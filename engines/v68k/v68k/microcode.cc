@@ -1171,6 +1171,76 @@ namespace v68k
 		pb.result = data;
 	}
 	
+	void microcode_ROXR( processor_state& s, op_params& pb )
+	{
+		const uint32_t count = pb.first;
+		
+		int32_t data = pb.second;
+		
+		if ( count != 0 )
+		{
+			const int n_bits = bit_count( pb.size );
+			
+			const int effective_count = count % (n_bits + 1);
+			
+			if ( effective_count != 0 )
+			{
+				const int anticount = n_bits - effective_count;
+				
+				const uint32_t udata = zero_extend( data, pb.size );
+				
+				data = (udata << 1 | s.regs.x) << anticount
+				     |  udata                  >> effective_count;
+				
+				s.regs.x = udata >> (effective_count - 1 ) & 0x1;
+				
+				data = sign_extend( data, pb.size );
+			}
+		}
+		
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
+		            | V( 0 )
+		            | C( s.regs.x );
+		
+		pb.result = data;
+	}
+	
+	void microcode_ROXL( processor_state& s, op_params& pb )
+	{
+		const uint32_t count = pb.first;
+		
+		int32_t data = pb.second;
+		
+		if ( count != 0 )
+		{
+			const int n_bits = bit_count( pb.size );
+			
+			const int effective_count = count % (n_bits + 1);
+			
+			if ( effective_count != 0 )
+			{
+				const int anticount = n_bits - effective_count;
+				
+				const uint32_t udata = zero_extend( data, pb.size );
+				
+				data = (udata << 1 | s.regs.x) << effective_count - 1
+				     |  udata                  >> anticount + 1;
+				
+				s.regs.x = udata >> anticount & 0x1;
+				
+				data = sign_extend( data, pb.size );
+			}
+		}
+		
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
+		            | V( 0 )
+		            | C( s.regs.x );
+		
+		pb.result = data;
+	}
+	
 	void microcode_ROR( processor_state& s, op_params& pb )
 	{
 		const uint32_t count = pb.first;
