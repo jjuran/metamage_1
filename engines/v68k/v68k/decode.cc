@@ -540,17 +540,20 @@ namespace v68k
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
 		
-		if ( size_code != 3  &&  (opcode & 0x0010) == 0x0000 )
+		if ( size_code != 3 )
 		{
-			const int i = (opcode & 0x0008) >> 2 | (opcode & 0x0100) >> 8;
-			
-			storage.code = bit_shift_microcodes[ i ];
-			
-			storage.size  = op_size_in_00C0;
-			storage.fetch = fetches_bit_shift;
-			storage.flags = loads_and | stores_data;
-			
-			return &storage;
+			if ( (opcode & 0x0010) == 0x0000 )
+			{
+				const int i = (opcode & 0x0008) >> 2 | (opcode & 0x0100) >> 8;
+				
+				storage.code = bit_shift_microcodes[ i ];
+				
+				storage.size  = op_size_in_00C0;
+				storage.fetch = fetches_bit_shift;
+				storage.flags = loads_and | stores_data;
+				
+				return &storage;
+			}
 		}
 		
 		return 0;  // NULL
