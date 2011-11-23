@@ -34,6 +34,8 @@ namespace v68k
 	
 	void fetch_zero( processor_state& state, op_params& pb );
 	
+	void fetch_one( processor_state& state, op_params& pb );
+	
 	void fetch_ones( processor_state& state, op_params& pb );
 	
 	void fetch_unsigned_word( processor_state& state, op_params& pb );

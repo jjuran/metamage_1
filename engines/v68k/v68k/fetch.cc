@@ -64,6 +64,11 @@ namespace v68k
 		pb.first = 0;
 	}
 	
+	void fetch_one( processor_state& s, op_params& pb )
+	{
+		pb.first = 1;
+	}
+	
 	void fetch_ones( processor_state& s, op_params& pb )
 	{
 		pb.first = 0xFFFFFFFF;
