@@ -555,6 +555,30 @@ namespace v68k
 				return &storage;
 			}
 		}
+		else
+		{
+			const int i = (opcode & 0x0F00) >> 8;
+			
+			if ( i >= 4 )
+			{
+				return 0;  // NULL
+			}
+			
+			const uint16_t mode = opcode >> 3 & 0x7;
+			const uint16_t n    = opcode >> 0 & 0x7;
+			
+			if ( !ea_is_memory_alterable( mode ) )
+			{
+				return 0;  // NULL
+			}
+			
+			storage.size  = word_sized;
+			storage.fetch = fetches_bit_shift_mem;
+			storage.code  = bit_shift_microcodes[ i ];
+			storage.flags = loads_and | stores_data;
+			
+			return &storage;
+		}
 		
 		return 0;  // NULL
 	}
