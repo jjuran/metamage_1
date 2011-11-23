@@ -1171,5 +1171,79 @@ namespace v68k
 		pb.result = data;
 	}
 	
+	void microcode_ROR( processor_state& s, op_params& pb )
+	{
+		const uint32_t count = pb.first;
+		
+		int32_t data = pb.second;
+		
+		bool last_bit = 0;
+		
+		if ( count != 0 )
+		{
+			const int n_bits = bit_count( pb.size );
+			
+			const int effective_count = count & n_bits - 1;
+			
+			if ( effective_count != 0 )
+			{
+				const int anticount = n_bits - effective_count;
+				
+				const uint32_t udata = zero_extend( data, pb.size );
+				
+				data = udata << anticount
+				     | udata >> effective_count;
+				
+				data = sign_extend( data, pb.size );
+			}
+			
+			last_bit = data < 0;
+		}
+		
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
+		            | V( 0 )
+		            | C( last_bit );
+		
+		pb.result = data;
+	}
+	
+	void microcode_ROL( processor_state& s, op_params& pb )
+	{
+		const uint32_t count = pb.first;
+		
+		int32_t data = pb.second;
+		
+		bool last_bit = 0;
+		
+		if ( count != 0 )
+		{
+			const int n_bits = bit_count( pb.size );
+			
+			const int effective_count = count & n_bits - 1;
+			
+			if ( effective_count != 0 )
+			{
+				const int anticount = n_bits - effective_count;
+				
+				const uint32_t udata = zero_extend( data, pb.size );
+				
+				data = udata << effective_count
+				     | udata >> anticount;
+				
+				data = sign_extend( data, pb.size );
+			}
+			
+			last_bit = data & 0x1;
+		}
+		
+		s.regs.nzvc = N( data <  0 )
+		            | Z( data == 0 )
+		            | V( 0 )
+		            | C( last_bit );
+		
+		pb.result = data;
+	}
+	
 }
 
