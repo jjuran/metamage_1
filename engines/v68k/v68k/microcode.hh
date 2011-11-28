@@ -117,6 +117,10 @@ namespace v68k
 	
 	void microcode_OR( processor_state& state, op_params& pb );
 	
+	void microcode_DIVS( processor_state& state, op_params& pb );
+	
+	void microcode_DIVU( processor_state& state, op_params& pb );
+	
 	#pragma mark -
 	#pragma mark Line 9
 	

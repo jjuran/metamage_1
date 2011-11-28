@@ -72,13 +72,45 @@ namespace v68k
 		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
+	static void update_CCR_DIV( processor_state& s, const op_params& pb )
+	{
+		if ( pb.size == unsized )
+		{
+			/*
+				Either overflow or division by zero has occurred.
+				V is set in the former case and undefined in the latter.
+				N and Z are undefined either way; C is always cleared.
+				So set V and clear N, Z, and C.
+			*/
+			
+			s.regs.nzvc = 0x2;
+		}
+		else
+		{
+			/*
+				DIVS.W and DIVU.W are long-sized operations, in the sense
+				that they read and write a 32-bit operand/result.  (The
+				divisor is only 16 bits, but is always in a register, so
+				memory access isn't an issue.)  However, the CCR update
+				considers only the 16-bit quotient.
+			*/
+			
+			const int32_t data = sign_extend( pb.result, word_sized );
+			
+			s.regs.nzvc = common_NZ( data );
+		}
+	}
+	
 	
 	CCR_updater the_CCR_updaters[] =
 	{
 		&update_CCR_ADD,
 		&update_CCR_SUB,
+		0,  // NULL
+		0,  // NULL
 		&update_CCR_TST,
-		&update_CCR_BTST
+		&update_CCR_BTST,
+		&update_CCR_DIV
 	};
 	
 }

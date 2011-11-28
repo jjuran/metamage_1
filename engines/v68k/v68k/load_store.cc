@@ -44,6 +44,11 @@ namespace v68k
 	
 	bool store( processor_state& s, const op_params& pb )
 	{
+		if ( pb.size == unsized )
+		{
+			return true;
+		}
+		
 		uint32_t data = pb.result;
 		
 		const int32_t target = pb.target;
