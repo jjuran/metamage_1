@@ -41,7 +41,7 @@ namespace v68k
 		SUB_CCR_update   = CCR_update_sub | CCR_update_set_X,  // 0x0180, 1
 		CMP_CCR_update   = CCR_update_sub | CCR_update_An,     // 0x0900, 1
 		
-		TST_CCR_update   = basic_CCR_update | CCR_update_An,   // 0x0C00, 2
+		TST_CCR_update   = basic_CCR_update | CCR_update_An,   // 0x0A00, 2
 		
 		/*
 			Omit flags from the mask, so that the shifted mask result can be
