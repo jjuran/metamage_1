@@ -150,7 +150,7 @@ namespace v68k
 			storage.code = immediate_microcodes[ selector ];
 			
 			storage.fetch = fetches_immediate;
-			storage.flags = loads_and | stores_data | basic_CCR_update;
+			storage.flags = loads_and | stores_data;
 			
 			if ( selector & 2 )
 			{
