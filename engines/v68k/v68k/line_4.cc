@@ -32,11 +32,6 @@ namespace v68k
 			storage.code = opcode & 0x0008 ? microcode_BKPT
 			                               : microcode_SWAP;
 			
-			if ( opcode & 0x0008 )
-			{
-				storage.size = long_sized;  // because result is 32 bits
-			}
-			
 			return &storage;
 		}
 		
