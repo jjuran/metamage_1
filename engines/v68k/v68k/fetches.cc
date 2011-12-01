@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/fetch.hh"
+#include "v68k/load_store.hh"
 
 
 // 4-bit value, high bit is 0 for D and 1 for A
@@ -164,6 +165,7 @@ namespace v68k
 	fetcher fetches_NEG[] =
 	{
 		&fetch_effective_address,
+		&load,
 		&shift_NEG_operands,
 		0  // NULL
 	};
