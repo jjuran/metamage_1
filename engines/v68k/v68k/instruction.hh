@@ -32,6 +32,7 @@ namespace v68k
 		CCR_update_set_X = 0x0080,  // Assign C to X
 		CCR_update_add   = 0x0000,
 		CCR_update_sub   = 0x0100,
+		CCR_update_and_Z = 0x0200,  // Z &= x == 0
 		CCR_update_div_q = 0x0200,  // Consider only quotient, not remainder
 		CCR_update_An    = 0x0800,  // Update CCR even for address registers
 		
@@ -41,6 +42,8 @@ namespace v68k
 		ADD_CCR_update   = CCR_update_add | CCR_update_set_X,  // 0x0080, 0
 		SUB_CCR_update   = CCR_update_sub | CCR_update_set_X,  // 0x0180, 1
 		CMP_CCR_update   = CCR_update_sub | CCR_update_An,     // 0x0900, 1
+		ADDX_CCR_update  = ADD_CCR_update | CCR_update_and_Z,  // 0x0280, 2
+		SUBX_CCR_update  = SUB_CCR_update | CCR_update_and_Z,  // 0x0380, 3
 		
 		TST_CCR_update   = basic_CCR_update | CCR_update_An,   // 0x0C00, 4
 		DIV_CCR_update   = basic_CCR_update | CCR_update_div_q,// 0x0600, 6

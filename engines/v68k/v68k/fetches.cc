@@ -268,6 +268,21 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_ADDX_Dn[] =
+	{
+		&FETCH_MAJOR_REGISTER_NUM,
+		&fetch_sized_data_at_effective_address,
+		&add_X_to_first,
+		0  // NULL
+	};
+	
+	fetcher fetches_ADDX_predec[] =
+	{
+		&fetch_ADDX_predecrement,
+		&add_X_to_first,
+		0  // NULL
+	};
+	
 	
 	fetcher fetches_bit_shift[] =
 	{
