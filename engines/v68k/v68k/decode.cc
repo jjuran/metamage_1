@@ -377,6 +377,7 @@ namespace v68k
 				storage.size  = op_size_in_0100;
 				storage.fetch = fetches_CMPA;
 				storage.code  = microcode_CMP;
+				storage.flags = SUB_CCR_update;
 				
 				return &storage;
 			}
@@ -402,6 +403,7 @@ namespace v68k
 				{
 					storage.fetch = fetches_CMP;
 					storage.code  = microcode_CMP;
+					storage.flags = SUB_CCR_update;
 					
 					return &storage;
 				}
