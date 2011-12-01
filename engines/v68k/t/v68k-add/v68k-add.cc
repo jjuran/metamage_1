@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 4 + 2;
+static const unsigned n_tests = 4 + 2 + 2;
 
 
 using v68k::big_word;
@@ -103,6 +103,39 @@ static void adda()
 	ok_if( emu.regs.nzvc == 0xF );
 }
 
+static void addi()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 4096 ];
+	
+	memset( mem, 0xFF, sizeof mem );  // spike memory with bad addresses
+	
+	uint32_t* vectors = (uint32_t*) mem;
+	
+	vectors[0] = big_longword( 4096 );  // isp
+	vectors[1] = big_longword( 1024 );  // pc
+	
+	uint16_t* code = (uint16_t*) (mem + 1024);
+	
+	code[ 0 ] = big_word( 0x0640 );  // ADDI.W  #0x1234, D0
+	code[ 1 ] = big_word( 0x1234 );
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	emu.regs.nzvc = 0x0;
+	
+	emu.regs.d[0] = 0x0000FEDC;
+	
+	emu.step();
+	
+	ok_if( emu.regs.d[0] == 0x00001110 );
+	
+	ok_if( emu.regs.nzvc == 0x1 );
+}
+
 int main( int argc, char** argv )
 {
 	tap::start( "v68k-add", n_tests );
@@ -110,6 +143,8 @@ int main( int argc, char** argv )
 	add();
 	
 	adda();
+	
+	addi();
 	
 	return 0;
 }
