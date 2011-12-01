@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 12 + 2;
+static const unsigned n_tests = 12 + 2 + 4;
 
 
 using v68k::big_word;
@@ -134,6 +134,50 @@ static void subx()
 	ok_if( emu.regs.nzvc == 0x0 );
 }
 
+static void negx()
+{
+	using namespace v68k;
+	
+	uint8_t mem[ 4096 ];
+	
+	memset( mem, 0xFF, sizeof mem );  // spike memory with bad addresses
+	
+	uint32_t* vectors = (uint32_t*) mem;
+	
+	vectors[0] = big_longword( 4096 );  // isp
+	vectors[1] = big_longword( 1024 );  // pc
+	
+	uint16_t* code = (uint16_t*) (mem + 1024);
+	
+	code[ 0 ] = big_word( 0x4000 );  // NEGX.B  D0
+	code[ 1 ] = big_word( 0x4040 );  // NEGX.W  D0
+	
+	emulator emu( mc68000, mem, sizeof mem );
+	
+	emu.reset();
+	
+	emu.regs.   x = 1;
+	emu.regs.nzvc = 0;
+	
+	emu.regs.d[0] = 0x000000FF;
+	
+	
+	emu.step();
+	
+	ok_if( emu.regs.d[0] == 0x00000000 );
+	
+	ok_if( emu.regs.nzvc == 0x0 );
+	
+	
+	emu.regs.x = 1;
+	
+	emu.step();
+	
+	ok_if( emu.regs.d[0] == 0x0000FFFF );
+	
+	ok_if( emu.regs.nzvc == 0x9 );
+}
+
 int main( int argc, char** argv )
 {
 	tap::start( "v68k-xmath", n_tests );
@@ -141,6 +185,8 @@ int main( int argc, char** argv )
 	addx();
 	
 	subx();
+	
+	negx();
 	
 	return 0;
 }
