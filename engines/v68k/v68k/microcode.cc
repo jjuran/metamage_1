@@ -546,7 +546,11 @@ namespace v68k
 		
 		const uint16_t format = id >> 12;
 		
-		if ( format != 0 )
+		const uint32_t stack_frame_size = format == 0 ?  8
+		                                : format == 6 ? 12
+		                                :                0;
+		
+		if ( stack_frame_size == 0 )
 		{
 			s.format_error();
 			
@@ -569,7 +573,7 @@ namespace v68k
 			return;
 		}
 		
-		sp += 8;  // format 0
+		sp += stack_frame_size;
 		
 		s.set_SR( saved_sr );
 	}
