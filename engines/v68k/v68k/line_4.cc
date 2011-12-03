@@ -160,13 +160,11 @@ namespace v68k
 			storage.size  = word_sized;
 			storage.fetch = fetches_effective_address;
 			
-			storage.code = opcode & 0x0200 ? microcode_MOVE_from_SR
-			                               : microcode_MOVE_from_CCR;
+			storage.code = opcode & 0x0200 ? microcode_MOVE_from_CCR
+			                               : microcode_MOVE_from_SR;
 			
-			storage.flags = opcode & 0x0200 ? privileged_except_on_68000
-			                                : not_before_68010;
-			
-			storage.flags |= stores_data;
+			storage.flags = opcode & 0x0200 ? stores_data | not_before_68010
+			                                : stores_data | privileged_except_on_68000;
 			
 			return &storage;
 		}
