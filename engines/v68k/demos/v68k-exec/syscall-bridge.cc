@@ -9,6 +9,10 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/uio.h>
+
+// v68k
+#include "v68k/endian.hh"
 
 // v68k-exec
 #include "syscall-bridge.hh"
@@ -146,6 +150,79 @@ static bool emu_write( v68k::emulator& emu )
 	return set_result( emu, result );
 }
 
+struct iovec_68k
+{
+	uint32_t ptr;
+	uint32_t len;
+};
+
+static bool emu_writev( v68k::emulator& emu )
+{
+	uint32_t args[3];  // fd, iov, n
+	
+	if ( !get_stacked_args( emu, args, 3 ) )
+	{
+		return emu.bus_error();
+	}
+	
+	int result = -1;
+	
+	const int fd = int32_t( args[0] );
+	
+	const uint32_t iov_addr = args[1];
+	
+	const size_t n = args[2];
+	
+	const size_t size = n * sizeof (iovec_68k);
+	
+	struct iovec* iov = (struct iovec*) malloc( sizeof (struct iovec) * n );
+	
+	if ( iov == NULL )
+	{
+		errno = ENOMEM;
+		
+		goto end;
+	}
+	
+	const iovec_68k* iov_mem = (iovec_68k*) emu.mem.translate( iov_addr,
+	                                                           size,
+	                                                           emu.data_space(),
+	                                                           v68k::mem_read );
+	
+	if ( iov_mem == NULL )
+	{
+		errno = EFAULT;
+		
+		goto end;
+	}
+	
+	for ( int i = 0;  i < n;  ++i )
+	{
+		const uint32_t ptr = v68k::longword_from_big( iov_mem[i].ptr );
+		const uint32_t len = v68k::longword_from_big( iov_mem[i].len );
+		
+		const uint8_t* p = emu.mem.translate( ptr, len, emu.data_space(), v68k::mem_read );
+		
+		if ( p == NULL )
+		{
+			errno = EFAULT;
+			
+			goto end;
+		}
+		
+		iov[i].iov_base = (void*) p;
+		iov[i].iov_len  = len;
+	}
+	
+	result = writev( fd, iov, n );
+	
+end:
+	
+	free( iov );
+	
+	return set_result( emu, result );
+}
+
 bool bridge_call( v68k::emulator& emu )
 {
 	const uint16_t call_number = emu.regs.d[0];
@@ -155,6 +232,8 @@ bool bridge_call( v68k::emulator& emu )
 		case 1:  return emu_exit ( emu );
 		case 3:  return emu_read ( emu );
 		case 4:  return emu_write( emu );
+		
+		case 146:  return emu_writev( emu );
 		
 		default:
 			return false;
