@@ -71,7 +71,7 @@ namespace v68k
 	
 	inline bool ea_is_memory_alterable( uint16_t mode, uint16_t n = 0 )
 	{
-		return mode > 1  &&  mode < 7;
+		return mode > 1  &&  ea_is_alterable( mode, n );
 	}
 	
 }
