@@ -155,7 +155,7 @@ namespace v68k
 				                       : &decoded_MOVE_to_CCR;
 			}
 		}
-		else
+		else if ( ea_is_data_alterable( mode, n ) )
 		{
 			storage.size  = word_sized;
 			storage.fetch = fetches_effective_address;
