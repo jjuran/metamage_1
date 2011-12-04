@@ -162,6 +162,11 @@ namespace v68k
 				storage.flags |= basic_CCR_update;
 			}
 			
+			if ( selector == 6 )
+			{
+				storage.flags = loads_and | SUB_CCR_update;
+			}
+			
 			if ( selector == 6  &&  mode == 7  &&  n & 2 )
 			{
 				storage.flags |= not_before_68010;
