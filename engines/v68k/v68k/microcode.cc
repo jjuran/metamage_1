@@ -1116,6 +1116,8 @@ namespace v68k
 		
 		if ( count != 0 )
 		{
+			data &= data_mask;
+			
 			data >>= count - 1;
 			
 			last_bit = data & 0x1;
@@ -1126,7 +1128,7 @@ namespace v68k
 		}
 		
 		s.regs.nzvc = N( data & sign_mask )
-		            | Z( (data & data_mask) == 0 )
+		            | Z( data == 0 )
 		            | V( 0 )
 		            | C( last_bit );
 		
