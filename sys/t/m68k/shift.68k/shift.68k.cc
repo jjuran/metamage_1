@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = (18 + 8 + 2 + 2) * 3 + (18 + 2 + 2) * 3 + (12 + 2) * 3 * 2;
+static const unsigned n_tests = 6 * 4 + (18 + 8 + 2 + 2) * 3 + (18 + 2 + 2) * 3 + (12 + 2) * 3 * 2;
 
 
 using tap::ok_if;
@@ -26,9 +26,35 @@ using tap::ok_if;
 static uint16_t the_CCR = 0;
 
 
+static uint16_t the_data;
+
+#define DEFINE_MEM_SHIFTER( mnemonic )                          \
+	static asm uint16_t mnemonic##_mem( uint16_t data : __D0 )  \
+	{                                                           \
+		MOVE.W  D0,the_data     ;                               \
+		                                                        \
+		MOVE.W  the_CCR,D2      ;                               \
+		MOVE    D2,CCR          ;                               \
+		                                                        \
+		mnemonic.W   the_data   ;                               \
+		                                                        \
+		MOVE    SR,the_CCR      ;                               \
+		ANDI.W  #0x00FF,the_CCR ;                               \
+		                                                        \
+		MOVE.W  the_data,D0     ;                               \
+		                                                        \
+		RTS                                                     \
+	}
+
+DEFINE_MEM_SHIFTER( asr )
+DEFINE_MEM_SHIFTER( asl )
+DEFINE_MEM_SHIFTER( lsr )
+DEFINE_MEM_SHIFTER( lsl )
+
+
 typedef int32_t (*shifter)( int32_t data : __D0, uint32_t count : __D1 );
 
-#define DEFINE_SHIFTER( mnemonic, size )                            \
+#define DEFINE_REG_SHIFTER( mnemonic, size )                        \
 	static asm int32_t mnemonic##_##size( int32_t   data  : __D0,   \
 	                                      uint32_t  count : __D1 )  \
 	{                                                               \
@@ -43,21 +69,82 @@ typedef int32_t (*shifter)( int32_t data : __D0, uint32_t count : __D1 );
 		RTS                                                         \
 	}
 
-DEFINE_SHIFTER( asr, B )
-DEFINE_SHIFTER( asr, W )
-DEFINE_SHIFTER( asr, L )
+DEFINE_REG_SHIFTER( asr, B )
+DEFINE_REG_SHIFTER( asr, W )
+DEFINE_REG_SHIFTER( asr, L )
 
-DEFINE_SHIFTER( asl, B )
-DEFINE_SHIFTER( asl, W )
-DEFINE_SHIFTER( asl, L )
+DEFINE_REG_SHIFTER( asl, B )
+DEFINE_REG_SHIFTER( asl, W )
+DEFINE_REG_SHIFTER( asl, L )
 
-DEFINE_SHIFTER( lsr, B )
-DEFINE_SHIFTER( lsr, W )
-DEFINE_SHIFTER( lsr, L )
+DEFINE_REG_SHIFTER( lsr, B )
+DEFINE_REG_SHIFTER( lsr, W )
+DEFINE_REG_SHIFTER( lsr, L )
 
-DEFINE_SHIFTER( lsl, B )
-DEFINE_SHIFTER( lsl, W )
-DEFINE_SHIFTER( lsl, L )
+DEFINE_REG_SHIFTER( lsl, B )
+DEFINE_REG_SHIFTER( lsl, W )
+DEFINE_REG_SHIFTER( lsl, L )
+
+
+static void asr_memory()
+{
+	ok_if( asr_mem( 0x0000 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x04 );
+	
+	ok_if( asr_mem( 0x0001 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x15 );
+	
+	ok_if( asr_mem( 0xFFFF ) == 0xFFFF );
+	
+	ok_if( the_CCR == 0x19 );
+}
+
+static void asl_memory()
+{
+	ok_if( asl_mem( 0x0000 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x04 );
+	
+	ok_if( asl_mem( 0x8000 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x17 );
+	
+	ok_if( asl_mem( 0xFFFF ) == 0xFFFE );
+	
+	ok_if( the_CCR == 0x19 );
+}
+
+static void lsr_memory()
+{
+	ok_if( lsr_mem( 0x0000 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x04 );
+	
+	ok_if( lsr_mem( 0x0001 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x15 );
+	
+	ok_if( lsr_mem( 0xFFFF ) == 0x7FFF );
+	
+	ok_if( the_CCR == 0x11 );
+}
+
+static void lsl_memory()
+{
+	ok_if( lsl_mem( 0x0000 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x04 );
+	
+	ok_if( lsl_mem( 0x8000 ) == 0x0000 );
+	
+	ok_if( the_CCR == 0x15 );
+	
+	ok_if( lsl_mem( 0xFFFF ) == 0xFFFE );
+	
+	ok_if( the_CCR == 0x19 );
+}
 
 
 static void shift_either( shifter shift )
@@ -344,6 +431,11 @@ static void lsl_long()
 int main( int argc, char** argv )
 {
 	tap::start( "shift.68k", n_tests );
+	
+	asr_memory();
+	asl_memory();
+	lsr_memory();
+	lsl_memory();
 	
 	asr_byte();
 	asr_word();
