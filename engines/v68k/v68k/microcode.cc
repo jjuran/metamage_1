@@ -1080,6 +1080,8 @@ namespace v68k
 				last_bit = sign_extend( data, pb.size ) < 0;
 				
 				data <<= 1;
+				
+				data = sign_extend( data, pb.size );
 			}
 			
 			s.regs.x = last_bit;
