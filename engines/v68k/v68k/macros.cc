@@ -9,6 +9,20 @@
 namespace v68k
 {
 	
+	uint32_t zero_extend( uint32_t data, op_size_t size )
+	{
+		switch ( size )
+		{
+			case byte_sized:  return uint8_t ( data );
+			case word_sized:  return uint16_t( data );
+		//	case long_sized:  return           data;
+			default:
+				break;
+		}
+		
+		return data;
+	}
+	
 	int32_t sign_extend( int32_t data, op_size_t size )
 	{
 		switch ( size )
