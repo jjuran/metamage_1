@@ -54,8 +54,8 @@ namespace v68k
 	
 	static void update_CCR_SUB( processor_state& s, const op_params& pb )
 	{
-		const int32_t a = pb.first;
-		const int32_t b = pb.second;
+		const int32_t a = sign_extend( pb.first,  pb.size );
+		const int32_t b = sign_extend( pb.second, pb.size );
 		
 		const int32_t d = b - a;
 		
