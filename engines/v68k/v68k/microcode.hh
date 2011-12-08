@@ -162,6 +162,12 @@ namespace v68k
 	void microcode_LSR( processor_state& state, op_params& pb );
 	void microcode_LSL( processor_state& state, op_params& pb );
 	
+	void microcode_ROXR( processor_state& state, op_params& pb );
+	void microcode_ROXL( processor_state& state, op_params& pb );
+	
+	void microcode_ROR( processor_state& state, op_params& pb );
+	void microcode_ROL( processor_state& state, op_params& pb );
+	
 }
 
 #endif
