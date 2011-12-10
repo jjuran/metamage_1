@@ -123,6 +123,8 @@ namespace v68k
 	
 	void microcode_OR( processor_state& state, op_params& pb );
 	
+	void microcode_SBCD( processor_state& state, op_params& pb );
+	
 	void microcode_DIVS( processor_state& state, op_params& pb );
 	
 	void microcode_DIVU( processor_state& state, op_params& pb );
@@ -145,6 +147,8 @@ namespace v68k
 	void microcode_AND( processor_state& state, op_params& pb );
 	
 	void microcode_EXG( processor_state& state, op_params& pb );
+	
+	void microcode_ABCD( processor_state& state, op_params& pb );
 	
 	void microcode_MULS( processor_state& state, op_params& pb );
 	

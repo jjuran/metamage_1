@@ -879,6 +879,25 @@ namespace v68k
 		pb.result = pb.first | pb.second;
 	}
 	
+	static uint32_t BCD_encoded( int x )
+	{
+		return + x / 10 << 4
+		       | x % 10;
+	}
+	
+	static int decoded_BCD( uint8_t x )
+	{
+		return 10 * (x >> 4) + (x & 0xF);
+	}
+	
+	void microcode_SBCD( processor_state& s, op_params& pb )
+	{
+		const int a = decoded_BCD( pb.first  );
+		const int b = decoded_BCD( pb.second );
+		
+		pb.result = BCD_encoded( (100 + b - a) % 100 );
+	}
+	
 	void microcode_DIVS( processor_state& s, op_params& pb )
 	{
 		const int32_t dividend = pb.second;
@@ -990,6 +1009,23 @@ namespace v68k
 		Rx = Ry;
 		
 		Ry = temp;
+	}
+	
+	void microcode_ABCD( processor_state& s, op_params& pb )
+	{
+		const int a = decoded_BCD( pb.first  );
+		const int b = decoded_BCD( pb.second );
+		
+		const int sum = a + b;
+		
+		pb.result = BCD_encoded( sum % 100 );
+		
+		if ( const bool carry = sum >= 100 )
+		{
+			// Sick hack so ADDX-style CCR update sets the C bit
+			pb.first  |= 0x80;
+			pb.second |= 0x80;
+		}
 	}
 	
 	void microcode_MULS( processor_state& s, op_params& pb )
