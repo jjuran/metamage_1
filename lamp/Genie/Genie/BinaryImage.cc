@@ -220,12 +220,28 @@ namespace Genie
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		try
+		{
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+			
+			const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
+			
+			return rsrc ? ReadProgramAsCodeResource(      )
+			            : ReadProgramAsCodeFragment( file );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == eofErr )
+			{
+				// Empty resource fork, try data fork
+			}
+			else
+			{
+				throw;
+			}
+		}
 		
-		const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
-		
-		return rsrc ? ReadProgramAsCodeResource(      )
-		            : ReadProgramAsCodeFragment( file );
+		return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
 	}
 	
 	static bool CachedImageIsPurged( const BinaryImageCache::value_type& value )
