@@ -256,6 +256,10 @@ namespace Genie
 			{
 				// Empty resource fork, try data fork
 			}
+			else if ( err == resNotFound )
+			{
+				// No code resource, try data fork
+			}
 			else
 			{
 				throw;
