@@ -89,6 +89,45 @@ namespace Genie
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
+	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
+	{
+		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
+		
+		if ( length == kCFragGoesToEOF )
+		{
+			UInt32 eof = N::GetEOF( refNum );
+			
+			if ( offset >= eof )
+			{
+				p7::throw_errno( EINVAL );
+			}
+			
+			length = eof - offset;
+		}
+		
+		BinaryImage data;
+		
+		try
+		{
+			data = N::NewHandle( length );
+		}
+		catch ( ... )
+		{
+			data = N::TempNewHandle( length );
+		}
+		
+		N::HLockHi( data );
+		
+		MacIO::FSRead( MacIO::kThrowEOF_Always,
+		               refNum,
+		               N::fsFromStart,
+		               offset,
+		               length,
+		               *data.get().Get() );
+		
+		return data;
+	}
+	
 	
 	static BinaryImage ReadProgramAsCodeResource()
 	{
@@ -176,41 +215,7 @@ namespace Genie
 		
 		// Handle no longer used here
 		
-		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
-		
-		if ( length == kCFragGoesToEOF )
-		{
-			UInt32 eof = N::GetEOF( refNum );
-			
-			if ( offset >= eof )
-			{
-				p7::throw_errno( EINVAL );
-			}
-			
-			length = eof - offset;
-		}
-		
-		BinaryImage data;
-		
-		try
-		{
-			data = N::NewHandle( length );
-		}
-		catch ( ... )
-		{
-			data = N::TempNewHandle( length );
-		}
-		
-		N::HLockHi( data );
-		
-		MacIO::FSRead( MacIO::kThrowEOF_Always,
-		               refNum,
-		               N::fsFromStart,
-		               offset,
-		               length,
-		               *data.get().Get() );
-		
-		return data;
+		return ReadProgramFromDataFork( file, offset, length );
 	}
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
