@@ -14,6 +14,14 @@ namespace Genie
 {
 	
 #ifdef __POWERPC__
+#ifndef __MWERKS__
+	
+	void dispatch_ppc_system_call( ... )
+	{
+		// FIXME?
+	}
+	
+#else
 	
 	enum { kSystemCallSize = sizeof (SystemCall) };
 	
@@ -103,6 +111,7 @@ namespace Genie
 		lwz		RTOC,20(SP)
 	}
 	
+#endif
 #endif
 	
 }
