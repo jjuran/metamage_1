@@ -1,5 +1,5 @@
 /*	=================
- *	AccessProperty.cp
+ *	AccessProperty.cc
  *	=================
  */
 

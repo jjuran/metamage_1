@@ -1,5 +1,5 @@
 /*	=================
- *	GetObjectClass.cp
+ *	GetObjectClass.cc
  *	=================
  */
 

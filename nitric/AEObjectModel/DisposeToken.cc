@@ -1,5 +1,5 @@
 /*	===============
- *	DisposeToken.cp
+ *	DisposeToken.cc
  *	===============
  */
 

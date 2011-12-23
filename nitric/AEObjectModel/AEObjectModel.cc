@@ -1,5 +1,5 @@
 /*	================
- *	AEObjectModel.cp
+ *	AEObjectModel.cc
  *	================
  */
 
