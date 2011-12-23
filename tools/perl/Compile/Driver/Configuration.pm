@@ -126,6 +126,15 @@ sub conflicts_with
 	return $spec ne $value;
 }
 
+sub arch_option
+{
+	my $self = shift;
+	
+	my $arch = $self->{arch} or return;
+	
+	return (-arch => $arch);
+}
+
 sub is_apple_gcc
 {
 	my $self = shift;

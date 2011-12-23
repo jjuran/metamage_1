@@ -181,6 +181,8 @@ sub compile
 	
 	make_ancestor_dirs( $dest );
 	
+	my @arch = $conf->arch_option;
+	
 	my @o = -O2;
 	
 	my @f;
@@ -200,7 +202,7 @@ sub compile
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	run_command( qw( gcc -c -o ), $dest, @o, @f, @w, @d, @i, $path );
+	run_command( qw( gcc -c -o ), $dest, @arch, @o, @f, @w, @d, @i, $path );
 }
 
 sub link_lib
@@ -249,12 +251,14 @@ sub link_exe
 	
 	make_ancestor_dirs( $dest );
 	
+	my @arch = $conf->arch_option;
+	
 	if ( $conf->is_apple_gcc )
 	{
 		push @libs, -framework => "Carbon";
 	}
 	
-	run_command( qw( g++ -o ), $dest, @$objs, @libs );
+	run_command( qw( g++ -o ), $dest, @arch, @$objs, @libs );
 }
 
 1;
