@@ -241,11 +241,18 @@ sub link_exe
 	
 	return ""  if up_to_date( $dest, @$objs, @libs );
 	
+	my $conf = $module->{CONF};
+	
 	@libs = reverse @libs;
 	
 	print_job( $job );
 	
 	make_ancestor_dirs( $dest );
+	
+	if ( $conf->is_apple_gcc )
+	{
+		push @libs, -framework => "Carbon";
+	}
 	
 	run_command( qw( g++ -o ), $dest, @$objs, @libs );
 }
