@@ -126,6 +126,13 @@ sub conflicts_with
 	return $spec ne $value;
 }
 
+sub is_apple_gcc
+{
+	my $self = shift;
+	
+	return ($self->{ mac_runtime } || "") eq "mach-o";
+}
+
 sub debugging
 {
 	my $self = shift;
