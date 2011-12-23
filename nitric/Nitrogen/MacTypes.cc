@@ -15,6 +15,9 @@
 #include <MacTypes.h>
 #endif
 
+// iota
+#include "iota/dummy.hh"
+
 //  These are weird ones:
 //  They are some member functions of std::char_traits < UTF16Char > that the linker wants.
 //  They are not needed in CodeWarrior, because CW8 has two byte wchar_t(s), and so the standard

@@ -13,6 +13,9 @@
 
 #include "Nitrogen/ControlDefinitions.hh"
 
+// iota
+#include "iota/dummy.hh"
+
 
 namespace Nitrogen
 {
