@@ -177,17 +177,17 @@ static bool emu_writev( v68k::emulator& emu )
 	
 	struct iovec* iov = (struct iovec*) malloc( sizeof (struct iovec) * n );
 	
+	const iovec_68k* iov_mem = (iovec_68k*) emu.mem.translate( iov_addr,
+	                                                           size,
+	                                                           emu.data_space(),
+	                                                           v68k::mem_read );
+	
 	if ( iov == NULL )
 	{
 		errno = ENOMEM;
 		
 		goto end;
 	}
-	
-	const iovec_68k* iov_mem = (iovec_68k*) emu.mem.translate( iov_addr,
-	                                                           size,
-	                                                           emu.data_space(),
-	                                                           v68k::mem_read );
 	
 	if ( iov_mem == NULL )
 	{
