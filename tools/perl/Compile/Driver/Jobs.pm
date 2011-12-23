@@ -175,13 +175,21 @@ sub compile
 	
 	return ""  if up_to_date_including_headers( $module, $dest, $path );
 	
+	my $conf = $module->{CONF};
+	
 	print_job( $job );
 	
 	make_ancestor_dirs( $dest );
 	
+	my %d;
+	
+	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
+	
+	my @d = map { "-D$_=" . $d{ $_ } } keys %d;
+	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	run_command( qw( gcc -c -o ), $dest, @i, $path );
+	run_command( qw( gcc -c -o ), $dest, @d, @i, $path );
 }
 
 sub link_lib

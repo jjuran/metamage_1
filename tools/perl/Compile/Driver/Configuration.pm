@@ -92,5 +92,12 @@ sub conflicts_with
 	return $spec ne $value;
 }
 
+sub debugging
+{
+	my $self = shift;
+	
+	return $self->{ build } eq "dbg";
+}
+
 1;
 
