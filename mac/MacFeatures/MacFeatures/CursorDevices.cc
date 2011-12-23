@@ -5,6 +5,9 @@
 
 #include "MacFeatures/CursorDevices.hh"
 
+// iota
+#include "iota/dummy.hh"
+
 #if TARGET_CPU_68K
 
 // Mac OS
