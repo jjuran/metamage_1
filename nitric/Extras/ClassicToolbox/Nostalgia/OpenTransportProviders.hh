@@ -1,4 +1,7 @@
-// Nostalgia/OpenTransportProviders.hh
+/*
+	Nostalgia/OpenTransportProviders.hh
+	-----------------------------------
+*/
 
 #ifndef NOSTALGIA_OPENTRANSPORTPROVIDERS_HH
 #define NOSTALGIA_OPENTRANSPORTPROVIDERS_HH

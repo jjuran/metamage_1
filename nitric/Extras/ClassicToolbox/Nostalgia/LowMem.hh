@@ -1,4 +1,7 @@
-// Nostalgia/MacWindows.hh
+/*
+	Nostalgia/LowMem.hh
+	-------------------
+*/
 
 #ifndef NOSTALGIA_LOWMEM_HH
 #define NOSTALGIA_LOWMEM_HH

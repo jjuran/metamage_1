@@ -1,4 +1,7 @@
-// Nostalgia/MacWindows.hh
+/*
+	Nostalgia/MacWindows.hh
+	-----------------------
+*/
 
 #ifndef NOSTALGIA_MACWINDOWS_HH
 #define NOSTALGIA_MACWINDOWS_HH
