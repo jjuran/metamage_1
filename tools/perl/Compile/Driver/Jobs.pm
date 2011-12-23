@@ -183,6 +183,13 @@ sub compile
 	
 	my @o = -O2;
 	
+	my @f;
+	
+	if ( $conf->is_apple_gcc )
+	{
+		push @f, "-fpascal-strings";
+	}
+	
 	my %d;
 	
 	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
@@ -191,7 +198,7 @@ sub compile
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	run_command( qw( gcc -c -o ), $dest, @o, @d, @i, $path );
+	run_command( qw( gcc -c -o ), $dest, @o, @f, @d, @i, $path );
 }
 
 sub link_lib
