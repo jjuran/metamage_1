@@ -18,6 +18,13 @@ namespace v68k
 		model( model ),
 		condition()
 	{
+		uint32_t* p   = (uint32_t*)  &regs;
+		uint32_t* end = (uint32_t*) (&regs + 1);
+		
+		for ( ;  p < end;  ++p )
+		{
+			*p = 0;
+		}
 	}
 	
 	void processor_state::prefetch_instruction_word()
