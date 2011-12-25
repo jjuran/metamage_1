@@ -187,7 +187,7 @@ static int execute_68k( int argc, char** argv )
 {
 	const char* path = argv[1];
 	
-	uint8_t* mem = (uint8_t*) malloc( mem_size );
+	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
 	{
