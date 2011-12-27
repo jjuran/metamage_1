@@ -6,6 +6,7 @@
 #include "Genie/FS/gui/new/bitmap.hh"
 
 // POSIX
+#include <sys/mman.h>
 #include <sys/stat.h>
 
 // Standard C++
@@ -23,6 +24,9 @@
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/Quickdraw.hh"
+
+// MacVFS
+#include "MacVFS/mmap/Ptr_memory_mapping.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -96,8 +100,52 @@ namespace Genie
 			
 			off_t GetEOF()  { return Bits_GetEOF( ViewKey() ); }
 			
+			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
+			
 			//void Synchronize( bool metadata );
 	};
+	
+	
+	class bits_memory_mapping : public vfs::Ptr_memory_mapping
+	{
+		private:
+			vfs::filehandle_ptr its_file;
+		
+		public:
+			bits_memory_mapping( const nucleus::shared< Mac::Ptr >&  p,
+			                     size_t                              length,
+			                     int                                 flags,
+			                     vfs::filehandle&                    file,
+			                     off_t                               offset );
+			
+			~bits_memory_mapping();
+			
+			void msync( void* addr, size_t len, int flags ) const;
+	};
+	
+	bits_memory_mapping::bits_memory_mapping( const nucleus::shared< Mac::Ptr >&  p,
+	                                          size_t                              length,
+	                                          int                                 flags,
+	                                          vfs::filehandle&                    file,
+	                                          off_t                               offset )
+	:
+		vfs::Ptr_memory_mapping( p, length, flags, offset ),
+		its_file( &file )
+	{
+	}
+	
+	bits_memory_mapping::~bits_memory_mapping()
+	{
+		msync( get_address(), get_size(), MS_SYNC );
+	}
+	
+	void bits_memory_mapping::msync( void* addr, size_t len, int flags ) const
+	{
+		Bits_IO& file = static_cast< Bits_IO& >( *its_file.get() );
+		
+		InvalidateWindowForView( file.ViewKey() );
+	}
+	
 	
 	const FSTree* Bits_IO::ViewKey()
 	{
@@ -161,6 +209,24 @@ namespace Genie
 		InvalidateWindowForView( view );
 		
 		return n_bytes;
+	}
+	
+	vfs::memory_mapping_ptr
+	//
+	Bits_IO::Map( size_t length, int prot, int flags, off_t offset )
+	{
+		const vfs::node* view = ViewKey();
+		
+		BitMap_Parameters& params = gBitMapMap[ view ];
+		
+		const size_t pix_size = BitMap_n_bytes( params.bitmap );
+		
+		if ( offset + length > pix_size )
+		{
+			p7::throw_errno( ENXIO );
+		}
+		
+		return new bits_memory_mapping( params.bits, length, flags, *this, offset );
 	}
 	
 	
