@@ -138,6 +138,8 @@ namespace v68k
 		{
 			write_byte( p, x );
 			
+			translate( addr, sizeof (uint8_t), fc, mem_update );
+			
 			return true;
 		}
 		
@@ -150,6 +152,8 @@ namespace v68k
 		{
 			write_big_word_unaligned( p, x );
 			
+			translate( addr, sizeof (uint16_t), fc, mem_update );
+			
 			return true;
 		}
 		
@@ -161,6 +165,8 @@ namespace v68k
 		if ( uint8_t* p = translate( addr, sizeof (uint32_t), fc, mem_write ) )
 		{
 			write_big_long_unaligned( p, x );
+			
+			translate( addr, sizeof (uint32_t), fc, mem_update );
 			
 			return true;
 		}
