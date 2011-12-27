@@ -217,5 +217,12 @@ namespace v68k
 		return false;
 	}
 	
+	
+	low_memory_region::low_memory_region( uint8_t* mem_base, uint32_t mem_size )
+	:
+		memory( mem_base, mem_size )
+	{
+	}
+	
 }
 

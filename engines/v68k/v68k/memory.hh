@@ -54,6 +54,12 @@ namespace v68k
 			bool get_instruction_word( uint32_t addr, uint16_t& x, function_code_t fc ) const;
 	};
 	
+	class low_memory_region : public memory
+	{
+		public:
+			low_memory_region( uint8_t* mem_base, uint32_t mem_size );
+	};
+	
 }
 
 #endif
