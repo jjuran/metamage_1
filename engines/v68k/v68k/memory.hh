@@ -34,14 +34,8 @@ namespace v68k
 	
 	class memory
 	{
-		private:
-			uint8_t* const  base;
-			uint32_t const  size;
-		
 		public:
-			memory( uint8_t* mem_base, uint32_t mem_size );
-			
-			uint8_t* translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const;
+			virtual uint8_t* translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const = 0;
 			
 			bool get_byte( uint32_t addr, uint8_t & x, function_code_t fc ) const;
 			bool get_word( uint32_t addr, uint16_t& x, function_code_t fc ) const;
@@ -56,8 +50,14 @@ namespace v68k
 	
 	class low_memory_region : public memory
 	{
+		private:
+			uint8_t* const  base;
+			uint32_t const  size;
+		
 		public:
 			low_memory_region( uint8_t* mem_base, uint32_t mem_size );
+			
+			uint8_t* translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const;
 	};
 	
 }
