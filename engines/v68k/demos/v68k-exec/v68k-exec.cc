@@ -26,6 +26,9 @@
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
 
+// v68k-exec
+#include "memory.hh"
+
 
 #pragma exceptions off
 
@@ -231,7 +234,7 @@ static int execute_68k( int argc, char** argv )
 		}
 	}
 	
-	const v68k::low_memory_region memory( mem, mem_size );
+	const memory_manager memory( mem, mem_size );
 	
 	v68k::emulator emu( v68k::mc68000, memory );
 	
