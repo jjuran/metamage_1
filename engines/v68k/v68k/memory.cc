@@ -182,20 +182,32 @@ namespace v68k
 	}
 	
 	
-	low_memory_region::low_memory_region( uint8_t* mem_base, uint32_t mem_size )
+	memory_region::memory_region( uint8_t* mem_base, uint32_t mem_size )
 	:
 		base( mem_base ),
 		size( mem_size )
 	{
 	}
 	
-	uint8_t* low_memory_region::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
+	uint8_t* memory_region::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
 	{
 		if ( addr + length > size  ||  addr + length < addr )
 		{
 			return 0;  // NULL
 		}
 		
+		return base + addr;
+	}
+	
+	
+	low_memory_region::low_memory_region( uint8_t* mem_base, uint32_t mem_size )
+	:
+		memory_region( mem_base, mem_size )
+	{
+	}
+	
+	uint8_t* low_memory_region::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
+	{
 		if ( addr < 1024 )
 		{
 			if ( fc <= user_program_space )
@@ -213,7 +225,7 @@ namespace v68k
 			}
 		}
 		
-		return base + addr;
+		return memory_region::translate( addr, length, fc, access );
 	}
 	
 }
