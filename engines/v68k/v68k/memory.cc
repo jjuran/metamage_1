@@ -95,42 +95,6 @@ namespace v68k
 	}
 	
 	
-	memory::memory( uint8_t* mem_base, uint32_t mem_size )
-	:
-		base( mem_base ),
-		size( mem_size )
-	{
-	}
-	
-	
-	uint8_t* memory::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
-	{
-		if ( addr + length > size  ||  addr + length < addr )
-		{
-			return 0;  // NULL
-		}
-		
-		if ( addr < 1024 )
-		{
-			if ( fc <= user_program_space )
-			{
-				// No user access to system vectors
-				
-				return 0;  // NULL
-			}
-			
-			if ( access == mem_exec )
-			{
-				// System vectors are not code -- not even the reset vector
-				
-				return 0;  // NULL
-			}
-		}
-		
-		return base + addr;
-	}
-	
-	
 	bool memory::get_byte( uint32_t addr, uint8_t& x, function_code_t fc ) const
 	{
 		if ( const uint8_t* p = translate( addr, sizeof (uint8_t), fc, mem_read ) )
@@ -215,6 +179,53 @@ namespace v68k
 		}
 		
 		return false;
+	}
+	
+	
+	memory_region::memory_region( uint8_t* mem_base, uint32_t mem_size )
+	:
+		base( mem_base ),
+		size( mem_size )
+	{
+	}
+	
+	uint8_t* memory_region::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
+	{
+		if ( addr + length > size  ||  addr + length < addr )
+		{
+			return 0;  // NULL
+		}
+		
+		return base + addr;
+	}
+	
+	
+	low_memory_region::low_memory_region( uint8_t* mem_base, uint32_t mem_size )
+	:
+		memory_region( mem_base, mem_size )
+	{
+	}
+	
+	uint8_t* low_memory_region::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
+	{
+		if ( addr < 1024 )
+		{
+			if ( fc <= user_program_space )
+			{
+				// No user access to system vectors
+				
+				return 0;  // NULL
+			}
+			
+			if ( access == mem_exec )
+			{
+				// System vectors are not code -- not even the reset vector
+				
+				return 0;  // NULL
+			}
+		}
+		
+		return memory_region::translate( addr, length, fc, access );
 	}
 	
 }

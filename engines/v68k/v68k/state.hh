@@ -53,7 +53,7 @@ namespace v68k
 	{
 		registers regs;
 		
-		const memory mem;
+		const memory& mem;
 		
 		const processor_model model;
 		
@@ -61,7 +61,7 @@ namespace v68k
 		
 		uint16_t opcode;  // current instruction opcode
 		
-		processor_state( processor_model model, uint8_t* mem_base, uint32_t mem_size );
+		processor_state( processor_model model, const memory& mem );
 		
 		void prefetch_instruction_word();
 		

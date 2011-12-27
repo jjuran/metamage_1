@@ -22,7 +22,7 @@ namespace v68k
 			void double_bus_fault();
 		
 		public:
-			emulator( processor_model model, uint8_t* mem_base, uint32_t mem_size );
+			emulator( processor_model model, const memory& mem );
 			
 			void reset();
 			

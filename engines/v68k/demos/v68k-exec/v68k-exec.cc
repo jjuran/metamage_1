@@ -249,7 +249,9 @@ static int execute_68k( int argc, char** argv )
 		}
 	}
 	
-	v68k::emulator emu( v68k::mc68000, mem, mem_size );
+	const v68k::low_memory_region memory( mem, mem_size );
+	
+	v68k::emulator emu( v68k::mc68000, memory );
 	
 	emu.reset();
 	
