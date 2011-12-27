@@ -259,7 +259,7 @@ step_loop:
 	{
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
-			print_instruction_limit_exceeded( instruction_limit );
+			print_instruction_limit_exceeded( instruction_limit_var );
 			
 			dump( emu );
 			

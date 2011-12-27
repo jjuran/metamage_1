@@ -20,7 +20,7 @@ void note_program_loaded( uint32_t n_bytes, const char* path );
 
 void print_blank_line();
 
-void print_instruction_limit_exceeded( int limit );
+void print_instruction_limit_exceeded( const char* limit );
 
 void print_halted();
 
