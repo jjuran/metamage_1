@@ -164,7 +164,7 @@ static int emulator_rot13()
 	load_n_words( mem, code_address, program, sizeof program / 2 );
 	load_n_words( mem, os_address,   os,      sizeof os      / 2 );
 	
-	const v68k::memory memory( mem, sizeof mem );
+	const v68k::low_memory_region memory( mem, sizeof mem );
 	
 	v68k::emulator emu( v68k::mc68000, memory );
 	
