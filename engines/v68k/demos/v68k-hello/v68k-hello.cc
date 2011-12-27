@@ -221,7 +221,9 @@ static void emulator_test()
 	load_n_words( mem, os_address,   os,      sizeof os      / 2 );
 	load_data   ( mem );
 	
-	v68k::emulator emu( v68k::mc68000, mem, sizeof mem );
+	const v68k::memory memory( mem, sizeof mem );
+	
+	v68k::emulator emu( v68k::mc68000, memory );
 	
 	emu.reset();
 	
