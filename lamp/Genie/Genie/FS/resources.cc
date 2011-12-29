@@ -13,6 +13,7 @@
 
 // plus
 #include "plus/hexidecimal.hh"
+#include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
 // MacScribe
