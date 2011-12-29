@@ -15,23 +15,23 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef std::map< const FSTree*, Ped::View* > Map;
+	typedef std::map< unsigned long, const void* > Map;
 	
 	static Map the_map;
 	
 	
 	void add_focusable_view( const FSTree* key, Ped::View* value )
 	{
-		the_map[ key ] = value;
+		the_map[ (unsigned long) key ] = value;
 	}
 	
 	Ped::View* get_focusable_view( const FSTree* key )
 	{
-		Map::const_iterator it = the_map.find( key );
+		Map::const_iterator it = the_map.find( (unsigned long) key );
 		
 		if ( it != the_map.end() )
 		{
-			return it->second;
+			return (Ped::View*) it->second;
 		}
 		
 		return NULL;
@@ -39,7 +39,7 @@ namespace Genie
 	
 	void remove_focusable_view( const FSTree* key )
 	{
-		the_map.erase( key );
+		the_map.erase( (unsigned long) key );
 	}
 	
 }
