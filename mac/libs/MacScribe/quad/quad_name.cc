@@ -61,7 +61,7 @@ namespace MacScribe
 	
 	static bool char_is_safe( char c )
 	{
-		return char_is_initial_safe( c )  ||  c == '#';
+		return char_is_initial_safe( c )  ||  c == '!'  ||  c == '#';
 	}
 	
 	plus::string make_quad_name( quad_t q )
