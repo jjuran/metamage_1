@@ -25,6 +25,7 @@ namespace v68k
 	
 	emulator::emulator( processor_model model, const memory& mem )
 	:
+		its_instruction_counter(),
 		processor_state( model, mem )
 	{
 	}
@@ -205,6 +206,8 @@ namespace v68k
 		{
 			return bus_error();
 		}
+		
+		++its_instruction_counter;
 		
 		// prefetch next
 		prefetch_instruction_word();

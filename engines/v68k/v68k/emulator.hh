@@ -19,10 +19,14 @@ namespace v68k
 	class emulator : public processor_state
 	{
 		private:
+			unsigned long its_instruction_counter;
+			
 			void double_bus_fault();
 		
 		public:
 			emulator( processor_model model, const memory& mem );
+			
+			unsigned long instruction_count() const  { return its_instruction_counter; }
 			
 			void reset();
 			
