@@ -54,9 +54,14 @@ namespace MacScribe
 		return parse_quad_name( name.data(), name.size() );
 	}
 	
-	static inline bool char_is_safe( char c )
+	static bool char_is_initial_safe( char c )
 	{
 		return std::isalnum( c )  ||  c == '_'  ||  c & 0x80;
+	}
+	
+	static bool char_is_safe( char c )
+	{
+		return char_is_initial_safe( c )  ||  c == '#';
 	}
 	
 	plus::string make_quad_name( quad_t q )
@@ -77,7 +82,7 @@ namespace MacScribe
 		switch ( n_spaces )
 		{
 			case 0:
-				safe = char_is_safe( d )  ||  d == '#';  // special exemption
+				safe = char_is_safe( d );
 				
 				if ( !safe )  break;
 			
@@ -92,7 +97,7 @@ namespace MacScribe
 				if ( !safe )  break;
 			
 			case 3:
-				safe = char_is_safe( a );
+				safe = char_is_initial_safe( a );
 				break;
 			
 			case 4:
