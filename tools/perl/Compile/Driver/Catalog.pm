@@ -8,7 +8,8 @@ use warnings;
 use strict;
 
 
-*list_files = \&Compile::Driver::Files::list;
+*list_files         = \&Compile::Driver::Files::list;
+*make_ancestor_dirs = \&Compile::Driver::Files::make_ancestor_dirs;
 
 *read_catalog_file     = \&Compile::Driver::InputFile::Catalog::read_file;
 *read_description_file = \&Compile::Driver::InputFile::Description::read_file;
@@ -29,20 +30,6 @@ if ( -f $File )
 else
 {
 	create_catalog_file();
-}
-
-
-sub make_ancestor_dirs
-{
-	my ( $path ) = @_;
-	
-	$path =~ s{ /+ [^/]* $}{}x;
-	
-	return  if -d $path;
-	
-	make_ancestor_dirs( $path );
-	
-	mkdir( $path );
 }
 
 

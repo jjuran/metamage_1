@@ -1,10 +1,13 @@
 package Compile::Driver::Jobs;
 
+use Compile::Driver::Files;
 use Compile::Driver::InputFile::CPPSource;
 
 use warnings;
 use strict;
 
+
+*make_ancestor_dirs = \&Compile::Driver::Files::make_ancestor_dirs;
 
 *read_cpp_source_file = \&Compile::Driver::InputFile::CPPSource::read_file;
 
@@ -146,19 +149,6 @@ sub print_job
 	$item =~ s{ .* // }{}x;
 	
 	print "$type $item\n";
-}
-
-sub make_ancestor_dirs
-{
-	my ( $path ) = @_;
-	
-	$path =~ s{ /+ [^/]* $}{}x;
-	
-	return  if -d $path;
-	
-	make_ancestor_dirs( $path );
-	
-	mkdir( $path );
 }
 
 sub run_command

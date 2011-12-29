@@ -54,5 +54,18 @@ sub enumerate
 	return @result;
 }
 
+sub make_ancestor_dirs
+{
+	my ( $path ) = @_;
+	
+	$path =~ s{ /+ [^/]* $}{}x;
+	
+	return  if -d $path;
+	
+	make_ancestor_dirs( $path );
+	
+	mkdir( $path );
+}
+
 1;
 
