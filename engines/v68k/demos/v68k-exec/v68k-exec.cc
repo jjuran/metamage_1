@@ -187,6 +187,10 @@ static int execute_68k( int argc, char** argv )
 {
 	const char* path = argv[1];
 	
+	const char* instruction_limit_var = getenv( "V68K_INSTRUCTION_LIMIT" );
+	
+	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
+	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
@@ -259,6 +263,15 @@ step_loop:
 	
 	while ( emu.step() )
 	{
+		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
+		{
+			printf( "%d instruction limit exceeded\n", instruction_limit );
+			
+			dump( emu );
+			
+			exit( 3 );
+		}
+		
 		continue;
 	}
 	
