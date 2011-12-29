@@ -12,7 +12,7 @@
 #include "plus/var_string.hh"
 
 // MacScribe
-#include "quad/quad_name.hh"
+#include "quad/utf8_quad_name.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -35,8 +35,8 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	using MacScribe::make_quad_name;
-	using MacScribe::parse_quad_name;
+	using MacScribe::make_utf8_quad_name;
+	using MacScribe::parse_utf8_quad_name;
 	using MacScribe::quad_t;
 	
 	
@@ -84,7 +84,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const Ped::CommandCode code = Ped::CommandCode( parse_quad_name( Name() ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( Name() ) );
 		
 		Ped::CommandHandler handler = Ped::GetCommandHandler( code );
 		
@@ -125,7 +125,7 @@ namespace Genie
 	
 	void cmd_symlink::Delete() const
 	{
-		const Ped::CommandCode code = Ped::CommandCode( parse_quad_name( Name() ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( Name() ) );
 		
 		cmd_map::iterator it = the_command_map.find( code );
 		
@@ -141,7 +141,7 @@ namespace Genie
 	
 	static FSTreePtr cmd_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
-		cmd_map::const_iterator it = the_command_map.find( parse_quad_name( name ) );
+		cmd_map::const_iterator it = the_command_map.find( parse_utf8_quad_name( name ) );
 		
 		if ( it != the_command_map.end() )
 		{
@@ -167,7 +167,7 @@ namespace Genie
 			
 			plus::var_string name;
 			
-			name += make_quad_name( it->first );
+			name += make_utf8_quad_name( it->first );
 			
 			cache.push_back( FSNode( inode, name ) );
 		}

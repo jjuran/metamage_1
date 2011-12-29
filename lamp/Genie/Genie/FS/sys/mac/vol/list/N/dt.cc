@@ -10,7 +10,7 @@
 #include "gear/parse_decimal.hh"
 
 // MacScribe
-#include "quad/quad_name.hh"
+#include "quad/utf8_quad_name.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -63,7 +63,7 @@ namespace Genie
 	
 	
 	using MacScribe::invalid_quad_name;
-	using MacScribe::parse_quad_name;
+	using MacScribe::parse_utf8_quad_name;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
@@ -142,7 +142,7 @@ namespace Genie
 	
 	static FSSpec DTGetAPPL( const FSTreePtr& appls_quad, short index = 0 )
 	{
-		const ::OSType creator = parse_quad_name( appls_quad->Name() );
+		const ::OSType creator = parse_utf8_quad_name( appls_quad->Name() );
 		
 		const FSTreePtr& great_x2_grandparent = appls_quad->ParentRef()->ParentRef()->ParentRef();
 		
@@ -229,7 +229,7 @@ namespace Genie
 	{
 		try
 		{
-			(void) parse_quad_name( name );
+			(void) parse_utf8_quad_name( name );
 		}
 		catch ( const invalid_quad_name& )
 		{
@@ -252,8 +252,8 @@ namespace Genie
 		
 		const short selector = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const ::OSType type    = parse_quad_name( parent ->Name() );
-		const ::OSType creator = parse_quad_name( gparent->Name() );
+		const ::OSType type    = parse_utf8_quad_name( parent ->Name() );
+		const ::OSType creator = parse_utf8_quad_name( gparent->Name() );
 		
 		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->Name().c_str() );
 		
@@ -300,8 +300,8 @@ namespace Genie
 		const FSTreePtr&   gparent = parent ->ParentRef();
 		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
 		
-		const ::OSType type    = parse_quad_name( parent ->Name() );
-		const ::OSType creator = parse_quad_name( gparent->Name() );
+		const ::OSType type    = parse_utf8_quad_name( parent ->Name() );
+		const ::OSType creator = parse_utf8_quad_name( gparent->Name() );
 		
 		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->Name().c_str() );
 		

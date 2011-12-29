@@ -14,7 +14,7 @@
 #include "plus/var_string.hh"
 
 // MacScribe
-#include "quad/quad_name.hh"
+#include "quad/utf8_quad_name.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -136,8 +136,8 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	using MacScribe::make_quad_name;
-	using MacScribe::parse_quad_name;
+	using MacScribe::make_utf8_quad_name;
+	using MacScribe::parse_utf8_quad_name;
 	using MacScribe::quad_t;
 	
 	
@@ -161,7 +161,7 @@ namespace Genie
 		
 		try
 		{
-			decoded = parse_quad_name( name.data(), name.size() );
+			decoded = parse_utf8_quad_name( name );
 		}
 		catch ( ... )
 		{
@@ -197,7 +197,7 @@ namespace Genie
 					name += '.';
 				}
 				
-				name += make_quad_name( selector );
+				name += make_utf8_quad_name( selector );
 				
 				return FSNode( inode, name );
 			}

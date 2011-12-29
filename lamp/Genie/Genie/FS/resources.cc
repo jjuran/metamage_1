@@ -82,8 +82,10 @@ namespace Genie
 	
 	static N::GetResInfo_Result GetResInfo_from_name( const plus::string& name )
 	{
-		const char* begin = name.data();
-		const char* end   = name.size() + begin;
+		const plus::string& mac_name = plus::mac_from_utf8( name );
+		
+		const char* begin = mac_name.data();
+		const char* end   = mac_name.size() + begin;
 		
 		// In the event of a short name, isxdigit( '\0' ) will return false
 		
