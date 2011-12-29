@@ -203,7 +203,7 @@ static int execute_68k( int argc, char** argv )
 	load_vectors( mem );
 	load_n_words( mem, os_address, os, sizeof os / 2 );
 	
-	(uint32_t&) mem[ argc_addr ] = big_longword( argc );
+	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
 	
 	uint32_t* args = (uint32_t*) &mem[ args_addr ];
