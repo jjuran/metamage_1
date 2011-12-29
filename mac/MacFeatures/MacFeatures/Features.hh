@@ -1,7 +1,7 @@
-/*	===========
- *	Features.hh
- *	===========
- */
+/*
+	Features.hh
+	-----------
+*/
 
 #ifndef MACFEATURES_FEATURES_HH
 #define MACFEATURES_FEATURES_HH
