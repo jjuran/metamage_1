@@ -56,7 +56,7 @@ namespace MacScribe
 	
 	static inline bool char_is_safe( char c )
 	{
-		return std::isalnum( c )  ||  c == '_';
+		return std::isalnum( c )  ||  c == '_'  ||  c & 0x80;
 	}
 	
 	plus::string make_quad_name( quad_t q )
