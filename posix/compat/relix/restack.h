@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-struct _lamp_stack_footer
+struct _relix_stack_footer
 {
 	void* frame_pointer;
 	
@@ -34,7 +34,7 @@ struct _lamp_stack_footer
 	
 	void* stack_limit;
 	
-	struct _lamp_stack_footer* previous;
+	struct _relix_stack_footer* previous;
 };
 
 /*

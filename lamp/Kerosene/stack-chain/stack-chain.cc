@@ -26,10 +26,10 @@
 extern "C" void* _create_new_stack();
 
 
-static _lamp_stack_footer* global_stack = NULL;
+static _relix_stack_footer* global_stack = NULL;
 
 
-static _lamp_stack_footer* get_top_stack()
+static _relix_stack_footer* get_top_stack()
 {
 	register const void* stack_pointer = 0;
 	
@@ -57,7 +57,7 @@ static _lamp_stack_footer* get_top_stack()
 
 static inline const void* get_stack_limit()
 {
-	if ( _lamp_stack_footer* stack = get_top_stack() )
+	if ( _relix_stack_footer* stack = get_top_stack() )
 	{
 		return stack->stack_limit;
 	}
@@ -92,7 +92,7 @@ void* _create_new_stack()
 	
 	void* base = (char*) limit + size;
 	
-	_lamp_stack_footer* footer = (_lamp_stack_footer*) base - 1;
+	_relix_stack_footer* footer = (_relix_stack_footer*) base - 1;
 	
 	footer->stack_limit = limit;
 	footer->previous    = global_stack;
