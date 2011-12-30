@@ -8,9 +8,6 @@
 // Standard C
 #include "errno.h"
 
-// Debug
-#include "debug/assert.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -30,9 +27,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		ASSERT( !it->second.expired() );
-		
-		return it->second.lock();
+		return it->second->shared_from_this();
 	}
 	
 }
