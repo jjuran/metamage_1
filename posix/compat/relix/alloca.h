@@ -18,7 +18,7 @@ extern "C" {
 #endif
 
 
-inline size_t _lamp_alloca_space()
+inline size_t _relix_alloca_space()
 {
 	const size_t margin = 5 * 1024;  // leave 5K available
 	
@@ -31,7 +31,7 @@ inline int is_excessive_for_alloca( size_t size )
 {
 #ifdef __LAMP__
 	
-	return size > _lamp_alloca_space();
+	return size > _relix_alloca_space();
 	
 #endif
 	
