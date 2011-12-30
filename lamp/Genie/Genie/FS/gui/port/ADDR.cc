@@ -89,8 +89,8 @@ namespace Genie
 		
 		plus::string itsGesturePaths[ n_gestures ];
 		
-		FSTreePtr                    itsTTYDelegate;
-		boost::weak_ptr< IOHandle >  itsTerminal;
+		FSTreePtr  itsTTYDelegate;
+		IOHandle*  itsTerminal;
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
@@ -98,7 +98,8 @@ namespace Genie
 		                     itIsVisible  ( true ),
 		                     itHasCloseBox( true ),
 		                     itsFocus(),
-		                     itsSubview( Ped::EmptyView::Get() )
+		                     itsSubview( Ped::EmptyView::Get() ),
+		                     itsTerminal()
 		{
 		}
 	};
@@ -149,17 +150,15 @@ namespace Genie
 	}
 	
 	
-	static bool Disconnect_Window_Terminal( boost::weak_ptr< IOHandle >& terminal_weak )
+	static bool Disconnect_Window_Terminal( IOHandle*& h )
 	{
-		if ( !terminal_weak.expired() )
+		if ( h != NULL )
 		{
-			const IOPtr& terminal_shared = terminal_weak.lock();
-			
-			TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *terminal_shared ) );
+			TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *h ) );
 			
 			terminal.Disconnect();
 			
-			terminal_weak.reset();
+			h = NULL;
 			
 			return true;
 		}
@@ -226,11 +225,9 @@ namespace Genie
 		{
 			WindowParameters& params = *it;
 			
-			if ( !params.itsTerminal.expired() )
+			if ( params.itsTerminal != NULL )
 			{
-				const IOPtr& handle = params.itsTerminal.lock();
-				
-				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
+				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *params.itsTerminal ) );
 				
 				send_signal_to_foreground_process_group_of_terminal( SIGWINCH, terminal );
 			}
@@ -669,7 +666,7 @@ namespace Genie
 			terminal->Attach( tty );
 		}
 		
-		params.itsTerminal = terminal;
+		params.itsTerminal = terminal.get();
 		
 		return terminal;
 	}
