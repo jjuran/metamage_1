@@ -11,7 +11,7 @@
 extern "C" {
 #endif
 
-struct _lamp_user_parameter_block
+struct _relix_user_parameter_block
 {
 	const void* stack_bottom;
 	const void* stack_limit;
@@ -27,12 +27,12 @@ struct _lamp_user_parameter_block
 #endif
 };
 
-typedef struct _lamp_user_parameter_block _lamp_user_parameter_block;
+typedef struct _relix_user_parameter_block _relix_user_parameter_block;
 
 
 struct _lamp_system_parameter_block
 {
-	_lamp_user_parameter_block* current_user;
+	_relix_user_parameter_block* current_user;
 	
 	const size_t system_block_length;
 	const size_t user_block_length;

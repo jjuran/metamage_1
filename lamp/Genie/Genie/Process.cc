@@ -139,7 +139,7 @@ namespace Genie
 		NULL,  // current user
 		
 		sizeof (_lamp_system_parameter_block),
-		sizeof (_lamp_user_parameter_block),
+		sizeof (_relix_user_parameter_block),
 		
 		TARGET_CPU_68K ? &dispatch_68k_system_call :
 		TARGET_CPU_PPC ? &dispatch_ppc_system_call
@@ -578,16 +578,16 @@ namespace Genie
 		return result;
 	}
 	
-	static inline _lamp_user_parameter_block user_pb_for_init()
+	static inline _relix_user_parameter_block user_pb_for_init()
 	{
-		_lamp_user_parameter_block pb = { NULL };
+		_relix_user_parameter_block pb = { NULL };
 		
 		return pb;
 	}
 	
-	static inline _lamp_user_parameter_block copy_user_pb( const _lamp_user_parameter_block& pb )
+	static inline _relix_user_parameter_block copy_user_pb( const _relix_user_parameter_block& pb )
 	{
-		_lamp_user_parameter_block result = pb;
+		_relix_user_parameter_block result = pb;
 		
 		result.cleanup = NULL;
 		
