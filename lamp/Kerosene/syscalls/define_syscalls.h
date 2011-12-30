@@ -88,7 +88,7 @@ DEFINE_SYSCALL_7F( _OTInetStringToAddress )
 DEFINE_SYSCALL_7F( AESendBlocking )
 DEFINE_SYSCALL_7F( fsync )
 
-DEFINE_SYSCALL_7F( _lamp_clone )
+DEFINE_SYSCALL_7F( _relix_clone )
 DEFINE_SYSCALL_7F( _OTInetMailExchange )
 DEFINE_SYSCALL_7F( unshare )
 

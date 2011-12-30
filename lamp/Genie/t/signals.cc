@@ -37,7 +37,7 @@ static pid_t clone( int (*f)(void*), void* param )
 {
 #ifdef __LAMP__
 	
-	return _lamp_clone( f, NULL, 0, CLONE_VM, param );
+	return _relix_clone( f, NULL, 0, CLONE_VM, param );
 	
 #else
 	
