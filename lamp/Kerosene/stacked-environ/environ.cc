@@ -7,8 +7,8 @@
 #include "errno.h"
 #include "stdlib.h"
 
-// Lamp
-#include "lamp/environ_stack.h"
+// Relix
+#include "relix/environ_stack.h"
 
 // Kerosene
 #include "environ_store.hh"

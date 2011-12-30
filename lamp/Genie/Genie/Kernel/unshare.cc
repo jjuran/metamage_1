@@ -6,8 +6,8 @@
 // Standard C
 #include <errno.h>
 
-// Lamp
-#include "lamp/sched.h"
+// Relix
+#include "relix/sched.h"
 
 // Genie
 #include "Genie/current_process.hh"

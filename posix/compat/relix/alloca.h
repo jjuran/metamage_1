@@ -3,26 +3,26 @@
 	--------
 */
 
-#ifndef LAMP_ALLOCA_H
-#define LAMP_ALLOCA_H
+#ifndef RELIX_ALLOCA_H
+#define RELIX_ALLOCA_H
 
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
 
-// Lamp
-#include "lamp/stack.h"
+// Relix
+#include "relix/stack.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 
-inline size_t _lamp_alloca_space()
+inline size_t _relix_alloca_space()
 {
 	const size_t margin = 5 * 1024;  // leave 5K available
 	
-	const size_t space = _lamp_stack_space();
+	const size_t space = _relix_stack_space();
 	
 	return space > margin ? space - margin : 0;
 }
@@ -31,7 +31,7 @@ inline int is_excessive_for_alloca( size_t size )
 {
 #ifdef __LAMP__
 	
-	return size > _lamp_alloca_space();
+	return size > _relix_alloca_space();
 	
 #endif
 	

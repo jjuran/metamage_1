@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LAMP_OTINETMAILEXCHANGE_H
-#define LAMP_OTINETMAILEXCHANGE_H
+#ifndef RELIX_OTINETMAILEXCHANGE_H
+#define RELIX_OTINETMAILEXCHANGE_H
 
 #ifdef __cplusplus
 extern "C" {

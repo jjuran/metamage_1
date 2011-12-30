@@ -12,8 +12,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-// Lamp
-#include "lamp/sched.h"
+// Relix
+#include "relix/sched.h"
 
 // iota
 #include "iota/strings.hh"
@@ -61,7 +61,7 @@ static int f_getppid( void* )
 static int f_clone_getppid( void* )
 {
 	// return the child pid
-	return CHECK( _lamp_clone( &f_getppid, NULL, 0, CLONE_VM | CLONE_PARENT, NULL ) );
+	return CHECK( _relix_clone( &f_getppid, NULL, 0, CLONE_VM | CLONE_PARENT, NULL ) );
 }
 
 static int f_chdir( void* arg )
@@ -90,7 +90,7 @@ static int simple_clone( int (*f)( void* ), int x = 0 )
 {
 	int wait_status = -1;
 	
-	const int child_pid = CHECK( _lamp_clone( f, NULL, 0, CLONE_VM, &x ) );
+	const int child_pid = CHECK( _relix_clone( f, NULL, 0, CLONE_VM, &x ) );
 	
 	CHECK( waitpid( child_pid, &wait_status, 0 ) );
 	
@@ -127,7 +127,7 @@ static bool cwd_gets_changed( int more_flags )
 	
 	int wait_status = -1;
 	
-	CHECK( _lamp_clone( &f_chdir, NULL, 0, CLONE_VM | more_flags, (void*) "/tmp" ) );
+	CHECK( _relix_clone( &f_chdir, NULL, 0, CLONE_VM | more_flags, (void*) "/tmp" ) );
 	
 	CHECK( wait( &wait_status ) );
 	
@@ -155,7 +155,7 @@ static bool fd_gets_closed( int more_flags )
 	
 	int fd_a = CHECK( dup( STDOUT_FILENO ) );
 	
-	CHECK( _lamp_clone( &f_close, NULL, 0, CLONE_VM | more_flags, &fd_a ) );
+	CHECK( _relix_clone( &f_close, NULL, 0, CLONE_VM | more_flags, &fd_a ) );
 	
 	CHECK( wait( &wait_status ) );
 	
@@ -182,7 +182,7 @@ static bool sigaction_changed( int more_flags )
 	
 	CHECK( sigaction( SIGURG, &ignore, NULL ) );
 	
-	CHECK( _lamp_clone( &f_sigaction, NULL, 0, CLONE_VM | more_flags, NULL ) );
+	CHECK( _relix_clone( &f_sigaction, NULL, 0, CLONE_VM | more_flags, NULL ) );
 	
 	CHECK( wait( &wait_status ) );
 	

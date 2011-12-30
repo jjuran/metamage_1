@@ -6,8 +6,8 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 
 // Debug
 #include "debug/boost_assert.hh"
@@ -96,7 +96,7 @@ namespace Genie
 			};
 		
 		private:
-			_lamp_user_parameter_block its_pb;
+			_relix_user_parameter_block its_pb;
 			
 			pid_t itsPPID;
 			pid_t itsPID;

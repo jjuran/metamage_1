@@ -8,8 +8,8 @@
 // Standard C
 #include "stdlib.h"
 
-// Lamp
-#include "lamp/environ_stack.h"
+// Relix
+#include "relix/environ_stack.h"
 
 // getenv
 #include "getenv.cc.hh"

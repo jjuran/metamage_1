@@ -5,8 +5,8 @@
 	Copyright 2010, Joshua Juran
 */
 
-#ifndef LAMP_ENVIRONSTACK_H
-#define LAMP_ENVIRONSTACK_H
+#ifndef RELIX_ENVIRONSTACK_H
+#define RELIX_ENVIRONSTACK_H
 
 #ifdef __cplusplus
 extern "C" {

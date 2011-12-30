@@ -7,10 +7,10 @@
 #include <signal.h>
 #include <stdlib.h>
 
-// Lamp
-#include "lamp/parameter_block.h"
-#include "lamp/restack.h"
-#include "lamp/stack.h"
+// Relix
+#include "relix/parameter_block.h"
+#include "relix/restack.h"
+#include "relix/stack.h"
 #include "tool-runtime/parameter_block.h"
 
 
@@ -26,10 +26,10 @@
 extern "C" void* _create_new_stack();
 
 
-static _lamp_stack_footer* global_stack = NULL;
+static _relix_stack_footer* global_stack = NULL;
 
 
-static _lamp_stack_footer* get_top_stack()
+static _relix_stack_footer* get_top_stack()
 {
 	register const void* stack_pointer = 0;
 	
@@ -57,7 +57,7 @@ static _lamp_stack_footer* get_top_stack()
 
 static inline const void* get_stack_limit()
 {
-	if ( _lamp_stack_footer* stack = get_top_stack() )
+	if ( _relix_stack_footer* stack = get_top_stack() )
 	{
 		return stack->stack_limit;
 	}
@@ -65,7 +65,7 @@ static inline const void* get_stack_limit()
 	return global_user_params->stack_limit;
 }
 
-unsigned _lamp_stack_space()
+unsigned _relix_stack_space()
 {
 	register const char* stack_pointer = 0;
 	
@@ -92,7 +92,7 @@ void* _create_new_stack()
 	
 	void* base = (char*) limit + size;
 	
-	_lamp_stack_footer* footer = (_lamp_stack_footer*) base - 1;
+	_relix_stack_footer* footer = (_relix_stack_footer*) base - 1;
 	
 	footer->stack_limit = limit;
 	footer->previous    = global_stack;

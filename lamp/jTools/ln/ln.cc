@@ -16,8 +16,8 @@
 // Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
 
-// Lamp
-#include "lamp/alloca.h"
+// Relix
+#include "relix/alloca.h"
 
 // Iota
 #include "iota/strings.hh"

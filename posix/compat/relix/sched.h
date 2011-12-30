@@ -3,8 +3,8 @@
 	-------
 */
 
-#ifndef LAMP_SCHED_H
-#define LAMP_SCHED_H
+#ifndef RELIX_SCHED_H
+#define RELIX_SCHED_H
 
 // Standard C
 #include <stddef.h>
@@ -33,7 +33,7 @@
 extern "C" {
 #endif
 
-int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg );
+int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg );
 
 int unshare( int flags );
 

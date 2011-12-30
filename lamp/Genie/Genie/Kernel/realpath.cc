@@ -9,8 +9,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// Lamp
-#include "lamp/_realpathat.h"
+// Relix
+#include "relix/_realpathat.h"
 
 // plus
 #include "plus/mac_utf8.hh"

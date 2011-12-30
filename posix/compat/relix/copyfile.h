@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LAMP_COPYFILE_H
-#define LAMP_COPYFILE_H
+#ifndef RELIX_COPYFILE_H
+#define RELIX_COPYFILE_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -6,8 +6,8 @@
 // POSIX
 #include "fcntl.h"
 
-// Lamp
-#include "lamp/copyfile.h"
+// Relix
+#include "relix/copyfile.h"
 
 // Exceptions are off here
 #pragma exceptions off

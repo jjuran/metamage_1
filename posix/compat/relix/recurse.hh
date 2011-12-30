@@ -3,15 +3,15 @@
 	----------
 */
 
-#ifndef LAMP_RECURSE_HH
-#define LAMP_RECURSE_HH
+#ifndef RELIX_RECURSE_HH
+#define RELIX_RECURSE_HH
 
-// Lamp
-#include "lamp/restack.h"
-#include "lamp/stack.h"
+// Relix
+#include "relix/restack.h"
+#include "relix/stack.h"
 
 
-namespace lamp
+namespace relix
 {
 
 const unsigned stack_margin = 12 * 1024;
@@ -24,7 +24,7 @@ inline bool stack_is_sufficient()
 	
 #endif
 	
-	return _lamp_stack_space() >= stack_margin;
+	return _relix_stack_space() >= stack_margin;
 }
 
 
@@ -73,7 +73,7 @@ inline R recurse( R (*f)() )
 	typedef R (*F)(        );
 	typedef R (*T)( int, F );
 	
-	const T restack = (T) _lamp_restack;
+	const T restack = (T) _relix_restack;
 	
 	const unsigned size = 0;
 	
@@ -95,7 +95,7 @@ inline R recurse( R (*f)( F_1 ), A1 a1 )
 	typedef R (*F)(         F_1 );
 	typedef R (*T)( int, F, T_1 );
 	
-	const T restack = (T) _lamp_restack;
+	const T restack = (T) _relix_restack;
 	
 	const unsigned size = sizeof (T_1);
 	
@@ -119,7 +119,7 @@ inline R recurse( R (*f)( F_1, F_2 ), A1 a1, A2 a2 )
 	typedef R (*F)(         F_1, F_2 );
 	typedef R (*T)( int, F, T_1, T_2 );
 	
-	const T restack = (T) _lamp_restack;
+	const T restack = (T) _relix_restack;
 	
 	const unsigned size = sizeof (T_1)
 	                    + sizeof (T_2);
@@ -149,7 +149,7 @@ inline R recurse( R (*f)( F_1, F_2, F_3 ), A1 a1, A2 a2, A3 a3 )
 	typedef R (*F)(         F_1, F_2, F_3 );
 	typedef R (*T)( int, F, T_1, T_2, T_3 );
 	
-	const T restack = (T) _lamp_restack;
+	const T restack = (T) _relix_restack;
 	
 	const unsigned size = sizeof (T_1)
 	                    + sizeof (T_2)
@@ -184,7 +184,7 @@ inline R recurse( R (*f)( F_1, F_2, F_3, F_4 ), A1 a1, A2 a2, A3 a3, A4 a4 )
 	typedef R (*F)(         F_1, F_2, F_3, F_4 );
 	typedef R (*T)( int, F, T_1, T_2, T_3, T_4 );
 	
-	const T restack = (T) _lamp_restack;
+	const T restack = (T) _relix_restack;
 	
 	const unsigned size = sizeof (T_1)
 	                    + sizeof (T_2)
@@ -224,7 +224,7 @@ inline R recurse( R (*f)( F_1, F_2, F_3, F_4, F_5 ), A1 a1, A2 a2, A3 a3, A4 a4,
 	typedef R (*F)(         F_1, F_2, F_3, F_4, F_5 );
 	typedef R (*T)( int, F, T_1, T_2, T_3, T_4, T_5 );
 	
-	const T restack = (T) _lamp_restack;
+	const T restack = (T) _relix_restack;
 	
 	const unsigned size = sizeof (T_1)
 	                    + sizeof (T_2)

@@ -10,8 +10,8 @@
 // Debug
 #include "debug/assert.hh"
 
-// Lamp
-#include "lamp/vfork.h"
+// Relix
+#include "relix/vfork.h"
 
 
 namespace Genie

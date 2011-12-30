@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LAMP_FORKANDEXIT_H
-#define LAMP_FORKANDEXIT_H
+#ifndef RELIX_FORKANDEXIT_H
+#define RELIX_FORKANDEXIT_H
 
 // POSIX
 #include <unistd.h>

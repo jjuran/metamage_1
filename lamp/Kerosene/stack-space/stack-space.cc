@@ -3,9 +3,9 @@
 	--------------
 */
 
-// Lamp
-#include "lamp/parameter_block.h"
-#include "lamp/stack.h"
+// Relix
+#include "relix/parameter_block.h"
+#include "relix/stack.h"
 #include "tool-runtime/parameter_block.h"
 
 
@@ -18,7 +18,7 @@
 #endif
 
 
-unsigned _lamp_stack_space()
+unsigned _relix_stack_space()
 {
 	register const char* stack_pointer = 0;
 	

@@ -5,6 +5,6 @@
 
 #include "tool-runtime/parameter_block.h"
 
-struct _lamp_system_parameter_block*  global_system_params;
-struct _lamp_user_parameter_block*    global_user_params;
+struct _relix_system_parameter_block*  global_system_params;
+struct _relix_user_parameter_block*    global_user_params;
 

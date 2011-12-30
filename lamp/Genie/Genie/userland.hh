@@ -6,14 +6,14 @@
 #ifndef GENIE_USERLAND_HH
 #define GENIE_USERLAND_HH
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 
 
 namespace Genie
 {
 	
-	extern "C" _lamp_system_parameter_block global_parameter_block;
+	extern "C" _relix_system_parameter_block global_parameter_block;
 	
 #ifdef __MC68K__
 	

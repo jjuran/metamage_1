@@ -3,8 +3,8 @@
 	--------------
 */
 
-// Lamp
-#include "lamp/restack.h"
+// Relix
+#include "relix/restack.h"
 
 
 extern "C" void* _create_new_stack();
@@ -13,7 +13,7 @@ extern "C" void* _create_new_stack();
 
 extern "C" void __ptr_glue();
 
-asm void _lamp_restack( unsigned param_length, const void* f, ... )
+asm void _relix_restack( unsigned param_length, const void* f, ... )
 {
 	// automatic prolog
 	
@@ -31,7 +31,7 @@ asm void _lamp_restack( unsigned param_length, const void* f, ... )
 	
 	bl  _create_new_stack
 	
-	addi  r11,r3,(-sizeof (_lamp_stack_footer))  // r11 <= &stack.frame_pointer
+	addi  r11,r3,(-sizeof (_relix_stack_footer))  // r11 <= &stack.frame_pointer
 	
 	// initialize dummy frame in stack footer
 	lwz  r5, 0(sp)

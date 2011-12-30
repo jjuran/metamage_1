@@ -1,5 +1,5 @@
-#ifndef	LAMP_SYSCALLS_H
-#define	LAMP_SYSCALLS_H
+#ifndef RELIX_SYSCALLS_H
+#define RELIX_SYSCALLS_H
 
 
 #define __NR_restart_syscall             0
@@ -92,7 +92,7 @@
 // 87
 // 88
 // 89
-#define __NR__lamp_mmap                 90
+#define __NR__relix_mmap                90
 #define __NR_munmap                     91
 #define __NR_truncate                   92
 #define __NR_ftruncate                  93
@@ -122,7 +122,7 @@
 #define __NR_AESendBlocking            117  // ipc
 #define __NR_fsync                     118
 // 119
-#define __NR__lamp_clone               120  // clone
+#define __NR__relix_clone              120  // clone
 #define __NR__OTInetMailExchange       121  // setdomainname
 #define __NR_unshare                   122  // uname
 // 123

@@ -3,8 +3,8 @@
 	----------
 */
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 #include "tool-runtime/parameter_block.h"
 
 
@@ -35,7 +35,7 @@ extern int errno;
 extern void _MSL_cleanup();
 
 // Call main() and exit()
-extern void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb );
+extern void _lamp_main( int argc, char** argv, char** envp, _relix_system_parameter_block* pb );
 extern int        main( int argc, char** argv );
 
 extern void exit( int );
@@ -43,7 +43,7 @@ extern void exit( int );
 
 #pragma force_active on
 
-void _lamp_main( int argc, char** argv, char** envp, _lamp_system_parameter_block* pb )
+void _lamp_main( int argc, char** argv, char** envp, _relix_system_parameter_block* pb )
 {
 #ifndef __MC68K__
 	

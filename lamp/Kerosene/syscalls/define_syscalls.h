@@ -3,8 +3,8 @@
 	-----------------
 */
 
-// Lamp
-#include "lamp/syscalls.h"
+// Relix
+#include "relix/syscalls.h"
 
 
 DEFINE_SYSCALL_7F( _exit )
@@ -72,7 +72,7 @@ DEFINE_SYSCALL_7F( symlinkat )
 DEFINE_SYSCALL_7F( _realpathat )
 DEFINE_SYSCALL_7F( _readlinkat )
 
-DEFINE_SYSCALL_7F( _lamp_mmap )
+DEFINE_SYSCALL_7F( _relix_mmap )
 DEFINE_SYSCALL_7F( munmap )
 DEFINE_SYSCALL_7F( truncate )
 DEFINE_SYSCALL_7F( ftruncate )
@@ -88,7 +88,7 @@ DEFINE_SYSCALL_7F( _OTInetStringToAddress )
 DEFINE_SYSCALL_7F( AESendBlocking )
 DEFINE_SYSCALL_7F( fsync )
 
-DEFINE_SYSCALL_7F( _lamp_clone )
+DEFINE_SYSCALL_7F( _relix_clone )
 DEFINE_SYSCALL_7F( _OTInetMailExchange )
 DEFINE_SYSCALL_7F( unshare )
 

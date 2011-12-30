@@ -6,9 +6,9 @@
 // POSIX
 #include <unistd.h>
 
-// Lamp
-#include "lamp/environ_stack.h"
-#include "lamp/vfork.h"
+// Relix
+#include "relix/environ_stack.h"
+#include "relix/vfork.h"
 
 
 #pragma exceptions off

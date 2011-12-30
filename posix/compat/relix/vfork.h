@@ -5,8 +5,8 @@
 	Copyright 2010, Joshua Juran
 */
 
-#ifndef LAMP_VFORK_H
-#define LAMP_VFORK_H
+#ifndef RELIX_VFORK_H
+#define RELIX_VFORK_H
 
 // POSIX
 #include <unistd.h>

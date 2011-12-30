@@ -6,8 +6,8 @@
 // Standard C
 #include <errno.h>
 
-// Lamp
-#include "lamp/sched.h"
+// Relix
+#include "relix/sched.h"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -22,7 +22,7 @@ static const int supported_clone_flags = CLONE_VM
                                        | CLONE_PARENT
                                        | CLONE_THREAD;
 
-int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg )
+int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg )
 {
 	using namespace Genie;
 	
@@ -108,7 +108,7 @@ int _lamp_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fla
 
 #pragma force_active on
 
-REGISTER_SYSTEM_CALL( _lamp_clone );
+REGISTER_SYSTEM_CALL( _relix_clone );
 
 #pragma force_active reset
 

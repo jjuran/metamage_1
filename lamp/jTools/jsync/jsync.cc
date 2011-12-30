@@ -17,8 +17,8 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
-// Lamp
-#include "lamp/recurse.hh"
+// Relix
+#include "relix/recurse.hh"
 
 // Iota
 #include "iota/strings.hh"
@@ -215,7 +215,7 @@ namespace tool
 		}
 		else
 		{
-			lamp::recurse( &recursively_copy_directory, olddirfd, name, newdirfd );
+			relix::recurse( &recursively_copy_directory, olddirfd, name, newdirfd );
 		}
 	}
 	
@@ -611,11 +611,11 @@ namespace tool
 		           const char*,
 		           const char* ) = &recursively_sync;
 		
-		lamp::recurse( f, a_dirfd,
-		                  b_dirfd,
-		                  c_dirfd,
-		                  subpath.c_str(),
-		                  filename.c_str() );
+		relix::recurse( f, a_dirfd,
+		                   b_dirfd,
+		                   c_dirfd,
+		                   subpath.c_str(),
+		                   filename.c_str() );
 	}
 	
 	template < class In, class Out, class Pred >
