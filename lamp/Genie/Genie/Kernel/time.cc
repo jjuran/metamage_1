@@ -11,12 +11,7 @@
 #include "sys/time.h"
 
 // Nitrogen
-#include "Nitrogen/DateTimeUtils.hh"
-#include "Nitrogen/OSUtils.hh"
 #include "Nitrogen/Timer.hh"
-
-// TimeOff
-#include "TimeOff/TimeOff.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -38,43 +33,6 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
-	
-	
-	static inline UInt32 GlobalDateTime()
-	{
-		return N::GetDateTime() - TimeOff::GetGMTDelta();
-	}
-	
-	struct StartTime
-	{
-		UInt64 microseconds;
-		UInt32 dateTime;
-		time_t unixTime;
-		UInt64 diff;
-		
-		StartTime() : microseconds( N::Microseconds() ),
-		              dateTime    ( GlobalDateTime()  ),
-		              unixTime    ( dateTime - TimeOff::MacUnixEpochOffset() ),
-		              diff        ( unixTime * 1000000ULL - microseconds )
-		{
-		}
-	};
-	
-	static StartTime gStartTime;
-	
-	
-	static int gettimeofday( struct timeval* tv, struct timezone* tz )
-	{
-		if ( tv != NULL )
-		{
-			UInt64 now = N::Microseconds() + gStartTime.diff;
-			
-			tv->tv_sec  = now / 1000000;
-			tv->tv_usec = now % 1000000;
-		}
-		
-		return 0;
-	}
 	
 	
 	static inline UInt64 microseconds_from_timespec( const struct timespec& time )
