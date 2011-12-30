@@ -13,7 +13,7 @@ extern "C" void* _create_new_stack();
 
 extern "C" void __ptr_glue();
 
-asm void _lamp_restack( unsigned param_length, const void* f, ... )
+asm void _relix_restack( unsigned param_length, const void* f, ... )
 {
 	// automatic prolog
 	

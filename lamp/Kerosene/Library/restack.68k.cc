@@ -11,7 +11,7 @@ extern "C" void* _create_new_stack();
 
 #ifdef __MC68K__
 
-asm void _lamp_restack( unsigned param_length, const void* f, ... )
+asm void _relix_restack( unsigned param_length, const void* f, ... )
 {
 	LINK  A6, #-4
 	
