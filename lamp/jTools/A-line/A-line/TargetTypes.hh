@@ -46,6 +46,7 @@ namespace tool
 	enum BuildVariety
 	{
 		buildDefault,
+		buildSymbolics,
 		buildDebug,
 		buildRelease
 	};

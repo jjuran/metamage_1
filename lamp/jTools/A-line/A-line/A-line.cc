@@ -598,8 +598,9 @@ namespace tool
 		o::bind_option_to_variable( "-B", macAPI, apiMacBlue   );
 		o::bind_option_to_variable( "-C", macAPI, apiMacCarbon );
 		
-		o::bind_option_to_variable( "-g", buildVariety, buildDebug   );
-		o::bind_option_to_variable( "-R", buildVariety, buildRelease );
+		o::bind_option_to_variable( "-X", buildVariety, buildSymbolics );
+		o::bind_option_to_variable( "-g", buildVariety, buildDebug     );
+		o::bind_option_to_variable( "-R", buildVariety, buildRelease   );
 		
 		o::alias_option( "-6", "--68k" );
 		o::alias_option( "-P", "--ppc" );
@@ -613,6 +614,7 @@ namespace tool
 		o::alias_option( "-B", "--blue"   );
 		o::alias_option( "-C", "--carbon" );
 		
+		o::alias_option( "-X", "--sym    " );
 		o::alias_option( "-g", "--debug"   );
 		o::alias_option( "-R", "--release" );
 		

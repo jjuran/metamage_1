@@ -576,7 +576,7 @@ namespace tool
 			}
 		}
 		
-		if ( target_info.build == buildDebug )
+		if ( target_info.build != buildRelease )
 		{
 			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 1 );
 		}

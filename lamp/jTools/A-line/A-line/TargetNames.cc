@@ -58,8 +58,9 @@ namespace tool
 	{
 		switch ( build )
 		{
-			case buildDebug:    return "dbg";
-			case buildRelease:  return "opt";
+			case buildSymbolics:  return "sym";
+			case buildDebug:      return "dbg";
+			case buildRelease:    return "opt";
 		};
 		
 		return "";

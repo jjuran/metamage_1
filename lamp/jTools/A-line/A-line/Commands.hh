@@ -60,7 +60,7 @@ namespace tool
 		bool m68k, ppc, x86;
 		bool a4, a5, cfm, machO;
 		bool blue, carbon;
-		bool debug;
+		bool sym, debug;
 		bool gnu;
 		
 		CommandGenerator( const TargetInfo& target )
@@ -75,8 +75,9 @@ namespace tool
 			machO ( target.platform & runtimeMachO          ),
 			blue  ( target.platform & apiMacBlue            ),
 			carbon( target.platform & apiMacCarbon          ),
-			debug ( target.build     == buildDebug   ),
-			gnu   ( target.toolchain == toolchainGNU )
+			sym   ( target.build     == buildSymbolics ),
+			debug ( target.build     == buildDebug     ),
+			gnu   ( target.toolchain == toolchainGNU   )
 		{}
 		
 		const char* UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
@@ -140,7 +141,7 @@ namespace tool
 			
 			result.push_back( Optimization() );
 			
-			if ( debug )
+			if ( sym )
 			{
 				result.push_back( "-g" );
 			}
@@ -189,7 +190,9 @@ namespace tool
 		
 		const char* LinkerOptions() const
 		{
-			return debug || gnu ? "" : "-s";
+			return + sym || gnu ? ""
+			       : debug      ? "-S"
+			       :              "-s";
 		}
 		
 	};
