@@ -22,7 +22,7 @@
 namespace Genie
 {
 	
-	static long _lamp_mmap( void *addr, size_t len, int prot, int flags, int fd, off_t off )
+	static long _relix_mmap( void *addr, size_t len, int prot, int flags, int fd, off_t off )
 	{
 		if ( len == 0 )
 		{
@@ -77,8 +77,8 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( _lamp_mmap );
-	REGISTER_SYSTEM_CALL( munmap     );
+	REGISTER_SYSTEM_CALL( _relix_mmap );
+	REGISTER_SYSTEM_CALL( munmap      );
 	
 	#pragma force_active reset
 	
