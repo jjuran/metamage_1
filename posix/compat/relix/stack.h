@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-unsigned _lamp_stack_space( void );
+unsigned _relix_stack_space( void );
 
 #ifdef __cplusplus
 }

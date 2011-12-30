@@ -24,7 +24,7 @@ inline bool stack_is_sufficient()
 	
 #endif
 	
-	return _lamp_stack_space() >= stack_margin;
+	return _relix_stack_space() >= stack_margin;
 }
 
 

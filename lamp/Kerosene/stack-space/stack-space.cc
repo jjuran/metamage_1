@@ -18,7 +18,7 @@
 #endif
 
 
-unsigned _lamp_stack_space()
+unsigned _relix_stack_space()
 {
 	register const char* stack_pointer = 0;
 	

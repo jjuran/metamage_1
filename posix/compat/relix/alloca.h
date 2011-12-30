@@ -22,7 +22,7 @@ inline size_t _relix_alloca_space()
 {
 	const size_t margin = 5 * 1024;  // leave 5K available
 	
-	const size_t space = _lamp_stack_space();
+	const size_t space = _relix_stack_space();
 	
 	return space > margin ? space - margin : 0;
 }
