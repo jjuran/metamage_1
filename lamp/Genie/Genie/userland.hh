@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern "C" _lamp_system_parameter_block global_parameter_block;
+	extern "C" _relix_system_parameter_block global_parameter_block;
 	
 #ifdef __MC68K__
 	

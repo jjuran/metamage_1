@@ -30,7 +30,7 @@ struct _relix_user_parameter_block
 typedef struct _relix_user_parameter_block _relix_user_parameter_block;
 
 
-struct _lamp_system_parameter_block
+struct _relix_system_parameter_block
 {
 	_relix_user_parameter_block* current_user;
 	
@@ -42,7 +42,7 @@ struct _lamp_system_parameter_block
 	uint64_t (*const microsecond_timer)();
 };
 
-typedef struct _lamp_system_parameter_block _lamp_system_parameter_block;
+typedef struct _relix_system_parameter_block _relix_system_parameter_block;
 
 #ifdef __cplusplus
 }

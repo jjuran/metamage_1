@@ -10,16 +10,16 @@
 #include "plus/ref_count.hh"
 
 
-struct _lamp_system_parameter_block;
+struct _relix_system_parameter_block;
 
 
 namespace Genie
 {
 	
-	typedef int (*lamp_entry)( int                            argc,
-	                           char**                         argv,
-	                           char**                         envp,
-	                           _lamp_system_parameter_block*  pb );
+	typedef int (*lamp_entry)( int                             argc,
+	                           char**                          argv,
+	                           char**                          envp,
+	                           _relix_system_parameter_block*  pb );
 	
 	class exec_handle : public plus::ref_count< exec_handle >
 	{

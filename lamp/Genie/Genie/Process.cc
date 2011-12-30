@@ -132,13 +132,13 @@ namespace Genie
 		return N::Microseconds();
 	}
 	
-	extern "C" _lamp_system_parameter_block global_parameter_block;
+	extern "C" _relix_system_parameter_block global_parameter_block;
 	
-	_lamp_system_parameter_block global_parameter_block =
+	_relix_system_parameter_block global_parameter_block =
 	{
 		NULL,  // current user
 		
-		sizeof (_lamp_system_parameter_block),
+		sizeof (_relix_system_parameter_block),
 		sizeof (_relix_user_parameter_block),
 		
 		TARGET_CPU_68K ? &dispatch_68k_system_call :
