@@ -693,6 +693,15 @@ namespace tool
 		
 		char const *const *freeArgs = args;
 		
+		if ( gOptions.preprocess  &&  buildVariety == buildSymbolics )
+		{
+			const char* msg = "A-line:  Symbolics and separate preprocessing are incompatible";
+			
+			fprintf( stderr, "%s\n", msg );
+			
+			return 2;
+		}
+		
 	#if TARGET_API_MAC_CARBON
 		
 		/*
