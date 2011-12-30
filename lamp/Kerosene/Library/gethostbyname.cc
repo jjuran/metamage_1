@@ -14,8 +14,8 @@
 // POSIX
 #include <netdb.h>
 
-// Lamp
-#include "lamp/_OTInetStringToAddress.h"
+// Relix
+#include "relix/_OTInetStringToAddress.h"
 
 
 struct hostent* gethostbyname( const char* name )

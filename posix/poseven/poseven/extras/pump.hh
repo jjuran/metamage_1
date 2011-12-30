@@ -14,8 +14,8 @@
 #ifndef POSEVEN_EXTRAS_PUMP_HH
 #define POSEVEN_EXTRAS_PUMP_HH
 
-// Lamp
-#include "lamp/pump.h"
+// Relix
+#include "relix/pump.h"
 
 // poseven
 #ifndef POSEVEN_TYPES_ERRNO_T_HH

@@ -3,8 +3,8 @@
 	--------------
 */
 
-// Lamp
-#include "lamp/restack.h"
+// Relix
+#include "relix/restack.h"
 
 
 extern "C" void* _create_new_stack();

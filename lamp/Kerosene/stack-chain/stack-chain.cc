@@ -7,10 +7,10 @@
 #include <signal.h>
 #include <stdlib.h>
 
-// Lamp
-#include "lamp/parameter_block.h"
-#include "lamp/restack.h"
-#include "lamp/stack.h"
+// Relix
+#include "relix/parameter_block.h"
+#include "relix/restack.h"
+#include "relix/stack.h"
 #include "tool-runtime/parameter_block.h"
 
 

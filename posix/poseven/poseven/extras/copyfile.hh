@@ -14,8 +14,8 @@
 #ifndef POSEVEN_FUNCTIONS_COPYFILE_HH
 #define POSEVEN_FUNCTIONS_COPYFILE_HH
 
-// compat
-#include "lamp/copyfile.h"
+// Relix
+#include "relix/copyfile.h"
 
 // iota
 #include "iota/string_traits.hh"

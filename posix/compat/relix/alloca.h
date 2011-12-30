@@ -3,15 +3,15 @@
 	--------
 */
 
-#ifndef LAMP_ALLOCA_H
-#define LAMP_ALLOCA_H
+#ifndef RELIX_ALLOCA_H
+#define RELIX_ALLOCA_H
 
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
 
-// Lamp
-#include "lamp/stack.h"
+// Relix
+#include "relix/stack.h"
 
 #ifdef __cplusplus
 extern "C" {

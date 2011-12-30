@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LAMP_AESENDBLOCKING_H
-#define LAMP_AESENDBLOCKING_H
+#ifndef RELIX_AESENDBLOCKING_H
+#define RELIX_AESENDBLOCKING_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -1,5 +1,5 @@
-#ifndef	LAMP_SYSCALLS_H
-#define	LAMP_SYSCALLS_H
+#ifndef RELIX_SYSCALLS_H
+#define RELIX_SYSCALLS_H
 
 
 #define __NR_restart_syscall             0

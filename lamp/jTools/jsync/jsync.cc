@@ -17,8 +17,8 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
-// Lamp
-#include "lamp/recurse.hh"
+// Relix
+#include "relix/recurse.hh"
 
 // Iota
 #include "iota/strings.hh"

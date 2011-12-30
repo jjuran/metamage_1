@@ -3,8 +3,8 @@
 	-------------
 */
 
-#ifndef LAMP_REALPATHAT_H
-#define LAMP_REALPATHAT_H
+#ifndef RELIX_REALPATHAT_H
+#define RELIX_REALPATHAT_H
 
 #include <sys/types.h>
 

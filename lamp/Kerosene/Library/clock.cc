@@ -6,8 +6,8 @@
 // Standard C
 #include "time.h"
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 #include "tool-runtime/parameter_block.h"
 
 

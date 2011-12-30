@@ -6,8 +6,8 @@
 #ifndef GENIE_USERLAND_HH
 #define GENIE_USERLAND_HH
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 
 
 namespace Genie

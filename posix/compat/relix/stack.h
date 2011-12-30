@@ -3,8 +3,8 @@
 	-------
 */
 
-#ifndef LAMP_STACK_H
-#define LAMP_STACK_H
+#ifndef RELIX_STACK_H
+#define RELIX_STACK_H
 
 #ifdef __cplusplus
 extern "C" {

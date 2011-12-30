@@ -11,8 +11,8 @@
 // iota
 #include "iota/strings.hh"
 
-// Lamp
-#include "lamp/copyfile.h"
+// Relix
+#include "relix/copyfile.h"
 
 // text-input
 #include "text_input/feed.hh"

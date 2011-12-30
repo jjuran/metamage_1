@@ -16,8 +16,8 @@
 // Iota
 #include "iota/strings.hh"
 
-// Lamp
-#include "lamp/fork_and_exit.h"
+// Relix
+#include "relix/fork_and_exit.h"
 
 // poseven
 #include "poseven/extras/pump.hh"

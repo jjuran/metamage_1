@@ -9,8 +9,8 @@
 // POSIX
 #include <unistd.h>
 
-// Lamp
-#include "lamp/alloca.h"
+// Relix
+#include "relix/alloca.h"
 
 // Iota
 #include "iota/strings.hh"

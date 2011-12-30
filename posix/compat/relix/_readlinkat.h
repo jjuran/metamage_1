@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LAMP_READLINKAT_H
-#define LAMP_READLINKAT_H
+#ifndef RELIX_READLINKAT_H
+#define RELIX_READLINKAT_H
 
 #include <sys/types.h>
 

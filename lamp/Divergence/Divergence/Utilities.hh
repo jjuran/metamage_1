@@ -21,7 +21,7 @@
 #endif
 
 #if !TARGET_RT_MAC_MACHO
-	#include "lamp/AESendBlocking.h"
+	#include "relix/AESendBlocking.h"
 #endif
 
 

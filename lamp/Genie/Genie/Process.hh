@@ -6,8 +6,8 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 
 // Debug
 #include "debug/boost_assert.hh"

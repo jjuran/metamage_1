@@ -23,8 +23,8 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Lamp
-#include "lamp/syscalls.h"
+// Relix
+#include "relix/syscalls.h"
 
 // Iota
 #include "iota/strings.hh"

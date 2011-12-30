@@ -1,5 +1,5 @@
-#ifndef LAMP_PARAMETERBLOCK_H
-#define LAMP_PARAMETERBLOCK_H
+#ifndef RELIX_PARAMETERBLOCK_H
+#define RELIX_PARAMETERBLOCK_H
 
 // Standard C
 #include <stdint.h>

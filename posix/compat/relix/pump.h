@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-#ifndef LAMP_PUMP_H
-#define LAMP_PUMP_H
+#ifndef RELIX_PUMP_H
+#define RELIX_PUMP_H
 
 // POSIX
 #include <sys/types.h>

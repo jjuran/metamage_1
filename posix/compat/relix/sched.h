@@ -3,8 +3,8 @@
 	-------
 */
 
-#ifndef LAMP_SCHED_H
-#define LAMP_SCHED_H
+#ifndef RELIX_SCHED_H
+#define RELIX_SCHED_H
 
 // Standard C
 #include <stddef.h>

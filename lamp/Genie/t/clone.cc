@@ -12,8 +12,8 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-// Lamp
-#include "lamp/sched.h"
+// Relix
+#include "relix/sched.h"
 
 // iota
 #include "iota/strings.hh"

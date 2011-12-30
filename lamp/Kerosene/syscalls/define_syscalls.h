@@ -3,8 +3,8 @@
 	-----------------
 */
 
-// Lamp
-#include "lamp/syscalls.h"
+// Relix
+#include "relix/syscalls.h"
 
 
 DEFINE_SYSCALL_7F( _exit )

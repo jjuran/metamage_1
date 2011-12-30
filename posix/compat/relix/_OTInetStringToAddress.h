@@ -3,8 +3,8 @@
 	------------------------
 */
 
-#ifndef LAMP_OTINETSTRINGTOADDRESS_H
-#define LAMP_OTINETSTRINGTOADDRESS_H
+#ifndef RELIX_OTINETSTRINGTOADDRESS_H
+#define RELIX_OTINETSTRINGTOADDRESS_H
 
 #ifdef __cplusplus
 extern "C" {

@@ -14,7 +14,7 @@
 
 #ifdef __LAMP__
 // Relix
-#include "lamp/alloca.h"
+#include "relix/alloca.h"
 #define ALLOC( x )  signalling_alloca( x )
 #else
 #define ALLOC( x )  std::malloc( x )

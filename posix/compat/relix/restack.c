@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "lamp/restack.h"
+#include "relix/restack.h"
 
 // Standard C
 #include <stdlib.h>

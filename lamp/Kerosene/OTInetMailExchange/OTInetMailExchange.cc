@@ -8,8 +8,8 @@
 #include <OpenTransportProviders.h>
 #endif
 
-// Lamp
-#include "lamp/_OTInetMailExchange.h"
+// Relix
+#include "relix/_OTInetMailExchange.h"
 
 
 #pragma exceptions off

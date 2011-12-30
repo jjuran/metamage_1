@@ -5,8 +5,8 @@
 	Joshua Juran
 */
 
-// Lamp
-#include "lamp/parameter_block.h"
+// Relix
+#include "relix/parameter_block.h"
 #include "tool-runtime/parameter_block.h"
 
 

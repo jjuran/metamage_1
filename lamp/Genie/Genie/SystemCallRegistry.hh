@@ -6,8 +6,8 @@
 #ifndef GENIE_SYSTEMCALLREGISTRY_HH
 #define GENIE_SYSTEMCALLREGISTRY_HH
 
-// Lamp
-#include "lamp/syscalls.h"
+// Relix
+#include "relix/syscalls.h"
 
 
 namespace Genie

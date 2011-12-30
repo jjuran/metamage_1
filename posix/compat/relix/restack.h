@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef LAMP_RESTACK_H
-#define LAMP_RESTACK_H
+#ifndef RELIX_RESTACK_H
+#define RELIX_RESTACK_H
 
 #ifdef __cplusplus
 extern "C" {

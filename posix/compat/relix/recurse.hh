@@ -3,12 +3,12 @@
 	----------
 */
 
-#ifndef LAMP_RECURSE_HH
-#define LAMP_RECURSE_HH
+#ifndef RELIX_RECURSE_HH
+#define RELIX_RECURSE_HH
 
-// Lamp
-#include "lamp/restack.h"
-#include "lamp/stack.h"
+// Relix
+#include "relix/restack.h"
+#include "relix/stack.h"
 
 
 namespace lamp
