@@ -11,7 +11,7 @@
 #include "relix/stack.h"
 
 
-namespace lamp
+namespace relix
 {
 
 const unsigned stack_margin = 12 * 1024;
