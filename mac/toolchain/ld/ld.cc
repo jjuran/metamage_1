@@ -369,6 +369,7 @@ namespace tool
 	
 	static const char* output_pathname = NULL;
 	
+	static bool sym     = true;
 	static bool debug   = true;
 	static bool dry_run = false;
 	static bool verbose = false;
@@ -403,9 +404,18 @@ namespace tool
 				
 				break;
 			
+			case 'S':
+				if ( arg[2] == '\0' )
+				{
+					sym = false;
+				}
+				
+				break;
+			
 			case 's':
 				if ( arg[2] == '\0' )
 				{
+					sym = false;
 					debug = false;
 				}
 				
@@ -722,11 +732,14 @@ namespace tool
 			command.push_back( gFileCreator );
 		}
 		
-		if ( debug )
+		if ( sym )
 		{
 			command.push_back( "-sym" );
 			command.push_back( "full" );
-			
+		}
+		
+		if ( debug )
+		{
 			if ( arch == arch_ppc )
 			{
 				command.push_back( "-tb" );
