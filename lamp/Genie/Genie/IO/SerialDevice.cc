@@ -86,6 +86,8 @@ namespace Genie
 			
 			SerialDeviceHandle( const SerialDeviceHandle& other );
 			
+			~SerialDeviceHandle();
+			
 			bool Preempted() const  { return itIsPassive && IsShared(); }
 			
 			unsigned int SysPoll();
@@ -258,6 +260,10 @@ namespace Genie
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
 		itIsPassive    ( other.itIsPassive     )
+	{
+	}
+	
+	SerialDeviceHandle::~SerialDeviceHandle()
 	{
 	}
 	
