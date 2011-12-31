@@ -11,6 +11,9 @@
 #include <LowMem.h>
 #endif
 
+// plus
+#include "plus/string.hh"
+
 // nucleus
 #ifndef NUCLEUS_ADVANCEUNTILDONESEQUENCE_HH
 #include "nucleus/advance_until_done_sequence.hh"
@@ -22,7 +25,7 @@
 #endif
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Nitrogen

@@ -15,7 +15,7 @@
 #endif
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 // Files.h
 struct FSSpec;

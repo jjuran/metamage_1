@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"

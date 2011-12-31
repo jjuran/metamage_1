@@ -7,7 +7,7 @@
 #ifndef GENIE_FS_FILETESTS_HH
 #define GENIE_FS_FILETESTS_HH
 
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie

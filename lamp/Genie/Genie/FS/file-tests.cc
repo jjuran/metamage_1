@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// Genie
+#include "Genie/FS/FSTree.hh"
+
 
 namespace Genie
 {

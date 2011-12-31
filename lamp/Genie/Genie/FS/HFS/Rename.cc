@@ -33,6 +33,7 @@
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/Utilities/AsyncIO.hh"

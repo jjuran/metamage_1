@@ -7,7 +7,7 @@
 #define GENIE_FILESYSTEM_FSTREE_NULL_HH
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie

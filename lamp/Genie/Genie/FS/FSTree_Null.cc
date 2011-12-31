@@ -11,6 +11,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Genie
+#include "Genie/FS/FSTree.hh"
+
 
 namespace Genie
 {

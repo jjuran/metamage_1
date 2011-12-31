@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_IconSuite.hh"
 
+// Genie
+#include "Genie/FS/FSTree.hh"
+
 
 namespace Genie
 {

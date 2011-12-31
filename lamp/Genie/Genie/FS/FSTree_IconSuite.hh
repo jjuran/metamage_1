@@ -6,6 +6,9 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_ICONSUITE_HH
 #define GENIE_FILESYSTEM_FSTREE_ICONSUITE_HH
 
+// plus
+#include "plus/string.hh"
+
 // nucleus
 #ifndef NUCLEUS_SHARED_HH
 #include "nucleus/shared.hh"
@@ -17,7 +20,7 @@
 #endif
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie

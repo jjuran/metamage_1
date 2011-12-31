@@ -5,6 +5,7 @@
 
 // Genie
 #include "Genie/current_process.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 

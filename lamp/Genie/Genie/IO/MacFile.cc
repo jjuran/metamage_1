@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"

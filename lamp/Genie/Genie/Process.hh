@@ -30,7 +30,7 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
 #include "Genie/Process/vfork_context.hh"

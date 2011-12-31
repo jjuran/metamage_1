@@ -6,8 +6,11 @@
 #ifndef GENIE_FS_SYS_MAC_USER_HOME_HH
 #define GENIE_FS_SYS_MAC_USER_HOME_HH
 
+// plus
+#include "plus/string.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie

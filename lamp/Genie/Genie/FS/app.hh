@@ -7,8 +7,15 @@
 #define GENIE_FS_APP_HH
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
+
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace Genie
 {

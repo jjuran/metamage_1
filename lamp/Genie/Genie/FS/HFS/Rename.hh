@@ -7,7 +7,7 @@
 #define GENIE_FS_HFS_RENAME_HH
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 //#include <Files.h>
 struct FSSpec;

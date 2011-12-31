@@ -6,6 +6,9 @@
 #ifndef GENIE_FS_GUI_NEW_PORT_HH
 #define GENIE_FS_GUI_NEW_PORT_HH
 
+// plus
+#include "plus/string.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 

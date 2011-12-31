@@ -6,8 +6,11 @@
 #ifndef GENIE_FS_GUI_NEW_TEXTEDIT_HH
 #define GENIE_FS_GUI_NEW_TEXTEDIT_HH
 
+// plus
+#include "plus/string.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie
