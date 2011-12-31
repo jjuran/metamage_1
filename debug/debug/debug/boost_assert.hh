@@ -1,17 +1,19 @@
-/*	=====================
- *	debug/boost_assert.hh
- *	=====================
- */
+/*
+	debug/boost_assert.hh
+	---------------------
+*/
 
 #ifndef DEBUG_BOOSTASSERT_HH
 #define DEBUG_BOOSTASSERT_HH
 
-
-#include "debug/assert.hh"
-
 #define BOOST_ENABLE_ASSERT_HANDLER
 
+// Debug
+#include "debug/assert.hh"
+
+// Boost
 #include <boost/assert.hpp>
+
 
 namespace boost
 {
