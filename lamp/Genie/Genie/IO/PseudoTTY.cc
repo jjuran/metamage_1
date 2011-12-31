@@ -87,6 +87,11 @@ namespace Genie
 		GetPseudoTTYMap().erase( itsID );
 	}
 	
+	FSTreePtr PseudoTTYHandle::GetFile()
+	{
+		return itsTerminal->GetFile();
+	}
+	
 	IOHandle* PseudoTTYHandle::Next() const
 	{
 		return itsTerminal.get();
