@@ -117,6 +117,18 @@ namespace Genie
 		return pair;
 	}
 	
+	static void UnreferenceSerialDevice( const plus::string& portName, bool isPassive )
+	{
+		SerialDeviceMap::iterator it = gSerialDevices.find( portName );
+		
+		if ( it != gSerialDevices.end() )
+		{
+			SerialDevicePair& pair = it->second;
+			
+			(isPassive ? pair.passive : pair.active).reset();
+		}
+	}
+	
 	template < class Type >
 	static inline IOPtr NewSerialDeviceHandle( Type param, bool isPassive )
 	{
@@ -267,6 +279,7 @@ namespace Genie
 	
 	SerialDeviceHandle::~SerialDeviceHandle()
 	{
+		UnreferenceSerialDevice( itsPortName, itIsPassive );
 	}
 	
 	unsigned int SerialDeviceHandle::SysPoll()
