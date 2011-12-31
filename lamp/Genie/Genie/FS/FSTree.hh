@@ -22,6 +22,7 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
+#include "Genie/IO/OpenFlags.hh"
 
 // time.h
 struct timespec;
@@ -34,8 +35,6 @@ namespace Genie
 {
 	
 	class IOHandle;
-	
-	typedef int OpenFlags;
 	
 	class FSTree;
 	class FSTreeCache;
