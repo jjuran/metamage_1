@@ -6,6 +6,9 @@
 #ifndef GENIE_IO_IOPTR_HH
 #define GENIE_IO_IOPTR_HH
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // boost
 #include <boost/shared_ptr.hpp>
 
