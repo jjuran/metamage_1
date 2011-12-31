@@ -28,9 +28,9 @@ namespace Genie
 	
 	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
 	
-	typedef boost::shared_ptr< IOHandle > (*HandleCreator)( const nucleus::shared< Mac::FSFileRefNum >&, OpenFlags );
+	typedef IOPtr (*HandleCreator)( const nucleus::shared< Mac::FSFileRefNum >&, OpenFlags );
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
 	                   OpenFlags      flags,

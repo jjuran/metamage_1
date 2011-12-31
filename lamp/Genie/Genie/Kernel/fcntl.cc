@@ -60,8 +60,8 @@ namespace Genie
 				return set_errno( ELOOP );
 			}
 			
-			boost::shared_ptr< IOHandle > opened = directory ? file->OpenDirectory()
-			                                                 : file->Open( flags, mode );
+			IOPtr opened = directory ? file->OpenDirectory()
+			                         : file->Open( flags, mode );
 			
 			const bool truncating = flags & O_TRUNC;
 			

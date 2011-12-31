@@ -24,7 +24,7 @@ namespace Genie
 	{
 		private:
 			TerminalID                       itsID;
-			boost::shared_ptr< IOHandle >    itsTerminal;
+			IOPtr                            itsTerminal;
 			boost::intrusive_ptr< Conduit >  itsInput;
 			boost::intrusive_ptr< Conduit >  itsOutput;
 			
@@ -37,7 +37,7 @@ namespace Genie
 			
 			~PseudoTTYHandle();
 			
-			FSTreePtr GetFile()  { return itsTerminal->GetFile(); }
+			FSTreePtr GetFile();
 			
 			unsigned int SysPoll();
 			
@@ -47,8 +47,8 @@ namespace Genie
 			
 	};
 	
-	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
-	                          boost::shared_ptr< IOHandle >& slave );
+	void GetNewPseudoTTYPair( IOPtr&  master,
+	                          IOPtr&  slave );
 	
 }
 

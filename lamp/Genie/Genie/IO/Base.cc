@@ -62,10 +62,10 @@ namespace Genie
 	class FSTree_IOHandle : public FSTree
 	{
 		private:
-			boost::shared_ptr< IOHandle > itsHandle;
+			IOPtr itsHandle;
 		
 		public:
-			FSTree_IOHandle( const boost::shared_ptr< IOHandle >& handle )
+			FSTree_IOHandle( const IOPtr& handle )
 			:
 				FSTree( null_FSTreePtr,
 				        IOName( handle.get(), true ),
@@ -76,7 +76,7 @@ namespace Genie
 			
 			plus::string Pathname() const  { return Name(); }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			IOPtr Open( OpenFlags flags ) const
 			{
 				return itsHandle;
 			}
@@ -105,12 +105,12 @@ namespace Genie
 		return NULL;
 	}
 	
-	boost::shared_ptr< IOHandle > IOHandle::Clone()
+	IOPtr IOHandle::Clone()
 	{
 		return shared_from_this();
 	}
 	
-	void IOHandle::Attach( const boost::shared_ptr< IOHandle >& target )
+	void IOHandle::Attach( const IOPtr& target )
 	{
 		p7::throw_errno( EINVAL );
 	}

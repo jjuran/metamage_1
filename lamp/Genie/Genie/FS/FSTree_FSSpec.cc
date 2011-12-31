@@ -327,12 +327,12 @@ namespace Genie
 			
 			void SymLink( const plus::string& target ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+			IOPtr Open( OpenFlags flags              ) const;
 			
 			shared_exec_handle GetExecutable() const;
 			
-			boost::shared_ptr< IOHandle > OpenDirectory() const;
+			IOPtr OpenDirectory() const;
 			
 			void CreateDirectory( mode_t mode ) const;
 			
@@ -838,7 +838,7 @@ namespace Genie
 		FinishCreation();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
+	IOPtr FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
 	{
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
@@ -881,7 +881,7 @@ namespace Genie
 			}
 		}
 		
-		boost::shared_ptr< IOHandle > opened = Open( flags );
+		IOPtr opened = Open( flags );
 		
 		if ( created )
 		{
@@ -891,7 +891,7 @@ namespace Genie
 		return opened;
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_HFS::Open( OpenFlags flags ) const
+	IOPtr FSTree_HFS::Open( OpenFlags flags ) const
 	{
 		flags |= itIsOnServer ? O_MAC_ASYNC : 0;
 		
@@ -908,7 +908,7 @@ namespace Genie
 		return prepare_executable( unit );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_HFS::OpenDirectory() const
+	IOPtr FSTree_HFS::OpenDirectory() const
 	{
 		if ( !IsDirectory() )
 		{

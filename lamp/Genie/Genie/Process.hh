@@ -214,7 +214,7 @@ namespace Genie
 			void Yield();
 			void AsyncYield();
 			
-			const boost::shared_ptr< IOHandle >& ControllingTerminal() const;
+			const IOPtr& ControllingTerminal() const;
 			
 			FSTreePtr GetCWD() const;
 			

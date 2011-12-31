@@ -15,7 +15,7 @@ namespace Genie
 	namespace n = nucleus;
 	
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
 	                   OpenFlags      flags,

@@ -12,14 +12,14 @@ namespace Genie
 	class fs_info_impl : public fs_info
 	{
 		public:
-			boost::shared_ptr< IOHandle > its_cwd;
+			IOPtr its_cwd;
 		
 		public:
 			fs_info_impl()
 			{
 			}
 			
-			fs_info_impl( const boost::shared_ptr< IOHandle >& cwd ) : its_cwd( cwd )
+			fs_info_impl( const IOPtr& cwd ) : its_cwd( cwd )
 			{
 			}
 			
@@ -37,22 +37,22 @@ namespace Genie
 	}
 	
 	
-	static inline const boost::shared_ptr< IOHandle >& get_cwd( const fs_info* that )
+	static inline const IOPtr& get_cwd( const fs_info* that )
 	{
 		return static_cast< const fs_info_impl* >( that )->its_cwd;
 	}
 	
-	static inline boost::shared_ptr< IOHandle >& get_cwd( fs_info* that )
+	static inline IOPtr& get_cwd( fs_info* that )
 	{
 		return static_cast< fs_info_impl* >( that )->its_cwd;
 	}
 	
-	void fs_info::chdir( const boost::shared_ptr< IOHandle >& dir )
+	void fs_info::chdir( const IOPtr& dir )
 	{
 		get_cwd( this ) = dir;
 	}
 	
-	boost::shared_ptr< IOHandle > fs_info::getcwd() const
+	IOPtr fs_info::getcwd() const
 	{
 		return get_cwd( this );
 	}
@@ -63,7 +63,7 @@ namespace Genie
 		             static_cast< fs_info_impl& >( other ) );
 	}
 	
-	fs_info* fs_info::create( const boost::shared_ptr< IOHandle >& dir )
+	fs_info* fs_info::create( const IOPtr& dir )
 	{
 		return new fs_info_impl( dir );
 	}

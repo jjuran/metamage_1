@@ -22,7 +22,7 @@ namespace Genie
 	{
 	}
 	
-	boost::shared_ptr< IOHandle > MemoryFileHandle::Clone()
+	IOPtr MemoryFileHandle::Clone()
 	{
 		return seize_ptr( new MemoryFileHandle( GetFile(),
 		                                        GetFlags(),

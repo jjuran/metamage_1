@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< IOHandle > New_OT_Socket( bool nonblocking );
+	IOPtr New_OT_Socket( bool nonblocking );
 	
 }
 

@@ -60,7 +60,7 @@ namespace Genie
 			
 			void Listen( int backlog );
 			
-			std::auto_ptr< IOHandle > Accept( sockaddr& client, socklen_t& len );
+			IOPtr Accept( sockaddr& client, socklen_t& len );
 			
 			void Connect( const sockaddr& server, socklen_t len );
 			
@@ -98,7 +98,7 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
-	std::auto_ptr< IOHandle > PairedSocket::Accept( sockaddr& client, socklen_t& len )
+	IOPtr PairedSocket::Accept( sockaddr& client, socklen_t& len )
 	{
 		p7::throw_errno( EINVAL );
 		
@@ -135,7 +135,7 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
 	                 const boost::intrusive_ptr< Conduit >&  output,

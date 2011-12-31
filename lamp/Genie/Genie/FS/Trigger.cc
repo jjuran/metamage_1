@@ -45,7 +45,7 @@ namespace Genie
 		return n;
 	}
 	
-	boost::shared_ptr< IOHandle > Trigger_Base::Open( OpenFlags flags ) const
+	IOPtr Trigger_Base::Open( OpenFlags flags ) const
 	{
 		return seize_ptr( new TriggerHandle( Self(), flags ) );
 	}

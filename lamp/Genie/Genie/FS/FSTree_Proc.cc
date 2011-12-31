@@ -139,7 +139,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 			
 			FSTreePtr ResolveLink() const;
 	};
@@ -376,7 +376,7 @@ namespace Genie
 				pid_t pgid = process.GetPGID();
 				pid_t sid  = process.GetSID();
 				
-				const boost::shared_ptr< IOHandle >& term = process.ControllingTerminal();
+				const IOPtr& term = process.ControllingTerminal();
 				
 				plus::string terminal_name = "?";
 				
@@ -576,7 +576,7 @@ namespace Genie
 	}
 	
 	
-	static const boost::shared_ptr< IOHandle >& GetFDHandle( pid_t pid, int fd )
+	static const IOPtr& GetFDHandle( pid_t pid, int fd )
 	{
 		fd_table& files = GetProcess( pid ).FileDescriptors();
 		
@@ -600,7 +600,7 @@ namespace Genie
 		return 0;
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_PID_fd_N::Open( OpenFlags flags, mode_t mode ) const
+	IOPtr FSTree_PID_fd_N::Open( OpenFlags flags, mode_t mode ) const
 	{
 		if ( flags & O_NOFOLLOW )
 		{

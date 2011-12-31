@@ -23,12 +23,12 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	New_DataForkHandle( const nucleus::shared< Mac::FSFileRefNum >&  refNum,
 	                    OpenFlags                                    flags );
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	New_RsrcForkHandle( const nucleus::shared< Mac::FSFileRefNum >&  refNum,
 	                    OpenFlags                                    flags );

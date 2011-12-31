@@ -39,7 +39,7 @@ namespace Genie
 	int DuplicateFileDescriptor( int oldfd, int newfd, bool close_on_exec )
 	{
 		// Throws EBADF
-		boost::shared_ptr< IOHandle > const& handle = GetFileHandle( oldfd );
+		IOPtr const& handle = GetFileHandle( oldfd );
 		
 		if ( oldfd != newfd )
 		{
@@ -49,9 +49,9 @@ namespace Genie
 		return newfd;
 	}
 	
-	void AssignFileDescriptor( int                                   fd,
-	                           const boost::shared_ptr< IOHandle >&  handle,
-	                           bool                                  close_on_exec )
+	void AssignFileDescriptor( int           fd,
+	                           const IOPtr&  handle,
+	                           bool          close_on_exec )
 	{
 		if ( fd < 0 )
 		{
@@ -70,7 +70,7 @@ namespace Genie
 		return files.at( fd );
 	}
 	
-	boost::shared_ptr< IOHandle > const& GetFileHandle( int fd )
+	IOPtr const& GetFileHandle( int fd )
 	{
 		return GetFileDescriptor( fd ).handle;
 	}

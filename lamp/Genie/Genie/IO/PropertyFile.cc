@@ -15,7 +15,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	boost::shared_ptr< IOHandle > PropertyReaderFileHandle::Clone()
+	IOPtr PropertyReaderFileHandle::Clone()
 	{
 		return seize_ptr( new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData ) );
 	}

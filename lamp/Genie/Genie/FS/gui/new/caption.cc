@@ -137,7 +137,7 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			const FSTree* ViewKey();
 			
@@ -152,7 +152,7 @@ namespace Genie
 			void SetEOF( off_t length )  { CaptionText_SetEOF( GetFile().get(), length ); }
 	};
 	
-	boost::shared_ptr< IOHandle > CaptionTextFileHandle::Clone()
+	IOPtr CaptionTextFileHandle::Clone()
 	{
 		return seize_ptr( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
 	}
@@ -216,7 +216,7 @@ namespace Genie
 			
 			void SetEOF( off_t length ) const  { CaptionText_SetEOF( this, length ); }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	off_t FSTree_Caption_text::GetEOF() const
@@ -224,7 +224,7 @@ namespace Genie
 		return gCaptionParametersMap[ ParentRef().get() ].its_utf8_text.size();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Caption_text::Open( OpenFlags flags ) const
+	IOPtr FSTree_Caption_text::Open( OpenFlags flags ) const
 	{
 		return seize_ptr( new CaptionTextFileHandle( Self(), flags ) );
 	}

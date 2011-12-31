@@ -31,7 +31,7 @@ namespace Genie
 	{
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Dynamic_N::Open( OpenFlags flags ) const
+	IOPtr FSTree_Dynamic_N::Open( OpenFlags flags ) const
 	{
 		const unsigned id = gear::parse_unsigned_decimal( Name().c_str() );
 		

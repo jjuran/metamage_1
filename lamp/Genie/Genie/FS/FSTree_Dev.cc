@@ -56,11 +56,11 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	
-	typedef boost::shared_ptr< IOHandle > (*OpenProc)( OpenFlags flags );
+	typedef IOPtr (*OpenProc)( OpenFlags flags );
 	
 	class FSTree_BasicDevice : public FSTree
 	{
@@ -78,7 +78,7 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			IOPtr Open( OpenFlags flags ) const
 			{
 				return itsOpener( flags );
 			}
@@ -110,7 +110,7 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		typedef boost::shared_ptr< IOHandle > IORef;
+		typedef IOPtr IORef;
 		
 		static IORef open( OpenFlags flags )
 		{
@@ -132,7 +132,7 @@ namespace Genie
 	typedef FSTree_DynamicGroup< PseudoTTYHandle  > FSTree_dev_pts;
 	
 	
-	boost::shared_ptr< IOHandle > FSTree_SimpleDevice::Open( OpenFlags /*flags*/ ) const
+	IOPtr FSTree_SimpleDevice::Open( OpenFlags /*flags*/ ) const
 	{
 		return GetSimpleDeviceHandle( Name() );
 	}
@@ -141,11 +141,9 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		typedef boost::shared_ptr< IOHandle > IORef;
-		
-		static IORef open( OpenFlags flags )
+		static IOPtr open( OpenFlags flags )
 		{
-			const IORef& tty = CurrentProcess().ControllingTerminal();
+			const IOPtr& tty = CurrentProcess().ControllingTerminal();
 			
 			if ( tty.get() == NULL )
 			{

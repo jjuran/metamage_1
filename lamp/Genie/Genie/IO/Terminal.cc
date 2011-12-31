@@ -37,7 +37,7 @@ namespace Genie
 	
 	static void CheckControllingTerminal( const Process& process, const TerminalHandle& tty )
 	{
-		const boost::shared_ptr< IOHandle >& process_ctty = process.ControllingTerminal();
+		const IOPtr& process_ctty = process.ControllingTerminal();
 		
 		if ( process_ctty.get() != &tty )
 		{

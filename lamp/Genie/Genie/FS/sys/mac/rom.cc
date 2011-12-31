@@ -60,11 +60,11 @@ namespace Genie
 			
 			off_t GetEOF() const  { return global_rom_size; }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	
-	boost::shared_ptr< IOHandle > FSTree_sys_mac_rom::Open( OpenFlags flags ) const
+	IOPtr FSTree_sys_mac_rom::Open( OpenFlags flags ) const
 	{
 	#if TARGET_API_MAC_CARBON
 		

@@ -23,13 +23,13 @@ namespace Genie
 	                             int   newfd,
 	                             bool  close_on_exec = false );
 	
-	void AssignFileDescriptor( int                                   fd,
-	                           const boost::shared_ptr< IOHandle >&  handle,
-	                           bool                                  close_on_exec = false );
+	void AssignFileDescriptor( int           fd,
+	                           const IOPtr&  handle,
+	                           bool          close_on_exec = false );
 	
 	FileDescriptor& GetFileDescriptor( int fd );
 	
-	boost::shared_ptr< IOHandle > const& GetFileHandle( int fd );
+	IOPtr const& GetFileHandle( int fd );
 	
 	template < class Handle >
 	inline Handle& GetFileHandleWithCast( int fd, int errnum = 0 )

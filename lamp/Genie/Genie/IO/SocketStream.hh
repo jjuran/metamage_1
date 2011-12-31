@@ -61,7 +61,7 @@ namespace Genie
 			
 			virtual void Listen( int backlog ) = 0;
 			
-			virtual std::auto_ptr< IOHandle > Accept( sockaddr& client, socklen_t& len ) = 0;
+			virtual IOPtr Accept( sockaddr& client, socklen_t& len ) = 0;
 			
 			virtual void Connect( const sockaddr& server, socklen_t len ) = 0;
 			

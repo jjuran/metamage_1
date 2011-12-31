@@ -90,7 +90,7 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -106,7 +106,7 @@ namespace Genie
 		return GetFile()->ParentRef().get();
 	}
 	
-	boost::shared_ptr< IOHandle > Pixels_IO::Clone()
+	IOPtr Pixels_IO::Clone()
 	{
 		return seize_ptr( new Pixels_IO( GetFile(), GetFlags() ) );
 	}
@@ -214,7 +214,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	static bool has_pixels( const FSTree* view )
@@ -232,7 +232,7 @@ namespace Genie
 		return Pixels_GetEOF( ParentKey() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Pixels::Open( OpenFlags flags ) const
+	IOPtr FSTree_Pixels::Open( OpenFlags flags ) const
 	{
 		return seize_ptr( new Pixels_IO( Self(), flags ) );
 	}

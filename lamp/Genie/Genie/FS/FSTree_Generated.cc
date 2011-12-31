@@ -44,7 +44,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	
@@ -53,7 +53,7 @@ namespace Genie
 		return its_data.size();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Generated::Open( OpenFlags flags ) const
+	IOPtr FSTree_Generated::Open( OpenFlags flags ) const
 	{
 		if ( flags != O_RDONLY )
 		{

@@ -9,24 +9,22 @@
 // Debug
 #include "debug/boost_assert.hh"
 
-// Boost
-#include <boost/shared_ptr.hpp>
+// Genie
+#include "Genie/IO/IOPtr.hh"
 
 
 namespace Genie
 {
 	
-	class IOHandle;
-	
 	struct FileDescriptor
 	{
-		boost::shared_ptr< IOHandle >  handle;
-		bool                           closeOnExec;
+		IOPtr  handle;
+		bool   closeOnExec;
 		
 		FileDescriptor() : closeOnExec( false )  {}
 		
-		FileDescriptor( const boost::shared_ptr< IOHandle >& handle ) : handle     ( handle ),
-		                                                                closeOnExec( false  )
+		FileDescriptor( const IOPtr& handle ) : handle     ( handle ),
+		                                        closeOnExec( false  )
 		{
 		}
 		

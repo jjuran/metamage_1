@@ -14,19 +14,19 @@
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
-#include <boost/shared_ptr.hpp>
+
+// Genie
+#include "Genie/IO/IOPtr.hh"
 
 
 namespace Genie
 {
 	
-	class IOHandle;
-	
 	class Session : public plus::ref_count< Session >
 	{
 		private:
-			int                             itsID;
-			boost::shared_ptr< IOHandle >  itsControllingTerminal;
+			int    itsID;
+			IOPtr  itsControllingTerminal;
 		
 		public:
 			Session()  {}
@@ -35,9 +35,9 @@ namespace Genie
 			
 			int ID() const  { return itsID; }
 			
-			const boost::shared_ptr< IOHandle >& GetControllingTerminal() const  { return itsControllingTerminal; }
+			const IOPtr& GetControllingTerminal() const  { return itsControllingTerminal; }
 			
-			void SetControllingTerminal( const boost::shared_ptr< IOHandle >& terminal )
+			void SetControllingTerminal( const IOPtr& terminal )
 			{
 				itsControllingTerminal = terminal;
 			}

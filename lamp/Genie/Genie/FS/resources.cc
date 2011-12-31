@@ -143,7 +143,7 @@ namespace Genie
 			
 			~Rsrc_IOHandle();
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			void Synchronize( bool metadata );
 	};
@@ -196,7 +196,7 @@ namespace Genie
 		N::WriteResource  ( r );
 	}
 	
-	boost::shared_ptr< IOHandle > Rsrc_IOHandle::Clone()
+	IOPtr Rsrc_IOHandle::Clone()
 	{
 		return seize_ptr( new Rsrc_IOHandle( GetFile(),
 		                                     GetFlags(),
@@ -244,8 +244,8 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+			IOPtr Open( OpenFlags flags              ) const;
 	};
 	
 	void FSTree_Rsrc_File::Delete() const
@@ -266,14 +266,14 @@ namespace Genie
 		return N::GetHandleSize( r );
 	}
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return Open( flags );
 	}
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	FSTree_Rsrc_File::Open( OpenFlags flags ) const
 	{
@@ -316,7 +316,7 @@ namespace Genie
 		IOHandle* raw_pointer = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
 		                                : new Handle_IOHandle( Self(), flags, h );
 		
-		return boost::shared_ptr< IOHandle >( raw_pointer );
+		return IOPtr( raw_pointer );
 	}
 	
 	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,

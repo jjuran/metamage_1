@@ -26,7 +26,7 @@ namespace Genie
 			
 			void SetTimes() const  { Invoke(); }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	template < class Action >

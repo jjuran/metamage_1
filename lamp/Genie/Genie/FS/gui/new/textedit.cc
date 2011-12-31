@@ -114,7 +114,7 @@ namespace Genie
 			
 			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	void FSTree_TextEdit_gate::Invoke() const
@@ -126,7 +126,7 @@ namespace Genie
 		params.itIsInterlocked = false;
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_TextEdit_gate::Open( OpenFlags flags ) const
+	IOPtr FSTree_TextEdit_gate::Open( OpenFlags flags ) const
 	{
 		if ( (flags & O_ACCMODE) == O_WRONLY )
 		{

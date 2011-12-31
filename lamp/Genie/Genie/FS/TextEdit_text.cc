@@ -38,7 +38,7 @@ namespace Genie
 			
 			void SetEOF( off_t length ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	
@@ -69,7 +69,7 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			const FSTree* ViewKey();
 			
@@ -82,7 +82,7 @@ namespace Genie
 			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
 	};
 	
-	boost::shared_ptr< IOHandle > TextEdit_text_Handle::Clone()
+	IOPtr TextEdit_text_Handle::Clone()
 	{
 		return seize_ptr( new TextEdit_text_Handle( GetFile(), GetFlags() ) );
 	}
@@ -152,11 +152,11 @@ namespace Genie
 		TextEdit_text_SetEOF( this, length );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_TextEdit_text::Open( OpenFlags flags ) const
+	IOPtr FSTree_TextEdit_text::Open( OpenFlags flags ) const
 	{
 		IOHandle* result = new TextEdit_text_Handle( Self(), flags );
 		
-		return boost::shared_ptr< IOHandle >( result );
+		return IOPtr( result );
 	}
 	
 	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr&     parent,

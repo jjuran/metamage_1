@@ -284,10 +284,10 @@ namespace Genie
 			{
 			}
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
-	boost::shared_ptr< IOHandle > FSTree_Button_socket::Open( OpenFlags flags ) const
+	IOPtr FSTree_Button_socket::Open( OpenFlags flags ) const
 	{
 		const FSTree* view = ParentRef().get();
 		

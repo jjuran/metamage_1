@@ -17,7 +17,7 @@
 namespace Genie
 {
 	
-	typedef boost::shared_ptr< IOHandle > (*DynamicElementGetter)( std::size_t );
+	typedef IOPtr (*DynamicElementGetter)( std::size_t );
 	
 	
 	class FSTree_Dynamic_N : public FSTree
@@ -30,7 +30,7 @@ namespace Genie
 			                  const plus::string&   name,
 			                  DynamicElementGetter  getter );
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	

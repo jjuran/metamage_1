@@ -36,7 +36,7 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const
+			IOPtr Open( OpenFlags flags ) const
 			{
 				flags |= itIsOnServer ? O_MAC_ASYNC : 0;
 				

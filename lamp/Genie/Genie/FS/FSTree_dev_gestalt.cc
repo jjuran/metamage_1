@@ -67,7 +67,7 @@ namespace Genie
 		}
 	}
 	
-	boost::shared_ptr< IOHandle > dev_gestalt::open( OpenFlags flags )
+	IOPtr dev_gestalt::open( OpenFlags flags )
 	{
 		return seize_ptr( new GestaltDeviceHandle( flags ) );
 	}
