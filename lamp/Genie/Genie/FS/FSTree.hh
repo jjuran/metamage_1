@@ -106,11 +106,12 @@ namespace Genie
 			virtual bool IsFile() const;
 			virtual bool IsDirectory() const;
 			virtual bool IsLink() const;
-			virtual bool IsPipe() const;
 			
 			const FSTreePtr& ParentRef() const  { return itsParent; }
 			
 			const plus::string& Name() const  { return itsName; }
+			
+			mode_t FileMode() const  { return itsMode; }
 			
 			plus::string Pathname() const;
 			

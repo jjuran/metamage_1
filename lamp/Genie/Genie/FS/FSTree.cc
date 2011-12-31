@@ -166,11 +166,6 @@ namespace Genie
 		return S_ISLNK( itsMode );
 	}
 	
-	bool FSTree::IsPipe() const
-	{
-		return S_ISFIFO( itsMode );
-	}
-	
 	FSTreePtr FSTree::Parent() const
 	{
 		return itsParent.get() ? itsParent : Self();
