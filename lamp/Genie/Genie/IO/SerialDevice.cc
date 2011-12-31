@@ -97,6 +97,10 @@ namespace Genie
 	struct SerialDevicePair
 	{
 		boost::weak_ptr< IOHandle > passive, active;
+		
+		SerialDevicePair() : passive(), active()
+		{
+		}
 	};
 	
 	static SerialDevicePair& GetSerialDevicePair( const plus::string& portName )
