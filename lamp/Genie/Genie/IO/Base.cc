@@ -21,6 +21,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Genie
+#include "Genie/FS/FSTree.hh"
+
 
 #ifndef O_EXEC
 #define O_EXEC  0

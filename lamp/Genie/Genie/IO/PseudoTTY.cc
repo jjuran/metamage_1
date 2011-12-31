@@ -12,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 

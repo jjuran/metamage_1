@@ -10,6 +10,7 @@
 #include "plus/string.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 

@@ -10,6 +10,9 @@
 #include "errno.h"
 #include "fcntl.h"
 
+// plus
+#include "plus/string.hh"
+
 // Genie
 #include "Genie/IO/Base.hh"
 
