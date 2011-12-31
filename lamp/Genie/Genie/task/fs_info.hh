@@ -35,13 +35,13 @@ namespace Genie
 			~fs_info()  {}
 		
 		public:
-			void chdir( const boost::shared_ptr< IOHandle >& dir );
+			void chdir( const IOPtr& dir );
 			
-			boost::shared_ptr< IOHandle > getcwd() const;
+			IOPtr getcwd() const;
 			
 			void swap( fs_info& other );
 			
-			static fs_info* create( const boost::shared_ptr< IOHandle >& dir );
+			static fs_info* create( const IOPtr& dir );
 	};
 	
 	inline void swap( fs_info& a, fs_info& b )

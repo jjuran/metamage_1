@@ -20,8 +20,8 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
-	boost::shared_ptr< IOHandle > GetDynamicElementFromGroupByID( const DynamicGroup&  group,
-	                                                              DynamicElementID     id )
+	IOPtr GetDynamicElementFromGroupByID( const DynamicGroup&  group,
+	                                      DynamicElementID     id )
 	{
 		DynamicGroup::const_iterator it = group.find( id );
 		

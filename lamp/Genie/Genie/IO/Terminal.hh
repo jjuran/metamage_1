@@ -28,10 +28,10 @@ namespace Genie
 	class TerminalHandle : public IOHandle
 	{
 		private:
-			const plus::string             itsTTYName;
-			boost::shared_ptr< IOHandle >  itsTTY;
-			pid_t                          its_process_group_id;
-			bool                           itIsDisconnected;
+			const plus::string  itsTTYName;
+			IOPtr               itsTTY;
+			pid_t               its_process_group_id;
+			bool                itIsDisconnected;
 			
 			IOHandle* Next() const  { return itsTTY.get(); }
 		
@@ -49,7 +49,7 @@ namespace Genie
 			
 			bool IsTerminal() const  { return true; }
 			
-			void Attach( const boost::shared_ptr< IOHandle >& target )  { itsTTY = target; }
+			void Attach( const IOPtr& target )  { itsTTY = target; }
 			
 			FSTreePtr GetFile();
 			

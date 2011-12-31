@@ -41,8 +41,8 @@ namespace Genie
 			boost::intrusive_ptr< Conduit > east( new Conduit );
 			boost::intrusive_ptr< Conduit > west( new Conduit );
 			
-			boost::shared_ptr< IOHandle > san_jose = NewPairedSocket( west, east, nonblocking );
-			boost::shared_ptr< IOHandle > new_york = NewPairedSocket( east, west, nonblocking );
+			IOPtr san_jose = NewPairedSocket( west, east, nonblocking );
+			IOPtr new_york = NewPairedSocket( east, west, nonblocking );
 			
 			int a = LowestUnusedFileDescriptor( 3 );
 			int b = LowestUnusedFileDescriptor( a + 1 );
@@ -145,7 +145,7 @@ namespace Genie
 			
 			int fd = LowestUnusedFileDescriptor();
 			
-			AssignFileDescriptor( fd, boost::shared_ptr< IOHandle >( incoming ) );
+			AssignFileDescriptor( fd, IOPtr( incoming ) );
 			
 			if ( addr == NULL  &&  addrlen != NULL )
 			{

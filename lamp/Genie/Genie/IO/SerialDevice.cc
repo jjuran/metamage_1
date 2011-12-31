@@ -109,7 +109,7 @@ namespace Genie
 	}
 	
 	template < class Type >
-	static inline boost::shared_ptr< IOHandle > NewSerialDeviceHandle( Type param, bool isPassive )
+	static inline IOPtr NewSerialDeviceHandle( Type param, bool isPassive )
 	{
 		return seize_ptr( new SerialDeviceHandle( param, isPassive ) );
 	}
@@ -117,15 +117,15 @@ namespace Genie
 #endif
 	
 	
-	boost::shared_ptr< IOHandle > OpenSerialDevice( const plus::string&  portName,
-	                                                bool                 isPassive,
-	                                                bool                 nonblocking )
+	IOPtr OpenSerialDevice( const plus::string&  portName,
+	                        bool                 isPassive,
+	                        bool                 nonblocking )
 	{
 	#if TARGET_API_MAC_CARBON
 		
 		p7::throw_errno( ENOENT );
 		
-		return boost::shared_ptr< IOHandle >();
+		return IOPtr();
 		
 	#else
 		
@@ -139,8 +139,8 @@ namespace Genie
 			try_again( nonblocking );
 		}
 		
-		boost::shared_ptr< IOHandle > result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
-		                                                       : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other.lock().get() ), isPassive );
+		IOPtr result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
+		                               : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other.lock().get() ), isPassive );
 		
 		same = result;
 		

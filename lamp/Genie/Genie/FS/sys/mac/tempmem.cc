@@ -65,11 +65,11 @@ namespace Genie
 			
 			off_t GetEOF() const  { return ::TempFreeMem(); }
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	
-	boost::shared_ptr< IOHandle > FSTree_sys_mac_tempmem::Open( OpenFlags flags ) const
+	IOPtr FSTree_sys_mac_tempmem::Open( OpenFlags flags ) const
 	{
 		return seize_ptr( new TempMem_IOHandle( Self(), flags ) );
 		

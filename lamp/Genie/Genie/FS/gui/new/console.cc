@@ -72,10 +72,10 @@ namespace Genie
 	
 	struct ConsoleParameters
 	{
-		boost::shared_ptr< IOHandle >  itsTerminal;
-		std::size_t         itsStartOfInput;
-		std::size_t         itsStartOfOutput;
-		bool                itHasReceivedEOF;
+		IOPtr        itsTerminal;
+		std::size_t  itsStartOfInput;
+		std::size_t  itsStartOfOutput;
+		bool         itHasReceivedEOF;
 		
 		ConsoleParameters()
 		:
@@ -157,7 +157,7 @@ namespace Genie
 	{
 		ConsoleParameters& params = gConsoleParametersMap[ key ];
 		
-		const boost::shared_ptr< IOHandle >& handle = params.itsTerminal;
+		const IOPtr& handle = params.itsTerminal;
 		
 		TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
 		
@@ -386,7 +386,7 @@ namespace Genie
 				GetDynamicGroup< ConsoleTTYHandle >().erase( itsID );
 			}
 			
-			void Attach( const boost::shared_ptr< IOHandle >& terminal );
+			void Attach( const IOPtr& terminal );
 			
 			FSTreePtr GetFile()  { return MakeConsoleProxy( itsID ); }
 			
@@ -399,7 +399,7 @@ namespace Genie
 			void IOCtl( unsigned long request, int* argp );
 	};
 	
-	void ConsoleTTYHandle::Attach( const boost::shared_ptr< IOHandle >& terminal )
+	void ConsoleTTYHandle::Attach( const IOPtr& terminal )
 	{
 		const FSTree* view = ViewKey();
 		
@@ -741,7 +741,7 @@ namespace Genie
 			
 			void Rename( const FSTreePtr& destination ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	void FSTree_Console_tty::Rename( const FSTreePtr& destination ) const
@@ -749,14 +749,14 @@ namespace Genie
 		destination->Attach( Self() );
 	}
 	
-	static inline boost::shared_ptr< IOHandle >
+	static inline IOPtr
 	//
 	NewConsoleTTY( const FSTreePtr& self, TerminalID id )
 	{
 		return seize_ptr( new ConsoleTTYHandle( self, id ) );
 	}
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	FSTree_Console_tty::Open( OpenFlags flags ) const
 	{
@@ -764,7 +764,7 @@ namespace Genie
 		
 		unsigned id = ++gLastID;
 		
-		boost::shared_ptr< IOHandle > result( NewConsoleTTY( Self(), id ) );
+		IOPtr result( NewConsoleTTY( Self(), id ) );
 		
 		GetDynamicGroup< ConsoleTTYHandle >()[ id ] = result;
 		

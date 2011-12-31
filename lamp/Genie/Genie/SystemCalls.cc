@@ -236,14 +236,14 @@ namespace Genie
 	}
 	
 	
-	static inline boost::shared_ptr< IOHandle >
+	static inline IOPtr
 	//
 	NewPipeReader( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
 	{
 		return seize_ptr( new PipeOutHandle( conduit, nonblocking ) );
 	}
 	
-	static inline boost::shared_ptr< IOHandle >
+	static inline IOPtr
 	//
 	NewPipeWriter( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
 	{
@@ -262,8 +262,8 @@ namespace Genie
 			
 			boost::intrusive_ptr< Conduit > conduit( new Conduit );
 			
-			boost::shared_ptr< IOHandle > pipeIn ( NewPipeWriter( conduit, nonblocking ) );
-			boost::shared_ptr< IOHandle > pipeOut( NewPipeReader( conduit, nonblocking ) );
+			IOPtr pipeIn ( NewPipeWriter( conduit, nonblocking ) );
+			IOPtr pipeOut( NewPipeReader( conduit, nonblocking ) );
 			
 			AssignFileDescriptor( reader, pipeOut, close_on_exec );
 			AssignFileDescriptor( writer, pipeIn,  close_on_exec );

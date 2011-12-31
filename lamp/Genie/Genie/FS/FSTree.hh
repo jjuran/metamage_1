@@ -16,12 +16,10 @@
 #include "plus/ref_count.hh"
 #include "plus/string.hh"
 
-// boost
-#include <boost/shared_ptr.hpp>
-
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/FSTreePtr.hh"
+#include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/OpenFlags.hh"
 
 // time.h
@@ -33,8 +31,6 @@ struct stat;
 
 namespace Genie
 {
-	
-	class IOHandle;
 	
 	class FSTreeCache;
 	class FSIterator;
@@ -153,16 +149,16 @@ namespace Genie
 			
 			virtual void SymLink( const plus::string& target ) const;
 			
-			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags, mode_t mode ) const;
-			virtual boost::shared_ptr< IOHandle > Open( OpenFlags flags              ) const;
+			virtual IOPtr Open( OpenFlags flags, mode_t mode ) const;
+			virtual IOPtr Open( OpenFlags flags              ) const;
 			
 			virtual shared_exec_handle GetExecutable() const;
 			
 			// Directory methods
 			
-			virtual boost::shared_ptr< IOHandle > OpenDirectory() const;
+			virtual IOPtr OpenDirectory() const;
 			
-			virtual boost::shared_ptr< IOHandle > ChangeToDirectory() const;
+			virtual IOPtr ChangeToDirectory() const;
 			
 			virtual void CreateDirectory( mode_t mode ) const;
 			

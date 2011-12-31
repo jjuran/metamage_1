@@ -341,7 +341,7 @@ namespace Genie
 				ASSERT( itsData.get() != NULL );
 			}
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -371,7 +371,7 @@ namespace Genie
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 	};
 	
-	boost::shared_ptr< IOHandle > IconDataFileHandle::Clone()
+	IOPtr IconDataFileHandle::Clone()
 	{
 		return seize_ptr( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
 	}
@@ -453,7 +453,7 @@ namespace Genie
 		return itsData->GetSize();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Icon_data::Open( OpenFlags flags ) const
+	IOPtr FSTree_Icon_data::Open( OpenFlags flags ) const
 	{
 		const int mode = flags & O_ACCMODE;
 		
@@ -473,7 +473,7 @@ namespace Genie
 				p7::throw_errno( EACCES );
 		}
 		
-		return boost::shared_ptr< IOHandle >( result );
+		return IOPtr( result );
 	}
 	
 	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const

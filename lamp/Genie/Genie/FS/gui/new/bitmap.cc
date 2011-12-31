@@ -81,7 +81,7 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -97,7 +97,7 @@ namespace Genie
 		return GetFile()->ParentRef().get();
 	}
 	
-	boost::shared_ptr< IOHandle > Bits_IO::Clone()
+	IOPtr Bits_IO::Clone()
 	{
 		return seize_ptr( new Bits_IO( GetFile(), GetFlags() ) );
 	}
@@ -175,7 +175,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	static bool has_bits( const FSTree* view )
@@ -188,7 +188,7 @@ namespace Genie
 		return Bits_GetEOF( ParentKey() );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Bits::Open( OpenFlags flags ) const
+	IOPtr FSTree_Bits::Open( OpenFlags flags ) const
 	{
 		return seize_ptr( new Bits_IO( Self(), flags ) );
 	}

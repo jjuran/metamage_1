@@ -22,7 +22,7 @@ static int ttypair( int fds[ 2 ] )
 	
 	try
 	{
-		boost::shared_ptr< IOHandle > master, slave;
+		IOPtr master, slave;
 		
 		GetNewPseudoTTYPair( master, slave );
 		

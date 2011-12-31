@@ -9,8 +9,8 @@
 // Debug
 #include "debug/boost_assert.hh"
 
-// Boost
-#include <boost/shared_ptr.hpp>
+// Genie
+#include "Genie/IO/IOPtr.hh"
 
 
 namespace plus
@@ -23,9 +23,7 @@ namespace plus
 namespace Genie
 {
 	
-	class IOHandle;
-	
-	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const plus::string& path );
+	IOPtr GetSimpleDeviceHandle( const plus::string& path );
 	
 }
 

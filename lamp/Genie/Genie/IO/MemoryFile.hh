@@ -38,7 +38,7 @@ namespace Genie
 			
 			~MemoryFileHandle();
 			
-			boost::shared_ptr< IOHandle > Clone();
+			IOPtr Clone();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			

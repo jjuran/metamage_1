@@ -20,7 +20,7 @@
 namespace Genie
 {
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
 	                 const boost::intrusive_ptr< Conduit >&  output,

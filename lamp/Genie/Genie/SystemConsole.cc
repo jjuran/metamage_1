@@ -27,7 +27,7 @@ namespace Genie
 		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_APPEND ).get() )->Write( buffer, length );
 	}
 	
-	static void MakeWindow( const boost::shared_ptr< IOHandle >& port_dir )
+	static void MakeWindow( const IOPtr& port_dir )
 	{
 		FSTreePtr port = port_dir->GetFile();
 		
@@ -67,7 +67,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static boost::shared_ptr< IOHandle > the_port = ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) )->ChangeToDirectory();
+		static IOPtr the_port = ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) )->ChangeToDirectory();
 		
 		MakeWindow( the_port );
 		

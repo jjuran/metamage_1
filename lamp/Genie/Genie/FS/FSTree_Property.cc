@@ -96,7 +96,7 @@ namespace Genie
 		return data.size();
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_Property::Open( OpenFlags flags ) const
+	IOPtr FSTree_Property::Open( OpenFlags flags ) const
 	{
 		IOHandle* result = NULL;
 		
@@ -113,7 +113,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return boost::shared_ptr< IOHandle >( result );
+		return IOPtr( result );
 	}
 	
 	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const

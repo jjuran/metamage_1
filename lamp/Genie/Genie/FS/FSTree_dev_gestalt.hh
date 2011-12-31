@@ -20,7 +20,7 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR;
 		
-		static boost::shared_ptr< IOHandle > open( OpenFlags flags );
+		static IOPtr open( OpenFlags flags );
 	};
 	
 }

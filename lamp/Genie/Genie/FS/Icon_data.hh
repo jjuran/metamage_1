@@ -88,7 +88,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 			
 			void Attach( const FSTreePtr& target ) const;
 	};

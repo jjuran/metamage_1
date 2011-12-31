@@ -1026,14 +1026,14 @@ namespace Genie
 		return itsProcessGroup.get() ? itsProcessGroup->GetSID() : 0;
 	}
 	
-	const boost::shared_ptr< IOHandle >& Process::ControllingTerminal() const
+	const IOPtr& Process::ControllingTerminal() const
 	{
 		if ( itsProcessGroup.get() )
 		{
 			return GetProcessGroup()->GetSession()->GetControllingTerminal();
 		}
 		
-		static boost::shared_ptr< IOHandle > null;
+		static IOPtr null;
 		
 		return null;
 	}

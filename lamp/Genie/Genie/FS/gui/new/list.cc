@@ -194,7 +194,7 @@ namespace Genie
 			
 			void SetEOF( off_t length ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	
@@ -246,7 +246,7 @@ namespace Genie
 		return result;
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree_List_data::Open( OpenFlags flags ) const
+	IOPtr FSTree_List_data::Open( OpenFlags flags ) const
 	{
 		IOHandle* result = NULL;
 		
@@ -266,7 +266,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return boost::shared_ptr< IOHandle >( result );
+		return IOPtr( result );
 	}
 	
 	

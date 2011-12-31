@@ -300,7 +300,7 @@ namespace Genie
 		p7::throw_errno( EINVAL );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags flags, mode_t mode ) const
+	IOPtr FSTree::Open( OpenFlags flags, mode_t mode ) const
 	{
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
@@ -313,7 +313,7 @@ namespace Genie
 		return Open( flags );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree::Open( OpenFlags /*flags*/ ) const
+	IOPtr FSTree::Open( OpenFlags /*flags*/ ) const
 	{
 		throw p7::errno_t( ENOENT );  // Assume read attempt if no mode
 	}
@@ -324,7 +324,7 @@ namespace Genie
 	}
 	
 	
-	boost::shared_ptr< IOHandle > FSTree::OpenDirectory() const
+	IOPtr FSTree::OpenDirectory() const
 	{
 		if ( !IsDirectory() )
 		{
@@ -334,7 +334,7 @@ namespace Genie
 		return seize_ptr( new VirtualDirHandle( Self() ) );
 	}
 	
-	boost::shared_ptr< IOHandle > FSTree::ChangeToDirectory() const
+	IOPtr FSTree::ChangeToDirectory() const
 	{
 		return OpenDirectory();
 	}

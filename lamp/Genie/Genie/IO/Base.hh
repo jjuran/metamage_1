@@ -15,6 +15,7 @@
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
+#include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/OpenFlags.hh"
 #include "Genie/mmap/memory_mapping.hh"
 
@@ -69,9 +70,9 @@ namespace Genie
 			
 			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
 			
-			virtual boost::shared_ptr< IOHandle > Clone();
+			virtual IOPtr Clone();
 			
-			virtual void Attach( const boost::shared_ptr< IOHandle >& target );
+			virtual void Attach( const IOPtr& target );
 			
 			virtual FSTreePtr GetFile();
 			
@@ -82,9 +83,9 @@ namespace Genie
 	};
 	
 	
-	inline boost::shared_ptr< IOHandle > seize_ptr( IOHandle* handle )
+	inline IOPtr seize_ptr( IOHandle* handle )
 	{
-		return boost::shared_ptr< IOHandle >( handle );
+		return IOPtr( handle );
 	}
 	
 	

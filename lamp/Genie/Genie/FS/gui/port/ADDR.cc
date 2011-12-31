@@ -153,7 +153,7 @@ namespace Genie
 	{
 		if ( !terminal_weak.expired() )
 		{
-			const boost::shared_ptr< IOHandle >& terminal_shared = terminal_weak.lock();
+			const IOPtr& terminal_shared = terminal_weak.lock();
 			
 			TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *terminal_shared ) );
 			
@@ -228,7 +228,7 @@ namespace Genie
 			
 			if ( !params.itsTerminal.expired() )
 			{
-				const boost::shared_ptr< IOHandle >& handle = params.itsTerminal.lock();
+				const IOPtr& handle = params.itsTerminal.lock();
 				
 				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
 				
@@ -627,7 +627,7 @@ namespace Genie
 			
 			void Attach( const FSTreePtr& target ) const;
 			
-			boost::shared_ptr< IOHandle > Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags ) const;
 	};
 	
 	void FSTree_sys_port_ADDR_tty::Attach( const FSTreePtr& target ) const
@@ -635,20 +635,20 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsTTYDelegate = target;
 	}
 	
-	static inline boost::shared_ptr< IOHandle >
+	static inline IOPtr
 	//
 	NewTerminal( const plus::string& name )
 	{
 		return seize_ptr( new TerminalHandle( name ) );
 	}
 	
-	boost::shared_ptr< IOHandle >
+	IOPtr
 	//
 	FSTree_sys_port_ADDR_tty::Open( OpenFlags flags ) const
 	{
 		WindowParameters& params = gWindowParametersMap[ WindowKey() ];
 		
-		boost::shared_ptr< IOHandle > tty;
+		IOPtr tty;
 		
 		const bool has_tty = params.itsTTYDelegate.get() != NULL;
 		
@@ -660,7 +660,7 @@ namespace Genie
 		plus::string pathname = ( has_tty ? tty->GetFile().get()
 		                                  : this                 )->Pathname();
 		
-		boost::shared_ptr< IOHandle > terminal = NewTerminal( pathname );
+		IOPtr terminal = NewTerminal( pathname );
 		
 		if ( has_tty )
 		{

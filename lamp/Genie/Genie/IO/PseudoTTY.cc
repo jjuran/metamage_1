@@ -25,7 +25,7 @@ namespace Genie
 		return GetDynamicGroup< PseudoTTYHandle >();
 	}
 	
-	static inline boost::shared_ptr< IOHandle >
+	static inline IOPtr
 	//
 	NewPseudoTTY( TerminalID                              id,
 	              const boost::intrusive_ptr< Conduit >&  input,
@@ -34,16 +34,16 @@ namespace Genie
 		return seize_ptr( new PseudoTTYHandle( id, input, output ) );
 	}
 	
-	void GetNewPseudoTTYPair( boost::shared_ptr< IOHandle >& master,
-	                          boost::shared_ptr< IOHandle >& slave )
+	void GetNewPseudoTTYPair( IOPtr&  master,
+	                          IOPtr&  slave )
 	{
 		static TerminalID index = 0;
 		
 		boost::intrusive_ptr< Conduit > incoming( new Conduit );
 		boost::intrusive_ptr< Conduit > outgoing( new Conduit );
 		
-		boost::shared_ptr< IOHandle > master_handle( NewPseudoTTY( index, outgoing, incoming ) );
-		boost::shared_ptr< IOHandle > slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
+		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
+		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
 		GetPseudoTTYMap()[ index ] = slave_handle;
 		
@@ -54,7 +54,7 @@ namespace Genie
 	}
 	
 	
-	static inline boost::shared_ptr< IOHandle > NewTerminal( const plus::string& name )
+	static inline IOPtr NewTerminal( const plus::string& name )
 	{
 		return seize_ptr( new TerminalHandle( name ) );
 	}

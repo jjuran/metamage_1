@@ -78,7 +78,7 @@ namespace Genie
 		return it != end ? it : NULL;
 	}
 	
-	boost::shared_ptr< IOHandle > GetSimpleDeviceHandle( const plus::string& path )
+	IOPtr GetSimpleDeviceHandle( const plus::string& path )
 	{
 		if ( const DeviceIOSpec* device = FindDevice( path ) )
 		{
