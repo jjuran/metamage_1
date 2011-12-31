@@ -17,11 +17,11 @@
 #include "plus/string.hh"
 
 // boost
-#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
+#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/OpenFlags.hh"
 
 // time.h
@@ -36,11 +36,8 @@ namespace Genie
 	
 	class IOHandle;
 	
-	class FSTree;
 	class FSTreeCache;
 	class FSIterator;
-	
-	typedef boost::intrusive_ptr< FSTree const > FSTreePtr;
 	
 	typedef boost::intrusive_ptr< FSIterator > FSIteratorPtr;
 	
