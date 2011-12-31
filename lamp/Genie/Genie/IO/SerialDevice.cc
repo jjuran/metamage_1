@@ -99,7 +99,8 @@ namespace Genie
 	
 	struct SerialDevicePair
 	{
-		boost::weak_ptr< IOHandle > passive, active;
+		IOHandle*  passive;
+		IOHandle*  active;
 		
 		SerialDevicePair() : passive(), active()
 		{
@@ -125,7 +126,7 @@ namespace Genie
 		{
 			SerialDevicePair& pair = it->second;
 			
-			(isPassive ? pair.passive : pair.active).reset();
+			(isPassive ? pair.passive : pair.active) = NULL;
 		}
 	}
 	
@@ -152,18 +153,18 @@ namespace Genie
 		
 		SerialDevicePair& pair = GetSerialDevicePair( portName );
 		
-		boost::weak_ptr< IOHandle >& same  = isPassive ? pair.passive : pair.active;
-		boost::weak_ptr< IOHandle >& other = isPassive ? pair.active : pair.passive;
+		IOHandle*& same  = isPassive ? pair.passive : pair.active;
+		IOHandle*  other = isPassive ? pair.active : pair.passive;
 		
-		while ( !same.expired() )
+		while ( same != NULL )
 		{
 			try_again( nonblocking );
 		}
 		
-		IOPtr result = other.expired() ? NewSerialDeviceHandle( portName, isPassive )
-		                               : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other.lock().get() ), isPassive );
+		boost::shared_ptr< IOHandle > result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
+		                                                     : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other ), isPassive );
 		
-		same = result;
+		same = result.get();
 		
 		return result;
 		
