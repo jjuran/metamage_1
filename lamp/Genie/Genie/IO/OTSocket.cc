@@ -86,7 +86,7 @@ namespace Genie
 			
 			void Listen( int backlog );
 			
-			std::auto_ptr< IOHandle > Accept( sockaddr& client, socklen_t& len );
+			IOPtr Accept( sockaddr& client, socklen_t& len );
 			
 			void Connect( const sockaddr& server, socklen_t len );
 			
@@ -416,7 +416,7 @@ namespace Genie
 		it_is_listener = true;
 	}
 	
-	std::auto_ptr< IOHandle > OTSocket::Accept( sockaddr& client, socklen_t& len )
+	IOPtr OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
 		RepairListener();
 		
@@ -440,7 +440,7 @@ namespace Genie
 		
 		OTSocket* handle = new OTSocket;
 		
-		std::auto_ptr< IOHandle > newSocket( handle );
+		IOPtr newSocket( handle );
 		
 		handle->itsPeerAddress.Assign( client, len );
 		

@@ -141,11 +141,11 @@ namespace Genie
 			// addr != NULL  implies  addrlen != NULL
 			socklen_t& length = addr != NULL ? *addrlen : dummy_length;
 			
-			std::auto_ptr< IOHandle > incoming( sock.Accept( address, length ) );
+			IOPtr incoming( sock.Accept( address, length ) );
 			
 			int fd = LowestUnusedFileDescriptor();
 			
-			AssignFileDescriptor( fd, IOPtr( incoming ) );
+			AssignFileDescriptor( fd, incoming );
 			
 			if ( addr == NULL  &&  addrlen != NULL )
 			{
