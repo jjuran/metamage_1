@@ -14,7 +14,8 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
+#include "Genie/IO/OpenFlags.hh"
 #include "Genie/mmap/memory_mapping.hh"
 
 
