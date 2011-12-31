@@ -106,10 +106,12 @@ namespace Genie
 		}
 	};
 	
+	typedef std::map< plus::string, SerialDevicePair > SerialDeviceMap;
+	
+	static SerialDeviceMap gSerialDevices;
+	
 	static SerialDevicePair& GetSerialDevicePair( const plus::string& portName )
 	{
-		static std::map< plus::string, SerialDevicePair > gSerialDevices;
-		
 		SerialDevicePair& pair = gSerialDevices[ portName ];
 		
 		return pair;
