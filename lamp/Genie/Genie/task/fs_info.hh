@@ -10,14 +10,11 @@
 #include "plus/ref_count.hh"
 
 // Genie
-#include "Genie/IO/Base.hh"
+#include "Genie/IO/IOPtr.hh"
 
 
 namespace Genie
 {
-	
-	class IOHandle;
-	
 	
 	class fs_info;
 	
