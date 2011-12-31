@@ -71,6 +71,7 @@ namespace Genie
 	class SerialDeviceHandle : public DeviceHandle
 	{
 		private:
+			plus::string                    itsPortName;
 			n::shared< Mac::DriverRefNum >  itsOutputRefNum;
 			n::shared< Mac::DriverRefNum >  itsInputRefNum;
 			bool                            itIsPassive;
@@ -223,6 +224,7 @@ namespace Genie
 	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
 		DeviceHandle( O_RDWR ),
+		itsPortName( portName ),
 		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
 		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
 		itIsPassive( passive )
@@ -242,6 +244,7 @@ namespace Genie
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
 	:
 		DeviceHandle( O_RDWR ),
+		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
 		itIsPassive    ( passive               )
@@ -251,6 +254,7 @@ namespace Genie
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
 	:
 		DeviceHandle( O_RDWR ),
+		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
 		itIsPassive    ( other.itIsPassive     )
