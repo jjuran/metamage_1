@@ -10,6 +10,9 @@
 #include <Events.h>
 #endif
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <sys/ttycom.h>
 

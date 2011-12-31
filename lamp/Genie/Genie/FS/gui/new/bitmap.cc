@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/bitmap.hh"
 
+// Standard C++
+#include <algorithm>
+
 // plus
 #include "plus/serialize.hh"
 

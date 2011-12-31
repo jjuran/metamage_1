@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Handle.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 

@@ -10,6 +10,9 @@
 #include <LowMem.h>
 #endif
 
+// Standard C++
+#include <algorithm>
+
 // gear
 #include "gear/inscribe_decimal.hh"
 

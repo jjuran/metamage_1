@@ -5,6 +5,9 @@
 
 #include "Genie/FS/TextEdit_text.hh"
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <sys/stat.h>
 

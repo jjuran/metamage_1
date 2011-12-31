@@ -7,6 +7,9 @@
 
 #include "Genie/FS/sys/mac/crm/serial.hh"
 
+// Standard C++
+#include <algorithm>
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
