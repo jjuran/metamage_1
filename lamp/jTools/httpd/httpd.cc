@@ -218,7 +218,7 @@ namespace tool
 			throw bad_http_request();
 		}
 		
-		parsed.resource.assign( request, resource - begin, space - begin );  // e.g. "/logo.png"
+		parsed.resource.assign( request, resource - begin, space - resource );  // e.g. "/logo.png"
 		
 		// HTTP version string starts after the second space
 		const char* version = space + 1;
