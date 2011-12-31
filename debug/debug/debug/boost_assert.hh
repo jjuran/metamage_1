@@ -7,6 +7,7 @@
 #define DEBUG_BOOSTASSERT_HH
 
 #define BOOST_ENABLE_ASSERT_HANDLER
+#define BOOST_NO_IOSTREAM
 
 // Debug
 #include "debug/assert.hh"
