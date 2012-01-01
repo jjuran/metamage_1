@@ -4,7 +4,7 @@
 */
 
 // Standard C
-#include <stdio.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -24,31 +24,6 @@
 
 using v68k::big_word;
 using v68k::big_longword;
-
-
-static void dump( const v68k::emulator& emu )
-{
-	const v68k::registers& regs = emu.regs;
-	
-	printf( "\n" );
-	
-	for ( int i = 0;  i < 8;  ++i )
-	{
-		printf( "D%d: %.8x   A%d: %.8x\n", i, regs.d[i], i, regs.a[i] );
-	}
-	
-	printf( "\n" );
-	
-	printf( "Alt SP:  %.8x\n", regs.alt_sp  );
-	printf( "Alt SSP: %.8x\n", regs.alt_ssp );
-	
-	printf( "\n" );
-	
-	printf( "PC: %.8x\n", regs.pc );
-	printf( "SR: %.4x\n", emu.get_SR() );
-	
-	printf( "\n" );
-}
 
 
 const uint32_t params_max_size = 4096;
@@ -195,9 +170,7 @@ static int execute_68k( int argc, char** argv )
 	
 	if ( mem == NULL )
 	{
-		fprintf( stderr, "Unable to allocate %d bytes\n", mem_size );
-		
-		return 1;
+		abort();
 	}
 	
 	load_vectors( mem );
@@ -214,9 +187,7 @@ static int execute_68k( int argc, char** argv )
 	
 	if ( args_data >= args_limit )
 	{
-		fprintf( stderr, "Parameter area well exceeded by argv\n" );
-		
-		return 1;
+		abort();
 	}
 	
 	while ( *++argv != NULL )
@@ -227,9 +198,7 @@ static int execute_68k( int argc, char** argv )
 		
 		if ( len > args_limit - args_data )
 		{
-			fprintf( stderr, "Parameter area exceeded by argv\n" );
-			
-			return 1;
+			abort();
 		}
 		
 		memcpy( args_data, *argv, len );
@@ -247,8 +216,6 @@ static int execute_68k( int argc, char** argv )
 		{
 			int n_read = read( fd, mem + code_address, code_max_size );
 			
-			fprintf( stderr, "Loaded %d bytes from %s\n", n_read, path );
-			
 			close( fd );
 		}
 	}
@@ -265,11 +232,7 @@ step_loop:
 	{
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
-			printf( "%d instruction limit exceeded\n", instruction_limit );
-			
-			dump( emu );
-			
-			exit( 3 );
+			raise( SIGXCPU );
 		}
 		
 		continue;
@@ -290,20 +253,12 @@ step_loop:
 		return emu.regs.d[0];
 	}
 	
-	putchar( '\n' );
-	
-	const char* condition;
-	
 	switch ( emu.condition )
 	{
 		using namespace v68k;
 		
 		case halted:
-			condition = "halted";
-			break;
-		
-		case stopped:
-			condition = "stopped";
+			raise( SIGSEGV );
 			break;
 		
 		case bkpt_0:
@@ -314,22 +269,12 @@ step_loop:
 		case bkpt_5:
 		case bkpt_6:
 		case bkpt_7:
-			condition = NULL;
-			
-			printf( "Breakpoint %d\n", emu.condition - bkpt_0 );
+			raise( SIGILL );
 			break;
 		
 		default:
-			condition = "???";
 			break;
 	}
-	
-	if ( condition )
-	{
-		printf( "Processor %s\n", condition );
-	}
-	
-	dump( emu );
 	
 	return 1;
 }
