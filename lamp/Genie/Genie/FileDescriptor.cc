@@ -8,6 +8,9 @@
 // iota
 #include "iota/swap.hh"
 
+// Genie
+#include "Genie/IO/Base.hh"
+
 
 namespace Genie
 {
