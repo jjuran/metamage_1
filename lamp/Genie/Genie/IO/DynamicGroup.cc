@@ -27,7 +27,9 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return it->second->shared_from_this();
+		IOHandle* h = (IOHandle*) it->second;
+		
+		return h->shared_from_this();
 	}
 	
 }

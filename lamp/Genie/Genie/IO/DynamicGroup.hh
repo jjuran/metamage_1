@@ -18,7 +18,7 @@ namespace Genie
 	
 	typedef std::size_t DynamicElementID;
 	
-	typedef std::map< DynamicElementID, IOHandle* > DynamicGroup;
+	typedef std::map< DynamicElementID, const void* > DynamicGroup;
 	
 	template < class Handle >
 	DynamicGroup& GetDynamicGroup()
