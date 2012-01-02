@@ -45,7 +45,7 @@ namespace Genie
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
-		GetPseudoTTYMap()[ index ] = slave_handle;
+		SetDynamicElementByID< PseudoTTYHandle >( index, slave_handle );
 		
 		++index;
 		

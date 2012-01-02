@@ -766,7 +766,7 @@ namespace Genie
 		
 		IOPtr result( NewConsoleTTY( Self(), id ) );
 		
-		GetDynamicGroup< ConsoleTTYHandle >()[ id ] = result;
+		SetDynamicElementByID< ConsoleTTYHandle >( id, result );
 		
 		return result;
 	}

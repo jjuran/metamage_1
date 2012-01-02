@@ -18,7 +18,7 @@ namespace Genie
 	
 	typedef std::size_t DynamicElementID;
 	
-	typedef std::map< DynamicElementID, boost::weak_ptr< IOHandle > > DynamicGroup;
+	typedef std::map< DynamicElementID, IOHandle* > DynamicGroup;
 	
 	template < class Handle >
 	DynamicGroup& GetDynamicGroup()
@@ -37,6 +37,14 @@ namespace Genie
 		DynamicGroup& group( GetDynamicGroup< Handle >() );
 		
 		return GetDynamicElementFromGroupByID( group, id );
+	}
+	
+	template < class Handle >
+	void SetDynamicElementByID( DynamicElementID id, const boost::shared_ptr< IOHandle >& h )
+	{
+		DynamicGroup& group( GetDynamicGroup< Handle >() );
+		
+		group[ id ] = h.get();
 	}
 	
 }
