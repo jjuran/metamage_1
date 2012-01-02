@@ -14,7 +14,10 @@
 #include "plus/string/concat.hh"
 
 // Debug
-#include "debug/assert.hh"
+#include "debug/boost_assert.hh"
+
+// boost
+#include <boost/shared_ptr.hpp>
 
 // Nitrogen
 #include "Nitrogen/DateTimeUtils.hh"
