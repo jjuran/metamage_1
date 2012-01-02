@@ -194,9 +194,7 @@ namespace Genie
 		
 		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
 		{
-			ViewParametersSubMap temp;
-			
-			temp.swap( *it );
+			ViewParametersSubMap temp = *it;
 			
 			gViewParametersMap.erase( it );
 			
