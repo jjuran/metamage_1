@@ -12,6 +12,23 @@
 namespace Genie
 {
 	
+	Session::Session()
+	{
+	}
+	
+	Session::Session( int id ) : itsID( id )
+	{
+	}
+	
+	Session::~Session()
+	{
+	}
+	
+	void Session::SetControllingTerminal( const IOPtr& terminal )
+	{
+		itsControllingTerminal = terminal;
+	}
+	
 	ProcessGroup::~ProcessGroup()
 	{
 		if ( IOHandle* handle = itsSession->GetControllingTerminal().get() )

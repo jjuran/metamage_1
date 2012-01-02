@@ -29,18 +29,17 @@ namespace Genie
 			IOPtr  itsControllingTerminal;
 		
 		public:
-			Session()  {}
+			Session();
 			
-			Session( int id ) : itsID( id )  {}
+			Session( int id );
+			
+			~Session();
 			
 			int ID() const  { return itsID; }
 			
 			const IOPtr& GetControllingTerminal() const  { return itsControllingTerminal; }
 			
-			void SetControllingTerminal( const IOPtr& terminal )
-			{
-				itsControllingTerminal = terminal;
-			}
+			void SetControllingTerminal( const IOPtr& terminal );
 	};
 	
 	class ProcessGroup : public plus::ref_count< ProcessGroup >
