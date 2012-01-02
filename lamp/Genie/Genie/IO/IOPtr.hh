@@ -10,7 +10,7 @@
 #include "debug/boost_assert.hh"
 
 // boost
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 
 
 namespace Genie
@@ -18,7 +18,7 @@ namespace Genie
 	
 	class IOHandle;
 	
-	typedef boost::shared_ptr< IOHandle > IOPtr;
+	typedef boost::intrusive_ptr< IOHandle > IOPtr;
 	
 }
 

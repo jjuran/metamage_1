@@ -29,7 +29,7 @@ namespace Genie
 		
 		IOHandle* h = (IOHandle*) it->second;
 		
-		return h->shared_from_this();
+		return h;
 	}
 	
 }
