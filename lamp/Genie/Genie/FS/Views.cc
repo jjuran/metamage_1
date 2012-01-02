@@ -12,6 +12,9 @@
 // Standard C++
 #include <map>
 
+// iota
+#include "iota/swap.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -68,7 +71,7 @@ namespace Genie
 	{
 		itsDelegate.swap( other.itsDelegate );
 		
-		using std::swap;
+		using iota::swap;
 		
 		swap( itsFactory,   other.itsFactory   );
 		swap( itsWindowKey, other.itsWindowKey );
