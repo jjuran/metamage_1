@@ -161,8 +161,8 @@ namespace Genie
 			try_again( nonblocking );
 		}
 		
-		boost::shared_ptr< IOHandle > result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
-		                                                     : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other ), isPassive );
+		IOPtr result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
+		                             : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other ), isPassive );
 		
 		same = result.get();
 		
