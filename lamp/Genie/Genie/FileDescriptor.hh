@@ -21,12 +21,15 @@ namespace Genie
 		IOPtr  handle;
 		bool   closeOnExec;
 		
-		FileDescriptor() : closeOnExec( false )  {}
+		FileDescriptor();
 		
-		FileDescriptor( const IOPtr& handle ) : handle     ( handle ),
-		                                        closeOnExec( false  )
-		{
-		}
+		FileDescriptor( const IOPtr& handle );
+		
+		FileDescriptor( const FileDescriptor& other );
+		
+		~FileDescriptor();
+		
+		FileDescriptor& operator=( const FileDescriptor& );
 		
 		void swap( FileDescriptor& other );
 	};

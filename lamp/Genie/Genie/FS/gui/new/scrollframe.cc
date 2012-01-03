@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/scrollframe.hh"
 
+// Standard C++
+#include <algorithm>
+
 // plus
 #include "plus/serialize.hh"
 

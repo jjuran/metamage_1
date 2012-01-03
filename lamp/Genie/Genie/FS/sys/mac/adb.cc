@@ -10,6 +10,9 @@
 // Standard C
 #include <ctype.h>
 
+// Standard C++
+#include <algorithm>
+
 // gear
 #include "gear/hexidecimal.hh"
 

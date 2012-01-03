@@ -5,6 +5,9 @@
 
 #include "Genie/FS/ResFile_Dir.hh"
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <sys/stat.h>
 

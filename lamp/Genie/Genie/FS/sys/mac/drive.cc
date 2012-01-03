@@ -7,6 +7,9 @@
 
 #include "Genie/FS/sys/mac/drive.hh"
 
+// Standard C++
+#include <algorithm>
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"

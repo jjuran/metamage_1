@@ -101,7 +101,7 @@ namespace Genie
 				
 				this->setpgrp( current.GetPGID() );
 				
-				process_session->SetControllingTerminal( shared_from_this() );
+				process_session->SetControllingTerminal( this );
 				break;
 			
 			default:

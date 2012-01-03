@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/vol/list.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Iota
 #include "iota/strings.hh"
 

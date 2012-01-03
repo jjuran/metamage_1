@@ -14,6 +14,7 @@
 #endif
 
 // Standard C++
+#include <algorithm>
 #include <map>
 
 // POSIX

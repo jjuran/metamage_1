@@ -6,6 +6,9 @@
 // Standard C
 #include <errno.h>
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <sys/stat.h>
 

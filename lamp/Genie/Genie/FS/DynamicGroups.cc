@@ -5,6 +5,9 @@
 
 #include "Genie/FS/DynamicGroups.hh"
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <sys/stat.h>
 

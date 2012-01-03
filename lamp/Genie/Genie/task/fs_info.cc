@@ -5,6 +5,9 @@
 
 #include "Genie/task/fs_info.hh"
 
+// Genie
+#include "Genie/IO/Base.hh"
+
 
 namespace Genie
 {

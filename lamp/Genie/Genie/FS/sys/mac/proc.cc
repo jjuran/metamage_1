@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/proc.hh"
 
+// Standard C++
+#include <algorithm>
+
 // gear
 #include "gear/hexidecimal.hh"
 

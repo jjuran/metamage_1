@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/caption.hh"
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <fcntl.h>
 

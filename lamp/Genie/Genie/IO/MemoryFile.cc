@@ -5,6 +5,9 @@
 
 #include "Genie/IO/MemoryFile.hh"
 
+// Standard C++
+#include <algorithm>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 

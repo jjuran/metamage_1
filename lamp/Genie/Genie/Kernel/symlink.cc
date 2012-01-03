@@ -6,6 +6,9 @@
 // Standard C
 #include <errno.h>
 
+// Standard C++
+#include <algorithm>
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/file-tests.hh"

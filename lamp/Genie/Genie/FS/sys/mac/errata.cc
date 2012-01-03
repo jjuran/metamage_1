@@ -10,6 +10,9 @@
 #include <ConditionalMacros.h>
 #endif
 
+// Standard C++
+#include <algorithm>
+
 // plus
 #include "plus/deconstruct_bool.hh"
 #include "plus/var_string.hh"

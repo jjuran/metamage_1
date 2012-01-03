@@ -3,6 +3,9 @@
  *	=======
  */
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include <unistd.h>
 

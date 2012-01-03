@@ -10,8 +10,10 @@
 #include "debug/boost_assert.hh"
 
 // boost
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/intrusive_ptr.hpp>
+
+// plus
+#include "plus/ref_count.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
@@ -40,7 +42,7 @@ namespace Genie
 		
 	*/
 	
-	class IOHandle : public boost::enable_shared_from_this< IOHandle >
+	class IOHandle : public plus::ref_count< IOHandle >
 	{
 		private:
 			OpenFlags itsOpenFlags;

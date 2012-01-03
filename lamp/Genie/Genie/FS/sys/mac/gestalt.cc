@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/gestalt.hh"
 
+// Satndard C++
+#include <algorithm>
+
 // Mac OS
 #ifndef __MACERRORS__
 #include <MacErrors.h>
