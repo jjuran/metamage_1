@@ -20,12 +20,12 @@ namespace Genie
 			FSTreeCache           ( const FSTreeCache& );
 			FSTreeCache& operator=( const FSTreeCache& );
 		
-		protected:
-			// protected destructor prevents slicing
-			~FSTreeCache()  {}
-		
 		public:
 			FSTreeCache()
+			{
+			}
+			
+			virtual ~FSTreeCache()
 			{
 			}
 			
