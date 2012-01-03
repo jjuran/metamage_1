@@ -13,12 +13,6 @@
 #include "plus/hexidecimal.hh"
 #include "plus/string/concat.hh"
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// boost
-#include <boost/shared_ptr.hpp>
-
 // Nitrogen
 #include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/OSUtils.hh"
@@ -45,7 +39,7 @@ namespace Genie
 	const FSTreePtr null_FSTreePtr = FSTreePtr();
 	
 	
-	typedef boost::shared_ptr< const FSTreeCache > FSTreeCachePtr;
+	typedef boost::intrusive_ptr< const FSTreeCache > FSTreeCachePtr;
 	
 	class FSIterator_Cache : public FSIterator
 	{

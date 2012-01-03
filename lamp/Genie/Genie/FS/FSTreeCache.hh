@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	class FSTreeCache
+	class FSTreeCache : public plus::ref_count< FSTreeCache >
 	{
 		private:
 			// non-copyable
