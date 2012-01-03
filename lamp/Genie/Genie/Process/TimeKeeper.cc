@@ -5,21 +5,16 @@
 
 #include "Genie/Process/TimeKeeper.hh"
 
-// Nitrogen
-#include "Nitrogen/Timer.hh"
+// Standard C
+#include <time.h>
 
 
 namespace Genie
 {
 	
-	static inline UInt64 GetTimer()
-	{
-		return Nitrogen::Microseconds();
-	}
-	
 	TimeKeeper::TimeKeeper()
 	:
-		itsLastTimerCheckpoint( GetTimer() ),
+		itsLastTimerCheckpoint( clock() ),
 		itsLastResume(),
 		itsLastActivity()
 	{
@@ -31,9 +26,9 @@ namespace Genie
 		itsTimes.child_system += times.system + times.child_system;
 	}
 	
-	static void UpdateClock( UInt64& clock, UInt64& checkpoint )
+	static void UpdateClock( uint64_t& clock, uint64_t& checkpoint )
 	{
-		UInt64 now = GetTimer();
+		const uint64_t now = ::clock();
 		
 		clock += now - checkpoint;
 		
@@ -59,7 +54,7 @@ namespace Genie
 	
 	void TimeKeeper::ResumeTimer()
 	{
-		UInt64 now = GetTimer();
+		const uint64_t now = clock();
 		
 		itsLastResume = now;
 		

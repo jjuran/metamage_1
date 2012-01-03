@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <time.h>
 
 // POSIX
 #include "sys/stat.h"
@@ -46,7 +47,6 @@
 
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Threads.hh"
-#include "Nitrogen/Timer.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
@@ -129,7 +129,7 @@ namespace Genie
 	
 	static uint64_t microseconds()
 	{
-		return N::Microseconds();
+		return clock();
 	}
 	
 	extern "C" _relix_system_parameter_block global_parameter_block;
@@ -691,7 +691,7 @@ namespace Genie
 	
 	unsigned int Process::SetAlarm( unsigned int seconds )
 	{
-		UInt64 now = N::Microseconds();
+		uint64_t now = clock();
 		
 		unsigned int remainder = 0;
 		
@@ -1389,7 +1389,7 @@ namespace Genie
 		
 		if ( itsAlarmClock )
 		{
-			UInt64 now = N::Microseconds();
+			uint64_t now = clock();
 			
 			if ( now > itsAlarmClock )
 			{

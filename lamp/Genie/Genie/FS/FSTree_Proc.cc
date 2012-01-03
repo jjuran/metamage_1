@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_Proc.hh"
 
+// Standard C
+#include <time.h>
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -15,9 +18,6 @@
 
 // Recall
 #include "recall/backtrace.hh"
-
-// Nitrogen
-#include "Nitrogen/Timer.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -42,7 +42,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -349,7 +348,7 @@ namespace Genie
 		{
 			runState = 'D';
 		}
-		else if ( runState == 'S'  &&  N::Microseconds() - process.GetTimeOfLastActivity() > 20 * 1000 * 1000 )
+		else if ( runState == 'S'  &&  clock() - process.GetTimeOfLastActivity() > 20 * 1000 * 1000 )
 		{
 			runState = 'I';  // idle
 		}
