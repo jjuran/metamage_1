@@ -13,13 +13,22 @@
 namespace Genie
 {
 	
-	class FSTreeCache
+	class FSTreeCache : public plus::ref_count< FSTreeCache >
 	{
-		protected:
-			// protected destructor prevents slicing
-			~FSTreeCache()  {}
+		private:
+			// non-copyable
+			FSTreeCache           ( const FSTreeCache& );
+			FSTreeCache& operator=( const FSTreeCache& );
 		
 		public:
+			FSTreeCache()
+			{
+			}
+			
+			virtual ~FSTreeCache()
+			{
+			}
+			
 			typedef const FSNode& const_reference;
 			
 			void push_back( const FSNode& node );
