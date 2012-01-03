@@ -76,7 +76,7 @@ namespace tool
 			blue  ( target.platform & apiMacBlue            ),
 			carbon( target.platform & apiMacCarbon          ),
 			sym   ( target.build     == buildSymbolics ),
-			debug ( target.build     == buildDebug     ),
+			debug ( target.build     != buildRelease   ),
 			gnu   ( target.toolchain == toolchainGNU   )
 		{}
 		
