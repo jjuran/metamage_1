@@ -19,7 +19,6 @@
 
 // Nitrogen
 #include "Nitrogen/Threads.hh"
-#include "Nitrogen/Timer.hh"
 
 // MacFeatures
 #include "MacFeatures/Threads.hh"
