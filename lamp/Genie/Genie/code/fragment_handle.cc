@@ -36,10 +36,10 @@ namespace Genie
 	fragment_handle::fragment_handle( const execution_unit& exec )
 	:
 		loaded_handle( exec ),
-		its_lamp_main(),
-		its_fragment_connection( connect( exec.get(), &its_lamp_main ) )
+		its_relix_main(),
+		its_fragment_connection( connect( exec.get(), &its_relix_main ) )
 	{
-		if ( its_lamp_main == NULL )
+		if ( its_relix_main == NULL )
 		{
 			p7::throw_errno( ENOEXEC );
 		}
@@ -51,7 +51,7 @@ namespace Genie
 	
 	relix_entry fragment_handle::get_main_entry_point() const
 	{
-		return its_lamp_main;
+		return its_relix_main;
 	}
 	
 }

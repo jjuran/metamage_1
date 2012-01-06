@@ -26,7 +26,7 @@ namespace Genie
 	class fragment_handle : public loaded_handle
 	{
 		private:
-			relix_entry its_lamp_main;
+			relix_entry its_relix_main;
 			
 			nucleus::owned< CFragConnectionID >  its_fragment_connection;
 		
