@@ -16,14 +16,14 @@ namespace Genie
 	class fixed_address : public exec_handle
 	{
 		private:
-			lamp_entry its_entry_point;
+			relix_entry its_entry_point;
 		
 		public:
-			fixed_address( lamp_entry entry ) : its_entry_point( entry )
+			fixed_address( relix_entry entry ) : its_entry_point( entry )
 			{
 			}
 			
-			lamp_entry get_main_entry_point() const  { return its_entry_point; }
+			relix_entry get_main_entry_point() const  { return its_entry_point; }
 	};
 	
 }

@@ -26,7 +26,7 @@ namespace Genie
 	class fragment_handle : public loaded_handle
 	{
 		private:
-			lamp_entry its_lamp_main;
+			relix_entry its_lamp_main;
 			
 			nucleus::owned< CFragConnectionID >  its_fragment_connection;
 		
@@ -35,7 +35,7 @@ namespace Genie
 			
 			~fragment_handle();
 			
-			lamp_entry get_main_entry_point() const;
+			relix_entry get_main_entry_point() const;
 	};
 	
 #ifdef __POWERPC__

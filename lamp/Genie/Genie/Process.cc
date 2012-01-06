@@ -269,7 +269,7 @@ namespace Genie
 			char** argv = its_memory_data->get_argv();
 			char** envp = its_memory_data->get_envp();
 			
-			lamp_entry lamp_main = its_exec_handle->get_main_entry_point();
+			relix_entry lamp_main = its_exec_handle->get_main_entry_point();
 			
 			ENTER_USERMAIN();
 			
