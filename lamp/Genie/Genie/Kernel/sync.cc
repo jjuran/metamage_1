@@ -3,14 +3,8 @@
  *	=======
  */
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include "unistd.h"
-
-// Nitrogen
-#include "Nitrogen/Files.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -21,24 +15,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
-	
-	static void Flush_Volume( N::FSVolumeRefNum vRefNum )
-	{
-		OSErr err = ::FlushVol( NULL, vRefNum );
-	}
-	
-	static void FlushAll()
-	{
-		N::Volume_Container volumes( N::Volumes() );
-		
-		std::for_each( volumes.begin(),
-		               volumes.end(),
-		               std::ptr_fun( Flush_Volume ) );
-	}
-	
 	
 	static int fdatasync( int fd )
 	{
@@ -66,17 +42,6 @@ namespace Genie
 		}
 		
 		return 0;
-	}
-	
-	static void sync()
-	{
-		try
-		{
-			FlushAll();
-		}
-		catch ( ... )
-		{
-		}
 	}
 	
 	

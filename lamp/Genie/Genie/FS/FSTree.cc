@@ -13,16 +13,8 @@
 #include "plus/hexidecimal.hh"
 #include "plus/string/concat.hh"
 
-// Nitrogen
-#include "Nitrogen/DateTimeUtils.hh"
-#include "Nitrogen/OSUtils.hh"
-#include "Nitrogen/Threads.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// TimeOff
-#include "TimeOff/TimeOff.hh"
 
 // Genie
 #include "Genie/FS/FSTreeCache_Impl.hh"
@@ -32,7 +24,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -194,9 +185,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
-		
-		time_t now = N::GetDateTime() - timeDiff;
+		const time_t now = time( NULL );
 		
 		const mode_t type = IsDirectory() ? S_IFDIR
 		                  : IsLink()      ? S_IFLNK

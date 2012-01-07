@@ -5,8 +5,8 @@
 
 #include "Genie/api/breathe.hh"
 
-// Nitrogen
-#include "Nitrogen/Timer.hh"
+// Standard C
+#include <time.h>
 
 // Genie
 #include "Genie/current_process.hh"
@@ -18,9 +18,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	bool breathe( bool may_throw )
 	{
 		if ( check_signals( may_throw ) )
@@ -28,7 +25,7 @@ namespace Genie
 			return true;
 		}
 		
-		const UInt64 now = N::Microseconds();
+		const uint64_t now = clock();
 		
 		Process& current = current_process();
 		

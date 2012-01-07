@@ -3,12 +3,12 @@
  *	=========
  */
 
+// Standard C
+#include <time.h>
+
 // POSIX
 #include "sys/select.h"
 #include "unistd.h"
-
-// Nitrogen
-#include "Nitrogen/Timer.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -25,7 +25,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
@@ -33,15 +32,15 @@ namespace Genie
 	                          fd_set*  writefds,
 	                          fd_set*  exceptfds, struct timeval* timeout )
 	{
-		SInt64 remaining_microseconds = 1;
-		UInt64 end_microseconds;
+		int64_t   remaining_microseconds = 1;
+		uint64_t  end_microseconds;
 		
 		if ( timeout != NULL )
 		{
 			remaining_microseconds = timeout->tv_sec * 1000000
 			                       + timeout->tv_usec;
 			
-			end_microseconds = N::Microseconds() + remaining_microseconds;
+			end_microseconds = clock() + remaining_microseconds;
 		}
 		
 		try
@@ -74,7 +73,7 @@ namespace Genie
 				
 				if ( timeout )
 				{
-					remaining_microseconds = end_microseconds - N::Microseconds();
+					remaining_microseconds = end_microseconds - clock();
 				}
 				
 				for ( int i = 0;  i != n;  ++i )

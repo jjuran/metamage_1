@@ -3,11 +3,11 @@
  *	========
  */
 
+// Standard C
+#include <time.h>
+
 // POSIX
 #include "sys/times.h"
-
-// Nitrogen
-#include "Nitrogen/Timer.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -18,14 +18,13 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	struct StartTime
 	{
-		UInt64 microseconds;
+		clock_t microseconds;
 		
-		StartTime() : microseconds( N::Microseconds() )  {}
+		StartTime() : microseconds( clock() )
+		{
+		}
 	};
 	
 	static StartTime gStartTime;
@@ -43,7 +42,7 @@ namespace Genie
 			tp->tms_cstime = clocks.child_system;
 		}
 		
-		return N::Microseconds() - gStartTime.microseconds;
+		return clock() - gStartTime.microseconds;
 	}
 	
 	#pragma force_active on
