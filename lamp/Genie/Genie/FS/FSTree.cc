@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree.hh"
 
+// Standard C++
+#include <algorithm>
+
 // POSIX
 #include "fcntl.h"
 #include "sys/stat.h"
