@@ -87,6 +87,7 @@ qw
 	openbsd-libc.lib
 	OTXTILib
 	PascalPreCarbonUPPGlue.o
+	PosixLib.lib
 	sfio.lib
 );
 
