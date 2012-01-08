@@ -18,6 +18,7 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
+#include "Genie/FS/FSIteratorPtr.hh"
 #include "Genie/FS/FSNode.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
@@ -34,9 +35,6 @@ namespace Genie
 {
 	
 	class FSTreeCache;
-	class FSIterator;
-	
-	typedef boost::intrusive_ptr< FSIterator > FSIteratorPtr;
 	
 	
 	extern const FSTreePtr null_FSTreePtr;
