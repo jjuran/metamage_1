@@ -9,6 +9,7 @@
 #define GENIE_FS_BASICDIRECTORY_HH
 
 // Genie
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreePtr.hh"
 
 
@@ -21,9 +22,6 @@ namespace plus
 
 namespace Genie
 {
-	
-	class FSTreeCache;
-	
 	
 	typedef FSTreePtr (*Lookup_Proc)( const FSTreePtr& parent, const plus::string& name );
 	

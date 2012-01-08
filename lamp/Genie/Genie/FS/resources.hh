@@ -10,6 +10,7 @@
 #include "plus/string.hh"
 
 // Genie
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreePtr.hh"
 
 // Files.h
@@ -18,8 +19,6 @@ struct FSSpec;
 
 namespace Genie
 {
-	
-	class FSTreeCache;
 	
 	void iterate_resources( const FSSpec& file, FSTreeCache& cache );
 	
