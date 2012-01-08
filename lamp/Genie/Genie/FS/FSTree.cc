@@ -62,10 +62,6 @@ namespace Genie
 	};
 	
 	
-	FSNode::~FSNode()
-	{
-	}
-	
 	FSIterator::~FSIterator()
 	{
 	}

@@ -18,6 +18,7 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
+#include "Genie/FS/FSNode.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/OpenFlags.hh"
@@ -47,22 +48,6 @@ namespace Genie
 	
 	const FSTreePtr& FSRoot();
 	
-	
-	struct FSNode
-	{
-		ino_t         inode;
-		plus::string  name;
-		
-		FSNode()
-		{
-		}
-		
-		FSNode( ino_t i, const plus::string& n ) : inode( i ), name( n )
-		{
-		}
-		
-		~FSNode();
-	};
 	
 	class FSIterator : public plus::ref_count< FSIterator >
 	{
