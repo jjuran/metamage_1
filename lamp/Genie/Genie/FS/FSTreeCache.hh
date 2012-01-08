@@ -6,9 +6,11 @@
 #ifndef GENIE_FS_FSTREECACHE_HH
 #define GENIE_FS_FSTREECACHE_HH
 
+// plus
+#include "plus/ref_count.hh"
+
 // Genie
 #include "Genie/FS/FSNode.hh"
-#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie
