@@ -70,7 +70,7 @@ namespace Genie
 	                         const plus::string&  name,
 	                         const void*          args )
 	{
-		return seize_ptr( new FSTree_Type( parent, name ) );
+		return new FSTree_Type( parent, name );
 	}
 	
 	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,

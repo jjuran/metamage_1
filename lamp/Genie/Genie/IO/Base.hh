@@ -85,12 +85,6 @@ namespace Genie
 	};
 	
 	
-	inline IOPtr seize_ptr( IOHandle* handle )
-	{
-		return IOPtr( handle );
-	}
-	
-	
 	template < class Handle > struct IOHandle_Downcast_Traits;
 	
 	template < class Handle >

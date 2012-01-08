@@ -117,7 +117,7 @@ namespace Genie
 	
 	FSTreePtr IOHandle::GetFile()
 	{
-		return seize_ptr( new FSTree_IOHandle( this ) );
+		return new FSTree_IOHandle( this );
 	}
 	
 	void IOHandle::IOCtl( unsigned long request, int* argp )

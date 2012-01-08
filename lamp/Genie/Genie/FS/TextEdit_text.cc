@@ -87,7 +87,7 @@ namespace Genie
 	
 	IOPtr TextEdit_text_Handle::Clone()
 	{
-		return seize_ptr( new TextEdit_text_Handle( GetFile(), GetFlags() ) );
+		return new TextEdit_text_Handle( GetFile(), GetFlags() );
 	}
 	
 	const FSTree* TextEdit_text_Handle::ViewKey()
@@ -166,7 +166,7 @@ namespace Genie
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{
-		return seize_ptr( new FSTree_TextEdit_text( parent, name ) );
+		return new FSTree_TextEdit_text( parent, name );
 	}
 	
 }

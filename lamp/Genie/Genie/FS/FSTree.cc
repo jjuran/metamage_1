@@ -277,7 +277,7 @@ namespace Genie
 			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
 		}
 		
-		return seize_ptr( new VirtualDirHandle( Self() ) );
+		return new VirtualDirHandle( Self() );
 	}
 	
 	IOPtr FSTree::ChangeToDirectory() const

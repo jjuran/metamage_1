@@ -102,7 +102,7 @@ namespace Genie
 	
 	IOPtr Bits_IO::Clone()
 	{
-		return seize_ptr( new Bits_IO( GetFile(), GetFlags() ) );
+		return new Bits_IO( GetFile(), GetFlags() );
 	}
 	
 	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
@@ -193,7 +193,7 @@ namespace Genie
 	
 	IOPtr FSTree_Bits::Open( OpenFlags flags ) const
 	{
-		return seize_ptr( new Bits_IO( Self(), flags ) );
+		return new Bits_IO( Self(), flags );
 	}
 	
 	class BitMapView : public Ped::View
@@ -264,7 +264,7 @@ namespace Genie
 		params.bitmap.bounds.bottom = 0;
 		params.bitmap.bounds.right  = 0;
 		
-		return seize_ptr( new BitMapView( delegate ) );
+		return new BitMapView( delegate );
 	}
 	
 	
@@ -398,11 +398,11 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void* )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

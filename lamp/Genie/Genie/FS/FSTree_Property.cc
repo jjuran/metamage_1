@@ -166,11 +166,11 @@ namespace Genie
 	{
 		const property_params& params = *(const property_params*) params_;
 		
-		return seize_ptr( new FSTree_Property( parent,
-		                                       name,
-		                                       params.size,
-		                                       params.get,
-		                                       params.set ) );
+		return new FSTree_Property( parent,
+		                            name,
+		                            params.size,
+		                            params.get,
+		                            params.set );
 	}
 	
 }

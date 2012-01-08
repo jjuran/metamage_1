@@ -284,7 +284,7 @@ namespace Genie
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
-		return seize_ptr( new Frame( delegate ) );
+		return new Frame( delegate );
 	}
 	
 	
@@ -395,11 +395,11 @@ namespace Genie
 	                                const plus::string&  name,
 	                                const void*          args )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

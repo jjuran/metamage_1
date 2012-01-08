@@ -37,7 +37,7 @@ namespace Genie
 	
 	FSTreePtr FSNull()
 	{
-		return seize_ptr( new FSTree_Null() );
+		return new FSTree_Null();
 	}
 	
 }

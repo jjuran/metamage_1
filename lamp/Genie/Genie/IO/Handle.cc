@@ -28,9 +28,9 @@ namespace Genie
 	
 	IOPtr Handle_IOHandle::Clone()
 	{
-		return seize_ptr( new Handle_IOHandle( GetFile(),
-		                                       GetFlags(),
-		                                       itsHandle ) );
+		return new Handle_IOHandle( GetFile(),
+		                            GetFlags(),
+		                            itsHandle );
 	}
 	
 	ssize_t Handle_IOHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

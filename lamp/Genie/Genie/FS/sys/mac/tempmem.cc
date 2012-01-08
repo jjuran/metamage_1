@@ -50,7 +50,7 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::TempNewHandle( length );
 		
-		return seize_ptr( new Handle_memory_mapping( h ) );
+		return new Handle_memory_mapping( h );
 	}
 	
 	
@@ -72,7 +72,7 @@ namespace Genie
 	
 	IOPtr FSTree_sys_mac_tempmem::Open( OpenFlags flags ) const
 	{
-		return seize_ptr( new TempMem_IOHandle( Self(), flags ) );
+		return new TempMem_IOHandle( Self(), flags );
 		
 	}
 	
@@ -80,7 +80,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_mac_tempmem( parent, name ) );
+		return new FSTree_sys_mac_tempmem( parent, name );
 	}
 	
 }

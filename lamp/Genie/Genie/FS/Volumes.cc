@@ -92,7 +92,7 @@ namespace Genie
 	                              const plus::string&  name,
 	                              const void*          args )
 	{
-		return seize_ptr( new FSTree_Volumes( parent, name ) );
+		return new FSTree_Volumes( parent, name );
 	}
 	
 	
@@ -126,7 +126,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		return seize_ptr( new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name ) );
+		return new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name );
 	}
 	
 	void FSTree_Volumes::IterateIntoCache( FSTreeCache& cache ) const

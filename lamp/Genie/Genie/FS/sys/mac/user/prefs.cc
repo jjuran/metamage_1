@@ -62,7 +62,7 @@ namespace Genie
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
-		return seize_ptr( new sys_mac_user_prefs( parent, name ) );
+		return new sys_mac_user_prefs( parent, name );
 	}
 	
 }

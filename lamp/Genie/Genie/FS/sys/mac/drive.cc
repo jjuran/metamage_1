@@ -207,7 +207,7 @@ namespace Genie
 	{
 		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return seize_ptr( new Trigger( parent, name, key ) );
+		return new Trigger( parent, name, key );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value

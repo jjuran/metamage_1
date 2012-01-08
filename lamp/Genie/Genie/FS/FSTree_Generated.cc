@@ -61,9 +61,9 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return seize_ptr( new PropertyReaderFileHandle( Self(),
-		                                                flags,
-		                                                its_data ) );
+		return new PropertyReaderFileHandle( Self(),
+		                                     flags,
+		                                     its_data );
 	}
 	
 	FSTreePtr new_generated( const FSTreePtr&     parent,
@@ -72,7 +72,7 @@ namespace Genie
 	{
 		Generated_ReadHook readHook = (Generated_ReadHook) params;
 		
-		return seize_ptr( new FSTree_Generated( parent, name, readHook ) );
+		return new FSTree_Generated( parent, name, readHook );
 	}
 	
 }

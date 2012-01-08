@@ -18,7 +18,7 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const plus::string&  target )
 	{
-		return seize_ptr( new FSTree_SymbolicLink( parent, name, target ) );
+		return new FSTree_SymbolicLink( parent, name, target );
 	}
 	
 }

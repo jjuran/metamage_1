@@ -440,7 +440,7 @@ namespace Genie
 		
 		const plus::string name = MakeName( item );
 		
-		return seize_ptr( new FSTree_HFS( cInfo, onServer, name ) );
+		return new FSTree_HFS( cInfo, onServer, name );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
@@ -460,7 +460,7 @@ namespace Genie
 		
 		const plus::string name = MakeName( fsspec );
 		
-		return seize_ptr( new FSTree_HFS( cInfo, onServer, name ) );
+		return new FSTree_HFS( cInfo, onServer, name );
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
@@ -477,7 +477,7 @@ namespace Genie
 		
 		FSTree_Union* u = NULL;
 		
-		static FSTreePtr result = seize_ptr( u = new FSTree_Union( null_FSTreePtr, plus::string::null ) );
+		static FSTreePtr result = u = new FSTree_Union( null_FSTreePtr, plus::string::null );
 		
 		if ( u != NULL )
 		{
@@ -917,7 +917,7 @@ namespace Genie
 		
 		const N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		return seize_ptr( new MacDirHandle( dir, itIsOnServer ) );
+		return new MacDirHandle( dir, itIsOnServer );
 	}
 	
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
@@ -939,7 +939,7 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Returns >( cInfo, onServer, dir.vRefNum, dir.dirID, macName, 0 );
 		
-		return seize_ptr( new FSTree_HFS( cInfo, onServer, name, parent ) );
+		return new FSTree_HFS( cInfo, onServer, name, parent );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
@@ -1269,7 +1269,7 @@ namespace Genie
 		
 		// This code path is only used on servers.
 		
-		return seize_ptr( new FSTree_HFS( cInfo, true, name ) );
+		return new FSTree_HFS( cInfo, true, name );
 	}
 	
 #endif

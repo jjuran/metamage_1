@@ -141,7 +141,7 @@ namespace Genie
 	                 const boost::intrusive_ptr< Conduit >&  output,
 	                 bool                                    nonblocking )
 	{
-		return seize_ptr( new PairedSocket( input, output, nonblocking ) );
+		return new PairedSocket( input, output, nonblocking );
 	}
 	
 }

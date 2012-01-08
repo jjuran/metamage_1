@@ -73,10 +73,10 @@ namespace Genie
 		
 	#else
 		
-		return seize_ptr( new MemoryFileHandle( Self(),
-		                                        flags,
-		                                        LMGetROMBase(),
-		                                        GetEOF() ) );
+		return new MemoryFileHandle( Self(),
+		                             flags,
+		                             LMGetROMBase(),
+		                             GetEOF() );
 		
 	#endif
 	}
@@ -85,7 +85,7 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_mac_rom( parent, name ) );
+		return new FSTree_sys_mac_rom( parent, name );
 	}
 	
 }

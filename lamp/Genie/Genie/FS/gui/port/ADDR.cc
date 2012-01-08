@@ -636,7 +636,7 @@ namespace Genie
 	//
 	NewTerminal( const plus::string& name )
 	{
-		return seize_ptr( new TerminalHandle( name ) );
+		return new TerminalHandle( name );
 	}
 	
 	IOPtr
@@ -904,7 +904,7 @@ namespace Genie
 		                                           params._.get,
 		                                           params._.set ) );
 		
-		return seize_ptr( tree );
+		return tree;
 	}
 	
 	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value

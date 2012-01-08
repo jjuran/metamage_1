@@ -31,7 +31,7 @@ namespace Genie
 	              const boost::intrusive_ptr< Conduit >&  input,
 	              const boost::intrusive_ptr< Conduit >&  output )
 	{
-		return seize_ptr( new PseudoTTYHandle( id, input, output ) );
+		return new PseudoTTYHandle( id, input, output );
 	}
 	
 	void GetNewPseudoTTYPair( IOPtr&  master,
@@ -56,7 +56,7 @@ namespace Genie
 	
 	static inline IOPtr NewTerminal( const plus::string& name )
 	{
-		return seize_ptr( new TerminalHandle( name ) );
+		return new TerminalHandle( name );
 	}
 	
 	static inline plus::string make_devpts( size_t id )

@@ -198,10 +198,10 @@ namespace Genie
 	
 	IOPtr Rsrc_IOHandle::Clone()
 	{
-		return seize_ptr( new Rsrc_IOHandle( GetFile(),
-		                                     GetFlags(),
-		                                     GetHandle(),
-		                                     itsFileSpec ) );
+		return new Rsrc_IOHandle( GetFile(),
+		                          GetFlags(),
+		                          GetHandle(),
+		                          itsFileSpec );
 	}
 	
 	void Rsrc_IOHandle::Synchronize( bool metadata )

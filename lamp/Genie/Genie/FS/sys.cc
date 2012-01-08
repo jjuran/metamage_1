@@ -86,7 +86,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return seize_ptr( new FSTree_Premapped( parent, name ) );
+		return new FSTree_Premapped( parent, name );
 	}
 	
 	class syscall_IteratorConverter
@@ -146,7 +146,7 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_kernel_bin_EXE( parent, name, (lamp_entry) args ) );
+		return new FSTree_sys_kernel_bin_EXE( parent, name, (lamp_entry) args );
 	}
 	
 	#define EXEC( main )  &Executable_Factory, (const void*) &main

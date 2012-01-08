@@ -174,7 +174,7 @@ namespace Genie
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
-		return seize_ptr( new PushButton( delegate ) );
+		return new PushButton( delegate );
 	}
 	
 	
@@ -298,7 +298,7 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return seize_ptr( new Button_socket_Handle( Self(), flags ) );
+		return new Button_socket_Handle( Self(), flags );
 	}
 	
 	
@@ -342,11 +342,11 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

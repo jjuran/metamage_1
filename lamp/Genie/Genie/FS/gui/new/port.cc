@@ -44,7 +44,7 @@ namespace Genie
 	{
 		FSTreePtr dir = new_port();
 		
-		return seize_ptr( new OpenWindowHandle( dir ) );
+		return new OpenWindowHandle( dir );
 	}
 	
 }

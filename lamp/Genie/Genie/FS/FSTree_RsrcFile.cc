@@ -51,7 +51,7 @@ namespace Genie
 	
 	FSTreePtr GetRsrcForkFSTree( const FSSpec& file, bool onServer )
 	{
-		return seize_ptr( new FSTree_RsrcFile( file, onServer ) );
+		return new FSTree_RsrcFile( file, onServer );
 	}
 	
 	

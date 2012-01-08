@@ -466,7 +466,7 @@ namespace Genie
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return seize_ptr( new Trigger( parent, name, key ) );
+		return new Trigger( parent, name, key );
 	}
 	
 	static FSTreePtr Root_Factory( const FSTreePtr&     parent,
@@ -531,7 +531,7 @@ namespace Genie
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return seize_ptr( new FSTree_Folder_Link( parent, key, type, name ) );
+		return new FSTree_Folder_Link( parent, key, type, name );
 	}
 	
 	

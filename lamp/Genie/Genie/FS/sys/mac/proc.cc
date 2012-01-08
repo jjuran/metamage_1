@@ -220,7 +220,7 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_mac_proc_PSN_exe( parent, name ) );
+		return new FSTree_sys_mac_proc_PSN_exe( parent, name );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value

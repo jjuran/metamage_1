@@ -443,7 +443,7 @@ namespace Genie
 	{
 		WindowRef key = GetKeyFromParent( parent.get() );
 		
-		return seize_ptr( new Trigger( parent, name, key ) );
+		return new Trigger( parent, name, key );
 	}
 	
 	

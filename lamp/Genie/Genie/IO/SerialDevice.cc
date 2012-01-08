@@ -134,7 +134,7 @@ namespace Genie
 	template < class Type >
 	static inline IOPtr NewSerialDeviceHandle( Type param, bool isPassive )
 	{
-		return seize_ptr( new SerialDeviceHandle( param, isPassive ) );
+		return new SerialDeviceHandle( param, isPassive );
 	}
 	
 #endif

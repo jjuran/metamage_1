@@ -183,7 +183,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return seize_ptr( new dt_appls_QUAD_list_N( parent, name ) );
+		return new dt_appls_QUAD_list_N( parent, name );
 	}
 	
 	static void appl_QUAD_list_iterate( const FSTreePtr& parent, FSTreeCache& cache )

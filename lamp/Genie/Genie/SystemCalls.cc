@@ -240,14 +240,14 @@ namespace Genie
 	//
 	NewPipeReader( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
 	{
-		return seize_ptr( new PipeOutHandle( conduit, nonblocking ) );
+		return new PipeOutHandle( conduit, nonblocking );
 	}
 	
 	static inline IOPtr
 	//
 	NewPipeWriter( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
 	{
-		return seize_ptr( new PipeInHandle( conduit, nonblocking ) );
+		return new PipeInHandle( conduit, nonblocking );
 	}
 	
 	static int pipe2( int pipefd[ 2 ], int flags )

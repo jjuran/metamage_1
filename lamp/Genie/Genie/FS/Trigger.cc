@@ -47,7 +47,7 @@ namespace Genie
 	
 	IOPtr Trigger_Base::Open( OpenFlags flags ) const
 	{
-		return seize_ptr( new TriggerHandle( Self(), flags ) );
+		return new TriggerHandle( Self(), flags );
 	}
 	
 }

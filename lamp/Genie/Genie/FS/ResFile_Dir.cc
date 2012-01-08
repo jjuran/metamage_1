@@ -161,7 +161,7 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const FSSpec&        file )
 	{
-		return seize_ptr( new FSTree_ResFileDir( parent, name, file ) );
+		return new FSTree_ResFileDir( parent, name, file );
 	}
 	
 }

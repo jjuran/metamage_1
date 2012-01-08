@@ -342,9 +342,9 @@ namespace Genie
 	{
 		typedef TextEdit_Scroller View;
 		
-		return seize_ptr( new View( delegate,
-		                            Console_KeyDown,
-		                            Console_UserCommand_Hook ) );
+		return new View( delegate,
+		                 Console_KeyDown,
+		                 Console_UserCommand_Hook );
 	}
 	
 	
@@ -364,7 +364,7 @@ namespace Genie
 		
 		plus::string name = gear::inscribe_decimal( id );
 		
-		return seize_ptr( new FSTree( parent, name ) );
+		return new FSTree( parent, name );
 	}
 	
 	class ConsoleTTYHandle : public TTYHandle
@@ -756,7 +756,7 @@ namespace Genie
 	//
 	NewConsoleTTY( const FSTreePtr& self, TerminalID id )
 	{
-		return seize_ptr( new ConsoleTTYHandle( self, id ) );
+		return new ConsoleTTYHandle( self, id );
 	}
 	
 	IOPtr
@@ -826,11 +826,11 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

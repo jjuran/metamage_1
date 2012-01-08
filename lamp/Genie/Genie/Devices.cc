@@ -82,7 +82,7 @@ namespace Genie
 	{
 		if ( const DeviceIOSpec* device = FindDevice( path ) )
 		{
-			return seize_ptr( new SimpleDeviceHandle( *device ) );
+			return new SimpleDeviceHandle( *device );
 		}
 		
 		throw p7::errno_t( ENOENT );

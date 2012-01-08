@@ -69,7 +69,7 @@ namespace Genie
 	
 	IOPtr dev_gestalt::open( OpenFlags flags )
 	{
-		return seize_ptr( new GestaltDeviceHandle( flags ) );
+		return new GestaltDeviceHandle( flags );
 	}
 	
 }

@@ -104,7 +104,7 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_mac_user_home( parent, name ) );
+		return new FSTree_sys_mac_user_home( parent, name );
 	}
 	
 }

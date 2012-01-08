@@ -37,7 +37,7 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return seize_ptr( new FSTree_sys_app_exe( parent, name ) );
+		return new FSTree_sys_app_exe( parent, name );
 	}
 	
 }

@@ -139,9 +139,9 @@ namespace Genie
 	
 	IOPtr MacFileHandle::Clone()
 	{
-		return seize_ptr( new MacFileHandle( itsRefNum,
-		                                     GetFlags(),
-		                                     itsFileGetter ) );
+		return new MacFileHandle( itsRefNum,
+		                          GetFlags(),
+		                          itsFileGetter );
 	}
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
@@ -220,9 +220,9 @@ namespace Genie
 	New_DataForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
 	                    OpenFlags                            flags )
 	{
-		return seize_ptr( new MacFileHandle( refNum,
-		                                     flags,
-		                                     &FSTreeFromFSSpec ) );
+		return new MacFileHandle( refNum,
+		                          flags,
+		                          &FSTreeFromFSSpec );
 	}
 	
 	IOPtr
@@ -230,9 +230,9 @@ namespace Genie
 	New_RsrcForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
 	                    OpenFlags                            flags )
 	{
-		return seize_ptr( new MacFileHandle( refNum,
-		                                     flags,
-		                                     &GetRsrcForkFSTree ) );
+		return new MacFileHandle( refNum,
+		                          flags,
+		                          &GetRsrcForkFSTree );
 	}
 	
 }

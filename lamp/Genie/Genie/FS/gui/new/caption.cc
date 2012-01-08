@@ -108,7 +108,7 @@ namespace Genie
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
-		return seize_ptr( new Caption( delegate ) );
+		return new Caption( delegate );
 	}
 	
 	
@@ -157,7 +157,7 @@ namespace Genie
 	
 	IOPtr CaptionTextFileHandle::Clone()
 	{
-		return seize_ptr( new CaptionTextFileHandle( GetFile(), GetFlags() ) );
+		return new CaptionTextFileHandle( GetFile(), GetFlags() );
 	}
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()
@@ -229,7 +229,7 @@ namespace Genie
 	
 	IOPtr FSTree_Caption_text::Open( OpenFlags flags ) const
 	{
-		return seize_ptr( new CaptionTextFileHandle( Self(), flags ) );
+		return new CaptionTextFileHandle( Self(), flags );
 	}
 	
 	
@@ -267,11 +267,11 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

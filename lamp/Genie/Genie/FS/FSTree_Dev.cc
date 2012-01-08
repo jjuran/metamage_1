@@ -167,17 +167,17 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return seize_ptr( new FSTree_BasicDevice( parent,
-		                                          name,
-		                                          &Opener::open,
-		                                          Opener::perm ) );
+		return new FSTree_BasicDevice( parent,
+		                               name,
+		                               &Opener::open,
+		                               Opener::perm );
 	}
 	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&     parent,
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
-		return seize_ptr( new FSTree_SimpleDevice( parent, name ) );
+		return new FSTree_SimpleDevice( parent, name );
 	}
 	
 	const FSTree_Premapped::Mapping dev_Mappings[] =

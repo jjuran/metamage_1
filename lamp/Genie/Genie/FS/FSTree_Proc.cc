@@ -220,7 +220,7 @@ namespace Genie
 	{
 		if ( name == "self" )
 		{
-			return seize_ptr( new FSTree_proc_self( parent ) );
+			return new FSTree_proc_self( parent );
 		}
 		
 		if ( !valid_name_of_pid::applies( name ) )
@@ -490,7 +490,7 @@ namespace Genie
 	{
 		const pid_t key = GetKeyFromParent( parent );
 		
-		return seize_ptr( new FSTree_PID_fd( parent, name, key ) );
+		return new FSTree_PID_fd( parent, name, key );
 	}
 	
 	template < class LinkResolver >
@@ -498,7 +498,7 @@ namespace Genie
 	                        const plus::string&  name,
 	                        const void*          args )
 	{
-		return seize_ptr( new FSTree_PID_Link< LinkResolver >( parent, name ) );
+		return new FSTree_PID_Link< LinkResolver >( parent, name );
 	}
 	
 	class FSTree_proc_PID_core : public FSTree
@@ -534,7 +534,7 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		return seize_ptr( new FSTree_proc_PID_core( parent, name ) );
+		return new FSTree_proc_PID_core( parent, name );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
@@ -571,7 +571,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return seize_ptr( new FSTree_PID_fd_N( (parent ? parent : this)->Self(), name, its_pid, key ) );
+		return new FSTree_PID_fd_N( (parent ? parent : this)->Self(), name, its_pid, key );
 	}
 	
 	

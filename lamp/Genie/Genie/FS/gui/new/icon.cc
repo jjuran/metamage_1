@@ -121,7 +121,7 @@ namespace Genie
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
 	{
-		return seize_ptr( new Icon( delegate ) );
+		return new Icon( delegate );
 	}
 	
 	
@@ -172,7 +172,7 @@ namespace Genie
 			data = boost::intrusive_ptr< IconData >( new IconData );
 		}
 		
-		return seize_ptr( new FSTree_Icon_data( parent, name, data ) );
+		return new FSTree_Icon_data( parent, name, data );
 	}
 	
 	
@@ -203,11 +203,11 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

@@ -373,7 +373,7 @@ namespace Genie
 	
 	IOPtr IconDataFileHandle::Clone()
 	{
-		return seize_ptr( new IconDataFileHandle( GetFile(), GetFlags(), itsData ) );
+		return new IconDataFileHandle( GetFile(), GetFlags(), itsData );
 	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )

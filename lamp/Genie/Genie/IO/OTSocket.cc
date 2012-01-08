@@ -499,7 +499,7 @@ namespace Genie
 	
 	IOPtr New_OT_Socket( bool nonblocking )
 	{
-		return seize_ptr( new OTSocket( nonblocking ) );
+		return new OTSocket( nonblocking );
 	}
 	
 }

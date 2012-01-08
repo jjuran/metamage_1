@@ -139,7 +139,7 @@ namespace Genie
 	
 	boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
 	{
-		return seize_ptr( new Stack( delegate ) );
+		return new Stack( delegate );
 	}
 	
 	
@@ -193,7 +193,7 @@ namespace Genie
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const
 			{
-				return seize_ptr( new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name ) );
+				return new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name );
 			}
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
@@ -228,7 +228,7 @@ namespace Genie
 	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&     parent,
 	                                            const plus::string&  name ) const
 	{
-		return seize_ptr( new FSTree_Stack( parent, name ) );
+		return new FSTree_Stack( parent, name );
 	}
 	
 	void FSTree_new_stack::DestroyDelegate( const FSTree* delegate )

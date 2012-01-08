@@ -111,7 +111,7 @@ namespace Genie
 	
 	IOPtr Pixels_IO::Clone()
 	{
-		return seize_ptr( new Pixels_IO( GetFile(), GetFlags() ) );
+		return new Pixels_IO( GetFile(), GetFlags() );
 	}
 	
 	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
@@ -237,7 +237,7 @@ namespace Genie
 	
 	IOPtr FSTree_Pixels::Open( OpenFlags flags ) const
 	{
-		return seize_ptr( new Pixels_IO( Self(), flags ) );
+		return new Pixels_IO( Self(), flags );
 	}
 	
 	class GWorld : public Ped::View
@@ -315,7 +315,7 @@ namespace Genie
 		params.depth            = 0;
 		params.bounds_are_valid = false;
 		
-		return seize_ptr( new GWorld( delegate ) );
+		return new GWorld( delegate );
 	}
 	
 	
@@ -491,11 +491,11 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void* )
 	{
-		return seize_ptr( new FSTree_new_View( parent,
-		                                       name,
-		                                       &CreateView,
-		                                       local_mappings,
-		                                       &DestroyDelegate ) );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &CreateView,
+		                            local_mappings,
+		                            &DestroyDelegate );
 	}
 	
 }

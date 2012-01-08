@@ -37,11 +37,6 @@ namespace Genie
 	
 	extern const FSTreePtr null_FSTreePtr;
 	
-	inline FSTreePtr seize_ptr( const FSTree* tree )
-	{
-		return FSTreePtr( tree );
-	}
-	
 	const FSTreePtr& FSRoot();
 	
 	
