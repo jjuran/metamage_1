@@ -17,6 +17,7 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/Iterate.hh"
 
 
 namespace Genie
@@ -39,7 +40,7 @@ namespace Genie
 	{
 		if ( itsIterator.get() == NULL )
 		{
-			itsIterator = GetFile()->Iterate();
+			itsIterator = Iterate( GetFile() );
 		}
 		
 		return itsIterator;

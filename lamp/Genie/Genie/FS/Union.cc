@@ -13,6 +13,7 @@
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/Iterate.hh"
 
 
 namespace Genie
@@ -34,7 +35,7 @@ namespace Genie
 	{
 		std::set< plus::string > names_that_have_been_seen;
 		
-		FSIteratorPtr top = itsTop->Iterate();
+		FSIteratorPtr top = Genie::Iterate( itsTop );
 		
 		top->Advance();  // .
 		top->Advance();  // ..
@@ -55,7 +56,7 @@ namespace Genie
 			top->Advance();
 		}
 		
-		FSIteratorPtr bottom = itsBottom->Iterate();
+		FSIteratorPtr bottom = Genie::Iterate( itsBottom );
 		
 		bottom->Advance();  // .
 		bottom->Advance();  // ..
