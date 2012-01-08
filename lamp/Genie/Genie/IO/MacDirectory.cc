@@ -7,6 +7,7 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Null.hh"
 
 

@@ -5,6 +5,9 @@
 
 #include "Genie/IO/VirtualDirectory.hh"
 
+// Genie
+#include "Genie/FS/FSTree.hh"
+
 
 namespace Genie
 {

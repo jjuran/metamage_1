@@ -11,7 +11,8 @@
 #include "errno.h"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSIteratorPtr.hh"
+#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/Base.hh"
 
 
