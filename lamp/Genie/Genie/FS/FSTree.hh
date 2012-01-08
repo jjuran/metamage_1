@@ -18,7 +18,6 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/FSIteratorPtr.hh"
 #include "Genie/FS/FSNode.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
@@ -45,23 +44,6 @@ namespace Genie
 	}
 	
 	const FSTreePtr& FSRoot();
-	
-	
-	class FSIterator : public plus::ref_count< FSIterator >
-	{
-		public:
-			virtual ~FSIterator();
-			
-			virtual FSNode Get() const = 0;
-			
-			virtual void Advance() = 0;
-			
-			virtual void Rewind() = 0;
-			
-			virtual void Seek( off_t index ) = 0;
-			
-			virtual off_t Tell() const = 0;
-	};
 	
 	
 	class FSTree : public plus::ref_count< FSTree >
@@ -149,8 +131,6 @@ namespace Genie
 			FSTreePtr Lookup( const plus::string& name, const FSTree* parent = NULL ) const;
 			
 			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			FSIteratorPtr Iterate() const;
 			
 			virtual void IterateIntoCache( FSTreeCache& cache ) const;
 			
