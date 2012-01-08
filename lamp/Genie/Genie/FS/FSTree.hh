@@ -18,7 +18,6 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/FSNode.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/OpenFlags.hh"

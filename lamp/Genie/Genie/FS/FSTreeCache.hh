@@ -7,6 +7,7 @@
 #define GENIE_FS_FSTREECACHE_HH
 
 // Genie
+#include "Genie/FS/FSNode.hh"
 #include "Genie/FS/FSTree.hh"
 
 
