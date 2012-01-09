@@ -1,6 +1,5 @@
 #!/bin/sh
 
-#host=lamp.sourceforge.net
 host=jjuran.dyndns.org/~jjuran
 
 test -z "$LAMP_SITE" && LAMP_SITE="$host"
