@@ -11,7 +11,7 @@
 // POSIX
 #include <sys/types.h>
 
-#ifndef __LAMP__
+#ifndef __RELIX__
 
 #ifdef __cplusplus
 extern "C"

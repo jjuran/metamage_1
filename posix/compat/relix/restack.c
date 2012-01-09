@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 
-#ifndef __LAMP__
+#ifndef __RELIX__
 
 void _relix_restack( unsigned param_length, const void* f, ... )
 {

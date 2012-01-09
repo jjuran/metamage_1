@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-#ifndef __LAMP__
+#ifndef __RELIX__
 
 #ifndef __linux__
 
@@ -73,7 +73,7 @@ int unlinkat( int dirfd, const char* path, int flags );
 
 #endif  // !__linux__
 
-#endif  // !__LAMP__
+#endif  // !__RELIX__
 
 #ifdef __cplusplus
 }

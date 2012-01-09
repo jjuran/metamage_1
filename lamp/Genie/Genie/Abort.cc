@@ -16,7 +16,7 @@
 #include "Genie/Faults.hh"
 
 
-#ifdef __LAMP__
+#ifdef __RELIX__
 
 void abort()
 {

@@ -359,7 +359,7 @@ namespace tool
 			
 			const struct stat b_stat = p7::fstat( b_fd );
 			
-		#ifdef __LAMP__
+		#ifdef __RELIX__
 			
 			if ( b_stat.st_mtime == a_time  &&  b_stat.st_checktime == c_time )
 			{

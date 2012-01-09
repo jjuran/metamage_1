@@ -142,7 +142,7 @@ namespace tool
 		return "/";
 	}
 	
-#ifndef __LAMP__
+#ifndef __RELIX__
 	
 	static inline ssize_t _getcwd( char* buffer, size_t length )
 	{

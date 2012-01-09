@@ -282,7 +282,7 @@ static void t_renameat()
 
 static void linkat_t()
 {
-#ifdef __LAMP__
+#ifdef __RELIX__
 	
 	// skipped
 	ok_if( true );

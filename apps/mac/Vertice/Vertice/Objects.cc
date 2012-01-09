@@ -285,7 +285,7 @@ namespace Vertice
 		{
 			//throw Geometry_Error();
 			
-		#ifndef __LAMP__
+		#ifndef __RELIX__
 			
 			std::fprintf( stderr, "Angular deviation: %f\n", total_deviation );
 			

@@ -131,7 +131,7 @@ namespace Genie
 			throw N::StringTooLong();
 		}
 		
-	#ifdef __LAMP__
+	#ifdef __RELIX__
 		
 		std::memcpy( sb->st_name, name, 1 + name[0] );
 		
@@ -174,7 +174,7 @@ namespace Genie
 		// time of last inode change:  pretend mod time; provide creation stamp for rsrc.
 		sb->st_ctime = (is_rsrc_fork ? hFileInfo.ioFlCrDat : hFileInfo.ioFlMdDat) - timeDiff;
 		
-	#ifdef __LAMP__
+	#ifdef __RELIX__
 		
 		sb->st_birthtim.tv_sec = hFileInfo.ioFlCrDat - timeDiff;
 		sb->st_checktim.tv_sec = hFileInfo.ioFlBkDat - timeDiff;

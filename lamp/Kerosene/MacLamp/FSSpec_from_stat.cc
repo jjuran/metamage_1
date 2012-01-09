@@ -27,7 +27,7 @@ int FSSpec_from_stat( const struct stat& stat_buffer, FSSpec& result )
 {
 	typedef UInt32 FSDirID;
 	
-#ifdef __LAMP__
+#ifdef __RELIX__
 	
 	const unsigned name_length = stat_buffer.st_name[0];
 	

@@ -29,7 +29,7 @@ inline size_t _relix_alloca_space()
 
 inline int is_excessive_for_alloca( size_t size )
 {
-#ifdef __LAMP__
+#ifdef __RELIX__
 	
 	return size > _relix_alloca_space();
 	

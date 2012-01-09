@@ -29,13 +29,13 @@ static const unsigned n_tests = 1 * 3 + 2 + 1 + 3;
 using tap::ok_if;
 
 
-#ifndef __LAMP__
+#ifndef __RELIX__
 #define vfork() fork()
 #endif
 
 static pid_t clone( int (*f)(void*), void* param )
 {
-#ifdef __LAMP__
+#ifdef __RELIX__
 	
 	return _relix_clone( f, NULL, 0, CLONE_VM, param );
 	

@@ -729,7 +729,7 @@ static void DoSomethingWithServiceFile( const plus::string& file )
 #define SYSTEM_PATH "/System"
 #endif
 
-#ifdef __LAMP__
+#ifdef __RELIX__
 #define SYSTEM_PATH "/sys/mac/vol/boot/mnt/System"
 #endif
 
@@ -973,7 +973,7 @@ static int TestPath( int argc, char** argv )
 		return 1;
 	}
 	
-#ifdef __LAMP__
+#ifdef __RELIX__
 	
 	const char* window_path = getenv( "WINDOW" );
 	

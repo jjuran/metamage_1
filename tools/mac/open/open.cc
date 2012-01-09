@@ -166,7 +166,7 @@ namespace tool
 	
 	static Mac::FSCreator DefaultTextFileCreator()
 	{
-	#ifdef __LAMP__
+	#ifdef __RELIX__
 		
 		const char* path = "/sys/type/text/DEFAULT";
 		

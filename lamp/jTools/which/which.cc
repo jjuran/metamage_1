@@ -12,7 +12,7 @@
 #include <unistd.h>
 
 
-#ifdef __LAMP__
+#ifdef __RELIX__
 // Relix
 #include "relix/alloca.h"
 #define ALLOC( x )  signalling_alloca( x )

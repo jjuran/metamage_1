@@ -18,7 +18,7 @@ const unsigned stack_margin = 12 * 1024;
 
 inline bool stack_is_sufficient()
 {
-#ifndef __LAMP__
+#ifndef __RELIX__
 	
 	return true;
 	

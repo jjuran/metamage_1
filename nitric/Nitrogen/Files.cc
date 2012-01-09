@@ -702,7 +702,7 @@ Return Value
       return result;
      }
 
-#ifndef __LAMP__
+#ifndef __RELIX__
 
    namespace
      {

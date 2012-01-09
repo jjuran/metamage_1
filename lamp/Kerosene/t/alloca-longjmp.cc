@@ -107,7 +107,7 @@ Rationale:
 	remains TODO on PowerPC.
 */
 
-#ifndef __LAMP__
+#ifndef __RELIX__
   #define N_TESTS 0
 #else
   #define N_TESTS (5 + 3)

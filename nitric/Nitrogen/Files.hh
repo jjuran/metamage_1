@@ -99,7 +99,7 @@
 #include "Nitrogen/UPP.hh"
 #endif
 
-#ifndef __LAMP__
+#ifndef __RELIX__
 #include <vector>
 #endif
 
@@ -1145,7 +1145,7 @@ namespace Nitrogen
                                                      FSSpec *            specs = 0,
                                                      HFSUniStr255 *      names = 0 );
    
-#ifndef __LAMP__
+#ifndef __RELIX__
    
    void FSGetCatalogInfoBulk( FSIterator                  iterator,
                               FSCatalogInfoBitmap         whichInfo,
