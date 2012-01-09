@@ -21,7 +21,6 @@ sub check_library
 	my ( $path ) = @_;
 	
 	check( "$path/Application Support/MacRelix/usr/lib/perl" );
-	check( "$path/Application Support/Lamp/usr/lib/perl"     );
 }
 
 check_library( "$ENV{HOME}/Library" )  if defined $ENV{HOME};
