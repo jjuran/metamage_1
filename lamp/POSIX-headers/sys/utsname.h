@@ -3,8 +3,8 @@
  *	=============
  */
 
-#ifndef LAMP_SYS_UTSNAME_H
-#define LAMP_SYS_UTSNAME_H
+#ifndef RELIX_SYS_UTSNAME_H
+#define RELIX_SYS_UTSNAME_H
 
 #ifdef __cplusplus
 extern "C" {

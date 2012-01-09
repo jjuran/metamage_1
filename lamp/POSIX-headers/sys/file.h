@@ -1,5 +1,5 @@
-#ifndef	LAMP_SYS_FILE_H
-#define	LAMP_SYS_FILE_H
+#ifndef	RELIX_SYS_FILE_H
+#define	RELIX_SYS_FILE_H
 
 #define LOCK_SH 1
 #define LOCK_EX 2
