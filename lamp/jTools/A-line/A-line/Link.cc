@@ -71,9 +71,9 @@ namespace tool
 	}
 	
 	
-	static inline bool TargetingLamp( bool targetingLamp )
+	static inline bool TargetingRelix( bool targetingRelix )
 	{
-		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targetingLamp;
+		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_RELIX_DEVELOPMENT && targetingRelix;
 	}
 	
 	
@@ -262,18 +262,18 @@ namespace tool
 		private:
 			std::vector< plus::string >  itsInputPathnames;
 			plus::string                 itsIncludeDirPathname;
-			bool                         itIsTargetingLamp;
+			bool                         itIsTargetingRelix;
 		
 		public:
 			RezzingTask( const std::vector< plus::string >&  input,
 			             const plus::string&                 output,
 			             const plus::string&                 includeDir,
-			             bool                                lamp )
+			             bool                                relix )
 			:
 				FileTask             ( output     ),
 				itsInputPathnames    ( input      ),
 				itsIncludeDirPathname( includeDir ),
-				itIsTargetingLamp    ( lamp       )
+				itIsTargetingRelix   ( relix      )
 			{
 			}
 			
@@ -288,7 +288,7 @@ namespace tool
 		
 	#ifdef __APPLE__
 		
-		// Use OS X's Rez on OS X, even if we're targeting Lamp
+		// Use OS X's Rez on OS X, even if we're targeting MacRelix
 		const bool use_OSX_Rez = true;
 		
 	#else
@@ -303,7 +303,7 @@ namespace tool
 			rezCommand.push_back( "-i" );
 			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
 			
-			if ( !TargetingLamp( itIsTargetingLamp ) )
+			if ( !TargetingRelix( itIsTargetingRelix ) )
 			{
 				// ... but only use the data fork for OS X apps
 				rezCommand.push_back( "-useDF" );
@@ -347,7 +347,7 @@ namespace tool
 	static TaskPtr MakeRezTask( const Project&       project,
 	                            const plus::string&  output_pathname,
 	                            bool                 needsCarbResource,
-	                            bool                 lamp )
+	                            bool                 relix )
 	{
 		const std::vector< plus::string >& input_filenames = project.UsedRezFiles();
 		
@@ -368,7 +368,7 @@ namespace tool
 		TaskPtr rez_task = seize_ptr( new RezzingTask( input_pathnames,
 		                                               output_pathname,
 		                                               includeDir,
-		                                               lamp ) );
+		                                               relix ) );
 		
 		std::for_each( input_pathnames.begin(),
 		               input_pathnames.end(),
@@ -381,16 +381,16 @@ namespace tool
 	{
 		private:
 			std::vector< plus::string >  itsInputPathnames;
-			bool                         itIsTargetingLamp;
+			bool                         itIsTargetingRelix;
 		
 		public:
 			ResourceCopyingTask( const std::vector< plus::string >&  input,
 			                     const plus::string&                 output,
-			                     bool                                lamp )
+			                     bool                                relix )
 			:
-				FileTask         ( output   ),
-				itsInputPathnames( input    ),
-				itIsTargetingLamp( lamp     )
+				FileTask          ( output   ),
+				itsInputPathnames ( input    ),
+				itIsTargetingRelix( relix    )
 			{
 			}
 			
@@ -405,7 +405,7 @@ namespace tool
 		
 		command.push_back( "cpres" );
 		
-		if ( !TargetingLamp( itIsTargetingLamp ) )
+		if ( !TargetingRelix( itIsTargetingRelix ) )
 		{
 			command.push_back( "--data" );
 		}
@@ -544,9 +544,9 @@ namespace tool
 	                  const TaskPtr&                 source_dependency,
 	                  const std::vector< TaskPtr >&  tool_dependencies )
 	{
-		const bool lamp = TargetingLamp( targetInfo.envType == envLamp );
+		const bool relix = TargetingRelix( targetInfo.envType == envRelix );
 		
-		const bool real_unix = !lamp;  // unix is an evil macro on Linux
+		const bool real_unix = !relix;  // unix is an evil macro on Linux
 		
 		plus::string diagnosticsDir = ProjectDiagnosticsDirPath( project.Name() );
 		
@@ -647,7 +647,7 @@ namespace tool
 				fileType = "APPL";
 				break;
 			
-		#if ALINE_LAMP_DEVELOPMENT
+		#if ALINE_RELIX_DEVELOPMENT
 			
 			case productSharedLib:
 				command.push_back( cmdgen.MWTargetSharedLibrary() );
@@ -728,7 +728,7 @@ namespace tool
 		}
 		
 		// FIXME:  This is a hack
-		if ( lamp )
+		if ( relix )
 		{
 			AddProjectImports( project, targetInfo.platform, link_input_arguments );
 		}
@@ -829,7 +829,7 @@ namespace tool
 					
 					WritePkgInfo( pkginfo.c_str(), fileType + creator );
 					
-					if ( lamp )
+					if ( relix )
 					{
 						link_input_arguments.push_back( pkginfo );
 					}
@@ -870,7 +870,7 @@ namespace tool
 					
 					rsrc_pathnames.push_back( rez_output_pathname );
 					
-					rez_task = MakeRezTask( project, rez_output_pathname, needsCarbResource, lamp );
+					rez_task = MakeRezTask( project, rez_output_pathname, needsCarbResource, relix );
 				}
 				else
 				{
@@ -886,7 +886,7 @@ namespace tool
 					
 					TaskPtr copy_rsrcs = seize_ptr( new ResourceCopyingTask( rsrc_pathnames,
 					                                                         rsrcFile,
-					                                                         lamp ) );
+					                                                         relix ) );
 					
 					if ( bundle )
 					{

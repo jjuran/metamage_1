@@ -3,8 +3,8 @@
  *	==========
  */
 
-#ifndef LAMP_SYS_WAIT_H
-#define LAMP_SYS_WAIT_H
+#ifndef RELIX_SYS_WAIT_H
+#define RELIX_SYS_WAIT_H
 
 #include "sys/types.h"
 

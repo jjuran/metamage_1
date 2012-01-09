@@ -152,7 +152,7 @@ namespace tool
 	{
 		if ( TARGET_API_MAC_CARBON )
 		{
-			// Lamp Carbon doesn't check driver names, and
+			// MacRelix Carbon doesn't check driver names, and
 			// OS X's BSD layer doesn't have /sys in the first place
 			return 0;
 		}

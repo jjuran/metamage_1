@@ -1008,7 +1008,7 @@ First build released to public
  *	This symbol, if defined, indicates to the C program that it should
  *	include vfork.h.
  */
-#undef I_VFORK	/* We have vfork.h on Lamp, but unistd.h includes it */
+#undef I_VFORK	/* We have vfork.h in MacRelix, but unistd.h includes it */
 
 /* CAN_PROTOTYPE:
  *	If defined, this macro indicates that the C compiler can handle

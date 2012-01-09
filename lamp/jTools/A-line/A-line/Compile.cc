@@ -271,7 +271,7 @@ namespace tool
 		
 		AugmentCommand( compile, cmdgen.AllCompilerOptions() );
 		
-		if ( !ALINE_LAMP_DEVELOPMENT  ||  options.Target().toolchain & toolchainGNU )
+		if ( !ALINE_RELIX_DEVELOPMENT  ||  options.Target().toolchain & toolchainGNU )
 		{
 			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
 			compile.push_back( "-Wno-long-double"             );
@@ -552,7 +552,7 @@ namespace tool
 			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
-		if ( options.Target().envType & envLamp )
+		if ( options.Target().envType & envRelix )
 		{
 			options.DEFINE_MACRO( "__LAMP__" );
 			options.DEFINE_MACRO( "__RELIX__" );

@@ -39,7 +39,7 @@ namespace tool
 	enum EnvType
 	{
 		envUnspecified = 0,
-		envLamp,
+		envRelix,
 		envUnix
 	};
 	

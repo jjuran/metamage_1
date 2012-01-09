@@ -17,7 +17,7 @@
 
 
 #ifndef SIGSTKFLT
-// SIGSTKFLT is not defined, so we're not in Lamp.
+// SIGSTKFLT is not defined, so we're not in MacRelix.
 // Define it to something harmless so we can run the tests anyway.
 #define SIGSTKFLT SIGALRM
 #endif

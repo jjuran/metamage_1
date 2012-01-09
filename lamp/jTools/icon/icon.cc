@@ -12,10 +12,6 @@
 #include <signal.h>
 #include <unistd.h>
 
-// Lamp
-#include "lamp/grafio.h"
-#include "lamp/winio.h"
-
 // poseven
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/open.hh"

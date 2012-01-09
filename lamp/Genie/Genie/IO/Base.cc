@@ -51,7 +51,7 @@ namespace Genie
 	
 	static inline mode_t permmode_from_openflags( OpenFlags flags )
 	{
-		// Not portable, but works in Lamp
+		// Not portable, but works in MacRelix
 		const bool reading = flags & O_RDONLY;
 		const bool writing = flags & O_WRONLY;
 		const bool execing = flags & O_EXEC;
