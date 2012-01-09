@@ -8,11 +8,11 @@ export LAMP_SITE
 
 list=http://$LAMP_SITE/experimental/
 
-test -n "$1" && export LAMP_PLATFORM="$1"
+test -n "$1" && export RELIX_PLATFORM="$1"
 
 export MBIN=mBin
 
 echo Checking $LAMP_SITE for latest version...
 
-htget $list | perl -we 'my $pf = $ENV{LAMP_PLATFORM} || substr( `cat /etc/platform`, 0, -1 ); while (<>) { m{ ( relix-${pf}_[\d-]+ ) \.gz }osx and $last = $1; }; exec "/etc/bootstrap/upgrade-lamp", $last;'
+htget $list | perl -we 'my $pf = $ENV{RELIX_PLATFORM} || substr( `cat /etc/platform`, 0, -1 ); while (<>) { m{ ( relix-${pf}_[\d-]+ ) \.gz }osx and $last = $1; }; exec "/etc/bootstrap/upgrade-lamp", $last;'
 
