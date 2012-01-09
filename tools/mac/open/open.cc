@@ -199,7 +199,7 @@ namespace tool
 				// Treat a malformed quad value the same as no value.  Move on.
 			}
 			
-			// No MAC_EDITOR_SIGNATURE; use the Lamp default.
+			// No MAC_EDITOR_SIGNATURE; use the MacRelix default.
 			
 			return DefaultTextFileCreator();
 		}

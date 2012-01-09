@@ -4,7 +4,7 @@
 -- | system |
 -- +--------+
 -- 
--- Part of the Lamp project
+-- Part of MacRelix
 -- 
 -- Runs its arguments in a host-native shell.
 -- 

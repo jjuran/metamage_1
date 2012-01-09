@@ -288,7 +288,7 @@ namespace tool
 		
 	#ifdef __APPLE__
 		
-		// Use OS X's Rez on OS X, even if we're targeting Lamp
+		// Use OS X's Rez on OS X, even if we're targeting MacRelix
 		const bool use_OSX_Rez = true;
 		
 	#else

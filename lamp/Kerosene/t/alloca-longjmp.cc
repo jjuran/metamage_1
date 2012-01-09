@@ -84,12 +84,12 @@ Rationale:
 	
 	Since alloca() is not standardized, providing failing tests for its behavior
 	is not my prerogative.  Consequently, this test module runs no tests at all
-	on platforms other than Lamp.  (For the record, the second and third of each
+	on platforms other than MacRelix.  (For the record, the second and third of each
 	group of three tests fail when compiled as either PowerPC or Intel code and
 	run on an Intel-based Mac (with Rosetta PowerPC emulation) running Mac OS X
 	10.4 "Tiger".)
 	
-	Lamp currently implements vfork() in terms of sigsetjmp(), and allocates a
+	MacRelix currently implements vfork() in terms of sigsetjmp(), and allocates a
 	sigjmp_buf on the stack using alloca().  Clearly, alloca() must be called
 	first, so that the sigjmp_buf structure is available to pass to sigsetjmp().
 	But the pattern above occurs if vfork() is called twice, nested, in the same
