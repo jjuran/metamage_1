@@ -9,7 +9,7 @@
 // ALINE_MAC_DEVELOPMENT:   true if A-line can target Mac OS or Mac OS X.
 // ALINE_CROSS_DEVELOPMENT: true if A-line can cross-compile.
 // ALINE_UNIX_DEVELOPMENT:  true if A-line can target native Unix.
-// ALINE_LAMP_DEVELOPMENT:  true if A-line can target Lamp (maybe via Classic).
+// ALINE_RELIX_DEVELOPMENT: true if A-line can target MacRelix (maybe via Classic).
 
 #if defined(__MACOS__) || defined(__APPLE__)
 #include <TargetConditionals.h>
@@ -32,9 +32,9 @@
 #endif
 
 #if !ALINE_UNIX_DEVELOPMENT || (defined(__APPLE__) && TARGET_CPU_PPC)
-#define ALINE_LAMP_DEVELOPMENT 1
+#define ALINE_RELIX_DEVELOPMENT 1
 #else
-#define ALINE_LAMP_DEVELOPMENT 0
+#define ALINE_RELIX_DEVELOPMENT 0
 #endif
 
 /*

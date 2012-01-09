@@ -73,7 +73,7 @@ namespace tool
 	
 	static inline bool TargetingLamp( bool targetingLamp )
 	{
-		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_LAMP_DEVELOPMENT && targetingLamp;
+		return !ALINE_UNIX_DEVELOPMENT  ||  ALINE_RELIX_DEVELOPMENT && targetingLamp;
 	}
 	
 	
@@ -647,7 +647,7 @@ namespace tool
 				fileType = "APPL";
 				break;
 			
-		#if ALINE_LAMP_DEVELOPMENT
+		#if ALINE_RELIX_DEVELOPMENT
 			
 			case productSharedLib:
 				command.push_back( cmdgen.MWTargetSharedLibrary() );

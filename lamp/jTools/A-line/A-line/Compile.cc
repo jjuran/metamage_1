@@ -271,7 +271,7 @@ namespace tool
 		
 		AugmentCommand( compile, cmdgen.AllCompilerOptions() );
 		
-		if ( !ALINE_LAMP_DEVELOPMENT  ||  options.Target().toolchain & toolchainGNU )
+		if ( !ALINE_RELIX_DEVELOPMENT  ||  options.Target().toolchain & toolchainGNU )
 		{
 			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
 			compile.push_back( "-Wno-long-double"             );
