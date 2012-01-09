@@ -171,9 +171,9 @@ void MacPerl_WriteMsg(void * io, const char * msg, size_t len);
 #ifdef __cplusplus
 extern "C"
 #endif
-void Lamp_async_check();
+void relix_async_check();
 
-#define PERL_ASYNC_CHECK()  Lamp_async_check()
+#define PERL_ASYNC_CHECK()  relix_async_check()
 
 #define PERL_WRITE_MSG_TO_CONSOLE(io, msg, len) MacPerl_WriteMsg(io, msg, len)
 

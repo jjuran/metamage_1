@@ -20,7 +20,7 @@ typedef enum Boolean Boolean;
 
 #endif
 
-void Lamp_async_check()
+void relix_async_check()
 {
 	static unsigned long global_counter = 0;
 	
