@@ -66,9 +66,10 @@ my @loser_libs =
 	'Apple;Carbon;Networking',
 );
 my @winner_libs =
+map { ":?$_" }
 qw
 (
-	:KSIOUXConsole.cc
+	KSIOUXConsole.cc
 	Abort.cc
 	Genie/Abort.cc.cpp
 	KSIOUXConsole.cc
