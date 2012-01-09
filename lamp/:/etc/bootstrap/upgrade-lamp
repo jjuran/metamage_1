@@ -15,7 +15,7 @@ test -d $dest && echo You already have $1. && exit || true
 cd /tmp
 
 echo Downloading $1.gz...
-htget -O http://$LAMP_SITE/experimental/$1.gz
+htget -O http://$RELIX_SITE/experimental/$1.gz
 
 echo Decompressing...
 gzip -d --name $1.gz
