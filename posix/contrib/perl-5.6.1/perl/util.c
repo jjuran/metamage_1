@@ -2027,7 +2027,7 @@ Perl_my_setenv(pTHX_ char *nam, char *val)
     (void)sprintf(environ[i],"%s=%s",nam,val);/* all that work just for this */
 
 #else   /* PERL_USE_SAFE_PUTENV */
-#   if defined(__CYGWIN__) || defined(MACOS_LAMP)
+#   if defined(__CYGWIN__) || defined(__RELIX__)
     setenv(nam, val, 1);
 #   else
     char *new_env;
@@ -3713,7 +3713,7 @@ Perl_new_struct_thread(pTHX_ struct perl_thread *t)
 }
 #endif /* USE_THREADS */
 
-#if !defined(MACOS_LAMP) && ( defined(HUGE_VAL) || (defined(USE_LONG_DOUBLE) && defined(HUGE_VALL)) )
+#if !defined(__RELIX__) && ( defined(HUGE_VAL) || (defined(USE_LONG_DOUBLE) && defined(HUGE_VALL)) )
 /*
  * This hack is to force load of "huge" support from libm.a
  * So it is in perl for (say) POSIX to use. 

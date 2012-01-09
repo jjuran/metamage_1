@@ -101,8 +101,6 @@ First build released to public
 #ifndef _config_h_
 #define _config_h_
 
-#define MACOS_LAMP
-
 #define PERL_USE_SAFE_PUTENV
 
 /* LOC_SED:
@@ -1197,7 +1195,7 @@ First build released to public
  *	so the default case (for NeXT) is big endian to catch them. 
  *	This might matter for NeXT 3.0.
  */
-#if (defined(CROSSCOMPILE) || defined(MULTIARCH)) && !defined(MACOS_TRADITIONAL) && !defined(MACOS_LAMP)
+#if (defined(CROSSCOMPILE) || defined(MULTIARCH)) && !defined(MACOS_TRADITIONAL) && !defined(__RELIX__)
 #  ifdef __LITTLE_ENDIAN__
 #    if LONGSIZE == 4
 #      define BYTEORDER 0x1234

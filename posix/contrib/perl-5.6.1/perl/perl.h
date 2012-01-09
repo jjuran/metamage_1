@@ -344,7 +344,7 @@ register struct op *Perl_op asm(stringify(OP_IN_REGISTER));
 # define STANDARD_C 1
 #endif
 
-#if defined(__cplusplus) || defined(WIN32) || defined(__sgi) || defined(OS2) || defined(__DGUX) || defined( EPOC) || defined(__QNX__) || defined( MACOS_LAMP )
+#if defined(__cplusplus) || defined(WIN32) || defined(__sgi) || defined(OS2) || defined(__DGUX) || defined( EPOC) || defined(__QNX__) || defined( __RELIX__ )
 # define DONT_DECLARE_STD 1
 #endif
 
@@ -1663,7 +1663,7 @@ typedef struct ptr_tbl PTR_TBL_t;
 #               define NO_ENVIRON_ARRAY
 #             endif
 #           else
-#             if defined(MACOS_LAMP)
+#             if defined(__RELIX__)
 #include "macos/macish.h"
 #             else
 #               include "unixish.h"

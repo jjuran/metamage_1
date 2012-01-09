@@ -5108,7 +5108,7 @@ Perl_sv_reset(pTHX_ register char *s, HV *stash)
 		}
 		if (GvHV(gv) && !HvNAME(GvHV(gv))) {
 		    hv_clear(GvHV(gv));
-#if defined( USE_ENVIRON_ARRAY ) && !defined( MACOS_LAMP )
+#if defined( USE_ENVIRON_ARRAY ) && !defined( __RELIX__ )
 		    if (gv == PL_envgv
 #  ifdef USE_ITHREADS
 			&& PL_curinterp == aTHX
@@ -6236,7 +6236,7 @@ Perl_sv_vcatpvfn(pTHX_ SV *sv, const char *pat, STRLEN patlen, va_list *args, SV
 	    if (args) {
 		eptr = va_arg(*args, char*);
 		if (eptr)
-#if defined(MACOS_TRADITIONAL) || defined(MACOS_LAMP)
+#if defined(MACOS_TRADITIONAL) || defined(__RELIX__)
 		  /* On MacOS, %#s format is used for Pascal strings */
 		  if (alt)
 		    elen = *eptr++;

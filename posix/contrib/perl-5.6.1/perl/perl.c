@@ -439,7 +439,7 @@ perl_destruct(pTHXx)
 
     /* jettison our possibly duplicated environment */
 
-#if defined( USE_ENVIRON_ARRAY ) && !defined( MACOS_LAMP )
+#if defined( USE_ENVIRON_ARRAY ) && !defined( __RELIX__ )
     if (environ != PL_origenviron
 #ifdef USE_ITHREADS
 	/* only main thread can free environ[0] contents */
@@ -2257,7 +2257,7 @@ Perl_moreswitches(pTHX_ char *s)
 	s++;
 	return s;
     case 'u':
-#if defined(MACOS_TRADITIONAL) || defined(MACOS_LAMP)
+#if defined(MACOS_TRADITIONAL) || defined(__RELIX__)
 	Perl_croak(aTHX_ "Believe me, you don't want to use \"-u\" on a Macintosh");
 #endif
 	PL_do_undump = TRUE;
@@ -2282,9 +2282,9 @@ Perl_moreswitches(pTHX_ char *s)
 
 	PerlIO_printf(PerlIO_stdout(),
 		      "\n\nCopyright 1987-2002, Larry Wall\n");
-#ifdef MACOS_LAMP
+#ifdef __RELIX__
 	PerlIO_printf(PerlIO_stdout(),
-		      "\nMac OS/Lamp port by Joshua Juran, 2005-2006\n");
+		      "\nMacRelix port by Josh Juran, 2005-2006\n");
 #endif
 #ifdef MACOS_TRADITIONAL
 	PerlIO_printf(PerlIO_stdout(),
@@ -3355,7 +3355,7 @@ S_init_postdump_symbols(pTHX_ register int argc, register char **argv, register 
 	*/
 	if (!env)
 	    env = (char**) environ;
-	#ifndef MACOS_LAMP
+	#ifndef __RELIX__
 	if (env != environ
 #  ifdef USE_ITHREADS
 	    && PL_curinterp == aTHX
