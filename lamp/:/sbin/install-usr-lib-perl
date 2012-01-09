@@ -4,15 +4,15 @@ set -e
 
 library="/sys/mac/user/prefs/.."
 support="$library/Application Support"
-lamp="$support/MacRelix"
-usr="$lamp/usr"
+relix="$support/MacRelix"
+usr="$relix/usr"
 lib="$usr/lib"
 
 test -d "$lib" || echo "-> mkdir -p $lib"
 
 test -d "$library" || mkdir $library
 test -d "$support" || mkdir $support
-test -d "$lamp"    || mkdir $lamp
+test -d "$relix"   || mkdir $relix
 test -d "$usr"     || mkdir $usr
 test -d "$lib"     || mkdir $lib
 
