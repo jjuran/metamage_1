@@ -47,8 +47,6 @@ print "Building for $build_config_name...\n";
 
 my $build_area = $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
 
-my $should_copy_syms = $ENV{LAMP_SYMS};
-
 my $timestamp = timestamp();
 
 my $lamp_source_dir = "$ENV{HOME}/src/tree/synced/metamage/lamp";
@@ -365,8 +363,7 @@ sub install_program
 	
 	my $output = build_output( $project, $foreign_build_tree );
 	
-	copy_file(  $output,       $install_path );
-	copy_file( "$output.xSYM", $install_path )  if $should_copy_syms;
+	copy_file(  $output, $install_path );
 }
 
 sub create_node
