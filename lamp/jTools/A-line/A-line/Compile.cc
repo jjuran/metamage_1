@@ -552,7 +552,7 @@ namespace tool
 			options.DEFINE_MACRO( "NO_POINTER_TO_MEMBER_TEMPLATE_PARAMETERS" );
 		}
 		
-		if ( options.Target().envType & envLamp )
+		if ( options.Target().envType & envRelix )
 		{
 			options.DEFINE_MACRO( "__LAMP__" );
 			options.DEFINE_MACRO( "__RELIX__" );

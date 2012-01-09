@@ -526,7 +526,7 @@ namespace tool
 		}
 		else
 		{
-			target.envType   = envLamp;
+			target.envType   = envRelix;
 		}
 		
 		// (a) Metrowerks/Mach-O is fully untested and almost certainly broken

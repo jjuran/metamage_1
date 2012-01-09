@@ -544,7 +544,7 @@ namespace tool
 	                  const TaskPtr&                 source_dependency,
 	                  const std::vector< TaskPtr >&  tool_dependencies )
 	{
-		const bool lamp = TargetingLamp( targetInfo.envType == envLamp );
+		const bool lamp = TargetingLamp( targetInfo.envType == envRelix );
 		
 		const bool real_unix = !lamp;  // unix is an evil macro on Linux
 		
