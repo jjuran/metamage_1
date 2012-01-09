@@ -62,6 +62,7 @@ my @loser_libs =
 	'MSL C.Carbon.Lib',
 	'MSL-fixup.lib',
 	'ControlsLib',
+	'OTXTILib',
 	'Apple;Carbon;Networking',
 );
 my @winner_libs =
@@ -85,7 +86,6 @@ qw
 	Kerosene-User.lib
 	MSL-fixup.lib
 	openbsd-libc.lib
-	OTXTILib
 	PascalPreCarbonUPPGlue.o
 	PosixLib.lib
 	sfio.lib
