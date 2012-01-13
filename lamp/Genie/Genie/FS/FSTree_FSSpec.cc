@@ -244,7 +244,7 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	static const N::FSDirSpec& GetJDirectory()
+	static const Mac::FSDirSpec& root_DirSpec()
 	{
 		static N::FSDirSpec j = FindJDirectory();
 		
@@ -473,7 +473,7 @@ namespace Genie
 	
 	static const FSTreePtr& MakeFSRoot()
 	{
-		const N::FSDirSpec& j_dir = GetJDirectory();
+		const Mac::FSDirSpec& j_dir = root_DirSpec();
 		
 		FSTree_Union* u = NULL;
 		
@@ -536,7 +536,7 @@ namespace Genie
 			
 			if ( isDir )
 			{
-				const N::FSDirSpec& root = GetJDirectory();
+				const Mac::FSDirSpec& root = root_DirSpec();
 				
 				return hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
 			}
@@ -558,7 +558,7 @@ namespace Genie
 			return Get_sys_mac_vol_N( N::FSVolumeRefNum( itsFileSpec.vRefNum ) );
 		}
 		
-		const N::FSDirSpec& root = GetJDirectory();
+		const Mac::FSDirSpec& root = root_DirSpec();
 		
 		if ( itsFileSpec.vRefNum == root.vRefNum  &&  itsFileSpec.parID == root.dirID )
 		{
@@ -593,7 +593,7 @@ namespace Genie
 	{
 		Stat_HFS( itIsOnServer, &sb, itsCInfo, itsFileSpec.name, false );
 		
-		const N::FSDirSpec& root = GetJDirectory();
+		const Mac::FSDirSpec& root = root_DirSpec();
 		
 		if ( itsFileSpec.vRefNum == root.vRefNum  &&  sb.st_ino == root.dirID )
 		{
@@ -728,7 +728,7 @@ namespace Genie
 		}
 		else if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			const N::FSDirSpec& root = GetJDirectory();
+			const Mac::FSDirSpec& root = root_DirSpec();
 			
 			const DirInfo& dirInfo = itsCInfo.dirInfo;
 			
