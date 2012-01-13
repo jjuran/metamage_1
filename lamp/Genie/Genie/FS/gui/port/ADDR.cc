@@ -242,11 +242,6 @@ namespace Genie
 		return gWindowParametersMap[ key ].itsWindow.get() != NULL;
 	}
 	
-	static bool HasWindow( const FSTree* that )
-	{
-		return port_has_window( that->ParentRef() );
-	}
-	
 	static void CreateUserWindow( const FSTree* key )
 	{
 		WindowParameters* it = gWindowParametersMap.find( key );
@@ -453,35 +448,39 @@ namespace Genie
 	}
 	
 	
+	class FSTree_sys_port_ADDR_Unfocus : public FSTree
+	{
+		public:
+			FSTree_sys_port_ADDR_Unfocus( const FSTreePtr&     parent,
+			                              const plus::string&  name )
+			:
+				FSTree( parent, name, 0 )
+			{
+			}
+			
+			const FSTree* WindowKey() const  { return ParentRef().get(); }
+			
+			void SymLink( const plus::string& target ) const;
+	};
+	
 	class FSTree_sys_port_ADDR_focus : public FSTree
 	{
 		public:
 			FSTree_sys_port_ADDR_focus( const FSTreePtr&     parent,
 			                            const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFLNK | 0777 )
 			{
 			}
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
 			
-			bool Exists() const;
-			
-			bool IsLink() const  { return Exists(); }
-			
 			void Delete() const;
-			
-			void SymLink( const plus::string& target ) const;
 			
 			plus::string ReadLink() const;
 			
 			FSTreePtr ResolveLink() const;
 	};
-	
-	bool FSTree_sys_port_ADDR_focus::Exists() const
-	{
-		return gWindowParametersMap[ WindowKey() ].itsFocus != NULL;
-	}
 	
 	void FSTree_sys_port_ADDR_focus::Delete() const
 	{
@@ -495,7 +494,7 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsFocus = NULL;
 	}
 	
-	void FSTree_sys_port_ADDR_focus::SymLink( const plus::string& target ) const
+	void FSTree_sys_port_ADDR_Unfocus::SymLink( const plus::string& target ) const
 	{
 		const FSTreePtr targeted_file = ResolvePathname( target, ParentRef() )->Lookup( plus::string::null );
 		
@@ -506,9 +505,6 @@ namespace Genie
 			// The target either doesn't exist or isn't a focusable view
 			throw p7::errno_t( EINVAL );
 		}
-		
-		// symlinkat() won't call us if the file exists
-		ASSERT( gWindowParametersMap[ WindowKey() ].itsFocus == NULL );
 		
 		FocusViewInWindow( *target_view, WindowKey() );
 		
@@ -548,6 +544,25 @@ namespace Genie
 	}
 	
 	
+	class FSTree_sys_port_ADDR_Unwindow : public FSTree
+	{
+		public:
+			FSTree_sys_port_ADDR_Unwindow( const FSTreePtr&     parent,
+			                               const plus::string&  name )
+			:
+				FSTree( parent, name, 0 )
+			{
+			}
+			
+			void SetTimes() const;
+	};
+	
+	void FSTree_sys_port_ADDR_Unwindow::SetTimes() const
+	{
+		CreateUserWindow( ParentRef().get() );
+	}
+	
+	
 	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
 	{
 		public:
@@ -559,10 +574,6 @@ namespace Genie
 			}
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			bool Exists() const  { return HasWindow( this ); }
-			
-			bool IsLink() const  { return Exists(); }
 			
 			void SetTimes() const;
 			
@@ -576,10 +587,7 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		if ( !InvalidateWindow( key ) )
-		{
-			CreateUserWindow( key );
-		}
+		InvalidateWindow( key );
 	}
 	
 	void FSTree_sys_port_ADDR_window::Delete() const
@@ -686,6 +694,28 @@ namespace Genie
 		return -1;
 	}
 	
+	class FSTree_Window_Ungesture : public FSTree
+	{
+		private:
+			int itsIndex;
+		
+		public:
+			FSTree_Window_Ungesture( const FSTreePtr&     parent,
+			                         const plus::string&  name );
+			
+			void SymLink( const plus::string& target ) const;
+	};
+	
+	FSTree_Window_Ungesture::FSTree_Window_Ungesture( const FSTreePtr&     parent,
+	                                                  const plus::string&  name )
+	:
+		FSTree( parent, name, 0 ),
+		itsIndex( LookupGesture( name ) )
+	{
+		ASSERT( itsIndex != -1 );
+	}
+	
+	
 	class FSTree_Window_Gesture : public FSTree_ReadableSymLink
 	{
 		private:
@@ -695,13 +725,7 @@ namespace Genie
 			FSTree_Window_Gesture( const FSTreePtr&     parent,
 			                       const plus::string&  name );
 			
-			bool Exists() const;
-			
-			bool IsLink() const  { return Exists(); }
-			
 			void Delete() const;
-			
-			void SymLink( const plus::string& target ) const;
 			
 			plus::string ReadLink() const;
 	};
@@ -715,13 +739,6 @@ namespace Genie
 		ASSERT( itsIndex != -1 );
 	}
 	
-	bool FSTree_Window_Gesture::Exists() const
-	{
-		const FSTree* view = GetViewKey( this );
-		
-		return !gWindowParametersMap[ view ].itsGesturePaths[ itsIndex ].empty();
-	}
-	
 	void FSTree_Window_Gesture::Delete() const
 	{
 		const FSTree* view = GetViewKey( this );
@@ -731,7 +748,7 @@ namespace Genie
 		params.itsGesturePaths[ itsIndex ].reset();
 	}
 	
-	void FSTree_Window_Gesture::SymLink( const plus::string& target_path ) const
+	void FSTree_Window_Ungesture::SymLink( const plus::string& target_path ) const
 	{
 		const FSTree* view = GetViewKey( this );
 		
@@ -883,6 +900,46 @@ namespace Genie
 		variable
 	};
 	
+	static FSTreePtr new_window( const FSTreePtr&     parent,
+	                             const plus::string&  name,
+	                             const void*          args )
+	{
+		const bool exists = port_has_window( parent );
+		
+		typedef FSTree* T;
+		
+		return exists ? T( new FSTree_sys_port_ADDR_window  ( parent, name ) )
+		              : T( new FSTree_sys_port_ADDR_Unwindow( parent, name ) );
+	}
+	
+	static FSTreePtr new_focus( const FSTreePtr&     parent,
+	                            const plus::string&  name,
+	                            const void*          args )
+	{
+		const bool exists = gWindowParametersMap[ parent.get() ].itsFocus != NULL;
+		
+		typedef FSTree* T;
+		
+		return exists ? T( new FSTree_sys_port_ADDR_focus  ( parent, name ) )
+		              : T( new FSTree_sys_port_ADDR_Unfocus( parent, name ) );
+	}
+	
+	static FSTreePtr new_gesture( const FSTreePtr&     parent,
+	                              const plus::string&  name,
+	                              const void*          args )
+	{
+		const FSTree* view = parent.get();
+		
+		const int index = LookupGesture( name );
+		
+		const bool exists = !gWindowParametersMap[ view ].itsGesturePaths[ index ].empty();
+		
+		typedef FSTree* T;
+		
+		return exists ? T( new FSTree_Window_Gesture  ( parent, name ) )
+		              : T( new FSTree_Window_Ungesture( parent, name ) );
+	}
+	
 	static FSTreePtr new_port_property( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
 	                                    const void*          params_ )
@@ -917,14 +974,14 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_port_ADDR_Mappings[] =
 	{
-		{ "window", &Basic_Factory< FSTree_sys_port_ADDR_window > },
+		{ "window", &new_window },
 		
 		{ "view",   &subview_factory, (const void*) &GetView },
 		
-		{ "focus",  &Basic_Factory< FSTree_sys_port_ADDR_focus > },
+		{ "focus",  &new_focus },
 		
-		{ "accept", &Basic_Factory< FSTree_Window_Gesture > },
-		{ "cancel", &Basic_Factory< FSTree_Window_Gesture > },
+		{ "accept", &new_gesture },
+		{ "cancel", &new_gesture },
 		
 		{ "tty",    &Basic_Factory< FSTree_sys_port_ADDR_tty > },
 		
