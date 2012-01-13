@@ -292,11 +292,6 @@ namespace Genie
 			            const plus::string&  name,
 			            const FSTree*        parent = NULL );
 			
-			bool Exists() const;
-			bool IsFile() const;
-			bool IsDirectory() const;
-			bool IsLink() const;
-			
 			FSTreePtr Parent() const;
 			
 			const FSSpec& GetFSSpec() const  { return itsFileSpec; }
@@ -500,56 +495,10 @@ namespace Genie
 	}
 	
 	
-	bool FSTree_HFS::Exists() const
-	{
-		return itsCInfo.hFileInfo.ioResult == noErr;
-	}
-	
-	bool FSTree_HFS::IsFile() const
-	{
-		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
-		
-		return hFileInfo.ioResult == noErr  &&  !(hFileInfo.ioFlAttrib & kioFlAttribDirMask);
-	}
-	
-	bool FSTree_HFS::IsDirectory() const
-	{
-		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
-		
-		return hFileInfo.ioResult == noErr  &&  hFileInfo.ioFlAttrib & kioFlAttribDirMask;
-	}
-	
 	static inline bool is_osx_symlink( const FInfo& fInfo )
 	{
 		return    fInfo.fdCreator == Mac::kSymLinkCreator
 		       && fInfo.fdType    == Mac::kSymLinkFileType;
-	}
-	
-	bool FSTree_HFS::IsLink() const
-	{
-		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
-		
-		const bool exists = hFileInfo.ioResult == noErr;
-		
-		if ( exists )
-		{
-			const bool isDir = hFileInfo.ioFlAttrib & kioFlAttribDirMask;
-			
-			if ( isDir )
-			{
-				const Mac::FSDirSpec& root = root_DirSpec();
-				
-				return hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
-			}
-			
-			const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
-			
-			const bool is_alias = fInfo.fdFlags & kIsAlias;
-			
-			return is_alias  ||  is_osx_symlink( fInfo );
-		}
-		
-		return false;
 	}
 	
 	FSTreePtr FSTree_HFS::Parent() const
