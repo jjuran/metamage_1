@@ -592,13 +592,6 @@ namespace Genie
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
 		Stat_HFS( itIsOnServer, &sb, itsCInfo, itsFileSpec.name, false );
-		
-		const Mac::FSDirSpec& root = root_DirSpec();
-		
-		if ( itsFileSpec.vRefNum == root.vRefNum  &&  sb.st_ino == root.dirID )
-		{
-			sb.st_mode += S_IFLNK - S_IFDIR;
-		}
 	}
 	
 	void FSTree_HFS::ChangeMode( mode_t mode ) const

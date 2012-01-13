@@ -26,6 +26,7 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
+#include "Genie/FS/FSTree_FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -84,6 +85,15 @@ namespace Genie
 	{
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
+			const Mac::FSDirSpec& root = root_DirSpec();
+			
+			const bool is_root = hFileInfo.ioVRefNum == root.vRefNum  &&  hFileInfo.ioDirID == root.dirID;
+			
+			if ( is_root )
+			{
+				return S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR;
+			}
+			
 			return S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
 		}
 		
