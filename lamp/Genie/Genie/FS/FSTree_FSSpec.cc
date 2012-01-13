@@ -372,7 +372,8 @@ namespace Genie
 	                        const FSTree*        parent )
 	:
 		FSTree( parent ? parent->Self() : null_FSTreePtr,
-		        name ),
+		        name,
+		        GetItemMode( cInfo.hFileInfo ) ),
 		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
 		itsCInfo        ( cInfo                 ),
 		itIsOnServer    ( onServer              )
