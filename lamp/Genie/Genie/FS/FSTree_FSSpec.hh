@@ -6,14 +6,18 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_FSSPEC_HH
 #define GENIE_FILESYSTEM_FSTREE_FSSPEC_HH
 
-// Files.h
-struct FSSpec;
 
+namespace Mac
+{
+	
+	struct FSDirSpec;
+	
+}
 
 namespace Genie
 {
 	
-	//FSTreePtr GetDataForkFSTree( const FSSpec& file );
+	const Mac::FSDirSpec& root_DirSpec();
 	
 }
 

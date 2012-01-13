@@ -244,7 +244,7 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	static const Mac::FSDirSpec& root_DirSpec()
+	const Mac::FSDirSpec& root_DirSpec()
 	{
 		static N::FSDirSpec j = FindJDirectory();
 		
