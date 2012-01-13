@@ -21,6 +21,8 @@ struct stat;
 namespace Genie
 {
 	
+	mode_t GetItemMode( const HFileInfo& hFileInfo );
+	
 	void Stat_HFS( bool                  async,
 	               struct ::stat*        sb,
 	               const CInfoPBRec&     cInfo,
