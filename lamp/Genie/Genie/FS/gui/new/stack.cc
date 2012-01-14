@@ -143,6 +143,15 @@ namespace Genie
 	}
 	
 	
+	static boost::intrusive_ptr< Pedestal::View >&
+	//
+	get_subview( const FSTree* parent, const plus::string& name )
+	{
+		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
+		
+		return find_or_append_subview( params, name ).view;
+	}
+	
 	class FSTree_Stack_Subview : public FSTree_View
 	{
 		public:
