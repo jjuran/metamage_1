@@ -348,7 +348,7 @@ namespace Genie
 			return gFrameParametersMap[ view ].outline_curvature;
 		}
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key )
+		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
 		{
 			return gFrameParametersMap[ key ].itsSubview;
 		}

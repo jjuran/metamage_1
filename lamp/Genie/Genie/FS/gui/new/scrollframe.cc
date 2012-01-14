@@ -349,7 +349,7 @@ namespace Genie
 	namespace
 	{
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key )
+		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
 		{
 			return gScrollFrameParametersMap[ key ].itsSubview;
 		}

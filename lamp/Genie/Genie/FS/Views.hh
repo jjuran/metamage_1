@@ -104,7 +104,9 @@ namespace Genie
 			void HardLink( const FSTreePtr& target ) const;
 	};
 	
-	typedef boost::intrusive_ptr< Pedestal::View >& (*ViewGetter)( const FSTree* );
+	typedef boost::intrusive_ptr< Pedestal::View >&
+	//
+	(*ViewGetter)( const FSTree*, const plus::string& name );
 	
 	class FSTree_View : public FSTree
 	{
@@ -142,7 +144,7 @@ namespace Genie
 			{
 				ASSERT( itsGetter != NULL );
 				
-				return itsGetter( ParentKey() );
+				return itsGetter( ParentKey(), Name() );
 			}
 	};
 	
