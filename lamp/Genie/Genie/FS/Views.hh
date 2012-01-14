@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_VIEWS_HH
 #define GENIE_FILESYSTEM_VIEWS_HH
 
-// Standard C++
-#include <memory>
-
 // Debug
 #include "debug/assert.hh"
 
