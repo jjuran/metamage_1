@@ -495,12 +495,6 @@ namespace Genie
 	}
 	
 	
-	static inline bool is_osx_symlink( const FInfo& fInfo )
-	{
-		return    fInfo.fdCreator == Mac::kSymLinkCreator
-		       && fInfo.fdType    == Mac::kSymLinkFileType;
-	}
-	
 	FSTreePtr FSTree_HFS::Parent() const
 	{
 		if ( itsFileSpec.parID == fsRtParID )
@@ -661,24 +655,19 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
+		if ( !IsLink() )
+		{
+			return Self();
+		}
+		
 		const HFileInfo& hFileInfo = itsCInfo.hFileInfo;
 		
 		const bool exists = hFileInfo.ioResult == noErr;
 		
-		if ( !exists )
+		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			//return Self();
-		}
-		else if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
-		{
-			const Mac::FSDirSpec& root = root_DirSpec();
-			
-			const DirInfo& dirInfo = itsCInfo.dirInfo;
-			
-			if ( dirInfo.ioVRefNum == root.vRefNum  &&  dirInfo.ioDrDirID == root.dirID )
-			{
-				return FSRoot();
-			}
+			// Symlink to root directory
+			return FSRoot();
 		}
 		else
 		{
@@ -686,29 +675,24 @@ namespace Genie
 			
 			const bool is_alias = fInfo.fdFlags & kIsAlias;
 			
-			if ( is_alias  ||  is_osx_symlink( fInfo ) )
+			const plus::string target = SlurpFile( itsFileSpec );
+			
+			if ( !target.empty() )
 			{
-				plus::string target = SlurpFile( itsFileSpec );
+				return ResolvePathname( target, Parent() );
+			}
+			else if ( is_alias )
+			{
+				FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
 				
-				if ( !target.empty() )
-				{
-					return ResolvePathname( target, Parent() );
-				}
-				else if ( is_alias )
-				{
-					FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
-					
-					return FSTreeFromFSSpec( target, FileIsOnServer( target ) );
-				}
-				else
-				{
-					// empty 'slnk' file
-					throw p7::errno_t( EIO );
-				}
+				return FSTreeFromFSSpec( target, FileIsOnServer( target ) );
+			}
+			else
+			{
+				// empty 'slnk' file
+				throw p7::errno_t( EIO );
 			}
 		}
-		
-		return Self();
 	}
 	
 	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
