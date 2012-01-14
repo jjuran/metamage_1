@@ -140,7 +140,7 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
-			virtual boost::intrusive_ptr< Pedestal::View >& Get() const
+			boost::intrusive_ptr< Pedestal::View >& Get() const
 			{
 				ASSERT( itsGetter != NULL );
 				
