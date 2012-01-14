@@ -18,7 +18,7 @@ namespace Genie
 	{
 		ViewGetter getter = (ViewGetter) args;  // reinterpret_cast
 		
-		return new FSTree_View( parent, name, getter, NULL );
+		return New_View( parent, name, getter, NULL );
 	}
 	
 }

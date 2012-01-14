@@ -189,7 +189,7 @@ namespace Genie
 	{
 		parent = parent ? parent : this;
 		
-		return new FSTree_View( parent->Self(), name, get_subview, delete_subview );
+		return New_View( parent->Self(), name, get_subview, delete_subview );
 	}
 	
 	class Stack_IteratorConverter
