@@ -17,8 +17,6 @@
 #include "Genie/FS/FSTree_Directory.hh"
 
 
-struct Rect;
-
 namespace Pedestal
 {
 	
