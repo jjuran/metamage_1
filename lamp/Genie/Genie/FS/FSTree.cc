@@ -137,7 +137,6 @@ namespace Genie
 	mode_t FSTree::FilePermMode() const
 	{
 		mode_t perm = IsDirectory() ? S_IRUSR | S_IWUSR | S_IXUSR
-		            : IsLink()      ? S_IRUSR | S_IWUSR | S_IXUSR
 		            :                 itsMode & 07777;
 		
 		return perm;
@@ -153,7 +152,6 @@ namespace Genie
 		const time_t now = time( NULL );
 		
 		const mode_t type = IsDirectory() ? S_IFDIR
-		                  : IsLink()      ? S_IFLNK
 		                  :                 itsMode & S_IFMT;
 		
 		sb.st_ino = Inode();
