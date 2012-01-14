@@ -397,5 +397,13 @@ namespace Genie
 		GetViewDelegate( this )->IterateIntoCache( cache );
 	}
 	
+	FSTreePtr New_View( const FSTreePtr&     parent,
+	                    const plus::string&  name,
+	                    ViewGetter           get,
+	                    ViewPurger           purge )
+	{
+		return new FSTree_View( parent, name, get, purge );
+	}
+	
 }
 

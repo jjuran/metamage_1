@@ -147,6 +147,11 @@ namespace Genie
 			}
 	};
 	
+	FSTreePtr New_View( const FSTreePtr&     parent,
+	                    const plus::string&  name,
+	                    ViewGetter           get,
+	                    ViewPurger           purge );
+	
 }
 
 #endif
