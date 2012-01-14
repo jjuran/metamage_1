@@ -91,7 +91,7 @@ namespace Genie
 			
 			if ( is_root )
 			{
-				return S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR;
+				return S_IFLNK | 0777;
 			}
 			
 			return S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
@@ -105,7 +105,7 @@ namespace Genie
 		
 		if ( is_link )
 		{
-			return S_IFLNK | S_IRUSR | S_IWUSR | S_IXUSR;
+			return S_IFLNK | 0777;
 		}
 		
 		return S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );;
