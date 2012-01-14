@@ -379,7 +379,7 @@ namespace Genie
 		
 		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
 		
-		{ "v", &subview_factory, (const void*) &GetView },
+		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
 		{ NULL, NULL }
 	};

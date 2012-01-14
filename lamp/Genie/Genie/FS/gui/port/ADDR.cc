@@ -976,7 +976,7 @@ namespace Genie
 	{
 		{ "window", &new_window },
 		
-		{ "view",   &subview_factory, (const void*) &GetView },
+		{ "view",   &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
 		{ "focus",  &new_focus },
 		

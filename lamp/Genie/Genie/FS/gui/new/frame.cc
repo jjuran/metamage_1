@@ -386,7 +386,7 @@ namespace Genie
 		{ ".outline-offset",    PROPERTY_INT( Outline_Offset    ) },
 		{ ".outline-curvature", PROPERTY_INT( Outline_Curvature ) },
 		
-		{ "v", &subview_factory, (const void*) &GetView },
+		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
 		{ NULL, NULL }
 	};
