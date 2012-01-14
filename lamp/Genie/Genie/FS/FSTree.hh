@@ -64,7 +64,8 @@ namespace Genie
 			virtual bool Exists() const;
 			virtual bool IsFile() const;
 			virtual bool IsDirectory() const;
-			virtual bool IsLink() const;
+			
+			bool IsLink() const;
 			
 			const FSTreePtr& ParentRef() const  { return itsParent; }
 			
