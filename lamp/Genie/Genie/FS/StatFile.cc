@@ -81,7 +81,7 @@ namespace Genie
 		       && fInfo.fdType    == Mac::kSymLinkFileType;
 	}
 	
-	static mode_t GetItemMode( const HFileInfo& hFileInfo )
+	mode_t GetItemMode( const HFileInfo& hFileInfo )
 	{
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
