@@ -33,6 +33,9 @@ struct stat;
 namespace Genie
 {
 	
+	struct node_method_set;
+	
+	
 	extern const FSTreePtr null_FSTreePtr;
 	
 	const FSTreePtr& FSRoot();
@@ -44,6 +47,8 @@ namespace Genie
 			FSTreePtr     itsParent;
 			plus::string  itsName;
 			mode_t        itsMode;
+			
+			const node_method_set*  its_methods;
 		
 		public:
 			FSTree();
@@ -51,9 +56,10 @@ namespace Genie
 			FSTree( const FSTreePtr&     parent,
 			        const plus::string&  name );
 			
-			FSTree( const FSTreePtr&     parent,
-			        const plus::string&  name,
-			        mode_t               mode );
+			FSTree( const FSTreePtr&        parent,
+			        const plus::string&     name,
+			        mode_t                  mode,
+			        const node_method_set*  methods = NULL );
 			
 			virtual ~FSTree();
 			
