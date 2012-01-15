@@ -5,9 +5,6 @@
 
 #include "Genie/FS/Trigger.hh"
 
-// POSIX
-#include <sys/stat.h>
-
 // Genie
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -17,9 +14,10 @@ namespace Genie
 {
 	
 	Trigger_Base::Trigger_Base( const FSTreePtr&     parent,
-	                            const plus::string&  name )
+	                            const plus::string&  name,
+	                            mode_t               mode )
 	:
-		FSTree( parent, name, S_IFCHR | 0200 )
+		FSTree( parent, name, mode )
 	{
 	}
 	

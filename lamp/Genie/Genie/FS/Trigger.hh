@@ -20,7 +20,8 @@ namespace Genie
 	{
 		public:
 			Trigger_Base( const FSTreePtr&     parent,
-			              const plus::string&  name );
+			              const plus::string&  name,
+			              mode_t               mode = S_IFCHR | 0200 );
 			
 			virtual void Invoke() const = 0;
 			
