@@ -152,6 +152,19 @@ namespace Genie
 		return find_or_append_subview( params, name ).view;
 	}
 	
+	static void delete_subview( const FSTree* parent, const plus::string& name )
+	{
+		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
+		
+		Named_Subview* subview = find_subview( params, name );
+		
+		ASSERT( subview != NULL );
+		
+		ViewList& v = params.v;
+		
+		v.erase( v.begin() + (subview - &v[0]) );
+	}
+	
 	class FSTree_Stack_Subview : public FSTree_View
 	{
 		public:
@@ -169,15 +182,7 @@ namespace Genie
 	{
 		FSTree_View::Delete();  // throws if nonexistent
 		
-		Stack_Parameters& params = gStack_Parameters_Map[ ParentRef().get() ];
-		
-		Named_Subview* subview = find_subview( params, Name() );
-		
-		ASSERT( subview != NULL );
-		
-		ViewList& v = params.v;
-		
-		v.erase( v.begin() + (subview - &v[0]) );
+		delete_subview( ParentRef().get(), Name() );
 	}
 	
 	
