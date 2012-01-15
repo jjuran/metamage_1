@@ -134,13 +134,6 @@ namespace Genie
 		return Parent()->Inode();
 	}
 	
-	mode_t FSTree::FilePermMode() const
-	{
-		mode_t perm = itsMode & 07777;
-		
-		return perm;
-	}
-	
 	void FSTree::Stat( struct ::stat& sb ) const
 	{
 		if ( ! Exists() )
@@ -150,11 +143,9 @@ namespace Genie
 		
 		const time_t now = time( NULL );
 		
-		const mode_t type = itsMode & S_IFMT;
-		
 		sb.st_ino = Inode();
 		
-		sb.st_mode = type | FilePermMode();
+		sb.st_mode = itsMode;
 		
 		sb.st_nlink = 1;
 		
