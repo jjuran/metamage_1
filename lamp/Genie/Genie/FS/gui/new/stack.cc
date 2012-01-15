@@ -158,7 +158,7 @@ namespace Genie
 			FSTree_Stack_Subview( const FSTreePtr&     parent,
 		                          const plus::string&  name)
 			:
-				FSTree_View( parent, name, get_subview )
+				FSTree_View( parent, name, get_subview, NULL )
 			{
 			}
 			
