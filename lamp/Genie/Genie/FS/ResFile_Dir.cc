@@ -33,6 +33,24 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	class FSTree_EmptyRsrcForkDir : public FSTree
+	{
+		private:
+			FSSpec  itsFileSpec;
+		
+		public:
+			FSTree_EmptyRsrcForkDir( const FSTreePtr&     parent,
+			                         const plus::string&  name,
+			                         const FSSpec&        file )
+			:
+				FSTree( parent, name, 0 ),
+				itsFileSpec( file )
+			{
+			}
+			
+			void CreateDirectory( mode_t mode ) const;
+	};
+	
 	class FSTree_ResFileDir : public FSTree
 	{
 		private:
@@ -48,18 +66,11 @@ namespace Genie
 			{
 			}
 			
-			bool Exists() const;
-			
-			bool IsDirectory() const  { return Exists(); }
-			
 			void Delete() const;
-			
-			void CreateDirectory( mode_t mode ) const;
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
-			
 	};
 	
 	
@@ -84,11 +95,6 @@ namespace Genie
 		}
 		
 		return exists;
-	}
-	
-	bool FSTree_ResFileDir::Exists() const
-	{
-		return ResFile_dir_exists( itsFileSpec );
 	}
 	
 	static inline bool contains( const char* s, size_t length, char c )
@@ -118,7 +124,7 @@ namespace Genie
 		N::SetEOF( resource_fork, 0 );
 	}
 	
-	void FSTree_ResFileDir::CreateDirectory( mode_t mode ) const
+	void FSTree_EmptyRsrcForkDir::CreateDirectory( mode_t mode ) const
 	{
 		CInfoPBRec cInfo = { 0 };
 		
@@ -166,7 +172,12 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const FSSpec&        file )
 	{
-		return new FSTree_ResFileDir( parent, name, file );
+		const bool exists = ResFile_dir_exists( file );
+		
+		typedef const FSTree* T;
+		
+		return exists ? T( new FSTree_ResFileDir      ( parent, name, file ) )
+		              : T( new FSTree_EmptyRsrcForkDir( parent, name, file ) );
 	}
 	
 }
