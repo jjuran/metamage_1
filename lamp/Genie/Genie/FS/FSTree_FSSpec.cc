@@ -690,9 +690,12 @@ namespace Genie
 			else
 			{
 				// empty 'slnk' file
-				throw p7::errno_t( EIO );
+			//	throw p7::errno_t( EIO );
 			}
 		}
+		
+		// Appease Metrowerks C++, which thinks we don't return a value
+		throw p7::errno_t( EIO );
 	}
 	
 	static void create_native_symlink( const FSSpec& link_spec, const char* target_path )
