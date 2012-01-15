@@ -245,7 +245,6 @@ namespace Genie
 			off_t GetEOF() const;
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-			IOPtr Open( OpenFlags flags              ) const;
 	};
 	
 	void FSTree_Rsrc_File::Delete() const
@@ -266,16 +265,7 @@ namespace Genie
 		return N::GetHandleSize( r );
 	}
 	
-	IOPtr
-	//
-	FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const
-	{
-		return Open( flags );
-	}
-	
-	IOPtr
-	//
-	FSTree_Rsrc_File::Open( OpenFlags flags ) const
+	IOPtr FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
