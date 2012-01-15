@@ -63,9 +63,9 @@ namespace Genie
 	};
 	
 	
-	bool FSTree_ResFileDir::Exists() const
+	static bool ResFile_dir_exists( const FSSpec& file )
 	{
-		::ResFileRefNum refNum = ::FSpOpenResFile( &itsFileSpec, fsRdPerm );
+		::ResFileRefNum refNum = ::FSpOpenResFile( &file, fsRdPerm );
 		
 		const bool exists = refNum >= 0;
 		
@@ -84,6 +84,11 @@ namespace Genie
 		}
 		
 		return exists;
+	}
+	
+	bool FSTree_ResFileDir::Exists() const
+	{
+		return ResFile_dir_exists( itsFileSpec );
 	}
 	
 	static inline bool contains( const char* s, size_t length, char c )
