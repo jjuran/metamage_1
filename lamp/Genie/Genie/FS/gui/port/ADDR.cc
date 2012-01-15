@@ -42,6 +42,7 @@
 #include "Pedestal/Window.hh"
 
 // Genie
+#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ReadableSymLink.hh"
@@ -448,21 +449,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_port_ADDR_Unfocus : public FSTree
-	{
-		public:
-			FSTree_sys_port_ADDR_Unfocus( const FSTreePtr&     parent,
-			                              const plus::string&  name )
-			:
-				FSTree( parent, name, 0 )
-			{
-			}
-			
-			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			void SymLink( const plus::string& target ) const;
-	};
-	
 	class FSTree_sys_port_ADDR_focus : public FSTree
 	{
 		public:
@@ -494,9 +480,11 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsFocus = NULL;
 	}
 	
-	void FSTree_sys_port_ADDR_Unfocus::SymLink( const plus::string& target ) const
+	static void unfocus_symlink( const FSTree*        parent,
+	                             const plus::string&  name,
+	                             const plus::string&  target )
 	{
-		const FSTreePtr targeted_file = ResolvePathname( target, ParentRef() )->Lookup( plus::string::null );
+		const FSTreePtr targeted_file = ResolvePathname( target, parent )->Lookup( plus::string::null );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
 		
@@ -506,9 +494,9 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		FocusViewInWindow( *target_view, WindowKey() );
+		FocusViewInWindow( *target_view, parent );
 		
-		gWindowParametersMap[ WindowKey() ].itsFocus = targeted_file.get();
+		gWindowParametersMap[ parent ].itsFocus = targeted_file.get();
 	}
 	
 	plus::string FSTree_sys_port_ADDR_focus::ReadLink() const
@@ -918,10 +906,12 @@ namespace Genie
 	{
 		const bool exists = gWindowParametersMap[ parent.get() ].itsFocus != NULL;
 		
-		typedef FSTree* T;
+		if ( exists )
+		{
+			return new FSTree_sys_port_ADDR_focus( parent, name );
+		}
 		
-		return exists ? T( new FSTree_sys_port_ADDR_focus  ( parent, name ) )
-		              : T( new FSTree_sys_port_ADDR_Unfocus( parent, name ) );
+		return New_CreatableSymLink( parent, name, &unfocus_symlink );
 	}
 	
 	static FSTreePtr new_gesture( const FSTreePtr&     parent,
