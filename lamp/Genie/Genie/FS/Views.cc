@@ -306,10 +306,12 @@ namespace Genie
 	
 	FSTree_View::FSTree_View( const FSTreePtr&     parent,
 	                          const plus::string&  name,
-	                          ViewGetter           get )
+	                          ViewGetter           get,
+	                          ViewPurger           purge )
 	:
 		FSTree( parent, name ),
-		itsGetter( get )
+		itsGetter( get   ),
+		itsPurger( purge )
 	{
 	}
 	
@@ -341,6 +343,11 @@ namespace Genie
 			Get() = Ped::EmptyView::Get();
 			
 			RemoveViewParameters( parent, name );
+			
+			if ( itsPurger )
+			{
+				itsPurger( parent, name );
+			}
 		}
 		else
 		{

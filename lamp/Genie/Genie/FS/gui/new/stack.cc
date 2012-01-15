@@ -152,26 +152,11 @@ namespace Genie
 		return find_or_append_subview( params, name ).view;
 	}
 	
-	class FSTree_Stack_Subview : public FSTree_View
+	static void delete_subview( const FSTree* parent, const plus::string& name )
 	{
-		public:
-			FSTree_Stack_Subview( const FSTreePtr&     parent,
-		                          const plus::string&  name)
-			:
-				FSTree_View( parent, name, get_subview )
-			{
-			}
-			
-			void Delete() const;
-	};
-	
-	void FSTree_Stack_Subview::Delete() const
-	{
-		FSTree_View::Delete();  // throws if nonexistent
+		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
 		
-		Stack_Parameters& params = gStack_Parameters_Map[ ParentRef().get() ];
-		
-		Named_Subview* subview = find_subview( params, Name() );
+		Named_Subview* subview = find_subview( params, name );
 		
 		ASSERT( subview != NULL );
 		
@@ -193,15 +178,19 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const
-			{
-				return new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name );
-			}
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
 			void Delete() const  { FSTree_new_stack::DestroyDelegate( this ); }
 	};
+	
+	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	{
+		parent = parent ? parent : this;
+		
+		return new FSTree_View( parent->Self(), name, get_subview, delete_subview );
+	}
 	
 	class Stack_IteratorConverter
 	{

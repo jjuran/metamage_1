@@ -103,10 +103,13 @@ namespace Genie
 	//
 	(*ViewGetter)( const FSTree*, const plus::string& name );
 	
+	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
+	
 	class FSTree_View : public FSTree
 	{
 		private:
-			ViewGetter itsGetter;
+			ViewGetter  itsGetter;
+			ViewPurger  itsPurger;
 			
 			// Non-copyable
 			FSTree_View           ( const FSTree_View& );
@@ -115,7 +118,8 @@ namespace Genie
 		public:
 			FSTree_View( const FSTreePtr&     parent,
 			             const plus::string&  name,
-			             ViewGetter           get = NULL );
+			             ViewGetter           get,
+			             ViewPurger           purge );
 			
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
