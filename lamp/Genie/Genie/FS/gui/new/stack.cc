@@ -189,15 +189,17 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const
-			{
-				return new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name );
-			}
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
 			void Delete() const  { FSTree_new_stack::DestroyDelegate( this ); }
 	};
+	
+	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	{
+		return new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name );
+	}
 	
 	class Stack_IteratorConverter
 	{
