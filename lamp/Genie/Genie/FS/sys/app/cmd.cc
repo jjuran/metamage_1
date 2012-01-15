@@ -23,6 +23,7 @@
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
@@ -62,27 +63,16 @@ namespace Genie
 	}
 	
 	
-	class unused_cmd_slot : public FSTree
-	{
-		public:
-			unused_cmd_slot( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree( parent, name, 0 )
-			{
-			}
-			
-			void SymLink( const plus::string& target ) const;
-	};
-	
-	void unused_cmd_slot::SymLink( const plus::string& target ) const
+	static void unused_cmd_slot_symlink( const FSTree*        parent,
+	                                     const plus::string&  name,
+	                                     const plus::string&  target )
 	{
 		if ( target.c_str()[0] != '/' )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( Name() ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( name ) );
 		
 		Ped::CommandHandler handler = Ped::GetCommandHandler( code );
 		
@@ -148,7 +138,7 @@ namespace Genie
 			return new cmd_symlink( parent, name, target );
 		}
 		
-		return new unused_cmd_slot( parent, name );
+		return New_CreatableSymLink( parent, name, &unused_cmd_slot_symlink );
 	}
 	
 	static void cmd_iterate( const FSTreePtr& parent, FSTreeCache& cache )
