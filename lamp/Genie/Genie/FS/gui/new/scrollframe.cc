@@ -327,13 +327,11 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
+	static void scrollframe_target_symlink( const FSTree* view, const plus::string& target_path )
 	{
-		FSTreePtr target = ResolvePathname( target_path, ParentRef() );
+		FSTreePtr target = ResolvePathname( target_path, view );
 		
 		FSTreePtr delegate = target->Lookup( plus::string::null );
-		
-		const FSTree* view = GetViewKey( this );
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -341,6 +339,13 @@ namespace Genie
 		params.itsTargetProxy = ScrollerProxy( delegate.get() );
 		
 		InvalidateWindowForView( view );
+	}
+	
+	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		scrollframe_target_symlink( view, target_path );
 	}
 	
 	plus::string FSTree_ScrollFrame_target::ReadLink() const
