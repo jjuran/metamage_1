@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_VIEWS_HH
 #define GENIE_FILESYSTEM_VIEWS_HH
 
-// Debug
-#include "debug/assert.hh"
-
 // plus
 #include "plus/var_string.hh"
 
@@ -105,47 +102,10 @@ namespace Genie
 	
 	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
 	
-	class FSTree_View : public FSTree
-	{
-		private:
-			ViewGetter  itsGetter;
-			ViewPurger  itsPurger;
-			
-			// Non-copyable
-			FSTree_View           ( const FSTree_View& );
-			FSTree_View& operator=( const FSTree_View& );
-		
-		public:
-			FSTree_View( const FSTreePtr&     parent,
-			             const plus::string&  name,
-			             ViewGetter           get,
-			             ViewPurger           purge );
-			
-			const FSTree* ParentKey() const  { return ParentRef().get(); }
-			
-			bool IsFile() const  { return false; }
-			
-			bool IsDirectory() const  { return Exists(); }
-			
-			bool Exists() const;
-			
-			void SetTimes() const;
-			
-			void Delete() const;
-			
-			void CreateDirectory( mode_t mode ) const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-			
-			boost::intrusive_ptr< Pedestal::View >& Get() const
-			{
-				ASSERT( itsGetter != NULL );
-				
-				return itsGetter( ParentKey(), Name() );
-			}
-	};
+	FSTreePtr New_View( const FSTreePtr&     parent,
+	                    const plus::string&  name,
+	                    ViewGetter           get,
+	                    ViewPurger           purge );
 	
 }
 
