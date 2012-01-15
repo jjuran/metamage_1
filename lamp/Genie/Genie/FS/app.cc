@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -30,27 +31,16 @@ namespace Genie
 	app_map the_application_map;
 	
 	
-	class unused_app_slot : public FSTree
-	{
-		public:
-			unused_app_slot( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree( parent, name, 0 )
-			{
-			}
-			
-			void SymLink( const plus::string& target ) const;
-	};
-	
-	void unused_app_slot::SymLink( const plus::string& target ) const
+	static void unused_app_slot_symlink( const FSTree*        parent,
+	                                     const plus::string&  name,
+	                                     const plus::string&  target )
 	{
 		if ( target.c_str()[0] != '/' )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		plus::string& value = the_application_map[ Name() ];
+		plus::string& value = the_application_map[ name ];
 		
 		if ( !value.empty() )
 		{
@@ -120,7 +110,7 @@ namespace Genie
 			return new app_symlink( parent, name, target );
 		}
 		
-		return new unused_app_slot( parent, name );
+		return New_CreatableSymLink( parent, name, &unused_app_slot_symlink );
 	}
 	
 	static void app_iterate( const FSTreePtr& parent, FSTreeCache& cache )
