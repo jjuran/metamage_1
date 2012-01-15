@@ -23,8 +23,8 @@
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 
@@ -95,6 +95,11 @@ namespace Genie
 		value = target;
 	}
 	
+	static node_method_set unused_cmd_slot_methods =
+	{
+		&unused_cmd_slot_symlink
+	};
+	
 	
 	class cmd_symlink : public FSTree_SymbolicLink
 	{
@@ -137,7 +142,7 @@ namespace Genie
 			return new cmd_symlink( parent, name, target );
 		}
 		
-		return New_CreatableSymLink( parent, name, &unused_cmd_slot_symlink );
+		return new FSTree( parent, name, 0, &unused_cmd_slot_methods );
 	}
 	
 	static void cmd_iterate( const FSTreePtr& parent, FSTreeCache& cache )
