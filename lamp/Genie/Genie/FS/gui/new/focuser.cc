@@ -47,7 +47,7 @@ namespace Genie
 	
 	Ped::View* Focuser::GetFocus() const
 	{
-		const FSTree* focus = GetWindowFocus( GetViewWindowKey( itsKey ) );
+		const FSTree* focus = get_port_focus( GetViewWindowKey( itsKey ) );
 			
 		return get_focusable_view( focus );
 	}

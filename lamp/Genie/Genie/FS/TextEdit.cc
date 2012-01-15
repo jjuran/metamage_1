@@ -303,7 +303,7 @@ namespace Genie
 		
 		const FSTree* windowKey = GetViewWindowKey( itsKey );
 		
-		SetWindowFocus( windowKey, itsKey );
+		set_port_focus( windowKey, itsKey );
 	}
 	
 	void TextEdit::Insert_Key( char c )

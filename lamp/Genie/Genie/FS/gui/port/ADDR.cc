@@ -170,7 +170,7 @@ namespace Genie
 	{
 		if ( window.get() )
 		{
-			UninstallViewFromWindow( window->GetView(), key );
+			uninstall_view_from_port( window->GetView(), key );
 			
 			window.reset();
 		}
@@ -298,7 +298,7 @@ namespace Genie
 		params.itsSubview->Activate( true );
 	}
 	
-	void RemoveUserWindow( const FSTree* key )
+	void remove_window_and_views_from_port( const FSTree* key )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
@@ -314,9 +314,9 @@ namespace Genie
 		RemoveAllViewParameters( key );
 	}
 	
-	void NotifyWindowOfViewLoss( const FSTree* window_key, const FSTree* view )
+	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view )
 	{
-		if ( WindowParameters* it = gWindowParametersMap.find( window_key ) )
+		if ( WindowParameters* it = gWindowParametersMap.find( port_key ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -404,7 +404,7 @@ namespace Genie
 		}
 	}
 	
-	bool InvalidateWindow( const FSTree* key )
+	bool invalidate_port_WindowRef( const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -416,7 +416,7 @@ namespace Genie
 		return false;
 	}
 	
-	void InstallViewInWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
+	void install_view_in_port( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -435,7 +435,7 @@ namespace Genie
 		}
 	}
 	
-	void UninstallViewFromWindow( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
+	void uninstall_view_from_port( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -526,9 +526,9 @@ namespace Genie
 		throw p7::errno_t( ENOENT );
 	}
 	
-	const FSTree* GetWindowFocus( const FSTree* window )
+	const FSTree* get_port_focus( const FSTree* port )
 	{
-		if ( WindowParameters* it = gWindowParametersMap.find( window ) )
+		if ( WindowParameters* it = gWindowParametersMap.find( port ) )
 		{
 			WindowParameters& params = *it;
 			
@@ -538,9 +538,9 @@ namespace Genie
 		return NULL;
 	}
 	
-	void SetWindowFocus( const FSTree* window, const FSTree* focus )
+	void set_port_focus( const FSTree* port, const FSTree* focus )
 	{
-		gWindowParametersMap[ window ].itsFocus = focus;
+		gWindowParametersMap[ port ].itsFocus = focus;
 	}
 	
 	
@@ -587,7 +587,7 @@ namespace Genie
 	{
 		const FSTree* key = WindowKey();
 		
-		InvalidateWindow( key );
+		invalidate_port_WindowRef( key );
 	}
 	
 	void FSTree_sys_port_ADDR_window::Delete() const

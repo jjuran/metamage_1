@@ -178,7 +178,7 @@ namespace Genie
 					gViewParametersMap.erase( it );
 				}
 				
-				NotifyWindowOfViewLoss( temp.itsWindowKey, temp.itsDelegate.get() );
+				notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
 				
 				DeleteDelegate( temp.itsDelegate );
 			}
@@ -202,7 +202,7 @@ namespace Genie
 			{
 				ViewParameters& params = jt->second;
 				
-				NotifyWindowOfViewLoss( params.itsWindowKey, params.itsDelegate.get() );
+				notify_port_of_view_loss( params.itsWindowKey, params.itsDelegate.get() );
 				
 				DeleteDelegate( params.itsDelegate );
 			}
@@ -263,7 +263,7 @@ namespace Genie
 	{
 		const FSTree* windowKey = GetViewWindowKey( view );
 		
-		return InvalidateWindow( windowKey );
+		return invalidate_port_WindowRef( windowKey );
 	}
 	
 	
@@ -338,7 +338,7 @@ namespace Genie
 		{
 			const FSTree* windowKey = GetViewWindowKey( this );
 			
-			UninstallViewFromWindow( Get(), windowKey );
+			uninstall_view_from_port( Get(), windowKey );
 			
 			Get() = Ped::EmptyView::Get();
 			
@@ -377,7 +377,7 @@ namespace Genie
 			Get() = view;
 			
 			// Install and invalidate if window exists
-			InstallViewInWindow( view, windowKey );
+			install_view_in_port( view, windowKey );
 		}
 		else
 		{
