@@ -20,6 +20,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
 
@@ -233,7 +234,12 @@ namespace Genie
 	
 	void FSTree::SymLink( const plus::string& target ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( !( its_methods  &&  its_methods->symlink ) )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		its_methods->symlink( this, target );
 	}
 	
 	IOPtr FSTree::Open( OpenFlags flags, mode_t mode ) const
