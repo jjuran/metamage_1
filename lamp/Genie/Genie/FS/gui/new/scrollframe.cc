@@ -283,17 +283,28 @@ namespace Genie
 	}
 	
 	
+	class FSTree_ScrollFrame_untarget : public FSTree
+	{
+		public:
+			FSTree_ScrollFrame_untarget( const FSTreePtr&     parent,
+			                             const plus::string&  name )
+			:
+				FSTree( parent, name, 0 )
+			{
+			}
+			
+			void SymLink( const plus::string& target ) const;
+	};
+	
 	class FSTree_ScrollFrame_target : public FSTree
 	{
 		public:
 			FSTree_ScrollFrame_target( const FSTreePtr&     parent,
 			                           const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFLNK | 0777 )
 			{
 			}
-			
-			bool Exists() const;
 			
 			void Delete() const;
 			
@@ -302,10 +313,8 @@ namespace Genie
 			plus::string ReadLink() const;
 	};
 	
-	bool FSTree_ScrollFrame_target::Exists() const
+	static bool scrollframe_target_exists( const FSTree* view )
 	{
-		const FSTree* view = GetViewKey( this );
-		
 		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
 	}
 	
@@ -322,13 +331,11 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
+	static void scrollframe_target_symlink( const FSTree* view, const plus::string& target_path )
 	{
-		FSTreePtr target = ResolvePathname( target_path, ParentRef() );
+		FSTreePtr target = ResolvePathname( target_path, view );
 		
 		FSTreePtr delegate = target->Lookup( plus::string::null );
-		
-		const FSTree* view = GetViewKey( this );
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -336,6 +343,20 @@ namespace Genie
 		params.itsTargetProxy = ScrollerProxy( delegate.get() );
 		
 		InvalidateWindowForView( view );
+	}
+	
+	void FSTree_ScrollFrame_untarget::SymLink( const plus::string& target_path ) const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		scrollframe_target_symlink( view, target_path );
+	}
+	
+	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		scrollframe_target_symlink( view, target_path );
 	}
 	
 	plus::string FSTree_ScrollFrame_target::ReadLink() const
@@ -372,12 +393,24 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
 	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
 	
+	static FSTreePtr target_factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args )
+	{
+		const bool exists = scrollframe_target_exists( parent.get() );
+		
+		typedef const FSTree* T;
+		
+		return exists ? T( new FSTree_ScrollFrame_target  ( parent, name ) )
+		              : T( new FSTree_ScrollFrame_untarget( parent, name ) );
+	}
+	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "horizontal", PROPERTY( Horizontal_Property ) },
 		{ "vertical",   PROPERTY( Vertical_Property   ) },
 		
-		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
+		{ "target", &target_factory },
 		
 		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
