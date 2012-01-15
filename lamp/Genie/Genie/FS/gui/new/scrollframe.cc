@@ -302,11 +302,16 @@ namespace Genie
 			plus::string ReadLink() const;
 	};
 	
+	static bool scrollframe_target_exists( const FSTree* view )
+	{
+		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
+	}
+	
 	bool FSTree_ScrollFrame_target::Exists() const
 	{
 		const FSTree* view = GetViewKey( this );
 		
-		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
+		return scrollframe_target_exists( view );
 	}
 	
 	void FSTree_ScrollFrame_target::Delete() const
