@@ -20,8 +20,7 @@ namespace plus
 namespace Genie
 {
 	
-	typedef void (*symlinker)( const FSTree*        parent,
-	                           const plus::string&  name,
+	typedef void (*symlinker)( const FSTree*        node,
 	                           const plus::string&  target );
 	
 	FSTreePtr New_CreatableSymLink( const FSTreePtr&     parent,

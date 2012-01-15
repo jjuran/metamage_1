@@ -63,8 +63,7 @@ namespace Genie
 	}
 	
 	
-	static void unused_cmd_slot_symlink( const FSTree*        parent,
-	                                     const plus::string&  name,
+	static void unused_cmd_slot_symlink( const FSTree*        node,
 	                                     const plus::string&  target )
 	{
 		if ( target.c_str()[0] != '/' )
@@ -72,7 +71,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( name ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( node->Name() ) );
 		
 		Ped::CommandHandler handler = Ped::GetCommandHandler( code );
 		

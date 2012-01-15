@@ -31,8 +31,7 @@ namespace Genie
 	app_map the_application_map;
 	
 	
-	static void unused_app_slot_symlink( const FSTree*        parent,
-	                                     const plus::string&  name,
+	static void unused_app_slot_symlink( const FSTree*        node,
 	                                     const plus::string&  target )
 	{
 		if ( target.c_str()[0] != '/' )
@@ -40,7 +39,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		plus::string& value = the_application_map[ name ];
+		plus::string& value = the_application_map[ node->Name() ];
 		
 		if ( !value.empty() )
 		{

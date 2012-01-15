@@ -480,10 +480,11 @@ namespace Genie
 		gWindowParametersMap[ WindowKey() ].itsFocus = NULL;
 	}
 	
-	static void unfocus_symlink( const FSTree*        parent,
-	                             const plus::string&  name,
+	static void unfocus_symlink( const FSTree*        node,
 	                             const plus::string&  target )
 	{
+		const FSTreePtr& parent = node->ParentRef();
+		
 		const FSTreePtr targeted_file = ResolvePathname( target, parent )->Lookup( plus::string::null );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
@@ -494,9 +495,11 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		FocusViewInWindow( *target_view, parent );
+		const FSTree* window_key = parent.get();
 		
-		gWindowParametersMap[ parent ].itsFocus = targeted_file.get();
+		FocusViewInWindow( *target_view, window_key );
+		
+		gWindowParametersMap[ window_key ].itsFocus = targeted_file.get();
 	}
 	
 	plus::string FSTree_sys_port_ADDR_focus::ReadLink() const
@@ -715,13 +718,14 @@ namespace Genie
 		params.itsGesturePaths[ itsIndex ].reset();
 	}
 	
-	static void ungesture_symlink( const FSTree*        view,
-	                               const plus::string&  name,
+	static void ungesture_symlink( const FSTree*        node,
 	                               const plus::string&  target_path )
 	{
+		const FSTree* view = node->ParentRef().get();
+		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		const int index = LookupGesture( name );
+		const int index = LookupGesture( node->Name() );
 		
 		params.itsGesturePaths[ index ] = target_path;
 	}

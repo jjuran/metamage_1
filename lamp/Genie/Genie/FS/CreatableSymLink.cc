@@ -37,7 +37,7 @@ namespace Genie
 	
 	void FSTree_CreatableSymLink::SymLink( const plus::string& target ) const
 	{
-		its_symlink( ParentRef().get(), Name(), target );
+		its_symlink( this, target );
 	}
 	
 	FSTreePtr New_CreatableSymLink( const FSTreePtr&     parent,
