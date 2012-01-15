@@ -13,9 +13,9 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 
@@ -48,6 +48,11 @@ namespace Genie
 		
 		value = target;
 	}
+	
+	static node_method_set unused_app_slot_methods =
+	{
+		&unused_app_slot_symlink
+	};
 	
 	
 	class app_symlink : public FSTree_SymbolicLink
@@ -109,7 +114,7 @@ namespace Genie
 			return new app_symlink( parent, name, target );
 		}
 		
-		return New_CreatableSymLink( parent, name, &unused_app_slot_symlink );
+		return new FSTree( parent, name, 0, &unused_app_slot_methods );
 	}
 	
 	static void app_iterate( const FSTreePtr& parent, FSTreeCache& cache )
