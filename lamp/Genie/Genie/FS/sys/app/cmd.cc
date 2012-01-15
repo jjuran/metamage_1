@@ -68,11 +68,9 @@ namespace Genie
 			unused_cmd_slot( const FSTreePtr&     parent,
 			                 const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, 0 )
 			{
 			}
-			
-			bool Exists() const  { return false; }
 			
 			void SymLink( const plus::string& target ) const;
 	};
