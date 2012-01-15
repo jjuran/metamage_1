@@ -165,17 +165,6 @@ namespace Genie
 		v.erase( v.begin() + (subview - &v[0]) );
 	}
 	
-	class FSTree_Stack_Subview : public FSTree_View
-	{
-		public:
-			FSTree_Stack_Subview( const FSTreePtr&     parent,
-		                          const plus::string&  name)
-			:
-				FSTree_View( parent, name, get_subview, delete_subview )
-			{
-			}
-	};
-	
 	
 	class FSTree_Stack : public FSTree
 	{
@@ -198,7 +187,9 @@ namespace Genie
 	
 	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		return new FSTree_Stack_Subview( (parent ? parent : this)->Self(), name );
+		parent = parent ? parent : this;
+		
+		return new FSTree_View( parent->Self(), name, get_subview, delete_subview );
 	}
 	
 	class Stack_IteratorConverter
