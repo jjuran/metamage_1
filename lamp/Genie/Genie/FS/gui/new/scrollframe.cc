@@ -283,17 +283,28 @@ namespace Genie
 	}
 	
 	
+	class FSTree_ScrollFrame_untarget : public FSTree
+	{
+		public:
+			FSTree_ScrollFrame_untarget( const FSTreePtr&     parent,
+			                             const plus::string&  name )
+			:
+				FSTree( parent, name, 0 )
+			{
+			}
+			
+			void SymLink( const plus::string& target ) const;
+	};
+	
 	class FSTree_ScrollFrame_target : public FSTree
 	{
 		public:
 			FSTree_ScrollFrame_target( const FSTreePtr&     parent,
 			                           const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFLNK | 0777 )
 			{
 			}
-			
-			bool Exists() const;
 			
 			void Delete() const;
 			
@@ -305,13 +316,6 @@ namespace Genie
 	static bool scrollframe_target_exists( const FSTree* view )
 	{
 		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
-	}
-	
-	bool FSTree_ScrollFrame_target::Exists() const
-	{
-		const FSTree* view = GetViewKey( this );
-		
-		return scrollframe_target_exists( view );
 	}
 	
 	void FSTree_ScrollFrame_target::Delete() const
@@ -339,6 +343,13 @@ namespace Genie
 		params.itsTargetProxy = ScrollerProxy( delegate.get() );
 		
 		InvalidateWindowForView( view );
+	}
+	
+	void FSTree_ScrollFrame_untarget::SymLink( const plus::string& target_path ) const
+	{
+		const FSTree* view = GetViewKey( this );
+		
+		scrollframe_target_symlink( view, target_path );
 	}
 	
 	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
@@ -386,7 +397,12 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
-		return new FSTree_ScrollFrame_target( parent, name );
+		const bool exists = scrollframe_target_exists( parent.get() );
+		
+		typedef const FSTree* T;
+		
+		return exists ? T( new FSTree_ScrollFrame_target  ( parent, name ) )
+		              : T( new FSTree_ScrollFrame_untarget( parent, name ) );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
