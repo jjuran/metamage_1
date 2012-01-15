@@ -382,12 +382,19 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
 	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
 	
+	static FSTreePtr target_factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args )
+	{
+		return new FSTree_ScrollFrame_target( parent, name );
+	}
+	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
 		{ "horizontal", PROPERTY( Horizontal_Property ) },
 		{ "vertical",   PROPERTY( Vertical_Property   ) },
 		
-		{ "target", &Basic_Factory< FSTree_ScrollFrame_target > },
+		{ "target", &target_factory },
 		
 		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
