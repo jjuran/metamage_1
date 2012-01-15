@@ -20,7 +20,6 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // Genie
-#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -386,7 +385,7 @@ namespace Genie
 			return new FSTree_ScrollFrame_target( parent, name );
 		}
 		
-		return New_CreatableSymLink( parent, name, &scrollframe_target_symlink );
+		return new FSTree( parent, name, 0, &scrollframe_target_methods );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
