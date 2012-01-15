@@ -171,19 +171,10 @@ namespace Genie
 			FSTree_Stack_Subview( const FSTreePtr&     parent,
 		                          const plus::string&  name)
 			:
-				FSTree_View( parent, name, get_subview, NULL )
+				FSTree_View( parent, name, get_subview, delete_subview )
 			{
 			}
-			
-			void Delete() const;
 	};
-	
-	void FSTree_Stack_Subview::Delete() const
-	{
-		FSTree_View::Delete();  // throws if nonexistent
-		
-		delete_subview( ParentRef().get(), Name() );
-	}
 	
 	
 	class FSTree_Stack : public FSTree
