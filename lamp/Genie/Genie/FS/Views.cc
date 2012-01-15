@@ -307,6 +307,32 @@ namespace Genie
 	}
 	
 	
+	class FSTree_Unview : public FSTree
+	{
+		private:
+			ViewGetter itsGetter;
+			
+			// Non-copyable
+			FSTree_Unview           ( const FSTree_Unview& );
+			FSTree_Unview& operator=( const FSTree_Unview& );
+		
+		public:
+			FSTree_Unview( const FSTreePtr&     parent,
+			               const plus::string&  name,
+			               ViewGetter           get );
+			
+			const FSTree* ParentKey() const  { return ParentRef().get(); }
+			
+			void CreateDirectory( mode_t mode ) const;
+			
+			boost::intrusive_ptr< Pedestal::View >& Get() const
+			{
+				ASSERT( itsGetter != NULL );
+				
+				return itsGetter( ParentKey(), Name() );
+			}
+	};
+	
 	class FSTree_View : public FSTree
 	{
 		private:
@@ -325,17 +351,9 @@ namespace Genie
 			
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
-			bool IsFile() const  { return false; }
-			
-			bool IsDirectory() const  { return Exists(); }
-			
-			bool Exists() const;
-			
 			void SetTimes() const;
 			
 			void Delete() const;
-			
-			void CreateDirectory( mode_t mode ) const;
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
@@ -349,20 +367,24 @@ namespace Genie
 			}
 	};
 	
+	FSTree_Unview::FSTree_Unview( const FSTreePtr&     parent,
+	                              const plus::string&  name,
+	                              ViewGetter           get )
+	:
+		FSTree( parent, name, 0 ),
+		itsGetter( get )
+	{
+	}
+	
 	FSTree_View::FSTree_View( const FSTreePtr&     parent,
 	                          const plus::string&  name,
 	                          ViewGetter           get,
 	                          ViewPurger           purge )
 	:
-		FSTree( parent, name ),
+		FSTree( parent, name, S_IFDIR | 0700 ),
 		itsGetter( get   ),
 		itsPurger( purge )
 	{
-	}
-	
-	bool FSTree_View::Exists() const
-	{
-		return ViewExists( ParentRef().get(), Name() );
 	}
 	
 	void FSTree_View::SetTimes() const
@@ -400,7 +422,7 @@ namespace Genie
 		}
 	}
 	
-	void FSTree_View::CreateDirectory( mode_t mode ) const
+	void FSTree_Unview::CreateDirectory( mode_t mode ) const
 	{
 		const FSTree* parent = ParentRef().get();
 		
@@ -447,7 +469,12 @@ namespace Genie
 	                    ViewGetter           get,
 	                    ViewPurger           purge )
 	{
-		return new FSTree_View( parent, name, get, purge );
+		const bool exists = ViewExists( parent.get(), name );
+		
+		typedef const FSTree* T;
+		
+		return exists ? T( new FSTree_View  ( parent, name, get, purge ) )
+		              : T( new FSTree_Unview( parent, name, get        ) );
 	}
 	
 }
