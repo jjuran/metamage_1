@@ -303,10 +303,10 @@ namespace Genie
 			h = N::NewHandle( 0 );
 		}
 		
-		IOHandle* raw_pointer = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
-		                                : new Handle_IOHandle( Self(), flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
+		                           : new Handle_IOHandle( Self(), flags, h );
 		
-		return IOPtr( raw_pointer );
+		return result;
 	}
 	
 	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,
