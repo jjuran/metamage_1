@@ -682,27 +682,6 @@ namespace Genie
 		return -1;
 	}
 	
-	class FSTree_Window_Ungesture : public FSTree
-	{
-		private:
-			int itsIndex;
-		
-		public:
-			FSTree_Window_Ungesture( const FSTreePtr&     parent,
-			                         const plus::string&  name );
-			
-			void SymLink( const plus::string& target ) const;
-	};
-	
-	FSTree_Window_Ungesture::FSTree_Window_Ungesture( const FSTreePtr&     parent,
-	                                                  const plus::string&  name )
-	:
-		FSTree( parent, name, 0 ),
-		itsIndex( LookupGesture( name ) )
-	{
-		ASSERT( itsIndex != -1 );
-	}
-	
 	
 	class FSTree_Window_Gesture : public FSTree_ReadableSymLink
 	{
@@ -736,13 +715,15 @@ namespace Genie
 		params.itsGesturePaths[ itsIndex ].reset();
 	}
 	
-	void FSTree_Window_Ungesture::SymLink( const plus::string& target_path ) const
+	static void ungesture_symlink( const FSTree*        view,
+	                               const plus::string&  name,
+	                               const plus::string&  target_path )
 	{
-		const FSTree* view = GetViewKey( this );
-		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		params.itsGesturePaths[ itsIndex ] = target_path;
+		const int index = LookupGesture( name );
+		
+		params.itsGesturePaths[ index ] = target_path;
 	}
 	
 	plus::string FSTree_Window_Gesture::ReadLink() const
@@ -924,10 +905,12 @@ namespace Genie
 		
 		const bool exists = !gWindowParametersMap[ view ].itsGesturePaths[ index ].empty();
 		
-		typedef FSTree* T;
+		if ( exists )
+		{
+			return new FSTree_Window_Gesture( parent, name );
+		}
 		
-		return exists ? T( new FSTree_Window_Gesture  ( parent, name ) )
-		              : T( new FSTree_Window_Ungesture( parent, name ) );
+		return New_CreatableSymLink( parent, name, &ungesture_symlink );
 	}
 	
 	static FSTreePtr new_port_property( const FSTreePtr&     parent,
