@@ -20,6 +20,7 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // Genie
+#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -283,19 +284,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_ScrollFrame_untarget : public FSTree
-	{
-		public:
-			FSTree_ScrollFrame_untarget( const FSTreePtr&     parent,
-			                             const plus::string&  name )
-			:
-				FSTree( parent, name, 0 )
-			{
-			}
-			
-			void SymLink( const plus::string& target ) const;
-	};
-	
 	class FSTree_ScrollFrame_target : public FSTree
 	{
 		public:
@@ -331,7 +319,9 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	static void scrollframe_target_symlink( const FSTree* view, const plus::string& target_path )
+	static void scrollframe_target_symlink( const FSTree*        view,
+	                                        const plus::string&  name,
+	                                        const plus::string&  target_path )
 	{
 		FSTreePtr target = ResolvePathname( target_path, view );
 		
@@ -345,18 +335,11 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	void FSTree_ScrollFrame_untarget::SymLink( const plus::string& target_path ) const
-	{
-		const FSTree* view = GetViewKey( this );
-		
-		scrollframe_target_symlink( view, target_path );
-	}
-	
 	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
 	{
 		const FSTree* view = GetViewKey( this );
 		
-		scrollframe_target_symlink( view, target_path );
+		scrollframe_target_symlink( view, Name(), target_path );
 	}
 	
 	plus::string FSTree_ScrollFrame_target::ReadLink() const
@@ -397,12 +380,12 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
-		const bool exists = scrollframe_target_exists( parent.get() );
+		if ( const bool exists = scrollframe_target_exists( parent.get() ) )
+		{
+			return new FSTree_ScrollFrame_target( parent, name );
+		}
 		
-		typedef const FSTree* T;
-		
-		return exists ? T( new FSTree_ScrollFrame_target  ( parent, name ) )
-		              : T( new FSTree_ScrollFrame_untarget( parent, name ) );
+		return New_CreatableSymLink( parent, name, &scrollframe_target_symlink );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
