@@ -106,13 +106,11 @@ namespace Genie
 			FSTree_TextEdit_gate( const FSTreePtr&     parent,
 			                      const plus::string&  name )
 			:
-				Trigger_Base( parent, name )
+				Trigger_Base( parent, name, S_IFCHR | 0600 )
 			{
 			}
 			
 			void Invoke() const;
-			
-			mode_t FilePermMode() const  { return S_IRUSR | S_IWUSR; }
 			
 			IOPtr Open( OpenFlags flags ) const;
 	};
