@@ -389,10 +389,7 @@ namespace Genie
 	
 	void FSTree_View::SetTimes() const
 	{
-		if ( !InvalidateWindowForView( this ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		InvalidateWindowForView( this );
 	}
 	
 	void FSTree_View::Delete() const
@@ -401,24 +398,17 @@ namespace Genie
 		
 		const plus::string& name = Name();
 		
-		if ( ViewExists( parent, name ) )
+		const FSTree* windowKey = GetViewWindowKey( this );
+		
+		uninstall_view_from_port( Get(), windowKey );
+		
+		Get() = Ped::EmptyView::Get();
+		
+		RemoveViewParameters( parent, name );
+		
+		if ( itsPurger )
 		{
-			const FSTree* windowKey = GetViewWindowKey( this );
-			
-			uninstall_view_from_port( Get(), windowKey );
-			
-			Get() = Ped::EmptyView::Get();
-			
-			RemoveViewParameters( parent, name );
-			
-			if ( itsPurger )
-			{
-				itsPurger( parent, name );
-			}
-		}
-		else
-		{
-			p7::throw_errno( ENOENT );
+			itsPurger( parent, name );
 		}
 	}
 	
@@ -428,28 +418,21 @@ namespace Genie
 		
 		const plus::string& name = Name();
 		
-		if ( ViewExists( parent, name ) )
+		const FSTree* windowKey = GetViewWindowKey( parent );
+		
+		if ( windowKey == NULL )
 		{
-			const FSTree* windowKey = GetViewWindowKey( parent );
-			
-			if ( windowKey == NULL )
-			{
-				windowKey = parent;
-			}
-			
-			AddViewWindowKey( parent, name, windowKey );
-			
-			boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
-			
-			Get() = view;
-			
-			// Install and invalidate if window exists
-			install_view_in_port( view, windowKey );
+			windowKey = parent;
 		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
+		
+		AddViewWindowKey( parent, name, windowKey );
+		
+		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
+		
+		Get() = view;
+		
+		// Install and invalidate if window exists
+		install_view_in_port( view, windowKey );
 	}
 	
 	FSTreePtr FSTree_View::Lookup_Child( const plus::string& name, const FSTree* parent ) const
