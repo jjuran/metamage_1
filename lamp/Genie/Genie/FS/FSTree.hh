@@ -62,8 +62,8 @@ namespace Genie
 			// General methods
 			
 			virtual bool Exists() const;
-			virtual bool IsFile() const;
 			
+			bool IsFile() const;
 			bool IsDirectory() const;
 			bool IsLink() const;
 			
