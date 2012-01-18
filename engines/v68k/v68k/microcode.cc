@@ -325,6 +325,8 @@ namespace v68k
 		const int16_t word = byte;
 		
 		Dn = (Dn & 0xFFFF0000) | word;
+		
+		pb.result = word;
 	}
 	
 	void microcode_EXT_L( processor_state& s, op_params& pb )
@@ -338,6 +340,8 @@ namespace v68k
 		const int32_t longword = word;
 		
 		Dn = longword;
+		
+		pb.result = longword;
 	}
 	
 	void microcode_EXTB( processor_state& s, op_params& pb )
@@ -351,6 +355,8 @@ namespace v68k
 		const int32_t longword = byte;
 		
 		Dn = longword;
+		
+		pb.result = longword;
 	}
 	
 	void microcode_TAS( processor_state& s, op_params& pb )
