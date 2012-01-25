@@ -26,11 +26,26 @@
 namespace Genie
 {
 	
+	static bool menu_has_item_index( MenuRef menu, const plus::string& index )
+	{
+		if ( menu != NULL  &&  index.size() < 5 )
+		{
+			if ( const unsigned i = gear::parse_unsigned_decimal( index.c_str() ) )
+			{
+				const UInt16 n_items = ::CountMenuItems( menu );
+				
+				return i <= n_items;
+			}
+		}
+		
+		return false;
+	}
+	
 	static FSTreePtr menu_items_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->ParentRef()->Name().c_str() ) );
 		
-		if ( menu == NULL )
+		if ( !menu_has_item_index( menu, name ) )
 		{
 			throw poseven::errno_t( ENOENT );
 		}
