@@ -20,6 +20,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
 
@@ -32,7 +33,7 @@ namespace Genie
 	const FSTreePtr null_FSTreePtr = FSTreePtr();
 	
 	
-	FSTree::FSTree() : itsParent(), itsName(), itsMode()
+	FSTree::FSTree() : itsParent(), itsName(), itsMode(), its_methods()
 	{
 	}
 	
@@ -47,18 +48,21 @@ namespace Genie
 		itsParent( parent ),
 		itsName  ( name[0] == '/' ? NameFromPtr( this )
 		                          : name ),
-		itsMode  ( S_IFREG | S_IRUSR )  // reasonable default
+		itsMode  ( S_IFREG | S_IRUSR ),  // reasonable default
+		its_methods()
 	{
 	}
 	
-	FSTree::FSTree( const FSTreePtr&     parent,
-	                const plus::string&  name,
-	                mode_t               mode )
+	FSTree::FSTree( const FSTreePtr&        parent,
+	                const plus::string&     name,
+	                mode_t                  mode,
+	                const node_method_set*  methods )
 	:
 		itsParent( parent ),
 		itsName  ( name[0] == '/' ? NameFromPtr( this )
 		                          : name ),
-		itsMode  ( mode )
+		itsMode  ( mode ),
+		its_methods( methods )
 	{
 	}
 	
@@ -230,7 +234,12 @@ namespace Genie
 	
 	void FSTree::SymLink( const plus::string& target ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( !( its_methods  &&  its_methods->symlink ) )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
+		its_methods->symlink( this, target );
 	}
 	
 	IOPtr FSTree::Open( OpenFlags flags, mode_t mode ) const

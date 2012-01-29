@@ -42,13 +42,13 @@
 #include "Pedestal/Window.hh"
 
 // Genie
-#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
@@ -502,6 +502,11 @@ namespace Genie
 		gWindowParametersMap[ window_key ].itsFocus = targeted_file.get();
 	}
 	
+	static node_method_set unfocus_methods =
+	{
+		&unfocus_symlink
+	};
+	
 	plus::string FSTree_sys_port_ADDR_focus::ReadLink() const
 	{
 		return ResolveLink()->Pathname();  // FIXME:  Use relative path
@@ -730,6 +735,11 @@ namespace Genie
 		params.itsGesturePaths[ index ] = target_path;
 	}
 	
+	static node_method_set ungesture_methods =
+	{
+		&ungesture_symlink
+	};
+	
 	plus::string FSTree_Window_Gesture::ReadLink() const
 	{
 		const FSTree* view = GetViewKey( this );
@@ -896,7 +906,7 @@ namespace Genie
 			return new FSTree_sys_port_ADDR_focus( parent, name );
 		}
 		
-		return New_CreatableSymLink( parent, name, &unfocus_symlink );
+		return new FSTree( parent, name, 0, &unfocus_methods );
 	}
 	
 	static FSTreePtr new_gesture( const FSTreePtr&     parent,
@@ -914,7 +924,7 @@ namespace Genie
 			return new FSTree_Window_Gesture( parent, name );
 		}
 		
-		return New_CreatableSymLink( parent, name, &ungesture_symlink );
+		return new FSTree( parent, name, 0, &ungesture_methods );
 	}
 	
 	static FSTreePtr new_port_property( const FSTreePtr&     parent,

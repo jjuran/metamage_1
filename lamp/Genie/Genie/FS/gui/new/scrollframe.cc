@@ -20,9 +20,9 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // Genie
-#include "Genie/FS/CreatableSymLink.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
@@ -284,19 +284,25 @@ namespace Genie
 	}
 	
 	
+	static void scrollframe_target_symlink( const FSTree*        node,
+	                                        const plus::string&  target_path );
+	
+	static node_method_set scrollframe_target_methods =
+	{
+		&scrollframe_target_symlink
+	};
+	
 	class FSTree_ScrollFrame_target : public FSTree
 	{
 		public:
 			FSTree_ScrollFrame_target( const FSTreePtr&     parent,
 			                           const plus::string&  name )
 			:
-				FSTree( parent, name, S_IFLNK | 0777 )
+				FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods )
 			{
 			}
 			
 			void Delete() const;
-			
-			void SymLink( const plus::string& target ) const;
 			
 			plus::string ReadLink() const;
 	};
@@ -334,11 +340,6 @@ namespace Genie
 		params.itsTargetProxy = ScrollerProxy( delegate.get() );
 		
 		InvalidateWindowForView( view );
-	}
-	
-	void FSTree_ScrollFrame_target::SymLink( const plus::string& target_path ) const
-	{
-		scrollframe_target_symlink( this, target_path );
 	}
 	
 	plus::string FSTree_ScrollFrame_target::ReadLink() const
@@ -384,7 +385,7 @@ namespace Genie
 			return new FSTree_ScrollFrame_target( parent, name );
 		}
 		
-		return New_CreatableSymLink( parent, name, &scrollframe_target_symlink );
+		return new FSTree( parent, name, 0, &scrollframe_target_methods );
 	}
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
