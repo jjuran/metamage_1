@@ -18,6 +18,7 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/OpenFlags.hh"
@@ -31,9 +32,6 @@ struct stat;
 
 namespace Genie
 {
-	
-	class FSTreeCache;
-	
 	
 	extern const FSTreePtr null_FSTreePtr;
 	

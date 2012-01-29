@@ -11,13 +11,11 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreeCache.hh"
 
 
 namespace Genie
 {
-	
-	class FSTreeCache;
-	
 	
 	class FSTree_Premapped : public FSTree
 	{

@@ -6,6 +6,7 @@
 #include "Genie/FS/Iterate.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache_Impl.hh"
 
 
