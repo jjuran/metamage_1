@@ -151,7 +151,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const FSTree* view = GetFile()->ParentRef().get();
+		const FSTree* view = GetFile()->owner();
 		
 		ListParameters& params = gListParameterMap[ view ];
 		

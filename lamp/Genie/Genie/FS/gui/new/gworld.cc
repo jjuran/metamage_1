@@ -110,7 +110,7 @@ namespace Genie
 	
 	const FSTree* Pixels_IO::ViewKey()
 	{
-		return GetFile()->ParentRef().get();
+		return GetFile()->owner();
 	}
 	
 	IOPtr Pixels_IO::Clone()

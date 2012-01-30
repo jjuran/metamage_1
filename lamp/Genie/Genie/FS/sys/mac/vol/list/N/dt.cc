@@ -73,7 +73,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
 	{
-		const FSTreePtr& grandparent = parent->ParentRef();
+		const FSTree* grandparent = parent->owner();
 		
 		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( grandparent->Name().c_str() ) );
 	}
@@ -125,7 +125,7 @@ namespace Genie
 	{
 		const ::OSType creator = parse_utf8_quad_name( appls_quad->Name() );
 		
-		const FSTreePtr& great_x2_grandparent = appls_quad->ParentRef()->ParentRef()->ParentRef();
+		const FSTree* great_x2_grandparent = appls_quad->owner()->owner()->owner();
 		
 		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -gear::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
 		
@@ -267,8 +267,8 @@ namespace Genie
 	
 	static plus::string generate_dt_icons_QUAD_QUAD_X( const FSTree* parent, const plus::string& name )
 	{
-		const FSTreePtr&   gparent = parent ->ParentRef();
-		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
+		const FSTree*   gparent = parent ->owner();
+		const FSTree* gggparent = gparent->owner()->owner();
 		
 		const short selector = gear::parse_unsigned_decimal( name.c_str() );
 		
@@ -317,8 +317,8 @@ namespace Genie
 	
 	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
-		const FSTreePtr&   gparent = parent ->ParentRef();
-		const FSTreePtr& gggparent = gparent->ParentRef()->ParentRef();
+		const FSTree*   gparent = parent ->owner();
+		const FSTree* gggparent = gparent->owner()->owner();
 		
 		const ::OSType type    = parse_utf8_quad_name( parent ->Name() );
 		const ::OSType creator = parse_utf8_quad_name( gparent->Name() );

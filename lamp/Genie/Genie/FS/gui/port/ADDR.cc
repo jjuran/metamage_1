@@ -468,7 +468,7 @@ namespace Genie
 	static void unfocus_symlink( const FSTree*        node,
 	                             const plus::string&  target )
 	{
-		const FSTreePtr& parent = node->ParentRef();
+		const FSTree* parent = node->owner();
 		
 		const FSTreePtr targeted_file = ResolvePathname( target, parent )->Lookup( plus::string::null );
 		
@@ -480,7 +480,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		const FSTree* window_key = parent.get();
+		const FSTree* window_key = parent;
 		
 		FocusViewInWindow( *target_view, window_key );
 		
@@ -556,19 +556,19 @@ namespace Genie
 	
 	static void window_touch( const FSTree* node )
 	{
-		invalidate_port_WindowRef( node->ParentRef().get() );
+		invalidate_port_WindowRef( node->owner() );
 	}
 	
 	static void window_remove( const FSTree* node )
 	{
-		CloseUserWindow( node->ParentRef().get() );
+		CloseUserWindow( node->owner() );
 	}
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
 	static plus::string window_readlink( const FSTree* node )
 	{
-		WindowRef windowPtr = GetWindowRef( node->ParentRef().get() );
+		WindowRef windowPtr = GetWindowRef( node->owner() );
 		
 		if ( windowPtr == NULL )
 		{
@@ -710,7 +710,7 @@ namespace Genie
 	
 	static void gesture_remove( const FSTree* node )
 	{
-		const FSTree* view = node->ParentRef().get();
+		const FSTree* view = node->owner();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
@@ -722,7 +722,7 @@ namespace Genie
 	static void ungesture_symlink( const FSTree*        node,
 	                               const plus::string&  target_path )
 	{
-		const FSTree* view = node->ParentRef().get();
+		const FSTree* view = node->owner();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
@@ -752,7 +752,7 @@ namespace Genie
 	
 	static plus::string gesture_readlink( const FSTree* node )
 	{
-		const FSTree* view = node->ParentRef().get();
+		const FSTree* view = node->owner();
 		
 		const int index = LookupGesture( node->Name() );
 		
@@ -898,7 +898,7 @@ namespace Genie
 	
 	static void unwindow_touch( const FSTree* node )
 	{
-		CreateUserWindow( node->ParentRef().get() );
+		CreateUserWindow( node->owner() );
 	}
 	
 	static node_method_set unwindow_methods =

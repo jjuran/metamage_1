@@ -295,7 +295,7 @@ namespace Genie
 	
 	static void scrollframe_target_remove( const FSTree* node )
 	{
-		const FSTree* view = node->Parent().get();
+		const FSTree* view = node->owner();
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -309,7 +309,7 @@ namespace Genie
 	static void scrollframe_target_symlink( const FSTree*        node,
 	                                        const plus::string&  target_path )
 	{
-		const FSTree* view = node->ParentRef().get();
+		const FSTree* view = node->owner();
 		
 		FSTreePtr target = ResolvePathname( target_path, view );
 		
@@ -325,7 +325,7 @@ namespace Genie
 	
 	static plus::string scrollframe_target_readlink( const FSTree* node )
 	{
-		const FSTree* view = node->ParentRef().get();
+		const FSTree* view = node->owner();
 		
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}

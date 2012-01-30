@@ -115,7 +115,7 @@ namespace Genie
 	
 	static MenuRef get_MenuRef( const FSTree* that )
 	{
-		return GetMenuRef( gear::parse_decimal( that->ParentRef()->ParentRef()->Name().c_str() ) );
+		return GetMenuRef( gear::parse_decimal( that->owner()->owner()->name().c_str() ) );
 	}
 	
 	static UInt16 get_menu_item_index( const FSTree* that )

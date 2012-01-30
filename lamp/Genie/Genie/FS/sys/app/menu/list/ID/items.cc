@@ -44,7 +44,7 @@ namespace Genie
 	
 	static FSTreePtr menu_items_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
-		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->ParentRef()->Name().c_str() ) );
+		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
 		if ( !menu_has_item_index( menu, name ) )
 		{
@@ -56,7 +56,7 @@ namespace Genie
 	
 	static void menu_items_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
-		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->ParentRef()->Name().c_str() ) );
+		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
 		if ( menu == NULL )
 		{

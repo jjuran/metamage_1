@@ -251,7 +251,7 @@ namespace Genie
 	
 	static const FSTreePtr& GetViewDelegate( const FSTree* view )
 	{
-		const FSTreePtr& delegate = GetViewDelegate( view->ParentRef().get(), view->Name() );
+		const FSTreePtr& delegate = GetViewDelegate( view->owner(), view->name() );
 		
 		return delegate;
 	}
@@ -265,7 +265,7 @@ namespace Genie
 	
 	const FSTree* GetViewWindowKey( const FSTree* view )
 	{
-		return GetViewWindowKey( view->ParentRef().get(), view->Name() );
+		return GetViewWindowKey( view->owner(), view->name() );
 	}
 	
 	
@@ -349,9 +349,9 @@ namespace Genie
 	{
 		new_view_extra& extra = *(new_view_extra*) node->extra();
 		
-		const FSTreePtr& parent = target->ParentRef();
+		const FSTree* parent = target->owner();
 		
-		const FSTree* key = parent.get();
+		const FSTree* key = parent;
 		
 		const plus::string& name = target->Name();
 		

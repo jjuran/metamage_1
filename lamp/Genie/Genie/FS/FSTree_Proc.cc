@@ -508,7 +508,7 @@ namespace Genie
 	static void proc_pid_core_chmod( const FSTree*  node,
 	                                 mode_t         mode )
 	{
-		const pid_t pid = GetKeyFromParent( node->ParentRef() );
+		const pid_t pid = GetKeyFromParent( node->owner() );
 		
 		Process& process = GetProcess( pid );
 		

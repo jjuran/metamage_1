@@ -417,7 +417,7 @@ namespace Genie
 	
 	const FSTree* ConsoleTTYHandle::ViewKey() const
 	{
-		return itsTTYFile->ParentRef().get();
+		return itsTTYFile->owner();
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll()

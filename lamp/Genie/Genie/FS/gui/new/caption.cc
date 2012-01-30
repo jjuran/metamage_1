@@ -123,7 +123,7 @@ namespace Genie
 	
 	static void CaptionText_SetEOF( const FSTree* text, off_t length )
 	{
-		const FSTree* view = text->ParentRef().get();
+		const FSTree* view = text->owner();
 		
 		CaptionParameters& params = gCaptionParametersMap[ view ];
 		
@@ -165,7 +165,7 @@ namespace Genie
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()
 	{
-		return GetFile()->ParentRef().get();
+		return GetFile()->owner();
 	}
 	
 	ssize_t CaptionTextFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

@@ -226,13 +226,13 @@ namespace Genie
 	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, OpenFlags flags )
 	:
 		VirtualFileHandle< StreamHandle >( file, flags ),
-		itsSeed( gButtonMap[ file->ParentRef().get() ].seed )
+		itsSeed( gButtonMap[ file->owner() ].seed )
 	{
 	}
 	
 	unsigned int Button_socket_Handle::SysPoll()
 	{
-		const FSTree* view = GetFile()->ParentRef().get();
+		const FSTree* view = GetFile()->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
@@ -245,7 +245,7 @@ namespace Genie
 	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
 	{
-		const FSTree* view = GetFile()->ParentRef().get();
+		const FSTree* view = GetFile()->owner();
 		
 	retry:
 		

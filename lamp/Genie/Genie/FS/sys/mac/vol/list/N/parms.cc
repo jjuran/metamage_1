@@ -28,14 +28,14 @@
 namespace Genie
 {
 	
-	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
 		return Mac::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->Name().c_str() ) );
 	}
 	
 	static Mac::FSVolumeRefNum GetKey( const FSTree* that )
 	{
-		return GetKeyFromParent( that->ParentRef() );
+		return GetKeyFromParent( that->owner() );
 	}
 	
 	

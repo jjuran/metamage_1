@@ -101,7 +101,7 @@ namespace Genie
 	
 	const FSTree* Bits_IO::ViewKey()
 	{
-		return GetFile()->ParentRef().get();
+		return GetFile()->owner();
 	}
 	
 	IOPtr Bits_IO::Clone()

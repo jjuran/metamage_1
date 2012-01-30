@@ -413,7 +413,7 @@ namespace Genie
 	
 	const FSTree* IconDataWriterHandle::ViewKey()
 	{
-		return GetFile()->ParentRef().get();
+		return GetFile()->owner();
 	}
 	
 	ssize_t IconDataWriterHandle::SysWrite( const char* buffer, size_t byteCount )
@@ -528,11 +528,9 @@ namespace Genie
 	
 	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
 	{
-		const FSTree* view = ParentRef().get();
-		
 		itsData->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
 		
-		InvalidateWindowForView( view );
+		InvalidateWindowForView( owner() );
 	}
 	
 }

@@ -32,7 +32,7 @@ namespace Genie
 	
 	static void TextEdit_text_SetEOF( const FSTree* text, off_t length )
 	{
-		const FSTree* view = text->ParentRef().get();
+		const FSTree* view = text->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -77,7 +77,7 @@ namespace Genie
 	
 	const FSTree* TextEdit_text_Handle::ViewKey()
 	{
-		return GetFile()->ParentRef().get();
+		return GetFile()->owner();
 	}
 	
 	ssize_t TextEdit_text_Handle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

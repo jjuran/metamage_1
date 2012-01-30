@@ -71,7 +71,7 @@ namespace Genie
 	
 	unsigned TextEdit_gate_Handle::SysPoll()
 	{
-		const FSTree* view = GetFile()->ParentRef().get();
+		const FSTree* view = GetFile()->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -82,7 +82,7 @@ namespace Genie
 	
 	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
 	{
-		const FSTree* view = GetFile()->ParentRef().get();
+		const FSTree* view = GetFile()->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
