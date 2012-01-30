@@ -504,6 +504,7 @@ namespace Genie
 	
 	static node_method_set unfocus_methods =
 	{
+		NULL,
 		&unfocus_symlink
 	};
 	
@@ -737,6 +738,7 @@ namespace Genie
 	
 	static node_method_set ungesture_methods =
 	{
+		NULL,
 		&ungesture_symlink
 	};
 	

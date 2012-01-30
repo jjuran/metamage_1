@@ -289,6 +289,7 @@ namespace Genie
 	
 	static node_method_set scrollframe_target_methods =
 	{
+		NULL,
 		&scrollframe_target_symlink
 	};
 	

@@ -372,6 +372,7 @@ namespace Genie
 	
 	static node_method_set hfs_methods =
 	{
+		NULL,
 		&hfs_symlink
 	};
 	
