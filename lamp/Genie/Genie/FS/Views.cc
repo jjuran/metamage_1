@@ -276,7 +276,7 @@ namespace Genie
 	                                  Mappings             mappings,
 	                                  Destructor           dtor )
 	:
-		FSTree( parent, name ),
+		FSTree( parent, name, S_IFREG | 0 ),
 		itsFactory( factory ),
 		itsMappings( mappings ),
 		itsDestructor( dtor )
