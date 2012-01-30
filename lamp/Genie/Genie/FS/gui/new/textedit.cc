@@ -106,7 +106,7 @@ namespace Genie
 			FSTree_TextEdit_gate( const FSTreePtr&     parent,
 			                      const plus::string&  name )
 			:
-				Trigger_Base( parent, name, S_IFCHR | 0600 )
+				Trigger_Base( parent, name, S_IFREG | 0600 )
 			{
 			}
 			
