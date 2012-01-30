@@ -77,8 +77,6 @@ namespace Genie
 			
 			const FSTree* owner() const  { return itsParent.get(); }
 			
-			const FSTreePtr& ParentRef() const  { return itsParent; }
-			
 			const plus::string& name() const  { return itsName; }
 			const plus::string& Name() const  { return itsName; }
 			
