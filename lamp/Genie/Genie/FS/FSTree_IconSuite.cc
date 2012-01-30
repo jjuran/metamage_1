@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_IconSuite.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 
@@ -28,7 +31,7 @@ namespace Genie
 			                  const plus::string&  name,
 			                  const Value&         iconSuite )
 			:
-				FSTree( parent, name ),
+				FSTree( parent, name, S_IFREG | 0400 ),
 				itsIconSuite( iconSuite )
 			{
 			}
