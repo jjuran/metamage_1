@@ -7,6 +7,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
@@ -20,6 +21,20 @@
 namespace Genie
 {
 	
+	static mode_t file_mode( const FSSpec& file, bool async )
+	{
+		CInfoPBRec cInfo;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo, async, file );
+		
+		if ( bool locked = cInfo.hFileInfo.ioFlAttrib & kioFlAttribLockedMask )
+		{
+			return S_IFREG | 0400;
+		}
+		
+		return S_IFREG | 0600;
+	}
+	
 	class FSTree_RsrcFile : public FSTree
 	{
 		private:
@@ -29,7 +44,9 @@ namespace Genie
 		public:
 			FSTree_RsrcFile( const FSSpec& file, bool onServer )
 			:
-				FSTree( FSTreeFromFSSpec( file, onServer ), "rsrc" ),
+				FSTree( FSTreeFromFSSpec( file, onServer ),
+				        "rsrc",
+				        file_mode( file, onServer ) ),
 				itsFileSpec( file ),
 				itIsOnServer( onServer )
 			{

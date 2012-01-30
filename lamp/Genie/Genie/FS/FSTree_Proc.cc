@@ -507,7 +507,7 @@ namespace Genie
 			FSTree_proc_PID_core( const FSTreePtr&     parent,
 			                      const plus::string&  name )
 			:
-				FSTree( parent, name )
+				FSTree( parent, name, S_IFREG | 0600 )
 			{
 			}
 			
