@@ -77,7 +77,7 @@ namespace Genie
 			
 			FSTreePtr Self() const  { return FSTreePtr( this ); }
 			
-			virtual FSTreePtr Parent() const;
+			FSTreePtr Parent() const;
 			
 			virtual ino_t Inode() const;
 			virtual ino_t ParentInode() const;
