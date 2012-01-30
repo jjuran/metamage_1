@@ -67,6 +67,8 @@ namespace Genie
 			bool IsDirectory() const;
 			bool IsLink() const;
 			
+			const FSTree* owner() const  { return itsParent.get(); }
+			
 			const FSTreePtr& ParentRef() const  { return itsParent; }
 			
 			const plus::string& Name() const  { return itsName; }
