@@ -71,6 +71,7 @@ namespace Genie
 			
 			const FSTreePtr& ParentRef() const  { return itsParent; }
 			
+			const plus::string& name() const  { return itsName; }
 			const plus::string& Name() const  { return itsName; }
 			
 			mode_t FileMode() const  { return itsMode; }
