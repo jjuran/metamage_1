@@ -379,7 +379,7 @@ namespace Genie
 	
 	static WindowRef GetKeyFromParent( const FSTree* parent )
 	{
-		return (WindowRef) plus::decode_32_bit_hex( parent->Name() );
+		return (WindowRef) plus::decode_32_bit_hex( parent->name() );
 	}
 	
 	template < class Accessor >

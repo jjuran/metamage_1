@@ -170,7 +170,7 @@ namespace Genie
 	
 	static Component GetKeyFromParent( const FSTree* parent )
 	{
-		return (Component) plus::decode_32_bit_hex( parent->Name() );
+		return (Component) plus::decode_32_bit_hex( parent->name() );
 	}
 	
 	

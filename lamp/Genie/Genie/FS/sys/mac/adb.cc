@@ -54,7 +54,7 @@ namespace Genie
 	
 	static inline N::ADBAddress GetKeyFromParent( const FSTree* parent )
 	{
-		return N::ADBAddress( gear::decoded_hex_digit( parent->Name()[0] ) );
+		return N::ADBAddress( gear::decoded_hex_digit( parent->name()[0] ) );
 	}
 	
 	

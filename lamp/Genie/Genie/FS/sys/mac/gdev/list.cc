@@ -85,7 +85,7 @@ namespace Genie
 	
 	static GDHandle GetKeyFromParent( const FSTree* parent )
 	{
-		return (GDHandle) plus::decode_32_bit_hex( parent->Name() );
+		return (GDHandle) plus::decode_32_bit_hex( parent->name() );
 	}
 	
 	

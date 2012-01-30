@@ -61,7 +61,7 @@ namespace Genie
 	
 	static MenuRef GetKeyFromParent( const FSTree* parent )
 	{
-		return GetMenuRef( gear::parse_decimal( parent->Name().c_str() ) );
+		return GetMenuRef( gear::parse_decimal( parent->name().c_str() ) );
 	}
 	
 	template < class Accessor >

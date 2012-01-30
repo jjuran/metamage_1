@@ -109,7 +109,7 @@ namespace Genie
 	
 	static ProcessSerialNumber GetKeyFromParent( const FSTree* parent )
 	{
-		return decoded_ProcessSerialNumber( parent->Name() );
+		return decoded_ProcessSerialNumber( parent->name() );
 	}
 	
 	

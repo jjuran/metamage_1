@@ -111,7 +111,7 @@ namespace Genie
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
-		return N::FSVolumeRefNum( gear::parse_decimal( parent->Name().c_str() ) );
+		return N::FSVolumeRefNum( gear::parse_decimal( parent->name().c_str() ) );
 	}
 	
 	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )

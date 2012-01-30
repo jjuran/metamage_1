@@ -78,7 +78,7 @@ namespace Genie
 	{
 		const FSTree* grandparent = parent->owner();
 		
-		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( grandparent->Name().c_str() ) );
+		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( grandparent->name().c_str() ) );
 	}
 	
 	
@@ -126,11 +126,11 @@ namespace Genie
 	
 	static FSSpec DTGetAPPL( const FSTree* appls_quad, short index = 0 )
 	{
-		const ::OSType creator = parse_utf8_quad_name( appls_quad->Name() );
+		const ::OSType creator = parse_utf8_quad_name( appls_quad->name() );
 		
 		const FSTree* great_x2_grandparent = appls_quad->owner()->owner()->owner();
 		
-		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -gear::parse_unsigned_decimal( great_x2_grandparent->Name().c_str() ) );
+		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -gear::parse_unsigned_decimal( great_x2_grandparent->name().c_str() ) );
 		
 		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
 	}
@@ -275,10 +275,10 @@ namespace Genie
 		
 		const short selector = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const ::OSType type    = parse_utf8_quad_name( parent ->Name() );
-		const ::OSType creator = parse_utf8_quad_name( gparent->Name() );
+		const ::OSType type    = parse_utf8_quad_name( parent ->name() );
+		const ::OSType creator = parse_utf8_quad_name( gparent->name() );
 		
-		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->Name().c_str() );
+		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->name().c_str() );
 		
 		DTPBRec pb;
 		
@@ -323,10 +323,10 @@ namespace Genie
 		const FSTree*   gparent = parent ->owner();
 		const FSTree* gggparent = gparent->owner()->owner();
 		
-		const ::OSType type    = parse_utf8_quad_name( parent ->Name() );
-		const ::OSType creator = parse_utf8_quad_name( gparent->Name() );
+		const ::OSType type    = parse_utf8_quad_name( parent ->name() );
+		const ::OSType creator = parse_utf8_quad_name( gparent->name() );
 		
-		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->Name().c_str() );
+		const short vRefNum = -gear::parse_unsigned_decimal( gggparent->name().c_str() );
 		
 		DTPBRec pb;
 		

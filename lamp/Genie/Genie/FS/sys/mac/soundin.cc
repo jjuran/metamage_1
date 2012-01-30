@@ -46,7 +46,7 @@ namespace Genie
 	
 	static UInt16 GetKeyFromParent( const FSTree* parent )
 	{
-		return gear::parse_unsigned_decimal( parent->Name().c_str() );
+		return gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
 	
 	

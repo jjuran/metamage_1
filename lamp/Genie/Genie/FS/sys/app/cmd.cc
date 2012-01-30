@@ -75,7 +75,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( node->Name() ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( node->name() ) );
 		
 		Ped::CommandHandler handler = Ped::GetCommandHandler( code );
 		

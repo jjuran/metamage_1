@@ -30,7 +30,7 @@ namespace Genie
 	
 	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
-		return Mac::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->Name().c_str() ) );
+		return Mac::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->name().c_str() ) );
 	}
 	
 	static Mac::FSVolumeRefNum GetKey( const FSTree* that )

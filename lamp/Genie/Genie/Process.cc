@@ -852,7 +852,7 @@ namespace Genie
 		CheckProgramFile( programFile );
 		
 		// Do we take the name before or after normalization?
-		itsName = programFile->Name();
+		itsName = programFile->name();
 		
 		ExecContext context( programFile, argv );
 		

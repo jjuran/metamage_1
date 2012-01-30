@@ -41,7 +41,7 @@ namespace Genie
 	
 	static inline N::CRMDeviceID GetKeyFromParent( const FSTree* parent )
 	{
-		return N::CRMDeviceID( gear::parse_decimal( parent->Name().c_str() ) );
+		return N::CRMDeviceID( gear::parse_decimal( parent->name().c_str() ) );
 	}
 	
 	

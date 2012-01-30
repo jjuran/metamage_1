@@ -70,7 +70,7 @@ namespace Genie
 			
 			ino_t inode = (ino_t) window;  // coerce pointer to integer
 			
-			vfs::dir_entry node( inode, window->Name() );
+			vfs::dir_entry node( inode, window->name() );
 			
 			cache.push_back( node );
 		}

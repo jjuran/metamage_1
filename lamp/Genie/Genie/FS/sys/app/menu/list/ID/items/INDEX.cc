@@ -120,7 +120,7 @@ namespace Genie
 	
 	static UInt16 get_menu_item_index( const FSTree* that )
 	{
-		return gear::parse_decimal( that->Name().c_str() );
+		return gear::parse_decimal( that->name().c_str() );
 	}
 	
 	template < class Accessor >

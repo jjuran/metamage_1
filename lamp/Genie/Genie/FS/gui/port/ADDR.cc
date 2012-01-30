@@ -717,7 +717,7 @@ namespace Genie
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		const int index = LookupGesture( node->Name() );
+		const int index = LookupGesture( node->name() );
 		
 		params.itsGesturePaths[ index ].reset();
 	}
@@ -729,7 +729,7 @@ namespace Genie
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		const int index = LookupGesture( node->Name() );
+		const int index = LookupGesture( node->name() );
 		
 		params.itsGesturePaths[ index ] = target_path;
 	}
@@ -757,7 +757,7 @@ namespace Genie
 	{
 		const FSTree* view = node->owner();
 		
-		const int index = LookupGesture( node->Name() );
+		const int index = LookupGesture( node->name() );
 		
 		const plus::string& link = gWindowParametersMap[ view ].itsGesturePaths[ index ];
 		

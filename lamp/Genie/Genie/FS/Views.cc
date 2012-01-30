@@ -357,7 +357,7 @@ namespace Genie
 		
 		const FSTree* key = parent;
 		
-		const plus::string& name = target->Name();
+		const plus::string& name = target->name();
 		
 		FSTreePtr delegate = extra.delegate_factory( node, parent, name );
 		

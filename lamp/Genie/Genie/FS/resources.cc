@@ -188,7 +188,7 @@ namespace Genie
 	{
 		FSTreePtr file = GetFile();
 		
-		N::GetResInfo_Result resInfo = GetResInfo_from_name( file->Name() );
+		N::GetResInfo_Result resInfo = GetResInfo_from_name( file->name() );
 		
 		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		

@@ -166,7 +166,7 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile->Name() ) );
+		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile->name() ) );
 		
 		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
 		                          && std::equal( destName.begin(),

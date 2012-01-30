@@ -58,7 +58,7 @@ namespace Genie
 	
 	static pid_t GetKeyFromParent( const FSTree* parent )
 	{
-		return pid_t( gear::parse_unsigned_decimal( parent->Name().c_str() ) );
+		return pid_t( gear::parse_unsigned_decimal( parent->name().c_str() ) );
 	}
 	
 	static inline pid_t GetKeyFromParent( const FSTreePtr& parent )
