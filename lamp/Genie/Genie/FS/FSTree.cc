@@ -114,7 +114,17 @@ namespace Genie
 	
 	FSTreePtr FSTree::Parent() const
 	{
-		return itsParent.get() ? itsParent : Self();
+		if ( itsParent.get() )
+		{
+			return itsParent;
+		}
+		
+		if ( its_methods  &&  its_methods->parent )
+		{
+			return its_methods->parent( this );
+		}
+		
+		return Self();
 	}
 	
 	ino_t FSTree::Inode() const
