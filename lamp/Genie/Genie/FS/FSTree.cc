@@ -42,17 +42,6 @@ namespace Genie
 		return plus::encode_32_bit_hex( (unsigned) ptr );
 	}
 	
-	FSTree::FSTree( const FSTreePtr&     parent,
-	                const plus::string&  name )
-	:
-		itsParent( parent ),
-		itsName  ( name[0] == '/' ? NameFromPtr( this )
-		                          : name ),
-		itsMode  ( S_IFREG | S_IRUSR ),  // reasonable default
-		its_methods()
-	{
-	}
-	
 	FSTree::FSTree( const FSTreePtr&        parent,
 	                const plus::string&     name,
 	                mode_t                  mode,

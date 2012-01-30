@@ -53,9 +53,6 @@ namespace Genie
 		public:
 			FSTree();
 			
-			FSTree( const FSTreePtr&     parent,
-			        const plus::string&  name );
-			
 			FSTree( const FSTreePtr&        parent,
 			        const plus::string&     name,
 			        mode_t                  mode,
