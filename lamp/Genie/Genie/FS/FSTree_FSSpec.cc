@@ -68,6 +68,7 @@
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
@@ -361,6 +362,19 @@ namespace Genie
 		return result;
 	}
 	
+	static void hfs_symlink( const FSTree*        node,
+	                         const plus::string&  target )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->SymLink( target );
+	}
+	
+	static node_method_set hfs_methods =
+	{
+		&hfs_symlink
+	};
+	
 	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
 	                        bool                 onServer,
 	                        const plus::string&  name,
@@ -368,7 +382,8 @@ namespace Genie
 	:
 		FSTree( parent ? parent->Self() : null_FSTreePtr,
 		        name,
-		        GetItemMode( cInfo.hFileInfo ) ),
+		        GetItemMode( cInfo.hFileInfo ),
+		        &hfs_methods ),
 		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
 		itsCInfo        ( cInfo                 ),
 		itIsOnServer    ( onServer              )
