@@ -740,8 +740,6 @@ namespace Genie
 			{
 			}
 			
-			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
 			void Rename( const FSTreePtr& destination ) const;
 			
 			IOPtr Open( OpenFlags flags ) const;
