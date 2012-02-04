@@ -74,8 +74,6 @@ namespace Genie
 			{
 			}
 			
-			plus::string Pathname() const  { return Name(); }
-			
 			IOPtr Open( OpenFlags flags ) const
 			{
 				return itsHandle;
