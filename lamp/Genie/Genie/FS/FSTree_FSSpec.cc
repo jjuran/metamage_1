@@ -369,6 +369,13 @@ namespace Genie
 		return file->Parent();
 	}
 	
+	static ino_t hfs_parent_inode( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->ParentInode();
+	}
+	
 	static void hfs_symlink( const FSTree*        node,
 	                         const plus::string&  target )
 	{
@@ -380,7 +387,7 @@ namespace Genie
 	static node_method_set hfs_methods =
 	{
 		&hfs_parent,
-		NULL,
+		&hfs_parent_inode,
 		&hfs_symlink
 	};
 	
