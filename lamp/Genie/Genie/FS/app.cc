@@ -52,6 +52,7 @@ namespace Genie
 	static node_method_set unused_app_slot_methods =
 	{
 		NULL,
+		NULL,
 		&unused_app_slot_symlink
 	};
 	

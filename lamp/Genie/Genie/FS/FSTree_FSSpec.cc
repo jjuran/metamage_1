@@ -380,6 +380,7 @@ namespace Genie
 	static node_method_set hfs_methods =
 	{
 		&hfs_parent,
+		NULL,
 		&hfs_symlink
 	};
 	
