@@ -106,7 +106,7 @@ namespace Genie
 			virtual plus::string ReadLink() const;
 			virtual FSTreePtr ResolveLink() const;
 			
-			virtual void SymLink( const plus::string& target ) const;
+			void SymLink( const plus::string& target ) const;
 			
 			virtual IOPtr Open( OpenFlags flags, mode_t mode ) const;
 			virtual IOPtr Open( OpenFlags flags              ) const;
