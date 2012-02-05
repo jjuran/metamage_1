@@ -223,7 +223,14 @@ namespace Genie
 	
 	void FSTree::Rename( const FSTreePtr& destination ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( its_methods  &&  its_methods->rename )
+		{
+			its_methods->rename( this, destination );
+		}
+		else
+		{
+			p7::throw_errno( EINVAL );
+		}
 	}
 	
 	void FSTree::HardLink( const FSTreePtr& destination ) const
