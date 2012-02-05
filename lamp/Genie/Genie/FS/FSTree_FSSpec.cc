@@ -390,6 +390,14 @@ namespace Genie
 		file->ChangeMode( mode );
 	}
 	
+	static void hfs_utime( const FSTree*          node,
+	                       const struct timespec  times[2] )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->SetTimes( times );
+	}
+	
 	static void hfs_symlink( const FSTree*        node,
 	                         const plus::string&  target )
 	{
@@ -405,7 +413,7 @@ namespace Genie
 		&hfs_stat,
 		&hfs_chmod,
 		NULL,
-		NULL,
+		&hfs_utime,
 		&hfs_symlink
 	};
 	
