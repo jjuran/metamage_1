@@ -908,10 +908,13 @@ namespace Genie
 	{
 		const bool exists = port_has_window( parent );
 		
-		typedef FSTree* T;
+		const mode_t mode = exists ? S_IFLNK | 0777
+		                           : 0;
 		
-		return exists ? T( new FSTree( parent, name, S_IFLNK | 0777, &window_methods ) )
-		              : T( new FSTree( parent, name, 0, &unwindow_methods ) );
+		const node_method_set& methods = exists ? window_methods
+		                                        : unwindow_methods;
+		
+		return new FSTree( parent, name, mode, &methods );
 	}
 	
 	static FSTreePtr new_focus( const FSTreePtr&     parent,
