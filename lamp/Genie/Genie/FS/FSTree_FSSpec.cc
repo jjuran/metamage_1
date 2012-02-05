@@ -415,6 +415,7 @@ namespace Genie
 		NULL,
 		&hfs_utime,
 		NULL,
+		NULL,
 		&hfs_symlink
 	};
 	
