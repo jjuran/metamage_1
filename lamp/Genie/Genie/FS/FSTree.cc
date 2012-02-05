@@ -178,9 +178,16 @@ namespace Genie
 		sb.st_ctime = now;
 	}
 	
-	void FSTree::ChangeMode( mode_t /*mode*/ ) const
+	void FSTree::ChangeMode( mode_t mode ) const
 	{
-		p7::throw_errno( EPERM );
+		if ( its_methods  &&  its_methods->chmod )
+		{
+			its_methods->chmod( this, mode );
+		}
+		else
+		{
+			p7::throw_errno( EPERM );
+		}
 	}
 	
 	void FSTree::SetTimes() const
