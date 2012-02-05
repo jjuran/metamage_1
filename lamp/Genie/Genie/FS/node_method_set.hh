@@ -33,6 +33,8 @@ namespace Genie
 	
 	typedef void (*chmod_method)( const FSTree*, mode_t );
 	
+	typedef void (*touch_method)( const FSTree* );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -42,6 +44,7 @@ namespace Genie
 		inode_method    parent_inode;
 		stat_method     stat;
 		chmod_method    chmod;
+		touch_method    touch;
 		symlink_method  symlink;
 	};
 	
