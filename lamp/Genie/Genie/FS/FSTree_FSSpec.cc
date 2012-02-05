@@ -376,6 +376,14 @@ namespace Genie
 		return file->ParentInode();
 	}
 	
+	static void hfs_stat( const FSTree*   node,
+	                      struct ::stat&  sb )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->Stat( sb );
+	}
+	
 	static void hfs_symlink( const FSTree*        node,
 	                         const plus::string&  target )
 	{
@@ -388,7 +396,7 @@ namespace Genie
 	{
 		&hfs_parent,
 		&hfs_parent_inode,
-		NULL,
+		&hfs_stat,
 		&hfs_symlink
 	};
 	
