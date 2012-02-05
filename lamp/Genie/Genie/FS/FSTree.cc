@@ -24,6 +24,11 @@
 #include "Genie/IO/VirtualDirectory.hh"
 
 
+#ifndef UTIME_NOW
+#define UTIME_NOW   ((1 << 30) - 1)
+#endif
+
+
 namespace Genie
 {
 	
@@ -180,7 +185,9 @@ namespace Genie
 	
 	void FSTree::SetTimes() const
 	{
-		p7::throw_errno( EPERM );
+		const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
+		
+		SetTimes( times );
 	}
 	
 	void FSTree::SetTimes( const struct timespec times[2] ) const
