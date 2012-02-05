@@ -284,6 +284,8 @@ namespace Genie
 	}
 	
 	
+	static plus::string scrollframe_target_readlink( const FSTree* node );
+	
 	static void scrollframe_target_symlink( const FSTree*        node,
 	                                        const plus::string&  target_path );
 	
@@ -301,7 +303,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
+		&scrollframe_target_readlink,
 		NULL,
 		&scrollframe_target_symlink
 	};
@@ -317,8 +319,6 @@ namespace Genie
 			}
 			
 			void Delete() const;
-			
-			plus::string ReadLink() const;
 	};
 	
 	static bool scrollframe_target_exists( const FSTree* view )
@@ -356,9 +356,9 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	plus::string FSTree_ScrollFrame_target::ReadLink() const
+	static plus::string scrollframe_target_readlink( const FSTree* node )
 	{
-		const FSTree* view = GetViewKey( this );
+		const FSTree* view = node->ParentRef().get();
 		
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}
