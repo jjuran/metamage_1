@@ -192,9 +192,16 @@ namespace Genie
 	
 	void FSTree::SetTimes() const
 	{
-		const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
-		
-		SetTimes( times );
+		if ( its_methods  &&  its_methods->touch )
+		{
+			its_methods->touch( this );
+		}
+		else
+		{
+			const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
+			
+			SetTimes( times );
+		}
 	}
 	
 	void FSTree::SetTimes( const struct timespec times[2] ) const
