@@ -5,39 +5,47 @@
 
 #include "Genie/FS/sys/app/exe.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/GetAppFile.hh"
 
 
 namespace Genie
 {
 	
-	class FSTree_sys_app_exe : public FSTree_ResolvableSymLink
-	{
-		public:
-			FSTree_sys_app_exe( const FSTreePtr&     parent,
-			                    const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
-	
-	
-	FSTreePtr FSTree_sys_app_exe::ResolveLink() const
+	static FSTreePtr app_exe_resolve( const FSTree* node )
 	{
 		return FSTreeFromFSSpec( GetAppFile(), false );
 	}
+	
+	static const node_method_set app_exe_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&app_exe_resolve
+	};
 	
 	FSTreePtr New_FSTree_sys_app_exe( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return new FSTree_sys_app_exe( parent, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &app_exe_methods );
 	}
 	
 }
