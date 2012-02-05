@@ -40,22 +40,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct Null_KeyName_Traits
-	{
-		typedef plus::string Key;
-		
-		static const plus::string& NameFromKey( const Key& key )
-		{
-			return key;
-		}
-		
-		static const Key& KeyFromName( const plus::string& name )
-		{
-			return name;
-		}
-	};
-	
-	
 	struct Named_Subview
 	{
 		plus::string                       name;
