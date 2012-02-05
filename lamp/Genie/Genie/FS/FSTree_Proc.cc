@@ -29,6 +29,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
@@ -510,10 +511,26 @@ namespace Genie
 			void ChangeMode( mode_t mode ) const;
 	};
 	
+	static void proc_pid_core_chmod( const FSTree*  node,
+	                                 mode_t         mode )
+	{
+		const FSTree_proc_PID_core* file = static_cast< const FSTree_proc_PID_core* >( node );
+		
+		file->ChangeMode( mode );
+	}
+	
+	static node_method_set proc_pid_core_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&proc_pid_core_chmod
+	};
+	
 	FSTree_proc_PID_core::FSTree_proc_PID_core( const FSTreePtr&     parent,
 	                                            const plus::string&  name )
 	:
-		FSTree( parent, name, S_IFREG | 0600 )
+		FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods )
 	{
 	}
 	
