@@ -20,6 +20,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
@@ -318,9 +319,17 @@ namespace Genie
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
-		if ( its_methods  &&  its_methods->resolve )
+		if ( its_methods )
 		{
-			return its_methods->resolve( this );
+			if ( its_methods->resolve )
+			{
+				return its_methods->resolve( this );
+			}
+			
+			if ( its_methods->readlink )
+			{
+				return ResolvePathname( its_methods->readlink( this ), ParentRef().get() );
+			}
 		}
 		
 		return Self();
