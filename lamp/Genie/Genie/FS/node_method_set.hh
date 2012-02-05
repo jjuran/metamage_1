@@ -50,6 +50,8 @@ namespace Genie
 	typedef off_t (*geteof_method)( const FSTree* );
 	typedef void  (*seteof_method)( const FSTree*, off_t );
 	
+	typedef plus::string (*readlink_method)( const FSTree* );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -67,6 +69,7 @@ namespace Genie
 		copyfile_method copyfile;
 		geteof_method   geteof;
 		seteof_method   seteof;
+		readlink_method readlink;
 		symlink_method  symlink;
 	};
 	
