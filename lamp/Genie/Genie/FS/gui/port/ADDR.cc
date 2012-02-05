@@ -564,25 +564,6 @@ namespace Genie
 		CloseUserWindow( node->ParentRef().get() );
 	}
 	
-	static plus::string window_readlink( const FSTree* node );
-	
-	static node_method_set window_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&window_touch,
-		NULL,
-		&window_remove,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&window_readlink
-	};
-	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
 	static plus::string window_readlink( const FSTree* node )
@@ -602,6 +583,23 @@ namespace Genie
 		
 		return result;
 	}
+	
+	static node_method_set window_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&window_touch,
+		NULL,
+		&window_remove,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&window_readlink
+	};
 	
 	
 	class FSTree_sys_port_ADDR_tty : public FSTree
