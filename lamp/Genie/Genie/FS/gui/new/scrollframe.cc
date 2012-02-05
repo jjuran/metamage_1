@@ -310,17 +310,6 @@ namespace Genie
 		&scrollframe_target_symlink
 	};
 	
-	class FSTree_ScrollFrame_target : public FSTree
-	{
-		public:
-			FSTree_ScrollFrame_target( const FSTreePtr&     parent,
-			                           const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods )
-			{
-			}
-	};
-	
 	static bool scrollframe_target_exists( const FSTree* view )
 	{
 		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
@@ -396,7 +385,7 @@ namespace Genie
 	{
 		if ( const bool exists = scrollframe_target_exists( parent.get() ) )
 		{
-			return new FSTree_ScrollFrame_target( parent, name );
+			return new FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods );
 		}
 		
 		return new FSTree( parent, name, 0, &scrollframe_target_methods );
