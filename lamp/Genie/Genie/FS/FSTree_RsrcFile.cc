@@ -42,28 +42,22 @@ namespace Genie
 			bool    itIsOnServer;
 		
 		public:
-			FSTree_RsrcFile( const FSSpec& file, bool onServer )
-			:
-				FSTree( FSTreeFromFSSpec( file, onServer ),
-				        "rsrc",
-				        file_mode( file, onServer ) ),
-				itsFileSpec( file ),
-				itIsOnServer( onServer )
-			{
-			}
+			FSTree_RsrcFile( const FSSpec& file, bool onServer );
 			
 			void Stat( struct ::stat& sb ) const;
 			
-			IOPtr Open( OpenFlags flags ) const
-			{
-				flags |= itIsOnServer ? O_MAC_ASYNC : 0;
-				
-				return OpenMacFileHandle( itsFileSpec,
-				                          flags,
-				                          &Genie::FSpOpenRF,
-				                          &New_RsrcForkHandle );
-			}
+			IOPtr Open( OpenFlags flags ) const;
 	};
+	
+	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file, bool onServer )
+	:
+		FSTree( FSTreeFromFSSpec( file, onServer ),
+		        "rsrc",
+		        file_mode( file, onServer ) ),
+		itsFileSpec( file ),
+		itIsOnServer( onServer )
+	{
+	}
 	
 	
 	FSTreePtr GetRsrcForkFSTree( const FSSpec& file, bool onServer )
@@ -81,6 +75,16 @@ namespace Genie
 		                             itsFileSpec );
 		
 		Stat_HFS( itIsOnServer, &sb, cInfo, itsFileSpec.name, true );
+	}
+	
+	IOPtr FSTree_RsrcFile::Open( OpenFlags flags ) const
+	{
+		flags |= itIsOnServer ? O_MAC_ASYNC : 0;
+		
+		return OpenMacFileHandle( itsFileSpec,
+		                          flags,
+		                          &Genie::FSpOpenRF,
+		                          &New_RsrcForkHandle );
 	}
 	
 }
