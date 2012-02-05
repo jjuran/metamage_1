@@ -699,20 +699,6 @@ namespace Genie
 		&gesture_readlink
 	};
 	
-	class FSTree_Window_Gesture : public FSTree
-	{
-		public:
-			FSTree_Window_Gesture( const FSTreePtr&     parent,
-			                       const plus::string&  name );
-	};
-	
-	FSTree_Window_Gesture::FSTree_Window_Gesture( const FSTreePtr&     parent,
-	                                              const plus::string&  name )
-	:
-		FSTree( parent, name, S_IFLNK | 0777, &gesture_methods )
-	{
-	}
-	
 	static void gesture_remove( const FSTree* node )
 	{
 		const FSTree* view = node->ParentRef().get();
@@ -956,7 +942,7 @@ namespace Genie
 		
 		if ( exists )
 		{
-			return new FSTree_Window_Gesture( parent, name );
+			return new FSTree( parent, name, S_IFLNK | 0777, &gesture_methods );
 		}
 		
 		return new FSTree( parent, name, 0, &ungesture_methods );
