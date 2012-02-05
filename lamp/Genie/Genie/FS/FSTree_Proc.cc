@@ -507,16 +507,23 @@ namespace Genie
 		public:
 			FSTree_proc_PID_core( const FSTreePtr&     parent,
 			                      const plus::string&  name );
-			
-			void ChangeMode( mode_t mode ) const;
 	};
 	
 	static void proc_pid_core_chmod( const FSTree*  node,
 	                                 mode_t         mode )
 	{
-		const FSTree_proc_PID_core* file = static_cast< const FSTree_proc_PID_core* >( node );
+		const pid_t pid = GetKeyFromParent( node->ParentRef() );
 		
-		file->ChangeMode( mode );
+		Process& process = GetProcess( pid );
+		
+		if ( mode == 0 )
+		{
+			process.SuppressCoreDump();
+		}
+		else
+		{
+			process.AllowCoreDump();
+		}
 	}
 	
 	static node_method_set proc_pid_core_methods =
@@ -532,22 +539,6 @@ namespace Genie
 	:
 		FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods )
 	{
-	}
-	
-	void FSTree_proc_PID_core::ChangeMode( mode_t mode ) const
-	{
-		const pid_t pid = GetKeyFromParent( ParentRef() );
-		
-		Process& process = GetProcess( pid );
-		
-		if ( mode == 0 )
-		{
-			process.SuppressCoreDump();
-		}
-		else
-		{
-			process.AllowCoreDump();
-		}
 	}
 	
 	static FSTreePtr core_Factory( const FSTreePtr&     parent,
