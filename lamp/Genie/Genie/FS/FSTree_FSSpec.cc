@@ -388,6 +388,7 @@ namespace Genie
 	{
 		&hfs_parent,
 		&hfs_parent_inode,
+		NULL,
 		&hfs_symlink
 	};
 	
