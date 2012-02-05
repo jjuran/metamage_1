@@ -206,7 +206,14 @@ namespace Genie
 	
 	void FSTree::SetTimes( const struct timespec times[2] ) const
 	{
-		p7::throw_errno( EPERM );
+		if ( its_methods  &&  its_methods->utime )
+		{
+			its_methods->utime( this, times );
+		}
+		else
+		{
+			p7::throw_errno( EPERM );
+		}
 	}
 	
 	void FSTree::Delete() const
