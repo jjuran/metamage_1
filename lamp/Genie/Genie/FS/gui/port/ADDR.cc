@@ -510,6 +510,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&unfocus_symlink
 	};
 	
@@ -732,6 +733,7 @@ namespace Genie
 	
 	static node_method_set ungesture_methods =
 	{
+		NULL,
 		NULL,
 		NULL,
 		NULL,

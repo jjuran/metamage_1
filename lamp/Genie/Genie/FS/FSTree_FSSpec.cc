@@ -414,6 +414,7 @@ namespace Genie
 		&hfs_chmod,
 		NULL,
 		&hfs_utime,
+		NULL,
 		&hfs_symlink
 	};
 	

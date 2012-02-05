@@ -39,6 +39,8 @@ namespace Genie
 	typedef void (*touch_method)( const FSTree* );
 	typedef void (*utime_method)( const FSTree*, const struct timespec times[2] );
 	
+	typedef void (*remove_method)( const FSTree* );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -50,6 +52,7 @@ namespace Genie
 		chmod_method    chmod;
 		touch_method    touch;
 		utime_method    utime;
+		remove_method   remove;
 		symlink_method  symlink;
 	};
 	
