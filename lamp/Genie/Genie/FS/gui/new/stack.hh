@@ -13,6 +13,10 @@
 namespace Genie
 {
 	
+	FSTreePtr New_stack( const FSTreePtr&     parent,
+	                     const plus::string&  name,
+	                     const void*          args );
+	
 	boost::intrusive_ptr< Pedestal::View > StackFactory( const FSTree* delegate );
 	
 	
