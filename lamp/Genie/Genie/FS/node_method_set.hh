@@ -45,6 +45,8 @@ namespace Genie
 	
 	typedef void (*link_method)( const FSTree*, const FSTreePtr& );
 	
+	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -59,6 +61,7 @@ namespace Genie
 		remove_method   remove;
 		rename_method   rename;
 		link_method     link;
+		copyfile_method copyfile;
 		symlink_method  symlink;
 	};
 	

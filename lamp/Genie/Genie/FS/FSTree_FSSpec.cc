@@ -417,6 +417,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&hfs_symlink
 	};
 	
