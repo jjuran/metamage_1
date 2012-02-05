@@ -268,6 +268,11 @@ namespace Genie
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
+		if ( its_methods  &&  its_methods->resolve )
+		{
+			return its_methods->resolve( this );
+		}
+		
 		return Self();
 	}
 	
