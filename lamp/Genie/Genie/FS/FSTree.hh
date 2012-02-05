@@ -84,7 +84,7 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const;
 			
-			virtual void ChangeMode( mode_t mode ) const;
+			void ChangeMode( mode_t mode ) const;
 			
 			virtual void SetTimes() const;
 			
