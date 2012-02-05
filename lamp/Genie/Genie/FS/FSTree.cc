@@ -233,7 +233,14 @@ namespace Genie
 	
 	void FSTree::CopyFile( const FSTreePtr& destination ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( its_methods  &&  its_methods->copyfile )
+		{
+			its_methods->copyfile( this, destination );
+		}
+		else
+		{
+			p7::throw_errno( EINVAL );
+		}
 	}
 	
 	off_t FSTree::GetEOF() const
