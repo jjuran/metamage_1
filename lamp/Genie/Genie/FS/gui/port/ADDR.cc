@@ -545,6 +545,20 @@ namespace Genie
 	}
 	
 	
+	static void window_touch( const FSTree* node )
+	{
+		invalidate_port_WindowRef( node->ParentRef().get() );
+	}
+	
+	static node_method_set window_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&window_touch
+	};
+	
 	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
 	{
 		public:
@@ -552,8 +566,6 @@ namespace Genie
 			                             const plus::string&  name );
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			void SetTimes() const;
 			
 			void Delete() const;
 			
@@ -564,15 +576,8 @@ namespace Genie
 	FSTree_sys_port_ADDR_window::FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
 	                                                          const plus::string&  name )
 	:
-		FSTree_ReadableSymLink( parent, name )
+		FSTree_ReadableSymLink( parent, name, &window_methods )
 	{
-	}
-	
-	void FSTree_sys_port_ADDR_window::SetTimes() const
-	{
-		const FSTree* key = WindowKey();
-		
-		invalidate_port_WindowRef( key );
 	}
 	
 	void FSTree_sys_port_ADDR_window::Delete() const
