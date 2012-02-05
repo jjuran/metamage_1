@@ -80,7 +80,7 @@ namespace Genie
 			FSTreePtr Parent() const;
 			
 			virtual ino_t Inode() const;
-			virtual ino_t ParentInode() const;
+			ino_t ParentInode() const;
 			
 			virtual void Stat( struct ::stat& sb ) const;
 			

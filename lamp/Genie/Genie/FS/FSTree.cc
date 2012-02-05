@@ -134,6 +134,11 @@ namespace Genie
 	
 	ino_t FSTree::ParentInode() const
 	{
+		if ( its_methods  &&  its_methods->parent_inode )
+		{
+			return its_methods->parent_inode( this );
+		}
+		
 		return Parent()->Inode();
 	}
 	
