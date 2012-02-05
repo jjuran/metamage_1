@@ -26,7 +26,7 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Genie
-#include "Genie/FS/ReadableSymLink.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
 
@@ -36,24 +36,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class sys_mac_gdev_main : public FSTree_ReadableSymLink
-	{
-		public:
-			sys_mac_gdev_main( const FSTreePtr&     parent,
-			                   const plus::string&  name )
-			:
-				FSTree_ReadableSymLink( parent, name )
-			{
-				if ( !MacFeatures::Has_ColorQuickdraw() )
-				{
-					p7::throw_errno( ENOENT );
-				}
-			}
-			
-			plus::string ReadLink() const;
-	};
-	
-	plus::string sys_mac_gdev_main::ReadLink() const
+	static plus::string gdev_main_readlink( const FSTree* node )
 	{
 		const GDHandle gdH = ::GetMainDevice();
 		
@@ -68,10 +51,38 @@ namespace Genie
 		return result;
 	}
 	
+	static const node_method_set gdev_main_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&gdev_main_readlink
+	};
+	
+	static FSTreePtr gdev_main_factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
+	{
+		if ( !MacFeatures::Has_ColorQuickdraw() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return new FSTree( parent, name, S_IFLNK | 0777, &gdev_main_methods );
+	}
 	
 	const FSTree_Premapped::Mapping sys_mac_gdev_Mappings[] =
 	{
-		{ "main", &Basic_Factory< sys_mac_gdev_main > },
+		{ "main", &gdev_main_factory },
 		
 		{ "list", &New_FSTree_sys_mac_gdev_list },
 		
