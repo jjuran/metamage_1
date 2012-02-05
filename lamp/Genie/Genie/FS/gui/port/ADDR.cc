@@ -559,13 +559,20 @@ namespace Genie
 		invalidate_port_WindowRef( node->ParentRef().get() );
 	}
 	
+	static void window_remove( const FSTree* node )
+	{
+		CloseUserWindow( node->ParentRef().get() );
+	}
+	
 	static node_method_set window_methods =
 	{
 		NULL,
 		NULL,
 		NULL,
 		NULL,
-		&window_touch
+		&window_touch,
+		NULL,
+		&window_remove
 	};
 	
 	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
@@ -576,8 +583,6 @@ namespace Genie
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
 			
-			void Delete() const;
-			
 			plus::string ReadLink() const;
 	};
 	
@@ -587,13 +592,6 @@ namespace Genie
 	:
 		FSTree_ReadableSymLink( parent, name, &window_methods )
 	{
-	}
-	
-	void FSTree_sys_port_ADDR_window::Delete() const
-	{
-		const FSTree* key = WindowKey();
-		
-		CloseUserWindow( key );
 	}
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
