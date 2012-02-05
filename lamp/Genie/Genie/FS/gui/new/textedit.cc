@@ -15,6 +15,7 @@
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -39,25 +40,21 @@ namespace Genie
 	}
 	
 	
-	class FSTree_TextEdit_interlock : public FSTree
+	static void textedit_interlock_touch( const FSTree* node )
 	{
-		public:
-			FSTree_TextEdit_interlock( const FSTreePtr&     parent,
-			                           const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0600 )
-			{
-			}
-			
-			void SetTimes() const;
-	};
-	
-	void FSTree_TextEdit_interlock::SetTimes() const
-	{
-		const FSTree* view = ParentRef().get();
+		const FSTree* view = node->ParentRef().get();
 		
 		TextEditParameters::Get( view ).itIsInterlocked = true;
 	}
+	
+	static node_method_set textedit_interlock_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&textedit_interlock_touch
+	};
 	
 	
 	class TextEdit_gate_Handle : public VirtualFileHandle< StreamHandle >
@@ -135,6 +132,13 @@ namespace Genie
 	}
 	
 	
+	static FSTreePtr interlock_factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
+	{
+		return new FSTree( parent, name, S_IFREG | 0600, &textedit_interlock_methods );
+	}
+	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct TE_View_Property : public View_Property< Serialize, Access >
 	{
@@ -179,7 +183,7 @@ namespace Genie
 		
 		{ "gate", &Basic_Factory< FSTree_TextEdit_gate > },
 		
-		{ "interlock", &Basic_Factory< FSTree_TextEdit_interlock > },
+		{ "interlock", &interlock_factory },
 		
 		{ "selection", PROPERTY( Selection_Property ) },
 		
