@@ -44,7 +44,6 @@
 // Genie
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
@@ -679,36 +678,50 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Window_Gesture : public FSTree_ReadableSymLink
+	static void gesture_remove( const FSTree* node );
+	
+	static plus::string gesture_readlink( const FSTree* node );
+	
+	static node_method_set gesture_methods =
 	{
-		private:
-			int itsIndex;
-		
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&gesture_remove,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&gesture_readlink
+	};
+	
+	class FSTree_Window_Gesture : public FSTree
+	{
 		public:
 			FSTree_Window_Gesture( const FSTreePtr&     parent,
 			                       const plus::string&  name );
-			
-			void Delete() const;
-			
-			plus::string ReadLink() const;
 	};
 	
 	FSTree_Window_Gesture::FSTree_Window_Gesture( const FSTreePtr&     parent,
 	                                              const plus::string&  name )
 	:
-		FSTree_ReadableSymLink( parent, name ),
-		itsIndex( LookupGesture( name ) )
+		FSTree( parent, name, S_IFLNK | 0777, &gesture_methods )
 	{
-		ASSERT( itsIndex != -1 );
 	}
 	
-	void FSTree_Window_Gesture::Delete() const
+	static void gesture_remove( const FSTree* node )
 	{
-		const FSTree* view = GetViewKey( this );
+		const FSTree* view = node->ParentRef().get();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		params.itsGesturePaths[ itsIndex ].reset();
+		const int index = LookupGesture( node->Name() );
+		
+		params.itsGesturePaths[ index ].reset();
 	}
 	
 	static void ungesture_symlink( const FSTree*        node,
@@ -742,11 +755,13 @@ namespace Genie
 		&ungesture_symlink
 	};
 	
-	plus::string FSTree_Window_Gesture::ReadLink() const
+	static plus::string gesture_readlink( const FSTree* node )
 	{
-		const FSTree* view = GetViewKey( this );
+		const FSTree* view = node->ParentRef().get();
 		
-		const plus::string& link = gWindowParametersMap[ view ].itsGesturePaths[ itsIndex ];
+		const int index = LookupGesture( node->Name() );
+		
+		const plus::string& link = gWindowParametersMap[ view ].itsGesturePaths[ index ];
 		
 		if ( link.empty() )
 		{
