@@ -238,6 +238,11 @@ namespace Genie
 	
 	off_t FSTree::GetEOF() const
 	{
+		if ( its_methods  &&  its_methods->geteof )
+		{
+			return its_methods->geteof( this );
+		}
+		
 		// Errors are meaningless here since there's no POSIX call specifically
 		// to get EOF (as there is truncate() for setting EOF).  We only care so
 		// we can populate stat::st_size.  Just return zero.
