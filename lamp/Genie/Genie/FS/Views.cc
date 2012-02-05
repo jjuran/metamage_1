@@ -25,6 +25,7 @@
 #include "Pedestal/EmptyView.hh"
 
 // Genie
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -351,8 +352,6 @@ namespace Genie
 			
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
-			void SetTimes() const;
-			
 			void Delete() const;
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
@@ -376,20 +375,29 @@ namespace Genie
 	{
 	}
 	
+	static void view_touch( const FSTree* node )
+	{
+		InvalidateWindowForView( node );
+	}
+	
+	static node_method_set view_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&view_touch
+	};
+	
 	FSTree_View::FSTree_View( const FSTreePtr&     parent,
 	                          const plus::string&  name,
 	                          ViewGetter           get,
 	                          ViewPurger           purge )
 	:
-		FSTree( parent, name, S_IFDIR | 0700 ),
+		FSTree( parent, name, S_IFDIR | 0700, &view_methods ),
 		itsGetter( get   ),
 		itsPurger( purge )
 	{
-	}
-	
-	void FSTree_View::SetTimes() const
-	{
-		InvalidateWindowForView( this );
 	}
 	
 	void FSTree_View::Delete() const
