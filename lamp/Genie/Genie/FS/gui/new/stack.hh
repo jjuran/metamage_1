@@ -7,34 +7,22 @@
 #define GENIE_FS_GUI_NEW_STACK_HH
 
 // Genie
-#include "Genie/FS/Views.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
+
+namespace plus
+{
+	
+	class string;
+	
+}
 
 namespace Genie
 {
 	
-	boost::intrusive_ptr< Pedestal::View > StackFactory( const FSTree* delegate );
-	
-	
-	class FSTree_new_stack : public FSTree_new_View
-	{
-		public:
-			FSTree_new_stack( const FSTreePtr&     parent,
-			                  const plus::string&  name )
-			:
-				FSTree_new_View( parent,
-				                 name,
-				                 &StackFactory,
-				                 NULL,
-				                 &DestroyDelegate )
-			{
-			}
-			
-			FSTreePtr CreateDelegate( const FSTreePtr&     parent,
-			                          const plus::string&  name ) const;
-			
-			static void DestroyDelegate( const FSTree* delegate );
-	};
+	FSTreePtr New_stack( const FSTreePtr&     parent,
+	                     const plus::string&  name,
+	                     const void*          args );
 	
 }
 

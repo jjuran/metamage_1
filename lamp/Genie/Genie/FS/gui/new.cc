@@ -40,7 +40,7 @@ namespace Genie
 		{ "list",         &New_FSTree_new_list                },
 		{ "scroller",     &New_FSTree_new_scroller            },
 		{ "scrollframe",  &New_FSTree_new_scrollframe         },
-		{ "stack",        &Basic_Factory< FSTree_new_stack  > },
+		{ "stack",        &New_stack                          },
 		{ "textedit",     &New_FSTree_new_textedit            },
 		{ "port",         &Basic_Factory< FSTree_new_port   > },
 		

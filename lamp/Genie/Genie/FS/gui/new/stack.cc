@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -121,10 +122,31 @@ namespace Genie
 	};
 	
 	
-	boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
 	{
 		return new Stack( delegate );
 	}
+	
+	
+	static void DestroyDelegate( const FSTree* delegate );
+	
+	class FSTree_new_stack : public FSTree_new_View
+	{
+		public:
+			FSTree_new_stack( const FSTreePtr&     parent,
+			                  const plus::string&  name )
+			:
+				FSTree_new_View( parent,
+				                 name,
+				                 &StackFactory,
+				                 NULL,
+				                 &DestroyDelegate )
+			{
+			}
+			
+			FSTreePtr CreateDelegate( const FSTreePtr&     parent,
+			                          const plus::string&  name ) const;
+	};
 	
 	
 	static boost::intrusive_ptr< Pedestal::View >&
@@ -166,7 +188,7 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
-			void Delete() const  { FSTree_new_stack::DestroyDelegate( this ); }
+			void Delete() const  { DestroyDelegate( this ); }
 	};
 	
 	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
@@ -206,9 +228,16 @@ namespace Genie
 		return new FSTree_Stack( parent, name );
 	}
 	
-	void FSTree_new_stack::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gStack_Parameters_Map.erase( delegate );
+	}
+	
+	FSTreePtr New_stack( const FSTreePtr&     parent,
+	                     const plus::string&  name,
+	                     const void*          args )
+	{
+		return new FSTree_new_stack( parent, name );
 	}
 	
 }
