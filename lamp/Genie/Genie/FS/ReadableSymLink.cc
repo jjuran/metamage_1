@@ -17,10 +17,11 @@
 namespace Genie
 {
 	
-	FSTree_ReadableSymLink::FSTree_ReadableSymLink( const FSTreePtr&     parent,
-	                                                const plus::string&  name )
+	FSTree_ReadableSymLink::FSTree_ReadableSymLink( const FSTreePtr&        parent,
+	                                                const plus::string&     name,
+	                                                const node_method_set*  methods )
 	:
-		FSTree( parent, name, S_IFLNK | 0777 )
+		FSTree( parent, name, S_IFLNK | 0777, methods )
 	{
 	}
 	

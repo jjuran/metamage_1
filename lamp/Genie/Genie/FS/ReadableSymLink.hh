@@ -15,11 +15,15 @@
 namespace Genie
 {
 	
+	struct node_method_set;
+	
+	
 	class FSTree_ReadableSymLink : public FSTree
 	{
 		public:
-			FSTree_ReadableSymLink( const FSTreePtr&     parent,
-			                        const plus::string&  name );
+			FSTree_ReadableSymLink( const FSTreePtr&        parent,
+			                        const plus::string&     name,
+			                        const node_method_set*  methods = NULL );
 			
 			FSTreePtr ResolveLink() const;
 	};
