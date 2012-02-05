@@ -263,6 +263,11 @@ namespace Genie
 	
 	plus::string FSTree::ReadLink() const
 	{
+		if ( its_methods  &&  its_methods->readlink )
+		{
+			return its_methods->readlink( this );
+		}
+		
 		throw p7::errno_t( EINVAL );
 	}
 	
