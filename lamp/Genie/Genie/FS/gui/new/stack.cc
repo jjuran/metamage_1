@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -121,10 +122,31 @@ namespace Genie
 	};
 	
 	
-	boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
 	{
 		return new Stack( delegate );
 	}
+	
+	
+	class FSTree_new_stack : public FSTree_new_View
+	{
+		public:
+			FSTree_new_stack( const FSTreePtr&     parent,
+			                  const plus::string&  name )
+			:
+				FSTree_new_View( parent,
+				                 name,
+				                 &StackFactory,
+				                 NULL,
+				                 &DestroyDelegate )
+			{
+			}
+			
+			FSTreePtr CreateDelegate( const FSTreePtr&     parent,
+			                          const plus::string&  name ) const;
+			
+			static void DestroyDelegate( const FSTree* delegate );
+	};
 	
 	
 	static boost::intrusive_ptr< Pedestal::View >&
