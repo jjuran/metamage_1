@@ -250,13 +250,17 @@ namespace Genie
 		return 0;
 	}
 	
-	void FSTree::SetEOF( off_t /*length*/ ) const
+	void FSTree::SetEOF( off_t length ) const
 	{
 		// This confuses MWCPPC when optimizing:
 		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
 		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
 		
-		if ( IsDirectory() )
+		if ( its_methods  &&  its_methods->seteof )
+		{
+			its_methods->seteof( this, length );
+		}
+		else if ( IsDirectory() )
 		{
 			p7::throw_errno( EISDIR );
 		}
