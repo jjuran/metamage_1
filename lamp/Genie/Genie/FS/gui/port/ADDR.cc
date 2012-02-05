@@ -583,21 +583,6 @@ namespace Genie
 		&window_readlink
 	};
 	
-	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
-	{
-		public:
-			FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
-			                             const plus::string&  name );
-	};
-	
-	
-	FSTree_sys_port_ADDR_window::FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
-	                                                          const plus::string&  name )
-	:
-		FSTree_ReadableSymLink( parent, name, &window_methods )
-	{
-	}
-	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
 	static plus::string window_readlink( const FSTree* node )
@@ -925,7 +910,7 @@ namespace Genie
 		
 		typedef FSTree* T;
 		
-		return exists ? T( new FSTree_sys_port_ADDR_window  ( parent, name ) )
+		return exists ? T( new FSTree( parent, name, S_IFLNK | 0777, &window_methods ) )
 		              : T( new FSTree( parent, name, 0, &unwindow_methods ) );
 	}
 	
