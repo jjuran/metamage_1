@@ -38,25 +38,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	void SetFileTimes( Mac::FSVolumeRefNum   vRefNum,
-	                   Mac::FSDirID          dirID,
-	                   const unsigned char*  name )
-	{
-		UInt32 modTime = N::GetDateTime();
-		
-		N::Str63 name_copy = name;
-		
-		CInfoPBRec paramBlock;
-		
-		MacIO::GetCatInfo< MacIO::Throw_All >( paramBlock, vRefNum, dirID, name_copy );
-		
-		paramBlock.hFileInfo.ioDirID = dirID;
-		
-		paramBlock.hFileInfo.ioFlMdDat = modTime;
-		
-		N::PBSetCatInfoSync( paramBlock );
-	}
-	
 	static void update_time( UInt32& date, const timespec& time, UInt32& now )
 	{
 		const long nsec = time.tv_nsec & ~UTIME_ARCHIVE;

@@ -21,10 +21,6 @@
 namespace Genie
 {
 	
-	void SetFileTimes( Mac::FSVolumeRefNum   vRefNum,
-	                   Mac::FSDirID          dirID,
-	                   const unsigned char*  name );
-	
 	void SetFileTimes( Mac::FSVolumeRefNum    vRefNum,
 	                   Mac::FSDirID           dirID,
 	                   const unsigned char*   name,
