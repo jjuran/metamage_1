@@ -300,9 +300,17 @@ namespace Genie
 	
 	plus::string FSTree::ReadLink() const
 	{
-		if ( its_methods  &&  its_methods->readlink )
+		if ( its_methods )
 		{
-			return its_methods->readlink( this );
+			if ( its_methods->readlink )
+			{
+				return its_methods->readlink( this );
+			}
+			
+			if ( its_methods->resolve )
+			{
+				return its_methods->resolve( this )->Pathname();
+			}
 		}
 		
 		throw p7::errno_t( EINVAL );
