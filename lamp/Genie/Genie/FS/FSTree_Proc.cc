@@ -30,7 +30,6 @@
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
@@ -55,22 +54,6 @@ namespace Genie
 	{
 		return GetKeyFromParent( parent.get() );
 	}
-	
-	
-	class FSTree_proc_self : public FSTree_ReadableSymLink
-	{
-		private:
-			pid_t getpid() const  { return CurrentProcess().GetPID(); }
-		
-		public:
-			FSTree_proc_self( const FSTreePtr& parent )
-			:
-				FSTree_ReadableSymLink( parent, "self" )
-			{
-			}
-			
-			plus::string ReadLink() const  { return gear::inscribe_unsigned_decimal( getpid() ); }
-	};
 	
 	
 	class FSTree_PID_fd : public FSTree
@@ -217,11 +200,34 @@ namespace Genie
 		}
 	};
 	
+	static plus::string proc_self_readlink( const FSTree* node )
+	{
+		return gear::inscribe_unsigned_decimal( CurrentProcess().GetPID() );
+	}
+	
+	static const node_method_set proc_self_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&proc_self_readlink
+	};
+	
+	
 	static FSTreePtr proc_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
 		if ( name == "self" )
 		{
-			return new FSTree_proc_self( parent );
+			return new FSTree( parent, name, S_IFLNK | 0777, &proc_self_methods );
 		}
 		
 		if ( !valid_name_of_pid::applies( name ) )
