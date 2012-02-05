@@ -52,6 +52,8 @@ namespace Genie
 	
 	typedef plus::string (*readlink_method)( const FSTree* );
 	
+	typedef FSTreePtr (*resolve_method)( const FSTree* );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -70,6 +72,7 @@ namespace Genie
 		geteof_method   geteof;
 		seteof_method   seteof;
 		readlink_method readlink;
+		resolve_method  resolve;
 		symlink_method  symlink;
 	};
 	
