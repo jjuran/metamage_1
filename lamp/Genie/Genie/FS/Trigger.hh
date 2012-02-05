@@ -25,8 +25,6 @@ namespace Genie
 			
 			virtual void Invoke() const = 0;
 			
-			void SetTimes() const  { Invoke(); }
-			
 			IOPtr Open( OpenFlags flags ) const;
 	};
 	
