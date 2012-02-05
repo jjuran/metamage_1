@@ -502,13 +502,6 @@ namespace Genie
 		return new FSTree_PID_Link< LinkResolver >( parent, name );
 	}
 	
-	class FSTree_proc_PID_core : public FSTree
-	{
-		public:
-			FSTree_proc_PID_core( const FSTreePtr&     parent,
-			                      const plus::string&  name );
-	};
-	
 	static void proc_pid_core_chmod( const FSTree*  node,
 	                                 mode_t         mode )
 	{
@@ -534,18 +527,11 @@ namespace Genie
 		&proc_pid_core_chmod
 	};
 	
-	FSTree_proc_PID_core::FSTree_proc_PID_core( const FSTreePtr&     parent,
-	                                            const plus::string&  name )
-	:
-		FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods )
-	{
-	}
-	
 	static FSTreePtr core_Factory( const FSTreePtr&     parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		return new FSTree_proc_PID_core( parent, name );
+		return new FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
