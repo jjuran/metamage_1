@@ -228,7 +228,14 @@ namespace Genie
 	
 	void FSTree::HardLink( const FSTreePtr& destination ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( its_methods  &&  its_methods->link )
+		{
+			its_methods->link( this, destination );
+		}
+		else
+		{
+			p7::throw_errno( EINVAL );
+		}
 	}
 	
 	void FSTree::CopyFile( const FSTreePtr& destination ) const
