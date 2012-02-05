@@ -21,12 +21,7 @@ namespace Genie
 		public:
 			FSTree_SymbolicLink( const FSTreePtr&     parent,
 			                     const plus::string&  name,
-			                     const plus::string&  target )
-			:
-				FSTree_ReadableSymLink( parent, name ),
-				itsTarget( target )
-			{
-			}
+			                     const plus::string&  target );
 			
 			plus::string ReadLink() const;
 	};
