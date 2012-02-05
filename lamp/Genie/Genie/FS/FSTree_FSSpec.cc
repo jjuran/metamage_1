@@ -303,8 +303,6 @@ namespace Genie
 			
 			void ChangeMode( mode_t mode ) const;
 			
-			void SetTimes() const;
-			
 			void SetTimes( const struct timespec times[2] ) const;
 			
 			void Delete() const;
@@ -581,13 +579,6 @@ namespace Genie
 	void FSTree_HFS::ChangeMode( mode_t mode ) const
 	{
 		ChangeFileMode( GetFSSpec(), mode );
-	}
-	
-	void FSTree_HFS::SetTimes() const
-	{
-		SetFileTimes( N::FSVolumeRefNum( itsFileSpec.vRefNum ),
-		              N::FSDirID       ( itsFileSpec.parID   ),
-		              itsFileSpec.name );
 	}
 	
 	void FSTree_HFS::SetTimes( const struct timespec times[2] ) const
