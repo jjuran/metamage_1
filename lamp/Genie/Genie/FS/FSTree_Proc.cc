@@ -505,14 +505,17 @@ namespace Genie
 	{
 		public:
 			FSTree_proc_PID_core( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0600 )
-			{
-			}
+			                      const plus::string&  name );
 			
 			void ChangeMode( mode_t mode ) const;
 	};
+	
+	FSTree_proc_PID_core::FSTree_proc_PID_core( const FSTreePtr&     parent,
+	                                            const plus::string&  name )
+	:
+		FSTree( parent, name, S_IFREG | 0600 )
+	{
+	}
 	
 	void FSTree_proc_PID_core::ChangeMode( mode_t mode ) const
 	{
