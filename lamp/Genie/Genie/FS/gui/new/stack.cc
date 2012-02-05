@@ -128,6 +128,8 @@ namespace Genie
 	}
 	
 	
+	static void DestroyDelegate( const FSTree* delegate );
+	
 	class FSTree_new_stack : public FSTree_new_View
 	{
 		public:
@@ -144,8 +146,6 @@ namespace Genie
 			
 			FSTreePtr CreateDelegate( const FSTreePtr&     parent,
 			                          const plus::string&  name ) const;
-			
-			static void DestroyDelegate( const FSTree* delegate );
 	};
 	
 	
@@ -188,7 +188,7 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
-			void Delete() const  { FSTree_new_stack::DestroyDelegate( this ); }
+			void Delete() const  { DestroyDelegate( this ); }
 	};
 	
 	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
@@ -228,7 +228,7 @@ namespace Genie
 		return new FSTree_Stack( parent, name );
 	}
 	
-	void FSTree_new_stack::DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const FSTree* delegate )
 	{
 		gStack_Parameters_Map.erase( delegate );
 	}
