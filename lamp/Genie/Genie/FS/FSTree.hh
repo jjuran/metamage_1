@@ -82,7 +82,7 @@ namespace Genie
 			virtual ino_t Inode() const;
 			ino_t ParentInode() const;
 			
-			virtual void Stat( struct ::stat& sb ) const;
+			void Stat( struct ::stat& sb ) const;
 			
 			virtual void ChangeMode( mode_t mode ) const;
 			

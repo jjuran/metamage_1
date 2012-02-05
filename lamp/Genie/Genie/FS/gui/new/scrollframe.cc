@@ -291,6 +291,7 @@ namespace Genie
 	{
 		NULL,
 		NULL,
+		NULL,
 		&scrollframe_target_symlink
 	};
 	

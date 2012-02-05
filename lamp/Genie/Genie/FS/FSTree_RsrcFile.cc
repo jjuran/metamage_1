@@ -14,6 +14,7 @@
 #include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/StatFile.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -49,11 +50,29 @@ namespace Genie
 			IOPtr Open( OpenFlags flags ) const;
 	};
 	
+	
+	static void rsrcfile_stat( const FSTree*   node,
+	                           struct ::stat&  sb )
+	{
+		const FSTree_RsrcFile* file = static_cast< const FSTree_RsrcFile* >( node );
+		
+		file->Stat( sb );
+	}
+	
+	static node_method_set rsrcfile_methods =
+	{
+		NULL,
+		NULL,
+		&rsrcfile_stat
+	};
+	
+	
 	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file, bool onServer )
 	:
 		FSTree( FSTreeFromFSSpec( file, onServer ),
 		        "rsrc",
-		        file_mode( file, onServer ) ),
+		        file_mode( file, onServer ),
+		        &rsrcfile_methods ),
 		itsFileSpec( file ),
 		itIsOnServer( onServer )
 	{

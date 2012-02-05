@@ -16,6 +16,10 @@
 #include "Genie/FS/FSTreePtr.hh"
 
 
+// #include <sys/stat.h>
+struct stat;
+
+
 namespace Genie
 {
 	
@@ -25,6 +29,8 @@ namespace Genie
 	
 	typedef ino_t (*inode_method)( const FSTree* );
 	
+	typedef void (*stat_method)( const FSTree*, struct ::stat& );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -32,6 +38,7 @@ namespace Genie
 	{
 		parent_method   parent;
 		inode_method    parent_inode;
+		stat_method     stat;
 		symlink_method  symlink;
 	};
 	
