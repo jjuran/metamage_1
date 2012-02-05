@@ -144,6 +144,13 @@ namespace Genie
 	
 	void FSTree::Stat( struct ::stat& sb ) const
 	{
+		if ( its_methods  &&  its_methods->stat )
+		{
+			its_methods->stat( this, sb );
+			
+			return;
+		}
+		
 		if ( ! Exists() )
 		{
 			p7::throw_errno( ENOENT );
