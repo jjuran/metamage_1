@@ -567,11 +567,7 @@ namespace Genie
 	{
 		public:
 			FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
-			                             const plus::string&  name )
-			:
-				FSTree_ReadableSymLink( parent, name )
-			{
-			}
+			                             const plus::string&  name );
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
 			
@@ -582,6 +578,13 @@ namespace Genie
 			plus::string ReadLink() const;
 	};
 	
+	
+	FSTree_sys_port_ADDR_window::FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
+	                                                          const plus::string&  name )
+	:
+		FSTree_ReadableSymLink( parent, name )
+	{
+	}
 	
 	void FSTree_sys_port_ADDR_window::SetTimes() const
 	{
