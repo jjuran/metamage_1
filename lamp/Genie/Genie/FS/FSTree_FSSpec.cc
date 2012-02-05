@@ -405,6 +405,7 @@ namespace Genie
 		&hfs_stat,
 		&hfs_chmod,
 		NULL,
+		NULL,
 		&hfs_symlink
 	};
 	

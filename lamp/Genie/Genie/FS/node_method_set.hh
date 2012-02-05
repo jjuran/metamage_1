@@ -16,6 +16,9 @@
 #include "Genie/FS/FSTreePtr.hh"
 
 
+// #include <time.h>
+struct timespec;
+
 // #include <sys/stat.h>
 struct stat;
 
@@ -34,6 +37,7 @@ namespace Genie
 	typedef void (*chmod_method)( const FSTree*, mode_t );
 	
 	typedef void (*touch_method)( const FSTree* );
+	typedef void (*utime_method)( const FSTree*, const struct timespec times[2] );
 	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
@@ -45,6 +49,7 @@ namespace Genie
 		stat_method     stat;
 		chmod_method    chmod;
 		touch_method    touch;
+		utime_method    utime;
 		symlink_method  symlink;
 	};
 	
