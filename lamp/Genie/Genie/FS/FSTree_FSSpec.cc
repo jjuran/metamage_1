@@ -395,6 +395,7 @@ namespace Genie
 		&hfs_parent,
 		&hfs_parent_inode,
 		&hfs_stat,
+		NULL,
 		&hfs_symlink
 	};
 	
