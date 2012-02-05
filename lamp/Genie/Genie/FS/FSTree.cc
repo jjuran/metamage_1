@@ -218,7 +218,14 @@ namespace Genie
 	
 	void FSTree::Delete() const
 	{
-		p7::throw_errno( EPERM );
+		if ( its_methods  &&  its_methods->remove )
+		{
+			its_methods->remove( this );
+		}
+		else
+		{
+			p7::throw_errno( EPERM );
+		}
 	}
 	
 	void FSTree::Rename( const FSTreePtr& destination ) const
