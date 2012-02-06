@@ -508,6 +508,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&unfocus_symlink
 	};
 	
@@ -544,24 +545,19 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_port_ADDR_Unwindow : public FSTree
+	static void window_touch( const FSTree* node )
 	{
-		public:
-			FSTree_sys_port_ADDR_Unwindow( const FSTreePtr&     parent,
-			                               const plus::string&  name )
-			:
-				FSTree( parent, name, 0 )
-			{
-			}
-			
-			void SetTimes() const;
-	};
-	
-	void FSTree_sys_port_ADDR_Unwindow::SetTimes() const
-	{
-		CreateUserWindow( ParentRef().get() );
+		invalidate_port_WindowRef( node->ParentRef().get() );
 	}
 	
+	static node_method_set window_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&window_touch
+	};
 	
 	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
 	{
@@ -570,8 +566,6 @@ namespace Genie
 			                             const plus::string&  name );
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			void SetTimes() const;
 			
 			void Delete() const;
 			
@@ -582,15 +576,8 @@ namespace Genie
 	FSTree_sys_port_ADDR_window::FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
 	                                                          const plus::string&  name )
 	:
-		FSTree_ReadableSymLink( parent, name )
+		FSTree_ReadableSymLink( parent, name, &window_methods )
 	{
-	}
-	
-	void FSTree_sys_port_ADDR_window::SetTimes() const
-	{
-		const FSTree* key = WindowKey();
-		
-		invalidate_port_WindowRef( key );
 	}
 	
 	void FSTree_sys_port_ADDR_window::Delete() const
@@ -748,6 +735,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&ungesture_symlink
 	};
 	
@@ -894,6 +882,21 @@ namespace Genie
 		variable
 	};
 	
+	
+	static void unwindow_touch( const FSTree* node )
+	{
+		CreateUserWindow( node->ParentRef().get() );
+	}
+	
+	static node_method_set unwindow_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&unwindow_touch
+	};
+	
 	static FSTreePtr new_window( const FSTreePtr&     parent,
 	                             const plus::string&  name,
 	                             const void*          args )
@@ -903,7 +906,7 @@ namespace Genie
 		typedef FSTree* T;
 		
 		return exists ? T( new FSTree_sys_port_ADDR_window  ( parent, name ) )
-		              : T( new FSTree_sys_port_ADDR_Unwindow( parent, name ) );
+		              : T( new FSTree( parent, name, 0, &unwindow_methods ) );
 	}
 	
 	static FSTreePtr new_focus( const FSTreePtr&     parent,

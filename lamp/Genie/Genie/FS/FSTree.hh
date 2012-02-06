@@ -86,7 +86,7 @@ namespace Genie
 			
 			void ChangeMode( mode_t mode ) const;
 			
-			virtual void SetTimes() const;
+			void SetTimes() const;
 			
 			virtual void SetTimes( const struct timespec times[2] ) const;
 			
