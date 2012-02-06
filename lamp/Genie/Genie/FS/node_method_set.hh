@@ -39,6 +39,21 @@ namespace Genie
 	typedef void (*touch_method)( const FSTree* );
 	typedef void (*utime_method)( const FSTree*, const struct timespec times[2] );
 	
+	typedef void (*remove_method)( const FSTree* );
+	
+	typedef void (*rename_method)( const FSTree*, const FSTreePtr& );
+	
+	typedef void (*link_method)( const FSTree*, const FSTreePtr& );
+	
+	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
+	
+	typedef off_t (*geteof_method)( const FSTree* );
+	typedef void  (*seteof_method)( const FSTree*, off_t );
+	
+	typedef plus::string (*readlink_method)( const FSTree* );
+	
+	typedef FSTreePtr (*resolve_method)( const FSTree* );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -50,6 +65,14 @@ namespace Genie
 		chmod_method    chmod;
 		touch_method    touch;
 		utime_method    utime;
+		remove_method   remove;
+		rename_method   rename;
+		link_method     link;
+		copyfile_method copyfile;
+		geteof_method   geteof;
+		seteof_method   seteof;
+		readlink_method readlink;
+		resolve_method  resolve;
 		symlink_method  symlink;
 	};
 	

@@ -295,6 +295,14 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
 		&scrollframe_target_symlink
 	};
 	

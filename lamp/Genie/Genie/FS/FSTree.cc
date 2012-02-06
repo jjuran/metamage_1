@@ -218,26 +218,59 @@ namespace Genie
 	
 	void FSTree::Delete() const
 	{
-		p7::throw_errno( EPERM );
+		if ( its_methods  &&  its_methods->remove )
+		{
+			its_methods->remove( this );
+		}
+		else
+		{
+			p7::throw_errno( EPERM );
+		}
 	}
 	
 	void FSTree::Rename( const FSTreePtr& destination ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( its_methods  &&  its_methods->rename )
+		{
+			its_methods->rename( this, destination );
+		}
+		else
+		{
+			p7::throw_errno( EINVAL );
+		}
 	}
 	
 	void FSTree::HardLink( const FSTreePtr& destination ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( its_methods  &&  its_methods->link )
+		{
+			its_methods->link( this, destination );
+		}
+		else
+		{
+			p7::throw_errno( EINVAL );
+		}
 	}
 	
 	void FSTree::CopyFile( const FSTreePtr& destination ) const
 	{
-		p7::throw_errno( EINVAL );
+		if ( its_methods  &&  its_methods->copyfile )
+		{
+			its_methods->copyfile( this, destination );
+		}
+		else
+		{
+			p7::throw_errno( EINVAL );
+		}
 	}
 	
 	off_t FSTree::GetEOF() const
 	{
+		if ( its_methods  &&  its_methods->geteof )
+		{
+			return its_methods->geteof( this );
+		}
+		
 		// Errors are meaningless here since there's no POSIX call specifically
 		// to get EOF (as there is truncate() for setting EOF).  We only care so
 		// we can populate stat::st_size.  Just return zero.
@@ -245,13 +278,17 @@ namespace Genie
 		return 0;
 	}
 	
-	void FSTree::SetEOF( off_t /*length*/ ) const
+	void FSTree::SetEOF( off_t length ) const
 	{
 		// This confuses MWCPPC when optimizing:
 		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
 		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
 		
-		if ( IsDirectory() )
+		if ( its_methods  &&  its_methods->seteof )
+		{
+			its_methods->seteof( this, length );
+		}
+		else if ( IsDirectory() )
 		{
 			p7::throw_errno( EISDIR );
 		}
@@ -263,11 +300,21 @@ namespace Genie
 	
 	plus::string FSTree::ReadLink() const
 	{
+		if ( its_methods  &&  its_methods->readlink )
+		{
+			return its_methods->readlink( this );
+		}
+		
 		throw p7::errno_t( EINVAL );
 	}
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
+		if ( its_methods  &&  its_methods->resolve )
+		{
+			return its_methods->resolve( this );
+		}
+		
 		return Self();
 	}
 	
