@@ -100,6 +100,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&unused_cmd_slot_symlink
 	};
 	

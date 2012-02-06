@@ -382,6 +382,14 @@ namespace Genie
 		file->Stat( sb );
 	}
 	
+	static void hfs_chmod( const FSTree*  node,
+	                       mode_t         mode )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->ChangeMode( mode );
+	}
+	
 	static void hfs_symlink( const FSTree*        node,
 	                         const plus::string&  target )
 	{
@@ -395,6 +403,7 @@ namespace Genie
 		&hfs_parent,
 		&hfs_parent_inode,
 		&hfs_stat,
+		&hfs_chmod,
 		&hfs_symlink
 	};
 	

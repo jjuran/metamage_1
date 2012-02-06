@@ -29,6 +29,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ReadableSymLink.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
@@ -501,25 +502,10 @@ namespace Genie
 		return new FSTree_PID_Link< LinkResolver >( parent, name );
 	}
 	
-	class FSTree_proc_PID_core : public FSTree
+	static void proc_pid_core_chmod( const FSTree*  node,
+	                                 mode_t         mode )
 	{
-		public:
-			FSTree_proc_PID_core( const FSTreePtr&     parent,
-			                      const plus::string&  name );
-			
-			void ChangeMode( mode_t mode ) const;
-	};
-	
-	FSTree_proc_PID_core::FSTree_proc_PID_core( const FSTreePtr&     parent,
-	                                            const plus::string&  name )
-	:
-		FSTree( parent, name, S_IFREG | 0600 )
-	{
-	}
-	
-	void FSTree_proc_PID_core::ChangeMode( mode_t mode ) const
-	{
-		const pid_t pid = GetKeyFromParent( ParentRef() );
+		const pid_t pid = GetKeyFromParent( node->ParentRef() );
 		
 		Process& process = GetProcess( pid );
 		
@@ -533,11 +519,19 @@ namespace Genie
 		}
 	}
 	
+	static node_method_set proc_pid_core_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&proc_pid_core_chmod
+	};
+	
 	static FSTreePtr core_Factory( const FSTreePtr&     parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		return new FSTree_proc_PID_core( parent, name );
+		return new FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value

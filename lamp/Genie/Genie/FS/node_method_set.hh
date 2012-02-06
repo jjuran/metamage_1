@@ -31,6 +31,8 @@ namespace Genie
 	
 	typedef void (*stat_method)( const FSTree*, struct ::stat& );
 	
+	typedef void (*chmod_method)( const FSTree*, mode_t );
+	
 	typedef void (*symlink_method)( const FSTree*, const plus::string& );
 	
 	
@@ -39,6 +41,7 @@ namespace Genie
 		parent_method   parent;
 		inode_method    parent_inode;
 		stat_method     stat;
+		chmod_method    chmod;
 		symlink_method  symlink;
 	};
 	
