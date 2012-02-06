@@ -5,14 +5,19 @@
 
 #include "Genie/FS/FSTree_Directory.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/FSTree_Null.hh"
 
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	const FSTree_Premapped::Mapping
 	//
@@ -59,7 +64,10 @@ namespace Genie
 			return f( (parent ? parent : this)->Self(), name, it->args );
 		}
 		
-		return FSNull();
+		p7::throw_errno( ENOENT );
+		
+		// not reached
+		return FSTreePtr();
 	}
 	
 	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
