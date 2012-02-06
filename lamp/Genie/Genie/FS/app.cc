@@ -56,6 +56,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&unused_app_slot_symlink
 	};
 	

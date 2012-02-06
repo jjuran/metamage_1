@@ -88,7 +88,7 @@ namespace Genie
 			
 			void SetTimes() const;
 			
-			virtual void SetTimes( const struct timespec times[2] ) const;
+			void SetTimes( const struct timespec times[2] ) const;
 			
 			virtual void Delete() const;
 			
