@@ -54,9 +54,7 @@ namespace Genie
 	{
 		if ( const Mapping* it = find_mapping( itsMappings, name ) )
 		{
-			const Function& f = it->f;
-			
-			return f( (parent ? parent : this)->Self(), name, it->args );
+			return it->f( (parent ? parent : this)->Self(), name, it->args );
 		}
 		
 		return FSNull();
