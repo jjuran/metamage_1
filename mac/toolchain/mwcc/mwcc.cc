@@ -247,7 +247,7 @@ namespace tool
 		
 		const char* opt = NULL;
 		
-		bool debug   = false;
+		bool sym     = false;
 		bool dry_run = false;
 		bool verbose = false;
 		
@@ -290,7 +290,7 @@ namespace tool
 						break;
 					
 					case 'g':
-						debug = true;
+						sym = true;
 						break;
 					
 					case 'O':
@@ -386,11 +386,13 @@ namespace tool
 			command.push_back( "off"   );
 		}
 		
-		if ( debug )
+		if ( sym )
 		{
 			command.push_back( "-sym" );
 			command.push_back( "full" );
 		}
+		
+		const bool debug = opt[2] == '0';
 		
 		if ( arch == arch_m68k  &&  !debug )
 		{
@@ -405,7 +407,7 @@ namespace tool
 		}
 		
 		command.push_back( "-opt" );
-		command.push_back( opt[2] == '0' ? "off" : "full" );
+		command.push_back( debug ? "off" : "full" );
 		
 		command.push_back( "-nosyspath"      );
 		command.push_back( "-convertpaths"   );
