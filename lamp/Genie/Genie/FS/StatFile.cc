@@ -83,6 +83,11 @@ namespace Genie
 	
 	mode_t GetItemMode( const HFileInfo& hFileInfo )
 	{
+		if ( hFileInfo.ioResult < 0 )
+		{
+			return 0;
+		}
+		
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
 			const Mac::FSDirSpec& root = root_DirSpec();
