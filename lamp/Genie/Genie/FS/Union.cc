@@ -10,6 +10,9 @@
 // Standard C++
 #include <set>
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
@@ -19,6 +22,9 @@
 namespace Genie
 {
 	
+	namespace p7 = poseven;
+	
+	
 	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		if ( parent == NULL )
@@ -26,9 +32,24 @@ namespace Genie
 			parent = this;
 		}
 		
-		FSTreePtr child = itsTop->Lookup( name, parent );
+		try
+		{
+			FSTreePtr child = itsTop->Lookup( name, parent );
+			
+			if ( exists( child ) )
+			{
+				return child;
+			}
+		}
+		catch ( const p7::errno_t& errnum )
+		{
+			if ( errnum != ENOENT )
+			{
+				throw;
+			}
+		}
 		
-		return exists( child ) ? child : itsBottom->Lookup( name, parent );
+		return itsBottom->Lookup( name, parent );
 	}
 	
 	void FSTree_Union::IterateIntoCache( FSTreeCache& cache ) const
