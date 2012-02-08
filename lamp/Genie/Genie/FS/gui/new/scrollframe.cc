@@ -284,51 +284,14 @@ namespace Genie
 	}
 	
 	
-	static void scrollframe_target_symlink( const FSTree*        node,
-	                                        const plus::string&  target_path );
-	
-	static node_method_set scrollframe_target_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&scrollframe_target_symlink
-	};
-	
-	class FSTree_ScrollFrame_target : public FSTree
-	{
-		public:
-			FSTree_ScrollFrame_target( const FSTreePtr&     parent,
-			                           const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods )
-			{
-			}
-			
-			void Delete() const;
-			
-			plus::string ReadLink() const;
-	};
-	
 	static bool scrollframe_target_exists( const FSTree* view )
 	{
 		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
 	}
 	
-	void FSTree_ScrollFrame_target::Delete() const
+	static void scrollframe_target_remove( const FSTree* node )
 	{
-		const FSTree* view = GetViewKey( this );
+		const FSTree* view = node->Parent().get();
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -356,12 +319,31 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	plus::string FSTree_ScrollFrame_target::ReadLink() const
+	static plus::string scrollframe_target_readlink( const FSTree* node )
 	{
-		const FSTree* view = GetViewKey( this );
+		const FSTree* view = node->ParentRef().get();
 		
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}
+	
+	static node_method_set scrollframe_target_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&scrollframe_target_remove,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&scrollframe_target_readlink,
+		NULL,
+		&scrollframe_target_symlink
+	};
 	
 	
 	namespace
@@ -396,7 +378,7 @@ namespace Genie
 	{
 		if ( const bool exists = scrollframe_target_exists( parent.get() ) )
 		{
-			return new FSTree_ScrollFrame_target( parent, name );
+			return new FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods );
 		}
 		
 		return new FSTree( parent, name, 0, &scrollframe_target_methods );
