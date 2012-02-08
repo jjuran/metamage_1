@@ -559,48 +559,16 @@ namespace Genie
 		invalidate_port_WindowRef( node->ParentRef().get() );
 	}
 	
-	static node_method_set window_methods =
+	static void window_remove( const FSTree* node )
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&window_touch
-	};
-	
-	class FSTree_sys_port_ADDR_window : public FSTree_ReadableSymLink
-	{
-		public:
-			FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
-			                             const plus::string&  name );
-			
-			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			void Delete() const;
-			
-			plus::string ReadLink() const;
-	};
-	
-	
-	FSTree_sys_port_ADDR_window::FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
-	                                                          const plus::string&  name )
-	:
-		FSTree_ReadableSymLink( parent, name, &window_methods )
-	{
-	}
-	
-	void FSTree_sys_port_ADDR_window::Delete() const
-	{
-		const FSTree* key = WindowKey();
-		
-		CloseUserWindow( key );
+		CloseUserWindow( node->ParentRef().get() );
 	}
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
-	plus::string FSTree_sys_port_ADDR_window::ReadLink() const
+	static plus::string window_readlink( const FSTree* node )
 	{
-		WindowRef windowPtr = GetWindowRef( WindowKey() );
+		WindowRef windowPtr = GetWindowRef( node->ParentRef().get() );
 		
 		if ( windowPtr == NULL )
 		{
@@ -615,6 +583,23 @@ namespace Genie
 		
 		return result;
 	}
+	
+	static node_method_set window_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&window_touch,
+		NULL,
+		&window_remove,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&window_readlink
+	};
 	
 	
 	class FSTree_sys_port_ADDR_tty : public FSTree
@@ -921,10 +906,13 @@ namespace Genie
 	{
 		const bool exists = port_has_window( parent );
 		
-		typedef FSTree* T;
+		const mode_t mode = exists ? S_IFLNK | 0777
+		                           : 0;
 		
-		return exists ? T( new FSTree_sys_port_ADDR_window  ( parent, name ) )
-		              : T( new FSTree( parent, name, 0, &unwindow_methods ) );
+		const node_method_set& methods = exists ? window_methods
+		                                        : unwindow_methods;
+		
+		return new FSTree( parent, name, mode, &methods );
 	}
 	
 	static FSTreePtr new_focus( const FSTreePtr&     parent,
