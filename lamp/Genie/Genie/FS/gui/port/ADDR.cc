@@ -588,8 +588,6 @@ namespace Genie
 		public:
 			FSTree_sys_port_ADDR_window( const FSTreePtr&     parent,
 			                             const plus::string&  name );
-			
-			const FSTree* WindowKey() const  { return ParentRef().get(); }
 	};
 	
 	
@@ -604,7 +602,7 @@ namespace Genie
 	
 	static plus::string window_readlink( const FSTree* node )
 	{
-		WindowRef windowPtr = GetWindowRef( WindowKey() );
+		WindowRef windowPtr = GetWindowRef( node->ParentRef().get() );
 		
 		if ( windowPtr == NULL )
 		{
