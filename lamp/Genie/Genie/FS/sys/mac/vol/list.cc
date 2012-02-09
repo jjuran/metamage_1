@@ -40,8 +40,8 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/premapped.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/SymbolicLink.hh"
@@ -430,32 +430,37 @@ namespace Genie
 		}
 	};
 	
-	class FSTree_Folder_Link : public FSTree_ResolvableSymLink
+	static FSTreePtr folder_link_resolve( const FSTree* node )
 	{
-		private:
-			typedef N::FSVolumeRefNum Key;
-			
-			Key            itsKey;
-			N::FolderType  itsType;
+		const char* name = node->name().c_str();
 		
-		public:
-			FSTree_Folder_Link( const FSTreePtr&     parent,
-			                    const Key&           key,
-			                    N::FolderType        type,
-			                    const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name ),
-				itsKey ( key  ),
-				itsType( type )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const
-			{
-				const bool onServer = VolumeIsOnServer( itsKey );
-				
-				return FSTreeFromFSDirSpec( N::FindFolder( itsKey, itsType, false ), onServer );
-			}
+		const N::FolderType type = name[0] == 's' ? N::kSystemFolderType
+		                         : name[0] == 't' ? N::kTemporaryFolderType
+		                         :                  N::FolderType();
+		
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( node->owner() );
+		
+		const bool onServer = VolumeIsOnServer( vRefNum );
+		
+		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ), onServer );
+	}
+	
+	static const node_method_set folder_link_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&folder_link_resolve
 	};
 	
 	
@@ -524,14 +529,13 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, unit );
 	}
 	
-	template < N::FolderType type >
 	static FSTreePtr Folder_Link_Factory( const FSTreePtr&     parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
 		N::FSVolumeRefNum key = GetKeyFromParent( parent );
 		
-		return new FSTree_Folder_Link( parent, key, type, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	
 	
@@ -580,8 +584,8 @@ namespace Genie
 		
 	#endif
 		
-		{ "sys", &Folder_Link_Factory< N::kSystemFolderType    > },
-		{ "tmp", &Folder_Link_Factory< N::kTemporaryFolderType > },
+		{ "sys", &Folder_Link_Factory },
+		{ "tmp", &Folder_Link_Factory },
 		
 		{ NULL, NULL }
 		
