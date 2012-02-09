@@ -145,17 +145,6 @@ namespace Genie
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
-	class FSTree_PID_Link_Base : public FSTree_ResolvableSymLink
-	{
-		public:
-			FSTree_PID_Link_Base( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-	};
-	
 	static Process& process_from_link( const FSTree* node )
 	{
 		const pid_t pid = GetKeyFromParent( node->owner() );
@@ -164,13 +153,13 @@ namespace Genie
 	}
 	
 	template < class LinkResolver >
-	class FSTree_PID_Link : public FSTree_PID_Link_Base
+	class FSTree_PID_Link : public FSTree_ResolvableSymLink
 	{
 		public:
 			FSTree_PID_Link( const FSTreePtr&     parent,
 			                 const plus::string&  name )
 			:
-				FSTree_PID_Link_Base( parent, name )
+				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
 			
