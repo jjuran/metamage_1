@@ -24,7 +24,6 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -119,20 +118,6 @@ namespace Genie
 	};
 	
 	
-	class dt_appls_QUAD_list_N : public FSTree_ResolvableSymLink
-	{
-		public:
-			dt_appls_QUAD_list_N( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
-	
-	
 	static FSSpec DTGetAPPL( const FSTreePtr& appls_quad, short index = 0 )
 	{
 		const ::OSType creator = parse_utf8_quad_name( appls_quad->Name() );
@@ -173,11 +158,11 @@ namespace Genie
 		&latest_appl_link_resolve
 	};
 	
-	FSTreePtr dt_appls_QUAD_list_N::ResolveLink() const
+	static FSTreePtr dt_appls_QUAD_list_N_resolve( const FSTree* node )
 	{
-		const short index = gear::parse_unsigned_decimal( Name().c_str() );
+		const short index = gear::parse_unsigned_decimal( node->name().c_str() );
 		
-		const FSTreePtr& grandparent = ParentRef()->ParentRef();
+		const FSTreePtr& grandparent = node->owner()->ParentRef();
 		
 		const FSSpec file = DTGetAPPL( grandparent, index );
 		
@@ -185,6 +170,24 @@ namespace Genie
 		
 		return FSTreeFromFSSpec( file, onServer );
 	}
+	
+	static const node_method_set dt_appls_QUAD_list_N_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&dt_appls_QUAD_list_N_resolve
+	};
 	
 	
 	static FSTreePtr appl_QUAD_list_lookup( const FSTreePtr& parent, const plus::string& name )
@@ -194,7 +197,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new dt_appls_QUAD_list_N( parent, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &dt_appls_QUAD_list_N_methods );
 	}
 	
 	static void appl_QUAD_list_iterate( const FSTreePtr& parent, FSTreeCache& cache )
