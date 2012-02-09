@@ -136,16 +136,13 @@ namespace Genie
 				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
-			
-		protected:
-			Process& GetProcess() const;
 	};
 	
-	inline Process& FSTree_PID_Link_Base::GetProcess() const
+	static Process& process_from_link( const FSTree* node )
 	{
-		const pid_t pid = GetKeyFromParent( ParentRef() );
+		const pid_t pid = GetKeyFromParent( node->owner() );
 		
-		return Genie::GetProcess( pid );
+		return GetProcess( pid );
 	}
 	
 	template < class LinkResolver >
@@ -159,7 +156,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr ResolveLink() const  { return LinkResolver::Resolve( GetProcess() ); }
+			FSTreePtr ResolveLink() const  { return LinkResolver::Resolve( process_from_link( this ) ); }
 	};
 	
 	struct ResolveLink_cwd
