@@ -23,6 +23,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -88,28 +89,33 @@ namespace Genie
 		return n::make< N::FSDirSpec >( new_vRefNum, new_dirID );
 	}
 	
-	class FSTree_Desktop_Dir_Link : public FSTree_ResolvableSymLink
+	static FSTreePtr desktop_dir_resolve( const FSTree* node )
 	{
-		private:
-			N::FSVolumeRefNum itsVRefNum;
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( node->owner() );
 		
-		public:
-			FSTree_Desktop_Dir_Link( const FSTreePtr&     parent,
-			                         const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name ),
-				itsVRefNum( GetKeyFromParent( parent ) )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const
-			{
-				const N::FSDirSpec dir = DTGetInfo_Dir( itsVRefNum );
-				
-				const bool onServer = VolumeIsOnServer( dir.vRefNum );
-				
-				return FSTreeFromFSDirSpec( dir, onServer );
-			}
+		const N::FSDirSpec dir = DTGetInfo_Dir( vRefNum );
+		
+		const bool onServer = VolumeIsOnServer( vRefNum );
+		
+		return FSTreeFromFSDirSpec( dir, onServer );
+	}
+	
+	static const node_method_set desktop_dir_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&desktop_dir_resolve
 	};
 	
 	
@@ -343,6 +349,13 @@ namespace Genie
 		return new_basic_directory( parent, name, icon_QUAD_lookup, NULL );
 	}
 	
+	static FSTreePtr new_sys_mac_vol_list_N_dt_dir( const FSTreePtr&     parent,
+	                                                const plus::string&  name,
+	                                                const void*          args )
+	{
+		return new FSTree( parent, name, S_IFLNK | 0777, &desktop_dir_methods );
+	}
+	
 	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr&     parent,
 	                                                  const plus::string&  name,
 	                                                  const void*          args )
@@ -360,10 +373,8 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_Mappings[] =
 	{
-		{ "dir",  &Basic_Factory< FSTree_Desktop_Dir_Link > },
-		
+		{ "dir",    &new_sys_mac_vol_list_N_dt_dir   },
 		{ "appls",  &new_sys_mac_vol_list_N_dt_appls },
-		
 		{ "icons",  &new_sys_mac_vol_list_N_dt_icons },
 		
 		{ NULL, NULL }
