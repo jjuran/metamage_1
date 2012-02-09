@@ -118,7 +118,7 @@ namespace Genie
 	};
 	
 	
-	static FSSpec DTGetAPPL( const FSTreePtr& appls_quad, short index = 0 )
+	static FSSpec DTGetAPPL( const FSTree* appls_quad, short index = 0 )
 	{
 		const ::OSType creator = parse_utf8_quad_name( appls_quad->Name() );
 		
@@ -131,7 +131,7 @@ namespace Genie
 	
 	static FSTreePtr latest_appl_link_resolve( const FSTree* node )
 	{
-		const FSTreePtr& parent = node->ParentRef();
+		const FSTree* parent = node->owner();
 		
 		const FSSpec file = DTGetAPPL( parent );
 		
@@ -162,7 +162,7 @@ namespace Genie
 	{
 		const short index = gear::parse_unsigned_decimal( node->name().c_str() );
 		
-		const FSTreePtr& grandparent = node->owner()->ParentRef();
+		const FSTree* grandparent = node->owner()->owner();
 		
 		const FSSpec file = DTGetAPPL( grandparent, index );
 		
@@ -202,7 +202,7 @@ namespace Genie
 	
 	static void appl_QUAD_list_iterate( const FSTreePtr& parent, FSTreeCache& cache )
 	{
-		const FSTreePtr& grandparent = parent->ParentRef();
+		const FSTree* grandparent = parent->owner();
 		
 		for ( short index = 1;  ;  ++index )
 		{
