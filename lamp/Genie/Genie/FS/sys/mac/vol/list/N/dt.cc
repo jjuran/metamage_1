@@ -119,19 +119,6 @@ namespace Genie
 	};
 	
 	
-	class dt_appls_QUAD_latest : public FSTree_ResolvableSymLink
-	{
-		public:
-			dt_appls_QUAD_latest( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
-	
 	class dt_appls_QUAD_list_N : public FSTree_ResolvableSymLink
 	{
 		public:
@@ -157,9 +144,9 @@ namespace Genie
 		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
 	}
 	
-	FSTreePtr dt_appls_QUAD_latest::ResolveLink() const
+	static FSTreePtr latest_appl_link_resolve( const FSTree* node )
 	{
-		const FSTreePtr& parent = ParentRef();
+		const FSTreePtr& parent = node->ParentRef();
 		
 		const FSSpec file = DTGetAPPL( parent );
 		
@@ -167,6 +154,24 @@ namespace Genie
 		
 		return FSTreeFromFSSpec( file, onServer );
 	}
+	
+	static const node_method_set latest_appl_link_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&latest_appl_link_resolve
+	};
 	
 	FSTreePtr dt_appls_QUAD_list_N::ResolveLink() const
 	{
@@ -211,6 +216,13 @@ namespace Genie
 		}
 	}
 	
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const FSTreePtr&     parent,
+	                                                              const plus::string&  name,
+	                                                              const void*          args )
+	{
+		return new FSTree( parent, name, S_IFLNK | 0777, &latest_appl_link_methods );
+	}
+	
 	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr&     parent,
 	                                                            const plus::string&  name,
 	                                                            const void*          args )
@@ -222,7 +234,7 @@ namespace Genie
 	
 	const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[] =
 	{
-		{ "latest",  &Basic_Factory< dt_appls_QUAD_latest > },
+		{ "latest",  &new_sys_mac_vol_list_N_dt_appls_QUAD_latest },
 		
 		{ "list",  &new_sys_mac_vol_list_N_dt_appls_QUAD_list },
 		
