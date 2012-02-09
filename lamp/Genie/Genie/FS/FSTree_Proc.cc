@@ -145,12 +145,48 @@ namespace Genie
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
-	static Process& process_from_link( const FSTree* node )
+	static FSTreePtr proc_link_resolve( const FSTree* node )
 	{
 		const pid_t pid = GetKeyFromParent( node->owner() );
 		
-		return GetProcess( pid );
+		Process& process = GetProcess( pid );
+		
+		const char* name = node->name().c_str();
+		
+		switch ( name[0] )
+		{
+			case 'c':  // cwd
+				return process.GetCWD();
+			
+			case 'e':  // exe
+				return process.ProgramFile();
+			
+			case 'r':  // root
+				return FSRoot();
+			
+			default:
+				// not reached
+				return NULL;
+		}
 	}
+	
+	static const node_method_set proc_link_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&proc_link_resolve
+	};
 	
 	template < class LinkResolver >
 	class FSTree_PID_Link : public FSTree_ResolvableSymLink
@@ -162,8 +198,6 @@ namespace Genie
 				FSTree_ResolvableSymLink( parent, name )
 			{
 			}
-			
-			FSTreePtr ResolveLink() const  { return LinkResolver::Resolve( process_from_link( this ) ); }
 	};
 	
 	struct ResolveLink_cwd
@@ -509,7 +543,7 @@ namespace Genie
 	                        const plus::string&  name,
 	                        const void*          args )
 	{
-		return new FSTree_PID_Link< LinkResolver >( parent, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &proc_link_methods );
 	}
 	
 	static void proc_pid_core_chmod( const FSTree*  node,
