@@ -30,7 +30,6 @@
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -186,42 +185,6 @@ namespace Genie
 		NULL,
 		NULL,
 		&proc_link_resolve
-	};
-	
-	template < class LinkResolver >
-	class FSTree_PID_Link : public FSTree_ResolvableSymLink
-	{
-		public:
-			FSTree_PID_Link( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-	};
-	
-	struct ResolveLink_cwd
-	{
-		static FSTreePtr Resolve( Process& process )
-		{
-			return process.GetCWD();
-		}
-	};
-	
-	struct ResolveLink_exe
-	{
-		static const FSTreePtr& Resolve( Process& process )
-		{
-			return process.ProgramFile();
-		}
-	};
-	
-	struct ResolveLink_root
-	{
-		static const FSTreePtr& Resolve( Process& process )
-		{
-			return FSRoot();
-		}
 	};
 	
 	
@@ -538,10 +501,9 @@ namespace Genie
 		return new FSTree_PID_fd( parent, name, key );
 	}
 	
-	template < class LinkResolver >
-	FSTreePtr Link_Factory( const FSTreePtr&     parent,
-	                        const plus::string&  name,
-	                        const void*          args )
+	static FSTreePtr link_factory( const FSTreePtr&     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &proc_link_methods );
 	}
@@ -586,9 +548,9 @@ namespace Genie
 	{
 		{ "fd", &fd_Factory },
 		
-		{ "cwd",  &Link_Factory< ResolveLink_cwd  > },
-		{ "exe",  &Link_Factory< ResolveLink_exe  > },
-		{ "root", &Link_Factory< ResolveLink_root > },
+		{ "cwd",  &link_factory },
+		{ "exe",  &link_factory },
+		{ "root", &link_factory },
 		
 		{ "name", PROPERTY( proc_PID_name ) },
 		
