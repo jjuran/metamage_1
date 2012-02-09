@@ -102,7 +102,27 @@ namespace Genie
 	}
 	
 	
-	class FSTree_PID_fd_N : public FSTree_ResolvableSymLink
+	static FSTreePtr proc_fd_resolve( const FSTree* node );
+	
+	static const node_method_set proc_fd_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&proc_fd_resolve
+	};
+	
+	class FSTree_PID_fd_N : public FSTree
 	{
 		private:
 			pid_t  itsPID;
@@ -114,7 +134,7 @@ namespace Genie
 			                 pid_t                pid,
 			                 int                  fd )
 			:
-				FSTree_ResolvableSymLink( parent, name ),
+				FSTree( parent, name, S_IFLNK | 0777, &proc_fd_methods ),
 				itsPID( pid ),
 				itsFD ( fd  )
 			{
@@ -123,8 +143,6 @@ namespace Genie
 			off_t GetEOF() const;
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-			
-			FSTreePtr ResolveLink() const;
 	};
 	
 	class FSTree_PID_Link_Base : public FSTree_ResolvableSymLink
@@ -609,9 +627,15 @@ namespace Genie
 		return GetFDHandle( itsPID, itsFD )->Clone();
 	}
 	
-	FSTreePtr FSTree_PID_fd_N::ResolveLink() const
+	static FSTreePtr proc_fd_resolve( const FSTree* node )
 	{
-		return GetFDHandle( itsPID, itsFD )->GetFile();
+		const char* fd_name  = node                  ->name().c_str();
+		const char* pid_name = node->owner()->owner()->name().c_str();
+		
+		const int    fd  = gear::parse_unsigned_decimal( fd_name  );
+		const pid_t  pid = gear::parse_unsigned_decimal( pid_name );
+		
+		return GetFDHandle( pid, fd )->GetFile();
 	}
 	
 	FSTreePtr New_FSTree_proc( const FSTreePtr&     parent,
