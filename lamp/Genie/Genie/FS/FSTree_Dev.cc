@@ -35,24 +35,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class FSTree_Device : public FSTree
-	{
-		public:
-			FSTree_Device( const FSTreePtr&     parent,
-			               const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFCHR | 0600 )
-			{
-			}
-	};
-	
-	class FSTree_SimpleDevice : public FSTree_Device
+	class FSTree_SimpleDevice : public FSTree
 	{
 		public:
 			FSTree_SimpleDevice( const FSTreePtr&     parent,
 			                     const plus::string&  name )
 			:
-				FSTree_Device( parent, name )
+				FSTree( parent, name, S_IFCHR | 0600 )
 			{
 			}
 			
