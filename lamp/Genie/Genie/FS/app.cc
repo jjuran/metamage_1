@@ -40,14 +40,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		plus::string& value = the_application_map[ node->Name() ];
-		
-		if ( !value.empty() )
-		{
-			p7::throw_errno( EEXIST );
-		}
-		
-		value = target;
+		the_application_map[ node->name() ] = target;
 	}
 	
 	static const link_method_set unused_app_slot_link_methods =

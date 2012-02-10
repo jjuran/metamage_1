@@ -83,11 +83,6 @@ namespace Genie
 		
 		plus::string& value = the_command_map[ code ];
 		
-		if ( !value.empty() )
-		{
-			p7::throw_errno( EEXIST );
-		}
-		
 		if ( handler == NULL )
 		{
 			Ped::SetCommandHandler( code, &exec_cmd );
