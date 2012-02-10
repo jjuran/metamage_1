@@ -44,6 +44,13 @@ namespace Genie
 			
 			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
+			const bool excluding = flags & O_EXCL;
+			
+			if ( excluding  &&  exists( file ) )
+			{
+				return set_errno( EEXIST );
+			}
+			
 			const bool directory = flags & O_DIRECTORY;
 			
 			if ( directory  &&  (flags & O_ACCMODE) != O_RDONLY )
