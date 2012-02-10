@@ -651,7 +651,7 @@ namespace Genie
 		
 		if ( has_tty )
 		{
-			tty = params.itsTTYDelegate->Open( flags );
+			tty = params.itsTTYDelegate->Open( flags, 0 );
 		}
 		
 		plus::string pathname = ( has_tty ? tty->GetFile().get()

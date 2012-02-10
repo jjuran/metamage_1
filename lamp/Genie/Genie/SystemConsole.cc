@@ -19,12 +19,12 @@ namespace Genie
 	
 	static ssize_t Spew( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_TRUNC ).get() )->Write( buffer, length );
+		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_TRUNC, 0 ).get() )->Write( buffer, length );
 	}
 	
 	static ssize_t Append( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_APPEND ).get() )->Write( buffer, length );
+		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
 	}
 	
 	static void MakeWindow( const IOPtr& port_dir )
