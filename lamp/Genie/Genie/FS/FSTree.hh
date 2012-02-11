@@ -112,7 +112,6 @@ namespace Genie
 			void SymLink( const plus::string& target ) const;
 			
 			virtual IOPtr Open( OpenFlags flags, mode_t mode ) const;
-			virtual IOPtr Open( OpenFlags flags              ) const;
 			
 			virtual shared_exec_handle GetExecutable() const;
 			
