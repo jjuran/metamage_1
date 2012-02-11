@@ -96,7 +96,7 @@ namespace Genie
 		return data.size();
 	}
 	
-	IOPtr FSTree_Property::Open( OpenFlags flags ) const
+	IOPtr FSTree_Property::Open( OpenFlags flags, mode_t mode ) const
 	{
 		IOHandle* result = NULL;
 		

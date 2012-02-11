@@ -88,7 +88,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 			
 			void Attach( const FSTreePtr& target ) const;
 	};

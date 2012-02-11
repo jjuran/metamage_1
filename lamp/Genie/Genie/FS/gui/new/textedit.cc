@@ -109,7 +109,7 @@ namespace Genie
 			
 			void Invoke() const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	void FSTree_TextEdit_gate::Invoke() const
@@ -121,11 +121,11 @@ namespace Genie
 		params.itIsInterlocked = false;
 	}
 	
-	IOPtr FSTree_TextEdit_gate::Open( OpenFlags flags ) const
+	IOPtr FSTree_TextEdit_gate::Open( OpenFlags flags, mode_t mode ) const
 	{
 		if ( (flags & O_ACCMODE) == O_WRONLY )
 		{
-			return Trigger_Base::Open( flags );
+			return Trigger_Base::Open( flags, mode );
 		}
 		
 		return new TextEdit_gate_Handle( Self(), flags );

@@ -178,7 +178,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	static bool has_bits( const FSTree* view )
@@ -191,7 +191,7 @@ namespace Genie
 		return Bits_GetEOF( ParentKey() );
 	}
 	
-	IOPtr FSTree_Bits::Open( OpenFlags flags ) const
+	IOPtr FSTree_Bits::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return new Bits_IO( Self(), flags );
 	}

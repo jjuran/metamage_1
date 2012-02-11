@@ -41,7 +41,7 @@ namespace Genie
 			
 			void SetEOF( off_t length ) const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
@@ -155,7 +155,7 @@ namespace Genie
 		TextEdit_text_SetEOF( this, length );
 	}
 	
-	IOPtr FSTree_TextEdit_text::Open( OpenFlags flags ) const
+	IOPtr FSTree_TextEdit_text::Open( OpenFlags flags, mode_t mode ) const
 	{
 		IOHandle* result = new TextEdit_text_Handle( Self(), flags );
 		

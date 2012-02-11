@@ -45,7 +45,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
@@ -54,7 +54,7 @@ namespace Genie
 		return its_data.size();
 	}
 	
-	IOPtr FSTree_Generated::Open( OpenFlags flags ) const
+	IOPtr FSTree_Generated::Open( OpenFlags flags, mode_t mode ) const
 	{
 		if ( flags != O_RDONLY )
 		{

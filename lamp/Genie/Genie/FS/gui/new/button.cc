@@ -284,10 +284,10 @@ namespace Genie
 			{
 			}
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
-	IOPtr FSTree_Button_socket::Open( OpenFlags flags ) const
+	IOPtr FSTree_Button_socket::Open( OpenFlags flags, mode_t mode ) const
 	{
 		const FSTree* view = ParentRef().get();
 		

@@ -47,7 +47,7 @@ namespace Genie
 			
 			void Stat( struct ::stat& sb ) const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
@@ -96,7 +96,7 @@ namespace Genie
 		Stat_HFS( itIsOnServer, &sb, cInfo, itsFileSpec.name, true );
 	}
 	
-	IOPtr FSTree_RsrcFile::Open( OpenFlags flags ) const
+	IOPtr FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
 	{
 		flags |= itIsOnServer ? O_MAC_ASYNC : 0;
 		

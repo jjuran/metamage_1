@@ -453,13 +453,13 @@ namespace Genie
 		return itsData->GetSize();
 	}
 	
-	IOPtr FSTree_Icon_data::Open( OpenFlags flags ) const
+	IOPtr FSTree_Icon_data::Open( OpenFlags flags, mode_t mode ) const
 	{
-		const int mode = flags & O_ACCMODE;
+		const int accmode = flags & O_ACCMODE;
 		
 		IOHandle* result = NULL;
 		
-		switch ( mode )
+		switch ( accmode )
 		{
 			case O_RDONLY:
 				result = new IconDataFileHandle( Self(), flags, itsData );

@@ -40,7 +40,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 		
 		private:
 			IOHandle* OpenForRead( OpenFlags flags ) const;

@@ -194,7 +194,7 @@ namespace Genie
 			
 			void SetEOF( off_t length ) const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
@@ -246,7 +246,7 @@ namespace Genie
 		return result;
 	}
 	
-	IOPtr FSTree_List_data::Open( OpenFlags flags ) const
+	IOPtr FSTree_List_data::Open( OpenFlags flags, mode_t mode ) const
 	{
 		IOHandle* result = NULL;
 		

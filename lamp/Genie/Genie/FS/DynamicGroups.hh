@@ -30,7 +30,7 @@ namespace Genie
 			                  const plus::string&   name,
 			                  DynamicElementGetter  getter );
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	

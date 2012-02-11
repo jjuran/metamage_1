@@ -34,7 +34,7 @@ namespace Genie
 	{
 	}
 	
-	IOPtr FSTree_Dynamic_N::Open( OpenFlags flags ) const
+	IOPtr FSTree_Dynamic_N::Open( OpenFlags flags, mode_t mode ) const
 	{
 		const unsigned id = gear::parse_unsigned_decimal( Name().c_str() );
 		
