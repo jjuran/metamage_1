@@ -15,6 +15,7 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
@@ -49,6 +50,13 @@ namespace Genie
 		value = target;
 	}
 	
+	static const link_method_set unused_app_slot_link_methods =
+	{
+		NULL,
+		NULL,
+		&unused_app_slot_symlink
+	};
+	
 	static node_method_set unused_app_slot_methods =
 	{
 		NULL,
@@ -63,9 +71,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		&unused_app_slot_symlink
+		&unused_app_slot_link_methods
 	};
 	
 	

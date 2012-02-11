@@ -40,6 +40,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/premapped.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -445,6 +446,12 @@ namespace Genie
 		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ), onServer );
 	}
 	
+	static const link_method_set folder_link_link_methods =
+	{
+		NULL,
+		&folder_link_resolve
+	};
+	
 	static const node_method_set folder_link_methods =
 	{
 		NULL,
@@ -459,8 +466,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&folder_link_resolve
+		&folder_link_link_methods
 	};
 	
 	

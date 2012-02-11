@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/GetAppFile.hh"
 
@@ -22,6 +23,12 @@ namespace Genie
 	{
 		return FSTreeFromFSSpec( GetAppFile(), false );
 	}
+	
+	static const link_method_set app_exe_link_methods =
+	{
+		NULL,
+		&app_exe_resolve
+	};
 	
 	static const node_method_set app_exe_methods =
 	{
@@ -37,8 +44,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&app_exe_resolve
+		&app_exe_link_methods
 	};
 	
 	FSTreePtr New_FSTree_sys_app_exe( const FSTreePtr&     parent,

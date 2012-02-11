@@ -11,6 +11,7 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/GetAppFolder.hh"
 
@@ -22,6 +23,12 @@ namespace Genie
 	{
 		return FSTreeFromFSDirSpec( GetAppFolder(), false );
 	}
+	
+	static const link_method_set app_dir_link_methods =
+	{
+		NULL,
+		&app_dir_resolve
+	};
 	
 	static const node_method_set app_dir_methods =
 	{
@@ -37,8 +44,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&app_dir_resolve
+		&app_dir_link_methods
 	};
 	
 	FSTreePtr New_FSTree_sys_app_dir( const FSTreePtr&     parent,

@@ -21,6 +21,7 @@
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
@@ -301,16 +302,18 @@ namespace Genie
 	
 	plus::string FSTree::ReadLink() const
 	{
-		if ( its_methods )
+		const link_method_set* link_methods;
+		
+		if ( its_methods  &&  (link_methods = its_methods->link_methods) )
 		{
-			if ( its_methods->readlink )
+			if ( link_methods->readlink )
 			{
-				return its_methods->readlink( this );
+				return link_methods->readlink( this );
 			}
 			
-			if ( its_methods->resolve )
+			if ( link_methods->resolve )
 			{
-				return its_methods->resolve( this )->Pathname();
+				return link_methods->resolve( this )->Pathname();
 			}
 		}
 		
@@ -319,16 +322,18 @@ namespace Genie
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
-		if ( its_methods )
+		const link_method_set* link_methods;
+		
+		if ( its_methods  &&  (link_methods = its_methods->link_methods) )
 		{
-			if ( its_methods->resolve )
+			if ( link_methods->resolve )
 			{
-				return its_methods->resolve( this );
+				return link_methods->resolve( this );
 			}
 			
-			if ( its_methods->readlink )
+			if ( link_methods->readlink )
 			{
-				return ResolvePathname( its_methods->readlink( this ), ParentRef().get() );
+				return ResolvePathname( link_methods->readlink( this ), owner() );
 			}
 		}
 		
@@ -337,12 +342,19 @@ namespace Genie
 	
 	void FSTree::SymLink( const plus::string& target ) const
 	{
-		if ( !( its_methods  &&  its_methods->symlink ) )
+		const link_method_set* link_methods;
+		
+		if ( its_methods  &&  (link_methods = its_methods->link_methods) )
 		{
-			p7::throw_errno( EINVAL );
+			if ( link_methods->symlink )
+			{
+				link_methods->symlink( this, target );
+				
+				return;
+			}
 		}
 		
-		its_methods->symlink( this, target );
+		p7::throw_errno( EINVAL );
 	}
 	
 	IOPtr FSTree::Open( OpenFlags flags, mode_t mode ) const

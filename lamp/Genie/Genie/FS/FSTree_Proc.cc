@@ -29,6 +29,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
@@ -103,6 +104,12 @@ namespace Genie
 	
 	static FSTreePtr proc_fd_resolve( const FSTree* node );
 	
+	static const link_method_set proc_fd_link_methods =
+	{
+		NULL,
+		&proc_fd_resolve
+	};
+	
 	static const node_method_set proc_fd_methods =
 	{
 		NULL,
@@ -117,8 +124,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&proc_fd_resolve
+		&proc_fd_link_methods
 	};
 	
 	class FSTree_PID_fd_N : public FSTree
@@ -169,6 +175,12 @@ namespace Genie
 		}
 	}
 	
+	static const link_method_set proc_link_link_methods =
+	{
+		NULL,
+		&proc_link_resolve
+	};
+	
 	static const node_method_set proc_link_methods =
 	{
 		NULL,
@@ -183,8 +195,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&proc_link_resolve
+		&proc_link_link_methods
 	};
 	
 	
@@ -206,6 +217,11 @@ namespace Genie
 		return gear::inscribe_unsigned_decimal( CurrentProcess().GetPID() );
 	}
 	
+	static const link_method_set proc_self_link_methods =
+	{
+		&proc_self_readlink
+	};
+	
 	static const node_method_set proc_self_methods =
 	{
 		NULL,
@@ -220,7 +236,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		&proc_self_readlink
+		&proc_self_link_methods
 	};
 	
 	

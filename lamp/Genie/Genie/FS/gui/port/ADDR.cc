@@ -47,6 +47,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
@@ -501,6 +502,13 @@ namespace Genie
 		gWindowParametersMap[ window_key ].itsFocus = targeted_file.get();
 	}
 	
+	static const link_method_set unfocus_link_methods =
+	{
+		NULL,
+		NULL,
+		&unfocus_symlink
+	};
+	
 	static node_method_set unfocus_methods =
 	{
 		NULL,
@@ -515,9 +523,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		&unfocus_symlink
+		&unfocus_link_methods
 	};
 	
 	plus::string FSTree_sys_port_ADDR_focus::ReadLink() const
@@ -583,6 +589,11 @@ namespace Genie
 		return result;
 	}
 	
+	static const link_method_set window_link_methods =
+	{
+		&window_readlink
+	};
+	
 	static node_method_set window_methods =
 	{
 		NULL,
@@ -597,7 +608,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		&window_readlink
+		&window_link_methods
 	};
 	
 	
@@ -682,6 +693,11 @@ namespace Genie
 	
 	static plus::string gesture_readlink( const FSTree* node );
 	
+	static const link_method_set gesture_link_methods =
+	{
+		&gesture_readlink
+	};
+	
 	static node_method_set gesture_methods =
 	{
 		NULL,
@@ -696,7 +712,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		&gesture_readlink
+		&gesture_link_methods
 	};
 	
 	static void gesture_remove( const FSTree* node )
@@ -722,6 +738,13 @@ namespace Genie
 		params.itsGesturePaths[ index ] = target_path;
 	}
 	
+	static const link_method_set ungesture_link_methods =
+	{
+		NULL,
+		NULL,
+		&ungesture_symlink
+	};
+	
 	static node_method_set ungesture_methods =
 	{
 		NULL,
@@ -736,9 +759,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		&ungesture_symlink
+		&ungesture_link_methods
 	};
 	
 	static plus::string gesture_readlink( const FSTree* node )

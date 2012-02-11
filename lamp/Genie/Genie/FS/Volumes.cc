@@ -29,6 +29,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -111,6 +112,12 @@ namespace Genie
 		return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( vRefNum ) );
 	}
 	
+	static const link_method_set volumes_link_link_methods =
+	{
+		NULL,
+		&volumes_link_resolve
+	};
+	
 	static const node_method_set volumes_link_methods =
 	{
 		NULL,
@@ -125,8 +132,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&volumes_link_resolve
+		&volumes_link_link_methods
 	};
 	
 	

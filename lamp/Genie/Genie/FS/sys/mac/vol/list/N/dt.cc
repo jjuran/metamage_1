@@ -23,6 +23,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -99,6 +100,12 @@ namespace Genie
 		return FSTreeFromFSDirSpec( dir, onServer );
 	}
 	
+	static const link_method_set desktop_dir_link_methods =
+	{
+		NULL,
+		&desktop_dir_resolve
+	};
+	
 	static const node_method_set desktop_dir_methods =
 	{
 		NULL,
@@ -113,8 +120,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&desktop_dir_resolve
+		&desktop_dir_link_methods
 	};
 	
 	
@@ -140,6 +146,12 @@ namespace Genie
 		return FSTreeFromFSSpec( file, onServer );
 	}
 	
+	static const link_method_set latest_appl_link_link_methods =
+	{
+		NULL,
+		&latest_appl_link_resolve
+	};
+	
 	static const node_method_set latest_appl_link_methods =
 	{
 		NULL,
@@ -154,8 +166,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&latest_appl_link_resolve
+		&latest_appl_link_link_methods
 	};
 	
 	static FSTreePtr dt_appls_QUAD_list_N_resolve( const FSTree* node )
@@ -171,6 +182,12 @@ namespace Genie
 		return FSTreeFromFSSpec( file, onServer );
 	}
 	
+	static const link_method_set dt_appls_QUAD_list_N__link_methods =
+	{
+		NULL,
+		&dt_appls_QUAD_list_N_resolve
+	};
+	
 	static const node_method_set dt_appls_QUAD_list_N_methods =
 	{
 		NULL,
@@ -185,8 +202,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&dt_appls_QUAD_list_N_resolve
+		&dt_appls_QUAD_list_N__link_methods
 	};
 	
 	
