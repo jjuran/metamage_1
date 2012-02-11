@@ -123,7 +123,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
 		&proc_fd_link_methods
 	};
 	
@@ -194,7 +193,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
 		&proc_link_link_methods
 	};
 	
@@ -224,7 +222,6 @@ namespace Genie
 	
 	static const node_method_set proc_self_methods =
 	{
-		NULL,
 		NULL,
 		NULL,
 		NULL,

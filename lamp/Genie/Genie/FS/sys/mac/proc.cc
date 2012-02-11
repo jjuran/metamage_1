@@ -227,7 +227,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
 		&mac_proc_exe_link_methods
 	};
 	

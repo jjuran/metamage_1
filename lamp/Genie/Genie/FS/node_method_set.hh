@@ -47,9 +47,7 @@ namespace Genie
 	
 	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
 	
-	typedef off_t (*geteof_method)( const FSTree* );
-	typedef void  (*seteof_method)( const FSTree*, off_t );
-	
+	struct data_method_set;
 	struct link_method_set;
 	
 	struct node_method_set
@@ -64,9 +62,8 @@ namespace Genie
 		rename_method   rename;
 		link_method     link;
 		copyfile_method copyfile;
-		geteof_method   geteof;
-		seteof_method   seteof;
 		
+		const data_method_set*  data_methods;
 		const link_method_set*  link_methods;
 	};
 	

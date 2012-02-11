@@ -21,6 +21,7 @@
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
@@ -268,9 +269,11 @@ namespace Genie
 	
 	off_t FSTree::GetEOF() const
 	{
-		if ( its_methods  &&  its_methods->geteof )
+		const data_method_set* data_methods;
+		
+		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
 		{
-			return its_methods->geteof( this );
+			return data_methods->geteof( this );
 		}
 		
 		// Errors are meaningless here since there's no POSIX call specifically
@@ -286,9 +289,11 @@ namespace Genie
 		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
 		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
 		
-		if ( its_methods  &&  its_methods->seteof )
+		const data_method_set* data_methods;
+		
+		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
 		{
-			its_methods->seteof( this, length );
+			data_methods->seteof( this, length );
 		}
 		else if ( IsDirectory() )
 		{
