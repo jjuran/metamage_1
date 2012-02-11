@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/user/home.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Nitrogen
 #include "Nitrogen/Folders.hh"
 
@@ -17,7 +20,8 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/GetAppFolder.hh"
 
@@ -26,20 +30,6 @@ namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	
-	
-	class FSTree_sys_mac_user_home : public FSTree_ResolvableSymLink
-	{
-		public:
-			FSTree_sys_mac_user_home( const FSTreePtr&     parent,
-			                          const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
 	
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
@@ -95,16 +85,34 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTree_sys_mac_user_home::ResolveLink() const
+	static FSTreePtr mac_user_home_resolve( const FSTree* node )
 	{
 		return FSTreeFromFSDirSpec( GetUserHomeFolder(), false );
 	}
+	
+	static const node_method_set mac_user_home_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&mac_user_home_resolve
+	};
 	
 	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr&     parent,
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
-		return new FSTree_sys_mac_user_home( parent, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &mac_user_home_methods );
 	}
 	
 }

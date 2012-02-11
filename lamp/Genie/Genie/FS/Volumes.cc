@@ -27,8 +27,9 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -96,23 +97,10 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes_Link : public FSTree_ResolvableSymLink
-	{
-		public:
-			FSTree_Volumes_Link( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
-	
-	FSTreePtr FSTree_Volumes_Link::ResolveLink() const
+	static FSTreePtr volumes_link_resolve( const FSTree* node )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
-		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( Name() ) );
+		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( node->name() ) );
 		
 		mac_name += ":";
 		
@@ -123,10 +111,31 @@ namespace Genie
 		return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( vRefNum ) );
 	}
 	
+	static const node_method_set volumes_link_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&volumes_link_resolve
+	};
+	
 	
 	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		return new FSTree_Volumes_Link( (parent ? parent : this)->Self(), name );
+		return new FSTree( (parent ? parent : this)->Self(),
+		                   name,
+		                   S_IFLNK | 0777,
+		                   &volumes_link_methods );
 	}
 	
 	void FSTree_Volumes::IterateIntoCache( FSTreeCache& cache ) const

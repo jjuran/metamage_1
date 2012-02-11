@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// POSIX
+#include <sys/stat.h>
+
 // gear
 #include "gear/hexidecimal.hh"
 
@@ -23,7 +26,7 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
 
@@ -195,24 +198,31 @@ namespace Genie
 			}
 	};
 	
-	class FSTree_sys_mac_proc_PSN_exe : public FSTree_ResolvableSymLink
+	static FSTreePtr mac_proc_exe_resolve( const FSTree* node )
 	{
-		public:
-			FSTree_sys_mac_proc_PSN_exe( const FSTreePtr&     parent,
-			                             const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const
-			{
-				ProcessSerialNumber psn = GetKeyFromParent( ParentRef().get() );
-				
-				const FSSpec file = N::GetProcessAppSpec( psn );
-				
-				return FSTreeFromFSSpec( file, FileIsOnServer( file ) );
-			}
+		ProcessSerialNumber psn = GetKeyFromParent( node->owner() );
+		
+		const FSSpec file = N::GetProcessAppSpec( psn );
+		
+		return FSTreeFromFSSpec( file, FileIsOnServer( file ) );
+	}
+	
+	static const node_method_set mac_proc_exe_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&mac_proc_exe_resolve
 	};
 	
 	
@@ -220,7 +230,7 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
-		return new FSTree_sys_mac_proc_PSN_exe( parent, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value

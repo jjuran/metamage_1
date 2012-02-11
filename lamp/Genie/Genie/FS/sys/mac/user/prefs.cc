@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/user/prefs.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Nitrogen
 #include "Nitrogen/Folders.hh"
 
@@ -13,27 +16,14 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/ResolvableSymLink.hh"
+#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
-	
-	
-	class sys_mac_user_prefs : public FSTree_ResolvableSymLink
-	{
-		public:
-			sys_mac_user_prefs( const FSTreePtr&     parent,
-			                    const plus::string&  name )
-			:
-				FSTree_ResolvableSymLink( parent, name )
-			{
-			}
-			
-			FSTreePtr ResolveLink() const;
-	};
 	
 	
 	static Mac::FSDirSpec GetPrefsFolder()
@@ -53,16 +43,34 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr sys_mac_user_prefs::ResolveLink() const
+	static FSTreePtr mac_user_prefs_resolve( const FSTree* node )
 	{
 		return FSTreeFromFSDirSpec( GetPrefsFolder(), false );
 	}
+	
+	static const node_method_set mac_user_prefs_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&mac_user_prefs_resolve
+	};
 	
 	FSTreePtr New_FSTree_sys_mac_user_prefs( const FSTreePtr&     parent,
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
-		return new sys_mac_user_prefs( parent, name );
+		return new FSTree( parent, name, S_IFLNK | 0777, &mac_user_prefs_methods );
 	}
 	
 }
