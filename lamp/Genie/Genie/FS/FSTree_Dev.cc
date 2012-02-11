@@ -19,8 +19,10 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/IO/PseudoTTY.hh"
@@ -33,20 +35,6 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
-	
-	
-	class FSTree_SimpleDevice : public FSTree
-	{
-		public:
-			FSTree_SimpleDevice( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFCHR | 0600 )
-			{
-			}
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
 	
 	
 	typedef IOPtr (*OpenProc)( OpenFlags flags );
@@ -121,10 +109,30 @@ namespace Genie
 	typedef FSTree_DynamicGroup< PseudoTTYHandle  > FSTree_dev_pts;
 	
 	
-	IOPtr FSTree_SimpleDevice::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr simple_device_open( const FSTree* node, int flags, mode_t mode )
 	{
-		return GetSimpleDeviceHandle( Name() );
+		return GetSimpleDeviceHandle( node->name() );
 	}
+	
+	static const data_method_set simple_device_data_methods =
+	{
+		&simple_device_open
+	};
+	
+	static const node_method_set simple_device_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&simple_device_data_methods
+	};
 	
 	struct dev_tty
 	{
@@ -166,7 +174,7 @@ namespace Genie
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
-		return new FSTree_SimpleDevice( parent, name );
+		return new FSTree( parent, name, S_IFCHR | 0600, &simple_device_methods );
 	}
 	
 	const FSTree_Premapped::Mapping dev_Mappings[] =
