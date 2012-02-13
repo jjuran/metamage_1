@@ -87,15 +87,16 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		typedef IOPtr IORef;
-		
-		static IORef open( OpenFlags flags )
-		{
-			const bool nonblocking = flags & O_NONBLOCK;
-			
-			return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
-		}
+		static IOPtr open( OpenFlags flags );
 	};
+	
+	template < class Mode, class Port >
+	IOPtr dev_Serial< Mode, Port >::open( OpenFlags flags )
+	{
+		const bool nonblocking = flags & O_NONBLOCK;
+		
+		return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
+	}
 	
 	typedef dev_Serial< CallOut_Traits, ModemPort_Traits   > dev_cumodem;
 	typedef dev_Serial< CallOut_Traits, PrinterPort_Traits > dev_cuprinter;
@@ -138,18 +139,20 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( OpenFlags flags )
-		{
-			const IOPtr& tty = CurrentProcess().ControllingTerminal();
-			
-			if ( tty.get() == NULL )
-			{
-				p7::throw_errno( ENOENT );
-			}
-			
-			return tty;
-		}
+		static IOPtr open( OpenFlags flags );
 	};
+	
+	IOPtr dev_tty::open( OpenFlags flags )
+	{
+		const IOPtr& tty = CurrentProcess().ControllingTerminal();
+		
+		if ( tty.get() == NULL )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return tty;
+	}
 	
 	
 	static FSTreePtr dev_fd_Factory( const FSTreePtr&     parent,
