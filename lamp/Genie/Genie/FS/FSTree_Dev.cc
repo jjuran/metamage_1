@@ -37,17 +37,15 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	typedef open_method OpenProc;
-	
 	class FSTree_BasicDevice : public FSTree
 	{
 		private:
-			OpenProc itsOpener;
+			open_method itsOpener;
 		
 		public:
 			FSTree_BasicDevice( const FSTreePtr&     parent,
 			                    const plus::string&  name,
-			                    OpenProc             opener,
+			                    open_method          opener,
 			                    mode_t               perm )
 			:
 				FSTree( parent, name, S_IFCHR | perm ),
