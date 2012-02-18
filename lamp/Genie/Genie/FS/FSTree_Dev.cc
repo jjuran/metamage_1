@@ -37,29 +37,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class FSTree_BasicDevice : public FSTree
-	{
-		private:
-			open_method itsOpener;
-		
-		public:
-			FSTree_BasicDevice( const FSTreePtr&     parent,
-			                    const plus::string&  name,
-			                    open_method          opener,
-			                    mode_t               perm )
-			:
-				FSTree( parent, name, S_IFCHR | perm ),
-				itsOpener( opener )
-			{
-			}
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const
-			{
-				return itsOpener( this, flags, mode );
-			}
-	};
-	
-	
 	struct CallOut_Traits
 	{
 		static const bool isPassive = false;
@@ -153,6 +130,36 @@ namespace Genie
 	}
 	
 	
+	template < class Opener >
+	struct basic_device
+	{
+		static const data_method_set data_methods;
+		static const node_method_set node_methods;
+	};
+	
+	template < class Opener >
+	const data_method_set basic_device< Opener >::data_methods =
+	{
+		&Opener::open
+	};
+	
+	template < class Opener >
+	const node_method_set basic_device< Opener >::node_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&data_methods
+	};
+	
+	
 	static FSTreePtr dev_fd_Factory( const FSTreePtr&     parent,
 	                                 const plus::string&  name,
 	                                 const void*          args )
@@ -165,10 +172,10 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return new FSTree_BasicDevice( parent,
-		                               name,
-		                               &Opener::open,
-		                               Opener::perm );
+		return new FSTree( parent,
+		                   name,
+		                   S_IFCHR | Opener::perm,
+		                   &basic_device< Opener >::node_methods );
 	}
 	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&     parent,
