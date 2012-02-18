@@ -128,19 +128,11 @@ namespace Genie
 	
 	class FSTree_PID_fd_N : public FSTree
 	{
-		private:
-			pid_t  itsPID;
-			int    itsFD;
-		
 		public:
 			FSTree_PID_fd_N( const FSTreePtr&     parent,
-			                 const plus::string&  name,
-			                 pid_t                pid,
-			                 int                  fd )
+			                 const plus::string&  name )
 			:
-				FSTree( parent, name, S_IFLNK | 0777, &proc_fd_methods ),
-				itsPID( pid ),
-				itsFD ( fd  )
+				FSTree( parent, name, S_IFLNK | 0777, &proc_fd_methods )
 			{
 			}
 			
@@ -587,7 +579,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree_PID_fd_N( (parent ? parent : this)->Self(), name, its_pid, key );
+		return new FSTree_PID_fd_N( (parent ? parent : this)->Self(), name );
 	}
 	
 	
