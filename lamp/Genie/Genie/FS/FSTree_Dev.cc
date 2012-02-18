@@ -37,7 +37,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	typedef IOPtr (*OpenProc)( OpenFlags flags );
+	typedef open_method OpenProc;
 	
 	class FSTree_BasicDevice : public FSTree
 	{
@@ -57,7 +57,7 @@ namespace Genie
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const
 			{
-				return itsOpener( flags );
+				return itsOpener( this, flags, mode );
 			}
 	};
 	
@@ -87,11 +87,11 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( OpenFlags flags );
+		static IOPtr open( const FSTree* node, int flags, mode_t mode );
 	};
 	
 	template < class Mode, class Port >
-	IOPtr dev_Serial< Mode, Port >::open( OpenFlags flags )
+	IOPtr dev_Serial< Mode, Port >::open( const FSTree* node, int flags, mode_t mode )
 	{
 		const bool nonblocking = flags & O_NONBLOCK;
 		
@@ -139,10 +139,10 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( OpenFlags flags );
+		static IOPtr open( const FSTree* node, int flags, mode_t mode );
 	};
 	
-	IOPtr dev_tty::open( OpenFlags flags )
+	IOPtr dev_tty::open( const FSTree* node, int flags, mode_t mode )
 	{
 		const IOPtr& tty = CurrentProcess().ControllingTerminal();
 		
