@@ -136,16 +136,6 @@ namespace Genie
 		&proc_fd_link_methods
 	};
 	
-	class FSTree_PID_fd_N : public FSTree
-	{
-		public:
-			FSTree_PID_fd_N( const FSTreePtr&     parent,
-			                 const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFLNK | 0777, &proc_fd_methods )
-			{
-			}
-	};
 	
 	static FSTreePtr proc_link_resolve( const FSTree* node )
 	{
@@ -585,7 +575,10 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree_PID_fd_N( (parent ? parent : this)->Self(), name );
+		return new FSTree( (parent ? parent : this)->Self(),
+		                   name,
+		                   S_IFLNK | 0777,
+		                   &proc_fd_methods );
 	}
 	
 	
