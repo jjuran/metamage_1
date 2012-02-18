@@ -29,6 +29,7 @@
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Base.hh"
@@ -101,8 +102,17 @@ namespace Genie
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
 	
+	static IOPtr proc_fd_open( const FSTree* node, int flags, mode_t mode );
+	
+	static off_t proc_fd_geteof( const FSTree* node );
 	
 	static FSTreePtr proc_fd_resolve( const FSTree* node );
+	
+	static const data_method_set proc_fd_data_methods =
+	{
+		&proc_fd_open,
+		&proc_fd_geteof
+	};
 	
 	static const link_method_set proc_fd_link_methods =
 	{
@@ -122,7 +132,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
+		&proc_fd_data_methods,
 		&proc_fd_link_methods
 	};
 	
@@ -135,10 +145,6 @@ namespace Genie
 				FSTree( parent, name, S_IFLNK | 0777, &proc_fd_methods )
 			{
 			}
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	static FSTreePtr proc_link_resolve( const FSTree* node )
@@ -601,9 +607,9 @@ namespace Genie
 		return files.at( fd ).handle.get();
 	}
 	
-	off_t FSTree_PID_fd_N::GetEOF() const
+	static off_t proc_fd_geteof( const FSTree* node )
 	{
-		IOHandle* handle = get_proc_fd_handle( this );
+		IOHandle* handle = get_proc_fd_handle( node );
 		
 		if ( RegularFileHandle* file = IOHandle_Cast< RegularFileHandle >( handle ) )
 		{
@@ -613,14 +619,14 @@ namespace Genie
 		return 0;
 	}
 	
-	IOPtr FSTree_PID_fd_N::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr proc_fd_open( const FSTree* node, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
 		{
 			p7::throw_errno( ELOOP );
 		}
 		
-		return get_proc_fd_handle( this )->Clone();
+		return get_proc_fd_handle( node )->Clone();
 	}
 	
 	static FSTreePtr proc_fd_resolve( const FSTree* node )
