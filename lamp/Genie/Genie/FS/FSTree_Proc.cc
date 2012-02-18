@@ -591,8 +591,14 @@ namespace Genie
 	}
 	
 	
-	static const IOPtr& GetFDHandle( pid_t pid, int fd )
+	static IOHandle* get_proc_fd_handle( const FSTree* node )
 	{
+		const char* fd_name  = node                  ->name().c_str();
+		const char* pid_name = node->owner()->owner()->name().c_str();
+		
+		const int    fd  = gear::parse_unsigned_decimal( fd_name  );
+		const pid_t  pid = gear::parse_unsigned_decimal( pid_name );
+		
 		fd_table& files = GetProcess( pid ).FileDescriptors();
 		
 		if ( !files.contains( fd ) )
@@ -600,12 +606,12 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return files.at( fd ).handle;
+		return files.at( fd ).handle.get();
 	}
 	
 	off_t FSTree_PID_fd_N::GetEOF() const
 	{
-		IOHandle* handle = GetFDHandle( itsPID, itsFD ).get();
+		IOHandle* handle = get_proc_fd_handle( this );
 		
 		if ( RegularFileHandle* file = IOHandle_Cast< RegularFileHandle >( handle ) )
 		{
@@ -622,18 +628,12 @@ namespace Genie
 			p7::throw_errno( ELOOP );
 		}
 		
-		return GetFDHandle( itsPID, itsFD )->Clone();
+		return get_proc_fd_handle( this )->Clone();
 	}
 	
 	static FSTreePtr proc_fd_resolve( const FSTree* node )
 	{
-		const char* fd_name  = node                  ->name().c_str();
-		const char* pid_name = node->owner()->owner()->name().c_str();
-		
-		const int    fd  = gear::parse_unsigned_decimal( fd_name  );
-		const pid_t  pid = gear::parse_unsigned_decimal( pid_name );
-		
-		return GetFDHandle( pid, fd )->GetFile();
+		return get_proc_fd_handle( node )->GetFile();
 	}
 	
 	FSTreePtr New_FSTree_proc( const FSTreePtr&     parent,
