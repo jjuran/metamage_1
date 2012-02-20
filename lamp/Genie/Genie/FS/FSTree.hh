@@ -103,8 +103,8 @@ namespace Genie
 			
 			virtual void CopyFile( const FSTreePtr& destination ) const;
 			
-			virtual off_t GetEOF() const;
-			virtual void  SetEOF( off_t length ) const;
+			off_t GetEOF() const;
+			void  SetEOF( off_t length ) const;
 			
 			plus::string ReadLink() const;
 			FSTreePtr ResolveLink() const;
