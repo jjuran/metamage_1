@@ -25,21 +25,13 @@
 namespace Genie
 {
 	
-	FSTree_Dynamic_N::FSTree_Dynamic_N( const FSTreePtr&      parent,
-	                                    const plus::string&   name,
-	                                    DynamicElementGetter  getter )
-	:
-		FSTree( parent, name, S_IFCHR | 0600 ),
-		itsGetter( getter )
+	IOPtr get_dynamic_element_from_node( const FSTree* node, DynamicElementGetter getter )
 	{
+		const unsigned id = gear::parse_unsigned_decimal( node->name().c_str() );
+		
+		return getter( id );
 	}
 	
-	IOPtr FSTree_Dynamic_N::Open( OpenFlags flags, mode_t mode ) const
-	{
-		const unsigned id = gear::parse_unsigned_decimal( Name().c_str() );
-		
-		return itsGetter( id );
-	}
 	
 	class DynamicGroup_IteratorConverter
 	{
@@ -67,7 +59,10 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree_Dynamic_N( (parent ? parent : this)->Self(), name, Getter() );
+		return new FSTree( parent ? parent : this,
+		                   name,
+		                   S_IFCHR | 0600,
+		                   node_methods() );
 	}
 	
 	void FSTree_DynamicGroup_Base::IterateIntoCache( FSTreeCache& cache ) const

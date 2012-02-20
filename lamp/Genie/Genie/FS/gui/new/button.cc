@@ -23,6 +23,8 @@
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -274,22 +276,9 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Button_socket : public FSTree
+	static IOPtr button_stream_open( const FSTree* node, int flags, mode_t mode )
 	{
-		public:
-			FSTree_Button_socket( const FSTreePtr&     parent,
-	                              const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0400 )
-			{
-			}
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
-	IOPtr FSTree_Button_socket::Open( OpenFlags flags, mode_t mode ) const
-	{
-		const FSTree* view = ParentRef().get();
+		const FSTree* view = node->owner();
 		
 		const Button_Parameters* it = gButtonMap.find( view );
 		
@@ -298,7 +287,34 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return new Button_socket_Handle( Self(), flags );
+		return new Button_socket_Handle( node, flags );
+	}
+	
+	static const data_method_set button_stream_data_methods =
+	{
+		&button_stream_open
+	};
+	
+	static const node_method_set button_stream_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&button_stream_data_methods
+	};
+	
+	static FSTreePtr button_stream_factory( const FSTreePtr&     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
+	{
+		return new FSTree( parent, name, S_IFREG | 0400, &button_stream_methods );
 	}
 	
 	
@@ -333,7 +349,7 @@ namespace Genie
 		
 		{ "click", &Basic_Factory< Button_click_Trigger > },
 		
-		{ "socket", &Basic_Factory< FSTree_Button_socket > },
+		{ "socket", &button_stream_factory },
 		
 		{ NULL, NULL }
 	};

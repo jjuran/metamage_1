@@ -20,9 +20,10 @@
 #include "Pedestal/Caption.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -205,31 +206,49 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	class FSTree_Caption_text : public FSTree
-	{
-		public:
-			FSTree_Caption_text( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0600 )
-			{
-			}
-			
-			off_t GetEOF() const;
-			
-			void SetEOF( off_t length ) const  { CaptionText_SetEOF( this, length ); }
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
 	
-	off_t FSTree_Caption_text::GetEOF() const
+	static void caption_text_seteof( const FSTree* node, off_t length )
 	{
-		return gCaptionParametersMap[ ParentRef().get() ].its_utf8_text.size();
+		CaptionText_SetEOF( node, length );
 	}
 	
-	IOPtr FSTree_Caption_text::Open( OpenFlags flags, mode_t mode ) const
+	static off_t caption_text_geteof( const FSTree* node )
 	{
-		return new CaptionTextFileHandle( Self(), flags );
+		return gCaptionParametersMap[ node->owner() ].its_utf8_text.size();
+	}
+	
+	static IOPtr caption_text_open( const FSTree* node, int flags, mode_t mode )
+	{
+		return new CaptionTextFileHandle( node, flags );
+	}
+	
+	static const data_method_set caption_text_data_methods =
+	{
+		&caption_text_open,
+		&caption_text_geteof,
+		&caption_text_seteof
+	};
+	
+	static const node_method_set caption_text_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&caption_text_data_methods
+	};
+	
+	static FSTreePtr caption_text_factory( const FSTreePtr&     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
+	{
+		return new FSTree( parent, name, S_IFREG | 0600, &caption_text_methods );
 	}
 	
 	
@@ -255,7 +274,7 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "text", &Basic_Factory< FSTree_Caption_text > },
+		{ "text", &caption_text_factory },
 		
 		{ "wrapped",   PROPERTY( Wrapped_Property   ) },
 		{ "disabling", PROPERTY( Disabling_Property ) },

@@ -19,8 +19,10 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/IO/PseudoTTY.hh"
@@ -33,45 +35,6 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
-	
-	
-	class FSTree_SimpleDevice : public FSTree
-	{
-		public:
-			FSTree_SimpleDevice( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFCHR | 0600 )
-			{
-			}
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
-	
-	typedef IOPtr (*OpenProc)( OpenFlags flags );
-	
-	class FSTree_BasicDevice : public FSTree
-	{
-		private:
-			OpenProc itsOpener;
-		
-		public:
-			FSTree_BasicDevice( const FSTreePtr&     parent,
-			                    const plus::string&  name,
-			                    OpenProc             opener,
-			                    mode_t               perm )
-			:
-				FSTree( parent, name, S_IFCHR | perm ),
-				itsOpener( opener )
-			{
-			}
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const
-			{
-				return itsOpener( flags );
-			}
-	};
 	
 	
 	struct CallOut_Traits
@@ -99,15 +62,16 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		typedef IOPtr IORef;
-		
-		static IORef open( OpenFlags flags )
-		{
-			const bool nonblocking = flags & O_NONBLOCK;
-			
-			return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
-		}
+		static IOPtr open( const FSTree* node, int flags, mode_t mode );
 	};
+	
+	template < class Mode, class Port >
+	IOPtr dev_Serial< Mode, Port >::open( const FSTree* node, int flags, mode_t mode )
+	{
+		const bool nonblocking = flags & O_NONBLOCK;
+		
+		return OpenSerialDevice( Port::Name(), Mode::isPassive, nonblocking );
+	}
 	
 	typedef dev_Serial< CallOut_Traits, ModemPort_Traits   > dev_cumodem;
 	typedef dev_Serial< CallOut_Traits, PrinterPort_Traits > dev_cuprinter;
@@ -121,26 +85,78 @@ namespace Genie
 	typedef FSTree_DynamicGroup< PseudoTTYHandle  > FSTree_dev_pts;
 	
 	
-	IOPtr FSTree_SimpleDevice::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr simple_device_open( const FSTree* node, int flags, mode_t mode )
 	{
-		return GetSimpleDeviceHandle( Name() );
+		return GetSimpleDeviceHandle( node->name() );
 	}
+	
+	static const data_method_set simple_device_data_methods =
+	{
+		&simple_device_open
+	};
+	
+	static const node_method_set simple_device_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&simple_device_data_methods
+	};
 	
 	struct dev_tty
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( OpenFlags flags )
+		static IOPtr open( const FSTree* node, int flags, mode_t mode );
+	};
+	
+	IOPtr dev_tty::open( const FSTree* node, int flags, mode_t mode )
+	{
+		const IOPtr& tty = CurrentProcess().ControllingTerminal();
+		
+		if ( tty.get() == NULL )
 		{
-			const IOPtr& tty = CurrentProcess().ControllingTerminal();
-			
-			if ( tty.get() == NULL )
-			{
-				p7::throw_errno( ENOENT );
-			}
-			
-			return tty;
+			p7::throw_errno( ENOENT );
 		}
+		
+		return tty;
+	}
+	
+	
+	template < class Opener >
+	struct basic_device
+	{
+		static const data_method_set data_methods;
+		static const node_method_set node_methods;
+	};
+	
+	template < class Opener >
+	const data_method_set basic_device< Opener >::data_methods =
+	{
+		&Opener::open
+	};
+	
+	template < class Opener >
+	const node_method_set basic_device< Opener >::node_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&data_methods
 	};
 	
 	
@@ -156,17 +172,17 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return new FSTree_BasicDevice( parent,
-		                               name,
-		                               &Opener::open,
-		                               Opener::perm );
+		return new FSTree( parent,
+		                   name,
+		                   S_IFCHR | Opener::perm,
+		                   &basic_device< Opener >::node_methods );
 	}
 	
 	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&     parent,
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
-		return new FSTree_SimpleDevice( parent, name );
+		return new FSTree( parent, name, S_IFCHR | 0600, &simple_device_methods );
 	}
 	
 	const FSTree_Premapped::Mapping dev_Mappings[] =
