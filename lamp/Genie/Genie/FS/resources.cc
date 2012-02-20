@@ -37,6 +37,8 @@
 
 // Genie
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -246,6 +248,31 @@ namespace Genie
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
+	
+	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode );
+	
+	static off_t rsrc_file_geteof( const FSTree* node );
+	
+	static const data_method_set rsrc_file_data_methods =
+	{
+		&rsrc_file_open,
+		&rsrc_file_geteof
+	};
+	
+	static const node_method_set rsrc_file_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&rsrc_file_data_methods
+	};
+	
+	
 	class FSTree_Rsrc_File : public FSTree
 	{
 		private:
@@ -258,7 +285,7 @@ namespace Genie
 			                  const plus::string&  name,
 			                  const FSSpec&        file )
 			:
-				FSTree( parent, name, S_IFREG | 0400 ),  // FIXME:  Check perms
+				FSTree( parent, name, S_IFREG | 0400, &rsrc_file_methods ),  // FIXME:  Check perms
 				itsFileSpec( file ),
 				its_resinfo( GetResInfo_from_name( name ) )
 			{
@@ -342,6 +369,20 @@ namespace Genie
 		                           : new Handle_IOHandle( Self(), flags, h );
 		
 		return result;
+	}
+	
+	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const FSTree_Rsrc_File* file = static_cast< const FSTree_Rsrc_File* >( node );
+		
+		return file->Open( flags, mode );
+	}
+	
+	static off_t rsrc_file_geteof( const FSTree* node )
+	{
+		const FSTree_Rsrc_File* file = static_cast< const FSTree_Rsrc_File* >( node );
+		
+		return file->GetEOF();
 	}
 	
 	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,
