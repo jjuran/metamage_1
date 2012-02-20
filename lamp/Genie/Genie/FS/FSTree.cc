@@ -364,6 +364,16 @@ namespace Genie
 	
 	IOPtr FSTree::Open( OpenFlags flags, mode_t mode ) const
 	{
+		const data_method_set* data_methods;
+		
+		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
+		{
+			if ( data_methods->open )
+			{
+				return data_methods->open( this, flags, mode );
+			}
+		}
+		
 		bool creating  = flags & O_CREAT;
 		bool excluding = flags & O_EXCL;
 		
