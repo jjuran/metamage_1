@@ -17,6 +17,8 @@
 // Genie
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 
@@ -25,24 +27,6 @@ namespace Genie
 {
 	
 	namespace Ped = Pedestal;
-	
-	
-	class FSTree_TextEdit_text : public FSTree
-	{
-		public:
-			FSTree_TextEdit_text( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0600 )
-			{
-			}
-			
-			off_t GetEOF() const;
-			
-			void SetEOF( off_t length ) const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
 	
 	
 	static void TextEdit_text_SetEOF( const FSTree* text, off_t length )
@@ -145,28 +129,48 @@ namespace Genie
 	}
 	
 	
-	off_t FSTree_TextEdit_text::GetEOF() const
+	static off_t textedit_text_geteof( const FSTree* node )
 	{
-		return TextEditParameters::Get( ParentRef().get() ).its_utf8_text.size();
+		return TextEditParameters::Get( node->owner() ).its_utf8_text.size();
 	}
 	
-	void FSTree_TextEdit_text::SetEOF( off_t length ) const
+	static void textedit_text_seteof( const FSTree* node, off_t length )
 	{
-		TextEdit_text_SetEOF( this, length );
+		TextEdit_text_SetEOF( node, length );
 	}
 	
-	IOPtr FSTree_TextEdit_text::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr textedit_text_open( const FSTree* node, int flags, mode_t mode )
 	{
-		IOHandle* result = new TextEdit_text_Handle( Self(), flags );
-		
-		return IOPtr( result );
+		return new TextEdit_text_Handle( node, flags );
 	}
+	
+	static const data_method_set textedit_text_data_methods =
+	{
+		&textedit_text_open,
+		&textedit_text_geteof,
+		&textedit_text_seteof
+	};
+	
+	static const node_method_set textedit_text_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&textedit_text_data_methods
+	};
 	
 	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{
-		return new FSTree_TextEdit_text( parent, name );
+		return new FSTree( parent, name, S_IFREG | 0600, &textedit_text_methods );
 	}
 	
 }
