@@ -24,6 +24,8 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/MemoryFile.hh"
 
 
@@ -46,26 +48,12 @@ namespace Genie
 	static const UInt32 global_rom_size = get_ROM_size();
 	
 	
-	class FSTree_sys_mac_rom : public FSTree
+	static off_t mac_rom_geteof( const FSTree* node )
 	{
-		public:
-			FSTree_sys_mac_rom( const FSTreePtr&     parent,
-			                    const plus::string&  name )
-			:
-				FSTree( parent,
-				        name,
-				        S_IFREG * (!TARGET_API_MAC_CARBON  ||  global_rom_size)
-				      | S_IRUSR *  !TARGET_API_MAC_CARBON )
-			{
-			}
-			
-			off_t GetEOF() const  { return global_rom_size; }
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
+		return global_rom_size;
+	}
 	
-	
-	IOPtr FSTree_sys_mac_rom::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr mac_rom_open( const FSTree* node, int flags, mode_t mode )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -73,19 +61,44 @@ namespace Genie
 		
 	#else
 		
-		return new MemoryFileHandle( Self(),
+		return new MemoryFileHandle( node,
 		                             flags,
 		                             LMGetROMBase(),
-		                             GetEOF() );
+		                             global_rom_size );
 		
 	#endif
 	}
+	
+	static const data_method_set mac_rom_data_methods =
+	{
+		&mac_rom_open,
+		&mac_rom_geteof
+	};
+	
+	static const node_method_set mac_rom_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&mac_rom_data_methods
+	};
 	
 	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return new FSTree_sys_mac_rom( parent, name );
+		const mode_t mode = !TARGET_API_MAC_CARBON ? S_IFREG | 0400
+		                  : global_rom_size != 0   ? S_IFREG
+		                  :                          0;
+		
+		return new FSTree( parent, name, mode, &mac_rom_methods );
 	}
 	
 }
