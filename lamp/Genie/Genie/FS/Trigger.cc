@@ -60,7 +60,7 @@ namespace Genie
 		return n;
 	}
 	
-	IOPtr Trigger_Base::Open( OpenFlags flags ) const
+	IOPtr Trigger_Base::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return new TriggerHandle( Self(), flags );
 	}

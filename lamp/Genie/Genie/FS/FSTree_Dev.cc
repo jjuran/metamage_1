@@ -45,7 +45,7 @@ namespace Genie
 			{
 			}
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
@@ -67,7 +67,7 @@ namespace Genie
 			{
 			}
 			
-			IOPtr Open( OpenFlags flags ) const
+			IOPtr Open( OpenFlags flags, mode_t mode ) const
 			{
 				return itsOpener( flags );
 			}
@@ -121,7 +121,7 @@ namespace Genie
 	typedef FSTree_DynamicGroup< PseudoTTYHandle  > FSTree_dev_pts;
 	
 	
-	IOPtr FSTree_SimpleDevice::Open( OpenFlags /*flags*/ ) const
+	IOPtr FSTree_SimpleDevice::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return GetSimpleDeviceHandle( Name() );
 	}

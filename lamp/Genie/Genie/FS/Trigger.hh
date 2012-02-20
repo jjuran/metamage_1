@@ -25,7 +25,7 @@ namespace Genie
 			
 			virtual void Invoke() const = 0;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	template < class Action >

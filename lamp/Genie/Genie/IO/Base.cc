@@ -74,7 +74,7 @@ namespace Genie
 			{
 			}
 			
-			IOPtr Open( OpenFlags flags ) const
+			IOPtr Open( OpenFlags flags, mode_t mode ) const
 			{
 				return itsHandle;
 			}

@@ -219,7 +219,7 @@ namespace Genie
 			
 			void SetEOF( off_t length ) const  { CaptionText_SetEOF( this, length ); }
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	off_t FSTree_Caption_text::GetEOF() const
@@ -227,7 +227,7 @@ namespace Genie
 		return gCaptionParametersMap[ ParentRef().get() ].its_utf8_text.size();
 	}
 	
-	IOPtr FSTree_Caption_text::Open( OpenFlags flags ) const
+	IOPtr FSTree_Caption_text::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return new CaptionTextFileHandle( Self(), flags );
 	}

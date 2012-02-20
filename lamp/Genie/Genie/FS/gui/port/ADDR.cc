@@ -624,7 +624,7 @@ namespace Genie
 			
 			void Attach( const FSTreePtr& target ) const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	void FSTree_sys_port_ADDR_tty::Attach( const FSTreePtr& target ) const
@@ -641,7 +641,7 @@ namespace Genie
 	
 	IOPtr
 	//
-	FSTree_sys_port_ADDR_tty::Open( OpenFlags flags ) const
+	FSTree_sys_port_ADDR_tty::Open( OpenFlags flags, mode_t mode ) const
 	{
 		WindowParameters& params = gWindowParametersMap[ WindowKey() ];
 		
@@ -651,7 +651,7 @@ namespace Genie
 		
 		if ( has_tty )
 		{
-			tty = params.itsTTYDelegate->Open( flags );
+			tty = params.itsTTYDelegate->Open( flags, 0 );
 		}
 		
 		plus::string pathname = ( has_tty ? tty->GetFile().get()

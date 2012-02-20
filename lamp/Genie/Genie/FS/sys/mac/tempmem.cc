@@ -66,11 +66,11 @@ namespace Genie
 			
 			off_t GetEOF() const  { return ::TempFreeMem(); }
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
-	IOPtr FSTree_sys_mac_tempmem::Open( OpenFlags flags ) const
+	IOPtr FSTree_sys_mac_tempmem::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return new TempMem_IOHandle( Self(), flags );
 		

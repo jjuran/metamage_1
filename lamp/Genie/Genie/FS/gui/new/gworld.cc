@@ -217,7 +217,7 @@ namespace Genie
 			
 			off_t GetEOF() const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	static bool has_pixels( const FSTree* view )
@@ -235,7 +235,7 @@ namespace Genie
 		return Pixels_GetEOF( ParentKey() );
 	}
 	
-	IOPtr FSTree_Pixels::Open( OpenFlags flags ) const
+	IOPtr FSTree_Pixels::Open( OpenFlags flags, mode_t mode ) const
 	{
 		return new Pixels_IO( Self(), flags );
 	}

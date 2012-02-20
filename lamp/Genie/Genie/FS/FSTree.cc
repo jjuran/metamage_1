@@ -372,11 +372,6 @@ namespace Genie
 			p7::throw_errno( EPERM );
 		}
 		
-		return Open( flags );
-	}
-	
-	IOPtr FSTree::Open( OpenFlags /*flags*/ ) const
-	{
 		throw p7::errno_t( ENOENT );  // Assume read attempt if no mode
 	}
 	

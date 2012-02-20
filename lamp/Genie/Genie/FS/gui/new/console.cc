@@ -742,7 +742,7 @@ namespace Genie
 			
 			void Rename( const FSTreePtr& destination ) const;
 			
-			IOPtr Open( OpenFlags flags ) const;
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	void FSTree_Console_tty::Rename( const FSTreePtr& destination ) const
@@ -759,7 +759,7 @@ namespace Genie
 	
 	IOPtr
 	//
-	FSTree_Console_tty::Open( OpenFlags flags ) const
+	FSTree_Console_tty::Open( OpenFlags flags, mode_t mode ) const
 	{
 		static unsigned gLastID = 0;
 		
