@@ -449,35 +449,18 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_port_ADDR_focus : public FSTree
+	static void focus_remove( const FSTree* node )
 	{
-		public:
-			FSTree_sys_port_ADDR_focus( const FSTreePtr&     parent,
-			                            const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFLNK | 0777 )
-			{
-			}
-			
-			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			void Delete() const;
-			
-			plus::string ReadLink() const;
-			
-			FSTreePtr ResolveLink() const;
-	};
-	
-	void FSTree_sys_port_ADDR_focus::Delete() const
-	{
-		const FSTree* focus_file = gWindowParametersMap[ WindowKey() ].itsFocus;
+		const FSTree* window = node->owner();
+		
+		const FSTree* focus_file = gWindowParametersMap[ window ].itsFocus;
 		
 		if ( Ped::View* focus_view = get_focusable_view( focus_file ) )
 		{
-			BlurViewInWindow( *focus_view, WindowKey() );
+			BlurViewInWindow( *focus_view, window );
 		}
 		
-		gWindowParametersMap[ WindowKey() ].itsFocus = NULL;
+		gWindowParametersMap[ window ].itsFocus = NULL;
 	}
 	
 	static void unfocus_symlink( const FSTree*        node,
@@ -525,20 +508,39 @@ namespace Genie
 		&unfocus_link_methods
 	};
 	
-	plus::string FSTree_sys_port_ADDR_focus::ReadLink() const
-	{
-		return ResolveLink()->Pathname();  // FIXME:  Use relative path
-	}
 	
-	FSTreePtr FSTree_sys_port_ADDR_focus::ResolveLink() const
+	static FSTreePtr focus_resolve( const FSTree* node )
 	{
-		if ( const FSTree* focus = gWindowParametersMap[ WindowKey() ].itsFocus )
+		if ( const FSTree* focus = gWindowParametersMap[ node->owner() ].itsFocus )
 		{
-			return FSTreePtr( focus );
+			return focus;
 		}
 		
 		throw p7::errno_t( ENOENT );
 	}
+	
+	static const link_method_set focus_link_methods =
+	{
+		NULL,  // FIXME:  Use relative path
+		&focus_resolve
+	};
+	
+	static node_method_set focus_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&focus_remove,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&focus_link_methods
+	};
+	
 	
 	const FSTree* get_port_focus( const FSTree* port )
 	{
@@ -939,12 +941,13 @@ namespace Genie
 	{
 		const bool exists = gWindowParametersMap[ parent.get() ].itsFocus != NULL;
 		
-		if ( exists )
-		{
-			return new FSTree_sys_port_ADDR_focus( parent, name );
-		}
+		const mode_t mode = exists ? S_IFLNK | 0777
+		                           : 0;
 		
-		return new FSTree( parent, name, 0, &unfocus_methods );
+		const node_method_set* const methods = exists ? &focus_methods
+		                                              : &unfocus_methods;
+		
+		return new FSTree( parent, name, mode, methods );
 	}
 	
 	static FSTreePtr new_gesture( const FSTreePtr&     parent,
