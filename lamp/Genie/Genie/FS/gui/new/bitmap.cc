@@ -25,10 +25,11 @@
 #include "Pedestal/View.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -160,41 +161,42 @@ namespace Genie
 	}
 	
 	
-	static bool has_bits( const FSTree* view );
-	
-	class FSTree_Bits : public FSTree
-	{
-		public:
-			FSTree_Bits( const FSTreePtr&     parent,
-			             const plus::string&  name )
-			:
-				FSTree( parent,
-				        name,
-				        has_bits( parent.get() ) * (S_IFREG | 0600) )
-			{
-			}
-			
-			const FSTree* ParentKey() const  { return ParentRef().get(); }
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
 	static bool has_bits( const FSTree* view )
 	{
 		return gBitMapMap[ view ].bits.get() != NULL;
 	}
 	
-	off_t FSTree_Bits::GetEOF() const
+	static off_t bitmap_bits_geteof( const FSTree* node )
 	{
-		return Bits_GetEOF( ParentKey() );
+		return Bits_GetEOF( node->owner() );
 	}
 	
-	IOPtr FSTree_Bits::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr bitmap_bits_open( const FSTree* node, int flags, mode_t mode )
 	{
-		return new Bits_IO( Self(), flags );
+		return new Bits_IO( node, flags );
 	}
+	
+	static const data_method_set bitmap_bits_data_methods =
+	{
+		&bitmap_bits_open,
+		&bitmap_bits_geteof
+	};
+	
+	static const node_method_set bitmap_bits_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&bitmap_bits_data_methods
+	};
+	
 	
 	class BitMapView : public Ped::View
 	{
@@ -381,6 +383,16 @@ namespace Genie
 		}
 	};
 	
+	
+	static FSTreePtr bitmap_bits_Factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
+	{
+		const mode_t mode = has_bits( parent.get() ) ? S_IFREG | 0600 : 0;
+		
+		return new FSTree( parent, name, mode, &bitmap_bits_methods );
+	}
+	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< BitMap_Property< prop > >::value
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
@@ -389,7 +401,7 @@ namespace Genie
 		
 		{ "bounds", PROPERTY( BitMap_bounds ) },
 		
-		{ "bits", &Basic_Factory< FSTree_Bits > },
+		{ "bits", &bitmap_bits_Factory },
 		
 		{ NULL, NULL }
 	};
