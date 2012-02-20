@@ -24,6 +24,8 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -180,24 +182,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_List_data : public FSTree
-	{
-		public:
-			FSTree_List_data( const FSTreePtr&     parent,
-			                  const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0600 )
-			{
-			}
-			
-			off_t GetEOF() const;
-			
-			void SetEOF( off_t length ) const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
-	
 	static std::size_t measure_strings( const std::vector< plus::string >& strings )
 	{
 		std::size_t result = 0;
@@ -212,19 +196,19 @@ namespace Genie
 		return result;
 	}
 	
-	off_t FSTree_List_data::GetEOF() const
+	static off_t list_data_geteof( const FSTree* node )
 	{
-		return measure_strings( gListParameterMap[ ParentRef().get() ].itsStrings );
+		return measure_strings( gListParameterMap[ node->owner() ].itsStrings );
 	}
 	
-	void FSTree_List_data::SetEOF( off_t length ) const
+	static void list_data_seteof( const FSTree* node, off_t length )
 	{
 		if ( length != 0 )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		ListParameters& params = gListParameterMap[ ParentRef().get() ];
+		ListParameters& params = gListParameterMap[ node->owner() ];
 		
 		params.itsStrings.clear();
 		
@@ -246,27 +230,56 @@ namespace Genie
 		return result;
 	}
 	
-	IOPtr FSTree_List_data::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr list_data_open( const FSTree* node, int flags, mode_t mode )
 	{
 		IOHandle* result = NULL;
 		
 		if ( flags == O_RDONLY )
 		{
-			plus::string data = join_strings( gListParameterMap[ ParentRef().get() ].itsStrings );
+			plus::string data = join_strings( gListParameterMap[ node->owner() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( Self(), flags, data );
+			result = new PropertyReaderFileHandle( node, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( Self(), flags );
+			result = new List_data_Handle( node, flags );
 		}
 		else
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return IOPtr( result );
+		return result;
+	}
+	
+	static const data_method_set list_data_data_methods =
+	{
+		&list_data_open,
+		&list_data_geteof,
+		&list_data_seteof
+	};
+	
+	static const node_method_set list_data_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&list_data_data_methods
+	};
+	
+	static FSTreePtr list_data_factory( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const void*          args )
+	{
+		return new FSTree( parent, name, S_IFREG | 0600, &list_data_methods );
 	}
 	
 	
@@ -298,7 +311,7 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "data", &Basic_Factory< FSTree_List_data > },
+		{ "data", &list_data_factory },
 		
 		{ "overlap", PROPERTY( Overlap_Property ) },
 		
