@@ -786,8 +786,6 @@ namespace Genie
 		NULL,
 		NULL,
 		&console_tty_rename,
-		NULL,
-		NULL,
 		&console_tty_data_methods
 	};
 	

@@ -41,8 +41,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&app_dir_link_methods
 	};
 	

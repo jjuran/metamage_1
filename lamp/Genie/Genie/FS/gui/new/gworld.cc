@@ -233,8 +233,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&gworld_pixels_data_methods
 	};
 	

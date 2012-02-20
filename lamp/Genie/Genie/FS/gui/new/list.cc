@@ -270,8 +270,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&list_data_data_methods
 	};
 	

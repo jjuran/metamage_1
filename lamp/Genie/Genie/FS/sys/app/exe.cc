@@ -41,8 +41,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&app_exe_link_methods
 	};
 	

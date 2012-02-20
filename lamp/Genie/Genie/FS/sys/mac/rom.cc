@@ -85,8 +85,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&mac_rom_data_methods
 	};
 	

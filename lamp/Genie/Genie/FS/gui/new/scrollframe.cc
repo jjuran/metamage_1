@@ -345,8 +345,6 @@ namespace Genie
 		&scrollframe_target_remove,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&scrollframe_target_link_methods
 	};
 	

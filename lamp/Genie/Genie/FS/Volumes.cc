@@ -129,8 +129,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&volumes_link_link_methods
 	};
 	

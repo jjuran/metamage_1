@@ -43,10 +43,6 @@ namespace Genie
 	
 	typedef void (*rename_method)( const FSTree*, const FSTreePtr& );
 	
-	typedef void (*link_method)( const FSTree*, const FSTreePtr& );
-	
-	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
-	
 	struct data_method_set;
 	struct link_method_set;
 	
@@ -60,8 +56,6 @@ namespace Genie
 		utime_method    utime;
 		remove_method   remove;
 		rename_method   rename;
-		link_method     link;
-		copyfile_method copyfile;
 		
 		const data_method_set*  data_methods;
 		const link_method_set*  link_methods;

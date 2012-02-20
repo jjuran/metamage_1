@@ -161,8 +161,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&textedit_text_data_methods
 	};
 	
