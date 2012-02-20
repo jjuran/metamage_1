@@ -68,6 +68,7 @@
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
@@ -406,6 +407,13 @@ namespace Genie
 		file->SymLink( target );
 	}
 	
+	static const link_method_set hfs_link_methods =
+	{
+		NULL,
+		NULL,
+		&hfs_symlink
+	};
+	
 	static node_method_set hfs_methods =
 	{
 		&hfs_parent,
@@ -419,10 +427,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&hfs_symlink
+		&hfs_link_methods
 	};
 	
 	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,

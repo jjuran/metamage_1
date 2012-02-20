@@ -21,6 +21,7 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/GetAppFolder.hh"
@@ -90,6 +91,12 @@ namespace Genie
 		return FSTreeFromFSDirSpec( GetUserHomeFolder(), false );
 	}
 	
+	static const link_method_set mac_user_home_link_methods =
+	{
+		NULL,
+		&mac_user_home_resolve
+	};
+	
 	static const node_method_set mac_user_home_methods =
 	{
 		NULL,
@@ -103,9 +110,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		&mac_user_home_resolve
+		&mac_user_home_link_methods
 	};
 	
 	FSTreePtr New_FSTree_sys_mac_user_home( const FSTreePtr&     parent,

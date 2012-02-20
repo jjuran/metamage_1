@@ -26,6 +26,7 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
@@ -207,6 +208,12 @@ namespace Genie
 		return FSTreeFromFSSpec( file, FileIsOnServer( file ) );
 	}
 	
+	static const link_method_set mac_proc_exe_link_methods =
+	{
+		NULL,
+		&mac_proc_exe_resolve
+	};
+	
 	static const node_method_set mac_proc_exe_methods =
 	{
 		NULL,
@@ -220,9 +227,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		&mac_proc_exe_resolve
+		&mac_proc_exe_link_methods
 	};
 	
 	

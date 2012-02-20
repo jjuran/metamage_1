@@ -26,6 +26,7 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Genie
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
@@ -51,6 +52,11 @@ namespace Genie
 		return result;
 	}
 	
+	static const link_method_set gdev_main_link_methods =
+	{
+		&gdev_main_readlink
+	};
+	
 	static const node_method_set gdev_main_methods =
 	{
 		NULL,
@@ -64,8 +70,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&gdev_main_readlink
+		&gdev_main_link_methods
 	};
 	
 	static FSTreePtr gdev_main_factory( const FSTreePtr&     parent,

@@ -6,6 +6,7 @@
 #include "Genie/FS/SymbolicLink.hh"
 
 // Genie
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -18,6 +19,11 @@ namespace Genie
 		
 		return file->Target();
 	}
+	
+	static const link_method_set link_methods =
+	{
+		&readlink
+	};
 	
 	static const node_method_set methods =
 	{
@@ -32,8 +38,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&readlink
+		&link_methods
 	};
 	
 	FSTree_SymbolicLink::FSTree_SymbolicLink( const FSTreePtr&     parent,

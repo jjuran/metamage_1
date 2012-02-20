@@ -17,6 +17,7 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -48,6 +49,12 @@ namespace Genie
 		return FSTreeFromFSDirSpec( GetPrefsFolder(), false );
 	}
 	
+	static const link_method_set mac_user_prefs_link_methods =
+	{
+		NULL,
+		&mac_user_prefs_resolve
+	};
+	
 	static const node_method_set mac_user_prefs_methods =
 	{
 		NULL,
@@ -61,9 +68,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		&mac_user_prefs_resolve
+		&mac_user_prefs_link_methods
 	};
 	
 	FSTreePtr New_FSTree_sys_mac_user_prefs( const FSTreePtr&     parent,

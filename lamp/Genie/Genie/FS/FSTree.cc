@@ -21,6 +21,8 @@
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
@@ -267,9 +269,11 @@ namespace Genie
 	
 	off_t FSTree::GetEOF() const
 	{
-		if ( its_methods  &&  its_methods->geteof )
+		const data_method_set* data_methods;
+		
+		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
 		{
-			return its_methods->geteof( this );
+			return data_methods->geteof( this );
 		}
 		
 		// Errors are meaningless here since there's no POSIX call specifically
@@ -285,9 +289,11 @@ namespace Genie
 		//p7::throw_errno( IsDirectory() ? EISDIR : EINVAL );
 		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
 		
-		if ( its_methods  &&  its_methods->seteof )
+		const data_method_set* data_methods;
+		
+		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
 		{
-			its_methods->seteof( this, length );
+			data_methods->seteof( this, length );
 		}
 		else if ( IsDirectory() )
 		{
@@ -301,16 +307,18 @@ namespace Genie
 	
 	plus::string FSTree::ReadLink() const
 	{
-		if ( its_methods )
+		const link_method_set* link_methods;
+		
+		if ( its_methods  &&  (link_methods = its_methods->link_methods) )
 		{
-			if ( its_methods->readlink )
+			if ( link_methods->readlink )
 			{
-				return its_methods->readlink( this );
+				return link_methods->readlink( this );
 			}
 			
-			if ( its_methods->resolve )
+			if ( link_methods->resolve )
 			{
-				return its_methods->resolve( this )->Pathname();
+				return link_methods->resolve( this )->Pathname();
 			}
 		}
 		
@@ -319,16 +327,18 @@ namespace Genie
 	
 	FSTreePtr FSTree::ResolveLink() const
 	{
-		if ( its_methods )
+		const link_method_set* link_methods;
+		
+		if ( its_methods  &&  (link_methods = its_methods->link_methods) )
 		{
-			if ( its_methods->resolve )
+			if ( link_methods->resolve )
 			{
-				return its_methods->resolve( this );
+				return link_methods->resolve( this );
 			}
 			
-			if ( its_methods->readlink )
+			if ( link_methods->readlink )
 			{
-				return ResolvePathname( its_methods->readlink( this ), ParentRef().get() );
+				return ResolvePathname( link_methods->readlink( this ), owner() );
 			}
 		}
 		
@@ -337,12 +347,19 @@ namespace Genie
 	
 	void FSTree::SymLink( const plus::string& target ) const
 	{
-		if ( !( its_methods  &&  its_methods->symlink ) )
+		const link_method_set* link_methods;
+		
+		if ( its_methods  &&  (link_methods = its_methods->link_methods) )
 		{
-			p7::throw_errno( EINVAL );
+			if ( link_methods->symlink )
+			{
+				link_methods->symlink( this, target );
+				
+				return;
+			}
 		}
 		
-		its_methods->symlink( this, target );
+		p7::throw_errno( EINVAL );
 	}
 	
 	IOPtr FSTree::Open( OpenFlags flags, mode_t mode ) const

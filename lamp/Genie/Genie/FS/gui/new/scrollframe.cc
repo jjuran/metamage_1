@@ -22,6 +22,7 @@
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/ScrollerBase.hh"
@@ -326,6 +327,13 @@ namespace Genie
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}
 	
+	static const link_method_set scrollframe_target_link_methods =
+	{
+		&scrollframe_target_readlink,
+		NULL,
+		&scrollframe_target_symlink
+	};
+	
 	static node_method_set scrollframe_target_methods =
 	{
 		NULL,
@@ -339,10 +347,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&scrollframe_target_readlink,
-		NULL,
-		&scrollframe_target_symlink
+		&scrollframe_target_link_methods
 	};
 	
 	
