@@ -106,8 +106,8 @@ namespace Genie
 			virtual off_t GetEOF() const;
 			virtual void  SetEOF( off_t length ) const;
 			
-			virtual plus::string ReadLink() const;
-			virtual FSTreePtr ResolveLink() const;
+			plus::string ReadLink() const;
+			FSTreePtr ResolveLink() const;
 			
 			void SymLink( const plus::string& target ) const;
 			
