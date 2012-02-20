@@ -25,10 +25,11 @@
 #include "Pedestal/View.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -196,30 +197,6 @@ namespace Genie
 	}
 	
 	
-	static bool has_pixels( const FSTree* view );
-	
-	class FSTree_Pixels : public FSTree
-	{
-		private:
-			int itsIndex;
-		
-		public:
-			FSTree_Pixels( const FSTreePtr&     parent,
-			               const plus::string&  name )
-			:
-				FSTree( parent,
-				        name,
-				        has_pixels( parent.get() ) * (S_IFREG | 0600) )
-			{
-			}
-			
-			const FSTree* ParentKey() const  { return ParentRef().get(); }
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
 	static bool has_pixels( const FSTree* view )
 	{
 		if ( GWorldPtr gworld = gGWorldMap[ view ].gworld.get() )
@@ -230,15 +207,46 @@ namespace Genie
 		return false;
 	}
 	
-	off_t FSTree_Pixels::GetEOF() const
+	static off_t gworld_pixels_geteof( const FSTree* node )
 	{
-		return Pixels_GetEOF( ParentKey() );
+		return Pixels_GetEOF( node->owner() );
 	}
 	
-	IOPtr FSTree_Pixels::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr gworld_pixels_open( const FSTree* node, int flags, mode_t mode )
 	{
-		return new Pixels_IO( Self(), flags );
+		return new Pixels_IO( node, flags );
 	}
+	
+	static const data_method_set gworld_pixels_data_methods =
+	{
+		&gworld_pixels_open,
+		&gworld_pixels_geteof
+	};
+	
+	static const node_method_set gworld_pixels_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&gworld_pixels_data_methods
+	};
+	
+	static FSTreePtr gworld_pixels_factory( const FSTreePtr&     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
+	{
+		const mode_t mode = has_pixels( parent.get() ) ? S_IFREG | 0600 : 0;
+		
+		return new FSTree( parent, name, mode, &gworld_pixels_methods );
+	}
+	
 	
 	class GWorld : public Ped::View
 	{
@@ -482,7 +490,7 @@ namespace Genie
 		{ "bounds", PROPERTY( PixMap_bounds ) },
 		{ "depth",  PROPERTY( PixMap_depth  ) },
 		
-		{ "pixels", &Basic_Factory< FSTree_Pixels > },
+		{ "pixels", &gworld_pixels_factory },
 		
 		{ NULL, NULL }
 	};
