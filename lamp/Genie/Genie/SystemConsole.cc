@@ -51,18 +51,18 @@ namespace Genie
 		
 		ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) )->HardLink( view );
 		
-		FSTreePtr subview = ResolveRelativePath( STR_LEN( "v" ), view );
+		FSTreePtr subview = ResolveRelativePath( STR_LEN( "view/v" ), port );
 		
 		ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) )->HardLink( subview );
 		
-		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "v" ), subview );
+		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "view/v/v" ), port );
 		
 		ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) )->HardLink( subsubview );
 		
-		ResolveRelativePath( STR_LEN( "target" ), view )->SymLink( "v/v" );
+		ResolveRelativePath( STR_LEN( "view/target" ), port )->SymLink( "v/v" );
 		
-		Spew( ResolveRelativePath( STR_LEN( "vertical" ), view    ), STR_LEN( "1" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "padding"  ), subview ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "view/vertical"  ), port ), STR_LEN( "1" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "view/v/padding" ), port ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static FSTreePtr GetConsoleWindow()
