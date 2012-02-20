@@ -159,7 +159,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Get_RsrcFile_FSTree( (parent ? parent : this)->Self(), name, itsFileSpec );
+		return Get_RsrcFile_FSTree( parent, name, itsFileSpec );
 	}
 	
 	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const

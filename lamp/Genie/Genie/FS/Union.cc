@@ -27,11 +27,6 @@ namespace Genie
 	
 	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		if ( parent == NULL )
-		{
-			parent = this;
-		}
-		
 		try
 		{
 			FSTreePtr child = itsTop->Lookup( name, parent );

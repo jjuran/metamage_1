@@ -193,8 +193,6 @@ namespace Genie
 	
 	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		parent = parent ? parent : this;
-		
 		return New_View( parent->Self(), name, get_subview, delete_subview );
 	}
 	

@@ -44,7 +44,7 @@ namespace Genie
 	
 	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		return itsLookup( (parent ? parent : this)->Self(), name );
+		return itsLookup( parent, name );
 	}
 	
 	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const
