@@ -22,6 +22,7 @@
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
@@ -412,6 +413,16 @@ namespace Genie
 	
 	FSTreePtr FSTree::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->lookup )
+			{
+				return dir_methods->lookup( this, name, parent );
+			}
+		}
+		
 		throw p7::errno_t( ENOTDIR );
 	}
 	
