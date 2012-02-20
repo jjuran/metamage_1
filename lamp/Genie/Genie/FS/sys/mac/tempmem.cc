@@ -16,6 +16,8 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualFile.hh"
 #include "Genie/mmap/Handle_memory_mapping.hh"
 
@@ -54,33 +56,43 @@ namespace Genie
 	}
 	
 	
-	class FSTree_sys_mac_tempmem : public FSTree
+	static off_t mac_tempmem_geteof( const FSTree* node )
 	{
-		public:
-			FSTree_sys_mac_tempmem( const FSTreePtr&     parent,
-			                        const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFREG | 0 )
-			{
-			}
-			
-			off_t GetEOF() const  { return ::TempFreeMem(); }
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
+		return ::TempFreeMem();
+	}
 	
-	
-	IOPtr FSTree_sys_mac_tempmem::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr mac_tempmem_open( const FSTree* node, int flags, mode_t mode )
 	{
-		return new TempMem_IOHandle( Self(), flags );
+		return new TempMem_IOHandle( node, flags );
 		
 	}
+	
+	static const data_method_set mac_tempmem_data_methods =
+	{
+		&mac_tempmem_open,
+		&mac_tempmem_geteof
+	};
+	
+	static const node_method_set mac_tempmem_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&mac_tempmem_data_methods
+	};
 	
 	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTreePtr&     parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return new FSTree_sys_mac_tempmem( parent, name );
+		return new FSTree( parent, name, S_IFREG | 0, &mac_tempmem_methods );
 	}
 	
 }
