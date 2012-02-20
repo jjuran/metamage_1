@@ -731,21 +731,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Console_tty : public FSTree
-	{
-		public:
-			FSTree_Console_tty( const FSTreePtr&     parent,
-			                    const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFCHR | 0600 )
-			{
-			}
-			
-			void Rename( const FSTreePtr& destination ) const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
 	static void console_tty_rename( const FSTree* node, const FSTreePtr& destination )
 	{
 		destination->Attach( node );
