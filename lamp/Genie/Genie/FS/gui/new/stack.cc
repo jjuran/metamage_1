@@ -21,6 +21,8 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -172,29 +174,16 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Stack : public FSTree
+	static void stack_remove( const FSTree* node )
 	{
-		public:
-			typedef ViewList  Sequence;
-			
-			FSTree_Stack( const FSTreePtr&     parent,
-		                  const plus::string&  name)
-			:
-				FSTree( parent, name, S_IFDIR | 0700 )
-			{
-			}
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-			
-			void Delete() const  { DestroyDelegate( this ); }
-	};
+		DestroyDelegate( node );
+	}
 	
-	FSTreePtr FSTree_Stack::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	static FSTreePtr stack_lookup( const FSTree* node, const plus::string& name, const FSTree* parent )
 	{
 		return New_View( parent->Self(), name, get_subview, delete_subview );
 	}
+	
 	
 	class Stack_IteratorConverter
 	{
@@ -207,11 +196,13 @@ namespace Genie
 			}
 	};
 	
-	void FSTree_Stack::IterateIntoCache( FSTreeCache& cache ) const
+	static void stack_listdir( const FSTree* node, FSTreeCache& cache )
 	{
+		typedef ViewList Sequence;
+		
 		Stack_IteratorConverter converter;
 		
-		const Sequence& sequence = gStack_Parameters_Map[ this ].v;
+		const Sequence& sequence = gStack_Parameters_Map[ node ].v;
 		
 		std::transform( sequence.begin(),
 		                sequence.end(),
@@ -219,11 +210,32 @@ namespace Genie
 		                converter );
 	}
 	
+	static const dir_method_set stack_dir_methods =
+	{
+		&stack_lookup,
+		&stack_listdir
+	};
+	
+	static const node_method_set stack_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&stack_remove,
+		NULL,
+		NULL,
+		NULL,
+		&stack_dir_methods
+	};
+	
 	
 	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&     parent,
 	                                            const plus::string&  name ) const
 	{
-		return new FSTree_Stack( parent, name );
+		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
 	}
 	
 	static void DestroyDelegate( const FSTree* delegate )
