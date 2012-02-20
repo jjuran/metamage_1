@@ -447,7 +447,7 @@ namespace Genie
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return GetViewDelegate( this )->Lookup( real_name, parent );
+		return GetViewDelegate( this )->Lookup( real_name, NULL );
 	}
 	
 	void FSTree_View::IterateIntoCache( FSTreeCache& cache ) const
