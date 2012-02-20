@@ -68,6 +68,7 @@
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/errata.hh"
@@ -399,6 +400,27 @@ namespace Genie
 		file->SetTimes( times );
 	}
 	
+	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->Open( flags, mode );
+	}
+	
+	static off_t hfs_geteof( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->GetEOF();
+	}
+	
+	static void hfs_seteof( const FSTree* node, off_t length )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->SetEOF( length );
+	}
+	
 	static plus::string hfs_readlink( const FSTree* node )
 	{
 		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
@@ -421,6 +443,13 @@ namespace Genie
 		file->SymLink( target );
 	}
 	
+	static const data_method_set hfs_data_methods =
+	{
+		&hfs_open,
+		&hfs_geteof,
+		&hfs_seteof
+	};
+	
 	static const link_method_set hfs_link_methods =
 	{
 		&hfs_readlink,
@@ -438,7 +467,7 @@ namespace Genie
 		&hfs_utime,
 		NULL,
 		NULL,
-		NULL,
+		&hfs_data_methods,
 		&hfs_link_methods
 	};
 	
