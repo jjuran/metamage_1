@@ -41,12 +41,13 @@
 #include "Genie/Devices.hh"
 #include "Genie/FileDescriptor.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
@@ -745,9 +746,9 @@ namespace Genie
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
-	void FSTree_Console_tty::Rename( const FSTreePtr& destination ) const
+	static void console_tty_rename( const FSTree* node, const FSTreePtr& destination )
 	{
-		destination->Attach( Self() );
+		destination->Attach( node );
 	}
 	
 	static inline IOPtr
@@ -757,19 +758,44 @@ namespace Genie
 		return new ConsoleTTYHandle( self, id );
 	}
 	
-	IOPtr
-	//
-	FSTree_Console_tty::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr console_tty_open( const FSTree* node, int flags, mode_t mode )
 	{
 		static unsigned gLastID = 0;
 		
 		unsigned id = ++gLastID;
 		
-		IOPtr result( NewConsoleTTY( Self(), id ) );
+		IOPtr result( NewConsoleTTY( node, id ) );
 		
 		SetDynamicElementByID< ConsoleTTYHandle >( id, result );
 		
 		return result;
+	}
+	
+	static const data_method_set console_tty_data_methods =
+	{
+		&console_tty_open
+	};
+	
+	static const node_method_set console_tty_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&console_tty_rename,
+		NULL,
+		NULL,
+		&console_tty_data_methods
+	};
+	
+	static FSTreePtr console_tty_factory( const FSTreePtr&     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
+	{
+		return new FSTree( parent, name, S_IFCHR | 0600, &console_tty_methods );
 	}
 	
 	
@@ -799,7 +825,7 @@ namespace Genie
 	
 	static const FSTree_Premapped::Mapping local_mappings[] =
 	{
-		{ "tty", &Basic_Factory< FSTree_Console_tty > },
+		{ "tty", &console_tty_factory },
 		
 		{ "text", &New_FSTree_TextEdit_text },
 		
