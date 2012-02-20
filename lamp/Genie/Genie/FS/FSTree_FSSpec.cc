@@ -399,6 +399,20 @@ namespace Genie
 		file->SetTimes( times );
 	}
 	
+	static plus::string hfs_readlink( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->ReadLink();
+	}
+	
+	static FSTreePtr hfs_resolve( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->ResolveLink();
+	}
+	
 	static void hfs_symlink( const FSTree*        node,
 	                         const plus::string&  target )
 	{
@@ -409,8 +423,8 @@ namespace Genie
 	
 	static const link_method_set hfs_link_methods =
 	{
-		NULL,
-		NULL,
+		&hfs_readlink,
+		&hfs_resolve,
 		&hfs_symlink
 	};
 	
