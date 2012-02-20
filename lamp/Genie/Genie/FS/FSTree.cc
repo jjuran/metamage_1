@@ -428,6 +428,16 @@ namespace Genie
 	
 	void FSTree::IterateIntoCache( FSTreeCache& cache ) const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->listdir )
+			{
+				dir_methods->listdir( this, cache );
+			}
+		}
+		
 		throw p7::errno_t( ENOTDIR );
 	}
 	
