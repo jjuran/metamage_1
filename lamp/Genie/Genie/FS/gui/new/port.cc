@@ -10,28 +10,14 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
 
 namespace Genie
 {
-	
-	class FSTree_new_port : public FSTree
-	{
-		public:
-			FSTree_new_port( const FSTreePtr&     parent,
-			                 const plus::string&  name );
-			
-			IOPtr ChangeToDirectory() const;
-	};
-	
-	FSTree_new_port::FSTree_new_port( const FSTreePtr&     parent,
-	                                  const plus::string&  name )
-	:
-		FSTree( parent, name, S_IFDIR | 0100 )
-	{
-	}
 	
 	class OpenWindowHandle : public VirtualDirHandle
 	{
@@ -50,19 +36,43 @@ namespace Genie
 		remove_port( GetFile().get() );
 	}
 	
-	IOPtr FSTree_new_port::ChangeToDirectory() const
+	static IOPtr new_port_chdir( const FSTree* node )
 	{
 		FSTreePtr dir = new_port();
 		
 		return new OpenWindowHandle( dir );
 	}
 	
+	static const dir_method_set new_port_dir_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&new_port_chdir
+	};
+	
+	static const node_method_set new_port_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&new_port_dir_methods
+	};
+	
 	
 	FSTreePtr New_new_port( const FSTreePtr&     parent,
 	                        const plus::string&  name,
 	                        const void*          args )
 	{
-		return new FSTree_new_port( parent, name );
+		return new FSTree( parent, name, S_IFDIR | 0100, &new_port_methods );
 	}
 	
 }
