@@ -944,11 +944,6 @@ namespace Genie
 	
 	IOPtr FSTree_HFS::OpenDirectory() const
 	{
-		if ( !IsDirectory() )
-		{
-			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
-		}
-		
 		const N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
 		return new MacDirHandle( dir, itIsOnServer );
