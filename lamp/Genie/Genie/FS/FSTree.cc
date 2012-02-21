@@ -392,8 +392,18 @@ namespace Genie
 		return OpenDirectory();
 	}
 	
-	void FSTree::CreateDirectory( mode_t /*mode*/ ) const
+	void FSTree::CreateDirectory( mode_t mode ) const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->mkdir )
+			{
+				dir_methods->mkdir( this, mode );
+			}
+		}
+
 		p7::throw_errno( EPERM );
 	}
 	
