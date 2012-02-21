@@ -13,6 +13,8 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/PropertyFile.hh"
 
 
@@ -31,6 +33,41 @@ namespace Genie
 	                                     property_set_hook  set_hook,
 	                                     const FSTree*      parent );
 	
+	
+	static IOPtr property_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const FSTree_Property* file = static_cast< const FSTree_Property* >( node );
+		
+		return file->Open( flags, mode );
+	}
+	
+	static off_t property_geteof( const FSTree* node )
+	{
+		const FSTree_Property* file = static_cast< const FSTree_Property* >( node );
+		
+		return file->GetEOF();
+	}
+	
+	static const data_method_set property_data_methods =
+	{
+		&property_open,
+		&property_geteof
+	};
+	
+	static const node_method_set property_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&property_data_methods
+	};
+	
+	
 	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  size_t               size,
@@ -39,7 +76,8 @@ namespace Genie
 	:
 		FSTree( parent,
 		        name,
-		        get_property_filemode( readHook, writeHook, parent.get() ) ),
+		        get_property_filemode( readHook, writeHook, parent.get() ),
+		        &property_methods ),
 		itsSize( size ),
 		itsReadHook ( readHook  ),
 		itsWriteHook( writeHook )

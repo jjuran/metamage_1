@@ -27,6 +27,8 @@
 // Genie
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/Copy_IconSuite.hh"
@@ -438,11 +440,45 @@ namespace Genie
 	}
 	
 	
+	static IOPtr icon_data_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
+		
+		return file->Open( flags, mode );
+	}
+	
+	static off_t icon_data_geteof( const FSTree* node )
+	{
+		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
+		
+		return file->GetEOF();
+	}
+	
+	static const data_method_set icon_data_data_methods =
+	{
+		&icon_data_open,
+		&icon_data_geteof
+	};
+	
+	static const node_method_set icon_data_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&icon_data_data_methods
+	};
+	
+	
 	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                         parent,
 	                                    const plus::string&                      name,
 	                                    const boost::intrusive_ptr< IconData >&  data )
 	:
-		FSTree( parent, name, S_IFREG | 0600 ),
+		FSTree( parent, name, S_IFREG | 0600, &icon_data_methods ),
 		itsData( data )
 	{
 		ASSERT( data.get() != NULL );

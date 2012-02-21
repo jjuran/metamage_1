@@ -17,6 +17,8 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/PropertyFile.hh"
 
 
@@ -24,6 +26,31 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
+	
+	
+	static IOPtr generated_open( const FSTree* node, int flags, mode_t mode );
+	
+	static off_t generated_geteof( const FSTree* node );
+	
+	
+	static const data_method_set generated_data_methods =
+	{
+		&generated_open,
+		&generated_geteof
+	};
+	
+	static const node_method_set generated_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&generated_data_methods
+	};
 	
 	
 	class FSTree_Generated : public FSTree
@@ -38,32 +65,34 @@ namespace Genie
 			                  const plus::string&  name,
 			                  ReadHook             readHook )
 			:
-				FSTree( parent, name, S_IFREG | 0400 ),
+				FSTree( parent, name, S_IFREG | 0400, &generated_methods ),
 				its_data( readHook( parent.get(), name ) )
 			{
 			}
 			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+			const plus::string& data() const  { return its_data; }
 	};
 	
 	
-	off_t FSTree_Generated::GetEOF() const
+	static off_t generated_geteof( const FSTree* node )
 	{
-		return its_data.size();
+		const FSTree_Generated* file = static_cast< const FSTree_Generated* >( node );
+		
+		return file->data().size();
 	}
 	
-	IOPtr FSTree_Generated::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr generated_open( const FSTree* node, int flags, mode_t mode )
 	{
 		if ( flags != O_RDONLY )
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return new PropertyReaderFileHandle( Self(),
+		const FSTree_Generated* file = static_cast< const FSTree_Generated* >( node );
+		
+		return new PropertyReaderFileHandle( node,
 		                                     flags,
-		                                     its_data );
+		                                     file->data() );
 	}
 	
 	FSTreePtr new_generated( const FSTreePtr&     parent,
