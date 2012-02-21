@@ -384,6 +384,16 @@ namespace Genie
 	
 	IOPtr FSTree::OpenDirectory() const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->opendir )
+			{
+				return dir_methods->opendir( this );
+			}
+		}
+		
 		return new VirtualDirHandle( Self() );
 	}
 	
