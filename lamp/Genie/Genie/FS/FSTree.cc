@@ -399,6 +399,16 @@ namespace Genie
 	
 	IOPtr FSTree::ChangeToDirectory() const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->chdir )
+			{
+				return dir_methods->chdir( this );
+			}
+		}
+		
 		return OpenDirectory();
 	}
 	
