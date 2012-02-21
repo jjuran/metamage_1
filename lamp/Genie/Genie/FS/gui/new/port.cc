@@ -47,5 +47,13 @@ namespace Genie
 		return new OpenWindowHandle( dir );
 	}
 	
+	
+	FSTreePtr New_new_port( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          args )
+	{
+		return new FSTree_new_port( parent, name );
+	}
+	
 }
 

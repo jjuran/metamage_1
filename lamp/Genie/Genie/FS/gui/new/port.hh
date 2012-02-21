@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie
@@ -24,6 +25,10 @@ namespace Genie
 			
 			IOPtr ChangeToDirectory() const;
 	};
+	
+	FSTreePtr New_new_port( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          args );
 	
 }
 
