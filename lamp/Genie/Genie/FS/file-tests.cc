@@ -17,27 +17,38 @@ namespace Genie
 	
 	bool exists( const FSTreePtr& file )
 	{
-		return file->Exists();
+		const mode_t mode = file->FileMode();
+		
+		return mode != 0;
 	}
 	
 	bool is_file( const FSTreePtr& file )
 	{
-		return file->IsFile();
+		const mode_t mode = file->FileMode();
+		
+		// A file as used here is any existing non-directory.
+		return mode != 0  &&  !S_ISDIR( mode );
 	}
 	
 	bool is_directory( const FSTreePtr& file )
 	{
-		return file->IsDirectory();
+		const mode_t mode = file->FileMode();
+		
+		return S_ISDIR( mode );
 	}
 	
 	bool is_symlink( const FSTreePtr& file )
 	{
-		return file->IsLink();
+		const mode_t mode = file->FileMode();
+		
+		return S_ISLNK( mode );
 	}
 	
 	bool is_fifo( const FSTreePtr& file )
 	{
-		return S_ISFIFO( file->FileMode() );
+		const mode_t mode = file->FileMode();
+		
+		return S_ISFIFO( mode );
 	}
 	
 }
