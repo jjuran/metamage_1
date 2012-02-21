@@ -25,6 +25,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FileDescriptors.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
@@ -67,6 +68,11 @@ namespace Genie
 			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( newCWD );
+			
+			if ( !is_directory( newCWD ) )
+			{
+				return set_errno( exists( newCWD ) ? ENOTDIR : ENOENT );
+			}
 			
 			current_process().ChangeDirectory( newCWD );
 			
