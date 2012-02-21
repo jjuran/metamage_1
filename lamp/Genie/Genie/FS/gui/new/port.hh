@@ -10,21 +10,11 @@
 #include "plus/string.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie
 {
-	
-	class FSTree_new_port : public FSTree
-	{
-		public:
-			FSTree_new_port( const FSTreePtr&     parent,
-			                 const plus::string&  name );
-			
-			IOPtr ChangeToDirectory() const;
-	};
 	
 	FSTreePtr New_new_port( const FSTreePtr&     parent,
 	                        const plus::string&  name,
