@@ -9,12 +9,22 @@
 #include <sys/stat.h>
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/gui/port.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
 
 namespace Genie
 {
+	
+	class FSTree_new_port : public FSTree
+	{
+		public:
+			FSTree_new_port( const FSTreePtr&     parent,
+			                 const plus::string&  name );
+			
+			IOPtr ChangeToDirectory() const;
+	};
 	
 	FSTree_new_port::FSTree_new_port( const FSTreePtr&     parent,
 	                                  const plus::string&  name )
@@ -45,6 +55,14 @@ namespace Genie
 		FSTreePtr dir = new_port();
 		
 		return new OpenWindowHandle( dir );
+	}
+	
+	
+	FSTreePtr New_new_port( const FSTreePtr&     parent,
+	                        const plus::string&  name,
+	                        const void*          args )
+	{
+		return new FSTree_new_port( parent, name );
 	}
 	
 }

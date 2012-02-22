@@ -42,7 +42,7 @@ namespace Genie
 		{ "scrollframe",  &New_FSTree_new_scrollframe         },
 		{ "stack",        &New_stack                          },
 		{ "textedit",     &New_FSTree_new_textedit            },
-		{ "port",         &Basic_Factory< FSTree_new_port   > },
+		{ "port",         &New_new_port                       },
 		
 		{ NULL, NULL }
 	};
