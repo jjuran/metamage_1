@@ -47,8 +47,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&generated_data_methods
 	};
 	

@@ -81,8 +81,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&mac_tempmem_data_methods
 	};
 	

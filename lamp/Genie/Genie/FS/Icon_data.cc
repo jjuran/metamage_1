@@ -468,8 +468,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&icon_data_data_methods
 	};
 	

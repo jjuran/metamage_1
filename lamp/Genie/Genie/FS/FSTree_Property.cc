@@ -62,8 +62,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&property_data_methods
 	};
 	

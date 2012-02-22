@@ -61,8 +61,6 @@ namespace Genie
 	
 	static node_method_set rsrcfile_methods =
 	{
-		NULL,
-		NULL,
 		&rsrcfile_stat
 	};
 	

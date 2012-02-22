@@ -64,8 +64,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&mac_user_prefs_link_methods
 	};
 	

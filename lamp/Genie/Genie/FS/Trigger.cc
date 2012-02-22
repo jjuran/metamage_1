@@ -25,8 +25,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&trigger_touch
 	};
 	

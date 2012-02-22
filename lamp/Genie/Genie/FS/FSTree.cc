@@ -24,6 +24,7 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
+#include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
 
@@ -128,9 +129,14 @@ namespace Genie
 			return itsParent;
 		}
 		
-		if ( its_methods  &&  its_methods->parent )
+		const misc_method_set* misc_methods;
+		
+		if ( its_methods  &&  (misc_methods = its_methods->misc_methods) )
 		{
-			return its_methods->parent( this );
+			if ( misc_methods->parent )
+			{
+				return misc_methods->parent( this );
+			}
 		}
 		
 		return Self();
@@ -143,9 +149,14 @@ namespace Genie
 	
 	ino_t FSTree::ParentInode() const
 	{
-		if ( its_methods  &&  its_methods->parent_inode )
+		const misc_method_set* misc_methods;
+		
+		if ( its_methods  &&  (misc_methods = its_methods->misc_methods) )
 		{
-			return its_methods->parent_inode( this );
+			if ( misc_methods->parent_inode )
+			{
+				return misc_methods->parent_inode( this );
+			}
 		}
 		
 		return Parent()->Inode();

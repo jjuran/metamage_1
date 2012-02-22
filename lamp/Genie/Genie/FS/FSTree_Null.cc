@@ -13,6 +13,7 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -29,9 +30,23 @@ namespace Genie
 		throw;
 	}
 	
-	static node_method_set null_methods =
+	static const misc_method_set null_misc_methods =
 	{
 		&null_parent
+	};
+	
+	static node_method_set null_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&null_misc_methods
 	};
 	
 	FSTreePtr FSNull()

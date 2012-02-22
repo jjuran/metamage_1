@@ -501,8 +501,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&unfocus_link_methods
 	};
 	
@@ -525,8 +523,6 @@ namespace Genie
 	
 	static node_method_set focus_methods =
 	{
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -593,8 +589,6 @@ namespace Genie
 	
 	static node_method_set window_methods =
 	{
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&window_touch,
@@ -698,8 +692,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&gesture_remove,
 		NULL,
 		NULL,
@@ -738,8 +730,6 @@ namespace Genie
 	
 	static node_method_set ungesture_methods =
 	{
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,
@@ -903,8 +893,6 @@ namespace Genie
 	
 	static node_method_set unwindow_methods =
 	{
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&unwindow_touch

@@ -34,8 +34,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&link_methods
 	};
 	

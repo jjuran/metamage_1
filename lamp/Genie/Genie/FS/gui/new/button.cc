@@ -303,8 +303,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&button_stream_data_methods
 	};
 	

@@ -190,8 +190,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&bitmap_bits_data_methods
 	};
 	

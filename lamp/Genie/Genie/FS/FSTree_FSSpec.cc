@@ -71,6 +71,7 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
+#include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
@@ -498,10 +499,14 @@ namespace Genie
 		&hfs_opendir
 	};
 	
-	static node_method_set hfs_methods =
+	static const misc_method_set hfs_misc_methods =
 	{
 		&hfs_parent,
-		&hfs_parent_inode,
+		&hfs_parent_inode
+	};
+	
+	static node_method_set hfs_methods =
+	{
 		&hfs_stat,
 		&hfs_chmod,
 		NULL,
@@ -510,7 +515,8 @@ namespace Genie
 		NULL,
 		&hfs_data_methods,
 		&hfs_link_methods,
-		&hfs_dir_methods
+		&hfs_dir_methods,
+		&hfs_misc_methods
 	};
 	
 	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,

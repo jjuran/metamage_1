@@ -106,8 +106,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&mac_user_home_link_methods
 	};
 	

@@ -103,8 +103,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&simple_device_data_methods
 	};
 	
@@ -144,8 +142,6 @@ namespace Genie
 	template < class Opener >
 	const node_method_set basic_device< Opener >::node_methods =
 	{
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,

@@ -461,8 +461,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&folder_link_link_methods
 	};
 	

@@ -237,8 +237,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&caption_text_data_methods
 	};
 	

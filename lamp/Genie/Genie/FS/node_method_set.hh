@@ -25,10 +25,6 @@ namespace Genie
 	
 	class FSTree;
 	
-	typedef FSTreePtr (*parent_method)( const FSTree* );
-	
-	typedef ino_t (*inode_method)( const FSTree* );
-	
 	typedef void (*stat_method)( const FSTree*, struct ::stat& );
 	
 	typedef void (*chmod_method)( const FSTree*, mode_t );
@@ -43,11 +39,10 @@ namespace Genie
 	struct data_method_set;
 	struct link_method_set;
 	struct dir_method_set;
+	struct misc_method_set;
 	
 	struct node_method_set
 	{
-		parent_method   parent;
-		inode_method    parent_inode;
 		stat_method     stat;
 		chmod_method    chmod;
 		touch_method    touch;
@@ -58,6 +53,7 @@ namespace Genie
 		const data_method_set*  data_methods;
 		const link_method_set*  link_methods;
 		const dir_method_set*   dir_methods;
+		const misc_method_set*  misc_methods;
 	};
 	
 }

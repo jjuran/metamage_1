@@ -267,8 +267,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&rsrc_file_data_methods
 	};
 	

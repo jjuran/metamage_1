@@ -51,8 +51,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&textedit_interlock_touch
 	};
 	

@@ -384,8 +384,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
 		&view_touch
 	};
 	
