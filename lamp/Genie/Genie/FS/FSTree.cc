@@ -383,11 +383,6 @@ namespace Genie
 	
 	IOPtr FSTree::OpenDirectory() const
 	{
-		if ( !IsDirectory() )
-		{
-			p7::throw_errno( Exists() ? ENOTDIR : ENOENT );
-		}
-		
 		return new VirtualDirHandle( Self() );
 	}
 	

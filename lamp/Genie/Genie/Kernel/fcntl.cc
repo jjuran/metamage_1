@@ -60,6 +60,11 @@ namespace Genie
 				return set_errno( ELOOP );
 			}
 			
+			if ( directory  &&  !is_directory( file ) )
+			{
+				return set_errno( exists( file ) ? ENOTDIR : ENOENT );
+			}
+			
 			IOPtr opened = directory ? file->OpenDirectory()
 			                         : file->Open( flags, mode );
 			
