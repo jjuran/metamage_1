@@ -9,9 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// plus
-#include "plus/string.hh"
-
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 
