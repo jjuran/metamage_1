@@ -22,6 +22,7 @@
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/VirtualDirectory.hh"
@@ -383,16 +384,46 @@ namespace Genie
 	
 	IOPtr FSTree::OpenDirectory() const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->opendir )
+			{
+				return dir_methods->opendir( this );
+			}
+		}
+		
 		return new VirtualDirHandle( Self() );
 	}
 	
 	IOPtr FSTree::ChangeToDirectory() const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->chdir )
+			{
+				return dir_methods->chdir( this );
+			}
+		}
+		
 		return OpenDirectory();
 	}
 	
-	void FSTree::CreateDirectory( mode_t /*mode*/ ) const
+	void FSTree::CreateDirectory( mode_t mode ) const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->mkdir )
+			{
+				dir_methods->mkdir( this, mode );
+			}
+		}
+
 		p7::throw_errno( EPERM );
 	}
 	
@@ -412,11 +443,31 @@ namespace Genie
 	
 	FSTreePtr FSTree::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->lookup )
+			{
+				return dir_methods->lookup( this, name, parent );
+			}
+		}
+		
 		throw p7::errno_t( ENOTDIR );
 	}
 	
 	void FSTree::IterateIntoCache( FSTreeCache& cache ) const
 	{
+		const dir_method_set* dir_methods;
+		
+		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
+		{
+			if ( dir_methods->listdir )
+			{
+				dir_methods->listdir( this, cache );
+			}
+		}
+		
 		throw p7::errno_t( ENOTDIR );
 	}
 	

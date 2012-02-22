@@ -117,9 +117,9 @@ namespace Genie
 			
 			// Directory methods
 			
-			virtual IOPtr OpenDirectory() const;
+			IOPtr OpenDirectory() const;
 			
-			virtual IOPtr ChangeToDirectory() const;
+			IOPtr ChangeToDirectory() const;
 			
 			virtual void CreateDirectory( mode_t mode ) const;
 			

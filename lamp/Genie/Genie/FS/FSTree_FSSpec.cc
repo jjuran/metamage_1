@@ -69,6 +69,7 @@
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/errata.hh"
@@ -443,6 +444,38 @@ namespace Genie
 		file->SymLink( target );
 	}
 	
+	static FSTreePtr hfs_lookup( const FSTree*        node,
+	                             const plus::string&  name,
+	                             const FSTree*        parent )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->Lookup_Child( name, parent );
+	}
+	
+	static void hfs_listdir( const FSTree*  node,
+	                         FSTreeCache&   cache )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->IterateIntoCache( cache );
+	}
+	
+	static void hfs_mkdir( const FSTree*  node,
+	                       mode_t         mode )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->CreateDirectory( mode );
+	}
+	
+	static IOPtr hfs_opendir( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->OpenDirectory();
+	}
+	
 	static const data_method_set hfs_data_methods =
 	{
 		&hfs_open,
@@ -457,6 +490,14 @@ namespace Genie
 		&hfs_symlink
 	};
 	
+	static const dir_method_set hfs_dir_methods =
+	{
+		&hfs_lookup,
+		&hfs_listdir,
+		&hfs_mkdir,
+		&hfs_opendir
+	};
+	
 	static node_method_set hfs_methods =
 	{
 		&hfs_parent,
@@ -468,7 +509,8 @@ namespace Genie
 		NULL,
 		NULL,
 		&hfs_data_methods,
-		&hfs_link_methods
+		&hfs_link_methods,
+		&hfs_dir_methods
 	};
 	
 	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
