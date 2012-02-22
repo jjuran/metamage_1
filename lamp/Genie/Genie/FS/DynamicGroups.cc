@@ -59,7 +59,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree( parent ? parent : this,
+		return new FSTree( parent,
 		                   name,
 		                   S_IFCHR | 0600,
 		                   node_methods() );

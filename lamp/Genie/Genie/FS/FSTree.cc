@@ -438,6 +438,11 @@ namespace Genie
 			return Parent();
 		}
 		
+		if ( parent == NULL )
+		{
+			parent = this;
+		}
+		
 		return Lookup_Child( name, parent );
 	}
 	

@@ -569,7 +569,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree( (parent ? parent : this)->Self(),
+		return new FSTree( parent,
 		                   name,
 		                   S_IFLNK | 0777,
 		                   &proc_fd_methods );

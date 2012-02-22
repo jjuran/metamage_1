@@ -135,7 +135,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		return new FSTree( (parent ? parent : this)->Self(),
+		return new FSTree( parent,
 		                   name,
 		                   S_IFLNK | 0777,
 		                   &volumes_link_methods );
