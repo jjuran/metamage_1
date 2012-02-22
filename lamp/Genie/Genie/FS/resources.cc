@@ -352,13 +352,6 @@ namespace Genie
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
-		const bool excluding = flags & O_EXCL;
-		
-		if ( excluding )
-		{
-			p7::throw_errno( EEXIST );
-		}
-		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
 		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );

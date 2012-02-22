@@ -916,12 +916,9 @@ namespace Genie
 	
 	IOPtr FSTree_HFS::Open( OpenFlags flags, mode_t mode ) const
 	{
-		bool creating  = flags & O_CREAT;
-		bool excluding = flags & O_EXCL;
-		
 		bool created = false;
 		
-		if ( creating )
+		if ( const bool creating = flags & O_CREAT )
 		{
 			const bool exists = itsCInfo.hFileInfo.ioResult == noErr;
 			
@@ -930,10 +927,6 @@ namespace Genie
 				CreateFile();
 				
 				created = true;
-			}
-			else if ( excluding )
-			{
-				p7::throw_errno( EEXIST );
 			}
 			else
 			{
