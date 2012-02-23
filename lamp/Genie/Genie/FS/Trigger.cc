@@ -6,6 +6,7 @@
 #include "Genie/FS/Trigger.hh"
 
 // Genie
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -21,11 +22,27 @@ namespace Genie
 		file->Invoke();
 	}
 	
+	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const Trigger_Base* file = static_cast< const Trigger_Base* >( node );
+		
+		return file->Open( flags, mode );
+	}
+	
+	static const data_method_set trigger_data_methods =
+	{
+		&trigger_open
+	};
+	
 	static node_method_set trigger_methods =
 	{
 		NULL,
 		NULL,
-		&trigger_touch
+		&trigger_touch,
+		NULL,
+		NULL,
+		NULL,
+		&trigger_data_methods
 	};
 	
 	Trigger_Base::Trigger_Base( const FSTreePtr&     parent,
