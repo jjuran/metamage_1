@@ -19,12 +19,19 @@ namespace Genie
 	class FSTree_SymbolicLink : public FSTree
 	{
 		private:
+			typedef void (*remove_method)( const FSTree* );
+			
+			remove_method its_remove;
+			
 			plus::string itsTarget;
 		
 		public:
 			FSTree_SymbolicLink( const FSTreePtr&     parent,
 			                     const plus::string&  name,
-			                     const plus::string&  target );
+			                     const plus::string&  target,
+			                     remove_method        remove = NULL );
+			
+			void Delete() const;
 			
 			const plus::string& Target() const  { return itsTarget; }
 	};
