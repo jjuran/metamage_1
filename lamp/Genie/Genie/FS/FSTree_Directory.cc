@@ -14,9 +14,12 @@
 namespace Genie
 {
 	
-	const FSTree_Premapped::Mapping
-	//
-	FSTree_Premapped::empty_mappings[] = { { NULL, NULL } };
+	namespace premapped
+	{
+		
+		const mapping empty_mappings[] = { { NULL, NULL } };
+		
+	}
 	
 	
 	static const FSTree_Premapped::Mapping*

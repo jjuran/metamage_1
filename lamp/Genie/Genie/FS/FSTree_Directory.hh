@@ -30,6 +30,9 @@ namespace Genie
 			function     f;
 			const void*  args;
 		};
+		
+		extern const mapping empty_mappings[];
+		
 	}
 	
 	class FSTree_Premapped : public FSTree
@@ -37,8 +40,6 @@ namespace Genie
 		public:
 			typedef premapped::function Function;
 			typedef premapped::mapping  Mapping;
-			
-			static const Mapping empty_mappings[];
 		
 		private:
 			typedef const Mapping* Mappings;
@@ -51,7 +52,7 @@ namespace Genie
 		public:
 			FSTree_Premapped( const FSTreePtr&     parent,
 			                  const plus::string&  name,
-			                  Mappings             mappings = empty_mappings,
+			                  Mappings             mappings = premapped::empty_mappings,
 			                  Destructor           dtor     = NULL )
 			:
 				FSTree( parent, name, S_IFDIR | 0700 ),
