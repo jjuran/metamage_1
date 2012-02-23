@@ -81,7 +81,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &gdev_main_methods );
 	}
 	
-	const FSTree_Premapped::Mapping sys_mac_gdev_Mappings[] =
+	const premapped::mapping sys_mac_gdev_Mappings[] =
 	{
 		{ "main", &gdev_main_factory },
 		

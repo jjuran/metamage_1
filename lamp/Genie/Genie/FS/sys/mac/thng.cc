@@ -200,7 +200,7 @@ namespace Genie
 		return true;
 	}
 	
-	extern const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[];
+	extern const premapped::mapping sys_mac_thng_REF_Mappings[];
 	
 	static FSTreePtr thng_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
@@ -395,7 +395,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_thng_REF_Mappings[] =
+	const premapped::mapping sys_mac_thng_REF_Mappings[] =
 	{
 		{ "type",         PROPERTY( sys_mac_thng_REF_code< ComponentDescription_Type         > ) },
 		{ "subtype",      PROPERTY( sys_mac_thng_REF_code< ComponentDescription_SubType      > ) },

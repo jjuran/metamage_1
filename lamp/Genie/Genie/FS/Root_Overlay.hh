@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	extern const FSTree_Premapped::Mapping Root_Overlay_Mappings[];
+	extern const premapped::mapping Root_Overlay_Mappings[];
 	
 }
 

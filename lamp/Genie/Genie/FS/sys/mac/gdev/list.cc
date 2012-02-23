@@ -98,7 +98,7 @@ namespace Genie
 	}
 	
 	
-	extern const FSTree_Premapped::Mapping sys_mac_gdev_list_H_Mappings[];
+	extern const premapped::mapping sys_mac_gdev_list_H_Mappings[];
 	
 	static FSTreePtr gdev_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
@@ -193,7 +193,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_gdev_list_N_Property< prop > >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_gdev_list_H_Mappings[] =
+	const premapped::mapping sys_mac_gdev_list_H_Mappings[] =
 	{
 		{ "driver", &Driver_Link_Factory },
 		

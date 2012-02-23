@@ -16,7 +16,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_machine_Mappings[] =
+	const premapped::mapping sys_mac_machine_Mappings[] =
 	{
 		{ "id",   PROPERTY( sys_mac_machine_id   ) },
 		{ "name", PROPERTY( sys_mac_machine_name ) },

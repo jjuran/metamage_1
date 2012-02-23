@@ -164,7 +164,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_vol_N_parms_Mappings[] =
+	const premapped::mapping sys_mac_vol_N_parms_Mappings[] =
 	{
 		{ "attrib",   PROPERTY( GetVolumeParmsAttrib   ) },
 		{ "handle",   PROPERTY( GetVolumeParmsHandle   ) },

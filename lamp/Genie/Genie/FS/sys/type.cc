@@ -51,7 +51,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	extern const FSTree_Premapped::Mapping sys_type_text_Mappings[] =
+	extern const premapped::mapping sys_type_text_Mappings[] =
 	{
 		{ "DEFAULT", PROPERTY( sys_type_text_wildcard ) },
 		
@@ -60,7 +60,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	const FSTree_Premapped::Mapping sys_type_Mappings[] =
+	const premapped::mapping sys_type_Mappings[] =
 	{
 		{ "text", PREMAPPED( sys_type_text_Mappings ) },
 		

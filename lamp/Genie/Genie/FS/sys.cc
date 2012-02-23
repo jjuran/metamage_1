@@ -151,9 +151,9 @@ namespace Genie
 	
 	#define EXEC( main )  &Executable_Factory, (const void*) &main
 	
-	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];
+	extern const premapped::mapping sys_kernel_bin_Mappings[];
 	
-	const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[] =
+	const premapped::mapping sys_kernel_bin_Mappings[] =
 	{
 		{ "true",  EXEC( main_true  ) },
 		{ "false", EXEC( main_false ) },
@@ -166,9 +166,9 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	extern const FSTree_Premapped::Mapping sys_kernel_Mappings[];
+	extern const premapped::mapping sys_kernel_Mappings[];
 	
-	const FSTree_Premapped::Mapping sys_kernel_Mappings[] =
+	const premapped::mapping sys_kernel_Mappings[] =
 	{
 		{ "bin",     PREMAPPED( sys_kernel_bin_Mappings ) },
 		
@@ -177,7 +177,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	const FSTree_Premapped::Mapping sys_Mappings[] =
+	const premapped::mapping sys_Mappings[] =
 	{
 		{ "app",    PREMAPPED( sys_app_Mappings    ) },
 		{ "cpu",    PREMAPPED( sys_cpu_Mappings    ) },

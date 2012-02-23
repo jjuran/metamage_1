@@ -44,7 +44,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_Mappings[] =
+	const premapped::mapping sys_mac_Mappings[] =
 	{
 		{ "proc",    &New_FSTree_sys_mac_proc    },
 		{ "soundin", &New_FSTree_sys_mac_soundin },

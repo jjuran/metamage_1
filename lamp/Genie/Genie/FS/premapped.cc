@@ -16,7 +16,7 @@ namespace Genie
 	                             const plus::string&  name,
 	                             const void*          args )
 	{
-		const FSTree_Premapped::Mapping* mappings = (const FSTree_Premapped::Mapping*) args;
+		const premapped::mapping* mappings = (const premapped::mapping*) args;
 		
 		return Premapped_Factory( parent, name, mappings );
 	}

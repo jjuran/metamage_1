@@ -16,7 +16,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	const FSTree_Premapped::Mapping gui_Mappings[] =
+	const premapped::mapping gui_Mappings[] =
 	{
 		{ "new", PREMAPPED( new_Mappings ) },
 		

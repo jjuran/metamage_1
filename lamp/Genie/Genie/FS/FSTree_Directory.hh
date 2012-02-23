@@ -78,10 +78,10 @@ namespace Genie
 		return new FSTree_Type( parent, name );
 	}
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
-	                             const plus::string&                name,
-	                             const FSTree_Premapped::Mapping    mappings[],
-	                             void                             (*dtor)(const FSTree*) = NULL );
+	FSTreePtr Premapped_Factory( const FSTreePtr&            parent,
+	                             const plus::string&         name,
+	                             const premapped::mapping    mappings[],
+	                             void                      (*dtor)(const FSTree*) = NULL );
 	
 }
 

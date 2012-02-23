@@ -88,10 +88,10 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
-	                             const plus::string&                name,
-	                             const FSTree_Premapped::Mapping    mappings[],
-	                             void                             (*dtor)(const FSTree*) )
+	FSTreePtr Premapped_Factory( const FSTreePtr&            parent,
+	                             const plus::string&         name,
+	                             const premapped::mapping    mappings[],
+	                             void                      (*dtor)(const FSTree*) )
 	{
 		return FSTreePtr( new FSTree_Premapped( parent, name, mappings, dtor ) );
 	}
