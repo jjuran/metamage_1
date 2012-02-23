@@ -275,7 +275,10 @@ namespace Genie
 		
 		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
 		{
-			return data_methods->geteof( this );
+			if ( data_methods->geteof )
+			{
+				return data_methods->geteof( this );
+			}
 		}
 		
 		// Errors are meaningless here since there's no POSIX call specifically
@@ -295,9 +298,15 @@ namespace Genie
 		
 		if ( its_methods  &&  (data_methods = its_methods->data_methods) )
 		{
-			data_methods->seteof( this, length );
+			if ( data_methods->seteof )
+			{
+				data_methods->seteof( this, length );
+				
+				return;
+			}
 		}
-		else if ( IsDirectory() )
+		
+		if ( IsDirectory() )
 		{
 			p7::throw_errno( EISDIR );
 		}
