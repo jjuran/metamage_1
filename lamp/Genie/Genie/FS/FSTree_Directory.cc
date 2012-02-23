@@ -5,8 +5,12 @@
 
 #include "Genie/FS/FSTree_Directory.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FS/file-tests.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
 

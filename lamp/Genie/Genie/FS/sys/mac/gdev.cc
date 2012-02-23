@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// POSIX
+#include <sys/stat.h>
+
 // iota
 #include "iota/strings.hh"
 
@@ -26,6 +29,7 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"

@@ -6,6 +6,7 @@
 #include "Genie/FS/premapped.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 
 

@@ -9,6 +9,9 @@
 #include <MacTypes.h>
 #endif
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <map>
 

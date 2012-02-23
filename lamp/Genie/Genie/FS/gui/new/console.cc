@@ -10,6 +10,9 @@
 #include <Events.h>
 #endif
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 

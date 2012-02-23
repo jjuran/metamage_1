@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/list.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <vector>
 

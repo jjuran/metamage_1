@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -21,6 +24,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/link_method_set.hh"

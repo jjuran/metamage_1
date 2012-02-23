@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -20,6 +23,7 @@
 // Genie
 #include "Genie/code/fixed_address.hh"
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/app.hh"

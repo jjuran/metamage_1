@@ -10,6 +10,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // plus
 #include "plus/mac_utf8.hh"

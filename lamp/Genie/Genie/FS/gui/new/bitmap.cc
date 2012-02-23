@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/bitmap.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 
