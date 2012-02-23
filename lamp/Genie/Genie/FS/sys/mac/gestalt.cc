@@ -181,7 +181,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree_Premapped( parent, name );
+		return Premapped_Factory( parent, name );
 	}
 	
 	class gestalt_IteratorConverter
