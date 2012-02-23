@@ -17,19 +17,26 @@
 namespace Genie
 {
 	
+	namespace premapped
+	{
+		
+		typedef FSTreePtr (*function)( const FSTreePtr&,
+		                               const plus::string&,
+		                               const void* );
+		
+		struct mapping
+		{
+			const char*  name;
+			function     f;
+			const void*  args;
+		};
+	}
+	
 	class FSTree_Premapped : public FSTree
 	{
 		public:
-			typedef FSTreePtr (*Function)( const FSTreePtr&,
-			                               const plus::string&,
-			                               const void* );
-			
-			struct Mapping
-			{
-				const char*  name;
-				Function     f;
-				const void*  args;
-			};
+			typedef premapped::function Function;
+			typedef premapped::mapping  Mapping;
 			
 			static const Mapping empty_mappings[];
 		
