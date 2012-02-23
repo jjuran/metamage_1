@@ -11,7 +11,6 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 
 
 namespace Genie
@@ -34,41 +33,6 @@ namespace Genie
 		extern const mapping empty_mappings[];
 		
 	}
-	
-	class FSTree_Premapped : public FSTree
-	{
-		public:
-			typedef premapped::function Function;
-			typedef premapped::mapping  Mapping;
-		
-		private:
-			typedef const Mapping* Mappings;
-			
-			typedef void (*Destructor)( const FSTree* );
-			
-			Destructor  itsDestructor;
-			Mappings    itsMappings;
-		
-		public:
-			FSTree_Premapped( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  Mappings             mappings = premapped::empty_mappings,
-			                  Destructor           dtor     = NULL )
-			:
-				FSTree( parent, name, S_IFDIR | 0700 ),
-				itsMappings( mappings ),
-				itsDestructor( dtor )
-			{
-			}
-			
-			~FSTree_Premapped();
-			
-			void Delete() const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
 	
 	
 	template < class FSTree_Type >
