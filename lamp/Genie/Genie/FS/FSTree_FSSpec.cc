@@ -402,6 +402,14 @@ namespace Genie
 		file->SetTimes( times );
 	}
 	
+	static void hfs_rename( const FSTree*     node,
+	                        const FSTreePtr&  destination )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->Rename( destination );
+	}
+	
 	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode )
 	{
 		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
@@ -512,7 +520,7 @@ namespace Genie
 		NULL,
 		&hfs_utime,
 		NULL,
-		NULL,
+		&hfs_rename,
 		&hfs_data_methods,
 		&hfs_link_methods,
 		&hfs_dir_methods,
