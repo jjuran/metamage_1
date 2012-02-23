@@ -63,6 +63,8 @@ namespace Genie
 	};
 	
 	
+	static void app_symlink_remove( const FSTree* node );
+	
 	class app_symlink : public FSTree_SymbolicLink
 	{
 		public:
@@ -70,16 +72,14 @@ namespace Genie
 			             const plus::string&  name,
 			             const plus::string&  target )
 			:
-				FSTree_SymbolicLink( parent, name, target )
+				FSTree_SymbolicLink( parent, name, target, &app_symlink_remove )
 			{
 			}
-			
-			void Delete() const;
 	};
 	
-	void app_symlink::Delete() const
+	static void app_symlink_remove( const FSTree* node )
 	{
-		app_map::iterator it = the_application_map.find( Name() );
+		app_map::iterator it = the_application_map.find( node->name() );
 		
 		if ( it == the_application_map.end() )
 		{
