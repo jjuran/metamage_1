@@ -412,11 +412,20 @@ namespace Genie
 		InvalidateWindowForView( node );
 	}
 	
+	static void view_remove( const FSTree* node )
+	{
+		const FSTree_View* file = static_cast< const FSTree_View* >( node );
+		
+		return file->Delete();
+	}
+	
 	static node_method_set view_methods =
 	{
 		NULL,
 		NULL,
-		&view_touch
+		&view_touch,
+		NULL,
+		&view_remove
 	};
 	
 	FSTree_View::FSTree_View( const FSTreePtr&     parent,
