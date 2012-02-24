@@ -441,6 +441,8 @@ namespace Genie
 			if ( dir_methods->mkdir )
 			{
 				dir_methods->mkdir( this, mode );
+				
+				return;
 			}
 		}
 
@@ -490,6 +492,8 @@ namespace Genie
 			if ( dir_methods->listdir )
 			{
 				dir_methods->listdir( this, cache );
+				
+				return;
 			}
 		}
 		
