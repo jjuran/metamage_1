@@ -3,6 +3,7 @@ package Compile::Driver::Catalog;
 use Compile::Driver::Files;
 use Compile::Driver::InputFile::Catalog;
 use Compile::Driver::InputFile::Description;
+use Compile::Driver::Platform;
 
 use warnings;
 use strict;
@@ -46,8 +47,13 @@ sub add_project_description
 		$name = $explicit_name;
 	}
 	
-	my $for = 0;
-	my $not = 0;
+	my @platform = @{ $data->{platform} || [] };
+	
+	my @for = grep { !m/^ ! /x } @platform;
+	my @not = grep { s/^ ! //x } @platform;
+	
+	my $for = Compile::Driver::Platform::mask_for_values( @for );
+	my $not = Compile::Driver::Platform::mask_for_values( @not );
 	
 	my $platform = "$for/$not";
 	
