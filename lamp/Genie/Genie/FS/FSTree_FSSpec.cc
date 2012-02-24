@@ -88,6 +88,11 @@
 #include "Genie/Utilities/CreateAlias.hh"
 
 
+#ifndef CONFIG_HFS_ASYNC_RESOLVEPATH
+#define CONFIG_HFS_ASYNC_RESOLVEPATH  0
+#endif
+
+
 namespace Genie
 {
 	
@@ -338,7 +343,11 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 			
+		#if CONFIG_HFS_ASYNC_RESOLVEPATH
+			
 			FSTreePtr ResolvePath( const char*& begin, const char* end ) const;
+			
+		#endif
 		
 		private:
 			void CreateFile() const;
@@ -1352,6 +1361,8 @@ namespace Genie
 	
 #endif
 	
+#if CONFIG_HFS_ASYNC_RESOLVEPATH
+	
 	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
 	{
 		ASSERT( begin < end );
@@ -1377,6 +1388,8 @@ namespace Genie
 		
 	#endif
 	}
+	
+#endif  // #if CONFIG_HFS_ASYNC_RESOLVEPATH
 	
 	void FSTree_HFS::FinishCreation() const
 	{
