@@ -93,7 +93,7 @@ namespace Genie
 			
 			void SetTimes( const struct timespec times[2] ) const;
 			
-			virtual void Delete() const;
+			void Delete() const;
 			
 			void Rename( const FSTreePtr& destination ) const;
 			

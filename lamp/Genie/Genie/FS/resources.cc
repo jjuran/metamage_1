@@ -268,6 +268,8 @@ namespace Genie
 	};
 	
 	
+	static void rsrc_file_remove( const FSTree* node );
+	
 	static void rsrc_file_rename( const FSTree* node, const FSTreePtr& destination );
 	
 	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode );
@@ -286,7 +288,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
+		&rsrc_file_remove,
 		&rsrc_file_rename,
 		&rsrc_file_data_methods
 	};
@@ -388,6 +390,13 @@ namespace Genie
 		                           : new Handle_IOHandle( Self(), flags, h );
 		
 		return result;
+	}
+	
+	static void rsrc_file_remove( const FSTree* node )
+	{
+		const FSTree_Rsrc_File* file = static_cast< const FSTree_Rsrc_File* >( node );
+		
+		return file->Delete();
 	}
 	
 	static void rsrc_file_rename( const FSTree* node, const FSTreePtr& destination )

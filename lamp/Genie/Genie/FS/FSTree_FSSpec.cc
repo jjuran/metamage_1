@@ -411,6 +411,13 @@ namespace Genie
 		file->SetTimes( times );
 	}
 	
+	static void hfs_remove( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->Delete();
+	}
+	
 	static void hfs_rename( const FSTree*     node,
 	                        const FSTreePtr&  destination )
 	{
@@ -528,7 +535,7 @@ namespace Genie
 		&hfs_chmod,
 		NULL,
 		&hfs_utime,
-		NULL,
+		&hfs_remove,
 		&hfs_rename,
 		&hfs_data_methods,
 		&hfs_link_methods,

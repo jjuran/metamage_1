@@ -13,6 +13,7 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -25,6 +26,17 @@ namespace Genie
 		
 	}
 	
+	
+	static void premapped_remove( const FSTree* node );
+	
+	static const node_method_set premapped_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&premapped_remove
+	};
 	
 	class FSTree_Premapped : public FSTree
 	{
@@ -46,7 +58,7 @@ namespace Genie
 			                  Mappings             mappings = premapped::empty_mappings,
 			                  Destructor           dtor     = NULL )
 			:
-				FSTree( parent, name, S_IFDIR | 0700 ),
+				FSTree( parent, name, S_IFDIR | 0700, &premapped_methods ),
 				itsMappings( mappings ),
 				itsDestructor( dtor )
 			{
@@ -60,6 +72,13 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	static void premapped_remove( const FSTree* node )
+	{
+		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
+		
+		file->Delete();
+	}
 	
 	
 	static const FSTree_Premapped::Mapping*

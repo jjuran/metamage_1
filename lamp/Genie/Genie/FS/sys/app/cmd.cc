@@ -111,6 +111,8 @@ namespace Genie
 	};
 	
 	
+	static void cmd_symlink_remove( const FSTree* node );
+	
 	class cmd_symlink : public FSTree_SymbolicLink
 	{
 		public:
@@ -118,16 +120,14 @@ namespace Genie
 			             const plus::string&  name,
 			             const plus::string&  target )
 			:
-				FSTree_SymbolicLink( parent, name, target )
+				FSTree_SymbolicLink( parent, name, target, &cmd_symlink_remove )
 			{
 			}
-			
-			void Delete() const;
 	};
 	
-	void cmd_symlink::Delete() const
+	static void cmd_symlink_remove( const FSTree* node )
 	{
-		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( Name() ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( node->name() ) );
 		
 		cmd_map::iterator it = the_command_map.find( code );
 		

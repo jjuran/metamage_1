@@ -82,6 +82,18 @@ namespace Genie
 		file->CreateDirectory( mode );
 	}
 	
+	
+	static void resfile_dir_remove( const FSTree* node );
+	
+	static const node_method_set resfile_dir_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&resfile_dir_remove
+	};
+	
 	class FSTree_ResFileDir : public FSTree
 	{
 		private:
@@ -92,7 +104,7 @@ namespace Genie
 			                   const plus::string&  name,
 			                   const FSSpec&        file )
 			:
-				FSTree( parent, name, S_IFDIR | 0700 ),
+				FSTree( parent, name, S_IFDIR | 0700, &resfile_dir_methods ),
 				itsFileSpec( file )
 			{
 			}
@@ -103,6 +115,13 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	static void resfile_dir_remove( const FSTree* node )
+	{
+		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
+		
+		file->Delete();
+	}
 	
 	
 	static bool ResFile_dir_exists( const FSSpec& file )
