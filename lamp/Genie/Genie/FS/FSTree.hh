@@ -121,7 +121,7 @@ namespace Genie
 			
 			IOPtr ChangeToDirectory() const;
 			
-			virtual void CreateDirectory( mode_t mode ) const;
+			void CreateDirectory( mode_t mode ) const;
 			
 			FSTreePtr Lookup( const plus::string& name, const FSTree* parent = NULL ) const;
 			

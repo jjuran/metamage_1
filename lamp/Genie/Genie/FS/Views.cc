@@ -25,6 +25,7 @@
 #include "Pedestal/EmptyView.hh"
 
 // Genie
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -334,6 +335,34 @@ namespace Genie
 			}
 	};
 	
+	static void unview_mkdir( const FSTree* node, mode_t mode )
+	{
+		const FSTree_Unview* file = static_cast< const FSTree_Unview* >( node );
+		
+		file->CreateDirectory( mode );
+	}
+	
+	static const dir_method_set unview_dir_methods =
+	{
+		NULL,
+		NULL,
+		&unview_mkdir
+	};
+	
+	static const node_method_set unview_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&unview_dir_methods
+	};
+	
+	
 	class FSTree_View : public FSTree
 	{
 		private:
@@ -370,7 +399,7 @@ namespace Genie
 	                              const plus::string&  name,
 	                              ViewGetter           get )
 	:
-		FSTree( parent, name, 0 ),
+		FSTree( parent, name, 0, &unview_methods ),
 		itsGetter( get )
 	{
 	}

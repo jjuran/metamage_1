@@ -21,6 +21,8 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/resources.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -33,6 +35,28 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static void empty_rsrc_fork_mkdir( const FSTree* node, mode_t mode );
+	
+	static const dir_method_set empty_rsrc_fork_dir_methods =
+	{
+		NULL,
+		NULL,
+		&empty_rsrc_fork_mkdir
+	};
+	
+	static const node_method_set empty_rsrc_fork_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&empty_rsrc_fork_dir_methods
+	};
+	
 	class FSTree_EmptyRsrcForkDir : public FSTree
 	{
 		private:
@@ -43,13 +67,20 @@ namespace Genie
 			                         const plus::string&  name,
 			                         const FSSpec&        file )
 			:
-				FSTree( parent, name, 0 ),
+				FSTree( parent, name, 0, &empty_rsrc_fork_methods ),
 				itsFileSpec( file )
 			{
 			}
 			
 			void CreateDirectory( mode_t mode ) const;
 	};
+	
+	static void empty_rsrc_fork_mkdir( const FSTree* node, mode_t mode )
+	{
+		const FSTree_EmptyRsrcForkDir* file = static_cast< const FSTree_EmptyRsrcForkDir* >( node );
+		
+		file->CreateDirectory( mode );
+	}
 	
 	class FSTree_ResFileDir : public FSTree
 	{
