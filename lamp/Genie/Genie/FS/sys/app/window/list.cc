@@ -19,6 +19,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/sys/app/window/list/REF.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"

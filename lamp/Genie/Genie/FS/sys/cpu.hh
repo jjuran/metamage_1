@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const FSTree_Premapped::Mapping sys_cpu_Mappings[];
+	extern const premapped::mapping sys_cpu_Mappings[];
 	
 }
 

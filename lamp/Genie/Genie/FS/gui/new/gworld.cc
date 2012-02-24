@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/gworld.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -479,7 +482,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< PixMap_Property< prop > >::value
 	
-	static const FSTree_Premapped::Mapping local_mappings[] =
+	static const premapped::mapping local_mappings[] =
 	{
 		{ "rowBytes", PROPERTY( PixMap_rowBytes ) },
 		

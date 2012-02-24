@@ -14,7 +14,7 @@
 namespace Genie
 {
 	
-	const FSTree_Premapped::Mapping sys_mac_crm_Mappings[] =
+	const premapped::mapping sys_mac_crm_Mappings[] =
 	{
 		{ "serial", &New_FSTree_sys_mac_crm_serial },
 		

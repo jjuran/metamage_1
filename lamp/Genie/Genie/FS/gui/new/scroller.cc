@@ -162,7 +162,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
-	static const FSTree_Premapped::Mapping local_mappings[] =
+	static const premapped::mapping local_mappings[] =
 	{
 		{ "width",  PROPERTY( Width_Property  ) },
 		{ "height", PROPERTY( Height_Property ) },

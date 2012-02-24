@@ -15,7 +15,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_time_Mappings[] =
+	const premapped::mapping sys_mac_time_Mappings[] =
 	{
 		{ ".dls+gmt-delta", PROPERTY( sys_mac_time_dlsgmtdelta ) },
 		{ "dls",            PROPERTY( sys_mac_time_dls         ) },

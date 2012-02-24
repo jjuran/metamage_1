@@ -5,6 +5,9 @@
 
 #include "Genie/FS/FSTree_Proc.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C
 #include <time.h>
 
@@ -177,7 +180,7 @@ namespace Genie
 	};
 	
 	
-	extern const FSTree_Premapped::Mapping proc_PID_Mappings[];
+	extern const premapped::mapping proc_PID_Mappings[];
 	
 	struct valid_name_of_pid
 	{
@@ -531,7 +534,7 @@ namespace Genie
 	
 	#define GENERATED( gen )  &new_generated, (void*) &proc_PID_Property< gen >::Read
 	
-	const FSTree_Premapped::Mapping proc_PID_Mappings[] =
+	const premapped::mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
 		

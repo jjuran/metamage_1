@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// POSIX
+#include <sys/stat.h>
+
 // iota
 #include "iota/strings.hh"
 
@@ -26,6 +29,7 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"
@@ -81,7 +85,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &gdev_main_methods );
 	}
 	
-	const FSTree_Premapped::Mapping sys_mac_gdev_Mappings[] =
+	const premapped::mapping sys_mac_gdev_Mappings[] =
 	{
 		{ "main", &gdev_main_factory },
 		

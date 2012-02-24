@@ -5,8 +5,12 @@
 
 #include "Genie/FS/FSTree_Directory.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
 #include "Genie/FS/file-tests.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
 
@@ -14,9 +18,48 @@
 namespace Genie
 {
 	
-	const FSTree_Premapped::Mapping
-	//
-	FSTree_Premapped::empty_mappings[] = { { NULL, NULL } };
+	namespace premapped
+	{
+		
+		const mapping empty_mappings[] = { { NULL, NULL } };
+		
+	}
+	
+	
+	class FSTree_Premapped : public FSTree
+	{
+		public:
+			typedef premapped::function Function;
+			typedef premapped::mapping  Mapping;
+		
+		private:
+			typedef const Mapping* Mappings;
+			
+			typedef void (*Destructor)( const FSTree* );
+			
+			Destructor  itsDestructor;
+			Mappings    itsMappings;
+		
+		public:
+			FSTree_Premapped( const FSTreePtr&     parent,
+			                  const plus::string&  name,
+			                  Mappings             mappings = premapped::empty_mappings,
+			                  Destructor           dtor     = NULL )
+			:
+				FSTree( parent, name, S_IFDIR | 0700 ),
+				itsMappings( mappings ),
+				itsDestructor( dtor )
+			{
+			}
+			
+			~FSTree_Premapped();
+			
+			void Delete() const;
+			
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
+			
+			void IterateIntoCache( FSTreeCache& cache ) const;
+	};
 	
 	
 	static const FSTree_Premapped::Mapping*
@@ -88,10 +131,10 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&                   parent,
-	                             const plus::string&                name,
-	                             const FSTree_Premapped::Mapping    mappings[],
-	                             void                             (*dtor)(const FSTree*) )
+	FSTreePtr Premapped_Factory( const FSTreePtr&            parent,
+	                             const plus::string&         name,
+	                             const premapped::mapping    mappings[],
+	                             void                      (*dtor)(const FSTree*) )
 	{
 		return FSTreePtr( new FSTree_Premapped( parent, name, mappings, dtor ) );
 	}

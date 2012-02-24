@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -21,6 +24,7 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/link_method_set.hh"
@@ -234,9 +238,9 @@ namespace Genie
 		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
 	}
 	
-	extern const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
+	extern const premapped::mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
 	
-	const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[] =
+	const premapped::mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[] =
 	{
 		{ "latest",  &new_sys_mac_vol_list_N_dt_appls_QUAD_latest },
 		
@@ -387,7 +391,7 @@ namespace Genie
 	}
 	
 	
-	const FSTree_Premapped::Mapping sys_mac_vol_list_N_dt_Mappings[] =
+	const premapped::mapping sys_mac_vol_list_N_dt_Mappings[] =
 	{
 		{ "dir",    &new_sys_mac_vol_list_N_dt_dir   },
 		{ "appls",  &new_sys_mac_vol_list_N_dt_appls },

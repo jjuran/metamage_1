@@ -15,7 +15,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	const FSTree_Premapped::Mapping sys_mac_event_Mappings[] =
+	const premapped::mapping sys_mac_event_Mappings[] =
 	{
 		{ "post", PREMAPPED( sys_mac_event_post_Mappings ) },
 		

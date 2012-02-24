@@ -23,7 +23,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	const FSTree_Premapped::Mapping Root_Overlay_Mappings[] =
+	const premapped::mapping Root_Overlay_Mappings[] =
 	{
 		{ "Users",   &New_FSTree_Users   },
 		{ "Volumes", &New_FSTree_Volumes },

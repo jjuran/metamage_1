@@ -17,7 +17,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_user_Mappings[] =
+	const premapped::mapping sys_mac_user_Mappings[] =
 	{
 		{ "home",  &New_FSTree_sys_mac_user_home  },
 		{ "prefs", &New_FSTree_sys_mac_user_prefs },

@@ -101,7 +101,7 @@ namespace Genie
 	}
 	
 	
-	static const FSTree_Premapped::Mapping local_mappings[] =
+	static const premapped::mapping local_mappings[] =
 	{
 		{ NULL, NULL }
 	};

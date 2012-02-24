@@ -29,6 +29,7 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 
@@ -181,7 +182,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree_Premapped( parent, name );
+		return Premapped_Factory( parent, name );
 	}
 	
 	class gestalt_IteratorConverter

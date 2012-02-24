@@ -186,7 +186,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Selected  >  Selected_Property;
 	typedef View_Property< plus::serialize_bool, Disabling >  Disabling_Property;
 	
-	static const FSTree_Premapped::Mapping local_mappings[] =
+	static const premapped::mapping local_mappings[] =
 	{
 		{ "data", &Data_Factory },
 		

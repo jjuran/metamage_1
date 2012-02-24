@@ -183,7 +183,7 @@ namespace Genie
 	};
 	
 	
-	extern const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[];
+	extern const premapped::mapping sys_mac_vol_N_Mappings[];
 	
 	static FSTreePtr vol_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
@@ -546,7 +546,7 @@ namespace Genie
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_mac_vol_N_Property< access > )
 	
-	const FSTree_Premapped::Mapping sys_mac_vol_N_Mappings[] =
+	const premapped::mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_vol_N_name ) },
 		

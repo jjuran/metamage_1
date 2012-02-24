@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/list.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <vector>
 
@@ -305,7 +308,7 @@ namespace Genie
 	
 	typedef List_Property< plus::serialize_bool, Overlap >  Overlap_Property;
 	
-	static const FSTree_Premapped::Mapping local_mappings[] =
+	static const premapped::mapping local_mappings[] =
 	{
 		{ "data", &list_data_factory },
 		

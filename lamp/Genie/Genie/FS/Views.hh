@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/FS/property.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 
 
@@ -75,7 +76,7 @@ namespace Genie
 	class FSTree_new_View : public FSTree
 	{
 		private:
-			typedef const FSTree_Premapped::Mapping* Mappings;
+			typedef const premapped::mapping* Mappings;
 			
 			typedef void (*Destructor)( const FSTree* delegate );
 			

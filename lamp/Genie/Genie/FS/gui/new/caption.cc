@@ -10,6 +10,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -268,7 +269,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	static const FSTree_Premapped::Mapping local_mappings[] =
+	static const premapped::mapping local_mappings[] =
 	{
 		{ "text", &caption_text_factory },
 		

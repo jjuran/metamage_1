@@ -85,7 +85,7 @@ namespace Genie
 		return ADBAddress_is_valid( N::ADBAddress( hex_digit ) );
 	}
 	
-	extern const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[];
+	extern const premapped::mapping sys_mac_adb_N_Mappings[];
 	
 	static FSTreePtr adb_lookup( const FSTreePtr& parent, const plus::string& name )
 	{
@@ -199,7 +199,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const FSTree_Premapped::Mapping sys_mac_adb_N_Mappings[] =
+	const premapped::mapping sys_mac_adb_N_Mappings[] =
 	{
 		{ "type",      PROPERTY( sys_mac_adb_N_type   ) },
 		{ "origin",    PROPERTY( sys_mac_adb_N_origin ) },

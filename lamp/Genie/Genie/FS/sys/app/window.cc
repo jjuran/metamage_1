@@ -59,7 +59,7 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, sys_app_window_front_ReadLink() );
 	}
 	
-	const FSTree_Premapped::Mapping sys_app_window_Mappings[] =
+	const premapped::mapping sys_app_window_Mappings[] =
 	{
 		{ "front", &new_front },
 		

@@ -458,7 +458,7 @@ namespace Genie
 	typedef Access_WindowColor< N::GetPortBackColor, N::RGBBackColor > Access_WindowBackColor;
 	typedef Access_WindowColor< N::GetPortForeColor, N::RGBForeColor > Access_WindowForeColor;
 	
-	const FSTree_Premapped::Mapping sys_app_window_list_REF_Mappings[] =
+	const premapped::mapping sys_app_window_list_REF_Mappings[] =
 	{
 		{ ".mac-title", PROPERTY(                     window_title   ) },
 		{      "title", PROPERTY( utf8_text_property< window_title > ) },

@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const FSTree_Premapped::Mapping sys_app_menu_Mappings[];
+	extern const premapped::mapping sys_app_menu_Mappings[];
 	
 }
 

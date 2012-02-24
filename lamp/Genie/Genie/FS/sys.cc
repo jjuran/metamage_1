@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -20,6 +23,7 @@
 // Genie
 #include "Genie/code/fixed_address.hh"
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/app.hh"
@@ -86,7 +90,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree_Premapped( parent, name );
+		return Premapped_Factory( parent, name );
 	}
 	
 	class syscall_IteratorConverter
@@ -151,9 +155,9 @@ namespace Genie
 	
 	#define EXEC( main )  &Executable_Factory, (const void*) &main
 	
-	extern const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[];
+	extern const premapped::mapping sys_kernel_bin_Mappings[];
 	
-	const FSTree_Premapped::Mapping sys_kernel_bin_Mappings[] =
+	const premapped::mapping sys_kernel_bin_Mappings[] =
 	{
 		{ "true",  EXEC( main_true  ) },
 		{ "false", EXEC( main_false ) },
@@ -166,9 +170,9 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	extern const FSTree_Premapped::Mapping sys_kernel_Mappings[];
+	extern const premapped::mapping sys_kernel_Mappings[];
 	
-	const FSTree_Premapped::Mapping sys_kernel_Mappings[] =
+	const premapped::mapping sys_kernel_Mappings[] =
 	{
 		{ "bin",     PREMAPPED( sys_kernel_bin_Mappings ) },
 		
@@ -177,7 +181,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	const FSTree_Premapped::Mapping sys_Mappings[] =
+	const premapped::mapping sys_Mappings[] =
 	{
 		{ "app",    PREMAPPED( sys_app_Mappings    ) },
 		{ "cpu",    PREMAPPED( sys_cpu_Mappings    ) },
