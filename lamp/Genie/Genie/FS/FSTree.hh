@@ -95,7 +95,7 @@ namespace Genie
 			
 			virtual void Delete() const;
 			
-			virtual void Rename( const FSTreePtr& destination ) const;
+			void Rename( const FSTreePtr& destination ) const;
 			
 			virtual void HardLink( const FSTreePtr& destination ) const;
 			
