@@ -227,6 +227,25 @@ namespace Genie
 	}
 	
 	
+	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode );
+	
+	static const data_method_set unrsrc_file_data_methods =
+	{
+		&unrsrc_file_open
+	};
+	
+	static const node_method_set unrsrc_file_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&unrsrc_file_data_methods
+	};
+	
+	
 	class FSTree_Unrsrc_File : public FSTree
 	{
 		private:
@@ -239,7 +258,7 @@ namespace Genie
 			                    const plus::string&  name,
 			                    const FSSpec&        file )
 			:
-				FSTree( parent, name, 0 ),
+				FSTree( parent, name, 0, &unrsrc_file_methods ),
 				itsFileSpec( file ),
 				its_resinfo( GetResInfo_from_name( name ) )
 			{
@@ -346,6 +365,13 @@ namespace Genie
 		                           : new Handle_IOHandle( Self(), flags, h );
 		
 		return result;
+	}
+	
+	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const FSTree_Unrsrc_File* file = static_cast< const FSTree_Unrsrc_File* >( node );
+		
+		return file->Open( flags, mode );
 	}
 	
 	IOPtr FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const

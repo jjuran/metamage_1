@@ -23,6 +23,8 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 #ifndef O_EXEC
@@ -59,6 +61,26 @@ namespace Genie
 		return reading * 0400 | writing * 0200 | execing * 0100;
 	}
 	
+	
+	static IOPtr anonymous_open( const FSTree* node, int flags, mode_t mode );
+	
+	static const data_method_set anonymous_data_methods =
+	{
+		&anonymous_open
+	};
+	
+	static const node_method_set anonymous_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&anonymous_data_methods
+	};
+	
+	
 	class FSTree_IOHandle : public FSTree
 	{
 		private:
@@ -69,7 +91,8 @@ namespace Genie
 			:
 				FSTree( null_FSTreePtr,
 				        IOName( handle.get(), true ),
-				        S_IFIFO | permmode_from_openflags( handle->GetFlags() ) ),
+				        S_IFIFO | permmode_from_openflags( handle->GetFlags() ),
+				        &anonymous_methods ),
 				itsHandle( handle )
 			{
 			}
@@ -79,6 +102,15 @@ namespace Genie
 				return itsHandle;
 			}
 	};
+	
+	
+	static IOPtr anonymous_open( const FSTree* node, int flags, mode_t mode )
+	{
+		const FSTree_IOHandle* file = static_cast< const FSTree_IOHandle* >( node );
+		
+		return file->Open( flags, mode );
+	}
+	
 	
 	IOHandle::IOHandle( OpenFlags flags ) : itsOpenFlags( flags )
 	{

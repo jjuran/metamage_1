@@ -47,6 +47,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
@@ -600,21 +601,38 @@ namespace Genie
 	};
 	
 	
+	static IOPtr port_tty_open( const FSTree* node, int flags, mode_t mode );
+	
+	static const data_method_set port_tty_data_methods =
+	{
+		&port_tty_open
+	};
+	
+	static const node_method_set port_tty_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&port_tty_data_methods
+	};
+	
+	
 	class FSTree_sys_port_ADDR_tty : public FSTree
 	{
 		public:
 			FSTree_sys_port_ADDR_tty( const FSTreePtr&     parent,
 			                          const plus::string&  name )
 			:
-				FSTree( parent, name, S_IFCHR | 0600 )
+				FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods )
 			{
 			}
 			
 			const FSTree* WindowKey() const  { return ParentRef().get(); }
 			
 			void Attach( const FSTreePtr& target ) const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	void FSTree_sys_port_ADDR_tty::Attach( const FSTreePtr& target ) const
@@ -629,11 +647,9 @@ namespace Genie
 		return new TerminalHandle( name );
 	}
 	
-	IOPtr
-	//
-	FSTree_sys_port_ADDR_tty::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr port_tty_open( const FSTree* node, int flags, mode_t mode )
 	{
-		WindowParameters& params = gWindowParametersMap[ WindowKey() ];
+		WindowParameters& params = gWindowParametersMap[ node->owner() ];
 		
 		IOPtr tty;
 		
@@ -645,7 +661,7 @@ namespace Genie
 		}
 		
 		plus::string pathname = ( has_tty ? tty->GetFile().get()
-		                                  : this                 )->Pathname();
+		                                  : node                 )->Pathname();
 		
 		IOPtr terminal = NewTerminal( pathname );
 		
