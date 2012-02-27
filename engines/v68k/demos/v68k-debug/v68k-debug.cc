@@ -15,8 +15,8 @@
 // v68k
 #include "v68k/endian.hh"
 
-// v68k-debug
-#include "syscall-bridge.hh"
+// v68k-syscalls
+#include "syscall/bridge.hh"
 
 
 #pragma exceptions off
