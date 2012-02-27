@@ -1,6 +1,6 @@
 /*
-	syscall-bridge.cc
-	-----------------
+	bridge.cc
+	---------
 */
 
 // Standard C
@@ -14,8 +14,8 @@
 // v68k
 #include "v68k/endian.hh"
 
-// v68k-exec
-#include "syscall-bridge.hh"
+// v68k-syscalls
+#include "syscall/bridge.hh"
 
 
 #pragma exceptions off

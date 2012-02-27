@@ -1,6 +1,6 @@
 /*
-	syscall-bridge.hh
-	-----------------
+	bridge.hh
+	---------
 */
 
 #ifndef SYSCALLBRIDGE_HH
