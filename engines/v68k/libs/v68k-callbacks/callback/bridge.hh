@@ -20,6 +20,7 @@ enum
 	division_by_zero,
 	privilege_violation,
 	line_F_emulator,
+	ExitToShell_trap,
 	n
 };
 

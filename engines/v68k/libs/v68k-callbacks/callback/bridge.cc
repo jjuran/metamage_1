@@ -35,6 +35,14 @@ static uint32_t unimplemented_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t ExitToShell_callback( v68k::emulator& emu )
+{
+	exit( 0 );
+	
+	// Not reached
+	return nil;
+}
+
 
 #define ERR_MSG( msg )  "v68k: exception: " msg "\n"
 
@@ -86,6 +94,7 @@ static const function_type the_callbacks[] =
 	&division_by_zero_callback,
 	&privilege_violation_callback,
 	&line_F_emulator_callback,
+	&ExitToShell_callback,
 	NULL
 };
 
