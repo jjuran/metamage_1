@@ -119,6 +119,17 @@ const uint32_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
 
+static void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
+{
+	const uint32_t unimplemented = v68k::big_longword( address );
+	
+	for ( uint32_t* p = table;  p < end;  ++p )
+	{
+		*p = unimplemented;
+	}
+}
+
+
 static const uint16_t loader_code[] =
 {
 	0x027C,  // ANDI #DFFF,SR  ; clear S
@@ -205,6 +216,16 @@ static int execute_68k( int argc, char** argv )
 	v68k::user::os_load_spec load = { mem, mem_size, os_address };
 	
 	load_vectors( load );
+	
+	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
+	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
+	
+	const uint32_t null_routine = load.mem_used - 2;
+	
+	const uint32_t unimplemented = callback_address( v68k::callback::unimplemented );
+	
+	init_trap_table( os_traps, os_traps + os_trap_count, null_routine  );
+	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
 	
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
