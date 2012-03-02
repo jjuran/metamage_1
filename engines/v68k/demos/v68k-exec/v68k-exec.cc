@@ -43,14 +43,14 @@ using v68k::big_longword;
 	0K	+-----------------------+
 		| System vectors        |
 	1K	+-----------------------+
-		|                       |
+		| OS trap table         |
 	2K	+-----------------------+
 		| OS / supervisor stack |
 	3K	+-----------------------+
 		|                       |
-	4K	+-----------------------+
+	4K	|                       |
 		|                       |
-		|                       |
+		| Toolbox trap table    |
 		|                       |
 		|                       |
 		|                       |
@@ -100,6 +100,12 @@ const uint32_t boot_address = 7168;
 const uint32_t initial_SSP  = 3072;
 const uint32_t initial_USP  = 16384;
 const uint32_t code_address = 16384;
+
+const uint32_t os_trap_table_address = 1024;
+const uint32_t tb_trap_table_address = 3072;
+
+const uint32_t os_trap_count = 1 <<  8;  //  256, 1K
+const uint32_t tb_trap_count = 1 << 10;  // 1024, 4K
 
 const uint32_t mem_size = code_address + code_max_size;
 
