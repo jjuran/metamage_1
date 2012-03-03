@@ -30,10 +30,10 @@ namespace v68k
 	
 	static const microcode bit_op_microcodes[] =
 	{
+		&microcode_NOP,
 		&microcode_BCHG,
 		&microcode_BCLR,
-		&microcode_BSET,
-		&microcode_NOP
+		&microcode_BSET
 	};
 	
 	static const microcode modify_SR_microcodes[] =
