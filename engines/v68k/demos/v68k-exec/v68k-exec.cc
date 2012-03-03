@@ -15,6 +15,9 @@
 // v68k
 #include "v68k/endian.hh"
 
+// v68k-user
+#include "v68k-user/load.hh"
+
 // v68k-syscalls
 #include "syscall/bridge.hh"
 
@@ -22,7 +25,6 @@
 #pragma exceptions off
 
 
-using v68k::big_word;
 using v68k::big_longword;
 
 
@@ -92,22 +94,24 @@ const uint32_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
 
-static const uint16_t os[] =
+static const uint16_t bkpt_7_code[] =
 {
-	// Jump over handlers
-	
-	0x601A,  // BRA.S  *+28
-	
 	// Illegal Instruction,
 	// Privilege Violation
 	
-	0x484F,  // BKPT  #7
-	
+	0x484F  // BKPT  #7
+};
+
+static const uint16_t finish_code[] =
+{
 	// Trap 15
 	
 	0x4E72,  // STOP #FFFF  ; finish
-	0xFFFF,
-	
+	0xFFFF
+};
+
+static const uint16_t trap_0_code[] =
+{
 	// Trap 0
 	
 	0x41EF,  // LEA  (2,A7),A0
@@ -120,17 +124,21 @@ static const uint16_t os[] =
 	0x30BC,  // MOVE.W  #0x484A,(A0)
 	0x484A,
 	
-	0x4E73,  // RTE
-	
+	0x4E73   // RTE
+};
+
+static const uint16_t line_A_code[] =
+{
 	// Line A Emulator
 	
 	0x54AF,  // ADDQ.L  #2,(2,A7)
 	0x0002,
 	
-	0x4E73,  // RTE
-	
-	// OS resumes here
-	
+	0x4E73   // RTE
+};
+
+static const uint16_t loader_code[] =
+{
 	0x027C,  // ANDI #DFFF,SR  ; clear S
 	0xDFFF,
 	
@@ -163,47 +171,25 @@ static const uint16_t os[] =
 	0x4e4F   // TRAP  #15
 };
 
-const uint32_t bkpt_7_addr = os_address +  2;
-const uint32_t finish_addr = os_address +  4;
-const uint32_t trap_0_addr = os_address +  8;
-const uint32_t line_A_addr = os_address + 22;
+#define HANDLER( handler )  handler, sizeof handler
 
-static void load_vectors( uint8_t* mem )
+static void load_vectors( v68k::user::os_load_spec& os )
 {
-	uint32_t* vectors = (uint32_t*) mem;
+	uint32_t* vectors = (uint32_t*) os.mem_base;
 	
 	memset( vectors, 0xFF, 1024 );
 	
 	vectors[0] = big_longword( initial_SSP );  // isp
-	vectors[1] = big_longword( os_address  );  // pc
 	
-	vectors[4] = big_longword( bkpt_7_addr );  // Illegal Instruction
-	vectors[8] = big_longword( bkpt_7_addr );  // Privilege Violation
+	using v68k::user::install_exception_handler;
 	
-	vectors[10] = big_longword( line_A_addr );  // Line A Emulator
+	install_exception_handler( os,  1, HANDLER( loader_code ) );
+	install_exception_handler( os,  4, HANDLER( bkpt_7_code ) );
+	install_exception_handler( os, 10, HANDLER( line_A_code ) );
+	install_exception_handler( os, 32, HANDLER( trap_0_code ) );
+	install_exception_handler( os, 47, HANDLER( finish_code ) );
 	
-	vectors[32] = big_longword( trap_0_addr );  // Trap  0
-	vectors[47] = big_longword( finish_addr );  // Trap 15
-}
-
-static void load_code( uint16_t*        dest,
-                       const uint16_t*  begin,
-                       const uint16_t*  end )
-{
-	while ( begin < end )
-	{
-		*dest++ = big_word( *begin++ );
-	}
-}
-
-static inline void load_n_words( uint8_t*         mem,
-                                 uint32_t         offset,
-                                 const uint16_t*  begin,
-                                 size_t           n_words )
-{
-	uint16_t* dest = (uint16_t*) (mem + offset);
-	
-	load_code( dest, begin, begin + n_words );
+	vectors[8] = vectors[4];
 }
 
 static int execute_68k( int argc, char** argv )
@@ -221,8 +207,9 @@ static int execute_68k( int argc, char** argv )
 		abort();
 	}
 	
-	load_vectors( mem );
-	load_n_words( mem, os_address, os, sizeof os / 2 );
+	v68k::user::os_load_spec load = { mem, mem_size, os_address };
+	
+	load_vectors( load );
 	
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
