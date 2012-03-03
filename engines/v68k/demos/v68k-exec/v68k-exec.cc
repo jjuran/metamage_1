@@ -19,6 +19,9 @@
 #include "v68k-user/line_A_shim.hh"
 #include "v68k-user/load.hh"
 
+// v68k-callbacks
+#include "callback/bridge.hh"
+
 // v68k-syscalls
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
@@ -251,6 +254,16 @@ step_loop:
 		if ( bridge_call( emu ) )
 		{
 			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
+		}
+		
+		goto step_loop;
+	}
+	
+	if ( emu.condition == v68k::bkpt_3 )
+	{
+		if ( uint32_t new_opcode = v68k::callback::bridge( emu ) )
+		{
+			emu.acknowledge_breakpoint( new_opcode );
 		}
 		
 		goto step_loop;
