@@ -21,10 +21,28 @@ namespace callback {
 
 enum
 {
+	rts = 0x4E75,
 	nil = 0
 };
 
 typedef uint32_t (*function_type)( v68k::emulator& emu );
+
+
+static uint32_t pop_args( v68k::emulator& emu, int n_bytes )
+{
+	uint32_t return_address;
+	
+	if ( !emu.mem.get_long( emu.regs.a[7], return_address, emu.data_space() ) )
+	{
+		return nil;
+	}
+	
+	emu.regs.a[7] += n_bytes;
+	
+	const bool ok = emu.mem.put_long( emu.regs.a[7], return_address, emu.data_space() );
+	
+	return ok ? rts : nil;
+}
 
 
 static uint32_t unimplemented_callback( v68k::emulator& emu )
@@ -41,6 +59,15 @@ static uint32_t ExitToShell_callback( v68k::emulator& emu )
 	
 	// Not reached
 	return nil;
+}
+
+static uint32_t SysBeep_callback( v68k::emulator& emu )
+{
+	char c = 0x07;
+	
+	write( STDOUT_FILENO, &c, sizeof c );
+	
+	return pop_args( emu, sizeof (uint16_t) );
 }
 
 
@@ -95,6 +122,7 @@ static const function_type the_callbacks[] =
 	&privilege_violation_callback,
 	&line_F_emulator_callback,
 	&ExitToShell_callback,
+	&SysBeep_callback,
 	NULL
 };
 

@@ -21,6 +21,7 @@ enum
 	privilege_violation,
 	line_F_emulator,
 	ExitToShell_trap,
+	SysBeep_trap,
 	n
 };
 
