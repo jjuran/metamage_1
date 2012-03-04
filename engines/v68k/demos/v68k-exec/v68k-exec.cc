@@ -16,6 +16,7 @@
 #include "v68k/endian.hh"
 
 // v68k-user
+#include "v68k-user/line_A_shim.hh"
 #include "v68k-user/load.hh"
 
 // v68k-syscalls
@@ -111,16 +112,6 @@ static const uint16_t finish_code[] =
 	0xFFFF
 };
 
-static const uint16_t line_A_code[] =
-{
-	// Line A Emulator
-	
-	0x54AF,  // ADDQ.L  #2,(2,A7)
-	0x0002,
-	
-	0x4E73   // RTE
-};
-
 static const uint16_t loader_code[] =
 {
 	0x027C,  // ANDI #DFFF,SR  ; clear S
@@ -166,10 +157,11 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[0] = big_longword( initial_SSP );  // isp
 	
 	using v68k::user::install_exception_handler;
+	using v68k::user::line_A_shim;
 	
 	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	install_exception_handler( os,  4, HANDLER( bkpt_7_code ) );
-	install_exception_handler( os, 10, HANDLER( line_A_code ) );
+	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
 	install_exception_handler( os, 32, HANDLER( system_call ) );
 	install_exception_handler( os, 47, HANDLER( finish_code ) );
 	
