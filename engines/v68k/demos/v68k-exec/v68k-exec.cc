@@ -20,6 +20,7 @@
 
 // v68k-syscalls
 #include "syscall/bridge.hh"
+#include "syscall/handler.hh"
 
 
 #pragma exceptions off
@@ -110,23 +111,6 @@ static const uint16_t finish_code[] =
 	0xFFFF
 };
 
-static const uint16_t trap_0_code[] =
-{
-	// Trap 0
-	
-	0x41EF,  // LEA  (2,A7),A0
-	0x0002,
-	
-	0x5590,  // SUBQ.L  #2,(A0)
-	
-	0x2050,  // MOVEA.L  (A0),A0
-	
-	0x30BC,  // MOVE.W  #0x484A,(A0)
-	0x484A,
-	
-	0x4E73   // RTE
-};
-
 static const uint16_t line_A_code[] =
 {
 	// Line A Emulator
@@ -186,7 +170,7 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	install_exception_handler( os,  4, HANDLER( bkpt_7_code ) );
 	install_exception_handler( os, 10, HANDLER( line_A_code ) );
-	install_exception_handler( os, 32, HANDLER( trap_0_code ) );
+	install_exception_handler( os, 32, HANDLER( system_call ) );
 	install_exception_handler( os, 47, HANDLER( finish_code ) );
 	
 	vectors[8] = vectors[4];
