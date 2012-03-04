@@ -104,14 +104,6 @@ static const uint16_t bkpt_7_code[] =
 	0x484F  // BKPT  #7
 };
 
-static const uint16_t finish_code[] =
-{
-	// Trap 15
-	
-	0x4E72,  // STOP #FFFF  ; finish
-	0xFFFF
-};
-
 static const uint16_t loader_code[] =
 {
 	0x027C,  // ANDI #DFFF,SR  ; clear S
@@ -143,7 +135,9 @@ static const uint16_t loader_code[] =
 	0x4EB8,  // JSR  code_address
 	code_address,
 	
-	0x4e4F   // TRAP  #15
+	0x2F00,  // MOVE.L  D0,-(A7)
+	0x7001,  // MOVEQ  #1,D0
+	0x484A   // BKPT   #2
 };
 
 #define HANDLER( handler )  handler, sizeof handler
@@ -163,7 +157,6 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	install_exception_handler( os,  4, HANDLER( bkpt_7_code ) );
 	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
 	install_exception_handler( os, 32, HANDLER( system_call ) );
-	install_exception_handler( os, 47, HANDLER( finish_code ) );
 	
 	vectors[8] = vectors[4];
 }
@@ -257,11 +250,6 @@ step_loop:
 		}
 		
 		goto step_loop;
-	}
-	
-	if ( emu.condition == v68k::finished )
-	{
-		return emu.regs.d[0];
 	}
 	
 	switch ( emu.condition )
