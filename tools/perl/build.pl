@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
-use FindBin '$Bin';
+use FindBin '$RealBin';
 
-use lib $Bin;
+use lib $RealBin;
 
 use Compile::Driver::Configuration;
 use Compile::Driver::Jobs;
