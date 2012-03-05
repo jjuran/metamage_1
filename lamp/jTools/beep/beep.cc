@@ -3,15 +3,15 @@
  *	=======
  */
 
-// Mac OS
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
+// POSIX
+#include <unistd.h>
 
 
 int main( void )
 {
-	SysBeep( 30 );
+	const char c = 0x07;
+	
+	write( STDOUT_FILENO, &c, sizeof c );
 	
 	return 0;
 }
