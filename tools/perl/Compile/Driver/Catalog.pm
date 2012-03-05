@@ -120,15 +120,22 @@ sub create_catalog_file
 	close $out or die "$0: $path: $!\n";
 }
 
+sub platform_matches
+{
+	my ( $platform, $for, $not ) = @_;
+	
+	return !(~$platform & $for)  &&  !($platform & $not)
+}
+
 sub find_project
 {
-	my ( $name ) = @_;
+	my ( $name, $platform ) = @_;
 	
 	my $entry = $Catalog{ $name };
 	
 	return  if !defined $entry;
 	
-	my @matches = @$entry;
+	my @matches = grep { platform_matches( $platform, @{$_}{"FOR", "NOT"} ) } @$entry;
 	
 	return 0  if !@matches;
 	

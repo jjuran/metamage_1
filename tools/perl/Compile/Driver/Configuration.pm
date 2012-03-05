@@ -2,6 +2,7 @@ package Compile::Driver::Configuration;
 
 use Compile::Driver::Catalog;
 use Compile::Driver::Module;
+use Compile::Driver::Platform;
 
 use warnings;
 use strict;
@@ -23,6 +24,17 @@ sub new
 	return bless \%self, $class;
 }
 
+sub platform_mask
+{
+	my $self = shift;
+	
+	my %platform = %$self;
+	
+	delete $platform{ build };
+	
+	return Compile::Driver::Platform::mask_for_values( values %platform );
+}
+
 sub target
 {
 	my $self = shift;
@@ -42,11 +54,13 @@ sub get_module
 	
 	my $optional = !$mandatory  &&  $name =~ m{^ _ }x;
 	
-	my $key = $name;
+	my $mask = $self->platform_mask;
+	
+	my $key = "$name $mask";
 	
 	return $module_cache{ $key }  if exists $module_cache{ $key };
 	
-	my $desc = Compile::Driver::Catalog::find_project( $name );
+	my $desc = Compile::Driver::Catalog::find_project( $name, $mask );
 	
 	if ( !$desc )
 	{
