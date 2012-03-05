@@ -1,7 +1,7 @@
-/*	=======
- *	beep.cc
- *	=======
- */
+/*
+	beep.c
+	------
+*/
 
 // POSIX
 #include <unistd.h>
