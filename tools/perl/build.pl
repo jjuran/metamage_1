@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
+use FindBin '$Bin';
+
+use lib $Bin;
+
 use Compile::Driver::Configuration;
 use Compile::Driver::Jobs;
 use Compile::Driver::Module;
