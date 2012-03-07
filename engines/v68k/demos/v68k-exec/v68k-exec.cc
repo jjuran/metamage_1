@@ -52,7 +52,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-		| argc/argv/envp params |
+		|                       |
 		|                       |
 		|                       |
 		|                       |
@@ -60,11 +60,19 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-		| user stack            |
+		| argc/argv/envp params |
 		|                       |
 		|                       |
 		|                       |
 	12K	+-----------------------+
+		|                       |
+		|                       |
+		|                       |
+		| user stack            |
+		|                       |
+		|                       |
+		|                       |
+	16K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -80,7 +88,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	44K	+-----------------------+
+	48K	+-----------------------+
 	
 */
 
@@ -89,12 +97,12 @@ const uint32_t code_max_size   = 32768;
 
 const uint32_t os_address   = 1024;
 const uint32_t initial_SSP  = 2048;
-const uint32_t initial_USP  = 12288;
-const uint32_t code_address = 12288;
+const uint32_t initial_USP  = 16384;
+const uint32_t code_address = 16384;
 
 const uint32_t mem_size = code_address + code_max_size;
 
-const uint32_t params_addr = 4096;
+const uint32_t params_addr = 8192;
 
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
