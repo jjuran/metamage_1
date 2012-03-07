@@ -54,8 +54,8 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-		|                       |
-		|                       |
+	7K	+-----------------------+
+		| boot code             |
 	8K	+-----------------------+
 		|                       |
 		|                       |
@@ -96,6 +96,7 @@ const uint32_t params_max_size = 4096;
 const uint32_t code_max_size   = 32768;
 
 const uint32_t os_address   = 1024;
+const uint32_t boot_address = 7168;
 const uint32_t initial_SSP  = 2048;
 const uint32_t initial_USP  = 16384;
 const uint32_t code_address = 16384;
@@ -161,9 +162,12 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	using v68k::user::install_exception_handler;
 	using v68k::user::line_A_shim;
 	
-	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
 	install_exception_handler( os, 32, HANDLER( system_call ) );
+	
+	os.mem_used = boot_address;
+	
+	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	
 	using namespace v68k::callback;
 	
