@@ -10,7 +10,7 @@
 #include "v68k/emulator.hh"
 
 
-const uint32_t params_addr = 4096;
+extern uint32_t errno_ptr_addr;
 
 bool bridge_call( v68k::emulator& emu );
 

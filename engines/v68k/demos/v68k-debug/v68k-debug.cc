@@ -61,6 +61,8 @@ const uint32_t code_address = 12288;
 
 const uint32_t mem_size = code_address + code_max_size;
 
+const uint32_t params_addr = 4096;
+
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
 
@@ -190,6 +192,8 @@ static int execute_68k( int argc, char** argv )
 	const char* instruction_limit_var = getenv( "V68K_INSTRUCTION_LIMIT" );
 	
 	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
+	
+	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	

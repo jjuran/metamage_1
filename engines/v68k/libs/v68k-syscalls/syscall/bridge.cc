@@ -21,6 +21,9 @@
 #pragma exceptions off
 
 
+uint32_t errno_ptr_addr;
+
+
 static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
 {
 	uint32_t sp = emu.regs.a[7];
@@ -44,8 +47,6 @@ static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
 static void set_errno( v68k::emulator& emu )
 {
 	emu.regs.d[1] = errno;
-	
-	const uint32_t errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	
 	uint32_t errno_ptr;
 	
