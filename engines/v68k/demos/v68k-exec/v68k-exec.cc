@@ -43,10 +43,10 @@ using v68k::big_longword;
 	0K	+-----------------------+
 		| System vectors        |
 	1K	+-----------------------+
-		| OS / supervisor stack |
+		|                       |
 	2K	+-----------------------+
-		|                       |
-		|                       |
+		| OS / supervisor stack |
+	3K	+-----------------------+
 		|                       |
 	4K	+-----------------------+
 		|                       |
@@ -95,9 +95,9 @@ using v68k::big_longword;
 const uint32_t params_max_size = 4096;
 const uint32_t code_max_size   = 32768;
 
-const uint32_t os_address   = 1024;
+const uint32_t os_address   = 2048;
 const uint32_t boot_address = 7168;
-const uint32_t initial_SSP  = 2048;
+const uint32_t initial_SSP  = 3072;
 const uint32_t initial_USP  = 16384;
 const uint32_t code_address = 16384;
 
