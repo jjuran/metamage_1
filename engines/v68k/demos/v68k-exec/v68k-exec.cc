@@ -43,12 +43,20 @@ using v68k::big_longword;
 	0K	+-----------------------+
 		| System vectors        |
 	1K	+-----------------------+
-		| OS / supervisor stack |
+		| OS trap table         |
 	2K	+-----------------------+
+		| OS / supervisor stack |
+	3K	+-----------------------+
+		|                       |
+	4K	|                       |
+		|                       |
+		| Toolbox trap table    |
 		|                       |
 		|                       |
 		|                       |
-	4K	+-----------------------+
+	7K	+-----------------------+
+		| boot code             |
+	8K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -56,7 +64,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	8K	+-----------------------+
+	12K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -64,7 +72,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	12K	+-----------------------+
+	16K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -80,21 +88,28 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	44K	+-----------------------+
+	48K	+-----------------------+
 	
 */
 
 const uint32_t params_max_size = 4096;
 const uint32_t code_max_size   = 32768;
 
-const uint32_t os_address   = 1024;
-const uint32_t initial_SSP  = 2048;
-const uint32_t initial_USP  = 12288;
-const uint32_t code_address = 12288;
+const uint32_t os_address   = 2048;
+const uint32_t boot_address = 7168;
+const uint32_t initial_SSP  = 3072;
+const uint32_t initial_USP  = 16384;
+const uint32_t code_address = 16384;
+
+const uint32_t os_trap_table_address = 1024;
+const uint32_t tb_trap_table_address = 3072;
+
+const uint32_t os_trap_count = 1 <<  8;  //  256, 1K
+const uint32_t tb_trap_count = 1 << 10;  // 1024, 4K
 
 const uint32_t mem_size = code_address + code_max_size;
 
-const uint32_t params_addr = 4096;
+const uint32_t params_addr = 8192;
 
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
@@ -153,9 +168,12 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	using v68k::user::install_exception_handler;
 	using v68k::user::line_A_shim;
 	
-	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
 	install_exception_handler( os, 32, HANDLER( system_call ) );
+	
+	os.mem_used = boot_address;
+	
+	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	
 	using namespace v68k::callback;
 	
