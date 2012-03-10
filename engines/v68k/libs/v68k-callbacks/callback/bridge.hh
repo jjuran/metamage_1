@@ -16,6 +16,7 @@ namespace callback {
 enum
 {
 	unimplemented,
+	illegal_instruction,
 	n
 };
 
