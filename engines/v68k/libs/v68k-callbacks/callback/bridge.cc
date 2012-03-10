@@ -60,12 +60,22 @@ static uint32_t privilege_violation_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t line_F_emulator_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Line F Emulator" );
+	
+	raise( SIGILL );
+	
+	return nil;
+}
+
 
 static const function_type the_callbacks[] =
 {
 	&unimplemented_callback,
 	&illegal_instruction_callback,
 	&privilege_violation_callback,
+	&line_F_emulator_callback,
 	NULL
 };
 

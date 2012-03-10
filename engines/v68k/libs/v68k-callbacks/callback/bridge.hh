@@ -18,6 +18,7 @@ enum
 	unimplemented,
 	illegal_instruction,
 	privilege_violation,
+	line_F_emulator,
 	n
 };
 
