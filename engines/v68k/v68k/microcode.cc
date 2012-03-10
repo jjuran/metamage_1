@@ -911,7 +911,7 @@ namespace v68k
 		
 		if ( divisor == 0 )
 		{
-			s.take_exception_format_6( 4 * sizeof (uint32_t), pb.address );
+			s.take_exception_format_6( 5 * sizeof (uint32_t), pb.address );
 			
 			pb.size = unsized;  // Don't store the result
 			
@@ -942,7 +942,7 @@ namespace v68k
 		
 		if ( divisor == 0 )
 		{
-			s.take_exception_format_6( 4 * sizeof (uint32_t), pb.address );
+			s.take_exception_format_6( 5 * sizeof (uint32_t), pb.address );
 			
 			pb.size = unsized;  // Don't store the result
 			
