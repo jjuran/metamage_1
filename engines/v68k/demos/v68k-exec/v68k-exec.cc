@@ -15,8 +15,10 @@
 // v68k
 #include "v68k/endian.hh"
 
+// v68k-mac
+#include "v68k-mac/trap_dispatcher.hh"
+
 // v68k-user
-#include "v68k-user/line_A_shim.hh"
 #include "v68k-user/load.hh"
 
 // v68k-callbacks
@@ -179,9 +181,9 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[0] = big_longword( initial_SSP );  // isp
 	
 	using v68k::user::install_exception_handler;
-	using v68k::user::line_A_shim;
+	using v68k::mac::trap_dispatcher;
 	
-	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
+	install_exception_handler( os, 10, HANDLER( trap_dispatcher ) );
 	install_exception_handler( os, 32, HANDLER( system_call ) );
 	
 	os.mem_used = boot_address;
