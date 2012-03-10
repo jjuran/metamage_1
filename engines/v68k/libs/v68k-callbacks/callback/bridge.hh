@@ -17,6 +17,7 @@ enum
 {
 	unimplemented,
 	illegal_instruction,
+	privilege_violation,
 	n
 };
 

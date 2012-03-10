@@ -51,11 +51,21 @@ static uint32_t illegal_instruction_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t privilege_violation_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Privilege Violation" );
+	
+	raise( SIGILL );
+	
+	return nil;
+}
+
 
 static const function_type the_callbacks[] =
 {
 	&unimplemented_callback,
 	&illegal_instruction_callback,
+	&privilege_violation_callback,
 	NULL
 };
 
