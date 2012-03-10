@@ -5,7 +5,11 @@
 
 #include "callback/bridge.hh"
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
+#include <signal.h>
 #include <stdlib.h>
 
 
@@ -32,9 +36,56 @@ static uint32_t unimplemented_callback( v68k::emulator& emu )
 }
 
 
+#define ERR_MSG( msg )  "v68k: exception: " msg "\n"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define WRITE_ERR( msg )  write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
+
+static uint32_t illegal_instruction_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Illegal Instruction" );
+	
+	raise( SIGILL );
+	
+	return nil;
+}
+
+static uint32_t division_by_zero_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Division By Zero" );
+	
+	raise( SIGFPE );
+	
+	return nil;
+}
+
+static uint32_t privilege_violation_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Privilege Violation" );
+	
+	raise( SIGILL );
+	
+	return nil;
+}
+
+static uint32_t line_F_emulator_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Line F Emulator" );
+	
+	raise( SIGILL );
+	
+	return nil;
+}
+
+
 static const function_type the_callbacks[] =
 {
 	&unimplemented_callback,
+	&illegal_instruction_callback,
+	&division_by_zero_callback,
+	&privilege_violation_callback,
+	&line_F_emulator_callback,
 	NULL
 };
 

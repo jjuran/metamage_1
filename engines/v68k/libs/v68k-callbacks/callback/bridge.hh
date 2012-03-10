@@ -16,6 +16,10 @@ namespace callback {
 enum
 {
 	unimplemented,
+	illegal_instruction,
+	division_by_zero,
+	privilege_violation,
+	line_F_emulator,
 	n
 };
 
