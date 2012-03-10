@@ -160,6 +160,7 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	using namespace v68k::callback;
 	
 	vectors[ 4] = big_longword( callback_address( illegal_instruction ) );
+	vectors[ 5] = big_longword( callback_address( division_by_zero    ) );
 	vectors[ 8] = big_longword( callback_address( privilege_violation ) );
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
