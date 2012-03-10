@@ -104,14 +104,6 @@ const uint32_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
 
-static const uint16_t bkpt_7_code[] =
-{
-	// Illegal Instruction,
-	// Privilege Violation
-	
-	0x484F  // BKPT  #7
-};
-
 static const uint16_t loader_code[] =
 {
 	0x027C,  // ANDI #DFFF,SR  ; clear S
@@ -162,11 +154,13 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	using v68k::user::line_A_shim;
 	
 	install_exception_handler( os,  1, HANDLER( loader_code ) );
-	install_exception_handler( os,  4, HANDLER( bkpt_7_code ) );
 	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
 	install_exception_handler( os, 32, HANDLER( system_call ) );
 	
-	vectors[8] = vectors[4];
+	using namespace v68k::callback;
+	
+	vectors[4] = big_longword( callback_address( illegal_instruction ) );
+	vectors[8] = big_longword( callback_address( privilege_violation ) );
 }
 
 static int execute_68k( int argc, char** argv )
