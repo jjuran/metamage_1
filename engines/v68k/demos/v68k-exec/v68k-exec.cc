@@ -229,6 +229,10 @@ static int execute_68k( int argc, char** argv )
 	init_trap_table( os_traps, os_traps + os_trap_count, null_routine  );
 	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
 	
+	using namespace v68k::callback;
+	
+	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
+	
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
 	
