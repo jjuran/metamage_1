@@ -15,8 +15,10 @@
 // v68k
 #include "v68k/endian.hh"
 
+// v68k-mac
+#include "v68k-mac/trap_dispatcher.hh"
+
 // v68k-user
-#include "v68k-user/line_A_shim.hh"
 #include "v68k-user/load.hh"
 
 // v68k-callbacks
@@ -43,12 +45,20 @@ using v68k::big_longword;
 	0K	+-----------------------+
 		| System vectors        |
 	1K	+-----------------------+
-		| OS / supervisor stack |
+		| OS trap table         |
 	2K	+-----------------------+
+		| OS / supervisor stack |
+	3K	+-----------------------+
+		|                       |
+	4K	|                       |
+		|                       |
+		| Toolbox trap table    |
 		|                       |
 		|                       |
 		|                       |
-	4K	+-----------------------+
+	7K	+-----------------------+
+		| boot code             |
+	8K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -56,7 +66,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	8K	+-----------------------+
+	12K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -64,7 +74,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	12K	+-----------------------+
+	16K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -80,21 +90,28 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	44K	+-----------------------+
+	48K	+-----------------------+
 	
 */
 
 const uint32_t params_max_size = 4096;
 const uint32_t code_max_size   = 32768;
 
-const uint32_t os_address   = 1024;
-const uint32_t initial_SSP  = 2048;
-const uint32_t initial_USP  = 12288;
-const uint32_t code_address = 12288;
+const uint32_t os_address   = 2048;
+const uint32_t boot_address = 7168;
+const uint32_t initial_SSP  = 3072;
+const uint32_t initial_USP  = 16384;
+const uint32_t code_address = 16384;
+
+const uint32_t os_trap_table_address = 1024;
+const uint32_t tb_trap_table_address = 3072;
+
+const uint32_t os_trap_count = 1 <<  8;  //  256, 1K
+const uint32_t tb_trap_count = 1 << 10;  // 1024, 4K
 
 const uint32_t mem_size = code_address + code_max_size;
 
-const uint32_t params_addr = 4096;
+const uint32_t params_addr = 8192;
 
 const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
 const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
@@ -102,6 +119,17 @@ const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
 const uint32_t argc_addr = params_addr + 40;  // 4 bytes
 const uint32_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
+
+
+static void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
+{
+	const uint32_t unimplemented = v68k::big_longword( address );
+	
+	for ( uint32_t* p = table;  p < end;  ++p )
+	{
+		*p = unimplemented;
+	}
+}
 
 
 static const uint16_t loader_code[] =
@@ -137,7 +165,9 @@ static const uint16_t loader_code[] =
 	
 	0x2F00,  // MOVE.L  D0,-(A7)
 	0x7001,  // MOVEQ  #1,D0
-	0x484A   // BKPT   #2
+	0x484A,  // BKPT   #2
+	
+	0x4E75   // RTS
 };
 
 #define HANDLER( handler )  handler, sizeof handler
@@ -151,11 +181,14 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[0] = big_longword( initial_SSP );  // isp
 	
 	using v68k::user::install_exception_handler;
-	using v68k::user::line_A_shim;
+	using v68k::mac::trap_dispatcher;
+	
+	install_exception_handler( os, 10, HANDLER( trap_dispatcher ) );
+	install_exception_handler( os, 32, HANDLER( system_call ) );
+	
+	os.mem_used = boot_address;
 	
 	install_exception_handler( os,  1, HANDLER( loader_code ) );
-	install_exception_handler( os, 10, HANDLER( line_A_shim ) );
-	install_exception_handler( os, 32, HANDLER( system_call ) );
 	
 	using namespace v68k::callback;
 	
@@ -185,6 +218,16 @@ static int execute_68k( int argc, char** argv )
 	v68k::user::os_load_spec load = { mem, mem_size, os_address };
 	
 	load_vectors( load );
+	
+	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
+	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
+	
+	const uint32_t null_routine = load.mem_used - 2;
+	
+	const uint32_t unimplemented = callback_address( v68k::callback::unimplemented );
+	
+	init_trap_table( os_traps, os_traps + os_trap_count, null_routine  );
+	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
 	
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
