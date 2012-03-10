@@ -231,6 +231,7 @@ static int execute_68k( int argc, char** argv )
 	
 	using namespace v68k::callback;
 	
+	tb_traps[ 0x01C8 ] = big_longword( callback_address( SysBeep_trap     ) );
 	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
 	
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
