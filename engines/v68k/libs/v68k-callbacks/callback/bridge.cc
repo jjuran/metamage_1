@@ -51,6 +51,15 @@ static uint32_t illegal_instruction_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t division_by_zero_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Division By Zero" );
+	
+	raise( SIGFPE );
+	
+	return nil;
+}
+
 static uint32_t privilege_violation_callback( v68k::emulator& emu )
 {
 	WRITE_ERR( "Privilege Violation" );
@@ -74,6 +83,7 @@ static const function_type the_callbacks[] =
 {
 	&unimplemented_callback,
 	&illegal_instruction_callback,
+	&division_by_zero_callback,
 	&privilege_violation_callback,
 	&line_F_emulator_callback,
 	NULL
