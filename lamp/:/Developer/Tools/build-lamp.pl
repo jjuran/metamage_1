@@ -80,7 +80,7 @@ my $vers_2_data;
 
 if ( defined $ENV{BUILD_DATE} )
 {
-	$vers_1_data = `vers "" "as of $ENV{BUILD_DATE}, by Joshua Juran"`;
+	$vers_1_data = `vers "" "as of $ENV{BUILD_DATE}, by Josh Juran"`;
 	$vers_2_data = `vers "" "MacRelix experimental snapshot"`;
 }
 
