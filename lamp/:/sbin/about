@@ -42,7 +42,7 @@ echo 78 > view/main/.margin-left
 /bin/ln /gui/new/caption view/main/v
 
 echo >> view/main/v/text "MacRelix"
-echo >> view/main/v/text "by Joshua Juran"
+echo >> view/main/v/text "by Josh Juran"
 
 echo 1 > view/icon/v/disabling
 echo 1 > view/main/v/disabling
