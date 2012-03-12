@@ -50,7 +50,7 @@ static const char* gGags[] =
 	"Whazzuuup!",
 	"Nobody expects the Spanish Inquisition!",
 	"You REALLY ought to get some sleep...",
-	"\xA5 Vote for Joshua Juran \xA5",  // bullets
+	"\xA5 Vote for Josh Juran \xA5",  // bullets
 	""
 };
 
