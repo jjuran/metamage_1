@@ -3,9 +3,6 @@
  *	========
  */
 
-// Standard C/C++
-#include <cstdlib>
-
 // POSIX
 #include <unistd.h>
 
@@ -21,6 +18,6 @@ int main( int argc, char const *const argv[] )
 	
 	ssize_t bytes = read( STDIN_FILENO, &c, sizeof c );
 	
-	return bytes ? EXIT_SUCCESS : EXIT_FAILURE;
+	return bytes ? 0 : 1;
 }
 
