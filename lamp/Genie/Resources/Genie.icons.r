@@ -549,6 +549,6 @@ type 'Poof' {
 };
 
 resource 'Poof' (0, "Owner resource") {
-	"Lamp (Lamp ain't Mac POSIX) by Joshua Juran"
+	"MacRelix by Josh Juran"
 };
 
