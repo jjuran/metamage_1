@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "MacRelix by Joshua Juran <http://www.metamage.com/code/MacRelix/>."
+echo "MacRelix by Josh Juran <http://www.metamage.com/code/MacRelix/>."
 echo
 
 # Advise if the perl lib is missing

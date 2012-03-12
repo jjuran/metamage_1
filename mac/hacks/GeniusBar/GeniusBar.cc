@@ -108,7 +108,7 @@ static const char* GetGeniusString( EventRecord* theEvent )
 			{
 				if ( IsPointingToTrash( theEvent->where ) )
 				{
-					geniusMsg = "This is GeniusBar, a hack by Joshua Juran.";
+					geniusMsg = "This is GeniusBar, a hack by Josh Juran.";
 				}
 				else
 				{
