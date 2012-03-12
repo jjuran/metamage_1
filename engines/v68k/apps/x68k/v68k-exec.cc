@@ -202,7 +202,7 @@ static int execute_68k( int argc, char** argv )
 {
 	const char* path = argv[1];
 	
-	const char* instruction_limit_var = getenv( "V68K_INSTRUCTION_LIMIT" );
+	const char* instruction_limit_var = getenv( "X68K_INSTRUCTION_LIMIT" );
 	
 	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
 	
