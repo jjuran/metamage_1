@@ -40,6 +40,13 @@ namespace Genie
 		
 		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), port );
 		
+		if ( exists( view ) )
+		{
+			view->Delete();
+			
+			view = ResolveRelativePath( STR_LEN( "view" ), port );
+		}
+		
 		Spew( ResolveRelativePath( STR_LEN( "title" ), port ), STR_LEN( "System Console" "\n" ) );
 		
 		Spew( ResolveRelativePath( STR_LEN( "size" ),  port ), STR_LEN( "495x272" "\n" ) );
