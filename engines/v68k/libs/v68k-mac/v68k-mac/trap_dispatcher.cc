@@ -87,7 +87,7 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x0882,  // BCLR     #10,D2             ; clear and test keep-A0 bit, 8<<2
 	0x000A,
 	
-	0x2070,  // MOVEA.L  (A0,D2.W),A0       ;  move trap address to A0
+	0x2070,  // MOVEA.L  (A0,D2.W),A0       ; move trap address to A0
 	0x2000,
 	
 	0x6708,  // BEQ.S    restore_a0         ; if keep-A0 is clear, restore A0
