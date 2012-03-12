@@ -1,7 +1,7 @@
-/*	========
- *	pause.cc
- *	========
- */
+/*
+	pause.c
+	-------
+*/
 
 // POSIX
 #include <unistd.h>
