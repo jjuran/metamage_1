@@ -25,6 +25,8 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/file_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
@@ -61,6 +63,30 @@ namespace Genie
 	}
 	
 	
+	static shared_exec_handle builtin_loadexec( const FSTree* node );
+	
+	static const file_method_set builtin_file_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&builtin_loadexec
+	};
+	
+	static const node_method_set builtin_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&builtin_file_methods
+	};
+	
 	class FSTree_sys_kernel_bin_EXE : public FSTree
 	{
 		private:
@@ -71,7 +97,7 @@ namespace Genie
 			                           const plus::string&  name,
 			                           lamp_entry           main )
 			:
-				FSTree( parent, name, S_IFREG | 0500 ),
+				FSTree( parent, name, S_IFREG | 0500, &builtin_methods ),
 				its_exec_handle( new fixed_address( main ) )
 			{
 			}
@@ -81,6 +107,15 @@ namespace Genie
 				return its_exec_handle;
 			}
 	};
+	
+	static shared_exec_handle builtin_loadexec( const FSTree* node )
+	{
+		typedef FSTree_sys_kernel_bin_EXE File;
+		
+		const File* file = static_cast< const File* >( node );
+		
+		return file->GetExecutable();
+	}
 	
 	
 	static FSTreePtr syscall_lookup( const FSTreePtr& parent, const plus::string& name )
