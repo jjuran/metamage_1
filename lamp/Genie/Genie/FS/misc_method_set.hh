@@ -25,6 +25,7 @@ namespace Genie
 	{
 		parent_method  parent;
 		inode_method   parent_inode;
+		inode_method   inode;
 	};
 	
 }
