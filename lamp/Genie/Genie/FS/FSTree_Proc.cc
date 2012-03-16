@@ -64,22 +64,20 @@ namespace Genie
 	{
 		private:
 			typedef fd_table  Sequence;
-			
-			pid_t its_pid;
 		
 		public:
 			FSTree_PID_fd( const FSTreePtr&     parent,
-			               const plus::string&  name,
-			               pid_t                pid )
+			               const plus::string&  name )
 			:
-				FSTree( parent, name, S_IFDIR | 0700 ),
-				its_pid( pid )
+				FSTree( parent, name, S_IFDIR | 0700 )
 			{
 			}
 			
 			const Sequence& ItemSequence() const
 			{
-				return GetProcess( its_pid ).FileDescriptors();
+				const pid_t pid = gear::parse_unsigned_decimal( owner()->name().c_str() );
+				
+				return GetProcess( pid ).FileDescriptors();
 			}
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
@@ -488,9 +486,7 @@ namespace Genie
 	                             const plus::string&  name,
 	                             const void*          args )
 	{
-		const pid_t key = GetKeyFromParent( parent );
-		
-		return new FSTree_PID_fd( parent, name, key );
+		return new FSTree_PID_fd( parent, name );
 	}
 	
 	static FSTreePtr link_factory( const FSTreePtr&     parent,
