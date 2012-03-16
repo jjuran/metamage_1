@@ -634,17 +634,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_sys_port_ADDR_tty : public FSTree
-	{
-		public:
-			FSTree_sys_port_ADDR_tty( const FSTreePtr&     parent,
-			                          const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods )
-			{
-			}
-	};
-	
 	static inline IOPtr
 	//
 	NewTerminal( const plus::string& name )
@@ -967,6 +956,13 @@ namespace Genie
 		return new FSTree( parent, name, 0, &ungesture_methods );
 	}
 	
+	static FSTreePtr new_tty( const FSTreePtr&     parent,
+	                          const plus::string&  name,
+	                          const void*          args )
+	{
+		return new FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods );
+	}
+	
 	static FSTreePtr new_port_property( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
 	                                    const void*          params_ )
@@ -1010,7 +1006,7 @@ namespace Genie
 		{ "accept", &new_gesture },
 		{ "cancel", &new_gesture },
 		
-		{ "tty",    &Basic_Factory< FSTree_sys_port_ADDR_tty > },
+		{ "tty",    &new_tty },
 		
 		{ "title",  PROPERTY( kAttrVariable, Window_Title      ) },
 		{ "pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
