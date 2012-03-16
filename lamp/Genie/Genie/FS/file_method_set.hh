@@ -15,12 +15,14 @@ namespace Genie
 	
 	class FSTree;
 	
-	typedef void (*attach_method)( const FSTree*, const FSTreePtr& );
+	typedef void (*attach_method  )( const FSTree*, const FSTreePtr& );
+	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
 	
 	
 	struct file_method_set
 	{
-		attach_method  attach;
+		attach_method    attach;
+		copyfile_method  copyfile;
 	};
 	
 }
