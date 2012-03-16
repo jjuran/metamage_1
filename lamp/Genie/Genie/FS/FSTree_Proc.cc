@@ -103,25 +103,25 @@ namespace Genie
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
 	
-	static IOPtr proc_fd_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr proc_fd_link_open( const FSTree* node, int flags, mode_t mode );
 	
-	static off_t proc_fd_geteof( const FSTree* node );
+	static off_t proc_fd_link_geteof( const FSTree* node );
 	
-	static FSTreePtr proc_fd_resolve( const FSTree* node );
+	static FSTreePtr proc_fd_link_resolve( const FSTree* node );
 	
-	static const data_method_set proc_fd_data_methods =
+	static const data_method_set proc_fd_link_data_methods =
 	{
-		&proc_fd_open,
-		&proc_fd_geteof
+		&proc_fd_link_open,
+		&proc_fd_link_geteof
 	};
 	
-	static const link_method_set proc_fd_link_methods =
+	static const link_method_set proc_fd_link_link_methods =
 	{
 		NULL,
-		&proc_fd_resolve
+		&proc_fd_link_resolve
 	};
 	
-	static const node_method_set proc_fd_methods =
+	static const node_method_set proc_fd_link_methods =
 	{
 		NULL,
 		NULL,
@@ -129,8 +129,8 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		&proc_fd_data_methods,
-		&proc_fd_link_methods
+		&proc_fd_link_data_methods,
+		&proc_fd_link_link_methods
 	};
 	
 	
@@ -563,7 +563,7 @@ namespace Genie
 		return new FSTree( parent,
 		                   name,
 		                   S_IFLNK | 0777,
-		                   &proc_fd_methods );
+		                   &proc_fd_link_methods );
 	}
 	
 	
@@ -585,7 +585,7 @@ namespace Genie
 		return files.at( fd ).handle.get();
 	}
 	
-	static off_t proc_fd_geteof( const FSTree* node )
+	static off_t proc_fd_link_geteof( const FSTree* node )
 	{
 		IOHandle* handle = get_proc_fd_handle( node );
 		
@@ -597,7 +597,7 @@ namespace Genie
 		return 0;
 	}
 	
-	static IOPtr proc_fd_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr proc_fd_link_open( const FSTree* node, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
 		{
@@ -607,7 +607,7 @@ namespace Genie
 		return get_proc_fd_handle( node )->Clone();
 	}
 	
-	static FSTreePtr proc_fd_resolve( const FSTree* node )
+	static FSTreePtr proc_fd_link_resolve( const FSTree* node )
 	{
 		return get_proc_fd_handle( node )->GetFile();
 	}
