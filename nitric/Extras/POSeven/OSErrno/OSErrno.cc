@@ -36,6 +36,7 @@ namespace OSErrno
 			case memFullErr     :  result = ENOMEM;        break;
 			case opWrErr        :  // fall through
 			case permErr        :  // fall through
+			case afpAccessDenied:  // fall through
 			case portInUse      :  result = EACCES;        break;
 			case userCanceledErr:  result = ECANCELED;     break;
 			case fBsyErr        :  result = EBUSY;         break;
