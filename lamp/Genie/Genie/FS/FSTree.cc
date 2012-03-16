@@ -268,6 +268,18 @@ namespace Genie
 	
 	void FSTree::HardLink( const FSTreePtr& destination ) const
 	{
+		const file_method_set* file_methods;
+		
+		if ( its_methods  &&  (file_methods = its_methods->file_methods) )
+		{
+			if ( file_methods->hardlink )
+			{
+				file_methods->hardlink( this, destination );
+				
+				return;
+			}
+		}
+		
 		{
 			p7::throw_errno( EINVAL );
 		}
