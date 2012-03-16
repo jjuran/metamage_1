@@ -113,7 +113,7 @@ namespace Genie
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 			
-			virtual shared_exec_handle GetExecutable() const;
+			shared_exec_handle GetExecutable() const;
 			
 			// Directory methods
 			
