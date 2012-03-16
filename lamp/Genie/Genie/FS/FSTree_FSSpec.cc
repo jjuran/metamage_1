@@ -517,6 +517,13 @@ namespace Genie
 		file->CopyFile( dest );
 	}
 	
+	static shared_exec_handle hfs_loadexec( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->GetExecutable();
+	}
+	
 	static const data_method_set hfs_data_methods =
 	{
 		&hfs_open,
@@ -542,7 +549,9 @@ namespace Genie
 	static const file_method_set hfs_file_methods =
 	{
 		NULL,
-		&hfs_copyfile
+		&hfs_copyfile,
+		NULL,
+		&hfs_loadexec
 	};
 	
 	static const misc_method_set hfs_misc_methods =
