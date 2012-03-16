@@ -29,7 +29,9 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
+#include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -72,24 +74,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Volumes : public FSTree
-	{
-		public:
-			FSTree_Volumes( const FSTreePtr&     parent,
-			                const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFDIR | 0700 )
-			{
-			}
-			
-			ino_t Inode() const  { return fsRtParID; }
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	
 	static FSTreePtr volumes_link_resolve( const FSTree* node )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
@@ -123,7 +107,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr FSTree_Volumes::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	static FSTreePtr volumes_lookup( const FSTree*        node,
+	                                 const plus::string&  name,
+	                                 const FSTree*        parent )
 	{
 		return new FSTree( parent,
 		                   name,
@@ -131,7 +117,8 @@ namespace Genie
 		                   &volumes_link_methods );
 	}
 	
-	void FSTree_Volumes::IterateIntoCache( FSTreeCache& cache ) const
+	static void volumes_listdir( const FSTree*  node,
+	                             FSTreeCache&   cache )
 	{
 		for ( int i = 1;  true;  ++i )
 		{
@@ -161,11 +148,47 @@ namespace Genie
 	}
 	
 	
+	static ino_t volumes_inode( const FSTree* node )
+	{
+		return fsRtParID;
+	}
+	
+	static const dir_method_set volumes_dir_methods =
+	{
+		&volumes_lookup,
+		&volumes_listdir
+	};
+	
+	static const misc_method_set volumes_misc_methods =
+	{
+		NULL,
+		NULL,
+		&volumes_inode
+	};
+	
+	static const node_method_set volumes_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&volumes_dir_methods,
+		&volumes_misc_methods
+	};
+	
+	
 	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
 	                              const plus::string&  name,
 	                              const void*          args )
 	{
-		return new FSTree_Volumes( parent, name );
+		return new FSTree( parent,
+		                   name,
+		                   S_IFDIR | 0700,
+		                   &volumes_methods );
 	}
 	
 }
