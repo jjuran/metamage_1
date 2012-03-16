@@ -46,6 +46,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&null_misc_methods
 	};
 	

@@ -548,6 +548,7 @@ namespace Genie
 		&hfs_data_methods,
 		&hfs_link_methods,
 		&hfs_dir_methods,
+		NULL,
 		&hfs_misc_methods
 	};
 	

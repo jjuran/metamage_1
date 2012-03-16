@@ -39,6 +39,7 @@ namespace Genie
 	struct data_method_set;
 	struct link_method_set;
 	struct dir_method_set;
+	struct file_method_set;
 	struct misc_method_set;
 	
 	struct node_method_set
@@ -53,6 +54,7 @@ namespace Genie
 		const data_method_set*  data_methods;
 		const link_method_set*  link_methods;
 		const dir_method_set*   dir_methods;
+		const file_method_set*  file_methods;
 		const misc_method_set*  misc_methods;
 	};
 	

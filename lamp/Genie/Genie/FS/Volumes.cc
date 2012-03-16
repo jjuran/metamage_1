@@ -177,6 +177,7 @@ namespace Genie
 		NULL,
 		NULL,
 		&volumes_dir_methods,
+		NULL,
 		&volumes_misc_methods
 	};
 	
