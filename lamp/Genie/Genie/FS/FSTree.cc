@@ -144,6 +144,16 @@ namespace Genie
 	
 	ino_t FSTree::Inode() const
 	{
+		const misc_method_set* misc_methods;
+		
+		if ( its_methods  &&  (misc_methods = its_methods->misc_methods) )
+		{
+			if ( misc_methods->inode )
+			{
+				return misc_methods->inode( this );
+			}
+		}
+		
 		return 0;
 	}
 	
