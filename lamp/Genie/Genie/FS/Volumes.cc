@@ -90,14 +90,6 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
-	                              const plus::string&  name,
-	                              const void*          args )
-	{
-		return new FSTree_Volumes( parent, name );
-	}
-	
-	
 	static FSTreePtr volumes_link_resolve( const FSTree* node )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
@@ -166,6 +158,14 @@ namespace Genie
 			
 			cache.push_back( FSNode( inode, name ) );
 		}
+	}
+	
+	
+	FSTreePtr New_FSTree_Volumes( const FSTreePtr&     parent,
+	                              const plus::string&  name,
+	                              const void*          args )
+	{
+		return new FSTree_Volumes( parent, name );
 	}
 	
 }
