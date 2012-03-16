@@ -73,17 +73,19 @@ namespace Genie
 			{
 			}
 			
-			const Sequence& ItemSequence() const
-			{
-				const pid_t pid = gear::parse_unsigned_decimal( owner()->name().c_str() );
-				
-				return GetProcess( pid ).FileDescriptors();
-			}
+			const Sequence& ItemSequence() const;
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	const fd_table& FSTree_PID_fd::ItemSequence() const
+	{
+		const pid_t pid = gear::parse_unsigned_decimal( owner()->name().c_str() );
+		
+		return GetProcess( pid ).FileDescriptors();
+	}
 	
 	static void iterate_one_fd( void* param, int fd, const FileDescriptor& )
 	{
