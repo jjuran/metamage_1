@@ -101,7 +101,7 @@ namespace Genie
 			
 			// File methods
 			
-			virtual void CopyFile( const FSTreePtr& destination ) const;
+			void CopyFile( const FSTreePtr& destination ) const;
 			
 			off_t GetEOF() const;
 			void  SetEOF( off_t length ) const;
