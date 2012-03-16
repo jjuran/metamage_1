@@ -387,6 +387,13 @@ namespace Genie
 		return file->ParentInode();
 	}
 	
+	static ino_t hfs_inode( const FSTree* node )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		return file->Inode();
+	}
+	
 	static void hfs_stat( const FSTree*   node,
 	                      struct ::stat&  sb )
 	{
@@ -526,7 +533,8 @@ namespace Genie
 	static const misc_method_set hfs_misc_methods =
 	{
 		&hfs_parent,
-		&hfs_parent_inode
+		&hfs_parent_inode,
+		&hfs_inode
 	};
 	
 	static node_method_set hfs_methods =
