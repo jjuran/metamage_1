@@ -416,10 +416,6 @@ namespace Genie
 			
 			void Delete() const;
 			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-			
 			boost::intrusive_ptr< Pedestal::View >& Get() const
 			{
 				ASSERT( itsGetter != NULL );
@@ -449,13 +445,30 @@ namespace Genie
 		return file->Delete();
 	}
 	
+	static FSTreePtr view_lookup( const FSTree*        node,
+	                              const plus::string&  name,
+	                              const FSTree*        parent );
+	
+	static void view_listdir( const FSTree*  node,
+	                          FSTreeCache&   cache );
+	
+	static const dir_method_set view_dir_methods =
+	{
+		&view_lookup,
+		&view_listdir
+	};
+	
 	static node_method_set view_methods =
 	{
 		NULL,
 		NULL,
 		&view_touch,
 		NULL,
-		&view_remove
+		&view_remove,
+		NULL,
+		NULL,
+		NULL,
+		&view_dir_methods
 	};
 	
 	FSTree_View::FSTree_View( const FSTreePtr&     parent,
@@ -512,16 +525,19 @@ namespace Genie
 		install_view_in_port( view, windowKey );
 	}
 	
-	FSTreePtr FSTree_View::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	static FSTreePtr view_lookup( const FSTree*        node,
+	                              const plus::string&  name,
+	                              const FSTree*        parent )
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return GetViewDelegate( this )->Lookup( real_name, NULL );
+		return GetViewDelegate( node )->Lookup( real_name, NULL );
 	}
 	
-	void FSTree_View::IterateIntoCache( FSTreeCache& cache ) const
+	static void view_listdir( const FSTree*  node,
+	                          FSTreeCache&   cache )
 	{
-		GetViewDelegate( this )->IterateIntoCache( cache );
+		GetViewDelegate( node )->IterateIntoCache( cache );
 	}
 	
 	FSTreePtr New_View( const FSTreePtr&     parent,
