@@ -62,11 +62,6 @@ namespace Genie
 			
 			// General methods
 			
-			bool Exists() const;
-			bool IsFile() const;
-			bool IsDirectory() const;
-			bool IsLink() const;
-			
 			const FSTree* owner() const  { return itsParent.get(); }
 			
 			const FSTreePtr& ParentRef() const  { return itsParent; }

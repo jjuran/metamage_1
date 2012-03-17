@@ -859,7 +859,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
-		if ( !IsLink() )
+		if ( !is_symlink( this ) )
 		{
 			return Self();
 		}
@@ -1066,12 +1066,12 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		if ( name == "rsrc"  &&  IsFile() )
+		if ( name == "rsrc"  &&  is_file( this ) )
 		{
 			return GetRsrcForkFSTree( itsFileSpec, itIsOnServer );
 		}
 		
-		if ( name == "r"  &&  IsFile() )
+		if ( name == "r"  &&  is_file( this ) )
 		{
 			return Get_ResFileDir_FSTree( Self(), "r", itsFileSpec );
 		}
@@ -1405,7 +1405,7 @@ namespace Genie
 	#ifdef __MACOS__
 		if (     TARGET_CPU_68K
 		     ||  !itIsOnServer
-		     ||  !IsDirectory()
+		     ||  !is_directory( this )
 		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  MacFeatures::Is_BlueBoxed() )
 	#endif
