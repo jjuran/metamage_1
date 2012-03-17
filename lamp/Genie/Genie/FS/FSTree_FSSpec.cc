@@ -859,7 +859,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::ResolveLink() const
 	{
-		if ( !IsLink() )
+		if ( !is_symlink( this ) )
 		{
 			return Self();
 		}
