@@ -13,6 +13,7 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -29,13 +30,30 @@ namespace Genie
 	
 	static void premapped_remove( const FSTree* node );
 	
+	static FSTreePtr premapped_lookup( const FSTree*        node,
+	                                   const plus::string&  name,
+	                                   const FSTree*        parent );
+	
+	static void premapped_listdir( const FSTree*  node,
+	                               FSTreeCache&   cache );
+	
+	static const dir_method_set premapped_dir_methods =
+	{
+		&premapped_lookup,
+		&premapped_listdir
+	};
+	
 	static const node_method_set premapped_methods =
 	{
 		NULL,
 		NULL,
 		NULL,
 		NULL,
-		&premapped_remove
+		&premapped_remove,
+		NULL,
+		NULL,
+		NULL,
+		&premapped_dir_methods
 	};
 	
 	class FSTree_Premapped : public FSTree
@@ -78,6 +96,23 @@ namespace Genie
 		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
 		
 		file->Delete();
+	}
+	
+	static FSTreePtr premapped_lookup( const FSTree*        node,
+	                                   const plus::string&  name,
+	                                   const FSTree*        parent )
+	{
+		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
+		
+		return file->Lookup_Child( name, parent );
+	}
+	
+	static void premapped_listdir( const FSTree*  node,
+	                               FSTreeCache&   cache )
+	{
+		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
+		
+		file->IterateIntoCache( cache );
 	}
 	
 	
