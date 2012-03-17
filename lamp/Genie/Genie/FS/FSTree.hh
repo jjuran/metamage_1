@@ -49,6 +49,13 @@ namespace Genie
 			mode_t        itsMode;
 			
 			const node_method_set*  its_methods;
+			
+			void*  its_extra;
+			
+		private:
+			// non-copyable
+			FSTree           ( const FSTree& );
+			FSTree& operator=( const FSTree& );
 		
 		public:
 			FSTree();
@@ -56,7 +63,8 @@ namespace Genie
 			FSTree( const FSTreePtr&        parent,
 			        const plus::string&     name,
 			        mode_t                  mode,
-			        const node_method_set*  methods = NULL );
+			        const node_method_set*  methods = NULL,
+			        std::size_t             n_extra = 0 );
 			
 			virtual ~FSTree();
 			
@@ -70,6 +78,8 @@ namespace Genie
 			const plus::string& Name() const  { return itsName; }
 			
 			mode_t FileMode() const  { return itsMode; }
+			
+			void* extra() const  { return its_extra; }
 			
 			plus::string Pathname() const;
 			
