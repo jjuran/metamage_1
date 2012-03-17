@@ -59,6 +59,20 @@ namespace Genie
 		itsAction();
 	}
 	
+	
+	typedef void (*trigger_function)( const FSTree* );
+	
+	struct trigger_extra
+	{
+		trigger_function  function;
+		intptr_t          data;
+		
+	};
+	
+	FSTreePtr trigger_factory( const FSTreePtr&     parent,
+	                           const plus::string&  name,
+	                           const void*          args );
+	
 }
 
 #endif
