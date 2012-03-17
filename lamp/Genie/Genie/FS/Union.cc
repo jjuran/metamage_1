@@ -20,6 +20,8 @@
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/Iterate.hh"
+#include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -28,10 +30,47 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static FSTreePtr union_lookup( const FSTree*        node,
+	                               const plus::string&  name,
+	                               const FSTree*        parent )
+	{
+		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
+		
+		return file->Lookup_Child( name, parent );
+	}
+	
+	static void union_listdir( const FSTree*  node,
+	                           FSTreeCache&   cache )
+	{
+		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
+		
+		file->IterateIntoCache( cache );
+	}
+	
+	static const dir_method_set union_dir_methods =
+	{
+		&union_lookup,
+		&union_listdir
+	};
+	
+	static const node_method_set union_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&union_dir_methods
+	};
+	
+	
 	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
 	                            const plus::string&  name )
 	:
-		FSTree( parent, name, S_IFDIR | 0700 )
+		FSTree( parent, name, S_IFDIR | 0700, &union_methods )
 	{
 	}
 	

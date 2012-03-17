@@ -85,13 +85,30 @@ namespace Genie
 	
 	static void resfile_dir_remove( const FSTree* node );
 	
+	static FSTreePtr resfile_dir_lookup( const FSTree*        node,
+	                                     const plus::string&  name,
+	                                     const FSTree*        parent );
+	
+	static void resfile_dir_listdir( const FSTree*  node,
+	                                 FSTreeCache&   cache );
+	
+	static const dir_method_set resfile_dir_dir_methods =
+	{
+		&resfile_dir_lookup,
+		&resfile_dir_listdir
+	};
+	
 	static const node_method_set resfile_dir_methods =
 	{
 		NULL,
 		NULL,
 		NULL,
 		NULL,
-		&resfile_dir_remove
+		&resfile_dir_remove,
+		NULL,
+		NULL,
+		NULL,
+		&resfile_dir_dir_methods
 	};
 	
 	class FSTree_ResFileDir : public FSTree
@@ -121,6 +138,23 @@ namespace Genie
 		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
 		
 		file->Delete();
+	}
+	
+	static FSTreePtr resfile_dir_lookup( const FSTree*        node,
+	                                     const plus::string&  name,
+	                                     const FSTree*        parent )
+	{
+		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
+		
+		return file->Lookup_Child( name, parent );
+	}
+	
+	static void resfile_dir_listdir( const FSTree*  node,
+	                                 FSTreeCache&   cache )
+	{
+		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
+		
+		file->IterateIntoCache( cache );
 	}
 	
 	

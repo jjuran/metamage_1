@@ -33,6 +33,7 @@
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Base.hh"
@@ -60,29 +61,9 @@ namespace Genie
 	}
 	
 	
-	class FSTree_PID_fd : public FSTree
+	static const fd_table& fd_sequence( const FSTree* node )
 	{
-		private:
-			typedef fd_table  Sequence;
-		
-		public:
-			FSTree_PID_fd( const FSTreePtr&     parent,
-			               const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFDIR | 0700 )
-			{
-			}
-			
-			const Sequence& ItemSequence() const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	const fd_table& FSTree_PID_fd::ItemSequence() const
-	{
-		const pid_t pid = gear::parse_unsigned_decimal( owner()->name().c_str() );
+		const pid_t pid = gear::parse_unsigned_decimal( node->owner()->name().c_str() );
 		
 		return GetProcess( pid ).FileDescriptors();
 	}
@@ -98,12 +79,36 @@ namespace Genie
 		cache.push_back( FSNode( inode, name ) );
 	}
 	
-	void FSTree_PID_fd::IterateIntoCache( FSTreeCache& cache ) const
+	static FSTreePtr proc_fd_lookup( const FSTree*        node,
+	                                 const plus::string&  name,
+	                                 const FSTree*        parent );
+	
+	static void proc_fd_listdir( const FSTree* node, FSTreeCache& cache )
 	{
-		const Sequence& sequence = ItemSequence();
+		const fd_table& sequence = fd_sequence( node );
 		
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
+	
+	static const dir_method_set proc_fd_dir_methods =
+	{
+		&proc_fd_lookup,
+		&proc_fd_listdir
+	};
+	
+	static const node_method_set proc_fd_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&proc_fd_dir_methods
+	};
+	
 	
 	static IOPtr proc_fd_link_open( const FSTree* node, int flags, mode_t mode );
 	
@@ -488,7 +493,7 @@ namespace Genie
 	                             const plus::string&  name,
 	                             const void*          args )
 	{
-		return new FSTree_PID_fd( parent, name );
+		return new FSTree( parent, name, S_IFDIR | 0700, &proc_fd_methods );
 	}
 	
 	static FSTreePtr link_factory( const FSTreePtr&     parent,
@@ -551,11 +556,13 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr FSTree_PID_fd::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	static FSTreePtr proc_fd_lookup( const FSTree*        node,
+	                                 const plus::string&  name,
+	                                 const FSTree*        parent )
 	{
 		const int key = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const Sequence& sequence = ItemSequence();
+		const fd_table& sequence = fd_sequence( node );
 		
 		if ( !sequence.contains( key ) )
 		{

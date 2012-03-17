@@ -20,6 +20,7 @@
 
 // Genie
 #include "Genie/FS/FSTreeCache.hh"
+#include "Genie/FS/dir_method_set.hh"
 
 
 namespace Genie
@@ -48,10 +49,47 @@ namespace Genie
 			}
 	};
 	
+	
+	static FSTreePtr dynamic_group_lookup( const FSTree*        node,
+	                                       const plus::string&  name,
+	                                       const FSTree*        parent )
+	{
+		const FSTree_DynamicGroup_Base* file = static_cast< const FSTree_DynamicGroup_Base* >( node );
+		
+		return file->Lookup_Child( name, parent );
+	}
+	
+	static void dynamic_group_listdir( const FSTree*  node,
+	                                   FSTreeCache&   cache )
+	{
+		const FSTree_DynamicGroup_Base* file = static_cast< const FSTree_DynamicGroup_Base* >( node );
+		
+		file->IterateIntoCache( cache );
+	}
+	
+	static const dir_method_set dynamic_group_dir_methods =
+	{
+		&dynamic_group_lookup,
+		&dynamic_group_listdir
+	};
+	
+	static const node_method_set dynamic_group_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&dynamic_group_dir_methods
+	};
+	
 	FSTree_DynamicGroup_Base::FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
 	                                                    const plus::string&  name )
 	:
-		FSTree( parent, name, S_IFDIR | 0700 )
+		FSTree( parent, name, S_IFDIR | 0700, &dynamic_group_methods )
 	{
 	}
 	

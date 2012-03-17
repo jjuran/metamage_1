@@ -125,9 +125,9 @@ namespace Genie
 			
 			FSTreePtr Lookup( const plus::string& name, const FSTree* parent = NULL ) const;
 			
-			virtual FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
+			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
-			virtual void IterateIntoCache( FSTreeCache& cache ) const;
+			void IterateIntoCache( FSTreeCache& cache ) const;
 			
 			// Internal methods
 			
