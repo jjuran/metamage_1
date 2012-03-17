@@ -70,6 +70,7 @@
 #include "Genie/FS/HFS/SetFileTimes.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -508,6 +509,14 @@ namespace Genie
 		return file->OpenDirectory();
 	}
 	
+	static void hfs_copyfile( const FSTree*     node,
+	                          const FSTreePtr&  dest )
+	{
+		const FSTree_HFS* file = static_cast< const FSTree_HFS* >( node );
+		
+		file->CopyFile( dest );
+	}
+	
 	static const data_method_set hfs_data_methods =
 	{
 		&hfs_open,
@@ -530,6 +539,12 @@ namespace Genie
 		&hfs_opendir
 	};
 	
+	static const file_method_set hfs_file_methods =
+	{
+		NULL,
+		&hfs_copyfile
+	};
+	
 	static const misc_method_set hfs_misc_methods =
 	{
 		&hfs_parent,
@@ -548,7 +563,7 @@ namespace Genie
 		&hfs_data_methods,
 		&hfs_link_methods,
 		&hfs_dir_methods,
-		NULL,
+		&hfs_file_methods,
 		&hfs_misc_methods
 	};
 	

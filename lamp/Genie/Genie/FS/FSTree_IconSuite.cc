@@ -10,6 +10,8 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/file_method_set.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -17,6 +19,29 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	
+	
+	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target );
+	
+	static const file_method_set iconsuite_file_methods =
+	{
+		NULL,
+		&iconsuite_copyfile
+	};
+	
+	static const node_method_set iconsuite_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&iconsuite_file_methods
+	};
 	
 	
 	class FSTree_IconSuite : public FSTree
@@ -31,7 +56,7 @@ namespace Genie
 			                  const plus::string&  name,
 			                  const Value&         iconSuite )
 			:
-				FSTree( parent, name, S_IFREG | 0400 ),
+				FSTree( parent, name, S_IFREG | 0400, &iconsuite_methods ),
 				itsIconSuite( iconSuite )
 			{
 			}
@@ -58,6 +83,13 @@ namespace Genie
 		}
 		
 		gStoredIconSuite.reset();
+	}
+	
+	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target )
+	{
+		const FSTree_IconSuite* file = static_cast< const FSTree_IconSuite* >( node );
+		
+		file->CopyFile( target );
 	}
 	
 	
