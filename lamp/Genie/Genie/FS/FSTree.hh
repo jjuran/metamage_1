@@ -133,7 +133,7 @@ namespace Genie
 			
 			FSTreePtr ResolvePath( const char*& begin, const char* end ) const;
 			
-			virtual void Attach( const FSTreePtr& target ) const;
+			void Attach( const FSTreePtr& target ) const;
 	};
 	
 }

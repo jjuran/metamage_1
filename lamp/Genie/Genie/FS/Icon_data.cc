@@ -28,6 +28,7 @@
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -454,10 +455,22 @@ namespace Genie
 		return file->GetEOF();
 	}
 	
+	static void icon_data_attach( const FSTree* node, const FSTreePtr& target )
+	{
+		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
+		
+		file->Attach( target );
+	}
+	
 	static const data_method_set icon_data_data_methods =
 	{
 		&icon_data_open,
 		&icon_data_geteof
+	};
+	
+	static const file_method_set icon_data_file_methods =
+	{
+		&icon_data_attach
 	};
 	
 	static const node_method_set icon_data_methods =
@@ -468,7 +481,10 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		&icon_data_data_methods
+		&icon_data_data_methods,
+		NULL,
+		NULL,
+		&icon_data_file_methods
 	};
 	
 	

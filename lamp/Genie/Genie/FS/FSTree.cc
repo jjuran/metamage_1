@@ -23,6 +23,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -527,6 +528,18 @@ namespace Genie
 	
 	void FSTree::Attach( const FSTreePtr& target ) const
 	{
+		const file_method_set* file_methods;
+		
+		if ( its_methods  &&  (file_methods = its_methods->file_methods) )
+		{
+			if ( file_methods->attach )
+			{
+				file_methods->attach( this, target );
+				
+				return;
+			}
+		}
+		
 		p7::throw_errno( EINVAL );
 	}
 	

@@ -48,6 +48,7 @@
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
@@ -603,9 +604,19 @@ namespace Genie
 	
 	static IOPtr port_tty_open( const FSTree* node, int flags, mode_t mode );
 	
+	static void port_tty_attach( const FSTree* node, const FSTreePtr& target )
+	{
+		gWindowParametersMap[ node->owner() ].itsTTYDelegate = target;
+	}
+	
 	static const data_method_set port_tty_data_methods =
 	{
 		&port_tty_open
+	};
+	
+	static const file_method_set port_tty_file_methods =
+	{
+		&port_tty_attach
 	};
 	
 	static const node_method_set port_tty_methods =
@@ -616,29 +627,12 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		&port_tty_data_methods
+		&port_tty_data_methods,
+		NULL,
+		NULL,
+		&port_tty_file_methods
 	};
 	
-	
-	class FSTree_sys_port_ADDR_tty : public FSTree
-	{
-		public:
-			FSTree_sys_port_ADDR_tty( const FSTreePtr&     parent,
-			                          const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods )
-			{
-			}
-			
-			const FSTree* WindowKey() const  { return ParentRef().get(); }
-			
-			void Attach( const FSTreePtr& target ) const;
-	};
-	
-	void FSTree_sys_port_ADDR_tty::Attach( const FSTreePtr& target ) const
-	{
-		gWindowParametersMap[ WindowKey() ].itsTTYDelegate = target;
-	}
 	
 	static inline IOPtr
 	//
@@ -962,6 +956,13 @@ namespace Genie
 		return new FSTree( parent, name, 0, &ungesture_methods );
 	}
 	
+	static FSTreePtr new_tty( const FSTreePtr&     parent,
+	                          const plus::string&  name,
+	                          const void*          args )
+	{
+		return new FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods );
+	}
+	
 	static FSTreePtr new_port_property( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
 	                                    const void*          params_ )
@@ -1005,7 +1006,7 @@ namespace Genie
 		{ "accept", &new_gesture },
 		{ "cancel", &new_gesture },
 		
-		{ "tty",    &Basic_Factory< FSTree_sys_port_ADDR_tty > },
+		{ "tty",    &new_tty },
 		
 		{ "title",  PROPERTY( kAttrVariable, Window_Title      ) },
 		{ "pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
