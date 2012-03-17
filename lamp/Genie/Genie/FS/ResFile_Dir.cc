@@ -60,17 +60,18 @@ namespace Genie
 	
 	class FSTree_EmptyRsrcForkDir : public FSTree
 	{
-		private:
-			FSSpec  itsFileSpec;
-		
 		public:
 			FSTree_EmptyRsrcForkDir( const FSTreePtr&     parent,
 			                         const plus::string&  name,
 			                         const FSSpec&        file )
 			:
-				FSTree( parent, name, 0, &empty_rsrc_fork_methods ),
-				itsFileSpec( file )
+				FSTree( parent,
+				        name,
+				        0,
+				        &empty_rsrc_fork_methods,
+				        sizeof (FSSpec) )
 			{
+				*(FSSpec*) extra() = file;
 			}
 			
 			void CreateDirectory( mode_t mode ) const;
@@ -114,16 +115,16 @@ namespace Genie
 	
 	class FSTree_ResFileDir : public FSTree
 	{
-		private:
-			FSSpec  itsFileSpec;
-		
 		public:
 			FSTree_ResFileDir( const FSTreePtr&     parent,
 			                   const plus::string&  name,
 			                   const FSSpec&        file )
 			:
-				FSTree( parent, name, S_IFDIR | 0700, &resfile_dir_methods ),
-				itsFileSpec( file )
+				FSTree( parent,
+				        name,
+				        S_IFDIR | 0700,
+				        &resfile_dir_methods,
+				        sizeof (FSSpec) )
 			{
 			}
 			
@@ -199,7 +200,9 @@ namespace Genie
 	
 	void FSTree_ResFileDir::Delete() const
 	{
-		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( itsFileSpec, Mac::fsRdWrPerm );
+		const FSSpec& fileSpec = *(FSSpec*) extra();
+		
+		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( fileSpec, Mac::fsRdWrPerm );
 		
 		if ( N::GetEOF( resource_fork ) > 286 )
 		{
@@ -211,14 +214,16 @@ namespace Genie
 	
 	void FSTree_EmptyRsrcForkDir::CreateDirectory( mode_t mode ) const
 	{
+		const FSSpec& fileSpec = *(FSSpec*) extra();
+		
 		CInfoPBRec cInfo = { 0 };
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, itsFileSpec );
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, fileSpec );
 		
 		::OSType creator;
 		::OSType type;
 		
-		if ( !exists || is_rsrc_file( cInfo, itsFileSpec.name ) )
+		if ( !exists || is_rsrc_file( cInfo, fileSpec.name ) )
 		{
 			creator = 'RSED';
 			type    = 'rsrc';
@@ -231,7 +236,7 @@ namespace Genie
 			type    = fInfo.fdType;
 		}
 		
-		N::FSpCreateResFile( itsFileSpec,
+		N::FSpCreateResFile( fileSpec,
 		                     Mac::FSCreator( creator ),
 		                     Mac::FSType   ( type    ),
 		                     Mac::smSystemScript );
@@ -244,12 +249,16 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Get_RsrcFile_FSTree( parent, name, itsFileSpec );
+		const FSSpec& fileSpec = *(FSSpec*) extra();
+		
+		return Get_RsrcFile_FSTree( parent, name, fileSpec );
 	}
 	
 	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		iterate_resources( itsFileSpec, cache );
+		const FSSpec& fileSpec = *(FSSpec*) extra();
+		
+		iterate_resources( fileSpec, cache );
 	}
 	
 	
