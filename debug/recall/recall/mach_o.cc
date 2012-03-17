@@ -145,12 +145,20 @@ namespace recall
 	
 	const char* find_symbol_name( return_address_mach_o addr )
 	{
+	#ifdef __LP64__
+		
+		return NULL;
+		
+	#else
+		
 		unsigned int  offset       = 0;
 		bool          publicSymbol = false;
 		
 		const char* name = GetFunctionName( (unsigned) addr, &offset, &publicSymbol );
 		
 		return name;
+		
+	#endif
 	}
 	
 #endif
