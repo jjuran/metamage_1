@@ -29,6 +29,7 @@
 
 // Genie
 #include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -275,13 +276,42 @@ namespace Genie
 	}
 	
 	
+	static void new_view_hardlink( const FSTree*     node,
+	                               const FSTreePtr&  dest )
+	{
+		const FSTree_new_View* file = static_cast< const FSTree_new_View* >( node );
+		
+		file->HardLink( dest );
+	}
+	
+	static const file_method_set new_view_file_methods =
+	{
+		NULL,
+		NULL,
+		&new_view_hardlink
+	};
+	
+	static const node_method_set new_view_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&new_view_file_methods
+	};
+	
 	FSTree_new_View::FSTree_new_View( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  ViewFactory          factory,
 	                                  Mappings             mappings,
 	                                  Destructor           dtor )
 	:
-		FSTree( parent, name, S_IFREG | 0 ),
+		FSTree( parent, name, S_IFREG | 0, &new_view_methods ),
 		itsFactory( factory ),
 		itsMappings( mappings ),
 		itsDestructor( dtor )
