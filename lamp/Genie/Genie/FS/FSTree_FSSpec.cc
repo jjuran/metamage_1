@@ -1405,7 +1405,7 @@ namespace Genie
 	#ifdef __MACOS__
 		if (     TARGET_CPU_68K
 		     ||  !itIsOnServer
-		     ||  !IsDirectory()
+		     ||  !is_directory( this )
 		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  MacFeatures::Is_BlueBoxed() )
 	#endif
