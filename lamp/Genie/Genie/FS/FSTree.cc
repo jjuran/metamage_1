@@ -182,7 +182,7 @@ namespace Genie
 			return;
 		}
 		
-		if ( ! Exists() )
+		if ( itsMode == 0 )
 		{
 			p7::throw_errno( ENOENT );
 		}
@@ -341,7 +341,7 @@ namespace Genie
 			}
 		}
 		
-		if ( IsDirectory() )
+		if ( S_ISDIR( itsMode ) )
 		{
 			p7::throw_errno( EISDIR );
 		}
