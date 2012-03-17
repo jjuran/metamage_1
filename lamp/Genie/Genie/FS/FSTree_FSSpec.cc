@@ -847,11 +847,6 @@ namespace Genie
 	
 	plus::string FSTree_HFS::ReadLink() const
 	{
-		if ( !IsLink() )
-		{
-			p7::throw_errno( EINVAL );
-		}
-		
 		const plus::string target = SlurpFile( itsFileSpec );
 		
 		if ( !target.empty() )
