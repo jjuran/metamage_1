@@ -102,27 +102,6 @@ namespace Genie
 	}
 	
 	
-	bool FSTree::Exists() const
-	{
-		return itsMode != 0;
-	}
-	
-	bool FSTree::IsFile() const
-	{
-		// A file as used here is any existing non-directory.
-		return itsMode != 0  &&  !S_ISDIR( itsMode );
-	}
-	
-	bool FSTree::IsDirectory() const
-	{
-		return S_ISDIR( itsMode );
-	}
-	
-	bool FSTree::IsLink() const
-	{
-		return S_ISLNK( itsMode );
-	}
-	
 	FSTreePtr FSTree::Parent() const
 	{
 		if ( itsParent.get() )
