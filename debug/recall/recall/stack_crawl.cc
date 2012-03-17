@@ -14,11 +14,20 @@
 #endif
 
 
+#ifdef __x86_64__
+#define CONFIG_STACK_CRAWLS 0
+#else
+#define CONFIG_STACK_CRAWLS 1
+#endif
+
+
 namespace recall
 {
 	
 	stack_frame_pointer get_stack_frame_pointer( int levels_to_skip )
 	{
+	#if CONFIG_STACK_CRAWLS
+		
 		stack_frame* frame = get_top_frame()->next;
 		
 		while ( frame != NULL  &&  --levels_to_skip >= 0 )
@@ -27,6 +36,12 @@ namespace recall
 		}
 		
 		return reinterpret_cast< stack_frame_pointer >( frame );
+		
+	#else
+		
+		return NULL;
+		
+	#endif
 	}
 	
 	template < class StackFrame > struct switch_frame_traits
@@ -136,10 +151,14 @@ namespace recall
 	                           unsigned             capacity,
 	                           stack_frame_pointer  top )
 	{
+	#if CONFIG_STACK_CRAWLS
+		
 		const stack_frame* top_frame = top ? (const stack_frame*) top
 		                                   : get_top_frame();
 		
 		return capacity - crawl_stack( top_frame, result, capacity );
+		
+	#endif
 		
 		return 0;
 	}

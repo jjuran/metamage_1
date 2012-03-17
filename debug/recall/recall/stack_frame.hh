@@ -110,6 +110,12 @@ namespace recall
 	
 #endif
 	
+#ifdef __x86_64__
+	
+	typedef stack_frame_x86 stack_frame;
+	
+#endif
+	
 }
 
 #endif
