@@ -48,6 +48,13 @@ namespace Genie
 			}
 	};
 	
+	FSTree_DynamicGroup_Base::FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
+	                                                    const plus::string&  name )
+	:
+		FSTree( parent, name, S_IFDIR | 0700 )
+	{
+	}
+	
 	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		const unsigned id = gear::parse_unsigned_decimal( name.c_str() );

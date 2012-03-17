@@ -6,9 +6,6 @@
 #ifndef GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 #define GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 
-// POSIX
-#include <sys/stat.h>
-
 // Genie 
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
@@ -31,11 +28,7 @@ namespace Genie
 			typedef DynamicGroup Sequence;
 			
 			FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
-			                          const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFDIR | 0700 )
-			{
-			}
+			                          const plus::string&  name );
 			
 			virtual const Sequence& ItemSequence() const = 0;
 			
