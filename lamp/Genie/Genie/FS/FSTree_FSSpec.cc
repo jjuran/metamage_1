@@ -1066,12 +1066,12 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		if ( name == "rsrc"  &&  IsFile() )
+		if ( name == "rsrc"  &&  is_file( this ) )
 		{
 			return GetRsrcForkFSTree( itsFileSpec, itIsOnServer );
 		}
 		
-		if ( name == "r"  &&  IsFile() )
+		if ( name == "r"  &&  is_file( this ) )
 		{
 			return Get_ResFileDir_FSTree( Self(), "r", itsFileSpec );
 		}
