@@ -8,9 +8,6 @@
 #ifndef GENIE_FS_UNION_HH
 #define GENIE_FS_UNION_HH
 
-// POSIX
-#include <sys/stat.h>
-
 // Genie
 #include "Genie/FS/FSTree.hh"
 
@@ -26,11 +23,7 @@ namespace Genie
 		
 		public:
 			FSTree_Union( const FSTreePtr&     parent,
-			              const plus::string&  name )
-			:
-				FSTree( parent, name, S_IFDIR | 0700 )
-			{
-			}
+			              const plus::string&  name );
 			
 			void SetTop( const FSTreePtr& top )
 			{

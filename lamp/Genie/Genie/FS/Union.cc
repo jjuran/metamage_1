@@ -7,6 +7,9 @@
 
 #include "Genie/FS/Union.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <set>
 
@@ -24,6 +27,13 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	
+	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
+	                            const plus::string&  name )
+	:
+		FSTree( parent, name, S_IFDIR | 0700 )
+	{
+	}
 	
 	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
