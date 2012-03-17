@@ -15,14 +15,14 @@
 namespace Genie
 {
 	
-	bool exists( const FSTreePtr& file )
+	bool exists( const FSTree* file )
 	{
 		const mode_t mode = file->FileMode();
 		
 		return mode != 0;
 	}
 	
-	bool is_file( const FSTreePtr& file )
+	bool is_file( const FSTree* file )
 	{
 		const mode_t mode = file->FileMode();
 		
@@ -30,21 +30,21 @@ namespace Genie
 		return mode != 0  &&  !S_ISDIR( mode );
 	}
 	
-	bool is_directory( const FSTreePtr& file )
+	bool is_directory( const FSTree* file )
 	{
 		const mode_t mode = file->FileMode();
 		
 		return S_ISDIR( mode );
 	}
 	
-	bool is_symlink( const FSTreePtr& file )
+	bool is_symlink( const FSTree* file )
 	{
 		const mode_t mode = file->FileMode();
 		
 		return S_ISLNK( mode );
 	}
 	
-	bool is_fifo( const FSTreePtr& file )
+	bool is_fifo( const FSTree* file )
 	{
 		const mode_t mode = file->FileMode();
 		
