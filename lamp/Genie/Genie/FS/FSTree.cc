@@ -433,6 +433,16 @@ namespace Genie
 	
 	shared_exec_handle FSTree::GetExecutable() const
 	{
+		const file_method_set* file_methods;
+		
+		if ( its_methods  &&  (file_methods = its_methods->file_methods) )
+		{
+			if ( file_methods->loadexec )
+			{
+				return file_methods->loadexec( this );
+			}
+		}
+		
 		throw p7::errno_t( ENOEXEC );
 	}
 	
