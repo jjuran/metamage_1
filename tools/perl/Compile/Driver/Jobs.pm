@@ -176,9 +176,11 @@ sub compile
 	
 	make_ancestor_dirs( $dest );
 	
+	my @f = "-fpascal-strings";
+	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	run_command( qw( gcc -c -o ), $dest, @i, $path );
+	run_command( qw( gcc -c -o ), $dest, @f, @i, $path );
 }
 
 sub link_lib
