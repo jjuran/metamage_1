@@ -22,6 +22,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/resources.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -238,7 +239,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_ResFileDir::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		if ( !Exists() )
+		if ( !exists( this ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
