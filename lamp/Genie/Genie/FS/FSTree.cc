@@ -510,11 +510,6 @@ namespace Genie
 			parent = this;
 		}
 		
-		return Lookup_Child( name, parent );
-	}
-	
-	FSTreePtr FSTree::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
 		const dir_method_set* dir_methods;
 		
 		if ( its_methods  &&  (dir_methods = its_methods->dir_methods) )
