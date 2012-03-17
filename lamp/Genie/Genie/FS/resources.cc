@@ -250,8 +250,6 @@ namespace Genie
 	{
 		private:
 			FSSpec itsFileSpec;
-			
-			N::GetResInfo_Result its_resinfo;
 		
 		public:
 			FSTree_Unrsrc_File( const FSTreePtr&     parent,
@@ -259,8 +257,7 @@ namespace Genie
 			                    const FSSpec&        file )
 			:
 				FSTree( parent, name, 0, &unrsrc_file_methods ),
-				itsFileSpec( file ),
-				its_resinfo( GetResInfo_from_name( name ) )
+				itsFileSpec( file )
 			{
 			}
 			
@@ -296,8 +293,6 @@ namespace Genie
 	{
 		private:
 			FSSpec itsFileSpec;
-			
-			N::GetResInfo_Result its_resinfo;
 		
 		public:
 			FSTree_Rsrc_File( const FSTreePtr&     parent,
@@ -305,8 +300,7 @@ namespace Genie
 			                  const FSSpec&        file )
 			:
 				FSTree( parent, name, S_IFREG | 0400, &rsrc_file_methods ),  // FIXME:  Check perms
-				itsFileSpec( file ),
-				its_resinfo( GetResInfo_from_name( name ) )
+				itsFileSpec( file )
 			{
 			}
 			
@@ -328,7 +322,9 @@ namespace Genie
 	{
 		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
-		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
+		N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+		
+		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
 		
 		(void) N::RemoveResource( r );
 	}
@@ -337,7 +333,9 @@ namespace Genie
 	{
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
-		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
+		N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+		
+		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
 		
 		return N::GetHandleSize( r );
 	}
@@ -356,7 +354,9 @@ namespace Genie
 		{
 			RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 			
-			(void) N::AddResource( N::NewHandle( 0 ), its_resinfo );
+			N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+			
+			(void) N::AddResource( N::NewHandle( 0 ), resinfo );
 		}
 		
 		n::owned< N::Handle > h = N::NewHandle( 0 );
@@ -380,7 +380,9 @@ namespace Genie
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
 		
-		const N::Handle r = N::Get1Resource( its_resinfo.type, its_resinfo.id );
+		N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+		
+		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
