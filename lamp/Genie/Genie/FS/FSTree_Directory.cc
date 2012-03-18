@@ -61,37 +61,6 @@ namespace Genie
 		&premapped_dir_methods
 	};
 	
-	class FSTree_Premapped : public FSTree
-	{
-		private:
-			typedef const premapped::mapping* Mappings;
-			
-			typedef premapped::destructor Destructor;
-		
-		public:
-			FSTree_Premapped( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  Mappings             mappings,
-			                  Destructor           dtor );
-	};
-	
-	FSTree_Premapped::FSTree_Premapped( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    Mappings             mappings,
-	                                    Destructor           dtor )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFDIR | 0700,
-		        &premapped_methods,
-		        sizeof (premapped_extra),
-		        dtor )
-	{
-		premapped_extra& extra = *(premapped_extra*) this->extra();
-		
-		extra.mappings = mappings;
-	}
-	
 	
 	static const premapped::mapping*
 	//
@@ -166,7 +135,18 @@ namespace Genie
 	                             const premapped::mapping    mappings[],
 	                             void                      (*dtor)(const FSTree*) )
 	{
-		return FSTreePtr( new FSTree_Premapped( parent, name, mappings, dtor ) );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFDIR | 0700,
+		                             &premapped_methods,
+		                             sizeof (premapped_extra),
+		                             dtor );
+		
+		premapped_extra& extra = *(premapped_extra*) result->extra();
+		
+		extra.mappings = mappings;
+		
+		return result;
 	}
 	
 }
