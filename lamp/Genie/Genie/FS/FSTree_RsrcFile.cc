@@ -61,11 +61,32 @@ namespace Genie
 		file->Stat( sb );
 	}
 	
+	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
+	{
+		CInfoPBRec cInfo = { 0 };
+		
+		const bool async = false;
+		
+		FSpGetCatInfo< FNF_Throws >( cInfo,
+		                             async,
+		                             itsFileSpec );
+		
+		Stat_HFS( async, &sb, cInfo, itsFileSpec.name, true );
+	}
+	
 	static IOPtr rsrcfile_open( const FSTree* node, int flags, mode_t mode )
 	{
 		const FSTree_RsrcFile* file = static_cast< const FSTree_RsrcFile* >( node );
 		
 		return file->Open( flags, mode );
+	}
+	
+	IOPtr FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
+	{
+		return OpenMacFileHandle( itsFileSpec,
+		                          flags,
+		                          &Genie::FSpOpenRF,
+		                          &New_RsrcForkHandle );
 	}
 	
 	static const data_method_set rsrcfile_data_methods =
@@ -99,28 +120,6 @@ namespace Genie
 	FSTreePtr GetRsrcForkFSTree( const FSSpec& file )
 	{
 		return new FSTree_RsrcFile( file );
-	}
-	
-	
-	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
-	{
-		CInfoPBRec cInfo = { 0 };
-		
-		const bool async = false;
-		
-		FSpGetCatInfo< FNF_Throws >( cInfo,
-		                             async,
-		                             itsFileSpec );
-		
-		Stat_HFS( async, &sb, cInfo, itsFileSpec.name, true );
-	}
-	
-	IOPtr FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
-	{
-		return OpenMacFileHandle( itsFileSpec,
-		                          flags,
-		                          &Genie::FSpOpenRF,
-		                          &New_RsrcForkHandle );
 	}
 	
 }
