@@ -295,7 +295,6 @@ namespace Genie
 		private:
 			FSSpec      itsFileSpec;
 			CInfoPBRec  itsCInfo;
-			bool        itIsOnServer;
 		
 		public:
 			FSTree_HFS( const CInfoPBRec&    cInfo,
@@ -586,8 +585,7 @@ namespace Genie
 		        GetItemMode( cInfo.hFileInfo ),
 		        &hfs_methods ),
 		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
-		itsCInfo        ( cInfo                 ),
-		itIsOnServer    ( onServer              )
+		itsCInfo        ( cInfo                 )
 	{
 		// we override Parent()
 		
@@ -736,8 +734,10 @@ namespace Genie
 		{
 		}
 		
+		const bool async = false;
+		
 		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ),
-		                                       itIsOnServer ) );
+		                                       async ) );
 	}
 	
 	ino_t FSTree_HFS::Inode() const
@@ -751,7 +751,9 @@ namespace Genie
 	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
-		Stat_HFS( itIsOnServer, &sb, itsCInfo, itsFileSpec.name, false );
+		const bool async = false;
+		
+		Stat_HFS( async, &sb, itsCInfo, itsFileSpec.name, false );
 	}
 	
 	void FSTree_HFS::ChangeMode( mode_t mode ) const
@@ -1020,11 +1022,11 @@ namespace Genie
 	
 	IOPtr FSTree_HFS::Open( OpenFlags flags ) const
 	{
-		flags |= itIsOnServer ? O_MAC_ASYNC : 0;
+		const bool async = false;
 		
 		return OpenMacFileHandle( GetFSSpec(),
 		                          flags,
-		                          itIsOnServer ? &Genie::FSpOpenDF : N::FSpOpenDF,
+		                          async ? &Genie::FSpOpenDF : N::FSpOpenDF,
 		                          &New_DataForkHandle );
 	}
 	
@@ -1039,7 +1041,9 @@ namespace Genie
 	{
 		const N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		return new MacDirHandle( dir, itIsOnServer );
+		const bool async = false;
+		
+		return new MacDirHandle( dir, async );
 	}
 	
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
@@ -1066,9 +1070,11 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
+		const bool async = false;
+		
 		if ( name == "rsrc"  &&  is_file( this ) )
 		{
-			return GetRsrcForkFSTree( itsFileSpec, itIsOnServer );
+			return GetRsrcForkFSTree( itsFileSpec, async );
 		}
 		
 		if ( name == "r"  &&  is_file( this ) )
@@ -1080,7 +1086,7 @@ namespace Genie
 		
 		N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		return FSTreePtr_From_Lookup( dir, itIsOnServer, name, parent );
+		return FSTreePtr_From_Lookup( dir, async, name, parent );
 	}
 	
 	
@@ -1402,9 +1408,11 @@ namespace Genie
 	{
 		ASSERT( begin < end );
 		
+		const bool async = false;
+		
 	#ifdef __MACOS__
 		if (     TARGET_CPU_68K
-		     ||  !itIsOnServer
+		     ||  !async
 		     ||  !is_directory( this )
 		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
 		     ||  MacFeatures::Is_BlueBoxed() )
