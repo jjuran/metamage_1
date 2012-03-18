@@ -441,9 +441,7 @@ namespace Genie
 		
 		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( node->owner() );
 		
-		const bool onServer = VolumeIsOnServer( vRefNum );
-		
-		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ), onServer );
+		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ) );
 	}
 	
 	static const link_method_set folder_link_link_methods =
@@ -483,7 +481,7 @@ namespace Genie
 		
 		const Mac::FSDirSpec volume = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
 		
-		return FSTreeFromFSDirSpec( volume, VolumeIsOnServer( key ) );
+		return FSTreeFromFSDirSpec( volume );
 	}
 	
 	static FSTreePtr Drive_Link_Factory( const FSTreePtr&     parent,

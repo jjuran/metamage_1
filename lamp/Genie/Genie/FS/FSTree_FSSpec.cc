@@ -653,14 +653,16 @@ namespace Genie
 		return new FSTree_HFS( cInfo, name );
 	}
 	
-	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
+	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
 	{
 		N::Str31 mac_name = "\p";
 		
 		CInfoPBRec cInfo;
 		
+		const bool async = false;
+		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
-		                             onServer,
+		                             async,
 		                             dir.vRefNum,
 		                             dir.dirID,
 		                             mac_name,
@@ -677,7 +679,7 @@ namespace Genie
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
-		return FSTreeFromFSDirSpec( GetUsersDirectory(), false );
+		return FSTreeFromFSDirSpec( GetUsersDirectory() );
 	}
 	
 	
@@ -692,7 +694,7 @@ namespace Genie
 		if ( u != NULL )
 		{
 			FSTreePtr top    = Premapped_Factory( null_FSTreePtr, plus::string::null, Root_Overlay_Mappings );
-			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir, false );
+			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir );
 			
 			u->SetTop   ( top    );
 			u->SetBottom( bottom );
@@ -734,10 +736,7 @@ namespace Genie
 		{
 		}
 		
-		const bool async = false;
-		
-		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ),
-		                                       async ) );
+		return FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ) );
 	}
 	
 	ino_t FSTree_HFS::Inode() const
@@ -939,7 +938,7 @@ namespace Genie
 		{
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent, FileIsOnServer( linkSpec ) ) );
+			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ) );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			
@@ -1041,9 +1040,7 @@ namespace Genie
 	{
 		const N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		const bool async = false;
-		
-		return new MacDirHandle( dir, async );
+		return new MacDirHandle( dir );
 	}
 	
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
@@ -1071,8 +1068,6 @@ namespace Genie
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		const bool async = false;
-		
 		if ( name == "rsrc"  &&  is_file( this ) )
 		{
 			return GetRsrcForkFSTree( itsFileSpec );

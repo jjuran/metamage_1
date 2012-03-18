@@ -46,7 +46,7 @@ namespace Genie
 	
 	static FSTreePtr mac_user_prefs_resolve( const FSTree* node )
 	{
-		return FSTreeFromFSDirSpec( GetPrefsFolder(), false );
+		return FSTreeFromFSDirSpec( GetPrefsFolder() );
 	}
 	
 	static const link_method_set mac_user_prefs_link_methods =

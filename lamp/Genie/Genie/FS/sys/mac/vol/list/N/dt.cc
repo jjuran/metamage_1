@@ -99,9 +99,7 @@ namespace Genie
 		
 		const N::FSDirSpec dir = DTGetInfo_Dir( vRefNum );
 		
-		const bool onServer = VolumeIsOnServer( vRefNum );
-		
-		return FSTreeFromFSDirSpec( dir, onServer );
+		return FSTreeFromFSDirSpec( dir );
 	}
 	
 	static const link_method_set desktop_dir_link_methods =

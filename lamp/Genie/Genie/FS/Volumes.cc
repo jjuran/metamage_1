@@ -85,7 +85,7 @@ namespace Genie
 		
 		const Mac::FSDirSpec dir = n::make< Mac::FSDirSpec >( vRefNum, Mac::fsRtDirID );
 		
-		return FSTreeFromFSDirSpec( dir, VolumeIsOnServer( vRefNum ) );
+		return FSTreeFromFSDirSpec( dir );
 	}
 	
 	static const link_method_set volumes_link_link_methods =

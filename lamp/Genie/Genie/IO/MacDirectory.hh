@@ -22,13 +22,11 @@ namespace Genie
 	{
 		private:
 			Mac::FSDirSpec its_dir_spec;
-			bool           it_is_on_server;
 		
 		public:
-			MacDirHandle( const Mac::FSDirSpec& dir, bool on_server )
+			MacDirHandle( const Mac::FSDirSpec& dir )
 			:
-				its_dir_spec( dir ),
-				it_is_on_server( on_server )
+				its_dir_spec( dir )
 			{
 			}
 			

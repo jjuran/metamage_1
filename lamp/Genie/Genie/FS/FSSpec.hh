@@ -39,7 +39,7 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	
-	FSTreePtr FSTreeFromFSDirSpec( const Mac::FSDirSpec& dir, bool onServer );
+	FSTreePtr FSTreeFromFSDirSpec( const Mac::FSDirSpec& dir );
 	
 }
 
