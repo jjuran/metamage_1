@@ -23,9 +23,11 @@
 namespace Genie
 {
 	
-	static mode_t file_mode( const FSSpec& file, bool async )
+	static mode_t file_mode( const FSSpec& file )
 	{
 		CInfoPBRec cInfo;
+		
+		const bool async = false;
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, async, file );
 		
@@ -43,7 +45,7 @@ namespace Genie
 			FSSpec  itsFileSpec;
 		
 		public:
-			FSTree_RsrcFile( const FSSpec& file, bool onServer );
+			FSTree_RsrcFile( const FSSpec& file );
 			
 			void Stat( struct ::stat& sb ) const;
 			
@@ -83,20 +85,20 @@ namespace Genie
 	};
 	
 	
-	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file, bool onServer )
+	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file )
 	:
-		FSTree( FSTreeFromFSSpec( file, onServer ),
+		FSTree( FSTreeFromFSSpec( file ),
 		        "rsrc",
-		        file_mode( file, onServer ),
+		        file_mode( file ),
 		        &rsrcfile_methods ),
 		itsFileSpec( file )
 	{
 	}
 	
 	
-	FSTreePtr GetRsrcForkFSTree( const FSSpec& file, bool onServer )
+	FSTreePtr GetRsrcForkFSTree( const FSSpec& file )
 	{
-		return new FSTree_RsrcFile( file, onServer );
+		return new FSTree_RsrcFile( file );
 	}
 	
 	

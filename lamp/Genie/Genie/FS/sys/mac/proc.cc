@@ -205,7 +205,7 @@ namespace Genie
 		
 		const FSSpec file = N::GetProcessAppSpec( psn );
 		
-		return FSTreeFromFSSpec( file, FileIsOnServer( file ) );
+		return FSTreeFromFSSpec( file );
 	}
 	
 	static const link_method_set mac_proc_exe_link_methods =

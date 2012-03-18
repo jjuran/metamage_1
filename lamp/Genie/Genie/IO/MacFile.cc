@@ -28,7 +28,7 @@ namespace Genie
 	class MacFileHandle : public RegularFileHandle
 	{
 		private:
-			typedef FSTreePtr (*FileGetter)( const FSSpec&, bool );
+			typedef FSTreePtr (*FileGetter)( const FSSpec& );
 			
 			nucleus::shared< Nitrogen::FSFileRefNum >  itsRefNum;
 			FileGetter                                 itsFileGetter;
@@ -132,9 +132,7 @@ namespace Genie
 	
 	FSTreePtr MacFileHandle::GetFile()
 	{
-		const bool async = GetFlags() & O_MAC_ASYNC;
-		
-		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ), async );
+		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
 	}
 	
 	IOPtr MacFileHandle::Clone()

@@ -638,12 +638,14 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
+	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
 		CInfoPBRec cInfo;
 		
+		const bool async = false;
+		
 		FSpGetCatInfo< FNF_Returns >( cInfo,
-		                              onServer,
+		                              async,
 		                              item );
 		
 		const plus::string name = MakeName( item );
@@ -889,7 +891,7 @@ namespace Genie
 			{
 				FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
 				
-				return FSTreeFromFSSpec( target, FileIsOnServer( target ) );
+				return FSTreeFromFSSpec( target );
 			}
 			else
 			{
@@ -1073,7 +1075,7 @@ namespace Genie
 		
 		if ( name == "rsrc"  &&  is_file( this ) )
 		{
-			return GetRsrcForkFSTree( itsFileSpec, async );
+			return GetRsrcForkFSTree( itsFileSpec );
 		}
 		
 		if ( name == "r"  &&  is_file( this ) )

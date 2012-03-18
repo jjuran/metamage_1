@@ -140,9 +140,7 @@ namespace Genie
 		
 		const FSSpec file = DTGetAPPL( parent );
 		
-		const bool onServer = VolumeIsOnServer( N::FSVolumeRefNum( file.vRefNum ) );
-		
-		return FSTreeFromFSSpec( file, onServer );
+		return FSTreeFromFSSpec( file );
 	}
 	
 	static const link_method_set latest_appl_link_link_methods =
@@ -171,9 +169,7 @@ namespace Genie
 		
 		const FSSpec file = DTGetAPPL( grandparent, index );
 		
-		const bool onServer = VolumeIsOnServer( N::FSVolumeRefNum( file.vRefNum ) );
-		
-		return FSTreeFromFSSpec( file, onServer );
+		return FSTreeFromFSSpec( file );
 	}
 	
 	static const link_method_set dt_appls_QUAD_list_N__link_methods =
