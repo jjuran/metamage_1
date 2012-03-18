@@ -581,6 +581,13 @@ namespace Genie
 		itsCInfo.hFileInfo.ioNamePtr = itsFileSpec.name;
 	}
 	
+	static FSTreePtr new_HFS_node( const CInfoPBRec&    cInfo,
+	                               const plus::string&  name,
+	                               const FSTree*        parent = NULL )
+	{
+		return new FSTree_HFS( cInfo, name, parent );
+	}
+	
 	
 	static void FSpFileCopy( const FSSpec&         source,
 	                         const FSSpec&         destDir,
@@ -639,7 +646,7 @@ namespace Genie
 		
 		const plus::string name = MakeName( item );
 		
-		return new FSTree_HFS( cInfo, name );
+		return new_HFS_node( cInfo, name );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
@@ -661,7 +668,7 @@ namespace Genie
 		
 		const plus::string name = MakeName( fsspec );
 		
-		return new FSTree_HFS( cInfo, name );
+		return new_HFS_node( cInfo, name );
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
@@ -1052,7 +1059,7 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
 		
-		return new FSTree_HFS( cInfo, name, parent );
+		return new_HFS_node( cInfo, name, parent );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
