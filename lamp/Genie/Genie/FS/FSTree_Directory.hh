@@ -19,6 +19,8 @@ namespace Genie
 	namespace premapped
 	{
 		
+		typedef void (*destructor)( const FSTree* );
+		
 		typedef FSTreePtr (*function)( const FSTreePtr&,
 		                               const plus::string&,
 		                               const void* );

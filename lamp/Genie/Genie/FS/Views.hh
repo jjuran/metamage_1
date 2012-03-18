@@ -75,7 +75,7 @@ namespace Genie
 		private:
 			typedef const premapped::mapping* Mappings;
 			
-			typedef void (*Destructor)( const FSTree* delegate );
+			typedef premapped::destructor Destructor;
 			
 			ViewFactory  itsFactory;
 			Mappings     itsMappings;
