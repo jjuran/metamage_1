@@ -58,17 +58,13 @@ namespace Genie
 	
 	class FSTree_Premapped : public FSTree
 	{
-		public:
-			typedef premapped::function Function;
-			typedef premapped::mapping  Mapping;
-		
 		private:
-			typedef const Mapping* Mappings;
+			typedef const premapped::mapping* Mappings;
 			
 			typedef premapped::destructor Destructor;
 			
-			Destructor  itsDestructor;
 			Mappings    itsMappings;
+			Destructor  itsDestructor;
 		
 		public:
 			FSTree_Premapped( const FSTreePtr&     parent,
@@ -87,7 +83,7 @@ namespace Genie
 	
 	FSTree_Premapped::FSTree_Premapped( const FSTreePtr&     parent,
 	                                    const plus::string&  name,
-	                                    const Mapping*       mappings,
+	                                    Mappings             mappings,
 	                                    Destructor           dtor )
 	:
 		FSTree( parent,
@@ -124,11 +120,11 @@ namespace Genie
 	}
 	
 	
-	static const FSTree_Premapped::Mapping*
+	static const premapped::mapping*
 	//
-	find_mapping( const FSTree_Premapped::Mapping* mappings, const plus::string& name )
+	find_mapping( const premapped::mapping* mappings, const plus::string& name )
 	{
-		for ( const FSTree_Premapped::Mapping* it = mappings;  it->name;  ++it )
+		for ( const premapped::mapping* it = mappings;  it->name;  ++it )
 		{
 			if ( it->name == name )
 			{
@@ -157,7 +153,7 @@ namespace Genie
 	
 	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		if ( const Mapping* it = find_mapping( itsMappings, name ) )
+		if ( const premapped::mapping* it = find_mapping( itsMappings, name ) )
 		{
 			return it->f( parent, name, it->args );
 		}
@@ -167,11 +163,11 @@ namespace Genie
 	
 	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		for ( const Mapping* it = itsMappings;  it->name != NULL;  ++it )
+		for ( const premapped::mapping* it = itsMappings;  it->name != NULL;  ++it )
 		{
 			const plus::string& name = it->name;
 			
-			const Function& f = it->f;
+			premapped::function f = it->f;
 			
 			try
 			{
