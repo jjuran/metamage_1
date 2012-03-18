@@ -39,51 +39,28 @@ namespace Genie
 		return S_IFREG | 0600;
 	}
 	
-	class FSTree_RsrcFile : public FSTree
-	{
-		private:
-			FSSpec  itsFileSpec;
-		
-		public:
-			FSTree_RsrcFile( const FSSpec& file );
-			
-			void Stat( struct ::stat& sb ) const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
 	
 	static void rsrcfile_stat( const FSTree*   node,
 	                           struct ::stat&  sb )
-	{
-		const FSTree_RsrcFile* file = static_cast< const FSTree_RsrcFile* >( node );
-		
-		file->Stat( sb );
-	}
-	
-	void FSTree_RsrcFile::Stat( struct ::stat& sb ) const
 	{
 		CInfoPBRec cInfo = { 0 };
 		
 		const bool async = false;
 		
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
 		                             async,
-		                             itsFileSpec );
+		                             fileSpec );
 		
-		Stat_HFS( async, &sb, cInfo, itsFileSpec.name, true );
+		Stat_HFS( async, &sb, cInfo, fileSpec.name, true );
 	}
 	
 	static IOPtr rsrcfile_open( const FSTree* node, int flags, mode_t mode )
 	{
-		const FSTree_RsrcFile* file = static_cast< const FSTree_RsrcFile* >( node );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
 		
-		return file->Open( flags, mode );
-	}
-	
-	IOPtr FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
-	{
-		return OpenMacFileHandle( itsFileSpec,
+		return OpenMacFileHandle( fileSpec,
 		                          flags,
 		                          &Genie::FSpOpenRF,
 		                          &New_RsrcForkHandle );
@@ -106,20 +83,19 @@ namespace Genie
 	};
 	
 	
-	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file )
-	:
-		FSTree( FSTreeFromFSSpec( file ),
-		        "rsrc",
-		        file_mode( file ),
-		        &rsrcfile_methods ),
-		itsFileSpec( file )
-	{
-	}
-	
-	
 	FSTreePtr GetRsrcForkFSTree( const FSSpec& file )
 	{
-		return new FSTree_RsrcFile( file );
+		FSTreePtr parent = FSTreeFromFSSpec( file );
+		
+		FSTree* result = new FSTree( parent,
+		                             "rsrc",
+		                             file_mode( file ),
+		                             &rsrcfile_methods,
+		                             sizeof (FSSpec) );
+		
+		*(FSSpec*) result->extra() = file;
+		
+		return result;
 	}
 	
 }
