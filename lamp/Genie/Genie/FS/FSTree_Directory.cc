@@ -73,8 +73,8 @@ namespace Genie
 		public:
 			FSTree_Premapped( const FSTreePtr&     parent,
 			                  const plus::string&  name,
-			                  Mappings             mappings = premapped::empty_mappings,
-			                  Destructor           dtor     = NULL )
+			                  Mappings             mappings,
+			                  Destructor           dtor )
 			:
 				FSTree( parent, name, S_IFDIR | 0700, &premapped_methods ),
 				itsMappings( mappings ),
