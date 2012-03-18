@@ -98,30 +98,6 @@ namespace Genie
 		extra.mappings = mappings;
 	}
 	
-	static void premapped_remove( const FSTree* node )
-	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		file->Delete();
-	}
-	
-	static FSTreePtr premapped_lookup( const FSTree*        node,
-	                                   const plus::string&  name,
-	                                   const FSTree*        parent )
-	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	static void premapped_listdir( const FSTree*  node,
-	                               FSTreeCache&   cache )
-	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
 	
 	static const premapped::mapping*
 	//
@@ -138,12 +114,28 @@ namespace Genie
 		return NULL;
 	}
 	
+	static void premapped_remove( const FSTree* node )
+	{
+		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
+		
+		file->Delete();
+	}
+	
 	void FSTree_Premapped::Delete() const
 	{
 		if ( node_destructor dtor = destructor() )
 		{
 			dtor( static_cast< const FSTree* >( this ) );
 		}
+	}
+	
+	static FSTreePtr premapped_lookup( const FSTree*        node,
+	                                   const plus::string&  name,
+	                                   const FSTree*        parent )
+	{
+		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
+		
+		return file->Lookup_Child( name, parent );
 	}
 	
 	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
@@ -156,6 +148,14 @@ namespace Genie
 		}
 		
 		return FSNull();
+	}
+	
+	static void premapped_listdir( const FSTree*  node,
+	                               FSTreeCache&   cache )
+	{
+		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
+		
+		file->IterateIntoCache( cache );
 	}
 	
 	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
