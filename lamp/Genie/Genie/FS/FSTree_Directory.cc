@@ -28,6 +28,11 @@ namespace Genie
 	}
 	
 	
+	struct premapped_extra
+	{
+		premapped::mapping const*  mappings;
+	};
+	
 	static void premapped_remove( const FSTree* node );
 	
 	static FSTreePtr premapped_lookup( const FSTree*        node,
@@ -62,8 +67,6 @@ namespace Genie
 			typedef const premapped::mapping* Mappings;
 			
 			typedef premapped::destructor Destructor;
-			
-			Mappings    itsMappings;
 		
 		public:
 			FSTree_Premapped( const FSTreePtr&     parent,
@@ -87,10 +90,12 @@ namespace Genie
 		        name,
 		        S_IFDIR | 0700,
 		        &premapped_methods,
-		        0,
-		        dtor ),
-		itsMappings( mappings )
+		        sizeof (premapped_extra),
+		        dtor )
 	{
+		premapped_extra& extra = *(premapped_extra*) this->extra();
+		
+		extra.mappings = mappings;
 	}
 	
 	static void premapped_remove( const FSTree* node )
@@ -143,7 +148,9 @@ namespace Genie
 	
 	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
-		if ( const premapped::mapping* it = find_mapping( itsMappings, name ) )
+		premapped_extra& extra = *(premapped_extra*) this->extra();
+		
+		if ( const premapped::mapping* it = find_mapping( extra.mappings, name ) )
 		{
 			return it->f( parent, name, it->args );
 		}
@@ -153,7 +160,9 @@ namespace Genie
 	
 	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
 	{
-		for ( const premapped::mapping* it = itsMappings;  it->name != NULL;  ++it )
+		premapped_extra& extra = *(premapped_extra*) this->extra();
+		
+		for ( const premapped::mapping* it = extra.mappings;  it->name != NULL;  ++it )
 		{
 			const plus::string& name = it->name;
 			
