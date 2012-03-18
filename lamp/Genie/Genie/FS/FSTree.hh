@@ -33,6 +33,8 @@ struct stat;
 namespace Genie
 {
 	
+	typedef void (*node_destructor)( const FSTree* );
+	
 	struct node_method_set;
 	
 	
@@ -52,6 +54,8 @@ namespace Genie
 			
 			void*  its_extra;
 			
+			node_destructor  its_destructor;
+			
 		private:
 			// non-copyable
 			FSTree           ( const FSTree& );
@@ -64,7 +68,8 @@ namespace Genie
 			        const plus::string&     name,
 			        mode_t                  mode,
 			        const node_method_set*  methods = NULL,
-			        std::size_t             n_extra = 0 );
+			        std::size_t             n_extra = 0,
+			        node_destructor         dtor    = NULL );
 			
 			virtual ~FSTree();
 			
@@ -80,6 +85,8 @@ namespace Genie
 			mode_t FileMode() const  { return itsMode; }
 			
 			void* extra() const  { return its_extra; }
+			
+			node_destructor destructor() const  { return its_destructor; }
 			
 			plus::string Pathname() const;
 			

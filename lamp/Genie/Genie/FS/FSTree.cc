@@ -50,7 +50,8 @@ namespace Genie
 		itsName(),
 		itsMode(),
 		its_methods(),
-		its_extra()
+		its_extra(),
+		its_destructor()
 	{
 	}
 	
@@ -63,19 +64,26 @@ namespace Genie
 	                const plus::string&     name,
 	                mode_t                  mode,
 	                const node_method_set*  methods,
-	                std::size_t             n_extra )
+	                std::size_t             n_extra,
+	                node_destructor         dtor )
 	:
 		itsParent( parent ),
 		itsName  ( name[0] == '/' ? NameFromPtr( this )
 		                          : name ),
 		itsMode  ( mode ),
 		its_methods( methods ),
-		its_extra( n_extra ? ::operator new( n_extra ) : NULL )
+		its_extra( n_extra ? ::operator new( n_extra ) : NULL ),
+		its_destructor()
 	{
 	}
 	
 	FSTree::~FSTree()
 	{
+		if ( its_destructor )
+		{
+			its_destructor( this );
+		}
+		
 		::operator delete( its_extra );
 	}
 	
