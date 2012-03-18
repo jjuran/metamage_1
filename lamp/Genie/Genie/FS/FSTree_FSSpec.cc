@@ -89,11 +89,6 @@
 #include "Genie/Utilities/CreateAlias.hh"
 
 
-#ifndef CONFIG_HFS_ASYNC_RESOLVEPATH
-#define CONFIG_HFS_ASYNC_RESOLVEPATH  0
-#endif
-
-
 namespace Genie
 {
 	
@@ -295,11 +290,9 @@ namespace Genie
 		private:
 			FSSpec      itsFileSpec;
 			CInfoPBRec  itsCInfo;
-			bool        itIsOnServer;
 		
 		public:
 			FSTree_HFS( const CInfoPBRec&    cInfo,
-			            bool                 onServer,
 			            const plus::string&  name,
 			            const FSTree*        parent = NULL );
 			
@@ -343,12 +336,6 @@ namespace Genie
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
-			
-		#if CONFIG_HFS_ASYNC_RESOLVEPATH
-			
-			FSTreePtr ResolvePath( const char*& begin, const char* end ) const;
-			
-		#endif
 		
 		private:
 			void CreateFile() const;
@@ -577,7 +564,6 @@ namespace Genie
 	};
 	
 	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
-	                        bool                 onServer,
 	                        const plus::string&  name,
 	                        const FSTree*        parent )
 	:
@@ -586,8 +572,7 @@ namespace Genie
 		        GetItemMode( cInfo.hFileInfo ),
 		        &hfs_methods ),
 		itsFileSpec     ( FSMakeFSSpec( cInfo ) ),
-		itsCInfo        ( cInfo                 ),
-		itIsOnServer    ( onServer              )
+		itsCInfo        ( cInfo                 )
 	{
 		// we override Parent()
 		
@@ -642,27 +627,31 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item, bool onServer )
+	FSTreePtr FSTreeFromFSSpec( const FSSpec& item )
 	{
 		CInfoPBRec cInfo;
 		
+		const bool async = false;
+		
 		FSpGetCatInfo< FNF_Returns >( cInfo,
-		                              onServer,
+		                              async,
 		                              item );
 		
 		const plus::string name = MakeName( item );
 		
-		return new FSTree_HFS( cInfo, onServer, name );
+		return new FSTree_HFS( cInfo, name );
 	}
 	
-	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
+	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
 	{
 		N::Str31 mac_name = "\p";
 		
 		CInfoPBRec cInfo;
 		
+		const bool async = false;
+		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
-		                             onServer,
+		                             async,
 		                             dir.vRefNum,
 		                             dir.dirID,
 		                             mac_name,
@@ -672,14 +661,14 @@ namespace Genie
 		
 		const plus::string name = MakeName( fsspec );
 		
-		return new FSTree_HFS( cInfo, onServer, name );
+		return new FSTree_HFS( cInfo, name );
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
-		return FSTreeFromFSDirSpec( GetUsersDirectory(), false );
+		return FSTreeFromFSDirSpec( GetUsersDirectory() );
 	}
 	
 	
@@ -694,7 +683,7 @@ namespace Genie
 		if ( u != NULL )
 		{
 			FSTreePtr top    = Premapped_Factory( null_FSTreePtr, plus::string::null, Root_Overlay_Mappings );
-			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir, false );
+			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir );
 			
 			u->SetTop   ( top    );
 			u->SetBottom( bottom );
@@ -736,8 +725,7 @@ namespace Genie
 		{
 		}
 		
-		return FSTreePtr( FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ),
-		                                       itIsOnServer ) );
+		return FSTreeFromFSDirSpec( io::get_preceding_directory( itsFileSpec ) );
 	}
 	
 	ino_t FSTree_HFS::Inode() const
@@ -751,7 +739,9 @@ namespace Genie
 	
 	void FSTree_HFS::Stat( struct ::stat& sb ) const
 	{
-		Stat_HFS( itIsOnServer, &sb, itsCInfo, itsFileSpec.name, false );
+		const bool async = false;
+		
+		Stat_HFS( async, &sb, itsCInfo, itsFileSpec.name, false );
 	}
 	
 	void FSTree_HFS::ChangeMode( mode_t mode ) const
@@ -889,7 +879,7 @@ namespace Genie
 			{
 				FSSpec target = N::ResolveAliasFile( GetFSSpec(), false );
 				
-				return FSTreeFromFSSpec( target, FileIsOnServer( target ) );
+				return FSTreeFromFSSpec( target );
 			}
 			else
 			{
@@ -937,7 +927,7 @@ namespace Genie
 		{
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent, FileIsOnServer( linkSpec ) ) );
+			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ) );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			
@@ -1020,11 +1010,11 @@ namespace Genie
 	
 	IOPtr FSTree_HFS::Open( OpenFlags flags ) const
 	{
-		flags |= itIsOnServer ? O_MAC_ASYNC : 0;
+		const bool async = false;
 		
 		return OpenMacFileHandle( GetFSSpec(),
 		                          flags,
-		                          itIsOnServer ? &Genie::FSpOpenDF : N::FSpOpenDF,
+		                          async ? &Genie::FSpOpenDF : N::FSpOpenDF,
 		                          &New_DataForkHandle );
 	}
 	
@@ -1039,7 +1029,7 @@ namespace Genie
 	{
 		const N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		return new MacDirHandle( dir, itIsOnServer );
+		return new MacDirHandle( dir );
 	}
 	
 	void FSTree_HFS::CreateDirectory( mode_t /*mode*/ ) const
@@ -1051,7 +1041,6 @@ namespace Genie
 	
 	
 	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
-	                                        bool                 onServer,
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
@@ -1059,16 +1048,18 @@ namespace Genie
 		
 		CInfoPBRec cInfo;
 		
-		FSpGetCatInfo< FNF_Returns >( cInfo, onServer, dir.vRefNum, dir.dirID, macName, 0 );
+		const bool async = false;
 		
-		return new FSTree_HFS( cInfo, onServer, name, parent );
+		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
+		
+		return new FSTree_HFS( cInfo, name, parent );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		if ( name == "rsrc"  &&  is_file( this ) )
 		{
-			return GetRsrcForkFSTree( itsFileSpec, itIsOnServer );
+			return GetRsrcForkFSTree( itsFileSpec );
 		}
 		
 		if ( name == "r"  &&  is_file( this ) )
@@ -1080,7 +1071,7 @@ namespace Genie
 		
 		N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		return FSTreePtr_From_Lookup( dir, itIsOnServer, name, parent );
+		return FSTreePtr_From_Lookup( dir, name, parent );
 	}
 	
 	
@@ -1234,197 +1225,6 @@ namespace Genie
 		
 	#endif
 	}
-	
-#ifdef __MACOS__
-	
-	struct ResolvePath_CInfoPBRec : CInfoPBRec
-	{
-		N::Str63       name;
-		const char*    begin;
-		const char*    end;
-		volatile bool  done;
-	};
-	
-	static inline bool char_is_special( char c )
-	{
-		return c == ':'  ||  c & 0x80;
-	}
-	
-	static bool name_is_special( const char* begin, const char* end )
-	{
-		const unsigned name_length = end - begin;
-		
-		// This is the UTF-8-encoded length, which will be longer than the
-		// MacRoman length in the presence of non-ASCII characters, but those
-		// are special anyway.
-		
-		if ( name_length > 31 )
-		{
-			return true;
-		}
-		else if ( const bool dot = begin[0] == '.' )
-		{
-			const bool two_dots = begin[1] == '.';
-			
-			if ( const bool thats_it = 1 + two_dots == name_length )
-			{
-				return true;
-			}
-		}
-		else if ( std::find_if( begin, end, std::ptr_fun( char_is_special ) ) != end )
-		{
-			return true;
-		}
-		
-		return false;
-	}
-	
-	namespace
-	{
-		
-		pascal void ResolvePath_Completion( ParamBlockRec* pb )
-		{
-			ResolvePath_CInfoPBRec& cInfo = *(ResolvePath_CInfoPBRec*) pb;
-			
-			if ( cInfo.dirInfo.ioResult < 0 )
-			{
-				goto done;
-			}
-			
-			const char* begin = cInfo.begin;
-			
-			while ( begin < cInfo.end  &&  begin[0] == '/' )
-			{
-				++begin;
-			}
-			
-			if ( begin == cInfo.end )
-			{
-				goto done;
-			}
-			
-			const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
-			
-			if ( !is_dir )
-			{
-				goto done;
-			}
-			
-			const char* slash = std::find( begin, cInfo.end, '/' );
-			
-			if ( name_is_special( begin, slash ) )
-			{
-				goto done;
-			}
-			
-			const unsigned name_length = slash - begin;
-			
-			cInfo.name[ 0 ] = name_length;
-			
-			std::copy( begin, slash, &cInfo.name[1] );
-			
-			cInfo.begin = slash;
-			
-			OSErr err = ::PBGetCatInfoAsync( &cInfo );
-			
-			if ( cInfo.dirInfo.ioResult >= 0 )
-			{
-				// Successfully queued
-				return;
-			}
-			
-			// We don't know if this was queued or not, so set done below
-			
-		done:
-			
-			cInfo.done = true;
-			
-			Ped::WakeUp();
-		}
-		
-	}
-	
-	static FSTreePtr ResolvePath_HFS( const FSSpec& dirFileSpec, const char*& begin, const char* end )
-	{
-		ResolvePath_CInfoPBRec cInfo;
-		
-		DirInfo& dirInfo = cInfo.dirInfo;
-		
-		dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, ResolvePath_Completion >();
-		
-		dirInfo.ioNamePtr   = cInfo.name;
-		dirInfo.ioVRefNum   = dirFileSpec.vRefNum;
-		dirInfo.ioDrDirID   = dirFileSpec.parID;
-		dirInfo.ioFDirIndex = 0;
-		
-		cInfo.name = dirFileSpec.name;
-		
-		cInfo.begin = begin;
-		cInfo.end   = end;
-		cInfo.done  = false;
-		
-		N::PBGetCatInfoAsync( cInfo, N::FNF_Returns() );
-		
-		while ( !cInfo.done )
-		{
-			AsyncYield();
-		}
-		
-		begin = cInfo.begin;
-		
-		ASSERT( dirInfo.ioResult <= 0 );
-		
-		const bool nonexistent = dirInfo.ioResult == fnfErr  && begin == end;
-		
-		if ( !nonexistent )
-		{
-			Mac::ThrowOSStatus( dirInfo.ioResult );
-		}
-		
-		const SInt32 dirID = nonexistent ? dirInfo.ioDrDirID : dirInfo.ioDrParID;
-		
-		FSSpec result = { dirInfo.ioVRefNum, dirID };
-		
-		N::CopyToPascalString( cInfo.name, result.name, sizeof result.name - 1 );
-		
-		const plus::string name = MakeName( result );
-		
-		// This code path is only used on servers.
-		
-		return new FSTree_HFS( cInfo, true, name );
-	}
-	
-#endif
-	
-#if CONFIG_HFS_ASYNC_RESOLVEPATH
-	
-	FSTreePtr FSTree_HFS::ResolvePath( const char*& begin, const char* end ) const
-	{
-		ASSERT( begin < end );
-		
-	#ifdef __MACOS__
-		if (     TARGET_CPU_68K
-		     ||  !itIsOnServer
-		     ||  !is_directory( this )
-		     ||  name_is_special( begin, std::find( begin, end, '/' ) )
-		     ||  MacFeatures::Is_BlueBoxed() )
-	#endif
-		{
-			// Special handling required for
-			// * dot, dotdot, colons, and long names
-			// * running in Classic, which has broken PBGetCatInfoAsync()
-			
-			return FSTree::ResolvePath( begin, end );
-		}
-		
-	#ifdef __MACOS__
-		
-		return ResolvePath_HFS( itsFileSpec, begin, end );
-		
-	#endif
-	}
-	
-#endif  // #if CONFIG_HFS_ASYNC_RESOLVEPATH
 	
 	void FSTree_HFS::FinishCreation() const
 	{

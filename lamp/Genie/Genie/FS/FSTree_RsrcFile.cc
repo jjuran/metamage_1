@@ -23,9 +23,11 @@
 namespace Genie
 {
 	
-	static mode_t file_mode( const FSSpec& file, bool async )
+	static mode_t file_mode( const FSSpec& file )
 	{
 		CInfoPBRec cInfo;
+		
+		const bool async = false;
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo, async, file );
 		
@@ -41,10 +43,9 @@ namespace Genie
 	{
 		private:
 			FSSpec  itsFileSpec;
-			bool    itIsOnServer;
 		
 		public:
-			FSTree_RsrcFile( const FSSpec& file, bool onServer );
+			FSTree_RsrcFile( const FSSpec& file );
 			
 			void Stat( struct ::stat& sb ) const;
 			
@@ -84,21 +85,20 @@ namespace Genie
 	};
 	
 	
-	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file, bool onServer )
+	FSTree_RsrcFile::FSTree_RsrcFile( const FSSpec& file )
 	:
-		FSTree( FSTreeFromFSSpec( file, onServer ),
+		FSTree( FSTreeFromFSSpec( file ),
 		        "rsrc",
-		        file_mode( file, onServer ),
+		        file_mode( file ),
 		        &rsrcfile_methods ),
-		itsFileSpec( file ),
-		itIsOnServer( onServer )
+		itsFileSpec( file )
 	{
 	}
 	
 	
-	FSTreePtr GetRsrcForkFSTree( const FSSpec& file, bool onServer )
+	FSTreePtr GetRsrcForkFSTree( const FSSpec& file )
 	{
-		return new FSTree_RsrcFile( file, onServer );
+		return new FSTree_RsrcFile( file );
 	}
 	
 	
@@ -106,17 +106,17 @@ namespace Genie
 	{
 		CInfoPBRec cInfo = { 0 };
 		
+		const bool async = false;
+		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
-		                             itIsOnServer,
+		                             async,
 		                             itsFileSpec );
 		
-		Stat_HFS( itIsOnServer, &sb, cInfo, itsFileSpec.name, true );
+		Stat_HFS( async, &sb, cInfo, itsFileSpec.name, true );
 	}
 	
 	IOPtr FSTree_RsrcFile::Open( OpenFlags flags, mode_t mode ) const
 	{
-		flags |= itIsOnServer ? O_MAC_ASYNC : 0;
-		
 		return OpenMacFileHandle( itsFileSpec,
 		                          flags,
 		                          &Genie::FSpOpenRF,

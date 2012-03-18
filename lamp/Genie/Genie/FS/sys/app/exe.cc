@@ -21,7 +21,7 @@ namespace Genie
 	
 	static FSTreePtr app_exe_resolve( const FSTree* node )
 	{
-		return FSTreeFromFSSpec( GetAppFile(), false );
+		return FSTreeFromFSSpec( GetAppFile() );
 	}
 	
 	static const link_method_set app_exe_link_methods =

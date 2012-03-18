@@ -21,7 +21,7 @@ namespace Genie
 	
 	static FSTreePtr app_dir_resolve( const FSTree* node )
 	{
-		return FSTreeFromFSDirSpec( GetAppFolder(), false );
+		return FSTreeFromFSDirSpec( GetAppFolder() );
 	}
 	
 	static const link_method_set app_dir_link_methods =
