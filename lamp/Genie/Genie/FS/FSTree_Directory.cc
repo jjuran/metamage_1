@@ -74,13 +74,7 @@ namespace Genie
 			FSTree_Premapped( const FSTreePtr&     parent,
 			                  const plus::string&  name,
 			                  Mappings             mappings,
-			                  Destructor           dtor )
-			:
-				FSTree( parent, name, S_IFDIR | 0700, &premapped_methods ),
-				itsMappings( mappings ),
-				itsDestructor( dtor )
-			{
-			}
+			                  Destructor           dtor );
 			
 			~FSTree_Premapped();
 			
@@ -90,6 +84,20 @@ namespace Genie
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
+	
+	FSTree_Premapped::FSTree_Premapped( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    const Mapping*       mappings,
+	                                    Destructor           dtor )
+	:
+		FSTree( parent,
+		        name,
+		        S_IFDIR | 0700,
+		        &premapped_methods ),
+		itsMappings( mappings ),
+		itsDestructor( dtor )
+	{
+	}
 	
 	static void premapped_remove( const FSTree* node )
 	{
