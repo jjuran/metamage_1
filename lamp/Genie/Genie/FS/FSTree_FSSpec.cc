@@ -291,14 +291,6 @@ namespace Genie
 		CInfoPBRec  cinfo;
 	};
 	
-	class FSTree_HFS : public FSTree
-	{
-		public:
-			FSTree_HFS( const CInfoPBRec&    cInfo,
-			            const plus::string&  name,
-			            const FSTree*        parent = NULL );
-	};
-	
 	static FSSpec FSMakeFSSpec( const CInfoPBRec& cInfo )
 	{
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
@@ -424,33 +416,28 @@ namespace Genie
 		&hfs_misc_methods
 	};
 	
-	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
-	                        const plus::string&  name,
-	                        const FSTree*        parent )
-	:
-		FSTree( parent ? parent->Self() : null_FSTreePtr,
-		        name,
-		        GetItemMode( cInfo.hFileInfo ),
-		        &hfs_methods,
-		        sizeof (hfs_extra) )
+	static FSTreePtr new_HFS_node( const CInfoPBRec&    cInfo,
+	                               const plus::string&  name,
+	                               const FSTree*        parent = NULL )
 	{
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             GetItemMode( cInfo.hFileInfo ),
+		                             &hfs_methods,
+		                             sizeof (hfs_extra) );
+		
 		// we override Parent()
 		
 		ASSERT( !name.empty() );
 		
-		hfs_extra& extra = *(hfs_extra*) this->extra();
+		hfs_extra& extra = *(hfs_extra*) result->extra();
 		
 		extra.fsspec = FSMakeFSSpec( cInfo );
 		extra.cinfo  = cInfo;
 		
 		extra.cinfo.hFileInfo.ioNamePtr = extra.fsspec.name;
-	}
-	
-	static FSTreePtr new_HFS_node( const CInfoPBRec&    cInfo,
-	                               const plus::string&  name,
-	                               const FSTree*        parent = NULL )
-	{
-		return new FSTree_HFS( cInfo, name, parent );
+		
+		return result;
 	}
 	
 	
