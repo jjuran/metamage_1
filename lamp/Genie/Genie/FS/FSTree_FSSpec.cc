@@ -1053,7 +1053,6 @@ namespace Genie
 	
 	
 	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
-	                                        bool                 onServer,
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
 	{
@@ -1061,7 +1060,9 @@ namespace Genie
 		
 		CInfoPBRec cInfo;
 		
-		FSpGetCatInfo< FNF_Returns >( cInfo, onServer, dir.vRefNum, dir.dirID, macName, 0 );
+		const bool async = false;
+		
+		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
 		
 		return new FSTree_HFS( cInfo, name, parent );
 	}
@@ -1084,7 +1085,7 @@ namespace Genie
 		
 		N::FSDirSpec dir = Dir_From_CInfo( itsCInfo );
 		
-		return FSTreePtr_From_Lookup( dir, async, name, parent );
+		return FSTreePtr_From_Lookup( dir, name, parent );
 	}
 	
 	
