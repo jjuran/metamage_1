@@ -298,7 +298,6 @@ namespace Genie
 		
 		public:
 			FSTree_HFS( const CInfoPBRec&    cInfo,
-			            bool                 onServer,
 			            const plus::string&  name,
 			            const FSTree*        parent = NULL );
 			
@@ -576,7 +575,6 @@ namespace Genie
 	};
 	
 	FSTree_HFS::FSTree_HFS( const CInfoPBRec&    cInfo,
-	                        bool                 onServer,
 	                        const plus::string&  name,
 	                        const FSTree*        parent )
 	:
@@ -650,7 +648,7 @@ namespace Genie
 		
 		const plus::string name = MakeName( item );
 		
-		return new FSTree_HFS( cInfo, onServer, name );
+		return new FSTree_HFS( cInfo, name );
 	}
 	
 	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir, bool onServer )
@@ -670,7 +668,7 @@ namespace Genie
 		
 		const plus::string name = MakeName( fsspec );
 		
-		return new FSTree_HFS( cInfo, onServer, name );
+		return new FSTree_HFS( cInfo, name );
 	}
 	
 	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
@@ -1065,7 +1063,7 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Returns >( cInfo, onServer, dir.vRefNum, dir.dirID, macName, 0 );
 		
-		return new FSTree_HFS( cInfo, onServer, name, parent );
+		return new FSTree_HFS( cInfo, name, parent );
 	}
 	
 	FSTreePtr FSTree_HFS::Lookup_Child( const plus::string& name, const FSTree* parent ) const
