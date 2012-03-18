@@ -64,15 +64,12 @@ namespace Genie
 			typedef premapped::destructor Destructor;
 			
 			Mappings    itsMappings;
-			Destructor  itsDestructor;
 		
 		public:
 			FSTree_Premapped( const FSTreePtr&     parent,
 			                  const plus::string&  name,
 			                  Mappings             mappings,
 			                  Destructor           dtor );
-			
-			~FSTree_Premapped();
 			
 			void Delete() const;
 			
@@ -89,9 +86,10 @@ namespace Genie
 		FSTree( parent,
 		        name,
 		        S_IFDIR | 0700,
-		        &premapped_methods ),
-		itsMappings( mappings ),
-		itsDestructor( dtor )
+		        &premapped_methods,
+		        0,
+		        dtor ),
+		itsMappings( mappings )
 	{
 	}
 	
@@ -135,19 +133,11 @@ namespace Genie
 		return NULL;
 	}
 	
-	FSTree_Premapped::~FSTree_Premapped()
-	{
-		if ( itsDestructor )
-		{
-			itsDestructor( static_cast< FSTree* >( this ) );
-		}
-	}
-	
 	void FSTree_Premapped::Delete() const
 	{
-		if ( itsDestructor )
+		if ( node_destructor dtor = destructor() )
 		{
-			itsDestructor( static_cast< const FSTree* >( this ) );
+			dtor( static_cast< const FSTree* >( this ) );
 		}
 	}
 	
