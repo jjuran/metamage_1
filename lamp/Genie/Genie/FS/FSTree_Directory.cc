@@ -73,12 +73,6 @@ namespace Genie
 			                  const plus::string&  name,
 			                  Mappings             mappings,
 			                  Destructor           dtor );
-			
-			void Delete() const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	FSTree_Premapped::FSTree_Premapped( const FSTreePtr&     parent,
@@ -116,16 +110,9 @@ namespace Genie
 	
 	static void premapped_remove( const FSTree* node )
 	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		file->Delete();
-	}
-	
-	void FSTree_Premapped::Delete() const
-	{
-		if ( node_destructor dtor = destructor() )
+		if ( node_destructor dtor = node->destructor() )
 		{
-			dtor( static_cast< const FSTree* >( this ) );
+			dtor( node );
 		}
 	}
 	
@@ -133,14 +120,7 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const FSTree*        parent )
 	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		premapped_extra& extra = *(premapped_extra*) this->extra();
+		premapped_extra& extra = *(premapped_extra*) node->extra();
 		
 		if ( const premapped::mapping* it = find_mapping( extra.mappings, name ) )
 		{
@@ -153,14 +133,7 @@ namespace Genie
 	static void premapped_listdir( const FSTree*  node,
 	                               FSTreeCache&   cache )
 	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
-	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		premapped_extra& extra = *(premapped_extra*) this->extra();
+		premapped_extra& extra = *(premapped_extra*) node->extra();
 		
 		for ( const premapped::mapping* it = extra.mappings;  it->name != NULL;  ++it )
 		{
@@ -170,7 +143,7 @@ namespace Genie
 			
 			try
 			{
-				FSTreePtr file = f( Self(), name, it->args );
+				FSTreePtr file = f( node, name, it->args );
 				
 				if ( !exists( file ) )
 				{
