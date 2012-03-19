@@ -35,7 +35,9 @@ namespace text_input
 		
 		ASSERT( begin <= end );
 		
-		const char* eol = gear::find_first_match( begin, end, "\p" "\n" "\r" );
+		const unsigned char newlines[] = { 2, '\n', '\r' };
+		
+		const char* eol = gear::find_first_match( begin, end, newlines );
 		
 		if ( eol != NULL )
 		{
