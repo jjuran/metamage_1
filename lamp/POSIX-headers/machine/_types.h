@@ -22,7 +22,7 @@ typedef unsigned short      __uint16_t;
 typedef unsigned int        __uint32_t;
 typedef unsigned long long  __uint64_t;
 
-typedef unsigned long __clock_t;
+typedef unsigned long long __clock_t;
 
 typedef long __time_t;
 
