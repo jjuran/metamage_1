@@ -310,13 +310,15 @@ namespace Genie
 		premapped::mapping const*  mappings;
 		premapped::destructor      destructor;
 		ViewFactory                view_factory;
+		DelegateFactory            delegate_factory;
 	};
 	
 	FSTree_new_View::FSTree_new_View( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  ViewFactory          factory,
 	                                  Mappings             mappings,
-	                                  Destructor           dtor )
+	                                  Destructor           dtor,
+	                                  DelegateFactory      delegate_factory )
 	:
 		FSTree( parent,
 		        name,
@@ -326,15 +328,17 @@ namespace Genie
 	{
 		new_view_extra& extra = *(new_view_extra*) this->extra();
 		
-		extra.mappings     = mappings;
-		extra.destructor   = dtor;
-		extra.view_factory = factory;
+		extra.mappings         = mappings;
+		extra.destructor       = dtor;
+		extra.view_factory     = factory;
+		extra.delegate_factory = delegate_factory;
 	}
 	
-	FSTreePtr FSTree_new_View::CreateDelegate( const FSTreePtr&     parent,
-	                                           const plus::string&  name ) const
+	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
+	                                                const FSTreePtr&     parent,
+	                                                const plus::string&  name )
 	{
-		new_view_extra& extra = *(new_view_extra*) this->extra();
+		new_view_extra& extra = *(new_view_extra*) node->extra();
 		
 		FSTreePtr delegate = Premapped_Factory( parent, name, extra.mappings, extra.destructor );
 		
@@ -351,7 +355,7 @@ namespace Genie
 		
 		const plus::string& name = target->Name();
 		
-		FSTreePtr delegate = CreateDelegate( parent, name );
+		FSTreePtr delegate = extra.delegate_factory( this, parent, name );
 		
 		AddViewParameters( key, name, delegate, extra.view_factory );
 		

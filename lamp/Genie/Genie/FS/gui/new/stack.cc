@@ -132,6 +132,10 @@ namespace Genie
 	
 	static void DestroyDelegate( const FSTree* delegate );
 	
+	static FSTreePtr create_delegate_for_new_stack( const FSTree*        node,
+	                                                const FSTreePtr&     parent,
+	                                                const plus::string&  name );
+	
 	class FSTree_new_stack : public FSTree_new_View
 	{
 		public:
@@ -142,12 +146,10 @@ namespace Genie
 				                 name,
 				                 &StackFactory,
 				                 NULL,
-				                 &DestroyDelegate )
+				                 &DestroyDelegate,
+				                 &create_delegate_for_new_stack )
 			{
 			}
-			
-			FSTreePtr CreateDelegate( const FSTreePtr&     parent,
-			                          const plus::string&  name ) const;
 	};
 	
 	
@@ -230,8 +232,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr FSTree_new_stack::CreateDelegate( const FSTreePtr&     parent,
-	                                            const plus::string&  name ) const
+	static FSTreePtr create_delegate_for_new_stack( const FSTree*        node,
+	                                                const FSTreePtr&     parent,
+	                                                const plus::string&  name )
 	{
 		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
 	}

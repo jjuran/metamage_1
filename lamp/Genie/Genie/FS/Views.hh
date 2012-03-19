@@ -30,6 +30,10 @@ namespace Genie
 	
 	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
+	typedef FSTreePtr (*DelegateFactory)( const FSTree*,
+	                                      const FSTreePtr&,
+	                                      const plus::string& );
+	
 	
 	const FSTree* GetViewWindowKey( const FSTree* view );
 	
@@ -70,22 +74,24 @@ namespace Genie
 	};
 	
 	
+	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
+	                                                const FSTreePtr&     parent,
+	                                                const plus::string&  name );
+	
 	class FSTree_new_View : public FSTree
 	{
 		private:
 			typedef const premapped::mapping* Mappings;
 			
 			typedef premapped::destructor Destructor;
-			
-			virtual FSTreePtr CreateDelegate( const FSTreePtr&     parent,
-			                                  const plus::string&  name ) const;
 		
 		public:
 			FSTree_new_View( const FSTreePtr&     parent,
 			                 const plus::string&  name,
 			                 ViewFactory          factory,
 			                 Mappings             mappings,
-			                 Destructor           dtor );
+			                 Destructor           dtor,
+			                 DelegateFactory      delegate_factory = &create_default_delegate_for_new_view );
 			
 			void HardLink( const FSTreePtr& target ) const;
 	};
