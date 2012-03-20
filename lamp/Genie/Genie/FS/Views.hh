@@ -78,22 +78,6 @@ namespace Genie
 	                                                const FSTreePtr&     parent,
 	                                                const plus::string&  name );
 	
-	class FSTree_new_View : public FSTree
-	{
-		private:
-			typedef const premapped::mapping* Mappings;
-			
-			typedef premapped::destructor Destructor;
-		
-		public:
-			FSTree_new_View( const FSTreePtr&     parent,
-			                 const plus::string&  name,
-			                 ViewFactory          factory,
-			                 Mappings             mappings,
-			                 Destructor           dtor,
-			                 DelegateFactory      delegate_factory = &create_default_delegate_for_new_view );
-	};
-	
 	FSTreePtr New_new_view( const FSTreePtr&           parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,

@@ -308,27 +308,6 @@ namespace Genie
 		DelegateFactory            delegate_factory;
 	};
 	
-	FSTree_new_View::FSTree_new_View( const FSTreePtr&     parent,
-	                                  const plus::string&  name,
-	                                  ViewFactory          factory,
-	                                  Mappings             mappings,
-	                                  Destructor           dtor,
-	                                  DelegateFactory      delegate_factory )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFREG | 0,
-		        &new_view_methods,
-		        sizeof (new_view_extra) )
-	{
-		new_view_extra& extra = *(new_view_extra*) this->extra();
-		
-		extra.mappings         = mappings;
-		extra.destructor       = dtor;
-		extra.view_factory     = factory;
-		extra.delegate_factory = delegate_factory;
-	}
-	
 	FSTreePtr New_new_view( const FSTreePtr&           parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
@@ -337,12 +316,20 @@ namespace Genie
 	                        DelegateFactory            delegate_factory )
 	
 	{
-		return new FSTree_new_View( parent,
-		                            name,
-		                            factory,
-		                            mappings,
-		                            dtor,
-		                            delegate_factory );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0,
+		                             &new_view_methods,
+		                             sizeof (new_view_extra) );
+		
+		new_view_extra& extra = *(new_view_extra*) result->extra();
+		
+		extra.mappings         = mappings;
+		extra.destructor       = dtor;
+		extra.view_factory     = factory;
+		extra.delegate_factory = delegate_factory;
+		
+		return result;
 	}
 	
 	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
