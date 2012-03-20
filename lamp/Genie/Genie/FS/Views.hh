@@ -92,8 +92,6 @@ namespace Genie
 			                 Mappings             mappings,
 			                 Destructor           dtor,
 			                 DelegateFactory      delegate_factory = &create_default_delegate_for_new_view );
-			
-			void HardLink( const FSTreePtr& target ) const;
 	};
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&

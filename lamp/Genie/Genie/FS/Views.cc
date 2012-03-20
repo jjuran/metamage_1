@@ -277,12 +277,7 @@ namespace Genie
 	
 	
 	static void new_view_hardlink( const FSTree*     node,
-	                               const FSTreePtr&  dest )
-	{
-		const FSTree_new_View* file = static_cast< const FSTree_new_View* >( node );
-		
-		file->HardLink( dest );
-	}
+	                               const FSTreePtr&  dest );
 	
 	static const file_method_set new_view_file_methods =
 	{
@@ -345,9 +340,10 @@ namespace Genie
 		return delegate;
 	}
 	
-	void FSTree_new_View::HardLink( const FSTreePtr& target ) const
+	static void new_view_hardlink( const FSTree*     node,
+	                               const FSTreePtr&  target )
 	{
-		new_view_extra& extra = *(new_view_extra*) this->extra();
+		new_view_extra& extra = *(new_view_extra*) node->extra();
 		
 		const FSTreePtr& parent = target->ParentRef();
 		
@@ -355,7 +351,7 @@ namespace Genie
 		
 		const plus::string& name = target->Name();
 		
-		FSTreePtr delegate = extra.delegate_factory( this, parent, name );
+		FSTreePtr delegate = extra.delegate_factory( node, parent, name );
 		
 		AddViewParameters( key, name, delegate, extra.view_factory );
 		
