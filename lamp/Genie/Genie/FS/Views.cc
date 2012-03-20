@@ -329,6 +329,22 @@ namespace Genie
 		extra.delegate_factory = delegate_factory;
 	}
 	
+	FSTreePtr New_new_view( const FSTreePtr&           parent,
+	                        const plus::string&        name,
+	                        ViewFactory                factory,
+	                        const premapped::mapping*  mappings,
+	                        premapped::destructor      dtor,
+	                        DelegateFactory            delegate_factory )
+	
+	{
+		return new FSTree_new_View( parent,
+		                            name,
+		                            factory,
+		                            mappings,
+		                            dtor,
+		                            delegate_factory );
+	}
+	
 	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
 	                                                const FSTreePtr&     parent,
 	                                                const plus::string&  name )

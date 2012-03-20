@@ -94,6 +94,13 @@ namespace Genie
 			                 DelegateFactory      delegate_factory = &create_default_delegate_for_new_view );
 	};
 	
+	FSTreePtr New_new_view( const FSTreePtr&           parent,
+	                        const plus::string&        name,
+	                        ViewFactory                factory,
+	                        const premapped::mapping*  mappings,
+	                        premapped::destructor      dtor,
+	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
+	
 	typedef boost::intrusive_ptr< Pedestal::View >&
 	//
 	(*ViewGetter)( const FSTree*, const plus::string& name );
