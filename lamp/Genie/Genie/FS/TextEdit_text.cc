@@ -15,6 +15,7 @@
 #include "plus/mac_utf8.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"

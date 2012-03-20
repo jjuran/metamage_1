@@ -15,6 +15,7 @@
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/gui/port/ADDR.hh"

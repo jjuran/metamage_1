@@ -6,6 +6,7 @@
 #include "Genie/FS/subview.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Views.hh"
 
 
