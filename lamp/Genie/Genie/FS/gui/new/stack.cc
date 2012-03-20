@@ -132,26 +132,6 @@ namespace Genie
 	
 	static void DestroyDelegate( const FSTree* delegate );
 	
-	static FSTreePtr create_delegate_for_new_stack( const FSTree*        node,
-	                                                const FSTreePtr&     parent,
-	                                                const plus::string&  name );
-	
-	class FSTree_new_stack : public FSTree_new_View
-	{
-		public:
-			FSTree_new_stack( const FSTreePtr&     parent,
-			                  const plus::string&  name )
-			:
-				FSTree_new_View( parent,
-				                 name,
-				                 &StackFactory,
-				                 NULL,
-				                 &DestroyDelegate,
-				                 &create_delegate_for_new_stack )
-			{
-			}
-	};
-	
 	
 	static boost::intrusive_ptr< Pedestal::View >&
 	//
@@ -248,7 +228,12 @@ namespace Genie
 	                     const plus::string&  name,
 	                     const void*          args )
 	{
-		return new FSTree_new_stack( parent, name );
+		return new FSTree_new_View( parent,
+		                            name,
+		                            &StackFactory,
+		                            NULL,
+		                            &DestroyDelegate,
+		                            &create_delegate_for_new_stack );
 	}
 	
 }
