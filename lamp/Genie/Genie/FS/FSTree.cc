@@ -44,7 +44,12 @@ namespace Genie
 	const FSTreePtr null_FSTreePtr = FSTreePtr();
 	
 	
-	FSTree::FSTree() : itsParent(), itsName(), itsMode(), its_methods()
+	FSTree::FSTree()
+	:
+		itsParent(),
+		itsName(),
+		itsMode(),
+		its_methods()
 	{
 	}
 	
