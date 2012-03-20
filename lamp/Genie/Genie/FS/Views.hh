@@ -36,9 +36,6 @@ namespace Genie
 	bool InvalidateWindowForView( const FSTree* view );
 	
 	
-	inline const FSTree* GetViewKey( const FSTree* that )  { return that->ParentRef().get(); }
-	
-	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct Const_View_Property : readonly_property
 	{
