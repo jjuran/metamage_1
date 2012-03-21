@@ -98,7 +98,7 @@ sub scan_for_project_descriptions
 		return;
 	}
 	
-	my @subdirs = list_files( $dir, sub { -d } );
+	my @subdirs = list_files( $dir, sub { -d  &&  !m{^ var $}x } );
 	
 	scan_for_project_descriptions( $_ )  foreach @subdirs;
 }
