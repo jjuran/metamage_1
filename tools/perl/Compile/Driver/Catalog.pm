@@ -1,5 +1,7 @@
 package Compile::Driver::Catalog;
 
+use FindBin '$RealBin';
+
 use Compile::Driver::Files;
 use Compile::Driver::InputFile::Catalog;
 use Compile::Driver::InputFile::Description;
@@ -18,7 +20,8 @@ use strict;
 
 my $subpath = "var/cache/compile-driver";
 
-my $File = "$ENV{HOME}/$subpath/catalog";
+# Assume we're called from the repo's top level
+my $File = "$RealBin/$subpath/catalog";
 
 my %Catalog;
 
