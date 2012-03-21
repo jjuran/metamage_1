@@ -22,9 +22,9 @@ namespace Genie
 			{
 			}
 			
-			lamp_entry get_main_entry_point() const
+			relix_entry get_main_entry_point() const
 			{
-				return (lamp_entry) *unit().get();  // reinterpret_cast
+				return (relix_entry) *unit().get();  // reinterpret_cast
 			}
 	};
 	
