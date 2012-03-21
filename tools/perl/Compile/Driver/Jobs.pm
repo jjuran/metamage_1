@@ -1,5 +1,7 @@
 package Compile::Driver::Jobs;
 
+use FindBin '$RealBin';
+
 use Compile::Driver::Files;
 use Compile::Driver::InputFile::CPPSource;
 
@@ -12,7 +14,8 @@ use strict;
 *read_cpp_source_file = \&Compile::Driver::InputFile::CPPSource::read_file;
 
 
-my $build_dir = "$ENV{HOME}/var/build";
+# Assume we're called from the repo's top level
+my $build_dir = "$RealBin/var/build";
 
 
 sub derived_filename
