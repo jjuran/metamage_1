@@ -108,7 +108,7 @@ sub scan_for_project_descriptions
 
 sub create_catalog_file
 {
-	my $root = "$ENV{HOME}/src/tree";
+	my $root = $RealBin;
 	
 	scan_for_project_descriptions( $root );
 	
