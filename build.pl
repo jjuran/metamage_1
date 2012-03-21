@@ -2,7 +2,7 @@
 
 use FindBin '$RealBin';
 
-use lib $RealBin;
+use lib "$RealBin/tools/perl";
 
 use Compile::Driver::Configuration;
 use Compile::Driver::Jobs;
