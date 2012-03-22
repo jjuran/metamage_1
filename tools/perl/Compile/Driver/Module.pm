@@ -225,6 +225,25 @@ sub search_dirs
 	return @searches;
 }
 
+sub filter
+{
+	my ( $conf ) = @_;
+	
+	return  if !/\.(c|cc|cpp)$/;
+	
+	my @parts = split m{\.}, $_;
+	
+	pop   @parts;  # filename extension
+	shift @parts;  # forename
+	
+	foreach my $part ( @parts )
+	{
+		return  if $conf->conflicts_with( $part );
+	}
+	
+	return 1;
+}
+
 sub sources
 {
 	my $self = shift;
@@ -240,7 +259,9 @@ sub sources
 	
 	@source_dirs = $self->search_dirs  if !@source_dirs;
 	
-	my $filter = sub { /\.(c|cc|cpp)$/ };
+	my $conf = $self->{CONF};
+	
+	my $filter = sub { filter( $conf ) };
 	
 	return map { enumerate_files( $_, $filter ) } @source_dirs;
 }

@@ -17,6 +17,8 @@ sub new
 	
 	my %self;
 	
+	$self{ arch } = "unix";  # Set to conflict with .68k.c files with asm {}
+	
 	$self{ unix } = "unix";
 	
 	$self{ build } = $build;
@@ -75,6 +77,19 @@ sub get_module
 	}
 	
 	return $module_cache{ $key } = Compile::Driver::Module::->new( $self, $desc );
+}
+
+sub conflicts_with
+{
+	my $self = shift;
+	
+	my ( $spec ) = @_;
+	
+	my $category = 'arch';
+	
+	my $value = $self->{ $category } or return;
+	
+	return $spec ne $value;
 }
 
 1;
