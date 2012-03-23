@@ -11,17 +11,39 @@ use strict;
 my $build = "dbg";
 
 
+my %category_of_spec = qw
+(
+	dbg  build
+	opt  build
+);
+
 sub new
 {
 	my $class = shift;
 	
+	my @specs = @_;
+	
 	my %self;
+	
+	foreach my $spec ( @specs )
+	{
+		my $category = $category_of_spec{ $spec };
+		
+		if ( !exists $self{ $category } )
+		{
+			$self{ $category } = $spec;
+		}
+		elsif ( $self{ $category } ne $spec )
+		{
+			die "Can't set $category=$spec; $category is already $self{ $category }\n";
+		}
+	}
 	
 	$self{ arch } = "unix";  # Set to conflict with .68k.c files with asm {}
 	
 	$self{ unix } = "unix";
 	
-	$self{ build } = $build;
+	$self{ build } = $build  if !exists $self{ build };
 	
 	return bless \%self, $class;
 }
