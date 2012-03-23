@@ -7,13 +7,14 @@ use lib "$RealBin/tools/perl";
 use Compile::Driver::Configuration;
 use Compile::Driver::Jobs;
 use Compile::Driver::Module;
+use Compile::Driver::Options;
 
 use warnings;
 use strict;
 
-my @args = @ARGV;
+my @args = Compile::Driver::Options::set_options( @ARGV );
 
-my $configuration = Compile::Driver::Configuration::->new();
+my $configuration = Compile::Driver::Configuration::->new( Compile::Driver::Options::specs );
 
 my @jobs;
 my @tasks;
