@@ -8,6 +8,11 @@ use warnings;
 use strict;
 
 
+# Host config
+my $is_osx = $^O eq "darwin";
+
+my $is_mac = $is_osx;
+
 my $build = "dbg";
 
 
@@ -37,6 +42,13 @@ sub new
 		{
 			die "Can't set $category=$spec; $category is already $self{ $category }\n";
 		}
+	}
+	
+	if ( $is_mac )
+	{
+		$self{ mac_runtime } = 'mach-o';
+		
+		$self{ mac_api } = 'carbon';
 	}
 	
 	$self{ arch } = "unix";  # Set to conflict with .68k.c files with asm {}
@@ -112,6 +124,13 @@ sub conflicts_with
 	my $value = $self->{ $category } or return;
 	
 	return $spec ne $value;
+}
+
+sub is_apple_gcc
+{
+	my $self = shift;
+	
+	return ($self->{ mac_runtime } || "") eq "mach-o";
 }
 
 sub debugging

@@ -183,6 +183,15 @@ sub compile
 	
 	my @o = -O2;
 	
+	my @f;
+	my @w;
+	
+	if ( $conf->is_apple_gcc )
+	{
+		push @f, "-fpascal-strings";
+		push @w, "-Wno-deprecated-declarations";
+	}
+	
 	my %d;
 	
 	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
@@ -191,7 +200,7 @@ sub compile
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	run_command( qw( gcc -c -o ), $dest, @o, @d, @i, $path );
+	run_command( qw( gcc -c -o ), $dest, @o, @f, @w, @d, @i, $path );
 }
 
 sub link_lib
@@ -232,11 +241,18 @@ sub link_exe
 	
 	return ""  if up_to_date( $dest, @$objs, @libs );
 	
+	my $conf = $module->{CONF};
+	
 	@libs = reverse @libs;
 	
 	print_job( $job );
 	
 	make_ancestor_dirs( $dest );
+	
+	if ( $conf->is_apple_gcc )
+	{
+		push @libs, -framework => "Carbon";
+	}
 	
 	run_command( qw( g++ -o ), $dest, @$objs, @libs );
 }
