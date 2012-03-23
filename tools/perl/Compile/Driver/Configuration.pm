@@ -53,8 +53,6 @@ sub new
 		$self{ mac } = 'mac';
 	}
 	
-	$self{ arch } = "unix";  # Set to conflict with .68k.c files with asm {}
-	
 	$self{ unix } = "unix";
 	
 	$self{ build } = $build  if !exists $self{ build };
@@ -123,7 +121,7 @@ sub conflicts_with
 	
 	my $category = 'arch';
 	
-	my $value = $self->{ $category } or return;
+	my $value = $self->{ $category } or return 1;
 	
 	return $spec ne $value;
 }
