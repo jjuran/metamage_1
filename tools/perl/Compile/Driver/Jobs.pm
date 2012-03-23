@@ -181,6 +181,8 @@ sub compile
 	
 	make_ancestor_dirs( $dest );
 	
+	my @o = -O2;
+	
 	my %d;
 	
 	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
@@ -189,7 +191,7 @@ sub compile
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	run_command( qw( gcc -c -o ), $dest, @d, @i, $path );
+	run_command( qw( gcc -c -o ), $dest, @o, @d, @i, $path );
 }
 
 sub link_lib
