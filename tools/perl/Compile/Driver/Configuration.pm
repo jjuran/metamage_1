@@ -49,6 +49,8 @@ sub new
 		$self{ mac_runtime } = 'mach-o';
 		
 		$self{ mac_api } = 'carbon';
+		
+		$self{ mac } = 'mac';
 	}
 	
 	$self{ arch } = "unix";  # Set to conflict with .68k.c files with asm {}
