@@ -11,6 +11,10 @@ use strict;
 # Host config
 my $is_osx = $^O eq "darwin";
 
+my $osx_arch = $is_osx ? substr( `arch`, 0, -1 ) : "";
+
+$osx_arch =~ s/^ i386 /x86/x;
+
 my $is_mac = $is_osx;
 
 my $build = "dbg";
@@ -18,6 +22,9 @@ my $build = "dbg";
 
 my %category_of_spec = qw
 (
+	ppc  arch
+	x86  arch
+	
 	dbg  build
 	opt  build
 );
@@ -46,6 +53,18 @@ sub new
 	
 	if ( $is_mac )
 	{
+		if ( exists $self{ arch } )
+		{
+			if ( $osx_arch lt $self{ arch } )
+			{
+				die "Can't build OS X x86 on ppc\n";
+			}
+		}
+		else
+		{
+			$self{ arch } = $osx_arch;
+		}
+		
 		$self{ mac_runtime } = 'mach-o';
 		
 		$self{ mac_api } = 'carbon';
@@ -77,7 +96,17 @@ sub target
 	
 	my $build = $self->{build};
 	
-	return $build;
+	if ( !$is_mac )
+	{
+		return $build;
+	}
+	
+	my ( $arch, $rt, $api ) = @{ $self }{ qw( arch mac_runtime mac_api ) };
+	
+	$rt  =~ s{^ (....) .* }{$1}x;
+	$api =~ s{^ (....) .* }{$1}x;
+	
+	return "$arch-$rt-$api-$build";
 }
 
 my %module_cache;
@@ -131,6 +160,8 @@ sub arch_option
 	my $self = shift;
 	
 	my $arch = $self->{arch} or return;
+	
+	$arch =~ s/^ x86 $/i386/x;
 	
 	return (-arch => $arch);
 }

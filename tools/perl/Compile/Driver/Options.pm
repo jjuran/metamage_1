@@ -5,6 +5,9 @@ use strict;
 
 my %Spec_for_option = qw
 (
+	P ppc
+	8 x86
+	
 	R opt
 );
 
