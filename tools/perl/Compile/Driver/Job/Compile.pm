@@ -56,6 +56,15 @@ sub up_to_date_for_headers
 	return 1;
 }
 
+sub input_files
+{
+	my $self = shift;
+	
+	my $path = $self->{PATH};
+	
+	return $path;
+}
+
 sub up_to_date
 {
 	my $self = shift;
