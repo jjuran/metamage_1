@@ -2,6 +2,9 @@ package Compile::Driver;
 
 use Compile::Driver::Configuration;
 use Compile::Driver::Job;
+use Compile::Driver::Job::Compile;
+use Compile::Driver::Job::Link::Archive;
+use Compile::Driver::Job::Link::Binary;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
@@ -13,20 +16,11 @@ sub jobs_for
 {
 	my ( $module ) = @_;
 	
+	return if !$module->is_buildable;
+	
 	my @jobs;
 	
 	my $target = $module->target;
-	
-	my $product = $module->product_type;
-	
-	my $is_lib = $module->is_static_lib;
-	my $is_exe = $module->is_executable;
-	
-	my $type = $is_lib ? "AR"
-	         : $is_exe ? "LINK"
-	         :           "";
-	
-	return if !$type;
 	
 	my @sources = $module->sources;
 	
@@ -40,7 +34,7 @@ sub jobs_for
 		
 		push @objs, $obj;
 		
-		my $compile = Compile::Driver::Job::->new
+		my $compile = Compile::Driver::Job::Compile::->new
 		(
 			TYPE => "CC",
 			FROM => $module,
@@ -51,18 +45,29 @@ sub jobs_for
 		push @jobs, $compile;
 	}
 	
-	my $dest = $is_lib ? Compile::Driver::Job::lib_pathname( $target, $name )
-	                   : Compile::Driver::Job::bin_pathname( $target, $name, $module->program_name );
+	my $link;
 	
-	my $link = Compile::Driver::Job::->new
-	(
-		TYPE => $type,
-		FROM => $module,
-		OBJS => \@objs,
-		DEST => $dest,
-	);
-	
-	$link->{PREQ} = $module->recursive_prerequisites  if $is_exe;
+	if ( $module->is_static_lib )
+	{
+		$link = Compile::Driver::Job::Link::Archive::->new
+		(
+			TYPE => "AR",
+			FROM => $module,
+			OBJS => \@objs,
+			DEST => Compile::Driver::Job::lib_pathname( $target, $name ),
+		);
+	}
+	elsif ( $module->is_executable )
+	{
+		$link = Compile::Driver::Job::Link::Binary::->new
+		(
+			TYPE => "LINK",
+			FROM => $module,
+			OBJS => \@objs,
+			PREQ => $module->recursive_prerequisites,
+			DEST => Compile::Driver::Job::bin_pathname( $target, $name, $module->program_name ),
+		);
+	}
 	
 	push @jobs, $link;
 	

@@ -3,15 +3,12 @@ package Compile::Driver::Job;
 use FindBin '$RealBin';
 
 use Compile::Driver::Files;
-use Compile::Driver::InputFile::CPPSource;
 
 use warnings;
 use strict;
 
 
 *make_ancestor_dirs = \&Compile::Driver::Files::make_ancestor_dirs;
-
-*read_cpp_source_file = \&Compile::Driver::InputFile::CPPSource::read_file;
 
 
 # Assume we're called from the repo's top level
@@ -102,52 +99,6 @@ sub up_to_date
 	return 1;
 }
 
-my %includes_cache;
-
-sub get_includes
-{
-	my ( $path ) = @_;
-	
-	exists $includes_cache{ $path } and return $includes_cache{ $path };
-	
-	my $includes = read_cpp_source_file( $path );
-	
-	return $includes_cache{ $path } = $includes;
-}
-
-sub up_to_date_for_headers
-{
-	my ( $module, $out_date, @headers ) = @_;
-	
-	foreach my $h ( @headers )
-	{
-		my @stat = stat $h;
-		
-		return 0  if !@stat || $stat[9] >= $out_date;
-		
-		my $includes = get_includes( $h );
-		
-		$includes = $includes->{USER};
-		
-		my @headers = grep { defined } map { $module->find_include( $_ ) } @$includes;
-		
-		return 0  if !up_to_date_for_headers( $module, $out_date, @headers );
-	}
-	
-	return 1;
-}
-
-sub up_to_date_including_headers
-{
-	my ( $module, $out, @in ) = @_;
-	
-	-f $out or return 0;
-	
-	my $out_date = (stat _)[9];
-	
-	return up_to_date_for_headers( $module, $out_date, @in );
-}
-
 sub print
 {
 	my $self = shift;
@@ -173,113 +124,19 @@ sub run_command
 	}
 }
 
-sub compile
-{
-	my $self = shift;
-	
-	my $module = $self->{FROM};
-	
-	my $path = $self->{PATH};
-	my $dest = $self->{DEST};
-	
-	return ""  if up_to_date_including_headers( $module, $dest, $path );
-	
-	my $conf = $module->{CONF};
-	
-	$self->print;
-	
-	make_ancestor_dirs( $dest );
-	
-	my @arch = $conf->arch_option;
-	
-	my @o = -O2;
-	
-	my @f;
-	my @w;
-	
-	if ( $conf->is_apple_gcc )
-	{
-		push @f, "-fpascal-strings";
-		push @w, "-Wno-deprecated-declarations";
-	}
-	
-	my %d;
-	
-	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
-	
-	my @d = map { "-D$_=" . $d{ $_ } } keys %d;
-	
-	my @i = map { "-I$_" } @{ $module->all_search_dirs };
-	
-	run_command( qw( gcc -c -o ), $dest, @arch, @o, @f, @w, @d, @i, $path );
-}
-
-sub link_lib
-{
-	my $self = shift;
-	
-	my $module = $self->{FROM};
-	
-	my $objs = $self->{OBJS};
-	my $dest = $self->{DEST};
-	
-	$self->{PATH} = lib_filename( $module->name );
-	
-	return ""  if up_to_date( $dest, @$objs );
-	
-	$self->print;
-	
-	make_ancestor_dirs( $dest );
-	
-	unlink( $dest );
-	
-	run_command( qw( ar rcs ), $dest, @$objs );
-}
-
-sub link_exe
-{
-	my $self = shift;
-	
-	my $module = $self->{FROM};
-	
-	my $objs = $self->{OBJS};
-	my $preq = $self->{PREQ};
-	my $dest = $self->{DEST};
-	
-	my @prereqs = grep { $module->get( $_ )->is_static_lib } @$preq;
-	
-	my @libs = map { lib_pathname( $module->target, $_ ) } @prereqs;
-	
-	return ""  if up_to_date( $dest, @$objs, @libs );
-	
-	my $conf = $module->{CONF};
-	
-	@libs = reverse @libs;
-	
-	$self->print;
-	
-	make_ancestor_dirs( $dest );
-	
-	my @arch = $conf->arch_option;
-	
-	if ( $conf->is_apple_gcc )
-	{
-		push @libs, -framework => "Carbon";
-	}
-	
-	run_command( qw( g++ -o ), $dest, @arch, @$objs, @libs );
-}
-
 sub perform
 {
 	my $self = shift;
 	
-	for ( $self->{TYPE} )
-	{
-		/^ CC   $/x and $self->compile;
-		/^ AR   $/x and $self->link_lib;
-		/^ LINK $/x and $self->link_exe;
-	}
+	my @command = $self->command or return "";  # null command means up to date
+	
+	$self->print;
+	
+	my $dest = $self->{DEST};
+	
+	make_ancestor_dirs( $dest );
+	
+	run_command( @command );
 }
 
 1;
