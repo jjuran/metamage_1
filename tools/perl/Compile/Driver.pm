@@ -1,7 +1,7 @@
 package Compile::Driver;
 
 use Compile::Driver::Configuration;
-use Compile::Driver::Jobs;
+use Compile::Driver::Job;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
@@ -36,31 +36,31 @@ sub jobs_for
 	
 	foreach my $path ( @sources )
 	{
-		my $obj = Compile::Driver::Jobs::obj_pathname( $target, $name, $path );
+		my $obj = Compile::Driver::Job::obj_pathname( $target, $name, $path );
 		
 		push @objs, $obj;
 		
-		my $compile =
-		{
+		my $compile = Compile::Driver::Job::->new
+		(
 			TYPE => "CC",
 			FROM => $module,
 			PATH => $path,
 			DEST => $obj,
-		};
+		);
 		
 		push @jobs, $compile;
 	}
 	
-	my $dest = $is_lib ? Compile::Driver::Jobs::lib_pathname( $target, $name )
-	                   : Compile::Driver::Jobs::bin_pathname( $target, $name, $module->program_name );
+	my $dest = $is_lib ? Compile::Driver::Job::lib_pathname( $target, $name )
+	                   : Compile::Driver::Job::bin_pathname( $target, $name, $module->program_name );
 	
-	my $link =
-	{
+	my $link = Compile::Driver::Job::->new
+	(
 		TYPE => $type,
 		FROM => $module,
 		OBJS => \@objs,
 		DEST => $dest,
-	};
+	);
 	
 	$link->{PREQ} = $module->recursive_prerequisites  if $is_exe;
 	
@@ -92,7 +92,7 @@ sub main
 	
 	foreach my $job ( @jobs )
 	{
-		Compile::Driver::Jobs::do_job( $job );
+		$job->perform;
 	}
 	
 }

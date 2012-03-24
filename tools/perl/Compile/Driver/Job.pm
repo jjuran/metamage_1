@@ -1,4 +1,4 @@
-package Compile::Driver::Jobs;
+package Compile::Driver::Job;
 
 use FindBin '$RealBin';
 
@@ -17,6 +17,15 @@ use strict;
 # Assume we're called from the repo's top level
 my $build_dir = "$RealBin/var/build";
 
+
+sub new
+{
+	my $class = shift;
+	
+	my %self = @_;
+	
+	return bless \%self, $class;
+}
 
 sub derived_filename
 {
@@ -139,13 +148,13 @@ sub up_to_date_including_headers
 	return up_to_date_for_headers( $module, $out_date, @in );
 }
 
-sub print_job
+sub print
 {
-	my ( $job ) = @_;
+	my $self = shift;
 	
-	my $type = $job->{TYPE};
-	my $dest = $job->{DEST};
-	my $item = $job->{PATH} || $job->{FROM}->name;
+	my $type = $self->{TYPE};
+	my $dest = $self->{DEST};
+	my $item = $self->{PATH} || $self->{FROM}->name;
 	
 	$type .= " " x (5 - length( $type ));
 	
@@ -166,18 +175,18 @@ sub run_command
 
 sub compile
 {
-	my ( $job ) = @_;
+	my $self = shift;
 	
-	my $module = $job->{FROM};
+	my $module = $self->{FROM};
 	
-	my $path = $job->{PATH};
-	my $dest = $job->{DEST};
+	my $path = $self->{PATH};
+	my $dest = $self->{DEST};
 	
 	return ""  if up_to_date_including_headers( $module, $dest, $path );
 	
 	my $conf = $module->{CONF};
 	
-	print_job( $job );
+	$self->print;
 	
 	make_ancestor_dirs( $dest );
 	
@@ -207,18 +216,18 @@ sub compile
 
 sub link_lib
 {
-	my ( $job ) = @_;
+	my $self = shift;
 	
-	my $module = $job->{FROM};
+	my $module = $self->{FROM};
 	
-	my $objs = $job->{OBJS};
-	my $dest = $job->{DEST};
+	my $objs = $self->{OBJS};
+	my $dest = $self->{DEST};
 	
-	$job->{PATH} = lib_filename( $module->name );
+	$self->{PATH} = lib_filename( $module->name );
 	
 	return ""  if up_to_date( $dest, @$objs );
 	
-	print_job( $job );
+	$self->print;
 	
 	make_ancestor_dirs( $dest );
 	
@@ -229,13 +238,13 @@ sub link_lib
 
 sub link_exe
 {
-	my ( $job ) = @_;
+	my $self = shift;
 	
-	my $module = $job->{FROM};
+	my $module = $self->{FROM};
 	
-	my $objs = $job->{OBJS};
-	my $preq = $job->{PREQ};
-	my $dest = $job->{DEST};
+	my $objs = $self->{OBJS};
+	my $preq = $self->{PREQ};
+	my $dest = $self->{DEST};
 	
 	my @prereqs = grep { $module->get( $_ )->is_static_lib } @$preq;
 	
@@ -247,7 +256,7 @@ sub link_exe
 	
 	@libs = reverse @libs;
 	
-	print_job( $job );
+	$self->print;
 	
 	make_ancestor_dirs( $dest );
 	
@@ -261,15 +270,15 @@ sub link_exe
 	run_command( qw( g++ -o ), $dest, @arch, @$objs, @libs );
 }
 
-sub do_job
+sub perform
 {
-	my ( $job ) = @_;
+	my $self = shift;
 	
-	for ( $job->{TYPE} )
+	for ( $self->{TYPE} )
 	{
-		/^ CC   $/x and compile( $job );
-		/^ AR   $/x and link_lib( $job );
-		/^ LINK $/x and link_exe( $job );
+		/^ CC   $/x and $self->compile;
+		/^ AR   $/x and $self->link_lib;
+		/^ LINK $/x and $self->link_exe;
 	}
 }
 
