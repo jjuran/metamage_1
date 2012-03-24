@@ -40,8 +40,6 @@ sub command
 	
 	my @input = $self->input_files;
 	
-	return  if $self->up_to_date( @input );
-	
 	unlink( $dest );
 	
 	return qw( ar rcs ), $dest, @input;

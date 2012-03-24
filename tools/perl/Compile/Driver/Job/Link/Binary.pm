@@ -47,8 +47,6 @@ sub command
 	
 	my @input = $self->input_files;
 	
-	return  if $self->up_to_date( @input );
-	
 	my $conf = $module->{CONF};
 	
 	my @arch = $conf->arch_option;

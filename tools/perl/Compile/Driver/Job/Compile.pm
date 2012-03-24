@@ -91,8 +91,6 @@ sub command
 	my $path = $self->{PATH};
 	my $dest = $self->{DEST};
 	
-	return  if $self->up_to_date;
-	
 	my $conf = $module->{CONF};
 	
 	my @arch = $conf->arch_option;

@@ -130,7 +130,11 @@ sub perform
 {
 	my $self = shift;
 	
-	my @command = $self->command or return "";  # null command means up to date
+	my @input = $self->input_files;
+	
+	return ""  if $self->up_to_date( @input );
+	
+	my @command = $self->command;
 	
 	$self->print;
 	
