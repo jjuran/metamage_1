@@ -16,6 +16,10 @@ sub new
 	
 	my %self = @_;
 	
+	my $module = $self{ FROM };
+	
+	$self{ PATH } = lib_filename( $module->name );
+	
 	return bless \%self, $class;
 }
 
@@ -32,11 +36,7 @@ sub command
 {
 	my $self = shift;
 	
-	my $module = $self->{FROM};
-	
 	my $dest = $self->{DEST};
-	
-	$self->{PATH} = lib_filename( $module->name );
 	
 	my @input = $self->input_files;
 	
