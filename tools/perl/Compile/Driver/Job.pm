@@ -81,7 +81,9 @@ sub bin_pathname
 
 sub up_to_date
 {
-	my $out = shift @_;
+	my $self = shift;
+	
+	my $out = $self->{DEST};
 	
 	-f $out or return 0;
 	

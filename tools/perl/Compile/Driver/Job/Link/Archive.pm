@@ -8,7 +8,6 @@ use strict;
 
 
 *lib_filename = \&Compile::Driver::Job::lib_filename;
-*up_to_date   = \&Compile::Driver::Job::up_to_date;
 
 
 sub new
@@ -31,7 +30,7 @@ sub command
 	
 	$self->{PATH} = lib_filename( $module->name );
 	
-	return  if up_to_date( $dest, @$objs );
+	return  if $self->up_to_date( @$objs );
 	
 	unlink( $dest );
 	

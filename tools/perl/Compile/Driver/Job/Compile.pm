@@ -56,15 +56,21 @@ sub up_to_date_for_headers
 	return 1;
 }
 
-sub up_to_date_including_headers
+sub up_to_date
 {
-	my ( $module, $out, @in ) = @_;
+	my $self = shift;
+	
+	my $out = $self->{DEST};
 	
 	-f $out or return 0;
 	
 	my $out_date = (stat _)[9];
 	
-	return up_to_date_for_headers( $module, $out_date, @in );
+	my $module = $self->{FROM};
+	
+	my $path = $self->{PATH};
+	
+	return up_to_date_for_headers( $module, $out_date, $path );
 }
 
 sub command
@@ -76,7 +82,7 @@ sub command
 	my $path = $self->{PATH};
 	my $dest = $self->{DEST};
 	
-	return  if up_to_date_including_headers( $module, $dest, $path );
+	return  if $self->up_to_date;
 	
 	my $conf = $module->{CONF};
 	

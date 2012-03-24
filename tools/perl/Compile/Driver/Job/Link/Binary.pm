@@ -8,7 +8,6 @@ use strict;
 
 
 *lib_pathname = \&Compile::Driver::Job::lib_pathname;
-*up_to_date   = \&Compile::Driver::Job::up_to_date;
 
 
 sub new
@@ -34,7 +33,7 @@ sub command
 	
 	my @libs = map { lib_pathname( $module->target, $_ ) } @prereqs;
 	
-	return  if up_to_date( $dest, @$objs, @libs );
+	return  if $self->up_to_date( @$objs, @libs );
 	
 	my $conf = $module->{CONF};
 	
