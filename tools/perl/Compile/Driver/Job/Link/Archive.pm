@@ -19,22 +19,32 @@ sub new
 	return bless \%self, $class;
 }
 
+sub input_files
+{
+	my $self = shift;
+	
+	my $objs = $self->{OBJS};
+	
+	return @$objs;
+}
+
 sub command
 {
 	my $self = shift;
 	
 	my $module = $self->{FROM};
 	
-	my $objs = $self->{OBJS};
 	my $dest = $self->{DEST};
 	
 	$self->{PATH} = lib_filename( $module->name );
 	
-	return  if $self->up_to_date( @$objs );
+	my @input = $self->input_files;
+	
+	return  if $self->up_to_date( @input );
 	
 	unlink( $dest );
 	
-	return qw( ar rcs ), $dest, @$objs;
+	return qw( ar rcs ), $dest, @input;
 }
 
 1;
