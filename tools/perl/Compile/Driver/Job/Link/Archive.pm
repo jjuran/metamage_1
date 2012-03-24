@@ -38,11 +38,9 @@ sub command
 	
 	my $dest = $self->{DEST};
 	
-	my @input = $self->input_files;
-	
 	unlink( $dest );
 	
-	return qw( ar rcs ), $dest, @input;
+	return qw( ar rcs ), $dest;
 }
 
 1;

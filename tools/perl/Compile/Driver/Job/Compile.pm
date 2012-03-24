@@ -88,7 +88,6 @@ sub command
 	
 	my $module = $self->{FROM};
 	
-	my $path = $self->{PATH};
 	my $dest = $self->{DEST};
 	
 	my $conf = $module->{CONF};
@@ -114,7 +113,7 @@ sub command
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	return qw( gcc -c -o ), $dest, @arch, @o, @f, @w, @d, @i, $path;
+	return qw( gcc -c -o ), $dest, @arch, @o, @f, @w, @d, @i;
 }
 
 1;

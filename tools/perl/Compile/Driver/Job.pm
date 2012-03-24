@@ -134,7 +134,7 @@ sub perform
 	
 	return ""  if $self->up_to_date( @input );
 	
-	my @command = $self->command;
+	my @command = ($self->command, @input);
 	
 	$self->print;
 	

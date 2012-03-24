@@ -45,18 +45,18 @@ sub command
 	
 	my $dest = $self->{DEST};
 	
-	my @input = $self->input_files;
-	
 	my $conf = $module->{CONF};
 	
 	my @arch = $conf->arch_option;
 	
+	my @frameworks;
+	
 	if ( $conf->is_apple_gcc )
 	{
-		push @input, -framework => "Carbon";
+		push @frameworks, -framework => "Carbon";
 	}
 	
-	return qw( g++ -o ), $dest, @arch, @input;
+	return qw( g++ -o ), $dest, @arch, @frameworks;
 }
 
 1;
