@@ -261,5 +261,17 @@ sub link_exe
 	run_command( qw( g++ -o ), $dest, @arch, @$objs, @libs );
 }
 
+sub do_job
+{
+	my ( $job ) = @_;
+	
+	for ( $job->{TYPE} )
+	{
+		/^ CC   $/x and compile( $job );
+		/^ AR   $/x and link_lib( $job );
+		/^ LINK $/x and link_exe( $job );
+	}
+}
+
 1;
 

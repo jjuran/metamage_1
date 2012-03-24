@@ -93,11 +93,6 @@ build( $configuration->get_module( $_ ) )  foreach @prereqs;
 
 foreach my $job ( @jobs )
 {
-	for ( $job->{TYPE} )
-	{
-		/^ CC   $/x and Compile::Driver::Jobs::compile( $job );
-		/^ AR   $/x and Compile::Driver::Jobs::link_lib( $job );
-		/^ LINK $/x and Compile::Driver::Jobs::link_exe( $job );
-	}
+	Compile::Driver::Jobs::do_job( $job );
 }
 
