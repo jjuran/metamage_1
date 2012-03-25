@@ -84,7 +84,7 @@ sub up_to_date
 
 sub tool_name
 {
-	return "gcc";
+	return "cc";
 }
 
 sub command

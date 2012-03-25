@@ -39,7 +39,7 @@ sub input_files
 
 sub tool_name
 {
-	return "g++";
+	return "c++";
 }
 
 sub command
