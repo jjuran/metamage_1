@@ -32,6 +32,11 @@ sub input_files
 	return @$objs;
 }
 
+sub tool_name
+{
+	return "ar";
+}
+
 sub command
 {
 	my $self = shift;
@@ -40,7 +45,7 @@ sub command
 	
 	unlink( $dest );
 	
-	return qw( ar rcs ), $dest;
+	return $self->tool_name, 'rcs', $dest;
 }
 
 1;

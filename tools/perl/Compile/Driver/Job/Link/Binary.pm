@@ -37,6 +37,11 @@ sub input_files
 	return @$objs, @libs;
 }
 
+sub tool_name
+{
+	return "g++";
+}
+
 sub command
 {
 	my $self = shift;
@@ -56,7 +61,7 @@ sub command
 		push @frameworks, -framework => "Carbon";
 	}
 	
-	return qw( g++ -o ), $dest, @arch, @frameworks;
+	return $self->tool_name, -o => $dest, @arch, @frameworks;
 }
 
 1;

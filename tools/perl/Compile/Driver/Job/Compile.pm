@@ -82,6 +82,11 @@ sub up_to_date
 	return up_to_date_for_headers( $module, $out_date, $path );
 }
 
+sub tool_name
+{
+	return "gcc";
+}
+
 sub command
 {
 	my $self = shift;
@@ -113,7 +118,7 @@ sub command
 	
 	my @i = map { "-I$_" } @{ $module->all_search_dirs };
 	
-	return qw( gcc -c -o ), $dest, @arch, @o, @f, @w, @d, @i;
+	return $self->tool_name, '-c', -o => $dest, @arch, @o, @f, @w, @d, @i;
 }
 
 1;
