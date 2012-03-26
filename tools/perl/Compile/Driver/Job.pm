@@ -3,6 +3,7 @@ package Compile::Driver::Job;
 use FindBin '$RealBin';
 
 use Compile::Driver::Files;
+use Compile::Driver::Options;
 
 use warnings;
 use strict;
@@ -118,6 +119,8 @@ sub print
 
 sub run_command
 {
+	print join( " ", @_ ), "\n"  if Compile::Driver::Options::verbose();
+	
 	my $wait = system( @_ );
 	
 	if ( $wait != 0 )

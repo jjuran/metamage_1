@@ -3,6 +3,11 @@ package Compile::Driver::Options;
 use warnings;
 use strict;
 
+my %Flag_for_option = qw
+(
+	v verbose
+);
+
 my %Spec_for_option = qw
 (
 	P ppc
@@ -11,7 +16,13 @@ my %Spec_for_option = qw
 	R opt
 );
 
+my %Flags;
 my @Specs;
+
+sub verbose
+{
+	return $Flags{ verbose };
+}
 
 sub specs
 {
@@ -21,6 +32,13 @@ sub specs
 sub set_option
 {
 	my ( $option ) = @_;
+	
+	if ( my $flag = $Flag_for_option{ $option } )
+	{
+		$Flags{ $flag } = 1;
+		
+		return;
+	}
 	
 	my $spec = $Spec_for_option{ $option } or die "No such option '$option'\n";
 	
