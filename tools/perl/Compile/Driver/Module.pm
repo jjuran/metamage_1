@@ -212,6 +212,8 @@ sub search_dirs
 	{
 		next if $search =~ m{^ / }x;  # absolute path
 		
+		next if $search =~ s{^ ~/ }{$ENV{HOME}/}x;  # home-relative path
+		
 		$search = $search eq "." ? $tree : "$tree/$search";
 	}
 	
