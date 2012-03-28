@@ -87,29 +87,6 @@ namespace Genie
 		&builtin_file_methods
 	};
 	
-	class FSTree_sys_kernel_bin_EXE : public FSTree
-	{
-		public:
-			FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
-			                           const plus::string&  name,
-			                           relix_entry          main );
-	};
-	
-	FSTree_sys_kernel_bin_EXE::FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
-	                                                      const plus::string&  name,
-	                                                      relix_entry          main )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFREG | 0500,
-		        &builtin_methods,
-		        sizeof (relix_entry) )
-	{
-		relix_entry& extra = *(relix_entry*) this->extra();
-		
-		extra = main;
-	}
-	
 	static shared_exec_handle builtin_loadexec( const FSTree* node )
 	{
 		relix_entry& extra = *(relix_entry*) node->extra();
@@ -185,7 +162,17 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
-		return new FSTree_sys_kernel_bin_EXE( parent, name, (relix_entry) args );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0500,
+		                             &builtin_methods,
+		                             sizeof (relix_entry) );
+		
+		relix_entry& extra = *(relix_entry*) result->extra();
+		
+		extra = (relix_entry) args;
+		
+		return result;
 	}
 	
 	#define EXEC( main )  &Executable_Factory, (const void*) &main
