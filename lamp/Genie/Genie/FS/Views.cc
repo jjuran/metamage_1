@@ -305,29 +305,46 @@ namespace Genie
 		&new_view_file_methods
 	};
 	
+	struct new_view_extra
+	{
+		premapped::mapping const*  mappings;
+		premapped::destructor      destructor;
+		ViewFactory                view_factory;
+	};
+	
 	FSTree_new_View::FSTree_new_View( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
 	                                  ViewFactory          factory,
 	                                  Mappings             mappings,
 	                                  Destructor           dtor )
 	:
-		FSTree( parent, name, S_IFREG | 0, &new_view_methods ),
-		itsFactory( factory ),
-		itsMappings( mappings ),
-		itsDestructor( dtor )
+		FSTree( parent,
+		        name,
+		        S_IFREG | 0,
+		        &new_view_methods,
+		        sizeof (new_view_extra) )
 	{
+		new_view_extra& extra = *(new_view_extra*) this->extra();
+		
+		extra.mappings     = mappings;
+		extra.destructor   = dtor;
+		extra.view_factory = factory;
 	}
 	
 	FSTreePtr FSTree_new_View::CreateDelegate( const FSTreePtr&     parent,
 	                                           const plus::string&  name ) const
 	{
-		FSTreePtr delegate = Premapped_Factory( parent, name, itsMappings, itsDestructor );
+		new_view_extra& extra = *(new_view_extra*) this->extra();
+		
+		FSTreePtr delegate = Premapped_Factory( parent, name, extra.mappings, extra.destructor );
 		
 		return delegate;
 	}
 	
 	void FSTree_new_View::HardLink( const FSTreePtr& target ) const
 	{
+		new_view_extra& extra = *(new_view_extra*) this->extra();
+		
 		const FSTreePtr& parent = target->ParentRef();
 		
 		const FSTree* key = parent.get();
@@ -336,7 +353,7 @@ namespace Genie
 		
 		FSTreePtr delegate = CreateDelegate( parent, name );
 		
-		AddViewParameters( key, name, delegate, itsFactory );
+		AddViewParameters( key, name, delegate, extra.view_factory );
 		
 		target->CreateDirectory( 0 );  // mode is ignored
 	}

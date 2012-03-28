@@ -77,10 +77,6 @@ namespace Genie
 			
 			typedef premapped::destructor Destructor;
 			
-			ViewFactory  itsFactory;
-			Mappings     itsMappings;
-			Destructor   itsDestructor;
-			
 			virtual FSTreePtr CreateDelegate( const FSTreePtr&     parent,
 			                                  const plus::string&  name ) const;
 		

@@ -246,25 +246,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Unrsrc_File : public FSTree
-	{
-		private:
-			FSSpec itsFileSpec;
-		
-		public:
-			FSTree_Unrsrc_File( const FSTreePtr&     parent,
-			                    const plus::string&  name,
-			                    const FSSpec&        file )
-			:
-				FSTree( parent, name, 0, &unrsrc_file_methods ),
-				itsFileSpec( file )
-			{
-			}
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
-	
 	static void rsrc_file_remove( const FSTree* node );
 	
 	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode );
@@ -289,28 +270,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Rsrc_File : public FSTree
-	{
-		private:
-			FSSpec itsFileSpec;
-		
-		public:
-			FSTree_Rsrc_File( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  const FSSpec&        file )
-			:
-				FSTree( parent, name, S_IFREG | 0400, &rsrc_file_methods ),  // FIXME:  Check perms
-				itsFileSpec( file )
-			{
-			}
-			
-			void Delete() const;
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-	};
-	
 	static bool has_resource( const FSSpec& file, const N::GetResInfo_Result& resinfo )
 	{
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
@@ -318,29 +277,33 @@ namespace Genie
 		return ::Get1Resource( resinfo.type, resinfo.id ) != NULL;
 	}
 	
-	void FSTree_Rsrc_File::Delete() const
+	static void rsrc_file_remove( const FSTree* node )
 	{
-		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+		RdWr_OpenResFile_Scope openResFile( fileSpec );
+		
+		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
 		
 		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
 		
 		(void) N::RemoveResource( r );
 	}
 	
-	off_t FSTree_Rsrc_File::GetEOF() const
+	static off_t rsrc_file_geteof( const FSTree* node )
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		
+		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
 		
 		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
 		
 		return N::GetHandleSize( r );
 	}
 	
-	IOPtr FSTree_Unrsrc_File::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -351,66 +314,42 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		
 		{
-			RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+			RdWr_OpenResFile_Scope openResFile( fileSpec );
 			
-			N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+			N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
 			
 			(void) N::AddResource( N::NewHandle( 0 ), resinfo );
 		}
 		
 		n::owned< N::Handle > h = N::NewHandle( 0 );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
-		                           : new Handle_IOHandle( Self(), flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
+		                           : new Handle_IOHandle( node, flags, h );
 		
 		return result;
 	}
 	
-	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode )
-	{
-		const FSTree_Unrsrc_File* file = static_cast< const FSTree_Unrsrc_File* >( node );
-		
-		return file->Open( flags, mode );
-	}
-	
-	IOPtr FSTree_Rsrc_File::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( itsFileSpec, Mac::fsRdPerm );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( name() );
+		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+		
+		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
 		
 		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( Self(), flags, h, itsFileSpec )
-		                           : new Handle_IOHandle( Self(), flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
+		                           : new Handle_IOHandle( node, flags, h );
 		
 		return result;
-	}
-	
-	static void rsrc_file_remove( const FSTree* node )
-	{
-		const FSTree_Rsrc_File* file = static_cast< const FSTree_Rsrc_File* >( node );
-		
-		return file->Delete();
-	}
-	
-	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode )
-	{
-		const FSTree_Rsrc_File* file = static_cast< const FSTree_Rsrc_File* >( node );
-		
-		return file->Open( flags, mode );
-	}
-	
-	static off_t rsrc_file_geteof( const FSTree* node )
-	{
-		const FSTree_Rsrc_File* file = static_cast< const FSTree_Rsrc_File* >( node );
-		
-		return file->GetEOF();
 	}
 	
 	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,
@@ -421,10 +360,17 @@ namespace Genie
 		
 		const bool exists = has_resource( file, resinfo );
 		
-		typedef const FSTree* T;
+		// FIXME:  Check perms
+		const mode_t mode = exists ? S_IFREG | 0400 : 0;
 		
-		return exists ? T( new FSTree_Rsrc_File  ( parent, name, file ) )
-		              : T( new FSTree_Unrsrc_File( parent, name, file ) );
+		const node_method_set* methods = exists ? &rsrc_file_methods
+		                                        : &unrsrc_file_methods;
+		
+		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
+		
+		*(FSSpec*) result->extra() = file;
+		
+		return result;
 	}
 }
 

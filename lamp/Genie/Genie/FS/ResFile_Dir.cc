@@ -58,31 +58,6 @@ namespace Genie
 		&empty_rsrc_fork_dir_methods
 	};
 	
-	class FSTree_EmptyRsrcForkDir : public FSTree
-	{
-		private:
-			FSSpec  itsFileSpec;
-		
-		public:
-			FSTree_EmptyRsrcForkDir( const FSTreePtr&     parent,
-			                         const plus::string&  name,
-			                         const FSSpec&        file )
-			:
-				FSTree( parent, name, 0, &empty_rsrc_fork_methods ),
-				itsFileSpec( file )
-			{
-			}
-			
-			void CreateDirectory( mode_t mode ) const;
-	};
-	
-	static void empty_rsrc_fork_mkdir( const FSTree* node, mode_t mode )
-	{
-		const FSTree_EmptyRsrcForkDir* file = static_cast< const FSTree_EmptyRsrcForkDir* >( node );
-		
-		file->CreateDirectory( mode );
-	}
-	
 	
 	static void resfile_dir_remove( const FSTree* node );
 	
@@ -111,52 +86,6 @@ namespace Genie
 		NULL,
 		&resfile_dir_dir_methods
 	};
-	
-	class FSTree_ResFileDir : public FSTree
-	{
-		private:
-			FSSpec  itsFileSpec;
-		
-		public:
-			FSTree_ResFileDir( const FSTreePtr&     parent,
-			                   const plus::string&  name,
-			                   const FSSpec&        file )
-			:
-				FSTree( parent, name, S_IFDIR | 0700, &resfile_dir_methods ),
-				itsFileSpec( file )
-			{
-			}
-			
-			void Delete() const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	static void resfile_dir_remove( const FSTree* node )
-	{
-		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
-		
-		file->Delete();
-	}
-	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        node,
-	                                     const plus::string&  name,
-	                                     const FSTree*        parent )
-	{
-		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
-		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	static void resfile_dir_listdir( const FSTree*  node,
-	                                 FSTreeCache&   cache )
-	{
-		const FSTree_ResFileDir* file = static_cast< const FSTree_ResFileDir* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
 	
 	
 	static bool ResFile_dir_exists( const FSSpec& file )
@@ -197,9 +126,11 @@ namespace Genie
 		                                                      '.' );
 	}
 	
-	void FSTree_ResFileDir::Delete() const
+	static void resfile_dir_remove( const FSTree* node )
 	{
-		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( itsFileSpec, Mac::fsRdWrPerm );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		
+		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( fileSpec, Mac::fsRdWrPerm );
 		
 		if ( N::GetEOF( resource_fork ) > 286 )
 		{
@@ -209,16 +140,18 @@ namespace Genie
 		N::SetEOF( resource_fork, 0 );
 	}
 	
-	void FSTree_EmptyRsrcForkDir::CreateDirectory( mode_t mode ) const
+	static void empty_rsrc_fork_mkdir( const FSTree* node, mode_t mode )
 	{
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		
 		CInfoPBRec cInfo = { 0 };
 		
-		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, itsFileSpec );
+		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, fileSpec );
 		
 		::OSType creator;
 		::OSType type;
 		
-		if ( !exists || is_rsrc_file( cInfo, itsFileSpec.name ) )
+		if ( !exists || is_rsrc_file( cInfo, fileSpec.name ) )
 		{
 			creator = 'RSED';
 			type    = 'rsrc';
@@ -231,25 +164,32 @@ namespace Genie
 			type    = fInfo.fdType;
 		}
 		
-		N::FSpCreateResFile( itsFileSpec,
+		N::FSpCreateResFile( fileSpec,
 		                     Mac::FSCreator( creator ),
 		                     Mac::FSType   ( type    ),
 		                     Mac::smSystemScript );
 	}
 	
-	FSTreePtr FSTree_ResFileDir::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	static FSTreePtr resfile_dir_lookup( const FSTree*        node,
+	                                     const plus::string&  name,
+	                                     const FSTree*        parent )
 	{
-		if ( !exists( this ) )
+		if ( !exists( node ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Get_RsrcFile_FSTree( parent, name, itsFileSpec );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		
+		return Get_RsrcFile_FSTree( parent, name, fileSpec );
 	}
 	
-	void FSTree_ResFileDir::IterateIntoCache( FSTreeCache& cache ) const
+	static void resfile_dir_listdir( const FSTree*  node,
+	                                 FSTreeCache&   cache )
 	{
-		iterate_resources( itsFileSpec, cache );
+		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		
+		iterate_resources( fileSpec, cache );
 	}
 	
 	
@@ -259,10 +199,16 @@ namespace Genie
 	{
 		const bool exists = ResFile_dir_exists( file );
 		
-		typedef const FSTree* T;
+		const mode_t mode = exists ? S_IFDIR | 0700 : 0;
 		
-		return exists ? T( new FSTree_ResFileDir      ( parent, name, file ) )
-		              : T( new FSTree_EmptyRsrcForkDir( parent, name, file ) );
+		const node_method_set* methods = exists ? &resfile_dir_methods
+		                                        : &empty_rsrc_fork_methods;
+		
+		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
+		
+		*(FSSpec*) result->extra() = file;
+		
+		return result;
 	}
 	
 }
