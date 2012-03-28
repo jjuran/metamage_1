@@ -37,8 +37,12 @@ namespace poseven
 		pf_local = PF_LOCAL,
 		pf_inet  = PF_INET,
 		pf_inet6 = PF_INET6,
+		
+	#ifdef PF_IPX
+		
 		pf_ipx   = PF_IPX,
 		
+	#endif
 		
 	#ifdef PF_APPLETALK
 		
