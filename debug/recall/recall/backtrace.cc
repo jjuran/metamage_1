@@ -95,7 +95,7 @@ namespace recall
 	
 #endif
 	
-#ifdef __ELF__
+#if defined( __ELF__ )  ||  defined( __CYGWIN__ )
 	
 	static const char* find_symbol_name( return_address_native )
 	{

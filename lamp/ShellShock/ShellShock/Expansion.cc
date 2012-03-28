@@ -510,7 +510,7 @@ namespace ShellShock
 		
 		std::vector< plus::string > result;
 		
-		const unsigned char* metachars = "\p" "*" "?" "[";
+		const unsigned char metachars[] = { 3, '*', '?', '[' };
 		
 		if ( gear::find_first_match( word.data(), word.size(), metachars ) )
 		{

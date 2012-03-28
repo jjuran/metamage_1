@@ -18,7 +18,7 @@
 namespace poseven
 {
 	
-#ifndef __APPLE__
+#if !defined( __APPLE__ )  &&  !defined( __CYGWIN__ )
 	
 	void clearenv()
 	{

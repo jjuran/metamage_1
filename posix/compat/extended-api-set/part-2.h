@@ -16,9 +16,7 @@
 extern "C" {
 #endif
 
-#ifndef __RELIX__
-
-#ifndef __linux__
+#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
 #ifndef O_DIRECTORY
 #define O_DIRECTORY  0
@@ -65,15 +63,13 @@ int futimesat( int dirfd, const char* path, const struct timeval times[2] );
 int faccessat( int dirfd, const char* path, int mode, int flags );
 int fchmodat( int dirfd, const char* path, mode_t mode, int flags );
 int fchownat( int dirfd, const char* path, uid_t owner, gid_t group, int flags );
-int fexecve( int fd, const char *const argv[], const char *const envp[] );
+int fexecve( int fd, char *const argv[], char *const envp[] );
 int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags );
 ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size );
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
-#endif  // !__linux__
-
-#endif  // !__RELIX__
+#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
 #ifdef __cplusplus
 }

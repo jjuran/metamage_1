@@ -31,7 +31,13 @@ namespace poseven
 		af_unspec    = AF_UNSPEC,
 		af_unix      = AF_UNIX,
 		af_inet      = AF_INET,
+		
+	#ifdef AF_IPX
+		
 		af_ipx       = AF_IPX,
+		
+	#endif
+		
 		af_appletalk = AF_APPLETALK,
 		
 		address_family_max = nucleus::enumeration_traits< unsigned short >::max
