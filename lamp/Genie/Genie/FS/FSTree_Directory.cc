@@ -28,6 +28,11 @@ namespace Genie
 	}
 	
 	
+	struct premapped_extra
+	{
+		premapped::mapping const*  mappings;
+	};
+	
 	static void premapped_remove( const FSTree* node );
 	
 	static FSTreePtr premapped_lookup( const FSTree*        node,
@@ -56,69 +61,6 @@ namespace Genie
 		&premapped_dir_methods
 	};
 	
-	class FSTree_Premapped : public FSTree
-	{
-		private:
-			typedef const premapped::mapping* Mappings;
-			
-			typedef premapped::destructor Destructor;
-			
-			Mappings    itsMappings;
-			Destructor  itsDestructor;
-		
-		public:
-			FSTree_Premapped( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  Mappings             mappings,
-			                  Destructor           dtor );
-			
-			~FSTree_Premapped();
-			
-			void Delete() const;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	FSTree_Premapped::FSTree_Premapped( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    Mappings             mappings,
-	                                    Destructor           dtor )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFDIR | 0700,
-		        &premapped_methods ),
-		itsMappings( mappings ),
-		itsDestructor( dtor )
-	{
-	}
-	
-	static void premapped_remove( const FSTree* node )
-	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		file->Delete();
-	}
-	
-	static FSTreePtr premapped_lookup( const FSTree*        node,
-	                                   const plus::string&  name,
-	                                   const FSTree*        parent )
-	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	static void premapped_listdir( const FSTree*  node,
-	                               FSTreeCache&   cache )
-	{
-		const FSTree_Premapped* file = static_cast< const FSTree_Premapped* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
 	
 	static const premapped::mapping*
 	//
@@ -135,25 +77,21 @@ namespace Genie
 		return NULL;
 	}
 	
-	FSTree_Premapped::~FSTree_Premapped()
+	static void premapped_remove( const FSTree* node )
 	{
-		if ( itsDestructor )
+		if ( node_destructor dtor = node->destructor() )
 		{
-			itsDestructor( static_cast< FSTree* >( this ) );
+			dtor( node );
 		}
 	}
 	
-	void FSTree_Premapped::Delete() const
+	static FSTreePtr premapped_lookup( const FSTree*        node,
+	                                   const plus::string&  name,
+	                                   const FSTree*        parent )
 	{
-		if ( itsDestructor )
-		{
-			itsDestructor( static_cast< const FSTree* >( this ) );
-		}
-	}
-	
-	FSTreePtr FSTree_Premapped::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		if ( const premapped::mapping* it = find_mapping( itsMappings, name ) )
+		premapped_extra& extra = *(premapped_extra*) node->extra();
+		
+		if ( const premapped::mapping* it = find_mapping( extra.mappings, name ) )
 		{
 			return it->f( parent, name, it->args );
 		}
@@ -161,9 +99,12 @@ namespace Genie
 		return FSNull();
 	}
 	
-	void FSTree_Premapped::IterateIntoCache( FSTreeCache& cache ) const
+	static void premapped_listdir( const FSTree*  node,
+	                               FSTreeCache&   cache )
 	{
-		for ( const premapped::mapping* it = itsMappings;  it->name != NULL;  ++it )
+		premapped_extra& extra = *(premapped_extra*) node->extra();
+		
+		for ( const premapped::mapping* it = extra.mappings;  it->name != NULL;  ++it )
 		{
 			const plus::string& name = it->name;
 			
@@ -171,7 +112,7 @@ namespace Genie
 			
 			try
 			{
-				FSTreePtr file = f( Self(), name, it->args );
+				FSTreePtr file = f( node, name, it->args );
 				
 				if ( !exists( file ) )
 				{
@@ -194,7 +135,18 @@ namespace Genie
 	                             const premapped::mapping    mappings[],
 	                             void                      (*dtor)(const FSTree*) )
 	{
-		return FSTreePtr( new FSTree_Premapped( parent, name, mappings, dtor ) );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFDIR | 0700,
+		                             &premapped_methods,
+		                             sizeof (premapped_extra),
+		                             dtor );
+		
+		premapped_extra& extra = *(premapped_extra*) result->extra();
+		
+		extra.mappings = mappings;
+		
+		return result;
 	}
 	
 }
