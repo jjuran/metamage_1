@@ -148,7 +148,7 @@ namespace tool
 	{
 		std::vector< plus::string > result;
 		
-		const unsigned char* whitespace = "\p"  " "  "\t";
+		const unsigned char whitespace[] = { 2, ' ', '\t' };
 		
 		const char* begin = text.data();
 		const char* end   = text.size() + begin;
@@ -208,7 +208,7 @@ namespace tool
 	
 	static void ProcessLine( const plus::string& line )
 	{
-		if ( gear::find_first_nonmatch( line.data(), line.size(), "\p \t", "#" )[0] == '#' )
+		if ( gear::find_first_nonmatch( line.data(), line.size(), '\t', "#" )[0] == '#' )
 		{
 			return;  // It's blank or a comment
 		}
