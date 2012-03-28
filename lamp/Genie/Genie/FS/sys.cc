@@ -95,18 +95,25 @@ namespace Genie
 		public:
 			FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
 			                           const plus::string&  name,
-			                           relix_entry          main )
-			:
-				FSTree( parent, name, S_IFREG | 0500, &builtin_methods ),
-				its_main_entry( main )
-			{
-			}
+			                           relix_entry          main );
 			
 			shared_exec_handle GetExecutable() const
 			{
 				return new fixed_address( its_main_entry );
 			}
 	};
+	
+	FSTree_sys_kernel_bin_EXE::FSTree_sys_kernel_bin_EXE( const FSTreePtr&     parent,
+	                                                      const plus::string&  name,
+	                                                      relix_entry          main )
+	:
+		FSTree( parent,
+		        name,
+		        S_IFREG | 0500,
+		        &builtin_methods ),
+		its_main_entry( main )
+	{
+	}
 	
 	static shared_exec_handle builtin_loadexec( const FSTree* node )
 	{
