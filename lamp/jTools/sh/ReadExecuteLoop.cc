@@ -107,7 +107,7 @@ namespace tool
 		
 		p7::fd_reader reader( fd );
 		
-		const unsigned char* whitespace = "\p"  " "  "\t";
+		const unsigned char whitespace[] = { 2, ' ', '\t' };
 		
 		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
