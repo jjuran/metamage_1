@@ -321,11 +321,11 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		return new FSTree_new_View( parent,
-		                            name,
-		                            &CreateView,
-		                            local_mappings,
-		                            &DestroyDelegate );
+		return New_new_view( parent,
+		                     name,
+		                     &CreateView,
+		                     local_mappings,
+		                     &DestroyDelegate );
 	}
 	
 }

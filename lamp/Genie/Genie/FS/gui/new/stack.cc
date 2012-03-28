@@ -228,12 +228,12 @@ namespace Genie
 	                     const plus::string&  name,
 	                     const void*          args )
 	{
-		return new FSTree_new_View( parent,
-		                            name,
-		                            &StackFactory,
-		                            NULL,
-		                            &DestroyDelegate,
-		                            &create_delegate_for_new_stack );
+		return New_new_view( parent,
+		                     name,
+		                     &StackFactory,
+		                     NULL,
+		                     &DestroyDelegate,
+		                     &create_delegate_for_new_stack );
 	}
 	
 }
