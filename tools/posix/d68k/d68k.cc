@@ -201,7 +201,7 @@ namespace tool
 	
 	static size_t global_pc = 0;
 	
-	static unsigned short global_last_op = 0xFFFFFFFF;
+	static unsigned short global_last_op = 0;
 	
 	static unsigned global_last_CMPI_operand = 0;
 	
