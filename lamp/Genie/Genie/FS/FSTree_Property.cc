@@ -112,7 +112,7 @@ namespace Genie
 	
 	off_t FSTree_Property::GetEOF() const
 	{
-		if ( itsSize != 0 )
+		if ( itsSize != 0  ||  itsReadHook == NULL )
 		{
 			return itsSize;
 		}
