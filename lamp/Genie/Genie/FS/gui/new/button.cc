@@ -314,28 +314,19 @@ namespace Genie
 	}
 	
 	
-	class Button_click_Trigger : public Trigger_Base
+	static void button_click_trigger( const FSTree* node )
 	{
-		public:
-			Button_click_Trigger( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				Trigger_Base( parent, name )
-			{
-			}
-			
-			void Invoke() const;
-	};
-	
-	void Button_click_Trigger::Invoke() const
-	{
-		const FSTree* view = owner();
+		const FSTree* view = node->owner();
 		
 		gButtonMap[ view ].pseudoclicked = true;
 		
 		Ped::AdjustSleepForTimer( 1 );
 	}
 	
+	static const trigger_extra button_click_trigger_extra =
+	{
+		&button_click_trigger
+	};
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
@@ -345,7 +336,7 @@ namespace Genie
 		
 		{ "title", PROPERTY( utf8_text_property< Button_Title > ) },
 		
-		{ "click", &Basic_Factory< Button_click_Trigger > },
+		{ "click", &trigger_factory, (void*) &button_click_trigger_extra },
 		
 		{ "socket", &button_stream_factory },
 		
