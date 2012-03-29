@@ -463,16 +463,6 @@ namespace Genie
 	};
 	
 	
-	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
-	{
-		N::FSVolumeRefNum key = GetKeyFromParent( parent );
-		
-		return new Trigger( parent, name, key );
-	}
-	
 	static FSTreePtr Root_Factory( const FSTreePtr&     parent,
 	                               const plus::string&  name,
 	                               const void*          args )
@@ -537,6 +527,17 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	
+	static FSTreePtr volume_trigger_factory( const FSTreePtr&     parent,
+	                                         const plus::string&  name,
+	                                         const void*          args )
+	{
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( parent );
+		
+		const trigger_extra extra = { (trigger_function) args, vRefNum };
+		
+		return trigger_factory( parent, name, &extra );
+	}
+	
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
@@ -574,12 +575,12 @@ namespace Genie
 		// volume roots are named "mnt", not the volume name
 		{ "mnt",  &Root_Factory },
 		
-		{ "flush",  &Trigger_Factory< Trigger< Volume_Flush   > > },
-		{ "umount", &Trigger_Factory< Trigger< Volume_Unmount > > },
+		{ "flush",  &volume_trigger_factory, (void*) &volume_flush_trigger   },
+		{ "umount", &volume_trigger_factory, (void*) &volume_unmount_trigger },
 		
 	#if !TARGET_API_MAC_CARBON
 		
-		{ "eject",  &Trigger_Factory< Trigger< Volume_Eject   > > },
+		{ "eject",  &volume_trigger_factory, (void*) &volume_eject_trigger   },
 		
 	#endif
 		
