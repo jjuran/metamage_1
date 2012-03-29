@@ -91,28 +91,6 @@ namespace Genie
 	}
 	
 	
-	class FSTree_TextEdit_gate : public Trigger_Base
-	{
-		public:
-			FSTree_TextEdit_gate( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				Trigger_Base( parent, name, S_IFREG | 0600 )
-			{
-			}
-			
-			void Invoke() const;
-	};
-	
-	void FSTree_TextEdit_gate::Invoke() const
-	{
-		const FSTree* view = ParentRef().get();
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
-		
-		params.itIsInterlocked = false;
-	}
-	
 	static IOPtr textedit_gate_open( const FSTree* node, OpenFlags flags, mode_t mode )
 	{
 		return new TextEdit_gate_Handle( node, flags );
