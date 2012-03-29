@@ -15,6 +15,7 @@
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -101,8 +102,6 @@ namespace Genie
 			}
 			
 			void Invoke() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	void FSTree_TextEdit_gate::Invoke() const
@@ -114,16 +113,34 @@ namespace Genie
 		params.itIsInterlocked = false;
 	}
 	
-	IOPtr FSTree_TextEdit_gate::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr textedit_gate_open( const FSTree* node, OpenFlags flags, mode_t mode )
 	{
-		if ( (flags & O_ACCMODE) == O_WRONLY )
-		{
-			return Trigger_Base::Open( flags, mode );
-		}
-		
-		return new TextEdit_gate_Handle( Self(), flags );
+		return new TextEdit_gate_Handle( node, flags );
 	}
 	
+	static const data_method_set textedit_gate_data_methods =
+	{
+		&textedit_gate_open
+	};
+	
+	static const node_method_set textedit_gate_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&textedit_gate_data_methods
+	};
+	
+	
+	static FSTreePtr gate_factory( const FSTreePtr&     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
+	{
+		return new FSTree( parent, name, S_IFREG | 0400, &textedit_gate_methods );
+	}
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct TE_View_Property : public View_Property< Serialize, Access >
@@ -175,7 +192,7 @@ namespace Genie
 		{ "lock",   &trigger_factory, &textedit_lock_trigger_extra },
 		{ "unlock", &trigger_factory, &textedit_lock_trigger_extra },
 		
-		{ "gate", &Basic_Factory< FSTree_TextEdit_gate > },
+		{ "gate", &gate_factory },
 		
 		{ "selection", PROPERTY( Selection_Property ) },
 		
