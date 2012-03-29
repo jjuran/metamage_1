@@ -5,7 +5,11 @@
 
 #include "Genie/FS/Trigger.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"

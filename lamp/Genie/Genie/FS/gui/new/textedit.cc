@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/textedit.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // plus
 #include "plus/serialize.hh"
 

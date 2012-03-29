@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/button.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 

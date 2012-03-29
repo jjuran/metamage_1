@@ -26,6 +26,7 @@
 #endif
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Trigger.hh"
 
 

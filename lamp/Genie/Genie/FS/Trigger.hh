@@ -6,11 +6,11 @@
 #ifndef GENIE_FILESYSTEM_TRIGGER_HH
 #define GENIE_FILESYSTEM_TRIGGER_HH
 
-// POSIX
-#include <sys/stat.h>
+// plus
+#include "plus/string.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie
