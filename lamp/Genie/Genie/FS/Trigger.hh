@@ -16,17 +16,6 @@
 namespace Genie
 {
 	
-	class Trigger_Base : public FSTree
-	{
-		public:
-			Trigger_Base( const FSTreePtr&     parent,
-			              const plus::string&  name,
-			              mode_t               mode = S_IFCHR | 0200 );
-			
-			virtual void Invoke() const = 0;
-	};
-	
-	
 	typedef void (*trigger_function)( const FSTree* );
 	
 	struct trigger_extra

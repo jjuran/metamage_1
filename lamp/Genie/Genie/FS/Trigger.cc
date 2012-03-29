@@ -23,10 +23,6 @@ namespace Genie
 			
 			return;
 		}
-		
-		const Trigger_Base* file = static_cast< const Trigger_Base* >( node );
-		
-		file->Invoke();
 	}
 	
 	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode );
@@ -46,14 +42,6 @@ namespace Genie
 		NULL,
 		&trigger_data_methods
 	};
-	
-	Trigger_Base::Trigger_Base( const FSTreePtr&     parent,
-	                            const plus::string&  name,
-	                            mode_t               mode )
-	:
-		FSTree( parent, name, mode, &trigger_methods )
-	{
-	}
 	
 	class TriggerHandle : public VirtualFileHandle< StreamHandle >
 	{
