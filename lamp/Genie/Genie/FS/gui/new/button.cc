@@ -324,15 +324,17 @@ namespace Genie
 			{
 			}
 			
-			void Invoke() const
-			{
-				const FSTree* view = ParentRef().get();
-				
-				gButtonMap[ view ].pseudoclicked = true;
-				
-				Ped::AdjustSleepForTimer( 1 );
-			}
+			void Invoke() const;
 	};
+	
+	void Button_click_Trigger::Invoke() const
+	{
+		const FSTree* view = owner();
+		
+		gButtonMap[ view ].pseudoclicked = true;
+		
+		Ped::AdjustSleepForTimer( 1 );
+	}
 	
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
