@@ -199,14 +199,15 @@ namespace Genie
 		}
 	};
 	
-	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	static FSTreePtr drive_trigger_factory( const FSTreePtr&     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
-		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( parent );
 		
-		return new Trigger( parent, name, key );
+		const trigger_extra extra = { (trigger_function) args, vRefNum };
+		
+		return trigger_factory( parent, name, &extra );
 	}
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value
@@ -219,10 +220,10 @@ namespace Genie
 		{ "fsid",  PROPERTY( GetDriveFSID  ) },
 		{ "size",  PROPERTY( GetDriveSize  ) },
 		
-		{ "flush",  &Trigger_Factory< Trigger< Volume_Flush   > > },
-		{ "umount", &Trigger_Factory< Trigger< Volume_Unmount > > },
-		{ "eject",  &Trigger_Factory< Trigger< Volume_Eject   > > },
-		{ "mount",  &Trigger_Factory< Trigger< Volume_Mount   > > },
+		{ "flush",  &drive_trigger_factory, (void*) &volume_flush_trigger   },
+		{ "umount", &drive_trigger_factory, (void*) &volume_unmount_trigger },
+		{ "eject",  &drive_trigger_factory, (void*) &volume_eject_trigger   },
+		{ "mount",  &drive_trigger_factory, (void*) &volume_mount_trigger   },
 		
 		{ NULL, NULL }
 	};
