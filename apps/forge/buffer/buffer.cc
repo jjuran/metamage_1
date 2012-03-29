@@ -77,7 +77,7 @@ namespace tool
 		p7::spew( "view/main/vertical", STR_LEN( "1" "\n" ) );
 		p7::spew( "view/main/v/padding", STR_LEN( "4" "\n" ) );
 		
-		p7::symlink( "view/main/v/v/gate", "accept" );
+		p7::symlink( "view/main/v/v/unlock", "accept" );
 		
 		p7::link( "/gui/new/defaultkeys", "view/defaultkeys" );
 	}
@@ -161,7 +161,7 @@ namespace tool
 		
 		p7::close( input );
 		
-		p7::utime( "view/main/v/v/interlock" );
+		p7::utime( "view/main/v/v/lock" );
 		
 		n::owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
 		

@@ -5,6 +5,9 @@
 
 #include "Genie/FS/gui/new/textedit.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // plus
 #include "plus/serialize.hh"
 
@@ -15,6 +18,7 @@
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -40,19 +44,14 @@ namespace Genie
 	}
 	
 	
-	static void textedit_interlock_touch( const FSTree* node )
+	static void textedit_lock_trigger( const FSTree* node )
 	{
-		const FSTree* view = node->ParentRef().get();
+		const FSTree* view = node->owner();
 		
-		TextEditParameters::Get( view ).itIsInterlocked = true;
+		const bool locked = node->name()[0] != 'u';
+		
+		TextEditParameters::Get( view ).itIsInterlocked = locked;
 	}
-	
-	static node_method_set textedit_interlock_methods =
-	{
-		NULL,
-		NULL,
-		&textedit_interlock_touch
-	};
 	
 	
 	class TextEdit_gate_Handle : public VirtualFileHandle< StreamHandle >
@@ -95,46 +94,33 @@ namespace Genie
 	}
 	
 	
-	class FSTree_TextEdit_gate : public Trigger_Base
+	static IOPtr textedit_gate_open( const FSTree* node, OpenFlags flags, mode_t mode )
 	{
-		public:
-			FSTree_TextEdit_gate( const FSTreePtr&     parent,
-			                      const plus::string&  name )
-			:
-				Trigger_Base( parent, name, S_IFREG | 0600 )
-			{
-			}
-			
-			void Invoke() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+		return new TextEdit_gate_Handle( node, flags );
+	}
+	
+	static const data_method_set textedit_gate_data_methods =
+	{
+		&textedit_gate_open
 	};
 	
-	void FSTree_TextEdit_gate::Invoke() const
+	static const node_method_set textedit_gate_methods =
 	{
-		const FSTree* view = ParentRef().get();
-		
-		TextEditParameters& params = TextEditParameters::Get( view );
-		
-		params.itIsInterlocked = false;
-	}
-	
-	IOPtr FSTree_TextEdit_gate::Open( OpenFlags flags, mode_t mode ) const
-	{
-		if ( (flags & O_ACCMODE) == O_WRONLY )
-		{
-			return Trigger_Base::Open( flags, mode );
-		}
-		
-		return new TextEdit_gate_Handle( Self(), flags );
-	}
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&textedit_gate_data_methods
+	};
 	
 	
-	static FSTreePtr interlock_factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	static FSTreePtr gate_factory( const FSTreePtr&     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &textedit_interlock_methods );
+		return new FSTree( parent, name, S_IFREG | 0400, &textedit_gate_methods );
 	}
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
@@ -159,6 +145,11 @@ namespace Genie
 		}
 	};
 	
+	static const trigger_extra textedit_lock_trigger_extra =
+	{
+		&textedit_lock_trigger
+	};
+	
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
@@ -179,9 +170,10 @@ namespace Genie
 	{
 		{ "text", &New_FSTree_TextEdit_text },
 		
-		{ "gate", &Basic_Factory< FSTree_TextEdit_gate > },
+		{ "lock",   &trigger_factory, &textedit_lock_trigger_extra },
+		{ "unlock", &trigger_factory, &textedit_lock_trigger_extra },
 		
-		{ "interlock", &interlock_factory },
+		{ "gate", &gate_factory },
 		
 		{ "selection", PROPERTY( Selection_Property ) },
 		

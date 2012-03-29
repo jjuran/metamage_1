@@ -25,6 +25,13 @@
 namespace Genie
 {
 	
+	class FSTree;
+	
+	void volume_flush_trigger( const FSTree* node );
+	void volume_eject_trigger( const FSTree* node );
+	void volume_mount_trigger( const FSTree* node );
+	void volume_unmount_trigger( const FSTree* node );
+	
 	template < void (*f)(Mac::FSVolumeRefNum) >
 	class Volume_Action
 	{

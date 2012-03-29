@@ -33,11 +33,16 @@ namespace Genie
 	
 	struct sys_mac_event_post_click
 	{
-		void operator()() const
+		static void trigger( const FSTree* node )
 		{
 			N::PostEvent( N::mouseDown, 0 );
 			N::PostEvent( N::mouseUp,   0 );
 		}
+	};
+	
+	static const trigger_extra click_extra =
+	{
+		&sys_mac_event_post_click::trigger
 	};
 	
 	struct sys_mac_event_post_key : writeonly_property
@@ -60,7 +65,7 @@ namespace Genie
 	
 	const premapped::mapping sys_mac_event_post_Mappings[] =
 	{
-		{ "click", &Basic_Factory< Trigger< sys_mac_event_post_click > > },
+		{ "click", &trigger_factory, (void*) &click_extra },
 		
 		{ "key",   PROPERTY( sys_mac_event_post_key ) },
 		

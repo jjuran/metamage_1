@@ -5,7 +5,11 @@
 
 #include "Genie/FS/Trigger.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
@@ -17,9 +21,12 @@ namespace Genie
 	
 	static void trigger_touch( const FSTree* node )
 	{
-		const Trigger_Base* file = static_cast< const Trigger_Base* >( node );
-		
-		file->Invoke();
+		if ( trigger_function f = *(trigger_function*) node->extra() )
+		{
+			f( node );
+			
+			return;
+		}
 	}
 	
 	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode );
@@ -39,14 +46,6 @@ namespace Genie
 		NULL,
 		&trigger_data_methods
 	};
-	
-	Trigger_Base::Trigger_Base( const FSTreePtr&     parent,
-	                            const plus::string&  name,
-	                            mode_t               mode )
-	:
-		FSTree( parent, name, mode, &trigger_methods )
-	{
-	}
 	
 	class TriggerHandle : public VirtualFileHandle< StreamHandle >
 	{
@@ -73,6 +72,24 @@ namespace Genie
 	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode )
 	{
 		return new TriggerHandle( node, flags );
+	}
+	
+	
+	FSTreePtr trigger_factory( const FSTreePtr&     parent,
+	                           const plus::string&  name,
+	                           const void*          args )
+	{
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFCHR | 0200,
+		                             &trigger_methods,
+		                             sizeof (trigger_extra) );
+		
+		trigger_extra& extra = *(trigger_extra*) result->extra();
+		
+		extra = *(trigger_extra*) args;
+		
+		return result;
 	}
 	
 }

@@ -365,23 +365,14 @@ namespace Genie
 		}
 	};
 	
-	class Select_Trigger
+	static void select_trigger( const FSTree* node )
 	{
-		private:
-			typedef WindowRef Key;
-			
-			Key itsKey;
+		trigger_extra& extra = *(trigger_extra*) node->extra();
 		
-		public:
-			Select_Trigger( Key key ) : itsKey( key )
-			{
-			}
-			
-			void operator()() const
-			{
-				N::SelectWindow( itsKey );
-			}
-	};
+		const WindowRef window = (WindowRef) extra.data;
+		
+		N::SelectWindow( window );
+	}
 	
 	
 	static WindowRef GetKeyFromParent( const FSTree* parent )
@@ -446,6 +437,17 @@ namespace Genie
 		return new Trigger( parent, name, key );
 	}
 	
+	static FSTreePtr window_trigger_factory( const FSTreePtr&     parent,
+	                                         const plus::string&  name,
+	                                         const void*          args )
+	{
+		const WindowRef window = GetKeyFromParent( parent.get() );
+		
+		const trigger_extra extra = { &select_trigger, (intptr_t) window };
+		
+		return trigger_factory( parent, name, &extra );
+	}
+	
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
@@ -473,7 +475,7 @@ namespace Genie
 		{ "back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
 		{ "fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
 		
-		{ "select", &Trigger_Factory< Trigger< Select_Trigger > > },
+		{ "select", &window_trigger_factory },
 		
 		{ "z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
 		
