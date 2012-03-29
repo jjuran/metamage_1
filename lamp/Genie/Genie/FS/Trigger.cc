@@ -22,12 +22,7 @@ namespace Genie
 		file->Invoke();
 	}
 	
-	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode )
-	{
-		const Trigger_Base* file = static_cast< const Trigger_Base* >( node );
-		
-		return file->Open( flags, mode );
-	}
+	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode );
 	
 	static const data_method_set trigger_data_methods =
 	{
@@ -75,9 +70,9 @@ namespace Genie
 		return n;
 	}
 	
-	IOPtr Trigger_Base::Open( OpenFlags flags, mode_t mode ) const
+	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode )
 	{
-		return new TriggerHandle( Self(), flags );
+		return new TriggerHandle( node, flags );
 	}
 	
 }

@@ -24,8 +24,6 @@ namespace Genie
 			              mode_t               mode = S_IFCHR | 0200 );
 			
 			virtual void Invoke() const = 0;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	template < class Action >
