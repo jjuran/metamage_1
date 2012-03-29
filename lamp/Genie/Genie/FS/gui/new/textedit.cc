@@ -49,20 +49,6 @@ namespace Genie
 		TextEditParameters::Get( view ).itIsInterlocked = locked;
 	}
 	
-	static void textedit_interlock_touch( const FSTree* node )
-	{
-		const FSTree* view = node->ParentRef().get();
-		
-		TextEditParameters::Get( view ).itIsInterlocked = true;
-	}
-	
-	static node_method_set textedit_interlock_methods =
-	{
-		NULL,
-		NULL,
-		&textedit_interlock_touch
-	};
-	
 	
 	class TextEdit_gate_Handle : public VirtualFileHandle< StreamHandle >
 	{
@@ -139,13 +125,6 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr interlock_factory( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
-	{
-		return new FSTree( parent, name, S_IFREG | 0600, &textedit_interlock_methods );
-	}
-	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
 	struct TE_View_Property : public View_Property< Serialize, Access >
 	{
@@ -197,8 +176,6 @@ namespace Genie
 		{ "unlock", &trigger_factory, &textedit_lock_trigger_extra },
 		
 		{ "gate", &Basic_Factory< FSTree_TextEdit_gate > },
-		
-		{ "interlock", &interlock_factory },
 		
 		{ "selection", PROPERTY( Selection_Property ) },
 		
