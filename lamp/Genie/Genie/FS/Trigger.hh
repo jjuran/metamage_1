@@ -26,39 +26,6 @@ namespace Genie
 			virtual void Invoke() const = 0;
 	};
 	
-	template < class Action >
-	class Trigger : public Trigger_Base
-	{
-		private:
-			Action itsAction;
-		
-		public:
-			Trigger( const FSTreePtr&     parent,
-			         const plus::string&  name,
-			         const Action&        action )
-			:
-				Trigger_Base( parent, name ),
-				itsAction( action  )
-			{
-			}
-			
-			Trigger( const FSTreePtr&     parent,
-			         const plus::string&  name )
-			:
-				Trigger_Base( parent, name ),
-				itsAction()
-			{
-			}
-			
-			void Invoke() const;
-	};
-	
-	template < class Action >
-	void Trigger< Action >::Invoke() const
-	{
-		itsAction();
-	}
-	
 	
 	typedef void (*trigger_function)( const FSTree* );
 	
