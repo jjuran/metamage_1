@@ -40,6 +40,15 @@ namespace Genie
 	}
 	
 	
+	static void textedit_lock_trigger( const FSTree* node )
+	{
+		const FSTree* view = node->owner();
+		
+		const bool locked = node->name()[0] != 'u';
+		
+		TextEditParameters::Get( view ).itIsInterlocked = locked;
+	}
+	
 	static void textedit_interlock_touch( const FSTree* node )
 	{
 		const FSTree* view = node->ParentRef().get();
@@ -159,6 +168,11 @@ namespace Genie
 		}
 	};
 	
+	static const trigger_extra textedit_lock_trigger_extra =
+	{
+		&textedit_lock_trigger
+	};
+	
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
@@ -178,6 +192,9 @@ namespace Genie
 	static const premapped::mapping local_mappings[] =
 	{
 		{ "text", &New_FSTree_TextEdit_text },
+		
+		{ "lock",   &trigger_factory, &textedit_lock_trigger_extra },
+		{ "unlock", &trigger_factory, &textedit_lock_trigger_extra },
 		
 		{ "gate", &Basic_Factory< FSTree_TextEdit_gate > },
 		
