@@ -28,14 +28,6 @@ namespace Genie
 		const node_method_set*  methods;
 	};
 	
-	class FSTree_DynamicGroup_Base : public FSTree
-	{
-		public:
-			FSTree_DynamicGroup_Base( const FSTreePtr&            parent,
-			                          const plus::string&         name,
-			                          const dynamic_group_extra&  extra );
-	};
-	
 	
 	template < class Handle >
 	struct dynamic_group_element

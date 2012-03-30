@@ -105,19 +105,6 @@ namespace Genie
 		&dynamic_group_dir_methods
 	};
 	
-	FSTree_DynamicGroup_Base::FSTree_DynamicGroup_Base( const FSTreePtr&            parent,
-	                                                    const plus::string&         name,
-	                                                    const dynamic_group_extra&  extra )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFDIR | 0700,
-		        &dynamic_group_methods,
-		        sizeof (dynamic_group_extra) )
-	{
-		*(dynamic_group_extra*) this->extra() = extra;
-	}
-	
 	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
 	                                 const plus::string&  name,
 	                                 const void*          args )
