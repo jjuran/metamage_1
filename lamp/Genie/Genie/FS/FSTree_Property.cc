@@ -30,26 +30,12 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	typedef property_get_hook Property_ReadHook;
-	typedef property_set_hook Property_WriteHook;
-	
 	class FSTree_Property : public FSTree
 	{
 		public:
-			typedef Property_ReadHook   ReadHook;
-			typedef Property_WriteHook  WriteHook;
-		
-		private:
-			size_t     itsSize;
-			ReadHook   itsReadHook;
-			WriteHook  itsWriteHook;
-		
-		public:
 			FSTree_Property( const FSTreePtr&     parent,
 			                 const plus::string&  name,
-			                 size_t               size,
-			                 ReadHook             readHook,
-			                 WriteHook            writeHook = NULL );
+			                 mode_t               mode );
 			
 			off_t GetEOF() const;
 			
@@ -64,7 +50,9 @@ namespace Genie
 	
 	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const
 	{
-		if ( itsReadHook == NULL )
+		property_params& extra = *(property_params*) this->extra();
+		
+		if ( extra.get == NULL )
 		{
 			p7::throw_errno( EACCES );
 		}
@@ -75,7 +63,7 @@ namespace Genie
 		{
 			const bool binary = flags & O_BINARY;
 			
-			itsReadHook( data, ParentRef().get(), binary );
+			extra.get( data, owner(), binary );
 			
 			if ( !binary )
 			{
@@ -93,7 +81,9 @@ namespace Genie
 	
 	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
 	{
-		if ( itsWriteHook == NULL )
+		property_params& extra = *(property_params*) this->extra();
+		
+		if ( extra.set == NULL )
 		{
 			p7::throw_errno( EACCES );
 		}
@@ -102,7 +92,7 @@ namespace Genie
 		
 		return new PropertyWriterFileHandle( Self(),
 		                                     flags,
-		                                     itsWriteHook,
+		                                     extra.set,
 		                                     binary );
 	}
 	
@@ -142,9 +132,11 @@ namespace Genie
 	
 	off_t FSTree_Property::GetEOF() const
 	{
-		if ( itsSize != 0  ||  itsReadHook == NULL )
+		property_params& extra = *(property_params*) this->extra();
+		
+		if ( extra.size != 0  ||  extra.get == NULL )
 		{
-			return itsSize;
+			return extra.size;
 		}
 		
 		plus::var_string data;
@@ -153,7 +145,7 @@ namespace Genie
 		{
 			const bool binary = true;  // Return binary length
 			
-			itsReadHook( data, ParentRef().get(), binary );
+			extra.get( data, owner(), binary );
 		}
 		catch ( const undefined_property& )
 		{
@@ -214,26 +206,28 @@ namespace Genie
 	{
 		const property_params& params = *(const property_params*) params_;
 		
-		return new FSTree_Property( parent,
-		                            name,
-		                            params.size,
-		                            params.get,
-		                            params.set );
+		const mode_t mode = get_property_filemode( params.get,
+		                                           params.set,
+		                                           parent.get() );
+		
+		FSTree* result = new FSTree_Property( parent, name, mode );
+		
+		property_params& extra = *(property_params*) result->extra();
+		
+		extra = params;
+		
+		return result;
 	}
 	
 	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
 	                                  const plus::string&  name,
-	                                  size_t               size,
-	                                  ReadHook             readHook,
-	                                  WriteHook            writeHook )
+	                                  mode_t               mode )
 	:
 		FSTree( parent,
 		        name,
-		        get_property_filemode( readHook, writeHook, parent.get() ),
-		        &property_methods ),
-		itsSize( size ),
-		itsReadHook ( readHook  ),
-		itsWriteHook( writeHook )
+		        mode,
+		        &property_methods,
+		        sizeof (property_params) )
 	{
 	}
 	
