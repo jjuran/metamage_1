@@ -36,10 +36,6 @@ namespace Genie
 			FSTree_Property( const FSTreePtr&     parent,
 			                 const plus::string&  name,
 			                 mode_t               mode );
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
 	};
 	
 	
@@ -93,41 +89,27 @@ namespace Genie
 	
 	static IOPtr property_open( const FSTree* node, int flags, mode_t mode )
 	{
-		const FSTree_Property* file = static_cast< const FSTree_Property* >( node );
-		
-		return file->Open( flags, mode );
-	}
-	
-	IOPtr FSTree_Property::Open( OpenFlags flags, mode_t mode ) const
-	{
 		IOHandle* result = NULL;
 		
 		if ( (flags & ~O_BINARY) == O_RDONLY )
 		{
-			result = open_for_read( this, flags );
+			result = open_for_read( node, flags );
 		}
 		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
 		{
-			result = open_for_write( this, flags );
+			result = open_for_write( node, flags );
 		}
 		else
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return IOPtr( result );
+		return result;
 	}
 	
 	static off_t property_geteof( const FSTree* node )
 	{
-		const FSTree_Property* file = static_cast< const FSTree_Property* >( node );
-		
-		return file->GetEOF();
-	}
-	
-	off_t FSTree_Property::GetEOF() const
-	{
-		property_params& extra = *(property_params*) this->extra();
+		property_params& extra = *(property_params*) node->extra();
 		
 		if ( extra.size != 0  ||  extra.get == NULL )
 		{
@@ -140,7 +122,7 @@ namespace Genie
 		{
 			const bool binary = true;  // Return binary length
 			
-			extra.get( data, owner(), binary );
+			extra.get( data, node->owner(), binary );
 		}
 		catch ( const undefined_property& )
 		{
