@@ -30,15 +30,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class FSTree_Property : public FSTree
-	{
-		public:
-			FSTree_Property( const FSTreePtr&     parent,
-			                 const plus::string&  name,
-			                 mode_t               mode );
-	};
-	
-	
 	static IOHandle* open_for_read( const FSTree* node, int flags )
 	{
 		property_params& extra = *(property_params*) node->extra();
@@ -187,25 +178,17 @@ namespace Genie
 		                                           params.set,
 		                                           parent.get() );
 		
-		FSTree* result = new FSTree_Property( parent, name, mode );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             mode,
+		                             &property_methods,
+		                             sizeof (property_params) );
 		
 		property_params& extra = *(property_params*) result->extra();
 		
 		extra = params;
 		
 		return result;
-	}
-	
-	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
-	                                  const plus::string&  name,
-	                                  mode_t               mode )
-	:
-		FSTree( parent,
-		        name,
-		        mode,
-		        &property_methods,
-		        sizeof (property_params) )
-	{
 	}
 	
 }
