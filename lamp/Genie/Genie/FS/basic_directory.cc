@@ -19,6 +19,12 @@
 namespace Genie
 {
 	
+	struct basic_dir_extra
+	{
+		Lookup_Proc   lookup;
+		Iterate_Proc  iterate;
+	};
+	
 	static FSTreePtr basic_lookup( const FSTree*        node,
 	                               const plus::string&  name,
 	                               const FSTree*        parent );
@@ -47,19 +53,11 @@ namespace Genie
 	
 	class basic_directory : public FSTree
 	{
-		private:
-			Lookup_Proc   itsLookup;
-			Iterate_Proc  itsIterate;
-		
 		public:
 			basic_directory( const FSTreePtr&     parent,
 			                 const plus::string&  name,
 			                 Lookup_Proc          lookup,
 			                 Iterate_Proc         iterate );
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	
@@ -67,29 +65,19 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const FSTree*        parent )
 	{
-		const basic_directory* file = static_cast< const basic_directory* >( node );
+		basic_dir_extra& extra = *(basic_dir_extra*) node->extra();
 		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		return itsLookup( parent, name );
+		return extra.lookup( parent, name );
 	}
 	
 	static void basic_listdir( const FSTree*  node,
 	                           FSTreeCache&   cache )
 	{
-		const basic_directory* file = static_cast< const basic_directory* >( node );
+		basic_dir_extra& extra = *(basic_dir_extra*) node->extra();
 		
-		file->IterateIntoCache( cache );
-	}
-	
-	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		if ( itsIterate != NULL )
+		if ( extra.iterate != NULL )
 		{
-			itsIterate( Self(), cache );
+			extra.iterate( node, cache );
 		}
 	}
 	
@@ -111,10 +99,13 @@ namespace Genie
 		        name,
 		        iterate ? S_IFDIR | 0500
 		                : S_IFDIR | 0100,
-		        &basic_methods ),
-		itsLookup ( lookup  ),
-		itsIterate( iterate )
+		        &basic_methods,
+		        sizeof (basic_dir_extra) )
 	{
+		basic_dir_extra& extra = *(basic_dir_extra*) this->extra();
+		
+		extra.lookup  = lookup;
+		extra.iterate = iterate;
 	}
 	
 }
