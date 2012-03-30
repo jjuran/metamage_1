@@ -63,19 +63,6 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		return itsLookup( parent, name );
-	}
-	
-	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		if ( itsIterate != NULL )
-		{
-			itsIterate( Self(), cache );
-		}
-	}
-	
 	static FSTreePtr basic_lookup( const FSTree*        node,
 	                               const plus::string&  name,
 	                               const FSTree*        parent )
@@ -85,12 +72,25 @@ namespace Genie
 		return file->Lookup_Child( name, parent );
 	}
 	
+	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
+	{
+		return itsLookup( parent, name );
+	}
+	
 	static void basic_listdir( const FSTree*  node,
 	                           FSTreeCache&   cache )
 	{
 		const basic_directory* file = static_cast< const basic_directory* >( node );
 		
 		file->IterateIntoCache( cache );
+	}
+	
+	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const
+	{
+		if ( itsIterate != NULL )
+		{
+			itsIterate( Self(), cache );
+		}
 	}
 	
 	
