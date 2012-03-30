@@ -81,9 +81,6 @@ namespace Genie
 	
 	class ConsoleTTYHandle;
 	
-	typedef FSTree_DynamicGroup< ConsoleTTYHandle > FSTree_dev_con;
-	typedef FSTree_DynamicGroup< PseudoTTYHandle  > FSTree_dev_pts;
-	
 	
 	static IOPtr simple_device_open( const FSTree* node, int flags, mode_t mode )
 	{
@@ -192,8 +189,8 @@ namespace Genie
 		
 		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
 		
-		{ "con", &Basic_Factory< FSTree_dev_con > },
-		{ "pts", &Basic_Factory< FSTree_dev_pts > },
+		{ "con", &dynamic_group_factory, &dynamic_group_element< ConsoleTTYHandle >::extra },
+		{ "pts", &dynamic_group_factory, &dynamic_group_element< PseudoTTYHandle  >::extra },
 		
 		{ "fd", &dev_fd_Factory },
 		
