@@ -973,18 +973,14 @@ namespace Genie
 		
 		const bool is_link = has_window  &&  params.is_mutable;
 		
-		typedef FSTree* T;
+		if ( is_link )
+		{
+			return new FSTree_SymbolicLink( parent,
+			                                name,
+			                                "window/" + name );
+		}
 		
-		T tree = is_link ? T( new FSTree_SymbolicLink( parent,
-		                                               name,
-		                                               "window/" + name ) )
-		                 : T( new FSTree_Property( parent,
-		                                           name,
-		                                           params._.size,
-		                                           params._.get,
-		                                           params._.set ) );
-		
-		return tree;
+		return new_property( parent, name, params_ );
 	}
 	
 	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
