@@ -19,6 +19,12 @@
 namespace Genie
 {
 	
+	struct basic_dir_extra
+	{
+		Lookup_Proc   lookup;
+		Iterate_Proc  iterate;
+	};
+	
 	static FSTreePtr basic_lookup( const FSTree*        node,
 	                               const plus::string&  name,
 	                               const FSTree*        parent );
@@ -45,59 +51,25 @@ namespace Genie
 		&basic_dir_methods
 	};
 	
-	class basic_directory : public FSTree
-	{
-		private:
-			Lookup_Proc   itsLookup;
-			Iterate_Proc  itsIterate;
-		
-		public:
-			basic_directory( const FSTreePtr&     parent,
-			                 const plus::string&  name,
-			                 Lookup_Proc          lookup,
-			                 Iterate_Proc         iterate )
-			:
-				FSTree( parent, name, iterate ? S_IFDIR | 0500
-				                              : S_IFDIR | 0100, &basic_methods ),
-				itsLookup ( lookup  ),
-				itsIterate( iterate )
-			{
-			}
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
-	};
-	
-	
-	FSTreePtr basic_directory::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		return itsLookup( parent, name );
-	}
-	
-	void basic_directory::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		if ( itsIterate != NULL )
-		{
-			itsIterate( Self(), cache );
-		}
-	}
 	
 	static FSTreePtr basic_lookup( const FSTree*        node,
 	                               const plus::string&  name,
 	                               const FSTree*        parent )
 	{
-		const basic_directory* file = static_cast< const basic_directory* >( node );
+		basic_dir_extra& extra = *(basic_dir_extra*) node->extra();
 		
-		return file->Lookup_Child( name, parent );
+		return extra.lookup( parent, name );
 	}
 	
 	static void basic_listdir( const FSTree*  node,
 	                           FSTreeCache&   cache )
 	{
-		const basic_directory* file = static_cast< const basic_directory* >( node );
+		basic_dir_extra& extra = *(basic_dir_extra*) node->extra();
 		
-		file->IterateIntoCache( cache );
+		if ( extra.iterate != NULL )
+		{
+			extra.iterate( node, cache );
+		}
 	}
 	
 	
@@ -106,7 +78,19 @@ namespace Genie
 	                               Lookup_Proc          lookup,
 	                               Iterate_Proc         iterate )
 	{
-		return new basic_directory( parent, name, lookup, iterate );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             iterate ? S_IFDIR | 0500
+		                                     : S_IFDIR | 0100,
+		                             &basic_methods,
+		                             sizeof (basic_dir_extra) );
+		
+		basic_dir_extra& extra = *(basic_dir_extra*) result->extra();
+		
+		extra.lookup  = lookup;
+		extra.iterate = iterate;
+		
+		return result;
 	}
 	
 }
