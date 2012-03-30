@@ -379,19 +379,6 @@ namespace Genie
 		return extra.get( node->owner(), node->name() );
 	}
 	
-	class FSTree_Unview : public FSTree
-	{
-		private:
-			// Non-copyable
-			FSTree_Unview           ( const FSTree_Unview& );
-			FSTree_Unview& operator=( const FSTree_Unview& );
-		
-		public:
-			FSTree_Unview( const FSTreePtr&     parent,
-			               const plus::string&  name,
-			               ViewGetter           get );
-	};
-	
 	static void unview_mkdir( const FSTree* node, mode_t mode )
 	{
 		const FSTree* parent = node->owner();
@@ -435,31 +422,6 @@ namespace Genie
 		&unview_dir_methods
 	};
 	
-	
-	class FSTree_View : public FSTree
-	{
-		private:
-			// Non-copyable
-			FSTree_View           ( const FSTree_View& );
-			FSTree_View& operator=( const FSTree_View& );
-		
-		public:
-			FSTree_View( const FSTreePtr&     parent,
-			             const plus::string&  name,
-			             ViewGetter           get,
-			             ViewPurger           purge );
-	};
-	
-	FSTree_Unview::FSTree_Unview( const FSTreePtr&     parent,
-	                              const plus::string&  name,
-	                              ViewGetter           get )
-	:
-		FSTree( parent, name, 0, &unview_methods, sizeof (view_extra) )
-	{
-		view_extra& extra = *(view_extra*) this->extra();
-		
-		extra.get = get;
-	}
 	
 	static void view_touch( const FSTree* node )
 	{
@@ -522,19 +484,6 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	FSTree_View::FSTree_View( const FSTreePtr&     parent,
-	                          const plus::string&  name,
-	                          ViewGetter           get,
-	                          ViewPurger           purge )
-	:
-		FSTree( parent, name, S_IFDIR | 0700, &view_methods, sizeof (view_extra) )
-	{
-		view_extra& extra = *(view_extra*) this->extra();
-		
-		extra.get   = get;
-		extra.purge = purge;
-	}
-	
 	FSTreePtr New_View( const FSTreePtr&     parent,
 	                    const plus::string&  name,
 	                    ViewGetter           get,
@@ -542,10 +491,24 @@ namespace Genie
 	{
 		const bool exists = ViewExists( parent.get(), name );
 		
-		typedef const FSTree* T;
+		const mode_t mode = exists ? S_IFDIR | 0700
+		                           : 0;
 		
-		return exists ? T( new FSTree_View  ( parent, name, get, purge ) )
-		              : T( new FSTree_Unview( parent, name, get        ) );
+		const node_method_set& methods = exists ? view_methods
+		                                        : unview_methods;
+		
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             mode,
+		                             &methods,
+		                             sizeof (view_extra) );
+		
+		view_extra& extra = *(view_extra*) result->extra();
+		
+		extra.get   = get;
+		extra.purge = purge;
+		
+		return result;
 	}
 	
 }
