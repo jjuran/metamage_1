@@ -19,6 +19,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/dir_method_set.hh"
 

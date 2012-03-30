@@ -6,8 +6,11 @@
 #ifndef GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 #define GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 
-// Genie 
-#include "Genie/FS/FSTree.hh"
+// plus
+#include "plus/string.hh"
+
+// Genie
+#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/DynamicGroup.hh"
