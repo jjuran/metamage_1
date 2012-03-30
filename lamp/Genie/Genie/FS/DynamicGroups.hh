@@ -32,8 +32,6 @@ namespace Genie
 			
 			virtual const Sequence& ItemSequence() const = 0;
 			
-			virtual DynamicElementGetter Getter() const = 0;
-			
 			virtual const node_method_set* node_methods() const = 0;
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
@@ -89,11 +87,6 @@ namespace Genie
 			const Sequence& ItemSequence() const
 			{
 				return GetDynamicGroup< Handle >();
-			}
-			
-			DynamicElementGetter Getter() const
-			{
-				return &GetDynamicElementByID< Handle >;
 			}
 			
 			const node_method_set* node_methods() const
