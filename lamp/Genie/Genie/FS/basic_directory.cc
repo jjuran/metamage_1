@@ -55,14 +55,7 @@ namespace Genie
 			basic_directory( const FSTreePtr&     parent,
 			                 const plus::string&  name,
 			                 Lookup_Proc          lookup,
-			                 Iterate_Proc         iterate )
-			:
-				FSTree( parent, name, iterate ? S_IFDIR | 0500
-				                              : S_IFDIR | 0100, &basic_methods ),
-				itsLookup ( lookup  ),
-				itsIterate( iterate )
-			{
-			}
+			                 Iterate_Proc         iterate );
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
@@ -107,6 +100,21 @@ namespace Genie
 	                               Iterate_Proc         iterate )
 	{
 		return new basic_directory( parent, name, lookup, iterate );
+	}
+	
+	basic_directory::basic_directory( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  Lookup_Proc          lookup,
+	                                  Iterate_Proc         iterate )
+	:
+		FSTree( parent,
+		        name,
+		        iterate ? S_IFDIR | 0500
+		                : S_IFDIR | 0100,
+		        &basic_methods ),
+		itsLookup ( lookup  ),
+		itsIterate( iterate )
+	{
 	}
 	
 }
