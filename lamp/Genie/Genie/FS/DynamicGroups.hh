@@ -97,6 +97,10 @@ namespace Genie
 	{
 	}
 	
+	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args );
+	
 }
 
 #endif

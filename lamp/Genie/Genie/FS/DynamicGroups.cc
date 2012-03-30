@@ -118,5 +118,22 @@ namespace Genie
 		*(dynamic_group_extra*) this->extra() = extra;
 	}
 	
+	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args )
+	{
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFDIR | 0700,
+		                             &dynamic_group_methods,
+		                             sizeof (dynamic_group_extra) );
+		
+		dynamic_group_extra& extra = *(dynamic_group_extra*) result->extra();
+		
+		extra = *(dynamic_group_extra*) args;
+		
+		return result;
+	}
+	
 }
 
