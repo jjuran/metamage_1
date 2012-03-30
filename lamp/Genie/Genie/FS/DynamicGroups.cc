@@ -86,18 +86,26 @@ namespace Genie
 		&dynamic_group_dir_methods
 	};
 	
-	FSTree_DynamicGroup_Base::FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
-	                                                    const plus::string&  name )
+	FSTree_DynamicGroup_Base::FSTree_DynamicGroup_Base( const FSTreePtr&            parent,
+	                                                    const plus::string&         name,
+	                                                    const dynamic_group_extra&  extra )
 	:
-		FSTree( parent, name, S_IFDIR | 0700, &dynamic_group_methods )
+		FSTree( parent,
+		        name,
+		        S_IFDIR | 0700,
+		        &dynamic_group_methods,
+		        sizeof (dynamic_group_extra) )
 	{
+		*(dynamic_group_extra*) this->extra() = extra;
 	}
 	
 	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
+		dynamic_group_extra& extra = *(dynamic_group_extra*) this->extra();
+		
 		const unsigned id = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const DynamicGroup& sequence = ItemSequence();
+		const DynamicGroup& sequence = *extra.group;
 		
 		if ( sequence.find( id ) == sequence.end() )
 		{
@@ -107,14 +115,16 @@ namespace Genie
 		return new FSTree( parent,
 		                   name,
 		                   S_IFCHR | 0600,
-		                   node_methods() );
+		                   extra.methods );
 	}
 	
 	void FSTree_DynamicGroup_Base::IterateIntoCache( FSTreeCache& cache ) const
 	{
+		dynamic_group_extra& extra = *(dynamic_group_extra*) this->extra();
+		
 		DynamicGroup_IteratorConverter converter;
 		
-		const DynamicGroup& sequence = ItemSequence();
+		const DynamicGroup& sequence = *extra.group;
 		
 		std::transform( sequence.begin(),
 		                sequence.end(),

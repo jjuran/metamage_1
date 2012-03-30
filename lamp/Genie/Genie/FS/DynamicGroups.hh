@@ -22,17 +22,18 @@ namespace Genie
 	IOPtr get_dynamic_element_from_node( const FSTree* node, DynamicElementGetter getter );
 	
 	
+	struct dynamic_group_extra
+	{
+		const DynamicGroup*     group;
+		const node_method_set*  methods;
+	};
+	
 	class FSTree_DynamicGroup_Base : public FSTree
 	{
 		public:
-			typedef DynamicGroup Sequence;
-			
-			FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
-			                          const plus::string&  name );
-			
-			virtual const Sequence& ItemSequence() const = 0;
-			
-			virtual const node_method_set* node_methods() const = 0;
+			FSTree_DynamicGroup_Base( const FSTreePtr&            parent,
+			                          const plus::string&         name,
+			                          const dynamic_group_extra&  extra );
 			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
@@ -47,6 +48,15 @@ namespace Genie
 		
 		static const data_method_set data_methods;
 		static const node_method_set node_methods;
+		
+		static const dynamic_group_extra extra;
+	};
+	
+	template < class Handle >
+	const dynamic_group_extra dynamic_group_element< Handle >::extra =
+	{
+		&GetDynamicGroup< Handle >(),
+		&dynamic_group_element< Handle >::node_methods
 	};
 	
 	template < class Handle >
@@ -79,23 +89,15 @@ namespace Genie
 		public:
 			FSTree_DynamicGroup( const FSTreePtr&     parent,
 			                     const plus::string&  name );
-			
-			const Sequence& ItemSequence() const
-			{
-				return GetDynamicGroup< Handle >();
-			}
-			
-			const node_method_set* node_methods() const
-			{
-				return &dynamic_group_element< Handle >::node_methods;
-			}
 	};
 	
 	template < class Handle >
 	FSTree_DynamicGroup< Handle >::FSTree_DynamicGroup( const FSTreePtr&     parent,
 	                                                    const plus::string&  name )
 	:
-		FSTree_DynamicGroup_Base( parent, name )
+		FSTree_DynamicGroup_Base( parent,
+		                          name,
+		                          dynamic_group_element< Handle >::extra )
 	{
 	}
 	
