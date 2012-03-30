@@ -40,17 +40,12 @@ namespace Genie
 			off_t GetEOF() const;
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-		
-		private:
-			IOHandle* OpenForRead( OpenFlags flags ) const;
-			
-			IOHandle* OpenForWrite( OpenFlags flags ) const;
 	};
 	
 	
-	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const
+	static IOHandle* open_for_read( const FSTree* node, int flags )
 	{
-		property_params& extra = *(property_params*) this->extra();
+		property_params& extra = *(property_params*) node->extra();
 		
 		if ( extra.get == NULL )
 		{
@@ -63,7 +58,7 @@ namespace Genie
 		{
 			const bool binary = flags & O_BINARY;
 			
-			extra.get( data, owner(), binary );
+			extra.get( data, node->owner(), binary );
 			
 			if ( !binary )
 			{
@@ -74,14 +69,14 @@ namespace Genie
 		{
 		}
 		
-		return new PropertyReaderFileHandle( Self(),
+		return new PropertyReaderFileHandle( node,
 		                                     flags,
 		                                     data );
 	}
 	
-	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
+	static IOHandle* open_for_write( const FSTree* node, int flags )
 	{
-		property_params& extra = *(property_params*) this->extra();
+		property_params& extra = *(property_params*) node->extra();
 		
 		if ( extra.set == NULL )
 		{
@@ -90,7 +85,7 @@ namespace Genie
 		
 		const bool binary = flags & O_BINARY;
 		
-		return new PropertyWriterFileHandle( Self(),
+		return new PropertyWriterFileHandle( node,
 		                                     flags,
 		                                     extra.set,
 		                                     binary );
@@ -109,11 +104,11 @@ namespace Genie
 		
 		if ( (flags & ~O_BINARY) == O_RDONLY )
 		{
-			result = OpenForRead( flags );
+			result = open_for_read( this, flags );
 		}
 		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
 		{
-			result = OpenForWrite( flags );
+			result = open_for_write( this, flags );
 		}
 		else
 		{
