@@ -79,24 +79,6 @@ namespace Genie
 		&data_methods
 	};
 	
-	template < class Handle >
-	class FSTree_DynamicGroup : public FSTree_DynamicGroup_Base
-	{
-		public:
-			FSTree_DynamicGroup( const FSTreePtr&     parent,
-			                     const plus::string&  name );
-	};
-	
-	template < class Handle >
-	FSTree_DynamicGroup< Handle >::FSTree_DynamicGroup( const FSTreePtr&     parent,
-	                                                    const plus::string&  name )
-	:
-		FSTree_DynamicGroup_Base( parent,
-		                          name,
-		                          dynamic_group_element< Handle >::extra )
-	{
-	}
-	
 	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
 	                                 const plus::string&  name,
 	                                 const void*          args );
