@@ -106,11 +106,6 @@ namespace Genie
 		                                     binary );
 	}
 	
-	static mode_t get_property_filemode( property_get_hook  get_hook,
-	                                     property_set_hook  set_hook,
-	                                     const FSTree*      parent );
-	
-	
 	static IOPtr property_open( const FSTree* node, int flags, mode_t mode )
 	{
 		const FSTree_Property* file = static_cast< const FSTree_Property* >( node );
@@ -118,11 +113,53 @@ namespace Genie
 		return file->Open( flags, mode );
 	}
 	
+	IOPtr FSTree_Property::Open( OpenFlags flags, mode_t mode ) const
+	{
+		IOHandle* result = NULL;
+		
+		if ( (flags & ~O_BINARY) == O_RDONLY )
+		{
+			result = OpenForRead( flags );
+		}
+		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
+		{
+			result = OpenForWrite( flags );
+		}
+		else
+		{
+			throw p7::errno_t( EINVAL );
+		}
+		
+		return IOPtr( result );
+	}
+	
 	static off_t property_geteof( const FSTree* node )
 	{
 		const FSTree_Property* file = static_cast< const FSTree_Property* >( node );
 		
 		return file->GetEOF();
+	}
+	
+	off_t FSTree_Property::GetEOF() const
+	{
+		if ( itsSize != 0  ||  itsReadHook == NULL )
+		{
+			return itsSize;
+		}
+		
+		plus::var_string data;
+		
+		try
+		{
+			const bool binary = true;  // Return binary length
+			
+			itsReadHook( data, ParentRef().get(), binary );
+		}
+		catch ( const undefined_property& )
+		{
+		}
+		
+		return data.size();
 	}
 	
 	static const data_method_set property_data_methods =
@@ -169,48 +206,6 @@ namespace Genie
 		}
 		
 		return result;
-	}
-	
-	off_t FSTree_Property::GetEOF() const
-	{
-		if ( itsSize != 0  ||  itsReadHook == NULL )
-		{
-			return itsSize;
-		}
-		
-		plus::var_string data;
-		
-		try
-		{
-			const bool binary = true;  // Return binary length
-			
-			itsReadHook( data, ParentRef().get(), binary );
-		}
-		catch ( const undefined_property& )
-		{
-		}
-		
-		return data.size();
-	}
-	
-	IOPtr FSTree_Property::Open( OpenFlags flags, mode_t mode ) const
-	{
-		IOHandle* result = NULL;
-		
-		if ( (flags & ~O_BINARY) == O_RDONLY )
-		{
-			result = OpenForRead( flags );
-		}
-		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
-		{
-			result = OpenForWrite( flags );
-		}
-		else
-		{
-			throw p7::errno_t( EINVAL );
-		}
-		
-		return IOPtr( result );
 	}
 	
 	FSTreePtr new_property( const FSTreePtr&     parent,
