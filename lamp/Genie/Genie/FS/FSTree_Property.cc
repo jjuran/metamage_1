@@ -125,7 +125,7 @@ namespace Genie
 			
 			itsReadHook( data, ParentRef().get(), binary );
 		}
-		catch ( const Undefined& )
+		catch ( const undefined_property& )
 		{
 		}
 		
@@ -172,7 +172,7 @@ namespace Genie
 				data += '\n';
 			}
 		}
-		catch ( const Undefined& )
+		catch ( const undefined_property& )
 		{
 		}
 		

@@ -14,6 +14,8 @@
 namespace Genie
 {
 	
+	struct undefined_property {};
+	
 	typedef property_get_hook Property_ReadHook;
 	typedef property_set_hook Property_WriteHook;
 	
@@ -30,8 +32,6 @@ namespace Genie
 			WriteHook  itsWriteHook;
 		
 		public:
-			struct Undefined {};
-			
 			FSTree_Property( const FSTreePtr&     parent,
 			                 const plus::string&  name,
 			                 size_t               size,

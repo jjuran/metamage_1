@@ -283,7 +283,7 @@ namespace Genie
 			
 			if ( !is_valid_unit_number( key ) )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			AuxDCEHandle dceHandle = GetUTableBase()[ key ];

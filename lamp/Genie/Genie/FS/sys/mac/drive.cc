@@ -178,7 +178,7 @@ namespace Genie
 		
 		if ( el == NULL )
 		{
-			throw FSTree_Property::Undefined();
+			throw undefined_property();
 		}
 		
 		return *el;

@@ -77,7 +77,7 @@ namespace Genie
 			
 			if ( device->whichCursor == NULL )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			const CursorData& data = *device->whichCursor;
@@ -121,7 +121,7 @@ namespace Genie
 			
 			if ( device == NULL )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return device;

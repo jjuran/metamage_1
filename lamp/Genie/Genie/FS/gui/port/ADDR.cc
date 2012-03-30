@@ -784,7 +784,7 @@ namespace Genie
 		
 		if ( it == NULL )
 		{
-			throw FSTree_Property::Undefined();
+			throw undefined_property();
 		}
 		
 		return *it;
