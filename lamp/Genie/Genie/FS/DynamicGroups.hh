@@ -34,10 +34,6 @@ namespace Genie
 			FSTree_DynamicGroup_Base( const FSTreePtr&            parent,
 			                          const plus::string&         name,
 			                          const dynamic_group_extra&  extra );
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	

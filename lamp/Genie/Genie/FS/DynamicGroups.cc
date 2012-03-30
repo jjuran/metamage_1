@@ -54,14 +54,7 @@ namespace Genie
 	                                       const plus::string&  name,
 	                                       const FSTree*        parent )
 	{
-		const FSTree_DynamicGroup_Base* file = static_cast< const FSTree_DynamicGroup_Base* >( node );
-		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		dynamic_group_extra& extra = *(dynamic_group_extra*) this->extra();
+		dynamic_group_extra& extra = *(dynamic_group_extra*) node->extra();
 		
 		const unsigned id = gear::parse_unsigned_decimal( name.c_str() );
 		
@@ -81,14 +74,7 @@ namespace Genie
 	static void dynamic_group_listdir( const FSTree*  node,
 	                                   FSTreeCache&   cache )
 	{
-		const FSTree_DynamicGroup_Base* file = static_cast< const FSTree_DynamicGroup_Base* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
-	void FSTree_DynamicGroup_Base::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		dynamic_group_extra& extra = *(dynamic_group_extra*) this->extra();
+		dynamic_group_extra& extra = *(dynamic_group_extra*) node->extra();
 		
 		DynamicGroup_IteratorConverter converter;
 		
