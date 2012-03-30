@@ -62,6 +62,50 @@ namespace Genie
 	};
 	
 	
+	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const
+	{
+		if ( itsReadHook == NULL )
+		{
+			p7::throw_errno( EACCES );
+		}
+		
+		plus::var_string data;
+		
+		try
+		{
+			const bool binary = flags & O_BINARY;
+			
+			itsReadHook( data, ParentRef().get(), binary );
+			
+			if ( !binary )
+			{
+				data += '\n';
+			}
+		}
+		catch ( const undefined_property& )
+		{
+		}
+		
+		return new PropertyReaderFileHandle( Self(),
+		                                     flags,
+		                                     data );
+	}
+	
+	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
+	{
+		if ( itsWriteHook == NULL )
+		{
+			p7::throw_errno( EACCES );
+		}
+		
+		const bool binary = flags & O_BINARY;
+		
+		return new PropertyWriterFileHandle( Self(),
+		                                     flags,
+		                                     itsWriteHook,
+		                                     binary );
+	}
+	
 	static mode_t get_property_filemode( property_get_hook  get_hook,
 	                                     property_set_hook  set_hook,
 	                                     const FSTree*      parent );
@@ -98,22 +142,6 @@ namespace Genie
 		&property_data_methods
 	};
 	
-	
-	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
-	                                  const plus::string&  name,
-	                                  size_t               size,
-	                                  ReadHook             readHook,
-	                                  WriteHook            writeHook )
-	:
-		FSTree( parent,
-		        name,
-		        get_property_filemode( readHook, writeHook, parent.get() ),
-		        &property_methods ),
-		itsSize( size ),
-		itsReadHook ( readHook  ),
-		itsWriteHook( writeHook )
-	{
-	}
 	
 	static mode_t get_property_filemode( property_get_hook  get_hook,
 	                                     property_set_hook  set_hook,
@@ -185,50 +213,6 @@ namespace Genie
 		return IOPtr( result );
 	}
 	
-	IOHandle* FSTree_Property::OpenForRead( OpenFlags flags ) const
-	{
-		if ( itsReadHook == NULL )
-		{
-			p7::throw_errno( EACCES );
-		}
-		
-		plus::var_string data;
-		
-		try
-		{
-			const bool binary = flags & O_BINARY;
-			
-			itsReadHook( data, ParentRef().get(), binary );
-			
-			if ( !binary )
-			{
-				data += '\n';
-			}
-		}
-		catch ( const undefined_property& )
-		{
-		}
-		
-		return new PropertyReaderFileHandle( Self(),
-		                                     flags,
-		                                     data );
-	}
-	
-	IOHandle* FSTree_Property::OpenForWrite( OpenFlags flags ) const
-	{
-		if ( itsWriteHook == NULL )
-		{
-			p7::throw_errno( EACCES );
-		}
-		
-		const bool binary = flags & O_BINARY;
-		
-		return new PropertyWriterFileHandle( Self(),
-		                                     flags,
-		                                     itsWriteHook,
-		                                     binary );
-	}
-	
 	FSTreePtr new_property( const FSTreePtr&     parent,
 	                        const plus::string&  name,
 	                        const void*          params_ )
@@ -240,6 +224,22 @@ namespace Genie
 		                            params.size,
 		                            params.get,
 		                            params.set );
+	}
+	
+	FSTree_Property::FSTree_Property( const FSTreePtr&     parent,
+	                                  const plus::string&  name,
+	                                  size_t               size,
+	                                  ReadHook             readHook,
+	                                  WriteHook            writeHook )
+	:
+		FSTree( parent,
+		        name,
+		        get_property_filemode( readHook, writeHook, parent.get() ),
+		        &property_methods ),
+		itsSize( size ),
+		itsReadHook ( readHook  ),
+		itsWriteHook( writeHook )
+	{
 	}
 	
 }
