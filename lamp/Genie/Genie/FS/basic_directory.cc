@@ -51,15 +51,6 @@ namespace Genie
 		&basic_dir_methods
 	};
 	
-	class basic_directory : public FSTree
-	{
-		public:
-			basic_directory( const FSTreePtr&     parent,
-			                 const plus::string&  name,
-			                 Lookup_Proc          lookup,
-			                 Iterate_Proc         iterate );
-	};
-	
 	
 	static FSTreePtr basic_lookup( const FSTree*        node,
 	                               const plus::string&  name,
@@ -87,25 +78,19 @@ namespace Genie
 	                               Lookup_Proc          lookup,
 	                               Iterate_Proc         iterate )
 	{
-		return new basic_directory( parent, name, lookup, iterate );
-	}
-	
-	basic_directory::basic_directory( const FSTreePtr&     parent,
-	                                  const plus::string&  name,
-	                                  Lookup_Proc          lookup,
-	                                  Iterate_Proc         iterate )
-	:
-		FSTree( parent,
-		        name,
-		        iterate ? S_IFDIR | 0500
-		                : S_IFDIR | 0100,
-		        &basic_methods,
-		        sizeof (basic_dir_extra) )
-	{
-		basic_dir_extra& extra = *(basic_dir_extra*) this->extra();
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             iterate ? S_IFDIR | 0500
+		                                     : S_IFDIR | 0100,
+		                             &basic_methods,
+		                             sizeof (basic_dir_extra) );
+		
+		basic_dir_extra& extra = *(basic_dir_extra*) result->extra();
 		
 		extra.lookup  = lookup;
 		extra.iterate = iterate;
+		
+		return result;
 	}
 	
 }
