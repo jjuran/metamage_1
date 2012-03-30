@@ -390,24 +390,13 @@ namespace Genie
 			FSTree_Unview( const FSTreePtr&     parent,
 			               const plus::string&  name,
 			               ViewGetter           get );
-			
-			const FSTree* ParentKey() const  { return ParentRef().get(); }
-			
-			void CreateDirectory( mode_t mode ) const;
 	};
 	
 	static void unview_mkdir( const FSTree* node, mode_t mode )
 	{
-		const FSTree_Unview* file = static_cast< const FSTree_Unview* >( node );
+		const FSTree* parent = node->owner();
 		
-		file->CreateDirectory( mode );
-	}
-	
-	void FSTree_Unview::CreateDirectory( mode_t mode ) const
-	{
-		const FSTree* parent = owner();
-		
-		const plus::string& name = Name();
+		const plus::string& name = node->name();
 		
 		const FSTree* windowKey = GetViewWindowKey( parent );
 		
@@ -420,7 +409,7 @@ namespace Genie
 		
 		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
 		
-		view_of( this ) = view;
+		view_of( node ) = view;
 		
 		// Install and invalidate if window exists
 		install_view_in_port( view, windowKey );
@@ -459,10 +448,6 @@ namespace Genie
 			             const plus::string&  name,
 			             ViewGetter           get,
 			             ViewPurger           purge );
-			
-			const FSTree* ParentKey() const  { return ParentRef().get(); }
-			
-			void Delete() const;
 	};
 	
 	FSTree_Unview::FSTree_Unview( const FSTreePtr&     parent,
@@ -483,24 +468,17 @@ namespace Genie
 	
 	static void view_remove( const FSTree* node )
 	{
-		const FSTree_View* file = static_cast< const FSTree_View* >( node );
+		const view_extra& extra = *(view_extra*) node->extra();
 		
-		return file->Delete();
-	}
-	
-	void FSTree_View::Delete() const
-	{
-		const view_extra& extra = *(view_extra*) this->extra();
+		const FSTree* parent = node->owner();
 		
-		const FSTree* parent = ParentKey();
+		const plus::string& name = node->name();
 		
-		const plus::string& name = Name();
+		const FSTree* windowKey = GetViewWindowKey( node );
 		
-		const FSTree* windowKey = GetViewWindowKey( this );
+		uninstall_view_from_port( view_of( node ), windowKey );
 		
-		uninstall_view_from_port( view_of( this ), windowKey );
-		
-		view_of( this ) = Ped::EmptyView::Get();
+		view_of( node ) = Ped::EmptyView::Get();
 		
 		RemoveViewParameters( parent, name );
 		
