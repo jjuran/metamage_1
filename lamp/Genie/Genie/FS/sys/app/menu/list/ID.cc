@@ -26,7 +26,9 @@
 #include "Nitrogen/Str.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/app/menu/list/ID/items.hh"

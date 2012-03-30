@@ -32,6 +32,7 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 

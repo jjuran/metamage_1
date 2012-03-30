@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/IO/PropertyFile.hh"
 
 

@@ -19,6 +19,7 @@
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/premapped.hh"
+#include "Genie/FS/property.hh"
 
 
 namespace Genie

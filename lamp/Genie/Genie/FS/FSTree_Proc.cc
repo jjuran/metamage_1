@@ -28,6 +28,7 @@
 // Genie
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
@@ -36,6 +37,7 @@
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"

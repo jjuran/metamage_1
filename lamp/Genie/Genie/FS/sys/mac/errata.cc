@@ -22,6 +22,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/Utilities/GetMachineName.hh"
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON

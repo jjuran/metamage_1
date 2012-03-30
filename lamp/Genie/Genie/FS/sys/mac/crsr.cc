@@ -29,6 +29,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
 
