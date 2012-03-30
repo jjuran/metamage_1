@@ -78,11 +78,7 @@ namespace Genie
 	{
 		public:
 			FSTree_DynamicGroup( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree_DynamicGroup_Base( parent, name )
-			{
-			}
+			                     const plus::string&  name );
 			
 			const Sequence& ItemSequence() const
 			{
@@ -94,6 +90,14 @@ namespace Genie
 				return &dynamic_group_element< Handle >::node_methods;
 			}
 	};
+	
+	template < class Handle >
+	FSTree_DynamicGroup< Handle >::FSTree_DynamicGroup( const FSTreePtr&     parent,
+	                                                    const plus::string&  name )
+	:
+		FSTree_DynamicGroup_Base( parent, name )
+	{
+	}
 	
 }
 
