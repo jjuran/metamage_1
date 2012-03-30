@@ -403,6 +403,29 @@ namespace Genie
 		file->CreateDirectory( mode );
 	}
 	
+	void FSTree_Unview::CreateDirectory( mode_t mode ) const
+	{
+		const FSTree* parent = owner();
+		
+		const plus::string& name = Name();
+		
+		const FSTree* windowKey = GetViewWindowKey( parent );
+		
+		if ( windowKey == NULL )
+		{
+			windowKey = parent;
+		}
+		
+		AddViewWindowKey( parent, name, windowKey );
+		
+		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
+		
+		view_of( this ) = view;
+		
+		// Install and invalidate if window exists
+		install_view_in_port( view, windowKey );
+	}
+	
 	static const dir_method_set unview_dir_methods =
 	{
 		NULL,
@@ -465,12 +488,42 @@ namespace Genie
 		return file->Delete();
 	}
 	
+	void FSTree_View::Delete() const
+	{
+		const view_extra& extra = *(view_extra*) this->extra();
+		
+		const FSTree* parent = ParentKey();
+		
+		const plus::string& name = Name();
+		
+		const FSTree* windowKey = GetViewWindowKey( this );
+		
+		uninstall_view_from_port( view_of( this ), windowKey );
+		
+		view_of( this ) = Ped::EmptyView::Get();
+		
+		RemoveViewParameters( parent, name );
+		
+		if ( extra.purge )
+		{
+			extra.purge( parent, name );
+		}
+	}
+	
 	static FSTreePtr view_lookup( const FSTree*        node,
 	                              const plus::string&  name,
-	                              const FSTree*        parent );
+	                              const FSTree*        parent )
+	{
+		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
+		
+		return GetViewDelegate( node )->Lookup( real_name, NULL );
+	}
 	
 	static void view_listdir( const FSTree*  node,
-	                          FSTreeCache&   cache );
+	                          FSTreeCache&   cache )
+	{
+		GetViewDelegate( node )->IterateIntoCache( cache );
+	}
 	
 	static const dir_method_set view_dir_methods =
 	{
@@ -502,66 +555,6 @@ namespace Genie
 		
 		extra.get   = get;
 		extra.purge = purge;
-	}
-	
-	void FSTree_View::Delete() const
-	{
-		const view_extra& extra = *(view_extra*) this->extra();
-		
-		const FSTree* parent = ParentKey();
-		
-		const plus::string& name = Name();
-		
-		const FSTree* windowKey = GetViewWindowKey( this );
-		
-		uninstall_view_from_port( view_of( this ), windowKey );
-		
-		view_of( this ) = Ped::EmptyView::Get();
-		
-		RemoveViewParameters( parent, name );
-		
-		if ( extra.purge )
-		{
-			extra.purge( parent, name );
-		}
-	}
-	
-	void FSTree_Unview::CreateDirectory( mode_t mode ) const
-	{
-		const FSTree* parent = ParentRef().get();
-		
-		const plus::string& name = Name();
-		
-		const FSTree* windowKey = GetViewWindowKey( parent );
-		
-		if ( windowKey == NULL )
-		{
-			windowKey = parent;
-		}
-		
-		AddViewWindowKey( parent, name, windowKey );
-		
-		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
-		
-		view_of( this ) = view;
-		
-		// Install and invalidate if window exists
-		install_view_in_port( view, windowKey );
-	}
-	
-	static FSTreePtr view_lookup( const FSTree*        node,
-	                              const plus::string&  name,
-	                              const FSTree*        parent )
-	{
-		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
-		
-		return GetViewDelegate( node )->Lookup( real_name, NULL );
-	}
-	
-	static void view_listdir( const FSTree*  node,
-	                          FSTreeCache&   cache )
-	{
-		GetViewDelegate( node )->IterateIntoCache( cache );
 	}
 	
 	FSTreePtr New_View( const FSTreePtr&     parent,
