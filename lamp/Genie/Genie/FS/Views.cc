@@ -363,11 +363,25 @@ namespace Genie
 	}
 	
 	
+	struct view_extra
+	{
+		ViewGetter  get;
+		ViewPurger  purge;
+	};
+	
+	
+	static boost::intrusive_ptr< Pedestal::View >& view_of( const FSTree* node )
+	{
+		ASSERT( node != NULL );
+		
+		const view_extra& extra = *(view_extra*) node->extra();
+		
+		return extra.get( node->owner(), node->name() );
+	}
+	
 	class FSTree_Unview : public FSTree
 	{
 		private:
-			ViewGetter itsGetter;
-			
 			// Non-copyable
 			FSTree_Unview           ( const FSTree_Unview& );
 			FSTree_Unview& operator=( const FSTree_Unview& );
@@ -380,13 +394,6 @@ namespace Genie
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
 			void CreateDirectory( mode_t mode ) const;
-			
-			boost::intrusive_ptr< Pedestal::View >& Get() const
-			{
-				ASSERT( itsGetter != NULL );
-				
-				return itsGetter( ParentKey(), Name() );
-			}
 	};
 	
 	static void unview_mkdir( const FSTree* node, mode_t mode )
@@ -420,9 +427,6 @@ namespace Genie
 	class FSTree_View : public FSTree
 	{
 		private:
-			ViewGetter  itsGetter;
-			ViewPurger  itsPurger;
-			
 			// Non-copyable
 			FSTree_View           ( const FSTree_View& );
 			FSTree_View& operator=( const FSTree_View& );
@@ -436,22 +440,17 @@ namespace Genie
 			const FSTree* ParentKey() const  { return ParentRef().get(); }
 			
 			void Delete() const;
-			
-			boost::intrusive_ptr< Pedestal::View >& Get() const
-			{
-				ASSERT( itsGetter != NULL );
-				
-				return itsGetter( ParentKey(), Name() );
-			}
 	};
 	
 	FSTree_Unview::FSTree_Unview( const FSTreePtr&     parent,
 	                              const plus::string&  name,
 	                              ViewGetter           get )
 	:
-		FSTree( parent, name, 0, &unview_methods ),
-		itsGetter( get )
+		FSTree( parent, name, 0, &unview_methods, sizeof (view_extra) )
 	{
+		view_extra& extra = *(view_extra*) this->extra();
+		
+		extra.get = get;
 	}
 	
 	static void view_touch( const FSTree* node )
@@ -497,29 +496,33 @@ namespace Genie
 	                          ViewGetter           get,
 	                          ViewPurger           purge )
 	:
-		FSTree( parent, name, S_IFDIR | 0700, &view_methods ),
-		itsGetter( get   ),
-		itsPurger( purge )
+		FSTree( parent, name, S_IFDIR | 0700, &view_methods, sizeof (view_extra) )
 	{
+		view_extra& extra = *(view_extra*) this->extra();
+		
+		extra.get   = get;
+		extra.purge = purge;
 	}
 	
 	void FSTree_View::Delete() const
 	{
+		const view_extra& extra = *(view_extra*) this->extra();
+		
 		const FSTree* parent = ParentKey();
 		
 		const plus::string& name = Name();
 		
 		const FSTree* windowKey = GetViewWindowKey( this );
 		
-		uninstall_view_from_port( Get(), windowKey );
+		uninstall_view_from_port( view_of( this ), windowKey );
 		
-		Get() = Ped::EmptyView::Get();
+		view_of( this ) = Ped::EmptyView::Get();
 		
 		RemoveViewParameters( parent, name );
 		
-		if ( itsPurger )
+		if ( extra.purge )
 		{
-			itsPurger( parent, name );
+			extra.purge( parent, name );
 		}
 	}
 	
@@ -540,7 +543,7 @@ namespace Genie
 		
 		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
 		
-		Get() = view;
+		view_of( this ) = view;
 		
 		// Install and invalidate if window exists
 		install_view_in_port( view, windowKey );
