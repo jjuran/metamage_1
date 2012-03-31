@@ -19,6 +19,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/dir_method_set.hh"
 
@@ -54,17 +55,36 @@ namespace Genie
 	                                       const plus::string&  name,
 	                                       const FSTree*        parent )
 	{
-		const FSTree_DynamicGroup_Base* file = static_cast< const FSTree_DynamicGroup_Base* >( node );
+		dynamic_group_extra& extra = *(dynamic_group_extra*) node->extra();
 		
-		return file->Lookup_Child( name, parent );
+		const unsigned id = gear::parse_unsigned_decimal( name.c_str() );
+		
+		const DynamicGroup& sequence = *extra.group;
+		
+		if ( sequence.find( id ) == sequence.end() )
+		{
+			poseven::throw_errno( ENOENT );
+		}
+		
+		return new FSTree( parent,
+		                   name,
+		                   S_IFCHR | 0600,
+		                   extra.methods );
 	}
 	
 	static void dynamic_group_listdir( const FSTree*  node,
 	                                   FSTreeCache&   cache )
 	{
-		const FSTree_DynamicGroup_Base* file = static_cast< const FSTree_DynamicGroup_Base* >( node );
+		dynamic_group_extra& extra = *(dynamic_group_extra*) node->extra();
 		
-		file->IterateIntoCache( cache );
+		DynamicGroup_IteratorConverter converter;
+		
+		const DynamicGroup& sequence = *extra.group;
+		
+		std::transform( sequence.begin(),
+		                sequence.end(),
+		                std::back_inserter( cache ),
+		                converter );
 	}
 	
 	static const dir_method_set dynamic_group_dir_methods =
@@ -86,40 +106,21 @@ namespace Genie
 		&dynamic_group_dir_methods
 	};
 	
-	FSTree_DynamicGroup_Base::FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
-	                                                    const plus::string&  name )
-	:
-		FSTree( parent, name, S_IFDIR | 0700, &dynamic_group_methods )
+	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args )
 	{
-	}
-	
-	FSTreePtr FSTree_DynamicGroup_Base::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		const unsigned id = gear::parse_unsigned_decimal( name.c_str() );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFDIR | 0700,
+		                             &dynamic_group_methods,
+		                             sizeof (dynamic_group_extra) );
 		
-		const DynamicGroup& sequence = ItemSequence();
+		dynamic_group_extra& extra = *(dynamic_group_extra*) result->extra();
 		
-		if ( sequence.find( id ) == sequence.end() )
-		{
-			poseven::throw_errno( ENOENT );
-		}
+		extra = *(dynamic_group_extra*) args;
 		
-		return new FSTree( parent,
-		                   name,
-		                   S_IFCHR | 0600,
-		                   node_methods() );
-	}
-	
-	void FSTree_DynamicGroup_Base::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		DynamicGroup_IteratorConverter converter;
-		
-		const DynamicGroup& sequence = ItemSequence();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		return result;
 	}
 	
 }
