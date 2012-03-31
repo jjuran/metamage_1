@@ -29,9 +29,11 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -283,7 +285,7 @@ namespace Genie
 			
 			if ( !is_valid_unit_number( key ) )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			AuxDCEHandle dceHandle = GetUTableBase()[ key ];

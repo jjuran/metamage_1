@@ -29,6 +29,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
 
@@ -77,7 +78,7 @@ namespace Genie
 			
 			if ( device->whichCursor == NULL )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			const CursorData& data = *device->whichCursor;
@@ -121,7 +122,7 @@ namespace Genie
 			
 			if ( device == NULL )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return device;

@@ -20,7 +20,9 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 
 
 namespace Genie
@@ -51,7 +53,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMLocalHand == 0 )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return parmsInfo.vMLocalHand;
@@ -64,7 +66,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMServerAdr == 0 )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return parmsInfo.vMServerAdr;
@@ -77,7 +79,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 2  ||  parmsInfo.vMVolumeGrade == 0 )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return parmsInfo.vMVolumeGrade;
@@ -90,7 +92,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 2 )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return parmsInfo.vMForeignPrivID;
@@ -103,7 +105,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 3 )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return parmsInfo.vMExtendedAttributes;
@@ -116,7 +118,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 4  ||  parmsInfo.vMDeviceID == NULL )
 			{
-				throw FSTree_Property::Undefined();
+				throw undefined_property();
 			}
 			
 			return (const char*) parmsInfo.vMDeviceID;

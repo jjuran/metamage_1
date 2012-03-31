@@ -18,6 +18,7 @@
 #include "Pedestal/Stack.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"

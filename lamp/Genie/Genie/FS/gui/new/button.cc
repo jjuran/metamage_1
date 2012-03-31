@@ -21,6 +21,7 @@
 #include "Pedestal/PushButton.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"

@@ -6,6 +6,7 @@
 #include "Genie/FS/sys/mac.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/premapped.hh"

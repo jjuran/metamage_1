@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/premapped.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"

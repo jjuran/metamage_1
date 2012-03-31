@@ -15,6 +15,7 @@
 // Genie
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/IO/PropertyFile.hh"
 
 
@@ -27,6 +28,38 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
+	
+	
+	typedef property_get_hook Property_ReadHook;
+	typedef property_set_hook Property_WriteHook;
+	
+	class FSTree_Property : public FSTree
+	{
+		public:
+			typedef Property_ReadHook   ReadHook;
+			typedef Property_WriteHook  WriteHook;
+		
+		private:
+			size_t     itsSize;
+			ReadHook   itsReadHook;
+			WriteHook  itsWriteHook;
+		
+		public:
+			FSTree_Property( const FSTreePtr&     parent,
+			                 const plus::string&  name,
+			                 size_t               size,
+			                 ReadHook             readHook,
+			                 WriteHook            writeHook = NULL );
+			
+			off_t GetEOF() const;
+			
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+		
+		private:
+			IOHandle* OpenForRead( OpenFlags flags ) const;
+			
+			IOHandle* OpenForWrite( OpenFlags flags ) const;
+	};
 	
 	
 	static mode_t get_property_filemode( property_get_hook  get_hook,
@@ -125,7 +158,7 @@ namespace Genie
 			
 			itsReadHook( data, ParentRef().get(), binary );
 		}
-		catch ( const Undefined& )
+		catch ( const undefined_property& )
 		{
 		}
 		
@@ -172,7 +205,7 @@ namespace Genie
 				data += '\n';
 			}
 		}
-		catch ( const Undefined& )
+		catch ( const undefined_property& )
 		{
 		}
 		

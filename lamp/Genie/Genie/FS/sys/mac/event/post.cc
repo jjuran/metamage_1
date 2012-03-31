@@ -13,6 +13,7 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
+#include "Genie/FS/property.hh"
 
 
 namespace Nitrogen

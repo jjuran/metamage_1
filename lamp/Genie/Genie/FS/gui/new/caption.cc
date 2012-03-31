@@ -21,6 +21,7 @@
 #include "Pedestal/Caption.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"

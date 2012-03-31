@@ -23,11 +23,13 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
 

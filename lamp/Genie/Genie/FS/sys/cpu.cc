@@ -21,6 +21,7 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/property.hh"
 
 
 #if UNIVERSAL_INTERFACES_VERSION <= 0x0342
