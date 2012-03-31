@@ -180,7 +180,7 @@ namespace plus
 			// An owned buffer should always have 1 user, but it's easier
 			// to check both here.
 			
-			const size_t use_count = ((size_t*) its_alloc.pointer)[ -1 ];
+			const size_t use_count = ((size_t*) store.alloc.pointer)[ -1 ];
 			
 			return use_count == 1;
 		}
@@ -194,11 +194,11 @@ namespace plus
 		{
 			ASSERT( length <= max_offset );
 			
-			its_small_name[ max_offset ] = max_offset - length;
+			store.small[ max_offset ] = max_offset - length;
 		}
 		else
 		{
-			its_alloc.length = length;
+			store.alloc.length = length;
 		}
 		
 		char* p = const_cast< char* >( data() );
@@ -214,33 +214,33 @@ namespace plus
 		check_size( length   );
 		check_size( capacity );
 		
-		its_alloc.pointer  = p;
-		its_alloc.length   = length;
-		its_alloc.capacity = capacity;  // may be zero
+		store.alloc.pointer  = p;
+		store.alloc.length   = length;
+		store.alloc.capacity = capacity;  // may be zero
 		
 		_policy( ~policy );
 	}
 	
 	string::string( const char* p, size_type length )
 	{
-		its_small_name[ 0          ] = '\0';
-		its_small_name[ max_offset ] = max_offset;
+		store.small[ 0          ] = '\0';
+		store.small[ max_offset ] = max_offset;
 		
 		assign( p, length );
 	}
 	
 	string::string( const char* p, const char* q )
 	{
-		its_small_name[ 0          ] = '\0';
-		its_small_name[ max_offset ] = max_offset;
+		store.small[ 0          ] = '\0';
+		store.small[ max_offset ] = max_offset;
 		
 		assign( p, q );
 	}
 	
 	string::string( const char* s )
 	{
-		its_small_name[ 0          ] = '\0';
-		its_small_name[ max_offset ] = max_offset;
+		store.small[ 0          ] = '\0';
+		store.small[ max_offset ] = max_offset;
 		
 		assign( s );
 	}
@@ -249,28 +249,28 @@ namespace plus
 	{
 		// An uninitialized 15-char string is acceptable because we're just
 		// going to assign over it anyway, and empties aren't faster here.
-		its_small_name[ max_offset ] = 0;
+		store.small[ max_offset ] = 0;
 		
 		assign( n, c );
 	}
 	
 	string::~string()
 	{
-		dispose( its_alloc.pointer, _policy() );
+		dispose( store.alloc.pointer, _policy() );
 	}
 	
 	string::string( const string& other, size_type pos, size_type n )
 	{
-		its_small_name[ 0          ] = '\0';
-		its_small_name[ max_offset ] = max_offset;
+		store.small[ 0          ] = '\0';
+		store.small[ max_offset ] = max_offset;
 		
 		assign( other, pos, n );
 	}
 	
 	string::string( const string& other )
 	{
-		its_small_name[ 0          ] = '\0';
-		its_small_name[ max_offset ] = max_offset;
+		store.small[ 0          ] = '\0';
+		store.small[ max_offset ] = max_offset;
 		
 		assign( other );
 	}
@@ -292,10 +292,10 @@ namespace plus
 			or 31 for 64-bit).
 		*/
 		
-		const char margin = its_small_name[ max_offset ];
+		const char margin = store.small[ max_offset ];
 		
 		return is_small() ? max_offset - margin
-		                  : its_alloc.length;
+		                  : store.alloc.length;
 	}
 	
 	string::size_type string::capacity() const
@@ -305,10 +305,8 @@ namespace plus
 			return max_offset;
 		}
 		
-		const long capacity = its_alloc.capacity;  // negative for substrings
-		
-		return capacity > 0 ? its_alloc.capacity
-		                    : its_alloc.length;
+		return store.alloc.capacity > 0 ? store.alloc.capacity
+		                                : store.alloc.length;
 	}
 	
 	string::size_type string::substr_offset() const
@@ -318,20 +316,18 @@ namespace plus
 			return 0;
 		}
 		
-		const long capacity = its_alloc.capacity;  // negative for substrings
-		
-		return capacity >= 0 ? 0
-		                     : -capacity;
+		return store.alloc.capacity >= 0 ? 0
+		                                 : -store.alloc.capacity;
 	}
 	
 	const char* string::data( bool zero_terminator_required ) const
 	{
 		if ( is_small() )
 		{
-			return its_small_name;  // always terminated
+			return store.small;  // always terminated
 		}
 		
-		const char* begin = its_alloc.pointer + substr_offset();
+		const char* begin = store.alloc.pointer + substr_offset();
 		
 		if ( !zero_terminator_required  ||  is_c_str() )
 		{
@@ -340,7 +336,7 @@ namespace plus
 		
 		string& non_const = const_cast< string& >( *this );
 		
-		plus::string temp( begin, its_alloc.length );
+		plus::string temp( begin, store.alloc.length );
 		
 		non_const.swap( temp );
 		
@@ -364,11 +360,11 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		dispose( its_alloc.pointer, _policy() );
+		dispose( store.alloc.pointer, _policy() );
 		
-		its_alloc.pointer  = p;
-		its_alloc.length   = length;
-		its_alloc.capacity = capacity;  // may be zero
+		store.alloc.pointer  = p;
+		store.alloc.length   = length;
+		store.alloc.capacity = capacity;  // may be zero
 		
 		_policy( ~policy );
 		
@@ -379,13 +375,13 @@ namespace plus
 	{
 		check_size( length );
 		
-		char const *const old_pointer = its_alloc.pointer;
+		char const *const old_pointer = store.alloc.pointer;
 		
 		const char old_policy = _policy();
 		
 		char* new_pointer = NULL;
 		
-		if ( length >= sizeof its_small_name )
+		if ( length >= datum_buffer_size )
 		{
 			const size_type capacity = adjusted_capacity( length );
 			
@@ -398,17 +394,17 @@ namespace plus
 			
 			new_pointer += sizeof (size_t);
 			
-			its_alloc.pointer  = new_pointer;
-			its_alloc.length   = length;
-			its_alloc.capacity = capacity;
+			store.alloc.pointer  = new_pointer;
+			store.alloc.length   = length;
+			store.alloc.capacity = capacity;
 			
 			_policy( ~delete_shared );
 		}
 		else
 		{
-			new_pointer = its_small_name;
+			new_pointer = store.small;
 			
-			its_small_name[ max_offset ] = max_offset - length;
+			store.small[ max_offset ] = max_offset - length;
 		}
 		
 		new_pointer[ length ] = '\0';
@@ -422,12 +418,12 @@ namespace plus
 	{
 		if ( is_small() )
 		{
-			return its_small_name;
+			return store.small;
 		}
 		
 		if ( _policy() == ~delete_shared )
 		{
-			const size_t refcount = ((size_t*) its_alloc.pointer)[ -1 ];
+			const size_t refcount = ((size_t*) store.alloc.pointer)[ -1 ];
 			
 			ASSERT( refcount != 0 );
 			
@@ -444,13 +440,13 @@ namespace plus
 				return const_cast< char* >( data() );
 			}
 		}
-		else if ( long( its_alloc.capacity ) > 0 )
+		else if ( store.alloc.capacity > 0 )
 		{
 			// delete_owned or read/write external buffer
-			return const_cast< char* >( its_alloc.pointer );
+			return const_cast< char* >( store.alloc.pointer );
 		}
 		
-		assign( data(), its_alloc.length, capacity() );
+		assign( data(), store.alloc.length, capacity() );
 		
 		if ( tainting  &&  _policy() == ~delete_shared )
 		{
@@ -523,7 +519,7 @@ namespace plus
 		{
 			reset();
 			
-			memcpy( its_longs, m.source.its_longs, buffer_size );
+			memcpy( &store, &m.source.store, sizeof store );
 			
 			if ( m.source._policy() < 0 )
 			{
@@ -551,7 +547,7 @@ namespace plus
 		
 		n = std::min( n, other_size - pos );
 		
-		const bool small = n < sizeof its_small_name;
+		const bool small = n < datum_buffer_size;
 		
 		const bool shallow = !small  &&  other._policy() >= ~delete_shared;
 		
@@ -564,7 +560,7 @@ namespace plus
 		{
 			if ( other._policy() == ~delete_shared )
 			{
-				size_t& refcount = ((size_t*) other.its_alloc.pointer)[ -1 ];
+				size_t& refcount = ((size_t*) other.store.alloc.pointer)[ -1 ];
 				
 				// Should never happen, since address space would be exhausted
 				// by size( -1 ) / sizeof (string) copies of a string, which is
@@ -582,19 +578,17 @@ namespace plus
 			// If this is a self-assignment, then *we* are either static
 			// or shared with non-minimal refcount, and dispose() does nothing.
 			
-			dispose( its_alloc.pointer, _policy() );
+			dispose( store.alloc.pointer, _policy() );
 			
-			std::copy( other.its_longs,
-			           other.its_longs + buffer_size_in_longs,
-			           its_longs );
+			memcpy( &store, &other.store, sizeof store );
 			
-			its_alloc.length = n;
+			store.alloc.length = n;
 			
 			if ( pos != 0 )
 			{
 				const long new_offset = substr_offset() + pos;
 				
-				its_alloc.capacity = size_type( -new_offset );
+				store.alloc.capacity = -new_offset;
 			}
 		}
 		else
@@ -603,15 +597,6 @@ namespace plus
 		}
 		
 		return *this;
-	}
-	
-	void string::swap( string& other )
-	{
-		long temp_longs[ buffer_size_in_longs ];
-		
-		memcpy( temp_longs,      other.its_longs, buffer_size );
-		memcpy( other.its_longs, its_longs,       buffer_size );
-		memcpy( its_longs,       temp_longs,      buffer_size );
 	}
 	
 	

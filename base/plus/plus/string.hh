@@ -8,6 +8,10 @@
 
 // iota
 #include "iota/pascal_string.hh"
+#include "iota/swap.hh"
+
+// plus
+#include "plus/datum_storage.hh"
 
 
 namespace plus
@@ -53,31 +57,16 @@ namespace plus
 			
 			enum
 			{
-				buffer_size_in_longs = 4,  // ptr/len/cap/etc
-				buffer_size          = buffer_size_in_longs * sizeof (long),
-				max_offset           = buffer_size - 1
+				max_offset = datum_buffer_size - 1
 			};
 		
 		private:
-			struct alloc_state
-			{
-				const char*  pointer;
-				size_type    length;
-				size_type    capacity;
-				const void*  misc;
-			};
-			
-			union
-			{
-				char         its_small_name[ buffer_size ];
-				alloc_state  its_alloc;
-				long         its_longs[ buffer_size_in_longs ];
-			};
+			datum_storage store;
 			
 			// The _ is mnemonic for ~
-			signed char _policy() const  { return its_small_name[ max_offset ]; }
+			signed char _policy() const  { return store.small[ max_offset ]; }
 			
-			void _policy( char negated )  { its_small_name[ max_offset ] = negated; }
+			void _policy( char negated )  { store.small[ max_offset ] = negated; }
 		
 		protected:
 			char* reallocate( size_type length );
@@ -102,8 +91,8 @@ namespace plus
 			
 			string()
 			{
-				its_small_name[ 0          ] = '\0';
-				its_small_name[ max_offset ] = max_offset;
+				store.small[ 0          ] = '\0';
+				store.small[ max_offset ] = max_offset;
 			}
 			
 			string( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
@@ -120,7 +109,7 @@ namespace plus
 			
 			string( const move_t& m )
 			{
-				its_small_name[ max_offset ] = 0;
+				store.small[ max_offset ] = 0;
 				
 				assign( m );
 			}
@@ -131,7 +120,7 @@ namespace plus
 			
 			string( const unsigned char* other )
 			{
-				its_small_name[ max_offset ] = max_offset;  // empty string
+				store.small[ max_offset ] = max_offset;  // empty string
 				
 				assign( other );
 			}
@@ -220,7 +209,12 @@ namespace plus
 			
 			string& operator=( char c )  { return assign( 1, c ); }
 			
-			void swap( string& other );
+			void swap( string& other )
+			{
+				using iota::swap;
+				
+				swap( store, other.store );
+			}
 			
 			move_t move()  { return move_t( *this ); }
 			
