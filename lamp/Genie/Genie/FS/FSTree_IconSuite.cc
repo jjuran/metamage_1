@@ -48,16 +48,22 @@ namespace Genie
 	{
 		private:
 			typedef n::owned< N::IconSuiteRef > Value;
-			
-			Value itsIconSuite;
 		
 		public:
 			FSTree_IconSuite( const FSTreePtr&     parent,
 			                  const plus::string&  name,
 			                  Value                iconSuite );
-			
-			void CopyFile( const FSTreePtr& destination ) const;
 	};
+	
+	
+	static void dispose_iconsuite( const FSTree* node )
+	{
+		::IconSuiteRef& extra = *(::IconSuiteRef*) node->extra();
+		
+		const bool disposeData = true;
+		
+		(void) ::DisposeIconSuite( extra, disposeData );
+	}
 	
 	
 	static N::IconSuiteRef gStoredIconSuite;
@@ -77,16 +83,11 @@ namespace Genie
 	
 	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target )
 	{
-		const FSTree_IconSuite* file = static_cast< const FSTree_IconSuite* >( node );
+		::IconSuiteRef extra = *(::IconSuiteRef*) node->extra();
 		
-		file->CopyFile( target );
-	}
-	
-	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
-	{
-		stored_IconSuite_scope scope( itsIconSuite );
+		stored_IconSuite_scope scope( extra );
 		
-		destination->Attach( this );
+		target->Attach( node );
 	}
 	
 	
@@ -103,9 +104,16 @@ namespace Genie
 	                                    const plus::string&  name,
 	                                    Value                iconSuite )
 	:
-		FSTree( parent, name, S_IFREG | 0400, &iconsuite_methods ),
-		itsIconSuite( iconSuite )
+		FSTree( parent,
+		        name,
+		        S_IFREG | 0400,
+		        &iconsuite_methods,
+		        sizeof (::IconSuiteRef),
+		        &dispose_iconsuite )
 	{
+		::IconSuiteRef& extra = *(::IconSuiteRef*) this->extra();
+		
+		extra = iconSuite.release();
 	}
 	
 	const N::IconSuiteRef Fetch_IconSuite()
