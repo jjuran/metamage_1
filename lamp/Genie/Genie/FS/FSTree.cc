@@ -73,7 +73,7 @@ namespace Genie
 		itsMode  ( mode ),
 		its_methods( methods ),
 		its_extra( n_extra ? ::operator new( n_extra ) : NULL ),
-		its_destructor()
+		its_destructor( dtor )
 	{
 	}
 	
