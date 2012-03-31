@@ -75,18 +75,18 @@ namespace Genie
 		}
 	};
 	
-	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
-	{
-		stored_IconSuite_scope scope( itsIconSuite );
-		
-		destination->Attach( this );
-	}
-	
 	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target )
 	{
 		const FSTree_IconSuite* file = static_cast< const FSTree_IconSuite* >( node );
 		
 		file->CopyFile( target );
+	}
+	
+	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
+	{
+		stored_IconSuite_scope scope( itsIconSuite );
+		
+		destination->Attach( this );
 	}
 	
 	
