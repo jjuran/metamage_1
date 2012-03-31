@@ -155,7 +155,7 @@ namespace plus
 			
 		#endif
 			
-			bool is_small() const  { return (_policy() & 0xF0) == 0; }
+			bool is_small() const  { return (unsigned char) _policy() <= max_offset; }
 			
 			bool empty() const  { return size() == 0; }
 			
