@@ -65,18 +65,18 @@ namespace Genie
 	};
 	
 	
-	static n::shared< N::IconSuiteRef > gStoredIconSuite;
+	static N::IconSuiteRef gStoredIconSuite;
 	
 	struct stored_IconSuite_scope
 	{
-		stored_IconSuite_scope( const n::shared< N::IconSuiteRef >& icon )
+		stored_IconSuite_scope( N::IconSuiteRef icon )
 		{
 			gStoredIconSuite = icon;
 		}
 		
 		~stored_IconSuite_scope()
 		{
-			gStoredIconSuite.reset();
+			gStoredIconSuite = NULL;
 		}
 	};
 	
