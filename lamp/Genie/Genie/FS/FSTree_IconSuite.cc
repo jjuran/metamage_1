@@ -44,65 +44,62 @@ namespace Genie
 	};
 	
 	
-	class FSTree_IconSuite : public FSTree
+	static void dispose_iconsuite( const FSTree* node )
 	{
-		private:
-			typedef n::shared< N::IconSuiteRef > Value;
-			
-			Value itsIconSuite;
+		::IconSuiteRef& extra = *(::IconSuiteRef*) node->extra();
 		
-		public:
-			FSTree_IconSuite( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  const Value&         iconSuite )
-			:
-				FSTree( parent, name, S_IFREG | 0400, &iconsuite_methods ),
-				itsIconSuite( iconSuite )
-			{
-			}
-			
-			void CopyFile( const FSTreePtr& destination ) const;
-	};
-	
-	
-	static n::shared< N::IconSuiteRef > gStoredIconSuite;
-	
-	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
-	{
-		gStoredIconSuite = itsIconSuite;
+		const bool disposeData = true;
 		
-		try
-		{
-			destination->Attach( FSTreePtr( this ) );
-		}
-		catch ( ... )
-		{
-			gStoredIconSuite.reset();
-			
-			throw;
-		}
-		
-		gStoredIconSuite.reset();
+		(void) ::DisposeIconSuite( extra, disposeData );
 	}
+	
+	
+	static N::IconSuiteRef gStoredIconSuite;
+	
+	struct stored_IconSuite_scope
+	{
+		stored_IconSuite_scope( N::IconSuiteRef icon )
+		{
+			gStoredIconSuite = icon;
+		}
+		
+		~stored_IconSuite_scope()
+		{
+			gStoredIconSuite = NULL;
+		}
+	};
 	
 	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target )
 	{
-		const FSTree_IconSuite* file = static_cast< const FSTree_IconSuite* >( node );
+		::IconSuiteRef extra = *(::IconSuiteRef*) node->extra();
 		
-		file->CopyFile( target );
+		stored_IconSuite_scope scope( extra );
+		
+		target->Attach( node );
 	}
 	
 	
 	FSTreePtr
 	//
-	New_FSTree_IconSuite( const FSTreePtr&                     parent,
-			              const plus::string&                  name,
-			              const n::shared< N::IconSuiteRef >&  iconSuite )
+	New_FSTree_IconSuite( const FSTreePtr&             parent,
+			              const plus::string&          name,
+			              n::owned< N::IconSuiteRef >  iconSuite )
 	{
-		return new FSTree_IconSuite( parent, name, iconSuite );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0400,
+		                             &iconsuite_methods,
+		                             sizeof (::IconSuiteRef),
+		                             &dispose_iconsuite );
+		
+		::IconSuiteRef& extra = *(::IconSuiteRef*) result->extra();
+		
+		extra = iconSuite.release();
+		
+		return result;
 	}
 	
-	const n::shared< N::IconSuiteRef >& Fetch_IconSuite()
+	const N::IconSuiteRef Fetch_IconSuite()
 	{
 		return gStoredIconSuite;
 	}
