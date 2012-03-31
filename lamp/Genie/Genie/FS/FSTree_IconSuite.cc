@@ -47,14 +47,14 @@ namespace Genie
 	class FSTree_IconSuite : public FSTree
 	{
 		private:
-			typedef n::shared< N::IconSuiteRef > Value;
+			typedef n::owned< N::IconSuiteRef > Value;
 			
 			Value itsIconSuite;
 		
 		public:
 			FSTree_IconSuite( const FSTreePtr&     parent,
 			                  const plus::string&  name,
-			                  const Value&         iconSuite )
+			                  Value                iconSuite )
 			:
 				FSTree( parent, name, S_IFREG | 0400, &iconsuite_methods ),
 				itsIconSuite( iconSuite )
@@ -97,9 +97,9 @@ namespace Genie
 	
 	FSTreePtr
 	//
-	New_FSTree_IconSuite( const FSTreePtr&                     parent,
-			              const plus::string&                  name,
-			              const n::shared< N::IconSuiteRef >&  iconSuite )
+	New_FSTree_IconSuite( const FSTreePtr&             parent,
+			              const plus::string&          name,
+			              n::owned< N::IconSuiteRef >  iconSuite )
 	{
 		return new FSTree_IconSuite( parent, name, iconSuite );
 	}

@@ -10,8 +10,8 @@
 #include "plus/string.hh"
 
 // nucleus
-#ifndef NUCLEUS_SHARED_HH
-#include "nucleus/shared.hh"
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
 #endif
 
 // Nitrogen
@@ -28,9 +28,9 @@ namespace Genie
 	
 	FSTreePtr
 	//
-	New_FSTree_IconSuite( const FSTreePtr&                                  parent,
-			              const plus::string&                               name,
-			              const nucleus::shared< Nitrogen::IconSuiteRef >&  iconSuite );
+	New_FSTree_IconSuite( const FSTreePtr&                          parent,
+			              const plus::string&                       name,
+			              nucleus::owned< Nitrogen::IconSuiteRef >  iconSuite );
 	
 	const Nitrogen::IconSuiteRef Fetch_IconSuite();
 	

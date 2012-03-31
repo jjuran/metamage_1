@@ -372,7 +372,7 @@ namespace Genie
 	{
 		const Component comp = GetKeyFromParent( parent.get() );
 		
-		n::shared< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
+		n::owned< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
 		
 		const ::Handle h = iconSuite.get().Get();
 		
