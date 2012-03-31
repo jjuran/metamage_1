@@ -63,9 +63,9 @@ namespace Genie
 	
 	struct property_params
 	{
-		const std::size_t        size;
-		const property_get_hook  get;
-		const property_set_hook  set;
+		std::size_t        size;
+		property_get_hook  get;
+		property_set_hook  set;
 	};
 	
 	template < class Property >

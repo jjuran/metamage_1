@@ -6,8 +6,11 @@
 #ifndef GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 #define GENIE_FILESYSTEM_DYNAMICGROUPS_HH
 
-// Genie 
-#include "Genie/FS/FSTree.hh"
+// plus
+#include "plus/string.hh"
+
+// Genie
+#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/DynamicGroup.hh"
@@ -22,21 +25,10 @@ namespace Genie
 	IOPtr get_dynamic_element_from_node( const FSTree* node, DynamicElementGetter getter );
 	
 	
-	class FSTree_DynamicGroup_Base : public FSTree
+	struct dynamic_group_extra
 	{
-		public:
-			typedef DynamicGroup Sequence;
-			
-			FSTree_DynamicGroup_Base( const FSTreePtr&     parent,
-			                          const plus::string&  name );
-			
-			virtual const Sequence& ItemSequence() const = 0;
-			
-			virtual const node_method_set* node_methods() const = 0;
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
+		const DynamicGroup*     group;
+		const node_method_set*  methods;
 	};
 	
 	
@@ -47,6 +39,15 @@ namespace Genie
 		
 		static const data_method_set data_methods;
 		static const node_method_set node_methods;
+		
+		static const dynamic_group_extra extra;
+	};
+	
+	template < class Handle >
+	const dynamic_group_extra dynamic_group_element< Handle >::extra =
+	{
+		&GetDynamicGroup< Handle >(),
+		&dynamic_group_element< Handle >::node_methods
 	};
 	
 	template < class Handle >
@@ -73,27 +74,9 @@ namespace Genie
 		&data_methods
 	};
 	
-	template < class Handle >
-	class FSTree_DynamicGroup : public FSTree_DynamicGroup_Base
-	{
-		public:
-			FSTree_DynamicGroup( const FSTreePtr&     parent,
-			                     const plus::string&  name )
-			:
-				FSTree_DynamicGroup_Base( parent, name )
-			{
-			}
-			
-			const Sequence& ItemSequence() const
-			{
-				return GetDynamicGroup< Handle >();
-			}
-			
-			const node_method_set* node_methods() const
-			{
-				return &dynamic_group_element< Handle >::node_methods;
-			}
-	};
+	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args );
 	
 }
 
