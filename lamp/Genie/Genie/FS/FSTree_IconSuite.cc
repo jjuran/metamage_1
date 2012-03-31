@@ -82,20 +82,9 @@ namespace Genie
 	
 	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
 	{
-		gStoredIconSuite = itsIconSuite;
+		stored_IconSuite_scope scope( itsIconSuite );
 		
-		try
-		{
-			destination->Attach( FSTreePtr( this ) );
-		}
-		catch ( ... )
-		{
-			gStoredIconSuite.reset();
-			
-			throw;
-		}
-		
-		gStoredIconSuite.reset();
+		destination->Attach( this );
 	}
 	
 	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target )
