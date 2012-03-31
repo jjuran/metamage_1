@@ -54,12 +54,7 @@ namespace Genie
 		public:
 			FSTree_IconSuite( const FSTreePtr&     parent,
 			                  const plus::string&  name,
-			                  Value                iconSuite )
-			:
-				FSTree( parent, name, S_IFREG | 0400, &iconsuite_methods ),
-				itsIconSuite( iconSuite )
-			{
-			}
+			                  Value                iconSuite );
 			
 			void CopyFile( const FSTreePtr& destination ) const;
 	};
@@ -102,6 +97,15 @@ namespace Genie
 			              n::owned< N::IconSuiteRef >  iconSuite )
 	{
 		return new FSTree_IconSuite( parent, name, iconSuite );
+	}
+	
+	FSTree_IconSuite::FSTree_IconSuite( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    Value                iconSuite )
+	:
+		FSTree( parent, name, S_IFREG | 0400, &iconsuite_methods ),
+		itsIconSuite( iconSuite )
+	{
 	}
 	
 	const N::IconSuiteRef Fetch_IconSuite()
