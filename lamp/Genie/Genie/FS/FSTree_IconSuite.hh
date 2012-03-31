@@ -32,7 +32,7 @@ namespace Genie
 			              const plus::string&                               name,
 			              const nucleus::shared< Nitrogen::IconSuiteRef >&  iconSuite );
 	
-	const nucleus::shared< Nitrogen::IconSuiteRef >& Fetch_IconSuite();
+	const Nitrogen::IconSuiteRef Fetch_IconSuite();
 	
 }
 

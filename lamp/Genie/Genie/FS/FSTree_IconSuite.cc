@@ -104,7 +104,7 @@ namespace Genie
 		return new FSTree_IconSuite( parent, name, iconSuite );
 	}
 	
-	const n::shared< N::IconSuiteRef >& Fetch_IconSuite()
+	const N::IconSuiteRef Fetch_IconSuite()
 	{
 		return gStoredIconSuite;
 	}
