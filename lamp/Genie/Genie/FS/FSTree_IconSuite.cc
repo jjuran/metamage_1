@@ -67,6 +67,19 @@ namespace Genie
 	
 	static n::shared< N::IconSuiteRef > gStoredIconSuite;
 	
+	struct stored_IconSuite_scope
+	{
+		stored_IconSuite_scope( const n::shared< N::IconSuiteRef >& icon )
+		{
+			gStoredIconSuite = icon;
+		}
+		
+		~stored_IconSuite_scope()
+		{
+			gStoredIconSuite.reset();
+		}
+	};
+	
 	void FSTree_IconSuite::CopyFile( const FSTreePtr& destination ) const
 	{
 		gStoredIconSuite = itsIconSuite;
