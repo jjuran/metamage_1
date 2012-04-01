@@ -11,7 +11,7 @@
 #include "iota/swap.hh"
 
 // plus
-#include "plus/datum_storage.hh"
+#include "plus/datum_access.hh"
 
 
 namespace plus
@@ -146,11 +146,11 @@ namespace plus
 			
 			bool empty() const  { return size() == 0; }
 			
-			size_type size() const;
+			size_type size() const  { return plus::size( store ); }
 			
 			size_type length() const  { return size(); }
 			
-			size_type capacity() const;
+			size_type capacity() const  { return plus::capacity( store ); }
 			
 			size_type substr_offset() const;
 			
