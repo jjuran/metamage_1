@@ -8,6 +8,9 @@
 // Standard C++
 #include <stdexcept>
 
+// debug
+#include "debug/assert.hh"
+
 // plus
 #include "plus/datum_access.hh"
 #include "plus/datum_alloc.hh"
@@ -53,6 +56,26 @@ namespace plus
 		char* p = set_capacity( datum, capacity );
 		
 		p[ length ] = '\0';
+	}
+	
+	void string_set_length( datum_storage& datum, long length, char* data )
+	{
+		ASSERT( length >= 0 );
+		
+		ASSERT( length <= capacity( datum ) );
+		
+		ASSERT( data == begin( datum ) );
+		
+		if ( is_small( datum ) )
+		{
+			datum.small[ datum_max_offset ] = datum_max_offset - length;
+		}
+		else
+		{
+			datum.alloc.length = length;
+		}
+		
+		data[ length ] = '\0';
 	}
 	
 }

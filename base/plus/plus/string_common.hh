@@ -16,6 +16,8 @@ namespace plus
 	
 	void string_reserve( datum_storage& datum, long capacity );
 	
+	void string_set_length( datum_storage& datum, long length, char* data );
+	
 }
 
 #endif
