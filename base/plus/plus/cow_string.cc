@@ -85,25 +85,12 @@ namespace plus
 	{
 		string_check_size( new_length );
 		
-		const size_type capacity_ = capacity();
-		const size_type size_     = size();
-		
-		size_type new_capacity;
-		
-		if ( true )
-		{
-			const bool growing = new_length > capacity_;
-			
-			new_capacity = growing ? std::max( size_ * 2, new_length )
-			                       : capacity_;
-		}
-		
-		new_capacity = adjusted_capacity( new_capacity );
-		
 		char* data;
 		
-		if ( new_capacity != capacity_ )
+		if ( new_length > capacity() )
 		{
+			size_type new_capacity = adjusted_capacity( std::max( size() * 2, new_length ) );
+			
 			data = extend_capacity( store, new_capacity );
 		}
 		else
