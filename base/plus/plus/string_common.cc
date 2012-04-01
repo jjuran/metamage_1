@@ -8,6 +8,10 @@
 // Standard C++
 #include <stdexcept>
 
+// plus
+#include "plus/datum_access.hh"
+#include "plus/datum_alloc.hh"
+
 
 #define LENGTH_ERROR_MESSAGE  "string size can't exceed 0x7fffffff"
 
@@ -28,6 +32,27 @@ namespace plus
 			
 			throw std::length_error( message );
 		}
+	}
+	
+	void string_reserve( datum_storage& datum, long capacity )
+	{
+		string_check_size( capacity );
+		
+		const long length = size( datum );
+		
+		if ( capacity < datum_max_offset )
+		{
+			capacity = datum_max_offset;
+		}
+		
+		if ( capacity < length )
+		{
+			capacity = length;
+		}
+		
+		char* p = set_capacity( datum, capacity );
+		
+		p[ length ] = '\0';
 	}
 	
 }
