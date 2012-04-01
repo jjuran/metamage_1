@@ -20,7 +20,8 @@ namespace plus
 	
 	enum
 	{
-		datum_buffer_size = sizeof (datum_allocation)
+		datum_buffer_size = sizeof (datum_allocation),
+		datum_max_offset  = datum_buffer_size - 1
 	};
 	
 	struct datum_storage
