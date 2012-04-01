@@ -160,5 +160,19 @@ namespace plus
 		return q;
 	}
 	
+	char* curtail_capacity( datum_storage& datum, long new_capacity )
+	{
+		try
+		{
+			return extend_capacity( datum, new_capacity );
+		}
+		catch ( ... )
+		{
+			// Failure to decrease capacity is not an error
+		}
+		
+		return begin( datum );
+	}
+	
 }
 
