@@ -115,42 +115,6 @@ namespace plus
 	}
 	
 	
-	static void dispose( const char* pointer, int _policy )
-	{
-		switch ( _policy )
-		{
-			case ~delete_shared:
-			case ~delete_owned:
-			{
-				pointer -= sizeof (size_t);
-				
-				// This casts away const, but it's only the characters that are
-				// const, not the refcount.
-				
-				size_t& refcount = *(size_t*) pointer;
-				
-				if ( --refcount > 0 )
-				{
-					break;
-				}
-			}
-			
-			// fall through
-			
-			case ~delete_basic:
-				::operator delete( (void*) pointer );
-				break;
-			
-			case ~delete_free:
-				free( (void*) pointer );
-				break;
-			
-			default:
-				break;
-		}
-	}
-	
-	
 	void string::check_size( size_type size )
 	{
 		// 2 GB limit on 32-bit platforms
@@ -256,7 +220,7 @@ namespace plus
 	
 	string::~string()
 	{
-		dispose( store.alloc.pointer, _policy() );
+		destroy( store );
 	}
 	
 	string::string( const string& other, size_type pos, size_type n )
@@ -322,7 +286,7 @@ namespace plus
 			ASSERT( p + length >= p );
 		}
 		
-		dispose( store.alloc.pointer, _policy() );
+		destroy( store );
 		
 		store.alloc.pointer  = p;
 		store.alloc.length   = length;
@@ -337,41 +301,13 @@ namespace plus
 	{
 		check_size( length );
 		
-		char const *const old_pointer = store.alloc.pointer;
+		datum_storage old_store = store;
 		
-		const char old_policy = _policy();
-		
-		char* new_pointer = NULL;
-		
-		if ( length >= datum_buffer_size )
-		{
-			const size_type capacity = adjusted_capacity( length );
-			
-			const size_t buffer_length = sizeof (size_t) + capacity + 1;
-			
-			// may throw
-			new_pointer = (char*) ::operator new( buffer_length );
-			
-			reinterpret_cast< size_t* >( new_pointer )[0] = 1;  // refcount
-			
-			new_pointer += sizeof (size_t);
-			
-			store.alloc.pointer  = new_pointer;
-			store.alloc.length   = length;
-			store.alloc.capacity = capacity;
-			
-			_policy( ~delete_shared );
-		}
-		else
-		{
-			new_pointer = store.small;
-			
-			store.small[ max_offset ] = max_offset - length;
-		}
+		char* new_pointer = allocate( store, length );
 		
 		new_pointer[ length ] = '\0';
 		
-		dispose( old_pointer, old_policy );
+		destroy( old_store );
 		
 		return new_pointer;
 	}
@@ -538,9 +474,9 @@ namespace plus
 			// Either way, we perform a shallow copy.
 			
 			// If this is a self-assignment, then *we* are either static
-			// or shared with non-minimal refcount, and dispose() does nothing.
+			// or shared with non-minimal refcount, and destroy() does nothing.
 			
-			dispose( store.alloc.pointer, _policy() );
+			destroy( store );
 			
 			memcpy( &store, &other.store, sizeof store );
 			

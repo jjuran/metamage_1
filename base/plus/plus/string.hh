@@ -12,20 +12,11 @@
 
 // plus
 #include "plus/datum_access.hh"
+#include "plus/datum_alloc.hh"
 
 
 namespace plus
 {
-	
-	enum delete_policy
-	{
-		delete_never,  // propagates, for static storage like argv members
-		delete_shared, // Refcounted delete, for everything by default
-		delete_owned,  // Stored as shared, but can't be shared again
-		delete_basic,  // Standard-issue delete, for caller-supplied handoffs
-		delete_free    // Calls free(), not operator delete()
-	};
-	
 	
 	class string
 	{
