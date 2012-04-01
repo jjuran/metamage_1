@@ -131,5 +131,16 @@ namespace plus
 		dispose( datum.alloc.pointer, datum.small[ datum_max_offset ] );
 	}
 	
+	char* reallocate( datum_storage& datum, long length )
+	{
+		datum_storage old = datum;
+		
+		char* new_pointer = allocate( datum, length );
+		
+		destroy( old );
+		
+		return new_pointer;
+	}
+	
 }
 

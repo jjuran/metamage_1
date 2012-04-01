@@ -31,6 +31,8 @@ namespace plus
 	
 	void destroy( datum_storage& datum );
 	
+	char* reallocate( datum_storage& datum, long length );
+	
 }
 
 #endif
