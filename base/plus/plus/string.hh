@@ -69,8 +69,6 @@ namespace plus
 			void _policy( char negated )  { store.small[ max_offset ] = negated; }
 		
 		protected:
-			char* reallocate( size_type length );
-			
 			void set_length( size_type length );
 			
 			char* copy_on_write( bool tainting );
@@ -203,7 +201,7 @@ namespace plus
 			
 		#endif
 			
-			char* reset( size_type n = 0 )  { return reallocate( n ); }
+			char* reset( size_type n = 0 );
 			
 			string& operator=( const char* s )  { return assign( s ); }
 			

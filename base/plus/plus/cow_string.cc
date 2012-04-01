@@ -83,7 +83,7 @@ namespace plus
 	
 	char* cow_string::embiggen( size_type new_length, size_type new_capacity )
 	{
-		// reallocate() will throw if either parameter exceeds max_size()
+		// reset() will throw if either parameter exceeds max_size()
 		
 		const size_type capacity_ = capacity();
 		const size_type size_     = size();
@@ -105,7 +105,7 @@ namespace plus
 			{
 				cow_string temp;
 				
-				char* new_pointer = temp.reallocate( new_capacity );
+				char* new_pointer = temp.reset( new_capacity );
 				
 				memcpy( new_pointer, data(), size() );
 				

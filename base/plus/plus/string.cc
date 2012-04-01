@@ -371,7 +371,7 @@ namespace plus
 		return *this;
 	}
 	
-	char* string::reallocate( size_type length )
+	char* string::reset( size_type length )
 	{
 		check_size( length );
 		
@@ -458,7 +458,7 @@ namespace plus
 	
 	string& string::assign( const char* p, size_type length, size_type capacity )
 	{
-		// reallocate() will throw if length or capacity exceeds max_size()
+		// reset() will throw if length or capacity exceeds max_size()
 		
 		if ( length )
 		{
@@ -471,7 +471,7 @@ namespace plus
 		{
 			capacity = std::max( length, capacity );
 			
-			char* new_pointer = reallocate( capacity );
+			char* new_pointer = reset( capacity );
 			
 			memcpy( new_pointer, p, length );
 			
@@ -504,9 +504,9 @@ namespace plus
 	
 	string& string::assign( size_type n, char c )
 	{
-		// reallocate() will throw if n exceeds max_size()
+		// reset() will throw if n exceeds max_size()
 		
-		char* pointer = reallocate( n );
+		char* pointer = reset( n );
 		
 		memset( pointer, c, n );
 		
