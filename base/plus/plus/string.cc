@@ -305,13 +305,9 @@ namespace plus
 	{
 		check_size( length );
 		
-		datum_storage old_store = store;
-		
-		char* new_pointer = allocate( store, length );
+		char* new_pointer = reallocate( store, length );
 		
 		new_pointer[ length ] = '\0';
-		
-		destroy( old_store );
 		
 		return new_pointer;
 	}
