@@ -42,6 +42,8 @@ namespace plus
 	
 	char* curtail_capacity( datum_storage& datum, long new_capacity );
 	
+	char* set_capacity( datum_storage& datum, long new_capacity );
+	
 }
 
 #endif

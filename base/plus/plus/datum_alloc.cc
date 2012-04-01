@@ -13,7 +13,7 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/datum_storage.hh"
+#include "plus/datum_access.hh"
 
 
 namespace plus
@@ -169,6 +169,27 @@ namespace plus
 		catch ( ... )
 		{
 			// Failure to decrease capacity is not an error
+		}
+		
+		return begin( datum );
+	}
+	
+	char* set_capacity( datum_storage& datum, long new_capacity )
+	{
+		new_capacity = adjusted_capacity( new_capacity );
+		
+		const long old_capacity = capacity( datum );
+		
+		if ( new_capacity != old_capacity )
+		{
+			if ( new_capacity > old_capacity )
+			{
+				return extend_capacity( datum, new_capacity );
+			}
+			else
+			{
+				return curtail_capacity( datum, new_capacity );
+			}
 		}
 		
 		return begin( datum );
