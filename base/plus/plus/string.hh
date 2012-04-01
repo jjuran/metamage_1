@@ -152,8 +152,6 @@ namespace plus
 			
 			size_type capacity() const  { return plus::capacity( store ); }
 			
-			size_type substr_offset() const;
-			
 			bool is_c_str() const  { return end()[0] == '\0'; }
 			
 			bool movable() const;

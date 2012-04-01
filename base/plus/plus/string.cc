@@ -282,17 +282,6 @@ namespace plus
 		return *this;
 	}
 	
-	string::size_type string::substr_offset() const
-	{
-		if ( is_small() )
-		{
-			return 0;
-		}
-		
-		return store.alloc.capacity >= 0 ? 0
-		                                 : -store.alloc.capacity;
-	}
-	
 	const char* string::data( bool zero_terminator_required ) const
 	{
 		if ( is_small() )
@@ -300,7 +289,7 @@ namespace plus
 			return store.small;  // always terminated
 		}
 		
-		const char* begin = store.alloc.pointer + substr_offset();
+		const char* begin = store.alloc.pointer + alloc_substr_offset( store );
 		
 		if ( !zero_terminator_required  ||  is_c_str() )
 		{
@@ -559,7 +548,7 @@ namespace plus
 			
 			if ( pos != 0 )
 			{
-				const long new_offset = substr_offset() + pos;
+				const long new_offset = alloc_substr_offset( store ) + pos;
 				
 				store.alloc.capacity = -new_offset;
 			}
