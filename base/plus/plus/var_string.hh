@@ -65,6 +65,7 @@ namespace plus
 			
 			var_string( const move_t& m ) : string( m )
 			{
+				copy_on_write( true );
 			}
 			
 			var_string( const string& other, size_type pos = 0, size_type n = npos )
