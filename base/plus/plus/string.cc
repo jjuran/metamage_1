@@ -276,48 +276,6 @@ namespace plus
 		return new_pointer;
 	}
 	
-	char* string::copy_on_write( bool tainting )
-	{
-		if ( is_small() )
-		{
-			return store.small;
-		}
-		
-		if ( _policy() == ~delete_shared )
-		{
-			const size_t refcount = ((size_t*) store.alloc.pointer)[ -1 ];
-			
-			ASSERT( refcount != 0 );
-			
-			if ( refcount == 1 )
-			{
-				// Shared with no others
-				
-				if ( tainting )
-				{
-					// ...and now never will be
-					_policy( ~delete_owned );
-				}
-				
-				return const_cast< char* >( data() );
-			}
-		}
-		else if ( store.alloc.capacity > 0 )
-		{
-			// delete_owned or read/write external buffer
-			return const_cast< char* >( store.alloc.pointer );
-		}
-		
-		assign( data(), store.alloc.length, capacity() );
-		
-		if ( tainting  &&  _policy() == ~delete_shared )
-		{
-			_policy( ~delete_owned );
-		}
-		
-		return const_cast< char* >( data() );
-	}
-	
 	string& string::assign( const char* p, size_type length, size_type capacity )
 	{
 		// reset() will throw if length or capacity exceeds max_size()

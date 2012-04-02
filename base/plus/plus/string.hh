@@ -62,7 +62,10 @@ namespace plus
 			void _policy( char negated )  { store.small[ max_offset ] = negated; }
 		
 		protected:
-			char* copy_on_write( bool tainting );
+			char* copy_on_write( bool tainting )
+			{
+				return plus::copy_on_write( store, tainting );
+			}
 			
 			struct move_t
 			{
