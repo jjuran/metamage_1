@@ -291,7 +291,7 @@ namespace plus
 		
 		const char* begin = store.alloc.pointer + alloc_substr_offset( store );
 		
-		if ( is_c_str() )
+		if ( begin[ store.alloc.length ] == '\0' )
 		{
 			return begin;
 		}
