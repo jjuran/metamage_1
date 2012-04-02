@@ -26,7 +26,7 @@ static void move_to_var_string()
 	plus::var_string baz = bar.move();
 	
 	ok_if( foo.data() != bar.data() );
-	ok_if( foo.data() != baz.data(), "move to var_string gets tainted # TODO" );
+	ok_if( foo.data() != baz.data(), "move to var_string gets tainted" );
 }
 
 int main( int argc, const char *const *argv )
