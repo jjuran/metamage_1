@@ -6,6 +6,9 @@
 #ifndef PLUS_DATUMALLOC_HH
 #define PLUS_DATUMALLOC_HH
 
+// plus
+#include "plus/datum_storage.hh"
+
 
 namespace plus
 {
@@ -19,11 +22,27 @@ namespace plus
 		delete_free    // Calls free(), not operator delete()
 	};
 	
-	struct datum_storage;
-	
 	char* datum_alloc( unsigned long size );
 	
 	void datum_free( char* mem );
+	
+	
+	void construct_from_move_untaint_policy( datum_storage&  x,
+	                                         datum_movable&  y,
+	                                         signed char     _old_policy );
+	
+	inline void construct_from_move_untaint( datum_storage& x, datum_movable& y )
+	{
+		construct_from_move_untaint_policy( x, y, ~delete_owned );
+	}
+	
+	inline void construct_from_move( datum_storage& x, datum_movable& y )
+	{
+		construct_from_move_untaint_policy( x, y, 0 );
+	}
+	
+	void assign_from_move( datum_storage& x, datum_movable& y );
+	
 	
 	char* allocate( datum_storage& datum, long length, long capacity );
 	

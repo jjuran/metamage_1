@@ -35,6 +35,33 @@ namespace plus
 	}
 	
 	
+	void construct_from_move_untaint_policy( datum_storage&  x,
+	                                         datum_movable&  y,
+	                                         signed char     _old_policy )
+	{
+		x = y;
+		
+		if ( margin( x ) < 0 )
+		{
+			// Detach any allocated strings; leave small strings alone
+			y.small[ datum_max_offset ] = 0;
+			
+			// _old_policy is either ~delete_owned or 0
+			
+			if ( margin( x ) == _old_policy )
+			{
+				x.small[ datum_max_offset ] = ~delete_shared;
+			}
+		}
+	}
+	
+	void assign_from_move( datum_storage& x, datum_movable& y )
+	{
+		destroy( x );
+		
+		construct_from_move( x, y );
+	}
+	
 	struct datum_alloc_header
 	{
 		size_t refcount;
