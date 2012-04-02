@@ -63,7 +63,7 @@ namespace plus
 				assign( n, c );
 			}
 			
-			var_string( const move_t& m ) : string( m )
+			var_string( datum_movable& m ) : string( m )
 			{
 				copy_on_write( true );
 			}
@@ -97,7 +97,7 @@ namespace plus
 				return assign( other );
 			}
 			
-			var_string& operator=( const move_t& m )
+			var_string& operator=( datum_movable& m )
 			{
 				return assign( m );
 			}
@@ -174,7 +174,7 @@ namespace plus
 				return *this;
 			}
 			
-			var_string& assign( const move_t& m );
+			var_string& assign( datum_movable& m );
 			
 			var_string& assign( const string& other, size_type pos = 0, size_type n = npos )
 			{

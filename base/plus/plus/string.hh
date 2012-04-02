@@ -66,15 +66,6 @@ namespace plus
 			{
 				return plus::copy_on_write( store, tainting );
 			}
-			
-			struct move_t
-			{
-				string& source;
-				
-				move_t( string& s ) : source( s )
-				{
-				}
-			};
 		
 		public:
 			static const size_type npos = size_type( -1 );
@@ -99,11 +90,9 @@ namespace plus
 			
 			~string();
 			
-			string( const move_t& m )
+			string( datum_movable& m )
 			{
-				store.small[ max_offset ] = 0;
-				
-				assign( m );
+				construct_from_move_untaint( store, m );
 			}
 			
 			string( const string& other, size_type pos, size_type n = npos );
@@ -122,7 +111,7 @@ namespace plus
 			string           ( const string& other );
 			string& operator=( const string& other );
 			
-			string& operator=( const move_t& m )
+			string& operator=( datum_movable& m )
 			{
 				return assign( m );
 			}
@@ -177,7 +166,7 @@ namespace plus
 			
 			string& assign( size_type n, char c );
 			
-			string& assign( const move_t& m );
+			string& assign( datum_movable& m );
 			
 			string& assign( const string& other, size_type pos = 0, size_type n = npos );
 			
@@ -204,9 +193,9 @@ namespace plus
 				swap( store, other.store );
 			}
 			
-			move_t move()  { return move_t( *this ); }
+			datum_movable& move()  { return (datum_movable&) store; }
 			
-			friend move_t move( string& s )  { return s.move(); }
+			friend datum_movable& move( string& s )  { return s.move(); }
 			
 			size_type copy( char* buffer, size_type n, size_type pos = 0 ) const;
 			
