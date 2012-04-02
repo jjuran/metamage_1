@@ -11,21 +11,12 @@
 #include "iota/swap.hh"
 
 // plus
-#include "plus/datum_storage.hh"
+#include "plus/datum_access.hh"
+#include "plus/datum_alloc.hh"
 
 
 namespace plus
 {
-	
-	enum delete_policy
-	{
-		delete_never,  // propagates, for static storage like argv members
-		delete_shared, // Refcounted delete, for everything by default
-		delete_owned,  // Stored as shared, but can't be shared again
-		delete_basic,  // Standard-issue delete, for caller-supplied handoffs
-		delete_free    // Calls free(), not operator delete()
-	};
-	
 	
 	class string
 	{
@@ -146,21 +137,17 @@ namespace plus
 			
 			bool empty() const  { return size() == 0; }
 			
-			size_type size() const;
+			size_type size() const  { return plus::size( store ); }
 			
 			size_type length() const  { return size(); }
 			
-			size_type capacity() const;
-			
-			size_type substr_offset() const;
-			
-			bool is_c_str() const  { return end()[0] == '\0'; }
+			size_type capacity() const  { return plus::capacity( store ); }
 			
 			bool movable() const;
 			
-			const char* data( bool zero_terminator_required = false ) const;
+			const char* data() const  { return plus::begin( store ); }
 			
-			const char* c_str() const  { return data( true ); }
+			const char* c_str() const;
 			
 			const char* begin() const  { return data(); }
 			
