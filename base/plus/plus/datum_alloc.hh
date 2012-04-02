@@ -27,6 +27,8 @@ namespace plus
 	
 	char* allocate( datum_storage& datum, long length );
 	
+	char* allocate_data( datum_storage& datum, const char* p, long n );
+	
 	void destroy( datum_storage& datum );
 	
 }

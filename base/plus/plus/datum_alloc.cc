@@ -7,6 +7,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // debug
 #include "debug/assert.hh"
@@ -79,6 +80,15 @@ namespace plus
 		}
 		
 		return new_pointer;
+	}
+	
+	char* allocate_data( datum_storage& datum, const char* p, long n )
+	{
+		char* q = allocate( datum, n );
+		
+		memcpy( q, p, n );
+		
+		return q;
 	}
 	
 	static void dispose( const char* pointer, signed char _policy )
