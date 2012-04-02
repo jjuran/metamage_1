@@ -19,7 +19,7 @@ namespace plus
 		private:
 			char* mutable_data()  { return copy_on_write( false ); }
 			
-			char* embiggen( size_type new_length, size_type new_capacity = 0 );
+			char* embiggen( size_type new_length );
 			
 			char* insert_uninitialized( char* p, size_type n );
 			

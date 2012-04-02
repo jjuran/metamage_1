@@ -96,20 +96,21 @@ namespace plus
 		return erase_unchecked( p, n );
 	}
 	
-	char* var_string::embiggen( size_type new_length, size_type new_capacity )
+	char* var_string::embiggen( size_type new_length )
 	{
 		// reset() will throw if either parameter exceeds max_size()
 		
 		const size_type capacity_ = capacity();
 		const size_type size_     = size();
 		
-		if ( new_capacity <= new_length )
+		size_type new_capacity;
+		
+		if ( true )
 		{
 			const bool growing = new_length > capacity_;
 			
-			new_capacity = new_capacity ? new_length
-			             : growing      ? std::max( size_ * 2, new_length )
-			             :                capacity_;
+			new_capacity = growing ? std::max( size_ * 2, new_length )
+			                       : capacity_;
 		}
 		
 		new_capacity = adjusted_capacity( new_capacity );

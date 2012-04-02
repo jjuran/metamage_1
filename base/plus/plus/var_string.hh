@@ -19,7 +19,7 @@ namespace plus
 		private:
 			char* mutable_data()  { return const_cast< char* >( string::data() ); }
 			
-			char* embiggen( size_type new_length, size_type new_capacity = 0 );
+			char* embiggen( size_type new_length );
 			
 			char* insert_uninitialized( char* p, size_type n );
 			
