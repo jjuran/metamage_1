@@ -58,7 +58,7 @@ namespace plus
 			{
 			}
 			
-			cow_string( const move_t& m ) : string( m )
+			cow_string( datum_movable& m ) : string( m )
 			{
 			}
 			
@@ -91,7 +91,7 @@ namespace plus
 				return assign( other );
 			}
 			
-			cow_string& operator=( const move_t& m )
+			cow_string& operator=( datum_movable& m )
 			{
 				return assign( m );
 			}
@@ -159,7 +159,7 @@ namespace plus
 				return *this;
 			}
 			
-			cow_string& assign( const move_t& m )
+			cow_string& assign( datum_movable& m )
 			{
 				string::assign( m );
 				

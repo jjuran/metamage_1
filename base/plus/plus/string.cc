@@ -333,24 +333,13 @@ namespace plus
 		return *this;
 	}
 	
-	string& string::assign( const move_t& m )
+	string& string::assign( datum_movable& m )
 	{
-		if ( &m.source != this )
+		if ( &m != &store )
 		{
-			reset();
+			destroy( store );
 			
-			memcpy( &store, &m.source.store, sizeof store );
-			
-			if ( m.source._policy() < 0 )
-			{
-				// Empty any allocated strings; leave small strings alone
-				m.source._policy( max_offset );
-			}
-			
-			if ( _policy() == ~delete_owned )
-			{
-				_policy( ~delete_shared );
-			}
+			construct_from_move_untaint( store, m );
 		}
 		
 		return *this;

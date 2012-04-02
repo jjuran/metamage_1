@@ -22,23 +22,13 @@
 namespace plus
 {
 	
-	var_string& var_string::assign( const move_t& m )
+	var_string& var_string::assign( datum_movable& m )
 	{
-		if ( &m.source != this )
+		if ( &m != &store )
 		{
-			/*
-				A buffer that can't be moved (because it's shared) is still
-				handled by copy_on_write(), but to be exception-safe, we'll
-				need to reallocate *before* resetting the source.  For this
-				case, move a copy of the source string.
-			*/
+			plus::copy_on_write( m, true );
 			
-			string::assign( m.source.movable() ? m
-			                                   : string( m.source ).move() );
-			
-			copy_on_write( true );
-			
-			m.source.reset();
+			assign_from_move( store, m );
 		}
 		
 		return *this;

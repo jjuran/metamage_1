@@ -33,6 +33,8 @@ namespace plus
 		};
 	};
 	
+	struct datum_movable : datum_storage {};
+	
 }
 
 #endif
