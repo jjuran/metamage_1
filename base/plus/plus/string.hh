@@ -13,6 +13,7 @@
 // plus
 #include "plus/datum_access.hh"
 #include "plus/datum_alloc.hh"
+#include "plus/string_common.hh"
 
 
 namespace plus
@@ -44,7 +45,7 @@ namespace plus
 				return max;
 			}
 			
-			static void check_size( size_type size );
+			static void check_size( size_type size )  { string_check_size( size ); }
 			
 			enum
 			{
