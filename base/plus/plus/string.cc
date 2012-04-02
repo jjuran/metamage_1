@@ -282,7 +282,7 @@ namespace plus
 		return *this;
 	}
 	
-	const char* string::data( bool zero_terminator_required ) const
+	const char* string::c_str() const
 	{
 		if ( is_small() )
 		{
@@ -291,7 +291,7 @@ namespace plus
 		
 		const char* begin = store.alloc.pointer + alloc_substr_offset( store );
 		
-		if ( !zero_terminator_required  ||  is_c_str() )
+		if ( is_c_str() )
 		{
 			return begin;
 		}
