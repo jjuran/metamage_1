@@ -260,13 +260,17 @@ namespace plus
 			return begin;
 		}
 		
-		string& non_const = const_cast< string& >( *this );
+		datum_storage temp;
 		
-		plus::string temp( begin, store.alloc.length );
+		char* p = allocate_data( temp, begin, store.alloc.length );
 		
-		non_const.swap( temp );
+		datum_storage& u = const_cast< datum_storage& >( store );
 		
-		return non_const.data();
+		destroy( u );
+		
+		u = temp;
+		
+		return p;
 	}
 	
 	const char* string::end() const
