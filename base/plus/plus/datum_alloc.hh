@@ -44,6 +44,8 @@ namespace plus
 	
 	char* set_capacity( datum_storage& datum, long new_capacity );
 	
+	char* copy_on_write( datum_storage& datum, bool tainting );
+	
 }
 
 #endif

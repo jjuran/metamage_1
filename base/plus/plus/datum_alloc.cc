@@ -195,5 +195,49 @@ namespace plus
 		return begin( datum );
 	}
 	
+	char* copy_on_write( datum_storage& datum, bool tainting )
+	{
+		if ( is_small( datum ) )
+		{
+			return datum.small;
+		}
+		
+		char* p;
+		
+		if ( margin( datum ) == ~delete_shared )
+		{
+			datum_alloc_header* header = (datum_alloc_header*) datum.alloc.pointer - 1;
+			
+			ASSERT( header->refcount != 0 );
+			
+			if ( header->refcount == 1 )
+			{
+				p = const_cast< char* >( datum.alloc.pointer + alloc_substr_offset( datum ) );
+				
+				goto single;
+			}
+		}
+		else if ( datum.alloc.capacity > 0 )
+		{
+			// delete_owned or read/write external buffer
+			return const_cast< char* >( datum.alloc.pointer );
+		}
+		else
+		{
+			tainting = false;
+		}
+		
+		p = extend_capacity( datum, datum.alloc.length );
+		
+	single:
+		
+		if ( tainting )
+		{
+			datum.small[ datum_max_offset ] = ~delete_owned;
+		}
+		
+		return p;
+	}
+	
 }
 
