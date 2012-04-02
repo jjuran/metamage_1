@@ -355,7 +355,7 @@ namespace plus
 			
 			memcpy( new_pointer, p, length );
 			
-			set_length( length );
+			string_set_length( store, length, new_pointer );
 		}
 		else
 		{
