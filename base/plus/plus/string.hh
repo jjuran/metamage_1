@@ -62,8 +62,6 @@ namespace plus
 			void _policy( char negated )  { store.small[ max_offset ] = negated; }
 		
 		protected:
-			void set_length( size_type length );
-			
 			char* copy_on_write( bool tainting );
 			
 			struct move_t

@@ -57,7 +57,7 @@ namespace plus
 		
 		const size_type new_size = old_size - n;
 		
-		set_length( new_size );
+		string_set_length( store, new_size, begin );
 		
 		return p;
 	}
@@ -144,7 +144,7 @@ namespace plus
 		
 		char* data = mutable_data();
 		
-		set_length( new_length );
+		string_set_length( store, new_length, data );
 		
 		return data;
 	}

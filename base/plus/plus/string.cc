@@ -134,24 +134,6 @@ namespace plus
 		return true;  // externally-supplied, single-user buffer
 	}
 	
-	void string::set_length( size_type length )
-	{
-		if ( is_small() )
-		{
-			ASSERT( length <= max_offset );
-			
-			store.small[ max_offset ] = max_offset - length;
-		}
-		else
-		{
-			store.alloc.length = length;
-		}
-		
-		char* p = const_cast< char* >( data() );
-		
-		p[ length ] = '\0';
-	}
-	
 	string::string( const char*    p,
 	                size_type      length,
 	                delete_policy  policy,
@@ -355,7 +337,7 @@ namespace plus
 			
 			memcpy( new_pointer, p, length );
 			
-			set_length( length );
+			string_set_length( store, length, new_pointer );
 		}
 		else
 		{
