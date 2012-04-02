@@ -52,9 +52,10 @@ namespace plus
 				max_offset = datum_buffer_size - 1
 			};
 		
-		private:
+		protected:
 			datum_storage store;
-			
+		
+		private:
 			// The _ is mnemonic for ~
 			signed char _policy() const  { return store.small[ max_offset ]; }
 			

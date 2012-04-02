@@ -131,18 +131,6 @@ namespace plus
 		return data;
 	}
 	
-	void cow_string::reserve( size_type new_capacity )
-	{
-		// embiggen() will throw if new_capacity exceeds max_size()
-		
-		if ( new_capacity < max_offset )
-		{
-			new_capacity = max_offset;
-		}
-		
-		embiggen( size(), new_capacity );
-	}
-	
 	void cow_string::resize( size_type new_size, char c )
 	{
 		// embiggen() will throw if new_size exceeds max_size()

@@ -38,6 +38,12 @@ namespace plus
 	
 	char* reallocate( datum_storage& datum, long length );
 	
+	char* extend_capacity( datum_storage& datum, long new_capacity );
+	
+	char* curtail_capacity( datum_storage& datum, long new_capacity );
+	
+	char* set_capacity( datum_storage& datum, long new_capacity );
+	
 }
 
 #endif

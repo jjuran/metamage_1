@@ -8,6 +8,7 @@
 
 // plus
 #include "plus/string.hh"
+#include "plus/string_common.hh"
 
 
 namespace plus
@@ -202,7 +203,7 @@ namespace plus
 			
 			void clear()  { resize( 0 ); }
 			
-			void reserve( size_type size );
+			void reserve( size_type size )  { string_reserve( store, size ); }
 			void resize ( size_type size, char c = '\0' );
 			
 			cow_string& insert( size_type pos, const string& s );
