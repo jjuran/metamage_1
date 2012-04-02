@@ -25,7 +25,12 @@ namespace plus
 	
 	void datum_free( char* mem );
 	
-	char* allocate( datum_storage& datum, long length );
+	char* allocate( datum_storage& datum, long length, long capacity );
+	
+	inline char* allocate( datum_storage& datum, long length )
+	{
+		return allocate( datum, length, length );
+	}
 	
 	char* allocate_data( datum_storage& datum, const char* p, long n );
 	

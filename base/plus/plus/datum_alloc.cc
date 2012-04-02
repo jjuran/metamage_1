@@ -47,15 +47,16 @@ namespace plus
 		return capacity | (1 << n_missing_bits_of_precision) - 1;
 	}
 	
-	char* allocate( datum_storage& datum, long length )
+	char* allocate( datum_storage& datum, long length, long capacity )
 	{
-		ASSERT( length >= 0 );
+		ASSERT( length   >= 0 );
+		ASSERT( capacity >= 0 );
 		
 		char* new_pointer;
 		
-		if ( length >= datum_buffer_size )
+		if ( capacity >= datum_buffer_size )
 		{
-			long capacity = adjusted_capacity( length );
+			capacity = adjusted_capacity( capacity );
 			
 			const size_t buffer_length = sizeof (datum_alloc_header) + capacity + 1;
 			
