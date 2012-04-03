@@ -83,7 +83,7 @@ namespace plus
 	
 	char* cow_string::embiggen( size_type new_length )
 	{
-		// reset() will throw if either parameter exceeds max_size()
+		string_check_size( new_length );
 		
 		const size_type capacity_ = capacity();
 		const size_type size_     = size();
@@ -100,32 +100,16 @@ namespace plus
 		
 		new_capacity = adjusted_capacity( new_capacity );
 		
+		char* data;
+		
 		if ( new_capacity != capacity_ )
 		{
-			try
-			{
-				cow_string temp;
-				
-				char* new_pointer = temp.reset( new_capacity );
-				
-				memcpy( new_pointer, data(), size() );
-				
-				swap( temp );
-			}
-			catch ( ... )
-			{
-				const bool increasing = new_capacity > capacity_;
-				
-				if ( increasing )
-				{
-					throw;
-				}
-				
-				// Failure to decrease capacity is not an error
-			}
+			data = extend_capacity( store, new_capacity );
 		}
-		
-		char* data = mutable_data();  // copy on write
+		else
+		{
+			data = mutable_data();  // copy on write
+		}
 		
 		string_set_length( store, new_length, data );
 		

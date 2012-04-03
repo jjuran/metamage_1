@@ -88,7 +88,7 @@ namespace plus
 	
 	char* var_string::embiggen( size_type new_length )
 	{
-		// reset() will throw if either parameter exceeds max_size()
+		string_check_size( new_length );
 		
 		const size_type capacity_ = capacity();
 		const size_type size_     = size();
@@ -105,34 +105,18 @@ namespace plus
 		
 		new_capacity = adjusted_capacity( new_capacity );
 		
+		char* data;
+		
 		if ( new_capacity != capacity_ )
 		{
-			try
-			{
-				var_string temp;
-				
-				char* new_pointer = temp.reset( new_capacity );
-				
-				memcpy( new_pointer, data(), size() );
-				
-				swap( temp );
-				
-				copy_on_write( true );  // taint the string as unshareable
-			}
-			catch ( ... )
-			{
-				const bool increasing = new_capacity > capacity_;
-				
-				if ( increasing )
-				{
-					throw;
-				}
-				
-				// Failure to decrease capacity is not an error
-			}
+			data = extend_capacity( store, new_capacity );
+			
+			copy_on_write( true );  // taint the string as unshareable
 		}
-		
-		char* data = mutable_data();
+		else
+		{
+			data = mutable_data();
+		}
 		
 		string_set_length( store, new_length, data );
 		
