@@ -10,22 +10,6 @@
 #include <CodeFragments.h>
 #endif
 
-/*
-
-// FragmentInitTerm
-#include "FragmentInitTermProcs.h"
-
-#undef FRAGMENT_INIT_TERM_PROCS_ARRAY
-
-static pascal OSErr SaveInitBlock_Initialize( const CFragInitBlock* initBlock );
-
-#define FRAGMENT_INIT_TERM_PROCS_ARRAY  { { &SaveInitBlock_Initialize, NULL } }
-
-// FragmentInitTerm
-#include "FragmentInitTerm.h"
-
-*/
-
 
 static CFragInitBlock  gSavedInitBlock;
 static FSSpec          gSavedFileSpec;
