@@ -16,7 +16,7 @@
 #include "pfiles/common.hh"
 
 // A-line
-#include "CompileDriver/Platform.hh"
+#include "A-line/Platform.hh"
 
 
 namespace tool

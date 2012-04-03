@@ -3,7 +3,7 @@
  *	================
  */
 
-#include "CompileDriver/ProjectConfig.hh"
+#include "A-line/ProjectConfig.hh"
 
 // Standard C++
 #include <algorithm>
@@ -26,8 +26,8 @@
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Locations.hh"
-#include "CompileDriver/Platform.hh"
-#include "CompileDriver/ProjectCatalog.hh"
+#include "A-line/Platform.hh"
+#include "A-line/ProjectCatalog.hh"
 
 
 namespace tool

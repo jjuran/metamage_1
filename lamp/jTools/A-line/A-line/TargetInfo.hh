@@ -6,10 +6,8 @@
 #ifndef ALINE_TARGETINFO_HH
 #define ALINE_TARGETINFO_HH
 
-// CompileDriver
-#include "CompileDriver/Platform.hh"
-
 // A-line
+#include "A-line/Platform.hh"
 #include "A-line/TargetTypes.hh"
 
 

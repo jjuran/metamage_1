@@ -3,8 +3,8 @@
  *	=================
  */
 
-#ifndef COMPILEDRIVER_PROJECTCATALOG_HH
-#define COMPILEDRIVER_PROJECTCATALOG_HH
+#ifndef ALINE_PROJECTCATALOG_HH
+#define ALINE_PROJECTCATALOG_HH
 
 // Standard C++
 #include <iterator>
@@ -19,8 +19,8 @@
 #endif
 
 // A-line
-#include "CompileDriver/Platform.hh"
-#include "CompileDriver/ProjectConfig.hh"
+#include "A-line/Platform.hh"
+#include "A-line/ProjectConfig.hh"
 
 
 namespace tool

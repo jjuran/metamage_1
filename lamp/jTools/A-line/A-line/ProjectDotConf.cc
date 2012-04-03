@@ -3,7 +3,7 @@
  *	=================
  */
 
-#include "CompileDriver/ProjectDotConf.hh"
+#include "A-line/ProjectDotConf.hh"
 
 // text-input
 #include "text_input/feed.hh"
@@ -13,8 +13,8 @@
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/open.hh"
 
-// CompileDriver
-#include "CompileDriver/ProjectCatalog.hh"
+// A-line
+#include "A-line/ProjectCatalog.hh"
 
 
 namespace tool

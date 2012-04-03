@@ -7,7 +7,7 @@
 #define ALINE_PROJECTCOMMON_HH
 
 // A-line
-#include "CompileDriver/Platform.hh"
+#include "A-line/Platform.hh"
 
 
 namespace plus

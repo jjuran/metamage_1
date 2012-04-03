@@ -52,11 +52,6 @@
 #include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
-// CompileDriver
-#include "CompileDriver/ProjectCatalog.hh"
-#include "CompileDriver/ProjectConfig.hh"
-#include "CompileDriver/ProjectDotConf.hh"
-
 // A-line
 #include "A-line/Commands.hh"
 #include "A-line/Exceptions.hh"
@@ -64,11 +59,12 @@
 #include "A-line/Link.hh"
 #include "A-line/Locations.hh"
 #include "A-line/Project.hh"
+#include "A-line/ProjectCatalog.hh"
 #include "A-line/ProjectCommon.hh"
+#include "A-line/ProjectConfig.hh"
+#include "A-line/ProjectDotConf.hh"
 #include "A-line/TargetNames.hh"
 #include "A-line/Task.hh"
-#include "CompileDriver/ProjectCatalog.hh"
-#include "CompileDriver/ProjectConfig.hh"
 
 
 namespace tool

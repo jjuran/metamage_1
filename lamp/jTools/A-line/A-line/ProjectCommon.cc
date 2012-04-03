@@ -12,7 +12,7 @@
 #include "A-line/Exceptions.hh"
 #include "A-line/Includes.hh"
 #include "A-line/Project.hh"
-#include "CompileDriver/ProjectCatalog.hh"
+#include "A-line/ProjectCatalog.hh"
 
 
 namespace tool

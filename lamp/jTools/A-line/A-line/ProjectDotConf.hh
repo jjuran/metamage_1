@@ -3,8 +3,8 @@
  *	=================
  */
 
-#ifndef COMPILEDRIVER_PROJECTDOTCONF_HH
-#define COMPILEDRIVER_PROJECTDOTCONF_HH
+#ifndef ALINE_PROJECTDOTCONF_HH
+#define ALINE_PROJECTDOTCONF_HH
 
 // Standard C++
 #include <vector>

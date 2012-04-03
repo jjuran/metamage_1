@@ -10,6 +10,7 @@
 #include <vector>
 
 // A-line
+#include "A-line/Platform.hh"
 #include "A-line/Task.hh"
 
 

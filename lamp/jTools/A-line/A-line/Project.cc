@@ -31,17 +31,15 @@
 // pfiles
 #include "pfiles/common.hh"
 
-// CompileDriver
-#include "CompileDriver/ProjectConfig.hh"
-
 // A-line
 #include "A-line/A-line.hh"
 #include "A-line/Exceptions.hh"
 #include "A-line/DeepFiles.hh"
 #include "A-line/Locations.hh"
+#include "A-line/ProjectCatalog.hh"
 #include "A-line/ProjectCommon.hh"
+#include "A-line/ProjectConfig.hh"
 #include "A-line/SourceDotList.hh"
-#include "CompileDriver/ProjectCatalog.hh"
 
 
 namespace poseven

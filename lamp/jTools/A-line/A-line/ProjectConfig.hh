@@ -3,8 +3,8 @@
  *	================
  */
 
-#ifndef COMPILEDRIVER_PROJECTCONFIG_HH
-#define COMPILEDRIVER_PROJECTCONFIG_HH
+#ifndef ALINE_PROJECTCONFIG_HH
+#define ALINE_PROJECTCONFIG_HH
 
 // Standard C++
 #include <map>
@@ -13,9 +13,9 @@
 // plus
 #include "plus/string.hh"
 
-// CompileDriver
-#include "CompileDriver/Platform.hh"
-#include "CompileDriver/ProjectDotConf.hh"
+// A-line
+#include "A-line/Platform.hh"
+#include "A-line/ProjectDotConf.hh"
 
 
 namespace tool

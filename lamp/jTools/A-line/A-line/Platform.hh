@@ -3,8 +3,8 @@
  *	===========
  */
 
-#ifndef COMPILEDRIVER_PLATFORM_HH
-#define COMPILEDRIVER_PLATFORM_HH
+#ifndef ALINE_PLATFORM_HH
+#define ALINE_PLATFORM_HH
 
 // ALINE_MAC_DEVELOPMENT:   true if A-line can target Mac OS or Mac OS X.
 // ALINE_CROSS_DEVELOPMENT: true if A-line can cross-compile.

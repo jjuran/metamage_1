@@ -13,10 +13,8 @@
 #include "plus/string.hh"
 
 // A-line
+#include "A-line/Platform.hh"
 #include "A-line/TargetInfo.hh"
-
-// CompileDriver
-#include "CompileDriver/Platform.hh"
 
 
 namespace tool
