@@ -130,7 +130,8 @@ namespace tool
 		
 		const char* Optimization() const
 		{
-			return   debug ? "-O0"
+			return   sym   ? "-O0"
+			       : debug ? "-O2"
 			       : gnu   ? "-O2"
 			       :         "-O4";
 		}
