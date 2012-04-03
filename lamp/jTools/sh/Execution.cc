@@ -42,14 +42,12 @@
 #include "poseven/functions/write.hh"
 #include "poseven/functions/_exit.hh"
 
-// ShellShock
-#include "ShellShock/Expansion.hh"
-#include "ShellShock/StringArray.hh"
-
 // sh
 #include "Builtins.hh"
+#include "Expansion.hh"
 #include "Options.hh"
 #include "PositionalParameters.hh"
+#include "StringArray.hh"
 
 
 #ifdef __MWERKS__

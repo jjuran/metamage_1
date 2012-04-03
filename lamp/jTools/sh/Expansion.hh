@@ -12,8 +12,8 @@
 // plus
 #include "plus/string.hh"
 
-// ShellShock
-#include "ShellShock/Tokenization.hh"
+// sh
+#include "Tokenization.hh"
 
 
 namespace ShellShock

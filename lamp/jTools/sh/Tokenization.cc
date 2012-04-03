@@ -2,7 +2,7 @@
 // Tokenization.cc
 // ===============
 
-#include "ShellShock/Tokenization.hh"
+#include "Tokenization.hh"
 
 // Standard C/C++
 #include <cctype>

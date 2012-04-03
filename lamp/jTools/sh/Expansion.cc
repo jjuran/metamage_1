@@ -3,7 +3,7 @@
  *	============
  */
 
-#include "ShellShock/Expansion.hh"
+#include "Expansion.hh"
 
 // Standard C/C++
 #include <cctype>

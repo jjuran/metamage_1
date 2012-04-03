@@ -2,7 +2,7 @@
 // StringArray.cc
 // ==============
 
-#include "ShellShock/StringArray.hh"
+#include "StringArray.hh"
 
 // Standard C++
 #include <algorithm>
