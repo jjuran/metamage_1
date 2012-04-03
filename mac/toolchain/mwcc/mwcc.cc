@@ -392,7 +392,7 @@ namespace tool
 			command.push_back( "full" );
 		}
 		
-		const bool debug = opt[2] == '0';
+		const bool debug = opt[2] <= '2';
 		
 		if ( arch == arch_m68k  &&  !debug )
 		{
@@ -406,8 +406,12 @@ namespace tool
 			command.push_back( "on"  );
 		}
 		
+		const char* opt_level = sym   ? "off"
+		                      : debug ? "l2"
+		                      :         "full";
+		
 		command.push_back( "-opt" );
-		command.push_back( debug ? "off" : "full" );
+		command.push_back( opt_level );
 		
 		command.push_back( "-nosyspath"      );
 		command.push_back( "-convertpaths"   );
