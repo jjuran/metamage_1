@@ -228,6 +228,8 @@ namespace plus
 		
 		char* p = allocate_data( temp, begin, store.alloc.length );
 		
+		p[ store.alloc.length ] = '\0';
+		
 		datum_storage& u = const_cast< datum_storage& >( store );
 		
 		destroy( u );
