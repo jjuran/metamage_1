@@ -168,6 +168,24 @@ static uint32_t division_by_zero_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t chk_trap_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "CHK range exceeded" );
+	
+	raise( SIGFPE );
+	
+	return nil;
+}
+
+static uint32_t trapv_trap_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "TRAPV on overflow" );
+	
+	raise( SIGFPE );
+	
+	return nil;
+}
+
 static uint32_t privilege_violation_callback( v68k::emulator& emu )
 {
 	WRITE_ERR( "Privilege Violation" );
@@ -192,6 +210,8 @@ static const function_type the_callbacks[] =
 	&unimplemented_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
+	&chk_trap_callback,
+	&trapv_trap_callback,
 	&privilege_violation_callback,
 	&line_F_emulator_callback,
 	&unimplemented_trap_callback,

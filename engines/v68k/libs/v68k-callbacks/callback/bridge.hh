@@ -18,6 +18,8 @@ enum
 	unimplemented,
 	illegal_instruction,
 	division_by_zero,
+	chk_trap,
+	trapv_trap,
 	privilege_violation,
 	line_F_emulator,
 	unimplemented_trap,
