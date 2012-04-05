@@ -194,6 +194,8 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	
 	vectors[ 4] = big_longword( callback_address( illegal_instruction ) );
 	vectors[ 5] = big_longword( callback_address( division_by_zero    ) );
+	vectors[ 6] = big_longword( callback_address( chk_trap            ) );
+	vectors[ 7] = big_longword( callback_address( trapv_trap          ) );
 	vectors[ 8] = big_longword( callback_address( privilege_violation ) );
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
