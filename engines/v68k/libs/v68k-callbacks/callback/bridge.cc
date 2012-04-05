@@ -16,6 +16,13 @@
 #pragma exceptions off
 
 
+#define ERR_MSG( msg )  "v68k: exception: " msg "\n"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define WRITE_ERR( msg )  write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
+
+
 namespace v68k     {
 namespace callback {
 
@@ -70,12 +77,6 @@ static uint32_t SysBeep_callback( v68k::emulator& emu )
 	return pop_args( emu, sizeof (uint16_t) );
 }
 
-
-#define ERR_MSG( msg )  "v68k: exception: " msg "\n"
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-#define WRITE_ERR( msg )  write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
 
 static uint32_t illegal_instruction_callback( v68k::emulator& emu )
 {
