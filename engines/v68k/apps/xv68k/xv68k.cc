@@ -197,6 +197,7 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[ 6] = big_longword( callback_address( chk_trap            ) );
 	vectors[ 7] = big_longword( callback_address( trapv_trap          ) );
 	vectors[ 8] = big_longword( callback_address( privilege_violation ) );
+	vectors[ 9] = big_longword( callback_address( trace_exception     ) );
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
 
