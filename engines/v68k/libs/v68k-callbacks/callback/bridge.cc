@@ -204,6 +204,15 @@ static uint32_t trace_exception_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t line_A_emulator_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Line A Emulator" );
+	
+	raise( SIGILL );
+	
+	return nil;
+}
+
 static uint32_t line_F_emulator_callback( v68k::emulator& emu )
 {
 	WRITE_ERR( "Line F Emulator" );
@@ -223,6 +232,7 @@ static const function_type the_callbacks[] =
 	&trapv_trap_callback,
 	&privilege_violation_callback,
 	&trace_exception_callback,
+	&line_A_emulator_callback,
 	&line_F_emulator_callback,
 	&unimplemented_trap_callback,
 	&NewPtr_callback,

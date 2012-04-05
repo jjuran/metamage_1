@@ -22,6 +22,7 @@ enum
 	trapv_trap,
 	privilege_violation,
 	trace_exception,
+	line_A_emulator,
 	line_F_emulator,
 	unimplemented_trap,
 	NewPtr_trap,
