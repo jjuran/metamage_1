@@ -60,6 +60,16 @@ static uint32_t unimplemented_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t unimplemented_trap_callback( v68k::emulator& emu )
+{
+	WRITE_ERR( "Unimplemented Mac Toolbox trap" );
+	
+	raise( SIGILL );
+	
+	// Not reached
+	return nil;
+}
+
 static uint32_t ExitToShell_callback( v68k::emulator& emu )
 {
 	exit( 0 );
@@ -122,6 +132,7 @@ static const function_type the_callbacks[] =
 	&division_by_zero_callback,
 	&privilege_violation_callback,
 	&line_F_emulator_callback,
+	&unimplemented_trap_callback,
 	&ExitToShell_callback,
 	&SysBeep_callback,
 	NULL

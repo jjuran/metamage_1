@@ -20,6 +20,7 @@ enum
 	division_by_zero,
 	privilege_violation,
 	line_F_emulator,
+	unimplemented_trap,
 	ExitToShell_trap,
 	SysBeep_trap,
 	n
