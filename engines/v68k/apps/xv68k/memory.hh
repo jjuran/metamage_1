@@ -9,12 +9,17 @@
 // v68k-callbacks
 #include "callback/memory.hh"
 
+// v68k-mac
+#include "v68k-mac/memory.hh"
+
 
 class memory_manager : public v68k::memory
 {
 	private:
 		uint32_t                 its_low_mem_size;
 		v68k::low_memory_region  its_low_mem;
+		
+		v68k::mac::low_memory  its_mac_low_mem;
 		
 		v68k::callback::memory  its_callback_memory;
 	
