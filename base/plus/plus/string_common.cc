@@ -53,9 +53,7 @@ namespace plus
 			capacity = length;
 		}
 		
-		char* p = set_capacity( datum, capacity );
-		
-		p[ length ] = '\0';
+		set_capacity( datum, capacity );
 	}
 	
 	void string_set_length( datum_storage& datum, long length, char* data )
