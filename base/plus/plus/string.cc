@@ -176,13 +176,6 @@ namespace plus
 		assign( other );
 	}
 	
-	string& string::operator=( const string& other )
-	{
-		assign( other );
-		
-		return *this;
-	}
-	
 	const char* string::c_str() const
 	{
 		if ( is_small() )

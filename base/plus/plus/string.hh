@@ -111,8 +111,12 @@ namespace plus
 			
 		#endif
 			
-			string           ( const string& other );
-			string& operator=( const string& other );
+			string( const string& other );
+			
+			string& operator=( const string& other )
+			{
+				return assign( other );
+			}
 			
 			string& operator=( datum_movable& m )
 			{
