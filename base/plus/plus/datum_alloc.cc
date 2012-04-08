@@ -107,6 +107,8 @@ namespace plus
 			datum.small[ datum_max_offset ] = datum_max_offset - length;
 		}
 		
+		new_pointer[ length ] = '\0';
+		
 		return new_pointer;
 	}
 	
