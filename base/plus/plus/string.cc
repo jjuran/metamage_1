@@ -112,28 +112,6 @@ namespace plus
 	}
 	
 	
-	bool string::movable() const
-	{
-		if ( _policy() >= ~delete_never )
-		{
-			// small strings and delete_never are always shallow-copied
-			return true;
-		}
-		
-		if ( _policy() >= ~delete_owned )
-		{
-			// covers delete_shared, also.
-			// An owned buffer should always have 1 user, but it's easier
-			// to check both here.
-			
-			const size_t use_count = ((size_t*) store.alloc.pointer)[ -1 ];
-			
-			return use_count == 1;
-		}
-		
-		return true;  // externally-supplied, single-user buffer
-	}
-	
 	string::string( const char*    p,
 	                size_type      length,
 	                delete_policy  policy,

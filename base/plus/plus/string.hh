@@ -135,8 +135,6 @@ namespace plus
 			
 			size_type capacity() const  { return plus::capacity( store ); }
 			
-			bool movable() const;
-			
 			const char* data() const  { return plus::begin( store ); }
 			
 			const char* c_str() const;
