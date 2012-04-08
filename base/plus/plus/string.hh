@@ -74,8 +74,7 @@ namespace plus
 			
 			string()
 			{
-				store.small[ 0          ] = '\0';
-				store.small[ max_offset ] = max_offset;
+				construct_from_default( store );
 			}
 			
 			string( const char* p, size_type length, delete_policy policy, size_type capacity = 0 );
