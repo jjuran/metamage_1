@@ -206,8 +206,6 @@ namespace plus
 		
 		char* p = allocate_data( temp, begin, store.alloc.length );
 		
-		p[ store.alloc.length ] = '\0';
-		
 		datum_storage& u = const_cast< datum_storage& >( store );
 		
 		destroy( u );
@@ -249,11 +247,7 @@ namespace plus
 	{
 		check_size( length );
 		
-		char* new_pointer = reallocate( store, length );
-		
-		new_pointer[ length ] = '\0';
-		
-		return new_pointer;
+		return reallocate( store, length );
 	}
 	
 	string& string::assign( const char* p, size_type length )
