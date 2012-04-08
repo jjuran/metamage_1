@@ -162,10 +162,7 @@ namespace plus
 	
 	string::string( const string& other, size_type pos, size_type n )
 	{
-		store.small[ 0          ] = '\0';
-		store.small[ max_offset ] = max_offset;
-		
-		assign( other, pos, n );
+		construct_from_move( store, other.substr( pos, n ).move() );
 	}
 	
 	const char* string::c_str() const
@@ -299,65 +296,7 @@ namespace plus
 	
 	string& string::assign( const string& other, size_type pos, size_type n )
 	{
-		const size_type other_size = other.size();
-		
-		if ( pos > other_size )
-		{
-			throw std::out_of_range( "plus::string" );
-		}
-		
-		n = std::min( n, other_size - pos );
-		
-		const bool small = n < datum_buffer_size;
-		
-		const bool shallow = !small  &&  other._policy() >= ~delete_shared;
-		
-		/*
-			A shallow copy is made for delete_shared and delete_never when
-			the resulting substring is not a small string.
-		*/
-		
-		if ( shallow )
-		{
-			if ( other._policy() == ~delete_shared )
-			{
-				size_t& refcount = ((size_t*) other.store.alloc.pointer)[ -1 ];
-				
-				// Should never happen, since address space would be exhausted
-				// by size( -1 ) / sizeof (string) copies of a string, which is
-				// necessarily less than size( -1 ).  This is to catch errors in
-				// maintaining the refcount.
-				
-				ASSERT( refcount <= size_t( -1 ) );
-				
-				++refcount;
-			}
-			
-			// Either it's shared or it occupies static storage.
-			// Either way, we perform a shallow copy.
-			
-			// If this is a self-assignment, then *we* are either static
-			// or shared with non-minimal refcount, and destroy() does nothing.
-			
-			destroy( store );
-			
-			memcpy( &store, &other.store, sizeof store );
-			
-			store.alloc.length = n;
-			
-			if ( pos != 0 )
-			{
-				const long new_offset = alloc_substr_offset( store ) + pos;
-				
-				store.alloc.capacity = -new_offset;
-			}
-		}
-		else
-		{
-			assign( other.data() + pos, n );
-		}
-		
-		return *this;
+		return assign( other.substr( pos, n ).move() );
 	}
 	
 	
@@ -594,7 +533,31 @@ namespace plus
 	
 	string string::substr( size_type pos, size_type n ) const
 	{
-		return string( *this, pos, n );
+		const size_type len = size();
+		
+		if ( pos > len )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		if ( len - pos < n )
+		{
+			n = len - pos;
+		}
+		
+		if ( n > datum_max_offset  &&  _policy() >= ~delete_shared )
+		{
+			plus::string temp = *this;
+			
+			const long offset = alloc_substr_offset( store );
+			
+			temp.store.alloc.length   = n;
+			temp.store.alloc.capacity = -(offset + pos);
+			
+			return temp.move();
+		}
+		
+		return string( data() + pos, n );
 	}
 	
 	
