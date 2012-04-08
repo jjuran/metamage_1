@@ -88,7 +88,10 @@ namespace plus
 			
 			string( size_type n, char c );
 			
-			~string();
+			~string()
+			{
+				destroy( store );
+			}
 			
 			string( datum_movable& m )
 			{

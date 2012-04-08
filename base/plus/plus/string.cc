@@ -160,11 +160,6 @@ namespace plus
 		assign( n, c );
 	}
 	
-	string::~string()
-	{
-		destroy( store );
-	}
-	
 	string::string( const string& other, size_type pos, size_type n )
 	{
 		store.small[ 0          ] = '\0';
