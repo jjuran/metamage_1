@@ -168,14 +168,6 @@ namespace plus
 		assign( other, pos, n );
 	}
 	
-	string::string( const string& other )
-	{
-		store.small[ 0          ] = '\0';
-		store.small[ max_offset ] = max_offset;
-		
-		assign( other );
-	}
-	
 	const char* string::c_str() const
 	{
 		if ( is_small() )

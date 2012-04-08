@@ -111,7 +111,10 @@ namespace plus
 			
 		#endif
 			
-			string( const string& other );
+			string( const string& other )
+			{
+				construct_from_copy( store, other.store );
+			}
 			
 			string& operator=( const string& other )
 			{
@@ -173,7 +176,14 @@ namespace plus
 			
 			string& assign( datum_movable& m );
 			
-			string& assign( const string& other, size_type pos = 0, size_type n = npos );
+			string& assign( const string& other )
+			{
+				assign_from_copy( store, other.store );
+				
+				return *this;
+			}
+			
+			string& assign( const string& other, size_type pos, size_type n = npos );
 			
 		#if IOTA_HAS_PASCAL_STRINGS
 			
