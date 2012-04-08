@@ -256,9 +256,9 @@ namespace plus
 		return new_pointer;
 	}
 	
-	string& string::assign( const char* p, size_type length, size_type capacity )
+	string& string::assign( const char* p, size_type length )
 	{
-		// reset() will throw if length or capacity exceeds max_size()
+		// reset() will throw if length exceeds max_size()
 		
 		if ( length )
 		{
@@ -269,9 +269,7 @@ namespace plus
 		
 		if ( empty() )
 		{
-			capacity = std::max( length, capacity );
-			
-			char* new_pointer = reset( capacity );
+			char* new_pointer = reset( length );
 			
 			memcpy( new_pointer, p, length );
 			
@@ -285,7 +283,7 @@ namespace plus
 			
 			string temp;
 			
-			temp.assign( p, length, capacity );
+			temp.assign( p, length );
 			
 			swap( temp );
 		}

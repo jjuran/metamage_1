@@ -153,7 +153,7 @@ namespace plus
 			                delete_policy  policy,
 			                size_type      capacity = 0 );
 			
-			string& assign( const char* p, size_type length, size_type capacity = 0 );
+			string& assign( const char* p, size_type length );
 			
 			string& assign( const char* p, const char* q )
 			{
