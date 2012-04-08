@@ -129,10 +129,13 @@ namespace plus
 	
 	string::string( const char* p, size_type length )
 	{
-		store.small[ 0          ] = '\0';
-		store.small[ max_offset ] = max_offset;
+		ASSERT( p != NULL );
 		
-		assign( p, length );
+		ASSERT( p + length >= p );
+		
+		check_size( length );
+		
+		allocate_data( store, p, length );
 	}
 	
 	string::string( const char* p, const char* q )
