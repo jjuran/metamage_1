@@ -594,7 +594,31 @@ namespace plus
 	
 	string string::substr( size_type pos, size_type n ) const
 	{
-		return string( *this, pos, n );
+		const size_type len = size();
+		
+		if ( pos > len )
+		{
+			throw std::out_of_range( "plus::string" );
+		}
+		
+		if ( len - pos < n )
+		{
+			n = len - pos;
+		}
+		
+		if ( n > datum_max_offset  &&  _policy() >= ~delete_shared )
+		{
+			plus::string temp = *this;
+			
+			const long offset = alloc_substr_offset( store );
+			
+			temp.store.alloc.length   = n;
+			temp.store.alloc.capacity = -(offset + pos);
+			
+			return temp.move();
+		}
+		
+		return string( data() + pos, n );
 	}
 	
 	
