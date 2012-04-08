@@ -53,6 +53,20 @@ namespace plus
 	
 	char* allocate_data( datum_storage& datum, const char* p, long n );
 	
+	void construct_from_copy( datum_storage& x, const datum_storage& y, bool taint = false );
+	
+	void assign_from_copy( datum_storage& x, const datum_storage& y, bool taint = false );
+	
+	inline void construct_from_copy_taint( datum_storage& x, const datum_storage& y )
+	{
+		construct_from_copy( x, y, true );
+	}
+	
+	inline void assign_from_copy_taint( datum_storage& x, const datum_storage& y )
+	{
+		assign_from_copy( x, y, true );
+	}
+	
 	void destroy( datum_storage& datum );
 	
 	char* reallocate( datum_storage& datum, long length );

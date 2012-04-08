@@ -121,6 +121,35 @@ namespace plus
 		return q;
 	}
 	
+	void construct_from_copy( datum_storage& x, const datum_storage& y, bool taint )
+	{
+		if ( margin( y ) >= ~delete_shared + taint )
+		{
+			if ( margin( y ) == ~delete_shared )
+			{
+				datum_alloc_header* header = (datum_alloc_header*) y.alloc.pointer - 1;
+				
+				++header->refcount;
+			}
+			
+			x = y;
+		}
+		else
+		{
+			allocate_data( x, y.alloc.pointer + alloc_substr_offset( y ), y.alloc.length );
+		}
+	}
+	
+	void assign_from_copy( datum_storage& x, const datum_storage& y, bool taint )
+	{
+		if ( &x != &y )
+		{
+			destroy( x );
+			
+			construct_from_copy( x, y, taint );
+		}
+	}
+	
 	static void dispose( const char* pointer, signed char _policy )
 	{
 		switch ( _policy )
