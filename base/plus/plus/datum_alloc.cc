@@ -76,8 +76,8 @@ namespace plus
 	
 	char* allocate( datum_storage& datum, long length, long capacity )
 	{
-		ASSERT( length   >= 0 );
-		ASSERT( capacity >= 0 );
+		ASSERT( length   >= 0      );
+		ASSERT( capacity >= length );
 		
 		char* new_pointer;
 		
