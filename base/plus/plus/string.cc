@@ -232,37 +232,7 @@ namespace plus
 	
 	string& string::assign( const char* p, size_type length )
 	{
-		// reset() will throw if length exceeds max_size()
-		
-		if ( length )
-		{
-			ASSERT( p != NULL );
-			
-			ASSERT( p + length >= p );
-		}
-		
-		if ( empty() )
-		{
-			char* new_pointer = reset( length );
-			
-			memcpy( new_pointer, p, length );
-			
-			string_set_length( store, length, new_pointer );
-		}
-		else
-		{
-			// Always assign to a temporary and then swap.
-			// This handles the cases of input occupying either our small buffer
-			// or an allocated one.
-			
-			string temp;
-			
-			temp.assign( p, length );
-			
-			swap( temp );
-		}
-		
-		return *this;
+		return assign( string( p, length ).move() );
 	}
 	
 	string& string::assign( const char* s )
