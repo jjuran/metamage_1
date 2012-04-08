@@ -27,6 +27,12 @@ namespace plus
 	void datum_free( char* mem );
 	
 	
+	inline void construct_from_default( datum_storage& x )
+	{
+		x.small[ 0                ] = '\0';
+		x.small[ datum_max_offset ] = datum_max_offset;
+	}
+	
 	void construct_from_move_untaint_policy( datum_storage&  x,
 	                                         datum_movable&  y,
 	                                         signed char     _old_policy );
