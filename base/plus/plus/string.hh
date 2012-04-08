@@ -111,7 +111,10 @@ namespace plus
 			
 		#endif
 			
-			string( const string& other );
+			string( const string& other )
+			{
+				construct_from_copy( store, other.store );
+			}
 			
 			string& operator=( const string& other )
 			{
