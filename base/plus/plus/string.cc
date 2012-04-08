@@ -162,10 +162,7 @@ namespace plus
 	
 	string::string( const string& other, size_type pos, size_type n )
 	{
-		store.small[ 0          ] = '\0';
-		store.small[ max_offset ] = max_offset;
-		
-		assign( other, pos, n );
+		construct_from_move( store, other.substr( pos, n ).move() );
 	}
 	
 	const char* string::c_str() const
