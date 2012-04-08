@@ -192,6 +192,8 @@ namespace plus
 		
 		u = temp;
 		
+		ASSERT( !is_small() );
+		
 		return p;
 	}
 	
