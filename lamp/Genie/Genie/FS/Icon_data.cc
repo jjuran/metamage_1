@@ -459,25 +459,12 @@ namespace Genie
 			FSTree_Icon_data( const FSTreePtr&                         parent,
 			                  const plus::string&                      name,
 			                  const boost::intrusive_ptr< IconData >&  data );
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-			
-			void Attach( const FSTreePtr& target ) const;
 	};
 	
 	
 	static IOPtr icon_data_open( const FSTree* node, int flags, mode_t mode )
 	{
-		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
-		
-		return file->Open( flags, mode );
-	}
-	
-	IOPtr FSTree_Icon_data::Open( OpenFlags flags, mode_t mode ) const
-	{
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
 		const int accmode = flags & O_ACCMODE;
 		
@@ -486,11 +473,11 @@ namespace Genie
 		switch ( accmode )
 		{
 			case O_RDONLY:
-				result = new IconDataFileHandle( Self(), flags, extra.data );
+				result = new IconDataFileHandle( node, flags, extra.data );
 				break;
 			
 			case O_WRONLY:
-				result = new IconDataWriterHandle( Self(), flags, extra.data );
+				result = new IconDataWriterHandle( node, flags, extra.data );
 				break;
 			
 			default:
@@ -502,32 +489,18 @@ namespace Genie
 	
 	static off_t icon_data_geteof( const FSTree* node )
 	{
-		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
-		
-		return file->GetEOF();
-	}
-	
-	off_t FSTree_Icon_data::GetEOF() const
-	{
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
 		return extra.data->GetSize();
 	}
 	
 	static void icon_data_attach( const FSTree* node, const FSTreePtr& target )
 	{
-		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
-		
-		file->Attach( target );
-	}
-	
-	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
-	{
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
 		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
 		
-		InvalidateWindowForView( owner() );
+		InvalidateWindowForView( node->owner() );
 	}
 	
 	static const data_method_set icon_data_data_methods =
