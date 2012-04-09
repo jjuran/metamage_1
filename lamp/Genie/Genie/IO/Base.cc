@@ -87,21 +87,23 @@ namespace Genie
 			IOPtr itsHandle;
 		
 		public:
-			FSTree_IOHandle( const IOPtr& handle )
-			:
-				FSTree( null_FSTreePtr,
-				        IOName( handle.get(), true ),
-				        S_IFIFO | permmode_from_openflags( handle->GetFlags() ),
-				        &anonymous_methods ),
-				itsHandle( handle )
-			{
-			}
+			FSTree_IOHandle( const IOPtr& handle );
 			
 			IOPtr Open( OpenFlags flags, mode_t mode ) const
 			{
 				return itsHandle;
 			}
 	};
+	
+	FSTree_IOHandle::FSTree_IOHandle( const IOPtr& handle )
+	:
+		FSTree( null_FSTreePtr,
+		        IOName( handle.get(), true ),
+		        S_IFIFO | permmode_from_openflags( handle->GetFlags() ),
+		        &anonymous_methods ),
+		itsHandle( handle )
+	{
+	}
 	
 	
 	static IOPtr anonymous_open( const FSTree* node, int flags, mode_t mode )
