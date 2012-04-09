@@ -30,15 +30,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class FSTree_Union : public FSTree
-	{
-		public:
-			FSTree_Union( const FSTreePtr&     parent,
-			              const plus::string&  name,
-			              const FSTreePtr&     top,
-			              const FSTreePtr&     bottom );
-	};
-	
 	struct union_extra
 	{
 		const FSTree* top;
@@ -156,30 +147,22 @@ namespace Genie
 	                            const FSTreePtr&     top,
 	                            const FSTreePtr&     bottom )
 	{
-		FSTree_Union* result = new FSTree_Union( parent, name, top, bottom );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFDIR | 0700,
+		                             &union_methods,
+		                             sizeof (union_extra),
+		                             &dispose_union );
 		
-		return result;
-	}
-	
-	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
-	                            const plus::string&  name,
-	                            const FSTreePtr&     top,
-	                            const FSTreePtr&     bottom )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFDIR | 0700,
-		        &union_methods,
-		        sizeof (union_extra),
-		        &dispose_union )
-	{
-		union_extra& extra = *(union_extra*) this->extra();
+		union_extra& extra = *(union_extra*) result->extra();
 		
 		intrusive_ptr_add_ref( top   .get() );
 		intrusive_ptr_add_ref( bottom.get() );
 		
 		extra.top    = top.get();
 		extra.bottom = bottom.get();
+		
+		return result;
 	}
 	
 }
