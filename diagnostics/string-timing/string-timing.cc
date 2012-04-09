@@ -44,7 +44,6 @@ static uint64_t microclock()
 }
 
 #ifdef __MACH__
-#define clock_t uint64_t
 #define clock() microclock()
 #endif
 
@@ -64,14 +63,14 @@ class timer
 	private:
 		const char* const its_name;
 		
-		const clock_t its_start;
+		const uint64_t its_start;
 	
 	public:
 		timer( const char* name ) : its_name( name ), its_start( clock() )
 		{
 		}
 		
-		clock_t get() const
+		uint64_t get() const
 		{
 			return clock() - its_start;
 		}

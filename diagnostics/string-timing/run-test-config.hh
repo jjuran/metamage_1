@@ -11,7 +11,7 @@ try
 		#include "tests.hh"
 	}
 	
-	clock_t best = 0;
+	uint64_t best = 0;
 	
 	for ( int trial = 0;  trial < n_trials;  ++trial )
 	{
@@ -22,7 +22,7 @@ try
 			#include "tests.hh"
 		}
 		
-		const clock_t result = t.get();
+		const uint64_t result = t.get();
 		
 		if ( best == 0  ||  result < best )
 		{
