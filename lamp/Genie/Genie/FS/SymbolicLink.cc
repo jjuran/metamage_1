@@ -18,6 +18,12 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	struct symlink_extra
+	{
+		plus::datum_storage  target;
+		remove_method        remove;
+	};
+	
 	static void remove( const FSTree* node )
 	{
 		const FSTree_SymbolicLink* file = static_cast< const FSTree_SymbolicLink* >( node );
@@ -27,9 +33,9 @@ namespace Genie
 	
 	static plus::string readlink( const FSTree* node )
 	{
-		const FSTree_SymbolicLink* file = static_cast< const FSTree_SymbolicLink* >( node );
+		symlink_extra& extra = *(symlink_extra*) node->extra();
 		
-		return file->Target();
+		return reinterpret_cast< const plus::string& >( extra.target );
 	}
 	
 	static const link_method_set link_methods =
@@ -49,22 +55,39 @@ namespace Genie
 		&link_methods
 	};
 	
+	static void dispose_symlink( const FSTree* node )
+	{
+		symlink_extra& extra = *(symlink_extra*) node->extra();
+		
+		plus::destroy( extra.target );
+	}
+	
 	FSTree_SymbolicLink::FSTree_SymbolicLink( const FSTreePtr&     parent,
 	                                          const plus::string&  name,
-	                                          const plus::string&  target,
+	                                          plus::string         target,
 	                                          remove_method        remove )
 	:
-		FSTree( parent, name, S_IFLNK | 0777, &methods ),
-		its_remove( remove ),
-		itsTarget( target )
+		FSTree( parent,
+		        name,
+		        S_IFLNK | 0777,
+		        &methods,
+		        sizeof (symlink_extra),
+		        &dispose_symlink )
 	{
+		symlink_extra& extra = *(symlink_extra*) this->extra();
+		
+		plus::construct_from_move( extra.target, target.move() );
+		
+		extra.remove = remove;
 	}
 	
 	void FSTree_SymbolicLink::Delete() const
 	{
-		if ( its_remove )
+		symlink_extra& extra = *(symlink_extra*) this->extra();
+		
+		if ( extra.remove )
 		{
-			its_remove( this );
+			extra.remove( this );
 		}
 		else
 		{
