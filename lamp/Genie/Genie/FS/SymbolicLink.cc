@@ -31,6 +31,20 @@ namespace Genie
 		return file->Delete();
 	}
 	
+	void FSTree_SymbolicLink::Delete() const
+	{
+		symlink_extra& extra = *(symlink_extra*) this->extra();
+		
+		if ( extra.remove )
+		{
+			extra.remove( this );
+		}
+		else
+		{
+			p7::throw_errno( EPERM );
+		}
+	}
+	
 	static plus::string readlink( const FSTree* node )
 	{
 		symlink_extra& extra = *(symlink_extra*) node->extra();
@@ -79,20 +93,6 @@ namespace Genie
 		plus::construct_from_move( extra.target, target.move() );
 		
 		extra.remove = remove;
-	}
-	
-	void FSTree_SymbolicLink::Delete() const
-	{
-		symlink_extra& extra = *(symlink_extra*) this->extra();
-		
-		if ( extra.remove )
-		{
-			extra.remove( this );
-		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
 	}
 	
 	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&     parent,
