@@ -61,12 +61,7 @@ namespace Genie
 		public:
 			FSTree_Generated( const FSTreePtr&     parent,
 			                  const plus::string&  name,
-			                  ReadHook             readHook )
-			:
-				FSTree( parent, name, S_IFREG | 0400, &generated_methods ),
-				its_data( readHook( parent.get(), name ) )
-			{
-			}
+			                  ReadHook             readHook );
 			
 			const plus::string& data() const  { return its_data; }
 	};
@@ -100,6 +95,15 @@ namespace Genie
 		Generated_ReadHook readHook = (Generated_ReadHook) params;
 		
 		return new FSTree_Generated( parent, name, readHook );
+	}
+	
+	FSTree_Generated::FSTree_Generated( const FSTreePtr&     parent,
+	                                    const plus::string&  name,
+	                                    Generated_ReadHook   readHook )
+	:
+		FSTree( parent, name, S_IFREG | 0400, &generated_methods ),
+		its_data( readHook( parent.get(), name ) )
+	{
 	}
 	
 }
