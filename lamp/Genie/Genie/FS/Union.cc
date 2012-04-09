@@ -37,10 +37,6 @@ namespace Genie
 			              const plus::string&  name,
 			              const FSTreePtr&     top,
 			              const FSTreePtr&     bottom );
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
 	struct union_extra
@@ -62,14 +58,7 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const FSTree*        parent )
 	{
-		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
-		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
-		union_extra& extra = *(union_extra*) this->extra();
+		union_extra& extra = *(union_extra*) node->extra();
 		
 		try
 		{
@@ -94,14 +83,7 @@ namespace Genie
 	static void union_listdir( const FSTree*  node,
 	                           FSTreeCache&   cache )
 	{
-		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
-	void FSTree_Union::IterateIntoCache( FSTreeCache& cache ) const
-	{
-		union_extra& extra = *(union_extra*) this->extra();
+		union_extra& extra = *(union_extra*) node->extra();
 		
 		std::set< plus::string > names_that_have_been_seen;
 		
