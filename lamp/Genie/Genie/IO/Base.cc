@@ -86,33 +86,11 @@ namespace Genie
 		IOHandle* handle;
 	};
 	
-	class FSTree_IOHandle : public FSTree
-	{
-		public:
-			FSTree_IOHandle( const IOPtr& handle );
-	};
-	
 	static void dispose_handle( const FSTree* node )
 	{
 		handle_extra& extra = *(handle_extra*) node->extra();
 		
 		intrusive_ptr_release( extra.handle );
-	}
-	
-	FSTree_IOHandle::FSTree_IOHandle( const IOPtr& handle )
-	:
-		FSTree( null_FSTreePtr,
-		        IOName( handle.get(), true ),
-		        S_IFIFO | permmode_from_openflags( handle->GetFlags() ),
-		        &anonymous_methods,
-		        sizeof (handle_extra),
-		        &dispose_handle )
-	{
-		handle_extra& extra = *(handle_extra*) this->extra();
-		
-		intrusive_ptr_add_ref( handle.get() );
-		
-		extra.handle = handle.get();
 	}
 	
 	
@@ -159,7 +137,20 @@ namespace Genie
 	
 	FSTreePtr IOHandle::GetFile()
 	{
-		return new FSTree_IOHandle( this );
+		FSTree* result = new FSTree( null_FSTreePtr,
+		                             IOName( this, true ),
+		                             S_IFIFO | permmode_from_openflags( GetFlags() ),
+		                             &anonymous_methods,
+		                             sizeof (handle_extra),
+		                             &dispose_handle );
+		
+		handle_extra& extra = *(handle_extra*) result->extra();
+		
+		intrusive_ptr_add_ref( this );
+		
+		extra.handle = this;
+		
+		return result;
 	}
 	
 	void IOHandle::IOCtl( unsigned long request, int* argp )
