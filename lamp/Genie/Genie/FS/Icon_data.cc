@@ -488,6 +488,13 @@ namespace Genie
 	};
 	
 	
+	FSTreePtr New_FSTree_Icon_data( const FSTreePtr&                         parent,
+	                                const plus::string&                      name,
+	                                const boost::intrusive_ptr< IconData >&  data )
+	{
+		return new FSTree_Icon_data( parent, name, data );
+	}
+	
 	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                         parent,
 	                                    const plus::string&                      name,
 	                                    const boost::intrusive_ptr< IconData >&  data )

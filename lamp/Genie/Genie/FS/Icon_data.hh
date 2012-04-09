@@ -93,6 +93,10 @@ namespace Genie
 			void Attach( const FSTreePtr& target ) const;
 	};
 	
+	FSTreePtr New_FSTree_Icon_data( const FSTreePtr&                         parent,
+	                                const plus::string&                      name,
+	                                const boost::intrusive_ptr< IconData >&  data );
+	
 }
 
 #endif
