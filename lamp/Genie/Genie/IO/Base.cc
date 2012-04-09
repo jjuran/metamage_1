@@ -81,36 +81,46 @@ namespace Genie
 	};
 	
 	
+	struct handle_extra
+	{
+		IOHandle* handle;
+	};
+	
 	class FSTree_IOHandle : public FSTree
 	{
-		private:
-			IOPtr itsHandle;
-		
 		public:
 			FSTree_IOHandle( const IOPtr& handle );
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const
-			{
-				return itsHandle;
-			}
 	};
+	
+	static void dispose_handle( const FSTree* node )
+	{
+		handle_extra& extra = *(handle_extra*) node->extra();
+		
+		intrusive_ptr_release( extra.handle );
+	}
 	
 	FSTree_IOHandle::FSTree_IOHandle( const IOPtr& handle )
 	:
 		FSTree( null_FSTreePtr,
 		        IOName( handle.get(), true ),
 		        S_IFIFO | permmode_from_openflags( handle->GetFlags() ),
-		        &anonymous_methods ),
-		itsHandle( handle )
+		        &anonymous_methods,
+		        sizeof (handle_extra),
+		        &dispose_handle )
 	{
+		handle_extra& extra = *(handle_extra*) this->extra();
+		
+		intrusive_ptr_add_ref( handle.get() );
+		
+		extra.handle = handle.get();
 	}
 	
 	
 	static IOPtr anonymous_open( const FSTree* node, int flags, mode_t mode )
 	{
-		const FSTree_IOHandle* file = static_cast< const FSTree_IOHandle* >( node );
+		handle_extra& extra = *(handle_extra*) node->extra();
 		
-		return file->Open( flags, mode );
+		return extra.handle;
 	}
 	
 	
