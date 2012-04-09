@@ -76,7 +76,11 @@ class timer
 			return clock() - its_start;
 		}
 		
+	#ifdef __RELIX__
+		
 		~timer() { kill( 1, 0 ); }  // guaranteed yield point in MacRelix
+		
+	#endif
 };
 
 const char* test_names[] =
