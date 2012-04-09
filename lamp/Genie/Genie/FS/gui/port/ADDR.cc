@@ -975,7 +975,7 @@ namespace Genie
 		
 		if ( is_link )
 		{
-			return new FSTree_SymbolicLink( parent,
+			return New_FSTree_SymbolicLink( parent,
 			                                name,
 			                                "window/" + name );
 		}

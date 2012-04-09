@@ -140,7 +140,7 @@ namespace Genie
 		
 		result += gear::inscribe_decimal( -vRefNum );
 		
-		return new FSTree_SymbolicLink( parent, name, result );
+		return New_FSTree_SymbolicLink( parent, name, result );
 		
 	}
 	
