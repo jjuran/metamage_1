@@ -67,55 +67,6 @@ namespace Genie
 		return file->Lookup_Child( name, parent );
 	}
 	
-	static void union_listdir( const FSTree*  node,
-	                           FSTreeCache&   cache )
-	{
-		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
-	static const dir_method_set union_dir_methods =
-	{
-		&union_lookup,
-		&union_listdir
-	};
-	
-	static const node_method_set union_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&union_dir_methods
-	};
-	
-	
-	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
-	                            const plus::string&  name,
-	                            const FSTreePtr&     top,
-	                            const FSTreePtr&     bottom )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFDIR | 0700,
-		        &union_methods,
-		        sizeof (union_extra),
-		        &dispose_union )
-	{
-		union_extra& extra = *(union_extra*) this->extra();
-		
-		intrusive_ptr_add_ref( top   .get() );
-		intrusive_ptr_add_ref( bottom.get() );
-		
-		extra.top    = top.get();
-		extra.bottom = bottom.get();
-	}
-	
 	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
 	{
 		union_extra& extra = *(union_extra*) this->extra();
@@ -138,6 +89,14 @@ namespace Genie
 		}
 		
 		return extra.bottom->Lookup( name, parent );
+	}
+	
+	static void union_listdir( const FSTree*  node,
+	                           FSTreeCache&   cache )
+	{
+		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
+		
+		file->IterateIntoCache( cache );
 	}
 	
 	void FSTree_Union::IterateIntoCache( FSTreeCache& cache ) const
@@ -190,6 +149,26 @@ namespace Genie
 		}
 	}
 	
+	static const dir_method_set union_dir_methods =
+	{
+		&union_lookup,
+		&union_listdir
+	};
+	
+	static const node_method_set union_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&union_dir_methods
+	};
+	
+	
 	FSTreePtr New_FSTree_Union( const FSTreePtr&     parent,
 	                            const plus::string&  name,
 	                            const FSTreePtr&     top,
@@ -198,6 +177,27 @@ namespace Genie
 		FSTree_Union* result = new FSTree_Union( parent, name, top, bottom );
 		
 		return result;
+	}
+	
+	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
+	                            const plus::string&  name,
+	                            const FSTreePtr&     top,
+	                            const FSTreePtr&     bottom )
+	:
+		FSTree( parent,
+		        name,
+		        S_IFDIR | 0700,
+		        &union_methods,
+		        sizeof (union_extra),
+		        &dispose_union )
+	{
+		union_extra& extra = *(union_extra*) this->extra();
+		
+		intrusive_ptr_add_ref( top   .get() );
+		intrusive_ptr_add_ref( bottom.get() );
+		
+		extra.top    = top.get();
+		extra.bottom = bottom.get();
 	}
 	
 }
