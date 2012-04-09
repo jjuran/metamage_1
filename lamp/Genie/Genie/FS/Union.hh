@@ -40,6 +40,11 @@ namespace Genie
 			void IterateIntoCache( FSTreeCache& cache ) const;
 	};
 	
+	FSTreePtr New_FSTree_Union( const FSTreePtr&     parent,
+	                            const plus::string&  name,
+	                            const FSTreePtr&     top,
+	                            const FSTreePtr&     bottom );
+	
 }
 
 #endif

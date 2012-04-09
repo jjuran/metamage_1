@@ -144,5 +144,18 @@ namespace Genie
 		}
 	}
 	
+	FSTreePtr New_FSTree_Union( const FSTreePtr&     parent,
+	                            const plus::string&  name,
+	                            const FSTreePtr&     top,
+	                            const FSTreePtr&     bottom )
+	{
+		FSTree_Union* result = new FSTree_Union( parent, name );
+		
+		result->SetTop   ( top    );
+		result->SetBottom( bottom );
+		
+		return result;
+	}
+	
 }
 
