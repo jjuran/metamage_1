@@ -475,6 +475,31 @@ namespace Genie
 		return file->Open( flags, mode );
 	}
 	
+	IOPtr FSTree_Icon_data::Open( OpenFlags flags, mode_t mode ) const
+	{
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		const int accmode = flags & O_ACCMODE;
+		
+		IOHandle* result = NULL;
+		
+		switch ( accmode )
+		{
+			case O_RDONLY:
+				result = new IconDataFileHandle( Self(), flags, extra.data );
+				break;
+			
+			case O_WRONLY:
+				result = new IconDataWriterHandle( Self(), flags, extra.data );
+				break;
+			
+			default:
+				p7::throw_errno( EACCES );
+		}
+		
+		return IOPtr( result );
+	}
+	
 	static off_t icon_data_geteof( const FSTree* node )
 	{
 		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
@@ -482,11 +507,27 @@ namespace Genie
 		return file->GetEOF();
 	}
 	
+	off_t FSTree_Icon_data::GetEOF() const
+	{
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		return extra.data->GetSize();
+	}
+	
 	static void icon_data_attach( const FSTree* node, const FSTreePtr& target )
 	{
 		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
 		
 		file->Attach( target );
+	}
+	
+	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
+	{
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
+		
+		InvalidateWindowForView( owner() );
 	}
 	
 	static const data_method_set icon_data_data_methods =
@@ -540,47 +581,6 @@ namespace Genie
 		intrusive_ptr_add_ref( data.get() );
 		
 		extra.data = data.get();
-	}
-	
-	off_t FSTree_Icon_data::GetEOF() const
-	{
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
-		
-		return extra.data->GetSize();
-	}
-	
-	IOPtr FSTree_Icon_data::Open( OpenFlags flags, mode_t mode ) const
-	{
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
-		
-		const int accmode = flags & O_ACCMODE;
-		
-		IOHandle* result = NULL;
-		
-		switch ( accmode )
-		{
-			case O_RDONLY:
-				result = new IconDataFileHandle( Self(), flags, extra.data );
-				break;
-			
-			case O_WRONLY:
-				result = new IconDataWriterHandle( Self(), flags, extra.data );
-				break;
-			
-			default:
-				p7::throw_errno( EACCES );
-		}
-		
-		return IOPtr( result );
-	}
-	
-	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
-	{
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
-		
-		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
-		
-		InvalidateWindowForView( owner() );
 	}
 	
 }
