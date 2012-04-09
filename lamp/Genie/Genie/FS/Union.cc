@@ -38,7 +38,9 @@ namespace Genie
 		
 		public:
 			FSTree_Union( const FSTreePtr&     parent,
-			              const plus::string&  name );
+			              const plus::string&  name,
+			              const FSTreePtr&     top,
+			              const FSTreePtr&     bottom );
 			
 			void SetTop( const FSTreePtr& top )
 			{
@@ -93,9 +95,13 @@ namespace Genie
 	
 	
 	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
-	                            const plus::string&  name )
+	                            const plus::string&  name,
+	                            const FSTreePtr&     top,
+	                            const FSTreePtr&     bottom )
 	:
-		FSTree( parent, name, S_IFDIR | 0700, &union_methods )
+		FSTree( parent, name, S_IFDIR | 0700, &union_methods ),
+		itsTop   ( top    ),
+		itsBottom( bottom )
 	{
 	}
 	
@@ -174,10 +180,7 @@ namespace Genie
 	                            const FSTreePtr&     top,
 	                            const FSTreePtr&     bottom )
 	{
-		FSTree_Union* result = new FSTree_Union( parent, name );
-		
-		result->SetTop   ( top    );
-		result->SetBottom( bottom );
+		FSTree_Union* result = new FSTree_Union( parent, name, top, bottom );
 		
 		return result;
 	}
