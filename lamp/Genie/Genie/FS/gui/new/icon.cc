@@ -172,7 +172,7 @@ namespace Genie
 			data = boost::intrusive_ptr< IconData >( new IconData );
 		}
 		
-		return new FSTree_Icon_data( parent, name, data );
+		return New_FSTree_Icon_data( parent, name, data );
 	}
 	
 	
