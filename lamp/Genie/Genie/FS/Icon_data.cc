@@ -453,14 +453,6 @@ namespace Genie
 		intrusive_ptr_release( extra.data );
 	}
 	
-	class FSTree_Icon_data : public FSTree
-	{
-		public:
-			FSTree_Icon_data( const FSTreePtr&                         parent,
-			                  const plus::string&                      name,
-			                  const boost::intrusive_ptr< IconData >&  data );
-	};
-	
 	
 	static IOPtr icon_data_open( const FSTree* node, int flags, mode_t mode )
 	{
@@ -533,27 +525,22 @@ namespace Genie
 	                                const plus::string&                      name,
 	                                const boost::intrusive_ptr< IconData >&  data )
 	{
-		return new FSTree_Icon_data( parent, name, data );
-	}
-	
-	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                         parent,
-	                                    const plus::string&                      name,
-	                                    const boost::intrusive_ptr< IconData >&  data )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFREG | 0600,
-		        &icon_data_methods,
-		        sizeof (icon_data_extra),
-		        &dispose_icon_data )
-	{
 		ASSERT( data.get() != NULL );
 		
-		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0600,
+		                             &icon_data_methods,
+		                             sizeof (icon_data_extra),
+		                             &dispose_icon_data );
+		
+		icon_data_extra& extra = *(icon_data_extra*) result->extra();
 		
 		intrusive_ptr_add_ref( data.get() );
 		
 		extra.data = data.get();
+		
+		return result;
 	}
 	
 }
