@@ -69,31 +69,25 @@ namespace Genie
 		plus::destroy( extra.target );
 	}
 	
-	FSTree_SymbolicLink::FSTree_SymbolicLink( const FSTreePtr&     parent,
-	                                          const plus::string&  name,
-	                                          plus::string         target,
-	                                          remove_method        remove )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFLNK | 0777,
-		        &methods,
-		        sizeof (symlink_extra),
-		        &dispose_symlink )
-	{
-		symlink_extra& extra = *(symlink_extra*) this->extra();
-		
-		plus::construct_from_move( extra.target, target.move() );
-		
-		extra.remove = remove;
-	}
-	
 	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&     parent,
 	                                   const plus::string&  name,
 	                                   plus::string         target,
 	                                   remove_method        remove )
 	{
-		return new FSTree_SymbolicLink( parent, name, target.move(), remove );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFLNK | 0777,
+		                             &methods,
+		                             sizeof (symlink_extra),
+		                             &dispose_symlink );
+		
+		symlink_extra& extra = *(symlink_extra*) result->extra();
+		
+		plus::construct_from_move( extra.target, target.move() );
+		
+		extra.remove = remove;
+		
+		return result;
 	}
 	
 }
