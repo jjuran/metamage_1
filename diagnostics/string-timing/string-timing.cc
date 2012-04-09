@@ -5,6 +5,7 @@
 
 // Standard C
 #include <signal.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <time.h>
 
