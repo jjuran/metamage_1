@@ -26,18 +26,11 @@ namespace Genie
 	
 	static void remove( const FSTree* node )
 	{
-		const FSTree_SymbolicLink* file = static_cast< const FSTree_SymbolicLink* >( node );
-		
-		return file->Delete();
-	}
-	
-	void FSTree_SymbolicLink::Delete() const
-	{
-		symlink_extra& extra = *(symlink_extra*) this->extra();
+		symlink_extra& extra = *(symlink_extra*) node->extra();
 		
 		if ( extra.remove )
 		{
-			extra.remove( this );
+			extra.remove( node );
 		}
 		else
 		{

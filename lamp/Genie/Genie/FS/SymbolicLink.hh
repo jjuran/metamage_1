@@ -24,8 +24,6 @@ namespace Genie
 			                     const plus::string&  name,
 			                     plus::string         target,
 			                     remove_method        remove = NULL );
-			
-			void Delete() const;
 	};
 	
 	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&     parent,
