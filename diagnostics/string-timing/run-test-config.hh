@@ -30,7 +30,7 @@ try
 		}
 	}
 	
-	printf( "  %4lld", best / K );
+	printf( "  %4llu", best / K );
 }
 catch ( const skipped_test& )
 {
