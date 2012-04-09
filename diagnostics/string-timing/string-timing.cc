@@ -43,8 +43,8 @@ static uint64_t microclock()
 	return uint64_t( tv.tv_sec ) * 1000000 + tv.tv_usec;
 }
 
-#ifdef __MACH__
-#define clock() microclock()
+#ifdef __RELIX__
+#define microclock() clock()
 #endif
 
 #ifdef __MACOS__
@@ -66,13 +66,13 @@ class timer
 		const uint64_t its_start;
 	
 	public:
-		timer( const char* name ) : its_name( name ), its_start( clock() )
+		timer( const char* name ) : its_name( name ), its_start( microclock() )
 		{
 		}
 		
 		uint64_t get() const
 		{
-			return clock() - its_start;
+			return microclock() - its_start;
 		}
 		
 	#ifdef __RELIX__
