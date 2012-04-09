@@ -71,7 +71,7 @@ namespace Genie
 			        std::size_t             n_extra = 0,
 			        node_destructor         dtor    = NULL );
 			
-			virtual ~FSTree();
+			~FSTree();
 			
 			// General methods
 			
