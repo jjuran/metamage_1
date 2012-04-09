@@ -11,6 +11,7 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -19,8 +20,6 @@ namespace Genie
 	class FSTree_SymbolicLink : public FSTree
 	{
 		private:
-			typedef void (*remove_method)( const FSTree* );
-			
 			remove_method its_remove;
 			
 			plus::string itsTarget;

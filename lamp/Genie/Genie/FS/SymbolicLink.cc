@@ -10,7 +10,6 @@
 
 // Genie
 #include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
