@@ -441,11 +441,20 @@ namespace Genie
 	}
 	
 	
+	struct icon_data_extra
+	{
+		IconData* data;
+	};
+	
+	static void dispose_icon_data( const FSTree* node )
+	{
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
+		
+		intrusive_ptr_release( extra.data );
+	}
+	
 	class FSTree_Icon_data : public FSTree
 	{
-		private:
-			boost::intrusive_ptr< IconData > itsData;
-		
 		public:
 			FSTree_Icon_data( const FSTreePtr&                         parent,
 			                  const plus::string&                      name,
@@ -517,19 +526,33 @@ namespace Genie
 	                                    const plus::string&                      name,
 	                                    const boost::intrusive_ptr< IconData >&  data )
 	:
-		FSTree( parent, name, S_IFREG | 0600, &icon_data_methods ),
-		itsData( data )
+		FSTree( parent,
+		        name,
+		        S_IFREG | 0600,
+		        &icon_data_methods,
+		        sizeof (icon_data_extra),
+		        &dispose_icon_data )
 	{
 		ASSERT( data.get() != NULL );
+		
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		intrusive_ptr_add_ref( data.get() );
+		
+		extra.data = data.get();
 	}
 	
 	off_t FSTree_Icon_data::GetEOF() const
 	{
-		return itsData->GetSize();
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		return extra.data->GetSize();
 	}
 	
 	IOPtr FSTree_Icon_data::Open( OpenFlags flags, mode_t mode ) const
 	{
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
 		const int accmode = flags & O_ACCMODE;
 		
 		IOHandle* result = NULL;
@@ -537,11 +560,11 @@ namespace Genie
 		switch ( accmode )
 		{
 			case O_RDONLY:
-				result = new IconDataFileHandle( Self(), flags, itsData );
+				result = new IconDataFileHandle( Self(), flags, extra.data );
 				break;
 			
 			case O_WRONLY:
-				result = new IconDataWriterHandle( Self(), flags, itsData );
+				result = new IconDataWriterHandle( Self(), flags, extra.data );
 				break;
 			
 			default:
@@ -553,7 +576,9 @@ namespace Genie
 	
 	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
 	{
-		itsData->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
 		
 		InvalidateWindowForView( owner() );
 	}
