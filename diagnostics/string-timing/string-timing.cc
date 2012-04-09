@@ -32,14 +32,15 @@ class skipped_test {};
 
 #define SKIP  throw skipped_test()
 
+#ifndef __STDC_INT64__
+typedef long long    uint64_t;
+#endif
 
 static uint64_t microclock()
 {
-	timeval tv;
-	
-	int got = gettimeofday( &tv, NULL );
-	
-	return uint64_t( tv.tv_sec ) * 1000000 + tv.tv_usec;
+	struct timespec got;
+	clock_gettime(CLOCK_MONOTONIC, &got);
+	return uint64_t( got.tv_sec ) * 1000000 + (got.tv_nsec / 1000);
 }
 
 #ifdef __MACH__
