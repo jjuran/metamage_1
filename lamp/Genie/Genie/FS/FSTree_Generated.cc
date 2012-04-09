@@ -57,18 +57,6 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Generated : public FSTree
-	{
-		private:
-			typedef Generated_ReadHook ReadHook;
-		
-		public:
-			FSTree_Generated( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  ReadHook             readHook );
-	};
-	
-	
 	static off_t generated_geteof( const FSTree* node )
 	{
 		const generated_extra& extra = *(generated_extra*) node->extra();
@@ -105,25 +93,20 @@ namespace Genie
 	{
 		Generated_ReadHook readHook = (Generated_ReadHook) params;
 		
-		return new FSTree_Generated( parent, name, readHook );
-	}
-	
-	FSTree_Generated::FSTree_Generated( const FSTreePtr&     parent,
-	                                    const plus::string&  name,
-	                                    Generated_ReadHook   readHook )
-	:
-		FSTree( parent,
-		        name,
-		        S_IFREG | 0400,
-		        &generated_methods,
-		        sizeof (generated_extra),
-		        &dispose_generated )
-	{
 		plus::string data = readHook( parent.get(), name );
 		
-		generated_extra& extra = *(generated_extra*) this->extra();
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0400,
+		                             &generated_methods,
+		                             sizeof (generated_extra),
+		                             &dispose_generated );
+		
+		generated_extra& extra = *(generated_extra*) result->extra();
 		
 		plus::construct_from_move( extra.datum, data.move() );
+		
+		return result;
 	}
 	
 }
