@@ -37,7 +37,8 @@ namespace Genie
 	
 	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&     parent,
 	                                   const plus::string&  name,
-	                                   const plus::string&  target );
+	                                   const plus::string&  target,
+	                                   remove_method        remove = NULL );
 	
 }
 
