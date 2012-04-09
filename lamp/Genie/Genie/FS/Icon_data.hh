@@ -6,17 +6,9 @@
 #ifndef GENIE_FILESYSTEM_ICON_DATA_HH
 #define GENIE_FILESYSTEM_ICON_DATA_HH
 
-// POSIX
-#include <sys/stat.h>
-
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
-
 // plus
 #include "plus/ref_count.hh"
+#include "plus/string.hh"
 
 // Nitrogen
 #ifndef NITROGEN_ICONS_HH
@@ -24,7 +16,7 @@
 #endif
 
 // Genie
-#include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie

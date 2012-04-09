@@ -5,6 +5,9 @@
 
 #include "Genie/FS/Icon_data.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -25,6 +28,7 @@
 #include "Nitrogen/Icons.hh"
 
 // Genie
+#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
