@@ -534,29 +534,19 @@ namespace Genie
 	}
 	
 	
-	static const FSTreePtr& MakeFSRoot()
+	static FSTreePtr MakeFSRoot()
 	{
-		const Mac::FSDirSpec& j_dir = root_DirSpec();
-		
-		FSTree_Union* u = NULL;
-		
-		static FSTreePtr result = u = new FSTree_Union( null_FSTreePtr, plus::string::null );
-		
-		if ( u != NULL )
-		{
-			FSTreePtr top    = Premapped_Factory( null_FSTreePtr, plus::string::null, Root_Overlay_Mappings );
-			FSTreePtr bottom = FSTreeFromFSDirSpec( j_dir );
-			
-			u->SetTop   ( top    );
-			u->SetBottom( bottom );
-		}
-		
-		return result;
+		return New_FSTree_Union( null_FSTreePtr,
+		                         plus::string::null,
+		                         Premapped_Factory( null_FSTreePtr,
+		                                            plus::string::null,
+		                                            Root_Overlay_Mappings ),
+		                         FSTreeFromFSDirSpec( root_DirSpec() ) );
 	}
 	
 	const FSTreePtr& FSRoot()
 	{
-		static const FSTreePtr& root = MakeFSRoot();
+		static FSTreePtr root = MakeFSRoot();
 		
 		return root;
 	}
