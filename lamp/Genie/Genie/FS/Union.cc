@@ -42,16 +42,6 @@ namespace Genie
 			              const FSTreePtr&     top,
 			              const FSTreePtr&     bottom );
 			
-			void SetTop( const FSTreePtr& top )
-			{
-				itsTop = top;
-			}
-			
-			void SetBottom( const FSTreePtr& bottom )
-			{
-				itsBottom = bottom;
-			}
-			
 			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
 			
 			void IterateIntoCache( FSTreeCache& cache ) const;
