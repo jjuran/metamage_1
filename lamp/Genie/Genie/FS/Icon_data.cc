@@ -441,6 +441,24 @@ namespace Genie
 	}
 	
 	
+	class FSTree_Icon_data : public FSTree
+	{
+		private:
+			boost::intrusive_ptr< IconData > itsData;
+		
+		public:
+			FSTree_Icon_data( const FSTreePtr&                         parent,
+			                  const plus::string&                      name,
+			                  const boost::intrusive_ptr< IconData >&  data );
+			
+			off_t GetEOF() const;
+			
+			IOPtr Open( OpenFlags flags, mode_t mode ) const;
+			
+			void Attach( const FSTreePtr& target ) const;
+	};
+	
+	
 	static IOPtr icon_data_open( const FSTree* node, int flags, mode_t mode )
 	{
 		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
