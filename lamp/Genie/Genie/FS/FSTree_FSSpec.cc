@@ -331,8 +331,8 @@ namespace Genie
 	
 	static void hfs_remove( const FSTree* node );
 	
-	static void hfs_rename( const FSTree*     node,
-	                        const FSTreePtr&  destination );
+	static void hfs_rename( const FSTree*  node,
+	                        const FSTree*  destination );
 	
 	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode );
 	
@@ -682,8 +682,8 @@ namespace Genie
 		return spec;
 	}
 	
-	static void hfs_rename( const FSTree*     node,
-	                        const FSTreePtr&  destFile )
+	static void hfs_rename( const FSTree*  node,
+	                        const FSTree*  destFile )
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		

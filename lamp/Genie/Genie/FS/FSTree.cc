@@ -251,7 +251,7 @@ namespace Genie
 	{
 		if ( its_methods  &&  its_methods->rename )
 		{
-			its_methods->rename( this, destination );
+			its_methods->rename( this, destination.get() );
 		}
 		else
 		{
