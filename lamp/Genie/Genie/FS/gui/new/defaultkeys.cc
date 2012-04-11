@@ -17,6 +17,9 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/lookup.hh"
+#include "Genie/FS/resolve.hh"
+#include "Genie/FS/touch.hh"
 
 
 namespace Genie
@@ -44,11 +47,11 @@ namespace Genie
 		
 		ASSERT( window != NULL );
 		
-		FSTreePtr link = window->Lookup( name );
+		FSTreePtr link = lookup( window, name );
 		
-		FSTreePtr target = link->ResolveLink();
+		FSTreePtr target = resolve( link.get() );
 		
-		target->SetTimes();
+		touch( target.get() );
 	}
 	
 	bool DefaultKey_Handler::KeyDown( const EventRecord& event )

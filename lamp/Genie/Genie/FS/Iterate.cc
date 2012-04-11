@@ -8,6 +8,9 @@
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTreeCache_Impl.hh"
+#include "Genie/FS/inode.hh"
+#include "Genie/FS/listdir.hh"
+#include "Genie/FS/parent_inode.hh"
 
 
 namespace Genie
@@ -50,10 +53,10 @@ namespace Genie
 	{
 		FSTreeCache_Impl cache;
 		
-		cache.push_back( FSNode( dir->Inode(),       "."  ) );
-		cache.push_back( FSNode( dir->ParentInode(), ".." ) );
+		cache.push_back( FSNode( inode       ( dir.get() ), "."  ) );
+		cache.push_back( FSNode( parent_inode( dir.get() ), ".." ) );
 		
-		dir->IterateIntoCache( cache );
+		listdir( dir.get(), cache );
 		
 		FSTreeCache_Impl* newCache = new FSTreeCache_Impl();
 		

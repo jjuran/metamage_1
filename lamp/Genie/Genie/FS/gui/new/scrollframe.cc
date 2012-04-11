@@ -32,6 +32,7 @@
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/lookup.hh"
 #include "Genie/FS/gui/new/scroller.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -313,7 +314,7 @@ namespace Genie
 		
 		FSTreePtr target = ResolvePathname( target_path, view );
 		
-		FSTreePtr delegate = target->Lookup( plus::string::null );
+		FSTreePtr delegate = lookup( target.get(), plus::string::null );
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		

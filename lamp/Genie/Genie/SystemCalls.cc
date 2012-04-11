@@ -27,6 +27,7 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/seteof.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -449,7 +450,7 @@ namespace Genie
 			
 			ResolveLinks_InPlace( file );
 			
-			file->SetEOF( length );
+			seteof( file.get(), length );
 		}
 		catch ( ... )
 		{

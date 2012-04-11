@@ -26,6 +26,7 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/pathname.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -49,7 +50,7 @@ namespace Genie
 			const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 			
 			plus::string resolved = is_mac ? mac_pathname_from_file( file )
-			                               : file->Pathname();
+			                               : pathname( file.get() );
 			
 			if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )
 			{

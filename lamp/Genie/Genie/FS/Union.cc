@@ -22,6 +22,7 @@
 #include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/Iterate.hh"
 #include "Genie/FS/dir_method_set.hh"
+#include "Genie/FS/lookup.hh"
 #include "Genie/FS/node_method_set.hh"
 
 
@@ -54,7 +55,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr child = extra.top->Lookup( name, parent );
+			FSTreePtr child = lookup( extra.top, name, parent );
 			
 			if ( exists( child ) )
 			{
@@ -69,7 +70,7 @@ namespace Genie
 			}
 		}
 		
-		return extra.bottom->Lookup( name, parent );
+		return lookup( extra.bottom, name, parent );
 	}
 	
 	static void union_listdir( const FSTree*  node,

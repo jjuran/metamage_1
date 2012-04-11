@@ -9,7 +9,13 @@
 #include "iota/strings.hh"
 
 // Genie
+#include "Genie/FS/chdir.hh"
 #include "Genie/FS/file-tests.hh"
+#include "Genie/FS/hardlink.hh"
+#include "Genie/FS/open.hh"
+#include "Genie/FS/remove.hh"
+#include "Genie/FS/symlink.hh"
+#include "Genie/FS/touch.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Stream.hh"
 
@@ -19,12 +25,12 @@ namespace Genie
 	
 	static ssize_t Spew( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_TRUNC, 0 ).get() )->Write( buffer, length );
+		return IOHandle_Cast< StreamHandle >( open( file.get(), O_WRONLY | O_TRUNC, 0 ).get() )->Write( buffer, length );
 	}
 	
 	static ssize_t Append( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( file->Open( O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
+		return IOHandle_Cast< StreamHandle >( open( file.get(), O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
 	}
 	
 	static void MakeWindow( const IOPtr& port_dir )
@@ -42,7 +48,7 @@ namespace Genie
 		
 		if ( exists( view ) )
 		{
-			view->Delete();
+			remove( view.get() );
 			
 			view = ResolveRelativePath( STR_LEN( "view" ), port );
 		}
@@ -51,22 +57,22 @@ namespace Genie
 		
 		Spew( ResolveRelativePath( STR_LEN( "size" ),  port ), STR_LEN( "495x272" "\n" ) );
 		
-		window->SetTimes();
+		touch( window.get() );
 		
 		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), port ), STR_LEN( "4" "\n" ) );
 		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), port ), STR_LEN( "9" "\n" ) );
 		
-		ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) )->HardLink( view );
+		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
 		
 		FSTreePtr subview = ResolveRelativePath( STR_LEN( "view/v" ), port );
 		
-		ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) )->HardLink( subview );
+		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
 		
 		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "view/v/v" ), port );
 		
-		ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) )->HardLink( subsubview );
+		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
 		
-		ResolveRelativePath( STR_LEN( "view/target" ), port )->SymLink( "v/v" );
+		symlink( ResolveRelativePath( STR_LEN( "view/target" ), port ).get(), "v/v" );
 		
 		Spew( ResolveRelativePath( STR_LEN( "view/vertical"  ), port ), STR_LEN( "1" "\n" ) );
 		Spew( ResolveRelativePath( STR_LEN( "view/v/padding" ), port ), STR_LEN( "4" "\n" ) );
@@ -74,7 +80,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static IOPtr the_port = ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) )->ChangeToDirectory();
+		static IOPtr the_port = chdir( ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) ).get() );
 		
 		MakeWindow( the_port );
 		

@@ -14,6 +14,8 @@
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/readlink.hh"
+#include "Genie/FS/symlink.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -33,7 +35,7 @@ namespace Genie
 				return set_errno( EEXIST );
 			}
 			
-			link->SymLink( target_path );
+			symlink( link.get(), target_path );
 		}
 		catch ( ... )
 		{
@@ -74,7 +76,7 @@ namespace Genie
 				return set_errno( exists( link ) ? EINVAL : ENOENT );
 			}
 			
-			plus::string linkPath = link->ReadLink();
+			plus::string linkPath = readlink( link.get() );
 			
 			const bool too_big = linkPath.size() > buffer_size;
 			

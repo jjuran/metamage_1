@@ -72,6 +72,9 @@
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/chdir.hh"
+#include "Genie/FS/exec.hh"
+#include "Genie/FS/stat.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
@@ -604,7 +607,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( fs_info::create( FSRoot()->ChangeToDirectory() ) ),
+		its_fs_info           ( fs_info::create( chdir( FSRoot().get() ) ) ),
 		itsFileDescriptors    ( fd_table::create() ),
 		its_signal_handlers   ( signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
@@ -781,7 +784,7 @@ namespace Genie
 	{
 		struct ::stat sb;
 		
-		programFile->Stat( sb );
+		stat( programFile.get(), sb );
 		
 		if ( S_ISDIR( sb.st_mode ) )
 		{
@@ -890,7 +893,7 @@ namespace Genie
 		
 		itsProgramFile = context.executable;
 		
-		shared_exec_handle executable = itsProgramFile->GetExecutable();
+		shared_exec_handle executable = exec( itsProgramFile.get() );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -1051,7 +1054,7 @@ namespace Genie
 	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		its_fs_info->chdir( newCWD->ChangeToDirectory() );
+		its_fs_info->chdir( chdir( newCWD.get() ) );
 	}
 	
 	void Process::ResumeAfterFork()
