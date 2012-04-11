@@ -441,43 +441,58 @@ namespace Genie
 	}
 	
 	
-	class FSTree_Icon_data : public FSTree
+	struct icon_data_extra
 	{
-		private:
-			boost::intrusive_ptr< IconData > itsData;
-		
-		public:
-			FSTree_Icon_data( const FSTreePtr&                         parent,
-			                  const plus::string&                      name,
-			                  const boost::intrusive_ptr< IconData >&  data );
-			
-			off_t GetEOF() const;
-			
-			IOPtr Open( OpenFlags flags, mode_t mode ) const;
-			
-			void Attach( const FSTreePtr& target ) const;
+		IconData* data;
 	};
+	
+	static void dispose_icon_data( const FSTree* node )
+	{
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
+		
+		intrusive_ptr_release( extra.data );
+	}
 	
 	
 	static IOPtr icon_data_open( const FSTree* node, int flags, mode_t mode )
 	{
-		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
-		return file->Open( flags, mode );
+		const int accmode = flags & O_ACCMODE;
+		
+		IOHandle* result = NULL;
+		
+		switch ( accmode )
+		{
+			case O_RDONLY:
+				result = new IconDataFileHandle( node, flags, extra.data );
+				break;
+			
+			case O_WRONLY:
+				result = new IconDataWriterHandle( node, flags, extra.data );
+				break;
+			
+			default:
+				p7::throw_errno( EACCES );
+		}
+		
+		return IOPtr( result );
 	}
 	
 	static off_t icon_data_geteof( const FSTree* node )
 	{
-		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
-		return file->GetEOF();
+		return extra.data->GetSize();
 	}
 	
 	static void icon_data_attach( const FSTree* node, const FSTreePtr& target )
 	{
-		const FSTree_Icon_data* file = static_cast< const FSTree_Icon_data* >( node );
+		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
-		file->Attach( target );
+		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
+		
+		InvalidateWindowForView( node->owner() );
 	}
 	
 	static const data_method_set icon_data_data_methods =
@@ -510,52 +525,22 @@ namespace Genie
 	                                const plus::string&                      name,
 	                                const boost::intrusive_ptr< IconData >&  data )
 	{
-		return new FSTree_Icon_data( parent, name, data );
-	}
-	
-	FSTree_Icon_data::FSTree_Icon_data( const FSTreePtr&                         parent,
-	                                    const plus::string&                      name,
-	                                    const boost::intrusive_ptr< IconData >&  data )
-	:
-		FSTree( parent, name, S_IFREG | 0600, &icon_data_methods ),
-		itsData( data )
-	{
 		ASSERT( data.get() != NULL );
-	}
-	
-	off_t FSTree_Icon_data::GetEOF() const
-	{
-		return itsData->GetSize();
-	}
-	
-	IOPtr FSTree_Icon_data::Open( OpenFlags flags, mode_t mode ) const
-	{
-		const int accmode = flags & O_ACCMODE;
 		
-		IOHandle* result = NULL;
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0600,
+		                             &icon_data_methods,
+		                             sizeof (icon_data_extra),
+		                             &dispose_icon_data );
 		
-		switch ( accmode )
-		{
-			case O_RDONLY:
-				result = new IconDataFileHandle( Self(), flags, itsData );
-				break;
-			
-			case O_WRONLY:
-				result = new IconDataWriterHandle( Self(), flags, itsData );
-				break;
-			
-			default:
-				p7::throw_errno( EACCES );
-		}
+		icon_data_extra& extra = *(icon_data_extra*) result->extra();
 		
-		return IOPtr( result );
-	}
-	
-	void FSTree_Icon_data::Attach( const FSTreePtr& target ) const
-	{
-		itsData->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
+		intrusive_ptr_add_ref( data.get() );
 		
-		InvalidateWindowForView( owner() );
+		extra.data = data.get();
+		
+		return result;
 	}
 	
 }
