@@ -3,13 +3,9 @@
 	----------
 */
 
+// vfs
+#include "vfs/dir_contents_fwd.hh"
 
-namespace vfs
-{
-	
-	class dir_contents;
-	
-}
 
 namespace Genie
 {
