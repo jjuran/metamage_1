@@ -14,6 +14,7 @@
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/remove.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -42,7 +43,7 @@ namespace Genie
 			
 			if ( remove_any || remove_dir == is_directory( file ) )
 			{
-				file->Delete();
+				remove( file.get() );
 			}
 			else
 			{
