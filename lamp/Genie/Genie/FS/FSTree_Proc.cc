@@ -37,6 +37,7 @@
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/pathname.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/Device.hh"
@@ -390,7 +391,7 @@ namespace Genie
 				
 				if ( IOHandle* handle = term.get() )
 				{
-					terminal_name = handle->GetFile()->Pathname();
+					terminal_name = pathname( handle->GetFile().get() );
 					
 					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 					
