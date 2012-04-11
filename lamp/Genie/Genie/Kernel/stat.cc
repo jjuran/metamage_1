@@ -13,7 +13,10 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
+#include "Genie/FS/chmod.hh"
 #include "Genie/FS/file-tests.hh"
+#include "Genie/FS/geteof.hh"
+#include "Genie/FS/stat.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -66,7 +69,7 @@ namespace Genie
 				ResolveLinks_InPlace( file );
 			}
 			
-			file->ChangeMode( mode );
+			chmod( file.get(), mode );
 		}
 		catch ( ... )
 		{
@@ -80,7 +83,7 @@ namespace Genie
 	{
 		try
 		{
-			GetFileHandle( fd )->GetFile()->ChangeMode( mode );
+			chmod( GetFileHandle( fd )->GetFile().get(), mode );
 		}
 		catch ( ... )
 		{
@@ -106,11 +109,11 @@ namespace Genie
 				ResolveLinks_InPlace( file );
 			}
 			
-			file->Stat( *sb );
+			stat( file.get(), *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{
-				sb->st_size = file->GetEOF();
+				sb->st_size = geteof( file.get() );
 			}
 		}
 		catch ( ... )
@@ -132,7 +135,7 @@ namespace Genie
 		{
 			IOHandle& handle = *GetFileHandle( fd );
 			
-			handle.GetFile()->Stat( *sb );
+			stat( handle.GetFile().get(), *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{
