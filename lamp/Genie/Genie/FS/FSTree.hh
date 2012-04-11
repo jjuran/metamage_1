@@ -139,8 +139,6 @@ namespace Genie
 			
 			// Internal methods
 			
-			FSTreePtr ResolvePath( const char*& begin, const char* end ) const;
-			
 			void Attach( const FSTreePtr& target ) const;
 	};
 	

@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include "fcntl.h"
 #include "sys/stat.h"
@@ -534,21 +531,6 @@ namespace Genie
 		}
 		
 		throw p7::errno_t( ENOTDIR );
-	}
-	
-	FSTreePtr FSTree::ResolvePath( const char*& begin, const char* end ) const
-	{
-		ASSERT( begin < end );
-		
-		ASSERT( begin[0] != '/' );
-		
-		const char* slash = std::find( begin, end, '/' );
-		
-		plus::string name( begin, slash );
-		
-		begin = slash;
-		
-		return Lookup( name );
 	}
 	
 	void FSTree::Attach( const FSTreePtr& target ) const

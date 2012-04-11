@@ -5,6 +5,9 @@
 
 #include "Genie/FS/ResolvePathname.hh"
 
+// Standard C++
+#include <algorithm>
+
 // Debug
 #include "debug/assert.hh"
 
@@ -50,6 +53,21 @@ namespace Genie
 		return link_count > 0;
 	}
 	
+	static FSTreePtr ResolvePath( const FSTree* node, const char*& begin, const char* end )
+	{
+		ASSERT( begin < end );
+		
+		ASSERT( begin[0] != '/' );
+		
+		const char* slash = std::find( begin, end, '/' );
+		
+		plus::string name( begin, slash );
+		
+		begin = slash;
+		
+		return node->Lookup( name );
+	}
+	
 	FSTreePtr ResolveRelativePath( const char*       begin,
 	                               std::size_t       length,
 	                               const FSTreePtr&  current )
@@ -63,7 +81,7 @@ namespace Genie
 		
 		const char* end = begin + length;
 		
-		result = result->ResolvePath( begin, end );
+		result = ResolvePath( result.get(), begin, end );
 		
 		while ( begin < end )
 		{
@@ -86,7 +104,7 @@ namespace Genie
 			
 			if ( begin < end )
 			{
-				result = result->ResolvePath( begin, end );
+				result = ResolvePath( result.get(), begin, end );
 			}
 		}
 		
