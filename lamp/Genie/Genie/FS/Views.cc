@@ -277,8 +277,8 @@ namespace Genie
 	}
 	
 	
-	static void new_view_hardlink( const FSTree*     node,
-	                               const FSTreePtr&  dest );
+	static void new_view_hardlink( const FSTree*  node,
+	                               const FSTree*  dest );
 	
 	static const file_method_set new_view_file_methods =
 	{
@@ -344,8 +344,8 @@ namespace Genie
 		return delegate;
 	}
 	
-	static void new_view_hardlink( const FSTree*     node,
-	                               const FSTreePtr&  target )
+	static void new_view_hardlink( const FSTree*  node,
+	                               const FSTree*  target )
 	{
 		new_view_extra& extra = *(new_view_extra*) node->extra();
 		

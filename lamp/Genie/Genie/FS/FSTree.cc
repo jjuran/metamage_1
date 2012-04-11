@@ -267,7 +267,7 @@ namespace Genie
 		{
 			if ( file_methods->hardlink )
 			{
-				file_methods->hardlink( this, destination );
+				file_methods->hardlink( this, destination.get() );
 				
 				return;
 			}
