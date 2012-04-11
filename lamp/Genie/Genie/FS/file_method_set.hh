@@ -17,7 +17,7 @@ namespace Genie
 	class FSTree;
 	
 	typedef void (*attach_method  )( const FSTree*, const FSTree* );
-	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
+	typedef void (*copyfile_method)( const FSTree*, const FSTree* );
 	typedef void (*hardlink_method)( const FSTree*, const FSTreePtr& );
 	
 	typedef shared_exec_handle (*loadexec_method)( const FSTree* );

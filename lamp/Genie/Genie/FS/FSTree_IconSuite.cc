@@ -21,7 +21,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target );
+	static void iconsuite_copyfile( const FSTree* node, const FSTree* target );
 	
 	static const file_method_set iconsuite_file_methods =
 	{
@@ -69,7 +69,7 @@ namespace Genie
 		}
 	};
 	
-	static void iconsuite_copyfile( const FSTree* node, const FSTreePtr& target )
+	static void iconsuite_copyfile( const FSTree* node, const FSTree* target )
 	{
 		::IconSuiteRef extra = *(::IconSuiteRef*) node->extra();
 		

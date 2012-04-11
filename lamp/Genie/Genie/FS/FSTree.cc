@@ -286,7 +286,7 @@ namespace Genie
 		{
 			if ( file_methods->copyfile )
 			{
-				file_methods->copyfile( this, destination );
+				file_methods->copyfile( this, destination.get() );
 				
 				return;
 			}
