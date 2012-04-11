@@ -30,76 +30,30 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class FSTree_Union : public FSTree
+	struct union_extra
 	{
-		private:
-			FSTreePtr itsTop;
-			FSTreePtr itsBottom;
-		
-		public:
-			FSTree_Union( const FSTreePtr&     parent,
-			              const plus::string&  name,
-			              const FSTreePtr&     top,
-			              const FSTreePtr&     bottom );
-			
-			FSTreePtr Lookup_Child( const plus::string& name, const FSTree* parent ) const;
-			
-			void IterateIntoCache( FSTreeCache& cache ) const;
+		const FSTree* top;
+		const FSTree* bottom;
 	};
+	
+	static void dispose_union( const FSTree* node )
+	{
+		union_extra& extra = *(union_extra*) node->extra();
+		
+		intrusive_ptr_release( extra.top    );
+		intrusive_ptr_release( extra.bottom );
+	}
+	
 	
 	static FSTreePtr union_lookup( const FSTree*        node,
 	                               const plus::string&  name,
 	                               const FSTree*        parent )
 	{
-		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
+		union_extra& extra = *(union_extra*) node->extra();
 		
-		return file->Lookup_Child( name, parent );
-	}
-	
-	static void union_listdir( const FSTree*  node,
-	                           FSTreeCache&   cache )
-	{
-		const FSTree_Union* file = static_cast< const FSTree_Union* >( node );
-		
-		file->IterateIntoCache( cache );
-	}
-	
-	static const dir_method_set union_dir_methods =
-	{
-		&union_lookup,
-		&union_listdir
-	};
-	
-	static const node_method_set union_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&union_dir_methods
-	};
-	
-	
-	FSTree_Union::FSTree_Union( const FSTreePtr&     parent,
-	                            const plus::string&  name,
-	                            const FSTreePtr&     top,
-	                            const FSTreePtr&     bottom )
-	:
-		FSTree( parent, name, S_IFDIR | 0700, &union_methods ),
-		itsTop   ( top    ),
-		itsBottom( bottom )
-	{
-	}
-	
-	FSTreePtr FSTree_Union::Lookup_Child( const plus::string& name, const FSTree* parent ) const
-	{
 		try
 		{
-			FSTreePtr child = itsTop->Lookup( name, parent );
+			FSTreePtr child = extra.top->Lookup( name, parent );
 			
 			if ( exists( child ) )
 			{
@@ -114,14 +68,17 @@ namespace Genie
 			}
 		}
 		
-		return itsBottom->Lookup( name, parent );
+		return extra.bottom->Lookup( name, parent );
 	}
 	
-	void FSTree_Union::IterateIntoCache( FSTreeCache& cache ) const
+	static void union_listdir( const FSTree*  node,
+	                           FSTreeCache&   cache )
 	{
+		union_extra& extra = *(union_extra*) node->extra();
+		
 		std::set< plus::string > names_that_have_been_seen;
 		
-		FSIteratorPtr top = Genie::Iterate( itsTop );
+		FSIteratorPtr top = Genie::Iterate( extra.top );
 		
 		top->Advance();  // .
 		top->Advance();  // ..
@@ -142,7 +99,7 @@ namespace Genie
 			top->Advance();
 		}
 		
-		FSIteratorPtr bottom = Genie::Iterate( itsBottom );
+		FSIteratorPtr bottom = Genie::Iterate( extra.bottom );
 		
 		bottom->Advance();  // .
 		bottom->Advance();  // ..
@@ -165,12 +122,45 @@ namespace Genie
 		}
 	}
 	
+	static const dir_method_set union_dir_methods =
+	{
+		&union_lookup,
+		&union_listdir
+	};
+	
+	static const node_method_set union_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&union_dir_methods
+	};
+	
+	
 	FSTreePtr New_FSTree_Union( const FSTreePtr&     parent,
 	                            const plus::string&  name,
 	                            const FSTreePtr&     top,
 	                            const FSTreePtr&     bottom )
 	{
-		FSTree_Union* result = new FSTree_Union( parent, name, top, bottom );
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFDIR | 0700,
+		                             &union_methods,
+		                             sizeof (union_extra),
+		                             &dispose_union );
+		
+		union_extra& extra = *(union_extra*) result->extra();
+		
+		intrusive_ptr_add_ref( top   .get() );
+		intrusive_ptr_add_ref( bottom.get() );
+		
+		extra.top    = top.get();
+		extra.bottom = bottom.get();
 		
 		return result;
 	}
