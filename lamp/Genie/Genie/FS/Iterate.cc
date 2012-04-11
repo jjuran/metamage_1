@@ -7,6 +7,7 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreeCache_Impl.hh"
 #include "Genie/FS/inode.hh"
 #include "Genie/FS/listdir.hh"
