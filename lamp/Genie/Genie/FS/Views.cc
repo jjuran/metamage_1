@@ -31,7 +31,11 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
+#include "Genie/FS/listdir.hh"
+#include "Genie/FS/lookup.hh"
+#include "Genie/FS/mkdir.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/remove.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -150,7 +154,7 @@ namespace Genie
 			
 			try
 			{
-				delegate->Delete();
+				remove( delegate );
 			}
 			catch ( ... )
 			{
@@ -159,7 +163,7 @@ namespace Genie
 					// This might happen in __destroy_global_chain(),
 					// so don't ASSERT which relies on trashed infrastructure.
 					
-					::DebugStr( "\p" "Delegate's Delete() method may not throw" );
+					::DebugStr( "\p" "remove( delegate ) may not throw" );
 				}
 			}
 			
@@ -359,7 +363,7 @@ namespace Genie
 		
 		AddViewParameters( key, name, delegate, extra.view_factory );
 		
-		target->CreateDirectory( 0 );  // mode is ignored
+		mkdir( target, 0 );  // mode is ignored
 	}
 	
 	
@@ -456,13 +460,13 @@ namespace Genie
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return GetViewDelegate( node )->Lookup( real_name, NULL );
+		return lookup( GetViewDelegate( node ).get(), real_name, NULL );
 	}
 	
 	static void view_listdir( const FSTree*  node,
 	                          FSTreeCache&   cache )
 	{
-		GetViewDelegate( node )->IterateIntoCache( cache );
+		listdir( GetViewDelegate( node ).get(), cache );
 	}
 	
 	static const dir_method_set view_dir_methods =
