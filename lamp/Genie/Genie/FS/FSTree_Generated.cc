@@ -51,32 +51,17 @@ namespace Genie
 	};
 	
 	
-	class FSTree_Generated : public FSTree
+	struct generated_extra
 	{
-		private:
-			typedef Generated_ReadHook ReadHook;
-			
-			plus::string its_data;
-		
-		public:
-			FSTree_Generated( const FSTreePtr&     parent,
-			                  const plus::string&  name,
-			                  ReadHook             readHook )
-			:
-				FSTree( parent, name, S_IFREG | 0400, &generated_methods ),
-				its_data( readHook( parent.get(), name ) )
-			{
-			}
-			
-			const plus::string& data() const  { return its_data; }
+		plus::datum_storage datum;
 	};
 	
 	
 	static off_t generated_geteof( const FSTree* node )
 	{
-		const FSTree_Generated* file = static_cast< const FSTree_Generated* >( node );
+		const generated_extra& extra = *(generated_extra*) node->extra();
 		
-		return file->data().size();
+		return plus::size( extra.datum );
 	}
 	
 	static IOPtr generated_open( const FSTree* node, int flags, mode_t mode )
@@ -86,11 +71,20 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		const FSTree_Generated* file = static_cast< const FSTree_Generated* >( node );
+		generated_extra& extra = *(generated_extra*) node->extra();
+		
+		plus::string& string = reinterpret_cast< plus::string& >( extra.datum );
 		
 		return new PropertyReaderFileHandle( node,
 		                                     flags,
-		                                     file->data() );
+		                                     string );
+	}
+	
+	static void dispose_generated( const FSTree* node )
+	{
+		generated_extra& extra = *(generated_extra*) node->extra();
+		
+		plus::destroy( extra.datum );
 	}
 	
 	FSTreePtr new_generated( const FSTreePtr&     parent,
@@ -99,7 +93,20 @@ namespace Genie
 	{
 		Generated_ReadHook readHook = (Generated_ReadHook) params;
 		
-		return new FSTree_Generated( parent, name, readHook );
+		plus::string data = readHook( parent.get(), name );
+		
+		FSTree* result = new FSTree( parent,
+		                             name,
+		                             S_IFREG | 0400,
+		                             &generated_methods,
+		                             sizeof (generated_extra),
+		                             &dispose_generated );
+		
+		generated_extra& extra = *(generated_extra*) result->extra();
+		
+		plus::construct_from_move( extra.datum, data.move() );
+		
+		return result;
 	}
 	
 }
