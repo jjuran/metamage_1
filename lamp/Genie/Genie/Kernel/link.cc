@@ -19,6 +19,7 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/hardlink.hh"
 #include "Genie/Kernel/make_alias.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -64,7 +65,7 @@ namespace Genie
 			}
 			else
 			{
-				oldFile->HardLink( newFile );
+				hardlink( oldFile.get(), newFile.get() );
 			}
 		}
 		catch ( ... )
