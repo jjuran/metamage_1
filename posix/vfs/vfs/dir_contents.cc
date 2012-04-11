@@ -5,6 +5,9 @@
 
 #include "vfs/dir_contents_impl.hh"
 
+// vfs
+#include "vfs/dir_entry.hh"
+
 
 namespace vfs
 {
