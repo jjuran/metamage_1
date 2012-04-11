@@ -49,6 +49,7 @@
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/FS/attach.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/DynamicGroup.hh"
@@ -736,7 +737,7 @@ namespace Genie
 	
 	static void console_tty_rename( const FSTree* node, const FSTree* destination )
 	{
-		destination->Attach( node );
+		attach( destination, node );
 	}
 	
 	static inline IOPtr
