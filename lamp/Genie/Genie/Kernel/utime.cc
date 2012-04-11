@@ -11,6 +11,8 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/touch.hh"
+#include "Genie/FS/utime.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -55,11 +57,11 @@ namespace Genie
 			
 			if ( merely_touch( times ) )
 			{
-				file->SetTimes();
+				touch( file.get() );
 			}
 			else
 			{
-				file->SetTimes( times );
+				utime( file.get(), times );
 			}
 		}
 		catch ( ... )
