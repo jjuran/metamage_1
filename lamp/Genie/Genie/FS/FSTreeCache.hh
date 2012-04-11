@@ -9,9 +9,6 @@
 // vfs
 #include "vfs/dir_contents.hh"
 
-// Genie
-#include "Genie/FS/FSNode.hh"
-
 
 namespace Genie
 {

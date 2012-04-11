@@ -12,9 +12,11 @@
 // plus
 #include "plus/ref_count.hh"
 
+// vfs
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/FSIteratorPtr.hh"
-#include "Genie/FS/FSNode.hh"
 #include "Genie/FS/FSTreePtr.hh"
 
 
