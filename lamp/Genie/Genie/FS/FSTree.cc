@@ -541,7 +541,7 @@ namespace Genie
 		{
 			if ( file_methods->attach )
 			{
-				file_methods->attach( this, target );
+				file_methods->attach( this, target.get() );
 				
 				return;
 			}

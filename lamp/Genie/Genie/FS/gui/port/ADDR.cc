@@ -604,7 +604,7 @@ namespace Genie
 	
 	static IOPtr port_tty_open( const FSTree* node, int flags, mode_t mode );
 	
-	static void port_tty_attach( const FSTree* node, const FSTreePtr& target )
+	static void port_tty_attach( const FSTree* node, const FSTree* target )
 	{
 		gWindowParametersMap[ node->owner() ].itsTTYDelegate = target;
 	}
