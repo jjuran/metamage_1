@@ -9,9 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
-
 
 // #include <time.h>
 struct timespec;
@@ -34,7 +31,7 @@ namespace Genie
 	
 	typedef void (*remove_method)( const FSTree* );
 	
-	typedef void (*rename_method)( const FSTree*, const FSTreePtr& );
+	typedef void (*rename_method)( const FSTree*, const FSTree* );
 	
 	struct data_method_set;
 	struct link_method_set;

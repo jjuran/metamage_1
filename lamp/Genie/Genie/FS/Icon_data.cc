@@ -490,7 +490,7 @@ namespace Genie
 		return extra.data->GetSize();
 	}
 	
-	static void icon_data_attach( const FSTree* node, const FSTreePtr& target )
+	static void icon_data_attach( const FSTree* node, const FSTree* target )
 	{
 		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		

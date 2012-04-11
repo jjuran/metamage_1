@@ -8,7 +8,6 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie
@@ -16,9 +15,9 @@ namespace Genie
 	
 	class FSTree;
 	
-	typedef void (*attach_method  )( const FSTree*, const FSTreePtr& );
-	typedef void (*copyfile_method)( const FSTree*, const FSTreePtr& );
-	typedef void (*hardlink_method)( const FSTree*, const FSTreePtr& );
+	typedef void (*attach_method  )( const FSTree*, const FSTree* );
+	typedef void (*copyfile_method)( const FSTree*, const FSTree* );
+	typedef void (*hardlink_method)( const FSTree*, const FSTree* );
 	
 	typedef shared_exec_handle (*loadexec_method)( const FSTree* );
 	

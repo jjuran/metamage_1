@@ -331,8 +331,8 @@ namespace Genie
 	
 	static void hfs_remove( const FSTree* node );
 	
-	static void hfs_rename( const FSTree*     node,
-	                        const FSTreePtr&  destination );
+	static void hfs_rename( const FSTree*  node,
+	                        const FSTree*  destination );
 	
 	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode );
 	
@@ -359,8 +359,8 @@ namespace Genie
 	
 	static IOPtr hfs_opendir( const FSTree* node );
 	
-	static void hfs_copyfile( const FSTree*     node,
-	                          const FSTreePtr&  dest );
+	static void hfs_copyfile( const FSTree*  node,
+	                          const FSTree*  dest );
 	
 	static shared_exec_handle hfs_loadexec( const FSTree* node );
 	
@@ -458,8 +458,8 @@ namespace Genie
 		                                   preflight ) );
 	}
 	
-	static void hfs_copyfile( const FSTree*     node,
-	                          const FSTreePtr&  destination )
+	static void hfs_copyfile( const FSTree*  node,
+	                          const FSTree*  destination )
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		
@@ -682,8 +682,8 @@ namespace Genie
 		return spec;
 	}
 	
-	static void hfs_rename( const FSTree*     node,
-	                        const FSTreePtr&  destFile )
+	static void hfs_rename( const FSTree*  node,
+	                        const FSTree*  destFile )
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		

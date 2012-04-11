@@ -251,7 +251,7 @@ namespace Genie
 	{
 		if ( its_methods  &&  its_methods->rename )
 		{
-			its_methods->rename( this, destination );
+			its_methods->rename( this, destination.get() );
 		}
 		else
 		{
@@ -267,7 +267,7 @@ namespace Genie
 		{
 			if ( file_methods->hardlink )
 			{
-				file_methods->hardlink( this, destination );
+				file_methods->hardlink( this, destination.get() );
 				
 				return;
 			}
@@ -286,7 +286,7 @@ namespace Genie
 		{
 			if ( file_methods->copyfile )
 			{
-				file_methods->copyfile( this, destination );
+				file_methods->copyfile( this, destination.get() );
 				
 				return;
 			}
@@ -541,7 +541,7 @@ namespace Genie
 		{
 			if ( file_methods->attach )
 			{
-				file_methods->attach( this, target );
+				file_methods->attach( this, target.get() );
 				
 				return;
 			}

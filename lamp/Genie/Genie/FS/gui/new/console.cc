@@ -734,7 +734,7 @@ namespace Genie
 	}
 	
 	
-	static void console_tty_rename( const FSTree* node, const FSTreePtr& destination )
+	static void console_tty_rename( const FSTree* node, const FSTree* destination )
 	{
 		destination->Attach( node );
 	}
