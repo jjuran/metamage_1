@@ -19,6 +19,8 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/geteof.hh"
+#include "Genie/FS/seteof.hh"
 #include "Genie/mmap/Handle_memory_mapping.hh"
 
 
@@ -133,12 +135,12 @@ namespace Genie
 	
 	off_t RegularFileHandle::GetEOF()
 	{
-		return GetFile()->GetEOF();
+		return geteof( GetFile().get() );
 	}
 	
 	void RegularFileHandle::SetEOF( off_t length )
 	{
-		GetFile()->SetEOF( length );
+		seteof( GetFile().get(), length );
 	}
 	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
