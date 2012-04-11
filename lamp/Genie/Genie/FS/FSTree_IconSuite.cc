@@ -10,6 +10,7 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
+#include "Genie/FS/attach.hh"
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
@@ -75,7 +76,7 @@ namespace Genie
 		
 		stored_IconSuite_scope scope( extra );
 		
-		target->Attach( node );
+		attach( target, node );
 	}
 	
 	
