@@ -10,6 +10,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/copyfile.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -24,7 +25,7 @@ int copyfileat( int olddirfd, const char* oldpath, int newdirfd, const char* new
 		
 		// Do not resolve links
 		
-		srcFile->CopyFile( destFile );
+		copyfile( srcFile.get(), destFile.get() );
 	}
 	catch ( ... )
 	{
