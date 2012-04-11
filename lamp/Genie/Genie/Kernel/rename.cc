@@ -7,6 +7,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
+#include "Genie/FS/rename.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -22,7 +23,7 @@ namespace Genie
 			
 			// Do not resolve links
 			
-			srcFile->Rename( destFile );
+			rename( srcFile.get(), destFile.get() );
 		}
 		catch ( ... )
 		{
