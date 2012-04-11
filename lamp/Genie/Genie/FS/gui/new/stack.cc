@@ -164,7 +164,7 @@ namespace Genie
 	
 	static FSTreePtr stack_lookup( const FSTree* node, const plus::string& name, const FSTree* parent )
 	{
-		return New_View( parent->Self(), name, get_subview, delete_subview );
+		return New_View( parent, name, get_subview, delete_subview );
 	}
 	
 	
