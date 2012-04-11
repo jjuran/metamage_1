@@ -16,6 +16,8 @@
 
 // Genie
 #include "Genie/FS/file-tests.hh"
+#include "Genie/FS/lookup.hh"
+#include "Genie/FS/resolve.hh"
 
 
 namespace Genie
@@ -28,7 +30,7 @@ namespace Genie
 	{
 		if ( is_symlink( file ) )
 		{
-			file = file->ResolveLink();
+			file = resolve( file.get() );
 			
 			return true;
 		}
@@ -65,7 +67,7 @@ namespace Genie
 		
 		begin = slash;
 		
-		return node->Lookup( name );
+		return lookup( node, name );
 	}
 	
 	FSTreePtr ResolveRelativePath( const char*       begin,
