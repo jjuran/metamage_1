@@ -16,6 +16,8 @@
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
+#include "Genie/FS/open.hh"
+#include "Genie/FS/opendir.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -72,8 +74,8 @@ namespace Genie
 				return set_errno( exists( file ) ? ENOTDIR : ENOENT );
 			}
 			
-			IOPtr opened = directory ? file->OpenDirectory()
-			                         : file->Open( flags, mode );
+			IOPtr opened = directory ? opendir( file.get()              )
+			                         : open   ( file.get(), flags, mode );
 			
 			const bool truncating = flags & O_TRUNC;
 			
