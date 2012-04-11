@@ -82,6 +82,8 @@ namespace Genie
 			
 			mode_t FileMode() const  { return itsMode; }
 			
+			const node_method_set* methods() const  { return its_methods; }
+			
 			void* extra() const  { return its_extra; }
 			
 			node_destructor destructor() const  { return its_destructor; }
