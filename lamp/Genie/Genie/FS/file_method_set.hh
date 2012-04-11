@@ -8,7 +8,6 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie
