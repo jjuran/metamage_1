@@ -50,7 +50,10 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
+#include "Genie/FS/lookup.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/open.hh"
+#include "Genie/FS/pathname.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
@@ -470,7 +473,7 @@ namespace Genie
 	{
 		const FSTree* parent = node->owner();
 		
-		const FSTreePtr targeted_file = ResolvePathname( target, parent )->Lookup( plus::string::null );
+		const FSTreePtr targeted_file = lookup( ResolvePathname( target, parent ).get(), plus::string::null );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
 		
@@ -651,11 +654,11 @@ namespace Genie
 		
 		if ( has_tty )
 		{
-			tty = params.itsTTYDelegate->Open( flags, 0 );
+			tty = open( params.itsTTYDelegate.get(), flags, 0 );
 		}
 		
-		plus::string pathname = ( has_tty ? tty->GetFile().get()
-		                                  : node                 )->Pathname();
+		plus::string pathname = Genie::pathname( has_tty ? tty->GetFile().get()
+		                                                 : node                 );
 		
 		IOPtr terminal = NewTerminal( pathname );
 		
