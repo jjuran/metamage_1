@@ -160,7 +160,7 @@ namespace Genie
 			
 			name += make_utf8_quad_name( it->first );
 			
-			cache.push_back( FSNode( inode, name ) );
+			cache.push_back( vfs::dir_entry( inode, name ) );
 		}
 	}
 	

@@ -114,13 +114,13 @@ namespace Genie
 	class gdev_IteratorConverter
 	{
 		public:
-			FSNode operator()( GDHandle gdH ) const
+			vfs::dir_entry operator()( GDHandle gdH ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = plus::encode_32_bit_hex( (unsigned) gdH );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

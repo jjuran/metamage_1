@@ -79,7 +79,7 @@ namespace Genie
 				
 				name += make_quad_name( type );
 				
-				const FSNode node( info.id, name );
+				const vfs::dir_entry node( info.id, name );
 				
 				cache.push_back( node );
 			}

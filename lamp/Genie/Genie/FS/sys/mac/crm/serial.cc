@@ -87,7 +87,7 @@ namespace Genie
 	class crm_IteratorConverter
 	{
 		public:
-			FSNode operator()( const N::CRMSerialDevice_Container::value_type& rec ) const
+			vfs::dir_entry operator()( const N::CRMSerialDevice_Container::value_type& rec ) const
 			{
 				const int key = rec->crmDeviceID;
 				
@@ -95,7 +95,7 @@ namespace Genie
 				
 				plus::string name = gear::inscribe_decimal( key );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

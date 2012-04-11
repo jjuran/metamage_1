@@ -57,13 +57,13 @@ namespace Genie
 	class window_IteratorConverter
 	{
 		public:
-			FSNode operator()( WindowRef window ) const
+			vfs::dir_entry operator()( WindowRef window ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = plus::encode_32_bit_hex( (unsigned) window );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

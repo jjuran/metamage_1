@@ -1087,7 +1087,7 @@ namespace Genie
 				
 				N::CopyToPascalString( pb.items[ j ].name, item.name, sizeof item.name - 1 );
 				
-				const FSNode node( inode, GetUnixName( item ) );
+				const vfs::dir_entry node( inode, GetUnixName( item ) );
 				
 				cache.push_back( node );
 			}

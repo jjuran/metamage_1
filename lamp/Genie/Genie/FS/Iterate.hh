@@ -26,7 +26,7 @@ namespace Genie
 		public:
 			virtual ~FSIterator();
 			
-			virtual FSNode Get() const = 0;
+			virtual vfs::dir_entry Get() const = 0;
 			
 			virtual void Advance() = 0;
 			

@@ -154,13 +154,13 @@ namespace Genie
 	class psn_IteratorConverter
 	{
 		public:
-			FSNode operator()( const ProcessSerialNumber& psn ) const
+			vfs::dir_entry operator()( const ProcessSerialNumber& psn ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = encoded_ProcessSerialNumber( psn );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

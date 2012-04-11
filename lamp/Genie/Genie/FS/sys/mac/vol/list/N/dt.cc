@@ -214,7 +214,7 @@ namespace Genie
 				break;
 			}
 			
-			cache.push_back( FSNode( index, gear::inscribe_unsigned_decimal( index ) ) );
+			cache.push_back( vfs::dir_entry( index, gear::inscribe_unsigned_decimal( index ) ) );
 		}
 	}
 	
@@ -345,7 +345,7 @@ namespace Genie
 				break;
 			}
 			
-			cache.push_back( FSNode( selector, gear::inscribe_unsigned_decimal( selector ) ) );
+			cache.push_back( vfs::dir_entry( selector, gear::inscribe_unsigned_decimal( selector ) ) );
 		}
 	}
 	

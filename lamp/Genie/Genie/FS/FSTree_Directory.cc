@@ -121,7 +121,7 @@ namespace Genie
 				
 				ino_t inode = 0;
 				
-				cache.push_back( FSNode( inode, name ) );
+				cache.push_back( vfs::dir_entry( inode, name ) );
 			}
 			catch ( ... )
 			{

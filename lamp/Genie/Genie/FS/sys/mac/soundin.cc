@@ -103,13 +103,13 @@ namespace Genie
 			{
 			}
 			
-			FSNode operator()()
+			vfs::dir_entry operator()()
 			{
 				const ino_t inode = ++its_index;
 				
 				plus::string name = gear::inscribe_decimal( its_index );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

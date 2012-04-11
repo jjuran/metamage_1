@@ -322,7 +322,7 @@ namespace Genie
 	class unit_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::UnitTableDrivers_Container::const_reference ref ) const
+			vfs::dir_entry operator()( N::UnitTableDrivers_Container::const_reference ref ) const
 			{
 				const int i = &ref - GetUTableBase();
 				
@@ -330,7 +330,7 @@ namespace Genie
 				
 				plus::string name = gear::inscribe_decimal( i );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

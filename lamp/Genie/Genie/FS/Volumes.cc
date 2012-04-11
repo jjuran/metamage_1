@@ -143,7 +143,7 @@ namespace Genie
 			
 			const plus::string name = plus::utf8_from_mac( colons_from_slashes( mac_name ) );
 			
-			cache.push_back( FSNode( inode, name ) );
+			cache.push_back( vfs::dir_entry( inode, name ) );
 		}
 	}
 	

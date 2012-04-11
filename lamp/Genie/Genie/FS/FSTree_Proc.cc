@@ -79,7 +79,7 @@ namespace Genie
 		
 		FSTreeCache& cache = *(FSTreeCache*) param;
 		
-		cache.push_back( FSNode( inode, name ) );
+		cache.push_back( vfs::dir_entry( inode, name ) );
 	}
 	
 	static FSTreePtr proc_fd_lookup( const FSTree*        node,
@@ -247,7 +247,7 @@ namespace Genie
 		
 		FSTreeCache& cache = *(FSTreeCache*) param;
 		
-		cache.push_back( FSNode( inode, name ) );
+		cache.push_back( vfs::dir_entry( inode, name ) );
 		
 		return NULL;
 	}

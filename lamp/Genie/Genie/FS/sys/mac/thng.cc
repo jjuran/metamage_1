@@ -217,13 +217,13 @@ namespace Genie
 	class thng_IteratorConverter
 	{
 		public:
-			FSNode operator()( Component component ) const
+			vfs::dir_entry operator()( Component component ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = plus::encode_32_bit_hex( (unsigned) component );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

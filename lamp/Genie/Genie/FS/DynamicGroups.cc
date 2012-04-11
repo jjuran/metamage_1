@@ -38,7 +38,7 @@ namespace Genie
 	class DynamicGroup_IteratorConverter
 	{
 		public:
-			FSNode operator()( const DynamicGroup::value_type& value ) const
+			vfs::dir_entry operator()( const DynamicGroup::value_type& value ) const
 			{
 				const unsigned id = value.first;
 				
@@ -46,7 +46,7 @@ namespace Genie
 				
 				const plus::string name = gear::inscribe_unsigned_decimal( id );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

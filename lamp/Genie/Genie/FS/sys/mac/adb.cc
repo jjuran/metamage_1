@@ -102,13 +102,13 @@ namespace Genie
 	class adb_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::ADBAddress addr ) const
+			vfs::dir_entry operator()( N::ADBAddress addr ) const
 			{
 				const ino_t inode = addr;
 				
 				plus::string name( 1, gear::encoded_hex_char( addr ) );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

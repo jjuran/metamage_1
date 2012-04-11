@@ -83,13 +83,13 @@ namespace Genie
 	class drive_IteratorConverter
 	{
 		public:
-			FSNode operator()( const N::DriveQueue_Sequence::value_type& value ) const
+			vfs::dir_entry operator()( const N::DriveQueue_Sequence::value_type& value ) const
 			{
 				const ino_t inode = value.dQDrive;
 				
 				plus::string name = gear::inscribe_decimal( value.dQDrive );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

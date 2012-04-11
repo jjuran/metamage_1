@@ -171,11 +171,11 @@ namespace Genie
 	class Stack_IteratorConverter
 	{
 		public:
-			FSNode operator()( const ViewList::value_type& value ) const
+			vfs::dir_entry operator()( const ViewList::value_type& value ) const
 			{
 				const ino_t inode = 0;
 				
-				return FSNode( inode, value.name );
+				return vfs::dir_entry( inode, value.name );
 			}
 	};
 	

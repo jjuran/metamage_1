@@ -83,7 +83,7 @@ namespace Genie
 	
 	int DirHandle::ReadDir( dirent& entry )
 	{
-		FSNode node = Iterator()->Get();
+		vfs::dir_entry node = Iterator()->Get();
 		
 		if ( node.name.empty() )
 		{

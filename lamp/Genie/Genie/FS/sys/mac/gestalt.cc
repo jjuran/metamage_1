@@ -188,7 +188,7 @@ namespace Genie
 	class gestalt_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::Gestalt_Selector selector ) const
+			vfs::dir_entry operator()( N::Gestalt_Selector selector ) const
 			{
 				const bool valid = is_valid_Gestalt_Selector( selector );
 				
@@ -203,7 +203,7 @@ namespace Genie
 				
 				name += make_utf8_quad_name( selector );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

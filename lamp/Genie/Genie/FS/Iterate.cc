@@ -28,12 +28,12 @@ namespace Genie
 		public:
 			FSIterator_Cache( const FSTreeCachePtr& cache ) : contents( cache ), nextOffset( 0 )  {}
 			
-			FSNode Get() const
+			vfs::dir_entry Get() const
 			{
 				const FSTreeCache_Impl* impl = static_cast< const FSTreeCache_Impl* >( contents.get() );
 				
 				return nextOffset < impl->size() ? impl->at( nextOffset )
-				                                 : FSNode();
+				                                 : vfs::dir_entry();
 			}
 			
 			void Advance()  { ++nextOffset; }
@@ -54,8 +54,8 @@ namespace Genie
 	{
 		FSTreeCache_Impl cache;
 		
-		cache.push_back( FSNode( inode       ( dir.get() ), "."  ) );
-		cache.push_back( FSNode( parent_inode( dir.get() ), ".." ) );
+		cache.push_back( vfs::dir_entry( inode       ( dir.get() ), "."  ) );
+		cache.push_back( vfs::dir_entry( parent_inode( dir.get() ), ".." ) );
 		
 		listdir( dir.get(), cache );
 		

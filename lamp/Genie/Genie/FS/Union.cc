@@ -87,7 +87,7 @@ namespace Genie
 		
 		while ( true )
 		{
-			FSNode node = top->Get();
+			vfs::dir_entry node = top->Get();
 			
 			if ( node.name.empty() )
 			{
@@ -108,7 +108,7 @@ namespace Genie
 		
 		while ( true )
 		{
-			FSNode node = bottom->Get();
+			vfs::dir_entry node = bottom->Get();
 			
 			if ( node.name.empty() )
 			{

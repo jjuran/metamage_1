@@ -60,7 +60,7 @@ namespace Genie
 			
 			MenuID id = GetMenuID( menu.menu );
 			
-			cache.push_back( FSNode( id, gear::inscribe_decimal( id ) ) );
+			cache.push_back( vfs::dir_entry( id, gear::inscribe_decimal( id ) ) );
 		}
 		
 	#endif

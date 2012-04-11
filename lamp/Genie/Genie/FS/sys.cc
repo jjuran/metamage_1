@@ -108,13 +108,13 @@ namespace Genie
 	class syscall_IteratorConverter
 	{
 		public:
-			FSNode operator()( const SystemCall& value ) const
+			vfs::dir_entry operator()( const SystemCall& value ) const
 			{
 				const ino_t inode = &value - GetSystemCall( 0 );
 				
 				plus::string name = name_of_syscall( &value );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

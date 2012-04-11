@@ -199,13 +199,13 @@ namespace Genie
 	class vol_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::FSVolumeRefNum vRefNum ) const
+			vfs::dir_entry operator()( N::FSVolumeRefNum vRefNum ) const
 			{
 				const ino_t inode = -vRefNum;
 				
 				plus::string name = gear::inscribe_decimal( -vRefNum );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	

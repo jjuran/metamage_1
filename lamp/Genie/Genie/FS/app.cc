@@ -130,7 +130,7 @@ namespace Genie
 				
 				const plus::string& name = it->first;
 				
-				cache.push_back( FSNode( inode, name ) );
+				cache.push_back( vfs::dir_entry( inode, name ) );
 			}
 		}
 	}

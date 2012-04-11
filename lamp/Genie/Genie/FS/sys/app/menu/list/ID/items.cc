@@ -67,7 +67,7 @@ namespace Genie
 		
 		for ( int i = 1;  i <= n_items;  ++i )
 		{
-			cache.push_back( FSNode( i, gear::inscribe_decimal( i ) ) );
+			cache.push_back( vfs::dir_entry( i, gear::inscribe_decimal( i ) ) );
 		}
 	}
 	
