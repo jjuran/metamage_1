@@ -5,9 +5,11 @@
 
 #include "Genie/FS/Iterate.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreeCache_Impl.hh"
 #include "Genie/FS/inode.hh"
 #include "Genie/FS/listdir.hh"
@@ -17,7 +19,7 @@
 namespace Genie
 {
 	
-	typedef boost::intrusive_ptr< const FSTreeCache > FSTreeCachePtr;
+	typedef boost::intrusive_ptr< const vfs::dir_contents > FSTreeCachePtr;
 	
 	class FSIterator_Cache : public FSIterator
 	{

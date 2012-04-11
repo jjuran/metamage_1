@@ -21,10 +21,13 @@
 // Nitrogen
 #include "Nitrogen/Sound.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
@@ -124,7 +127,7 @@ namespace Genie
 		return distance( N::SoundInputDevice_Names() );
 	}
 	
-	static void soundin_Iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void soundin_Iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		const std::size_t n = Count_SoundInputDevices();
 		

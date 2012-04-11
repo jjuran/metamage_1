@@ -29,8 +29,8 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const FSTree*        parent );
 	
-	static void basic_listdir( const FSTree*  node,
-	                           FSTreeCache&   cache );
+	static void basic_listdir( const FSTree*       node,
+	                           vfs::dir_contents&  cache );
 	
 	static const dir_method_set basic_dir_methods =
 	{
@@ -61,8 +61,8 @@ namespace Genie
 		return extra.lookup( parent, name );
 	}
 	
-	static void basic_listdir( const FSTree*  node,
-	                           FSTreeCache&   cache )
+	static void basic_listdir( const FSTree*       node,
+	                           vfs::dir_contents&  cache )
 	{
 		basic_dir_extra& extra = *(basic_dir_extra*) node->extra();
 		

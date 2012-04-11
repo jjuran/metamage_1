@@ -31,11 +31,14 @@
 // Arcana
 #include "ADB/Protocol.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -112,7 +115,7 @@ namespace Genie
 			}
 	};
 	
-	static void adb_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void adb_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		adb_IteratorConverter converter;
 		

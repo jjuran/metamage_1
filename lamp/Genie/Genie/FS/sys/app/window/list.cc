@@ -17,10 +17,13 @@
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/sys/app/window/list/REF.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 #include "Genie/Utilities/WindowList_contains.hh"
@@ -67,7 +70,7 @@ namespace Genie
 			}
 	};
 	
-	static void WindowRef_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void WindowRef_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		window_IteratorConverter converter;
 		

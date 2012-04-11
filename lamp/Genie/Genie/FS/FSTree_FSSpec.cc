@@ -55,6 +55,10 @@
 // MacLamp
 #include "FSSpec_from_stat.h"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/code/executable_file.hh"
 #include "Genie/code/prepare_executable.hh"
@@ -62,7 +66,6 @@
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
@@ -353,8 +356,8 @@ namespace Genie
 	                             const plus::string&  name,
 	                             const FSTree*        parent );
 	
-	static void hfs_listdir( const FSTree*  node,
-	                         FSTreeCache&   cache );
+	static void hfs_listdir( const FSTree*       node,
+	                         vfs::dir_contents&  cache );
 	
 	static void hfs_mkdir( const FSTree*  node,
 	                       mode_t         mode );
@@ -1033,7 +1036,7 @@ namespace Genie
 	}
 	
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
-	                                   FSTreeCache&                  cache )
+	                                   vfs::dir_contents&            cache )
 	{
 		FSSpec item = { pb.dirInfo.ioVRefNum, pb.dirInfo.ioDrDirID };
 		
@@ -1103,8 +1106,8 @@ namespace Genie
 	
 #endif
 	
-	static void hfs_listdir( const FSTree*  node,
-	                         FSTreeCache&   cache )
+	static void hfs_listdir( const FSTree*       node,
+	                         vfs::dir_contents&  cache )
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		

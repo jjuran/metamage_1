@@ -17,9 +17,12 @@
 // Pedestal
 #include "Pedestal/Stack.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/dir_method_set.hh"
@@ -179,7 +182,7 @@ namespace Genie
 			}
 	};
 	
-	static void stack_listdir( const FSTree* node, FSTreeCache& cache )
+	static void stack_listdir( const FSTree* node, vfs::dir_contents& cache )
 	{
 		typedef ViewList Sequence;
 		

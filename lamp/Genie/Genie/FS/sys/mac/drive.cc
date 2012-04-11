@@ -24,10 +24,13 @@
 // ClassicToolbox
 #include "ClassicToolbox/Files.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/SymbolicLink.hh"
@@ -93,7 +96,7 @@ namespace Genie
 			}
 	};
 	
-	static void drive_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void drive_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		drive_IteratorConverter converter;
 		

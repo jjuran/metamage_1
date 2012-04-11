@@ -21,11 +21,14 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -199,7 +202,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &dt_appls_QUAD_list_N_methods );
 	}
 	
-	static void appl_QUAD_list_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void appl_QUAD_list_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		const FSTree* grandparent = parent->owner();
 		
@@ -315,7 +318,7 @@ namespace Genie
 		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
 	}
 	
-	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		const FSTree*   gparent = parent ->owner();
 		const FSTree* gggparent = gparent->owner()->owner();

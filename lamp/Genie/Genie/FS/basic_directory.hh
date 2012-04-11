@@ -8,8 +8,10 @@
 #ifndef GENIE_FS_BASICDIRECTORY_HH
 #define GENIE_FS_BASICDIRECTORY_HH
 
+// vfs
+#include "vfs/dir_contents_fwd.hh"
+
 // Genie
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreePtr.hh"
 
 
@@ -25,7 +27,7 @@ namespace Genie
 	
 	typedef FSTreePtr (*Lookup_Proc)( const FSTreePtr& parent, const plus::string& name );
 	
-	typedef void (*Iterate_Proc)( const FSTreePtr& parent, FSTreeCache& cache );
+	typedef void (*Iterate_Proc)( const FSTreePtr& parent, vfs::dir_contents& cache );
 	
 	
 	FSTreePtr new_basic_directory( const FSTreePtr&     parent,

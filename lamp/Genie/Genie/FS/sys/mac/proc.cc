@@ -20,11 +20,14 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
@@ -164,7 +167,7 @@ namespace Genie
 			}
 	};
 	
-	static void psn_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void psn_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		psn_IteratorConverter converter;
 		

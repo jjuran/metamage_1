@@ -27,10 +27,13 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
@@ -334,7 +337,7 @@ namespace Genie
 			}
 	};
 	
-	static void unit_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void unit_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		unit_IteratorConverter converter;
 		
