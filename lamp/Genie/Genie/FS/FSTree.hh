@@ -17,12 +17,19 @@
 #include "Genie/FS/FSTreePtr.hh"
 
 
+namespace vfs
+{
+	
+	struct node_method_set;
+	
+}
+
 namespace Genie
 {
 	
 	typedef void (*node_destructor)( const FSTree* );
 	
-	struct node_method_set;
+	using vfs::node_method_set;
 	
 	
 	extern const FSTreePtr null_FSTreePtr;

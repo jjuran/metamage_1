@@ -40,6 +40,24 @@ namespace Genie
 	struct file_method_set;
 	struct misc_method_set;
 	
+}
+
+namespace vfs
+{
+	
+	using Genie::stat_method;
+	using Genie::chmod_method;
+	using Genie::touch_method;
+	using Genie::utime_method;
+	using Genie::remove_method;
+	using Genie::rename_method;
+	
+	using Genie::data_method_set;
+	using Genie::link_method_set;
+	using Genie::dir_method_set;
+	using Genie::file_method_set;
+	using Genie::misc_method_set;
+	
 	struct node_method_set
 	{
 		stat_method     stat;
@@ -55,6 +73,13 @@ namespace Genie
 		const file_method_set*  file_methods;
 		const misc_method_set*  misc_methods;
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::node_method_set;
 	
 }
 
