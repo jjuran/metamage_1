@@ -110,7 +110,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_defaultkeys( const FSTreePtr&     parent,
+	FSTreePtr New_defaultkeys( const FSTree*        parent,
 	                           const plus::string&  name,
 	                           const void*          args )
 	{

@@ -467,7 +467,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Root_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Root_Factory( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
@@ -478,7 +478,7 @@ namespace Genie
 		return FSTreeFromFSDirSpec( volume );
 	}
 	
-	static FSTreePtr Drive_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Drive_Link_Factory( const FSTree*        parent,
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
@@ -500,7 +500,7 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, drive );
 	}
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Driver_Link_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
@@ -522,7 +522,7 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, unit );
 	}
 	
-	static FSTreePtr Folder_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Folder_Link_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
@@ -531,7 +531,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	
-	static FSTreePtr volume_trigger_factory( const FSTreePtr&     parent,
+	static FSTreePtr volume_trigger_factory( const FSTree*        parent,
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
@@ -595,7 +595,7 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

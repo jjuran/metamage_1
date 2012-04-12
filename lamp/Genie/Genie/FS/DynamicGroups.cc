@@ -109,7 +109,7 @@ namespace Genie
 		&dynamic_group_dir_methods
 	};
 	
-	FSTreePtr dynamic_group_factory( const FSTreePtr&     parent,
+	FSTreePtr dynamic_group_factory( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{

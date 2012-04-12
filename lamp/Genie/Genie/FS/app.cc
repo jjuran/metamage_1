@@ -139,7 +139,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr New_FSTree_app( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_app( const FSTree*        parent,
 	                          const plus::string&  name,
 	                          const void*          args )
 	{

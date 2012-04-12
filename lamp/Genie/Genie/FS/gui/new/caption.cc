@@ -242,7 +242,7 @@ namespace Genie
 		&caption_text_data_methods
 	};
 	
-	static FSTreePtr caption_text_factory( const FSTreePtr&     parent,
+	static FSTreePtr caption_text_factory( const FSTree*        parent,
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
@@ -280,7 +280,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_caption( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_caption( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

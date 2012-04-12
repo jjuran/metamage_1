@@ -495,14 +495,14 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr fd_Factory( const FSTreePtr&     parent,
+	static FSTreePtr fd_Factory( const FSTree*        parent,
 	                             const plus::string&  name,
 	                             const void*          args )
 	{
 		return new FSTree( parent, name, S_IFDIR | 0700, &proc_fd_methods );
 	}
 	
-	static FSTreePtr link_factory( const FSTreePtr&     parent,
+	static FSTreePtr link_factory( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
@@ -532,7 +532,7 @@ namespace Genie
 		&proc_pid_core_chmod
 	};
 	
-	static FSTreePtr core_Factory( const FSTreePtr&     parent,
+	static FSTreePtr core_Factory( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
@@ -627,7 +627,7 @@ namespace Genie
 		return get_proc_fd_handle( node )->GetFile();
 	}
 	
-	FSTreePtr New_FSTree_proc( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_proc( const FSTree*        parent,
 	                           const plus::string&  name,
 	                           const void*          args )
 	{

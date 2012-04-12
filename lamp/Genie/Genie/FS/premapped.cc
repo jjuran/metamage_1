@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	FSTreePtr premapped_factory( const FSTreePtr&     parent,
+	FSTreePtr premapped_factory( const FSTree*        parent,
 	                             const plus::string&  name,
 	                             const void*          args )
 	{

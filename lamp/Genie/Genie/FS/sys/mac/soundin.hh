@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_mac_soundin( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_soundin( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args );
 	

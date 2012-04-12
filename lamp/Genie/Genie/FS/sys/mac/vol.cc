@@ -121,7 +121,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr new_volume_link( const FSTreePtr&     parent,
+	static FSTreePtr new_volume_link( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

@@ -228,7 +228,7 @@ namespace Genie
 		gStack_Parameters_Map.erase( delegate );
 	}
 	
-	FSTreePtr New_stack( const FSTreePtr&     parent,
+	FSTreePtr New_stack( const FSTree*        parent,
 	                     const plus::string&  name,
 	                     const void*          args )
 	{

@@ -74,7 +74,7 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr New_FSTree_sys_app_menu_list_ID_items( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_menu_list_ID_items( const FSTree*        parent,
 	                                                 const plus::string&  name,
 	                                                 const void*          args )
 	{

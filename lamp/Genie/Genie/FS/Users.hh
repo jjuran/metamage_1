@@ -18,7 +18,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_Users( const FSTree*        parent,
 	                            const plus::string&  name,
 	                            const void*          args );
 	

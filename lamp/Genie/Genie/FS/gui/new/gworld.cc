@@ -237,11 +237,11 @@ namespace Genie
 		&gworld_pixels_data_methods
 	};
 	
-	static FSTreePtr gworld_pixels_factory( const FSTreePtr&     parent,
+	static FSTreePtr gworld_pixels_factory( const FSTree*        parent,
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
-		const mode_t mode = has_pixels( parent.get() ) ? S_IFREG | 0600 : 0;
+		const mode_t mode = has_pixels( parent ) ? S_IFREG | 0600 : 0;
 		
 		return new FSTree( parent, name, mode, &gworld_pixels_methods );
 	}
@@ -494,7 +494,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_gworld( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_gworld( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void* )
 	{

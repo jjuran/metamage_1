@@ -531,7 +531,7 @@ namespace Genie
 		return new_HFS_node( cInfo, name );
 	}
 	
-	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_Users( const FSTree*        parent,
 	                            const plus::string&  name,
 	                            const void*          args )
 	{

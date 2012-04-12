@@ -430,20 +430,20 @@ namespace Genie
 	
 	
 	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Trigger_Factory( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		WindowRef key = GetKeyFromParent( parent.get() );
+		WindowRef key = GetKeyFromParent( parent );
 		
 		return new Trigger( parent, name, key );
 	}
 	
-	static FSTreePtr window_trigger_factory( const FSTreePtr&     parent,
+	static FSTreePtr window_trigger_factory( const FSTree*        parent,
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
-		const WindowRef window = GetKeyFromParent( parent.get() );
+		const WindowRef window = GetKeyFromParent( parent );
 		
 		const trigger_extra extra = { &select_trigger, (intptr_t) window };
 		

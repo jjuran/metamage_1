@@ -776,7 +776,7 @@ namespace Genie
 		&console_tty_data_methods
 	};
 	
-	static FSTreePtr console_tty_factory( const FSTreePtr&     parent,
+	static FSTreePtr console_tty_factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
@@ -831,7 +831,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_console( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_console( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

@@ -21,7 +21,7 @@ namespace Genie
 	
 	// Can be used in premapped directory maps
 	
-	FSTreePtr new_property( const FSTreePtr&     parent,
+	FSTreePtr new_property( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          params );
 	

@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_new_caption( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_caption( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args );
 	

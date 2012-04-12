@@ -52,7 +52,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr new_front( const FSTreePtr&     parent,
+	static FSTreePtr new_front( const FSTree*        parent,
 	                            const plus::string&  name,
 	                            const void*          args )
 	{

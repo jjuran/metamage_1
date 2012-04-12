@@ -221,14 +221,14 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const FSTree*        parent,
 	                                                              const plus::string&  name,
 	                                                              const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &latest_appl_link_methods );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTree*        parent,
 	                                                            const plus::string&  name,
 	                                                            const void*          args )
 	{
@@ -315,7 +315,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
+		return New_FSTree_Generated( parent.get(), name, generate_dt_icons_QUAD_QUAD_X );
 	}
 	
 	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
@@ -366,21 +366,21 @@ namespace Genie
 		return new_basic_directory( parent, name, icon_QUAD_lookup, NULL );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_dir( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_dir( const FSTree*        parent,
 	                                                const plus::string&  name,
 	                                                const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &desktop_dir_methods );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTree*        parent,
 	                                                  const plus::string&  name,
 	                                                  const void*          args )
 	{
 		return new_basic_directory( parent, name, appl_lookup, NULL );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTree*        parent,
 	                                                  const plus::string&  name,
 	                                                  const void*          args )
 	{

@@ -82,7 +82,7 @@ namespace Genie
 		                converter );
 	}
 	
-	FSTreePtr New_FSTree_sys_app_window_list( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_window_list( const FSTree*        parent,
 	                                          const plus::string&  name,
 	                                          const void*          args )
 	{

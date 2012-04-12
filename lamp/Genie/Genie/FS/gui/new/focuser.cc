@@ -220,7 +220,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_focuser( const FSTreePtr&     parent,
+	FSTreePtr New_focuser( const FSTree*        parent,
 	                       const plus::string&  name,
 	                       const void*          args )
 	{

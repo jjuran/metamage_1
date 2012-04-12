@@ -101,7 +101,7 @@ namespace Genie
 		return window;
 	}
 	
-	FSTreePtr New_sys_port( const FSTreePtr&     parent,
+	FSTreePtr New_sys_port( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          args )
 	{

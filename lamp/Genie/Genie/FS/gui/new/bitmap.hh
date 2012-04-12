@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_new_bitmap( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_bitmap( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void* );
 	

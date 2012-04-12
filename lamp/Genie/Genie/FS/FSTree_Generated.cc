@@ -87,13 +87,13 @@ namespace Genie
 		plus::destroy( extra.datum );
 	}
 	
-	FSTreePtr new_generated( const FSTreePtr&     parent,
+	FSTreePtr new_generated( const FSTree*        parent,
 	                         const plus::string&  name,
 	                         const void*          params )
 	{
 		Generated_ReadHook readHook = (Generated_ReadHook) params;
 		
-		plus::string data = readHook( parent.get(), name );
+		plus::string data = readHook( parent, name );
 		
 		FSTree* result = new FSTree( parent,
 		                             name,

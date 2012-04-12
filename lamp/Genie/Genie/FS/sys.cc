@@ -131,7 +131,7 @@ namespace Genie
 		                converter );
 	}
 	
-	static FSTreePtr New_sys_kernel_syscall( const FSTreePtr&     parent,
+	static FSTreePtr New_sys_kernel_syscall( const FSTree*        parent,
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
@@ -161,7 +161,7 @@ namespace Genie
 		
 	}
 	
-	static FSTreePtr Executable_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Executable_Factory( const FSTree*        parent,
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{

@@ -119,7 +119,7 @@ namespace Genie
 		return GetKeyFromParent( parent.get() );
 	}
 	
-	static FSTreePtr Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Link_Factory( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
@@ -203,7 +203,7 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr drive_trigger_factory( const FSTreePtr&     parent,
+	static FSTreePtr drive_trigger_factory( const FSTree*        parent,
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
@@ -232,7 +232,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_drive( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_drive( const FSTree*        parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{

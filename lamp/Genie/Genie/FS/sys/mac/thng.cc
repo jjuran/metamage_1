@@ -369,11 +369,11 @@ namespace Genie
 		return c;
 	}
 	
-	static FSTreePtr IconSuite_Factory( const FSTreePtr&     parent,
+	static FSTreePtr IconSuite_Factory( const FSTree*        parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{
-		const Component comp = GetKeyFromParent( parent.get() );
+		const Component comp = GetKeyFromParent( parent );
 		
 		n::owned< N::IconSuiteRef > iconSuite = N::GetComponentIconSuite( comp );
 		
@@ -416,7 +416,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_thng( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_thng( const FSTree*        parent,
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{

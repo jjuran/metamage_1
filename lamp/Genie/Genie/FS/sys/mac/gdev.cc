@@ -73,7 +73,7 @@ namespace Genie
 		&gdev_main_link_methods
 	};
 	
-	static FSTreePtr gdev_main_factory( const FSTreePtr&     parent,
+	static FSTreePtr gdev_main_factory( const FSTree*        parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{

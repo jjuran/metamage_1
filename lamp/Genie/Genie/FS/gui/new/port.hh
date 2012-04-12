@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_new_port( const FSTreePtr&     parent,
+	FSTreePtr New_new_port( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          args );
 	

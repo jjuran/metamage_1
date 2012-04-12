@@ -42,7 +42,7 @@ namespace Genie
 		&app_exe_link_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_app_exe( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_exe( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

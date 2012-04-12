@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_new_gworld( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_gworld( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void* );
 	

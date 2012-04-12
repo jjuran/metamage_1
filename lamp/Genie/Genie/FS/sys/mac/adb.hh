@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_adb( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args );
 	
