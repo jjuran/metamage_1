@@ -18,9 +18,12 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/dir_method_set.hh"
 
 
@@ -38,7 +41,7 @@ namespace Genie
 	class DynamicGroup_IteratorConverter
 	{
 		public:
-			FSNode operator()( const DynamicGroup::value_type& value ) const
+			vfs::dir_entry operator()( const DynamicGroup::value_type& value ) const
 			{
 				const unsigned id = value.first;
 				
@@ -46,7 +49,7 @@ namespace Genie
 				
 				const plus::string name = gear::inscribe_unsigned_decimal( id );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
@@ -72,8 +75,8 @@ namespace Genie
 		                   extra.methods );
 	}
 	
-	static void dynamic_group_listdir( const FSTree*  node,
-	                                   FSTreeCache&   cache )
+	static void dynamic_group_listdir( const FSTree*       node,
+	                                   vfs::dir_contents&  cache )
 	{
 		dynamic_group_extra& extra = *(dynamic_group_extra*) node->extra();
 		

@@ -65,8 +65,8 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const FSTree*        parent );
 	
-	static void resfile_dir_listdir( const FSTree*  node,
-	                                 FSTreeCache&   cache );
+	static void resfile_dir_listdir( const FSTree*       node,
+	                                 vfs::dir_contents&  cache );
 	
 	static const dir_method_set resfile_dir_dir_methods =
 	{
@@ -184,8 +184,8 @@ namespace Genie
 		return Get_RsrcFile_FSTree( parent, name, fileSpec );
 	}
 	
-	static void resfile_dir_listdir( const FSTree*  node,
-	                                 FSTreeCache&   cache )
+	static void resfile_dir_listdir( const FSTree*       node,
+	                                 vfs::dir_contents&  cache )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) node->extra();
 		

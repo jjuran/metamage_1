@@ -20,11 +20,14 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
@@ -154,17 +157,17 @@ namespace Genie
 	class psn_IteratorConverter
 	{
 		public:
-			FSNode operator()( const ProcessSerialNumber& psn ) const
+			vfs::dir_entry operator()( const ProcessSerialNumber& psn ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = encoded_ProcessSerialNumber( psn );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
-	static void psn_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void psn_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		psn_IteratorConverter converter;
 		

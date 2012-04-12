@@ -8,10 +8,13 @@
 // POSIX
 #include <sys/stat.h>
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Null.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -39,8 +42,8 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const FSTree*        parent );
 	
-	static void premapped_listdir( const FSTree*  node,
-	                               FSTreeCache&   cache );
+	static void premapped_listdir( const FSTree*       node,
+	                               vfs::dir_contents&  cache );
 	
 	static const dir_method_set premapped_dir_methods =
 	{
@@ -99,8 +102,8 @@ namespace Genie
 		return FSNull();
 	}
 	
-	static void premapped_listdir( const FSTree*  node,
-	                               FSTreeCache&   cache )
+	static void premapped_listdir( const FSTree*       node,
+	                               vfs::dir_contents&  cache )
 	{
 		premapped_extra& extra = *(premapped_extra*) node->extra();
 		
@@ -121,7 +124,7 @@ namespace Genie
 				
 				ino_t inode = 0;
 				
-				cache.push_back( FSNode( inode, name ) );
+				cache.push_back( vfs::dir_entry( inode, name ) );
 			}
 			catch ( ... )
 			{

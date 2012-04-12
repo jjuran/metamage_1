@@ -31,11 +31,14 @@
 // Arcana
 #include "ADB/Protocol.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -102,17 +105,17 @@ namespace Genie
 	class adb_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::ADBAddress addr ) const
+			vfs::dir_entry operator()( N::ADBAddress addr ) const
 			{
 				const ino_t inode = addr;
 				
 				plus::string name( 1, gear::encoded_hex_char( addr ) );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
-	static void adb_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void adb_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		adb_IteratorConverter converter;
 		

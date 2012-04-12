@@ -27,10 +27,13 @@
 
 #include "Nitrogen/Gestalt.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 
 
@@ -188,7 +191,7 @@ namespace Genie
 	class gestalt_IteratorConverter
 	{
 		public:
-			FSNode operator()( N::Gestalt_Selector selector ) const
+			vfs::dir_entry operator()( N::Gestalt_Selector selector ) const
 			{
 				const bool valid = is_valid_Gestalt_Selector( selector );
 				
@@ -203,11 +206,11 @@ namespace Genie
 				
 				name += make_utf8_quad_name( selector );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
-	static void gestalt_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void gestalt_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		gestalt_IteratorConverter converter;
 		

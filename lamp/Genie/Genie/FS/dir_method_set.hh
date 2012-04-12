@@ -12,8 +12,10 @@
 // plus
 #include "plus/string.hh"
 
+// vfs
+#include "vfs/dir_contents_fwd.hh"
+
 // Genie
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
 
@@ -23,7 +25,7 @@ namespace Genie
 	
 	typedef FSTreePtr (*lookup_method)( const FSTree*, const plus::string&, const FSTree* );
 	
-	typedef void (*listdir_method)( const FSTree* node, FSTreeCache& cache );
+	typedef void (*listdir_method)( const FSTree* node, vfs::dir_contents& cache );
 	
 	typedef void (*mkdir_method)( const FSTree* node, mode_t mode );
 	

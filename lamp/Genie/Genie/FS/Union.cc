@@ -16,10 +16,13 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/Iterate.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/lookup.hh"
@@ -73,8 +76,8 @@ namespace Genie
 		return lookup( extra.bottom, name, parent );
 	}
 	
-	static void union_listdir( const FSTree*  node,
-	                           FSTreeCache&   cache )
+	static void union_listdir( const FSTree*       node,
+	                           vfs::dir_contents&  cache )
 	{
 		union_extra& extra = *(union_extra*) node->extra();
 		
@@ -87,7 +90,7 @@ namespace Genie
 		
 		while ( true )
 		{
-			FSNode node = top->Get();
+			vfs::dir_entry node = top->Get();
 			
 			if ( node.name.empty() )
 			{
@@ -108,7 +111,7 @@ namespace Genie
 		
 		while ( true )
 		{
-			FSNode node = bottom->Get();
+			vfs::dir_entry node = bottom->Get();
 			
 			if ( node.name.empty() )
 			{

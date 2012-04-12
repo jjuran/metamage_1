@@ -35,8 +35,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Handle.hh"
@@ -55,7 +58,7 @@ namespace Genie
 	using MacScribe::parse_quad_name;
 	
 	
-	void iterate_resources( const FSSpec& file, FSTreeCache& cache )
+	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 	{
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
 		
@@ -79,7 +82,7 @@ namespace Genie
 				
 				name += make_quad_name( type );
 				
-				const FSNode node( info.id, name );
+				const vfs::dir_entry node( info.id, name );
 				
 				cache.push_back( node );
 			}

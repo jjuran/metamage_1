@@ -25,10 +25,13 @@
 
 #include "Nitrogen/Str.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/misc_method_set.hh"
@@ -117,8 +120,8 @@ namespace Genie
 		                   &volumes_link_methods );
 	}
 	
-	static void volumes_listdir( const FSTree*  node,
-	                             FSTreeCache&   cache )
+	static void volumes_listdir( const FSTree*       node,
+	                             vfs::dir_contents&  cache )
 	{
 		for ( int i = 1;  true;  ++i )
 		{
@@ -143,7 +146,7 @@ namespace Genie
 			
 			const plus::string name = plus::utf8_from_mac( colons_from_slashes( mac_name ) );
 			
-			cache.push_back( FSNode( inode, name ) );
+			cache.push_back( vfs::dir_entry( inode, name ) );
 		}
 	}
 	

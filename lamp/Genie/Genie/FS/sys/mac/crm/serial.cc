@@ -20,10 +20,13 @@
 // ClassicToolbox
 #include "ClassicToolbox/CRMSerialDevices.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -87,7 +90,7 @@ namespace Genie
 	class crm_IteratorConverter
 	{
 		public:
-			FSNode operator()( const N::CRMSerialDevice_Container::value_type& rec ) const
+			vfs::dir_entry operator()( const N::CRMSerialDevice_Container::value_type& rec ) const
 			{
 				const int key = rec->crmDeviceID;
 				
@@ -95,11 +98,11 @@ namespace Genie
 				
 				plus::string name = gear::inscribe_decimal( key );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
-	static void serial_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void serial_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		crm_IteratorConverter converter;
 		

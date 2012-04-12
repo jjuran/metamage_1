@@ -23,10 +23,13 @@
 
 #include "Nitrogen/Components.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
@@ -217,17 +220,17 @@ namespace Genie
 	class thng_IteratorConverter
 	{
 		public:
-			FSNode operator()( Component component ) const
+			vfs::dir_entry operator()( Component component ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = plus::encode_32_bit_hex( (unsigned) component );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
-	static void thng_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void thng_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		thng_IteratorConverter converter;
 		

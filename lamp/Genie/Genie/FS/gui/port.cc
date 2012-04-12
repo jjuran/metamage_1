@@ -17,9 +17,12 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
@@ -57,7 +60,7 @@ namespace Genie
 		return FSTreePtr( *it );
 	}
 	
-	static void window_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void window_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		WindowMap::const_iterator end = gWindowMap.end();
 		
@@ -67,7 +70,7 @@ namespace Genie
 			
 			ino_t inode = (ino_t) window;  // coerce pointer to integer
 			
-			FSNode node( inode, window->Name() );
+			vfs::dir_entry node( inode, window->Name() );
 			
 			cache.push_back( node );
 		}

@@ -25,11 +25,14 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FileDescriptor.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -77,16 +80,16 @@ namespace Genie
 		
 		plus::string name = gear::inscribe_decimal( fd );
 		
-		FSTreeCache& cache = *(FSTreeCache*) param;
+		vfs::dir_contents& cache = *(vfs::dir_contents*) param;
 		
-		cache.push_back( FSNode( inode, name ) );
+		cache.push_back( vfs::dir_entry( inode, name ) );
 	}
 	
 	static FSTreePtr proc_fd_lookup( const FSTree*        node,
 	                                 const plus::string&  name,
 	                                 const FSTree*        parent );
 	
-	static void proc_fd_listdir( const FSTree* node, FSTreeCache& cache )
+	static void proc_fd_listdir( const FSTree* node, vfs::dir_contents& cache )
 	{
 		const fd_table& sequence = fd_sequence( node );
 		
@@ -245,14 +248,14 @@ namespace Genie
 		
 		plus::string name = gear::inscribe_decimal( pid );
 		
-		FSTreeCache& cache = *(FSTreeCache*) param;
+		vfs::dir_contents& cache = *(vfs::dir_contents*) param;
 		
-		cache.push_back( FSNode( inode, name ) );
+		cache.push_back( vfs::dir_entry( inode, name ) );
 		
 		return NULL;
 	}
 	
-	static void proc_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void proc_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		for_each_process( &iterate_one_process, &cache );
 	}

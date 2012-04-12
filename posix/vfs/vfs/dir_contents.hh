@@ -10,7 +10,7 @@
 #include "plus/ref_count.hh"
 
 // vfs
-#include "vfs/dir_entry.hh"
+#include "vfs/dir_entry_fwd.hh"
 
 
 namespace vfs

@@ -9,8 +9,11 @@
 // plus
 #include "plus/string.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTreePtr.hh"
 
 // Files.h
@@ -20,7 +23,7 @@ struct FSSpec;
 namespace Genie
 {
 	
-	void iterate_resources( const FSSpec& file, FSTreeCache& cache );
+	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache );
 	
 	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,
 	                               const plus::string&  name,

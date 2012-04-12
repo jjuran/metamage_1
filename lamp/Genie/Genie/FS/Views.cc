@@ -463,8 +463,8 @@ namespace Genie
 		return lookup( GetViewDelegate( node ).get(), real_name, NULL );
 	}
 	
-	static void view_listdir( const FSTree*  node,
-	                          FSTreeCache&   cache )
+	static void view_listdir( const FSTree*       node,
+	                          vfs::dir_contents&  cache )
 	{
 		listdir( GetViewDelegate( node ).get(), cache );
 	}

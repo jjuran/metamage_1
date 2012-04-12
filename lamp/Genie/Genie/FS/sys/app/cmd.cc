@@ -20,10 +20,13 @@
 // Pedestal
 #include "Pedestal/Commands.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -144,7 +147,7 @@ namespace Genie
 		return new FSTree( parent, name, 0, &unused_cmd_slot_methods );
 	}
 	
-	static void cmd_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void cmd_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		typedef cmd_map::iterator iterator;
 		
@@ -160,7 +163,7 @@ namespace Genie
 			
 			name += make_utf8_quad_name( it->first );
 			
-			cache.push_back( FSNode( inode, name ) );
+			cache.push_back( vfs::dir_entry( inode, name ) );
 		}
 	}
 	

@@ -26,9 +26,12 @@
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTreeCache.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
@@ -114,17 +117,17 @@ namespace Genie
 	class gdev_IteratorConverter
 	{
 		public:
-			FSNode operator()( GDHandle gdH ) const
+			vfs::dir_entry operator()( GDHandle gdH ) const
 			{
 				const ino_t inode = 0;
 				
 				plus::string name = plus::encode_32_bit_hex( (unsigned) gdH );
 				
-				return FSNode( inode, name );
+				return vfs::dir_entry( inode, name );
 			}
 	};
 	
-	static void gdev_iterate( const FSTreePtr& parent, FSTreeCache& cache )
+	static void gdev_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
 	{
 		gdev_IteratorConverter converter;
 		
