@@ -27,13 +27,14 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/nodes/fixed_dir.hh"
+#include "vfs/nodes/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -140,7 +141,7 @@ namespace Genie
 		
 		plus::string target = "/sys/mac/unit/" + unitNumber;
 		
-		return New_FSTree_SymbolicLink( parent, name, target );
+		return vfs::new_symbolic_link( parent, name, target );
 	}
 	
 	struct GetDriveFlags : plus::serialize_hex< UInt32 >

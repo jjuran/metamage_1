@@ -22,9 +22,12 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/nodes/symbolic_link.hh"
+
 // Genie
 #include "Genie/FS/sys/app/window/list.hh"
-#include "Genie/FS/SymbolicLink.hh"
 
 
 namespace Genie
@@ -56,7 +59,7 @@ namespace Genie
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
-		return New_FSTree_SymbolicLink( parent, name, sys_app_window_front_ReadLink() );
+		return vfs::new_symbolic_link( parent, name, sys_app_window_front_ReadLink() );
 	}
 	
 	const vfs::fixed_mapping sys_app_window_Mappings[] =

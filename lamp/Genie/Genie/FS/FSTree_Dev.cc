@@ -17,6 +17,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/nodes/symbolic_link.hh"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FS/data_method_set.hh"
@@ -24,7 +28,6 @@
 #include "Genie/FS/FSTree_dev_gestalt.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
@@ -153,7 +156,7 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
-		return FSTreePtr( New_FSTree_SymbolicLink( parent, name, "/proc/self/fd" ) );
+		return vfs::new_symbolic_link( parent, name, "/proc/self/fd" );
 	}
 	
 	template < class Opener >

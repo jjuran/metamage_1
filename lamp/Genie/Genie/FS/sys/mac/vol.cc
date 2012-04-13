@@ -26,8 +26,11 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Folders.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/nodes/symbolic_link.hh"
+
 // Genie
-#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 
 
@@ -140,7 +143,7 @@ namespace Genie
 		
 		result += gear::inscribe_decimal( -vRefNum );
 		
-		return New_FSTree_SymbolicLink( parent, name, result );
+		return vfs::new_symbolic_link( parent, name, result );
 		
 	}
 	

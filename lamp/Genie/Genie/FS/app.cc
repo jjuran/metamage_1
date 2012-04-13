@@ -14,6 +14,8 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/nodes/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
@@ -21,7 +23,6 @@
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/SymbolicLink.hh"
 
 
 namespace Genie
@@ -108,10 +109,10 @@ namespace Genie
 		{
 			const plus::string& target = it->second;
 			
-			return New_FSTree_SymbolicLink( parent,
-			                                name,
-			                                target,
-			                                &app_symlink_remove );
+			return vfs::new_symbolic_link( parent,
+			                               name,
+			                               target,
+			                               &app_symlink_remove );
 		}
 		
 		return new FSTree( parent, name, 0, &unused_app_slot_methods );

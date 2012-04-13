@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/vol/list.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -37,7 +40,9 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/nodes/fixed_dir.hh"
+#include "vfs/nodes/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
@@ -49,7 +54,6 @@
 #include "Genie/FS/property.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/serialize_Str255.hh"
-#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
@@ -497,7 +501,7 @@ namespace Genie
 		
 		drive = "/sys/mac/drive/" + drive;
 		
-		return New_FSTree_SymbolicLink( parent, name, drive );
+		return vfs::new_symbolic_link( parent, name, drive );
 	}
 	
 	static FSTreePtr Driver_Link_Factory( const FSTree*        parent,
@@ -519,7 +523,7 @@ namespace Genie
 		
 		unit = "/sys/mac/unit/" + unit;
 		
-		return New_FSTree_SymbolicLink( parent, name, unit );
+		return vfs::new_symbolic_link( parent, name, unit );
 	}
 	
 	static FSTreePtr Folder_Link_Factory( const FSTree*        parent,

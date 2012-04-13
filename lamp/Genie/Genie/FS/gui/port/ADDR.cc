@@ -10,6 +10,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // iota
 #include "iota/strings.hh"
@@ -42,14 +43,15 @@
 #include "Pedestal/Window.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/nodes/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
@@ -980,9 +982,9 @@ namespace Genie
 		
 		if ( is_link )
 		{
-			return New_FSTree_SymbolicLink( parent,
-			                                name,
-			                                "window/" + name );
+			return vfs::new_symbolic_link( parent,
+			                               name,
+			                               "window/" + name );
 		}
 		
 		return new_property( parent, name, params_ );
