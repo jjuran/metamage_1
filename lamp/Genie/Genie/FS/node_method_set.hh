@@ -9,9 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
-
 
 // #include <time.h>
 struct timespec;
@@ -20,19 +17,22 @@ struct timespec;
 struct stat;
 
 
-namespace Genie
+namespace vfs
 {
 	
-	typedef void (*stat_method)( const FSTree*, struct ::stat& );
+	class node;
 	
-	typedef void (*chmod_method)( const FSTree*, mode_t );
 	
-	typedef void (*touch_method)( const FSTree* );
-	typedef void (*utime_method)( const FSTree*, const struct timespec times[2] );
+	typedef void (*stat_method)( const node*, struct ::stat& );
 	
-	typedef void (*remove_method)( const FSTree* );
+	typedef void (*chmod_method)( const node*, mode_t );
 	
-	typedef void (*rename_method)( const FSTree*, const FSTree* );
+	typedef void (*touch_method)( const node* );
+	typedef void (*utime_method)( const node*, const struct timespec times[2] );
+	
+	typedef void (*remove_method)( const node* );
+	
+	typedef void (*rename_method)( const node*, const node* );
 	
 	struct data_method_set;
 	struct link_method_set;
@@ -40,23 +40,6 @@ namespace Genie
 	struct file_method_set;
 	struct misc_method_set;
 	
-}
-
-namespace vfs
-{
-	
-	using Genie::stat_method;
-	using Genie::chmod_method;
-	using Genie::touch_method;
-	using Genie::utime_method;
-	using Genie::remove_method;
-	using Genie::rename_method;
-	
-	using Genie::data_method_set;
-	using Genie::link_method_set;
-	using Genie::dir_method_set;
-	using Genie::file_method_set;
-	using Genie::misc_method_set;
 	
 	struct node_method_set
 	{
@@ -78,6 +61,19 @@ namespace vfs
 
 namespace Genie
 {
+	
+	using vfs::stat_method;
+	using vfs::chmod_method;
+	using vfs::touch_method;
+	using vfs::utime_method;
+	using vfs::remove_method;
+	using vfs::rename_method;
+	
+	using vfs::data_method_set;
+	using vfs::link_method_set;
+	using vfs::dir_method_set;
+	using vfs::file_method_set;
+	using vfs::misc_method_set;
 	
 	using vfs::node_method_set;
 	

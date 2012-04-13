@@ -9,18 +9,18 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	typedef plus::string (*readlink_method)( const FSTree* );
+	typedef plus::string (*readlink_method)( const node* );
 	
-	typedef FSTreePtr (*resolve_method)( const FSTree* );
+	typedef node_ptr (*resolve_method)( const node* );
 	
-	typedef void (*symlink_method)( const FSTree*, const plus::string& );
+	typedef void (*symlink_method)( const node*, const plus::string& );
 	
 	
 	struct link_method_set
@@ -29,6 +29,17 @@ namespace Genie
 		resolve_method  resolve;
 		symlink_method  symlink;
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::readlink_method;
+	using vfs::resolve_method;
+	using vfs::symlink_method;
+	
+	using vfs::link_method_set;
 	
 }
 

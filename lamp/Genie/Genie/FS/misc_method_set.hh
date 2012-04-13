@@ -9,16 +9,16 @@
 // POSIX
 #include <sys/types.h>
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	typedef FSTreePtr (*parent_method)( const FSTree* );
+	typedef node_ptr (*parent_method)( const node* );
 	
-	typedef ino_t (*inode_method)( const FSTree* );
+	typedef ino_t (*inode_method)( const node* );
 	
 	
 	struct misc_method_set
@@ -27,6 +27,16 @@ namespace Genie
 		inode_method   parent_inode;
 		inode_method   inode;
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::parent_method;
+	using vfs::inode_method;
+	
+	using vfs::misc_method_set;
 	
 }
 

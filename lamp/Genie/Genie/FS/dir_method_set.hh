@@ -14,24 +14,22 @@
 
 // vfs
 #include "vfs/dir_contents_fwd.hh"
-
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
-#include "Genie/IO/IOPtr.hh"
+#include "vfs/handle_ptr.hh"
+#include "vfs/node_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	typedef FSTreePtr (*lookup_method)( const FSTree*, const plus::string&, const FSTree* );
+	typedef node_ptr (*lookup_method)( const node*, const plus::string&, const node* );
 	
-	typedef void (*listdir_method)( const FSTree* node, vfs::dir_contents& cache );
+	typedef void (*listdir_method)( const node* it, vfs::dir_contents& cache );
 	
-	typedef void (*mkdir_method)( const FSTree* node, mode_t mode );
+	typedef void (*mkdir_method)( const node* it, mode_t mode );
 	
-	typedef IOPtr (*opendir_method)( const FSTree* node );
+	typedef handle_ptr (*opendir_method)( const node* it );
 	
-	typedef IOPtr (*chdir_method)( const FSTree* node );
+	typedef handle_ptr (*chdir_method)( const node* it );
 	
 	
 	struct dir_method_set
@@ -42,6 +40,19 @@ namespace Genie
 		opendir_method  opendir;
 		chdir_method    chdir;
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::lookup_method;
+	using vfs::listdir_method;
+	using vfs::mkdir_method;
+	using vfs::opendir_method;
+	using vfs::chdir_method;
+	
+	using vfs::dir_method_set;
 	
 }
 

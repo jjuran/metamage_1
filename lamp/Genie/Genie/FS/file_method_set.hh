@@ -6,19 +6,19 @@
 #ifndef GENIE_FS_FILEMETHODSET_HH
 #define GENIE_FS_FILEMETHODSET_HH
 
-// Genie
-#include "Genie/code/shared_exec_handle.hh"
-#include "Genie/FS/FSTree_fwd.hh"
+// vfs
+#include "vfs/node_fwd.hh"
+#include "vfs/program_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	typedef void (*attach_method  )( const FSTree*, const FSTree* );
-	typedef void (*copyfile_method)( const FSTree*, const FSTree* );
-	typedef void (*hardlink_method)( const FSTree*, const FSTree* );
+	typedef void (*attach_method  )( const node*, const node* );
+	typedef void (*copyfile_method)( const node*, const node* );
+	typedef void (*hardlink_method)( const node*, const node* );
 	
-	typedef shared_exec_handle (*loadexec_method)( const FSTree* );
+	typedef program_ptr (*loadexec_method)( const node* );
 	
 	
 	struct file_method_set
@@ -28,6 +28,18 @@ namespace Genie
 		hardlink_method  hardlink;
 		loadexec_method  loadexec;
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::attach_method;
+	using vfs::copyfile_method;
+	using vfs::hardlink_method;
+	using vfs::loadexec_method;
+	
+	using vfs::file_method_set;
 	
 }
 
