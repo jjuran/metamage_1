@@ -541,12 +541,12 @@ namespace Genie
 	
 	static FSTreePtr MakeFSRoot()
 	{
-		return New_FSTree_Union( null_FSTreePtr,
+		return New_FSTree_Union( NULL,
 		                         plus::string::null,
 		                         Premapped_Factory( NULL,
 		                                            plus::string::null,
-		                                            Root_Overlay_Mappings ),
-		                         FSTreeFromFSDirSpec( root_DirSpec() ) );
+		                                            Root_Overlay_Mappings ).get(),
+		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
 	}
 	
 	const FSTreePtr& FSRoot()

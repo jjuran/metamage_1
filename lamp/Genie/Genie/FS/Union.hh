@@ -18,10 +18,10 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_Union( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_Union( const FSTree*        parent,
 	                            const plus::string&  name,
-	                            const FSTreePtr&     top,
-	                            const FSTreePtr&     bottom );
+	                            const FSTree*        top,
+	                            const FSTree*        bottom );
 	
 }
 
