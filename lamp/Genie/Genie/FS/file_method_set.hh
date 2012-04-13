@@ -8,12 +8,11 @@
 
 // Genie
 #include "Genie/code/shared_exec_handle.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	typedef void (*attach_method  )( const FSTree*, const FSTree* );
 	typedef void (*copyfile_method)( const FSTree*, const FSTree* );

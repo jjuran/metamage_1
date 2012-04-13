@@ -9,6 +9,9 @@
 // POSIX
 #include <sys/types.h>
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 // #include <time.h>
 struct timespec;
@@ -19,8 +22,6 @@ struct stat;
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	typedef void (*stat_method)( const FSTree*, struct ::stat& );
 	

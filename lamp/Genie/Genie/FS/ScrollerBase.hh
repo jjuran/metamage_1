@@ -11,11 +11,12 @@
 #include "Pedestal/Scroller_beta.hh"
 #endif
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	class Scroller : public Pedestal::ScrollerAPI
 	{

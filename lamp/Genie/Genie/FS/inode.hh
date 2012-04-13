@@ -6,11 +6,12 @@
 // POSIX
 #include <sys/types.h>
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	ino_t inode( const FSTree* node );
 	

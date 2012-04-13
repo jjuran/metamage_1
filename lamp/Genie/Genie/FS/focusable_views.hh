@@ -6,6 +6,9 @@
 #ifndef GENIE_FS_FOCUSABLEVIEWS_HH
 #define GENIE_FS_FOCUSABLEVIEWS_HH
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Pedestal
 {
@@ -16,8 +19,6 @@ namespace Pedestal
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	void add_focusable_view( const FSTree* key, Pedestal::View* value );
 	

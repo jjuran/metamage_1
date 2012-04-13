@@ -9,6 +9,9 @@
 // Standard C/C++
 #include <cstddef>
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace plus
 {
@@ -19,8 +22,6 @@ namespace plus
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	typedef void (*property_get_hook)( plus::var_string&  out,
 	                                   const FSTree*      that,

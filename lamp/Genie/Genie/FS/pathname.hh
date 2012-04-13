@@ -6,11 +6,12 @@
 // plus
 #include "plus/string.hh"
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	plus::string pathname( const FSTree* node );
 	

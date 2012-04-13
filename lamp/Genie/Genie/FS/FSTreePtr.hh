@@ -12,11 +12,12 @@
 // boost
 #include <boost/intrusive_ptr.hpp>
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	typedef boost::intrusive_ptr< FSTree const > FSTreePtr;
 	

@@ -4,13 +4,12 @@
 */
 
 // Genie
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/IO/IOPtr.hh"
 
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	IOPtr opendir( const FSTree* node );
 	

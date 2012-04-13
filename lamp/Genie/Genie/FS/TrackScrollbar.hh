@@ -11,11 +11,12 @@
 #include "Pedestal/TrackScrollbar.hh"
 #endif
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	struct Scrollbar_UserData : Pedestal::Scrollbar_UserData
 	{

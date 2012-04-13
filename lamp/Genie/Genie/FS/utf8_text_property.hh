@@ -10,11 +10,12 @@
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	template < class Mac_Text_Property >
 	struct utf8_text_property

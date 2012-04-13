@@ -10,13 +10,12 @@
 #include <sys/types.h>
 
 // Genie
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/IO/IOPtr.hh"
 
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	typedef off_t (*geteof_method)( const FSTree* );
 	typedef void  (*seteof_method)( const FSTree*, off_t );

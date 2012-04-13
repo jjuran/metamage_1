@@ -13,8 +13,6 @@
 namespace Genie
 {
 	
-	class FSTree;
-	
 	FSTreePtr lookup( const FSTree*        node,
 	                  const plus::string&  name,
 	                  const FSTree*        surrogate = NULL );

@@ -3,11 +3,12 @@
 	-----------
 */
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	void hardlink( const FSTree* node, const FSTree* target );
 	

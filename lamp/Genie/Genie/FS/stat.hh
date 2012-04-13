@@ -3,6 +3,9 @@
 	-------
 */
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 // <sys/stat.h>
 struct stat;
@@ -10,8 +13,6 @@ struct stat;
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	void stat( const FSTree* node, struct ::stat& sb );
 	

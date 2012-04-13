@@ -3,6 +3,9 @@
 	--------
 */
 
+// Genie
+#include "Genie/FS/FSTree_fwd.hh"
+
 
 // time.h
 struct timespec;
@@ -10,8 +13,6 @@ struct timespec;
 
 namespace Genie
 {
-	
-	class FSTree;
 	
 	void utime( const FSTree* node, const struct timespec* times );
 	

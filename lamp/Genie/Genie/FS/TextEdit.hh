@@ -25,15 +25,13 @@
 #endif
 
 // Genie
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/ScrollerBase.hh"
 
 
 namespace Genie
 {
-	
-	class FSTree;
-	
 	
 	struct TextEditParameters
 	{
