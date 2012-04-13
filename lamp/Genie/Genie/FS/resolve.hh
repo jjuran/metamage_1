@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	FSTreePtr resolve( const FSTree* node );
+	FSTreePtr resolve( const FSTree* it );
 	
 }
 

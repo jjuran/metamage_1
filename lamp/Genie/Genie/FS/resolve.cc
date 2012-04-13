@@ -15,9 +15,9 @@
 namespace Genie
 {
 	
-	FSTreePtr resolve( const FSTree* node )
+	FSTreePtr resolve( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const link_method_set* link_methods;
 		
@@ -25,16 +25,16 @@ namespace Genie
 		{
 			if ( link_methods->resolve )
 			{
-				return link_methods->resolve( node );
+				return link_methods->resolve( it );
 			}
 			
 			if ( link_methods->readlink )
 			{
-				return ResolvePathname( link_methods->readlink( node ), node->owner() );
+				return ResolvePathname( link_methods->readlink( it ), it->owner() );
 			}
 		}
 		
-		return node;
+		return it;
 	}
 	
 }

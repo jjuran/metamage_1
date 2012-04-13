@@ -20,9 +20,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void hardlink( const FSTree* node, const FSTree* target )
+	void hardlink( const FSTree* it, const FSTree* target )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const file_method_set* file_methods;
 		
@@ -30,7 +30,7 @@ namespace Genie
 		{
 			if ( file_methods->hardlink )
 			{
-				file_methods->hardlink( node, target );
+				file_methods->hardlink( it, target );
 				
 				return;
 			}

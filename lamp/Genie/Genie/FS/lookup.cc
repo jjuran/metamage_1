@@ -21,25 +21,25 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	FSTreePtr lookup( const FSTree*        node,
+	FSTreePtr lookup( const FSTree*        it,
 	                  const plus::string&  name,
 	                  const FSTree*        surrogate )
 	{
 		if ( name == "." )
 		{
-			return node;
+			return it;
 		}
 		else if ( name == ".." )
 		{
-			return parent( node );
+			return parent( it );
 		}
 		
 		if ( surrogate == NULL )
 		{
-			surrogate = node;
+			surrogate = it;
 		}
 		
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -47,7 +47,7 @@ namespace Genie
 		{
 			if ( dir_methods->lookup )
 			{
-				return dir_methods->lookup( node, name, surrogate );
+				return dir_methods->lookup( it, name, surrogate );
 			}
 		}
 		

@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	off_t geteof( const FSTree* node );
+	off_t geteof( const FSTree* it );
 	
 }
 

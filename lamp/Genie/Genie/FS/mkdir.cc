@@ -20,9 +20,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void mkdir( const FSTree* node, mode_t mode )
+	void mkdir( const FSTree* it, mode_t mode )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -30,7 +30,7 @@ namespace Genie
 		{
 			if ( dir_methods->mkdir )
 			{
-				dir_methods->mkdir( node, mode );
+				dir_methods->mkdir( it, mode );
 				
 				return;
 			}

@@ -24,27 +24,27 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void stat( const FSTree* node, struct ::stat& sb )
+	void stat( const FSTree* it, struct ::stat& sb )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		if ( methods  &&  methods->stat )
 		{
-			methods->stat( node, sb );
+			methods->stat( it, sb );
 			
 			return;
 		}
 		
-		if ( node->filemode() == 0 )
+		if ( it->filemode() == 0 )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
 		const time_t now = time( NULL );
 		
-		sb.st_ino = inode( node );
+		sb.st_ino = inode( it );
 		
-		sb.st_mode = node->filemode();
+		sb.st_mode = it->filemode();
 		
 		sb.st_nlink = 1;
 		

@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	void listdir( const FSTree* node, vfs::dir_contents& contents );
+	void listdir( const FSTree* it, vfs::dir_contents& contents );
 	
 }
 

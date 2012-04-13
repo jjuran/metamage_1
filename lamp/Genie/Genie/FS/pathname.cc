@@ -16,13 +16,13 @@
 namespace Genie
 {
 	
-	plus::string pathname( const FSTree* node )
+	plus::string pathname( const FSTree* it )
 	{
-		plus::string pathname = node->name();
+		plus::string pathname = it->name();
 		
-		FSTreePtr tree = parent( node );
+		FSTreePtr tree = parent( it );
 		
-		if ( tree.get() == node  &&  !pathname.empty() )
+		if ( tree.get() == it  &&  !pathname.empty() )
 		{
 			// Anonymous files have null parents (but so does root)
 			return pathname;

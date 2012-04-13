@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void remove( const FSTree* node );
+	void remove( const FSTree* it );
 	
 }
 

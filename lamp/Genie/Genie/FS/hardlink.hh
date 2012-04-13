@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void hardlink( const FSTree* node, const FSTree* target );
+	void hardlink( const FSTree* it, const FSTree* target );
 	
 }
 

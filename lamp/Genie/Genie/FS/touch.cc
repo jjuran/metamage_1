@@ -28,19 +28,19 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void touch( const FSTree* node )
+	void touch( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		if ( methods  &&  methods->touch )
 		{
-			methods->touch( node );
+			methods->touch( it );
 		}
 		else
 		{
 			const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
 			
-			utime( node, times );
+			utime( it, times );
 		}
 	}
 	

@@ -20,9 +20,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void symlink( const FSTree* node, const plus::string& target )
+	void symlink( const FSTree* it, const plus::string& target )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const link_method_set* link_methods;
 		
@@ -30,7 +30,7 @@ namespace Genie
 		{
 			if ( link_methods->symlink )
 			{
-				link_methods->symlink( node, target );
+				link_methods->symlink( it, target );
 				
 				return;
 			}

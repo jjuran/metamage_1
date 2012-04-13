@@ -14,9 +14,9 @@
 namespace Genie
 {
 	
-	off_t geteof( const FSTree* node )
+	off_t geteof( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const data_method_set* data_methods;
 		
@@ -24,7 +24,7 @@ namespace Genie
 		{
 			if ( data_methods->geteof )
 			{
-				return data_methods->geteof( node );
+				return data_methods->geteof( it );
 			}
 		}
 		

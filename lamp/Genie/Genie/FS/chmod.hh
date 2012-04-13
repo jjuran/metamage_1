@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	void chmod( const FSTree* node, mode_t mode );
+	void chmod( const FSTree* it, mode_t mode );
 	
 }
 

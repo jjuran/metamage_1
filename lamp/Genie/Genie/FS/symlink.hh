@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	void symlink( const FSTree* node, const plus::string& target );
+	void symlink( const FSTree* it, const plus::string& target );
 	
 }
 

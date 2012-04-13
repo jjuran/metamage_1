@@ -19,13 +19,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void rename( const FSTree* node, const FSTree* target )
+	void rename( const FSTree* it, const FSTree* target )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		if ( methods  &&  methods->rename )
 		{
-			methods->rename( node, target );
+			methods->rename( it, target );
 		}
 		else
 		{

@@ -14,7 +14,7 @@ struct timespec;
 namespace Genie
 {
 	
-	void utime( const FSTree* node, const struct timespec* times );
+	void utime( const FSTree* it, const struct timespec* times );
 	
 }
 

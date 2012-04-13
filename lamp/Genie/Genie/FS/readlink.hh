@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	plus::string readlink( const FSTree* node );
+	plus::string readlink( const FSTree* it );
 	
 }
 

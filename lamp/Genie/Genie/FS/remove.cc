@@ -19,13 +19,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void remove( const FSTree* node )
+	void remove( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		if ( methods  &&  methods->remove )
 		{
-			methods->remove( node );
+			methods->remove( it );
 		}
 		else
 		{

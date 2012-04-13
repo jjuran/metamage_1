@@ -14,7 +14,7 @@ struct stat;
 namespace Genie
 {
 	
-	void stat( const FSTree* node, struct ::stat& sb );
+	void stat( const FSTree* it, struct ::stat& sb );
 	
 }
 

@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void copyfile( const FSTree* node, const FSTree* target );
+	void copyfile( const FSTree* it, const FSTree* target );
 	
 }
 

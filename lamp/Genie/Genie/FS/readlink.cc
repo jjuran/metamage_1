@@ -21,9 +21,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	plus::string readlink( const FSTree* node )
+	plus::string readlink( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const link_method_set* link_methods;
 		
@@ -31,12 +31,12 @@ namespace Genie
 		{
 			if ( link_methods->readlink )
 			{
-				return link_methods->readlink( node );
+				return link_methods->readlink( it );
 			}
 			
 			if ( link_methods->resolve )
 			{
-				return pathname( link_methods->resolve( node ).get() );
+				return pathname( link_methods->resolve( it ).get() );
 			}
 		}
 		

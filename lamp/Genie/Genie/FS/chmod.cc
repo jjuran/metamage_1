@@ -19,13 +19,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void chmod( const FSTree* node, mode_t mode )
+	void chmod( const FSTree* it, mode_t mode )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		if ( methods  &&  methods->chmod )
 		{
-			methods->chmod( node, mode );
+			methods->chmod( it, mode );
 		}
 		else
 		{

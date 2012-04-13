@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void rename( const FSTree* node, const FSTree* target );
+	void rename( const FSTree* it, const FSTree* target );
 	
 }
 

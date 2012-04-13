@@ -19,13 +19,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void utime( const FSTree* node, const struct timespec* times )
+	void utime( const FSTree* it, const struct timespec* times )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		if ( methods  &&  methods->utime )
 		{
-			methods->utime( node, times );
+			methods->utime( it, times );
 		}
 		else
 		{

@@ -15,9 +15,9 @@
 namespace Genie
 {
 	
-	IOPtr opendir( const FSTree* node )
+	IOPtr opendir( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -25,11 +25,11 @@ namespace Genie
 		{
 			if ( dir_methods->opendir )
 			{
-				return dir_methods->opendir( node );
+				return dir_methods->opendir( it );
 			}
 		}
 		
-		return new VirtualDirHandle( node );
+		return new VirtualDirHandle( it );
 	}
 	
 }

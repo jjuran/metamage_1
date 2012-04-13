@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	ino_t inode( const FSTree* node );
+	ino_t inode( const FSTree* it );
 	
 }
 

@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	plus::string pathname( const FSTree* node );
+	plus::string pathname( const FSTree* it );
 	
 }
 

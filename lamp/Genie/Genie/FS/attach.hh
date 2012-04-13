@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void attach( const FSTree* node, const FSTree* target );
+	void attach( const FSTree* it, const FSTree* target );
 	
 }
 

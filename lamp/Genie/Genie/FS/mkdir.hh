@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	void mkdir( const FSTree* node, mode_t mode );
+	void mkdir( const FSTree* it, mode_t mode );
 	
 }
 

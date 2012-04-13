@@ -14,14 +14,14 @@
 namespace Genie
 {
 	
-	FSTreePtr parent( const FSTree* node )
+	FSTreePtr parent( const FSTree* it )
 	{
-		if ( node->owner() != NULL )
+		if ( it->owner() != NULL )
 		{
-			return node->owner();
+			return it->owner();
 		}
 		
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const misc_method_set* misc_methods;
 		
@@ -29,11 +29,11 @@ namespace Genie
 		{
 			if ( misc_methods->parent )
 			{
-				return misc_methods->parent( node );
+				return misc_methods->parent( it );
 			}
 		}
 		
-		return node;
+		return it;
 	}
 	
 }

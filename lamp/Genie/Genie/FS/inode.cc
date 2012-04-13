@@ -14,9 +14,9 @@
 namespace Genie
 {
 	
-	ino_t inode( const FSTree* node )
+	ino_t inode( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const misc_method_set* misc_methods;
 		
@@ -24,7 +24,7 @@ namespace Genie
 		{
 			if ( misc_methods->inode )
 			{
-				return misc_methods->inode( node );
+				return misc_methods->inode( it );
 			}
 		}
 		

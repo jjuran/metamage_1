@@ -14,7 +14,7 @@
 namespace Genie
 {
 	
-	IOPtr open( const FSTree* node, int flags, mode_t mode );
+	IOPtr open( const FSTree* it, int flags, mode_t mode );
 	
 }
 

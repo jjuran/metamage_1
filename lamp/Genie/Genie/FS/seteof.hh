@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	void seteof( const FSTree* node, off_t length );
+	void seteof( const FSTree* it, off_t length );
 	
 }
 

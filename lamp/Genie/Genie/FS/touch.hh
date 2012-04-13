@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void touch( const FSTree* node );
+	void touch( const FSTree* it );
 	
 }
 
