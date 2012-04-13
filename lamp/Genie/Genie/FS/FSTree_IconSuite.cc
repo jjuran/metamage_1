@@ -82,7 +82,7 @@ namespace Genie
 	
 	FSTreePtr
 	//
-	New_FSTree_IconSuite( const FSTreePtr&             parent,
+	New_FSTree_IconSuite( const FSTree*                parent,
 			              const plus::string&          name,
 			              n::owned< N::IconSuiteRef >  iconSuite )
 	{
