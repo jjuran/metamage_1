@@ -30,7 +30,7 @@ namespace Genie
 	typedef void (*Iterate_Proc)( const FSTree* parent, vfs::dir_contents& cache );
 	
 	
-	FSTreePtr new_basic_directory( const FSTreePtr&     parent,
+	FSTreePtr new_basic_directory( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               Lookup_Proc          lookup,
 	                               Iterate_Proc         iterate );
