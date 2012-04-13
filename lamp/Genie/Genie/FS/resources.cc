@@ -355,7 +355,7 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,
+	FSTreePtr Get_RsrcFile_FSTree( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const FSSpec&        file )
 	{
