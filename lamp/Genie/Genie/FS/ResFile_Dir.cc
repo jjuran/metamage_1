@@ -193,7 +193,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Get_ResFileDir_FSTree( const FSTreePtr&     parent,
+	FSTreePtr Get_ResFileDir_FSTree( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const FSSpec&        file )
 	{
