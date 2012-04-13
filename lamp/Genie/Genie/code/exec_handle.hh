@@ -13,7 +13,7 @@
 struct _relix_system_parameter_block;
 
 
-namespace Genie
+namespace vfs
 {
 	
 	typedef int (*relix_entry)( int                             argc,
@@ -21,13 +21,22 @@ namespace Genie
 	                            char**                          envp,
 	                            _relix_system_parameter_block*  pb );
 	
-	class exec_handle : public plus::ref_count< exec_handle >
+	class program : public plus::ref_count< program >
 	{
 		public:
-			virtual ~exec_handle();
+			virtual ~program();
 			
 			virtual relix_entry get_main_entry_point() const = 0;
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::relix_entry;
+	
+	typedef vfs::program exec_handle;
 	
 }
 

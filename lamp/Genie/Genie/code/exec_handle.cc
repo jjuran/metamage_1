@@ -6,10 +6,10 @@
 #include "Genie/code/exec_handle.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	exec_handle::~exec_handle()
+	program::~program()
 	{
 	}
 	

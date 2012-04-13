@@ -12,6 +12,9 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// vfs
+#include "vfs/program_ptr.hh"
+
 // Genie
 #include "Genie/code/exec_handle.hh"
 
@@ -19,7 +22,7 @@
 namespace Genie
 {
 	
-	typedef boost::intrusive_ptr< exec_handle >  shared_exec_handle;
+	typedef vfs::program_ptr shared_exec_handle;
 	
 }
 
