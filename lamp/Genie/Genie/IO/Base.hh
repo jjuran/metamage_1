@@ -15,6 +15,10 @@
 // plus
 #include "plus/ref_count.hh"
 
+// vfs
+#include "vfs/handle_ptr.hh"
+#include "vfs/node_ptr.hh"
+
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
@@ -31,6 +35,13 @@ namespace Genie
 		kPollExcept = 4
 	};
 	
+}
+
+namespace vfs
+{
+	
+	using Genie::memory_mapping;
+	
 	/*
 		Each file descriptor refers to an I/O handle.
 		Several file descriptors may share the same I/O handle.
@@ -41,23 +52,23 @@ namespace Genie
 		
 	*/
 	
-	class IOHandle : public plus::ref_count< IOHandle >
+	class handle : public plus::ref_count< handle >
 	{
 		private:
 			int itsOpenFlags;
 			
-			virtual IOHandle* Next() const  { return NULL; }
+			virtual handle* Next() const  { return NULL; }
 			
 			// non-copyable
-			IOHandle           ( const IOHandle& );
-			IOHandle& operator=( const IOHandle& );
+			handle           ( const handle& );
+			handle& operator=( const handle& );
 		
 		public:
-			typedef bool (IOHandle::*Test)() const;
+			typedef bool (handle::*Test)() const;
 			
-			IOHandle( int flags );
+			handle( int flags );
 			
-			virtual ~IOHandle();
+			virtual ~handle();
 			
 			virtual bool IsStream     () const  { return false; }
 			virtual bool IsRegularFile() const  { return false; }
@@ -65,23 +76,30 @@ namespace Genie
 			virtual bool IsTerminal   () const  { return false; }
 			virtual bool IsDirectory  () const  { return false; }
 			
-			IOHandle* GetBaseForCast( Test test );
+			handle* GetBaseForCast( Test test );
 			
 			int GetFlags() const  { return itsOpenFlags; }
 			
 			void SetFlags( int flags )  { itsOpenFlags = flags; }
 			
-			virtual IOPtr Clone();
+			virtual handle_ptr Clone();
 			
-			virtual void Attach( const IOPtr& target );
+			virtual void Attach( const handle_ptr& target );
 			
-			virtual FSTreePtr GetFile();
+			virtual node_ptr GetFile();
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
 			virtual boost::intrusive_ptr< memory_mapping > Map( size_t length, off_t offset );
 			
 	};
+	
+}
+
+namespace Genie
+{
+	
+	typedef vfs::handle IOHandle;
 	
 }
 

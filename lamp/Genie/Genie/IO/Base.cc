@@ -21,8 +21,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
@@ -32,7 +34,7 @@
 #endif
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
@@ -62,7 +64,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr anonymous_open( const FSTree* node, int flags, mode_t mode );
+	static handle_ptr anonymous_open( const node* it, int flags, mode_t mode );
 	
 	static const data_method_set anonymous_data_methods =
 	{
@@ -83,41 +85,41 @@ namespace Genie
 	
 	struct handle_extra
 	{
-		IOHandle* handle;
+		vfs::handle* handle;
 	};
 	
-	static void dispose_handle( const FSTree* node )
+	static void dispose_handle( const node* it )
 	{
-		handle_extra& extra = *(handle_extra*) node->extra();
+		handle_extra& extra = *(handle_extra*) it->extra();
 		
 		intrusive_ptr_release( extra.handle );
 	}
 	
 	
-	static IOPtr anonymous_open( const FSTree* node, int flags, mode_t mode )
+	static handle_ptr anonymous_open( const node* it, int flags, mode_t mode )
 	{
-		handle_extra& extra = *(handle_extra*) node->extra();
+		handle_extra& extra = *(handle_extra*) it->extra();
 		
 		return extra.handle;
 	}
 	
 	
-	IOHandle::IOHandle( int flags ) : itsOpenFlags( flags )
+	handle::handle( int flags ) : itsOpenFlags( flags )
 	{
 	}
 	
-	IOHandle::~IOHandle()
+	handle::~handle()
 	{
 	}
 	
-	IOHandle* IOHandle::GetBaseForCast( Test test )
+	handle* handle::GetBaseForCast( Test test )
 	{
 		if ( (this->*test)() )
 		{
 			return this;
 		}
 		
-		if ( IOHandle* next = Next() )
+		if ( handle* next = Next() )
 		{
 			return next->GetBaseForCast( test );
 		}
@@ -125,24 +127,24 @@ namespace Genie
 		return NULL;
 	}
 	
-	IOPtr IOHandle::Clone()
+	handle_ptr handle::Clone()
 	{
 		return this;
 	}
 	
-	void IOHandle::Attach( const IOPtr& target )
+	void handle::Attach( const handle_ptr& target )
 	{
 		p7::throw_errno( EINVAL );
 	}
 	
-	FSTreePtr IOHandle::GetFile()
+	node_ptr handle::GetFile()
 	{
-		FSTree* result = new FSTree( NULL,
-		                             IOName( this, true ),
-		                             S_IFIFO | permmode_from_openflags( GetFlags() ),
-		                             &anonymous_methods,
-		                             sizeof (handle_extra),
-		                             &dispose_handle );
+		node* result = new node( NULL,
+		                         IOName( this, true ),
+		                         S_IFIFO | permmode_from_openflags( GetFlags() ),
+		                         &anonymous_methods,
+		                         sizeof (handle_extra),
+		                         &dispose_handle );
 		
 		handle_extra& extra = *(handle_extra*) result->extra();
 		
@@ -153,9 +155,9 @@ namespace Genie
 		return result;
 	}
 	
-	void IOHandle::IOCtl( unsigned long request, int* argp )
+	void handle::IOCtl( unsigned long request, int* argp )
 	{
-		if ( IOHandle* next = Next() )
+		if ( handle* next = Next() )
 		{
 			return next->IOCtl( request, argp );
 		}
@@ -165,7 +167,7 @@ namespace Genie
 	
 	boost::intrusive_ptr< memory_mapping >
 	//
-	IOHandle::Map( size_t length, off_t offset )
+	handle::Map( size_t length, off_t offset )
 	{
 		p7::throw_errno( ENODEV );
 		

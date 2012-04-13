@@ -12,11 +12,12 @@
 // boost
 #include <boost/intrusive_ptr.hpp>
 
+// Genie
+#include "Genie/IO/IOHandle_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class IOHandle;
 	
 	typedef boost::intrusive_ptr< IOHandle > IOPtr;
 	
