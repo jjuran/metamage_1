@@ -3,24 +3,24 @@
 	---------
 */
 
-#include "Genie/FS/attach.hh"
+#include "vfs/primitives/attach.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/file_method_set.hh"
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void attach( const FSTree* it, const FSTree* target )
+	void attach( const node* it, const node* target )
 	{
 		const node_method_set* methods = it->methods();
 		
