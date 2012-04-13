@@ -137,7 +137,7 @@ namespace Genie
 	
 	FSTreePtr IOHandle::GetFile()
 	{
-		FSTree* result = new FSTree( null_FSTreePtr,
+		FSTree* result = new FSTree( NULL,
 		                             IOName( this, true ),
 		                             S_IFIFO | permmode_from_openflags( GetFlags() ),
 		                             &anonymous_methods,

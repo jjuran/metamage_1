@@ -369,7 +369,7 @@ namespace Genie
 		
 		plus::string name = gear::inscribe_decimal( id );
 		
-		return new FSTree( parent, name, S_IFCHR | 0600 );
+		return new FSTree( parent.get(), name, S_IFCHR | 0600 );
 	}
 	
 	class ConsoleTTYHandle : public TTYHandle

@@ -87,7 +87,7 @@ namespace Genie
 	{
 		FSTreePtr parent = FSTreeFromFSSpec( file );
 		
-		FSTree* result = new FSTree( parent,
+		FSTree* result = new FSTree( parent.get(),
 		                             "rsrc",
 		                             file_mode( file ),
 		                             &rsrcfile_methods,
