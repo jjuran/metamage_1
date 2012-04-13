@@ -6,11 +6,14 @@
 #ifndef GENIE_FS_FSTREEFWD_HH
 #define GENIE_FS_FSTREEFWD_HH
 
+// vfs
+#include "vfs/node_fwd.hh"
+
 
 namespace Genie
 {
 	
-	class FSTree;
+	typedef vfs::node FSTree;
 	
 }
 

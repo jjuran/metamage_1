@@ -6,11 +6,8 @@
 #ifndef GENIE_FS_FSTREEPTR_HH
 #define GENIE_FS_FSTREEPTR_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// boost
-#include <boost/intrusive_ptr.hpp>
+// vfs
+#include "vfs/node_ptr.hh"
 
 // Genie
 #include "Genie/FS/FSTree_fwd.hh"
@@ -19,7 +16,7 @@
 namespace Genie
 {
 	
-	typedef boost::intrusive_ptr< FSTree const > FSTreePtr;
+	typedef vfs::node_ptr FSTreePtr;
 	
 }
 
