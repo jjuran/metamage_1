@@ -68,7 +68,7 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Icon_data( const FSTreePtr&                         parent,
+	FSTreePtr New_FSTree_Icon_data( const FSTree*                            parent,
 	                                const plus::string&                      name,
 	                                const boost::intrusive_ptr< IconData >&  data );
 	
