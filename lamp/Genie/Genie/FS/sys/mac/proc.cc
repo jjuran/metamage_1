@@ -140,7 +140,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_proc_PSN_Mappings[];
 	
-	static FSTreePtr psn_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr psn_lookup( const FSTree* parent, const plus::string& name )
 	{
 		const ProcessSerialNumber psn = decoded_ProcessSerialNumber( name.c_str() );
 		
@@ -167,7 +167,7 @@ namespace Genie
 			}
 	};
 	
-	static void psn_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void psn_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		psn_IteratorConverter converter;
 		

@@ -72,7 +72,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_crm_serial_N_Mappings[];
 	
-	static FSTreePtr serial_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr serial_lookup( const FSTree* parent, const plus::string& name )
 	{
 		const N::CRMDeviceID key = N::CRMDeviceID( gear::parse_decimal( name.c_str() ) );
 		
@@ -102,7 +102,7 @@ namespace Genie
 			}
 	};
 	
-	static void serial_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void serial_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		crm_IteratorConverter converter;
 		

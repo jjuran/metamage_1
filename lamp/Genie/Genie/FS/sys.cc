@@ -98,7 +98,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr syscall_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr syscall_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( LookUpSystemCallByName( name.c_str() ) == NULL )
 		{
@@ -121,7 +121,7 @@ namespace Genie
 			}
 	};
 	
-	static void syscall_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void syscall_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		syscall_IteratorConverter converter;
 		

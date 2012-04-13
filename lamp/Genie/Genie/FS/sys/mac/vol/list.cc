@@ -189,7 +189,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_vol_N_Mappings[];
 	
-	static FSTreePtr vol_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr vol_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_vol_number::applies( name ) )
 		{
@@ -212,7 +212,7 @@ namespace Genie
 			}
 	};
 	
-	static void vol_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void vol_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		vol_IteratorConverter converter;
 		

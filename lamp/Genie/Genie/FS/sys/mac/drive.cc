@@ -73,7 +73,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_drive_N_Mappings[];
 	
-	static FSTreePtr drive_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr drive_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !is_valid_drive_name( name ) )
 		{
@@ -96,7 +96,7 @@ namespace Genie
 			}
 	};
 	
-	static void drive_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void drive_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		drive_IteratorConverter converter;
 		

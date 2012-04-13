@@ -207,7 +207,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_thng_REF_Mappings[];
 	
-	static FSTreePtr thng_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr thng_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !is_valid_Component_name( name ) )
 		{
@@ -230,7 +230,7 @@ namespace Genie
 			}
 	};
 	
-	static void thng_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void thng_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		thng_IteratorConverter converter;
 		

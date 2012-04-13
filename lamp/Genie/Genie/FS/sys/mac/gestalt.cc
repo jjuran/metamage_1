@@ -178,7 +178,7 @@ namespace Genie
 		return is_valid_Gestalt_Selector( N::Gestalt_Selector( decoded ) );
 	}
 	
-	static FSTreePtr gestalt_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr gestalt_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !is_valid_Gestalt_Selector_name( name ) )
 		{
@@ -210,7 +210,7 @@ namespace Genie
 			}
 	};
 	
-	static void gestalt_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void gestalt_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		gestalt_IteratorConverter converter;
 		

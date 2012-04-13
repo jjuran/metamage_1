@@ -47,7 +47,7 @@ namespace Genie
 		return WindowList_contains( window );
 	}
 	
-	static FSTreePtr WindowRef_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr WindowRef_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !is_valid_WindowRef_name( name ) )
 		{
@@ -70,7 +70,7 @@ namespace Genie
 			}
 	};
 	
-	static void WindowRef_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void WindowRef_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		window_IteratorConverter converter;
 		

@@ -227,7 +227,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr proc_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr proc_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( name == "self" )
 		{
@@ -255,7 +255,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static void proc_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void proc_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		for_each_process( &iterate_one_process, &cache );
 	}
