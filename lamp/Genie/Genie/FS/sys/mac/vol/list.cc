@@ -608,7 +608,7 @@ namespace Genie
 		
 		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		
-		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
+		return Premapped_Factory( parent.get(), name, sys_mac_vol_N_Mappings );
 	}
 	
 }

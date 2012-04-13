@@ -45,7 +45,7 @@ namespace Genie
 		return new FSTree_Type( parent, name );
 	}
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&            parent,
+	FSTreePtr Premapped_Factory( const FSTree*               parent,
 	                             const plus::string&         name,
 	                             const premapped::mapping    mappings[] = premapped::empty_mappings,
 	                             void                      (*dtor)(const FSTree*) = NULL );

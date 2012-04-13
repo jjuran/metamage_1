@@ -543,7 +543,7 @@ namespace Genie
 	{
 		return New_FSTree_Union( null_FSTreePtr,
 		                         plus::string::null,
-		                         Premapped_Factory( null_FSTreePtr,
+		                         Premapped_Factory( NULL,
 		                                            plus::string::null,
 		                                            Root_Overlay_Mappings ),
 		                         FSTreeFromFSDirSpec( root_DirSpec() ) );
