@@ -26,6 +26,7 @@
 
 // Genie
 #include "Genie/code/fixed_address.hh"
+#include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/file_method_set.hh"
