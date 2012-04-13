@@ -90,7 +90,7 @@ namespace Genie
 	
 	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
 	
-	FSTreePtr New_View( const FSTreePtr&     parent,
+	FSTreePtr New_View( const FSTree*        parent,
 	                    const plus::string&  name,
 	                    ViewGetter           get,
 	                    ViewPurger           purge );

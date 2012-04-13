@@ -488,12 +488,12 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	FSTreePtr New_View( const FSTreePtr&     parent,
+	FSTreePtr New_View( const FSTree*        parent,
 	                    const plus::string&  name,
 	                    ViewGetter           get,
 	                    ViewPurger           purge )
 	{
-		const bool exists = ViewExists( parent.get(), name );
+		const bool exists = ViewExists( parent, name );
 		
 		const mode_t mode = exists ? S_IFDIR | 0700
 		                           : 0;
