@@ -140,7 +140,7 @@ namespace Genie
 		
 		public:
 			Rsrc_IOHandle( const FSTreePtr&               file,
-			               OpenFlags                      flags,
+			               int                            flags,
 			               const n::shared< N::Handle >&  h,
 			               const FSSpec&                  resFile )
 			:

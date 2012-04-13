@@ -19,7 +19,7 @@ namespace Genie
 			off_t itsMark;
 		
 		public:
-			RegularFileHandle( OpenFlags flags );
+			RegularFileHandle( int flags );
 			
 			virtual ~RegularFileHandle();
 			

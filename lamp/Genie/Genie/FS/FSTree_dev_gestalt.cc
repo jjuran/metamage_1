@@ -33,7 +33,7 @@ namespace Genie
 	class GestaltDeviceHandle : public DeviceHandle
 	{
 		public:
-			GestaltDeviceHandle( OpenFlags flags ) : DeviceHandle( flags )
+			GestaltDeviceHandle( int flags ) : DeviceHandle( flags )
 			{
 			}
 			

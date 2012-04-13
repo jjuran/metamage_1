@@ -21,7 +21,7 @@ namespace Genie
 		
 		public:
 			VirtualFileHandle( const FSTreePtr&  file,
-			                   OpenFlags         flags ) : Base( flags ),
+			                   int               flags ) : Base( flags ),
 			                                               itsFile( file )
 			{
 			}

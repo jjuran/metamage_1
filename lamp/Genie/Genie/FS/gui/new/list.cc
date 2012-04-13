@@ -133,7 +133,7 @@ namespace Genie
 	class List_data_Handle : public VirtualFileHandle< StreamHandle >
 	{
 		public:
-			List_data_Handle( const FSTreePtr& file, OpenFlags flags )
+			List_data_Handle( const FSTreePtr& file, int flags )
 			:
 				VirtualFileHandle< StreamHandle >( file, flags )
 			{

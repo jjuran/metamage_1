@@ -56,7 +56,7 @@ namespace Genie
 	};
 	
 	
-	RegularFileHandle::RegularFileHandle( OpenFlags flags ) : FileHandle( flags ), itsMark()
+	RegularFileHandle::RegularFileHandle( int flags ) : FileHandle( flags ), itsMark()
 	{
 	}
 	

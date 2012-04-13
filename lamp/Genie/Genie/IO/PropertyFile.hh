@@ -25,7 +25,7 @@ namespace Genie
 		
 		public:
 			PropertyReaderFileHandle( const FSTreePtr&     file,
-			                          OpenFlags            flags,
+			                          int                  flags,
 			                          const plus::string&  value )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags ),
@@ -54,7 +54,7 @@ namespace Genie
 		
 		public:
 			PropertyWriterFileHandle( const FSTreePtr&  file,
-			                          OpenFlags         flags,
+			                          int               flags,
 			                          WriteHook         writeHook,
 			                          bool              binary )
 			:

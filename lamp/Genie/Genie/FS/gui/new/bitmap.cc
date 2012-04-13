@@ -80,7 +80,7 @@ namespace Genie
 			Bits_IO& operator=( const Bits_IO& );
 		
 		public:
-			Bits_IO( const FSTreePtr& file, OpenFlags flags )
+			Bits_IO( const FSTreePtr& file, int flags )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags )
 			{

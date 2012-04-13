@@ -26,7 +26,7 @@ namespace Genie
 		
 		public:
 			MemoryFileHandle( const FSTreePtr&  file,
-			                  OpenFlags         flags,
+			                  int               flags,
 			                  char*             base,
 			                  std::size_t       size )
 			:

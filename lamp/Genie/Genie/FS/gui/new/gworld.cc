@@ -89,7 +89,7 @@ namespace Genie
 			Pixels_IO& operator=( const Pixels_IO& );
 		
 		public:
-			Pixels_IO( const FSTreePtr& file, OpenFlags flags )
+			Pixels_IO( const FSTreePtr& file, int flags )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags )
 			{

@@ -216,14 +216,14 @@ namespace Genie
 			std::size_t itsSeed;
 		
 		public:
-			Button_socket_Handle( const FSTreePtr& file, OpenFlags flags );
+			Button_socket_Handle( const FSTreePtr& file, int flags );
 			
 			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 	};
 	
-	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, OpenFlags flags )
+	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, int flags )
 	:
 		VirtualFileHandle< StreamHandle >( file, flags ),
 		itsSeed( gButtonMap[ file->owner() ].seed )

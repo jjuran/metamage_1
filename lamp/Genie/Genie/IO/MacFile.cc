@@ -35,7 +35,7 @@ namespace Genie
 		
 		public:
 			MacFileHandle( const nucleus::shared< Nitrogen::FSFileRefNum >&  refNum,
-			               OpenFlags                                         flags,
+			               int                                               flags,
 			               FileGetter                                        getFile );
 			
 			~MacFileHandle();
@@ -118,7 +118,7 @@ namespace Genie
 	
 	
 	MacFileHandle::MacFileHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                              OpenFlags                            flags,
+	                              int                                  flags,
 	                              FileGetter                           getFile )
 	: RegularFileHandle( flags  ),
 	  itsRefNum        ( refNum ),
@@ -216,7 +216,7 @@ namespace Genie
 	IOPtr
 	//
 	New_DataForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                    OpenFlags                            flags )
+	                    int                                  flags )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,
@@ -226,7 +226,7 @@ namespace Genie
 	IOPtr
 	//
 	New_RsrcForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                    OpenFlags                            flags )
+	                    int                                  flags )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,

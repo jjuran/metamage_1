@@ -27,7 +27,7 @@ namespace Genie
 			bool              itHasBeenDisconnected;
 		
 		public:
-			StreamHandle( OpenFlags flags );
+			StreamHandle( int flags );
 			
 			virtual ~StreamHandle();
 			

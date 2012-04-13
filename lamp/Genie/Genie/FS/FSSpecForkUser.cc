@@ -18,7 +18,7 @@ namespace Genie
 	IOPtr
 	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
-	                   OpenFlags      flags,
+	                   int            flags,
 	                   ForkOpener     openFork,
 	                   HandleCreator  createHandle )
 	{

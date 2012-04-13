@@ -131,7 +131,7 @@ namespace Genie
 			
 			StreamHandle& stream = IOHandle_Cast< StreamHandle >( handle );
 			
-			const OpenFlags mask = O_APPEND | O_NONBLOCK;  // settable flags
+			const int mask = O_APPEND | O_NONBLOCK;  // settable flags
 			
 			switch ( cmd )
 			{

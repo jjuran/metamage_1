@@ -52,7 +52,7 @@ namespace Genie
 	{
 		public:
 			TriggerHandle( const FSTreePtr&  file,
-			               OpenFlags         flags )
+			               int               flags )
 			:
 				VirtualFileHandle< StreamHandle >( file, flags )
 			{

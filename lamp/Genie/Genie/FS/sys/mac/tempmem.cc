@@ -34,7 +34,7 @@ namespace Genie
 	{
 		public:
 			TempMem_IOHandle( const FSTreePtr&  file,
-			                  OpenFlags         flags )
+			                  int               flags )
 			:
 				VirtualFileHandle< IOHandle >( file, flags )
 			{

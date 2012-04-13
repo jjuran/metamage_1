@@ -18,7 +18,6 @@
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
-#include "Genie/IO/OpenFlags.hh"
 #include "Genie/mmap/memory_mapping.hh"
 
 
@@ -45,7 +44,7 @@ namespace Genie
 	class IOHandle : public plus::ref_count< IOHandle >
 	{
 		private:
-			OpenFlags itsOpenFlags;
+			int itsOpenFlags;
 			
 			virtual IOHandle* Next() const  { return NULL; }
 			
@@ -56,7 +55,7 @@ namespace Genie
 		public:
 			typedef bool (IOHandle::*Test)() const;
 			
-			IOHandle( OpenFlags flags );
+			IOHandle( int flags );
 			
 			virtual ~IOHandle();
 			
@@ -68,9 +67,9 @@ namespace Genie
 			
 			IOHandle* GetBaseForCast( Test test );
 			
-			OpenFlags GetFlags() const  { return itsOpenFlags; }
+			int GetFlags() const  { return itsOpenFlags; }
 			
-			void SetFlags( OpenFlags flags )  { itsOpenFlags = flags; }
+			void SetFlags( int flags )  { itsOpenFlags = flags; }
 			
 			virtual IOPtr Clone();
 			

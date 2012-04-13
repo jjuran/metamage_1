@@ -339,7 +339,7 @@ namespace Genie
 		
 		public:
 			IconDataFileHandle( const FSTreePtr&                         file,
-			                    OpenFlags                                flags,
+			                    int                                      flags,
 			                    const boost::intrusive_ptr< IconData >&  data )
 			:
 				VirtualFileHandle< RegularFileHandle >( file, flags ),
@@ -362,7 +362,7 @@ namespace Genie
 		
 		public:
 			IconDataWriterHandle( const FSTreePtr&                         file,
-			                      OpenFlags                                flags,
+			                      int                                      flags,
 			                      const boost::intrusive_ptr< IconData >&  data )
 			:
 				VirtualFileHandle< StreamHandle >( file, flags ),
