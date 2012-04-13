@@ -383,11 +383,11 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr bitmap_bits_Factory( const FSTreePtr&     parent,
+	static FSTreePtr bitmap_bits_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		const mode_t mode = has_bits( parent.get() ) ? S_IFREG | 0600 : 0;
+		const mode_t mode = has_bits( parent ) ? S_IFREG | 0600 : 0;
 		
 		return new FSTree( parent, name, mode, &bitmap_bits_methods );
 	}
@@ -405,7 +405,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_bitmap( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_bitmap( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void* )
 	{

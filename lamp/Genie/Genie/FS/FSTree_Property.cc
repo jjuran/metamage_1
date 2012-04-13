@@ -168,7 +168,7 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr new_property( const FSTreePtr&     parent,
+	FSTreePtr new_property( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          params_ )
 	{
@@ -176,7 +176,7 @@ namespace Genie
 		
 		const mode_t mode = get_property_filemode( params.get,
 		                                           params.set,
-		                                           parent.get() );
+		                                           parent );
 		
 		FSTree* result = new FSTree( parent,
 		                             name,

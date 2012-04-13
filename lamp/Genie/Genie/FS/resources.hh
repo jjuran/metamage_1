@@ -25,7 +25,7 @@ namespace Genie
 	
 	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache );
 	
-	FSTreePtr Get_RsrcFile_FSTree( const FSTreePtr&     parent,
+	FSTreePtr Get_RsrcFile_FSTree( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const FSSpec&        file );
 	

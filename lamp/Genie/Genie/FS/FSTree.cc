@@ -35,7 +35,7 @@ namespace Genie
 		return plus::encode_32_bit_hex( (unsigned) ptr );
 	}
 	
-	FSTree::FSTree( const FSTreePtr&        parent,
+	FSTree::FSTree( const FSTree*           parent,
 	                const plus::string&     name,
 	                mode_t                  mode,
 	                const node_method_set*  methods,

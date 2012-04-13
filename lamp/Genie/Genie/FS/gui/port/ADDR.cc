@@ -911,7 +911,7 @@ namespace Genie
 		&unwindow_touch
 	};
 	
-	static FSTreePtr new_window( const FSTreePtr&     parent,
+	static FSTreePtr new_window( const FSTree*        parent,
 	                             const plus::string&  name,
 	                             const void*          args )
 	{
@@ -926,11 +926,11 @@ namespace Genie
 		return new FSTree( parent, name, mode, &methods );
 	}
 	
-	static FSTreePtr new_focus( const FSTreePtr&     parent,
+	static FSTreePtr new_focus( const FSTree*        parent,
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
-		const bool exists = gWindowParametersMap[ parent.get() ].itsFocus != NULL;
+		const bool exists = gWindowParametersMap[ parent ].itsFocus != NULL;
 		
 		const mode_t mode = exists ? S_IFLNK | 0777
 		                           : 0;
@@ -941,11 +941,11 @@ namespace Genie
 		return new FSTree( parent, name, mode, methods );
 	}
 	
-	static FSTreePtr new_gesture( const FSTreePtr&     parent,
+	static FSTreePtr new_gesture( const FSTree*        parent,
 	                              const plus::string&  name,
 	                              const void*          args )
 	{
-		const FSTree* view = parent.get();
+		const FSTree* view = parent;
 		
 		const int index = LookupGesture( name );
 		
@@ -959,14 +959,14 @@ namespace Genie
 		return new FSTree( parent, name, 0, &ungesture_methods );
 	}
 	
-	static FSTreePtr new_tty( const FSTreePtr&     parent,
+	static FSTreePtr new_tty( const FSTree*        parent,
 	                          const plus::string&  name,
 	                          const void*          args )
 	{
 		return new FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods );
 	}
 	
-	static FSTreePtr new_port_property( const FSTreePtr&     parent,
+	static FSTreePtr new_port_property( const FSTree*        parent,
 	                                    const plus::string&  name,
 	                                    const void*          params_ )
 	{

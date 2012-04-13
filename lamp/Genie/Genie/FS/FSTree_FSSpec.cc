@@ -531,7 +531,7 @@ namespace Genie
 		return new_HFS_node( cInfo, name );
 	}
 	
-	FSTreePtr New_FSTree_Users( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_Users( const FSTree*        parent,
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
@@ -541,12 +541,12 @@ namespace Genie
 	
 	static FSTreePtr MakeFSRoot()
 	{
-		return New_FSTree_Union( null_FSTreePtr,
+		return New_FSTree_Union( NULL,
 		                         plus::string::null,
-		                         Premapped_Factory( null_FSTreePtr,
+		                         Premapped_Factory( NULL,
 		                                            plus::string::null,
-		                                            Root_Overlay_Mappings ),
-		                         FSTreeFromFSDirSpec( root_DirSpec() ) );
+		                                            Root_Overlay_Mappings ).get(),
+		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
 	}
 	
 	const FSTreePtr& FSRoot()

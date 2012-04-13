@@ -25,7 +25,7 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr trigger_factory( const FSTreePtr&     parent,
+	FSTreePtr trigger_factory( const FSTree*        parent,
 	                           const plus::string&  name,
 	                           const void*          args );
 	

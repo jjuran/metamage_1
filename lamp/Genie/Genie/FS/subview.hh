@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr subview_factory( const FSTreePtr&     parent,
+	FSTreePtr subview_factory( const FSTree*        parent,
 	                           const plus::string&  name,
 	                           const void*          args );
 	

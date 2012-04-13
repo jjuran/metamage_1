@@ -163,7 +163,7 @@ namespace Genie
 		&textedit_text_data_methods
 	};
 	
-	FSTreePtr New_FSTree_TextEdit_text( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_TextEdit_text( const FSTree*        parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{

@@ -45,7 +45,7 @@ namespace Genie
 		return false;
 	}
 	
-	static FSTreePtr menu_items_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr menu_items_lookup( const FSTree* parent, const plus::string& name )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
@@ -57,7 +57,7 @@ namespace Genie
 		return Premapped_Factory( parent, name, sys_app_menu_list_ID_items_INDEX_Mappings );
 	}
 	
-	static void menu_items_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void menu_items_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
@@ -74,7 +74,7 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr New_FSTree_sys_app_menu_list_ID_items( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_menu_list_ID_items( const FSTree*        parent,
 	                                                 const plus::string&  name,
 	                                                 const void*          args )
 	{

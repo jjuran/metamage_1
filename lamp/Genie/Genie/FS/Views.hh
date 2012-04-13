@@ -30,7 +30,7 @@ namespace Genie
 	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
 	typedef FSTreePtr (*DelegateFactory)( const FSTree*,
-	                                      const FSTreePtr&,
+	                                      const FSTree*,
 	                                      const plus::string& );
 	
 	
@@ -74,10 +74,10 @@ namespace Genie
 	
 	
 	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
-	                                                const FSTreePtr&     parent,
+	                                                const FSTree*        parent,
 	                                                const plus::string&  name );
 	
-	FSTreePtr New_new_view( const FSTreePtr&           parent,
+	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
 	                        const premapped::mapping*  mappings,
@@ -90,7 +90,7 @@ namespace Genie
 	
 	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
 	
-	FSTreePtr New_View( const FSTreePtr&     parent,
+	FSTreePtr New_View( const FSTree*        parent,
 	                    const plus::string&  name,
 	                    ViewGetter           get,
 	                    ViewPurger           purge );

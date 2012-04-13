@@ -100,7 +100,7 @@ namespace Genie
 		return false;
 	}
 	
-	static FSTreePtr app_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr app_lookup( const FSTree* parent, const plus::string& name )
 	{
 		app_map::iterator it = the_application_map.find( name );
 		
@@ -117,7 +117,7 @@ namespace Genie
 		return new FSTree( parent, name, 0, &unused_app_slot_methods );
 	}
 	
-	static void app_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void app_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		typedef app_map::iterator iterator;
 		
@@ -139,7 +139,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr New_FSTree_app( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_app( const FSTree*        parent,
 	                          const plus::string&  name,
 	                          const void*          args )
 	{

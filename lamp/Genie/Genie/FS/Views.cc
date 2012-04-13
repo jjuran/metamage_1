@@ -313,7 +313,7 @@ namespace Genie
 		DelegateFactory            delegate_factory;
 	};
 	
-	FSTreePtr New_new_view( const FSTreePtr&           parent,
+	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
 	                        const premapped::mapping*  mappings,
@@ -338,7 +338,7 @@ namespace Genie
 	}
 	
 	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
-	                                                const FSTreePtr&     parent,
+	                                                const FSTree*        parent,
 	                                                const plus::string&  name )
 	{
 		new_view_extra& extra = *(new_view_extra*) node->extra();
@@ -488,12 +488,12 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	FSTreePtr New_View( const FSTreePtr&     parent,
+	FSTreePtr New_View( const FSTree*        parent,
 	                    const plus::string&  name,
 	                    ViewGetter           get,
 	                    ViewPurger           purge )
 	{
-		const bool exists = ViewExists( parent.get(), name );
+		const bool exists = ViewExists( parent, name );
 		
 		const mode_t mode = exists ? S_IFDIR | 0700
 		                           : 0;

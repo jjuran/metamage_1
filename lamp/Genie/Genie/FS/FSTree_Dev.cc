@@ -149,7 +149,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr dev_fd_Factory( const FSTreePtr&     parent,
+	static FSTreePtr dev_fd_Factory( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
@@ -157,7 +157,7 @@ namespace Genie
 	}
 	
 	template < class Opener >
-	static FSTreePtr BasicDevice_Factory( const FSTreePtr&     parent,
+	static FSTreePtr BasicDevice_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
@@ -167,7 +167,7 @@ namespace Genie
 		                   &basic_device< Opener >::node_methods );
 	}
 	
-	static FSTreePtr SimpleDevice_Factory( const FSTreePtr&     parent,
+	static FSTreePtr SimpleDevice_Factory( const FSTree*        parent,
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{

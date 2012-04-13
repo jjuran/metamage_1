@@ -17,7 +17,7 @@
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_SymbolicLink( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_SymbolicLink( const FSTree*        parent,
 	                                   const plus::string&  name,
 	                                   plus::string         target,
 	                                   remove_method        remove = NULL );

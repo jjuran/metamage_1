@@ -84,7 +84,7 @@ namespace Genie
 		&mac_tempmem_data_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{

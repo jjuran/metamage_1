@@ -274,7 +274,7 @@ namespace Genie
 		&list_data_data_methods
 	};
 	
-	static FSTreePtr list_data_factory( const FSTreePtr&     parent,
+	static FSTreePtr list_data_factory( const FSTree*        parent,
 	                                    const plus::string&  name,
 	                                    const void*          args )
 	{
@@ -317,7 +317,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_list( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_list( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{

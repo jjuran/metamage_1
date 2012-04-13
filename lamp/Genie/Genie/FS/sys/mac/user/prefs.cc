@@ -67,7 +67,7 @@ namespace Genie
 		&mac_user_prefs_link_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_user_prefs( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_user_prefs( const FSTree*        parent,
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{

@@ -86,7 +86,7 @@ namespace Genie
 		&mac_rom_data_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_rom( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_rom( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

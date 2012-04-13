@@ -130,7 +130,7 @@ namespace Genie
 		Ped::SetCommandHandler( code, NULL );
 	}
 	
-	static FSTreePtr cmd_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr cmd_lookup( const FSTree* parent, const plus::string& name )
 	{
 		cmd_map::const_iterator it = the_command_map.find( parse_utf8_quad_name( name ) );
 		
@@ -147,7 +147,7 @@ namespace Genie
 		return new FSTree( parent, name, 0, &unused_cmd_slot_methods );
 	}
 	
-	static void cmd_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void cmd_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		typedef cmd_map::iterator iterator;
 		
@@ -168,7 +168,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr New_FSTree_sys_app_cmd( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_cmd( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

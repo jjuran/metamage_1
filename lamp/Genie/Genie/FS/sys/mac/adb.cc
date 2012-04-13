@@ -92,7 +92,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_adb_N_Mappings[];
 	
-	static FSTreePtr adb_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr adb_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !name_is_valid_ADBAddress( name ) )
 		{
@@ -115,7 +115,7 @@ namespace Genie
 			}
 	};
 	
-	static void adb_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void adb_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		adb_IteratorConverter converter;
 		
@@ -214,7 +214,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_adb( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_adb( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{

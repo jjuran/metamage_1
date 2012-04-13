@@ -104,7 +104,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_gdev_list_H_Mappings[];
 	
-	static FSTreePtr gdev_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr gdev_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !is_valid_GDHandle_name( name ) )
 		{
@@ -127,7 +127,7 @@ namespace Genie
 			}
 	};
 	
-	static void gdev_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void gdev_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		gdev_IteratorConverter converter;
 		
@@ -182,11 +182,11 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Driver_Link_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		GDHandle key = GetKeyFromParent( parent.get() );
+		GDHandle key = GetKeyFromParent( parent );
 		
 		plus::string unit = gear::inscribe_decimal( ~key[0]->gdRefNum );
 		
@@ -206,7 +206,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_gdev_list( const FSTree*        parent,
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{

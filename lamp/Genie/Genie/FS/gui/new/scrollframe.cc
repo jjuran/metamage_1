@@ -377,11 +377,11 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
 	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
 	
-	static FSTreePtr target_factory( const FSTreePtr&     parent,
+	static FSTreePtr target_factory( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
-		if ( const bool exists = scrollframe_target_exists( parent.get() ) )
+		if ( const bool exists = scrollframe_target_exists( parent ) )
 		{
 			return new FSTree( parent, name, S_IFLNK | 0777, &scrollframe_target_methods );
 		}
@@ -401,7 +401,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scrollframe( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_scrollframe( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{

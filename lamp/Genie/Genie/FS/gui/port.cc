@@ -39,7 +39,7 @@ namespace Genie
 	static WindowMap gWindowMap;
 	
 	
-	static FSTreePtr window_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr window_lookup( const FSTree* parent, const plus::string& name )
 	{
 		WindowMap::const_iterator it;
 		
@@ -60,7 +60,7 @@ namespace Genie
 		return FSTreePtr( *it );
 	}
 	
-	static void window_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void window_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		WindowMap::const_iterator end = gWindowMap.end();
 		
@@ -83,16 +83,16 @@ namespace Genie
 		gWindowMap.erase( port );
 	}
 	
-	static const FSTreePtr& SysWindow()
+	static const FSTree* SysWindow()
 	{
 		static FSTreePtr sys_window = ResolveAbsolutePath( STR_LEN( "/gui/port" ) );
 		
-		return sys_window;
+		return sys_window.get();
 	}
 	
 	FSTreePtr new_port()
 	{
-		const FSTreePtr& parent = SysWindow();
+		const FSTree* parent = SysWindow();
 		
 		FSTreePtr window = Premapped_Factory( parent, "/", sys_port_ADDR_Mappings, &remove_port );
 		
@@ -101,7 +101,7 @@ namespace Genie
 		return window;
 	}
 	
-	FSTreePtr New_sys_port( const FSTreePtr&     parent,
+	FSTreePtr New_sys_port( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          args )
 	{

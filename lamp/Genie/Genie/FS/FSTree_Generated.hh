@@ -21,12 +21,12 @@ namespace Genie
 	
 	// Can be used in premapped directory maps
 	
-	FSTreePtr new_generated( const FSTreePtr&     parent,
+	FSTreePtr new_generated( const FSTree*        parent,
 	                         const plus::string&  name,
 	                         const void*          params );
 	
 	
-	inline FSTreePtr New_FSTree_Generated( const FSTreePtr&     parent,
+	inline FSTreePtr New_FSTree_Generated( const FSTree*        parent,
 	                                       const plus::string&  name,
 	                                       Generated_ReadHook   get_hook )
 	{

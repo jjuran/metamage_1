@@ -312,7 +312,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_unit_N_Mappings[];
 	
-	static FSTreePtr unit_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr unit_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_unit_number::applies( name ) )
 		{
@@ -337,7 +337,7 @@ namespace Genie
 			}
 	};
 	
-	static void unit_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void unit_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		unit_IteratorConverter converter;
 		
@@ -365,7 +365,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_unit( const FSTree*        parent,
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{

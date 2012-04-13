@@ -86,7 +86,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_soundin_REF_Mappings[];
 	
-	static FSTreePtr soundin_Lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr soundin_Lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_soundin_device::applies( name ) )
 		{
@@ -127,7 +127,7 @@ namespace Genie
 		return distance( N::SoundInputDevice_Names() );
 	}
 	
-	static void soundin_Iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void soundin_Iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		const std::size_t n = Count_SoundInputDevices();
 		
@@ -211,7 +211,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_soundin( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_soundin( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{

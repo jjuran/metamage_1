@@ -310,7 +310,7 @@ namespace Genie
 		&button_stream_data_methods
 	};
 	
-	static FSTreePtr button_stream_factory( const FSTreePtr&     parent,
+	static FSTreePtr button_stream_factory( const FSTree*        parent,
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
@@ -347,7 +347,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_button( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_new_button( const FSTree*        parent,
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{

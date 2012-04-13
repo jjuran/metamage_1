@@ -21,7 +21,7 @@ namespace Genie
 		
 		typedef void (*destructor)( const FSTree* );
 		
-		typedef FSTreePtr (*function)( const FSTreePtr&,
+		typedef FSTreePtr (*function)( const FSTree*,
 		                               const plus::string&,
 		                               const void* );
 		
@@ -38,14 +38,14 @@ namespace Genie
 	
 	
 	template < class FSTree_Type >
-	FSTreePtr Basic_Factory( const FSTreePtr&     parent,
+	FSTreePtr Basic_Factory( const FSTree*        parent,
 	                         const plus::string&  name,
 	                         const void*          args )
 	{
 		return new FSTree_Type( parent, name );
 	}
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&            parent,
+	FSTreePtr Premapped_Factory( const FSTree*               parent,
 	                             const plus::string&         name,
 	                             const premapped::mapping    mappings[] = premapped::empty_mappings,
 	                             void                      (*dtor)(const FSTree*) = NULL );

@@ -147,10 +147,10 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Union( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_Union( const FSTree*        parent,
 	                            const plus::string&  name,
-	                            const FSTreePtr&     top,
-	                            const FSTreePtr&     bottom )
+	                            const FSTree*        top,
+	                            const FSTree*        bottom )
 	{
 		FSTree* result = new FSTree( parent,
 		                             name,
@@ -161,11 +161,11 @@ namespace Genie
 		
 		union_extra& extra = *(union_extra*) result->extra();
 		
-		intrusive_ptr_add_ref( top   .get() );
-		intrusive_ptr_add_ref( bottom.get() );
+		intrusive_ptr_add_ref( top    );
+		intrusive_ptr_add_ref( bottom );
 		
-		extra.top    = top.get();
-		extra.bottom = bottom.get();
+		extra.top    = top;
+		extra.bottom = bottom;
 		
 		return result;
 	}

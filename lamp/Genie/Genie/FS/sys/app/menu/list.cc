@@ -33,7 +33,7 @@
 namespace Genie
 {
 	
-	static FSTreePtr menu_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr menu_lookup( const FSTree* parent, const plus::string& name )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( name.c_str() ) );
 		
@@ -45,7 +45,7 @@ namespace Genie
 		return Premapped_Factory( parent, name, sys_app_menu_list_ID_Mappings );
 	}
 	
-	static void menulist_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void menulist_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 	#if !TARGET_API_MAC_CARBON
 		
@@ -69,7 +69,7 @@ namespace Genie
 	#endif
 	}
 	
-	FSTreePtr New_FSTree_sys_app_menu_list( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_app_menu_list( const FSTree*        parent,
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{

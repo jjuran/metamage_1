@@ -192,7 +192,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr appl_QUAD_list_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr appl_QUAD_list_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !canonical_positive_integer::applies( name ) )
 		{
@@ -202,7 +202,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &dt_appls_QUAD_list_N_methods );
 	}
 	
-	static void appl_QUAD_list_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void appl_QUAD_list_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		const FSTree* grandparent = parent->owner();
 		
@@ -221,14 +221,14 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const FSTree*        parent,
 	                                                              const plus::string&  name,
 	                                                              const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &latest_appl_link_methods );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTree*        parent,
 	                                                            const plus::string&  name,
 	                                                            const void*          args )
 	{
@@ -260,7 +260,7 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr appl_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr appl_lookup( const FSTree* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
@@ -308,7 +308,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr icon_QUAD_QUAD_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr icon_QUAD_QUAD_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !canonical_positive_integer::applies( name ) )
 		{
@@ -318,7 +318,7 @@ namespace Genie
 		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
 	}
 	
-	static void icon_QUAD_QUAD_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void icon_QUAD_QUAD_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		const FSTree*   gparent = parent ->owner();
 		const FSTree* gggparent = gparent->owner()->owner();
@@ -352,35 +352,35 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr icon_QUAD_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr icon_QUAD_lookup( const FSTree* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
 		return new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
 	}
 	
-	static FSTreePtr icon_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr icon_lookup( const FSTree* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
 		return new_basic_directory( parent, name, icon_QUAD_lookup, NULL );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_dir( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_dir( const FSTree*        parent,
 	                                                const plus::string&  name,
 	                                                const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &desktop_dir_methods );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTree*        parent,
 	                                                  const plus::string&  name,
 	                                                  const void*          args )
 	{
 		return new_basic_directory( parent, name, appl_lookup, NULL );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTreePtr&     parent,
+	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTree*        parent,
 	                                                  const plus::string&  name,
 	                                                  const void*          args )
 	{

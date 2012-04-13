@@ -133,7 +133,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Premapped_Factory( const FSTreePtr&            parent,
+	FSTreePtr Premapped_Factory( const FSTree*               parent,
 	                             const plus::string&         name,
 	                             const premapped::mapping    mappings[],
 	                             void                      (*dtor)(const FSTree*) )

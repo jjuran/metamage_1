@@ -217,7 +217,7 @@ namespace Genie
 	
 	
 	static FSTreePtr create_delegate_for_new_stack( const FSTree*        node,
-	                                                const FSTreePtr&     parent,
+	                                                const FSTree*        parent,
 	                                                const plus::string&  name )
 	{
 		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
@@ -228,7 +228,7 @@ namespace Genie
 		gStack_Parameters_Map.erase( delegate );
 	}
 	
-	FSTreePtr New_stack( const FSTreePtr&     parent,
+	FSTreePtr New_stack( const FSTree*        parent,
 	                     const plus::string&  name,
 	                     const void*          args )
 	{

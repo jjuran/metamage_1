@@ -52,7 +52,7 @@ namespace Genie
 	
 	FSTreePtr FSNull()
 	{
-		return new FSTree( FSTreePtr(), plus::string::null, 0, &null_methods );
+		return new FSTree( NULL, plus::string::null, 0, &null_methods );
 	}
 	
 }

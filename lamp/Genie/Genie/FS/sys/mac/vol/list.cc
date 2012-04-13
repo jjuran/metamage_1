@@ -189,7 +189,7 @@ namespace Genie
 	
 	extern const premapped::mapping sys_mac_vol_N_Mappings[];
 	
-	static FSTreePtr vol_lookup( const FSTreePtr& parent, const plus::string& name )
+	static FSTreePtr vol_lookup( const FSTree* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_vol_number::applies( name ) )
 		{
@@ -212,7 +212,7 @@ namespace Genie
 			}
 	};
 	
-	static void vol_iterate( const FSTreePtr& parent, vfs::dir_contents& cache )
+	static void vol_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
 		vol_IteratorConverter converter;
 		
@@ -467,7 +467,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Root_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Root_Factory( const FSTree*        parent,
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
@@ -478,7 +478,7 @@ namespace Genie
 		return FSTreeFromFSDirSpec( volume );
 	}
 	
-	static FSTreePtr Drive_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Drive_Link_Factory( const FSTree*        parent,
 	                                     const plus::string&  name,
 	                                     const void*          args )
 	{
@@ -500,7 +500,7 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, drive );
 	}
 	
-	static FSTreePtr Driver_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Driver_Link_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
@@ -522,7 +522,7 @@ namespace Genie
 		return New_FSTree_SymbolicLink( parent, name, unit );
 	}
 	
-	static FSTreePtr Folder_Link_Factory( const FSTreePtr&     parent,
+	static FSTreePtr Folder_Link_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
@@ -531,7 +531,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	
-	static FSTreePtr volume_trigger_factory( const FSTreePtr&     parent,
+	static FSTreePtr volume_trigger_factory( const FSTree*        parent,
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
@@ -595,7 +595,7 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTreePtr&     parent,
+	FSTreePtr New_FSTree_sys_mac_vol( const FSTree*        parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
@@ -608,7 +608,7 @@ namespace Genie
 		
 		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		
-		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
+		return Premapped_Factory( parent.get(), name, sys_mac_vol_N_Mappings );
 	}
 	
 }
