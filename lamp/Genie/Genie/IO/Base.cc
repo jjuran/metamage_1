@@ -172,13 +172,5 @@ namespace Genie
 		return boost::intrusive_ptr< memory_mapping >();
 	}
 	
-	void Check_IOHandle_Cast( const void* cast, int errorToThrow )
-	{
-		if ( cast == NULL )
-		{
-			p7::throw_errno( errorToThrow );
-		}
-	}
-	
 }
 

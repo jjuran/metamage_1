@@ -8,6 +8,7 @@
 
 // Genie
 #include "Genie/IO/Base.hh"
+#include "Genie/IO/IOHandle_Cast.hh"
 
 
 namespace Genie

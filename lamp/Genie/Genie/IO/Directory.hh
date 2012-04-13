@@ -14,6 +14,7 @@
 #include "Genie/FS/FSIteratorPtr.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/Base.hh"
+#include "Genie/IO/IOHandle_Cast.hh"
 
 
 namespace Genie
