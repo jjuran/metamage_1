@@ -77,7 +77,7 @@ namespace Genie
 	                                                const FSTree*        parent,
 	                                                const plus::string&  name );
 	
-	FSTreePtr New_new_view( const FSTreePtr&           parent,
+	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
 	                        const premapped::mapping*  mappings,
