@@ -67,7 +67,7 @@ namespace Genie
 			const plus::string& name() const  { return itsName; }
 			const plus::string& Name() const  { return itsName; }
 			
-			mode_t FileMode() const  { return itsMode; }
+			mode_t filemode() const  { return itsMode; }
 			
 			const node_method_set* methods() const  { return its_methods; }
 			

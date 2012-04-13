@@ -35,7 +35,7 @@ namespace Genie
 			return;
 		}
 		
-		if ( node->FileMode() == 0 )
+		if ( node->filemode() == 0 )
 		{
 			p7::throw_errno( ENOENT );
 		}
@@ -44,7 +44,7 @@ namespace Genie
 		
 		sb.st_ino = inode( node );
 		
-		sb.st_mode = node->FileMode();
+		sb.st_mode = node->filemode();
 		
 		sb.st_nlink = 1;
 		

@@ -40,10 +40,10 @@ namespace Genie
 		}
 		
 		// This confuses MWCPPC when optimizing:
-		//p7::throw_errno( S_ISDIR( node->FileMode() ) ? EISDIR : EINVAL );
+		//p7::throw_errno( S_ISDIR( node->filemode() ) ? EISDIR : EINVAL );
 		// internal compiler error: File: 'PCodeUtilities.c' Line: 80
 		
-		const volatile int error = S_ISDIR( node->FileMode() ) ? EISDIR : EINVAL;
+		const volatile int error = S_ISDIR( node->filemode() ) ? EISDIR : EINVAL;
 		
 		p7::throw_errno( error );
 	}
