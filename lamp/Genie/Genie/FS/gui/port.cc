@@ -83,16 +83,16 @@ namespace Genie
 		gWindowMap.erase( port );
 	}
 	
-	static const FSTreePtr& SysWindow()
+	static const FSTree* SysWindow()
 	{
 		static FSTreePtr sys_window = ResolveAbsolutePath( STR_LEN( "/gui/port" ) );
 		
-		return sys_window;
+		return sys_window.get();
 	}
 	
 	FSTreePtr new_port()
 	{
-		const FSTreePtr& parent = SysWindow();
+		const FSTree* parent = SysWindow();
 		
 		FSTreePtr window = Premapped_Factory( parent, "/", sys_port_ADDR_Mappings, &remove_port );
 		
