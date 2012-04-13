@@ -338,7 +338,7 @@ namespace Genie
 	}
 	
 	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
-	                                                const FSTreePtr&     parent,
+	                                                const FSTree*        parent,
 	                                                const plus::string&  name )
 	{
 		new_view_extra& extra = *(new_view_extra*) node->extra();
