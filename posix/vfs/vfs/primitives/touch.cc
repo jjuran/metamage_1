@@ -3,7 +3,7 @@
 	--------
 */
 
-#include "Genie/FS/touch.hh"
+#include "vfs/primitives/touch.hh"
 
 // POSIX
 #include <time.h>
@@ -12,11 +12,9 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 #include "vfs/primitives/utime.hh"
-
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 #ifndef UTIME_NOW
@@ -24,13 +22,13 @@
 #endif
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void touch( const FSTree* it )
+	void touch( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		

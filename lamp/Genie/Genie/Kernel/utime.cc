@@ -7,6 +7,7 @@
 #include "sys/stat.h"
 
 // vfs
+#include "vfs/primitives/touch.hh"
 #include "vfs/primitives/utime.hh"
 
 // Genie
@@ -14,7 +15,6 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/touch.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
