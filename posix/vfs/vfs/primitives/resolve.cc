@@ -3,23 +3,18 @@
 	----------
 */
 
-#include "Genie/FS/resolve.hh"
+#include "vfs/primitives/resolve.hh"
 
 // vfs
 #include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node_ptr.hh"
-
-// Genie
-#include "Genie/FS/ResolvePathname.hh"
+#include "vfs/functions/resolve_pathname.hh"
 
 
 namespace vfs
 {
-	
-	using Genie::ResolvePathname;
-	
 	
 	node_ptr resolve( const node* it )
 	{
@@ -36,7 +31,7 @@ namespace vfs
 			
 			if ( link_methods->readlink )
 			{
-				return ResolvePathname( link_methods->readlink( it ), it->owner() );
+				return resolve_pathname( link_methods->readlink( it ), it->owner() );
 			}
 		}
 		
