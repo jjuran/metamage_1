@@ -13,12 +13,12 @@
 // vfs
 #include "vfs/primitives/chmod.hh"
 #include "vfs/primitives/geteof.hh"
+#include "vfs/primitives/stat.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/stat.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/RegularFile.hh"

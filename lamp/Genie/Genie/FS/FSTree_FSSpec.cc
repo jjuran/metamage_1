@@ -59,6 +59,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/primitives/stat.hh"
 
 // Genie
 #include "Genie/code/executable_file.hh"
@@ -78,7 +79,6 @@
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/stat.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"

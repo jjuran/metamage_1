@@ -3,7 +3,7 @@
 	-------
 */
 
-#include "Genie/FS/stat.hh"
+#include "vfs/primitives/stat.hh"
 
 // POSIX
 #include <time.h>
@@ -14,19 +14,17 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 #include "vfs/primitives/inode.hh"
 
-// Genie
-#include "Genie/FS/node_method_set.hh"
 
-
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void stat( const FSTree* it, struct ::stat& sb )
+	void stat( const node* it, struct ::stat& sb )
 	{
 		const node_method_set* methods = it->methods();
 		
