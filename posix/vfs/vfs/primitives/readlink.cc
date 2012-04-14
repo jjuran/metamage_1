@@ -3,27 +3,25 @@
 	-----------
 */
 
-#include "Genie/FS/readlink.hh"
+#include "vfs/primitives/readlink.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/link_method_set.hh"
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 #include "vfs/functions/pathname.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
-
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	plus::string readlink( const FSTree* it )
+	plus::string readlink( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		
