@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "Genie/FS/seteof.hh"
+#include "vfs/primitives/seteof.hh"
 
 // POSIX
 #include <sys/stat.h>
@@ -11,19 +11,19 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/data_method_set.hh"
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void seteof( const FSTree* it, off_t length )
+	void seteof( const node* it, off_t length )
 	{
 		const node_method_set* methods = it->methods();
 		

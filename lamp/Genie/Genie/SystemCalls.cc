@@ -20,6 +20,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/primitives/seteof.hh"
+
 // Genie
 #include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
@@ -27,7 +30,6 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/seteof.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"

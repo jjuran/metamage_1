@@ -20,9 +20,9 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/primitives/geteof.hh"
+#include "vfs/primitives/seteof.hh"
 
 // Genie
-#include "Genie/FS/seteof.hh"
 #include "Genie/mmap/Handle_memory_mapping.hh"
 
 
