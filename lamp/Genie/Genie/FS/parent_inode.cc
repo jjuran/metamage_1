@@ -8,11 +8,11 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/primitives/inode.hh"
+#include "vfs/primitives/parent.hh"
 
 // Genie
 #include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/parent.hh"
 
 
 namespace Genie

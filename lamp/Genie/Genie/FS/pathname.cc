@@ -8,9 +8,11 @@
 // plus
 #include "plus/string/concat.hh"
 
+// vfs
+#include "vfs/primitives/parent.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/parent.hh"
 
 
 namespace Genie

@@ -3,18 +3,18 @@
 	---------
 */
 
-#include "Genie/FS/parent.hh"
+#include "vfs/primitives/parent.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/misc_method_set.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	FSTreePtr parent( const FSTree* it )
+	node_ptr parent( const node* it )
 	{
 		if ( it->owner() != NULL )
 		{
