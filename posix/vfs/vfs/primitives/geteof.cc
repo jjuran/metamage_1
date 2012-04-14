@@ -3,18 +3,18 @@
 	---------
 */
 
-#include "Genie/FS/geteof.hh"
+#include "vfs/primitives/geteof.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/data_method_set.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	off_t geteof( const FSTree* it )
+	off_t geteof( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		

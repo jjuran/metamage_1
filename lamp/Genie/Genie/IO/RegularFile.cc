@@ -17,9 +17,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/geteof.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/geteof.hh"
 #include "Genie/FS/seteof.hh"
 #include "Genie/mmap/Handle_memory_mapping.hh"
 
