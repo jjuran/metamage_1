@@ -10,9 +10,7 @@
 #include "vfs/node.hh"
 #include "vfs/primitives/inode.hh"
 #include "vfs/primitives/listdir.hh"
-
-// Genie
-#include "Genie/FS/parent_inode.hh"
+#include "vfs/primitives/parent_inode.hh"
 
 
 namespace Genie

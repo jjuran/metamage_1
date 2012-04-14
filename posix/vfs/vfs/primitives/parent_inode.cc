@@ -3,22 +3,20 @@
 	---------------
 */
 
-#include "Genie/FS/parent_inode.hh"
+#include "vfs/primitives/parent_inode.hh"
 
 // vfs
+#include "vfs/misc_method_set.hh"
 #include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 #include "vfs/primitives/inode.hh"
 #include "vfs/primitives/parent.hh"
 
-// Genie
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
-
-namespace Genie
+namespace vfs
 {
 	
-	ino_t parent_inode( const FSTree* it )
+	ino_t parent_inode( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		
