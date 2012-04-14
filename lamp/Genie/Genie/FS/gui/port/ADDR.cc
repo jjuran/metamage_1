@@ -41,6 +41,9 @@
 #include "Pedestal/Application.hh"
 #include "Pedestal/Window.hh"
 
+// vfs
+#include "vfs/functions/pathname.hh"
+
 // Genie
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -53,7 +56,6 @@
 #include "Genie/FS/lookup.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/open.hh"
-#include "Genie/FS/pathname.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
@@ -657,8 +659,8 @@ namespace Genie
 			tty = open( params.itsTTYDelegate.get(), flags, 0 );
 		}
 		
-		plus::string pathname = Genie::pathname( has_tty ? tty->GetFile().get()
-		                                                 : node                 );
+		plus::string pathname = vfs::pathname( has_tty ? tty->GetFile().get()
+		                                               : node                 );
 		
 		IOPtr terminal = NewTerminal( pathname );
 		

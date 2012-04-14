@@ -3,26 +3,25 @@
 	-----------
 */
 
-#include "Genie/FS/pathname.hh"
+#include "vfs/functions/pathname.hh"
 
 // plus
 #include "plus/string/concat.hh"
 
 // vfs
+#include "vfs/node.hh"
+#include "vfs/node_ptr.hh"
 #include "vfs/primitives/parent.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
 
-
-namespace Genie
+namespace vfs
 {
 	
-	plus::string pathname( const FSTree* it )
+	plus::string pathname( const node* it )
 	{
 		plus::string pathname = it->name();
 		
-		FSTreePtr tree = parent( it );
+		node_ptr tree = parent( it );
 		
 		if ( tree.get() == it  &&  !pathname.empty() )
 		{

@@ -8,11 +8,13 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/functions/pathname.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/pathname.hh"
 
 
 namespace Genie
