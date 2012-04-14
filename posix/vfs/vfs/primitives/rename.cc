@@ -3,23 +3,23 @@
 	---------
 */
 
-#include "Genie/FS/rename.hh"
+#include "vfs/primitives/rename.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void rename( const FSTree* it, const FSTree* target )
+	void rename( const node* it, const node* target )
 	{
 		const node_method_set* methods = it->methods();
 		
