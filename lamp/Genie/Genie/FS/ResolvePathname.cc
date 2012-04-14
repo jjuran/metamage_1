@@ -28,7 +28,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	bool ResolveLink_InPlace( FSTreePtr& file )
+	static bool ResolveLink_InPlace( FSTreePtr& file )
 	{
 		if ( is_symlink( file ) )
 		{
