@@ -68,7 +68,7 @@ namespace Genie
 				return set_errno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD() );
+			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD().get() );
 			
 			ResolveLinks_InPlace( newCWD );
 			
@@ -448,7 +448,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, current_process().GetCWD() );
+			FSTreePtr file = ResolvePathname( path, current_process().GetCWD().get() );
 			
 			ResolveLinks_InPlace( file );
 			

@@ -65,9 +65,9 @@ namespace Genie
 		return lookup( node, name );
 	}
 	
-	FSTreePtr ResolveRelativePath( const char*       begin,
-	                               std::size_t       length,
-	                               const FSTreePtr&  current )
+	FSTreePtr ResolveRelativePath( const char*    begin,
+	                               std::size_t    length,
+	                               const FSTree*  current )
 	{
 		if ( length == 0 )
 		{
@@ -134,7 +134,7 @@ namespace Genie
 	
 	FSTreePtr ResolvePathname( const char*       begin,
 	                           std::size_t       length,
-	                           const FSTreePtr&  current )
+	                           const FSTree*     current )
 	{
 		if ( const bool absolute = *begin == '/' )
 		{
@@ -144,14 +144,14 @@ namespace Genie
 		return ResolveRelativePath( begin, length, current );
 	}
 	
-	FSTreePtr ResolvePathname( const char*       pathname,
-	                           const FSTreePtr&  current )
+	FSTreePtr ResolvePathname( const char*    pathname,
+	                           const FSTree*  current )
 	{
 		return ResolvePathname( pathname, std::strlen( pathname ), current );
 	}
 	
 	FSTreePtr ResolvePathname( const plus::string&  pathname,
-	                           const FSTreePtr&     current )
+	                           const FSTree*        current )
 	{
 		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}

@@ -18,9 +18,9 @@ namespace Genie
 	
 	bool ResolveLinks_InPlace( FSTreePtr& link );
 	
-	FSTreePtr ResolveRelativePath( const char*       begin,
-	                               std::size_t       length,
-	                               const FSTreePtr&  current );
+	FSTreePtr ResolveRelativePath( const char*    begin,
+	                               std::size_t    length,
+	                               const FSTree*  current );
 	
 	
 	FSTreePtr ResolveAbsolutePath( const char*  begin,
@@ -29,15 +29,15 @@ namespace Genie
 	FSTreePtr ResolveAbsolutePath( const plus::string& path );
 	
 	
-	FSTreePtr ResolvePathname( const char*       begin,
-	                           std::size_t       length,
-	                           const FSTreePtr&  current = null_FSTreePtr );
+	FSTreePtr ResolvePathname( const char*    begin,
+	                           std::size_t    length,
+	                           const FSTree*  current = NULL );
 	
-	FSTreePtr ResolvePathname( const char*       pathname,
-	                           const FSTreePtr&  current = null_FSTreePtr );
+	FSTreePtr ResolvePathname( const char*    pathname,
+	                           const FSTree*  current = NULL );
 	
 	FSTreePtr ResolvePathname( const plus::string&  pathname,
-	                           const FSTreePtr&     current = null_FSTreePtr );
+	                           const FSTree*        current = NULL );
 	
 }
 

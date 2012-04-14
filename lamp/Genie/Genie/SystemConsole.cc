@@ -39,45 +39,47 @@ namespace Genie
 	{
 		FSTreePtr port = port_dir->GetFile();
 		
-		FSTreePtr window = ResolveRelativePath( STR_LEN( "window" ),  port );
+		const FSTree* cwd = port.get();
+		
+		FSTreePtr window = ResolveRelativePath( STR_LEN( "window" ),  cwd );
 		
 		if ( exists( window ) )
 		{
 			return;
 		}
 		
-		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), port );
+		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), cwd );
 		
 		if ( exists( view ) )
 		{
 			remove( view.get() );
 			
-			view = ResolveRelativePath( STR_LEN( "view" ), port );
+			view = ResolveRelativePath( STR_LEN( "view" ), cwd );
 		}
 		
-		Spew( ResolveRelativePath( STR_LEN( "title" ), port ), STR_LEN( "System Console" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
 		
-		Spew( ResolveRelativePath( STR_LEN( "size" ),  port ), STR_LEN( "495x272" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 		
 		touch( window.get() );
 		
-		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), port ), STR_LEN( "4" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), port ), STR_LEN( "9" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
 		
-		FSTreePtr subview = ResolveRelativePath( STR_LEN( "view/v" ), port );
+		FSTreePtr subview = ResolveRelativePath( STR_LEN( "view/v" ), cwd );
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
 		
-		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "view/v/v" ), port );
+		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "view/v/v" ), cwd );
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
 		
-		symlink( ResolveRelativePath( STR_LEN( "view/target" ), port ).get(), "v/v" );
+		symlink( ResolveRelativePath( STR_LEN( "view/target" ), cwd ).get(), "v/v" );
 		
-		Spew( ResolveRelativePath( STR_LEN( "view/vertical"  ), port ), STR_LEN( "1" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "view/v/padding" ), port ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "view/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "view/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static FSTreePtr GetConsoleWindow()
@@ -91,7 +93,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleText()
 	{
-		FSTreePtr text = ResolveRelativePath( STR_LEN( "view/v/v/text" ), GetConsoleWindow() );
+		FSTreePtr text = ResolveRelativePath( STR_LEN( "view/v/v/text" ), GetConsoleWindow().get() );
 		
 		return text;
 	}
