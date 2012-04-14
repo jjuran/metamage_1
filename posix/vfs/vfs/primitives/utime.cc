@@ -3,23 +3,23 @@
 	--------
 */
 
-#include "Genie/FS/utime.hh"
+#include "vfs/primitives/utime.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void utime( const FSTree* it, const struct timespec* times )
+	void utime( const node* it, const struct timespec* times )
 	{
 		const node_method_set* methods = it->methods();
 		
