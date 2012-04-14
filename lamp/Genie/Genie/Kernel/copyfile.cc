@@ -3,14 +3,16 @@
  *	===========
  */
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/copyfile.hh"
+
 // Relix
 #include "relix/copyfile.h"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/copyfile.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
