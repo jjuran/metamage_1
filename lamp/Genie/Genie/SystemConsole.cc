@@ -8,10 +8,12 @@
 // Iota
 #include "iota/strings.hh"
 
+// vfs
+#include "vfs/primitives/hardlink.hh"
+
 // Genie
 #include "Genie/FS/chdir.hh"
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/hardlink.hh"
 #include "Genie/FS/open.hh"
 #include "Genie/FS/remove.hh"
 #include "Genie/FS/symlink.hh"

@@ -13,13 +13,15 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/hardlink.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/FS/hardlink.hh"
 #include "Genie/Kernel/make_alias.hh"
 #include "Genie/SystemCallRegistry.hh"
 
