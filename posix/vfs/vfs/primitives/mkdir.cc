@@ -3,24 +3,24 @@
 	--------
 */
 
-#include "Genie/FS/mkdir.hh"
+#include "vfs/primitives/mkdir.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/dir_method_set.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void mkdir( const FSTree* it, mode_t mode )
+	void mkdir( const node* it, mode_t mode )
 	{
 		const node_method_set* methods = it->methods();
 		
