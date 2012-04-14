@@ -12,12 +12,12 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/primitives/readlink.hh"
+#include "vfs/primitives/symlink.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/symlink.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 

@@ -3,24 +3,24 @@
 	----------
 */
 
-#include "Genie/FS/symlink.hh"
+#include "vfs/primitives/symlink.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/link_method_set.hh"
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void symlink( const FSTree* it, const plus::string& target )
+	void symlink( const node* it, const plus::string& target )
 	{
 		const node_method_set* methods = it->methods();
 		
