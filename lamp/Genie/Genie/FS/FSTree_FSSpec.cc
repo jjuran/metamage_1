@@ -59,6 +59,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/functions/root.hh"
 #include "vfs/primitives/stat.hh"
 
 // Genie
@@ -547,13 +548,6 @@ namespace Genie
 		                                            plus::string::null,
 		                                            Root_Overlay_Mappings ).get(),
 		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
-	}
-	
-	const FSTree* FSRoot()
-	{
-		static FSTreePtr root = MakeFSRoot();
-		
-		return root.get();
 	}
 	
 	
@@ -1122,6 +1116,18 @@ namespace Genie
 		IterateFilesIntoCache( cInfo, cache );
 		
 	#endif
+	}
+	
+}
+
+namespace vfs
+{
+	
+	const node* root()
+	{
+		static node_ptr root = Genie::MakeFSRoot();
+		
+		return root.get();
 	}
 	
 }

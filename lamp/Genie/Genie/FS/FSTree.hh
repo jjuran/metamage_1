@@ -8,6 +8,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/root.hh"
 
 // Genie
 #include "Genie/FS/FSTree_fwd.hh"
@@ -23,7 +24,10 @@ namespace Genie
 	
 	extern const FSTreePtr null_FSTreePtr;
 	
-	const FSTree* FSRoot();
+	inline const FSTree* FSRoot()
+	{
+		return vfs::root();
+	}
 	
 }
 
