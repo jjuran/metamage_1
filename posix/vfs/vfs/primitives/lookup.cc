@@ -3,29 +3,27 @@
 	---------
 */
 
-#include "Genie/FS/lookup.hh"
+#include "vfs/primitives/lookup.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/dir_method_set.hh"
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 #include "vfs/primitives/parent.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
-
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	FSTreePtr lookup( const FSTree*        it,
-	                  const plus::string&  name,
-	                  const FSTree*        surrogate )
+	node_ptr lookup( const node*          it,
+	                 const plus::string&  name,
+	                 const node*          surrogate )
 	{
 		if ( name == "." )
 		{

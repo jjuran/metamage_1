@@ -14,9 +14,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/primitives/lookup.hh"
+
 // Genie
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/lookup.hh"
 #include "Genie/FS/resolve.hh"
 
 

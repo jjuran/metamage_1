@@ -43,6 +43,7 @@
 
 // vfs
 #include "vfs/functions/pathname.hh"
+#include "vfs/primitives/lookup.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
@@ -53,7 +54,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/lookup.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/open.hh"
 #include "Genie/FS/serialize_qd.hh"
