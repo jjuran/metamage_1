@@ -9,9 +9,9 @@
 #include "vfs/dir_contents_impl.hh"
 #include "vfs/node.hh"
 #include "vfs/primitives/inode.hh"
+#include "vfs/primitives/listdir.hh"
 
 // Genie
-#include "Genie/FS/listdir.hh"
 #include "Genie/FS/parent_inode.hh"
 
 

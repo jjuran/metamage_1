@@ -27,11 +27,13 @@
 // PEdestal
 #include "Pedestal/EmptyView.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/listdir.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/listdir.hh"
 #include "Genie/FS/lookup.hh"
 #include "Genie/FS/mkdir.hh"
 #include "Genie/FS/node_method_set.hh"
