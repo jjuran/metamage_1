@@ -28,23 +28,11 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static bool ResolveLink_InPlace( FSTreePtr& file )
-	{
-		if ( is_symlink( file ) )
-		{
-			file = resolve( file.get() );
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
 	bool ResolveLinks_InPlace( FSTreePtr& file )
 	{
 		unsigned link_count = 0;
 		
-		while ( ResolveLink_InPlace( file ) )
+		while ( is_symlink( file ) )
 		{
 			++link_count;
 			
@@ -52,6 +40,8 @@ namespace Genie
 			{
 				p7::throw_errno( ELOOP );
 			}
+			
+			file = resolve( file.get() );
 		}
 		
 		return link_count > 0;
