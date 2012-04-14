@@ -42,7 +42,10 @@ namespace vfs
 		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
 		its_destructor( dtor )
 	{
-		intrusive_ptr_add_ref( owner );
+		if ( owner )
+		{
+			intrusive_ptr_add_ref( owner );
+		}
 	}
 	
 	node::~node()
@@ -54,7 +57,10 @@ namespace vfs
 		
 		::operator delete( its_extra );
 		
-		intrusive_ptr_release( its_owner );
+		if ( its_owner )
+		{
+			intrusive_ptr_release( its_owner );
+		}
 	}
 	
 }
