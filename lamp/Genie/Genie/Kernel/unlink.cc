@@ -9,12 +9,14 @@
 // POSIX
 #include "fcntl.h"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/remove.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/remove.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 

@@ -3,23 +3,23 @@
 	---------
 */
 
-#include "Genie/FS/remove.hh"
+#include "vfs/primitives/remove.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	void remove( const FSTree* it )
+	void remove( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		
