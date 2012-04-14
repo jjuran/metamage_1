@@ -12,9 +12,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/inode.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/inode.hh"
 #include "Genie/FS/node_method_set.hh"
 
 

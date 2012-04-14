@@ -3,18 +3,18 @@
 	--------
 */
 
-#include "Genie/FS/inode.hh"
+#include "vfs/primitives/inode.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/misc_method_set.hh"
+#include "vfs/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	ino_t inode( const FSTree* it )
+	ino_t inode( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		
