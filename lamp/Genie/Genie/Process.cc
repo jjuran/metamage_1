@@ -610,11 +610,11 @@ namespace Genie
 		fileDescriptors.for_each( &close_fd_on_exec, &keep_fd );
 	}
 	
-	static void CheckProgramFile( const FSTreePtr& programFile )
+	static void CheckProgramFile( const vfs::node& programFile )
 	{
 		struct ::stat sb;
 		
-		stat( *programFile, sb );
+		stat( programFile, sb );
 		
 		if ( S_ISDIR( sb.st_mode ) )
 		{
@@ -673,7 +673,7 @@ namespace Genie
 		
 		vfs::resolve_links_in_place( *relix::root(), programFile );
 		
-		CheckProgramFile( programFile );
+		CheckProgramFile( *programFile );
 		
 		// Do we take the name before or after normalization?
 		get_process().set_name( programFile->name() );
