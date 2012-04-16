@@ -23,7 +23,7 @@ namespace Genie
 	
 	extern const FSTreePtr null_FSTreePtr;
 	
-	const FSTreePtr& FSRoot();
+	const FSTree* FSRoot();
 	
 }
 

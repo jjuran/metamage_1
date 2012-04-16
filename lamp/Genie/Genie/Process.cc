@@ -609,7 +609,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( fs_info::create( chdir( FSRoot().get() ) ) ),
+		its_fs_info           ( fs_info::create( chdir( FSRoot() ) ) ),
 		itsFileDescriptors    ( fd_table::create() ),
 		its_signal_handlers   ( signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),

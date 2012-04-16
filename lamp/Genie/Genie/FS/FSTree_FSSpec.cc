@@ -549,11 +549,11 @@ namespace Genie
 		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
 	}
 	
-	const FSTreePtr& FSRoot()
+	const FSTree* FSRoot()
 	{
 		static FSTreePtr root = MakeFSRoot();
 		
-		return root;
+		return root.get();
 	}
 	
 	
