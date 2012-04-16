@@ -8,9 +8,11 @@
 // POSIX
 #include <sys/stat.h>
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/attach.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/attach.hh"
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 

@@ -11,7 +11,7 @@
 namespace Genie
 {
 	
-	IOPtr opendir( const FSTree* node );
+	IOPtr opendir( const FSTree* it );
 	
 }
 

@@ -11,7 +11,7 @@
 namespace Genie
 {
 	
-	shared_exec_handle exec( const FSTree* node );
+	shared_exec_handle exec( const FSTree* it );
 	
 }
 

@@ -22,6 +22,9 @@
 #include "Pedestal/Scrollbar.hh"
 #include "Pedestal/Scroller_beta.hh"
 
+// vfs
+#include "vfs/primitives/lookup.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -32,7 +35,6 @@
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/lookup.hh"
 #include "Genie/FS/gui/new/scroller.hh"
 #include "Genie/Utilities/simple_map.hh"
 

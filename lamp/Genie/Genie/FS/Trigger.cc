@@ -8,11 +8,13 @@
 // POSIX
 #include <sys/stat.h>
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/touch.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/touch.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/IO/VirtualFile.hh"
 

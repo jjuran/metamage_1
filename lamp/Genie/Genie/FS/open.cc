@@ -24,9 +24,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	IOPtr open( const FSTree* node, int flags, mode_t mode )
+	IOPtr open( const FSTree* it, int flags, mode_t mode )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const data_method_set* data_methods;
 		
@@ -34,7 +34,7 @@ namespace Genie
 		{
 			if ( data_methods->open )
 			{
-				return data_methods->open( node, flags, mode );
+				return data_methods->open( it, flags, mode );
 			}
 		}
 		

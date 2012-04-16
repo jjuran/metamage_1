@@ -7,12 +7,10 @@
 
 // vfs
 #include "vfs/dir_contents_impl.hh"
-
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/inode.hh"
-#include "Genie/FS/listdir.hh"
-#include "Genie/FS/parent_inode.hh"
+#include "vfs/node.hh"
+#include "vfs/primitives/inode.hh"
+#include "vfs/primitives/listdir.hh"
+#include "vfs/primitives/parent_inode.hh"
 
 
 namespace Genie

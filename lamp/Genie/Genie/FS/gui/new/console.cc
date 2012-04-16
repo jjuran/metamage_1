@@ -40,6 +40,9 @@
 
 #include "Nitrogen/Quickdraw.hh"
 
+// vfs
+#include "vfs/primitives/attach.hh"
+
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FileDescriptor.hh"
@@ -49,7 +52,6 @@
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/attach.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/DynamicGroup.hh"

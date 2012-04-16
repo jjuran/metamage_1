@@ -63,6 +63,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/primitives/stat.hh"
+
 // Genie
 #include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
@@ -74,7 +77,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/chdir.hh"
 #include "Genie/FS/exec.hh"
-#include "Genie/FS/stat.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"

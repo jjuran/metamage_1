@@ -3,11 +3,13 @@
  *	=========
  */
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/rename.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/rename.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 

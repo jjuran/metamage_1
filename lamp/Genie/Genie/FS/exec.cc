@@ -20,9 +20,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	shared_exec_handle exec( const FSTree* node )
+	shared_exec_handle exec( const FSTree* it )
 	{
-		const node_method_set* methods = node->methods();
+		const node_method_set* methods = it->methods();
 		
 		const file_method_set* file_methods;
 		
@@ -30,7 +30,7 @@ namespace Genie
 		{
 			if ( file_methods->loadexec )
 			{
-				return file_methods->loadexec( node );
+				return file_methods->loadexec( it );
 			}
 		}
 		

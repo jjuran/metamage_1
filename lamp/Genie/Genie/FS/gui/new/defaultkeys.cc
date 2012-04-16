@@ -13,13 +13,15 @@
 // Pedestal
 #include "Pedestal/View.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/primitives/lookup.hh"
+#include "vfs/primitives/touch.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/lookup.hh"
 #include "Genie/FS/resolve.hh"
-#include "Genie/FS/touch.hh"
 
 
 namespace Genie
