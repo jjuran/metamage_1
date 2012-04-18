@@ -37,14 +37,6 @@ namespace Genie
 	}
 	
 	
-	template < class FSTree_Type >
-	FSTreePtr Basic_Factory( const FSTree*        parent,
-	                         const plus::string&  name,
-	                         const void*          args )
-	{
-		return new FSTree_Type( parent, name );
-	}
-	
 	FSTreePtr Premapped_Factory( const FSTree*               parent,
 	                             const plus::string&         name,
 	                             const premapped::mapping    mappings[] = premapped::empty_mappings,
