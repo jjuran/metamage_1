@@ -7,7 +7,7 @@
 #define GENIE_FS_DIRMETHODSET_HH
 
 // vfs
-#include "vfs/dir_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
 
 
 namespace Genie

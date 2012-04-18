@@ -10,7 +10,7 @@
 
 // Genie
 #include "vfs/node.hh"
-#include "vfs/node_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
 namespace vfs

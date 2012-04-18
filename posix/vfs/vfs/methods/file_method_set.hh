@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef VFS_FILEMETHODSET_HH
-#define VFS_FILEMETHODSET_HH
+#ifndef VFS_METHODS_FILEMETHODSET_HH
+#define VFS_METHODS_FILEMETHODSET_HH
 
 // vfs
 #include "vfs/node_fwd.hh"

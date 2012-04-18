@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef VFS_NODEMETHODSET_HH
-#define VFS_NODEMETHODSET_HH
+#ifndef VFS_METHODS_NODEMETHODSET_HH
+#define VFS_METHODS_NODEMETHODSET_HH
 
 // POSIX
 #include <sys/types.h>

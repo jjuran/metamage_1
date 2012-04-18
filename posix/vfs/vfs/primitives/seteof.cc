@@ -12,9 +12,9 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
-#include "vfs/data_method_set.hh"
 #include "vfs/node.hh"
-#include "vfs/node_method_set.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
 namespace vfs

@@ -10,8 +10,8 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/dir_method_set.hh"
-#include "vfs/node_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
 namespace vfs

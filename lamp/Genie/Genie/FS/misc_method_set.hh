@@ -7,7 +7,7 @@
 #define GENIE_FS_MISCMETHODSET_HH
 
 // vfs
-#include "vfs/misc_method_set.hh"
+#include "vfs/methods/misc_method_set.hh"
 
 
 namespace Genie

@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef VFS_LINKMETHODSET_HH
-#define VFS_LINKMETHODSET_HH
+#ifndef VFS_METHODS_LINKMETHODSET_HH
+#define VFS_METHODS_LINKMETHODSET_HH
 
 // plus
 #include "plus/string.hh"

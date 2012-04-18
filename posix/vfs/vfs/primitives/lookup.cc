@@ -9,9 +9,9 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
-#include "vfs/dir_method_set.hh"
 #include "vfs/node.hh"
-#include "vfs/node_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/parent.hh"
 
 

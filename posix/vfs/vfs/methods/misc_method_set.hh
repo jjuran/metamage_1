@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef VFS_MISCMETHODSET_HH
-#define VFS_MISCMETHODSET_HH
+#ifndef VFS_METHODS_MISCMETHODSET_HH
+#define VFS_METHODS_MISCMETHODSET_HH
 
 // POSIX
 #include <sys/types.h>

@@ -7,7 +7,7 @@
 #define GENIE_FS_LINKMETHODSET_HH
 
 // vfs
-#include "vfs/link_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
 
 
 namespace Genie

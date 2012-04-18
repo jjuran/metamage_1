@@ -3,8 +3,8 @@
 	-----------------
 */
 
-#ifndef VFS_DIRMETHODSET_HH
-#define VFS_DIRMETHODSET_HH
+#ifndef VFS_METHODS_DIRMETHODSET_HH
+#define VFS_METHODS_DIRMETHODSET_HH
 
 // POSIX
 #include <sys/types.h>

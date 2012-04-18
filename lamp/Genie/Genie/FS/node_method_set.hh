@@ -7,7 +7,7 @@
 #define GENIE_FS_NODEMETHODSET_HH
 
 // vfs
-#include "vfs/node_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
 namespace Genie

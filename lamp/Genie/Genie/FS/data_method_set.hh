@@ -7,7 +7,7 @@
 #define GENIE_FS_DATAMETHODSET_HH
 
 // vfs
-#include "vfs/data_method_set.hh"
+#include "vfs/methods/data_method_set.hh"
 
 
 namespace Genie
