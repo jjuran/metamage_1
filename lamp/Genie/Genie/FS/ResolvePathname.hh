@@ -25,12 +25,6 @@ namespace Genie
 	                               std::size_t       length,
 	                               const FSTreePtr&  current );
 	
-	inline FSTreePtr ResolveRelativePath( const plus::string&  path,
-	                                      const FSTreePtr&     current )
-	{
-		return ResolveRelativePath( path.c_str(), path.length(), current );
-	}
-	
 	
 	FSTreePtr ResolveAbsolutePath( const char*  begin,
 	                               std::size_t  length );
