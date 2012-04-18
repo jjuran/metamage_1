@@ -25,9 +25,11 @@
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
@@ -371,7 +373,7 @@ namespace Genie
 	#define PROPERTY_VALUE( access )  &new_property, &property_params_factory< Frame_Property<       serialize_Value,      access > >::value
 	#define PROPERTY_INT(   access )  &new_property, &property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "width",  PROPERTY_VALUE( Width  ) },
 		{ "height", PROPERTY_VALUE( Height ) },

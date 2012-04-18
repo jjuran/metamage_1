@@ -30,11 +30,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 
 
 namespace Nitrogen
@@ -185,7 +185,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name );
+		return fixed_dir( parent, name );
 	}
 	
 	class gestalt_IteratorConverter

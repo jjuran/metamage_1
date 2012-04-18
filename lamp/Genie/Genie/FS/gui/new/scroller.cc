@@ -21,9 +21,11 @@
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Scroller_beta.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
@@ -163,7 +165,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
 	typedef View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "width",  PROPERTY( Width_Property  ) },
 		{ "height", PROPERTY( Height_Property ) },

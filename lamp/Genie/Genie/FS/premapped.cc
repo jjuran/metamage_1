@@ -5,9 +5,11 @@
 
 #include "Genie/FS/premapped.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 
 
 namespace Genie
@@ -17,9 +19,9 @@ namespace Genie
 	                             const plus::string&  name,
 	                             const void*          args )
 	{
-		const premapped::mapping* mappings = (const premapped::mapping*) args;
+		const vfs::fixed_mapping* mappings = (const vfs::fixed_mapping*) args;
 		
-		return Premapped_Factory( parent, name, mappings );
+		return fixed_dir( parent, name, mappings );
 	}
 	
 }

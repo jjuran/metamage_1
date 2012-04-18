@@ -9,9 +9,12 @@
 // plus
 #include "plus/var_string.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
+#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/FS/property.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 
 
 namespace Pedestal
@@ -80,8 +83,8 @@ namespace Genie
 	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
-	                        const premapped::mapping*  mappings,
-	                        premapped::destructor      dtor,
+	                        const vfs::fixed_mapping*  mappings,
+	                        vfs::node_destructor       dtor,
 	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&

@@ -29,10 +29,10 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
@@ -102,7 +102,7 @@ namespace Genie
 	}
 	
 	
-	extern const premapped::mapping sys_mac_gdev_list_H_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_gdev_list_H_Mappings[];
 	
 	static FSTreePtr gdev_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -111,7 +111,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_gdev_list_H_Mappings );
+		return fixed_dir( parent, name, sys_mac_gdev_list_H_Mappings );
 	}
 	
 	class gdev_IteratorConverter
@@ -197,7 +197,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_gdev_list_N_Property< prop > >::value
 	
-	const premapped::mapping sys_mac_gdev_list_H_Mappings[] =
+	const vfs::fixed_mapping sys_mac_gdev_list_H_Mappings[] =
 	{
 		{ "driver", &Driver_Link_Factory },
 		

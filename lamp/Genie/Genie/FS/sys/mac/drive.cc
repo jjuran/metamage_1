@@ -27,11 +27,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/SymbolicLink.hh"
 #include "Genie/FS/Trigger.hh"
@@ -71,7 +71,7 @@ namespace Genie
 	}
 	
 	
-	extern const premapped::mapping sys_mac_drive_N_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_drive_N_Mappings[];
 	
 	static FSTreePtr drive_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -80,7 +80,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_drive_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_drive_N_Mappings );
 	}
 	
 	class drive_IteratorConverter
@@ -216,7 +216,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value
 	
-	const premapped::mapping sys_mac_drive_N_Mappings[] =
+	const vfs::fixed_mapping sys_mac_drive_N_Mappings[] =
 	{
 		{ "driver", &Link_Factory },
 		

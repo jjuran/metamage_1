@@ -54,7 +54,7 @@ namespace Genie
 			throw poseven::errno_t( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_app_menu_list_ID_items_INDEX_Mappings );
+		return fixed_dir( parent, name, sys_app_menu_list_ID_items_INDEX_Mappings );
 	}
 	
 	static void menu_items_iterate( const FSTree* parent, vfs::dir_contents& cache )

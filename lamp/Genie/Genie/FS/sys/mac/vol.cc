@@ -144,7 +144,7 @@ namespace Genie
 		
 	}
 	
-	const premapped::mapping sys_mac_vol_Mappings[] =
+	const vfs::fixed_mapping sys_mac_vol_Mappings[] =
 	{
 		{ "list", &New_FSTree_sys_mac_vol },
 		

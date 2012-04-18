@@ -54,7 +54,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_app_window_list_REF_Mappings );
+		return fixed_dir( parent, name, sys_app_window_list_REF_Mappings );
 	}
 	
 	class window_IteratorConverter

@@ -17,9 +17,11 @@
 // Pedestal
 #include "Pedestal/View.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Icon_data.hh"
 #include "Genie/FS/Views.hh"
@@ -187,7 +189,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Selected  >  Selected_Property;
 	typedef View_Property< plus::serialize_bool, Disabling >  Disabling_Property;
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "data", &Data_Factory },
 		

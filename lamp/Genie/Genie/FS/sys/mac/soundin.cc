@@ -24,11 +24,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -84,7 +84,7 @@ namespace Genie
 		}
 	};
 	
-	extern const premapped::mapping sys_mac_soundin_REF_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[];
 	
 	static FSTreePtr soundin_Lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -93,7 +93,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_soundin_REF_Mappings );
+		return fixed_dir( parent, name, sys_mac_soundin_REF_Mappings );
 	}
 	
 	class soundin_IteratorGenerator
@@ -202,7 +202,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_soundin_REF_Mappings[] =
+	const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[] =
 	{
 		{ "name", PROPERTY( sys_mac_soundin_REF_name ) },
 		

@@ -42,7 +42,7 @@ namespace Genie
 			throw poseven::errno_t( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_app_menu_list_ID_Mappings );
+		return fixed_dir( parent, name, sys_app_menu_list_ID_Mappings );
 	}
 	
 	static void menulist_iterate( const FSTree* parent, vfs::dir_contents& cache )

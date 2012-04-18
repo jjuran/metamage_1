@@ -6,14 +6,14 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_DEV_HH
 #define GENIE_FILESYSTEM_FSTREE_DEV_HH
 
-// Genie 
-#include "Genie/FS/FSTree_Directory.hh"
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
 
 
 namespace Genie
 {
 	
-	extern const premapped::mapping dev_Mappings[];
+	extern const vfs::fixed_mapping dev_Mappings[];
 	
 }
 

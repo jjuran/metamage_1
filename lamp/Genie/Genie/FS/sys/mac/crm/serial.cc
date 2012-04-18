@@ -23,11 +23,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
@@ -70,7 +70,7 @@ namespace Genie
 		return N::GetCRMAttributes< N::crmSerialDevice >( crmRec );
 	}
 	
-	extern const premapped::mapping sys_mac_crm_serial_N_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[];
 	
 	static FSTreePtr serial_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -84,7 +84,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_crm_serial_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_crm_serial_N_Mappings );
 	}
 	
 	class crm_IteratorConverter
@@ -183,7 +183,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_crm_serial_N_Mappings[] =
+	const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[] =
 	{
 		{ "name",   PROPERTY( sys_mac_crm_serial_N_name   ) },
 		{ "input",  PROPERTY( sys_mac_crm_serial_N_input  ) },

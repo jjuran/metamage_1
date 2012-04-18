@@ -544,9 +544,9 @@ namespace Genie
 	{
 		return New_FSTree_Union( NULL,
 		                         plus::string::null,
-		                         Premapped_Factory( NULL,
-		                                            plus::string::null,
-		                                            Root_Overlay_Mappings ).get(),
+		                         fixed_dir( NULL,
+		                                    plus::string::null,
+		                                    Root_Overlay_Mappings ).get(),
 		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
 	}
 	

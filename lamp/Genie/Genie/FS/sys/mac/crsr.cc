@@ -150,7 +150,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_crsr_Property< prop > >::value
 	
-	const premapped::mapping sys_mac_crsr_Mappings[] =
+	const vfs::fixed_mapping sys_mac_crsr_Mappings[] =
 	{
 		{ "location", PROPERTY( GetCursorLocation ) },
 		

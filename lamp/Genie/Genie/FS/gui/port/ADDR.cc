@@ -996,7 +996,7 @@ namespace Genie
 	typedef Window_Property< serialize_ProcID, &ProcID   >  ProcID_Property;
 	typedef Window_Property< serialize_bool,   &CloseBox >  CloseBox_Property;
 	
-	const premapped::mapping sys_port_ADDR_Mappings[] =
+	const vfs::fixed_mapping sys_port_ADDR_Mappings[] =
 	{
 		{ "window", &new_window },
 		

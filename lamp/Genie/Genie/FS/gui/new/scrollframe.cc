@@ -23,10 +23,10 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // vfs
+#include "vfs/nodes/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -391,7 +391,7 @@ namespace Genie
 		return new FSTree( parent, name, 0, &scrollframe_target_methods );
 	}
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "horizontal", PROPERTY( Horizontal_Property ) },
 		{ "vertical",   PROPERTY( Vertical_Property   ) },

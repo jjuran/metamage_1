@@ -187,7 +187,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_cpu_Mappings[] =
+	const vfs::fixed_mapping sys_cpu_Mappings[] =
 	{
 		{ "family", PROPERTY( sys_cpu_Property< GetCPUFamily > ) },
 		{ "type",   PROPERTY( sys_cpu_Property< GetCPUType   > ) },

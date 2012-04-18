@@ -106,7 +106,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name );
+		return fixed_dir( parent, name );
 	}
 	
 	class syscall_IteratorConverter
@@ -181,9 +181,9 @@ namespace Genie
 	
 	#define EXEC( main )  &Executable_Factory, (const void*) &main
 	
-	extern const premapped::mapping sys_kernel_bin_Mappings[];
+	extern const vfs::fixed_mapping sys_kernel_bin_Mappings[];
 	
-	const premapped::mapping sys_kernel_bin_Mappings[] =
+	const vfs::fixed_mapping sys_kernel_bin_Mappings[] =
 	{
 		{ "true",  EXEC( main_true  ) },
 		{ "false", EXEC( main_false ) },
@@ -196,9 +196,9 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &premapped_factory, (const void*) map
 	
-	extern const premapped::mapping sys_kernel_Mappings[];
+	extern const vfs::fixed_mapping sys_kernel_Mappings[];
 	
-	const premapped::mapping sys_kernel_Mappings[] =
+	const vfs::fixed_mapping sys_kernel_Mappings[] =
 	{
 		{ "bin",     PREMAPPED( sys_kernel_bin_Mappings ) },
 		
@@ -207,7 +207,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	const premapped::mapping sys_Mappings[] =
+	const vfs::fixed_mapping sys_Mappings[] =
 	{
 		{ "app",    PREMAPPED( sys_app_Mappings    ) },
 		{ "cpu",    PREMAPPED( sys_cpu_Mappings    ) },

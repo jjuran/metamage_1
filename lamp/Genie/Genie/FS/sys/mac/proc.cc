@@ -23,12 +23,12 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -138,7 +138,7 @@ namespace Genie
 	}
 	
 	
-	extern const premapped::mapping sys_mac_proc_PSN_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[];
 	
 	static FSTreePtr psn_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -151,7 +151,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_proc_PSN_Mappings );
+		return fixed_dir( parent, name, sys_mac_proc_PSN_Mappings );
 	}
 	
 	class psn_IteratorConverter
@@ -241,7 +241,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_proc_PSN_Mappings[] =
+	const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_proc_PSN_name ) },
 		

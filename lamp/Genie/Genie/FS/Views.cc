@@ -309,8 +309,8 @@ namespace Genie
 	
 	struct new_view_extra
 	{
-		premapped::mapping const*  mappings;
-		premapped::destructor      destructor;
+		vfs::fixed_mapping const*  mappings;
+		vfs::node_destructor       destructor;
 		ViewFactory                view_factory;
 		DelegateFactory            delegate_factory;
 	};
@@ -318,8 +318,8 @@ namespace Genie
 	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
-	                        const premapped::mapping*  mappings,
-	                        premapped::destructor      dtor,
+	                        const vfs::fixed_mapping*  mappings,
+	                        vfs::node_destructor       dtor,
 	                        DelegateFactory            delegate_factory )
 	
 	{
@@ -345,7 +345,7 @@ namespace Genie
 	{
 		new_view_extra& extra = *(new_view_extra*) node->extra();
 		
-		FSTreePtr delegate = Premapped_Factory( parent, name, extra.mappings, extra.destructor );
+		FSTreePtr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
 		
 		return delegate;
 	}

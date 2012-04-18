@@ -20,9 +20,11 @@
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/PushButton.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -334,7 +336,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ ".mac-title", PROPERTY( Button_Title ) },
 		

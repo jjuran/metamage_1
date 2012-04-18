@@ -8,14 +8,14 @@
 #ifndef GENIE_FS_ROOTOVERLAY_HH
 #define GENIE_FS_ROOTOVERLAY_HH
 
-// Genie
-#include "Genie/FS/FSTree_Directory.hh"
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
 
 
 namespace Genie
 {
 	
-	extern const premapped::mapping Root_Overlay_Mappings[];
+	extern const vfs::fixed_mapping Root_Overlay_Mappings[];
 	
 }
 

@@ -6,14 +6,14 @@
 #ifndef GENIE_FS_SYS_MAC_VOL_LIST_N_PARMS_HH
 #define GENIE_FS_SYS_MAC_VOL_LIST_N_PARMS_HH
 
-// Genie
-#include "Genie/FS/FSTree_Directory.hh"
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
 
 
 namespace Genie
 {
 	
-	extern const premapped::mapping sys_mac_vol_N_parms_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_vol_N_parms_Mappings[];
 	
 }
 

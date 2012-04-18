@@ -26,7 +26,7 @@
 namespace Genie
 {
 	
-	const premapped::mapping new_Mappings[] =
+	const vfs::fixed_mapping new_Mappings[] =
 	{
 		{ "bitmap",       &New_FSTree_new_bitmap              },
 		{ "button",       &New_FSTree_new_button              },

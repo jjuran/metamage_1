@@ -394,7 +394,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< BitMap_Property< prop > >::value
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "rowBytes", PROPERTY( BitMap_rowBytes ) },
 		

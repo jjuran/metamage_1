@@ -187,7 +187,7 @@ namespace Genie
 	};
 	
 	
-	extern const premapped::mapping sys_mac_vol_N_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_vol_N_Mappings[];
 	
 	static FSTreePtr vol_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -196,7 +196,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_vol_N_Mappings );
 	}
 	
 	class vol_IteratorConverter
@@ -549,7 +549,7 @@ namespace Genie
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_mac_vol_N_Property< access > )
 	
-	const premapped::mapping sys_mac_vol_N_Mappings[] =
+	const vfs::fixed_mapping sys_mac_vol_N_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_vol_N_name ) },
 		
@@ -608,7 +608,7 @@ namespace Genie
 		
 		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		
-		return Premapped_Factory( parent.get(), name, sys_mac_vol_N_Mappings );
+		return fixed_dir( parent.get(), name, sys_mac_vol_N_Mappings );
 	}
 	
 }

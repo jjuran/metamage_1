@@ -12,7 +12,7 @@
 namespace Genie
 {
 	
-	const premapped::mapping sys_app_menu_Mappings[] =
+	const vfs::fixed_mapping sys_app_menu_Mappings[] =
 	{
 		{ "list", &New_FSTree_sys_app_menu_list },
 		

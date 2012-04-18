@@ -6,8 +6,11 @@
 #ifndef GENIE_FS_GUI_PORT_ADDR_HH
 #define GENIE_FS_GUI_PORT_ADDR_HH
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Pedestal
@@ -20,7 +23,7 @@ namespace Pedestal
 namespace Genie
 {
 	
-	extern const premapped::mapping sys_port_ADDR_Mappings[];
+	extern const vfs::fixed_mapping sys_port_ADDR_Mappings[];
 	
 	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view );
 	

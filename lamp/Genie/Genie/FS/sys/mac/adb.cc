@@ -34,12 +34,12 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
@@ -90,7 +90,7 @@ namespace Genie
 		return ADBAddress_is_valid( N::ADBAddress( hex_digit ) );
 	}
 	
-	extern const premapped::mapping sys_mac_adb_N_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_adb_N_Mappings[];
 	
 	static FSTreePtr adb_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -99,7 +99,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_adb_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_adb_N_Mappings );
 	}
 	
 	class adb_IteratorConverter
@@ -204,7 +204,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_adb_N_Mappings[] =
+	const vfs::fixed_mapping sys_mac_adb_N_Mappings[] =
 	{
 		{ "type",      PROPERTY( sys_mac_adb_N_type   ) },
 		{ "origin",    PROPERTY( sys_mac_adb_N_origin ) },

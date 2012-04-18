@@ -308,7 +308,7 @@ namespace Genie
 	
 	typedef List_Property< plus::serialize_bool, Overlap >  Overlap_Property;
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "data", &list_data_factory },
 		
