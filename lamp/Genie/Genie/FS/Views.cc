@@ -345,7 +345,7 @@ namespace Genie
 	{
 		new_view_extra& extra = *(new_view_extra*) node->extra();
 		
-		FSTreePtr delegate = Premapped_Factory( parent, name, extra.mappings, extra.destructor );
+		FSTreePtr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
 		
 		return delegate;
 	}

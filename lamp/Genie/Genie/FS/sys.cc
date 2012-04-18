@@ -106,7 +106,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name );
+		return fixed_dir( parent, name );
 	}
 	
 	class syscall_IteratorConverter

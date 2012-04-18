@@ -319,7 +319,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_unit_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_unit_N_Mappings );
 	}
 	
 	class unit_IteratorConverter

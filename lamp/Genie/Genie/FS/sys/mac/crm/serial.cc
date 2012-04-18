@@ -84,7 +84,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_crm_serial_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_crm_serial_N_Mappings );
 	}
 	
 	class crm_IteratorConverter

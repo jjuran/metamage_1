@@ -94,7 +94,7 @@ namespace Genie
 	{
 		const FSTree* parent = SysWindow();
 		
-		FSTreePtr window = Premapped_Factory( parent, "/", sys_port_ADDR_Mappings, &remove_port );
+		FSTreePtr window = fixed_dir( parent, "/", sys_port_ADDR_Mappings, &remove_port );
 		
 		gWindowMap.insert( window.get() );
 		

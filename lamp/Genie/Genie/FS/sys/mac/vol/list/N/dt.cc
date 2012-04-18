@@ -264,7 +264,7 @@ namespace Genie
 	{
 		validate_quad_name( name );
 		
-		return Premapped_Factory( parent, name, sys_mac_vol_list_N_dt_appls_QUAD_Mappings );
+		return fixed_dir( parent, name, sys_mac_vol_list_N_dt_appls_QUAD_Mappings );
 	}
 	
 	

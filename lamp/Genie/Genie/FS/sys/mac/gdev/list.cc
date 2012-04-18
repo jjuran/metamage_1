@@ -111,7 +111,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_gdev_list_H_Mappings );
+		return fixed_dir( parent, name, sys_mac_gdev_list_H_Mappings );
 	}
 	
 	class gdev_IteratorConverter

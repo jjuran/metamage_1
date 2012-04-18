@@ -196,7 +196,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_vol_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_vol_N_Mappings );
 	}
 	
 	class vol_IteratorConverter
@@ -608,7 +608,7 @@ namespace Genie
 		
 		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		
-		return Premapped_Factory( parent.get(), name, sys_mac_vol_N_Mappings );
+		return fixed_dir( parent.get(), name, sys_mac_vol_N_Mappings );
 	}
 	
 }

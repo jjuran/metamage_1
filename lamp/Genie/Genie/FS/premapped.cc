@@ -19,7 +19,7 @@ namespace Genie
 	{
 		const premapped::mapping* mappings = (const premapped::mapping*) args;
 		
-		return Premapped_Factory( parent, name, mappings );
+		return fixed_dir( parent, name, mappings );
 	}
 	
 }

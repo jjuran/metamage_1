@@ -80,7 +80,7 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return Premapped_Factory( parent, name, sys_mac_drive_N_Mappings );
+		return fixed_dir( parent, name, sys_mac_drive_N_Mappings );
 	}
 	
 	class drive_IteratorConverter
