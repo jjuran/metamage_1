@@ -39,7 +39,7 @@ namespace Genie
 		&trigger_open
 	};
 	
-	static node_method_set trigger_methods =
+	static const node_method_set trigger_methods =
 	{
 		NULL,
 		NULL,

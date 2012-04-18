@@ -71,7 +71,7 @@ namespace Genie
 		&rsrcfile_open
 	};
 	
-	static node_method_set rsrcfile_methods =
+	static const node_method_set rsrcfile_methods =
 	{
 		&rsrcfile_stat,
 		NULL,

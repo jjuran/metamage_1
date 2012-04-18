@@ -499,7 +499,7 @@ namespace Genie
 		&unfocus_symlink
 	};
 	
-	static node_method_set unfocus_methods =
+	static const node_method_set unfocus_methods =
 	{
 		NULL,
 		NULL,
@@ -528,7 +528,7 @@ namespace Genie
 		&focus_resolve
 	};
 	
-	static node_method_set focus_methods =
+	static const node_method_set focus_methods =
 	{
 		NULL,
 		NULL,
@@ -594,7 +594,7 @@ namespace Genie
 		&window_readlink
 	};
 	
-	static node_method_set window_methods =
+	static const node_method_set window_methods =
 	{
 		NULL,
 		NULL,
@@ -701,7 +701,7 @@ namespace Genie
 		&gesture_readlink
 	};
 	
-	static node_method_set gesture_methods =
+	static const node_method_set gesture_methods =
 	{
 		NULL,
 		NULL,
@@ -743,7 +743,7 @@ namespace Genie
 		&ungesture_symlink
 	};
 	
-	static node_method_set ungesture_methods =
+	static const node_method_set ungesture_methods =
 	{
 		NULL,
 		NULL,
@@ -906,7 +906,7 @@ namespace Genie
 		CreateUserWindow( node->owner() );
 	}
 	
-	static node_method_set unwindow_methods =
+	static const node_method_set unwindow_methods =
 	{
 		NULL,
 		NULL,

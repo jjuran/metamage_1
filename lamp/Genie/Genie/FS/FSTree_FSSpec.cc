@@ -407,7 +407,7 @@ namespace Genie
 		&hfs_inode
 	};
 	
-	static node_method_set hfs_methods =
+	static const node_method_set hfs_methods =
 	{
 		&hfs_stat,
 		&hfs_chmod,

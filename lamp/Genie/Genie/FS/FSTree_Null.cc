@@ -35,7 +35,7 @@ namespace Genie
 		&null_parent
 	};
 	
-	static node_method_set null_methods =
+	static const node_method_set null_methods =
 	{
 		NULL,
 		NULL,

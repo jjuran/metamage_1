@@ -477,7 +477,7 @@ namespace Genie
 		&view_listdir
 	};
 	
-	static node_method_set view_methods =
+	static const node_method_set view_methods =
 	{
 		NULL,
 		NULL,

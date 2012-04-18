@@ -101,7 +101,7 @@ namespace Genie
 		&unused_cmd_slot_symlink
 	};
 	
-	static node_method_set unused_cmd_slot_methods =
+	static const node_method_set unused_cmd_slot_methods =
 	{
 		NULL,
 		NULL,

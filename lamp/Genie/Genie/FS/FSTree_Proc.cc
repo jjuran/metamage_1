@@ -526,7 +526,7 @@ namespace Genie
 		}
 	}
 	
-	static node_method_set proc_pid_core_methods =
+	static const node_method_set proc_pid_core_methods =
 	{
 		NULL,
 		&proc_pid_core_chmod
