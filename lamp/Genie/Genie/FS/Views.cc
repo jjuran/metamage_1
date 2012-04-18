@@ -310,7 +310,7 @@ namespace Genie
 	struct new_view_extra
 	{
 		premapped::mapping const*  mappings;
-		premapped::destructor      destructor;
+		vfs::node_destructor       destructor;
 		ViewFactory                view_factory;
 		DelegateFactory            delegate_factory;
 	};
@@ -319,7 +319,7 @@ namespace Genie
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
 	                        const premapped::mapping*  mappings,
-	                        premapped::destructor      dtor,
+	                        vfs::node_destructor       dtor,
 	                        DelegateFactory            delegate_factory )
 	
 	{

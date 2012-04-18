@@ -82,7 +82,7 @@ namespace Genie
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
 	                        const premapped::mapping*  mappings,
-	                        premapped::destructor      dtor,
+	                        vfs::node_destructor       dtor,
 	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&
