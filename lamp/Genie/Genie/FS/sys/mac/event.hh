@@ -6,8 +6,8 @@
 #ifndef GENIE_FS_SYS_MAC_EVENT_HH
 #define GENIE_FS_SYS_MAC_EVENT_HH
 
-// Genie
-#include "Genie/FS/FSTree_Directory.hh"
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
 
 
 namespace Genie

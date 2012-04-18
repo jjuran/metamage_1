@@ -9,10 +9,12 @@
 // plus
 #include "plus/var_string.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/FS/property.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 
 
 namespace Pedestal

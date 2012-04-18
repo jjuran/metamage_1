@@ -6,8 +6,8 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_DEV_HH
 #define GENIE_FILESYSTEM_FSTREE_DEV_HH
 
-// Genie 
-#include "Genie/FS/FSTree_Directory.hh"
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
 
 
 namespace Genie

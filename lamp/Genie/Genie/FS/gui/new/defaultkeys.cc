@@ -15,11 +15,11 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/nodes/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/touch.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/resolve.hh"
 

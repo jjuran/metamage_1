@@ -6,8 +6,8 @@
 #ifndef GENIE_FS_SYS_APP_WINDOW_LIST_REF_HH
 #define GENIE_FS_SYS_APP_WINDOW_LIST_REF_HH
 
-// Genie
-#include "Genie/FS/FSTree_Directory.hh"
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
 
 
 namespace Genie

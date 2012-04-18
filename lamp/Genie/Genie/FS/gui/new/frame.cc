@@ -25,9 +25,11 @@
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Frame.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"

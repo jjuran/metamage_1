@@ -23,10 +23,10 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // vfs
+#include "vfs/nodes/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Directory.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
