@@ -215,7 +215,7 @@ namespace Genie
 	}
 	
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ NULL, NULL }
 	};

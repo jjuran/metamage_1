@@ -21,7 +21,7 @@ namespace Pedestal
 namespace Genie
 {
 	
-	extern const premapped::mapping sys_port_ADDR_Mappings[];
+	extern const vfs::fixed_mapping sys_port_ADDR_Mappings[];
 	
 	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view );
 	

@@ -65,7 +65,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_desktop_Property< prop > >::value
 	
-	const premapped::mapping sys_mac_desktop_Mappings[] =
+	const vfs::fixed_mapping sys_mac_desktop_Mappings[] =
 	{
 		{ "bounds", PROPERTY( GetScreenBounds ) },
 		{ "size",   PROPERTY( GetScreenSize   ) },

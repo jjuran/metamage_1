@@ -70,7 +70,7 @@ namespace Genie
 		return N::GetCRMAttributes< N::crmSerialDevice >( crmRec );
 	}
 	
-	extern const premapped::mapping sys_mac_crm_serial_N_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[];
 	
 	static FSTreePtr serial_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -183,7 +183,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_crm_serial_N_Mappings[] =
+	const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[] =
 	{
 		{ "name",   PROPERTY( sys_mac_crm_serial_N_name   ) },
 		{ "input",  PROPERTY( sys_mac_crm_serial_N_input  ) },

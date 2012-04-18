@@ -81,7 +81,7 @@ namespace Genie
 	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
-	                        const premapped::mapping*  mappings,
+	                        const vfs::fixed_mapping*  mappings,
 	                        vfs::node_destructor       dtor,
 	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	

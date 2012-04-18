@@ -167,7 +167,7 @@ namespace Genie
 	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::HOffset >  HOffset_Property;
 	typedef TE_View_Property< plus::serialize_int< int >, ScrollerParameters::VOffset >  VOffset_Property;
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "text", &New_FSTree_TextEdit_text },
 		

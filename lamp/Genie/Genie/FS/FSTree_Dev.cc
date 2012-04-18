@@ -174,7 +174,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFCHR | 0600, &simple_device_methods );
 	}
 	
-	const premapped::mapping dev_Mappings[] =
+	const vfs::fixed_mapping dev_Mappings[] =
 	{
 		{ "null",    &SimpleDevice_Factory },
 		{ "zero",    &SimpleDevice_Factory },

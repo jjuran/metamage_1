@@ -70,7 +70,7 @@ namespace Genie
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_Property< access > )
 	
-	const premapped::mapping sys_app_Mappings[] =
+	const vfs::fixed_mapping sys_app_Mappings[] =
 	{
 		{ "cmd",   &New_FSTree_sys_app_cmd },
 		

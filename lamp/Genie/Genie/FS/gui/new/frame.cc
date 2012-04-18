@@ -371,7 +371,7 @@ namespace Genie
 	#define PROPERTY_VALUE( access )  &new_property, &property_params_factory< Frame_Property<       serialize_Value,      access > >::value
 	#define PROPERTY_INT(   access )  &new_property, &property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "width",  PROPERTY_VALUE( Width  ) },
 		{ "height", PROPERTY_VALUE( Height ) },

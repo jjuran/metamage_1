@@ -84,7 +84,7 @@ namespace Genie
 		}
 	};
 	
-	extern const premapped::mapping sys_mac_soundin_REF_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[];
 	
 	static FSTreePtr soundin_Lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -202,7 +202,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_soundin_REF_Mappings[] =
+	const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[] =
 	{
 		{ "name", PROPERTY( sys_mac_soundin_REF_name ) },
 		

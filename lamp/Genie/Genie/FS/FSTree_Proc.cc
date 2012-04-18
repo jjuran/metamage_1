@@ -191,7 +191,7 @@ namespace Genie
 	};
 	
 	
-	extern const premapped::mapping proc_PID_Mappings[];
+	extern const vfs::fixed_mapping proc_PID_Mappings[];
 	
 	struct valid_name_of_pid
 	{
@@ -543,7 +543,7 @@ namespace Genie
 	
 	#define GENERATED( gen )  &new_generated, (void*) &proc_PID_Property< gen >::Read
 	
-	const premapped::mapping proc_PID_Mappings[] =
+	const vfs::fixed_mapping proc_PID_Mappings[] =
 	{
 		{ "fd", &fd_Factory },
 		

@@ -64,7 +64,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_event_post_Mappings[] =
+	const vfs::fixed_mapping sys_mac_event_post_Mappings[] =
 	{
 		{ "click", &trigger_factory, (void*) &click_extra },
 		

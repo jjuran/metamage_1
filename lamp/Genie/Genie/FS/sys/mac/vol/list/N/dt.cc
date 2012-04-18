@@ -235,9 +235,9 @@ namespace Genie
 		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
 	}
 	
-	extern const premapped::mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
 	
-	const premapped::mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[] =
+	const vfs::fixed_mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[] =
 	{
 		{ "latest",  &new_sys_mac_vol_list_N_dt_appls_QUAD_latest },
 		
@@ -388,7 +388,7 @@ namespace Genie
 	}
 	
 	
-	const premapped::mapping sys_mac_vol_list_N_dt_Mappings[] =
+	const vfs::fixed_mapping sys_mac_vol_list_N_dt_Mappings[] =
 	{
 		{ "dir",    &new_sys_mac_vol_list_N_dt_dir   },
 		{ "appls",  &new_sys_mac_vol_list_N_dt_appls },

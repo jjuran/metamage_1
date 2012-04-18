@@ -334,7 +334,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ ".mac-title", PROPERTY( Button_Title ) },
 		

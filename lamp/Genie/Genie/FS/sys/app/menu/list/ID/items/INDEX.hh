@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const premapped::mapping sys_app_menu_list_ID_items_INDEX_Mappings[];
+	extern const vfs::fixed_mapping sys_app_menu_list_ID_items_INDEX_Mappings[];
 	
 }
 

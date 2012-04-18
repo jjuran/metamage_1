@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const premapped::mapping gui_Mappings[];
+	extern const vfs::fixed_mapping gui_Mappings[];
 	
 }
 

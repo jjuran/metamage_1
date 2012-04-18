@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const premapped::mapping sys_app_window_Mappings[];
+	extern const vfs::fixed_mapping sys_app_window_Mappings[];
 	
 }
 

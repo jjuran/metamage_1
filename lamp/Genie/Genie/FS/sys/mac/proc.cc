@@ -138,7 +138,7 @@ namespace Genie
 	}
 	
 	
-	extern const premapped::mapping sys_mac_proc_PSN_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[];
 	
 	static FSTreePtr psn_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -241,7 +241,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	
-	const premapped::mapping sys_mac_proc_PSN_Mappings[] =
+	const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[] =
 	{
 		{ ".mac-name", PROPERTY( sys_mac_proc_PSN_name ) },
 		

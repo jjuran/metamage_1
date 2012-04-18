@@ -310,7 +310,7 @@ namespace Genie
 		}
 	};
 	
-	extern const premapped::mapping sys_mac_unit_N_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_unit_N_Mappings[];
 	
 	static FSTreePtr unit_lookup( const FSTree* parent, const plus::string& name )
 	{
@@ -352,7 +352,7 @@ namespace Genie
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_unit_N_Property< prop > >::value
 	
-	const premapped::mapping sys_mac_unit_N_Mappings[] =
+	const vfs::fixed_mapping sys_mac_unit_N_Mappings[] =
 	{
 		{ "flags",  PROPERTY( GetDriverFlags            ) },
 		{ "name",   PROPERTY( DriverName                ) },

@@ -103,7 +103,7 @@ namespace Genie
 	
 	typedef sys_app_menu_list_ID_Property< menu_title > sys_app_menu_list_ID_title;
 	
-	const premapped::mapping sys_app_menu_list_ID_Mappings[] =
+	const vfs::fixed_mapping sys_app_menu_list_ID_Mappings[] =
 	{
 		{ ".mac-title", PROPERTY( sys_app_menu_list_ID_title ) },
 		

@@ -391,7 +391,7 @@ namespace Genie
 		return new FSTree( parent, name, 0, &scrollframe_target_methods );
 	}
 	
-	static const premapped::mapping local_mappings[] =
+	static const vfs::fixed_mapping local_mappings[] =
 	{
 		{ "horizontal", PROPERTY( Horizontal_Property ) },
 		{ "vertical",   PROPERTY( Vertical_Property   ) },

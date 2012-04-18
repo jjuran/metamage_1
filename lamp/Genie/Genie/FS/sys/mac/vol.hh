@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	extern const premapped::mapping sys_mac_vol_Mappings[];
+	extern const vfs::fixed_mapping sys_mac_vol_Mappings[];
 	
 }
 

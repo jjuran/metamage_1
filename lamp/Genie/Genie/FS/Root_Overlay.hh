@@ -15,7 +15,7 @@
 namespace Genie
 {
 	
-	extern const premapped::mapping Root_Overlay_Mappings[];
+	extern const vfs::fixed_mapping Root_Overlay_Mappings[];
 	
 }
 

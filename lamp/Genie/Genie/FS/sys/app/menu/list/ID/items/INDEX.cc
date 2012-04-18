@@ -168,7 +168,7 @@ namespace Genie
 	
 	typedef sys_app_menu_list_ID_items_INDEX_Property< menu_item_text > sys_app_menu_list_ID_items_INDEX_text;
 	
-	const premapped::mapping sys_app_menu_list_ID_items_INDEX_Mappings[] =
+	const vfs::fixed_mapping sys_app_menu_list_ID_items_INDEX_Mappings[] =
 	{
 		{ ".mac-text", PROPERTY( sys_app_menu_list_ID_items_INDEX_text ) },
 		
