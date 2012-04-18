@@ -11,11 +11,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/null.hh"
 
 // Genie
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Null.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
@@ -99,7 +99,7 @@ namespace Genie
 			return it->f( parent, name, it->args );
 		}
 		
-		return FSNull();
+		return vfs::null();
 	}
 	
 	static void premapped_listdir( const FSTree*       node,
