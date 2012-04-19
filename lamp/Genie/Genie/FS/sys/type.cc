@@ -15,10 +15,12 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -59,7 +61,7 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	const vfs::fixed_mapping sys_type_Mappings[] =
 	{

@@ -12,9 +12,11 @@
 // plus
 #include "plus/serialize.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
@@ -64,7 +66,7 @@ namespace Genie
 	};
 	
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	

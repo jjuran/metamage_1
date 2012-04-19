@@ -7,12 +7,14 @@
 
 #include "Genie/FS/Root_Overlay.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/app.hh"
 #include "Genie/FS/FSTree_Dev.hh"
 #include "Genie/FS/FSTree_Proc.hh"
 #include "Genie/FS/gui.hh"
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/FS/Volumes.hh"
@@ -21,7 +23,7 @@
 namespace Genie
 {
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	const vfs::fixed_mapping Root_Overlay_Mappings[] =
 	{

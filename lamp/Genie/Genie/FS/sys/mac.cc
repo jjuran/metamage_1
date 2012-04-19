@@ -5,11 +5,13 @@
 
 #include "Genie/FS/sys/mac.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"
@@ -41,7 +43,7 @@
 namespace Genie
 {
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	

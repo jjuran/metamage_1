@@ -5,8 +5,10 @@
 
 #include "Genie/FS/gui.hh"
 
+// vfs
+#include "vfs/nodes/fixed_dir.hh"
+
 // Genie
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/gui/new.hh"
 #include "Genie/FS/gui/port.hh"
 
@@ -14,7 +16,7 @@
 namespace Genie
 {
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	const vfs::fixed_mapping gui_Mappings[] =
 	{

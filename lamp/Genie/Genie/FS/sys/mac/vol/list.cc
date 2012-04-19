@@ -37,6 +37,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
@@ -45,7 +46,6 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/serialize_Str255.hh"
@@ -543,7 +543,7 @@ namespace Genie
 	}
 	
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
 	

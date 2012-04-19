@@ -23,6 +23,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/nodes/fixed_dir.hh"
 
 // Genie
 #include "Genie/code/fixed_address.hh"
@@ -31,7 +32,6 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/premapped.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
@@ -194,7 +194,7 @@ namespace Genie
 	};
 	
 	
-	#define PREMAPPED( map )  &premapped_factory, (const void*) map
+	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
 	extern const vfs::fixed_mapping sys_kernel_Mappings[];
 	
