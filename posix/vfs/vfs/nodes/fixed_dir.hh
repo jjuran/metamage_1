@@ -38,6 +38,10 @@ namespace vfs
 	                    const fixed_mapping    mappings[] = empty_mappings,
 	                    void                 (*dtor)(const node*) = NULL );
 	
+	node_ptr fixed_dir_factory( const node*          parent,
+	                            const plus::string&  name,
+	                            const void*          args );
+	
 }
 
 #endif

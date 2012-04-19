@@ -145,5 +145,14 @@ namespace vfs
 		return result;
 	}
 	
+	node_ptr fixed_dir_factory( const node*          parent,
+	                            const plus::string&  name,
+	                            const void*          args )
+	{
+		const fixed_mapping* mappings = (const fixed_mapping*) args;
+		
+		return fixed_dir( parent, name, mappings );
+	}
+	
 }
 
