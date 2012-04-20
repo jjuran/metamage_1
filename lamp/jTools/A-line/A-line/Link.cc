@@ -727,11 +727,7 @@ namespace tool
 			AddLibraryLinkArgs( usedProjects, link_input_arguments );
 		}
 		
-		// FIXME:  This is a hack
-		if ( relix )
-		{
-			AddProjectImports( project, targetInfo.platform, link_input_arguments );
-		}
+		AddProjectImports( project, targetInfo.platform, link_input_arguments );
 		
 		const bool machO = real_unix && targetInfo.platform & runtimeMachO;
 		
