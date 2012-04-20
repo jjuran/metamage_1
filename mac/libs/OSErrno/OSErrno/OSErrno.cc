@@ -2,8 +2,10 @@
 
 #include "OSErrno/OSErrno.hh"
 
-// Nitrogen
-#include "Nitrogen/OpenTransport.hh"
+// Mac OS
+#ifndef __OPENTRANSPORT__
+#include <OpenTransport.h>
+#endif
 
 
 namespace OSErrno
