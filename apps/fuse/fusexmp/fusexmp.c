@@ -8,6 +8,8 @@
   gcc -Wall `pkg-config fuse --cflags --libs` fusexmp.c -o fusexmp
 */
 
+#define _FILE_OFFSET_BITS 64
+
 #define FUSE_USE_VERSION 26
 
 #ifdef HAVE_CONFIG_H
