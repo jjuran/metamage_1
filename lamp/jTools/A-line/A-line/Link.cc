@@ -93,7 +93,7 @@ namespace tool
 			{
 				const plus::string& import = *the_import;
 				
-				if ( import[ 0 ] == '-' )
+				if ( import[ 0 ] == '@' )
 				{
 					// Weak-linked, so it's a stub library.
 					// Currently, all of these are system-provided, not project-local.
