@@ -44,7 +44,7 @@ namespace poseven
 		
 		result.resize( size );
 		
-		return result;
+		return result.move();
 	}
 	
 }
