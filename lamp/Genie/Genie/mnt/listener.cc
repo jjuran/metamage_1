@@ -19,12 +19,22 @@
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 
+// vfs
+#include "vfs/node_fwd.hh"
+
 // relix-kernel
 #include "relix/fs/console.hh"
 #include "relix/task/scheduler.hh"
 
+// freemount
+#include "freemount/event_loop.hh"
+#include "freemount/receiver.hh"
+#include "freemount/server.hh"
+#include "freemount/session.hh"
+
 // Genie
 #include "Genie/mnt/path.hh"
+#include "Genie/mnt/root.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -32,6 +42,8 @@
 
 namespace Genie
 {
+	
+	namespace mnt = freemount;
 	
 	using posix::listen_unix;
 	
@@ -61,6 +73,14 @@ namespace Genie
 	};
 	
 	static
+	int frame_handler( void* context, const mnt::frame_header& frame )
+	{
+		op_scope sync;
+		
+		return mnt::frame_handler( context, frame );
+	}
+	
+	static
 	void* client_proc( void* param )
 	{
 		client_data client = *(client_data*) param;
@@ -69,17 +89,22 @@ namespace Genie
 		
 		const int remote_fd = client.fd;
 		
-		char buffer[ 256 ];
-		ssize_t n_read;
+		const vfs::node& root = freemount_root();
+		
+		mnt::session* s;
 		
 		try
 		{
-			while ( (n_read = read( remote_fd, buffer, sizeof buffer )) > 0 )
 			{
 				op_scope sync;
 				
-				relix::console::log( buffer, n_read );
+				// This manipulates shared refcounts.
+				s = new mnt::session( remote_fd, root, root );
 			}
+			
+			mnt::data_receiver r( &frame_handler, s );
+			
+			run_event_loop( r, remote_fd );
 		}
 		catch ( ... )
 		{
@@ -87,6 +112,10 @@ namespace Genie
 		}
 		
 		close( remote_fd );
+		
+		op_scope sync;
+		
+		delete s;  // manipulates shared refcounts
 		
 		return NULL;
 	}
