@@ -734,6 +734,8 @@ namespace Genie
 		
 		itsLifeStage       = kProcessLive;
 		
+		relix::mark_thread_active( gettid() );
+		
 		if ( gCurrentProcess != this )
 		{
 			return;
@@ -801,6 +803,8 @@ namespace Genie
 		swap_os_thread( looseThread );
 		
 		itsLifeStage       = kProcessLive;
+		
+		relix::mark_thread_active( gettid() );
 		
 		return looseThread;
 	}
