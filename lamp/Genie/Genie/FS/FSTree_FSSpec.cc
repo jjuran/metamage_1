@@ -932,6 +932,12 @@ namespace Genie
 	
 	static vfs::program_ptr hfs_loadexec( const FSTree* that )
 	{
+	#ifdef __i386__
+		
+		throw p7::errno_t( ENOEXEC );
+		
+	#endif
+		
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		execution_unit unit = GetBinaryImage( extra.fsspec );
