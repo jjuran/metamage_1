@@ -36,6 +36,7 @@
 
 // Genie
 #include "Genie/mnt/path.hh"
+#include "Genie/mnt/spawn.hh"
 #include "Genie/mnt/root.hh"
 
 
@@ -72,6 +73,7 @@ namespace Genie
 	struct client_data
 	{
 		int fd;
+		int pid;
 	};
 	
 	static
@@ -119,6 +121,8 @@ namespace Genie
 		
 		delete s;  // manipulates shared refcounts
 		
+		terminate_freemount_process( client.pid );
+		
 		return NULL;
 	}
 	
@@ -132,10 +136,16 @@ namespace Genie
 			client = new client_data();
 			
 			client->fd = remote_fd;
+			
+			op_scope sync;
+			
+			client->pid = spawn_freemount_process();
 		}
 		catch ( ... )
 		{
 			close( remote_fd );
+			
+			delete client;
 			
 			return;
 		}
