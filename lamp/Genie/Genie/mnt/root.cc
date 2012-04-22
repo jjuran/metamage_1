@@ -10,7 +10,7 @@
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
-#include "Genie/FS/sys/app/window.hh"
+#include "Genie/FS/gui.hh"
 
 
 namespace Genie {
@@ -19,7 +19,7 @@ namespace Genie {
 
 static const vfs::fixed_mapping root_mappings[] =
 {
-	{ "window", PREMAPPED( sys_app_window_Mappings ) },
+	{ "gui", PREMAPPED( gui_Mappings ) },
 	
 	{ NULL, NULL }
 };
