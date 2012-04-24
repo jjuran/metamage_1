@@ -32,6 +32,10 @@
 namespace N = Nitrogen;
 
 
+#ifndef __MACOS__
+namespace {
+#endif
+
 int execve( char  const*  path,
             char* const*  argv,
             char* const*  envp )
@@ -91,3 +95,7 @@ int execve( char  const*  path,
 REGISTER_SYSTEM_CALL( execve );
 
 #pragma force_active reset
+
+#ifndef __MACOS__
+}
+#endif
