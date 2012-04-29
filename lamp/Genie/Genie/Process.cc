@@ -330,10 +330,16 @@ namespace Genie
 	
 	static void* measure_stack_limit()
 	{
+	#ifdef __MACOS__
+		
 		const unsigned extra_stack = TARGET_CPU_68K * 10;
 		
 		return   (char*) recall::get_frame_pointer()
 		       - (N::ThreadCurrentStackSpace( N::GetCurrentThread() ) + extra_stack);
+		
+	#endif
+		
+		return NULL;
 	}
 	
 	pascal void* Process::ThreadEntry( void* param )
