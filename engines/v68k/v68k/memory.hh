@@ -35,6 +35,10 @@ namespace v68k
 	class memory
 	{
 		public:
+			virtual ~memory()
+			{
+			}
+			
 			virtual uint8_t* translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const = 0;
 			
 			bool get_byte( uint32_t addr, uint8_t & x, function_code_t fc ) const;
