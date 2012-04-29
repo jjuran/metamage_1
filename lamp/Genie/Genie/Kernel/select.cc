@@ -33,7 +33,7 @@ namespace Genie
 	                          fd_set*  exceptfds, struct timeval* timeout )
 	{
 		int64_t   remaining_microseconds = 1;
-		uint64_t  end_microseconds;
+		uint64_t  end_microseconds       = 0;
 		
 		if ( timeout != NULL )
 		{
