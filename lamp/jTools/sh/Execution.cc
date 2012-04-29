@@ -170,21 +170,13 @@ namespace tool
 	};
 	
 	
-	class ShellParameterDictionary : public Sh::ParameterDictionary
-	{
-		public:
-			ShellParameterDictionary()  {}
-			
-			std::vector< plus::string > Lookup( const plus::string& param, bool double_quoted ) const;
-	};
-	
 	template < class T >
 	static inline std::vector< T > MakeVector( const T& value )
 	{
 		return std::vector< T >( 1, value );
 	}
 	
-	std::vector< plus::string > ShellParameterDictionary::Lookup( const plus::string& param, bool double_quoted ) const
+	static std::vector< plus::string > lookup_shell_param( const plus::string& param, bool double_quoted )
 	{
 		plus::var_string single_result;
 		
@@ -531,7 +523,7 @@ namespace tool
 	
 	static Command ParseCommand( const Command& command )
 	{
-		return Sh::ParseCommand( command, ShellParameterDictionary() );
+		return Sh::ParseCommand( command, &lookup_shell_param );
 	}
 	
 	static void SetupChildProcess( p7::pid_t pgid = p7::pid_t( 0 ) )
