@@ -81,9 +81,7 @@ namespace tool
 		
 		const char* buffer_end = buffer + sizeof buffer;
 		
-		const char* p = buffer;
-		
-		for ( p;  p != buffer_end;  ++p )
+		for ( const char* p = buffer;  p != buffer_end;  ++p )
 		{
 			if ( *p == ':' )
 			{
