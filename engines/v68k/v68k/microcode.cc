@@ -181,6 +181,9 @@ namespace v68k
 					*p++ = data >>  8 & 0xFF;
 				case byte_sized:
 					*p++ = data >>  0 & 0xFF;
+				
+				default:
+					break;
 			}
 		}
 		else
@@ -198,6 +201,9 @@ namespace v68k
 					data |= *p++ <<  8;
 				case byte_sized:
 					data |= *p++ <<  0;
+				
+				default:
+					break;
 			}
 			
 			if ( reg_id & 0x8 )
