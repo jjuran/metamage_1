@@ -21,11 +21,11 @@
 			                                DEBUG_CURRENT_FUNCTION,  \
 			                                __FILE__,                \
 			                                __LINE__ );              \
-		else 0
+		else (void) 0
 	
 #else
 	
-	#define ASSERT( cond )  if ( 0 ) (void) !(cond); else 0
+	#define ASSERT( cond )  if ( 0 ) (void) !(cond); else (void) 0
 	
 #endif
 
