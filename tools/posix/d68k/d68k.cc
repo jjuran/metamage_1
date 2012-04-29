@@ -1808,7 +1808,7 @@ namespace tool
 	{
 		const size_t bytes_read = global_bytes_read;
 		
-		const char index = op >> 8 & 0xf;
+		const unsigned short index = op >> 8 & 0xf;
 		
 		const char* ccode = index == 0 ? "RA"
 		                  : index == 1 ? "SR"
