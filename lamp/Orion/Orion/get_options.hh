@@ -44,6 +44,10 @@ namespace orion
 	class option_binding
 	{
 		public:
+			virtual ~option_binding()
+			{
+			}
+			
 			virtual bool argument_expected() const = 0;
 			
 			virtual void set( const char* param = "" ) const = 0;
