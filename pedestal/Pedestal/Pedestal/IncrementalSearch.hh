@@ -65,6 +65,10 @@ namespace Pedestal
 	class IncrementalSearchEditor
 	{
 		public:
+			virtual ~IncrementalSearchEditor()
+			{
+			}
+			
 			virtual void BeginQuasimode() = 0;
 			virtual void EndQuasimode() = 0;
 			
