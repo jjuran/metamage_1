@@ -341,6 +341,9 @@ namespace tool
 		{
 			switch ( redirection.op )
 			{
+				case Sh::kRedirectNone:
+					break;
+				
 				case Sh::kRedirectInput:
 					file = Open( param, O_RDONLY );
 					Dup2( file, fd );
