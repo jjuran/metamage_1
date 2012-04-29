@@ -1176,7 +1176,7 @@ namespace Genie
 	
 	void Process::ResetSignalAction( int signo )
 	{
-		const struct sigaction default_sigaction = { SIG_DFL, 0, 0 };
+		const struct sigaction default_sigaction = { SIG_DFL };
 		
 		SetSignalAction( signo, default_sigaction );
 	}
