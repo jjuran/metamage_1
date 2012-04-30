@@ -46,7 +46,11 @@ namespace Genie
 		
 		if ( it == the_ports.end() )
 		{
-			p7::throw_errno( ENOENT );
+			FSTreePtr port = fixed_dir( parent, name, gui_port_ADDR_Mappings, &remove_port );
+			
+			the_ports[ name ] = port.get();
+			
+			return port;
 		}
 		
 		return it->second;
