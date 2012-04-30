@@ -94,14 +94,14 @@ namespace Genie
 	{
 		const FSTree* parent = gui_port();
 		
-		FSTreePtr port = fixed_dir( parent, "/", sys_port_ADDR_Mappings, &remove_port );
+		FSTreePtr port = fixed_dir( parent, "/", gui_port_ADDR_Mappings, &remove_port );
 		
 		the_ports.insert( port.get() );
 		
 		return port;
 	}
 	
-	FSTreePtr New_sys_port( const FSTree*        parent,
+	FSTreePtr new_gui_port( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          args )
 	{

@@ -21,7 +21,7 @@ namespace Genie
 	void remove_port( const FSTree* port );
 	
 	
-	FSTreePtr New_sys_port( const FSTree*        parent,
+	FSTreePtr new_gui_port( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          args );
 	

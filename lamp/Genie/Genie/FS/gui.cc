@@ -22,7 +22,7 @@ namespace Genie
 	{
 		{ "new", PREMAPPED( new_Mappings ) },
 		
-		{ "port", &New_sys_port },
+		{ "port", &new_gui_port },
 		
 		{ NULL, NULL }
 	};
