@@ -61,6 +61,7 @@
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
+#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -91,6 +92,7 @@ namespace Genie
 		N::WindowDefProcID  itsProcID;
 		bool                itIsVisible;
 		bool                itHasCloseBox;
+		bool                itIsLocked;
 		
 		boost::intrusive_ptr< Ped::Window >  itsWindow;
 		boost::intrusive_ptr< Ped::View   >  itsSubview;
@@ -107,6 +109,7 @@ namespace Genie
 		                     itsProcID( N::documentProc ),
 		                     itIsVisible  ( true ),
 		                     itHasCloseBox( true ),
+		                     itIsLocked(),
 		                     itsSubview( Ped::EmptyView::Get() ),
 		                     itsFocus(),
 		                     itsTerminal()
@@ -244,6 +247,13 @@ namespace Genie
 		}
 	}
 	
+	
+	static bool port_is_locked( const FSTreePtr& port )
+	{
+		const FSTree* key = port.get();
+		
+		return gWindowParametersMap[ key ].itIsLocked;
+	}
 	
 	static bool port_has_window( const FSTreePtr& port )
 	{
@@ -903,6 +913,70 @@ namespace Genie
 	};
 	
 	
+	class lock_handle : public VirtualFileHandle< IOHandle >
+	{
+		private:
+			// non-copyable
+			lock_handle           ( const lock_handle& );
+			lock_handle& operator=( const lock_handle& );
+		
+		public:
+			lock_handle( const FSTreePtr&  file,
+			             int               flags )
+			:
+				VirtualFileHandle< IOHandle >( file, flags )
+			{
+				gWindowParametersMap[ file->owner() ].itIsLocked = true;
+			}
+			
+			~lock_handle();
+	};
+	
+	lock_handle::~lock_handle()
+	{
+		const vfs::node* port = GetFile()->owner();
+		
+		gWindowParametersMap[ port ].itIsLocked = false;
+		
+		remove_window_and_views_from_port( port );
+	}
+	
+	static IOPtr lock_open( const FSTree* that, int flags, mode_t mode )
+	{
+		if ( gWindowParametersMap[ that->owner() ].itIsLocked )
+		{
+			if ( flags & O_EXCL )
+			{
+				p7::throw_errno( EEXIST );
+			}
+			
+			p7::throw_errno( EACCES );
+		}
+		
+		if ( !(flags & O_CREAT) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return new lock_handle( that, flags );
+	}
+	
+	static const data_method_set lock_data_methods =
+	{
+		&lock_open
+	};
+	
+	static const node_method_set lock_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&lock_data_methods
+	};
+	
 	static void unwindow_touch( const FSTree* node )
 	{
 		CreateUserWindow( node->owner() );
@@ -914,6 +988,18 @@ namespace Genie
 		NULL,
 		&unwindow_touch
 	};
+	
+	static FSTreePtr new_lock( const FSTree*        parent,
+	                           const plus::string&  name,
+	                           const void*          args )
+	{
+		const bool exists = port_is_locked( parent );
+		
+		const mode_t mode = exists ? S_IFREG | 0000
+		                           : 0;
+		
+		return new FSTree( parent, name, mode, &lock_methods );
+	}
 	
 	static FSTreePtr new_window( const FSTree*        parent,
 	                             const plus::string&  name,
@@ -1000,6 +1086,8 @@ namespace Genie
 	
 	const vfs::fixed_mapping gui_port_ADDR_Mappings[] =
 	{
+		{ "lock", &new_lock },
+		
 		{ "window", &new_window },
 		
 		{ "view",   &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
