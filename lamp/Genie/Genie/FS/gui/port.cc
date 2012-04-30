@@ -34,14 +34,14 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	typedef std::set< const FSTree* > WindowMap;
+	typedef std::set< const FSTree* > set_of_ports;
 	
-	static WindowMap gWindowMap;
+	static set_of_ports the_ports;
 	
 	
-	static FSTreePtr window_lookup( const FSTree* parent, const plus::string& name )
+	static FSTreePtr port_lookup( const FSTree* parent, const plus::string& name )
 	{
-		WindowMap::const_iterator it;
+		set_of_ports::const_iterator it;
 		
 		const bool canonical = canonical_32_bit_hex::applies( name );
 		
@@ -49,10 +49,10 @@ namespace Genie
 		{
 			const FSTree* key = (const FSTree*) plus::decode_32_bit_hex( name );
 			
-			it = gWindowMap.find( key );
+			it = the_ports.find( key );
 		}
 		
-		if ( !canonical  ||  it == gWindowMap.end() )
+		if ( !canonical  ||  it == the_ports.end() )
 		{
 			p7::throw_errno( ENOENT );
 		}
@@ -60,17 +60,17 @@ namespace Genie
 		return FSTreePtr( *it );
 	}
 	
-	static void window_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void port_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		WindowMap::const_iterator end = gWindowMap.end();
+		set_of_ports::const_iterator end = the_ports.end();
 		
-		for ( WindowMap::const_iterator it = gWindowMap.begin();  it != end;  ++it )
+		for ( set_of_ports::const_iterator it = the_ports.begin();  it != end;  ++it )
 		{
-			const FSTree* window = *it;
+			const FSTree* port = *it;
 			
-			ino_t inode = (ino_t) window;  // coerce pointer to integer
+			ino_t inode = (ino_t) port;  // coerce pointer to integer
 			
-			vfs::dir_entry node( inode, window->name() );
+			vfs::dir_entry node( inode, port->name() );
 			
 			cache.push_back( node );
 		}
@@ -80,32 +80,32 @@ namespace Genie
 	{
 		remove_window_and_views_from_port( port );
 		
-		gWindowMap.erase( port );
+		the_ports.erase( port );
 	}
 	
-	static const FSTree* SysWindow()
+	static const FSTree* gui_port()
 	{
-		static FSTreePtr sys_window = ResolveAbsolutePath( STR_LEN( "/gui/port" ) );
+		static FSTreePtr node = ResolveAbsolutePath( STR_LEN( "/gui/port" ) );
 		
-		return sys_window.get();
+		return node.get();
 	}
 	
 	FSTreePtr new_port()
 	{
-		const FSTree* parent = SysWindow();
+		const FSTree* parent = gui_port();
 		
-		FSTreePtr window = fixed_dir( parent, "/", sys_port_ADDR_Mappings, &remove_port );
+		FSTreePtr port = fixed_dir( parent, "/", sys_port_ADDR_Mappings, &remove_port );
 		
-		gWindowMap.insert( window.get() );
+		the_ports.insert( port.get() );
 		
-		return window;
+		return port;
 	}
 	
 	FSTreePtr New_sys_port( const FSTree*        parent,
 	                        const plus::string&  name,
 	                        const void*          args )
 	{
-		return new_basic_directory( parent, name, window_lookup, window_iterate );
+		return new_basic_directory( parent, name, port_lookup, port_iterate );
 	}
 	
 }
