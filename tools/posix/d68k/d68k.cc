@@ -1375,6 +1375,9 @@ namespace tool
 					case 4:  // RTD
 						arg = read_word_signed();
 						break;
+					
+					default:
+						arg = 0;  // not used, but needed to silence warning
 				}
 				
 				printf( name, arg );
