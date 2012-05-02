@@ -72,7 +72,7 @@ namespace tool
 			return usage();
 		}
 		
-		struct sigaction action = { SIG_IGN, 0, 0 };
+		struct sigaction action = { SIG_IGN };
 		
 		// Ignore SIGHUP
 		sigaction( SIGHUP, &action, NULL );
