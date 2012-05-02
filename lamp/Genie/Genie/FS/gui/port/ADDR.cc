@@ -105,8 +105,8 @@ namespace Genie
 		                     itsProcID( N::documentProc ),
 		                     itIsVisible  ( true ),
 		                     itHasCloseBox( true ),
-		                     itsFocus(),
 		                     itsSubview( Ped::EmptyView::Get() ),
+		                     itsFocus(),
 		                     itsTerminal()
 		{
 		}

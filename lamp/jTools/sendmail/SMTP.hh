@@ -73,8 +73,8 @@ namespace SMTP
 		{
 			private:
 				text_input::feed    its_feed;
-				poseven::fd_reader  its_input_reader;
 				poseven::fd_t       its_connection;
+				poseven::fd_reader  its_input_reader;
 				
 				void verify_response();
 			
