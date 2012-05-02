@@ -246,7 +246,7 @@ static void inserted()
 {
 	plus::var_string s = "01234567";
 	
-	char* half = "89abcdef";
+	const char* half = "89abcdef";
 	
 	s.insert( s.begin(), half, half + sizeof "89abcdef" - 1 );
 	
