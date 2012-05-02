@@ -54,7 +54,7 @@ namespace recall
 	
 #endif
 
-#ifdef __POWERPC__
+#if defined( __POWERPC__ )  ||  defined( __powerpc__ )
 	
 	typedef stack_frame_ppc stack_frame;
 	

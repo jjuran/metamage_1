@@ -40,7 +40,7 @@ namespace recall
 	
 	typedef return_address_cfm return_address_ppc;
 	
-#elif defined( __POWERPC__ )
+#elif defined( __POWERPC__ )  ||  defined( __powerpc__ )
 	
 	typedef return_address_native return_address_ppc;
 	
