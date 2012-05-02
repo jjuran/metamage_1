@@ -16,6 +16,10 @@ namespace Pedestal
 	class TEClickLoop_User
 	{
 		protected:
+			virtual ~TEClickLoop_User()
+			{
+			}
+			
 			struct TEClickLoop_Scope
 			{
 				TEClickLoop_Scope( TEClickLoop_User* user );
@@ -30,6 +34,10 @@ namespace Pedestal
 	class TEClickLoop_Subject
 	{
 		protected:
+			virtual ~TEClickLoop_Subject()
+			{
+			}
+			
 			struct TEClickLoop_Scope
 			{
 				TEClickLoop_Scope( TEClickLoop_Subject* subject );

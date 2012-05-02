@@ -45,6 +45,10 @@ namespace tool
 	class InfoMutator
 	{
 		public:
+			virtual ~InfoMutator()
+			{
+			}
+			
 			virtual void operator()( CInfoPBRec& cInfo ) const = 0;
 	};
 	
