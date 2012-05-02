@@ -77,6 +77,7 @@ namespace v68k
 			
 			default:
 				// Not reached
+				ok = 0;  // silence uninitialized-variable warning
 				break;
 		}
 		

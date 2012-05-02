@@ -250,6 +250,10 @@ namespace recall
 	class Unmangler
 	{
 		public:
+			virtual ~Unmangler()
+			{
+			}
+			
 			virtual const char* FindTemplateParameters( const char* p ) = 0;
 			
 			virtual bool TemplateParameterFollows( const char* p ) = 0;

@@ -23,6 +23,9 @@ namespace tool
 			case arch68K:  return "68k";
 			case archPPC:  return "ppc";
 			case archX86:  return "x86";
+			
+			default:
+				break;
 		};
 		
 		std::fprintf( stderr, "Invalid arch: %x\n", arch );
@@ -38,6 +41,9 @@ namespace tool
 			case runtimeA5CodeSegments:  return "a5";
 			case runtimeCodeFragments:   return "cfm";
 			case runtimeMachO:           return "mach";
+			
+			default:
+				break;
 		};
 		
 		return "";
@@ -49,6 +55,9 @@ namespace tool
 		{
 			case apiMacBlue:    return "blue";
 			case apiMacCarbon:  return "carb";
+			
+			default:
+				break;
 		};
 		
 		return "";
@@ -61,6 +70,9 @@ namespace tool
 			case buildSymbolics:  return "sym";
 			case buildDebug:      return "dbg";
 			case buildRelease:    return "opt";
+			
+			default:
+				break;
 		};
 		
 		return "";

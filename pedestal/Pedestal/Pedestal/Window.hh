@@ -118,12 +118,20 @@ namespace Pedestal
 	class WindowCloseHandler : public plus::ref_count< WindowCloseHandler >
 	{
 		public:
+			virtual ~WindowCloseHandler()
+			{
+			}
+			
 			virtual void operator()( WindowRef window ) const = 0;
 	};
 	
 	class WindowResizeHandler : public plus::ref_count< WindowResizeHandler >
 	{
 		public:
+			virtual ~WindowResizeHandler()
+			{
+			}
+			
 			virtual void operator()( WindowRef window, short h, short v ) const = 0;
 	};
 	
@@ -140,7 +148,7 @@ namespace Pedestal
 		public:
 			Window( const NewWindowContext& context );
 			
-			~Window();
+			virtual ~Window();
 			
 			WindowRef Get() const  { return itsWindowRef; }
 			

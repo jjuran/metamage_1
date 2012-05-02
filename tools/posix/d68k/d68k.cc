@@ -1375,6 +1375,9 @@ namespace tool
 					case 4:  // RTD
 						arg = read_word_signed();
 						break;
+					
+					default:
+						arg = 0;  // not used, but needed to silence warning
 				}
 				
 				printf( name, arg );
@@ -1808,7 +1811,7 @@ namespace tool
 	{
 		const size_t bytes_read = global_bytes_read;
 		
-		const char index = op >> 8 & 0xf;
+		const unsigned short index = op >> 8 & 0xf;
 		
 		const char* ccode = index == 0 ? "RA"
 		                  : index == 1 ? "SR"

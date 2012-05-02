@@ -665,8 +665,8 @@ namespace ShellShock
 		return plus::string( var, end - var );
 	}
 	
-	std::vector< plus::string > ParameterExpansion( const ParameterDictionary*  dictionary,
-	                                                const plus::string&         word )
+	std::vector< plus::string > ParameterExpansion( param_lookup_f       lookup_param,
+	                                                const plus::string&  word )
 	{
 		// $HOME -> /home/jjuran
 		
@@ -699,7 +699,7 @@ namespace ShellShock
 			
 			plus::string varName = ScanParameter( p );
 			
-			std::vector< plus::string > lookup = dictionary->Lookup( varName, double_quoted );
+			std::vector< plus::string > lookup = lookup_param( varName, double_quoted );
 			
 			// lookup.size() equals 1 except in the case of $*, $@, or "$@"
 			
@@ -815,8 +815,7 @@ namespace ShellShock
 		return ApplyCommand< Algorithm >( algorithm )( command );
 	}
 	
-	Command ParseCommand( const Command&              command,
-	                      const ParameterDictionary&  dictionary )
+	Command ParseCommand( const Command& command, param_lookup_f lookup_param )
 	{
 		return 
 			Apply( QuoteRemoval,
@@ -830,7 +829,7 @@ namespace ShellShock
 										std::bind1st
 										(
 											plus::ptr_fun( ParameterExpansion ),
-											&dictionary
+											lookup_param
 										),
 										Apply( TildeExpansion,
 											Apply( BraceExpansion,

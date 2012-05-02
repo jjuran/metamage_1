@@ -24,6 +24,10 @@ namespace Pedestal
 	class ScrollerAPI
 	{
 		public:
+			virtual ~ScrollerAPI()
+			{
+			}
+			
 			virtual short ViewWidth () const = 0;
 			virtual short ViewHeight() const = 0;
 			

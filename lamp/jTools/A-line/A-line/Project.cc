@@ -604,6 +604,10 @@ namespace tool
 			case productToolkit:
 			case productINIT:
 				used_project_names.push_back( "__" + product_name );
+				break;
+			
+			default:
+				break;
 		}
 		
 		GetDirectlyUsedProjectsFromConfig( conf_data, used_project_names );

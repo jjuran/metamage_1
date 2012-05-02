@@ -298,8 +298,6 @@ namespace Genie
 			{
 				const BinaryImage& image = cacheEntry->image;
 				
-			retry:
-				
 				N::Handle h = image.get();
 				
 				/*

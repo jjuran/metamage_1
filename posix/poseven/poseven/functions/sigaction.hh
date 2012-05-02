@@ -40,7 +40,7 @@ namespace poseven
 	inline void sigaction( signo_t              signo,
 	                       sigaction_handler_t  handler )
 	{
-		struct sigaction action = { handler, 0, 0 };
+		struct sigaction action = { handler };
 		
 		sigaction( signo, action );
 	}
