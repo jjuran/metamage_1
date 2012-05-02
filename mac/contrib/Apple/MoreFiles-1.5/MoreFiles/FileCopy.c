@@ -276,7 +276,7 @@ pascal	OSErr	FileCopy(short srcVRefNum,
 	long	tempLong;
 	short	tempInt;
 	
-	Boolean	spaceOK;				/* true if there's enough room to copy the file to the destination volume */
+	Boolean	spaceOK = 0;			/* true if there's enough room to copy the file to the destination volume */
 
 	Boolean	hasDataFork;
 	Boolean	hasResourceFork;

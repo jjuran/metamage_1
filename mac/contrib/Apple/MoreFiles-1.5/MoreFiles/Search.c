@@ -748,9 +748,9 @@ pascal	OSErr	IndexedSearch(CSParamPtr pb,
 	Str63					itemName;
 	CInfoPBRec				cPB;
 	long					tempLong;
-	Boolean					includeFiles;
-	Boolean					includeDirs;
-	Boolean					includeNames;
+	Boolean					includeFiles = 0;
+	Boolean					includeDirs  = 0;
+	Boolean					includeNames = 0;
 	Str63					upperName;
 	
 	timerTask.stopSearch = false;	/* don't stop yet! */
