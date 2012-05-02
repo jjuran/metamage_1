@@ -1575,7 +1575,8 @@ namespace Vertice
 			return true;
 		}
 		
-		short cmd;
+		short cmd = cmdNone;
+		
 		bool shooter = true;
 		if ( shooter )
 		{

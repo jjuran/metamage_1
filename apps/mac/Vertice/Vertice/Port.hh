@@ -47,6 +47,7 @@ namespace Vertice
 	
 	enum
 	{
+		cmdNone,
 		cmdMoveLeft,
 		cmdMoveRight,
 		cmdMoveUp,
