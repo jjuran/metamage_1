@@ -207,7 +207,7 @@ namespace plus
 		return *this;
 	}
 	
-	void cow_string::insert( char* p, char* i, char* j )
+	void cow_string::insert( char* p, const char* i, const char* j )
 	{
 		ASSERT( i <= j );
 		

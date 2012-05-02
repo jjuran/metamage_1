@@ -214,7 +214,7 @@ namespace plus
 		return *this;
 	}
 	
-	void var_string::insert( char* p, char* i, char* j )
+	void var_string::insert( char* p, const char* i, const char* j )
 	{
 		ASSERT( i <= j );
 		

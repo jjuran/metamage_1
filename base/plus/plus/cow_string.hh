@@ -214,7 +214,7 @@ namespace plus
 			
 			cow_string& insert( size_type pos, size_type n, char c );
 			
-			void insert( char* p, char* i, char* j );
+			void insert( char* p, const char* i, const char* j );
 			
 			void insert( char* p, size_type n, char c );
 			
