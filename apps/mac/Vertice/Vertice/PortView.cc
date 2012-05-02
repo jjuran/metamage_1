@@ -162,12 +162,7 @@ namespace Vertice
 			DeepVertex( const MeshPolygon&       polygon,
 			            const V::Point3D::Type&  point,
 			            const V::Point2D::Type&  uv    = V::Point2D::Make( 0, 0 ),
-			            const ColorMatrix&       color = V::White() ) : itsPolygon( &polygon ),
-			                                                            itsPoint( point ),
-			                                                            itsTexturePoint( uv ),
-			                                                            itsColor( color )
-			{
-			}
+			            const ColorMatrix&       color = V::White() );
 			
 			const MeshPolygon& Polygon() const  { return *itsPolygon; }
 			
@@ -175,6 +170,17 @@ namespace Vertice
 			double operator[]( Index index ) const  { return itsPoint[ index ]; }
 	};
 	
+	DeepVertex::DeepVertex( const MeshPolygon&       polygon,
+	                        const V::Point3D::Type&  point,
+	                        const V::Point2D::Type&  uv,
+	                        const ColorMatrix&       color )
+	:
+		itsPolygon( &polygon ),
+		itsPoint( point ),
+		itsTexturePoint( uv ),
+		itsColor( color )
+	{
+	}
 	
 	static inline UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
 	{
