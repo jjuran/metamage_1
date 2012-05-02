@@ -129,7 +129,7 @@ namespace nucleus
 	{
 		ProcessInfoRec operator()( FSSpec* appSpec = NULL ) const
 		{
-			ProcessInfoRec result;
+			ProcessInfoRec result = { 0 };
 			
 			return nucleus::initialize( result, appSpec );
 		}
