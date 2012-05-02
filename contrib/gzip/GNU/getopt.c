@@ -49,13 +49,7 @@
 #if defined (_LIBC) || !defined (__GNU_LIBRARY__)
 
 
-/* This needs to come after some library #include
-   to get __GNU_LIBRARY__ defined.  */
-#ifdef	__GNU_LIBRARY__
-/* Don't include stdlib.h for non-GNU C libraries because some of them
-   contain conflicting prototypes for getopt.  */
 #include <stdlib.h>
-#endif	/* GNU C library.  */
 
 /* If GETOPT_COMPAT is defined, `+' as well as `--' can introduce a
    long-named option.  Because this is not POSIX.2 compliant, it is
