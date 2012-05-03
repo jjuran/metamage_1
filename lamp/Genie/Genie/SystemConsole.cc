@@ -15,9 +15,9 @@
 #include "vfs/primitives/touch.hh"
 
 // Genie
-#include "Genie/FS/chdir.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/open.hh"
+#include "Genie/FS/opendir.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Stream.hh"
 
@@ -82,7 +82,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static IOPtr the_port = chdir( ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) ).get() );
+		static IOPtr the_port = opendir( ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) ).get() );
 		
 		MakeWindow( the_port );
 		

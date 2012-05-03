@@ -36,7 +36,7 @@ namespace Genie
 		remove_port( GetFile().get() );
 	}
 	
-	static IOPtr new_port_chdir( const FSTree* node )
+	static IOPtr new_port_opendir( const FSTree* node )
 	{
 		FSTreePtr dir = new_port();
 		
@@ -48,8 +48,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		&new_port_chdir
+		&new_port_opendir
 	};
 	
 	static const node_method_set new_port_methods =

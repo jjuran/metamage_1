@@ -75,8 +75,8 @@
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/chdir.hh"
 #include "Genie/FS/exec.hh"
+#include "Genie/FS/opendir.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
@@ -615,7 +615,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( fs_info::create( chdir( FSRoot() ) ) ),
+		its_fs_info           ( fs_info::create( opendir( FSRoot() ) ) ),
 		itsFileDescriptors    ( fd_table::create() ),
 		its_signal_handlers   ( signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
@@ -1062,7 +1062,7 @@ namespace Genie
 	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		its_fs_info->chdir( chdir( newCWD.get() ) );
+		its_fs_info->chdir( opendir( newCWD.get() ) );
 	}
 	
 	void Process::ResumeAfterFork()
