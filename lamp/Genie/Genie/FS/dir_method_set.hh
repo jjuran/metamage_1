@@ -17,7 +17,6 @@ namespace Genie
 	using vfs::listdir_method;
 	using vfs::mkdir_method;
 	using vfs::opendir_method;
-	using vfs::chdir_method;
 	
 	using vfs::dir_method_set;
 	
