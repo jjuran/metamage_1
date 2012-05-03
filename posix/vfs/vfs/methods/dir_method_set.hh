@@ -29,8 +29,6 @@ namespace vfs
 	
 	typedef handle_ptr (*opendir_method)( const node* it );
 	
-	typedef handle_ptr (*chdir_method)( const node* it );
-	
 	
 	struct dir_method_set
 	{
@@ -38,7 +36,6 @@ namespace vfs
 		listdir_method  listdir;
 		mkdir_method    mkdir;
 		opendir_method  opendir;
-		chdir_method    chdir;
 	};
 	
 }
