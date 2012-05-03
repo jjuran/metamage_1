@@ -576,7 +576,7 @@ namespace tool
 		
 		try
 		{
-			if ( builtin != NULL  &&  command.redirections.empty() )
+			if ( builtin != NULL  &&  (strcmp( argv[0], "exec" ) == 0  &&  (RedirectIOs( command.redirections ), true)  ||  command.redirections.empty()) )
 			{
 				return wait_from_exit( CallBuiltin( builtin, argv ) );  // wait from exit
 			}
