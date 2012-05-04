@@ -124,8 +124,6 @@ namespace Genie
 		{
 			DuplicateFileDescriptor( oldfd, newfd, close_on_exec );
 			
-			const bool dup2_semantics = flags == DUP_DUP2;
-			
 			if ( oldfd == newfd  &&  !dup2_semantics )
 			{
 				return set_errno( EINVAL );
