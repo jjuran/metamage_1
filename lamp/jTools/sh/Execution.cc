@@ -365,6 +365,7 @@ namespace tool
 					break;
 				
 				case Sh::kRedirectInputDuplicate:
+				case Sh::kRedirectOutputDuplicate:
 					file = gear::parse_unsigned_decimal( param );  // FIXME:  Probably bad if param isn't an integer
 					Dup2( file, fd );
 					break;
@@ -407,11 +408,6 @@ namespace tool
 					file = Open( param, O_WRONLY | O_APPEND | O_CREAT );
 					
 					dup2_and_close( file, fd );
-					break;
-				
-				case Sh::kRedirectOutputDuplicate:
-					file = gear::parse_unsigned_decimal( param );  // FIXME:  Probably bad if atoi returns 0
-					Dup2( file, fd );
 					break;
 				
 				case Sh::kRedirectOutputAndError:
