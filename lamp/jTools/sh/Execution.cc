@@ -366,6 +366,12 @@ namespace tool
 				
 				case Sh::kRedirectInputDuplicate:
 				case Sh::kRedirectOutputDuplicate:
+					if ( param[0] == '-'  &&  param[1] == '\0' )
+					{
+						close( fd );
+						break;
+					}
+					
 					file = gear::parse_unsigned_decimal( param );  // FIXME:  Probably bad if param isn't an integer
 					Dup2( file, fd );
 					break;
