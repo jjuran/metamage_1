@@ -330,6 +330,13 @@ namespace tool
 		p7::throw_posix_result( dup2( oldfd, newfd ) );
 	}
 	
+	static void dup2_and_close( int oldfd, int newfd )
+	{
+		Dup2( oldfd, newfd );
+		
+		close( oldfd );
+	}
+	
 	static void RedirectIO( Sh::Redirection redirection )
 	{
 		int fd = redirection.fd;
@@ -346,8 +353,8 @@ namespace tool
 				
 				case Sh::kRedirectInput:
 					file = Open( param, O_RDONLY );
-					Dup2( file, fd );
-					close( file );
+					
+					dup2_and_close( file, fd );
 					break;
 				
 				case Sh::kRedirectInputHere:
@@ -366,21 +373,22 @@ namespace tool
 					{
 						Dup2( file, 0 );
 						Dup2( file, 1 );
+						
+						close( file );
 					}
 					else
 					{
-						Dup2( file, fd );
+						dup2_and_close( file, fd );
 					}
 					
-					close( file );
 					break;
 				
 				case Sh::kRedirectOutput:
 					if ( GetOption( kOptionNonClobberingRedirection ) )
 					{
 						file = OpenNoClobber( param );
-						Dup2( file, fd );
-						close( file );
+						
+						dup2_and_close( file, fd );
 						
 						break;
 					}
@@ -388,14 +396,14 @@ namespace tool
 					
 				case Sh::kRedirectOutputClobbering:
 					file = Open( param, O_WRONLY | O_CREAT | O_TRUNC );
-					Dup2( file, fd );
-					close( file );
+					
+					dup2_and_close( file, fd );
 					break;
 				
 				case Sh::kRedirectOutputAppending:
 					file = Open( param, O_WRONLY | O_APPEND | O_CREAT );
-					Dup2( file, fd );
-					close( file );
+					
+					dup2_and_close( file, fd );
 					break;
 				
 				case Sh::kRedirectOutputDuplicate:
