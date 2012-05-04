@@ -332,9 +332,12 @@ namespace tool
 	
 	static void dup2_and_close( int oldfd, int newfd )
 	{
-		Dup2( oldfd, newfd );
-		
-		close( oldfd );
+		if ( oldfd != newfd )
+		{
+			Dup2( oldfd, newfd );
+			
+			close( oldfd );
+		}
 	}
 	
 	static void RedirectIO( Sh::Redirection redirection )
