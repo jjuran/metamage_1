@@ -748,7 +748,7 @@ namespace Genie
 			
 			if ( !target.empty() )
 			{
-				return ResolvePathname( target, hfs_parent( node ) );
+				return ResolvePathname( target, hfs_parent( node ).get() );
 			}
 			else if ( is_alias )
 			{
@@ -802,7 +802,7 @@ namespace Genie
 		{
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ) );
+			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ).get() );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			

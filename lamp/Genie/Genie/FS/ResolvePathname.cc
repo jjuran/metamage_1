@@ -5,6 +5,9 @@
 
 #include "Genie/FS/ResolvePathname.hh"
 
+// Standard C/C++
+#include <cstring>
+
 // Standard C++
 #include <algorithm>
 
@@ -28,23 +31,11 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	bool ResolveLink_InPlace( FSTreePtr& file )
-	{
-		if ( is_symlink( file ) )
-		{
-			file = resolve( file.get() );
-			
-			return true;
-		}
-		
-		return false;
-	}
-	
 	bool ResolveLinks_InPlace( FSTreePtr& file )
 	{
 		unsigned link_count = 0;
 		
-		while ( ResolveLink_InPlace( file ) )
+		while ( is_symlink( file ) )
 		{
 			++link_count;
 			
@@ -52,6 +43,8 @@ namespace Genie
 			{
 				p7::throw_errno( ELOOP );
 			}
+			
+			file = resolve( file.get() );
 		}
 		
 		return link_count > 0;
@@ -72,9 +65,9 @@ namespace Genie
 		return lookup( node, name );
 	}
 	
-	FSTreePtr ResolveRelativePath( const char*       begin,
-	                               std::size_t       length,
-	                               const FSTreePtr&  current )
+	FSTreePtr ResolveRelativePath( const char*    begin,
+	                               std::size_t    length,
+	                               const FSTree*  current )
 	{
 		if ( length == 0 )
 		{
@@ -115,6 +108,7 @@ namespace Genie
 		return result;
 	}
 	
+	
 	FSTreePtr ResolveAbsolutePath( const char*  begin,
 	                               std::size_t  length )
 	{
@@ -130,6 +124,36 @@ namespace Genie
 		
 		return length == 0 ? FSRoot()
 		                   : ResolveRelativePath( begin, length, FSRoot() );
+	}
+	
+	FSTreePtr ResolveAbsolutePath( const plus::string& path )
+	{
+		return ResolveAbsolutePath( path.c_str(), path.length() );
+	}
+	
+	
+	FSTreePtr ResolvePathname( const char*       begin,
+	                           std::size_t       length,
+	                           const FSTree*     current )
+	{
+		if ( const bool absolute = *begin == '/' )
+		{
+			return ResolveAbsolutePath( begin, length );
+		}
+		
+		return ResolveRelativePath( begin, length, current );
+	}
+	
+	FSTreePtr ResolvePathname( const char*    pathname,
+	                           const FSTree*  current )
+	{
+		return ResolvePathname( pathname, std::strlen( pathname ), current );
+	}
+	
+	FSTreePtr ResolvePathname( const plus::string&  pathname,
+	                           const FSTree*        current )
+	{
+		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}
 	
 }

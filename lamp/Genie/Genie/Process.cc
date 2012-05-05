@@ -402,7 +402,7 @@ namespace Genie
 	
 	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
-	static void Normalize( const char* path, ExecContext& context, const FSTreePtr& cwd )
+	static void Normalize( const char* path, ExecContext& context, const FSTree* cwd )
 	{
 		FSSpec fileSpec;
 		
@@ -852,8 +852,10 @@ namespace Genie
 		
 		n::owned< N::ThreadID > looseThread;
 		
+		FSTreePtr cwd = GetCWD();
+		
 		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
-		FSTreePtr programFile = ResolvePathname( path, GetCWD() );
+		FSTreePtr programFile = ResolvePathname( path, cwd.get() );
 		
 		ResolveLinks_InPlace( programFile );
 		
@@ -864,7 +866,7 @@ namespace Genie
 		
 		ExecContext context( programFile, argv );
 		
-		Normalize( path, context, GetCWD() );
+		Normalize( path, context, cwd.get() );
 		
 		int script_fd = -1;
 		
