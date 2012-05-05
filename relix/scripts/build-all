@@ -2,11 +2,11 @@
 
 set -e
 
-A-line -B Genie tools tests git
-A-line -C Genie tools tests git
-A-line -B56 Genie
-A-line -B46 tools tests git
-A-line -RB Genie tools tests git
-A-line -RC Genie tools tests git
-A-line -RB56 Genie
-A-line -RB46 tools tests git
+A-line --cpp -B Genie tools tests git
+A-line --cpp -C Genie tools tests git
+A-line --cpp -B56 Genie
+A-line --cpp -B46 tools tests git
+A-line --cpp -RB Genie tools tests git
+A-line --cpp -RC Genie tools tests git
+A-line --cpp -RB56 Genie
+A-line --cpp -RB46 tools tests git
