@@ -3,14 +3,14 @@
 	----------
 */
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/primitives/resolve.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr resolve( const FSTree* it );
+	using vfs::resolve;
 	
 }
 
