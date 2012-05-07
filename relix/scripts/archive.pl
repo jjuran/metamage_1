@@ -26,14 +26,14 @@ my %supported_configs = qw
 	68k-a4-blue-opt   68k
 	ppc-cfm-blue-opt  std
 	ppc-cfm-carb-opt  osx
-	68k-a4-blue-dbg   68k@
-	ppc-cfm-blue-dbg  std@
-	ppc-cfm-carb-dbg  osx@
+	68k-a4-blue-dbg   68k~
+	ppc-cfm-blue-dbg  std~
+	ppc-cfm-carb-dbg  osx~
 );
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
 
-if ( $build_config_name =~ /^ \w{3} @? $/x )
+if ( $build_config_name =~ /^ \w{3} ~? $/x )
 {
 	$config_short_name = $build_config_name;
 	
