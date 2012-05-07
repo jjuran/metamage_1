@@ -37,6 +37,17 @@ sub input_files
 	return @$objs, @libs;
 }
 
+sub imports
+{
+	my $self = shift;
+	
+	my $module = $self->{FROM};
+	
+	my $preq = $self->{PREQ};
+	
+	return map { $module->get( $_ )->imports } @$preq;
+}
+
 sub tool_name
 {
 	return "c++";

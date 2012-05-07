@@ -102,6 +102,11 @@ sub up_to_date
 	return 1;
 }
 
+sub imports
+{
+	return;
+}
+
 sub print
 {
 	my $self = shift;
@@ -137,7 +142,7 @@ sub perform
 	
 	return ""  if $self->up_to_date( @input );
 	
-	my @command = ($self->command, @input);
+	my @command = ($self->command, @input, $self->imports);
 	
 	$self->print;
 	
