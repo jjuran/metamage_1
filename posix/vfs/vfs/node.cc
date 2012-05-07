@@ -5,6 +5,9 @@
 
 #include "vfs/node.hh"
 
+// Standard C
+#include <stdint.h>
+
 // plus
 #include "plus/hexidecimal.hh"
 
