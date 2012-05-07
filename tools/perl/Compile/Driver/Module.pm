@@ -133,6 +133,17 @@ sub recursive_prerequisites
 	return $self->{MEMO}{PREREQS} = $merge;
 }
 
+sub imports
+{
+	my $self = shift;
+	
+	my $data = $self->{DESC}{DATA};
+	
+	my $imports = $data->{imports} || [];
+	
+	return @$imports;
+}
+
 sub tree
 {
 	my $self = shift;
