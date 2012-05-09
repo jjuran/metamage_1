@@ -28,11 +28,13 @@
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/is_binary_data.hh"
 
 
 namespace Genie
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
@@ -208,6 +210,19 @@ namespace Genie
 		
 	}
 	
+	static bool is_text_file( const FSSpec& file )
+	{
+		n::owned< N::FSFileRefNum > in = N::FSpOpenDF( file, N::fsRdPerm );
+		
+		const size_t buffer_size = TARGET_API_MAC_CARBON ? 4026 : 512;
+		
+		char buffer[ buffer_size ];
+		
+		const size_t n_read = N::FSRead( in, buffer, N::ThrowEOF_Never() );
+		
+		return !is_binary_data( buffer, n_read );
+	}
+	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
 		CInfoPBRec paramBlock = { 0 };
@@ -238,7 +253,11 @@ namespace Genie
 		{
 			FInfo& info = hFileInfo.ioFlFndrInfo;
 			
-			if ( info.fdType != 'TEXT' )
+			if ( info.fdType == 0  &&  is_text_file( file ) )
+			{
+				info.fdType = 'TEXT';
+			}
+			else if ( info.fdType != 'TEXT' )
 			{
 				// Can't change executability of non-scripts
 				// (e.g. don't remove Shared bit on apps)
