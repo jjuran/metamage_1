@@ -9,26 +9,26 @@ local $| = 1;  # piping hot output
 
 die "\$HOME must be defined\n" if !exists $ENV{HOME};
 
-my %arches   = qw( m68k 68K  powerpc PPC );
-my %runtimes = qw( cfm CFM  rsrc Res);
-my %backends = qw( blue Blue  carbon Carbon );
+my %arches   = qw( m68k 68k   powerpc ppc  );
+my %runtimes = qw( cfm  cfm   rsrc    a4   );
+my %backends = qw( blue blue  carbon  carb );
 
 my $arch    = $ENV{HOSTTYPE}    or die "Missing HOSTTYPE\n";
 my $runtime = $ENV{MAC_RUNTIME} or die "Missing MAC_RUNTIME\n";
 my $backend = $ENV{MAC_BACKEND} or die "Missing MAC_BACKEND\n";
 
-my $build_config_name = join '-', $arches{$arch}, $runtimes{$runtime}, $backends{$backend}, 'Debug';
+my $build_config_name = join '-', $arches{$arch}, $runtimes{$runtime}, $backends{$backend}, 'dbg';
 
-$build_config_name = shift || $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
+$build_config_name = shift || $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 
 my %supported_configs = qw
 (
-	68K-Res-Blue-Release    68k
-	PPC-CFM-Blue-Release    std
-	PPC-CFM-Carbon-Release  osx
-	68K-Res-Blue-Debug      68k@
-	PPC-CFM-Blue-Debug      std@
-	PPC-CFM-Carbon-Debug    osx@
+	68k-a4-blue-opt   68k
+	ppc-cfm-blue-opt  std
+	ppc-cfm-carb-opt  osx
+	68k-a4-blue-dbg   68k@
+	ppc-cfm-blue-dbg  std@
+	ppc-cfm-carb-dbg  osx@
 );
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
@@ -45,7 +45,7 @@ if ( $build_config_name =~ /^ \w{3} @? $/x )
 # This avoids a bug that squelches error output
 print "Building for $build_config_name...\n";
 
-my $build_area = $build_config_name;  # e.g. 'PPC-CFM-Carbon-Debug'
+my $build_area = $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 
 my $timestamp = timestamp();
 
@@ -135,7 +135,7 @@ my %fsmap =
 			# aevt wrappers
 			qw( File Line activate quit ),
 			# Misc scripts
-			qw( build-lamp.pl filter-mwlink-warnings.pl ramdisk.pl report run-tests strip-all ),
+			qw( filter-mwlink-warnings.pl ramdisk.pl report run-tests strip-all ),
 		],
 	},
 	bin =>
@@ -452,7 +452,7 @@ mkdir $tmp_subdir;
 mkdir $lamp_dist;
 
 # Genie is a different config than its programs on 68K
-(my $genie_build_tree = $build_tree) =~ s/-Res-/-Code-/;
+(my $genie_build_tree = $build_tree) =~ s/-a4-/-a5-/;
 
 install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
