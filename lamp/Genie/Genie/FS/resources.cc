@@ -329,6 +329,14 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::NewHandle( 0 );
 		
+		// node refers to an unrsrc; make a new one that's a live rsrc
+		
+		FSTreePtr new_node = Get_RsrcFile_FSTree( node->owner(),
+		                                          node->name(),
+		                                          fileSpec );
+		
+		node = new_node.get();
+		
 		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
 		                           : new Handle_IOHandle( node, flags, h );
 		
