@@ -6,7 +6,7 @@
 #include "Genie/FS/gui/new.hh"
 
 // Genie
-#include "Genie/config/mini.hh"
+#include "Genie/config/gui_new_gworld.hh"
 #include "Genie/FS/gui/new/bitmap.hh"
 #include "Genie/FS/gui/new/button.hh"
 #include "Genie/FS/gui/new/caption.hh"
@@ -23,10 +23,6 @@
 #include "Genie/FS/gui/new/stack.hh"
 #include "Genie/FS/gui/new/textedit.hh"
 
-
-#ifndef CONFIG_GUI_NEW_GWORLD
-#define CONFIG_GUI_NEW_GWORLD  (!CONFIG_MINI)
-#endif
 
 namespace Genie
 {
