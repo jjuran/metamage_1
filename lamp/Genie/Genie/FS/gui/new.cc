@@ -6,6 +6,7 @@
 #include "Genie/FS/gui/new.hh"
 
 // Genie
+#include "Genie/config/mini.hh"
 #include "Genie/FS/gui/new/bitmap.hh"
 #include "Genie/FS/gui/new/button.hh"
 #include "Genie/FS/gui/new/caption.hh"
@@ -23,6 +24,10 @@
 #include "Genie/FS/gui/new/textedit.hh"
 
 
+#ifndef CONFIG_GUI_NEW_GWORLD
+#define CONFIG_GUI_NEW_GWORLD  (!CONFIG_MINI)
+#endif
+
 namespace Genie
 {
 	
@@ -35,7 +40,13 @@ namespace Genie
 		{ "defaultkeys",  &New_defaultkeys                    },
 		{ "focuser",      &New_focuser                        },
 		{ "frame",        &New_FSTree_new_frame               },
+		
+	#if CONFIG_GUI_NEW_GWORLD
+		
 		{ "gworld",       &New_FSTree_new_gworld              },
+		
+	#endif
+		
 		{ "icon",         &New_FSTree_new_icon                },
 		{ "list",         &New_FSTree_new_list                },
 		{ "scroller",     &New_FSTree_new_scroller            },
