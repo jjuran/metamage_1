@@ -97,7 +97,11 @@ namespace Genie
 	{
 		property_params& extra = *(property_params*) node->extra();
 		
-		if ( extra.size != 0  ||  extra.get == NULL )
+		const char* name = node->name().data();
+		
+		const bool binary = name[0] == '.'  &&  name[1] == '~';
+		
+		if ( binary  &&  extra.size != 0  ||  extra.get == NULL )
 		{
 			return extra.size;
 		}
@@ -106,15 +110,13 @@ namespace Genie
 		
 		try
 		{
-			const bool binary = true;  // Return binary length
-			
 			extra.get( data, node->owner(), binary );
 		}
 		catch ( const undefined_property& )
 		{
 		}
 		
-		return data.size();
+		return data.size() + !binary;
 	}
 	
 	static const data_method_set property_data_methods =
