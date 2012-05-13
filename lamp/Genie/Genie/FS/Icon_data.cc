@@ -28,6 +28,8 @@
 #include "Nitrogen/Icons.hh"
 
 // Genie
+#include "Genie/config/color.hh"
+#include "Genie/config/iconsuites.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
@@ -168,6 +170,8 @@ namespace Genie
 				// No such icon family resource, try a cicn
 			}
 			
+		#if CONFIG_COLOR
+			
 			try
 			{
 				N::PlotCIconHandle( area,
@@ -181,6 +185,8 @@ namespace Genie
 			{
 				// No such color icon, try an ICON
 			}
+			
+		#endif
 			
 			try
 			{
@@ -214,12 +220,16 @@ namespace Genie
 				                   N::Handle( GetHandle() ) );
 				break;
 			
+		#if CONFIG_ICONSUITES
+			
 			case 76:
 				N::PlotIconSuite( area,
 				                  align,
 				                  transform,
 				                  N::IconSuiteRef( GetHandle() ) );
 				break;
+			
+		#endif
 			
 			default:
 				break;
@@ -492,11 +502,20 @@ namespace Genie
 	
 	static void icon_data_attach( const FSTree* node, const FSTree* target )
 	{
+	#if CONFIG_ICONSUITES
+		
 		icon_data_extra& extra = *(icon_data_extra*) node->extra();
 		
 		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
 		
 		InvalidateWindowForView( node->owner() );
+		
+	#else
+		
+		// FIXME:  Support monochrome icons
+		p7::throw_errno( ENOSYS );
+		
+	#endif
 	}
 	
 	static const data_method_set icon_data_data_methods =
