@@ -39,6 +39,7 @@
 #include "Pedestal/Window.hh"
 
 // Genie
+#include "Genie/config/color.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
@@ -474,8 +475,12 @@ namespace Genie
 		{ "text-font",  PROPERTY_ACCESS( Access_WindowTextFont ) },
 		{ "text-size",  PROPERTY_ACCESS( Access_WindowTextSize ) },
 		
+	#if CONFIG_COLOR
+		
 		{ "back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
 		{ "fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
+		
+	#endif
 		
 		{ "select", &window_trigger_factory },
 		
