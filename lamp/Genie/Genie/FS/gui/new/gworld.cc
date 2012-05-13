@@ -28,6 +28,7 @@
 #include "Pedestal/View.hh"
 
 // Genie
+#include "Genie/config/gui_new_gworld.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
@@ -57,7 +58,15 @@ namespace Genie
 	
 	typedef simple_map< const FSTree*, GWorld_Parameters > GWorldMap;
 	
+#if CONFIG_GUI_NEW_GWORLD
+	
 	static GWorldMap gGWorldMap;
+	
+#else
+	
+	extern GWorldMap gGWorldMap;
+	
+#endif
 	
 	
 	static unsigned PixMap_n_bytes( PixMapHandle pix_h )
