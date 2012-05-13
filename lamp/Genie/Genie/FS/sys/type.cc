@@ -58,6 +58,8 @@ namespace Genie
 	{
 		{ "DEFAULT", PROPERTY( sys_type_text_wildcard ) },
 		
+		{ ".~DEFAULT", PROPERTY( sys_type_text_wildcard ) },
+		
 		{ NULL, NULL }
 	};
 	
