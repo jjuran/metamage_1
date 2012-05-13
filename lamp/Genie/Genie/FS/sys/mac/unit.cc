@@ -362,6 +362,14 @@ namespace Genie
 		{ "owner",  PROPERTY( GetDriverOwner            ) },
 		{ "extdev", PROPERTY( GetDriverExternalDeviceID ) },
 		
+		{ ".~flags",  PROPERTY( GetDriverFlags            ) },
+		{ ".~name",   PROPERTY( DriverName                ) },
+		{ ".~slot",   PROPERTY( GetDriverSlot             ) },
+		{ ".~id",     PROPERTY( GetDriverSlotId           ) },
+		{ ".~base",   PROPERTY( GetDriverBase             ) },
+		{ ".~owner",  PROPERTY( GetDriverOwner            ) },
+		{ ".~extdev", PROPERTY( GetDriverExternalDeviceID ) },
+		
 		{ NULL, NULL }
 	};
 	
