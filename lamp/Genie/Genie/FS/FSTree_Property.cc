@@ -78,7 +78,9 @@ namespace Genie
 	{
 		IOHandle* result = NULL;
 		
-		const bool binary = flags & O_BINARY;
+		const char* name = node->name().data();
+		
+		const bool binary = name[0] == '.'  &&  name[1] == '~';
 		
 		flags &= ~O_BINARY;
 		
