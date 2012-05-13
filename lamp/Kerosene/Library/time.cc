@@ -121,7 +121,7 @@ static long get_dls_gmtdelta_field()
 {
 	const char* pathname = "/sys/mac/time/.~dls+gmt-delta";
 	
-	int fd = open( pathname, O_RDONLY | O_BINARY );
+	int fd = open( pathname, O_RDONLY );
 	
 	if ( fd < 0 )
 	{
