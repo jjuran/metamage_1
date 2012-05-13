@@ -553,6 +553,8 @@ namespace Genie
 		
 		{ "name", PROPERTY( proc_PID_name ) },
 		
+		{ ".~name", PROPERTY( proc_PID_name ) },
+		
 		{ "cmdline", GENERATED( proc_PID_cmdline ) },
 		{ "stat",    GENERATED( proc_PID_stat    ) },
 		{ "stack",   GENERATED( proc_PID_stack   ) },
