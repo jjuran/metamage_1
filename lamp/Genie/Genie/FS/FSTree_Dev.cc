@@ -23,6 +23,8 @@
 
 // Genie
 #include "Genie/Devices.hh"
+#include "Genie/config/mini.hh"
+#include "Genie/config/pts.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
@@ -33,6 +35,10 @@
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/Process.hh"
 
+
+#ifndef CONFIG_DEV_SERIAL
+#define CONFIG_DEV_SERIAL  (!CONFIG_MINI)
+#endif
 
 namespace Genie
 {
@@ -185,15 +191,24 @@ namespace Genie
 		
 		{ "tty", &BasicDevice_Factory< dev_tty > },
 		
+	#if CONFIG_DEV_SERIAL
+		
 		{ "cu.modem",    &BasicDevice_Factory< dev_cumodem    > },
 		{ "cu.printer",  &BasicDevice_Factory< dev_cuprinter  > },
 		{ "tty.modem",   &BasicDevice_Factory< dev_ttymodem   > },
 		{ "tty.printer", &BasicDevice_Factory< dev_ttyprinter > },
 		
+	#endif
+		
 		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
 		
 		{ "con", &dynamic_group_factory, &dynamic_group_element< ConsoleTTYHandle >::extra },
+		
+	#if CONFIG_PTS
+		
 		{ "pts", &dynamic_group_factory, &dynamic_group_element< PseudoTTYHandle  >::extra },
+		
+	#endif
 		
 		{ "fd", &dev_fd_Factory },
 		

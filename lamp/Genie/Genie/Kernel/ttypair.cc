@@ -7,6 +7,7 @@
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
+#include "Genie/config/pts.hh"
 #include "Genie/IO/PseudoTTY.hh"
 
 
@@ -43,5 +44,9 @@ static int ttypair( int fds[ 2 ] )
 	return 0;
 }
 
+#if CONFIG_PTS
+
 REGISTER_SYSTEM_CALL( ttypair );
+
+#endif
 
