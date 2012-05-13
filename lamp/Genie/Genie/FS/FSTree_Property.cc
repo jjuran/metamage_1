@@ -19,11 +19,6 @@
 #include "Genie/IO/PropertyFile.hh"
 
 
-#ifndef O_BINARY
-#define O_BINARY  0
-#endif
-
-
 namespace Genie
 {
 	
@@ -81,8 +76,6 @@ namespace Genie
 		const char* name = node->name().data();
 		
 		const bool binary = name[0] == '.'  &&  name[1] == '~';
-		
-		flags &= ~O_BINARY;
 		
 		if ( flags == O_RDONLY )
 		{
