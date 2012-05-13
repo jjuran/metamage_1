@@ -80,11 +80,13 @@ namespace Genie
 		
 		const bool binary = flags & O_BINARY;
 		
-		if ( (flags & ~O_BINARY) == O_RDONLY )
+		flags &= ~O_BINARY;
+		
+		if ( flags == O_RDONLY )
 		{
 			result = open_for_read( node, flags, binary );
 		}
-		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
+		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
 			result = open_for_write( node, flags, binary );
 		}
