@@ -29,6 +29,7 @@
 #include "vfs/nodes/fixed_dir.hh"
 
 // Genie
+#include "Genie/config/iconsuites.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"
@@ -411,7 +412,11 @@ namespace Genie
 		
 		{ "icon",         &new_generated, (void*) &sys_mac_thng_REF_icon::Get },
 		
+	#if CONFIG_ICONSUITES
+		
 		{ "suite",        &IconSuite_Factory },
+		
+	#endif
 		
 		{ NULL, NULL }
 	};
