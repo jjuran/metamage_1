@@ -39,8 +39,6 @@ extern "C" {
 	
 	#define O_DIRECTORY	0x4000  // matches m68k and powerpc Linux
 	
-	#define O_BINARY	0x8000  // matches WinCE
-	
 	#define O_EXEC    0x00040000
 	#define O_SEARCH  0x00040000
 	
