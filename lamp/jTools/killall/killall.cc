@@ -73,7 +73,7 @@ static int killall( const char* name_to_kill, int sig )
 		{
 			int pid_dirfd = openat( proc_dirfd, proc_id, O_RDONLY | O_DIRECTORY );
 			
-			int name_fd = openat( pid_dirfd, "name", O_RDONLY | O_BINARY );
+			int name_fd = openat( pid_dirfd, ".~name", O_RDONLY | O_BINARY );
 			
 			const ssize_t n_read = read( name_fd, buffer, buffer_size );
 			
