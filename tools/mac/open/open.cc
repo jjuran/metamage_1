@@ -168,7 +168,7 @@ namespace tool
 	{
 	#ifdef __RELIX__
 		
-		const char* path = "/sys/type/text/DEFAULT";
+		const char* path = "/sys/type/text/.~DEFAULT";
 		
 		const plus::string code = p7::slurp( p7::open( path, p7::o_rdonly | p7::o_binary ) );
 		
