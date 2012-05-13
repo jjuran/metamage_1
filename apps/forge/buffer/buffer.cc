@@ -53,7 +53,7 @@ namespace tool
 	{
 		p7::chdir( "/gui/new/port" );
 		
-		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
+		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
 		          title,
 		          std::strlen( title ) );
 		
