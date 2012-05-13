@@ -9,6 +9,8 @@
 #include "vfs/nodes/fixed_dir.hh"
 
 // Genie
+#include "Genie/config/color.hh"
+#include "Genie/config/mini.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -40,6 +42,22 @@
 #include "Genie/FS/sys/mac/vol.hh"
 
 
+#ifndef CONFIG_SYS_MAC_ADB
+#define CONFIG_SYS_MAC_ADB  (!CONFIG_MINI)
+#endif
+
+#ifndef CONFIG_SYS_MAC_CRM
+#define CONFIG_SYS_MAC_CRM  (!CONFIG_MINI)
+#endif
+
+#ifndef CONFIG_SYS_MAC_GDEV
+#define CONFIG_SYS_MAC_GDEV  CONFIG_COLOR
+#endif
+
+#ifndef CONFIG_SYS_MAC_SOUNDIN
+#define CONFIG_SYS_MAC_SOUNDIN  (!CONFIG_MINI)
+#endif
+
 namespace Genie
 {
 	
@@ -50,16 +68,32 @@ namespace Genie
 	const vfs::fixed_mapping sys_mac_Mappings[] =
 	{
 		{ "proc",    &New_FSTree_sys_mac_proc    },
+		
+	#if CONFIG_SYS_MAC_SOUNDIN
+		
 		{ "soundin", &New_FSTree_sys_mac_soundin },
+		
+	#endif
+		
 		{ "tempmem", &New_FSTree_sys_mac_tempmem },
 		{ "thng",    &New_FSTree_sys_mac_thng    },
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 		
+	#if CONFIG_SYS_MAC_CRM
+		
 		{ "crm",  PREMAPPED( sys_mac_crm_Mappings  ) },
+		
+	#endif
+		
 		{ "crsr", PREMAPPED( sys_mac_crsr_Mappings ) },
 		
+	#if CONFIG_SYS_MAC_ADB
+		
 		{ "adb",   &New_FSTree_sys_mac_adb   },
+		
+	#endif
+		
 		{ "drive", &New_FSTree_sys_mac_drive },
 		{ "unit",  &New_FSTree_sys_mac_unit  },
 		
@@ -70,7 +104,13 @@ namespace Genie
 		{ "desktop", PREMAPPED( sys_mac_desktop_Mappings ) },
 		{ "errata",  PREMAPPED( sys_mac_errata_Mappings  ) },
 		{ "event",   PREMAPPED( sys_mac_event_Mappings   ) },
+		
+	#if CONFIG_SYS_MAC_GDEV
+		
 		{ "gdev",    PREMAPPED( sys_mac_gdev_Mappings    ) },
+		
+	#endif
+		
 		{ "machine", PREMAPPED( sys_mac_machine_Mappings ) },
 		{ "thread",  PREMAPPED( sys_mac_thread_Mappings  ) },
 		{ "time",    PREMAPPED( sys_mac_time_Mappings    ) },
