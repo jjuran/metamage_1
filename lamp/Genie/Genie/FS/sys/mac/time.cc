@@ -21,6 +21,10 @@ namespace Genie
 		{ "dls",            PROPERTY( sys_mac_time_dls         ) },
 		{ "gmt-delta",      PROPERTY( sys_mac_time_gmtdelta    ) },
 		
+		{ ".~dls+gmt-delta", PROPERTY( sys_mac_time_dlsgmtdelta ) },
+		{ ".~dls",           PROPERTY( sys_mac_time_dls         ) },
+		{ ".~gmt-delta",     PROPERTY( sys_mac_time_gmtdelta    ) },
+		
 		{ NULL, NULL }
 		
 	};
