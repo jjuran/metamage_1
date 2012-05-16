@@ -1,0 +1,25 @@
+#!/bin/sh
+
+echo > view/v/text "???"
+
+sleep 2
+
+echo > view/v/text "Here's a simple demo:"
+
+sleep 2
+
+echo >> view/v/text
+echo >> view/v/text "\$ cd /gui/new/port"
+
+sleep 1.5
+
+echo >> view/v/text "\$ ln /gui/new/caption view"
+
+sleep 1.5
+
+echo >> view/v/text "\$ touch window"
+
+sleep 1.5
+
+echo >> view/v/text "\$ echo Hello > view/text"
+

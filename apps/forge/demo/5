@@ -1,0 +1,67 @@
+#!/bin/sh
+
+CONSOLE=/app/demo-console/view/v/v
+
+echo > view/v/text "Let's tweak a few things:"
+
+sleep 2
+
+echo >> view/v/text
+echo >> view/v/text "\$ echo 550,500 > pos"
+
+sleep 1
+
+echo >> $CONSOLE/text "echo 550,500 > pos"
+
+sleep 1.5
+
+echo >> view/v/text "\$ echo 448x240 > size"
+
+sleep 1
+
+echo >> $CONSOLE/text "echo 448x240 > size"
+
+sleep 1.5
+
+perl >> view/v/text -e 'print "The font... "'
+
+sleep 1
+
+echo >> $CONSOLE/text "echo 72 > window/text-size"
+
+sleep 1
+
+echo >> $CONSOLE/text "echo 0 > window/text-font"
+
+sleep .5
+
+perl >> view/v/text -e 'print "no wait...  "'
+
+sleep 1
+
+echo >> $CONSOLE/text "echo 2 > window/text-font"
+
+sleep 1
+
+echo >> view/v/text "And..."
+
+sleep 1
+
+echo 900x400 > size
+
+sleep 1
+
+echo >> view/v/text "\$ echo Hello world > view/text"
+
+sleep 1
+
+echo >> $CONSOLE/text "echo Hello world > view/text"
+
+sleep 3
+
+echo >> $CONSOLE/text "echo Hello world > title"
+
+sleep 2
+
+echo >> $CONSOLE/text "echo '*applause*' >> view/text"
+

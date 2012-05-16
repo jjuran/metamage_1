@@ -1,0 +1,28 @@
+#!/bin/sh
+
+echo > view/v/text "..."
+
+sleep 2
+
+echo > view/v/text "What does that mean?"
+
+sleep 2
+
+echo > view/v/text "It refers to a GUI"
+
+sleep .5
+
+echo >> view/v/text "(graphical user interface),"
+
+sleep 1.5
+
+echo >> view/v/text
+echo >> view/v/text "whose API is not a set of"
+echo >> view/v/text "*functions*"
+
+sleep 2
+
+echo >> view/v/text
+echo >> view/v/text "but consists entirely of"
+echo >> view/v/text "*filing operations*."
+

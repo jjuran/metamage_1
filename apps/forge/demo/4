@@ -1,0 +1,57 @@
+#!/bin/sh
+
+echo > view/v/text "Now let's try it for real."
+
+sleep 2
+
+echo 10,50 > pos
+
+sleep 1
+
+echo 800x400 > size
+
+sleep 1
+
+rm /app/demo-console 2>/dev/null
+
+/bin/teletype /bin/sh -c '/bin/ln -s $WINDOW /app/demo-console; /bin/login'
+
+sleep 1
+
+echo 10,484 > /app/demo-console/pos
+
+CONSOLE=/app/demo-console/view/v/v
+
+sleep 2
+
+echo >> view/v/text
+echo >> view/v/text "\$ cd /gui/new/port"
+
+sleep 1
+
+echo >> $CONSOLE/text "cd /gui/new/port"
+
+sleep 1.5
+
+echo >> view/v/text "\$ ln /gui/new/caption view"
+
+sleep 1
+
+echo >> $CONSOLE/text "ln /gui/new/caption view"
+
+sleep 1.5
+
+echo >> view/v/text "\$ touch window"
+
+sleep 1
+
+echo >> $CONSOLE/text "touch window"
+
+sleep 2
+
+echo >> view/v/text "\$ echo Hello > view/text"
+
+sleep 1
+
+echo >> $CONSOLE/text "echo Hello > view/text"
+

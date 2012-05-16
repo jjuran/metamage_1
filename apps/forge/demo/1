@@ -1,0 +1,40 @@
+#!/bin/sh
+
+echo > view/v/text "What is FORGE?"
+
+sleep 2
+
+echo >> view/v/text
+echo >> view/v/text "FORGE is a"
+
+sleep 1
+
+echo > title "FORGE: File"
+
+echo >> view/v/text
+echo >> view/v/text "  File-"
+
+sleep .5
+
+echo > title "FORGE: File-Oriented"
+
+echo >> view/v/text "  Oriented,"
+
+sleep 1.5
+
+echo > title "FORGE: File-Oriented, Reflective"
+
+echo >> view/v/text "  Reflective"
+
+sleep 1.5
+
+echo > title "FORGE: File-Oriented, Reflective Graphical"
+
+echo >> view/v/text "  Graphical"
+
+sleep 1
+
+echo > title "FORGE: File-Oriented, Reflective Graphical Environment"
+
+echo >> view/v/text "  Environment."
+
