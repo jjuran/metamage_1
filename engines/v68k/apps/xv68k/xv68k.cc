@@ -1,6 +1,6 @@
 /*
-	v68k-hello.cc
-	-------------
+	xv68k.cc
+	--------
 */
 
 // Standard C
@@ -28,7 +28,7 @@
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
 
-// v68k-exec
+// xv68k
 #include "memory.hh"
 
 
@@ -202,7 +202,7 @@ static int execute_68k( int argc, char** argv )
 {
 	const char* path = argv[1];
 	
-	const char* instruction_limit_var = getenv( "X68K_INSTRUCTION_LIMIT" );
+	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
 	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
 	
