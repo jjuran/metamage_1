@@ -174,6 +174,8 @@ my %fsmap =
 			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# djb's UCSPI
 			\ qw( argv0 tcpcat tcpclient ),
+			# v68k interpreter
+			\ qw( xv68k ),
 			# Modem-related scripts
 			qw( cidlistener cidmon mcmd ),
 			# Text translation
