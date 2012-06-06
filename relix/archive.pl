@@ -49,7 +49,7 @@ my $build_area = $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 
 my $timestamp = timestamp();
 
-my $lamp_source_dir = "$ENV{HOME}/src/tree/synced/metamage/lamp";
+my $lamp_source_dir = "$ENV{HOME}/src/tree/metamage/lamp";
 my $user_builds_dir = "$ENV{HOME}/var/build";
 my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
 
