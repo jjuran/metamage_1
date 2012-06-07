@@ -40,10 +40,12 @@ namespace Genie
 			{
 			}
 			
-			memory_mapping::intrusive_ptr Map( size_t length, off_t offset );
+			boost::intrusive_ptr< memory_mapping > Map( size_t length, off_t offset );
 	};
 	
-	memory_mapping::intrusive_ptr TempMem_IOHandle::Map( size_t length, off_t offset )
+	boost::intrusive_ptr< memory_mapping >
+	//
+	TempMem_IOHandle::Map( size_t length, off_t offset )
 	{
 		if ( offset != 0 )
 		{
