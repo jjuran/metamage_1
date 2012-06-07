@@ -15,12 +15,19 @@ namespace Genie
 	
 	class memory_mapping : public plus::ref_count< memory_mapping >
 	{
+		private:
+			void* const its_address;
+		
 		public:
 			typedef void* addr_t;
 			
+			memory_mapping( void* addr ) : its_address( addr )
+			{
+			}
+			
 			virtual ~memory_mapping();
 			
-			virtual addr_t get_address() const = 0;
+			addr_t get_address() const  { return its_address; }
 	};
 	
 }

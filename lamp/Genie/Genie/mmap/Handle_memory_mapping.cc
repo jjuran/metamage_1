@@ -19,6 +19,7 @@ namespace Genie
 	
 	Handle_memory_mapping::Handle_memory_mapping( nucleus::owned< N::Handle > h )
 	:
+		memory_mapping( *h.get() ),
 		its_handle( h )
 	{
 		N::HLock( its_handle );

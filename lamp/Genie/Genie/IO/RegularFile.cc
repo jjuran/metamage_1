@@ -37,23 +37,18 @@ namespace Genie
 	class malloc_memory_mapping : public memory_mapping
 	{
 		private:
-			void* its_address;
-			
-			addr_t get_address() const  { return its_address; }
-		
-		private:
 			// non-copyable
 			malloc_memory_mapping           ( const malloc_memory_mapping& );
 			malloc_memory_mapping& operator=( const malloc_memory_mapping& );
 		
 		public:
-			malloc_memory_mapping( void* addr ) : its_address( addr )
+			malloc_memory_mapping( void* addr ) : memory_mapping( addr )
 			{
 			}
 			
 			~malloc_memory_mapping()
 			{
-				free( its_address );
+				free( get_address() );
 			}
 	};
 	

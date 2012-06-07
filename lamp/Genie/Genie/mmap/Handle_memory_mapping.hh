@@ -27,8 +27,6 @@ namespace Genie
 	{
 		private:
 			nucleus::owned< Mac::Handle > its_handle;
-			
-			addr_t get_address() const  { return *its_handle.get(); }
 		
 		public:
 			Handle_memory_mapping( nucleus::owned< Mac::Handle > h );
