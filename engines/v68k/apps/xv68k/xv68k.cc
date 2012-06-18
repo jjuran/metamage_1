@@ -266,9 +266,11 @@ static int execute_68k( int argc, char** argv )
 	
 	*args = 0;  // trailing NULL of argv
 	
+	int fd;
+	
 	if ( path != NULL )
 	{
-		int fd = open( path, O_RDONLY );
+		fd = open( path, O_RDONLY );
 		
 		if ( fd >= 0 )
 		{
