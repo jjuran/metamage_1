@@ -277,6 +277,10 @@ static int execute_68k( int argc, char** argv )
 			return 1;
 		}
 	}
+	else
+	{
+		fd = STDIN_FILENO;
+	}
 	
 	int n_read = read( fd, mem + code_address, code_max_size );
 	
@@ -351,11 +355,6 @@ step_loop:
 
 int main( int argc, char** argv )
 {
-	if ( const char* path = argv[1] )
-	{
-		return execute_68k( argc, argv );
-	}
-	
-	return 0;
+	return execute_68k( argc, argv );
 }
 
