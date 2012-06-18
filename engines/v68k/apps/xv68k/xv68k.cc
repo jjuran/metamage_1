@@ -266,16 +266,27 @@ static int execute_68k( int argc, char** argv )
 	
 	*args = 0;  // trailing NULL of argv
 	
+	int fd;
+	
 	if ( path != NULL )
 	{
-		int fd = open( path, O_RDONLY );
+		fd = open( path, O_RDONLY );
 		
-		if ( fd >= 0 )
+		if ( fd < 0 )
 		{
-			int n_read = read( fd, mem + code_address, code_max_size );
-			
-			close( fd );
+			return 1;
 		}
+	}
+	else
+	{
+		fd = STDIN_FILENO;
+	}
+	
+	int n_read = read( fd, mem + code_address, code_max_size );
+	
+	if ( path != NULL )
+	{
+		close( fd );
 	}
 	
 	const memory_manager memory( mem, mem_size );
@@ -344,11 +355,6 @@ step_loop:
 
 int main( int argc, char** argv )
 {
-	if ( const char* path = argv[1] )
-	{
-		return execute_68k( argc, argv );
-	}
-	
-	return 0;
+	return execute_68k( argc, argv );
 }
 
