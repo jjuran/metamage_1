@@ -272,11 +272,13 @@ static int execute_68k( int argc, char** argv )
 	{
 		fd = open( path, O_RDONLY );
 		
-		if ( fd >= 0 )
+		if ( fd < 0 )
 		{
-			int n_read = read( fd, mem + code_address, code_max_size );
+			return 1;
 		}
 	}
+	
+	int n_read = read( fd, mem + code_address, code_max_size );
 	
 	if ( path != NULL )
 	{
