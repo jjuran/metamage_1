@@ -275,9 +275,12 @@ static int execute_68k( int argc, char** argv )
 		if ( fd >= 0 )
 		{
 			int n_read = read( fd, mem + code_address, code_max_size );
-			
-			close( fd );
 		}
+	}
+	
+	if ( path != NULL )
+	{
+		close( fd );
 	}
 	
 	const memory_manager memory( mem, mem_size );
