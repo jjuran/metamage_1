@@ -82,7 +82,7 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-		= user code             =  x4
+		= user code             =  x6
 		|                       |
 		|                       |
 		|                       |
@@ -90,12 +90,12 @@ using v68k::big_longword;
 		|                       |
 		|                       |
 		|                       |
-	48K	+-----------------------+
+	64K	+-----------------------+
 	
 */
 
 const uint32_t params_max_size = 4096;
-const uint32_t code_max_size   = 32768;
+const uint32_t code_max_size   = 48 * 1024;
 
 const uint32_t os_address   = 2048;
 const uint32_t boot_address = 7168;
