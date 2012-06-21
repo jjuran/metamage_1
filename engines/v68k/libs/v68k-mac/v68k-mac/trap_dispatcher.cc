@@ -56,14 +56,14 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 	0xE54A,  // LSL.W    #2,D2
 	
-	0x2F70,  // MOVE.L   (A0,D2.W),(12,A7)  ; overwrite D0 slot with trap addr
+	0x2F70,  // MOVE.L   (A0,D2.W),(12,A7)  ; overwrite A1 slot with trap addr
 	0x2000,
 	0x000C,
 	
 	0x0C41,  // CMPI.W   #0xAC00,D1         ; auto-pop?
 	0xAC00,
 	
-	0x4CDF,  // MOVEM.L  (A7)+,D1/D2/A0     ; restore used regs only (3)
+	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0     ; pop stack without touching CCR
 	0x0106,
 	
 	0x6D02,  // BLT.S    nopop
@@ -103,7 +103,7 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x4E90,  // JSR  (A0)                   ; call OS trap routine
 	
 // end:
-	0x4CDF,  // MOVEM.L  (A7)+,D1/D2/A0/A1  ; restore used regs only (4)
+	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0-A1  ; restore regs
 	0x0306,  // 
 	0x588F,  // ADDQ.L   #4,A7              ; pop saved D0
 	
