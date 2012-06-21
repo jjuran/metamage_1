@@ -224,7 +224,7 @@ static int execute_68k( int argc, char** argv )
 	
 	const uint32_t null_routine = load.mem_used - 2;
 	
-	const uint32_t unimplemented = callback_address( v68k::callback::unimplemented );
+	const uint32_t unimplemented = callback_address( v68k::callback::unimplemented_trap );
 	
 	init_trap_table( os_traps, os_traps + os_trap_count, null_routine  );
 	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
