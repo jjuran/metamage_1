@@ -12,6 +12,9 @@
 #include <signal.h>
 #include <stdlib.h>
 
+// v68k-alloc
+#include "v68k-alloc/memory.hh"
+
 
 #pragma exceptions off
 
@@ -97,6 +100,35 @@ static uint32_t unimplemented_trap_callback( v68k::emulator& emu )
 	return nil;
 }
 
+static uint32_t NewPtr_callback( v68k::emulator& emu )
+{
+	const uint32_t size = emu.regs.d[0];
+	
+	uint32_t addr = v68k::alloc::allocate( size );
+	
+	emu.regs.a[0] = addr;
+	
+	if ( addr == 0 )
+	{
+		const uint32_t addr_MemErr = 0x0220;
+		
+		const int16_t memFullErr = -108;
+		
+		emu.mem.put_word( addr_MemErr, memFullErr, v68k::user_data_space );
+	}
+	
+	return rts;
+}
+
+static uint32_t DisposePtr_callback( v68k::emulator& emu )
+{
+	const uint32_t addr = emu.regs.a[0];
+	
+	v68k::alloc::deallocate( addr );
+	
+	return rts;
+}
+
 static uint32_t ExitToShell_callback( v68k::emulator& emu )
 {
 	exit( 0 );
@@ -160,6 +192,8 @@ static const function_type the_callbacks[] =
 	&privilege_violation_callback,
 	&line_F_emulator_callback,
 	&unimplemented_trap_callback,
+	&NewPtr_callback,
+	&DisposePtr_callback,
 	&ExitToShell_callback,
 	&SysBeep_callback,
 	&no_op_callback

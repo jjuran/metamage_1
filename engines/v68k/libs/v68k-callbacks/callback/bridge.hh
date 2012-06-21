@@ -21,6 +21,8 @@ enum
 	privilege_violation,
 	line_F_emulator,
 	unimplemented_trap,
+	NewPtr_trap,
+	DisposePtr_trap,
 	ExitToShell_trap,
 	SysBeep_trap,
 	no_op,
