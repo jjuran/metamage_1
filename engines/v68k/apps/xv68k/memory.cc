@@ -36,6 +36,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return its_low_mem.translate( addr, length, fc, access );
 	}
 	
+	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
+	{
+		return its_alloc_mem.translate( addr, length, fc, access );
+	}
+	
 	return its_callback_memory.translate( addr, length, fc, access );
 }
 
