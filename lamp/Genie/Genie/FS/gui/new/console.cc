@@ -515,6 +515,9 @@ namespace Genie
 		params.itsStartOfOutput = 
 		params.itsStartOfInput += command_size;
 		
+		text_params.itsSelection.start =
+		text_params.itsSelection.end   = s.size();
+		
 		return byteCount;
 	}
 	
