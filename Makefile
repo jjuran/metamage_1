@@ -1,6 +1,9 @@
 # Makefile for <https://github.com/jjuran/metamage_1>
 
 ALINE = var/build/dbg/bin/A-line/A-line
+D68K  = var/build/dbg/bin/d68k/d68k
+
+PACK68K = engines/v68k/utils/pack68k.pl
 
 default:
 	@echo 'For help, run `make help`.'
@@ -19,4 +22,13 @@ catalog: rm-catalog
 A-line:
 	./build.pl A-line
 	cp $(ALINE) .
+
+d68k:
+	./build.pl d68k
+
+d68k-hello: d68k
+	$(PACK68K) engines/v68k/demos/hello.p68k | $(D68K)
+
+d68k-fizzbuzz: d68k
+	$(PACK68K) engines/v68k/demos/fizzbuzz.p68k | $(D68K)
 
