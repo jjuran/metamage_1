@@ -230,6 +230,13 @@ static int execute_68k( int argc, char** argv )
 	
 	using namespace v68k::callback;
 	
+	const uint32_t big_no_op = big_longword( callback_address( v68k::callback::no_op ) );
+	
+	os_traps[ 0x46 ] = big_no_op;  // GetTrapAddress
+	os_traps[ 0x47 ] = big_no_op;  // SetTrapAddress
+	os_traps[ 0x55 ] = big_no_op;  // StripAddress
+	os_traps[ 0x98 ] = big_no_op;  // HWPriv
+	
 	tb_traps[ 0x01C8 ] = big_longword( callback_address( SysBeep_trap     ) );
 	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
 	
