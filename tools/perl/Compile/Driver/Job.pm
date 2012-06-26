@@ -13,7 +13,7 @@ use strict;
 
 
 # Assume we're called from the repo's top level
-my $build_dir = "$RealBin/var/build";
+our $build_dir = "$RealBin/var/build";
 
 
 sub new
