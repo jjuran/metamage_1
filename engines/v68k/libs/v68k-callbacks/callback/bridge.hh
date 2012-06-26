@@ -23,6 +23,7 @@ enum
 	unimplemented_trap,
 	ExitToShell_trap,
 	SysBeep_trap,
+	no_op,
 	n
 };
 
