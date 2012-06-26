@@ -63,8 +63,8 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x0C41,  // CMPI.W   #0xAC00,D1         ; auto-pop?
 	0xAC00,
 	
-	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0     ; pop stack without touching CCR
-	0x0106,
+	0x4FEF,  // LEA      (12,A7),A7         ; pop stack without touching CCR
+	0x000C,
 	
 	0x6D02,  // BLT.S    nopop
 	
