@@ -18,6 +18,8 @@
 
 #define ERR_MSG( msg )  "v68k: exception: " msg "\n"
 
+#define STRLEN( s )  (sizeof "" s - 1)
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define WRITE_ERR( msg )  write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
@@ -65,9 +67,29 @@ static uint32_t no_op_callback( v68k::emulator& emu )
 	return rts;
 }
 
+static char hex[] =
+{
+	'0', '1', '2', '3',
+	'4', '5', '6', '7',
+	'8', '9', 'A', 'B',
+	'C', 'D', 'E', 'F'
+};
+
+#define UNIMPLEMENTED_TRAP_PREFIX  "v68k: exception: Unimplemented Mac trap: "
+
 static uint32_t unimplemented_trap_callback( v68k::emulator& emu )
 {
-	WRITE_ERR( "Unimplemented Mac Toolbox trap" );
+	static char buffer[] = UNIMPLEMENTED_TRAP_PREFIX "A123\n";
+	
+	char* p = buffer + STRLEN( UNIMPLEMENTED_TRAP_PREFIX );
+	
+	const uint16_t trap = emu.regs.d[1];
+	
+	p[1] = hex[ trap >> 8 & 0xF ];
+	p[2] = hex[ trap >> 4 & 0xF ];
+	p[3] = hex[ trap      & 0xF ];
+	
+	write( STDERR_FILENO, buffer, STRLEN( UNIMPLEMENTED_TRAP_PREFIX "A123\n" ) );
 	
 	raise( SIGILL );
 	
