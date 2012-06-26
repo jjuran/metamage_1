@@ -33,8 +33,8 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 // User mode trap dispatcher:
 	
-	0x48E7,  // MOVEM.L  D0-D2/A0,-(A7)     ; save regs + space for trap addr
-	0xE080,
+	0x48E7,  // MOVEM.L  D1-D2/A0-A1,-(A7)  ; save regs + space for trap addr
+	0x60C0,
 	
 	0x206F,  // MOVEA.L  (16,A7),A0         ; load caller PC
 	0x0010,
@@ -56,15 +56,15 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 	0xE54A,  // LSL.W    #2,D2
 	
-	0x2F70,  // MOVE.L   (A0,D2.W),(12,A7)  ; overwrite D0 slot with trap addr
+	0x2F70,  // MOVE.L   (A0,D2.W),(12,A7)  ; overwrite A1 slot with trap addr
 	0x2000,
 	0x000C,
 	
 	0x0C41,  // CMPI.W   #0xAC00,D1         ; auto-pop?
 	0xAC00,
 	
-	0x4CDF,  // MOVEM.L  (A7)+,D1/D2/A0     ; restore used regs only (3)
-	0x0106,
+	0x4FEF,  // LEA      (12,A7),A7         ; pop stack without touching CCR
+	0x000C,
 	
 	0x6D02,  // BLT.S    nopop
 	
@@ -74,8 +74,6 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x4E75,  // RTS                         ; 'return' to Toolbox trap routine
 	
 // os_trap:
-	0x2F09,  // MOVE.L   A1,-(A7)           ; save A1 for OS traps
-	
 	0x307C,  // MOVEA.W  #1024,A0           ; point A0 to OS trap table
 	0x0400,
 	
@@ -94,8 +92,8 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 	0x4E90,  // JSR  (A0)                   ; call OS trap routine
 	
-	0x2F48,  // MOVE.L   A0,(4,A7)          ; overwrite saved A0 with new A0
-	0x0004,
+	0x2F48,  // MOVE.L   A0,(8,A7)          ; overwrite saved A0 with new A0
+	0x0008,
 	
 	0x6002,  // BRA.S    end
 	
@@ -103,9 +101,8 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x4E90,  // JSR  (A0)                   ; call OS trap routine
 	
 // end:
-	0x4CDF,  // MOVEM.L  (A7)+,D1/D2/A0/A1  ; restore used regs only (4)
+	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0-A1  ; restore regs
 	0x0306,  // 
-	0x588F,  // ADDQ.L   #4,A7              ; pop saved D0
 	
 	0x4E75   // RTS                         ; return to caller
 };
