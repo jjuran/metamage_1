@@ -145,6 +145,27 @@ static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 	return buffer + offset;
 }
 
+static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
+{
+	if ( g->addr == addr  &&  g->size_ == size )
+	{
+		return buffer;
+	}
+	
+	return NULL;
+}
+
+static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
+{
+	if ( size == 2 )
+	{
+		words[ g->index ] = buffer[0] << 8
+		                  | buffer[1];
+	}
+	
+	return buffer;
+}
+
 uint8_t* low_memory::translate( uint32_t               addr,
                                 uint32_t               length,
                                 v68k::function_code_t  fc,
@@ -163,8 +184,14 @@ uint8_t* low_memory::translate( uint32_t               addr,
 		{
 			return read_globals( g, addr, length );
 		}
-		
-		// Mac low memory is not yet writable
+		else if ( access == mem_write )
+		{
+			return write_globals( g, addr, length );
+		}
+		else  // mem_update
+		{
+			return update_globals( g, addr, length );
+		}
 	}
 	
 	return 0;
