@@ -229,6 +229,9 @@ static int execute_68k( int argc, char** argv )
 	
 	using namespace v68k::callback;
 	
+	os_traps[ 0x1E ] = big_longword( callback_address( NewPtr_trap     ) );
+	os_traps[ 0x1F ] = big_longword( callback_address( DisposePtr_trap ) );
+	
 	const uint32_t big_no_op = big_longword( callback_address( v68k::callback::no_op ) );
 	
 	os_traps[ 0x46 ] = big_no_op;  // GetTrapAddress
