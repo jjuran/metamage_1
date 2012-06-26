@@ -29,7 +29,8 @@ namespace v68k
 	{
 		mem_exec  = 0x0,
 		mem_read  = 0x1,
-		mem_write = 0x2
+		mem_write = 0x2,
+		mem_update = 0x3
 	};
 	
 	class memory
