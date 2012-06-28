@@ -234,6 +234,7 @@ static int execute_68k( int argc, char** argv )
 	
 	os_traps[ 0x1E ] = big_longword( callback_address( NewPtr_trap     ) );
 	os_traps[ 0x1F ] = big_longword( callback_address( DisposePtr_trap ) );
+	os_traps[ 0x2E ] = big_longword( callback_address( BlockMove_trap  ) );
 	
 	const uint32_t big_no_op = big_longword( callback_address( v68k::callback::no_op ) );
 	
