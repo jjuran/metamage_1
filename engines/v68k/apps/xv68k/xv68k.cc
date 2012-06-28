@@ -324,6 +324,16 @@ step_loop:
 		{
 			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
 		}
+		else
+		{
+			// FIXME:  Report call number
+			
+			//const uint16_t call_number = emu.regs.d[0];
+			
+			const char* msg = "Unimplemented system call\n";
+			
+			write( STDERR_FILENO, msg, strlen( msg ) );
+		}
 		
 		goto step_loop;
 	}
