@@ -11,6 +11,7 @@
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
+#include <string.h>
 
 // must
 #include "must/write.h"
@@ -132,6 +133,36 @@ static uint32_t DisposePtr_callback( v68k::emulator& emu )
 	return rts;
 }
 
+static uint32_t BlockMove_callback( v68k::emulator& emu )
+{
+	const uint32_t src = emu.regs.a[0];
+	const uint32_t dst = emu.regs.a[1];
+	
+	const uint32_t n = emu.regs.d[0];
+	
+	const uint8_t* p = emu.mem.translate( src, n, v68k::user_data_space, v68k::mem_read );
+	
+	if ( p == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* q = emu.mem.translate( dst, n, v68k::user_data_space, v68k::mem_write );
+	
+	if ( q == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	memcpy( q, p, n );
+	
+	emu.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
+	
+	return rts;
+}
+
 static uint32_t ExitToShell_callback( v68k::emulator& emu )
 {
 	exit( 0 );
@@ -237,6 +268,7 @@ static const function_type the_callbacks[] =
 	&unimplemented_trap_callback,
 	&NewPtr_callback,
 	&DisposePtr_callback,
+	&BlockMove_callback,
 	&ExitToShell_callback,
 	&SysBeep_callback,
 	&no_op_callback

@@ -27,6 +27,7 @@ enum
 	unimplemented_trap,
 	NewPtr_trap,
 	DisposePtr_trap,
+	BlockMove_trap,
 	ExitToShell_trap,
 	SysBeep_trap,
 	no_op,
