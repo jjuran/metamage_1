@@ -84,16 +84,14 @@ uint32_t allocate( uint32_t size )
 		return 0;  // NULL
 	}
 	
-	size = size + (page_size - 1) & ~(page_size - 1);  // round up to n pages
+	const int n = (size + page_size - 1) / page_size;  // round up
 	
-	void* alloc = malloc( size );
+	void* alloc = calloc( n, page_size );
 	
 	if ( alloc == NULL )
 	{
 		return 0;  // NULL
 	}
-	
-	const int n = size / page_size;
 	
 	int i = find_n_pages( n, alloc );
 	
