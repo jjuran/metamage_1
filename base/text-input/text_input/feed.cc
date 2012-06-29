@@ -104,7 +104,7 @@ namespace text_input
 	{
 		(void) get_fragment_ref();
 		
-		return its_next_line.empty() ? NULL : &its_next_line;
+		return its_last_line.empty() ? NULL : &its_last_line;
 	}
 	
 	char* feed::buffer()
