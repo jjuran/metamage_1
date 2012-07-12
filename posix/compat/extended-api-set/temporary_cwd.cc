@@ -6,6 +6,9 @@
 #include "extended-api-set/part-2.h"
 #include "extended-api-set/temporary_cwd.hh"
 
+// Standard C
+#include <stdlib.h>
+
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
@@ -35,7 +38,10 @@ _temporary_cwd::~_temporary_cwd()
 		
 		if ( !it_has_failed )
 		{
-			fchdir( its_saved_cwd );
+			if ( fchdir( its_saved_cwd ) != 0 )
+			{
+				abort();
+			}
 		}
 		
 		close( its_saved_cwd );
