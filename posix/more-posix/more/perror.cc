@@ -8,6 +8,7 @@
 #include "more/perror.hh"
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // POSIX
@@ -25,6 +26,18 @@
 namespace more
 {
 	
+	#define WRITE_IOVEC_TO_STDERR( iov )  write_iovec_to_stderr( iov, sizeof iov / sizeof iov[0] )
+	
+	static void write_iovec_to_stderr( const iovec* iov, size_t n )
+	{
+		int written = ::writev( STDERR_FILENO, iov, n );
+		
+		if ( written == -1 )
+		{
+			abort();
+		}
+	}
+	
 	void perror( int errnum )
 	{
 		const char* error = strerror( errnum );
@@ -35,7 +48,7 @@ namespace more
 			{ (void*) STR_LEN( "\n" )        },
 		};
 		
-		(void) ::writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] );
+		WRITE_IOVEC_TO_STDERR( iov );
 	}
 	
 	void perror( const char* s, int errnum )
@@ -56,7 +69,7 @@ namespace more
 			iov[ 2 ].iov_len = 0;
 		}
 		
-		(void) ::writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] );
+		WRITE_IOVEC_TO_STDERR( iov );
 	}
 	
 	void perror( const char* s1, const char* s2, int errnum )
@@ -79,7 +92,7 @@ namespace more
 			iov[ 4 ].iov_len = 0;
 		}
 		
-		(void) ::writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] );
+		WRITE_IOVEC_TO_STDERR( iov );
 	}
 	
 	void perror( const char* s1, const char* s2, const char* s3 )
@@ -94,7 +107,7 @@ namespace more
 			{ (void*) STR_LEN( "\n" )  },
 		};
 		
-		(void) ::writev( STDERR_FILENO, iov, sizeof iov / sizeof iov[0] );
+		WRITE_IOVEC_TO_STDERR( iov );
 	}
 	
 }
