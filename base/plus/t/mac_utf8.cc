@@ -25,7 +25,7 @@ static void utf8_from_mac()
 	
 	ok_if( utf8.empty() );
 	
-	plus::string mac = "long enough to be allocated";
+	plus::string mac = "long enough to be allocated, even on 64-bit";
 	
 	utf8 = plus::utf8_from_mac( mac );
 	
@@ -48,7 +48,7 @@ static void mac_from_utf8()
 	
 	ok_if( mac.empty() );
 	
-	plus::string utf8 = "long enough to be allocated";
+	plus::string utf8 = "long enough to be allocated, even on 64-bit";
 	
 	mac = plus::mac_from_utf8( utf8 );
 	
