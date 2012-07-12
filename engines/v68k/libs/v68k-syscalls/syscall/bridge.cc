@@ -171,7 +171,7 @@ static bool emu_kill( v68k::emulator& emu )
 	const pid_t pid = int32_t( args[0] );
 	const int   sig = int32_t( args[1] );
 	
-	int result = kill( pid, sig );
+	int result;
 	
 	if ( pid != getpid() )
 	{
