@@ -29,7 +29,13 @@ uint8_t* memory::translate( uint32_t               addr,
 		return 0;  // NULL
 	}
 	
-	const uint32_t first_callback_addr = 0 - n * sizeof (uint16_t);
+	/*
+		Callback addresses occupy high memory.  Multiply the callback number by
+		the size of the BKPT instruction to get the distance from the end of
+		memory.  Subtract this from 0 and cast to uint32_t to get the address.
+	*/
+	
+	const uint32_t first_callback_addr = uint32_t( 0 - n * sizeof (uint16_t) );
 	
 	if ( addr < first_callback_addr )
 	{
@@ -41,6 +47,6 @@ uint8_t* memory::translate( uint32_t               addr,
 	return callback_trap + (addr & 1);
 }
 
-}  // namespace v68k
 }  // namespace callback
+}  // namespace v68k
 
