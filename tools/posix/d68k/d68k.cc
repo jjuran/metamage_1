@@ -87,7 +87,7 @@ namespace tool
 		return x;
 	}
 	
-	static inline unsigned short byte_swap( unsigned short x )
+	static inline uint16_t byte_swap( uint16_t x )
 	{
 	#ifdef __LITTLE_ENDIAN__
 		
@@ -98,15 +98,15 @@ namespace tool
 		return x;
 	}
 	
-	static void append_hex( plus::var_string& s, unsigned long x, int min_bytes )
+	static void append_hex( plus::var_string& s, uint32_t x, int min_bytes )
 	{
-		const unsigned short min_digits = min_bytes * 2;
+		const uint16_t min_digits = min_bytes * 2;
 		
-		const unsigned short magnitude = gear::hexidecimal_magnitude( x );
+		const uint16_t magnitude = gear::hexidecimal_magnitude( x );
 		
-		const unsigned short even_magnitude = magnitude + (magnitude & 0x1 );
+		const uint16_t even_magnitude = magnitude + (magnitude & 0x1 );
 		
-		const unsigned short n_bytes = std::max( even_magnitude, min_digits );
+		const uint16_t n_bytes = std::max( even_magnitude, min_digits );
 		
 		s.resize( s.size() + n_bytes );
 		
@@ -131,7 +131,7 @@ namespace tool
 		s += gear::inscribe_decimal( x );
 	}
 	
-	static inline const char* get_aTrap_name( unsigned short trap_word )
+	static inline const char* get_aTrap_name( uint16_t trap_word )
 	{
 		return get_trap_name( trap_word );
 	}
@@ -198,25 +198,25 @@ namespace tool
 	static bool globally_prefix_address         = true;
 	static bool globally_attach_target_comments = true;
 	
-	static size_t global_bytes_read = 0;
+	static uint32_t global_bytes_read = 0;
 	
-	static size_t global_pc = 0;
+	static uint32_t global_pc = 0;
 	
-	static unsigned short global_last_op = 0;
+	static uint16_t global_last_op = 0;
 	
-	static unsigned global_last_CMPI_operand = 0;
+	static uint32_t global_last_CMPI_operand = 0;
 	
-	static size_t global_last_branch_target = 0;
-	static size_t global_last_pc_relative_target = 0;
-	static size_t global_successor_of_last_exit = 0;
+	static uint32_t global_last_branch_target = 0;
+	static uint32_t global_last_pc_relative_target = 0;
+	static uint32_t global_successor_of_last_exit = 0;
 	
-	static std::vector< size_t > global_branch_targets;
+	static std::vector< uint32_t > global_branch_targets;
 	
-	static std::vector< size_t > global_entry_points;
-	static std::vector< size_t > global_exit_points;
+	static std::vector< uint32_t > global_entry_points;
+	static std::vector< uint32_t > global_exit_points;
 	
 	
-	static const unsigned short indexed_jump_code[] =
+	static const uint16_t indexed_jump_code[] =
 	{
 		//0xd040,  // ADD.W    D0,D0
 		
@@ -232,7 +232,7 @@ namespace tool
 	static bool at_indexed_jump = false;
 	
 	
-	static const unsigned short lswtch_code[] =
+	static const uint16_t lswtch_code[] =
 	{
 		0x205f,
 		0x2248,
@@ -256,12 +256,12 @@ namespace tool
 	
 	static int lswtch_state = 0;
 	
-	static size_t lswtch_offset = 0;
+	static uint32_t lswtch_offset = 0;
 	
 	
-	static void add_branch_target( size_t address )
+	static void add_branch_target( uint32_t address )
 	{
-		typedef std::vector< size_t >::iterator iterator;
+		typedef std::vector< uint32_t >::iterator iterator;
 		
 		const iterator it = std::lower_bound( global_branch_targets.begin(),
 		                                      global_branch_targets.end(),
@@ -275,9 +275,9 @@ namespace tool
 		}
 	}
 	
-	static bool check_branch_target( size_t address )
+	static bool check_branch_target( uint32_t address )
 	{
-		typedef std::vector< size_t >::iterator iterator;
+		typedef std::vector< uint32_t >::iterator iterator;
 		
 		const iterator it = std::lower_bound( global_branch_targets.begin(),
 		                                      global_branch_targets.end(),
@@ -290,18 +290,18 @@ namespace tool
 		return found;
 	}
 	
-	static void add_exit_point( size_t address )
+	static void add_exit_point( uint32_t address )
 	{
 		global_exit_points.push_back( address );
 	}
 	
-	static void add_entry_point( size_t address )
+	static void add_entry_point( uint32_t address )
 	{
 		// Add an entry point unless
 		// * it already exists
 		// * it lies between an entry point and an exit point (or eof)
 		
-		typedef std::vector< size_t >::iterator iterator;
+		typedef std::vector< uint32_t >::iterator iterator;
 		
 		// Search for an exit point equal to or prior to the address
 		
@@ -319,7 +319,7 @@ namespace tool
 			return;
 		}
 		
-		const size_t previous_exit = *it;
+		const uint32_t previous_exit = *it;
 		
 		const iterator jt = std::lower_bound( global_entry_points.begin(),
 		                                      global_entry_points.end(),
@@ -335,7 +335,7 @@ namespace tool
 		}
 	}
 	
-	static unsigned short read_word( bool peeking = false )
+	static uint16_t read_word( bool peeking = false )
 	{
 		const size_t buffer_size = 4096;
 		
@@ -378,13 +378,13 @@ namespace tool
 			}
 		}
 		
-		const unsigned short result = byte_swap( *(unsigned short *) p );
+		const uint16_t result = byte_swap( *(uint16_t *) p );
 		
 		if ( !peeking )
 		{
-			p += sizeof (unsigned short);
+			p += sizeof (uint16_t);
 			
-			global_bytes_read += sizeof (unsigned short);
+			global_bytes_read += sizeof (uint16_t);
 			
 			if ( !at_indexed_jump )
 			{
@@ -422,7 +422,7 @@ namespace tool
 		return result;
 	}
 	
-	static inline unsigned short peek_word()
+	static inline uint16_t peek_word()
 	{
 		return read_word( true );
 	}
@@ -432,12 +432,12 @@ namespace tool
 		return read_word();
 	}
 	
-	static unsigned int read_long()
+	static uint32_t read_long()
 	{
-		const unsigned int high = read_word();
-		const unsigned int low  = read_word();
+		const uint16_t high = read_word();
+		const uint16_t low  = read_word();
 		
-		return high << 16 | low;
+		return uint32_t( high ) << 16 | low;
 	}
 	
 	
@@ -447,7 +447,7 @@ namespace tool
 		name[1] = '0' + n;
 	}
 	
-	static int read_extended_displacement( unsigned short size_code )
+	static int read_extended_displacement( uint16_t size_code )
 	{
 		switch ( size_code )
 		{
@@ -465,8 +465,8 @@ namespace tool
 		return 0;
 	}
 	
-	static unsigned global_last_absolute_addr_from_ea  = 0;
-	static unsigned global_last_immediate_data_from_ea = 0;
+	static uint32_t global_last_absolute_addr_from_ea  = 0;
+	static uint32_t global_last_immediate_data_from_ea = 0;
 	
 	static plus::string read_ea( short mode_reg, short immediate_size )
 	{
@@ -514,7 +514,7 @@ namespace tool
 			return result;
 		}
 		
-		unsigned short extension = read_word();
+		uint16_t extension = read_word();
 		
 		if ( mode == 5  ||  mode == 7 && reg == 2 )
 		{
@@ -686,12 +686,12 @@ namespace tool
 					break;
 			}
 			
-			unsigned& marker = reg <= 1 ? global_last_absolute_addr_from_ea
+			uint32_t& marker = reg <= 1 ? global_last_absolute_addr_from_ea
 			                            : global_last_immediate_data_from_ea;
 			
 			result += "0x";
 			
-			const unsigned data = immediate_size == 1 ? extension & 0xff
+			const uint32_t data = immediate_size == 1 ? extension & 0xff
 			                    : immediate_size == 2 ? extension
 			                    :                       extension << 16 | read_word();
 			
@@ -704,9 +704,9 @@ namespace tool
 	}
 	
 	
-	typedef void (*decoder)( unsigned short op );
+	typedef void (*decoder)( uint16_t op );
 	
-	static void decode_default( unsigned short op )
+	static void decode_default( uint16_t op )
 	{
 		printf( "%#.4x\n", op );
 	}
@@ -727,13 +727,13 @@ namespace tool
 #pragma mark -
 #pragma mark ** Line 0 **
 	
-	static void decode_compare( unsigned short op )
+	static void decode_compare( uint16_t op )
 	{
 		const bool compare_and_swap = op & 0x0800;
 		
 		const short size_index = (op >> 9 & 0x3) - compare_and_swap;
 		
-		if ( unsigned( size_index & 0x3 ) == 0x3 )
+		if ( uint16_t( size_index & 0x3 ) == 0x3 )
 		{
 			throw illegal_instruction();
 		}
@@ -742,8 +742,8 @@ namespace tool
 		
 		const bool is_cas2 = mode_reg == 0x3c;
 		
-		const unsigned short ext1 =           read_word();
-		const unsigned short ext2 = is_cas2 ? read_word() : 0;
+		const uint16_t ext1 =           read_word();
+		const uint16_t ext2 = is_cas2 ? read_word() : 0;
 		
 		const bool is_chk2 = ext1 & 0x0800;
 		
@@ -755,7 +755,7 @@ namespace tool
 		printf( "%s     ...\n", op_name );
 	}
 	
-	static void decode_Immediate( unsigned short op )
+	static void decode_Immediate( uint16_t op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
@@ -786,7 +786,7 @@ namespace tool
 		
 		const short mode_reg = op & 0x3f;
 		
-		unsigned immediate_data = read_word();
+		uint32_t immediate_data = read_word();
 		
 		if ( mode_reg == 0x3c )
 		{
@@ -815,7 +815,7 @@ namespace tool
 		}
 	}
 	
-	static void decode_Bit_op( unsigned short op, bool dynamic )
+	static void decode_Bit_op( uint16_t op, bool dynamic )
 	{
 		char dynamic_format[] = "Bfoo     D%d,%s"  "\n";
 		char static_format [] = "Bfoo     #%#x,%s" "\n";
@@ -844,7 +844,7 @@ namespace tool
 #pragma mark -
 #pragma mark ** Line 1-3 **
 	
-	static void decode_MOVE( unsigned short op, short size_index )
+	static void decode_MOVE( uint16_t op, short size_index )
 	{
 		const short immediate_size = sizes[ size_index ];
 		
@@ -856,7 +856,7 @@ namespace tool
 		
 		if ( immediate_size == 2  &&  dest_mode_reg == 0  &&  source_mode_reg == 0x3c )
 		{
-			const unsigned short data = peek_word();
+			const uint16_t data = peek_word();
 			
 			if ( (data & 0xf000) == 0xa000 )
 			{
@@ -873,7 +873,7 @@ namespace tool
 		
 		if ( immediate_size == 4  &&  source_mode_reg == 0x3c )
 		{
-			const unsigned data = global_last_immediate_data_from_ea;
+			const uint32_t data = global_last_immediate_data_from_ea;
 			
 			if (     isprint( data >> 24        )
 			     &&  isprint( data >> 16 & 0xff )
@@ -924,7 +924,7 @@ namespace tool
 		{ STR_LEN( ""     ) }
 	};
 	
-	static void decode_unary( unsigned short op )
+	static void decode_unary( uint16_t op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
@@ -957,7 +957,7 @@ namespace tool
 		"MOVE     %s,SR"  "\n"
 	};
 	
-	static void decode_4_line_special( unsigned short op )
+	static void decode_4_line_special( uint16_t op )
 	{
 		if ( op == 0x4afc )
 		{
@@ -968,7 +968,7 @@ namespace tool
 		
 		const bool tas = op & 0x0f00 == 0x0a00;
 		
-		const unsigned short immediate_size = tas ? 1 : 2;
+		const uint16_t immediate_size = tas ? 1 : 2;
 		
 		const plus::string ea = read_ea( op & 0x3f, immediate_size );
 		
@@ -978,7 +978,7 @@ namespace tool
 		printf( format, ea.c_str() );
 	}
 	
-	static bool jump_breaks_routine( unsigned short mode_reg )
+	static bool jump_breaks_routine( uint16_t mode_reg )
 	{
 		// Whether a jump marks the end of routine:
 		// * only JMP breaks a routine, not JSR
@@ -995,7 +995,7 @@ namespace tool
 		return !resumes;
 	}
 	
-	static void print_comment( unsigned long pc_relative_target )
+	static void print_comment( uint32_t pc_relative_target )
 	{
 		printf( COMMENT "%#.6x", pc_relative_target );
 	}
@@ -1004,7 +1004,7 @@ namespace tool
 	{
 		printf( "; indexed jump table\n" );
 		
-		const size_t jump_table = global_bytes_read;
+		const uint32_t jump_table = global_bytes_read;
 		
 		int n_jumps = global_last_CMPI_operand;
 		
@@ -1018,17 +1018,17 @@ namespace tool
 	{
 		printf( "; __lswtch__ table\n" );
 		
-		const size_t table_start = global_bytes_read;
+		const uint32_t table_start = global_bytes_read;
 		
-		const size_t default_case = table_start + read_word();
+		const uint32_t default_case = table_start + read_word();
 		
 		printf( "; default:  goto $%.6x\n", default_case );
 		
-		const unsigned min = read_long();
+		const uint32_t min = read_long();
 		
 		printf( "; min: %#x, %d\n", min, min );
 		
-		const unsigned max = read_long();
+		const uint32_t max = read_long();
 		
 		printf( "; max: %#x, %d\n", max, max );
 		
@@ -1036,11 +1036,11 @@ namespace tool
 		
 		while ( n-- >= 0 )
 		{
-			const unsigned value = read_long();
+			const uint32_t value = read_long();
 			
-			size_t target = global_bytes_read;
+			uint32_t target = global_bytes_read;
 			
-			const unsigned short offset = read_word();
+			const uint16_t offset = read_word();
 			
 			target += offset;
 			
@@ -1048,9 +1048,9 @@ namespace tool
 		}
 	}
 	
-	static void decode_Jump( unsigned short op )
+	static void decode_Jump( uint16_t op )
 	{
-		const unsigned short source = op & 0x3f;
+		const uint16_t source = op & 0x3f;
 		
 		const bool jump = op & 0x0040;
 		
@@ -1122,7 +1122,7 @@ namespace tool
 		"RTR" "\n"
 	};
 	
-	static char* get_register_sequence( char* buffer, unsigned short mask, char c )
+	static char* get_register_sequence( char* buffer, uint16_t mask, char c )
 	{
 		char* p = buffer;
 		
@@ -1178,7 +1178,7 @@ namespace tool
 		return p;
 	}
 	
-	static char* get_register_set( char* buffer, unsigned short mask, bool reverse )
+	static char* get_register_set( char* buffer, uint16_t mask, bool reverse )
 	{
 		if ( reverse )
 		{
@@ -1200,8 +1200,8 @@ namespace tool
 			     | mask >> 15;
 		}
 		
-		const unsigned short low  = mask & 0xff;
-		const unsigned short high = mask >>   8;
+		const uint16_t low  = mask & 0xff;
+		const uint16_t high = mask >>   8;
 		
 		char *p = buffer;
 		
@@ -1217,9 +1217,9 @@ namespace tool
 		return p;
 	}
 	
-	static void decode_long_mul_div( unsigned short op )
+	static void decode_long_mul_div( uint16_t op )
 	{
-		const unsigned short extension = read_word();
+		const uint16_t extension = read_word();
 		
 		const bool division = op & 0x0040;
 		
@@ -1228,10 +1228,10 @@ namespace tool
 		
 		const char* qualifier = division && !is_64_bit ? "L.L" : ".L ";
 		
-		const unsigned short mode_reg = op & 0x3f;
+		const uint16_t mode_reg = op & 0x3f;
 		
-		const unsigned short d_base = extension >> 24 & 0x7;
-		const unsigned short d_more = extension       & 0x7;
+		const uint16_t d_base = extension >> 24 & 0x7;
+		const uint16_t d_more = extension       & 0x7;
 		
 		const plus::string ea = read_ea( mode_reg, 4 );
 		
@@ -1251,20 +1251,20 @@ namespace tool
 		printf( format, basename, sign, qualifier, ea.c_str(), extra, '0' + d_base );
 	}
 	
-	static void decode_MOVEM( unsigned short op )
+	static void decode_MOVEM( uint16_t op )
 	{
 		const bool restore = op & 0x0400;
 		const bool longs   = op & 0x0040;
 		
-		const unsigned short mode_reg = op & 0x3f;
+		const uint16_t mode_reg = op & 0x3f;
 		
 		const bool reversed = !restore  &&  (mode_reg >> 3) == 4;
 		
 		const short size_index = longs + 1;
 		
-		const unsigned short mask = read_word();
+		const uint16_t mask = read_word();
 		
-		const size_t buffer_size = 16 * 3;  // 3 bytes per register max
+		const short buffer_size = 16 * 3;  // 3 bytes per register max
 		
 		char buffer[ buffer_size ];
 		
@@ -1306,17 +1306,17 @@ namespace tool
 		"SRP"     // 68040
 	};
 	
-	static void decode_MOVEC( unsigned short op )
+	static void decode_MOVEC( uint16_t op )
 	{
 		const bool to = op & 0x0001;
 		
-		const unsigned short extension = read_word();
+		const uint16_t extension = read_word();
 		
 		const char bank = extension & 0x8000 ? 'A' : 'D';
 		
-		const unsigned short reg = extension >> 12 & 0x7;
+		const uint16_t reg = extension >> 12 & 0x7;
 		
-		const unsigned short control = extension & 0x0FFF;
+		const uint16_t control = extension & 0x0FFF;
 		
 		if ( control & ~0x0807 )
 		{
@@ -1338,7 +1338,7 @@ namespace tool
 		}
 	}
 	
-	static void decode_4e_misc( unsigned short op )
+	static void decode_4e_misc( uint16_t op )
 	{
 		switch ( op & 0x0038 )
 		{
@@ -1422,7 +1422,7 @@ namespace tool
 #pragma mark -
 #pragma mark ** High-order **
 	
-	static void decode_data( unsigned short op )
+	static void decode_data( uint16_t op )
 	{
 		printf( "%.6x:  DC.W     %#.4x  ; %d bytes of data\n", global_bytes_read - 2, op, op );
 		
@@ -1430,7 +1430,7 @@ namespace tool
 		
 		while ( --n_words >= 0 )
 		{
-			const size_t bytes_read = global_bytes_read;
+			const uint32_t bytes_read = global_bytes_read;
 			
 			if ( n_words-- )
 			{
@@ -1445,7 +1445,7 @@ namespace tool
 		printf( "\n" );
 	}
 	
-	static bool decoded_data( unsigned short op )
+	static bool decoded_data( uint16_t op )
 	{
 		switch ( global_last_op )
 		{
@@ -1482,15 +1482,15 @@ namespace tool
 		return true;
 	}
 	
-	static void decode_MOVEP( unsigned short op )
+	static void decode_MOVEP( uint16_t op )
 	{
 		const bool store_to_mem = op & 0x80;
 		const bool long_mode    = op & 0x40;
 		
-		const unsigned short data_reg = op >> 9 & 0x7;
-		const unsigned short addr_reg = op >> 0 & 0x7;
+		const uint16_t data_reg = op >> 9 & 0x7;
+		const uint16_t addr_reg = op >> 0 & 0x7;
 		
-		const unsigned short displacement = read_word();
+		const uint16_t displacement = read_word();
 		
 		const char register_operand[ STRLEN( "Dx" ) ] = { 'D', '0' + data_reg };
 		
@@ -1530,11 +1530,11 @@ namespace tool
 		printf( "%s\n", out.c_str() );
 	}
 	
-	static void decode_MOVES( unsigned short op )
+	static void decode_MOVES( uint16_t op )
 	{
-		const unsigned short extension = read_word();
+		const uint16_t extension = read_word();
 		
-		const unsigned short mode_reg = op & 0x3f;
+		const uint16_t mode_reg = op & 0x3f;
 		
 		const short size_index = op >> 6 & 0x3;
 		
@@ -1547,7 +1547,7 @@ namespace tool
 		
 		const char bank = extension & 0x8000 ? 'A' : 'D';
 		
-		const unsigned short reg = extension >> 12 & 0x7;
+		const uint16_t reg = extension >> 12 & 0x7;
 		
 		const plus::string ea = read_ea( mode_reg, sizes[ size_index ] );
 		
@@ -1563,7 +1563,7 @@ namespace tool
 		}
 	}
 	
-	static void decode_0_line( unsigned short op )
+	static void decode_0_line( uint16_t op )
 	{
 		if ( const bool data = decoded_data( op ) )
 		{
@@ -1609,24 +1609,24 @@ namespace tool
 		};
 	}
 	
-	static void decode_MOVE_Byte( unsigned short op )
+	static void decode_MOVE_Byte( uint16_t op )
 	{
 		decode_MOVE( op, 0 );
 	}
 	
-	static void decode_MOVE_Long( unsigned short op )
+	static void decode_MOVE_Long( uint16_t op )
 	{
 		decode_MOVE( op, 2 );
 	}
 	
-	static void decode_MOVE_Word( unsigned short op )
+	static void decode_MOVE_Word( uint16_t op )
 	{
 		decode_MOVE( op, 1 );
 	}
 	
-	static void decode_4_line( unsigned short op )
+	static void decode_4_line( uint16_t op )
 	{
-		const unsigned short source = op & 0x3f;
+		const uint16_t source = op & 0x3f;
 		
 		if ( (op & 0xfff8) == 0x49c0 )
 		{
@@ -1639,7 +1639,7 @@ namespace tool
 		{
 			const bool lea = op & 0x0040;
 			
-			const unsigned short immediate_size = lea ? 0 : 2;
+			const uint16_t immediate_size = lea ? 0 : 2;
 			
 			const char* format = lea ? "LEA      %s,A%d"
 			                         : "CHK.W    %s,D%d";
@@ -1704,7 +1704,7 @@ namespace tool
 					if ( const bool is_bkpt = (op & 0xFFF8) == 0x4848 )
 					{
 						// BKPT
-						const unsigned short vector = op & 0x7;
+						const uint16_t vector = op & 0x7;
 						
 						printf( "BKPT     #%d" "\n", vector );
 						
@@ -1757,12 +1757,12 @@ namespace tool
 		};
 	}
 	
-	static inline unsigned short get_quick_data( unsigned short x )
+	static inline uint16_t get_quick_data( uint16_t x )
 	{
 		return (x - 1 & 0x7) + 1;
 	}
 	
-	static void decode_Quick( unsigned short op )
+	static void decode_Quick( uint16_t op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
@@ -1795,7 +1795,7 @@ namespace tool
 			return;
 		}
 		
-		const unsigned short quick_data = get_quick_data( op >> 9 );
+		const uint16_t quick_data = get_quick_data( op >> 9 );
 		
 		const bool subtract = op & 0x0100;
 		
@@ -1808,11 +1808,11 @@ namespace tool
 		printf( format, name, size_codes[ size_index ], quick_data, ea.c_str() );
 	}
 	
-	static void decode_Branch( unsigned short op )
+	static void decode_Branch( uint16_t op )
 	{
-		const size_t bytes_read = global_bytes_read;
+		const uint32_t bytes_read = global_bytes_read;
 		
-		const unsigned short index = op >> 8 & 0xf;
+		const uint16_t index = op >> 8 & 0xf;
 		
 		const char* ccode = index == 0 ? "RA"
 		                  : index == 1 ? "SR"
@@ -1843,7 +1843,7 @@ namespace tool
 		const char sign = negative ? '-' : '+';
 		*/
 		
-		const size_t target = bytes_read + arg;
+		const uint32_t target = bytes_read + arg;
 		
 		global_last_branch_target = target;
 		
@@ -1869,7 +1869,7 @@ namespace tool
 		add_entry_point( target );
 	}
 	
-	static void decode_MOVEQ( unsigned short op )
+	static void decode_MOVEQ( uint16_t op )
 	{
 		if ( op & 0x0100 )
 		{
@@ -1891,11 +1891,11 @@ namespace tool
 		"SBCD.B   -(A%d),-(A%d)" "\n"
 	};
 	
-	static void decode_8_line( unsigned short op )
+	static void decode_8_line( uint16_t op )
 	{
-		const unsigned short size_index = op >> 6 & 0x3;
+		const uint16_t size_index = op >> 6 & 0x3;
 		
-		const unsigned short reg = op >> 9 & 0x7;
+		const uint16_t reg = op >> 9 & 0x7;
 		
 		if ( size_index == 3 )
 		{
@@ -1912,7 +1912,7 @@ namespace tool
 		
 		if ( op & 0x0100 )
 		{
-			unsigned short op_mode = op >> 3 & 0x1f;
+			uint16_t op_mode = op >> 3 & 0x1f;
 			
 			const char* format = NULL;
 			
@@ -1949,11 +1949,11 @@ namespace tool
 		}
 	}
 	
-	static void decode_B_line( unsigned short op )
+	static void decode_B_line( uint16_t op )
 	{
-		unsigned short size_index = op >> 6 & 0x3;
+		uint16_t size_index = op >> 6 & 0x3;
 		
-		const unsigned short reg = op >> 9 & 0x7;
+		const uint16_t reg = op >> 9 & 0x7;
 		
 		if ( size_index == 3 )
 		{
@@ -1995,11 +1995,11 @@ namespace tool
 		"EXG      D%d,A%d" "\n",
 	};
 	
-	static void decode_C_line( unsigned short op )
+	static void decode_C_line( uint16_t op )
 	{
-		const unsigned short size_index = op >> 6 & 0x3;
+		const uint16_t size_index = op >> 6 & 0x3;
 		
-		const unsigned short reg = op >> 9 & 0x7;
+		const uint16_t reg = op >> 9 & 0x7;
 		
 		if ( size_index == 3 )
 		{
@@ -2016,7 +2016,7 @@ namespace tool
 		
 		if ( op & 0x0100 )
 		{
-			const unsigned short op_mode = op >> 3 & 0x1f;
+			const uint16_t op_mode = op >> 3 & 0x1f;
 			
 			const char* format = NULL;
 			
@@ -2063,15 +2063,15 @@ namespace tool
 		}
 	}
 	
-	static void decode_ADD_SUB( unsigned short op )
+	static void decode_ADD_SUB( uint16_t op )
 	{
 		const bool adding = op & 0x4000;
 		
 		const char* name = adding ? "ADD" : "SUB";
 		
-		const unsigned short reg = op >> 9 & 0x7;
+		const uint16_t reg = op >> 9 & 0x7;
 		
-		unsigned short size_index = op >> 6 & 0x3;
+		uint16_t size_index = op >> 6 & 0x3;
 		
 		const bool adda = size_index == 3;
 		
@@ -2113,7 +2113,7 @@ namespace tool
 		}
 	}
 	
-	static void decode_shift_rotate( unsigned short op )
+	static void decode_shift_rotate( uint16_t op )
 	{
 		const short size_index = op >> 6 & 0x3;
 		
@@ -2162,9 +2162,9 @@ namespace tool
 			
 			const char* format = count_in_Dn ? "D%d,D%d" : "#%d,D%d";
 			
-			const unsigned short source = op >> 9 & 0x7;
+			const uint16_t source = op >> 9 & 0x7;
 			
-			const unsigned short count = count_in_Dn ? source : get_quick_data( source );
+			const uint16_t count = count_in_Dn ? source : get_quick_data( source );
 			
 			printf( format, count, op & 0x7 );
 		}
@@ -2172,7 +2172,7 @@ namespace tool
 		printf( "\n" );
 	}
 	
-	static void decode_A_line( unsigned short op )
+	static void decode_A_line( uint16_t op )
 	{
 		const char* name = get_aTrap_name( op );
 		
@@ -2191,11 +2191,11 @@ namespace tool
 		}
 	}
 	
-	static void decode_F_line( unsigned short op )
+	static void decode_F_line( uint16_t op )
 	{
 		if ( op == 0xf210 )
 		{
-			const unsigned short extension = read_word();
+			const uint16_t extension = read_word();
 			
 			if ( (extension & 0xfc7f) == 0x4800 )
 			{
@@ -2251,10 +2251,10 @@ namespace tool
 		return name_validity[ c >> 5 & 0x3 ] & 1 << (c & 0x1f);
 	}
 	
-	static const char* get_name( unsigned short word )
+	static const char* get_name( uint16_t word )
 	{
-		const unsigned short byte_0 = word >> 8;
-		const unsigned short byte_1 = word & 0xff;
+		const uint16_t byte_0 = word >> 8;
+		const uint16_t byte_1 = word & 0xff;
 		
 		if ( byte_0 < 0x80 )
 		{
@@ -2265,7 +2265,7 @@ namespace tool
 		
 		char* p = name;
 		
-		size_t length = 0;
+		uint32_t length = 0;
 		
 		const bool try_fixed = false;
 		
@@ -2283,7 +2283,7 @@ namespace tool
 			
 			length = 8 + 8 * is_method - 2;
 		}
-		else if ( const size_t length_byte = byte_0 & 0x1f )
+		else if ( const uint32_t length_byte = byte_0 & 0x1f )
 		{
 			if ( !valid_name_char( byte_1 ) )
 			{
@@ -2303,7 +2303,7 @@ namespace tool
 		
 		for ( p[ length ] = '\0';  length > 1;  length -= 2 )
 		{
-			const unsigned short pair = read_word();
+			const uint16_t pair = read_word();
 			
 			*p++ = pair >> 8;
 			*p++ = pair & 0xff;
@@ -2323,7 +2323,7 @@ namespace tool
 		{
 			// Check for Macsbug symbol names
 			
-			const unsigned short word_0 = peek_word();
+			const uint16_t word_0 = peek_word();
 			
 			if ( const char* name = get_name( word_0 ) )
 			{
@@ -2340,7 +2340,7 @@ namespace tool
 			printf( "%.6x:  ", global_bytes_read );
 		}
 		
-		const unsigned short word = read_word();
+		const uint16_t word = read_word();
 		
 		global_pc = global_bytes_read;
 		
@@ -2369,10 +2369,10 @@ namespace tool
 	
 	static void skip_resource_header()
 	{
-		const unsigned short  flags   = read_word();
-		const unsigned long   type    = read_long();
-		const unsigned short  id      = read_word();
-		const unsigned short  version = read_word();
+		const uint16_t  flags   = read_word();
+		const uint32_t  type    = read_long();
+		const uint16_t  id      = read_word();
+		const uint16_t  version = read_word();
 		
 		printf( "; Flags:          %d" "\n", flags   );
 		
