@@ -33,6 +33,7 @@
 #include "plus/var_string.hh"
 
 // poseven
+#include "poseven/functions/chdir.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/execvp.hh"
 #include "poseven/functions/open.hh"
@@ -495,7 +496,7 @@ namespace tool
 		
 		PrintCommandForShell( MakeCommand( "cd", targetDir.c_str() ) );
 		
-		chdir( targetDir.c_str() );
+		p7::chdir( targetDir.c_str() );
 		
 		const std::vector< plus::string >& prereqs = project.AllUsedProjects();
 		
