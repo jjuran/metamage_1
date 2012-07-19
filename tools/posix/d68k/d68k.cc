@@ -1076,7 +1076,7 @@ namespace tool
 			++newlines;
 		}
 		
-		printf( newlines );
+		printf( "%s", newlines );
 		
 		if ( jump )
 		{
