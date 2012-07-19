@@ -13,6 +13,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -48,7 +51,7 @@ int main( int argc, char **argv )
 	
 	if ( argc != 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "usage: kill [-sig] pid\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "usage: kill [-sig] pid\n" ) );
 		
 		return 1;
 	}
