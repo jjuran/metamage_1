@@ -21,6 +21,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// must
+#include "must/pipe.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -737,7 +740,7 @@ namespace tool
 		
 		int pipes[ 2 ];
 		
-		pipe( pipes );  // pipe between first two processes
+		must_pipe( pipes );  // pipe between first two processes
 		
 		int reading = pipes[ 0 ];
 		int writing = pipes[ 1 ];
@@ -764,7 +767,7 @@ namespace tool
 		
 		while ( ++command != commands.end() - 1 )
 		{
-			pipe( pipes );  // next pipe
+			must_pipe( pipes );  // next pipe
 			
 			// Close previous write-end
 			close( writing );

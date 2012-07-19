@@ -15,6 +15,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // poseven
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/open.hh"
@@ -90,11 +93,11 @@ namespace tool
 			{
 				if ( gLoginShell )
 				{
-					(void) write( STDOUT_FILENO, STR_LEN( "logout\n" ) );
+					must_write( STDOUT_FILENO, STR_LEN( "logout\n" ) );
 				}
 				else
 				{
-					(void) write( STDOUT_FILENO, STR_LEN( "exit\n" ) );
+					must_write( STDOUT_FILENO, STR_LEN( "exit\n" ) );
 				}
 			}
 		}
