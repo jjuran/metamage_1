@@ -20,6 +20,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// must
+#include "must/pipe.h"
+#include "must/write.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -356,7 +360,9 @@ namespace tool
 		while ( pipes-- )
 		{
 			int fds[2];
-			pipe( fds );
+			
+			must_pipe( fds );
+			
 			itsPipes.push_back( fds );
 		}
 	}
@@ -373,8 +379,10 @@ namespace tool
 				break;
 			
 			case kInputLine:
-				pipe( fds );
-				write( fds[1], redir.data.data(), redir.data.size() );
+				must_pipe( fds );
+				
+				must_write( fds[1], redir.data.data(), redir.data.size() );
+				
 				close( fds[1] );
 				dup2( fds[0], redir.fd );
 				close( fds[0] );
