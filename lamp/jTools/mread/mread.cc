@@ -9,6 +9,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -85,7 +88,7 @@ int main( int argc, const char *const argv[] )
 			
 			*newline = '\n';
 			
-			write( STDOUT_FILENO, buffer, newline + 1 - buffer );
+			must_write( STDOUT_FILENO, buffer, newline + 1 - buffer );
 			
 			if ( equal_strings( buffer, newline, STR_LEN( "ERROR" ) ) )
 			{
