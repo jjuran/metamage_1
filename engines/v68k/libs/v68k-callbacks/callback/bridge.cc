@@ -12,6 +12,9 @@
 #include <signal.h>
 #include <stdlib.h>
 
+// must
+#include "must/write.h"
+
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
 
@@ -25,7 +28,7 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
-#define WRITE_ERR( msg )  write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
+#define WRITE_ERR( msg )  must_write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
 
 
 namespace v68k     {
@@ -92,7 +95,7 @@ static uint32_t unimplemented_trap_callback( v68k::emulator& emu )
 	p[2] = hex[ trap >> 4 & 0xF ];
 	p[3] = hex[ trap      & 0xF ];
 	
-	write( STDERR_FILENO, buffer, STRLEN( UNIMPLEMENTED_TRAP_PREFIX "A123\n" ) );
+	must_write( STDERR_FILENO, buffer, STRLEN( UNIMPLEMENTED_TRAP_PREFIX "A123\n" ) );
 	
 	raise( SIGILL );
 	
@@ -141,7 +144,7 @@ static uint32_t SysBeep_callback( v68k::emulator& emu )
 {
 	char c = 0x07;
 	
-	write( STDOUT_FILENO, &c, sizeof c );
+	must_write( STDOUT_FILENO, &c, sizeof c );
 	
 	return pop_args( emu, sizeof (uint16_t) );
 }
