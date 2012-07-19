@@ -6,6 +6,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -19,7 +22,7 @@ int main( int argc, char *const argv[] )
 	{
 		const char usage[] = "Usage: argv0 command arg0 [ arg1 ... argn ]\n";
 		
-		(void) write( STDERR_FILENO, usage, sizeof usage - 1 );
+		must_write( STDERR_FILENO, usage, sizeof usage - 1 );
 		
 		return 1;
 	}

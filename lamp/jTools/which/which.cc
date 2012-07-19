@@ -11,6 +11,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 
 #ifdef __RELIX__
 // Relix
@@ -142,7 +145,7 @@ int main( int argc, char** argv )
 				
 				*end++ = '\n';
 				
-				::write( STDOUT_FILENO, begin, end - begin );
+				must_write( STDOUT_FILENO, begin, end - begin );
 				
 				break;
 			}

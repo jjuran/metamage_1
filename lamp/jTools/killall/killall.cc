@@ -19,6 +19,9 @@
 // Extended API Set Part 2
 #include "extended-api-set/part-2.h"
 
+// must
+#include "must/write.h"
+
 // Relix
 #include "relix/alloca.h"
 
@@ -121,7 +124,7 @@ int main( int argc, char const *const argv[] )
 	
 	if ( argc != 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "killall: usage: killall [-sig] name\n" ) );
 		
 		return 1;
 	}

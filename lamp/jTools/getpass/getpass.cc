@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -30,7 +33,7 @@ int main( int argc, const char *const *argv )
 	
 	password[ length++ ] = '\n';
 	
-	(void) write( STDOUT_FILENO, password, length );
+	must_write( STDOUT_FILENO, password, length );
 	
 	return 0;
 }
