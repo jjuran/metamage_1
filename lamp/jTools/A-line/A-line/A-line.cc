@@ -283,8 +283,8 @@ namespace tool
 			pathname = diagnostics_path;
 		}
 		
-		std::fprintf( stderr, "#\n# %d bytes of %s\n#\n" "    report %s\n#\n",
-		                            size,       stuff,               pathname );
+		std::fprintf( stderr, "#\n# %ld bytes of %s\n#\n" "    report %s\n#\n",
+		                            size,        stuff,               pathname );
 	}
 	
 	void check_diagnostics( bool succeeded, const char* diagnostics_path )
@@ -761,9 +761,9 @@ namespace tool
 		if ( std::size_t n = CountFailures() )
 		{
 			std::fprintf( stderr, "###\n"
-			                      "### A-line: %d task%s had errors\n"
-			                      "###\n",     n,     n == 1 ? ""
-			                                                 : "s" );
+			                      "### A-line: %ld task%s had errors\n"
+			                      "###\n",     n,      n == 1 ? ""
+			                                                  : "s" );
 			
 			return EXIT_FAILURE;
 		}
