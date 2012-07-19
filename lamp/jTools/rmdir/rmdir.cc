@@ -9,6 +9,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -24,7 +27,7 @@ int main( int argc, char *const *argv )
 	// Check for sufficient number of args
 	if ( argc < 2 )
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "rmdir: missing arguments\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "rmdir: missing arguments\n" ) );
 		
 		return 1;
 	}
