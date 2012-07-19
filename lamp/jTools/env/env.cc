@@ -12,6 +12,9 @@
 // POSIX
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -29,7 +32,7 @@ static void DumpEnvironment()
 		output += "\n";
 	}
 	
-	(void) write( STDOUT_FILENO, output.data(), output.size() );
+	must_write( STDOUT_FILENO, output.data(), output.size() );
 }
 
 int main( int argc, char** argv )
