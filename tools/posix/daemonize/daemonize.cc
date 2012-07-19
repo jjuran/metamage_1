@@ -13,6 +13,10 @@
 // POSIX
 #include <termios.h>
 
+// must
+#include "must/chdir.h"
+#include "must/write.h"
+
 // iota
 #include "iota/strings.hh"
 
@@ -40,7 +44,7 @@ namespace tool
 	
 	static int usage()
 	{
-		(void) write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
 		
 		return 2;
 	}
@@ -109,7 +113,7 @@ namespace tool
 		
 		if ( !keep_cwd )
 		{
-			chdir( "/" );
+			must_chdir( "/" );
 		}
 		
 		if ( !keep_stdin )
