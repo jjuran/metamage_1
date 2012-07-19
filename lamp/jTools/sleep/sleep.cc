@@ -11,6 +11,9 @@
 #include <time.h>
 #include <unistd.h>
 
+// must
+#include "must/write.h"
+
 // Iota
 #include "iota/strings.hh"
 
@@ -26,7 +29,7 @@ int main( int argc, char const *const argv[] )
 	// Check for correct number of args
 	if ( argc != 2 )
 	{
-		write( STDERR_FILENO, STR_LEN( "Usage: sleep seconds\n" ) );
+		must_write( STDERR_FILENO, STR_LEN( "Usage: sleep seconds\n" ) );
 		
 		return 2;
 	}
