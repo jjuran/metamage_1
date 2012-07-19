@@ -248,8 +248,8 @@ namespace tool
 			
 			unsigned width = std::max( 32U, name_length );
 			
-			write( STDOUT_FILENO, test_name,                                    name_length );
-			write( STDOUT_FILENO, "..................................", width - name_length );
+			p7::write( p7::stdout_fileno, test_name,                                    name_length );
+			p7::write( p7::stdout_fileno, "..................................", width - name_length );
 			
 			TestResults results = run_test( test_file );
 			
