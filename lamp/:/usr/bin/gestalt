@@ -77,6 +77,18 @@ if ( defined $arg  &&  $arg =~ m/^ - ([bdxktvV]) /x )
 
 my $selector = $arg;
 
+if ( !defined $selector )
+{
+	warn $USAGE;
+	
+	if ( -e "/sys/mac/gestalt/tabl" )
+	{
+		warn "Run `ls /sys/mac/gestalt` for a list of selectors.\n";
+	}
+	
+	exit 2;
+}
+
 my $selector_length = length $selector;
 
 if ( $selector_length != 4 )
