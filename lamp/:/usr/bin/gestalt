@@ -57,7 +57,7 @@ my $display = $default_display;
 
 my $arg = shift;
 
-if ( $arg =~ m/^ - ([bdxktvV]) /x )
+if ( defined $arg  &&  $arg =~ m/^ - ([bdxktvV]) /x )
 {
 	$display = $1;
 	
