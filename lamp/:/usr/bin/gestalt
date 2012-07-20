@@ -4,6 +4,17 @@ my $device = '/dev/gestalt';
 
 my $default_display = 'x';
 
+my $USAGE = <<'[END]';
+usage: gestalt [-bdxktvV] <selector>
+    -b  binary
+    -d  decimal
+    -x  hex
+    -k  frequency
+    -t  OSType
+    -v  version
+    -V  NumVersion
+[END]
+
 sub Version
 {
 	$_ = join '', ($_ >> 12) & 0xF || '',
@@ -76,6 +87,8 @@ if ( $selector_length != 4 )
 	}
 	else
 	{
+		warn $USAGE;
+		
 		die "Selector must be length 4";
 	}
 }
