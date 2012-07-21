@@ -4,6 +4,17 @@ my $device = '/dev/gestalt';
 
 my $default_display = 'x';
 
+my $USAGE = <<'[END]';
+usage: gestalt [-bdxktvV] <selector>
+    -b  binary
+    -d  decimal
+    -x  hex
+    -k  frequency
+    -t  OSType
+    -v  version
+    -V  NumVersion
+[END]
+
 sub Version
 {
 	$_ = join '', ($_ >> 12) & 0xF || '',
@@ -57,7 +68,7 @@ my $display = $default_display;
 
 my $arg = shift;
 
-if ( $arg =~ m/^ - ([bdxktvV]) /x )
+if ( defined $arg  &&  $arg =~ m/^ - ([bdxktvV]) /x )
 {
 	$display = $1;
 	
@@ -65,6 +76,18 @@ if ( $arg =~ m/^ - ([bdxktvV]) /x )
 }
 
 my $selector = $arg;
+
+if ( !defined $selector )
+{
+	warn $USAGE;
+	
+	if ( -e "/sys/mac/gestalt/tabl" )
+	{
+		warn "Run `ls /sys/mac/gestalt` for a list of selectors.\n";
+	}
+	
+	exit 2;
+}
 
 my $selector_length = length $selector;
 
@@ -76,6 +99,8 @@ if ( $selector_length != 4 )
 	}
 	else
 	{
+		warn $USAGE;
+		
 		die "Selector must be length 4";
 	}
 }
