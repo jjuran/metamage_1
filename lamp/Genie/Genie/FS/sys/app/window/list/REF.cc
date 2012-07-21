@@ -91,6 +91,22 @@ namespace Nitrogen
 	
 	using ::SetPortTextSize;
 	
+	static inline
+	void SetWindowAlpha( WindowRef window, float alpha )
+	{
+		::SetWindowAlpha( window, alpha );
+	}
+	
+	static
+	float GetWindowAlpha( WindowRef window )
+	{
+		float alpha;
+		
+		Mac::ThrowOSStatus( ::GetWindowAlpha( window, &alpha ) );
+		
+		return alpha;
+	}
+	
 }
 
 namespace Genie
@@ -385,6 +401,24 @@ namespace Genie
 		}
 	};
 	
+	struct Access_WindowAlpha : plus::serialize_unsigned< short >
+	{
+		static short Get( WindowRef window )
+		{
+			return short( N::GetWindowAlpha( window ) * 10000 );
+		}
+		
+		static void Set( WindowRef window, short alpha )
+		{
+			if ( uint16_t( alpha ) > 10000 )
+			{
+				alpha = 10000;
+			}
+			
+			N::SetWindowAlpha( window, alpha / 10000.0 );
+		}
+	};
+	
 	static void select_trigger( const vfs::node* that )
 	{
 		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
@@ -509,6 +543,12 @@ namespace Genie
 		
 		{ ".~back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
 		{ ".~fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
+		
+	#endif
+		
+	#if TARGET_API_MAC_OSX
+		
+		{ "alpha",  PROPERTY_ACCESS( Access_WindowAlpha ) },
 		
 	#endif
 		
