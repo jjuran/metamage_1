@@ -8,6 +8,10 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
+// MacIO
+#include "MacIO/FSRead_Sync.hh"
+#include "MacIO/FSWrite_Sync.hh"
+
 // Genie
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
@@ -144,31 +148,25 @@ namespace Genie
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
 	{
-		const bool async = GetFlags() & O_MAC_ASYNC;
-		
-		ssize_t read = FSRead( MacIO::kThrowEOF_Never,
-		                       itsRefNum,
-		                       N::fsFromStart,
-		                       offset,
-		                       byteCount,
-		                       data,
-		                       async );
+		ssize_t read = MacIO::FSRead( MacIO::kThrowEOF_Never,
+		                              itsRefNum,
+		                              N::fsFromStart,
+		                              offset,
+		                              byteCount,
+		                              data );
 		
 		return read;
 	}
 	
 	ssize_t MacFileHandle::Positioned_Write( const char* data, size_t byteCount, off_t offset )
 	{
-		const bool async = GetFlags() & O_MAC_ASYNC;
-		
 		const N::FSIOPosMode mode = N::fsFromStart;
 		
-		ssize_t written = FSWrite( itsRefNum,
-		                           mode,
-		                           offset,
-		                           byteCount,
-		                           data,
-		                           async );
+		ssize_t written = MacIO::FSWrite( itsRefNum,
+		                                  mode,
+		                                  offset,
+		                                  byteCount,
+		                                  data );
 		
 		if ( offset == 0 )
 		{
@@ -180,17 +178,14 @@ namespace Genie
 	
 	ssize_t MacFileHandle::Append( const char* data, size_t byteCount )
 	{
-		const bool async = GetFlags() & O_MAC_ASYNC;
-		
 		const N::FSIOPosMode  mode   = N::fsFromLEOF;
 		const SInt32          offset = 0;
 		
-		ssize_t written = FSWrite( itsRefNum,
-		                           mode,
-		                           offset,
-		                           byteCount,
-		                           data,
-		                           async );
+		ssize_t written = MacIO::FSWrite( itsRefNum,
+		                                  mode,
+		                                  offset,
+		                                  byteCount,
+		                                  data );
 		
 		return written;
 	}
