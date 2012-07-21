@@ -168,7 +168,7 @@ namespace Genie
 	
 	static void SpewFile( const FSSpec& file, const plus::string& contents )
 	{
-		n::owned< N::FSFileRefNum > output = FSpOpenDF( file, N::fsWrPerm );
+		n::owned< N::FSFileRefNum > output = N::FSpOpenDF( file, N::fsWrPerm );
 		
 		N::SetEOF( output, 0 );
 		
