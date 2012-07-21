@@ -9,6 +9,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+// Nitrogen
+#include "Nitrogen/Files.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
@@ -22,6 +25,9 @@
 
 namespace Genie
 {
+	
+	namespace N = Nitrogen;
+	
 	
 	static mode_t file_mode( const FSSpec& file )
 	{
@@ -62,7 +68,7 @@ namespace Genie
 		
 		return OpenMacFileHandle( fileSpec,
 		                          flags,
-		                          &Genie::FSpOpenRF,
+		                          &N::FSpOpenRF,
 		                          &New_RsrcForkHandle );
 	}
 	
