@@ -1070,7 +1070,7 @@ namespace Genie
 		{
 			return vfs::new_symbolic_link( parent,
 			                               name,
-			                               "window/" + name );
+			                               "w/" + name );
 		}
 		
 		return new_property( parent, name, params_ );
