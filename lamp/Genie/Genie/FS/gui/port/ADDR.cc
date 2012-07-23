@@ -1010,11 +1010,32 @@ namespace Genie
 		CreateUserWindow( node->owner() );
 	}
 	
+	static vfs::filehandle_ptr unwindow_open( const vfs::node* that, int flags, mode_t mode )
+	{
+		if ( !(flags & O_CREAT) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		CreateUserWindow( that->owner() );
+		
+		return new vfs::filehandle( flags );
+	}
+	
+	static const data_method_set unwindow_data_methods =
+	{
+		&unwindow_open
+	};
+	
 	static const node_method_set unwindow_methods =
 	{
 		NULL,
 		NULL,
-		&unwindow_touch
+		&unwindow_touch,
+		NULL,
+		NULL,
+		NULL,
+		&unwindow_data_methods
 	};
 	
 	static FSTreePtr new_lock( const FSTree*        parent,
