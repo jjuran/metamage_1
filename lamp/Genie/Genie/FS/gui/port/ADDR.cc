@@ -1089,6 +1089,7 @@ namespace Genie
 		{ "lock", &new_lock },
 		
 		{ "window", &new_window },
+		{ "w",      &new_window },
 		
 		{ "view",   &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
