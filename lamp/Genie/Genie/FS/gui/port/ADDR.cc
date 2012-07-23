@@ -1007,8 +1007,9 @@ namespace Genie
 	{
 		const bool exists = port_has_window( parent );
 		
-		const mode_t mode = exists ? S_IFLNK | 0777
-		                           : 0;
+		const mode_t mode = !exists          ? 0
+		                  : name.size() == 1 ? S_IFLNK | 0777
+		                  :                    S_IFREG | 0600;
 		
 		const node_method_set& methods = exists ? window_methods
 		                                        : unwindow_methods;
