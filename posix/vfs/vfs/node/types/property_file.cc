@@ -107,31 +107,14 @@ namespace vfs
 		
 		const char* name = that->name().data();
 		
-		const bool binary = name[0] == '.'  &&  name[1] == '~';
+		// Only return a (positive) fixed size in binary mode
 		
-		if ( binary  &&  extra.size >= 0 )
+		if ( extra.size >= 0  &&  name[0] == '.'  &&  name[1] == '~' )
 		{
 			return extra.size;
 		}
 		
-		if ( extra.get == NULL )
-		{
-			return 0;
-		}
-		
-		plus::var_string data;
-		
-		try
-		{
-			named_property_get_hook get = (named_property_get_hook) extra.get;
-			
-			get( data, that->owner(), binary, that->name() );
-		}
-		catch ( const undefined_property& )
-		{
-		}
-		
-		return data.size() + !binary;
+		return 0;
 	}
 	
 	static const data_method_set property_data_methods =
