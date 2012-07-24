@@ -991,7 +991,7 @@ static int TestPath( int argc, char** argv )
 	
 	int fd = 0;
 	
-	p7::read( p7::openat( window, "ref/pos", p7::o_rdonly | p7::o_binary ),
+	p7::read( p7::openat( window, "ref/.~pos", p7::o_rdonly ),
 	          (char*) &location, sizeof location );
 	
 	int start_pos = location.h;
@@ -1001,8 +1001,8 @@ static int TestPath( int argc, char** argv )
 	UInt64 time_length = 250000;  // quarter second
 	
 	n::owned< p7::fd_t > pos = p7::openat( window,
-	                                       "ref/pos",
-	                                       p7::o_wronly | p7::o_trunc | p7::o_binary );
+	                                       "ref/.~pos",
+	                                       p7::o_wronly | p7::o_trunc );
 	
 	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
 	{

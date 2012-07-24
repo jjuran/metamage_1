@@ -468,23 +468,38 @@ namespace Genie
 		{ ".mac-title", PROPERTY(                     window_title   ) },
 		{      "title", PROPERTY( utf8_text_property< window_title > ) },
 		
+		{ ".~mac-title", PROPERTY(                     window_title   ) },
+		{     ".~title", PROPERTY( utf8_text_property< window_title > ) },
+		
 		{ "pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
 		{ "size",  PROPERTY_ACCESS( Access_WindowSize     ) },
 		{ "vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
 		
+		{ ".~pos",   PROPERTY_ACCESS( Access_WindowPosition ) },
+		{ ".~size",  PROPERTY_ACCESS( Access_WindowSize     ) },
+		{ ".~vis",   PROPERTY_ACCESS( Access_WindowVisible  ) },
+		
 		{ "text-font",  PROPERTY_ACCESS( Access_WindowTextFont ) },
 		{ "text-size",  PROPERTY_ACCESS( Access_WindowTextSize ) },
+		
+		{ ".~text-font",  PROPERTY_ACCESS( Access_WindowTextFont ) },
+		{ ".~text-size",  PROPERTY_ACCESS( Access_WindowTextSize ) },
 		
 	#if CONFIG_COLOR
 		
 		{ "back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
 		{ "fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
 		
+		{ ".~back-color", PROPERTY_ACCESS( Access_WindowBackColor ) },
+		{ ".~fore-color", PROPERTY_ACCESS( Access_WindowForeColor ) },
+		
 	#endif
 		
 		{ "select", &window_trigger_factory },
 		
 		{ "z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
+		
+		{ ".~z", PROPERTY_CONST_ACCESS( Access_WindowZOrder ) },
 		
 		{ NULL, NULL }
 	};

@@ -1018,6 +1018,13 @@ namespace Genie
 		{ "procid", PROPERTY( kAttrConstant, ProcID_Property   ) },
 		{ "goaway", PROPERTY( kAttrConstant, CloseBox_Property ) },
 		
+		{ ".~title",  PROPERTY( kAttrVariable, Window_Title      ) },
+		{ ".~pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
+		{ ".~size",   PROPERTY( kAttrVariable, Size_Property     ) },
+		{ ".~vis",    PROPERTY( kAttrVariable, Visible_Property  ) },
+		{ ".~procid", PROPERTY( kAttrConstant, ProcID_Property   ) },
+		{ ".~goaway", PROPERTY( kAttrConstant, CloseBox_Property ) },
+		
 		{ NULL, NULL }
 	};
 	

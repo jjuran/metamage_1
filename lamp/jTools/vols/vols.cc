@@ -71,7 +71,7 @@ namespace tool
 			
 			if ( wanted_driver_name != NULL )
 			{
-				n::owned< p7::fd_t > name_fd = p7::openat( vol_N_dirfd.get(), "driver/name", p7::o_rdonly | p7::o_binary );
+				n::owned< p7::fd_t > name_fd = p7::openat( vol_N_dirfd.get(), "driver/.~name", p7::o_rdonly );
 				
 				plus::string driver_name = p7::slurp( name_fd.get() );
 				

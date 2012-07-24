@@ -114,7 +114,7 @@ int main( int argc, char const *const argv[] )
 	
 	if ( const char* name = ttyname( p7::stdin_fileno ) )
 	{
-		p7::spew( p7::open( "title", p7::o_wronly | p7::o_trunc | p7::o_binary ),
+		p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
 		          name,
 		          std::strlen( name ) );
 	}

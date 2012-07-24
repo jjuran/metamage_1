@@ -19,18 +19,13 @@
 #include "Genie/IO/PropertyFile.hh"
 
 
-#ifndef O_BINARY
-#define O_BINARY  0
-#endif
-
-
 namespace Genie
 {
 	
 	namespace p7 = poseven;
 	
 	
-	static IOHandle* open_for_read( const FSTree* node, int flags )
+	static IOHandle* open_for_read( const FSTree* node, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) node->extra();
 		
@@ -43,8 +38,6 @@ namespace Genie
 		
 		try
 		{
-			const bool binary = flags & O_BINARY;
-			
 			extra.get( data, node->owner(), binary );
 			
 			if ( !binary )
@@ -61,7 +54,7 @@ namespace Genie
 		                                     data );
 	}
 	
-	static IOHandle* open_for_write( const FSTree* node, int flags )
+	static IOHandle* open_for_write( const FSTree* node, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) node->extra();
 		
@@ -69,8 +62,6 @@ namespace Genie
 		{
 			p7::throw_errno( EACCES );
 		}
-		
-		const bool binary = flags & O_BINARY;
 		
 		return new PropertyWriterFileHandle( node,
 		                                     flags,
@@ -82,13 +73,17 @@ namespace Genie
 	{
 		IOHandle* result = NULL;
 		
-		if ( (flags & ~O_BINARY) == O_RDONLY )
+		const char* name = node->name().data();
+		
+		const bool binary = name[0] == '.'  &&  name[1] == '~';
+		
+		if ( flags == O_RDONLY )
 		{
-			result = open_for_read( node, flags );
+			result = open_for_read( node, flags, binary );
 		}
-		else if ( (flags & ~(O_CREAT | O_BINARY)) == (O_WRONLY | O_TRUNC) )
+		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
-			result = open_for_write( node, flags );
+			result = open_for_write( node, flags, binary );
 		}
 		else
 		{
