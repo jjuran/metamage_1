@@ -65,6 +65,28 @@ static int find_unused_pthread_id()
 	return -1;
 }
 
+pthread_t pthread_self()
+{
+	init_thread_leader();
+	
+	int tid = gettid();
+	
+	for ( int i = 0;  i < PTHREAD_THREADS_MAX;  ++i )
+	{
+		if ( pthreads[ i ].tid == tid )
+		{
+			return i;
+		}
+	}
+	
+	return 0;
+}
+
+int pthread_equal( pthread_t a, pthread_t b)
+{
+	return a == b;
+}
+
 int pthread_create( pthread_t*             thread_id,
                     const pthread_attr_t*  attr,
                     void*                  (*start_routine)(void*),
