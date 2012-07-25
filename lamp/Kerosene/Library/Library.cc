@@ -540,7 +540,7 @@ int link( const char* oldpath, const char* newpath )
 	return linkat( AT_FDCWD, oldpath, AT_FDCWD, newpath, AT_SYMLINK_FOLLOW );
 }
 
-int readlink( const char *path, char *buffer, size_t buffer_size )
+ssize_t readlink( const char *path, char *buffer, size_t buffer_size )
 {
 	const int saved_errno = errno;
 	

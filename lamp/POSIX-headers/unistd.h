@@ -177,7 +177,7 @@ int	 lchown(const char *, uid_t, gid_t);
 int	 mkstemp(char *);
 char	*mktemp(char *);
 int	 nice(int);
-int	 readlink(const char *, char *, size_t)
+ssize_t	 readlink(const char *, char *, size_t)
 		__attribute__ ((__bounded__(__string__,2,3)));
 int	 setkey(const char *);
 int	 setpgrp(pid_t pid, pid_t pgrp);	/* obsoleted by setpgid() */
