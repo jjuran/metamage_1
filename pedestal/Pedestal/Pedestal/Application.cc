@@ -719,7 +719,7 @@ namespace Pedestal
 	{
 		using namespace nucleus::operators;
 		
-		Point mouseLocation = N::GetMouse();
+		Point mouseLocation = N::GetGlobalMouse();
 		
 		if ( mouseLocation != gLastMouseLocation )
 		{
