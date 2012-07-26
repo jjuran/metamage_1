@@ -63,8 +63,8 @@ namespace Genie
 		
 		touch( window.get() );
 		
-		Spew( ResolveRelativePath( STR_LEN( "window/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "window/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
 		
