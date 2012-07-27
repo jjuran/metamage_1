@@ -9,8 +9,8 @@ echo 10,50 > pos
 
 touch window
 
-echo 4 > window/text-font
-echo 9 > window/text-size
+echo 4 > w/text-font
+echo 9 > w/text-size
 
 ln /gui/new/scrollframe  view
 ln /gui/new/frame        view/v
