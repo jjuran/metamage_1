@@ -70,8 +70,8 @@ int main( int argc, char const *const argv[] )
 	
 	p7::utime( "window" );
 	
-	p7::spew( "window/text-font", STR_LEN( "4" "\n" ) );
-	p7::spew( "window/text-size", STR_LEN( "9" "\n" ) );
+	p7::spew( "w/text-font", STR_LEN( "4" "\n" ) );
+	p7::spew( "w/text-size", STR_LEN( "9" "\n" ) );
 	
 	p7::link( "/gui/new/scrollframe", "view"     );
 	p7::link( "/gui/new/frame",       "view/v"   );
