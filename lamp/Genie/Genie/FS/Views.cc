@@ -191,7 +191,7 @@ namespace Genie
 				
 				if ( submap.empty() )
 				{
-					gViewParametersMap.erase( it );
+					gViewParametersMap.erase( parent );
 				}
 				
 				notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
@@ -212,7 +212,7 @@ namespace Genie
 		{
 			ViewParametersSubMap temp = *it;
 			
-			gViewParametersMap.erase( it );
+			gViewParametersMap.erase( parent );
 			
 			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
 			{
