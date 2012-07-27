@@ -18,7 +18,7 @@ namespace Genie
 	class map_base
 	{
 		private:
-			typedef const void*  Key;
+			typedef const void*  key_t;
 			typedef void*      (*allocator)();
 			typedef void*      (*duplicator)( const void* );
 			typedef void       (*deallocator)( const void* );
@@ -38,10 +38,10 @@ namespace Genie
 			
 			~map_base();
 			
-			const void* find( Key key );
-			const void* get( Key key, allocator a );
+			const void* find( key_t key );
+			const void* get( key_t key, allocator a );
 			
-			void erase( Key key );
+			void erase( key_t key );
 			
 			void clear();
 			

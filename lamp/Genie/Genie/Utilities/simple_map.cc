@@ -93,7 +93,7 @@ namespace Genie
 		delete its_map;
 	}
 	
-	const void* map_base::get( Key key, allocator a )
+	const void* map_base::get( key_t key, allocator a )
 	{
 		if ( its_map == NULL )
 		{
@@ -112,7 +112,7 @@ namespace Genie
 		return result;
 	}
 	
-	const void* map_base::find( Key key )
+	const void* map_base::find( key_t key )
 	{
 		if ( its_map )
 		{
@@ -129,7 +129,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	void map_base::erase( Key key )
+	void map_base::erase( key_t key )
 	{
 		if ( its_map )
 		{
