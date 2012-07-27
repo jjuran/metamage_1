@@ -8,8 +8,8 @@ echo FORGE > title
 
 touch window
 
-echo 48 > window/text-size
-echo  4 > window/text-font
+echo 48 > w/text-size
+echo  4 > w/text-font
 
 /bin/ln /gui/new/frame   view
 /bin/ln /gui/new/caption view/v

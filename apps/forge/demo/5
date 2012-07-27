@@ -27,11 +27,11 @@ perl >> view/v/text -e 'print "The font... "'
 
 sleep 1
 
-echo >> $CONSOLE/text "echo 72 > window/text-size"
+echo >> $CONSOLE/text "echo 72 > w/text-size"
 
 sleep 1
 
-echo >> $CONSOLE/text "echo 0 > window/text-font"
+echo >> $CONSOLE/text "echo 0 > w/text-font"
 
 sleep .5
 
@@ -39,7 +39,7 @@ perl >> view/v/text -e 'print "no wait...  "'
 
 sleep 1
 
-echo >> $CONSOLE/text "echo 2 > window/text-font"
+echo >> $CONSOLE/text "echo 2 > w/text-font"
 
 sleep 1
 
