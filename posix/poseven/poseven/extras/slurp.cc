@@ -32,7 +32,7 @@ namespace poseven
 		
 		result.resize( n_read );
 		
-		return result;
+		return result.move();
 	}
 	
 	plus::string slurp( const char* path )
