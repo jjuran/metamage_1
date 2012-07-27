@@ -49,27 +49,6 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	class canary
-	{
-		private:
-			bool it_lives;
-		
-		public:
-			canary() : it_lives( true )
-			{
-			}
-			
-			~canary()
-			{
-				it_lives = false;
-			}
-			
-			bool lives() const
-			{
-				return it_lives;
-			}
-	};
-	
 	struct ViewParameters
 	{
 		FSTreePtr      itsDelegate;
@@ -98,8 +77,6 @@ namespace Genie
 	typedef simple_map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
-	
-	static canary the_canary;
 	
 	
 	static const ViewParameters* FindView( const FSTree* parent, const plus::string& name )
@@ -203,11 +180,6 @@ namespace Genie
 	
 	void RemoveAllViewParameters( const FSTree* parent )
 	{
-		if ( !the_canary.lives() )
-		{
-			return;
-		}
-		
 		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
 		{
 			ViewParametersSubMap temp = *it;
