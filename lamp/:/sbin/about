@@ -2,7 +2,7 @@
 
 cd /gui/port/about
 
-/usr/bin/touch window/select 2> /dev/null  &&  exit  ||  /bin/true
+/usr/bin/touch w/select 2> /dev/null  &&  exit  ||  /bin/true
 
 exec 0>&2             # save fd 2
 exec 2> /dev/null     # discard stderr
@@ -20,7 +20,7 @@ echo > procid 4
 
 /usr/bin/touch window
 
-echo 0 > window/text-font
+echo 0 > w/text-font
 
 /bin/ln /gui/new/stack view
 
