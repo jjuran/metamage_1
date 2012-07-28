@@ -407,7 +407,7 @@ namespace tool
 		}
 		
 		const char* opt_level = sym   ? "off"
-		                      : debug ? "l2"
+		                      : debug ? "on"
 		                      :         "full";
 		
 		command.push_back( "-opt" );
