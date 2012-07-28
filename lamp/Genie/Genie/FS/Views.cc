@@ -367,6 +367,13 @@ namespace Genie
 		
 		if ( windowKey == NULL )
 		{
+			ASSERT( parent != NULL );
+			
+			windowKey = GetViewWindowKey( parent->owner() );
+		}
+		
+		if ( windowKey == NULL )
+		{
 			windowKey = parent;
 		}
 		
