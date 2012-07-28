@@ -134,9 +134,6 @@ namespace Genie
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate );
-	
-	
 	static boost::intrusive_ptr< Pedestal::View >&
 	//
 	get_subview( const FSTree* parent, const plus::string& name )
@@ -162,7 +159,7 @@ namespace Genie
 	
 	static void stack_remove( const FSTree* node )
 	{
-		DestroyDelegate( node );
+		gStack_Parameters_Map.erase( node );
 	}
 	
 	static FSTreePtr stack_lookup( const FSTree* node, const plus::string& name, const FSTree* parent )
@@ -223,11 +220,6 @@ namespace Genie
 		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
 	}
 	
-	static void DestroyDelegate( const FSTree* delegate )
-	{
-		gStack_Parameters_Map.erase( delegate );
-	}
-	
 	FSTreePtr New_stack( const FSTree*        parent,
 	                     const plus::string&  name,
 	                     const void*          args )
@@ -236,7 +228,7 @@ namespace Genie
 		                     name,
 		                     &StackFactory,
 		                     NULL,
-		                     &DestroyDelegate,
+		                     &stack_remove,
 		                     &create_delegate_for_new_stack );
 	}
 	
