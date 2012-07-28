@@ -53,8 +53,13 @@ namespace tool
 	
 	static inline plus::string Include( const plus::string& dir )
 	{
-		// Turn a pathname into a -I option.
-		// Works for gcc and CW Pro 6; doesn't work for CW Pro 2, MrC, or SC.
+		/*
+			Input an include path and output the command-line option.
+			This works for gcc and CW Pro 6.
+			
+			It doesn't work for CW Pro 3, MrC, or SC, but we can preprocess
+			separately in these cases.
+		*/
 		
 		return "-I" + dir;
 	}
