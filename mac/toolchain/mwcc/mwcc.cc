@@ -413,10 +413,14 @@ namespace tool
 		command.push_back( "-opt" );
 		command.push_back( opt_level );
 		
-		command.push_back( "-nosyspath"      );
-		command.push_back( "-convertpaths"   );
+		if ( !gIncludeDirs.empty() )
+		{
+			command.push_back( "-nosyspath"      );
+			command.push_back( "-convertpaths"   );
+			command.push_back( "-once"           );
+		}
+		
 		command.push_back( "-nomapcr"        );
-		command.push_back( "-once"           );
 		
 		command.push_back( "-w"                                                   );
 		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
