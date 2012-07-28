@@ -20,6 +20,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/primitives/remove.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -51,12 +52,13 @@ namespace Genie
 	{
 		plus::string                       name;
 		boost::intrusive_ptr< Ped::View >  view;
+		const vfs::node*                   node;
 		
-		Named_Subview()
+		Named_Subview() : node()
 		{
 		}
 		
-		Named_Subview( const plus::string& n ) : name( n )
+		Named_Subview( const plus::string& n ) : name( n ), node()
 		{
 		}
 	};
@@ -136,18 +138,18 @@ namespace Genie
 	
 	static boost::intrusive_ptr< Pedestal::View >&
 	//
-	get_subview( const FSTree* parent, const plus::string& name )
+	get_subview( const FSTree* layer, const plus::string& name )
 	{
-		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
+		Stack_Parameters& params = gStack_Parameters_Map[ layer->owner() ];
 		
-		return find_or_append_subview( params, name ).view;
+		return find_or_append_subview( params, layer->name() ).view;
 	}
 	
-	static void delete_subview( const FSTree* parent, const plus::string& name )
+	static void destroy_layer( const FSTree* that )
 	{
-		Stack_Parameters& params = gStack_Parameters_Map[ parent ];
+		Stack_Parameters& params = gStack_Parameters_Map[ that->owner() ];
 		
-		Named_Subview* subview = find_subview( params, name );
+		Named_Subview* subview = find_subview( params, that->name() );
 		
 		ASSERT( subview != NULL );
 		
@@ -157,14 +159,50 @@ namespace Genie
 	}
 	
 	
+	static vfs::node_ptr stack_subview_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
+	{
+		return New_View( parent, name, get_subview, NULL );
+	}
+	
+	static const vfs::fixed_mapping stack_mappings[] =
+	{
+		{ "v", &stack_subview_factory },
+		
+		{ NULL, NULL }
+	};
+	
+	
 	static void stack_remove( const FSTree* node )
 	{
+		Stack_Parameters& params = gStack_Parameters_Map[ node ];
+		
+		while ( !params.v.empty() )
+		{
+			remove( params.v.back().node );
+		}
+		
 		gStack_Parameters_Map.erase( node );
 	}
 	
 	static FSTreePtr stack_lookup( const FSTree* node, const plus::string& name, const FSTree* parent )
 	{
-		return New_View( parent, name, get_subview, delete_subview );
+		Named_Subview& layer = find_or_append_subview( gStack_Parameters_Map[ node ], name );
+		
+		if ( layer.node == NULL )
+		{
+			vfs::node_ptr layer_node = vfs::fixed_dir( parent,
+			                                           name,
+			                                           stack_mappings,
+			                                           &destroy_layer );
+			
+			layer.node = layer_node.get();
+			
+			return layer_node;
+		}
+		
+		return layer.node;
 	}
 	
 	
