@@ -120,6 +120,7 @@ enum
 	
 	Opt_cplusplus,
 	Opt_precompile,
+	Opt_CR_newlines,
 };
 
 static command::option options[] =
@@ -129,6 +130,7 @@ static command::option options[] =
 	{ "cfm", Opt_CFM },
 	{ "ppc", Opt_PPC },
 	
+	{ "cr", Opt_CR_newlines },
 	{ "c++", Opt_cplusplus },
 	{ "precompile", Opt_precompile },
 	
@@ -147,6 +149,8 @@ static command::option options[] =
 };
 
 static const char* output_path = NULL;
+
+static bool output_carriage_returns = false;
 
 using namespace tool;
 
@@ -175,6 +179,7 @@ static char* const* get_options( char* const* argv )
 			case Opt_debug:       global_config_debug      = true;  break;
 			case Opt_cplusplus:   global_config_cplusplus  = true;  break;
 			case Opt_precompile:  global_config_precompile = true;  break;
+			case Opt_CR_newlines:  output_carriage_returns = true;  break;
 			
 			case Opt_Unix_lines:  set_line_style( unix_line_directives ); break;
 			case Opt_Mac_lines:   set_line_style( mac_line_directives  ); break;
@@ -244,6 +249,11 @@ namespace tool
 			{
 				// complain
 			}
+		}
+		
+		if ( output_carriage_returns )
+		{
+			global_newline_char = '\r';
 		}
 		
 		plus::string temp_path;

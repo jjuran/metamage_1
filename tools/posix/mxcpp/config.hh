@@ -19,7 +19,7 @@ namespace tool
 	
 	extern bool global_config_debug;
 	
-	const char global_newline_char = '\n';
+	extern char global_newline_char;
 	
 	enum line_style
 	{
