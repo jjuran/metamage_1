@@ -140,7 +140,7 @@ namespace tool
 			  its_command_maker        ( maker   ),
 			  it_has_no_includes       ( no_includes )
 			{
-				if ( project.SourceDirs().empty() )
+				if ( !it_has_no_includes  &&  project.SourceDirs().empty() )
 				{
 					its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
 				}
