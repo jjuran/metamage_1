@@ -24,8 +24,11 @@ echo 0 > window/text-font
 
 /bin/ln /gui/new/stack view
 
-icon=view/icon
-main=view/main
+icon=view/icon/v
+main=view/main/v
+
+test -e view/has_layers || icon=view/icon
+test -e view/has_layers || main=view/main
 
 /bin/ln /gui/new/frame $icon
 
