@@ -1,14 +1,16 @@
 #!/bin/sh
 
-export APPLET=about
+cd /gui/port/about
 
-/usr/bin/touch /app/$APPLET/window/select 2> /dev/null  &&  exit  ||  /bin/true
+/usr/bin/touch window/select 2> /dev/null  &&  exit  ||  /bin/true
 
-rm /app/$APPLET 2> /dev/null
+exec 0>&2             # save fd 2
+exec 2> /dev/null     # discard stderr
+exec 9> lock || exit  # bail if the lock is taken
+exec 2>&0             # restore fd 2
+exec 0< /dev/null     # clear fd 0
 
 iconid=128
-
-cd -P /gui/new/port
 
 echo 0 > vis
 echo 220,68 > size
@@ -50,6 +52,4 @@ echo 1 > view/main/v/disabling
 /usr/bin/daemonize --cwd --ctty=tty -- /usr/bin/idle
 
 echo 1 > vis
-
-/bin/ln -s $PWD /app/$APPLET
 
