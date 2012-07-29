@@ -17,77 +17,85 @@ echo 5 > procid
 echo 300,125 > size
 
 ln /gui/new/stack view
-ln /gui/new/frame view/icon
 
-echo 32 > view/icon/width
-echo 32 > view/icon/height
-echo 13 > view/icon/.margin-top
-echo 23 > view/icon/.margin-left
-echo 23 > view/icon/.margin-right
+icon=view/icon
+main=view/main
+entry=view/entry
+ok=view/ok
+cancel=view/cancel
+defaultkeys=view/defaultkeys
 
-ln /gui/new/icon view/icon/v
+ln /gui/new/frame $icon
 
-ln /gui/new/frame view/main
+echo 32 > $icon/width
+echo 32 > $icon/height
+echo 13 > $icon/.margin-top
+echo 23 > $icon/.margin-left
+echo 23 > $icon/.margin-right
 
-echo 13 > view/main/.margin-top
-echo 13 > view/main/.margin-right
-echo 71 > view/main/.margin-bottom
-echo 78 > view/main/.margin-left
+ln /gui/new/icon $icon/v
 
-ln /gui/new/caption view/main/v
+ln /gui/new/frame $main
 
-ln /gui/new/frame view/entry
+echo 13 > $main/.margin-top
+echo 13 > $main/.margin-right
+echo 71 > $main/.margin-bottom
+echo 78 > $main/.margin-left
 
-echo 16 > view/entry/height
-echo 13 > view/entry/.margin-right
-echo 49 > view/entry/.margin-bottom
-echo 78 > view/entry/.margin-left
-echo 1 > view/entry/.outline-width
-echo 2 > view/entry/padding
+ln /gui/new/caption $main/v
 
-ln /gui/new/textedit view/entry/v
+ln /gui/new/frame $entry
 
-ln /gui/new/frame view/ok
+echo 16 > $entry/height
+echo 13 > $entry/.margin-right
+echo 49 > $entry/.margin-bottom
+echo 78 > $entry/.margin-left
+echo 1 > $entry/.outline-width
+echo 2 > $entry/padding
 
-echo 58 > view/ok/width
-echo 20 > view/ok/height
-echo 13 > view/ok/.margin-right
-echo 13 > view/ok/.margin-bottom
+ln /gui/new/textedit $entry/v
 
-echo 3 > view/ok/.outline-width
-echo 1 > view/ok/.outline-offset
-echo 16 > view/ok/.outline-curvature
+ln /gui/new/frame $ok
 
-ln /gui/new/button view/ok/v
+echo 58 > $ok/width
+echo 20 > $ok/height
+echo 13 > $ok/.margin-right
+echo 13 > $ok/.margin-bottom
 
-ln /gui/new/frame view/cancel
+echo 3 > $ok/.outline-width
+echo 1 > $ok/.outline-offset
+echo 16 > $ok/.outline-curvature
 
-echo 58 > view/cancel/width
-echo 20 > view/cancel/height
-echo 84 > view/cancel/.margin-right
-echo 13 > view/cancel/.margin-bottom
+ln /gui/new/button $ok/v
 
-ln /gui/new/button view/cancel/v
+ln /gui/new/frame $cancel
 
-echo $iconid > view/icon/v/data
-echo 1 > view/icon/v/disabling
+echo 58 > $cancel/width
+echo 20 > $cancel/height
+echo 84 > $cancel/.margin-right
+echo 13 > $cancel/.margin-bottom
 
-echo $text > view/main/v/text
-echo 1     > view/main/v/disabling
+ln /gui/new/button $cancel/v
 
-echo 1 > view/entry/v/singular
+echo $iconid > $icon/v/data
+echo 1 > $icon/v/disabling
 
-echo Cancel > view/cancel/v/title
+echo $text > $main/v/text
+echo 1     > $main/v/disabling
 
-ln -s view/ok/v/click accept
-ln -s view/cancel/v/click cancel
+echo 1 > $entry/v/singular
 
-ln /gui/new/defaultkeys view
+echo Cancel > $cancel/v/title
+
+ln -s $ok/v/click accept
+ln -s $cancel/v/click cancel
+
+ln /gui/new/defaultkeys $defaultkeys
 
 touch window
 
 echo 0 > window/text-font
 #echo ddd > window/back-color
 
-select -1 -rview/{ok,cancel}/v/socket | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1' && cat view/entry/v/text && echo
+select -1 -r{$ok,$cancel}/v/socket | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1' && cat $entry/v/text && echo
 
