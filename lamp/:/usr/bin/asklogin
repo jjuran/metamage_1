@@ -21,14 +21,23 @@ echo 300,150 > size
 
 ln /gui/new/stack view
 
-focuser=view/.focuser
-icon=view/icon
-main=view/main
-user=view/user
-pass=view/pass
-ok=view/ok
-cancel=view/cancel
-defaultkeys=view/defaultkeys
+focuser=view/.focuser/v
+icon=view/icon/v
+main=view/main/v
+user=view/user/v
+pass=view/pass/v
+ok=view/ok/v
+cancel=view/cancel/v
+defaultkeys=view/defaultkeys/v
+
+test -e view/has_layers || focuser=view/.focuser
+test -e view/has_layers || icon=view/icon
+test -e view/has_layers || main=view/main
+test -e view/has_layers || user=view/user
+test -e view/has_layers || pass=view/pass
+test -e view/has_layers || ok=view/ok
+test -e view/has_layers || cancel=view/cancel
+test -e view/has_layers || defaultkeys=view/defaultkeys
 
 ln /gui/new/focuser $focuser
 
