@@ -135,7 +135,7 @@ namespace tool
 		pid_t sid   = gear::parse_unsigned_decimal( p_sid   );
 		pid_t tpgid = gear::parse_unsigned_decimal( p_tpgid );
 		
-		if ( q_termname - p_termname == STRLEN( "/gui/port/12345678/tty" ) )
+		if ( q_termname - p_termname >= STRLEN( "/gui/port/_/tty" ) )
 		{
 			p_termname += STRLEN( "/gui/port/"        );
 			q_termname -= STRLEN(              "/tty" );
