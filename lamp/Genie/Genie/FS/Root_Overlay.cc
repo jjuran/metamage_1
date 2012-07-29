@@ -11,7 +11,6 @@
 #include "vfs/nodes/fixed_dir.hh"
 
 // Genie
-#include "Genie/FS/app.hh"
 #include "Genie/FS/FSTree_Dev.hh"
 #include "Genie/FS/FSTree_Proc.hh"
 #include "Genie/FS/gui.hh"
@@ -30,7 +29,6 @@ namespace Genie
 		{ "Users",   &New_FSTree_Users   },
 		{ "Volumes", &New_FSTree_Volumes },
 		
-		{ "app",  &New_FSTree_app  },
 		{ "proc", &New_FSTree_proc },
 		
 		{ "dev", PREMAPPED( dev_Mappings ) },
