@@ -1,12 +1,14 @@
 #!/bin/sh
 
-export APPLET=psmon
+cd /gui/port/psmon
 
-/usr/bin/touch /app/$APPLET/window/select 2> /dev/null  &&  exit  ||  /bin/true
+/usr/bin/touch window/select 2> /dev/null  &&  exit  ||  /bin/true
 
-/bin/rm /app/$APPLET 2> /dev/null
-
-cd -P /gui/new/port
+exec 0>&2             # save fd 2
+exec 2> /dev/null     # discard stderr
+exec 9> lock || exit  # bail if the lock is taken
+exec 2>&0             # restore fd 2
+exec 0< /dev/null     # clear fd 0
 
 echo 0 > vis
 echo 10,47 > pos
@@ -30,6 +32,4 @@ echo 0 > view/v/wrapped
 /usr/bin/daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2 > view/v/text
 
 echo 1 > vis
-
-/bin/ln -s $PWD /app/$APPLET
 
