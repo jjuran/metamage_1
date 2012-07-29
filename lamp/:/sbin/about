@@ -23,31 +23,35 @@ echo > procid 4
 echo 0 > window/text-font
 
 /bin/ln /gui/new/stack view
-/bin/ln /gui/new/frame view/icon
 
-echo 32 > view/icon/width
-echo 32 > view/icon/height
-echo 13 > view/icon/.margin-top
-echo 23 > view/icon/.margin-left
-echo 23 > view/icon/.margin-right
+icon=view/icon
+main=view/main
 
-/bin/ln /gui/new/icon view/icon/v
+/bin/ln /gui/new/frame $icon
 
-echo $iconid > view/icon/v/data
+echo 32 > $icon/width
+echo 32 > $icon/height
+echo 13 > $icon/.margin-top
+echo 23 > $icon/.margin-left
+echo 23 > $icon/.margin-right
 
-/bin/ln /gui/new/frame view/main
+/bin/ln /gui/new/icon $icon/v
 
-echo 13 > view/main/.margin-top
-echo 13 > view/main/.margin-right
-echo 78 > view/main/.margin-left
+echo $iconid > $icon/v/data
 
-/bin/ln /gui/new/caption view/main/v
+/bin/ln /gui/new/frame $main
 
-echo >> view/main/v/text "MacRelix"
-echo >> view/main/v/text "by Josh Juran"
+echo 13 > $main/.margin-top
+echo 13 > $main/.margin-right
+echo 78 > $main/.margin-left
 
-echo 1 > view/icon/v/disabling
-echo 1 > view/main/v/disabling
+/bin/ln /gui/new/caption $main/v
+
+echo >> $main/v/text "MacRelix"
+echo >> $main/v/text "by Josh Juran"
+
+echo 1 > $icon/v/disabling
+echo 1 > $main/v/disabling
 
 /usr/bin/daemonize --cwd --ctty=tty -- /usr/bin/idle
 
