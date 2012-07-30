@@ -98,6 +98,10 @@ namespace Genie
 	                    ViewGetter           get,
 	                    ViewPurger           purge );
 	
+	vfs::node_ptr new_view_dir( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          /* args */ = NULL );
+	
 }
 
 #endif
