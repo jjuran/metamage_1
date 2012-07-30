@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CONSOLE=/app/demo-console/view/v/v
+CONSOLE=/tmp/demo-console/view/v/v
 
 echo > view/v/text "Let's tweak a few things:"
 
