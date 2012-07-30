@@ -168,7 +168,8 @@ namespace Genie
 	
 	static const vfs::fixed_mapping stack_mappings[] =
 	{
-		{ "v", &stack_subview_factory },
+		{ "view", &stack_subview_factory },
+		{ "v",    &stack_subview_factory },
 		
 		{ NULL, NULL }
 	};

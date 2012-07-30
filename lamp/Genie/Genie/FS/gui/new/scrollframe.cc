@@ -398,7 +398,8 @@ namespace Genie
 		
 		{ "target", &target_factory },
 		
-		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "view", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "v",    &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
 		{ NULL, NULL }
 	};

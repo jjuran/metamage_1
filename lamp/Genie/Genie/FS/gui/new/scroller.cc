@@ -173,7 +173,8 @@ namespace Genie
 		{ "x", PROPERTY( HOffset_Property ) },
 		{ "y", PROPERTY( VOffset_Property ) },
 		
-		{ "v", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "view", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "v",    &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
 		
 		{ NULL, NULL }
 	};
