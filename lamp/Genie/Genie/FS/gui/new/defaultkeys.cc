@@ -102,25 +102,13 @@ namespace Genie
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
-	{
-	}
-	
-	
-	static const vfs::fixed_mapping local_mappings[] =
-	{
-		{ NULL, NULL }
-	};
-	
 	FSTreePtr New_defaultkeys( const FSTree*        parent,
 	                           const plus::string&  name,
 	                           const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,
-		                     &CreateView,
-		                     local_mappings,
-		                     &DestroyDelegate );
+		                     &CreateView );
 	}
 	
 }
