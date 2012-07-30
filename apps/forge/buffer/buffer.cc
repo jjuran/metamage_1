@@ -49,6 +49,8 @@ namespace tool
 	namespace o = orion;
 	
 	
+	static int no_layers;
+	
 	static void make_window( const char* title )
 	{
 		p7::chdir( "/gui/new/port" );
@@ -68,18 +70,23 @@ namespace tool
 		p7::spew( "window/text-size", STR_LEN( "9" "\n" ) );
 		
 		p7::link( "/gui/new/stack",       "view"          );
-		p7::link( "/gui/new/scrollframe", "view/main"     );
-		p7::link( "/gui/new/frame",       "view/main/v"   );
-		p7::link( "/gui/new/textedit",    "view/main/v/v" );
 		
-		p7::symlink( "v/v", "view/main/target" );
+		struct stat sb;
 		
-		p7::spew( "view/main/vertical", STR_LEN( "1" "\n" ) );
-		p7::spew( "view/main/v/padding", STR_LEN( "4" "\n" ) );
+		no_layers = stat( "view/has_layers", &sb );
 		
-		p7::symlink( "view/main/v/v/unlock", "accept" );
+		p7::link( "/gui/new/scrollframe", no_layers ? "view/main"     : "view/main/v"     );
+		p7::link( "/gui/new/frame",       no_layers ? "view/main/v"   : "view/main/v/v"   );
+		p7::link( "/gui/new/textedit",    no_layers ? "view/main/v/v" : "view/main/v/v/v" );
 		
-		p7::link( "/gui/new/defaultkeys", "view/defaultkeys" );
+		p7::symlink( "v/v", no_layers ? "view/main/target" : "view/main/v/target" );
+		
+		p7::spew( no_layers ? "view/main/vertical"  : "view/main/v/vertical",  STR_LEN( "1" "\n" ) );
+		p7::spew( no_layers ? "view/main/v/padding" : "view/main/v/v/padding", STR_LEN( "4" "\n" ) );
+		
+		p7::symlink( no_layers ? "view/main/v/v/unlock" : "view/main/v/v/v/unlock", "accept" );
+		
+		p7::link( "/gui/new/defaultkeys", no_layers ? "view/defaultkeys" : "view/defaultkeys/v" );
 	}
 	
 	
@@ -89,7 +96,7 @@ namespace tool
 		
 		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
 		
-		const char* gate = "view/main/v/v/gate";
+		const char* gate = no_layers ? "view/main/v/v/gate" : "view/main/v/v/v/gate";
 		
 		char c;
 		
@@ -157,13 +164,16 @@ namespace tool
 		
 		make_window( title );
 		
-		p7::pump( input, p7::open( "view/main/v/v/text", p7::o_wronly | p7::o_trunc ) );
+		const char* text = no_layers ? "view/main/v/v/text" : "view/main/v/v/v/text";
+		const char* lock = no_layers ? "view/main/v/v/lock" : "view/main/v/v/v/lock";
+		
+		p7::pump( input, p7::open( text, p7::o_wronly | p7::o_trunc ) );
 		
 		p7::close( input );
 		
-		p7::utime( "view/main/v/v/lock" );
+		p7::utime( lock );
 		
-		n::owned< p7::fd_t > buffer = p7::open( "view/main/v/v/text", p7::o_rdonly );
+		n::owned< p7::fd_t > buffer = p7::open( text, p7::o_rdonly );
 		
 		n::owned< p7::fd_t > output = p7::openat( cwd, output_file, p7::o_wronly | p7::o_creat );
 		
