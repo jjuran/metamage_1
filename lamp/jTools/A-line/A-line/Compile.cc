@@ -554,7 +554,6 @@ namespace tool
 		
 		if ( options.Target().envType & envRelix )
 		{
-			options.DEFINE_MACRO( "__LAMP__" );
 			options.DEFINE_MACRO( "__RELIX__" );
 		}
 		
