@@ -330,6 +330,9 @@ namespace tool
 		
 		if ( options.Target().envType & envRelix )
 		{
+			// CW Pro 5 barfs on LF newlines, so use CR
+			preprocess.push_back( "--cr" );
+			
 		#ifdef __RELIX__
 			
 			// For now, mxcpp relies on _realpathat() for this.
