@@ -399,7 +399,7 @@ namespace Genie
 		{ "target", &target_factory },
 		
 		{ "view", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
-		{ "v",    &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
+		{ "v",    &new_view_dir,                                                        },
 		
 		{ NULL, NULL }
 	};
