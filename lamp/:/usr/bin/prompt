@@ -25,13 +25,6 @@ ok=view/ok/v
 cancel=view/cancel/v
 defaultkeys=view/defaultkeys/v
 
-test -e view/has_layers || icon=view/icon
-test -e view/has_layers || main=view/main
-test -e view/has_layers || entry=view/entry
-test -e view/has_layers || ok=view/ok
-test -e view/has_layers || cancel=view/cancel
-test -e view/has_layers || defaultkeys=view/defaultkeys
-
 ln /gui/new/frame $icon
 
 echo 32 > $icon/width

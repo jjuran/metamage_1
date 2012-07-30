@@ -30,15 +30,6 @@ ok=view/ok/v
 cancel=view/cancel/v
 defaultkeys=view/defaultkeys/v
 
-test -e view/has_layers || focuser=view/.focuser
-test -e view/has_layers || icon=view/icon
-test -e view/has_layers || main=view/main
-test -e view/has_layers || user=view/user
-test -e view/has_layers || pass=view/pass
-test -e view/has_layers || ok=view/ok
-test -e view/has_layers || cancel=view/cancel
-test -e view/has_layers || defaultkeys=view/defaultkeys
-
 ln /gui/new/focuser $focuser
 
 ln /gui/new/frame $icon
