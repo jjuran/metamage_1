@@ -27,9 +27,6 @@ echo 0 > window/text-font
 icon=view/icon/v
 main=view/main/v
 
-test -e view/has_layers || icon=view/icon
-test -e view/has_layers || main=view/main
-
 /bin/ln /gui/new/frame $icon
 
 echo 32 > $icon/width
