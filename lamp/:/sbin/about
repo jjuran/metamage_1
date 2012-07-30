@@ -23,31 +23,38 @@ echo > procid 4
 echo 0 > window/text-font
 
 /bin/ln /gui/new/stack view
-/bin/ln /gui/new/frame view/icon
 
-echo 32 > view/icon/width
-echo 32 > view/icon/height
-echo 13 > view/icon/.margin-top
-echo 23 > view/icon/.margin-left
-echo 23 > view/icon/.margin-right
+icon=view/icon/v
+main=view/main/v
 
-/bin/ln /gui/new/icon view/icon/v
+test -e view/has_layers || icon=view/icon
+test -e view/has_layers || main=view/main
 
-echo $iconid > view/icon/v/data
+/bin/ln /gui/new/frame $icon
 
-/bin/ln /gui/new/frame view/main
+echo 32 > $icon/width
+echo 32 > $icon/height
+echo 13 > $icon/.margin-top
+echo 23 > $icon/.margin-left
+echo 23 > $icon/.margin-right
 
-echo 13 > view/main/.margin-top
-echo 13 > view/main/.margin-right
-echo 78 > view/main/.margin-left
+/bin/ln /gui/new/icon $icon/v
 
-/bin/ln /gui/new/caption view/main/v
+echo $iconid > $icon/v/data
 
-echo >> view/main/v/text "MacRelix"
-echo >> view/main/v/text "by Josh Juran"
+/bin/ln /gui/new/frame $main
 
-echo 1 > view/icon/v/disabling
-echo 1 > view/main/v/disabling
+echo 13 > $main/.margin-top
+echo 13 > $main/.margin-right
+echo 78 > $main/.margin-left
+
+/bin/ln /gui/new/caption $main/v
+
+echo >> $main/v/text "MacRelix"
+echo >> $main/v/text "by Josh Juran"
+
+echo 1 > $icon/v/disabling
+echo 1 > $main/v/disabling
 
 /usr/bin/daemonize --cwd --ctty=tty -- /usr/bin/idle
 
