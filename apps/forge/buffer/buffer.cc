@@ -49,8 +49,6 @@ namespace tool
 	namespace o = orion;
 	
 	
-	static int no_layers;
-	
 	static void make_window( const char* title )
 	{
 		p7::chdir( "/gui/new/port" );
@@ -73,20 +71,18 @@ namespace tool
 		
 		struct stat sb;
 		
-		no_layers = stat( "view/has_layers", &sb );
+		p7::link( "/gui/new/scrollframe", "view/main/v"     );
+		p7::link( "/gui/new/frame",       "view/main/v/v"   );
+		p7::link( "/gui/new/textedit",    "view/main/v/v/v" );
 		
-		p7::link( "/gui/new/scrollframe", no_layers ? "view/main"     : "view/main/v"     );
-		p7::link( "/gui/new/frame",       no_layers ? "view/main/v"   : "view/main/v/v"   );
-		p7::link( "/gui/new/textedit",    no_layers ? "view/main/v/v" : "view/main/v/v/v" );
+		p7::symlink( "v/v", "view/main/v/target" );
 		
-		p7::symlink( "v/v", no_layers ? "view/main/target" : "view/main/v/target" );
+		p7::spew( "view/main/v/vertical",  STR_LEN( "1" "\n" ) );
+		p7::spew( "view/main/v/v/padding", STR_LEN( "4" "\n" ) );
 		
-		p7::spew( no_layers ? "view/main/vertical"  : "view/main/v/vertical",  STR_LEN( "1" "\n" ) );
-		p7::spew( no_layers ? "view/main/v/padding" : "view/main/v/v/padding", STR_LEN( "4" "\n" ) );
+		p7::symlink( "view/main/v/v/v/unlock", "accept" );
 		
-		p7::symlink( no_layers ? "view/main/v/v/unlock" : "view/main/v/v/v/unlock", "accept" );
-		
-		p7::link( "/gui/new/defaultkeys", no_layers ? "view/defaultkeys" : "view/defaultkeys/v" );
+		p7::link( "/gui/new/defaultkeys", "view/defaultkeys/v" );
 	}
 	
 	
@@ -96,7 +92,7 @@ namespace tool
 		
 		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
 		
-		const char* gate = no_layers ? "view/main/v/v/gate" : "view/main/v/v/v/gate";
+		const char* gate = "view/main/v/v/v/gate";
 		
 		char c;
 		
@@ -164,8 +160,8 @@ namespace tool
 		
 		make_window( title );
 		
-		const char* text = no_layers ? "view/main/v/v/text" : "view/main/v/v/v/text";
-		const char* lock = no_layers ? "view/main/v/v/lock" : "view/main/v/v/v/lock";
+		const char* text = "view/main/v/v/v/text";
+		const char* lock = "view/main/v/v/v/lock";
 		
 		p7::pump( input, p7::open( text, p7::o_wronly | p7::o_trunc ) );
 		
