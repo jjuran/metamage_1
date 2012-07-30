@@ -12,9 +12,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C++
-#include <map>
-
 // iota
 #include "iota/swap.hh"
 
@@ -72,55 +69,40 @@ namespace Genie
 		swap( itsWindowKey, other.itsWindowKey );
 	}
 	
-	typedef std::map< plus::string, ViewParameters > ViewParametersSubMap;
-	
-	typedef simple_map< const FSTree*, ViewParametersSubMap > ViewParametersMap;
+	typedef simple_map< const FSTree*, ViewParameters > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
 	
 	
-	static const ViewParameters* FindView( const FSTree* parent, const plus::string& name )
+	static inline const ViewParameters* find_view( const FSTree* parent )
 	{
-		if ( const ViewParametersSubMap* the_submap = gViewParametersMap.find( parent ) )
-		{
-			const ViewParametersSubMap& submap = *the_submap;
-			
-			ViewParametersSubMap::const_iterator it = submap.find( name );
-			
-			if ( it != submap.end() )
-			{
-				return &it->second;
-			}
-		}
-		
-		return NULL;
+		return gViewParametersMap.find( parent );
 	}
 	
-	static bool ViewExists( const FSTree* parent, const plus::string& name )
+	static bool view_exists( const FSTree* parent )
 	{
-		return FindView( parent, name ) != NULL;
+		return find_view( parent ) != NULL;
 	}
 	
-	static void AddViewParameters( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const FSTreePtr&     delegate,
-	                               ViewFactory          factory )
+	static void add_view_parameters( const FSTree*     parent,
+	                                 const FSTreePtr&  delegate,
+	                                 ViewFactory       factory )
 	{
 		ASSERT( delegate.get() != NULL );
 		
-		ViewParameters& params = gViewParametersMap[ parent ][ name ];
+		ViewParameters& params = gViewParametersMap[ parent ];
 		
 		params.itsFactory  = factory;
 		params.itsDelegate = delegate;
 	}
 	
-	static void AddViewWindowKey( const FSTree* parent, const plus::string& name, const FSTree* windowKey )
+	static void add_view_port_key( const FSTree* parent, const FSTree* windowKey )
 	{
-		ASSERT( FindView( parent, name ) != NULL );
+		ASSERT( find_view( parent ) != NULL );
 		
-		ASSERT( FindView( parent, name )->itsDelegate.get() != NULL );
+		ASSERT( find_view( parent )->itsDelegate.get() != NULL );
 		
-		gViewParametersMap[ parent ][ name ].itsWindowKey = windowKey;
+		gViewParametersMap[ parent ].itsWindowKey = windowKey;
 	}
 	
 	static void DeleteDelegate( FSTreePtr& delegate_ref )
@@ -150,57 +132,25 @@ namespace Genie
 		}
 	}
 	
-	static void RemoveViewParameters( const FSTree* parent, const plus::string& name )
-	{
-		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
-		{
-			ViewParametersSubMap& submap = *it;
-			
-			ViewParametersSubMap::iterator jt = submap.find( name );
-			
-			ViewParameters temp;
-			
-			if ( jt != submap.end() )
-			{
-				temp.swap( jt->second );
-				
-				submap.erase( jt );
-				
-				if ( submap.empty() )
-				{
-					gViewParametersMap.erase( parent );
-				}
-				
-				notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
-				
-				DeleteDelegate( temp.itsDelegate );
-			}
-		}
-	}
-	
 	void RemoveAllViewParameters( const FSTree* parent )
 	{
-		if ( ViewParametersSubMap* it = gViewParametersMap.find( parent ) )
+		if ( ViewParameters* it = gViewParametersMap.find( parent ) )
 		{
-			ViewParametersSubMap temp = *it;
+			ViewParameters temp;
+			
+			temp.swap( *it );
 			
 			gViewParametersMap.erase( parent );
 			
-			for ( ViewParametersSubMap::iterator jt = temp.begin();  jt != temp.end();  ++jt )
-			{
-				ViewParameters& params = jt->second;
-				
-				notify_port_of_view_loss( params.itsWindowKey, params.itsDelegate.get() );
-				
-				DeleteDelegate( params.itsDelegate );
-			}
+			notify_port_of_view_loss( temp.itsWindowKey, temp.itsDelegate.get() );
+			
+			DeleteDelegate( temp.itsDelegate );
 		}
 	}
 	
-	static boost::intrusive_ptr< Ped::View > MakeView( const FSTree*        parent,
-	                                                   const plus::string&  name )
+	static boost::intrusive_ptr< Ped::View > make_view( const FSTree* parent )
 	{
-		if ( const ViewParameters* params = FindView( parent, name ) )
+		if ( const ViewParameters* params = find_view( parent ) )
 		{
 			const FSTree* delegate = params->itsDelegate.get();
 			
@@ -215,9 +165,9 @@ namespace Genie
 		return boost::intrusive_ptr< Ped::View >();
 	}
 	
-	static inline const FSTreePtr& GetViewDelegate( const FSTree* parent, const plus::string& name )
+	static const FSTreePtr& GetViewDelegate( const FSTree* view )
 	{
-		const ViewParameters* params = FindView( parent, name );
+		const ViewParameters* params = find_view( view->owner() );
 		
 		if ( params == NULL )
 		{
@@ -227,23 +177,11 @@ namespace Genie
 		return params->itsDelegate;
 	}
 	
-	static const FSTreePtr& GetViewDelegate( const FSTree* view )
-	{
-		const FSTreePtr& delegate = GetViewDelegate( view->owner(), view->name() );
-		
-		return delegate;
-	}
-	
-	static inline const FSTree* GetViewWindowKey( const FSTree* parent, const plus::string& name )
-	{
-		const ViewParameters* params = FindView( parent, name );
-		
-		return params ? params->itsWindowKey : NULL;
-	}
-	
 	const FSTree* GetViewWindowKey( const FSTree* view )
 	{
-		return GetViewWindowKey( view->owner(), view->name() );
+		const ViewParameters* params = find_view( view->owner() );
+		
+		return params ? params->itsWindowKey : NULL;
 	}
 	
 	
@@ -335,7 +273,7 @@ namespace Genie
 		
 		FSTreePtr delegate = extra.delegate_factory( node, parent, name );
 		
-		AddViewParameters( key, name, delegate, extra.view_factory );
+		add_view_parameters( key, delegate, extra.view_factory );
 		
 		mkdir( target, 0 );  // mode is ignored
 	}
@@ -377,9 +315,9 @@ namespace Genie
 			windowKey = parent;
 		}
 		
-		AddViewWindowKey( parent, name, windowKey );
+		add_view_port_key( parent, windowKey );
 		
-		boost::intrusive_ptr< Ped::View > view = MakeView( parent, name );
+		boost::intrusive_ptr< Ped::View > view = make_view( parent );
 		
 		view_of( node ) = view;
 		
@@ -427,7 +365,7 @@ namespace Genie
 		
 		view_of( node ) = Ped::EmptyView::Get();
 		
-		RemoveViewParameters( parent, name );
+		RemoveAllViewParameters( parent );
 		
 		if ( extra.purge )
 		{
@@ -474,7 +412,7 @@ namespace Genie
 	                    ViewGetter           get,
 	                    ViewPurger           purge )
 	{
-		const bool exists = ViewExists( parent, name );
+		const bool exists = view_exists( parent );
 		
 		const mode_t mode = exists ? S_IFDIR | 0700
 		                           : 0;
