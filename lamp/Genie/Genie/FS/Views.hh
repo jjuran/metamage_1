@@ -83,8 +83,8 @@ namespace Genie
 	FSTreePtr New_new_view( const FSTree*              parent,
 	                        const plus::string&        name,
 	                        ViewFactory                factory,
-	                        const vfs::fixed_mapping*  mappings,
-	                        vfs::node_destructor       dtor,
+	                        const vfs::fixed_mapping*  mappings         = vfs::empty_mappings,
+	                        vfs::node_destructor       dtor             = NULL,
 	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&
