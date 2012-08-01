@@ -809,12 +809,17 @@ namespace Genie
 			FSSpec targetSpec = GetFSSpecFromFSTree( target );
 			
 			CreateAlias( linkSpec, targetSpec );
+			
+			goto created;
 		}
 		catch ( const Mac::OSStatus& err )
 		{
-			// Non-aliases get creator and type for OS X symlinks
-			N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		}
+		
+		// Non-aliases get creator and type for OS X symlinks
+		N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
+		
+	created:
 		
 		SpewFile( linkSpec, targetPath );
 	}
