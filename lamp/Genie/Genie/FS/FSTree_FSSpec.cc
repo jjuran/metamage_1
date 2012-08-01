@@ -812,6 +812,13 @@ namespace Genie
 			
 			goto created;
 		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != EXDEV )
+			{
+				throw;
+			}
+		}
 		catch ( const Mac::OSStatus& err )
 		{
 		}
