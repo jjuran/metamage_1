@@ -24,10 +24,10 @@ echo 0 > w/text-font
 
 /bin/ln /gui/new/stack view
 
-icon=view/icon/v
-main=view/main/v
+icon=v/icon/v
+main=v/main/v
 
-/bin/ln /gui/new/frame $icon
+/bin/ln /gui/new/frame v/icon/view
 
 echo 32 > $icon/width
 echo 32 > $icon/height
@@ -35,17 +35,17 @@ echo 13 > $icon/.margin-top
 echo 23 > $icon/.margin-left
 echo 23 > $icon/.margin-right
 
-/bin/ln /gui/new/icon $icon/v
+/bin/ln /gui/new/icon $icon/view
 
 echo $iconid > $icon/v/data
 
-/bin/ln /gui/new/frame $main
+/bin/ln /gui/new/frame v/main/view
 
 echo 13 > $main/.margin-top
 echo 13 > $main/.margin-right
 echo 78 > $main/.margin-left
 
-/bin/ln /gui/new/caption $main/v
+/bin/ln /gui/new/caption $main/view
 
 echo >> $main/v/text "MacRelix"
 echo >> $main/v/text "by Josh Juran"
