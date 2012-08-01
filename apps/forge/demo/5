@@ -1,13 +1,13 @@
 #!/bin/sh
 
-CONSOLE=/tmp/demo-console/view/v/v
+CONSOLE=/tmp/demo-console/v/v/v
 
-echo > view/v/text "Let's tweak a few things:"
+echo > v/v/text "Let's tweak a few things:"
 
 sleep 2
 
-echo >> view/v/text
-echo >> view/v/text "\$ echo 550,500 > pos"
+echo >> v/v/text
+echo >> v/v/text "\$ echo 550,500 > pos"
 
 sleep 1
 
@@ -15,7 +15,7 @@ echo >> $CONSOLE/text "echo 550,500 > pos"
 
 sleep 1.5
 
-echo >> view/v/text "\$ echo 448x240 > size"
+echo >> v/v/text "\$ echo 448x240 > size"
 
 sleep 1
 
@@ -23,7 +23,7 @@ echo >> $CONSOLE/text "echo 448x240 > size"
 
 sleep 1.5
 
-perl >> view/v/text -e 'print "The font... "'
+perl >> v/v/text -e 'print "The font... "'
 
 sleep 1
 
@@ -35,7 +35,7 @@ echo >> $CONSOLE/text "echo 0 > w/text-font"
 
 sleep .5
 
-perl >> view/v/text -e 'print "no wait...  "'
+perl >> v/v/text -e 'print "no wait...  "'
 
 sleep 1
 
@@ -43,7 +43,7 @@ echo >> $CONSOLE/text "echo 2 > w/text-font"
 
 sleep 1
 
-echo >> view/v/text "And..."
+echo >> v/v/text "And..."
 
 sleep 1
 
@@ -51,11 +51,11 @@ echo 900x400 > size
 
 sleep 1
 
-echo >> view/v/text "\$ echo Hello world > view/text"
+echo >> v/v/text "\$ echo Hello world > v/text"
 
 sleep 1
 
-echo >> $CONSOLE/text "echo Hello world > view/text"
+echo >> $CONSOLE/text "echo Hello world > v/text"
 
 sleep 3
 
@@ -63,5 +63,5 @@ echo >> $CONSOLE/text "echo Hello world > title"
 
 sleep 2
 
-echo >> $CONSOLE/text "echo '*applause*' >> view/text"
+echo >> $CONSOLE/text "echo '*applause*' >> v/text"
 

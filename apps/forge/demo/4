@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo > view/v/text "Now let's try it for real."
+echo > v/v/text "Now let's try it for real."
 
 sleep 2
 
@@ -20,12 +20,12 @@ sleep 1
 
 echo 10,484 > /tmp/demo-console/pos
 
-CONSOLE=/tmp/demo-console/view/v/v
+CONSOLE=/tmp/demo-console/v/v/v
 
 sleep 2
 
-echo >> view/v/text
-echo >> view/v/text "\$ cd /gui/new/port"
+echo >> v/v/text
+echo >> v/v/text "\$ cd /gui/new/port"
 
 sleep 1
 
@@ -33,7 +33,7 @@ echo >> $CONSOLE/text "cd /gui/new/port"
 
 sleep 1.5
 
-echo >> view/v/text "\$ ln /gui/new/caption view"
+echo >> v/v/text "\$ ln /gui/new/caption view"
 
 sleep 1
 
@@ -41,7 +41,7 @@ echo >> $CONSOLE/text "ln /gui/new/caption view"
 
 sleep 1.5
 
-echo >> view/v/text "\$ touch window"
+echo >> v/v/text "\$ touch window"
 
 sleep 1
 
@@ -49,9 +49,9 @@ echo >> $CONSOLE/text "touch window"
 
 sleep 2
 
-echo >> view/v/text "\$ echo Hello > view/text"
+echo >> v/v/text "\$ echo Hello > v/text"
 
 sleep 1
 
-echo >> $CONSOLE/text "echo Hello > view/text"
+echo >> $CONSOLE/text "echo Hello > v/text"
 

@@ -1,4 +1,4 @@
 #!/bin/sh
 
-echo FORGE, by Josh Juran > view/v/text
+echo FORGE, by Josh Juran > v/v/text
 
