@@ -38,7 +38,7 @@ int main( int argc, char *argv[] )
 			return 1;
 		}
 		
-		const char* text_subpath = "view/v/v/text";
+		const char* text_subpath = "v/v/v/text";
 		
 		int text_fd = openat( window_dirfd, text_subpath, O_WRONLY | O_TRUNC );
 		
