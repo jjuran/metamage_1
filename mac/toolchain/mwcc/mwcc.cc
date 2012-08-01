@@ -422,8 +422,18 @@ namespace tool
 		
 		command.push_back( "-nomapcr"        );
 		
-		command.push_back( "-w"                                                   );
+		command.push_back( "-w" );
+		
+	#ifdef __MC68K__
+		
+		// Don't assume noimplicit is recognized (which it's not in CW Pro 3)
+		command.push_back( "all,nounusedarg,nonotinlined,noextracomma" );
+		
+	#else
+		
 		command.push_back( "all,nounusedarg,noimplicit,nonotinlined,noextracomma" );
+		
+	#endif
 		
 		command.push_back( "-ext" );
 		command.push_back( "o"    );
