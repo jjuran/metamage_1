@@ -148,14 +148,6 @@ typedef	__int64_t	quad_t;
 typedef	__uint64_t	u_quad_t;
 typedef	quad_t *	qaddr_t;
 
-#if __BSD_VISIBLE && !defined( __MWERKS__ )
-/* VM system types */
-typedef __vaddr_t	vaddr_t;
-typedef __paddr_t	paddr_t;
-typedef __vsize_t	vsize_t;
-typedef __psize_t	psize_t;
-#endif /* __BSD_VISIBLE */
-
 /* Standard system types */
 typedef	__int32_t	daddr_t;	/* 32-bit disk address */
 typedef	__int32_t	daddr32_t;	/* 32-bit disk address */
