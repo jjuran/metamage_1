@@ -21,18 +21,18 @@ echo 300,150 > size
 
 ln /gui/new/stack view
 
-focuser=view/.focuser/v
-icon=view/icon/v
-main=view/main/v
-user=view/user/v
-pass=view/pass/v
-ok=view/ok/v
-cancel=view/cancel/v
-defaultkeys=view/defaultkeys/v
+focuser=v/.focuser/v
+icon=v/icon/v
+main=v/main/v
+user=v/user/v
+pass=v/pass/v
+ok=v/ok/v
+cancel=v/cancel/v
+defaultkeys=v/defaultkeys/v
 
-ln /gui/new/focuser $focuser
+ln /gui/new/focuser v/focuser/view
 
-ln /gui/new/frame $icon
+ln /gui/new/frame v/icon/view
 
 echo 32 > $icon/width
 echo 32 > $icon/height
@@ -40,18 +40,18 @@ echo 13 > $icon/.margin-top
 echo 23 > $icon/.margin-left
 echo 23 > $icon/.margin-right
 
-ln /gui/new/icon $icon/v
+ln /gui/new/icon $icon/view
 
-ln /gui/new/frame $main
+ln /gui/new/frame v/main/view
 
 echo 13 > $main/.margin-top
 echo 13 > $main/.margin-right
 echo 103 > $main/.margin-bottom
 echo 78 > $main/.margin-left
 
-ln /gui/new/caption $main/v
+ln /gui/new/caption $main/view
 
-ln /gui/new/frame $user
+ln /gui/new/frame v/user/view
 
 echo 16 > $user/height
 echo 13 > $user/.margin-right
@@ -60,9 +60,9 @@ echo 78 > $user/.margin-left
 echo 1 > $user/.outline-width
 echo 2 > $user/padding
 
-ln /gui/new/textedit $user/v
+ln /gui/new/textedit $user/view
 
-ln /gui/new/frame $pass
+ln /gui/new/frame v/pass/view
 
 echo 16 > $pass/height
 echo 13 > $pass/.margin-right
@@ -71,9 +71,9 @@ echo 78 > $pass/.margin-left
 echo 1 > $pass/.outline-width
 echo 2 > $pass/padding
 
-ln /gui/new/textedit $pass/v
+ln /gui/new/textedit $pass/view
 
-ln /gui/new/frame $ok
+ln /gui/new/frame v/ok/view
 
 echo 58 > $ok/width
 echo 20 > $ok/height
@@ -84,16 +84,16 @@ echo 3 > $ok/.outline-width
 echo 1 > $ok/.outline-offset
 echo 16 > $ok/.outline-curvature
 
-ln /gui/new/button $ok/v
+ln /gui/new/button $ok/view
 
-ln /gui/new/frame $cancel
+ln /gui/new/frame v/cancel/view
 
 echo 58 > $cancel/width
 echo 20 > $cancel/height
 echo 84 > $cancel/.margin-right
 echo 13 > $cancel/.margin-bottom
 
-ln /gui/new/button $cancel/v
+ln /gui/new/button $cancel/view
 
 echo $iconid > $icon/v/data
 echo 1 > $icon/v/disabling
@@ -110,7 +110,7 @@ echo Cancel > $cancel/v/title
 ln -s $ok/v/click accept
 ln -s $cancel/v/click cancel
 
-ln /gui/new/defaultkeys $defaultkeys
+ln /gui/new/defaultkeys v/defaultkeys/view
 
 #echo 1 > $ok/v/disabled
 
