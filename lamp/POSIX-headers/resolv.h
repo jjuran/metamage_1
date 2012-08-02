@@ -89,11 +89,7 @@
 #define	_RESOLV_H_
 
 #include <sys/param.h>
-#if (!defined(BSD)) || (BSD < 199306)
-# include <sys/bitypes.h>
-#else
-# include <sys/types.h>
-#endif
+#include <sys/types.h>
 #include <sys/cdefs.h>
 #include <sys/socket.h>
 #include <stdio.h>
