@@ -69,18 +69,18 @@ namespace tool
 		
 		p7::link( "/gui/new/stack",       "view"          );
 		
-		p7::link( "/gui/new/scrollframe", "view/main/v"     );
-		p7::link( "/gui/new/frame",       "view/main/v/v"   );
-		p7::link( "/gui/new/textedit",    "view/main/v/v/v" );
+		p7::link( "/gui/new/scrollframe", "v/main/view"     );
+		p7::link( "/gui/new/frame",       "v/main/v/view"   );
+		p7::link( "/gui/new/textedit",    "v/main/v/v/view" );
 		
-		p7::symlink( "v/v", "view/main/v/target" );
+		p7::symlink( "v/v", "v/main/v/target" );
 		
-		p7::spew( "view/main/v/vertical",  STR_LEN( "1" "\n" ) );
-		p7::spew( "view/main/v/v/padding", STR_LEN( "4" "\n" ) );
+		p7::spew( "v/main/v/vertical",  STR_LEN( "1" "\n" ) );
+		p7::spew( "v/main/v/v/padding", STR_LEN( "4" "\n" ) );
 		
-		p7::symlink( "view/main/v/v/v/unlock", "accept" );
+		p7::symlink( "v/main/v/v/v/unlock", "accept" );
 		
-		p7::link( "/gui/new/defaultkeys", "view/defaultkeys/v" );
+		p7::link( "/gui/new/defaultkeys", "v/defaultkeys/view" );
 	}
 	
 	
@@ -90,7 +90,7 @@ namespace tool
 		
 		p7::ioctl( p7::open( "tty", p7::o_rdwr ), TIOCSCTTY, NULL );
 		
-		const char* gate = "view/main/v/v/v/gate";
+		const char* gate = "v/main/v/v/v/gate";
 		
 		char c;
 		
@@ -158,8 +158,8 @@ namespace tool
 		
 		make_window( title );
 		
-		const char* text = "view/main/v/v/v/text";
-		const char* lock = "view/main/v/v/v/lock";
+		const char* text = "v/main/v/v/v/text";
+		const char* lock = "v/main/v/v/v/lock";
 		
 		p7::pump( input, p7::open( text, p7::o_wronly | p7::o_trunc ) );
 		
