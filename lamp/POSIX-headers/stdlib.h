@@ -55,8 +55,10 @@ typedef	__wchar_t	wchar_t;
 #ifdef __MWERKS__
 #include <div_t.h>
 #ifdef __cplusplus
+#ifdef _MSL_USING_NAMESPACE
 using std::div_t;
 using std::ldiv_t;
+#endif
 #endif
 #else
 typedef struct {
