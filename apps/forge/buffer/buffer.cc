@@ -69,8 +69,6 @@ namespace tool
 		
 		p7::link( "/gui/new/stack",       "view"          );
 		
-		struct stat sb;
-		
 		p7::link( "/gui/new/scrollframe", "view/main/v"     );
 		p7::link( "/gui/new/frame",       "view/main/v/v"   );
 		p7::link( "/gui/new/textedit",    "view/main/v/v/v" );
