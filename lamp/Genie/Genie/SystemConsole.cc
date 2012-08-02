@@ -68,18 +68,18 @@ namespace Genie
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
 		
-		FSTreePtr subview = ResolveRelativePath( STR_LEN( "view/v" ), cwd );
+		FSTreePtr subview = ResolveRelativePath( STR_LEN( "v/view" ), cwd );
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
 		
-		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "view/v/v" ), cwd );
+		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "v/v/view" ), cwd );
 		
 		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
 		
-		symlink( ResolveRelativePath( STR_LEN( "view/target" ), cwd ).get(), "v/v" );
+		symlink( ResolveRelativePath( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
 		
-		Spew( ResolveRelativePath( STR_LEN( "view/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "view/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
+		Spew( ResolveRelativePath( STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static FSTreePtr GetConsoleWindow()
@@ -93,7 +93,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleText()
 	{
-		FSTreePtr text = ResolveRelativePath( STR_LEN( "view/v/v/text" ), GetConsoleWindow().get() );
+		FSTreePtr text = ResolveRelativePath( STR_LEN( "v/v/v/text" ), GetConsoleWindow().get() );
 		
 		return text;
 	}

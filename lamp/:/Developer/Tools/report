@@ -13,15 +13,15 @@ echo 4 > w/text-font
 echo 9 > w/text-size
 
 ln /gui/new/scrollframe  view
-ln /gui/new/frame        view/v
-ln /gui/new/console      view/v/v
+ln /gui/new/frame        v/view
+ln /gui/new/console      v/v/view
 
-ln -s v/v view/target
+ln -s v/v v/target
 
-echo 1 > view/vertical
-echo 4 > view/v/padding
+echo 1 > v/vertical
+echo 4 > v/v/padding
 
-mv view/v/v/tty tty
+mv v/v/v/tty tty
 
 daemonize --cwd --ctty=tty chain cat "$1" ';' idle
 

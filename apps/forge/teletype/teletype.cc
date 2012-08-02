@@ -74,15 +74,15 @@ int main( int argc, char const *const argv[] )
 	p7::spew( "w/text-size", STR_LEN( "9" "\n" ) );
 	
 	p7::link( "/gui/new/scrollframe", "view"     );
-	p7::link( "/gui/new/frame",       "view/v"   );
-	p7::link( "/gui/new/console",     "view/v/v" );
+	p7::link( "/gui/new/frame",       "v/view"   );
+	p7::link( "/gui/new/console",     "v/v/view" );
 	
-	p7::symlink( "v/v", "view/target" );
+	p7::symlink( "v/v", "v/target" );
 	
-	p7::spew( "view/vertical", STR_LEN( "1" "\n" ) );
-	p7::spew( "view/v/padding", STR_LEN( "4" "\n" ) );
+	p7::spew( "v/vertical", STR_LEN( "1" "\n" ) );
+	p7::spew( "v/v/padding", STR_LEN( "4" "\n" ) );
 	
-	p7::rename( "view/v/v/tty", "tty" );
+	p7::rename( "v/v/v/tty", "tty" );
 	
 	n::owned< p7::fd_t > tty = p7::open( "tty", p7::o_rdwr );
 	

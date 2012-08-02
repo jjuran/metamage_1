@@ -34,9 +34,9 @@
 /*
 	cd /gui/new/port
 	ln /gui/new/stack view
-	ln /gui/new/color view/background
-	ln /gui/new/frame view
-	ls view
+	ln /gui/new/color v/background/view
+	ln /gui/new/frame v/frame/view
+	ls v
 		frame
 		background
 	
@@ -168,7 +168,8 @@ namespace Genie
 	
 	static const vfs::fixed_mapping stack_mappings[] =
 	{
-		{ "v", &stack_subview_factory },
+		{ "view", &stack_subview_factory },
+		{ "v",    &stack_subview_factory },
 		
 		{ NULL, NULL }
 	};

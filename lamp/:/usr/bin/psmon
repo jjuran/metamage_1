@@ -24,12 +24,12 @@ echo 000 > w/back-color
 echo 0f0 > w/fore-color
 
 /bin/ln /gui/new/frame   view
-/bin/ln /gui/new/caption view/v
+/bin/ln /gui/new/caption v/view
 
-echo 4 > view/padding
-echo 0 > view/v/wrapped
+echo 4 > v/padding
+echo 0 > v/v/wrapped
 
-/usr/bin/daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2 > view/v/text
+/usr/bin/daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2 > v/v/text
 
 echo 1 > vis
 
