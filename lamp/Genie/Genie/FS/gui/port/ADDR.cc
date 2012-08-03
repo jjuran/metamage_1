@@ -61,6 +61,7 @@
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/open.hh"
+#include "vfs/primitives/resolve.hh"
 
 // relix
 #include "relix/api/root.hh"
@@ -82,6 +83,16 @@ namespace Genie
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
+	
+#ifdef __RELIX__
+	
+	const bool w_dir_is_real = false;
+	
+#else
+	
+	const bool w_dir_is_real = true;
+	
+#endif
 	
 	static const char* gGestures[] =
 	{
@@ -1018,7 +1029,14 @@ namespace Genie
 		const vfs::node_method_set& methods = exists ? window_methods
 		                                             : unwindow_methods;
 		
-		return new vfs::node( parent, name, mode, &methods );
+		vfs::node_ptr node( new vfs::node( parent, name, mode, &methods ) );
+		
+		if ( w_dir_is_real  &&  mode == (S_IFLNK | 0777) )
+		{
+			return resolve( *relix::root(), *node );
+		}
+		
+		return node;
 	}
 	
 	static vfs::node_ptr new_focus( const vfs::node*     parent,
