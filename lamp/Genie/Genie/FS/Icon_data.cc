@@ -436,16 +436,18 @@ namespace Genie
 		
 		SInt16 resID;
 		
+		size_t actual_byte_count = byteCount;
+		
 		if ( (GetFlags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
 		{
 			resID = gear::parse_decimal( buffer );
 			
 			buffer = (const char*) &resID;
 			
-			byteCount = sizeof (::ResID);
+			actual_byte_count = sizeof (::ResID);
 		}
 		
-		itsData->Write( buffer, byteCount );
+		itsData->Write( buffer, actual_byte_count );
 		
 		const FSTree* view = ViewKey();
 		
