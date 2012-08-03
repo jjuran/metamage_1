@@ -412,8 +412,9 @@ namespace Genie
 	{
 		const bool exists = view_exists( parent );
 		
-		const mode_t mode = exists ? S_IFDIR | 0700
-		                           : 0;
+		const mode_t mode = !exists ? 0
+		                  : name.size() == 1 ? S_IFDIR | 0700
+		                  :                    S_IFREG | 0600;
 		
 		const node_method_set& methods = exists ? view_methods
 		                                        : unview_methods;
