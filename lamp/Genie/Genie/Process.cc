@@ -57,9 +57,6 @@
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
-// GetPathname
-#include "GetPathname.hh"
-
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"
 
@@ -396,7 +393,6 @@ namespace Genie
 	{
 		FSTreePtr                   executable;
 		std::vector< const char* >  argVector;
-		plus::string                scriptPath;
 		plus::string                interpreterPath;
 		plus::string                interpreterArg;
 		
@@ -495,37 +491,6 @@ namespace Genie
 			}
 			
 			context.executable = ResolvePathname( context.interpreterPath, cwd );
-		}
-		else if ( type == 'MPST' )
-		{
-			context.scriptPath = GetMacPathname( fileSpec );
-			
-			const int newTokenCount = 3;
-			const int skipCount = 1;  // skip the script's name because we're overwriting it anyway
-			
-			// E.g. "$ script foo bar"
-			// argv == { "script", "foo", "bar", "baz", NULL }
-			
-			context.argVector.resize( context.argVector.size() + newTokenCount );
-			
-			const char* const* const argv = &context.argVector.front();
-			
-			// argv == { "script", "foo", "bar", "baz", NULL, ??, ?? }
-			
-			std::copy_backward( context.argVector.begin() + skipCount,
-			                    context.argVector.end() - newTokenCount,
-			                    context.argVector.end() );
-			
-			// argv == { "script", "foo", "bar", "foo", "bar", "baz", NULL }
-			
-			context.argVector[ 0 ] = "/Developer/Tools/tlsrvr";
-			context.argVector[ 1 ] = "--escape";
-			context.argVector[ 2 ] = "--";
-			context.argVector[ 3 ] = context.scriptPath.c_str();  // Overwrite with full pathname
-			
-			// argv == { "sh", "--", "/usr/bin/script", "foo", "bar", "baz", NULL }
-			
-			context.executable = ResolveAbsolutePath( STR_LEN( "/Developer/Tools/tlsrvr" ) );
 		}
 		else
 		{
