@@ -3,10 +3,10 @@
 	----------------
 */
 
-#include "Genie/signal_traits.hh"
+#include "relix/signal/signal_traits.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	const signal_traits global_signal_traits[] =
