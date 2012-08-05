@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef GENIE_TASK_SIGNALHANDLERS_HH
-#define GENIE_TASK_SIGNALHANDLERS_HH
+#ifndef RELIX_TASK_SIGNALHANDLERS_HH
+#define RELIX_TASK_SIGNALHANDLERS_HH
 
 // plus
 #include "plus/ref_count.hh"
@@ -14,7 +14,7 @@
 struct sigaction;
 
 
-namespace Genie
+namespace relix
 {
 	
 	class signal_handlers;

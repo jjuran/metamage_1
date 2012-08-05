@@ -8,6 +8,7 @@
 
 // Relix
 #include "relix/parameter_block.h"
+#include "relix/task/signal_handlers.hh"
 
 // Debug
 #include "debug/boost_assert.hh"
@@ -37,7 +38,6 @@
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
 #include "Genie/task/fs_info.hh"
-#include "Genie/task/signal_handlers.hh"
 #include "Genie/task/memory_data.hh"
 
 
@@ -113,7 +113,7 @@ namespace Genie
 			
 			boost::intrusive_ptr< fd_table > itsFileDescriptors;
 			
-			boost::intrusive_ptr< signal_handlers > its_signal_handlers;
+			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
 			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;

@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "Genie/task/signal_handlers.hh"
+#include "relix/task/signal_handlers.hh"
 
 // Standard C
 #include <string.h>
@@ -12,7 +12,7 @@
 #include <signal.h>
 
 
-namespace Genie
+namespace relix
 {
 	
 	class signal_handlers_impl : public signal_handlers
@@ -83,7 +83,7 @@ namespace Genie
 	
 	void signal_handlers::swap( signal_handlers& other )
 	{
-		Genie::swap( static_cast< signal_handlers_impl& >( *this ),
+		relix::swap( static_cast< signal_handlers_impl& >( *this ),
 		             static_cast< signal_handlers_impl& >( other ) );
 	}
 	

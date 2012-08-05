@@ -625,7 +625,7 @@ namespace Genie
 		itsName               ( "init" ),
 		its_fs_info           ( fs_info::create( opendir( FSRoot() ) ) ),
 		itsFileDescriptors    ( fd_table::create() ),
-		its_signal_handlers   ( signal_handlers::create() ),
+		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
