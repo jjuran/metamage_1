@@ -8,6 +8,8 @@
 #ifndef EXTENDEDAPISET_PART2_H
 #define EXTENDEDAPISET_PART2_H
 
+#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
+
 // POSIX
 #include <dirent.h>
 #include <sys/types.h>
@@ -15,8 +17,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
 #ifndef O_DIRECTORY
 #define O_DIRECTORY  0
@@ -69,11 +69,11 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
-#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
-
 #ifdef __cplusplus
 }
 #endif
+
+#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
 #endif
 
