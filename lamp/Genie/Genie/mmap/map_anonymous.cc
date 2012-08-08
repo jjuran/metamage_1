@@ -22,7 +22,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	vfs::memory_mapping_ptr map_anonymous( std::size_t length )
+	vfs::memory_mapping_ptr map_anonymous( std::size_t length, int prot, int flags )
 	{
 		::Handle h = NULL;
 		

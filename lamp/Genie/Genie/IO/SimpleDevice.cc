@@ -39,7 +39,7 @@ namespace Genie
 	//
 	SimpleDeviceHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
-		return map_anonymous( length );
+		return map_anonymous( length, prot, flags );
 	}
 	
 }
