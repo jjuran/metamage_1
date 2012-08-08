@@ -8,6 +8,7 @@
 
 // Relix
 #include "relix/parameter_block.h"
+#include "relix/restack.h"
 #include "tool-runtime/parameter_block.h"
 
 
@@ -46,6 +47,12 @@ extern int         main( int argc, char** argv );
 extern void exit( int );
 
 
+static
+void run( int argc, char** argv )
+{
+	exit( main( argc, argv ) );
+}
+
 void _relix_main( int argc, char** argv, char** envp, system_pb* pb )
 {
 	const size_t min_size = offsetof( system_pb, runctl ) + sizeof (long (*)());
@@ -73,5 +80,5 @@ void _relix_main( int argc, char** argv, char** envp, system_pb* pb )
 		pb->runctl( runctl_allocate_syscall_stack );
 	}
 	
-	exit( main( argc, argv ) );
+	_relix_restack( sizeof (int) + sizeof (char**), &run, argc, argv );
 }
