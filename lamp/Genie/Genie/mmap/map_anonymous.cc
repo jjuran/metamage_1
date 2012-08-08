@@ -48,7 +48,7 @@ namespace Genie
 			memset( *handle.get(), '\0', length );
 		}
 		
-		return new Handle_memory_mapping( handle );
+		return new Handle_memory_mapping( handle, length, flags );
 	}
 	
 }

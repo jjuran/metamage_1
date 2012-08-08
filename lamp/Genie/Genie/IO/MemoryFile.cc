@@ -75,7 +75,7 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new static_memory_mapping( itsBase + offset );
+		return new static_memory_mapping( itsBase + offset, length, flags );
 	}
 	
 }

@@ -54,7 +54,7 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::TempNewHandle( length );
 		
-		return new Handle_memory_mapping( h );
+		return new Handle_memory_mapping( h, length, flags );
 	}
 	
 	

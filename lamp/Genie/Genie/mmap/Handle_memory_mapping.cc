@@ -17,9 +17,11 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	Handle_memory_mapping::Handle_memory_mapping( nucleus::owned< N::Handle > h )
+	Handle_memory_mapping::Handle_memory_mapping( nucleus::owned< Mac::Handle >  h,
+	                                              Size                           size,
+	                                              int                            flags )
 	:
-		memory_mapping( *h.get() ),
+		memory_mapping( *h.get(), size, flags ),
 		its_handle( h )
 	{
 		N::HLock( its_handle );
