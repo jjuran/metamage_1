@@ -40,12 +40,12 @@ namespace Genie
 			{
 			}
 			
-			memory_mapping_ptr Map( size_t length, off_t offset );
+			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 	memory_mapping_ptr
 	//
-	TempMem_IOHandle::Map( size_t length, off_t offset )
+	TempMem_IOHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
 		if ( offset != 0 )
 		{

@@ -147,7 +147,7 @@ namespace Genie
 	
 	memory_mapping_ptr
 	//
-	RegularFileHandle::Map( size_t length, off_t offset )
+	RegularFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
 		memory_mapping* mapping = NULL;
 		
