@@ -103,8 +103,10 @@ namespace Genie
 	
 	void memory_data_impl::swap( memory_data_impl& other )
 	{
-		Genie::swap( its_parameters,      other.its_parameters      );
-		Genie::swap( its_memory_mappings, other.its_memory_mappings );
+		using Genie::swap;
+		
+		swap( its_parameters,      other.its_parameters      );
+		swap( its_memory_mappings, other.its_memory_mappings );
 	}
 	
 	inline void swap( memory_data_impl& a, memory_data_impl& b )
