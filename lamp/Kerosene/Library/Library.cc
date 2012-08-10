@@ -571,13 +571,6 @@ int unlink( const char* path )
 	return unlinkat( AT_FDCWD, path, 0 );
 }
 
-pid_t fork()
-{
-	errno = ENOSYS;
-	
-	return -1;
-}
-
 int gethostname( char* result, size_t buffer_length )
 {
 	struct utsname uts;

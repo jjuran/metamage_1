@@ -8,7 +8,7 @@
 
 
 DEFINE_SYSCALL_7F( _exit )
-
+DEFINE_SYSCALL_7F( fork  )
 DEFINE_SYSCALL_7F( read  )
 DEFINE_SYSCALL_7F( write )
 DEFINE_SYSCALL_7F( openat )
