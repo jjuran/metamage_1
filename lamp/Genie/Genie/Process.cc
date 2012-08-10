@@ -35,6 +35,7 @@
 
 // relix-include
 #include "relix/syscalls.h"
+#include "relix/task/syscall_stack_base.hh"
 
 // Iota
 #include "iota/strings.hh"
@@ -97,6 +98,7 @@
 #include "relix/task/process_resources.hh"
 #include "relix/task/scheduler.hh"
 #include "relix/task/session.hh"
+#include "relix/task/thread_syscall_stack_base.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
@@ -610,6 +612,85 @@ namespace Genie
 		
 	}
 	
+#ifdef __RELIX__
+#ifdef __MC68K__
+	
+	static
+	asm int child_return_from_fork( void* stack : __a0 )
+	{
+		MOVEA.L  A0,SP
+		MOVEQ    #0,D0
+		MOVE.L  (SP)+,A6
+		RTS
+	}
+	
+#endif
+	
+#ifdef __POWERPC__
+	
+	static
+	asm int child_return_from_fork( void* stack )
+	{
+		nofralloc
+		
+		mr    SP,r3
+		
+		sub   r3,r3,r3
+		
+		lwz   sp,0(sp)  // pop
+		
+		lwz   r0,8(sp)
+		mtlr  r0
+		
+		blr
+	}
+	
+#endif
+#else  // #ifdef __RELIX__
+	
+	static
+	int child_return_from_fork( void* stack )
+	{
+		return 0;
+	}
+	
+#endif
+	
+	const size_t fork_stack_length = TARGET_CPU_68K ? 4 *  4
+	                                                : 4 * 16;
+	
+	static inline
+	void* get_syscall_stack_top( const relix::thread& thread )
+	{
+		char* base = (char*) relix::base_address_of_syscall_stack( thread );
+		
+		return base - fork_stack_length;
+	}
+	
+	static
+	void* fork_start( void* param, const void* bottom, const void* limit )
+	{
+		Process& thread = *(Process*) param;
+		
+		relix::process_image& image = thread.get_process().get_process_image();
+		
+		_relix_user_parameter_block& pb = image.param_block();
+		
+		global_parameter_block.current_user = &pb;
+		
+		gCurrentProcess = &thread;
+		
+		// Accumulate any system time between start and entry to main()
+		relix::leave_system();
+		
+		void* stack = get_syscall_stack_top( thread );
+		
+		child_return_from_fork( stack );
+		
+		// Not reached
+		return NULL;
+	}
+	
 	static void close_fd_on_exec( void* keep, int fd, vfs::file_descriptor& desc )
 	{
 		if ( desc.will_close_on_exec() )
@@ -713,6 +794,29 @@ namespace Genie
 	relix::os_thread_box new_thread( Process& task )
 	{
 		return new_thread( &Process::thread_start, task );
+	}
+	
+	pid_t Process::fork()
+	{
+		Process& child = NewProcess( *this );
+		
+		child.allocate_syscall_stack();
+		
+		void* child_stack_top  = get_syscall_stack_top( child );
+		void* parent_stack_top = get_syscall_stack_top( *this );
+		
+		memcpy( child_stack_top, parent_stack_top, fork_stack_length );
+		
+		relix::process& child_process = child.get_process();
+		
+		child_process.unshare_per_fork();
+		child_process.unshare_vm();
+		
+		relix::os_thread_box thread = new_thread( &fork_start, child );
+		
+		child.swap_os_thread( thread );
+		
+		return child.GetPID();
 	}
 	
 	void Process::Exec( const char*         path,
