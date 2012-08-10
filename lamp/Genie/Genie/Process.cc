@@ -697,15 +697,22 @@ namespace Genie
 		gCurrentProcess = NULL;
 	}
 	
-	static relix::os_thread_box new_thread( Process& task )
+	static
+	relix::os_thread_box new_thread( cthread::start_proc start, Process& task )
 	{
 		const std::size_t min_stack = minimum_stack_size();
 		
-		return new_os_thread( &Process::thread_start,
+		return new_os_thread( start,
 		                      &task,
 		                      min_stack,
 		                      &thread_switch_in,
 		                      &thread_switch_out );
+	}
+	
+	static inline
+	relix::os_thread_box new_thread( Process& task )
+	{
+		return new_thread( &Process::thread_start, task );
 	}
 	
 	void Process::Exec( const char*         path,
