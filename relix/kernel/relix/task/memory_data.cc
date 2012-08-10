@@ -54,12 +54,8 @@ namespace relix
 			
 			program_parameters  its_parameters;
 			mmap_list           its_memory_mappings;
-		
-		public:
-			memory_data_impl()
-			{
-			}
 			
+			// privately copyable
 			memory_data_impl( const memory_data_impl& x )
 			{
 				/*
@@ -76,6 +72,11 @@ namespace relix
 					the process, including argv/envp pointers and string data
 					and private mmap regions.
 				*/
+			}
+		
+		public:
+			memory_data_impl()
+			{
 			}
 			
 			const memory_tract* find( addr_t addr ) const;
@@ -199,11 +200,6 @@ namespace relix
 	memory_data* memory_data::create()
 	{
 		return new memory_data_impl();
-	}
-	
-	memory_data* duplicate( const memory_data& x )
-	{
-		return new memory_data_impl( static_cast< const memory_data_impl& >( x ) );
 	}
 	
 	void destroy( const memory_data* x )

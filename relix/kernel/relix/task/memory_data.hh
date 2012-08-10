@@ -71,8 +71,6 @@ namespace relix
 		a.swap( b );
 	}
 	
-	memory_data* duplicate( const memory_data& one );
-	
 }
 
 #endif
