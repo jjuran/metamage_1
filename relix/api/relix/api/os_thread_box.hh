@@ -15,6 +15,8 @@ namespace relix
 	
 	typedef void* (*os_thread_start_type)( void*, const void*, const void* );
 	
+	typedef void (*os_thread_switch_type)( void* );
+	
 	class os_thread;
 	
 	class os_thread_box
@@ -45,7 +47,11 @@ namespace relix
 			}
 	};
 	
-	os_thread_box new_os_thread( os_thread_start_type start, void* param, int stack_size );
+	os_thread_box new_os_thread( os_thread_start_type   start,
+	                             void*                  param,
+	                             int                    stack_size,
+	                             os_thread_switch_type  switch_in  = 0,
+	                             os_thread_switch_type  switch_out = 0 );
 	
 	os_thread_id get_os_thread_id( const os_thread& thread );
 	

@@ -43,6 +43,9 @@ namespace relix
 		os_thread_start_type  start;
 		void*                 param;
 		
+		os_thread_switch_type  switch_in;
+		os_thread_switch_type  switch_out;
+		
 		const void*   stack_bottom;
 		const void*   stack_limit;
 	};
@@ -52,6 +55,8 @@ namespace relix
 		private:
 			typedef void* (*start_function_type)( void*, const void*, const void* );
 			
+			typedef void (*switch_function_type)( void* );
+			
 			os_thread_param its_param;
 			
 			os_thread_id its_id;
@@ -60,7 +65,11 @@ namespace relix
 			os_thread& operator=( const os_thread& );
 		
 		public:
-			os_thread( start_function_type start, void* param, int stack_size );
+			os_thread( start_function_type   start,
+			           void*                 param,
+			           int                   stack_size,
+			           switch_function_type  switch_in,
+			           switch_function_type  switch_out );
 			
 			~os_thread();
 			
@@ -106,10 +115,37 @@ namespace relix
 	}
 	
 	
-	os_thread::os_thread( start_function_type start, void* param, int stack_size )
+	static pascal void ThreadSwitchIn( ThreadID thread, void* param_ )
+	{
+		const os_thread_param& param = *(os_thread_param*) param_;
+		
+		if ( param.switch_in )
+		{
+			param.switch_in( param.param );
+		}
+	}
+	
+	static pascal void ThreadSwitchOut( ThreadID thread, void* param_ )
+	{
+		const os_thread_param& param = *(os_thread_param*) param_;
+		
+		if ( param.switch_out )
+		{
+			param.switch_out( param.param );
+		}
+	}
+	
+	os_thread::os_thread( start_function_type   start,
+	                      void*                 param,
+	                      int                   stack_size,
+	                      switch_function_type  switch_in,
+	                      switch_function_type  switch_out )
 	{
 		its_param.start = start;
 		its_param.param = param;
+		
+		its_param.switch_in  = switch_in;
+		its_param.switch_out = switch_out;
 		
 		its_param.stack_bottom = NULL;
 		its_param.stack_limit  = NULL;
@@ -133,6 +169,12 @@ namespace relix
 		                   &its_id );
 		
 		Mac::ThrowOSStatus( err );
+		
+		static ThreadSwitchUPP switchIn  = NewThreadSwitchUPP( ThreadSwitchIn  );
+		static ThreadSwitchUPP switchOut = NewThreadSwitchUPP( ThreadSwitchOut );
+		
+		if ( switch_in  )  SetThreadSwitcher( its_id, switchIn,  &its_param, true  );
+		if ( switch_out )  SetThreadSwitcher( its_id, switchOut, &its_param, false );
 	}
 	
 	os_thread::~os_thread()
@@ -217,9 +259,17 @@ namespace relix
 		that.its_thread = temp;
 	}
 	
-	os_thread_box new_os_thread( os_thread_start_type start, void* param, int stack_size )
+	os_thread_box new_os_thread( os_thread_start_type   start,
+	                             void*                  param,
+	                             int                    stack_size,
+	                             os_thread_switch_type  switch_in,
+	                             os_thread_switch_type  switch_out )
 	{
-		return os_thread_box( *new os_thread( start, param, stack_size ) );
+		return os_thread_box( *new os_thread( start,
+		                                      param,
+		                                      stack_size,
+		                                      switch_in,
+		                                      switch_out ) );
 	}
 	
 	os_thread_id get_os_thread_id( const os_thread& thread )
