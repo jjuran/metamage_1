@@ -257,4 +257,14 @@ namespace relix
 		impl_cast( this )->its_memory_mappings.clear();
 	}
 	
+	void memory_data::back_up()
+	{
+		impl_cast( this )->back_up();
+	}
+	
+	void memory_data::restore()
+	{
+		impl_cast( this )->restore();
+	}
+	
 }

@@ -60,6 +60,9 @@ namespace relix
 			void remove_memory_mapping( addr_t key );
 			
 			void clear_memory_mappings();
+			
+			void back_up();
+			void restore();
 	};
 	
 	inline void swap( memory_data& a, memory_data& b )
