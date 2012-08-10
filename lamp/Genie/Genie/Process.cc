@@ -1540,8 +1540,6 @@ namespace Genie
 	}
 	
 	
-	static const UInt32 gMinimumSleepIntervalTicks = 2;
-	
 	void Process::Breathe()
 	{
 		Pause( kProcessRunning );
