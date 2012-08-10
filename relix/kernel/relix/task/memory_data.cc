@@ -76,6 +76,9 @@ namespace relix
 			
 			void erase_memory_mapping( addr_t addr );
 			
+			void back_up();
+			void restore();
+			
 			void swap( memory_data_impl& other );
 	};
 	
@@ -122,6 +125,30 @@ namespace relix
 				
 				break;
 			}
+		}
+	}
+	
+	void memory_data_impl::back_up()
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter end = its_memory_mappings.end();
+		
+		for ( Iter it = its_memory_mappings.begin();  it != end;  ++it )
+		{
+			it->back_up();
+		}
+	}
+	
+	void memory_data_impl::restore()
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter end = its_memory_mappings.end();
+		
+		for ( Iter it = its_memory_mappings.begin();  it != end;  ++it )
+		{
+			it->restore();
 		}
 	}
 	
