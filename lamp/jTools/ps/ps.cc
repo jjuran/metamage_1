@@ -55,6 +55,11 @@ namespace tool
 	static p7::fd_t g_proc = p7::open( "/proc", p7::o_rdonly | p7::o_directory ).release();
 	
 	
+	static inline bool is_ascii( signed char c )
+	{
+		return c >= 0;
+	}
+	
 	static plus::string left_padded( const char* begin, const char* end, unsigned length )
 	{
 		length = std::max< unsigned >( length, end - begin );
@@ -190,7 +195,14 @@ namespace tool
 		
 		if ( !globally_wide  &&  report.size() > incoming_report_size + 80 )
 		{
-			report.resize( incoming_report_size + 80 );
+			size_t new_size = incoming_report_size + 80;
+			
+			if ( !is_ascii( report[ new_size ] ) )
+			{
+				do {} while ( !is_ascii( report[ --new_size ] ) );
+			}
+			
+			report.resize( new_size );
 		}
 		
 		report += "\n";
