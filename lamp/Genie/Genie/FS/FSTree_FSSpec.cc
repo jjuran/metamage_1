@@ -937,6 +937,27 @@ namespace Genie
 	}
 	
 	
+	static bool is_possibly_masked_symlink( const CInfoPBRec& cInfo )
+	{
+		const HFileInfo& hFileInfo = cInfo.hFileInfo;
+		
+		if ( hFileInfo.ioResult != 0 )
+		{
+			return false;  // doesn't exist
+		}
+		
+		if ( hFileInfo.ioFlAttrib & kioFlAttribDirMask )
+		{
+			return false;  // directory
+		}
+		
+		const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
+		
+		// 'slnk'/'rhap' files show up as 'TEXT'/'MACS' in Classic
+		
+		return fInfo.fdType == 'TEXT'  &&  fInfo.fdCreator == 'MACS';
+	}
+	
 	static FSTreePtr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
 	                                        const plus::string&  name,
 	                                        const FSTree*        parent )
@@ -948,6 +969,24 @@ namespace Genie
 		const bool async = false;
 		
 		FSpGetCatInfo< FNF_Returns >( cInfo, async, dir.vRefNum, dir.dirID, macName, 0 );
+		
+		if ( MacFeatures::Is_BlueBoxed()  &&  is_possibly_masked_symlink( cInfo ) )
+		{
+			FSSpec spec = { dir.vRefNum, dir.dirID };
+			
+			memcpy( spec.name, macName, 1 + macName[0] );
+			
+			FSRef ref = N::FSpMakeFSRef( spec );
+			
+			FSCatalogInfo info;
+			
+			N::FSGetCatalogInfo( ref, kFSCatInfoFinderInfo, &info, NULL, NULL, NULL );
+			
+			const FileInfo& fileInfo = *(const FileInfo*) info.finderInfo;
+			
+			cInfo.hFileInfo.ioFlFndrInfo.fdType    = fileInfo.fileType;
+			cInfo.hFileInfo.ioFlFndrInfo.fdCreator = fileInfo.fileCreator;
+		}
 		
 		return new_HFS_node( cInfo, name, parent );
 	}
