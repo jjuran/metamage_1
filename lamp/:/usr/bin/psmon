@@ -2,7 +2,7 @@
 
 cd /gui/port/psmon
 
-/usr/bin/touch w/select 2> /dev/null  &&  exit  ||  /bin/true
+/usr/bin/touch w/select 2> /dev/null  &&  exit  ||  true
 
 exec 0>&2             # save fd 2
 exec 2> /dev/null     # discard stderr
