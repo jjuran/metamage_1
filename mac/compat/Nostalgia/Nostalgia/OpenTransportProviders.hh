@@ -6,6 +6,11 @@
 #ifndef NOSTALGIA_OPENTRANSPORTPROVIDERS_HH
 #define NOSTALGIA_OPENTRANSPORTPROVIDERS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __OPENTRANSPORTPROVIDERS__
 // OpenTransportProviders.h uses FSSpec but doesn't include Files.h
 #ifndef __FILES__

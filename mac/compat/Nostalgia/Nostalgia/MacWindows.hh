@@ -6,6 +6,11 @@
 #ifndef NOSTALGIA_MACWINDOWS_HH
 #define NOSTALGIA_MACWINDOWS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif

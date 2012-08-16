@@ -6,6 +6,11 @@
 #ifndef NOSTALGIA_OPENTRANSPORT_HH
 #define NOSTALGIA_OPENTRANSPORT_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif
