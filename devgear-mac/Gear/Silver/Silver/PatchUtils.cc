@@ -9,8 +9,10 @@
 #include "Silver/PatchUtils.hh"
 
 // Mac OS
+#ifdef __MACOS__
 #ifndef __PATCHES__
 #include <Patches.h>
+#endif
 #endif
 
 // iota
