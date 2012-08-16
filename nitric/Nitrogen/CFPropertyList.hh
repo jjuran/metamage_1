@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFPROPERTYLIST_HH
 #define NITROGEN_CFPROPERTYLIST_HH
 
+#ifndef __COREFOUNDATION_CFPROPERTYLIST__
 #ifndef __CFPROPERTYLIST__
 #include <CFPropertyList.h>
+#endif
 #endif
 
 #ifndef NUCLEUS_CONVERT_HH

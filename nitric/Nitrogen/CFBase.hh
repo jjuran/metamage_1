@@ -12,11 +12,15 @@
 #ifndef NITROGEN_CFBASE_HH
 #define NITROGEN_CFBASE_HH
 
+#ifndef __COREFOUNDATION_CFBASE__
 #ifndef __CFBASE__
 #include <CFBase.h>
 #endif
+#endif
+#ifndef __COREFOUNDATION_CFSTRING__
 #ifndef __CFSTRING__
 #include <CFString.h>
+#endif
 #endif
 
 // nucleus

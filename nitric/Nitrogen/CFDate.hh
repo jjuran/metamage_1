@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFDATE_HH
 #define NITROGEN_CFDATE_HH
 
+#ifndef __COREFOUNDATION_CFDATE__
 #ifndef __CFDATE__
 #include <CFDate.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

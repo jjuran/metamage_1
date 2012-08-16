@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFBUNDLE_HH
 #define NITROGEN_CFBUNDLE_HH
 
+#ifndef __COREFOUNDATION_CFBUNDLE__
 #ifndef __CFBUNDLE__
 #include <CFBundle.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

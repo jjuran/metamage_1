@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFURL_HH
 #define NITROGEN_CFURL_HH
 
+#ifndef __COREFOUNDATION_CFURL__
 #ifndef __CFURL__
 #include <CFURL.h>
+#endif
 #endif
 
 // Standard C/C++

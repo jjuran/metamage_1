@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFUUID_HH
 #define NITROGEN_CFUUID_HH
 
+#ifndef __COREFOUNDATION_CFUUID__
 #ifndef __CFUUID__
 #include <CFUUID.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

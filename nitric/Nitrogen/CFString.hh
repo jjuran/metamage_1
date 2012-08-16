@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFSTRING_HH
 #define NITROGEN_CFSTRING_HH
 
+#ifndef __COREFOUNDATION_CFSTRING__
 #ifndef __CFSTRING__
 #include <CFString.h>
+#endif
 #endif
 
 // iota
