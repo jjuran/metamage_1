@@ -10,6 +10,11 @@
 // This code was written entirely by the above contributors, who place it
 // in the public domain.
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>

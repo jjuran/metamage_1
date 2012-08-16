@@ -14,6 +14,12 @@
 #ifndef NITROGEN_SOUND_HH
 #define NITROGEN_SOUND_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __SOUND__
 #include <Sound.h>
 #endif

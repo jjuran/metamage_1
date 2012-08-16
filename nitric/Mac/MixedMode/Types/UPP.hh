@@ -11,6 +11,11 @@
 #ifndef MAC_MIXEDMODE_TYPES_UPP_HH
 #define MAC_MIXEDMODE_TYPES_UPP_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>

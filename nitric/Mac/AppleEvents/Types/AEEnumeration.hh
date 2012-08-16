@@ -6,6 +6,11 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEENUMERATION_HH
 #define MAC_APPLEEVENTS_TYPES_AEENUMERATION_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __ASREGISTRY__
 #include <ASRegistry.h>

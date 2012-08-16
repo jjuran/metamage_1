@@ -6,6 +6,11 @@
 #ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
 #define MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>

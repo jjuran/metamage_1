@@ -5,6 +5,12 @@
 
 #include "debug/assert.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_MACMEMORY_HH
 #define NITROGEN_MACMEMORY_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif

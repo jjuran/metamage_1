@@ -12,15 +12,24 @@
 #ifndef NITROGEN_CFPROPERTYLIST_HH
 #define NITROGEN_CFPROPERTYLIST_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFPROPERTYLIST__
 #ifndef __CFPROPERTYLIST__
 #include <CFPropertyList.h>
 #endif
 #endif
 
+// nucleus
 #ifndef NUCLEUS_CONVERT_HH
 #include "nucleus/convert.hh"
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif

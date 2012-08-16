@@ -3,6 +3,11 @@
  *	================
  */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 #ifndef GRAFX_PIXEL32_HH
 #define GRAFX_PIXEL32_HH
 

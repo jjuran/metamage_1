@@ -14,6 +14,12 @@
 #ifndef NITROGEN_LISTS_HH
 #define NITROGEN_LISTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __LISTS__
 #include <Lists.h>
 #endif

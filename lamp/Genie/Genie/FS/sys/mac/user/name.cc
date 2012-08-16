@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/mac/user/name.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
 // Mac OS
 #ifndef __COREFOUNDATION_CFBUNDLE__
 #ifndef __CFBUNDLE__

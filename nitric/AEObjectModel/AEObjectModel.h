@@ -6,6 +6,11 @@
 #ifndef AEOBJECTMODEL_AEOBJECTMODEL_H
 #define AEOBJECTMODEL_AEOBJECTMODEL_H
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

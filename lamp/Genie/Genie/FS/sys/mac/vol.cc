@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/mac/vol.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __LOWMEM__
 #include <LowMem.h>

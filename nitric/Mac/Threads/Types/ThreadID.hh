@@ -6,6 +6,11 @@
 #ifndef MAC_THREADS_TYPES_THREADID_HH
 #define MAC_THREADS_TYPES_THREADID_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __THREADS__
 #include <Threads.h>

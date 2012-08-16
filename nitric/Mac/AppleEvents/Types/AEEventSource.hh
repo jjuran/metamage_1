@@ -6,6 +6,11 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEEVENTSOURCE_HH
 #define MAC_APPLEEVENTS_TYPES_AEEVENTSOURCE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __APPLEEVENTS__
 #include <AppleEvents.h>

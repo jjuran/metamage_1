@@ -14,6 +14,12 @@
 #ifndef NITROGEN_OSA_HH
 #define NITROGEN_OSA_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __OSA__
 #include <OSA.h>
 #endif

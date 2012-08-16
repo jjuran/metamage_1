@@ -19,6 +19,11 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __GESTALT__
 #include <Gestalt.h>
 #endif

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_SCRAP_HH
 #define NITROGEN_SCRAP_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __SCRAP__
 #include <Scrap.h>
 #endif

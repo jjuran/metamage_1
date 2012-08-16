@@ -6,6 +6,11 @@
 #ifndef MAC_TOOLBOX_TYPES_BOOLEAN_HH
 #define MAC_TOOLBOX_TYPES_BOOLEAN_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>

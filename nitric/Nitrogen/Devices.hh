@@ -14,6 +14,11 @@
 #ifndef NITROGEN_DEVICES_HH
 #define NITROGEN_DEVICES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __DEVICES__
 #include <Devices.h>

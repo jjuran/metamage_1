@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/mac/thread/default-stack-size.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __THREADS__
 #include <Threads.h>

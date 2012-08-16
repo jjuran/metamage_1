@@ -5,6 +5,12 @@
 
 #include "Mac/Sound/Functions/SysBeep.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __SOUND__
 #include <Sound.h>
 #endif

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_CONTROLS_HH
 #define NITROGEN_CONTROLS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __CONTROLS__
 #include <Controls.h>
 #endif

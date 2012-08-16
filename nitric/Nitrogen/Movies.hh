@@ -14,6 +14,12 @@
 #ifndef NITROGEN_MOVIES_HH
 #define NITROGEN_MOVIES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <QuickTime/QuickTime.h>
+#endif
+
+// Mac OS
 #ifndef __MOVIES__
 #include <Movies.h>
 #endif

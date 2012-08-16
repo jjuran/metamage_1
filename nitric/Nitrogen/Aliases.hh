@@ -14,6 +14,12 @@
 #ifndef NITROGEN_ALIASES_HH
 #define NITROGEN_ALIASES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __ALIASES__
 #include <Aliases.h>
 #endif

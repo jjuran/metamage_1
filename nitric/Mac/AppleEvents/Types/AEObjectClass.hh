@@ -6,6 +6,12 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
 #define MAC_APPLEEVENTS_TYPES_AEOBJECTCLASS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

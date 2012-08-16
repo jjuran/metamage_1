@@ -23,6 +23,12 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif

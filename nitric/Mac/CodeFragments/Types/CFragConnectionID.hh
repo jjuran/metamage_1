@@ -6,6 +6,12 @@
 #ifndef MAC_CODEFRAGMENTS_TYPES_CFRAGCONNECTIONID_HH
 #define MAC_CODEFRAGMENTS_TYPES_CFRAGCONNECTIONID_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __CODEFRAGMENTS__
 #include <CodeFragments.h>
 #endif

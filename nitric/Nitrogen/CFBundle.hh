@@ -12,11 +12,19 @@
 #ifndef NITROGEN_CFBUNDLE_HH
 #define NITROGEN_CFBUNDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFBUNDLE__
 #ifndef __CFBUNDLE__
 #include <CFBundle.h>
 #endif
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif

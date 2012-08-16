@@ -22,6 +22,11 @@
 #ifndef __SEARCH__
 #define __SEARCH__
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __FILES__
 #include <Files.h>
 #endif

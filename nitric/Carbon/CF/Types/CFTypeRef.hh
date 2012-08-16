@@ -6,6 +6,12 @@
 #ifndef CARBON_CF_TYPES_CFTYPEREF_HH
 #define CARBON_CF_TYPES_CFTYPEREF_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFBASE__
 #ifndef __CFBASE__
 #include <CFBase.h>

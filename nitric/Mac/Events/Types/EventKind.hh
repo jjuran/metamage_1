@@ -6,6 +6,12 @@
 #ifndef MAC_EVENTS_TYPES_EVENTKIND_HH
 #define MAC_EVENTS_TYPES_EVENTKIND_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __EVENTS__
 #include <Events.h>
 #endif

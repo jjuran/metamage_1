@@ -7,6 +7,11 @@
 
 #include "Genie/Utilities/GetMachineName.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __GESTALT__
 #include <Gestalt.h>
 #endif

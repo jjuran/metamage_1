@@ -3,6 +3,11 @@
  *	==========
  */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __EVENTS__
 #include <Events.h>

@@ -5,6 +5,11 @@
 
 #include "Genie/IO/OTSocket.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __OPENTRANSPORTPROVIDERS__
 #include <OpenTransportProviders.h>

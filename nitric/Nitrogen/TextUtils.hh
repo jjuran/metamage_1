@@ -14,6 +14,11 @@
 #ifndef NITROGEN_TEXTUTILS_HH
 #define NITROGEN_TEXTUTILS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTUTILS__
 #include <TextUtils.h>

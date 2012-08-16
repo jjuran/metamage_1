@@ -12,6 +12,12 @@
 #ifndef NITROGEN_CGDATAPROVIDER_HH
 #define NITROGEN_CGDATAPROVIDER_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef CGDATAPROVIDER_H_
 #include <CGDataProvider.h>
 #endif

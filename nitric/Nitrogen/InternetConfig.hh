@@ -14,6 +14,12 @@
 #ifndef NITROGEN_INTERNETCONFIG_HH
 #define NITROGEN_INTERNETCONFIG_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __INTERNETCONFIG__
 #include <InternetConfig.h>
 #endif

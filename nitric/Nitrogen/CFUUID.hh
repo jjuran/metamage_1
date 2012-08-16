@@ -12,11 +12,19 @@
 #ifndef NITROGEN_CFUUID_HH
 #define NITROGEN_CFUUID_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFUUID__
 #ifndef __CFUUID__
 #include <CFUUID.h>
 #endif
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif

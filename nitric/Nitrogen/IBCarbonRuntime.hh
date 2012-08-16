@@ -14,9 +14,17 @@
 #ifndef NITROGEN_IBCARBONRUNTIME_HH
 #define NITROGEN_IBCARBONRUNTIME_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __IBCARBONRUNTIME__
 #include <IBCarbonRuntime.h>
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_MACWINDOWS_HH
 #include "Nitrogen/MacWindows.hh"
 #endif

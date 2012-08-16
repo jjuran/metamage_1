@@ -5,6 +5,11 @@
 
 #include "RunToolServer.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>

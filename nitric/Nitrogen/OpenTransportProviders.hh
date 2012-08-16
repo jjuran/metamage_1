@@ -14,6 +14,11 @@
 #ifndef NITROGEN_OPENTRANSPORTPROVIDERS_HH
 #define NITROGEN_OPENTRANSPORTPROVIDERS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 // OpenTransportProviders.h depends on FSSpec but doesn't include Files.h.
 #ifndef __FILES__

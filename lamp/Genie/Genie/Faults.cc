@@ -5,6 +5,11 @@
 
 #include "Genie/Faults.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACHINEEXCEPTIONS__
 #include <MachineExceptions.h>

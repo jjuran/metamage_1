@@ -6,6 +6,11 @@
 #ifndef MAC_RESOURCES_FUNCTIONS_RESERROR_HH
 #define MAC_RESOURCES_FUNCTIONS_RESERROR_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __RESOURCES__
 #include <Resources.h>

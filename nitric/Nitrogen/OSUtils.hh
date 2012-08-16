@@ -14,6 +14,12 @@
 #ifndef NITROGEN_OSUTILS_HH
 #define NITROGEN_OSUTILS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __OSUTILS__
 #include <OSUtils.h>
 #endif

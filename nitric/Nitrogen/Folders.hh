@@ -14,6 +14,12 @@
 #ifndef NITROGEN_FOLDERS_HH
 #define NITROGEN_FOLDERS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __FOLDERS__
 #include <Folders.h>
 #endif

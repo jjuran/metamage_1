@@ -6,6 +6,11 @@
 #ifndef MAC_TEXTEDIT_TYPES_TEHANDLE_HH
 #define MAC_TEXTEDIT_TYPES_TEHANDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
