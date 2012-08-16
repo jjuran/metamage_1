@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/app.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif

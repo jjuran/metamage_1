@@ -8,6 +8,11 @@
 // POSIX
 #include <sys/stat.h>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __FILES__
 #include <Files.h>

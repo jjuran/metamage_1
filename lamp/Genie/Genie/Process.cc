@@ -5,6 +5,11 @@
 
 #include "Genie/Process.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __PROCESSES__
 #include <Processes.h>

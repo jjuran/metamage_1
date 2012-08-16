@@ -5,6 +5,11 @@
 
 #include "Genie/FS/sys/app/menu/list.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __LOWMEM__
 #include <LowMem.h>

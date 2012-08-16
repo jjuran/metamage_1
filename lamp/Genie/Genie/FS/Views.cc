@@ -5,6 +5,11 @@
 
 #include "Genie/FS/Views.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
