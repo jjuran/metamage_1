@@ -35,7 +35,7 @@ inline int is_excessive_for_alloca( size_t size )
 	
 #endif
 	
-	return false;
+	return 0;  // false
 }
 
 
@@ -43,7 +43,7 @@ inline void* safe_alloca( size_t length )
 {
 	if ( is_excessive_for_alloca( length ) )
 	{
-		return NULL;
+		return 0;  // NULL
 	}
 	
 	return alloca( length );
