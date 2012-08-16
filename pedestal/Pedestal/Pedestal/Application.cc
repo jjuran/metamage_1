@@ -8,6 +8,11 @@
 // Standard C++
 #include <algorithm>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __CONTROLS__
 #include <Controls.h>

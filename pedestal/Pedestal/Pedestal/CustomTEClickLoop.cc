@@ -5,6 +5,11 @@
 
 #include "Pedestal/CustomTEClickLoop.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>

@@ -6,6 +6,11 @@
 #ifndef PEDESTAL_SCROLLBAR_HH
 #define PEDESTAL_SCROLLBAR_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __CONTROLS__
 #include <Controls.h>

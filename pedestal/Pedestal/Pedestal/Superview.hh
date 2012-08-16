@@ -6,6 +6,11 @@
 #ifndef PEDESTAL_SUPERVIEW_HH
 #define PEDESTAL_SUPERVIEW_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>

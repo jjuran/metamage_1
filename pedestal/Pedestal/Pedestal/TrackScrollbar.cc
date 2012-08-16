@@ -5,6 +5,11 @@
 
 #include "Pedestal/TrackScrollbar.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
