@@ -28,6 +28,11 @@
 #define GENERATENODATA 0
 #endif
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __MACERRORS__
 #include <MacErrors.h>
 #endif

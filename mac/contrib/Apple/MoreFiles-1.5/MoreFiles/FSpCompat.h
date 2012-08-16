@@ -22,6 +22,11 @@
 #ifndef __FSPCOMPAT__
 #define __FSPCOMPAT__
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 #ifndef __FILES__
 #include <Files.h>
 #endif
