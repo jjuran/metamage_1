@@ -1,11 +1,9 @@
 /*
 	pump.cc
 	-------
-	
-	Joshua Juran
 */
 
-#include "pump.h"
+#include "relix/pump.h"
 
 // Standard C++
 #include <algorithm>
