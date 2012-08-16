@@ -3,6 +3,11 @@
 	-------
 */
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef  __AEHELPERS__
 #include <AEHelpers.h>
