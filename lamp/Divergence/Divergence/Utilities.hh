@@ -12,6 +12,11 @@
 
 #endif
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
