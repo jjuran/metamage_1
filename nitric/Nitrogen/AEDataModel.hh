@@ -1521,12 +1521,12 @@ namespace Nitrogen
 	class AEReplaceDescData_Putter
 	{
 		private:
-			Mac::DescType                        theType;
-			nucleus::owned< Mac::AEDesc_Data >&  theDesc;
+			Mac::DescType      theType;
+			Mac::AEDesc_Data&  theDesc;
 		
 		public:
-			AEReplaceDescData_Putter( Mac::DescType                        type,
-			                          nucleus::owned< Mac::AEDesc_Data >&  desc )
+			AEReplaceDescData_Putter( Mac::DescType      type,
+			                          Mac::AEDesc_Data&  desc )
 			:
 				theType( type ),
 				theDesc( desc )
@@ -1541,7 +1541,7 @@ namespace Nitrogen
 	
 	template < Mac::DescType type >
 	inline void AEReplaceDescData( typename DescType_parameter< type >::type  data,
-	                               AEDesc&                                    result )
+	                               Mac::AEDesc_Data&                          result )
 	{
 		DescType_put< type >( data,
 		                      AEReplaceDescData_Putter( type, result ) );
