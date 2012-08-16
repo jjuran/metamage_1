@@ -6,8 +6,10 @@
 #ifndef CARBON_CF_TYPES_CFMUTABLESTRINGREF_HH
 #define CARBON_CF_TYPES_CFMUTABLESTRINGREF_HH
 
+#ifndef __COREFOUNDATION_CFSTRING__
 #ifndef __CFSTRING__
 #include <CFString.h>
+#endif
 #endif
 
 // nucleus

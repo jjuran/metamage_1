@@ -6,8 +6,10 @@
 #ifndef CARBON_CF_TYPES_CFTYPEREF_HH
 #define CARBON_CF_TYPES_CFTYPEREF_HH
 
+#ifndef __COREFOUNDATION_CFBASE__
 #ifndef __CFBASE__
 #include <CFBase.h>
+#endif
 #endif
 
 // nucleus

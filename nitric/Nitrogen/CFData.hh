@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFDATA_HH
 #define NITROGEN_CFDATA_HH
 
+#ifndef __COREFOUNDATION_CFDATA__
 #ifndef __CFDATA__
 #include <CFData.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

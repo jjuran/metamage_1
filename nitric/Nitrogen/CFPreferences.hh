@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFPREFERENCES_HH
 #define NITROGEN_CFPREFERENCES_HH
 
+#ifndef __COREFOUNDATION_CFPREFERENCES__
 #ifndef __CFPREFERENCES__
 #include <CFPreferences.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

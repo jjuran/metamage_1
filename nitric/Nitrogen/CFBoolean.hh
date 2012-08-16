@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFBOOLEAN_HH
 #define NITROGEN_CFBOOLEAN_HH
 
+#ifndef __COREFOUNDATION_CFNUMBER__
 #ifndef __CFNUMBER__
 #include <CFNumber.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"

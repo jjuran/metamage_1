@@ -7,8 +7,10 @@
 #define GENIE_UTILITIES_CFSTRINGGETSTDSTRING_HH
 
 // Mac OS
+#ifndef __COREFOUNDATION_CFSTRING__
 #ifndef __CFSTRING__
 #include <CFString.h>
+#endif
 #endif
 
 // plus

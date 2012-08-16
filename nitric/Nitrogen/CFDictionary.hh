@@ -12,8 +12,10 @@
 #ifndef NITROGEN_CFDICTIONARY_HH
 #define NITROGEN_CFDICTIONARY_HH
 
+#ifndef __COREFOUNDATION_CFDICTIONARY__
 #ifndef __CFDICTIONARY__
 #include <CFDictionary.h>
+#endif
 #endif
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
