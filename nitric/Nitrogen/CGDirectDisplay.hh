@@ -15,8 +15,10 @@
 #define NITROGEN_CGDIRECTDISPLAY_HH
 
 // Mac OS
+#ifndef __CGDIRECT_DISPLAY_H__
 #ifndef __CGDIRECTDISPLAY__
 #include <CGDirectDisplay.h>
+#endif
 #endif
 	
 // Nitrogen
