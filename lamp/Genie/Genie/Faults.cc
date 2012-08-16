@@ -14,9 +14,11 @@
 #include <signal.h>
 
 // Silver
+#if TARGET_CPU_68K
 #include "Silver/Patch.hh"
 #include "Silver/Procs.hh"
 #include "Silver/Traps.hh"
+#endif
 
 // Genie
 #include "Genie/Dispatch/system_call.68k.hh"
@@ -24,9 +26,6 @@
 
 namespace Genie
 {
-	
-	namespace Ag = Silver;
-	
 	
 	extern class Process* gCurrentProcess;  // defined in Process.cc
 	
@@ -67,6 +66,9 @@ namespace Genie
 	}
 	
 #if TARGET_CPU_68K
+	
+	namespace Ag = Silver;
+	
 	
 	extern void* gExceptionVectorTable[];
 	extern void* gExceptionUserHandlerTable[];
