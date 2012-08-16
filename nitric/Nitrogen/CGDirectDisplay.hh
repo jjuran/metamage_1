@@ -20,9 +20,11 @@
 #endif
 
 // Mac OS
+#ifndef CGDIRECTDISPLAY_H_
 #ifndef __CGDIRECT_DISPLAY_H__
 #ifndef __CGDIRECTDISPLAY__
 #include <CGDirectDisplay.h>
+#endif
 #endif
 #endif
 	
