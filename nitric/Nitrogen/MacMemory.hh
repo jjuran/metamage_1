@@ -483,7 +483,7 @@ namespace Nitrogen
 				HLock( result );
 			}
 			
-			char* begin = *result.get();
+			char* begin = *result.get().Get();
 			
 			get( begin, begin + size );
 			
