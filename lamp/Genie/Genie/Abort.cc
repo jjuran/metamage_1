@@ -3,6 +3,8 @@
  *	========
  */
 
+#ifdef __RELIX__
+
 // Mac OS
 #ifndef __PROCESSES__
 #include <Processes.h>
@@ -15,8 +17,6 @@
 // Genie
 #include "Genie/Faults.hh"
 
-
-#ifdef __RELIX__
 
 void abort()
 {
