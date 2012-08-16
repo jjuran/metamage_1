@@ -12,9 +12,17 @@
 #ifndef NITROGEN_CGIMAGE_HH
 #define NITROGEN_CGIMAGE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef CGIMAGE_H_
 #include <CGImage.h>
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_CGDATAPROVIDER_HH
 #include "Nitrogen/CGDataProvider.hh"
 #endif

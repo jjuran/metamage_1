@@ -14,6 +14,12 @@
 #ifndef NITROGEN_NAVIGATION_HH
 #define NITROGEN_NAVIGATION_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __NAVIGATION__
 #include <Navigation.h>
 #endif

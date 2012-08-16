@@ -12,6 +12,12 @@
 #ifndef NITROGEN_CFURL_HH
 #define NITROGEN_CFURL_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFURL__
 #ifndef __CFURL__
 #include <CFURL.h>

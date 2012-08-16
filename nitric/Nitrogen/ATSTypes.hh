@@ -14,6 +14,12 @@
 #ifndef NITROGEN_ATSTYPES_HH
 #define NITROGEN_ATSTYPES_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __ATSTYPES__
 #include <ATSTypes.h>
 #endif

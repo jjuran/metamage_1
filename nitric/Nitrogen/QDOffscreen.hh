@@ -14,12 +14,21 @@
 #ifndef NITROGEN_QDOFFSCREEN_HH
 #define NITROGEN_QDOFFSCREEN_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __QDOFFSCREEN__
 #include <QDOffscreen.h>
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_QUICKDRAW_HH
 #include "Nitrogen/Quickdraw.hh"
 #endif
+
 
 namespace Nitrogen
 {

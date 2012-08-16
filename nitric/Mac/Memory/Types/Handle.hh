@@ -6,6 +6,12 @@
 #ifndef MAC_MEMORY_TYPES_HANDLE_HH
 #define MAC_MEMORY_TYPES_HANDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif

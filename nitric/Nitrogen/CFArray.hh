@@ -12,14 +12,23 @@
 #ifndef NITROGEN_CFARRAY_HH
 #define NITROGEN_CFARRAY_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFARRAY__
 #ifndef __CFARRAY__
 #include <CFArray.h>
 #endif
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_CFBASE_HH
 #include "Nitrogen/CFBase.hh"
 #endif
+
 
 namespace Nitrogen
   {

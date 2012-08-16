@@ -14,6 +14,11 @@
 #ifndef NITROGEN_AEINTERACTION_HH
 #define NITROGEN_AEINTERACTION_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
 // Mac OS
 #ifndef __AEINTERACTION__
 #include <AEInteraction.h>

@@ -6,6 +6,12 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AECOMPOPERATOR_HH
 #define MAC_APPLEEVENTS_TYPES_AECOMPOPERATOR_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

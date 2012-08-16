@@ -6,6 +6,12 @@
 #ifndef MAC_LISTS_TYPES_LISTHANDLE_HH
 #define MAC_LISTS_TYPES_LISTHANDLE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __LISTS__
 #include <Lists.h>
 #endif

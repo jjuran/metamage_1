@@ -14,6 +14,12 @@
 #ifndef NITROGEN_ICONS_HH
 #define NITROGEN_ICONS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __ICONS__
 #include <Icons.h>
 #endif

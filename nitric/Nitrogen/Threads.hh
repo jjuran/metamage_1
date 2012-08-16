@@ -17,6 +17,11 @@
 // Standard C/C++
 #include <cstddef>
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __THREADS__
 #include <Threads.h>

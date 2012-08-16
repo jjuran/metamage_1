@@ -6,6 +6,11 @@
 #ifndef MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 #define MAC_APPLEEVENTS_UTILITIES_NONNULLAEDESCSARELIVE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
 // Mac OS
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_KEYCHAINCORE_HH
 #define NITROGEN_KEYCHAINCORE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __KEYCHAINCORE__
 #include <KeychainCore.h>
 #endif

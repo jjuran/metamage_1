@@ -6,6 +6,11 @@
 #ifndef MAC_RESOURCES_UTILITIES_CHECKEDRESOURCE_HH
 #define MAC_RESOURCES_UTILITIES_CHECKEDRESOURCE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACERRORS__
 #include <MacErrors.h>

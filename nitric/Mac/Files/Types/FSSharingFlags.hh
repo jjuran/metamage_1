@@ -6,6 +6,12 @@
 #ifndef MAC_FILES_TYPES_FSSHARINGFLAGS_HH
 #define MAC_FILES_TYPES_FSSHARINGFLAGS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif

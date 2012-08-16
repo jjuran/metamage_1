@@ -6,6 +6,12 @@
 #ifndef MAC_RESOURCES_TYPES_RESTYPE_HH
 #define MAC_RESOURCES_TYPES_RESTYPE_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __ALIASES__
 #include <Aliases.h>
 #endif

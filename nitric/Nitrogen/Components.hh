@@ -14,6 +14,12 @@
 #ifndef NITROGEN_COMPONENTS_HH
 #define NITROGEN_COMPONENTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
 #ifndef __COMPONENTS__
 #include <Components.h>
 #endif

@@ -12,6 +12,12 @@
 #ifndef NITROGEN_CFSTRING_HH
 #define NITROGEN_CFSTRING_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFSTRING__
 #ifndef __CFSTRING__
 #include <CFString.h>

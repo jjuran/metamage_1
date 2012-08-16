@@ -14,6 +14,12 @@
 #ifndef NITROGEN_MACWINDOWS_HH
 #define NITROGEN_MACWINDOWS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif

@@ -14,6 +14,12 @@
 #ifndef NITROGEN_AEOBJECTS_HH
 #define NITROGEN_AEOBJECTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __AEOBJECTS__
 #include <AEObjects.h>
 #endif

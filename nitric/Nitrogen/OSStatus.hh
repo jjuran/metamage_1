@@ -14,6 +14,11 @@
 #ifndef NITROGEN_OSSTATUS_HH
 #define NITROGEN_OSSTATUS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // Mac OS
 #ifndef __MACTYPES__
 #include <MacTypes.h>

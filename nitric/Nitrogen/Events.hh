@@ -14,6 +14,12 @@
 #ifndef NITROGEN_EVENTS_HH
 #define NITROGEN_EVENTS_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __EVENTS__
 #include <Events.h>
 #endif

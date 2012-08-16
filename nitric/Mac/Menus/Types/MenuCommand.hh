@@ -6,6 +6,12 @@
 #ifndef MAC_MENUS_TYPES_MENUCOMMAND_HH
 #define MAC_MENUS_TYPES_MENUCOMMAND_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
 #ifndef __MENUS__
 #include <Menus.h>
 #endif

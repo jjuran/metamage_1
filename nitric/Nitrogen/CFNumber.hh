@@ -12,11 +12,19 @@
 #ifndef NITROGEN_CFNUMBER_HH
 #define NITROGEN_CFNUMBER_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreFoundation/CoreFoundation.h>
+#endif
+
+// Mac OS
 #ifndef __COREFOUNDATION_CFDATE__
 #ifndef __CFDATE__
 #include <CFNumber.h>
 #endif
 #endif
+
+// Nitrogen
 #ifndef NITROGEN_CFBOOLEAN_HH
 #include "Nitrogen/CFBoolean.hh"
 #endif

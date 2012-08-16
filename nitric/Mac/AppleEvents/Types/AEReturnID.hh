@@ -6,6 +6,12 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AERETURNID_HH
 #define MAC_APPLEEVENTS_TYPES_AERETURNID_HH
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
 #ifndef __AEDATAMODEL__
 #include <AEDataModel.h>
 #endif
