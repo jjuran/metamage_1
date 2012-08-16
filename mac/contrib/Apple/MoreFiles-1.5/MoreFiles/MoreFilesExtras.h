@@ -22,7 +22,9 @@
 #ifndef __MOREFILESEXTRAS__
 #define __MOREFILESEXTRAS__
 
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 #include "MoreFiles/Optimization.h"
 

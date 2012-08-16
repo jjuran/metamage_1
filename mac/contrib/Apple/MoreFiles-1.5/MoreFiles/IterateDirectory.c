@@ -16,7 +16,9 @@
 **	library I wrote while in Apple Developer Technical Support
 */
 
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
 
 #define	__COMPILINGMOREFILES
 

@@ -22,7 +22,9 @@
 #ifndef __FSPCOMPAT__
 #define __FSPCOMPAT__
 
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 #include "MoreFiles/Optimization.h"
 

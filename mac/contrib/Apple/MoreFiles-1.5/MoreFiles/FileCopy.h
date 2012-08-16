@@ -22,7 +22,9 @@
 #ifndef __FILECOPY__
 #define __FILECOPY__
 
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 #include "MoreFiles/Optimization.h"
 

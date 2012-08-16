@@ -19,10 +19,18 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef __MACMEMORY__
 #include <MacMemory.h>
+#endif
+#ifndef __SCRIPT__
 #include <Script.h>
+#endif
+#ifndef __MATH64__
 #include <Math64.h>
+#endif
 
 #define	__COMPILINGMOREFILES
 

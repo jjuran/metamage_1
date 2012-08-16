@@ -55,7 +55,9 @@
 **	File:	Optimization.h
 */
 
+#ifndef __CONDITIONALMACROS__
 #include <ConditionalMacros.h>
+#endif
 
 // if we're compiling for Carbon, then we're running on Mac OS 8.1 or later
 #ifndef __MACOSSEVENFIVEONEORLATER

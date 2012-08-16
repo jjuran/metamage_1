@@ -19,13 +19,28 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef __DEVICES__
 #include <Devices.h>
+#endif
+#ifndef __FOLDERS__
 #include <Folders.h>
+#endif
+#ifndef __HFSVOLUMES__
 #include <HFSVolumes.h>
+#endif
+#ifndef __TEXTUTILS__
 #include <TextUtils.h>
+#endif
+#ifndef __SCRIPT__
 #include <Script.h>
+#endif
+#ifndef __MATH64__
 #include <Math64.h>
+#endif
+
 
 #if !TARGET_API_MAC_CARBON
 

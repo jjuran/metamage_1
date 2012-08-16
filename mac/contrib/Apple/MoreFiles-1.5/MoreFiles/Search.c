@@ -19,11 +19,21 @@
 **	descended from Apple Sample Code, but that you've made changes.
 */
 
+#ifndef __GESTALT__
 #include <Gestalt.h>
+#endif
+#ifndef __TIMER__
 #include <Timer.h>
+#endif
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef __MACMEMORY__
 #include <MacMemory.h>
+#endif
+#ifndef __TEXTUTILS__
 #include <TextUtils.h>
+#endif
 
 #define	__COMPILINGMOREFILES
 

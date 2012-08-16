@@ -22,7 +22,9 @@
 #ifndef __SEARCH__
 #define __SEARCH__
 
+#ifndef __FILES__
 #include <Files.h>
+#endif
 
 #include "MoreFiles/Optimization.h"
 

@@ -28,11 +28,21 @@
 #define GENERATENODATA 0
 #endif
 
+#ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
+#ifndef __GESTALT__
 #include <Gestalt.h>
+#endif
+#ifndef __RESOURCES__
 #include <Resources.h>
+#endif
+#ifndef __SCRIPT__
 #include <Script.h>
+#endif
 
 #define	__COMPILINGMOREFILES
 
