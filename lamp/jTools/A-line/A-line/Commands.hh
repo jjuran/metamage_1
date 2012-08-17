@@ -78,7 +78,7 @@ namespace tool
 			gnu   ( target.toolchain == toolchainGNU   )
 		{}
 		
-		const char* UnixCompilerName() const  { return gnu ? "gcc" : "mwcc"; }
+		const char* UnixCompilerName() const  { return gnu ? "cc" : "mwcc"; }
 		
 		Command CompilerName() const
 		{
@@ -87,7 +87,7 @@ namespace tool
 		
 		const char* LinkerName() const
 		{
-			return gnu ? "g++"
+			return gnu ? "c++"
 			           : "ld";
 		}
 		
