@@ -79,7 +79,7 @@ namespace io
 	                                const F1&       visit_dir_before,
 	                                const F2&       visit_file,
 	                                const F3&       visit_dir_after,
-	                                unsigned        depth = 0 )
+	                                unsigned        depth )
 	{
 		typedef typename filespec_traits< DirSpec >::file_spec file_spec;
 		
