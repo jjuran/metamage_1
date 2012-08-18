@@ -27,9 +27,11 @@
 
 #include "Nitrogen/Icons.hh"
 
+// relix-kernel
+#include "relix/config/color.hh"
+#include "relix/config/iconsuites.hh"
+
 // Genie
-#include "Genie/config/color.hh"
-#include "Genie/config/iconsuites.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"

@@ -27,8 +27,10 @@
 // Pedestal
 #include "Pedestal/View.hh"
 
+// relix-kernel
+#include "relix/config/gui_new_gworld.hh"
+
 // Genie
-#include "Genie/config/gui_new_gworld.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"

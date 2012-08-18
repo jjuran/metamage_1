@@ -23,8 +23,8 @@
 // MacFeatures
 #include "MacFeatures/Threads.hh"
 
-// Genie
-#include "Genie/config/mini.hh"
+// relix-kernel
+#include "relix/config/mini.hh"
 
 
 namespace Genie

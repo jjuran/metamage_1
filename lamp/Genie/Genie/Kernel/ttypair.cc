@@ -3,11 +3,13 @@
 	----------
 */
 
+// relix-kernel
+#include "relix/config/pts.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/config/pts.hh"
 #include "Genie/IO/PseudoTTY.hh"
 
 

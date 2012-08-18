@@ -8,9 +8,11 @@
 // vfs
 #include "vfs/nodes/fixed_dir.hh"
 
+// relix-kernel
+#include "relix/config/color.hh"
+#include "relix/config/mini.hh"
+
 // Genie
-#include "Genie/config/color.hh"
-#include "Genie/config/mini.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"

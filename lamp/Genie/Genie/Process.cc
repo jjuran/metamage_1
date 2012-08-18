@@ -71,8 +71,10 @@
 // vfs
 #include "vfs/primitives/stat.hh"
 
+// relix-kernel
+#include "relix/config/mini.hh"
+
 // Genie
-#include "Genie/config/mini.hh"
 #include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
