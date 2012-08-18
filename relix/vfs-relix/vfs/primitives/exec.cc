@@ -3,24 +3,27 @@
 	-------
 */
 
-#include "Genie/FS/exec.hh"
+#include "vfs/primitives/exec.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
+// vfs-relix
+#include "vfs/program.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	shared_exec_handle exec( const FSTree* it )
+	program_ptr exec( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		
