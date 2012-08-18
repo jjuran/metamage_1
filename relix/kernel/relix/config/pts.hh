@@ -3,11 +3,11 @@
 	-------------
 */
 
-#ifndef GENIE_CONFIG_PTS_HH
-#define GENIE_CONFIG_PTS_HH
+#ifndef RELIX_CONFIG_PTS_HH
+#define RELIX_CONFIG_PTS_HH
 
-// Genie
-#include "Genie/config/mini.hh"
+// relix-kernel
+#include "relix/config/mini.hh"
 
 
 #ifndef CONFIG_PTS

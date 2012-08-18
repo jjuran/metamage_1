@@ -3,11 +3,11 @@
 	----------------
 */
 
-#ifndef GENIE_SIGNALTRAITS_HH
-#define GENIE_SIGNALTRAITS_HH
+#ifndef RELIX_SIGNAL_SIGNALTRAITS_HH
+#define RELIX_SIGNAL_SIGNALTRAITS_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	enum signal_traits

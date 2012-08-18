@@ -3,11 +3,11 @@
 	------------------------
 */
 
-#ifndef GENIE_CONFIG_GUINEWGWORLD_HH
-#define GENIE_CONFIG_GUINEWGWORLD_HH
+#ifndef RELIX_CONFIG_GUINEWGWORLD_HH
+#define RELIX_CONFIG_GUINEWGWORLD_HH
 
-// Genie
-#include "Genie/config/mini.hh"
+// relix-kernel
+#include "relix/config/mini.hh"
 
 
 #ifndef CONFIG_GUI_NEW_GWORLD

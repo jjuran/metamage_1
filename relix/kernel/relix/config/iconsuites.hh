@@ -3,11 +3,11 @@
 	--------------------
 */
 
-#ifndef GENIE_CONFIG_ICONSUITES_HH
-#define GENIE_CONFIG_ICONSUITES_HH
+#ifndef RELIX_CONFIG_ICONSUITES_HH
+#define RELIX_CONFIG_ICONSUITES_HH
 
-// Genie
-#include "Genie/config/color.hh"
+// relix-kernel
+#include "relix/config/color.hh"
 
 
 #ifndef CONFIG_ICONSUITES

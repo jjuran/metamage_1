@@ -38,8 +38,10 @@
 // Pedestal
 #include "Pedestal/Window.hh"
 
+// relix-kernel
+#include "relix/config/color.hh"
+
 // Genie
-#include "Genie/config/color.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"

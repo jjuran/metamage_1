@@ -28,8 +28,10 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/nodes/fixed_dir.hh"
 
+// relix-kernel
+#include "relix/config/iconsuites.hh"
+
 // Genie
-#include "Genie/config/iconsuites.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"

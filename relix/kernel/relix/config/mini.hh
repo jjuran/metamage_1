@@ -3,8 +3,8 @@
 	--------------
 */
 
-#ifndef GENIE_CONFIG_MINI_HH
-#define GENIE_CONFIG_MINI_HH
+#ifndef RELIX_CONFIG_MINI_HH
+#define RELIX_CONFIG_MINI_HH
 
 
 #ifndef CONFIG_MINI

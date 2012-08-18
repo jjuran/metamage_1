@@ -3,10 +3,10 @@
 	----------------
 */
 
-#include "Genie/caught_signal.hh"
+#include "relix/signal/caught_signal.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	caught_signal the_caught_signal;

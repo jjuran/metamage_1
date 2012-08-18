@@ -31,6 +31,7 @@
 
 // Relix
 #include "relix/syscalls.h"
+#include "relix/signal/signal_traits.hh"
 
 // Iota
 #include "iota/strings.hh"
@@ -71,8 +72,10 @@
 // vfs
 #include "vfs/primitives/stat.hh"
 
+// relix-kernel
+#include "relix/config/mini.hh"
+
 // Genie
-#include "Genie/config/mini.hh"
 #include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
@@ -87,7 +90,6 @@
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/scheduler.hh"
-#include "Genie/signal_traits.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 #include "Genie/userland.hh"
@@ -1462,6 +1464,8 @@ namespace Genie
 				
 				if ( action.sa_handler == SIG_DFL )
 				{
+					using namespace relix;
+					
 					const signal_traits traits = global_signal_traits[ signo ];
 					
 					switch ( traits & signal_default_action_mask )

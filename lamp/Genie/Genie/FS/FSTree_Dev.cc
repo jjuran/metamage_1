@@ -21,10 +21,12 @@
 #include "vfs/node.hh"
 #include "vfs/nodes/symbolic_link.hh"
 
+// relix-kernel
+#include "relix/config/mini.hh"
+#include "relix/config/pts.hh"
+
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/config/mini.hh"
-#include "Genie/config/pts.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"

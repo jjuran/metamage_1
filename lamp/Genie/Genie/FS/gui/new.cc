@@ -5,8 +5,10 @@
 
 #include "Genie/FS/gui/new.hh"
 
+// relix-kernel
+#include "relix/config/gui_new_gworld.hh"
+
 // Genie
-#include "Genie/config/gui_new_gworld.hh"
 #include "Genie/FS/gui/new/bitmap.hh"
 #include "Genie/FS/gui/new/button.hh"
 #include "Genie/FS/gui/new/caption.hh"
