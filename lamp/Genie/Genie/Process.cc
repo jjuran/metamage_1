@@ -72,6 +72,9 @@
 // vfs
 #include "vfs/primitives/stat.hh"
 
+// vfs-relix
+#include "vfs/primitives/exec.hh"
+
 // relix-kernel
 #include "relix/config/mini.hh"
 
@@ -84,7 +87,6 @@
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/exec.hh"
 #include "Genie/FS/opendir.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/ProcessList.hh"
