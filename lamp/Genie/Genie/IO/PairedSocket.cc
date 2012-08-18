@@ -15,6 +15,8 @@
 #include "Nitrogen/OSUtils.hh"
 
 // Genie
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/IO/SocketStream.hh"
 
 
@@ -46,12 +48,12 @@ namespace Genie
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsInput->read( data, byteCount, IsNonblocking() );
+				return itsInput->read( data, byteCount, IsNonblocking(), &try_again );
 			}
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsOutput->write( data, byteCount, IsNonblocking() );
+				return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );

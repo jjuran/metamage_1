@@ -12,6 +12,8 @@
 #include "plus/var_string.hh"
 
 // Genie
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
@@ -104,12 +106,12 @@ namespace Genie
 	
 	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsInput->read( data, byteCount, IsNonblocking() );
+		return itsInput->read( data, byteCount, IsNonblocking(), &try_again );
 	}
 	
 	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsOutput->write( data, byteCount, IsNonblocking() );
+		return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 	}
 	
 }

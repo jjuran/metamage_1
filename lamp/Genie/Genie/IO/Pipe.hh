@@ -16,6 +16,8 @@
 #include <boost/intrusive_ptr.hpp>
 
 // Genie
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/IO/Conduit.hh"
 #include "Genie/IO/Stream.hh"
 
@@ -48,7 +50,7 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsConduit->write( data, byteCount, IsNonblocking() );
+				return itsConduit->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
@@ -79,7 +81,7 @@ namespace Genie
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsConduit->read( data, byteCount, IsNonblocking() );
+				return itsConduit->read( data, byteCount, IsNonblocking(), &try_again );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );

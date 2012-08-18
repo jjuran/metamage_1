@@ -11,10 +11,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
-
 
 namespace Genie
 {
@@ -65,7 +61,10 @@ namespace Genie
 		return its_egress_has_closed || its_pages.size() < 20;
 	}
 	
-	int conduit::read( char* buffer, std::size_t max_bytes, bool nonblocking )
+	int conduit::read( char*        buffer,
+	                   std::size_t  max_bytes,
+	                   bool         nonblocking,
+	                   try_again_f  try_again )
 	{
 		if ( max_bytes == 0 )
 		{
@@ -108,7 +107,11 @@ namespace Genie
 		return max_bytes;
 	}
 	
-	int conduit::write( const char* buffer, std::size_t n_bytes, bool nonblocking )
+	int conduit::write( const char*    buffer,
+	                    std::size_t    n_bytes,
+	                    bool           nonblocking,
+	                    try_again_f    try_again,
+	                    broken_pipe_f  broken_pipe )
 	{
 		while ( !is_writable() )
 		{

@@ -47,6 +47,9 @@ namespace Genie
 	class conduit : public plus::ref_count< conduit >
 	{
 		private:
+			typedef void (*try_again_f)( bool );
+			typedef void (*broken_pipe_f)();
+			
 			std::list< page > its_pages;
 			
 			bool its_ingress_has_closed;
@@ -67,8 +70,8 @@ namespace Genie
 			bool close_ingress()  { its_ingress_has_closed = true;  return its_egress_has_closed;  }
 			bool close_egress()   { its_egress_has_closed  = true;  return its_ingress_has_closed; }
 			
-			int read (       char* data, std::size_t byteCount, bool nonblocking );
-			int write( const char* data, std::size_t byteCount, bool nonblocking );
+			int read (       char* data, std::size_t n, bool nonblocking, try_again_f                );
+			int write( const char* data, std::size_t n, bool nonblocking, try_again_f, broken_pipe_f );
 	};
 	
 }
