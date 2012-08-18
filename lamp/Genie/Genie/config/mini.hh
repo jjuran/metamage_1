@@ -6,10 +6,8 @@
 #ifndef GENIE_CONFIG_MINI_HH
 #define GENIE_CONFIG_MINI_HH
 
-
-#ifndef CONFIG_MINI
-#define CONFIG_MINI 0
-#endif
+// relix-kernel
+#include "relix/config/mini.hh"
 
 #endif
 

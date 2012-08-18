@@ -6,13 +6,8 @@
 #ifndef GENIE_CONFIG_PTS_HH
 #define GENIE_CONFIG_PTS_HH
 
-// Genie
-#include "Genie/config/mini.hh"
-
-
-#ifndef CONFIG_PTS
-#define CONFIG_PTS  (!CONFIG_MINI)
-#endif
+// relix-kernel
+#include "relix/config/pts.hh"
 
 #endif
 
