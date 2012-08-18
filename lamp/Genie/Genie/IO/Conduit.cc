@@ -65,17 +65,17 @@ namespace Genie
 	}
 	
 	
-	bool Conduit::IsReadable() const
+	bool conduit::is_readable() const
 	{
 		return its_ingress_has_closed || !its_pages.empty();
 	}
 	
-	bool Conduit::IsWritable() const
+	bool conduit::is_writable() const
 	{
 		return its_egress_has_closed || its_pages.size() < 20;
 	}
 	
-	int Conduit::Read( char* buffer, std::size_t max_bytes, bool nonblocking )
+	int conduit::read( char* buffer, std::size_t max_bytes, bool nonblocking )
 	{
 		if ( max_bytes == 0 )
 		{
@@ -118,9 +118,9 @@ namespace Genie
 		return max_bytes;
 	}
 	
-	int Conduit::Write( const char* buffer, std::size_t n_bytes, bool nonblocking )
+	int conduit::write( const char* buffer, std::size_t n_bytes, bool nonblocking )
 	{
-		while ( !IsWritable() )
+		while ( !is_writable() )
 		{
 			try_again( nonblocking );
 		}

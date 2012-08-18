@@ -26,10 +26,10 @@ namespace Genie
 	class PipeInHandle : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< Conduit > itsConduit;
+			boost::intrusive_ptr< conduit > itsConduit;
 		
 		public:
-			PipeInHandle( const boost::intrusive_ptr< Conduit >&  conduit,
+			PipeInHandle( const boost::intrusive_ptr< conduit >&  conduit,
 			              bool                                    nonblocking )
 			:
 				StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
@@ -43,12 +43,12 @@ namespace Genie
 			unsigned int SysPoll()
 			{
 				return   kPollRead
-				       | kPollWrite * itsConduit->IsWritable();
+				       | kPollWrite * itsConduit->is_writable();
 			}
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsConduit->Write( data, byteCount, IsNonblocking() );
+				return itsConduit->write( data, byteCount, IsNonblocking() );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
@@ -57,10 +57,10 @@ namespace Genie
 	class PipeOutHandle : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< Conduit > itsConduit;
+			boost::intrusive_ptr< conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( const boost::intrusive_ptr< Conduit >&  conduit,
+			PipeOutHandle( const boost::intrusive_ptr< conduit >&  conduit,
 			               bool                                    nonblocking )
 			:
 				StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
@@ -73,13 +73,13 @@ namespace Genie
 			
 			unsigned int SysPoll()
 			{
-				return   kPollRead * itsConduit->IsReadable()
+				return   kPollRead * itsConduit->is_readable()
 				       | kPollWrite;
 			}
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsConduit->Read( data, byteCount, IsNonblocking() );
+				return itsConduit->read( data, byteCount, IsNonblocking() );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );

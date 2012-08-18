@@ -11,13 +11,13 @@ namespace Genie
 	
 	PipeInHandle::~PipeInHandle()
 	{
-		itsConduit->CloseIngress();
+		itsConduit->close_ingress();
 	}
 	
 	
 	PipeOutHandle::~PipeOutHandle()
 	{
-		itsConduit->CloseEgress();
+		itsConduit->close_egress();
 	}
 	
 }

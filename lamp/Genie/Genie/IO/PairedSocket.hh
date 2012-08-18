@@ -22,8 +22,8 @@ namespace Genie
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
-	                 const boost::intrusive_ptr< Conduit >&  output,
+	NewPairedSocket( const boost::intrusive_ptr< conduit >&  input,
+	                 const boost::intrusive_ptr< conduit >&  output,
 	                 bool                                    nonblocking );
 	
 }

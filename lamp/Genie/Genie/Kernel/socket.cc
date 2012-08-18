@@ -38,8 +38,8 @@ namespace Genie
 			const bool close_on_exec = type & SOCK_CLOEXEC;
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
-			boost::intrusive_ptr< Conduit > east( new Conduit );
-			boost::intrusive_ptr< Conduit > west( new Conduit );
+			boost::intrusive_ptr< conduit > east( new conduit );
+			boost::intrusive_ptr< conduit > west( new conduit );
 			
 			IOPtr san_jose = NewPairedSocket( west, east, nonblocking );
 			IOPtr new_york = NewPairedSocket( east, west, nonblocking );

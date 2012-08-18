@@ -44,7 +44,7 @@ namespace Genie
 			std::size_t read( char* buffer, std::size_t max_bytes );
 	};
 	
-	class Conduit : public plus::ref_count< Conduit >
+	class conduit : public plus::ref_count< conduit >
 	{
 		private:
 			std::list< page > its_pages;
@@ -53,22 +53,22 @@ namespace Genie
 			bool its_egress_has_closed;
 		
 		public:
-			Conduit() : its_ingress_has_closed( false ),
+			conduit() : its_ingress_has_closed( false ),
 			            its_egress_has_closed ( false )
 			{
 			}
 			
-			bool IsReadable() const;
-			bool IsWritable() const;
+			bool is_readable() const;
+			bool is_writable() const;
 			
-			bool IngressHasClosed() const  { return its_ingress_has_closed; }
-			bool EgressHasClosed()  const  { return its_egress_has_closed;  }
+			bool ingress_has_closed() const  { return its_ingress_has_closed; }
+			bool egress_has_closed()  const  { return its_egress_has_closed;  }
 			
-			bool CloseIngress()  { its_ingress_has_closed = true;  return its_egress_has_closed;  }
-			bool CloseEgress()   { its_egress_has_closed  = true;  return its_ingress_has_closed; }
+			bool close_ingress()  { its_ingress_has_closed = true;  return its_egress_has_closed;  }
+			bool close_egress()   { its_egress_has_closed  = true;  return its_ingress_has_closed; }
 			
-			int Read (       char* data, std::size_t byteCount, bool nonblocking );
-			int Write( const char* data, std::size_t byteCount, bool nonblocking );
+			int read (       char* data, std::size_t byteCount, bool nonblocking );
+			int write( const char* data, std::size_t byteCount, bool nonblocking );
 	};
 	
 }

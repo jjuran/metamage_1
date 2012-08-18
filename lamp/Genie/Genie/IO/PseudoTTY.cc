@@ -28,8 +28,8 @@ namespace Genie
 	static inline IOPtr
 	//
 	NewPseudoTTY( TerminalID                              id,
-	              const boost::intrusive_ptr< Conduit >&  input,
-	              const boost::intrusive_ptr< Conduit >&  output )
+	              const boost::intrusive_ptr< conduit >&  input,
+	              const boost::intrusive_ptr< conduit >&  output )
 	{
 		return new PseudoTTYHandle( id, input, output );
 	}
@@ -39,8 +39,8 @@ namespace Genie
 	{
 		static TerminalID index = 0;
 		
-		boost::intrusive_ptr< Conduit > incoming( new Conduit );
-		boost::intrusive_ptr< Conduit > outgoing( new Conduit );
+		boost::intrusive_ptr< conduit > incoming( new conduit );
+		boost::intrusive_ptr< conduit > outgoing( new conduit );
 		
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
@@ -69,8 +69,8 @@ namespace Genie
 	}
 	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                      id,
-			                          boost::intrusive_ptr< Conduit >  input,
-			                          boost::intrusive_ptr< Conduit >  output )
+			                          boost::intrusive_ptr< conduit >  input,
+			                          boost::intrusive_ptr< conduit >  output )
 	: TTYHandle( O_RDWR ),
 	  itsID( id ),
 	  itsTerminal( NewTerminal( make_devpts( id ) ) ),
@@ -81,8 +81,8 @@ namespace Genie
 	
 	PseudoTTYHandle::~PseudoTTYHandle()
 	{
-		itsInput->CloseEgress();
-		itsOutput->CloseIngress();
+		itsInput->close_egress();
+		itsOutput->close_ingress();
 		
 		GetPseudoTTYMap().erase( itsID );
 	}
@@ -99,17 +99,17 @@ namespace Genie
 	
 	unsigned int PseudoTTYHandle::SysPoll()
 	{
-		return (itsInput->IsReadable() ? kPollRead : 0) | kPollWrite;
+		return (itsInput->is_readable() ? kPollRead : 0) | kPollWrite;
 	}
 	
 	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsInput->Read( data, byteCount, IsNonblocking() );
+		return itsInput->read( data, byteCount, IsNonblocking() );
 	}
 	
 	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsOutput->Write( data, byteCount, IsNonblocking() );
+		return itsOutput->write( data, byteCount, IsNonblocking() );
 	}
 	
 }

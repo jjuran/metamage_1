@@ -28,30 +28,30 @@ namespace Genie
 	class PairedSocket : public SocketHandle
 	{
 		private:
-			boost::intrusive_ptr< Conduit >  itsInput;
-			boost::intrusive_ptr< Conduit >  itsOutput;
+			boost::intrusive_ptr< conduit >  itsInput;
+			boost::intrusive_ptr< conduit >  itsOutput;
 		
 		public:
-			PairedSocket( boost::intrusive_ptr< Conduit >  input,
-			              boost::intrusive_ptr< Conduit >  output,
+			PairedSocket( boost::intrusive_ptr< conduit >  input,
+			              boost::intrusive_ptr< conduit >  output,
 			              bool                             nonblocking );
 			
 			~PairedSocket();
 			
 			unsigned int SysPoll()
 			{
-				return   kPollRead  * itsInput->IsReadable()
-				       | kPollWrite * itsOutput->IsWritable();
+				return   kPollRead  * itsInput->is_readable()
+				       | kPollWrite * itsOutput->is_writable();
 			}
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsInput->Read( data, byteCount, IsNonblocking() );
+				return itsInput->read( data, byteCount, IsNonblocking() );
 			}
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsOutput->Write( data, byteCount, IsNonblocking() );
+				return itsOutput->write( data, byteCount, IsNonblocking() );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
@@ -72,8 +72,8 @@ namespace Genie
 	};
 	
 	
-	PairedSocket::PairedSocket( boost::intrusive_ptr< Conduit >  input,
-			                    boost::intrusive_ptr< Conduit >  output,
+	PairedSocket::PairedSocket( boost::intrusive_ptr< conduit >  input,
+			                    boost::intrusive_ptr< conduit >  output,
 			                    bool                             nonblocking )
 	:
 		SocketHandle( nonblocking ),
@@ -126,19 +126,19 @@ namespace Genie
 	
 	void PairedSocket::ShutdownReading()
 	{
-		itsInput->CloseEgress();
+		itsInput->close_egress();
 	}
 	
 	void PairedSocket::ShutdownWriting()
 	{
-		itsOutput->CloseIngress();
+		itsOutput->close_ingress();
 	}
 	
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
-	                 const boost::intrusive_ptr< Conduit >&  output,
+	NewPairedSocket( const boost::intrusive_ptr< conduit >&  input,
+	                 const boost::intrusive_ptr< conduit >&  output,
 	                 bool                                    nonblocking )
 	{
 		return new PairedSocket( input, output, nonblocking );
