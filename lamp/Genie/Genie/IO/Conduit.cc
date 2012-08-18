@@ -5,18 +5,11 @@
 
 #include "Genie/IO/Conduit.hh"
 
-// Standard C
-#include <errno.h>
-#include <signal.h>
-
 // Standard C++
 #include <algorithm>
 
 // Debug
 #include "debug/assert.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
@@ -25,9 +18,6 @@
 
 namespace Genie
 {
-	
-	namespace p7 = poseven;
-	
 	
 	page::page( const page& other )
 	:
@@ -127,9 +117,7 @@ namespace Genie
 		
 		if ( its_egress_has_closed )
 		{
-			send_signal_to_current_process( SIGPIPE );
-			
-			p7::throw_errno( EPIPE );
+			broken_pipe();
 		}
 		
 		if ( n_bytes == 0 )
