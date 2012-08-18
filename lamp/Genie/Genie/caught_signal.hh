@@ -6,25 +6,16 @@
 #ifndef GENIE_CAUGHTSIGNAL_HH
 #define GENIE_CAUGHTSIGNAL_HH
 
-// POSIX
-#include <sys/signal.h>
+// relix-kernel
+#include "relix/signal/caught_signal.hh"
 
 
 namespace Genie
 {
 	
-	struct caught_signal
-	{
-		int               signo;
-		struct sigaction  action;
-	};
-	
-	extern caught_signal the_caught_signal;
-	
-	inline void prevent_syscall_restart()
-	{
-		the_caught_signal.action.sa_flags &= ~SA_RESTART;
-	}
+	using relix::caught_signal;
+	using relix::the_caught_signal;
+	using relix::prevent_syscall_restart;
 	
 }
 
