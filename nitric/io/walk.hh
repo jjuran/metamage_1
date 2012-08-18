@@ -148,7 +148,8 @@ namespace io
 		recursively_walk_subtrees( item,
 		                           walk_noop(),
 		                           file_deleter     < file_spec >(),
-		                           directory_deleter< file_spec >() );
+		                           directory_deleter< file_spec >(),
+		                           0 );
 	}
 	
 }
