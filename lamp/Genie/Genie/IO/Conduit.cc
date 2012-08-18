@@ -29,37 +29,37 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	Page::Page( const Page& other )
+	page::page( const page& other )
 	:
-		written( other.written ),
-		read   ( other.read    )
+		n_written( other.n_written ),
+		n_read   ( other.n_read    )
 	{
-		ASSERT( read    <= written  );
-		ASSERT( written <= capacity );
+		ASSERT( n_read    <= n_written );
+		ASSERT( n_written <= capacity  );
 		
-		std::copy( &other.data[ read    ],
-		           &other.data[ written ],
-		           &      data[ read    ] );
+		std::copy( &other.data[ n_read    ],
+		           &other.data[ n_written ],
+		           &      data[ n_read    ] );
 	}
 	
-	void Page::Write( const char* buffer, std::size_t n_bytes )
+	void page::write( const char* buffer, std::size_t n_bytes )
 	{
-		ASSERT( n_bytes <= Writable() );
+		ASSERT( n_bytes <= n_writable() );
 		
-		std::copy( buffer, buffer + n_bytes, &data[ written ] );
+		std::copy( buffer, buffer + n_bytes, &data[ n_written ] );
 		
-		written += n_bytes;
+		n_written += n_bytes;
 	}
 	
-	std::size_t Page::Read( char* buffer, std::size_t max_bytes )
+	std::size_t page::read( char* buffer, std::size_t max_bytes )
 	{
-		max_bytes = std::min( max_bytes, Readable() );
+		max_bytes = std::min( max_bytes, n_readable() );
 		
-		const char* start = &data[ read ];
+		const char* start = &data[ n_read ];
 		
 		std::copy( start, start + max_bytes, buffer );
 		
-		read += max_bytes;
+		n_read += max_bytes;
 		
 		return max_bytes;
 	}
@@ -67,12 +67,12 @@ namespace Genie
 	
 	bool Conduit::IsReadable() const
 	{
-		return itsIngressHasClosed || !itsPages.empty();
+		return its_ingress_has_closed || !its_pages.empty();
 	}
 	
 	bool Conduit::IsWritable() const
 	{
-		return itsEgressHasClosed || itsPages.size() < 20;
+		return its_egress_has_closed || its_pages.size() < 20;
 	}
 	
 	int Conduit::Read( char* buffer, std::size_t max_bytes, bool nonblocking )
@@ -83,34 +83,34 @@ namespace Genie
 		}
 		
 		// Wait until we have some data or the stream is closed
-		while ( itsPages.empty() && !itsIngressHasClosed )
+		while ( its_pages.empty() && !its_ingress_has_closed )
 		{
 			try_again( nonblocking );
 		}
 		
 		// Either a page was written, or input was closed,
-		// or possibly both, so check itsPages rather than itsIngressHasClosed
+		// or possibly both, so check its_pages rather than its_ingress_has_closed
 		// so we don't miss data.
 		
 		// If the page queue is still empty then input must have closed.
-		if ( itsPages.empty() )
+		if ( its_pages.empty() )
 		{
 			return 0;
 		}
 		
 		// Only reached if a page is available.
 		
-		const std::size_t readable = itsPages.front().Readable();
+		const std::size_t readable = its_pages.front().n_readable();
 		
 		ASSERT( readable > 0 );
 		
 		const bool consumed = max_bytes >= readable;
 		
-		itsPages.front().Read( buffer, max_bytes );
+		its_pages.front().read( buffer, max_bytes );
 		
 		if ( consumed )
 		{
-			itsPages.pop_front();
+			its_pages.pop_front();
 			
 			return readable;
 		}
@@ -125,7 +125,7 @@ namespace Genie
 			try_again( nonblocking );
 		}
 		
-		if ( itsEgressHasClosed )
+		if ( its_egress_has_closed )
 		{
 			send_signal_to_current_process( SIGPIPE );
 			
@@ -137,15 +137,15 @@ namespace Genie
 			return 0;
 		}
 		
-		if ( itsPages.empty() )
+		if ( its_pages.empty() )
 		{
-			itsPages.push_back( Page() );
+			its_pages.push_back( page() );
 		}
-		else if ( n_bytes > itsPages.back().Writable()  &&  n_bytes <= Page::capacity )
+		else if ( n_bytes > its_pages.back().n_writable()  &&  n_bytes <= page::capacity )
 		{
-			itsPages.push_back( Page() );
+			its_pages.push_back( page() );
 			
-			itsPages.back().Write( buffer, n_bytes );
+			its_pages.back().write( buffer, n_bytes );
 			
 			return n_bytes;
 		}
@@ -154,16 +154,16 @@ namespace Genie
 		
 		std::size_t writable = 0;
 		
-		while ( end - buffer > (writable = itsPages.back().Writable()) )
+		while ( end - buffer > (writable = its_pages.back().n_writable()) )
 		{
-			itsPages.back().Write( buffer, writable );
+			its_pages.back().write( buffer, writable );
 			
 			buffer += writable;
 			
-			itsPages.push_back( Page() );
+			its_pages.push_back( page() );
 		}
 		
-		itsPages.back().Write( buffer, end - buffer );
+		its_pages.back().write( buffer, end - buffer );
 		
 		
 		return n_bytes;
