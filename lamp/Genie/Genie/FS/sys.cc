@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys.hh"
 
-// POSIX
-#include <sys/stat.h>
-
 // Standard C++
 #include <algorithm>
 
@@ -25,13 +22,12 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/nodes/fixed_dir.hh"
 
+// vfs-relix
+#include "vfs/nodes/builtin.hh"
+
 // Genie
-#include "Genie/code/fixed_address.hh"
-#include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
@@ -64,38 +60,6 @@ namespace Genie
 		}
 		
 		return key->name;
-	}
-	
-	
-	static shared_exec_handle builtin_loadexec( const FSTree* node );
-	
-	static const file_method_set builtin_file_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		&builtin_loadexec
-	};
-	
-	static const node_method_set builtin_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&builtin_file_methods
-	};
-	
-	static shared_exec_handle builtin_loadexec( const FSTree* node )
-	{
-		relix_entry& extra = *(relix_entry*) node->extra();
-		
-		return new fixed_address( extra );
 	}
 	
 	
@@ -162,24 +126,7 @@ namespace Genie
 		
 	}
 	
-	static FSTreePtr Executable_Factory( const FSTree*        parent,
-	                                     const plus::string&  name,
-	                                     const void*          args )
-	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0500,
-		                             &builtin_methods,
-		                             sizeof (relix_entry) );
-		
-		relix_entry& extra = *(relix_entry*) result->extra();
-		
-		extra = (relix_entry) args;
-		
-		return result;
-	}
-	
-	#define EXEC( main )  &Executable_Factory, (const void*) &main
+	#define EXEC( main )  &vfs::builtin_factory, (const void*) &main
 	
 	extern const vfs::fixed_mapping sys_kernel_bin_Mappings[];
 	
