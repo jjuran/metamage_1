@@ -5,6 +5,9 @@
 
 #include "relix/task/memory_data.hh"
 
+// standard C/C++
+#include <cstring>
+
 // Standard C++
 #include <algorithm>
 #include <vector>
