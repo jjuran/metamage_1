@@ -14,7 +14,7 @@
 
 // vfs
 #include "vfs/dir_contents_fwd.hh"
-#include "vfs/handle_ptr.hh"
+#include "vfs/filehandle_ptr.hh"
 #include "vfs/node_ptr.hh"
 
 
@@ -27,7 +27,7 @@ namespace vfs
 	
 	typedef void (*mkdir_method)( const node* it, mode_t mode );
 	
-	typedef handle_ptr (*opendir_method)( const node* it );
+	typedef filehandle_ptr (*opendir_method)( const node* it );
 	
 	
 	struct dir_method_set

@@ -16,7 +16,7 @@
 #include "plus/ref_count.hh"
 
 // vfs
-#include "vfs/handle_ptr.hh"
+#include "vfs/filehandle_ptr.hh"
 #include "vfs/node_ptr.hh"
 
 // Genie
@@ -50,23 +50,23 @@ namespace vfs
 		
 	*/
 	
-	class handle : public plus::ref_count< handle >
+	class filehandle : public plus::ref_count< filehandle >
 	{
 		private:
 			int itsOpenFlags;
 			
-			virtual handle* Next() const  { return NULL; }
+			virtual filehandle* Next() const  { return NULL; }
 			
 			// non-copyable
-			handle           ( const handle& );
-			handle& operator=( const handle& );
+			filehandle           ( const filehandle& );
+			filehandle& operator=( const filehandle& );
 		
 		public:
-			typedef bool (handle::*Test)() const;
+			typedef bool (filehandle::*Test)() const;
 			
-			handle( int flags );
+			filehandle( int flags );
 			
-			virtual ~handle();
+			virtual ~filehandle();
 			
 			virtual bool IsStream     () const  { return false; }
 			virtual bool IsRegularFile() const  { return false; }
@@ -74,15 +74,15 @@ namespace vfs
 			virtual bool IsTerminal   () const  { return false; }
 			virtual bool IsDirectory  () const  { return false; }
 			
-			handle* GetBaseForCast( Test test );
+			filehandle* GetBaseForCast( Test test );
 			
 			int GetFlags() const  { return itsOpenFlags; }
 			
 			void SetFlags( int flags )  { itsOpenFlags = flags; }
 			
-			virtual handle_ptr Clone();
+			virtual filehandle_ptr Clone();
 			
-			virtual void Attach( const handle_ptr& target );
+			virtual void Attach( const filehandle_ptr& target );
 			
 			virtual node_ptr GetFile();
 			
@@ -97,7 +97,7 @@ namespace vfs
 namespace Genie
 {
 	
-	typedef vfs::handle IOHandle;
+	typedef vfs::filehandle IOHandle;
 	
 }
 

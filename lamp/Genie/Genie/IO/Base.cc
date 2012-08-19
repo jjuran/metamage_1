@@ -64,7 +64,7 @@ namespace vfs
 	}
 	
 	
-	static handle_ptr anonymous_open( const node* it, int flags, mode_t mode );
+	static filehandle_ptr anonymous_open( const node* it, int flags, mode_t mode );
 	
 	static const data_method_set anonymous_data_methods =
 	{
@@ -85,7 +85,7 @@ namespace vfs
 	
 	struct handle_extra
 	{
-		vfs::handle* handle;
+		vfs::filehandle* handle;
 	};
 	
 	static void dispose_handle( const node* it )
@@ -96,7 +96,7 @@ namespace vfs
 	}
 	
 	
-	static handle_ptr anonymous_open( const node* it, int flags, mode_t mode )
+	static filehandle_ptr anonymous_open( const node* it, int flags, mode_t mode )
 	{
 		handle_extra& extra = *(handle_extra*) it->extra();
 		
@@ -104,22 +104,22 @@ namespace vfs
 	}
 	
 	
-	handle::handle( int flags ) : itsOpenFlags( flags )
+	filehandle::filehandle( int flags ) : itsOpenFlags( flags )
 	{
 	}
 	
-	handle::~handle()
+	filehandle::~filehandle()
 	{
 	}
 	
-	handle* handle::GetBaseForCast( Test test )
+	filehandle* filehandle::GetBaseForCast( Test test )
 	{
 		if ( (this->*test)() )
 		{
 			return this;
 		}
 		
-		if ( handle* next = Next() )
+		if ( filehandle* next = Next() )
 		{
 			return next->GetBaseForCast( test );
 		}
@@ -127,17 +127,17 @@ namespace vfs
 		return NULL;
 	}
 	
-	handle_ptr handle::Clone()
+	filehandle_ptr filehandle::Clone()
 	{
 		return this;
 	}
 	
-	void handle::Attach( const handle_ptr& target )
+	void filehandle::Attach( const filehandle_ptr& target )
 	{
 		p7::throw_errno( EINVAL );
 	}
 	
-	node_ptr handle::GetFile()
+	node_ptr filehandle::GetFile()
 	{
 		node* result = new node( NULL,
 		                         IOName( this, true ),
@@ -155,9 +155,9 @@ namespace vfs
 		return result;
 	}
 	
-	void handle::IOCtl( unsigned long request, int* argp )
+	void filehandle::IOCtl( unsigned long request, int* argp )
 	{
-		if ( handle* next = Next() )
+		if ( filehandle* next = Next() )
 		{
 			return next->IOCtl( request, argp );
 		}
@@ -167,7 +167,7 @@ namespace vfs
 	
 	boost::intrusive_ptr< memory_mapping >
 	//
-	handle::Map( size_t length, off_t offset )
+	filehandle::Map( size_t length, off_t offset )
 	{
 		p7::throw_errno( ENODEV );
 		

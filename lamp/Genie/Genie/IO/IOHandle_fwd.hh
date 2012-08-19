@@ -10,14 +10,14 @@
 namespace vfs
 {
 	
-	class handle;
+	class filehandle;
 	
 }
 
 namespace Genie
 {
 	
-	typedef vfs::handle IOHandle;
+	typedef vfs::filehandle IOHandle;
 	
 }
 
