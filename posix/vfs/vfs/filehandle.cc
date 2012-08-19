@@ -9,7 +9,11 @@
 namespace vfs
 {
 	
-	filehandle::filehandle( int flags ) : its_flags( flags )
+	filehandle::filehandle( int                           flags,
+	                        const filehandle_method_set*  methods )
+	:
+		its_flags  ( flags   ),
+		its_methods( methods )
 	{
 	}
 	
