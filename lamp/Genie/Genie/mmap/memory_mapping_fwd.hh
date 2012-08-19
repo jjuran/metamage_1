@@ -6,11 +6,14 @@
 #ifndef GENIE_MMAP_MEMORYMAPPINGFWD_HH
 #define GENIE_MMAP_MEMORYMAPPINGFWD_HH
 
+// vfs
+#include "vfs/memory_mapping_fwd.hh"
+
 
 namespace Genie
 {
 	
-	class memory_mapping;
+	using vfs::memory_mapping;
 	
 }
 
