@@ -3,14 +3,14 @@
 	-------------
 */
 
-#include "Genie/Utilities/simple_map.hh"
+#include "plus/simple_map.hh"
 
 // Standard C++
 #include <algorithm>
 #include <map>
 
 
-namespace Genie
+namespace plus
 {
 	
 	typedef std::map< unsigned long, const void* > simple_map_type;
