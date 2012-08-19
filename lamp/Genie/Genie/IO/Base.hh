@@ -40,8 +40,6 @@ namespace Genie
 namespace vfs
 {
 	
-	using Genie::memory_mapping;
-	
 	/*
 		Each file descriptor refers to an I/O handle.
 		Several file descriptors may share the same I/O handle.

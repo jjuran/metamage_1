@@ -10,11 +10,12 @@
 #include "plus/ref_count.hh"
 #include "plus/string.hh"
 
+// Genie
+#include "Genie/mmap/memory_mapping_fwd.hh"
+
 
 namespace Genie
 {
-	
-	class memory_mapping;
 	
 	class memory_data;
 	
