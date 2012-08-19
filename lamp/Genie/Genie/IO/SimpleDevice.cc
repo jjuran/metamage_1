@@ -35,7 +35,7 @@ namespace Genie
 		return io.writer( data, byteCount );
 	}
 	
-	boost::intrusive_ptr< memory_mapping >
+	memory_mapping_ptr
 	//
 	SimpleDeviceHandle::Map( size_t length, off_t offset )
 	{

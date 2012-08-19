@@ -38,7 +38,7 @@ namespace Genie
 		
 		try
 		{
-			typedef boost::intrusive_ptr< memory_mapping >  intrusive_ptr;
+			typedef memory_mapping_ptr  intrusive_ptr;
 			typedef void*                                   addr_t;
 			
 			const intrusive_ptr memory = anonymous ? map_anonymous( len )

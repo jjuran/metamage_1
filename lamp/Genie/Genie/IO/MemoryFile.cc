@@ -66,7 +66,7 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	boost::intrusive_ptr< memory_mapping >
+	memory_mapping_ptr
 	//
 	MemoryFileHandle::Map( size_t length, off_t offset )
 	{

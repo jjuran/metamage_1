@@ -48,7 +48,7 @@ namespace Genie
 			
 			off_t GetEOF()  { return itsSize; }
 			
-			boost::intrusive_ptr< memory_mapping > Map( size_t length, off_t offset );
+			memory_mapping_ptr Map( size_t length, off_t offset );
 	};
 	
 }

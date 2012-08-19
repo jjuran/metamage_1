@@ -145,7 +145,7 @@ namespace Genie
 		return SysWrite( buffer, byteCount );
 	}
 	
-	boost::intrusive_ptr< memory_mapping >
+	memory_mapping_ptr
 	//
 	RegularFileHandle::Map( size_t length, off_t offset )
 	{
@@ -168,7 +168,7 @@ namespace Genie
 			mapping = new Handle_memory_mapping( h );
 		}
 		
-		boost::intrusive_ptr< memory_mapping > result( mapping );
+		memory_mapping_ptr result( mapping );
 		
 		void* addr = mapping->get_address();
 		

@@ -17,6 +17,7 @@
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
+#include "vfs/memory_mapping_ptr.hh"
 #include "vfs/node_ptr.hh"
 
 // Genie
@@ -88,14 +89,15 @@ namespace vfs
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual boost::intrusive_ptr< memory_mapping > Map( size_t length, off_t offset );
-			
+			virtual memory_mapping_ptr Map( size_t length, off_t offset );
 	};
 	
 }
 
 namespace Genie
 {
+	
+	using vfs::memory_mapping_ptr;
 	
 	typedef vfs::filehandle IOHandle;
 	

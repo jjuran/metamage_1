@@ -165,13 +165,13 @@ namespace vfs
 		p7::throw_errno( EINVAL );
 	}
 	
-	boost::intrusive_ptr< memory_mapping >
+	memory_mapping_ptr
 	//
 	filehandle::Map( size_t length, off_t offset )
 	{
 		p7::throw_errno( ENODEV );
 		
-		return boost::intrusive_ptr< memory_mapping >();
+		return memory_mapping_ptr();
 	}
 	
 }
