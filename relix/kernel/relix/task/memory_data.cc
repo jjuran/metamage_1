@@ -1,11 +1,9 @@
 /*
 	memory_data.cc
 	--------------
-	
-	Copyright 2010, Joshua Juran
 */
 
-#include "Genie/task/memory_data.hh"
+#include "relix/task/memory_data.hh"
 
 // Standard C++
 #include <algorithm>
@@ -19,14 +17,14 @@
 #include <boost/intrusive_ptr.hpp>
 
 // plus
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
-// Genie
-#include "Genie/mmap/memory_mapping.hh"
-#include "Genie/Utilities/simple_map.hh"
+// vfs
+#include "vfs/memory_mapping.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	static void assign_flattened_argv( plus::var_string& result, char const *const *argv )
@@ -70,7 +68,7 @@ namespace Genie
 	class memory_data_impl : public memory_data
 	{
 		public:
-			typedef simple_map< addr_t, boost::intrusive_ptr< const memory_mapping > > mmap_map;
+			typedef plus::simple_map< addr_t, boost::intrusive_ptr< const vfs::memory_mapping > > mmap_map;
 			
 			program_parameters  its_parameters;
 			mmap_map            its_memory_mappings;
@@ -103,7 +101,7 @@ namespace Genie
 	
 	void memory_data_impl::swap( memory_data_impl& other )
 	{
-		using Genie::swap;
+		using relix::swap;
 		
 		swap( its_parameters,      other.its_parameters      );
 		swap( its_memory_mappings, other.its_memory_mappings );
@@ -117,7 +115,7 @@ namespace Genie
 	
 	void memory_data::swap( memory_data& other )
 	{
-		Genie::swap( static_cast< memory_data_impl& >( *this ),
+		relix::swap( static_cast< memory_data_impl& >( *this ),
 		             static_cast< memory_data_impl& >( other ) );
 	}
 	
@@ -207,7 +205,7 @@ namespace Genie
 		return &impl_cast( this )->its_parameters.its_envp[ 0 ];
 	}
 	
-	void* memory_data::add_memory_mapping( const memory_mapping* mapping )
+	void* memory_data::add_memory_mapping( const vfs::memory_mapping* mapping )
 	{
 		ASSERT( mapping != NULL );
 		
