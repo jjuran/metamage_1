@@ -25,7 +25,7 @@ namespace Nitrogen
 			      const Mac::AEDesc_Token&  obj1,
 			      const Mac::AEDesc_Token&  obj2 );
 	
-	template < ::DescType tokenType > struct Compare_Traits;
+	template < Mac::DescType tokenType > struct Compare_Traits;
 	
 	class Comparer
 	{
@@ -49,7 +49,7 @@ namespace Nitrogen
 				map[ tokenType ] = callback;
 			}
 			
-			template < ::DescType tokenType >
+			template < Mac::DescType tokenType >
 			void Register()
 			{
 				Register( tokenType, Compare_Traits< tokenType >::Compare );
@@ -67,13 +67,13 @@ namespace Nitrogen
 		TheGlobalComparer().Register( tokenType, callback );
 	}
 	
-	template < ::DescType tokenType >
+	template < Mac::DescType tokenType >
 	inline void RegisterComparer()
 	{
 		TheGlobalComparer().template Register< tokenType >();
 	}
 	
-	template < ::DescType descType >
+	template < Mac::DescType descType >
 	struct BasicComparer
 	{
 		typedef typename DescType_result< descType >::type Result;
@@ -94,7 +94,7 @@ namespace Nitrogen
 		}
 	};
 	
-	template < ::DescType descType >
+	template < Mac::DescType descType >
 	struct NumericComparer
 	{
 		typedef typename DescType_result< descType >::type Result;
