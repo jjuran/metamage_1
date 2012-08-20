@@ -1,9 +1,3 @@
-// Pedestal.icons.r
-
-#ifndef __TYPES_R__
-#include "Types.r"
-#endif
-
 type ':-)Ê' as 'STR ';
 resource ':-)Ê' (0) { "Yet another Pedestal hack" };
 

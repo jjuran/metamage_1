@@ -1,9 +1,3 @@
-// Genie.icons.r
-
-#ifndef __TYPES_R__
-#include "Types.r"
-#endif
-
 resource 'ICN#' (128) {
 	{	/* array: 2 elements */
 		/* [1] */
