@@ -77,10 +77,17 @@ namespace Nitrogen
 		return control;
 	}
 	
+#if TARGET_API_MAC_OSX
+// Works in 10.1 and later
+#define GetPortVisibleRegion_or_NULL( port )  (NULL)
+#else
+#define GetPortVisibleRegion_or_NULL( port )  GetPortVisibleRegion( port )
+#endif
+	
 	void UpdateControls( WindowRef window )
 	{
 		::UpdateControls( window,
-		                  GetPortVisibleRegion( GetWindowPort( window ) ) );
+		                  GetPortVisibleRegion_or_NULL( GetWindowPort( window ) ) );
 	}
 	
 	FindControl_Result FindControl( Point testPoint, WindowRef theWindow )
