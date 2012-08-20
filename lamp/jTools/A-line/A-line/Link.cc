@@ -334,7 +334,16 @@ namespace tool
 		
 		if ( use_OSX_Rez )
 		{
-			rezCommand.push_back( "/Developer/Tools/Rez" );
+			const char* rez = "/Developer/Tools/Rez";
+			
+			struct ::stat sb;
+			
+			if ( stat( rez, &sb ) != 0 )
+			{
+				rez = "Rez";  // It's at /usr/bin/Rez on Lion.
+			}
+			
+			rezCommand.push_back( rez );
 			rezCommand.push_back( "-i" );
 			rezCommand.push_back( "/Developer/Headers/FlatCarbon" );
 			
