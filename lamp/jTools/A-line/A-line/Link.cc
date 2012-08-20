@@ -353,7 +353,7 @@ namespace tool
 			rezCommand.push_back( "mpwrez" );
 		}
 		
-		rezCommand.push_back( "Types.r" );
+		rezCommand.push_back( "Carbon.r" );
 		
 		rezCommand.push_back( "-i" );
 		
