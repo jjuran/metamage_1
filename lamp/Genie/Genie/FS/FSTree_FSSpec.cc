@@ -1092,7 +1092,7 @@ namespace Genie
 			
 			++cInfo.dirInfo.ioFDirIndex;
 			
-			OSErr err = ::PBGetCatInfoAsync( &cInfo );
+			(void) ::PBGetCatInfoAsync( &cInfo );
 			
 			if ( cInfo.dirInfo.ioResult >= 0 )
 			{
