@@ -44,7 +44,7 @@ namespace poseven
 			return inet_address;
 		}
 		
-	#if __LITTLE_ENDIAN__
+	#if CONFIG_LITTLE_ENDIAN
 		
 		static address_type make( in_addr_t addr, in_port_t port )
 		{
