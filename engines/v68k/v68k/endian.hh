@@ -9,15 +9,8 @@
 // C99
 #include <stdint.h>
 
-
-#ifndef V68K_LITTLE_ENDIAN
-	#if defined( __BIG_ENDIAN__ ) || defined( __MC68K__ )
-		#define V68K_LITTLE_ENDIAN  0
-	#endif
-	#if defined( __LITTLE_ENDIAN__ ) || defined( __i386__ ) || defined( __x86_64__ )
-		#define V68K_LITTLE_ENDIAN  1
-	#endif
-#endif
+// config
+#include "config/endian.h"
 
 
 namespace v68k
@@ -25,9 +18,9 @@ namespace v68k
 	
 	inline bool is_little_endian()
 	{
-	#ifdef V68K_LITTLE_ENDIAN
+	#ifdef CONFIG_LITTLE_ENDIAN
 		
-		return V68K_LITTLE_ENDIAN;
+		return CONFIG_LITTLE_ENDIAN;
 		
 	#else
 	#warning Endianness unknown at compile time, will check (inefficiently) at runtime.
