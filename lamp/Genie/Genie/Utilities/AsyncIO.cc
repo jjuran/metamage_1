@@ -110,7 +110,10 @@ namespace Genie
 	               unsigned char*       name,
 	               SInt16               index )
 	{
-		Str255 dummyName = "\p";
+		//Str255 dummyName = "\p";  // clang hates this
+		
+		Str255 dummyName;
+		       dummyName[ 0 ] = 0;
 		
 		if ( index == 0  &&  (name == NULL  ||  name[ 0 ] == '\0') )
 		{
