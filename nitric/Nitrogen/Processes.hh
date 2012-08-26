@@ -89,20 +89,17 @@ namespace nucleus
 			return result;
 		}
 	};
-	
-	// Since ProcessSerialNumber is declared at global scope, namespace Nitrogen isn't checked.
-	// We include "nucleus/operators.hh" below to make the operators available in nucleus::operators.
-	inline bool operator==( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
-	{
-		return a.highLongOfPSN == b.highLongOfPSN
-			&& a.lowLongOfPSN  == b.lowLongOfPSN;
-	}
-	
-	inline bool operator!=( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
-	{
-		return !( a == b );
-	}
-	
+}
+
+inline bool operator==( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
+{
+	return a.highLongOfPSN == b.highLongOfPSN
+		&& a.lowLongOfPSN  == b.lowLongOfPSN;
+}
+
+inline bool operator!=( const ::ProcessSerialNumber& a, const ::ProcessSerialNumber& b )
+{
+	return !( a == b );
 }
 
 namespace Nitrogen
