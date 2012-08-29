@@ -245,7 +245,7 @@ namespace Genie
 		
 		char const *const *argv = &args[ 0 ];
 		
-		spawn_process( argv[ 0 ], argv, NULL );
+		spawn_process( argv[ 0 ], argv );
 	}
 	
 }
