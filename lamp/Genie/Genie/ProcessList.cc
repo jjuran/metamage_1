@@ -201,6 +201,13 @@ namespace Genie
 		}
 	}
 	
+	void spawn_process( const char* path, const char* const* argv )
+	{
+		const char* envp[] = { "PATH=/bin:/sbin:/usr/bin:/usr/sbin", NULL };
+		
+		spawn_process( path, argv, envp );
+	}
+	
 	void spawn_process( const plus::string& program_args )
 	{
 		plus::var_string arg_string = program_args;

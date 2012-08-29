@@ -77,11 +77,9 @@ namespace Genie
 	{
 		const char* argv[] = { "-sh", "-c", "", NULL };
 		
-		const char* envp[] = { "PATH=/bin:/sbin:/usr/bin:/usr/sbin", NULL };
-		
 		argv[2] = command.c_str();
 		
-		spawn_process( "/bin/sh", argv, envp );
+		spawn_process( "/bin/sh", argv );
 	}
 	
 	
