@@ -53,7 +53,7 @@ echo >> $main/v/text "by Josh Juran"
 echo 1 > $icon/v/disabling
 echo 1 > $main/v/disabling
 
-/usr/bin/daemonize --cwd --ctty=tty -- /usr/bin/idle
+daemonize --cwd --ctty=tty -- idle
 
 echo 1 > vis
 

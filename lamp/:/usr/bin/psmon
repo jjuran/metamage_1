@@ -29,7 +29,7 @@ echo 0f0 > w/fore-color
 echo 4 > v/padding
 echo 0 > v/v/wrapped
 
-/usr/bin/daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2 > v/v/text
+daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2 > v/v/text
 
 echo 1 > vis
 

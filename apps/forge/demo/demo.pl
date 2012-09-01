@@ -16,7 +16,7 @@ sub setup
 
 sub finish
 {
-	system "/usr/bin/daemonize --cwd --ctty=tty -- /usr/bin/idle";
+	system "daemonize --cwd --ctty=tty -- idle";
 }
 
 sub go
