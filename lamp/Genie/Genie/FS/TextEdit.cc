@@ -5,6 +5,13 @@
 
 #include "Genie/FS/TextEdit.hh"
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
+
 // Standard C++
 #include <algorithm>
 
