@@ -5,6 +5,17 @@
 
 #include "Genie/FS/sys/app/window/list/REF.hh"
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
+
 // Standard C/C++
 #include <cstdio>
 #include <cstring>

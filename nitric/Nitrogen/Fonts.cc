@@ -13,6 +13,13 @@
 
 #include "Nitrogen/Fonts.hh"
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_FONTS_H
+#include "missing/Fonts.h"
+#endif
+#endif
+
 
 namespace Nitrogen
 {

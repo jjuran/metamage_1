@@ -13,6 +13,13 @@
 #include <Fonts.h>
 #endif
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
+
 // Nitrogen
 #include "Mac/Controls/Types/ControlPartCode.hh"
 

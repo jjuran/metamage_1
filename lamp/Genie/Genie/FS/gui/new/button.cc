@@ -5,6 +5,17 @@
 
 #include "Genie/FS/gui/new/button.hh"
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
+
 // POSIX
 #include <sys/stat.h>
 

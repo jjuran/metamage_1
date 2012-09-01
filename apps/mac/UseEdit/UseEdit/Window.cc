@@ -8,6 +8,16 @@
 // Standard C++
 #include <algorithm>
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_FONTS_H
+#include "missing/Fonts.h"
+#endif
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
+
 // plus
 #include "plus/string.hh"
 

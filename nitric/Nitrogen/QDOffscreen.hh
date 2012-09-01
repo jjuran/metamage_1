@@ -20,8 +20,17 @@
 #endif
 
 // Mac OS
+#ifndef MAC_OS_X_VERSION_10_7
 #ifndef __QDOFFSCREEN__
 #include <QDOffscreen.h>
+#endif
+#endif
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QDOFFSCREEN_H
+#include "missing/QDOffscreen.h"
+#endif
 #endif
 
 // Nitrogen
