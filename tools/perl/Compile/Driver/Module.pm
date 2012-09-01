@@ -63,6 +63,13 @@ sub is_static_lib
 	return grep { $self->product_type eq $_ } qw( lib dropin );
 }
 
+sub is_toolkit
+{
+	my $self = shift;
+	
+	return $self->product_type eq 'toolkit';
+}
+
 sub is_executable
 {
 	my $self = shift;
@@ -74,7 +81,7 @@ sub is_buildable
 {
 	my $self = shift;
 	
-	return $self->is_static_lib  ||  $self->is_executable;
+	return $self->is_static_lib  ||  $self->is_toolkit  ||  $self->is_executable;
 }
 
 sub program_name
@@ -277,6 +284,24 @@ sub sources
 	my $filter = sub { filter( $conf ) };
 	
 	return map { enumerate_files( $_, $filter ) } @source_dirs;
+}
+
+sub source_is_tool
+{
+	my $self = shift;
+	
+	my ( $source ) = @_;
+	
+	if ( !exists $self->{IS_TOOL} )
+	{
+		my $tools = $self->{DESC}{DATA}{tools} || [];
+		
+		$self->{IS_TOOL} = { map { $_ => 1 } @$tools };
+	}
+	
+	$source =~ s{^ .* / }{}x;
+	
+	return exists $self->{IS_TOOL}{ $source };
 }
 
 sub all_search_dirs

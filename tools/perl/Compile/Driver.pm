@@ -27,12 +27,20 @@ sub jobs_for
 	my $name = $module->name;
 	
 	my @objs;
+	my @tool_objs;
 	
 	foreach my $path ( @sources )
 	{
 		my $obj = Compile::Driver::Job::obj_pathname( $target, $name, $path );
 		
-		push @objs, $obj;
+		if ( $module->source_is_tool( $path ) )
+		{
+			push @tool_objs, $obj;
+		}
+		else
+		{
+			push @objs, $obj;
+		}
 		
 		my $compile = Compile::Driver::Job::Compile::->new
 		(
@@ -47,7 +55,7 @@ sub jobs_for
 	
 	my $link;
 	
-	if ( $module->is_static_lib )
+	if ( @objs  and  $module->is_static_lib  ||  $module->is_toolkit )
 	{
 		$link = Compile::Driver::Job::Link::Archive::->new
 		(
@@ -69,7 +77,28 @@ sub jobs_for
 		);
 	}
 	
-	push @jobs, $link;
+	push @jobs, $link  if defined $link;
+	
+	my @prereqs = @{ $module->recursive_prerequisites };
+	
+	push @prereqs, $name;
+	
+	foreach my $obj ( @tool_objs )
+	{
+		my ( $tool_name ) = $obj =~ m{ / ( [^/]+ ) \. \w+ \.o }x;
+		
+		my $link = Compile::Driver::Job::Link::Binary::->new
+		(
+			TYPE => "LINK",
+			PATH => $tool_name,
+			FROM => $module,
+			OBJS => [ $obj ],
+			PREQ => \@prereqs,
+			DEST => Compile::Driver::Job::bin_pathname( $target, $name, $tool_name ),
+		);
+		
+		push @jobs, $link;
+	}
 	
 	return @jobs;
 }
