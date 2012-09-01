@@ -238,7 +238,7 @@ namespace Genie
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
 		Mac::FSDirID        dirID   = Mac::FSDirID       ();
 		
-		if ( TARGET_RT_MAC_MACHO )
+		if ( TARGET_API_MAC_CARBON )
 		{
 			const FSRef location = N::GetProcessBundleLocation( N::CurrentProcess() );
 			
@@ -253,20 +253,14 @@ namespace Genie
 		                                                      dirID,
 		                                                      name );
 		
-		if ( exists )
+		if ( !exists )
 		{
-			cInfo.dirInfo.ioVRefNum = GetVRefNum( N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
+			MacIO::GetCatInfo< FNF_Returns >( cInfo,
+			                                  vRefNum,
+			                                  dirID );
 		}
-		else
-		{
-			// Then root, or bust
-			N::FSDirSpec root = io::system_root< N::FSDirSpec >();
-			
-			MacIO::GetCatInfo< FNF_Throws >( cInfo,
-			                                 root.vRefNum,
-			                                 root.dirID,
-			                                 name );
-		}
+		
+		cInfo.dirInfo.ioVRefNum = GetVRefNum( N::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum ) );
 		
 		return Dir_From_CInfo( cInfo );
 	}
