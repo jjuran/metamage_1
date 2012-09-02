@@ -233,9 +233,12 @@ namespace Genie
 		
 		// Try current directory first
 		
+		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
+		Mac::FSDirID        dirID   = Mac::FSDirID       ();
+		
 		const bool exists = MacIO::GetCatInfo< FNF_Returns >( cInfo,
-		                                                      N::FSVolumeRefNum(),
-		                                                      N::FSDirID(),
+		                                                      vRefNum,
+		                                                      dirID,
 		                                                      name );
 		
 		if ( exists )
