@@ -22,6 +22,23 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static void CenterWindowRect( Rect& bounds )
+	{
+		// Pre-conditions:  bounds is set to { 0, 0, v, h }
+		
+		const short topMargin = ::GetMBarHeight() + 18;  // FIXME:  Calculate title bar height
+		
+		BitMap screenBits = N::GetQDGlobalsScreenBits();
+		
+		short spareWidth = screenBits.bounds.right - bounds.right;
+		
+		short spareHeight = screenBits.bounds.bottom - bounds.bottom - topMargin;
+		
+		::OffsetRect( &bounds,
+		              spareWidth / 2,
+		              topMargin + spareHeight / 3 );
+	}
+	
 	class AboutFunction
 	{
 		public:
@@ -38,9 +55,9 @@ namespace Pedestal
 	
 	static std::auto_ptr< Window > NewAboutBox()
 	{
-		Rect bounds = N::OffsetRect( N::SetRect( 0, 0, 128, 128 ),
-		                             300,
-		                             200 );
+		Rect bounds = N::SetRect( 0, 0, 128, 128 );
+		
+		CenterWindowRect( bounds );
 		
 		NewWindowContext context( bounds, "\p" "Pedestal", true, Mac::noGrowDocProc );
 		
