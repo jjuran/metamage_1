@@ -9,11 +9,7 @@
 #include "Nitrogen/Icons.hh"
 #include "Nitrogen/Quickdraw.hh"
 
-// MacFeatures
-#include "MacFeatures/ColorQuickdraw.hh"
-
 // Pedestal
-#include "Pedestal/EmptyView.hh"
 #include "Pedestal/UniqueWindowOwner.hh"
 #include "Pedestal/UserWindow.hh"
 
@@ -71,14 +67,7 @@ namespace Pedestal
 		
 		std::auto_ptr< Window > window( new UserWindow( context ) );
 		
-		if ( MacFeatures::Has_ColorQuickdraw() )
-		{
-			window->SetView( boost::intrusive_ptr< View >( new AboutBoxView() ) );
-		}
-		else
-		{
-			window->SetView( boost::intrusive_ptr< View >( new EmptyView() ) );
-		}
+		window->SetView( boost::intrusive_ptr< View >( new AboutBoxView() ) );
 		
 		return window;
 	}
