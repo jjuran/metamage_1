@@ -25,5 +25,5 @@ echo >> v/v/text "\$ touch window"
 
 sleep 1.5
 
-echo >> v/v/text "\$ echo Hello > v/text"
+echo >> v/v/text "\$ echo Hello world > v/text"
 
