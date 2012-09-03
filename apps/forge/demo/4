@@ -4,11 +4,11 @@ echo > v/v/text "Now let's try it for real."
 
 sleep 2
 
-echo 10,50 > pos
+echo 9,45 > pos
 
 sleep 1
 
-echo 800x400 > size
+echo 720x242 > size
 
 sleep 1
 
@@ -18,7 +18,7 @@ rm /tmp/demo-console 2>/dev/null
 
 sleep 1
 
-echo 10,484 > /tmp/demo-console/pos
+echo 9,318 > /tmp/demo-console/pos
 
 CONSOLE=/tmp/demo-console/v/v/v
 

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo 800x600 > size
+echo 640x480 > size
 
 echo FORGE > title
 

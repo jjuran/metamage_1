@@ -7,11 +7,11 @@ echo > v/v/text "Let's tweak a few things:"
 sleep 2
 
 echo >> v/v/text
-echo >> v/v/text "\$ echo 550,500 > pos"
+echo >> v/v/text "\$ echo 280,340 > pos"
 
 sleep 1
 
-echo >> $CONSOLE/text "echo 550,500 > pos"
+echo >> $CONSOLE/text "echo 280,340 > pos"
 
 sleep 1.5
 
