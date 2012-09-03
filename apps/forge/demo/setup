@@ -6,7 +6,7 @@ echo FORGE > title
 
 touch window
 
-echo 48 > w/text-size
+echo 36 > w/text-size
 echo  4 > w/text-font
 
 /bin/ln new/frame   view
