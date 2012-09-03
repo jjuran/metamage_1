@@ -90,6 +90,15 @@ namespace tool
 						verbose = true;
 						break;
 					
+					case 'd':
+						if ( arg[2] == '\0' )
+						{
+							command.push_back( arg );
+							
+							command.push_back( *++argv );
+						}
+						break;
+					
 					case 'i':
 					case 'o':
 						if ( arg[2] == '\0' )
