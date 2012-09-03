@@ -1,7 +1,5 @@
 #!/bin/sh
 
-echo 10,50 > $WINDOW/pos
-
 echo 800x600 > size
 
 echo FORGE > title
