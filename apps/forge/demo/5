@@ -47,10 +47,6 @@ echo >> v/v/text "And..."
 
 sleep 1
 
-echo 900x400 > size
-
-sleep 1
-
 echo >> v/v/text "\$ echo Hello world > v/text"
 
 sleep 1
