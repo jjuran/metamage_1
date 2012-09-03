@@ -24,8 +24,7 @@ CONSOLE=/tmp/demo-console/v/v/v
 
 sleep 2
 
-echo >> v/v/text
-echo >> v/v/text "\$ cd /gui/new/port"
+echo > v/v/text "\$ cd /gui/new/port"
 
 sleep 1
 
