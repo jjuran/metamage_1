@@ -17,7 +17,7 @@ echo >> v/v/text "\$ exec 9> lock"
 
 sleep 1.5
 
-echo >> v/v/text "\$ ln /gui/new/caption view"
+echo >> v/v/text "\$ ln new/caption view"
 
 sleep 1.5
 
