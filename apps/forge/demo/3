@@ -9,7 +9,7 @@ echo > v/v/text "Here's a simple demo:"
 sleep 2
 
 echo >> v/v/text
-echo >> v/v/text "\$ cd /gui/port/hello"
+echo >> v/v/text "\$ cd \$FORGE/gui/port/hello"
 
 sleep 1.5
 

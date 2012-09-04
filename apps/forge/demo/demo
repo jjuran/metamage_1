@@ -2,7 +2,7 @@
 
 set -e
 
-cd /gui/port/demo
+cd $FORGE/gui/port/demo
 
 $DEMO/setup
 

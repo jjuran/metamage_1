@@ -33,11 +33,11 @@ echo >> v/v/text "text written to it will execute."
 
 sleep 3.5
 
-echo > v/v/text "\$ cd /gui/port/hello"
+echo > v/v/text "\$ cd \$FORGE/gui/port/hello"
 
 sleep 1
 
-echo >> $CONSOLE/text "cd /gui/port/hello"
+echo >> $CONSOLE/text "cd \$FORGE/gui/port/hello"
 
 sleep 1.5
 
