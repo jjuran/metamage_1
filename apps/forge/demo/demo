@@ -2,7 +2,7 @@
 
 set -e
 
-cd /gui/new/port
+cd /gui/port/demo
 
 $DEMO/setup
 

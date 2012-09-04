@@ -33,11 +33,19 @@ echo >> v/v/text "text written to it will execute."
 
 sleep 3.5
 
-echo > v/v/text "\$ cd /gui/new/port"
+echo > v/v/text "\$ cd /gui/port/hello"
 
 sleep 1
 
-echo >> $CONSOLE/text "cd /gui/new/port"
+echo >> $CONSOLE/text "cd /gui/port/hello"
+
+sleep 1.5
+
+echo >> v/v/text "\$ exec 9> lock"
+
+sleep 1
+
+echo >> $CONSOLE/text "exec 9> lock"
 
 sleep 1.5
 
