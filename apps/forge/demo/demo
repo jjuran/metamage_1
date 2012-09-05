@@ -1,0 +1,12 @@
+#!/bin/sh
+
+set -e
+
+cd /gui/new/port
+
+$DEMO/setup
+
+$DEMO/main
+
+daemonize --cwd --ctty=tty -- idle
+
