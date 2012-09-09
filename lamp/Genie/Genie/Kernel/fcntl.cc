@@ -18,7 +18,7 @@
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -76,16 +76,6 @@ namespace Genie
 			
 			IOPtr opened = directory ? opendir( file.get()              )
 			                         : open   ( file.get(), flags, mode );
-			
-			const bool truncating = flags & O_TRUNC;
-			
-			if ( truncating )
-			{
-				if ( RegularFileHandle* file_handle = IOHandle_Cast< RegularFileHandle >( opened.get() ) )
-				{
-					file_handle->SetEOF( 0 );
-				}
-			}
 			
 			const bool close_on_exec = flags & O_CLOEXEC;
 			
