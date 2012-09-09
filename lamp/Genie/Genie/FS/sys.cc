@@ -104,17 +104,17 @@ namespace Genie
 	}
 	
 	
-	static int main_true()
+	static int true_main()
 	{
 		return 0;
 	}
 	
-	static int main_false()
+	static int false_main()
 	{
 		return 1;
 	}
 	
-	static int main_beep()
+	static int beep_main()
 	{
 		Mac::SysBeep();
 		
@@ -127,10 +127,10 @@ namespace Genie
 	
 	const vfs::fixed_mapping sys_kernel_bin_Mappings[] =
 	{
-		{ "true",  EXEC( main_true  ) },
-		{ "false", EXEC( main_false ) },
+		{ "true",  EXEC( true_main  ) },
+		{ "false", EXEC( false_main ) },
 		
-		{ "beep",  EXEC( main_beep  ) },
+		{ "beep",  EXEC( beep_main  ) },
 		
 		{ NULL, NULL }
 	};
