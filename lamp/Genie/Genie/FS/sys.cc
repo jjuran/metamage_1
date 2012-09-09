@@ -104,26 +104,21 @@ namespace Genie
 	}
 	
 	
-	namespace
+	static int main_true()
 	{
+		return 0;
+	}
+	
+	static int main_false()
+	{
+		return 1;
+	}
+	
+	static int main_beep()
+	{
+		Mac::SysBeep();
 		
-		int main_true()
-		{
-			return 0;
-		}
-		
-		int main_false()
-		{
-			return 1;
-		}
-		
-		int main_beep()
-		{
-			Mac::SysBeep();
-			
-			return 0;
-		}
-		
+		return 0;
 	}
 	
 	#define EXEC( main )  &vfs::builtin_factory, (const void*) &main
