@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd /gui/port/about
+cd $FORGE/gui/port/about
 
 /usr/bin/touch w/select 2> /dev/null  &&  exit  ||  true
 
