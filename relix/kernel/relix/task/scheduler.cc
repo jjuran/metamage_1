@@ -50,6 +50,13 @@ namespace relix
 	
 	bool is_active()
 	{
+		if ( pthread_yield_needed )
+		{
+			pthread_yield_needed = false;
+			
+			pthread_yield();
+		}
+		
 		return !active_threads.empty();
 	}
 	
