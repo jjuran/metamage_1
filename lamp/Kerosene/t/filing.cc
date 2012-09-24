@@ -257,7 +257,7 @@ static void t_renameat()
 	
 	(void) rename( "a", "foo/a" );
 	
-	ok_if( renameat( foo_fd, "a", bar_fd, "a" ) == 0, "renameat( dirfd, x, dirfd, x ) # TODO" );
+	ok_if( renameat( foo_fd, "a", bar_fd, "a" ) == 0, "renameat( dirfd, x, dirfd, x )" );
 	
 	ok_if( exists( "bar/a" ) );
 	
