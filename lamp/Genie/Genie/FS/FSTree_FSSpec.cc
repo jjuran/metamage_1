@@ -556,12 +556,18 @@ namespace Genie
 	
 	static FSTreePtr MakeFSRoot()
 	{
-		return New_FSTree_Union( NULL,
-		                         plus::string::null,
-		                         fixed_dir( NULL,
-		                                    plus::string::null,
-		                                    Root_Overlay_Mappings ).get(),
-		                         FSTreeFromFSDirSpec( root_DirSpec() ).get() );
+		vfs::node_ptr overlayfs = fixed_dir( NULL,
+		                                     plus::string::null,
+		                                     Root_Overlay_Mappings );
+		
+		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
+		
+		vfs::node_ptr rootfs = New_FSTree_Union( NULL,
+		                                         plus::string::null,
+		                                         overlayfs.get(),
+		                                         diskfs.get() );
+		
+		return rootfs;
 	}
 	
 	
