@@ -81,6 +81,7 @@
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/misc_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/resfs.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
@@ -560,12 +561,19 @@ namespace Genie
 		                                     plus::string::null,
 		                                     Root_Overlay_Mappings );
 		
+		vfs::node_ptr resfs = new_resfs_root();
+		
 		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
+		
+		vfs::node_ptr bottom = New_FSTree_Union( NULL,
+		                                         plus::string::null,
+		                                         resfs.get(),
+		                                         diskfs.get() );
 		
 		vfs::node_ptr rootfs = New_FSTree_Union( NULL,
 		                                         plus::string::null,
 		                                         overlayfs.get(),
-		                                         diskfs.get() );
+		                                         bottom.get() );
 		
 		return rootfs;
 	}
