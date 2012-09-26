@@ -411,13 +411,11 @@ namespace Genie
 	
 	static void Normalize( const char* path, ExecContext& context, const FSTree* cwd )
 	{
-		FSSpec fileSpec;
-		
 		OSType type = 'Wish';
 		
 		try
 		{
-			fileSpec = GetFSSpecFromFSTree( context.executable );
+			const FSSpec fileSpec = GetFSSpecFromFSTree( context.executable );
 			
 			type = N::FSpGetFInfo( fileSpec ).fdType;
 		}
