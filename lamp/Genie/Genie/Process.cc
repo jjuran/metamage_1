@@ -435,7 +435,7 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			const size_t buffer_length = 1024;
+			const size_t buffer_length = 512;
 			
 			char data[ buffer_length + 1 ];
 			
