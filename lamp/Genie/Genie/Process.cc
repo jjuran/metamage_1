@@ -435,12 +435,15 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			char data[ 1024 + 1 ];
-			data[1024] = '\0';
+			const size_t buffer_length = 1024;
+			
+			char data[ buffer_length + 1 ];
+			
+			data[ buffer_length ] = '\0';
 			
 			n::owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
 			
-			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
+			size_t bytes = N::FSRead( script, buffer_length, data, N::ThrowEOF_Never() );
 			
 			N::FSClose( script );
 			
