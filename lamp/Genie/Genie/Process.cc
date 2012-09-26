@@ -456,18 +456,18 @@ namespace Genie
 			return;  // Already normalized
 		}
 		
+		const plus::string block = first_disk_block( context.executable.get() );
+		
+		const ssize_t bytes = block.size();
+		
+		const char* data = block.c_str();
+		
+		const bool has_shebang = bytes > 2 && data[0] == '#' && data[1] == '!';
+		
 		if ( type == 'TEXT' )
 		{
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
-			
-			const plus::string block = first_disk_block( context.executable.get() );
-			
-			const ssize_t bytes = block.size();
-			
-			const char* data = block.c_str();
-			
-			const bool has_shebang = bytes > 2 && data[0] == '#' && data[1] == '!';
 			
 			if ( has_shebang )
 			{
