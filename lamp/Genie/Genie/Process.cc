@@ -462,8 +462,6 @@ namespace Genie
 					throw NotExecutable();  // #! line too long
 				}
 				
-				*nl = '\0';
-				
 				char* space = std::find( data, nl, ' ' );
 				
 				hasArg = space != nl;
