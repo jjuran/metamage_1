@@ -448,7 +448,9 @@ namespace Genie
 			
 			script.reset();
 			
-			if ( bytes > 2 && data[0] == '#' && data[1] == '!' )
+			const bool has_shebang = bytes > 2 && data[0] == '#' && data[1] == '!';
+			
+			if ( has_shebang )
 			{
 				char* end = data + bytes;
 				
