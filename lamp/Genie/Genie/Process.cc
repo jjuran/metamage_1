@@ -84,8 +84,9 @@
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
-#include "Genie/IO/Base.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/scheduler.hh"
@@ -441,11 +442,13 @@ namespace Genie
 			
 			data[ buffer_length ] = '\0';
 			
-			n::owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
+			vfs::filehandle_ptr script = open( context.executable.get(), O_RDONLY, 0 );
 			
-			size_t bytes = N::FSRead( script, buffer_length, data, N::ThrowEOF_Never() );
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *script.get() );
 			
-			N::FSClose( script );
+			const ssize_t bytes = stream.Read( data, buffer_length );
+			
+			script.reset();
 			
 			if ( bytes > 2 && data[0] == '#' && data[1] == '!' )
 			{
