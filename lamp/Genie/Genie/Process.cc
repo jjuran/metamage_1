@@ -464,9 +464,9 @@ namespace Genie
 				
 				*nl = '\0';
 				
-				char* space = std::strchr( data, ' ' );
+				char* space = std::find( data, nl, ' ' );
 				
-				hasArg = space;
+				hasArg = space != nl;
 				
 				context.interpreterPath.assign( &data[2], hasArg ? space : nl );
 				context.interpreterArg .assign( hasArg ? space + 1 : nl, nl );
