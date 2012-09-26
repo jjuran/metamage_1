@@ -466,7 +466,7 @@ namespace Genie
 				
 				hasArg = space != nl;
 				
-				context.interpreterPath.assign( &data[2], hasArg ? space : nl );
+				context.interpreterPath.assign( &data[2], space );
 				context.interpreterArg .assign( hasArg ? space + 1 : nl, nl );
 			}
 			
