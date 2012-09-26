@@ -409,6 +409,33 @@ namespace Genie
 	
 	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
+	static plus::string first_disk_block( const vfs::node* file )
+	{
+		const size_t buffer_length = 512;
+		
+		plus::var_string result;
+		
+		char* p = result.reset( buffer_length );
+		
+		ssize_t n_read = 0;
+		
+		try
+		{
+			const vfs::filehandle_ptr fh = open( file, O_RDONLY, 0 );
+			
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *fh.get() );
+			
+			n_read = stream.Read( p, buffer_length );
+		}
+		catch ( ... )
+		{
+		}
+		
+		result.resize( n_read );
+		
+		return result.move();
+	}
+	
 	static void Normalize( const char* path, ExecContext& context, const FSTree* cwd )
 	{
 		OSType type = 'Wish';
@@ -434,37 +461,29 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			const size_t buffer_length = 512;
+			const plus::string block = first_disk_block( context.executable.get() );
 			
-			char data[ buffer_length + 1 ];
+			const ssize_t bytes = block.size();
 			
-			data[ buffer_length ] = '\0';
-			
-			vfs::filehandle_ptr script = open( context.executable.get(), O_RDONLY, 0 );
-			
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *script.get() );
-			
-			const ssize_t bytes = stream.Read( data, buffer_length );
-			
-			script.reset();
+			const char* data = block.c_str();
 			
 			const bool has_shebang = bytes > 2 && data[0] == '#' && data[1] == '!';
 			
 			if ( has_shebang )
 			{
-				char* end = data + bytes;
+				const char* end = data + bytes;
 				
-				char* cr = std::find( data, end, '\r' );
-				char* lf = std::find( data, end, '\n' );
+				const char* cr = std::find( data, end, '\r' );
+				const char* lf = std::find( data, end, '\n' );
 				
-				char* nl = std::min( cr, lf );
+				const char* nl = std::min( cr, lf );
 				
 				if ( nl == end )
 				{
 					throw NotExecutable();  // #! line too long
 				}
 				
-				char* space = std::find( data, nl, ' ' );
+				const char* space = std::find( data, nl, ' ' );
 				
 				hasArg = space != nl;
 				
