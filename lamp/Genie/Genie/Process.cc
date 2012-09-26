@@ -468,8 +468,8 @@ namespace Genie
 				
 				hasArg = space;
 				
-				context.interpreterPath.assign( &data[2], space ? space : nl );
-				context.interpreterArg .assign( space ? space + 1 : nl, nl );
+				context.interpreterPath.assign( &data[2], hasArg ? space : nl );
+				context.interpreterArg .assign( hasArg ? space + 1 : nl, nl );
 			}
 			
 			// E.g. "$ script foo bar baz"
