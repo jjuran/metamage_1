@@ -84,8 +84,9 @@
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
+#include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
-#include "Genie/IO/Base.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/scheduler.hh"
@@ -410,13 +411,11 @@ namespace Genie
 	
 	static void Normalize( const char* path, ExecContext& context, const FSTree* cwd )
 	{
-		FSSpec fileSpec;
-		
 		OSType type = 'Wish';
 		
 		try
 		{
-			fileSpec = GetFSSpecFromFSTree( context.executable );
+			const FSSpec fileSpec = GetFSSpecFromFSTree( context.executable );
 			
 			type = N::FSpGetFInfo( fileSpec ).fdType;
 		}
@@ -435,14 +434,19 @@ namespace Genie
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
 			
-			char data[ 1024 + 1 ];
-			data[1024] = '\0';
+			const size_t buffer_length = 512;
 			
-			n::owned< N::FSFileRefNum > script = N::FSpOpenDF( fileSpec, N::fsRdPerm );
+			char data[ buffer_length + 1 ];
 			
-			size_t bytes = N::FSRead( script, 1024, data, N::ThrowEOF_Never() );
+			data[ buffer_length ] = '\0';
 			
-			N::FSClose( script );
+			vfs::filehandle_ptr script = open( context.executable.get(), O_RDONLY, 0 );
+			
+			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *script.get() );
+			
+			const ssize_t bytes = stream.Read( data, buffer_length );
+			
+			script.reset();
 			
 			if ( bytes > 2 && data[0] == '#' && data[1] == '!' )
 			{
@@ -458,14 +462,16 @@ namespace Genie
 					throw NotExecutable();  // #! line too long
 				}
 				
-				*nl = '\0';
+				char* space = std::find( data, nl, ' ' );
 				
-				char* space = std::strchr( data, ' ' );
+				hasArg = space != nl;
 				
-				hasArg = space;
+				context.interpreterPath.assign( &data[2], space );
 				
-				context.interpreterPath.assign( &data[2], space ? space : nl );
-				context.interpreterArg .assign( space ? space + 1 : nl, nl );
+				if ( hasArg )
+				{
+					context.interpreterArg.assign( space + 1, nl );
+				}
 			}
 			
 			// E.g. "$ script foo bar baz"
