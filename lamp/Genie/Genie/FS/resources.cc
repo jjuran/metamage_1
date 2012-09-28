@@ -40,8 +40,12 @@
 #include "vfs/dir_entry.hh"
 
 // Genie
+#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/data_method_set.hh"
+#include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/FS/property.hh"
+#include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
 
@@ -62,6 +66,25 @@ namespace Genie
 	{
 		Mac::ResType  type;
 		Mac::ResID    id;
+	};
+	
+	class ResLoad_false_scope
+	{
+		private:
+			// non-copyable
+			ResLoad_false_scope           ( const ResLoad_false_scope& );
+			ResLoad_false_scope& operator=( const ResLoad_false_scope& );
+		
+		public:
+			ResLoad_false_scope()
+			{
+				::SetResLoad( false );
+			}
+			
+			~ResLoad_false_scope()
+			{
+				::SetResLoad( true );
+			}
 	};
 	
 	
@@ -130,6 +153,61 @@ namespace Genie
 		
 		return result;
 	}
+	
+	
+	struct resource_name : readwrite_property
+	{
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
+		{
+			const vfs::node* res_file = that->owner();
+			
+			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+			
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
+			
+			const ResSpec resSpec = GetResSpec_from_name( that->name() );
+			
+			const N::Handle r = (ResLoad_false_scope(),
+			                     N::Get1Resource( resSpec.type, resSpec.id ));
+			
+			const N::GetResInfo_Result resInfo = N::GetResInfo( r );
+			
+			::ReleaseResource( r );
+			
+			result.assign( resInfo.name );
+		}
+		
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		{
+			const size_t length = end - begin;
+			
+			if ( length > 255 )
+			{
+				p7::throw_errno( ENAMETOOLONG );
+			}
+			
+			Str255 name;
+			
+			name[ 0 ] = length;
+			
+			memcpy( name + 1, begin, length );
+			
+			const vfs::node* res_file = that->owner();
+			
+			const FSSpec& fileSpec = *(FSSpec*) res_file->extra();
+			
+			RdWr_OpenResFile_Scope openResFile( fileSpec );
+			
+			const ResSpec resSpec = GetResSpec_from_name( that->name() );
+			
+			const N::Handle r = (ResLoad_false_scope(),
+			                     N::Get1Resource( resSpec.type, resSpec.id ));
+			
+			N::SetResInfo( r, resSpec.id, name );
+			
+			::ReleaseResource( r );
+		}
+	};
 	
 	
 	class Rsrc_IOHandle : public Handle_IOHandle
@@ -264,10 +342,61 @@ namespace Genie
 	
 	static off_t rsrc_file_geteof( const FSTree* node );
 	
+	static vfs::node_ptr rsrc_file_lookup( const vfs::node*     that,
+	                                       const plus::string&  name,
+	                                       const vfs::node*     parent )
+	{
+		bool binary = false;
+		bool mac    = false;
+		
+		const char* p = name.c_str();
+		
+		if ( *p == '.' )
+		{
+			++p;
+			
+			if ( *p == '~' )
+			{
+				binary = true;
+				
+				++p;
+			}
+			
+			if ( memcmp( p, "mac-", sizeof "mac-" - 1) == 0 )
+			{
+				mac = true;
+				
+				p += sizeof "mac-" - 1;
+			}
+			else if ( !binary )
+			{
+				p = "";  // Don't match on ".name"
+			}
+		}
+		
+		if ( memcmp( p, "name", sizeof "name" ) != 0 )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		typedef property_params_factory<                     resource_name   > mac_factory;
+		typedef property_params_factory< utf8_text_property< resource_name > > utf8_factory;
+		
+		const property_params& params = mac ? mac_factory ::value
+		                                    : utf8_factory::value;
+		
+		return new_property( that, name, &params );
+	}
+	
 	static const data_method_set rsrc_file_data_methods =
 	{
 		&rsrc_file_open,
 		&rsrc_file_geteof
+	};
+	
+	static const dir_method_set rsrc_file_dirmethods =
+	{
+		&rsrc_file_lookup
 	};
 	
 	static const node_method_set rsrc_file_methods =
@@ -278,7 +407,9 @@ namespace Genie
 		NULL,
 		&rsrc_file_remove,
 		&rsrc_file_rename,
-		&rsrc_file_data_methods
+		&rsrc_file_data_methods,
+		NULL,
+		&rsrc_file_dirmethods
 	};
 	
 	
