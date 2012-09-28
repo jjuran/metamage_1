@@ -9,6 +9,9 @@
 // POSIX
 #include <sys/types.h>
 
+// plus
+#include "plus/string.hh"
+
 // vfs
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/node_fwd.hh"
@@ -22,12 +25,15 @@ namespace vfs
 	
 	typedef filehandle_ptr (*open_method)( const node*, int flags, mode_t );
 	
+	typedef plus::string (*slurp_method)( const node* );
+	
 	
 	struct data_method_set
 	{
 		open_method    open;
 		geteof_method  geteof;
 		seteof_method  seteof;
+		slurp_method   slurp;
 	};
 	
 }
