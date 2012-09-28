@@ -58,6 +58,13 @@ namespace Genie
 	using MacScribe::parse_quad_name;
 	
 	
+	struct ResSpec
+	{
+		Mac::ResType  type;
+		Mac::ResID    id;
+	};
+	
+	
 	void iterate_resources( const FSSpec& file, vfs::dir_contents& cache )
 	{
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
@@ -89,7 +96,7 @@ namespace Genie
 		}
 	}
 	
-	static N::GetResInfo_Result GetResInfo_from_name( const plus::string& name )
+	static ResSpec GetResSpec_from_name( const plus::string& name )
 	{
 		const plus::string& mac_name = plus::mac_from_utf8( name );
 		
@@ -119,7 +126,7 @@ namespace Genie
 		
 		const ::OSType type = parse_quad_name( begin, end - begin );
 		
-		const N::GetResInfo_Result result = { N::ResID( id ), N::ResType( type ) };
+		const ResSpec result = { Mac::ResType( type ), Mac::ResID( id ) };
 		
 		return result;
 	}
@@ -167,11 +174,11 @@ namespace Genie
 		}
 	}
 	
-	static N::Handle GetOrAddResource( const N::GetResInfo_Result& resinfo )
+	static N::Handle GetOrAddResource( const ResSpec& resSpec )
 	{
 		try
 		{
-			return N::Get1Resource( resinfo.type, resinfo.id );
+			return N::Get1Resource( resSpec.type, resSpec.id );
 		}
 		catch ( const Mac::OSStatus& err )
 		{
@@ -180,7 +187,7 @@ namespace Genie
 				throw;
 			}
 			
-			return N::AddResource( N::NewHandle( 0 ), resinfo );
+			return N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
 		}
 	}
 	
@@ -188,11 +195,11 @@ namespace Genie
 	{
 		FSTreePtr file = GetFile();
 		
-		N::GetResInfo_Result resInfo = GetResInfo_from_name( file->name() );
+		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
 		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
 		
-		const N::Handle r = GetOrAddResource( resInfo );
+		const N::Handle r = GetOrAddResource( resSpec );
 		
 		const size_t size = GetEOF();
 		
@@ -273,11 +280,11 @@ namespace Genie
 	};
 	
 	
-	static bool has_resource( const FSSpec& file, const N::GetResInfo_Result& resinfo )
+	static bool has_resource( const FSSpec& file, const ResSpec& resSpec )
 	{
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdPerm );
 		
-		return ::Get1Resource( resinfo.type, resinfo.id ) != NULL;
+		return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 	}
 	
 	static void rsrc_file_remove( const FSTree* node )
@@ -286,9 +293,9 @@ namespace Genie
 		
 		RdWr_OpenResFile_Scope openResFile( fileSpec );
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( node->name() );
 		
-		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		(void) N::RemoveResource( r );
 	}
@@ -299,9 +306,9 @@ namespace Genie
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( node->name() );
 		
-		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		return N::GetHandleSize( r );
 	}
@@ -322,9 +329,9 @@ namespace Genie
 		{
 			RdWr_OpenResFile_Scope openResFile( fileSpec );
 			
-			N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+			const ResSpec resSpec = GetResSpec_from_name( node->name() );
 			
-			(void) N::AddResource( N::NewHandle( 0 ), resinfo );
+			(void) N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
 		}
 		
 		n::owned< N::Handle > h = N::NewHandle( 0 );
@@ -351,9 +358,9 @@ namespace Genie
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
 		
-		N::GetResInfo_Result resinfo = GetResInfo_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( node->name() );
 		
-		const N::Handle r = N::Get1Resource( resinfo.type, resinfo.id );
+		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
@@ -367,9 +374,9 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const FSSpec&        file )
 	{
-		const N::GetResInfo_Result resinfo = GetResInfo_from_name( name );
+		const ResSpec resSpec = GetResSpec_from_name( name );
 		
-		const bool exists = has_resource( file, resinfo );
+		const bool exists = has_resource( file, resSpec );
 		
 		// FIXME:  Check perms
 		const mode_t mode = exists ? S_IFREG | 0400 : 0;
