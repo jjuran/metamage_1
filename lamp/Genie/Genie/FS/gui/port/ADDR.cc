@@ -651,6 +651,31 @@ namespace Genie
 	};
 	
 	
+	class port_tty_filehandle : public vfs::filehandle
+	{
+		private:
+			vfs::node_ptr  its_tty_file;
+		
+		public:
+			port_tty_filehandle( const vfs::node_ptr& file )
+			:
+				vfs::filehandle( 0 ),
+				its_tty_file( file )
+			{
+			}
+			
+			~port_tty_filehandle();
+			
+			vfs::node_ptr GetFile()  { return its_tty_file; }
+	};
+	
+	port_tty_filehandle::~port_tty_filehandle()
+	{
+		WindowParameters& params = gWindowParametersMap[ GetFile()->owner() ];
+		
+		params.itsTerminal = NULL;
+	}
+	
 	static inline IOPtr
 	//
 	NewTerminal( const plus::string& name )
@@ -670,6 +695,10 @@ namespace Genie
 		{
 			tty = open( params.itsTTYDelegate.get(), flags, 0 );
 		}
+		else
+		{
+			tty = new port_tty_filehandle( node );
+		}
 		
 		plus::string pathname = vfs::pathname( has_tty ? tty->GetFile().get()
 		                                               : node                 );
@@ -679,9 +708,9 @@ namespace Genie
 		if ( has_tty )
 		{
 			tty->Attach( terminal );
-			
-			terminal->Attach( tty );
 		}
+		
+		terminal->Attach( tty );
 		
 		params.itsTerminal = terminal.get();
 		
