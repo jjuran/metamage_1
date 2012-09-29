@@ -4,11 +4,11 @@ echo > v/v/text "Now let's try it for real."
 
 sleep 2
 
-echo 10,50 > pos
+echo 9,45 > pos
 
 sleep 1
 
-echo 800x400 > size
+echo 720x242 > size
 
 sleep 1
 
@@ -18,26 +18,42 @@ rm /tmp/demo-console 2>/dev/null
 
 sleep 1
 
-echo 10,484 > /tmp/demo-console/pos
+echo 9,318 > /tmp/demo-console/pos
 
 CONSOLE=/tmp/demo-console/v/v/v
 
 sleep 2
 
 echo >> v/v/text
-echo >> v/v/text "\$ cd /gui/new/port"
+echo >> v/v/text "That's a live console --"
 
 sleep 1
 
-echo >> $CONSOLE/text "cd /gui/new/port"
+echo >> v/v/text "text written to it will execute."
+
+sleep 3.5
+
+echo > v/v/text "\$ cd \$FORGE/gui/port/hello"
+
+sleep 1
+
+echo >> $CONSOLE/text "cd \$FORGE/gui/port/hello"
 
 sleep 1.5
 
-echo >> v/v/text "\$ ln /gui/new/caption view"
+echo >> v/v/text "\$ exec 9> lock"
 
 sleep 1
 
-echo >> $CONSOLE/text "ln /gui/new/caption view"
+echo >> $CONSOLE/text "exec 9> lock"
+
+sleep 1.5
+
+echo >> v/v/text "\$ ln new/caption view"
+
+sleep 1
+
+echo >> $CONSOLE/text "ln new/caption view"
 
 sleep 1.5
 
@@ -49,9 +65,9 @@ echo >> $CONSOLE/text "touch window"
 
 sleep 2
 
-echo >> v/v/text "\$ echo Hello > v/text"
+echo >> v/v/text '$ echo "Hello world" > v/text'
 
 sleep 1
 
-echo >> $CONSOLE/text "echo Hello > v/text"
+echo >> $CONSOLE/text 'echo "Hello world" > v/text'
 

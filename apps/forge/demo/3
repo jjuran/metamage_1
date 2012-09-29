@@ -9,11 +9,15 @@ echo > v/v/text "Here's a simple demo:"
 sleep 2
 
 echo >> v/v/text
-echo >> v/v/text "\$ cd /gui/new/port"
+echo >> v/v/text "\$ cd \$FORGE/gui/port/hello"
 
 sleep 1.5
 
-echo >> v/v/text "\$ ln /gui/new/caption view"
+echo >> v/v/text "\$ exec 9> lock"
+
+sleep 1.5
+
+echo >> v/v/text "\$ ln new/caption view"
 
 sleep 1.5
 
@@ -21,5 +25,5 @@ echo >> v/v/text "\$ touch window"
 
 sleep 1.5
 
-echo >> v/v/text "\$ echo Hello > v/text"
+echo >> v/v/text "\$ echo Hello world > v/text"
 

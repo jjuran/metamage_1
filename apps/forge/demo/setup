@@ -1,18 +1,16 @@
 #!/bin/sh
 
-echo 10,50 > $WINDOW/pos
-
-echo 800x600 > size
+echo 640x480 > size
 
 echo FORGE > title
 
 touch window
 
-echo 48 > w/text-size
+echo 36 > w/text-size
 echo  4 > w/text-font
 
-/bin/ln /gui/new/frame   view
-/bin/ln /gui/new/caption v/view
+/bin/ln new/frame   view
+/bin/ln new/caption v/view
 
 echo 4 > v/padding
 
