@@ -15,8 +15,12 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
-#include "Genie/IO/Conduit.hh"
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/IO/Stream.hh"
 
 
@@ -26,11 +30,11 @@ namespace Genie
 	class PipeInHandle : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< Conduit > itsConduit;
+			boost::intrusive_ptr< plus::conduit > itsConduit;
 		
 		public:
-			PipeInHandle( const boost::intrusive_ptr< Conduit >&  conduit,
-			              bool                                    nonblocking )
+			PipeInHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
+			              bool                                          nonblocking )
 			:
 				StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
 				                          : O_WRONLY ),
@@ -43,12 +47,12 @@ namespace Genie
 			unsigned int SysPoll()
 			{
 				return   kPollRead
-				       | kPollWrite * itsConduit->IsWritable();
+				       | kPollWrite * itsConduit->is_writable();
 			}
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsConduit->Write( data, byteCount, IsNonblocking() );
+				return itsConduit->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
@@ -57,11 +61,11 @@ namespace Genie
 	class PipeOutHandle : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< Conduit > itsConduit;
+			boost::intrusive_ptr< plus::conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( const boost::intrusive_ptr< Conduit >&  conduit,
-			               bool                                    nonblocking )
+			PipeOutHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
+			               bool                                          nonblocking )
 			:
 				StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
 				                          : O_RDONLY ),
@@ -73,13 +77,13 @@ namespace Genie
 			
 			unsigned int SysPoll()
 			{
-				return   kPollRead * itsConduit->IsReadable()
+				return   kPollRead * itsConduit->is_readable()
 				       | kPollWrite;
 			}
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsConduit->Read( data, byteCount, IsNonblocking() );
+				return itsConduit->read( data, byteCount, IsNonblocking(), &try_again );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );

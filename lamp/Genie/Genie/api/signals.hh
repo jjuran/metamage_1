@@ -14,6 +14,8 @@ namespace Genie
 	
 	void send_signal_to_current_process( int signo );
 	
+	void broken_pipe();
+	
 }
 
 #endif

@@ -9,10 +9,12 @@
 // POSIX
 #include "sys/socket.h"
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
-#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
 #include "Genie/IO/SocketStream.hh"
@@ -31,6 +33,9 @@
 namespace Genie
 {
 	
+	using plus::conduit;
+	
+	
 	static int socketpair( int domain, int type, int protocol, int fds[2] )
 	{
 		try
@@ -38,8 +43,8 @@ namespace Genie
 			const bool close_on_exec = type & SOCK_CLOEXEC;
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
-			boost::intrusive_ptr< Conduit > east( new Conduit );
-			boost::intrusive_ptr< Conduit > west( new Conduit );
+			boost::intrusive_ptr< conduit > east( new conduit );
+			boost::intrusive_ptr< conduit > west( new conduit );
 			
 			IOPtr san_jose = NewPairedSocket( west, east, nonblocking );
 			IOPtr new_york = NewPairedSocket( east, west, nonblocking );

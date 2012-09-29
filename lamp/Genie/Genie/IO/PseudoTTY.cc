@@ -12,6 +12,8 @@
 #include "plus/var_string.hh"
 
 // Genie
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
@@ -27,9 +29,9 @@ namespace Genie
 	
 	static inline IOPtr
 	//
-	NewPseudoTTY( TerminalID                              id,
-	              const boost::intrusive_ptr< Conduit >&  input,
-	              const boost::intrusive_ptr< Conduit >&  output )
+	NewPseudoTTY( TerminalID                                    id,
+	              const boost::intrusive_ptr< plus::conduit >&  input,
+	              const boost::intrusive_ptr< plus::conduit >&  output )
 	{
 		return new PseudoTTYHandle( id, input, output );
 	}
@@ -39,8 +41,8 @@ namespace Genie
 	{
 		static TerminalID index = 0;
 		
-		boost::intrusive_ptr< Conduit > incoming( new Conduit );
-		boost::intrusive_ptr< Conduit > outgoing( new Conduit );
+		boost::intrusive_ptr< plus::conduit > incoming( new plus::conduit );
+		boost::intrusive_ptr< plus::conduit > outgoing( new plus::conduit );
 		
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
@@ -68,9 +70,9 @@ namespace Genie
 		return result;
 	}
 	
-	PseudoTTYHandle::PseudoTTYHandle( std::size_t                      id,
-			                          boost::intrusive_ptr< Conduit >  input,
-			                          boost::intrusive_ptr< Conduit >  output )
+	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
+			                          boost::intrusive_ptr< plus::conduit >  input,
+			                          boost::intrusive_ptr< plus::conduit >  output )
 	: TTYHandle( O_RDWR ),
 	  itsID( id ),
 	  itsTerminal( NewTerminal( make_devpts( id ) ) ),
@@ -81,8 +83,8 @@ namespace Genie
 	
 	PseudoTTYHandle::~PseudoTTYHandle()
 	{
-		itsInput->CloseEgress();
-		itsOutput->CloseIngress();
+		itsInput->close_egress();
+		itsOutput->close_ingress();
 		
 		GetPseudoTTYMap().erase( itsID );
 	}
@@ -99,17 +101,17 @@ namespace Genie
 	
 	unsigned int PseudoTTYHandle::SysPoll()
 	{
-		return (itsInput->IsReadable() ? kPollRead : 0) | kPollWrite;
+		return (itsInput->is_readable() ? kPollRead : 0) | kPollWrite;
 	}
 	
 	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsInput->Read( data, byteCount, IsNonblocking() );
+		return itsInput->read( data, byteCount, IsNonblocking(), &try_again );
 	}
 	
 	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsOutput->Write( data, byteCount, IsNonblocking() );
+		return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 	}
 	
 }

@@ -12,9 +12,11 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
 #include "Genie/IO/Base.hh"
-#include "Genie/IO/Conduit.hh"
 
 
 namespace Genie
@@ -22,9 +24,9 @@ namespace Genie
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
-	                 const boost::intrusive_ptr< Conduit >&  output,
-	                 bool                                    nonblocking );
+	NewPairedSocket( const boost::intrusive_ptr< plus::conduit >&  input,
+	                 const boost::intrusive_ptr< plus::conduit >&  output,
+	                 bool                                          nonblocking );
 	
 }
 

@@ -247,14 +247,14 @@ namespace Genie
 	
 	static inline IOPtr
 	//
-	NewPipeReader( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
+	NewPipeReader( const boost::intrusive_ptr< plus::conduit >& conduit, bool nonblocking )
 	{
 		return new PipeOutHandle( conduit, nonblocking );
 	}
 	
 	static inline IOPtr
 	//
-	NewPipeWriter( const boost::intrusive_ptr< Conduit >& conduit, bool nonblocking )
+	NewPipeWriter( const boost::intrusive_ptr< plus::conduit >& conduit, bool nonblocking )
 	{
 		return new PipeInHandle( conduit, nonblocking );
 	}
@@ -269,7 +269,7 @@ namespace Genie
 			int reader = LowestUnusedFileDescriptor( 3 );
 			int writer = LowestUnusedFileDescriptor( reader + 1 );
 			
-			boost::intrusive_ptr< Conduit > conduit( new Conduit );
+			boost::intrusive_ptr< plus::conduit > conduit( new plus::conduit );
 			
 			IOPtr pipeIn ( NewPipeWriter( conduit, nonblocking ) );
 			IOPtr pipeOut( NewPipeReader( conduit, nonblocking ) );

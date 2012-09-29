@@ -15,6 +15,8 @@
 #include "Nitrogen/OSUtils.hh"
 
 // Genie
+#include "Genie/api/signals.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/IO/SocketStream.hh"
 
 
@@ -28,30 +30,30 @@ namespace Genie
 	class PairedSocket : public SocketHandle
 	{
 		private:
-			boost::intrusive_ptr< Conduit >  itsInput;
-			boost::intrusive_ptr< Conduit >  itsOutput;
+			boost::intrusive_ptr< plus::conduit >  itsInput;
+			boost::intrusive_ptr< plus::conduit >  itsOutput;
 		
 		public:
-			PairedSocket( boost::intrusive_ptr< Conduit >  input,
-			              boost::intrusive_ptr< Conduit >  output,
-			              bool                             nonblocking );
+			PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
+			              boost::intrusive_ptr< plus::conduit >  output,
+			              bool                                   nonblocking );
 			
 			~PairedSocket();
 			
 			unsigned int SysPoll()
 			{
-				return   kPollRead  * itsInput->IsReadable()
-				       | kPollWrite * itsOutput->IsWritable();
+				return   kPollRead  * itsInput->is_readable()
+				       | kPollWrite * itsOutput->is_writable();
 			}
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsInput->Read( data, byteCount, IsNonblocking() );
+				return itsInput->read( data, byteCount, IsNonblocking(), &try_again );
 			}
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsOutput->Write( data, byteCount, IsNonblocking() );
+				return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
 			//void IOCtl( unsigned long request, int* argp );
@@ -72,9 +74,9 @@ namespace Genie
 	};
 	
 	
-	PairedSocket::PairedSocket( boost::intrusive_ptr< Conduit >  input,
-			                    boost::intrusive_ptr< Conduit >  output,
-			                    bool                             nonblocking )
+	PairedSocket::PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
+			                    boost::intrusive_ptr< plus::conduit >  output,
+			                    bool                                   nonblocking )
 	:
 		SocketHandle( nonblocking ),
 		itsInput ( input  ),
@@ -126,20 +128,20 @@ namespace Genie
 	
 	void PairedSocket::ShutdownReading()
 	{
-		itsInput->CloseEgress();
+		itsInput->close_egress();
 	}
 	
 	void PairedSocket::ShutdownWriting()
 	{
-		itsOutput->CloseIngress();
+		itsOutput->close_ingress();
 	}
 	
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< Conduit >&  input,
-	                 const boost::intrusive_ptr< Conduit >&  output,
-	                 bool                                    nonblocking )
+	NewPairedSocket( const boost::intrusive_ptr< plus::conduit >&  input,
+	                 const boost::intrusive_ptr< plus::conduit >&  output,
+	                 bool                                          nonblocking )
 	{
 		return new PairedSocket( input, output, nonblocking );
 	}

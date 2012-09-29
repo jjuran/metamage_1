@@ -12,8 +12,10 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
-#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/TTY.hh"
 
 
@@ -23,17 +25,17 @@ namespace Genie
 	class PseudoTTYHandle : public TTYHandle
 	{
 		private:
-			TerminalID                       itsID;
-			IOPtr                            itsTerminal;
-			boost::intrusive_ptr< Conduit >  itsInput;
-			boost::intrusive_ptr< Conduit >  itsOutput;
+			TerminalID                             itsID;
+			IOPtr                                  itsTerminal;
+			boost::intrusive_ptr< plus::conduit >  itsInput;
+			boost::intrusive_ptr< plus::conduit >  itsOutput;
 			
 			IOHandle* Next() const;
 		
 		public:
-			PseudoTTYHandle( std::size_t                      id,
-			                 boost::intrusive_ptr< Conduit >  input,
-			                 boost::intrusive_ptr< Conduit >  output );
+			PseudoTTYHandle( std::size_t                            id,
+			                 boost::intrusive_ptr< plus::conduit >  input,
+			                 boost::intrusive_ptr< plus::conduit >  output );
 			
 			~PseudoTTYHandle();
 			
