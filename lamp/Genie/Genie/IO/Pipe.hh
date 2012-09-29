@@ -28,11 +28,11 @@ namespace Genie
 	class PipeInHandle : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< conduit > itsConduit;
+			boost::intrusive_ptr< plus::conduit > itsConduit;
 		
 		public:
-			PipeInHandle( const boost::intrusive_ptr< conduit >&  conduit,
-			              bool                                    nonblocking )
+			PipeInHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
+			              bool                                          nonblocking )
 			:
 				StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
 				                          : O_WRONLY ),
@@ -59,11 +59,11 @@ namespace Genie
 	class PipeOutHandle : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< conduit > itsConduit;
+			boost::intrusive_ptr< plus::conduit > itsConduit;
 		
 		public:
-			PipeOutHandle( const boost::intrusive_ptr< conduit >&  conduit,
-			               bool                                    nonblocking )
+			PipeOutHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
+			               bool                                          nonblocking )
 			:
 				StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
 				                          : O_RDONLY ),

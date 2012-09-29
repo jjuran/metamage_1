@@ -29,9 +29,9 @@ namespace Genie
 	
 	static inline IOPtr
 	//
-	NewPseudoTTY( TerminalID                              id,
-	              const boost::intrusive_ptr< conduit >&  input,
-	              const boost::intrusive_ptr< conduit >&  output )
+	NewPseudoTTY( TerminalID                                    id,
+	              const boost::intrusive_ptr< plus::conduit >&  input,
+	              const boost::intrusive_ptr< plus::conduit >&  output )
 	{
 		return new PseudoTTYHandle( id, input, output );
 	}
@@ -41,8 +41,8 @@ namespace Genie
 	{
 		static TerminalID index = 0;
 		
-		boost::intrusive_ptr< conduit > incoming( new conduit );
-		boost::intrusive_ptr< conduit > outgoing( new conduit );
+		boost::intrusive_ptr< plus::conduit > incoming( new plus::conduit );
+		boost::intrusive_ptr< plus::conduit > outgoing( new plus::conduit );
 		
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
@@ -70,9 +70,9 @@ namespace Genie
 		return result;
 	}
 	
-	PseudoTTYHandle::PseudoTTYHandle( std::size_t                      id,
-			                          boost::intrusive_ptr< conduit >  input,
-			                          boost::intrusive_ptr< conduit >  output )
+	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
+			                          boost::intrusive_ptr< plus::conduit >  input,
+			                          boost::intrusive_ptr< plus::conduit >  output )
 	: TTYHandle( O_RDWR ),
 	  itsID( id ),
 	  itsTerminal( NewTerminal( make_devpts( id ) ) ),

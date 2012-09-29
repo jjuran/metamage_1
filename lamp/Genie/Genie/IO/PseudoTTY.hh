@@ -23,17 +23,17 @@ namespace Genie
 	class PseudoTTYHandle : public TTYHandle
 	{
 		private:
-			TerminalID                       itsID;
-			IOPtr                            itsTerminal;
-			boost::intrusive_ptr< conduit >  itsInput;
-			boost::intrusive_ptr< conduit >  itsOutput;
+			TerminalID                             itsID;
+			IOPtr                                  itsTerminal;
+			boost::intrusive_ptr< plus::conduit >  itsInput;
+			boost::intrusive_ptr< plus::conduit >  itsOutput;
 			
 			IOHandle* Next() const;
 		
 		public:
-			PseudoTTYHandle( std::size_t                      id,
-			                 boost::intrusive_ptr< conduit >  input,
-			                 boost::intrusive_ptr< conduit >  output );
+			PseudoTTYHandle( std::size_t                            id,
+			                 boost::intrusive_ptr< plus::conduit >  input,
+			                 boost::intrusive_ptr< plus::conduit >  output );
 			
 			~PseudoTTYHandle();
 			

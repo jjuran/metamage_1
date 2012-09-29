@@ -12,7 +12,7 @@
 #include "debug/assert.hh"
 
 
-namespace Genie
+namespace plus
 {
 	
 	page::page( const page& other )

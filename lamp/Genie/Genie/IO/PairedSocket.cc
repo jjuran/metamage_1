@@ -30,13 +30,13 @@ namespace Genie
 	class PairedSocket : public SocketHandle
 	{
 		private:
-			boost::intrusive_ptr< conduit >  itsInput;
-			boost::intrusive_ptr< conduit >  itsOutput;
+			boost::intrusive_ptr< plus::conduit >  itsInput;
+			boost::intrusive_ptr< plus::conduit >  itsOutput;
 		
 		public:
-			PairedSocket( boost::intrusive_ptr< conduit >  input,
-			              boost::intrusive_ptr< conduit >  output,
-			              bool                             nonblocking );
+			PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
+			              boost::intrusive_ptr< plus::conduit >  output,
+			              bool                                   nonblocking );
 			
 			~PairedSocket();
 			
@@ -74,9 +74,9 @@ namespace Genie
 	};
 	
 	
-	PairedSocket::PairedSocket( boost::intrusive_ptr< conduit >  input,
-			                    boost::intrusive_ptr< conduit >  output,
-			                    bool                             nonblocking )
+	PairedSocket::PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
+			                    boost::intrusive_ptr< plus::conduit >  output,
+			                    bool                                   nonblocking )
 	:
 		SocketHandle( nonblocking ),
 		itsInput ( input  ),
@@ -139,9 +139,9 @@ namespace Genie
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< conduit >&  input,
-	                 const boost::intrusive_ptr< conduit >&  output,
-	                 bool                                    nonblocking )
+	NewPairedSocket( const boost::intrusive_ptr< plus::conduit >&  input,
+	                 const boost::intrusive_ptr< plus::conduit >&  output,
+	                 bool                                          nonblocking )
 	{
 		return new PairedSocket( input, output, nonblocking );
 	}

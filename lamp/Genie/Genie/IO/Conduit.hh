@@ -13,7 +13,7 @@
 #include "plus/ref_count.hh"
 
 
-namespace Genie
+namespace plus
 {
 	
 	class page
@@ -44,7 +44,7 @@ namespace Genie
 			std::size_t read( char* buffer, std::size_t max_bytes );
 	};
 	
-	class conduit : public plus::ref_count< conduit >
+	class conduit : public ref_count< conduit >
 	{
 		private:
 			typedef void (*try_again_f)( bool );
