@@ -1,10 +1,10 @@
-/*	==========
- *	Conduit.hh
- *	==========
- */
+/*
+	conduit.hh
+	----------
+*/
 
-#ifndef GENIE_IO_CONDUIT_HH
-#define GENIE_IO_CONDUIT_HH
+#ifndef PLUS_CONDUIT_HH
+#define PLUS_CONDUIT_HH
 
 // Standard C++
 #include <list>

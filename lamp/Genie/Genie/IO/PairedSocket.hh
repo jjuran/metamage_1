@@ -12,9 +12,11 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
 #include "Genie/IO/Base.hh"
-#include "Genie/IO/Conduit.hh"
 
 
 namespace Genie

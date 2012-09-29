@@ -1,9 +1,9 @@
-/*	==========
- *	Conduit.cc
- *	==========
- */
+/*
+	conduit.cc
+	----------
+*/
 
-#include "Genie/IO/Conduit.hh"
+#include "plus/conduit.hh"
 
 // Standard C++
 #include <algorithm>

@@ -12,8 +12,10 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
-#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/TTY.hh"
 
 

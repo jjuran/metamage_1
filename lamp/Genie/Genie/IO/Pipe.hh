@@ -15,10 +15,12 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/Stream.hh"
 
 

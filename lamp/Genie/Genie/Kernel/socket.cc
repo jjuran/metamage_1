@@ -9,10 +9,12 @@
 // POSIX
 #include "sys/socket.h"
 
+// plus
+#include "plus/conduit.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
-#include "Genie/IO/Conduit.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
 #include "Genie/IO/SocketStream.hh"
