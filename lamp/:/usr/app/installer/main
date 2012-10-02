@@ -1,0 +1,10 @@
+#!/bin/sh
+
+/bin/test -d /tmp || /bin/mkdir /tmp
+
+/sbin/upgrade
+
+/bin/sync
+
+/usr/bin/idle
+
