@@ -179,6 +179,8 @@ namespace Genie
 		
 		execution_unit unit = N::DetachResource( N::Get1Resource( resType, resID ) );
 		
+		N::HLockHi( unit.get() );
+		
 		return prepare_executable( unit );
 	}
 	
