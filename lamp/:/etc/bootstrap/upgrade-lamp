@@ -2,12 +2,6 @@
 
 set -e
 
-test -n "$HOME" || echo "$0: HOME is not set"
-test -n "$HOME" || exit 1
-
-test -d $HOME || echo "$0: HOME doesn't exist"
-test -d $HOME || exit 1
-
 dest="/sys/app/dir/../$1"
 
 test -d $dest && echo You already have $1. && exit || true
