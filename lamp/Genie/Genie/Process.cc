@@ -519,7 +519,7 @@ namespace Genie
 			
 			context.executable = ResolvePathname( context.interpreterPath, cwd );
 		}
-		else
+		else if ( type != 0 )
 		{
 			throw NotExecutable();
 		}
