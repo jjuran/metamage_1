@@ -10,14 +10,19 @@
 
 // POSIX
 #include <errno.h>
+#include <fcntl.h>
 #include <unistd.h>
+
+// relix
+#include "relix/copyfile.h"
+#include "relix/pump.h"
 
 // plus
 #include "plus/var_string.hh"
 
 // poseven
-#include "poseven/extras/copyfile.hh"
 #include "poseven/functions/stat.hh"
+#include "poseven/types/errno_t.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -46,6 +51,35 @@ namespace tool
 		return name_start;
 	}
 	
+	static int copyfile_or_pump( const char* src, const char* dest )
+	{
+		int ok = ::copyfile( src, dest );
+		
+		if ( ok < 0  &&  (errno == EINVAL  ||  errno == EXDEV) )
+		{
+			int in = ok = open( src, O_RDONLY );
+			
+			if ( in >= 0 )
+			{
+				int out = ok = open( dest, O_WRONLY|O_CREAT, 0666 );
+				
+				if ( out >= 0 )
+				{
+					ssize_t pumped = pump( in, NULL, out, NULL, 0, 0 );
+					
+					pumped = pump( in, NULL, out, NULL, 0, 0 );
+					
+					ok = -(pumped != 0);
+					
+					close( out );
+				}
+				
+				close( in );
+			}
+		}
+		
+		return ok;
+	}
 	
 	int Main( int argc, char** argv )
 	{
@@ -93,7 +127,7 @@ namespace tool
 				
 				destFilePath += Basename( sourcePath );
 				
-				if ( -1 == copyfile( sourcePath, destFilePath.c_str() ) )
+				if ( -1 == copyfile_or_pump( sourcePath, destFilePath.c_str() ) )
 				{
 					++fail;
 				}
@@ -137,7 +171,7 @@ namespace tool
 				}
 			}
 			
-			p7::copyfile( sourcePath, destPath );
+			p7::throw_posix_result( copyfile_or_pump( sourcePath, destPath ) );
 		}
 		
 		return fail;
