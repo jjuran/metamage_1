@@ -333,6 +333,7 @@ namespace Genie
 		
 		::SetResLoad( false );
 		
+		map_resfs_files_of_type( resfs_root_node.get(), 'Data' );
 		map_resfs_files_of_type( resfs_root_node.get(), 'Exec' );
 		
 		::SetResLoad( true );
