@@ -281,6 +281,15 @@ namespace tool
 		
 		write_line( pragma_cplusplus, p - pragma_cplusplus, global_newline_char );
 		
+		if ( global_config_cplusplus )
+		{
+			char pragma_bool      [] = "#pragma bool on";
+			char pragma_wchar_type[] = "#pragma wchar_type off";
+			
+			write_line( pragma_bool,       sizeof pragma_bool       - 1, global_newline_char );
+			write_line( pragma_wchar_type, sizeof pragma_wchar_type - 1, global_newline_char );
+		}
+		
 		for ( unsigned i = 0;  i < argn;  ++i )
 		{
 			preprocess_file( args[ i ] );
