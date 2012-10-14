@@ -65,12 +65,6 @@
 	#define _WCHAR_T_DEFINED_
 	#define	_TIMER_T_DEFINED_
 	
-	#ifdef __cplusplus
-	#ifdef _MSL_USING_NAMESPACE
-	using std::size_t;
-	#endif
-	#endif
-		
 #endif
 
 #if __BSD_VISIBLE
