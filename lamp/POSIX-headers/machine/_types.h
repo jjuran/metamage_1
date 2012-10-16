@@ -7,8 +7,12 @@
 #define	_SIZE_T_DEFINED_
 
 #if defined( __cplusplus )  &&  defined( _MSL_USING_NAMESPACE )
+#if __MSL__ < 0x6000
+using namespace std;
+#else
 using std::size_t;
 using std::va_list;
+#endif
 #endif
 typedef va_list __va_list;
 
