@@ -105,6 +105,120 @@ namespace tool
 		return a != b;
 	}
 	
+#ifdef __MC68K__
+	
+	/*
+		Rewriting these functions in assembler is absolutely necessary.
+		The output generated MWC68K for the C versions is worse than useless --
+		in each case, the effect is to clobber D5 and return true (without
+		regard to whether optimizations are active).
+		
+		logical_and:
+		
+			LINK     A6,#0
+			MOVEA.L  (12,A6),A0
+			MOVEQ    #88,D5
+			BEQ.S    *+10
+			MOVEA.L  (16,A6),A0
+			MOVEQ    #88,D5
+			BNE.S    *+6
+			MOVEQ    #0,D0
+			BRA.S    *+4
+			MOVEQ    #1,D0
+			EXT.W    D0
+			EXT.L    D0
+			MOVE.L   D0,-(A7)
+			MOVE.L   (8,A6),-(A7)
+			JSR      __rt_ultoi64
+			UNLK     A6
+			RTS
+		
+		logical_or:
+		
+			LINK     A6,#0
+			MOVEA.L  (12,A6),A0
+			MOVEQ    #88,D5
+			BNE.S    *+14
+			MOVEA.L  (16,A6),A0
+			MOVEQ    #88,D5
+			BNE.S    *+6
+			MOVEQ    #0,D0
+			BRA.S    *+4
+			MOVEQ    #1,D0
+			EXT.W    D0
+			EXT.L    D0
+			MOVE.L   D0,-(A7)
+			MOVE.L   (8,A6),-(A7)
+			JSR      __rt_ultoi64
+			UNLK     A6
+			RTS
+		
+		Avoiding the sign extension of a value which is clearly either 0 or 1
+		and the subsequent three-instruction call of a function that does the
+		work of two instructions is merely an added bonus.
+	*/
+	
+	static asm value_t logical_and( const value_t& a, const value_t& b )
+	{
+		LINK     A6,#0
+		
+		MOVEA.L  8(A6),A0
+		CLR.L    (A0)+
+		MOVEQ.L  #0,D0
+		
+		MOVEA.L  12(A6),A1
+		TST.L    (A1)+
+		BNE.S    test_b
+		TST.L    (A1)
+		BEQ.S    done
+		
+	test_b:
+		MOVEA.L  16(A6),A1
+		TST.L    (A1)+
+		BNE.S    is_true
+		TST.L    (A1)
+		BEQ.S    done
+		
+	is_true:
+		MOVEQ.L  #1,D0
+		
+	done:
+		MOVE.L   D0,(A0)
+		
+		UNLK     A6
+		RTS
+	}
+	
+	static asm value_t logical_or( const value_t& a, const value_t& b )
+	{
+		LINK     A6,#0
+		
+		MOVEA.L  8(A6),A0
+		CLR.L    (A0)+
+		MOVEQ.L  #1,D0
+		
+		MOVEA.L  12(A6),A1
+		TST.L    (A1)+
+		BNE.S    done
+		TST.L    (A1)
+		BNE.S    done
+		
+		MOVEA.L  16(A6),A1
+		TST.L    (A1)+
+		BNE.S    done
+		TST.L    (A1)
+		BNE.S    done
+		
+		MOVEQ.L  #0,D0
+		
+	done:
+		MOVE.L   D0,(A0)
+		
+		UNLK     A6
+		RTS
+	}
+	
+#else
 	
 	static value_t logical_and( const value_t& a, const value_t& b )
 	{
@@ -115,6 +229,8 @@ namespace tool
 	{
 		return a || b;
 	}
+	
+#endif
 	
 	
 	static value_t branch( const value_t& a, const value_t& b )
