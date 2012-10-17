@@ -49,8 +49,10 @@ typedef	__wchar_t	wchar_t;
 
 #ifdef __MWERKS__
 #include <div_t.h>
-#ifdef __cplusplus
-#ifdef _MSL_USING_NAMESPACE
+#if defined( __cplusplus )  &&  defined( _MSL_USING_NAMESPACE )
+#if __MSL__ < 0x6000
+using namespace std;
+#else
 using std::div_t;
 using std::ldiv_t;
 #endif
