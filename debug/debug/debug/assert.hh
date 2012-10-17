@@ -9,10 +9,10 @@
 
 #if TARGET_CONFIG_DEBUGGING
 	
-	#if defined(__MWERKS__) && (__MWERKS__ < 0x0300)
-	#define DEBUG_CURRENT_FUNCTION  __func__
-	#else
+	#if defined( __GNUC__ )  ||  defined(__MWERKS__)  &&  (__MWERKS__ >= 0x2400)
 	#define DEBUG_CURRENT_FUNCTION  __PRETTY_FUNCTION__
+	#else
+	#define DEBUG_CURRENT_FUNCTION  "(unknown)"
 	#endif
 	
 	#define ASSERT( cond )                                           \
