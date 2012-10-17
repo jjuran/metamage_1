@@ -120,7 +120,8 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 		
 		std::memcpy( path + filename_offset, filename, filename_length + 1 );
 		
-		struct ::stat sb;
+		struct stat sb;
+		
 		int status = stat( path, &sb );
 		
 		if ( status == 0  &&  sb.st_mode & S_IXUSR )
