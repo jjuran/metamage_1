@@ -401,7 +401,7 @@ void siglongjmp( sigjmp_buf env, int val )
 
 int fileno( FILE *stream )
 {
-	return _fileno( stream );
+	return stream->handle;
 }
 
 extern "C" FILE* __find_unopened_file();
