@@ -6,7 +6,7 @@
 
 #define	_SIZE_T_DEFINED_
 
-#ifdef __cplusplus
+#if defined( __cplusplus )  &&  defined( _MSL_USING_NAMESPACE )
 using std::size_t;
 using std::va_list;
 #endif
