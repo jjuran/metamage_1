@@ -12,7 +12,15 @@
 	
 	#ifdef __cplusplus
 		
-		using std::size_t;
+		#if __MSL__ < 0x6000
+			
+			using namespace std;
+			
+		#else
+			
+			using std::size_t;
+			
+		#endif
 		
 	#endif
 	
