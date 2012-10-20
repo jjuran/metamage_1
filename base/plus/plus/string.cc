@@ -64,39 +64,41 @@ namespace plus
 	}
 	
 	
-	class matches_any
+	class matches
 	{
 		private:
 			const char*  begin;
 			const char*  end;
+			bool         negated;
 		
 		public:
-			matches_any( const char* a, const char* z ) : begin( a ), end( z )
+			matches( const char* a, const char* z, bool neg )
+			:
+				begin( a ),
+				end  ( z ),
+				negated( neg )
 			{
 			}
 			
 			bool operator()( char c ) const
 			{
-				return std::find( begin, end, c ) != end;
+				return (std::find( begin, end, c ) != end) ^ negated;
 			}
 	};
 	
-	class matches_none
+	static matches matches_any( const char* a, const char* b )
 	{
-		private:
-			const char*  begin;
-			const char*  end;
+		const bool negated = false;
 		
-		public:
-			matches_none( const char* a, const char* z ) : begin( a ), end( z )
-			{
-			}
-			
-			bool operator()( char c ) const
-			{
-				return std::find( begin, end, c ) == end;
-			}
-	};
+		return matches( a, b, negated );
+	}
+	
+	static matches matches_none( const char* a, const char* b )
+	{
+		const bool negated = true;
+		
+		return matches( a, b, negated );
+	}
 	
 	
 	template < class Iter, class F >
