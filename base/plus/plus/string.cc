@@ -101,12 +101,11 @@ namespace plus
 	}
 	
 	
-	template < class Iter, class F >
-	static Iter find_last_if( Iter begin, Iter end, F f )
+	static const char* find_last_if( const char* begin, const char* end, matches f )
 	{
 		ASSERT( begin <= end );
 		
-		Iter it = end;
+		const char* it = end;
 		
 		while ( --it >= begin )
 		{
