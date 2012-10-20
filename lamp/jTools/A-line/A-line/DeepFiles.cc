@@ -5,18 +5,6 @@
 
 #include "A-line/DeepFiles.hh"
 
-// plus
-#include "plus/functional_extensions.hh"
-#include "plus/pointer_to_function.hh"
-
-// Io
-#ifndef IO_FILES_HH
-#include "io/files.hh"
-#endif
-#ifndef IO_WALK_HH
-#include "io/walk.hh"
-#endif
-
 // poseven
 #ifndef POSEVEN_FUNCTIONS_LSTAT_HH
 #include "poseven/functions/lstat.hh"
@@ -65,12 +53,15 @@ namespace tool
 		
 		directory_container contents = io::directory_contents( dir );
 		
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               plus::compose1( std::bind1st( std::mem_fun( &DeepFileSearch::SearchItem ),
-		                                             this ),
-		                               std::bind1st( plus::ptr_fun( path_descender( io::path_descent ) ),
-		                                             dir ) ) );
+		typedef directory_container::const_iterator Iter;
+		
+		const Iter begin = contents.begin();
+		const Iter end   = contents.end  ();
+		
+		for ( Iter it = begin;  it != end;  ++it )
+		{
+			SearchItem( dir / *it );
+		}
 		
 		return *this;
 	}
