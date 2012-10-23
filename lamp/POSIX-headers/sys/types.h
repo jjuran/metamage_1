@@ -82,54 +82,6 @@ typedef	__cpuid_t	cpuid_t;	/* CPU id */
 //typedef	__register_t	register_t;	/* register-sized type */
 #endif /* __BSD_VISIBLE */
 
-/*
- * XXX The exact-width bit types should only be exposed if __BSD_VISIBLE
- *     but the rest of the includes are not ready for that yet.
- */
-#ifndef	__BIT_TYPES_DEFINED__
-#define	__BIT_TYPES_DEFINED__
-#endif
-
-#ifndef	_INT8_T_DEFINED_
-#define	_INT8_T_DEFINED_
-typedef	__int8_t		int8_t;
-#endif
-
-#ifndef	_UINT8_T_DEFINED_
-#define	_UINT8_T_DEFINED_
-typedef	__uint8_t		uint8_t;
-#endif
-
-#ifndef	_INT16_T_DEFINED_
-#define	_INT16_T_DEFINED_
-typedef	__int16_t		int16_t;
-#endif
-
-#ifndef	_UINT16_T_DEFINED_
-#define	_UINT16_T_DEFINED_
-typedef	__uint16_t		uint16_t;
-#endif
-
-#ifndef	_INT32_T_DEFINED_
-#define	_INT32_T_DEFINED_
-typedef	__int32_t		int32_t;
-#endif
-
-#ifndef	_UINT32_T_DEFINED_
-#define	_UINT32_T_DEFINED_
-typedef	__uint32_t		uint32_t;
-#endif
-
-#ifndef	_INT64_T_DEFINED_
-#define	_INT64_T_DEFINED_
-typedef	__int64_t		int64_t;
-#endif
-
-#ifndef	_UINT64_T_DEFINED_
-#define	_UINT64_T_DEFINED_
-typedef	__uint64_t		uint64_t;
-#endif
-
 /* BSD-style unsigned bits types */
 #ifndef __CGBASE__
 #define _MACHTYPES_H_
