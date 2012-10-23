@@ -41,13 +41,10 @@
 #include <CWANSIIncludes/stdio.h>
 
 #include <sys/cdefs.h>
-#include <sys/_types.h>
 
 #include <stdarg.h>
 
-#if __BSD_VISIBLE || __POSIX_VISIBLE || __XPG_VISIBLE
-#include <sys/types.h>	/* XXX should be removed */
-#endif
+#include <sys/types.h>
 
 #define	_FSTDIO			/* Define for new stdio with functions. */
 
