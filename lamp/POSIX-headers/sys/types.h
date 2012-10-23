@@ -188,20 +188,4 @@ __END_DECLS
 #include <sys/select.h>	/* must be after type declarations */
 #endif
 
-#if defined(__STDC__) && defined(_KERNEL)
-/*
- * Forward structure declarations for function prototypes.  We include the
- * common structures that cross subsystem boundaries here; others are mostly
- * used in the same place that the structure is defined.
- */
-struct	proc;
-struct	pgrp;
-struct	ucred;
-struct	rusage;
-struct	file;
-struct	buf;
-struct	tty;
-struct	uio;
-#endif
-
 #endif /* !_SYS_TYPES_H_ */
