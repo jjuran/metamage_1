@@ -15,7 +15,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/functional_extensions.hh"
 #include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
@@ -130,13 +129,25 @@ namespace tool
 		return product == productStaticLib  ||  product == productDropIn;
 	}
 	
+	struct not_a_lib_on
+	{
+		Platform platform;
+		
+		not_a_lib_on( Platform platform ) : platform( platform )
+		{
+		}
+		
+		bool operator()( const plus::string& name )
+		{
+			return !ProjectBuildsLib( GetProject( name, platform ) );
+		}
+	};
+	
 	static void RemoveNonLibs( std::vector< plus::string >& usedProjects, Platform platform )
 	{
 		usedProjects.resize( std::remove_if( usedProjects.begin(),
 		                                     usedProjects.end(),
-		                                     plus::compose1( std::not1( plus::ptr_fun( ProjectBuildsLib ) ),
-		                                                     std::bind2nd( plus::ptr_fun( GetProject ),
-		                                                                   platform ) ) ) - usedProjects.begin() );
+		                                     not_a_lib_on( platform ) ) - usedProjects.begin() );
 	}
 	
 	static plus::string DirCreate_Idempotent( const plus::string& dir )
