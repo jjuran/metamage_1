@@ -59,7 +59,7 @@ namespace v68k
 		&microcode_ADD,
 		0,  // NULL
 		&microcode_EOR,
-		&microcode_CMP
+		&microcode_NOP
 	//	0  // NULL
 	};
 	
@@ -405,7 +405,7 @@ namespace v68k
 			{
 				storage.size  = op_size_in_0100;
 				storage.fetch = fetches_CMPA;
-				storage.code  = microcode_CMP;
+				storage.code  = microcode_NOP;
 				storage.flags = SUB_CCR_update;
 				
 				return &storage;
@@ -420,7 +420,7 @@ namespace v68k
 				if ( mode == 1 )
 				{
 					storage.fetch = fetches_CMPM;
-					storage.code  = microcode_CMP;
+					storage.code  = microcode_NOP;
 					storage.flags = SUB_CCR_update;
 					
 					return &storage;
@@ -440,7 +440,7 @@ namespace v68k
 				if ( ea_is_valid( mode, n ) )
 				{
 					storage.fetch = fetches_CMP;
-					storage.code  = microcode_CMP;
+					storage.code  = microcode_NOP;
 					storage.flags = SUB_CCR_update;
 					
 					return &storage;

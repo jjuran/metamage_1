@@ -988,12 +988,6 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line B
 	
-	void microcode_CMP( processor_state& s, op_params& pb )
-	{
-		const int32_t a = pb.first;
-		const int32_t b = pb.second;
-	}
-	
 	void microcode_EOR( processor_state& s, op_params& pb )
 	{
 		pb.result = pb.first ^ pb.second;

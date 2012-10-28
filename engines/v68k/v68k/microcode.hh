@@ -137,8 +137,6 @@ namespace v68k
 	#pragma mark -
 	#pragma mark Line B
 	
-	void microcode_CMP( processor_state& state, op_params& pb );
-	
 	void microcode_EOR( processor_state& state, op_params& pb );
 	
 	#pragma mark -
