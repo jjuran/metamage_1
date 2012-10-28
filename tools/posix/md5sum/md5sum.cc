@@ -103,8 +103,6 @@ namespace tool
 				
 				MD5Sum( buffer, p7::open( argv[ i ], p7::o_rdonly ) );
 				
-				buffer[ n_MD5_nibbles ] = '\0';
-				
 				struct iovec output_message[] =
 				{
 					{ buffer, n_MD5_nibbles              },
