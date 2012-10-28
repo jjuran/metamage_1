@@ -516,7 +516,7 @@ namespace tool
 		
 		uint16_t extension = read_word();
 		
-		if ( mode == 5  ||  mode == 7 && reg == 2 )
+		if ( mode == 5  ||  (mode == 7  &&  reg == 2) )
 		{
 			// Address Register Indirect with Displacement
 			// Program Counter Indirect with Displacement
@@ -546,7 +546,7 @@ namespace tool
 				result += ")";
 			}
 		}
-		else if ( mode == 6  ||  mode == 7 && reg == 3 )
+		else if ( mode == 6  ||  (mode == 7  &&  reg == 3) )
 		{
 			// Address Register Indirect with Index (8-bit Displacement)
 			// Address Register Indirect with Index (Base Displacement)
@@ -1182,22 +1182,22 @@ namespace tool
 	{
 		if ( reverse )
 		{
-			mask = mask << 15
-			     | mask << 13 & 0x4000
-			     | mask << 11 & 0x2000
-			     | mask <<  9 & 0x1000
-			     | mask <<  7 & 0x0800
-			     | mask <<  5 & 0x0400
-			     | mask <<  3 & 0x0200
-			     | mask <<  1 & 0x0100
-			     | mask >>  1 & 0x0080
-			     | mask >>  3 & 0x0040
-			     | mask >>  5 & 0x0020
-			     | mask >>  7 & 0x0010
-			     | mask >>  9 & 0x0008
-			     | mask >> 11 & 0x0004
-			     | mask >> 13 & 0x0002
-			     | mask >> 15;
+			mask =  mask << 15
+			     | (mask << 13 & 0x4000)
+			     | (mask << 11 & 0x2000)
+			     | (mask <<  9 & 0x1000)
+			     | (mask <<  7 & 0x0800)
+			     | (mask <<  5 & 0x0400)
+			     | (mask <<  3 & 0x0200)
+			     | (mask <<  1 & 0x0100)
+			     | (mask >>  1 & 0x0080)
+			     | (mask >>  3 & 0x0040)
+			     | (mask >>  5 & 0x0020)
+			     | (mask >>  7 & 0x0010)
+			     | (mask >>  9 & 0x0008)
+			     | (mask >> 11 & 0x0004)
+			     | (mask >> 13 & 0x0002)
+			     |  mask >> 15;
 		}
 		
 		const uint16_t low  = mask & 0xff;
@@ -2027,7 +2027,7 @@ namespace tool
 				case  8:  // EXG
 				case  9:  // EXG
 				case 17:  // EXG
-					format = exg_abcd_ops[ op_mode >> 2 | op_mode & 1 ];
+					format = exg_abcd_ops[ op_mode >> 2 | (op_mode & 1) ];
 					break;
 				
 				default:
