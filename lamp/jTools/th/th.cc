@@ -225,7 +225,7 @@ namespace tool
 			
 			struct stat sb;
 			
-			if ( -1 == ::stat( test_file, &sb )  ||  S_ISDIR( sb.st_mode ) && (errno = EISDIR) )
+			if ( -1 == ::stat( test_file, &sb )  ||  (S_ISDIR( sb.st_mode )  &&  (errno = EISDIR)) )
 			{
 				p7::perror( "th", test_file );
 				
