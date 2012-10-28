@@ -100,7 +100,7 @@ namespace UseEdit
 			n::owned< Mac::AEDesc_Token > token = N::AEResolve( N::AEGetParamDesc( event,
 			                                                                       Mac::keyDirectObject ) );
 			
-			switch ( Mac::DescType( token.get().descriptorType ) )
+			switch ( token.get().descriptorType )
 			{
 				case typeDocument:
 					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< Mac::typePtr >( token, typeDocument ) ) )
