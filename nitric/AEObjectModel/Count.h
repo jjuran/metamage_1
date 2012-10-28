@@ -51,8 +51,8 @@ namespace Nitrogen
 					
 					friend bool operator<( const Key& a, const Key& b )
 					{
-						return a.desiredClass < b.desiredClass || a.desiredClass == b.desiredClass
-						                                       && a.containerType < b.containerType;
+						return  a.desiredClass <  b.desiredClass
+						    || (a.desiredClass == b.desiredClass  &&  a.containerType < b.containerType);
 					}
 			};
 			
