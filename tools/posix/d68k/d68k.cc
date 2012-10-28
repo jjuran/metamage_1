@@ -966,7 +966,7 @@ namespace tool
 			return;
 		}
 		
-		const bool tas = op & 0x0f00 == 0x0a00;
+		const bool tas = (op & 0x0f00) == 0x0a00;
 		
 		const uint16_t immediate_size = tas ? 1 : 2;
 		
