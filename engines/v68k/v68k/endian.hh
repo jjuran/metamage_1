@@ -38,10 +38,10 @@ namespace v68k
 	
 	inline uint32_t swap_4_bytes( uint32_t longword )
 	{
-		return   longword << 24
-		       | longword <<  8 & 0x00FF0000
-		       | longword >>  8 & 0x0000FF00
-		       | longword >> 24;
+		return    longword << 24
+		       | (longword <<  8 & 0x00FF0000)
+		       | (longword >>  8 & 0x0000FF00)
+		       |  longword >> 24;
 	}
 	
 	
