@@ -564,21 +564,18 @@ namespace v68k
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
 		
+		int i;
+		
 		if ( size_code != 3 )
 		{
-			const int i = (opcode & 0x0018) >> 2 | (opcode & 0x0100) >> 8;
-			
-			storage.code = bit_shift_microcodes[ i ];
+			i = (opcode & 0x0018) >> 2 | (opcode & 0x0100) >> 8;
 			
 			storage.size  = op_size_in_00C0;
 			storage.fetch = fetches_bit_shift_Dn;
-			storage.flags = loads_and | stores_data;
-			
-			return &storage;
 		}
 		else
 		{
-			const int i = (opcode & 0x0F00) >> 8;
+			i = (opcode & 0x0F00) >> 8;
 			
 			if ( i >= 8 )
 			{
@@ -595,13 +592,13 @@ namespace v68k
 			
 			storage.size  = word_sized;
 			storage.fetch = fetches_bit_shift_mem;
-			storage.code  = bit_shift_microcodes[ i ];
-			storage.flags = loads_and | stores_data;
-			
-			return &storage;
 		}
 		
-		return 0;  // NULL
+		storage.code = bit_shift_microcodes[ i ];
+		
+		storage.flags = loads_and | stores_data;
+		
+		return &storage;
 	}
 	
 	static const instruction* decode_unimplemented( uint16_t opcode, instruction& storage )
