@@ -14,9 +14,6 @@
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif
-#ifndef __SOUND__
-#include <Sound.h>
-#endif
 
 // Standard C++
 #include <algorithm>
