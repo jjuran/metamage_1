@@ -13,17 +13,6 @@
 #ifdef __MWERKS__
 #include <cerrno>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-extern int errno;
-
-#ifdef __cplusplus
-}
-#endif
-
-
 /*
  * Undef error codes defined by MSL. We are overriding the MSL implementations, so
  * these versions of the codes should never be generated anyway.

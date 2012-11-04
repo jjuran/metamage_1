@@ -41,11 +41,6 @@
 #include <sys/types.h>
 #endif
 
-#ifndef	_SIZE_T_DEFINED_
-#define	_SIZE_T_DEFINED_
-typedef	__size_t	size_t;
-#endif
-
 /* in C++, wchar_t is a built-in type */
 #if !defined(_WCHAR_T_DEFINED_) && !defined(__cplusplus)
 #define _WCHAR_T_DEFINED_
@@ -86,14 +81,6 @@ typedef struct {
 } qdiv_t;
 #endif
 
-
-#ifndef	NULL
-#ifdef 	__GNUG__
-#define NULL	__null
-#else
-#define	NULL	0L
-#endif
-#endif
 
 #define	EXIT_FAILURE	1
 #define	EXIT_SUCCESS	0
