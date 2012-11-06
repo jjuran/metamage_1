@@ -8,8 +8,8 @@
 #ifndef MORE_PERROR_HH
 #define MORE_PERROR_HH
 
-// Standard C/C++
-#include <cerrno>
+// Standard C
+#include <errno.h>
 
 
 namespace more
