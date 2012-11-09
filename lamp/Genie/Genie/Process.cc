@@ -1027,6 +1027,9 @@ namespace Genie
 	{
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{
+			// prevent reentry if backtrace causes exception
+			itMayDumpCore = false;
+			
 			DumpBacktrace();
 		}
 		
