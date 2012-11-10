@@ -19,6 +19,9 @@
 #include "plus/argv.hh"
 #include "plus/simple_map.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/memory_mapping.hh"
 
@@ -28,6 +31,9 @@
 
 namespace relix
 {
+	
+	namespace p7 = poseven;
+	
 	
 	struct program_parameters
 	{
@@ -76,6 +82,7 @@ namespace relix
 			
 			void erase_memory_mapping( addr_t addr );
 			
+			void prepare();
 			void back_up();
 			void restore();
 			
@@ -124,6 +131,23 @@ namespace relix
 				its_memory_mappings.erase( it );
 				
 				break;
+			}
+		}
+	}
+	
+	void memory_data_impl::prepare()
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter end = its_memory_mappings.end();
+		
+		for ( Iter it = its_memory_mappings.begin();  it != end;  ++it )
+		{
+			memory_tract& tract = *it;
+			
+			if ( ! tract.allocate() )
+			{
+				p7::throw_errno( ENOMEM );
 			}
 		}
 	}
@@ -255,6 +279,11 @@ namespace relix
 	void memory_data::clear_memory_mappings()
 	{
 		impl_cast( this )->its_memory_mappings.clear();
+	}
+	
+	void memory_data::prepare()
+	{
+		impl_cast( this )->prepare();
 	}
 	
 	void memory_data::back_up()

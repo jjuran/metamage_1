@@ -61,6 +61,7 @@ namespace relix
 			
 			void clear_memory_mappings();
 			
+			void prepare();
 			void back_up();
 			void restore();
 	};
