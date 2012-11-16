@@ -41,10 +41,10 @@
 #include <sys/types.h>
 #endif
 
-#if __MSL__ < 0x6000
-#include <stddef.h>
-#else
-#include <wchar.h>
+/* in C++, wchar_t is a built-in type */
+#if !defined(_WCHAR_T_DEFINED_) && !defined(__cplusplus)
+#define _WCHAR_T_DEFINED_
+typedef	__wchar_t	wchar_t;
 #endif
 
 #ifdef __MWERKS__
