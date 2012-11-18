@@ -8,9 +8,6 @@
 #ifndef GENIE_PROCESS_VFORKCONTEXT_HH
 #define GENIE_PROCESS_VFORKCONTEXT_HH
 
-// Recall
-#include "recall/stack_crawl.hh"
-
 
 struct _vfork_pad;
 
@@ -35,7 +32,7 @@ namespace Genie
 			
 			~vfork_context();
 			
-			recall::stack_frame_pointer get_vfork_frame_pointer() const;
+			const void* get_vfork_frame_pointer() const;
 			
 			void resume_vfork( int second_result );
 			

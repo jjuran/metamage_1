@@ -22,11 +22,11 @@ namespace Genie
 		delete its_pad;
 	}
 	
-	recall::stack_frame_pointer vfork_context::get_vfork_frame_pointer() const
+	const void* vfork_context::get_vfork_frame_pointer() const
 	{
 		if ( its_pad != NULL )
 		{
-			return (recall::stack_frame_pointer) its_pad->fp;
+			return its_pad->fp;
 		}
 		
 		return NULL;

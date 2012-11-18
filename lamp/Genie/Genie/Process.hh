@@ -18,6 +18,9 @@
 // plus
 #include "plus/ref_count.hh"
 
+// Recall
+#include "recall/stack_crawl.hh"
+
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
