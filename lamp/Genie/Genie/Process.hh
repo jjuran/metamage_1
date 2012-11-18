@@ -266,8 +266,6 @@ namespace Genie
 		public:
 			bool Forked() const  { return itsThread.get() == Mac::kNoThreadID; }
 			
-			bool Forking() const  { return itsForkedChildPID != 0; }
-			
 			Mac::ThreadID GetThread() const;
 			
 			Process& vfork();
