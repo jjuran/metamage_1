@@ -759,7 +759,7 @@ namespace Genie
 		itsInterdependence = kProcessForking;
 		itsSchedule        = kProcessFrozen;
 		
-		itsStackFramePtr = get_vfork_frame_pointer();
+		itsStackFramePtr = (recall::stack_frame_pointer) get_vfork_frame_pointer();
 		
 		Suspend();
 		
@@ -1082,8 +1082,8 @@ namespace Genie
 		
 		typedef recall::stack_frame_pointer fp_t;
 		
-		fp_t vfork_fp = get_vfork_frame_pointer(       );
-		fp_t stack_fp = get_stack_frame_pointer( depth );
+		fp_t vfork_fp = (fp_t) get_vfork_frame_pointer(       );
+		fp_t stack_fp =        get_stack_frame_pointer( depth );
 		
 		// Stack grows down
 		const bool stack_fault = stack_fp > vfork_fp;
