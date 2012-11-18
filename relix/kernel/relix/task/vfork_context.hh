@@ -1,18 +1,16 @@
 /*
 	vfork_context.hh
 	----------------
-	
-	Joshua Juran
 */
 
-#ifndef GENIE_PROCESS_VFORKCONTEXT_HH
-#define GENIE_PROCESS_VFORKCONTEXT_HH
+#ifndef RELIX_TASK_VFORKCONTEXT_HH
+#define RELIX_TASK_VFORKCONTEXT_HH
 
 
 struct _vfork_pad;
 
 
-namespace Genie
+namespace relix
 {
 	
 	class vfork_context

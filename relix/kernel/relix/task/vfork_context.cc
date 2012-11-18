@@ -1,11 +1,9 @@
 /*
 	vfork_context.cc
 	----------------
-	
-	Joshua Juran
 */
 
-#include "Genie/Process/vfork_context.hh"
+#include "relix/task/vfork_context.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -14,7 +12,7 @@
 #include "relix/vfork.h"
 
 
-namespace Genie
+namespace relix
 {
 	
 	vfork_context::~vfork_context()
