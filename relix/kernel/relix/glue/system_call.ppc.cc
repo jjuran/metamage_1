@@ -100,7 +100,7 @@ namespace relix
 		lwz     r3,24(SP)
 		
 		// deallocate our stack frame
-		addi    SP,SP,64
+		lwz     SP,0(SP)
 		
 		// restore RTOC
 		lwz     RTOC,20(SP)
