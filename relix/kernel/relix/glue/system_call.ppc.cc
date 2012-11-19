@@ -6,8 +6,13 @@
 #include "relix/glue/system_call.ppc.hh"
 
 // relix
+#include "relix/restack.h"
+#include "relix/config/syscall_stacks.hh"
 #include "relix/glue/kernel_boundary.hh"
 #include "relix/syscall/registry.hh"
+
+
+extern "C" void* current_stack_base();
 
 
 namespace relix
@@ -40,6 +45,44 @@ namespace relix
 		
 		// save the system call number in the slot reserved for binder use
 		stw     r11,16(SP)
+		
+	#if CONFIG_SYSCALL_STACKS
+		
+		bl      current_stack_base
+		
+		cmpi    cr0,r3,0
+		
+		beq+    cr0,restart
+		
+		addi    r12,r3,(-sizeof (_relix_stack_footer))  // r12 <= &stack.frame_pointer
+		
+		// reload syscall number, load backlink
+		lwz     r11,16(SP)
+		lwz     r10, 0(SP)
+		
+		// reload parameters
+		lwz     r5,32(SP)
+		lwz     r6,36(SP)
+		lwz     r7,40(SP)
+		lwz     r8,44(SP)
+		lwz     r3,48(SP)
+		lwz     r4,52(SP)
+		
+		// save syscall number and backlink in syscall stack
+		stw     r11,16(r12)
+		stw     r10, 0(r12)
+		
+		// save parameters in syscall stack
+		stw     r5,32(r12)
+		stw     r6,36(r12)
+		stw     r7,40(r12)
+		stw     r8,44(r12)
+		stw     r3,48(r12)
+		stw     r4,52(r12)
+		
+		mr      SP,r12
+		
+	#endif
 		
 	restart:
 		
