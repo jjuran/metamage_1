@@ -8,6 +8,7 @@
 
 // Relix
 #include "relix/parameter_block.h"
+#include "relix/config/syscall_stacks.hh"
 #include "relix/task/signal_handlers.hh"
 #include "relix/task/syscall_stack.hh"
 
@@ -102,7 +103,11 @@ namespace Genie
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			
+		#if CONFIG_SYSCALL_STACKS
+			
 			relix::syscall_stack its_syscall_stack;
+			
+		#endif
 			
 			boost::intrusive_ptr< ProcessGroup > itsProcessGroup;
 			
@@ -228,7 +233,15 @@ namespace Genie
 			
 			fd_table& FileDescriptors()  { return *itsFileDescriptors; }
 			
+		#if CONFIG_SYSCALL_STACKS
+			
 			void* get_syscall_stack_memory() const  { return its_syscall_stack.memory; }
+			
+		#else
+			
+			void* get_syscall_stack_memory() const  { return NULL; }
+			
+		#endif
 			
 			unsigned int SetAlarm( unsigned int seconds );
 			

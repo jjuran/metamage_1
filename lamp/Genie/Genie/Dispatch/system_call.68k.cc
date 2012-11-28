@@ -5,6 +5,9 @@
 
 #include "Genie/Dispatch/system_call.68k.hh"
 
+// Relix
+#include "relix/config/syscall_stacks.hh"
+
 // Genie
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/Dispatch/kernel_boundary.hh"
@@ -29,6 +32,8 @@ namespace Genie
 		MOVE.L	A1,-(SP)  ; // push the address of the first arg
 		MOVE.L	D0,-(SP)  ; // push the system call number
 		
+	#if CONFIG_SYSCALL_STACKS
+		
 		JSR  current_stack_base
 		
 		// copy things from current stack to new stack
@@ -40,6 +45,8 @@ namespace Genie
 		MOVE.L   (SP),-(A0)  // system call number
 		
 		MOVEA.L  A0, SP  // switch to new stack
+		
+	#endif
 		
 	restart:
 		
