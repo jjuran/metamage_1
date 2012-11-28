@@ -19,5 +19,7 @@ macbin --decode $1.$MBIN
 
 mv $1 $dest
 
+rm "$1.$MBIN"
+
 echo Done.
 
