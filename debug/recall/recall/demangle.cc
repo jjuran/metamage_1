@@ -558,7 +558,7 @@ namespace recall
 	
 	void Unmangler::ReadType( plus::var_string& out, const char*& p )
 	{
-		if ( *p >= 'a'  &&  *p <= 'z'  ||  *p == 'S'  ||  *p == 'U' )
+		if ( (*p >= 'a'  &&  *p <= 'z')  ||  *p == 'S'  ||  *p == 'U' )
 		{
 			ReadBasicType( out, p );
 			

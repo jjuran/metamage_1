@@ -27,21 +27,21 @@ namespace chars
 				break;
 			
 			case 2:
-				p[0] = 0xC0 | uc >> 6 & 0x1F;
-				p[1] = 0x80 | uc      & 0x3F;
+				p[0] = 0xC0 | (uc >> 6 & 0x1F);
+				p[1] = 0x80 | (uc      & 0x3F);
 				break;
 			
 			case 3:
-				p[0] = 0xE0 | uc >> 12 & 0x0F;
-				p[1] = 0x80 | uc >>  6 & 0x3F;
-				p[2] = 0x80 | uc       & 0x3F;
+				p[0] = 0xE0 | (uc >> 12 & 0x0F);
+				p[1] = 0x80 | (uc >>  6 & 0x3F);
+				p[2] = 0x80 | (uc       & 0x3F);
 				break;
 			
 			case 4:
-				p[0] = 0xF0 | uc >> 18 & 0x07;
-				p[1] = 0x80 | uc >> 12 & 0x3F;
-				p[2] = 0x80 | uc >>  6 & 0x3F;
-				p[3] = 0x80 | uc       & 0x3F;
+				p[0] = 0xF0 | (uc >> 18 & 0x07);
+				p[1] = 0x80 | (uc >> 12 & 0x3F);
+				p[2] = 0x80 | (uc >>  6 & 0x3F);
+				p[3] = 0x80 | (uc       & 0x3F);
 				break;
 		}
 	}
@@ -76,15 +76,15 @@ namespace chars
 			
 			case 2:
 				result = (p[0] & 0x1F) << 6
-				       |  p[1] & 0x3F;
+				       | (p[1] & 0x3F);
 				break;
 			
 			case 3:
 				result = (p[0] & 0x0F) << 12
 				       | (p[1] & 0x3F) <<  6
-				       |  p[2] & 0x3F;
+				       | (p[2] & 0x3F);
 				
-				if ( result < 0x800  ||  result >= 0xD800  &&  result < 0xE000 )
+				if ( result < 0x800  ||  (result >= 0xD800  &&  result < 0xE000) )
 				{
 					// overlong encoding, or surrogate
 					return unichar_t( -1 );
@@ -96,7 +96,7 @@ namespace chars
 				result = (p[0] & 0x07) << 18
 				       | (p[1] & 0x3F) << 12
 				       | (p[2] & 0x3F) <<  6
-				       |  p[3] & 0x3F;
+				       | (p[3] & 0x3F);
 				
 				if ( result < 0x10000 )
 				{

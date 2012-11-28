@@ -80,7 +80,7 @@ namespace tool
 						++result.n_LF;
 					}
 				}
-				else if ( c < 0x20  &&  c != 0x09  ||  c == 0x7F )
+				else if ( (c < 0x20  &&  c != 0x09)  ||  c == 0x7F )
 				{
 					++result.n_ctrl;
 				}
