@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 11;
+static const unsigned n_tests = 13;
 
 
 using tap::ok_if;
@@ -42,6 +42,14 @@ static void newlines()
 	
 	ok_if( feed.get_fragment_ref() == "zee" );
 	ok_if( feed.get_fragment_ref() == ""    );
+	
+	feed.accept_input( STR_LEN( "zig" ) );
+	
+	const plus::string* fragment = feed.get_fragment();
+	
+	ok_if( fragment != NULL  &&  *fragment == "zig" );
+	
+	ok_if( feed.get_fragment() == NULL );
 }
 
 int main( int argc, const char *const *argv )
