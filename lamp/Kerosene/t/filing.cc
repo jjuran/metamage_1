@@ -24,7 +24,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 5 + 6 + 7 + 4 + 20 + 13 + 4;
+static const unsigned n_tests = 5 + 6 + 7 + 4 + 20 + 13 + 4 + 1;
 
 
 using tap::ok_if;
@@ -324,6 +324,11 @@ static void linkat_t()
 	(void) unlink( "foo" );
 }
 
+static void dups()
+{
+	ok_if( dup2( devnull_fd, devnull_fd ) == devnull_fd );
+}
+
 static void cleanup()
 {
 	(void) unlink( "loop-de-loop" );
@@ -349,6 +354,8 @@ int main( int argc, char** argv )
 	t_renameat();
 	
 	linkat_t();
+	
+	dups();
 	
 	cleanup();
 	
