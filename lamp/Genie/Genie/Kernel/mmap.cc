@@ -37,7 +37,7 @@ namespace Genie
 		
 		if ( flags & MAP_FIXED )
 		{
-			return set_errno( EINVAL );
+			return set_errno( ENOTSUP );
 		}
 		
 		const bool anonymous = flags & MAP_ANON;
