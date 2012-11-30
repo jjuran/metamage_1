@@ -1,11 +1,9 @@
 /*
 	vfork_context.cc
 	----------------
-	
-	Joshua Juran
 */
 
-#include "Genie/Process/vfork_context.hh"
+#include "relix/task/vfork_context.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -14,7 +12,7 @@
 #include "relix/vfork.h"
 
 
-namespace Genie
+namespace relix
 {
 	
 	vfork_context::~vfork_context()
@@ -22,11 +20,11 @@ namespace Genie
 		delete its_pad;
 	}
 	
-	recall::stack_frame_pointer vfork_context::get_vfork_frame_pointer() const
+	const void* vfork_context::get_vfork_frame_pointer() const
 	{
 		if ( its_pad != NULL )
 		{
-			return (recall::stack_frame_pointer) its_pad->fp;
+			return its_pad->fp;
 		}
 		
 		return NULL;

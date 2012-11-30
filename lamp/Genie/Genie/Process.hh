@@ -11,12 +11,16 @@
 #include "relix/config/syscall_stacks.hh"
 #include "relix/task/signal_handlers.hh"
 #include "relix/task/syscall_stack.hh"
+#include "relix/task/vfork_context.hh"
 
 // Debug
 #include "debug/boost_assert.hh"
 
 // plus
 #include "plus/ref_count.hh"
+
+// Recall
+#include "recall/stack_crawl.hh"
 
 // Boost
 #include <boost/intrusive_ptr.hpp>
@@ -36,7 +40,6 @@
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TraceTarget.hh"
-#include "Genie/Process/vfork_context.hh"
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
 #include "Genie/task/fs_info.hh"
@@ -86,7 +89,7 @@ namespace Genie
 	
 	class Process : public plus::ref_count< Process >,
 	                public SignalReceiver,
-	                public vfork_context,
+	                public relix::vfork_context,
 	                public TraceTarget
 	{
 		public:

@@ -1,21 +1,16 @@
 /*
 	vfork_context.hh
 	----------------
-	
-	Joshua Juran
 */
 
-#ifndef GENIE_PROCESS_VFORKCONTEXT_HH
-#define GENIE_PROCESS_VFORKCONTEXT_HH
-
-// Recall
-#include "recall/stack_crawl.hh"
+#ifndef RELIX_TASK_VFORKCONTEXT_HH
+#define RELIX_TASK_VFORKCONTEXT_HH
 
 
 struct _vfork_pad;
 
 
-namespace Genie
+namespace relix
 {
 	
 	class vfork_context
@@ -35,7 +30,7 @@ namespace Genie
 			
 			~vfork_context();
 			
-			recall::stack_frame_pointer get_vfork_frame_pointer() const;
+			const void* get_vfork_frame_pointer() const;
 			
 			void resume_vfork( int second_result );
 			
