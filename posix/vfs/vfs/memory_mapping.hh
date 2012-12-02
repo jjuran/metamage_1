@@ -36,6 +36,11 @@ namespace vfs
 			
 			virtual ~memory_mapping();
 			
+			unsigned long ref_count() const
+			{
+				return intrusive_ptr_ref_count( this );
+			}
+			
 			addr_t get_address() const  { return its_address; }
 			size_t get_size   () const  { return its_size;    }
 			int    get_flags  () const  { return its_flags;   }
