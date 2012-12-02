@@ -16,12 +16,12 @@ namespace vfs
 	class memory_mapping : public plus::ref_count< memory_mapping >
 	{
 		private:
-			void* const its_address;
-		
-		public:
 			typedef void* addr_t;
 			
-			memory_mapping( void* addr ) : its_address( addr )
+			const addr_t its_address;
+		
+		public:
+			memory_mapping( addr_t addr ) : its_address( addr )
 			{
 			}
 			
