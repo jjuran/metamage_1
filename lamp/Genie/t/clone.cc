@@ -9,7 +9,9 @@
 #include <stdlib.h>
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
+#include <sys/mman.h>
 #include <sys/wait.h>
 
 // Relix
@@ -23,7 +25,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 4 + 2 + 2 + 2 + 2;
+static const unsigned n_tests = 4 + 2 + 2 + 2 + 2 + 1;
 
 
 static int f_zero( void* )
@@ -78,6 +80,20 @@ static int f_sigaction( void* arg )
 	const struct sigaction dfl = { SIG_DFL };
 	
 	CHECK( sigaction( SIGURG, &dfl, NULL ) );
+	
+	return 0;
+}
+
+static int f_vm( void* arg )
+{
+	int n = *(int*) arg;
+	
+	while ( n-- )
+	{
+		*(int*) arg = n;
+		
+		sched_yield();
+	}
 	
 	return 0;
 }
@@ -194,6 +210,36 @@ static void sighand()
 	EXPECT( !sigaction_changed( 0             ) );  // copy signal handlers
 }
 
+static void vm()
+{
+	int zero = CHECK( open( "/dev/zero", O_RDWR, 0 ) );
+	
+	const size_t size = 4096;
+	
+	void* memory = mmap( NULL, size, PROT_READ|PROT_WRITE, MAP_PRIVATE, zero, 0 );
+	
+	close( zero );
+	
+	CHECK( memory != NULL ? 0 : 1 );
+	
+	*(int*) memory = 3;
+	
+	CHECK( _relix_clone( &f_vm, NULL, 0, 0, memory ) );
+	
+	sched_yield();
+	sched_yield();
+	
+	EXPECT( *(int*) memory == 3 );
+	
+	munmap( memory, size );
+	
+	sched_yield();
+	
+	int wait_status = -1;
+	
+	CHECK( wait( &wait_status ) );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -208,6 +254,8 @@ int main( int argc, char** argv )
 	files();
 	
 	sighand();
+	
+	vm();
 	
 	return 0;
 }
