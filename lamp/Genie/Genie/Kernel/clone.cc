@@ -10,6 +10,7 @@
 #include "relix/sched.h"
 
 // relix-kernel
+#include "relix/config/vm_fork.hh"
 #include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_resources.hh"
@@ -62,7 +63,7 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		return set_errno( ENOSYS );
 	}
 	
-	if ( !share_vm )
+	if ( ! CONFIG_VM_FORK  &&  ! share_vm )
 	{
 		// Sorry, no distinct address spaces
 		return set_errno( ENOSYS );
@@ -96,6 +97,11 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		if ( !share_sighand )
 		{
 			proc.unshare_signal_handlers();
+		}
+		
+		if ( CONFIG_VM_FORK  &&  ! share_vm )
+		{
+			proc.unshare_vm();
 		}
 		
 		child.SpawnThread( f, arg );
