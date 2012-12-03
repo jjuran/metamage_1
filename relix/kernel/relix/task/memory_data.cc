@@ -5,8 +5,8 @@
 
 #include "relix/task/memory_data.hh"
 
-// standard C/C++
-#include <cstring>
+// Standard C++
+#include <list>
 
 // debug
 #include "debug/assert.hh"
@@ -21,6 +21,9 @@
 
 // vfs
 #include "vfs/memory_mapping.hh"
+
+// Relix
+#include "relix/task/memory_tract.hh"
 
 
 namespace relix
@@ -41,10 +44,10 @@ namespace relix
 	class memory_data_impl : public memory_data
 	{
 		public:
-			typedef plus::simple_map< addr_t, boost::intrusive_ptr< const vfs::memory_mapping > > mmap_map;
+			typedef std::list< memory_tract > mmap_list;
 			
 			program_parameters  its_parameters;
-			mmap_map            its_memory_mappings;
+			mmap_list           its_memory_mappings;
 		
 		public:
 			memory_data_impl()
@@ -69,8 +72,58 @@ namespace relix
 				*/
 			}
 			
+			const memory_tract* find( addr_t addr ) const;
+			
+			void erase_memory_mapping( addr_t addr );
+			
 			void swap( memory_data_impl& other );
 	};
+	
+	const memory_tract* memory_data_impl::find( addr_t addr ) const
+	{
+		typedef mmap_list::const_iterator Iter;
+		
+		const Iter begin = its_memory_mappings.begin();
+		const Iter end   = its_memory_mappings.end();
+		
+		Iter it = end;
+		
+		while ( begin != it )
+		{
+			--it;
+			
+			if ( it->get_address() == addr )
+			{
+				return &*it;
+				
+				break;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	void memory_data_impl::erase_memory_mapping( addr_t addr )
+	{
+		typedef mmap_list::iterator Iter;
+		
+		const Iter begin = its_memory_mappings.begin();
+		const Iter end   = its_memory_mappings.end();
+		
+		Iter it = end;
+		
+		while ( begin != it )
+		{
+			--it;
+			
+			if ( it->get_address() == addr )
+			{
+				its_memory_mappings.erase( it );
+				
+				break;
+			}
+		}
+	}
 	
 	void memory_data_impl::swap( memory_data_impl& other )
 	{
@@ -154,16 +207,14 @@ namespace relix
 		
 		void* key = mapping->get_address();
 		
-		impl_cast( this )->its_memory_mappings[ key ] = mapping;
+		impl_cast( this )->its_memory_mappings.push_back( memory_tract( mapping ) );
 		
 		return key;
 	}
 	
 	void memory_data::msync_memory_mapping( addr_t key, size_t len, int flags )
 	{
-		memory_data_impl::mmap_map& mappings = impl_cast( this )->its_memory_mappings;
-		
-		if ( boost::intrusive_ptr< const vfs::memory_mapping >* it = mappings.find( key ) )
+		if ( const memory_tract* it = impl_cast( this )->find( key ) )
 		{
 			it->get()->msync( key, len, flags );
 		}
@@ -171,7 +222,7 @@ namespace relix
 	
 	void memory_data::remove_memory_mapping( addr_t key )
 	{
-		impl_cast( this )->its_memory_mappings.erase( key );
+		impl_cast( this )->erase_memory_mapping( key );
 	}
 	
 	void memory_data::clear_memory_mappings()
