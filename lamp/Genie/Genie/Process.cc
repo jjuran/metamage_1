@@ -31,6 +31,7 @@
 
 // Relix
 #include "relix/syscalls.h"
+#include "relix/config/syscall_stacks.hh"
 #include "relix/signal/signal_traits.hh"
 
 // Iota
@@ -1086,7 +1087,7 @@ namespace Genie
 		fp_t stack_fp =        get_stack_frame_pointer( depth );
 		
 		// Stack grows down
-		const bool stack_fault = stack_fp > vfork_fp;
+		const bool stack_fault = !CONFIG_SYSCALL_STACKS  &&  stack_fp > vfork_fp;
 		
 		Resume();
 		
