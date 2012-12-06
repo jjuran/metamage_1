@@ -95,7 +95,7 @@ my %fsmap =
 			proc   => [ qw( exe.t   ) ],
 			sh     => [ qw( braces.t errexit.t exit.t io.t vars.t ) ],
 			perm   => [ \ qw( test-write-locked ) ],
-			signal => [ \ qw( test-longjmp-past-vfork test-read-intr ) ],
+			signal => [ \ qw( test-read-intr ) ],
 			time   => [ \ qw( test-time ) ],
 			plus         => [ \ map { "plus-tests/$_" }
 			                        "concat_strings",
