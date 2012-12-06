@@ -29,7 +29,7 @@ namespace Genie
 			nucleus::owned< Mac::Handle > its_handle;
 		
 		public:
-			Handle_memory_mapping( nucleus::owned< Mac::Handle > h );
+			Handle_memory_mapping( nucleus::owned< Mac::Handle > h, Size size, int flags );
 	};
 	
 }

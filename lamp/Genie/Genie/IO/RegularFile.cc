@@ -42,7 +42,9 @@ namespace Genie
 			malloc_memory_mapping& operator=( const malloc_memory_mapping& );
 		
 		public:
-			malloc_memory_mapping( void* addr ) : memory_mapping( addr )
+			malloc_memory_mapping( void* addr, size_t size, int flags )
+			:
+				memory_mapping( addr, size, flags )
 			{
 			}
 			
@@ -147,7 +149,7 @@ namespace Genie
 	
 	memory_mapping_ptr
 	//
-	RegularFileHandle::Map( size_t length, off_t offset )
+	RegularFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
 		memory_mapping* mapping = NULL;
 		
@@ -155,7 +157,7 @@ namespace Genie
 		{
 			if ( void* addr = malloc( length ) )
 			{
-				mapping = new malloc_memory_mapping( addr );
+				mapping = new malloc_memory_mapping( addr, length, flags );
 			}
 		}
 		
@@ -165,7 +167,7 @@ namespace Genie
 			
 			n::owned< N::Handle > h = N::TempNewHandle( length );
 			
-			mapping = new Handle_memory_mapping( h );
+			mapping = new Handle_memory_mapping( h, length, flags );
 		}
 		
 		memory_mapping_ptr result( mapping );

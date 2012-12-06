@@ -22,7 +22,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	vfs::memory_mapping_ptr map_anonymous( std::size_t length )
+	vfs::memory_mapping_ptr map_anonymous( std::size_t length, int prot, int flags )
 	{
 		::Handle h = NULL;
 		
@@ -48,7 +48,7 @@ namespace Genie
 			memset( *handle.get(), '\0', length );
 		}
 		
-		return new Handle_memory_mapping( handle );
+		return new Handle_memory_mapping( handle, length, flags );
 	}
 	
 }

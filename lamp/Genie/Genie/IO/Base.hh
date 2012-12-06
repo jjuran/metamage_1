@@ -89,7 +89,7 @@ namespace vfs
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual memory_mapping_ptr Map( size_t length, off_t offset );
+			virtual memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 }

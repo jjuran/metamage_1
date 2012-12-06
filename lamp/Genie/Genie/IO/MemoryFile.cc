@@ -68,14 +68,14 @@ namespace Genie
 	
 	memory_mapping_ptr
 	//
-	MemoryFileHandle::Map( size_t length, off_t offset )
+	MemoryFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
 		if ( offset + length > itsSize )
 		{
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new static_memory_mapping( itsBase + offset );
+		return new static_memory_mapping( itsBase + offset, length, flags );
 	}
 	
 }
