@@ -26,7 +26,7 @@
 
 #define SYSNAME  "Relix"
 #define RELEASE  "0.7.1"
-#define VERSION  "verbose version string"
+#define VERSION  "MacRelix"
 
 
 namespace Genie
