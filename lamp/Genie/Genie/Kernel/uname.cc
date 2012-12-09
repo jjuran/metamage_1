@@ -24,7 +24,7 @@
 #include "Genie/Utilities/GetWorkstationName.hh"
 
 
-#define SYSNAME  "Genie"
+#define SYSNAME  "Relix"
 #define RELEASE  "0.7something"
 #define VERSION  "verbose version string"
 
