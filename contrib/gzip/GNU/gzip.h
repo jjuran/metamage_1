@@ -10,6 +10,9 @@
  *	- SanitizeCName
  */
 
+#ifndef GNU_GZIP_GZIP_H
+#define GNU_GZIP_GZIP_H
+
 #if defined(__STDC__) || defined(PROTO)
 #  define OF(args)  args
 #else
@@ -323,3 +326,6 @@ extern voidp xmalloc      OF((unsigned int size));
 
 	/* in inflate.c */
 extern int inflate OF((void));
+
+#endif
+
