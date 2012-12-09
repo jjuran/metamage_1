@@ -25,7 +25,7 @@
 
 
 #define SYSNAME  "Relix"
-#define RELEASE  "0.7something"
+#define RELEASE  "0.7.1"
 #define VERSION  "verbose version string"
 
 
