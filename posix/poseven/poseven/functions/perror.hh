@@ -13,13 +13,9 @@
 // Standard C/C++
 #include <cerrno>
 
+// plus
+#include "plus/string_fwd.hh"
 
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace poseven
 {
