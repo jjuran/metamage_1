@@ -22,6 +22,9 @@
 namespace Genie
 {
 	
+	Process* lookup_process( pid_t pid );
+	Process& get_process   ( pid_t pid );
+	
 	const boost::intrusive_ptr< Process >& NewProcess( Process& parent, pid_t ppid = 0 );
 	
 	Process& GetInitProcess();

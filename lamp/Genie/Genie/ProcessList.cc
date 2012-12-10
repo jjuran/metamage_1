@@ -44,6 +44,32 @@ namespace Genie
 	
 	static pid_t global_last_pid = 0;
 	
+	Process* lookup_process( pid_t pid )
+	{
+		if ( size_t( pid ) < global_processes.size() )
+		{
+			if ( Process* process = global_processes[ pid ].get() )
+			{
+				if ( process->GetLifeStage() != kProcessReleased )
+				{
+					return process;
+				}
+			}
+		}
+		
+		return NULL;
+	}
+	
+	Process& get_process( pid_t pid )
+	{
+		if ( Process* process = lookup_process( pid ) )
+		{
+			return *process;
+		}
+		
+		throw p7::errno_t( ESRCH );
+	}
+	
 	static pid_t next_pid()
 	{
 		if ( ++global_last_pid >= global_processes.size() )
