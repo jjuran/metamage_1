@@ -50,7 +50,7 @@ namespace Genie
 			
 			bool IsTerminal() const  { return true; }
 			
-			void Attach( const IOPtr& target )  { itsTTY = target; }
+			void Attach( vfs::filehandle* target )  { itsTTY = target; }
 			
 			FSTreePtr GetFile();
 			

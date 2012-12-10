@@ -104,14 +104,6 @@ namespace vfs
 	}
 	
 	
-	filehandle::filehandle( int flags ) : itsOpenFlags( flags )
-	{
-	}
-	
-	filehandle::~filehandle()
-	{
-	}
-	
 	filehandle* filehandle::GetBaseForCast( Test test )
 	{
 		if ( (this->*test)() )
@@ -132,7 +124,7 @@ namespace vfs
 		return this;
 	}
 	
-	void filehandle::Attach( const filehandle_ptr& target )
+	void filehandle::Attach( vfs::filehandle* target )
 	{
 		p7::throw_errno( EINVAL );
 	}
