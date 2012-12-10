@@ -1,12 +1,13 @@
 /*
 	basic_directory.hh
 	------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef GENIE_FS_BASICDIRECTORY_HH
 #define GENIE_FS_BASICDIRECTORY_HH
+
+// plus
+#include "plus/string_fwd.hh"
 
 // vfs
 #include "vfs/dir_contents_fwd.hh"
@@ -14,13 +15,6 @@
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Genie
 {

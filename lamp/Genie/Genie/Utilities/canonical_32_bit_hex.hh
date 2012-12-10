@@ -1,20 +1,14 @@
 /*
 	canonical_32_bit_hex.hh
 	-----------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef GENIE_UTILITIES_CANINICAL32BITHEX_HH
 #define GENIE_UTILITIES_CANINICAL32BITHEX_HH
 
+// plus
+#include "plus/string_fwd.hh"
 
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Genie
 {

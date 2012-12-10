@@ -6,16 +6,12 @@
 #ifndef GENIE_FS_HFS_LONGNAME_HH
 #define GENIE_FS_HFS_LONGNAME_HH
 
+// plus
+#include "plus/string_fwd.hh"
+
 //#include <Files.h>
 struct FSSpec;
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Genie
 {

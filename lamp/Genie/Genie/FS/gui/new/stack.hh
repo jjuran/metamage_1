@@ -6,16 +6,12 @@
 #ifndef GENIE_FS_GUI_NEW_STACK_HH
 #define GENIE_FS_GUI_NEW_STACK_HH
 
+// plus
+#include "plus/string_fwd.hh"
+
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Genie
 {

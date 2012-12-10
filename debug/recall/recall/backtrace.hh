@@ -6,16 +6,12 @@
 #ifndef RECALL_BACKTRACE_HH
 #define RECALL_BACKTRACE_HH
 
+// plus
+#include "plus/var_string_fwd.hh"
+
 // Recall
 #include "recall/stack_crawl.hh"
 
-
-namespace plus
-{
-	
-	class var_string;
-	
-}
 
 namespace recall
 {

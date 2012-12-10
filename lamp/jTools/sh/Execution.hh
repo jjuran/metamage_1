@@ -5,18 +5,14 @@
 #ifndef EXECUTION_HH
 #define EXECUTION_HH
 
+// plus
+#include "plus/string_fwd.hh"
+
 // poseven
 #ifndef POSEVEN_TYPES_WAIT_T_HH
 #include "poseven/types/wait_t.hh"
 #endif
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace tool
 {

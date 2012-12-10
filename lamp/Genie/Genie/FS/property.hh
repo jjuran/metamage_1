@@ -9,16 +9,12 @@
 // Standard C/C++
 #include <cstddef>
 
+// plus
+#include "plus/var_string_fwd.hh"
+
 // Genie
 #include "Genie/FS/FSTree_fwd.hh"
 
-
-namespace plus
-{
-	
-	class var_string;	
-	
-}
 
 namespace Genie
 {

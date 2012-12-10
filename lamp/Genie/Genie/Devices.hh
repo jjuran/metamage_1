@@ -9,16 +9,12 @@
 // Debug
 #include "debug/boost_assert.hh"
 
+// plus
+#include "plus/string_fwd.hh"
+
 // Genie
 #include "Genie/IO/IOPtr.hh"
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Genie
 {
