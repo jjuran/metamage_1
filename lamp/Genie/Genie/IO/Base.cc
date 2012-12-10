@@ -104,14 +104,6 @@ namespace vfs
 	}
 	
 	
-	filehandle::filehandle( int flags ) : itsOpenFlags( flags )
-	{
-	}
-	
-	filehandle::~filehandle()
-	{
-	}
-	
 	filehandle* filehandle::GetBaseForCast( Test test )
 	{
 		if ( (this->*test)() )
