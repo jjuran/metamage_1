@@ -6,20 +6,13 @@
 #define BUILTINS_HH
 
 // plus
-#include "plus/string.hh"
+#include "plus/string_fwd.hh"
 
 // poseven
 #ifndef POSEVEN_TYPES_EXIT_T_HH
 #include "poseven/types/exit_t.hh"
 #endif
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace tool
 {
