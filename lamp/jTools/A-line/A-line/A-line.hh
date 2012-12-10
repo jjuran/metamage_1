@@ -9,16 +9,12 @@
 // Standard C++
 #include <vector>
 
+// plus
+#include "plus/string_fwd.hh"
+
 // A-line
 #include "A-line/Task.hh"
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace tool
 {
