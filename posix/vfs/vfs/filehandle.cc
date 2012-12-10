@@ -9,7 +9,7 @@
 namespace vfs
 {
 	
-	filehandle::filehandle( int flags ) : itsOpenFlags( flags )
+	filehandle::filehandle( int flags ) : its_flags( flags )
 	{
 	}
 	

@@ -30,7 +30,7 @@ namespace vfs
 	class filehandle : public plus::ref_count< filehandle >
 	{
 		private:
-			int itsOpenFlags;
+			int its_flags;
 			
 			virtual filehandle* Next() const  { return NULL; }
 			
@@ -53,9 +53,9 @@ namespace vfs
 			
 			filehandle* GetBaseForCast( Test test );
 			
-			int GetFlags() const  { return itsOpenFlags; }
+			int GetFlags() const  { return its_flags; }
 			
-			void SetFlags( int flags )  { itsOpenFlags = flags; }
+			void SetFlags( int flags )  { its_flags = flags; }
 			
 			virtual filehandle_ptr Clone();
 			
