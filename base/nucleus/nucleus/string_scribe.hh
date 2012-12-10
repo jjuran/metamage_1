@@ -7,8 +7,11 @@
 #define NUCLEUS_STRINGSCRIBE_HH
 
 // plus
-#ifndef PLUS_VARSTRING_HH
+#ifndef PLUS_STRING_HH
 #include "plus/string.hh"
+#endif
+#ifndef PLUS_VARSTRINGFWD_HH
+#include "plus/var_string_fwd.hh"
 #endif
 
 // nucleus
@@ -19,13 +22,6 @@
 #include "nucleus/string.hh"
 #endif
 
-
-namespace plus
-{
-	
-	class var_string;
-	
-}
 
 namespace nucleus
 {
