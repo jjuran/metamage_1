@@ -1,20 +1,14 @@
 /*
 	append_hex_encoded_byte.hh
 	--------------------------
-	
-	Copyright 2009, Joshua Juran
 */
 
 #ifndef GENIE_FS_APPENDHEXENCODEDBYTE_HH
 #define GENIE_FS_APPENDHEXENCODEDBYTE_HH
 
+// plus
+#include "plus/var_string_fwd.hh"
 
-namespace plus
-{
-	
-	class var_string;
-	
-}
 
 namespace Genie
 {

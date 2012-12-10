@@ -6,17 +6,13 @@
 #ifndef GENIE_FS_STRINGIFYQD_HH
 #define GENIE_FS_STRINGIFYQD_HH
 
+// plus
+#include "plus/var_string_fwd.hh"
+
 // #include <MacTypes.h>
 struct Point;
 struct Rect;
 
-
-namespace plus
-{
-	
-	class var_string;
-	
-}
 
 namespace Genie
 {
