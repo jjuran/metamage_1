@@ -3,13 +3,9 @@
  *	================
  */
 
+// plus
+#include "plus/string_fwd.hh"
 
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace tool
 {
