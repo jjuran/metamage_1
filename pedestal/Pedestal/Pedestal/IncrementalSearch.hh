@@ -9,6 +9,9 @@
 // Debug
 #include "debug/boost_assert.hh"
 
+// plus
+#include "plus/string_fwd.hh"
+
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
@@ -17,13 +20,6 @@
 #include "Pedestal/Quasimode.hh"
 #endif
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace Pedestal
 {
