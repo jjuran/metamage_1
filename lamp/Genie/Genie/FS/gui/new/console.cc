@@ -399,7 +399,7 @@ namespace Genie
 				GetDynamicGroup< ConsoleTTYHandle >().erase( itsID );
 			}
 			
-			void Attach( const IOPtr& terminal );
+			void Attach( vfs::filehandle* terminal );
 			
 			FSTreePtr GetFile()  { return MakeConsoleProxy( itsID ); }
 			
@@ -412,7 +412,7 @@ namespace Genie
 			void IOCtl( unsigned long request, int* argp );
 	};
 	
-	void ConsoleTTYHandle::Attach( const IOPtr& terminal )
+	void ConsoleTTYHandle::Attach( vfs::filehandle* terminal )
 	{
 		const FSTree* view = ViewKey();
 		

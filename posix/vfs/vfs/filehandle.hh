@@ -59,7 +59,7 @@ namespace vfs
 			
 			virtual filehandle_ptr Clone();
 			
-			virtual void Attach( const filehandle_ptr& target );
+			virtual void Attach( filehandle* target );
 			
 			virtual node_ptr GetFile();
 			

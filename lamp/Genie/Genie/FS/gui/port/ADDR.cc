@@ -707,10 +707,10 @@ namespace Genie
 		
 		if ( has_tty )
 		{
-			tty->Attach( terminal );
+			tty->Attach( terminal.get() );
 		}
 		
-		terminal->Attach( tty );
+		terminal->Attach( tty.get() );
 		
 		params.itsTerminal = terminal.get();
 		
