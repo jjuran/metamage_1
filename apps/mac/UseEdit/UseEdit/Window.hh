@@ -9,18 +9,14 @@
 // Standard C++
 #include <memory>
 
+// plus
+#include "plus/string_fwd.hh"
+
 // Pedestal
 #ifndef PEDESTAL_WINDOW_HH
 #include "Pedestal/Window.hh"
 #endif
 
-
-namespace plus
-{
-	
-	class string;
-	
-}
 
 namespace UseEdit
 {
