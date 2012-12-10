@@ -202,31 +202,12 @@ namespace Genie
 	
 	Process& GetProcess( pid_t pid )
 	{
-		if ( Process* process = FindProcess( pid ) )
-		{
-			return *process;
-		}
-		
-		throw p7::errno_t( ESRCH );
-	}
-	
-	static void* find_pid( void* param, pid_t pid, Process& process )
-	{
-		return *(pid_t*) param == pid ? &process
-		                              : NULL;
+		return get_process( pid );
 	}
 	
 	Process* FindProcess( pid_t pid )
 	{
-		if ( Process* result = (Process*) for_each_process( &find_pid, &pid ) )
-		{
-			if ( result->GetLifeStage() != kProcessReleased )
-			{
-				return result;
-			}
-		}
-		
-		return NULL;
+		return lookup_process( pid );
 	}
 	
 	void DeliverFatalSignal( int signo )
