@@ -170,6 +170,12 @@ namespace tool
 					destPath = destFilePath.c_str();
 				}
 			}
+			else
+			{
+				std::fprintf( stderr, "cp: %s: %s\n", destPath, strerror( errno ) );
+				
+				return 1;
+			}
 			
 			p7::throw_posix_result( copyfile_or_pump( sourcePath, destPath ) );
 		}
