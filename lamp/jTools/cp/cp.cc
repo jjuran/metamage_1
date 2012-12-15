@@ -141,7 +141,7 @@ namespace tool
 			
 			if ( -1 == lstat( sourcePath, &sb ) )
 			{
-				std::fprintf( stderr, "cp: cannot stat `%s': %s\n", sourcePath, strerror( errno ) );
+				std::fprintf( stderr, "cp: %s: %s\n", sourcePath, strerror( errno ) );
 				
 				return 1;
 			}
