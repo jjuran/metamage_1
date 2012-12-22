@@ -11,8 +11,14 @@
 // Standard C
 #include <signal.h>
 
+// Debug
+#include "debug/boost_assert.hh"
+
 // plus
 #include "plus/var_string.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
 
 // poseven
 #include "poseven/types/errno_t.hh"

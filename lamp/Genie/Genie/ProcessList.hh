@@ -9,12 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
-
 // Genie
 #include "Genie/Process.hh"
 
