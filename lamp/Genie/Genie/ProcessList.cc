@@ -139,7 +139,7 @@ namespace Genie
 		
 	}
 	
-	static const boost::intrusive_ptr< Process >& NewProcess( Process::RootProcess )
+	static Process& NewProcess( Process::RootProcess )
 	{
 		static const bool has_ThreadManager = MacFeatures::Has_Threads();
 		
@@ -156,25 +156,29 @@ namespace Genie
 		
 		const pid_t pid = next_pid();
 		
-		boost::intrusive_ptr< Process > process( new Process( Process::RootProcess() ) );
+		Process* new_process = new Process( Process::RootProcess() );
 		
-		return global_processes[ pid ] = process;
+		global_processes[ pid ] = new_process;
+		
+		return *new_process;
 	}
 	
-	const boost::intrusive_ptr< Process >& NewProcess( Process& parent, pid_t ppid )
+	Process& NewProcess( Process& parent, pid_t ppid )
 	{
 		const pid_t pid = next_pid();
 		
-		boost::intrusive_ptr< Process > process( new Process( parent, pid, ppid ) );
+		Process* new_process = new Process( parent, pid, ppid );
 		
-		return global_processes[ pid ] = process;
+		global_processes[ pid ] = new_process;
+		
+		return *new_process;
 	}
 	
 	Process& GetInitProcess()
 	{
-		static const boost::intrusive_ptr< Process >& init = NewProcess( Process::RootProcess() );
+		static Process& init = NewProcess( Process::RootProcess() );
 		
-		return *init;
+		return init;
 	}
 	
 	void kill_all_processes()
@@ -211,7 +215,7 @@ namespace Genie
 	{
 		Process& parent = GetInitProcess();
 		
-		Process& child = *NewProcess( parent, 1 );
+		Process& child = NewProcess( parent, 1 );
 		
 		child.unshare_fs_info();
 		child.unshare_files();

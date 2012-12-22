@@ -76,7 +76,7 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		const pid_t ppid = share_parent ? caller.GetPPID()
 		                                : caller.GetPID();
 		
-		Process& child = *NewProcess( caller, ppid );
+		Process& child = NewProcess( caller, ppid );
 		
 		if ( !share_fs )
 		{

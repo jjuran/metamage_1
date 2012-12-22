@@ -726,9 +726,7 @@ namespace Genie
 	
 	Process& Process::vfork()
 	{
-		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( *this );
-		
-		Process& child = *child_ptr;
+		Process& child = NewProcess( *this );
 		
 		child.unshare_fs_info();
 		child.unshare_files();
@@ -1100,9 +1098,7 @@ namespace Genie
 	{
 		Process& parent = *this;
 		
-		const boost::intrusive_ptr< Process >& child_ptr = NewProcess( parent );
-		
-		Process& child = *child_ptr;
+		Process& child = NewProcess( parent );
 		
 		child.itsLifeStage       = kProcessLive;
 		
