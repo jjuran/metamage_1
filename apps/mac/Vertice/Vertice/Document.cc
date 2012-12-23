@@ -223,15 +223,15 @@ namespace Vertice
 		}
 		
 		// Look, ma!  No branches!
-		unsigned width = size >> 0 &   1
-		               | size >> 1 &   2
-		               | size >> 2 &   4
-		               | size >> 3 &   8
-		               | size >> 4 &  16
-		               | size >> 5 &  32
-		               | size >> 6 &  64
-		               | size >> 7 & 128
-		               | size >> 8 & 256;
+		unsigned width = (size >> 0 &   1)
+		               | (size >> 1 &   2)
+		               | (size >> 2 &   4)
+		               | (size >> 3 &   8)
+		               | (size >> 4 &  16)
+		               | (size >> 5 &  32)
+		               | (size >> 6 &  64)
+		               | (size >> 7 & 128)
+		               | (size >> 8 & 256);
 		
 		return width;
 	}
