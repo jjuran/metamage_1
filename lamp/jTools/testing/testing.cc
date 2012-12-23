@@ -439,7 +439,7 @@ static int TestAFP( int argc, char** argv )
 
 static int TestDate( int argc, char** argv )
 {
-	std::printf( "DateTime == %.8x\n", N::GetDateTime() );
+	std::printf( "DateTime == %.8lx\n", N::GetDateTime() );
 	
 	return 0;
 }
@@ -1235,7 +1235,7 @@ static int TestDefaultThreadStackSize( int argc, char** argv )
 		return 1;
 	}
 	
-	std::fprintf( stdout, "Default thread stack size:  %d\n", size );
+	std::fprintf( stdout, "Default thread stack size:  %ld\n", size );
 	
 	return 0;
 }
