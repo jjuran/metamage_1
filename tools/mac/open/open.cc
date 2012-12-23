@@ -328,7 +328,7 @@ namespace tool
 			}
 			catch ( const Mac::OSStatus& err )
 			{
-				std::fprintf( stderr, "open: %s: OSStatus %d\n", pathname, err.Get() );
+				std::fprintf( stderr, "open: %s: OSStatus %ld\n", pathname, err.Get() );
 			}
 			catch ( const p7::errno_t& errnum )
 			{
