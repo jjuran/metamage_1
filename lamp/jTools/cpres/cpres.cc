@@ -216,9 +216,9 @@ namespace tool
 				
 				plus::string destName( dest.name );
 				
-				std::fprintf( stderr, "OSStatus %d copying from %s to %s.\n",
-				                                err.Get(),      source_path,
-				                                                      destName.c_str() );
+				std::fprintf( stderr, "OSStatus %ld copying from %s to %s.\n",
+				                                err.Get(),       source_path,
+				                                                       destName.c_str() );
 			}
 		}
 		

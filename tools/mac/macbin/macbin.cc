@@ -93,7 +93,7 @@ namespace tool
 		}
 		catch ( const MacBinary::InvalidMacBinaryHeader& )
 		{
-			std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %x\n", totalBytes );
+			std::fprintf( stderr, "Invalid MacBinary header somewhere past offset %lx\n", totalBytes );
 			
 			throw p7::exit_failure;
 		}
