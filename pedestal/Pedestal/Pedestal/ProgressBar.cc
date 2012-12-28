@@ -67,10 +67,6 @@ namespace Pedestal
 		}
 	}
 	
-	ProgressBar::ProgressBar( const Rect& bounds )
-	{
-	}
-	
 	void ProgressBar::DrawProgress( Rect insetBounds )
 	{
 		const int boundsWidth = insetBounds.right - insetBounds.left;

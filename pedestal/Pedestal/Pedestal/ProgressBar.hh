@@ -28,8 +28,6 @@ namespace Pedestal
 	class ProgressBar : public View
 	{
 		public:
-			ProgressBar( const Rect& bounds );
-			
 			virtual double Progress() = 0;
 			
 			void DrawProgress( Rect insetBounds );
