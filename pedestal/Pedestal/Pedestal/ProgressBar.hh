@@ -28,7 +28,7 @@ namespace Pedestal
 	class ProgressBar : public View
 	{
 		public:
-			virtual double Progress() = 0;
+			virtual int Value() const = 0;
 			
 			void DrawProgress( Rect insetBounds );
 			

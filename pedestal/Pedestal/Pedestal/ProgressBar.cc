@@ -69,9 +69,21 @@ namespace Pedestal
 	
 	void ProgressBar::DrawProgress( Rect insetBounds )
 	{
+		int value = Value();
+		
+		if ( value < 0 )
+		{
+			value = 0;
+		}
+		
+		if ( value > 10000 )
+		{
+			value = 10000;
+		}
+		
 		const int boundsWidth = insetBounds.right - insetBounds.left;
 		
-		double progressWidth = Progress() * boundsWidth;
+		int progressWidth = value * boundsWidth / 10000;
 		
 		insetBounds.right = insetBounds.left + short( progressWidth );
 		
