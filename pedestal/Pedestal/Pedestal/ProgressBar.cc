@@ -68,34 +68,12 @@ namespace Pedestal
 	}
 	
 	ProgressBar::ProgressBar( const Rect& bounds )
-	/*
-	:
-		itsBounds( CalcCenteredProgressBarRect( bounds ) ), 
-		itsProgress( 0 )
-	*/
 	{
 	}
-	
-	/*
-	void ProgressBar::ZeroProgress()
-	{
-		//itsProgress = 0;
-		
-		// Erase the progress bar, leaving the black outline intact.
-		EraseProgress( ProgressBarInsetBounds( itsBounds ) );
-	}
-	
-	void ProgressBar::SetProgress( double progress )
-	{
-		itsProgress = progress;
-		
-		DrawProgress();
-	}
-	*/
 	
 	void ProgressBar::DrawProgress( Rect insetBounds )
 	{
-		double boundsWidth = insetBounds.right - insetBounds.left;
+		const int boundsWidth = insetBounds.right - insetBounds.left;
 		
 		double progressWidth = Progress() * boundsWidth;
 		
