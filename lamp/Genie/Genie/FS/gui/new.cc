@@ -20,6 +20,7 @@
 #include "Genie/FS/gui/new/icon.hh"
 #include "Genie/FS/gui/new/list.hh"
 #include "Genie/FS/gui/new/port.hh"
+#include "Genie/FS/gui/new/progress.hh"
 #include "Genie/FS/gui/new/scroller.hh"
 #include "Genie/FS/gui/new/scrollframe.hh"
 #include "Genie/FS/gui/new/stack.hh"
@@ -52,6 +53,7 @@ namespace Genie
 		{ "stack",        &New_stack                          },
 		{ "textedit",     &New_FSTree_new_textedit            },
 		{ "port",         &New_new_port                       },
+		{ "progress",     &New_new_progress                   },
 		
 		{ NULL, NULL }
 	};
