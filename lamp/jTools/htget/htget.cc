@@ -128,7 +128,7 @@ namespace tool
 	                              p7::fd_t             http_server,
 	                              p7::fd_t             document_destination )
 	{
-		p7::write( document_destination, partial_content );
+		size_t n_written = p7::write( document_destination, partial_content );
 		
 		const size_t buffer_size = 4096;
 		
@@ -136,7 +136,12 @@ namespace tool
 		
 		while ( const ssize_t n_read = p7::read( http_server, buffer, buffer_size ) )
 		{
-			p7::write( document_destination, buffer, n_read );
+			n_written += p7::write( document_destination, buffer, n_read );
+			
+			if ( dumping_progress )
+			{
+				dump_progress( n_written );
+			}
 		}
 	}
 	
