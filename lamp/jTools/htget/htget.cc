@@ -44,6 +44,25 @@ namespace tool
 	namespace o = orion;
 	
 	
+	static bool dumping_progress = false;
+	
+	static size_t content_length = 0;
+	
+	static plus::string content_length_string;
+	
+	static void dump_progress( size_t content_bytes_received )
+	{
+		plus::var_string dump = gear::inscribe_unsigned_decimal( content_bytes_received );
+		
+		dump += '/';
+		
+		dump += content_length_string;
+		
+		dump += '\n';
+		
+		p7::write( p7::stdout_fileno, dump );
+	}
+	
 	static bool ParseURL( const plus::string& url,
 	                      plus::string& outURLScheme, 
 	                      plus::string& outHostname,
@@ -128,6 +147,8 @@ namespace tool
 		o::bind_option_to_variable( "-I", sendHEADRequest );
 		o::bind_option_to_variable( "-o", outputFile      );
 		o::bind_option_to_variable( "-O", saveToFile      );
+		
+		o::bind_option_to_variable( "--dump-progress", dumping_progress );
 		
 		o::alias_option( "-i", "--headers" );
 		o::alias_option( "-i", "--include" );
@@ -228,7 +249,21 @@ namespace tool
 		
 		if ( expecting_content )
 		{
-			receive_document( response.GetPartialContent(),
+			const plus::string& partial_content = response.GetPartialContent();
+			
+			if ( dumping_progress )
+			{
+				content_length = response.ContentLengthOrZero();
+				
+				if ( content_length )
+				{
+					content_length_string = gear::inscribe_unsigned_decimal( content_length );
+					
+					dump_progress( partial_content.size() );
+				}
+			}
+			
+			receive_document( partial_content,
 			                  http_server,
 			                  p7::open( outputFile, p7::o_wronly | create_flags ) );
 		}
