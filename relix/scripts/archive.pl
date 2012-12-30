@@ -183,7 +183,7 @@ my %fsmap =
 			# Apps
 			\ qw( buffer ),
 			# Script apps
-			qw( asklogin confirm prompt psmon ),
+			qw( asklogin confirm progress prompt psmon ),
 			# App utilities
 			\ qw( daemonize follower idle overwrite select ),
 			# Misc
