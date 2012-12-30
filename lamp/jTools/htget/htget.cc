@@ -22,8 +22,8 @@
 
 // poseven
 #include "poseven/bundles/inet.hh"
-#include "poseven/extras/pump.hh"
 #include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/socket.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -130,7 +130,14 @@ namespace tool
 	{
 		p7::write( document_destination, partial_content );
 		
-		p7::pump( http_server, document_destination );
+		const size_t buffer_size = 4096;
+		
+		char buffer[ buffer_size ];
+		
+		while ( const ssize_t n_read = p7::read( http_server, buffer, buffer_size ) )
+		{
+			p7::write( document_destination, buffer, n_read );
+		}
 	}
 	
 	int Main( int argc, char** argv )
