@@ -31,6 +31,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/nodes/null.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/mkdir.hh"
@@ -410,6 +411,19 @@ namespace Genie
 		&view_dir_methods
 	};
 	
+	static const node_method_set viewdir_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&view_dir_methods
+	};
+	
 	FSTreePtr New_View( const FSTree*        parent,
 	                    const plus::string&  name,
 	                    ViewGetter           get,
@@ -434,6 +448,23 @@ namespace Genie
 		
 		extra.get   = get;
 		extra.purge = purge;
+		
+		return result;
+	}
+	
+	vfs::node_ptr new_view_dir( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          /* args */ )
+	{
+		if ( !view_exists( parent ) )
+		{
+			return vfs::null();
+		}
+		
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFDIR | 0700,
+		                                   &viewdir_methods );
 		
 		return result;
 	}
