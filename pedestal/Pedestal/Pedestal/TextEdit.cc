@@ -500,7 +500,7 @@ namespace Pedestal
 		
 		return    Try_IgnoreAutoKey( event )
 		       || Try_RepeatSearch( *this, event )
-		       || event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask );
+		       || (event.what == keyDown && Try_ArrowKeyChord( *this, event.message & charCodeMask ));
 	}
 	
 	bool TextEdit::Process_Key( const EventRecord& event )
