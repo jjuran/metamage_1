@@ -23,10 +23,7 @@
 
 // vfs
 #include "vfs/node.hh"
-
-// Genie
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+#include "vfs/nodes/anonymous.hh"
 
 
 #ifndef O_EXEC
@@ -64,46 +61,6 @@ namespace vfs
 	}
 	
 	
-	static filehandle_ptr anonymous_open( const node* it, int flags, mode_t mode );
-	
-	static const data_method_set anonymous_data_methods =
-	{
-		&anonymous_open
-	};
-	
-	static const node_method_set anonymous_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&anonymous_data_methods
-	};
-	
-	
-	struct handle_extra
-	{
-		vfs::filehandle* handle;
-	};
-	
-	static void dispose_handle( const node* it )
-	{
-		handle_extra& extra = *(handle_extra*) it->extra();
-		
-		intrusive_ptr_release( extra.handle );
-	}
-	
-	
-	static filehandle_ptr anonymous_open( const node* it, int flags, mode_t mode )
-	{
-		handle_extra& extra = *(handle_extra*) it->extra();
-		
-		return extra.handle;
-	}
-	
-	
 	filehandle* filehandle::GetBaseForCast( Test test )
 	{
 		if ( (this->*test)() )
@@ -131,20 +88,9 @@ namespace vfs
 	
 	node_ptr filehandle::GetFile()
 	{
-		node* result = new node( NULL,
-		                         IOName( this, true ),
-		                         S_IFIFO | permmode_from_openflags( GetFlags() ),
-		                         &anonymous_methods,
-		                         sizeof (handle_extra),
-		                         &dispose_handle );
+		const mode_t mode = S_IFIFO | permmode_from_openflags( GetFlags() );
 		
-		handle_extra& extra = *(handle_extra*) result->extra();
-		
-		intrusive_ptr_add_ref( this );
-		
-		extra.handle = this;
-		
-		return result;
+		return vfs::new_anonymous_node( IOName( this, true ), mode, this );
 	}
 	
 	void filehandle::IOCtl( unsigned long request, int* argp )
