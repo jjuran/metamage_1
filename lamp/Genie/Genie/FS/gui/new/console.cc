@@ -434,7 +434,9 @@ namespace Genie
 		
 		const plus::string& s = TextEditParameters::Get( view ).its_mac_text;
 		
-		const bool readable = params.itsStartOfInput < s.size()  &&  *(s.end() - 1) == '\n'  ||  params.itHasReceivedEOF;
+		const size_t size = s.size();
+		
+		const bool readable = params.itsStartOfInput < size  &&  s[ size - 1 ] == '\n'  ||  params.itHasReceivedEOF;
 		
 		int readability = readable ? kPollRead : 0;
 		
