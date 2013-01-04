@@ -436,7 +436,7 @@ namespace Genie
 		
 		const size_t size = s.size();
 		
-		const bool readable = params.itsStartOfInput < size  &&  s[ size - 1 ] == '\n'  ||  params.itHasReceivedEOF;
+		const bool readable = (params.itsStartOfInput < size  &&  s[ size - 1 ] == '\n')  ||  params.itHasReceivedEOF;
 		
 		int readability = readable ? kPollRead : 0;
 		

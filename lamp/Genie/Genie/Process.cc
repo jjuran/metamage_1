@@ -1448,7 +1448,7 @@ namespace Genie
 							break;
 						
 						case signal_terminate:
-							Terminate( signo | traits & signal_core );
+							Terminate( signo | (traits & signal_core) );
 							break;
 						
 						case signal_stop:
