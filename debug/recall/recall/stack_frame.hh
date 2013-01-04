@@ -72,7 +72,11 @@ namespace recall
 		
 		static char *get_r1( void )
 		{
-			__asm__( "mr r3,r1; blr" );
+			char* result;
+			
+			__asm__( "mr r3,r1" : "=r"(result) );
+			
+			return result;
 		}
 		
 	#endif
@@ -95,7 +99,11 @@ namespace recall
 	
 	static char *get_ebp( void )
 	{
-		__asm__( "mov  %ebp,%eax" );
+		char* result;
+		
+		__asm__( "mov  %%ebp,%0" : "=ra"(result) );
+		
+		return result;
 	}
 	
 	inline const stack_frame_x86* get_frame_pointer()
@@ -103,9 +111,9 @@ namespace recall
 		return (const stack_frame_x86*) get_ebp();
 	}
 	
-	static const stack_frame_x86* get_top_frame()
+	inline const stack_frame_x86* get_top_frame()
 	{
-		__asm__( "mov  %ebp,%eax" );
+		return (const stack_frame_x86*) get_ebp();
 	}
 	
 #endif
