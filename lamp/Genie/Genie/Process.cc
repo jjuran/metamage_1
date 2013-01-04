@@ -446,7 +446,7 @@ namespace Genie
 		
 		const bool has_shebang = bytes > 2 && data[0] == '#' && data[1] == '!';
 		
-		if ( type == 'TEXT'  ||  type == 0  &&  has_shebang )
+		if ( type == 'TEXT'  ||  (type == 0  &&  has_shebang) )
 		{
 			context.interpreterPath = "/bin/sh";  // default
 			bool hasArg = false;
