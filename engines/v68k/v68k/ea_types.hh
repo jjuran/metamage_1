@@ -56,7 +56,7 @@ namespace v68k
 	
 	inline bool ea_is_control( uint16_t mode, uint16_t n )
 	{
-		return mode == 2  ||  mode - 5u <= 1  || mode == 7  &&  n < 4;
+		return mode == 2  ||  mode - 5u <= 1  ||  (mode == 7  &&  n < 4);
 	}
 	
 	inline bool ea_is_alterable( uint16_t mode, uint16_t n )

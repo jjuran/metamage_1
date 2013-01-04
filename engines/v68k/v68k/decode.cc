@@ -140,7 +140,7 @@ namespace v68k
 			
 			const int selector = (opcode & 0x0E00) >> 9;
 			
-			if ( !ea_is_data( mode, n )  ||  selector != 6  &&  !ea_is_alterable( mode, n ) )
+			if ( !ea_is_data( mode, n )  ||  (selector != 6  &&  !ea_is_alterable( mode, n )) )
 			{
 				return 0;  // NULL
 			}
