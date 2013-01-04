@@ -489,7 +489,7 @@ namespace Pedestal
 	{
 		if ( Window* window = SetPort_FrontWindow() )
 		{
-			if ( gQuasimode = window->GetView()->EnterShiftSpaceQuasimode( event ) )
+			if (( gQuasimode = window->GetView()->EnterShiftSpaceQuasimode( event ) ))
 			{
 				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 				
