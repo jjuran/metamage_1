@@ -59,8 +59,8 @@ namespace v68k
 			case GE:  return ~(nzvc >> 2 ^ nzvc) & 0x2;  //  N == V
 			case LT:  return  (nzvc >> 2 ^ nzvc) & 0x2;  //  N ^  V
 			
-			case GT:  return ~(nzvc >> 2 ^ nzvc) & 0x2 & ~nzvc >> 1;  //  N == V && !Z
-			case LE:  return  (nzvc >> 2 ^ nzvc) & 0x2 | nzvc & 0x4;  //  N ^  V ||  Z
+			case GT:  return ~(nzvc >> 2 ^ nzvc) & 0x2  & ~nzvc >>  1;   //  N == V && !Z
+			case LE:  return ((nzvc >> 2 ^ nzvc) & 0x2) | (nzvc & 0x4);  //  N ^  V ||  Z
 		}
 	}
 	

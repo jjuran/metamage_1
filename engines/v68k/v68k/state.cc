@@ -122,7 +122,7 @@ namespace v68k
 		
 		const bool has_extra_bits = model >= mc68020;
 		
-		const uint16_t sr_mask = 0xA71F | 0x5000 & -has_extra_bits ;
+		const uint16_t sr_mask = 0xA71F | (0x5000 & -has_extra_bits);
 		
 		new_sr &= sr_mask;
 		
@@ -161,7 +161,7 @@ namespace v68k
 	{
 		const uint16_t saved_sr = get_SR();
 		
-		set_SR( saved_sr & 0x3FFF | 0x2000 );  // Clear T1/T0, set S
+		set_SR( (saved_sr & 0x3FFF) | 0x2000 );  // Clear T1/T0, set S
 		
 		uint32_t& sp = regs.a[7];
 		
@@ -202,7 +202,7 @@ namespace v68k
 	{
 		const uint16_t saved_sr = get_SR();
 		
-		set_SR( saved_sr & 0x3FFF | 0x2000 );  // Clear T1/T0, set S
+		set_SR( (saved_sr & 0x3FFF) | 0x2000 );  // Clear T1/T0, set S
 		
 		uint32_t& sp = regs.a[7];
 		
