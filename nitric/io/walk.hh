@@ -127,14 +127,6 @@ namespace io
 	}
 	
 	template < class DirSpec >
-	void recursively_delete_directory( const DirSpec& dir )
-	{
-		recursively_delete_directory_contents( dir );
-		
-		delete_empty_directory( dir );
-	}
-	
-	template < class DirSpec >
 	void recursively_delete_directory_contents( const DirSpec& item )
 	{
 		typedef typename filespec_traits< DirSpec >::file_spec file_spec;
@@ -144,6 +136,14 @@ namespace io
 		                           file_deleter     < file_spec >(),
 		                           directory_deleter< file_spec >(),
 		                           0 );
+	}
+	
+	template < class DirSpec >
+	void recursively_delete_directory( const DirSpec& dir )
+	{
+		recursively_delete_directory_contents( dir );
+		
+		delete_empty_directory( dir );
 	}
 	
 }
