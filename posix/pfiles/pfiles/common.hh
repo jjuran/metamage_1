@@ -25,8 +25,8 @@
 #ifndef IO_FILES_HH
 #include "io/files.hh"
 #endif
-#ifndef IO_WALK_HH
-#include "io/walk.hh"
+#ifndef IO_WALKFWD_HH
+#include "io/walk_fwd.hh"
 #endif
 
 // poseven
