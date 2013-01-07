@@ -34,9 +34,6 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
-// Io
-#include "io/io.hh"
-
 // poseven
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/extras/spew.hh"
@@ -46,6 +43,9 @@
 
 // pfiles
 #include "pfiles/common.hh"
+
+// Io
+#include "io/walk.hh"
 
 // Orion
 #include "Orion/Main.hh"
