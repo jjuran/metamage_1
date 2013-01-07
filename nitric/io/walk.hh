@@ -18,20 +18,14 @@
 #ifndef IO_FILES_HH
 #include "io/files.hh"
 #endif
+#ifndef IO_WALKFWD_HH
+#include "io/walk_fwd.hh"
+#endif
 
 
 
 namespace io
 {
-	
-	template < class FileSpec > struct directory_contents_traits;
-	
-	namespace you_missed_some_includes  // dummy
-	{
-		
-		class directory_stream {};
-		
-	}
 	
 	dummy::directory_stream directory_contents( dummy::file_spec );
 	
