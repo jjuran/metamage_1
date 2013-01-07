@@ -171,8 +171,8 @@ namespace tool
 			
 			friend bool operator<( const PlatformDemands& a, const PlatformDemands& b )
 			{
-				return                                                a.its_requirements < b.its_requirements
-				       || a.its_requirements == b.its_requirements && a.its_prohibitions < b.its_prohibitions;
+				return                                                 a.its_requirements < b.its_requirements
+				       || (a.its_requirements == b.its_requirements && a.its_prohibitions < b.its_prohibitions);
 			}
 			
 			friend bool operator==( const PlatformDemands& a, const PlatformDemands& b )

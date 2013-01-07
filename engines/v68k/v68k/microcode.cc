@@ -721,7 +721,7 @@ namespace v68k
 	
 	static inline uint16_t index_of_control_register( uint16_t id )
 	{
-		return id >> 8 | id & ~0x0800;
+		return id >> 8 | (id & ~0x0800);
 	}
 	
 	static uint32_t* get_control_register( processor_state& s, uint16_t control_index )

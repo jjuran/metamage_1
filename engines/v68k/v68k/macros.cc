@@ -43,8 +43,8 @@ namespace v68k
 		{
 			default:
 			case long_sized:  return src;
-			case byte_sized:  return dest & 0xFFFFFF00 | uint8_t ( src );
-			case word_sized:  return dest & 0xFFFF0000 | uint16_t( src );
+			case byte_sized:  return (dest & 0xFFFFFF00) | uint8_t ( src );
+			case word_sized:  return (dest & 0xFFFF0000) | uint16_t( src );
 		}
 		
 	}

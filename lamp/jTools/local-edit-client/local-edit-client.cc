@@ -96,10 +96,10 @@ namespace tool
 		
 		const unsigned char mask = 0x3f;
 		
-		buffer[0] = code[                            (triplet[0] >> 2) ];
-		buffer[1] = code[ mask & (triplet[0] << 4) | (triplet[1] >> 4) ];
-		buffer[2] = code[ mask & (triplet[1] << 2) | (triplet[2] >> 6) ];
-		buffer[3] = code[ mask & (triplet[2] << 0)                     ];
+		buffer[0] = code[                              (triplet[0] >> 2) ];
+		buffer[1] = code[ (mask & (triplet[0] << 4)) | (triplet[1] >> 4) ];
+		buffer[2] = code[ (mask & (triplet[1] << 2)) | (triplet[2] >> 6) ];
+		buffer[3] = code[  mask & (triplet[2] << 0)                      ];
 	}
 	
 	static plus::string EncodeBase64( const unsigned char* begin, const unsigned char* end )

@@ -201,7 +201,7 @@ namespace v68k
 		
 		if ( mode == 3  ||  mode == 4 )
 		{
-			pb.target = 0x8 | s.opcode & 0x7;  // register id for An
+			pb.target = 0x8 | (s.opcode & 0x7);  // register id for An
 		}
 		else
 		{

@@ -28,8 +28,8 @@ namespace v68k
 	
 	static inline uint8_t ADDX_NZ( int32_t data, uint8_t nzvc )
 	{
-		return + N( data <  0 )
-		       | Z( data == 0 ) & nzvc & 0x4;
+		return +   N( data <  0 )
+		       | ( Z( data == 0 ) & nzvc & 0x4 );
 	}
 	
 	static inline uint8_t additive_VC( int32_t a, int32_t b, int32_t c )

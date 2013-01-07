@@ -224,7 +224,7 @@ namespace v68k
 				storage.code  = &microcode_MOVE;
 				storage.flags = TST_CCR_update;
 				
-				if ( mode == 1  ||  mode == 7  &&  n >= 2 )
+				if ( mode == 1  ||  (mode == 7  &&  n >= 2) )
 				{
 					storage.flags = not_before_68020 | TST_CCR_update;
 				}
@@ -326,7 +326,7 @@ namespace v68k
 			
 			const uint16_t update_mode = 3 + to_mem;  // postinc or predec
 			
-			if ( mode == update_mode  ||  ea_is_control( mode, n )  &&  (ea_is_alterable( mode, n ) || !to_mem ) )
+			if ( mode == update_mode  ||  (ea_is_control( mode, n )  &&  (ea_is_alterable( mode, n ) || !to_mem )) )
 			{
 				storage.size  = op_size_in_0040;
 				storage.fetch = fetches_MOVEM;

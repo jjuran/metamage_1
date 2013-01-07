@@ -48,7 +48,7 @@ namespace Genie
 		
 		if ( is_child && pgid_matches )
 		{
-			if ( terminated  ||  stopped && (traced || pb.match_untraced) )
+			if ( terminated  ||  (stopped && (traced || pb.match_untraced)) )
 			{
 				return &process;
 			}
@@ -102,7 +102,7 @@ namespace Genie
 		
 		bool traced     = process->IsBeingTraced();
 		
-		if ( terminated  ||  stopped && (traced || match_untraced) )
+		if ( terminated  ||  (stopped && (traced || match_untraced)) )
 		{
 			return process;
 		}

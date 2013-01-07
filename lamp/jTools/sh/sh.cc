@@ -142,7 +142,7 @@ namespace tool
 		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
 		gLoginShell = gLoginShell  ||  argv[ 0 ][ 0 ] == '-';
 		
-		interactive = interactive  ||  *freeArgs == NULL && command == NULL && isatty( 0 ) && isatty( 2 );
+		interactive = interactive  ||  (*freeArgs == NULL && command == NULL && isatty( 0 ) && isatty( 2 ));
 		
 		monitor = monitor || interactive;
 		
