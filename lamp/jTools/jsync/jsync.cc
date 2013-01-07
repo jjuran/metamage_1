@@ -27,9 +27,6 @@
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
-// Io
-#include "io/walk.hh"
-
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/dup.hh"
@@ -53,6 +50,9 @@
 
 // pfiles
 #include "pfiles/common.hh"
+
+// Io
+#include "io/walk.hh"
 
 // Orion
 #include "Orion/get_options.hh"
