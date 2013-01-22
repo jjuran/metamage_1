@@ -181,7 +181,9 @@ namespace Genie
 		
 		while ( !params.v.empty() )
 		{
-			remove( params.v.back().node );
+			const vfs::node* layer = params.v.back().node;
+			
+			remove( layer );
 		}
 		
 		gStack_Parameters_Map.erase( node );
