@@ -11,9 +11,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// Debug
-#include "debug/assert.hh"
-
 // Pedestal
 #include "Pedestal/Stack.hh"
 
@@ -151,7 +148,10 @@ namespace Genie
 		
 		Named_Subview* subview = find_subview( params, that->name() );
 		
-		ASSERT( subview != NULL );
+		if ( subview == NULL )
+		{
+			return;
+		}
 		
 		ViewList& v = params.v;
 		
@@ -181,7 +181,11 @@ namespace Genie
 		
 		while ( !params.v.empty() )
 		{
-			remove( params.v.back().node );
+			const vfs::node* layer = params.v.back().node;
+			
+			remove( layer );
+			
+			RemoveAllViewParameters( layer );
 		}
 		
 		gStack_Parameters_Map.erase( node );
