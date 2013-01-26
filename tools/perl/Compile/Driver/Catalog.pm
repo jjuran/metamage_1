@@ -146,7 +146,14 @@ sub find_project
 	
 	if ( !exists $entry->{DATA} )
 	{
-		$entry->{DATA} = read_description_file( $entry->{PATH} );
+		my $path = $entry->{PATH};
+		
+		if ( $path !~ m{^ / }x )
+		{
+			$path = "$RealBin/$path";
+		}
+		
+		$entry->{DATA} = read_description_file( $path );
 	}
 	
 	return $entry;
