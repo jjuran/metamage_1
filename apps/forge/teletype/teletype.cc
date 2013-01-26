@@ -61,6 +61,7 @@ int main( int argc, char const *const argv[] )
 {
 	p7::chdir( "/gui/new/port" );
 	
+	setenv( "PORT", tool::getcwd(), true );
 	setenv( "WINDOW", tool::getcwd(), true );
 	
 	const short width  = 2 * 4 +  6 * 80 + 15;
