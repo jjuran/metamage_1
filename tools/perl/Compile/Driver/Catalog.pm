@@ -45,6 +45,13 @@ sub add_project_description
 	
 	my $data = read_description_file( $path );
 	
+	my $prefix = $RealBin . "/";
+	
+	if ( substr( $path, 0, length $prefix ) eq $prefix )
+	{
+		$path = substr( $path, length $prefix );
+	}
+	
 	if ( my $explicit_name = $data->{name}[0] )
 	{
 		$name = $explicit_name;
