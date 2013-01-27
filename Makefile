@@ -1,6 +1,7 @@
 # Makefile for <https://github.com/jjuran/metamage_1>
 
 REPOS =
+REPOS += freemount
 REPOS += git
 REPOS += macward-compat
 
