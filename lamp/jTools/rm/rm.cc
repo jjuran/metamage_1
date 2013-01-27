@@ -10,9 +10,6 @@
 // Iota
 #include "iota/strings.hh"
 
-// Io
-#include "io/walk.hh"
-
 // poseven
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/write.hh"
@@ -21,6 +18,9 @@
 
 // pfiles
 #include "pfiles/common.hh"
+
+// Io
+#include "io/walk.hh"
 
 // Orion
 #include "Orion/get_options.hh"
