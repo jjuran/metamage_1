@@ -73,3 +73,5 @@ xv68k-bus-pc: xv68k
 xv68k-div0: xv68k
 	echo 80C1 4E75 | $(PACK68K) | $(XV68K)
 
+.SECONDARY:
+
