@@ -1,5 +1,7 @@
 # Makefile for <https://github.com/jjuran/metamage_1>
 
+REPOS = git macward-compat
+
 ALINE = var/build/dbg/bin/A-line/A-line
 D68K  = var/build/dbg/bin/d68k/d68k
 XV68K = var/build/dbg/bin/xv68k/xv68k
@@ -19,6 +21,14 @@ rm-catalog:
 
 catalog: rm-catalog
 	./build.pl
+
+LINKS/%:
+	@echo $(REPOS) | grep $* > /dev/null || (echo Unknown repo $*; exit 1)
+	@test -d ../$*/.git || (echo 'Please run `(cd .. && git clone git://github.com/jjuran/$*.git)`.'; exit 128)
+	ln -s ../../$* LINKS/
+
+%.git: LINKS/%
+	@true
 
 A-line:
 	./build.pl A-line
