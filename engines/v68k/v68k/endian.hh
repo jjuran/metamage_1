@@ -31,51 +31,51 @@ namespace v68k
 		return *(const char*) &x;
 	}
 	
-	inline uint16_t swap_2_bytes( uint16_t word )
+	inline uint16_t swap_2_bytes( uint16_t u16 )
 	{
-		return word << 8 | word >> 8;
+		return u16 << 8 | u16 >> 8;
 	}
 	
-	inline uint32_t swap_4_bytes( uint32_t longword )
+	inline uint32_t swap_4_bytes( uint32_t u32 )
 	{
-		return    longword << 24
-		       | (longword <<  8 & 0x00FF0000)
-		       | (longword >>  8 & 0x0000FF00)
-		       |  longword >> 24;
+		return    u32 << 24
+		       | (u32 <<  8 & 0x00FF0000)
+		       | (u32 >>  8 & 0x0000FF00)
+		       |  u32 >> 24;
 	}
 	
 	
-	inline uint16_t toggle_word_byte_order( uint16_t word )
+	inline uint16_t swap_2_bytes_big( uint16_t u16 )
 	{
-		return is_little_endian() ? swap_2_bytes( word )
-		                          :               word;
+		return is_little_endian() ? swap_2_bytes( u16 )
+		                          :               u16;
 	}
 	
-	inline uint32_t toggle_longword_byte_order( uint32_t longword )
+	inline uint32_t swap_4_bytes_big( uint32_t u32 )
 	{
-		return is_little_endian() ? swap_4_bytes( longword )
-		                          :               longword;
+		return is_little_endian() ? swap_4_bytes( u32 )
+		                          :               u32;
 	}
 	
 	
 	inline uint16_t big_word( uint16_t word )
 	{
-		return toggle_word_byte_order( word );
+		return swap_2_bytes_big( word );
 	}
 	
 	inline uint16_t word_from_big( uint16_t word )
 	{
-		return toggle_word_byte_order( word );
+		return swap_2_bytes_big( word );
 	}
 	
 	inline uint32_t big_longword( uint32_t longword )
 	{
-		return toggle_longword_byte_order( longword );
+		return swap_4_bytes_big( longword );
 	}
 	
 	inline uint32_t longword_from_big( uint32_t longword )
 	{
-		return toggle_longword_byte_order( longword );
+		return swap_4_bytes_big( longword );
 	}
 	
 }
