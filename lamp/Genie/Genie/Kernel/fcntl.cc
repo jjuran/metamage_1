@@ -131,7 +131,7 @@ namespace Genie
 				case F_SETFL:
 					// Current unsettable flags plus new settable flags
 					stream.SetFlags( (stream.GetFlags() & ~mask) | (param & mask) );
-					break;
+					return 0;
 				
 				default:
 					break;
