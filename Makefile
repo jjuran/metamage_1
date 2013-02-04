@@ -1,6 +1,8 @@
 # Makefile for <https://github.com/jjuran/metamage_1>
 
-REPOS = git macward-compat
+REPOS =
+REPOS += git
+REPOS += macward-compat
 
 ALINE = var/build/dbg/bin/A-line/A-line
 D68K  = var/build/dbg/bin/d68k/d68k
