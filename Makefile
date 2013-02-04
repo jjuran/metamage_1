@@ -22,7 +22,10 @@ rm-catalog:
 catalog: rm-catalog
 	./build.pl
 
-LINKS/%:
+LINKS:
+	mkdir -p LINKS
+
+LINKS/%: LINKS
 	@echo $(REPOS) | grep $* > /dev/null || (echo Unknown repo $*; exit 1)
 	@test -d ../$*/.git || (echo 'Please run `(cd .. && git clone git://github.com/jjuran/$*.git)`.'; exit 128)
 	ln -s ../../$* LINKS/
