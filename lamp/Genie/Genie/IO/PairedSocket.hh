@@ -12,8 +12,8 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// plus
-#include "plus/conduit.hh"
+// vfs
+#include "vfs/stream.hh"
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -24,9 +24,9 @@ namespace Genie
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< plus::conduit >&  input,
-	                 const boost::intrusive_ptr< plus::conduit >&  output,
-	                 bool                                          nonblocking );
+	NewPairedSocket( const boost::intrusive_ptr< vfs::stream >&  input,
+	                 const boost::intrusive_ptr< vfs::stream >&  output,
+	                 bool                                        nonblocking );
 	
 }
 

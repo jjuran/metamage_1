@@ -31,13 +31,13 @@ namespace Genie
 	class PairedSocket : public StreamHandle
 	{
 		private:
-			boost::intrusive_ptr< plus::conduit >  itsInput;
-			boost::intrusive_ptr< plus::conduit >  itsOutput;
+			boost::intrusive_ptr< vfs::stream >  itsInput;
+			boost::intrusive_ptr< vfs::stream >  itsOutput;
 		
 		public:
-			PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
-			              boost::intrusive_ptr< plus::conduit >  output,
-			              bool                                   nonblocking );
+			PairedSocket( boost::intrusive_ptr< vfs::stream >  input,
+			              boost::intrusive_ptr< vfs::stream >  output,
+			              bool                                 nonblocking );
 			
 			~PairedSocket();
 			
@@ -91,9 +91,9 @@ namespace Genie
 	};
 	
 	
-	PairedSocket::PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
-			                    boost::intrusive_ptr< plus::conduit >  output,
-			                    bool                                   nonblocking )
+	PairedSocket::PairedSocket( boost::intrusive_ptr< vfs::stream >  input,
+			                    boost::intrusive_ptr< vfs::stream >  output,
+			                    bool                                 nonblocking )
 	:
 		StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
 		                          : O_RDWR,
@@ -122,9 +122,9 @@ namespace Genie
 	
 	IOPtr
 	//
-	NewPairedSocket( const boost::intrusive_ptr< plus::conduit >&  input,
-	                 const boost::intrusive_ptr< plus::conduit >&  output,
-	                 bool                                          nonblocking )
+	NewPairedSocket( const boost::intrusive_ptr< vfs::stream >&  input,
+	                 const boost::intrusive_ptr< vfs::stream >&  output,
+	                 bool                                        nonblocking )
 	{
 		return new PairedSocket( input, output, nonblocking );
 	}
