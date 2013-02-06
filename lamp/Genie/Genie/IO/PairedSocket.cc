@@ -5,6 +5,11 @@
 
 #include "Genie/IO/PairedSocket.hh"
 
+// STREAMS
+#ifdef __RELIX__
+#include <stropts.h>
+#endif
+
 // POSIX
 #include <fcntl.h>
 #include <sys/socket.h>
@@ -15,6 +20,12 @@
 // vfs
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
+#include "vfs/filehandle/primitives/conveying.hh"
+
+// relix-kernel
+#include "relix/api/assign_fd.hh"
+#include "relix/api/first_free_fd.hh"
+#include "relix/api/get_fd_handle.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
@@ -57,8 +68,12 @@ namespace Genie
 				return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
+			void IOCtl( unsigned long request, int* argp );
+			
 			void ShutdownReading();
 			void ShutdownWriting();
+			
+			bool conveying() const  { return !itsInput->empty(); }
 	};
 	
 	
@@ -75,6 +90,11 @@ namespace Genie
 		}
 	}
 	
+	static int pairedsocket_conveying( vfs::filehandle* sock )
+	{
+		return static_cast< PairedSocket& >( *sock ).conveying();
+	}
+	
 	static const vfs::socket_method_set pairedsocket_socket_methods =
 	{
 		NULL,
@@ -82,6 +102,9 @@ namespace Genie
 		NULL,
 		NULL,
 		&pairedsocket_shutdown,
+		NULL,
+		NULL,
+		&pairedsocket_conveying,
 	};
 	
 	static const vfs::filehandle_method_set pairedsocket_methods =
@@ -107,6 +130,62 @@ namespace Genie
 	{
 		ShutdownReading();
 		ShutdownWriting();
+	}
+	
+	static vfs::filehandle& check_fh( vfs::filehandle& fh )
+	{
+		if ( conveying( fh ) )
+		{
+			// To prevent cycles, don't send a socket with fds in flight
+			
+			p7::throw_errno( ELOOP );
+		}
+		
+		return fh;
+	}
+	
+	void PairedSocket::IOCtl( unsigned long request, int* argp )
+	{
+		switch ( request )
+		{
+		#ifdef __RELIX__
+			
+			case I_SENDFD:
+				// FIXME:  Implement garbage collection to allow cycles
+				
+				itsOutput->send_fd( check_fh( relix::get_fd_handle( (int) argp ) ) );
+				
+				break;
+			
+			case I_RECVFD:
+				if ( argp != NULL )
+				{
+					strrecvfd* arg = (strrecvfd*) argp;
+					
+					int fd = relix::first_free_fd();
+					
+					relix::assign_fd( fd, *itsInput->recv_fd( IsNonblocking(), &try_again ) );
+					
+					arg->fd = fd;
+					
+					arg->uid = 0;
+					arg->gid = 0;
+					
+					int* fill = (int*) arg->fill;
+					
+					fill[ 0 ] = 0;
+					fill[ 1 ] = 0;
+				}
+				
+				break;
+			
+		#endif
+			
+			default:
+				p7::throw_errno( EINVAL );
+				
+				break;
+		}
 	}
 	
 	void PairedSocket::ShutdownReading()
