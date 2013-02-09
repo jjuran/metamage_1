@@ -12,10 +12,10 @@
 #include "Genie/IO/VirtualDirectory.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	IOPtr opendir( const FSTree* it )
+	filehandle_ptr opendir( const node* it )
 	{
 		const node_method_set* methods = it->methods();
 		
@@ -29,7 +29,7 @@ namespace Genie
 			}
 		}
 		
-		return new VirtualDirHandle( it );
+		return new Genie::VirtualDirHandle( it );
 	}
 	
 }

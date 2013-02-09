@@ -3,15 +3,15 @@
 	----------
 */
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
-#include "Genie/IO/IOPtr.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
+#include "vfs/node_fwd.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	IOPtr opendir( const FSTree* it );
+	filehandle_ptr opendir( const node* that );
 	
 }
 
