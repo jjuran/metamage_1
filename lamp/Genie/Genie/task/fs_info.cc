@@ -5,8 +5,8 @@
 
 #include "Genie/task/fs_info.hh"
 
-// Genie
-#include "Genie/IO/Base.hh"
+// vfs
+#include "vfs/filehandle.hh"
 
 
 namespace Genie
@@ -15,14 +15,14 @@ namespace Genie
 	class fs_info_impl : public fs_info
 	{
 		public:
-			IOPtr its_cwd;
+			vfs::filehandle_ptr its_cwd;
 		
 		public:
 			fs_info_impl()
 			{
 			}
 			
-			fs_info_impl( const IOPtr& cwd ) : its_cwd( cwd )
+			fs_info_impl( const vfs::filehandle_ptr& cwd ) : its_cwd( cwd )
 			{
 			}
 			
@@ -40,22 +40,22 @@ namespace Genie
 	}
 	
 	
-	static inline const IOPtr& get_cwd( const fs_info* that )
+	static inline const vfs::filehandle_ptr& get_cwd( const fs_info* that )
 	{
 		return static_cast< const fs_info_impl* >( that )->its_cwd;
 	}
 	
-	static inline IOPtr& get_cwd( fs_info* that )
+	static inline vfs::filehandle_ptr& get_cwd( fs_info* that )
 	{
 		return static_cast< fs_info_impl* >( that )->its_cwd;
 	}
 	
-	void fs_info::chdir( const IOPtr& dir )
+	void fs_info::chdir( const vfs::filehandle_ptr& dir )
 	{
 		get_cwd( this ) = dir;
 	}
 	
-	IOPtr fs_info::getcwd() const
+	vfs::filehandle_ptr fs_info::getcwd() const
 	{
 		return get_cwd( this );
 	}
@@ -66,7 +66,7 @@ namespace Genie
 		             static_cast< fs_info_impl& >( other ) );
 	}
 	
-	fs_info* fs_info::create( const IOPtr& dir )
+	fs_info* fs_info::create( const vfs::filehandle_ptr& dir )
 	{
 		return new fs_info_impl( dir );
 	}

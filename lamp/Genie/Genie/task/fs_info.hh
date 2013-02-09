@@ -9,8 +9,8 @@
 // plus
 #include "plus/ref_count.hh"
 
-// Genie
-#include "Genie/IO/IOPtr.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
 
 
 namespace Genie
@@ -32,13 +32,13 @@ namespace Genie
 			~fs_info()  {}
 		
 		public:
-			void chdir( const IOPtr& dir );
+			void chdir( const vfs::filehandle_ptr& dir );
 			
-			IOPtr getcwd() const;
+			vfs::filehandle_ptr getcwd() const;
 			
 			void swap( fs_info& other );
 			
-			static fs_info* create( const IOPtr& dir );
+			static fs_info* create( const vfs::filehandle_ptr& dir );
 	};
 	
 	inline void swap( fs_info& a, fs_info& b )
