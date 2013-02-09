@@ -1,8 +1,6 @@
 /*
 	fd_table.cc
 	-----------
-	
-	Copyright 2010, Joshua Juran
 */
 
 #include "Genie/task/fd_table.hh"
@@ -13,8 +11,8 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FileDescriptor.hh"
+// vfs
+#include "vfs/file_descriptor.hh"
 
 
 namespace Genie
