@@ -74,7 +74,7 @@ namespace Genie
 		return GetProcess( pid ).FileDescriptors();
 	}
 	
-	static void iterate_one_fd( void* param, int fd, const FileDescriptor& )
+	static void iterate_one_fd( void* param, int fd, const vfs::file_descriptor& )
 	{
 		const ino_t inode = fd;
 		

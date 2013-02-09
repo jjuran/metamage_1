@@ -102,15 +102,15 @@ namespace Genie
 				                                close_on_exec );
 			}
 			
-			FileDescriptor& descriptor = GetFileDescriptor( filedes );
+			vfs::file_descriptor& descriptor = GetFileDescriptor( filedes );
 			
 			switch ( cmd )
 			{
 				case F_GETFD:
-					return descriptor.closeOnExec;
+					return descriptor.will_close_on_exec();
 				
 				case F_SETFD:
-					descriptor.closeOnExec = param;
+					descriptor.set_to_close_on_exec( param );
 					return 0;
 				
 				default:

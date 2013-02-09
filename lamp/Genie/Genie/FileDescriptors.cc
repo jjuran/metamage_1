@@ -60,10 +60,10 @@ namespace Genie
 		
 		fd_table& files = CurrentProcess().FileDescriptors();
 		
-		(files[ fd ] = handle).closeOnExec = close_on_exec;
+		(files[ fd ] = handle).set_to_close_on_exec( close_on_exec );
 	}
 	
-	FileDescriptor& GetFileDescriptor( int fd )
+	vfs::file_descriptor& GetFileDescriptor( int fd )
 	{
 		fd_table& files = CurrentProcess().FileDescriptors();
 		

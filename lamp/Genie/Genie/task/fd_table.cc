@@ -22,18 +22,20 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	using vfs::file_descriptor;
+	
 	
 	class fd_table_impl : public fd_table
 	{
 		public:
-			std::vector< FileDescriptor > its_fds;
+			std::vector< file_descriptor > its_fds;
 		
 		public:
 			fd_table_impl()
 			{
 			}
 			
-			fd_table_impl( const std::vector< FileDescriptor >& fds ) : its_fds( fds )
+			fd_table_impl( const std::vector< file_descriptor >& fds ) : its_fds( fds )
 			{
 			}
 			
@@ -51,24 +53,24 @@ namespace Genie
 	}
 	
 	
-	static inline const std::vector< FileDescriptor >& get_fds( const fd_table* that )
+	static inline const std::vector< file_descriptor >& get_fds( const fd_table* that )
 	{
 		return static_cast< const fd_table_impl* >( that )->its_fds;
 	}
 	
-	static inline std::vector< FileDescriptor >& get_fds( fd_table* that )
+	static inline std::vector< file_descriptor >& get_fds( fd_table* that )
 	{
 		return static_cast< fd_table_impl* >( that )->its_fds;
 	}
 	
 	bool fd_table::contains( int fd ) const
 	{
-		const std::vector< FileDescriptor >& fds = get_fds( this );
+		const std::vector< file_descriptor >& fds = get_fds( this );
 		
 		return unsigned( fd ) < fds.size()  &&  fds[ fd ].handle.get() != NULL;
 	}
 	
-	FileDescriptor& fd_table::at( int fd )
+	file_descriptor& fd_table::at( int fd )
 	{
 		if ( !contains( fd ) )
 		{
@@ -78,14 +80,14 @@ namespace Genie
 		return get_fds( this )[ fd ];
 	}
 	
-	FileDescriptor& fd_table::operator[]( int fd )
+	file_descriptor& fd_table::operator[]( int fd )
 	{
 		if ( fd < 0 )
 		{
 			p7::throw_errno( EBADF );
 		}
 		
-		std::vector< FileDescriptor >& fds = get_fds( this );
+		std::vector< file_descriptor >& fds = get_fds( this );
 		
 		if ( fd >= fds.size() )
 		{
@@ -97,7 +99,7 @@ namespace Genie
 	
 	int fd_table::first_unused( int minimum )
 	{
-		std::vector< FileDescriptor >& fds = get_fds( this );
+		std::vector< file_descriptor >& fds = get_fds( this );
 		
 		const std::size_t n = fds.size();
 		
@@ -116,12 +118,12 @@ namespace Genie
 	
 	void fd_table::close( int fd )
 	{
-		FileDescriptor().swap( get_fds( this ).at( fd ) );
+		file_descriptor().swap( get_fds( this ).at( fd ) );
 	}
 	
-	void fd_table::for_each( void (*f)( void*, int, const FileDescriptor& ), void* param ) const
+	void fd_table::for_each( void (*f)( void*, int, const file_descriptor& ), void* param ) const
 	{
-		const std::vector< FileDescriptor >& fds = get_fds( this );
+		const std::vector< file_descriptor >& fds = get_fds( this );
 		
 		const std::size_t n = fds.size();
 		
@@ -135,9 +137,9 @@ namespace Genie
 		
 	}
 	
-	void fd_table::for_each( void (*f)( void*, int, FileDescriptor& ), void* param )
+	void fd_table::for_each( void (*f)( void*, int, file_descriptor& ), void* param )
 	{
-		std::vector< FileDescriptor >& fds = get_fds( this );
+		std::vector< file_descriptor >& fds = get_fds( this );
 		
 		const std::size_t n = fds.size();
 		

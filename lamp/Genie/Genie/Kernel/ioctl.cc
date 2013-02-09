@@ -29,15 +29,15 @@ namespace Genie
 		
 		try
 		{
-			FileDescriptor& file = files[ filedes ];
+			vfs::file_descriptor& file = files[ filedes ];
 			
 			if ( request == FIOCLEX )
 			{
-				file.closeOnExec = true;
+				file.set_to_close_on_exec( true );
 			}
 			else if ( request == FIONCLEX )
 			{
-				file.closeOnExec = false;
+				file.set_to_close_on_exec( false );
 			}
 			else
 			{

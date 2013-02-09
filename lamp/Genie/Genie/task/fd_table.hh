@@ -10,6 +10,13 @@
 #include "plus/ref_count.hh"
 
 
+namespace vfs
+{
+	
+	struct file_descriptor;
+	
+}
+
 namespace Genie
 {
 	
@@ -22,8 +29,6 @@ namespace Genie
 namespace Genie
 {
 	
-	struct FileDescriptor;
-	
 	class fd_table : public plus::ref_count< fd_table >
 	{
 		private:
@@ -35,19 +40,21 @@ namespace Genie
 			~fd_table()  {}
 		
 		public:
+			typedef vfs::file_descriptor file_descriptor;
+			
 			bool contains( int fd ) const;
 			
-			FileDescriptor& at( int fd );
+			file_descriptor& at( int fd );
 			
-			FileDescriptor& operator[]( int fd );
+			file_descriptor& operator[]( int fd );
 			
 			int first_unused( int minimum );
 			
 			void close( int fd );
 			
-			void for_each( void (*)( void*, int, const FileDescriptor& ), void* = 0L ) const;
+			void for_each( void (*)( void*, int, const file_descriptor& ), void* = 0L ) const;
 			
-			void for_each( void (*)( void*, int, FileDescriptor& ), void* = 0L );
+			void for_each( void (*)( void*, int, file_descriptor& ), void* = 0L );
 			
 			void clear();
 			

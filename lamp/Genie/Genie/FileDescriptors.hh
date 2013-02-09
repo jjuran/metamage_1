@@ -11,10 +11,15 @@
 #include "Genie/IO/IOHandle_Cast.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	struct FileDescriptor;
+	struct file_descriptor;
+	
+}
+
+namespace Genie
+{
 	
 	int LowestUnusedFileDescriptor( int fd = 0 );
 	
@@ -28,7 +33,7 @@ namespace Genie
 	                           const IOPtr&  handle,
 	                           bool          close_on_exec = false );
 	
-	FileDescriptor& GetFileDescriptor( int fd );
+	vfs::file_descriptor& GetFileDescriptor( int fd );
 	
 	IOPtr const& GetFileHandle( int fd );
 	
