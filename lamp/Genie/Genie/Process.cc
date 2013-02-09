@@ -599,8 +599,8 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( fs_info::create( opendir( FSRoot() ) ) ),
-		itsFileDescriptors    ( fd_table::create() ),
+		its_fs_info           ( relix::fs_info::create( opendir( FSRoot() ) ) ),
+		itsFileDescriptors    ( relix::fd_table::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -620,7 +620,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		fd_table& fds = *itsFileDescriptors;
+		relix::fd_table& fds = *itsFileDescriptors;
 		
 		fds[ 0 ] =
 		fds[ 1 ] = GetSimpleDeviceHandle( "null"    );
@@ -763,7 +763,7 @@ namespace Genie
 		}
 	}
 	
-	static void CloseMarkedFileDescriptors( fd_table& fileDescriptors, int keep_fd = -1 )
+	static void CloseMarkedFileDescriptors( relix::fd_table& fileDescriptors, int keep_fd = -1 )
 	{
 		// Close file descriptors with close-on-exec flag.
 		

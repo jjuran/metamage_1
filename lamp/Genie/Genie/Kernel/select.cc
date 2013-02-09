@@ -45,7 +45,7 @@ namespace Genie
 		
 		try
 		{
-			fd_table& files = current_process().FileDescriptors();
+			relix::fd_table& files = current_process().FileDescriptors();
 			
 			// Output fd sets
 			fd_set rd, wr, ex;

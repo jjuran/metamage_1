@@ -25,7 +25,7 @@ namespace Genie
 	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
-		fd_table& files = current_process().FileDescriptors();
+		relix::fd_table& files = current_process().FileDescriptors();
 		
 		try
 		{

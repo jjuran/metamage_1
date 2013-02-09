@@ -67,7 +67,7 @@ namespace Genie
 	}
 	
 	
-	static const fd_table& fd_sequence( const FSTree* node )
+	static const relix::fd_table& fd_sequence( const FSTree* node )
 	{
 		const pid_t pid = gear::parse_unsigned_decimal( node->owner()->name().c_str() );
 		
@@ -91,7 +91,7 @@ namespace Genie
 	
 	static void proc_fd_listdir( const FSTree* node, vfs::dir_contents& cache )
 	{
-		const fd_table& sequence = fd_sequence( node );
+		const relix::fd_table& sequence = fd_sequence( node );
 		
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
@@ -570,7 +570,7 @@ namespace Genie
 	{
 		const int key = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const fd_table& sequence = fd_sequence( node );
+		const relix::fd_table& sequence = fd_sequence( node );
 		
 		if ( !sequence.contains( key ) )
 		{
@@ -592,7 +592,7 @@ namespace Genie
 		const int    fd  = gear::parse_unsigned_decimal( fd_name  );
 		const pid_t  pid = gear::parse_unsigned_decimal( pid_name );
 		
-		fd_table& files = GetProcess( pid ).FileDescriptors();
+		relix::fd_table& files = GetProcess( pid ).FileDescriptors();
 		
 		if ( !files.contains( fd ) )
 		{

@@ -1,11 +1,9 @@
 /*
 	fd_table.cc
 	-----------
-	
-	Copyright 2010, Joshua Juran
 */
 
-#include "Genie/task/fd_table.hh"
+#include "relix/task/fd_table.hh"
 
 // Standard C++
 #include <vector>
@@ -13,11 +11,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Genie
-#include "Genie/FileDescriptor.hh"
+// vfs
+#include "vfs/file_descriptor.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	namespace p7 = poseven;
@@ -160,7 +158,7 @@ namespace Genie
 	
 	void fd_table::swap( fd_table& other )
 	{
-		Genie::swap( static_cast< fd_table_impl& >( *this ),
+		relix::swap( static_cast< fd_table_impl& >( *this ),
 		             static_cast< fd_table_impl& >( other ) );
 	}
 	
