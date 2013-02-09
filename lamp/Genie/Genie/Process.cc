@@ -757,7 +757,7 @@ namespace Genie
 	
 	static void close_fd_on_exec( void* keep, int fd, FileDescriptor& desc )
 	{
-		if ( desc.closeOnExec  &&  fd != *(int*) keep )
+		if ( desc.will_close_on_exec()  &&  fd != *(int*) keep )
 		{
 			desc.handle.reset();
 		}
