@@ -18,7 +18,7 @@ namespace Genie
 		typedef vfs::filehandle_ptr filehandle_ptr;
 		
 		filehandle_ptr  handle;
-		bool   closeOnExec;
+		bool            close_on_exec;
 		
 		FileDescriptor();
 		
@@ -34,12 +34,12 @@ namespace Genie
 		
 		bool will_close_on_exec() const
 		{
-			return closeOnExec;
+			return close_on_exec;
 		}
 		
 		void set_to_close_on_exec( bool will_close )
 		{
-			closeOnExec = will_close;
+			close_on_exec = will_close;
 		}
 	};
 	

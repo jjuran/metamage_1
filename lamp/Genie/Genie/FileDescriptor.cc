@@ -17,21 +17,21 @@ namespace Genie
 	
 	FileDescriptor::FileDescriptor()
 	:
-		closeOnExec( false )
+		close_on_exec( false )
 	{
 	}
 	
 	FileDescriptor::FileDescriptor( const filehandle_ptr& handle )
 	:
-		handle     ( handle ),
-		closeOnExec( false  )
+		handle       ( handle ),
+		close_on_exec( false  )
 	{
 	}
 	
 	FileDescriptor::FileDescriptor( const FileDescriptor& other )
 	:
-		handle     ( other.handle      ),
-		closeOnExec( other.closeOnExec )
+		handle       ( other.handle      ),
+		close_on_exec( other.close_on_exec )
 	{
 	}
 	
@@ -41,8 +41,8 @@ namespace Genie
 	
 	FileDescriptor& FileDescriptor::operator=( const FileDescriptor& other )
 	{
-		handle      = other.handle;
-		closeOnExec = other.closeOnExec;
+		handle        = other.handle;
+		close_on_exec = other.close_on_exec;
 		
 		return *this;
 	}
@@ -51,8 +51,8 @@ namespace Genie
 	{
 		using iota::swap;
 		
-		swap( handle,      other.handle      );
-		swap( closeOnExec, other.closeOnExec );
+		swap( handle,        other.handle        );
+		swap( close_on_exec, other.close_on_exec );
 	}
 	
 }
