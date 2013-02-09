@@ -12,34 +12,34 @@
 #include "vfs/filehandle.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	FileDescriptor::FileDescriptor()
+	file_descriptor::file_descriptor()
 	:
 		close_on_exec( false )
 	{
 	}
 	
-	FileDescriptor::FileDescriptor( const filehandle_ptr& handle )
+	file_descriptor::file_descriptor( const filehandle_ptr& handle )
 	:
 		handle       ( handle ),
 		close_on_exec( false  )
 	{
 	}
 	
-	FileDescriptor::FileDescriptor( const FileDescriptor& other )
+	file_descriptor::file_descriptor( const file_descriptor& other )
 	:
 		handle       ( other.handle      ),
 		close_on_exec( other.close_on_exec )
 	{
 	}
 	
-	FileDescriptor::~FileDescriptor()
+	file_descriptor::~file_descriptor()
 	{
 	}
 	
-	FileDescriptor& FileDescriptor::operator=( const FileDescriptor& other )
+	file_descriptor& file_descriptor::operator=( const file_descriptor& other )
 	{
 		handle        = other.handle;
 		close_on_exec = other.close_on_exec;
@@ -47,7 +47,7 @@ namespace Genie
 		return *this;
 	}
 	
-	void FileDescriptor::swap( FileDescriptor& other )
+	void file_descriptor::swap( file_descriptor& other )
 	{
 		using iota::swap;
 		

@@ -755,7 +755,7 @@ namespace Genie
 		
 	}
 	
-	static void close_fd_on_exec( void* keep, int fd, FileDescriptor& desc )
+	static void close_fd_on_exec( void* keep, int fd, vfs::file_descriptor& desc )
 	{
 		if ( desc.will_close_on_exec()  &&  fd != *(int*) keep )
 		{

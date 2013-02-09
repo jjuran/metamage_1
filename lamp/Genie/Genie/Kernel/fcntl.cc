@@ -102,7 +102,7 @@ namespace Genie
 				                                close_on_exec );
 			}
 			
-			FileDescriptor& descriptor = GetFileDescriptor( filedes );
+			vfs::file_descriptor& descriptor = GetFileDescriptor( filedes );
 			
 			switch ( cmd )
 			{

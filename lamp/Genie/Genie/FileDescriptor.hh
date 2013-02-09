@@ -10,27 +10,27 @@
 #include "vfs/filehandle_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	struct FileDescriptor
+	struct file_descriptor
 	{
 		typedef vfs::filehandle_ptr filehandle_ptr;
 		
 		filehandle_ptr  handle;
 		bool            close_on_exec;
 		
-		FileDescriptor();
+		file_descriptor();
 		
-		FileDescriptor( const filehandle_ptr& handle );
+		file_descriptor( const filehandle_ptr& handle );
 		
-		FileDescriptor( const FileDescriptor& other );
+		file_descriptor( const file_descriptor& other );
 		
-		~FileDescriptor();
+		~file_descriptor();
 		
-		FileDescriptor& operator=( const FileDescriptor& );
+		file_descriptor& operator=( const file_descriptor& );
 		
-		void swap( FileDescriptor& other );
+		void swap( file_descriptor& other );
 		
 		bool will_close_on_exec() const
 		{
@@ -43,7 +43,7 @@ namespace Genie
 		}
 	};
 	
-	inline void swap( FileDescriptor& a, FileDescriptor& b )
+	inline void swap( file_descriptor& a, file_descriptor& b )
 	{
 		a.swap( b );
 	}

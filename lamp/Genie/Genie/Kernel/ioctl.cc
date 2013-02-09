@@ -29,7 +29,7 @@ namespace Genie
 		
 		try
 		{
-			FileDescriptor& file = files[ filedes ];
+			vfs::file_descriptor& file = files[ filedes ];
 			
 			if ( request == FIOCLEX )
 			{
