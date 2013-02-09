@@ -17,7 +17,7 @@ namespace vfs
 	
 }
 
-namespace Genie
+namespace relix
 {
 	
 	class fd_table;

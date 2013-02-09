@@ -122,7 +122,7 @@ namespace Genie
 			
 			boost::intrusive_ptr< fs_info > its_fs_info;
 			
-			boost::intrusive_ptr< fd_table > itsFileDescriptors;
+			boost::intrusive_ptr< relix::fd_table > itsFileDescriptors;
 			
 			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
 			
@@ -234,7 +234,7 @@ namespace Genie
 			
 			const FSTreePtr& ProgramFile() const  { return itsProgramFile; }
 			
-			fd_table& FileDescriptors()  { return *itsFileDescriptors; }
+			relix::fd_table& FileDescriptors()  { return *itsFileDescriptors; }
 			
 		#if CONFIG_SYSCALL_STACKS
 			

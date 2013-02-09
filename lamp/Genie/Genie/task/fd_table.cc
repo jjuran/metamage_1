@@ -15,7 +15,7 @@
 #include "vfs/file_descriptor.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	namespace p7 = poseven;
@@ -158,7 +158,7 @@ namespace Genie
 	
 	void fd_table::swap( fd_table& other )
 	{
-		Genie::swap( static_cast< fd_table_impl& >( *this ),
+		relix::swap( static_cast< fd_table_impl& >( *this ),
 		             static_cast< fd_table_impl& >( other ) );
 	}
 	

@@ -24,14 +24,14 @@ namespace Genie
 	
 	int LowestUnusedFileDescriptor( int fd )
 	{
-		fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_table& files = CurrentProcess().FileDescriptors();
 		
 		return files.first_unused( fd );
 	}
 	
 	void CloseFileDescriptor( int fd )
 	{
-		fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_table& files = CurrentProcess().FileDescriptors();
 		
 		return files.close( fd );
 	}
@@ -58,14 +58,14 @@ namespace Genie
 			p7::throw_errno( EBADF );
 		}
 		
-		fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_table& files = CurrentProcess().FileDescriptors();
 		
 		(files[ fd ] = handle).set_to_close_on_exec( close_on_exec );
 	}
 	
 	vfs::file_descriptor& GetFileDescriptor( int fd )
 	{
-		fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_table& files = CurrentProcess().FileDescriptors();
 		
 		return files.at( fd );
 	}
