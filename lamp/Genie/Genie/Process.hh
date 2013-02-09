@@ -120,7 +120,7 @@ namespace Genie
 			
 			plus::string itsName;
 			
-			boost::intrusive_ptr< fs_info > its_fs_info;
+			boost::intrusive_ptr< relix::fs_info > its_fs_info;
 			
 			boost::intrusive_ptr< fd_table > itsFileDescriptors;
 			

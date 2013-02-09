@@ -9,7 +9,7 @@
 #include "vfs/filehandle.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	class fs_info_impl : public fs_info
@@ -62,7 +62,7 @@ namespace Genie
 	
 	void fs_info::swap( fs_info& other )
 	{
-		Genie::swap( static_cast< fs_info_impl& >( *this ),
+		relix::swap( static_cast< fs_info_impl& >( *this ),
 		             static_cast< fs_info_impl& >( other ) );
 	}
 	

@@ -13,7 +13,7 @@
 #include "vfs/filehandle_ptr.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	class fs_info;

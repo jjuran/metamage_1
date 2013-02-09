@@ -599,7 +599,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( fs_info::create( opendir( FSRoot() ) ) ),
+		its_fs_info           ( relix::fs_info::create( opendir( FSRoot() ) ) ),
 		itsFileDescriptors    ( fd_table::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
