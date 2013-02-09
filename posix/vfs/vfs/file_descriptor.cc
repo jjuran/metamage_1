@@ -1,9 +1,9 @@
-/*	=================
- *	FileDescriptor.cc
- *	=================
- */
+/*
+	file_descriptor.cc
+	------------------
+*/
 
-#include "Genie/FileDescriptor.hh"
+#include "vfs/file_descriptor.hh"
 
 // iota
 #include "iota/swap.hh"
