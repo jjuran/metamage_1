@@ -6,11 +6,8 @@
 #ifndef GENIE_FILEDESCRIPTOR_HH
 #define GENIE_FILEDESCRIPTOR_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// Genie
-#include "Genie/IO/IOPtr.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
 
 
 namespace Genie
@@ -18,12 +15,14 @@ namespace Genie
 	
 	struct FileDescriptor
 	{
-		IOPtr  handle;
+		typedef vfs::filehandle_ptr filehandle_ptr;
+		
+		filehandle_ptr  handle;
 		bool   closeOnExec;
 		
 		FileDescriptor();
 		
-		FileDescriptor( const IOPtr& handle );
+		FileDescriptor( const filehandle_ptr& handle );
 		
 		FileDescriptor( const FileDescriptor& other );
 		

@@ -8,8 +8,8 @@
 // iota
 #include "iota/swap.hh"
 
-// Genie
-#include "Genie/IO/Base.hh"
+// vfs
+#include "vfs/filehandle.hh"
 
 
 namespace Genie
@@ -21,7 +21,7 @@ namespace Genie
 	{
 	}
 	
-	FileDescriptor::FileDescriptor( const IOPtr& handle )
+	FileDescriptor::FileDescriptor( const filehandle_ptr& handle )
 	:
 		handle     ( handle ),
 		closeOnExec( false  )
