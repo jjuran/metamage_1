@@ -18,21 +18,23 @@
 #include "Genie/IO/RegularFile.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	static void truncate( vfs::filehandle* that )
+	static void truncate( filehandle* that )
 	{
+		using namespace Genie;
+		
 		if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( that ) )
 		{
 			fh->SetEOF( 0 );
 		}
 	}
 	
-	IOPtr open( const FSTree* it, int flags, mode_t mode )
+	filehandle_ptr open( const node* it, int flags, mode_t mode )
 	{
 		const node_method_set* methods = it->methods();
 		
@@ -42,7 +44,7 @@ namespace Genie
 		{
 			if ( data_methods->open )
 			{
-				IOPtr result = data_methods->open( it, flags, mode );
+				filehandle_ptr result = data_methods->open( it, flags, mode );
 				
 				if ( flags & O_TRUNC )
 				{

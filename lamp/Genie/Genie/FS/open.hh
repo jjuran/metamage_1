@@ -6,15 +6,15 @@
 // POSIX
 #include <sys/types.h>
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
-#include "Genie/IO/IOPtr.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
+#include "vfs/node_fwd.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	IOPtr open( const FSTree* it, int flags, mode_t mode );
+	filehandle_ptr open( const node* that, int flags, mode_t mode );
 	
 }
 
