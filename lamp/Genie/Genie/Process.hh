@@ -39,7 +39,6 @@
 #include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
-#include "Genie/Process/TraceTarget.hh"
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
 #include "Genie/task/fs_info.hh"
@@ -89,8 +88,7 @@ namespace Genie
 	
 	class Process : public plus::ref_count< Process >,
 	                public SignalReceiver,
-	                public relix::vfork_context,
-	                public TraceTarget
+	                public relix::vfork_context
 	{
 		public:
 			enum
@@ -163,6 +161,8 @@ namespace Genie
 			void Orphan();
 		
 		public:
+			bool IsBeingTraced() const  { return false; }
+			
 			void Terminate( int wait_status );
 			
 			struct RootProcess {};
