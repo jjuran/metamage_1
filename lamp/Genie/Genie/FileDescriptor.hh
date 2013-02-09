@@ -31,6 +31,16 @@ namespace Genie
 		FileDescriptor& operator=( const FileDescriptor& );
 		
 		void swap( FileDescriptor& other );
+		
+		bool will_close_on_exec() const
+		{
+			return closeOnExec;
+		}
+		
+		void set_to_close_on_exec( bool will_close )
+		{
+			closeOnExec = will_close;
+		}
 	};
 	
 	inline void swap( FileDescriptor& a, FileDescriptor& b )
