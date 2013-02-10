@@ -63,12 +63,6 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		return set_errno( ENOSYS );
 	}
 	
-	if ( clone_thread )
-	{
-		// Can't do thread groups yet
-		return set_errno( ENOSYS );
-	}
-	
 	try
 	{
 		Process& caller = current_process();
@@ -76,7 +70,8 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		const pid_t ppid = share_parent ? caller.GetPPID()
 		                                : caller.GetPID();
 		
-		Process& child = NewProcess( caller, ppid );
+		Process& child = clone_thread ? NewThread ( caller       )
+		                              : NewProcess( caller, ppid );
 		
 		if ( !share_fs )
 		{
