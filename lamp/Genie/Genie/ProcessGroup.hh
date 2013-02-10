@@ -15,6 +15,9 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
+// relix
+#include "relix/task/session.hh"
+
 // Genie
 #include "Genie/IO/IOPtr.hh"
 
@@ -22,25 +25,7 @@
 namespace Genie
 {
 	
-	class Session : public plus::ref_count< Session >
-	{
-		private:
-			int    itsID;
-			IOPtr  itsControllingTerminal;
-		
-		public:
-			Session();
-			
-			Session( int id );
-			
-			~Session();
-			
-			int ID() const  { return itsID; }
-			
-			const IOPtr& GetControllingTerminal() const  { return itsControllingTerminal; }
-			
-			void SetControllingTerminal( vfs::filehandle& terminal );
-	};
+	typedef relix::session Session;
 	
 	class ProcessGroup : public plus::ref_count< ProcessGroup >
 	{
@@ -62,7 +47,7 @@ namespace Genie
 			
 			int ID() const  { return itsID; }
 			
-			int GetSID() const  { return itsSession->ID(); }
+			int GetSID() const  { return itsSession->id(); }
 			
 			Session& GetSession() const  { return *itsSession; }
 	};

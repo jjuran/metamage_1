@@ -73,7 +73,7 @@ namespace Genie
 					if ( its_process_group_id == no_pgid  ||  &FindProcessGroup( its_process_group_id )->GetSession() == &process_session )
 					{
 						// This must be the caller's controlling terminal.
-						if ( process_session.GetControllingTerminal().get() == this )
+						if ( process_session.get_ctty().get() == this )
 						{
 							setpgrp( GetProcessGroupInSession( *argp, process_session )->ID() );
 						}
@@ -85,13 +85,13 @@ namespace Genie
 				break;
 			
 			case TIOCSCTTY:
-				if ( process_session.ID() != current.GetPID() )
+				if ( process_session.id() != current.GetPID() )
 				{
 					// not a session leader
 					p7::throw_errno( EPERM );
 				}
 				
-				if ( process_session.GetControllingTerminal().get() != NULL )
+				if ( process_session.get_ctty().get() != NULL )
 				{
 					// already has a controlling terminal
 					p7::throw_errno( EPERM );
@@ -101,7 +101,7 @@ namespace Genie
 				
 				this->setpgrp( current.GetPGID() );
 				
-				process_session.SetControllingTerminal( *this );
+				process_session.set_ctty( *this );
 				break;
 			
 			default:

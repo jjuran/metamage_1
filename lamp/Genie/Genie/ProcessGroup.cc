@@ -12,26 +12,9 @@
 namespace Genie
 {
 	
-	Session::Session()
-	{
-	}
-	
-	Session::Session( int id ) : itsID( id )
-	{
-	}
-	
-	Session::~Session()
-	{
-	}
-	
-	void Session::SetControllingTerminal( vfs::filehandle& terminal )
-	{
-		itsControllingTerminal = &terminal;
-	}
-	
 	ProcessGroup::~ProcessGroup()
 	{
-		if ( IOHandle* handle = itsSession->GetControllingTerminal().get() )
+		if ( IOHandle* handle = itsSession->get_ctty().get() )
 		{
 			TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 			
