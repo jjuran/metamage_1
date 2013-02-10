@@ -543,7 +543,7 @@ namespace Genie
 			return NewProcessGroup( pgid, session );
 		}
 		
-		if ( &pgrp->GetSession() != &session )
+		if ( &pgrp->get_session() != &session )
 		{
 			p7::throw_errno( EPERM );
 		}
@@ -1009,19 +1009,19 @@ namespace Genie
 	
 	pid_t Process::GetPGID() const
 	{
-		return itsProcessGroup.get() ? itsProcessGroup->ID() : 0;
+		return itsProcessGroup.get() ? itsProcessGroup->id() : 0;
 	}
 	
 	pid_t Process::GetSID()  const
 	{
-		return itsProcessGroup.get() ? itsProcessGroup->GetSID() : 0;
+		return itsProcessGroup.get() ? itsProcessGroup->getsid() : 0;
 	}
 	
 	const IOPtr& Process::ControllingTerminal() const
 	{
 		if ( itsProcessGroup.get() )
 		{
-			return GetProcessGroup().GetSession().get_ctty();
+			return GetProcessGroup().get_session().get_ctty();
 		}
 		
 		static IOPtr null;

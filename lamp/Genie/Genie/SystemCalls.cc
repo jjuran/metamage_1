@@ -404,7 +404,7 @@ namespace Genie
 				pgid = target.GetPID();
 			}
 			
-			Session& session = target.GetProcessGroup().GetSession();
+			Session& session = target.GetProcessGroup().get_session();
 			
 			target.SetProcessGroup( *GetProcessGroupInSession( pgid, session ) );
 			
