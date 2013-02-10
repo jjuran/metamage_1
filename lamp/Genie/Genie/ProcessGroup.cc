@@ -24,14 +24,14 @@ namespace Genie
 	{
 	}
 	
-	void Session::SetControllingTerminal( vfs::filehandle& terminal )
+	void Session::set_ctty( vfs::filehandle& terminal )
 	{
 		itsControllingTerminal = &terminal;
 	}
 	
 	ProcessGroup::~ProcessGroup()
 	{
-		if ( IOHandle* handle = itsSession->GetControllingTerminal().get() )
+		if ( IOHandle* handle = itsSession->get_ctty().get() )
 		{
 			TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 			

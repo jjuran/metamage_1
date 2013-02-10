@@ -1021,7 +1021,7 @@ namespace Genie
 	{
 		if ( itsProcessGroup.get() )
 		{
-			return GetProcessGroup().GetSession().GetControllingTerminal();
+			return GetProcessGroup().GetSession().get_ctty();
 		}
 		
 		static IOPtr null;

@@ -35,11 +35,11 @@ namespace Genie
 			
 			~Session();
 			
-			int ID() const  { return itsID; }
+			int id() const  { return itsID; }
 			
-			const IOPtr& GetControllingTerminal() const  { return itsControllingTerminal; }
+			const IOPtr& get_ctty() const  { return itsControllingTerminal; }
 			
-			void SetControllingTerminal( vfs::filehandle& terminal );
+			void set_ctty( vfs::filehandle& terminal );
 	};
 	
 	class ProcessGroup : public plus::ref_count< ProcessGroup >
@@ -62,7 +62,7 @@ namespace Genie
 			
 			int ID() const  { return itsID; }
 			
-			int GetSID() const  { return itsSession->ID(); }
+			int GetSID() const  { return itsSession->id(); }
 			
 			Session& GetSession() const  { return *itsSession; }
 	};
