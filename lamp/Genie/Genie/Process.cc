@@ -508,11 +508,6 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
-	{
-		return boost::intrusive_ptr< Session >( new Session( sid ) );
-	}
-	
 	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, const boost::intrusive_ptr< Session >& session )
 	{
 		return boost::intrusive_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );

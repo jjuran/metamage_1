@@ -417,11 +417,6 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
-	{
-		return boost::intrusive_ptr< Session >( new Session( sid ) );
-	}
-	
 	static pid_t setsid()
 	{
 		try

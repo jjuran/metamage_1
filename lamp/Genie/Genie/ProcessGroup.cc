@@ -42,5 +42,10 @@ namespace Genie
 		}
 	}
 	
+	boost::intrusive_ptr< Session > NewSession( pid_t sid )
+	{
+		return new Session( sid );
+	}
+	
 }
 
