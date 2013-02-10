@@ -104,6 +104,7 @@ namespace Genie
 			
 			pid_t itsPPID;
 			pid_t itsPID;
+			pid_t itsTID;
 			pid_t itsForkedChildPID;
 			
 		#if CONFIG_SYSCALL_STACKS
@@ -201,7 +202,7 @@ namespace Genie
 			void SuppressCoreDump()  { itMayDumpCore = false; }
 			void AllowCoreDump   ()  { itMayDumpCore = true;  }
 			
-			pid_t gettid() const  { return itsPID; }
+			pid_t gettid() const  { return itsTID; }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
