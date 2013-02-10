@@ -201,6 +201,8 @@ namespace Genie
 			void SuppressCoreDump()  { itMayDumpCore = false; }
 			void AllowCoreDump   ()  { itMayDumpCore = true;  }
 			
+			pid_t gettid() const  { return itsPID; }
+			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }
 			
