@@ -15,38 +15,12 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// vfs
-#include "vfs/filehandle_ptr.hh"
+// relix
+#include "relix/task/session.hh"
 
 // Genie
 #include "Genie/IO/IOPtr.hh"
 
-
-namespace relix
-{
-	
-	class session : public plus::ref_count< session >
-	{
-		private:
-			int its_id;
-			
-			vfs::filehandle_ptr its_terminal;
-		
-		public:
-			session();
-			
-			session( int id );
-			
-			~session();
-			
-			int id() const  { return its_id; }
-			
-			const vfs::filehandle_ptr& get_ctty() const  { return its_terminal; }
-			
-			void set_ctty( vfs::filehandle& terminal );
-	};
-	
-}
 
 namespace Genie
 {

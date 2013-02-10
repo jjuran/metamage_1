@@ -9,28 +9,6 @@
 #include "Genie/IO/Terminal.hh"
 
 
-namespace relix
-{
-	
-	session::session()
-	{
-	}
-	
-	session::session( int id ) : its_id( id )
-	{
-	}
-	
-	session::~session()
-	{
-	}
-	
-	void session::set_ctty( vfs::filehandle& terminal )
-	{
-		its_terminal = &terminal;
-	}
-	
-}
-
 namespace Genie
 {
 	
