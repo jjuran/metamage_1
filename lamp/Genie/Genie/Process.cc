@@ -524,7 +524,7 @@ namespace Genie
 		
 		if ( process.GetPGID() == pgid )
 		{
-			return process.GetProcessGroup().get();
+			return &process.GetProcessGroup();
 		}
 		
 		return NULL;
@@ -631,7 +631,7 @@ namespace Genie
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( parent.GetProcessGroup() ),
+		itsProcessGroup       ( parent.itsProcessGroup ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -1026,7 +1026,7 @@ namespace Genie
 	{
 		if ( itsProcessGroup.get() )
 		{
-			return GetProcessGroup()->GetSession().GetControllingTerminal();
+			return GetProcessGroup().GetSession().GetControllingTerminal();
 		}
 		
 		static IOPtr null;

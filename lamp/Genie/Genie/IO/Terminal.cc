@@ -49,7 +49,7 @@ namespace Genie
 	{
 		Process& current = CurrentProcess();
 		
-		Session& process_session = current.GetProcessGroup()->GetSession();
+		Session& process_session = current.GetProcessGroup().GetSession();
 		
 		switch ( request )
 		{

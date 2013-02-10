@@ -205,7 +205,7 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			const boost::intrusive_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
+			ProcessGroup& GetProcessGroup() const  { return *itsProcessGroup; }
 			
 			void SetProcessGroup( ProcessGroup& pgrp )  { itsProcessGroup = &pgrp; }
 			
