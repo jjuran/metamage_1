@@ -75,7 +75,7 @@ namespace Genie
 						// This must be the caller's controlling terminal.
 						if ( process_session->GetControllingTerminal().get() == this )
 						{
-							setpgrp( GetProcessGroupInSession( *argp, process_session )->ID() );
+							setpgrp( GetProcessGroupInSession( *argp, *process_session )->ID() );
 						}
 					}
 					

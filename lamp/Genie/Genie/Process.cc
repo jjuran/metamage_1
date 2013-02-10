@@ -539,16 +539,16 @@ namespace Genie
 		return boost::intrusive_ptr< ProcessGroup >( group );
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session )
+	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session )
 	{
 		boost::intrusive_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
 		
 		if ( pgrp.get() == NULL )
 		{
-			return NewProcessGroup( pgid, *session );
+			return NewProcessGroup( pgid, session );
 		}
 		
-		if ( pgrp->GetSession() != session )
+		if ( pgrp->GetSession().get() != &session )
 		{
 			p7::throw_errno( EPERM );
 		}

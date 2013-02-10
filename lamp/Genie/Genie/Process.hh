@@ -299,7 +299,7 @@ namespace Genie
 	
 	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session );
+	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session );
 	
 	void SendSignalToProcessGroup( int sig, pid_t pgid );
 	
