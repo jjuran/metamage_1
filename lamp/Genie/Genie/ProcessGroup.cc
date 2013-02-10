@@ -9,25 +9,30 @@
 #include "Genie/IO/Terminal.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
-	Session::Session()
+	session::session()
 	{
 	}
 	
-	Session::Session( int id ) : itsID( id )
+	session::session( int id ) : its_id( id )
 	{
 	}
 	
-	Session::~Session()
+	session::~session()
 	{
 	}
 	
-	void Session::set_ctty( vfs::filehandle& terminal )
+	void session::set_ctty( vfs::filehandle& terminal )
 	{
-		itsControllingTerminal = &terminal;
+		its_terminal = &terminal;
 	}
+	
+}
+
+namespace Genie
+{
 	
 	ProcessGroup::~ProcessGroup()
 	{
