@@ -39,6 +39,7 @@
 #include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
+#include "Genie/Process/TimeKeeper.hh"
 #include "Genie/ProcessGroup.hh"
 #include "Genie/task/fd_table.hh"
 #include "Genie/task/fs_info.hh"
@@ -87,6 +88,7 @@ namespace Genie
 	typedef int (*Clone_Function)( void* arg );
 	
 	class Process : public plus::ref_count< Process >,
+	                public TimeKeeper,
 	                public SignalReceiver,
 	                public relix::vfork_context
 	{

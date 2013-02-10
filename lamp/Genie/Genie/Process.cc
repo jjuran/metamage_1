@@ -621,6 +621,7 @@ namespace Genie
 	
 	Process::Process( Process& parent, pid_t pid, pid_t ppid ) 
 	:
+		TimeKeeper            (),  // Reset resource utilization on fork
 		SignalReceiver        ( parent ),
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
