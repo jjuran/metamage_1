@@ -508,19 +508,9 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
+	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, Session& session )
 	{
-		return boost::intrusive_ptr< Session >( new Session( sid ) );
-	}
-	
-	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, const boost::intrusive_ptr< Session >& session )
-	{
-		return boost::intrusive_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );
-	}
-	
-	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
-	{
-		return NewProcessGroup( pgid, NewSession( pgid ) );
+		return new ProcessGroup( pgid, session );
 	}
 	
 	static void* find_process_group( void* param, pid_t, Process& process )
@@ -529,31 +519,31 @@ namespace Genie
 		
 		if ( process.GetPGID() == pgid )
 		{
-			return process.GetProcessGroup().get();
+			return &process.GetProcessGroup();
 		}
 		
 		return NULL;
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	ProcessGroup* FindProcessGroup( pid_t pgid )
 	{
 		void* result = for_each_process( &find_process_group, &pgid );
 		
 		ProcessGroup* group = (ProcessGroup*) result;
 		
-		return boost::intrusive_ptr< ProcessGroup >( group );
+		return group;
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session )
+	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session )
 	{
-		boost::intrusive_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
+		ProcessGroup* pgrp = FindProcessGroup( pgid );
 		
-		if ( pgrp.get() == NULL )
+		if ( pgrp == NULL )
 		{
 			return NewProcessGroup( pgid, session );
 		}
 		
-		if ( pgrp->GetSession() != session )
+		if ( &pgrp->GetSession() != &session )
 		{
 			p7::throw_errno( EPERM );
 		}
@@ -595,7 +585,7 @@ namespace Genie
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
+		itsProcessGroup       ( NewProcessGroup( itsPID, *NewSession( itsPID ) ) ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
@@ -636,7 +626,7 @@ namespace Genie
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( parent.GetProcessGroup() ),
+		itsProcessGroup       ( parent.itsProcessGroup ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -1031,7 +1021,7 @@ namespace Genie
 	{
 		if ( itsProcessGroup.get() )
 		{
-			return GetProcessGroup()->GetSession()->GetControllingTerminal();
+			return GetProcessGroup().GetSession().GetControllingTerminal();
 		}
 		
 		static IOPtr null;

@@ -39,7 +39,7 @@ namespace Genie
 			
 			const IOPtr& GetControllingTerminal() const  { return itsControllingTerminal; }
 			
-			void SetControllingTerminal( const IOPtr& terminal );
+			void SetControllingTerminal( vfs::filehandle& terminal );
 	};
 	
 	class ProcessGroup : public plus::ref_count< ProcessGroup >
@@ -51,10 +51,10 @@ namespace Genie
 		public:
 			ProcessGroup()  {}
 			
-			ProcessGroup( int id, const boost::intrusive_ptr< Session >& session )
+			ProcessGroup( int id, Session& session )
 			:
 				itsID( id ),
-				itsSession( session )
+				itsSession( &session )
 			{
 			}
 			
@@ -64,8 +64,10 @@ namespace Genie
 			
 			int GetSID() const  { return itsSession->ID(); }
 			
-			const boost::intrusive_ptr< Session >& GetSession() const  { return itsSession; }
+			Session& GetSession() const  { return *itsSession; }
 	};
+	
+	boost::intrusive_ptr< Session > NewSession( pid_t sid );
 	
 }
 

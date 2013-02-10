@@ -24,9 +24,9 @@ namespace Genie
 	{
 	}
 	
-	void Session::SetControllingTerminal( const IOPtr& terminal )
+	void Session::SetControllingTerminal( vfs::filehandle& terminal )
 	{
-		itsControllingTerminal = terminal;
+		itsControllingTerminal = &terminal;
 	}
 	
 	ProcessGroup::~ProcessGroup()
@@ -40,6 +40,11 @@ namespace Genie
 				terminal.setpgrp( no_pgid );
 			}
 		}
+	}
+	
+	boost::intrusive_ptr< Session > NewSession( pid_t sid )
+	{
+		return new Session( sid );
 	}
 	
 }

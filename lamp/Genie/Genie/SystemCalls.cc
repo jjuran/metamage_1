@@ -404,9 +404,9 @@ namespace Genie
 				pgid = target.GetPID();
 			}
 			
-			const boost::intrusive_ptr< Session >& session = target.GetProcessGroup()->GetSession();
+			Session& session = target.GetProcessGroup().GetSession();
 			
-			target.SetProcessGroup( GetProcessGroupInSession( pgid, session ) );
+			target.SetProcessGroup( *GetProcessGroupInSession( pgid, session ) );
 			
 			return 0;
 		}
@@ -417,11 +417,6 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Session > NewSession( pid_t sid )
-	{
-		return boost::intrusive_ptr< Session >( new Session( sid ) );
-	}
-	
 	static pid_t setsid()
 	{
 		try
@@ -431,7 +426,7 @@ namespace Genie
 			int pid = current.GetPID();
 			
 			// throws EPERM if pgid already exists
-			current.SetProcessGroup( GetProcessGroupInSession( pid, NewSession( pid ) ) );
+			current.SetProcessGroup( *GetProcessGroupInSession( pid, *NewSession( pid ) ) );
 			
 			return pid;
 		}

@@ -205,9 +205,9 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			const boost::intrusive_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
+			ProcessGroup& GetProcessGroup() const  { return *itsProcessGroup; }
 			
-			void SetProcessGroup( const boost::intrusive_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
+			void SetProcessGroup( ProcessGroup& pgrp )  { itsProcessGroup = &pgrp; }
 			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			
@@ -297,9 +297,9 @@ namespace Genie
 			bool HandlePendingSignals( bool may_throw );
 	};
 	
-	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
+	ProcessGroup* FindProcessGroup( pid_t pgid );
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, const boost::intrusive_ptr< Session >& session );
+	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session );
 	
 	void SendSignalToProcessGroup( int sig, pid_t pgid );
 	
