@@ -510,7 +510,7 @@ namespace Genie
 	
 	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, Session& session )
 	{
-		return boost::intrusive_ptr< ProcessGroup >( new ProcessGroup( pgid, session ) );
+		return new ProcessGroup( pgid, session );
 	}
 	
 	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
@@ -536,7 +536,7 @@ namespace Genie
 		
 		ProcessGroup* group = (ProcessGroup*) result;
 		
-		return boost::intrusive_ptr< ProcessGroup >( group );
+		return group;
 	}
 	
 	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session )
