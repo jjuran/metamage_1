@@ -297,7 +297,7 @@ namespace Genie
 			bool HandlePendingSignals( bool may_throw );
 	};
 	
-	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid );
+	ProcessGroup* FindProcessGroup( pid_t pgid );
 	
 	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session );
 	

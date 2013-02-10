@@ -530,7 +530,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > FindProcessGroup( pid_t pgid )
+	ProcessGroup* FindProcessGroup( pid_t pgid )
 	{
 		void* result = for_each_process( &find_process_group, &pgid );
 		
@@ -541,9 +541,9 @@ namespace Genie
 	
 	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session )
 	{
-		boost::intrusive_ptr< ProcessGroup > pgrp = FindProcessGroup( pgid );
+		ProcessGroup* pgrp = FindProcessGroup( pgid );
 		
-		if ( pgrp.get() == NULL )
+		if ( pgrp == NULL )
 		{
 			return NewProcessGroup( pgid, session );
 		}
