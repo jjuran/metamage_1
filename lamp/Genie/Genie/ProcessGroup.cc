@@ -5,25 +5,31 @@
 
 #include "Genie/ProcessGroup.hh"
 
-// Genie
-#include "Genie/IO/Terminal.hh"
+// vfs
+#include "vfs/filehandle/primitives/getpgrp.hh"
+#include "vfs/filehandle/primitives/setpgrp.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
-	ProcessGroup::~ProcessGroup()
+	process_group::~process_group()
 	{
-		if ( IOHandle* handle = itsSession->get_ctty().get() )
+		if ( vfs::filehandle* handle = its_session->get_ctty().get() )
 		{
-			TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
+			// FIXME:  Assert that handle is a terminal
 			
-			if ( terminal.getpgrp() == id() )
+			if ( getpgrp( *handle ) == id() )
 			{
-				terminal.setpgrp( no_pgid );
+				setpgrp( *handle, no_pgid );
 			}
 		}
 	}
+	
+}
+
+namespace Genie
+{
 	
 	boost::intrusive_ptr< Session > NewSession( pid_t sid )
 	{
