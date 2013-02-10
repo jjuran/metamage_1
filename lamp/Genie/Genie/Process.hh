@@ -207,7 +207,7 @@ namespace Genie
 			
 			const boost::intrusive_ptr< ProcessGroup >& GetProcessGroup() const  { return itsProcessGroup; }
 			
-			void SetProcessGroup( const boost::intrusive_ptr< ProcessGroup >& pgrp )  { itsProcessGroup = pgrp; }
+			void SetProcessGroup( ProcessGroup& pgrp )  { itsProcessGroup = &pgrp; }
 			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			
