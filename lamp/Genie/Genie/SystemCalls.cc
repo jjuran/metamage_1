@@ -166,6 +166,11 @@ namespace Genie
 	}
 	
 	
+	static pid_t gettid()
+	{
+		return current_process().gettid();
+	}
+	
 	static pid_t getpid()
 	{
 		return current_process().GetPID();
@@ -596,6 +601,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( getpid    );
 	REGISTER_SYSTEM_CALL( getppid   );
 	REGISTER_SYSTEM_CALL( getsid    );
+	REGISTER_SYSTEM_CALL( gettid    );
 	REGISTER_SYSTEM_CALL( lseek     );
 	REGISTER_SYSTEM_CALL( pause     );
 	REGISTER_SYSTEM_CALL( pipe2     );
