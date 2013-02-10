@@ -513,11 +513,6 @@ namespace Genie
 		return new ProcessGroup( pgid, session );
 	}
 	
-	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid )
-	{
-		return NewProcessGroup( pgid, *NewSession( pgid ) );
-	}
-	
 	static void* find_process_group( void* param, pid_t, Process& process )
 	{
 		const pid_t pgid = *(pid_t*) param;
@@ -590,7 +585,7 @@ namespace Genie
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( NewProcessGroup( itsPID ) ),
+		itsProcessGroup       ( NewProcessGroup( itsPID, *NewSession( itsPID ) ) ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
