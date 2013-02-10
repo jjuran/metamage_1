@@ -1184,7 +1184,7 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
-		mark_process_inactive( GetPID() );
+		mark_process_inactive( gettid() );
 		
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{

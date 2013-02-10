@@ -233,7 +233,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			global_processes.at( child.GetPID() ).reset();
+			global_processes.at( child.gettid() ).reset();
 		}
 	}
 	

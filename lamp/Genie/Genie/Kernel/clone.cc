@@ -95,7 +95,7 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		
 		child.SpawnThread( f, arg );
 		
-		return child.GetPID();
+		return child.gettid();
 	}
 	catch ( ... )
 	{
