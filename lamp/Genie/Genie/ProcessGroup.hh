@@ -64,7 +64,7 @@ namespace Genie
 			
 			int GetSID() const  { return itsSession->ID(); }
 			
-			const boost::intrusive_ptr< Session >& GetSession() const  { return itsSession; }
+			Session& GetSession() const  { return *itsSession; }
 	};
 	
 	boost::intrusive_ptr< Session > NewSession( pid_t sid );

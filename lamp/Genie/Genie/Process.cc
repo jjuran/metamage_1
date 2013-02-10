@@ -548,7 +548,7 @@ namespace Genie
 			return NewProcessGroup( pgid, session );
 		}
 		
-		if ( pgrp->GetSession().get() != &session )
+		if ( &pgrp->GetSession() != &session )
 		{
 			p7::throw_errno( EPERM );
 		}
@@ -1026,7 +1026,7 @@ namespace Genie
 	{
 		if ( itsProcessGroup.get() )
 		{
-			return GetProcessGroup()->GetSession()->GetControllingTerminal();
+			return GetProcessGroup()->GetSession().GetControllingTerminal();
 		}
 		
 		static IOPtr null;

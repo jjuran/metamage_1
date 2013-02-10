@@ -49,7 +49,7 @@ namespace Genie
 	{
 		Process& current = CurrentProcess();
 		
-		Session& process_session = *current.GetProcessGroup()->GetSession();
+		Session& process_session = current.GetProcessGroup()->GetSession();
 		
 		switch ( request )
 		{
@@ -70,7 +70,7 @@ namespace Genie
 				{
 					// If the terminal has an existing foreground process group,
 					// it must be in the same session as the calling process.
-					if ( its_process_group_id == no_pgid  ||  FindProcessGroup( its_process_group_id )->GetSession().get() == &process_session )
+					if ( its_process_group_id == no_pgid  ||  &FindProcessGroup( its_process_group_id )->GetSession() == &process_session )
 					{
 						// This must be the caller's controlling terminal.
 						if ( process_session.GetControllingTerminal().get() == this )
