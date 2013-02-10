@@ -39,7 +39,7 @@ namespace Genie
 			
 			const IOPtr& GetControllingTerminal() const  { return itsControllingTerminal; }
 			
-			void SetControllingTerminal( const IOPtr& terminal );
+			void SetControllingTerminal( vfs::filehandle& terminal );
 	};
 	
 	class ProcessGroup : public plus::ref_count< ProcessGroup >

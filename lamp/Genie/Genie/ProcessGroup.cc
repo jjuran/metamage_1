@@ -24,9 +24,9 @@ namespace Genie
 	{
 	}
 	
-	void Session::SetControllingTerminal( const IOPtr& terminal )
+	void Session::SetControllingTerminal( vfs::filehandle& terminal )
 	{
-		itsControllingTerminal = terminal;
+		itsControllingTerminal = &terminal;
 	}
 	
 	ProcessGroup::~ProcessGroup()
