@@ -45,11 +45,11 @@ namespace Genie
 			
 			~ProcessGroup();
 			
-			int ID() const  { return itsID; }
+			int id() const  { return itsID; }
 			
-			int GetSID() const  { return itsSession->id(); }
+			int getsid() const  { return itsSession->id(); }
 			
-			Session& GetSession() const  { return *itsSession; }
+			Session& get_session() const  { return *itsSession; }
 	};
 	
 	boost::intrusive_ptr< Session > NewSession( pid_t sid );

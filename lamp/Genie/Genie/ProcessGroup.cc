@@ -18,7 +18,7 @@ namespace Genie
 		{
 			TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 			
-			if ( terminal.getpgrp() == ID() )
+			if ( terminal.getpgrp() == id() )
 			{
 				terminal.setpgrp( no_pgid );
 			}
