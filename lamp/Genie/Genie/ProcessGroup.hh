@@ -51,10 +51,10 @@ namespace Genie
 		public:
 			ProcessGroup()  {}
 			
-			ProcessGroup( int id, const boost::intrusive_ptr< Session >& session )
+			ProcessGroup( int id, Session& session )
 			:
 				itsID( id ),
-				itsSession( session )
+				itsSession( &session )
 			{
 			}
 			
