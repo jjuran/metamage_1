@@ -404,9 +404,9 @@ namespace Genie
 				pgid = target.GetPID();
 			}
 			
-			const boost::intrusive_ptr< Session >& session = target.GetProcessGroup()->GetSession();
+			Session& session = *target.GetProcessGroup()->GetSession();
 			
-			target.SetProcessGroup( GetProcessGroupInSession( pgid, *session ) );
+			target.SetProcessGroup( GetProcessGroupInSession( pgid, session ) );
 			
 			return 0;
 		}
