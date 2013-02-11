@@ -37,6 +37,11 @@ namespace Genie
 	{
 		wait_param& pb = *(wait_param*) param;
 		
+		if ( process.gettid() != process.GetPID() )
+		{
+			return NULL;  // ignore non-leader threads
+		}
+		
 		const bool is_child     =                   process.GetPPID() == pb.ppid;
 		const bool pgid_matches = pb.pgid == 0  ||  process.GetPGID() == pb.pgid;
 		
