@@ -619,7 +619,7 @@ namespace Genie
 		InstallExceptionHandlers();
 	}
 	
-	Process::Process( Process& parent, pid_t pid, pid_t ppid ) 
+	Process::Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid ) 
 	:
 		TimeKeeper            (),  // Reset resource utilization on fork
 		SignalReceiver        ( parent ),

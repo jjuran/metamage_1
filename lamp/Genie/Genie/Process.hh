@@ -170,7 +170,7 @@ namespace Genie
 			struct RootProcess {};
 			
 			Process( RootProcess );
-			Process( Process& parent, pid_t pid, pid_t ppid = 0 );
+			Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid );
 			
 			~Process();
 			

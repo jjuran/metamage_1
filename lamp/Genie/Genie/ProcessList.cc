@@ -173,7 +173,7 @@ namespace Genie
 	{
 		const pid_t pid = next_pid();
 		
-		Process* new_process = new Process( parent, pid, ppid );
+		Process* new_process = new Process( parent, pid, ppid, pid );
 		
 		global_processes[ pid ] = new_process;
 		
