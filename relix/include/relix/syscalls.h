@@ -67,7 +67,7 @@
 #define __NR_ustat                      62
 #define __NR_fork_and_exit              63  // dup2
 #define __NR_getppid                    64
-// 65
+#define __NR_gettid                     65  // getpgrp
 #define __NR_setsid                     66
 #define __NR_sigaction                  67
 #define __NR_sgetmask                   68
