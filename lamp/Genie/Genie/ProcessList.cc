@@ -180,6 +180,20 @@ namespace Genie
 		return *new_process;
 	}
 	
+	Process& NewThread( Process& caller )
+	{
+		const pid_t tid = next_pid();
+		
+		const pid_t pid  = caller.GetPID ();
+		const pid_t ppid = caller.GetPPID();
+		
+		Process* new_process = new Process( caller, pid, ppid, tid );
+		
+		global_processes[ tid ] = new_process;
+		
+		return *new_process;
+	}
+	
 	Process& GetInitProcess()
 	{
 		static Process& init = NewProcess( Process::RootProcess() );
