@@ -6,8 +6,8 @@
 #ifndef RELIX_SCHED_H
 #define RELIX_SCHED_H
 
-// Standard C
-#include <stddef.h>
+// POSIX
+#include <sys/types.h>
 
 
 #define CLONE_VM              0x00000100
@@ -32,6 +32,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+pid_t gettid();
 
 int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int flags, void* arg );
 
