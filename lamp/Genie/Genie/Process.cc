@@ -1218,20 +1218,23 @@ namespace Genie
 		
 		itsLifeStage = kProcessZombie;
 		
-		Process& parent = GetProcess( ppid );
-		
-		if ( ppid > 1  &&  parent.WaitsForChildren() )
+		if ( gettid() == pid )
 		{
-			parent.Raise( SIGCHLD );
+			Process& parent = GetProcess( ppid );
+			
+			if ( ppid > 1  &&  parent.WaitsForChildren() )
+			{
+				parent.Raise( SIGCHLD );
+			}
+			else
+			{
+				Release();
+			}
+			
+			notify_param param = { pid, isSessionLeader };
+			
+			for_each_process( &notify_process, &param );
 		}
-		else
-		{
-			Release();
-		}
-		
-		notify_param param = { pid, isSessionLeader };
-		
-		for_each_process( &notify_process, &param );
 		
 		if ( gCurrentProcess != this )
 		{
