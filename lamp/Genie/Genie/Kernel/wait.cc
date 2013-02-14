@@ -37,6 +37,11 @@ namespace Genie
 	{
 		wait_param& pb = *(wait_param*) param;
 		
+		if ( process.gettid() != process.GetPID() )
+		{
+			return NULL;  // ignore non-leader threads
+		}
+		
 		const bool is_child     =                   process.GetPPID() == pb.ppid;
 		const bool pgid_matches = pb.pgid == 0  ||  process.GetPGID() == pb.pgid;
 		
@@ -111,6 +116,33 @@ namespace Genie
 		return NULL;
 	}
 	
+	static Process* CheckTID( pid_t caller, pid_t tid )
+	{
+		Process* thread = FindProcess( tid );
+		
+		if ( thread == NULL )
+		{
+			// No such thread
+			p7::throw_errno( ECHILD );
+		}
+		
+		if ( thread->GetPID() != caller )
+		{
+			// Thread exists but it's not in your thread group
+			p7::throw_errno( EINVAL );
+		}
+		
+		const bool terminated = thread->GetLifeStage() == kProcessZombie;
+		
+		if ( terminated )
+		{
+			return thread;
+		}
+		
+		// The thread is still alive, please wait...
+		return NULL;
+	}
+	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
 		Process& caller = current_process();
@@ -119,11 +151,14 @@ namespace Genie
 		
 		bool untraced = options & WUNTRACED;
 		
+		const bool is_thread = options & __WTHREAD;
+		
 		try
 		{
 			while ( true )
 			{
 				if ( Process* child = pid == -1 ? CheckAny( ppid, pid, untraced )
+				                    : is_thread ? CheckTID( ppid, pid )
 				                                : CheckPID( ppid, pid, untraced ) )
 				{
 					if ( stat_loc != NULL )

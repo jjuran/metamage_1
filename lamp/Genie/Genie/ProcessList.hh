@@ -21,6 +21,8 @@ namespace Genie
 	
 	Process& NewProcess( Process& parent, pid_t ppid = 0 );
 	
+	Process& NewThread( Process& caller );
+	
 	Process& GetInitProcess();
 	
 	bool process_exists( pid_t pid );

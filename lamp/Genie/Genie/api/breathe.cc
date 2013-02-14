@@ -31,7 +31,7 @@ namespace Genie
 		
 		if ( now - current.GetTimeOfLastResume() > 20000 )
 		{
-			mark_process_active( current_process().GetPID() );
+			mark_process_active( current_process().gettid() );
 			
 			current.Breathe();
 			

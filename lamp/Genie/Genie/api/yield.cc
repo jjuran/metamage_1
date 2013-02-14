@@ -26,7 +26,7 @@ namespace Genie
 	
 	void yield()
 	{
-		mark_process_inactive( current_process().GetPID() );
+		mark_process_inactive( current_process().gettid() );
 		
 		current_process().Yield();
 	}

@@ -16,6 +16,8 @@ extern "C" {
 #define WNOHANG    1
 #define WUNTRACED  2
 
+#define __WTHREAD  0x80000000
+
 #define WTERMSIG(stat)     ( (stat) & 0x7f )
 
 #define WCOREDUMP(stat)    ( (stat) & 0x80 )
