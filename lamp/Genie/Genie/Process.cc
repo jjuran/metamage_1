@@ -584,6 +584,7 @@ namespace Genie
 		its_pb                ( user_pb_for_init() ),
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
+		itsTID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( NewProcessGroup( itsPID, *NewSession( itsPID ) ) ),
 		itsStackFramePtr      ( NULL ),
@@ -619,13 +620,14 @@ namespace Genie
 		InstallExceptionHandlers();
 	}
 	
-	Process::Process( Process& parent, pid_t pid, pid_t ppid ) 
+	Process::Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid ) 
 	:
 		TimeKeeper            (),  // Reset resource utilization on fork
 		SignalReceiver        ( parent ),
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
+		itsTID                ( tid ),
 		itsForkedChildPID     ( 0 ),
 		itsProcessGroup       ( parent.itsProcessGroup ),
 		itsStackFramePtr      ( NULL ),
