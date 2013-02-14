@@ -58,7 +58,7 @@ DEFINE_SYSCALL_7F( umask )
 
 DEFINE_SYSCALL_7F( fork_and_exit )
 DEFINE_SYSCALL_7F( getppid )
-
+DEFINE_SYSCALL_7F( gettid )
 DEFINE_SYSCALL_7F( setsid )
 DEFINE_SYSCALL_7F( sigaction )
 

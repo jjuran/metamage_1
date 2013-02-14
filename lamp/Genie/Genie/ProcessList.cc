@@ -173,9 +173,23 @@ namespace Genie
 	{
 		const pid_t pid = next_pid();
 		
-		Process* new_process = new Process( parent, pid, ppid );
+		Process* new_process = new Process( parent, pid, ppid, pid );
 		
 		global_processes[ pid ] = new_process;
+		
+		return *new_process;
+	}
+	
+	Process& NewThread( Process& caller )
+	{
+		const pid_t tid = next_pid();
+		
+		const pid_t pid  = caller.GetPID ();
+		const pid_t ppid = caller.GetPPID();
+		
+		Process* new_process = new Process( caller, pid, ppid, tid );
+		
+		global_processes[ tid ] = new_process;
 		
 		return *new_process;
 	}
@@ -233,7 +247,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			global_processes.at( child.GetPID() ).reset();
+			global_processes.at( child.gettid() ).reset();
 		}
 	}
 	
