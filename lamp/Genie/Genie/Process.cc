@@ -1118,6 +1118,23 @@ namespace Genie
 	{
 		const notify_param& pb = *(notify_param*) param;
 		
+		const pid_t that_pid = process.GetPID();
+		
+		if ( that_pid == pb.pid  &&  process.gettid() != that_pid )
+		{
+			// This is one of our threads; kill it.
+			
+			if ( process.itsLifeStage < kProcessTerminating )
+			{
+				process.Terminate();  // singly recursive call
+			}
+			
+			if ( process.itsLifeStage == kProcessZombie )
+			{
+				process.Release();
+			}
+		}
+		
 		if ( pb.is_session_leader  &&  process.GetSID() == pb.pid )
 		{
 			process.Raise( SIGHUP );
