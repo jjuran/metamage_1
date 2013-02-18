@@ -19,6 +19,11 @@
 #include "Genie/api/yield.hh"
 
 
+#ifndef __RELIX__
+#define __WTHREAD  0
+#endif
+
+
 namespace Genie
 {
 	
