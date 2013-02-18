@@ -66,7 +66,7 @@ static void hello_world()
 	
 	pthread_join( thread, &result );
 	
-	ok_if( errno != 123, "per-thread errno # TODO" );
+	ok_if( errno != 123, "per-thread errno" );
 	
 	const char* s = (const char*) result;
 	
