@@ -1347,6 +1347,8 @@ namespace Genie
 		
 		itsStackFramePtr = recall::get_stack_frame_pointer();
 		
+		const int saved_errno = *its_pb.errno_var;
+		
 		if ( newSchedule == kProcessStopped )
 		{
 			N::SetThreadState( GetThread(), N::kStoppedThreadState );
@@ -1356,6 +1358,8 @@ namespace Genie
 			// Ignore errors so we don't throw in critical sections
 			(void) ::YieldToAnyThread();
 		}
+		
+		*its_pb.errno_var = saved_errno;
 		
 		Resume();
 	}
