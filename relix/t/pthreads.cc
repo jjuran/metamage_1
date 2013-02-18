@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 // Standard C
+#include <errno.h>
 #include <string.h>
 
 // tap-out
@@ -18,7 +19,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2;
+static const unsigned n_tests = 3;
 
 
 using tap::ok_if;
@@ -35,6 +36,8 @@ static void* entry( void* arg )
 	sleep( 2 );
 	
 	write( output, "!", 1 );
+	
+	errno = 123;
 	
 	return (void*) "\n";
 }
@@ -62,6 +65,8 @@ static void hello_world()
 	void* result;
 	
 	pthread_join( thread, &result );
+	
+	ok_if( errno != 123, "per-thread errno # TODO" );
 	
 	const char* s = (const char*) result;
 	
