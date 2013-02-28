@@ -248,20 +248,6 @@ namespace Genie
 	}
 	
 	
-	static inline IOPtr
-	//
-	NewPipeReader( const boost::intrusive_ptr< plus::conduit >& conduit, bool nonblocking )
-	{
-		return new PipeOutHandle( conduit, nonblocking );
-	}
-	
-	static inline IOPtr
-	//
-	NewPipeWriter( const boost::intrusive_ptr< plus::conduit >& conduit, bool nonblocking )
-	{
-		return new PipeInHandle( conduit, nonblocking );
-	}
-	
 	static int pipe2( int pipefd[ 2 ], int flags )
 	{
 		try
@@ -274,8 +260,8 @@ namespace Genie
 			
 			boost::intrusive_ptr< plus::conduit > conduit( new plus::conduit );
 			
-			IOPtr pipeIn ( NewPipeWriter( conduit, nonblocking ) );
-			IOPtr pipeOut( NewPipeReader( conduit, nonblocking ) );
+			IOPtr pipeIn ( new PipeInHandle ( conduit, nonblocking ) );  // writer
+			IOPtr pipeOut( new PipeOutHandle( conduit, nonblocking ) );  // reader
 			
 			AssignFileDescriptor( reader, pipeOut, close_on_exec );
 			AssignFileDescriptor( writer, pipeIn,  close_on_exec );
