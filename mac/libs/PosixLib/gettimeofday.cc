@@ -63,6 +63,15 @@ namespace PosixLib
 			
 			UInt64 Now()
 			{
+				const UInt64 new_offset = Offset();
+				
+				const int delta = 2 * 1000000;  // two seconds
+				
+				if ( new_offset - offset >= delta )
+				{
+					offset = new_offset;
+				}
+				
 				return Microseconds() + offset;
 			}
 	};
