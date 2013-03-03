@@ -24,14 +24,11 @@ struct pthread
 	void* (*start)(void*);
 	void* arg;
 	void* result;
-	
-	void run()
-	{
-		result = start( arg );
-	}
 };
 
 static pthread pthreads[ PTHREAD_THREADS_MAX ];
+
+static int n_keys = 0;
 
 static void init_thread_leader()
 {
@@ -45,7 +42,11 @@ static int pthread_clone_function( void* arg )
 {
 	pthread* that = (pthread*) arg;
 	
-	that->run();
+	arg = that->arg;
+	
+	that->arg = NULL;
+	
+	that->result = that->start( arg );
 	
 	return 0;
 }
@@ -150,4 +151,41 @@ int pthread_join( pthread_t id, void** result )
 	}
 	
 	return ESRCH;
+}
+
+int pthread_key_create( pthread_key_t* key, void (*destructor_function)(void*) )
+{
+	if ( n_keys > 0 )
+	{
+		return EAGAIN;
+	}
+	
+	n_keys = 1;
+	
+	*key = 0;
+	
+	return 0;
+}
+
+int pthread_key_delete( pthread_key_t )
+{
+	n_keys = 0;
+	
+	return 0;
+}
+
+int pthread_setspecific( pthread_key_t key, const void* value )
+{
+	const int i = pthread_self();
+	
+	pthreads[ i ].arg = (void*) value;
+	
+	return 0;
+}
+
+void* pthread_getspecific( pthread_key_t key )
+{
+	const int i = pthread_self();
+	
+	return pthreads[ i ].arg;
 }
