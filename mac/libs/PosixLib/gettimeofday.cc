@@ -32,6 +32,11 @@ namespace PosixLib
 		return result;
 	}
 	
+	static inline time_t UnixTime()
+	{
+		return GetGlobalDateTime() - TimeOff::MacUnixEpochOffset();
+	}
+	
 	static inline UInt64 Microseconds()
 	{
 		UInt64 result;
@@ -41,25 +46,38 @@ namespace PosixLib
 		return result;
 	}
 	
-	struct Clock
+	class MicrosecondUnixTimeClock
 	{
-		UInt64 microseconds;
-		UInt32 dateTime;
-		time_t unixTime;
-		UInt64 diff;
+		private:
+			UInt64 offset;
 		
-		Clock() : microseconds( Microseconds() ),
-		          dateTime    ( GetGlobalDateTime()  ),
-		          unixTime    ( dateTime - TimeOff::MacUnixEpochOffset() ),
-		          diff        ( unixTime * 1000000ULL - microseconds )
-		{
-		}
-		
-		UInt64 Now() const  { return Microseconds() + diff; }
+		public:
+			MicrosecondUnixTimeClock() : offset( Offset() )
+			{
+			}
+			
+			static UInt64 Offset()
+			{
+				return UnixTime() * 1000000ULL - Microseconds();
+			}
+			
+			UInt64 Now()
+			{
+				const UInt64 new_offset = Offset();
+				
+				const int delta = 2 * 1000000;  // two seconds
+				
+				if ( new_offset - offset >= delta )
+				{
+					offset = new_offset;
+				}
+				
+				return Microseconds() + offset;
+			}
 	};
 	
 	
-	static Clock gClock;
+	static MicrosecondUnixTimeClock gClock;
 	
 }
 
