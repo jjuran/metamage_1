@@ -60,6 +60,7 @@ namespace tool
 			"precompile",
 			"product",
 			"program",
+			"require",
 			"rez",
 			"rsrc",
 			"runtime",
