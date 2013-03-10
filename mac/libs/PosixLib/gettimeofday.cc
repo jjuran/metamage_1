@@ -46,19 +46,29 @@ namespace PosixLib
 		return result;
 	}
 	
-	struct Clock
+	class MicrosecondUnixTimeClock
 	{
-		UInt64 diff;
+		private:
+			UInt64 offset;
 		
-		Clock() : diff( UnixTime() * 1000000ULL - Microseconds() )
-		{
-		}
-		
-		UInt64 Now() const  { return Microseconds() + diff; }
+		public:
+			MicrosecondUnixTimeClock() : offset( Offset() )
+			{
+			}
+			
+			static UInt64 Offset()
+			{
+				return UnixTime() * 1000000ULL - Microseconds();
+			}
+			
+			UInt64 Now()
+			{
+				return Microseconds() + offset;
+			}
 	};
 	
 	
-	static Clock gClock;
+	static MicrosecondUnixTimeClock gClock;
 	
 }
 
