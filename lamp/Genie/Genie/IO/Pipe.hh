@@ -54,8 +54,6 @@ namespace Genie
 			{
 				return itsConduit->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
-			
-			//void IOCtl( unsigned long request, int* argp );
 	};
 	
 	class PipeOutHandle : public StreamHandle
@@ -85,8 +83,6 @@ namespace Genie
 			{
 				return itsConduit->read( data, byteCount, IsNonblocking(), &try_again );
 			}
-			
-			//void IOCtl( unsigned long request, int* argp );
 	};
 	
 }

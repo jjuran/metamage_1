@@ -56,8 +56,6 @@ namespace Genie
 				return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
-			//void IOCtl( unsigned long request, int* argp );
-			
 			void Bind( const sockaddr& local, socklen_t len );
 			
 			void Listen( int backlog );

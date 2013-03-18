@@ -54,8 +54,6 @@ namespace Genie
 			
 			ssize_t Append( const char* buffer, size_t n_bytes );
 			
-			//void IOCtl( unsigned long request, int* argp );
-			
 			void Synchronize( bool metadata );
 			
 			off_t GetEOF()  { return Nitrogen::GetEOF( itsRefNum ); }

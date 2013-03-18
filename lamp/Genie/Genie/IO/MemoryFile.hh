@@ -44,8 +44,6 @@ namespace Genie
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			//void IOCtl( unsigned long request, int* argp );
-			
 			off_t GetEOF()  { return itsSize; }
 			
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );

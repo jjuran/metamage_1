@@ -55,8 +55,6 @@ namespace Genie
 			
 			bool IsSocket() const  { return true; }
 			
-			//void IOCtl( unsigned long request, int* argp );
-			
 			virtual void Bind( const sockaddr& local, socklen_t len ) = 0;
 			
 			virtual void Listen( int backlog ) = 0;
