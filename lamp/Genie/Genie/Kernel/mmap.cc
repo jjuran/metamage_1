@@ -75,10 +75,25 @@ namespace Genie
 		return 0;
 	}
 	
+	static int msync( void* addr, size_t len, int flags )
+	{
+		try
+		{
+			current_process().msync_memory_mapping( addr, len, flags );
+		}
+		catch ( ... )
+		{
+			return set_errno_from_exception();
+		}
+		
+		return 0;
+	}
+	
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( _relix_mmap );
 	REGISTER_SYSTEM_CALL( munmap      );
+	REGISTER_SYSTEM_CALL( msync       );
 	
 	#pragma force_active reset
 	
