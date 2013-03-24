@@ -19,6 +19,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/mmap/types/file_memory_mapping.hh"
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/seteof.hh"
 
@@ -171,6 +172,8 @@ namespace Genie
 		}
 		
 		memory_mapping_ptr result( mapping );
+		
+		result = memory_mapping_ptr( new vfs::file_memory_mapping( mapping, this ) );
 		
 		void* addr = mapping->get_address();
 		
