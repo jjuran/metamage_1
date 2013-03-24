@@ -39,6 +39,8 @@ namespace vfs
 			addr_t get_address() const  { return its_address; }
 			size_t get_size   () const  { return its_size;    }
 			int    get_flags  () const  { return its_flags;   }
+			
+			virtual void msync( void* addr, size_t len, int flags ) const;
 	};
 	
 }

@@ -13,5 +13,9 @@ namespace vfs
 	{
 	}
 	
+	void memory_mapping::msync( void* addr, size_t len, int flags ) const
+	{
+	}
+	
 }
 
