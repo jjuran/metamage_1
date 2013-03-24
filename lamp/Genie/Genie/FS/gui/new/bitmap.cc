@@ -308,33 +308,32 @@ namespace Genie
 		
 		const short rowBytes = compute_rowBytes_from_bounds( bounds );
 		
-		if ( params.bitmap.baseAddr )
+		const size_t new_size = rowBytes * (bounds.bottom - bounds.top);
+		
+		::Ptr const old_base = params.bitmap.baseAddr;
+		
+		const size_t old_size = old_base ? N::GetPtrSize( old_base ) : 0;
+		
+		params.bits.reset();
+		
+		params.bitmap.baseAddr = ::NewPtrClear( new_size );
+		
+		if ( params.bitmap.baseAddr == NULL  &&  old_base != NULL )
 		{
-			const size_t old_size = N::GetPtrSize( params.bitmap.baseAddr );
+			/*
+				Try to reallocate old block.  This shouldn't fail, but
+				theoretically it might throw memFullErr.
+			*/
+			params.bits = N::NewPtrClear( old_size );
 			
-			params.bits.reset();
+			params.bitmap.baseAddr = params.bits.get();
 			
-			const size_t new_size = rowBytes * (bounds.bottom - bounds.top);
-			
-			params.bitmap.baseAddr = ::NewPtrClear( new_size );
-			
-			if ( params.bitmap.baseAddr == NULL )
-			{
-				/*
-					Try to reallocate old block.  This shouldn't fail, but
-					theoretically it might throw memFullErr.
-				*/
-				params.bits = N::NewPtrClear( old_size );
-				
-				params.bitmap.baseAddr = params.bits.get();
-				
-				// Even if we succeed here, it's still a failure mode.
-				p7::throw_errno( ENOMEM );
-			}
-			
-			// Seize the newly allocated block
-			params.bits = n::owned< N::Ptr >::seize( params.bitmap.baseAddr );
+			// Even if we succeed here, it's still a failure mode.
+			p7::throw_errno( ENOMEM );
 		}
+		
+		// Seize the newly allocated block
+		params.bits = n::owned< N::Ptr >::seize( params.bitmap.baseAddr );
 		
 		params.bitmap.bounds   = bounds;
 		params.bitmap.rowBytes = rowBytes;
