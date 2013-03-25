@@ -54,6 +54,8 @@ namespace relix
 			
 			addr_t add_memory_mapping( const vfs::memory_mapping* mapping );
 			
+			void msync_memory_mapping( addr_t addr, size_t len, int flags );
+			
 			void remove_memory_mapping( addr_t key );
 			
 			void clear_memory_mappings();

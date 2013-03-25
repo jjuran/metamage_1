@@ -146,7 +146,7 @@
 #define __NR_getdents                  141
 // 142
 #define __NR_flock                     143
-// 144
+#define __NR_msync                     144
 #define __NR_readv                     145
 #define __NR_writev                    146
 #define __NR_getsid                    147
