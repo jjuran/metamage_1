@@ -99,6 +99,8 @@ DEFINE_SYSCALL( fchdir )
 
 DEFINE_SYSCALL( getdents )
 
+DEFINE_SYSCALL( msync )
+
 DEFINE_SYSCALL( writev )
 DEFINE_SYSCALL( getsid )
 DEFINE_SYSCALL( fdatasync )

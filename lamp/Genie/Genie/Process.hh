@@ -192,6 +192,11 @@ namespace Genie
 				return its_memory_data->add_memory_mapping( mapping );
 			}
 			
+			void msync_memory_mapping( addr_t addr, size_t len, int flags )
+			{
+				its_memory_data->msync_memory_mapping( addr, len, flags );
+			}
+			
 			void remove_memory_mapping( addr_t key )
 			{
 				its_memory_data->remove_memory_mapping( key );

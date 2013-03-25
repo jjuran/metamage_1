@@ -219,6 +219,16 @@ namespace relix
 		return key;
 	}
 	
+	void memory_data::msync_memory_mapping( addr_t key, size_t len, int flags )
+	{
+		memory_data_impl::mmap_map& mappings = impl_cast( this )->its_memory_mappings;
+		
+		if ( boost::intrusive_ptr< const vfs::memory_mapping >* it = mappings.find( key ) )
+		{
+			it->get()->msync( key, len, flags );
+		}
+	}
+	
 	void memory_data::remove_memory_mapping( addr_t key )
 	{
 		impl_cast( this )->its_memory_mappings.erase( key );
