@@ -7,7 +7,7 @@
 #define MACIO_ROUTINES_HH
 
 // Mac OS
-#ifndef MAC_OS_X_VERSION_10_7
+#ifndef MAC_OS_X_VERSION_10_6
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
