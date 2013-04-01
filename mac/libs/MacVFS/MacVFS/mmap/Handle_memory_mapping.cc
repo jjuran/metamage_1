@@ -1,9 +1,9 @@
-/*	========================
- *	Handle_memory_mapping.cc
- *	========================
- */
+/*
+	Handle_memory_mapping.cc
+	------------------------
+*/
 
-#include "Genie/mmap/Handle_memory_mapping.hh"
+#include "MacVFS/mmap/Handle_memory_mapping.hh"
 
 // Nitrogen
 #ifndef NITROGEN_MACMEMORY_HH
@@ -11,7 +11,7 @@
 #endif
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace N = Nitrogen;
