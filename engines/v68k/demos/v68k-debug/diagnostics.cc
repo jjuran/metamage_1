@@ -29,7 +29,7 @@ void err_argv_way_too_big()
 
 void note_program_loaded( uint32_t n_bytes, const char* path )
 {
-	fprintf( stderr, "Loaded %d bytes from %s\n", n_bytes, path );
+	//fprintf( stderr, "Loaded %d bytes from %s\n", n_bytes, path );
 }
 
 void print_blank_line()
