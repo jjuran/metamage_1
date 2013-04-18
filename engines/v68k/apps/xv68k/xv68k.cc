@@ -41,6 +41,7 @@
 #include "syscall/handler.hh"
 
 // xv68k
+#include "diagnostics.hh"
 #include "memory.hh"
 #include "screen.hh"
 
@@ -310,6 +311,8 @@ static void load_argv( uint8_t* mem, int argc, char** argv )
 	
 	if ( args_data >= args_limit )
 	{
+		err_argv_way_too_big();
+		
 		abort();
 	}
 	
@@ -321,6 +324,8 @@ static void load_argv( uint8_t* mem, int argc, char** argv )
 		
 		if ( len > args_limit - args_data )
 		{
+			err_argv_too_big();
+			
 			abort();
 		}
 		
@@ -447,6 +452,8 @@ static void emulation_loop( v68k::emulator& emu )
 		
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
+			print_instruction_limit_exceeded( instruction_limit_var );
+			
 			dump_and_raise( emu, SIGXCPU );
 		}
 	}
@@ -454,12 +461,20 @@ static void emulation_loop( v68k::emulator& emu )
 
 static void report_condition( v68k::emulator& emu )
 {
+	print_blank_line();
+	
 	switch ( emu.condition )
 	{
 		using namespace v68k;
 		
 		case halted:
+			print_halted();
+			
 			dump_and_raise( emu, SIGSEGV );
+			break;
+		
+		case stopped:
+			print_stopped();
 			break;
 		
 		default:
@@ -663,6 +678,8 @@ static int execute_68k( int argc, char** argv )
 	emulation_loop( emu );
 	
 	report_condition( emu );
+	
+	dump( emu );
 	
 	return 1;
 }
