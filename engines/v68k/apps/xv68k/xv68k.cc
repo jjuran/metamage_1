@@ -294,6 +294,32 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 }
 
+static void report_condition( v68k::emulator& emu )
+{
+	switch ( emu.condition )
+	{
+		using namespace v68k;
+		
+		case halted:
+			raise( SIGSEGV );
+			break;
+		
+		case bkpt_0:
+		case bkpt_1:
+		case bkpt_2:
+		case bkpt_3:
+		case bkpt_4:
+		case bkpt_5:
+		case bkpt_6:
+		case bkpt_7:
+			raise( SIGILL );
+			break;
+		
+		default:
+			break;
+	}
+}
+
 static int execute_68k( int argc, char** argv )
 {
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
@@ -369,28 +395,7 @@ step_loop:
 		goto step_loop;
 	}
 	
-	switch ( emu.condition )
-	{
-		using namespace v68k;
-		
-		case halted:
-			raise( SIGSEGV );
-			break;
-		
-		case bkpt_0:
-		case bkpt_1:
-		case bkpt_2:
-		case bkpt_3:
-		case bkpt_4:
-		case bkpt_5:
-		case bkpt_6:
-		case bkpt_7:
-			raise( SIGILL );
-			break;
-		
-		default:
-			break;
-	}
+	report_condition( emu );
 	
 	return 1;
 }
