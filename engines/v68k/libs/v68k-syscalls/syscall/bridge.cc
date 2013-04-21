@@ -24,6 +24,8 @@
 
 uint32_t errno_ptr_addr;
 
+int32_t fake_pid = 12345;  // fake PID for getpid(), unless 0
+
 
 static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
 {
@@ -154,7 +156,7 @@ static bool emu_write( v68k::emulator& emu )
 
 static bool emu_getpid( v68k::emulator& emu )
 {
-	int result = getpid();
+	int32_t result = fake_pid > 0 ? fake_pid : getpid();
 	
 	return set_result( emu, result );
 }
