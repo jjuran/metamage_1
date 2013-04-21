@@ -27,6 +27,11 @@ uint32_t errno_ptr_addr;
 int32_t fake_pid = 12345;  // fake PID for getpid(), unless 0
 
 
+static int32_t emulated_pid()
+{
+	return fake_pid > 0 ? fake_pid : getpid();
+}
+
 static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
 {
 	uint32_t sp = emu.regs.a[7];
@@ -156,7 +161,7 @@ static bool emu_write( v68k::emulator& emu )
 
 static bool emu_getpid( v68k::emulator& emu )
 {
-	int32_t result = fake_pid > 0 ? fake_pid : getpid();
+	int32_t result = emulated_pid();
 	
 	return set_result( emu, result );
 }
@@ -170,12 +175,12 @@ static bool emu_kill( v68k::emulator& emu )
 		return emu.bus_error();
 	}
 	
-	const pid_t pid = int32_t( args[0] );
-	const int   sig = int32_t( args[1] );
+	pid_t     pid = int32_t( args[0] );
+	const int sig = int32_t( args[1] );
 	
 	int result;
 	
-	if ( pid != getpid() )
+	if ( pid != emulated_pid() )
 	{
 		result = -1;
 		
@@ -183,6 +188,11 @@ static bool emu_kill( v68k::emulator& emu )
 	}
 	else
 	{
+		if ( fake_pid > 0  &&  pid == fake_pid )
+		{
+			pid = getpid();
+		}
+		
 		result = kill( pid, sig );
 	}
 	
