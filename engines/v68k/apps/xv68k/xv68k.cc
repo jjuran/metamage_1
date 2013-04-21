@@ -230,21 +230,21 @@ static void load_Mac_traps( uint8_t* mem )
 
 static void load_argv( uint8_t* mem, int argc, char** argv )
 {
-	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
+	(uint32_t&) mem[ argc_addr ] = big_longword( argc      );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
 	
 	uint32_t* args = (uint32_t*) &mem[ args_addr ];
 	
 	uint8_t* args_limit = &mem[ params_addr ] + params_max_size;
 	
-	uint8_t* args_data = (uint8_t*) (args + argc);
+	uint8_t* args_data = (uint8_t*) (args + argc + 1);
 	
 	if ( args_data >= args_limit )
 	{
 		abort();
 	}
 	
-	while ( *++argv != NULL )
+	while ( *argv != NULL )
 	{
 		*args++ = big_longword( args_data - mem );
 		
@@ -258,6 +258,8 @@ static void load_argv( uint8_t* mem, int argc, char** argv )
 		memcpy( args_data, *argv, len );
 		
 		args_data += len;
+		
+		++argv;
 	}
 	
 	*args = 0;  // trailing NULL of argv
@@ -371,6 +373,13 @@ static void report_condition( v68k::emulator& emu )
 
 static int execute_68k( int argc, char** argv )
 {
+	if ( argc > 0 )
+	{
+		// skip argv[0] if present (which it should be, but we have to check)
+		--argc;
+		++argv;
+	}
+	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
@@ -386,7 +395,7 @@ static int execute_68k( int argc, char** argv )
 	
 	load_argv( mem, argc, argv );
 	
-	const char* path = argv[1];
+	const char* path = argv[0];
 	
 	load_code( mem, path );
 	
