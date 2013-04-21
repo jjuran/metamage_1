@@ -12,6 +12,8 @@
 
 extern uint32_t errno_ptr_addr;
 
+extern int32_t fake_pid;
+
 bool bridge_call( v68k::emulator& emu );
 
 
