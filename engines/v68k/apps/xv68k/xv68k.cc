@@ -294,6 +294,55 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 }
 
+static void emulation_loop( v68k::emulator& emu )
+{
+	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
+	
+	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
+	
+step_loop:
+	
+	while ( emu.step() )
+	{
+		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
+		{
+			raise( SIGXCPU );
+		}
+		
+		continue;
+	}
+	
+	if ( emu.condition == v68k::bkpt_2 )
+	{
+		if ( bridge_call( emu ) )
+		{
+			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
+		}
+		else
+		{
+			// FIXME:  Report call number
+			
+			//const uint16_t call_number = emu.regs.d[0];
+			
+			const char* msg = "Unimplemented system call\n";
+			
+			write( STDERR_FILENO, msg, strlen( msg ) );
+		}
+		
+		goto step_loop;
+	}
+	
+	if ( emu.condition == v68k::bkpt_3 )
+	{
+		if ( uint32_t new_opcode = v68k::callback::bridge( emu ) )
+		{
+			emu.acknowledge_breakpoint( new_opcode );
+		}
+		
+		goto step_loop;
+	}
+}
+
 static void report_condition( v68k::emulator& emu )
 {
 	switch ( emu.condition )
@@ -341,10 +390,6 @@ static int execute_68k( int argc, char** argv )
 	
 	load_code( mem, path );
 	
-	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
-	
-	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
-	
 	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	
 	const memory_manager memory( mem, mem_size );
@@ -353,47 +398,7 @@ static int execute_68k( int argc, char** argv )
 	
 	emu.reset();
 	
-step_loop:
-	
-	while ( emu.step() )
-	{
-		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
-		{
-			raise( SIGXCPU );
-		}
-		
-		continue;
-	}
-	
-	if ( emu.condition == v68k::bkpt_2 )
-	{
-		if ( bridge_call( emu ) )
-		{
-			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
-		}
-		else
-		{
-			// FIXME:  Report call number
-			
-			//const uint16_t call_number = emu.regs.d[0];
-			
-			const char* msg = "Unimplemented system call\n";
-			
-			write( STDERR_FILENO, msg, strlen( msg ) );
-		}
-		
-		goto step_loop;
-	}
-	
-	if ( emu.condition == v68k::bkpt_3 )
-	{
-		if ( uint32_t new_opcode = v68k::callback::bridge( emu ) )
-		{
-			emu.acknowledge_breakpoint( new_opcode );
-		}
-		
-		goto step_loop;
-	}
+	emulation_loop( emu );
 	
 	report_condition( emu );
 	
