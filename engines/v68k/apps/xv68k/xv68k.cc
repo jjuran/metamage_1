@@ -194,7 +194,10 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	
 	vectors[ 4] = big_longword( callback_address( illegal_instruction ) );
 	vectors[ 5] = big_longword( callback_address( division_by_zero    ) );
+	vectors[ 6] = big_longword( callback_address( chk_trap            ) );
+	vectors[ 7] = big_longword( callback_address( trapv_trap          ) );
 	vectors[ 8] = big_longword( callback_address( privilege_violation ) );
+	vectors[ 9] = big_longword( callback_address( trace_exception     ) );
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
 
@@ -231,6 +234,7 @@ static int execute_68k( int argc, char** argv )
 	
 	os_traps[ 0x1E ] = big_longword( callback_address( NewPtr_trap     ) );
 	os_traps[ 0x1F ] = big_longword( callback_address( DisposePtr_trap ) );
+	os_traps[ 0x2E ] = big_longword( callback_address( BlockMove_trap  ) );
 	
 	const uint32_t big_no_op = big_longword( callback_address( v68k::callback::no_op ) );
 	
@@ -320,6 +324,16 @@ step_loop:
 		if ( bridge_call( emu ) )
 		{
 			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
+		}
+		else
+		{
+			// FIXME:  Report call number
+			
+			//const uint16_t call_number = emu.regs.d[0];
+			
+			const char* msg = "Unimplemented system call\n";
+			
+			write( STDERR_FILENO, msg, strlen( msg ) );
 		}
 		
 		goto step_loop;
