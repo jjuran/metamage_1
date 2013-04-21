@@ -286,7 +286,7 @@ static int execute_68k( int argc, char** argv )
 		
 		if ( fd < 0 )
 		{
-			return 1;
+			abort();
 		}
 	}
 	else
@@ -294,7 +294,12 @@ static int execute_68k( int argc, char** argv )
 		fd = STDIN_FILENO;
 	}
 	
-	int n_read = read( fd, mem + code_address, code_max_size );
+	ssize_t n_read = read( fd, mem + code_address, code_max_size );
+	
+	if ( n_read < 0 )
+	{
+		abort();
+	}
 	
 	if ( path != NULL )
 	{
