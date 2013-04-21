@@ -267,7 +267,11 @@ static void load_code( uint8_t* mem, const char* path )
 {
 	int fd;
 	
-	if ( path != NULL )
+	if ( path == NULL  ||  (path[0] == '-'  &&  path[1] == '\0') )
+	{
+		fd = STDIN_FILENO;
+	}
+	else
 	{
 		fd = open( path, O_RDONLY );
 		
@@ -275,10 +279,6 @@ static void load_code( uint8_t* mem, const char* path )
 		{
 			abort();
 		}
-	}
-	else
-	{
-		fd = STDIN_FILENO;
 	}
 	
 	ssize_t n_read = read( fd, mem + code_address, code_max_size );
