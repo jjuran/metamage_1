@@ -263,25 +263,8 @@ static void load_argv( uint8_t* mem, int argc, char** argv )
 	*args = 0;  // trailing NULL of argv
 }
 
-static int execute_68k( int argc, char** argv )
+static void load_code( uint8_t* mem, const char* path )
 {
-	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
-	
-	if ( mem == NULL )
-	{
-		abort();
-	}
-	
-	v68k::user::os_load_spec load = { mem, mem_size, os_address };
-	
-	load_vectors( load );
-	
-	load_Mac_traps( mem );
-	
-	load_argv( mem, argc, argv );
-	
-	const char* path = argv[1];
-	
 	int fd;
 	
 	if ( path != NULL )
@@ -309,6 +292,28 @@ static int execute_68k( int argc, char** argv )
 	{
 		close( fd );
 	}
+}
+
+static int execute_68k( int argc, char** argv )
+{
+	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
+	
+	if ( mem == NULL )
+	{
+		abort();
+	}
+	
+	v68k::user::os_load_spec load = { mem, mem_size, os_address };
+	
+	load_vectors( load );
+	
+	load_Mac_traps( mem );
+	
+	load_argv( mem, argc, argv );
+	
+	const char* path = argv[1];
+	
+	load_code( mem, path );
 	
 	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
