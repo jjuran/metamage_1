@@ -201,27 +201,8 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
 
-static int execute_68k( int argc, char** argv )
+static void load_Mac_traps( uint8_t* mem )
 {
-	const char* path = argv[1];
-	
-	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
-	
-	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
-	
-	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
-	
-	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
-	
-	if ( mem == NULL )
-	{
-		abort();
-	}
-	
-	v68k::user::os_load_spec load = { mem, mem_size, os_address };
-	
-	load_vectors( load );
-	
 	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
 	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
 	
@@ -245,7 +226,10 @@ static int execute_68k( int argc, char** argv )
 	
 	tb_traps[ 0x01C8 ] = big_longword( callback_address( SysBeep_trap     ) );
 	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
-	
+}
+
+static void load_argv( uint8_t* mem, int argc, char** argv )
+{
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
 	
@@ -277,7 +261,10 @@ static int execute_68k( int argc, char** argv )
 	}
 	
 	*args = 0;  // trailing NULL of argv
-	
+}
+
+static void load_code( uint8_t* mem, const char* path )
+{
 	int fd;
 	
 	if ( path != NULL )
@@ -305,12 +292,13 @@ static int execute_68k( int argc, char** argv )
 	{
 		close( fd );
 	}
+}
+
+static void emulation_loop( v68k::emulator& emu )
+{
+	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
-	const memory_manager memory( mem, mem_size );
-	
-	v68k::emulator emu( v68k::mc68000, memory );
-	
-	emu.reset();
+	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
 	
 step_loop:
 	
@@ -353,7 +341,10 @@ step_loop:
 		
 		goto step_loop;
 	}
-	
+}
+
+static void report_condition( v68k::emulator& emu )
+{
 	switch ( emu.condition )
 	{
 		using namespace v68k;
@@ -376,6 +367,40 @@ step_loop:
 		default:
 			break;
 	}
+}
+
+static int execute_68k( int argc, char** argv )
+{
+	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
+	
+	if ( mem == NULL )
+	{
+		abort();
+	}
+	
+	v68k::user::os_load_spec load = { mem, mem_size, os_address };
+	
+	load_vectors( load );
+	
+	load_Mac_traps( mem );
+	
+	load_argv( mem, argc, argv );
+	
+	const char* path = argv[1];
+	
+	load_code( mem, path );
+	
+	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
+	
+	const memory_manager memory( mem, mem_size );
+	
+	v68k::emulator emu( v68k::mc68000, memory );
+	
+	emu.reset();
+	
+	emulation_loop( emu );
+	
+	report_condition( emu );
 	
 	return 1;
 }
