@@ -420,6 +420,15 @@ static int execute_68k( int argc, char** argv )
 				}
 			}
 			
+			const char* opt = arg + 1;
+			
+			if ( opt[0] == 'A' )
+			{
+				fake_pid = 0;
+				
+				continue;
+			}
+			
 			return BAD_USAGE( "Unknown option", arg );
 		}
 		
