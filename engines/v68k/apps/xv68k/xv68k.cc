@@ -201,19 +201,8 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
 
-static int execute_68k( int argc, char** argv )
+static void load_Mac_traps( uint8_t* mem )
 {
-	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
-	
-	if ( mem == NULL )
-	{
-		abort();
-	}
-	
-	v68k::user::os_load_spec load = { mem, mem_size, os_address };
-	
-	load_vectors( load );
-	
 	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
 	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
 	
@@ -237,6 +226,22 @@ static int execute_68k( int argc, char** argv )
 	
 	tb_traps[ 0x01C8 ] = big_longword( callback_address( SysBeep_trap     ) );
 	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
+}
+
+static int execute_68k( int argc, char** argv )
+{
+	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
+	
+	if ( mem == NULL )
+	{
+		abort();
+	}
+	
+	v68k::user::os_load_spec load = { mem, mem_size, os_address };
+	
+	load_vectors( load );
+	
+	load_Mac_traps( mem );
 	
 	const char* path = argv[1];
 	
