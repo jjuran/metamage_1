@@ -180,13 +180,7 @@ static bool emu_kill( v68k::emulator& emu )
 	
 	int result;
 	
-	if ( pid != emulated_pid() )
-	{
-		result = -1;
-		
-		errno = EPERM;
-	}
-	else
+	if ( pid == emulated_pid() )
 	{
 		if ( fake_pid > 0  &&  pid == fake_pid )
 		{
@@ -194,6 +188,12 @@ static bool emu_kill( v68k::emulator& emu )
 		}
 		
 		result = kill( pid, sig );
+	}
+	else
+	{
+		result = -1;
+		
+		errno = EPERM;
 	}
 	
 	return set_result( emu, result );
