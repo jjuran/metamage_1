@@ -203,14 +203,6 @@ static void load_vectors( v68k::user::os_load_spec& os )
 
 static int execute_68k( int argc, char** argv )
 {
-	const char* path = argv[1];
-	
-	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
-	
-	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
-	
-	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
-	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
@@ -245,6 +237,8 @@ static int execute_68k( int argc, char** argv )
 	
 	tb_traps[ 0x01C8 ] = big_longword( callback_address( SysBeep_trap     ) );
 	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
+	
+	const char* path = argv[1];
 	
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc - 1 );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
@@ -305,6 +299,12 @@ static int execute_68k( int argc, char** argv )
 	{
 		close( fd );
 	}
+	
+	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
+	
+	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
+	
+	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
 	
 	const memory_manager memory( mem, mem_size );
 	
