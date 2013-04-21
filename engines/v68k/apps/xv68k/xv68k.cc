@@ -478,6 +478,27 @@ static int execute_68k( int argc, char** argv )
 				
 				const size_t size = equals - option;
 				
+				if ( OPTION_MATCHES( option, size, "pid" ) )
+				{
+					if ( *equals == '\0' )
+					{
+						fake_pid = 0;
+					}
+					else
+					{
+						const char* param = equals + 1;
+						
+						fake_pid = gear::parse_unsigned_decimal( &param );
+						
+						if ( param[0] != '\0' )
+						{
+							return BAD_USAGE( "Invalid option", arg );
+						}
+					}
+					
+					continue;
+				}
+				
 				return BAD_USAGE( "Unknown option", arg );
 			}
 			
