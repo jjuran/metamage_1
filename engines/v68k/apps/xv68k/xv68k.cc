@@ -371,6 +371,21 @@ static void report_condition( v68k::emulator& emu )
 	}
 }
 
+#define STRLEN( s )  (sizeof "" s - 1)
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+static int bad_usage( const char* text, size_t text_size, const char* arg )
+{
+	write( STDERR_FILENO, text, text_size );
+	write( STDERR_FILENO, arg, strlen( arg ) );
+	write( STDERR_FILENO, STR_LEN( "\n" ) );
+	
+	return 2;
+}
+
+#define BAD_USAGE( text, arg )  bad_usage( STR_LEN( text ": " ), arg )
+
 static int execute_68k( int argc, char** argv )
 {
 	if ( argc > 0 )
@@ -379,6 +394,41 @@ static int execute_68k( int argc, char** argv )
 		--argc;
 		++argv;
 	}
+	
+	char** args = argv - 1;
+	
+	while ( const char* arg = *++args )
+	{
+		if ( arg[0] == '-' )
+		{
+			if ( arg[1] == '\0' )
+			{
+				// An "-" argument is not an option and means /dev/fd/0
+				break;
+			}
+			
+			if ( arg[1] == '-' )
+			{
+				// long option or "--"
+				
+				const char* option = arg + 2;
+				
+				if ( *option == '\0' )
+				{
+					++args;
+					break;
+				}
+			}
+			
+			return BAD_USAGE( "Unknown option", arg );
+		}
+		
+		// not an option
+		break;
+	}
+	
+	argc -= args - argv;
+	argv  = args;
 	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
