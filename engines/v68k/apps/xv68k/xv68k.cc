@@ -424,6 +424,8 @@ static int execute_68k( int argc, char** argv )
 			
 			if ( opt[0] == 'A' )
 			{
+				fully_authorized = true;
+				
 				fake_pid = 0;
 				
 				continue;

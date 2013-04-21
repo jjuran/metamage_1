@@ -24,6 +24,8 @@
 
 uint32_t errno_ptr_addr;
 
+bool fully_authorized = false;
+
 int32_t fake_pid = 12345;  // fake PID for getpid(), unless 0
 
 
@@ -180,7 +182,7 @@ static bool emu_kill( v68k::emulator& emu )
 	
 	int result;
 	
-	if ( pid == emulated_pid() )
+	if ( fully_authorized  ||  pid == emulated_pid() )
 	{
 		if ( fake_pid > 0  &&  pid == fake_pid )
 		{
