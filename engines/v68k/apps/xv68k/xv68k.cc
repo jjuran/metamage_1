@@ -421,6 +421,26 @@ static int bad_usage( const char* text, size_t text_size, const char* arg )
 
 #define BAD_USAGE( text, arg )  bad_usage( STR_LEN( text ": " ), arg )
 
+static const char* find_char( const char* begin, char c )
+{
+	while ( *begin != '\0'  &&  *begin != c )
+	{
+		++begin;
+	}
+	
+	return begin;
+}
+
+static bool option_matches( const char*  option,
+                            size_t       option_size,
+                            const char*  name,
+                            size_t       name_size )
+{
+	return option_size == name_size  &&  memcmp( option, name, name_size ) == 0;
+}
+
+#define OPTION_MATCHES( option, size, name )  option_matches( option, size, STR_LEN( name ) )
+
 static int execute_68k( int argc, char** argv )
 {
 	if ( argc > 0 )
@@ -453,7 +473,15 @@ static int execute_68k( int argc, char** argv )
 					++args;
 					break;
 				}
+				
+				const char* equals = find_char( option, '=' );
+				
+				const size_t size = equals - option;
+				
+				return BAD_USAGE( "Unknown option", arg );
 			}
+			
+			// short option
 			
 			const char* opt = arg + 1;
 			
