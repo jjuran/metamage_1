@@ -10,6 +10,9 @@
 #include "v68k/state.hh"
 
 
+#pragma exceptions off
+
+
 namespace v68k
 {
 	

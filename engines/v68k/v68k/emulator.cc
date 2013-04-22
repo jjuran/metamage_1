@@ -13,6 +13,9 @@
 #include "v68k/update_CCR.hh"
 
 
+#pragma exceptions off
+
+
 namespace v68k
 {
 	

@@ -9,6 +9,9 @@
 #include "v68k/endian.hh"
 
 
+#pragma exceptions off
+
+
 namespace v68k
 {
 	

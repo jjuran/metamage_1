@@ -6,6 +6,9 @@
 #include "v68k/macros.hh"
 
 
+#pragma exceptions off
+
+
 namespace v68k
 {
 	
