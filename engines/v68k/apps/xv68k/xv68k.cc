@@ -51,11 +51,11 @@ using v68k::auth::fully_authorized;
 	----------
 	
 	0K	+-----------------------+
-		| System vectors        |
+		| System vectors        |  1K
 	1K	+-----------------------+
-		| OS trap table         |
+		| OS trap table         |  1K
 	2K	+-----------------------+
-		| OS / supervisor stack |
+		| OS / supervisor stack |  1K
 	3K	+-----------------------+
 		|                       |
 	4K	|                       |
@@ -63,9 +63,9 @@ using v68k::auth::fully_authorized;
 		| Toolbox trap table    |
 		|                       |
 		|                       |
-		|                       |
+		|                       |  4K
 	7K	+-----------------------+
-		| boot code             |
+		| boot code             |  1K
 	8K	+-----------------------+
 		|                       |
 		|                       |
@@ -73,7 +73,7 @@ using v68k::auth::fully_authorized;
 		| argc/argv/envp params |
 		|                       |
 		|                       |
-		|                       |
+		|                       |  4K
 	12K	+-----------------------+
 		|                       |
 		|                       |
@@ -81,7 +81,7 @@ using v68k::auth::fully_authorized;
 		| user stack            |
 		|                       |
 		|                       |
-		|                       |
+		|                       |  4K
 	16K	+-----------------------+
 		|                       |
 		|                       |
@@ -97,7 +97,7 @@ using v68k::auth::fully_authorized;
 		|                       |
 		|                       |
 		|                       |
-		|                       |
+		|                       |  48K
 	64K	+-----------------------+
 	
 */
