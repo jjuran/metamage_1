@@ -36,9 +36,12 @@ namespace v68k
 	class memory
 	{
 		public:
-			virtual ~memory()
-			{
-			}
+			/*
+				Since we don't destroy instances of derived classes through
+				pointers to this class, we don't need a virtual destructor.
+			*/
+			
+			//virtual ~memory();
 			
 			virtual uint8_t* translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const = 0;
 			
