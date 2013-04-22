@@ -12,6 +12,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // v68k
 #include "v68k/endian.hh"
 
@@ -297,11 +300,21 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 }
 
+static inline unsigned parse_instruction_limit( const char* var )
+{
+	if ( var == NULL )
+	{
+		return 0;
+	}
+	
+	return gear::parse_unsigned_decimal( var );
+}
+
 static void emulation_loop( v68k::emulator& emu )
 {
 	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
-	const int instruction_limit = instruction_limit_var ? atoi( instruction_limit_var ) : 0;
+	const unsigned instruction_limit = parse_instruction_limit( instruction_limit_var );
 	
 step_loop:
 	
