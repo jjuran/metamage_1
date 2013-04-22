@@ -41,6 +41,7 @@
 
 // xv68k
 #include "memory.hh"
+#include "screen.hh"
 
 
 #pragma exceptions off
@@ -118,6 +119,16 @@ static void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |  48K
 	64K	+-----------------------+
+		
+	104	+-----------------------+
+		|                       |  screen memory begins 0x0001A700  (1792 bytes after)
+		|                       |  screen memory ends   0x0001FC80  (896 bytes before)
+		|                       |
+		= screen memory buffer  =  x6
+		|                       |
+		|                       |
+		|                       |  24K (21.375K used)
+	128	+-----------------------+
 	
 */
 

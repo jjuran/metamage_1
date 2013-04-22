@@ -10,6 +10,8 @@
 #include "v68k/memory.hh"
 
 
+const uint32_t screen_addr = 0x0001A700;
+
 const uint32_t screen_size = 21888;  // 512x342x1 / 8
 
 

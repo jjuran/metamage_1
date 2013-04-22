@@ -36,6 +36,11 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return its_low_mem.translate( addr, length, fc, access );
 	}
 	
+	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
+	{
+		return its_screen.translate( addr - screen_addr, length, fc, access );
+	}
+	
 	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
 	{
 		return its_alloc_mem.translate( addr, length, fc, access );
