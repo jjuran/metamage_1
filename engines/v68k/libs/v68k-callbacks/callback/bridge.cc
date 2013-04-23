@@ -178,6 +178,10 @@ static uint32_t Gestalt_callback( v68k::emulator& emu )
 		//	value = 0;
 			break;
 		
+		case 'proc':
+			value = (emu.model >> 8) + 1;
+			break;
+		
 		default:
 			result = gestaltUndefSelectorErr;
 			break;
