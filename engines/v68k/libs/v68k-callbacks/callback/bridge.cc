@@ -163,6 +163,32 @@ static uint32_t BlockMove_callback( v68k::emulator& emu )
 	return rts;
 }
 
+static uint32_t Gestalt_callback( v68k::emulator& emu )
+{
+	const int32_t gestaltUndefSelectorErr = -5551;
+	
+	const uint32_t selector = emu.regs.d[0];
+	
+	uint32_t value = 0;
+	int32_t result = 0;
+	
+	switch ( selector )
+	{
+		case 'v68k':
+		//	value = 0;
+			break;
+		
+		default:
+			result = gestaltUndefSelectorErr;
+			break;
+	}
+	
+	emu.regs.d[0] = result;
+	emu.regs.a[0] = value;
+	
+	return rts;
+}
+
 static uint32_t ExitToShell_callback( v68k::emulator& emu )
 {
 	exit( 0 );
@@ -269,6 +295,7 @@ static const function_type the_callbacks[] =
 	&NewPtr_callback,
 	&DisposePtr_callback,
 	&BlockMove_callback,
+	&Gestalt_callback,
 	&ExitToShell_callback,
 	&SysBeep_callback,
 	&no_op_callback

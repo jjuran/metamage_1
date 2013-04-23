@@ -216,6 +216,7 @@ static void load_Mac_traps( uint8_t* mem )
 	os_traps[ 0x1E ] = big_longword( callback_address( NewPtr_trap     ) );
 	os_traps[ 0x1F ] = big_longword( callback_address( DisposePtr_trap ) );
 	os_traps[ 0x2E ] = big_longword( callback_address( BlockMove_trap  ) );
+	os_traps[ 0xAD ] = big_longword( callback_address( Gestalt_trap    ) );
 	
 	const uint32_t big_no_op = big_longword( callback_address( v68k::callback::no_op ) );
 	
