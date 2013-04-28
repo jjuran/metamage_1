@@ -125,24 +125,21 @@ namespace Genie
 		return NULL;
 	}
 	
-	namespace
+	void ReaperThreadEntry();
+	
+	void ReaperThreadEntry()
 	{
-		
-		void ReaperThreadEntry()
+		while ( true )
 		{
-			while ( true )
+			if ( reaper_must_run )
 			{
-				if ( reaper_must_run )
-				{
-					reaper_must_run = false;
-					
-					for_each_process( &reap_process );
-				}
+				reaper_must_run = false;
 				
-				N::YieldToAnyThread();
+				for_each_process( &reap_process );
 			}
+			
+			N::YieldToAnyThread();
 		}
-		
 	}
 	
 	static Process& NewProcess( Process::RootProcess )
