@@ -274,7 +274,12 @@ namespace tool
 		if ( !ALINE_RELIX_DEVELOPMENT  ||  options.Target().toolchain & toolchainGNU )
 		{
 			compile.push_back( "-Wno-deprecated-declarations" );  // since we're using legacy API's
+			
+		#ifdef __POWERPC__
+			
 			compile.push_back( "-Wno-long-double"             );
+			
+		#endif
 			
 			bool cplusplus = !IsCFile( source_pathname );
 			
