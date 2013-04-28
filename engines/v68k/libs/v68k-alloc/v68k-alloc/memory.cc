@@ -158,7 +158,12 @@ uint8_t* memory::translate( uint32_t               addr,
 	{
 		// alloc memory is not executable, for now
 		
-		return 0;  // NULL
+		/*
+			FIXME:  alloc memory must be executable for load().  We need a
+			way to specify whether a region should be executable or not.
+		*/
+		
+		//return 0;  // NULL
 	}
 	
 	if ( addr < start  ||  addr >= limit )
