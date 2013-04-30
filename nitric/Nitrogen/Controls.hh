@@ -43,6 +43,9 @@
 #endif
 
 // Nitrogen
+#ifndef MAC_CONTROLS_TYPES_CONTROLDATATAG_HH
+#include "Mac/Controls/Types/ControlData_Tag.hh"
+#endif
 #ifndef MAC_CONTROLS_TYPES_CONTROLPARTCODE_HH
 #include "Mac/Controls/Types/ControlPartCode.hh"
 #endif
@@ -295,15 +298,7 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	enum ControlDataTag
-	{
-		kControlFontStyleTag = ::kControlFontStyleTag,
-		kControlKeyFilterTag = ::kControlKeyFilterTag,
-		kControlKindTag      = ::kControlKindTag,
-		kControlSizeTag      = ::kControlSizeTag,
-		
-		kControlDataTag_Max = nucleus::enumeration_traits< ::FourCharCode >::max
-	};
+	typedef Mac::ControlData_Tag ControlDataTag;
 	
    template < ::ResType inTagName > struct ControlData_Traits;
 
