@@ -279,8 +279,6 @@ namespace tool
 			
 			compile.push_back( "-Wno-long-double"             );
 			
-		#endif
-			
 			bool cplusplus = !IsCFile( source_pathname );
 			
 			if ( cplusplus )
@@ -288,6 +286,8 @@ namespace tool
 				// We don't need this warning for C, and in fact GNU C complains about it
 				compile.push_back( "-Wno-non-template-friend" );
 			}
+			
+		#endif
 			
 			compile.push_back( "-fvisibility=hidden" );
 		}
