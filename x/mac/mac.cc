@@ -16,6 +16,7 @@
 
 // mac
 #include "OSUtils.hh"
+#include "Segments.hh"
 
 
 void* os_trap_table     [] : 1 * 1024;
@@ -28,6 +29,11 @@ static void install_OSUtils()
 {
 	OSTRAP( Delay   );  // A03B
 	TBTRAP( SysBeep );  // A9C8
+}
+
+static void install_SegmentLoader()
+{
+	TBTRAP( ExitToShell );  // A9F4
 }
 
 static asm void* load( const char* path : __A0 ) : __A0
@@ -62,6 +68,8 @@ int main( int argc, char** argv )
 	}
 	
 	install_OSUtils();
+	
+	install_SegmentLoader();
 	
 	const char* path = argv[1];
 	
