@@ -18,6 +18,7 @@
 #include "Debugger.hh"
 #include "InitGraf.hh"
 #include "OSUtils.hh"
+#include "Rects.hh"
 #include "Segments.hh"
 
 
@@ -36,6 +37,10 @@ static void install_OSUtils()
 static void install_QuickDraw()
 {
 	toolbox_trap_table[ 0x006E ] = &InitGraf_patch;
+	
+	toolbox_trap_table[ 0x00A2 ] = &PaintRect_patch;
+	toolbox_trap_table[ 0x00A3 ] = &EraseRect_patch;
+	toolbox_trap_table[ 0x00A5 ] = &FillRect_patch;
 }
 
 static void install_SegmentLoader()
