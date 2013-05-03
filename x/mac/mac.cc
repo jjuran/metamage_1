@@ -16,6 +16,7 @@
 
 // mac
 #include "Debugger.hh"
+#include "InitGraf.hh"
 #include "OSUtils.hh"
 #include "Segments.hh"
 
@@ -30,6 +31,11 @@ static void install_OSUtils()
 {
 	OSTRAP( Delay   );  // A03B
 	TBTRAP( SysBeep );  // A9C8
+}
+
+static void install_QuickDraw()
+{
+	toolbox_trap_table[ 0x006E ] = &InitGraf_patch;
 }
 
 static void install_SegmentLoader()
@@ -75,6 +81,8 @@ int main( int argc, char** argv )
 	}
 	
 	install_OSUtils();
+	
+	install_QuickDraw();
 	
 	install_SegmentLoader();
 	
