@@ -13,6 +13,7 @@
 
 // macos
 #include "Debugger.hh"
+#include "Handles.hh"
 #include "InitGraf.hh"
 #include "OSUtils.hh"
 #include "Rects.hh"
@@ -30,10 +31,26 @@ void* toolbox_trap_table[] : 3 * 1024;
 #define OSTRAP( Routine )  (os_trap_table     [ _ ## Routine & 0x00FF ] = &Routine ## _patch)
 #define TBTRAP( Routine )  (toolbox_trap_table[ _ ## Routine & 0x03FF ] = &Routine ## _patch)
 
+enum
+{
+	_ReallocateHandle = _ReallocHandle,
+};
+
 
 static void initialize_low_memory_globals()
 {
 	ScrnBase = 0x0001A700;
+}
+
+static void install_MemoryManager()
+{
+	OSTRAP( NewHandle        );  // A022
+	OSTRAP( DisposeHandle    );  // A023
+	OSTRAP( SetHandleSize    );  // A024
+	OSTRAP( GetHandleSize    );  // A025
+	OSTRAP( ReallocateHandle );  // A027
+	OSTRAP( EmptyHandle      );  // A02B
+	OSTRAP( NewEmptyHandle   );  // A066
 }
 
 static void install_OSUtils()
@@ -79,6 +96,8 @@ static asm void module_suspend()
 int main( int argc, char** argv )
 {
 	initialize_low_memory_globals();
+	
+	install_MemoryManager();
 	
 	install_OSUtils();
 	
