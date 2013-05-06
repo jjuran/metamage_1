@@ -16,6 +16,7 @@ namespace callback {
 enum
 {
 	unimplemented,
+	load,
 	illegal_instruction,
 	division_by_zero,
 	chk_trap,

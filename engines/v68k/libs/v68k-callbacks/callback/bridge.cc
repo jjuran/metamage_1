@@ -6,9 +6,12 @@
 #include "callback/bridge.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 // Standard C
+#include <errno.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,6 +21,9 @@
 
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
+
+// v68k-auth
+#include "auth/auth.hh"
 
 
 #pragma exceptions off
@@ -34,6 +40,9 @@
 
 namespace v68k     {
 namespace callback {
+
+using v68k::auth::fully_authorized;
+
 
 enum
 {
@@ -71,6 +80,101 @@ static uint32_t unimplemented_callback( v68k::emulator& emu )
 
 static uint32_t no_op_callback( v68k::emulator& emu )
 {
+	return rts;
+}
+
+static uint32_t load_callback( v68k::emulator& emu )
+{
+	const uint32_t path_addr = emu.regs.a[0];
+	const uint32_t path_size = emu.regs.d[0];  // includes trailing NUL
+	
+	emu.regs.a[0] = 0;
+	
+	if ( !fully_authorized )
+	{
+		emu.regs.d[1] = EPERM;
+		
+		return rts;
+	}
+	
+	const uint8_t* p = emu.mem.translate( path_addr,
+	                                      path_size,
+	                                      v68k::user_data_space,
+	                                      v68k::mem_read );
+	
+	if ( p == NULL )
+	{
+		emu.regs.d[1] = EFAULT;
+		
+		return rts;
+	}
+	
+	if ( path_size == 0  ||  p[0] == '\0'  ||  p[ path_size - 1 ] != '\0' )
+	{
+		emu.regs.d[1] = EINVAL;
+		
+		return rts;
+	}
+	
+	const char* path = (const char*) p;
+	
+	int fd = open( path, O_RDONLY );
+	
+	if ( fd < 0 )
+	{
+		emu.regs.d[1] = errno;
+		
+		return rts;
+	}
+	
+	struct stat sb;
+	
+	int err = fstat( fd, &sb );
+	
+	if ( err < 0 )
+	{
+		emu.regs.d[1] = errno;
+	}
+	else
+	{
+		const size_t file_size = sb.st_size;
+		
+		using v68k::alloc::page_size;
+		using v68k::alloc::page_size_bits;
+		using v68k::alloc::allocate_n_pages;
+		using v68k::alloc::deallocate;
+		
+		const size_t n = (file_size + page_size - 1) >> page_size_bits;  // round up
+		
+		void* alloc = calloc( n, page_size );
+		
+		const uint32_t addr = allocate_n_pages( alloc, n );
+		
+		if ( addr == 0 )
+		{
+			free( alloc );
+			
+			emu.regs.d[1] = ENOMEM;
+		}
+		else
+		{
+			const ssize_t n_read = read( fd, alloc, file_size );
+			
+			if ( n_read != file_size )
+			{
+				deallocate( addr );  // frees alloc also
+				
+				emu.regs.d[1] = n_read < 0 ? errno : EIO;
+			}
+			else
+			{
+				emu.regs.a[0] = addr;
+			}
+		}
+	}
+	
+	close( fd );
+	
 	return rts;
 }
 
@@ -287,6 +391,7 @@ static uint32_t line_F_emulator_callback( v68k::emulator& emu )
 static const function_type the_callbacks[] =
 {
 	&unimplemented_callback,
+	&load_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
 	&chk_trap_callback,
