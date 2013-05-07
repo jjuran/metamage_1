@@ -26,6 +26,16 @@ const uint32_t n_alloc_pages = n_alloc_bytes / page_size;
 
 uint32_t allocate_n_pages_for_existing_alloc_unchecked( uint32_t n, void* alloc );
 
+inline uint32_t allocate_n_pages( void* alloc, uint32_t n )
+{
+	if ( n > n_alloc_pages )
+	{
+		return 0;
+	}
+	
+	return allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
+}
+
 inline uint32_t allocate( void* alloc, uint32_t size )
 {
 	if ( size & (page_size - 1) )
@@ -35,12 +45,7 @@ inline uint32_t allocate( void* alloc, uint32_t size )
 	
 	const uint32_t n = size >> page_size_bits;
 	
-	if ( n > n_alloc_pages )
-	{
-		return 0;
-	}
-	
-	return allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
+	return allocate_n_pages( alloc, n );
 }
 
 uint32_t allocate( uint32_t size );
