@@ -45,6 +45,8 @@ inline uint32_t allocate( void* alloc, uint32_t size )
 
 uint32_t allocate( uint32_t size );
 
+void* deallocate_existing( uint32_t addr );
+
 void deallocate( uint32_t addr );
 
 class memory : public v68k::memory

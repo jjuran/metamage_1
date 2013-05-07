@@ -118,7 +118,7 @@ uint32_t allocate( uint32_t size )
 	return result;
 }
 
-void deallocate( uint32_t addr )
+void* deallocate_existing( uint32_t addr )
 {
 	if ( start <= addr  &&  addr < limit )
 	{
@@ -128,8 +128,6 @@ void deallocate( uint32_t addr )
 		
 		if ( alloc != NULL  &&  alloc != (void*) -1L )
 		{
-			free( alloc );
-			
 			do
 			{
 				alloc_pages[ i++ ] = NULL;
@@ -137,8 +135,17 @@ void deallocate( uint32_t addr )
 				alloc = (char*) alloc + page_size;
 			}
 			while ( alloc_pages[ i ] == alloc );
+			
+			return alloc;
 		}
 	}
+	
+	return NULL;
+}
+
+void deallocate( uint32_t addr )
+{
+	free( deallocate_existing( addr ) );
 }
 
 
