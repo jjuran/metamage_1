@@ -71,6 +71,32 @@ static int find_n_pages( int n, void* alloc )
 	return 0;
 }
 
+uint32_t allocate_n_pages_for_existing_alloc_unchecked( uint32_t n, void* alloc )
+{
+	if ( alloc == NULL )
+	{
+		return 0;  // NULL
+	}
+	
+	int i = find_n_pages( n, alloc );
+	
+	if ( i == 0 )
+	{
+		return 0;
+	}
+	
+	const uint32_t result = start + i * page_size;
+	
+	for ( const int end = i + n;  i != end;  ++i )
+	{
+		alloc_pages[ i ] = alloc;
+		
+		alloc = (char*) alloc + page_size;
+	}
+	
+	return result;
+}
+
 uint32_t allocate( uint32_t size )
 {
 	if ( size > n_alloc_bytes )
@@ -82,27 +108,11 @@ uint32_t allocate( uint32_t size )
 	
 	void* alloc = calloc( n, page_size );
 	
-	if ( alloc == NULL )
-	{
-		return 0;  // NULL
-	}
+	const uint32_t result = allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
 	
-	int i = find_n_pages( n, alloc );
-	
-	if ( i == 0 )
+	if ( result == 0 )
 	{
 		free( alloc );
-		
-		return 0;
-	}
-	
-	const uint32_t result = start + i * page_size;
-	
-	for ( const int end = i + n;  i != end;  ++i )
-	{
-		alloc_pages[ i ] = alloc;
-		
-		alloc = (char*) alloc + page_size;
 	}
 	
 	return result;
