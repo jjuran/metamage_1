@@ -15,12 +15,6 @@
 namespace v68k  {
 namespace alloc {
 
-const uint32_t n_alloc_bytes = limit - start;  // 7 MiB
-
-const int page_size = 64 * 1024;
-
-const uint32_t n_alloc_pages = n_alloc_bytes / page_size;
-
 static void* alloc_pages[ n_alloc_pages + 1 ];
 
 
