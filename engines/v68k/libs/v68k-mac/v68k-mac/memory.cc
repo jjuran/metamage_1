@@ -191,10 +191,22 @@ static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
 {
 	const bool big = !iota::is_little_endian();
 	
-	if ( size == 2 )
+	switch ( size )
 	{
-		words[ g->index ] = buffer[ 1 - big ] << 8
-		                  | buffer[ 0 + big ];
+		case 4:
+			// low word
+			words[ g->index + 1 ] = buffer[ 3 - big ] << 8
+			                      | buffer[ 2 + big ];
+			// fall through
+		
+		case 2:
+			words[ g->index     ] = buffer[ 1 - big ] << 8
+			                      | buffer[ 0 + big ];
+			break;
+		
+		default:
+			// There are no other sizes.
+			break;
 	}
 	
 	return buffer;
