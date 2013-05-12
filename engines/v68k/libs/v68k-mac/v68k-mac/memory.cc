@@ -118,10 +118,7 @@ static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 		}
 		else
 		{
-			const uint16_t word = g->word();
-			
-			buffer[ i++ ] = word >> 8;
-			buffer[ i++ ] = word;
+			return (uint8_t*) &words[ g->index ];
 		}
 		
 		addr += width;
