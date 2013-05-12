@@ -26,6 +26,8 @@ enum
 	tag_Ticks,
 	tag_Ticks_low_word,
 	tag_MemErr,
+	tag_ScrnBase,
+	tag_ScrnBase_low_word,
 	tag_last_A_trap,
 	n_words
 };
@@ -55,6 +57,7 @@ static const global globals[] =
 	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
+	{ 0x0824, 4,    tag_ScrnBase    },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
 	{ 0x0BFE, 2,    tag_last_A_trap }
