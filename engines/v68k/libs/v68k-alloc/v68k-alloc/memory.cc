@@ -15,12 +15,6 @@
 namespace v68k  {
 namespace alloc {
 
-const uint32_t n_alloc_bytes = limit - start;  // 7 MiB
-
-const int page_size = 64 * 1024;
-
-const uint32_t n_alloc_pages = n_alloc_bytes / page_size;
-
 static void* alloc_pages[ n_alloc_pages + 1 ];
 
 
@@ -77,17 +71,8 @@ static int find_n_pages( int n, void* alloc )
 	return 0;
 }
 
-uint32_t allocate( uint32_t size )
+uint32_t allocate_n_pages_for_existing_alloc_unchecked( uint32_t n, void* alloc )
 {
-	if ( size > n_alloc_bytes )
-	{
-		return 0;  // NULL
-	}
-	
-	const int n = (size + page_size - 1) / page_size;  // round up
-	
-	void* alloc = calloc( n, page_size );
-	
 	if ( alloc == NULL )
 	{
 		return 0;  // NULL
@@ -97,8 +82,6 @@ uint32_t allocate( uint32_t size )
 	
 	if ( i == 0 )
 	{
-		free( alloc );
-		
 		return 0;
 	}
 	
@@ -114,7 +97,28 @@ uint32_t allocate( uint32_t size )
 	return result;
 }
 
-void deallocate( uint32_t addr )
+uint32_t allocate( uint32_t size )
+{
+	if ( size > n_alloc_bytes )
+	{
+		return 0;  // NULL
+	}
+	
+	const int n = (size + page_size - 1) / page_size;  // round up
+	
+	void* alloc = calloc( n, page_size );
+	
+	const uint32_t result = allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
+	
+	if ( result == 0 )
+	{
+		free( alloc );
+	}
+	
+	return result;
+}
+
+void* deallocate_existing( uint32_t addr )
 {
 	if ( start <= addr  &&  addr < limit )
 	{
@@ -124,8 +128,6 @@ void deallocate( uint32_t addr )
 		
 		if ( alloc != NULL  &&  alloc != (void*) -1L )
 		{
-			free( alloc );
-			
 			do
 			{
 				alloc_pages[ i++ ] = NULL;
@@ -133,8 +135,17 @@ void deallocate( uint32_t addr )
 				alloc = (char*) alloc + page_size;
 			}
 			while ( alloc_pages[ i ] == alloc );
+			
+			return alloc;
 		}
 	}
+	
+	return NULL;
+}
+
+void deallocate( uint32_t addr )
+{
+	free( deallocate_existing( addr ) );
 }
 
 
