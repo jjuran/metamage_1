@@ -15,6 +15,9 @@
 // v68k
 #include "v68k/endian.hh"
 
+// v68k-auth
+#include "auth/auth.hh"
+
 // v68k-syscalls
 #include "syscall/bridge.hh"
 
@@ -22,9 +25,10 @@
 #pragma exceptions off
 
 
-uint32_t errno_ptr_addr;
+using v68k::auth::fully_authorized;
 
-bool fully_authorized = false;
+
+uint32_t errno_ptr_addr;
 
 int32_t fake_pid = 12345;  // fake PID for getpid(), unless 0
 

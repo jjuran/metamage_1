@@ -18,6 +18,9 @@
 // v68k
 #include "v68k/endian.hh"
 
+// v68k-auth
+#include "auth/auth.hh"
+
 // v68k-mac
 #include "v68k-mac/trap_dispatcher.hh"
 
@@ -39,6 +42,8 @@
 
 
 using v68k::big_longword;
+
+using v68k::auth::fully_authorized;
 
 
 /*

@@ -12,8 +12,6 @@
 
 extern uint32_t errno_ptr_addr;
 
-extern bool fully_authorized;
-
 extern int32_t fake_pid;
 
 bool bridge_call( v68k::emulator& emu );
