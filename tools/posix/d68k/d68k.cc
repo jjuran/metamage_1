@@ -2180,6 +2180,10 @@ namespace tool
 		{
 			printf( "%s" "\n", name );
 		}
+		else if ( op >= 0xA800  &&  (name = get_aTrap_name( op & ~0x0400 )) )
+		{
+			printf( "%s,AutoPop" "\n", name );
+		}
 		else if ( op < 0xA800  &&  (name = get_aTrap_name( op & ~0x0600 )) )
 		{
 			const char* sys   = op & 0x0400 ? ",Sys"   : "";
