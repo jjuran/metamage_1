@@ -168,6 +168,7 @@ static uint32_t load_callback( v68k::emulator& emu )
 			}
 			else
 			{
+				emu.regs.d[0] = n_read;
 				emu.regs.a[0] = addr;
 			}
 		}
