@@ -28,7 +28,7 @@ loop:
 	
 	JSR  0xFFFFFFFC   ;  // the actual load callback
 	
-	MOVE.L   A0,D0    ;  // if ( *a0 != NULL ) ;
+	MOVE.L   A0,D2    ;  // if ( *a0 != NULL ) ;
 	BNE.S    no_errno ;  // else
 	MOVE.L   D1,errno ;  //     errno = d1;
 no_errno:
