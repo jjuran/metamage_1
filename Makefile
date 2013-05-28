@@ -9,7 +9,7 @@ ALINE = var/build/dbg/bin/A-line/A-line
 D68K  = var/build/dbg/bin/d68k/d68k
 XV68K = var/build/dbg/bin/xv68k/xv68k
 
-PACK68K = engines/v68k/utils/pack68k.pl
+PACK68K = utils/pack.pl
 
 default:
 	@echo 'For help, run `make help`.'
