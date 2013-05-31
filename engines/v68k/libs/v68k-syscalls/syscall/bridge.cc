@@ -278,6 +278,61 @@ end:
 	return set_result( emu, result );
 }
 
+static bool emu_nanosleep( v68k::emulator& emu )
+{
+	uint32_t args[2];  // requested, remaining
+	
+	if ( !get_stacked_args( emu, args, 2 ) )
+	{
+		return emu.bus_error();
+	}
+	
+	uint32_t requested = args[0];
+	
+	uint32_t requested_seconds;
+	uint32_t requested_nanoseconds;
+	
+	const bool ok = emu.mem.get_long( requested,     requested_seconds,     emu.data_space() )
+	              & emu.mem.get_long( requested + 4, requested_nanoseconds, emu.data_space() );
+	
+	if ( !ok )
+	{
+		errno = EFAULT;
+		
+		return set_result( emu, -1 );
+	}
+	
+	if ( requested_nanoseconds >= 1000 * 1000 * 1000 )
+	{
+		errno = EINVAL;
+		
+		return set_result( emu, -1 );
+	}
+	
+	const timespec request_ts = { requested_seconds, requested_nanoseconds };
+	
+	timespec remain_ts;
+	
+	int result = nanosleep( &request_ts, &remain_ts );
+	
+	const uint32_t remaining = args[1];
+	
+	if ( result < 0  &&  remaining != 0 )
+	{
+		const bool ok = emu.mem.put_long( remaining,     remain_ts.tv_sec,  emu.data_space() )
+		              & emu.mem.put_long( remaining + 4, remain_ts.tv_nsec, emu.data_space() );
+		
+		if ( !ok )
+		{
+			errno = EFAULT;
+			
+			result = -1;
+		}
+	}
+	
+	return set_result( emu, result );
+}
+
 bool bridge_call( v68k::emulator& emu )
 {
 	const uint16_t call_number = emu.regs.d[0];
@@ -292,6 +347,7 @@ bool bridge_call( v68k::emulator& emu )
 		case 37:  return emu_kill  ( emu );
 		
 		case 146:  return emu_writev( emu );
+		case 162:  return emu_nanosleep( emu );
 		
 		default:
 			return false;
