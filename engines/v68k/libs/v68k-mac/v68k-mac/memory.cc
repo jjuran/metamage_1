@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// v68k-mac
+#include "v68k-mac/dynamic_globals.hh"
+
 
 #pragma exceptions off
 
@@ -17,6 +20,8 @@ namespace mac  {
 
 enum
 {
+	tag_Ticks,
+	tag_Ticks_low_word,
 	tag_MemErr,
 	tag_last_A_trap,
 	n_words
@@ -30,7 +35,7 @@ struct global
 	uint8_t   size_;
 	uint8_t   index;
 	
-	uint8_t size() const  { return size_ & 0x7F; }
+	uint8_t size() const  { return size_ & 0x3F; }
 	
 	uint16_t word() const  { return int16_t( int8_t( index ) ); }
 };
@@ -44,6 +49,7 @@ static const global globals[] =
 {
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 0x82, 64              },  // ScreenRow
+	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
@@ -69,6 +75,27 @@ static const global* find_global( uint16_t address )
 	}
 	
 	return it;
+}
+
+static void refresh_dynamic_global( uint8_t tag )
+{
+	uint16_t* address = &words[ tag ];
+	
+	uint32_t longword;
+	
+	switch ( tag )
+	{
+		case tag_Ticks:
+			longword = get_Ticks();
+			
+			address[ 0 ] = longword >> 16;
+			address[ 1 ] = longword;
+			
+			break;
+		
+		default:
+			break;
+	}
 }
 
 static uint8_t buffer[ 7 ];
@@ -118,6 +145,11 @@ static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 		}
 		else
 		{
+			if ( g->size_ >= 0x40 )
+			{
+				refresh_dynamic_global( g->index );
+			}
+			
 			return (uint8_t*) &words[ g->index ];
 		}
 		
