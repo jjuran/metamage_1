@@ -33,14 +33,14 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 // User mode trap dispatcher:
 	
-	0x48E7,  // MOVEM.L  D1-D2/A0-A1,-(A7)  ; save regs + space for trap addr
-	0x60C0,
+	0x48E7,  // MOVEM.L  D1-D2/A0-A2,-(A7)  ; save regs + space for trap addr
+	0x60E0,
 	
-	0x206F,  // MOVEA.L  (16,A7),A0         ; load caller PC
-	0x0010,
+	0x206F,  // MOVEA.L  (20,A7),A0         ; load caller PC
+	0x0014,
 	0x3218,  // MOVE.W   (A0)+,D1           ; move trap word to D1 and skip it
-	0x2F48,  // MOVE.L   A0,(16,A7)         ; update caller PC
-	0x0010,
+	0x2F48,  // MOVE.L   A0,(20,A7)         ; update caller PC
+	0x0014,
 	
 	0x3401,  // MOVE.W   D1,D2              ; copy trap word
 	
@@ -56,15 +56,15 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 	0xE54A,  // LSL.W    #2,D2
 	
-	0x2F70,  // MOVE.L   (A0,D2.W),(12,A7)  ; overwrite A1 slot with trap addr
+	0x2F70,  // MOVE.L   (A0,D2.W),(16,A7)  ; overwrite A2 slot with trap addr
 	0x2000,
-	0x000C,
+	0x0010,
 	
 	0x0C41,  // CMPI.W   #0xAC00,D1         ; auto-pop?
 	0xAC00,
 	
-	0x4FEF,  // LEA      (12,A7),A7         ; pop stack without touching CCR
-	0x000C,
+	0x4FEF,  // LEA      (16,A7),A7         ; pop stack without touching CCR
+	0x0010,
 	
 	0x6D02,  // BLT.S    nopop
 	
@@ -85,12 +85,15 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x0882,  // BCLR     #10,D2             ; clear and test keep-A0 bit, 8<<2
 	0x000A,
 	
-	0x2070,  // MOVEA.L  (A0,D2.W),A0       ; move trap address to A0
+	0x2470,  // MOVEA.L  (A0,D2.W),A2       ; move trap address to A2
 	0x2000,
+	
+	0x206F,  // MOVEA.L  (8,A7),A0          ; restore original A0
+	0x0008,
 	
 	0x6708,  // BEQ.S    restore_a0         ; if keep-A0 is clear, restore A0
 	
-	0x4E90,  // JSR  (A0)                   ; call OS trap routine
+	0x4E92,  // JSR  (A2)                   ; call OS trap routine
 	
 	0x2F48,  // MOVE.L   A0,(8,A7)          ; overwrite saved A0 with new A0
 	0x0008,
@@ -98,11 +101,11 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x6002,  // BRA.S    end
 	
 // restore_a0:
-	0x4E90,  // JSR  (A0)                   ; call OS trap routine
+	0x4E92,  // JSR  (A2)                   ; call OS trap routine
 	
 // end:
-	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0-A1  ; restore regs
-	0x0306,  // 
+	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0-A2  ; restore regs
+	0x0706,  // 
 	
 	0x4E75   // RTS                         ; return to caller
 };
