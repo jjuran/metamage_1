@@ -10,6 +10,9 @@
 #include <unistd.h>
 
 
+uint32_t Ticks : 0x016A;
+
+
 pascal long Delay_patch( long numTicks : __A0 ) : __D0
 {
 	const long nanoseconds_per_tick = 1000 * 1000 * 1000 / 60;
@@ -26,8 +29,7 @@ pascal long Delay_patch( long numTicks : __A0 ) : __D0
 		delay = remaining;
 	}
 	
-	// FIXME:  Return Ticks
-	return 0;
+	return Ticks;
 }
 
 pascal void SysBeep_patch( short duration )
