@@ -17,17 +17,16 @@ pascal long Delay_patch( long numTicks : __A0 ) : __D0
 	const long seconds     = numTicks / 60;
 	const long nanoseconds = numTicks % 60 * nanoseconds_per_tick;
 	
-	const timespec delay = { seconds, nanoseconds };
+	timespec delay = { seconds, nanoseconds };
 	
 	timespec remaining;
 	
-	int woken = nanosleep( &delay, &remaining );
-	
-	if ( woken )
+	while ( nanosleep( &delay, &remaining ) != 0 )
 	{
-		// FIXME:  Return Ticks
+		delay = remaining;
 	}
 	
+	// FIXME:  Return Ticks
 	return 0;
 }
 
