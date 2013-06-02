@@ -53,23 +53,6 @@ enum
 typedef uint32_t (*function_type)( v68k::emulator& emu );
 
 
-static uint32_t pop_args( v68k::emulator& emu, int n_bytes )
-{
-	uint32_t return_address;
-	
-	if ( !emu.mem.get_long( emu.regs.a[7], return_address, emu.data_space() ) )
-	{
-		return nil;
-	}
-	
-	emu.regs.a[7] += n_bytes;
-	
-	const bool ok = emu.mem.put_long( emu.regs.a[7], return_address, emu.data_space() );
-	
-	return ok ? rts : nil;
-}
-
-
 static uint32_t unimplemented_callback( v68k::emulator& emu )
 {
 	abort();
