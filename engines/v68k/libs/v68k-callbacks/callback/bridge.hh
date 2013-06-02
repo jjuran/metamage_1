@@ -30,8 +30,6 @@ enum
 	DisposePtr_trap,
 	BlockMove_trap,
 	Gestalt_trap,
-	ExitToShell_trap,
-	SysBeep_trap,
 	no_op,
 	n
 };

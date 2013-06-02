@@ -298,23 +298,6 @@ static uint32_t Gestalt_callback( v68k::emulator& emu )
 	return rts;
 }
 
-static uint32_t ExitToShell_callback( v68k::emulator& emu )
-{
-	exit( 0 );
-	
-	// Not reached
-	return nil;
-}
-
-static uint32_t SysBeep_callback( v68k::emulator& emu )
-{
-	char c = 0x07;
-	
-	must_write( STDOUT_FILENO, &c, sizeof c );
-	
-	return pop_args( emu, sizeof (uint16_t) );
-}
-
 
 static uint32_t illegal_instruction_callback( v68k::emulator& emu )
 {
@@ -406,8 +389,6 @@ static const function_type the_callbacks[] =
 	&DisposePtr_callback,
 	&BlockMove_callback,
 	&Gestalt_callback,
-	&ExitToShell_callback,
-	&SysBeep_callback,
 	&no_op_callback
 };
 
