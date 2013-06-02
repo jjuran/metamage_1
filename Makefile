@@ -55,12 +55,6 @@ xv68k:
 xv68k-rts: xv68k
 	echo 4E75 | $(PACK68K) | $(XV68K)
 
-xv68k-ExitToShell: xv68k
-	echo A9F4 | $(PACK68K) | $(XV68K)
-
-xv68k-beep: xv68k
-	echo 3F00 A9C8 4E75 | $(PACK68K) | $(XV68K)
-
 xv68k-hello: xv68k
 	$(PACK68K) engines/v68k/demos/hello.p68k | $(XV68K)
 
