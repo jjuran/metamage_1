@@ -110,6 +110,7 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0-A2  ; restore regs
 	0x0706,  // 
 	
+	0x4A40,  // TST.W    D0                 ; set CCR so caller doesn't have to
 	0x4E75   // RTS                         ; return to caller
 };
 
