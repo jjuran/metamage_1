@@ -232,9 +232,6 @@ static void load_Mac_traps( uint8_t* mem )
 	os_traps[ 0x47 ] = big_no_op;  // SetTrapAddress
 	os_traps[ 0x55 ] = big_no_op;  // StripAddress
 	os_traps[ 0x98 ] = big_no_op;  // HWPriv
-	
-	tb_traps[ 0x01C8 ] = big_longword( callback_address( SysBeep_trap     ) );
-	tb_traps[ 0x01F4 ] = big_longword( callback_address( ExitToShell_trap ) );
 }
 
 static void load_argv( uint8_t* mem, int argc, char** argv )
