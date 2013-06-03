@@ -20,6 +20,7 @@
 #include "iota/strings.hh"
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/hexidecimal.hh"
 
 // plus
@@ -64,6 +65,7 @@ typedef unsigned int OSType;
 namespace tool
 {
 	
+	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace o = orion;
 	
@@ -405,9 +407,9 @@ namespace tool
 		return "application/octet-stream";
 	}
 	
-	static void DumpFile( const plus::string& pathname )
+	static void DumpFile( p7::fd_t from_file )
 	{
-		p7::pump( io::open_for_reading( pathname ), p7::stdout_fileno );
+		p7::pump( from_file, p7::stdout_fileno );
 	}
 	
 	static void ListDir( const plus::string& pathname )
@@ -521,6 +523,8 @@ namespace tool
 			
 			plus::var_string responseHeader = HTTP_VERSION " 200 OK\r\n";
 			
+			n::owned< p7::fd_t > from_file;
+			
 			if ( !is_dir )
 			{
 				contentType = GuessContentType( pathname, type );
@@ -531,6 +535,12 @@ namespace tool
 				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
 				
 			#endif
+				
+				from_file = io::open_for_reading( pathname );
+				
+				const size_t size = p7::fstat( from_file ).st_size;
+				
+				responseHeader += HTTP::HeaderFieldLine( "Content-Length",  gear::inscribe_unsigned_decimal( size ) );
 			}
 			
 			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType );
@@ -541,7 +551,7 @@ namespace tool
 			
 			if ( parsed.method != "HEAD" )
 			{
-				is_dir ? ListDir( pathname ) : DumpFile( pathname );
+				is_dir ? ListDir( pathname ) : DumpFile( from_file );
 			}
 		}
 	}
