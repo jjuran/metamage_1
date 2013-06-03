@@ -517,18 +517,23 @@ namespace tool
 			
 		#endif
 			
-			const char* contentType = is_dir ? "text/plain" : GuessContentType( pathname, type );
+			const char* contentType = "text/plain";
 			
 			plus::var_string responseHeader = HTTP_VERSION " 200 OK\r\n";
 			
-			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType                   );
+			if ( !is_dir )
+			{
+				contentType = GuessContentType( pathname, type );
+				
+			#if TARGET_OS_MAC
+				
+				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    plus::encode_32_bit_hex( info.fdType    ) );
+				responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
+				
+			#endif
+			}
 			
-		#if TARGET_OS_MAC
-			
-			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Type",    plus::encode_32_bit_hex( info.fdType    ) );
-			responseHeader += HTTP::HeaderFieldLine( "X-Mac-Creator", plus::encode_32_bit_hex( info.fdCreator ) );
-			
-		#endif
+			responseHeader += HTTP::HeaderFieldLine( "Content-Type",  contentType );
 			
 			responseHeader += "\r\n";
 			
