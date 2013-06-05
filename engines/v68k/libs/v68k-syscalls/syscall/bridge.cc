@@ -11,6 +11,7 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/time.h>
 #include <sys/uio.h>
 
 // v68k
@@ -206,6 +207,37 @@ static bool emu_kill( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
+static bool emu_gettimeofday( v68k::processor_state& s )
+{
+	uint32_t args[2];  // tv, tz
+	
+	if ( !get_stacked_args( s, args, 2 ) )
+	{
+		return s.bus_error();
+	}
+	
+	timeval tv;
+	
+	int result = gettimeofday( &tv, NULL );
+	
+	const uint32_t tv_addr = args[0];
+	
+	if ( result == 0 )
+	{
+		const bool ok = s.mem.put_long( tv_addr,     tv.tv_sec,  s.data_space() )
+		              & s.mem.put_long( tv_addr + 4, tv.tv_usec, s.data_space() );
+		
+		if ( !ok )
+		{
+			errno = EFAULT;
+			
+			result = -1;
+		}
+	}
+	
+	return set_result( s, result );
+}
+
 struct iovec_68k
 {
 	uint32_t ptr;
@@ -346,6 +378,7 @@ bool bridge_call( v68k::processor_state& s )
 		
 		case 20:  return emu_getpid( s );
 		case 37:  return emu_kill  ( s );
+		case 78:  return emu_gettimeofday( s );
 		
 		case 146:  return emu_writev( s );
 		case 162:  return emu_nanosleep( s );
