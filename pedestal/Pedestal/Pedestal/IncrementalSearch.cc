@@ -170,6 +170,11 @@ namespace Pedestal
 		
 		int limit = backward ? -1 : maxPosition + 1;
 		
+		if ( !backward  &&  position >= limit )
+		{
+			return -1;
+		}
+		
 		while ( position != limit )
 		{
 			if ( pattern_match( text + position, pattern, pattern_length ) )
