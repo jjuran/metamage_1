@@ -1,6 +1,6 @@
 #!/bin/sh
 
-host=jjuran.dyndns.org/~jjuran
+host=www.macrelix.org/pub
 
 test -z "$RELIX_SITE" && RELIX_SITE="$host"
 

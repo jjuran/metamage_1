@@ -18,7 +18,7 @@ test -d "$lib"     || mkdir $lib
 
 cd /tmp
 
-host=jjuran.dyndns.org/~jjuran
+host=www.macrelix.org/pub
 
 experimental="http://$host/experimental/"
 
