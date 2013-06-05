@@ -15,6 +15,7 @@
 #include "tool-runtime/parameter_block.h"
 
 // mac
+#include "Debugger.hh"
 #include "OSUtils.hh"
 #include "Segments.hh"
 
@@ -34,6 +35,12 @@ static void install_OSUtils()
 static void install_SegmentLoader()
 {
 	TBTRAP( ExitToShell );  // A9F4
+}
+
+static void install_Debugger()
+{
+	TBTRAP( Debugger );  // A9FF
+	TBTRAP( DebugStr );  // ABFF
 }
 
 static asm void* load( const char* path : __A0 ) : __A0
@@ -70,6 +77,8 @@ int main( int argc, char** argv )
 	install_OSUtils();
 	
 	install_SegmentLoader();
+	
+	install_Debugger();
 	
 	const char* path = argv[1];
 	
