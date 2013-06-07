@@ -50,6 +50,25 @@ using v68k::big_longword;
 using v68k::auth::fully_authorized;
 
 
+static void dump( const v68k::emulator& emu )
+{
+	const v68k::registers& regs = emu.regs;
+	
+	print_register_dump( regs.d,
+	                     regs.a,
+	                     regs.alt_sp,
+	                     regs.alt_ssp,
+	                     regs.pc,
+	                     emu.get_SR() );
+}
+
+static void dump_and_raise( const v68k::emulator& emu, int signo )
+{
+	dump( emu );
+	
+	raise( signo );
+}
+
 /*
 	Memory map
 	----------
@@ -388,7 +407,7 @@ static void emulation_loop( v68k::emulator& emu )
 	{
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
-			raise( SIGXCPU );
+			dump_and_raise( emu, SIGXCPU );
 		}
 	}
 }
@@ -400,7 +419,7 @@ static void report_condition( v68k::emulator& emu )
 		using namespace v68k;
 		
 		case halted:
-			raise( SIGSEGV );
+			dump_and_raise( emu, SIGSEGV );
 			break;
 		
 		default:
