@@ -27,6 +27,7 @@
 
 // v68k-utils
 #include "utils/load.hh"
+#include "utils/print_register_dump.hh"
 
 
 #pragma exceptions off
@@ -56,6 +57,15 @@ enum
 
 typedef uint32_t (*function_type)( v68k::processor_state& s );
 
+
+static void dump_and_raise( const v68k::processor_state& s, int signo )
+{
+	using v68k::utils::print_register_dump;
+	
+	print_register_dump( s.regs );
+	
+	raise( signo );
+}
 
 static uint32_t unimplemented_callback( v68k::processor_state& s )
 {
@@ -200,7 +210,7 @@ static uint32_t unimplemented_trap_callback( v68k::processor_state& s )
 	
 	must_write( STDERR_FILENO, buffer, STRLEN( UNIMPLEMENTED_TRAP_PREFIX "A123\n" ) );
 	
-	raise( SIGILL );
+	dump_and_raise( s, SIGILL );
 	
 	// Not reached
 	return nil;
@@ -302,7 +312,7 @@ static uint32_t illegal_instruction_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Illegal Instruction" );
 	
-	raise( SIGILL );
+	dump_and_raise( s, SIGILL );
 	
 	return nil;
 }
@@ -311,7 +321,7 @@ static uint32_t division_by_zero_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Division By Zero" );
 	
-	raise( SIGFPE );
+	dump_and_raise( s, SIGFPE );
 	
 	return nil;
 }
@@ -320,7 +330,7 @@ static uint32_t chk_trap_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "CHK range exceeded" );
 	
-	raise( SIGFPE );
+	dump_and_raise( s, SIGFPE );
 	
 	return nil;
 }
@@ -329,7 +339,7 @@ static uint32_t trapv_trap_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "TRAPV on overflow" );
 	
-	raise( SIGFPE );
+	dump_and_raise( s, SIGFPE );
 	
 	return nil;
 }
@@ -338,7 +348,7 @@ static uint32_t privilege_violation_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Privilege Violation" );
 	
-	raise( SIGILL );
+	dump_and_raise( s, SIGILL );
 	
 	return nil;
 }
@@ -347,7 +357,7 @@ static uint32_t trace_exception_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Trace Exception" );
 	
-	raise( SIGTRAP );
+	dump_and_raise( s, SIGTRAP );
 	
 	return nil;
 }
@@ -356,7 +366,7 @@ static uint32_t line_A_emulator_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line A Emulator" );
 	
-	raise( SIGILL );
+	dump_and_raise( s, SIGILL );
 	
 	return nil;
 }
@@ -365,7 +375,7 @@ static uint32_t line_F_emulator_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line F Emulator" );
 	
-	raise( SIGILL );
+	dump_and_raise( s, SIGILL );
 	
 	return nil;
 }
