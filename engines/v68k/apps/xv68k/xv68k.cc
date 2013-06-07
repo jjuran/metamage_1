@@ -33,6 +33,7 @@
 
 // v68k-utils
 #include "utils/load.hh"
+#include "utils/print_register_dump.hh"
 
 // v68k-syscalls
 #include "syscall/bridge.hh"
@@ -52,14 +53,9 @@ using v68k::auth::fully_authorized;
 
 static void dump( const v68k::emulator& emu )
 {
-	const v68k::registers& regs = emu.regs;
+	using v68k::utils::print_register_dump;
 	
-	print_register_dump( regs.d,
-	                     regs.a,
-	                     regs.alt_sp,
-	                     regs.alt_ssp,
-	                     regs.pc,
-	                     emu.get_SR() );
+	print_register_dump( emu.regs );
 }
 
 static void dump_and_raise( const v68k::emulator& emu, int signo )
