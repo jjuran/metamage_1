@@ -12,7 +12,7 @@
 #include <CIncludes/Controls.h>
 #endif
 
-#if !ACCESSORS_ARE_FUNCTIONS
+#if !ACCESSOR_CALLS_ARE_FUNCTIONS
 #include "Carbonate/Controls.hh"
 #endif
 
