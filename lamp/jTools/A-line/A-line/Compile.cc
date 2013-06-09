@@ -571,13 +571,6 @@ namespace tool
 			
 			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
 		}
-		else if ( target_info.platform & apiMacBlue )
-		{
-			if ( target_info.platform & archPPC )
-			{
-				options.DEFINE_MACRO( "ACCESSOR_CALLS_ARE_FUNCTIONS" );
-			}
-		}
 		
 		if ( target_info.build != buildRelease )
 		{
