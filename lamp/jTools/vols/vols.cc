@@ -34,6 +34,25 @@ namespace tool
 	namespace o = orion;
 	
 	
+	static plus::string slurp_file( p7::fd_t dirfd, const char* name )
+	{
+		try
+		{
+			n::owned< p7::fd_t > fd = p7::openat( dirfd, name, p7::o_rdonly );
+			
+			return p7::slurp( fd.get() );
+		}
+		catch ( const p7::errno_t& err )
+		{
+			if ( err != ENOENT )
+			{
+				throw;
+			}
+		}
+		
+		return "";
+	}
+	
 	int Main( int argc, char** argv )
 	{
 		const char* wanted_driver_name = NULL;
@@ -71,9 +90,7 @@ namespace tool
 			
 			if ( wanted_driver_name != NULL )
 			{
-				n::owned< p7::fd_t > name_fd = p7::openat( vol_N_dirfd.get(), "driver/.~name", p7::o_rdonly );
-				
-				plus::string driver_name = p7::slurp( name_fd.get() );
+				plus::string driver_name = slurp_file( vol_N_dirfd.get(), "driver/.~name" );
 				
 				wanted = driver_name == wanted_driver_name;
 			}
