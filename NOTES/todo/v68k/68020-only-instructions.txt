@@ -1,0 +1,18 @@
+68020-Only Instructions
+=======================
+
+The following instructions defined only for the 68020:
+
+CALLM
+RTM
+
+Barring the unlikely event of a Mac program that runs only on the Mac II
+and nothing else, the presence or lack of support for these instructions
+has no effect on emulation of Mac programs.  Although the idea of adding
+them for completeness is intriguing, it would require access to a sample
+program which used them and actual hardware to compare an implementation
+against, without which it would be not just useless, but untestable, and
+devoid even of any ascribed value.
+
+This almost certainly will not happen without a financial incentive.
+
