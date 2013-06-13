@@ -17,6 +17,7 @@ enum
 {
 	no_op,
 	load,
+	enter_supervisor_mode,
 	illegal_instruction,
 	division_by_zero,
 	chk_trap,

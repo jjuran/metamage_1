@@ -49,6 +49,7 @@ using v68k::auth::fully_authorized;
 
 enum
 {
+	nop = 0x4E71,
 	rts = 0x4E75,
 	nil = 0
 };
@@ -124,6 +125,45 @@ static uint32_t load_callback( v68k::processor_state& s )
 	else
 	{
 		s.regs.a[0] = addr;
+	}
+	
+	return rts;
+}
+
+static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
+{
+	const uint16_t old_SR = s.get_SR();
+	const uint16_t new_SR = old_SR | 0x2000;
+	
+	s.regs.d[0] = old_SR;
+	
+	if ( old_SR == new_SR )
+	{
+		return rts;
+	}
+	
+	if ( fully_authorized )
+	{
+		uint32_t return_address;
+		
+		if ( !s.mem.get_long( s.regs.a[7], return_address, s.data_space() ) )
+		{
+			abort();  // FIXME
+			return nil;
+		}
+		
+		s.regs.a[7] += 4;
+		
+		s.set_SR( new_SR );
+		
+		s.regs.pc = return_address - 2;
+		
+		return nop;
+	}
+	else
+	{
+		s.regs.d[0] = 0xFFFFFFFF;
+		s.regs.d[1] = EPERM;
 	}
 	
 	return rts;
@@ -326,6 +366,7 @@ static const function_type the_callbacks[] =
 {
 	&no_op_callback,
 	&load_callback,
+	&enter_supervisor_mode_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
 	&chk_trap_callback,
