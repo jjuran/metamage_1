@@ -201,7 +201,7 @@ namespace v68k
 		return true;
 	}
 	
-	bool processor_state::take_exception_format_6( uint16_t vector_offset, uint32_t instruction_address )
+	bool processor_state::take_exception_format_2( uint16_t vector_offset, uint32_t instruction_address )
 	{
 		const uint16_t saved_sr = get_SR();
 		
@@ -218,7 +218,7 @@ namespace v68k
 		
 		sp -= size;
 		
-		const uint32_t format_and_offset = 6 << 12 | vector_offset;
+		const uint32_t format_and_offset = 2 << 12 | vector_offset;
 		
 		const bool ok = mem.put_word( sp + 0, saved_sr,            data_space() )
 		              & mem.put_long( sp + 2, regs.pc,             data_space() )

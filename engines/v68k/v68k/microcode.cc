@@ -249,7 +249,7 @@ namespace v68k
 			return;  // within bounds
 		}
 		
-		s.take_exception_format_6( 6 * sizeof (uint32_t), s.regs.pc - 2 );
+		s.take_exception_format_2( 6 * sizeof (uint32_t), s.regs.pc - 2 );
 	}
 	
 	void microcode_LEA( processor_state& s, op_params& pb )
@@ -595,7 +595,7 @@ namespace v68k
 		const uint16_t format = id >> 12;
 		
 		const uint32_t stack_frame_size = format == 0 ?  8
-		                                : format == 6 ? 12
+		                                : format == 2 ? 12
 		                                :                0;
 		
 		if ( stack_frame_size == 0 )
@@ -658,7 +658,7 @@ namespace v68k
 	{
 		if ( s.get_CCR() & 0x2 )
 		{
-			s.take_exception_format_6( 7 * sizeof (uint32_t), s.regs.pc - 2 );
+			s.take_exception_format_2( 7 * sizeof (uint32_t), s.regs.pc - 2 );
 		}
 	}
 	
@@ -920,7 +920,7 @@ namespace v68k
 		
 		if ( divisor == 0 )
 		{
-			s.take_exception_format_6( 5 * sizeof (uint32_t), pb.address );
+			s.take_exception_format_2( 5 * sizeof (uint32_t), pb.address );
 			
 			pb.size = unsized;  // Don't store the result
 			
@@ -951,7 +951,7 @@ namespace v68k
 		
 		if ( divisor == 0 )
 		{
-			s.take_exception_format_6( 5 * sizeof (uint32_t), pb.address );
+			s.take_exception_format_2( 5 * sizeof (uint32_t), pb.address );
 			
 			pb.size = unsized;  // Don't store the result
 			
