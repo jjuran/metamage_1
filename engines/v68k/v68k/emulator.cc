@@ -118,6 +118,8 @@ namespace v68k
 			return privilege_violation();
 		}
 		
+		const uint32_t instruction_address = regs.pc;
+		
 		// advance pc
 		regs.pc += 2;
 		
@@ -173,6 +175,8 @@ namespace v68k
 			}
 		}
 		
+		const uint16_t saved_SR = get_SR();
+		
 		// execute
 		decoded->code( *this, pb );
 		
@@ -212,6 +216,16 @@ namespace v68k
 		}
 		
 		++its_instruction_counter;
+		
+		if ( (saved_SR >> 14) - 1 > 0  &&  condition >= normal )
+		{
+			if ( condition == stopped )
+			{
+				condition = normal;  // Traced STOP instructions don't stop
+			}
+			
+			take_exception_format_2( 9 * sizeof (uint32_t), instruction_address );
+		}
 		
 		// prefetch next
 		prefetch_instruction_word();
