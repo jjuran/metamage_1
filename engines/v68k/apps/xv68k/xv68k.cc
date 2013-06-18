@@ -112,7 +112,7 @@ const uint32_t code_max_size   = 48 * 1024;
 const uint32_t os_address   = 2048;
 const uint32_t boot_address = 7168;
 const uint32_t initial_SSP  = 3072;
-const uint32_t initial_USP  = 16384;
+const uint16_t initial_USP  = 16384;
 const uint32_t code_address = 16384;
 
 const uint32_t os_trap_table_address = 1024;
@@ -125,11 +125,11 @@ const uint32_t mem_size = code_address + code_max_size;
 
 const uint32_t params_addr = 8192;
 
-const uint32_t user_pb_addr   = params_addr +  0;  // 20 bytes
-const uint32_t system_pb_addr = params_addr + 20;  // 20 bytes
+const uint16_t user_pb_addr   = params_addr +  0;  // 20 bytes
+const uint16_t system_pb_addr = params_addr + 20;  // 20 bytes
 
-const uint32_t argc_addr = params_addr + 40;  // 4 bytes
-const uint32_t argv_addr = params_addr + 44;  // 4 bytes
+const uint16_t argc_addr = params_addr + 40;  // 4 bytes
+const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
 
