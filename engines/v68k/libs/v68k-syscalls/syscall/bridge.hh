@@ -7,14 +7,14 @@
 #define SYSCALLBRIDGE_HH
 
 // v68k
-#include "v68k/emulator.hh"
+#include "v68k/state.hh"
 
 
 extern uint32_t errno_ptr_addr;
 
 extern int32_t fake_pid;
 
-bool bridge_call( v68k::emulator& emu );
+bool bridge_call( v68k::processor_state& s );
 
 
 #endif

@@ -50,10 +50,10 @@ enum
 	nil = 0
 };
 
-typedef uint32_t (*function_type)( v68k::emulator& emu );
+typedef uint32_t (*function_type)( v68k::processor_state& s );
 
 
-static uint32_t unimplemented_callback( v68k::emulator& emu )
+static uint32_t unimplemented_callback( v68k::processor_state& s )
 {
 	abort();
 	
@@ -61,40 +61,40 @@ static uint32_t unimplemented_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t no_op_callback( v68k::emulator& emu )
+static uint32_t no_op_callback( v68k::processor_state& s )
 {
 	return rts;
 }
 
-static uint32_t load_callback( v68k::emulator& emu )
+static uint32_t load_callback( v68k::processor_state& s )
 {
-	const uint32_t path_addr = emu.regs.a[0];
-	const uint32_t path_size = emu.regs.d[0];  // includes trailing NUL
+	const uint32_t path_addr = s.regs.a[0];
+	const uint32_t path_size = s.regs.d[0];  // includes trailing NUL
 	
-	emu.regs.a[0] = 0;
+	s.regs.a[0] = 0;
 	
 	if ( !fully_authorized )
 	{
-		emu.regs.d[1] = EPERM;
+		s.regs.d[1] = EPERM;
 		
 		return rts;
 	}
 	
-	const uint8_t* p = emu.mem.translate( path_addr,
-	                                      path_size,
-	                                      v68k::user_data_space,
-	                                      v68k::mem_read );
+	const uint8_t* p = s.mem.translate( path_addr,
+	                                    path_size,
+	                                    v68k::user_data_space,
+	                                    v68k::mem_read );
 	
 	if ( p == NULL )
 	{
-		emu.regs.d[1] = EFAULT;
+		s.regs.d[1] = EFAULT;
 		
 		return rts;
 	}
 	
 	if ( path_size == 0  ||  p[0] == '\0'  ||  p[ path_size - 1 ] != '\0' )
 	{
-		emu.regs.d[1] = EINVAL;
+		s.regs.d[1] = EINVAL;
 		
 		return rts;
 	}
@@ -105,7 +105,7 @@ static uint32_t load_callback( v68k::emulator& emu )
 	
 	if ( fd < 0 )
 	{
-		emu.regs.d[1] = errno;
+		s.regs.d[1] = errno;
 		
 		return rts;
 	}
@@ -116,7 +116,7 @@ static uint32_t load_callback( v68k::emulator& emu )
 	
 	if ( err < 0 )
 	{
-		emu.regs.d[1] = errno;
+		s.regs.d[1] = errno;
 	}
 	else
 	{
@@ -137,7 +137,7 @@ static uint32_t load_callback( v68k::emulator& emu )
 		{
 			free( alloc );
 			
-			emu.regs.d[1] = ENOMEM;
+			s.regs.d[1] = ENOMEM;
 		}
 		else
 		{
@@ -147,12 +147,12 @@ static uint32_t load_callback( v68k::emulator& emu )
 			{
 				deallocate( addr );  // frees alloc also
 				
-				emu.regs.d[1] = n_read < 0 ? errno : EIO;
+				s.regs.d[1] = n_read < 0 ? errno : EIO;
 			}
 			else
 			{
-				emu.regs.d[0] = n_read;
-				emu.regs.a[0] = addr;
+				s.regs.d[0] = n_read;
+				s.regs.a[0] = addr;
 			}
 		}
 	}
@@ -172,13 +172,13 @@ static char hex[] =
 
 #define UNIMPLEMENTED_TRAP_PREFIX  "v68k: exception: Unimplemented Mac trap: "
 
-static uint32_t unimplemented_trap_callback( v68k::emulator& emu )
+static uint32_t unimplemented_trap_callback( v68k::processor_state& s )
 {
 	static char buffer[] = UNIMPLEMENTED_TRAP_PREFIX "A123\n";
 	
 	char* p = buffer + STRLEN( UNIMPLEMENTED_TRAP_PREFIX );
 	
-	const uint16_t trap = emu.regs.d[1];
+	const uint16_t trap = s.regs.d[1];
 	
 	p[1] = hex[ trap >> 8 & 0xF ];
 	p[2] = hex[ trap >> 4 & 0xF ];
@@ -192,13 +192,13 @@ static uint32_t unimplemented_trap_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t NewPtr_callback( v68k::emulator& emu )
+static uint32_t NewPtr_callback( v68k::processor_state& s )
 {
-	const uint32_t size = emu.regs.d[0];
+	const uint32_t size = s.regs.d[0];
 	
 	uint32_t addr = v68k::alloc::allocate( size );
 	
-	emu.regs.a[0] = addr;
+	s.regs.a[0] = addr;
 	
 	if ( addr == 0 )
 	{
@@ -206,29 +206,29 @@ static uint32_t NewPtr_callback( v68k::emulator& emu )
 		
 		const int16_t memFullErr = -108;
 		
-		emu.mem.put_word( addr_MemErr, memFullErr, v68k::user_data_space );
+		s.mem.put_word( addr_MemErr, memFullErr, v68k::user_data_space );
 	}
 	
 	return rts;
 }
 
-static uint32_t DisposePtr_callback( v68k::emulator& emu )
+static uint32_t DisposePtr_callback( v68k::processor_state& s )
 {
-	const uint32_t addr = emu.regs.a[0];
+	const uint32_t addr = s.regs.a[0];
 	
 	v68k::alloc::deallocate( addr );
 	
 	return rts;
 }
 
-static uint32_t BlockMove_callback( v68k::emulator& emu )
+static uint32_t BlockMove_callback( v68k::processor_state& s )
 {
-	const uint32_t src = emu.regs.a[0];
-	const uint32_t dst = emu.regs.a[1];
+	const uint32_t src = s.regs.a[0];
+	const uint32_t dst = s.regs.a[1];
 	
-	const uint32_t n = emu.regs.d[0];
+	const uint32_t n = s.regs.d[0];
 	
-	const uint8_t* p = emu.mem.translate( src, n, v68k::user_data_space, v68k::mem_read );
+	const uint8_t* p = s.mem.translate( src, n, v68k::user_data_space, v68k::mem_read );
 	
 	if ( p == NULL )
 	{
@@ -236,7 +236,7 @@ static uint32_t BlockMove_callback( v68k::emulator& emu )
 		return nil;  // FIXME
 	}
 	
-	uint8_t* q = emu.mem.translate( dst, n, v68k::user_data_space, v68k::mem_write );
+	uint8_t* q = s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_write );
 	
 	if ( q == NULL )
 	{
@@ -246,16 +246,16 @@ static uint32_t BlockMove_callback( v68k::emulator& emu )
 	
 	memcpy( q, p, n );
 	
-	emu.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
+	s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
 	
 	return rts;
 }
 
-static uint32_t Gestalt_callback( v68k::emulator& emu )
+static uint32_t Gestalt_callback( v68k::processor_state& s )
 {
 	const int32_t gestaltUndefSelectorErr = -5551;
 	
-	const uint32_t selector = emu.regs.d[0];
+	const uint32_t selector = s.regs.d[0];
 	
 	uint32_t value = 0;
 	int32_t result = 0;
@@ -267,7 +267,7 @@ static uint32_t Gestalt_callback( v68k::emulator& emu )
 			break;
 		
 		case 'proc':
-			value = (emu.model >> 8) + 1;
+			value = (s.model >> 8) + 1;
 			break;
 		
 		default:
@@ -275,14 +275,14 @@ static uint32_t Gestalt_callback( v68k::emulator& emu )
 			break;
 	}
 	
-	emu.regs.d[0] = result;
-	emu.regs.a[0] = value;
+	s.regs.d[0] = result;
+	s.regs.a[0] = value;
 	
 	return rts;
 }
 
 
-static uint32_t illegal_instruction_callback( v68k::emulator& emu )
+static uint32_t illegal_instruction_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Illegal Instruction" );
 	
@@ -291,7 +291,7 @@ static uint32_t illegal_instruction_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t division_by_zero_callback( v68k::emulator& emu )
+static uint32_t division_by_zero_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Division By Zero" );
 	
@@ -300,7 +300,7 @@ static uint32_t division_by_zero_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t chk_trap_callback( v68k::emulator& emu )
+static uint32_t chk_trap_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "CHK range exceeded" );
 	
@@ -309,7 +309,7 @@ static uint32_t chk_trap_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t trapv_trap_callback( v68k::emulator& emu )
+static uint32_t trapv_trap_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "TRAPV on overflow" );
 	
@@ -318,7 +318,7 @@ static uint32_t trapv_trap_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t privilege_violation_callback( v68k::emulator& emu )
+static uint32_t privilege_violation_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Privilege Violation" );
 	
@@ -327,7 +327,7 @@ static uint32_t privilege_violation_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t trace_exception_callback( v68k::emulator& emu )
+static uint32_t trace_exception_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Trace Exception" );
 	
@@ -336,7 +336,7 @@ static uint32_t trace_exception_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t line_A_emulator_callback( v68k::emulator& emu )
+static uint32_t line_A_emulator_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line A Emulator" );
 	
@@ -345,7 +345,7 @@ static uint32_t line_A_emulator_callback( v68k::emulator& emu )
 	return nil;
 }
 
-static uint32_t line_F_emulator_callback( v68k::emulator& emu )
+static uint32_t line_F_emulator_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line F Emulator" );
 	
@@ -376,9 +376,9 @@ static const function_type the_callbacks[] =
 };
 
 
-uint32_t bridge( v68k::emulator& emu )
+uint32_t bridge( v68k::processor_state& s )
 {
-	const int32_t pc = emu.regs.pc;
+	const int32_t pc = s.regs.pc;
 	
 	const uint32_t call_number = pc / -2 - 1;
 	
@@ -390,7 +390,7 @@ uint32_t bridge( v68k::emulator& emu )
 		
 		if ( f != NULL )
 		{
-			return f( emu );
+			return f( s );
 		}
 	}
 	

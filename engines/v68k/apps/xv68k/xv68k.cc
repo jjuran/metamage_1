@@ -16,6 +16,7 @@
 #include "gear/parse_decimal.hh"
 
 // v68k
+#include "v68k/emulator.hh"
 #include "v68k/endian.hh"
 
 // v68k-auth

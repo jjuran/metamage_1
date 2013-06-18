@@ -39,15 +39,15 @@ static int32_t emulated_pid()
 	return fake_pid > 0 ? fake_pid : getpid();
 }
 
-static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
+static bool get_stacked_args( const v68k::processor_state& s, uint32_t* out, int n )
 {
-	uint32_t sp = emu.regs.a[7];
+	uint32_t sp = s.regs.a[7];
 	
 	while ( n > 0 )
 	{
 		sp += 4;
 		
-		if ( !emu.mem.get_long( sp, *out, emu.data_space() ) )
+		if ( !s.mem.get_long( sp, *out, s.data_space() ) )
 		{
 			return false;
 		}
@@ -59,37 +59,37 @@ static bool get_stacked_args( const v68k::emulator& emu, uint32_t* out, int n )
 	return true;
 }
 
-static void set_errno( v68k::emulator& emu )
+static void set_errno( v68k::processor_state& s )
 {
-	emu.regs.d[1] = errno;
+	s.regs.d[1] = errno;
 	
 	uint32_t errno_ptr;
 	
-	if ( emu.mem.get_long( errno_ptr_addr, errno_ptr, emu.data_space() )  &&  errno_ptr != 0 )
+	if ( s.mem.get_long( errno_ptr_addr, errno_ptr, s.data_space() )  &&  errno_ptr != 0 )
 	{
-		emu.mem.put_long( errno_ptr, errno, emu.data_space() );
+		s.mem.put_long( errno_ptr, errno, s.data_space() );
 	}
 }
 
-static inline bool set_result( v68k::emulator& emu, int result )
+static inline bool set_result( v68k::processor_state& s, int result )
 {
-	emu.regs.d[0] = result;
+	s.regs.d[0] = result;
 	
 	if ( result < 0 )
 	{
-		set_errno( emu );
+		set_errno( s );
 	}
 	
 	return true;
 }
 
-static bool emu_exit( v68k::emulator& emu )
+static bool emu_exit( v68k::processor_state& s )
 {
 	uint32_t args[1];  // status
 	
-	if ( !get_stacked_args( emu, args, 1 ) )
+	if ( !get_stacked_args( s, args, 1 ) )
 	{
-		return emu.bus_error();
+		return s.bus_error();
 	}
 	
 	const int status = int32_t( args[0] );
@@ -100,13 +100,13 @@ static bool emu_exit( v68k::emulator& emu )
 	return false;
 }
 
-static bool emu_read( v68k::emulator& emu )
+static bool emu_read( v68k::processor_state& s )
 {
 	uint32_t args[3];  // fd, buffer, length
 	
-	if ( !get_stacked_args( emu, args, 3 ) )
+	if ( !get_stacked_args( s, args, 3 ) )
 	{
-		return emu.bus_error();
+		return s.bus_error();
 	}
 	
 	const int fd = int32_t( args[0] );
@@ -115,7 +115,7 @@ static bool emu_read( v68k::emulator& emu )
 	
 	const size_t length = args[2];
 	
-	uint8_t* p = emu.mem.translate( buffer, length, emu.data_space(), v68k::mem_write );
+	uint8_t* p = s.mem.translate( buffer, length, s.data_space(), v68k::mem_write );
 	
 	int result;
 	
@@ -130,16 +130,16 @@ static bool emu_read( v68k::emulator& emu )
 		result = read( fd, p, length );
 	}
 	
-	return set_result( emu, result );
+	return set_result( s, result );
 }
 
-static bool emu_write( v68k::emulator& emu )
+static bool emu_write( v68k::processor_state& s )
 {
 	uint32_t args[3];  // fd, buffer, length
 	
-	if ( !get_stacked_args( emu, args, 3 ) )
+	if ( !get_stacked_args( s, args, 3 ) )
 	{
-		return emu.bus_error();
+		return s.bus_error();
 	}
 	
 	const int fd = int32_t( args[0] );
@@ -148,7 +148,7 @@ static bool emu_write( v68k::emulator& emu )
 	
 	const size_t length = args[2];
 	
-	const uint8_t* p = emu.mem.translate( buffer, length, emu.data_space(), v68k::mem_read );
+	const uint8_t* p = s.mem.translate( buffer, length, s.data_space(), v68k::mem_read );
 	
 	int result;
 	
@@ -163,23 +163,23 @@ static bool emu_write( v68k::emulator& emu )
 		result = write( fd, p, length );
 	}
 	
-	return set_result( emu, result );
+	return set_result( s, result );
 }
 
-static bool emu_getpid( v68k::emulator& emu )
+static bool emu_getpid( v68k::processor_state& s )
 {
 	int32_t result = emulated_pid();
 	
-	return set_result( emu, result );
+	return set_result( s, result );
 }
 
-static bool emu_kill( v68k::emulator& emu )
+static bool emu_kill( v68k::processor_state& s )
 {
 	uint32_t args[2];  // pid, sig
 	
-	if ( !get_stacked_args( emu, args, 2 ) )
+	if ( !get_stacked_args( s, args, 2 ) )
 	{
-		return emu.bus_error();
+		return s.bus_error();
 	}
 	
 	pid_t     pid = int32_t( args[0] );
@@ -203,7 +203,7 @@ static bool emu_kill( v68k::emulator& emu )
 		errno = EPERM;
 	}
 	
-	return set_result( emu, result );
+	return set_result( s, result );
 }
 
 struct iovec_68k
@@ -212,13 +212,13 @@ struct iovec_68k
 	uint32_t len;
 };
 
-static bool emu_writev( v68k::emulator& emu )
+static bool emu_writev( v68k::processor_state& s )
 {
 	uint32_t args[3];  // fd, iov, n
 	
-	if ( !get_stacked_args( emu, args, 3 ) )
+	if ( !get_stacked_args( s, args, 3 ) )
 	{
-		return emu.bus_error();
+		return s.bus_error();
 	}
 	
 	int result = -1;
@@ -233,10 +233,10 @@ static bool emu_writev( v68k::emulator& emu )
 	
 	struct iovec* iov = (struct iovec*) malloc( sizeof (struct iovec) * n );
 	
-	const iovec_68k* iov_mem = (iovec_68k*) emu.mem.translate( iov_addr,
-	                                                           size,
-	                                                           emu.data_space(),
-	                                                           v68k::mem_read );
+	const iovec_68k* iov_mem = (iovec_68k*) s.mem.translate( iov_addr,
+	                                                         size,
+	                                                         s.data_space(),
+	                                                         v68k::mem_read );
 	
 	if ( iov == NULL )
 	{
@@ -257,7 +257,7 @@ static bool emu_writev( v68k::emulator& emu )
 		const uint32_t ptr = v68k::longword_from_big( iov_mem[i].ptr );
 		const uint32_t len = v68k::longword_from_big( iov_mem[i].len );
 		
-		const uint8_t* p = emu.mem.translate( ptr, len, emu.data_space(), v68k::mem_read );
+		const uint8_t* p = s.mem.translate( ptr, len, s.data_space(), v68k::mem_read );
 		
 		if ( p == NULL )
 		{
@@ -276,16 +276,16 @@ end:
 	
 	free( iov );
 	
-	return set_result( emu, result );
+	return set_result( s, result );
 }
 
-static bool emu_nanosleep( v68k::emulator& emu )
+static bool emu_nanosleep( v68k::processor_state& s )
 {
 	uint32_t args[2];  // requested, remaining
 	
-	if ( !get_stacked_args( emu, args, 2 ) )
+	if ( !get_stacked_args( s, args, 2 ) )
 	{
-		return emu.bus_error();
+		return s.bus_error();
 	}
 	
 	uint32_t requested = args[0];
@@ -293,21 +293,21 @@ static bool emu_nanosleep( v68k::emulator& emu )
 	uint32_t requested_seconds;
 	uint32_t requested_nanoseconds;
 	
-	const bool ok = emu.mem.get_long( requested,     requested_seconds,     emu.data_space() )
-	              & emu.mem.get_long( requested + 4, requested_nanoseconds, emu.data_space() );
+	const bool ok = s.mem.get_long( requested,     requested_seconds,     s.data_space() )
+	              & s.mem.get_long( requested + 4, requested_nanoseconds, s.data_space() );
 	
 	if ( !ok )
 	{
 		errno = EFAULT;
 		
-		return set_result( emu, -1 );
+		return set_result( s, -1 );
 	}
 	
 	if ( requested_nanoseconds >= 1000 * 1000 * 1000 )
 	{
 		errno = EINVAL;
 		
-		return set_result( emu, -1 );
+		return set_result( s, -1 );
 	}
 	
 	const timespec request_ts = { requested_seconds, requested_nanoseconds };
@@ -320,8 +320,8 @@ static bool emu_nanosleep( v68k::emulator& emu )
 	
 	if ( result < 0  &&  remaining != 0 )
 	{
-		const bool ok = emu.mem.put_long( remaining,     remain_ts.tv_sec,  emu.data_space() )
-		              & emu.mem.put_long( remaining + 4, remain_ts.tv_nsec, emu.data_space() );
+		const bool ok = s.mem.put_long( remaining,     remain_ts.tv_sec,  s.data_space() )
+		              & s.mem.put_long( remaining + 4, remain_ts.tv_nsec, s.data_space() );
 		
 		if ( !ok )
 		{
@@ -331,24 +331,24 @@ static bool emu_nanosleep( v68k::emulator& emu )
 		}
 	}
 	
-	return set_result( emu, result );
+	return set_result( s, result );
 }
 
-bool bridge_call( v68k::emulator& emu )
+bool bridge_call( v68k::processor_state& s )
 {
-	const uint16_t call_number = emu.regs.d[0];
+	const uint16_t call_number = s.regs.d[0];
 	
 	switch ( call_number )
 	{
-		case 1:  return emu_exit ( emu );
-		case 3:  return emu_read ( emu );
-		case 4:  return emu_write( emu );
+		case 1:  return emu_exit ( s );
+		case 3:  return emu_read ( s );
+		case 4:  return emu_write( s );
 		
-		case 20:  return emu_getpid( emu );
-		case 37:  return emu_kill  ( emu );
+		case 20:  return emu_getpid( s );
+		case 37:  return emu_kill  ( s );
 		
-		case 146:  return emu_writev( emu );
-		case 162:  return emu_nanosleep( emu );
+		case 146:  return emu_writev( s );
+		case 162:  return emu_nanosleep( s );
 		
 		default:
 			return false;
