@@ -51,16 +51,16 @@ using v68k::big_longword;
 using v68k::auth::fully_authorized;
 
 
-static void dump( const v68k::emulator& emu )
+static void dump( const v68k::processor_state& s )
 {
 	using v68k::utils::print_register_dump;
 	
-	print_register_dump( emu.regs );
+	print_register_dump( s.regs );
 }
 
-static void dump_and_raise( const v68k::emulator& emu, int signo )
+static void dump_and_raise( const v68k::processor_state& s, int signo )
 {
-	dump( emu );
+	dump( s );
 	
 	raise( signo );
 }
