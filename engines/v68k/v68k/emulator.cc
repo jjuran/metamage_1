@@ -81,18 +81,12 @@ namespace v68k
 	
 	bool emulator::step()
 	{
-		if ( at_breakpoint() )
-		{
-			condition = normal;
-			
-			// Unacknowledged breakpoint traps as illegal instruction
-			return illegal_instruction();
-		}
-		
 		if ( condition != normal )
 		{
 			return false;
 		}
+		
+	bkpt_acknowledge:
 		
 		// decode (prefetched)
 		instruction storage = { 0 };
@@ -181,6 +175,13 @@ namespace v68k
 		
 		// execute
 		decoded->code( *this, pb );
+		
+		if ( at_breakpoint() )
+		{
+			condition = normal;
+			
+			goto bkpt_acknowledge;
+		}
 		
 		// update CCR
 		

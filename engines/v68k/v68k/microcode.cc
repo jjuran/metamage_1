@@ -301,6 +301,13 @@ namespace v68k
 		
 		s.regs.pc -= 2;
 		
+		s.opcode = 0x4AFC;  // ILLEGAL
+		
+		if ( bkpt_handler f = s.bkpt.f[ data ] )
+		{
+			s.opcode = f( s );
+		}
+		
 		s.condition = processor_condition( bkpt_0 + data );
 	}
 	

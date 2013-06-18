@@ -322,13 +322,43 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 }
 
+static uint16_t bkpt_2( v68k::processor_state& s )
+{
+	if ( bridge_call( s ) )
+	{
+		return 0x4E75;  // RTS
+	}
+	else
+	{
+		// FIXME:  Report call number
+		
+		//const uint16_t call_number = emu.regs.d[0];
+		
+		const char* msg = "Unimplemented system call\n";
+		
+		write( STDERR_FILENO, msg, strlen( msg ) );
+		
+		return 0x4AFC;  // ILLEGAL
+	}
+}
+
+static uint16_t bkpt_3( v68k::processor_state& s )
+{
+	if ( uint32_t new_opcode = v68k::callback::bridge( s ) )
+	{
+		return new_opcode;
+	}
+	
+	return 0x4AFC;  // ILLEGAL
+}
+
 static v68k::bkpt_handlers the_bkpt_handlers =
 {
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
+		&bkpt_2,
+		&bkpt_3,
 		NULL,
 		NULL,
 		NULL,
@@ -352,46 +382,12 @@ static void emulation_loop( v68k::emulator& emu )
 	
 	const unsigned instruction_limit = parse_instruction_limit( instruction_limit_var );
 	
-step_loop:
-	
 	while ( emu.step() )
 	{
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
 			raise( SIGXCPU );
 		}
-		
-		continue;
-	}
-	
-	if ( emu.condition == v68k::bkpt_2 )
-	{
-		if ( bridge_call( emu ) )
-		{
-			emu.acknowledge_breakpoint( 0x4E75 );  // RTS
-		}
-		else
-		{
-			// FIXME:  Report call number
-			
-			//const uint16_t call_number = emu.regs.d[0];
-			
-			const char* msg = "Unimplemented system call\n";
-			
-			write( STDERR_FILENO, msg, strlen( msg ) );
-		}
-		
-		goto step_loop;
-	}
-	
-	if ( emu.condition == v68k::bkpt_3 )
-	{
-		if ( uint32_t new_opcode = v68k::callback::bridge( emu ) )
-		{
-			emu.acknowledge_breakpoint( new_opcode );
-		}
-		
-		goto step_loop;
 	}
 }
 
@@ -403,17 +399,6 @@ static void report_condition( v68k::emulator& emu )
 		
 		case halted:
 			raise( SIGSEGV );
-			break;
-		
-		case bkpt_0:
-		case bkpt_1:
-		case bkpt_2:
-		case bkpt_3:
-		case bkpt_4:
-		case bkpt_5:
-		case bkpt_6:
-		case bkpt_7:
-			raise( SIGILL );
 			break;
 		
 		default:
