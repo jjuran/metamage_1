@@ -49,11 +49,22 @@ namespace v68k
 		normal = 1
 	};
 	
+	struct processor_state;
+	
+	typedef uint16_t (*bkpt_handler)(processor_state& s);
+	
+	struct bkpt_handlers
+	{
+		const bkpt_handler f[ 8 ];
+	};
+	
 	struct processor_state
 	{
 		registers regs;
 		
 		const memory& mem;
+		
+		const bkpt_handlers& bkpt;
 		
 		const processor_model model;
 		
@@ -61,7 +72,7 @@ namespace v68k
 		
 		uint16_t opcode;  // current instruction opcode
 		
-		processor_state( processor_model model, const memory& mem );
+		processor_state( processor_model model, const memory& mem, const bkpt_handlers& bkpts );
 		
 		void prefetch_instruction_word();
 		

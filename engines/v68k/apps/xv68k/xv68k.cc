@@ -322,6 +322,20 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 }
 
+static v68k::bkpt_handlers the_bkpt_handlers =
+{
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+	}
+};
+
 static inline unsigned parse_instruction_limit( const char* var )
 {
 	if ( var == NULL )
@@ -500,7 +514,7 @@ static int execute_68k( int argc, char** argv )
 	
 	const memory_manager memory( mem, mem_size );
 	
-	v68k::emulator emu( v68k::mc68000, memory );
+	v68k::emulator emu( v68k::mc68000, memory, the_bkpt_handlers );
 	
 	emu.reset();
 	
