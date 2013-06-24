@@ -19,7 +19,7 @@ static uint64_t microsecond_clock()
 {
 	timeval tv;
 	
-	int got = gettimeofday( &tv, NULL );
+	int got = gettimeofday( &tv, 0 );  // NULL
 	
 	if ( got < 0 )
 	{
