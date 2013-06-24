@@ -25,6 +25,9 @@
 // v68k-auth
 #include "auth/auth.hh"
 
+// v68k-utils
+#include "utils/load.hh"
+
 
 #pragma exceptions off
 
@@ -99,65 +102,29 @@ static uint32_t load_callback( v68k::processor_state& s )
 		return rts;
 	}
 	
+	using v68k::alloc::page_size;
+	using v68k::alloc::page_size_bits;
+	using v68k::alloc::allocate_n_pages;
+	using v68k::utils::load_file;
+	
 	const char* path = (const char*) p;
 	
-	int fd = open( path, O_RDONLY );
+	void* alloc = load_file( path, &s.regs.d[0] );
 	
-	if ( fd < 0 )
+	const size_t n = (s.regs.d[0] + page_size - 1) >> page_size_bits;  // round up
+	
+	const uint32_t addr = allocate_n_pages( alloc, n );
+	
+	if ( addr == 0 )
 	{
-		s.regs.d[1] = errno;
+		free( alloc );
 		
-		return rts;
-	}
-	
-	struct stat sb;
-	
-	int err = fstat( fd, &sb );
-	
-	if ( err < 0 )
-	{
-		s.regs.d[1] = errno;
+		s.regs.d[1] = ENOMEM;
 	}
 	else
 	{
-		const size_t file_size = sb.st_size;
-		
-		using v68k::alloc::page_size;
-		using v68k::alloc::page_size_bits;
-		using v68k::alloc::allocate_n_pages;
-		using v68k::alloc::deallocate;
-		
-		const size_t n = (file_size + page_size - 1) >> page_size_bits;  // round up
-		
-		void* alloc = calloc( n, page_size );
-		
-		const uint32_t addr = allocate_n_pages( alloc, n );
-		
-		if ( addr == 0 )
-		{
-			free( alloc );
-			
-			s.regs.d[1] = ENOMEM;
-		}
-		else
-		{
-			const ssize_t n_read = read( fd, alloc, file_size );
-			
-			if ( n_read != file_size )
-			{
-				deallocate( addr );  // frees alloc also
-				
-				s.regs.d[1] = n_read < 0 ? errno : EIO;
-			}
-			else
-			{
-				s.regs.d[0] = n_read;
-				s.regs.a[0] = addr;
-			}
-		}
+		s.regs.a[0] = addr;
 	}
-	
-	close( fd );
 	
 	return rts;
 }

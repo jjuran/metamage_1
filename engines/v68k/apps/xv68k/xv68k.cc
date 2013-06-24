@@ -31,6 +31,9 @@
 // v68k-callbacks
 #include "callback/bridge.hh"
 
+// v68k-utils
+#include "utils/load.hh"
+
 // v68k-syscalls
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
@@ -282,6 +285,22 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 	else
 	{
+		using v68k::utils::load_file;
+		
+		uint32_t size;
+		
+		if ( void* alloc = load_file( path, &size ) )
+		{
+			if ( size > code_max_size )
+			{
+				abort();
+			}
+			
+			memcpy( mem + code_address, alloc, size );
+			
+			return;
+		}
+		
 		fd = open( path, O_RDONLY );
 		
 		if ( fd < 0 )
