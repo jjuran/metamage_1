@@ -15,9 +15,10 @@
 namespace v68k
 {
 	
-	processor_state::processor_state( processor_model model, const memory& mem )
+	processor_state::processor_state( processor_model model, const memory& mem, const bkpt_handlers& bkpts )
 	:
 		mem( mem ),
+		bkpt( bkpts ),
 		model( model ),
 		condition()
 	{
