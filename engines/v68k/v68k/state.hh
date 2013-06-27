@@ -32,7 +32,6 @@ namespace v68k
 		startup = 0,
 		
 		halted  = -1,  // double bus fault
-		stopped = -2,  // STOP instruction
 		
 		bkpt_0 = 0xF0,
 		bkpt_1 = 0xF1,
@@ -45,7 +44,9 @@ namespace v68k
 		
 		bkpt_mask = 0xF8,
 		
-		finished = 2,
+		finished = 3,  // STOP #FFFF (v68k extension)
+		stopped  = 2,  // STOP instruction
+		
 		normal = 1
 	};
 	
