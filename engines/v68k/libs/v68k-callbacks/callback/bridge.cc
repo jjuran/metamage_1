@@ -169,6 +169,13 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	return rts;
 }
 
+static uint32_t set_trace_mode_callback( v68k::processor_state& s )
+{
+	s.regs.ttsm = (s.regs.ttsm & 0x3) | (uint8_t( s.regs.pc ) << 1 & 0xC);
+	
+	return rts;
+}
+
 static char hex[] =
 {
 	'0', '1', '2', '3',
@@ -367,6 +374,11 @@ static const function_type the_callbacks[] =
 	&no_op_callback,
 	&load_callback,
 	&enter_supervisor_mode_callback,
+	NULL,
+	&set_trace_mode_callback,
+	&set_trace_mode_callback,
+	&set_trace_mode_callback,
+	&set_trace_mode_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
 	&chk_trap_callback,
