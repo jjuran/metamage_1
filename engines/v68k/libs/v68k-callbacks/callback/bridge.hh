@@ -15,7 +15,7 @@ namespace callback {
 
 enum
 {
-	unimplemented,
+	no_op,
 	load,
 	illegal_instruction,
 	division_by_zero,
@@ -30,7 +30,7 @@ enum
 	DisposePtr_trap,
 	BlockMove_trap,
 	Gestalt_trap,
-	no_op,
+	unimplemented,
 	n
 };
 

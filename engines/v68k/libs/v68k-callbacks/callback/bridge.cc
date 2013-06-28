@@ -324,7 +324,7 @@ static uint32_t line_F_emulator_callback( v68k::processor_state& s )
 
 static const function_type the_callbacks[] =
 {
-	&unimplemented_callback,
+	&no_op_callback,
 	&load_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
@@ -339,7 +339,7 @@ static const function_type the_callbacks[] =
 	&DisposePtr_callback,
 	&BlockMove_callback,
 	&Gestalt_callback,
-	&no_op_callback
+	&unimplemented_callback
 };
 
 
