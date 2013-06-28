@@ -37,6 +37,12 @@
 #endif
 
 
+#undef DateString
+#undef TimeString
+#undef LongDateString
+#undef LongTimeString
+
+
 namespace Nitrogen
   {
 	
