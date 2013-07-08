@@ -390,7 +390,7 @@ namespace Genie
 	{
 		if ( len != sizeof (InetAddress) )
 		{
-			// Fail
+			p7::throw_errno( EINVAL );
 		}
 		
 		itsSocketAddress.Assign( local, len );
@@ -429,6 +429,11 @@ namespace Genie
 		
 		::OTMemzero( &call, sizeof (TCall) );
 		
+		if ( len < sizeof (InetAddress) )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
 		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
@@ -442,6 +447,11 @@ namespace Genie
 		N::OTListen( itsEndpoint, &call );
 		
 		len = call.addr.len;
+		
+		if ( len != sizeof (InetAddress) )
+		{
+			p7::throw_errno( EINVAL );
+		}
 		
 		OTSocket* handle = new OTSocket;
 		
