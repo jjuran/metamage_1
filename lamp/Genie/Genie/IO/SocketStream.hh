@@ -56,20 +56,6 @@ namespace Genie
 			virtual ~SocketHandle()  {}
 			
 			bool IsSocket() const  { return true; }
-			
-			virtual void Bind( const sockaddr& local, socklen_t len ) = 0;
-			
-			virtual void Listen( int backlog ) = 0;
-			
-			virtual IOPtr Accept( sockaddr& client, socklen_t& len ) = 0;
-			
-			virtual void Connect( const sockaddr& server, socklen_t len ) = 0;
-			
-			virtual const SocketAddress& GetSockName() const = 0;
-			virtual const SocketAddress& GetPeerName() const = 0;
-			
-			virtual void ShutdownReading() = 0;
-			virtual void ShutdownWriting() = 0;
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< SocketHandle >

@@ -60,17 +60,6 @@ namespace Genie
 				return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
 			}
 			
-			void Bind( const sockaddr& local, socklen_t len );
-			
-			void Listen( int backlog );
-			
-			IOPtr Accept( sockaddr& client, socklen_t& len );
-			
-			void Connect( const sockaddr& server, socklen_t len );
-			
-			const SocketAddress& GetSockName() const;
-			const SocketAddress& GetPeerName() const;
-			
 			void ShutdownReading();
 			void ShutdownWriting();
 	};
@@ -118,42 +107,6 @@ namespace Genie
 	{
 		ShutdownReading();
 		ShutdownWriting();
-	}
-	
-	void PairedSocket::Bind( const sockaddr& local, socklen_t len )
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
-	void PairedSocket::Listen( int backlog )
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
-	IOPtr PairedSocket::Accept( sockaddr& client, socklen_t& len )
-	{
-		p7::throw_errno( EINVAL );
-		
-		throw;
-	}
-	
-	void PairedSocket::Connect( const sockaddr& server, socklen_t len )
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
-	const SocketAddress& PairedSocket::GetSockName() const
-	{
-		p7::throw_errno( EINVAL );
-		
-		throw;
-	}
-	
-	const SocketAddress& PairedSocket::GetPeerName() const
-	{
-		p7::throw_errno( EINVAL );
-		
-		throw;
 	}
 	
 	void PairedSocket::ShutdownReading()
