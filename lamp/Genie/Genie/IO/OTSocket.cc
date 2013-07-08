@@ -24,6 +24,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/socket_method_set.hh"
+
 // Nitrogen
 #include "Mac/OpenTransport/Utilities/OTNotifier_Entrance.hh"
 
@@ -225,9 +229,69 @@ namespace Genie
 		Complete( *socket );
 	}
 	
+	
+	static void OT_bind( vfs::filehandle* sock, const sockaddr* local, socklen_t len )
+	{
+		static_cast< OTSocket& >( *sock ).Bind( *local, len );
+	}
+	
+	static void OT_listen( vfs::filehandle* sock, int backlog )
+	{
+		static_cast< OTSocket& >( *sock ).Listen( backlog );
+	}
+	
+	static vfs::filehandle_ptr OT_accept( vfs::filehandle* sock, sockaddr* client, socklen_t* len )
+	{
+		return static_cast< OTSocket& >( *sock ).Accept( *client, *len );
+	}
+	
+	static void OT_connect( vfs::filehandle* sock, const sockaddr* server, socklen_t len )
+	{
+		static_cast< OTSocket& >( *sock ).Connect( *server, len );
+	}
+	
+	static void OT_shutdown( vfs::filehandle* sock, int how )
+	{
+		if ( how != SHUT_WR )
+		{
+			static_cast< OTSocket& >( *sock ).ShutdownReading();
+		}
+		
+		if ( how != SHUT_RD )
+		{
+			static_cast< OTSocket& >( *sock ).ShutdownWriting();
+		}
+	}
+	
+	static const sockaddr* OT_getsockname( vfs::filehandle* sock )
+	{
+		return &static_cast< OTSocket& >( *sock ).GetSockName().address;
+	}
+	
+	static const sockaddr* OT_getpeername( vfs::filehandle* sock )
+	{
+		return &static_cast< OTSocket& >( *sock ).GetPeerName().address;
+	}
+	
+	static const vfs::socket_method_set OT_socket_methods =
+	{
+		&OT_bind,
+		&OT_listen,
+		&OT_accept,
+		&OT_connect,
+		&OT_shutdown,
+		&OT_getsockname,
+		&OT_getpeername,
+	};
+	
+	static const vfs::filehandle_method_set OT_methods =
+	{
+		&OT_socket_methods,
+	};
+	
 	OTSocket::OTSocket( bool nonblocking )
 	:
-		SocketHandle( nonblocking ),
+		SocketHandle( nonblocking, &OT_methods ),
 		itsBacklog(),
 		its_result            ( 0 ),
 		n_incoming_connections( 0 ),
