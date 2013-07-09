@@ -19,6 +19,7 @@ namespace vfs
 {
 	
 	struct filehandle_method_set;
+	struct socket_method_set;
 	
 	/*
 		Each file descriptor refers to an I/O handle.
@@ -62,6 +63,8 @@ namespace vfs
 			void SetFlags( int flags )  { its_flags = flags; }
 			
 			const filehandle_method_set* methods() const  { return its_methods; }
+			
+			const socket_method_set& socket_methods() const;
 			
 			virtual filehandle_ptr Clone();
 			
