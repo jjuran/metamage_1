@@ -24,9 +24,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	StreamHandle::StreamHandle( int flags )
+	StreamHandle::StreamHandle( int                                flags,
+	                            const vfs::filehandle_method_set*  methods )
 	:
-		IOHandle( flags ),
+		IOHandle( flags, methods ),
 		itHasBeenDisconnected()
 	{
 	}
