@@ -11,6 +11,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/socket_method_set.hh"
+
 // Nitrogen
 #include "Nitrogen/OSUtils.hh"
 
@@ -72,11 +76,39 @@ namespace Genie
 	};
 	
 	
+	static void pairedsocket_shutdown( vfs::filehandle* sock, int how )
+	{
+		if ( how != SHUT_WR )
+		{
+			static_cast< PairedSocket& >( *sock ).ShutdownReading();
+		}
+		
+		if ( how != SHUT_RD )
+		{
+			static_cast< PairedSocket& >( *sock ).ShutdownWriting();
+		}
+	}
+	
+	static const vfs::socket_method_set pairedsocket_socket_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&pairedsocket_shutdown,
+	};
+	
+	static const vfs::filehandle_method_set pairedsocket_methods =
+	{
+		&pairedsocket_socket_methods,
+	};
+	
+	
 	PairedSocket::PairedSocket( boost::intrusive_ptr< plus::conduit >  input,
 			                    boost::intrusive_ptr< plus::conduit >  output,
 			                    bool                                   nonblocking )
 	:
-		SocketHandle( nonblocking ),
+		SocketHandle( nonblocking, &pairedsocket_methods ),
 		itsInput ( input  ),
 		itsOutput( output )
 	{
