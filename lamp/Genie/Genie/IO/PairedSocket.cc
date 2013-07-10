@@ -6,6 +6,7 @@
 #include "Genie/IO/PairedSocket.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <sys/socket.h>
 
 // poseven
@@ -21,7 +22,7 @@
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/IO/SocketStream.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -31,7 +32,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class PairedSocket : public SocketHandle
+	class PairedSocket : public StreamHandle
 	{
 		private:
 			boost::intrusive_ptr< plus::conduit >  itsInput;
@@ -97,7 +98,9 @@ namespace Genie
 			                    boost::intrusive_ptr< plus::conduit >  output,
 			                    bool                                   nonblocking )
 	:
-		SocketHandle( nonblocking, &pairedsocket_methods ),
+		StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
+		                          : O_RDWR,
+		              &pairedsocket_methods ),
 		itsInput ( input  ),
 		itsOutput( output )
 	{
