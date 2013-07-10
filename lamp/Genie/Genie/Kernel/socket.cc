@@ -3,11 +3,14 @@
  *	=========
  */
 
+// POSIX
+#include <sys/socket.h>
+
+// Standard C
+#include <errno.h>
+
 // Standard C/C++
 #include <cstring>
-
-// POSIX
-#include "sys/socket.h"
 
 // plus
 #include "plus/conduit.hh"
@@ -26,7 +29,6 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
-#include "Genie/IO/SocketStream.hh"
 
 
 #ifndef SOCK_CLOEXEC
