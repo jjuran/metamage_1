@@ -45,7 +45,7 @@
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/IO/SocketStream.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/ShareOpenTransport.hh"
 
 
@@ -63,7 +63,7 @@ namespace Genie
 		operator const sockaddr&() const  { return *(const sockaddr*) this; }
 	};
 	
-	class OTSocket : public SocketHandle
+	class OTSocket : public StreamHandle
 	{
 		private:
 			OpenTransportShare       itsOpenTransport;
@@ -296,7 +296,9 @@ namespace Genie
 	
 	OTSocket::OTSocket( bool nonblocking )
 	:
-		SocketHandle( nonblocking, &OT_methods ),
+		StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
+		                          : O_RDWR,
+		              &OT_methods ),
 		itsBacklog(),
 		its_result            ( 0 ),
 		n_incoming_connections( 0 ),
