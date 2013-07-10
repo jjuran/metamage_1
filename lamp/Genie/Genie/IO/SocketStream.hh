@@ -44,10 +44,12 @@ namespace Genie
 	class SocketHandle : public StreamHandle
 	{
 		public:
-			SocketHandle( bool nonblocking )
+			SocketHandle( bool                               nonblocking,
+			              const vfs::filehandle_method_set*  methods = NULL )
 			:
 				StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
-				                          : O_RDWR )
+				                          : O_RDWR,
+				              methods )
 			{
 			}
 			
