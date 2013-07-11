@@ -18,6 +18,9 @@
 namespace vfs
 {
 	
+	struct filehandle_method_set;
+	struct socket_method_set;
+	
 	/*
 		Each file descriptor refers to an I/O handle.
 		Several file descriptors may share the same I/O handle.
@@ -30,7 +33,8 @@ namespace vfs
 	class filehandle : public plus::ref_count< filehandle >
 	{
 		private:
-			int its_flags;
+			int                           its_flags;
+			const filehandle_method_set*  its_methods;
 			
 			virtual filehandle* Next() const  { return NULL; }
 			
@@ -41,7 +45,8 @@ namespace vfs
 		public:
 			typedef bool (filehandle::*Test)() const;
 			
-			filehandle( int flags );
+			filehandle( int                           flags,
+			            const filehandle_method_set*  methods = NULL );
 			
 			virtual ~filehandle();
 			
@@ -56,6 +61,10 @@ namespace vfs
 			int GetFlags() const  { return its_flags; }
 			
 			void SetFlags( int flags )  { its_flags = flags; }
+			
+			const filehandle_method_set* methods() const  { return its_methods; }
+			
+			const socket_method_set& socket_methods() const;
 			
 			virtual filehandle_ptr Clone();
 			

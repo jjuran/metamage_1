@@ -3,21 +3,32 @@
  *	=========
  */
 
+// POSIX
+#include <sys/socket.h>
+
+// Standard C
+#include <errno.h>
+
 // Standard C/C++
 #include <cstring>
 
-// POSIX
-#include "sys/socket.h"
-
 // plus
 #include "plus/conduit.hh"
+
+// vfs
+#include "vfs/filehandle/primitives/accept.hh"
+#include "vfs/filehandle/primitives/bind.hh"
+#include "vfs/filehandle/primitives/connect.hh"
+#include "vfs/filehandle/primitives/getpeername.hh"
+#include "vfs/filehandle/primitives/getsockname.hh"
+#include "vfs/filehandle/primitives/listen.hh"
+#include "vfs/filehandle/primitives/shutdown.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
-#include "Genie/IO/SocketStream.hh"
 
 
 #ifndef SOCK_CLOEXEC
@@ -102,9 +113,7 @@ int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
-		
-		sock.Bind( *name, namelen );
+		bind( *GetFileHandle( fd ), *name, namelen );
 	}
 	catch ( ... )
 	{
@@ -121,9 +130,7 @@ int listen( int fd, int backlog )
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
-		
-		sock.Listen( backlog );
+		listen( *GetFileHandle( fd ), backlog );
 	}
 	catch ( ... )
 	{
@@ -140,8 +147,6 @@ int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( listener );
-		
 		if ( addrlen == NULL  &&  addr != NULL )
 		{
 			// If you pass the address buffer you must indicate the size
@@ -157,7 +162,7 @@ int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 		// addr != NULL  implies  addrlen != NULL
 		socklen_t& length = addr != NULL ? *addrlen : dummy_length;
 		
-		IOPtr incoming( sock.Accept( address, length ) );
+		vfs::filehandle_ptr incoming = accept( *GetFileHandle( listener ), address, length );
 		
 		int fd = LowestUnusedFileDescriptor();
 		
@@ -188,9 +193,7 @@ int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
-		
-		sock.Connect( *serv_addr, addrlen );
+		connect( *GetFileHandle( fd ), *serv_addr, addrlen );
 	}
 	catch ( ... )
 	{
@@ -201,19 +204,31 @@ int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 }
 
 
+static inline socklen_t sizeof_sockaddr( const sockaddr& addr )
+{
+	return sizeof (sockaddr);
+}
+
+static void get_sockaddr_name( const sockaddr& addr, struct sockaddr* name, socklen_t* namelen )
+{
+	const socklen_t size = sizeof_sockaddr( addr );
+	
+	const size_t n = *namelen < size ? *namelen : size;
+	
+	std::memcpy( name, &addr, n );
+	
+	*namelen = size;
+}
+
 int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 {
 	using namespace Genie;
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
+		const sockaddr& addr = getsockname( *GetFileHandle( fd ) );
 		
-		const SocketAddress& address = sock.GetSockName();
-		
-		*namelen = address.Len();
-		
-		std::memcpy( name, address.Get(), address.Len() );
+		get_sockaddr_name( addr, name, namelen );
 	}
 	catch ( ... )
 	{
@@ -230,13 +245,9 @@ int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
+		const sockaddr& addr = getpeername( *GetFileHandle( fd ) );
 		
-		const SocketAddress& address = sock.GetPeerName();
-		
-		*namelen = address.Len();
-		
-		std::memcpy( name, address.Get(), address.Len() );
+		get_sockaddr_name( addr, name, namelen );
 	}
 	catch ( ... )
 	{
@@ -253,22 +264,7 @@ int shutdown( int fd, int how )
 	
 	try
 	{
-		SocketHandle& sock = GetFileHandleWithCast< SocketHandle >( fd );
-		
-		int flags = how + 1;
-		
-		bool stop_reading = flags & 1;
-		bool stop_writing = flags & 2;
-		
-		if ( stop_reading )
-		{
-			sock.ShutdownReading();
-		}
-		
-		if ( stop_writing )
-		{
-			sock.ShutdownWriting();
-		}
+		shutdown( *GetFileHandle( fd ), how );
 	}
 	catch ( ... )
 	{

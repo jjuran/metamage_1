@@ -28,7 +28,8 @@ namespace Genie
 			bool              itHasBeenDisconnected;
 		
 		public:
-			StreamHandle( int flags );
+			StreamHandle( int                                flags,
+			              const vfs::filehandle_method_set*  methods = NULL );
 			
 			virtual ~StreamHandle();
 			
