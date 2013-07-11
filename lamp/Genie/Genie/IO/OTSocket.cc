@@ -58,13 +58,18 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
+	struct InetAddress : private ::InetAddress
+	{
+		operator const sockaddr&() const  { return *(const sockaddr*) this; }
+	};
+	
 	class OTSocket : public SocketHandle
 	{
 		private:
 			OpenTransportShare       itsOpenTransport;
 			int                      itsBacklog;
-			SocketAddress            itsSocketAddress;
-			SocketAddress            itsPeerAddress;
+			InetAddress              itsSocketAddress;
+			InetAddress              itsPeerAddress;
 		
 		public:
 			n::owned< EndpointRef >  itsEndpoint;
@@ -99,8 +104,8 @@ namespace Genie
 			
 			void Connect( const sockaddr& server, socklen_t len );
 			
-			const SocketAddress& GetSockName() const  { return itsSocketAddress; }
-			const SocketAddress& GetPeerName() const  { return itsPeerAddress;   }
+			const sockaddr& GetSockName() const  { return itsSocketAddress; }
+			const sockaddr& GetPeerName() const  { return itsPeerAddress;   }
 			
 			void ShutdownReading()  {}
 			void ShutdownWriting();
@@ -265,12 +270,12 @@ namespace Genie
 	
 	static const sockaddr* OT_getsockname( vfs::filehandle* sock )
 	{
-		return &static_cast< OTSocket& >( *sock ).GetSockName().address;
+		return &static_cast< OTSocket& >( *sock ).GetSockName();
 	}
 	
 	static const sockaddr* OT_getpeername( vfs::filehandle* sock )
 	{
-		return &static_cast< OTSocket& >( *sock ).GetPeerName().address;
+		return &static_cast< OTSocket& >( *sock ).GetPeerName();
 	}
 	
 	static const vfs::socket_method_set OT_socket_methods =
@@ -457,16 +462,11 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		itsSocketAddress.Assign( local, len );
+		itsSocketAddress = (const InetAddress&) local;
 	}
 	
 	void OTSocket::Listen( int backlog )
 	{
-		if ( itsSocketAddress.Get() == NULL )
-		{
-			p7::throw_errno( EDESTADDRREQ );
-		}
-		
 		itsBacklog = backlog;
 		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
@@ -476,8 +476,8 @@ namespace Genie
 		
 		::OTMemzero( &reqAddr, sizeof (TBind) );
 		
-		reqAddr.addr.buf = reinterpret_cast< unsigned char* >( itsSocketAddress.Get() );
-		reqAddr.addr.len = itsSocketAddress.Len();
+		reqAddr.addr.buf = (unsigned char*) &itsSocketAddress;  // reinterpret_cast
+		reqAddr.addr.len = sizeof itsSocketAddress;
 		reqAddr.qlen = backlog;
 		
 		OTBind_sync( *this, &reqAddr );
@@ -521,7 +521,7 @@ namespace Genie
 		
 		IOPtr newSocket( handle );
 		
-		handle->itsPeerAddress.Assign( client, len );
+		handle->itsPeerAddress = (const InetAddress&) client;
 		
 		its_result = 1;
 		
