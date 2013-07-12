@@ -265,6 +265,8 @@ static uint32_t BlockMove_callback( v68k::processor_state& s )
 	return rts;
 }
 
+#define OSTYPE(a, b, c, d)  ((a) << 24 | (b) << 16 | (c) << 8 | (d))
+
 static uint32_t Gestalt_callback( v68k::processor_state& s )
 {
 	const int32_t gestaltUndefSelectorErr = -5551;
@@ -276,11 +278,11 @@ static uint32_t Gestalt_callback( v68k::processor_state& s )
 	
 	switch ( selector )
 	{
-		case 'v68k':
+		case OSTYPE('v', '6', '8', 'k'):  // 'v68k'
 		//	value = 0;
 			break;
 		
-		case 'proc':
+		case OSTYPE('p', 'r', 'o', 'c'):  // 'proc'
 			value = (s.model >> 8) + 1;
 			break;
 		
