@@ -36,6 +36,7 @@
 // vfs
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
 // Nitrogen
@@ -240,6 +241,21 @@ namespace Genie
 	}
 	
 	
+	static unsigned OT_poll( vfs::filehandle* sock )
+	{
+		return static_cast< OTSocket& >( *sock ).SysPoll();
+	}
+	
+	static ssize_t OT_read( vfs::filehandle* sock, char* buffer, size_t n )
+	{
+		return static_cast< OTSocket& >( *sock ).SysRead( buffer, n );
+	}
+	
+	static ssize_t OT_write( vfs::filehandle* sock, const char* buffer, size_t n )
+	{
+		return static_cast< OTSocket& >( *sock ).SysWrite( buffer, n );
+	}
+	
 	static void OT_bind( vfs::filehandle* sock, const sockaddr* local, socklen_t len )
 	{
 		static_cast< OTSocket& >( *sock ).Bind( *local, len );
@@ -283,6 +299,13 @@ namespace Genie
 		return &static_cast< OTSocket& >( *sock ).GetPeerName();
 	}
 	
+	static const vfs::stream_method_set OT_stream_methods =
+	{
+		&OT_poll,
+		&OT_read,
+		&OT_write,
+	};
+	
 	static const vfs::socket_method_set OT_socket_methods =
 	{
 		&OT_bind,
@@ -298,6 +321,7 @@ namespace Genie
 	{
 		NULL,
 		&OT_socket_methods,
+		&OT_stream_methods,
 	};
 	
 	OTSocket::OTSocket( bool nonblocking )
