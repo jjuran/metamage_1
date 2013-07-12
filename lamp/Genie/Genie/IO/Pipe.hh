@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_PIPE_HH
 #define GENIE_IO_PIPE_HH
 
-// POSIX
-#include <fcntl.h>
-
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -19,8 +16,6 @@
 #include "plus/conduit.hh"
 
 // Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
 #include "Genie/IO/Stream.hh"
 
 
@@ -34,26 +29,13 @@ namespace Genie
 		
 		public:
 			PipeInHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-			              bool                                          nonblocking )
-			:
-				StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
-				                          : O_WRONLY ),
-				itsConduit( conduit )
-			{
-			}
+			              bool                                          nonblocking );
 			
 			~PipeInHandle();
 			
-			unsigned int SysPoll()
-			{
-				return   kPollRead
-				       | kPollWrite * itsConduit->is_writable();
-			}
+			unsigned int SysPoll();
 			
-			ssize_t SysWrite( const char* data, std::size_t byteCount )
-			{
-				return itsConduit->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
-			}
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
 	class PipeOutHandle : public StreamHandle
@@ -63,26 +45,13 @@ namespace Genie
 		
 		public:
 			PipeOutHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-			               bool                                          nonblocking )
-			:
-				StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
-				                          : O_RDONLY ),
-				itsConduit( conduit )
-			{
-			}
+			               bool                                          nonblocking );
 			
 			~PipeOutHandle();
 			
-			unsigned int SysPoll()
-			{
-				return   kPollRead * itsConduit->is_readable()
-				       | kPollWrite;
-			}
+			unsigned int SysPoll();
 			
-			ssize_t SysRead( char* data, std::size_t byteCount )
-			{
-				return itsConduit->read( data, byteCount, IsNonblocking(), &try_again );
-			}
+			ssize_t SysRead( char* data, std::size_t byteCount );
 	};
 	
 }
