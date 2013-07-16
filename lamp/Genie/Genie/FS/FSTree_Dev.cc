@@ -19,6 +19,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/node/types/dynamic_group.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // relix-kernel
@@ -28,7 +29,6 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/DynamicGroups.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ResolvePathname.hh"
@@ -184,6 +184,9 @@ namespace Genie
 	{
 		return new FSTree( parent, name, S_IFCHR | 0600, &simple_device_methods );
 	}
+	
+	using vfs::dynamic_group_factory;
+	using vfs::dynamic_group_element;
 	
 	const vfs::fixed_mapping dev_Mappings[] =
 	{

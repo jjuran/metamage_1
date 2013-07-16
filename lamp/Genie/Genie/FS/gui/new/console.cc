@@ -46,6 +46,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // vfs
+#include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/primitives/attach.hh"
 
 // Genie
@@ -59,7 +60,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
 #include "Genie/IO/VirtualFile.hh"
@@ -396,7 +396,7 @@ namespace Genie
 			
 			~ConsoleTTYHandle()
 			{
-				GetDynamicGroup< ConsoleTTYHandle >().erase( itsID );
+				vfs::get_dynamic_group< ConsoleTTYHandle >().erase( itsID );
 			}
 			
 			void Attach( vfs::filehandle* terminal );
@@ -765,7 +765,7 @@ namespace Genie
 		
 		IOPtr result( NewConsoleTTY( node, id ) );
 		
-		SetDynamicElementByID< ConsoleTTYHandle >( id, result );
+		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
 		
 		return result;
 	}

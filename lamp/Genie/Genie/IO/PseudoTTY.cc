@@ -11,20 +11,22 @@
 // plus
 #include "plus/var_string.hh"
 
+// vfs
+#include "vfs/filehandle/types/dynamic_group.hh"
+
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/IO/DynamicGroup.hh"
 #include "Genie/IO/Terminal.hh"
 
 
 namespace Genie
 {
 	
-	static inline DynamicGroup& GetPseudoTTYMap()
+	static inline vfs::dynamic_group& GetPseudoTTYMap()
 	{
-		return GetDynamicGroup< PseudoTTYHandle >();
+		return vfs::get_dynamic_group< PseudoTTYHandle >();
 	}
 	
 	static inline IOPtr
@@ -47,7 +49,7 @@ namespace Genie
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
-		SetDynamicElementByID< PseudoTTYHandle >( index, slave_handle );
+		vfs::set_dynamic_element_by_id< PseudoTTYHandle >( index, slave_handle.get() );
 		
 		++index;
 		
