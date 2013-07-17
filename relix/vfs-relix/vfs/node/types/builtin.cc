@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "vfs/nodes/builtin.hh"
+#include "vfs/node/types/builtin.hh"
 
 // POSIX
 #include <sys/stat.h>

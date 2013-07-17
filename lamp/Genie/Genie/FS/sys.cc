@@ -23,7 +23,7 @@
 #include "vfs/node/types/fixed_dir.hh"
 
 // vfs-relix
-#include "vfs/nodes/builtin.hh"
+#include "vfs/node/types/builtin.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
