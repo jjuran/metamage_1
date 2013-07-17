@@ -30,7 +30,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"

@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "vfs/nodes/anonymous.hh"
+#include "vfs/node/types/anonymous.hh"
 
 // vfs
 #include "vfs/filehandle.hh"

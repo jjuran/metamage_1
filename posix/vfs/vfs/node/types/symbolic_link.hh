@@ -3,8 +3,8 @@
 	----------------
 */
 
-#ifndef VFS_NODES_SYMBOLICLINK_HH
-#define VFS_NODES_SYMBOLICLINK_HH
+#ifndef VFS_NODE_TYPES_SYMBOLICLINK_HH
+#define VFS_NODE_TYPES_SYMBOLICLINK_HH
 
 // plus
 #include "plus/string.hh"

@@ -31,7 +31,7 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/null.hh"
+#include "vfs/node/types/null.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/mkdir.hh"

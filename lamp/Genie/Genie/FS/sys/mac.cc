@@ -6,7 +6,7 @@
 #include "Genie/FS/sys/mac.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // relix-kernel
 #include "relix/config/color.hh"

@@ -7,7 +7,7 @@
 #define GENIE_FS_BASICDIRECTORY_HH
 
 // vfs
-#include "vfs/nodes/basic_directory.hh"
+#include "vfs/node/types/basic_directory.hh"
 
 
 namespace Genie

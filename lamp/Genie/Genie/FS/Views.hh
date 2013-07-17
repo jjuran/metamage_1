@@ -10,7 +10,7 @@
 #include "plus/var_string.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"

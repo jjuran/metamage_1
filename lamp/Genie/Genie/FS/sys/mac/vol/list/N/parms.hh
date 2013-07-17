@@ -7,7 +7,7 @@
 #define GENIE_FS_SYS_MAC_VOL_LIST_N_PARMS_HH
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 
 namespace Genie

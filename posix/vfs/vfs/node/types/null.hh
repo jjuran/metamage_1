@@ -3,8 +3,8 @@
 	-------
 */
 
-#ifndef VFS_NODES_NULL_HH
-#define VFS_NODES_NULL_HH
+#ifndef VFS_NODE_TYPES_NULL_HH
+#define VFS_NODE_TYPES_NULL_HH
 
 // vfs
 #include "vfs/node_ptr.hh"

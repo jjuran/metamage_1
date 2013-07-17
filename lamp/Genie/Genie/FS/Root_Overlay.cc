@@ -8,7 +8,7 @@
 #include "Genie/FS/Root_Overlay.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Dev.hh"

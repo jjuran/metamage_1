@@ -33,7 +33,7 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/symbolic_link.hh"
+#include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/sys/mac/vol/list.hh"

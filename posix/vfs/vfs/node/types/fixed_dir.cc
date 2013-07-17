@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // POSIX
 #include <sys/stat.h>
@@ -15,7 +15,7 @@
 #include "vfs/functions/file-tests.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
-#include "vfs/nodes/null.hh"
+#include "vfs/node/types/null.hh"
 
 
 namespace vfs

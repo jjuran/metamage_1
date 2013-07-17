@@ -3,7 +3,7 @@
 	-------
 */
 
-#include "vfs/nodes/null.hh"
+#include "vfs/node/types/null.hh"
 
 // plus
 #include "plus/string.hh"

@@ -23,7 +23,7 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/anonymous.hh"
+#include "vfs/node/types/anonymous.hh"
 
 
 #ifndef O_EXEC

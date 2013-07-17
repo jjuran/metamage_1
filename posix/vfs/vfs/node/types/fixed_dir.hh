@@ -3,8 +3,8 @@
 	------------
 */
 
-#ifndef VFS_NODES_FIXEDDIR_HH
-#define VFS_NODES_FIXEDDIR_HH
+#ifndef VFS_NODE_TYPES_FIXEDDIR_HH
+#define VFS_NODE_TYPES_FIXEDDIR_HH
 
 // plus
 #include "plus/string.hh"

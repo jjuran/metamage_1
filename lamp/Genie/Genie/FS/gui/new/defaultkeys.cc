@@ -20,7 +20,7 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/touch.hh"
 

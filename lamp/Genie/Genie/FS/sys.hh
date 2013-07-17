@@ -7,7 +7,7 @@
 #define GENIE_FS_SYS_HH
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 
 namespace Genie

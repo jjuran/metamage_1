@@ -19,7 +19,7 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/nodes/symbolic_link.hh"
+#include "vfs/node/types/symbolic_link.hh"
 
 // relix-kernel
 #include "relix/config/mini.hh"

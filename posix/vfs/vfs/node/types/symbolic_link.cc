@@ -3,7 +3,7 @@
 	----------------
 */
 
-#include "vfs/nodes/symbolic_link.hh"
+#include "vfs/node/types/symbolic_link.hh"
 
 // POSIX
 #include <sys/stat.h>

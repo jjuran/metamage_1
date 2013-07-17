@@ -9,7 +9,7 @@
 #define GENIE_FS_ROOTOVERLAY_HH
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 
 namespace Genie

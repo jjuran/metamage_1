@@ -26,7 +26,7 @@
 #include "Pedestal/Frame.hh"
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"

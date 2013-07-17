@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "vfs/nodes/basic_directory.hh"
+#include "vfs/node/types/basic_directory.hh"
 
 // POSIX
 #include <sys/stat.h>

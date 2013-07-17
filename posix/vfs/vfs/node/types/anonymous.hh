@@ -3,8 +3,8 @@
 	------------
 */
 
-#ifndef VFS_NODES_ANONYMOUS_HH
-#define VFS_NODES_ANONYMOUS_HH
+#ifndef VFS_NODE_TYPES_ANONYMOUS_HH
+#define VFS_NODE_TYPES_ANONYMOUS_HH
 
 // POSIX
 #include <sys/types.h>

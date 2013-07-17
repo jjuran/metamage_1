@@ -7,7 +7,7 @@
 #define GENIE_FS_GUI_PORT_ADDR_HH
 
 // vfs
-#include "vfs/nodes/fixed_dir.hh"
+#include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/FSTree_fwd.hh"

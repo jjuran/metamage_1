@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef VFS_NODES_BASICDIRECTORY_HH
-#define VFS_NODES_BASICDIRECTORY_HH
+#ifndef VFS_NODE_TYPES_BASICDIRECTORY_HH
+#define VFS_NODE_TYPES_BASICDIRECTORY_HH
 
 // plus
 #include "plus/string_fwd.hh"

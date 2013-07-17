@@ -45,7 +45,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/functions/pathname.hh"
-#include "vfs/nodes/symbolic_link.hh"
+#include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
