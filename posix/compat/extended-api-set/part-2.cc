@@ -26,11 +26,9 @@
 
 DIR *fdopendir( int fd )
 {
-	char path[] = "/dev/fd/1234567890";
+	_temporary_cwd cwd( fd, "." );
 	
-	sprintf( path + sizeof "/dev/fd/" - 1, "%d", fd );
-	
-	DIR* dir = opendir( path );
+	DIR* dir = opendir( "." );
 	
 	close( fd );
 	
