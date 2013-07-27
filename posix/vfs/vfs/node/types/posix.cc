@@ -12,6 +12,7 @@
 #include "plus/string.hh"
 
 // poseven
+#include "poseven/extras/slurp.hh"
 #include "poseven/functions/opendir.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/types/errno_t.hh"
@@ -20,6 +21,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
@@ -47,6 +49,15 @@ namespace vfs
 		posix_extra& extra = *(posix_extra*) that->extra();
 		
 		sb = extra.status;
+	}
+	
+	static plus::string posix_slurp( const node* that )
+	{
+		posix_extra& extra = *(posix_extra*) that->extra();
+		
+		const plus::string& path = reinterpret_cast< const plus::string& >( extra.path );
+		
+		return p7::slurp( path.c_str() );
 	}
 	
 	static node_ptr posix_lookup( const node*          that,
@@ -95,6 +106,14 @@ namespace vfs
 		}
 	}
 	
+	static const data_method_set posix_data_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&posix_slurp,
+	};
+	
 	static const dir_method_set posix_dir_methods =
 	{
 		&posix_lookup,
@@ -111,7 +130,7 @@ namespace vfs
 		NULL,
 		NULL,
 		NULL,
-		NULL,
+		&posix_data_methods,
 		NULL,
 		&posix_dir_methods,
 	};
