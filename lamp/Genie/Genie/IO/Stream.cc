@@ -32,6 +32,15 @@ namespace Genie
 	{
 	}
 	
+	StreamHandle::StreamHandle( const vfs::node_ptr&               file,
+	                            int                                flags,
+	                            const vfs::filehandle_method_set*  methods )
+	:
+		IOHandle( file.get(), flags, methods ),
+		itHasBeenDisconnected()
+	{
+	}
+	
 	StreamHandle::~StreamHandle()
 	{
 	}

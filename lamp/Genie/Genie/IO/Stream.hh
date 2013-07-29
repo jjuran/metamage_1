@@ -31,6 +31,10 @@ namespace Genie
 			StreamHandle( int                                flags,
 			              const vfs::filehandle_method_set*  methods = NULL );
 			
+			StreamHandle( const vfs::node_ptr&               file,
+			              int                                flags,
+			              const vfs::filehandle_method_set*  methods = NULL );
+			
 			virtual ~StreamHandle();
 			
 			bool IsStream() const  { return true; }

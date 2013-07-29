@@ -21,6 +21,8 @@ namespace Genie
 		public:
 			RegularFileHandle( int flags );
 			
+			RegularFileHandle( const vfs::node_ptr& file, int flags );
+			
 			virtual ~RegularFileHandle();
 			
 			bool IsRegularFile() const  { return true; }

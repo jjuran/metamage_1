@@ -100,6 +100,13 @@ namespace Genie
 	{
 	}
 	
+	RegularFileHandle::RegularFileHandle( const vfs::node_ptr& file, int flags )
+	:
+		FileHandle( file.get(), flags ),
+		itsMark()
+	{
+	}
+	
 	RegularFileHandle::~RegularFileHandle()
 	{
 	}
