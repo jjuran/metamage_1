@@ -49,6 +49,10 @@ namespace vfs
 			filehandle( int                           flags,
 			            const filehandle_method_set*  methods = NULL );
 			
+			filehandle( const node*                   file,
+			            int                           flags,
+			            const filehandle_method_set*  methods = NULL );
+			
 			virtual ~filehandle();
 			
 			virtual bool IsStream     () const  { return false; }

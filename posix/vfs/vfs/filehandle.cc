@@ -27,6 +27,16 @@ namespace vfs
 	{
 	}
 	
+	filehandle::filehandle( const node*                   file,
+	                        int                           flags,
+	                        const filehandle_method_set*  methods )
+	:
+		its_file   ( file    ),
+		its_flags  ( flags   ),
+		its_methods( methods )
+	{
+	}
+	
 	filehandle::~filehandle()
 	{
 	}
