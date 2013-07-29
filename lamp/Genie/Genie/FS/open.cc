@@ -11,11 +11,14 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/filehandle/functions/truncate.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/RegularFile.hh"
 
 
 namespace vfs
@@ -23,16 +26,6 @@ namespace vfs
 	
 	namespace p7 = poseven;
 	
-	
-	static void truncate( filehandle* that )
-	{
-		using namespace Genie;
-		
-		if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( that ) )
-		{
-			fh->SetEOF( 0 );
-		}
-	}
 	
 	filehandle_ptr open( const node* it, int flags, mode_t mode )
 	{
