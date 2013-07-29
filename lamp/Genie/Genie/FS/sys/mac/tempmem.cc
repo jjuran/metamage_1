@@ -33,7 +33,7 @@ namespace Genie
 	class TempMem_IOHandle : public VirtualFileHandle< IOHandle >
 	{
 		public:
-			TempMem_IOHandle( const FSTreePtr&  file,
+			TempMem_IOHandle( const vfs::node*  file,
 			                  int               flags )
 			:
 				VirtualFileHandle< IOHandle >( file, flags )

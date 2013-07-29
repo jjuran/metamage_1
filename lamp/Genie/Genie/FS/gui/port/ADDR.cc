@@ -950,7 +950,7 @@ namespace Genie
 			lock_handle& operator=( const lock_handle& );
 		
 		public:
-			lock_handle( const FSTreePtr&  file,
+			lock_handle( const vfs::node*  file,
 			             int               flags )
 			:
 				VirtualFileHandle< IOHandle >( file, flags )
