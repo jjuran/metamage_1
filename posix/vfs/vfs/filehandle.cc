@@ -9,6 +9,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 
 
