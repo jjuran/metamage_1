@@ -24,6 +24,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/node/types/anonymous.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
 
 
 #ifndef O_EXEC
@@ -88,9 +89,11 @@ namespace vfs
 	
 	node_ptr filehandle::GetFile()
 	{
+		const bool is_pipe = !(its_methods  &&  its_methods->socket_methods);
+		
 		const mode_t mode = S_IFIFO | permmode_from_openflags( GetFlags() );
 		
-		return vfs::new_anonymous_node( IOName( this, true ), mode, this );
+		return vfs::new_anonymous_node( IOName( this, is_pipe ), mode, this );
 	}
 	
 	void filehandle::IOCtl( unsigned long request, int* argp )
