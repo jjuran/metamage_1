@@ -90,6 +90,7 @@ namespace Genie
 	
 	static const vfs::filehandle_method_set pairedsocket_methods =
 	{
+		NULL,
 		&pairedsocket_socket_methods,
 	};
 	
