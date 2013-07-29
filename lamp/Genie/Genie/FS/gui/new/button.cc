@@ -43,7 +43,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
-#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -223,7 +222,7 @@ namespace Genie
 	};
 	
 	
-	class Button_socket_Handle : public VirtualFileHandle< StreamHandle >
+	class Button_socket_Handle : public StreamHandle
 	{
 		private:
 			std::size_t itsSeed;
@@ -238,7 +237,7 @@ namespace Genie
 	
 	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, int flags )
 	:
-		VirtualFileHandle< StreamHandle >( file, flags ),
+		StreamHandle( file, flags ),
 		itsSeed( gButtonMap[ file->owner() ].seed )
 	{
 	}

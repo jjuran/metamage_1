@@ -39,7 +39,6 @@
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
 
@@ -344,7 +343,7 @@ namespace Genie
 	}
 	
 	
-	class IconDataFileHandle : public VirtualFileHandle< RegularFileHandle >
+	class IconDataFileHandle : public RegularFileHandle
 	{
 		private:
 			boost::intrusive_ptr< IconData > itsData;
@@ -354,7 +353,7 @@ namespace Genie
 			                    int                                      flags,
 			                    const boost::intrusive_ptr< IconData >&  data )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags ),
+				RegularFileHandle( file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );
@@ -367,7 +366,7 @@ namespace Genie
 			off_t GetEOF()  { return itsData->GetSize(); }
 	};
 	
-	class IconDataWriterHandle : public VirtualFileHandle< StreamHandle >
+	class IconDataWriterHandle : public StreamHandle
 	{
 		private:
 			boost::intrusive_ptr< IconData > itsData;
@@ -377,7 +376,7 @@ namespace Genie
 			                      int                                      flags,
 			                      const boost::intrusive_ptr< IconData >&  data )
 			:
-				VirtualFileHandle< StreamHandle >( file, flags ),
+				StreamHandle( file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );

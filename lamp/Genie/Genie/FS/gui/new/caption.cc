@@ -27,7 +27,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -134,12 +133,12 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class CaptionTextFileHandle : public VirtualFileHandle< RegularFileHandle >
+	class CaptionTextFileHandle : public RegularFileHandle
 	{
 		public:
 			CaptionTextFileHandle( const FSTreePtr& file, int flags )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags )
+				RegularFileHandle( file, flags )
 			{
 			}
 			

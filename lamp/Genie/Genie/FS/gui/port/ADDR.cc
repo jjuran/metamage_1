@@ -61,7 +61,6 @@
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
-#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -942,7 +941,7 @@ namespace Genie
 	};
 	
 	
-	class lock_handle : public VirtualFileHandle< IOHandle >
+	class lock_handle : public IOHandle
 	{
 		private:
 			// non-copyable
@@ -953,7 +952,7 @@ namespace Genie
 			lock_handle( const vfs::node*  file,
 			             int               flags )
 			:
-				VirtualFileHandle< IOHandle >( file, flags )
+				IOHandle( file, flags )
 			{
 				gWindowParametersMap[ file->owner() ].itIsLocked = true;
 			}

@@ -24,7 +24,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
-#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
@@ -57,12 +56,12 @@ namespace Genie
 	}
 	
 	
-	class TextEdit_gate_Handle : public VirtualFileHandle< StreamHandle >
+	class TextEdit_gate_Handle : public StreamHandle
 	{
 		public:
 			TextEdit_gate_Handle( const FSTreePtr& file, int flags )
 			:
-				VirtualFileHandle< StreamHandle >( file, flags )
+				StreamHandle( file, flags )
 			{
 			}
 			

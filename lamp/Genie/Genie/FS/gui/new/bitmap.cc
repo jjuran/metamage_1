@@ -76,7 +76,7 @@ namespace Genie
 		return BitMap_n_bytes( gBitMapMap[ key ].bitmap );
 	}
 	
-	class Bits_IO : public VirtualFileHandle< RegularFileHandle >
+	class Bits_IO : public RegularFileHandle
 	{
 		private:
 			// non-copyable
@@ -86,7 +86,7 @@ namespace Genie
 		public:
 			Bits_IO( const FSTreePtr& file, int flags )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags )
+				RegularFileHandle( file, flags )
 			{
 			}
 			

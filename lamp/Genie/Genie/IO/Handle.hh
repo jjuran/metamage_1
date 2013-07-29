@@ -19,13 +19,12 @@
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
-	class Handle_IOHandle : public VirtualFileHandle< RegularFileHandle >
+	class Handle_IOHandle : public RegularFileHandle
 	{
 		private:
 			nucleus::shared< Mac::Handle > itsHandle;
@@ -38,7 +37,7 @@ namespace Genie
 			                 int                                    flags,
 			                 const nucleus::shared< Mac::Handle >&  h )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags ),
+				RegularFileHandle( file, flags ),
 				itsHandle( h )
 			{
 			}

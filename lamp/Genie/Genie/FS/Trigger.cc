@@ -16,7 +16,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
-#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
@@ -50,13 +49,13 @@ namespace Genie
 		&trigger_data_methods
 	};
 	
-	class TriggerHandle : public VirtualFileHandle< StreamHandle >
+	class TriggerHandle : public StreamHandle
 	{
 		public:
 			TriggerHandle( const FSTreePtr&  file,
 			               int               flags )
 			:
-				VirtualFileHandle< StreamHandle >( file, flags )
+				StreamHandle( file, flags )
 			{
 			}
 			

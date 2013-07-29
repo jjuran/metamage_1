@@ -12,13 +12,12 @@
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
-	class MemoryFileHandle : public VirtualFileHandle< RegularFileHandle >
+	class MemoryFileHandle : public RegularFileHandle
 	{
 		private:
 			char*        itsBase;  // base address
@@ -30,7 +29,7 @@ namespace Genie
 			                  char*             base,
 			                  std::size_t       size )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags ),
+				RegularFileHandle( file, flags ),
 				itsBase( base ),
 				itsSize( size )
 			{
