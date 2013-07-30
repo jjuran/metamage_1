@@ -31,6 +31,8 @@ namespace Genie
 		public:
 			DirHandle();
 			
+			DirHandle( const vfs::node* dir );
+			
 			~DirHandle();
 			
 			bool IsDirectory() const  { return true; }

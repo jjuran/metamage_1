@@ -32,6 +32,12 @@ namespace Genie
 	{
 	}
 	
+	DirHandle::DirHandle( const vfs::node* dir )
+	:
+		IOHandle( dir, O_RDONLY )
+	{
+	}
+	
 	DirHandle::~DirHandle()
 	{
 	}
