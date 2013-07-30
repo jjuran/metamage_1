@@ -12,13 +12,12 @@
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 
 
 namespace Genie
 {
 	
-	class PropertyReaderFileHandle : public VirtualFileHandle< RegularFileHandle >
+	class PropertyReaderFileHandle : public RegularFileHandle
 	{
 		private:
 			plus::string itsData;
@@ -28,7 +27,7 @@ namespace Genie
 			                          int                  flags,
 			                          const plus::string&  value )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags ),
+				RegularFileHandle( file, flags ),
 				itsData( value )
 			{
 			}
@@ -41,7 +40,7 @@ namespace Genie
 	};
 	
 	
-	class PropertyWriterFileHandle : public VirtualFileHandle< StreamHandle >
+	class PropertyWriterFileHandle : public StreamHandle
 	{
 		private:
 			typedef void (*WriteHook)( const FSTree  *that,
@@ -58,7 +57,7 @@ namespace Genie
 			                          WriteHook         writeHook,
 			                          bool              binary )
 			:
-				VirtualFileHandle< StreamHandle >( file, flags ),
+				StreamHandle( file, flags ),
 				itsWriteHook( writeHook ),
 				itIsBinary( binary )
 			{

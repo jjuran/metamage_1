@@ -62,7 +62,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/IO/TTY.hh"
-#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 

@@ -33,6 +33,7 @@ namespace vfs
 	class filehandle : public plus::ref_count< filehandle >
 	{
 		private:
+			node_ptr                      its_file;
 			int                           its_flags;
 			const filehandle_method_set*  its_methods;
 			
@@ -46,6 +47,10 @@ namespace vfs
 			typedef bool (filehandle::*Test)() const;
 			
 			filehandle( int                           flags,
+			            const filehandle_method_set*  methods = NULL );
+			
+			filehandle( const node*                   file,
+			            int                           flags,
 			            const filehandle_method_set*  methods = NULL );
 			
 			virtual ~filehandle();

@@ -92,7 +92,7 @@ namespace Genie
 		return 0;
 	}
 	
-	class Pixels_IO : public VirtualFileHandle< RegularFileHandle >
+	class Pixels_IO : public RegularFileHandle
 	{
 		private:
 			// non-copyable
@@ -102,7 +102,7 @@ namespace Genie
 		public:
 			Pixels_IO( const FSTreePtr& file, int flags )
 			:
-				VirtualFileHandle< RegularFileHandle >( file, flags )
+				RegularFileHandle( file, flags )
 			{
 			}
 			

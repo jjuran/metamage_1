@@ -89,6 +89,11 @@ namespace vfs
 	
 	node_ptr filehandle::GetFile()
 	{
+		if ( its_file.get() )
+		{
+			return its_file;
+		}
+		
 		const bool is_pipe = !(its_methods  &&  its_methods->socket_methods);
 		
 		const mode_t mode = S_IFIFO | permmode_from_openflags( GetFlags() );

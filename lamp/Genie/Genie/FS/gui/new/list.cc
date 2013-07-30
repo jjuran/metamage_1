@@ -31,7 +31,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/VirtualFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -130,12 +129,12 @@ namespace Genie
 	}
 	
 	
-	class List_data_Handle : public VirtualFileHandle< StreamHandle >
+	class List_data_Handle : public StreamHandle
 	{
 		public:
 			List_data_Handle( const FSTreePtr& file, int flags )
 			:
-				VirtualFileHandle< StreamHandle >( file, flags )
+				StreamHandle( file, flags )
 			{
 			}
 			

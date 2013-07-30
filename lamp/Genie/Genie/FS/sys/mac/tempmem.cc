@@ -18,7 +18,7 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/VirtualFile.hh"
+#include "Genie/IO/Base.hh"
 #include "Genie/mmap/Handle_memory_mapping.hh"
 
 
@@ -30,13 +30,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class TempMem_IOHandle : public VirtualFileHandle< IOHandle >
+	class TempMem_IOHandle : public IOHandle
 	{
 		public:
-			TempMem_IOHandle( const FSTreePtr&  file,
+			TempMem_IOHandle( const vfs::node*  file,
 			                  int               flags )
 			:
-				VirtualFileHandle< IOHandle >( file, flags )
+				IOHandle( file, flags )
 			{
 			}
 			
