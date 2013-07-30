@@ -13,21 +13,21 @@
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port.hh"
-#include "Genie/IO/VirtualDirectory.hh"
+#include "Genie/IO/Directory.hh"
 
 
 namespace Genie
 {
 	
-	class OpenWindowHandle : public VirtualDirHandle
+	class OpenWindowHandle : public DirHandle
 	{
 		public:
-			OpenWindowHandle( const FSTreePtr& tree );
+			OpenWindowHandle( const vfs::node* dir );
 			
 			~OpenWindowHandle();
 	};
 	
-	OpenWindowHandle::OpenWindowHandle( const FSTreePtr& tree ) : VirtualDirHandle( tree )
+	OpenWindowHandle::OpenWindowHandle( const vfs::node* dir ) : DirHandle( dir )
 	{
 	}
 	
@@ -40,7 +40,7 @@ namespace Genie
 	{
 		FSTreePtr dir = new_port();
 		
-		return new OpenWindowHandle( dir );
+		return new OpenWindowHandle( dir.get() );
 	}
 	
 	static const dir_method_set new_port_dir_methods =

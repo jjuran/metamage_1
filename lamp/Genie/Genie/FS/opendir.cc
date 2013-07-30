@@ -9,7 +9,7 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/VirtualDirectory.hh"
+#include "Genie/IO/Directory.hh"
 
 
 namespace vfs
@@ -29,7 +29,7 @@ namespace vfs
 			}
 		}
 		
-		return new Genie::VirtualDirHandle( it );
+		return new Genie::DirHandle( it );
 	}
 	
 }
