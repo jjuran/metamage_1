@@ -253,21 +253,17 @@ namespace Genie
 		try
 		{
 			const bool close_on_exec = flags & O_CLOEXEC;
-			const bool nonblocking   = flags & O_NONBLOCK;
 			
-			int reader = LowestUnusedFileDescriptor( 3 );
-			int writer = LowestUnusedFileDescriptor( reader + 1 );
+			int reader_fd = LowestUnusedFileDescriptor( 3 );
+			int writer_fd = LowestUnusedFileDescriptor( reader_fd + 1 );
 			
-			boost::intrusive_ptr< plus::conduit > conduit( new plus::conduit );
+			pipe_ends ends = new_pipe( flags & O_NONBLOCK );
 			
-			IOPtr pipeIn ( new PipeInHandle ( conduit, nonblocking ) );  // writer
-			IOPtr pipeOut( new PipeOutHandle( conduit, nonblocking ) );  // reader
+			AssignFileDescriptor( reader_fd, ends.reader, close_on_exec );
+			AssignFileDescriptor( writer_fd, ends.writer, close_on_exec );
 			
-			AssignFileDescriptor( reader, pipeOut, close_on_exec );
-			AssignFileDescriptor( writer, pipeIn,  close_on_exec );
-			
-			pipefd[ 0 ] = reader;
-			pipefd[ 1 ] = writer;
+			pipefd[ 0 ] = reader_fd;
+			pipefd[ 1 ] = writer_fd;
 		}
 		catch ( ... )
 		{
