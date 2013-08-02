@@ -434,7 +434,7 @@ namespace tool
 			
 			const bool has_trailing_slash = dir.end()[ -1 ] == '/';
 			
-			const char* sentinel = "//" + has_trailing_slash;
+			const char* sentinel = &"//"[ has_trailing_slash ];
 			
 			// dir has trailing slash, add another for sentinel
 			plus::string result = dir + sentinel + relative_path;
