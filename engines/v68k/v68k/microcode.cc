@@ -69,7 +69,7 @@ namespace v68k
 			return;
 		}
 		
-		switch ( pb.size == long_sized )
+		switch ( (pb.size == long_sized) + 0 )  // clang hates boolean switch conditions
 		{
 			case true:
 				p[0] = Dx >> 24;
@@ -102,7 +102,7 @@ namespace v68k
 		
 		uint32_t data = pb.size == long_sized ? 0 : Dx & 0xFFFF0000;
 		
-		switch ( pb.size == long_sized )
+		switch ( (pb.size == long_sized) + 0 )  // clang hates boolean switch conditions
 		{
 			case true:
 				data |= p[0] << 24;
