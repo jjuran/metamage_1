@@ -203,7 +203,7 @@ namespace tool
 			
 			output += " test";
 			
-			output += "s " + (count == 1);
+			output += &"s "[ (count == 1) ];
 			
 			output += status;
 			
