@@ -232,10 +232,7 @@ namespace Nitrogen
 	{
 		static pascal void* Adapter( void* threadParam )
 		{
-			if ( TARGET_CPU_PPC && TARGET_RT_MAC_CFM )
-			{
-				Terminate_ThreadStack();
-			}
+			Terminate_ThreadStack();  // only affects PPC CFM
 			
 			try
 			{
