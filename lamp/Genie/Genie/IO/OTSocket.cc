@@ -10,6 +10,8 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
+#ifndef MAC_OS_X_VERSION_10_8
+
 // Mac OS
 #ifndef __OPENTRANSPORTPROVIDERS__
 #include <OpenTransportProviders.h>
@@ -584,4 +586,6 @@ namespace Genie
 	}
 	
 }
+
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 

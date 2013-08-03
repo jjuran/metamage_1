@@ -8,6 +8,8 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
+#ifndef MAC_OS_X_VERSION_10_8
+
 // Mac OS
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
@@ -157,4 +159,6 @@ namespace Genie
 	#pragma force_active reset
 	
 }
+
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 

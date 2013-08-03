@@ -3,8 +3,10 @@
 #include "OSErrno/OSErrno.hh"
 
 // Mac OS
+#ifndef MAC_OS_X_VERSION_10_8
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
+#endif
 #endif
 
 

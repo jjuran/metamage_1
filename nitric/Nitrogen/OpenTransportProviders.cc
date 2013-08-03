@@ -17,6 +17,8 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_8
+
 using Nitrogen::DefaultInternetServicesPath;
 
 const DefaultInternetServicesPath kDefaultInternetServicesPath = DefaultInternetServicesPath();
@@ -124,4 +126,6 @@ namespace Nitrogen
 	}
 	
 }
+
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 
