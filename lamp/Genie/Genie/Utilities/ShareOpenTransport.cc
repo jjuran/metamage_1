@@ -5,6 +5,13 @@
 
 #include "Genie/Utilities/ShareOpenTransport.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+#ifndef MAC_OS_X_VERSION_10_8
+
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"
 
@@ -37,4 +44,6 @@ namespace Genie
 	}
 	
 }
+
+#endif  // #ifndef MAC_OS_X_VERSION_10_8
 
