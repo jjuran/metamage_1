@@ -58,7 +58,7 @@ namespace Genie
 		return global_rom_size;
 	}
 	
-	static IOPtr mac_rom_open( const FSTree* node, int flags, mode_t mode )
+	static vfs::filehandle_ptr mac_rom_open( const vfs::node* that, int flags, mode_t mode )
 	{
 	#if TARGET_API_MAC_CARBON
 		
@@ -66,10 +66,10 @@ namespace Genie
 		
 	#else
 		
-		return new MemoryFileHandle( node,
-		                             flags,
-		                             LMGetROMBase(),
-		                             global_rom_size );
+		return open_buffer_file( that,
+		                         flags,
+		                         LMGetROMBase(),
+		                         global_rom_size );
 		
 	#endif
 	}

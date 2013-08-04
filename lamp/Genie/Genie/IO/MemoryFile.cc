@@ -78,5 +78,16 @@ namespace Genie
 		return new static_memory_mapping( itsBase + offset, length, flags );
 	}
 	
+	vfs::filehandle_ptr open_buffer_file( const vfs::node*  file,
+	                                      int               flags,
+	                                      char*             addr,
+	                                      std::size_t       size )
+	{
+		return new MemoryFileHandle( file,
+		                             flags,
+		                             addr,
+		                             size );
+	}
+	
 }
 

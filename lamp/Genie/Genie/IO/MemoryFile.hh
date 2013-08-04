@@ -48,6 +48,11 @@ namespace Genie
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
+	vfs::filehandle_ptr open_buffer_file( const vfs::node*  file,
+	                                      int               flags,
+	                                      char*             addr,
+	                                      std::size_t       size );
+	
 }
 
 #endif
