@@ -11,7 +11,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+
 // Genie
+#include "Genie/IO/RegularFile.hh"
 #include "Genie/mmap/static_memory_mapping.hh"
 
 
@@ -20,6 +24,43 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	
+	class MemoryFileHandle : public RegularFileHandle
+	{
+		private:
+			char*        itsBase;  // base address
+			std::size_t  itsSize;
+		
+		public:
+			MemoryFileHandle( const FSTreePtr&  file,
+			                  int               flags,
+			                  char*             base,
+			                  std::size_t       size );
+			
+			~MemoryFileHandle();
+			
+			IOPtr Clone();
+			
+			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
+			
+			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
+			
+			off_t GetEOF()  { return itsSize; }
+			
+			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
+	};
+	
+	
+	MemoryFileHandle::MemoryFileHandle( const FSTreePtr&  file,
+	                                    int               flags,
+	                                    char*             base,
+	                                    std::size_t       size )
+	:
+		RegularFileHandle( file, flags ),
+		itsBase( base ),
+		itsSize( size )
+	{
+	}
 	
 	MemoryFileHandle::~MemoryFileHandle()
 	{
