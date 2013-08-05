@@ -96,13 +96,19 @@ namespace Genie
 	};
 	
 	
-	RegularFileHandle::RegularFileHandle( int flags ) : FileHandle( flags ), itsMark()
+	RegularFileHandle::RegularFileHandle( int                                flags,
+	                                      const vfs::filehandle_method_set*  methods )
+	:
+		FileHandle( flags, methods ),
+		itsMark()
 	{
 	}
 	
-	RegularFileHandle::RegularFileHandle( const vfs::node_ptr& file, int flags )
+	RegularFileHandle::RegularFileHandle( const vfs::node_ptr&               file,
+	                                      int                                flags,
+	                                      const vfs::filehandle_method_set*  methods )
 	:
-		FileHandle( file.get(), flags ),
+		FileHandle( file.get(), flags, methods ),
 		itsMark()
 	{
 	}

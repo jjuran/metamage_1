@@ -19,9 +19,12 @@ namespace Genie
 			off_t itsMark;
 		
 		public:
-			RegularFileHandle( int flags );
+			RegularFileHandle( int                                flags,
+			                   const vfs::filehandle_method_set*  methods = NULL );
 			
-			RegularFileHandle( const vfs::node_ptr& file, int flags );
+			RegularFileHandle( const vfs::node_ptr&               file,
+			                   int                                flags,
+			                   const vfs::filehandle_method_set*  methods = NULL );
 			
 			virtual ~RegularFileHandle();
 			
