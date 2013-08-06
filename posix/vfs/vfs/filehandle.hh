@@ -19,6 +19,7 @@ namespace vfs
 {
 	
 	struct filehandle_method_set;
+	struct bstore_method_set;
 	struct socket_method_set;
 	
 	/*
@@ -68,6 +69,7 @@ namespace vfs
 			
 			const filehandle_method_set* methods() const  { return its_methods; }
 			
+			const bstore_method_set& bstore_methods() const;
 			const socket_method_set& socket_methods() const;
 			
 			virtual filehandle_ptr Clone();

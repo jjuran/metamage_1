@@ -61,6 +61,22 @@ namespace vfs
 	{
 	}
 	
+	const bstore_method_set& filehandle::bstore_methods() const
+	{
+		if ( !its_methods  ||  !its_methods->bstore_methods )
+		{
+			// This confuses MWCPPC when optimizing:
+			//p7::throw_errno( IsDirectory() ? EISDIR : ESPIPE );
+			// internal compiler error: File: 'PCodeUtilities.c' Line: 80
+			
+			const volatile int error = IsDirectory() ? EISDIR : ESPIPE;
+			
+			p7::throw_errno( error );
+		}
+		
+		return *its_methods->bstore_methods;
+	}
+	
 	const socket_method_set& filehandle::socket_methods() const
 	{
 		if ( !its_methods  ||  !its_methods->socket_methods )
