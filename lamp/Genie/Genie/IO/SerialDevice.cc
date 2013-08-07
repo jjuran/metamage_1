@@ -246,7 +246,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
-		DeviceHandle( O_RDWR ),
+		StreamHandle( O_RDWR ),
 		itsPortName( portName ),
 		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
 		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
@@ -266,7 +266,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
 	:
-		DeviceHandle( O_RDWR ),
+		StreamHandle( O_RDWR ),
 		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
@@ -276,7 +276,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
 	:
-		DeviceHandle( O_RDWR ),
+		StreamHandle( O_RDWR ),
 		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
