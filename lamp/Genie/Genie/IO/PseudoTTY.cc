@@ -75,7 +75,7 @@ namespace Genie
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 			                          boost::intrusive_ptr< plus::conduit >  input,
 			                          boost::intrusive_ptr< plus::conduit >  output )
-	: TTYHandle( O_RDWR ),
+	: StreamHandle( O_RDWR ),
 	  itsID( id ),
 	  itsTerminal( NewTerminal( make_devpts( id ) ) ),
 	  itsInput( input ),

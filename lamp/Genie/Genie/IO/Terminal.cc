@@ -3,7 +3,7 @@
  *	===========
  */
 
-#include "Genie/IO/TTY.hh"
+#include "Genie/IO/Terminal.hh"
 
 // Standard C
 #include <signal.h>
@@ -16,7 +16,7 @@
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/IO/Terminal.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessGroup.hh"
 

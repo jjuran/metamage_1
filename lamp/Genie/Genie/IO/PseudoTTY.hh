@@ -16,13 +16,15 @@
 #include "plus/conduit.hh"
 
 // Genie
-#include "Genie/IO/TTY.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class PseudoTTYHandle : public TTYHandle
+	typedef std::size_t TerminalID;
+	
+	class PseudoTTYHandle : public StreamHandle
 	{
 		private:
 			TerminalID                             itsID;

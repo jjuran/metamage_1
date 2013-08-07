@@ -60,8 +60,8 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/IO/Terminal.hh"
-#include "Genie/IO/TTY.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -376,7 +376,7 @@ namespace Genie
 		return new FSTree( parent.get(), name, S_IFCHR | 0600 );
 	}
 	
-	class ConsoleTTYHandle : public TTYHandle
+	class ConsoleTTYHandle : public StreamHandle
 	{
 		private:
 			FSTreePtr  itsTTYFile;
@@ -387,7 +387,7 @@ namespace Genie
 		public:
 			ConsoleTTYHandle( const FSTreePtr& file, unsigned id )
 			:
-				TTYHandle( 0 ),
+				StreamHandle( 0 ),
 				itsTTYFile( file ),
 				itsID( id )
 			{
@@ -738,7 +738,7 @@ namespace Genie
 				break;
 			
 			default:
-				TTYHandle::IOCtl( request, argp );
+				StreamHandle::IOCtl( request, argp );
 				break;
 		};
 	}
