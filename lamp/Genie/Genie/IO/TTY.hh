@@ -7,7 +7,7 @@
 #define GENIE_IO_TTY_HH
 
 // Genie
-#include "Genie/IO/Device.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -15,7 +15,7 @@ namespace Genie
 	
 	typedef std::size_t TerminalID;
 	
-	typedef DeviceHandle TTYHandle;
+	typedef StreamHandle TTYHandle;
 	
 }
 

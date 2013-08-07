@@ -43,7 +43,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/IO/Base.hh"
-#include "Genie/IO/Device.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/ProcessList.hh"

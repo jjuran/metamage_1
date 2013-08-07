@@ -7,13 +7,13 @@
 #define GENIE_IO_REGULARFILE_HH
 
  // Genie
- #include "Genie/IO/File.hh"
+ #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	class RegularFileHandle : public FileHandle
+	class RegularFileHandle : public StreamHandle
 	{
 		private:
 			off_t itsMark;

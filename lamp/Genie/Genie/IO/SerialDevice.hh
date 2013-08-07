@@ -7,7 +7,7 @@
 #define GENIE_IO_SERIALDEVICE_HH
 
 // Genie
-#include "Genie/IO/Device.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie

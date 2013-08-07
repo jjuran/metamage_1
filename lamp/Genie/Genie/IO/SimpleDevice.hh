@@ -10,7 +10,7 @@
 #include <fcntl.h>
 
  // Genie
-#include "Genie/IO/Device.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -26,13 +26,13 @@ namespace Genie
 		Writer writer;
 	};
 	
-	class SimpleDeviceHandle : public DeviceHandle
+	class SimpleDeviceHandle : public StreamHandle
 	{
 		private:
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const DeviceIOSpec& io ) : DeviceHandle( O_RDWR ), io( io )
+			SimpleDeviceHandle( const DeviceIOSpec& io ) : StreamHandle( O_RDWR ), io( io )
 			{
 			}
 			

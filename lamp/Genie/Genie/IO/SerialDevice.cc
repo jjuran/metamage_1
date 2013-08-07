@@ -74,7 +74,7 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	class SerialDeviceHandle : public DeviceHandle
+	class SerialDeviceHandle : public StreamHandle
 	{
 		private:
 			plus::string                    itsPortName;

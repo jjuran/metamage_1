@@ -26,7 +26,7 @@
 
 // Genie
 #include "Genie/FS/ResolvePathname.hh"
-#include "Genie/IO/Device.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -35,10 +35,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class GestaltDeviceHandle : public DeviceHandle
+	class GestaltDeviceHandle : public StreamHandle
 	{
 		public:
-			GestaltDeviceHandle( int flags ) : DeviceHandle( flags )
+			GestaltDeviceHandle( int flags ) : StreamHandle( flags )
 			{
 			}
 			
