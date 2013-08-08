@@ -14,6 +14,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 
 namespace Genie
 {
@@ -22,11 +26,45 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static ssize_t Mac_Handle_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< Handle_IOHandle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t Mac_Handle_geteof( vfs::filehandle* file )
+	{
+		return static_cast< Handle_IOHandle& >( *file ).GetEOF();
+	}
+	
+	static ssize_t Mac_Handle_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< Handle_IOHandle& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static void Mac_Handle_seteof( vfs::filehandle* file, off_t length )
+	{
+		static_cast< Handle_IOHandle& >( *file ).SetEOF( length );
+	}
+	
+	static const vfs::bstore_method_set Mac_Handle_bstore_methods =
+	{
+		&Mac_Handle_pread,
+		&Mac_Handle_geteof,
+		&Mac_Handle_pwrite,
+		&Mac_Handle_seteof,
+	};
+	
+	static const vfs::filehandle_method_set Mac_Handle_methods =
+	{
+		&Mac_Handle_bstore_methods,
+	};
+	
+	
 	Handle_IOHandle::Handle_IOHandle( const FSTreePtr&                       file,
 	                                  int                                    flags,
 	                                  const nucleus::shared< Mac::Handle >&  h )
 	:
-		RegularFileHandle( file, flags ),
+		RegularFileHandle( file, flags, &Mac_Handle_methods ),
 		itsHandle( h )
 	{
 	}
