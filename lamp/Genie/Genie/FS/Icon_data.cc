@@ -27,6 +27,10 @@
 
 #include "Nitrogen/Icons.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 // relix-kernel
 #include "relix/config/color.hh"
 #include "relix/config/iconsuites.hh"
@@ -351,13 +355,7 @@ namespace Genie
 		public:
 			IconDataFileHandle( const FSTreePtr&                         file,
 			                    int                                      flags,
-			                    const boost::intrusive_ptr< IconData >&  data )
-			:
-				RegularFileHandle( file, flags ),
-				itsData( data )
-			{
-				ASSERT( itsData.get() != NULL );
-			}
+			                    const boost::intrusive_ptr< IconData >&  data );
 			
 			IOPtr Clone();
 			
@@ -365,6 +363,40 @@ namespace Genie
 			
 			off_t GetEOF()  { return itsData->GetSize(); }
 	};
+	
+	
+	static ssize_t icon_data_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< IconDataFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t icon_data_geteof( vfs::filehandle* file )
+	{
+		return static_cast< IconDataFileHandle& >( *file ).GetEOF();
+	}
+	
+	static const vfs::bstore_method_set icon_data_bstore_methods =
+	{
+		&icon_data_pread,
+		&icon_data_geteof,
+	};
+	
+	static const vfs::filehandle_method_set icon_data_filehandle_methods =
+	{
+		&icon_data_bstore_methods,
+	};
+	
+	
+	IconDataFileHandle::IconDataFileHandle( const FSTreePtr&                         file,
+	                                        int                                      flags,
+	                                        const boost::intrusive_ptr< IconData >&  data )
+	:
+		RegularFileHandle( file, flags, &icon_data_filehandle_methods ),
+		itsData( data )
+	{
+		ASSERT( itsData.get() != NULL );
+	}
+	
 	
 	class IconDataWriterHandle : public StreamHandle
 	{
