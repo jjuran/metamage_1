@@ -14,6 +14,10 @@
 // plus
 #include "plus/mac_utf8.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/TextEdit.hh"
@@ -50,11 +54,7 @@ namespace Genie
 	class TextEdit_text_Handle : public RegularFileHandle
 	{
 		public:
-			TextEdit_text_Handle( const FSTreePtr& file, int flags )
-			:
-				RegularFileHandle( file, flags )
-			{
-			}
+			TextEdit_text_Handle( const FSTreePtr& file, int flags );
 			
 			IOPtr Clone();
 			
@@ -68,6 +68,47 @@ namespace Genie
 			
 			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
 	};
+	
+	
+	static ssize_t TextEdit_text_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< TextEdit_text_Handle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t TextEdit_text_geteof( vfs::filehandle* file )
+	{
+		return static_cast< TextEdit_text_Handle& >( *file ).GetEOF();
+	}
+	
+	static ssize_t TextEdit_text_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< TextEdit_text_Handle& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static void TextEdit_text_seteof( vfs::filehandle* file, off_t length )
+	{
+		static_cast< TextEdit_text_Handle& >( *file ).SetEOF( length );
+	}
+	
+	static const vfs::bstore_method_set TextEdit_text_bstore_methods =
+	{
+		&TextEdit_text_pread,
+		&TextEdit_text_geteof,
+		&TextEdit_text_pwrite,
+		&TextEdit_text_seteof,
+	};
+	
+	static const vfs::filehandle_method_set TextEdit_text_methods =
+	{
+		&TextEdit_text_bstore_methods,
+	};
+	
+	
+	TextEdit_text_Handle::TextEdit_text_Handle( const FSTreePtr& file, int flags )
+	:
+		RegularFileHandle( file, flags, &TextEdit_text_methods )
+	{
+	}
 	
 	IOPtr TextEdit_text_Handle::Clone()
 	{
