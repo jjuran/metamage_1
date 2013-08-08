@@ -17,6 +17,10 @@
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 // Pedestal
 #include "Pedestal/Caption.hh"
 
@@ -136,11 +140,7 @@ namespace Genie
 	class CaptionTextFileHandle : public RegularFileHandle
 	{
 		public:
-			CaptionTextFileHandle( const FSTreePtr& file, int flags )
-			:
-				RegularFileHandle( file, flags )
-			{
-			}
+			CaptionTextFileHandle( const FSTreePtr& file, int flags );
 			
 			IOPtr Clone();
 			
@@ -156,6 +156,47 @@ namespace Genie
 			
 			void SetEOF( off_t length )  { CaptionText_SetEOF( GetFile().get(), length ); }
 	};
+	
+	
+	static ssize_t caption_text_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< CaptionTextFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t caption_text_geteof( vfs::filehandle* file )
+	{
+		return static_cast< CaptionTextFileHandle& >( *file ).GetEOF();
+	}
+	
+	static ssize_t caption_text_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< CaptionTextFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static void caption_text_seteof( vfs::filehandle* file, off_t length )
+	{
+		static_cast< CaptionTextFileHandle& >( *file ).SetEOF( length );
+	}
+	
+	static const vfs::bstore_method_set caption_text_bstore_methods =
+	{
+		&caption_text_pread,
+		&caption_text_geteof,
+		&caption_text_pwrite,
+		&caption_text_seteof,
+	};
+	
+	static const vfs::filehandle_method_set caption_text_filehandle_methods =
+	{
+		&caption_text_bstore_methods,
+	};
+	
+	
+	CaptionTextFileHandle::CaptionTextFileHandle( const FSTreePtr& file, int flags )
+	:
+		RegularFileHandle( file, flags, &caption_text_filehandle_methods )
+	{
+	}
 	
 	IOPtr CaptionTextFileHandle::Clone()
 	{
