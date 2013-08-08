@@ -11,6 +11,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 
 namespace Genie
 {
@@ -18,11 +22,33 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static ssize_t propertyreader_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< PropertyReaderFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t propertyreader_geteof( vfs::filehandle* file )
+	{
+		return static_cast< PropertyReaderFileHandle& >( *file ).GetEOF();
+	}
+	
+	static const vfs::bstore_method_set propertyreader_bstore_methods =
+	{
+		&propertyreader_pread,
+		&propertyreader_geteof,
+	};
+	
+	static const vfs::filehandle_method_set propertyreader_methods =
+	{
+		&propertyreader_bstore_methods,
+	};
+	
+	
 	PropertyReaderFileHandle::PropertyReaderFileHandle( const FSTreePtr&     file,
 	                                                    int                  flags,
 	                                                    const plus::string&  value )
 	:
-		RegularFileHandle( file, flags ),
+		RegularFileHandle( file, flags, &propertyreader_methods ),
 		itsData( value )
 	{
 	}
