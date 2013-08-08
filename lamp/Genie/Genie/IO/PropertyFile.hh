@@ -25,12 +25,7 @@ namespace Genie
 		public:
 			PropertyReaderFileHandle( const FSTreePtr&     file,
 			                          int                  flags,
-			                          const plus::string&  value )
-			:
-				RegularFileHandle( file, flags ),
-				itsData( value )
-			{
-			}
+			                          const plus::string&  value );
 			
 			IOPtr Clone();
 			

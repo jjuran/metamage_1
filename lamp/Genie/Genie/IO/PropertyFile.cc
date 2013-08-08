@@ -18,6 +18,15 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	PropertyReaderFileHandle::PropertyReaderFileHandle( const FSTreePtr&     file,
+	                                                    int                  flags,
+	                                                    const plus::string&  value )
+	:
+		RegularFileHandle( file, flags ),
+		itsData( value )
+	{
+	}
+	
 	IOPtr PropertyReaderFileHandle::Clone()
 	{
 		return new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData );
