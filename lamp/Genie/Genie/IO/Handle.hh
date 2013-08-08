@@ -35,12 +35,7 @@ namespace Genie
 		public:
 			Handle_IOHandle( const FSTreePtr&                       file,
 			                 int                                    flags,
-			                 const nucleus::shared< Mac::Handle >&  h )
-			:
-				RegularFileHandle( file, flags ),
-				itsHandle( h )
-			{
-			}
+			                 const nucleus::shared< Mac::Handle >&  h );
 			
 			~Handle_IOHandle();
 			

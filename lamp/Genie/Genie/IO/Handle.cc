@@ -22,6 +22,15 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	Handle_IOHandle::Handle_IOHandle( const FSTreePtr&                       file,
+	                                  int                                    flags,
+	                                  const nucleus::shared< Mac::Handle >&  h )
+	:
+		RegularFileHandle( file, flags ),
+		itsHandle( h )
+	{
+	}
+	
 	Handle_IOHandle::~Handle_IOHandle()
 	{
 	}
