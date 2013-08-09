@@ -57,7 +57,6 @@ namespace vfs
 			
 			virtual bool IsStream     () const  { return false; }
 			virtual bool IsRegularFile() const  { return false; }
-			virtual bool IsSocket     () const  { return false; }
 			virtual bool IsTerminal   () const  { return false; }
 			virtual bool IsDirectory  () const  { return false; }
 			
