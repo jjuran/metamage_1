@@ -79,7 +79,7 @@ namespace Genie
 			
 			const bool close_on_exec = flags & O_CLOEXEC;
 			
-			AssignFileDescriptor( fd, opened, close_on_exec );
+			assign_file_descriptor( fd, *opened, close_on_exec );
 			
 			return fd;
 		}

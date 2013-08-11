@@ -259,8 +259,8 @@ namespace Genie
 			
 			pipe_ends ends = new_pipe( flags & O_NONBLOCK );
 			
-			AssignFileDescriptor( reader_fd, ends.reader, close_on_exec );
-			AssignFileDescriptor( writer_fd, ends.writer, close_on_exec );
+			assign_file_descriptor( reader_fd, *ends.reader, close_on_exec );
+			assign_file_descriptor( writer_fd, *ends.writer, close_on_exec );
 			
 			pipefd[ 0 ] = reader_fd;
 			pipefd[ 1 ] = writer_fd;

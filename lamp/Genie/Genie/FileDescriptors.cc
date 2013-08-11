@@ -43,15 +43,15 @@ namespace Genie
 		
 		if ( oldfd != newfd )
 		{
-			AssignFileDescriptor( newfd, handle, close_on_exec );
+			assign_file_descriptor( newfd, *handle, close_on_exec );
 		}
 		
 		return newfd;
 	}
 	
-	void AssignFileDescriptor( int           fd,
-	                           const IOPtr&  handle,
-	                           bool          close_on_exec )
+	void assign_file_descriptor( int               fd,
+	                             vfs::filehandle&  handle,
+	                             bool              close_on_exec )
 	{
 		if ( fd < 0 )
 		{
@@ -60,7 +60,7 @@ namespace Genie
 		
 		relix::fd_table& files = CurrentProcess().FileDescriptors();
 		
-		(files[ fd ] = handle).set_to_close_on_exec( close_on_exec );
+		(files[ fd ] = vfs::filehandle_ptr( &handle )).set_to_close_on_exec( close_on_exec );
 	}
 	
 	vfs::file_descriptor& GetFileDescriptor( int fd )

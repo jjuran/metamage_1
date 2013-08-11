@@ -32,8 +32,8 @@ static int ttypair( int fds[ 2 ] )
 		int master_fd = LowestUnusedFileDescriptor( 3 );
 		int slave_fd  = LowestUnusedFileDescriptor( master_fd + 1 );
 		
-		AssignFileDescriptor( master_fd, master );
-		AssignFileDescriptor( slave_fd,  slave  );
+		assign_file_descriptor( master_fd, *master );
+		assign_file_descriptor( slave_fd,  *slave  );
 		
 		fds[ 0 ] = master_fd;
 		fds[ 1 ] = slave_fd;
