@@ -22,6 +22,9 @@
 
 // vfs
 #include "vfs/primitives/seteof.hh"
+#include "vfs/filehandle/primitives/pread.hh"
+#include "vfs/filehandle/primitives/pwrite.hh"
+#include "vfs/filehandle/primitives/seteof.hh"
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
@@ -312,11 +315,10 @@ namespace Genie
 		
 		try
 		{
-			RegularFileHandle& file = GetFileHandleWithCast< RegularFileHandle >( fd, ESPIPE );
-			
-			int get = file.Positioned_Read( reinterpret_cast< char* >( buf ),
-			                                count,
-			                                offset );
+			ssize_t get = pread( get_filehandle( fd ),
+			                     (char*) buf,
+			                     count,
+			                     offset );
 			
 			return get;
 		}
@@ -451,14 +453,7 @@ namespace Genie
 	{
 		try
 		{
-			IOHandle* h = &get_filehandle( fd );
-			
-			typedef RegularFileHandle FileHandle;
-			
-			if ( FileHandle* fh = IOHandle_Cast< FileHandle >( h ) )
-			{
-				fh->SetEOF( length );
-			}
+			seteof( get_filehandle( fd ), length );
 		}
 		catch ( ... )
 		{
@@ -478,11 +473,11 @@ namespace Genie
 		
 		try
 		{
-			RegularFileHandle& file = GetFileHandleWithCast< RegularFileHandle >( fd, ESPIPE );
+			vfs::filehandle& file = get_filehandle( fd );
 			
 			const char* buffer = reinterpret_cast< const char* >( buf );
 			
-			const ssize_t put = file.Positioned_Write( buffer, count, offset );
+			const ssize_t put = pwrite( file, buffer, count, offset );
 			
 			return put;
 		}

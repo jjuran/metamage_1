@@ -11,6 +11,7 @@
 #include "sys/stat.h"
 
 // vfs
+#include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/primitives/chmod.hh"
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/stat.hh"
@@ -143,7 +144,7 @@ namespace Genie
 			{
 				try
 				{
-					sb->st_size = IOHandle_Cast< RegularFileHandle >( handle ).GetEOF();
+					sb->st_size = geteof( handle );
 				}
 				catch ( ... )
 				{
