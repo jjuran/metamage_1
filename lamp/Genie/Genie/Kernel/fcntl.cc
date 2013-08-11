@@ -9,9 +9,11 @@
 // POSIX
 #include "fcntl.h"
 
+// vfs
+#include "vfs/file_descriptor.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"

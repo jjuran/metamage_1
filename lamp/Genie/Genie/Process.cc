@@ -68,6 +68,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/file_descriptor.hh"
 #include "vfs/primitives/stat.hh"
 
 // vfs-relix
@@ -81,7 +82,6 @@
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/Dispatch/system_call.ppc.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"

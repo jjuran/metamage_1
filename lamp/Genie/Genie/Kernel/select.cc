@@ -10,13 +10,15 @@
 #include "sys/select.h"
 #include "unistd.h"
 
+// vfs
+#include "vfs/file_descriptor.hh"
+
 // Pedestal
 #include "Pedestal/Application.hh"
 
 // Genie
 #include "Genie/api/yield.hh"
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"

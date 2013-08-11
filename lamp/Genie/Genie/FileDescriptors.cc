@@ -11,8 +11,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/file_descriptor.hh"
+
 // Genie
-#include "Genie/FileDescriptor.hh"
 #include "Genie/Process.hh"
 
 

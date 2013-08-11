@@ -46,12 +46,12 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // vfs
+#include "vfs/file_descriptor.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/primitives/attach.hh"
 
 // Genie
 #include "Genie/Devices.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/ResolvePathname.hh"

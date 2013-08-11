@@ -12,9 +12,11 @@
 // OSErrno
 #include "OSErrno/OSErrno.hh"
 
+// vfs
+#include "vfs/file_descriptor.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptor.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
