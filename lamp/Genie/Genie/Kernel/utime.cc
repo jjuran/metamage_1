@@ -48,7 +48,7 @@ namespace Genie
 		try
 		{
 			FSTreePtr file = path != NULL ? ResolvePathAt( fd, path )
-			                              : GetFileHandle( fd )->GetFile();
+			                              : get_filehandle( fd ).GetFile();
 			
 			const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
 			

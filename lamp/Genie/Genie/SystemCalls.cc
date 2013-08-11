@@ -203,12 +203,14 @@ namespace Genie
 	{
 		try
 		{
-			if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( GetFileHandle( fd ).get() ) )
+			vfs::filehandle* file = &get_filehandle( fd );
+			
+			if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( file ) )
 			{
 				return fh->Seek( offset, whence );
 			}
 			
-			if ( DirHandle* h = IOHandle_Cast< DirHandle >( GetFileHandle( fd ).get() ) )
+			if ( DirHandle* h = IOHandle_Cast< DirHandle >( file ) )
 			{
 				return h->Seek( offset, whence );
 			}
@@ -447,7 +449,7 @@ namespace Genie
 	{
 		try
 		{
-			IOHandle* h = GetFileHandle( fd ).get();
+			IOHandle* h = &get_filehandle( fd );
 			
 			typedef RegularFileHandle FileHandle;
 			

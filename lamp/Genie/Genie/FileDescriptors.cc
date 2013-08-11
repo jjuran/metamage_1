@@ -39,11 +39,11 @@ namespace Genie
 	int DuplicateFileDescriptor( int oldfd, int newfd, bool close_on_exec )
 	{
 		// Throws EBADF
-		IOPtr const& handle = GetFileHandle( oldfd );
+		vfs::filehandle& handle = get_filehandle( oldfd );
 		
 		if ( oldfd != newfd )
 		{
-			assign_file_descriptor( newfd, *handle, close_on_exec );
+			assign_file_descriptor( newfd, handle, close_on_exec );
 		}
 		
 		return newfd;
@@ -70,9 +70,9 @@ namespace Genie
 		return files.at( fd );
 	}
 	
-	IOPtr const& GetFileHandle( int fd )
+	vfs::filehandle& get_filehandle( int fd )
 	{
-		return GetFileDescriptor( fd ).handle;
+		return *GetFileDescriptor( fd ).handle;
 	}
 	
 }

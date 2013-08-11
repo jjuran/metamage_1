@@ -42,7 +42,7 @@ namespace Genie
 			typedef void*                                   addr_t;
 			
 			const intrusive_ptr memory = anonymous ? map_anonymous           ( len, prot, flags      )
-			                                       : GetFileHandle( fd )->Map( len, prot, flags, off );
+			                                       : get_filehandle( fd ).Map( len, prot, flags, off );
 			
 			const addr_t address = current_process().add_memory_mapping( memory.get() );
 			

@@ -85,7 +85,7 @@ namespace Genie
 	{
 		try
 		{
-			chmod( GetFileHandle( fd )->GetFile().get(), mode );
+			chmod( get_filehandle( fd ).GetFile().get(), mode );
 		}
 		catch ( ... )
 		{
@@ -135,7 +135,7 @@ namespace Genie
 		
 		try
 		{
-			IOHandle& handle = *GetFileHandle( fd );
+			IOHandle& handle = get_filehandle( fd );
 			
 			stat( handle.GetFile().get(), *sb );
 			

@@ -35,12 +35,12 @@ namespace Genie
 	
 	vfs::file_descriptor& GetFileDescriptor( int fd );
 	
-	IOPtr const& GetFileHandle( int fd );
+	vfs::filehandle& get_filehandle( int fd );
 	
 	template < class Handle >
 	inline Handle& GetFileHandleWithCast( int fd, int errnum = 0 )
 	{
-		return IOHandle_Cast< Handle >( *GetFileHandle( fd ), errnum );
+		return IOHandle_Cast< Handle >( get_filehandle( fd ), errnum );
 	}
 	
 }

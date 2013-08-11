@@ -113,7 +113,7 @@ int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 	
 	try
 	{
-		bind( *GetFileHandle( fd ), *name, namelen );
+		bind( get_filehandle( fd ), *name, namelen );
 	}
 	catch ( ... )
 	{
@@ -130,7 +130,7 @@ int listen( int fd, int backlog )
 	
 	try
 	{
-		listen( *GetFileHandle( fd ), backlog );
+		listen( get_filehandle( fd ), backlog );
 	}
 	catch ( ... )
 	{
@@ -162,7 +162,7 @@ int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 		// addr != NULL  implies  addrlen != NULL
 		socklen_t& length = addr != NULL ? *addrlen : dummy_length;
 		
-		vfs::filehandle_ptr incoming = accept( *GetFileHandle( listener ), address, length );
+		vfs::filehandle_ptr incoming = accept( get_filehandle( listener ), address, length );
 		
 		int fd = LowestUnusedFileDescriptor();
 		
@@ -193,7 +193,7 @@ int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	
 	try
 	{
-		connect( *GetFileHandle( fd ), *serv_addr, addrlen );
+		connect( get_filehandle( fd ), *serv_addr, addrlen );
 	}
 	catch ( ... )
 	{
@@ -226,7 +226,7 @@ int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 	
 	try
 	{
-		const sockaddr& addr = getsockname( *GetFileHandle( fd ) );
+		const sockaddr& addr = getsockname( get_filehandle( fd ) );
 		
 		get_sockaddr_name( addr, name, namelen );
 	}
@@ -245,7 +245,7 @@ int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	
 	try
 	{
-		const sockaddr& addr = getpeername( *GetFileHandle( fd ) );
+		const sockaddr& addr = getpeername( get_filehandle( fd ) );
 		
 		get_sockaddr_name( addr, name, namelen );
 	}
@@ -264,7 +264,7 @@ int shutdown( int fd, int how )
 	
 	try
 	{
-		shutdown( *GetFileHandle( fd ), how );
+		shutdown( get_filehandle( fd ), how );
 	}
 	catch ( ... )
 	{
