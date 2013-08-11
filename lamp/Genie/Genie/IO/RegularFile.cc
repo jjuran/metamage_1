@@ -118,20 +118,6 @@ namespace Genie
 	{
 	}
 	
-	ssize_t RegularFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
-	{
-		p7::throw_errno( EPERM );
-		
-		return 0;
-	}
-	
-	ssize_t RegularFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
-	{
-		p7::throw_errno( EPERM );
-		
-		return 0;
-	}
-	
 	ssize_t RegularFileHandle::Append( const char* buffer, size_t n_bytes )
 	{
 		itsMark = geteof( *this );
@@ -187,16 +173,6 @@ namespace Genie
 		itsMark = base + offset;
 		
 		return itsMark;
-	}
-	
-	off_t RegularFileHandle::GetEOF()
-	{
-		return geteof( GetFile().get() );
-	}
-	
-	void RegularFileHandle::SetEOF( off_t length )
-	{
-		seteof( GetFile().get(), length );
 	}
 	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
