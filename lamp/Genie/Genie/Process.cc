@@ -76,9 +76,9 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
+#include "relix/signal/caught_signal.hh"
 
 // Genie
-#include "Genie/caught_signal.hh"
 #include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/Dispatch/system_call.ppc.hh"
@@ -1487,7 +1487,7 @@ namespace Genie
 					continue;
 				}
 				
-				const caught_signal caught = { signo, action };
+				const relix::caught_signal caught = { signo, action };
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{

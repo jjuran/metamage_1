@@ -14,8 +14,10 @@
 // OSErrno
 #include "OSErrno/OSErrno.hh"
 
+// relix-kernel
+#include "relix/signal/caught_signal.hh"
+
 // Genie
-#include "Genie/caught_signal.hh"
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
 
@@ -36,9 +38,9 @@ namespace Genie
 		{
 			return errnum;
 		}
-		catch ( const caught_signal& signal )
+		catch ( const relix::caught_signal& signal )
 		{
-			the_caught_signal = signal;
+			relix::the_caught_signal = signal;
 			
 			return EINTR;
 		}

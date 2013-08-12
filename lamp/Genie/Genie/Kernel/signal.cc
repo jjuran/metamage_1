@@ -9,8 +9,10 @@
 // POSIX
 #include "signal.h"
 
+// relix-kernel
+#include "relix/signal/caught_signal.hh"
+
 // Genie
-#include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -225,7 +227,7 @@ namespace Genie
 		
 		current.SetBlockedSignals( previous );
 		
-		prevent_syscall_restart();
+		relix::prevent_syscall_restart();
 		
 		return -1;  // EINTR
 	}

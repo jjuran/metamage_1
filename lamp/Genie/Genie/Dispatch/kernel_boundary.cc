@@ -10,8 +10,10 @@
 #include "Nitrogen/Threads.hh"
 #endif
 
+// relix-kernel
+#include "relix/signal/caught_signal.hh"
+
 // Genie
-#include "Genie/caught_signal.hh"
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
 #include "Genie/api/breathe.hh"
@@ -31,7 +33,7 @@ namespace Genie
 	extern class Process* gCurrentProcess;
 	
 	
-	static void call_signal_handler( const caught_signal& signal )
+	static void call_signal_handler( const relix::caught_signal& signal )
 	{
 		const sigset_t signo_mask = 1 << signal.signo - 1;
 		
@@ -72,7 +74,7 @@ namespace Genie
 		{
 			breathe( true );
 		}
-		catch ( const caught_signal& signal )
+		catch ( const relix::caught_signal& signal )
 		{
 			gCurrentProcess->LeaveSystemCall();
 			
@@ -88,11 +90,11 @@ namespace Genie
 	{
 		gCurrentProcess->LeaveSystemCall();
 		
-		if ( the_caught_signal.signo )
+		if ( relix::the_caught_signal.signo )
 		{
-			const caught_signal signal = the_caught_signal;
+			const relix::caught_signal signal = relix::the_caught_signal;
 			
-			the_caught_signal.signo = 0;
+			relix::the_caught_signal.signo = 0;
 			
 			call_signal_handler( signal );
 			

@@ -16,8 +16,10 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 
+// relix-kernel
+#include "relix/signal/caught_signal.hh"
+
 // Genie
-#include "Genie/caught_signal.hh"
 #include "Genie/current_process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/api/yield.hh"
@@ -115,7 +117,7 @@ namespace Genie
 			
 			result = set_errno_from_exception();
 			
-			prevent_syscall_restart();
+			relix::prevent_syscall_restart();
 		}
 		
 		set_timespec_microseconds( remaining, std::max( remaining_microseconds, 0LL ) );
