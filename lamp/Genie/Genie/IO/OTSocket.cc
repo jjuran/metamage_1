@@ -293,6 +293,7 @@ namespace Genie
 	
 	static const vfs::filehandle_method_set OT_methods =
 	{
+		NULL,
 		&OT_socket_methods,
 	};
 	

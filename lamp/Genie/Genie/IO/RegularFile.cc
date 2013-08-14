@@ -20,6 +20,9 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/geteof.hh"
+#include "vfs/filehandle/primitives/pread.hh"
+#include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/mmap/types/file_memory_mapping.hh"
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/seteof.hh"
@@ -65,13 +68,11 @@ namespace Genie
 	
 	void file_memory_mapping::msync( void* addr, size_t len, int flags ) const
 	{
-		RegularFileHandle& file = static_cast< RegularFileHandle& >( *get_file() );
-		
 		const int mmap_flags = get_flags();
 		
 		if ( (mmap_flags & (MAP_SHARED|MAP_PRIVATE)) == MAP_SHARED )
 		{
-			file.Positioned_Write( (const char*) addr, len, its_offset );
+			pwrite( *get_file(), (const char*) addr, len, its_offset );
 		}
 	}
 	
@@ -117,32 +118,19 @@ namespace Genie
 	{
 	}
 	
-	ssize_t RegularFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
-	{
-		p7::throw_errno( EPERM );
-		
-		return 0;
-	}
-	
-	ssize_t RegularFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
-	{
-		p7::throw_errno( EPERM );
-		
-		return 0;
-	}
-	
 	ssize_t RegularFileHandle::Append( const char* buffer, size_t n_bytes )
 	{
-		itsMark = GetEOF();
+		itsMark = geteof( *this );
 		
-		return Positioned_Write( buffer, n_bytes, itsMark );
+		return pwrite( *this, buffer, n_bytes, itsMark );
 	}
 	
 	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
 	{
-		ssize_t read = Positioned_Read( buffer,
-		                                n_bytes,
-		                                GetFileMark() );
+		ssize_t read = pread( *this,
+		                      buffer,
+		                      n_bytes,
+		                      GetFileMark() );
 		
 		return Advance( read );
 	}
@@ -152,9 +140,10 @@ namespace Genie
 		const bool appending = GetFlags() & O_APPEND;
 		
 		ssize_t written = appending ? Append( buffer, n_bytes )
-		                            : Positioned_Write( buffer,
-		                                                n_bytes,
-		                                                GetFileMark() );
+		                            : pwrite( *this,
+		                                      buffer,
+		                                      n_bytes,
+		                                      GetFileMark() );
 		
 		return Advance( written );
 	}
@@ -174,7 +163,7 @@ namespace Genie
 				break;
 			
 			case SEEK_END:
-				base = GetEOF();
+				base = geteof( *this );
 				break;
 			
 			default:
@@ -184,16 +173,6 @@ namespace Genie
 		itsMark = base + offset;
 		
 		return itsMark;
-	}
-	
-	off_t RegularFileHandle::GetEOF()
-	{
-		return geteof( GetFile().get() );
-	}
-	
-	void RegularFileHandle::SetEOF( off_t length )
-	{
-		seteof( GetFile().get(), length );
 	}
 	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
@@ -230,7 +209,7 @@ namespace Genie
 		
 		void* addr = mapping->get_address();
 		
-		ssize_t count = Positioned_Read( (char*) addr, length, offset );
+		ssize_t count = pread( *this, (char*) addr, length, offset );
 		
 		if ( count < length )
 		{

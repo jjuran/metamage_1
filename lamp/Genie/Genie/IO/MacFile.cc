@@ -5,6 +5,10 @@
 
 #include "Genie/IO/MacFile.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
@@ -59,6 +63,40 @@ namespace Genie
 			off_t GetEOF()  { return Nitrogen::GetEOF( itsRefNum ); }
 			
 			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
+	};
+	
+	
+	static ssize_t hfs_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< MacFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t hfs_geteof( vfs::filehandle* file )
+	{
+		return static_cast< MacFileHandle& >( *file ).GetEOF();
+	}
+	
+	static ssize_t hfs_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< MacFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static void hfs_seteof( vfs::filehandle* file, off_t length )
+	{
+		static_cast< MacFileHandle& >( *file ).SetEOF( length );
+	}
+	
+	static const vfs::bstore_method_set hfs_bstore_methods =
+	{
+		&hfs_pread,
+		&hfs_geteof,
+		&hfs_pwrite,
+		&hfs_seteof,
+	};
+	
+	static const vfs::filehandle_method_set hfs_methods =
+	{
+		&hfs_bstore_methods,
 	};
 	
 	
@@ -122,7 +160,7 @@ namespace Genie
 	MacFileHandle::MacFileHandle( const n::shared< N::FSFileRefNum >&  refNum,
 	                              int                                  flags,
 	                              FileGetter                           getFile )
-	: RegularFileHandle( flags  ),
+	: RegularFileHandle( flags, &hfs_methods ),
 	  itsRefNum        ( refNum ),
 	  itsFileGetter    ( getFile )
 	{

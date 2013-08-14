@@ -14,8 +14,8 @@ namespace Genie
 {
 	
 	using vfs::open_method;
-	using vfs::geteof_method;
-	using vfs::seteof_method;
+	using vfs::getfsize_method;
+	using vfs::truncate_method;
 	
 	using vfs::data_method_set;
 	

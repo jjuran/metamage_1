@@ -5,26 +5,20 @@
 
 #include "vfs/filehandle/functions/truncate.hh"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
-// Genie
-#include "Genie/IO/RegularFile.hh"
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/seteof.hh"
 
 
 namespace vfs
 {
 	
-	namespace p7 = poseven;
-	
-	
 	void truncate( filehandle* that )
 	{
-		using namespace Genie;
-		
-		if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( that ) )
+		if ( that->methods()  &&  that->methods()->bstore_methods )
 		{
-			fh->SetEOF( 0 );
+			seteof( *that, 0 );
 		}
 	}
 	

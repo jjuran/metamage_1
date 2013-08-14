@@ -24,6 +24,10 @@
 // Nitrogen
 #include "Nitrogen/QDOffscreen.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 // Pedestal
 #include "Pedestal/View.hh"
 
@@ -100,11 +104,7 @@ namespace Genie
 			Pixels_IO& operator=( const Pixels_IO& );
 		
 		public:
-			Pixels_IO( const FSTreePtr& file, int flags )
-			:
-				RegularFileHandle( file, flags )
-			{
-			}
+			Pixels_IO( const FSTreePtr& file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -118,6 +118,41 @@ namespace Genie
 			
 			//void Synchronize( bool metadata );
 	};
+	
+	
+	static ssize_t pixels_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< Pixels_IO& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t pixels_geteof( vfs::filehandle* file )
+	{
+		return static_cast< Pixels_IO& >( *file ).GetEOF();
+	}
+	
+	static ssize_t pixels_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< Pixels_IO& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static const vfs::bstore_method_set pixels_bstore_methods =
+	{
+		&pixels_pread,
+		&pixels_geteof,
+		&pixels_pwrite,
+	};
+	
+	static const vfs::filehandle_method_set pixels_methods =
+	{
+		&pixels_bstore_methods,
+	};
+	
+	
+	Pixels_IO::Pixels_IO( const FSTreePtr& file, int flags )
+	:
+		RegularFileHandle( file, flags, &pixels_methods )
+	{
+	}
 	
 	const FSTree* Pixels_IO::ViewKey()
 	{

@@ -13,6 +13,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
 
 // Genie
 #include "Genie/IO/RegularFile.hh"
@@ -51,12 +53,40 @@ namespace Genie
 	};
 	
 	
+	static ssize_t buffer_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< MemoryFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t buffer_geteof( vfs::filehandle* file )
+	{
+		return static_cast< MemoryFileHandle& >( *file ).GetEOF();
+	}
+	
+	static ssize_t buffer_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< MemoryFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static const vfs::bstore_method_set buffer_bstore_methods =
+	{
+		&buffer_pread,
+		&buffer_geteof,
+		&buffer_pwrite,
+	};
+	
+	static const vfs::filehandle_method_set buffer_methods =
+	{
+		&buffer_bstore_methods,
+	};
+	
+	
 	MemoryFileHandle::MemoryFileHandle( const FSTreePtr&  file,
 	                                    int               flags,
 	                                    char*             base,
 	                                    std::size_t       size )
 	:
-		RegularFileHandle( file, flags ),
+		RegularFileHandle( file, flags, &buffer_methods ),
 		itsBase( base ),
 		itsSize( size )
 	{

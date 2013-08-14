@@ -29,6 +29,8 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/file_descriptor.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
@@ -605,9 +607,9 @@ namespace Genie
 	{
 		IOHandle* handle = get_proc_fd_handle( node );
 		
-		if ( RegularFileHandle* file = IOHandle_Cast< RegularFileHandle >( handle ) )
+		if ( handle->methods()->bstore_methods != NULL )
 		{
-			return file->GetEOF();
+			return geteof( *handle );
 		}
 		
 		return 0;

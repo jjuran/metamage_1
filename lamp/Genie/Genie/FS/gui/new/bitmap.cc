@@ -25,6 +25,10 @@
 #include "Nitrogen/MacMemory.hh"
 #include "Nitrogen/Quickdraw.hh"
 
+// vfs
+#include "vfs/filehandle/methods/bstore_method_set.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+
 // MacVFS
 #include "MacVFS/mmap/Ptr_memory_mapping.hh"
 
@@ -84,11 +88,7 @@ namespace Genie
 			Bits_IO& operator=( const Bits_IO& );
 		
 		public:
-			Bits_IO( const FSTreePtr& file, int flags )
-			:
-				RegularFileHandle( file, flags )
-			{
-			}
+			Bits_IO( const FSTreePtr& file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -105,6 +105,40 @@ namespace Genie
 			//void Synchronize( bool metadata );
 	};
 	
+	
+	static ssize_t bits_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< Bits_IO& >( *file ).Positioned_Read( buffer, n, offset );
+	}
+	
+	static off_t bits_geteof( vfs::filehandle* file )
+	{
+		return static_cast< Bits_IO& >( *file ).GetEOF();
+	}
+	
+	static ssize_t bits_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return static_cast< Bits_IO& >( *file ).Positioned_Write( buffer, n, offset );
+	}
+	
+	static const vfs::bstore_method_set bits_bstore_methods =
+	{
+		&bits_pread,
+		&bits_geteof,
+		&bits_pwrite,
+	};
+	
+	static const vfs::filehandle_method_set bits_methods =
+	{
+		&bits_bstore_methods,
+	};
+	
+	
+	Bits_IO::Bits_IO( const FSTreePtr& file, int flags )
+	:
+		RegularFileHandle( file, flags, &bits_methods )
+	{
+	}
 	
 	class bits_memory_mapping : public vfs::Ptr_memory_mapping
 	{
