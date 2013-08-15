@@ -18,7 +18,7 @@
 
 // Genie
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/mmap/static_memory_mapping.hh"
+#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie
@@ -146,7 +146,7 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new static_memory_mapping( itsBase + offset, length, flags );
+		return new memory_mapping( itsBase + offset, length, flags );
 	}
 	
 	vfs::filehandle_ptr open_buffer_file( const vfs::node*  file,
