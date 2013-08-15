@@ -9,6 +9,9 @@
 // Relix
 #include "relix/parameter_block.h"
 #include "relix/config/syscall_stacks.hh"
+#include "relix/task/fd_table.hh"
+#include "relix/task/fs_info.hh"
+#include "relix/task/memory_data.hh"
 #include "relix/task/signal_handlers.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/vfork_context.hh"
@@ -18,6 +21,7 @@
 
 // plus
 #include "plus/ref_count.hh"
+#include "plus/string.hh"
 
 // Recall
 #include "recall/stack_crawl.hh"
@@ -41,9 +45,6 @@
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
 #include "Genie/ProcessGroup.hh"
-#include "Genie/task/fd_table.hh"
-#include "Genie/task/fs_info.hh"
-#include "Genie/task/memory_data.hh"
 
 
 namespace Genie
@@ -140,7 +141,7 @@ namespace Genie
 			
 			shared_exec_handle  its_exec_handle;
 			
-			boost::intrusive_ptr< memory_data > its_memory_data;
+			boost::intrusive_ptr< relix::memory_data > its_memory_data;
 			
 			void* itsReexecArgs[8];
 			
@@ -187,7 +188,7 @@ namespace Genie
 			
 			typedef void* addr_t;
 			
-			addr_t add_memory_mapping( const memory_mapping* mapping )
+			addr_t add_memory_mapping( const vfs::memory_mapping* mapping )
 			{
 				return its_memory_data->add_memory_mapping( mapping );
 			}

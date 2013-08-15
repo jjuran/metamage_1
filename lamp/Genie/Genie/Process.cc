@@ -141,6 +141,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	using relix::memory_data;
+	
+	
 	static uint64_t microseconds()
 	{
 		return clock();
