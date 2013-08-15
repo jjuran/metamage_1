@@ -11,8 +11,8 @@
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
-// Genie
-#include "Genie/mmap/Handle_memory_mapping.hh"
+// MacVFS
+#include "MacVFS/mmap/Handle_memory_mapping.hh"
 
 
 namespace Genie
@@ -48,7 +48,7 @@ namespace Genie
 			memset( *handle.get(), '\0', length );
 		}
 		
-		return new Handle_memory_mapping( handle, length, flags );
+		return new vfs::Handle_memory_mapping( handle, length, flags );
 	}
 	
 }

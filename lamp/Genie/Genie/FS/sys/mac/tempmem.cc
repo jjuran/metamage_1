@@ -14,12 +14,14 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// MacVFS
+#include "MacVFS/mmap/Handle_memory_mapping.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Base.hh"
-#include "Genie/mmap/Handle_memory_mapping.hh"
 
 
 namespace Genie
@@ -54,7 +56,7 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::TempNewHandle( length );
 		
-		return new Handle_memory_mapping( h, length, flags );
+		return new vfs::Handle_memory_mapping( h, length, flags );
 	}
 	
 	

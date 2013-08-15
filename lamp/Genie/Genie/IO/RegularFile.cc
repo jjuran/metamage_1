@@ -27,8 +27,8 @@
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/seteof.hh"
 
-// Genie
-#include "Genie/mmap/Handle_memory_mapping.hh"
+// MacVFS
+#include "MacVFS/mmap/Handle_memory_mapping.hh"
 
 
 namespace Genie
@@ -200,7 +200,7 @@ namespace Genie
 			
 			n::owned< N::Handle > h = N::TempNewHandle( length );
 			
-			mapping = new Handle_memory_mapping( h, length, flags );
+			mapping = new vfs::Handle_memory_mapping( h, length, flags );
 		}
 		
 		memory_mapping_ptr result( mapping );
