@@ -76,7 +76,7 @@ namespace Genie
 		}
 	}
 	
-	class malloc_memory_mapping : public memory_mapping
+	class malloc_memory_mapping : public vfs::memory_mapping
 	{
 		private:
 			// non-copyable
@@ -184,7 +184,7 @@ namespace Genie
 	//
 	RegularFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
-		memory_mapping* mapping = NULL;
+		vfs::memory_mapping* mapping = NULL;
 		
 		if ( const bool small = length < 64 * 1024 )
 		{

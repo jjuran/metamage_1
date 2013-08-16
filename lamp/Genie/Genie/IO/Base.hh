@@ -8,11 +8,11 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/memory_mapping.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
-#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie

@@ -12,13 +12,13 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/memory_mapping.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 
 // Genie
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie
@@ -146,7 +146,7 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new memory_mapping( itsBase + offset, length, flags );
+		return new vfs::memory_mapping( itsBase + offset, length, flags );
 	}
 	
 	vfs::filehandle_ptr open_buffer_file( const vfs::node*  file,

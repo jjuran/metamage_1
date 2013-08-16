@@ -16,7 +16,6 @@
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/mmap/map_anonymous.hh"
-#include "Genie/mmap/memory_mapping.hh"
 
 
 namespace Genie
