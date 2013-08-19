@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	shared_exec_handle prepare_executable( const execution_unit& unit )
+	vfs::program_ptr prepare_executable( const execution_unit& unit )
 	{
 		return new native_code_handle( unit );
 	}

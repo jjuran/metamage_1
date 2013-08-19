@@ -39,8 +39,10 @@
 #include "Mac/Threads/Types/ThreadID.hh"
 #endif
 
+// vfs
+#include "vfs/program_ptr.hh"
+
 // Genie
-#include "Genie/code/shared_exec_handle.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
@@ -139,7 +141,7 @@ namespace Genie
 		private:
 			FSTreePtr itsProgramFile;
 			
-			shared_exec_handle  its_exec_handle;
+			vfs::program_ptr  its_exec_handle;
 			
 			boost::intrusive_ptr< relix::memory_data > its_memory_data;
 			

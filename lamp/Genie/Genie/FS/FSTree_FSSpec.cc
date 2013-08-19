@@ -377,7 +377,7 @@ namespace Genie
 	static void hfs_copyfile( const FSTree*  node,
 	                          const FSTree*  dest );
 	
-	static shared_exec_handle hfs_loadexec( const FSTree* node );
+	static vfs::program_ptr hfs_loadexec( const FSTree* node );
 	
 	static const data_method_set hfs_data_methods =
 	{
@@ -930,7 +930,7 @@ namespace Genie
 		return opened;
 	}
 	
-	static shared_exec_handle hfs_loadexec( const FSTree* node )
+	static vfs::program_ptr hfs_loadexec( const FSTree* node )
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		

@@ -6,15 +6,20 @@
 #ifndef GENIE_CODE_PREPAREEXECUTABLE_HH
 #define GENIE_CODE_PREPAREEXECUTABLE_HH
 
+// vfs
+#include "vfs/program_ptr.hh"
+
+// vfs-relix
+#include "vfs/program.hh"
+
 // Genie
 #include "Genie/code/execution_unit.hh"
-#include "Genie/code/shared_exec_handle.hh"
 
 
 namespace Genie
 {
 	
-	shared_exec_handle prepare_executable( const execution_unit& unit );
+	vfs::program_ptr prepare_executable( const execution_unit& unit );
 	
 }
 

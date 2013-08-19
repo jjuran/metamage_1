@@ -72,6 +72,7 @@
 #include "vfs/primitives/stat.hh"
 
 // vfs-relix
+#include "vfs/program.hh"
 #include "vfs/primitives/exec.hh"
 
 // relix-kernel
@@ -267,7 +268,7 @@ namespace Genie
 			char** argv = its_memory_data->get_argv();
 			char** envp = its_memory_data->get_envp();
 			
-			relix_entry relix_main = its_exec_handle->get_main_entry_point();
+			vfs::relix_entry relix_main = its_exec_handle->get_main_entry_point();
 			
 			ENTER_USERMAIN();
 			
@@ -881,7 +882,7 @@ namespace Genie
 		
 		itsProgramFile = context.executable;
 		
-		shared_exec_handle executable = exec( itsProgramFile.get() );
+		vfs::program_ptr executable = exec( itsProgramFile.get() );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
