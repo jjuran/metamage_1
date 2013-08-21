@@ -18,6 +18,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/functions/root.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/resolve.hh"
 
@@ -122,8 +123,8 @@ namespace Genie
 		
 		length = end - begin;
 		
-		return length == 0 ? FSRoot()
-		                   : ResolveRelativePath( begin, length, FSRoot() );
+		return length == 0 ? vfs::root()
+		                   : ResolveRelativePath( begin, length, vfs::root() );
 	}
 	
 	FSTreePtr ResolveAbsolutePath( const plus::string& path )

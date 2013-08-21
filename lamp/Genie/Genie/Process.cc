@@ -69,6 +69,7 @@
 
 // vfs
 #include "vfs/file_descriptor.hh"
+#include "vfs/functions/root.hh"
 #include "vfs/primitives/stat.hh"
 
 // vfs-relix
@@ -594,7 +595,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( relix::fs_info::create( opendir( FSRoot() ) ) ),
+		its_fs_info           ( relix::fs_info::create( opendir( vfs::root() ) ) ),
 		itsFileDescriptors    ( relix::fd_table::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
@@ -602,7 +603,7 @@ namespace Genie
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		itsProgramFile        ( FSRoot() ),
+		itsProgramFile        ( vfs::root() ),
 		its_memory_data       ( root_memory_data() ),
 		itMayDumpCore         ()
 	{

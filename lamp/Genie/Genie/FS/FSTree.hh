@@ -8,7 +8,6 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/functions/root.hh"
 
 // Genie
 #include "Genie/FS/FSTree_fwd.hh"
@@ -20,12 +19,6 @@ namespace Genie
 	
 	using vfs::node_destructor;
 	using vfs::node_method_set;
-	
-	
-	inline const FSTree* FSRoot()
-	{
-		return vfs::root();
-	}
 	
 }
 

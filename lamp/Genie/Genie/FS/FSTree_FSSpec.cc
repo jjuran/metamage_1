@@ -586,14 +586,14 @@ namespace Genie
 		
 		if ( extra.fsspec.vRefNum == root.vRefNum  &&  extra.fsspec.parID == root.dirID )
 		{
-			return FSRoot();
+			return vfs::root();
 		}
 		
 		try
 		{
 			if ( extra.fsspec == GetUsersDirectory() / "\p" )
 			{
-				return FSRoot();
+				return vfs::root();
 			}
 		}
 		catch ( ... )
@@ -758,7 +758,7 @@ namespace Genie
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
 			// Symlink to root directory
-			return FSRoot();
+			return vfs::root();
 		}
 		else
 		{

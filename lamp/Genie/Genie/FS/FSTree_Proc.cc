@@ -32,6 +32,7 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/functions/root.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -165,7 +166,7 @@ namespace Genie
 				return process.ProgramFile();
 			
 			case 'r':  // root
-				return FSRoot();
+				return vfs::root();
 			
 			default:
 				// not reached
