@@ -22,8 +22,6 @@ namespace Genie
 	using vfs::node_method_set;
 	
 	
-	extern const FSTreePtr null_FSTreePtr;
-	
 	inline const FSTree* FSRoot()
 	{
 		return vfs::root();
