@@ -6,15 +6,17 @@
 #ifndef GENIE_CODE_LOADEDHANDLE_HH
 #define GENIE_CODE_LOADEDHANDLE_HH
 
+// vfs-relix
+#include "vfs/program.hh"
+
 // Genie
 #include "Genie/code/execution_unit.hh"
-#include "Genie/code/exec_handle.hh"
 
 
 namespace Genie
 {
 	
-	class loaded_handle : public exec_handle
+	class loaded_handle : public vfs::program
 	{
 		private:
 			execution_unit its_execution_unit;

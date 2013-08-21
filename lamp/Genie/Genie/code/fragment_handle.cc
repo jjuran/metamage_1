@@ -22,7 +22,7 @@ namespace Genie
 	
 	
 	static n::owned< CFragConnectionID > connect( const Mac::Handle  h,
-	                                              relix_entry*       main )
+	                                              vfs::relix_entry*  main )
 	{
 		const std::size_t size = N::GetHandleSize( h );
 		
@@ -49,7 +49,7 @@ namespace Genie
 	{
 	}
 	
-	relix_entry fragment_handle::get_main_entry_point() const
+	vfs::relix_entry fragment_handle::get_main_entry_point() const
 	{
 		return its_relix_main;
 	}
