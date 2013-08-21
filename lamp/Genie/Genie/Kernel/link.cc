@@ -15,13 +15,13 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/hardlink.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/Kernel/make_alias.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -47,7 +47,7 @@ namespace Genie
 		
 		if ( const bool follow = flags & AT_SYMLINK_FOLLOW )
 		{
-			ResolveLinks_InPlace( oldFile );
+			vfs::resolve_links_in_place( oldFile );
 		}
 		
 		try

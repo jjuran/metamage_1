@@ -69,6 +69,8 @@
 
 // vfs
 #include "vfs/file_descriptor.hh"
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
 #include "vfs/primitives/stat.hh"
@@ -86,7 +88,6 @@
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
@@ -838,7 +839,7 @@ namespace Genie
 		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
 		vfs::node_ptr programFile = resolve_pathname( path, *cwd );
 		
-		ResolveLinks_InPlace( programFile );
+		vfs::resolve_links_in_place( programFile );
 		
 		CheckProgramFile( programFile );
 		
