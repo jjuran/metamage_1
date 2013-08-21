@@ -46,6 +46,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/hangup.hh"
+#include "vfs/functions/new_static_symlink.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/symbolic_link.hh"
@@ -1123,15 +1124,6 @@ namespace Genie
 		return new_property( parent, name, params_ );
 	}
 	
-	static vfs::node_ptr new_static_symlink( const vfs::node*     parent,
-	                                         const plus::string&  name,
-	                                         const void*          params )
-	{
-		const char* target = (const char*) params;
-		
-		return vfs::new_symbolic_link( parent, name, target );
-	}
-	
 	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
 	
 	typedef Window_Property< serialize_Point,  &Origin   >  Origin_Property;
@@ -1157,7 +1149,7 @@ namespace Genie
 		
 		{ "tty",    &new_tty },
 		
-		{ "new",    &new_static_symlink, "../../new" },
+		{ "new",    &vfs::new_static_symlink, "../../new" },
 		
 		{ "title",  PROPERTY( kAttrVariable, Window_Title      ) },
 		{ "pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
