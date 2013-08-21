@@ -19,8 +19,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/new_static_symlink.hh"
 #include "vfs/node/types/dynamic_group.hh"
-#include "vfs/node/types/symbolic_link.hh"
 
 // relix-kernel
 #include "relix/config/mini.hh"
@@ -159,13 +159,6 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr dev_fd_Factory( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
-	{
-		return vfs::new_symbolic_link( parent, name, "/proc/self/fd" );
-	}
-	
 	template < class Opener >
 	static FSTreePtr BasicDevice_Factory( const FSTree*        parent,
 	                                      const plus::string&  name,
@@ -214,7 +207,7 @@ namespace Genie
 		
 	#endif
 		
-		{ "fd", &dev_fd_Factory },
+		{ "fd", &vfs::new_static_symlink, "/proc/self/fd" },
 		
 		{ NULL, NULL }
 	};
