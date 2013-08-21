@@ -45,13 +45,13 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
@@ -486,7 +486,7 @@ namespace Genie
 	{
 		const FSTree* parent = node->owner();
 		
-		const FSTreePtr targeted_file = lookup( ResolvePathname( target, parent ).get(), plus::string::null );
+		const vfs::node_ptr targeted_file = lookup( resolve_pathname( target, *parent ).get(), plus::string::null );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
 		

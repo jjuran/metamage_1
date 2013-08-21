@@ -25,6 +25,7 @@
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
+#include "vfs/functions/resolve_pathname.hh"
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
@@ -73,7 +74,7 @@ namespace Genie
 				return set_errno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD().get() );
+			vfs::node_ptr newCWD = resolve_pathname( pathname, *current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( newCWD );
 			
@@ -434,7 +435,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, current_process().GetCWD().get() );
+			vfs::node_ptr file = resolve_pathname( path, *current_process().GetCWD() );
 			
 			ResolveLinks_InPlace( file );
 			

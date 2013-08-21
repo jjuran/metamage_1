@@ -28,17 +28,6 @@ namespace Genie
 	
 	FSTreePtr ResolveAbsolutePath( const plus::string& path );
 	
-	
-	FSTreePtr ResolvePathname( const char*    begin,
-	                           std::size_t    length,
-	                           const FSTree*  current = NULL );
-	
-	FSTreePtr ResolvePathname( const char*    pathname,
-	                           const FSTree*  current = NULL );
-	
-	FSTreePtr ResolvePathname( const plus::string&  pathname,
-	                           const FSTree*        current = NULL );
-	
 }
 
 #endif

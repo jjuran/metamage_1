@@ -5,9 +5,6 @@
 
 #include "Genie/FS/ResolvePathname.hh"
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C++
 #include <algorithm>
 
@@ -130,31 +127,6 @@ namespace Genie
 	FSTreePtr ResolveAbsolutePath( const plus::string& path )
 	{
 		return ResolveAbsolutePath( path.c_str(), path.length() );
-	}
-	
-	
-	FSTreePtr ResolvePathname( const char*       begin,
-	                           std::size_t       length,
-	                           const FSTree*     current )
-	{
-		if ( const bool absolute = *begin == '/' )
-		{
-			return ResolveAbsolutePath( begin, length );
-		}
-		
-		return ResolveRelativePath( begin, length, current );
-	}
-	
-	FSTreePtr ResolvePathname( const char*    pathname,
-	                           const FSTree*  current )
-	{
-		return ResolvePathname( pathname, std::strlen( pathname ), current );
-	}
-	
-	FSTreePtr ResolvePathname( const plus::string&  pathname,
-	                           const FSTree*        current )
-	{
-		return ResolvePathname( pathname.data(), pathname.size(), current );
 	}
 	
 }

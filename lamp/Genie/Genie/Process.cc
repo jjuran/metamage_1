@@ -69,6 +69,7 @@
 
 // vfs
 #include "vfs/file_descriptor.hh"
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -423,7 +424,7 @@ namespace Genie
 		return result.move();
 	}
 	
-	static void Normalize( const char* path, ExecContext& context, const FSTree* cwd )
+	static void Normalize( const char* path, ExecContext& context, const vfs::node& cwd )
 	{
 		OSType type = 0;
 		
@@ -504,7 +505,7 @@ namespace Genie
 				                          context.interpreterArg.c_str() );
 			}
 			
-			context.executable = ResolvePathname( context.interpreterPath, cwd );
+			context.executable = resolve_pathname( context.interpreterPath, cwd );
 		}
 		else if ( type != 0 )
 		{
@@ -835,7 +836,7 @@ namespace Genie
 		FSTreePtr cwd = GetCWD();
 		
 		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
-		FSTreePtr programFile = ResolvePathname( path, cwd.get() );
+		vfs::node_ptr programFile = resolve_pathname( path, *cwd );
 		
 		ResolveLinks_InPlace( programFile );
 		
@@ -846,7 +847,7 @@ namespace Genie
 		
 		ExecContext context( programFile, argv );
 		
-		Normalize( path, context, cwd.get() );
+		Normalize( path, context, *cwd );
 		
 		int script_fd = -1;
 		
