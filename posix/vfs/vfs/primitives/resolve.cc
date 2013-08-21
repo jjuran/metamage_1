@@ -31,7 +31,7 @@ namespace vfs
 			
 			if ( link_methods->readlink )
 			{
-				return resolve_pathname( link_methods->readlink( it ), it->owner() );
+				return resolve_pathname( link_methods->readlink( it ), *it->owner() );
 			}
 		}
 		

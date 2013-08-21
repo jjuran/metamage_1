@@ -18,7 +18,7 @@ namespace vfs
 	
 	node_ptr resolve_relative_path( const char*  begin,
 	                                std::size_t  length,
-	                                const node*  current );
+	                                const node&  current );
 	
 	
 	node_ptr resolve_absolute_path( const char*  begin,
@@ -29,13 +29,13 @@ namespace vfs
 	
 	node_ptr resolve_pathname( const char*  begin,
 	                           std::size_t  length,
-	                           const node*  current = NULL );
+	                           const node&  current );
 	
 	node_ptr resolve_pathname( const char*  pathname,
-	                           const node*  current = NULL );
+	                           const node&  current );
 	
 	node_ptr resolve_pathname( const plus::string&  pathname,
-	                           const node*          current = NULL );
+	                           const node&          current );
 	
 }
 

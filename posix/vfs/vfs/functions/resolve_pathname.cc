@@ -31,7 +31,7 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	static node_ptr resolve_path( const node* it, const char*& begin, const char* end )
+	static node_ptr resolve_path( const node& that, const char*& begin, const char* end )
 	{
 		ASSERT( begin < end );
 		
@@ -43,23 +43,23 @@ namespace vfs
 		
 		begin = slash;
 		
-		return lookup( it, name );
+		return lookup( &that, name );
 	}
 	
 	node_ptr resolve_relative_path( const char*  begin,
 	                                std::size_t  length,
-	                                const node*  current )
+	                                const node&  current )
 	{
 		if ( length == 0 )
 		{
-			return current;
+			return &current;
 		}
 		
-		node_ptr result = current;
+		node_ptr result = &current;
 		
 		const char* end = begin + length;
 		
-		result = resolve_path( result.get(), begin, end );
+		result = resolve_path( *result, begin, end );
 		
 		while ( begin < end )
 		{
@@ -82,7 +82,7 @@ namespace vfs
 			
 			if ( begin < end )
 			{
-				result = resolve_path( result.get(), begin, end );
+				result = resolve_path( *result, begin, end );
 			}
 		}
 		
@@ -104,7 +104,7 @@ namespace vfs
 		length = end - begin;
 		
 		return length == 0 ? root()
-		                   : resolve_relative_path( begin, length, root() );
+		                   : resolve_relative_path( begin, length, *root() );
 	}
 	
 	node_ptr resolve_absolute_path( const plus::string& path )
@@ -115,7 +115,7 @@ namespace vfs
 	
 	node_ptr resolve_pathname( const char*  begin,
 	                           std::size_t  length,
-	                           const node*  current )
+	                           const node&  current )
 	{
 		if ( const bool absolute = *begin == '/' )
 		{
@@ -126,13 +126,13 @@ namespace vfs
 	}
 	
 	node_ptr resolve_pathname( const char*  pathname,
-	                           const node*  current )
+	                           const node&  current )
 	{
 		return resolve_pathname( pathname, std::strlen( pathname ), current );
 	}
 	
 	node_ptr resolve_pathname( const plus::string&  pathname,
-	                           const node*          current )
+	                           const node&          current )
 	{
 		return resolve_pathname( pathname.data(), pathname.size(), current );
 	}
