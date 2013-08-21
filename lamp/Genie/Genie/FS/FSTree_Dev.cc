@@ -31,7 +31,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/FSTree_dev_gestalt.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"

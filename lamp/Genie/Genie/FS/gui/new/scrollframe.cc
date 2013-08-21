@@ -23,6 +23,8 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // vfs
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 
@@ -30,7 +32,6 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
@@ -314,7 +315,7 @@ namespace Genie
 	{
 		const FSTree* view = node->owner();
 		
-		FSTreePtr target = ResolvePathname( target_path, view );
+		const vfs::node_ptr target = resolve_pathname( target_path, *view );
 		
 		FSTreePtr delegate = lookup( target.get(), plus::string::null );
 		

@@ -21,10 +21,13 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/primitives/seteof.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
+#include "vfs/functions/resolve_links_in_place.hh"
+#include "vfs/functions/resolve_pathname.hh"
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
@@ -34,7 +37,6 @@
 #include "Genie/Faults.hh"
 #include "Genie/FileDescriptors.hh"
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -73,9 +75,9 @@ namespace Genie
 				return set_errno( EINVAL );
 			}
 			
-			FSTreePtr newCWD = ResolvePathname( pathname, current_process().GetCWD().get() );
+			vfs::node_ptr newCWD = resolve_pathname( pathname, *current_process().GetCWD() );
 			
-			ResolveLinks_InPlace( newCWD );
+			vfs::resolve_links_in_place( newCWD );
 			
 			if ( !is_directory( newCWD ) )
 			{
@@ -434,9 +436,9 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathname( path, current_process().GetCWD().get() );
+			vfs::node_ptr file = resolve_pathname( path, *current_process().GetCWD() );
 			
-			ResolveLinks_InPlace( file );
+			vfs::resolve_links_in_place( file );
 			
 			seteof( file.get(), length );
 		}

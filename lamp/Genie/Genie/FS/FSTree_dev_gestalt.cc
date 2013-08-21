@@ -24,8 +24,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
+
 // Genie
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Stream.hh"
 
 
@@ -42,7 +45,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr GetFile()  { return ResolveAbsolutePath( STR_LEN( "/dev/gestalt" ) ); }
+			vfs::node_ptr GetFile()  { return vfs::resolve_absolute_path( STR_LEN( "/dev/gestalt" ) ); }
 			
 			unsigned int SysPoll()  { return 0; }
 			

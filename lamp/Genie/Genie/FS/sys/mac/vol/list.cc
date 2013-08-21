@@ -41,6 +41,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
@@ -52,7 +53,6 @@
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
@@ -608,7 +608,7 @@ namespace Genie
 	
 	FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
-		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/sys/mac/vol/list" ) );
+		vfs::node_ptr parent = vfs::resolve_absolute_path( STR_LEN( "/sys/mac/vol/list" ) );
 		
 		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		

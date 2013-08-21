@@ -11,9 +11,12 @@
 // POSeven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
+
 // Genie
 #include "Genie/FileDescriptors.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/Process.hh"
 
@@ -41,11 +44,15 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const bool absolute = path[0] == '/';
+		if ( path[0] == '/' )
+		{
+			return vfs::resolve_absolute_path( path );
+		}
 		
-		return ResolvePathname( path,   absolute          ? NULL
-		                              : dirfd == AT_FDCWD ? CurrentProcess().GetCWD().get()
-			                          :                     GetDirFile( dirfd ).get() );
+		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? CurrentProcess().GetCWD()
+		                                         : GetDirFile( dirfd );
+		
+		return resolve_pathname( path, *at_dir );
 	}
 	
 }

@@ -8,8 +8,11 @@
 // plus
 #include "plus/var_string.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
+
 // Genie
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/mmap/map_anonymous.hh"
 
 
@@ -22,7 +25,7 @@ namespace Genie
 		
 		deviceName += io.name;
 		
-		return ResolveAbsolutePath( deviceName );
+		return vfs::resolve_absolute_path( deviceName );
 	}
 	
 	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )

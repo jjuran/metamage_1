@@ -47,14 +47,15 @@
 
 // vfs
 #include "vfs/file_descriptor.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/attach.hh"
 
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
@@ -369,11 +370,11 @@ namespace Genie
 	
 	static FSTreePtr MakeConsoleProxy( unsigned id )
 	{
-		FSTreePtr parent = ResolveAbsolutePath( STR_LEN( "/dev/con" ) );
+		vfs::node_ptr parent = vfs::resolve_absolute_path( STR_LEN( "/dev/con" ) );
 		
 		plus::string name = gear::inscribe_decimal( id );
 		
-		return new FSTree( parent.get(), name, S_IFCHR | 0600 );
+		return new vfs::node( parent.get(), name, S_IFCHR | 0600 );
 	}
 	
 	class ConsoleTTYHandle : public StreamHandle

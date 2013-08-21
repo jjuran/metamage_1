@@ -14,8 +14,11 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
+
 // Genie
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessGroup.hh"
@@ -32,7 +35,7 @@ namespace Genie
 	
 	FSTreePtr TerminalHandle::GetFile()
 	{
-		return ResolveAbsolutePath( itsTTYName );
+		return vfs::resolve_absolute_path( itsTTYName );
 	}
 	
 	static void CheckControllingTerminal( const Process& process, const TerminalHandle& tty )

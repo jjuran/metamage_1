@@ -59,7 +59,9 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -85,7 +87,6 @@
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
 #include "Genie/FS/ResFile_Dir.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/Root_Overlay.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/FS/Union.hh"
@@ -770,7 +771,7 @@ namespace Genie
 			
 			if ( !target.empty() )
 			{
-				return ResolvePathname( target, hfs_parent( node ).get() );
+				return resolve_pathname( target, *hfs_parent( node ) );
 			}
 			else if ( is_alias )
 			{
@@ -824,7 +825,7 @@ namespace Genie
 		{
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			FSTreePtr target = ResolvePathname( targetPath, FSTreeFromFSDirSpec( linkParent ).get() );
+			const vfs::node_ptr target = resolve_pathname( targetPath, *FSTreeFromFSDirSpec( linkParent ) );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			

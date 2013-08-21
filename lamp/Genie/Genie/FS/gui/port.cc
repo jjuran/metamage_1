@@ -20,10 +20,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/functions/resolve_pathname.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 
 
@@ -81,9 +82,9 @@ namespace Genie
 	
 	static const FSTree* gui_port()
 	{
-		static FSTreePtr node = ResolveAbsolutePath( STR_LEN( "/gui/port" ) );
+		static vfs::node_ptr port = vfs::resolve_absolute_path( STR_LEN( "/gui/port" ) );
 		
-		return node.get();
+		return port.get();
 	}
 	
 	FSTreePtr new_port()
