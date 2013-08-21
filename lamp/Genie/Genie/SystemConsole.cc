@@ -9,6 +9,7 @@
 #include "iota/strings.hh"
 
 // vfs
+#include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/hardlink.hh"
 #include "vfs/primitives/remove.hh"
 #include "vfs/primitives/symlink.hh"
@@ -66,15 +67,15 @@ namespace Genie
 		Spew( ResolveRelativePath( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
 		Spew( ResolveRelativePath( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
-		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
+		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
 		
 		FSTreePtr subview = ResolveRelativePath( STR_LEN( "v/view" ), cwd );
 		
-		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
+		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
 		
 		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "v/v/view" ), cwd );
 		
-		hardlink( ResolveAbsolutePath( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
+		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
 		
 		symlink( ResolveRelativePath( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
 		
@@ -84,7 +85,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static IOPtr the_port = opendir( ResolveAbsolutePath( STR_LEN( "/gui/new/port" ) ).get() );
+		static const vfs::filehandle_ptr the_port = opendir( vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ).get() );
 		
 		MakeWindow( the_port );
 		

@@ -106,28 +106,5 @@ namespace Genie
 		return result;
 	}
 	
-	
-	FSTreePtr ResolveAbsolutePath( const char*  begin,
-	                               std::size_t  length )
-	{
-		ASSERT( length != 0 );
-		
-		ASSERT( *begin == '/' );
-		
-		const char* end = begin + length;
-		
-		while ( *++begin == '/' ) continue;
-		
-		length = end - begin;
-		
-		return length == 0 ? vfs::root()
-		                   : ResolveRelativePath( begin, length, vfs::root() );
-	}
-	
-	FSTreePtr ResolveAbsolutePath( const plus::string& path )
-	{
-		return ResolveAbsolutePath( path.c_str(), path.length() );
-	}
-	
 }
 
