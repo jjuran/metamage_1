@@ -9,6 +9,7 @@
 #include "iota/strings.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/hardlink.hh"
 #include "vfs/primitives/remove.hh"
@@ -19,7 +20,6 @@
 #include "Genie/FS/file-tests.hh"
 #include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
-#include "Genie/FS/ResolvePathname.hh"
 #include "Genie/IO/Stream.hh"
 
 
@@ -40,47 +40,47 @@ namespace Genie
 	{
 		FSTreePtr port = port_dir->GetFile();
 		
-		const FSTree* cwd = port.get();
+		const vfs::node& cwd = *port;
 		
-		FSTreePtr window = ResolveRelativePath( STR_LEN( "window" ),  cwd );
+		vfs::node_ptr window = resolve_relative_path( STR_LEN( "window" ), cwd );
 		
 		if ( exists( window ) )
 		{
 			return;
 		}
 		
-		FSTreePtr view = ResolveRelativePath( STR_LEN( "view" ), cwd );
+		vfs::node_ptr view = resolve_relative_path( STR_LEN( "view" ), cwd );
 		
 		if ( exists( view ) )
 		{
 			remove( view.get() );
 			
-			view = ResolveRelativePath( STR_LEN( "view" ), cwd );
+			view = resolve_relative_path( STR_LEN( "view" ), cwd );
 		}
 		
-		Spew( ResolveRelativePath( STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
+		Spew( resolve_relative_path( STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
 		
-		Spew( ResolveRelativePath( STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
+		Spew( resolve_relative_path( STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 		
 		touch( window.get() );
 		
-		Spew( ResolveRelativePath( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
+		Spew( resolve_relative_path( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( resolve_relative_path( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
 		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
 		
-		FSTreePtr subview = ResolveRelativePath( STR_LEN( "v/view" ), cwd );
+		vfs::node_ptr subview = resolve_relative_path( STR_LEN( "v/view" ), cwd );
 		
 		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
 		
-		FSTreePtr subsubview = ResolveRelativePath( STR_LEN( "v/v/view" ), cwd );
+		vfs::node_ptr subsubview = resolve_relative_path( STR_LEN( "v/v/view" ), cwd );
 		
 		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
 		
-		symlink( ResolveRelativePath( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
+		symlink( resolve_relative_path( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
 		
-		Spew( ResolveRelativePath( STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
-		Spew( ResolveRelativePath( STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( resolve_relative_path( STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
+		Spew( resolve_relative_path( STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static FSTreePtr GetConsoleWindow()
@@ -94,7 +94,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleText()
 	{
-		FSTreePtr text = ResolveRelativePath( STR_LEN( "v/v/v/text" ), GetConsoleWindow().get() );
+		vfs::node_ptr text = resolve_relative_path( STR_LEN( "v/v/v/text" ), *GetConsoleWindow() );
 		
 		return text;
 	}

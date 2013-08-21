@@ -15,10 +15,6 @@ namespace Genie
 	
 	bool ResolveLinks_InPlace( FSTreePtr& link );
 	
-	FSTreePtr ResolveRelativePath( const char*    begin,
-	                               std::size_t    length,
-	                               const FSTree*  current );
-	
 }
 
 #endif
