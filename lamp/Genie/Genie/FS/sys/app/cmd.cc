@@ -31,7 +31,6 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/ResolvePathname.hh"
 
 
 namespace Genie
