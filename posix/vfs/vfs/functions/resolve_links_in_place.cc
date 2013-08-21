@@ -24,7 +24,7 @@ namespace vfs
 	{
 		unsigned link_count = 0;
 		
-		while ( is_symlink( file ) )
+		while ( is_symlink( *file ) )
 		{
 			++link_count;
 			

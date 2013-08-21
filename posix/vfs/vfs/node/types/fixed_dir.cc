@@ -110,7 +110,7 @@ namespace vfs
 			{
 				node_ptr file = f( dir, name, it->args );
 				
-				if ( !exists( file ) )
+				if ( !exists( *file ) )
 				{
 					continue;
 				}

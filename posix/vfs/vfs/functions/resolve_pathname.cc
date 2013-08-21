@@ -67,7 +67,7 @@ namespace vfs
 			
 			ASSERT( *begin == '/' );
 			
-			if ( is_file( result ) )
+			if ( is_file( *result ) )
 			{
 				if ( ++begin == end  ||  *begin == '/' )
 				{
