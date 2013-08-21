@@ -19,10 +19,10 @@
 
 // vfs
 #include "vfs/primitives/lookup.hh"
+#include "vfs/primitives/resolve.hh"
 
 // Genie
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/resolve.hh"
 
 
 namespace Genie

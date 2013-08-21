@@ -22,11 +22,11 @@
 #include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
+#include "vfs/primitives/resolve.hh"
 #include "vfs/primitives/touch.hh"
 
 // Genie
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/resolve.hh"
 
 
 namespace Genie
