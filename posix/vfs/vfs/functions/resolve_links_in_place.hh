@@ -6,9 +6,6 @@
 #ifndef VFS_FUNCTIONS_RESOLVELINKSINPLACE_HH
 #define VFS_FUNCTIONS_RESOLVELINKSINPLACE_HH
 
-// plus
-#include "plus/string.hh"
-
 // vfs
 #include "vfs/node_ptr.hh"
 
