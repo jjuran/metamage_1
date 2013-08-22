@@ -389,7 +389,7 @@ namespace Genie
 	static void view_listdir( const FSTree*       node,
 	                          vfs::dir_contents&  cache )
 	{
-		listdir( GetViewDelegate( node ).get(), cache );
+		listdir( *GetViewDelegate( node ), cache );
 	}
 	
 	static const dir_method_set view_dir_methods =

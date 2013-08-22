@@ -56,7 +56,7 @@ namespace Genie
 		cache.push_back( vfs::dir_entry( inode       ( *dir ), "."  ) );
 		cache.push_back( vfs::dir_entry( parent_inode( dir.get() ), ".." ) );
 		
-		listdir( dir.get(), cache );
+		listdir( *dir, cache );
 		
 		vfs::dir_contents_impl* newCache = new vfs::dir_contents_impl();
 		
