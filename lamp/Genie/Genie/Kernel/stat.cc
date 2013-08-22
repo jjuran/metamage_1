@@ -117,7 +117,7 @@ namespace Genie
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{
-				sb->st_size = geteof( file.get() );
+				sb->st_size = geteof( *file );
 			}
 		}
 		catch ( ... )
