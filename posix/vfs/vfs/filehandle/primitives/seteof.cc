@@ -22,7 +22,7 @@ namespace vfs
 		
 		if ( bstore_methods.seteof == NULL )
 		{
-			seteof( that.GetFile().get(), length );
+			seteof( *that.GetFile(), length );
 		}
 		
 		bstore_methods.seteof( &that, length );
