@@ -21,9 +21,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	plus::string readlink( const node* it )
+	plus::string readlink( const node& that)
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const link_method_set* link_methods;
 		
@@ -31,12 +31,12 @@ namespace vfs
 		{
 			if ( link_methods->readlink )
 			{
-				return link_methods->readlink( it );
+				return link_methods->readlink( &that );
 			}
 			
 			if ( link_methods->resolve )
 			{
-				return pathname( *link_methods->resolve( it ) );
+				return pathname( *link_methods->resolve( &that ) );
 			}
 		}
 		
