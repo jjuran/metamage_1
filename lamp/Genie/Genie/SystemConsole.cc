@@ -67,15 +67,15 @@ namespace Genie
 		Spew( resolve_relative_path( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
 		Spew( resolve_relative_path( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
-		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
+		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ), *view );
 		
 		vfs::node_ptr subview = resolve_relative_path( STR_LEN( "v/view" ), cwd );
 		
-		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
+		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ), *subview );
 		
 		vfs::node_ptr subsubview = resolve_relative_path( STR_LEN( "v/v/view" ), cwd );
 		
-		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
+		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ), *subsubview );
 		
 		symlink( resolve_relative_path( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
 		
