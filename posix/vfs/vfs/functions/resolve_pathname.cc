@@ -43,7 +43,7 @@ namespace vfs
 		
 		begin = slash;
 		
-		return lookup( &that, name );
+		return lookup( that, name );
 	}
 	
 	node_ptr resolve_relative_path( const char*  begin,

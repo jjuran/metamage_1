@@ -383,7 +383,7 @@ namespace Genie
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return lookup( GetViewDelegate( node ).get(), real_name, NULL );
+		return lookup( *GetViewDelegate( node ), real_name, NULL );
 	}
 	
 	static void view_listdir( const FSTree*       node,

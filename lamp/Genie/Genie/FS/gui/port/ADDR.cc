@@ -486,7 +486,7 @@ namespace Genie
 	{
 		const FSTree* parent = node->owner();
 		
-		const vfs::node_ptr targeted_file = lookup( resolve_pathname( target, *parent ).get(), plus::string::null );
+		const vfs::node_ptr targeted_file = lookup( *resolve_pathname( target, *parent ), plus::string::null );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
 		
