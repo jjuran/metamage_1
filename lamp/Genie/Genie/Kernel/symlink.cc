@@ -11,12 +11,12 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/primitives/readlink.hh"
 #include "vfs/primitives/symlink.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -32,7 +32,7 @@ namespace Genie
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
-			if ( exists( link ) )
+			if ( exists( *link ) )
 			{
 				return set_errno( EEXIST );
 			}
@@ -73,9 +73,9 @@ namespace Genie
 			
 			// Do not resolve links -- we want the target even if it's another symlink
 			
-			if ( !is_symlink( link ) )
+			if ( !is_symlink( *link ) )
 			{
-				return set_errno( exists( link ) ? EINVAL : ENOENT );
+				return set_errno( exists( *link ) ? EINVAL : ENOENT );
 			}
 			
 			plus::string linkPath = readlink( *link );

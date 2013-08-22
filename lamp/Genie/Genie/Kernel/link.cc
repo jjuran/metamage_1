@@ -15,12 +15,12 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/hardlink.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/Kernel/make_alias.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -56,7 +56,7 @@ namespace Genie
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
-			if ( exists( newFile ) )
+			if ( exists( *newFile ) )
 			{
 				return set_errno( EEXIST );
 			}

@@ -26,6 +26,7 @@
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
@@ -36,7 +37,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FileDescriptors.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/IO/RegularFile.hh"
@@ -79,9 +79,9 @@ namespace Genie
 			
 			vfs::resolve_links_in_place( newCWD );
 			
-			if ( !is_directory( newCWD ) )
+			if ( !is_directory( *newCWD ) )
 			{
-				return set_errno( exists( newCWD ) ? ENOTDIR : ENOENT );
+				return set_errno( exists( *newCWD ) ? ENOTDIR : ENOENT );
 			}
 			
 			current_process().ChangeDirectory( newCWD );

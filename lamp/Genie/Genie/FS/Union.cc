@@ -20,10 +20,10 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/Iterate.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -60,7 +60,7 @@ namespace Genie
 		{
 			vfs::node_ptr child = lookup( *extra.top, name, parent );
 			
-			if ( exists( child ) )
+			if ( exists( *child ) )
 			{
 				return child;
 			}

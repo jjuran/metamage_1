@@ -11,11 +11,11 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/primitives/remove.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -43,7 +43,7 @@ namespace Genie
 			const bool remove_any = flags & AT_REMOVEANY;
 			const bool remove_dir = flags & AT_REMOVEDIR;
 			
-			if ( remove_any || remove_dir == is_directory( file ) )
+			if ( remove_any || remove_dir == is_directory( *file ) )
 			{
 				remove( *file );
 			}

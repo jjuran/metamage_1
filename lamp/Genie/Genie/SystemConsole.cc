@@ -10,6 +10,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/hardlink.hh"
 #include "vfs/primitives/open.hh"
@@ -18,7 +19,6 @@
 #include "vfs/primitives/touch.hh"
 
 // Genie
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
 
@@ -44,14 +44,14 @@ namespace Genie
 		
 		vfs::node_ptr window = resolve_relative_path( STR_LEN( "window" ), cwd );
 		
-		if ( exists( window ) )
+		if ( exists( *window ) )
 		{
 			return;
 		}
 		
 		vfs::node_ptr view = resolve_relative_path( STR_LEN( "view" ), cwd );
 		
-		if ( exists( view ) )
+		if ( exists( *view ) )
 		{
 			remove( *view );
 			

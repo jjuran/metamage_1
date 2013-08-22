@@ -60,6 +60,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
@@ -69,7 +70,6 @@
 #include "Genie/code/executable_file.hh"
 #include "Genie/code/prepare_executable.hh"
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
@@ -745,7 +745,7 @@ namespace Genie
 	
 	static FSTreePtr hfs_resolve( const FSTree* node )
 	{
-		if ( !is_symlink( node ) )
+		if ( !is_symlink( *node ) )
 		{
 			return node;
 		}
@@ -1020,12 +1020,12 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		
-		if ( name == "rsrc"  &&  is_file( node ) )
+		if ( name == "rsrc"  &&  is_file( *node ) )
 		{
 			return GetRsrcForkFSTree( extra.fsspec );
 		}
 		
-		if ( name == "r"  &&  is_file( node ) )
+		if ( name == "r"  &&  is_file( *node ) )
 		{
 			return Get_ResFileDir_FSTree( node, "r", extra.fsspec );
 		}

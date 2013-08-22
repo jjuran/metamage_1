@@ -12,13 +12,13 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/file_descriptor.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/open.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
@@ -51,7 +51,7 @@ namespace Genie
 			
 			const bool excluding = flags & O_EXCL;
 			
-			if ( excluding  &&  exists( file ) )
+			if ( excluding  &&  exists( *file ) )
 			{
 				return set_errno( EEXIST );
 			}
@@ -67,14 +67,14 @@ namespace Genie
 			{
 				vfs::resolve_links_in_place( file );
 			}
-			else if ( is_symlink( file ) )
+			else if ( is_symlink( *file ) )
 			{
 				return set_errno( ELOOP );
 			}
 			
-			if ( directory  &&  !is_directory( file ) )
+			if ( directory  &&  !is_directory( *file ) )
 			{
-				return set_errno( exists( file ) ? ENOTDIR : ENOENT );
+				return set_errno( exists( *file ) ? ENOTDIR : ENOENT );
 			}
 			
 			IOPtr opened = directory ? opendir( *file              )

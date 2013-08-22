@@ -13,6 +13,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
+#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/chmod.hh"
 #include "vfs/primitives/geteof.hh"
@@ -21,7 +22,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -46,7 +46,7 @@ namespace Genie
 				vfs::resolve_links_in_place( file );
 			}
 			
-			if ( !exists( file ) )
+			if ( !exists( *file ) )
 			{
 				return set_errno( EACCES );
 			}

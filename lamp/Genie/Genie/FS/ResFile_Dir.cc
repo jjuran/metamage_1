@@ -18,11 +18,13 @@
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
+// vfs
+#include "vfs/functions/file-tests.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/resources.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -174,7 +176,7 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const FSTree*        parent )
 	{
-		if ( !exists( node ) )
+		if ( !exists( *node ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
