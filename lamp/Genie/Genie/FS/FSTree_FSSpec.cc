@@ -740,7 +740,7 @@ namespace Genie
 			return target;
 		}
 		
-		return pathname( hfs_resolve( node ).get() );
+		return pathname( *hfs_resolve( node ) );
 	}
 	
 	static FSTreePtr hfs_resolve( const FSTree* node )

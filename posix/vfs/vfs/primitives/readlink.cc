@@ -36,7 +36,7 @@ namespace vfs
 			
 			if ( link_methods->resolve )
 			{
-				return pathname( link_methods->resolve( it ).get() );
+				return pathname( *link_methods->resolve( it ) );
 			}
 		}
 		

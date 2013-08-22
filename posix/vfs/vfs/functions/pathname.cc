@@ -17,13 +17,13 @@
 namespace vfs
 {
 	
-	plus::string pathname( const node* it )
+	plus::string pathname( const node& that )
 	{
-		plus::string pathname = it->name();
+		plus::string pathname = that.name();
 		
-		node_ptr tree = parent( it );
+		node_ptr tree = parent( &that );
 		
-		if ( tree.get() == it  &&  !pathname.empty() )
+		if ( tree.get() == &that  &&  !pathname.empty() )
 		{
 			// Anonymous files have null parents (but so does root)
 			return pathname;

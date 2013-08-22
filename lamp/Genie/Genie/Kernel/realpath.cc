@@ -53,7 +53,7 @@ namespace Genie
 			const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 			
 			plus::string resolved = is_mac ? mac_pathname_from_file( file )
-			                               : pathname( file.get() );
+			                               : pathname( *file );
 			
 			if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )
 			{

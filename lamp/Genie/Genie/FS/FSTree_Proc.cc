@@ -396,7 +396,7 @@ namespace Genie
 				
 				if ( IOHandle* handle = term.get() )
 				{
-					terminal_name = pathname( handle->GetFile().get() );
+					terminal_name = pathname( *handle->GetFile() );
 					
 					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
 					

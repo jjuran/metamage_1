@@ -699,8 +699,8 @@ namespace Genie
 			tty = new port_tty_filehandle( node );
 		}
 		
-		plus::string pathname = vfs::pathname( has_tty ? tty->GetFile().get()
-		                                               : node                 );
+		plus::string pathname = vfs::pathname( has_tty ? *tty->GetFile()
+		                                               : *node           );
 		
 		IOPtr terminal = NewTerminal( pathname );
 		
