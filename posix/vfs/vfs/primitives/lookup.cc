@@ -31,7 +31,7 @@ namespace vfs
 		}
 		else if ( name == ".." )
 		{
-			return parent( &that );
+			return parent( that );
 		}
 		
 		if ( surrogate == NULL )
