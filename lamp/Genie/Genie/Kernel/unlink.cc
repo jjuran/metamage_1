@@ -45,7 +45,7 @@ namespace Genie
 			
 			if ( remove_any || remove_dir == is_directory( file ) )
 			{
-				remove( file.get() );
+				remove( *file );
 			}
 			else
 			{

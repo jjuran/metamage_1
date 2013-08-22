@@ -16,7 +16,7 @@
 namespace vfs
 {
 	
-	node_ptr lookup( const node*          it,
+	node_ptr lookup( const node&          that,
 	                 const plus::string&  name,
 	                 const node*          surrogate = NULL );
 	

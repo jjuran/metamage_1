@@ -73,7 +73,7 @@ namespace Genie
 				vfs::resolve_links_in_place( file );
 			}
 			
-			chmod( file.get(), mode );
+			chmod( *file, mode );
 		}
 		catch ( ... )
 		{
@@ -87,7 +87,7 @@ namespace Genie
 	{
 		try
 		{
-			chmod( get_filehandle( fd ).GetFile().get(), mode );
+			chmod( *get_filehandle( fd ).GetFile(), mode );
 		}
 		catch ( ... )
 		{
@@ -113,11 +113,11 @@ namespace Genie
 				vfs::resolve_links_in_place( file );
 			}
 			
-			stat( file.get(), *sb );
+			stat( *file, *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{
-				sb->st_size = geteof( file.get() );
+				sb->st_size = geteof( *file );
 			}
 		}
 		catch ( ... )
@@ -139,7 +139,7 @@ namespace Genie
 		{
 			IOHandle& handle = get_filehandle( fd );
 			
-			stat( handle.GetFile().get(), *sb );
+			stat( *handle.GetFile(), *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{

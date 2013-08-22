@@ -77,8 +77,8 @@ namespace Genie
 				return set_errno( exists( file ) ? ENOTDIR : ENOENT );
 			}
 			
-			IOPtr opened = directory ? opendir( file.get()              )
-			                         : open   ( file.get(), flags, mode );
+			IOPtr opened = directory ? opendir( *file              )
+			                         : open   ( *file, flags, mode );
 			
 			const bool close_on_exec = flags & O_CLOEXEC;
 			

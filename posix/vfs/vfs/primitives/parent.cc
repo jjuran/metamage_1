@@ -14,14 +14,14 @@
 namespace vfs
 {
 	
-	node_ptr parent( const node* it )
+	node_ptr parent( const node& that )
 	{
-		if ( it->owner() != NULL )
+		if ( that.owner() != NULL )
 		{
-			return it->owner();
+			return that.owner();
 		}
 		
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const misc_method_set* misc_methods;
 		
@@ -29,11 +29,11 @@ namespace vfs
 		{
 			if ( misc_methods->parent )
 			{
-				return misc_methods->parent( it );
+				return misc_methods->parent( &that );
 			}
 		}
 		
-		return it;
+		return &that;
 	}
 	
 }

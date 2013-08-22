@@ -317,7 +317,7 @@ namespace Genie
 		
 		const vfs::node_ptr target = resolve_pathname( target_path, *view );
 		
-		FSTreePtr delegate = lookup( target.get(), plus::string::null );
+		vfs::node_ptr delegate = lookup( *target, plus::string::null );
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		

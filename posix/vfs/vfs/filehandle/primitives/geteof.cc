@@ -22,7 +22,7 @@ namespace vfs
 		
 		if ( bstore_methods.geteof == NULL )
 		{
-			return geteof( that.GetFile().get() );
+			return geteof( *that.GetFile() );
 		}
 		
 		return bstore_methods.geteof( &that );

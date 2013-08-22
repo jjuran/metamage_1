@@ -27,7 +27,7 @@ namespace Genie
 			
 			// Do not resolve links
 			
-			mkdir( location.get(), mode );
+			mkdir( *location, mode );
 		}
 		catch ( ... )
 		{

@@ -67,7 +67,7 @@ namespace Genie
 			}
 			else
 			{
-				hardlink( oldFile.get(), newFile.get() );
+				hardlink( *oldFile, *newFile );
 			}
 		}
 		catch ( ... )

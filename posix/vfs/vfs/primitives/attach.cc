@@ -20,9 +20,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void attach( const node* it, const node* target )
+	void attach( const node& that, const node& target )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const file_method_set* file_methods;
 		
@@ -30,7 +30,7 @@ namespace vfs
 		{
 			if ( file_methods->attach )
 			{
-				file_methods->attach( it, target );
+				file_methods->attach( &that, &target );
 				
 				return;
 			}

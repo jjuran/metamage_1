@@ -37,7 +37,7 @@ namespace Genie
 				return set_errno( EEXIST );
 			}
 			
-			symlink( link.get(), target_path );
+			symlink( *link, target_path );
 		}
 		catch ( ... )
 		{
@@ -78,7 +78,7 @@ namespace Genie
 				return set_errno( exists( link ) ? EINVAL : ENOENT );
 			}
 			
-			plus::string linkPath = readlink( link.get() );
+			plus::string linkPath = readlink( *link );
 			
 			const bool too_big = linkPath.size() > buffer_size;
 			

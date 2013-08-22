@@ -19,13 +19,13 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void utime( const node* it, const struct timespec* times )
+	void utime( const node& that, const struct timespec* times )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		if ( methods  &&  methods->utime )
 		{
-			methods->utime( it, times );
+			methods->utime( &that, times );
 		}
 		else
 		{

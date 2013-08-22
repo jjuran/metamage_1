@@ -20,9 +20,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void hardlink( const node* it, const node* target )
+	void hardlink( const node& that, const node& target )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const file_method_set* file_methods;
 		
@@ -30,7 +30,7 @@ namespace vfs
 		{
 			if ( file_methods->hardlink )
 			{
-				file_methods->hardlink( it, target );
+				file_methods->hardlink( &that, &target );
 				
 				return;
 			}

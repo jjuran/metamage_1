@@ -121,7 +121,7 @@ namespace Genie
 			
 			try
 			{
-				remove( delegate );
+				remove( *delegate );
 			}
 			catch ( ... )
 			{
@@ -279,7 +279,7 @@ namespace Genie
 		
 		add_view_parameters( key, delegate, extra.view_factory );
 		
-		mkdir( target, 0 );  // mode is ignored
+		mkdir( *target, 0 );  // mode is ignored
 	}
 	
 	
@@ -383,13 +383,13 @@ namespace Genie
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return lookup( GetViewDelegate( node ).get(), real_name, NULL );
+		return lookup( *GetViewDelegate( node ), real_name, NULL );
 	}
 	
 	static void view_listdir( const FSTree*       node,
 	                          vfs::dir_contents&  cache )
 	{
-		listdir( GetViewDelegate( node ).get(), cache );
+		listdir( *GetViewDelegate( node ), cache );
 	}
 	
 	static const dir_method_set view_dir_methods =

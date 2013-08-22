@@ -16,7 +16,7 @@
 namespace vfs
 {
 	
-	ino_t parent_inode( const node* it );
+	ino_t parent_inode( const node& that );
 	
 }
 

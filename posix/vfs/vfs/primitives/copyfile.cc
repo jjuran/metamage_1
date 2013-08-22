@@ -20,9 +20,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void copyfile( const node* it, const node* target )
+	void copyfile( const node& that, const node& target )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const file_method_set* file_methods;
 		
@@ -30,7 +30,7 @@ namespace vfs
 		{
 			if ( file_methods->copyfile )
 			{
-				file_methods->copyfile( it, target );
+				file_methods->copyfile( &that, &target );
 				
 				return;
 			}

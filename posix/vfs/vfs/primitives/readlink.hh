@@ -16,7 +16,7 @@
 namespace vfs
 {
 	
-	plus::string readlink( const node* it );
+	plus::string readlink( const node& that);
 	
 }
 

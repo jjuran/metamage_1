@@ -25,9 +25,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	filehandle_ptr open( const node* that, int flags, mode_t mode )
+	filehandle_ptr open( const node& that, int flags, mode_t mode )
 	{
-		const node_method_set* methods = that->methods();
+		const node_method_set* methods = that.methods();
 		
 		const data_method_set* data_methods;
 		
@@ -35,7 +35,7 @@ namespace vfs
 		{
 			if ( data_methods->open )
 			{
-				filehandle_ptr result = data_methods->open( that, flags, mode );
+				filehandle_ptr result = data_methods->open( &that, flags, mode );
 				
 				if ( flags & O_TRUNC )
 				{

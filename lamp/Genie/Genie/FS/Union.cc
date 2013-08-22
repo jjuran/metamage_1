@@ -58,7 +58,7 @@ namespace Genie
 		
 		try
 		{
-			FSTreePtr child = lookup( extra.top, name, parent );
+			vfs::node_ptr child = lookup( *extra.top, name, parent );
 			
 			if ( exists( child ) )
 			{
@@ -73,7 +73,7 @@ namespace Genie
 			}
 		}
 		
-		return lookup( extra.bottom, name, parent );
+		return lookup( *extra.bottom, name, parent );
 	}
 	
 	static void union_listdir( const FSTree*       node,

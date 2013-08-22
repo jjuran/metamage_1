@@ -19,13 +19,13 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void rename( const node* it, const node* target )
+	void rename( const node& that, const node& target )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		if ( methods  &&  methods->rename )
 		{
-			methods->rename( it, target );
+			methods->rename( &that, &target );
 		}
 		else
 		{

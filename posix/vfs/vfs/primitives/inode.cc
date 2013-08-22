@@ -14,9 +14,9 @@
 namespace vfs
 {
 	
-	ino_t inode( const node* it )
+	ino_t inode( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const misc_method_set* misc_methods;
 		
@@ -24,7 +24,7 @@ namespace vfs
 		{
 			if ( misc_methods->inode )
 			{
-				return misc_methods->inode( it );
+				return misc_methods->inode( &that );
 			}
 		}
 		

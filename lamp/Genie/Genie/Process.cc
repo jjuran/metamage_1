@@ -398,7 +398,7 @@ namespace Genie
 	
 	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
-	static plus::string first_disk_block( const vfs::node* file )
+	static plus::string first_disk_block( const vfs::node& file )
 	{
 		const size_t buffer_length = 512;
 		
@@ -445,7 +445,7 @@ namespace Genie
 			return;  // Already normalized
 		}
 		
-		const plus::string block = first_disk_block( context.executable.get() );
+		const plus::string block = first_disk_block( *context.executable );
 		
 		const ssize_t bytes = block.size();
 		
@@ -597,7 +597,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( relix::fs_info::create( opendir( vfs::root() ) ) ),
+		its_fs_info           ( relix::fs_info::create( opendir( *vfs::root() ) ) ),
 		itsFileDescriptors    ( relix::fd_table::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
@@ -774,7 +774,7 @@ namespace Genie
 	{
 		struct ::stat sb;
 		
-		stat( programFile.get(), sb );
+		stat( *programFile, sb );
 		
 		if ( S_ISDIR( sb.st_mode ) )
 		{
@@ -1046,7 +1046,7 @@ namespace Genie
 	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		its_fs_info->chdir( opendir( newCWD.get() ) );
+		its_fs_info->chdir( opendir( *newCWD ) );
 	}
 	
 	void Process::ResumeAfterFork()

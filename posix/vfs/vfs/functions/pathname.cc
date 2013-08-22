@@ -21,7 +21,7 @@ namespace vfs
 	{
 		plus::string pathname = that.name();
 		
-		node_ptr tree = parent( &that );
+		node_ptr tree = parent( that );
 		
 		if ( tree.get() == &that  &&  !pathname.empty() )
 		{
@@ -42,7 +42,7 @@ namespace vfs
 				break;
 			}
 			
-			tree = parent( tree.get() );
+			tree = parent( *tree );
 		}
 		
 		return pathname;

@@ -78,7 +78,7 @@ namespace Genie
 		
 		stored_IconSuite_scope scope( extra );
 		
-		attach( target, node );
+		attach( *target, *node );
 	}
 	
 	

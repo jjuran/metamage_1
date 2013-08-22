@@ -14,7 +14,7 @@
 namespace vfs
 {
 	
-	filehandle_ptr opendir( const node* that );
+	filehandle_ptr opendir( const node& that );
 	
 }
 

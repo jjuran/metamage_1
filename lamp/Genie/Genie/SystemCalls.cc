@@ -440,7 +440,7 @@ namespace Genie
 			
 			vfs::resolve_links_in_place( file );
 			
-			seteof( file.get(), length );
+			seteof( *file, length );
 		}
 		catch ( ... )
 		{

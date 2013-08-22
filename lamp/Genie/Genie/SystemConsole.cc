@@ -28,12 +28,12 @@ namespace Genie
 	
 	static ssize_t Spew( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( open( file.get(), O_WRONLY | O_TRUNC, 0 ).get() )->Write( buffer, length );
+		return IOHandle_Cast< StreamHandle >( open( *file, O_WRONLY | O_TRUNC, 0 ).get() )->Write( buffer, length );
 	}
 	
 	static ssize_t Append( const FSTreePtr& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( open( file.get(), O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
+		return IOHandle_Cast< StreamHandle >( open( *file, O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
 	}
 	
 	static void MakeWindow( const IOPtr& port_dir )
@@ -53,7 +53,7 @@ namespace Genie
 		
 		if ( exists( view ) )
 		{
-			remove( view.get() );
+			remove( *view );
 			
 			view = resolve_relative_path( STR_LEN( "view" ), cwd );
 		}
@@ -62,22 +62,22 @@ namespace Genie
 		
 		Spew( resolve_relative_path( STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 		
-		touch( window.get() );
+		touch( *window );
 		
 		Spew( resolve_relative_path( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
 		Spew( resolve_relative_path( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
-		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ).get(), view.get() );
+		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ), *view );
 		
 		vfs::node_ptr subview = resolve_relative_path( STR_LEN( "v/view" ), cwd );
 		
-		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ).get(), subview.get() );
+		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ), *subview );
 		
 		vfs::node_ptr subsubview = resolve_relative_path( STR_LEN( "v/v/view" ), cwd );
 		
-		hardlink( vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ).get(), subsubview.get() );
+		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ), *subsubview );
 		
-		symlink( resolve_relative_path( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
+		symlink( *resolve_relative_path( STR_LEN( "v/target" ), cwd ), "v/v" );
 		
 		Spew( resolve_relative_path( STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
 		Spew( resolve_relative_path( STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
@@ -85,7 +85,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static const vfs::filehandle_ptr the_port = opendir( vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ).get() );
+		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ) );
 		
 		MakeWindow( the_port );
 		

@@ -14,9 +14,9 @@
 namespace vfs
 {
 	
-	off_t geteof( const node* it )
+	off_t geteof( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const data_method_set* data_methods;
 		
@@ -24,7 +24,7 @@ namespace vfs
 		{
 			if ( data_methods->geteof )
 			{
-				return data_methods->geteof( it );
+				return data_methods->geteof( &that );
 			}
 		}
 		

@@ -21,25 +21,25 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	node_ptr lookup( const node*          it,
+	node_ptr lookup( const node&          that,
 	                 const plus::string&  name,
 	                 const node*          surrogate )
 	{
 		if ( name == "." )
 		{
-			return it;
+			return &that;
 		}
 		else if ( name == ".." )
 		{
-			return parent( it );
+			return parent( that );
 		}
 		
 		if ( surrogate == NULL )
 		{
-			surrogate = it;
+			surrogate = &that;
 		}
 		
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -47,7 +47,7 @@ namespace vfs
 		{
 			if ( dir_methods->lookup )
 			{
-				return dir_methods->lookup( it, name, surrogate );
+				return dir_methods->lookup( &that, name, surrogate );
 			}
 		}
 		
