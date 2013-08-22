@@ -25,7 +25,7 @@ namespace Genie
 			
 			// Do not resolve links
 			
-			rename( srcFile.get(), destFile.get() );
+			rename( *srcFile, *destFile );
 		}
 		catch ( ... )
 		{
