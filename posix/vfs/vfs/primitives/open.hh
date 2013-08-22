@@ -17,7 +17,7 @@
 namespace vfs
 {
 	
-	filehandle_ptr open( const node* that, int flags, mode_t mode );
+	filehandle_ptr open( const node& that, int flags, mode_t mode );
 	
 }
 

@@ -78,7 +78,7 @@ namespace Genie
 			}
 			
 			IOPtr opened = directory ? opendir( file.get()              )
-			                         : open   ( file.get(), flags, mode );
+			                         : open   ( *file, flags, mode );
 			
 			const bool close_on_exec = flags & O_CLOEXEC;
 			

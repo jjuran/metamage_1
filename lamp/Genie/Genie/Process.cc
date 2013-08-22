@@ -398,7 +398,7 @@ namespace Genie
 	
 	static inline p7::errno_t NotExecutable()  { return p7::errno_t( EPERM ); }
 	
-	static plus::string first_disk_block( const vfs::node* file )
+	static plus::string first_disk_block( const vfs::node& file )
 	{
 		const size_t buffer_length = 512;
 		
@@ -445,7 +445,7 @@ namespace Genie
 			return;  // Already normalized
 		}
 		
-		const plus::string block = first_disk_block( context.executable.get() );
+		const plus::string block = first_disk_block( *context.executable );
 		
 		const ssize_t bytes = block.size();
 		

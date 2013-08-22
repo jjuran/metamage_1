@@ -692,7 +692,7 @@ namespace Genie
 		
 		if ( has_tty )
 		{
-			tty = open( params.itsTTYDelegate.get(), flags, 0 );
+			tty = open( *params.itsTTYDelegate, flags, 0 );
 		}
 		else
 		{
