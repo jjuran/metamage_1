@@ -597,7 +597,7 @@ namespace Genie
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
-		its_fs_info           ( relix::fs_info::create( opendir( vfs::root() ) ) ),
+		its_fs_info           ( relix::fs_info::create( opendir( *vfs::root() ) ) ),
 		itsFileDescriptors    ( relix::fd_table::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
@@ -1046,7 +1046,7 @@ namespace Genie
 	
 	void Process::ChangeDirectory( const FSTreePtr& newCWD )
 	{
-		its_fs_info->chdir( opendir( newCWD.get() ) );
+		its_fs_info->chdir( opendir( *newCWD ) );
 	}
 	
 	void Process::ResumeAfterFork()

@@ -15,9 +15,9 @@
 namespace vfs
 {
 	
-	filehandle_ptr opendir( const node* it )
+	filehandle_ptr opendir( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -25,11 +25,11 @@ namespace vfs
 		{
 			if ( dir_methods->opendir )
 			{
-				return dir_methods->opendir( it );
+				return dir_methods->opendir( &that );
 			}
 		}
 		
-		return new Genie::DirHandle( it );
+		return new Genie::DirHandle( &that );
 	}
 	
 }

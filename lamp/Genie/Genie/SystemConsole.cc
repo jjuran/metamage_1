@@ -85,7 +85,7 @@ namespace Genie
 	
 	static FSTreePtr GetConsoleWindow()
 	{
-		static const vfs::filehandle_ptr the_port = opendir( vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ).get() );
+		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ) );
 		
 		MakeWindow( the_port );
 		
