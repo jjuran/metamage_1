@@ -279,7 +279,7 @@ namespace Genie
 		
 		add_view_parameters( key, delegate, extra.view_factory );
 		
-		mkdir( target, 0 );  // mode is ignored
+		mkdir( *target, 0 );  // mode is ignored
 	}
 	
 	

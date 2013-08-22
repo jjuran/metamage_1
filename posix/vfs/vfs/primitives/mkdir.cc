@@ -20,9 +20,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void mkdir( const node* it, mode_t mode )
+	void mkdir( const node& that, mode_t mode )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const dir_method_set* dir_methods;
 		
@@ -30,7 +30,7 @@ namespace vfs
 		{
 			if ( dir_methods->mkdir )
 			{
-				dir_methods->mkdir( it, mode );
+				dir_methods->mkdir( &that, mode );
 				
 				return;
 			}

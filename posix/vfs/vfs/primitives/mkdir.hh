@@ -16,7 +16,7 @@
 namespace vfs
 {
 	
-	void mkdir( const node* it, mode_t mode );
+	void mkdir( const node& that, mode_t mode );
 	
 }
 
