@@ -62,7 +62,7 @@ namespace Genie
 		
 		Spew( resolve_relative_path( STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 		
-		touch( window.get() );
+		touch( *window );
 		
 		Spew( resolve_relative_path( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
 		Spew( resolve_relative_path( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );

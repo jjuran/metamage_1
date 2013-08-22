@@ -28,19 +28,19 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void touch( const node* it )
+	void touch( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		if ( methods  &&  methods->touch )
 		{
-			methods->touch( it );
+			methods->touch( &that );
 		}
 		else
 		{
 			const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
 			
-			utime( it, times );
+			utime( &that, times );
 		}
 	}
 	

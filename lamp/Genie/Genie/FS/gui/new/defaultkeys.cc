@@ -58,7 +58,7 @@ namespace Genie
 		
 		vfs::node_ptr target = resolve( *link );
 		
-		touch( target.get() );
+		touch( *target );
 	}
 	
 	bool DefaultKey_Handler::KeyDown( const EventRecord& event )

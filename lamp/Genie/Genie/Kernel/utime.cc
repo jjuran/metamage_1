@@ -60,7 +60,7 @@ namespace Genie
 			
 			if ( merely_touch( times ) )
 			{
-				touch( file.get() );
+				touch( *file );
 			}
 			else
 			{

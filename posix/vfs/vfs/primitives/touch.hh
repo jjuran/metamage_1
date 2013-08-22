@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void touch( const node* it );
+	void touch( const node& that );
 	
 }
 

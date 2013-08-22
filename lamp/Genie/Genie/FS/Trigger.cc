@@ -66,7 +66,7 @@ namespace Genie
 	
 	ssize_t TriggerHandle::Write( const char* buffer, size_t n )
 	{
-		touch( GetFile().get() );
+		touch( *GetFile() );
 		
 		return n;
 	}
