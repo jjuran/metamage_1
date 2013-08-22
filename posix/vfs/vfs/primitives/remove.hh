@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void remove( const node* it );
+	void remove( const node& that );
 	
 }
 

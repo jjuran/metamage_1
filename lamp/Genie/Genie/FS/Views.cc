@@ -121,7 +121,7 @@ namespace Genie
 			
 			try
 			{
-				remove( delegate );
+				remove( *delegate );
 			}
 			catch ( ... )
 			{

@@ -19,13 +19,13 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void remove( const node* it )
+	void remove( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		if ( methods  &&  methods->remove )
 		{
-			methods->remove( it );
+			methods->remove( &that );
 		}
 		else
 		{

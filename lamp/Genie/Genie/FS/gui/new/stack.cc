@@ -183,7 +183,7 @@ namespace Genie
 		{
 			const vfs::node* layer = params.v.back().node;
 			
-			remove( layer );
+			remove( *layer );
 			
 			RemoveAllViewParameters( layer );
 		}

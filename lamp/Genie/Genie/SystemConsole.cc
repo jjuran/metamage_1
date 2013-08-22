@@ -53,7 +53,7 @@ namespace Genie
 		
 		if ( exists( view ) )
 		{
-			remove( view.get() );
+			remove( *view );
 			
 			view = resolve_relative_path( STR_LEN( "view" ), cwd );
 		}
