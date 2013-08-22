@@ -20,9 +20,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	plus::string slurp( const node* that )
+	plus::string slurp( const node& that )
 	{
-		const node_method_set* methods = that->methods();
+		const node_method_set* methods = that.methods();
 		
 		const data_method_set* data_methods;
 		
@@ -30,7 +30,7 @@ namespace vfs
 		{
 			if ( data_methods->slurp )
 			{
-				return data_methods->slurp( that );
+				return data_methods->slurp( &that );
 			}
 			
 			// FIXME:  Try open/read

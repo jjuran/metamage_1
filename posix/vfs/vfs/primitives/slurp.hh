@@ -16,7 +16,7 @@
 namespace vfs
 {
 	
-	plus::string slurp( const node* that );
+	plus::string slurp( const node& that );
 	
 }
 
