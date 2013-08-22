@@ -113,7 +113,7 @@ namespace Genie
 				vfs::resolve_links_in_place( file );
 			}
 			
-			stat( file.get(), *sb );
+			stat( *file, *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{
@@ -139,7 +139,7 @@ namespace Genie
 		{
 			IOHandle& handle = get_filehandle( fd );
 			
-			stat( handle.GetFile().get(), *sb );
+			stat( *handle.GetFile(), *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{

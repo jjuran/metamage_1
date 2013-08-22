@@ -774,7 +774,7 @@ namespace Genie
 	{
 		struct ::stat sb;
 		
-		stat( programFile.get(), sb );
+		stat( *programFile, sb );
 		
 		if ( S_ISDIR( sb.st_mode ) )
 		{

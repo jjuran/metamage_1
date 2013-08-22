@@ -687,7 +687,7 @@ namespace Genie
 		
 		try
 		{
-			stat( file.get(), stat_buffer );
+			stat( *file, stat_buffer );
 		}
 		catch ( const p7::errno_t& err )
 		{

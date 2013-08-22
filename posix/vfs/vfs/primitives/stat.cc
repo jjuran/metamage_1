@@ -24,27 +24,27 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void stat( const node* it, struct ::stat& sb )
+	void stat( const node& that, struct ::stat& sb )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		if ( methods  &&  methods->stat )
 		{
-			methods->stat( it, sb );
+			methods->stat( &that, sb );
 			
 			return;
 		}
 		
-		if ( it->filemode() == 0 )
+		if ( that.filemode() == 0 )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
 		const time_t now = time( NULL );
 		
-		sb.st_ino = inode( *it );
+		sb.st_ino = inode( that );
 		
-		sb.st_mode = it->filemode();
+		sb.st_mode = that.filemode();
 		
 		sb.st_nlink = 1;
 		
