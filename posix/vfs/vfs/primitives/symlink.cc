@@ -20,9 +20,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void symlink( const node* it, const plus::string& target )
+	void symlink( const node& that, const plus::string& target )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const link_method_set* link_methods;
 		
@@ -30,7 +30,7 @@ namespace vfs
 		{
 			if ( link_methods->symlink )
 			{
-				link_methods->symlink( it, target );
+				link_methods->symlink( &that, target );
 				
 				return;
 			}

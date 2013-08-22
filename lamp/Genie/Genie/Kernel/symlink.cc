@@ -37,7 +37,7 @@ namespace Genie
 				return set_errno( EEXIST );
 			}
 			
-			symlink( link.get(), target_path );
+			symlink( *link, target_path );
 		}
 		catch ( ... )
 		{

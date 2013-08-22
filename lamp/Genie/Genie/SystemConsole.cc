@@ -77,7 +77,7 @@ namespace Genie
 		
 		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ), *subsubview );
 		
-		symlink( resolve_relative_path( STR_LEN( "v/target" ), cwd ).get(), "v/v" );
+		symlink( *resolve_relative_path( STR_LEN( "v/target" ), cwd ), "v/v" );
 		
 		Spew( resolve_relative_path( STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
 		Spew( resolve_relative_path( STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
