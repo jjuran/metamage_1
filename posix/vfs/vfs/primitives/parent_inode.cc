@@ -30,7 +30,7 @@ namespace vfs
 			}
 		}
 		
-		return inode( parent( it ).get() );
+		return inode( *parent( it ) );
 	}
 	
 }

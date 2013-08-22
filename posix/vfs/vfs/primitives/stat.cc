@@ -42,7 +42,7 @@ namespace vfs
 		
 		const time_t now = time( NULL );
 		
-		sb.st_ino = inode( it );
+		sb.st_ino = inode( *it );
 		
 		sb.st_mode = it->filemode();
 		
