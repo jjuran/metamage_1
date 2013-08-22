@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void attach( const node* it, const node* target );
+	void attach( const node& that, const node& target );
 	
 }
 

@@ -747,7 +747,7 @@ namespace Genie
 	
 	static void console_tty_rename( const FSTree* node, const FSTree* destination )
 	{
-		attach( destination, node );
+		attach( *destination, *node );
 	}
 	
 	static inline IOPtr
