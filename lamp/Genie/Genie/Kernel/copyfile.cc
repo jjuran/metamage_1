@@ -27,7 +27,7 @@ int copyfileat( int olddirfd, const char* oldpath, int newdirfd, const char* new
 		
 		// Do not resolve links
 		
-		copyfile( srcFile.get(), destFile.get() );
+		copyfile( *srcFile, *destFile );
 	}
 	catch ( ... )
 	{

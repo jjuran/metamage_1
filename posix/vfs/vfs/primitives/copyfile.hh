@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void copyfile( const node* it, const node* target );
+	void copyfile( const node& that, const node& target );
 	
 }
 
