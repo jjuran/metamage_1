@@ -73,7 +73,7 @@ namespace Genie
 				vfs::resolve_links_in_place( file );
 			}
 			
-			chmod( file.get(), mode );
+			chmod( *file, mode );
 		}
 		catch ( ... )
 		{
@@ -87,7 +87,7 @@ namespace Genie
 	{
 		try
 		{
-			chmod( get_filehandle( fd ).GetFile().get(), mode );
+			chmod( *get_filehandle( fd ).GetFile(), mode );
 		}
 		catch ( ... )
 		{

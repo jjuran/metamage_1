@@ -19,13 +19,13 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	void chmod( const node* it, mode_t mode )
+	void chmod( const node& that, mode_t mode )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		if ( methods  &&  methods->chmod )
 		{
-			methods->chmod( it, mode );
+			methods->chmod( &that, mode );
 		}
 		else
 		{
