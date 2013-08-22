@@ -16,9 +16,9 @@
 namespace vfs
 {
 	
-	node_ptr resolve( const node* it )
+	node_ptr resolve( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const link_method_set* link_methods;
 		
@@ -26,16 +26,16 @@ namespace vfs
 		{
 			if ( link_methods->resolve )
 			{
-				return link_methods->resolve( it );
+				return link_methods->resolve( &that );
 			}
 			
 			if ( link_methods->readlink )
 			{
-				return resolve_pathname( link_methods->readlink( it ), *it->owner() );
+				return resolve_pathname( link_methods->readlink( &that ), *that.owner() );
 			}
 		}
 		
-		return it;
+		return &that;
 	}
 	
 }

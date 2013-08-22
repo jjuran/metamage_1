@@ -33,7 +33,7 @@ namespace vfs
 				p7::throw_errno( ELOOP );
 			}
 			
-			file = resolve( file.get() );
+			file = resolve( *file );
 		}
 	}
 	

@@ -56,7 +56,7 @@ namespace Genie
 		
 		vfs::node_ptr link = lookup( *window, name );
 		
-		FSTreePtr target = resolve( link.get() );
+		vfs::node_ptr target = resolve( *link );
 		
 		touch( target.get() );
 	}
