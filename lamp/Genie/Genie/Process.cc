@@ -73,6 +73,7 @@
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
+#include "vfs/primitives/open.hh"
 #include "vfs/primitives/stat.hh"
 
 // vfs-relix
@@ -89,7 +90,6 @@
 #include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/ProcessList.hh"

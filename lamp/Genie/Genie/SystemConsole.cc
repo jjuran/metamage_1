@@ -12,13 +12,13 @@
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/hardlink.hh"
+#include "vfs/primitives/open.hh"
 #include "vfs/primitives/remove.hh"
 #include "vfs/primitives/symlink.hh"
 #include "vfs/primitives/touch.hh"
 
 // Genie
 #include "Genie/FS/file-tests.hh"
-#include "Genie/FS/open.hh"
 #include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
 

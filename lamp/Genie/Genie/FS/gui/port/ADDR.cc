@@ -48,6 +48,7 @@
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
+#include "vfs/primitives/open.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
@@ -57,7 +58,6 @@
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/open.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/IO/Terminal.hh"
