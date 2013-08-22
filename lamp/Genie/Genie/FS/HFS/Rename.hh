@@ -6,8 +6,8 @@
 #ifndef GENIE_FS_HFS_RENAME_HH
 #define GENIE_FS_HFS_RENAME_HH
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_fwd.hh"
 
 //#include <Files.h>
 struct FSSpec;
@@ -16,7 +16,7 @@ struct FSSpec;
 namespace Genie
 {
 	
-	void Rename_HFS( const FSSpec& srcFileSpec, const FSTreePtr& destFile );
+	void Rename_HFS( const FSSpec& srcFileSpec, const vfs::node& destFile );
 	
 }
 

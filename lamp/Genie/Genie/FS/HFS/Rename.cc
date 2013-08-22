@@ -24,6 +24,9 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
+// vfs
+#include "vfs/functions/file-tests.hh"
+
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
@@ -31,7 +34,6 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
-#include "Genie/FS/file-tests.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
@@ -139,7 +141,7 @@ namespace Genie
 	}
 	
 	
-	void Rename_HFS( const FSSpec& srcFileSpec, const FSTreePtr& destFile )
+	void Rename_HFS( const FSSpec& srcFileSpec, const vfs::node& destFile )
 	{
 		if ( !io::item_exists( srcFileSpec ) )
 		{
@@ -156,7 +158,7 @@ namespace Genie
 			p7::throw_errno( destIsDir ? EISDIR : ENOTDIR );
 		}
 		
-		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
+		FSSpec destFileSpec = GetFSSpecFromFSTree( &destFile );
 		
 		// Can't move across volumes
 		if ( srcFileSpec.vRefNum != destFileSpec.vRefNum )
@@ -166,7 +168,7 @@ namespace Genie
 		
 		N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( srcFileSpec.vRefNum );
 		
-		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile->name() ) );
+		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile.name() ) );
 		
 		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
 		                          && std::equal( destName.begin(),

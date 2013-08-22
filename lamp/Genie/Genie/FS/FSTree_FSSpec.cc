@@ -709,7 +709,7 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) node->extra();
 		
-		Rename_HFS( extra.fsspec, destFile );
+		Rename_HFS( extra.fsspec, *destFile );
 	}
 	
 	
