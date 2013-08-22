@@ -64,7 +64,7 @@ namespace Genie
 			}
 			else
 			{
-				utime( file.get(), times );
+				utime( *file, times );
 			}
 		}
 		catch ( ... )

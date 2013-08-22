@@ -40,7 +40,7 @@ namespace vfs
 		{
 			const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
 			
-			utime( &that, times );
+			utime( that, times );
 		}
 	}
 	
