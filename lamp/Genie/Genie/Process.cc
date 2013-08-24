@@ -885,7 +885,7 @@ namespace Genie
 		
 		itsProgramFile = context.executable;
 		
-		vfs::program_ptr executable = exec( itsProgramFile.get() );
+		vfs::program_ptr executable = exec( *itsProgramFile );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the

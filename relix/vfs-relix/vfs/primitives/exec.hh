@@ -11,7 +11,7 @@
 namespace vfs
 {
 	
-	program_ptr exec( const node* it );
+	program_ptr exec( const node& that );
 	
 }
 

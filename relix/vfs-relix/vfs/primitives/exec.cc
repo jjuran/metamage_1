@@ -23,9 +23,9 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	program_ptr exec( const node* it )
+	program_ptr exec( const node& that )
 	{
-		const node_method_set* methods = it->methods();
+		const node_method_set* methods = that.methods();
 		
 		const file_method_set* file_methods;
 		
@@ -33,7 +33,7 @@ namespace vfs
 		{
 			if ( file_methods->loadexec )
 			{
-				return file_methods->loadexec( it );
+				return file_methods->loadexec( &that );
 			}
 		}
 		
