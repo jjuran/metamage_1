@@ -146,31 +146,6 @@ namespace Genie
 		return advance_mark( written );
 	}
 	
-	off_t RegularFileHandle::Seek( off_t offset, int whence )
-	{
-		off_t base = 0;
-		
-		switch ( whence )
-		{
-			case SEEK_SET:
-				base = 0;
-				break;
-			
-			case SEEK_CUR:
-				base = get_mark();
-				break;
-			
-			case SEEK_END:
-				base = geteof( *this );
-				break;
-			
-			default:
-				p7::throw_errno( EINVAL );
-		}
-		
-		return set_mark( base + offset );
-	}
-	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
 	{
 		return SysWrite( buffer, byteCount );

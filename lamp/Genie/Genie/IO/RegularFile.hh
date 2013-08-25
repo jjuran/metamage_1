@@ -37,8 +37,6 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 			
-			off_t Seek( off_t offset, int whence );
-			
 			ssize_t Write( const char* buffer, std::size_t byteCount );
 			
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
