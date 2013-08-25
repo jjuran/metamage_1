@@ -100,8 +100,7 @@ namespace Genie
 	RegularFileHandle::RegularFileHandle( int                                flags,
 	                                      const vfs::filehandle_method_set*  methods )
 	:
-		StreamHandle( flags, methods ),
-		itsMark()
+		StreamHandle( flags, methods )
 	{
 	}
 	
@@ -109,8 +108,7 @@ namespace Genie
 	                                      int                                flags,
 	                                      const vfs::filehandle_method_set*  methods )
 	:
-		StreamHandle( file.get(), flags, methods ),
-		itsMark()
+		StreamHandle( file.get(), flags, methods )
 	{
 	}
 	

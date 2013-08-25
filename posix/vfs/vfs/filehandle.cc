@@ -42,6 +42,7 @@ namespace vfs
 	filehandle::filehandle( int                           flags,
 	                        const filehandle_method_set*  methods )
 	:
+		its_mark   (         ),
 		its_flags  ( flags   ),
 		its_methods( methods )
 	{
@@ -51,6 +52,7 @@ namespace vfs
 	                        int                           flags,
 	                        const filehandle_method_set*  methods )
 	:
+		its_mark   (         ),
 		its_file   ( file    ),
 		its_flags  ( flags   ),
 		its_methods( methods )

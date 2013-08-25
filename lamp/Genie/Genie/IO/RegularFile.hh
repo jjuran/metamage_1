@@ -15,9 +15,6 @@ namespace Genie
 	
 	class RegularFileHandle : public StreamHandle
 	{
-		private:
-			off_t itsMark;
-		
 		public:
 			RegularFileHandle( int                                flags,
 			                   const vfs::filehandle_method_set*  methods = NULL );
@@ -27,12 +24,6 @@ namespace Genie
 			                   const vfs::filehandle_method_set*  methods = NULL );
 			
 			virtual ~RegularFileHandle();
-			
-			off_t get_mark() const  { return itsMark; }
-			
-			off_t set_mark( off_t mark )  { return itsMark = mark; }
-			
-			ssize_t advance_mark( ssize_t delta )  { itsMark += delta;  return delta; }
 			
 			bool IsRegularFile() const  { return true; }
 			
