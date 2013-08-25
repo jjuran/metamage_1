@@ -39,7 +39,7 @@ namespace vfs
 				
 				if ( flags & O_TRUNC )
 				{
-					truncate( result.get() );
+					truncate( *result );
 				}
 				
 				return result;

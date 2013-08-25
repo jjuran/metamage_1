@@ -14,11 +14,11 @@
 namespace vfs
 {
 	
-	void truncate( filehandle* that )
+	void truncate( filehandle& that )
 	{
-		if ( that->methods()  &&  that->methods()->bstore_methods )
+		if ( that.methods()  &&  that.methods()->bstore_methods )
 		{
-			seteof( *that, 0 );
+			seteof( that, 0 );
 		}
 	}
 	

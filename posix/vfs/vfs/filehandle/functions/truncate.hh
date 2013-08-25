@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void truncate( filehandle* that );
+	void truncate( filehandle& that );
 	
 }
 
