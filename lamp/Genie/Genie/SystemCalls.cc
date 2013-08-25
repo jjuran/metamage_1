@@ -23,6 +23,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/primitives/seteof.hh"
+#include "vfs/filehandle/functions/seek.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
@@ -39,7 +40,7 @@
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
-#include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -212,15 +213,12 @@ namespace Genie
 		{
 			vfs::filehandle* file = &get_filehandle( fd );
 			
-			if ( RegularFileHandle* fh = IOHandle_Cast< RegularFileHandle >( file ) )
-			{
-				return fh->Seek( offset, whence );
-			}
-			
 			if ( DirHandle* h = IOHandle_Cast< DirHandle >( file ) )
 			{
 				return h->Seek( offset, whence );
 			}
+			
+			return seek( *file, offset, whence );
 			
 			// downcast failed
 		}

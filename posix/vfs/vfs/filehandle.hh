@@ -34,6 +34,7 @@ namespace vfs
 	class filehandle : public plus::ref_count< filehandle >
 	{
 		private:
+			off_t                         its_mark;
 			node_ptr                      its_file;
 			int                           its_flags;
 			const filehandle_method_set*  its_methods;
@@ -66,6 +67,12 @@ namespace vfs
 			int GetFlags() const  { return its_flags; }
 			
 			void SetFlags( int flags )  { its_flags = flags; }
+			
+			off_t get_mark() const  { return its_mark; }
+			
+			off_t set_mark( off_t mark )  { return its_mark = mark; }
+			
+			ssize_t advance_mark( ssize_t delta )  { its_mark += delta;  return delta; }
 			
 			const filehandle_method_set* methods() const  { return its_methods; }
 			

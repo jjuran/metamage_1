@@ -100,8 +100,7 @@ namespace Genie
 	RegularFileHandle::RegularFileHandle( int                                flags,
 	                                      const vfs::filehandle_method_set*  methods )
 	:
-		StreamHandle( flags, methods ),
-		itsMark()
+		StreamHandle( flags, methods )
 	{
 	}
 	
@@ -109,8 +108,7 @@ namespace Genie
 	                                      int                                flags,
 	                                      const vfs::filehandle_method_set*  methods )
 	:
-		StreamHandle( file.get(), flags, methods ),
-		itsMark()
+		StreamHandle( file.get(), flags, methods )
 	{
 	}
 	
@@ -120,9 +118,9 @@ namespace Genie
 	
 	ssize_t RegularFileHandle::Append( const char* buffer, size_t n_bytes )
 	{
-		itsMark = geteof( *this );
+		set_mark( geteof( *this ) );
 		
-		return pwrite( *this, buffer, n_bytes, itsMark );
+		return pwrite( *this, buffer, n_bytes, get_mark() );
 	}
 	
 	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
@@ -130,9 +128,9 @@ namespace Genie
 		ssize_t read = pread( *this,
 		                      buffer,
 		                      n_bytes,
-		                      GetFileMark() );
+		                      get_mark() );
 		
-		return Advance( read );
+		return advance_mark( read );
 	}
 	
 	ssize_t RegularFileHandle::SysWrite( const char* buffer, size_t n_bytes )
@@ -143,36 +141,9 @@ namespace Genie
 		                            : pwrite( *this,
 		                                      buffer,
 		                                      n_bytes,
-		                                      GetFileMark() );
+		                                      get_mark() );
 		
-		return Advance( written );
-	}
-	
-	off_t RegularFileHandle::Seek( off_t offset, int whence )
-	{
-		off_t base = 0;
-		
-		switch ( whence )
-		{
-			case SEEK_SET:
-				base = 0;
-				break;
-			
-			case SEEK_CUR:
-				base = GetFileMark();
-				break;
-			
-			case SEEK_END:
-				base = geteof( *this );
-				break;
-			
-			default:
-				p7::throw_errno( EINVAL );
-		}
-		
-		itsMark = base + offset;
-		
-		return itsMark;
+		return advance_mark( written );
 	}
 	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )

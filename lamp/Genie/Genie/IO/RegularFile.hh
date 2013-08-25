@@ -15,9 +15,6 @@ namespace Genie
 	
 	class RegularFileHandle : public StreamHandle
 	{
-		private:
-			off_t itsMark;
-		
 		public:
 			RegularFileHandle( int                                flags,
 			                   const vfs::filehandle_method_set*  methods = NULL );
@@ -39,12 +36,6 @@ namespace Genie
 			ssize_t SysRead( char* buffer, size_t n_bytes );
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
-			
-			off_t Seek( off_t offset, int whence );
-			
-			off_t GetFileMark() const  { return itsMark; }
-			
-			ssize_t Advance( ssize_t step )  { itsMark += step;  return step; }
 			
 			ssize_t Write( const char* buffer, std::size_t byteCount );
 			
