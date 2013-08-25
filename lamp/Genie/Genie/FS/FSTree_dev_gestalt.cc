@@ -47,8 +47,6 @@ namespace Genie
 			
 			vfs::node_ptr GetFile()  { return vfs::resolve_absolute_path( STR_LEN( "/dev/gestalt" ) ); }
 			
-			unsigned int SysPoll()  { return 0; }
-			
 			void IOCtl( unsigned long request, int* argp );
 	};
 	

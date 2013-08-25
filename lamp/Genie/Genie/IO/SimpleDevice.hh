@@ -38,8 +38,6 @@ namespace Genie
 			
 			FSTreePtr GetFile();
 			
-			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );

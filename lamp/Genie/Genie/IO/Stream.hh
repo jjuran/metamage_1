@@ -39,7 +39,7 @@ namespace Genie
 			
 			bool IsStream() const  { return true; }
 			
-			virtual unsigned int SysPoll() = 0;
+			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
 			virtual ssize_t SysRead( char* data, std::size_t byteCount );
 			

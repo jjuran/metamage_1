@@ -27,8 +27,6 @@ namespace Genie
 			
 			virtual IOPtr Clone() = 0;
 			
-			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
 			ssize_t SysRead( char* buffer, size_t n_bytes );
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );

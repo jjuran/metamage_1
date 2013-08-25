@@ -59,8 +59,6 @@ namespace Genie
 			{
 			}
 			
-			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
 			ssize_t Write( const char* buffer, size_t n );
 	};
 	

@@ -414,8 +414,6 @@ namespace Genie
 				ASSERT( itsData.get() != NULL );
 			}
 			
-			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
 			const FSTree* ViewKey();
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );

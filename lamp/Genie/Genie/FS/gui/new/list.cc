@@ -138,8 +138,6 @@ namespace Genie
 			{
 			}
 			
-			unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 	};
 	
