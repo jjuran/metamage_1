@@ -28,6 +28,12 @@ namespace Genie
 			
 			virtual ~RegularFileHandle();
 			
+			off_t get_mark() const  { return itsMark; }
+			
+			off_t set_mark( off_t mark )  { return itsMark = mark; }
+			
+			ssize_t advance_mark( ssize_t delta )  { itsMark += delta;  return delta; }
+			
 			bool IsRegularFile() const  { return true; }
 			
 			virtual IOPtr Clone() = 0;
@@ -41,10 +47,6 @@ namespace Genie
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 			
 			off_t Seek( off_t offset, int whence );
-			
-			off_t GetFileMark() const  { return itsMark; }
-			
-			ssize_t Advance( ssize_t step )  { itsMark += step;  return step; }
 			
 			ssize_t Write( const char* buffer, std::size_t byteCount );
 			

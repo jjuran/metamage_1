@@ -120,9 +120,9 @@ namespace Genie
 	
 	ssize_t RegularFileHandle::Append( const char* buffer, size_t n_bytes )
 	{
-		itsMark = geteof( *this );
+		set_mark( geteof( *this ) );
 		
-		return pwrite( *this, buffer, n_bytes, itsMark );
+		return pwrite( *this, buffer, n_bytes, get_mark() );
 	}
 	
 	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
@@ -130,9 +130,9 @@ namespace Genie
 		ssize_t read = pread( *this,
 		                      buffer,
 		                      n_bytes,
-		                      GetFileMark() );
+		                      get_mark() );
 		
-		return Advance( read );
+		return advance_mark( read );
 	}
 	
 	ssize_t RegularFileHandle::SysWrite( const char* buffer, size_t n_bytes )
@@ -143,9 +143,9 @@ namespace Genie
 		                            : pwrite( *this,
 		                                      buffer,
 		                                      n_bytes,
-		                                      GetFileMark() );
+		                                      get_mark() );
 		
-		return Advance( written );
+		return advance_mark( written );
 	}
 	
 	off_t RegularFileHandle::Seek( off_t offset, int whence )
@@ -159,7 +159,7 @@ namespace Genie
 				break;
 			
 			case SEEK_CUR:
-				base = GetFileMark();
+				base = get_mark();
 				break;
 			
 			case SEEK_END:
@@ -170,9 +170,7 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 		}
 		
-		itsMark = base + offset;
-		
-		return itsMark;
+		return set_mark( base + offset );
 	}
 	
 	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
