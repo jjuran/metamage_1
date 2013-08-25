@@ -20,6 +20,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/append.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
@@ -116,13 +117,6 @@ namespace Genie
 	{
 	}
 	
-	ssize_t RegularFileHandle::Append( const char* buffer, size_t n_bytes )
-	{
-		set_mark( geteof( *this ) );
-		
-		return pwrite( *this, buffer, n_bytes, get_mark() );
-	}
-	
 	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
 	{
 		ssize_t read = pread( *this,
@@ -137,7 +131,7 @@ namespace Genie
 	{
 		const bool appending = get_flags() & O_APPEND;
 		
-		ssize_t written = appending ? Append( buffer, n_bytes )
+		ssize_t written = appending ? append( *this, buffer, n_bytes )
 		                            : pwrite( *this,
 		                                      buffer,
 		                                      n_bytes,

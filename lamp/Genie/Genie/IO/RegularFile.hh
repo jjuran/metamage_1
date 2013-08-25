@@ -29,8 +29,6 @@ namespace Genie
 			
 			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
-			virtual ssize_t Append( const char* buffer, size_t n_bytes );
-			
 			ssize_t SysRead( char* buffer, size_t n_bytes );
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );

@@ -24,12 +24,15 @@ namespace vfs
 	
 	typedef void (*seteof_method)( filehandle*, off_t length );
 	
+	typedef ssize_t (*append_method)( filehandle*, const char* buffer, size_t n );
+	
 	struct bstore_method_set
 	{
 		pread_method   pread;
 		geteof_method  geteof;
 		pwrite_method  pwrite;
 		seteof_method  seteof;
+		append_method  append;
 	};
 	
 }

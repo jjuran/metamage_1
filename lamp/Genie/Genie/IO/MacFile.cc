@@ -86,12 +86,18 @@ namespace Genie
 		static_cast< MacFileHandle& >( *file ).SetEOF( length );
 	}
 	
+	static ssize_t hfs_append( vfs::filehandle* file, const char* buffer, size_t n )
+	{
+		return static_cast< MacFileHandle& >( *file ).Append( buffer, n );
+	}
+	
 	static const vfs::bstore_method_set hfs_bstore_methods =
 	{
 		&hfs_pread,
 		&hfs_geteof,
 		&hfs_pwrite,
 		&hfs_seteof,
+		&hfs_append,
 	};
 	
 	static const vfs::filehandle_method_set hfs_methods =
