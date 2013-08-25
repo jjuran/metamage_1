@@ -25,8 +25,6 @@ namespace Genie
 			
 			virtual ~RegularFileHandle();
 			
-			bool IsRegularFile() const  { return true; }
-			
 			virtual IOPtr Clone() = 0;
 			
 			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
@@ -40,16 +38,6 @@ namespace Genie
 			ssize_t Write( const char* buffer, std::size_t byteCount );
 			
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
-	};
-	
-	template <> struct IOHandle_Downcast_Traits< RegularFileHandle >
-	{
-		static IOHandle::Test GetTest()  { return &IOHandle::IsRegularFile; }
-		
-		static int GetError( IOHandle& handle )
-		{
-			return IOHandle_Downcast_Traits< StreamHandle >::GetError( handle );
-		}
 	};
 	
 }
