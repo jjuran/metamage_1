@@ -161,7 +161,7 @@ namespace Genie
 	
 	IOPtr Pixels_IO::Clone()
 	{
-		return new Pixels_IO( GetFile(), GetFlags() );
+		return new Pixels_IO( GetFile(), get_flags() );
 	}
 	
 	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

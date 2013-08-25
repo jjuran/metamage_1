@@ -156,7 +156,7 @@ namespace Genie
 		
 		std::vector< plus::string >& strings = params.itsStrings;
 		
-		if ( GetFlags() & O_TRUNC )
+		if ( get_flags() & O_TRUNC )
 		{
 			strings.clear();
 		}

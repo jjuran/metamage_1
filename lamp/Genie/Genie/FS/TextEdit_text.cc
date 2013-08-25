@@ -112,7 +112,7 @@ namespace Genie
 	
 	IOPtr TextEdit_text_Handle::Clone()
 	{
-		return new TextEdit_text_Handle( GetFile(), GetFlags() );
+		return new TextEdit_text_Handle( GetFile(), get_flags() );
 	}
 	
 	const FSTree* TextEdit_text_Handle::ViewKey()

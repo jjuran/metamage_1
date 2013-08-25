@@ -200,7 +200,7 @@ namespace Genie
 	
 	IOPtr CaptionTextFileHandle::Clone()
 	{
-		return new CaptionTextFileHandle( GetFile(), GetFlags() );
+		return new CaptionTextFileHandle( GetFile(), get_flags() );
 	}
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()

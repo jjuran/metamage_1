@@ -76,7 +76,7 @@ namespace Genie
 	IOPtr Handle_IOHandle::Clone()
 	{
 		return new Handle_IOHandle( GetFile(),
-		                            GetFlags(),
+		                            get_flags(),
 		                            itsHandle );
 	}
 	
@@ -98,7 +98,7 @@ namespace Genie
 	
 	ssize_t Handle_IOHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		const bool writable = GetFlags() + (1 - O_RDONLY) & 2;
+		const bool writable = get_flags() + (1 - O_RDONLY) & 2;
 		
 		if ( !writable )
 		{

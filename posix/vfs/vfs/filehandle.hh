@@ -63,9 +63,9 @@ namespace vfs
 			
 			filehandle* GetBaseForCast( Test test );
 			
-			int GetFlags() const  { return its_flags; }
+			int get_flags() const  { return its_flags; }
 			
-			void SetFlags( int flags )  { its_flags = flags; }
+			void set_flags( int flags )  { its_flags = flags; }
 			
 			off_t get_mark() const  { return its_mark; }
 			

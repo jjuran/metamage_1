@@ -292,7 +292,7 @@ namespace Genie
 	IOPtr Rsrc_IOHandle::Clone()
 	{
 		return new Rsrc_IOHandle( GetFile(),
-		                          GetFlags(),
+		                          get_flags(),
 		                          GetHandle(),
 		                          itsFileSpec );
 	}

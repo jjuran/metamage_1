@@ -135,7 +135,7 @@ namespace Genie
 	
 	ssize_t RegularFileHandle::SysWrite( const char* buffer, size_t n_bytes )
 	{
-		const bool appending = GetFlags() & O_APPEND;
+		const bool appending = get_flags() & O_APPEND;
 		
 		ssize_t written = appending ? Append( buffer, n_bytes )
 		                            : pwrite( *this,

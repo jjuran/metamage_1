@@ -423,7 +423,7 @@ namespace Genie
 	
 	IOPtr IconDataFileHandle::Clone()
 	{
-		return new IconDataFileHandle( GetFile(), GetFlags(), itsData );
+		return new IconDataFileHandle( GetFile(), get_flags(), itsData );
 	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
@@ -432,7 +432,7 @@ namespace Genie
 		
 		ssize_t bytes_read = itsData->Read( buffer, byteCount, offset );
 		
-		if ( bytes_read == sizeof (::ResID)  &&  (GetFlags() & O_BINARY) == 0 )
+		if ( bytes_read == sizeof (::ResID)  &&  (get_flags() & O_BINARY) == 0 )
 		{
 			short resID = 0;
 			
@@ -471,7 +471,7 @@ namespace Genie
 		
 		size_t actual_byte_count = byteCount;
 		
-		if ( (GetFlags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
+		if ( (get_flags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
 		{
 			resID = gear::parse_decimal( buffer );
 			

@@ -55,7 +55,7 @@ namespace Genie
 	
 	IOPtr PropertyReaderFileHandle::Clone()
 	{
-		return new PropertyReaderFileHandle( GetFile(), GetFlags(), itsData );
+		return new PropertyReaderFileHandle( GetFile(), get_flags(), itsData );
 	}
 	
 	ssize_t PropertyReaderFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

@@ -188,7 +188,7 @@ namespace Genie
 	
 	IOPtr Bits_IO::Clone()
 	{
-		return new Bits_IO( GetFile(), GetFlags() );
+		return new Bits_IO( GetFile(), get_flags() );
 	}
 	
 	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

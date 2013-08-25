@@ -99,7 +99,7 @@ namespace Genie
 	IOPtr MemoryFileHandle::Clone()
 	{
 		return new MemoryFileHandle( GetFile(),
-		                             GetFlags(),
+		                             get_flags(),
 		                             itsBase,
 		                             itsSize );
 	}

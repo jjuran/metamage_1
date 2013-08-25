@@ -129,11 +129,11 @@ namespace Genie
 			switch ( cmd )
 			{
 				case F_GETFL:
-					return stream.GetFlags();
+					return stream.get_flags();
 					
 				case F_SETFL:
 					// Current unsettable flags plus new settable flags
-					stream.SetFlags( (stream.GetFlags() & ~mask) | (param & mask) );
+					stream.set_flags( (stream.get_flags() & ~mask) | (param & mask) );
 					return 0;
 				
 				default:

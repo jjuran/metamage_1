@@ -178,7 +178,7 @@ namespace Genie
 	IOPtr MacFileHandle::Clone()
 	{
 		return new MacFileHandle( itsRefNum,
-		                          GetFlags(),
+		                          get_flags(),
 		                          itsFileGetter );
 	}
 	
