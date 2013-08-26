@@ -20,14 +20,20 @@ namespace vfs
 		private:
 			memory_mapping_ptr  its_memory;
 			filehandle_ptr      its_file;
+			off_t               its_offset;
 		
 		public:
 			file_memory_mapping( memory_mapping*  memory,
-			                     filehandle*      file );
+			                     filehandle*      file,
+			                     off_t            offset );
 			
 			~file_memory_mapping();
 			
 			filehandle* get_file() const  { return its_file.get(); }
+			
+			off_t get_offset() const  { return its_offset; }
+			
+			void msync( void* addr, size_t len, int flags ) const;
 	};
 	
 }

@@ -10,7 +10,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/mman.h>
 
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
@@ -39,43 +38,6 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
-	
-	class file_memory_mapping : public vfs::file_memory_mapping
-	{
-		private:
-			off_t  its_offset;
-		
-		public:
-			file_memory_mapping( memory_mapping*     memory,
-			                     RegularFileHandle*  file,
-			                     off_t               offset )
-			:
-				vfs::file_memory_mapping( memory, file ),
-				its_offset( offset )
-			{
-			}
-			
-			~file_memory_mapping();
-			
-			off_t get_offset() const  { return its_offset; }
-			
-			void msync( void* addr, size_t len, int flags ) const;
-	};
-	
-	file_memory_mapping::~file_memory_mapping()
-	{
-		msync( get_address(), get_size(), MS_SYNC );
-	}
-	
-	void file_memory_mapping::msync( void* addr, size_t len, int flags ) const
-	{
-		const int mmap_flags = get_flags();
-		
-		if ( (mmap_flags & (MAP_SHARED|MAP_PRIVATE)) == MAP_SHARED )
-		{
-			pwrite( *get_file(), (const char*) addr, len, its_offset );
-		}
-	}
 	
 	class malloc_memory_mapping : public vfs::memory_mapping
 	{
@@ -170,7 +132,7 @@ namespace Genie
 		
 		memory_mapping_ptr result( mapping );
 		
-		result = memory_mapping_ptr( new file_memory_mapping( mapping, this, offset ) );
+		result = memory_mapping_ptr( new vfs::file_memory_mapping( mapping, this, offset ) );
 		
 		void* addr = mapping->get_address();
 		
