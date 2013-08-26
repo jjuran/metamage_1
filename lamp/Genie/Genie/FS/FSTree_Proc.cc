@@ -608,7 +608,7 @@ namespace Genie
 	{
 		IOHandle* handle = get_proc_fd_handle( node );
 		
-		if ( handle->methods()->bstore_methods != NULL )
+		if ( handle->methods()  &&  handle->methods()->bstore_methods )
 		{
 			return geteof( *handle );
 		}
