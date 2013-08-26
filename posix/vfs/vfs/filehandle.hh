@@ -10,7 +10,6 @@
 #include "plus/ref_count.hh"
 
 // vfs
-#include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_ptr.hh"
 #include "vfs/node_ptr.hh"
 
@@ -77,8 +76,6 @@ namespace vfs
 			
 			const bstore_method_set& bstore_methods() const;
 			const socket_method_set& socket_methods() const;
-			
-			virtual filehandle_ptr Clone();
 			
 			virtual void Attach( filehandle* target );
 			

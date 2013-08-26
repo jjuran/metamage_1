@@ -92,8 +92,6 @@ namespace Genie
 			
 			const FSTree* ViewKey();
 			
-			IOPtr Clone();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
@@ -184,11 +182,6 @@ namespace Genie
 	const FSTree* Bits_IO::ViewKey()
 	{
 		return GetFile()->owner();
-	}
-	
-	IOPtr Bits_IO::Clone()
-	{
-		return new Bits_IO( GetFile(), get_flags() );
 	}
 	
 	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

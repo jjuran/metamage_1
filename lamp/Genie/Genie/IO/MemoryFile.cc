@@ -41,8 +41,6 @@ namespace Genie
 			
 			~MemoryFileHandle();
 			
-			IOPtr Clone();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
@@ -94,14 +92,6 @@ namespace Genie
 	
 	MemoryFileHandle::~MemoryFileHandle()
 	{
-	}
-	
-	IOPtr MemoryFileHandle::Clone()
-	{
-		return new MemoryFileHandle( GetFile(),
-		                             get_flags(),
-		                             itsBase,
-		                             itsSize );
 	}
 	
 	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

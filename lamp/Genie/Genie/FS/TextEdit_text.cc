@@ -56,8 +56,6 @@ namespace Genie
 		public:
 			TextEdit_text_Handle( const FSTreePtr& file, int flags );
 			
-			IOPtr Clone();
-			
 			const FSTree* ViewKey();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
@@ -108,11 +106,6 @@ namespace Genie
 	:
 		RegularFileHandle( file, flags, &TextEdit_text_methods )
 	{
-	}
-	
-	IOPtr TextEdit_text_Handle::Clone()
-	{
-		return new TextEdit_text_Handle( GetFile(), get_flags() );
 	}
 	
 	const FSTree* TextEdit_text_Handle::ViewKey()

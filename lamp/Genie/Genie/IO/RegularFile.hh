@@ -25,8 +25,6 @@ namespace Genie
 			
 			virtual ~RegularFileHandle();
 			
-			virtual IOPtr Clone() = 0;
-			
 			ssize_t SysRead( char* buffer, size_t n_bytes );
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );

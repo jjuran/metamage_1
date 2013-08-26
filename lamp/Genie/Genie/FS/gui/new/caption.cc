@@ -142,8 +142,6 @@ namespace Genie
 		public:
 			CaptionTextFileHandle( const FSTreePtr& file, int flags );
 			
-			IOPtr Clone();
-			
 			const FSTree* ViewKey();
 			
 			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].its_utf8_text; }
@@ -196,11 +194,6 @@ namespace Genie
 	:
 		RegularFileHandle( file, flags, &caption_text_filehandle_methods )
 	{
-	}
-	
-	IOPtr CaptionTextFileHandle::Clone()
-	{
-		return new CaptionTextFileHandle( GetFile(), get_flags() );
 	}
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()

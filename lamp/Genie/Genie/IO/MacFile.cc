@@ -50,8 +50,6 @@ namespace Genie
 			
 			FSTreePtr GetFile();
 			
-			IOPtr Clone();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
@@ -179,13 +177,6 @@ namespace Genie
 	FSTreePtr MacFileHandle::GetFile()
 	{
 		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
-	}
-	
-	IOPtr MacFileHandle::Clone()
-	{
-		return new MacFileHandle( itsRefNum,
-		                          get_flags(),
-		                          itsFileGetter );
 	}
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )

@@ -73,13 +73,6 @@ namespace Genie
 	{
 	}
 	
-	IOPtr Handle_IOHandle::Clone()
-	{
-		return new Handle_IOHandle( GetFile(),
-		                            get_flags(),
-		                            itsHandle );
-	}
-	
 	ssize_t Handle_IOHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
 		const size_t size = GetEOF();

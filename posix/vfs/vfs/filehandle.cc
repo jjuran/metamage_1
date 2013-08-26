@@ -113,11 +113,6 @@ namespace vfs
 		return reading * 0400 | writing * 0200 | execing * 0100;
 	}
 	
-	filehandle_ptr filehandle::Clone()
-	{
-		return this;
-	}
-	
 	void filehandle::Attach( vfs::filehandle* target )
 	{
 		p7::throw_errno( EINVAL );

@@ -357,8 +357,6 @@ namespace Genie
 			                    int                                      flags,
 			                    const boost::intrusive_ptr< IconData >&  data );
 			
-			IOPtr Clone();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			off_t GetEOF()  { return itsData->GetSize(); }
@@ -418,11 +416,6 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 	};
-	
-	IOPtr IconDataFileHandle::Clone()
-	{
-		return new IconDataFileHandle( GetFile(), get_flags(), itsData );
-	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
 	{

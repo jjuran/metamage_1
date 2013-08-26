@@ -39,8 +39,6 @@ namespace Genie
 			
 			~Handle_IOHandle();
 			
-			IOPtr Clone();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );

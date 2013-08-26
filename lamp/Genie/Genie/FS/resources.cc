@@ -236,8 +236,6 @@ namespace Genie
 			
 			~Rsrc_IOHandle();
 			
-			IOPtr Clone();
-			
 			void Synchronize( bool metadata );
 	};
 	
@@ -287,14 +285,6 @@ namespace Genie
 		
 		N::ChangedResource( r );
 		N::WriteResource  ( r );
-	}
-	
-	IOPtr Rsrc_IOHandle::Clone()
-	{
-		return new Rsrc_IOHandle( GetFile(),
-		                          get_flags(),
-		                          GetHandle(),
-		                          itsFileSpec );
 	}
 	
 	void Rsrc_IOHandle::Synchronize( bool metadata )

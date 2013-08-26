@@ -27,8 +27,6 @@ namespace Genie
 			                          int                  flags,
 			                          const plus::string&  value );
 			
-			IOPtr Clone();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			off_t GetEOF()  { return itsData.size(); }

@@ -29,8 +29,13 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/file_descriptor.hh"
+#include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/append.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
+#include "vfs/filehandle/primitives/pread.hh"
+#include "vfs/filehandle/primitives/pwrite.hh"
+#include "vfs/filehandle/primitives/seteof.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/root.hh"
 #include "vfs/node/types/fixed_dir.hh"
@@ -616,6 +621,75 @@ namespace Genie
 		return 0;
 	}
 	
+	
+	class shadow_filehandle : public RegularFileHandle
+	{
+		private:
+			vfs::filehandle_ptr its_basis;
+		
+		public:
+			shadow_filehandle( const vfs::node&  file,
+			                   int               flags,
+			                   vfs::filehandle&  basis );
+			
+			~shadow_filehandle();
+			
+			vfs::filehandle& get() const  { return *its_basis; }
+	};
+	
+	static ssize_t shadow_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	{
+		return pread( static_cast< shadow_filehandle& >( *file ).get(), buffer, n, offset );
+	}
+	
+	static off_t shadow_geteof( vfs::filehandle* file )
+	{
+		return geteof( static_cast< shadow_filehandle& >( *file ).get() );
+	}
+	
+	static ssize_t shadow_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		return pwrite( static_cast< shadow_filehandle& >( *file ).get(), buffer, n, offset );
+	}
+	
+	static void shadow_seteof( vfs::filehandle* file, off_t offset )
+	{
+		seteof( static_cast< shadow_filehandle& >( *file ).get(), offset );
+	}
+	
+	static ssize_t shadow_append( vfs::filehandle* file, const char* buffer, size_t n )
+	{
+		return append( static_cast< shadow_filehandle& >( *file ).get(), buffer, n );
+	}
+	
+	static const vfs::bstore_method_set shadow_bstore_methods =
+	{
+		&shadow_pread,
+		&shadow_geteof,
+		&shadow_pwrite,
+		&shadow_seteof,
+		&shadow_append,
+	};
+	
+	static const vfs::filehandle_method_set shadow_methods =
+	{
+		&shadow_bstore_methods,
+	};
+	
+	shadow_filehandle::shadow_filehandle( const vfs::node&  file,
+	                                      int               flags,
+	                                      vfs::filehandle&  basis )
+	:
+		RegularFileHandle( &file, flags, &shadow_methods ),
+		its_basis( &basis )
+	{
+	}
+	
+	shadow_filehandle::~shadow_filehandle()
+	{
+	}
+	
+	
 	static IOPtr proc_fd_link_open( const FSTree* node, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
@@ -623,7 +697,14 @@ namespace Genie
 			p7::throw_errno( ELOOP );
 		}
 		
-		return get_proc_fd_handle( node )->Clone();
+		vfs::filehandle_ptr fh = get_proc_fd_handle( node );
+		
+		if ( fh->methods()  &&  fh->methods()->bstore_methods )
+		{
+			return new shadow_filehandle( *node, flags, *fh );
+		}
+		
+		return fh;
 	}
 	
 	static FSTreePtr proc_fd_link_resolve( const FSTree* node )
