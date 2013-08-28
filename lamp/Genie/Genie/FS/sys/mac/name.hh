@@ -15,12 +15,12 @@ namespace Genie
 	
 	struct sys_mac_macname : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 	};
 	
 	struct sys_mac_name : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 	};
 	
 }

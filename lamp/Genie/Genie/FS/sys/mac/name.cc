@@ -15,12 +15,12 @@
 namespace Genie
 {
 	
-	void sys_mac_macname::get( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_macname::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetWorkstationName( false );
 	}
 	
-	void sys_mac_name::get( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_name::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetWorkstationName( true );
 	}

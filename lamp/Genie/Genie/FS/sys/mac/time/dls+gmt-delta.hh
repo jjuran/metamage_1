@@ -17,21 +17,21 @@ namespace Genie
 	{
 		static const std::size_t fixed_size = 4;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 	};
 	
 	struct sys_mac_time_dls : readonly_property
 	{
 		static const std::size_t fixed_size = 1;
 		
-		static void get( plus::var_string& out, const FSTree* that, bool binary );
+		static void get( plus::var_string& out, const vfs::node* that, bool binary );
 	};
 	
 	struct sys_mac_time_gmtdelta : readonly_property
 	{
 		static const std::size_t fixed_size = 4;
 		
-		static void get( plus::var_string& out, const FSTree* that, bool binary );
+		static void get( plus::var_string& out, const vfs::node* that, bool binary );
 	};
 	
 }

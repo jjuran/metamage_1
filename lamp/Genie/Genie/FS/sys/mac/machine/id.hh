@@ -17,7 +17,7 @@ namespace Genie
 	{
 		static const std::size_t fixed_size = 4;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 	};
 	
 }

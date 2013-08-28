@@ -12,21 +12,21 @@
 // plus
 #include "plus/var_string_fwd.hh"
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
+// vfs
+#include "vfs/node_fwd.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	typedef void (*property_get_hook)( plus::var_string&  out,
-	                                   const FSTree*      that,
+	                                   const node*        that,
 	                                   bool               binary );
 	
-	typedef void (*property_set_hook)( const FSTree  *that,
-	                                   const char    *begin,
-	                                   const char    *end,
-	                                   bool           binary );
+	typedef void (*property_set_hook)( const node*  that,
+	                                   const char*  begin,
+	                                   const char*  end,
+	                                   bool         binary );
 	
 	struct readonly_property
 	{
@@ -36,7 +36,7 @@ namespace Genie
 		static const bool can_set = false;
 		
 		// Not defined
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary );
+		static void set( const node* that, const char* begin, const char* end, bool binary );
 	};
 	
 	struct writeonly_property
@@ -47,7 +47,7 @@ namespace Genie
 		static const bool can_set = true;
 		
 		// Not defined
-		static void get( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const node* that, bool binary );
 	};
 	
 	struct readwrite_property
@@ -61,7 +61,7 @@ namespace Genie
 	struct property_params
 	{
 		std::size_t        size;
-		property_get_hook  get;
+		vfs::property_get_hook  get;
 		property_set_hook  set;
 	};
 	
@@ -78,6 +78,20 @@ namespace Genie
 		Property::can_get ? &Property::get : 0,  // NULL
 		Property::can_set ? &Property::set : 0   // NULL
 	};
+	
+}
+
+namespace Genie
+{
+	
+	using vfs::property_get_hook;
+	using vfs::property_set_hook;
+	using vfs::readonly_property;
+	using vfs::writeonly_property;
+	using vfs::readwrite_property;
+	
+	using vfs::property_params;
+	using vfs::property_params_factory;
 	
 }
 
