@@ -1,5 +1,5 @@
 /*
-	fixed_dir.hh
+	fixed_dir.cc
 	------------
 */
 
