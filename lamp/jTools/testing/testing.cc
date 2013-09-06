@@ -107,8 +107,8 @@
 #endif
 
 // Nitrogen Extras / Iteration
-#include "Iteration/AEDescListItems.h"
-#include "Iteration/AEDescListItemDatas.h"
+#include "Iteration/AEDescListItems.hh"
+#include "Iteration/AEDescListItemDatas.hh"
 
 // OSErrno
 #include "OSErrno/OSErrno.hh"

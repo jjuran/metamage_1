@@ -1,10 +1,10 @@
-/*	=====================
- *	AEDescListItemDatas.h
- *	=====================
- */
+/*
+	AEDescListItemDatas.hh
+	----------------------
+*/
 
-#ifndef ITERATION_AEDESCLISTITEMDATAS_H
-#define ITERATION_AEDESCLISTITEMDATAS_H
+#ifndef ITERATION_AEDESCLISTITEMDATAS_HH
+#define ITERATION_AEDESCLISTITEMDATAS_HH
 
 // nucleus
 #ifndef NUCLEUS_INDEXEDVALUESEQUENCE_HH

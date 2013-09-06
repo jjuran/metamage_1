@@ -36,8 +36,8 @@
 #endif
 
 // Nitrogen Extras / Iteration
-#ifndef ITERATION_AEDESCLISTITEMS_H
-#include "Iteration/AEDescListItems.h"
+#ifndef ITERATION_AEDESCLISTITEMS_HH
+#include "Iteration/AEDescListItems.hh"
 #endif
 
 
