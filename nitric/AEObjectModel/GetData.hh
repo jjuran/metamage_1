@@ -1,11 +1,12 @@
-/*	=========
- *	GetData.h
- *	=========
- */
+/*
+	GetData.hh
+	----------
+*/
 
-#ifndef AEOBJECTMODEL_GETDATA_H
-#define AEOBJECTMODEL_GETDATA_H
+#ifndef AEOBJECTMODEL_GETDATA_HH
+#define AEOBJECTMODEL_GETDATA_HH
 
+// Standard C++
 #include <map>
 
 // Nitrogen

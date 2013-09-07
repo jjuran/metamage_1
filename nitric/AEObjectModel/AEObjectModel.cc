@@ -1,11 +1,9 @@
-/*	================
- *	AEObjectModel.cc
- *	================
- */
+/*
+	AEObjectModel.cc
+	----------------
+*/
 
-#ifndef AEOBJECTMODEL_AEOBJECTMODEL_H
-#include "AEObjectModel/AEObjectModel.h"
-#endif
+#include "AEObjectModel/AEObjectModel.hh"
 
 // Standard C++
 #include <algorithm>
@@ -22,18 +20,10 @@
 #endif
 
 // Nitrogen Extras / AEObjectModel
-#ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
-#include "AEObjectModel/AccessProperty.h"
-#endif
-#ifndef AEOBJECTMODEL_COMPARE_H
-#include "AEObjectModel/Compare.h"
-#endif
-#ifndef AEOBJECTMODEL_COUNT_H
-#include "AEObjectModel/Count.h"
-#endif
-#ifndef AEOBJECTMODEL_DISPOSETOKEN_H
-#include "AEObjectModel/DisposeToken.h"
-#endif
+#include "AEObjectModel/AccessProperty.hh"
+#include "AEObjectModel/Compare.hh"
+#include "AEObjectModel/Count.hh"
+#include "AEObjectModel/DisposeToken.hh"
 
 // Nitrogen Extras / Iteration
 #ifndef ITERATION_AEDESCLISTITEMS_HH

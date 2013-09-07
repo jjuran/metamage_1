@@ -1,11 +1,12 @@
-/*	================
- *	AccessProperty.h
- *	================
- */
+/*
+	AccessProperty.hh
+	-----------------
+*/
 
-#ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
-#define AEOBJECTMODEL_ACCESSPROPERTY_H
+#ifndef AEOBJECTMODEL_ACCESSPROPERTY_HH
+#define AEOBJECTMODEL_ACCESSPROPERTY_HH
 
+// Standard C++
 #include <map>
 
 // Mac OS X
@@ -13,6 +14,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

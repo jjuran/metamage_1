@@ -1,11 +1,9 @@
-/*	==========
- *	SetData.cc
- *	==========
- */
+/*
+	SetData.cc
+	----------
+*/
 
-#ifndef AEOBJECTMODEL_SETDATA_H
-#include "AEObjectModel/SetData.h"
-#endif
+#include "AEObjectModel/SetData.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"

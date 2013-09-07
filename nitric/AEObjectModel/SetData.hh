@@ -1,11 +1,12 @@
-/*	=========
- *	SetData.h
- *	=========
- */
+/*
+	SetData.hh
+	----------
+*/
 
-#ifndef AEOBJECTMODEL_SETDATA_H
-#define AEOBJECTMODEL_SETDATA_H
+#ifndef AEOBJECTMODEL_SETDATA_HH
+#define AEOBJECTMODEL_SETDATA_HH
 
+// Standard C++
 #include <map>
 
 // Nitrogen

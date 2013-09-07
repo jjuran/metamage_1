@@ -1,9 +1,9 @@
-/*	==========
- *	GetData.cc
- *	==========
- */
+/*
+	GetData.cc
+	----------
+*/
 
-#include "AEObjectModel/GetData.h"
+#include "AEObjectModel/GetData.hh"
 
 // Nitrogen
 #include "Nitrogen/AEDataModel.hh"

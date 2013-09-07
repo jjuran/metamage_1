@@ -1,11 +1,9 @@
-/*	==========
- *	Compare.cc
- *	==========
- */
+/*
+	Compare.cc
+	----------
+*/
 
-#ifndef AEOBJECTMODEL_COMPARE_H
-#include "AEObjectModel/Compare.h"
-#endif
+#include "AEObjectModel/Compare.hh"
 
 
 namespace Nitrogen

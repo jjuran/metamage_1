@@ -1,16 +1,17 @@
-/*	===============
- *	AEObjectModel.h
- *	===============
- */
+/*
+	AEObjectModel.hh
+	----------------
+*/
 
-#ifndef AEOBJECTMODEL_AEOBJECTMODEL_H
-#define AEOBJECTMODEL_AEOBJECTMODEL_H
+#ifndef AEOBJECTMODEL_AEOBJECTMODEL_HH
+#define AEOBJECTMODEL_AEOBJECTMODEL_HH
 
 // Mac OS X
 #ifdef __APPLE__
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

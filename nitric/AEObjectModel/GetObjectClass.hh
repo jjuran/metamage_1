@@ -1,11 +1,12 @@
-/*	================
- *	GetObjectClass.h
- *	================
- */
+/*
+	GetObjectClass.hh
+	-----------------
+*/
 
-#ifndef AEOBJECTMODEL_GETOBJECTCLASS_H
-#define AEOBJECTMODEL_GETOBJECTCLASS_H
+#ifndef AEOBJECTMODEL_GETOBJECTCLASS_HH
+#define AEOBJECTMODEL_GETOBJECTCLASS_HH
 
+// Standard C++
 #include <map>
 
 // Mac OS X
@@ -13,6 +14,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #endif
 
+// Mac OS
 #ifndef __AEREGISTRY__
 #include <AERegistry.h>
 #endif

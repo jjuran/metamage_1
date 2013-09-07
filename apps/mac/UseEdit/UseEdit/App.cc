@@ -23,11 +23,11 @@
 #include "Iteration/AEDescListItemDatas.hh"
 
 // AEObjectModel
-#include "AEObjectModel/AccessProperty.h"
-#include "AEObjectModel/AEObjectModel.h"
-#include "AEObjectModel/Count.h"
-#include "AEObjectModel/GetData.h"
-#include "AEObjectModel/GetObjectClass.h"
+#include "AEObjectModel/AccessProperty.hh"
+#include "AEObjectModel/AEObjectModel.hh"
+#include "AEObjectModel/Count.hh"
+#include "AEObjectModel/GetData.hh"
+#include "AEObjectModel/GetObjectClass.hh"
 
 // Pedestal
 #include "Pedestal/AboutBox.hh"

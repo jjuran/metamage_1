@@ -1,11 +1,9 @@
-/*	=================
- *	GetObjectClass.cc
- *	=================
- */
+/*
+	GetObjectClass.cc
+	-----------------
+*/
 
-#ifndef AEOBJECTMODEL_GETOBJECTCLASS_H
-#include "AEObjectModel/GetObjectClass.h"
-#endif
+#include "AEObjectModel/GetObjectClass.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"

@@ -1,11 +1,12 @@
-/*	=========
- *	Compare.h
- *	=========
- */
+/*
+	Compare.hh
+	----------
+*/
 
-#ifndef AEOBJECTMODEL_COMPARE_H
-#define AEOBJECTMODEL_COMPARE_H
+#ifndef AEOBJECTMODEL_COMPARE_HH
+#define AEOBJECTMODEL_COMPARE_HH
 
+// Standard C++
 #include <map>
 
 // Nitrogen

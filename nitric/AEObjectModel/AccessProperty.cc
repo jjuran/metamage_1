@@ -1,11 +1,9 @@
-/*	=================
- *	AccessProperty.cc
- *	=================
- */
+/*
+	AccessProperty.cc
+	-----------------
+*/
 
-#ifndef AEOBJECTMODEL_ACCESSPROPERTY_H
-#include "AEObjectModel/AccessProperty.h"
-#endif
+#include "AEObjectModel/AccessProperty.hh"
 
 // Mac OS X
 #ifdef __APPLE__

@@ -1,11 +1,12 @@
-/*	=======
- *	Count.h
- *	=======
- */
+/*
+	Count.hh
+	--------
+*/
 
-#ifndef AEOBJECTMODEL_COUNT_H
-#define AEOBJECTMODEL_COUNT_H
+#ifndef AEOBJECTMODEL_COUNT_HH
+#define AEOBJECTMODEL_COUNT_HH
 
+// Standard C++
 #include <map>
 
 // Nitrogen

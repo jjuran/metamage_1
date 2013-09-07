@@ -1,11 +1,12 @@
-/*	==============
- *	DisposeToken.h
- *	==============
- */
+/*
+	DisposeToken.hh
+	---------------
+*/
 
-#ifndef AEOBJECTMODEL_DISPOSETOKEN_H
-#define AEOBJECTMODEL_DISPOSETOKEN_H
+#ifndef AEOBJECTMODEL_DISPOSETOKEN_HH
+#define AEOBJECTMODEL_DISPOSETOKEN_HH
 
+// Standard C++
 #include <map>
 
 // Nitrogen

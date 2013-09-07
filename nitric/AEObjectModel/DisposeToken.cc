@@ -1,11 +1,9 @@
-/*	===============
- *	DisposeToken.cc
- *	===============
- */
+/*
+	DisposeToken.cc
+	---------------
+*/
 
-#ifndef AEOBJECTMODEL_DISPOSETOKEN_H
-#include "AEObjectModel/DisposeToken.h"
-#endif
+#include "AEObjectModel/DisposeToken.hh"
 
 // Standard C++
 #include <algorithm>
