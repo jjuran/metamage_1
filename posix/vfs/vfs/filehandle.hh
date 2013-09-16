@@ -42,6 +42,7 @@ namespace vfs
 			node_ptr                      its_file;
 			int                           its_flags;
 			const filehandle_method_set*  its_methods;
+			void*                         its_extra;
 			filehandle_destructor         its_destructor;
 			
 			virtual filehandle* Next() const  { return NULL; }
@@ -55,11 +56,13 @@ namespace vfs
 			
 			filehandle( int                           flags,
 			            const filehandle_method_set*  methods = NULL,
+			            std::size_t                   n_extra = 0,
 			            filehandle_destructor         dtor    = NULL );
 			
 			filehandle( const node*                   file,
 			            int                           flags,
 			            const filehandle_method_set*  methods = NULL,
+			            std::size_t                   n_extra = 0,
 			            filehandle_destructor         dtor    = NULL );
 			
 			virtual ~filehandle();
@@ -84,6 +87,8 @@ namespace vfs
 			const bstore_method_set&   bstore_methods  () const;
 			const socket_method_set&   socket_methods  () const;
 			const terminal_method_set& terminal_methods() const;
+			
+			void* extra() const  { return its_extra; }
 			
 			filehandle_destructor destructor() const  { return its_destructor; }
 			

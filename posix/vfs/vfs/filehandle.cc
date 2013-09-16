@@ -41,11 +41,13 @@ namespace vfs
 	
 	filehandle::filehandle( int                           flags,
 	                        const filehandle_method_set*  methods,
+	                        std::size_t                   n_extra,
 	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),
 		its_flags  ( flags   ),
 		its_methods( methods ),
+		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
 		its_destructor( dtor )
 	{
 	}
@@ -53,12 +55,14 @@ namespace vfs
 	filehandle::filehandle( const node*                   file,
 	                        int                           flags,
 	                        const filehandle_method_set*  methods,
+	                        std::size_t                   n_extra,
 	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),
 		its_file   ( file    ),
 		its_flags  ( flags   ),
 		its_methods( methods ),
+		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
 		its_destructor( dtor )
 	{
 	}
@@ -69,6 +73,8 @@ namespace vfs
 		{
 			its_destructor( this );
 		}
+		
+		::operator delete( its_extra );
 	}
 	
 	const bstore_method_set& filehandle::bstore_methods() const
