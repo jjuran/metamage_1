@@ -44,6 +44,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/hangup.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/symbolic_link.hh"
@@ -166,9 +167,7 @@ namespace Genie
 	{
 		if ( h != NULL )
 		{
-			TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *h ) );
-			
-			terminal.Disconnect();
+			hangup( *h );
 			
 			h = NULL;
 			
