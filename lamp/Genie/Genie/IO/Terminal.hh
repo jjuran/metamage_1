@@ -32,7 +32,6 @@ namespace Genie
 			const plus::string  itsTTYName;
 			IOPtr               itsTTY;
 			pid_t               its_process_group_id;
-			bool                itIsDisconnected;
 			
 			IOHandle* Next() const  { return itsTTY.get(); }
 		
@@ -41,8 +40,7 @@ namespace Genie
 			:
 				IOHandle( O_RDWR ),
 				itsTTYName          ( ttyName ),
-				its_process_group_id( no_pgid ),
-				itIsDisconnected    ( false   )
+				its_process_group_id( no_pgid )
 			{
 			}
 			
@@ -59,8 +57,6 @@ namespace Genie
 			void setpgrp( pid_t pgid )  { its_process_group_id = pgid; }
 			
 			void IOCtl( unsigned long request, int* argp );
-			
-			bool IsDisconnected() const  { return itIsDisconnected; }
 			
 			void Disconnect();
 			

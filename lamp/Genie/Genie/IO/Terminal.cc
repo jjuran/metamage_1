@@ -115,8 +115,6 @@ namespace Genie
 	
 	void TerminalHandle::Disconnect()
 	{
-		itIsDisconnected = true;
-		
 		if ( StreamHandle* tty = IOHandle_Cast< StreamHandle >( Next() ) )
 		{
 			tty->Disconnect();
