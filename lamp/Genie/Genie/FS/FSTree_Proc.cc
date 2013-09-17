@@ -33,6 +33,7 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/append.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
+#include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
@@ -52,7 +53,6 @@
 #include "Genie/FS/property.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/RegularFile.hh"
-#include "Genie/IO/Terminal.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -403,9 +403,7 @@ namespace Genie
 				{
 					terminal_name = pathname( *handle->GetFile() );
 					
-					TerminalHandle& terminal = IOHandle_Cast< TerminalHandle >( *handle );
-					
-					tpgid = terminal.getpgrp();
+					tpgid = getpgrp( *handle );
 				}
 				
 				plus::var_string result;
