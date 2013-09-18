@@ -56,13 +56,6 @@ namespace Genie
 			const plus::string& TTYName() const  { return itsTTYName; }
 	};
 	
-	template <> struct IOHandle_Downcast_Traits< TerminalHandle >
-	{
-		static IOHandle::Test GetTest()  { return &IOHandle::IsTerminal; }
-		
-		static int GetError( IOHandle& )  { return ENOTTY; }
-	};
-	
 }
 
 #endif
