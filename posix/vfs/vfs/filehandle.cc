@@ -89,6 +89,16 @@ namespace vfs
 		return *its_methods->socket_methods;
 	}
 	
+	const terminal_method_set& filehandle::terminal_methods() const
+	{
+		if ( !its_methods  ||  !its_methods->terminal_methods )
+		{
+			p7::throw_errno( ENOTTY );
+		}
+		
+		return *its_methods->terminal_methods;
+	}
+	
 	
 	static plus::string IOName( const void* address, bool is_pipe )
 	{
