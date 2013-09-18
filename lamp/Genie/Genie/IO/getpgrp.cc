@@ -19,7 +19,9 @@ namespace vfs
 	{
 		using namespace Genie;
 		
-		return IOHandle_Cast< TerminalHandle >( that ).getpgrp();
+		that.terminal_methods();  // throws if not a terminal
+		
+		return static_cast< TerminalHandle& >( that ).getpgrp();
 	}
 	
 }
