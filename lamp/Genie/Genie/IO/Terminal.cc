@@ -9,6 +9,7 @@
 #include <signal.h>
 
 // POSIX
+#include <fcntl.h>
 #include "sys/ttycom.h"
 
 // poseven
@@ -28,6 +29,15 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
+	
+	
+	TerminalHandle::TerminalHandle( const plus::string& tty_name )
+	:
+		vfs::filehandle     ( O_RDWR   ),
+		itsTTYName          ( tty_name ),
+		its_process_group_id( no_pgid  )
+	{
+	}
 	
 	TerminalHandle::~TerminalHandle()
 	{

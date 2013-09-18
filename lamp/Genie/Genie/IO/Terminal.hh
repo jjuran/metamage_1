@@ -8,7 +8,6 @@
 
 // POSIX
 #include "errno.h"
-#include "fcntl.h"
 
 // plus
 #include "plus/string.hh"
@@ -36,13 +35,7 @@ namespace Genie
 			IOHandle* Next() const  { return itsTTY.get(); }
 		
 		public:
-			TerminalHandle( const plus::string& ttyName )
-			:
-				IOHandle( O_RDWR ),
-				itsTTYName          ( ttyName ),
-				its_process_group_id( no_pgid )
-			{
-			}
+			TerminalHandle( const plus::string& tty_name );
 			
 			~TerminalHandle();
 			
