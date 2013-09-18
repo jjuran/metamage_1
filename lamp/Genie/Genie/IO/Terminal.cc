@@ -17,6 +17,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/terminal_method_set.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
 // Genie
@@ -31,9 +33,28 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static void terminal_hangup( vfs::filehandle* that )
+	{
+		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
+		
+		terminal.Disconnect();
+	}
+	
+	static const vfs::terminal_method_set terminal_methods =
+	{
+		&terminal_hangup
+	};
+	
+	static const vfs::filehandle_method_set filehandle_methods =
+	{
+		NULL,
+		NULL,
+		&terminal_methods
+	};
+	
 	TerminalHandle::TerminalHandle( const plus::string& tty_name )
 	:
-		vfs::filehandle     ( O_RDWR   ),
+		vfs::filehandle     ( O_RDWR, &filehandle_methods ),
 		itsTTYName          ( tty_name ),
 		its_process_group_id( no_pgid  )
 	{
