@@ -58,7 +58,6 @@ namespace vfs
 			virtual ~filehandle();
 			
 			virtual bool IsStream     () const  { return false; }
-			virtual bool IsTerminal   () const  { return false; }
 			virtual bool IsDirectory  () const  { return false; }
 			
 			filehandle* GetBaseForCast( Test test );

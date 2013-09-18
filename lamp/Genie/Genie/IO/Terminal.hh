@@ -39,8 +39,6 @@ namespace Genie
 			
 			~TerminalHandle();
 			
-			bool IsTerminal() const  { return true; }
-			
 			void Attach( vfs::filehandle* target )  { itsTTY = target; }
 			
 			FSTreePtr GetFile();
