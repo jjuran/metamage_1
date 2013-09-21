@@ -32,6 +32,7 @@
 // Relix
 #include "relix/syscalls.h"
 #include "relix/config/syscall_stacks.hh"
+#include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
 
 // Iota
@@ -1577,6 +1578,19 @@ namespace Genie
 		else
 		{
 			gCurrentProcess->AsyncYield();
+		}
+	}
+	
+}
+
+namespace relix
+{
+	
+	void signal_process_group( int signo, pid_t pgid )
+	{
+		if ( pgid != no_pgid )
+		{
+			Genie::SendSignalToProcessGroup( signo, pgid );
 		}
 	}
 	
