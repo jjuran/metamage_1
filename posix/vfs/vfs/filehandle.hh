@@ -20,6 +20,7 @@ namespace vfs
 	struct filehandle_method_set;
 	struct bstore_method_set;
 	struct socket_method_set;
+	struct terminal_method_set;
 	
 	/*
 		Each file descriptor refers to an I/O handle.
@@ -74,8 +75,9 @@ namespace vfs
 			
 			const filehandle_method_set* methods() const  { return its_methods; }
 			
-			const bstore_method_set& bstore_methods() const;
-			const socket_method_set& socket_methods() const;
+			const bstore_method_set&   bstore_methods  () const;
+			const socket_method_set&   socket_methods  () const;
+			const terminal_method_set& terminal_methods() const;
 			
 			virtual void Attach( filehandle* target );
 			
