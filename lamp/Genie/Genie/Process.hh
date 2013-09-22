@@ -42,11 +42,15 @@
 // vfs
 #include "vfs/program_ptr.hh"
 
+// relix
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
+
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
+#include "Genie/IO/IOPtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
-#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -116,7 +120,7 @@ namespace Genie
 			
 		#endif
 			
-			boost::intrusive_ptr< ProcessGroup > itsProcessGroup;
+			boost::intrusive_ptr< relix::process_group > itsProcessGroup;
 			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
@@ -218,9 +222,9 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			ProcessGroup& GetProcessGroup() const  { return *itsProcessGroup; }
+			relix::process_group& GetProcessGroup() const  { return *itsProcessGroup; }
 			
-			void SetProcessGroup( ProcessGroup& pgrp )  { itsProcessGroup = &pgrp; }
+			void SetProcessGroup( relix::process_group& pgrp )  { itsProcessGroup = &pgrp; }
 			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			
@@ -310,9 +314,11 @@ namespace Genie
 			bool HandlePendingSignals( bool may_throw );
 	};
 	
-	ProcessGroup* FindProcessGroup( pid_t pgid );
+	relix::process_group* FindProcessGroup( pid_t pgid );
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session );
+	boost::intrusive_ptr< relix::process_group >
+	//
+	GetProcessGroupInSession( pid_t pgid, relix::session& session );
 	
 	void SendSignalToProcessGroup( int sig, pid_t pgid );
 	
@@ -321,6 +327,8 @@ namespace Genie
 	Process& GetProcess( pid_t pid );
 	
 	Process* FindProcess( pid_t pid );
+	
+	boost::intrusive_ptr< relix::session > NewSession( pid_t sid );
 	
 }
 

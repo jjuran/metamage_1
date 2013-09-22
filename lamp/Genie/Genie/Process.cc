@@ -516,9 +516,11 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< ProcessGroup > NewProcessGroup( pid_t pgid, Session& session )
+	static boost::intrusive_ptr< relix::process_group >
+	//
+	NewProcessGroup( pid_t pgid, relix::session& session )
 	{
-		return new ProcessGroup( pgid, session );
+		return new relix::process_group( pgid, session );
 	}
 	
 	static void* find_process_group( void* param, pid_t, Process& process )
@@ -533,18 +535,20 @@ namespace Genie
 		return NULL;
 	}
 	
-	ProcessGroup* FindProcessGroup( pid_t pgid )
+	relix::process_group* FindProcessGroup( pid_t pgid )
 	{
 		void* result = for_each_process( &find_process_group, &pgid );
 		
-		ProcessGroup* group = (ProcessGroup*) result;
+		relix::process_group* group = (relix::process_group*) result;
 		
 		return group;
 	}
 	
-	boost::intrusive_ptr< ProcessGroup > GetProcessGroupInSession( pid_t pgid, Session& session )
+	boost::intrusive_ptr< relix::process_group >
+	//
+	GetProcessGroupInSession( pid_t pgid, relix::session& session )
 	{
-		ProcessGroup* pgrp = FindProcessGroup( pgid );
+		relix::process_group* pgrp = FindProcessGroup( pgid );
 		
 		if ( pgrp == NULL )
 		{
@@ -1579,6 +1583,11 @@ namespace Genie
 		{
 			gCurrentProcess->AsyncYield();
 		}
+	}
+	
+	boost::intrusive_ptr< relix::session > NewSession( pid_t sid )
+	{
+		return new relix::session( sid );
 	}
 	
 }

@@ -397,7 +397,7 @@ namespace Genie
 				pgid = target.GetPID();
 			}
 			
-			Session& session = target.GetProcessGroup().get_session();
+			relix::session& session = target.GetProcessGroup().get_session();
 			
 			target.SetProcessGroup( *GetProcessGroupInSession( pgid, session ) );
 			

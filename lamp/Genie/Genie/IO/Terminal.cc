@@ -28,7 +28,6 @@
 // Genie
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
-#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -87,7 +86,7 @@ namespace Genie
 	{
 		Process& current = CurrentProcess();
 		
-		Session& process_session = current.GetProcessGroup().get_session();
+		relix::session& process_session = current.GetProcessGroup().get_session();
 		
 		switch ( request )
 		{
