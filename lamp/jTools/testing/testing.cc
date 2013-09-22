@@ -980,15 +980,15 @@ static int TestPath( int argc, char** argv )
 	
 #ifdef __RELIX__
 	
-	const char* window_path = getenv( "WINDOW" );
+	const char* port_path = getenv( "PORT" );
 	
-	if ( !window_path )
+	if ( !port_path )
 	{
 		return 1;
 	}
 	
-	n::owned< p7::fd_t > window = p7::open( window_path,
-	                                        p7::o_rdonly | p7::o_directory );
+	n::owned< p7::fd_t > port = p7::open( port_path,
+	                                      p7::o_rdonly | p7::o_directory );
 	
 	int pix = gear::parse_decimal( argv[2] );
 	
@@ -996,7 +996,7 @@ static int TestPath( int argc, char** argv )
 	
 	int fd = 0;
 	
-	p7::read( p7::openat( window, "ref/.~pos", p7::o_rdonly ),
+	p7::read( p7::openat( port, "w/.~pos", p7::o_rdonly ),
 	          (char*) &location, sizeof location );
 	
 	int start_pos = location.h;
@@ -1005,8 +1005,8 @@ static int TestPath( int argc, char** argv )
 	
 	UInt64 time_length = 250000;  // quarter second
 	
-	n::owned< p7::fd_t > pos = p7::openat( window,
-	                                       "ref/.~pos",
+	n::owned< p7::fd_t > pos = p7::openat( port,
+	                                       "w/.~pos",
 	                                       p7::o_wronly | p7::o_trunc );
 	
 	if ( ::GetCurrentKeyModifiers() & (shiftKey | rightShiftKey) )
