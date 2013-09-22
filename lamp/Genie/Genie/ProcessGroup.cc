@@ -9,9 +9,9 @@
 namespace Genie
 {
 	
-	boost::intrusive_ptr< Session > NewSession( pid_t sid )
+	boost::intrusive_ptr< relix::session > NewSession( pid_t sid )
 	{
-		return new Session( sid );
+		return new relix::session( sid );
 	}
 	
 }
