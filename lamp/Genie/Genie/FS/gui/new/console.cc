@@ -66,7 +66,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
-#include "Genie/IO/Terminal.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -752,20 +751,13 @@ namespace Genie
 		attach( *destination, *node );
 	}
 	
-	static inline IOPtr
-	//
-	NewConsoleTTY( const FSTreePtr& self, TerminalID id )
-	{
-		return new ConsoleTTYHandle( self, id );
-	}
-	
 	static IOPtr console_tty_open( const FSTree* node, int flags, mode_t mode )
 	{
 		static unsigned gLastID = 0;
 		
 		unsigned id = ++gLastID;
 		
-		IOPtr result( NewConsoleTTY( node, id ) );
+		vfs::filehandle_ptr result( new ConsoleTTYHandle( node, id ) );
 		
 		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
 		
