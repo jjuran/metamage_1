@@ -23,15 +23,15 @@
 
 int main( int argc, char *argv[] )
 {
-	const char* window_path = getenv( "WINDOW" );
+	const char* port_path = getenv( "PORT" );
 	
-	if ( window_path == NULL )
+	if ( port_path == NULL )
 	{
 		write( STDOUT_FILENO, STR_LEN( ANSI_CLEARSCREEN ANSI_SETCURSOR_HOME ) );
 	}
 	else
 	{
-		int window_dirfd = open( window_path, O_RDONLY | O_DIRECTORY );
+		int window_dirfd = open( port_path, O_RDONLY | O_DIRECTORY );
 		
 		if ( window_dirfd < 0 )
 		{
