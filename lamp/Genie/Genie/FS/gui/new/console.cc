@@ -48,9 +48,13 @@
 // vfs
 #include "vfs/file_descriptor.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/attach.hh"
+
+// relix
+#include "relix/signal/signal_process_group.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -170,11 +174,9 @@ namespace Genie
 	{
 		ConsoleParameters& params = gConsoleParametersMap[ key ];
 		
-		const IOPtr& handle = params.itsTerminal;
+		const pid_t pgid = getpgrp( *params.itsTerminal );
 		
-		TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *handle ) );
-		
-		send_signal_to_foreground_process_group_of_terminal( signo, terminal );
+		relix::signal_process_group( signo, pgid );
 	}
 	
 	static bool Try_Control_Character( TextEdit& that, const EventRecord& event )
