@@ -28,7 +28,6 @@
 // Genie
 #include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
-#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie

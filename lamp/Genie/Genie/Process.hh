@@ -42,11 +42,15 @@
 // vfs
 #include "vfs/program_ptr.hh"
 
+// relix
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
+
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
+#include "Genie/IO/IOPtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
-#include "Genie/ProcessGroup.hh"
 
 
 namespace Genie
@@ -323,6 +327,8 @@ namespace Genie
 	Process& GetProcess( pid_t pid );
 	
 	Process* FindProcess( pid_t pid );
+	
+	boost::intrusive_ptr< relix::session > NewSession( pid_t sid );
 	
 }
 
