@@ -655,20 +655,14 @@ namespace Genie
 	
 	class port_tty_filehandle : public vfs::filehandle
 	{
-		private:
-			vfs::node_ptr  its_tty_file;
-		
 		public:
-			port_tty_filehandle( const vfs::node_ptr& file )
+			port_tty_filehandle( const vfs::node* file )
 			:
-				vfs::filehandle( 0 ),
-				its_tty_file( file )
+				vfs::filehandle( file, 0 )
 			{
 			}
 			
 			~port_tty_filehandle();
-			
-			vfs::node_ptr GetFile()  { return its_tty_file; }
 	};
 	
 	port_tty_filehandle::~port_tty_filehandle()
