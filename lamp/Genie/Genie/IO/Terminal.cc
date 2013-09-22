@@ -160,13 +160,5 @@ namespace Genie
 		relix::signal_process_group( SIGHUP, pgid );
 	}
 	
-	void send_signal_to_foreground_process_group_of_terminal( int signo, const TerminalHandle& h )
-	{
-		if ( h.getpgrp() != no_pgid )
-		{
-			SendSignalToProcessGroup( signo, h.getpgrp() );
-		}
-	}
-	
 }
 
