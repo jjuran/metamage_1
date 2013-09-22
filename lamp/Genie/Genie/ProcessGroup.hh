@@ -23,8 +23,6 @@
 namespace Genie
 {
 	
-	typedef relix::process_group ProcessGroup;
-	
 	boost::intrusive_ptr< relix::session > NewSession( pid_t sid );
 	
 }
