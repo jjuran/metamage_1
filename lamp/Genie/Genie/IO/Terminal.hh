@@ -50,8 +50,6 @@ namespace Genie
 			void IOCtl( unsigned long request, int* argp );
 			
 			void Disconnect();
-			
-			const plus::string& TTYName() const  { return itsTTYName; }
 	};
 	
 }
