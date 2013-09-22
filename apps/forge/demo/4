@@ -14,7 +14,7 @@ sleep 1
 
 rm /tmp/demo-console 2>/dev/null
 
-/bin/teletype /bin/sh -c '/bin/ln -s $WINDOW /tmp/demo-console; /bin/login'
+/bin/teletype /bin/sh -c '/bin/ln -s $PORT /tmp/demo-console; /bin/login'
 
 sleep 1
 

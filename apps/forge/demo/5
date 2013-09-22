@@ -47,8 +47,8 @@ echo >> v/v/text "And..."
 
 sleep 3
 
-echo >> $CONSOLE/text "echo 0f0 > \$WINDOW/w/fore-color"
-echo >> $CONSOLE/text "echo 000 > \$WINDOW/w/back-color"
+echo >> $CONSOLE/text "echo 0f0 > \$PORT/w/fore-color"
+echo >> $CONSOLE/text "echo 000 > \$PORT/w/back-color"
 
 sleep 2
 
