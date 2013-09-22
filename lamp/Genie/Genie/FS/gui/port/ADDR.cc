@@ -44,12 +44,16 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/hangup.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/open.hh"
+
+// relix
+#include "relix/signal/signal_process_group.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
@@ -238,9 +242,9 @@ namespace Genie
 			
 			if ( params.itsTerminal != NULL )
 			{
-				TerminalHandle& terminal( IOHandle_Cast< TerminalHandle >( *params.itsTerminal ) );
+				const pid_t pgid = getpgrp( *params.itsTerminal );
 				
-				send_signal_to_foreground_process_group_of_terminal( SIGWINCH, terminal );
+				relix::signal_process_group( SIGWINCH, pgid );
 			}
 		}
 	}
