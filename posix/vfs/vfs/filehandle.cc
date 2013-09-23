@@ -40,27 +40,35 @@ namespace vfs
 	
 	
 	filehandle::filehandle( int                           flags,
-	                        const filehandle_method_set*  methods )
+	                        const filehandle_method_set*  methods,
+	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),
 		its_flags  ( flags   ),
-		its_methods( methods )
+		its_methods( methods ),
+		its_destructor( dtor )
 	{
 	}
 	
 	filehandle::filehandle( const node*                   file,
 	                        int                           flags,
-	                        const filehandle_method_set*  methods )
+	                        const filehandle_method_set*  methods,
+	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),
 		its_file   ( file    ),
 		its_flags  ( flags   ),
-		its_methods( methods )
+		its_methods( methods ),
+		its_destructor( dtor )
 	{
 	}
 	
 	filehandle::~filehandle()
 	{
+		if ( its_destructor )
+		{
+			its_destructor( this );
+		}
 	}
 	
 	const bstore_method_set& filehandle::bstore_methods() const

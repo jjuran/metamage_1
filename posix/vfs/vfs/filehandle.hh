@@ -31,6 +31,10 @@ namespace vfs
 		Each type (abstract as well as leaf) has a node in the tree.
 	*/
 	
+	class filehandle;
+	
+	typedef void (*filehandle_destructor)( filehandle* );
+	
 	class filehandle : public plus::ref_count< filehandle >
 	{
 		private:
@@ -38,6 +42,7 @@ namespace vfs
 			node_ptr                      its_file;
 			int                           its_flags;
 			const filehandle_method_set*  its_methods;
+			filehandle_destructor         its_destructor;
 			
 			virtual filehandle* Next() const  { return NULL; }
 			
@@ -49,11 +54,13 @@ namespace vfs
 			typedef bool (filehandle::*Test)() const;
 			
 			filehandle( int                           flags,
-			            const filehandle_method_set*  methods = NULL );
+			            const filehandle_method_set*  methods = NULL,
+			            filehandle_destructor         dtor    = NULL );
 			
 			filehandle( const node*                   file,
 			            int                           flags,
-			            const filehandle_method_set*  methods = NULL );
+			            const filehandle_method_set*  methods = NULL,
+			            filehandle_destructor         dtor    = NULL );
 			
 			virtual ~filehandle();
 			
@@ -77,6 +84,8 @@ namespace vfs
 			const bstore_method_set&   bstore_methods  () const;
 			const socket_method_set&   socket_methods  () const;
 			const terminal_method_set& terminal_methods() const;
+			
+			filehandle_destructor destructor() const  { return its_destructor; }
 			
 			virtual void Attach( filehandle* target );
 			
