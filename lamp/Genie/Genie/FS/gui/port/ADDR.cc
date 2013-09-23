@@ -927,28 +927,9 @@ namespace Genie
 	};
 	
 	
-	class lock_handle : public IOHandle
+	static void destroy_lock_handle( vfs::filehandle* that )
 	{
-		private:
-			// non-copyable
-			lock_handle           ( const lock_handle& );
-			lock_handle& operator=( const lock_handle& );
-		
-		public:
-			lock_handle( const vfs::node*  file,
-			             int               flags )
-			:
-				IOHandle( file, flags )
-			{
-				gWindowParametersMap[ file->owner() ].itIsLocked = true;
-			}
-			
-			~lock_handle();
-	};
-	
-	lock_handle::~lock_handle()
-	{
-		const vfs::node* port = GetFile()->owner();
+		const vfs::node* port = that->GetFile()->owner();
 		
 		gWindowParametersMap[ port ].itIsLocked = false;
 		
@@ -972,7 +953,11 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new lock_handle( that, flags );
+		vfs::filehandle_ptr result = new vfs::filehandle( that, flags, NULL, 0, &destroy_lock_handle );
+		
+		gWindowParametersMap[ that->owner() ].itIsLocked = true;
+		
+		return result;
 	}
 	
 	static const data_method_set lock_data_methods =
