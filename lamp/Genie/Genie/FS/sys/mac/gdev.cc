@@ -53,7 +53,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static plus::string gdev_main_readlink( const FSTree* node )
+	static plus::string gdev_main_readlink( const FSTree* that )
 	{
 		const GDHandle gdH = ::GetMainDevice();
 		

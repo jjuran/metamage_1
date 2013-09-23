@@ -292,9 +292,9 @@ namespace Genie
 	}
 	
 	
-	static IOPtr button_stream_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr button_stream_open( const FSTree* that, int flags, mode_t mode )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		const Button_Parameters* it = gButtonMap.find( view );
 		
@@ -303,7 +303,7 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return new Button_socket_Handle( node, flags );
+		return new Button_socket_Handle( that, flags );
 	}
 	
 	static const data_method_set button_stream_data_methods =
@@ -330,9 +330,9 @@ namespace Genie
 	}
 	
 	
-	static void button_click_trigger( const FSTree* node )
+	static void button_click_trigger( const FSTree* that )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		gButtonMap[ view ].pseudoclicked = true;
 		

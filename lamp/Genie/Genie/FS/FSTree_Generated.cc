@@ -28,9 +28,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static IOPtr generated_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr generated_open( const FSTree* that, int flags, mode_t mode );
 	
-	static off_t generated_geteof( const FSTree* node );
+	static off_t generated_geteof( const FSTree* that );
 	
 	
 	static const data_method_set generated_data_methods =
@@ -57,32 +57,32 @@ namespace Genie
 	};
 	
 	
-	static off_t generated_geteof( const FSTree* node )
+	static off_t generated_geteof( const FSTree* that )
 	{
-		const generated_extra& extra = *(generated_extra*) node->extra();
+		const generated_extra& extra = *(generated_extra*) that->extra();
 		
 		return plus::size( extra.datum );
 	}
 	
-	static IOPtr generated_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr generated_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( flags != O_RDONLY )
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		generated_extra& extra = *(generated_extra*) node->extra();
+		generated_extra& extra = *(generated_extra*) that->extra();
 		
 		plus::string& string = reinterpret_cast< plus::string& >( extra.datum );
 		
-		return new PropertyReaderFileHandle( node,
+		return new PropertyReaderFileHandle( that,
 		                                     flags,
 		                                     string );
 	}
 	
-	static void dispose_generated( const FSTree* node )
+	static void dispose_generated( const FSTree* that )
 	{
-		generated_extra& extra = *(generated_extra*) node->extra();
+		generated_extra& extra = *(generated_extra*) that->extra();
 		
 		plus::destroy( extra.datum );
 	}

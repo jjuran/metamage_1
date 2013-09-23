@@ -25,9 +25,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static IOHandle* open_for_read( const FSTree* node, int flags, bool binary )
+	static IOHandle* open_for_read( const FSTree* that, int flags, bool binary )
 	{
-		property_params& extra = *(property_params*) node->extra();
+		property_params& extra = *(property_params*) that->extra();
 		
 		if ( extra.get == NULL )
 		{
@@ -38,7 +38,7 @@ namespace Genie
 		
 		try
 		{
-			extra.get( data, node->owner(), binary );
+			extra.get( data, that->owner(), binary );
 			
 			if ( !binary )
 			{
@@ -49,41 +49,41 @@ namespace Genie
 		{
 		}
 		
-		return new PropertyReaderFileHandle( node,
+		return new PropertyReaderFileHandle( that,
 		                                     flags,
 		                                     data );
 	}
 	
-	static IOHandle* open_for_write( const FSTree* node, int flags, bool binary )
+	static IOHandle* open_for_write( const FSTree* that, int flags, bool binary )
 	{
-		property_params& extra = *(property_params*) node->extra();
+		property_params& extra = *(property_params*) that->extra();
 		
 		if ( extra.set == NULL )
 		{
 			p7::throw_errno( EACCES );
 		}
 		
-		return new PropertyWriterFileHandle( node,
+		return new PropertyWriterFileHandle( that,
 		                                     flags,
 		                                     extra.set,
 		                                     binary );
 	}
 	
-	static IOPtr property_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr property_open( const FSTree* that, int flags, mode_t mode )
 	{
 		IOHandle* result = NULL;
 		
-		const char* name = node->name().data();
+		const char* name = that->name().data();
 		
 		const bool binary = name[0] == '.'  &&  name[1] == '~';
 		
 		if ( flags == O_RDONLY )
 		{
-			result = open_for_read( node, flags, binary );
+			result = open_for_read( that, flags, binary );
 		}
 		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
-			result = open_for_write( node, flags, binary );
+			result = open_for_write( that, flags, binary );
 		}
 		else
 		{
@@ -93,11 +93,11 @@ namespace Genie
 		return result;
 	}
 	
-	static off_t property_geteof( const FSTree* node )
+	static off_t property_geteof( const FSTree* that )
 	{
-		property_params& extra = *(property_params*) node->extra();
+		property_params& extra = *(property_params*) that->extra();
 		
-		const char* name = node->name().data();
+		const char* name = that->name().data();
 		
 		const bool binary = name[0] == '.'  &&  name[1] == '~';
 		
@@ -110,7 +110,7 @@ namespace Genie
 		
 		try
 		{
-			extra.get( data, node->owner(), binary );
+			extra.get( data, that->owner(), binary );
 		}
 		catch ( const undefined_property& )
 		{

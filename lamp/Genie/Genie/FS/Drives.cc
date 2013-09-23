@@ -33,9 +33,9 @@
 namespace Genie
 {
 	
-	void volume_flush_trigger( const FSTree* node )
+	void volume_flush_trigger( const FSTree* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) node->extra();
+		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -44,18 +44,18 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	void volume_eject_trigger( const FSTree* node )
+	void volume_eject_trigger( const FSTree* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) node->extra();
+		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
 		Nitrogen::Eject( vRefNum );
 	}
 	
-	void volume_mount_trigger( const FSTree* node )
+	void volume_mount_trigger( const FSTree* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) node->extra();
+		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -64,9 +64,9 @@ namespace Genie
 	
 #endif
 	
-	void volume_unmount_trigger( const FSTree* node )
+	void volume_unmount_trigger( const FSTree* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) node->extra();
+		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		

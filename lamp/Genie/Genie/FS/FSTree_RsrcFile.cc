@@ -46,14 +46,14 @@ namespace Genie
 	}
 	
 	
-	static void rsrcfile_stat( const FSTree*   node,
+	static void rsrcfile_stat( const FSTree*   that,
 	                           struct ::stat&  sb )
 	{
 		CInfoPBRec cInfo = { 0 };
 		
 		const bool async = false;
 		
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
 		                             async,
@@ -62,9 +62,9 @@ namespace Genie
 		Stat_HFS( async, &sb, cInfo, fileSpec.name, true );
 	}
 	
-	static IOPtr rsrcfile_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr rsrcfile_open( const FSTree* that, int flags, mode_t mode )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		return OpenMacFileHandle( fileSpec,
 		                          flags,

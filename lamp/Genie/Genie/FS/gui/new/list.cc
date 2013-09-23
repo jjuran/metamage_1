@@ -196,19 +196,19 @@ namespace Genie
 		return result;
 	}
 	
-	static off_t list_data_geteof( const FSTree* node )
+	static off_t list_data_geteof( const FSTree* that )
 	{
-		return measure_strings( gListParameterMap[ node->owner() ].itsStrings );
+		return measure_strings( gListParameterMap[ that->owner() ].itsStrings );
 	}
 	
-	static void list_data_seteof( const FSTree* node, off_t length )
+	static void list_data_seteof( const FSTree* that, off_t length )
 	{
 		if ( length != 0 )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		ListParameters& params = gListParameterMap[ node->owner() ];
+		ListParameters& params = gListParameterMap[ that->owner() ];
 		
 		params.itsStrings.clear();
 		
@@ -230,20 +230,20 @@ namespace Genie
 		return result;
 	}
 	
-	static IOPtr list_data_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr list_data_open( const FSTree* that, int flags, mode_t mode )
 	{
 		IOHandle* result = NULL;
 		
 		if ( flags == O_RDONLY )
 		{
-			plus::string data = join_strings( gListParameterMap[ node->owner() ].itsStrings );
+			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( node, flags, data );
+			result = new PropertyReaderFileHandle( that, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( node, flags );
+			result = new List_data_Handle( that, flags );
 		}
 		else
 		{

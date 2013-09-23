@@ -305,7 +305,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr unrsrc_file_open( const FSTree* that, int flags, mode_t mode );
 	
 	static const data_method_set unrsrc_file_data_methods =
 	{
@@ -324,13 +324,13 @@ namespace Genie
 	};
 	
 	
-	static void rsrc_file_remove( const FSTree* node );
+	static void rsrc_file_remove( const FSTree* that );
 	
 	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination );
 	
-	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr rsrc_file_open( const FSTree* that, int flags, mode_t mode );
 	
-	static off_t rsrc_file_geteof( const FSTree* node );
+	static off_t rsrc_file_geteof( const FSTree* that );
 	
 	static vfs::node_ptr rsrc_file_lookup( const vfs::node*     that,
 	                                       const plus::string&  name,
@@ -410,13 +410,13 @@ namespace Genie
 		return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 	}
 	
-	static void rsrc_file_remove( const FSTree* node )
+	static void rsrc_file_remove( const FSTree* that )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		RdWr_OpenResFile_Scope openResFile( fileSpec );
 		
-		const ResSpec resSpec = GetResSpec_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
 		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
@@ -461,20 +461,20 @@ namespace Genie
 		N::SetResInfo( r, new_resSpec.id, resInfo.name );
 	}
 	
-	static off_t rsrc_file_geteof( const FSTree* node )
+	static off_t rsrc_file_geteof( const FSTree* that )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
 		
-		const ResSpec resSpec = GetResSpec_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
 		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		return N::GetHandleSize( r );
 	}
 	
-	static IOPtr unrsrc_file_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr unrsrc_file_open( const FSTree* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -485,48 +485,48 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		{
 			RdWr_OpenResFile_Scope openResFile( fileSpec );
 			
-			const ResSpec resSpec = GetResSpec_from_name( node->name() );
+			const ResSpec resSpec = GetResSpec_from_name( that->name() );
 			
 			(void) N::AddResource( N::NewHandle( 0 ), resSpec.type, resSpec.id, NULL );
 		}
 		
 		n::owned< N::Handle > h = N::NewHandle( 0 );
 		
-		// node refers to an unrsrc; make a new one that's a live rsrc
+		// that refers to an unrsrc; make a new one that's a live rsrc
 		
-		FSTreePtr new_node = Get_RsrcFile_FSTree( node->owner(),
-		                                          node->name(),
+		FSTreePtr new_node = Get_RsrcFile_FSTree( that->owner(),
+		                                          that->name(),
 		                                          fileSpec );
 		
-		node = new_node.get();
+		that = new_node.get();
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
-		                           : new Handle_IOHandle( node, flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( that, flags, h, fileSpec )
+		                           : new Handle_IOHandle( that, flags, h );
 		
 		return result;
 	}
 	
-	static IOPtr rsrc_file_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr rsrc_file_open( const FSTree* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( fileSpec, Mac::fsRdPerm );
 		
-		const ResSpec resSpec = GetResSpec_from_name( node->name() );
+		const ResSpec resSpec = GetResSpec_from_name( that->name() );
 		
 		const N::Handle r = N::Get1Resource( resSpec.type, resSpec.id );
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( node, flags, h, fileSpec )
-		                           : new Handle_IOHandle( node, flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( that, flags, h, fileSpec )
+		                           : new Handle_IOHandle( that, flags, h );
 		
 		return result;
 	}

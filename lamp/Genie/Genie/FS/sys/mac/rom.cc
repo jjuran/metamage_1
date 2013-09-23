@@ -53,7 +53,7 @@ namespace Genie
 	static const UInt32 global_rom_size = get_ROM_size();
 	
 	
-	static off_t mac_rom_geteof( const FSTree* node )
+	static off_t mac_rom_geteof( const FSTree* that )
 	{
 		return global_rom_size;
 	}

@@ -21,17 +21,17 @@
 namespace Genie
 {
 	
-	static void trigger_touch( const FSTree* node )
+	static void trigger_touch( const FSTree* that )
 	{
-		if ( trigger_function f = *(trigger_function*) node->extra() )
+		if ( trigger_function f = *(trigger_function*) that->extra() )
 		{
-			f( node );
+			f( that );
 			
 			return;
 		}
 	}
 	
-	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr trigger_open( const FSTree* that, int flags, mode_t mode );
 	
 	static const data_method_set trigger_data_methods =
 	{
@@ -69,9 +69,9 @@ namespace Genie
 		return n;
 	}
 	
-	static IOPtr trigger_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr trigger_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TriggerHandle( node, flags );
+		return new TriggerHandle( that, flags );
 	}
 	
 	

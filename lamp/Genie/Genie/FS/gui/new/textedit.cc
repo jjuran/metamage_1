@@ -46,11 +46,11 @@ namespace Genie
 	}
 	
 	
-	static void textedit_lock_trigger( const FSTree* node )
+	static void textedit_lock_trigger( const FSTree* that )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
-		const bool locked = node->name()[0] != 'u';
+		const bool locked = that->name()[0] != 'u';
 		
 		TextEditParameters::Get( view ).itIsInterlocked = locked;
 	}
@@ -96,9 +96,9 @@ namespace Genie
 	}
 	
 	
-	static IOPtr textedit_gate_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr textedit_gate_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TextEdit_gate_Handle( node, flags );
+		return new TextEdit_gate_Handle( that, flags );
 	}
 	
 	static const data_method_set textedit_gate_data_methods =

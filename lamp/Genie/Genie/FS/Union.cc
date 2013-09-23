@@ -41,20 +41,20 @@ namespace Genie
 		const FSTree* bottom;
 	};
 	
-	static void dispose_union( const FSTree* node )
+	static void dispose_union( const FSTree* that )
 	{
-		union_extra& extra = *(union_extra*) node->extra();
+		union_extra& extra = *(union_extra*) that->extra();
 		
 		intrusive_ptr_release( extra.top    );
 		intrusive_ptr_release( extra.bottom );
 	}
 	
 	
-	static FSTreePtr union_lookup( const FSTree*        node,
+	static FSTreePtr union_lookup( const FSTree*        that,
 	                               const plus::string&  name,
 	                               const FSTree*        parent )
 	{
-		union_extra& extra = *(union_extra*) node->extra();
+		union_extra& extra = *(union_extra*) that->extra();
 		
 		try
 		{
@@ -76,10 +76,10 @@ namespace Genie
 		return lookup( *extra.bottom, name, parent );
 	}
 	
-	static void union_listdir( const FSTree*       node,
+	static void union_listdir( const FSTree*       that,
 	                           vfs::dir_contents&  cache )
 	{
-		union_extra& extra = *(union_extra*) node->extra();
+		union_extra& extra = *(union_extra*) that->extra();
 		
 		std::set< plus::string > names_that_have_been_seen;
 		

@@ -204,9 +204,9 @@ namespace Genie
 			}
 	};
 	
-	static FSTreePtr mac_proc_exe_resolve( const FSTree* node )
+	static FSTreePtr mac_proc_exe_resolve( const FSTree* that )
 	{
-		ProcessSerialNumber psn = GetKeyFromParent( node->owner() );
+		ProcessSerialNumber psn = GetKeyFromParent( that->owner() );
 		
 		const FSSpec file = N::GetProcessAppSpec( psn );
 		

@@ -746,18 +746,18 @@ namespace Genie
 	}
 	
 	
-	static void console_tty_rename( const FSTree* node, const FSTree* destination )
+	static void console_tty_rename( const FSTree* that, const FSTree* destination )
 	{
-		attach( *destination, *node );
+		attach( *destination, *that );
 	}
 	
-	static IOPtr console_tty_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr console_tty_open( const FSTree* that, int flags, mode_t mode )
 	{
 		static unsigned gLastID = 0;
 		
 		unsigned id = ++gLastID;
 		
-		vfs::filehandle_ptr result( new ConsoleTTYHandle( node, id ) );
+		vfs::filehandle_ptr result( new ConsoleTTYHandle( that, id ) );
 		
 		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
 		

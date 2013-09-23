@@ -38,7 +38,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static void empty_rsrc_fork_mkdir( const FSTree* node, mode_t mode );
+	static void empty_rsrc_fork_mkdir( const FSTree* that, mode_t mode );
 	
 	static const dir_method_set empty_rsrc_fork_dir_methods =
 	{
@@ -61,13 +61,13 @@ namespace Genie
 	};
 	
 	
-	static void resfile_dir_remove( const FSTree* node );
+	static void resfile_dir_remove( const FSTree* that );
 	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        node,
+	static FSTreePtr resfile_dir_lookup( const FSTree*        that,
 	                                     const plus::string&  name,
 	                                     const FSTree*        parent );
 	
-	static void resfile_dir_listdir( const FSTree*       node,
+	static void resfile_dir_listdir( const FSTree*       that,
 	                                 vfs::dir_contents&  cache );
 	
 	static const dir_method_set resfile_dir_dir_methods =
@@ -128,9 +128,9 @@ namespace Genie
 		                                                      '.' );
 	}
 	
-	static void resfile_dir_remove( const FSTree* node )
+	static void resfile_dir_remove( const FSTree* that )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		n::owned< Mac::FSFileRefNum > resource_fork = N::FSpOpenRF( fileSpec, Mac::fsRdWrPerm );
 		
@@ -142,9 +142,9 @@ namespace Genie
 		N::SetEOF( resource_fork, 0 );
 	}
 	
-	static void empty_rsrc_fork_mkdir( const FSTree* node, mode_t mode )
+	static void empty_rsrc_fork_mkdir( const FSTree* that, mode_t mode )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		CInfoPBRec cInfo = { 0 };
 		
@@ -172,24 +172,24 @@ namespace Genie
 		                     Mac::smSystemScript );
 	}
 	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        node,
+	static FSTreePtr resfile_dir_lookup( const FSTree*        that,
 	                                     const plus::string&  name,
 	                                     const FSTree*        parent )
 	{
-		if ( !exists( *node ) )
+		if ( !exists( *that ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		return Get_RsrcFile_FSTree( parent, name, fileSpec );
 	}
 	
-	static void resfile_dir_listdir( const FSTree*       node,
+	static void resfile_dir_listdir( const FSTree*       that,
 	                                 vfs::dir_contents&  cache )
 	{
-		const FSSpec& fileSpec = *(FSSpec*) node->extra();
+		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
 		iterate_resources( fileSpec, cache );
 	}

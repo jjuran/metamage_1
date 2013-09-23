@@ -262,14 +262,14 @@ namespace Genie
 		return gBitMapMap[ view ].bits.get() != NULL;
 	}
 	
-	static off_t bitmap_bits_geteof( const FSTree* node )
+	static off_t bitmap_bits_geteof( const FSTree* that )
 	{
-		return Bits_GetEOF( node->owner() );
+		return Bits_GetEOF( that->owner() );
 	}
 	
-	static IOPtr bitmap_bits_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr bitmap_bits_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new Bits_IO( node, flags );
+		return new Bits_IO( that, flags );
 	}
 	
 	static const data_method_set bitmap_bits_data_methods =

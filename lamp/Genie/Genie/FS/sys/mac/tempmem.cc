@@ -60,14 +60,14 @@ namespace Genie
 	}
 	
 	
-	static off_t mac_tempmem_geteof( const FSTree* node )
+	static off_t mac_tempmem_geteof( const FSTree* that )
 	{
 		return ::TempFreeMem();
 	}
 	
-	static IOPtr mac_tempmem_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr mac_tempmem_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TempMem_IOHandle( node, flags );
+		return new TempMem_IOHandle( that, flags );
 		
 	}
 	

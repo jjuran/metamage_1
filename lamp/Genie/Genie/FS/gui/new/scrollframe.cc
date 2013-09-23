@@ -297,9 +297,9 @@ namespace Genie
 		return gScrollFrameParametersMap[ view ].itsTargetProxy.Get() != NULL;
 	}
 	
-	static void scrollframe_target_remove( const FSTree* node )
+	static void scrollframe_target_remove( const FSTree* that )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		ScrollFrameParameters& params = gScrollFrameParametersMap[ view ];
 		
@@ -310,10 +310,10 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	static void scrollframe_target_symlink( const FSTree*        node,
+	static void scrollframe_target_symlink( const FSTree*        that,
 	                                        const plus::string&  target_path )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		const vfs::node_ptr target = resolve_pathname( target_path, *view );
 		
@@ -327,9 +327,9 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	static plus::string scrollframe_target_readlink( const FSTree* node )
+	static plus::string scrollframe_target_readlink( const FSTree* that )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}

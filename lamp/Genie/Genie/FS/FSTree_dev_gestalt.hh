@@ -20,7 +20,7 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR;
 		
-		static IOPtr open( const FSTree* node, int flags, mode_t mode );
+		static IOPtr open( const FSTree* that, int flags, mode_t mode );
 	};
 	
 }

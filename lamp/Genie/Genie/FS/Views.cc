@@ -199,7 +199,7 @@ namespace Genie
 	}
 	
 	
-	static void new_view_hardlink( const FSTree*  node,
+	static void new_view_hardlink( const FSTree*  that,
 	                               const FSTree*  dest );
 	
 	static const file_method_set new_view_file_methods =
@@ -255,27 +255,27 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
+	FSTreePtr create_default_delegate_for_new_view( const FSTree*        that,
 	                                                const FSTree*        parent,
 	                                                const plus::string&  name )
 	{
-		new_view_extra& extra = *(new_view_extra*) node->extra();
+		new_view_extra& extra = *(new_view_extra*) that->extra();
 		
 		FSTreePtr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
 		
 		return delegate;
 	}
 	
-	static void new_view_hardlink( const FSTree*  node,
+	static void new_view_hardlink( const FSTree*  that,
 	                               const FSTree*  target )
 	{
-		new_view_extra& extra = *(new_view_extra*) node->extra();
+		new_view_extra& extra = *(new_view_extra*) that->extra();
 		
 		const FSTree* parent = target->owner();
 		
 		const FSTree* key = parent;
 		
-		FSTreePtr delegate = extra.delegate_factory( node, parent, "v" );
+		FSTreePtr delegate = extra.delegate_factory( that, parent, "v" );
 		
 		add_view_parameters( key, delegate, extra.view_factory );
 		
@@ -290,20 +290,20 @@ namespace Genie
 	};
 	
 	
-	static boost::intrusive_ptr< Pedestal::View >& view_of( const FSTree* node )
+	static boost::intrusive_ptr< Pedestal::View >& view_of( const FSTree* that )
 	{
-		ASSERT( node != NULL );
+		ASSERT( that != NULL );
 		
-		const view_extra& extra = *(view_extra*) node->extra();
+		const view_extra& extra = *(view_extra*) that->extra();
 		
-		return extra.get( node->owner(), node->name() );
+		return extra.get( that->owner(), that->name() );
 	}
 	
-	static void unview_mkdir( const FSTree* node, mode_t mode )
+	static void unview_mkdir( const FSTree* that, mode_t mode )
 	{
-		const FSTree* parent = node->owner();
+		const FSTree* parent = that->owner();
 		
-		const plus::string& name = node->name();
+		const plus::string& name = that->name();
 		
 		const FSTree* windowKey = GetViewWindowKey( parent );
 		
@@ -323,7 +323,7 @@ namespace Genie
 		
 		boost::intrusive_ptr< Ped::View > view = make_view( parent );
 		
-		view_of( node ) = view;
+		view_of( that ) = view;
 		
 		// Install and invalidate if window exists
 		install_view_in_port( view, windowKey );
@@ -350,24 +350,24 @@ namespace Genie
 	};
 	
 	
-	static void view_touch( const FSTree* node )
+	static void view_touch( const FSTree* that )
 	{
-		InvalidateWindowForView( node );
+		InvalidateWindowForView( that );
 	}
 	
-	static void view_remove( const FSTree* node )
+	static void view_remove( const FSTree* that )
 	{
-		const view_extra& extra = *(view_extra*) node->extra();
+		const view_extra& extra = *(view_extra*) that->extra();
 		
-		const FSTree* parent = node->owner();
+		const FSTree* parent = that->owner();
 		
-		const plus::string& name = node->name();
+		const plus::string& name = that->name();
 		
-		const FSTree* windowKey = GetViewWindowKey( node );
+		const FSTree* windowKey = GetViewWindowKey( that );
 		
-		uninstall_view_from_port( view_of( node ), windowKey );
+		uninstall_view_from_port( view_of( that ), windowKey );
 		
-		view_of( node ) = Ped::EmptyView::Get();
+		view_of( that ) = Ped::EmptyView::Get();
 		
 		RemoveAllViewParameters( parent );
 		
@@ -377,19 +377,19 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr view_lookup( const FSTree*        node,
+	static FSTreePtr view_lookup( const FSTree*        that,
 	                              const plus::string&  name,
 	                              const FSTree*        parent )
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
-		return lookup( *GetViewDelegate( node ), real_name, NULL );
+		return lookup( *GetViewDelegate( that ), real_name, NULL );
 	}
 	
-	static void view_listdir( const FSTree*       node,
+	static void view_listdir( const FSTree*       that,
 	                          vfs::dir_contents&  cache )
 	{
-		listdir( *GetViewDelegate( node ), cache );
+		listdir( *GetViewDelegate( that ), cache );
 	}
 	
 	static const dir_method_set view_dir_methods =

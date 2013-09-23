@@ -34,7 +34,7 @@ namespace Genie
 	
 	struct sys_mac_event_post_click
 	{
-		static void trigger( const FSTree* node )
+		static void trigger( const FSTree* that )
 		{
 			N::PostEvent( N::mouseDown, 0 );
 			N::PostEvent( N::mouseUp,   0 );

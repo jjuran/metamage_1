@@ -249,14 +249,14 @@ namespace Genie
 		return false;
 	}
 	
-	static off_t gworld_pixels_geteof( const FSTree* node )
+	static off_t gworld_pixels_geteof( const FSTree* that )
 	{
-		return Pixels_GetEOF( node->owner() );
+		return Pixels_GetEOF( that->owner() );
 	}
 	
-	static IOPtr gworld_pixels_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr gworld_pixels_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new Pixels_IO( node, flags );
+		return new Pixels_IO( that, flags );
 	}
 	
 	static const data_method_set gworld_pixels_data_methods =
@@ -472,9 +472,9 @@ namespace Genie
 		UpdateGWorld_from_params( params );
 	}
 	
-	static n::shared< GWorldPtr >& get_gworldptr( const FSTree* node )
+	static n::shared< GWorldPtr >& get_gworldptr( const FSTree* that )
 	{
-		GWorld_Parameters* it = gGWorldMap.find( node );
+		GWorld_Parameters* it = gGWorldMap.find( that );
 		
 		if ( it == NULL )
 		{

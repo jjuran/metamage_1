@@ -96,9 +96,9 @@ namespace Genie
 		return n::make< N::FSDirSpec >( new_vRefNum, new_dirID );
 	}
 	
-	static FSTreePtr desktop_dir_resolve( const FSTree* node )
+	static FSTreePtr desktop_dir_resolve( const FSTree* that )
 	{
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( node->owner() );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( that->owner() );
 		
 		const N::FSDirSpec dir = DTGetInfo_Dir( vRefNum );
 		
@@ -135,9 +135,9 @@ namespace Genie
 		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
 	}
 	
-	static FSTreePtr latest_appl_link_resolve( const FSTree* node )
+	static FSTreePtr latest_appl_link_resolve( const FSTree* that )
 	{
-		const FSTree* parent = node->owner();
+		const FSTree* parent = that->owner();
 		
 		const FSSpec file = DTGetAPPL( parent );
 		
@@ -162,11 +162,11 @@ namespace Genie
 		&latest_appl_link_link_methods
 	};
 	
-	static FSTreePtr dt_appls_QUAD_list_N_resolve( const FSTree* node )
+	static FSTreePtr dt_appls_QUAD_list_N_resolve( const FSTree* that )
 	{
-		const short index = gear::parse_unsigned_decimal( node->name().c_str() );
+		const short index = gear::parse_unsigned_decimal( that->name().c_str() );
 		
-		const FSTree* grandparent = node->owner()->owner();
+		const FSTree* grandparent = that->owner()->owner();
 		
 		const FSSpec file = DTGetAPPL( grandparent, index );
 		

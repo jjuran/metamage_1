@@ -72,11 +72,11 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( const FSTree* node, int flags, mode_t mode );
+		static IOPtr open( const FSTree* that, int flags, mode_t mode );
 	};
 	
 	template < class Mode, class Port >
-	IOPtr dev_Serial< Mode, Port >::open( const FSTree* node, int flags, mode_t mode )
+	IOPtr dev_Serial< Mode, Port >::open( const FSTree* that, int flags, mode_t mode )
 	{
 		const bool nonblocking = flags & O_NONBLOCK;
 		
@@ -92,9 +92,9 @@ namespace Genie
 	class ConsoleTTYHandle;
 	
 	
-	static IOPtr simple_device_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr simple_device_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return GetSimpleDeviceHandle( node->name() );
+		return GetSimpleDeviceHandle( that->name() );
 	}
 	
 	static const data_method_set simple_device_data_methods =
@@ -117,10 +117,10 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( const FSTree* node, int flags, mode_t mode );
+		static IOPtr open( const FSTree* that, int flags, mode_t mode );
 	};
 	
-	IOPtr dev_tty::open( const FSTree* node, int flags, mode_t mode )
+	IOPtr dev_tty::open( const FSTree* that, int flags, mode_t mode )
 	{
 		const IOPtr& tty = CurrentProcess().ControllingTerminal();
 		

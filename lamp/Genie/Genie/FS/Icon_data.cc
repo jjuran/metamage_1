@@ -486,17 +486,17 @@ namespace Genie
 		IconData* data;
 	};
 	
-	static void dispose_icon_data( const FSTree* node )
+	static void dispose_icon_data( const FSTree* that )
 	{
-		icon_data_extra& extra = *(icon_data_extra*) node->extra();
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
 		intrusive_ptr_release( extra.data );
 	}
 	
 	
-	static IOPtr icon_data_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr icon_data_open( const FSTree* that, int flags, mode_t mode )
 	{
-		icon_data_extra& extra = *(icon_data_extra*) node->extra();
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
 		const int accmode = flags & O_ACCMODE;
 		
@@ -505,11 +505,11 @@ namespace Genie
 		switch ( accmode )
 		{
 			case O_RDONLY:
-				result = new IconDataFileHandle( node, flags, extra.data );
+				result = new IconDataFileHandle( that, flags, extra.data );
 				break;
 			
 			case O_WRONLY:
-				result = new IconDataWriterHandle( node, flags, extra.data );
+				result = new IconDataWriterHandle( that, flags, extra.data );
 				break;
 			
 			default:
@@ -519,22 +519,22 @@ namespace Genie
 		return IOPtr( result );
 	}
 	
-	static off_t icon_data_geteof( const FSTree* node )
+	static off_t icon_data_geteof( const FSTree* that )
 	{
-		icon_data_extra& extra = *(icon_data_extra*) node->extra();
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
 		return extra.data->GetSize();
 	}
 	
-	static void icon_data_attach( const FSTree* node, const FSTree* target )
+	static void icon_data_attach( const FSTree* that, const FSTree* target )
 	{
 	#if CONFIG_ICONSUITES
 		
-		icon_data_extra& extra = *(icon_data_extra*) node->extra();
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
 		extra.data->SetIconSuite( Copy_IconSuite( Fetch_IconSuite() ) );
 		
-		InvalidateWindowForView( node->owner() );
+		InvalidateWindowForView( that->owner() );
 		
 	#else
 		

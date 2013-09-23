@@ -24,7 +24,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static void iconsuite_copyfile( const FSTree* node, const FSTree* target );
+	static void iconsuite_copyfile( const FSTree* that, const FSTree* target );
 	
 	static const file_method_set iconsuite_file_methods =
 	{
@@ -47,9 +47,9 @@ namespace Genie
 	};
 	
 	
-	static void dispose_iconsuite( const FSTree* node )
+	static void dispose_iconsuite( const FSTree* that )
 	{
-		::IconSuiteRef& extra = *(::IconSuiteRef*) node->extra();
+		::IconSuiteRef& extra = *(::IconSuiteRef*) that->extra();
 		
 		const bool disposeData = true;
 		
@@ -72,13 +72,13 @@ namespace Genie
 		}
 	};
 	
-	static void iconsuite_copyfile( const FSTree* node, const FSTree* target )
+	static void iconsuite_copyfile( const FSTree* that, const FSTree* target )
 	{
-		::IconSuiteRef extra = *(::IconSuiteRef*) node->extra();
+		::IconSuiteRef extra = *(::IconSuiteRef*) that->extra();
 		
 		stored_IconSuite_scope scope( extra );
 		
-		attach( *target, *node );
+		attach( *target, *that );
 	}
 	
 	

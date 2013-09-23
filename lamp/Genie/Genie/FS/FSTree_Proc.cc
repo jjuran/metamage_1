@@ -74,9 +74,9 @@ namespace Genie
 	}
 	
 	
-	static const relix::fd_table& fd_sequence( const FSTree* node )
+	static const relix::fd_table& fd_sequence( const FSTree* that )
 	{
-		const pid_t pid = gear::parse_unsigned_decimal( node->owner()->name().c_str() );
+		const pid_t pid = gear::parse_unsigned_decimal( that->owner()->name().c_str() );
 		
 		return GetProcess( pid ).FileDescriptors();
 	}
@@ -92,13 +92,13 @@ namespace Genie
 		cache.push_back( vfs::dir_entry( inode, name ) );
 	}
 	
-	static FSTreePtr proc_fd_lookup( const FSTree*        node,
+	static FSTreePtr proc_fd_lookup( const FSTree*        that,
 	                                 const plus::string&  name,
 	                                 const FSTree*        parent );
 	
-	static void proc_fd_listdir( const FSTree* node, vfs::dir_contents& cache )
+	static void proc_fd_listdir( const FSTree* that, vfs::dir_contents& cache )
 	{
-		const relix::fd_table& sequence = fd_sequence( node );
+		const relix::fd_table& sequence = fd_sequence( that );
 		
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
@@ -123,11 +123,11 @@ namespace Genie
 	};
 	
 	
-	static IOPtr proc_fd_link_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr proc_fd_link_open( const FSTree* that, int flags, mode_t mode );
 	
-	static off_t proc_fd_link_geteof( const FSTree* node );
+	static off_t proc_fd_link_geteof( const FSTree* that );
 	
-	static FSTreePtr proc_fd_link_resolve( const FSTree* node );
+	static FSTreePtr proc_fd_link_resolve( const FSTree* that );
 	
 	static const data_method_set proc_fd_link_data_methods =
 	{
@@ -154,13 +154,13 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr proc_link_resolve( const FSTree* node )
+	static FSTreePtr proc_link_resolve( const FSTree* that )
 	{
-		const pid_t pid = GetKeyFromParent( node->owner() );
+		const pid_t pid = GetKeyFromParent( that->owner() );
 		
 		Process& process = GetProcess( pid );
 		
-		const char* name = node->name().c_str();
+		const char* name = that->name().c_str();
 		
 		switch ( name[0] )
 		{
@@ -211,7 +211,7 @@ namespace Genie
 		}
 	};
 	
-	static plus::string proc_self_readlink( const FSTree* node )
+	static plus::string proc_self_readlink( const FSTree* that )
 	{
 		return gear::inscribe_unsigned_decimal( CurrentProcess().GetPID() );
 	}
@@ -514,10 +514,10 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &proc_link_methods );
 	}
 	
-	static void proc_pid_core_chmod( const FSTree*  node,
+	static void proc_pid_core_chmod( const FSTree*  that,
 	                                 mode_t         mode )
 	{
-		const pid_t pid = GetKeyFromParent( node->owner() );
+		const pid_t pid = GetKeyFromParent( that->owner() );
 		
 		Process& process = GetProcess( pid );
 		
@@ -569,13 +569,13 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	static FSTreePtr proc_fd_lookup( const FSTree*        node,
+	static FSTreePtr proc_fd_lookup( const FSTree*        that,
 	                                 const plus::string&  name,
 	                                 const FSTree*        parent )
 	{
 		const int key = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const relix::fd_table& sequence = fd_sequence( node );
+		const relix::fd_table& sequence = fd_sequence( that );
 		
 		if ( !sequence.contains( key ) )
 		{
@@ -589,10 +589,10 @@ namespace Genie
 	}
 	
 	
-	static IOHandle* get_proc_fd_handle( const FSTree* node )
+	static IOHandle* get_proc_fd_handle( const FSTree* that )
 	{
-		const char* fd_name  = node                  ->name().c_str();
-		const char* pid_name = node->owner()->owner()->name().c_str();
+		const char* fd_name  = that                  ->name().c_str();
+		const char* pid_name = that->owner()->owner()->name().c_str();
 		
 		const int    fd  = gear::parse_unsigned_decimal( fd_name  );
 		const pid_t  pid = gear::parse_unsigned_decimal( pid_name );
@@ -607,9 +607,9 @@ namespace Genie
 		return files.at( fd ).handle.get();
 	}
 	
-	static off_t proc_fd_link_geteof( const FSTree* node )
+	static off_t proc_fd_link_geteof( const FSTree* that )
 	{
-		IOHandle* handle = get_proc_fd_handle( node );
+		IOHandle* handle = get_proc_fd_handle( that );
 		
 		if ( handle->methods()  &&  handle->methods()->bstore_methods )
 		{
@@ -688,26 +688,26 @@ namespace Genie
 	}
 	
 	
-	static IOPtr proc_fd_link_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr proc_fd_link_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
 		{
 			p7::throw_errno( ELOOP );
 		}
 		
-		vfs::filehandle_ptr fh = get_proc_fd_handle( node );
+		vfs::filehandle_ptr fh = get_proc_fd_handle( that );
 		
 		if ( fh->methods()  &&  fh->methods()->bstore_methods )
 		{
-			return new shadow_filehandle( *node, flags, *fh );
+			return new shadow_filehandle( *that, flags, *fh );
 		}
 		
 		return fh;
 	}
 	
-	static FSTreePtr proc_fd_link_resolve( const FSTree* node )
+	static FSTreePtr proc_fd_link_resolve( const FSTree* that )
 	{
-		return get_proc_fd_handle( node )->GetFile();
+		return get_proc_fd_handle( that )->GetFile();
 	}
 	
 	FSTreePtr New_FSTree_proc( const FSTree*        parent,

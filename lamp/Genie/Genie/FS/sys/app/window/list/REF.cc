@@ -381,9 +381,9 @@ namespace Genie
 		}
 	};
 	
-	static void select_trigger( const FSTree* node )
+	static void select_trigger( const FSTree* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) node->extra();
+		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
 		const WindowRef window = (WindowRef) extra.data;
 		

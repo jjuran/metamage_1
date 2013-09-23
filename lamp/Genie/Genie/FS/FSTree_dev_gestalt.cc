@@ -73,7 +73,7 @@ namespace Genie
 		}
 	}
 	
-	IOPtr dev_gestalt::open( const FSTree* node, int flags, mode_t mode )
+	IOPtr dev_gestalt::open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new GestaltDeviceHandle( flags );
 	}

@@ -325,60 +325,60 @@ namespace Genie
 		return result;
 	}
 	
-	static FSTreePtr hfs_parent( const FSTree* node );
+	static FSTreePtr hfs_parent( const FSTree* that );
 	
-	static ino_t hfs_parent_inode( const FSTree* node )
+	static ino_t hfs_parent_inode( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		return extra.fsspec.parID;
 	}
 	
-	static ino_t hfs_inode( const FSTree* node );
+	static ino_t hfs_inode( const FSTree* that );
 	
-	static void hfs_stat( const FSTree*   node,
+	static void hfs_stat( const FSTree*   that,
 	                      struct ::stat&  sb );
 	
-	static void hfs_chmod( const FSTree*  node,
+	static void hfs_chmod( const FSTree*  that,
 	                       mode_t         mode );
 	
-	static void hfs_utime( const FSTree*          node,
+	static void hfs_utime( const FSTree*          that,
 	                       const struct timespec  times[2] );
 	
-	static void hfs_remove( const FSTree* node );
+	static void hfs_remove( const FSTree* that );
 	
-	static void hfs_rename( const FSTree*  node,
+	static void hfs_rename( const FSTree*  that,
 	                        const FSTree*  destination );
 	
-	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr hfs_open( const FSTree* that, int flags, mode_t mode );
 	
-	static off_t hfs_geteof( const FSTree* node );
+	static off_t hfs_geteof( const FSTree* that );
 	
-	static void hfs_seteof( const FSTree* node, off_t length );
+	static void hfs_seteof( const FSTree* that, off_t length );
 	
-	static plus::string hfs_readlink( const FSTree* node );
+	static plus::string hfs_readlink( const FSTree* that );
 	
-	static FSTreePtr hfs_resolve( const FSTree* node );
+	static FSTreePtr hfs_resolve( const FSTree* that );
 	
-	static void hfs_symlink( const FSTree*        node,
+	static void hfs_symlink( const FSTree*        that,
 	                         const plus::string&  target );
 	
-	static FSTreePtr hfs_lookup( const FSTree*        node,
+	static FSTreePtr hfs_lookup( const FSTree*        that,
 	                             const plus::string&  name,
 	                             const FSTree*        parent );
 	
-	static void hfs_listdir( const FSTree*       node,
+	static void hfs_listdir( const FSTree*       that,
 	                         vfs::dir_contents&  cache );
 	
-	static void hfs_mkdir( const FSTree*  node,
+	static void hfs_mkdir( const FSTree*  that,
 	                       mode_t         mode );
 	
-	static IOPtr hfs_opendir( const FSTree* node );
+	static IOPtr hfs_opendir( const FSTree* that );
 	
-	static void hfs_copyfile( const FSTree*  node,
+	static void hfs_copyfile( const FSTree*  that,
 	                          const FSTree*  dest );
 	
-	static vfs::program_ptr hfs_loadexec( const FSTree* node );
+	static vfs::program_ptr hfs_loadexec( const FSTree* that );
 	
 	static const data_method_set hfs_data_methods =
 	{
@@ -474,10 +474,10 @@ namespace Genie
 		                                   preflight ) );
 	}
 	
-	static void hfs_copyfile( const FSTree*  node,
+	static void hfs_copyfile( const FSTree*  that,
 	                          const FSTree*  destination )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const FSSpec& srcFile = extra.fsspec;
 		
@@ -574,9 +574,9 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr hfs_parent( const FSTree* node )
+	static FSTreePtr hfs_parent( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		if ( extra.fsspec.parID == fsRtParID )
 		{
@@ -604,37 +604,37 @@ namespace Genie
 		return FSTreeFromFSDirSpec( io::get_preceding_directory( extra.fsspec ) );
 	}
 	
-	static ino_t hfs_inode( const FSTree* node )
+	static ino_t hfs_inode( const FSTree* that )
 	{
 		struct ::stat sb;
 		
-		hfs_stat( node, sb );
+		hfs_stat( that, sb );
 		
 		return sb.st_ino;
 	}
 	
-	static void hfs_stat( const FSTree*   node,
+	static void hfs_stat( const FSTree*   that,
 	                      struct ::stat&  sb )
 	{
 		const bool async = false;
 		
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Stat_HFS( async, &sb, extra.cinfo, extra.fsspec.name, false );
 	}
 	
-	static void hfs_chmod( const FSTree*  node,
+	static void hfs_chmod( const FSTree*  that,
 	                       mode_t         mode )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		ChangeFileMode( extra.fsspec, mode );
 	}
 	
-	static void hfs_utime( const FSTree*          node,
+	static void hfs_utime( const FSTree*          that,
 	                       const struct timespec  times[2] )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		SetFileTimes( N::FSVolumeRefNum( extra.fsspec.vRefNum ),
 		              N::FSDirID       ( extra.fsspec.parID   ),
@@ -673,9 +673,9 @@ namespace Genie
 		Mac::ThrowOSStatus( deleteErr );
 	}
 	
-	static void hfs_remove( const FSTree* node )
+	static void hfs_remove( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Delete_HFS( extra.fsspec );
 	}
@@ -704,34 +704,34 @@ namespace Genie
 		return spec;
 	}
 	
-	static void hfs_rename( const FSTree*  node,
+	static void hfs_rename( const FSTree*  that,
 	                        const FSTree*  destFile )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Rename_HFS( extra.fsspec, *destFile );
 	}
 	
 	
-	static off_t hfs_geteof( const FSTree* node )
+	static off_t hfs_geteof( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
 		
 		return extra.cinfo.hFileInfo.ioFlLgLen;
 	}
 	
-	static void hfs_seteof( const FSTree* node, off_t length )
+	static void hfs_seteof( const FSTree* that, off_t length )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		N::SetEOF( N::FSpOpenDF( extra.fsspec, N::fsWrPerm ), length );
 	}
 	
-	static plus::string hfs_readlink( const FSTree* node )
+	static plus::string hfs_readlink( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const plus::string target = SlurpFile( extra.fsspec );
 		
@@ -740,17 +740,17 @@ namespace Genie
 			return target;
 		}
 		
-		return pathname( *hfs_resolve( node ) );
+		return pathname( *hfs_resolve( that ) );
 	}
 	
-	static FSTreePtr hfs_resolve( const FSTree* node )
+	static FSTreePtr hfs_resolve( const FSTree* that )
 	{
-		if ( !is_symlink( *node ) )
+		if ( !is_symlink( *that ) )
 		{
-			return node;
+			return that;
 		}
 		
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const HFileInfo& hFileInfo = extra.cinfo.hFileInfo;
 		
@@ -771,7 +771,7 @@ namespace Genie
 			
 			if ( !target.empty() )
 			{
-				return resolve_pathname( target, *hfs_parent( node ) );
+				return resolve_pathname( target, *hfs_parent( that ) );
 			}
 			else if ( is_alias )
 			{
@@ -859,14 +859,14 @@ namespace Genie
 		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
 	}
 	
-	static void hfs_symlink( const FSTree*        node,
+	static void hfs_symlink( const FSTree*        that,
 	                         const plus::string&  target )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		CreateSymLink( node, target );
+		CreateSymLink( that, target );
 		
-		finish_creation( extra.fsspec, node->name() );
+		finish_creation( extra.fsspec, that->name() );
 	}
 	
 	static void create_file( const FSSpec& file, const plus::string& name )
@@ -878,9 +878,9 @@ namespace Genie
 		finish_creation( file, name );
 	}
 	
-	static IOPtr hfs_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr hfs_open( const FSTree* that, int flags, mode_t mode )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		bool created = false;
 		
@@ -890,13 +890,13 @@ namespace Genie
 			
 			if ( !exists )
 			{
-				create_file( extra.fsspec, node->name() );
+				create_file( extra.fsspec, that->name() );
 				
 				created = true;
 			}
 			else
 			{
-				const plus::string name_MacRoman = plus::mac_from_utf8( node->name() );
+				const plus::string name_MacRoman = plus::mac_from_utf8( that->name() );
 				
 				if ( name_MacRoman.size() <= 31 )
 				{
@@ -925,38 +925,38 @@ namespace Genie
 		
 		if ( created )
 		{
-			hfs_chmod( node, mode );
+			hfs_chmod( that, mode );
 		}
 		
 		return opened;
 	}
 	
-	static vfs::program_ptr hfs_loadexec( const FSTree* node )
+	static vfs::program_ptr hfs_loadexec( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		execution_unit unit = load_executable_file( extra.fsspec );
 		
 		return prepare_executable( unit );
 	}
 	
-	static IOPtr hfs_opendir( const FSTree* node )
+	static IOPtr hfs_opendir( const FSTree* that )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const N::FSDirSpec dir = Dir_From_CInfo( extra.cinfo );
 		
 		return new MacDirHandle( dir );
 	}
 	
-	static void hfs_mkdir( const FSTree*  node,
+	static void hfs_mkdir( const FSTree*  that,
 	                       mode_t         mode )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		N::FSpDirCreate( extra.fsspec );
 		
-		finish_creation( extra.fsspec, node->name() );
+		finish_creation( extra.fsspec, that->name() );
 	}
 	
 	
@@ -1014,20 +1014,20 @@ namespace Genie
 		return new_HFS_node( cInfo, name, parent );
 	}
 	
-	static FSTreePtr hfs_lookup( const FSTree*        node,
+	static FSTreePtr hfs_lookup( const FSTree*        that,
 	                             const plus::string&  name,
 	                             const FSTree*        parent )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		if ( name == "rsrc"  &&  is_file( *node ) )
+		if ( name == "rsrc"  &&  is_file( *that ) )
 		{
 			return GetRsrcForkFSTree( extra.fsspec );
 		}
 		
-		if ( name == "r"  &&  is_file( *node ) )
+		if ( name == "r"  &&  is_file( *that ) )
 		{
-			return Get_ResFileDir_FSTree( node, "r", extra.fsspec );
+			return Get_ResFileDir_FSTree( that, "r", extra.fsspec );
 		}
 		
 		Mac::ThrowOSStatus( extra.cinfo.dirInfo.ioResult );
@@ -1174,10 +1174,10 @@ namespace Genie
 	
 #endif
 	
-	static void hfs_listdir( const FSTree*       node,
+	static void hfs_listdir( const FSTree*       that,
 	                         vfs::dir_contents&  cache )
 	{
-		hfs_extra& extra = *(hfs_extra*) node->extra();
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
 		

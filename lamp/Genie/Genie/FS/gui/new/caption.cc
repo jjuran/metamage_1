@@ -242,19 +242,19 @@ namespace Genie
 	}
 	
 	
-	static void caption_text_seteof( const FSTree* node, off_t length )
+	static void caption_text_seteof( const FSTree* that, off_t length )
 	{
-		CaptionText_SetEOF( node, length );
+		CaptionText_SetEOF( that, length );
 	}
 	
-	static off_t caption_text_geteof( const FSTree* node )
+	static off_t caption_text_geteof( const FSTree* that )
 	{
-		return gCaptionParametersMap[ node->owner() ].its_utf8_text.size();
+		return gCaptionParametersMap[ that->owner() ].its_utf8_text.size();
 	}
 	
-	static IOPtr caption_text_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr caption_text_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new CaptionTextFileHandle( node, flags );
+		return new CaptionTextFileHandle( that, flags );
 	}
 	
 	static const data_method_set caption_text_data_methods =

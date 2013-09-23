@@ -86,7 +86,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr mac_user_home_resolve( const FSTree* node )
+	static FSTreePtr mac_user_home_resolve( const FSTree* that )
 	{
 		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
 	}

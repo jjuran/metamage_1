@@ -114,9 +114,9 @@ namespace Genie
 	};
 	
 	
-	static void cmd_symlink_remove( const FSTree* node )
+	static void cmd_symlink_remove( const FSTree* that )
 	{
-		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( node->name() ) );
+		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( that->name() ) );
 		
 		cmd_map::iterator it = the_command_map.find( code );
 		

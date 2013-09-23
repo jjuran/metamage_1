@@ -163,19 +163,19 @@ namespace Genie
 	}
 	
 	
-	static off_t textedit_text_geteof( const FSTree* node )
+	static off_t textedit_text_geteof( const FSTree* that )
 	{
-		return TextEditParameters::Get( node->owner() ).its_utf8_text.size();
+		return TextEditParameters::Get( that->owner() ).its_utf8_text.size();
 	}
 	
-	static void textedit_text_seteof( const FSTree* node, off_t length )
+	static void textedit_text_seteof( const FSTree* that, off_t length )
 	{
-		TextEdit_text_SetEOF( node, length );
+		TextEdit_text_SetEOF( that, length );
 	}
 	
-	static IOPtr textedit_text_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr textedit_text_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TextEdit_text_Handle( node, flags );
+		return new TextEdit_text_Handle( that, flags );
 	}
 	
 	static const data_method_set textedit_text_data_methods =

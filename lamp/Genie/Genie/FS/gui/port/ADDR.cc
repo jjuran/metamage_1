@@ -471,9 +471,9 @@ namespace Genie
 	}
 	
 	
-	static void focus_remove( const FSTree* node )
+	static void focus_remove( const FSTree* that )
 	{
-		const FSTree* window = node->owner();
+		const FSTree* window = that->owner();
 		
 		const FSTree* focus_file = gWindowParametersMap[ window ].itsFocus;
 		
@@ -485,10 +485,10 @@ namespace Genie
 		gWindowParametersMap[ window ].itsFocus = NULL;
 	}
 	
-	static void unfocus_symlink( const FSTree*        node,
+	static void unfocus_symlink( const FSTree*        that,
 	                             const plus::string&  target )
 	{
-		const FSTree* parent = node->owner();
+		const FSTree* parent = that->owner();
 		
 		const vfs::node_ptr targeted_file = lookup( *resolve_pathname( target, *parent ), plus::string::null );
 		
@@ -527,9 +527,9 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr focus_resolve( const FSTree* node )
+	static FSTreePtr focus_resolve( const FSTree* that )
 	{
-		if ( const FSTree* focus = gWindowParametersMap[ node->owner() ].itsFocus )
+		if ( const FSTree* focus = gWindowParametersMap[ that->owner() ].itsFocus )
 		{
 			return focus;
 		}
@@ -574,21 +574,21 @@ namespace Genie
 	}
 	
 	
-	static void window_touch( const FSTree* node )
+	static void window_touch( const FSTree* that )
 	{
-		invalidate_port_WindowRef( node->owner() );
+		invalidate_port_WindowRef( that->owner() );
 	}
 	
-	static void window_remove( const FSTree* node )
+	static void window_remove( const FSTree* that )
 	{
-		CloseUserWindow( node->owner() );
+		CloseUserWindow( that->owner() );
 	}
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
-	static plus::string window_readlink( const FSTree* node )
+	static plus::string window_readlink( const FSTree* that )
 	{
-		WindowRef windowPtr = GetWindowRef( node->owner() );
+		WindowRef windowPtr = GetWindowRef( that->owner() );
 		
 		if ( windowPtr == NULL )
 		{
@@ -622,11 +622,11 @@ namespace Genie
 	};
 	
 	
-	static IOPtr port_tty_open( const FSTree* node, int flags, mode_t mode );
+	static IOPtr port_tty_open( const FSTree* that, int flags, mode_t mode );
 	
-	static void port_tty_attach( const FSTree* node, const FSTree* target )
+	static void port_tty_attach( const FSTree* that, const FSTree* target )
 	{
-		gWindowParametersMap[ node->owner() ].itsTTYDelegate = target;
+		gWindowParametersMap[ that->owner() ].itsTTYDelegate = target;
 	}
 	
 	static const data_method_set port_tty_data_methods =
@@ -680,9 +680,9 @@ namespace Genie
 		return new TerminalHandle( name );
 	}
 	
-	static IOPtr port_tty_open( const FSTree* node, int flags, mode_t mode )
+	static IOPtr port_tty_open( const FSTree* that, int flags, mode_t mode )
 	{
-		WindowParameters& params = gWindowParametersMap[ node->owner() ];
+		WindowParameters& params = gWindowParametersMap[ that->owner() ];
 		
 		IOPtr tty;
 		
@@ -694,11 +694,11 @@ namespace Genie
 		}
 		else
 		{
-			tty = new port_tty_filehandle( node );
+			tty = new port_tty_filehandle( that );
 		}
 		
 		plus::string pathname = vfs::pathname( has_tty ? *tty->GetFile()
-		                                               : *node           );
+		                                               : *that           );
 		
 		IOPtr terminal = NewTerminal( pathname );
 		
@@ -730,9 +730,9 @@ namespace Genie
 	}
 	
 	
-	static void gesture_remove( const FSTree* node );
+	static void gesture_remove( const FSTree* that );
 	
-	static plus::string gesture_readlink( const FSTree* node );
+	static plus::string gesture_readlink( const FSTree* that );
 	
 	static const link_method_set gesture_link_methods =
 	{
@@ -751,25 +751,25 @@ namespace Genie
 		&gesture_link_methods
 	};
 	
-	static void gesture_remove( const FSTree* node )
+	static void gesture_remove( const FSTree* that )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		const int index = LookupGesture( node->name() );
+		const int index = LookupGesture( that->name() );
 		
 		params.itsGesturePaths[ index ].reset();
 	}
 	
-	static void ungesture_symlink( const FSTree*        node,
+	static void ungesture_symlink( const FSTree*        that,
 	                               const plus::string&  target_path )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
-		const int index = LookupGesture( node->name() );
+		const int index = LookupGesture( that->name() );
 		
 		params.itsGesturePaths[ index ] = target_path;
 	}
@@ -793,11 +793,11 @@ namespace Genie
 		&ungesture_link_methods
 	};
 	
-	static plus::string gesture_readlink( const FSTree* node )
+	static plus::string gesture_readlink( const FSTree* that )
 	{
-		const FSTree* view = node->owner();
+		const FSTree* view = that->owner();
 		
-		const int index = LookupGesture( node->name() );
+		const int index = LookupGesture( that->name() );
 		
 		const plus::string& link = gWindowParametersMap[ view ].itsGesturePaths[ index ];
 		
@@ -1003,9 +1003,9 @@ namespace Genie
 		&lock_data_methods
 	};
 	
-	static void unwindow_touch( const FSTree* node )
+	static void unwindow_touch( const FSTree* that )
 	{
-		CreateUserWindow( node->owner() );
+		CreateUserWindow( that->owner() );
 	}
 	
 	static vfs::filehandle_ptr unwindow_open( const vfs::node* that, int flags, mode_t mode )

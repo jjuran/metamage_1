@@ -82,10 +82,10 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr volumes_link_resolve( const FSTree* node )
+	static FSTreePtr volumes_link_resolve( const FSTree* that )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
-		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( node->name() ) );
+		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
 		
 		mac_name += ":";
 		
@@ -115,7 +115,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr volumes_lookup( const FSTree*        node,
+	static FSTreePtr volumes_lookup( const FSTree*        that,
 	                                 const plus::string&  name,
 	                                 const FSTree*        parent )
 	{
@@ -125,7 +125,7 @@ namespace Genie
 		                   &volumes_link_methods );
 	}
 	
-	static void volumes_listdir( const FSTree*       node,
+	static void volumes_listdir( const FSTree*       that,
 	                             vfs::dir_contents&  cache )
 	{
 		for ( int i = 1;  true;  ++i )
@@ -156,7 +156,7 @@ namespace Genie
 	}
 	
 	
-	static ino_t volumes_inode( const FSTree* node )
+	static ino_t volumes_inode( const FSTree* that )
 	{
 		return fsRtParID;
 	}

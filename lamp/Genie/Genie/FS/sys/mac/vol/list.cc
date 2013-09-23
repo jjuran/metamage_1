@@ -439,15 +439,15 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr folder_link_resolve( const FSTree* node )
+	static FSTreePtr folder_link_resolve( const FSTree* that )
 	{
-		const char* name = node->name().c_str();
+		const char* name = that->name().c_str();
 		
 		const N::FolderType type = name[0] == 's' ? N::kSystemFolderType
 		                         : name[0] == 't' ? N::kTemporaryFolderType
 		                         :                  N::FolderType();
 		
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( node->owner() );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( that->owner() );
 		
 		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ) );
 	}

@@ -175,9 +175,9 @@ namespace Genie
 	};
 	
 	
-	static void stack_remove( const FSTree* node )
+	static void stack_remove( const FSTree* that )
 	{
-		Stack_Parameters& params = gStack_Parameters_Map[ node ];
+		Stack_Parameters& params = gStack_Parameters_Map[ that ];
 		
 		while ( !params.v.empty() )
 		{
@@ -188,12 +188,12 @@ namespace Genie
 			RemoveAllViewParameters( layer );
 		}
 		
-		gStack_Parameters_Map.erase( node );
+		gStack_Parameters_Map.erase( that );
 	}
 	
-	static FSTreePtr stack_lookup( const FSTree* node, const plus::string& name, const FSTree* parent )
+	static FSTreePtr stack_lookup( const FSTree* that, const plus::string& name, const FSTree* parent )
 	{
-		Named_Subview& layer = find_or_append_subview( gStack_Parameters_Map[ node ], name );
+		Named_Subview& layer = find_or_append_subview( gStack_Parameters_Map[ that ], name );
 		
 		if ( layer.node == NULL )
 		{
@@ -222,13 +222,13 @@ namespace Genie
 			}
 	};
 	
-	static void stack_listdir( const FSTree* node, vfs::dir_contents& cache )
+	static void stack_listdir( const FSTree* that, vfs::dir_contents& cache )
 	{
 		typedef ViewList Sequence;
 		
 		Stack_IteratorConverter converter;
 		
-		const Sequence& sequence = gStack_Parameters_Map[ node ].v;
+		const Sequence& sequence = gStack_Parameters_Map[ that ].v;
 		
 		std::transform( sequence.begin(),
 		                sequence.end(),
@@ -256,7 +256,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr create_delegate_for_new_stack( const FSTree*        node,
+	static FSTreePtr create_delegate_for_new_stack( const FSTree*        that,
 	                                                const FSTree*        parent,
 	                                                const plus::string&  name )
 	{

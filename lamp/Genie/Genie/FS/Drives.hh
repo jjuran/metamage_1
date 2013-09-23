@@ -13,10 +13,10 @@
 namespace Genie
 {
 	
-	void volume_flush_trigger( const FSTree* node );
-	void volume_eject_trigger( const FSTree* node );
-	void volume_mount_trigger( const FSTree* node );
-	void volume_unmount_trigger( const FSTree* node );
+	void volume_flush_trigger( const FSTree* that );
+	void volume_eject_trigger( const FSTree* that );
+	void volume_mount_trigger( const FSTree* that );
+	void volume_unmount_trigger( const FSTree* that );
 	
 }
 
