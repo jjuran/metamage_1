@@ -654,21 +654,9 @@ namespace Genie
 	};
 	
 	
-	class port_tty_filehandle : public vfs::filehandle
+	static void destroy_port_tty( vfs::filehandle* that )
 	{
-		public:
-			port_tty_filehandle( const vfs::node* file )
-			:
-				vfs::filehandle( file, 0 )
-			{
-			}
-			
-			~port_tty_filehandle();
-	};
-	
-	port_tty_filehandle::~port_tty_filehandle()
-	{
-		WindowParameters& params = gWindowParametersMap[ GetFile()->owner() ];
+		WindowParameters& params = gWindowParametersMap[ that->GetFile()->owner() ];
 		
 		params.itsTerminal = NULL;
 	}
@@ -694,7 +682,7 @@ namespace Genie
 		}
 		else
 		{
-			tty = new port_tty_filehandle( that );
+			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
 		plus::string pathname = vfs::pathname( has_tty ? *tty->GetFile()
