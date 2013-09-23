@@ -13,14 +13,16 @@
 
 // poseven
 #include "poseven/extras/slurp.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/functions/opendir.hh"
 #include "poseven/functions/stat.hh"
-#include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/types/posix.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
@@ -49,6 +51,21 @@ namespace vfs
 		posix_extra& extra = *(posix_extra*) that->extra();
 		
 		sb = extra.status;
+	}
+	
+	static filehandle_ptr posix_open( const node* that, int flags, mode_t mode )
+	{
+		posix_extra& extra = *(posix_extra*) that->extra();
+		
+		const plus::string& path = reinterpret_cast< const plus::string& >( extra.path );
+		
+		n::owned< p7::fd_t > fd = p7::open( path.c_str(), p7::open_flags_t( flags ), p7::mode_t( mode ) );
+		
+		filehandle_ptr result = new_posix_fd( flags, fd.get() );
+		
+		fd.release();
+		
+		return result;
 	}
 	
 	static plus::string posix_slurp( const node* that )
@@ -108,7 +125,7 @@ namespace vfs
 	
 	static const data_method_set posix_data_methods =
 	{
-		NULL,
+		&posix_open,
 		NULL,
 		NULL,
 		&posix_slurp,
