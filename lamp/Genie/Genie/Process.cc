@@ -1032,6 +1032,16 @@ namespace Genie
 		return itsProcessGroup.get() ? itsProcessGroup->getsid() : 0;
 	}
 	
+	relix::process_group& Process::GetProcessGroup()  const
+	{
+		return *itsProcessGroup;
+	}
+	
+	void Process::SetProcessGroup( relix::process_group& pgrp )
+	{
+		itsProcessGroup = &pgrp;
+	}
+	
 	const IOPtr& Process::ControllingTerminal() const
 	{
 		if ( itsProcessGroup.get() )

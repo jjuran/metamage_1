@@ -222,9 +222,9 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			relix::process_group& GetProcessGroup() const  { return *itsProcessGroup; }
+			relix::process_group& GetProcessGroup() const;
 			
-			void SetProcessGroup( relix::process_group& pgrp )  { itsProcessGroup = &pgrp; }
+			void SetProcessGroup( relix::process_group& pgrp );
 			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			
