@@ -34,6 +34,7 @@
 #include "relix/config/syscall_stacks.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
+#include "relix/task/process.hh"
 
 // Iota
 #include "iota/strings.hh"
@@ -557,7 +558,6 @@ namespace Genie
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( NewProcessGroup( itsPID, *NewSession( itsPID ) ) ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
@@ -593,13 +593,15 @@ namespace Genie
 	
 	Process::Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid ) 
 	:
-		relix::thread( tid, parent ),
+		relix::thread( tid,
+		               parent,
+		               tid == pid ? NULL
+		                          : &parent.get_process() ),
 		TimeKeeper            (),  // Reset resource utilization on fork
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
-		itsProcessGroup       ( parent.itsProcessGroup ),
 		itsStackFramePtr      ( NULL ),
 		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
@@ -990,34 +992,27 @@ namespace Genie
 	
 	pid_t Process::GetPGID() const
 	{
-		return itsProcessGroup.get() ? itsProcessGroup->id() : 0;
+		return get_process().get_process_group().id();
 	}
 	
 	pid_t Process::GetSID()  const
 	{
-		return itsProcessGroup.get() ? itsProcessGroup->getsid() : 0;
+		return get_process().get_process_group().get_session().id();
 	}
 	
 	relix::process_group& Process::GetProcessGroup()  const
 	{
-		return *itsProcessGroup;
+		return get_process().get_process_group();
 	}
 	
 	void Process::SetProcessGroup( relix::process_group& pgrp )
 	{
-		itsProcessGroup = &pgrp;
+		get_process().set_process_group( pgrp );
 	}
 	
 	const IOPtr& Process::ControllingTerminal() const
 	{
-		if ( itsProcessGroup.get() )
-		{
-			return GetProcessGroup().get_session().get_ctty();
-		}
-		
-		static IOPtr null;
-		
-		return null;
+		return get_process().get_process_group().get_session().get_ctty();
 	}
 	
 	vfs::node_ptr Process::GetCWD() const
@@ -1211,8 +1206,6 @@ namespace Genie
 		itsFileDescriptors.reset();
 		
 		its_fs_info.reset();
-		
-		itsProcessGroup.reset();
 		
 		if ( its_pb.cleanup != NULL )
 		{

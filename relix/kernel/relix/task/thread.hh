@@ -6,6 +6,12 @@
 #ifndef RELIX_TASK_THREAD_HH
 #define RELIX_TASK_THREAD_HH
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // plus
 #include "plus/ref_count.hh"
 
@@ -30,15 +36,19 @@ namespace relix
 			
 			sigset_t its_pending_signals;
 			sigset_t its_blocked_signals;
+
+			boost::intrusive_ptr< process > its_process;
 		
 		public:
 			thread( int id );
 			
-			thread( int id, const thread& caller );
+			thread( int id, const thread& caller, process* p );
 			
 			virtual ~thread();
 			
 			int id() const  { return its_id; }
+			
+			process& get_process() const;
 			
 			sigset_t signals_pending() const  { return its_pending_signals; }
 			sigset_t signals_blocked() const  { return its_blocked_signals; }

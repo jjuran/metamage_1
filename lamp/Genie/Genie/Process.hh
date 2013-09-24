@@ -121,8 +121,6 @@ namespace Genie
 			
 		#endif
 			
-			boost::intrusive_ptr< relix::process_group > itsProcessGroup;
-			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
 			uint64_t itsAlarmClock;
