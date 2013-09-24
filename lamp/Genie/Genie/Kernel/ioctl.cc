@@ -15,6 +15,9 @@
 // vfs
 #include "vfs/file_descriptor.hh"
 
+// relix-kernel
+#include "relix/task/fd_table.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/IO/Base.hh"

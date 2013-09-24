@@ -9,10 +9,6 @@
 // Relix
 #include "relix/parameter_block.h"
 #include "relix/config/syscall_stacks.hh"
-#include "relix/task/fd_table.hh"
-#include "relix/task/fs_info.hh"
-#include "relix/task/memory_data.hh"
-#include "relix/task/signal_handlers.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/vfork_context.hh"
 
@@ -40,6 +36,7 @@
 #endif
 
 // vfs
+#include "vfs/memory_mapping_fwd.hh"
 #include "vfs/program_ptr.hh"
 
 // Genie
@@ -52,8 +49,12 @@
 namespace relix
 {
 	
+	class fd_table;
+	class fs_info;
+	class memory_data;
 	class process_group;
 	class session;
+	class signal_handlers;
 	
 }
 

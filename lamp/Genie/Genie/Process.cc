@@ -84,8 +84,12 @@
 // relix-kernel
 #include "relix/config/mini.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/task/fd_table.hh"
+#include "relix/task/fs_info.hh"
+#include "relix/task/memory_data.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
+#include "relix/task/signal_handlers.hh"
 
 // Genie
 #include "Genie/Devices.hh"

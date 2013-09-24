@@ -13,6 +13,9 @@
 // vfs
 #include "vfs/file_descriptor.hh"
 
+// relix-kernel
+#include "relix/task/fd_table.hh"
+
 // Pedestal
 #include "Pedestal/Application.hh"
 

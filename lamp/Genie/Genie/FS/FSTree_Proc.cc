@@ -41,6 +41,9 @@
 #include "vfs/functions/root.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
+// relix-kernel
+#include "relix/task/fd_table.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
