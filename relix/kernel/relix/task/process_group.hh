@@ -32,20 +32,15 @@ namespace relix
 			boost::intrusive_ptr< session > its_session;
 		
 		public:
-			process_group( int id, session& s )
-			:
-				its_id     ( id ),
-				its_session( &s )
-			{
-			}
+			process_group( int id, session& s );
 			
 			~process_group();
 			
 			int id() const  { return its_id; }
 			
-			int getsid() const  { return its_session->id(); }
+			int getsid() const;
 			
-			session& get_session() const  { return *its_session; }
+			session& get_session() const;
 	};
 	
 }

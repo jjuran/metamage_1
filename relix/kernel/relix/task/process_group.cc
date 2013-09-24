@@ -13,6 +13,13 @@
 namespace relix
 {
 	
+	process_group::process_group( int id, session& s )
+	:
+		its_id     ( id ),
+		its_session( &s )
+	{
+	}
+	
 	process_group::~process_group()
 	{
 		if ( vfs::filehandle* handle = its_session->get_ctty().get() )
@@ -24,6 +31,16 @@ namespace relix
 				setpgrp( *handle, no_pgid );
 			}
 		}
+	}
+	
+	int process_group::getsid() const
+	{
+		return its_session->id();
+	}
+	
+	session& process_group::get_session() const
+	{
+		return *its_session;
 	}
 	
 }
