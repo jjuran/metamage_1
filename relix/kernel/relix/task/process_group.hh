@@ -12,15 +12,15 @@
 // plus
 #include "plus/ref_count.hh"
 
-// relix
-#include "relix/task/session.hh"
-
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
 
 namespace relix
 {
+	
+	class session;
+	
 	
 	const int no_pgid = 0x7fffffff;
 	

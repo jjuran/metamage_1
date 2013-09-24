@@ -9,6 +9,9 @@
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/setpgrp.hh"
 
+// relix
+#include "relix/task/session.hh"
+
 
 namespace relix
 {
