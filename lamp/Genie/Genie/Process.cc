@@ -1024,6 +1024,21 @@ namespace Genie
 		                             : plus::string::null;
 	}
 	
+	void* Process::add_memory_mapping( const vfs::memory_mapping* mapping )
+	{
+		return its_memory_data->add_memory_mapping( mapping );
+	}
+	
+	void Process::msync_memory_mapping( addr_t addr, size_t len, int flags )
+	{
+		its_memory_data->msync_memory_mapping( addr, len, flags );
+	}
+	
+	void Process::remove_memory_mapping( addr_t key )
+	{
+		its_memory_data->remove_memory_mapping( key );
+	}
+	
 	pid_t Process::GetPGID() const
 	{
 		return itsProcessGroup.get() ? itsProcessGroup->id() : 0;

@@ -198,20 +198,11 @@ namespace Genie
 			
 			typedef void* addr_t;
 			
-			addr_t add_memory_mapping( const vfs::memory_mapping* mapping )
-			{
-				return its_memory_data->add_memory_mapping( mapping );
-			}
+			addr_t add_memory_mapping( const vfs::memory_mapping* mapping );
 			
-			void msync_memory_mapping( addr_t addr, size_t len, int flags )
-			{
-				its_memory_data->msync_memory_mapping( addr, len, flags );
-			}
+			void msync_memory_mapping( addr_t addr, size_t len, int flags );
 			
-			void remove_memory_mapping( addr_t key )
-			{
-				its_memory_data->remove_memory_mapping( key );
-			}
+			void remove_memory_mapping( addr_t key );
 			
 			bool MayDumpCore() const  { return itMayDumpCore; }
 			
