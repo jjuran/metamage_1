@@ -85,7 +85,7 @@ namespace Genie
 				return set_errno( exists( *newCWD ) ? ENOTDIR : ENOENT );
 			}
 			
-			current_process().ChangeDirectory( newCWD );
+			current_process().ChangeDirectory( *newCWD );
 			
 			return 0;
 		}

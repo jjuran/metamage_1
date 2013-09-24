@@ -1049,9 +1049,9 @@ namespace Genie
 		return its_fs_info->getcwd()->GetFile();
 	}
 	
-	void Process::ChangeDirectory( const FSTreePtr& newCWD )
+	void Process::ChangeDirectory( const vfs::node& new_cwd )
 	{
-		its_fs_info->chdir( opendir( *newCWD ) );
+		its_fs_info->chdir( opendir( new_cwd ) );
 	}
 	
 	void Process::ResumeAfterFork()

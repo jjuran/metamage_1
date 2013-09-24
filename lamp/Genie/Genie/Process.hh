@@ -245,7 +245,7 @@ namespace Genie
 			
 			FSTreePtr GetCWD() const;
 			
-			void ChangeDirectory( const FSTreePtr& newCWD );
+			void ChangeDirectory( const vfs::node& new_cwd );
 			
 			const plus::string& ProgramName()  const  { return itsName;   }
 			
