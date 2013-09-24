@@ -84,6 +84,8 @@
 // relix-kernel
 #include "relix/config/mini.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
 
 // Genie
 #include "Genie/Devices.hh"

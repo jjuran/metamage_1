@@ -42,16 +42,20 @@
 // vfs
 #include "vfs/program_ptr.hh"
 
-// relix
-#include "relix/task/process_group.hh"
-#include "relix/task/session.hh"
-
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/IOPtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
 
+
+namespace relix
+{
+	
+	class process_group;
+	class session;
+	
+}
 
 namespace Genie
 {

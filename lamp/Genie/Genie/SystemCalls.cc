@@ -33,6 +33,8 @@
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
 
 // Genie
 #include "Genie/current_process.hh"

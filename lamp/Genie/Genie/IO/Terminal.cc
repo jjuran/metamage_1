@@ -24,6 +24,8 @@
 
 // relix
 #include "relix/signal/signal_process_group.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
 
 // Genie
 #include "Genie/IO/Stream.hh"
