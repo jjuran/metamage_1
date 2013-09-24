@@ -36,12 +36,12 @@
 #endif
 
 // vfs
+#include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_fwd.hh"
 #include "vfs/program_ptr.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
-#include "Genie/IO/IOPtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
 
@@ -237,7 +237,7 @@ namespace Genie
 			void Yield();
 			void AsyncYield();
 			
-			const IOPtr& ControllingTerminal() const;
+			const vfs::filehandle_ptr& ControllingTerminal() const;
 			
 			FSTreePtr GetCWD() const;
 			
