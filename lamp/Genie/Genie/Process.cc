@@ -29,10 +29,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// mac-sys-utils
-#include "mac_sys/current_thread_stack_space.hh"
-#include "mac_sys/init_thread.hh"
-
 // Relix
 #include "relix/syscalls.h"
 #include "relix/config/syscall_stacks.hh"
@@ -58,7 +54,6 @@
 #include "Mac/Sound/Functions/SysBeep.hh"
 
 #include "Nitrogen/Aliases.hh"
-#include "Nitrogen/Threads.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
@@ -305,28 +300,6 @@ namespace Genie
 		return exit_status;
 	}
 	
-	
-	static void* measure_stack_limit()
-	{
-	#ifdef __MACOS__
-		
-		return   (char*) recall::get_frame_pointer()
-		       - mac::sys::current_thread_stack_space();
-		
-	#endif
-		
-		return NULL;
-	}
-	
-	pascal void* Process_ThreadEntry( void* param );
-	
-	pascal void* Process_ThreadEntry( void* param )
-	{
-		const void* bottom = mac::sys::init_thread();
-		const void* limit  = measure_stack_limit();
-		
-		return Process::thread_start( param, bottom, limit );
-	}
 	
 	void* Process::thread_start( void* param, const void* bottom, const void* limit )
 	{
@@ -714,7 +687,7 @@ namespace Genie
 			process = &GetProcess( ppid );
 		}
 		
-		return process->itsThread.get();
+		return get_os_thread_id( *process->itsThread.get() );
 	}
 	
 	Process& Process::vfork()
@@ -780,16 +753,9 @@ namespace Genie
 		}
 	}
 	
-	static std::size_t ThreadStackSize()
+	static inline std::size_t minimum_stack_size()
 	{
-		const ::Size minimumStackSize = (CONFIG_MINI ? 32 : 64) * 1024;
-		
-		::Size size = 0;
-		
-		// Jaguar returns paramErr
-		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
-		
-		return std::max( size, minimumStackSize );
+		return (CONFIG_MINI ? 32 : 64) * 1024;
 	}
 	
 	class thing_that_may_resume_after_vfork
@@ -884,10 +850,10 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const std::size_t stackSize = ThreadStackSize();
+		const std::size_t min_stack = minimum_stack_size();
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process_ThreadEntry >( this, stackSize );
+		looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
 		if ( its_pb.cleanup != NULL )
 		{
@@ -979,10 +945,10 @@ namespace Genie
 		
 		ResetSignalHandlers();
 		
-		const std::size_t stackSize = ThreadStackSize();
+		const std::size_t min_stack = minimum_stack_size();
 		
 		// Create the new thread
-		relix::os_thread_box looseThread = N::NewThread< Process_ThreadEntry >( this, stackSize );
+		relix::os_thread_box looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );

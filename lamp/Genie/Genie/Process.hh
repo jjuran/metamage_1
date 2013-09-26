@@ -22,16 +22,6 @@
 // Recall
 #include "recall/stack_crawl.hh"
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_THREADS_TYPES_THREADID_HH
-#include "Mac/Threads/Types/ThreadID.hh"
-#endif
-
 // vfs
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_fwd.hh"
@@ -39,6 +29,7 @@
 
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
+#include "relix/api/os_thread_box.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/vfork_context.hh"
@@ -58,8 +49,6 @@ namespace relix
 	class process_group;
 	class session;
 	class signal_handlers;
-	
-	typedef nucleus::owned< Mac::ThreadID > os_thread_box;
 	
 }
 
