@@ -15,12 +15,23 @@
 #include "OSErrno/OSErrno.hh"
 
 // relix-kernel
+#include "relix/api/current_thread.hh"
 #include "relix/signal/caught_signal.hh"
 
 // Genie
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
 
+
+namespace relix
+{
+	
+	thread& current_thread()
+	{
+		return Genie::current_process();
+	}
+	
+}
 
 namespace Genie
 {
