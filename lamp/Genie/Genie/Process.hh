@@ -59,6 +59,8 @@ namespace relix
 	class session;
 	class signal_handlers;
 	
+	typedef nucleus::owned< Mac::ThreadID > os_thread_box;
+	
 }
 
 namespace Genie
@@ -159,7 +161,7 @@ namespace Genie
 			
 			void* itsReexecArgs[8];
 			
-			nucleus::owned< Mac::ThreadID > itsThread;
+			relix::os_thread_box itsThread;
 			
 			bool itMayDumpCore;
 		
@@ -301,7 +303,7 @@ namespace Genie
 			                                void* _6,
 			                                void* _7 );
 			
-			nucleus::owned< Mac::ThreadID > SpawnThread( Clone_Function f, void* arg );
+			relix::os_thread_box SpawnThread( Clone_Function f, void* arg );
 			
 			void InitThread();
 			

@@ -825,7 +825,7 @@ namespace Genie
 		// Declare this first so it goes out of scope last
 		thing_that_may_resume_after_vfork resume;
 		
-		n::owned< N::ThreadID > looseThread;
+		relix::os_thread_box looseThread;
 		
 		FSTreePtr cwd = GetCWD();
 		
@@ -938,7 +938,7 @@ namespace Genie
 	{
 		thing_that_may_resume_after_vfork resume;
 		
-		n::owned< N::ThreadID > looseThread = SpawnThread( (Clone_Function) f, _1 );
+		relix::os_thread_box looseThread = SpawnThread( (Clone_Function) f, _1 );
 		
 	//	itsReexecArgs[0] = (void*) f;
 	//	itsReexecArgs[1] = _1;
@@ -964,7 +964,7 @@ namespace Genie
 		}
 	}
 	
-	n::owned< N::ThreadID > Process::SpawnThread( Clone_Function f, void* arg )
+	relix::os_thread_box Process::SpawnThread( Clone_Function f, void* arg )
 	{
 		itsReexecArgs[0] = (void*) f;
 		itsReexecArgs[1] = arg;
@@ -982,7 +982,7 @@ namespace Genie
 		const std::size_t stackSize = ThreadStackSize();
 		
 		// Create the new thread
-		n::owned< N::ThreadID > looseThread = N::NewThread< Process_ThreadEntry >( this, stackSize );
+		relix::os_thread_box looseThread = N::NewThread< Process_ThreadEntry >( this, stackSize );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
