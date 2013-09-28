@@ -1110,7 +1110,7 @@ namespace Genie
 		
 		child.itsLifeStage       = kProcessLive;
 		
-		child.itsThread = parent.itsThread;
+		child.itsThread.swap( parent.itsThread );
 		
 		ASSERT( child.its_pb.cleanup == NULL );
 		
