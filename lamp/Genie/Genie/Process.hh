@@ -129,7 +129,7 @@ namespace Genie
 			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
-			UInt64 itsAlarmClock;
+			uint64_t itsAlarmClock;
 			
 			plus::string itsName;
 			
