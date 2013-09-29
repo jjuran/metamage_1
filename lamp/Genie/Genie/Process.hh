@@ -6,14 +6,14 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
-// Relix
-#include "relix/parameter_block.h"
-#include "relix/config/syscall_stacks.hh"
-#include "relix/task/syscall_stack.hh"
-#include "relix/task/vfork_context.hh"
-
 // Debug
 #include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
+// relix-include
+#include "relix/parameter_block.h"
 
 // plus
 #include "plus/ref_count.hh"
@@ -21,9 +21,6 @@
 
 // Recall
 #include "recall/stack_crawl.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
 
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
@@ -39,6 +36,11 @@
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_fwd.hh"
 #include "vfs/program_ptr.hh"
+
+// relix-kernel
+#include "relix/config/syscall_stacks.hh"
+#include "relix/task/syscall_stack.hh"
+#include "relix/task/vfork_context.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
