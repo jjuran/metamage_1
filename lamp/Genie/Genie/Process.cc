@@ -688,17 +688,17 @@ namespace Genie
 		Resume();
 	}
 	
-	Nitrogen::ThreadID Process::GetThread() const
+	relix::os_thread_id Process::GetThread() const
 	{
 		const Process* process = this;
 		
-		while ( process->itsThread.get() == N::kNoThreadID )
+		while ( process->itsThread.get() == 0 )
 		{
 			pid_t ppid = process->GetPPID();
 			
 			if ( ppid == 1 )
 			{
-				return N::kNoThreadID;
+				return 0;
 			}
 			
 			process = &GetProcess( ppid );
@@ -912,7 +912,7 @@ namespace Genie
 		
 		Suspend();
 		
-		if ( looseThread.get() == N::kNoThreadID )
+		if ( looseThread.get() == 0 )
 		{
 			resume.enable( itsPPID );
 		}
@@ -948,7 +948,7 @@ namespace Genie
 		
 		Suspend();
 		
-		if ( looseThread.get() == N::kNoThreadID )
+		if ( looseThread.get() == 0 )
 		{
 			resume.enable( itsPPID );
 		}
@@ -1366,12 +1366,11 @@ namespace Genie
 		
 		if ( newSchedule == kProcessStopped )
 		{
-			N::SetThreadState( GetThread(), N::kStoppedThreadState );
+			relix::stop_os_thread( GetThread() );
 		}
 		else
 		{
-			// Ignore errors so we don't throw in critical sections
-			(void) ::YieldToAnyThread();
+			relix::os_thread_yield();
 		}
 		
 		*its_pb.errno_var = saved_errno;
@@ -1530,9 +1529,9 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		N::ThreadID thread = GetThread();
+		relix::os_thread_id thread = GetThread();
 		
-		if ( thread == N::kNoThreadID )
+		if ( thread == 0 )
 		{
 			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
 			
@@ -1544,13 +1543,13 @@ namespace Genie
 			return;
 		}
 		
-		if ( N::GetThreadState( thread ) == N::kStoppedThreadState )
+		if ( relix::is_os_thread_stopped( thread ) )
 		{
 			ASSERT( itsSchedule == kProcessStopped );
 			
 			itsSchedule = kProcessSleeping;
 			
-			N::SetThreadState( thread, N::kReadyThreadState );
+			relix::wake_os_thread( thread );
 		}
 	}
 	
@@ -1579,8 +1578,7 @@ namespace Genie
 	{
 		if ( gCurrentProcess == NULL )
 		{
-			// Ignore errors so we don't throw in critical sections
-			(void) ::YieldToAnyThread();
+			relix::os_thread_yield();
 		}
 		else
 		{
