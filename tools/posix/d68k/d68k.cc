@@ -12,7 +12,8 @@
 #include <stdio.h>
 #include <string.h>
 
-// Iota
+// iota
+#include "iota/endian.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -84,17 +85,6 @@ namespace tool
 	
 	static inline int sign_extend_char( signed char x )
 	{
-		return x;
-	}
-	
-	static inline uint16_t byte_swap( uint16_t x )
-	{
-	#ifdef __LITTLE_ENDIAN__
-		
-		x = x << 8 | x >> 8;
-		
-	#endif
-		
 		return x;
 	}
 	
@@ -378,7 +368,7 @@ namespace tool
 			}
 		}
 		
-		const uint16_t result = byte_swap( *(uint16_t *) p );
+		const uint16_t result = iota::u16_from_big( *(uint16_t *) p );
 		
 		if ( !peeking )
 		{
