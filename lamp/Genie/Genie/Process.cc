@@ -29,6 +29,10 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
+// mac-sys-utils
+#include "mac_sys/current_thread_stack_space.hh"
+#include "mac_sys/init_thread.hh"
+
 // Relix
 #include "relix/syscalls.h"
 #include "relix/config/syscall_stacks.hh"
@@ -302,44 +306,12 @@ namespace Genie
 	}
 	
 	
-	recall::stack_frame_pointer Init_Thread();
-	
-#if TARGET_CPU_PPC && TARGET_RT_MAC_CFM
-	
-	asm recall::stack_frame_pointer Init_Thread()
-	{
-		lwz r4,0(sp)
-		li  r0,0
-		lwz r3,0(r4)
-		stw r0,0(r3)
-	}
-	
-#elif TARGET_CPU_68K
-	
-	asm recall::stack_frame_pointer Init_Thread()
-	{
-		MOVEA.L (A6),A0
-		RTS
-	}
-	
-#else
-	
-	inline recall::stack_frame_pointer Init_Thread()
-	{
-		return NULL;
-	}
-	
-#endif
-	
-	
 	static void* measure_stack_limit()
 	{
 	#ifdef __MACOS__
 		
-		const unsigned extra_stack = TARGET_CPU_68K * 10;
-		
 		return   (char*) recall::get_frame_pointer()
-		       - (N::ThreadCurrentStackSpace( N::GetCurrentThread() ) + extra_stack);
+		       - mac::sys::current_thread_stack_space();
 		
 	#endif
 		
@@ -350,7 +322,7 @@ namespace Genie
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->its_pb.stack_bottom = Init_Thread();
+		process->its_pb.stack_bottom = mac::sys::init_thread();
 		process->its_pb.stack_limit  = measure_stack_limit();
 		
 		try
