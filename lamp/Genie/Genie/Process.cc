@@ -30,6 +30,7 @@
 #include "unistd.h"
 
 // mac-sys-utils
+#include "mac_sys/current_thread_stack_space.hh"
 #include "mac_sys/init_thread.hh"
 
 // Relix
@@ -309,10 +310,8 @@ namespace Genie
 	{
 	#ifdef __MACOS__
 		
-		const unsigned extra_stack = TARGET_CPU_68K * 10;
-		
 		return   (char*) recall::get_frame_pointer()
-		       - (N::ThreadCurrentStackSpace( N::GetCurrentThread() ) + extra_stack);
+		       - mac::sys::current_thread_stack_space();
 		
 	#endif
 		
