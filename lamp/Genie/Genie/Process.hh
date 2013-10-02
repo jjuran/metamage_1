@@ -38,6 +38,7 @@
 #include "vfs/program_ptr.hh"
 
 // relix-kernel
+#include "relix/api/os_thread_api.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/vfork_context.hh"
@@ -282,9 +283,9 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			bool Forked() const  { return itsThread.get() == Mac::kNoThreadID; }
+			bool Forked() const  { return itsThread.get() == 0; }
 			
-			Mac::ThreadID GetThread() const;
+			relix::os_thread_id GetThread() const;
 			
 			Process& vfork();
 			
