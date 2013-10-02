@@ -195,6 +195,8 @@ namespace Genie
 			
 			static pascal void* ThreadEntry( void* param );
 			
+			static void* thread_start( void* param, const void* bottom, const void* limit );
+			
 			int Run();
 			
 			const plus::string& GetCmdLine() const;

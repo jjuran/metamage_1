@@ -320,10 +320,18 @@ namespace Genie
 	
 	pascal void* Process::ThreadEntry( void* param )
 	{
+		const void* bottom = mac::sys::init_thread();
+		const void* limit  = measure_stack_limit();
+		
+		return thread_start( param, bottom, limit );
+	}
+	
+	void* Process::thread_start( void* param, const void* bottom, const void* limit )
+	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->its_pb.stack_bottom = mac::sys::init_thread();
-		process->its_pb.stack_limit  = measure_stack_limit();
+		process->its_pb.stack_bottom = bottom;
+		process->its_pb.stack_limit  = limit;
 		
 		try
 		{
