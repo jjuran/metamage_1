@@ -22,22 +22,14 @@
 // Recall
 #include "recall/stack_crawl.hh"
 
-// nucleus
-#ifndef NUCLEUS_OWNED_HH
-#include "nucleus/owned.hh"
-#endif
-
-// Nitrogen
-#ifndef MAC_THREADS_TYPES_THREADID_HH
-#include "Mac/Threads/Types/ThreadID.hh"
-#endif
-
 // vfs
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_fwd.hh"
 #include "vfs/program_ptr.hh"
 
 // relix-kernel
+#include "relix/api/os_thread_api.hh"
+#include "relix/api/os_thread_box.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/vfork_context.hh"
@@ -158,7 +150,7 @@ namespace Genie
 			
 			void* itsReexecArgs[8];
 			
-			nucleus::owned< Mac::ThreadID > itsThread;
+			relix::os_thread_box itsThread;
 			
 			bool itMayDumpCore;
 		
@@ -193,7 +185,7 @@ namespace Genie
 			void unshare_files();
 			void unshare_signal_handlers();
 			
-			static pascal void* ThreadEntry( void* param );
+			static void* thread_start( void* param, const void* bottom, const void* limit );
 			
 			int Run();
 			
@@ -282,9 +274,9 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			bool Forked() const  { return itsThread.get() == Mac::kNoThreadID; }
+			bool Forked() const  { return itsThread.get() == 0; }
 			
-			Mac::ThreadID GetThread() const;
+			relix::os_thread_id GetThread() const;
 			
 			Process& vfork();
 			
@@ -300,7 +292,7 @@ namespace Genie
 			                                void* _6,
 			                                void* _7 );
 			
-			nucleus::owned< Mac::ThreadID > SpawnThread( Clone_Function f, void* arg );
+			relix::os_thread_box SpawnThread( Clone_Function f, void* arg );
 			
 			void InitThread();
 			

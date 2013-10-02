@@ -29,10 +29,6 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// mac-sys-utils
-#include "mac_sys/current_thread_stack_space.hh"
-#include "mac_sys/init_thread.hh"
-
 // Relix
 #include "relix/syscalls.h"
 #include "relix/config/syscall_stacks.hh"
@@ -58,7 +54,6 @@
 #include "Mac/Sound/Functions/SysBeep.hh"
 
 #include "Nitrogen/Aliases.hh"
-#include "Nitrogen/Threads.hh"
 
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
@@ -306,24 +301,12 @@ namespace Genie
 	}
 	
 	
-	static void* measure_stack_limit()
-	{
-	#ifdef __MACOS__
-		
-		return   (char*) recall::get_frame_pointer()
-		       - mac::sys::current_thread_stack_space();
-		
-	#endif
-		
-		return NULL;
-	}
-	
-	pascal void* Process::ThreadEntry( void* param )
+	void* Process::thread_start( void* param, const void* bottom, const void* limit )
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->its_pb.stack_bottom = mac::sys::init_thread();
-		process->its_pb.stack_limit  = measure_stack_limit();
+		process->its_pb.stack_bottom = bottom;
+		process->its_pb.stack_limit  = limit;
 		
 		try
 		{
@@ -688,23 +671,23 @@ namespace Genie
 		Resume();
 	}
 	
-	Nitrogen::ThreadID Process::GetThread() const
+	relix::os_thread_id Process::GetThread() const
 	{
 		const Process* process = this;
 		
-		while ( process->itsThread.get() == N::kNoThreadID )
+		while ( process->itsThread.get() == 0 )
 		{
 			pid_t ppid = process->GetPPID();
 			
 			if ( ppid == 1 )
 			{
-				return N::kNoThreadID;
+				return 0;
 			}
 			
 			process = &GetProcess( ppid );
 		}
 		
-		return process->itsThread.get();
+		return get_os_thread_id( *process->itsThread.get() );
 	}
 	
 	Process& Process::vfork()
@@ -770,16 +753,9 @@ namespace Genie
 		}
 	}
 	
-	static std::size_t ThreadStackSize()
+	static inline std::size_t minimum_stack_size()
 	{
-		const ::Size minimumStackSize = (CONFIG_MINI ? 32 : 64) * 1024;
-		
-		::Size size = 0;
-		
-		// Jaguar returns paramErr
-		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
-		
-		return std::max( size, minimumStackSize );
+		return (CONFIG_MINI ? 32 : 64) * 1024;
 	}
 	
 	class thing_that_may_resume_after_vfork
@@ -815,7 +791,7 @@ namespace Genie
 		// Declare this first so it goes out of scope last
 		thing_that_may_resume_after_vfork resume;
 		
-		n::owned< N::ThreadID > looseThread;
+		relix::os_thread_box looseThread;
 		
 		FSTreePtr cwd = GetCWD();
 		
@@ -874,10 +850,10 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const std::size_t stackSize = ThreadStackSize();
+		const std::size_t min_stack = minimum_stack_size();
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
 		if ( its_pb.cleanup != NULL )
 		{
@@ -912,7 +888,7 @@ namespace Genie
 		
 		Suspend();
 		
-		if ( looseThread.get() == N::kNoThreadID )
+		if ( looseThread.get() == 0 )
 		{
 			resume.enable( itsPPID );
 		}
@@ -928,7 +904,7 @@ namespace Genie
 	{
 		thing_that_may_resume_after_vfork resume;
 		
-		n::owned< N::ThreadID > looseThread = SpawnThread( (Clone_Function) f, _1 );
+		relix::os_thread_box looseThread = SpawnThread( (Clone_Function) f, _1 );
 		
 	//	itsReexecArgs[0] = (void*) f;
 	//	itsReexecArgs[1] = _1;
@@ -948,13 +924,13 @@ namespace Genie
 		
 		Suspend();
 		
-		if ( looseThread.get() == N::kNoThreadID )
+		if ( looseThread.get() == 0 )
 		{
 			resume.enable( itsPPID );
 		}
 	}
 	
-	n::owned< N::ThreadID > Process::SpawnThread( Clone_Function f, void* arg )
+	relix::os_thread_box Process::SpawnThread( Clone_Function f, void* arg )
 	{
 		itsReexecArgs[0] = (void*) f;
 		itsReexecArgs[1] = arg;
@@ -969,10 +945,10 @@ namespace Genie
 		
 		ResetSignalHandlers();
 		
-		const std::size_t stackSize = ThreadStackSize();
+		const std::size_t min_stack = minimum_stack_size();
 		
 		// Create the new thread
-		n::owned< N::ThreadID > looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		relix::os_thread_box looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
@@ -1110,7 +1086,7 @@ namespace Genie
 		
 		child.itsLifeStage       = kProcessLive;
 		
-		child.itsThread = parent.itsThread;
+		child.itsThread.swap( parent.itsThread );
 		
 		ASSERT( child.its_pb.cleanup == NULL );
 		
@@ -1366,12 +1342,11 @@ namespace Genie
 		
 		if ( newSchedule == kProcessStopped )
 		{
-			N::SetThreadState( GetThread(), N::kStoppedThreadState );
+			relix::stop_os_thread( GetThread() );
 		}
 		else
 		{
-			// Ignore errors so we don't throw in critical sections
-			(void) ::YieldToAnyThread();
+			relix::os_thread_yield();
 		}
 		
 		*its_pb.errno_var = saved_errno;
@@ -1530,9 +1505,9 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		N::ThreadID thread = GetThread();
+		relix::os_thread_id thread = GetThread();
 		
-		if ( thread == N::kNoThreadID )
+		if ( thread == 0 )
 		{
 			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
 			
@@ -1544,13 +1519,13 @@ namespace Genie
 			return;
 		}
 		
-		if ( N::GetThreadState( thread ) == N::kStoppedThreadState )
+		if ( relix::is_os_thread_stopped( thread ) )
 		{
 			ASSERT( itsSchedule == kProcessStopped );
 			
 			itsSchedule = kProcessSleeping;
 			
-			N::SetThreadState( thread, N::kReadyThreadState );
+			relix::wake_os_thread( thread );
 		}
 	}
 	
@@ -1579,8 +1554,7 @@ namespace Genie
 	{
 		if ( gCurrentProcess == NULL )
 		{
-			// Ignore errors so we don't throw in critical sections
-			(void) ::YieldToAnyThread();
+			relix::os_thread_yield();
 		}
 		else
 		{

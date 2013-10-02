@@ -463,11 +463,12 @@ namespace Genie
 		
 		// skip _lamp_main
 		// skip Process::Run()
-		// skip Process::ThreadEntry()
+		// skip Process::thread_start()
+		// skip Process_ThreadEntry()
 		// skip ??? (Thread Manager)
 		// skip ??? (Thread Manager)
 		
-		const int n_skipped = 5;
+		const int n_skipped = 6;
 		
 		if ( end - n_skipped > begin )
 		{

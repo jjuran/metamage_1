@@ -44,6 +44,12 @@ namespace plus
 				return --its_n;
 			}
 		
+		public:
+			friend unsigned long intrusive_ptr_ref_count( const ref_count_base* count )
+			{
+				return count->its_n;
+			}
+		
 		private:
 			friend void intrusive_ptr_add_ref( const ref_count_base* count )
 			{
