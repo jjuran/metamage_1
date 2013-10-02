@@ -464,7 +464,7 @@ namespace Genie
 		// skip _lamp_main
 		// skip Process::Run()
 		// skip Process::thread_start()
-		// skip Process::ThreadEntry()
+		// skip Process_ThreadEntry()
 		// skip ??? (Thread Manager)
 		// skip ??? (Thread Manager)
 		

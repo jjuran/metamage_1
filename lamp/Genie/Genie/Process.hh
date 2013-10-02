@@ -193,8 +193,6 @@ namespace Genie
 			void unshare_files();
 			void unshare_signal_handlers();
 			
-			static pascal void* ThreadEntry( void* param );
-			
 			static void* thread_start( void* param, const void* bottom, const void* limit );
 			
 			int Run();
