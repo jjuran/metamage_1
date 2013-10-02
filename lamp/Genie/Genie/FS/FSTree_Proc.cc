@@ -462,14 +462,16 @@ namespace Genie
 		const frame_data* end   = stack_crawl + n_frames;
 		
 		// skip _lamp_main
-		// skip Run()
-		// skip ProcessThreadEntry()
-		// skip Adapter()
+		// skip Process::Run()
+		// skip Process::ThreadEntry()
+		// skip ??? (Thread Manager)
 		// skip ??? (Thread Manager)
 		
-		if ( end - 5 > begin )
+		const int n_skipped = 5;
+		
+		if ( end - n_skipped > begin )
 		{
-			end -= 5;
+			end -= n_skipped;
 		}
 		
 		plus::var_string result;
