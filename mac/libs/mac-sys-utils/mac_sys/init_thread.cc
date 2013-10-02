@@ -11,6 +11,15 @@ namespace sys {
 	
 #if defined( __MWERKS__ )  &&  defined( __MACOS__ )
 
+	/*
+		init_thread()
+		
+		Return the stack frame pointer.
+		
+		On PPC CFM, zero the backlink since Mac OS didn't bother.
+		Otherwise, stack crawls will run off the end of the stack.
+	*/
+	
 #ifdef __POWERPC__
 	
 	asm void* init_thread()
