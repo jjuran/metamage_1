@@ -318,12 +318,22 @@ namespace Genie
 		return NULL;
 	}
 	
-	pascal void* Process::ThreadEntry( void* param )
+	pascal void* Process_ThreadEntry( void* param );
+	
+	pascal void* Process_ThreadEntry( void* param )
+	{
+		const void* bottom = mac::sys::init_thread();
+		const void* limit  = measure_stack_limit();
+		
+		return Process::thread_start( param, bottom, limit );
+	}
+	
+	void* Process::thread_start( void* param, const void* bottom, const void* limit )
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->its_pb.stack_bottom = mac::sys::init_thread();
-		process->its_pb.stack_limit  = measure_stack_limit();
+		process->its_pb.stack_bottom = bottom;
+		process->its_pb.stack_limit  = limit;
 		
 		try
 		{
@@ -877,7 +887,7 @@ namespace Genie
 		const std::size_t stackSize = ThreadStackSize();
 		
 		// Create the new thread
-		looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		looseThread = N::NewThread< Process_ThreadEntry >( this, stackSize );
 		
 		if ( its_pb.cleanup != NULL )
 		{
@@ -972,7 +982,7 @@ namespace Genie
 		const std::size_t stackSize = ThreadStackSize();
 		
 		// Create the new thread
-		n::owned< N::ThreadID > looseThread = N::NewThread< Process::ThreadEntry >( this, stackSize );
+		n::owned< N::ThreadID > looseThread = N::NewThread< Process_ThreadEntry >( this, stackSize );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
