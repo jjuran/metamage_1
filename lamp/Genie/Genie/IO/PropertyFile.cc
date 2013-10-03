@@ -12,6 +12,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 
@@ -44,11 +45,11 @@ namespace Genie
 	};
 	
 	
-	PropertyReaderFileHandle::PropertyReaderFileHandle( const FSTreePtr&     file,
+	PropertyReaderFileHandle::PropertyReaderFileHandle( const vfs::node&     file,
 	                                                    int                  flags,
 	                                                    const plus::string&  value )
 	:
-		RegularFileHandle( file, flags, &propertyreader_methods ),
+		RegularFileHandle( &file, flags, &propertyreader_methods ),
 		itsData( value )
 	{
 	}
@@ -67,6 +68,17 @@ namespace Genie
 		return n_bytes;
 	}
 	
+	
+	PropertyWriterFileHandle::PropertyWriterFileHandle( const vfs::node&  file,
+	                                                    int               flags,
+	                                                    WriteHook         writeHook,
+	                                                    bool              binary )
+	:
+		StreamHandle( &file, flags ),
+		itsWriteHook( writeHook ),
+		itIsBinary( binary )
+	{
+	}
 	
 	ssize_t PropertyWriterFileHandle::SysWrite( const char* buffer, std::size_t byteCount )
 	{

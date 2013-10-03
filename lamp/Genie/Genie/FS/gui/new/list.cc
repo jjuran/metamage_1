@@ -21,6 +21,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+
 // Pedestal
 #include "Pedestal/ListView.hh"
 
@@ -238,7 +241,7 @@ namespace Genie
 		{
 			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( that, flags, data );
+			result = new PropertyReaderFileHandle( *that, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )

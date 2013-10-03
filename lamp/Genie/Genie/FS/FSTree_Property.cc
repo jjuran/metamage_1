@@ -12,6 +12,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+
 // Genie
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -25,9 +28,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static IOHandle* open_for_read( const FSTree* that, int flags, bool binary )
+	static vfs::filehandle* open_for_read( const vfs::node& that, int flags, bool binary )
 	{
-		property_params& extra = *(property_params*) that->extra();
+		property_params& extra = *(property_params*) that.extra();
 		
 		if ( extra.get == NULL )
 		{
@@ -38,7 +41,7 @@ namespace Genie
 		
 		try
 		{
-			extra.get( data, that->owner(), binary );
+			extra.get( data, that.owner(), binary );
 			
 			if ( !binary )
 			{
@@ -54,9 +57,9 @@ namespace Genie
 		                                     data );
 	}
 	
-	static IOHandle* open_for_write( const FSTree* that, int flags, bool binary )
+	static vfs::filehandle* open_for_write( const vfs::node& that, int flags, bool binary )
 	{
-		property_params& extra = *(property_params*) that->extra();
+		property_params& extra = *(property_params*) that.extra();
 		
 		if ( extra.set == NULL )
 		{
@@ -79,11 +82,11 @@ namespace Genie
 		
 		if ( flags == O_RDONLY )
 		{
-			result = open_for_read( that, flags, binary );
+			result = open_for_read( *that, flags, binary );
 		}
 		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
-			result = open_for_write( that, flags, binary );
+			result = open_for_write( *that, flags, binary );
 		}
 		else
 		{

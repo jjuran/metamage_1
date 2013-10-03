@@ -75,7 +75,7 @@ namespace Genie
 		
 		plus::string& string = reinterpret_cast< plus::string& >( extra.datum );
 		
-		return new PropertyReaderFileHandle( that,
+		return new PropertyReaderFileHandle( *that,
 		                                     flags,
 		                                     string );
 	}

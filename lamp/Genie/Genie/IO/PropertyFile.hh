@@ -9,8 +9,10 @@
 // plus
 #include "plus/string.hh"
 
+// vfs
+#include "vfs/node_fwd.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/IO/RegularFile.hh"
 
 
@@ -23,7 +25,7 @@ namespace Genie
 			plus::string itsData;
 		
 		public:
-			PropertyReaderFileHandle( const FSTreePtr&     file,
+			PropertyReaderFileHandle( const vfs::node&     file,
 			                          int                  flags,
 			                          const plus::string&  value );
 			
@@ -36,25 +38,19 @@ namespace Genie
 	class PropertyWriterFileHandle : public StreamHandle
 	{
 		private:
-			typedef void (*WriteHook)( const FSTree  *that,
-			                           const char    *begin,
-			                           const char    *end,
-			                           bool           binary );
+			typedef void (*WriteHook)( const vfs::node*  that,
+			                           const char*       begin,
+			                           const char*       end,
+			                           bool              binary );
 			
 			WriteHook  itsWriteHook;
 			bool       itIsBinary;
 		
 		public:
-			PropertyWriterFileHandle( const FSTreePtr&  file,
+			PropertyWriterFileHandle( const vfs::node&  file,
 			                          int               flags,
 			                          WriteHook         writeHook,
-			                          bool              binary )
-			:
-				StreamHandle( file, flags ),
-				itsWriteHook( writeHook ),
-				itIsBinary( binary )
-			{
-			}
+			                          bool              binary );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 	};
