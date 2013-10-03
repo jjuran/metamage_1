@@ -13,7 +13,7 @@
 namespace Genie
 {
 	
-	void make_alias( const FSTreePtr& target, const FSTreePtr& alias )
+	void make_alias( const vfs::node& target, const vfs::node& alias )
 	{
 		const FSSpec targetSpec = GetFSSpecFromFSTree( target );
 		const FSSpec aliasSpec  = GetFSSpecFromFSTree( alias  );

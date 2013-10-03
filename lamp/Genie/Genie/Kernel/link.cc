@@ -63,7 +63,7 @@ namespace Genie
 			
 			if ( flags & AT_LINK_ALIAS )
 			{
-				make_alias( oldFile, newFile );
+				make_alias( *oldFile, *newFile );
 			}
 			else
 			{

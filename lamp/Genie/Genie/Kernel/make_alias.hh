@@ -6,14 +6,14 @@
 #ifndef GENIE_KERNEL_MAKEALIAS_HH
 #define GENIE_KERNEL_MAKEALIAS_HH
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
 {
 	
-	void make_alias( const FSTreePtr& target, const FSTreePtr& alias );
+	void make_alias( const vfs::node& target, const vfs::node& alias );
 	
 }
 

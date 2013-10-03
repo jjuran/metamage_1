@@ -35,7 +35,7 @@ namespace Genie
 	
 	Mac::FSDirSpec Dir_From_FSSpec( const FSSpec& dir );
 	
-	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file );
+	FSSpec GetFSSpecFromFSTree( const vfs::node& file );
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	

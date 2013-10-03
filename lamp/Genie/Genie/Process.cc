@@ -393,7 +393,7 @@ namespace Genie
 		
 		try
 		{
-			const FSSpec fileSpec = GetFSSpecFromFSTree( context.executable );
+			const FSSpec fileSpec = GetFSSpecFromFSTree( *context.executable );
 			
 			type = N::FSpGetFInfo( fileSpec ).fdType;
 		}

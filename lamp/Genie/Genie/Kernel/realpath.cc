@@ -36,7 +36,7 @@
 namespace Genie
 {
 	
-	static plus::string mac_pathname_from_file( const FSTreePtr& file )
+	static plus::string mac_pathname_from_file( const vfs::node& file )
 	{
 		return GetMacPathname( GetFSSpecFromFSTree( file ) );
 	}
@@ -52,7 +52,7 @@ namespace Genie
 			
 			const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 			
-			plus::string resolved = is_mac ? mac_pathname_from_file( file )
+			plus::string resolved = is_mac ? mac_pathname_from_file( *file )
 			                               : pathname( *file );
 			
 			if ( (flags & REALPATH_OUTPUT_HFS_UTF8) == REALPATH_OUTPUT_HFS_UTF8 )

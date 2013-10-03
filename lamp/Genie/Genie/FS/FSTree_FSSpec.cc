@@ -481,7 +481,7 @@ namespace Genie
 		
 		const FSSpec& srcFile = extra.fsspec;
 		
-		const FSSpec destFile = GetFSSpecFromFSTree( destination );
+		const FSSpec destFile = GetFSSpecFromFSTree( *destination );
 		
 		// Do not resolve links
 		
@@ -681,13 +681,13 @@ namespace Genie
 	}
 	
 	
-	FSSpec GetFSSpecFromFSTree( const FSTreePtr& file )
+	FSSpec GetFSSpecFromFSTree( const vfs::node& file )
 	{
 		struct ::stat stat_buffer = { 0 };
 		
 		try
 		{
-			stat( *file, stat_buffer );
+			stat( file, stat_buffer );
 		}
 		catch ( const p7::errno_t& err )
 		{
@@ -808,7 +808,7 @@ namespace Genie
 		                                        path.c_str() ) );
 	}
 	
-	static void CreateSymLink( const FSTreePtr& linkFile, const plus::string& targetPath )
+	static void CreateSymLink( const vfs::node& linkFile, const plus::string& targetPath )
 	{
 		FSSpec linkSpec = GetFSSpecFromFSTree( linkFile );
 		
@@ -829,7 +829,7 @@ namespace Genie
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			
-			FSSpec targetSpec = GetFSSpecFromFSTree( target );
+			FSSpec targetSpec = GetFSSpecFromFSTree( *target );
 			
 			CreateAlias( linkSpec, targetSpec );
 			
@@ -864,7 +864,7 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		CreateSymLink( that, target );
+		CreateSymLink( *that, target );
 		
 		finish_creation( extra.fsspec, that->name() );
 	}

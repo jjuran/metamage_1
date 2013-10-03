@@ -158,7 +158,7 @@ namespace Genie
 			p7::throw_errno( destIsDir ? EISDIR : ENOTDIR );
 		}
 		
-		FSSpec destFileSpec = GetFSSpecFromFSTree( &destFile );
+		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
 		
 		// Can't move across volumes
 		if ( srcFileSpec.vRefNum != destFileSpec.vRefNum )
