@@ -25,6 +25,7 @@
 // vfs
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_fwd.hh"
+#include "vfs/node_ptr.hh"
 #include "vfs/program_ptr.hh"
 
 // relix-kernel
@@ -35,7 +36,6 @@
 #include "relix/task/vfork_context.hh"
 
 // Genie
-#include "Genie/FS/FSTreePtr.hh"
 #include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
 
@@ -142,7 +142,7 @@ namespace Genie
 			unsigned itsAsyncOpCount;
 		
 		private:
-			FSTreePtr itsProgramFile;
+			vfs::node_ptr itsProgramFile;
 			
 			vfs::program_ptr  its_exec_handle;
 			
@@ -233,13 +233,13 @@ namespace Genie
 			
 			const vfs::filehandle_ptr& ControllingTerminal() const;
 			
-			FSTreePtr GetCWD() const;
+			vfs::node_ptr GetCWD() const;
 			
 			void ChangeDirectory( const vfs::node& new_cwd );
 			
 			const plus::string& ProgramName()  const  { return itsName;   }
 			
-			const FSTreePtr& ProgramFile() const  { return itsProgramFile; }
+			const vfs::node_ptr& ProgramFile() const  { return itsProgramFile; }
 			
 			relix::fd_table& FileDescriptors()  { return *itsFileDescriptors; }
 			
