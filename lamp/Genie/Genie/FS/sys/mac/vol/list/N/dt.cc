@@ -24,11 +24,12 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/node_ptr.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
@@ -74,9 +75,9 @@ namespace Genie
 	using MacScribe::parse_utf8_quad_name;
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	static N::FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
 	{
-		const FSTree* grandparent = parent->owner();
+		const vfs::node* grandparent = parent.owner();
 		
 		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( grandparent->name().c_str() ) );
 	}
@@ -96,9 +97,9 @@ namespace Genie
 		return n::make< N::FSDirSpec >( new_vRefNum, new_dirID );
 	}
 	
-	static FSTreePtr desktop_dir_resolve( const FSTree* that )
+	static vfs::node_ptr desktop_dir_resolve( const vfs::node* that )
 	{
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( that->owner() );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *that->owner() );
 		
 		const N::FSDirSpec dir = DTGetInfo_Dir( vRefNum );
 		
@@ -124,20 +125,20 @@ namespace Genie
 	};
 	
 	
-	static FSSpec DTGetAPPL( const FSTree* appls_quad, short index = 0 )
+	static FSSpec DTGetAPPL( const vfs::node* appls_quad, short index = 0 )
 	{
 		const ::OSType creator = parse_utf8_quad_name( appls_quad->name() );
 		
-		const FSTree* great_x2_grandparent = appls_quad->owner()->owner()->owner();
+		const vfs::node* great_x2_grandparent = appls_quad->owner()->owner()->owner();
 		
 		const N::FSVolumeRefNum vRefNum = N::FSVolumeRefNum( -gear::parse_unsigned_decimal( great_x2_grandparent->name().c_str() ) );
 		
 		return N::DTGetAPPL( vRefNum, Mac::FSCreator( creator ), index );
 	}
 	
-	static FSTreePtr latest_appl_link_resolve( const FSTree* that )
+	static vfs::node_ptr latest_appl_link_resolve( const vfs::node* that )
 	{
-		const FSTree* parent = that->owner();
+		const vfs::node* parent = that->owner();
 		
 		const FSSpec file = DTGetAPPL( parent );
 		
@@ -162,11 +163,11 @@ namespace Genie
 		&latest_appl_link_link_methods
 	};
 	
-	static FSTreePtr dt_appls_QUAD_list_N_resolve( const FSTree* that )
+	static vfs::node_ptr dt_appls_QUAD_list_N_resolve( const vfs::node* that )
 	{
 		const short index = gear::parse_unsigned_decimal( that->name().c_str() );
 		
-		const FSTree* grandparent = that->owner()->owner();
+		const vfs::node* grandparent = that->owner()->owner();
 		
 		const FSSpec file = DTGetAPPL( grandparent, index );
 		
@@ -192,19 +193,19 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr appl_QUAD_list_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr appl_QUAD_list_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !canonical_positive_integer::applies( name ) )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new FSTree( parent, name, S_IFLNK | 0777, &dt_appls_QUAD_list_N_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &dt_appls_QUAD_list_N_methods );
 	}
 	
-	static void appl_QUAD_list_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void appl_QUAD_list_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		const FSTree* grandparent = parent->owner();
+		const vfs::node* grandparent = parent->owner();
 		
 		for ( short index = 1;  ;  ++index )
 		{
@@ -221,16 +222,16 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const FSTree*        parent,
-	                                                              const plus::string&  name,
-	                                                              const void*          args )
+	static vfs::node_ptr new_sys_mac_vol_list_N_dt_appls_QUAD_latest( const vfs::node*     parent,
+	                                                                  const plus::string&  name,
+	                                                                  const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &latest_appl_link_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &latest_appl_link_methods );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const FSTree*        parent,
-	                                                            const plus::string&  name,
-	                                                            const void*          args )
+	static vfs::node_ptr new_sys_mac_vol_list_N_dt_appls_QUAD_list( const vfs::node*     parent,
+	                                                                const plus::string&  name,
+	                                                                const void*          args )
 	{
 		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
 	}
@@ -260,7 +261,7 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr appl_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr appl_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
@@ -268,10 +269,10 @@ namespace Genie
 	}
 	
 	
-	static plus::string generate_dt_icons_QUAD_QUAD_X( const FSTree* parent, const plus::string& name )
+	static plus::string generate_dt_icons_QUAD_QUAD_X( const vfs::node* parent, const plus::string& name )
 	{
-		const FSTree*   gparent = parent ->owner();
-		const FSTree* gggparent = gparent->owner()->owner();
+		const vfs::node*   gparent = parent ->owner();
+		const vfs::node* gggparent = gparent->owner()->owner();
 		
 		const short selector = gear::parse_unsigned_decimal( name.c_str() );
 		
@@ -308,7 +309,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr icon_QUAD_QUAD_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr icon_QUAD_QUAD_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !canonical_positive_integer::applies( name ) )
 		{
@@ -318,10 +319,10 @@ namespace Genie
 		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
 	}
 	
-	static void icon_QUAD_QUAD_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void icon_QUAD_QUAD_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		const FSTree*   gparent = parent ->owner();
-		const FSTree* gggparent = gparent->owner()->owner();
+		const vfs::node*   gparent = parent ->owner();
+		const vfs::node* gggparent = gparent->owner()->owner();
 		
 		const ::OSType type    = parse_utf8_quad_name( parent ->name() );
 		const ::OSType creator = parse_utf8_quad_name( gparent->name() );
@@ -352,37 +353,37 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr icon_QUAD_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr icon_QUAD_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
 		return new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
 	}
 	
-	static FSTreePtr icon_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr icon_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
 		return new_basic_directory( parent, name, icon_QUAD_lookup, NULL );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_dir( const FSTree*        parent,
-	                                                const plus::string&  name,
-	                                                const void*          args )
+	static vfs::node_ptr new_sys_mac_vol_list_N_dt_dir( const vfs::node*     parent,
+	                                                    const plus::string&  name,
+	                                                    const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &desktop_dir_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &desktop_dir_methods );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_appls( const FSTree*        parent,
-	                                                  const plus::string&  name,
-	                                                  const void*          args )
+	static vfs::node_ptr new_sys_mac_vol_list_N_dt_appls( const vfs::node*     parent,
+	                                                      const plus::string&  name,
+	                                                      const void*          args )
 	{
 		return new_basic_directory( parent, name, appl_lookup, NULL );
 	}
 	
-	static FSTreePtr new_sys_mac_vol_list_N_dt_icons( const FSTree*        parent,
-	                                                  const plus::string&  name,
-	                                                  const void*          args )
+	static vfs::node_ptr new_sys_mac_vol_list_N_dt_icons( const vfs::node*     parent,
+	                                                      const plus::string&  name,
+	                                                      const void*          args )
 	{
 		return new_basic_directory( parent, name, icon_lookup, NULL );
 	}
