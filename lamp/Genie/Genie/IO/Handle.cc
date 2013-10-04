@@ -18,6 +18,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 
@@ -63,11 +64,11 @@ namespace Genie
 	};
 	
 	
-	Handle_IOHandle::Handle_IOHandle( const FSTreePtr&                       file,
+	Handle_IOHandle::Handle_IOHandle( const vfs::node&                       file,
 	                                  int                                    flags,
 	                                  const nucleus::shared< Mac::Handle >&  h )
 	:
-		RegularFileHandle( file, flags, &Mac_Handle_methods ),
+		RegularFileHandle( &file, flags, &Mac_Handle_methods ),
 		itsHandle( h )
 	{
 	}

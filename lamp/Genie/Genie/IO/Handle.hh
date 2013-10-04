@@ -17,7 +17,6 @@
 #endif
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/IO/RegularFile.hh"
 
 
@@ -30,7 +29,7 @@ namespace Genie
 			nucleus::shared< Mac::Handle > itsHandle;
 		
 		public:
-			Handle_IOHandle( const FSTreePtr&                       file,
+			Handle_IOHandle( const vfs::node&                       file,
 			                 int                                    flags,
 			                 const nucleus::shared< Mac::Handle >&  h );
 			

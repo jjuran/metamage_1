@@ -25,6 +25,7 @@
 #include "Nitrogen/QDOffscreen.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 

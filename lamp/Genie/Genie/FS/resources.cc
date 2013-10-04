@@ -39,6 +39,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
@@ -225,7 +226,7 @@ namespace Genie
 			Rsrc_IOHandle& operator=( const Rsrc_IOHandle& );
 		
 		public:
-			Rsrc_IOHandle( const FSTreePtr&               file,
+			Rsrc_IOHandle( const vfs::node&               file,
 			               int                            flags,
 			               const n::shared< N::Handle >&  h,
 			               const FSSpec&                  resFile )
@@ -506,8 +507,8 @@ namespace Genie
 		
 		that = new_node.get();
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( that, flags, h, fileSpec )
-		                           : new Handle_IOHandle( that, flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
+		                           : new Handle_IOHandle( *that, flags, h );
 		
 		return result;
 	}
@@ -526,8 +527,8 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( that, flags, h, fileSpec )
-		                           : new Handle_IOHandle( that, flags, h );
+		IOHandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
+		                           : new Handle_IOHandle( *that, flags, h );
 		
 		return result;
 	}
