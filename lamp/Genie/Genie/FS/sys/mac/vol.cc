@@ -129,9 +129,9 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr new_volume_link( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	static vfs::node_ptr new_volume_link( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		typedef Mac::FSVolumeRefNum (*Function)();
 		
