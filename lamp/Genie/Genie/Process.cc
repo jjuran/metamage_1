@@ -343,17 +343,17 @@ namespace Genie
 	
 	struct ExecContext
 	{
-		FSTreePtr                   executable;
+		vfs::node_ptr               executable;
 		std::vector< const char* >  argVector;
 		plus::string                interpreterPath;
 		plus::string                interpreterArg;
 		
 		ExecContext()  {}
 		
-		ExecContext( const FSTreePtr&    executable,
+		ExecContext( const vfs::node&    executable,
 		             char const* const*  argv )
 		:
-			executable( executable ),
+			executable( &executable ),
 			argVector ( argv, argv + argv_length( argv ) + 1 )
 		{}
 	};
@@ -793,7 +793,7 @@ namespace Genie
 		
 		relix::os_thread_box looseThread;
 		
-		FSTreePtr cwd = GetCWD();
+		vfs::node_ptr cwd = GetCWD();
 		
 		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
 		vfs::node_ptr programFile = resolve_pathname( path, *cwd );
@@ -805,7 +805,7 @@ namespace Genie
 		// Do we take the name before or after normalization?
 		itsName = programFile->name();
 		
-		ExecContext context( programFile, argv );
+		ExecContext context( *programFile, argv );
 		
 		Normalize( path, context, *cwd );
 		
@@ -1023,7 +1023,7 @@ namespace Genie
 		return null;
 	}
 	
-	FSTreePtr Process::GetCWD() const
+	vfs::node_ptr Process::GetCWD() const
 	{
 		return its_fs_info->getcwd()->GetFile();
 	}
