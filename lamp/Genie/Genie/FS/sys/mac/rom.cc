@@ -66,7 +66,7 @@ namespace Genie
 		
 	#else
 		
-		return open_buffer_file( that,
+		return open_buffer_file( *that,
 		                         flags,
 		                         LMGetROMBase(),
 		                         global_rom_size );

@@ -34,7 +34,7 @@ namespace Genie
 			std::size_t  itsSize;
 		
 		public:
-			MemoryFileHandle( const FSTreePtr&  file,
+			MemoryFileHandle( const vfs::node&  file,
 			                  int               flags,
 			                  char*             base,
 			                  std::size_t       size );
@@ -79,12 +79,12 @@ namespace Genie
 	};
 	
 	
-	MemoryFileHandle::MemoryFileHandle( const FSTreePtr&  file,
+	MemoryFileHandle::MemoryFileHandle( const vfs::node&  file,
 	                                    int               flags,
 	                                    char*             base,
 	                                    std::size_t       size )
 	:
-		RegularFileHandle( file, flags, &buffer_methods ),
+		RegularFileHandle( &file, flags, &buffer_methods ),
 		itsBase( base ),
 		itsSize( size )
 	{
@@ -139,7 +139,7 @@ namespace Genie
 		return new vfs::memory_mapping( itsBase + offset, length, flags );
 	}
 	
-	vfs::filehandle_ptr open_buffer_file( const vfs::node*  file,
+	vfs::filehandle_ptr open_buffer_file( const vfs::node&  file,
 	                                      int               flags,
 	                                      char*             addr,
 	                                      std::size_t       size )
