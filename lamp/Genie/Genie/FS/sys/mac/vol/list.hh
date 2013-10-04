@@ -14,18 +14,18 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args );
+	vfs::node_ptr New_FSTree_sys_mac_vol( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args );
 	
-	FSTreePtr Get_sys_mac_vol_N( Mac::FSVolumeRefNum vRefNum );
+	vfs::node_ptr Get_sys_mac_vol_N( Mac::FSVolumeRefNum vRefNum );
 	
 }
 

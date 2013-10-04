@@ -79,14 +79,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
+	static N::FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
 	{
-		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->name().c_str() ) );
-	}
-	
-	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
-	{
-		return GetKeyFromParent( parent.get() );
+		return N::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent.name().c_str() ) );
 	}
 	
 	
@@ -193,7 +188,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_vol_N_Mappings[];
 	
-	static FSTreePtr vol_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr vol_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_vol_number::applies( name ) )
 		{
@@ -216,7 +211,7 @@ namespace Genie
 			}
 	};
 	
-	static void vol_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void vol_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		vol_IteratorConverter converter;
 		
@@ -380,7 +375,7 @@ namespace Genie
 		Mac::ThrowOSStatus( ::PBXGetVolInfoSync( &pb ) );
 	}
 	
-	static void GetVolInfo( XVolumeParam& pb, const FSTree* that, StringPtr name )
+	static void GetVolInfo( XVolumeParam& pb, const vfs::node& that, StringPtr name )
 	{
 		const N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
 		
@@ -401,18 +396,18 @@ namespace Genie
 		
 		typedef N::FSVolumeRefNum Key;
 		
-		static typename Accessor::result_type Get( const FSTree* that )
+		static typename Accessor::result_type Get( const vfs::node* that )
 		{
 			XVolumeParam pb;
 			
 			Str31 name;
 			
-			GetVolInfo( pb, that, Accessor::needsName ? name : NULL );
+			GetVolInfo( pb, *that, Accessor::needsName ? name : NULL );
 			
 			return Accessor::Get( pb );
 		}
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const typename Accessor::result_type data = Get( that );
 			
@@ -429,9 +424,9 @@ namespace Genie
 	{
 		static const bool can_set = true;
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
-			const N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
+			const N::FSVolumeRefNum vRefNum = GetKeyFromParent( *that );
 			
 			N::Str27 name( begin, end - begin );
 			
@@ -439,7 +434,7 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr folder_link_resolve( const FSTree* that )
+	static vfs::node_ptr folder_link_resolve( const vfs::node* that )
 	{
 		const char* name = that->name().c_str();
 		
@@ -447,7 +442,7 @@ namespace Genie
 		                         : name[0] == 't' ? N::kTemporaryFolderType
 		                         :                  N::FolderType();
 		
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( that->owner() );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *that->owner() );
 		
 		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ) );
 	}
@@ -471,22 +466,22 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Root_Factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	static vfs::node_ptr Root_Factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
-		N::FSVolumeRefNum key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
 		const Mac::FSDirSpec volume = n::make< Mac::FSDirSpec >( key, N::fsRtDirID );
 		
 		return FSTreeFromFSDirSpec( volume );
 	}
 	
-	static FSTreePtr Drive_Link_Factory( const FSTree*        parent,
-	                                     const plus::string&  name,
-	                                     const void*          args )
+	static vfs::node_ptr Drive_Link_Factory( const vfs::node*     parent,
+	                                         const plus::string&  name,
+	                                         const void*          args )
 	{
-		N::FSVolumeRefNum key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
 		HVolumeParam pb;
 		
@@ -504,11 +499,11 @@ namespace Genie
 		return vfs::new_symbolic_link( parent, name, drive );
 	}
 	
-	static FSTreePtr Driver_Link_Factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr Driver_Link_Factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		N::FSVolumeRefNum key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
 		HVolumeParam pb;
 		
@@ -526,20 +521,20 @@ namespace Genie
 		return vfs::new_symbolic_link( parent, name, unit );
 	}
 	
-	static FSTreePtr Folder_Link_Factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr Folder_Link_Factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		N::FSVolumeRefNum key = GetKeyFromParent( parent );
+		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
-		return new FSTree( parent, name, S_IFLNK | 0777, &folder_link_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &folder_link_methods );
 	}
 	
-	static FSTreePtr volume_trigger_factory( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	static vfs::node_ptr volume_trigger_factory( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( parent );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *parent );
 		
 		const trigger_extra extra = { (trigger_function) args, vRefNum };
 		
@@ -599,14 +594,14 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_vol( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_vol( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return new_basic_directory( parent, name, vol_lookup, vol_iterate );
 	}
 	
-	FSTreePtr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
+	vfs::node_ptr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
 		vfs::node_ptr parent = vfs::resolve_absolute_path( STR_LEN( "/sys/mac/vol/list" ) );
 		
