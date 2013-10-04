@@ -74,7 +74,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_drive_N_Mappings[];
 	
-	static FSTreePtr drive_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr drive_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !is_valid_drive_name( name ) )
 		{
@@ -97,7 +97,7 @@ namespace Genie
 			}
 	};
 	
-	static void drive_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void drive_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		drive_IteratorConverter converter;
 		
@@ -110,21 +110,16 @@ namespace Genie
 	}
 	
 	
-	static N::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
+	static N::FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
 	{
-		return N::FSVolumeRefNum( gear::parse_decimal( parent->name().c_str() ) );
+		return N::FSVolumeRefNum( gear::parse_decimal( parent.name().c_str() ) );
 	}
 	
-	static inline N::FSVolumeRefNum GetKeyFromParent( const FSTreePtr& parent )
+	static vfs::node_ptr Link_Factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
-		return GetKeyFromParent( parent.get() );
-	}
-	
-	static FSTreePtr Link_Factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
-	{
-		const N::FSVolumeRefNum key = GetKeyFromParent( parent );
+		const N::FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
 		const DrvQEl* el = FindDrive( key );
 		
@@ -175,7 +170,7 @@ namespace Genie
 		}
 	};
 	
-	static const DrvQEl& FindDrive( const FSTree* that )
+	static const DrvQEl& FindDrive( const vfs::node& that )
 	{
 		N::FSVolumeRefNum vRefNum = GetKeyFromParent( that );
 		
@@ -194,9 +189,9 @@ namespace Genie
 	{
 		static const size_t fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			const DrvQEl& el = FindDrive( that );
+			const DrvQEl& el = FindDrive( *that );
 			
 			const typename Accessor::result_type data = Accessor::Get( el );
 			
@@ -204,11 +199,11 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr drive_trigger_factory( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	static vfs::node_ptr drive_trigger_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
-		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( parent );
+		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *parent );
 		
 		const trigger_extra extra = { (trigger_function) args, vRefNum };
 		
@@ -233,9 +228,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_drive( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_drive( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		return new_basic_directory( parent, name, drive_lookup, drive_iterate );
 	}
