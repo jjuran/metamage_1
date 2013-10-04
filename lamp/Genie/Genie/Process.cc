@@ -53,8 +53,6 @@
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
-#include "Nitrogen/Aliases.hh"
-
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
