@@ -18,6 +18,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/get_machine_name.hh"
+
 // plus
 #include "plus/deconstruct_bool.hh"
 #include "plus/var_string.hh"
@@ -28,7 +31,6 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
-#include "Genie/Utilities/GetMachineName.hh"
 
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 	
@@ -56,7 +58,7 @@ namespace Genie
 				return false;
 			}
 			
-			const unsigned char* name = GetMachineName();
+			const unsigned char* name = mac::sys::get_machine_name();
 			
 			const bool powerpc = name != NULL  &&  name[1] == 'P';
 			

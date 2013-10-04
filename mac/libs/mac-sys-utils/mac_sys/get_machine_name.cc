@@ -1,11 +1,9 @@
 /*
-	GetMachineName.cc
-	-----------------
-	
-	Copyright 2010, Joshua Juran
+	get_machine_name.cc
+	-------------------
 */
 
-#include "Genie/Utilities/GetMachineName.hh"
+#include "mac_sys/get_machine_name.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -17,22 +15,23 @@
 #endif
 
 
-namespace Genie
-{
+namespace mac {
+namespace sys {
 	
-	const unsigned char* GetMachineName()
+	const unsigned char* get_machine_name()
 	{
 		SInt32 mnam;
 		
-		ConstStr255Param& result = *(ConstStr255Param*) &mnam;
-		
 		if ( OSErr err = ::Gestalt( gestaltUserVisibleMachineName, &mnam ) )
 		{
-			result = NULL;
+			return NULL;
 		}
+		
+		ConstStr255Param result = *(ConstStr255Param*) &mnam;
 		
 		return result;
 	}
 	
+}
 }
 
