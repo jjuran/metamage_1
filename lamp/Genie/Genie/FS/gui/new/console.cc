@@ -16,13 +16,12 @@
 #endif
 
 // POSIX
+#include <signal.h>
 #include <sys/stat.h>
+#include <sys/ttycom.h>
 
 // Standard C++
 #include <algorithm>
-
-// POSIX
-#include <sys/ttycom.h>
 
 // Iota
 #include "iota/strings.hh"
