@@ -16,7 +16,6 @@
 #include "relix/parameter_block.h"
 
 // plus
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // Recall
@@ -33,6 +32,7 @@
 #include "relix/api/os_thread_box.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/task/syscall_stack.hh"
+#include "relix/task/thread.hh"
 #include "relix/task/vfork_context.hh"
 
 // Genie
@@ -93,7 +93,9 @@ namespace Genie
 	
 	typedef int (*Clone_Function)( void* arg );
 	
-	class Process : public plus::ref_count< Process >,
+	// Genie::Process is actually a thread, not a process.
+	
+	class Process : public relix::thread,
 	                public TimeKeeper,
 	                public SignalReceiver,
 	                public relix::vfork_context
@@ -110,7 +112,6 @@ namespace Genie
 			
 			pid_t itsPPID;
 			pid_t itsPID;
-			pid_t itsTID;
 			pid_t itsForkedChildPID;
 			
 		#if CONFIG_SYSCALL_STACKS
@@ -204,7 +205,7 @@ namespace Genie
 			void SuppressCoreDump()  { itMayDumpCore = false; }
 			void AllowCoreDump   ()  { itMayDumpCore = true;  }
 			
-			pid_t gettid() const  { return itsTID; }
+			pid_t gettid() const  { return id(); }
 			
 			pid_t GetPPID() const  { return itsPPID; }
 			pid_t GetPID()  const  { return itsPID;  }

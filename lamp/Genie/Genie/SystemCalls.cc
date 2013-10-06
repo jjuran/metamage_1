@@ -33,6 +33,7 @@
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
+#include "relix/syscall/gettid.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
 
@@ -176,10 +177,7 @@ namespace Genie
 	}
 	
 	
-	static pid_t gettid()
-	{
-		return current_process().gettid();
-	}
+	using relix::gettid;
 	
 	static pid_t getpid()
 	{
