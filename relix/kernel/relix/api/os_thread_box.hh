@@ -31,7 +31,7 @@ namespace relix
 		public:
 			os_thread_box();
 			
-			os_thread_box( const boost::intrusive_ptr< os_thread >& thread );
+			os_thread_box( os_thread& thread );
 			
 			os_thread_box( const os_thread_box& that );
 			

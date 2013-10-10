@@ -129,9 +129,9 @@ namespace relix
 		Mac::ThrowOSStatus( err );
 	}
 	
-	os_thread_box::os_thread_box( const boost::intrusive_ptr< os_thread >& thread )
+	os_thread_box::os_thread_box( os_thread& thread )
 	:
-		its_thread( thread )
+		its_thread( &thread )
 	{
 	}
 	
@@ -199,7 +199,7 @@ namespace relix
 	{
 		typedef boost::intrusive_ptr< os_thread > intrusive_ptr;
 		
-		return intrusive_ptr( new os_thread( start, param, stack_size ) );
+		return os_thread_box( *new os_thread( start, param, stack_size ) );
 	}
 	
 	os_thread_id get_os_thread_id( const os_thread& thread )
