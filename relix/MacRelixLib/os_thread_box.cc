@@ -15,6 +15,12 @@
 #include <Threads.h>
 #endif
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // mac-sys-utils
 #include "mac_sys/current_thread_stack_space.hh"
 #include "mac_sys/init_thread.hh"
@@ -133,6 +139,7 @@ namespace relix
 	:
 		its_thread( &thread )
 	{
+		intrusive_ptr_add_ref( its_thread );
 	}
 	
 	os_thread::~os_thread()
@@ -141,14 +148,14 @@ namespace relix
 	}
 	
 	
-	os_thread_box::os_thread_box()
-	{
-	}
-	
 	os_thread_box::os_thread_box( const os_thread_box& that )
 	:
 		its_thread( that.its_thread )
 	{
+		if ( its_thread )
+		{
+			intrusive_ptr_add_ref( its_thread );
+		}
 	}
 	
 	os_thread_box& os_thread_box::operator=( const os_thread_box& that )
@@ -161,6 +168,16 @@ namespace relix
 		*/
 		
 		os_thread_box temp = *this;
+		
+		if ( that.its_thread )
+		{
+			intrusive_ptr_add_ref( that.its_thread );
+		}
+		
+		if ( its_thread )
+		{
+			intrusive_ptr_release( its_thread );
+		}
 		
 		its_thread = that.its_thread;
 		
@@ -177,22 +194,27 @@ namespace relix
 			
 			if ( err == noErr  &&  thread == its_thread->id() )
 			{
-				boost::intrusive_ptr< os_thread > temp;
-				
-				temp.swap( its_thread );
-				
-				::operator delete( temp.get() );
+				::operator delete( its_thread );
 				
 				::DisposeThread( thread, NULL, false );
 				
 				// Not reached
 			}
 		}
+		
+		if ( its_thread )
+		{
+			intrusive_ptr_release( its_thread );
+		}
 	}
 	
 	void os_thread_box::swap( os_thread_box& that )
 	{
-		its_thread.swap( that.its_thread );
+		os_thread* temp = its_thread;
+		
+		its_thread = that.its_thread;
+		
+		that.its_thread = temp;
 	}
 	
 	os_thread_box new_os_thread( os_thread_start_type start, void* param, int stack_size )

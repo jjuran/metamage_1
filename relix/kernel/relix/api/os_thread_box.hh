@@ -6,12 +6,6 @@
 #ifndef RELIX_API_OSTHREADBOX_HH
 #define RELIX_API_OSTHREADBOX_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
-
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
 
@@ -26,10 +20,12 @@ namespace relix
 	class os_thread_box
 	{
 		private:
-			boost::intrusive_ptr< os_thread > its_thread;
+			os_thread* its_thread;
 		
 		public:
-			os_thread_box();
+			os_thread_box() : its_thread()
+			{
+			}
 			
 			os_thread_box( os_thread& thread );
 			
@@ -39,7 +35,7 @@ namespace relix
 			
 			~os_thread_box();
 			
-			os_thread* get() const  { return its_thread.get(); }
+			os_thread* get() const  { return its_thread; }
 			
 			void swap( os_thread_box& that );
 			
