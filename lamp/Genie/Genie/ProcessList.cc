@@ -23,21 +23,18 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Nitrogen
-#include "Nitrogen/Threads.hh"
-
 // MacFeatures
 #include "MacFeatures/Threads.hh"
 
 // relix-kernel
 #include "relix/config/mini.hh"
+#include "relix/api/os_thread_api.hh"
+#include "relix/api/os_thread_box.hh"
 
 
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -127,7 +124,7 @@ namespace Genie
 	
 	void ReaperThreadEntry();
 	
-	void ReaperThreadEntry()
+	static void* reaper_thread_start( void* param, const void* bottom, const void* limit )
 	{
 		while ( true )
 		{
@@ -138,8 +135,10 @@ namespace Genie
 				for_each_process( &reap_process );
 			}
 			
-			N::YieldToAnyThread();
+			relix::os_thread_yield();
 		}
+		
+		return NULL;
 	}
 	
 	static Process& NewProcess( Process::RootProcess )
@@ -151,7 +150,7 @@ namespace Genie
 			p7::throw_errno( ENOSYS );
 		}
 		
-		static n::owned< N::ThreadID > reaper = N::NewThread< ReaperThreadEntry >( N::kCooperativeThread );
+		static relix::os_thread_box reaper = relix::new_os_thread( &reaper_thread_start, NULL, 0 );
 		
 		ASSERT( global_processes.empty() );
 		
