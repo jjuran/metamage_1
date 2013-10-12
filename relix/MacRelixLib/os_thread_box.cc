@@ -135,18 +135,18 @@ namespace relix
 		Mac::ThrowOSStatus( err );
 	}
 	
+	os_thread::~os_thread()
+	{
+		::DisposeThread( id(), NULL, false );
+	}
+	
+	
 	os_thread_box::os_thread_box( os_thread& thread )
 	:
 		its_thread( &thread )
 	{
 		intrusive_ptr_add_ref( its_thread );
 	}
-	
-	os_thread::~os_thread()
-	{
-		::DisposeThread( id(), NULL, false );
-	}
-	
 	
 	os_thread_box::os_thread_box( const os_thread_box& that )
 	:
