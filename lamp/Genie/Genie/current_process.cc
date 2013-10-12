@@ -16,6 +16,7 @@
 
 // relix-kernel
 #include "relix/api/current_thread.hh"
+#include "relix/api/errno.hh"
 #include "relix/signal/caught_signal.hh"
 
 // Genie
@@ -29,6 +30,11 @@ namespace relix
 	thread& current_thread()
 	{
 		return Genie::current_process();
+	}
+	
+	int set_errno( int errnum )
+	{
+		return Genie::gCurrentProcess->SetErrno( errnum );
 	}
 	
 }
