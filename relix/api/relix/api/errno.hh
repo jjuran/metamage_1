@@ -12,6 +12,8 @@ namespace relix
 	
 	int set_errno( int errnum );
 	
+	int set_errno_from_exception();
+	
 }
 
 #endif
