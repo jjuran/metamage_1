@@ -169,7 +169,7 @@ namespace relix
 	
 	os_thread_box::~os_thread_box()
 	{
-		if ( its_thread.get()  &&  intrusive_ptr_ref_count( its_thread.get() ) == 1 )
+		if ( get()  &&  intrusive_ptr_ref_count( get() ) == 1 )
 		{
 			::ThreadID thread;
 			
@@ -181,11 +181,11 @@ namespace relix
 				
 				temp.swap( its_thread );
 				
-				os_thread_id id = temp->id();
-				
 				::operator delete( temp.get() );
 				
-				::DisposeThread( id, NULL, false );
+				::DisposeThread( thread, NULL, false );
+				
+				// Not reached
 			}
 		}
 	}
