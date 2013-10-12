@@ -24,7 +24,7 @@ namespace relix
 		public:
 			thread( int id );
 			
-			~thread();
+			virtual ~thread();
 			
 			int id() const  { return its_id; }
 	};
