@@ -153,6 +153,15 @@ namespace relix
 	
 	os_thread_box& os_thread_box::operator=( const os_thread_box& that )
 	{
+		/*
+			The temporary is necessary in case the value prior to assignment
+			is the only reference to the current thread.  In this case, the
+			assignment will complete successfully and then the thread will
+			terminate during the destruction of temp.
+		*/
+		
+		os_thread_box temp = *this;
+		
 		its_thread = that.its_thread;
 		
 		return *this;
