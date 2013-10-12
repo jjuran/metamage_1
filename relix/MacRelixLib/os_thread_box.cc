@@ -15,6 +15,12 @@
 #include <Threads.h>
 #endif
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // mac-sys-utils
 #include "mac_sys/current_thread_stack_space.hh"
 #include "mac_sys/init_thread.hh"
@@ -129,10 +135,11 @@ namespace relix
 		Mac::ThrowOSStatus( err );
 	}
 	
-	os_thread_box::os_thread_box( const boost::intrusive_ptr< os_thread >& thread )
+	os_thread_box::os_thread_box( os_thread& thread )
 	:
-		its_thread( thread )
+		its_thread( &thread )
 	{
+		intrusive_ptr_add_ref( its_thread );
 	}
 	
 	os_thread::~os_thread()
@@ -141,14 +148,14 @@ namespace relix
 	}
 	
 	
-	os_thread_box::os_thread_box()
-	{
-	}
-	
 	os_thread_box::os_thread_box( const os_thread_box& that )
 	:
 		its_thread( that.its_thread )
 	{
+		if ( its_thread )
+		{
+			intrusive_ptr_add_ref( its_thread );
+		}
 	}
 	
 	os_thread_box& os_thread_box::operator=( const os_thread_box& that )
@@ -162,6 +169,16 @@ namespace relix
 		
 		os_thread_box temp = *this;
 		
+		if ( that.its_thread )
+		{
+			intrusive_ptr_add_ref( that.its_thread );
+		}
+		
+		if ( its_thread )
+		{
+			intrusive_ptr_release( its_thread );
+		}
+		
 		its_thread = that.its_thread;
 		
 		return *this;
@@ -169,7 +186,7 @@ namespace relix
 	
 	os_thread_box::~os_thread_box()
 	{
-		if ( its_thread.get()  &&  intrusive_ptr_ref_count( its_thread.get() ) == 1 )
+		if ( get()  &&  intrusive_ptr_ref_count( get() ) == 1 )
 		{
 			::ThreadID thread;
 			
@@ -177,29 +194,34 @@ namespace relix
 			
 			if ( err == noErr  &&  thread == its_thread->id() )
 			{
-				boost::intrusive_ptr< os_thread > temp;
+				::operator delete( its_thread );
 				
-				temp.swap( its_thread );
+				::DisposeThread( thread, NULL, false );
 				
-				os_thread_id id = temp->id();
-				
-				::operator delete( temp.get() );
-				
-				::DisposeThread( id, NULL, false );
+				// Not reached
 			}
+		}
+		
+		if ( its_thread )
+		{
+			intrusive_ptr_release( its_thread );
 		}
 	}
 	
 	void os_thread_box::swap( os_thread_box& that )
 	{
-		its_thread.swap( that.its_thread );
+		os_thread* temp = its_thread;
+		
+		its_thread = that.its_thread;
+		
+		that.its_thread = temp;
 	}
 	
 	os_thread_box new_os_thread( os_thread_start_type start, void* param, int stack_size )
 	{
 		typedef boost::intrusive_ptr< os_thread > intrusive_ptr;
 		
-		return intrusive_ptr( new os_thread( start, param, stack_size ) );
+		return os_thread_box( *new os_thread( start, param, stack_size ) );
 	}
 	
 	os_thread_id get_os_thread_id( const os_thread& thread )
