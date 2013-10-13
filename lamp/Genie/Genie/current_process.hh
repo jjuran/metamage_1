@@ -6,6 +6,9 @@
 #ifndef GENIE_CURRENTPROCESS_HH
 #define GENIE_CURRENTPROCESS_HH
 
+// relix-kernel
+#include "relix/api/errno.hh"
+
 
 namespace Genie
 {
@@ -17,9 +20,8 @@ namespace Genie
 	
 	inline Process& current_process()  { return *gCurrentProcess; }
 	
-	int set_errno( int errnum );
-	
-	int set_errno_from_exception();
+	using relix::set_errno;
+	using relix::set_errno_from_exception;
 	
 }
 
