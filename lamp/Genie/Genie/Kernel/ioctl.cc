@@ -9,9 +9,6 @@
 // POSIX
 #include "sys/ioctl.h"
 
-// OSErrno
-#include "OSErrno/OSErrno.hh"
-
 // vfs
 #include "vfs/file_descriptor.hh"
 
