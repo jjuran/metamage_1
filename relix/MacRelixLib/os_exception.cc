@@ -91,6 +91,9 @@ namespace relix
 		{
 			return errno_from_OSStatus( err );
 		}
+		
+		// Not reached, but try telling that to Metrowerks C++
+		return 0;
 	}
 	
 }
