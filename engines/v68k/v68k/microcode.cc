@@ -291,6 +291,7 @@ namespace v68k
 		
 		const uint32_t data = s.regs.d[n];
 		
+		pb.result   =
 		s.regs.d[n] = data << 16
 		            | data >> 16;
 	}

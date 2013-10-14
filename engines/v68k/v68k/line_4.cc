@@ -49,8 +49,16 @@ namespace v68k
 			{
 				storage.fetch = fetches_data_at_0007;
 				
-				storage.code = mode == 1 ? microcode_BKPT
-				                         : microcode_SWAP;
+				if ( mode == 0 )
+				{
+					storage.size  = long_sized;
+					storage.code  = microcode_SWAP;
+					storage.flags = basic_CCR_update;
+				}
+				else
+				{
+					storage.code = microcode_BKPT;
+				}
 				
 				return &storage;
 			}
