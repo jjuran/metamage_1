@@ -517,7 +517,7 @@ namespace tool
 			{
 				result += '*';
 				
-				append_signed_decimal( result, displacement );
+				append_signed_decimal( result, displacement + 2 );
 				
 				global_last_pc_relative_target = global_pc + displacement;
 			}
@@ -1766,7 +1766,7 @@ namespace tool
 				
 				const short displacement = read_word();
 				
-				printf( "DB%s     D%d,*%+d", ccode, op & 0x7, displacement );
+				printf( "DB%s     D%d,*%+d", ccode, op & 0x7, displacement + 2 );
 				
 				if ( globally_attach_target_comments )
 				{
