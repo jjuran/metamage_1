@@ -125,11 +125,14 @@ asm void set_trace_handler()
 {
 	JSR     0xFFFFFFFA ;  // enter_supervisor_mode()
 	
+	BMI.S   bail ;  // D0 is -1 if branch taken
+	
 	LEA     trace_handler,A0
 	MOVE.L  A0,trace_vector
 	
 	MOVE    D0,SR
 	
+bail:
 	RTS
 }
 
