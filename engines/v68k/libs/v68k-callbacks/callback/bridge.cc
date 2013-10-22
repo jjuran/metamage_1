@@ -149,6 +149,8 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	
 	if ( old_SR == new_SR )
 	{
+		s.regs.nzvc = 4;  // Clear N, set Z
+		
 		return rts;
 	}
 	
@@ -166,6 +168,8 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 		
 		s.set_SR( new_SR );
 		
+		s.regs.nzvc = 0;  // Clear N, Z
+		
 		s.regs.pc = return_address - 2;
 		
 		return nop;
@@ -174,6 +178,8 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	{
 		s.regs.d[0] = 0xFFFFFFFF;
 		s.regs.d[1] = EPERM;
+		
+		s.regs.nzvc = 8;  // Set N
 	}
 	
 	return rts;
