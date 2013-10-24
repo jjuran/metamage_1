@@ -252,7 +252,7 @@ namespace v68k
 		
 		const uint32_t dA = (mode << 3) & mode;  // 0 for D or 8 for A
 		
-		pb.second = dA + (s.opcode & 0x0E00) >> 9;
+		pb.second = dA | (s.opcode & 0x0E00) >> 9;
 	}
 	
 	
