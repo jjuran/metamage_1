@@ -124,8 +124,6 @@ my %fsmap =
 			\ qw( A-line ar cpres ld mpwrez mwcc postlink-68k-tool strip vers ),
 			# Debugging
 			\ qw( d68k demangle ),
-			# Source management
-			\ qw( jsync ),
 			# Exceptions
 			\ qw( abort buserror div0 illegal privileged ),
 			# Mac-specific
