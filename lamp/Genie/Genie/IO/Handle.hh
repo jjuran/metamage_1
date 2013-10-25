@@ -29,9 +29,6 @@ namespace Genie
 		private:
 			nucleus::shared< Mac::Handle > itsHandle;
 		
-		protected:
-			const nucleus::shared< Mac::Handle >& GetHandle() const  { return itsHandle; }
-		
 		public:
 			Handle_IOHandle( const FSTreePtr&                       file,
 			                 int                                    flags,
