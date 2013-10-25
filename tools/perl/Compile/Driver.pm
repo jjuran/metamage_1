@@ -8,7 +8,7 @@ use Compile::Driver::Job::Link::Binary;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

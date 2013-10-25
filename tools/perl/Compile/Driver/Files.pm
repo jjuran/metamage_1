@@ -1,6 +1,6 @@
 package Compile::Driver::Files;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

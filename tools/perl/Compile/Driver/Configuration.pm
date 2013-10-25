@@ -4,7 +4,7 @@ use Compile::Driver::Catalog;
 use Compile::Driver::Module;
 use Compile::Driver::Platform;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

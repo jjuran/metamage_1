@@ -7,7 +7,7 @@ use Compile::Driver::InputFile::Catalog;
 use Compile::Driver::InputFile::Description;
 use Compile::Driver::Platform;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

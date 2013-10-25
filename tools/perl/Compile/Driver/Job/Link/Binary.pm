@@ -3,7 +3,7 @@ package Compile::Driver::Job::Link::Binary;
 use     Compile::Driver::Job ;
 @ISA = 'Compile::Driver::Job';
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

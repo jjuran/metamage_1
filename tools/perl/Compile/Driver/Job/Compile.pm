@@ -5,7 +5,7 @@ use     Compile::Driver::Job ;
 
 use Compile::Driver::InputFile::CPPSource;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

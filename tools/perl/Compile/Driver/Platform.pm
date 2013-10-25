@@ -1,6 +1,6 @@
 package Compile::Driver::Platform;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 my %Bit_for_label = qw

@@ -5,7 +5,7 @@ use FindBin '$RealBin';
 use Compile::Driver::Files;
 use Compile::Driver::Options;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 
