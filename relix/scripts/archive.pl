@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 use Fatal qw( close mkdir open chmod read );
