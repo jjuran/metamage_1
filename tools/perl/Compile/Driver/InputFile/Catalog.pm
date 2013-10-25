@@ -1,6 +1,6 @@
 package Compile::Driver::InputFile::Catalog;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

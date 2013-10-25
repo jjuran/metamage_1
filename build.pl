@@ -6,7 +6,7 @@ use lib "$RealBin/tools/perl";
 
 use Compile::Driver;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

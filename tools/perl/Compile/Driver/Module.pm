@@ -3,7 +3,7 @@ package Compile::Driver::Module;
 use Compile::Driver::Files;
 use Compile::Driver::InputFile::SourceList;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 

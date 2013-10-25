@@ -1,6 +1,6 @@
 package Compile::Driver::Options;
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 
 my %Flag_for_option = qw
