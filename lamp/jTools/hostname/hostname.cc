@@ -24,6 +24,11 @@
 
 int main( int argc, char *const argv[] )
 {
+	if ( argc > 1  &&  strcmp( argv[1], "-s" ) == 0 )
+	{
+		--argc;
+	}
+	
 	if ( argc != 1 )
 	{
 		must_write( STDERR_FILENO, STR_LEN( "Usage: hostname\n" ) );
