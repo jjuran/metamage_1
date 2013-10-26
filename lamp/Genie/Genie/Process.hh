@@ -186,7 +186,7 @@ namespace Genie
 		public:
 			void ClearPendingSignals()  { itsPendingSignals = 0; }
 			
-			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
+			sigset_t signals_pending() const  { return itsPendingSignals; }
 			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }
 			
 			void AddPendingSignal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }

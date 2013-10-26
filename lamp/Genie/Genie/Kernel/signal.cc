@@ -155,7 +155,7 @@ namespace Genie
 	{
 		if ( oldset != NULL )
 		{
-			*oldset = current_process().GetPendingSignals();
+			*oldset = current_process().signals_pending();
 		}
 		
 		return 0;
