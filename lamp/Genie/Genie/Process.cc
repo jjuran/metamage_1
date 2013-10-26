@@ -1426,7 +1426,7 @@ namespace Genie
 		
 		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
-			const sigset_t active_signals = signals_pending() & ~GetBlockedSignals();
+			const sigset_t active_signals = signals_pending() & ~signals_blocked();
 			
 			if ( !active_signals )
 			{

@@ -46,7 +46,7 @@ namespace Genie
 		
 		gCurrentProcess->ClearPendingSignalSet( signo_mask );
 		
-		const sigset_t blocked_signals = gCurrentProcess->GetBlockedSignals();
+		const sigset_t blocked_signals = gCurrentProcess->signals_blocked();
 		
 		gCurrentProcess->BlockSignals( signal_mask );
 		

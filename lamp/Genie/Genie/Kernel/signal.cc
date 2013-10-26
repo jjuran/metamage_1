@@ -168,7 +168,7 @@ namespace Genie
 		
 		if ( oldset != NULL )
 		{
-			*oldset = current.GetBlockedSignals();
+			*oldset = current.signals_blocked();
 		}
 		
 		if ( set != NULL )
@@ -204,7 +204,7 @@ namespace Genie
 	{
 		Process& current = current_process();
 		
-		sigset_t previous = current.GetBlockedSignals();
+		sigset_t previous = current.signals_blocked();
 		
 		if ( sigmask != NULL )
 		{
