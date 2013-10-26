@@ -195,7 +195,7 @@ namespace Genie
 			
 			void SetBlockedSignals( sigset_t sigset )  { itsBlockedSignals = sigset; }
 			
-			void BlockSignals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
+			void block_signals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
 			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
 		
 		public:

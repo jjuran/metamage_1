@@ -184,7 +184,7 @@ namespace Genie
 					break;
 				
 				case SIG_BLOCK:
-					current.BlockSignals( filtered_set );
+					current.block_signals( filtered_set );
 					break;
 				
 				case SIG_UNBLOCK:

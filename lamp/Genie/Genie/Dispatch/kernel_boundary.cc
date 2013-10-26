@@ -48,7 +48,7 @@ namespace Genie
 		
 		const sigset_t blocked_signals = gCurrentProcess->signals_blocked();
 		
-		gCurrentProcess->BlockSignals( signal_mask );
+		gCurrentProcess->block_signals( signal_mask );
 		
 		signal.action.sa_handler( signal.signo );
 		
