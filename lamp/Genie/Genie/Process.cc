@@ -554,6 +554,8 @@ namespace Genie
 	:
 		relix::thread( 1 ),
 		its_pb                ( user_pb_for_init() ),
+		itsPendingSignals     (),
+		itsBlockedSignals     (),
 		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
@@ -595,8 +597,9 @@ namespace Genie
 	:
 		relix::thread( tid ),
 		TimeKeeper            (),  // Reset resource utilization on fork
-		SignalReceiver        ( parent ),
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
+		itsPendingSignals     (),  // Reset pending signals on fork
+		itsBlockedSignals     ( parent.itsBlockedSignals ),
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),

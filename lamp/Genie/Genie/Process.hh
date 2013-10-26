@@ -6,6 +6,9 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
+// Standard C
+#include <signal.h>
+
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -36,7 +39,6 @@
 #include "relix/task/vfork_context.hh"
 
 // Genie
-#include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
 
 
@@ -95,9 +97,13 @@ namespace Genie
 	
 	// Genie::Process is actually a thread, not a process.
 	
+	inline sigset_t sigset_from_signo( int signo )
+	{
+		return 1 << signo - 1;
+	}
+	
 	class Process : public relix::thread,
 	                public TimeKeeper,
-	                public SignalReceiver,
 	                public relix::vfork_context
 	{
 		public:
@@ -109,6 +115,9 @@ namespace Genie
 		
 		private:
 			_relix_user_parameter_block its_pb;
+			
+			sigset_t  itsPendingSignals;
+			sigset_t  itsBlockedSignals;
 			
 			pid_t itsPPID;
 			pid_t itsPID;
@@ -173,6 +182,21 @@ namespace Genie
 			static void* notify_process( void* param, pid_t, Process& process );
 			
 			void Orphan();
+		
+		public:
+			void ClearPendingSignals()  { itsPendingSignals = 0; }
+			
+			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
+			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }
+			
+			void AddPendingSignal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
+			
+			void ClearPendingSignalSet( sigset_t sigset )  { itsPendingSignals &= ~sigset; }
+			
+			void SetBlockedSignals( sigset_t sigset )  { itsBlockedSignals = sigset; }
+			
+			void BlockSignals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
+			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
 		
 		public:
 			bool IsBeingTraced() const  { return false; }
