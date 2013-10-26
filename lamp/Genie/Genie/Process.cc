@@ -828,7 +828,7 @@ namespace Genie
 		
 		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
 		
-		ClearPendingSignals();
+		clear_signals_pending();
 		
 		ResetSignalHandlers();
 		
@@ -942,7 +942,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		ClearPendingSignals();
+		clear_signals_pending();
 		
 		ResetSignalHandlers();
 		

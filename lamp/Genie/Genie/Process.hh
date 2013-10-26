@@ -184,14 +184,14 @@ namespace Genie
 			void Orphan();
 		
 		public:
-			void ClearPendingSignals()  { itsPendingSignals = 0; }
-			
 			sigset_t signals_pending() const  { return itsPendingSignals; }
 			sigset_t signals_blocked() const  { return itsBlockedSignals; }
 			
 			void set_pending_signal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
 			
 			void clear_pending_signal( int sig )  { itsPendingSignals &= ~sigset_from_signo( sig ); }
+			
+			void clear_signals_pending()  { itsPendingSignals = 0; }
 			
 			void SetBlockedSignals( sigset_t sigset )  { itsBlockedSignals = sigset; }
 			
