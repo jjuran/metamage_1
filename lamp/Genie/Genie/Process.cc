@@ -1162,7 +1162,7 @@ namespace Genie
 		
 		if ( action.sa_handler == SIG_IGN )
 		{
-			ClearPendingSignalSet( 1 << signo - 1 );
+			clear_pending_signal( signo );
 		}
 	}
 	
