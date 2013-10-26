@@ -188,7 +188,7 @@ namespace Genie
 					break;
 				
 				case SIG_UNBLOCK:
-					current.UnblockSignals( filtered_set );
+					current.unblock_signals( filtered_set );
 					break;
 				
 				default:

@@ -196,7 +196,7 @@ namespace Genie
 			void SetBlockedSignals( sigset_t sigset )  { itsBlockedSignals = sigset; }
 			
 			void block_signals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
-			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
+			void unblock_signals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
 		
 		public:
 			bool IsBeingTraced() const  { return false; }
