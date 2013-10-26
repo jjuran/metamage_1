@@ -52,7 +52,7 @@ namespace Genie
 		
 		signal.action.sa_handler( signal.signo );
 		
-		gCurrentProcess->SetBlockedSignals( blocked_signals );
+		gCurrentProcess->set_signals_blocked( blocked_signals );
 	}
 	
 	void enter_system_call( long syscall_number, long* params )

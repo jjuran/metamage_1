@@ -180,7 +180,7 @@ namespace Genie
 			switch ( how )
 			{
 				case SIG_SETMASK:
-					current.SetBlockedSignals( filtered_set );
+					current.set_signals_blocked( filtered_set );
 					break;
 				
 				case SIG_BLOCK:
@@ -208,7 +208,7 @@ namespace Genie
 		
 		if ( sigmask != NULL )
 		{
-			current.SetBlockedSignals( *sigmask );
+			current.set_signals_blocked( *sigmask );
 		}
 		
 		try
@@ -225,7 +225,7 @@ namespace Genie
 			(void) set_errno_from_exception();
 		}
 		
-		current.SetBlockedSignals( previous );
+		current.set_signals_blocked( previous );
 		
 		relix::prevent_syscall_restart();
 		
