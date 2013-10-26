@@ -1371,7 +1371,7 @@ namespace Genie
 			return;
 		}
 		
-		AddPendingSignal( signo );
+		set_pending_signal( signo );
 		
 		Continue();
 	}

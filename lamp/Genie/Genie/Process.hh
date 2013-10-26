@@ -189,7 +189,7 @@ namespace Genie
 			sigset_t signals_pending() const  { return itsPendingSignals; }
 			sigset_t signals_blocked() const  { return itsBlockedSignals; }
 			
-			void AddPendingSignal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
+			void set_pending_signal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
 			
 			void ClearPendingSignalSet( sigset_t sigset )  { itsPendingSignals &= ~sigset; }
 			
