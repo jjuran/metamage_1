@@ -156,6 +156,10 @@ namespace Genie
 			bool itMayDumpCore;
 		
 		private:
+			// non-copyable
+			Process           ( const Process& );
+			Process& operator=( const Process& );
+			
 			void Suspend();
 			void Resume();
 			void Pause( ProcessSchedule newSchedule );
