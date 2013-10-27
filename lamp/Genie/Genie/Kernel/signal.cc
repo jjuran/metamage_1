@@ -173,7 +173,8 @@ namespace Genie
 		
 		if ( set != NULL )
 		{
-			const sigset_t unblockable_mask = 1 << SIGKILL - 1 | 1 << SIGSTOP - 1;
+			const sigset_t unblockable_mask = sigset_from_signo( SIGKILL )
+			                                | sigset_from_signo( SIGSTOP );
 			
 			const sigset_t filtered_set = *set & ~unblockable_mask;
 			
