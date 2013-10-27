@@ -176,9 +176,11 @@ static const uint16_t loader_code[] =
 	code_address,
 	
 	0x2F00,  // MOVE.L  D0,-(A7)
+	0x42A7,  // CLR.L   -(A7)  ; zero return address
 	0x7001,  // MOVEQ  #1,D0
 	0x484A,  // BKPT   #2
 	
+	// Not reached
 	0x4E75   // RTS
 };
 
