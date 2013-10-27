@@ -11,6 +11,7 @@
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
+#include "relix/syscall/sigprocmask.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -155,60 +156,25 @@ namespace Genie
 	{
 		if ( oldset != NULL )
 		{
-			*oldset = current_process().GetPendingSignals();
+			*oldset = current_process().signals_pending();
 		}
 		
 		return 0;
 	}
 	
 	
-	static int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
-	{
-		Process& current = current_process();
-		
-		if ( oldset != NULL )
-		{
-			*oldset = current.GetBlockedSignals();
-		}
-		
-		if ( set != NULL )
-		{
-			const sigset_t unblockable_mask = 1 << SIGKILL - 1 | 1 << SIGSTOP - 1;
-			
-			const sigset_t filtered_set = *set & ~unblockable_mask;
-			
-			switch ( how )
-			{
-				case SIG_SETMASK:
-					current.SetBlockedSignals( filtered_set );
-					break;
-				
-				case SIG_BLOCK:
-					current.BlockSignals( filtered_set );
-					break;
-				
-				case SIG_UNBLOCK:
-					current.UnblockSignals( filtered_set );
-					break;
-				
-				default:
-					return set_errno( EINVAL );
-			}
-		}
-		
-		return 0;
-	}
+	using relix::sigprocmask;
 	
 	
 	static int sigsuspend( const sigset_t* sigmask )
 	{
 		Process& current = current_process();
 		
-		sigset_t previous = current.GetBlockedSignals();
+		sigset_t previous = current.signals_blocked();
 		
 		if ( sigmask != NULL )
 		{
-			current.SetBlockedSignals( *sigmask );
+			current.set_signals_blocked( *sigmask );
 		}
 		
 		try
@@ -225,7 +191,7 @@ namespace Genie
 			(void) set_errno_from_exception();
 		}
 		
-		current.SetBlockedSignals( previous );
+		current.set_signals_blocked( previous );
 		
 		relix::prevent_syscall_restart();
 		

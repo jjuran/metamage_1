@@ -44,15 +44,15 @@ namespace Genie
 			signal_mask |= signo_mask;
 		}
 		
-		gCurrentProcess->ClearPendingSignalSet( signo_mask );
+		gCurrentProcess->clear_pending_signal( signal.signo );
 		
-		const sigset_t blocked_signals = gCurrentProcess->GetBlockedSignals();
+		const sigset_t blocked_signals = gCurrentProcess->signals_blocked();
 		
-		gCurrentProcess->BlockSignals( signal_mask );
+		gCurrentProcess->block_signals( signal_mask );
 		
 		signal.action.sa_handler( signal.signo );
 		
-		gCurrentProcess->SetBlockedSignals( blocked_signals );
+		gCurrentProcess->set_signals_blocked( blocked_signals );
 	}
 	
 	void enter_system_call( long syscall_number, long* params )

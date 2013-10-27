@@ -593,9 +593,8 @@ namespace Genie
 	
 	Process::Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid ) 
 	:
-		relix::thread( tid ),
+		relix::thread( tid, parent ),
 		TimeKeeper            (),  // Reset resource utilization on fork
-		SignalReceiver        ( parent ),
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
@@ -825,7 +824,7 @@ namespace Genie
 		
 		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
 		
-		ClearPendingSignals();
+		clear_signals_pending();
 		
 		ResetSignalHandlers();
 		
@@ -939,7 +938,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		ClearPendingSignals();
+		clear_signals_pending();
 		
 		ResetSignalHandlers();
 		
@@ -1159,7 +1158,7 @@ namespace Genie
 		
 		if ( action.sa_handler == SIG_IGN )
 		{
-			ClearPendingSignalSet( 1 << signo - 1 );
+			clear_pending_signal( signo );
 		}
 	}
 	
@@ -1368,7 +1367,7 @@ namespace Genie
 			return;
 		}
 		
-		AddPendingSignal( signo );
+		set_pending_signal( signo );
 		
 		Continue();
 	}
@@ -1423,7 +1422,7 @@ namespace Genie
 		
 		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
-			const sigset_t active_signals = GetPendingSignals() & ~GetBlockedSignals();
+			const sigset_t active_signals = signals_pending() & ~signals_blocked();
 			
 			if ( !active_signals )
 			{

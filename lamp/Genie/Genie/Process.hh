@@ -36,8 +36,10 @@
 #include "relix/task/vfork_context.hh"
 
 // Genie
-#include "Genie/Process/SignalReceiver.hh"
 #include "Genie/Process/TimeKeeper.hh"
+
+
+struct sigaction;
 
 
 namespace relix
@@ -97,7 +99,6 @@ namespace Genie
 	
 	class Process : public relix::thread,
 	                public TimeKeeper,
-	                public SignalReceiver,
 	                public relix::vfork_context
 	{
 		public:
