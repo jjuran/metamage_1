@@ -184,19 +184,19 @@ namespace Genie
 			void Orphan();
 		
 		public:
-			void ClearPendingSignals()  { itsPendingSignals = 0; }
+			sigset_t signals_pending() const  { return itsPendingSignals; }
+			sigset_t signals_blocked() const  { return itsBlockedSignals; }
 			
-			sigset_t GetPendingSignals() const  { return itsPendingSignals; }
-			sigset_t GetBlockedSignals() const  { return itsBlockedSignals; }
+			void set_pending_signal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
 			
-			void AddPendingSignal( int sig )  { itsPendingSignals |= sigset_from_signo( sig ); }
+			void clear_pending_signal( int sig )  { itsPendingSignals &= ~sigset_from_signo( sig ); }
 			
-			void ClearPendingSignalSet( sigset_t sigset )  { itsPendingSignals &= ~sigset; }
+			void clear_signals_pending()  { itsPendingSignals = 0; }
 			
-			void SetBlockedSignals( sigset_t sigset )  { itsBlockedSignals = sigset; }
+			void block_signals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
+			void unblock_signals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
 			
-			void BlockSignals  ( sigset_t sigset )  { itsBlockedSignals |=  sigset; }
-			void UnblockSignals( sigset_t sigset )  { itsBlockedSignals &= ~sigset; }
+			void set_signals_blocked( sigset_t sigset )  { itsBlockedSignals = sigset; }
 		
 		public:
 			bool IsBeingTraced() const  { return false; }

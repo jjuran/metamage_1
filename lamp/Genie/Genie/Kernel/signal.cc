@@ -155,7 +155,7 @@ namespace Genie
 	{
 		if ( oldset != NULL )
 		{
-			*oldset = current_process().GetPendingSignals();
+			*oldset = current_process().signals_pending();
 		}
 		
 		return 0;
@@ -168,7 +168,7 @@ namespace Genie
 		
 		if ( oldset != NULL )
 		{
-			*oldset = current.GetBlockedSignals();
+			*oldset = current.signals_blocked();
 		}
 		
 		if ( set != NULL )
@@ -180,15 +180,15 @@ namespace Genie
 			switch ( how )
 			{
 				case SIG_SETMASK:
-					current.SetBlockedSignals( filtered_set );
+					current.set_signals_blocked( filtered_set );
 					break;
 				
 				case SIG_BLOCK:
-					current.BlockSignals( filtered_set );
+					current.block_signals( filtered_set );
 					break;
 				
 				case SIG_UNBLOCK:
-					current.UnblockSignals( filtered_set );
+					current.unblock_signals( filtered_set );
 					break;
 				
 				default:
@@ -204,11 +204,11 @@ namespace Genie
 	{
 		Process& current = current_process();
 		
-		sigset_t previous = current.GetBlockedSignals();
+		sigset_t previous = current.signals_blocked();
 		
 		if ( sigmask != NULL )
 		{
-			current.SetBlockedSignals( *sigmask );
+			current.set_signals_blocked( *sigmask );
 		}
 		
 		try
@@ -225,7 +225,7 @@ namespace Genie
 			(void) set_errno_from_exception();
 		}
 		
-		current.SetBlockedSignals( previous );
+		current.set_signals_blocked( previous );
 		
 		relix::prevent_syscall_restart();
 		
