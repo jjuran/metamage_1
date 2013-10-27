@@ -11,6 +11,7 @@
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
+#include "relix/syscall/sigprocmask.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -162,43 +163,7 @@ namespace Genie
 	}
 	
 	
-	static int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
-	{
-		Process& current = current_process();
-		
-		if ( oldset != NULL )
-		{
-			*oldset = current.signals_blocked();
-		}
-		
-		if ( set != NULL )
-		{
-			const sigset_t unblockable_mask = sigset_from_signo( SIGKILL )
-			                                | sigset_from_signo( SIGSTOP );
-			
-			const sigset_t filtered_set = *set & ~unblockable_mask;
-			
-			switch ( how )
-			{
-				case SIG_SETMASK:
-					current.set_signals_blocked( filtered_set );
-					break;
-				
-				case SIG_BLOCK:
-					current.block_signals( filtered_set );
-					break;
-				
-				case SIG_UNBLOCK:
-					current.unblock_signals( filtered_set );
-					break;
-				
-				default:
-					return set_errno( EINVAL );
-			}
-		}
-		
-		return 0;
-	}
+	using relix::sigprocmask;
 	
 	
 	static int sigsuspend( const sigset_t* sigmask )
