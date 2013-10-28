@@ -15,7 +15,7 @@ namespace relix
 	
 	int sigpending( sigset_t* oldset )
 	{
-		if ( oldset != NULL )
+		if ( oldset != 0 )  // NULL
 		{
 			*oldset = current_thread().signals_pending();
 		}
