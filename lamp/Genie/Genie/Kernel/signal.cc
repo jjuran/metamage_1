@@ -11,6 +11,7 @@
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
+#include "relix/syscall/sigpending.hh"
 #include "relix/syscall/sigprocmask.hh"
 
 // Genie
@@ -152,17 +153,7 @@ namespace Genie
 	}
 	
 	
-	static int sigpending( sigset_t* oldset )
-	{
-		if ( oldset != NULL )
-		{
-			*oldset = current_process().signals_pending();
-		}
-		
-		return 0;
-	}
-	
-	
+	using relix::sigpending;
 	using relix::sigprocmask;
 	
 	
