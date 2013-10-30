@@ -34,6 +34,7 @@
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/getpid.hh"
+#include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
@@ -179,13 +180,8 @@ namespace Genie
 	
 	
 	using relix::getpid;
+	using relix::getppid;
 	using relix::gettid;
-	
-	
-	static pid_t getppid()
-	{
-		return current_process().GetPPID();
-	}
 	
 	
 	static pid_t getsid( pid_t pid )
