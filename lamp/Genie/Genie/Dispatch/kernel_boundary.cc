@@ -9,6 +9,7 @@
 #include "mac_sys/current_thread_stack_space.hh"
 
 // relix-kernel
+#include "relix/signal/call_signal_handler.hh"
 #include "relix/signal/caught_signal.hh"
 
 // Genie
@@ -27,28 +28,6 @@ namespace Genie
 	
 	extern class Process* gCurrentProcess;
 	
-	
-	static void call_signal_handler( const relix::caught_signal& signal )
-	{
-		const sigset_t signo_mask = 1 << signal.signo - 1;
-		
-		sigset_t signal_mask = signal.action.sa_mask;
-		
-		if ( !(signal.action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
-		{
-			signal_mask |= signo_mask;
-		}
-		
-		gCurrentProcess->clear_pending_signal( signal.signo );
-		
-		const sigset_t blocked_signals = gCurrentProcess->signals_blocked();
-		
-		gCurrentProcess->block_signals( signal_mask );
-		
-		signal.action.sa_handler( signal.signo );
-		
-		gCurrentProcess->set_signals_blocked( blocked_signals );
-	}
 	
 	void enter_system_call( long syscall_number, long* params )
 	{
@@ -73,7 +52,7 @@ namespace Genie
 		{
 			gCurrentProcess->LeaveSystemCall();
 			
-			call_signal_handler( signal );
+			relix::call_signal_handler( signal );
 			
 			gCurrentProcess->EnterSystemCall();
 			
@@ -91,7 +70,7 @@ namespace Genie
 			
 			relix::the_caught_signal.signo = 0;
 			
-			call_signal_handler( signal );
+			relix::call_signal_handler( signal );
 			
 			return signal.action.sa_flags & SA_RESTART;
 		}
