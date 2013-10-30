@@ -989,6 +989,11 @@ namespace Genie
 		its_memory_data->remove_memory_mapping( key );
 	}
 	
+	pid_t Process::GetPPID() const
+	{
+		return itsPPID;
+	}
+	
 	pid_t Process::GetPGID() const
 	{
 		return get_process().get_process_group().id();

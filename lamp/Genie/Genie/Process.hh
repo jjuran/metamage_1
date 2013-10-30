@@ -210,7 +210,7 @@ namespace Genie
 			
 			pid_t gettid() const  { return id(); }
 			
-			pid_t GetPPID() const  { return itsPPID; }
+			pid_t GetPPID() const;
 			pid_t GetPID()  const  { return itsPID;  }
 			
 			pid_t GetPGID() const;
