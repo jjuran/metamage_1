@@ -553,9 +553,8 @@ namespace Genie
 	
 	Process::Process( RootProcess ) 
 	:
-		relix::thread( 1 ),
+		relix::thread( 1, 0, *new relix::process( 1, *NewProcessGroup( 1, *NewSession( 1 ) ) ) ),
 		its_pb                ( user_pb_for_init() ),
-		itsPPID               ( 0 ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
@@ -594,9 +593,9 @@ namespace Genie
 	Process::Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid ) 
 	:
 		relix::thread( tid,
-		               parent,
-		               tid == pid ? NULL
-		                          : &parent.get_process() ),
+		               parent.signals_blocked(),
+		               tid == pid ? *new relix::process( pid, parent.get_process().get_process_group() )
+		                          : parent.get_process() ),
 		TimeKeeper            (),  // Reset resource utilization on fork
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPPID               ( ppid ? ppid : parent.GetPID() ),

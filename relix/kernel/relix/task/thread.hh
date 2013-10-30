@@ -40,9 +40,7 @@ namespace relix
 			boost::intrusive_ptr< process > its_process;
 		
 		public:
-			thread( int id );
-			
-			thread( int id, const thread& caller, process* p );
+			thread( int id, sigset_t blocked, process& p );
 			
 			virtual ~thread();
 			
