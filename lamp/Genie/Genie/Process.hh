@@ -111,7 +111,6 @@ namespace Genie
 		private:
 			_relix_user_parameter_block its_pb;
 			
-			pid_t itsPPID;
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			

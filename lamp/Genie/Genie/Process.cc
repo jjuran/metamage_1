@@ -553,7 +553,7 @@ namespace Genie
 	
 	Process::Process( RootProcess ) 
 	:
-		relix::thread( 1, 0, *new relix::process( 1, *NewProcessGroup( 1, *NewSession( 1 ) ) ) ),
+		relix::thread( 1, 0, *new relix::process( 1, 0, *NewProcessGroup( 1, *NewSession( 1 ) ) ) ),
 		its_pb                ( user_pb_for_init() ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
@@ -594,11 +594,12 @@ namespace Genie
 	:
 		relix::thread( tid,
 		               parent.signals_blocked(),
-		               tid == pid ? *new relix::process( pid, parent.get_process().get_process_group() )
+		               tid == pid ? *new relix::process( pid,
+		                                                 ppid ? ppid : parent.GetPID(),
+		                                                 parent.get_process().get_process_group() )
 		                          : parent.get_process() ),
 		TimeKeeper            (),  // Reset resource utilization on fork
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
-		itsPPID               ( ppid ? ppid : parent.GetPID() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
@@ -991,7 +992,7 @@ namespace Genie
 	
 	pid_t Process::GetPPID() const
 	{
-		return itsPPID;
+		return get_process().getppid();
 	}
 	
 	pid_t Process::GetPGID() const
@@ -1284,7 +1285,7 @@ namespace Genie
 	{
 		ASSERT( GetPPID() != 1 );
 		
-		itsPPID = 1;
+		get_process().orphan();
 		
 		if ( itsLifeStage == kProcessZombie )
 		{
@@ -1296,7 +1297,7 @@ namespace Genie
 	{
 		ASSERT( itsLifeStage == kProcessZombie );
 		
-		itsPPID = 0;  // Don't match PPID comparisons
+		get_process().clear_ppid();  // Don't match PPID comparisons
 		itsLifeStage = kProcessReleased;
 		
 		notify_reaper();
