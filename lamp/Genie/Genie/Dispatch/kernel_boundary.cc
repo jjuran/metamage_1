@@ -5,10 +5,8 @@
 
 #include "Genie/Dispatch/kernel_boundary.hh"
 
-// Nitrogen
-#ifndef NITROGEN_THREADS_HH
-#include "Nitrogen/Threads.hh"
-#endif
+// mac-sys-utils
+#include "mac_sys/current_thread_stack_space.hh"
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
@@ -26,9 +24,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	extern class Process* gCurrentProcess;
 	
@@ -59,7 +54,7 @@ namespace Genie
 	{
 		gCurrentProcess->EnterSystemCall();
 		
-		const size_t space = N::ThreadCurrentStackSpace( N::GetCurrentThread() );
+		const size_t space = mac::sys::current_thread_stack_space();
 		
 		// space will be 0 if we're not on a Thread Manager stack
 		
