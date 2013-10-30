@@ -33,6 +33,7 @@
 
 // relix-kernel
 #include "relix/signal/caught_signal.hh"
+#include "relix/syscall/alarm.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
@@ -66,10 +67,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static unsigned int alarm( unsigned int seconds )
-	{
-		return current_process().SetAlarm( seconds );
-	}
+	using relix::alarm;
 	
 	
 	static int chdir( const char* pathname )

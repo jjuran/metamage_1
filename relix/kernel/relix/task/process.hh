@@ -15,6 +15,9 @@
 // plus
 #include "plus/ref_count.hh"
 
+// relix-kernel
+#include "relix/task/alarm_clock.hh"
+
 
 namespace relix
 {
@@ -27,6 +30,8 @@ namespace relix
 		private:
 			int its_id;
 			int its_ppid;
+			
+			alarm_clock its_alarm_clock;
 			
 			boost::intrusive_ptr< process_group > its_process_group;
 		
@@ -42,6 +47,8 @@ namespace relix
 			void orphan()  { its_ppid = 1; }
 			
 			void clear_ppid()  { its_ppid = 0; }
+			
+			alarm_clock& get_alarm_clock()  { return its_alarm_clock; }
 			
 			process_group& get_process_group() const;
 			

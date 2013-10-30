@@ -34,6 +34,7 @@
 #include "relix/config/syscall_stacks.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
+#include "relix/task/alarm_clock.hh"
 #include "relix/task/process.hh"
 
 // Iota
@@ -1372,7 +1373,7 @@ namespace Genie
 			return false;  // Don't try to handle signals in terminated processes
 		}
 		
-		if ( its_alarm_clock.check() )
+		if ( get_process().get_alarm_clock().check() )
 		{
 			Raise( SIGALRM );
 		}
