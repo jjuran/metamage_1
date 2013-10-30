@@ -888,7 +888,7 @@ namespace Genie
 		
 		if ( looseThread.get() == 0 )
 		{
-			resume.enable( itsPPID );
+			resume.enable( GetPPID() );
 		}
 	}
 	
@@ -924,7 +924,7 @@ namespace Genie
 		
 		if ( looseThread.get() == 0 )
 		{
-			resume.enable( itsPPID );
+			resume.enable( GetPPID() );
 		}
 	}
 	
@@ -1255,7 +1255,7 @@ namespace Genie
 		
 		if ( itsInterdependence == kProcessForked )
 		{
-			GetProcess( itsPPID ).ResumeAfterFork();  // Calls longjmp()
+			GetProcess( GetPPID() ).ResumeAfterFork();  // Calls longjmp()
 		}
 	}
 	
@@ -1277,7 +1277,7 @@ namespace Genie
 	
 	void Process::Orphan()
 	{
-		ASSERT( itsPID != 1 );
+		ASSERT( GetPPID() != 1 );
 		
 		itsPPID = 1;
 		
