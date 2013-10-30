@@ -111,7 +111,6 @@ namespace Genie
 		private:
 			_relix_user_parameter_block its_pb;
 			
-			pid_t itsPPID;
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			
@@ -210,7 +209,7 @@ namespace Genie
 			
 			pid_t gettid() const  { return id(); }
 			
-			pid_t GetPPID() const  { return itsPPID; }
+			pid_t GetPPID() const;
 			pid_t GetPID()  const  { return itsPID;  }
 			
 			pid_t GetPGID() const;

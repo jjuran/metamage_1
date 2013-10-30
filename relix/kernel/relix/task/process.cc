@@ -12,10 +12,11 @@
 namespace relix
 {
 	
-	process::process( int id, process_group& pg )
+	process::process( int id, int ppid, process_group& pg )
 	:
-		its_id           ( id ),
-		its_process_group( &pg )
+		its_id           ( id   ),
+		its_ppid         ( ppid ),
+		its_process_group( &pg  )
 	{
 	}
 	
