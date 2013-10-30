@@ -31,6 +31,7 @@
 #include "relix/api/os_thread_api.hh"
 #include "relix/api/os_thread_box.hh"
 #include "relix/config/syscall_stacks.hh"
+#include "relix/task/alarm_clock.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/thread.hh"
 #include "relix/task/vfork_context.hh"
@@ -122,7 +123,7 @@ namespace Genie
 			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
-			uint64_t itsAlarmClock;
+			relix::alarm_clock its_alarm_clock;
 			
 			plus::string itsName;
 			
@@ -256,7 +257,10 @@ namespace Genie
 			
 		#endif
 			
-			unsigned int SetAlarm( unsigned int seconds );
+			unsigned int SetAlarm( unsigned int seconds )
+			{
+				return its_alarm_clock.set( seconds );
+			}
 			
 			void ResetSignalHandlers();
 			

@@ -558,7 +558,6 @@ namespace Genie
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
-		itsAlarmClock         ( 0 ),
 		itsName               ( "init" ),
 		its_fs_info           ( relix::fs_info::create( opendir( *vfs::root() ) ) ),
 		itsFileDescriptors    ( relix::fd_table::create() ),
@@ -603,7 +602,6 @@ namespace Genie
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
-		itsAlarmClock         ( 0 ),
 		itsName               ( parent.ProgramName() ),
 		its_fs_info           ( parent.its_fs_info ),
 		itsFileDescriptors    ( parent.itsFileDescriptors ),
@@ -647,22 +645,6 @@ namespace Genie
 	void Process::unshare_signal_handlers()
 	{
 		its_signal_handlers = duplicate( *its_signal_handlers );
-	}
-	
-	unsigned int Process::SetAlarm( unsigned int seconds )
-	{
-		uint64_t now = clock();
-		
-		unsigned int remainder = 0;
-		
-		if ( itsAlarmClock )
-		{
-			remainder = (itsAlarmClock - now) / 1000000 + 1;
-		}
-		
-		itsAlarmClock = seconds ? now + seconds * 1000000 : 0;
-		
-		return remainder;
 	}
 	
 	void Process::InitThread()
@@ -1390,16 +1372,9 @@ namespace Genie
 			return false;  // Don't try to handle signals in terminated processes
 		}
 		
-		if ( itsAlarmClock )
+		if ( its_alarm_clock.check() )
 		{
-			uint64_t now = clock();
-			
-			if ( now > itsAlarmClock )
-			{
-				itsAlarmClock = 0;
-				
-				Raise( SIGALRM );
-			}
+			Raise( SIGALRM );
 		}
 		
 		if ( itsResult != 0 )
