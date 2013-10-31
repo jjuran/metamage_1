@@ -20,7 +20,7 @@ namespace relix
 		
 		if ( !(signal.action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
 		{
-			signal_mask |= sigset_from_signo( signal.signo );
+			sigaddset( &signal_mask, signal.signo );
 		}
 		
 		thread& self = current_thread();

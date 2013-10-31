@@ -25,11 +25,6 @@ namespace relix
 	class process;
 	
 	
-	inline sigset_t sigset_from_signo( int signo )
-	{
-		return 1 << signo - 1;
-	}
-	
 	class thread : public plus::ref_count< thread >
 	{
 		private:
@@ -52,17 +47,24 @@ namespace relix
 			sigset_t signals_pending() const  { return its_pending_signals; }
 			sigset_t signals_blocked() const  { return its_blocked_signals; }
 			
-			void set_pending_signal( int sig )  { its_pending_signals |= sigset_from_signo( sig ); }
+			void set_pending_signal( int sig )  { sigaddset( &its_pending_signals, sig ); }
 			
-			void clear_pending_signal( int sig )  { its_pending_signals &= ~sigset_from_signo( sig ); }
+			void clear_pending_signal( int sig )  { sigdelset( &its_pending_signals, sig ); }
 			
-			void clear_signals_pending()  { its_pending_signals = 0; }
+			void clear_signals_pending()  { sigemptyset( &its_pending_signals ); }
 			
-			void block_signals  ( sigset_t sigset )  { its_blocked_signals |=  sigset; }
-			void unblock_signals( sigset_t sigset )  { its_blocked_signals &= ~sigset; }
+			void block_signals  ( sigset_t sigset );
+			void unblock_signals( sigset_t sigset );
 			
 			void set_signals_blocked( sigset_t sigset )  { its_blocked_signals = sigset; }
 	};
+	
+#if defined( __RELIX__ )  ||  defined( __APPLE__ )
+	
+	inline void thread::block_signals  ( sigset_t sigset )  { its_blocked_signals |=  sigset; }
+	inline void thread::unblock_signals( sigset_t sigset )  { its_blocked_signals &= ~sigset; }
+	
+#endif
 	
 }
 
