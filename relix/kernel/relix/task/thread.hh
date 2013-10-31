@@ -15,14 +15,15 @@
 // plus
 #include "plus/ref_count.hh"
 
+// relix
+#include "relix/signal/sigset_t.hh"
+
 
 namespace relix
 {
 	
 	class process;
 	
-	
-	typedef unsigned long sigset_t;
 	
 	inline sigset_t sigset_from_signo( int signo )
 	{
