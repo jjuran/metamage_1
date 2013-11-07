@@ -3,42 +3,17 @@
  *	========
  */
 
-// Standard C
-#include <time.h>
-
-// POSIX
-#include "sys/times.h"
+// relix
+#include "relix/syscall/times.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
 {
 	
-	struct StartTime
-	{
-		clock_t microseconds;
-		
-		StartTime() : microseconds( clock() )
-		{
-		}
-	};
-	
-	static StartTime gStartTime;
-	
-	
-	static clock_t times( struct tms* tp )
-	{
-		if ( tp != NULL )
-		{
-			*tp = current_process().GetTimes();
-		}
-		
-		return clock() - gStartTime.microseconds;
-	}
+	using relix::times;
 	
 	#pragma force_active on
 	
