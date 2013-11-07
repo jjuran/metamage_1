@@ -34,12 +34,7 @@ namespace Genie
 	{
 		if ( tp != NULL )
 		{
-			const Times& clocks = current_process().GetTimes();
-			
-			tp->tms_utime  = clocks.user;
-			tp->tms_stime  = clocks.system;
-			tp->tms_cutime = clocks.child_user;
-			tp->tms_cstime = clocks.child_system;
+			*tp = current_process().GetTimes();
 		}
 		
 		return clock() - gStartTime.microseconds;

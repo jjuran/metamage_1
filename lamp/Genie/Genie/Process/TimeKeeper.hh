@@ -6,6 +6,9 @@
 #ifndef GENIE_PROCESS_TIMEKEEPER_HH
 #define GENIE_PROCESS_TIMEKEEPER_HH
 
+// POSIX
+#include <sys/times.h>
+
 // Standard C
 #include <stdint.h>
 
@@ -13,15 +16,7 @@
 namespace Genie
 {
 	
-	struct Times
-	{
-		uint64_t user;
-		uint64_t system;
-		uint64_t child_user;
-		uint64_t child_system;
-		
-		Times() : user(), system(), child_user(), child_system()  {}
-	};
+	typedef tms Times;
 	
 	class TimeKeeper
 	{
