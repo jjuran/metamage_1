@@ -18,6 +18,9 @@
 namespace Genie
 {
 	
+	static clock_t the_last_breath_time;
+	
+	
 	bool breathe( bool may_throw )
 	{
 		if ( check_signals( may_throw ) )
@@ -29,11 +32,13 @@ namespace Genie
 		
 		Process& current = current_process();
 		
-		if ( now - current.GetTimeOfLastResume() > 20000 )
+		if ( now - the_last_breath_time > 20000 )
 		{
 			mark_process_active( current_process().gettid() );
 			
 			current.Breathe();
+			
+			the_last_breath_time = clock();
 			
 			// Check for fatal signals again
 			return check_signals( may_throw );
