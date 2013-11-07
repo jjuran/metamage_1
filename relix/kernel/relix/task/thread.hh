@@ -6,6 +6,9 @@
 #ifndef RELIX_TASK_THREAD_HH
 #define RELIX_TASK_THREAD_HH
 
+// POSIX
+#include <signal.h>
+
 // Debug
 #include "debug/boost_assert.hh"
 
