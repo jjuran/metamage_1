@@ -8,13 +8,15 @@
 // Standard C
 #include <time.h>
 
+// relix
+#include "relix/task/schedule.hh"
+
 
 namespace Genie
 {
 	
 	TimeKeeper::TimeKeeper()
 	:
-		itsLastTimerCheckpoint( clock() ),
 		itsLastActivity()
 	{
 		itsTimes.tms_utime  = 0;
@@ -29,37 +31,26 @@ namespace Genie
 		itsTimes.tms_cstime += times.tms_stime + times.tms_cstime;
 	}
 	
-	static void UpdateClock( clock_t& clock, uint64_t& checkpoint )
-	{
-		const uint64_t now = ::clock();
-		
-		clock += now - checkpoint;
-		
-		checkpoint = now;
-	}
-	
 	void TimeKeeper::EnterSystemCall()
 	{
-		UpdateClock( itsTimes.tms_utime, itsLastTimerCheckpoint );
+		itsTimes.tms_utime += relix::checkpoint_delta();
 		
-		itsLastActivity = itsLastTimerCheckpoint;
+		itsLastActivity = ::clock();
 	}
 	
 	void TimeKeeper::LeaveSystemCall()
 	{
-		UpdateClock( itsTimes.tms_stime, itsLastTimerCheckpoint );
+		itsTimes.tms_stime += relix::checkpoint_delta();
 	}
 	
 	void TimeKeeper::SuspendTimer()
 	{
-		UpdateClock( itsTimes.tms_stime, itsLastTimerCheckpoint );
+		itsTimes.tms_stime += relix::checkpoint_delta();
 	}
 	
 	void TimeKeeper::ResumeTimer()
 	{
-		const uint64_t now = clock();
-		
-		itsLastTimerCheckpoint = now;
+		(void) relix::checkpoint_delta();
 	}
 	
 }

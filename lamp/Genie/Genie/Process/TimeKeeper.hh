@@ -21,7 +21,6 @@ namespace Genie
 	class TimeKeeper
 	{
 		private:
-			uint64_t itsLastTimerCheckpoint;
 			uint64_t itsLastActivity;
 			
 			Times itsTimes;
