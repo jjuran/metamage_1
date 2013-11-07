@@ -16,12 +16,25 @@ namespace relix
 	:
 		its_id           ( id   ),
 		its_ppid         ( ppid ),
+		its_last_activity(      ),
 		its_process_group( &pg  )
 	{
+		// Reset resource utilization on fork
+		
+		its_times.tms_utime  = 0;
+		its_times.tms_stime  = 0;
+		its_times.tms_cutime = 0;
+		its_times.tms_cstime = 0;
 	}
 	
 	process::~process()
 	{
+	}
+	
+	void process::accumulate_child_times( const struct tms& times )
+	{
+		its_times.tms_cutime += times.tms_utime + times.tms_cutime;
+		its_times.tms_cstime += times.tms_stime + times.tms_cstime;
 	}
 	
 	process_group& process::get_process_group() const

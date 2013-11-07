@@ -88,6 +88,7 @@
 #include "relix/task/memory_data.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
+#include "relix/task/schedule.hh"
 #include "relix/task/signal_handlers.hh"
 
 // Genie
@@ -598,7 +599,6 @@ namespace Genie
 		                                                 ppid ? ppid : parent.GetPID(),
 		                                                 parent.get_process().get_process_group() )
 		                          : parent.get_process() ),
-		TimeKeeper            (),  // Reset resource utilization on fork
 		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
@@ -973,6 +973,11 @@ namespace Genie
 		its_memory_data->remove_memory_mapping( key );
 	}
 	
+	const struct tms& Process::GetTimes() const
+	{
+		return get_process().get_times();
+	}
+	
 	pid_t Process::GetPPID() const
 	{
 		return get_process().getppid();
@@ -1286,9 +1291,19 @@ namespace Genie
 		notify_reaper();
 	}
 	
+	void Process::EnterSystemCall()
+	{
+		get_process().add_user_cpu_time( relix::checkpoint_delta() );
+	}
+	
+	void Process::LeaveSystemCall()
+	{
+		get_process().add_system_cpu_time( relix::checkpoint_delta() );
+	}
+	
 	void Process::Suspend()
 	{
-		SuspendTimer();
+		get_process().add_system_cpu_time( relix::checkpoint_delta() );
 		
 		gCurrentProcess = NULL;
 		
@@ -1305,7 +1320,7 @@ namespace Genie
 		
 		itsSchedule = kProcessRunning;
 		
-		ResumeTimer();
+		(void) relix::checkpoint_delta();
 	}
 	
 	void Process::Pause( ProcessSchedule newSchedule )

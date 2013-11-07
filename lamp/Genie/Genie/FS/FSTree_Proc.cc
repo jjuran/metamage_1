@@ -42,7 +42,9 @@
 #include "vfs/node/types/fixed_dir.hh"
 
 // relix-kernel
+#include "relix/api/current_process.hh"
 #include "relix/task/fd_table.hh"
+#include "relix/task/process.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
@@ -369,7 +371,7 @@ namespace Genie
 		{
 			runState = 'D';
 		}
-		else if ( runState == 'S'  &&  clock() - process.GetTimeOfLastActivity() > 20 * 1000 * 1000 )
+		else if ( runState == 'S'  &&  clock() - relix::current_process().get_last_activity() > 20 * 1000 * 1000 )
 		{
 			runState = 'I';  // idle
 		}

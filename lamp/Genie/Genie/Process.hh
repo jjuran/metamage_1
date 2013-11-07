@@ -35,11 +35,9 @@
 #include "relix/task/thread.hh"
 #include "relix/task/vfork_context.hh"
 
-// Genie
-#include "Genie/Process/TimeKeeper.hh"
-
 
 struct sigaction;
+struct tms;
 
 
 namespace relix
@@ -98,7 +96,6 @@ namespace Genie
 	// Genie::Process is actually a thread, not a process.
 	
 	class Process : public relix::thread,
-	                public TimeKeeper,
 	                public relix::vfork_context
 	{
 		public:
@@ -171,6 +168,8 @@ namespace Genie
 			void Orphan();
 		
 		public:
+			const struct tms& GetTimes() const;
+			
 			bool IsBeingTraced() const  { return false; }
 			
 			void Terminate( int wait_status );
@@ -189,6 +188,10 @@ namespace Genie
 			static void* thread_start( void* param, const void* bottom, const void* limit );
 			
 			int Run();
+			
+			void EnterSystemCall();
+			
+			void LeaveSystemCall();
 			
 			const plus::string& GetCmdLine() const;
 			
