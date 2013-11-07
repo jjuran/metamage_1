@@ -27,15 +27,12 @@ namespace Genie
 	{
 		private:
 			uint64_t itsLastTimerCheckpoint;
-			uint64_t itsLastResume;
 			uint64_t itsLastActivity;
 			
 			Times itsTimes;
 		
 		public:
 			TimeKeeper();
-			
-			const uint64_t& GetTimeOfLastResume() const  { return itsLastResume; }
 			
 			const uint64_t& GetTimeOfLastActivity() const  { return itsLastActivity; }
 			

@@ -15,7 +15,6 @@ namespace Genie
 	TimeKeeper::TimeKeeper()
 	:
 		itsLastTimerCheckpoint( clock() ),
-		itsLastResume(),
 		itsLastActivity()
 	{
 	}
@@ -55,8 +54,6 @@ namespace Genie
 	void TimeKeeper::ResumeTimer()
 	{
 		const uint64_t now = clock();
-		
-		itsLastResume = now;
 		
 		itsLastTimerCheckpoint = now;
 	}
