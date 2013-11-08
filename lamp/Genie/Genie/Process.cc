@@ -839,7 +839,7 @@ namespace Genie
 		
 		if ( its_pb.cleanup != NULL )
 		{
-			ENTER_USERLAND();
+			ENTER_USERLAND( global_parameter_block.current_user->globals );
 			
 			its_pb.cleanup();
 			
@@ -1202,7 +1202,7 @@ namespace Genie
 		
 		if ( its_pb.cleanup != NULL )
 		{
-			ENTER_USERLAND();
+			ENTER_USERLAND( global_parameter_block.current_user->globals );
 			
 			its_pb.cleanup();
 			

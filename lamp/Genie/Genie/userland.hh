@@ -6,14 +6,9 @@
 #ifndef GENIE_USERLAND_HH
 #define GENIE_USERLAND_HH
 
-// Relix
-#include "relix/parameter_block.h"
-
 
 namespace Genie
 {
-	
-	extern "C" _relix_system_parameter_block global_parameter_block;
 	
 #ifdef __MC68K__
 	
@@ -32,8 +27,8 @@ namespace Genie
 	#define ENTER_USERMAIN()  void* _saved_a4 = GetA4()
 	#define EXIT_USERMAIN()   (void)            SetA4( _saved_a4 )
 	
-	#define ENTER_USERLAND()  void* _saved_a4 = SetA4( global_parameter_block.current_user->globals )
-	#define EXIT_USERLAND()   (void)            SetA4( _saved_a4 )
+	#define ENTER_USERLAND( globals )  void* _saved_a4 = SetA4( globals )
+	#define EXIT_USERLAND()            (void)            SetA4( _saved_a4 )
 	
 #else
 	
@@ -45,8 +40,8 @@ namespace Genie
 	#define ENTER_USERMAIN()  /**/
 	#define EXIT_USERMAIN()   /**/
 	
-	#define ENTER_USERLAND()  /**/
-	#define EXIT_USERLAND()   /**/
+	#define ENTER_USERLAND( globals )  /**/
+	#define EXIT_USERLAND()            /**/
 	
 #endif
 	
