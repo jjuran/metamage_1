@@ -45,7 +45,6 @@ namespace Genie
 	{
 		public:
 			App();
-			~App()  { kill_all_processes(); }
 	};
 	
 	
@@ -66,6 +65,7 @@ namespace Genie
 	App::App()
 	{
 		Ped::gActivelyBusy_Hook = &is_active;
+		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
 		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );

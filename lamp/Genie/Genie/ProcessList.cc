@@ -197,11 +197,6 @@ namespace Genie
 		return init;
 	}
 	
-	void kill_all_processes()
-	{
-		Process_Table().swap( global_processes );
-	}
-	
 	
 	bool process_exists( pid_t pid )
 	{
@@ -292,6 +287,37 @@ namespace Genie
 		char const *const *argv = &args[ 0 ];
 		
 		spawn_process( argv[ 0 ], argv );
+	}
+	
+	static void* any_running( void*, pid_t pid, Process& process )
+	{
+		if ( process.id() > 1 )
+		{
+			return &process;
+		}
+		
+		return NULL;
+	}
+	
+	static void* send_sigterm( void*, pid_t pid, Process& process )
+	{
+		process.Raise( SIGTERM );
+		
+		return NULL;
+	}
+	
+	static bool already_quitting = false;
+	
+	bool is_ready_to_exit()
+	{
+		if ( !already_quitting )
+		{
+			for_each_process( &send_sigterm );
+			
+			already_quitting = true;
+		}
+		
+		return for_each_process( &any_running ) == NULL;
 	}
 	
 }

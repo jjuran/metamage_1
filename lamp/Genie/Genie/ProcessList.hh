@@ -37,7 +37,7 @@ namespace Genie
 	
 	void notify_reaper();
 	
-	void kill_all_processes();
+	bool is_ready_to_exit();
 	
 }
 
