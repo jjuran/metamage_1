@@ -12,9 +12,6 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// relix-include
-#include "relix/parameter_block.h"
-
 // plus
 #include "plus/string.hh"
 
@@ -106,8 +103,6 @@ namespace Genie
 			};
 		
 		private:
-			_relix_user_parameter_block its_pb;
-			
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			

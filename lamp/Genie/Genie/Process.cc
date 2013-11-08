@@ -88,6 +88,7 @@
 #include "relix/task/fs_info.hh"
 #include "relix/task/memory_data.hh"
 #include "relix/task/process_group.hh"
+#include "relix/task/process_image.hh"
 #include "relix/task/session.hh"
 #include "relix/task/schedule.hh"
 #include "relix/task/signal_handlers.hh"
@@ -306,8 +307,11 @@ namespace Genie
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		process->its_pb.stack_bottom = bottom;
-		process->its_pb.stack_limit  = limit;
+		relix::process_image& image = process->get_process().get_process_image();
+		
+		_relix_user_parameter_block& pb = image.initialize_param_block( bottom, limit );
+		
+		global_parameter_block.current_user = &pb;
 		
 		try
 		{
@@ -537,20 +541,9 @@ namespace Genie
 		return result;
 	}
 	
-	static inline _relix_user_parameter_block user_pb_for_init()
+	static boost::intrusive_ptr< relix::process_image > new_process_image()
 	{
-		_relix_user_parameter_block pb = { NULL };
-		
-		return pb;
-	}
-	
-	static inline _relix_user_parameter_block copy_user_pb( const _relix_user_parameter_block& pb )
-	{
-		_relix_user_parameter_block result = pb;
-		
-		result.cleanup = NULL;
-		
-		return result;
+		return new relix::process_image();
 	}
 	
 	Process::Process( RootProcess ) 
@@ -560,8 +553,8 @@ namespace Genie
 		               *new relix::process( 1,
 		                                    0,
 		                                    *NewProcessGroup( 1,
-		                                                      *NewSession( 1 ) ) ) ),
-		its_pb                ( user_pb_for_init() ),
+		                                                      *NewSession( 1 ) ),
+		                                    *new_process_image() ) ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
@@ -602,9 +595,9 @@ namespace Genie
 		               parent.signals_blocked(),
 		               tid == pid ? *new relix::process( pid,
 		                                                 ppid ? ppid : parent.GetPID(),
-		                                                 parent.get_process().get_process_group() )
+		                                                 parent.get_process().get_process_group(),
+		                                                 parent.get_process().get_process_image() )
 		                          : parent.get_process() ),
-		its_pb                ( copy_user_pb( parent.its_pb ) ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
@@ -701,8 +694,6 @@ namespace Genie
 		child.itsInterdependence = kProcessForked;
 		
 		gCurrentProcess = &child;
-		
-		global_parameter_block.current_user = &child.its_pb;
 		
 		return child;
 		
@@ -842,16 +833,7 @@ namespace Genie
 		// Create the new thread
 		looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
-		if ( its_pb.cleanup != NULL )
-		{
-			ENTER_USERLAND( global_parameter_block.current_user->globals );
-			
-			its_pb.cleanup();
-			
-			EXIT_USERLAND();
-			
-			its_pb.cleanup = NULL;
-		}
+		get_process().set_process_image( *new_process_image() );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
@@ -949,12 +931,7 @@ namespace Genie
 	
 	int Process::SetErrno( int errorNumber )
 	{
-		if ( its_pb.errno_var != NULL )
-		{
-			*its_pb.errno_var = errorNumber;
-		}
-		
-		return errorNumber == 0 ? 0 : -1;
+		return get_process().get_process_image().set_errno( errorNumber );
 	}
 	
 	const plus::string& Process::GetCmdLine() const
@@ -1078,12 +1055,6 @@ namespace Genie
 		
 		child.itsThread.swap( parent.itsThread );
 		
-		ASSERT( child.its_pb.cleanup == NULL );
-		
-		using std::swap;
-		
-		swap( child.its_pb.cleanup, parent.its_pb.cleanup );
-		
 		parent.Exit( exit_status );
 		
 		child.Resume();
@@ -1205,14 +1176,7 @@ namespace Genie
 		
 		its_fs_info.reset();
 		
-		if ( its_pb.cleanup != NULL )
-		{
-			ENTER_USERLAND( global_parameter_block.current_user->globals );
-			
-			its_pb.cleanup();
-			
-			EXIT_USERLAND();
-		}
+		get_process().set_process_image( *new_process_image() );
 		
 		itsLifeStage = kProcessZombie;
 		
@@ -1311,15 +1275,11 @@ namespace Genie
 		get_process().add_system_cpu_time( relix::checkpoint_delta() );
 		
 		gCurrentProcess = NULL;
-		
-		global_parameter_block.current_user = NULL;
 	}
 	
 	void Process::Resume()
 	{
 		gCurrentProcess = this;
-		
-		global_parameter_block.current_user = &its_pb;
 		
 		itsStackFramePtr = NULL;  // We don't track this while running
 		
@@ -1336,7 +1296,9 @@ namespace Genie
 		
 		itsStackFramePtr = recall::get_stack_frame_pointer();
 		
-		const int saved_errno = *its_pb.errno_var;
+		const relix::process_image& image = get_process().get_process_image();
+		
+		const int saved_errno = image.get_errno();
 		
 		if ( newSchedule == kProcessStopped )
 		{
@@ -1347,7 +1309,7 @@ namespace Genie
 			relix::os_thread_yield();
 		}
 		
-		*its_pb.errno_var = saved_errno;
+		image.set_errno( saved_errno );
 		
 		Resume();
 	}
