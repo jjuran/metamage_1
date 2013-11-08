@@ -12,6 +12,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// relix
+#include "relix/api/current_process.hh"
+#include "relix/task/process.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/ProcessList.hh"
@@ -150,9 +154,9 @@ namespace Genie
 	
 	static pid_t waitpid( pid_t pid, int* stat_loc, int options )
 	{
-		Process& caller = current_process();
+		relix::process& caller = relix::current_process();
 		
-		pid_t ppid = caller.GetPID();
+		const pid_t ppid = caller.id();
 		
 		bool untraced = options & WUNTRACED;
 		
@@ -175,7 +179,10 @@ namespace Genie
 					
 					if ( child->GetLifeStage() == kProcessZombie )
 					{
-						caller.AccumulateChildTimes( child->GetTimes() );
+						if ( !is_thread )
+						{
+							caller.accumulate_child_times( child->GetTimes() );
+						}
 						
 						child->Release();
 					}
