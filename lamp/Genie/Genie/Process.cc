@@ -315,7 +315,7 @@ namespace Genie
 		
 		try
 		{
-			process->InitThread();
+			process->Resume();
 			
 			int exit_status = process->Run();
 			
@@ -644,11 +644,6 @@ namespace Genie
 	void Process::unshare_signal_handlers()
 	{
 		its_signal_handlers = duplicate( *its_signal_handlers );
-	}
-	
-	void Process::InitThread()
-	{
-		Resume();
 	}
 	
 	relix::os_thread_id Process::GetThread() const
