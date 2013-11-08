@@ -82,6 +82,7 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
+#include "relix/glue/userland.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/task/fd_table.hh"
 #include "relix/task/fs_info.hh"
@@ -104,7 +105,6 @@
 #include "Genie/scheduler.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
-#include "Genie/userland.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -234,7 +234,7 @@ namespace Genie
 			
 			if ( handler != SIG_DFL  &&  handler != SIG_IGN )
 			{
-				call_signal_handler( handler, signo );
+				relix::call_signal_handler( handler, signo );
 			}
 			
 			gCurrentProcess->Terminate( signo | 0x80 );

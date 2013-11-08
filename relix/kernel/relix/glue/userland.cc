@@ -3,10 +3,10 @@
 	-----------
 */
 
-#include "Genie/userland.hh"
+#include "relix/glue/userland.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 #ifdef __MC68K__

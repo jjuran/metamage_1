@@ -3,11 +3,11 @@
 	-----------
 */
 
-#ifndef GENIE_USERLAND_HH
-#define GENIE_USERLAND_HH
+#ifndef RELIX_USERLAND_HH
+#define RELIX_USERLAND_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 #ifdef __MC68K__
@@ -24,11 +24,11 @@ namespace Genie
 	
 	void call_signal_handler( void* handler : __a0, int signo : __d0 );
 	
-	#define ENTER_USERMAIN()  void* _saved_a4 = GetA4()
-	#define EXIT_USERMAIN()   (void)            SetA4( _saved_a4 )
+	#define ENTER_USERMAIN()  void* _saved_a4 = ::relix::GetA4()
+	#define EXIT_USERMAIN()   (void)            ::relix::SetA4( _saved_a4 )
 	
-	#define ENTER_USERLAND( globals )  void* _saved_a4 = SetA4( globals )
-	#define EXIT_USERLAND()            (void)            SetA4( _saved_a4 )
+	#define ENTER_USERLAND( globals )  void* _saved_a4 = ::relix::SetA4( globals )
+	#define EXIT_USERLAND()            (void)            ::relix::SetA4( _saved_a4 )
 	
 #else
 	
