@@ -11,6 +11,7 @@ namespace Pedestal
 {
 	
 	extern bool (*gActivelyBusy_Hook)();
+	extern bool (*gReadyToExit_Hook)();
 	
 	class Application
 	{

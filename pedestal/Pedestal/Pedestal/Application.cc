@@ -189,10 +189,16 @@ namespace Pedestal
 	
 	
 	bool (*gActivelyBusy_Hook)() = NULL;
+	bool (*gReadyToExit_Hook )() = NULL;
 	
 	static bool ActivelyBusy()
 	{
 		return gActivelyBusy_Hook ? gActivelyBusy_Hook() : false;
+	}
+	
+	static bool ReadyToExit()
+	{
+		return gReadyToExit_Hook ? gReadyToExit_Hook() : true;
 	}
 	
 	static void UpdateLastUserEvent()
@@ -905,6 +911,8 @@ namespace Pedestal
 						
 						(void) DispatchCursor( event );
 						
+						gIdleNeeded = false;
+						
 						if ( event.what != nullEvent )
 						{
 							DispatchEvent( event );
@@ -913,7 +921,7 @@ namespace Pedestal
 							
 							gIdleNeeded = true;
 						}
-						else if ( gRunState.quitRequested )
+						else if ( (gIdleNeeded = gRunState.quitRequested)  &&  ReadyToExit() )
 						{
 							gRunState.endOfEventLoop = true;
 							
@@ -922,8 +930,6 @@ namespace Pedestal
 						else
 						{
 							GiveIdleTimeToWindows( event );
-							
-							gIdleNeeded = false;
 						}
 					}
 				}
