@@ -99,18 +99,19 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 			}
 			
-			Process& current = current_process();
+			relix::process& current = relix::current_process();
 			
 			relix::process& target = pid != 0 ? GetProcess( pid ).get_process()
-			                                  : current.get_process();
+			                                  : current;
 			
-			const int target_pid = target.id();
+			const int current_pid = current.id();
+			const int target_pid  = target .id();
 			
 			relix::session& target_session = target.get_process_group().get_session();
 			
 			const int target_sid = target_session.id();
 			
-			bool target_is_self = pid == 0  ||  target_pid == current.GetPID();
+			bool target_is_self = pid == 0  ||  target_pid == current_pid;
 			
 			if ( target_is_self )
 			{
@@ -123,19 +124,21 @@ namespace Genie
 			}
 			else
 			{
-				bool target_is_child = current.GetPID() == target.getppid();
+				bool target_is_child = current_pid == target.getppid();
 				
 				if ( !target_is_child )
 				{
 					p7::throw_errno( ESRCH );  // target is not self or a child
 				}
 				
-				if ( &target.get_process_image() != &current.get_process().get_process_image() )
+				if ( &target.get_process_image() != &current.get_process_image() )
 				{
 					p7::throw_errno( EACCES );  // child already execve'd
 				}
 				
-				if ( current.GetSID() != target_sid )
+				const int current_sid = current.get_process_group().get_session().id();
+				
+				if ( current_sid != target_sid )
 				{
 					p7::throw_errno( EPERM );  // child in different session
 				}
