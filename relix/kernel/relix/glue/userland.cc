@@ -5,6 +5,11 @@
 
 #include "relix/glue/userland.hh"
 
+// iota
+#ifdef __APPLE__
+#include "iota/dummy.hh"
+#endif
+
 
 namespace relix
 {
