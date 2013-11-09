@@ -32,3 +32,16 @@ namespace CompileTests
 	
 }
 
+#ifdef __APPLE__
+
+namespace _
+{
+	
+	void dummy()
+	{
+	}
+	
+}
+
+#endif
+
