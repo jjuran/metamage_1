@@ -101,39 +101,41 @@ namespace Genie
 			
 			Process& current = current_process();
 			
-			Process& target( pid != 0 ? GetProcess( pid )
-			                          : current );
+			relix::process& target = pid != 0 ? GetProcess( pid ).get_process()
+			                                  : current.get_process();
 			
-			relix::process& target_process = target.get_process();
+			const int target_pid = target.id();
 			
-			relix::session& session = target_process.get_process_group().get_session();
+			relix::session& target_session = target.get_process_group().get_session();
 			
-			bool target_is_self = pid == 0  ||  target_process.id() == current.GetPID();
+			const int target_sid = target_session.id();
+			
+			bool target_is_self = pid == 0  ||  target_pid == current.GetPID();
 			
 			if ( target_is_self )
 			{
 				// A session-leading child is in a different session, which we test for
 				
-				if ( session.id() == target_process.id() )
+				if ( target_sid == target_pid )
 				{
 					p7::throw_errno( EPERM );  // target is a session leader
 				}
 			}
 			else
 			{
-				bool target_is_child = current.GetPID() == target_process.getppid();
+				bool target_is_child = current.GetPID() == target.getppid();
 				
 				if ( !target_is_child )
 				{
 					p7::throw_errno( ESRCH );  // target is not self or a child
 				}
 				
-				if ( target.GetLifeStage() != kProcessStarting )
+				if ( &target.get_process_image() != &current.get_process().get_process_image() )
 				{
 					p7::throw_errno( EACCES );  // child already execve'd
 				}
 				
-				if ( current.GetSID() != session.id() )
+				if ( current.GetSID() != target_sid )
 				{
 					p7::throw_errno( EPERM );  // child in different session
 				}
@@ -142,10 +144,10 @@ namespace Genie
 			
 			if ( pgid == 0 )
 			{
-				pgid = target_process.id();
+				pgid = target_pid;
 			}
 			
-			target_process.set_process_group( *GetProcessGroupInSession( pgid, session ) );
+			target.set_process_group( *GetProcessGroupInSession( pgid, target_session ) );
 			
 			return 0;
 		}
