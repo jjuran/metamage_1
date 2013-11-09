@@ -555,7 +555,12 @@ namespace Genie
 	
 	Process::Process( RootProcess ) 
 	:
-		relix::thread( 1, 0, *new relix::process( 1, 0, *NewProcessGroup( 1, *NewSession( 1 ) ) ) ),
+		relix::thread( 1,
+		               0,
+		               *new relix::process( 1,
+		                                    0,
+		                                    *NewProcessGroup( 1,
+		                                                      *NewSession( 1 ) ) ) ),
 		its_pb                ( user_pb_for_init() ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
