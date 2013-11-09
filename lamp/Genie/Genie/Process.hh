@@ -291,8 +291,6 @@ namespace Genie
 			
 			relix::os_thread_box SpawnThread( Clone_Function f, void* arg );
 			
-			int SetErrno( int errorNumber );
-			
 			void Stop();
 			void Continue();
 			
