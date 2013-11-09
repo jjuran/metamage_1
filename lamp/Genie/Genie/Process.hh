@@ -211,8 +211,6 @@ namespace Genie
 			
 			relix::process_group& GetProcessGroup() const;
 			
-			void SetProcessGroup( relix::process_group& pgrp );
-			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }

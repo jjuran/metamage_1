@@ -965,11 +965,6 @@ namespace Genie
 		return get_process().get_process_group();
 	}
 	
-	void Process::SetProcessGroup( relix::process_group& pgrp )
-	{
-		get_process().set_process_group( pgrp );
-	}
-	
 	const IOPtr& Process::ControllingTerminal() const
 	{
 		return get_process().get_process_group().get_session().get_ctty();

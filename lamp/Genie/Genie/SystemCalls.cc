@@ -32,11 +32,13 @@
 #include "vfs/functions/resolve_pathname.hh"
 
 // relix-kernel
+#include "relix/api/current_process.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
+#include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
 
@@ -351,6 +353,10 @@ namespace Genie
 			Process& target( pid != 0 ? GetProcess( pid )
 			                          : current );
 			
+			relix::process& target_process = target.get_process();
+			
+			relix::session& session = target_process.get_process_group().get_session();
+			
 			bool target_is_self = pid == 0  ||  target.GetPID() == current.GetPID();
 			
 			if ( target_is_self )
@@ -388,9 +394,7 @@ namespace Genie
 				pgid = target.GetPID();
 			}
 			
-			relix::session& session = target.GetProcessGroup().get_session();
-			
-			target.SetProcessGroup( *GetProcessGroupInSession( pgid, session ) );
+			target_process.set_process_group( *GetProcessGroupInSession( pgid, session ) );
 			
 			return 0;
 		}
@@ -405,12 +409,12 @@ namespace Genie
 	{
 		try
 		{
-			Process& current = current_process();
+			relix::process& current = relix::current_process();
 			
-			int pid = current.GetPID();
+			const int pid = current.id();
 			
 			// throws EPERM if pgid already exists
-			current.SetProcessGroup( *GetProcessGroupInSession( pid, *NewSession( pid ) ) );
+			current.set_process_group( *GetProcessGroupInSession( pid, *NewSession( pid ) ) );
 			
 			return pid;
 		}
