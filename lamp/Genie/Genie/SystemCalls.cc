@@ -108,20 +108,20 @@ namespace Genie
 			
 			relix::session& session = target_process.get_process_group().get_session();
 			
-			bool target_is_self = pid == 0  ||  target.GetPID() == current.GetPID();
+			bool target_is_self = pid == 0  ||  target_process.id() == current.GetPID();
 			
 			if ( target_is_self )
 			{
 				// A session-leading child is in a different session, which we test for
 				
-				if ( target.GetSID() == target.GetPID() )
+				if ( session.id() == target_process.id() )
 				{
 					p7::throw_errno( EPERM );  // target is a session leader
 				}
 			}
 			else
 			{
-				bool target_is_child = current.GetPID() == target.GetPPID();
+				bool target_is_child = current.GetPID() == target_process.getppid();
 				
 				if ( !target_is_child )
 				{
@@ -133,7 +133,7 @@ namespace Genie
 					p7::throw_errno( EACCES );  // child already execve'd
 				}
 				
-				if ( current.GetSID() != target.GetSID() )
+				if ( current.GetSID() != session.id() )
 				{
 					p7::throw_errno( EPERM );  // child in different session
 				}
@@ -142,7 +142,7 @@ namespace Genie
 			
 			if ( pgid == 0 )
 			{
-				pgid = target.GetPID();
+				pgid = target_process.id();
 			}
 			
 			target_process.set_process_group( *GetProcessGroupInSession( pgid, session ) );
