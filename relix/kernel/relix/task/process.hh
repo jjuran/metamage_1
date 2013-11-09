@@ -27,6 +27,7 @@ namespace relix
 {
 	
 	class process_group;
+	class process_image;
 	
 	
 	class process : public plus::ref_count< process >
@@ -42,9 +43,10 @@ namespace relix
 			alarm_clock its_alarm_clock;
 			
 			boost::intrusive_ptr< process_group > its_process_group;
+			boost::intrusive_ptr< process_image > its_process_image;
 		
 		public:
-			process( int id, int ppid, process_group& pg );
+			process( int id, int ppid, process_group& pg, process_image& image );
 			
 			~process();
 			
@@ -68,8 +70,10 @@ namespace relix
 			alarm_clock& get_alarm_clock()  { return its_alarm_clock; }
 			
 			process_group& get_process_group() const;
+			process_image& get_process_image() const;
 			
 			void set_process_group( process_group& pg );
+			void set_process_image( process_image& image );
 	};
 	
 }

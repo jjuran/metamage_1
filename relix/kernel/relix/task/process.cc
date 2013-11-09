@@ -7,17 +7,19 @@
 
 // relix
 #include "relix/task/process_group.hh"
+#include "relix/task/process_image.hh"
 
 
 namespace relix
 {
 	
-	process::process( int id, int ppid, process_group& pg )
+	process::process( int id, int ppid, process_group& pg, process_image& image )
 	:
 		its_id           ( id   ),
 		its_ppid         ( ppid ),
 		its_last_activity(      ),
-		its_process_group( &pg  )
+		its_process_group( &pg  ),
+		its_process_image( &image )
 	{
 		// Reset resource utilization on fork
 		
@@ -42,9 +44,19 @@ namespace relix
 		return *its_process_group;
 	}
 	
+	process_image& process::get_process_image() const
+	{
+		return *its_process_image;
+	}
+	
 	void process::set_process_group( process_group& pg )
 	{
 		its_process_group = &pg;
+	}
+	
+	void process::set_process_image( process_image& image )
+	{
+		its_process_image = &image;
 	}
 	
 }
