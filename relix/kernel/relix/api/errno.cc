@@ -12,8 +12,11 @@
 #include "poseven/types/errno_t.hh"
 
 // relix-kernel
+#include "relix/api/current_process.hh"
 #include "relix/api/os_exception.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/task/process.hh"
+#include "relix/task/process_image.hh"
 
 
 namespace relix
@@ -55,6 +58,11 @@ namespace relix
 		}
 		
 		return EINVAL;
+	}
+	
+	int set_errno( int errnum )
+	{
+		return current_process().get_process_image().set_errno( errnum );
 	}
 	
 	int set_errno_from_exception()
