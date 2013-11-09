@@ -20,10 +20,5 @@ namespace relix
 		return Genie::current_process();
 	}
 	
-	int set_errno( int errnum )
-	{
-		return Genie::gCurrentProcess->SetErrno( errnum );
-	}
-	
 }
 

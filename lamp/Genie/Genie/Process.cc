@@ -924,11 +924,6 @@ namespace Genie
 		return looseThread;
 	}
 	
-	int Process::SetErrno( int errorNumber )
-	{
-		return get_process().get_process_image().set_errno( errorNumber );
-	}
-	
 	const plus::string& Process::GetCmdLine() const
 	{
 		return its_memory_data.get() ? its_memory_data.get()->get_cmdline()

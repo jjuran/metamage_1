@@ -10,7 +10,9 @@
 #include "signal.h"
 
 // relix-kernel
+#include "relix/api/errno.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/syscall/getpid.hh"
 #include "relix/syscall/sigpending.hh"
 #include "relix/syscall/sigprocmask.hh"
 
@@ -40,7 +42,7 @@ namespace Genie
 			return 0;
 		}
 		
-		return CurrentProcess().SetErrno( ESRCH );
+		return relix::set_errno( ESRCH );
 	}
 	
 	struct kill_param
@@ -74,13 +76,11 @@ namespace Genie
 	
 	static int kill_pgid( pid_t pgid, int signo )
 	{
-		Process& current = CurrentProcess();
-		
-		kill_param param = { pgid ? pgid : -current.GetPID(), signo, false };
+		kill_param param = { pgid ? pgid : -relix::getpid(), signo, false };
 		
 		for_each_process( &kill_process_in_group, &param );
 		
-		return param.killed_any ? 0 : current.SetErrno( ESRCH );
+		return param.killed_any ? 0 : relix::set_errno( ESRCH );
 		
 	}
 	
