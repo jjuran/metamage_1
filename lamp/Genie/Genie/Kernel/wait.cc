@@ -181,7 +181,7 @@ namespace Genie
 					{
 						if ( !is_thread )
 						{
-							caller.accumulate_child_times( child->GetTimes() );
+							caller.accumulate_child_times( child->get_process().get_times() );
 						}
 						
 						child->Release();

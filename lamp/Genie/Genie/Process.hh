@@ -163,8 +163,6 @@ namespace Genie
 			void Orphan();
 		
 		public:
-			const struct tms& GetTimes() const;
-			
 			bool IsBeingTraced() const  { return false; }
 			
 			void Terminate( int wait_status );

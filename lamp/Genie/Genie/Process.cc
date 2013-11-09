@@ -945,11 +945,6 @@ namespace Genie
 		its_memory_data->remove_memory_mapping( key );
 	}
 	
-	const struct tms& Process::GetTimes() const
-	{
-		return get_process().get_times();
-	}
-	
 	pid_t Process::GetPPID() const
 	{
 		return get_process().getppid();
