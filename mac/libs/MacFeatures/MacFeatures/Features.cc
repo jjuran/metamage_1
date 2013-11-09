@@ -5,9 +5,6 @@
 
 #include "MacFeatures/Features.hh"
 
-// iota
-#include "iota/dummy.hh"
-
 // MacFeatures
 #include "MacFeatures/BlueBoxed.hh"
 #include "MacFeatures/SystemVersion.hh"
