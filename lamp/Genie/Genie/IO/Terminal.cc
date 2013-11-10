@@ -23,7 +23,9 @@
 #include "vfs/functions/resolve_pathname.hh"
 
 // relix
+#include "relix/api/current_process.hh"
 #include "relix/signal/signal_process_group.hh"
+#include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
 
@@ -74,11 +76,9 @@ namespace Genie
 		return vfs::resolve_absolute_path( itsTTYName );
 	}
 	
-	static void CheckControllingTerminal( const Process& process, const TerminalHandle& tty )
+	static void CheckControllingTerminal( const vfs::filehandle* ctty, const TerminalHandle& tty )
 	{
-		const IOPtr& process_ctty = process.ControllingTerminal();
-		
-		if ( process_ctty.get() != &tty )
+		if ( ctty != &tty )
 		{
 			p7::throw_errno( ENOTTY );
 		}
@@ -86,16 +86,20 @@ namespace Genie
 	
 	void TerminalHandle::IOCtl( unsigned long request, int* argp )
 	{
-		Process& current = CurrentProcess();
+		relix::process& current = relix::current_process();
 		
-		relix::session& process_session = current.GetProcessGroup().get_session();
+		relix::process_group& process_group = current.get_process_group();
+		
+		relix::session& process_session = process_group.get_session();
+		
+		vfs::filehandle* ctty = process_session.get_ctty().get();
 		
 		switch ( request )
 		{
 			case TIOCGPGRP:
 				ASSERT( argp != NULL );
 				
-				CheckControllingTerminal( current, *this );
+				CheckControllingTerminal( ctty, *this );
 				
 				*argp = its_process_group_id;
 				
@@ -104,7 +108,7 @@ namespace Genie
 			case TIOCSPGRP:
 				ASSERT( argp != NULL );
 				
-				CheckControllingTerminal( current, *this );
+				CheckControllingTerminal( ctty, *this );
 				
 				{
 					// If the terminal has an existing foreground process group,
@@ -112,7 +116,7 @@ namespace Genie
 					if ( its_process_group_id == no_pgid  ||  &FindProcessGroup( its_process_group_id )->get_session() == &process_session )
 					{
 						// This must be the caller's controlling terminal.
-						if ( process_session.get_ctty().get() == this )
+						if ( ctty == this )
 						{
 							setpgrp( GetProcessGroupInSession( *argp, process_session )->id() );
 						}
@@ -124,13 +128,13 @@ namespace Genie
 				break;
 			
 			case TIOCSCTTY:
-				if ( process_session.id() != current.GetPID() )
+				if ( process_session.id() != current.id() )
 				{
 					// not a session leader
 					p7::throw_errno( EPERM );
 				}
 				
-				if ( process_session.get_ctty().get() != NULL )
+				if ( ctty != NULL )
 				{
 					// already has a controlling terminal
 					p7::throw_errno( EPERM );
@@ -138,7 +142,7 @@ namespace Genie
 				
 				// Check that we're not the controlling tty of another session
 				
-				this->setpgrp( current.GetPGID() );
+				this->setpgrp( process_group.id() );
 				
 				process_session.set_ctty( *this );
 				break;

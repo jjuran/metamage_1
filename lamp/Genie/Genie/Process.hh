@@ -209,8 +209,6 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			relix::process_group& GetProcessGroup() const;
-			
 			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }

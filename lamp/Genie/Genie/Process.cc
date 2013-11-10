@@ -493,9 +493,11 @@ namespace Genie
 	{
 		const pid_t pgid = *(pid_t*) param;
 		
-		if ( process.GetPGID() == pgid )
+		relix::process_group& process_group = process.get_process().get_process_group();
+		
+		if ( process_group.id() == pgid )
 		{
-			return &process.GetProcessGroup();
+			return &process_group;
 		}
 		
 		return NULL;
@@ -958,11 +960,6 @@ namespace Genie
 	pid_t Process::GetSID()  const
 	{
 		return get_process().get_process_group().get_session().id();
-	}
-	
-	relix::process_group& Process::GetProcessGroup()  const
-	{
-		return get_process().get_process_group();
 	}
 	
 	const IOPtr& Process::ControllingTerminal() const
