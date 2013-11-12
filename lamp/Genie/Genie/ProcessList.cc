@@ -31,6 +31,9 @@
 #include "relix/api/os_thread_api.hh"
 #include "relix/api/os_thread_box.hh"
 
+// Genie
+#include "Genie/Process.hh"
+
 
 namespace Genie
 {

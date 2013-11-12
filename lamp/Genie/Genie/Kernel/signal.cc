@@ -18,6 +18,7 @@
 
 // Genie
 #include "Genie/current_process.hh"
+#include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/SystemCallRegistry.hh"
 

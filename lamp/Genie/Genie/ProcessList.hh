@@ -9,12 +9,15 @@
 // POSIX
 #include <sys/types.h>
 
-// Genie
-#include "Genie/Process.hh"
+// plus
+#include "plus/string_fwd.hh"
 
 
 namespace Genie
 {
+	
+	class Process;
+	
 	
 	Process* lookup_process( pid_t pid );
 	Process& get_process   ( pid_t pid );
@@ -27,7 +30,7 @@ namespace Genie
 	
 	bool process_exists( pid_t pid );
 	
-	void* for_each_process( void* (*)( void*, pid_t, Process& ), void* = NULL );
+	void* for_each_process( void* (*)( void*, pid_t, Process& ), void* = 0 );  // NULL
 	
 	void spawn_process( const char* path, const char* const* argv, const char* const* envp );
 	

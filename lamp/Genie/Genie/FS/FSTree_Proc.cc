@@ -60,6 +60,7 @@
 #include "Genie/FS/property.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
