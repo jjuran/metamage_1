@@ -6,8 +6,11 @@
 // Standard C
 #include <errno.h>
 
-// Relix
+// relix-include
 #include "relix/sched.h"
+
+// relix-kernel
+#include "relix/task/process.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -68,11 +71,13 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 	{
 		Process& caller = current_process();
 		
-		const pid_t ppid = share_parent ? caller.GetPPID()
-		                                : caller.GetPID();
+		Process& child = clone_thread ? NewThread ( caller )
+		                              : NewProcess( caller );
 		
-		Process& child = clone_thread ? NewThread ( caller       )
-		                              : NewProcess( caller, ppid );
+		if ( share_parent )
+		{
+			child.get_process().set_ppid( caller.GetPPID() );
+		}
 		
 		if ( !share_fs )
 		{
