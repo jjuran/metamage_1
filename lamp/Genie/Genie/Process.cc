@@ -958,11 +958,6 @@ namespace Genie
 		return get_process().get_process_group().get_session().id();
 	}
 	
-	vfs::node_ptr Process::GetCWD() const
-	{
-		return get_process().get_process_resources().get_fs_info().getcwd()->GetFile();
-	}
-	
 	void Process::ChangeDirectory( const vfs::node& new_cwd )
 	{
 		get_process().get_process_resources().get_fs_info().chdir( opendir( new_cwd ) );
