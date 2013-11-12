@@ -168,11 +168,11 @@ namespace Genie
 		return *new_process;
 	}
 	
-	Process& NewProcess( Process& parent, pid_t ppid )
+	Process& NewProcess( Process& parent )
 	{
 		const pid_t pid = next_pid();
 		
-		Process* new_process = new Process( parent, pid, ppid, pid );
+		Process* new_process = new Process( parent, pid, 0, pid );
 		
 		global_processes[ pid ] = new_process;
 		
