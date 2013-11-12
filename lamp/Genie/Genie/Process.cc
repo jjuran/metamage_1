@@ -1142,8 +1142,6 @@ namespace Genie
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
 		itsFileDescriptors.reset();
 		
-		its_fs_info.reset();
-		
 		get_process().set_process_image( *new_process_image() );
 		
 		itsLifeStage = kProcessZombie;
