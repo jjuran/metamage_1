@@ -29,13 +29,8 @@
 #include "sys/wait.h"
 #include "unistd.h"
 
-// Relix
+// relix-include
 #include "relix/syscalls.h"
-#include "relix/config/syscall_stacks.hh"
-#include "relix/signal/signal_process_group.hh"
-#include "relix/signal/signal_traits.hh"
-#include "relix/task/alarm_clock.hh"
-#include "relix/task/process.hh"
 
 // Iota
 #include "iota/strings.hh"
@@ -82,11 +77,16 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
+#include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/signal/signal_process_group.hh"
+#include "relix/signal/signal_traits.hh"
+#include "relix/task/alarm_clock.hh"
 #include "relix/task/fd_table.hh"
 #include "relix/task/fs_info.hh"
 #include "relix/task/memory_data.hh"
+#include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/session.hh"
