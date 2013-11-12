@@ -48,6 +48,8 @@ namespace relix
 		public:
 			process( int id, int ppid, process_group& pg, process_image& image );
 			
+			process( int id, process& parent );
+			
 			~process();
 			
 			int id() const  { return its_id; }

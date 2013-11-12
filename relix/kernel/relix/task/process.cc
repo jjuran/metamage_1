@@ -29,6 +29,22 @@ namespace relix
 		its_times.tms_cstime = 0;
 	}
 	
+	process::process( int id, process& parent )
+	:
+		its_id           ( id   ),
+		its_ppid         ( parent.id() ),
+		its_last_activity(      ),
+		its_process_group( &parent.get_process_group() ),
+		its_process_image( &parent.get_process_image() )
+	{
+		// Reset resource utilization on fork
+		
+		its_times.tms_utime  = 0;
+		its_times.tms_stime  = 0;
+		its_times.tms_cutime = 0;
+		its_times.tms_cstime = 0;
+	}
+	
 	process::~process()
 	{
 	}

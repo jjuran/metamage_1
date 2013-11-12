@@ -595,10 +595,7 @@ namespace Genie
 	:
 		relix::thread( tid,
 		               parent.signals_blocked(),
-		               tid == pid ? *new relix::process( pid,
-		                                                 parent.GetPID(),
-		                                                 parent.get_process().get_process_group(),
-		                                                 parent.get_process().get_process_image() )
+		               tid == pid ? *new relix::process( pid, parent.get_process() )
 		                          : parent.get_process() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
