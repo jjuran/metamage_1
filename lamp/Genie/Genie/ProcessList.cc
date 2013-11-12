@@ -172,7 +172,7 @@ namespace Genie
 	{
 		const pid_t pid = next_pid();
 		
-		Process* new_process = new Process( parent, pid, 0, pid );
+		Process* new_process = new Process( parent, pid, pid );
 		
 		global_processes[ pid ] = new_process;
 		
@@ -186,7 +186,7 @@ namespace Genie
 		const pid_t pid  = caller.GetPID ();
 		const pid_t ppid = caller.GetPPID();
 		
-		Process* new_process = new Process( caller, pid, ppid, tid );
+		Process* new_process = new Process( caller, pid, tid );
 		
 		global_processes[ tid ] = new_process;
 		

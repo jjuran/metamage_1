@@ -591,7 +591,7 @@ namespace Genie
 		InstallExceptionHandlers();
 	}
 	
-	Process::Process( Process& parent, pid_t pid, pid_t ppid, pid_t tid ) 
+	Process::Process( Process& parent, pid_t pid, pid_t tid ) 
 	:
 		relix::thread( tid,
 		               parent.signals_blocked(),
