@@ -45,6 +45,8 @@
 #include "relix/api/current_process.hh"
 #include "relix/task/fd_table.hh"
 #include "relix/task/process.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
@@ -398,17 +400,17 @@ namespace Genie
 				pid_t pgid = process.GetPGID();
 				pid_t sid  = process.GetSID();
 				
-				const IOPtr& term = process.ControllingTerminal();
+				vfs::filehandle* term = process.get_process().get_process_group().get_session().get_ctty().get();
 				
 				plus::string terminal_name = "?";
 				
 				pid_t tpgid = 0;
 				
-				if ( IOHandle* handle = term.get() )
+				if ( term != NULL )
 				{
-					terminal_name = pathname( *handle->GetFile() );
+					terminal_name = pathname( *term->GetFile() );
 					
-					tpgid = getpgrp( *handle );
+					tpgid = getpgrp( *term );
 				}
 				
 				plus::var_string result;

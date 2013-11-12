@@ -962,11 +962,6 @@ namespace Genie
 		return get_process().get_process_group().get_session().id();
 	}
 	
-	const IOPtr& Process::ControllingTerminal() const
-	{
-		return get_process().get_process_group().get_session().get_ctty();
-	}
-	
 	vfs::node_ptr Process::GetCWD() const
 	{
 		return its_fs_info->getcwd()->GetFile();
