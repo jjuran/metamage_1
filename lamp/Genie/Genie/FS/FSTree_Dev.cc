@@ -23,8 +23,12 @@
 #include "vfs/node/types/dynamic_group.hh"
 
 // relix-kernel
+#include "relix/api/current_process.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/pts.hh"
+#include "relix/task/process.hh"
+#include "relix/task/process_group.hh"
+#include "relix/task/session.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -34,7 +38,6 @@
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
-#include "Genie/Process.hh"
 
 
 #ifndef CONFIG_DEV_SERIAL
@@ -122,9 +125,9 @@ namespace Genie
 	
 	IOPtr dev_tty::open( const FSTree* that, int flags, mode_t mode )
 	{
-		const IOPtr& tty = CurrentProcess().ControllingTerminal();
+		vfs::filehandle* tty = relix::current_process().get_process_group().get_session().get_ctty().get();
 		
-		if ( tty.get() == NULL )
+		if ( tty == NULL )
 		{
 			p7::throw_errno( ENOENT );
 		}
