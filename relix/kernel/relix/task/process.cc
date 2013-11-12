@@ -8,6 +8,7 @@
 // relix
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
+#include "relix/task/process_resources.hh"
 
 
 namespace relix
@@ -19,7 +20,8 @@ namespace relix
 		its_ppid         ( ppid ),
 		its_last_activity(      ),
 		its_process_group( &pg  ),
-		its_process_image( &image )
+		its_process_image( &image ),
+		its_process_resources( new process_resources() )
 	{
 		// Reset resource utilization on fork
 		
@@ -35,7 +37,8 @@ namespace relix
 		its_ppid         ( parent.id() ),
 		its_last_activity(      ),
 		its_process_group( &parent.get_process_group() ),
-		its_process_image( &parent.get_process_image() )
+		its_process_image( &parent.get_process_image() ),
+		its_process_resources( new process_resources( parent.get_process_resources() ) )
 	{
 		// Reset resource utilization on fork
 		
@@ -63,6 +66,11 @@ namespace relix
 	process_image& process::get_process_image() const
 	{
 		return *its_process_image;
+	}
+	
+	process_rsrcs& process::get_process_resources() const
+	{
+		return *its_process_resources;
 	}
 	
 	void process::set_process_group( process_group& pg )

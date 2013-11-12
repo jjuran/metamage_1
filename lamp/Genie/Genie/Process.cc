@@ -89,6 +89,7 @@
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
+#include "relix/task/process_resources.hh"
 #include "relix/task/session.hh"
 #include "relix/task/schedule.hh"
 #include "relix/task/signal_handlers.hh"
@@ -561,7 +562,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( "init" ),
-		its_fs_info           ( relix::fs_info::create( opendir( *vfs::root() ) ) ),
 		itsFileDescriptors    ( relix::fd_table::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
@@ -601,7 +601,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( parent.ProgramName() ),
-		its_fs_info           ( parent.its_fs_info ),
 		itsFileDescriptors    ( parent.itsFileDescriptors ),
 		its_signal_handlers   ( parent.its_signal_handlers ),
 		itsLifeStage          ( kProcessStarting ),
@@ -632,7 +631,7 @@ namespace Genie
 	
 	void Process::unshare_fs_info()
 	{
-		its_fs_info = duplicate( *its_fs_info );
+		get_process().get_process_resources().unshare_fs_info();
 	}
 	
 	void Process::unshare_files()
@@ -960,12 +959,12 @@ namespace Genie
 	
 	vfs::node_ptr Process::GetCWD() const
 	{
-		return its_fs_info->getcwd()->GetFile();
+		return get_process().get_process_resources().get_fs_info().getcwd()->GetFile();
 	}
 	
 	void Process::ChangeDirectory( const vfs::node& new_cwd )
 	{
-		its_fs_info->chdir( opendir( new_cwd ) );
+		get_process().get_process_resources().get_fs_info().chdir( opendir( new_cwd ) );
 	}
 	
 	void Process::ResumeAfterFork()

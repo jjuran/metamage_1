@@ -41,7 +41,6 @@ namespace relix
 {
 	
 	class fd_table;
-	class fs_info;
 	class memory_data;
 	class process_group;
 	class session;
@@ -115,8 +114,6 @@ namespace Genie
 			recall::stack_frame_pointer itsStackFramePtr;
 			
 			plus::string itsName;
-			
-			boost::intrusive_ptr< relix::fs_info > its_fs_info;
 			
 			boost::intrusive_ptr< relix::fd_table > itsFileDescriptors;
 			

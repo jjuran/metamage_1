@@ -28,6 +28,9 @@ namespace relix
 	
 	class process_group;
 	class process_image;
+	class process_resources;
+	
+	typedef process_resources process_rsrcs;
 	
 	
 	class process : public plus::ref_count< process >
@@ -44,6 +47,7 @@ namespace relix
 			
 			boost::intrusive_ptr< process_group > its_process_group;
 			boost::intrusive_ptr< process_image > its_process_image;
+			boost::intrusive_ptr< process_rsrcs > its_process_resources;
 		
 		public:
 			process( int id, int ppid, process_group& pg, process_image& image );
@@ -75,6 +79,7 @@ namespace relix
 			
 			process_group& get_process_group() const;
 			process_image& get_process_image() const;
+			process_rsrcs& get_process_resources() const;
 			
 			void set_process_group( process_group& pg );
 			void set_process_image( process_image& image );
