@@ -56,6 +56,8 @@ namespace relix
 			
 			void orphan()  { its_ppid = 1; }
 			
+			void set_ppid( int ppid )  { its_ppid = ppid; }
+			
 			void clear_ppid()  { its_ppid = 0; }
 			
 			clock_t get_last_activity() const  { return its_last_activity; }
