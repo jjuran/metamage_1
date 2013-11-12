@@ -33,6 +33,7 @@
 
 // relix-kernel
 #include "relix/api/current_process.hh"
+#include "relix/api/getcwd.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/getpid.hh"
@@ -81,7 +82,7 @@ namespace Genie
 				return set_errno( EINVAL );
 			}
 			
-			vfs::node_ptr newCWD = resolve_pathname( pathname, *current_process().GetCWD() );
+			vfs::node_ptr newCWD = resolve_pathname( pathname, *relix::getcwd() );
 			
 			vfs::resolve_links_in_place( newCWD );
 			
@@ -429,7 +430,7 @@ namespace Genie
 	{
 		try
 		{
-			vfs::node_ptr file = resolve_pathname( path, *current_process().GetCWD() );
+			vfs::node_ptr file = resolve_pathname( path, *relix::getcwd() );
 			
 			vfs::resolve_links_in_place( file );
 			
