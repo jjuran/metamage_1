@@ -770,7 +770,6 @@ namespace Genie
 		
 		vfs::node_ptr cwd = GetCWD();
 		
-		// Somehow (not GetCWD()) this fails in non-debug 68K in 7.6
 		vfs::node_ptr programFile = resolve_pathname( path, *cwd );
 		
 		vfs::resolve_links_in_place( programFile );
