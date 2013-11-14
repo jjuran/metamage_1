@@ -15,6 +15,7 @@
 #include "vfs/file_descriptor.hh"
 
 // relix-kernel
+#include "relix/api/assign_fd.hh"
 #include "relix/api/get_fds.hh"
 #include "relix/task/fd_map.hh"
 
@@ -39,7 +40,7 @@ namespace Genie
 		
 		if ( oldfd != newfd )
 		{
-			assign_file_descriptor( newfd, handle, close_on_exec );
+			relix::assign_fd( newfd, handle, close_on_exec );
 		}
 		
 		return newfd;

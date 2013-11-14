@@ -4,6 +4,7 @@
 */
 
 // relix-kernel
+#include "relix/api/assign_fd.hh"
 #include "relix/config/pts.hh"
 
 // Genie
@@ -32,8 +33,8 @@ static int ttypair( int fds[ 2 ] )
 		int master_fd = LowestUnusedFileDescriptor( 3 );
 		int slave_fd  = LowestUnusedFileDescriptor( master_fd + 1 );
 		
-		assign_file_descriptor( master_fd, *master );
-		assign_file_descriptor( slave_fd,  *slave  );
+		relix::assign_fd( master_fd, *master );
+		relix::assign_fd( slave_fd,  *slave  );
 		
 		fds[ 0 ] = master_fd;
 		fds[ 1 ] = slave_fd;

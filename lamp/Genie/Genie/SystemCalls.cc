@@ -31,6 +31,7 @@
 #include "vfs/functions/resolve_pathname.hh"
 
 // relix-kernel
+#include "relix/api/assign_fd.hh"
 #include "relix/api/current_process.hh"
 #include "relix/api/getcwd.hh"
 #include "relix/signal/caught_signal.hh"
@@ -220,8 +221,8 @@ namespace Genie
 			
 			pipe_ends ends = new_pipe( flags & O_NONBLOCK );
 			
-			assign_file_descriptor( reader_fd, *ends.reader, close_on_exec );
-			assign_file_descriptor( writer_fd, *ends.writer, close_on_exec );
+			relix::assign_fd( reader_fd, *ends.reader, close_on_exec );
+			relix::assign_fd( writer_fd, *ends.writer, close_on_exec );
 			
 			pipefd[ 0 ] = reader_fd;
 			pipefd[ 1 ] = writer_fd;
