@@ -9,9 +9,13 @@
 // Relix
 #include "relix/sched.h"
 
+// relix-kernel
+#include "relix/api/current_process.hh"
+#include "relix/api/errno.hh"
+#include "relix/task/process.hh"
+#include "relix/task/process_resources.hh"
+
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -27,7 +31,7 @@ int unshare( int flags )
 	if ( flags & ~supported_clone_flags )
 	{
 		// unsupported flag
-		return set_errno( EINVAL );
+		return relix::set_errno( EINVAL );
 	}
 	
 	const bool unshare_fs    = flags & CLONE_FS;
@@ -36,12 +40,12 @@ int unshare( int flags )
 	
 	if ( unshare_newns )
 	{
-		return set_errno( EPERM );
+		return relix::set_errno( EPERM );
 	}
 	
 	try
 	{
-		Process& caller = current_process();
+		relix::process_resources& caller = relix::current_process().get_process_resources();
 		
 		if ( unshare_fs )
 		{
@@ -50,12 +54,12 @@ int unshare( int flags )
 		
 		if ( unshare_files )
 		{
-			caller.unshare_files();
+			caller.unshare_fd_map();
 		}
 	}
 	catch ( ... )
 	{
-		return set_errno_from_exception();
+		return relix::set_errno_from_exception();
 	}
 	
 	return 0;
