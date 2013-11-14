@@ -229,7 +229,7 @@ namespace Genie
 	{
 		Process& parent = GetInitProcess();
 		
-		Process& child = NewProcess( parent, 1 );
+		Process& child = NewProcess( parent );
 		
 		child.unshare_fs_info();
 		child.unshare_files();
