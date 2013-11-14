@@ -77,11 +77,6 @@ namespace Genie
 		return pid_t( gear::parse_unsigned_decimal( parent->name().c_str() ) );
 	}
 	
-	static inline pid_t GetKeyFromParent( const FSTreePtr& parent )
-	{
-		return GetKeyFromParent( parent.get() );
-	}
-	
 	
 	static const relix::fd_table& fd_sequence( const FSTree* that )
 	{
