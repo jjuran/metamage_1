@@ -36,6 +36,7 @@
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
+#include "relix/syscall/close.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
@@ -72,21 +73,7 @@ namespace Genie
 	
 	using relix::alarm;
 	using relix::chdir;
-	
-	
-	static int close( int fd )
-	{
-		try
-		{
-			CloseFileDescriptor( fd );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::close;
 	
 	
 	static int dup3( int oldfd, int newfd, int flags )

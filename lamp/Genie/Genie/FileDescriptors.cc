@@ -34,13 +34,6 @@ namespace Genie
 		return files.first_unused( fd );
 	}
 	
-	void CloseFileDescriptor( int fd )
-	{
-		relix::fd_map& files = CurrentProcess().FileDescriptors();
-		
-		return files.close( fd );
-	}
-	
 	int DuplicateFileDescriptor( int oldfd, int newfd, bool close_on_exec )
 	{
 		// Throws EBADF
