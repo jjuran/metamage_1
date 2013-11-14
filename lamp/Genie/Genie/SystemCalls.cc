@@ -22,13 +22,11 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/primitives/opendir.hh"
 #include "vfs/primitives/seteof.hh"
 #include "vfs/filehandle/functions/seek.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
-#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
@@ -37,13 +35,12 @@
 #include "relix/api/getcwd.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
+#include "relix/syscall/chdir.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
-#include "relix/task/fs_info.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
-#include "relix/task/process_resources.hh"
 #include "relix/task/session.hh"
 
 // Genie
@@ -74,35 +71,7 @@ namespace Genie
 	
 	
 	using relix::alarm;
-	
-	
-	static int chdir( const char* pathname )
-	{
-		try
-		{
-			if ( pathname == NULL )
-			{
-				return set_errno( EINVAL );
-			}
-			
-			vfs::node_ptr newCWD = resolve_pathname( pathname, *relix::getcwd() );
-			
-			vfs::resolve_links_in_place( newCWD );
-			
-			if ( !is_directory( *newCWD ) )
-			{
-				return set_errno( exists( *newCWD ) ? ENOTDIR : ENOENT );
-			}
-			
-			relix::current_process().get_process_resources().get_fs_info().chdir( opendir( *newCWD ) );
-			
-			return 0;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
+	using relix::chdir;
 	
 	
 	static int close( int fd )
