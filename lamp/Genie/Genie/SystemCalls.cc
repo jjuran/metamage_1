@@ -40,6 +40,7 @@
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
+#include "relix/syscall/truncate.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
@@ -385,23 +386,7 @@ namespace Genie
 	}
 	
 	
-	static int truncate( const char* path, off_t length )
-	{
-		try
-		{
-			vfs::node_ptr file = resolve_pathname( path, *relix::getcwd() );
-			
-			vfs::resolve_links_in_place( file );
-			
-			seteof( *file, length );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::truncate;
 	
 	
 	static int ftruncate( int fd, off_t length )
