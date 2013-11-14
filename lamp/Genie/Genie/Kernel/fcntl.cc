@@ -18,6 +18,7 @@
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
+#include "relix/api/first_free_fd.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -48,7 +49,7 @@ namespace Genie
 	{
 		try
 		{
-			int fd = LowestUnusedFileDescriptor();
+			int fd = relix::first_free_fd();
 			
 			FSTreePtr file = ResolvePathAt( dirfd, path );
 			
@@ -104,7 +105,7 @@ namespace Genie
 				const bool close_on_exec = cmd == F_DUPFD_CLOEXEC;
 				
 				return DuplicateFileDescriptor( filedes,
-				                                LowestUnusedFileDescriptor( param ),
+				                                relix::first_free_fd( param ),
 				                                close_on_exec );
 			}
 			

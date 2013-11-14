@@ -26,6 +26,7 @@
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
+#include "relix/api/first_free_fd.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -66,8 +67,8 @@ int socketpair( int domain, int type, int protocol, int fds[2] )
 		IOPtr san_jose = NewPairedSocket( west, east, nonblocking );
 		IOPtr new_york = NewPairedSocket( east, west, nonblocking );
 		
-		int a = LowestUnusedFileDescriptor( 3 );
-		int b = LowestUnusedFileDescriptor( a + 1 );
+		int a = relix::first_free_fd( 3 );
+		int b = relix::first_free_fd( a + 1 );
 		
 		relix::assign_fd( a, *san_jose, close_on_exec );
 		relix::assign_fd( b, *new_york, close_on_exec );
@@ -88,7 +89,7 @@ int socket( int domain, int type, int protocol )
 {
 	using namespace Genie;
 	
-	int fd = LowestUnusedFileDescriptor();
+	int fd = relix::first_free_fd();
 	
 	// Assume domain is PF_INET, type is SOCK_STREAM, and protocol is INET_TCP
 	
@@ -167,7 +168,7 @@ int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 		
 		vfs::filehandle_ptr incoming = accept( get_filehandle( listener ), address, length );
 		
-		int fd = LowestUnusedFileDescriptor();
+		int fd = relix::first_free_fd();
 		
 		relix::assign_fd( fd, *incoming );
 		

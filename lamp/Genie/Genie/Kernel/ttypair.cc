@@ -5,11 +5,11 @@
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
+#include "relix/api/first_free_fd.hh"
 #include "relix/config/pts.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/IO/PseudoTTY.hh"
 
@@ -30,8 +30,8 @@ static int ttypair( int fds[ 2 ] )
 		
 		GetNewPseudoTTYPair( master, slave );
 		
-		int master_fd = LowestUnusedFileDescriptor( 3 );
-		int slave_fd  = LowestUnusedFileDescriptor( master_fd + 1 );
+		int master_fd = relix::first_free_fd( 3 );
+		int slave_fd  = relix::first_free_fd( master_fd + 1 );
 		
 		relix::assign_fd( master_fd, *master );
 		relix::assign_fd( slave_fd,  *slave  );

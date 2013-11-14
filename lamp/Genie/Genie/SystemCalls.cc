@@ -33,6 +33,7 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/current_process.hh"
+#include "relix/api/first_free_fd.hh"
 #include "relix/api/getcwd.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
@@ -216,8 +217,8 @@ namespace Genie
 		{
 			const bool close_on_exec = flags & O_CLOEXEC;
 			
-			int reader_fd = LowestUnusedFileDescriptor( 3 );
-			int writer_fd = LowestUnusedFileDescriptor( reader_fd + 1 );
+			int reader_fd = relix::first_free_fd( 3 );
+			int writer_fd = relix::first_free_fd( reader_fd + 1 );
 			
 			pipe_ends ends = new_pipe( flags & O_NONBLOCK );
 			
