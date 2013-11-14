@@ -76,6 +76,7 @@
 #include "vfs/primitives/exec.hh"
 
 // relix-kernel
+#include "relix/api/getcwd.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
@@ -764,7 +765,7 @@ namespace Genie
 		
 		relix::os_thread_box looseThread;
 		
-		vfs::node_ptr cwd = GetCWD();
+		vfs::node_ptr cwd = getcwd( get_process() );
 		
 		vfs::node_ptr programFile = resolve_pathname( path, *cwd );
 		
@@ -955,11 +956,6 @@ namespace Genie
 	pid_t Process::GetSID()  const
 	{
 		return get_process().get_process_group().get_session().id();
-	}
-	
-	vfs::node_ptr Process::GetCWD() const
-	{
-		return get_process().get_process_resources().get_fs_info().getcwd()->GetFile();
 	}
 	
 	void Process::ChangeDirectory( const vfs::node& new_cwd )

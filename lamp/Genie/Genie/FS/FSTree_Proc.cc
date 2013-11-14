@@ -43,6 +43,7 @@
 
 // relix-kernel
 #include "relix/api/current_process.hh"
+#include "relix/api/getcwd.hh"
 #include "relix/task/fd_table.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -173,7 +174,7 @@ namespace Genie
 		switch ( name[0] )
 		{
 			case 'c':  // cwd
-				return process.GetCWD();
+				return getcwd( process.get_process() );
 			
 			case 'e':  // exe
 				return process.ProgramFile();

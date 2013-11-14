@@ -15,10 +15,12 @@
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
+// relix
+#include "relix/api/getcwd.hh"
+
 // Genie
 #include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
-#include "Genie/Process.hh"
 
 
 #ifndef AT_FDCWD
@@ -49,7 +51,7 @@ namespace Genie
 			return vfs::resolve_absolute_path( path );
 		}
 		
-		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? CurrentProcess().GetCWD()
+		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? relix::getcwd()
 		                                         : GetDirFile( dirfd );
 		
 		return resolve_pathname( path, *at_dir );
