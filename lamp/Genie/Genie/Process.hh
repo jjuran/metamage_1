@@ -225,7 +225,7 @@ namespace Genie
 			
 			const vfs::node_ptr& ProgramFile() const  { return itsProgramFile; }
 			
-			relix::fd_map& FileDescriptors()  { return *itsFileDescriptors; }
+			relix::fd_map& FileDescriptors();
 			
 		#if CONFIG_SYSCALL_STACKS
 			

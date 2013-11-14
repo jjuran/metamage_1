@@ -956,6 +956,11 @@ namespace Genie
 		return get_process().get_process_group().get_session().id();
 	}
 	
+	relix::fd_map& Process::FileDescriptors()
+	{
+		return *itsFileDescriptors;
+	}
+	
 	void Process::ResumeAfterFork()
 	{
 		ASSERT( itsInterdependence == kProcessForking );
