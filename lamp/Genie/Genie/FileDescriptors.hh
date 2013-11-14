@@ -21,8 +21,6 @@ namespace vfs
 namespace Genie
 {
 	
-	int LowestUnusedFileDescriptor( int fd = 0 );
-	
 	int DuplicateFileDescriptor( int   oldfd,
 	                             int   newfd,
 	                             bool  close_on_exec = false );

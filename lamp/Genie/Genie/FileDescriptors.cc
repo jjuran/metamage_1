@@ -17,13 +17,6 @@
 namespace Genie
 {
 	
-	int LowestUnusedFileDescriptor( int fd )
-	{
-		relix::fd_map& files = relix::get_fds();
-		
-		return files.first_unused( fd );
-	}
-	
 	int DuplicateFileDescriptor( int oldfd, int newfd, bool close_on_exec )
 	{
 		// Throws EBADF
