@@ -24,6 +24,9 @@
 #include "vfs/filehandle/primitives/listen.hh"
 #include "vfs/filehandle/primitives/shutdown.hh"
 
+// relix-kernel
+#include "relix/api/assign_fd.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
@@ -66,8 +69,8 @@ int socketpair( int domain, int type, int protocol, int fds[2] )
 		int a = LowestUnusedFileDescriptor( 3 );
 		int b = LowestUnusedFileDescriptor( a + 1 );
 		
-		assign_file_descriptor( a, *san_jose, close_on_exec );
-		assign_file_descriptor( b, *new_york, close_on_exec );
+		relix::assign_fd( a, *san_jose, close_on_exec );
+		relix::assign_fd( b, *new_york, close_on_exec );
 		
 		fds[ 0 ] = a;
 		fds[ 1 ] = b;
@@ -94,9 +97,9 @@ int socket( int domain, int type, int protocol )
 		const bool close_on_exec = type & SOCK_CLOEXEC;
 		const bool nonblocking   = type & SOCK_NONBLOCK;
 		
-		assign_file_descriptor( fd,
-		                        *New_OT_Socket( nonblocking ),
-		                        close_on_exec );
+		relix::assign_fd( fd,
+		                  *New_OT_Socket( nonblocking ),
+		                  close_on_exec );
 	}
 	catch ( ... )
 	{
@@ -166,7 +169,7 @@ int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 		
 		int fd = LowestUnusedFileDescriptor();
 		
-		assign_file_descriptor( fd, *incoming );
+		relix::assign_fd( fd, *incoming );
 		
 		if ( addr == NULL  &&  addrlen != NULL )
 		{

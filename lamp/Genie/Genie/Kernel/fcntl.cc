@@ -16,6 +16,9 @@
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/open.hh"
 
+// relix-kernel
+#include "relix/api/assign_fd.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FileDescriptors.hh"
@@ -82,7 +85,7 @@ namespace Genie
 			
 			const bool close_on_exec = flags & O_CLOEXEC;
 			
-			assign_file_descriptor( fd, *opened, close_on_exec );
+			relix::assign_fd( fd, *opened, close_on_exec );
 			
 			return fd;
 		}
