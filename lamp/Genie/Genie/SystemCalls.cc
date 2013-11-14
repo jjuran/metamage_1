@@ -22,6 +22,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/primitives/opendir.hh"
 #include "vfs/primitives/seteof.hh"
 #include "vfs/filehandle/functions/seek.hh"
 #include "vfs/filehandle/primitives/pread.hh"
@@ -39,8 +40,10 @@
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
+#include "relix/task/fs_info.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
+#include "relix/task/process_resources.hh"
 #include "relix/task/session.hh"
 
 // Genie
@@ -91,7 +94,7 @@ namespace Genie
 				return set_errno( exists( *newCWD ) ? ENOTDIR : ENOENT );
 			}
 			
-			current_process().ChangeDirectory( *newCWD );
+			relix::current_process().get_process_resources().get_fs_info().chdir( opendir( *newCWD ) );
 			
 			return 0;
 		}

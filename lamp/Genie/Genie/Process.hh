@@ -221,8 +221,6 @@ namespace Genie
 			void Yield();
 			void AsyncYield();
 			
-			void ChangeDirectory( const vfs::node& new_cwd );
-			
 			const plus::string& ProgramName()  const  { return itsName;   }
 			
 			const vfs::node_ptr& ProgramFile() const  { return itsProgramFile; }

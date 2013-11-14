@@ -85,7 +85,6 @@
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/alarm_clock.hh"
 #include "relix/task/fd_table.hh"
-#include "relix/task/fs_info.hh"
 #include "relix/task/memory_data.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -101,7 +100,6 @@
 #include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
@@ -956,11 +954,6 @@ namespace Genie
 	pid_t Process::GetSID()  const
 	{
 		return get_process().get_process_group().get_session().id();
-	}
-	
-	void Process::ChangeDirectory( const vfs::node& new_cwd )
-	{
-		get_process().get_process_resources().get_fs_info().chdir( opendir( new_cwd ) );
 	}
 	
 	void Process::ResumeAfterFork()
