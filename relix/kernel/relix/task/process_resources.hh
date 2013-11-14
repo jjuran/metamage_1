@@ -19,6 +19,7 @@
 namespace relix
 {
 	
+	class fd_map;
 	class fs_info;
 	
 }
@@ -30,6 +31,7 @@ namespace relix
 	{
 		private:
 			boost::intrusive_ptr< fs_info > its_fs_info;
+			boost::intrusive_ptr< fd_map  > its_fd_map;
 		
 		public:
 			process_resources();
@@ -39,8 +41,10 @@ namespace relix
 			~process_resources();
 			
 			fs_info& get_fs_info() const;
+			fd_map&  get_fd_map () const;
 			
 			void unshare_fs_info();
+			void unshare_fd_map();
 	};
 	
 }

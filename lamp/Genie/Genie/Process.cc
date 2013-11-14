@@ -561,7 +561,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( "init" ),
-		itsFileDescriptors    ( relix::fd_map::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -600,7 +599,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( parent.ProgramName() ),
-		itsFileDescriptors    ( parent.itsFileDescriptors ),
 		its_signal_handlers   ( parent.its_signal_handlers ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -635,7 +633,7 @@ namespace Genie
 	
 	void Process::unshare_files()
 	{
-		itsFileDescriptors = duplicate( FileDescriptors() );
+		get_process().get_process_resources().unshare_fd_map();
 	}
 	
 	void Process::unshare_signal_handlers()
@@ -958,7 +956,7 @@ namespace Genie
 	
 	relix::fd_map& Process::FileDescriptors()
 	{
-		return *itsFileDescriptors;
+		return get_process().get_process_resources().get_fd_map();
 	}
 	
 	void Process::ResumeAfterFork()
@@ -1133,7 +1131,7 @@ namespace Genie
 		bool isSessionLeader = pid == sid;
 		
 		// This could yield, e.g. in OTCloseProvider() with sync idle events
-		itsFileDescriptors.reset();
+		get_process().reset_process_resources();
 		
 		get_process().set_process_image( *new_process_image() );
 		

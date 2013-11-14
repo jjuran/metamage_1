@@ -115,8 +115,6 @@ namespace Genie
 			
 			plus::string itsName;
 			
-			boost::intrusive_ptr< relix::fd_map > itsFileDescriptors;
-			
 			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
 			
 			ProcessLifeStage        itsLifeStage;
