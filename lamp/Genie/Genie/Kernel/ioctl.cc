@@ -13,7 +13,7 @@
 #include "vfs/file_descriptor.hh"
 
 // relix-kernel
-#include "relix/task/fd_table.hh"
+#include "relix/task/fd_map.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -27,7 +27,7 @@ namespace Genie
 	
 	static int ioctl( int filedes, unsigned long request, int* argp )
 	{
-		relix::fd_table& files = current_process().FileDescriptors();
+		relix::fd_map& files = current_process().FileDescriptors();
 		
 		try
 		{

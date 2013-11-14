@@ -40,7 +40,7 @@ struct tms;
 namespace relix
 {
 	
-	class fd_table;
+	class fd_map;
 	class memory_data;
 	class process_group;
 	class session;
@@ -115,7 +115,7 @@ namespace Genie
 			
 			plus::string itsName;
 			
-			boost::intrusive_ptr< relix::fd_table > itsFileDescriptors;
+			boost::intrusive_ptr< relix::fd_map > itsFileDescriptors;
 			
 			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
 			
@@ -225,7 +225,7 @@ namespace Genie
 			
 			const vfs::node_ptr& ProgramFile() const  { return itsProgramFile; }
 			
-			relix::fd_table& FileDescriptors()  { return *itsFileDescriptors; }
+			relix::fd_map& FileDescriptors()  { return *itsFileDescriptors; }
 			
 		#if CONFIG_SYSCALL_STACKS
 			

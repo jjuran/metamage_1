@@ -84,7 +84,7 @@
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/alarm_clock.hh"
-#include "relix/task/fd_table.hh"
+#include "relix/task/fd_map.hh"
 #include "relix/task/memory_data.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -561,7 +561,7 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( "init" ),
-		itsFileDescriptors    ( relix::fd_table::create() ),
+		itsFileDescriptors    ( relix::fd_map::create() ),
 		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -581,7 +581,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		relix::fd_table& fds = *itsFileDescriptors;
+		relix::fd_map& fds = *itsFileDescriptors;
 		
 		fds[ 0 ] =
 		fds[ 1 ] = GetSimpleDeviceHandle( "null"    );
@@ -699,7 +699,7 @@ namespace Genie
 		}
 	}
 	
-	static void CloseMarkedFileDescriptors( relix::fd_table& fileDescriptors, int keep_fd = -1 )
+	static void CloseMarkedFileDescriptors( relix::fd_map& fileDescriptors, int keep_fd = -1 )
 	{
 		// Close file descriptors with close-on-exec flag.
 		

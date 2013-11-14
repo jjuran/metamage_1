@@ -44,7 +44,7 @@
 // relix-kernel
 #include "relix/api/current_process.hh"
 #include "relix/api/getcwd.hh"
-#include "relix/task/fd_table.hh"
+#include "relix/task/fd_map.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
@@ -78,7 +78,7 @@ namespace Genie
 	}
 	
 	
-	static const relix::fd_table& fd_sequence( const FSTree* that )
+	static const relix::fd_map& fd_sequence( const FSTree* that )
 	{
 		const pid_t pid = gear::parse_unsigned_decimal( that->owner()->name().c_str() );
 		
@@ -102,7 +102,7 @@ namespace Genie
 	
 	static void proc_fd_listdir( const FSTree* that, vfs::dir_contents& cache )
 	{
-		const relix::fd_table& sequence = fd_sequence( that );
+		const relix::fd_map& sequence = fd_sequence( that );
 		
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
@@ -582,7 +582,7 @@ namespace Genie
 	{
 		const int key = gear::parse_unsigned_decimal( name.c_str() );
 		
-		const relix::fd_table& sequence = fd_sequence( that );
+		const relix::fd_map& sequence = fd_sequence( that );
 		
 		if ( !sequence.contains( key ) )
 		{
@@ -604,7 +604,7 @@ namespace Genie
 		const int    fd  = gear::parse_unsigned_decimal( fd_name  );
 		const pid_t  pid = gear::parse_unsigned_decimal( pid_name );
 		
-		relix::fd_table& files = GetProcess( pid ).FileDescriptors();
+		relix::fd_map& files = GetProcess( pid ).FileDescriptors();
 		
 		if ( !files.contains( fd ) )
 		{

@@ -1,9 +1,9 @@
 /*
-	fd_table.cc
-	-----------
+	fd_map.cc
+	---------
 */
 
-#include "relix/task/fd_table.hh"
+#include "relix/task/fd_map.hh"
 
 // Standard C++
 #include <vector>
@@ -23,52 +23,52 @@ namespace relix
 	using vfs::file_descriptor;
 	
 	
-	class fd_table_impl : public fd_table
+	class fd_map_impl : public fd_map
 	{
 		public:
 			std::vector< file_descriptor > its_fds;
 		
 		public:
-			fd_table_impl()
+			fd_map_impl()
 			{
 			}
 			
-			fd_table_impl( const std::vector< file_descriptor >& fds ) : its_fds( fds )
+			fd_map_impl( const std::vector< file_descriptor >& fds ) : its_fds( fds )
 			{
 			}
 			
-			void swap( fd_table_impl& other );
+			void swap( fd_map_impl& other );
 	};
 	
-	void fd_table_impl::swap( fd_table_impl& other )
+	void fd_map_impl::swap( fd_map_impl& other )
 	{
 		its_fds.swap( other.its_fds );
 	}
 	
-	inline void swap( fd_table_impl& a, fd_table_impl& b )
+	inline void swap( fd_map_impl& a, fd_map_impl& b )
 	{
 		a.swap( b );
 	}
 	
 	
-	static inline const std::vector< file_descriptor >& get_fds( const fd_table* that )
+	static inline const std::vector< file_descriptor >& get_fds( const fd_map* that )
 	{
-		return static_cast< const fd_table_impl* >( that )->its_fds;
+		return static_cast< const fd_map_impl* >( that )->its_fds;
 	}
 	
-	static inline std::vector< file_descriptor >& get_fds( fd_table* that )
+	static inline std::vector< file_descriptor >& get_fds( fd_map* that )
 	{
-		return static_cast< fd_table_impl* >( that )->its_fds;
+		return static_cast< fd_map_impl* >( that )->its_fds;
 	}
 	
-	bool fd_table::contains( int fd ) const
+	bool fd_map::contains( int fd ) const
 	{
 		const std::vector< file_descriptor >& fds = get_fds( this );
 		
 		return unsigned( fd ) < fds.size()  &&  fds[ fd ].handle.get() != NULL;
 	}
 	
-	file_descriptor& fd_table::at( int fd )
+	file_descriptor& fd_map::at( int fd )
 	{
 		if ( !contains( fd ) )
 		{
@@ -78,7 +78,7 @@ namespace relix
 		return get_fds( this )[ fd ];
 	}
 	
-	file_descriptor& fd_table::operator[]( int fd )
+	file_descriptor& fd_map::operator[]( int fd )
 	{
 		if ( fd < 0 )
 		{
@@ -95,7 +95,7 @@ namespace relix
 		return fds[ fd ];
 	}
 	
-	int fd_table::first_unused( int minimum )
+	int fd_map::first_unused( int minimum )
 	{
 		std::vector< file_descriptor >& fds = get_fds( this );
 		
@@ -114,12 +114,12 @@ namespace relix
 		return n;
 	}
 	
-	void fd_table::close( int fd )
+	void fd_map::close( int fd )
 	{
 		file_descriptor().swap( get_fds( this ).at( fd ) );
 	}
 	
-	void fd_table::for_each( void (*f)( void*, int, const file_descriptor& ), void* param ) const
+	void fd_map::for_each( void (*f)( void*, int, const file_descriptor& ), void* param ) const
 	{
 		const std::vector< file_descriptor >& fds = get_fds( this );
 		
@@ -135,7 +135,7 @@ namespace relix
 		
 	}
 	
-	void fd_table::for_each( void (*f)( void*, int, file_descriptor& ), void* param )
+	void fd_map::for_each( void (*f)( void*, int, file_descriptor& ), void* param )
 	{
 		std::vector< file_descriptor >& fds = get_fds( this );
 		
@@ -151,30 +151,30 @@ namespace relix
 		
 	}
 	
-	void fd_table::clear()
+	void fd_map::clear()
 	{
 		get_fds( this ).clear();
 	}
 	
-	void fd_table::swap( fd_table& other )
+	void fd_map::swap( fd_map& other )
 	{
-		relix::swap( static_cast< fd_table_impl& >( *this ),
-		             static_cast< fd_table_impl& >( other ) );
+		relix::swap( static_cast< fd_map_impl& >( *this ),
+		             static_cast< fd_map_impl& >( other ) );
 	}
 	
-	fd_table* fd_table::create()
+	fd_map* fd_map::create()
 	{
-		return new fd_table_impl();
+		return new fd_map_impl();
 	}
 	
-	fd_table* duplicate( const fd_table& one )
+	fd_map* duplicate( const fd_map& one )
 	{
-		return new fd_table_impl( get_fds( &one ) );
+		return new fd_map_impl( get_fds( &one ) );
 	}
 	
-	void destroy( const fd_table* x )
+	void destroy( const fd_map* x )
 	{
-		delete static_cast< const fd_table_impl* >( x );
+		delete static_cast< const fd_map_impl* >( x );
 	}
 	
 }

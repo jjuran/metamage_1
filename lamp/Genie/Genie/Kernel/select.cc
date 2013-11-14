@@ -14,7 +14,7 @@
 #include "vfs/file_descriptor.hh"
 
 // relix-kernel
-#include "relix/task/fd_table.hh"
+#include "relix/task/fd_map.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -50,7 +50,7 @@ namespace Genie
 		
 		try
 		{
-			relix::fd_table& files = current_process().FileDescriptors();
+			relix::fd_map& files = current_process().FileDescriptors();
 			
 			// Output fd sets
 			fd_set rd, wr, ex;

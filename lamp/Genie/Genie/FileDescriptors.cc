@@ -15,7 +15,7 @@
 #include "vfs/file_descriptor.hh"
 
 // relix-kernel
-#include "relix/task/fd_table.hh"
+#include "relix/task/fd_map.hh"
 
 // Genie
 #include "Genie/Process.hh"
@@ -29,14 +29,14 @@ namespace Genie
 	
 	int LowestUnusedFileDescriptor( int fd )
 	{
-		relix::fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_map& files = CurrentProcess().FileDescriptors();
 		
 		return files.first_unused( fd );
 	}
 	
 	void CloseFileDescriptor( int fd )
 	{
-		relix::fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_map& files = CurrentProcess().FileDescriptors();
 		
 		return files.close( fd );
 	}
@@ -63,14 +63,14 @@ namespace Genie
 			p7::throw_errno( EBADF );
 		}
 		
-		relix::fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_map& files = CurrentProcess().FileDescriptors();
 		
 		(files[ fd ] = vfs::filehandle_ptr( &handle )).set_to_close_on_exec( close_on_exec );
 	}
 	
 	vfs::file_descriptor& GetFileDescriptor( int fd )
 	{
-		relix::fd_table& files = CurrentProcess().FileDescriptors();
+		relix::fd_map& files = CurrentProcess().FileDescriptors();
 		
 		return files.at( fd );
 	}
