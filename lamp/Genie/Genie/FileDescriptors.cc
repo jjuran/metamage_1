@@ -5,12 +5,6 @@
 
 #include "Genie/FileDescriptors.hh"
 
-// POSIX
-#include "errno.h"
-
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // vfs
 #include "vfs/file_descriptor.hh"
 
@@ -22,9 +16,6 @@
 
 namespace Genie
 {
-	
-	namespace p7 = poseven;
-	
 	
 	int LowestUnusedFileDescriptor( int fd )
 	{
@@ -44,20 +35,6 @@ namespace Genie
 		}
 		
 		return newfd;
-	}
-	
-	void assign_file_descriptor( int               fd,
-	                             vfs::filehandle&  handle,
-	                             bool              close_on_exec )
-	{
-		if ( fd < 0 )
-		{
-			p7::throw_errno( EBADF );
-		}
-		
-		relix::fd_map& files = relix::get_fds();
-		
-		(files[ fd ] = vfs::filehandle_ptr( &handle )).set_to_close_on_exec( close_on_exec );
 	}
 	
 	vfs::file_descriptor& GetFileDescriptor( int fd )

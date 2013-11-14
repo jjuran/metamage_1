@@ -27,10 +27,6 @@ namespace Genie
 	                             int   newfd,
 	                             bool  close_on_exec = false );
 	
-	void assign_file_descriptor( int               fd,
-	                             vfs::filehandle&  handle,
-	                             bool              close_on_exec = false );
-	
 	vfs::file_descriptor& GetFileDescriptor( int fd );
 	
 	vfs::filehandle& get_filehandle( int fd );
