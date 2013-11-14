@@ -581,7 +581,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		relix::fd_map& fds = *itsFileDescriptors;
+		relix::fd_map& fds = FileDescriptors();
 		
 		fds[ 0 ] =
 		fds[ 1 ] = GetSimpleDeviceHandle( "null"    );
@@ -635,7 +635,7 @@ namespace Genie
 	
 	void Process::unshare_files()
 	{
-		itsFileDescriptors = duplicate( *itsFileDescriptors );
+		itsFileDescriptors = duplicate( FileDescriptors() );
 	}
 	
 	void Process::unshare_signal_handlers()
@@ -794,7 +794,7 @@ namespace Genie
 			}
 		}
 		
-		CloseMarkedFileDescriptors( *itsFileDescriptors, script_fd );
+		CloseMarkedFileDescriptors( FileDescriptors(), script_fd );
 		
 		clear_signals_pending();
 		
@@ -875,7 +875,7 @@ namespace Genie
 		itsReexecArgs[6] = _6;
 		itsReexecArgs[7] = _7;
 		
-		CloseMarkedFileDescriptors( *itsFileDescriptors );
+		CloseMarkedFileDescriptors( FileDescriptors() );
 		
 		if ( gCurrentProcess != this )
 		{
