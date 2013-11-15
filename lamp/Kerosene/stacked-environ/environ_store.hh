@@ -46,8 +46,6 @@ namespace kerosene
 			void put( char* string );
 			void unset( const char* name );
 			void clear();
-			
-			static environ_store* pop( environ_store* top );
 	};
 	
 }
