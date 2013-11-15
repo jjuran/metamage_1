@@ -15,6 +15,11 @@ char** environ = NULL;
 namespace kerosene
 {
 	
+	static bool cstr_less( const char* a, const char* b )
+	{
+		return std::strcmp( a, b ) < 0;
+	}
+	
 	static inline char* copy_string( const char* s )
 	{
 		const std::size_t len = std::strlen( s );
@@ -49,6 +54,8 @@ namespace kerosene
 					result.push_back( copy_string( *vars++ ) );
 				}
 			}
+			
+			std::sort( result.begin(), result.end(), std::ptr_fun( &cstr_less ) );
 			
 			result.push_back( NULL );
 		}
