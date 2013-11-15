@@ -7,7 +7,6 @@
 #include <unistd.h>
 
 // Relix
-#include "relix/environ_stack.h"
 #include "relix/vfork.h"
 
 
@@ -21,26 +20,11 @@ extern "C" pid_t vfork_start( const _vfork_pad* pad );
 static void _resume_vfork( const _vfork_pad* pad );
 
 
-static void resume_vfork( const _vfork_pad* pad )
-{
-	_pop_environ();
-	
-	_resume_vfork( pad );
-}
-
-
 static pid_t _vfork( _vfork_pad* pad )
 {
-	pad->resume_handler = &resume_vfork;
+	pad->resume_handler = &_resume_vfork;
 	
-	pid_t result = vfork_start( pad );
-	
-	if ( result == 0 )
-	{
-		_push_environ();
-	}
-	
-	return result;
+	return vfork_start( pad );
 }
 
 #ifdef __MC68K__
