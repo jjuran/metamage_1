@@ -18,12 +18,12 @@
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
+#include "relix/api/dup_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
@@ -105,9 +105,9 @@ namespace Genie
 			{
 				const bool close_on_exec = cmd == F_DUPFD_CLOEXEC;
 				
-				return DuplicateFileDescriptor( filedes,
-				                                relix::first_free_fd( param ),
-				                                close_on_exec );
+				return relix::dup_fd( filedes,
+				                      relix::first_free_fd( param ),
+				                      close_on_exec );
 			}
 			
 			vfs::file_descriptor& descriptor = relix::get_fd( filedes );
