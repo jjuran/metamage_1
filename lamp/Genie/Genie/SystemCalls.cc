@@ -35,6 +35,7 @@
 #include "relix/api/current_process.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/getcwd.hh"
+#include "relix/api/get_fd_handle.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
@@ -167,7 +168,7 @@ namespace Genie
 	{
 		try
 		{
-			vfs::filehandle* file = &get_filehandle( fd );
+			vfs::filehandle* file = &relix::get_fd_handle( fd );
 			
 			if ( DirHandle* h = IOHandle_Cast< DirHandle >( file ) )
 			{
@@ -271,7 +272,7 @@ namespace Genie
 		
 		try
 		{
-			ssize_t get = pread( get_filehandle( fd ),
+			ssize_t get = pread( relix::get_fd_handle( fd ),
 			                     (char*) buf,
 			                     count,
 			                     offset );
@@ -395,7 +396,7 @@ namespace Genie
 	{
 		try
 		{
-			seteof( get_filehandle( fd ), length );
+			seteof( relix::get_fd_handle( fd ), length );
 		}
 		catch ( ... )
 		{
@@ -415,7 +416,7 @@ namespace Genie
 		
 		try
 		{
-			vfs::filehandle& file = get_filehandle( fd );
+			vfs::filehandle& file = relix::get_fd_handle( fd );
 			
 			const char* buffer = reinterpret_cast< const char* >( buf );
 			

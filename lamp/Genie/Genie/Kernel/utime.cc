@@ -7,14 +7,17 @@
 #include "sys/stat.h"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/touch.hh"
 #include "vfs/primitives/utime.hh"
 
+// relix-kernel
+#include "relix/api/get_fd_handle.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -49,7 +52,7 @@ namespace Genie
 		try
 		{
 			FSTreePtr file = path != NULL ? ResolvePathAt( fd, path )
-			                              : get_filehandle( fd ).GetFile();
+			                              : relix::get_fd_handle( fd ).GetFile();
 			
 			const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
 			

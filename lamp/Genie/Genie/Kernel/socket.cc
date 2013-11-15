@@ -27,10 +27,10 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
+#include "relix/api/get_fd_handle.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/IO/OTSocket.hh"
 #include "Genie/IO/PairedSocket.hh"
 
@@ -117,7 +117,7 @@ int bind( int fd, const struct sockaddr* name, socklen_t namelen )
 	
 	try
 	{
-		bind( get_filehandle( fd ), *name, namelen );
+		bind( relix::get_fd_handle( fd ), *name, namelen );
 	}
 	catch ( ... )
 	{
@@ -134,7 +134,7 @@ int listen( int fd, int backlog )
 	
 	try
 	{
-		listen( get_filehandle( fd ), backlog );
+		listen( relix::get_fd_handle( fd ), backlog );
 	}
 	catch ( ... )
 	{
@@ -166,7 +166,7 @@ int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
 		// addr != NULL  implies  addrlen != NULL
 		socklen_t& length = addr != NULL ? *addrlen : dummy_length;
 		
-		vfs::filehandle_ptr incoming = accept( get_filehandle( listener ), address, length );
+		vfs::filehandle_ptr incoming = accept( relix::get_fd_handle( listener ), address, length );
 		
 		int fd = relix::first_free_fd();
 		
@@ -197,7 +197,7 @@ int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
 	
 	try
 	{
-		connect( get_filehandle( fd ), *serv_addr, addrlen );
+		connect( relix::get_fd_handle( fd ), *serv_addr, addrlen );
 	}
 	catch ( ... )
 	{
@@ -230,7 +230,7 @@ int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 	
 	try
 	{
-		const sockaddr& addr = getsockname( get_filehandle( fd ) );
+		const sockaddr& addr = getsockname( relix::get_fd_handle( fd ) );
 		
 		get_sockaddr_name( addr, name, namelen );
 	}
@@ -249,7 +249,7 @@ int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	
 	try
 	{
-		const sockaddr& addr = getpeername( get_filehandle( fd ) );
+		const sockaddr& addr = getpeername( relix::get_fd_handle( fd ) );
 		
 		get_sockaddr_name( addr, name, namelen );
 	}
@@ -268,7 +268,7 @@ int shutdown( int fd, int how )
 	
 	try
 	{
-		shutdown( get_filehandle( fd ), how );
+		shutdown( relix::get_fd_handle( fd ), how );
 	}
 	catch ( ... )
 	{

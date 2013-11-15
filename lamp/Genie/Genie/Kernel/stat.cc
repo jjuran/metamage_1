@@ -19,9 +19,11 @@
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/stat.hh"
 
+// relix-kernel
+#include "relix/api/get_fd_handle.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -87,7 +89,7 @@ namespace Genie
 	{
 		try
 		{
-			chmod( *get_filehandle( fd ).GetFile(), mode );
+			chmod( *relix::get_fd_handle( fd ).GetFile(), mode );
 		}
 		catch ( ... )
 		{
@@ -137,7 +139,7 @@ namespace Genie
 		
 		try
 		{
-			IOHandle& handle = get_filehandle( fd );
+			vfs::filehandle& handle = relix::get_fd_handle( fd );
 			
 			stat( *handle.GetFile(), *sb );
 			

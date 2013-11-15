@@ -9,9 +9,15 @@
 // POSIX
 #include "sys/mman.h"
 
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/memory_mapping.hh"
+
+// relix-kernel
+#include "relix/api/get_fd_handle.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/FS/ResolvePathAt.hh"
@@ -37,11 +43,11 @@ namespace Genie
 		
 		try
 		{
-			typedef memory_mapping_ptr  intrusive_ptr;
+			typedef vfs::memory_mapping_ptr  intrusive_ptr;
 			typedef void*                                   addr_t;
 			
-			const intrusive_ptr memory = anonymous ? map_anonymous           ( len, prot, flags      )
-			                                       : get_filehandle( fd ).Map( len, prot, flags, off );
+			const intrusive_ptr memory = anonymous ? map_anonymous                 ( len, prot, flags      )
+			                                       : relix::get_fd_handle( fd ).Map( len, prot, flags, off );
 			
 			const addr_t address = current_process().add_memory_mapping( memory.get() );
 			
