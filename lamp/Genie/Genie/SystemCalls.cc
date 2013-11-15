@@ -33,6 +33,7 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/current_process.hh"
+#include "relix/api/dup_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/getcwd.hh"
 #include "relix/api/get_fd_handle.hh"
@@ -99,7 +100,7 @@ namespace Genie
 		
 		try
 		{
-			DuplicateFileDescriptor( oldfd, newfd, close_on_exec );
+			relix::dup_fd( oldfd, newfd, close_on_exec );
 			
 			if ( oldfd == newfd  &&  !dup2_semantics )
 			{
