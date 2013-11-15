@@ -17,7 +17,6 @@
 
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
-#include "vfs/filehandle/primitives/seteof.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -29,6 +28,7 @@
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
 #include "relix/syscall/dup3.hh"
+#include "relix/syscall/ftruncate.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
@@ -323,23 +323,7 @@ namespace Genie
 	
 	
 	using relix::truncate;
-	
-	
-	static int ftruncate( int fd, off_t length )
-	{
-		try
-		{
-			seteof( relix::get_fd_handle( fd ), length );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
-	
-	
+	using relix::ftruncate;
 	using relix::pwrite;
 	
 	
