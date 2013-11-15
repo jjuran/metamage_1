@@ -10,6 +10,7 @@
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
+#include "relix/api/get_fd.hh"
 #include "relix/api/get_fds.hh"
 #include "relix/task/fd_map.hh"
 
@@ -39,7 +40,7 @@ namespace Genie
 	
 	vfs::filehandle& get_filehandle( int fd )
 	{
-		return *GetFileDescriptor( fd ).handle;
+		return *relix::get_fd( fd ).handle;
 	}
 	
 }
