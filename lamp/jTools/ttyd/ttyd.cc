@@ -7,13 +7,12 @@
 #include <sys/ttycom.h>
 
 // poseven
-#include "poseven/functions/clearenv.hh"
 #include "poseven/functions/ioctl.hh"
 #include "poseven/functions/read.hh"
 #include "poseven/functions/select.hh"
 #include "poseven/functions/setsid.hh"
 #include "poseven/functions/sigaction.hh"
-#include "poseven/functions/execv.hh"
+#include "poseven/functions/execve.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/functions/_exit.hh"
@@ -64,11 +63,11 @@ namespace tool
 			
 			p7::ioctl( p7::stdin_fileno, TIOCSCTTY, NULL );  // Reattach to terminal
 			
-			p7::clearenv();
-			
 			const char* login_argv[] = { "/bin/login", NULL };
 			
-			p7::execv( login_argv );
+			const char* login_envp[] = { NULL };
+			
+			p7::execve( login_argv, login_envp );
 		}
 		
 		close( slave );
