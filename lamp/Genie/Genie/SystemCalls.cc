@@ -33,7 +33,6 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/current_process.hh"
-#include "relix/api/dup_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/getcwd.hh"
 #include "relix/api/get_fd_handle.hh"
@@ -41,6 +40,7 @@
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
+#include "relix/syscall/dup3.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
@@ -65,10 +65,6 @@
 #define O_CLOEXEC  0
 #endif
 
-#ifndef DUP_DUP2
-#define DUP_DUP2  (-1)
-#endif
-
 
 namespace Genie
 {
@@ -79,41 +75,7 @@ namespace Genie
 	using relix::alarm;
 	using relix::chdir;
 	using relix::close;
-	
-	
-	static int dup3( int oldfd, int newfd, int flags )
-	{
-		const bool dup2_semantics = flags == DUP_DUP2;
-		
-		if ( dup2_semantics )
-		{
-			flags = 0;
-		}
-		
-		if ( flags & ~O_CLOEXEC )
-		{
-			// Invalid flags
-			return set_errno( EINVAL );
-		}
-		
-		const bool close_on_exec = flags & O_CLOEXEC;
-		
-		try
-		{
-			relix::dup_fd( oldfd, newfd, close_on_exec );
-			
-			if ( oldfd == newfd  &&  !dup2_semantics )
-			{
-				return set_errno( EINVAL );
-			}
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return newfd;
-	}
+	using relix::dup3;
 	
 	
 	static void _exit( int status )
