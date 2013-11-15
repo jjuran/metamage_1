@@ -121,9 +121,7 @@ namespace kerosene
 	}
 	
 	
-	environ_store::environ_store( environ_store* next, char** envp )
-	:
-		its_next( next )
+	environ_store::environ_store( char** envp )
 	{
 		copy_vars( envp, its_vars );
 		

@@ -25,7 +25,7 @@ static environ_store& get_envp()
 {
 	if ( global_environ_top == NULL )
 	{
-		global_environ_top = new environ_store( global_environ_top, environ );
+		global_environ_top = new environ_store( environ );
 	}
 	
 	return *global_environ_top;

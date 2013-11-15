@@ -19,7 +19,6 @@ namespace kerosene
 		private:
 			std::vector< char* >     its_vars;
 			std::set< const char* >  its_user_owned_vars;
-			environ_store*           its_next;
 			
 		private:
 			// Non-copyable
@@ -37,7 +36,7 @@ namespace kerosene
 			void reset();
 		
 		public:
-			environ_store( environ_store* next, char** envp );
+			environ_store( char** envp );
 			
 			~environ_store();
 			
