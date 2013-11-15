@@ -5,12 +5,8 @@
 
 #include "Genie/FileDescriptors.hh"
 
-// vfs
-#include "vfs/file_descriptor.hh"
-
 // relix-kernel
 #include "relix/api/assign_fd.hh"
-#include "relix/api/get_fd.hh"
 
 
 namespace Genie
@@ -27,11 +23,6 @@ namespace Genie
 		}
 		
 		return newfd;
-	}
-	
-	vfs::filehandle& get_filehandle( int fd )
-	{
-		return *relix::get_fd( fd ).handle;
 	}
 	
 }

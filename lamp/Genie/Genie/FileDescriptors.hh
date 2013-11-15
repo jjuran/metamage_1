@@ -21,8 +21,6 @@ namespace Genie
 	                             int   newfd,
 	                             bool  close_on_exec = false );
 	
-	vfs::filehandle& get_filehandle( int fd );
-	
 	template < class Handle >
 	inline Handle& GetFileHandleWithCast( int fd, int errnum = 0 )
 	{
