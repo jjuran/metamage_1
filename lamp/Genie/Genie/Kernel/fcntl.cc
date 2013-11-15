@@ -19,6 +19,7 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
+#include "relix/api/get_fd.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -109,7 +110,7 @@ namespace Genie
 				                                close_on_exec );
 			}
 			
-			vfs::file_descriptor& descriptor = GetFileDescriptor( filedes );
+			vfs::file_descriptor& descriptor = relix::get_fd( filedes );
 			
 			switch ( cmd )
 			{
