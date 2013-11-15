@@ -11,21 +11,12 @@
 #include "Genie/IO/IOHandle_Cast.hh"
 
 
-namespace vfs
-{
-	
-	struct file_descriptor;
-	
-}
-
 namespace Genie
 {
 	
 	int DuplicateFileDescriptor( int   oldfd,
 	                             int   newfd,
 	                             bool  close_on_exec = false );
-	
-	vfs::file_descriptor& GetFileDescriptor( int fd );
 	
 	vfs::filehandle& get_filehandle( int fd );
 	
