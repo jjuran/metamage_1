@@ -24,7 +24,6 @@
 #include "vfs/node.hh"
 #include "vfs/primitives/seteof.hh"
 #include "vfs/filehandle/functions/seek.hh"
-#include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
@@ -44,6 +43,7 @@
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
+#include "relix/syscall/pread.hh"
 #include "relix/syscall/truncate.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -226,27 +226,7 @@ namespace Genie
 	}
 	
 	
-	static ssize_t pread( int fd, void* buf, size_t count, off_t offset )
-	{
-		if ( offset < 0 )
-		{
-			return set_errno( EINVAL );
-		}
-		
-		try
-		{
-			ssize_t get = pread( relix::get_fd_handle( fd ),
-			                     (char*) buf,
-			                     count,
-			                     offset );
-			
-			return get;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
+	using relix::pread;
 	
 	static ssize_t read( int fd, void* buf, size_t count )
 	{
