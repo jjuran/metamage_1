@@ -24,7 +24,6 @@
 #include "vfs/node.hh"
 #include "vfs/primitives/seteof.hh"
 #include "vfs/filehandle/functions/seek.hh"
-#include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
@@ -44,6 +43,7 @@
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
 #include "relix/syscall/pread.hh"
+#include "relix/syscall/pwrite.hh"
 #include "relix/syscall/truncate.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -350,28 +350,8 @@ namespace Genie
 	}
 	
 	
-	static ssize_t pwrite( int fd, const void* buf, size_t count, off_t offset )
-	{
-		if ( offset < 0 )
-		{
-			return set_errno( EINVAL );
-		}
-		
-		try
-		{
-			vfs::filehandle& file = relix::get_fd_handle( fd );
-			
-			const char* buffer = reinterpret_cast< const char* >( buf );
-			
-			const ssize_t put = pwrite( file, buffer, count, offset );
-			
-			return put;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
+	using relix::pwrite;
+	
 	
 	static ssize_t write( int fd, const void* buf, size_t count )
 	{
