@@ -5,14 +5,9 @@
 
 // Standard C
 #include <errno.h>
-#include <signal.h>
-#include <string.h>
 
 // POSIX
-#include "sys/ioctl.h"
-#include "sys/stat.h"
 #include "sys/uio.h"
-#include "unistd.h"
 
 // Debug
 #include "debug/assert.hh"
@@ -21,18 +16,13 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
-#include "vfs/node.hh"
-#include "vfs/primitives/seteof.hh"
 #include "vfs/filehandle/functions/seek.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
-#include "vfs/functions/resolve_links_in_place.hh"
-#include "vfs/functions/resolve_pathname.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/current_process.hh"
 #include "relix/api/first_free_fd.hh"
-#include "relix/api/getcwd.hh"
 #include "relix/api/get_fd_handle.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
