@@ -8,10 +8,6 @@
 // standard C/C++
 #include <cstring>
 
-// Standard C++
-#include <algorithm>
-#include <vector>
-
 // debug
 #include "debug/assert.hh"
 #include "debug/boost_assert.hh"
@@ -20,8 +16,8 @@
 #include <boost/intrusive_ptr.hpp>
 
 // plus
+#include "plus/argv.hh"
 #include "plus/simple_map.hh"
-#include "plus/var_string.hh"
 
 // vfs
 #include "vfs/memory_mapping.hh"
@@ -30,42 +26,16 @@
 namespace relix
 {
 	
-	static void assign_flattened_argv( plus::var_string& result, char const *const *argv )
-	{
-		result.clear();
-		
-		// Check for NULL environ
-		
-		if ( argv == NULL )
-		{
-			return;
-		}
-		
-		while ( *argv )
-		{
-			const char* p = *argv++;
-			
-			result.append( p, std::strlen( p ) + 1 );  // include trailing NUL
-		}
-	}
-	
-	
 	struct program_parameters
 	{
-		plus::var_string its_cmdline;
-		plus::var_string its_environ;
-		
-		std::vector< char* > its_argv;
-		std::vector< char* > its_envp;
+		plus::argv its_cmdline;
+		plus::argv its_environ;
 	};
 	
 	static void swap( program_parameters& a, program_parameters& b )
 	{
-		a.its_cmdline.swap( b.its_cmdline );
-		a.its_environ.swap( b.its_environ );
-		
-		std::swap( a.its_argv, b.its_argv );
-		std::swap( a.its_envp, b.its_envp );
+		swap( a.its_cmdline, b.its_cmdline );
+		swap( a.its_environ, b.its_environ );
 	}
 	
 	class memory_data_impl : public memory_data
@@ -149,63 +119,33 @@ namespace relix
 	
 	const plus::string& memory_data::get_cmdline() const
 	{
-		return impl_cast( this )->its_parameters.its_cmdline;
-	}
-	
-	
-	static void assign_unflattened_argv( std::vector< char* >& result, plus::var_string& flat )
-	{
-		result.clear();
-		
-		char* begin = &*flat.begin();
-		char* end   = &*flat.end();
-		
-		while ( begin < end )
-		{
-			char* null = std::find( begin, end, '\0' );
-			
-			ASSERT( null != end );
-			
-			result.push_back( begin );
-			
-			begin = null + 1;
-		}
-		
-		result.push_back( NULL );
+		return impl_cast( this )->its_parameters.its_cmdline.get_string();
 	}
 	
 	
 	void memory_data::set_argv( const char *const *argv )
 	{
-		plus::var_string& cmdline = impl_cast( this )->its_parameters.its_cmdline;
-		
-		assign_flattened_argv( cmdline, argv );
-		
-		assign_unflattened_argv( impl_cast( this )->its_parameters.its_argv, cmdline );
+		impl_cast( this )->its_parameters.its_cmdline.assign( argv );
 	}
 	
 	void memory_data::set_envp( const char *const *envp )
 	{
-		plus::var_string& flatenv = impl_cast( this )->its_parameters.its_environ;
-		
-		assign_flattened_argv( flatenv, envp );
-		
-		assign_unflattened_argv( impl_cast( this )->its_parameters.its_envp, flatenv );
+		impl_cast( this )->its_parameters.its_environ.assign( envp );
 	}
 	
 	int memory_data::get_argc() const
 	{
-		return impl_cast( this )->its_parameters.its_argv.size() - 1;  // don't count trailing NULL
+		return impl_cast( this )->its_parameters.its_cmdline.get_argc();  // don't count trailing NULL
 	}
 	
 	char* const* memory_data::get_argv()
 	{
-		return &impl_cast( this )->its_parameters.its_argv[ 0 ];
+		return impl_cast( this )->its_parameters.its_cmdline.get_argv();
 	}
 	
 	char* const* memory_data::get_envp()
 	{
-		return &impl_cast( this )->its_parameters.its_envp[ 0 ];
+		return impl_cast( this )->its_parameters.its_environ.get_argv();
 	}
 	
 	void* memory_data::add_memory_mapping( const vfs::memory_mapping* mapping )
