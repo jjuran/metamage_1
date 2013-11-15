@@ -15,6 +15,7 @@
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/open.hh"
+#include "vfs/primitives/opendir.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -25,7 +26,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/FS/opendir.hh"
 #include "Genie/IO/Stream.hh"
 #include "Genie/SystemCallRegistry.hh"
 

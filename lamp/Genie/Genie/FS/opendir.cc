@@ -3,7 +3,8 @@
 	----------
 */
 
-#include "Genie/FS/opendir.hh"
+// vfs
+#include "vfs/primitives/opendir.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
