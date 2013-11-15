@@ -17,10 +17,6 @@
 namespace Genie
 {
 	
-	int DuplicateFileDescriptor( int   oldfd,
-	                             int   newfd,
-	                             bool  close_on_exec = false );
-	
 	template < class Handle >
 	inline Handle& GetFileHandleWithCast( int fd, int errnum = 0 )
 	{
