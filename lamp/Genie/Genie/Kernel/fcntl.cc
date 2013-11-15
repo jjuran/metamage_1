@@ -11,6 +11,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
@@ -26,7 +27,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -82,8 +82,8 @@ namespace Genie
 				return set_errno( exists( *file ) ? ENOTDIR : ENOENT );
 			}
 			
-			IOPtr opened = directory ? opendir( *file              )
-			                         : open   ( *file, flags, mode );
+			vfs::filehandle_ptr opened = directory ? opendir( *file              )
+			                                       : open   ( *file, flags, mode );
 			
 			const bool close_on_exec = flags & O_CLOEXEC;
 			
@@ -125,20 +125,18 @@ namespace Genie
 					break;
 			}
 			
-			IOHandle& handle = *descriptor.handle;
-			
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( handle );
+			vfs::filehandle& handle = *descriptor.handle;
 			
 			const int mask = O_APPEND | O_NONBLOCK;  // settable flags
 			
 			switch ( cmd )
 			{
 				case F_GETFL:
-					return stream.get_flags();
+					return handle.get_flags();
 					
 				case F_SETFL:
 					// Current unsettable flags plus new settable flags
-					stream.set_flags( (stream.get_flags() & ~mask) | (param & mask) );
+					handle.set_flags( (handle.get_flags() & ~mask) | (param & mask) );
 					return 0;
 				
 				default:
