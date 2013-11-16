@@ -7,6 +7,7 @@
 
 // poseven
 #include "poseven/functions/fstat.hh"
+#include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/pread.hh"
 #include "poseven/functions/pwrite.hh"
 
@@ -56,11 +57,21 @@ namespace vfs
 		return p7::pwrite( fd, buffer, n, offset );
 	}
 	
+	static void posix_seteof( vfs::filehandle* file, off_t offset )
+	{
+		posix_file_extra& extra = *(posix_file_extra*) file->extra();
+		
+		const p7::fd_t fd = p7::fd_t( extra.fd );
+		
+		p7::ftruncate( fd, offset );
+	}
+	
 	static const bstore_method_set posix_bstore_methods =
 	{
 		&posix_pread,
 		&posix_geteof,
 		&posix_pwrite,
+		&posix_seteof,
 	};
 	
 	static const filehandle_method_set posix_methods =
