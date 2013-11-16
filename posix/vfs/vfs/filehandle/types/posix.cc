@@ -8,6 +8,7 @@
 // poseven
 #include "poseven/functions/fstat.hh"
 #include "poseven/functions/pread.hh"
+#include "poseven/functions/pwrite.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -46,10 +47,20 @@ namespace vfs
 		return sb.st_size;
 	}
 	
+	static ssize_t posix_pwrite( filehandle* file, const char* buffer, size_t n, off_t offset )
+	{
+		posix_file_extra& extra = *(posix_file_extra*) file->extra();
+		
+		const p7::fd_t fd = p7::fd_t( extra.fd );
+		
+		return p7::pwrite( fd, buffer, n, offset );
+	}
+	
 	static const bstore_method_set posix_bstore_methods =
 	{
 		&posix_pread,
 		&posix_geteof,
+		&posix_pwrite,
 	};
 	
 	static const filehandle_method_set posix_methods =
