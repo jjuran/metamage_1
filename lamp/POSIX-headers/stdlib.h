@@ -131,13 +131,6 @@ unsigned long
 	 strtoul(const char *, char **, int);
 int	 system(const char *);
 
-/* these are currently just stubs */
-int	 mblen(const char *, size_t);
-size_t	 mbstowcs(wchar_t *, const char *, size_t);
-int	 wctomb(char *, wchar_t);
-int	 mbtowc(wchar_t *, const char *, size_t);
-size_t	 wcstombs(char *, const wchar_t *, size_t);
-
 /*
  * IEEE Std 1003.1c-95, also adopted by X/Open CAE Spec Issue 5 Version 2
  */
