@@ -17,8 +17,8 @@ namespace vfs
 {
 	
 	typedef int (*relix_entry)( int                             argc,
-	                            char**                          argv,
-	                            char**                          envp,
+	                            char* const*                    argv,
+	                            char* const*                    envp,
 	                            _relix_system_parameter_block*  pb );
 	
 	class program : public plus::ref_count< program >
