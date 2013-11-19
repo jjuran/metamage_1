@@ -125,6 +125,8 @@ namespace tool
 			
 			setenv( name, value.c_str(), 1 );
 		}
+		
+		setenv( "PATH", "/usr/local/bin:/usr/bin:/bin", 1 );
 	}
 	
 	static void ForkExecWait( char const* const             argv[],
@@ -157,8 +159,22 @@ namespace tool
 				close( reader );
 			}
 			
+			/*
+				I'm deprecating the HTTP-based local editor.  (a) I haven't
+				used it in years, (b) it relies on a totally nonstandard HTTP
+				method, (c) securing it is a nuisance (since it depends on SSH
+				port forwarding), and (d) I'd rather use Freemount or FORGE
+				(which are intended for this) than a one-off hack of HTTP.
+				
+				It's probably best not to pass the server's PATH through.
+				Set a reasonable one in SetCGIVariables(); a CGI program can
+				always change it.
+				
+				FIXME:  We can't actually uncomment clearenv() below, because
+				it's nonstandard and unsupported on OS X.
+			*/
+			
 			// This eliminates LOCAL_EDITOR, PATH, and SECURITYSESSIONID.
-			// We'll have to consider other approaches.
 			//clearenv();
 			
 			SetCGIVariables( request );
