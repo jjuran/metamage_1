@@ -142,7 +142,7 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 	return -1;
 }
 
-int execvp( const char* file, char* const argv[] )
+int execvpe( const char* file, char* const argv[], char* const envp[] )
 {
 	char path[ 4096 ];
 	
@@ -158,7 +158,12 @@ int execvp( const char* file, char* const argv[] )
 		file = path;
 	}
 	
-	return execv( file, argv );
+	return execve( file, argv, envp );
+}
+
+int execvp( const char* file, char* const argv[] )
+{
+	return execvpe( file, argv, environ );
 }
 
 int execle( const char* path, const char* arg0, ... )
