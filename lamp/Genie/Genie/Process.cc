@@ -275,9 +275,9 @@ namespace Genie
 		}
 		else
 		{
-			int    argc = its_memory_data->get_argc();
-			char** argv = its_memory_data->get_argv();
-			char** envp = its_memory_data->get_envp();
+			int          argc = its_memory_data->get_argc();
+			char* const* argv = its_memory_data->get_argv();
+			char* const* envp = its_memory_data->get_envp();
 			
 			vfs::relix_entry relix_main = its_exec_handle->get_main_entry_point();
 			
