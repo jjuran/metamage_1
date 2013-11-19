@@ -1,66 +1,23 @@
-/*	=======
- *	exec.cc
- *	=======
- */
+/*
+	execvpe.cc
+	----------
+*/
+
+#include "execvpe.hh"
+
+// POSIX
+#include <unistd.h>
+#include <sys/stat.h>
 
 // Standard C
-#include "errno.h"
-#include <stdarg.h>
-#include "stdlib.h"
+#include <errno.h>
+#include <stdlib.h>
 
 // Standard C/C++
 #include <cstring>
 
-// POSIX
-#include "sys/stat.h"
-#include "unistd.h"
 
-// Iota
-#include "iota/strings.hh"
-
-
-#pragma exceptions off
-
-
-extern "C" char** environ;
-
-
-static inline void inscribe_decimal( int x, char* s )
-{
-	char units[] = "9876543210";
-	
-	char* p = units + STRLEN( "9876543210" );
-	
-	if ( x == 0 )
-	{
-		--p;
-	}
-	else
-	{
-		while ( x != 0 )
-		{
-			*--p = '0' + x % 10;
-			
-			x /= 10;
-		}
-	}
-	
-	std::strcpy( s, p );
-}
-
-int fexecve( int fd, char *const argv[], char *const envp[] )
-{
-	char path[] = "/dev/fd/9876543210";
-	
-	inscribe_decimal( fd, path + STRLEN( "/dev/fd/" ) );
-	
-	return execve( path, argv, envp );
-}
-
-int execv( const char* path, char* const* argv )
-{
-	return execve( path, argv, environ );
-}
+#ifdef __APPLE__
 
 static inline const char* getpath()
 {
@@ -161,37 +118,5 @@ int execvpe( const char* file, char* const argv[], char* const envp[] )
 	return execve( file, argv, envp );
 }
 
-int execvp( const char* file, char* const argv[] )
-{
-	return execvpe( file, argv, environ );
-}
-
-int execle( const char* path, const char* arg0, ... )
-{
-	va_list va;
-	
-	va_start( va, arg0 );
-	
-	while ( const char* arg = va_arg( va, const char * ) )
-	{
-	}
-	
-	char* const* envp = va_arg( va, char* const* );
-	
-	va_end( va );
-	
-	char* const* argv = (char**) &arg0;
-	
-	return execve( path, argv, envp );
-}
-
-int execl( const char* path, const char* arg0, ... )
-{
-	return execv( path, (char**) &arg0 );
-}
-
-int execlp( const char* file, const char* arg0, ... )
-{
-	return execvp( file, (char**) &arg0 );
-}
+#endif
 
