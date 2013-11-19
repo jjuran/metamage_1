@@ -6,10 +6,6 @@
 // Standard C/C++
 #include <cctype>
 #include <cstdio>
-#include <cstdlib>
-
-// Standard C
-#include <stdlib.h>
 
 // POSIX
 #include <arpa/inet.h>
@@ -24,12 +20,13 @@
 #include "gear/hexidecimal.hh"
 
 // plus
+#include "plus/argv.hh"
 #include "plus/hexidecimal.hh"
 #include "plus/var_string.hh"
 
 // poseven
 #include "poseven/extras/pump.hh"
-#include "poseven/functions/execv.hh"
+#include "poseven/functions/execve.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
@@ -87,8 +84,10 @@ namespace tool
 		return a_size == b_size  &&  std::equal( a, a + a_size, b );
 	}
 	
-	static void SetCGIVariables( const HTTP::MessageReceiver& request )
+	static plus::string GetCGIVariables( const HTTP::MessageReceiver& request )
 	{
+		plus::var_string result;
+		
 		const HTTP::HeaderIndex& index = request.GetHeaderIndex();
 		
 		const char* stream = request.GetHeaderStream();
@@ -123,8 +122,15 @@ namespace tool
 			plus::string value( stream + it->value_offset,
 			                    stream + it->crlf_offset );
 			
-			setenv( name, value.c_str(), 1 );
+			result += name;
+			result += '=';
+			
+			result.append( value.c_str(), value.size() + 1 );
 		}
+		
+		result.append( STR_LEN( "PATH=/usr/local/bin:/usr/bin:/bin" ) + 1 );
+		
+		return result.move();
 	}
 	
 	static void ForkExecWait( char const* const             argv[],
@@ -133,6 +139,8 @@ namespace tool
 		const plus::string& partialData = request.GetPartialContent();
 		
 		bool partial_data_exist = !partialData.empty();
+		
+		plus::argv env = GetCGIVariables( request );
 		
 		int pipe_ends[2];
 		
@@ -157,13 +165,7 @@ namespace tool
 				close( reader );
 			}
 			
-			// This eliminates LOCAL_EDITOR, PATH, and SECURITYSESSIONID.
-			// We'll have to consider other approaches.
-			//clearenv();
-			
-			SetCGIVariables( request );
-			
-			p7::execv( argv );
+			p7::execve( argv, env.get_argv() );
 		}
 		
 		if ( partial_data_exist )
