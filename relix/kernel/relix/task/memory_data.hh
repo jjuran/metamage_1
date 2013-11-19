@@ -47,8 +47,8 @@ namespace relix
 			
 			int get_argc() const;
 			
-			char** get_argv();
-			char** get_envp();
+			char* const* get_argv();
+			char* const* get_envp();
 			
 			typedef void* addr_t;
 			

@@ -198,12 +198,12 @@ namespace relix
 		return impl_cast( this )->its_parameters.its_argv.size() - 1;  // don't count trailing NULL
 	}
 	
-	char** memory_data::get_argv()
+	char* const* memory_data::get_argv()
 	{
 		return &impl_cast( this )->its_parameters.its_argv[ 0 ];
 	}
 	
-	char** memory_data::get_envp()
+	char* const* memory_data::get_envp()
 	{
 		return &impl_cast( this )->its_parameters.its_envp[ 0 ];
 	}
