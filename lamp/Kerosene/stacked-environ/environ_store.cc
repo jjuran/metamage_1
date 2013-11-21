@@ -8,9 +8,6 @@
 // Standard C/C++
 #include <cstring>
 
-// Debug
-#include "debug/assert.hh"
-
 
 char** environ = NULL;
 
@@ -124,24 +121,7 @@ namespace kerosene
 	}
 	
 	
-	environ_store* environ_store::pop( environ_store* top )
-	{
-		ASSERT( top != NULL );
-		
-		environ_store *const next = top->its_next;
-		
-		ASSERT( next != NULL );
-		
-		next->update_environ();
-		
-		delete top;
-		
-		return next;
-	}
-	
-	environ_store::environ_store( environ_store* next, char** envp )
-	:
-		its_next( next )
+	environ_store::environ_store( char** envp )
 	{
 		copy_vars( envp, its_vars );
 		

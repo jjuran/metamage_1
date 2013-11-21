@@ -7,9 +7,6 @@
 #include "errno.h"
 #include "stdlib.h"
 
-// Relix
-#include "relix/environ_stack.h"
-
 // Kerosene
 #include "environ_store.hh"
 
@@ -24,34 +21,14 @@ using kerosene::environ_store;
 
 static environ_store *global_environ_top = NULL;
 
-static int global_environ_level = 0;
-static int global_vfork_level   = 0;
-
 static environ_store& get_envp()
 {
-	while ( global_vfork_level >= global_environ_level )
+	if ( global_environ_top == NULL )
 	{
-		global_environ_top = new environ_store( global_environ_top, environ );
-		
-		++global_environ_level;
+		global_environ_top = new environ_store( environ );
 	}
 	
 	return *global_environ_top;
-}
-
-void _push_environ()
-{
-	++global_vfork_level;
-}
-
-void _pop_environ()
-{
-	if ( global_environ_level > global_vfork_level-- )
-	{
-		global_environ_top = environ_store::pop( global_environ_top );
-		
-		--global_environ_level;
-	}
 }
 
 
