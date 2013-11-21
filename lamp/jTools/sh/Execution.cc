@@ -552,6 +552,8 @@ namespace tool
 				
 				if ( *a != *b )
 				{
+					typedef unsigned char uint8_t;
+					
 					return uint8_t( *a ) < uint8_t( *b );
 				}
 				
