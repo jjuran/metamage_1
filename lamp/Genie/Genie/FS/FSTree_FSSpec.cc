@@ -20,6 +20,9 @@
 #include "MoreFiles/FileCopy.h"
 #include "MoreFiles/MoreFilesExtras.h"
 
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -49,9 +52,6 @@
 
 // Arcana / MD5
 #include "MD5/MD5.hh"
-
-// Pedestal
-#include "Pedestal/WakeUp.hh"
 
 // MacLamp
 #include "FSSpec_from_stat.h"
@@ -104,7 +104,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Ped = Pedestal;
 	
 	
 	namespace path_descent_operators
@@ -1098,7 +1097,7 @@ namespace Genie
 			
 			cInfo.done = true;
 			
-			Ped::WakeUp();
+			mac::sys::request_async_wakeup();
 		}
 		
 	}
