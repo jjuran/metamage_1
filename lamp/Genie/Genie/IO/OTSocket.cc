@@ -43,9 +43,6 @@
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"
 
-// Pedestal
-#include "Pedestal/Application.hh"
-
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
@@ -59,7 +56,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace Ped = Pedestal;
 	
 	
 	struct InetAddress : private ::InetAddress
@@ -386,9 +382,6 @@ namespace Genie
 			{
 				break;
 			}
-			
-			// Hack to make sure we don't get starved for events
-			Ped::AdjustSleepForTimer( 4 );
 			
 			try_again( IsNonblocking() );
 		}
