@@ -23,6 +23,9 @@
 // POSIX
 #include <sys/socket.h>
 
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -42,7 +45,6 @@
 
 // Pedestal
 #include "Pedestal/Application.hh"
-#include "Pedestal/WakeUp.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
@@ -119,7 +121,7 @@ namespace Genie
 	                                    OTResult     result,
 	                                    void*        cookie )
 	{
-		Ped::WakeUp();
+		mac::sys::request_async_wakeup();
 		
 		try
 		{

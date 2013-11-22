@@ -32,6 +32,9 @@
 // Nostalgia
 #include "Nostalgia/LowMem.hh"
 
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -72,7 +75,6 @@
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/SetPort_GetWindow.hh"
-#include "Pedestal/WakeUp.hh"
 #include "Pedestal/Window.hh"
 
 
@@ -822,20 +824,11 @@ namespace Pedestal
 	
 	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
 	{
-		gInWaitNextEvent = true;
-		
-		if ( gAsyncEventsReady )
-		{
-			gAsyncEventsReady = false;
-			
-			sleep = 0;
-		}
-		
 		EventRecord event;
 		
 		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
 		
-		gInWaitNextEvent = false;
+		mac::sys::clear_async_wakeup();
 		
 		return event;
 	}

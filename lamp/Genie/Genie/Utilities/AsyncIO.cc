@@ -5,6 +5,9 @@
 
 #include "Genie/Utilities/AsyncIO.hh"
 
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+
 // plus
 #include "plus/pointer_to_function.hh"
 
@@ -21,9 +24,6 @@
 #include "MacIO/GetCatInfo_Async.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
-// Pedestal
-#include "Pedestal/WakeUp.hh"
-
 // Genie
 #include "Genie/FS/sys/mac/errata.hh"
 
@@ -35,7 +35,6 @@ namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace Ped = Pedestal;
 	
 	
 #if TARGET_CPU_68K && !TARGET_RT_MAC_CFM
@@ -48,7 +47,7 @@ namespace Genie
 	
 #endif
 	{
-		Ped::WakeUp();
+		mac::sys::request_async_wakeup();
 	}
 	
 	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
