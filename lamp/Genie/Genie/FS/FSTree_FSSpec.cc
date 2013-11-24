@@ -67,7 +67,7 @@
 #include "vfs/primitives/stat.hh"
 
 // Genie
-#include "Genie/code/executable_file.hh"
+#include "Genie/BinaryImage.hh"
 #include "Genie/code/prepare_executable.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
@@ -934,7 +934,7 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		execution_unit unit = load_executable_file( extra.fsspec );
+		execution_unit unit = GetBinaryImage( extra.fsspec );
 		
 		return prepare_executable( unit );
 	}
