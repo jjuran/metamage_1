@@ -12,8 +12,8 @@
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
-// Genie
-#include "Genie/mmap/map_anonymous.hh"
+// MacVFS
+#include "MacVFS/mmap/map_anonymous.hh"
 
 
 namespace Genie
@@ -42,7 +42,7 @@ namespace Genie
 	//
 	SimpleDeviceHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
-		return map_anonymous( length, prot, flags );
+		return vfs::map_anonymous( length, prot, flags );
 	}
 	
 }

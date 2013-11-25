@@ -3,7 +3,7 @@
 	----------------
 */
 
-#include "Genie/mmap/map_anonymous.hh"
+#include "MacVFS/mmap/map_anonymous.hh"
 
 // Standard C
 #include <string.h>
@@ -15,14 +15,14 @@
 #include "MacVFS/mmap/Handle_memory_mapping.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
-	vfs::memory_mapping_ptr map_anonymous( std::size_t length, int prot, int flags )
+	memory_mapping_ptr map_anonymous( std::size_t length, int prot, int flags )
 	{
 		::Handle h = NULL;
 		
@@ -48,7 +48,7 @@ namespace Genie
 			memset( *handle.get(), '\0', length );
 		}
 		
-		return new vfs::Handle_memory_mapping( handle, length, flags );
+		return new Handle_memory_mapping( handle, length, flags );
 	}
 	
 }

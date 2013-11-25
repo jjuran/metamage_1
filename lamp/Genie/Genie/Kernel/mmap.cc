@@ -16,12 +16,14 @@
 // relix-kernel
 #include "relix/api/get_fd_handle.hh"
 
+// MacVFS
+#include "MacVFS/mmap/map_anonymous.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/FS/ResolvePathAt.hh"
-#include "Genie/mmap/map_anonymous.hh"
 
 
 namespace Genie
@@ -46,7 +48,7 @@ namespace Genie
 			typedef vfs::memory_mapping_ptr  intrusive_ptr;
 			typedef void*                                   addr_t;
 			
-			const intrusive_ptr memory = anonymous ? map_anonymous                 ( len, prot, flags      )
+			const intrusive_ptr memory = anonymous ? vfs::map_anonymous            ( len, prot, flags      )
 			                                       : relix::get_fd_handle( fd ).Map( len, prot, flags, off );
 			
 			const addr_t address = current_process().add_memory_mapping( memory.get() );
