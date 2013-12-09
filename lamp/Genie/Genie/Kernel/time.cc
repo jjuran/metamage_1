@@ -4,10 +4,8 @@
  */
 
 // Standard C
+#include <stdint.h>
 #include <time.h>
-
-// Standard C++
-#include <algorithm>
 
 // POSIX
 #include "errno.h"
@@ -120,7 +118,12 @@ namespace Genie
 			relix::prevent_syscall_restart();
 		}
 		
-		set_timespec_microseconds( remaining, std::max( remaining_microseconds, 0LL ) );
+		if ( remaining_microseconds < 0 )
+		{
+			remaining_microseconds = 0;
+		}
+		
+		set_timespec_microseconds( remaining, remaining_microseconds );
 		
 		return result;
 	}
