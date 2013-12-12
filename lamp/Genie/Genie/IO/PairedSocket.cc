@@ -16,9 +16,6 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
-// Nitrogen
-#include "Nitrogen/OSUtils.hh"
-
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
@@ -28,7 +25,6 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
