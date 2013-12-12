@@ -201,6 +201,8 @@
 #define __NR_recv                      203
 #define __NR_sendto                    204
 #define __NR_recvfrom                  205
+#define __NR_sendmsg                   206
+#define __NR_recvmsg                   207
 
 #define __NR_preadv                    333
 #define __NR_pwritev                   334
