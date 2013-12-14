@@ -20,12 +20,14 @@ namespace vfs
 	{
 		const vfs::bstore_method_set& bstore_methods = that.bstore_methods();
 		
-		if ( bstore_methods.seteof == NULL )
+		if ( bstore_methods.seteof != NULL )
+		{
+			bstore_methods.seteof( &that, length );
+		}
+		else
 		{
 			seteof( *that.GetFile(), length );
 		}
-		
-		bstore_methods.seteof( &that, length );
 	}
 	
 }
