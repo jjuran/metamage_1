@@ -29,6 +29,7 @@
 #include "relix/syscall/close.hh"
 #include "relix/syscall/dup3.hh"
 #include "relix/syscall/ftruncate.hh"
+#include "relix/syscall/getpgid.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/gettid.hh"
@@ -80,22 +81,7 @@ namespace Genie
 	}
 	
 	
-	static pid_t getpgid( pid_t pid )
-	{
-		try
-		{
-			Process& proc = pid == 0 ? current_process()
-			                         : GetProcess( pid );
-			
-			return proc.GetPGID();
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
-	
-	
+	using relix::getpgid;
 	using relix::getpid;
 	using relix::getppid;
 	using relix::gettid;
