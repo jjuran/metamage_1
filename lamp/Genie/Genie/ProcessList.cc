@@ -26,6 +26,9 @@
 // MacFeatures
 #include "MacFeatures/Threads.hh"
 
+// relix-api
+#include "relix/api/get_thread.hh"
+
 // relix-kernel
 #include "relix/config/mini.hh"
 #include "relix/api/os_thread_api.hh"
@@ -321,6 +324,16 @@ namespace Genie
 		}
 		
 		return for_each_process( &any_running ) == NULL;
+	}
+	
+}
+
+namespace relix
+{
+	
+	thread& get_thread( int tid )
+	{
+		return Genie::get_process( tid );
 	}
 	
 }
