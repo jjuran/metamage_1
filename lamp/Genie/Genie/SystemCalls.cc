@@ -32,6 +32,7 @@
 #include "relix/syscall/getpgid.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
+#include "relix/syscall/getsid.hh"
 #include "relix/syscall/gettid.hh"
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
@@ -84,23 +85,8 @@ namespace Genie
 	using relix::getpgid;
 	using relix::getpid;
 	using relix::getppid;
+	using relix::getsid;
 	using relix::gettid;
-	
-	
-	static pid_t getsid( pid_t pid )
-	{
-		try
-		{
-			Process& proc = pid == 0 ? current_process()
-			                         : GetProcess( pid );
-			
-			return proc.GetSID();
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
 	
 	
 	static off_t lseek( int fd, off_t offset, int whence )
