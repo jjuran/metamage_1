@@ -32,6 +32,8 @@ namespace vfs
 	typedef const sockaddr* (*getpeername_method)( filehandle* );
 	typedef const sockaddr* (*getsockname_method)( filehandle* );
 	
+	typedef int (*conveying_method)( filehandle* );
+	
 	struct socket_method_set
 	{
 		bind_method      bind;
@@ -42,6 +44,8 @@ namespace vfs
 		
 		getsockname_method  getsockname;
 		getpeername_method  getpeername;
+		
+		conveying_method  conveying;
 	};
 	
 }

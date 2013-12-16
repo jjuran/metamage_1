@@ -12,9 +12,6 @@
 // Standard C/C++
 #include <cstring>
 
-// plus
-#include "plus/conduit.hh"
-
 // vfs
 #include "vfs/filehandle/primitives/accept.hh"
 #include "vfs/filehandle/primitives/bind.hh"
@@ -49,8 +46,6 @@ namespace
 {
 #endif
 
-using plus::conduit;
-
 
 int socketpair( int domain, int type, int protocol, int fds[2] )
 {
@@ -61,8 +56,8 @@ int socketpair( int domain, int type, int protocol, int fds[2] )
 		const bool close_on_exec = type & SOCK_CLOEXEC;
 		const bool nonblocking   = type & SOCK_NONBLOCK;
 		
-		boost::intrusive_ptr< conduit > east( new conduit );
-		boost::intrusive_ptr< conduit > west( new conduit );
+		boost::intrusive_ptr< vfs::stream > east( new vfs::stream );
+		boost::intrusive_ptr< vfs::stream > west( new vfs::stream );
 		
 		IOPtr san_jose = NewPairedSocket( west, east, nonblocking );
 		IOPtr new_york = NewPairedSocket( east, west, nonblocking );
