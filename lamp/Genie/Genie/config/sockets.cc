@@ -10,6 +10,7 @@
 #include "relix/config/mini.hh"
 #include "relix/syscall/accept.hh"
 #include "relix/syscall/bind.hh"
+#include "relix/syscall/connect.hh"
 #include "relix/syscall/listen.hh"
 
 // Genie
@@ -25,6 +26,7 @@ namespace {
 
 using relix::accept;
 using relix::bind;
+using relix::connect;
 using relix::listen;
 
 

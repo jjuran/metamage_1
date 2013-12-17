@@ -10,7 +10,6 @@
 #include <cstring>
 
 // vfs
-#include "vfs/filehandle/primitives/connect.hh"
 #include "vfs/filehandle/primitives/getpeername.hh"
 #include "vfs/filehandle/primitives/getsockname.hh"
 #include "vfs/filehandle/primitives/shutdown.hh"
@@ -97,25 +96,6 @@ int socket( int domain, int type, int protocol )
 	}
 	
 	return fd;
-}
-
-
-int connect( int fd, const struct sockaddr* serv_addr, socklen_t addrlen )
-{
-	using namespace Genie;
-	
-	// Assume sin_family is AF_INET
-	
-	try
-	{
-		connect( relix::get_fd_handle( fd ), *serv_addr, addrlen );
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
 }
 
 
