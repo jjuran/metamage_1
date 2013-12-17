@@ -6,14 +6,9 @@
 // POSIX
 #include <sys/socket.h>
 
-// vfs
-#include "vfs/filehandle/primitives/getpeername.hh"
-
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
-#include "relix/api/get_fd_handle.hh"
-#include "relix/socket/get_sockaddr_name.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -92,25 +87,6 @@ int socket( int domain, int type, int protocol )
 	}
 	
 	return fd;
-}
-
-
-int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
-{
-	using namespace Genie;
-	
-	try
-	{
-		const sockaddr& addr = getpeername( relix::get_fd_handle( fd ) );
-		
-		relix::get_sockaddr_name( addr, name, namelen );
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
 }
 
 #ifndef __MACOS__

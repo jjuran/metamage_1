@@ -11,6 +11,7 @@
 #include "relix/syscall/accept.hh"
 #include "relix/syscall/bind.hh"
 #include "relix/syscall/connect.hh"
+#include "relix/syscall/getpeername.hh"
 #include "relix/syscall/getsockname.hh"
 #include "relix/syscall/listen.hh"
 #include "relix/syscall/shutdown.hh"
@@ -29,6 +30,7 @@ namespace {
 using relix::accept;
 using relix::bind;
 using relix::connect;
+using relix::getpeername;
 using relix::getsockname;
 using relix::listen;
 using relix::shutdown;
