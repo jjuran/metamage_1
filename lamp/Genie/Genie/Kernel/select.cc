@@ -14,6 +14,8 @@
 #include "vfs/file_descriptor.hh"
 
 // relix-kernel
+#include "relix/api/errno.hh"
+#include "relix/api/get_fds.hh"
 #include "relix/task/fd_map.hh"
 
 // Pedestal
@@ -21,9 +23,7 @@
 
 // Genie
 #include "Genie/api/yield.hh"
-#include "Genie/current_process.hh"
 #include "Genie/IO/Stream.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -50,7 +50,7 @@ namespace Genie
 		
 		try
 		{
-			relix::fd_map& files = current_process().FileDescriptors();
+			relix::fd_map& files = relix::get_fds();
 			
 			// Output fd sets
 			fd_set rd, wr, ex;
@@ -129,7 +129,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return set_errno_from_exception();
+			return relix::set_errno_from_exception();
 		}
 	}
 	
