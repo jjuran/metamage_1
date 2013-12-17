@@ -17,6 +17,9 @@
 #define CONFIG_SOCKETS  (!CONFIG_MINI)
 #endif
 
+
+namespace {
+
 #if CONFIG_SOCKETS
 
 #pragma force_active on
@@ -34,4 +37,6 @@ REGISTER_SYSTEM_CALL( shutdown    );
 #pragma force_active reset
 
 #endif
+
+}  // namespace
 
