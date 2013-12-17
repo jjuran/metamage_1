@@ -15,6 +15,7 @@
 #include "relix/syscall/getsockname.hh"
 #include "relix/syscall/listen.hh"
 #include "relix/syscall/shutdown.hh"
+#include "relix/syscall/socket.hh"
 #include "relix/syscall/socketpair.hh"
 
 // Genie
@@ -35,6 +36,7 @@ using relix::getpeername;
 using relix::getsockname;
 using relix::listen;
 using relix::shutdown;
+using relix::socket;
 using relix::socketpair;
 
 
