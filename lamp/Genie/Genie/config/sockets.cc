@@ -12,6 +12,7 @@
 #include "relix/syscall/bind.hh"
 #include "relix/syscall/connect.hh"
 #include "relix/syscall/listen.hh"
+#include "relix/syscall/shutdown.hh"
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
@@ -28,6 +29,7 @@ using relix::accept;
 using relix::bind;
 using relix::connect;
 using relix::listen;
+using relix::shutdown;
 
 
 #if CONFIG_SOCKETS

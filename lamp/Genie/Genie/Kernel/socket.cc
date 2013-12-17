@@ -12,7 +12,6 @@
 // vfs
 #include "vfs/filehandle/primitives/getpeername.hh"
 #include "vfs/filehandle/primitives/getsockname.hh"
-#include "vfs/filehandle/primitives/shutdown.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -143,23 +142,6 @@ int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 		const sockaddr& addr = getpeername( relix::get_fd_handle( fd ) );
 		
 		get_sockaddr_name( addr, name, namelen );
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
-}
-
-
-int shutdown( int fd, int how )
-{
-	using namespace Genie;
-	
-	try
-	{
-		shutdown( relix::get_fd_handle( fd ), how );
 	}
 	catch ( ... )
 	{
