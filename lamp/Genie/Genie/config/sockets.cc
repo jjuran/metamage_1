@@ -8,6 +8,7 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
+#include "relix/syscall/bind.hh"
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
@@ -19,6 +20,9 @@
 
 
 namespace {
+
+using relix::bind;
+
 
 #if CONFIG_SOCKETS
 

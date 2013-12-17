@@ -14,7 +14,6 @@
 
 // vfs
 #include "vfs/filehandle/primitives/accept.hh"
-#include "vfs/filehandle/primitives/bind.hh"
 #include "vfs/filehandle/primitives/connect.hh"
 #include "vfs/filehandle/primitives/getpeername.hh"
 #include "vfs/filehandle/primitives/getsockname.hh"
@@ -103,23 +102,6 @@ int socket( int domain, int type, int protocol )
 	}
 	
 	return fd;
-}
-
-
-int bind( int fd, const struct sockaddr* name, socklen_t namelen )
-{
-	using namespace Genie;
-	
-	try
-	{
-		bind( relix::get_fd_handle( fd ), *name, namelen );
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
 }
 
 
