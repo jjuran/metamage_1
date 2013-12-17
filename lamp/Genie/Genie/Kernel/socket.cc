@@ -9,7 +9,6 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
-#include "relix/api/new_paired_socket.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -29,39 +28,6 @@
 namespace
 {
 #endif
-
-
-int socketpair( int domain, int type, int protocol, int fds[2] )
-{
-	using namespace Genie;
-	
-	try
-	{
-		const bool close_on_exec = type & SOCK_CLOEXEC;
-		const bool nonblocking   = type & SOCK_NONBLOCK;
-		
-		boost::intrusive_ptr< vfs::stream > east( new vfs::stream );
-		boost::intrusive_ptr< vfs::stream > west( new vfs::stream );
-		
-		vfs::filehandle_ptr san_jose = relix::new_paired_socket( west, east, nonblocking );
-		vfs::filehandle_ptr new_york = relix::new_paired_socket( east, west, nonblocking );
-		
-		int a = relix::first_free_fd( 3 );
-		int b = relix::first_free_fd( a + 1 );
-		
-		relix::assign_fd( a, *san_jose, close_on_exec );
-		relix::assign_fd( b, *new_york, close_on_exec );
-		
-		fds[ 0 ] = a;
-		fds[ 1 ] = b;
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
-}
 
 
 int socket( int domain, int type, int protocol )
