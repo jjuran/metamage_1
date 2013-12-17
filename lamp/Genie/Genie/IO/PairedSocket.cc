@@ -1,9 +1,7 @@
-/*	===============
- *	PairedSocket.cc
- *	===============
- */
-
-#include "Genie/IO/PairedSocket.hh"
+/*
+	PairedSocket.cc
+	---------------
+*/
 
 // STREAMS
 #ifdef __RELIX__
@@ -26,6 +24,7 @@
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/api/new_paired_socket.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
@@ -198,14 +197,16 @@ namespace Genie
 		itsOutput->close_ingress();
 	}
 	
+}
+
+namespace relix
+{
 	
-	IOPtr
-	//
-	NewPairedSocket( const boost::intrusive_ptr< vfs::stream >&  input,
-	                 const boost::intrusive_ptr< vfs::stream >&  output,
-	                 bool                                        nonblocking )
+	vfs::filehandle_ptr new_paired_socket( const boost::intrusive_ptr< vfs::stream >&  input,
+	                                       const boost::intrusive_ptr< vfs::stream >&  output,
+	                                       bool                                        nonblocking )
 	{
-		return new PairedSocket( input, output, nonblocking );
+		return new Genie::PairedSocket( input, output, nonblocking );
 	}
 	
 }

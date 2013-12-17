@@ -9,11 +9,11 @@
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
+#include "relix/api/new_paired_socket.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/IO/OTSocket.hh"
-#include "Genie/IO/PairedSocket.hh"
 
 
 #ifndef SOCK_CLOEXEC
@@ -43,8 +43,8 @@ int socketpair( int domain, int type, int protocol, int fds[2] )
 		boost::intrusive_ptr< vfs::stream > east( new vfs::stream );
 		boost::intrusive_ptr< vfs::stream > west( new vfs::stream );
 		
-		IOPtr san_jose = NewPairedSocket( west, east, nonblocking );
-		IOPtr new_york = NewPairedSocket( east, west, nonblocking );
+		vfs::filehandle_ptr san_jose = relix::new_paired_socket( west, east, nonblocking );
+		vfs::filehandle_ptr new_york = relix::new_paired_socket( east, west, nonblocking );
 		
 		int a = relix::first_free_fd( 3 );
 		int b = relix::first_free_fd( a + 1 );
