@@ -9,6 +9,7 @@
 // relix-kernel
 #include "relix/config/mini.hh"
 #include "relix/syscall/bind.hh"
+#include "relix/syscall/listen.hh"
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
@@ -22,6 +23,7 @@
 namespace {
 
 using relix::bind;
+using relix::listen;
 
 
 #if CONFIG_SOCKETS

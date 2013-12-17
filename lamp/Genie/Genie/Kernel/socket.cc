@@ -17,7 +17,6 @@
 #include "vfs/filehandle/primitives/connect.hh"
 #include "vfs/filehandle/primitives/getpeername.hh"
 #include "vfs/filehandle/primitives/getsockname.hh"
-#include "vfs/filehandle/primitives/listen.hh"
 #include "vfs/filehandle/primitives/shutdown.hh"
 
 // relix-kernel
@@ -102,23 +101,6 @@ int socket( int domain, int type, int protocol )
 	}
 	
 	return fd;
-}
-
-
-int listen( int fd, int backlog )
-{
-	using namespace Genie;
-	
-	try
-	{
-		listen( relix::get_fd_handle( fd ), backlog );
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
 }
 
 
