@@ -6,14 +6,10 @@
 // POSIX
 #include <sys/socket.h>
 
-// Standard C
-#include <errno.h>
-
 // Standard C/C++
 #include <cstring>
 
 // vfs
-#include "vfs/filehandle/primitives/accept.hh"
 #include "vfs/filehandle/primitives/connect.hh"
 #include "vfs/filehandle/primitives/getpeername.hh"
 #include "vfs/filehandle/primitives/getsockname.hh"
@@ -101,50 +97,6 @@ int socket( int domain, int type, int protocol )
 	}
 	
 	return fd;
-}
-
-
-int accept( int listener, struct sockaddr *addr, socklen_t *addrlen )
-{
-	using namespace Genie;
-	
-	try
-	{
-		if ( addrlen == NULL  &&  addr != NULL )
-		{
-			// If you pass the address buffer you must indicate the size
-			set_errno( EINVAL );
-		}
-		
-		sockaddr dummy_addr;
-		
-		socklen_t dummy_length = sizeof dummy_addr;
-		
-		sockaddr& address = addr != NULL ? *addr : dummy_addr;
-		
-		// addr != NULL  implies  addrlen != NULL
-		socklen_t& length = addr != NULL ? *addrlen : dummy_length;
-		
-		vfs::filehandle_ptr incoming = accept( relix::get_fd_handle( listener ), address, length );
-		
-		int fd = relix::first_free_fd();
-		
-		relix::assign_fd( fd, *incoming );
-		
-		if ( addr == NULL  &&  addrlen != NULL )
-		{
-			// You can pass a NULL address buffer and still get the size back
-			*addrlen = length;
-		}
-		
-		return fd;
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
-	}
-	
-	return 0;
 }
 
 
