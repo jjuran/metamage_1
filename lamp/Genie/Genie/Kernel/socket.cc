@@ -6,13 +6,16 @@
 // POSIX
 #include <sys/socket.h>
 
+// vfs
+#include "vfs/filehandle.hh"
+
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
+#include "relix/api/new_tcp_socket.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/IO/OTSocket.hh"
 
 
 #ifndef SOCK_CLOEXEC
@@ -44,7 +47,7 @@ int socket( int domain, int type, int protocol )
 		const bool nonblocking   = type & SOCK_NONBLOCK;
 		
 		relix::assign_fd( fd,
-		                  *New_OT_Socket( nonblocking ),
+		                  *relix::new_tcp_socket( nonblocking ),
 		                  close_on_exec );
 	}
 	catch ( ... )

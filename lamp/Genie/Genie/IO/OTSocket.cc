@@ -3,12 +3,16 @@
  *	===========
  */
 
-#include "Genie/IO/OTSocket.hh"
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
 #endif
+
+// vfs
+#include "vfs/filehandle.hh"
+
+// relix-kernel
+#include "relix/api/new_tcp_socket.hh"
 
 #ifndef MAC_OS_X_VERSION_10_8
 
@@ -576,12 +580,23 @@ namespace Genie
 		it_has_sent_FIN = true;
 	}
 	
-	IOPtr New_OT_Socket( bool nonblocking )
-	{
-		return new OTSocket( nonblocking );
-	}
-	
 }
 
 #endif  // #ifndef MAC_OS_X_VERSION_10_8
+
+namespace relix
+{
+	
+	vfs::filehandle_ptr new_tcp_socket( bool nonblocking )
+	{
+	#ifndef MAC_OS_X_VERSION_10_8
+		
+		return new Genie::OTSocket( nonblocking );
+		
+	#endif
+		
+		return NULL;
+	}
+	
+}
 
