@@ -48,7 +48,7 @@ namespace relix
 			
 			file_descriptor& operator[]( int fd );
 			
-			int first_unused( int minimum );
+			int first_unused( int minimum ) const;
 			
 			void close( int fd );
 			

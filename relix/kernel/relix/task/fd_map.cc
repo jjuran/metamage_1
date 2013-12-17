@@ -95,9 +95,9 @@ namespace relix
 		return fds[ fd ];
 	}
 	
-	int fd_map::first_unused( int minimum )
+	int fd_map::first_unused( int minimum ) const
 	{
-		std::vector< file_descriptor >& fds = get_fds( this );
+		const std::vector< file_descriptor >& fds = get_fds( this );
 		
 		const std::size_t n = fds.size();
 		
@@ -108,8 +108,6 @@ namespace relix
 				return fd;
 			}
 		}
-		
-		fds.resize( n + 1 );
 		
 		return n;
 	}
