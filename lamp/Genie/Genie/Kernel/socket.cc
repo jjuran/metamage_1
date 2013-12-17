@@ -6,9 +6,6 @@
 // POSIX
 #include <sys/socket.h>
 
-// Standard C/C++
-#include <cstring>
-
 // vfs
 #include "vfs/filehandle/primitives/getpeername.hh"
 #include "vfs/filehandle/primitives/getsockname.hh"
@@ -17,6 +14,7 @@
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/socket/get_sockaddr_name.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -98,22 +96,6 @@ int socket( int domain, int type, int protocol )
 }
 
 
-static inline socklen_t sizeof_sockaddr( const sockaddr& addr )
-{
-	return sizeof (sockaddr);
-}
-
-static void get_sockaddr_name( const sockaddr& addr, struct sockaddr* name, socklen_t* namelen )
-{
-	const socklen_t size = sizeof_sockaddr( addr );
-	
-	const size_t n = *namelen < size ? *namelen : size;
-	
-	std::memcpy( name, &addr, n );
-	
-	*namelen = size;
-}
-
 int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 {
 	using namespace Genie;
@@ -122,7 +104,7 @@ int getsockname( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
 		const sockaddr& addr = getsockname( relix::get_fd_handle( fd ) );
 		
-		get_sockaddr_name( addr, name, namelen );
+		relix::get_sockaddr_name( addr, name, namelen );
 	}
 	catch ( ... )
 	{
@@ -141,7 +123,7 @@ int getpeername( int fd, struct sockaddr* name, socklen_t* namelen )
 	{
 		const sockaddr& addr = getpeername( relix::get_fd_handle( fd ) );
 		
-		get_sockaddr_name( addr, name, namelen );
+		relix::get_sockaddr_name( addr, name, namelen );
 	}
 	catch ( ... )
 	{
