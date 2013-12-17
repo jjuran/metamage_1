@@ -101,7 +101,9 @@ namespace relix
 		
 		const std::size_t n = fds.size();
 		
-		for ( int fd = minimum;  fd < n;  ++fd )
+		int fd;
+		
+		for ( fd = minimum;  fd < n;  ++fd )
 		{
 			if ( fds[ fd ].handle.get() == NULL )
 			{
@@ -109,7 +111,7 @@ namespace relix
 			}
 		}
 		
-		return n;
+		return fd;
 	}
 	
 	void fd_map::close( int fd )
