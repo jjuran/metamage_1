@@ -64,36 +64,6 @@ namespace Genie
 		try_again( IsNonblocking() );
 	}
 	
-	// Return a reference to the peek buffer with at least minBytes of data in it.
-	// We Read() until we have enough data.  If there're not enough data available,
-	// then we either block, or throw EWOULDBLOCK if the stream is non-blocking.
-	
-	const plus::string* StreamHandle::Peek( std::size_t minBytes )
-	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
-		while ( itsPeekBuffer.size() < minBytes )
-		{
-			const std::size_t kBufferLength = 4096;
-			
-			char data[ kBufferLength ];
-			
-			ssize_t bytes = SysRead( data, kBufferLength );  // will block, throw, or return non-negative
-			
-			if ( bytes == 0 )
-			{
-				return NULL;
-			}
-			
-			itsPeekBuffer.append( data, bytes );
-		}
-		
-		return &itsPeekBuffer;
-	}
-	
 	unsigned int StreamHandle::Poll()
 	{
 		if ( IsDisconnected() )

@@ -60,8 +60,6 @@ namespace Genie
 			
 			void TryAgainLater() const;
 			
-			const plus::string* Peek( std::size_t minBytes );
-			
 			unsigned int Poll();
 			
 			ssize_t Read( char* data, std::size_t byteCount );
