@@ -8,6 +8,9 @@
 // Standard C++ library
 #include <algorithm>
 
+// plus
+#include "plus/string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 

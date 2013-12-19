@@ -71,7 +71,7 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		return SysPoll() | (itsPeekBuffer.empty() ? 0 : kPollRead);
+		return SysPoll();
 	}
 	
 	ssize_t StreamHandle::Read( char* data, std::size_t byteCount )
@@ -81,45 +81,12 @@ namespace Genie
 			p7::throw_errno( EIO );
 		}
 		
-		std::size_t bytesRead = std::min( itsPeekBuffer.size(), byteCount );
-		
-		if ( data != NULL )
-		{
-			// copy data out of peek buffer
-			std::copy( itsPeekBuffer.begin(),
-			           itsPeekBuffer.begin() + bytesRead,
-			           data );
-			
-			// advance dest mark for further reads
-			data += bytesRead;
-		}
-		
-		if ( bytesRead > 0 )
-		{
-			// slide unread data in peek buffer to beginning
-			itsPeekBuffer.erase( itsPeekBuffer.begin(),
-			                     itsPeekBuffer.begin() + bytesRead );
-			
-			// adjust request size
-			byteCount -= bytesRead;
-		}
-		
 		if ( data == NULL )
 		{
-			if ( bytesRead == 0 )
-			{
-				p7::throw_errno( EFAULT );
-			}
-			
-			return bytesRead;
+			p7::throw_errno( EFAULT );
 		}
 		
-		if ( bytesRead == 0 )
-		{
-			bytesRead = SysRead( data, byteCount );
-		}
-		
-		return bytesRead;
+		return SysRead( data, byteCount );
 	}
 	
 	ssize_t StreamHandle::Write( const char* data, std::size_t byteCount )

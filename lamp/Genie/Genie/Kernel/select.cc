@@ -4,6 +4,7 @@
  */
 
 // Standard C
+#include <stdint.h>
 #include <time.h>
 
 // POSIX

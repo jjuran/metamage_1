@@ -9,6 +9,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
+// plus
+#include "plus/var_string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
