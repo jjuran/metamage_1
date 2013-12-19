@@ -51,7 +51,7 @@ namespace Genie
 			
 			void Disconnect()  { itHasBeenDisconnected = true; }
 			
-			virtual bool IsDisconnected() const  { return itHasBeenDisconnected; }
+			bool IsDisconnected() const  { return itHasBeenDisconnected; }
 			
 			bool IsNonblocking() const  { return get_flags() & O_NONBLOCK; }
 			
