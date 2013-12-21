@@ -8,6 +8,15 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
+#include "relix/syscall/accept.hh"
+#include "relix/syscall/bind.hh"
+#include "relix/syscall/connect.hh"
+#include "relix/syscall/getpeername.hh"
+#include "relix/syscall/getsockname.hh"
+#include "relix/syscall/listen.hh"
+#include "relix/syscall/shutdown.hh"
+#include "relix/syscall/socket.hh"
+#include "relix/syscall/socketpair.hh"
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
@@ -16,6 +25,20 @@
 #ifndef CONFIG_SOCKETS
 #define CONFIG_SOCKETS  (!CONFIG_MINI)
 #endif
+
+
+namespace {
+
+using relix::accept;
+using relix::bind;
+using relix::connect;
+using relix::getpeername;
+using relix::getsockname;
+using relix::listen;
+using relix::shutdown;
+using relix::socket;
+using relix::socketpair;
+
 
 #if CONFIG_SOCKETS
 
@@ -34,4 +57,6 @@ REGISTER_SYSTEM_CALL( shutdown    );
 #pragma force_active reset
 
 #endif
+
+}  // namespace
 
