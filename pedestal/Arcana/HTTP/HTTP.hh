@@ -86,6 +86,9 @@ namespace HTTP
 			plus::string GetHeaderField( const plus::string& name, const char* nullValue = NULL );
 			
 			const plus::string& GetPartialContent() const  { return itsPartialContent; }
+			
+			std::size_t ContentLengthOrZero() const  { return itsContentLength; }
+			std::size_t ContentBytesReceived() const  { return itsContentBytesReceived; }
 	};
 	
 	class ResponseReceiver : public MessageReceiver

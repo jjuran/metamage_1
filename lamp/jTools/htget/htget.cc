@@ -22,8 +22,8 @@
 
 // poseven
 #include "poseven/bundles/inet.hh"
-#include "poseven/extras/pump.hh"
 #include "poseven/functions/open.hh"
+#include "poseven/functions/read.hh"
 #include "poseven/functions/socket.hh"
 #include "poseven/functions/write.hh"
 #include "poseven/types/exit_t.hh"
@@ -43,6 +43,25 @@ namespace tool
 	namespace p7 = poseven;
 	namespace o = orion;
 	
+	
+	static bool dumping_progress = false;
+	
+	static size_t content_length = 0;
+	
+	static plus::string content_length_string;
+	
+	static void dump_progress( size_t content_bytes_received )
+	{
+		plus::var_string dump = gear::inscribe_unsigned_decimal( content_bytes_received );
+		
+		dump += '/';
+		
+		dump += content_length_string;
+		
+		dump += '\n';
+		
+		p7::write( p7::stdout_fileno, dump );
+	}
 	
 	static bool ParseURL( const plus::string& url,
 	                      plus::string& outURLScheme, 
@@ -109,9 +128,21 @@ namespace tool
 	                              p7::fd_t             http_server,
 	                              p7::fd_t             document_destination )
 	{
-		p7::write( document_destination, partial_content );
+		size_t n_written = p7::write( document_destination, partial_content );
 		
-		p7::pump( http_server, document_destination );
+		const size_t buffer_size = 4096;
+		
+		char buffer[ buffer_size ];
+		
+		while ( const ssize_t n_read = p7::read( http_server, buffer, buffer_size ) )
+		{
+			n_written += p7::write( document_destination, buffer, n_read );
+			
+			if ( dumping_progress )
+			{
+				dump_progress( n_written );
+			}
+		}
 	}
 	
 	int Main( int argc, char** argv )
@@ -128,6 +159,8 @@ namespace tool
 		o::bind_option_to_variable( "-I", sendHEADRequest );
 		o::bind_option_to_variable( "-o", outputFile      );
 		o::bind_option_to_variable( "-O", saveToFile      );
+		
+		o::bind_option_to_variable( "--dump-progress", dumping_progress );
 		
 		o::alias_option( "-i", "--headers" );
 		o::alias_option( "-i", "--include" );
@@ -228,7 +261,21 @@ namespace tool
 		
 		if ( expecting_content )
 		{
-			receive_document( response.GetPartialContent(),
+			const plus::string& partial_content = response.GetPartialContent();
+			
+			if ( dumping_progress )
+			{
+				content_length = response.ContentLengthOrZero();
+				
+				if ( content_length )
+				{
+					content_length_string = gear::inscribe_unsigned_decimal( content_length );
+					
+					dump_progress( partial_content.size() );
+				}
+			}
+			
+			receive_document( partial_content,
 			                  http_server,
 			                  p7::open( outputFile, p7::o_wronly | create_flags ) );
 		}
