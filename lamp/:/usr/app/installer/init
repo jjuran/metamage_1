@@ -1,0 +1,33 @@
+#!/bin/sh
+
+/usr/bin/confirm "Proceed with automatic installation of MacRelix?" || exit
+
+cd /gui/port/install
+
+exec 0>&2             # save fd 2
+exec 2> /dev/null     # discard stderr
+exec 9> lock || exit  # bail if the lock is taken
+exec 2>&0             # restore fd 2
+exec 0< /dev/null     # clear fd 0
+
+echo 0 > vis
+echo 400,100 > size
+echo MacRelix Installer > title
+
+/usr/bin/touch window
+
+echo 9 > w/text-size
+echo 4 > w/text-font
+
+/bin/ln /gui/new/frame   view
+/bin/ln /gui/new/caption v/view
+
+echo 4 > v/padding
+echo 0 > v/v/wrapped
+
+/usr/bin/daemonize --cwd --stdout --ctty=tty -- /usr/app/installer/main > v/v/text
+
+echo 1 > vis
+
+
+
