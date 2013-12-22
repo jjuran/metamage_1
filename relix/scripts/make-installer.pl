@@ -51,7 +51,7 @@ my $timestamp = timestamp();
 
 my $lamp_source_dir = "$ENV{HOME}/src/tree/metamage/lamp";
 my $user_builds_dir = "$ENV{HOME}/var/build";
-my $user_lamp_dir   = "$ENV{HOME}/Developer/Lamp";
+my $user_lamp_dir   = "$ENV{HOME}/var/archive/MacRelix";
 
 my $tmp_dir = tmpdir();
 
@@ -173,6 +173,15 @@ sub want_dir
 	my ( $dir ) = @_;
 	
 	mkdir $dir unless -d $dir;
+	
+	return;
+}
+
+sub want_dirs
+{
+	my ( $dir ) = @_;
+	
+	system( "mkdir", "-p", $dir ) unless -d $dir;
 	
 	return;
 }
@@ -437,7 +446,7 @@ make_archive( $installer, $archive );
 
 my $build_area_path = "$lamp_builds_dir/$build_area";
 
-want_dir( $build_area_path );
+want_dirs( $build_area_path );
 
 verbose_system( "cp", $archive, $build_area_path );
 
