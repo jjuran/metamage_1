@@ -64,7 +64,7 @@ namespace Genie
 	
 	void StreamHandle::TryAgainLater() const
 	{
-		try_again( IsNonblocking() );
+		try_again( is_nonblocking( *this ) );
 	}
 	
 	unsigned int StreamHandle::Poll()
