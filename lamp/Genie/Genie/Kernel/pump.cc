@@ -9,9 +9,6 @@
 // POSIX
 #include <unistd.h>
 
-// Debug
-#include "debug/assert.hh"
-
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
 
@@ -28,17 +25,14 @@ namespace Genie
 	
 	static ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count, unsigned flags )
 	{
-		if ( count == 0 )
-		{
-			--count;
-		}
-		
 		std::size_t bytes_pumped = 0;
 		
 		try
 		{
 			StreamHandle& input  = GetFileHandleWithCast< StreamHandle >( fd_in  );
 			StreamHandle& output = GetFileHandleWithCast< StreamHandle >( fd_out );
+			
+			breathe( true );
 			
 			if ( off_in != NULL )
 			{
@@ -50,29 +44,30 @@ namespace Genie
 				seek( output, *off_out, 0 );
 			}
 			
-			while ( const plus::string* peek_buffer = input.Peek( 1 ) )
+			char buffer[ 4096 ];
+			
+			const size_t size = sizeof buffer;
+			
+			ssize_t n_read;
+			
+			while (( n_read = input.Read( buffer, count ? std::min( size, count ) : size ) ))
 			{
-				const bool may_throw = bytes_pumped == 0;
+				ssize_t n_written = output.Write( buffer, n_read );
 				
-				if ( breathe( may_throw ) )
+				bytes_pumped += n_written;
+				
+				if ( count != 0 )
 				{
-					return bytes_pumped;
+					if ( (count -= n_written) == 0 )
+					{
+						break;
+					}
 				}
 				
-				size_t bytes_wanted = std::min( count - bytes_pumped, peek_buffer->size() );
-				
-				int bytes_written = output.Write( peek_buffer->data(), bytes_wanted );
-				
-				input.Read( NULL, bytes_written );
-				
-				bytes_pumped += bytes_written;
-				
-				if ( bytes_pumped == count )
+				if ( breathe( false ) )
 				{
 					break;
 				}
-				
-				ASSERT( bytes_pumped < count );
 			}
 			
 			if ( off_in != NULL )

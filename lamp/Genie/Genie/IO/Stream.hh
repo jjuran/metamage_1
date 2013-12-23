@@ -10,9 +10,6 @@
 #include "errno.h"
 #include <fcntl.h>
 
-// plus
-#include "plus/var_string.hh"
-
 // Genie
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/IOHandle_Cast.hh"
@@ -24,7 +21,6 @@ namespace Genie
 	class StreamHandle : public IOHandle
 	{
 		private:
-			plus::var_string  itsPeekBuffer;
 			bool              itHasBeenDisconnected;
 		
 		public:
@@ -59,8 +55,6 @@ namespace Genie
 			void ClearNonblocking()  { set_flags( get_flags() & ~O_NONBLOCK ); }
 			
 			void TryAgainLater() const;
-			
-			const plus::string* Peek( std::size_t minBytes );
 			
 			unsigned int Poll();
 			

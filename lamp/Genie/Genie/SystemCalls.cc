@@ -163,31 +163,6 @@ namespace Genie
 	}
 	
 	
-	static int peek( int fd, const char** buffer, size_t minBytes )
-	{
-		try
-		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
-			
-			if ( const plus::string* peekBuffer = stream.Peek( minBytes ) )
-			{
-				if ( buffer != NULL )
-				{
-					*buffer = peekBuffer->c_str();
-				}
-				
-				return peekBuffer->size();
-			}
-			
-			return 0;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
-	
-	
 	using relix::pread;
 	
 	static ssize_t read( int fd, void* buf, size_t count )
@@ -398,7 +373,6 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( lseek     );
 	REGISTER_SYSTEM_CALL( pause     );
 	REGISTER_SYSTEM_CALL( pipe2     );
-	//REGISTER_SYSTEM_CALL( peek );
 	REGISTER_SYSTEM_CALL( pread     );
 	REGISTER_SYSTEM_CALL( read      );
 	REGISTER_SYSTEM_CALL( setpgid   );
