@@ -51,9 +51,6 @@ namespace Genie
 			
 			bool IsNonblocking() const  { return get_flags() & O_NONBLOCK; }
 			
-			void SetNonblocking  ()  { set_flags( get_flags() |  O_NONBLOCK ); }
-			void ClearNonblocking()  { set_flags( get_flags() & ~O_NONBLOCK ); }
-			
 			void TryAgainLater() const;
 			
 			unsigned int Poll();
