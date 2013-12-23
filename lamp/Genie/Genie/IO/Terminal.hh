@@ -9,8 +9,10 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/IO/Base.hh"
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/filehandle_ptr.hh"
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
@@ -19,23 +21,23 @@ namespace Genie
 	const pid_t no_pgid = 0x7fffffff;
 	
 	
-	class TerminalHandle : public IOHandle
+	class TerminalHandle : public vfs::filehandle
 	{
 		private:
-			const plus::string  itsTTYName;
-			IOPtr               itsTTY;
-			pid_t               its_process_group_id;
+			const plus::string   itsTTYName;
+			vfs::filehandle_ptr  its_tty;
+			pid_t                its_process_group_id;
 			
-			IOHandle* Next() const  { return itsTTY.get(); }
+			vfs::filehandle* Next() const  { return its_tty.get(); }
 		
 		public:
 			TerminalHandle( const plus::string& tty_name );
 			
 			~TerminalHandle();
 			
-			void Attach( vfs::filehandle* target )  { itsTTY = target; }
+			void Attach( vfs::filehandle* target )  { its_tty = target; }
 			
-			FSTreePtr GetFile();
+			vfs::node_ptr GetFile();
 			
 			pid_t getpgrp() const  { return its_process_group_id; }
 			

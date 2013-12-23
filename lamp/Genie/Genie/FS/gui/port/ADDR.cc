@@ -66,6 +66,7 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
+#include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Utilities/simple_map.hh"
 
