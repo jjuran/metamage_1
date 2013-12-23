@@ -6,9 +6,6 @@
 #ifndef GENIE_IO_TERMINAL_HH
 #define GENIE_IO_TERMINAL_HH
 
-// POSIX
-#include "errno.h"
-
 // plus
 #include "plus/string.hh"
 
@@ -18,8 +15,6 @@
 
 namespace Genie
 {
-	
-	typedef std::size_t TerminalID;
 	
 	const pid_t no_pgid = 0x7fffffff;
 	
