@@ -49,8 +49,6 @@ namespace Genie
 			
 			bool IsDisconnected() const  { return itHasBeenDisconnected; }
 			
-			bool IsNonblocking() const  { return get_flags() & O_NONBLOCK; }
-			
 			void TryAgainLater() const;
 			
 			unsigned int Poll();
