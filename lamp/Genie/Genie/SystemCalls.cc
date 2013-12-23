@@ -7,6 +7,7 @@
 #include <errno.h>
 
 // POSIX
+#include <fcntl.h>
 #include "sys/uio.h"
 
 // Debug

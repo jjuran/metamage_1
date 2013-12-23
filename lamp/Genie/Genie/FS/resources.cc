@@ -9,6 +9,7 @@
 #include <ctype.h>
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
 // gear

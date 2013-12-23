@@ -8,7 +8,6 @@
 
 // POSIX
 #include "errno.h"
-#include <fcntl.h>
 
 // Genie
 #include "Genie/IO/Base.hh"

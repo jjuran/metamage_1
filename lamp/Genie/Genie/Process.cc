@@ -25,6 +25,7 @@
 #include <time.h>
 
 // POSIX
+#include <fcntl.h>
 #include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"

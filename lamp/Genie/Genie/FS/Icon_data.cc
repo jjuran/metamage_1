@@ -6,6 +6,7 @@
 #include "Genie/FS/Icon_data.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
 // Standard C++
