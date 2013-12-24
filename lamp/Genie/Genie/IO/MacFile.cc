@@ -89,6 +89,11 @@ namespace Genie
 		return static_cast< MacFileHandle& >( *file ).Append( buffer, n );
 	}
 	
+	static void hfs_fsync( vfs::filehandle* file )
+	{
+		return static_cast< MacFileHandle& >( *file ).Synchronize( true );
+	}
+	
 	static const vfs::bstore_method_set hfs_bstore_methods =
 	{
 		&hfs_pread,
@@ -96,6 +101,7 @@ namespace Genie
 		&hfs_pwrite,
 		&hfs_seteof,
 		&hfs_append,
+		&hfs_fsync,
 	};
 	
 	static const vfs::filehandle_method_set hfs_methods =
