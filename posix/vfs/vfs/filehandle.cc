@@ -26,6 +26,7 @@
 #include "vfs/node.hh"
 #include "vfs/node/types/anonymous.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/ioctl.hh"
 
 
 #ifndef O_EXEC
@@ -160,7 +161,9 @@ namespace vfs
 	{
 		if ( filehandle* next = Next() )
 		{
-			return next->IOCtl( request, argp );
+			ioctl( next, request, argp );
+			
+			return;
 		}
 		
 		p7::throw_errno( EINVAL );

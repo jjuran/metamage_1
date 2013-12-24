@@ -40,8 +40,6 @@ namespace Genie
 			
 			virtual ssize_t SysWrite( const char* data, std::size_t byteCount );
 			
-			virtual void IOCtl( unsigned long request, int* argp );
-			
 			void Disconnect()  { itHasBeenDisconnected = true; }
 			
 			bool IsDisconnected() const  { return itHasBeenDisconnected; }

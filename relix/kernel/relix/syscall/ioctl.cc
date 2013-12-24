@@ -9,8 +9,8 @@
 #include <sys/ioctl.h>
 
 // vfs
-#include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
+#include "vfs/filehandle/primitives/ioctl.hh"
 
 // relix-kernel
 #include "relix/api/get_fds.hh"
@@ -39,7 +39,7 @@ namespace relix
 			}
 			else
 			{
-				file.handle->IOCtl( request, argp );
+				ioctl( &*file.handle, request, argp );
 			}
 		}
 		catch ( ... )

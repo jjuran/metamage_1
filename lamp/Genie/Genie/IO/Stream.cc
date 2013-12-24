@@ -8,9 +8,6 @@
 // Standard C++
 #include <algorithm>
 
-// POSIX
-#include "sys/ioctl.h"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -100,32 +97,6 @@ namespace Genie
 		}
 		
 		return SysWrite( data, byteCount );
-	}
-	
-	void StreamHandle::IOCtl( unsigned long request, int* argp )
-	{
-		switch ( request )
-		{
-			case FIONBIO:
-				if ( *argp )
-				{
-					set_nonblocking( *this );
-				}
-				else
-				{
-					clear_nonblocking( *this );
-				}
-				
-				break;
-			
-			case FIONREAD:
-				// not implemented
-				return p7::throw_errno( EINVAL );
-			
-			default:
-				IOHandle::IOCtl( request, argp );
-				break;
-		}
 	}
 	
 }
