@@ -5,6 +5,9 @@
 
 #include "Genie/IO/Handle.hh"
 
+// POSIX
+#include <fcntl.h>
+
 // Standard C++
 #include <algorithm>
 

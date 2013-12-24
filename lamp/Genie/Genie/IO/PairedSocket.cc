@@ -16,6 +16,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 #include "vfs/filehandle/primitives/conveying.hh"
@@ -59,12 +60,12 @@ namespace Genie
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
 			{
-				return itsInput->read( data, byteCount, IsNonblocking(), &try_again );
+				return itsInput->read( data, byteCount, is_nonblocking( *this ), &try_again );
 			}
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount )
 			{
-				return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
+				return itsOutput->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
 			}
 			
 			void IOCtl( unsigned long request, int* argp );
@@ -163,7 +164,7 @@ namespace Genie
 					
 					int fd = relix::first_free_fd();
 					
-					relix::assign_fd( fd, *itsInput->recv_fd( IsNonblocking(), &try_again ) );
+					relix::assign_fd( fd, *itsInput->recv_fd( is_nonblocking( *this ), &try_again ) );
 					
 					arg->fd = fd;
 					

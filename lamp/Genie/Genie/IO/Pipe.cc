@@ -17,6 +17,9 @@
 // plus
 #include "plus/conduit.hh"
 
+// vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
+
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
@@ -81,7 +84,7 @@ namespace Genie
 	
 	ssize_t PipeInHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsConduit->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
+		return itsConduit->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
 	}
 	
 	
@@ -107,7 +110,7 @@ namespace Genie
 	
 	ssize_t PipeOutHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsConduit->read( data, byteCount, IsNonblocking(), &try_again );
+		return itsConduit->read( data, byteCount, is_nonblocking( *this ), &try_again );
 	}
 	
 	pipe_ends new_pipe( int nonblock )

@@ -34,6 +34,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
@@ -387,7 +388,7 @@ namespace Genie
 				break;
 			}
 			
-			try_again( IsNonblocking() );
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		Mac::ThrowOSStatus( err_count );
@@ -435,7 +436,7 @@ namespace Genie
 			}
 		}
 		
-		if ( IsNonblocking() )
+		if ( is_nonblocking( *this ) )
 		{
 			if ( n_written == 0 )
 			{
@@ -507,7 +508,7 @@ namespace Genie
 		
 		while ( n_incoming_connections == 0 )
 		{
-			try_again( IsNonblocking() );
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		::OTAtomicAdd16( -1, &n_incoming_connections );

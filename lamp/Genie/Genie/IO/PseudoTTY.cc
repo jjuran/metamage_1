@@ -12,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 
 // Genie
@@ -108,12 +109,12 @@ namespace Genie
 	
 	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsInput->read( data, byteCount, IsNonblocking(), &try_again );
+		return itsInput->read( data, byteCount, is_nonblocking( *this ), &try_again );
 	}
 	
 	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsOutput->write( data, byteCount, IsNonblocking(), &try_again, &broken_pipe );
+		return itsOutput->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
 	}
 	
 }

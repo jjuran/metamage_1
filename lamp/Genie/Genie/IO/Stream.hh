@@ -8,7 +8,6 @@
 
 // POSIX
 #include "errno.h"
-#include <fcntl.h>
 
 // Genie
 #include "Genie/IO/Base.hh"
@@ -48,11 +47,6 @@ namespace Genie
 			void Disconnect()  { itHasBeenDisconnected = true; }
 			
 			bool IsDisconnected() const  { return itHasBeenDisconnected; }
-			
-			bool IsNonblocking() const  { return get_flags() & O_NONBLOCK; }
-			
-			void SetNonblocking  ()  { set_flags( get_flags() |  O_NONBLOCK ); }
-			void ClearNonblocking()  { set_flags( get_flags() & ~O_NONBLOCK ); }
 			
 			void TryAgainLater() const;
 			

@@ -14,6 +14,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
+
 // Genie
 #include "Genie/api/yield.hh"
 
@@ -61,7 +64,7 @@ namespace Genie
 	
 	void StreamHandle::TryAgainLater() const
 	{
-		try_again( IsNonblocking() );
+		try_again( is_nonblocking( *this ) );
 	}
 	
 	unsigned int StreamHandle::Poll()
@@ -106,11 +109,11 @@ namespace Genie
 			case FIONBIO:
 				if ( *argp )
 				{
-					SetNonblocking();
+					set_nonblocking( *this );
 				}
 				else
 				{
-					ClearNonblocking();
+					clear_nonblocking( *this );
 				}
 				
 				break;

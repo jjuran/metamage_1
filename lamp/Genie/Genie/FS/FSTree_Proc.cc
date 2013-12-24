@@ -6,6 +6,7 @@
 #include "Genie/FS/FSTree_Proc.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <sys/stat.h>
 
 // Standard C
