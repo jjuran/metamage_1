@@ -128,10 +128,5 @@ namespace Genie
 		}
 	}
 	
-	void StreamHandle::Synchronize( bool metadata )
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
 }
 

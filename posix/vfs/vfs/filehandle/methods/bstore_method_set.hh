@@ -26,6 +26,8 @@ namespace vfs
 	
 	typedef ssize_t (*append_method)( filehandle*, const char* buffer, size_t n );
 	
+	typedef void (*fsync_method)( filehandle* );
+	
 	struct bstore_method_set
 	{
 		pread_method   pread;
@@ -33,6 +35,7 @@ namespace vfs
 		pwrite_method  pwrite;
 		seteof_method  seteof;
 		append_method  append;
+		fsync_method   fsync;
 	};
 	
 }
