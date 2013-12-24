@@ -6,35 +6,21 @@
 // POSIX
 #include "unistd.h"
 
+// relix-kernel
+#include "relix/syscall/fsync.hh"
+
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	static int fsync( int fd );
+	using relix::fsync;
 	
 	static int fdatasync( int fd )
 	{
 		return fsync( fd );
-	}
-	
-	static int fsync( int fd )
-	{
-		try
-		{
-			GetFileHandleWithCast< StreamHandle >( fd ).Synchronize( true );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
 	}
 	
 	
