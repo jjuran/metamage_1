@@ -28,9 +28,6 @@
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
-// Genie
-#include "Genie/IO/Stream.hh"
-
 
 namespace Genie
 {
@@ -38,10 +35,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class GestaltDeviceHandle : public StreamHandle
+	class GestaltDeviceHandle : public vfs::filehandle
 	{
 		public:
-			GestaltDeviceHandle( int flags ) : StreamHandle( flags )
+			GestaltDeviceHandle( int flags ) : vfs::filehandle( flags )
 			{
 			}
 			
