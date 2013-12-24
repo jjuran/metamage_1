@@ -9,8 +9,9 @@
 // POSIX
 #include "sys/stat.h"
 
-// Genie
-#include "Genie/IO/Base.hh"
+// vfs
+#include "vfs/filehandle_ptr.hh"
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
@@ -20,7 +21,7 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR;
 		
-		static IOPtr open( const FSTree* that, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
 }

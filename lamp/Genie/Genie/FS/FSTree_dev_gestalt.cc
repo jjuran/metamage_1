@@ -25,6 +25,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
@@ -70,7 +71,7 @@ namespace Genie
 		}
 	}
 	
-	IOPtr dev_gestalt::open( const FSTree* that, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_gestalt::open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new GestaltDeviceHandle( flags );
 	}
