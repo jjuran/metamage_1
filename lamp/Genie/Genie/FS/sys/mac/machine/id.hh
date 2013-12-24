@@ -15,7 +15,7 @@ namespace Genie
 	
 	struct sys_mac_machine_id : readonly_property
 	{
-		static const std::size_t fixed_size = 4;
+		static const int fixed_size = 4;
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 	};

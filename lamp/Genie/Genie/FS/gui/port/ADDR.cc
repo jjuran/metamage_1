@@ -843,7 +843,7 @@ namespace Genie
 	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
 	struct Window_Property : readwrite_property
 	{
-		static const std::size_t fixed_size = Serialize::fixed_size;
+		static const int fixed_size = Serialize::fixed_size;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{

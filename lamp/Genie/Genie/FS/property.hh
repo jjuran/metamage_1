@@ -6,9 +6,6 @@
 #ifndef GENIE_FS_PROPERTY_HH
 #define GENIE_FS_PROPERTY_HH
 
-// Standard C/C++
-#include <cstddef>
-
 // plus
 #include "plus/var_string_fwd.hh"
 
@@ -30,7 +27,7 @@ namespace vfs
 	
 	struct readonly_property
 	{
-		static const std::size_t fixed_size = 0;
+		static const int fixed_size = 0;
 		
 		static const bool can_get = true;
 		static const bool can_set = false;
@@ -41,7 +38,7 @@ namespace vfs
 	
 	struct writeonly_property
 	{
-		static const std::size_t fixed_size = 0;
+		static const int fixed_size = 0;
 		
 		static const bool can_get = false;
 		static const bool can_set = true;
@@ -52,7 +49,7 @@ namespace vfs
 	
 	struct readwrite_property
 	{
-		static const std::size_t fixed_size = 0;
+		static const int fixed_size = 0;
 		
 		static const bool can_get = true;
 		static const bool can_set = true;
@@ -60,7 +57,7 @@ namespace vfs
 	
 	struct property_params
 	{
-		std::size_t        size;
+		int                size;
 		property_get_hook  get;
 		property_set_hook  set;
 	};

@@ -447,7 +447,7 @@ namespace Genie
 	template < class Accessor >
 	struct BitMap_Property : readwrite_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		static const bool can_set = Accessor::is_mutable;
 		

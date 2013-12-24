@@ -133,7 +133,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static const size_t fixed_size = 2;
+			static const int fixed_size = 2;
 			
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{
@@ -151,7 +151,7 @@ namespace Genie
 			typedef N::ADBAddress Key;
 		
 		public:
-			static const size_t fixed_size = 1;
+			static const int fixed_size = 1;
 			
 			static void get( plus::var_string& result, const FSTree* that, bool binary )
 			{

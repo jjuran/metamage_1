@@ -147,7 +147,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property : readonly_property
 	{
-		static const size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef Mac::FSVolumeRefNum Key;
 		

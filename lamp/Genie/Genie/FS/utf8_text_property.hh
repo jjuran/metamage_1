@@ -20,7 +20,7 @@ namespace Genie
 	template < class Mac_Text_Property >
 	struct utf8_text_property
 	{
-		static const std::size_t fixed_size = 0;
+		static const int fixed_size = 0;
 		
 		static const bool can_get = Mac_Text_Property::can_get;
 		static const bool can_set = Mac_Text_Property::can_set;

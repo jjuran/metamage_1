@@ -169,7 +169,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_gdev_list_N_Property : readonly_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef GDHandle Key;
 		

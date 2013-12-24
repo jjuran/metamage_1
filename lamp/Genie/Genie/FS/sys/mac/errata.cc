@@ -115,7 +115,7 @@ namespace Genie
 	template < class Erratum >
 	struct sys_mac_errata_Property : readonly_property
 	{
-		static const std::size_t fixed_size = 1;
+		static const int fixed_size = 1;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
