@@ -16,18 +16,11 @@
 namespace Genie
 {
 	
+	static int fsync( int fd );
+	
 	static int fdatasync( int fd )
 	{
-		try
-		{
-			GetFileHandleWithCast< StreamHandle >( fd ).Synchronize( false );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
+		return fsync( fd );
 	}
 	
 	static int fsync( int fd )
