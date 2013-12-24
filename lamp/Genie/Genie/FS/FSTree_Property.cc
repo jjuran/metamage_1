@@ -107,7 +107,7 @@ namespace Genie
 		
 		const bool binary = name[0] == '.'  &&  name[1] == '~';
 		
-		if ( (binary  &&  extra.size != 0)  ||  extra.get == NULL )
+		if ( (binary  &&  extra.size > 0)  ||  extra.get == NULL )
 		{
 			return extra.size;
 		}
