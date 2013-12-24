@@ -42,8 +42,6 @@ namespace Genie
 			
 			virtual void IOCtl( unsigned long request, int* argp );
 			
-			virtual void Synchronize( bool metadata );
-			
 			void Disconnect()  { itHasBeenDisconnected = true; }
 			
 			bool IsDisconnected() const  { return itHasBeenDisconnected; }
