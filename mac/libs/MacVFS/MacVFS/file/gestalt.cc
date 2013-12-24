@@ -1,9 +1,9 @@
-/*	=====================
- *	FSTree_dev_gestalt.cc
- *	=====================
- */
+/*
+	gestalt.cc
+	----------
+*/
 
-#include "Genie/FS/FSTree_dev_gestalt.hh"
+#include "MacVFS/file/gestalt.hh"
 
 // Mac OS X
 #ifdef __APPLE__
@@ -30,26 +30,31 @@
 #include "vfs/functions/resolve_pathname.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	class GestaltDeviceHandle : public vfs::filehandle
+	class gestalt_device : public filehandle
 	{
 		public:
-			GestaltDeviceHandle( int flags ) : vfs::filehandle( flags )
+			gestalt_device( int flags ) : filehandle( flags )
 			{
 			}
 			
-			vfs::node_ptr GetFile()  { return vfs::resolve_absolute_path( STR_LEN( "/dev/gestalt" ) ); }
+			node_ptr GetFile();
 			
 			void IOCtl( unsigned long request, int* argp );
 	};
 	
 	
-	void GestaltDeviceHandle::IOCtl( unsigned long request, int* argp )
+	node_ptr gestalt_device::GetFile()
+	{
+		return resolve_absolute_path( STR_LEN( "/dev/gestalt" ) );
+	}
+	
+	void gestalt_device::IOCtl( unsigned long request, int* argp )
 	{
 		long value;
 		
@@ -71,9 +76,9 @@ namespace Genie
 		}
 	}
 	
-	vfs::filehandle_ptr dev_gestalt::open( const vfs::node* that, int flags, mode_t mode )
+	filehandle_ptr open_gestalt( const node* that, int flags, mode_t mode )
 	{
-		return new GestaltDeviceHandle( flags );
+		return new gestalt_device( flags );
 	}
 	
 }

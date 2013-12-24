@@ -10,6 +10,7 @@
 
 // POSIX
 #include "fcntl.h"
+#include <sys/stat.h>
 
 // Iota
 #include "iota/strings.hh"
@@ -22,6 +23,9 @@
 #include "vfs/functions/new_static_symlink.hh"
 #include "vfs/node/types/dynamic_group.hh"
 
+// MacVFS
+#include "MacVFS/file/gestalt.hh"
+
 // relix-kernel
 #include "relix/api/current_process.hh"
 #include "relix/config/mini.hh"
@@ -33,7 +37,6 @@
 // Genie
 #include "Genie/Devices.hh"
 #include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/FSTree_dev_gestalt.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
@@ -90,6 +93,19 @@ namespace Genie
 	typedef dev_Serial< CallOut_Traits, PrinterPort_Traits > dev_cuprinter;
 	typedef dev_Serial< DialIn_Traits,  ModemPort_Traits   > dev_ttymodem;
 	typedef dev_Serial< DialIn_Traits,  PrinterPort_Traits > dev_ttyprinter;
+	
+	
+	struct dev_gestalt
+	{
+		static const mode_t perm = S_IRUSR;
+		
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
+	};
+	
+	vfs::filehandle_ptr dev_gestalt::open( const vfs::node* that, int flags, mode_t mode )
+	{
+		return open_gestalt( that, flags, mode );
+	}
 	
 	
 	class ConsoleTTYHandle;
