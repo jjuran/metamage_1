@@ -106,18 +106,6 @@ namespace Genie
 	{
 		switch ( request )
 		{
-			case FIONBIO:
-				if ( *argp )
-				{
-					set_nonblocking( *this );
-				}
-				else
-				{
-					clear_nonblocking( *this );
-				}
-				
-				break;
-			
 			case FIONREAD:
 				// not implemented
 				return p7::throw_errno( EINVAL );
