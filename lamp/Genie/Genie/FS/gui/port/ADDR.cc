@@ -825,7 +825,7 @@ namespace Genie
 	
 	struct Window_Title : readwrite_property
 	{
-		static const bool fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{

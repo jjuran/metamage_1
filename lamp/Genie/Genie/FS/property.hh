@@ -27,7 +27,7 @@ namespace vfs
 	
 	struct readonly_property
 	{
-		static const int fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		static const bool can_get = true;
 		static const bool can_set = false;
@@ -38,7 +38,7 @@ namespace vfs
 	
 	struct writeonly_property
 	{
-		static const int fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		static const bool can_get = false;
 		static const bool can_set = true;
@@ -49,7 +49,7 @@ namespace vfs
 	
 	struct readwrite_property
 	{
-		static const int fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		static const bool can_get = true;
 		static const bool can_set = true;

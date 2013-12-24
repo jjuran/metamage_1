@@ -56,7 +56,7 @@ namespace Genie
 	{
 		typedef Nitrogen::Str255 result_type;
 		
-		static const int fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		typedef deconstruct_Str255_contents  deconstruct;
 		typedef reconstruct_Str255_contents  reconstruct;
