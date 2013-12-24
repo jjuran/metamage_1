@@ -61,7 +61,7 @@ namespace vfs
 	struct property_params
 	{
 		std::size_t        size;
-		vfs::property_get_hook  get;
+		property_get_hook  get;
 		property_set_hook  set;
 	};
 	
