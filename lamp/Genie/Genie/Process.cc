@@ -65,7 +65,9 @@
 
 // vfs
 #include "vfs/file_descriptor.hh"
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
@@ -101,7 +103,6 @@
 #include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/scheduler.hh"
@@ -380,9 +381,7 @@ namespace Genie
 		{
 			const vfs::filehandle_ptr fh = open( file, O_RDONLY, 0 );
 			
-			StreamHandle& stream = IOHandle_Cast< StreamHandle >( *fh.get() );
-			
-			n_read = stream.Read( p, buffer_length );
+			n_read = pread( *fh, p, buffer_length, 0 );
 		}
 		catch ( ... )
 		{
