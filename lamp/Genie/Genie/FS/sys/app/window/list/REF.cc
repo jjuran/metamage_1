@@ -399,7 +399,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_app_window_list_REF_Const_Property : readonly_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef WindowRef Key;
 		
@@ -425,7 +425,7 @@ namespace Genie
 	{
 		static const bool can_set = true;
 		
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef WindowRef Key;
 		

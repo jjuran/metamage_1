@@ -273,7 +273,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_thng_REF_code : readonly_property
 	{
-		static const size_t fixed_size = sizeof (::OSType);
+		static const int fixed_size = sizeof (::OSType);
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{

@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/app/menu/list/ID/items/INDEX.hh"
 
-// Standard C/C++
-#include <cstddef>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <Carbon/Carbon.h>
@@ -131,7 +128,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_app_menu_list_ID_items_INDEX_Property : readwrite_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{

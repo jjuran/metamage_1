@@ -280,7 +280,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_unit_N_Property : readonly_property
 	{
-		static const size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{

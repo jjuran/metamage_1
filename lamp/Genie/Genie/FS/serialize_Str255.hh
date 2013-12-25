@@ -6,9 +6,6 @@
 #ifndef GENIE_FS_SERIALIZESTR255_HH
 #define GENIE_FS_SERIALIZESTR255_HH
 
-// Standard C/C++
-#include <cstddef>
-
 // plus
 #include "plus/stringify.hh"
 
@@ -59,7 +56,7 @@ namespace Genie
 	{
 		typedef Nitrogen::Str255 result_type;
 		
-		static const std::size_t fixed_size = 0;
+		static const int fixed_size = -1;
 		
 		typedef deconstruct_Str255_contents  deconstruct;
 		typedef reconstruct_Str255_contents  reconstruct;

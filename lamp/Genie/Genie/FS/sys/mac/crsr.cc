@@ -105,7 +105,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_mac_crsr_Property : readwrite_property
 	{
-		static const std::size_t fixed_size = Accessor::fixed_size;
+		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef typename Accessor::result_type result_type;
 		

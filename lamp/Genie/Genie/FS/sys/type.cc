@@ -32,7 +32,7 @@ namespace Genie
 	
 	struct sys_type_text_wildcard : readwrite_property
 	{
-		static const size_t fixed_size = sizeof gTextFileCreator;
+		static const int fixed_size = sizeof gTextFileCreator;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
