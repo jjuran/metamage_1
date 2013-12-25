@@ -43,9 +43,7 @@ namespace Genie
 			
 			~PipeInHandle();
 			
-			unsigned int SysPoll();
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			plus::conduit& get_conduit() const  { return *itsConduit; }
 	};
 	
 	class PipeOutHandle : public StreamHandle
@@ -59,29 +57,37 @@ namespace Genie
 			
 			~PipeOutHandle();
 			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* data, std::size_t byteCount );
+			plus::conduit& get_conduit() const  { return *itsConduit; }
 	};
 	
 	static unsigned pipein_poll( vfs::filehandle* that )
 	{
-		return static_cast< PipeInHandle& >( *that ).SysPoll();
+		plus::conduit& conduit = static_cast< PipeInHandle& >( *that ).get_conduit();
+		
+		return + vfs::Poll_read
+		       | vfs::Poll_write * conduit.is_writable();
 	}
 	
 	static ssize_t pipein_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return static_cast< PipeInHandle& >( *that ).SysRead( buffer, n );
+		plus::conduit& conduit = static_cast< PipeInHandle& >( *that ).get_conduit();
+		
+		return conduit.read( buffer, n, is_nonblocking( *that ), &try_again );
 	}
 	
 	static unsigned pipeout_poll( vfs::filehandle* that )
 	{
-		return static_cast< PipeOutHandle& >( *that ).SysPoll();
+		plus::conduit& conduit = static_cast< PipeOutHandle& >( *that ).get_conduit();
+		
+		return + vfs::Poll_read * conduit.is_readable()
+		       | vfs::Poll_write;
 	}
 	
 	static ssize_t pipeout_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return static_cast< PipeOutHandle& >( *that ).SysWrite( buffer, n );
+		plus::conduit& conduit = static_cast< PipeOutHandle& >( *that ).get_conduit();
+		
+		return conduit.write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
 	
 	static const vfs::stream_method_set pipein_stream_methods =
@@ -127,17 +133,6 @@ namespace Genie
 		itsConduit->close_ingress();
 	}
 	
-	unsigned PipeInHandle::SysPoll()
-	{
-		return + vfs::Poll_read
-		       | vfs::Poll_write * itsConduit->is_writable();
-	}
-	
-	ssize_t PipeInHandle::SysWrite( const char* data, std::size_t byteCount )
-	{
-		return itsConduit->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
-	}
-	
 	
 	PipeOutHandle::PipeOutHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
 	                              bool                                          nonblocking )
@@ -152,17 +147,6 @@ namespace Genie
 	PipeOutHandle::~PipeOutHandle()
 	{
 		itsConduit->close_egress();
-	}
-	
-	unsigned PipeOutHandle::SysPoll()
-	{
-		return + vfs::Poll_read * itsConduit->is_readable()
-		       | vfs::Poll_write;
-	}
-	
-	ssize_t PipeOutHandle::SysRead( char* data, std::size_t byteCount )
-	{
-		return itsConduit->read( data, byteCount, is_nonblocking( *this ), &try_again );
 	}
 	
 	pipe_ends new_pipe( int nonblock )
