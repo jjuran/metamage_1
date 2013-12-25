@@ -13,6 +13,7 @@
 
 // vfs
 #include "vfs/file_descriptor.hh"
+#include "vfs/enum/poll_result.hh"
 
 // relix-kernel
 #include "relix/api/errno.hh"
@@ -91,21 +92,21 @@ namespace Genie
 						
 						//if ( poll == 0 )  continue;  // Optimization
 						
-						if ( FD_ISSET( i, readfds )  &&  poll & kPollRead )
+						if ( FD_ISSET( i, readfds )  &&  poll & vfs::Poll_read )
 						{
 							FD_SET( i, &rd );
 							
 							++result;
 						}
 						
-						if ( FD_ISSET( i, writefds )  &&  poll & kPollWrite )
+						if ( FD_ISSET( i, writefds )  &&  poll & vfs::Poll_write )
 						{
 							FD_SET( i, &wr );
 							
 							++result;
 						}
 						
-						if ( FD_ISSET( i, exceptfds )  &&  poll & kPollExcept )
+						if ( FD_ISSET( i, exceptfds )  &&  poll & vfs::Poll_except )
 						{
 							FD_SET( i, &ex );
 							
