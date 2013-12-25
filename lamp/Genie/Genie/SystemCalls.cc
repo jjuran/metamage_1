@@ -18,6 +18,7 @@
 
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
+#include "vfs/filehandle/primitives/read.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -170,12 +171,7 @@ namespace Genie
 	{
 		try
 		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
-			
-			int get = stream.Read( reinterpret_cast< char* >( buf ),
-			                       count );
-			
-			return get;
+			return read( relix::get_fd_handle( fd ), (char*) buf, count );
 		}
 		catch ( ... )
 		{
