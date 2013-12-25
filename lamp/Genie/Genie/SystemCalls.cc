@@ -47,10 +47,8 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -322,7 +320,7 @@ namespace Genie
 		
 		try
 		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
+			vfs::filehandle& stream = relix::get_fd_handle( fd );
 			
 			ssize_t result = 0;
 			
@@ -332,7 +330,7 @@ namespace Genie
 				
 				const size_t length = iov[ i ].iov_len;
 				
-				const ssize_t written = stream.Write( buffer, length );
+				const ssize_t written = write( stream, buffer, length );
 				
 				result += written;
 				
