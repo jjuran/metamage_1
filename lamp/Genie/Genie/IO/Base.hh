@@ -9,6 +9,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
+#include "vfs/enum/poll_result.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
@@ -20,9 +21,9 @@ namespace Genie
 	
 	enum
 	{
-		kPollRead   = 1,
-		kPollWrite  = 2,
-		kPollExcept = 4
+		kPollRead   = vfs::Poll_read,
+		kPollWrite  = vfs::Poll_write,
+		kPollExcept = vfs::Poll_except
 	};
 	
 	using vfs::memory_mapping_ptr;
