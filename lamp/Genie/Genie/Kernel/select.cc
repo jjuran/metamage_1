@@ -16,8 +16,7 @@
 
 // relix-kernel
 #include "relix/api/errno.hh"
-#include "relix/api/get_fds.hh"
-#include "relix/task/fd_map.hh"
+#include "relix/api/get_fd_handle.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
@@ -51,8 +50,6 @@ namespace Genie
 		
 		try
 		{
-			relix::fd_map& files = relix::get_fds();
-			
 			// Output fd sets
 			fd_set rd, wr, ex;
 			
@@ -88,7 +85,7 @@ namespace Genie
 					     || FD_ISSET( i, writefds  )
 					     || FD_ISSET( i, exceptfds ) )
 					{
-						StreamHandle& stream = IOHandle_Cast< StreamHandle >( *files.at( i ).handle );
+						StreamHandle& stream = IOHandle_Cast< StreamHandle >( relix::get_fd_handle( i ) );
 						
 						unsigned int poll = stream.Poll();
 						
