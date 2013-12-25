@@ -36,9 +36,9 @@ namespace Genie
 		return IOHandle_Cast< StreamHandle >( open( file, O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
 	}
 	
-	static void MakeWindow( const IOPtr& port_dir )
+	static void MakeWindow( vfs::filehandle& port_dir )
 	{
-		vfs::node_ptr port = port_dir->GetFile();
+		vfs::node_ptr port = port_dir.GetFile();
 		
 		const vfs::node& cwd = *port;
 		
@@ -87,7 +87,7 @@ namespace Genie
 	{
 		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ) );
 		
-		MakeWindow( the_port );
+		MakeWindow( *the_port );
 		
 		return the_port->GetFile();
 	}
