@@ -19,13 +19,8 @@
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/filehandle/primitives/append.hh"
-#include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/filehandle/primitives/pread.hh"
-#include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/mmap/types/file_memory_mapping.hh"
-#include "vfs/primitives/geteof.hh"
-#include "vfs/primitives/seteof.hh"
 
 // MacVFS
 #include "MacVFS/mmap/Handle_memory_mapping.hh"
@@ -77,34 +72,6 @@ namespace Genie
 	
 	RegularFileHandle::~RegularFileHandle()
 	{
-	}
-	
-	ssize_t RegularFileHandle::SysRead( char* buffer, size_t n_bytes )
-	{
-		ssize_t read = pread( *this,
-		                      buffer,
-		                      n_bytes,
-		                      get_mark() );
-		
-		return advance_mark( read );
-	}
-	
-	ssize_t RegularFileHandle::SysWrite( const char* buffer, size_t n_bytes )
-	{
-		const bool appending = get_flags() & O_APPEND;
-		
-		ssize_t written = appending ? append( *this, buffer, n_bytes )
-		                            : pwrite( *this,
-		                                      buffer,
-		                                      n_bytes,
-		                                      get_mark() );
-		
-		return advance_mark( written );
-	}
-	
-	ssize_t RegularFileHandle::Write( const char* buffer, std::size_t byteCount )
-	{
-		return SysWrite( buffer, byteCount );
 	}
 	
 	memory_mapping_ptr
