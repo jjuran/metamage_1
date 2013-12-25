@@ -19,6 +19,7 @@
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
 #include "vfs/filehandle/primitives/read.hh"
+#include "vfs/filehandle/primitives/write.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -275,13 +276,7 @@ namespace Genie
 	{
 		try
 		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
-			
-			const char* data = reinterpret_cast< const char* >( buf );
-			
-			int put = stream.Write( data, count );
-			
-			return put;
+			return write( relix::get_fd_handle( fd ), (const char*) buf, count );
 		}
 		catch ( ... )
 		{
