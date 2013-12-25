@@ -39,7 +39,7 @@ namespace Genie
 		
 		public:
 			PipeInHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-			              bool                                          nonblocking );
+			              int                                           open_flags );
 			
 			~PipeInHandle();
 			
@@ -53,7 +53,7 @@ namespace Genie
 		
 		public:
 			PipeOutHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-			               bool                                          nonblocking );
+			               int                                           open_flags );
 			
 			~PipeOutHandle();
 			
@@ -119,11 +119,9 @@ namespace Genie
 	
 	
 	PipeInHandle::PipeInHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-	                            bool                                          nonblocking )
+	                            int                                           open_flags )
 	:
-		StreamHandle( nonblocking ? O_WRONLY | O_NONBLOCK
-		                          : O_WRONLY,
-		              &pipein_methods ),
+		StreamHandle( open_flags, &pipein_methods ),
 		itsConduit( conduit )
 	{
 	}
@@ -135,11 +133,9 @@ namespace Genie
 	
 	
 	PipeOutHandle::PipeOutHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-	                              bool                                          nonblocking )
+	                              int                                           open_flags )
 	:
-		StreamHandle( nonblocking ? O_RDONLY | O_NONBLOCK
-		                          : O_RDONLY,
-		              &pipeout_methods ),
+		StreamHandle( open_flags, &pipeout_methods ),
 		itsConduit( conduit )
 	{
 	}
@@ -155,8 +151,11 @@ namespace Genie
 		
 		pipe_ends result;
 		
-		result.writer.reset( new PipeInHandle ( conduit, nonblock ) );
-		result.reader.reset( new PipeOutHandle( conduit, nonblock ) );
+		const int open_flags = nonblock ? O_RDONLY | O_NONBLOCK
+		                                : O_RDONLY;
+		
+		result.writer.reset( new PipeInHandle ( conduit, open_flags ) );
+		result.reader.reset( new PipeOutHandle( conduit, open_flags ) );
 		
 		return result;
 	}
