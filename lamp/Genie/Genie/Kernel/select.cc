@@ -14,6 +14,7 @@
 // vfs
 #include "vfs/file_descriptor.hh"
 #include "vfs/enum/poll_result.hh"
+#include "vfs/filehandle/primitives/poll.hh"
 
 // relix-kernel
 #include "relix/api/errno.hh"
@@ -24,7 +25,6 @@
 
 // Genie
 #include "Genie/api/yield.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -86,9 +86,7 @@ namespace Genie
 					     || FD_ISSET( i, writefds  )
 					     || FD_ISSET( i, exceptfds ) )
 					{
-						StreamHandle& stream = IOHandle_Cast< StreamHandle >( relix::get_fd_handle( i ) );
-						
-						unsigned int poll = stream.Poll();
+						unsigned int poll = vfs::poll( relix::get_fd_handle( i ) );
 						
 						//if ( poll == 0 )  continue;  // Optimization
 						
