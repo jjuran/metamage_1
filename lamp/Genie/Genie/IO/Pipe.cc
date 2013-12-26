@@ -18,6 +18,7 @@
 #include "plus/conduit.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -26,7 +27,6 @@
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -38,7 +38,7 @@ namespace Genie
 		Pipe_writer,
 	};
 	
-	class PipeEndHandle : public StreamHandle
+	class PipeEndHandle : public vfs::filehandle
 	{
 		private:
 			boost::intrusive_ptr< plus::conduit > itsConduit;
@@ -124,7 +124,7 @@ namespace Genie
 	                              int                                           open_flags,
 	                              pipe_end_type                                 end_type )
 	:
-		StreamHandle( open_flags, &methods_for_end( end_type ) ),
+		vfs::filehandle( open_flags, &methods_for_end( end_type ) ),
 		itsConduit( conduit ),
 		its_pipe_end_type( end_type )
 	{
