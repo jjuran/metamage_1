@@ -9,15 +9,13 @@
 #include <sys/stat.h>
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/touch.hh"
-
-// Genie
-#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -73,20 +71,9 @@ namespace Genie
 		&trigger_data_methods
 	};
 	
-	class TriggerHandle : public StreamHandle
-	{
-		public:
-			TriggerHandle( const vfs::node&  file,
-			               int               flags )
-			:
-				StreamHandle( &file, flags, &trigger_io_methods )
-			{
-			}
-	};
-	
 	static vfs::filehandle_ptr trigger_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new TriggerHandle( *that, flags );
+		return new vfs::filehandle( that, flags, &trigger_io_methods );
 	}
 	
 	
