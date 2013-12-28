@@ -21,7 +21,6 @@
 
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
-#include "vfs/filehandle/primitives/write.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -43,6 +42,7 @@
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
 #include "relix/syscall/truncate.hh"
+#include "relix/syscall/write.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
@@ -259,19 +259,8 @@ namespace Genie
 	using relix::truncate;
 	using relix::ftruncate;
 	using relix::pwrite;
+	using relix::write;
 	
-	
-	static ssize_t write( int fd, const void* buf, size_t count )
-	{
-		try
-		{
-			return write( relix::get_fd_handle( fd ), (const char*) buf, count );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
 	
 	static ssize_t writev( int fd, const struct iovec *iov, int n_iov )
 	{
