@@ -16,7 +16,7 @@
 namespace Genie
 {
 	
-	FSTreePtr ResolvePathAt( int dirfd, const plus::string& path );
+	vfs::node_ptr ResolvePathAt( int dirfd, const plus::string& path );
 	
 }
 

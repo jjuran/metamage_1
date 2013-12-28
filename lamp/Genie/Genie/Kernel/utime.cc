@@ -51,8 +51,8 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = path != NULL ? ResolvePathAt( fd, path )
-			                              : relix::get_fd_handle( fd ).GetFile();
+			vfs::node_ptr file = path != NULL ? ResolvePathAt( fd, path )
+			                                  : relix::get_fd_handle( fd ).GetFile();
 			
 			const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
 			

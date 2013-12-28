@@ -32,7 +32,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	FSTreePtr ResolvePathAt( int dirfd, const plus::string& path )
+	vfs::node_ptr ResolvePathAt( int dirfd, const plus::string& path )
 	{
 		if ( path.empty() )
 		{
