@@ -49,7 +49,6 @@
 #include "Genie/Faults.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
-#include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
