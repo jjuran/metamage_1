@@ -35,6 +35,7 @@
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/getsid.hh"
 #include "relix/syscall/gettid.hh"
+#include "relix/syscall/lseek.hh"
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
@@ -87,21 +88,7 @@ namespace Genie
 	using relix::getppid;
 	using relix::getsid;
 	using relix::gettid;
-	
-	
-	static off_t lseek( int fd, off_t offset, int whence )
-	{
-		try
-		{
-			return seek( relix::get_fd_handle( fd ), offset, whence );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return set_errno( ESPIPE );
-	}
+	using relix::lseek;
 	
 	
 	static int pause()
