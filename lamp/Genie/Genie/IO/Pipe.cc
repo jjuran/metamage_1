@@ -18,6 +18,7 @@
 #include "plus/conduit.hh"
 
 // vfs
+#include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 
 // Genie
@@ -78,8 +79,8 @@ namespace Genie
 	
 	unsigned PipeInHandle::SysPoll()
 	{
-		return + kPollRead
-		       | kPollWrite * itsConduit->is_writable();
+		return + vfs::Poll_read
+		       | vfs::Poll_write * itsConduit->is_writable();
 	}
 	
 	ssize_t PipeInHandle::SysWrite( const char* data, std::size_t byteCount )
@@ -104,8 +105,8 @@ namespace Genie
 	
 	unsigned PipeOutHandle::SysPoll()
 	{
-		return + kPollRead * itsConduit->is_readable()
-		       | kPollWrite;
+		return + vfs::Poll_read * itsConduit->is_readable()
+		       | vfs::Poll_write;
 	}
 	
 	ssize_t PipeOutHandle::SysRead( char* data, std::size_t byteCount )
