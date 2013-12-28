@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// Standard C
+#include <string.h>
+
 // plus
 #include "plus/string.hh"
 
@@ -35,22 +38,32 @@ namespace relix
 	namespace p7 = poseven;
 	
 	
-	vfs::node_ptr resolve_path_at( int dirfd, const plus::string& path )
+	vfs::node_ptr resolve_path_at( int dirfd, const char* path, unsigned length )
 	{
-		if ( path.empty() )
+		if ( length == 0 )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
 		if ( path[0] == '/' )
 		{
-			return vfs::resolve_absolute_path( path );
+			return vfs::resolve_absolute_path( path, length );
 		}
 		
 		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? getcwd()
 		                                         : get_fd_handle( dirfd ).GetFile();
 		
-		return resolve_pathname( path, *at_dir );
+		return resolve_pathname( path, length, *at_dir );
+	}
+	
+	vfs::node_ptr resolve_path_at( int dirfd, const plus::string& path )
+	{
+		return resolve_path_at( dirfd, path.data(), path.size() );
+	}
+	
+	vfs::node_ptr resolve_path_at( int dirfd, const char* path )
+	{
+		return resolve_path_at( dirfd, path, strlen( path ) );
 	}
 	
 }

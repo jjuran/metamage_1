@@ -16,6 +16,10 @@
 namespace relix
 {
 	
+	vfs::node_ptr resolve_path_at( int dirfd, const char* path, unsigned length );
+	
+	vfs::node_ptr resolve_path_at( int dirfd, const char* path );
+	
 	vfs::node_ptr resolve_path_at( int dirfd, const plus::string& path );
 	
 }
