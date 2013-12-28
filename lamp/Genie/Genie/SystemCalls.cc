@@ -21,7 +21,6 @@
 
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
-#include "vfs/filehandle/primitives/read.hh"
 #include "vfs/filehandle/primitives/write.hh"
 
 // relix-kernel
@@ -42,6 +41,7 @@
 #include "relix/syscall/gettid.hh"
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
+#include "relix/syscall/read.hh"
 #include "relix/syscall/truncate.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -167,18 +167,7 @@ namespace Genie
 	
 	
 	using relix::pread;
-	
-	static ssize_t read( int fd, void* buf, size_t count )
-	{
-		try
-		{
-			return read( relix::get_fd_handle( fd ), (char*) buf, count );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
+	using relix::read;
 	
 	
 	static int setpgid( pid_t pid, pid_t pgid )
