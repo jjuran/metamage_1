@@ -7,16 +7,16 @@
 #define GENIE_FILESYSTEM_TRIGGER_HH
 
 // plus
-#include "plus/string.hh"
+#include "plus/string_fwd.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+//vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	typedef void (*trigger_function)( const FSTree* );
+	typedef void (*trigger_function)( const vfs::node* );
 	
 	struct trigger_extra
 	{
@@ -25,9 +25,9 @@ namespace Genie
 		
 	};
 	
-	FSTreePtr trigger_factory( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args );
+	vfs::node_ptr trigger_factory( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args );
 	
 }
 

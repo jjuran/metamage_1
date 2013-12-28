@@ -10,18 +10,18 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/touch.hh"
 
 // Genie
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Stream.hh"
 
 
 namespace Genie
 {
 	
-	static void trigger_touch( const FSTree* that )
+	static void trigger_touch( const vfs::node* that )
 	{
 		if ( trigger_function f = *(trigger_function*) that->extra() )
 		{
@@ -31,14 +31,14 @@ namespace Genie
 		}
 	}
 	
-	static IOPtr trigger_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr trigger_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static const data_method_set trigger_data_methods =
+	static const vfs::data_method_set trigger_data_methods =
 	{
 		&trigger_open
 	};
 	
-	static const node_method_set trigger_methods =
+	static const vfs::node_method_set trigger_methods =
 	{
 		NULL,
 		NULL,
@@ -69,21 +69,21 @@ namespace Genie
 		return n;
 	}
 	
-	static IOPtr trigger_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr trigger_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new TriggerHandle( *that, flags );
 	}
 	
 	
-	FSTreePtr trigger_factory( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args )
+	vfs::node_ptr trigger_factory( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFCHR | 0200,
-		                             &trigger_methods,
-		                             sizeof (trigger_extra) );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFCHR | 0200,
+		                                   &trigger_methods,
+		                                   sizeof (trigger_extra) );
 		
 		trigger_extra& extra = *(trigger_extra*) result->extra();
 		
