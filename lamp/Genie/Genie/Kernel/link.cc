@@ -43,15 +43,15 @@ namespace Genie
 	
 	static int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
 	{
-		vfs::node_ptr oldFile = ResolvePathAt( olddirfd, oldpath );
-		
-		if ( const bool follow = flags & AT_SYMLINK_FOLLOW )
-		{
-			vfs::resolve_links_in_place( oldFile );
-		}
-		
 		try
 		{
+			vfs::node_ptr oldFile = ResolvePathAt( olddirfd, oldpath );
+			
+			if ( const bool follow = flags & AT_SYMLINK_FOLLOW )
+			{
+				vfs::resolve_links_in_place( oldFile );
+			}
+			
 			vfs::node_ptr newFile = ResolvePathAt( newdirfd, newpath );
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
