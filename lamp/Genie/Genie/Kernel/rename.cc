@@ -3,37 +3,18 @@
  *	=========
  */
 
-// vfs
-#include "vfs/node.hh"
-#include "vfs/primitives/rename.hh"
+// relix-kernel
+#include "relix/syscall/renameat.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
 {
 	
-	static int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath )
-	{
-		try
-		{
-			vfs::node_ptr srcFile  = ResolvePathAt( olddirfd, oldpath );
-			vfs::node_ptr destFile = ResolvePathAt( newdirfd, newpath );
-			
-			// Do not resolve links
-			
-			rename( *srcFile, *destFile );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::renameat;
+	
 	
 	#pragma force_active on
 	
