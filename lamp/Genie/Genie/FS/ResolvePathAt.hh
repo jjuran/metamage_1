@@ -7,10 +7,10 @@
 #define GENIE_FILESYSTEM_RESOLVEPATHAT_HH
 
 // plus
-#include "plus/string.hh"
+#include "plus/string_fwd.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie

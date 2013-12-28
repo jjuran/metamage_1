@@ -8,6 +8,9 @@
 // POSIX
 #include "fcntl.h"
 
+// plus
+#include "plus/string.hh"
+
 // POSeven
 #include "poseven/types/errno_t.hh"
 
