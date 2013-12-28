@@ -3,13 +3,17 @@
 #include "Genie/SystemConsole.hh"
 
 // POSIX
+#include <errno.h>
 #include <fcntl.h>
 
 // Iota
 #include "iota/strings.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/read.hh"
+#include "vfs/filehandle/primitives/write.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/primitives/hardlink.hh"
@@ -19,21 +23,18 @@
 #include "vfs/primitives/symlink.hh"
 #include "vfs/primitives/touch.hh"
 
-// Genie
-#include "Genie/IO/Stream.hh"
-
 
 namespace Genie
 {
 	
 	static ssize_t Spew( const vfs::node& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( open( file, O_WRONLY | O_TRUNC, 0 ).get() )->Write( buffer, length );
+		return write( *open( file, O_WRONLY | O_TRUNC, 0 ), buffer, length );
 	}
 	
 	static ssize_t Append( const vfs::node& file, const char* buffer, std::size_t length )
 	{
-		return IOHandle_Cast< StreamHandle >( open( file, O_WRONLY | O_APPEND, 0 ).get() )->Write( buffer, length );
+		return write( *open( file, O_WRONLY | O_APPEND, 0 ), buffer, length );
 	}
 	
 	static void MakeWindow( vfs::filehandle& port_dir )

@@ -11,12 +11,15 @@
 
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
+#include "vfs/filehandle/primitives/read.hh"
+#include "vfs/filehandle/primitives/write.hh"
+
+// relix-kernel
+#include "relix/api/get_fd_handle.hh"
 
 // Genie
 #include "Genie/api/breathe.hh"
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -29,8 +32,8 @@ namespace Genie
 		
 		try
 		{
-			StreamHandle& input  = GetFileHandleWithCast< StreamHandle >( fd_in  );
-			StreamHandle& output = GetFileHandleWithCast< StreamHandle >( fd_out );
+			vfs::filehandle& input  = relix::get_fd_handle( fd_in  );
+			vfs::filehandle& output = relix::get_fd_handle( fd_out );
 			
 			breathe( true );
 			
@@ -50,9 +53,9 @@ namespace Genie
 			
 			ssize_t n_read;
 			
-			while (( n_read = input.Read( buffer, count ? std::min( size, count ) : size ) ))
+			while (( n_read = read( input, buffer, count ? std::min( size, count ) : size ) ))
 			{
-				ssize_t n_written = output.Write( buffer, n_read );
+				ssize_t n_written = write( output, buffer, n_read );
 				
 				bytes_pumped += n_written;
 				

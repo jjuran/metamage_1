@@ -18,6 +18,8 @@
 
 // vfs
 #include "vfs/filehandle/functions/seek.hh"
+#include "vfs/filehandle/primitives/read.hh"
+#include "vfs/filehandle/primitives/write.hh"
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
@@ -45,10 +47,8 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
-#include "Genie/FileDescriptors.hh"
 #include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -170,12 +170,7 @@ namespace Genie
 	{
 		try
 		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
-			
-			int get = stream.Read( reinterpret_cast< char* >( buf ),
-			                       count );
-			
-			return get;
+			return read( relix::get_fd_handle( fd ), (char*) buf, count );
 		}
 		catch ( ... )
 		{
@@ -279,13 +274,7 @@ namespace Genie
 	{
 		try
 		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
-			
-			const char* data = reinterpret_cast< const char* >( buf );
-			
-			int put = stream.Write( data, count );
-			
-			return put;
+			return write( relix::get_fd_handle( fd ), (const char*) buf, count );
 		}
 		catch ( ... )
 		{
@@ -331,7 +320,7 @@ namespace Genie
 		
 		try
 		{
-			StreamHandle& stream = GetFileHandleWithCast< StreamHandle >( fd );
+			vfs::filehandle& stream = relix::get_fd_handle( fd );
 			
 			ssize_t result = 0;
 			
@@ -341,7 +330,7 @@ namespace Genie
 				
 				const size_t length = iov[ i ].iov_len;
 				
-				const ssize_t written = stream.Write( buffer, length );
+				const ssize_t written = write( stream, buffer, length );
 				
 				result += written;
 				

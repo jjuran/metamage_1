@@ -10,6 +10,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/touch.hh"
@@ -20,6 +22,28 @@
 
 namespace Genie
 {
+	
+	static ssize_t trigger_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		touch( *that->GetFile() );
+		
+		return n;
+	}
+	
+	static const vfs::stream_method_set trigger_stream_methods =
+	{
+		NULL,
+		NULL,
+		&trigger_write,
+	};
+	
+	static const vfs::filehandle_method_set trigger_io_methods =
+	{
+		NULL,
+		NULL,
+		&trigger_stream_methods,
+	};
+	
 	
 	static void trigger_touch( const vfs::node* that )
 	{
@@ -55,19 +79,10 @@ namespace Genie
 			TriggerHandle( const vfs::node&  file,
 			               int               flags )
 			:
-				StreamHandle( &file, flags )
+				StreamHandle( &file, flags, &trigger_io_methods )
 			{
 			}
-			
-			ssize_t Write( const char* buffer, size_t n );
 	};
-	
-	ssize_t TriggerHandle::Write( const char* buffer, size_t n )
-	{
-		touch( *GetFile() );
-		
-		return n;
-	}
 	
 	static vfs::filehandle_ptr trigger_open( const vfs::node* that, int flags, mode_t mode )
 	{
