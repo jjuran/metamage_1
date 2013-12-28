@@ -46,7 +46,7 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( flock );
+	//REGISTER_SYSTEM_CALL( flock );
 	
 	#pragma force_active reset
 	
