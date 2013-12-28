@@ -16,6 +16,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/functions/seek.hh"
 
 // relix-kernel
@@ -47,7 +48,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
-#include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -93,16 +93,7 @@ namespace Genie
 	{
 		try
 		{
-			vfs::filehandle* file = &relix::get_fd_handle( fd );
-			
-			if ( DirHandle* h = IOHandle_Cast< DirHandle >( file ) )
-			{
-				return h->Seek( offset, whence );
-			}
-			
-			return seek( *file, offset, whence );
-			
-			// downcast failed
+			return seek( relix::get_fd_handle( fd ), offset, whence );
 		}
 		catch ( ... )
 		{
