@@ -295,13 +295,13 @@ namespace Genie
 			
 			if ( valid )
 			{
-				ssize_t n_bytes = 0;
+				size_t n_bytes = 0;
 				
 				for ( int i = 0;  i < n_iov;  ++i )
 				{
 					n_bytes += iov[ i ].iov_len;
 					
-					if ( n_bytes < 0 )
+					if ( ssize_t( n_bytes ) < 0 )
 					{
 						valid = false;  // ssize_t overflow
 						
