@@ -37,8 +37,6 @@ namespace Genie
 			
 			void Advance()  { ++nextOffset; }
 			
-			void Rewind()  { nextOffset = 0; }
-			
 			void Seek( off_t index )  { nextOffset = index; }
 			
 			off_t Tell() const  { return nextOffset; }

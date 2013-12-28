@@ -32,8 +32,6 @@ namespace Genie
 			
 			virtual void Advance() = 0;
 			
-			virtual void Rewind() = 0;
-			
 			virtual void Seek( off_t index ) = 0;
 			
 			virtual off_t Tell() const = 0;
