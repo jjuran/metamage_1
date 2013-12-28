@@ -82,16 +82,7 @@ namespace Genie
 				StreamHandle( &file, flags, &trigger_io_methods )
 			{
 			}
-			
-			ssize_t Write( const char* buffer, size_t n );
 	};
-	
-	ssize_t TriggerHandle::Write( const char* buffer, size_t n )
-	{
-		touch( *GetFile() );
-		
-		return n;
-	}
 	
 	static vfs::filehandle_ptr trigger_open( const vfs::node* that, int flags, mode_t mode )
 	{
