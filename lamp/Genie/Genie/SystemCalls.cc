@@ -289,7 +289,7 @@ namespace Genie
 		{
 		#ifdef IOV_MAX
 			
-			valid = valid  &&  n_iov <= IOV_MAX;
+			valid = n_iov <= IOV_MAX;
 			
 		#endif
 			
