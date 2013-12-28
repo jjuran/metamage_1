@@ -10,6 +10,9 @@
 #include <fcntl.h>
 #include "sys/uio.h"
 
+// more-libc
+#include "more/string.h"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -283,6 +286,8 @@ namespace Genie
 	
 	static ssize_t writev( int fd, const struct iovec *iov, int n_iov )
 	{
+		size_t n_bytes = 0;
+		
 		bool valid = n_iov > 0;
 		
 		if ( valid )
@@ -295,8 +300,6 @@ namespace Genie
 			
 			if ( valid )
 			{
-				size_t n_bytes = 0;
-				
 				for ( int i = 0;  i < n_iov;  ++i )
 				{
 					n_bytes += iov[ i ].iov_len;
@@ -317,34 +320,23 @@ namespace Genie
 			return set_errno( EINVAL );
 		}
 		
+		plus::string buffer;
+		
 		try
 		{
-			vfs::filehandle& stream = relix::get_fd_handle( fd );
-			
-			ssize_t result = 0;
+			char* p = buffer.reset( n_bytes );
 			
 			for ( int i = 0;  i < n_iov;  ++i )
 			{
-				const char* buffer = (char*) iov[ i ].iov_base;
-				
-				const size_t length = iov[ i ].iov_len;
-				
-				const ssize_t written = write( stream, buffer, length );
-				
-				result += written;
-				
-				if ( written != length )
-				{
-					break;
-				}
+				p = (char*) mempcpy( p, iov[ i ].iov_base, iov[ i ].iov_len );
 			}
-			
-			return result;
 		}
 		catch ( ... )
 		{
 			return set_errno_from_exception();
 		}
+		
+		return write( fd, buffer.data(), n_bytes );
 	}
 	
 	#pragma force_active on
