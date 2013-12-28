@@ -52,10 +52,10 @@ namespace Genie
 	class TriggerHandle : public StreamHandle
 	{
 		public:
-			TriggerHandle( const FSTreePtr&  file,
+			TriggerHandle( const vfs::node&  file,
 			               int               flags )
 			:
-				StreamHandle( file, flags )
+				StreamHandle( &file, flags )
 			{
 			}
 			
@@ -71,7 +71,7 @@ namespace Genie
 	
 	static IOPtr trigger_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TriggerHandle( that, flags );
+		return new TriggerHandle( *that, flags );
 	}
 	
 	
