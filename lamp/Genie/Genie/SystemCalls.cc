@@ -17,6 +17,7 @@
 
 // relix-kernel
 #include "relix/api/current_process.hh"
+#include "relix/api/get_process.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
@@ -101,7 +102,7 @@ namespace Genie
 			
 			relix::process& current = relix::current_process();
 			
-			relix::process& target = pid != 0 ? GetProcess( pid ).get_process()
+			relix::process& target = pid != 0 ? relix::get_process( pid )
 			                                  : current;
 			
 			const int current_pid = current.id();
