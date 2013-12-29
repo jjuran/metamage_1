@@ -3,62 +3,18 @@
  *	=========
  */
 
-// Standard C
-#include <errno.h>
-
-// POSIX
-#include "fcntl.h"
-
-// vfs
-#include "vfs/node.hh"
-#include "vfs/functions/file-tests.hh"
-#include "vfs/primitives/remove.hh"
+// relix-kernel
+#include "relix/syscall/unlinkat.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
-
-
-#ifndef AT_REMOVEANY
-#define AT_REMOVEANY  0
-#endif
-
-#ifndef AT_REMOVEDIR
-#define AT_REMOVEDIR  0
-#endif
 
 
 namespace Genie
 {
 	
-	static int unlinkat( int dirfd, const char* path, int flags )
-	{
-		try
-		{
-			vfs::node_ptr file = ResolvePathAt( dirfd, path );
-			
-			// Do not resolve links -- delete the symlink
-			
-			const bool remove_any = flags & AT_REMOVEANY;
-			const bool remove_dir = flags & AT_REMOVEDIR;
-			
-			if ( remove_any || remove_dir == is_directory( *file ) )
-			{
-				remove( *file );
-			}
-			else
-			{
-				return set_errno( remove_dir ? ENOTDIR : EPERM );
-			}
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::unlinkat;
+	
 	
 	#pragma force_active on
 	

@@ -3,80 +3,18 @@
  *	========
  */
 
-// POSIX
-#include "sys/stat.h"
-
-// vfs
-#include "vfs/filehandle.hh"
-#include "vfs/node.hh"
-#include "vfs/functions/resolve_links_in_place.hh"
-#include "vfs/primitives/touch.hh"
-#include "vfs/primitives/utime.hh"
-
 // relix-kernel
-#include "relix/api/get_fd_handle.hh"
+#include "relix/syscall/utimensat.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
-
-
-#ifndef AT_SYMLINK_NOFOLLOW
-#define AT_SYMLINK_NOFOLLOW  0
-#endif
 
 
 namespace Genie
 {
 	
-	static inline bool merely_touch( const timespec* t )
-	{
-		if ( t != NULL )
-		{
-		#ifdef UTIME_NOW
-			
-			if ( t[0].tv_nsec == UTIME_NOW  &&  t[1].tv_nsec == UTIME_NOW )
-			{
-				return true;
-			}
-			
-		#endif
-		}
-		
-		return t == NULL;
-	}
+	using relix::utimensat;
 	
-	static int utimensat( int fd, const char* path, const timespec times[2], int flags )
-	{
-		try
-		{
-			vfs::node_ptr file = path != NULL ? ResolvePathAt( fd, path )
-			                                  : relix::get_fd_handle( fd ).GetFile();
-			
-			const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
-			
-			if ( !nofollow  &&  path != NULL )
-			{
-				vfs::resolve_links_in_place( file );
-			}
-			
-			if ( merely_touch( times ) )
-			{
-				touch( *file );
-			}
-			else
-			{
-				utime( *file, times );
-			}
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
 	
 	#pragma force_active on
 	

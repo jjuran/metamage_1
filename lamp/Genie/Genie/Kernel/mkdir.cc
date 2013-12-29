@@ -3,39 +3,18 @@
  *	========
  */
 
-// POSIX
-#include "sys/stat.h"
-
-// vfs
-#include "vfs/node.hh"
-#include "vfs/primitives/mkdir.hh"
+// relix-kernel
+#include "relix/syscall/mkdirat.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
 {
 	
-	static int mkdirat( int dirfd, const char* path, mode_t mode )
-	{
-		try
-		{
-			vfs::node_ptr location = ResolvePathAt( dirfd, path );
-			
-			// Do not resolve links
-			
-			mkdir( *location, mode );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::mkdirat;
+	
 	
 	#pragma force_active on
 	
