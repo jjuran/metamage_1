@@ -6,6 +6,10 @@
 #ifndef MORE_STRING_H
 #define MORE_STRING_H
 
+#ifdef __linux__
+#include <string.h>
+#endif
+
 // more-libc
 #include "more/size.h"
 
