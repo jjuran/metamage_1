@@ -21,6 +21,7 @@
 // relix-kernel
 #include "relix/api/get_fd_handle.hh"
 #include "relix/syscall/faccessat.hh"
+#include "relix/syscall/fchmodat.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -38,28 +39,8 @@ namespace Genie
 {
 	
 	using relix::faccessat;
+	using relix::fchmodat;
 	
-	
-	static int fchmodat( int dirfd, const char* path, mode_t mode, int flags )
-	{
-		try
-		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
-			
-			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
-			{
-				vfs::resolve_links_in_place( file );
-			}
-			
-			chmod( *file, mode );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
 	
 	static int fchmod( int fd, mode_t mode )
 	{
