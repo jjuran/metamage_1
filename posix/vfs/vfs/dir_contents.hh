@@ -28,9 +28,7 @@ namespace vfs
 			{
 			}
 			
-			virtual ~dir_contents()
-			{
-			}
+			virtual ~dir_contents();
 			
 			typedef const dir_entry& const_reference;
 			
