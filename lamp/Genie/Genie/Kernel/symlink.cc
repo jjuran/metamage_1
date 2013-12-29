@@ -13,7 +13,9 @@
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/primitives/readlink.hh"
-#include "vfs/primitives/symlink.hh"
+
+// relix-kernel
+#include "relix/syscall/symlinkat.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -24,28 +26,7 @@
 namespace Genie
 {
 	
-	static int symlinkat( const char* target_path, int newdirfd, const char* newpath )
-	{
-		try
-		{
-			vfs::node_ptr link = ResolvePathAt( newdirfd, newpath );
-			
-			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
-			
-			if ( exists( *link ) )
-			{
-				return set_errno( EEXIST );
-			}
-			
-			symlink( *link, target_path );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::symlinkat;
 	
 	
 	// Our variant of readlink() provides complete information regarding the size
