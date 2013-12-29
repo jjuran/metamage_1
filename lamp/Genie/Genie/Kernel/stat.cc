@@ -13,7 +13,6 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
-#include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -22,17 +21,12 @@
 #include "relix/syscall/faccessat.hh"
 #include "relix/syscall/fchmod.hh"
 #include "relix/syscall/fchmodat.hh"
+#include "relix/syscall/fstatat.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/SystemCallRegistry.hh"
-
-
-#ifndef AT_SYMLINK_NOFOLLOW
-#define AT_SYMLINK_NOFOLLOW  0
-#endif
 
 
 namespace Genie
@@ -41,37 +35,7 @@ namespace Genie
 	using relix::faccessat;
 	using relix::fchmod;
 	using relix::fchmodat;
-	
-	
-	static int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
-	{
-		std::memset( (void*) sb, '\0', sizeof (struct stat) );
-		
-		sb->st_size = off_t( -1 );
-		
-		try
-		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
-			
-			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
-			{
-				vfs::resolve_links_in_place( file );
-			}
-			
-			stat( *file, *sb );
-			
-			if ( sb->st_size == off_t( -1 ) )
-			{
-				sb->st_size = geteof( *file );
-			}
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::fstatat;
 	
 	
 	static int fstat( int fd, struct stat* sb )
