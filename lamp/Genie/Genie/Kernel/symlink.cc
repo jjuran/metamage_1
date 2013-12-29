@@ -28,7 +28,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr link = ResolvePathAt( newdirfd, newpath );
+			vfs::node_ptr link = ResolvePathAt( newdirfd, newpath );
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
@@ -69,7 +69,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr link = ResolvePathAt( dirfd, path );
+			vfs::node_ptr link = ResolvePathAt( dirfd, path );
 			
 			// Do not resolve links -- we want the target even if it's another symlink
 			

@@ -23,7 +23,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr location = ResolvePathAt( dirfd, path );
+			vfs::node_ptr location = ResolvePathAt( dirfd, path );
 			
 			// Do not resolve links
 			

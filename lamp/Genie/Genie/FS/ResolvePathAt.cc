@@ -5,56 +5,19 @@
 
 #include "Genie/FS/ResolvePathAt.hh"
 
-// POSIX
-#include "fcntl.h"
-
-// POSeven
-#include "poseven/types/errno_t.hh"
-
 // vfs
 #include "vfs/node.hh"
-#include "vfs/functions/resolve_pathname.hh"
 
 // relix
-#include "relix/api/getcwd.hh"
-
-// Genie
-#include "Genie/FileDescriptors.hh"
-#include "Genie/IO/Directory.hh"
-
-
-#ifndef AT_FDCWD
-#define AT_FDCWD  (-100)
-#endif
+#include "relix/fs/resolve_path_at.hh"
 
 
 namespace Genie
 {
 	
-	namespace p7 = poseven;
-	
-	
-	static FSTreePtr GetDirFile( int fd )
+	vfs::node_ptr ResolvePathAt( int dirfd, const plus::string& path )
 	{
-		return GetFileHandleWithCast< DirHandle >( fd ).GetFile();
-	}
-	
-	FSTreePtr ResolvePathAt( int dirfd, const plus::string& path )
-	{
-		if ( path.empty() )
-		{
-			p7::throw_errno( ENOENT );
-		}
-		
-		if ( path[0] == '/' )
-		{
-			return vfs::resolve_absolute_path( path );
-		}
-		
-		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? relix::getcwd()
-		                                         : GetDirFile( dirfd );
-		
-		return resolve_pathname( path, *at_dir );
+		return relix::resolve_path_at( dirfd, path );
 	}
 	
 }

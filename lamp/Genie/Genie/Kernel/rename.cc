@@ -20,8 +20,8 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr srcFile  = ResolvePathAt( olddirfd, oldpath );
-			FSTreePtr destFile = ResolvePathAt( newdirfd, newpath );
+			vfs::node_ptr srcFile  = ResolvePathAt( olddirfd, oldpath );
+			vfs::node_ptr destFile = ResolvePathAt( newdirfd, newpath );
 			
 			// Do not resolve links
 			

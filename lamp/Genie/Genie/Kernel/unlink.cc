@@ -36,7 +36,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
+			vfs::node_ptr file = ResolvePathAt( dirfd, path );
 			
 			// Do not resolve links -- delete the symlink
 			

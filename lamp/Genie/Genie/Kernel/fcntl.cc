@@ -46,7 +46,7 @@ namespace Genie
 		{
 			int fd = relix::first_free_fd();
 			
-			FSTreePtr file = ResolvePathAt( dirfd, path );
+			vfs::node_ptr file = ResolvePathAt( dirfd, path );
 			
 			const bool excluding = flags & O_EXCL;
 			
