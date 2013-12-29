@@ -14,13 +14,13 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
-#include "vfs/primitives/chmod.hh"
 #include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/stat.hh"
 
 // relix-kernel
 #include "relix/api/get_fd_handle.hh"
 #include "relix/syscall/faccessat.hh"
+#include "relix/syscall/fchmod.hh"
 #include "relix/syscall/fchmodat.hh"
 
 // Genie
@@ -39,22 +39,8 @@ namespace Genie
 {
 	
 	using relix::faccessat;
+	using relix::fchmod;
 	using relix::fchmodat;
-	
-	
-	static int fchmod( int fd, mode_t mode )
-	{
-		try
-		{
-			chmod( *relix::get_fd_handle( fd ).GetFile(), mode );
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
 	
 	
 	static int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
