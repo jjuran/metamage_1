@@ -13,7 +13,6 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
-#include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/chmod.hh"
 #include "vfs/primitives/geteof.hh"
@@ -21,6 +20,7 @@
 
 // relix-kernel
 #include "relix/api/get_fd_handle.hh"
+#include "relix/syscall/faccessat.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -37,31 +37,7 @@
 namespace Genie
 {
 	
-	static int faccessat( int dirfd, const char* path, int mode, int flags )
-	{
-		try
-		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
-			
-			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
-			{
-				vfs::resolve_links_in_place( file );
-			}
-			
-			if ( !exists( *file ) )
-			{
-				return set_errno( EACCES );
-			}
-			
-			// FIXME: check permissions
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
+	using relix::faccessat;
 	
 	
 	static int fchmodat( int dirfd, const char* path, mode_t mode, int flags )
