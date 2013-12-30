@@ -1,11 +1,9 @@
 /*
-	Union.cc
+	union.cc
 	--------
-	
-	Copyright 2010, Joshua Juran
 */
 
-#include "Genie/FS/Union.hh"
+#include "vfs/node/types/union.hh"
 
 // POSIX
 #include <sys/stat.h>
@@ -30,15 +28,10 @@
 #include "vfs/primitives/lookup.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
-	
-	using vfs::node;
-	using vfs::node_ptr;
-	using vfs::dir_method_set;
-	using vfs::node_method_set;
 	
 	
 	struct union_extra
@@ -135,10 +128,10 @@ namespace Genie
 	};
 	
 	
-	node_ptr New_FSTree_Union( const node*          parent,
-	                           const plus::string&  name,
-	                           const node*          top,
-	                           const node*          bottom )
+	node_ptr new_union_directory( const node*          parent,
+	                              const plus::string&  name,
+	                              const node*          top,
+	                              const node*          bottom )
 	{
 		node* result = new node( parent,
 		                         name,
