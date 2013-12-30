@@ -23,7 +23,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 
 
 namespace Genie
