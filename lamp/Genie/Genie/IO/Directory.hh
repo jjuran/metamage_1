@@ -10,8 +10,10 @@
 #include "dirent.h"
 #include "errno.h"
 
+// vfs
+#include "vfs/dir_contents_box.hh"
+
 // Genie
-#include "Genie/FS/FSIteratorPtr.hh"
 #include "Genie/FS/FSTreePtr.hh"
 #include "Genie/IO/Base.hh"
 #include "Genie/IO/IOHandle_Cast.hh"
@@ -23,10 +25,7 @@ namespace Genie
 	class DirHandle : public IOHandle
 	{
 		private:
-			FSIteratorPtr  itsIterator;
-		
-		private:
-			const FSIteratorPtr& Iterator();
+			vfs::dir_contents_box  its_contents;
 		
 		public:
 			DirHandle();

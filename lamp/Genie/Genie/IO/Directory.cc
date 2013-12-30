@@ -15,9 +15,16 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/dir_contents.hh"
+#include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/primitives/inode.hh"
+#include "vfs/primitives/listdir.hh"
+#include "vfs/primitives/parent_inode.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/Iterate.hh"
 
 
 namespace Genie
@@ -25,6 +32,20 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	
+	static vfs::dir_contents_box get_contents( const vfs::node& dir )
+	{
+		vfs::dir_contents_box result;
+		
+		vfs::dir_contents& contents = *result;
+		
+		contents.push_back( vfs::dir_entry( inode       ( dir ), "."  ) );
+		contents.push_back( vfs::dir_entry( parent_inode( dir ), ".." ) );
+		
+		listdir( dir, contents );
+		
+		return result;
+	}
 	
 	DirHandle::DirHandle()
 	:
@@ -42,16 +63,6 @@ namespace Genie
 	{
 	}
 	
-	const FSIteratorPtr& DirHandle::Iterator()
-	{
-		if ( itsIterator.get() == NULL )
-		{
-			itsIterator = Iterate( GetFile() );
-		}
-		
-		return itsIterator;
-	}
-	
 	static void SetDirEntry( dirent& dir, ino_t inode, const plus::string& name )
 	{
 		dir.d_ino = inode;
@@ -61,8 +72,6 @@ namespace Genie
 	
 	off_t DirHandle::Seek( off_t offset, int whence )
 	{
-		FSIteratorPtr iterator = Iterator();
-		
 		off_t position = 0;
 		
 		switch ( whence )
@@ -72,7 +81,7 @@ namespace Genie
 				break;
 			
 			case SEEK_CUR:
-				position = iterator->Tell();
+				position = get_mark();
 				break;
 			
 			case SEEK_END:
@@ -82,21 +91,28 @@ namespace Genie
 		
 		position += offset;
 		
-		iterator->Seek( position );
-		
-		return position;
+		return set_mark( position );
 	}
 	
 	int DirHandle::ReadDir( dirent& entry )
 	{
-		vfs::dir_entry node = Iterator()->Get();
+		if ( !its_contents.get() )
+		{
+			its_contents = get_contents( *GetFile() );
+		}
 		
-		if ( node.name.empty() )
+		vfs::dir_contents& contents = *its_contents;
+		
+		const int i = get_mark();
+		
+		if ( i >= contents.size() )
 		{
 			return 0;
 		}
 		
-		itsIterator->Advance();
+		vfs::dir_entry node = contents.at( i );
+		
+		advance_mark( 1 );
 		
 		SetDirEntry( entry, node.inode, node.name );
 		
