@@ -26,10 +26,12 @@
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 
+// relix-kernel
+#include "relix/fs/resolve_path_at.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -46,7 +48,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = ResolvePathAt( dirfd, path );
+			FSTreePtr file = relix::resolve_path_at( dirfd, path );
 			
 			vfs::resolve_links_in_place( file );
 			

@@ -19,9 +19,11 @@
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/hardlink.hh"
 
+// relix-kernel
+#include "relix/fs/resolve_path_at.hh"
+
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/ResolvePathAt.hh"
 #include "Genie/Kernel/make_alias.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -45,14 +47,14 @@ namespace Genie
 	{
 		try
 		{
-			vfs::node_ptr oldFile = ResolvePathAt( olddirfd, oldpath );
+			vfs::node_ptr oldFile = relix::resolve_path_at( olddirfd, oldpath );
 			
 			if ( const bool follow = flags & AT_SYMLINK_FOLLOW )
 			{
 				vfs::resolve_links_in_place( oldFile );
 			}
 			
-			vfs::node_ptr newFile = ResolvePathAt( newdirfd, newpath );
+			vfs::node_ptr newFile = relix::resolve_path_at( newdirfd, newpath );
 			
 			// Do not resolve links.  If there's a symlink in this location, throw EEXIST.
 			
