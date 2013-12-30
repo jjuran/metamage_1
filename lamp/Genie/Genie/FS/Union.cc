@@ -13,6 +13,9 @@
 // Standard C++
 #include <set>
 
+// plus
+#include "plus/string.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -21,12 +24,10 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
-
-// Genie
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -34,14 +35,19 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	using vfs::node;
+	using vfs::node_ptr;
+	using vfs::dir_method_set;
+	using vfs::node_method_set;
+	
 	
 	struct union_extra
 	{
-		const FSTree* top;
-		const FSTree* bottom;
+		const node* top;
+		const node* bottom;
 	};
 	
-	static void dispose_union( const FSTree* that )
+	static void dispose_union( const node* that )
 	{
 		union_extra& extra = *(union_extra*) that->extra();
 		
@@ -50,9 +56,9 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr union_lookup( const FSTree*        that,
-	                               const plus::string&  name,
-	                               const FSTree*        parent )
+	static node_ptr union_lookup( const node*          that,
+	                              const plus::string&  name,
+	                              const node*          parent )
 	{
 		union_extra& extra = *(union_extra*) that->extra();
 		
@@ -76,7 +82,7 @@ namespace Genie
 		return lookup( *extra.bottom, name, parent );
 	}
 	
-	static void union_listdir( const FSTree*       that,
+	static void union_listdir( const node*         that,
 	                           vfs::dir_contents&  cache )
 	{
 		union_extra& extra = *(union_extra*) that->extra();
@@ -129,17 +135,17 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Union( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const FSTree*        top,
-	                            const FSTree*        bottom )
+	node_ptr New_FSTree_Union( const node*          parent,
+	                           const plus::string&  name,
+	                           const node*          top,
+	                           const node*          bottom )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFDIR | 0700,
-		                             &union_methods,
-		                             sizeof (union_extra),
-		                             &dispose_union );
+		node* result = new node( parent,
+		                         name,
+		                         S_IFDIR | 0700,
+		                         &union_methods,
+		                         sizeof (union_extra),
+		                         &dispose_union );
 		
 		union_extra& extra = *(union_extra*) result->extra();
 		

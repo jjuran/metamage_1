@@ -9,19 +9,19 @@
 #define GENIE_FS_UNION_HH
 
 // plus
-#include "plus/string.hh"
+#include "plus/string_fwd.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_Union( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const FSTree*        top,
-	                            const FSTree*        bottom );
+	vfs::node_ptr New_FSTree_Union( const vfs::node*     parent,
+	                                const plus::string&  name,
+	                                const vfs::node*     top,
+	                                const vfs::node*     bottom );
 	
 }
 
