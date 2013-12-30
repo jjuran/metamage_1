@@ -21,10 +21,10 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
+#include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
 
 // Genie
-#include "Genie/FS/Iterate.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
@@ -83,47 +83,29 @@ namespace Genie
 		
 		std::set< plus::string > names_that_have_been_seen;
 		
-		FSIteratorPtr top = Genie::Iterate( extra.top );
+		size_t i = cache.size();
 		
-		top->Advance();  // .
-		top->Advance();  // ..
+		listdir( *extra.top, cache );
 		
-		while ( true )
+		for ( i = i;  i < cache.size();  ++i )
 		{
-			vfs::dir_entry node = top->Get();
-			
-			if ( node.name.empty() )
-			{
-				break;
-			}
+			vfs::dir_entry node = cache.at( i );
 			
 			names_that_have_been_seen.insert( node.name );
-			
-			cache.push_back( node );
-			
-			top->Advance();
 		}
 		
-		FSIteratorPtr bottom = Genie::Iterate( extra.bottom );
+		vfs::dir_contents bottom;
 		
-		bottom->Advance();  // .
-		bottom->Advance();  // ..
+		listdir( *extra.bottom, bottom );
 		
-		while ( true )
+		for ( size_t i = 0;  i < bottom.size();  ++i )
 		{
-			vfs::dir_entry node = bottom->Get();
-			
-			if ( node.name.empty() )
-			{
-				break;
-			}
+			vfs::dir_entry node = bottom.at( i );
 			
 			if ( !names_that_have_been_seen.count( node.name ) )
 			{
 				cache.push_back( node );
 			}
-			
-			bottom->Advance();
 		}
 	}
 	
