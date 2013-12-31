@@ -36,8 +36,6 @@ namespace Genie
 			
 			bool IsDirectory() const  { return true; }
 			
-			off_t Seek( off_t offset, int whence );
-			
 			int ReadDir( dirent& entry );
 	};
 	

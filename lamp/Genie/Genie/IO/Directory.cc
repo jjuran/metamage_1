@@ -49,13 +49,13 @@ namespace Genie
 	
 	DirHandle::DirHandle()
 	:
-		IOHandle( O_RDONLY )
+		IOHandle( O_RDONLY | O_DIRECTORY )
 	{
 	}
 	
 	DirHandle::DirHandle( const vfs::node* dir )
 	:
-		IOHandle( dir, O_RDONLY )
+		IOHandle( dir, O_RDONLY | O_DIRECTORY )
 	{
 	}
 	
@@ -68,30 +68,6 @@ namespace Genie
 		dir.d_ino = inode;
 		
 		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
-	}
-	
-	off_t DirHandle::Seek( off_t offset, int whence )
-	{
-		off_t position = 0;
-		
-		switch ( whence )
-		{
-			case SEEK_SET:
-				//position = 0;
-				break;
-			
-			case SEEK_CUR:
-				position = get_mark();
-				break;
-			
-			case SEEK_END:
-			default:
-				p7::throw_errno( EINVAL );
-		}
-		
-		position += offset;
-		
-		return set_mark( position );
 	}
 	
 	int DirHandle::ReadDir( dirent& entry )

@@ -16,6 +16,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/functions/seek.hh"
 
 // relix-kernel
@@ -34,6 +35,7 @@
 #include "relix/syscall/getppid.hh"
 #include "relix/syscall/getsid.hh"
 #include "relix/syscall/gettid.hh"
+#include "relix/syscall/lseek.hh"
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
@@ -47,7 +49,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
-#include "Genie/IO/Directory.hh"
 #include "Genie/IO/Pipe.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -87,30 +88,7 @@ namespace Genie
 	using relix::getppid;
 	using relix::getsid;
 	using relix::gettid;
-	
-	
-	static off_t lseek( int fd, off_t offset, int whence )
-	{
-		try
-		{
-			vfs::filehandle* file = &relix::get_fd_handle( fd );
-			
-			if ( DirHandle* h = IOHandle_Cast< DirHandle >( file ) )
-			{
-				return h->Seek( offset, whence );
-			}
-			
-			return seek( *file, offset, whence );
-			
-			// downcast failed
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return set_errno( ESPIPE );
-	}
+	using relix::lseek;
 	
 	
 	static int pause()

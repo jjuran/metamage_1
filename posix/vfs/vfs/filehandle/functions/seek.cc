@@ -6,6 +6,7 @@
 #include "vfs/filehandle/functions/seek.hh"
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
 
 // poseven
@@ -24,10 +25,22 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	static bool is_seekable( filehandle& that )
+	{
+		if ( that.methods()  &&  that.methods()->bstore_methods )
+		{
+			return true;
+		}
+		
+		return that.get_flags() & O_DIRECTORY;
+	}
+	
 	off_t seek( filehandle& that, off_t offset, int whence )
 	{
-		// throws EISDIR or ESPIPE if not a regular file
-		that.bstore_methods();
+		if ( !is_seekable( that ) )
+		{
+			p7::throw_errno( ESPIPE );
+		}
 		
 		off_t base = 0;
 		
