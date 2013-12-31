@@ -8,12 +8,14 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-sys-utils
+#include "mac_sys/get_process_file.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/Utilities/GetAppFile.hh"
 
 
 namespace Genie
@@ -21,7 +23,7 @@ namespace Genie
 	
 	static FSTreePtr app_exe_resolve( const FSTree* that )
 	{
-		return FSTreeFromFSSpec( GetAppFile() );
+		return FSTreeFromFSSpec( mac::sys::get_process_file() );
 	}
 	
 	static const link_method_set app_exe_link_methods =
