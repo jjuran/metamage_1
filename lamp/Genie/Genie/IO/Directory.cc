@@ -49,13 +49,13 @@ namespace Genie
 	
 	DirHandle::DirHandle()
 	:
-		IOHandle( O_RDONLY )
+		IOHandle( O_RDONLY | O_DIRECTORY )
 	{
 	}
 	
 	DirHandle::DirHandle( const vfs::node* dir )
 	:
-		IOHandle( dir, O_RDONLY )
+		IOHandle( dir, O_RDONLY | O_DIRECTORY )
 	{
 	}
 	
