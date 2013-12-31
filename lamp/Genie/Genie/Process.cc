@@ -1211,16 +1211,6 @@ namespace Genie
 		notify_reaper();
 	}
 	
-	void Process::EnterSystemCall()
-	{
-		get_process().add_user_cpu_time( relix::checkpoint_delta() );
-	}
-	
-	void Process::LeaveSystemCall()
-	{
-		get_process().add_system_cpu_time( relix::checkpoint_delta() );
-	}
-	
 	void Process::Suspend()
 	{
 		get_process().add_system_cpu_time( relix::checkpoint_delta() );
