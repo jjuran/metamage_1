@@ -64,6 +64,7 @@
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/functions/root.hh"
+#include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
 
 // Genie
@@ -89,7 +90,6 @@
 #include "Genie/FS/ResFile_Dir.hh"
 #include "Genie/FS/Root_Overlay.hh"
 #include "Genie/FS/StatFile.hh"
-#include "Genie/FS/Union.hh"
 #include "Genie/FS/Users.hh"
 #include "Genie/IO/MacDirectory.hh"
 #include "Genie/IO/MacFile.hh"
@@ -559,15 +559,15 @@ namespace Genie
 		
 		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
 		
-		vfs::node_ptr bottom = New_FSTree_Union( NULL,
-		                                         plus::string::null,
-		                                         resfs.get(),
-		                                         diskfs.get() );
+		vfs::node_ptr bottom = vfs::new_union_directory( NULL,
+		                                                 plus::string::null,
+		                                                 resfs.get(),
+		                                                 diskfs.get() );
 		
-		vfs::node_ptr rootfs = New_FSTree_Union( NULL,
-		                                         plus::string::null,
-		                                         overlayfs.get(),
-		                                         bottom.get() );
+		vfs::node_ptr rootfs = vfs::new_union_directory( NULL,
+		                                                 plus::string::null,
+		                                                 overlayfs.get(),
+		                                                 bottom.get() );
 		
 		return rootfs;
 	}

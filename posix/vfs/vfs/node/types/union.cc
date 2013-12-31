@@ -1,17 +1,18 @@
 /*
-	Union.cc
+	union.cc
 	--------
-	
-	Copyright 2010, Joshua Juran
 */
 
-#include "Genie/FS/Union.hh"
+#include "vfs/node/types/union.hh"
 
 // POSIX
 #include <sys/stat.h>
 
 // Standard C++
 #include <set>
+
+// plus
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -21,15 +22,13 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+#include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
 
-// Genie
-#include "Genie/FS/Iterate.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
-
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
@@ -37,11 +36,11 @@ namespace Genie
 	
 	struct union_extra
 	{
-		const FSTree* top;
-		const FSTree* bottom;
+		const node* top;
+		const node* bottom;
 	};
 	
-	static void dispose_union( const FSTree* that )
+	static void dispose_union( const node* that )
 	{
 		union_extra& extra = *(union_extra*) that->extra();
 		
@@ -50,9 +49,9 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr union_lookup( const FSTree*        that,
-	                               const plus::string&  name,
-	                               const FSTree*        parent )
+	static node_ptr union_lookup( const node*          that,
+	                              const plus::string&  name,
+	                              const node*          parent )
 	{
 		union_extra& extra = *(union_extra*) that->extra();
 		
@@ -76,54 +75,36 @@ namespace Genie
 		return lookup( *extra.bottom, name, parent );
 	}
 	
-	static void union_listdir( const FSTree*       that,
+	static void union_listdir( const node*         that,
 	                           vfs::dir_contents&  cache )
 	{
 		union_extra& extra = *(union_extra*) that->extra();
 		
 		std::set< plus::string > names_that_have_been_seen;
 		
-		FSIteratorPtr top = Genie::Iterate( extra.top );
+		size_t i = cache.size();
 		
-		top->Advance();  // .
-		top->Advance();  // ..
+		listdir( *extra.top, cache );
 		
-		while ( true )
+		for ( i = i;  i < cache.size();  ++i )
 		{
-			vfs::dir_entry node = top->Get();
-			
-			if ( node.name.empty() )
-			{
-				break;
-			}
+			vfs::dir_entry node = cache.at( i );
 			
 			names_that_have_been_seen.insert( node.name );
-			
-			cache.push_back( node );
-			
-			top->Advance();
 		}
 		
-		FSIteratorPtr bottom = Genie::Iterate( extra.bottom );
+		vfs::dir_contents bottom;
 		
-		bottom->Advance();  // .
-		bottom->Advance();  // ..
+		listdir( *extra.bottom, bottom );
 		
-		while ( true )
+		for ( size_t i = 0;  i < bottom.size();  ++i )
 		{
-			vfs::dir_entry node = bottom->Get();
-			
-			if ( node.name.empty() )
-			{
-				break;
-			}
+			vfs::dir_entry node = bottom.at( i );
 			
 			if ( !names_that_have_been_seen.count( node.name ) )
 			{
 				cache.push_back( node );
 			}
-			
-			bottom->Advance();
 		}
 	}
 	
@@ -147,17 +128,17 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Union( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const FSTree*        top,
-	                            const FSTree*        bottom )
+	node_ptr new_union_directory( const node*          parent,
+	                              const plus::string&  name,
+	                              const node*          top,
+	                              const node*          bottom )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFDIR | 0700,
-		                             &union_methods,
-		                             sizeof (union_extra),
-		                             &dispose_union );
+		node* result = new node( parent,
+		                         name,
+		                         S_IFDIR | 0700,
+		                         &union_methods,
+		                         sizeof (union_extra),
+		                         &dispose_union );
 		
 		union_extra& extra = *(union_extra*) result->extra();
 		
