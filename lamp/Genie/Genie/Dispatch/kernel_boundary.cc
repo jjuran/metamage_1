@@ -11,10 +11,10 @@
 // relix-kernel
 #include "relix/signal/call_signal_handler.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/signal/deliver_fatal_signal.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
-#include "Genie/Faults.hh"
 #include "Genie/api/breathe.hh"
 
 
@@ -36,7 +36,7 @@ namespace Genie
 		
 		if ( space != 0  &&  space < 8192 )
 		{
-			DeliverFatalSignal( SIGSTKFLT );
+			relix::deliver_fatal_signal( SIGSTKFLT );
 		}
 		
 	rebreathe:

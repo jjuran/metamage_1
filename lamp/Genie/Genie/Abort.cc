@@ -12,15 +12,15 @@
 // mac-sys-utils
 #include "mac_sys/exit_to_shell.hh"
 
-// Genie
-#include "Genie/Faults.hh"
+// relix-kernel
+#include "relix/signal/deliver_fatal_signal.hh"
 
 
 void abort()
 {
 	try
 	{
-		Genie::DeliverFatalSignal( SIGABRT );
+		relix::deliver_fatal_signal( SIGABRT );
 	}
 	catch ( ... )
 	{

@@ -25,6 +25,9 @@
 #include "Silver/Traps.hh"
 #endif
 
+// relix-kernel
+#include "relix/signal/deliver_fatal_signal.hh"
+
 // Genie
 #include "Genie/Dispatch/system_call.68k.hh"
 
@@ -37,37 +40,37 @@ namespace Genie
 	
 	static void BusError()
 	{
-		DeliverFatalSignal( SIGSEGV );
+		relix::deliver_fatal_signal( SIGSEGV );
 	}
 	
 	static void AddressError()
 	{
-		DeliverFatalSignal( SIGBUS );
+		relix::deliver_fatal_signal( SIGBUS );
 	}
 	
 	static void IllegalInstruction()
 	{
-		DeliverFatalSignal( SIGILL );
+		relix::deliver_fatal_signal( SIGILL );
 	}
 	
 	static void DivisionByZero()
 	{
-		DeliverFatalSignal( SIGFPE );
+		relix::deliver_fatal_signal( SIGFPE );
 	}
 	
 	static void integer_range_check()
 	{
-		DeliverFatalSignal( SIGFPE );
+		relix::deliver_fatal_signal( SIGFPE );
 	}
 	
 	static void integer_overflow()
 	{
-		DeliverFatalSignal( SIGFPE );
+		relix::deliver_fatal_signal( SIGFPE );
 	}
 	
 	static void PrivilegeViolation()
 	{
-		DeliverFatalSignal( SIGILL );
+		relix::deliver_fatal_signal( SIGILL );
 	}
 	
 #if TARGET_CPU_68K

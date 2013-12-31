@@ -77,6 +77,7 @@
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/signal/deliver_fatal_signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/alarm_clock.hh"
@@ -221,8 +222,15 @@ namespace Genie
 		return lookup_process( pid );
 	}
 	
-	void DeliverFatalSignal( int signo )
+}
+
+namespace relix
+{
+	
+	void deliver_fatal_signal( int signo )
 	{
+		using namespace Genie;
+		
 		typedef void (*signal_handler_t)(int);
 		
 		if ( gCurrentProcess != NULL )
@@ -251,6 +259,10 @@ namespace Genie
 		mac::sys::exit_to_shell();  // not messing around
 	}
 	
+}
+
+namespace Genie
+{
 	
 	int Process::Run()
 	{
@@ -990,7 +1002,7 @@ namespace Genie
 		
 		if ( stack_fault )
 		{
-			DeliverFatalSignal( SIGSTKFLT );
+			relix::deliver_fatal_signal( SIGSTKFLT );
 		}
 		
 		relix::leave_system();
