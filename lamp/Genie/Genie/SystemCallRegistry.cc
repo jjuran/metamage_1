@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <vector>
 
-// Genie
-#include "Genie/Dispatch/UnimplementedSystemCall.hh"
+// relix-kernel
+#include "relix/syscall/unimplemented.hh"
 
 
 namespace Genie
@@ -23,7 +23,7 @@ namespace Genie
 	syscall_number_t gLastSystemCall = 0;
 	
 	
-	SystemCall::SystemCall() : function( (void*) UnimplementedSystemCall ), name()
+	SystemCall::SystemCall() : function( (void*) relix::unimplemented ), name()
 	{
 		
 	}
