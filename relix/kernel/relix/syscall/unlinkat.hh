@@ -1,5 +1,5 @@
 /*
-	renameat.hh
+	unlinkat.hh
 	-----------
 */
 
