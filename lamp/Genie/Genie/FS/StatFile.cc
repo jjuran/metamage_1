@@ -12,6 +12,9 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
+// gear
+#include "gear/is_binary_data.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -28,7 +31,6 @@
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
-#include "Genie/Utilities/is_binary_data.hh"
 
 
 namespace Genie
@@ -220,7 +222,7 @@ namespace Genie
 		
 		const size_t n_read = N::FSRead( in, buffer, N::ThrowEOF_Never() );
 		
-		return !is_binary_data( buffer, n_read );
+		return !gear::is_binary_data( buffer, n_read );
 	}
 	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )

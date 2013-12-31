@@ -5,6 +5,9 @@
 
 #include "Genie/IO/MacFile.hh"
 
+// gear
+#include "gear/is_binary_data.hh"
+
 // vfs
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -23,7 +26,6 @@
 #include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/IO/RegularFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
-#include "Genie/Utilities/is_binary_data.hh"
 
 
 namespace Genie
@@ -159,7 +161,7 @@ namespace Genie
 	{
 		try
 		{
-			ToggleBinaryFileSignature( file, is_binary_data( data, n_bytes ) );
+			ToggleBinaryFileSignature( file, gear::is_binary_data( data, n_bytes ) );
 		}
 		catch ( ... )
 		{

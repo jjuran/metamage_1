@@ -3,10 +3,10 @@
 	-----------------
 */
 
-#include "Genie/Utilities/is_binary_data.hh"
+#include "gear/is_binary_data.hh"
 
 
-namespace Genie
+namespace gear
 {
 	
 	typedef unsigned long size_t;

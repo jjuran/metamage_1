@@ -3,11 +3,11 @@
 	-----------------
 */
 
-#ifndef GENIE_UTILITIES_ISBINARYDATA_HH
-#define GENIE_UTILITIES_ISBINARYDATA_HH
+#ifndef GEAR_ISBINARYDATA_HH
+#define GEAR_ISBINARYDATA_HH
 
 
-namespace Genie
+namespace gear
 {
 	
 	bool is_binary_data( const char* data, unsigned long n_bytes );
