@@ -89,6 +89,7 @@
 #include "relix/task/session.hh"
 #include "relix/task/schedule.hh"
 #include "relix/task/signal_handlers.hh"
+#include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
 #include "Genie/Devices.hh"
@@ -254,7 +255,7 @@ namespace Genie
 	int Process::Run()
 	{
 		// Accumulate any system time between start and entry to main()
-		LeaveSystemCall();
+		relix::leave_system();
 		
 		int exit_status = 0;
 		
@@ -289,7 +290,7 @@ namespace Genie
 		}
 		
 		// Accumulate any user time between last system call (if any) and return from main()
-		EnterSystemCall();
+		relix::enter_system();
 		
 		// For code fragments, static destruction occurs here.
 		its_exec_handle.reset();
@@ -992,7 +993,7 @@ namespace Genie
 			DeliverFatalSignal( SIGSTKFLT );
 		}
 		
-		LeaveSystemCall();
+		relix::leave_system();
 		
 		resume_vfork( child );
 	}
