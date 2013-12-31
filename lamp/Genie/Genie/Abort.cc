@@ -5,14 +5,12 @@
 
 #ifdef __RELIX__
 
-// Mac OS
-#ifndef __PROCESSES__
-#include <Processes.h>
-#endif
-
 // Standard C
 #include <signal.h>
 #include <stdlib.h>
+
+// mac-sys-utils
+#include "mac_sys/exit_to_shell.hh"
 
 // Genie
 #include "Genie/Faults.hh"
@@ -28,7 +26,7 @@ void abort()
 	{
 	}
 	
-	::ExitToShell();
+	mac::sys::exit_to_shell();
 }
 	
 #endif

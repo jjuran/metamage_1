@@ -5,16 +5,6 @@
 
 #include "Genie/Process.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <ApplicationServices/ApplicationServices.h>
-#endif
-
-// Mac OS
-#ifndef __PROCESSES__
-#include <Processes.h>
-#endif
-
 // Standard C++
 #include <vector>
 
@@ -29,6 +19,9 @@
 #include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
+
+// mac-sys-utils
+#include "mac_sys/exit_to_shell.hh"
 
 // relix-include
 #include "relix/syscalls.h"
@@ -254,7 +247,7 @@ namespace Genie
 			Mac::SysBeep();
 		}
 		
-		::ExitToShell();  // not messing around
+		mac::sys::exit_to_shell();  // not messing around
 	}
 	
 	
