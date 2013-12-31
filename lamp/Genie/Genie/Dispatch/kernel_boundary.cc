@@ -33,7 +33,7 @@ namespace Genie
 	{
 		gCurrentProcess->EnterSystemCall();
 		
-		const size_t space = mac::sys::current_thread_stack_space();
+		const unsigned long space = mac::sys::current_thread_stack_space();
 		
 		// space will be 0 if we're not on a Thread Manager stack
 		
