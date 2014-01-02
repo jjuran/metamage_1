@@ -54,14 +54,6 @@ namespace io
 	void delete_empty_directory     ( dummy::file_spec, overload );
 	void delete_empty_directory_only( dummy::file_spec, overload );
 	
-	template < class FileSpec > struct system_root_getter;
-	
-	template < class FileSpec >
-	inline FileSpec system_root()
-	{
-		return system_root_getter< FileSpec >()();
-	}
-	
 	
 	template < class Filename, class FileSpec >
 	inline Filename get_filename( const FileSpec& file )

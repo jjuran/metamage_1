@@ -26,9 +26,6 @@
 #ifndef NITROGEN_FILES_HH
 #include "Nitrogen/Files.hh"
 #endif
-#ifndef NITROGEN_FOLDERS_HH
-#include "Nitrogen/Folders.hh"
-#endif
 
 
 namespace Nitrogen
@@ -249,34 +246,6 @@ namespace io
 	{
 		return Nitrogen::FSWrite( output, byteCount, data );
 	}
-	
-	
-	template <> struct system_root_getter< Nitrogen::FSVolumeRefNum >
-	{
-		Nitrogen::FSVolumeRefNum operator()() const
-		{
-			return Nitrogen::FindFolder( Nitrogen::kOnSystemDisk,
-			                             Nitrogen::kSystemFolderType,
-			                             kDontCreateFolder ).vRefNum;
-		}
-	};
-	
-	template <> struct system_root_getter< Nitrogen::FSDirSpec >
-	{
-		Nitrogen::FSDirSpec operator()() const
-		{
-			return nucleus::make< Nitrogen::FSDirSpec >( system_root< Nitrogen::FSVolumeRefNum >(),
-			                                             Nitrogen::fsRtDirID );
-		}
-	};
-	
-	template <> struct system_root_getter< FSSpec >
-	{
-		FSSpec operator()() const
-		{
-			return Nitrogen::FSMakeFSSpec( system_root< Nitrogen::FSDirSpec >() );
-		}
-	};
 	
 }
 
