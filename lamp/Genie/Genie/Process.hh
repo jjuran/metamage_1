@@ -177,10 +177,6 @@ namespace Genie
 			
 			int Run();
 			
-			void EnterSystemCall();
-			
-			void LeaveSystemCall();
-			
 			const plus::string& GetCmdLine() const;
 			
 			typedef void* addr_t;

@@ -11,10 +11,10 @@
 // relix-kernel
 #include "relix/signal/call_signal_handler.hh"
 #include "relix/signal/caught_signal.hh"
+#include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
 #include "Genie/Faults.hh"
-#include "Genie/Process.hh"
 #include "Genie/api/breathe.hh"
 
 
@@ -26,12 +26,9 @@
 namespace Genie
 {
 	
-	extern class Process* gCurrentProcess;
-	
-	
 	void enter_system_call( long syscall_number, long* params )
 	{
-		gCurrentProcess->EnterSystemCall();
+		relix::enter_system();
 		
 		const unsigned long space = mac::sys::current_thread_stack_space();
 		
@@ -50,11 +47,11 @@ namespace Genie
 		}
 		catch ( const relix::caught_signal& signal )
 		{
-			gCurrentProcess->LeaveSystemCall();
+			relix::leave_system();
 			
 			relix::call_signal_handler( signal );
 			
-			gCurrentProcess->EnterSystemCall();
+			relix::enter_system();
 			
 			goto rebreathe;
 		}
@@ -62,7 +59,7 @@ namespace Genie
 	
 	bool leave_system_call( int result )
 	{
-		gCurrentProcess->LeaveSystemCall();
+		relix::leave_system();
 		
 		if ( relix::the_caught_signal.signo )
 		{
