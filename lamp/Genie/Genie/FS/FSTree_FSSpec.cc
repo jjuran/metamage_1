@@ -610,11 +610,9 @@ namespace Genie
 	
 	static ino_t hfs_inode( const FSTree* that )
 	{
-		struct ::stat sb;
+		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		hfs_stat( that, sb );
-		
-		return sb.st_ino;
+		return extra.cinfo.hFileInfo.ioDirID;
 	}
 	
 	static void hfs_stat( const FSTree*   that,
