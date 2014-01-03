@@ -6,14 +6,14 @@
 #ifndef GENIE_IO_REGULARFILE_HH
 #define GENIE_IO_REGULARFILE_HH
 
- // Genie
- #include "Genie/IO/Stream.hh"
+// vfs
+#include "vfs/filehandle.hh"
 
 
 namespace Genie
 {
 	
-	class RegularFileHandle : public StreamHandle
+	class RegularFileHandle : public vfs::filehandle
 	{
 		public:
 			RegularFileHandle( int                                flags,
@@ -25,7 +25,7 @@ namespace Genie
 			
 			virtual ~RegularFileHandle();
 			
-			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
+			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 }

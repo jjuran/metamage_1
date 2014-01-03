@@ -173,7 +173,7 @@ namespace Genie
 		TextEdit_text_SetEOF( that, length );
 	}
 	
-	static IOPtr textedit_text_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr textedit_text_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new TextEdit_text_Handle( that, flags );
 	}

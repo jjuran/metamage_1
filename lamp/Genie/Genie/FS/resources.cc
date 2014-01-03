@@ -307,7 +307,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr unrsrc_file_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode );
 	
 	static const data_method_set unrsrc_file_data_methods =
 	{
@@ -330,7 +330,7 @@ namespace Genie
 	
 	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination );
 	
-	static IOPtr rsrc_file_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr rsrc_file_open( const FSTree* that, int flags, mode_t mode );
 	
 	static off_t rsrc_file_geteof( const FSTree* that );
 	
@@ -476,7 +476,7 @@ namespace Genie
 		return N::GetHandleSize( r );
 	}
 	
-	static IOPtr unrsrc_file_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -507,13 +507,13 @@ namespace Genie
 		
 		that = new_node.get();
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                           : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
+		                                  : new Handle_IOHandle( *that, flags, h );
 		
 		return result;
 	}
 	
-	static IOPtr rsrc_file_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr rsrc_file_open( const FSTree* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -527,8 +527,8 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                           : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
+		                                  : new Handle_IOHandle( *that, flags, h );
 		
 		return result;
 	}

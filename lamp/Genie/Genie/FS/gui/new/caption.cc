@@ -252,7 +252,7 @@ namespace Genie
 		return gCaptionParametersMap[ that->owner() ].its_utf8_text.size();
 	}
 	
-	static IOPtr caption_text_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr caption_text_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new CaptionTextFileHandle( that, flags );
 	}

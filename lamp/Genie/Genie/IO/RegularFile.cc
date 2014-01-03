@@ -58,7 +58,7 @@ namespace Genie
 	RegularFileHandle::RegularFileHandle( int                                flags,
 	                                      const vfs::filehandle_method_set*  methods )
 	:
-		StreamHandle( flags, methods )
+		vfs::filehandle( flags, methods )
 	{
 	}
 	
@@ -66,7 +66,7 @@ namespace Genie
 	                                      int                                flags,
 	                                      const vfs::filehandle_method_set*  methods )
 	:
-		StreamHandle( file.get(), flags, methods )
+		vfs::filehandle( file.get(), flags, methods )
 	{
 	}
 	
@@ -74,7 +74,7 @@ namespace Genie
 	{
 	}
 	
-	memory_mapping_ptr
+	vfs::memory_mapping_ptr
 	//
 	RegularFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
@@ -97,9 +97,9 @@ namespace Genie
 			mapping = new vfs::Handle_memory_mapping( h, length, flags );
 		}
 		
-		memory_mapping_ptr result( mapping );
+		vfs::memory_mapping_ptr result( mapping );
 		
-		result = memory_mapping_ptr( new vfs::file_memory_mapping( mapping, this, offset ) );
+		result = vfs::memory_mapping_ptr( new vfs::file_memory_mapping( mapping, this, offset ) );
 		
 		void* addr = mapping->get_address();
 		

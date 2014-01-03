@@ -47,7 +47,7 @@ namespace Genie
 			
 			off_t GetEOF()  { return itsSize; }
 			
-			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
+			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 	
@@ -127,7 +127,7 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	memory_mapping_ptr
+	vfs::memory_mapping_ptr
 	//
 	MemoryFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
