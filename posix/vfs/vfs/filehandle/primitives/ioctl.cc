@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/ioctl.h>
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
@@ -17,6 +20,9 @@
 
 namespace vfs
 {
+	
+	namespace p7 = poseven;
+	
 	
 	void ioctl( filehandle& that, unsigned long request, int* argp )
 	{
@@ -49,7 +55,7 @@ namespace vfs
 					
 				}
 				
-				that.IOCtl( request, argp );
+				p7::throw_errno( EINVAL );
 				
 				break;
 		}
