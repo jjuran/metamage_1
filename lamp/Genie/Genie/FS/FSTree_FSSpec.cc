@@ -1053,8 +1053,9 @@ namespace Genie
 	
 #ifdef __MACOS__
 	
-	struct IterateIntoCache_CInfoPBRec : CInfoPBRec
+	struct IterateIntoCache_CInfoPBRec
 	{
+		CInfoPBRec     cInfo;
 		NameAndID      items[ kMaxItems ];
 		UInt16         n_items;
 		volatile bool  done;
@@ -1067,7 +1068,7 @@ namespace Genie
 		{
 			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
 			
-			CInfoPBRec& cInfo = pb;
+			CInfoPBRec& cInfo = pb.cInfo;
 			
 			if ( cInfo.dirInfo.ioResult != noErr )
 			{
@@ -1113,7 +1114,7 @@ namespace Genie
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   vfs::dir_contents&            cache )
 	{
-		CInfoPBRec& cInfo = pb;
+		CInfoPBRec& cInfo = pb.cInfo;
 		
 		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
 		
@@ -1192,11 +1193,11 @@ namespace Genie
 		
 	#ifdef __MACOS__
 		
-		IterateIntoCache_CInfoPBRec cInfo;
+		IterateIntoCache_CInfoPBRec pb;
 		
-		static_cast< CInfoPBRec& >( cInfo ) = extra.cinfo;
+		pb.cInfo = extra.cinfo;
 		
-		IterateFilesIntoCache( cInfo, cache );
+		IterateFilesIntoCache( pb, cache );
 		
 	#endif
 	}
