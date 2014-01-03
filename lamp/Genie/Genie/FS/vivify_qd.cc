@@ -15,6 +15,10 @@
 namespace Genie
 {
 	
+	using mac::types::Point;
+	using mac::types::Rect;
+	
+	
 	static void advance_to_decimal( const char*& p, const char* end )
 	{
 		if ( p < end )
