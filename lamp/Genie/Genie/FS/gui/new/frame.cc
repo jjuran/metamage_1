@@ -135,8 +135,6 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			typedef Key Initializer;
-			
 			Frame( Key key ) : itsKey( key )
 			{
 			}

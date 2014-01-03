@@ -71,8 +71,6 @@ namespace Genie
 			Key itsKey;
 		
 		public:
-			typedef Key Initializer;
-			
 			ListView( Key key ) : itsKey( key )
 			{
 			}
