@@ -57,8 +57,6 @@ namespace Pedestal
 	class View : public plus::ref_count< View >
 	{
 		public:
-			struct Initializer {};
-			
 			virtual ~View()  {}
 			
 			virtual void Install  ( const Rect& bounds )  {}
