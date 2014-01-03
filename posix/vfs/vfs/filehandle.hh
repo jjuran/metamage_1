@@ -91,8 +91,6 @@ namespace vfs
 			virtual node_ptr GetFile();
 			
 			void set_file( const node& file );
-			
-			virtual void IOCtl( unsigned long request, int* argp );
 	};
 	
 }
