@@ -385,13 +385,7 @@ namespace Genie
 			const FSTree* ViewKey() const;
 		
 		public:
-			ConsoleTTYHandle( const FSTreePtr& file, unsigned id )
-			:
-				StreamHandle( 0 ),
-				itsTTYFile( file ),
-				itsID( id )
-			{
-			}
+			ConsoleTTYHandle( const vfs::node& file, unsigned id );
 			
 			~ConsoleTTYHandle()
 			{
@@ -410,6 +404,14 @@ namespace Genie
 			
 			void IOCtl( unsigned long request, int* argp );
 	};
+	
+	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
+	:
+		StreamHandle( 0 ),
+		itsTTYFile( &file ),
+		itsID( id )
+	{
+	}
 	
 	void ConsoleTTYHandle::Attach( vfs::filehandle* terminal )
 	{
@@ -755,7 +757,7 @@ namespace Genie
 		
 		unsigned id = ++gLastID;
 		
-		vfs::filehandle_ptr result( new ConsoleTTYHandle( that, id ) );
+		vfs::filehandle_ptr result( new ConsoleTTYHandle( *that, id ) );
 		
 		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
 		
