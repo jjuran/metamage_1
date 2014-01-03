@@ -12,10 +12,23 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// relix-kernel
+#include "relix/api/raise.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 
+
+namespace relix
+{
+	
+	void raise( int signo )
+	{
+		Genie::current_process().Raise( signo );
+	}
+	
+}
 
 namespace Genie
 {
@@ -30,14 +43,9 @@ namespace Genie
 		return current.HandlePendingSignals( may_throw );
 	}
 	
-	static void send_signal_to_current_process( int signo )
-	{
-		current_process().Raise( signo );
-	}
-	
 	void broken_pipe()
 	{
-		send_signal_to_current_process( SIGPIPE );
+		relix::raise( SIGPIPE );
 		
 		p7::throw_errno( EPIPE );
 	}
