@@ -56,6 +56,7 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
+		NULL,
 		&terminal_methods
 	};
 	
