@@ -1053,8 +1053,9 @@ namespace Genie
 	
 #ifdef __MACOS__
 	
-	struct IterateIntoCache_CInfoPBRec : CInfoPBRec
+	struct IterateIntoCache_CInfoPBRec
 	{
+		CInfoPBRec     cInfo;
 		NameAndID      items[ kMaxItems ];
 		UInt16         n_items;
 		volatile bool  done;
@@ -1063,25 +1064,27 @@ namespace Genie
 	namespace
 	{
 		
-		pascal void IterateIntoCache_Completion( ParamBlockRec* pb )
+		pascal void IterateIntoCache_Completion( ParamBlockRec* _pb )
 		{
-			IterateIntoCache_CInfoPBRec& cInfo = *(IterateIntoCache_CInfoPBRec*) pb;
+			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
+			
+			CInfoPBRec& cInfo = pb.cInfo;
 			
 			if ( cInfo.dirInfo.ioResult != noErr )
 			{
 				goto done;
 			}
 			
-			cInfo.items[ cInfo.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+			pb.items[ pb.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 			
-			++cInfo.n_items;
+			++pb.n_items;
 			
-			if ( cInfo.n_items == kMaxItems )
+			if ( pb.n_items == kMaxItems )
 			{
 				goto done;
 			}
 			
-			cInfo.dirInfo.ioNamePtr = cInfo.items[ cInfo.n_items ].name;
+			cInfo.dirInfo.ioNamePtr = pb.items[ pb.n_items ].name;
 			
 			cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
 			
@@ -1101,7 +1104,7 @@ namespace Genie
 			
 		done:
 			
-			cInfo.done = true;
+			pb.done = true;
 			
 			mac::sys::request_async_wakeup();
 		}
@@ -1111,15 +1114,17 @@ namespace Genie
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   vfs::dir_contents&            cache )
 	{
-		FSSpec item = { pb.dirInfo.ioVRefNum, pb.dirInfo.ioDrDirID };
+		CInfoPBRec& cInfo = pb.cInfo;
 		
-		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
+		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
+		
+		N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 		
 		const bool async = !TARGET_CPU_68K && FileIsOnServer( item ) && !MacFeatures::Is_BlueBoxed();
 		
 		if ( async )
 		{
-			pb.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
+			cInfo.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
 		}
 		
 		UInt16 n_items = 0;
@@ -1128,10 +1133,10 @@ namespace Genie
 		{
 			const UInt16 i = n_items + 1;  // one-based
 			
-			pb.dirInfo.ioNamePtr = pb.items[ 0 ].name;
-			pb.dirInfo.ioDrDirID = dirID;
+			cInfo.dirInfo.ioNamePtr = pb.items[ 0 ].name;
+			cInfo.dirInfo.ioDrDirID = dirID;
 			
-			pb.dirInfo.ioFDirIndex = i;
+			cInfo.dirInfo.ioFDirIndex = i;
 			
 			pb.done = false;
 			
@@ -1141,16 +1146,16 @@ namespace Genie
 			
 			if ( async )
 			{
-				N::PBGetCatInfoAsync( pb, N::FNF_Returns() );
+				N::PBGetCatInfoAsync( cInfo, N::FNF_Returns() );
 				
 				while ( !pb.done )
 				{
 					AsyncYield();
 				}
 			}
-			else if ( const bool exists = N::PBGetCatInfoSync( pb, N::FNF_Returns() ) )
+			else if ( const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() ) )
 			{
-				pb.items[ 0 ].id = N::FSDirID( pb.dirInfo.ioDrDirID );
+				pb.items[ 0 ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 				
 				++pb.n_items;
 			}
@@ -1168,12 +1173,12 @@ namespace Genie
 				cache.push_back( node );
 			}
 			
-			if ( pb.dirInfo.ioResult == fnfErr )
+			if ( cInfo.dirInfo.ioResult == fnfErr )
 			{
 				return;
 			}
 			
-			Mac::ThrowOSStatus( pb.dirInfo.ioResult );
+			Mac::ThrowOSStatus( cInfo.dirInfo.ioResult );
 		}
 	}
 	
@@ -1188,11 +1193,11 @@ namespace Genie
 		
 	#ifdef __MACOS__
 		
-		IterateIntoCache_CInfoPBRec cInfo;
+		IterateIntoCache_CInfoPBRec pb;
 		
-		static_cast< CInfoPBRec& >( cInfo ) = extra.cinfo;
+		pb.cInfo = extra.cinfo;
 		
-		IterateFilesIntoCache( cInfo, cache );
+		IterateFilesIntoCache( pb, cache );
 		
 	#endif
 	}
