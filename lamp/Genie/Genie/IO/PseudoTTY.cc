@@ -39,6 +39,15 @@ namespace Genie
 		return new PseudoTTYHandle( id, input, output );
 	}
 	
+	static inline plus::string make_devpts( size_t id )
+	{
+		plus::var_string result = "/dev/pts/";
+		
+		result += gear::inscribe_decimal( id );
+		
+		return result;
+	}
+	
 	void GetNewPseudoTTYPair( IOPtr&  master,
 	                          IOPtr&  slave )
 	{
@@ -50,35 +59,24 @@ namespace Genie
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
+		vfs::filehandle_ptr terminal = new TerminalHandle( make_devpts( index ) );
+		
+		terminal->Attach( slave_handle.get() );
+		
 		vfs::set_dynamic_element_by_id< PseudoTTYHandle >( index, slave_handle.get() );
 		
 		++index;
 		
 		master.swap( master_handle );
-		slave .swap( slave_handle  );
+		slave .swap( terminal      );
 	}
 	
-	
-	static inline IOPtr NewTerminal( const plus::string& name )
-	{
-		return new TerminalHandle( name );
-	}
-	
-	static inline plus::string make_devpts( size_t id )
-	{
-		plus::var_string result = "/dev/pts/";
-		
-		result += gear::inscribe_decimal( id );
-		
-		return result;
-	}
 	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 			                          boost::intrusive_ptr< plus::conduit >  input,
 			                          boost::intrusive_ptr< plus::conduit >  output )
 	: StreamHandle( O_RDWR ),
 	  itsID( id ),
-	  itsTerminal( NewTerminal( make_devpts( id ) ) ),
 	  itsInput( input ),
 	  itsOutput( output )
 	{
