@@ -14,6 +14,7 @@
 
 // Genie
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Stream.hh"
 
 
 namespace Genie

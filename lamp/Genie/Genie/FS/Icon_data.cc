@@ -44,6 +44,7 @@
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
 
