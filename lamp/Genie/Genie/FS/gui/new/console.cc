@@ -37,6 +37,9 @@
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
@@ -75,6 +78,7 @@
 namespace Genie
 {
 	
+	namespace p7 = poseven;
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
@@ -789,7 +793,8 @@ namespace Genie
 				break;
 			
 			default:
-				vfs::filehandle::IOCtl( request, argp );
+				p7::throw_errno( EINVAL );
+				
 				break;
 		};
 	}
