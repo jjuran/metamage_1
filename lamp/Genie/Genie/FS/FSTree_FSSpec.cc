@@ -1115,15 +1115,15 @@ namespace Genie
 	{
 		IterateIntoCache_CInfoPBRec& cInfo = pb;
 		
-		FSSpec item = { pb.dirInfo.ioVRefNum, pb.dirInfo.ioDrDirID };
+		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
 		
-		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
+		N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 		
 		const bool async = !TARGET_CPU_68K && FileIsOnServer( item ) && !MacFeatures::Is_BlueBoxed();
 		
 		if ( async )
 		{
-			pb.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
+			cInfo.dirInfo.ioCompletion = N::StaticUPP< N::IOCompletionUPP, IterateIntoCache_Completion >();
 		}
 		
 		UInt16 n_items = 0;
@@ -1132,10 +1132,10 @@ namespace Genie
 		{
 			const UInt16 i = n_items + 1;  // one-based
 			
-			pb.dirInfo.ioNamePtr = pb.items[ 0 ].name;
-			pb.dirInfo.ioDrDirID = dirID;
+			cInfo.dirInfo.ioNamePtr = pb.items[ 0 ].name;
+			cInfo.dirInfo.ioDrDirID = dirID;
 			
-			pb.dirInfo.ioFDirIndex = i;
+			cInfo.dirInfo.ioFDirIndex = i;
 			
 			pb.done = false;
 			
@@ -1145,16 +1145,16 @@ namespace Genie
 			
 			if ( async )
 			{
-				N::PBGetCatInfoAsync( pb, N::FNF_Returns() );
+				N::PBGetCatInfoAsync( cInfo, N::FNF_Returns() );
 				
 				while ( !pb.done )
 				{
 					AsyncYield();
 				}
 			}
-			else if ( const bool exists = N::PBGetCatInfoSync( pb, N::FNF_Returns() ) )
+			else if ( const bool exists = N::PBGetCatInfoSync( cInfo, N::FNF_Returns() ) )
 			{
-				pb.items[ 0 ].id = N::FSDirID( pb.dirInfo.ioDrDirID );
+				pb.items[ 0 ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 				
 				++pb.n_items;
 			}
@@ -1172,12 +1172,12 @@ namespace Genie
 				cache.push_back( node );
 			}
 			
-			if ( pb.dirInfo.ioResult == fnfErr )
+			if ( cInfo.dirInfo.ioResult == fnfErr )
 			{
 				return;
 			}
 			
-			Mac::ThrowOSStatus( pb.dirInfo.ioResult );
+			Mac::ThrowOSStatus( cInfo.dirInfo.ioResult );
 		}
 	}
 	
