@@ -507,8 +507,8 @@ namespace Genie
 		
 		that = new_node.get();
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                           : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
+		                                  : new Handle_IOHandle( *that, flags, h );
 		
 		return result;
 	}
@@ -527,8 +527,8 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		IOHandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                           : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
+		                                  : new Handle_IOHandle( *that, flags, h );
 		
 		return result;
 	}
