@@ -12,13 +12,11 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
-
-// Genie
-#include "Genie/IO/RegularFile.hh"
 
 
 namespace Genie
@@ -27,7 +25,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class MemoryFileHandle : public RegularFileHandle
+	class MemoryFileHandle : public vfs::filehandle
 	{
 		private:
 			char*        itsBase;  // base address
@@ -84,7 +82,7 @@ namespace Genie
 	                                    char*             base,
 	                                    std::size_t       size )
 	:
-		RegularFileHandle( &file, flags, &buffer_methods ),
+		vfs::filehandle( &file, flags, &buffer_methods ),
 		itsBase( base ),
 		itsSize( size )
 	{
