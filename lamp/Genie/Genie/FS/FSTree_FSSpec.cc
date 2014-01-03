@@ -33,6 +33,7 @@
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Files.hh"
+#include "Nitrogen/Folders.hh"
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -274,7 +275,11 @@ namespace Genie
 	
 	static N::FSDirSpec FindUsersDirectory()
 	{
-		N::FSDirSpec root = io::system_root< N::FSDirSpec >();
+		N::FSDirSpec root = N::FindFolder( N::kOnSystemDisk,
+		                                   N::kSystemFolderType,
+		                                   kDontCreateFolder );
+		
+		root.dirID = Mac::fsRtDirID;
 		
 		FSSpec users = root / "\p" "Users";
 		

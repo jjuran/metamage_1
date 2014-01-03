@@ -74,7 +74,13 @@ namespace tool
 	
 	static N::FSDirSpec QueueDirectory()
 	{
-		return N::FSpMake_FSDirSpec( io::system_root< N::FSDirSpec >() / "j" / "var" / "spool" / "jmail" / "queue" );
+		Mac::FSDirSpec folder = N::FindFolder( N::kOnSystemDisk,
+		                                       N::kSystemFolderType,
+		                                       kDontCreateFolder );
+		
+		folder.dirID = Mac::fsRtDirID;  // root
+		
+		return N::FSpMake_FSDirSpec( folder / "j" / "var" / "spool" / "jmail" / "queue" );
 	}
 	
 	
