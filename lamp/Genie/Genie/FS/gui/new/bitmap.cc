@@ -268,7 +268,7 @@ namespace Genie
 		return Bits_GetEOF( that->owner() );
 	}
 	
-	static IOPtr bitmap_bits_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr bitmap_bits_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new Bits_IO( that, flags );
 	}

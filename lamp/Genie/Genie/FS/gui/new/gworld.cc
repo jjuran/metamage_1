@@ -255,7 +255,7 @@ namespace Genie
 		return Pixels_GetEOF( that->owner() );
 	}
 	
-	static IOPtr gworld_pixels_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr gworld_pixels_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new Pixels_IO( that, flags );
 	}
