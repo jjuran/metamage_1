@@ -26,6 +26,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -42,7 +43,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -81,7 +81,7 @@ namespace Genie
 		return BitMap_n_bytes( gBitMapMap[ key ].bitmap );
 	}
 	
-	class Bits_IO : public RegularFileHandle
+	class Bits_IO : public vfs::filehandle
 	{
 		private:
 			// non-copyable
@@ -89,7 +89,7 @@ namespace Genie
 			Bits_IO& operator=( const Bits_IO& );
 		
 		public:
-			Bits_IO( const FSTreePtr& file, int flags );
+			Bits_IO( const vfs::node* file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -133,9 +133,9 @@ namespace Genie
 	};
 	
 	
-	Bits_IO::Bits_IO( const FSTreePtr& file, int flags )
+	Bits_IO::Bits_IO( const vfs::node* file, int flags )
 	:
-		RegularFileHandle( file, flags, &bits_methods )
+		vfs::filehandle( file, flags, &bits_methods )
 	{
 	}
 	
