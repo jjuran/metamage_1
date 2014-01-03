@@ -28,11 +28,8 @@ namespace Genie
 	{
 		private:
 			TerminalID                             itsID;
-			IOPtr                                  itsTerminal;
 			boost::intrusive_ptr< plus::conduit >  itsInput;
 			boost::intrusive_ptr< plus::conduit >  itsOutput;
-			
-			IOHandle* Next() const;
 		
 		public:
 			PseudoTTYHandle( std::size_t                            id,
@@ -40,8 +37,6 @@ namespace Genie
 			                 boost::intrusive_ptr< plus::conduit >  output );
 			
 			~PseudoTTYHandle();
-			
-			FSTreePtr GetFile();
 			
 			unsigned int SysPoll();
 			

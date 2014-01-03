@@ -90,16 +90,6 @@ namespace Genie
 		GetPseudoTTYMap().erase( itsID );
 	}
 	
-	FSTreePtr PseudoTTYHandle::GetFile()
-	{
-		return itsTerminal->GetFile();
-	}
-	
-	IOHandle* PseudoTTYHandle::Next() const
-	{
-		return itsTerminal.get();
-	}
-	
 	unsigned int PseudoTTYHandle::SysPoll()
 	{
 		return (itsInput->is_readable() ? kPollRead : 0) | kPollWrite;
