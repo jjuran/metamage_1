@@ -18,6 +18,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/terminal_method_set.hh"
 #include "vfs/filehandle/primitives/ioctl.hh"
@@ -84,12 +85,23 @@ namespace Genie
 		&terminal_write,
 	};
 	
+	static void terminal_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
+	{
+		static_cast< TerminalHandle& >( *that ).IOCtl( request, argp );
+	}
+	
 	static void terminal_hangup( vfs::filehandle* that )
 	{
 		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
 		
 		terminal.Disconnect();
 	}
+	
+	static const vfs::general_method_set terminal_general_methods =
+	{
+		NULL,
+		&terminal_ioctl,
+	};
 	
 	static const vfs::terminal_method_set terminal_methods =
 	{
@@ -101,7 +113,7 @@ namespace Genie
 		NULL,
 		NULL,
 		&terminal_stream_methods,
-		NULL,
+		&terminal_general_methods,
 		&terminal_methods
 	};
 	
