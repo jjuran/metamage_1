@@ -25,7 +25,7 @@ namespace Genie
 			
 			virtual ~RegularFileHandle();
 			
-			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
+			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 }
