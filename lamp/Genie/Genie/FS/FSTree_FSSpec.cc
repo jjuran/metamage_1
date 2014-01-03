@@ -1063,9 +1063,11 @@ namespace Genie
 	namespace
 	{
 		
-		pascal void IterateIntoCache_Completion( ParamBlockRec* pb )
+		pascal void IterateIntoCache_Completion( ParamBlockRec* _pb )
 		{
-			IterateIntoCache_CInfoPBRec& cInfo = *(IterateIntoCache_CInfoPBRec*) pb;
+			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
+			
+			IterateIntoCache_CInfoPBRec& cInfo = pb;
 			
 			if ( cInfo.dirInfo.ioResult != noErr )
 			{
@@ -1111,6 +1113,8 @@ namespace Genie
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   vfs::dir_contents&            cache )
 	{
+		IterateIntoCache_CInfoPBRec& cInfo = pb;
+		
 		FSSpec item = { pb.dirInfo.ioVRefNum, pb.dirInfo.ioDrDirID };
 		
 		N::FSDirID dirID = N::FSDirID( pb.dirInfo.ioDrDirID );
