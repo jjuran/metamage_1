@@ -1051,8 +1051,6 @@ namespace Genie
 		N::FSDirID  id;
 	};
 	
-#ifdef __MACOS__
-	
 	struct IterateIntoCache_CInfoPBRec
 	{
 		CInfoPBRec     cInfo;
@@ -1182,8 +1180,6 @@ namespace Genie
 		}
 	}
 	
-#endif
-	
 	static void hfs_listdir( const FSTree*       that,
 	                         vfs::dir_contents&  cache )
 	{
@@ -1191,15 +1187,11 @@ namespace Genie
 		
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
 		
-	#ifdef __MACOS__
-		
 		IterateIntoCache_CInfoPBRec pb;
 		
 		pb.cInfo = extra.cinfo;
 		
 		IterateFilesIntoCache( pb, cache );
-		
-	#endif
 	}
 	
 }
