@@ -1067,7 +1067,7 @@ namespace Genie
 		{
 			IterateIntoCache_CInfoPBRec& pb = *(IterateIntoCache_CInfoPBRec*) _pb;
 			
-			IterateIntoCache_CInfoPBRec& cInfo = pb;
+			CInfoPBRec& cInfo = pb;
 			
 			if ( cInfo.dirInfo.ioResult != noErr )
 			{
@@ -1113,7 +1113,7 @@ namespace Genie
 	static void IterateFilesIntoCache( IterateIntoCache_CInfoPBRec&  pb,
 	                                   vfs::dir_contents&            cache )
 	{
-		IterateIntoCache_CInfoPBRec& cInfo = pb;
+		CInfoPBRec& cInfo = pb;
 		
 		FSSpec item = { cInfo.dirInfo.ioVRefNum, cInfo.dirInfo.ioDrDirID };
 		
