@@ -1074,16 +1074,16 @@ namespace Genie
 				goto done;
 			}
 			
-			cInfo.items[ cInfo.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
+			pb.items[ pb.n_items ].id = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 			
-			++cInfo.n_items;
+			++pb.n_items;
 			
-			if ( cInfo.n_items == kMaxItems )
+			if ( pb.n_items == kMaxItems )
 			{
 				goto done;
 			}
 			
-			cInfo.dirInfo.ioNamePtr = cInfo.items[ cInfo.n_items ].name;
+			cInfo.dirInfo.ioNamePtr = pb.items[ pb.n_items ].name;
 			
 			cInfo.dirInfo.ioNamePtr[ 0 ] = '\0';
 			
@@ -1103,7 +1103,7 @@ namespace Genie
 			
 		done:
 			
-			cInfo.done = true;
+			pb.done = true;
 			
 			mac::sys::request_async_wakeup();
 		}
