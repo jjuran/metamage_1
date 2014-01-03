@@ -20,6 +20,7 @@
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 #include "vfs/filehandle/primitives/conveying.hh"
@@ -119,6 +120,11 @@ namespace Genie
 		&pairedsocket_write,
 	};
 	
+	static void pairedsocket_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
+	{
+		static_cast< PairedSocket& >( *that ).IOCtl( request, argp );
+	}
+	
 	static const vfs::socket_method_set pairedsocket_socket_methods =
 	{
 		NULL,
@@ -131,11 +137,18 @@ namespace Genie
 		&pairedsocket_conveying,
 	};
 	
+	static const vfs::general_method_set pairedsocket_general_methods =
+	{
+		NULL,
+		&pairedsocket_ioctl,
+	};
+	
 	static const vfs::filehandle_method_set pairedsocket_methods =
 	{
 		NULL,
 		&pairedsocket_socket_methods,
 		&pairedsocket_stream_methods,
+		&pairedsocket_general_methods,
 	};
 	
 	
