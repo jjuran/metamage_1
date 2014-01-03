@@ -11,6 +11,8 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 
 
 namespace vfs
@@ -33,6 +35,20 @@ namespace vfs
 				break;
 			
 			default:
+				if ( const filehandle_method_set* methods = that.methods() )
+				{
+					if ( const general_method_set* general_methods = methods->general_methods )
+					{
+						if ( general_methods->ioctl )
+						{
+							general_methods->ioctl( &that, request, argp );
+							
+							return;
+						}
+					}
+					
+				}
+				
 				that.IOCtl( request, argp );
 				
 				break;
