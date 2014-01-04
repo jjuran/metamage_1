@@ -28,9 +28,7 @@ namespace Genie
 			vfs::dir_contents_box  its_contents;
 		
 		public:
-			DirHandle();
-			
-			DirHandle( const vfs::node* dir );
+			DirHandle( const vfs::node* dir, vfs::filehandle_destructor dtor = NULL );
 			
 			~DirHandle();
 			

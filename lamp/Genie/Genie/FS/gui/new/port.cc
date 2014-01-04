@@ -19,28 +19,16 @@
 namespace Genie
 {
 	
-	class OpenWindowHandle : public DirHandle
+	static void remove_port_file( vfs::filehandle* that )
 	{
-		public:
-			OpenWindowHandle( const vfs::node* dir );
-			
-			~OpenWindowHandle();
-	};
-	
-	OpenWindowHandle::OpenWindowHandle( const vfs::node* dir ) : DirHandle( dir )
-	{
-	}
-	
-	OpenWindowHandle::~OpenWindowHandle()
-	{
-		remove_port( GetFile().get() );
+		remove_port( that->GetFile().get() );
 	}
 	
 	static IOPtr new_port_opendir( const FSTree* that )
 	{
 		FSTreePtr dir = new_port();
 		
-		return new OpenWindowHandle( dir.get() );
+		return new DirHandle( dir.get(), &remove_port_file );
 	}
 	
 	static const dir_method_set new_port_dir_methods =

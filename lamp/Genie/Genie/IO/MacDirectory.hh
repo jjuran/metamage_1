@@ -26,6 +26,7 @@ namespace Genie
 		public:
 			MacDirHandle( const Mac::FSDirSpec& dir )
 			:
+				DirHandle( NULL ),
 				its_dir_spec( dir )
 			{
 			}

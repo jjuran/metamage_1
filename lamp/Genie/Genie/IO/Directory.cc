@@ -47,15 +47,13 @@ namespace Genie
 		return result;
 	}
 	
-	DirHandle::DirHandle()
+	DirHandle::DirHandle( const vfs::node* dir, vfs::filehandle_destructor dtor  )
 	:
-		IOHandle( O_RDONLY | O_DIRECTORY )
-	{
-	}
-	
-	DirHandle::DirHandle( const vfs::node* dir )
-	:
-		IOHandle( dir, O_RDONLY | O_DIRECTORY )
+		vfs::filehandle( dir,
+		                 O_RDONLY | O_DIRECTORY,
+		                 NULL,
+		                 0,
+		                 dtor )
 	{
 	}
 	
