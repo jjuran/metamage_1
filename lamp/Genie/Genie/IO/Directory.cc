@@ -12,10 +12,15 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
+// debug
+#include "debug/assert.hh"
+
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/primitives/inode.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/parent_inode.hh"
@@ -26,6 +31,31 @@
 
 namespace Genie
 {
+	
+	static ssize_t dir_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		ASSERT( n >= sizeof (dirent) );
+		
+		dirent& entry = *(dirent*) buffer;
+		
+		int result = static_cast< DirHandle& >( *that ).ReadDir( entry );
+		
+		return result;
+	}
+	
+	static const vfs::stream_method_set dir_stream_methods =
+	{
+		NULL,
+		&dir_read,
+	};
+	
+	static const vfs::filehandle_method_set dir_methods =
+	{
+		NULL,
+		NULL,
+		&dir_stream_methods,
+	};
+	
 	
 	static vfs::dir_contents_box get_contents( const vfs::node& dir )
 	{
@@ -45,7 +75,7 @@ namespace Genie
 	:
 		vfs::filehandle( dir,
 		                 O_RDONLY | O_DIRECTORY,
-		                 NULL,
+		                 &dir_methods,
 		                 0,
 		                 dtor )
 	{
