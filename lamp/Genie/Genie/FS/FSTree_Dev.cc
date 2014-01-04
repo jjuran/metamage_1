@@ -113,7 +113,7 @@ namespace Genie
 	
 	static IOPtr simple_device_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return GetSimpleDeviceHandle( that->name() );
+		return GetSimpleDeviceHandle( *that );
 	}
 	
 	static const data_method_set simple_device_data_methods =

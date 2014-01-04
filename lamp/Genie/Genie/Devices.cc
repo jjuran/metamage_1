@@ -14,6 +14,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/node.hh"
+
 // Genie
 #include "Genie/IO/SimpleDevice.hh"
 #include "Genie/SystemConsole.hh"
@@ -81,9 +84,9 @@ namespace Genie
 		return it != end ? it : NULL;
 	}
 	
-	IOPtr GetSimpleDeviceHandle( const plus::string& path )
+	IOPtr GetSimpleDeviceHandle( const vfs::node& file )
 	{
-		if ( const DeviceIOSpec* device = FindDevice( path ) )
+		if ( const DeviceIOSpec* device = FindDevice( file.name() ) )
 		{
 			return new SimpleDeviceHandle( *device );
 		}
