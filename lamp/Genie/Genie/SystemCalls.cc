@@ -15,16 +15,8 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// vfs
-#include "vfs/filehandle.hh"
-#include "vfs/filehandle/functions/seek.hh"
-
 // relix-kernel
-#include "relix/api/assign_fd.hh"
 #include "relix/api/current_process.hh"
-#include "relix/api/first_free_fd.hh"
-#include "relix/api/get_fd_handle.hh"
-#include "relix/fs/pipe.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
@@ -37,6 +29,7 @@
 #include "relix/syscall/getsid.hh"
 #include "relix/syscall/gettid.hh"
 #include "relix/syscall/lseek.hh"
+#include "relix/syscall/pipe2.hh"
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
@@ -52,11 +45,6 @@
 #include "Genie/Faults.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
-
-
-#ifndef O_CLOEXEC
-#define O_CLOEXEC  0
-#endif
 
 
 namespace Genie
@@ -115,32 +103,7 @@ namespace Genie
 	}
 	
 	
-	static int pipe2( int pipefd[ 2 ], int flags )
-	{
-		try
-		{
-			const bool close_on_exec = flags & O_CLOEXEC;
-			
-			int reader_fd = relix::first_free_fd( 3 );
-			int writer_fd = relix::first_free_fd( reader_fd + 1 );
-			
-			relix::pipe_ends ends = relix::new_pipe( flags & O_NONBLOCK );
-			
-			relix::assign_fd( reader_fd, *ends.reader, close_on_exec );
-			relix::assign_fd( writer_fd, *ends.writer, close_on_exec );
-			
-			pipefd[ 0 ] = reader_fd;
-			pipefd[ 1 ] = writer_fd;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-		
-		return 0;
-	}
-	
-	
+	using relix::pipe2;
 	using relix::pread;
 	using relix::read;
 	
