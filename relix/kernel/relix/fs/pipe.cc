@@ -1,9 +1,9 @@
-/*	=======
- *	Pipe.cc
- *	=======
- */
+/*
+	pipe.cc
+	-------
+*/
 
-#include "Genie/IO/Pipe.hh"
+#include "relix/fs/pipe.hh"
 
 // POSIX
 #include <fcntl.h>
@@ -24,12 +24,12 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
+// relix
+#include "relix/api/try_again.hh"
+#include "relix/signal/broken_pipe.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	enum pipe_end_type

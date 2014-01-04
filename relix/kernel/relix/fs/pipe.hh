@@ -1,16 +1,16 @@
-/*	=======
- *	Pipe.hh
- *	=======
- */
+/*
+	pipe.hh
+	-------
+*/
 
-#ifndef GENIE_IO_PIPE_HH
-#define GENIE_IO_PIPE_HH
+#ifndef RELIX_FS_PIPE_HH
+#define RELIX_FS_PIPE_HH
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	struct pipe_ends

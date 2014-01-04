@@ -24,6 +24,7 @@
 #include "relix/api/current_process.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/fs/pipe.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
@@ -49,7 +50,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Faults.hh"
-#include "Genie/IO/Pipe.hh"
 #include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
@@ -124,7 +124,7 @@ namespace Genie
 			int reader_fd = relix::first_free_fd( 3 );
 			int writer_fd = relix::first_free_fd( reader_fd + 1 );
 			
-			pipe_ends ends = new_pipe( flags & O_NONBLOCK );
+			relix::pipe_ends ends = relix::new_pipe( flags & O_NONBLOCK );
 			
 			relix::assign_fd( reader_fd, *ends.reader, close_on_exec );
 			relix::assign_fd( writer_fd, *ends.writer, close_on_exec );
