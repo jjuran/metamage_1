@@ -5,11 +5,18 @@
 
 // POSIX
 #include "dirent.h"
+#include <fcntl.h>
+#include <errno.h>
+
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/filehandle/primitives/read.hh"
+
+// relix
+#include "relix/api/get_fd_handle.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FileDescriptors.hh"
-#include "Genie/IO/Directory.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -19,14 +26,19 @@ int getdents( unsigned fd, struct dirent* dirp, unsigned int count )
 	
 	try
 	{
-		DirHandle& dir = GetFileHandleWithCast< DirHandle >( fd );
+		vfs::filehandle& dir = relix::get_fd_handle( fd );
+		
+		if ( (dir.get_flags() & O_DIRECTORY) == 0 )
+		{
+			return set_errno( ENOTDIR );
+		}
 		
 		if ( count < sizeof (dirent) )
 		{
 			return set_errno( EINVAL );
 		}
 		
-		return dir.ReadDir( *dirp );
+		return read( dir, (char*) dirp, sizeof (dirent) );
 	}
 	catch ( ... )
 	{
