@@ -35,7 +35,6 @@
 #include "relix/task/session.hh"
 
 // Genie
-#include "Genie/Devices.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/PseudoTTY.hh"

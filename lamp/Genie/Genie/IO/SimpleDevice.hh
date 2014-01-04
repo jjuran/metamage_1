@@ -45,6 +45,8 @@ namespace Genie
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
+	IOPtr GetSimpleDeviceHandle( const vfs::node& file );
+	
 }
 
 #endif
