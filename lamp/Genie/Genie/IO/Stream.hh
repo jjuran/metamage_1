@@ -26,7 +26,7 @@ namespace Genie
 			StreamHandle( int                                flags,
 			              const vfs::filehandle_method_set*  methods = NULL );
 			
-			StreamHandle( const vfs::node_ptr&               file,
+			StreamHandle( const vfs::node*                   file,
 			              int                                flags,
 			              const vfs::filehandle_method_set*  methods = NULL );
 			
