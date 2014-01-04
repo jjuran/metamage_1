@@ -18,20 +18,27 @@
 #include "Genie/api/signals.hh"
 
 
-namespace Genie
+namespace relix
 {
-	
-	namespace p7 = poseven;
-	
 	
 	bool yield( bool may_throw )
 	{
+		using namespace Genie;
+		
 		mark_process_inactive( current_process().gettid() );
 		
 		current_process().Yield();
 		
 		return check_signals( may_throw );
 	}
+	
+}
+
+namespace Genie
+{
+	
+	namespace p7 = poseven;
+	
 	
 	void try_again( bool nonblocking )
 	{
