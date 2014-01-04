@@ -7,6 +7,7 @@
 #define GENIE_API_YIELD_HH
 
 // relix-kernel
+#include "relix/api/try_again.hh"
 #include "relix/api/yield.hh"
 
 
@@ -14,8 +15,7 @@ namespace Genie
 {
 	
 	using relix::yield;
-	
-	void try_again( bool nonblocking );
+	using relix::try_again;
 	
 }
 
