@@ -38,18 +38,18 @@ namespace Genie
 		Pipe_writer,
 	};
 	
-	class PipeEndHandle : public vfs::filehandle
+	class pipe_end : public vfs::filehandle
 	{
 		private:
 			boost::intrusive_ptr< plus::conduit > itsConduit;
 			pipe_end_type                         its_pipe_end_type;
 		
 		public:
-			PipeEndHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-			               int                                           open_flags,
-			               pipe_end_type                                 end_type );
+			pipe_end( const boost::intrusive_ptr< plus::conduit >&  conduit,
+			          int                                           open_flags,
+			          pipe_end_type                                 end_type );
 			
-			~PipeEndHandle();
+			~pipe_end();
 			
 			plus::conduit& get_conduit() const  { return *itsConduit; }
 			
@@ -58,7 +58,7 @@ namespace Genie
 	
 	static unsigned pipein_poll( vfs::filehandle* that )
 	{
-		plus::conduit& conduit = static_cast< PipeEndHandle& >( *that ).get_conduit();
+		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
 		
 		return + vfs::Poll_read
 		       | vfs::Poll_write * conduit.is_writable();
@@ -66,14 +66,14 @@ namespace Genie
 	
 	static ssize_t pipein_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		plus::conduit& conduit = static_cast< PipeEndHandle& >( *that ).get_conduit();
+		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
 		
 		return conduit.read( buffer, n, is_nonblocking( *that ), &try_again );
 	}
 	
 	static unsigned pipeout_poll( vfs::filehandle* that )
 	{
-		plus::conduit& conduit = static_cast< PipeEndHandle& >( *that ).get_conduit();
+		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
 		
 		return + vfs::Poll_read * conduit.is_readable()
 		       | vfs::Poll_write;
@@ -81,7 +81,7 @@ namespace Genie
 	
 	static ssize_t pipeout_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		plus::conduit& conduit = static_cast< PipeEndHandle& >( *that ).get_conduit();
+		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
 		
 		return conduit.write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
@@ -120,9 +120,9 @@ namespace Genie
 		                           : pipeout_methods;
 	}
 	
-	PipeEndHandle::PipeEndHandle( const boost::intrusive_ptr< plus::conduit >&  conduit,
-	                              int                                           open_flags,
-	                              pipe_end_type                                 end_type )
+	pipe_end::pipe_end( const boost::intrusive_ptr< plus::conduit >&  conduit,
+	                    int                                           open_flags,
+	                    pipe_end_type                                 end_type )
 	:
 		vfs::filehandle( open_flags, &methods_for_end( end_type ) ),
 		itsConduit( conduit ),
@@ -130,7 +130,7 @@ namespace Genie
 	{
 	}
 	
-	PipeEndHandle::~PipeEndHandle()
+	pipe_end::~pipe_end()
 	{
 		if ( which_end() == Pipe_reader )
 		{
@@ -151,8 +151,8 @@ namespace Genie
 		const int open_flags = nonblock ? O_RDONLY | O_NONBLOCK
 		                                : O_RDONLY;
 		
-		result.writer.reset( new PipeEndHandle( conduit, open_flags, Pipe_writer ) );
-		result.reader.reset( new PipeEndHandle( conduit, open_flags, Pipe_reader ) );
+		result.writer.reset( new pipe_end( conduit, open_flags, Pipe_writer ) );
+		result.reader.reset( new pipe_end( conduit, open_flags, Pipe_reader ) );
 		
 		return result;
 	}
