@@ -110,7 +110,10 @@ namespace Genie
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const DeviceIOSpec& io ) : StreamHandle( O_RDWR ), io( io )
+			SimpleDeviceHandle( const vfs::node& file )
+			:
+				StreamHandle( O_RDWR ),
+				io( FindDevice( file.name() ) )
 			{
 			}
 			
@@ -153,7 +156,7 @@ namespace Genie
 	
 	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file )
 	{
-		return new SimpleDeviceHandle( FindDevice( file.name() ) );
+		return new SimpleDeviceHandle( file );
 	}
 	
 }
