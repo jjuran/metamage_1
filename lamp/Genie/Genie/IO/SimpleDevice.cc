@@ -88,14 +88,19 @@ namespace Genie
 		return device.name == s;
 	}
 	
-	static const DeviceIOSpec* FindDevice( const plus::string& name )
+	static const DeviceIOSpec& FindDevice( const plus::string& name )
 	{
 		const DeviceIOSpec* begin = gDeviceIOSpecs;
 		const DeviceIOSpec* end   = begin + sizeof gDeviceIOSpecs / sizeof gDeviceIOSpecs[0];
 		
 		const DeviceIOSpec* it = std::find( begin, end, name );
 		
-		return it != end ? it : NULL;
+		if ( it == NULL )
+		{
+			throw p7::errno_t( ENOENT );
+		}
+		
+		return *it;
 	}
 	
 	
@@ -148,12 +153,7 @@ namespace Genie
 	
 	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file )
 	{
-		if ( const DeviceIOSpec* device = FindDevice( file.name() ) )
-		{
-			return new SimpleDeviceHandle( *device );
-		}
-		
-		throw p7::errno_t( ENOENT );
+		return new SimpleDeviceHandle( FindDevice( file.name() ) );
 	}
 	
 }
