@@ -405,9 +405,7 @@ namespace Genie
 	{
 		if ( it_has_sent_FIN )
 		{
-			send_signal_to_current_process( SIGPIPE );
-			
-			p7::throw_errno( EPIPE );
+			broken_pipe();
 		}
 		
 		const char* p = data;

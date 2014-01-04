@@ -5,41 +5,32 @@
 
 #include "Genie/api/signals.hh"
 
-// Standard C
-#include <errno.h>
-#include <signal.h>
-
-// poseven
-#include "poseven/types/errno_t.hh"
+// relix-kernel
+#include "relix/api/raise.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
-	namespace p7 = poseven;
+	void raise( int signo )
+	{
+		Genie::current_process().Raise( signo );
+	}
 	
+}
+
+namespace Genie
+{
 	
 	bool check_signals( bool may_throw )
 	{
 		Process& current = current_process();
 		
 		return current.HandlePendingSignals( may_throw );
-	}
-	
-	void send_signal_to_current_process( int signo )
-	{
-		current_process().Raise( signo );
-	}
-	
-	void broken_pipe()
-	{
-		send_signal_to_current_process( SIGPIPE );
-		
-		p7::throw_errno( EPIPE );
 	}
 	
 }
