@@ -443,9 +443,7 @@ namespace Genie
 		}
 		else if ( n_written < byteCount )
 		{
-			yield();
-			
-			const bool signal_caught = check_signals( false );
+			const bool signal_caught = yield( false );
 			
 			if ( !signal_caught )
 			{

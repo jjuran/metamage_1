@@ -10,7 +10,7 @@
 namespace Genie
 {
 	
-	void yield();
+	bool yield( bool may_throw );
 	
 	void try_again( bool nonblocking );
 	

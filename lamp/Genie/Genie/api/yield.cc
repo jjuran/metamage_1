@@ -24,11 +24,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	void yield()
+	bool yield( bool may_throw )
 	{
 		mark_process_inactive( current_process().gettid() );
 		
 		current_process().Yield();
+		
+		return check_signals( may_throw );
 	}
 	
 	void try_again( bool nonblocking )
@@ -38,9 +40,7 @@ namespace Genie
 			p7::throw_errno( EAGAIN );
 		}
 		
-		yield();
-		
-		check_signals( true );  // throw caught signals
+		yield( true );  // throw caught signals
 	}
 	
 }
