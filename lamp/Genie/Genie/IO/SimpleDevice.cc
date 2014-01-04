@@ -12,14 +12,13 @@
 #include <algorithm>
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/functions/resolve_pathname.hh"
 
 // MacVFS
 #include "MacVFS/mmap/map_anonymous.hh"
@@ -112,12 +111,10 @@ namespace Genie
 		public:
 			SimpleDeviceHandle( const vfs::node& file )
 			:
-				StreamHandle( O_RDWR ),
+				StreamHandle( &file, O_RDWR ),
 				io( FindDevice( file.name() ) )
 			{
 			}
-			
-			FSTreePtr GetFile();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
@@ -126,15 +123,6 @@ namespace Genie
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
-	
-	FSTreePtr SimpleDeviceHandle::GetFile()
-	{
-		plus::var_string deviceName = "/dev/";
-		
-		deviceName += io.name;
-		
-		return vfs::resolve_absolute_path( deviceName );
-	}
 	
 	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
