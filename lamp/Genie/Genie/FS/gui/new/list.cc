@@ -133,9 +133,9 @@ namespace Genie
 	class List_data_Handle : public StreamHandle
 	{
 		public:
-			List_data_Handle( const FSTreePtr& file, int flags )
+			List_data_Handle( const vfs::node& file, int flags )
 			:
-				StreamHandle( file, flags )
+				StreamHandle( &file, flags )
 			{
 			}
 			
@@ -244,7 +244,7 @@ namespace Genie
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( that, flags );
+			result = new List_data_Handle( *that, flags );
 		}
 		else
 		{

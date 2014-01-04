@@ -228,17 +228,17 @@ namespace Genie
 			std::size_t itsSeed;
 		
 		public:
-			Button_socket_Handle( const FSTreePtr& file, int flags );
+			Button_socket_Handle( const vfs::node& file, int flags );
 			
 			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 	};
 	
-	Button_socket_Handle::Button_socket_Handle( const FSTreePtr& file, int flags )
+	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( file, flags ),
-		itsSeed( gButtonMap[ file->owner() ].seed )
+		StreamHandle( &file, flags ),
+		itsSeed( gButtonMap[ file.owner() ].seed )
 	{
 	}
 	
@@ -303,7 +303,7 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return new Button_socket_Handle( that, flags );
+		return new Button_socket_Handle( *that, flags );
 	}
 	
 	static const data_method_set button_stream_data_methods =

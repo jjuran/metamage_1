@@ -59,9 +59,9 @@ namespace Genie
 	class TextEdit_gate_Handle : public StreamHandle
 	{
 		public:
-			TextEdit_gate_Handle( const FSTreePtr& file, int flags )
+			TextEdit_gate_Handle( const vfs::node& file, int flags )
 			:
-				StreamHandle( file, flags )
+				StreamHandle( &file, flags )
 			{
 			}
 			
@@ -98,7 +98,7 @@ namespace Genie
 	
 	static IOPtr textedit_gate_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TextEdit_gate_Handle( that, flags );
+		return new TextEdit_gate_Handle( *that, flags );
 	}
 	
 	static const data_method_set textedit_gate_data_methods =

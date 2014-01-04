@@ -404,11 +404,11 @@ namespace Genie
 			boost::intrusive_ptr< IconData > itsData;
 		
 		public:
-			IconDataWriterHandle( const FSTreePtr&                         file,
+			IconDataWriterHandle( const vfs::node&                         file,
 			                      int                                      flags,
 			                      const boost::intrusive_ptr< IconData >&  data )
 			:
-				StreamHandle( file, flags ),
+				StreamHandle( &file, flags ),
 				itsData( data )
 			{
 				ASSERT( itsData.get() != NULL );
@@ -511,7 +511,7 @@ namespace Genie
 				break;
 			
 			case O_WRONLY:
-				result = new IconDataWriterHandle( that, flags, extra.data );
+				result = new IconDataWriterHandle( *that, flags, extra.data );
 				break;
 			
 			default:
