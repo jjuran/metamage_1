@@ -394,8 +394,6 @@ namespace Genie
 			
 			void Attach( vfs::filehandle* terminal );
 			
-			FSTreePtr GetFile()  { return MakeConsoleProxy( itsID ); }
-			
 			unsigned int SysPoll();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
@@ -407,7 +405,7 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		StreamHandle( 0 ),
+		StreamHandle( MakeConsoleProxy( id ).get(), 0 ),
 		itsTTYFile( &file ),
 		itsID( id )
 	{
