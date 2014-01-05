@@ -12,9 +12,6 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
-// poseven
-#include "poseven/types/errno_t.hh"
-
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
@@ -29,9 +26,6 @@
 
 namespace Genie
 {
-	
-	namespace p7 = poseven;
-	
 	
 	static vfs::dir_contents_box get_contents( const vfs::node& dir )
 	{
