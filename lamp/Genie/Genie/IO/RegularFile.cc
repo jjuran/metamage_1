@@ -80,7 +80,7 @@ namespace Genie
 	{
 		vfs::memory_mapping* mapping = NULL;
 		
-		if ( const bool small = length < 64 * 1024 )
+		if ( const bool small = length <= 64 * 1024 )
 		{
 			if ( void* addr = malloc( length ) )
 			{

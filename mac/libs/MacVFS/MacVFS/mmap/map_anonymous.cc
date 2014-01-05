@@ -28,7 +28,7 @@ namespace vfs
 		
 		// dlmalloc defaults to 64K requests.  Don't use temp mem for those.
 		
-		if ( length < 128 * 1024 )
+		if ( length <= 64 * 1024 )
 		{
 			h = ::NewHandleClear( length );
 		}
