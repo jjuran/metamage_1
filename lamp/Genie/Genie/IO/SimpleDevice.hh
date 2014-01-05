@@ -9,6 +9,10 @@
 // POSIX
 #include <fcntl.h>
 
+// vfs
+#include "vfs/filehandle_ptr.hh"
+#include "vfs/node_fwd.hh"
+
  // Genie
 #include "Genie/IO/Stream.hh"
 
@@ -45,7 +49,7 @@ namespace Genie
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
-	IOPtr GetSimpleDeviceHandle( const vfs::node& file );
+	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file );
 	
 }
 

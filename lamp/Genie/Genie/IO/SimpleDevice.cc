@@ -112,7 +112,7 @@ namespace Genie
 	}
 	
 	
-	IOPtr GetSimpleDeviceHandle( const vfs::node& file )
+	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file )
 	{
 		if ( const DeviceIOSpec* device = FindDevice( file.name() ) )
 		{
