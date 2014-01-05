@@ -10,8 +10,8 @@
 #include "sys/mman.h"
 
 // vfs
-#include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
+#include "vfs/filehandle/primitives/mmap.hh"
 #include "vfs/mmap/functions/map_anonymous.hh"
 
 // relix-kernel
@@ -46,7 +46,7 @@ namespace Genie
 			typedef void*                                   addr_t;
 			
 			const intrusive_ptr memory = anonymous ? vfs::map_anonymous            ( len, prot, flags      )
-			                                       : relix::get_fd_handle( fd ).Map( len, prot, flags, off );
+			                                       : mmap( &relix::get_fd_handle( fd ), len, prot, flags, off );
 			
 			const addr_t address = current_process().add_memory_mapping( memory.get() );
 			
