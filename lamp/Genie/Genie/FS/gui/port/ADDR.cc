@@ -686,8 +686,7 @@ namespace Genie
 			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
-		plus::string pathname = vfs::pathname( has_tty ? *tty->GetFile()
-		                                               : *that           );
+		plus::string pathname = vfs::pathname( *tty->GetFile() );
 		
 		IOPtr terminal = NewTerminal( pathname );
 		
