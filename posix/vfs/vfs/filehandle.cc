@@ -169,14 +169,5 @@ namespace vfs
 		p7::throw_errno( EINVAL );
 	}
 	
-	memory_mapping_ptr
-	//
-	filehandle::Map( size_t length, int prot, int flags, off_t offset )
-	{
-		p7::throw_errno( ENODEV );
-		
-		return memory_mapping_ptr();
-	}
-	
 }
 

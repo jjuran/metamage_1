@@ -9,6 +9,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
+#include "vfs/memory_mapping_ptr.hh"
 #include "vfs/enum/poll_result.hh"
 
 // Genie
