@@ -56,7 +56,6 @@
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
-#include "Genie/Devices.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"

@@ -93,7 +93,6 @@
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
-#include "Genie/Devices.hh"
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
@@ -554,6 +553,11 @@ namespace Genie
 		return new relix::process_image();
 	}
 	
+	static vfs::filehandle_ptr open_device( const char* path, size_t length )
+	{
+		return open( *vfs::resolve_absolute_path( path, length ), O_RDWR, 0 );
+	}
+	
 	Process::Process( RootProcess ) 
 	:
 		relix::thread( 1,
@@ -589,8 +593,8 @@ namespace Genie
 		relix::fd_map& fds = FileDescriptors();
 		
 		fds[ 0 ] =
-		fds[ 1 ] = GetSimpleDeviceHandle( "null"    );
-		fds[ 2 ] = GetSimpleDeviceHandle( "console" );
+		fds[ 1 ] = open_device( STR_LEN( "/dev/null"    ) );
+		fds[ 2 ] = open_device( STR_LEN( "/dev/console" ) );
 		
 		InstallExceptionHandlers();
 	}
