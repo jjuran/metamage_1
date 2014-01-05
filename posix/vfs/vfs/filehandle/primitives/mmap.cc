@@ -5,6 +5,9 @@
 
 #include "vfs/filehandle/primitives/mmap.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
@@ -16,6 +19,9 @@
 
 namespace vfs
 {
+	
+	namespace p7 = poseven;
+	
 	
 	memory_mapping_ptr mmap( filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{
@@ -37,7 +43,10 @@ namespace vfs
 			}
 		}
 		
-		return that->Map( length, prot, flags, offset );
+		p7::throw_errno( ENODEV );
+		
+		// Not reached
+		return memory_mapping_ptr();
 	}
 	
 }
