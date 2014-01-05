@@ -24,8 +24,6 @@ namespace Genie
 			                   const vfs::filehandle_method_set*  methods = NULL );
 			
 			virtual ~RegularFileHandle();
-			
-			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 }
