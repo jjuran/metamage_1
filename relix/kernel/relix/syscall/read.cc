@@ -5,7 +5,12 @@
 
 #include "relix/syscall/read.hh"
 
+// POSIX
+#include <errno.h>
+#include <fcntl.h>
+
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/primitives/read.hh"
 
 // relix
@@ -20,7 +25,14 @@ namespace relix
 	{
 		try
 		{
-			ssize_t get = read( get_fd_handle( fd ),
+			vfs::filehandle& h = get_fd_handle( fd );
+			
+			if ( h.get_flags() & O_DIRECTORY )
+			{
+				return set_errno( EISDIR );
+			}
+			
+			ssize_t get = read( h,
 			                    (char*) buf,
 			                    count );
 			
