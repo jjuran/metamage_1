@@ -17,6 +17,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 
 
 namespace Genie
@@ -64,6 +65,11 @@ namespace Genie
 		return static_cast< MemoryFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
 	}
 	
+	static vfs::memory_mapping_ptr buffer_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
+	{
+		return static_cast< MemoryFileHandle& >( *that ).Map( length, prot, flags, offset );
+	}
+	
 	static const vfs::bstore_method_set buffer_bstore_methods =
 	{
 		&buffer_pread,
@@ -71,9 +77,17 @@ namespace Genie
 		&buffer_pwrite,
 	};
 	
+	static const vfs::general_method_set buffer_general_methods =
+	{
+		&buffer_mmap,
+	};
+	
 	static const vfs::filehandle_method_set buffer_methods =
 	{
 		&buffer_bstore_methods,
+		NULL,
+		NULL,
+		&buffer_general_methods,
 	};
 	
 	
