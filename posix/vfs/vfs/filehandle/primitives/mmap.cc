@@ -8,8 +8,10 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
+#include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
+#include "vfs/mmap/functions/map_file.hh"
 
 
 namespace vfs
@@ -25,6 +27,13 @@ namespace vfs
 				{
 					return general_methods->mmap( that, length, prot, flags, offset );
 				}
+			}
+			
+			if ( methods->bstore_methods )
+			{
+				// Generic implementation for any regular file
+				
+				return map_file( *that, length, prot, flags, offset );
 			}
 		}
 		
