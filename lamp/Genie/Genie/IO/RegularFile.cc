@@ -21,6 +21,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/mmap/types/file_memory_mapping.hh"
+#include "vfs/mmap/types/malloc_memory_mapping.hh"
 
 // MacVFS
 #include "MacVFS/mmap/Handle_memory_mapping.hh"
@@ -32,27 +33,6 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	
-	
-	class malloc_memory_mapping : public vfs::memory_mapping
-	{
-		private:
-			// non-copyable
-			malloc_memory_mapping           ( const malloc_memory_mapping& );
-			malloc_memory_mapping& operator=( const malloc_memory_mapping& );
-		
-		public:
-			malloc_memory_mapping( void* addr, size_t size, int flags )
-			:
-				memory_mapping( addr, size, flags )
-			{
-			}
-			
-			~malloc_memory_mapping()
-			{
-				free( get_address() );
-			}
-	};
 	
 	
 	RegularFileHandle::RegularFileHandle( int                                flags,
@@ -84,7 +64,7 @@ namespace Genie
 		{
 			if ( void* addr = malloc( length ) )
 			{
-				mapping = new malloc_memory_mapping( addr, length, flags );
+				mapping = new vfs::malloc_memory_mapping( addr, length, flags );
 			}
 		}
 		
