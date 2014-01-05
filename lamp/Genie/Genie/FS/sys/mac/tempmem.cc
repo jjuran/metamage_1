@@ -14,6 +14,10 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
+
 // MacVFS
 #include "MacVFS/mmap/Handle_memory_mapping.hh"
 
@@ -32,22 +36,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class TempMem_IOHandle : public IOHandle
-	{
-		public:
-			TempMem_IOHandle( const vfs::node*  file,
-			                  int               flags )
-			:
-				IOHandle( file, flags )
-			{
-			}
-			
-			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
-	};
-	
-	memory_mapping_ptr
+	static memory_mapping_ptr
 	//
-	TempMem_IOHandle::Map( size_t length, int prot, int flags, off_t offset )
+	tempmem_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{
 		if ( offset != 0 )
 		{
@@ -59,6 +50,19 @@ namespace Genie
 		return new vfs::Handle_memory_mapping( h, length, flags );
 	}
 	
+	static const vfs::general_method_set tempmem_general_methods =
+	{
+		&tempmem_mmap,
+	};
+	
+	static const vfs::filehandle_method_set tempmem_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&tempmem_general_methods,
+	};
+	
 	
 	static off_t mac_tempmem_geteof( const FSTree* that )
 	{
@@ -67,7 +71,7 @@ namespace Genie
 	
 	static IOPtr mac_tempmem_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TempMem_IOHandle( that, flags );
+		return new vfs::filehandle( that, flags, &tempmem_methods );
 		
 	}
 	
