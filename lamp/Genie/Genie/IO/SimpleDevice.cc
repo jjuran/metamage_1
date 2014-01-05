@@ -12,14 +12,13 @@
 #include <algorithm>
 
 // plus
-#include "plus/var_string.hh"
+#include "plus/string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/node.hh"
-#include "vfs/functions/resolve_pathname.hh"
 
 // MacVFS
 #include "MacVFS/mmap/map_anonymous.hh"
@@ -88,14 +87,19 @@ namespace Genie
 		return device.name == s;
 	}
 	
-	static const DeviceIOSpec* FindDevice( const plus::string& name )
+	static const DeviceIOSpec& FindDevice( const plus::string& name )
 	{
 		const DeviceIOSpec* begin = gDeviceIOSpecs;
 		const DeviceIOSpec* end   = begin + sizeof gDeviceIOSpecs / sizeof gDeviceIOSpecs[0];
 		
 		const DeviceIOSpec* it = std::find( begin, end, name );
 		
-		return it != end ? it : NULL;
+		if ( it == NULL )
+		{
+			throw p7::errno_t( ENOENT );
+		}
+		
+		return *it;
 	}
 	
 	
@@ -105,11 +109,12 @@ namespace Genie
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const DeviceIOSpec& io ) : StreamHandle( O_RDWR ), io( io )
+			SimpleDeviceHandle( const vfs::node& file )
+			:
+				StreamHandle( &file, O_RDWR ),
+				io( FindDevice( file.name() ) )
 			{
 			}
-			
-			FSTreePtr GetFile();
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
@@ -118,15 +123,6 @@ namespace Genie
 			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
-	
-	FSTreePtr SimpleDeviceHandle::GetFile()
-	{
-		plus::var_string deviceName = "/dev/";
-		
-		deviceName += io.name;
-		
-		return vfs::resolve_absolute_path( deviceName );
-	}
 	
 	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
@@ -148,12 +144,7 @@ namespace Genie
 	
 	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file )
 	{
-		if ( const DeviceIOSpec* device = FindDevice( file.name() ) )
-		{
-			return new SimpleDeviceHandle( *device );
-		}
-		
-		throw p7::errno_t( ENOENT );
+		return new SimpleDeviceHandle( file );
 	}
 	
 }
