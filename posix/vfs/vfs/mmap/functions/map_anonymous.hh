@@ -3,8 +3,8 @@
 	----------------
 */
 
-#ifndef MACVFS_MMAP_MAPANONYMOUS_HH
-#define MACVFS_MMAP_MAPANONYMOUS_HH
+#ifndef VFS_MMAP_MAPANONYMOUS_HH
+#define VFS_MMAP_MAPANONYMOUS_HH
 
 // vfs
 #include "vfs/memory_mapping_ptr.hh"

@@ -12,12 +12,10 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
+#include "vfs/mmap/functions/map_anonymous.hh"
 
 // relix-kernel
 #include "relix/api/get_fd_handle.hh"
-
-// MacVFS
-#include "MacVFS/mmap/map_anonymous.hh"
 
 // Genie
 #include "Genie/current_process.hh"

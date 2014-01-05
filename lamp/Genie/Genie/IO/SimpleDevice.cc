@@ -19,9 +19,7 @@
 
 // vfs
 #include "vfs/node.hh"
-
-// MacVFS
-#include "MacVFS/mmap/map_anonymous.hh"
+#include "vfs/mmap/functions/map_anonymous.hh"
 
 // Genie
 #include "Genie/IO/Stream.hh"
