@@ -14,6 +14,7 @@
 // vfs
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
+#include "vfs/functions/resolve_pathname.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
@@ -59,7 +60,7 @@ namespace Genie
 		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
-		vfs::filehandle_ptr terminal = new TerminalHandle( make_devpts( index ) );
+		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( make_devpts( index ) ) );
 		
 		terminal->Attach( slave_handle.get() );
 		

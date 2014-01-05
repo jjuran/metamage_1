@@ -20,7 +20,6 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/terminal_method_set.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
-#include "vfs/functions/resolve_pathname.hh"
 
 // relix
 #include "relix/api/current_process.hh"
@@ -60,21 +59,15 @@ namespace Genie
 		&terminal_methods
 	};
 	
-	TerminalHandle::TerminalHandle( const plus::string& tty_name )
+	TerminalHandle::TerminalHandle( const vfs::node& tty_file )
 	:
-		vfs::filehandle     ( O_RDWR, &filehandle_methods ),
-		itsTTYName          ( tty_name ),
+		vfs::filehandle     ( &tty_file, O_RDWR, &filehandle_methods ),
 		its_process_group_id( no_pgid  )
 	{
 	}
 	
 	TerminalHandle::~TerminalHandle()
 	{
-	}
-	
-	FSTreePtr TerminalHandle::GetFile()
-	{
-		return vfs::resolve_absolute_path( itsTTYName );
 	}
 	
 	static void CheckControllingTerminal( const vfs::filehandle* ctty, const TerminalHandle& tty )

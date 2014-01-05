@@ -47,7 +47,6 @@
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/hangup.hh"
 #include "vfs/functions/new_static_symlink.hh"
-#include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
@@ -662,13 +661,6 @@ namespace Genie
 		params.itsTerminal = NULL;
 	}
 	
-	static inline IOPtr
-	//
-	NewTerminal( const plus::string& name )
-	{
-		return new TerminalHandle( name );
-	}
-	
 	static IOPtr port_tty_open( const FSTree* that, int flags, mode_t mode )
 	{
 		WindowParameters& params = gWindowParametersMap[ that->owner() ];
@@ -686,9 +678,7 @@ namespace Genie
 			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
-		plus::string pathname = vfs::pathname( *tty->GetFile() );
-		
-		IOPtr terminal = NewTerminal( pathname );
+		IOPtr terminal = new TerminalHandle( *tty->GetFile() );
 		
 		if ( has_tty )
 		{

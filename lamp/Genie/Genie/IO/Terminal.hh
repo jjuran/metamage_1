@@ -6,13 +6,10 @@
 #ifndef GENIE_IO_TERMINAL_HH
 #define GENIE_IO_TERMINAL_HH
 
-// plus
-#include "plus/string.hh"
-
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle_ptr.hh"
-#include "vfs/node_ptr.hh"
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
@@ -24,20 +21,17 @@ namespace Genie
 	class TerminalHandle : public vfs::filehandle
 	{
 		private:
-			const plus::string   itsTTYName;
 			vfs::filehandle_ptr  its_tty;
 			pid_t                its_process_group_id;
 			
 			vfs::filehandle* Next() const  { return its_tty.get(); }
 		
 		public:
-			TerminalHandle( const plus::string& tty_name );
+			TerminalHandle( const vfs::node& tty_file );
 			
 			~TerminalHandle();
 			
 			void Attach( vfs::filehandle* target )  { its_tty = target; }
-			
-			vfs::node_ptr GetFile();
 			
 			pid_t getpgrp() const  { return its_process_group_id; }
 			
