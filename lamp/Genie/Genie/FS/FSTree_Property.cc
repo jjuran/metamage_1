@@ -16,13 +16,15 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/types/property_reader.hh"
+#include "vfs/filehandle/types/property_writer.hh"
 
 // Genie
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
-#include "Genie/IO/PropertyFile.hh"
 
 
 namespace Genie
@@ -55,9 +57,7 @@ namespace Genie
 		{
 		}
 		
-		return new PropertyReaderFileHandle( that,
-		                                     flags,
-		                                     data );
+		return vfs::new_property_reader( that, flags, data );
 	}
 	
 	static vfs::filehandle_ptr open_for_write( const vfs::node& that, int flags, bool binary )
@@ -69,10 +69,7 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
-		return new PropertyWriterFileHandle( that,
-		                                     flags,
-		                                     extra.set,
-		                                     binary );
+		return vfs::new_property_writer( that, flags, extra.set, binary );
 	}
 	
 	static vfs::filehandle_ptr property_open( const FSTree* that, int flags, mode_t mode )

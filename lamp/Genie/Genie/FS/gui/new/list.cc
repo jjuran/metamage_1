@@ -23,6 +23,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/types/property_reader.hh"
 
 // Pedestal
 #include "Pedestal/ListView.hh"
@@ -32,8 +33,8 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -237,7 +238,7 @@ namespace Genie
 		{
 			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
 			
-			return new PropertyReaderFileHandle( *that, flags, data );
+			return vfs::new_property_reader( *that, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
