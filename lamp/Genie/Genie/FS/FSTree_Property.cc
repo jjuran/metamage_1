@@ -18,22 +18,20 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/filehandle/types/property_reader.hh"
 #include "vfs/filehandle/types/property_writer.hh"
-
-// Genie
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
-#include "Genie/FS/property.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	static vfs::filehandle_ptr open_for_read( const vfs::node& that, int flags, bool binary )
+	static filehandle_ptr open_for_read( const node& that, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) that.extra();
 		
@@ -57,10 +55,10 @@ namespace Genie
 		{
 		}
 		
-		return vfs::new_property_reader( that, flags, data );
+		return new_property_reader( that, flags, data );
 	}
 	
-	static vfs::filehandle_ptr open_for_write( const vfs::node& that, int flags, bool binary )
+	static filehandle_ptr open_for_write( const node& that, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) that.extra();
 		
@@ -69,10 +67,10 @@ namespace Genie
 			p7::throw_errno( EACCES );
 		}
 		
-		return vfs::new_property_writer( that, flags, extra.set, binary );
+		return new_property_writer( that, flags, extra.set, binary );
 	}
 	
-	static vfs::filehandle_ptr property_open( const FSTree* that, int flags, mode_t mode )
+	static filehandle_ptr property_open( const node* that, int flags, mode_t mode )
 	{
 		const char* name = that->name().data();
 		
@@ -94,7 +92,7 @@ namespace Genie
 		return open_for_write( *that, flags, binary );
 	}
 	
-	static off_t property_geteof( const FSTree* that )
+	static off_t property_geteof( const node* that )
 	{
 		property_params& extra = *(property_params*) that->extra();
 		
@@ -145,7 +143,7 @@ namespace Genie
 	
 	static mode_t get_property_filemode( property_get_hook  get_hook,
 	                                     property_set_hook  set_hook,
-	                                     const FSTree*      parent )
+	                                     const node*        parent )
 	{
 		mode_t result = S_IFREG | (set_hook ? S_IWUSR : 0);
 		
@@ -171,9 +169,9 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr new_property( const FSTree*        parent,
-	                        const plus::string&  name,
-	                        const void*          params_ )
+	node_ptr new_property( const node*          parent,
+	                       const plus::string&  name,
+	                       const void*          params_ )
 	{
 		const property_params& params = *(const property_params*) params_;
 		
@@ -181,11 +179,11 @@ namespace Genie
 		                                           params.set,
 		                                           parent );
 		
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             mode,
-		                             &property_methods,
-		                             sizeof (property_params) );
+		node* result = new node( parent,
+		                         name,
+		                         mode,
+		                         &property_methods,
+		                         sizeof (property_params) );
 		
 		property_params& extra = *(property_params*) result->extra();
 		
