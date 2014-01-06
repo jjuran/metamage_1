@@ -77,26 +77,24 @@ namespace Genie
 	
 	static vfs::filehandle_ptr property_open( const FSTree* that, int flags, mode_t mode )
 	{
-		IOHandle* result = NULL;
-		
 		const char* name = that->name().data();
 		
 		const bool binary = name[0] == '.'  &&  name[1] == '~';
 		
 		if ( flags == O_RDONLY )
 		{
-			result = open_for_read( *that, flags, binary );
+			return open_for_read( *that, flags, binary );
 		}
 		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
-			result = open_for_write( *that, flags, binary );
+			// return below to silence Metrowerks warning
 		}
 		else
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return result;
+		return open_for_write( *that, flags, binary );
 	}
 	
 	static off_t property_geteof( const FSTree* that )

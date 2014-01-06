@@ -233,25 +233,23 @@ namespace Genie
 	
 	static vfs::filehandle_ptr list_data_open( const FSTree* that, int flags, mode_t mode )
 	{
-		IOHandle* result = NULL;
-		
 		if ( flags == O_RDONLY )
 		{
 			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( *that, flags, data );
+			return new PropertyReaderFileHandle( *that, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( *that, flags );
+			// return below to silence Metrowerks warning
 		}
 		else
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return result;
+		return new List_data_Handle( *that, flags );
 	}
 	
 	static const data_method_set list_data_data_methods =
