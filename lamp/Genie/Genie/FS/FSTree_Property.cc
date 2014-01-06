@@ -31,7 +31,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static vfs::filehandle* open_for_read( const vfs::node& that, int flags, bool binary )
+	static vfs::filehandle_ptr open_for_read( const vfs::node& that, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) that.extra();
 		
@@ -60,7 +60,7 @@ namespace Genie
 		                                     data );
 	}
 	
-	static vfs::filehandle* open_for_write( const vfs::node& that, int flags, bool binary )
+	static vfs::filehandle_ptr open_for_write( const vfs::node& that, int flags, bool binary )
 	{
 		property_params& extra = *(property_params*) that.extra();
 		
