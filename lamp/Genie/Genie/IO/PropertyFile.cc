@@ -15,6 +15,8 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/types/property_reader.hh"
+#include "vfs/filehandle/types/property_writer.hh"
 
 
 namespace Genie
@@ -97,6 +99,26 @@ namespace Genie
 		itsWriteHook( GetFile()->owner(), buffer, buffer + length, itIsBinary );
 		
 		return byteCount;
+	}
+	
+}
+
+namespace vfs
+{
+	
+	filehandle_ptr new_property_reader( const node&          file,
+	                                    int                  flags,
+	                                    const plus::string&  value )
+	{
+		return new Genie::PropertyReaderFileHandle( file, flags, value );
+	}
+	
+	filehandle_ptr new_property_writer( const node&          file,
+	                                    int                  flags,
+	                                    property_write_hook  write_hook,
+	                                    bool                 binary )
+	{
+		return new Genie::PropertyWriterFileHandle( file, flags, write_hook, binary );
 	}
 	
 }
