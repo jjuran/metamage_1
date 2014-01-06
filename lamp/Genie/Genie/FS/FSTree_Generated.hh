@@ -9,9 +9,25 @@
 // plus
 #include "plus/string.hh"
 
+// vfs
+#include "vfs/node_ptr.hh"
+
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 
+
+namespace vfs
+{
+	
+	typedef plus::string (*generated_file_hook)( const node* parent, const plus::string& name );
+	
+	// Can be used in premapped directory maps
+	
+	node_ptr new_generated( const node*          parent,
+	                        const plus::string&  name,
+	                        const void*          params );
+	
+}
 
 namespace Genie
 {
@@ -19,11 +35,7 @@ namespace Genie
 	typedef plus::string (*Generated_ReadHook)( const FSTree* parent, const plus::string& name );
 	
 	
-	// Can be used in premapped directory maps
-	
-	FSTreePtr new_generated( const FSTree*        parent,
-	                         const plus::string&  name,
-	                         const void*          params );
+	using vfs::new_generated;
 	
 	
 	inline FSTreePtr New_FSTree_Generated( const FSTree*        parent,

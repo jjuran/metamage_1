@@ -9,31 +9,26 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// Debug
-#include "debug/assert.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/types/property_reader.hh"
-
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	static vfs::filehandle_ptr generated_open( const FSTree* that, int flags, mode_t mode );
+	static filehandle_ptr generated_open( const node* that, int flags, mode_t mode );
 	
-	static off_t generated_geteof( const FSTree* that );
+	static off_t generated_geteof( const node* that );
 	
 	
 	static const data_method_set generated_data_methods =
@@ -60,14 +55,14 @@ namespace Genie
 	};
 	
 	
-	static off_t generated_geteof( const FSTree* that )
+	static off_t generated_geteof( const node* that )
 	{
 		const generated_extra& extra = *(generated_extra*) that->extra();
 		
 		return plus::size( extra.datum );
 	}
 	
-	static vfs::filehandle_ptr generated_open( const FSTree* that, int flags, mode_t mode )
+	static filehandle_ptr generated_open( const node* that, int flags, mode_t mode )
 	{
 		if ( flags != O_RDONLY )
 		{
@@ -78,30 +73,30 @@ namespace Genie
 		
 		plus::string& string = reinterpret_cast< plus::string& >( extra.datum );
 		
-		return vfs::new_property_reader( *that, flags, string );
+		return new_property_reader( *that, flags, string );
 	}
 	
-	static void dispose_generated( const FSTree* that )
+	static void dispose_generated( const node* that )
 	{
 		generated_extra& extra = *(generated_extra*) that->extra();
 		
 		plus::destroy( extra.datum );
 	}
 	
-	FSTreePtr new_generated( const FSTree*        parent,
-	                         const plus::string&  name,
-	                         const void*          params )
+	node_ptr new_generated( const node*          parent,
+	                        const plus::string&  name,
+	                        const void*          params )
 	{
-		Generated_ReadHook readHook = (Generated_ReadHook) params;
+		generated_file_hook read_hook = (generated_file_hook) params;
 		
-		plus::string data = readHook( parent, name );
+		plus::string data = read_hook( parent, name );
 		
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0400,
-		                             &generated_methods,
-		                             sizeof (generated_extra),
-		                             &dispose_generated );
+		node* result = new node( parent,
+		                         name,
+		                         S_IFREG | 0400,
+		                         &generated_methods,
+		                         sizeof (generated_extra),
+		                         &dispose_generated );
 		
 		generated_extra& extra = *(generated_extra*) result->extra();
 		
