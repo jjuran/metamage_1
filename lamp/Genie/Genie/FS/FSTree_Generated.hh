@@ -11,23 +11,11 @@
 
 // vfs
 #include "vfs/node_ptr.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
 
-
-namespace vfs
-{
-	
-	typedef plus::string (*generated_file_hook)( const node* parent, const plus::string& name );
-	
-	// Can be used in premapped directory maps
-	
-	node_ptr new_generated( const node*          parent,
-	                        const plus::string&  name,
-	                        const void*          params );
-	
-}
 
 namespace Genie
 {

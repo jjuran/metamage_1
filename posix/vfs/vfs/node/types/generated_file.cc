@@ -1,9 +1,9 @@
-/*	===================
- *	FSTree_Generated.cc
- *	===================
- */
+/*
+	generated_file.cc
+	-----------------
+*/
 
-#include "Genie/FS/FSTree_Generated.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // POSIX
 #include <fcntl.h>
