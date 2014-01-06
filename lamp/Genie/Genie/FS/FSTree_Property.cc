@@ -75,7 +75,7 @@ namespace Genie
 		                                     binary );
 	}
 	
-	static IOPtr property_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr property_open( const FSTree* that, int flags, mode_t mode )
 	{
 		IOHandle* result = NULL;
 		

@@ -28,7 +28,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static IOPtr generated_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr generated_open( const FSTree* that, int flags, mode_t mode );
 	
 	static off_t generated_geteof( const FSTree* that );
 	
@@ -64,7 +64,7 @@ namespace Genie
 		return plus::size( extra.datum );
 	}
 	
-	static IOPtr generated_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr generated_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( flags != O_RDONLY )
 		{

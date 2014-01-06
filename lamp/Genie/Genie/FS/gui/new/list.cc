@@ -231,7 +231,7 @@ namespace Genie
 		return result;
 	}
 	
-	static IOPtr list_data_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr list_data_open( const FSTree* that, int flags, mode_t mode )
 	{
 		IOHandle* result = NULL;
 		
