@@ -1,9 +1,9 @@
-/*	==================
- *	FSTree_Property.cc
- *	==================
- */
+/*
+	property_file.cc
+	----------------
+*/
 
-#include "Genie/FS/FSTree_Property.hh"
+#include "vfs/node/types/property_file.hh"
 
 // POSIX
 #include <fcntl.h>
