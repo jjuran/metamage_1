@@ -6,8 +6,8 @@
 #ifndef GENIE_FILESYSTEM_FSTREE_PROPERTY_HH
 #define GENIE_FILESYSTEM_FSTREE_PROPERTY_HH
 
-// plus
-#include "plus/string.hh"
+// vfs
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
@@ -16,14 +16,8 @@
 namespace Genie
 {
 	
-	struct undefined_property {};
-	
-	
-	// Can be used in premapped directory maps
-	
-	FSTreePtr new_property( const FSTree*        parent,
-	                        const plus::string&  name,
-	                        const void*          params );
+	using vfs::undefined_property;
+	using vfs::new_property;
 	
 }
 

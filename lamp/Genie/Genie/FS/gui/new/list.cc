@@ -23,6 +23,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/types/property_reader.hh"
 
 // Pedestal
 #include "Pedestal/ListView.hh"
@@ -32,8 +33,8 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/PropertyFile.hh"
 #include "Genie/IO/RegularFile.hh"
+#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -231,27 +232,25 @@ namespace Genie
 		return result;
 	}
 	
-	static IOPtr list_data_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr list_data_open( const FSTree* that, int flags, mode_t mode )
 	{
-		IOHandle* result = NULL;
-		
 		if ( flags == O_RDONLY )
 		{
 			plus::string data = join_strings( gListParameterMap[ that->owner() ].itsStrings );
 			
-			result = new PropertyReaderFileHandle( *that, flags, data );
+			return vfs::new_property_reader( *that, flags, data );
 		}
 		else if (    (flags & ~O_CREAT) - O_WRONLY == O_TRUNC
 		          || (flags & ~O_CREAT) - O_WRONLY == O_APPEND )
 		{
-			result = new List_data_Handle( *that, flags );
+			// return below to silence Metrowerks warning
 		}
 		else
 		{
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return result;
+		return new List_data_Handle( *that, flags );
 	}
 	
 	static const data_method_set list_data_data_methods =

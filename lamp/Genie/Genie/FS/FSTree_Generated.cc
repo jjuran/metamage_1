@@ -15,11 +15,14 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle.hh"
+#include "vfs/filehandle/types/property_reader.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/PropertyFile.hh"
 
 
 namespace Genie
@@ -28,7 +31,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static IOPtr generated_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr generated_open( const FSTree* that, int flags, mode_t mode );
 	
 	static off_t generated_geteof( const FSTree* that );
 	
@@ -64,7 +67,7 @@ namespace Genie
 		return plus::size( extra.datum );
 	}
 	
-	static IOPtr generated_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr generated_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( flags != O_RDONLY )
 		{
@@ -75,9 +78,7 @@ namespace Genie
 		
 		plus::string& string = reinterpret_cast< plus::string& >( extra.datum );
 		
-		return new PropertyReaderFileHandle( *that,
-		                                     flags,
-		                                     string );
+		return vfs::new_property_reader( *that, flags, string );
 	}
 	
 	static void dispose_generated( const FSTree* that )
