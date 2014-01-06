@@ -76,6 +76,8 @@ namespace vfs
 	                                    int                  flags,
 	                                    const plus::string&  value )
 	{
+		plus::string value_copy = value;
+		
 		filehandle* result = new filehandle( &file,
 		                                     flags,
 		                                     &propertyreader_methods,
@@ -83,8 +85,6 @@ namespace vfs
 		                                     &dispose_property_reader );
 		
 		property_reader_extra& extra = *(property_reader_extra*) result->extra();
-		
-		plus::string value_copy = value;
 		
 		construct_from_move( extra.value, value_copy.move() );
 		
