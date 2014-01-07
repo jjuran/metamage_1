@@ -7,6 +7,7 @@
 
 // vfs
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // MacVFS
 #include "MacVFS/file/sys_mac_rom.hh"
@@ -17,7 +18,6 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
@@ -101,7 +101,7 @@ namespace Genie
 		{ "drive", &New_FSTree_sys_mac_drive },
 		{ "unit",  &New_FSTree_sys_mac_unit  },
 		
-		{ "xpram", &new_generated, (void*) &sys_mac_xpram::Read },
+		{ "xpram", &vfs::new_generated, (void*) &sys_mac_xpram::Read },
 		
 	#endif
 		
@@ -126,7 +126,7 @@ namespace Genie
 		{ ".mac-name", PROPERTY(                     sys_mac_name   ) },
 		{      "name", PROPERTY( utf8_text_property< sys_mac_name > ) },
 		
-		{ "keys", &new_generated, (void*) &sys_mac_keys::Read },
+		{ "keys", &vfs::new_generated, (void*) &sys_mac_keys::Read },
 		
 		{ "rom", &vfs::new_sys_mac_rom },
 		
