@@ -68,7 +68,7 @@ namespace vfs
 		{
 			its_contents = new dir_contents();
 			
-			intrusive_ptr_release( its_contents );
+			intrusive_ptr_add_ref( its_contents );
 		}
 		
 		return its_contents;
