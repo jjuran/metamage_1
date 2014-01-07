@@ -5,11 +5,18 @@
 
 #include "Genie/FS/sys/mac/tempmem.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
-
-// Nitrogen
-#include "Nitrogen/MacMemory.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -17,9 +24,7 @@
 // vfs
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
-
-// MacVFS
-#include "MacVFS/mmap/Handle_memory_mapping.hh"
+#include "vfs/mmap/functions/map_temporary.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -31,8 +36,6 @@
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -45,9 +48,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		n::owned< N::Handle > h = N::TempNewHandle( length );
-		
-		return new vfs::Handle_memory_mapping( h, length, flags );
+		return vfs::map_temporary( length, prot, flags );
 	}
 	
 	static const vfs::general_method_set tempmem_general_methods =
