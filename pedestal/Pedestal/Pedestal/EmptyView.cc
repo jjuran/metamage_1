@@ -11,7 +11,7 @@ namespace Pedestal
 	
 	const boost::intrusive_ptr< View >& EmptyView::Get()
 	{
-		static boost::intrusive_ptr< View > empty = seize_ptr( new EmptyView );
+		static boost::intrusive_ptr< View > empty = new EmptyView;
 		
 		return empty;
 	}

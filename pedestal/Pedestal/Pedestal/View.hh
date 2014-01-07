@@ -90,12 +90,6 @@ namespace Pedestal
 			virtual bool UserCommand( CommandCode code  )  { return false; }
 	};
 	
-	
-	inline boost::intrusive_ptr< View > seize_ptr( View* view )
-	{
-		return boost::intrusive_ptr< View >( view );
-	}
-	
 }
 
 #endif
