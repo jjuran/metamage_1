@@ -19,6 +19,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 #include "vfs/mmap/functions/map_anonymous.hh"
 
 // Genie
@@ -101,6 +103,27 @@ namespace Genie
 	}
 	
 	
+	static memory_mapping_ptr
+	//
+	devzero_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
+	{
+		return vfs::map_anonymous( length, prot, flags );
+	}
+	
+	static const vfs::general_method_set devzero_general_methods =
+	{
+		&devzero_mmap,
+	};
+	
+	static const vfs::filehandle_method_set simpledevice_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&devzero_general_methods,
+	};
+	
+	
 	class SimpleDeviceHandle : public StreamHandle
 	{
 		private:
@@ -109,7 +132,7 @@ namespace Genie
 		public:
 			SimpleDeviceHandle( const vfs::node& file )
 			:
-				StreamHandle( &file, O_RDWR ),
+				StreamHandle( &file, O_RDWR, &simpledevice_methods ),
 				io( FindDevice( file.name() ) )
 			{
 			}
@@ -117,8 +140,6 @@ namespace Genie
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
-			memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 	
@@ -130,13 +151,6 @@ namespace Genie
 	ssize_t SimpleDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
 		return io.writer( data, byteCount );
-	}
-	
-	memory_mapping_ptr
-	//
-	SimpleDeviceHandle::Map( size_t length, int prot, int flags, off_t offset )
-	{
-		return vfs::map_anonymous( length, prot, flags );
 	}
 	
 	
