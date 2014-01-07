@@ -61,7 +61,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/IO/Base.hh"
-#include "Genie/IO/RegularFile.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -628,7 +627,7 @@ namespace Genie
 	}
 	
 	
-	class shadow_filehandle : public RegularFileHandle
+	class shadow_filehandle : public vfs::filehandle
 	{
 		private:
 			vfs::filehandle_ptr its_basis;
@@ -686,7 +685,7 @@ namespace Genie
 	                                      int               flags,
 	                                      vfs::filehandle&  basis )
 	:
-		RegularFileHandle( &file, flags, &shadow_methods ),
+		vfs::filehandle( &file, flags, &shadow_methods ),
 		its_basis( &basis )
 	{
 	}

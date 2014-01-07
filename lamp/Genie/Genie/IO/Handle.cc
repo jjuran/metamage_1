@@ -68,7 +68,7 @@ namespace Genie
 	                                  int                                    flags,
 	                                  const nucleus::shared< Mac::Handle >&  h )
 	:
-		RegularFileHandle( &file, flags, &Mac_Handle_methods ),
+		vfs::filehandle( &file, flags, &Mac_Handle_methods ),
 		itsHandle( h )
 	{
 	}

@@ -18,6 +18,7 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 
@@ -30,7 +31,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/RegularFile.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -137,7 +137,7 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class CaptionTextFileHandle : public RegularFileHandle
+	class CaptionTextFileHandle : public vfs::filehandle
 	{
 		public:
 			CaptionTextFileHandle( const vfs::node& file, int flags );
@@ -192,7 +192,7 @@ namespace Genie
 	
 	CaptionTextFileHandle::CaptionTextFileHandle( const vfs::node& file, int flags )
 	:
-		RegularFileHandle( &file, flags, &caption_text_filehandle_methods )
+		vfs::filehandle( &file, flags, &caption_text_filehandle_methods )
 	{
 	}
 	

@@ -16,14 +16,14 @@
 #include "Mac/Memory/Types/Handle.hh"
 #endif
 
-// Genie
-#include "Genie/IO/RegularFile.hh"
+// vfs
+#include "vfs/filehandle.hh"
 
 
 namespace Genie
 {
 	
-	class Handle_IOHandle : public RegularFileHandle
+	class Handle_IOHandle : public vfs::filehandle
 	{
 		private:
 			nucleus::shared< Mac::Handle > itsHandle;
