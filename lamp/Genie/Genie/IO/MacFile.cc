@@ -24,7 +24,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
-#include "Genie/IO/RegularFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -35,7 +34,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	class MacFileHandle : public RegularFileHandle
+	class MacFileHandle : public vfs::filehandle
 	{
 		private:
 			typedef FSTreePtr (*FileGetter)( const FSSpec& );
@@ -172,9 +171,9 @@ namespace Genie
 	MacFileHandle::MacFileHandle( const n::shared< N::FSFileRefNum >&  refNum,
 	                              int                                  flags,
 	                              FileGetter                           getFile )
-	: RegularFileHandle( flags, &hfs_methods ),
-	  itsRefNum        ( refNum ),
-	  itsFileGetter    ( getFile )
+	: vfs::filehandle( flags, &hfs_methods ),
+	  itsRefNum      ( refNum ),
+	  itsFileGetter  ( getFile )
 	{
 	}
 	

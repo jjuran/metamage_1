@@ -15,6 +15,7 @@
 #include "plus/mac_utf8.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 
@@ -24,7 +25,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/RegularFile.hh"
 
 
 namespace Genie
@@ -51,10 +51,10 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class TextEdit_text_Handle : public RegularFileHandle
+	class TextEdit_text_Handle : public vfs::filehandle
 	{
 		public:
-			TextEdit_text_Handle( const FSTreePtr& file, int flags );
+			TextEdit_text_Handle( const vfs::node& file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -102,9 +102,9 @@ namespace Genie
 	};
 	
 	
-	TextEdit_text_Handle::TextEdit_text_Handle( const FSTreePtr& file, int flags )
+	TextEdit_text_Handle::TextEdit_text_Handle( const vfs::node& file, int flags )
 	:
-		RegularFileHandle( file, flags, &TextEdit_text_methods )
+		vfs::filehandle( &file, flags, &TextEdit_text_methods )
 	{
 	}
 	
@@ -175,7 +175,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr textedit_text_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TextEdit_text_Handle( that, flags );
+		return new TextEdit_text_Handle( *that, flags );
 	}
 	
 	static const data_method_set textedit_text_data_methods =
