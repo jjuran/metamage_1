@@ -30,6 +30,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 
 // MacVFS
 #include "MacVFS/mmap/Ptr_memory_mapping.hh"
@@ -120,6 +121,11 @@ namespace Genie
 		return static_cast< Bits_IO& >( *file ).Positioned_Write( buffer, n, offset );
 	}
 	
+	static vfs::memory_mapping_ptr bits_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
+	{
+		return static_cast< Bits_IO& >( *that ).Map( length, prot, flags, offset );
+	}
+	
 	static const vfs::bstore_method_set bits_bstore_methods =
 	{
 		&bits_pread,
@@ -127,9 +133,17 @@ namespace Genie
 		&bits_pwrite,
 	};
 	
+	static const vfs::general_method_set bits_general_methods =
+	{
+		&bits_mmap,
+	};
+	
 	static const vfs::filehandle_method_set bits_methods =
 	{
 		&bits_bstore_methods,
+		NULL,
+		NULL,
+		&bits_general_methods,
 	};
 	
 	

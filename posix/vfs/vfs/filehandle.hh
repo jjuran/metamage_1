@@ -10,7 +10,6 @@
 #include "plus/ref_count.hh"
 
 // vfs
-#include "vfs/memory_mapping_ptr.hh"
 #include "vfs/node_ptr.hh"
 
 
@@ -97,8 +96,6 @@ namespace vfs
 			virtual node_ptr GetFile();
 			
 			virtual void IOCtl( unsigned long request, int* argp );
-			
-			virtual memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 }
