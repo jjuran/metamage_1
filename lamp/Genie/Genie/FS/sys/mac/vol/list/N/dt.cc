@@ -26,11 +26,11 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/node_ptr.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -316,7 +316,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return New_FSTree_Generated( parent, name, generate_dt_icons_QUAD_QUAD_X );
+		return new_generated( parent, name, (void*) generate_dt_icons_QUAD_QUAD_X );
 	}
 	
 	static void icon_QUAD_QUAD_iterate( const vfs::node* parent, vfs::dir_contents& cache )
