@@ -105,7 +105,7 @@ namespace Genie
 			Pixels_IO& operator=( const Pixels_IO& );
 		
 		public:
-			Pixels_IO( const FSTreePtr& file, int flags );
+			Pixels_IO( const vfs::node& file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -147,9 +147,9 @@ namespace Genie
 	};
 	
 	
-	Pixels_IO::Pixels_IO( const FSTreePtr& file, int flags )
+	Pixels_IO::Pixels_IO( const vfs::node& file, int flags )
 	:
-		RegularFileHandle( file, flags, &pixels_methods )
+		RegularFileHandle( &file, flags, &pixels_methods )
 	{
 	}
 	
@@ -257,7 +257,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr gworld_pixels_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new Pixels_IO( that, flags );
+		return new Pixels_IO( *that, flags );
 	}
 	
 	static const data_method_set gworld_pixels_data_methods =

@@ -54,7 +54,7 @@ namespace Genie
 	class TextEdit_text_Handle : public RegularFileHandle
 	{
 		public:
-			TextEdit_text_Handle( const FSTreePtr& file, int flags );
+			TextEdit_text_Handle( const vfs::node& file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -102,9 +102,9 @@ namespace Genie
 	};
 	
 	
-	TextEdit_text_Handle::TextEdit_text_Handle( const FSTreePtr& file, int flags )
+	TextEdit_text_Handle::TextEdit_text_Handle( const vfs::node& file, int flags )
 	:
-		RegularFileHandle( file, flags, &TextEdit_text_methods )
+		RegularFileHandle( &file, flags, &TextEdit_text_methods )
 	{
 	}
 	
@@ -175,7 +175,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr textedit_text_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new TextEdit_text_Handle( that, flags );
+		return new TextEdit_text_Handle( *that, flags );
 	}
 	
 	static const data_method_set textedit_text_data_methods =

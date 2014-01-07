@@ -140,7 +140,7 @@ namespace Genie
 	class CaptionTextFileHandle : public RegularFileHandle
 	{
 		public:
-			CaptionTextFileHandle( const FSTreePtr& file, int flags );
+			CaptionTextFileHandle( const vfs::node& file, int flags );
 			
 			const FSTree* ViewKey();
 			
@@ -190,9 +190,9 @@ namespace Genie
 	};
 	
 	
-	CaptionTextFileHandle::CaptionTextFileHandle( const FSTreePtr& file, int flags )
+	CaptionTextFileHandle::CaptionTextFileHandle( const vfs::node& file, int flags )
 	:
-		RegularFileHandle( file, flags, &caption_text_filehandle_methods )
+		RegularFileHandle( &file, flags, &caption_text_filehandle_methods )
 	{
 	}
 	
@@ -254,7 +254,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr caption_text_open( const FSTree* that, int flags, mode_t mode )
 	{
-		return new CaptionTextFileHandle( that, flags );
+		return new CaptionTextFileHandle( *that, flags );
 	}
 	
 	static const data_method_set caption_text_data_methods =
