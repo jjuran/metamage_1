@@ -127,7 +127,7 @@ namespace Genie
 	};
 	
 	
-	static IOPtr proc_fd_link_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr proc_fd_link_open( const FSTree* that, int flags, mode_t mode );
 	
 	static off_t proc_fd_link_geteof( const FSTree* that );
 	
@@ -695,7 +695,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr proc_fd_link_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr proc_fd_link_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
 		{

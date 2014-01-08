@@ -354,7 +354,7 @@ namespace Genie
 	static void hfs_rename( const FSTree*  that,
 	                        const FSTree*  destination );
 	
-	static IOPtr hfs_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr hfs_open( const FSTree* that, int flags, mode_t mode );
 	
 	static off_t hfs_geteof( const FSTree* that );
 	
@@ -377,7 +377,7 @@ namespace Genie
 	static void hfs_mkdir( const FSTree*  that,
 	                       mode_t         mode );
 	
-	static IOPtr hfs_opendir( const FSTree* that );
+	static vfs::filehandle_ptr hfs_opendir( const FSTree* that );
 	
 	static void hfs_copyfile( const FSTree*  that,
 	                          const FSTree*  dest );
@@ -880,7 +880,7 @@ namespace Genie
 		finish_creation( file, name );
 	}
 	
-	static IOPtr hfs_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr hfs_open( const FSTree* that, int flags, mode_t mode )
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
@@ -920,10 +920,10 @@ namespace Genie
 		
 		const bool async = false;
 		
-		IOPtr opened = OpenMacFileHandle( extra.fsspec,
-		                                  flags,
-		                                  async ? &Genie::FSpOpenDF : N::FSpOpenDF,
-		                                  &New_DataForkHandle );
+		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
+		                                                flags,
+		                                                async ? &Genie::FSpOpenDF : N::FSpOpenDF,
+		                                                &New_DataForkHandle );
 		
 		if ( created )
 		{
@@ -948,7 +948,7 @@ namespace Genie
 		return prepare_executable( unit );
 	}
 	
-	static IOPtr hfs_opendir( const FSTree* that )
+	static vfs::filehandle_ptr hfs_opendir( const FSTree* that )
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		

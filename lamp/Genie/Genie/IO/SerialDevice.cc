@@ -137,7 +137,7 @@ namespace Genie
 	}
 	
 	template < class Type >
-	static inline IOPtr NewSerialDeviceHandle( Type param, bool isPassive )
+	static inline vfs::filehandle_ptr NewSerialDeviceHandle( Type param, bool isPassive )
 	{
 		return new SerialDeviceHandle( param, isPassive );
 	}
@@ -145,15 +145,15 @@ namespace Genie
 #endif
 	
 	
-	IOPtr OpenSerialDevice( const plus::string&  portName,
-	                        bool                 isPassive,
-	                        bool                 nonblocking )
+	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
+	                                      bool                 isPassive,
+	                                      bool                 nonblocking )
 	{
 	#if TARGET_API_MAC_CARBON
 		
 		p7::throw_errno( ENOENT );
 		
-		return IOPtr();
+		return vfs::filehandle_ptr();
 		
 	#else
 		
@@ -167,8 +167,8 @@ namespace Genie
 			try_again( nonblocking );
 		}
 		
-		IOPtr result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
-		                             : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other ), isPassive );
+		vfs::filehandle_ptr result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
+		                                           : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other ), isPassive );
 		
 		same = result.get();
 		

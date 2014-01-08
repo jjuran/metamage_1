@@ -31,7 +31,7 @@ namespace Genie
 		return vfs::get_dynamic_group< PseudoTTYHandle >();
 	}
 	
-	static inline IOPtr
+	static inline vfs::filehandle_ptr
 	//
 	NewPseudoTTY( TerminalID                                    id,
 	              const boost::intrusive_ptr< plus::conduit >&  input,
@@ -49,16 +49,16 @@ namespace Genie
 		return result;
 	}
 	
-	void GetNewPseudoTTYPair( IOPtr&  master,
-	                          IOPtr&  slave )
+	void GetNewPseudoTTYPair( vfs::filehandle_ptr&  master,
+	                          vfs::filehandle_ptr&  slave )
 	{
 		static TerminalID index = 0;
 		
 		boost::intrusive_ptr< plus::conduit > incoming( new plus::conduit );
 		boost::intrusive_ptr< plus::conduit > outgoing( new plus::conduit );
 		
-		IOPtr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
-		IOPtr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
+		vfs::filehandle_ptr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
+		vfs::filehandle_ptr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
 		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( make_devpts( index ) ) );
 		

@@ -65,7 +65,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-#include "Genie/IO/IOPtr.hh"
 #include "Genie/IO/Terminal.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -106,8 +105,8 @@ namespace Genie
 		
 		plus::string itsGesturePaths[ n_gestures ];
 		
-		FSTreePtr  itsTTYDelegate;
-		IOHandle*  itsTerminal;
+		vfs::node_ptr     itsTTYDelegate;
+		vfs::filehandle*  itsTerminal;
 		
 		WindowParameters() : itsOrigin( gZeroPoint ),
 		                     itsSize  ( gZeroPoint ),
@@ -168,7 +167,7 @@ namespace Genie
 	}
 	
 	
-	static bool Disconnect_Window_Terminal( IOHandle*& h )
+	static bool Disconnect_Window_Terminal( vfs::filehandle*& h )
 	{
 		if ( h != NULL )
 		{
@@ -622,7 +621,7 @@ namespace Genie
 	};
 	
 	
-	static IOPtr port_tty_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr port_tty_open( const FSTree* that, int flags, mode_t mode );
 	
 	static void port_tty_attach( const FSTree* that, const FSTree* target )
 	{
@@ -661,11 +660,11 @@ namespace Genie
 		params.itsTerminal = NULL;
 	}
 	
-	static IOPtr port_tty_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr port_tty_open( const FSTree* that, int flags, mode_t mode )
 	{
 		WindowParameters& params = gWindowParametersMap[ that->owner() ];
 		
-		IOPtr tty;
+		vfs::filehandle_ptr tty;
 		
 		const bool has_tty = params.itsTTYDelegate.get() != NULL;
 		
@@ -678,7 +677,7 @@ namespace Genie
 			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
-		IOPtr terminal = new TerminalHandle( *tty->GetFile() );
+		vfs::filehandle_ptr terminal = new TerminalHandle( *tty->GetFile() );
 		
 		if ( has_tty )
 		{
@@ -926,7 +925,7 @@ namespace Genie
 		remove_window_and_views_from_port( port );
 	}
 	
-	static IOPtr lock_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr lock_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( gWindowParametersMap[ that->owner() ].itIsLocked )
 		{

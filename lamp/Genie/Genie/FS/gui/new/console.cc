@@ -86,10 +86,10 @@ namespace Genie
 	
 	struct ConsoleParameters
 	{
-		IOPtr        itsTerminal;
-		std::size_t  itsStartOfInput;
-		std::size_t  itsStartOfOutput;
-		bool         itHasReceivedEOF;
+		vfs::filehandle_ptr  itsTerminal;
+		std::size_t          itsStartOfInput;
+		std::size_t          itsStartOfOutput;
+		bool                 itHasReceivedEOF;
 		
 		ConsoleParameters()
 		:
@@ -749,7 +749,7 @@ namespace Genie
 		attach( *destination, *that );
 	}
 	
-	static IOPtr console_tty_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr console_tty_open( const FSTree* that, int flags, mode_t mode )
 	{
 		static unsigned gLastID = 0;
 		

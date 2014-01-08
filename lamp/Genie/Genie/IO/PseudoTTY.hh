@@ -15,6 +15,9 @@
 // plus
 #include "plus/conduit.hh"
 
+// vfs
+#include "vfs/filehandle_ptr.hh"
+
 // Genie
 #include "Genie/IO/Stream.hh"
 
@@ -46,8 +49,8 @@ namespace Genie
 			
 	};
 	
-	void GetNewPseudoTTYPair( IOPtr&  master,
-	                          IOPtr&  slave );
+	void GetNewPseudoTTYPair( vfs::filehandle_ptr&  master,
+	                          vfs::filehandle_ptr&  slave );
 	
 }
 

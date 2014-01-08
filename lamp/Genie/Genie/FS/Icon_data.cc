@@ -495,7 +495,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr icon_data_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr icon_data_open( const FSTree* that, int flags, mode_t mode )
 	{
 		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
@@ -517,7 +517,7 @@ namespace Genie
 				p7::throw_errno( EACCES );
 		}
 		
-		return IOPtr( result );
+		return result;
 	}
 	
 	static off_t icon_data_geteof( const FSTree* that )

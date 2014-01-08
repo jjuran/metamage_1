@@ -24,7 +24,7 @@ namespace Genie
 		remove_port( that->GetFile().get() );
 	}
 	
-	static IOPtr new_port_opendir( const FSTree* that )
+	static vfs::filehandle_ptr new_port_opendir( const FSTree* that )
 	{
 		FSTreePtr dir = new_port();
 		

@@ -14,7 +14,6 @@
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"
-#include "Genie/IO/IOPtr.hh"
 
 
 namespace Genie

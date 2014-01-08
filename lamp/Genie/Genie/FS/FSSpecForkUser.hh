@@ -19,6 +19,9 @@
 #include "Mac/Files/Types/FSIOPerm.hh"
 #endif
 
+// vfs
+#include "vfs/filehandle_ptr.hh"
+
 // Genie
 #include "Genie/IO/Base.hh"
 
@@ -28,9 +31,9 @@ namespace Genie
 	
 	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
 	
-	typedef IOPtr (*HandleCreator)( const nucleus::shared< Mac::FSFileRefNum >&, int );
+	typedef vfs::filehandle_ptr (*HandleCreator)( const nucleus::shared< Mac::FSFileRefNum >&, int );
 	
-	IOPtr
+	vfs::filehandle_ptr
 	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
 	                   int            flags,

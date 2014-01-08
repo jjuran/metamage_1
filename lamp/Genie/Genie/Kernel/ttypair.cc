@@ -26,7 +26,7 @@ static int ttypair( int fds[ 2 ] )
 	
 	try
 	{
-		IOPtr master, slave;
+		vfs::filehandle_ptr master, slave;
 		
 		GetNewPseudoTTYPair( master, slave );
 		

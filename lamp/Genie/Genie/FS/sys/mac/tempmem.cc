@@ -70,7 +70,7 @@ namespace Genie
 		return ::TempFreeMem();
 	}
 	
-	static IOPtr mac_tempmem_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr mac_tempmem_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new vfs::filehandle( that, flags, &tempmem_methods );
 		

@@ -248,7 +248,7 @@ namespace Genie
 	}
 	
 	
-	IOPtr
+	vfs::filehandle_ptr
 	//
 	New_DataForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
 	                    int                                  flags )
@@ -258,7 +258,7 @@ namespace Genie
 		                          &FSTreeFromFSSpec );
 	}
 	
-	IOPtr
+	vfs::filehandle_ptr
 	//
 	New_RsrcForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
 	                    int                                  flags )

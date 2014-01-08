@@ -62,7 +62,7 @@ namespace Genie
 		Stat_HFS( async, &sb, cInfo, fileSpec.name, true );
 	}
 	
-	static IOPtr rsrcfile_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr rsrcfile_open( const FSTree* that, int flags, mode_t mode )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		

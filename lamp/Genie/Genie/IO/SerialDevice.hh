@@ -9,6 +9,9 @@
 // plus
 #include "plus/string_fwd.hh"
 
+// vfs
+#include "vfs/filehandle_ptr.hh"
+
 // Genie
 #include "Genie/IO/Stream.hh"
 
@@ -16,9 +19,9 @@
 namespace Genie
 {
 	
-	IOPtr OpenSerialDevice( const plus::string&  portName,
-	                        bool                 isPassive,
-	                        bool                 nonblocking );
+	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
+	                                      bool                 isPassive,
+	                                      bool                 nonblocking );
 	
 }
 

@@ -77,11 +77,11 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( const FSTree* that, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const FSTree* that, int flags, mode_t mode );
 	};
 	
 	template < class Mode, class Port >
-	IOPtr dev_Serial< Mode, Port >::open( const FSTree* that, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_Serial< Mode, Port >::open( const FSTree* that, int flags, mode_t mode )
 	{
 		const bool nonblocking = flags & O_NONBLOCK;
 		
@@ -110,7 +110,7 @@ namespace Genie
 	class ConsoleTTYHandle;
 	
 	
-	static IOPtr simple_device_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr simple_device_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return GetSimpleDeviceHandle( *that );
 	}
@@ -135,10 +135,10 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static IOPtr open( const FSTree* that, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const FSTree* that, int flags, mode_t mode );
 	};
 	
-	IOPtr dev_tty::open( const FSTree* that, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_tty::open( const FSTree* that, int flags, mode_t mode )
 	{
 		vfs::filehandle* tty = relix::current_process().get_process_group().get_session().get_ctty().get();
 		

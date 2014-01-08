@@ -15,7 +15,7 @@ namespace Genie
 	namespace n = nucleus;
 	
 	
-	IOPtr
+	vfs::filehandle_ptr
 	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
 	                   int            flags,

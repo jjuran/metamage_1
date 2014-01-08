@@ -292,7 +292,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr button_stream_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr button_stream_open( const FSTree* that, int flags, mode_t mode )
 	{
 		const FSTree* view = that->owner();
 		

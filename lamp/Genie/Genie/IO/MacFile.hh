@@ -16,6 +16,9 @@
 #include "Mac/Files/Types/FSFileRefNum.hh"
 #endif
 
+// vfs
+#include "vfs/filehandle_ptr.hh"
+
 // Genie
 #include "Genie/IO/Base.hh"
 
@@ -23,12 +26,12 @@
 namespace Genie
 {
 	
-	IOPtr
+	vfs::filehandle_ptr
 	//
 	New_DataForkHandle( const nucleus::shared< Mac::FSFileRefNum >&  refNum,
 	                    int                                          flags );
 	
-	IOPtr
+	vfs::filehandle_ptr
 	//
 	New_RsrcForkHandle( const nucleus::shared< Mac::FSFileRefNum >&  refNum,
 	                    int                                          flags );

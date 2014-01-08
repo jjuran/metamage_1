@@ -96,7 +96,7 @@ namespace Genie
 	}
 	
 	
-	static IOPtr textedit_gate_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr textedit_gate_open( const FSTree* that, int flags, mode_t mode )
 	{
 		return new TextEdit_gate_Handle( *that, flags );
 	}

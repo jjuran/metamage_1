@@ -105,7 +105,7 @@ namespace Genie
 			
 			void Listen( int backlog );
 			
-			IOPtr Accept( sockaddr& client, socklen_t& len );
+			vfs::filehandle_ptr Accept( sockaddr& client, socklen_t& len );
 			
 			void Connect( const sockaddr& server, socklen_t len );
 			
@@ -486,7 +486,7 @@ namespace Genie
 		it_is_listener = true;
 	}
 	
-	IOPtr OTSocket::Accept( sockaddr& client, socklen_t& len )
+	vfs::filehandle_ptr OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
 		RepairListener();
 		
@@ -520,7 +520,7 @@ namespace Genie
 		
 		OTSocket* handle = new OTSocket;
 		
-		IOPtr newSocket( handle );
+		vfs::filehandle_ptr newSocket( handle );
 		
 		handle->itsPeerAddress = (const InetAddress&) client;
 		
