@@ -5,18 +5,11 @@
 
 #include "Genie/FS/sys/mac/tempmem.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __MACMEMORY__
-#include <MacMemory.h>
-#endif
-
 // POSIX
 #include <sys/stat.h>
+
+// mac-sys-utils
+#include "mac_sys/temp_free_mem.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -67,7 +60,7 @@ namespace Genie
 	
 	static off_t mac_tempmem_geteof( const FSTree* that )
 	{
-		return ::TempFreeMem();
+		return mac::sys::temp_free_mem();
 	}
 	
 	static vfs::filehandle_ptr mac_tempmem_open( const FSTree* that, int flags, mode_t mode )
