@@ -5,14 +5,9 @@
 
 #include "Genie/FS/sys/app.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-#ifndef __MACMEMORY__
-#include <MacMemory.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/free_mem.hh"
+#include "mac_sys/heap_size.hh"
 
 // plus
 #include "plus/serialize.hh"
@@ -37,23 +32,17 @@ namespace Genie
 	{
 		static long Get()
 		{
-			return ::FreeMem();
+			return mac::sys::free_mem();
 		}
 	};
-	
-#if !TARGET_API_MAC_CARBON
 	
 	struct GetHeapSize : plus::serialize_unsigned< long >
 	{
 		static long Get()
 		{
-			THz zone = ::ApplicationZone();
-			
-			return zone->bkLim - (Ptr) &zone->heapData;
+			return mac::sys::heap_size();
 		}
 	};
-	
-#endif
 	
 	template < class Accessor >
 	struct sys_app_Property : readonly_property
