@@ -5,15 +5,8 @@
 
 #include "Genie/FS/sys/mac/thread/default-stack-size.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __THREADS__
-#include <Threads.h>
-#endif
+// mac-sys-utils
+#include "mac_sys/default_thread_stack_size.hh"
 
 // plus
 #include "plus/serialize.hh"
@@ -23,21 +16,11 @@
 namespace Genie
 {
 	
-	static inline std::size_t DefaultThreadStackSize()
-	{
-		::Size size = 0;
-		
-		// Jaguar returns paramErr
-		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
-		
-		return size;
-	}
-	
 	void sys_mac_thread_defaultstacksize::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		typedef plus::serialize_unsigned< std::size_t > serialize;
 		
-		const std::size_t data = DefaultThreadStackSize();
+		const std::size_t data = mac::sys::default_thread_stack_size();
 		
 		serialize::deconstruct::apply( result, data, binary );
 	}
