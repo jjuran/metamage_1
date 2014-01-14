@@ -1,0 +1,84 @@
+/*
+	connect.cc
+	----------
+*/
+
+#include "unet/connect.hh"
+
+// POSIX
+#include <unistd.h>
+
+// Standard C
+#include <errno.h>
+
+// pass_fd
+#include "unet/pass_fd.hh"
+
+// poseven
+#include "poseven/functions/close.hh"
+#include "poseven/functions/dup2.hh"
+#include "poseven/functions/execvp.hh"
+#include "poseven/functions/socketpair.hh"
+#include "poseven/functions/waitpid.hh"
+
+
+#ifdef __RELIX__
+#define FORK() ::vfork()
+#else
+#define FORK() ::fork()
+#endif
+
+
+namespace unet
+{
+	
+	namespace n = nucleus;
+	
+	using namespace poseven;
+	
+	
+	static n::owned< fd_t > recv_fd_t( fd_t socket_fd )
+	{
+		int fd = throw_posix_result( unet::recv_fd( socket_fd ) );
+		
+		return n::owned< fd_t >::seize( fd_t( fd ) );
+	}
+	
+	connection_box connect( const char* argv[] )
+	{
+		// Create the unet control channel
+		
+		fd_pair fds = socketpair( pf_local, sock_stream );
+		
+		::pid_t child = throw_posix_result( FORK() );
+		
+		if ( child == 0 )
+		{
+			// Dup the control socket to stdout
+			
+			dup2( fds[ 1 ], stdout_fileno );
+			
+			::close( fds[ 0 ] );
+			::close( fds[ 1 ] );
+			
+			// Run the connector
+			
+			execvp( argv );
+		}
+		
+		// Wait for connector
+		
+		if ( wait_t w = waitpid( poseven::pid_t( child ) ) )
+		{
+			throw_errno( EIO );
+		}
+		
+		// Get server fds over control channel
+		
+		n::owned< fd_t > in  = recv_fd_t( fds[ 0 ] );
+		n::owned< fd_t > out = recv_fd_t( fds[ 0 ] );
+		
+		return connection_box( argv, in.release(), out.release() );
+	}
+	
+}
