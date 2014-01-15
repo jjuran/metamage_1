@@ -31,7 +31,7 @@ namespace unet
 	
 	const size_t control_len = CMSG_LEN( sizeof (int) );
 	
-	union cmsg_alloc
+	union cmsg_fd_alloc
 	{
 		cmsghdr  header;
 		char     alloc[ control_len ];
@@ -51,7 +51,7 @@ namespace unet
 		iov.iov_base = (void*) "";
 		iov.iov_len  = 1;
 		
-		cmsg_alloc cmsg;
+		cmsg_fd_alloc cmsg;
 		
 		cmsg.header.cmsg_level = SOL_SOCKET;
 		cmsg.header.cmsg_type  = SCM_RIGHTS;
@@ -97,7 +97,7 @@ namespace unet
 		iov.iov_base = buf;
 		iov.iov_len  = sizeof buf;
 		
-		cmsg_alloc cmsg;
+		cmsg_fd_alloc cmsg;
 		
 		msghdr msg = { 0 };
 		
