@@ -31,10 +31,10 @@ namespace unet
 	
 	const size_t control_len = CMSG_LEN( sizeof (int) );
 	
-	union cmsg_fd_alloc
+	struct cmsg_fd_alloc
 	{
 		cmsghdr  header;
-		char     alloc[ control_len ];
+		int      _data;
 	};
 	
 	
