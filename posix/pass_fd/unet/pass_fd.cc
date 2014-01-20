@@ -131,7 +131,7 @@ namespace unet
 			return -1;
 		}
 		
-		if ( msg.msg_controllen == control_len )
+		if ( msg.msg_controllen >= control_len )
 		{
 			if ( +   cmsg.header.cmsg_level == SOL_SOCKET
 			     &&  cmsg.header.cmsg_type  == SCM_RIGHTS
