@@ -1140,10 +1140,12 @@ namespace Genie
 		
 		bool isSessionLeader = pid == sid;
 		
-		// This could yield, e.g. in OTCloseProvider() with sync idle events
-		get_process().reset_process_resources();
-		
-		get_process().set_process_image( *new_process_image() );
+		if ( gettid() == pid )
+		{
+			get_process().reset_process_resources();
+			
+			get_process().set_process_image( *new_process_image() );
+		}
 		
 		itsLifeStage = kProcessZombie;
 		
