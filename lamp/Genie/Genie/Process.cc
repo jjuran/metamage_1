@@ -1221,7 +1221,11 @@ namespace Genie
 	{
 		ASSERT( itsLifeStage == kProcessZombie );
 		
-		get_process().clear_ppid();  // Don't match PPID comparisons
+		if ( gettid() == GetPID() )
+		{
+			get_process().clear_ppid();  // Don't match PPID comparisons
+		}
+		
 		itsLifeStage = kProcessReleased;
 		
 		notify_reaper();
