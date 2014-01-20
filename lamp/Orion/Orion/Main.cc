@@ -62,7 +62,7 @@ namespace Orion
 			{
 				const frame_data* last = end - 1;
 				
-				while ( last->frame_pointer >= stack_bottom_limit )
+				while ( last->frame_pointer > stack_bottom_limit )
 				{
 					--last;
 				}

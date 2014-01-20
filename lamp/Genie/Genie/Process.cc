@@ -986,7 +986,7 @@ namespace Genie
 		fp_t stack_fp =        get_stack_frame_pointer( depth );
 		
 		// Stack grows down
-		const bool stack_fault = !CONFIG_SYSCALL_STACKS  &&  stack_fp > vfork_fp;
+		const bool stack_fault = !CONFIG_SYSCALL_STACKS  &&  stack_fp >= vfork_fp;
 		
 		Resume();
 		

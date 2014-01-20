@@ -28,7 +28,7 @@ namespace recall
 	{
 	#if CONFIG_STACK_CRAWLS
 		
-		stack_frame* frame = get_top_frame()->next;
+		const stack_frame* frame = get_top_frame();
 		
 		while ( frame != NULL  &&  --levels_to_skip >= 0 )
 		{
