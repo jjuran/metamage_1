@@ -81,13 +81,18 @@ namespace Pedestal
 			value = 10000;
 		}
 		
+		const short left = insetBounds.left;
+		
 		const int boundsWidth = insetBounds.right - insetBounds.left;
 		
 		int progressWidth = value * boundsWidth / 10000;
 		
+		insetBounds.left += short( progressWidth );
+		
 		EraseProgress( insetBounds );
 		
-		insetBounds.right = insetBounds.left + short( progressWidth );
+		insetBounds.right = insetBounds.left;
+		insetBounds.left  = left;
 		
 		PaintProgress( insetBounds );
 	}
