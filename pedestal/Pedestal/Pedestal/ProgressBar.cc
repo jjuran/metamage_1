@@ -85,6 +85,8 @@ namespace Pedestal
 		
 		int progressWidth = value * boundsWidth / 10000;
 		
+		EraseProgress( insetBounds );
+		
 		insetBounds.right = insetBounds.left + short( progressWidth );
 		
 		PaintProgress( insetBounds );
@@ -95,8 +97,6 @@ namespace Pedestal
 		N::FrameRect( bounds );
 		
 		Rect insetBounds = ProgressBarInsetBounds( bounds );
-		
-		EraseProgress( insetBounds );
 		
 		DrawProgress( insetBounds );
 	}
