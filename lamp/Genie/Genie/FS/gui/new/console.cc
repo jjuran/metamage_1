@@ -38,6 +38,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
+#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
@@ -758,6 +759,12 @@ namespace Genie
 		vfs::filehandle_ptr result( new ConsoleTTYHandle( *that, id ) );
 		
 		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
+		
+		plus::var_string path = "/dev/con/";
+		
+		path += gear::inscribe_unsigned_decimal( id );
+		
+		result->set_file( *vfs::resolve_absolute_path( path ) );
 		
 		return result;
 	}
