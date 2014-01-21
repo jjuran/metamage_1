@@ -71,8 +71,6 @@ namespace Genie
 	
 	bool volume_is_ram_disk::applies( N::FSVolumeRefNum vRefNum )
 	{
-	#if !TARGET_API_MAC_CARBON
-		
 		using mac::types::AuxDCE;
 		
 		HVolumeParam pb;
@@ -93,8 +91,6 @@ namespace Genie
 		return std::equal( name,
 		                   name + 1 + name[0],
 		                   "\p" ".EDisk" );
-		
-	#endif
 		
 		return false;
 	}
