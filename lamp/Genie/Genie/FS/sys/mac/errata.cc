@@ -72,7 +72,7 @@ namespace Genie
 	{
 		const unsigned char* name = GetDriverName_WithinHandle( dce );
 		
-		return name[0] != 0 && std::equal( name + 1 + (name[0] == '.'),
+		return name[0] != 0 && std::equal( name + 1 + (name[1] == '.'),
 		                                   name + 1 + name[0],
 		                                   "Display_Video_Apple_Sheep" );
 	}
