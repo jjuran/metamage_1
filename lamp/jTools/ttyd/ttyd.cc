@@ -39,7 +39,7 @@ namespace tool
 	{
 		int fds[2];
 		
-		int paired = ttypair( fds );
+		p7::throw_posix_result( ttypair( fds ) );
 		
 		int master = fds[0];
 		int slave  = fds[1];
