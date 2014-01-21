@@ -27,7 +27,7 @@ namespace relix
 		
 		try
 		{
-			vfs::file_descriptor& file = files[ fd ];
+			vfs::file_descriptor& file = files.at( fd );
 			
 			if ( request == FIOCLEX )
 			{
