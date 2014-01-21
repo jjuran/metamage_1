@@ -157,6 +157,11 @@ namespace vfs
 		return vfs::new_anonymous_node( IOName( this, is_pipe ), mode, this );
 	}
 	
+	void filehandle::set_file( const node& file )
+	{
+		its_file = &file;
+	}
+	
 	void filehandle::IOCtl( unsigned long request, int* argp )
 	{
 		if ( filehandle* next = Next() )

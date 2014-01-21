@@ -38,6 +38,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
+#include "plus/var_string.hh"
 
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
@@ -367,15 +368,6 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr MakeConsoleProxy( unsigned id )
-	{
-		vfs::node_ptr parent = vfs::resolve_absolute_path( STR_LEN( "/dev/con" ) );
-		
-		plus::string name = gear::inscribe_decimal( id );
-		
-		return new vfs::node( parent.get(), name, S_IFCHR | 0600 );
-	}
-	
 	class ConsoleTTYHandle : public StreamHandle
 	{
 		private:
@@ -405,7 +397,7 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		StreamHandle( MakeConsoleProxy( id ).get(), 0 ),
+		StreamHandle( 0 ),
 		itsTTYFile( &file ),
 		itsID( id )
 	{
@@ -758,6 +750,12 @@ namespace Genie
 		vfs::filehandle_ptr result( new ConsoleTTYHandle( *that, id ) );
 		
 		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
+		
+		plus::var_string path = "/dev/con/";
+		
+		path += gear::inscribe_unsigned_decimal( id );
+		
+		result->set_file( *vfs::resolve_absolute_path( path ) );
 		
 		return result;
 	}
