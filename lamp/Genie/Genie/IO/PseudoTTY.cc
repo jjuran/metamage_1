@@ -60,11 +60,11 @@ namespace Genie
 		vfs::filehandle_ptr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		vfs::filehandle_ptr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
+		vfs::set_dynamic_element_by_id< PseudoTTYHandle >( index, slave_handle.get() );
+		
 		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( make_devpts( index ) ) );
 		
 		terminal->Attach( slave_handle.get() );
-		
-		vfs::set_dynamic_element_by_id< PseudoTTYHandle >( index, slave_handle.get() );
 		
 		++index;
 		
