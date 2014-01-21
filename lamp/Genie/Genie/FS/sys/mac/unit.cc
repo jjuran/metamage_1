@@ -21,9 +21,6 @@
 // Debug
 #include "debug/assert.hh"
 
-// nucleus
-#include "nucleus/indexed_sequence.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -43,53 +40,6 @@
 
 namespace Nitrogen
 {
-	
-	struct UnitTable_Container_Specifics
-	{
-		typedef UInt16             size_type;
-		typedef SInt16             difference_type;
-		typedef AuxDCEHandle       value_type;
-		typedef const value_type&  const_reference;
-		typedef const value_type*  const_pointer;
-		
-		class Nothing {};
-		
-		typedef Nothing context_type;
-		
-		
-		static size_type Size( context_type )
-		{
-			return LMGetUnitTableEntryCount();
-		}
-		
-		static const_reference get_reference( context_type state, size_type position )
-		{
-			AuxDCEHandle* base = (AuxDCEHandle*) LMGetUTableBase();
-			
-			return base[ position ];
-		}
-		
-		static const_pointer get_pointer( context_type state, size_type position )
-		{
-			return &get_reference( state, position );
-		}
-	};
-	
-	class UnitTable_Container: public nucleus::const_indexed_sequence< UnitTable_Container_Specifics >
-	{
-		friend UnitTable_Container UnitTable();
-		
-		private:
-			UnitTable_Container()
-			: nucleus::const_indexed_sequence< UnitTable_Container_Specifics >( UnitTable_Container_Specifics::Nothing() )
-			{}
-	};
-	
-	inline UnitTable_Container UnitTable()
-	{
-		return UnitTable_Container();
-	}
-	
 	
 	UnitTableDrivers_Container_Specifics::key_type
 	//
