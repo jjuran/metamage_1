@@ -5,18 +5,11 @@
 
 #include "Genie/FS/sys/mac/vol.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
-
 // Standard C++
 #include <algorithm>
+
+// mac-sys-utils
+#include "mac_sys/unit_table.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -76,20 +69,11 @@ namespace Genie
 		Mac::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
 	}
 	
-#if !TARGET_API_MAC_CARBON
-	
-	static inline AuxDCEHandle* GetUTableBase()
-	{
-		return (AuxDCEHandle*) LMGetUTableBase();
-	}
-	
-	extern const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle );
-	
-#endif
-	
 	bool volume_is_ram_disk::applies( N::FSVolumeRefNum vRefNum )
 	{
 	#if !TARGET_API_MAC_CARBON
+		
+		using mac::types::AuxDCE;
 		
 		HVolumeParam pb;
 		
@@ -102,9 +86,9 @@ namespace Genie
 		
 		const SInt16 unit_number = ~pb.ioVDRefNum;
 		
-		const AuxDCEHandle dceHandle = GetUTableBase()[ unit_number ];
+		AuxDCE** const dceHandle = mac::sys::get_unit_table_base()[ unit_number ];
 		
-		const unsigned char* name = GetDriverName_WithinHandle( dceHandle );
+		const unsigned char* name = mac::sys::get_driver_name( dceHandle );
 		
 		return std::equal( name,
 		                   name + 1 + name[0],
