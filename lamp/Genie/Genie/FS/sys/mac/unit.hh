@@ -7,12 +7,7 @@
 #define GENIE_FS_SYS_MAC_UNIT_HH
 
 // plus
-#include "plus/string.hh"
-
-// ClassicToolbox
-#ifndef CLASSICTOOLBOX_DEVICES_HH
-#include "ClassicToolbox/Devices.hh"
-#endif
+#include "plus/string_fwd.hh"
 
 // Genie
 #include "Genie/FS/FSTreePtr.hh"

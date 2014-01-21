@@ -23,6 +23,7 @@
 // plus
 #include "plus/contains.hh"
 #include "plus/serialize.hh"
+#include "plus/string.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -52,6 +53,10 @@ namespace Genie
 	
 	
 	using mac::types::AuxDCEHandle;
+	
+	typedef char*           Ptr;
+	typedef unsigned long   UInt32;
+	typedef unsigned short  UnitNumber;
 	
 	
 	struct decode_unit_number
