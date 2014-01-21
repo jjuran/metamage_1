@@ -368,15 +368,6 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr MakeConsoleProxy( unsigned id )
-	{
-		vfs::node_ptr parent = vfs::resolve_absolute_path( STR_LEN( "/dev/con" ) );
-		
-		plus::string name = gear::inscribe_decimal( id );
-		
-		return new vfs::node( parent.get(), name, S_IFCHR | 0600 );
-	}
-	
 	class ConsoleTTYHandle : public StreamHandle
 	{
 		private:
@@ -406,7 +397,7 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		StreamHandle( MakeConsoleProxy( id ).get(), 0 ),
+		StreamHandle( 0 ),
 		itsTTYFile( &file ),
 		itsID( id )
 	{
