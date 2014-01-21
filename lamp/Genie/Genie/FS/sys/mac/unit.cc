@@ -3,8 +3,6 @@
 	------------------------
 */
 
-#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-
 #include "Genie/FS/sys/mac/unit.hh"
 
 // Standard C
@@ -289,6 +287,3 @@ namespace Genie
 	}
 	
 }
-
-#endif
-
