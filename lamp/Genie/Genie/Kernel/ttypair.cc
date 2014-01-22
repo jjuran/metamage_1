@@ -47,9 +47,12 @@ static int ttypair( int fds[ 2 ] )
 	return 0;
 }
 
+#pragma force_active on
+
 #if CONFIG_PTS
 
 REGISTER_SYSTEM_CALL( ttypair );
 
 #endif
 
+#pragma force_active reset
