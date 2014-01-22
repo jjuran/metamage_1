@@ -3,12 +3,16 @@
 	------------------------
 */
 
-#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-
 #include "Genie/FS/sys/mac/unit.hh"
 
 // Standard C
 #include <ctype.h>
+
+// mac-types
+#include "mac_types/AuxDCE.hh"
+
+// mac-sys-utils
+#include "mac_sys/unit_table.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -17,6 +21,7 @@
 // plus
 #include "plus/contains.hh"
 #include "plus/serialize.hh"
+#include "plus/string.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -38,30 +43,18 @@
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
-namespace Nitrogen
-{
-	
-	UnitTableDrivers_Container_Specifics::key_type
-	//
-	UnitTableDrivers_Container_Specifics::get_next_key( key_type key )
-	{
-		const key_type end = end_key();
-		
-		while ( ++key < end  &&  *key == NULL )
-		{
-			continue;
-		}
-		
-		return key;
-	}
-	
-}
-
 namespace Genie
 {
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	using mac::types::AuxDCEHandle;
+	
+	typedef char*           Ptr;
+	typedef unsigned long   UInt32;
+	typedef unsigned short  UnitNumber;
 	
 	
 	struct decode_unit_number
@@ -78,17 +71,11 @@ namespace Genie
 	}
 	
 	
-	static inline AuxDCEHandle* GetUTableBase()
-	{
-		return (AuxDCEHandle*) LMGetUTableBase();
-	}
-	
-	
 	static bool is_valid_unit_number( UInt32 i )
 	{
-		AuxDCEHandle* base = GetUTableBase();
+		AuxDCEHandle* base = mac::sys::get_unit_table_base();
 		
-		const UInt16 count = LMGetUnitTableEntryCount();
+		const short count = mac::sys::get_unit_table_entry_count();
 		
 		return i < count  &&  base[ i ] != NULL;
 	}
@@ -104,32 +91,9 @@ namespace Genie
 		}
 	};
 	
-	const unsigned char* GetDriverName_WithinHandle( AuxDCEHandle dceHandle )
-	{
-		ASSERT( dceHandle != NULL );
-		
-		if ( dceHandle[0]->dCtlDriver != NULL )
-		{
-			const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
-			
-			const Ptr drvr = dceHandle[0]->dCtlDriver;
-			
-			// Dereferences a handle if ramBased
-			const DRVRHeaderPtr header = ramBased ? *(DRVRHeader **) drvr
-			                                      :  (DRVRHeader * ) drvr;
-			
-			if ( header != NULL )
-			{
-				return header->drvrName;
-			}
-		}
-		
-		return "\p";
-	}
-	
 	static N::Str255 GetDriverName( AuxDCEHandle dceHandle )
 	{
-		const unsigned char* name = GetDriverName_WithinHandle( dceHandle );
+		const unsigned char* name = mac::sys::get_driver_name( dceHandle );
 		
 		// Safely copy Pascal string onto stack
 		return N::Str255( name );
@@ -241,7 +205,7 @@ namespace Genie
 				throw undefined_property();
 			}
 			
-			AuxDCEHandle dceHandle = GetUTableBase()[ key ];
+			AuxDCEHandle dceHandle = mac::sys::get_unit_table_base()[ key ];
 			
 			const typename Accessor::result_type data = Accessor::Get( dceHandle );
 			
@@ -272,31 +236,23 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_unit_N_Mappings );
 	}
 	
-	class unit_IteratorConverter
+	static void unit_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		public:
-			vfs::dir_entry operator()( N::UnitTableDrivers_Container::const_reference ref ) const
+		const short n = mac::sys::get_unit_table_entry_count();
+		
+		AuxDCEHandle* it = mac::sys::get_unit_table_base();
+		
+		for ( int i = 0;  i < n;  ++i, ++it )
+		{
+			if ( *it )
 			{
-				const int i = &ref - GetUTableBase();
-				
 				const ino_t inode = i;
 				
 				plus::string name = gear::inscribe_decimal( i );
 				
-				return vfs::dir_entry( inode, name );
+				cache.push_back( vfs::dir_entry( inode, name ) );
 			}
-	};
-	
-	static void unit_iterate( const FSTree* parent, vfs::dir_contents& cache )
-	{
-		unit_IteratorConverter converter;
-		
-		N::UnitTableDrivers_Container sequence = N::UnitTableDrivers();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		}
 	}
 	
 	
@@ -331,6 +287,3 @@ namespace Genie
 	}
 	
 }
-
-#endif
-

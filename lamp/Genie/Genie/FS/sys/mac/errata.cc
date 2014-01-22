@@ -20,6 +20,7 @@
 
 // mac-sys-utils
 #include "mac_sys/get_machine_name.hh"
+#include "mac_sys/unit_table.hh"
 
 // plus
 #include "plus/deconstruct_bool.hh"
@@ -31,12 +32,6 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
-
-#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
-	
-	#include "Genie/FS/sys/mac/unit.hh"
-	
-#endif
 
 
 namespace Genie
@@ -66,19 +61,6 @@ namespace Genie
 		}
 	};
 	
-#if !TARGET_API_MAC_CARBON
-	
-	static bool DriverIsFromSheepShaver( AuxDCEHandle dce )
-	{
-		const unsigned char* name = GetDriverName_WithinHandle( dce );
-		
-		return name[0] != 0 && std::equal( name + 1 + (name[1] == '.'),
-		                                   name + 1 + name[0],
-		                                   "Display_Video_Apple_Sheep" );
-	}
-	
-#endif
-	
 	struct RunningInSheepShaver
 	{
 		static bool Test();
@@ -86,21 +68,42 @@ namespace Genie
 	
 	bool RunningInSheepShaver::Test()
 	{
-	#if !TARGET_API_MAC_CARBON
+		using mac::types::AuxDCE;
 		
-		namespace N = Nitrogen;
+		if ( TARGET_RT_MAC_MACHO )
+		{
+			return false;
+		}
 		
-		N::UnitTableDrivers_Container drivers = N::UnitTableDrivers();
+		const short n = mac::sys::get_unit_table_entry_count();
 		
-		N::UnitTableDrivers_Container::const_iterator it = std::find_if( drivers.begin(),
-		                                                                 drivers.end(),
-		                                                                 std::ptr_fun( DriverIsFromSheepShaver ) );
+		AuxDCE*** const begin = mac::sys::get_unit_table_base();
+		AuxDCE*** const end   = begin + n;
 		
-		return it != drivers.end();
+		for ( AuxDCE*** it = begin;  it < end;  ++it )
+		{
+			const unsigned char* name = mac::sys::get_driver_name( *it );
+			
+			if ( name[ 0 ] == 0 )
+			{
+				continue;
+			}
+			
+			const bool undotted = name[ 1 ] != '.';
+			
+			const int cmp = memcmp( &".Display_Video_Apple_Sheep"[ undotted ],
+			                        name + 1,
+			                        name[ 0 ] );
+			
+			if ( cmp == 0 )
+			{
+				return true;
+			}
+			
+			++it;
+		}
 		
-	#endif
-		
-		return false;  // FIXME:  What about Carbon?
+		return false;
 	}
 	
 	struct RunningInWeakEmulator
