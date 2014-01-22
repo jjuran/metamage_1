@@ -15,9 +15,6 @@
 #include <ConditionalMacros.h>
 #endif
 
-// Standard C++
-#include <algorithm>
-
 // mac-sys-utils
 #include "mac_sys/get_machine_name.hh"
 #include "mac_sys/unit_table.hh"
