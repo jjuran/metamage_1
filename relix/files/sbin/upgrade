@@ -1,18 +1,14 @@
 #!/bin/sh
 
-host=www.macrelix.org/pub
+host=www.macrelix.org
 
-test -z "$RELIX_SITE" && RELIX_SITE="$host"
-
-export RELIX_SITE
-
-list=http://$RELIX_SITE/experimental/
+export RELIX_URL=http://$host/pub/experimental/
 
 test -n "$1" && export RELIX_PLATFORM="$1"
 
 export MBIN=mBin
 
-echo Checking $RELIX_SITE for latest version...
+echo Checking $host for latest version...
 
-htget $list | perl -we 'my $pf = $ENV{RELIX_PLATFORM} || substr( `cat /etc/platform`, 0, -1 ); while (<>) { m{ ( relix-${pf}_[\d-]+ ) \.gz }osx and $last = $1; }; exec "/etc/bootstrap/upgrade-lamp", $last;'
+htget $RELIX_URL | perl -we 'my $pf = $ENV{RELIX_PLATFORM} || substr( `cat /etc/platform`, 0, -1 ); while (<>) { m{ ( relix-${pf}_[\d-]+ ) \.gz }osx and $last = $1; }; exec "/etc/bootstrap/upgrade-lamp", $last;'
 

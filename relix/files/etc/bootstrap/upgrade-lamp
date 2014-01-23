@@ -9,7 +9,7 @@ test -d $dest && echo You already have $1. && exit || true
 cd /tmp
 
 echo Downloading $1.gz...
-htget --dump-progress -O http://$RELIX_SITE/experimental/$1.gz | progress Downloading
+htget --dump-progress -O $RELIX_URL/$1.gz | progress Downloading
 
 echo Decompressing...
 gzip -d --name $1.gz
