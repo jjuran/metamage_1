@@ -194,6 +194,9 @@ my %fsmap =
 		freemount =>
 		[
 			'README',
+			{
+				www => sub { symlink "../www", $_[0] }
+			},
 		],
 		www =>
 		[
