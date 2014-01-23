@@ -171,6 +171,10 @@ my %fsmap =
 			\ qw( clear env time touch ),
 			# Common
 			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			# unet
+			\ qw( hello-unet uloop utcp ),
+			# Freemount
+			\ qw( fcat fdir fls fping fstat ),
 			# djb's UCSPI
 			\ qw( argv0 tcpcat tcpclient ),
 			# v68k interpreter
@@ -205,7 +209,7 @@ my %fsmap =
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
-		sbin => [ \ qw( superd inetd httpd ttyd ) ],
+		sbin => [ \ qw( superd inetd freemountd httpd ttyd ) ],
 		share =>
 		{
 			'git-core' =>
