@@ -89,7 +89,7 @@ my %fsmap =
 	bin =>
 	[
 		# Standard
-		\ qw( cat echo false ln mkdir mv rm sh sync true ),
+		\ qw( cat echo false ln mkdir mv rm rmdir sh sync true ),
 		# Perl scripts
 		qw( chmod date test ),
 	],
