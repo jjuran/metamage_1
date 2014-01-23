@@ -223,6 +223,10 @@ my %fsmap =
 	},
 	var =>
 	{
+		freemount =>
+		[
+			'README',
+		],
 		www =>
 		[
 			qw( index.html help.html main.css cubes.gif ),
