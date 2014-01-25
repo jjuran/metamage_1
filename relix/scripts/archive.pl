@@ -381,7 +381,12 @@ sub create_node
 	
 	$path .= "/$dir"  unless $dir eq '.';
 	
-	my $ref = ref $param or return install_script( $param, $path );
+	my $ref = ref $param;
+	
+	if ( $ref eq "" )
+	{
+		return install_script( $param, $path );
+	}
 	
 	if ( $ref eq "SCALAR" )
 	{
