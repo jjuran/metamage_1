@@ -19,6 +19,9 @@
 #pragma exceptions off
 
 
+static int failures = 0;
+
+
 int main( int argc, char *const *argv )
 {
 	// Check for sufficient number of args
@@ -30,7 +33,6 @@ int main( int argc, char *const *argv )
 	}
 	
 	// Try to make each directory.  Return whether any errors occurred.
-	int fail = 0;
 	
 	for ( int index = 1;  index < argc;  ++index )
 	{
@@ -40,10 +42,10 @@ int main( int argc, char *const *argv )
 		{
 			more::perror( "mkdir", argv[ index ] );
 			
-			fail++;
+			failures++;
 		}
 	}
 	
-	return (fail == 0) ? 0 : 1;
+	return (failures == 0) ? 0 : 1;
 }
 
