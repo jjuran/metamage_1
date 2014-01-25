@@ -79,9 +79,7 @@ static int lookup_path( const char* filename, char* path, size_t buffer_length )
 		
 		struct stat sb;
 		
-		int status = stat( path, &sb );
-		
-		if ( status == 0  &&  sb.st_mode & S_IXUSR )
+		if ( stat( path, &sb ) == 0  &&  sb.st_mode & S_IXUSR )
 		{
 			return 0;
 		}
