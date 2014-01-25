@@ -22,6 +22,18 @@
 static int failures = 0;
 
 
+static void make_dir( const char* path )
+{
+	int f = mkdir( path, 0700 );
+	
+	if ( f < 0 )
+	{
+		more::perror( "mkdir", path );
+		
+		++failures;
+	}
+}
+
 int main( int argc, char *const *argv )
 {
 	// Check for sufficient number of args
@@ -34,18 +46,10 @@ int main( int argc, char *const *argv )
 	
 	// Try to make each directory.  Return whether any errors occurred.
 	
-	for ( int index = 1;  index < argc;  ++index )
+	while ( *++argv != NULL )
 	{
-		int result = mkdir( argv[ index ], 0700 );
-		
-		if ( result == -1 )
-		{
-			more::perror( "mkdir", argv[ index ] );
-			
-			failures++;
-		}
+		make_dir( *argv );
 	}
 	
 	return (failures == 0) ? 0 : 1;
 }
-
