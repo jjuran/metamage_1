@@ -18,8 +18,17 @@
 extern "C" {
 #endif
 
+/*
+	gcc 4.0.1 build 5247 (PPC) has no O_DIRECTORY.  Define it to match
+	build 5367 on Intel.
+*/
+
 #ifndef O_DIRECTORY
+#ifdef __APPLE__
+#define O_DIRECTORY  0x100000
+#else
 #define O_DIRECTORY  0
+#endif
 #endif
 
 #define AT_FDCWD  (-100)
