@@ -14,7 +14,7 @@
 #endif
 
 
-#if defined( __llvm__ ) || defined( __x86_64__ )  ||  defined( __powerpc__ )  ||  defined( __arm__ )
+#if defined( __llvm__ )  ||  defined( __x86_64__ )  ||  defined( __powerpc__ )  ||  defined( __arm__ )  ||  defined(__INTERIX)
 #define CONFIG_STACK_CRAWLS 0
 #else
 #define CONFIG_STACK_CRAWLS 1
