@@ -8,6 +8,9 @@
 #include <fcntl.h>
 #include <errno.h>
 
+// Extended API Set, part 2
+#include "extended-api-set/part-2.h"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/primitives/read.hh"
