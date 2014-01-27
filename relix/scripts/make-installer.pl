@@ -24,11 +24,11 @@ $build_config_name = shift || $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 my %supported_configs = qw
 (
 	68k-a4-blue-opt   68k
-	ppc-cfm-blue-opt  std
+	ppc-cfm-blue-opt  os9
 	ppc-cfm-carb-opt  osx
-	68k-a4-blue-dbg   68k@
-	ppc-cfm-blue-dbg  std@
-	ppc-cfm-carb-dbg  osx@
+	68k-a4-blue-dbg   68k~
+	ppc-cfm-blue-dbg  os9~
+	ppc-cfm-carb-dbg  osx~
 );
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
