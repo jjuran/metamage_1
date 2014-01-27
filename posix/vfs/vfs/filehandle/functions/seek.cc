@@ -9,6 +9,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Extended API Set, part 2
+#include "extended-api-set/part-2.h"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 

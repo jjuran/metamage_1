@@ -12,6 +12,9 @@
 #include "fcntl.h"
 #include "sys/stat.h"
 
+// Extended API Set, part 2
+#include "extended-api-set/part-2.h"
+
 // debug
 #include "debug/assert.hh"
 
