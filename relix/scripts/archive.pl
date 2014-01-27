@@ -375,15 +375,17 @@ sub install_program
 
 sub create_node
 {
-	my ( $full_path, $dir, $param ) = @_;
+	my ( $path, $subpath, $dir, $param ) = @_;
 	
-	$full_path .= "/$dir"  unless $dir eq '.';
+	$subpath .= "/$dir"  unless $dir eq '.';
+	
+	my $full_path = $path . $subpath;
 	
 	my $ref = ref $param;
 	
 	if ( $ref eq "" )
 	{
-		(my $path_from_root = $full_path) =~ s{^ .* /:/ }{}x;
+		my $path_from_root = substr( $subpath, 1 );  # drop leading '/'
 		
 		return install_script( $param, $full_path, $path_from_root );
 	}
@@ -407,7 +409,7 @@ sub create_node
 	{
 		foreach my $file ( @$param )
 		{
-			create_node( $full_path, '.', $file );
+			create_node( $path, $subpath, '.', $file );
 		}
 		
 		return;
@@ -417,7 +419,7 @@ sub create_node
 	{
 		while ( my ($key, $value) = each %$param )
 		{
-			create_node( $full_path, $key, $value );
+			create_node( $path, $subpath, $key, $value );
 		}
 		
 		return;
@@ -468,7 +470,7 @@ mkdir $lamp_dist;
 
 install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( $relix_install_fs_root, "." => \%fsmap );
+create_node( $relix_install_fs_root, "", "." => \%fsmap );
 
 print "Archiving...\n";
 
