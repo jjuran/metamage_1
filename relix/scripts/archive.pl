@@ -69,6 +69,8 @@ my $root_name = "relix-${config_short_name}_$timestamp";
 
 my $lamp_dist = "$tmp_subdir/$root_name";
 
+my $relix_install_fs_root = "$lamp_dist/:";
+
 print "\$LAMP   = $lamp_source_dir\n";
 print "\$BUILDS = $user_builds_dir\n";
 print "\$OUTPUT = $build_output\n";
@@ -466,7 +468,7 @@ mkdir $lamp_dist;
 
 install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( "$lamp_dist/:", "." => \%fsmap );
+create_node( $relix_install_fs_root, "." => \%fsmap );
 
 print "Archiving...\n";
 
