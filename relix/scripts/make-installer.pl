@@ -360,8 +360,6 @@ sub create_node
 		return;
 	}
 	
-	want_dir( $path );
-	
 	if ( $ref eq "ARRAY" )
 	{
 		foreach my $file ( @$param )
