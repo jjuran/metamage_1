@@ -379,8 +379,6 @@ sub create_node
 {
 	my ( $path, $dir, $param ) = @_;
 	
-	#print "create_node( '$path', '$dir', '$param' )\n";
-	
 	$path .= "/$dir"  unless $dir eq '.';
 	
 	my $ref = ref $param or return install_script( $param, $path );
