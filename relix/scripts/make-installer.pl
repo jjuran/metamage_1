@@ -49,7 +49,7 @@ my $build_area = $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 
 my $timestamp = timestamp();
 
-my $lamp_source_dir = "$ENV{HOME}/src/tree/metamage/lamp";
+my $relix_files_dir = "$ENV{HOME}/src/tree/metamage/relix/files";
 my $user_builds_dir = "$ENV{HOME}/var/build";
 my $user_lamp_dir   = "$ENV{HOME}/var/archive/MacRelix";
 
@@ -58,7 +58,6 @@ my $tmp_dir = tmpdir();
 my $unique_dir_name = "$timestamp.$$";
 my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
-my $source_tree     = "$lamp_source_dir/:";
 my $build_tree      = "$user_builds_dir/$build_area";
 my $build_output    = "$build_tree/bin";
 my $lamp_builds_dir = "$user_lamp_dir/Builds";
@@ -69,7 +68,7 @@ my $root_name = "relix-${config_short_name}_$timestamp";
 
 my $lamp_dist = "$tmp_subdir/$root_name";
 
-print "\$LAMP   = $lamp_source_dir\n";
+print "\$FILES  = $relix_files_dir\n";
 print "\$BUILDS = $user_builds_dir\n";
 print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
@@ -207,7 +206,7 @@ sub verbose_system
 	
 	$command =~ s{$build_output}{\$OUTPUT}o;
 	
-	$command =~ s{$lamp_source_dir}{\$LAMP}o;
+	$command =~ s{$relix_files_dir}{\$FILES}o;
 	$command =~ s{$user_builds_dir}{\$BUILDS}o;
 	
 	$command =~ s{$lamp_dist}{\$DIST}og;
@@ -301,7 +300,7 @@ sub install_script
 {
 	my ( $name, $path_from_root ) = @_;
 	
-	my $file = "$source_tree/$path_from_root/$name";
+	my $file = "$relix_files_dir/$path_from_root/$name";
 	
 	-f $file or die "### Missing static file /$path_from_root/$name\n";
 	
