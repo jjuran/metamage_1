@@ -463,7 +463,7 @@ mkdir $lamp_dist;
 
 install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp_dist, ':' => \%fsmap );
+create_node( "$lamp_dist/:", "." => \%fsmap );
 
 print "Archiving...\n";
 

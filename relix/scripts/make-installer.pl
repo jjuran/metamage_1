@@ -431,7 +431,7 @@ mkdir $lamp_dist;
 
 install_umbrella_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp_dist, ':' => \%fsmap );
+create_node( "$lamp_dist/:", "." => \%fsmap );
 
 my $installer = "$lamp_dist/MacRelix Installer";
 my $archive   = "$lamp_dist/MacRelix-installer.mbin";
