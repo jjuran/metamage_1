@@ -324,8 +324,6 @@ sub install_subprogram
 	
 	my $output = build_output( $project );
 	
-	$install_path =~ s{^ .* /:/ }{}x;
-	
 	copy_file_to_rsrc( $output, $install_path, 'Exec' );
 }
 
@@ -355,6 +353,8 @@ sub create_node
 	
 	if ( $ref eq "SCALAR" )
 	{
+		$path =~ s{^ .* /:/ }{}x;
+		
 		install_subprogram( $$param, $path );
 		
 		return;
