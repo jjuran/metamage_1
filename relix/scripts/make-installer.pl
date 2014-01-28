@@ -299,11 +299,7 @@ sub copy_file_to_rsrc
 
 sub install_script
 {
-	my ( $name, $install_path ) = @_;
-	
-	my $path_from_root = $install_path;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
+	my ( $name, $path_from_root ) = @_;
 	
 	my $file = "$source_tree/$path_from_root/$name";
 	
@@ -352,6 +348,8 @@ sub create_node
 	
 	if ( $ref eq "" )
 	{
+		$path =~ s{^ .* /:/ }{}x;
+		
 		return install_script( $param, $path );
 	}
 	
