@@ -275,13 +275,9 @@ sub spew_to_rsrc
 
 sub copy_file_to_rsrc
 {
-	my ( $src, $dest, $type ) = @_;
+	my ( $src, $path_from_root, $type ) = @_;
 	
 	-f $src or die "### Missing file $src for copy\n";
-	
-	my $path_from_root = $dest;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
 	
 	$src =~ m{ ( / [^/]+ ) $}x;
 	
@@ -323,7 +319,7 @@ sub install_script
 	
 	my $type = $shebang eq '#!' ? 'Exec' : 'Data';
 	
-	copy_file_to_rsrc( $file, $install_path, $type );
+	copy_file_to_rsrc( $file, $path_from_root, $type );
 }
 
 sub install_subprogram
@@ -331,6 +327,8 @@ sub install_subprogram
 	my ( $project, $install_path ) = @_;
 	
 	my $output = build_output( $project );
+	
+	$install_path =~ s{^ .* /:/ }{}x;
 	
 	copy_file_to_rsrc( $output, $install_path, 'Exec' );
 }
