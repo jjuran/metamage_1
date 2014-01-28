@@ -340,7 +340,7 @@ sub create_node
 {
 	my ( $path, $dir, $param ) = @_;
 	
-	$path .= "/$dir"  unless $dir eq '.';
+	$path .= ("/" x !!length $path) . $dir  unless $dir eq '.';
 	
 	my $ref = ref $param;
 	
