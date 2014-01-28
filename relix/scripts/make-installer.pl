@@ -346,15 +346,11 @@ sub create_node
 	
 	if ( $ref eq "" )
 	{
-		$path =~ s{^ .* /:/ }{}x;
-		
 		return install_script( $param, $path );
 	}
 	
 	if ( $ref eq "SCALAR" )
 	{
-		$path =~ s{^ .* /:/ }{}x;
-		
 		install_subprogram( $$param, $path );
 		
 		return;
@@ -362,8 +358,6 @@ sub create_node
 	
 	if ( $ref eq "CODE" )
 	{
-		$path =~ s{^ .* /:/ }{}x;
-		
 		$param->( $path );
 		
 		return;
@@ -433,7 +427,7 @@ mkdir $lamp_dist;
 
 install_umbrella_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( "$lamp_dist/:", "." => \%fsmap );
+create_node( "", "." => \%fsmap );
 
 my $installer = "$lamp_dist/MacRelix Installer";
 my $archive   = "$lamp_dist/MacRelix-installer.mbin";
