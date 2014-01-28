@@ -33,7 +33,7 @@ my %supported_configs = qw
 
 my $config_short_name = $supported_configs{$build_config_name} || 'xxx';
 
-if ( $build_config_name =~ /^ \w{3} @? $/x )
+if ( $build_config_name =~ /^ \w{3} ~? $/x )
 {
 	$config_short_name = $build_config_name;
 	
