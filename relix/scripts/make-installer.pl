@@ -264,8 +264,6 @@ sub spew_to_rsrc
 {
 	my ( $path, $contents, $type ) = @_;
 	
-	$path =~ s{^ .* /:/ }{}x;
-	
 	my $id = next_id();
 	
 	my $dest_path = "$lamp_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
@@ -368,7 +366,10 @@ sub create_node
 	
 	if ( $ref eq "CODE" )
 	{
+		$path =~ s{^ .* /:/ }{}x;
+		
 		$param->( $path );
+		
 		return;
 	}
 	
