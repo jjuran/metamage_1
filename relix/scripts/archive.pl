@@ -375,39 +375,39 @@ sub install_program
 
 sub create_node
 {
-	my ( $path, $dir, $param ) = @_;
+	my ( $full_path, $dir, $param ) = @_;
 	
-	$path .= "/$dir"  unless $dir eq '.';
+	$full_path .= "/$dir"  unless $dir eq '.';
 	
 	my $ref = ref $param;
 	
 	if ( $ref eq "" )
 	{
-		(my $path_from_root = $path) =~ s{^ .* /:/ }{}x;
+		(my $path_from_root = $full_path) =~ s{^ .* /:/ }{}x;
 		
-		return install_script( $param, $path, $path_from_root );
+		return install_script( $param, $full_path, $path_from_root );
 	}
 	
 	if ( $ref eq "SCALAR" )
 	{
-		install_program( $$param, $path );
+		install_program( $$param, $full_path );
 		
 		return;
 	}
 	
 	if ( $ref eq "CODE" )
 	{
-		$param->( $path );
+		$param->( $full_path );
 		return;
 	}
 	
-	want_dir( $path );
+	want_dir( $full_path );
 	
 	if ( $ref eq "ARRAY" )
 	{
 		foreach my $file ( @$param )
 		{
-			create_node( $path, '.', $file );
+			create_node( $full_path, '.', $file );
 		}
 		
 		return;
@@ -417,7 +417,7 @@ sub create_node
 	{
 		while ( my ($key, $value) = each %$param )
 		{
-			create_node( $path, $key, $value );
+			create_node( $full_path, $key, $value );
 		}
 		
 		return;
