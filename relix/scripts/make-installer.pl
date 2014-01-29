@@ -264,8 +264,6 @@ sub spew_to_rsrc
 {
 	my ( $path, $contents, $type ) = @_;
 	
-	$path =~ s{^ .* /:/ }{}x;
-	
 	my $id = next_id();
 	
 	my $dest_path = "$lamp_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
@@ -277,13 +275,9 @@ sub spew_to_rsrc
 
 sub copy_file_to_rsrc
 {
-	my ( $src, $dest, $type ) = @_;
+	my ( $src, $path_from_root, $type ) = @_;
 	
 	-f $src or die "### Missing file $src for copy\n";
-	
-	my $path_from_root = $dest;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
 	
 	$src =~ m{ ( / [^/]+ ) $}x;
 	
@@ -305,11 +299,7 @@ sub copy_file_to_rsrc
 
 sub install_script
 {
-	my ( $name, $install_path ) = @_;
-	
-	my $path_from_root = $install_path;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
+	my ( $name, $path_from_root ) = @_;
 	
 	my $file = "$source_tree/$path_from_root/$name";
 	
@@ -325,7 +315,7 @@ sub install_script
 	
 	my $type = $shebang eq '#!' ? 'Exec' : 'Data';
 	
-	copy_file_to_rsrc( $file, $install_path, $type );
+	copy_file_to_rsrc( $file, $path_from_root, $type );
 }
 
 sub install_subprogram
@@ -350,11 +340,14 @@ sub create_node
 {
 	my ( $path, $dir, $param ) = @_;
 	
-	#print "create_node( '$path', '$dir', '$param' )\n";
+	$path .= ("/" x !!length $path) . $dir  unless $dir eq '.';
 	
-	$path .= "/$dir"  unless $dir eq '.';
+	my $ref = ref $param;
 	
-	my $ref = ref $param or return install_script( $param, $path );
+	if ( $ref eq "" )
+	{
+		return install_script( $param, $path );
+	}
 	
 	if ( $ref eq "SCALAR" )
 	{
@@ -366,6 +359,7 @@ sub create_node
 	if ( $ref eq "CODE" )
 	{
 		$param->( $path );
+		
 		return;
 	}
 	
@@ -433,7 +427,7 @@ mkdir $lamp_dist;
 
 install_umbrella_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp_dist, ':' => \%fsmap );
+create_node( "", "." => \%fsmap );
 
 my $installer = "$lamp_dist/MacRelix Installer";
 my $archive   = "$lamp_dist/MacRelix-installer.mbin";
