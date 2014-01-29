@@ -49,7 +49,7 @@ my $build_area = $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 
 my $timestamp = timestamp();
 
-my $lamp_source_dir = "$ENV{HOME}/src/tree/metamage/lamp";
+my $relix_files_dir = "$ENV{HOME}/src/tree/metamage/relix/files";
 my $user_builds_dir = "$ENV{HOME}/var/build";
 my $user_lamp_dir   = "$ENV{HOME}/var/archive/MacRelix";
 
@@ -58,7 +58,6 @@ my $tmp_dir = tmpdir();
 my $unique_dir_name = "$timestamp.$$";
 my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
-my $source_tree     = "$lamp_source_dir/:";
 my $build_tree      = "$user_builds_dir/$build_area";
 my $build_output    = "$build_tree/bin";
 my $lamp_builds_dir = "$user_lamp_dir/Builds";
@@ -69,7 +68,7 @@ my $root_name = "relix-${config_short_name}_$timestamp";
 
 my $lamp_dist = "$tmp_subdir/$root_name";
 
-print "\$LAMP   = $lamp_source_dir\n";
+print "\$FILES  = $relix_files_dir\n";
 print "\$BUILDS = $user_builds_dir\n";
 print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
@@ -207,7 +206,7 @@ sub verbose_system
 	
 	$command =~ s{$build_output}{\$OUTPUT}o;
 	
-	$command =~ s{$lamp_source_dir}{\$LAMP}o;
+	$command =~ s{$relix_files_dir}{\$FILES}o;
 	$command =~ s{$user_builds_dir}{\$BUILDS}o;
 	
 	$command =~ s{$lamp_dist}{\$DIST}og;
@@ -264,8 +263,6 @@ sub spew_to_rsrc
 {
 	my ( $path, $contents, $type ) = @_;
 	
-	$path =~ s{^ .* /:/ }{}x;
-	
 	my $id = next_id();
 	
 	my $dest_path = "$lamp_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
@@ -277,13 +274,9 @@ sub spew_to_rsrc
 
 sub copy_file_to_rsrc
 {
-	my ( $src, $dest, $type ) = @_;
+	my ( $src, $path_from_root, $type ) = @_;
 	
 	-f $src or die "### Missing file $src for copy\n";
-	
-	my $path_from_root = $dest;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
 	
 	$src =~ m{ ( / [^/]+ ) $}x;
 	
@@ -305,13 +298,9 @@ sub copy_file_to_rsrc
 
 sub install_script
 {
-	my ( $name, $install_path ) = @_;
+	my ( $name, $path_from_root ) = @_;
 	
-	my $path_from_root = $install_path;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
-	
-	my $file = "$source_tree/$path_from_root/$name";
+	my $file = "$relix_files_dir/$path_from_root/$name";
 	
 	-f $file or die "### Missing static file /$path_from_root/$name\n";
 	
@@ -325,7 +314,7 @@ sub install_script
 	
 	my $type = $shebang eq '#!' ? 'Exec' : 'Data';
 	
-	copy_file_to_rsrc( $file, $install_path, $type );
+	copy_file_to_rsrc( $file, $path_from_root, $type );
 }
 
 sub install_subprogram
@@ -350,11 +339,14 @@ sub create_node
 {
 	my ( $path, $dir, $param ) = @_;
 	
-	#print "create_node( '$path', '$dir', '$param' )\n";
+	$path .= ("/" x !!length $path) . $dir  unless $dir eq '.';
 	
-	$path .= "/$dir"  unless $dir eq '.';
+	my $ref = ref $param;
 	
-	my $ref = ref $param or return install_script( $param, $path );
+	if ( $ref eq "" )
+	{
+		return install_script( $param, $path );
+	}
 	
 	if ( $ref eq "SCALAR" )
 	{
@@ -366,6 +358,7 @@ sub create_node
 	if ( $ref eq "CODE" )
 	{
 		$param->( $path );
+		
 		return;
 	}
 	
@@ -433,7 +426,7 @@ mkdir $lamp_dist;
 
 install_umbrella_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp_dist, ':' => \%fsmap );
+create_node( "", "." => \%fsmap );
 
 my $installer = "$lamp_dist/MacRelix Installer";
 my $archive   = "$lamp_dist/MacRelix-installer.mbin";

@@ -49,7 +49,7 @@ my $build_area = $build_config_name;  # e.g. 'ppc-cfm-carb-dbg'
 
 my $timestamp = timestamp();
 
-my $lamp_source_dir = "$ENV{HOME}/src/tree/metamage/lamp";
+my $relix_files_dir = "$ENV{HOME}/src/tree/metamage/relix/files";
 my $user_builds_dir = "$ENV{HOME}/var/build";
 my $user_lamp_dir   = "$ENV{HOME}/var/archive/MacRelix";
 
@@ -58,7 +58,6 @@ my $tmp_dir = tmpdir();
 my $unique_dir_name = "$timestamp.$$";
 my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
-my $source_tree     = "$lamp_source_dir/:";
 my $build_tree      = "$user_builds_dir/$build_area";
 my $build_output    = "$build_tree/bin";
 my $lamp_builds_dir = "$user_lamp_dir/Builds";
@@ -69,7 +68,9 @@ my $root_name = "relix-${config_short_name}_$timestamp";
 
 my $lamp_dist = "$tmp_subdir/$root_name";
 
-print "\$LAMP   = $lamp_source_dir\n";
+my $relix_install_fs_root = "$lamp_dist/:";
+
+print "\$FILES  = $relix_files_dir\n";
 print "\$BUILDS = $user_builds_dir\n";
 print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
@@ -286,7 +287,7 @@ sub verbose_system
 	
 	$command =~ s{$build_output}{\$OUTPUT}o;
 	
-	$command =~ s{$lamp_source_dir}{\$LAMP}o;
+	$command =~ s{$relix_files_dir}{\$FILES}o;
 	$command =~ s{$user_builds_dir}{\$BUILDS}o;
 	
 	$command =~ s{$lamp_dist}{\$DIST}og;
@@ -341,13 +342,9 @@ sub copy_file
 
 sub install_script
 {
-	my ( $name, $install_path ) = @_;
+	my ( $name, $install_path, $path_from_root ) = @_;
 	
-	my $path_from_root = $install_path;
-	
-	$path_from_root =~ s{^ .* /:/ }{}x;
-	
-	my $file = "$source_tree/$path_from_root/$name";
+	my $file = "$relix_files_dir/$path_from_root/$name";
 	
 	-f $file || readlink $file or die "### Missing static file /$path_from_root/$name\n";
 	
@@ -377,34 +374,41 @@ sub install_program
 
 sub create_node
 {
-	my ( $path, $dir, $param ) = @_;
+	my ( $path, $subpath, $dir, $param ) = @_;
 	
-	#print "create_node( '$path', '$dir', '$param' )\n";
+	$subpath .= "/$dir"  unless $dir eq '.';
 	
-	$path .= "/$dir"  unless $dir eq '.';
+	my $full_path = $path . $subpath;
 	
-	my $ref = ref $param or return install_script( $param, $path );
+	my $ref = ref $param;
+	
+	if ( $ref eq "" )
+	{
+		my $path_from_root = substr( $subpath, 1 );  # drop leading '/'
+		
+		return install_script( $param, $full_path, $path_from_root );
+	}
 	
 	if ( $ref eq "SCALAR" )
 	{
-		install_program( $$param, $path );
+		install_program( $$param, $full_path );
 		
 		return;
 	}
 	
 	if ( $ref eq "CODE" )
 	{
-		$param->( $path );
+		$param->( $full_path );
 		return;
 	}
 	
-	want_dir( $path );
+	want_dir( $full_path );
 	
 	if ( $ref eq "ARRAY" )
 	{
 		foreach my $file ( @$param )
 		{
-			create_node( $path, '.', $file );
+			create_node( $path, $subpath, '.', $file );
 		}
 		
 		return;
@@ -414,7 +418,7 @@ sub create_node
 	{
 		while ( my ($key, $value) = each %$param )
 		{
-			create_node( $path, $key, $value );
+			create_node( $path, $subpath, $key, $value );
 		}
 		
 		return;
@@ -465,7 +469,7 @@ mkdir $lamp_dist;
 
 install_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
 
-create_node( $lamp_dist, ':' => \%fsmap );
+create_node( $relix_install_fs_root, "", "." => \%fsmap );
 
 print "Archiving...\n";
 
