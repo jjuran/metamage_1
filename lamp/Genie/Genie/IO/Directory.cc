@@ -18,6 +18,9 @@
 // debug
 #include "debug/assert.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
@@ -34,6 +37,9 @@
 
 namespace Genie
 {
+	
+	namespace p7 = poseven;
+	
 	
 	static ssize_t dir_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
@@ -91,6 +97,11 @@ namespace Genie
 	static void SetDirEntry( dirent& dir, ino_t inode, const plus::string& name )
 	{
 		dir.d_ino = inode;
+		
+		if ( name.size() >= sizeof dir.d_name )
+		{
+			p7::throw_errno( EOVERFLOW );
+		}
 		
 		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
 	}
