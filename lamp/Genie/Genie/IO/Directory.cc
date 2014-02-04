@@ -31,9 +31,6 @@
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/parent_inode.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-
 
 namespace Genie
 {

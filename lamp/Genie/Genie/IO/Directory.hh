@@ -11,16 +11,14 @@
 
 // vfs
 #include "vfs/dir_contents_box.hh"
-
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
-#include "Genie/IO/Base.hh"
+#include "vfs/filehandle.hh"
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
 {
 	
-	class DirHandle : public IOHandle
+	class DirHandle : public vfs::filehandle
 	{
 		private:
 			vfs::dir_contents_box  its_contents;
