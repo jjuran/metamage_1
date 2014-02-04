@@ -5,9 +5,6 @@
 
 #include "vfs/node/types/dynamic_group.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -38,22 +35,6 @@ namespace vfs
 	}
 	
 	
-	class dynamic_group_iterator_converter
-	{
-		public:
-			dir_entry operator()( const dynamic_group::value_type& value ) const
-			{
-				const unsigned id = value.first;
-				
-				const ino_t inode = id;
-				
-				const plus::string name = gear::inscribe_unsigned_decimal( id );
-				
-				return dir_entry( inode, name );
-			}
-	};
-	
-	
 	static node_ptr dynamic_group_lookup( const node*          that,
 	                                      const plus::string&  name,
 	                                      const node*          parent )
@@ -80,14 +61,22 @@ namespace vfs
 	{
 		dynamic_group_extra& extra = *(dynamic_group_extra*) that->extra();
 		
-		dynamic_group_iterator_converter converter;
-		
 		const dynamic_group& sequence = *extra.group;
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		typedef dynamic_group::const_iterator Iter;
+		
+		const Iter end = sequence.end();
+		
+		for ( Iter it = sequence.begin();  it != end;  ++it )
+		{
+			const int id = it->first;
+			
+			const ino_t inode = id;
+			
+			const plus::string name = gear::inscribe_unsigned_decimal( id );
+			
+			cache.push_back( dir_entry( inode, name ) );
+		}
 	}
 	
 	static const dir_method_set dynamic_group_dir_methods =
