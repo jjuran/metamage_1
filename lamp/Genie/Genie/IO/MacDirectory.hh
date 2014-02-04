@@ -31,7 +31,7 @@ namespace Genie
 			{
 			}
 			
-			FSTreePtr GetFile();
+			vfs::node_ptr GetFile();
 	};
 	
 }
