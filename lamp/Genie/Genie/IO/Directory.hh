@@ -6,13 +6,14 @@
 #ifndef GENIE_IO_DIRECTORY_HH
 #define GENIE_IO_DIRECTORY_HH
 
-// POSIX
-#include "dirent.h"
-
 // vfs
 #include "vfs/dir_contents_box.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/node_fwd.hh"
+
+// POSIX
+//#include <dirent.h>
+struct dirent;
 
 
 namespace Genie

@@ -9,6 +9,7 @@
 #include <cstring>
 
 // POSIX
+#include <dirent.h>
 #include "fcntl.h"
 #include "sys/stat.h"
 
