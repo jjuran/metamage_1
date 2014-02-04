@@ -9,6 +9,7 @@
 #include <cstring>
 
 // POSIX
+#include <dirent.h>
 #include "fcntl.h"
 #include "sys/stat.h"
 
@@ -30,9 +31,6 @@
 #include "vfs/primitives/inode.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/parent_inode.hh"
-
-// Genie
-#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie
