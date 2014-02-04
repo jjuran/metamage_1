@@ -40,7 +40,7 @@ namespace plus
 				const int n_bits = sizeof (size_type) * 8;
 				
 				// 0x7fffffff[ffffffff]
-				const size_type max = (size_type( 1 ) << n_bits - 1) - 1;
+				const size_type max = (size_type( 1 ) << (n_bits - 1)) - 1;
 				
 				return max;
 			}
