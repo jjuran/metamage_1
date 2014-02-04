@@ -103,7 +103,7 @@ namespace Genie
 			p7::throw_errno( EOVERFLOW );
 		}
 		
-		std::strcpy( dir.d_name, name.c_str() );  // FIXME:  Unsafe!
+		std::strcpy( dir.d_name, name.c_str() );
 	}
 	
 	int DirHandle::ReadDir( dirent& entry )
