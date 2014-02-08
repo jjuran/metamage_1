@@ -14,15 +14,15 @@
 #endif
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
 #ifndef __MACTYPES__
 #include <MacTypes.h>
 #endif
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -40,17 +40,9 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static UInt32 get_ROM_size()
-	{
-		SInt32 rom_size;
-		
-		const OSErr err = ::Gestalt( gestaltROMSize, &rom_size );
-		
-		return err == noErr ? rom_size : 0;
-	}
+	const unsigned long gestaltROMSize = 'rom ';
 	
-	
-	static const UInt32 global_rom_size = get_ROM_size();
+	static const off_t global_rom_size = mac::sys::gestalt( gestaltROMSize );
 	
 	
 	static off_t mac_rom_geteof( const FSTree* that )
