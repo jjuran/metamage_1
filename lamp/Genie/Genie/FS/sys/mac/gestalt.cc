@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/mac/gestalt.hh"
 
-// Satndard C++
-#include <algorithm>
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -33,8 +30,6 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/Gestalt.hh"
-
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
@@ -45,111 +40,8 @@
 #include "Genie/FS/FSTree.hh"
 
 
-namespace Nitrogen
-{
-	
-	struct Gestalt_Record
-	{
-		Gestalt_Selector  selector;
-		UInt32            zero;
-	};
-	
-	typedef Gestalt_Record const *const *Gestalt_Handle;
-	
-	class GestaltTable_Container
-	{
-		private:
-			Gestalt_Handle handle;
-			
-			// not implemented:
-			GestaltTable_Container& operator=( const GestaltTable_Container& );
-		
-		public:
-			typedef UInt16 size_type;
-			typedef SInt16 difference_type;
-			
-			typedef Gestalt_Selector value_type;
-			
-			typedef const value_type &reference;
-			typedef const value_type &const_reference;
-			
-			typedef const value_type *pointer;
-			typedef const value_type *const_pointer;
-			
-			class const_iterator
-			{
-				friend class GestaltTable_Container;
-				
-				public:
-					typedef GestaltTable_Container::size_type  size_type;
-					typedef GestaltTable_Container::reference  reference;
-					typedef GestaltTable_Container::pointer    pointer;
-					
-					typedef std::forward_iterator_tag iterator_category;
-					
-				private:
-					Gestalt_Handle  handle;
-					size_type       position;
-					
-					const_reference GetReference() const
-					{
-						return handle[0][ position ].selector;
-					}
-					
-					void Advance()
-					{
-						++position;
-						
-						if ( GetReference() == 0x7fffffff )
-						{
-							position = 0xffff;
-						}
-					}
-					
-					const_iterator( Gestalt_Handle h, size_type pos ) : handle( h ), position( pos )
-					{
-					}
-					
-				public:
-					const_iterator& operator++()      { Advance();  return *this; }
-					const_iterator operator++(int)    { const_iterator old = *this; operator++(); return old; }
-					
-					reference operator*() const       { return GetReference(); }
-					pointer operator->() const        { return &GetReference(); }
-					
-					friend bool operator==( const const_iterator& a, const const_iterator& b )    { return a.position == b.position; }
-					friend bool operator!=( const const_iterator& a, const const_iterator& b )    { return !( a == b ); }
-			};
-			
-			GestaltTable_Container( Gestalt_Handle h ) : handle( h )
-			{
-			}
-			
-			const_iterator begin() const              { return const_iterator( handle,      0 ); }
-			const_iterator end() const                { return const_iterator( handle, 0xffff ); }
-	};
-	
-	static GestaltTable_Container GestaltTable()
-	{
-		UInt32 tabl = Nitrogen::Gestalt( Nitrogen::GestaltSelector( 'tabl' ) );
-		
-		Gestalt_Handle h = reinterpret_cast< Gestalt_Handle >( tabl );
-		
-		if ( h == NULL  ||  *h == NULL )
-		{
-			Mac::ThrowOSStatus( nilHandleErr );
-		}
-		
-		return GestaltTable_Container( h );
-	}
-	
-}
-
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	using MacScribe::make_utf8_quad_name;
 	using MacScribe::parse_utf8_quad_name;
@@ -208,12 +100,28 @@ namespace Genie
 	{
 		gestalt_IteratorConverter converter;
 		
-		N::GestaltTable_Container sequence = N::GestaltTable();
+		using mac::sys::gestalt;
+		using mac::sys::gestalt_handle;
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		if ( gestalt_handle handle = (gestalt_handle) gestalt( 'tabl' ) )
+		{
+			if ( *handle == NULL )
+			{
+				Mac::ThrowOSStatus( nilHandleErr );
+			}
+			
+			for ( int i = 0;  ;  ++i )
+			{
+				const quad_t selector = handle[ 0 ][ i ].selector;
+				
+				if ( selector == 0x7fffffff )
+				{
+					break;
+				}
+				
+				cache.push_back( converter( selector ) );
+			}
+		}
 	}
 	
 	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTree*        parent,
