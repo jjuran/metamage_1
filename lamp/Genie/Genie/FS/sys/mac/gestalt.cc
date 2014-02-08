@@ -153,7 +153,7 @@ namespace Genie
 	using MacScribe::quad_t;
 	
 	
-	static bool is_valid_Gestalt_Selector( N::Gestalt_Selector selector )
+	static bool is_valid_Gestalt_Selector( quad_t selector )
 	{
 		try
 		{
@@ -180,7 +180,7 @@ namespace Genie
 			return false;
 		}
 		
-		return is_valid_Gestalt_Selector( N::Gestalt_Selector( decoded ) );
+		return is_valid_Gestalt_Selector( decoded );
 	}
 	
 	static FSTreePtr gestalt_lookup( const FSTree* parent, const plus::string& name )
@@ -196,7 +196,7 @@ namespace Genie
 	class gestalt_IteratorConverter
 	{
 		public:
-			vfs::dir_entry operator()( N::Gestalt_Selector selector ) const
+			vfs::dir_entry operator()( quad_t selector ) const
 			{
 				const bool valid = is_valid_Gestalt_Selector( selector );
 				
