@@ -155,16 +155,11 @@ namespace Genie
 	
 	static bool is_valid_Gestalt_Selector( quad_t selector )
 	{
-		try
-		{
-			N::Gestalt( selector );
-		}
-		catch ( ... )
-		{
-			return false;
-		}
+		SInt32 unused_Gestalt_result;
 		
-		return true;
+		const OSErr err = ::Gestalt( selector, &unused_Gestalt_result );
+		
+		return err == noErr;
 	}
 	
 	static inline bool is_valid_Gestalt_Selector_name( const plus::string& name )
