@@ -5,6 +5,16 @@
 
 #include "Genie/FS/sys/cpu.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
@@ -16,11 +26,6 @@
 
 // plus
 #include "plus/var_string.hh"
-
-// Nitrogen
-#include "Mac/Toolbox/Types/OSStatus.hh"
-
-#include "Nitrogen/Gestalt.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
@@ -44,9 +49,6 @@ enum
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	static long GetProcCode()
 	{
 		return mac::sys::gestalt( 'proc' ) - 1;
@@ -67,7 +69,7 @@ namespace Genie
 		}
 	};
 	
-	static long GetCPUCode( N::Gestalt_Selector selector )
+	static long GetCPUCode( unsigned long selector )
 	{
 		if ( !TARGET_CPU_68K )
 		{
@@ -137,7 +139,7 @@ namespace Genie
 		
 		static Result Get()
 		{
-			return GetCPUName( GetCPUCode( N::Gestalt_Selector( 'cpuf' ) ) );
+			return GetCPUName( GetCPUCode( 'cpuf' ) );
 		}
 	};
 	
@@ -147,7 +149,7 @@ namespace Genie
 		
 		static Result Get()
 		{
-			return GetCPUName( GetCPUCode( N::Gestalt_Selector( 'cput' ) ) );
+			return GetCPUName( GetCPUCode( 'cput' ) );
 		}
 	};
 	
