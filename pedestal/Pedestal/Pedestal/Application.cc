@@ -22,9 +22,6 @@
 #include <DiskInit.h>
 #endif
 #endif
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __TOOLUTILS__
 #include <ToolUtils.h>
 #endif
@@ -34,6 +31,7 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/gestalt.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -48,7 +46,6 @@
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/Events.hh"
-#include "Nitrogen/Gestalt.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
@@ -112,6 +109,10 @@ namespace Pedestal
 	
 	using Mac::kCoreEventClass;
 	using Mac::kAEQuitApplication;
+	
+	const uint32_t gestaltMenuMgrAttr = 'menu';
+	
+	const int gestaltMenuMgrAquaLayoutBit = 1;
 	
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
@@ -707,7 +708,7 @@ namespace Pedestal
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
 		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
 		
-		if ( N::Gestalt_Mask< N::gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutMask >() )
+		if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutBit ) )
 		{
 			SInt16 last = N::CountMenuItems( fileMenu );
 			
