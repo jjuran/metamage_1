@@ -22,6 +22,11 @@ namespace sys {
 	
 	bool gestalt_defined( unsigned long selector );
 	
+	inline bool gestalt_bit_set( unsigned long selector, int bit )
+	{
+		return gestalt( selector ) & (1UL << bit);
+	}
+	
 }
 }
 
