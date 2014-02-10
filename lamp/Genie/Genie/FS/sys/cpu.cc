@@ -5,6 +5,19 @@
 
 #include "Genie/FS/sys/cpu.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -13,11 +26,6 @@
 
 // plus
 #include "plus/var_string.hh"
-
-// Nitrogen
-#include "Mac/Toolbox/Types/OSStatus.hh"
-
-#include "Nitrogen/Gestalt.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
@@ -41,12 +49,9 @@ enum
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
 	static long GetProcCode()
 	{
-		return N::Gestalt( N::Gestalt_Selector( 'proc' ) ) - 1;
+		return mac::sys::gestalt( 'proc' ) - 1;
 	}
 	
 	static const char* Get68KCPUName( long code )
@@ -64,26 +69,21 @@ namespace Genie
 		}
 	};
 	
-	static long GetCPUCode( N::Gestalt_Selector selector )
+	static long GetCPUCode( unsigned long selector )
 	{
 		if ( !TARGET_CPU_68K )
 		{
-			return N::Gestalt( selector );
+			return mac::sys::gestalt( selector );
 		}
 		
-		long code = 0;
+		long code = mac::sys::gestalt( selector, -1 );
 		
-		try
+		if ( code == gestaltCPU68040 + 1 )
 		{
-			code = N::Gestalt( selector );
-			
-			if ( code == gestaltCPU68040 + 1 )
-			{
-				// Work around bug in System 7.1 on AV Quadras
-				--code;
-			}
+			// Work around bug in System 7.1 on AV Quadras
+			--code;
 		}
-		catch ( const Mac::OSStatus& err )
+		else if ( code < 0 )
 		{
 			code = GetProcCode();
 		}
@@ -139,7 +139,7 @@ namespace Genie
 		
 		static Result Get()
 		{
-			return GetCPUName( GetCPUCode( N::Gestalt_Selector( 'cpuf' ) ) );
+			return GetCPUName( GetCPUCode( 'cpuf' ) );
 		}
 	};
 	
@@ -149,7 +149,7 @@ namespace Genie
 		
 		static Result Get()
 		{
-			return GetCPUName( GetCPUCode( N::Gestalt_Selector( 'cput' ) ) );
+			return GetCPUName( GetCPUCode( 'cput' ) );
 		}
 	};
 	

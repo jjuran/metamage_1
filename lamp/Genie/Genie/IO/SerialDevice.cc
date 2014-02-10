@@ -28,6 +28,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // nucleus
 #include "nucleus/shared.hh"
 
@@ -36,8 +39,6 @@
 
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
-#include "Nitrogen/Gestalt.hh"
 
 // ClassicToolbox
 #if !TARGET_API_MAC_CARBON
@@ -55,24 +56,17 @@ enum
 	gestaltSerialPortArbitratorExists = 0
 };
 
-namespace Nitrogen
-{
-	
-	static const GestaltSelector gestaltSerialPortArbitratorAttr = GestaltSelector( ::gestaltSerialPortArbitratorAttr );
-	
-	template <> struct GestaltDefault< gestaltSerialPortArbitratorAttr > : GestaltAttrDefaults {};
-	
-}
-
 namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
 #if !TARGET_API_MAC_CARBON
+	
+	namespace N = Nitrogen;
+	
 	
 	class SerialDeviceHandle : public StreamHandle
 	{
@@ -201,7 +195,7 @@ namespace Genie
 	
 	static inline bool SerialPortsAreArbitrated()
 	{
-		return N::Gestalt_Bit< N::gestaltSerialPortArbitratorAttr, ::gestaltSerialPortArbitratorExists >();
+		return mac::sys::gestalt_bit_set( gestaltSerialPortArbitratorAttr, gestaltSerialPortArbitratorExists );
 	}
 	
 	static bool DriverIsOpen( const unsigned char* driverName )
