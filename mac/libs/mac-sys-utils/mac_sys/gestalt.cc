@@ -28,5 +28,14 @@ namespace sys {
 		return err == noErr ? result : default_value;
 	}
 	
+	bool gestalt_defined( unsigned long selector )
+	{
+		SInt32 unused_Gestalt_result;
+		
+		const OSErr err = ::Gestalt( selector, &unused_Gestalt_result );
+		
+		return err == noErr;
+	}
+	
 }
 }

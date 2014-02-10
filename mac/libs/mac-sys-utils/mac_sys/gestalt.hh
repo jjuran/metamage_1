@@ -20,6 +20,8 @@ namespace sys {
 	
 	long gestalt( unsigned long selector, long default_value = 0 );
 	
+	bool gestalt_defined( unsigned long selector );
+	
 }
 }
 

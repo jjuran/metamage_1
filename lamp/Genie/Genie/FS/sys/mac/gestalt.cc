@@ -18,6 +18,9 @@
 #include <MacErrors.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -153,15 +156,6 @@ namespace Genie
 	using MacScribe::quad_t;
 	
 	
-	static bool is_valid_Gestalt_Selector( quad_t selector )
-	{
-		SInt32 unused_Gestalt_result;
-		
-		const OSErr err = ::Gestalt( selector, &unused_Gestalt_result );
-		
-		return err == noErr;
-	}
-	
 	static inline bool is_valid_Gestalt_Selector_name( const plus::string& name )
 	{
 		quad_t decoded;
@@ -175,7 +169,7 @@ namespace Genie
 			return false;
 		}
 		
-		return is_valid_Gestalt_Selector( decoded );
+		return mac::sys::gestalt_defined( decoded );
 	}
 	
 	static FSTreePtr gestalt_lookup( const FSTree* parent, const plus::string& name )
@@ -193,7 +187,7 @@ namespace Genie
 		public:
 			vfs::dir_entry operator()( quad_t selector ) const
 			{
-				const bool valid = is_valid_Gestalt_Selector( selector );
+				const bool valid = mac::sys::gestalt_defined( selector );
 				
 				const ino_t inode = 0;
 				
