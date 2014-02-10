@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/cpu.hh"
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -46,7 +49,7 @@ namespace Genie
 	
 	static long GetProcCode()
 	{
-		return N::Gestalt( N::Gestalt_Selector( 'proc' ) ) - 1;
+		return mac::sys::gestalt( 'proc' ) - 1;
 	}
 	
 	static const char* Get68KCPUName( long code )
@@ -68,22 +71,17 @@ namespace Genie
 	{
 		if ( !TARGET_CPU_68K )
 		{
-			return N::Gestalt( selector );
+			return mac::sys::gestalt( selector );
 		}
 		
-		long code = 0;
+		long code = mac::sys::gestalt( selector, -1 );
 		
-		try
+		if ( code == gestaltCPU68040 + 1 )
 		{
-			code = N::Gestalt( selector );
-			
-			if ( code == gestaltCPU68040 + 1 )
-			{
-				// Work around bug in System 7.1 on AV Quadras
-				--code;
-			}
+			// Work around bug in System 7.1 on AV Quadras
+			--code;
 		}
-		catch ( const Mac::OSStatus& err )
+		else if ( code < 0 )
 		{
 			code = GetProcCode();
 		}
