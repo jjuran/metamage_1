@@ -14,6 +14,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -29,7 +32,6 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Folders.hh"
-#include "Nitrogen/Gestalt.hh"
 
 // MacIO
 #include "MacIO/FSMakeFSSpec_Sync.hh"
@@ -62,21 +64,18 @@
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
-namespace Nitrogen
-{
-	
-	static const Gestalt_Selector gestaltFSAttr = Gestalt_Selector( ::gestaltFSAttr );
-	
-	template <> struct GestaltDefault< gestaltFSAttr > : GestaltAttrDefaults {};
-	
-}
-
 namespace Genie
 {
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	const uint32_t gestaltFSAttr = 'fs  ';
+	
+	const int gestaltFSSupports4GBVols = 4;
+	const int gestaltFSSupports2TBVols = 5;
 	
 	
 	static N::FSVolumeRefNum GetKeyFromParent( const vfs::node& parent )
@@ -100,14 +99,14 @@ namespace Genie
 	
 	static bool Has_PBXGetVolInfo()
 	{
-		static bool result = N::Gestalt_Bit< N::gestaltFSAttr, gestaltFSSupports2TBVols >();
+		static bool result = mac::sys::gestalt_bit_set( gestaltFSAttr, gestaltFSSupports2TBVols );
 		
 		return result;
 	}
 	
 	static bool Has4GBVolumes()
 	{
-		static bool result = N::Gestalt_Bit< N::gestaltFSAttr, gestaltFSSupports4GBVols >();
+		static bool result = mac::sys::gestalt_bit_set( gestaltFSAttr, gestaltFSSupports4GBVols );
 		
 		return result;
 	}
