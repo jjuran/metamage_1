@@ -32,6 +32,7 @@ var/links/%: var/links
 	@echo $(REPOS) | grep $* > /dev/null || (echo Unknown repo $*; exit 1)
 	@test -d ../$*/.git || (echo 'Please run `(cd .. && git clone git://github.com/jjuran/$*.git)`.'; exit 128)
 	ln -s ../../../$* var/links/
+	rm -f var/cache/compile-driver/catalog
 
 %.git: var/links/%
 	@true
