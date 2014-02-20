@@ -38,8 +38,6 @@ namespace Genie
 			                  char*             base,
 			                  std::size_t       size );
 			
-			~MemoryFileHandle();
-			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
@@ -99,10 +97,6 @@ namespace Genie
 		vfs::filehandle( &file, flags, &buffer_methods ),
 		itsBase( base ),
 		itsSize( size )
-	{
-	}
-	
-	MemoryFileHandle::~MemoryFileHandle()
 	{
 	}
 	
