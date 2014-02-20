@@ -26,48 +26,67 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class MemoryFileHandle : public vfs::filehandle
+	struct buffer_extra
 	{
-		private:
-			char*        itsBase;  // base address
-			std::size_t  itsSize;
-		
-		public:
-			MemoryFileHandle( const vfs::node&  file,
-			                  int               flags,
-			                  char*             base,
-			                  std::size_t       size );
-			
-			~MemoryFileHandle();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return itsSize; }
-			
-			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
+		char*   base;  // base address
+		size_t  size;
 	};
 	
 	
 	static ssize_t buffer_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
 	{
-		return static_cast< MemoryFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+		buffer_extra& extra = *(buffer_extra*) file->extra();
+		
+		if ( offset >= extra.size )
+		{
+			return 0;
+		}
+		
+		n = std::min< size_t >( n, extra.size - offset );
+		
+		memcpy( buffer, extra.base + offset, n );
+		
+		return n;
 	}
 	
 	static off_t buffer_geteof( vfs::filehandle* file )
 	{
-		return static_cast< MemoryFileHandle& >( *file ).GetEOF();
+		buffer_extra& extra = *(buffer_extra*) file->extra();
+		
+		return extra.size;
 	}
 	
 	static ssize_t buffer_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
 	{
-		return static_cast< MemoryFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
+		buffer_extra& extra = *(buffer_extra*) file->extra();
+		
+		if ( n == 0 )
+		{
+			return 0;
+		}
+		
+		if ( offset >= extra.size )
+		{
+			p7::throw_errno( ENOSPC );
+		}
+		
+		n = std::min< size_t >( n, extra.size - offset );
+		
+		memcpy( extra.base + offset, buffer, n );
+		
+		return n;
 	}
 	
 	static vfs::memory_mapping_ptr buffer_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{
-		return static_cast< MemoryFileHandle& >( *that ).Map( length, prot, flags, offset );
+		buffer_extra& extra = *(buffer_extra*) that->extra();
+		
+		if ( offset + length > extra.size )
+		{
+			p7::throw_errno( ENXIO );
+		}
+		
+		return new vfs::memory_mapping( extra.base + offset, length, flags );
 	}
 	
 	static const vfs::bstore_method_set buffer_bstore_methods =
@@ -91,75 +110,22 @@ namespace Genie
 	};
 	
 	
-	MemoryFileHandle::MemoryFileHandle( const vfs::node&  file,
-	                                    int               flags,
-	                                    char*             base,
-	                                    std::size_t       size )
-	:
-		vfs::filehandle( &file, flags, &buffer_methods ),
-		itsBase( base ),
-		itsSize( size )
-	{
-	}
-	
-	MemoryFileHandle::~MemoryFileHandle()
-	{
-	}
-	
-	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
-	{
-		if ( offset >= itsSize )
-		{
-			return 0;
-		}
-		
-		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
-		
-		memcpy( buffer, itsBase + offset, n_bytes );
-		
-		return n_bytes;
-	}
-	
-	ssize_t MemoryFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
-	{
-		if ( n_bytes == 0 )
-		{
-			return 0;
-		}
-		
-		if ( offset >= itsSize )
-		{
-			p7::throw_errno( ENOSPC );
-		}
-		
-		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
-		
-		memcpy( itsBase + offset, buffer, n_bytes );
-		
-		return n_bytes;
-	}
-	
-	vfs::memory_mapping_ptr
-	//
-	MemoryFileHandle::Map( size_t length, int prot, int flags, off_t offset )
-	{
-		if ( offset + length > itsSize )
-		{
-			p7::throw_errno( ENXIO );
-		}
-		
-		return new vfs::memory_mapping( itsBase + offset, length, flags );
-	}
-	
 	vfs::filehandle_ptr open_buffer_file( const vfs::node&  file,
 	                                      int               flags,
 	                                      char*             addr,
 	                                      std::size_t       size )
 	{
-		return new MemoryFileHandle( file,
-		                             flags,
-		                             addr,
-		                             size );
+		vfs::filehandle* result = new vfs::filehandle( &file,
+		                                               flags,
+		                                               &buffer_methods,
+		                                               sizeof (buffer_extra) );
+		
+		buffer_extra& extra = *(buffer_extra*) result->extra();
+		
+		extra.base = addr;
+		extra.size = size;
+		
+		return result;
 	}
 	
 }
