@@ -26,11 +26,16 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	struct buffer_extra
+	{
+		char*   base;  // base address
+		size_t  size;
+	};
+	
 	class MemoryFileHandle : public vfs::filehandle
 	{
 		private:
-			char*        itsBase;  // base address
-			std::size_t  itsSize;
+			buffer_extra  extra;
 		
 		public:
 			MemoryFileHandle( const vfs::node&  file,
@@ -42,7 +47,7 @@ namespace Genie
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			off_t GetEOF()  { return itsSize; }
+			off_t GetEOF()  { return extra.size; }
 			
 			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
@@ -55,14 +60,14 @@ namespace Genie
 	
 	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		if ( offset >= itsSize )
+		if ( offset >= extra.size )
 		{
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
+		n_bytes = std::min< size_t >( n_bytes, extra.size - offset );
 		
-		memcpy( buffer, itsBase + offset, n_bytes );
+		memcpy( buffer, extra.base + offset, n_bytes );
 		
 		return n_bytes;
 	}
@@ -84,14 +89,14 @@ namespace Genie
 			return 0;
 		}
 		
-		if ( offset >= itsSize )
+		if ( offset >= extra.size )
 		{
 			p7::throw_errno( ENOSPC );
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
+		n_bytes = std::min< size_t >( n_bytes, extra.size - offset );
 		
-		memcpy( itsBase + offset, buffer, n_bytes );
+		memcpy( extra.base + offset, buffer, n_bytes );
 		
 		return n_bytes;
 	}
@@ -105,12 +110,12 @@ namespace Genie
 	//
 	MemoryFileHandle::Map( size_t length, int prot, int flags, off_t offset )
 	{
-		if ( offset + length > itsSize )
+		if ( offset + length > extra.size )
 		{
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new vfs::memory_mapping( itsBase + offset, length, flags );
+		return new vfs::memory_mapping( extra.base + offset, length, flags );
 	}
 	
 	static const vfs::bstore_method_set buffer_bstore_methods =
@@ -139,10 +144,10 @@ namespace Genie
 	                                    char*             base,
 	                                    std::size_t       size )
 	:
-		vfs::filehandle( &file, flags, &buffer_methods ),
-		itsBase( base ),
-		itsSize( size )
+		vfs::filehandle( &file, flags, &buffer_methods )
 	{
+		extra.base = base;
+		extra.size = size;
 	}
 	
 	vfs::filehandle_ptr open_buffer_file( const vfs::node&  file,
