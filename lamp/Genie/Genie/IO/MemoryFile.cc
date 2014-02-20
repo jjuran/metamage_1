@@ -58,18 +58,18 @@ namespace Genie
 		return static_cast< MemoryFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
 	}
 	
-	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n, off_t offset )
 	{
 		if ( offset >= extra.size )
 		{
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, extra.size - offset );
+		n = std::min< size_t >( n, extra.size - offset );
 		
-		memcpy( buffer, extra.base + offset, n_bytes );
+		memcpy( buffer, extra.base + offset, n );
 		
-		return n_bytes;
+		return n;
 	}
 	
 	static off_t buffer_geteof( vfs::filehandle* file )
@@ -82,9 +82,9 @@ namespace Genie
 		return static_cast< MemoryFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
 	}
 	
-	ssize_t MemoryFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	ssize_t MemoryFileHandle::Positioned_Write( const char* buffer, size_t n, off_t offset )
 	{
-		if ( n_bytes == 0 )
+		if ( n == 0 )
 		{
 			return 0;
 		}
@@ -94,11 +94,11 @@ namespace Genie
 			p7::throw_errno( ENOSPC );
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, extra.size - offset );
+		n = std::min< size_t >( n, extra.size - offset );
 		
-		memcpy( extra.base + offset, buffer, n_bytes );
+		memcpy( extra.base + offset, buffer, n );
 		
-		return n_bytes;
+		return n;
 	}
 	
 	static vfs::memory_mapping_ptr buffer_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
