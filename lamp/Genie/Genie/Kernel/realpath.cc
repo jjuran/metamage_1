@@ -6,9 +6,6 @@
 // Standard C
 #include <errno.h>
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -38,6 +35,13 @@
 namespace Genie
 {
 	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
+	
+	
 	static plus::string mac_pathname_from_file( const vfs::node& file )
 	{
 		return GetMacPathname( GetFSSpecFromFSTree( file ) );
@@ -64,7 +68,7 @@ namespace Genie
 			
 			const bool too_big = resolved.size() > buffer_size;
 			
-			const size_t bytes_copied = std::min( buffer_size, resolved.size() );
+			const size_t bytes_copied = min( buffer_size, resolved.size() );
 			
 			std::memcpy( buffer, resolved.data(), bytes_copied );
 			

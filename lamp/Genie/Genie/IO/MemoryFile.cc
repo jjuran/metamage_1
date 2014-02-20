@@ -5,9 +5,6 @@
 
 #include "Genie/IO/MemoryFile.hh"
 
-// Standard C++
-#include <algorithm>
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -32,6 +29,12 @@ namespace Genie
 		size_t  size;
 	};
 	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
+	
 	
 	static ssize_t buffer_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
 	{
@@ -42,7 +45,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n = std::min< size_t >( n, extra.size - offset );
+		n = min< size_t >( n, extra.size - offset );
 		
 		memcpy( buffer, extra.base + offset, n );
 		
@@ -70,7 +73,7 @@ namespace Genie
 			p7::throw_errno( ENOSPC );
 		}
 		
-		n = std::min< size_t >( n, extra.size - offset );
+		n = min< size_t >( n, extra.size - offset );
 		
 		memcpy( extra.base + offset, buffer, n );
 		

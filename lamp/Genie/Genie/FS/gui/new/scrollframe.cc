@@ -8,9 +8,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C++
-#include <algorithm>
-
 // plus
 #include "plus/serialize.hh"
 
@@ -45,6 +42,13 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
+	
+	
+	template < class T >
+	static inline T max( T a, T b )
+	{
+		return b < a ? a : b;
+	}
 	
 	
 	struct ScrollFrameParameters
@@ -118,7 +122,7 @@ namespace Genie
 				int viewLength   = vertical ? proxy->ViewHeight  () : proxy->ViewWidth  ();
 				int offset       = vertical ? proxy->GetVOffset  () : proxy->GetHOffset ();
 				
-				short max_offset = std::max( clientLength - viewLength, offset );
+				short max_offset = max( clientLength - viewLength, offset );
 				
 				N::SetControlMaximum( control, max_offset );
 			}

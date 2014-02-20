@@ -8,9 +8,6 @@
 // POSIX
 #include <fcntl.h>
 
-// Standard C++
-#include <algorithm>
-
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
@@ -28,6 +25,13 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
 	
 	
 	static ssize_t Mac_Handle_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
@@ -86,7 +90,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, size - offset );
+		n_bytes = min< size_t >( n_bytes, size - offset );
 		
 		memcpy( buffer, *itsHandle.get().Get() + offset, n_bytes );
 		
@@ -124,7 +128,7 @@ namespace Genie
 					throw;
 				}
 				
-				n_bytes = std::min< size_t >( n_bytes, existing_size - offset );
+				n_bytes = min< size_t >( n_bytes, existing_size - offset );
 			}
 		}
 		

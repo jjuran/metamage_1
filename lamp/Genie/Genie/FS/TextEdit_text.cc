@@ -5,9 +5,6 @@
 
 #include "Genie/FS/TextEdit_text.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -31,6 +28,13 @@ namespace Genie
 {
 	
 	namespace Ped = Pedestal;
+	
+	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
 	
 	
 	static void TextEdit_text_SetEOF( const FSTree* text, off_t length )
@@ -126,7 +130,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, s.size() - offset );
+		n_bytes = min< size_t >( n_bytes, s.size() - offset );
 		
 		memcpy( buffer, &s[ offset ], n_bytes );
 		
@@ -146,9 +150,7 @@ namespace Genie
 			s.resize( offset + n_bytes );
 		}
 		
-		std::copy( buffer,
-		           buffer + n_bytes,
-		           s.begin() + offset );
+		memcpy( s.begin() + offset, buffer, n_bytes );
 		
 		if ( offset < params.itsValidLength )
 		{

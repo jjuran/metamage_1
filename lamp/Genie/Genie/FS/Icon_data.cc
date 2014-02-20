@@ -9,8 +9,8 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <string.h>
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -71,6 +71,13 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
 	
 	
 	static void Plot_Null( const Rect&           area,
@@ -288,7 +295,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, size - mark );
+		n_bytes = min< size_t >( n_bytes, size - mark );
 		
 		const char* p = use_handle ? *h
 		                           : (const char*) &itsResID;
@@ -340,9 +347,7 @@ namespace Genie
 		
 		char* p = *h.Get();
 		
-		std::copy( buffer,
-		           buffer + n_bytes,
-		           p );
+		memcpy( p, buffer, n_bytes );
 		
 		return n_bytes;
 	}
@@ -444,7 +449,7 @@ namespace Genie
 				p7::throw_errno( ERANGE );
 			}
 			
-			std::copy( decimal, end, buffer );
+			memcpy( buffer, decimal, bytes_read );
 		}
 		
 		return bytes_read;

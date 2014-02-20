@@ -20,9 +20,6 @@
 #include <sys/stat.h>
 #include <sys/ttycom.h>
 
-// Standard C++
-#include <algorithm>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -74,6 +71,18 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
+	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
+	
+	template < class T >
+	static inline T max( T a, T b )
+	{
+		return b < a ? a : b;
+	}
 	
 	static void RunShellCommand( const plus::string& command )
 	{
@@ -573,7 +582,7 @@ namespace Genie
 			
 			const size_t max_write_after_cut = 8192;
 			
-			byteCount = std::min( byteCount, max_write_after_cut );
+			byteCount = min( byteCount, max_write_after_cut );
 		}
 		
 		const size_t start_of_input  = consoleParams.itsStartOfInput;
@@ -582,7 +591,7 @@ namespace Genie
 		ASSERT( start_of_input <= s.size() );
 		ASSERT( start_of_input >= start_of_output );
 		
-		params.itsValidLength = std::min( params.itsValidLength, start_of_output );
+		params.itsValidLength = min( params.itsValidLength, start_of_output );
 		
 		const plus::string saved_input( s.begin() + start_of_input, s.end() );
 		
@@ -660,7 +669,7 @@ namespace Genie
 				default:
 					*p++ = c;
 					
-					end_of_output_p = std::max( end_of_output_p, p );
+					end_of_output_p = max( end_of_output_p, p );
 					
 					break;
 			}
@@ -668,7 +677,7 @@ namespace Genie
 		
 		const size_t bytes_written = end_of_output_p - start_of_output_p;
 		
-		const size_t bytes_inserted = std::max( int( bytes_written - bytes_overwritable ), 0 );
+		const size_t bytes_inserted = max( int( bytes_written - bytes_overwritable ), 0 );
 		
 		if ( bytes_inserted == 0 )
 		{

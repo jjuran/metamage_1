@@ -19,7 +19,6 @@
 #endif
 
 // Standard C++
-#include <algorithm>
 #include <map>
 
 // POSIX
@@ -66,6 +65,13 @@ namespace Genie
 #if !TARGET_API_MAC_CARBON
 	
 	namespace N = Nitrogen;
+	
+	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
 	
 	
 	class SerialDeviceHandle : public StreamHandle
@@ -309,7 +315,7 @@ namespace Genie
 				
 				if ( std::size_t bytesAvailable = N::SerGetBuf( itsInputRefNum ) )
 				{
-					byteCount = std::min( byteCount, bytesAvailable );
+					byteCount = min( byteCount, bytesAvailable );
 					
 					break;
 				}

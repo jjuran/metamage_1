@@ -3,9 +3,6 @@
  *	=======
  */
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <unistd.h>
 
@@ -26,9 +23,16 @@
 namespace Genie
 {
 	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
+	
+	
 	static ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count, unsigned flags )
 	{
-		std::size_t bytes_pumped = 0;
+		size_t bytes_pumped = 0;
 		
 		try
 		{
@@ -53,7 +57,7 @@ namespace Genie
 			
 			ssize_t n_read;
 			
-			while (( n_read = read( input, buffer, count ? std::min( size, count ) : size ) ))
+			while (( n_read = read( input, buffer, count ? min( size, count ) : size ) ))
 			{
 				ssize_t n_written = write( output, buffer, n_read );
 				

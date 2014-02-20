@@ -9,9 +9,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 
-// Standard C++
-#include <algorithm>
-
 // plus
 #include "plus/serialize.hh"
 
@@ -54,6 +51,13 @@ namespace Genie
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
+	
+	
+	template < class T >
+	static inline T min( T a, T b )
+	{
+		return b < a ? b : a;
+	}
 	
 	
 	struct BitMap_Parameters
@@ -212,7 +216,7 @@ namespace Genie
 			return 0;
 		}
 		
-		n_bytes = std::min< size_t >( n_bytes, pix_size - offset );
+		n_bytes = min< size_t >( n_bytes, pix_size - offset );
 		
 		const char* baseAddr = params.bitmap.baseAddr;
 		
