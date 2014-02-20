@@ -53,6 +53,20 @@ namespace Genie
 		return static_cast< MemoryFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
 	}
 	
+	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	{
+		if ( offset >= itsSize )
+		{
+			return 0;
+		}
+		
+		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
+		
+		memcpy( buffer, itsBase + offset, n_bytes );
+		
+		return n_bytes;
+	}
+	
 	static off_t buffer_geteof( vfs::filehandle* file )
 	{
 		return static_cast< MemoryFileHandle& >( *file ).GetEOF();
@@ -63,9 +77,40 @@ namespace Genie
 		return static_cast< MemoryFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
 	}
 	
+	ssize_t MemoryFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	{
+		if ( n_bytes == 0 )
+		{
+			return 0;
+		}
+		
+		if ( offset >= itsSize )
+		{
+			p7::throw_errno( ENOSPC );
+		}
+		
+		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
+		
+		memcpy( itsBase + offset, buffer, n_bytes );
+		
+		return n_bytes;
+	}
+	
 	static vfs::memory_mapping_ptr buffer_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{
 		return static_cast< MemoryFileHandle& >( *that ).Map( length, prot, flags, offset );
+	}
+	
+	vfs::memory_mapping_ptr
+	//
+	MemoryFileHandle::Map( size_t length, int prot, int flags, off_t offset )
+	{
+		if ( offset + length > itsSize )
+		{
+			p7::throw_errno( ENXIO );
+		}
+		
+		return new vfs::memory_mapping( itsBase + offset, length, flags );
 	}
 	
 	static const vfs::bstore_method_set buffer_bstore_methods =
@@ -98,51 +143,6 @@ namespace Genie
 		itsBase( base ),
 		itsSize( size )
 	{
-	}
-	
-	ssize_t MemoryFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
-	{
-		if ( offset >= itsSize )
-		{
-			return 0;
-		}
-		
-		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
-		
-		memcpy( buffer, itsBase + offset, n_bytes );
-		
-		return n_bytes;
-	}
-	
-	ssize_t MemoryFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
-	{
-		if ( n_bytes == 0 )
-		{
-			return 0;
-		}
-		
-		if ( offset >= itsSize )
-		{
-			p7::throw_errno( ENOSPC );
-		}
-		
-		n_bytes = std::min< size_t >( n_bytes, itsSize - offset );
-		
-		memcpy( itsBase + offset, buffer, n_bytes );
-		
-		return n_bytes;
-	}
-	
-	vfs::memory_mapping_ptr
-	//
-	MemoryFileHandle::Map( size_t length, int prot, int flags, off_t offset )
-	{
-		if ( offset + length > itsSize )
-		{
-			p7::throw_errno( ENXIO );
-		}
-		
-		return new vfs::memory_mapping( itsBase + offset, length, flags );
 	}
 	
 	vfs::filehandle_ptr open_buffer_file( const vfs::node&  file,
