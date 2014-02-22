@@ -1,9 +1,9 @@
-/*	=============
- *	MemoryFile.cc
- *	=============
- */
+/*
+	buffer_file.cc
+	--------------
+*/
 
-#include "Genie/IO/MemoryFile.hh"
+#include "vfs/filehandle/types/buffer_file.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

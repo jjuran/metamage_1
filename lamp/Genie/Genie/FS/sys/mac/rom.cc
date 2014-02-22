@@ -27,11 +27,13 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// vfs
+#include "vfs/filehandle/types/buffer_file.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/MemoryFile.hh"
 
 
 namespace Genie

@@ -1,10 +1,10 @@
-/*	=============
- *	MemoryFile.hh
- *	=============
- */
+/*
+	buffer_file.hh
+	--------------
+*/
 
-#ifndef GENIE_IO_MEMORYFILE_HH
-#define GENIE_IO_MEMORYFILE_HH
+#ifndef VFS_FILEHANDLE_TYPES_BUFFERFILE_HH
+#define VFS_FILEHANDLE_TYPES_BUFFERFILE_HH
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
