@@ -58,6 +58,8 @@ namespace Genie
 		
 	#else
 		
+		using vfs::open_buffer_file;
+		
 		return open_buffer_file( *that,
 		                         flags,
 		                         LMGetROMBase(),

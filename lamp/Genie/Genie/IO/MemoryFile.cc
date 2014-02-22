@@ -17,7 +17,7 @@
 #include "vfs/filehandle/methods/general_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
@@ -36,7 +36,7 @@ namespace Genie
 	}
 	
 	
-	static ssize_t buffer_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	static ssize_t buffer_pread( filehandle* file, char* buffer, size_t n, off_t offset )
 	{
 		buffer_extra& extra = *(buffer_extra*) file->extra();
 		
@@ -52,14 +52,14 @@ namespace Genie
 		return n;
 	}
 	
-	static off_t buffer_geteof( vfs::filehandle* file )
+	static off_t buffer_geteof( filehandle* file )
 	{
 		buffer_extra& extra = *(buffer_extra*) file->extra();
 		
 		return extra.size;
 	}
 	
-	static ssize_t buffer_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	static ssize_t buffer_pwrite( filehandle* file, const char* buffer, size_t n, off_t offset )
 	{
 		buffer_extra& extra = *(buffer_extra*) file->extra();
 		
@@ -80,7 +80,7 @@ namespace Genie
 		return n;
 	}
 	
-	static vfs::memory_mapping_ptr buffer_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
+	static memory_mapping_ptr buffer_mmap( filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{
 		buffer_extra& extra = *(buffer_extra*) that->extra();
 		
@@ -89,22 +89,22 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new vfs::memory_mapping( extra.base + offset, length, flags );
+		return new memory_mapping( extra.base + offset, length, flags );
 	}
 	
-	static const vfs::bstore_method_set buffer_bstore_methods =
+	static const bstore_method_set buffer_bstore_methods =
 	{
 		&buffer_pread,
 		&buffer_geteof,
 		&buffer_pwrite,
 	};
 	
-	static const vfs::general_method_set buffer_general_methods =
+	static const general_method_set buffer_general_methods =
 	{
 		&buffer_mmap,
 	};
 	
-	static const vfs::filehandle_method_set buffer_methods =
+	static const filehandle_method_set buffer_methods =
 	{
 		&buffer_bstore_methods,
 		NULL,
@@ -113,15 +113,15 @@ namespace Genie
 	};
 	
 	
-	vfs::filehandle_ptr open_buffer_file( const vfs::node&  file,
-	                                      int               flags,
-	                                      char*             addr,
-	                                      std::size_t       size )
+	filehandle_ptr open_buffer_file( const node&  file,
+	                                 int          flags,
+	                                 char*        addr,
+	                                 std::size_t  size )
 	{
-		vfs::filehandle* result = new vfs::filehandle( &file,
-		                                               flags,
-		                                               &buffer_methods,
-		                                               sizeof (buffer_extra) );
+		filehandle* result = new filehandle( &file,
+		                                     flags,
+		                                     &buffer_methods,
+		                                     sizeof (buffer_extra) );
 		
 		buffer_extra& extra = *(buffer_extra*) result->extra();
 		
