@@ -1,10 +1,10 @@
 /*
-	Genie/FS/sys/mac/rom.hh
-	-----------------------
+	sys_mac_rom.hh
+	--------------
 */
 
-#ifndef GENIE_FS_SYS_MAC_ROM_HH
-#define GENIE_FS_SYS_MAC_ROM_HH
+#ifndef MACVFS_FILE_SYSMACROM_HH
+#define MACVFS_FILE_SYSMACROM_HH
 
 // plus
 #include "plus/string.hh"

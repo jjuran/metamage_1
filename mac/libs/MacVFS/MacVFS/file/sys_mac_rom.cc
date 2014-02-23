@@ -1,9 +1,9 @@
 /*
-	Genie/FS/sys/mac/rom.cc
-	-----------------------
+	sys_mac_rom.cc
+	--------------
 */
 
-#include "Genie/FS/sys/mac/rom.hh"
+#include "MacVFS/file/sys_mac_rom.hh"
 
 // POSIX
 #include "sys/stat.h"

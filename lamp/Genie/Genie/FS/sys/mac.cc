@@ -8,6 +8,9 @@
 // vfs
 #include "vfs/node/types/fixed_dir.hh"
 
+// MacVFS
+#include "MacVFS/file/sys_mac_rom.hh"
+
 // relix-kernel
 #include "relix/config/color.hh"
 #include "relix/config/mini.hh"
@@ -26,7 +29,6 @@
 #include "Genie/FS/sys/mac/machine.hh"
 #include "Genie/FS/sys/mac/name.hh"
 #include "Genie/FS/sys/mac/proc.hh"
-#include "Genie/FS/sys/mac/rom.hh"
 #include "Genie/FS/sys/mac/soundin.hh"
 #include "Genie/FS/sys/mac/tempmem.hh"
 #include "Genie/FS/sys/mac/thng.hh"
