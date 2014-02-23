@@ -9,16 +9,16 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr New_FSTree_sys_mac_rom( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args );
+	vfs::node_ptr New_FSTree_sys_mac_rom( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args );
 	
 }
 

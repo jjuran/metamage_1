@@ -28,10 +28,11 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/types/buffer_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 
@@ -47,7 +48,7 @@ namespace Genie
 	static const off_t global_rom_size = mac::sys::gestalt( gestaltROMSize );
 	
 	
-	static off_t mac_rom_geteof( const FSTree* that )
+	static off_t mac_rom_geteof( const vfs::node* that )
 	{
 		return global_rom_size;
 	}
@@ -87,15 +88,15 @@ namespace Genie
 		&mac_rom_data_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_rom( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_rom( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		const mode_t mode = !TARGET_API_MAC_CARBON ? S_IFREG | 0400
 		                  : global_rom_size != 0   ? S_IFREG
 		                  :                          0;
 		
-		return new FSTree( parent, name, mode, &mac_rom_methods );
+		return new vfs::node( parent, name, mode, &mac_rom_methods );
 	}
 	
 }
