@@ -13,12 +13,12 @@
 #include "vfs/node_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	vfs::node_ptr New_FSTree_sys_mac_rom( const vfs::node*     parent,
-	                                      const plus::string&  name,
-	                                      const void*          args );
+	node_ptr new_sys_mac_rom( const node*          parent,
+	                          const plus::string&  name,
+	                          const void*          args );
 	
 }
 

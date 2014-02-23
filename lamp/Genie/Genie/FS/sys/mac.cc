@@ -126,7 +126,7 @@ namespace Genie
 		
 		{ "keys", &new_generated, (void*) &sys_mac_keys::Read },
 		
-		{ "rom", &New_FSTree_sys_mac_rom },
+		{ "rom", &vfs::new_sys_mac_rom },
 		
 		{ NULL, NULL }
 		

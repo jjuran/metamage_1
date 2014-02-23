@@ -31,13 +31,11 @@
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/types/buffer_file.hh"
-
-// Genie
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
@@ -48,20 +46,18 @@ namespace Genie
 	static const off_t global_rom_size = mac::sys::gestalt( gestaltROMSize );
 	
 	
-	static off_t mac_rom_geteof( const vfs::node* that )
+	static off_t mac_rom_geteof( const node* that )
 	{
 		return global_rom_size;
 	}
 	
-	static vfs::filehandle_ptr mac_rom_open( const vfs::node* that, int flags, mode_t mode )
+	static filehandle_ptr mac_rom_open( const node* that, int flags, mode_t mode )
 	{
 	#if TARGET_API_MAC_CARBON
 		
 		throw p7::errno_t( EPERM );
 		
 	#else
-		
-		using vfs::open_buffer_file;
 		
 		return open_buffer_file( *that,
 		                         flags,
@@ -88,15 +84,15 @@ namespace Genie
 		&mac_rom_data_methods
 	};
 	
-	vfs::node_ptr New_FSTree_sys_mac_rom( const vfs::node*     parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	node_ptr new_sys_mac_rom( const node*          parent,
+	                          const plus::string&  name,
+	                          const void*          args )
 	{
 		const mode_t mode = !TARGET_API_MAC_CARBON ? S_IFREG | 0400
 		                  : global_rom_size != 0   ? S_IFREG
 		                  :                          0;
 		
-		return new vfs::node( parent, name, mode, &mac_rom_methods );
+		return new node( parent, name, mode, &mac_rom_methods );
 	}
 	
 }
