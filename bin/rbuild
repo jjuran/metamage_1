@@ -1,0 +1,9 @@
+#!/bin/sh -e
+
+PATH="$PWD/scripts/nexus:$PWD/bin:$PATH"
+
+SDK_DIR=~/opt/relix/SDK
+
+export SDK_DIR
+
+A-line --cpp -j1 $*
