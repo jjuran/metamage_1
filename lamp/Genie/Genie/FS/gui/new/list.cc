@@ -133,14 +133,17 @@ namespace Genie
 	class List_data_Handle : public StreamHandle
 	{
 		public:
-			List_data_Handle( const vfs::node& file, int flags )
-			:
-				StreamHandle( &file, flags )
-			{
-			}
+			List_data_Handle( const vfs::node& file, int flags );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 	};
+	
+	
+	List_data_Handle::List_data_Handle( const vfs::node& file, int flags )
+	:
+		StreamHandle( &file, flags )
+	{
+	}
 	
 	ssize_t List_data_Handle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
