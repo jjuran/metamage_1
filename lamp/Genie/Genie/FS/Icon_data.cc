@@ -31,6 +31,7 @@
 // vfs
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 
 // relix-kernel
 #include "relix/config/color.hh"
@@ -418,11 +419,31 @@ namespace Genie
 	};
 	
 	
+	static ssize_t icondatawriter_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< IconDataWriterHandle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set icondatawriter_stream_methods =
+	{
+		NULL,
+		NULL,
+		&icondatawriter_write,
+	};
+	
+	static const vfs::filehandle_method_set icondatawriter_methods =
+	{
+		NULL,
+		NULL,
+		&icondatawriter_stream_methods,
+	};
+	
+	
 	IconDataWriterHandle::IconDataWriterHandle( const vfs::node&                         file,
 	                                            int                                      flags,
 	                                            const boost::intrusive_ptr< IconData >&  data )
 	:
-		StreamHandle( &file, flags ),
+		StreamHandle( &file, flags, &icondatawriter_methods ),
 		itsData( data )
 	{
 		ASSERT( itsData.get() != NULL );
