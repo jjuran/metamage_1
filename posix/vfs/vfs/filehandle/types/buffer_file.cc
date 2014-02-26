@@ -5,6 +5,9 @@
 
 #include "vfs/filehandle/types/buffer_file.hh"
 
+// Standard C
+#include <string.h>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
