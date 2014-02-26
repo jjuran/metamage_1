@@ -18,16 +18,11 @@
 #include <MacErrors.h>
 #endif
 
-// Iota
-#include "iota/strings.hh"
-
 // poseven
 #include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
-#include "vfs/node.hh"
-#include "vfs/functions/resolve_pathname.hh"
 
 
 namespace vfs
@@ -39,20 +34,13 @@ namespace vfs
 	class gestalt_device : public filehandle
 	{
 		public:
-			gestalt_device( int flags ) : filehandle( flags )
+			gestalt_device( const node& that, int flags ) : filehandle( &that, flags )
 			{
 			}
-			
-			node_ptr GetFile();
 			
 			void IOCtl( unsigned long request, int* argp );
 	};
 	
-	
-	node_ptr gestalt_device::GetFile()
-	{
-		return resolve_absolute_path( STR_LEN( "/dev/gestalt" ) );
-	}
 	
 	void gestalt_device::IOCtl( unsigned long request, int* argp )
 	{
@@ -78,7 +66,7 @@ namespace vfs
 	
 	filehandle_ptr open_gestalt( const node* that, int flags, mode_t mode )
 	{
-		return new gestalt_device( flags );
+		return new gestalt_device( *that, flags );
 	}
 	
 }
