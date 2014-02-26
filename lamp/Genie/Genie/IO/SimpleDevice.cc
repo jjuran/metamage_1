@@ -130,18 +130,20 @@ namespace Genie
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const vfs::node& file )
-			:
-				StreamHandle( &file, O_RDWR, &simpledevice_methods ),
-				io( FindDevice( file.name() ) )
-			{
-			}
+			SimpleDeviceHandle( const vfs::node& file );
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
+	
+	SimpleDeviceHandle::SimpleDeviceHandle( const vfs::node& file )
+	:
+		StreamHandle( &file, O_RDWR, &simpledevice_methods ),
+		io( FindDevice( file.name() ) )
+	{
+	}
 	
 	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
