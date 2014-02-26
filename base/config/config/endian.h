@@ -3,8 +3,8 @@
 	--------
 */
 
-#ifndef CONFIG_ENDIAN_HH
-#define CONFIG_ENDIAN_HH
+#ifndef CONFIG_ENDIAN_H
+#define CONFIG_ENDIAN_H
 
 
 #ifndef CONFIG_LITTLE_ENDIAN
@@ -26,4 +26,3 @@
 
 
 #endif
-
