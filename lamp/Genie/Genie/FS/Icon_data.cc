@@ -410,18 +410,23 @@ namespace Genie
 		public:
 			IconDataWriterHandle( const vfs::node&                         file,
 			                      int                                      flags,
-			                      const boost::intrusive_ptr< IconData >&  data )
-			:
-				StreamHandle( &file, flags ),
-				itsData( data )
-			{
-				ASSERT( itsData.get() != NULL );
-			}
+			                      const boost::intrusive_ptr< IconData >&  data );
 			
 			const FSTree* ViewKey();
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 	};
+	
+	
+	IconDataWriterHandle::IconDataWriterHandle( const vfs::node&                         file,
+	                                            int                                      flags,
+	                                            const boost::intrusive_ptr< IconData >&  data )
+	:
+		StreamHandle( &file, flags ),
+		itsData( data )
+	{
+		ASSERT( itsData.get() != NULL );
+	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
 	{
