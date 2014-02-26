@@ -14,16 +14,11 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
-// Genie
-#include "Genie/IO/Stream.hh"
-
 
 namespace vfs
 {
 	
 	namespace p7 = poseven;
-	
-	using namespace Genie;
 	
 	
 	ssize_t read( filehandle& that, char* buffer, size_t n )
@@ -51,7 +46,10 @@ namespace vfs
 			}
 		}
 		
-		return IOHandle_Cast< StreamHandle >( that ).Read( buffer, n );
+		p7::throw_errno( EPERM );
+		
+		// Not reached
+		return 0;
 	}
 	
 }
