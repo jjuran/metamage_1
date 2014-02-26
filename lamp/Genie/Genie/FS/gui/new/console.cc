@@ -45,6 +45,8 @@
 // vfs
 #include "vfs/file_descriptor.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
@@ -405,9 +407,40 @@ namespace Genie
 			void IOCtl( unsigned long request, int* argp );
 	};
 	
+	
+	static unsigned consoletty_poll( vfs::filehandle* that )
+	{
+		return static_cast< ConsoleTTYHandle& >( *that ).SysPoll();
+	}
+	
+	static ssize_t consoletty_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return static_cast< ConsoleTTYHandle& >( *that ).SysRead( buffer, n );
+	}
+	
+	static ssize_t consoletty_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< ConsoleTTYHandle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set consoletty_stream_methods =
+	{
+		&consoletty_poll,
+		&consoletty_read,
+		&consoletty_write,
+	};
+	
+	static const vfs::filehandle_method_set consoletty_methods =
+	{
+		NULL,
+		NULL,
+		&consoletty_stream_methods,
+	};
+	
+	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		StreamHandle( 0 ),
+		StreamHandle( 0, &consoletty_methods ),
 		itsTTYFile( &file ),
 		itsID( id )
 	{
