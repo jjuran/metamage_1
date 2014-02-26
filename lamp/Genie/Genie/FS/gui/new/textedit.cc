@@ -59,16 +59,19 @@ namespace Genie
 	class TextEdit_gate_Handle : public StreamHandle
 	{
 		public:
-			TextEdit_gate_Handle( const vfs::node& file, int flags )
-			:
-				StreamHandle( &file, flags )
-			{
-			}
+			TextEdit_gate_Handle( const vfs::node& file, int flags );
 			
 			unsigned SysPoll();
 			
 			ssize_t SysRead( char* buffer, size_t n_bytes );
 	};
+	
+	
+	TextEdit_gate_Handle::TextEdit_gate_Handle( const vfs::node& file, int flags )
+	:
+		StreamHandle( &file, flags )
+	{
+	}
 	
 	unsigned TextEdit_gate_Handle::SysPoll()
 	{
