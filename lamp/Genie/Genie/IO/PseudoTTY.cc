@@ -16,6 +16,9 @@
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
@@ -62,7 +65,7 @@ namespace Genie
 		
 		vfs::set_dynamic_element_by_id< PseudoTTYHandle >( index, slave_handle.get() );
 		
-		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( make_devpts( index ) ) );
+		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
 		
 		terminal->Attach( slave_handle.get() );
 		

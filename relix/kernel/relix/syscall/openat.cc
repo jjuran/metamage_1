@@ -23,6 +23,7 @@
 #include "relix/api/errno.hh"
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
+#include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
 
 
@@ -62,7 +63,7 @@ namespace relix
 			
 			if ( const bool following = (flags & O_NOFOLLOW) == 0 )
 			{
-				vfs::resolve_links_in_place( file );
+				vfs::resolve_links_in_place( *relix::root(), file );
 			}
 			else if ( is_symlink( *file ) )
 			{

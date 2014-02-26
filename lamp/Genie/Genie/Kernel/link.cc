@@ -20,6 +20,7 @@
 #include "vfs/primitives/hardlink.hh"
 
 // relix-kernel
+#include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
 
 // Genie
@@ -51,7 +52,7 @@ namespace Genie
 			
 			if ( const bool follow = flags & AT_SYMLINK_FOLLOW )
 			{
-				vfs::resolve_links_in_place( oldFile );
+				vfs::resolve_links_in_place( *relix::root(), oldFile );
 			}
 			
 			vfs::node_ptr newFile = relix::resolve_path_at( newdirfd, newpath );

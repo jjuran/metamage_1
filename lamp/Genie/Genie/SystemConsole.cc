@@ -23,6 +23,9 @@
 #include "vfs/primitives/symlink.hh"
 #include "vfs/primitives/touch.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 
 namespace Genie
 {
@@ -39,54 +42,56 @@ namespace Genie
 	
 	static void MakeWindow( vfs::filehandle& port_dir )
 	{
+		vfs::node_ptr root = relix::root();
+		
 		vfs::node_ptr port = port_dir.GetFile();
 		
 		const vfs::node& cwd = *port;
 		
-		vfs::node_ptr window = resolve_relative_path( STR_LEN( "window" ), cwd );
+		vfs::node_ptr window = resolve_relative_path( *root, STR_LEN( "window" ), cwd );
 		
 		if ( exists( *window ) )
 		{
 			return;
 		}
 		
-		vfs::node_ptr view = resolve_relative_path( STR_LEN( "view" ), cwd );
+		vfs::node_ptr view = resolve_relative_path( *root, STR_LEN( "view" ), cwd );
 		
 		if ( exists( *view ) )
 		{
 			remove( *view );
 			
-			view = resolve_relative_path( STR_LEN( "view" ), cwd );
+			view = resolve_relative_path( *root, STR_LEN( "view" ), cwd );
 		}
 		
-		Spew( *resolve_relative_path( STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
+		Spew( *resolve_relative_path( *root, STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
 		
-		Spew( *resolve_relative_path( STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
+		Spew( *resolve_relative_path( *root, STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 		
 		touch( *window );
 		
-		Spew( *resolve_relative_path( STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
-		Spew( *resolve_relative_path( STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
+		Spew( *resolve_relative_path( *root, STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( *resolve_relative_path( *root, STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
-		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/scrollframe" ) ), *view );
+		hardlink( *vfs::resolve_absolute_path( *root, STR_LEN( "/gui/new/scrollframe" ) ), *view );
 		
-		vfs::node_ptr subview = resolve_relative_path( STR_LEN( "v/view" ), cwd );
+		vfs::node_ptr subview = resolve_relative_path( *root, STR_LEN( "v/view" ), cwd );
 		
-		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/frame" ) ), *subview );
+		hardlink( *vfs::resolve_absolute_path( *root, STR_LEN( "/gui/new/frame" ) ), *subview );
 		
-		vfs::node_ptr subsubview = resolve_relative_path( STR_LEN( "v/v/view" ), cwd );
+		vfs::node_ptr subsubview = resolve_relative_path( *root, STR_LEN( "v/v/view" ), cwd );
 		
-		hardlink( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/textedit" ) ), *subsubview );
+		hardlink( *vfs::resolve_absolute_path( *root, STR_LEN( "/gui/new/textedit" ) ), *subsubview );
 		
-		symlink( *resolve_relative_path( STR_LEN( "v/target" ), cwd ), "v/v" );
+		symlink( *resolve_relative_path( *root, STR_LEN( "v/target" ), cwd ), "v/v" );
 		
-		Spew( *resolve_relative_path( STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
-		Spew( *resolve_relative_path( STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
+		Spew( *resolve_relative_path( *root, STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
+		Spew( *resolve_relative_path( *root, STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
 	}
 	
 	static vfs::node_ptr GetConsoleWindow()
 	{
-		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( STR_LEN( "/gui/new/port" ) ) );
+		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( *relix::root(), STR_LEN( "/gui/new/port" ) ) );
 		
 		MakeWindow( *the_port );
 		
@@ -95,7 +100,7 @@ namespace Genie
 	
 	static vfs::node_ptr GetConsoleText()
 	{
-		vfs::node_ptr text = resolve_relative_path( STR_LEN( "v/v/v/text" ), *GetConsoleWindow() );
+		vfs::node_ptr text = resolve_relative_path( *relix::root(), STR_LEN( "v/v/v/text" ), *GetConsoleWindow() );
 		
 		return text;
 	}

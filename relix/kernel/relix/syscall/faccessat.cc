@@ -18,6 +18,7 @@
 
 // relix
 #include "relix/api/errno.hh"
+#include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
 
 
@@ -37,7 +38,7 @@ namespace relix
 			
 			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
 			{
-				vfs::resolve_links_in_place( file );
+				vfs::resolve_links_in_place( *relix::root(), file );
 			}
 			
 			if ( !exists( *file ) )

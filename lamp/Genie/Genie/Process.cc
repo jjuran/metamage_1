@@ -63,7 +63,6 @@
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/functions/resolve_pathname.hh"
-#include "vfs/functions/root.hh"
 #include "vfs/primitives/open.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -73,6 +72,7 @@
 
 // relix-kernel
 #include "relix/api/getcwd.hh"
+#include "relix/api/root.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
@@ -478,7 +478,7 @@ namespace Genie
 				                          context.interpreterArg.c_str() );
 			}
 			
-			context.executable = resolve_pathname( context.interpreterPath, cwd );
+			context.executable = resolve_pathname( *relix::root(), context.interpreterPath, cwd );
 		}
 		else if ( type != 0 )
 		{
@@ -555,7 +555,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr open_device( const char* path, size_t length )
 	{
-		return open( *vfs::resolve_absolute_path( path, length ), O_RDWR, 0 );
+		return open( *vfs::resolve_absolute_path( *relix::root(), path, length ), O_RDWR, 0 );
 	}
 	
 	Process::Process( RootProcess ) 
@@ -773,9 +773,9 @@ namespace Genie
 		
 		vfs::node_ptr cwd = getcwd( get_process() );
 		
-		vfs::node_ptr programFile = resolve_pathname( path, *cwd );
+		vfs::node_ptr programFile = resolve_pathname( *relix::root(), path, *cwd );
 		
-		vfs::resolve_links_in_place( programFile );
+		vfs::resolve_links_in_place( *relix::root(), programFile );
 		
 		CheckProgramFile( programFile );
 		

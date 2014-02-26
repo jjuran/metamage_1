@@ -51,6 +51,7 @@
 #include "vfs/primitives/attach.hh"
 
 // relix
+#include "relix/api/root.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -764,7 +765,7 @@ namespace Genie
 		
 		path += gear::inscribe_unsigned_decimal( id );
 		
-		result->set_file( *vfs::resolve_absolute_path( path ) );
+		result->set_file( *vfs::resolve_absolute_path( *relix::root(), path ) );
 		
 		return result;
 	}

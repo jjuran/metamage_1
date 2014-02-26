@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void resolve_links_in_place( node_ptr& file );
+	void resolve_links_in_place( const node& root, node_ptr& file );
 	
 }
 
