@@ -18,6 +18,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/terminal_method_set.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 
@@ -39,6 +40,28 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static unsigned terminal_poll( vfs::filehandle* that )
+	{
+		return IOHandle_Cast< StreamHandle >( *that ).Poll();
+	}
+	
+	static ssize_t terminal_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return IOHandle_Cast< StreamHandle >( *that ).Read( buffer, n );
+	}
+	
+	static ssize_t terminal_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return IOHandle_Cast< StreamHandle >( *that ).Write( buffer, n );
+	}
+	
+	static const vfs::stream_method_set terminal_stream_methods =
+	{
+		&terminal_poll,
+		&terminal_read,
+		&terminal_write,
+	};
+	
 	static void terminal_hangup( vfs::filehandle* that )
 	{
 		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
@@ -55,7 +78,7 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
+		&terminal_stream_methods,
 		NULL,
 		&terminal_methods
 	};
