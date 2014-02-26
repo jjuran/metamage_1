@@ -47,6 +47,9 @@
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
@@ -602,7 +605,7 @@ namespace Genie
 	
 	vfs::node_ptr Get_sys_mac_vol_N( N::FSVolumeRefNum vRefNum )
 	{
-		vfs::node_ptr parent = vfs::resolve_absolute_path( STR_LEN( "/sys/mac/vol/list" ) );
+		vfs::node_ptr parent = vfs::resolve_absolute_path( *relix::root(), STR_LEN( "/sys/mac/vol/list" ) );
 		
 		const plus::string name = gear::inscribe_decimal( -vRefNum );
 		

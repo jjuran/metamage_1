@@ -7,10 +7,10 @@
 
 // vfs
 #include "vfs/filehandle.hh"
-#include "vfs/functions/root.hh"
 #include "vfs/primitives/opendir.hh"
 
 // relix
+#include "relix/api/root.hh"
 #include "relix/task/fd_map.hh"
 #include "relix/task/fs_info.hh"
 
@@ -20,7 +20,7 @@ namespace relix
 	
 	process_resources::process_resources()
 	:
-		its_fs_info( relix::fs_info::create( opendir( *vfs::root() ) ) ),
+		its_fs_info( relix::fs_info::create( opendir( *relix::root() ) ) ),
 		its_fd_map ( relix::fd_map::create() )
 	{
 	}

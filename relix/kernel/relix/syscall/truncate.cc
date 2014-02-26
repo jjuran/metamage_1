@@ -14,6 +14,7 @@
 // relix
 #include "relix/api/errno.hh"
 #include "relix/api/getcwd.hh"
+#include "relix/api/root.hh"
 
 
 namespace relix
@@ -23,9 +24,9 @@ namespace relix
 	{
 		try
 		{
-			vfs::node_ptr file = resolve_pathname( path, *getcwd() );
+			vfs::node_ptr file = resolve_pathname( *relix::root(), path, *getcwd() );
 			
-			vfs::resolve_links_in_place( file );
+			vfs::resolve_links_in_place( *relix::root(), file );
 			
 			seteof( *file, length );
 		}

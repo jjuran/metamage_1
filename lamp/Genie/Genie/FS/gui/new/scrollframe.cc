@@ -25,6 +25,9 @@
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/link_method_set.hh"
@@ -319,7 +322,7 @@ namespace Genie
 	{
 		const FSTree* view = that->owner();
 		
-		const vfs::node_ptr target = resolve_pathname( target_path, *view );
+		const vfs::node_ptr target = resolve_pathname( *relix::root(), target_path, *view );
 		
 		vfs::node_ptr delegate = lookup( *target, plus::string::null );
 		

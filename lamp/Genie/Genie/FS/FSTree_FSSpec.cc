@@ -64,9 +64,11 @@
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
-#include "vfs/functions/root.hh"
 #include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
+
+// relix-kernel
+#include "relix/api/root.hh"
 
 // Genie
 #include "Genie/BinaryImage.hh"
@@ -591,14 +593,14 @@ namespace Genie
 		
 		if ( extra.fsspec.vRefNum == root.vRefNum  &&  extra.fsspec.parID == root.dirID )
 		{
-			return vfs::root();
+			return relix::root();
 		}
 		
 		try
 		{
 			if ( extra.fsspec == GetUsersDirectory() / "\p" )
 			{
-				return vfs::root();
+				return relix::root();
 			}
 		}
 		catch ( ... )
@@ -761,7 +763,7 @@ namespace Genie
 		if ( const bool is_dir = hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
 			// Symlink to root directory
-			return vfs::root();
+			return relix::root();
 		}
 		else
 		{
@@ -773,7 +775,7 @@ namespace Genie
 			
 			if ( !target.empty() )
 			{
-				return resolve_pathname( target, *hfs_parent( that ) );
+				return resolve_pathname( *relix::root(), target, *hfs_parent( that ) );
 			}
 			else if ( is_alias )
 			{
@@ -827,7 +829,7 @@ namespace Genie
 		{
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
-			const vfs::node_ptr target = resolve_pathname( targetPath, *FSTreeFromFSDirSpec( linkParent ) );
+			const vfs::node_ptr target = resolve_pathname( *relix::root(), targetPath, *FSTreeFromFSDirSpec( linkParent ) );
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			
@@ -1199,12 +1201,12 @@ namespace Genie
 	
 }
 
-namespace vfs
+namespace relix
 {
 	
-	const node* root()
+	const vfs::node* root()
 	{
-		static node_ptr root = Genie::MakeFSRoot();
+		static vfs::node_ptr root = Genie::MakeFSRoot();
 		
 		return root.get();
 	}

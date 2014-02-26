@@ -53,6 +53,7 @@
 #include "vfs/primitives/open.hh"
 
 // relix
+#include "relix/api/root.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -489,7 +490,7 @@ namespace Genie
 	{
 		const FSTree* parent = that->owner();
 		
-		const vfs::node_ptr targeted_file = lookup( *resolve_pathname( target, *parent ), plus::string::null );
+		const vfs::node_ptr targeted_file = lookup( *resolve_pathname( *relix::root(), target, *parent ), plus::string::null );
 		
 		Ped::View* target_view = get_focusable_view( targeted_file.get() );
 		

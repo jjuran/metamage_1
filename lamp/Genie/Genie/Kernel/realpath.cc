@@ -24,6 +24,7 @@
 #include "vfs/functions/resolve_links_in_place.hh"
 
 // relix-kernel
+#include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
 
 // Genie
@@ -54,7 +55,7 @@ namespace Genie
 		{
 			FSTreePtr file = relix::resolve_path_at( dirfd, path );
 			
-			vfs::resolve_links_in_place( file );
+			vfs::resolve_links_in_place( *relix::root(), file );
 			
 			const bool is_mac = flags & REALPATH_OUTPUT_HFS;
 			

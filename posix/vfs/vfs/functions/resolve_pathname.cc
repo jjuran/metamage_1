@@ -21,7 +21,6 @@
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
-#include "vfs/functions/root.hh"
 #include "vfs/primitives/lookup.hh"
 
 
@@ -46,7 +45,8 @@ namespace vfs
 		return lookup( that, name );
 	}
 	
-	node_ptr resolve_relative_path( const char*  begin,
+	node_ptr resolve_relative_path( const node&  root,
+	                                const char*  begin,
 	                                std::size_t  length,
 	                                const node&  current )
 	{
@@ -63,7 +63,7 @@ namespace vfs
 		
 		while ( begin < end )
 		{
-			resolve_links_in_place( result );
+			resolve_links_in_place( root, result );
 			
 			ASSERT( *begin == '/' );
 			
@@ -90,7 +90,8 @@ namespace vfs
 	}
 	
 	
-	node_ptr resolve_absolute_path( const char*  begin,
+	node_ptr resolve_absolute_path( const node&  root,
+	                                const char*  begin,
 	                                std::size_t  length )
 	{
 		ASSERT( length != 0 );
@@ -103,38 +104,42 @@ namespace vfs
 		
 		length = end - begin;
 		
-		return length == 0 ? root()
-		                   : resolve_relative_path( begin, length, *root() );
+		return length == 0 ? &root
+		                   : resolve_relative_path( root, begin, length, root );
 	}
 	
-	node_ptr resolve_absolute_path( const plus::string& path )
+	node_ptr resolve_absolute_path( const node&          root,
+	                                const plus::string&  path )
 	{
-		return resolve_absolute_path( path.c_str(), path.length() );
+		return resolve_absolute_path( root, path.c_str(), path.length() );
 	}
 	
 	
-	node_ptr resolve_pathname( const char*  begin,
+	node_ptr resolve_pathname( const node&  root,
+	                           const char*  begin,
 	                           std::size_t  length,
 	                           const node&  current )
 	{
 		if ( const bool absolute = *begin == '/' )
 		{
-			return resolve_absolute_path( begin, length );
+			return resolve_absolute_path( root, begin, length );
 		}
 		
-		return resolve_relative_path( begin, length, current );
+		return resolve_relative_path( root, begin, length, current );
 	}
 	
-	node_ptr resolve_pathname( const char*  pathname,
+	node_ptr resolve_pathname( const node&  root,
+	                           const char*  pathname,
 	                           const node&  current )
 	{
-		return resolve_pathname( pathname, std::strlen( pathname ), current );
+		return resolve_pathname( root, pathname, std::strlen( pathname ), current );
 	}
 	
-	node_ptr resolve_pathname( const plus::string&  pathname,
+	node_ptr resolve_pathname( const node&          root,
+	                           const plus::string&  pathname,
 	                           const node&          current )
 	{
-		return resolve_pathname( pathname.data(), pathname.size(), current );
+		return resolve_pathname( root, pathname.data(), pathname.size(), current );
 	}
 	
 }

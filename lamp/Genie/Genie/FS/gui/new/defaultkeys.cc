@@ -25,6 +25,9 @@
 #include "vfs/primitives/resolve.hh"
 #include "vfs/primitives/touch.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 // Genie
 #include "Genie/FS/Views.hh"
 
@@ -56,7 +59,7 @@ namespace Genie
 		
 		vfs::node_ptr link = lookup( *window, name );
 		
-		vfs::node_ptr target = resolve( *link );
+		vfs::node_ptr target = resolve( *relix::root(), *link );
 		
 		touch( *target );
 	}

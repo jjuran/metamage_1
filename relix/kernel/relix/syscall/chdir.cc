@@ -21,6 +21,7 @@
 #include "relix/api/current_process.hh"
 #include "relix/api/errno.hh"
 #include "relix/api/getcwd.hh"
+#include "relix/api/root.hh"
 #include "relix/task/fs_info.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_resources.hh"
@@ -38,9 +39,9 @@ namespace relix
 				return set_errno( EINVAL );
 			}
 			
-			vfs::node_ptr new_cwd = resolve_pathname( pathname, *getcwd() );
+			vfs::node_ptr new_cwd = resolve_pathname( *relix::root(), pathname, *getcwd() );
 			
-			vfs::resolve_links_in_place( new_cwd );
+			vfs::resolve_links_in_place( *relix::root(), new_cwd );
 			
 			if ( !is_directory( *new_cwd ) )
 			{

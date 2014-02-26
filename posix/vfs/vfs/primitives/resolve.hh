@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	node_ptr resolve( const node& that );
+	node_ptr resolve( const node& root, const node& that );
 	
 }
 

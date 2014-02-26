@@ -23,6 +23,9 @@
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
+// relix-kernel
+#include "relix/api/root.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
@@ -82,7 +85,7 @@ namespace Genie
 	
 	static const FSTree* gui_port()
 	{
-		static vfs::node_ptr port = vfs::resolve_absolute_path( STR_LEN( "/gui/port" ) );
+		static vfs::node_ptr port = vfs::resolve_absolute_path( *relix::root(), STR_LEN( "/gui/port" ) );
 		
 		return port.get();
 	}
