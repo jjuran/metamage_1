@@ -1201,12 +1201,12 @@ namespace Genie
 	
 }
 
-namespace vfs
+namespace relix
 {
 	
-	const node* root()
+	const vfs::node* root()
 	{
-		static node_ptr root = Genie::MakeFSRoot();
+		static vfs::node_ptr root = Genie::MakeFSRoot();
 		
 		return root.get();
 	}
