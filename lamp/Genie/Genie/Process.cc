@@ -577,7 +577,7 @@ namespace Genie
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		itsProgramFile        ( vfs::root() ),
+		itsProgramFile        ( relix::root() ),
 		its_memory_data       ( root_memory_data() ),
 		itMayDumpCore         ()
 	{

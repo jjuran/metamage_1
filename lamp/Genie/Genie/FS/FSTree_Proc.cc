@@ -39,12 +39,12 @@
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
 #include "vfs/functions/pathname.hh"
-#include "vfs/functions/root.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // relix-kernel
 #include "relix/api/current_process.hh"
 #include "relix/api/getcwd.hh"
+#include "relix/api/root.hh"
 #include "relix/task/fd_map.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -175,7 +175,7 @@ namespace Genie
 				return process.ProgramFile();
 			
 			case 'r':  // root
-				return vfs::root();
+				return relix::root();
 			
 			default:
 				// not reached
