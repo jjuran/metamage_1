@@ -6,19 +6,14 @@
 #include "vfs/filehandle/primitives/poll.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
-// Genie
-#include "Genie/IO/Stream.hh"
-
 
 namespace vfs
 {
-	
-	using namespace Genie;
-	
 	
 	unsigned poll( filehandle& that )
 	{
@@ -30,17 +25,10 @@ namespace vfs
 				{
 					return stream_methods->poll( &that );
 				}
-				
-				return Poll_read | Poll_write;
-			}
-			
-			if ( methods->bstore_methods )
-			{
-				return Poll_read | Poll_write;
 			}
 		}
 		
-		return IOHandle_Cast< StreamHandle >( that ).Poll();
+		return Poll_read | Poll_write;
 	}
 	
 }
