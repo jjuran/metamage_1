@@ -23,6 +23,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/types/property_reader.hh"
 
 // Pedestal
@@ -139,9 +141,29 @@ namespace Genie
 	};
 	
 	
+	static ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< List_data_Handle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set listdata_stream_methods =
+	{
+		NULL,
+		NULL,
+		&listdata_write,
+	};
+	
+	static const vfs::filehandle_method_set listdata_methods =
+	{
+		NULL,
+		NULL,
+		&listdata_stream_methods,
+	};
+	
+	
 	List_data_Handle::List_data_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( &file, flags )
+		StreamHandle( &file, flags, &listdata_methods )
 	{
 	}
 	
