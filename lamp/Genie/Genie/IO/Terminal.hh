@@ -23,11 +23,14 @@ namespace Genie
 		private:
 			vfs::filehandle_ptr  its_tty;
 			pid_t                its_process_group_id;
+			bool                 it_is_disconnected;
 		
 		public:
 			TerminalHandle( const vfs::node& tty_file );
 			
 			~TerminalHandle();
+			
+			bool disconnected() const  { return it_is_disconnected; }
 			
 			void Attach( vfs::filehandle* target )  { its_tty = target; }
 			

@@ -44,6 +44,11 @@ namespace Genie
 	{
 		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
 		
+		if ( terminal.disconnected() )
+		{
+			p7::throw_errno( EIO );
+		}
+		
 		vfs::filehandle* tty = terminal.Next();
 		
 		if ( tty == NULL )
@@ -100,7 +105,8 @@ namespace Genie
 	TerminalHandle::TerminalHandle( const vfs::node& tty_file )
 	:
 		vfs::filehandle     ( &tty_file, O_RDWR, &filehandle_methods ),
-		its_process_group_id( no_pgid  )
+		its_process_group_id( no_pgid  ),
+		it_is_disconnected  ( false )
 	{
 	}
 	
@@ -187,10 +193,7 @@ namespace Genie
 	
 	void TerminalHandle::Disconnect()
 	{
-		if ( StreamHandle* tty = IOHandle_Cast< StreamHandle >( Next() ) )
-		{
-			tty->Disconnect();
-		}
+		it_is_disconnected = true;
 		
 		const pid_t pgid = vfs::getpgrp( *this );
 		
