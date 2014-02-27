@@ -16,11 +16,6 @@ namespace vfs
 			return this;
 		}
 		
-		if ( filehandle* next = Next() )
-		{
-			return next->GetBaseForCast( test );
-		}
-		
 		return NULL;
 	}
 	
