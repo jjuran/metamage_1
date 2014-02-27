@@ -44,8 +44,6 @@ namespace vfs
 			void*                         its_extra;
 			filehandle_destructor         its_destructor;
 			
-			virtual filehandle* Next() const  { return NULL; }
-			
 			// non-copyable
 			filehandle           ( const filehandle& );
 			filehandle& operator=( const filehandle& );
