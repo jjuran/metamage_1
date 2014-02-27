@@ -12,11 +12,13 @@
 #include "plus/serialize.hh"
 
 // vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
@@ -118,7 +120,7 @@ namespace Genie
 		
 		while ( params.itIsInterlocked )
 		{
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		return 0;

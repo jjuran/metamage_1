@@ -45,6 +45,7 @@
 #endif
 
 // vfs
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
@@ -356,7 +357,7 @@ namespace Genie
 				}
 			}
 			
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Read( itsInputRefNum, data, byteCount );
@@ -366,7 +367,7 @@ namespace Genie
 	{
 		while ( Preempted() )
 		{
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Write( itsOutputRefNum, data, byteCount );

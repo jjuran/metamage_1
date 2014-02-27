@@ -45,6 +45,7 @@
 // vfs
 #include "vfs/file_descriptor.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
@@ -58,6 +59,7 @@
 
 // Genie
 #include "Genie/ProcessList.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
@@ -532,7 +534,7 @@ namespace Genie
 				break;
 			}
 			
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		if ( params.itHasReceivedEOF )
