@@ -38,7 +38,7 @@ namespace Genie
 			
 			pid_t getpgrp() const  { return its_process_group_id; }
 			
-			void setpgrp( pid_t pgid )  { its_process_group_id = pgid; }
+			void setpgrp( pid_t pgid );
 			
 			void IOCtl( unsigned long request, int* argp );
 			
