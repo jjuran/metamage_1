@@ -61,17 +61,17 @@ namespace Genie
 	
 	static unsigned terminal_poll( vfs::filehandle* that )
 	{
-		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).Poll();
+		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).SysPoll();
 	}
 	
 	static ssize_t terminal_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).Read( buffer, n );
+		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).SysRead( buffer, n );
 	}
 	
 	static ssize_t terminal_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).Write( buffer, n );
+		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).SysWrite( buffer, n );
 	}
 	
 	static const vfs::stream_method_set terminal_stream_methods =
