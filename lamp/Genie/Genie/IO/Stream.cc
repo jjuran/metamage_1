@@ -62,25 +62,5 @@ namespace Genie
 		try_again( is_nonblocking( *this ) );
 	}
 	
-	unsigned int StreamHandle::Poll()
-	{
-		return SysPoll();
-	}
-	
-	ssize_t StreamHandle::Read( char* data, std::size_t byteCount )
-	{
-		if ( data == NULL )
-		{
-			p7::throw_errno( EFAULT );
-		}
-		
-		return SysRead( data, byteCount );
-	}
-	
-	ssize_t StreamHandle::Write( const char* data, std::size_t byteCount )
-	{
-		return SysWrite( data, byteCount );
-	}
-	
 }
 
