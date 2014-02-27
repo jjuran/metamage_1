@@ -166,7 +166,7 @@ namespace vfs
 	{
 		if ( filehandle* next = Next() )
 		{
-			ioctl( next, request, argp );
+			ioctl( *next, request, argp );
 			
 			return;
 		}

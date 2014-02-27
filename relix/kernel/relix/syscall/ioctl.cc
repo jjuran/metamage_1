@@ -39,7 +39,7 @@ namespace relix
 			}
 			else
 			{
-				ioctl( &*file.handle, request, argp );
+				ioctl( *file.handle, request, argp );
 			}
 		}
 		catch ( ... )

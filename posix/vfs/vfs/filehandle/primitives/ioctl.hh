@@ -13,7 +13,7 @@
 namespace vfs
 {
 	
-	void ioctl( filehandle* that, unsigned long request, int* argp );
+	void ioctl( filehandle& that, unsigned long request, int* argp );
 	
 }
 
