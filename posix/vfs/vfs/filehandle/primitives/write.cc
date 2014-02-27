@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
@@ -15,14 +18,11 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/append.hh"
 
-// Genie
-#include "Genie/IO/Stream.hh"
-
 
 namespace vfs
 {
 	
-	using namespace Genie;
+	namespace p7 = poseven;
 	
 	
 	ssize_t write( filehandle& that, const char* buffer, size_t n )
@@ -53,7 +53,10 @@ namespace vfs
 			}
 		}
 		
-		return IOHandle_Cast< StreamHandle >( that ).Write( buffer, n );
+		p7::throw_errno( EPERM );
+		
+		// Not reached
+		return 0;
 	}
 	
 }
