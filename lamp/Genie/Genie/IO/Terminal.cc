@@ -121,6 +121,11 @@ namespace Genie
 	void TerminalHandle::setpgrp( pid_t pgid )
 	{
 		its_process_group_id = pgid;
+		
+		if ( it_is_disconnected )
+		{
+			relix::signal_process_group( SIGHUP, pgid );
+		}
 	}
 	
 	static void CheckControllingTerminal( const vfs::filehandle* ctty, const TerminalHandle& tty )
