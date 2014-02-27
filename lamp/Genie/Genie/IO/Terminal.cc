@@ -48,11 +48,6 @@ namespace Genie
 	{
 		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
 		
-		if ( terminal.disconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
 		vfs::filehandle* tty = terminal.Next();
 		
 		if ( tty == NULL )
