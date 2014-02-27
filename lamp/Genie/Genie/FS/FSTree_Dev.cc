@@ -77,11 +77,11 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static vfs::filehandle_ptr open( const FSTree* that, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
 	template < class Mode, class Port >
-	vfs::filehandle_ptr dev_Serial< Mode, Port >::open( const FSTree* that, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_Serial< Mode, Port >::open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool nonblocking = flags & O_NONBLOCK;
 		
@@ -110,7 +110,7 @@ namespace Genie
 	class ConsoleTTYHandle;
 	
 	
-	static vfs::filehandle_ptr simple_device_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr simple_device_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return GetSimpleDeviceHandle( *that );
 	}
@@ -135,10 +135,10 @@ namespace Genie
 	{
 		static const mode_t perm = S_IRUSR | S_IWUSR;
 		
-		static vfs::filehandle_ptr open( const FSTree* that, int flags, mode_t mode );
+		static vfs::filehandle_ptr open( const vfs::node* that, int flags, mode_t mode );
 	};
 	
-	vfs::filehandle_ptr dev_tty::open( const FSTree* that, int flags, mode_t mode )
+	vfs::filehandle_ptr dev_tty::open( const vfs::node* that, int flags, mode_t mode )
 	{
 		vfs::filehandle* tty = relix::current_process().get_process_group().get_session().get_ctty().get();
 		
@@ -178,21 +178,21 @@ namespace Genie
 	
 	
 	template < class Opener >
-	static FSTreePtr BasicDevice_Factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr BasicDevice_Factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		return new FSTree( parent,
-		                   name,
-		                   S_IFCHR | Opener::perm,
-		                   &basic_device< Opener >::node_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFCHR | Opener::perm,
+		                      &basic_device< Opener >::node_methods );
 	}
 	
-	static FSTreePtr SimpleDevice_Factory( const FSTree*        parent,
-	                                       const plus::string&  name,
-	                                       const void*          args )
+	static vfs::node_ptr SimpleDevice_Factory( const vfs::node*     parent,
+	                                           const plus::string&  name,
+	                                           const void*          args )
 	{
-		return new FSTree( parent, name, S_IFCHR | 0600, &simple_device_methods );
+		return new vfs::node( parent, name, S_IFCHR | 0600, &simple_device_methods );
 	}
 	
 	using vfs::dynamic_group_factory;
