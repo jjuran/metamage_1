@@ -44,6 +44,10 @@
 #include "ClassicToolbox/Serial.hh"
 #endif
 
+// vfs
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
+
 // Genie
 #include "Genie/api/yield.hh"
 
@@ -102,6 +106,37 @@ namespace Genie
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
+	
+	
+	static unsigned serial_poll( vfs::filehandle* that )
+	{
+		return static_cast< SerialDeviceHandle& >( *that ).SysPoll();
+	}
+	
+	static ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return static_cast< SerialDeviceHandle& >( *that ).SysRead( buffer, n );
+	}
+	
+	static ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< SerialDeviceHandle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set serial_stream_methods =
+	{
+		&serial_poll,
+		&serial_read,
+		&serial_write,
+	};
+	
+	static const vfs::filehandle_method_set serial_methods =
+	{
+		NULL,
+		NULL,
+		&serial_stream_methods,
+	};
+	
 	
 	struct SerialDevicePair
 	{
@@ -246,7 +281,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
-		StreamHandle( O_RDWR ),
+		StreamHandle( O_RDWR, &serial_methods ),
 		itsPortName( portName ),
 		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
 		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
@@ -266,7 +301,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
 	:
-		StreamHandle( O_RDWR ),
+		StreamHandle( O_RDWR, &serial_methods ),
 		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
@@ -276,7 +311,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
 	:
-		StreamHandle( O_RDWR ),
+		StreamHandle( O_RDWR, &serial_methods ),
 		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),

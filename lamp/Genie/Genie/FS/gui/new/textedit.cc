@@ -12,6 +12,8 @@
 #include "plus/serialize.hh"
 
 // vfs
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -59,16 +61,43 @@ namespace Genie
 	class TextEdit_gate_Handle : public StreamHandle
 	{
 		public:
-			TextEdit_gate_Handle( const vfs::node& file, int flags )
-			:
-				StreamHandle( &file, flags )
-			{
-			}
+			TextEdit_gate_Handle( const vfs::node& file, int flags );
 			
 			unsigned SysPoll();
 			
 			ssize_t SysRead( char* buffer, size_t n_bytes );
 	};
+	
+	
+	static unsigned texteditgate_poll( vfs::filehandle* that )
+	{
+		return static_cast< TextEdit_gate_Handle& >( *that ).SysPoll();
+	}
+	
+	static ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return static_cast< TextEdit_gate_Handle& >( *that ).SysRead( buffer, n );
+	}
+	
+	static const vfs::stream_method_set texteditgate_stream_methods =
+	{
+		&texteditgate_poll,
+		&texteditgate_read,
+	};
+	
+	static const vfs::filehandle_method_set texteditgate_methods =
+	{
+		NULL,
+		NULL,
+		&texteditgate_stream_methods,
+	};
+	
+	
+	TextEdit_gate_Handle::TextEdit_gate_Handle( const vfs::node& file, int flags )
+	:
+		StreamHandle( &file, flags, &texteditgate_methods )
+	{
+	}
 	
 	unsigned TextEdit_gate_Handle::SysPoll()
 	{

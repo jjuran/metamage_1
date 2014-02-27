@@ -18,6 +18,7 @@
 // vfs
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 #include "vfs/filehandle/primitives/conveying.hh"
 
@@ -77,6 +78,21 @@ namespace Genie
 	};
 	
 	
+	static unsigned pairedsocket_poll( vfs::filehandle* sock )
+	{
+		return static_cast< PairedSocket& >( *sock ).SysPoll();
+	}
+	
+	static ssize_t pairedsocket_read( vfs::filehandle* sock, char* buffer, size_t n )
+	{
+		return static_cast< PairedSocket& >( *sock ).SysRead( buffer, n );
+	}
+	
+	static ssize_t pairedsocket_write( vfs::filehandle* sock, const char* buffer, size_t n )
+	{
+		return static_cast< PairedSocket& >( *sock ).SysWrite( buffer, n );
+	}
+	
 	static void pairedsocket_shutdown( vfs::filehandle* sock, int how )
 	{
 		if ( how != SHUT_WR )
@@ -95,6 +111,13 @@ namespace Genie
 		return static_cast< PairedSocket& >( *sock ).conveying();
 	}
 	
+	static const vfs::stream_method_set pairedsocket_stream_methods =
+	{
+		&pairedsocket_poll,
+		&pairedsocket_read,
+		&pairedsocket_write,
+	};
+	
 	static const vfs::socket_method_set pairedsocket_socket_methods =
 	{
 		NULL,
@@ -111,6 +134,7 @@ namespace Genie
 	{
 		NULL,
 		&pairedsocket_socket_methods,
+		&pairedsocket_stream_methods,
 	};
 	
 	

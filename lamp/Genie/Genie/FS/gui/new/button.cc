@@ -32,6 +32,8 @@
 #include "Pedestal/PushButton.hh"
 
 // vfs
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -235,9 +237,34 @@ namespace Genie
 			ssize_t SysRead( char* buffer, std::size_t byteCount );
 	};
 	
+	
+	static unsigned buttonstream_poll( vfs::filehandle* that )
+	{
+		return static_cast< Button_socket_Handle& >( *that ).SysPoll();
+	}
+	
+	static ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return static_cast< Button_socket_Handle& >( *that ).SysRead( buffer, n );
+	}
+	
+	static const vfs::stream_method_set buttonstream_stream_methods =
+	{
+		&buttonstream_poll,
+		&buttonstream_read,
+	};
+	
+	static const vfs::filehandle_method_set buttonstream_methods =
+	{
+		NULL,
+		NULL,
+		&buttonstream_stream_methods,
+	};
+	
+	
 	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( &file, flags ),
+		StreamHandle( &file, flags, &buttonstream_methods ),
 		itsSeed( gButtonMap[ file.owner() ].seed )
 	{
 	}

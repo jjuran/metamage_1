@@ -13,6 +13,8 @@
 
 // vfs
 #include "vfs/filehandle/functions/nonblocking.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
@@ -28,6 +30,36 @@
 
 namespace Genie
 {
+	
+	static unsigned pseudotty_poll( vfs::filehandle* that )
+	{
+		return static_cast< PseudoTTYHandle& >( *that ).SysPoll();
+	}
+	
+	static ssize_t pseudotty_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return static_cast< PseudoTTYHandle& >( *that ).SysRead( buffer, n );
+	}
+	
+	static ssize_t pseudotty_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< PseudoTTYHandle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set pseudotty_stream_methods =
+	{
+		&pseudotty_poll,
+		&pseudotty_read,
+		&pseudotty_write,
+	};
+	
+	static const vfs::filehandle_method_set pseudotty_methods =
+	{
+		NULL,
+		NULL,
+		&pseudotty_stream_methods,
+	};
+	
 	
 	static inline vfs::dynamic_group& GetPseudoTTYMap()
 	{
@@ -79,7 +111,7 @@ namespace Genie
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 			                          boost::intrusive_ptr< plus::conduit >  input,
 			                          boost::intrusive_ptr< plus::conduit >  output )
-	: StreamHandle( O_RDWR ),
+	: StreamHandle( O_RDWR, &pseudotty_methods ),
 	  itsID( id ),
 	  itsInput( input ),
 	  itsOutput( output )

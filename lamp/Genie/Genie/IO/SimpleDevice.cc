@@ -21,6 +21,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/mmap/functions/map_anonymous.hh"
 
 // Genie
@@ -115,14 +116,6 @@ namespace Genie
 		&devzero_mmap,
 	};
 	
-	static const vfs::filehandle_method_set simpledevice_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		&devzero_general_methods,
-	};
-	
 	
 	class SimpleDeviceHandle : public StreamHandle
 	{
@@ -130,18 +123,46 @@ namespace Genie
 			const DeviceIOSpec& io;
 		
 		public:
-			SimpleDeviceHandle( const vfs::node& file )
-			:
-				StreamHandle( &file, O_RDWR, &simpledevice_methods ),
-				io( FindDevice( file.name() ) )
-			{
-			}
+			SimpleDeviceHandle( const vfs::node& file );
 			
 			ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
+	
+	static ssize_t simpledevice_read( vfs::filehandle* that, char* buffer, size_t n )
+	{
+		return static_cast< SimpleDeviceHandle& >( *that ).SysRead( buffer, n );
+	}
+	
+	static ssize_t simpledevice_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< SimpleDeviceHandle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set simpledevice_stream_methods =
+	{
+		NULL,
+		&simpledevice_read,
+		&simpledevice_write,
+	};
+	
+	static const vfs::filehandle_method_set simpledevice_methods =
+	{
+		NULL,
+		NULL,
+		&simpledevice_stream_methods,
+		&devzero_general_methods,
+	};
+	
+	
+	SimpleDeviceHandle::SimpleDeviceHandle( const vfs::node& file )
+	:
+		StreamHandle( &file, O_RDWR, &simpledevice_methods ),
+		io( FindDevice( file.name() ) )
+	{
+	}
 	
 	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{

@@ -23,6 +23,8 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/types/property_reader.hh"
 
 // Pedestal
@@ -133,14 +135,37 @@ namespace Genie
 	class List_data_Handle : public StreamHandle
 	{
 		public:
-			List_data_Handle( const vfs::node& file, int flags )
-			:
-				StreamHandle( &file, flags )
-			{
-			}
+			List_data_Handle( const vfs::node& file, int flags );
 			
 			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
 	};
+	
+	
+	static ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n )
+	{
+		return static_cast< List_data_Handle& >( *that ).SysWrite( buffer, n );
+	}
+	
+	static const vfs::stream_method_set listdata_stream_methods =
+	{
+		NULL,
+		NULL,
+		&listdata_write,
+	};
+	
+	static const vfs::filehandle_method_set listdata_methods =
+	{
+		NULL,
+		NULL,
+		&listdata_stream_methods,
+	};
+	
+	
+	List_data_Handle::List_data_Handle( const vfs::node& file, int flags )
+	:
+		StreamHandle( &file, flags, &listdata_methods )
+	{
+	}
 	
 	ssize_t List_data_Handle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
