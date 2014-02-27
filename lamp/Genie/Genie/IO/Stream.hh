@@ -25,12 +25,6 @@ namespace Genie
 			
 			virtual ~StreamHandle();
 			
-			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
-			
-			virtual ssize_t SysRead( char* data, std::size_t byteCount );
-			
-			virtual ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
 			void TryAgainLater() const;
 	};
 	
