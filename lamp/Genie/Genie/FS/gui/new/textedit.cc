@@ -107,7 +107,7 @@ namespace Genie
 		
 		const bool readable = !params.itIsInterlocked;
 		
-		return readable * kPollRead | kPollWrite;
+		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
 	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )

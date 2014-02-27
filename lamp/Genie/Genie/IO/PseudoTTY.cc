@@ -128,7 +128,7 @@ namespace Genie
 	
 	unsigned int PseudoTTYHandle::SysPoll()
 	{
-		return (itsInput->is_readable() ? kPollRead : 0) | kPollWrite;
+		return (itsInput->is_readable() ? vfs::Poll_read : 0) | vfs::Poll_write;
 	}
 	
 	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )

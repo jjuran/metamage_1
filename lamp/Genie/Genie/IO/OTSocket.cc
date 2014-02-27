@@ -380,7 +380,7 @@ namespace Genie
 			canRead = ::OTCountDataBytes( itsEndpoint, &count ) == noErr;
 		}
 		
-		return (canRead ? kPollRead : 0) | kPollWrite;
+		return (canRead ? vfs::Poll_read : 0) | vfs::Poll_write;
 	}
 	
 	ssize_t OTSocket::SysRead( char* data, std::size_t byteCount )

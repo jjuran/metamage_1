@@ -472,9 +472,9 @@ namespace Genie
 		
 		const bool readable = (params.itsStartOfInput < size  &&  s[ size - 1 ] == '\n')  ||  params.itHasReceivedEOF;
 		
-		int readability = readable ? kPollRead : 0;
+		int readability = readable ? vfs::Poll_read : 0;
 		
-		return readability | kPollWrite;
+		return readability | vfs::Poll_write;
 	}
 	
 	static void check_for_truncation( size_t               text_size,

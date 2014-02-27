@@ -331,8 +331,8 @@ namespace Genie
 		bool readable = unblocked  &&  N::SerGetBuf( itsInputRefNum ) > 0;
 		bool writable = unblocked;
 		
-		unsigned readability = readable * kPollRead;
-		unsigned writability = writable * kPollWrite;
+		unsigned readability = readable * vfs::Poll_read;
+		unsigned writability = writable * vfs::Poll_write;
 		
 		return readability | writability;
 	}

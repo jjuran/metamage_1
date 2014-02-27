@@ -55,8 +55,8 @@ namespace Genie
 			
 			unsigned int SysPoll()
 			{
-				return   kPollRead  * itsInput->is_readable()
-				       | kPollWrite * itsOutput->is_writable();
+				return   vfs::Poll_read  * itsInput->is_readable()
+				       | vfs::Poll_write * itsOutput->is_writable();
 			}
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )

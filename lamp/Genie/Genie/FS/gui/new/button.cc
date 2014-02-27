@@ -279,7 +279,7 @@ namespace Genie
 		                      || !it->installed
 		                      || it->seed != itsSeed;
 		
-		return readable * kPollRead | kPollWrite;
+		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
