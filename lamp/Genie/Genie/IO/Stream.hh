@@ -19,9 +19,6 @@ namespace Genie
 	
 	class StreamHandle : public IOHandle
 	{
-		private:
-			bool              itHasBeenDisconnected;
-		
 		public:
 			StreamHandle( int                                flags,
 			              const vfs::filehandle_method_set*  methods = NULL );
@@ -39,10 +36,6 @@ namespace Genie
 			virtual ssize_t SysRead( char* data, std::size_t byteCount );
 			
 			virtual ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
-			void Disconnect()  { itHasBeenDisconnected = true; }
-			
-			bool IsDisconnected() const  { return itHasBeenDisconnected; }
 			
 			void TryAgainLater() const;
 			
