@@ -64,40 +64,5 @@ namespace Genie
 		try_again( is_nonblocking( *this ) );
 	}
 	
-	unsigned int StreamHandle::Poll()
-	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
-		return SysPoll();
-	}
-	
-	ssize_t StreamHandle::Read( char* data, std::size_t byteCount )
-	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
-		if ( data == NULL )
-		{
-			p7::throw_errno( EFAULT );
-		}
-		
-		return SysRead( data, byteCount );
-	}
-	
-	ssize_t StreamHandle::Write( const char* data, std::size_t byteCount )
-	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
-		return SysWrite( data, byteCount );
-	}
-	
 }
 

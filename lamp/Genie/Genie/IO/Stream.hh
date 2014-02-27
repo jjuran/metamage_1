@@ -45,12 +45,6 @@ namespace Genie
 			bool IsDisconnected() const  { return itHasBeenDisconnected; }
 			
 			void TryAgainLater() const;
-			
-			unsigned int Poll();
-			
-			ssize_t Read( char* data, std::size_t byteCount );
-			
-			ssize_t Write( const char* data, std::size_t byteCount );
 	};
 	
 	template <> struct IOHandle_Downcast_Traits< StreamHandle >
