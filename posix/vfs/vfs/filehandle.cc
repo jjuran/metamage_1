@@ -26,7 +26,6 @@
 #include "vfs/node.hh"
 #include "vfs/node/types/anonymous.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
-#include "vfs/filehandle/primitives/ioctl.hh"
 
 
 #ifndef O_EXEC
@@ -164,13 +163,6 @@ namespace vfs
 	
 	void filehandle::IOCtl( unsigned long request, int* argp )
 	{
-		if ( filehandle* next = Next() )
-		{
-			ioctl( *next, request, argp );
-			
-			return;
-		}
-		
 		p7::throw_errno( EINVAL );
 	}
 	

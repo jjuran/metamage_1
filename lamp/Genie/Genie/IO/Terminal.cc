@@ -20,6 +20,7 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/terminal_method_set.hh"
+#include "vfs/filehandle/primitives/ioctl.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 
 // relix
@@ -40,19 +41,33 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	static vfs::filehandle& get_tty( vfs::filehandle* that )
+	{
+		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
+		
+		vfs::filehandle* tty = terminal.Next();
+		
+		if ( tty == NULL )
+		{
+			p7::throw_errno( ENXIO );
+		}
+		
+		return *tty;
+	}
+	
 	static unsigned terminal_poll( vfs::filehandle* that )
 	{
-		return IOHandle_Cast< StreamHandle >( *that ).Poll();
+		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).Poll();
 	}
 	
 	static ssize_t terminal_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return IOHandle_Cast< StreamHandle >( *that ).Read( buffer, n );
+		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).Read( buffer, n );
 	}
 	
 	static ssize_t terminal_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return IOHandle_Cast< StreamHandle >( *that ).Write( buffer, n );
+		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).Write( buffer, n );
 	}
 	
 	static const vfs::stream_method_set terminal_stream_methods =
@@ -166,7 +181,13 @@ namespace Genie
 				break;
 			
 			default:
-				IOHandle::IOCtl( request, argp );
+				if ( its_tty.get() == NULL )
+				{
+					p7::throw_errno( EINVAL );
+				}
+				
+				ioctl( *its_tty, request, argp );
+				
 				break;
 		};
 	}

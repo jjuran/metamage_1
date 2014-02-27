@@ -23,8 +23,6 @@ namespace Genie
 		private:
 			vfs::filehandle_ptr  its_tty;
 			pid_t                its_process_group_id;
-			
-			vfs::filehandle* Next() const  { return its_tty.get(); }
 		
 		public:
 			TerminalHandle( const vfs::node& tty_file );
@@ -32,6 +30,8 @@ namespace Genie
 			~TerminalHandle();
 			
 			void Attach( vfs::filehandle* target )  { its_tty = target; }
+			
+			vfs::filehandle* Next() const  { return its_tty.get(); }
 			
 			pid_t getpgrp() const  { return its_process_group_id; }
 			
