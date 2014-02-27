@@ -6,12 +6,8 @@
 #ifndef GENIE_IO_STREAM_HH
 #define GENIE_IO_STREAM_HH
 
-// POSIX
-#include "errno.h"
-
 // Genie
 #include "Genie/IO/Base.hh"
-#include "Genie/IO/IOHandle_Cast.hh"
 
 
 namespace Genie
@@ -32,8 +28,6 @@ namespace Genie
 			
 			virtual ~StreamHandle();
 			
-			bool IsStream() const  { return true; }
-			
 			virtual unsigned int SysPoll()  { return kPollRead | kPollWrite; }
 			
 			virtual ssize_t SysRead( char* data, std::size_t byteCount );
@@ -51,13 +45,6 @@ namespace Genie
 			ssize_t Read( char* data, std::size_t byteCount );
 			
 			ssize_t Write( const char* data, std::size_t byteCount );
-	};
-	
-	template <> struct IOHandle_Downcast_Traits< StreamHandle >
-	{
-		static IOHandle::Test GetTest()  { return &IOHandle::IsStream; }
-		
-		static int GetError( IOHandle& handle )  { return handle.IsDirectory() ? EISDIR : EINVAL; }
 	};
 	
 }
