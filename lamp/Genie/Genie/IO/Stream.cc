@@ -27,8 +27,7 @@ namespace Genie
 	StreamHandle::StreamHandle( int                                flags,
 	                            const vfs::filehandle_method_set*  methods )
 	:
-		IOHandle( flags, methods ),
-		itHasBeenDisconnected()
+		IOHandle( flags, methods )
 	{
 	}
 	
@@ -36,8 +35,7 @@ namespace Genie
 	                            int                                flags,
 	                            const vfs::filehandle_method_set*  methods )
 	:
-		vfs::filehandle( file, flags, methods ),
-		itHasBeenDisconnected()
+		vfs::filehandle( file, flags, methods )
 	{
 	}
 	
@@ -66,21 +64,11 @@ namespace Genie
 	
 	unsigned int StreamHandle::Poll()
 	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
 		return SysPoll();
 	}
 	
 	ssize_t StreamHandle::Read( char* data, std::size_t byteCount )
 	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
 		if ( data == NULL )
 		{
 			p7::throw_errno( EFAULT );
@@ -91,11 +79,6 @@ namespace Genie
 	
 	ssize_t StreamHandle::Write( const char* data, std::size_t byteCount )
 	{
-		if ( IsDisconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
 		return SysWrite( data, byteCount );
 	}
 	
