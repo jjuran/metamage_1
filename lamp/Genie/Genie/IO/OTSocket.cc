@@ -34,6 +34,8 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -52,7 +54,6 @@
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/ShareOpenTransport.hh"
 
 
@@ -69,7 +70,7 @@ namespace Genie
 		operator const sockaddr&() const  { return *(const sockaddr*) this; }
 	};
 	
-	class OTSocket : public StreamHandle
+	class OTSocket : public vfs::filehandle
 	{
 		private:
 			OpenTransportShare       itsOpenTransport;
@@ -326,8 +327,8 @@ namespace Genie
 	
 	OTSocket::OTSocket( bool nonblocking )
 	:
-		StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
-		                          : O_RDWR,
+		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
+		                             : O_RDWR,
 		              &OT_methods ),
 		itsBacklog(),
 		its_result            ( 0 ),
@@ -380,7 +381,7 @@ namespace Genie
 			canRead = ::OTCountDataBytes( itsEndpoint, &count ) == noErr;
 		}
 		
-		return (canRead ? kPollRead : 0) | kPollWrite;
+		return (canRead ? vfs::Poll_read : 0) | vfs::Poll_write;
 	}
 	
 	ssize_t OTSocket::SysRead( char* data, std::size_t byteCount )

@@ -43,8 +43,11 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
 #include "vfs/node.hh"
+#include "vfs/enum/poll_result.hh"
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
@@ -58,13 +61,13 @@
 
 // Genie
 #include "Genie/ProcessList.hh"
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -380,7 +383,7 @@ namespace Genie
 	}
 	
 	
-	class ConsoleTTYHandle : public StreamHandle
+	class ConsoleTTYHandle : public vfs::filehandle
 	{
 		private:
 			FSTreePtr  itsTTYFile;
@@ -440,7 +443,7 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		StreamHandle( 0, &consoletty_methods ),
+		vfs::filehandle( 0, &consoletty_methods ),
 		itsTTYFile( &file ),
 		itsID( id )
 	{
@@ -472,9 +475,9 @@ namespace Genie
 		
 		const bool readable = (params.itsStartOfInput < size  &&  s[ size - 1 ] == '\n')  ||  params.itHasReceivedEOF;
 		
-		int readability = readable ? kPollRead : 0;
+		int readability = readable ? vfs::Poll_read : 0;
 		
-		return readability | kPollWrite;
+		return readability | vfs::Poll_write;
 	}
 	
 	static void check_for_truncation( size_t               text_size,
@@ -532,7 +535,7 @@ namespace Genie
 				break;
 			}
 			
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		if ( params.itHasReceivedEOF )
@@ -773,7 +776,7 @@ namespace Genie
 				break;
 			
 			default:
-				StreamHandle::IOCtl( request, argp );
+				vfs::filehandle::IOCtl( request, argp );
 				break;
 		};
 	}

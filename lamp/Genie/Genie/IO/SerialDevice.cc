@@ -45,6 +45,8 @@
 #endif
 
 // vfs
+#include "vfs/enum/poll_result.hh"
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
@@ -78,7 +80,7 @@ namespace Genie
 	}
 	
 	
-	class SerialDeviceHandle : public StreamHandle
+	class SerialDeviceHandle : public vfs::filehandle
 	{
 		private:
 			plus::string                    itsPortName;
@@ -140,8 +142,8 @@ namespace Genie
 	
 	struct SerialDevicePair
 	{
-		IOHandle*  passive;
-		IOHandle*  active;
+		vfs::filehandle*  passive;
+		vfs::filehandle*  active;
 		
 		SerialDevicePair() : passive(), active()
 		{
@@ -194,8 +196,8 @@ namespace Genie
 		
 		SerialDevicePair& pair = GetSerialDevicePair( portName );
 		
-		IOHandle*& same  = isPassive ? pair.passive : pair.active;
-		IOHandle*  other = isPassive ? pair.active : pair.passive;
+		vfs::filehandle*& same  = isPassive ? pair.passive : pair.active;
+		vfs::filehandle*  other = isPassive ? pair.active : pair.passive;
 		
 		while ( same != NULL )
 		{
@@ -281,7 +283,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
-		StreamHandle( O_RDWR, &serial_methods ),
+		vfs::filehandle( O_RDWR, &serial_methods ),
 		itsPortName( portName ),
 		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
 		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
@@ -301,7 +303,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
 	:
-		StreamHandle( O_RDWR, &serial_methods ),
+		vfs::filehandle( O_RDWR, &serial_methods ),
 		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
@@ -311,7 +313,7 @@ namespace Genie
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
 	:
-		StreamHandle( O_RDWR, &serial_methods ),
+		vfs::filehandle( O_RDWR, &serial_methods ),
 		itsPortName( other.itsPortName ),
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
@@ -331,8 +333,8 @@ namespace Genie
 		bool readable = unblocked  &&  N::SerGetBuf( itsInputRefNum ) > 0;
 		bool writable = unblocked;
 		
-		unsigned readability = readable * kPollRead;
-		unsigned writability = writable * kPollWrite;
+		unsigned readability = readable * vfs::Poll_read;
+		unsigned writability = writable * vfs::Poll_write;
 		
 		return readability | writability;
 	}
@@ -356,7 +358,7 @@ namespace Genie
 				}
 			}
 			
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Read( itsInputRefNum, data, byteCount );
@@ -366,7 +368,7 @@ namespace Genie
 	{
 		while ( Preempted() )
 		{
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Write( itsOutputRefNum, data, byteCount );

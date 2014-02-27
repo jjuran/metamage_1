@@ -12,11 +12,15 @@
 #include "plus/serialize.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/enum/poll_result.hh"
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
@@ -25,7 +29,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -58,7 +61,7 @@ namespace Genie
 	}
 	
 	
-	class TextEdit_gate_Handle : public StreamHandle
+	class TextEdit_gate_Handle : public vfs::filehandle
 	{
 		public:
 			TextEdit_gate_Handle( const vfs::node& file, int flags );
@@ -95,7 +98,7 @@ namespace Genie
 	
 	TextEdit_gate_Handle::TextEdit_gate_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( &file, flags, &texteditgate_methods )
+		vfs::filehandle( &file, flags, &texteditgate_methods )
 	{
 	}
 	
@@ -107,7 +110,7 @@ namespace Genie
 		
 		const bool readable = !params.itIsInterlocked;
 		
-		return readable * kPollRead | kPollWrite;
+		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
 	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
@@ -118,7 +121,7 @@ namespace Genie
 		
 		while ( params.itIsInterlocked )
 		{
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 		}
 		
 		return 0;

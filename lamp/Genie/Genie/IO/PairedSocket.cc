@@ -16,6 +16,8 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -31,7 +33,6 @@
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -40,7 +41,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	class PairedSocket : public StreamHandle
+	class PairedSocket : public vfs::filehandle
 	{
 		private:
 			boost::intrusive_ptr< vfs::stream >  itsInput;
@@ -55,8 +56,8 @@ namespace Genie
 			
 			unsigned int SysPoll()
 			{
-				return   kPollRead  * itsInput->is_readable()
-				       | kPollWrite * itsOutput->is_writable();
+				return   vfs::Poll_read  * itsInput->is_readable()
+				       | vfs::Poll_write * itsOutput->is_writable();
 			}
 			
 			ssize_t SysRead( char* data, std::size_t byteCount )
@@ -142,8 +143,8 @@ namespace Genie
 			                    boost::intrusive_ptr< vfs::stream >  output,
 			                    bool                                 nonblocking )
 	:
-		StreamHandle( nonblocking ? O_RDWR | O_NONBLOCK
-		                          : O_RDWR,
+		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
+		                             : O_RDWR,
 		              &pairedsocket_methods ),
 		itsInput ( input  ),
 		itsOutput( output )

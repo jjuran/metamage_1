@@ -16,10 +16,8 @@
 #include "plus/conduit.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle_ptr.hh"
-
-// Genie
-#include "Genie/IO/Stream.hh"
 
 
 namespace Genie
@@ -27,7 +25,7 @@ namespace Genie
 	
 	typedef std::size_t TerminalID;
 	
-	class PseudoTTYHandle : public StreamHandle
+	class PseudoTTYHandle : public vfs::filehandle
 	{
 		private:
 			TerminalID                             itsID;

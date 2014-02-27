@@ -34,7 +34,6 @@
 #include "relix/task/session.hh"
 
 // Genie
-#include "Genie/IO/Stream.hh"
 #include "Genie/Process.hh"
 
 

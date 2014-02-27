@@ -32,11 +32,15 @@
 #include "Pedestal/PushButton.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/enum/poll_result.hh"
+#include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
+#include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
@@ -44,7 +48,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -224,7 +227,7 @@ namespace Genie
 	};
 	
 	
-	class Button_socket_Handle : public StreamHandle
+	class Button_socket_Handle : public vfs::filehandle
 	{
 		private:
 			std::size_t itsSeed;
@@ -264,7 +267,7 @@ namespace Genie
 	
 	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( &file, flags, &buttonstream_methods ),
+		vfs::filehandle( &file, flags, &buttonstream_methods ),
 		itsSeed( gButtonMap[ file.owner() ].seed )
 	{
 	}
@@ -279,7 +282,7 @@ namespace Genie
 		                      || !it->installed
 		                      || it->seed != itsSeed;
 		
-		return readable * kPollRead | kPollWrite;
+		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
@@ -299,7 +302,7 @@ namespace Genie
 		
 		if ( params.seed == itsSeed )
 		{
-			TryAgainLater();
+			try_again( is_nonblocking( *this ) );
 			
 			goto retry;
 		}

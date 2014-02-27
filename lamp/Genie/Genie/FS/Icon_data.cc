@@ -29,6 +29,7 @@
 #include "Nitrogen/Icons.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -44,7 +45,6 @@
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/file_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
 
@@ -403,7 +403,7 @@ namespace Genie
 	}
 	
 	
-	class IconDataWriterHandle : public StreamHandle
+	class IconDataWriterHandle : public vfs::filehandle
 	{
 		private:
 			boost::intrusive_ptr< IconData > itsData;
@@ -443,7 +443,7 @@ namespace Genie
 	                                            int                                      flags,
 	                                            const boost::intrusive_ptr< IconData >&  data )
 	:
-		StreamHandle( &file, flags, &icondatawriter_methods ),
+		vfs::filehandle( &file, flags, &icondatawriter_methods ),
 		itsData( data )
 	{
 		ASSERT( itsData.get() != NULL );
@@ -532,7 +532,7 @@ namespace Genie
 		
 		const int accmode = flags & O_ACCMODE;
 		
-		IOHandle* result = NULL;
+		vfs::filehandle* result = NULL;
 		
 		switch ( accmode )
 		{
