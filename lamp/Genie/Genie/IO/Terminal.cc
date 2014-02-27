@@ -22,6 +22,9 @@
 #include "vfs/filehandle/methods/terminal_method_set.hh"
 #include "vfs/filehandle/primitives/ioctl.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
+#include "vfs/filehandle/primitives/poll.hh"
+#include "vfs/filehandle/primitives/read.hh"
+#include "vfs/filehandle/primitives/write.hh"
 
 // relix
 #include "relix/api/current_process.hh"
@@ -62,17 +65,17 @@ namespace Genie
 	
 	static unsigned terminal_poll( vfs::filehandle* that )
 	{
-		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).SysPoll();
+		return poll( get_tty( that ) );
 	}
 	
 	static ssize_t terminal_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).SysRead( buffer, n );
+		return read( get_tty( that ), buffer, n );
 	}
 	
 	static ssize_t terminal_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return IOHandle_Cast< StreamHandle >( get_tty( that ) ).SysWrite( buffer, n );
+		return write( get_tty( that ), buffer, n );
 	}
 	
 	static const vfs::stream_method_set terminal_stream_methods =
