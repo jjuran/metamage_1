@@ -12,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -111,7 +112,7 @@ namespace Genie
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 			                          boost::intrusive_ptr< plus::conduit >  input,
 			                          boost::intrusive_ptr< plus::conduit >  output )
-	: StreamHandle( O_RDWR, &pseudotty_methods ),
+	: vfs::filehandle( O_RDWR, &pseudotty_methods ),
 	  itsID( id ),
 	  itsInput( input ),
 	  itsOutput( output )

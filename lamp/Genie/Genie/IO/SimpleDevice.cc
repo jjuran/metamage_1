@@ -18,6 +18,8 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/memory_mapping.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
@@ -25,7 +27,6 @@
 #include "vfs/mmap/functions/map_anonymous.hh"
 
 // Genie
-#include "Genie/IO/Stream.hh"
 #include "Genie/SystemConsole.hh"
 
 
@@ -104,7 +105,7 @@ namespace Genie
 	}
 	
 	
-	static memory_mapping_ptr
+	static vfs::memory_mapping_ptr
 	//
 	devzero_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{
@@ -117,7 +118,7 @@ namespace Genie
 	};
 	
 	
-	class SimpleDeviceHandle : public StreamHandle
+	class SimpleDeviceHandle : public vfs::filehandle
 	{
 		private:
 			const DeviceIOSpec& io;
@@ -159,7 +160,7 @@ namespace Genie
 	
 	SimpleDeviceHandle::SimpleDeviceHandle( const vfs::node& file )
 	:
-		StreamHandle( &file, O_RDWR, &simpledevice_methods ),
+		vfs::filehandle( &file, O_RDWR, &simpledevice_methods ),
 		io( FindDevice( file.name() ) )
 	{
 	}

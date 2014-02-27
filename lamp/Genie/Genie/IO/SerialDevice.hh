@@ -12,9 +12,6 @@
 // vfs
 #include "vfs/filehandle_ptr.hh"
 
-// Genie
-#include "Genie/IO/Stream.hh"
-
 
 namespace Genie
 {

@@ -32,6 +32,8 @@
 #include "Pedestal/PushButton.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -46,7 +48,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -226,7 +227,7 @@ namespace Genie
 	};
 	
 	
-	class Button_socket_Handle : public StreamHandle
+	class Button_socket_Handle : public vfs::filehandle
 	{
 		private:
 			std::size_t itsSeed;
@@ -266,7 +267,7 @@ namespace Genie
 	
 	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( &file, flags, &buttonstream_methods ),
+		vfs::filehandle( &file, flags, &buttonstream_methods ),
 		itsSeed( gButtonMap[ file.owner() ].seed )
 	{
 	}

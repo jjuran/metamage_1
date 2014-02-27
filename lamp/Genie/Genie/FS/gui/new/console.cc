@@ -43,8 +43,10 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
 #include "vfs/node.hh"
+#include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -66,7 +68,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -382,7 +383,7 @@ namespace Genie
 	}
 	
 	
-	class ConsoleTTYHandle : public StreamHandle
+	class ConsoleTTYHandle : public vfs::filehandle
 	{
 		private:
 			FSTreePtr  itsTTYFile;
@@ -442,7 +443,7 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		StreamHandle( 0, &consoletty_methods ),
+		vfs::filehandle( 0, &consoletty_methods ),
 		itsTTYFile( &file ),
 		itsID( id )
 	{
@@ -775,7 +776,7 @@ namespace Genie
 				break;
 			
 			default:
-				StreamHandle::IOCtl( request, argp );
+				vfs::filehandle::IOCtl( request, argp );
 				break;
 		};
 	}

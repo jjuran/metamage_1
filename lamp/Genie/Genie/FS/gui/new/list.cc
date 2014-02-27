@@ -22,6 +22,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -35,7 +36,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Stream.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -132,7 +132,7 @@ namespace Genie
 	}
 	
 	
-	class List_data_Handle : public StreamHandle
+	class List_data_Handle : public vfs::filehandle
 	{
 		public:
 			List_data_Handle( const vfs::node& file, int flags );
@@ -163,7 +163,7 @@ namespace Genie
 	
 	List_data_Handle::List_data_Handle( const vfs::node& file, int flags )
 	:
-		StreamHandle( &file, flags, &listdata_methods )
+		vfs::filehandle( &file, flags, &listdata_methods )
 	{
 	}
 	
