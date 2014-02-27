@@ -20,6 +20,7 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/terminal_method_set.hh"
+#include "vfs/filehandle/primitives/ioctl.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 
 // relix
@@ -180,7 +181,13 @@ namespace Genie
 				break;
 			
 			default:
-				IOHandle::IOCtl( request, argp );
+				if ( its_tty.get() == NULL )
+				{
+					p7::throw_errno( EINVAL );
+				}
+				
+				ioctl( *its_tty, request, argp );
+				
 				break;
 		};
 	}
