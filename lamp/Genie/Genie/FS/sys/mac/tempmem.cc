@@ -15,6 +15,8 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/memory_mapping.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
 #include "vfs/mmap/functions/map_temporary.hh"
@@ -23,7 +25,6 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Base.hh"
 
 
 namespace Genie
@@ -32,7 +33,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static memory_mapping_ptr
+	static vfs::memory_mapping_ptr
 	//
 	tempmem_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
 	{

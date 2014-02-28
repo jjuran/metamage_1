@@ -12,6 +12,9 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 
+// vfs
+#include "vfs/filehandle.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSSpecForkUser.hh"

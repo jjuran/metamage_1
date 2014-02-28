@@ -9,6 +9,7 @@
 #include "gear/is_binary_data.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 

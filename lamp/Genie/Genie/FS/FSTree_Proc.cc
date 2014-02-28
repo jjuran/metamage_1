@@ -29,6 +29,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -60,7 +61,6 @@
 #include "Genie/FS/link_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
-#include "Genie/IO/Base.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -596,7 +596,7 @@ namespace Genie
 	}
 	
 	
-	static IOHandle* get_proc_fd_handle( const FSTree* that )
+	static vfs::filehandle* get_proc_fd_handle( const FSTree* that )
 	{
 		const char* fd_name  = that                  ->name().c_str();
 		const char* pid_name = that->owner()->owner()->name().c_str();
@@ -616,7 +616,7 @@ namespace Genie
 	
 	static off_t proc_fd_link_geteof( const FSTree* that )
 	{
-		IOHandle* handle = get_proc_fd_handle( that );
+		vfs::filehandle* handle = get_proc_fd_handle( that );
 		
 		if ( handle->methods()  &&  handle->methods()->bstore_methods )
 		{

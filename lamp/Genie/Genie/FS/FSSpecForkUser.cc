@@ -8,6 +8,9 @@
 // POSIX
 #include "fcntl.h"
 
+// vfs
+#include "vfs/filehandle.hh"
+
 
 namespace Genie
 {
