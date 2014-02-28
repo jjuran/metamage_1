@@ -161,10 +161,5 @@ namespace vfs
 		its_file = &file;
 	}
 	
-	void filehandle::IOCtl( unsigned long request, int* argp )
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
 }
 

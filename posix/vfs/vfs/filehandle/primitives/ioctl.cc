@@ -8,13 +8,21 @@
 // POSIX
 #include <sys/ioctl.h>
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 
 
 namespace vfs
 {
+	
+	namespace p7 = poseven;
+	
 	
 	void ioctl( filehandle& that, unsigned long request, int* argp )
 	{
@@ -33,7 +41,21 @@ namespace vfs
 				break;
 			
 			default:
-				that.IOCtl( request, argp );
+				if ( const filehandle_method_set* methods = that.methods() )
+				{
+					if ( const general_method_set* general_methods = methods->general_methods )
+					{
+						if ( general_methods->ioctl )
+						{
+							general_methods->ioctl( &that, request, argp );
+							
+							return;
+						}
+					}
+					
+				}
+				
+				p7::throw_errno( EINVAL );
 				
 				break;
 		}

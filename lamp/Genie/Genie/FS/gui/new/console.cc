@@ -37,6 +37,9 @@
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
@@ -49,6 +52,7 @@
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
@@ -74,6 +78,7 @@
 namespace Genie
 {
 	
+	namespace p7 = poseven;
 	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
@@ -426,6 +431,11 @@ namespace Genie
 		return static_cast< ConsoleTTYHandle& >( *that ).SysWrite( buffer, n );
 	}
 	
+	static void consoletty_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
+	{
+		static_cast< ConsoleTTYHandle& >( *that ).IOCtl( request, argp );
+	}
+	
 	static const vfs::stream_method_set consoletty_stream_methods =
 	{
 		&consoletty_poll,
@@ -433,11 +443,18 @@ namespace Genie
 		&consoletty_write,
 	};
 	
+	static const vfs::general_method_set consoletty_general_methods =
+	{
+		NULL,
+		&consoletty_ioctl,
+	};
+	
 	static const vfs::filehandle_method_set consoletty_methods =
 	{
 		NULL,
 		NULL,
 		&consoletty_stream_methods,
+		&consoletty_general_methods,
 	};
 	
 	
@@ -776,7 +793,8 @@ namespace Genie
 				break;
 			
 			default:
-				vfs::filehandle::IOCtl( request, argp );
+				p7::throw_errno( EINVAL );
+				
 				break;
 		};
 	}
