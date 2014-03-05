@@ -33,6 +33,7 @@
 
 // v68k-utils
 #include "utils/load.hh"
+#include "utils/print_register_dump.hh"
 
 // v68k-syscalls
 #include "syscall/bridge.hh"
@@ -49,6 +50,20 @@ using v68k::big_longword;
 
 using v68k::auth::fully_authorized;
 
+
+static void dump( const v68k::processor_state& s )
+{
+	using v68k::utils::print_register_dump;
+	
+	print_register_dump( s.regs );
+}
+
+static void dump_and_raise( const v68k::processor_state& s, int signo )
+{
+	dump( s );
+	
+	raise( signo );
+}
 
 /*
 	Memory map
@@ -388,7 +403,7 @@ static void emulation_loop( v68k::emulator& emu )
 	{
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
-			raise( SIGXCPU );
+			dump_and_raise( emu, SIGXCPU );
 		}
 	}
 }
@@ -400,7 +415,7 @@ static void report_condition( v68k::emulator& emu )
 		using namespace v68k;
 		
 		case halted:
-			raise( SIGSEGV );
+			dump_and_raise( emu, SIGSEGV );
 			break;
 		
 		default:
