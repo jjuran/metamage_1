@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// iota
+#include "iota/endian.hh"
+
 // v68k-mac
 #include "v68k-mac/dynamic_globals.hh"
 
@@ -186,10 +189,12 @@ static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
 
 static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
 {
+	const bool big = !iota::is_little_endian();
+	
 	if ( size == 2 )
 	{
-		words[ g->index ] = buffer[0] << 8
-		                  | buffer[1];
+		words[ g->index ] = buffer[ 1 - big ] << 8
+		                  | buffer[ 0 + big ];
 	}
 	
 	return buffer;
