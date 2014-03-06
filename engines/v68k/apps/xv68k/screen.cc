@@ -35,7 +35,7 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 {
 	if ( access == v68k::mem_exec )
 	{
-		//return 0;  // NULL
+		return 0;  // NULL
 	}
 	
 	if ( the_screen_buffer == 0 )  // NULL

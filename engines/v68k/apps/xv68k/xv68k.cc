@@ -534,6 +534,41 @@ static int execute_68k( int argc, char** argv )
 					continue;
 				}
 				
+				if ( OPTION_MATCHES( option, size, "screen" ) )
+				{
+					const char* screen;
+					
+					if ( *equals == '\0' )
+					{
+						screen = *++args;
+						
+						if ( screen == NULL )
+						{
+							return BAD_USAGE( "Missing argument", option );
+						}
+					}
+					else
+					{
+						screen = equals + 1;
+					}
+					
+					int nok = set_screen_backing_store_file( screen );
+					
+					if ( nok )
+					{
+						const char* error = strerror( nok );
+						
+						write( STDERR_FILENO, screen, strlen( screen ) );
+						write( STDERR_FILENO, STR_LEN( ": " ) );
+						write( STDERR_FILENO, error, strlen( error ) );
+						write( STDERR_FILENO, STR_LEN( "\n" ) );
+						
+						return 1;
+					}
+					
+					continue;
+				}
+				
 				return BAD_USAGE( "Unknown option", arg );
 			}
 			
