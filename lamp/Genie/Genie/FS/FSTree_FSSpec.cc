@@ -360,8 +360,6 @@ namespace Genie
 	
 	static off_t hfs_geteof( const FSTree* that );
 	
-	static void hfs_seteof( const FSTree* that, off_t length );
-	
 	static plus::string hfs_readlink( const FSTree* that );
 	
 	static FSTreePtr hfs_resolve( const FSTree* that );
@@ -390,7 +388,6 @@ namespace Genie
 	{
 		&hfs_open,
 		&hfs_geteof,
-		&hfs_seteof
 	};
 	
 	static const link_method_set hfs_link_methods =
@@ -724,13 +721,6 @@ namespace Genie
 		Mac::ThrowOSStatus( extra.cinfo.hFileInfo.ioResult );
 		
 		return extra.cinfo.hFileInfo.ioFlLgLen;
-	}
-	
-	static void hfs_seteof( const FSTree* that, off_t length )
-	{
-		hfs_extra& extra = *(hfs_extra*) that->extra();
-		
-		N::SetEOF( N::FSpOpenDF( extra.fsspec, N::fsWrPerm ), length );
 	}
 	
 	static plus::string hfs_readlink( const FSTree* that )
