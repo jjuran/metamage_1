@@ -8,11 +8,6 @@
 // gear
 #include "gear/is_binary_data.hh"
 
-// nucleus
-#ifndef NUCLEUS_SHARED_HH
-#include "nucleus/shared.hh"
-#endif
-
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
@@ -45,13 +40,13 @@ namespace Genie
 		private:
 			typedef FSTreePtr (*FileGetter)( const FSSpec& );
 			
-			nucleus::shared< Nitrogen::FSFileRefNum >  itsRefNum;
-			FileGetter                                 itsFileGetter;
+			n::owned< Nitrogen::FSFileRefNum >  itsRefNum;
+			FileGetter                          itsFileGetter;
 		
 		public:
-			MacFileHandle( const nucleus::shared< Nitrogen::FSFileRefNum >&  refNum,
-			               int                                               flags,
-			               FileGetter                                        getFile );
+			MacFileHandle( n::owned< Nitrogen::FSFileRefNum >&  refNum,
+			               int                                  flags,
+			               FileGetter                           getFile );
 			
 			~MacFileHandle();
 			
@@ -174,9 +169,9 @@ namespace Genie
 	}
 	
 	
-	MacFileHandle::MacFileHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                              int                                  flags,
-	                              FileGetter                           getFile )
+	MacFileHandle::MacFileHandle( n::owned< N::FSFileRefNum >&  refNum,
+	                              int                           flags,
+	                              FileGetter                    getFile )
 	: vfs::filehandle( flags, &hfs_methods ),
 	  itsRefNum      ( refNum ),
 	  itsFileGetter  ( getFile )
