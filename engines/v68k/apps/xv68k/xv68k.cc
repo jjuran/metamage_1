@@ -158,6 +158,8 @@ const uint16_t argc_addr = params_addr + 40;  // 4 bytes
 const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
+const uint16_t ScrnBase = 0x0824;
+
 
 static void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
 {
@@ -177,6 +179,11 @@ static const uint16_t loader_code[] =
 	
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
+	
+	0x21FC,  // MOVE.L  #screen_addr,(ScrnBase).W
+	uint16_t( screen_addr >> 16 ),
+	uint16_t( screen_addr       ),
+	ScrnBase,
 	
 	0x42B8,  // CLR.L  user_pb_addr + 2 * sizeof (uint32_t)  ; user_pb->errno_var
 	user_pb_addr + 2 * sizeof (uint32_t),
