@@ -140,7 +140,7 @@ int main( int argc, char const *const argv[] )
 	
 	// If the child exited unsuccessfully and the terminal is still connected,
 	// keep the window around.
-	if ( wait_status != 0  &&  ::write( p7::stdout_fileno, "", 0 ) == 0 )
+	if ( wait_status != 0 )
 	{
 		// Reset ourselves as the foreground process group of the terminal,
 		// so we'll get SIGHUP when the window is closed.

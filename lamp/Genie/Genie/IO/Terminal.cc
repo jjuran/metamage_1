@@ -48,11 +48,6 @@ namespace Genie
 	{
 		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
 		
-		if ( terminal.disconnected() )
-		{
-			p7::throw_errno( EIO );
-		}
-		
 		vfs::filehandle* tty = terminal.Next();
 		
 		if ( tty == NULL )
@@ -127,6 +122,16 @@ namespace Genie
 	
 	TerminalHandle::~TerminalHandle()
 	{
+	}
+	
+	void TerminalHandle::setpgrp( pid_t pgid )
+	{
+		its_process_group_id = pgid;
+		
+		if ( it_is_disconnected )
+		{
+			relix::signal_process_group( SIGHUP, pgid );
+		}
 	}
 	
 	static void CheckControllingTerminal( const vfs::filehandle* ctty, const TerminalHandle& tty )
