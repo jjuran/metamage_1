@@ -40,13 +40,13 @@ namespace Genie
 		private:
 			typedef FSTreePtr (*FileGetter)( const FSSpec& );
 			
-			nucleus::shared< Nitrogen::FSFileRefNum >  itsRefNum;
-			FileGetter                                 itsFileGetter;
+			n::owned< Nitrogen::FSFileRefNum >  itsRefNum;
+			FileGetter                          itsFileGetter;
 		
 		public:
-			MacFileHandle( const nucleus::shared< Nitrogen::FSFileRefNum >&  refNum,
-			               int                                               flags,
-			               FileGetter                                        getFile );
+			MacFileHandle( n::owned< Nitrogen::FSFileRefNum >&  refNum,
+			               int                                  flags,
+			               FileGetter                           getFile );
 			
 			~MacFileHandle();
 			
@@ -169,9 +169,9 @@ namespace Genie
 	}
 	
 	
-	MacFileHandle::MacFileHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                              int                                  flags,
-	                              FileGetter                           getFile )
+	MacFileHandle::MacFileHandle( n::owned< N::FSFileRefNum >&  refNum,
+	                              int                           flags,
+	                              FileGetter                    getFile )
 	: vfs::filehandle( flags, &hfs_methods ),
 	  itsRefNum      ( refNum ),
 	  itsFileGetter  ( getFile )
@@ -251,8 +251,8 @@ namespace Genie
 	
 	vfs::filehandle_ptr
 	//
-	New_DataForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                    int                                  flags )
+	New_DataForkHandle( n::owned< N::FSFileRefNum >&  refNum,
+	                    int                           flags )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,
@@ -261,8 +261,8 @@ namespace Genie
 	
 	vfs::filehandle_ptr
 	//
-	New_RsrcForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                    int                                  flags )
+	New_RsrcForkHandle( n::owned< N::FSFileRefNum >&  refNum,
+	                    int                           flags )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,

@@ -7,8 +7,8 @@
 #define GENIE_FILESYSTEM_FSSPECFORKUSER_HH
 
 // nucleus
-#ifndef NUCLEUS_SHARED_HH
-#include "nucleus/shared.hh"
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
 #endif
 
 // Nitrogen
@@ -28,7 +28,7 @@ namespace Genie
 	
 	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
 	
-	typedef vfs::filehandle_ptr (*HandleCreator)( const nucleus::shared< Mac::FSFileRefNum >&, int );
+	typedef vfs::filehandle_ptr (*HandleCreator)( nucleus::owned< Mac::FSFileRefNum >&, int );
 	
 	vfs::filehandle_ptr
 	//
