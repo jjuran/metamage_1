@@ -8,6 +8,11 @@
 // gear
 #include "gear/is_binary_data.hh"
 
+// nucleus
+#ifndef NUCLEUS_SHARED_HH
+#include "nucleus/shared.hh"
+#endif
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
@@ -251,8 +256,8 @@ namespace Genie
 	
 	vfs::filehandle_ptr
 	//
-	New_DataForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                    int                                  flags )
+	New_DataForkHandle( n::owned< N::FSFileRefNum >&  refNum,
+	                    int                           flags )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,
@@ -261,8 +266,8 @@ namespace Genie
 	
 	vfs::filehandle_ptr
 	//
-	New_RsrcForkHandle( const n::shared< N::FSFileRefNum >&  refNum,
-	                    int                                  flags )
+	New_RsrcForkHandle( n::owned< N::FSFileRefNum >&  refNum,
+	                    int                           flags )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,
