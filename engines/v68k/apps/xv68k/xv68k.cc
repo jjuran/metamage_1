@@ -41,6 +41,7 @@
 
 // xv68k
 #include "memory.hh"
+#include "screen.hh"
 
 
 #pragma exceptions off
@@ -118,6 +119,16 @@ static void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |  48K
 	64K	+-----------------------+
+		
+	104	+-----------------------+
+		|                       |  screen memory begins 0x0001A700  (1792 bytes after)
+		|                       |  screen memory ends   0x0001FC80  (896 bytes before)
+		|                       |
+		= screen memory buffer  =  x6
+		|                       |
+		|                       |
+		|                       |  24K (21.375K used)
+	128	+-----------------------+
 	
 */
 
@@ -147,6 +158,8 @@ const uint16_t argc_addr = params_addr + 40;  // 4 bytes
 const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
+const uint16_t ScrnBase = 0x0824;
+
 
 static void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
 {
@@ -166,6 +179,11 @@ static const uint16_t loader_code[] =
 	
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
+	
+	0x21FC,  // MOVE.L  #screen_addr,(ScrnBase).W
+	uint16_t( screen_addr >> 16 ),
+	uint16_t( screen_addr       ),
+	ScrnBase,
 	
 	0x42B8,  // CLR.L  user_pb_addr + 2 * sizeof (uint32_t)  ; user_pb->errno_var
 	user_pb_addr + 2 * sizeof (uint32_t),
@@ -511,6 +529,41 @@ static int execute_68k( int argc, char** argv )
 						{
 							return BAD_USAGE( "Invalid option", arg );
 						}
+					}
+					
+					continue;
+				}
+				
+				if ( OPTION_MATCHES( option, size, "screen" ) )
+				{
+					const char* screen;
+					
+					if ( *equals == '\0' )
+					{
+						screen = *++args;
+						
+						if ( screen == NULL )
+						{
+							return BAD_USAGE( "Missing argument", option );
+						}
+					}
+					else
+					{
+						screen = equals + 1;
+					}
+					
+					int nok = set_screen_backing_store_file( screen );
+					
+					if ( nok )
+					{
+						const char* error = strerror( nok );
+						
+						write( STDERR_FILENO, screen, strlen( screen ) );
+						write( STDERR_FILENO, STR_LEN( ": " ) );
+						write( STDERR_FILENO, error, strlen( error ) );
+						write( STDERR_FILENO, STR_LEN( "\n" ) );
+						
+						return 1;
 					}
 					
 					continue;
