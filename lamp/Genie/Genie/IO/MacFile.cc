@@ -83,7 +83,43 @@ namespace Genie
 	
 	static void hfs_seteof( vfs::filehandle* file, off_t length )
 	{
-		static_cast< MacFileHandle& >( *file ).SetEOF( length );
+		MacFileHandle& h = static_cast< MacFileHandle& >( *file );
+		
+		const off_t eof = h.GetEOF();
+		
+		h.SetEOF( length );
+		
+		if ( length > eof )
+		{
+			const off_t block_size = 4096;
+			
+			const char buffer[ block_size ] = { 0 };
+			
+			off_t block_offset = (eof + block_size - 1) & ~(block_size - 1);
+			
+			if ( length <= block_offset )
+			{
+				h.Positioned_Write( buffer, length - eof, eof );
+				
+				return;
+			}
+			
+			h.Positioned_Write( buffer, block_offset - eof, eof );
+			
+			off_t end_block_offset = length & ~(block_size - 1);
+			
+			while ( block_offset < end_block_offset )
+			{
+				h.Positioned_Write( buffer, block_size, block_offset );
+				
+				block_offset += block_size;
+			}
+			
+			if ( block_offset < length )
+			{
+				h.Positioned_Write( buffer, length - block_offset, block_offset );
+			}
+		}
 	}
 	
 	static ssize_t hfs_append( vfs::filehandle* file, const char* buffer, size_t n )
