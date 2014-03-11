@@ -293,17 +293,6 @@ namespace Genie
 	
 	vfs::filehandle_ptr
 	//
-	new_HFS_fork_handle( n::owned< N::FSFileRefNum >&  refNum,
-	                     int                           flags,
-	                     FileGetter                    getFile )
-	{
-		return new MacFileHandle( refNum,
-		                          flags,
-		                          getFile );
-	}
-	
-	vfs::filehandle_ptr
-	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
 	                   int            flags,
 	                   ForkOpener     openFork,
@@ -314,7 +303,7 @@ namespace Genie
 		
 		n::owned< Mac::FSFileRefNum > fileHandle = openFork( fileSpec, rdPerm | wrPerm );
 		
-		return new_HFS_fork_handle( fileHandle, flags, getFile );
+		return new MacFileHandle( fileHandle, flags, getFile );
 	}
 	
 }
