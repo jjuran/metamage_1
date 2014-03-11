@@ -22,9 +22,7 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -287,22 +285,13 @@ namespace Genie
 	
 	vfs::filehandle_ptr
 	//
-	New_DataForkHandle( n::owned< N::FSFileRefNum >&  refNum,
-	                    int                           flags )
+	new_HFS_fork_handle( n::owned< N::FSFileRefNum >&  refNum,
+	                     int                           flags,
+	                     FileGetter                    getFile )
 	{
 		return new MacFileHandle( refNum,
 		                          flags,
-		                          &FSTreeFromFSSpec );
-	}
-	
-	vfs::filehandle_ptr
-	//
-	New_RsrcForkHandle( n::owned< N::FSFileRefNum >&  refNum,
-	                    int                           flags )
-	{
-		return new MacFileHandle( refNum,
-		                          flags,
-		                          &GetRsrcForkFSTree );
+		                          getFile );
 	}
 	
 }

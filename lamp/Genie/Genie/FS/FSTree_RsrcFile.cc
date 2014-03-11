@@ -72,7 +72,7 @@ namespace Genie
 		return OpenMacFileHandle( fileSpec,
 		                          flags,
 		                          &N::FSpOpenRF,
-		                          &New_RsrcForkHandle );
+		                          &GetRsrcForkFSTree );
 	}
 	
 	static const data_method_set rsrcfile_data_methods =

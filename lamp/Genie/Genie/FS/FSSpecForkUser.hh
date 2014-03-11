@@ -21,6 +21,7 @@
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
@@ -28,14 +29,14 @@ namespace Genie
 	
 	typedef nucleus::owned< Mac::FSFileRefNum > (*ForkOpener)( const FSSpec&, Mac::FSIOPerm );
 	
-	typedef vfs::filehandle_ptr (*HandleCreator)( nucleus::owned< Mac::FSFileRefNum >&, int );
+	typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
 	
 	vfs::filehandle_ptr
 	//
 	OpenMacFileHandle( const FSSpec&  fileSpec,
 	                   int            flags,
 	                   ForkOpener     openFork,
-	                   HandleCreator  createHandle );
+	                   FileGetter     getFile );
 	
 }
 

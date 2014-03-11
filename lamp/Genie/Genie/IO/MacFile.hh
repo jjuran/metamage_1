@@ -18,20 +18,20 @@
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	vfs::filehandle_ptr
-	//
-	New_DataForkHandle( nucleus::owned< Mac::FSFileRefNum >&  refNum,
-	                    int                                   flags );
+	typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
+	
 	
 	vfs::filehandle_ptr
 	//
-	New_RsrcForkHandle( nucleus::owned< Mac::FSFileRefNum >&  refNum,
-	                    int                                   flags );
+	new_HFS_fork_handle( nucleus::owned< Mac::FSFileRefNum >&  refNum,
+	                     int                                   flags,
+	                     FileGetter                            getFile );
 	
 }
 

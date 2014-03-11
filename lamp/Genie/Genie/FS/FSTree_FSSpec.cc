@@ -915,7 +915,7 @@ namespace Genie
 		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
 		                                                flags,
 		                                                async ? &Genie::FSpOpenDF : N::FSpOpenDF,
-		                                                &New_DataForkHandle );
+		                                                &FSTreeFromFSSpec );
 		
 		if ( created )
 		{
