@@ -17,7 +17,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/FS/data_method_set.hh"

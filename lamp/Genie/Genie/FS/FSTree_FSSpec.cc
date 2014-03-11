@@ -75,7 +75,6 @@
 #include "Genie/code/prepare_executable.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSSpecForkUser.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
