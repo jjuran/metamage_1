@@ -5,6 +5,9 @@
 
 #include "Genie/IO/MacFile.hh"
 
+// Standard C
+#include <string.h>
+
 // gear
 #include "gear/is_binary_data.hh"
 
@@ -91,7 +94,9 @@ namespace Genie
 		{
 			const off_t block_size = 4096;
 			
-			const char buffer[ block_size ] = { 0 };
+			char buffer[ block_size ];
+			
+			memset( buffer, '\0', block_size );
 			
 			off_t block_offset = (eof + block_size - 1) & ~(block_size - 1);
 			
