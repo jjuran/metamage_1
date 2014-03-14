@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 // v68k
@@ -47,10 +48,31 @@
 #pragma exceptions off
 
 
+#define STRLEN( s )  (sizeof "" s - 1)
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+
 using v68k::big_longword;
 
 using v68k::auth::fully_authorized;
 
+static bool verbose;
+
+static unsigned long n_instructions;
+
+
+static void atexit_report()
+{
+	if ( verbose )
+	{
+		const char* count = gear::inscribe_unsigned_decimal( n_instructions );
+		
+		write( STDERR_FILENO, STR_LEN( "### Instruction count: " ) );
+		write( STDERR_FILENO, count, strlen( count ) );
+		write( STDERR_FILENO, STR_LEN( "\n" ) );
+	}
+}
 
 static void dump( const v68k::processor_state& s )
 {
@@ -62,6 +84,8 @@ static void dump( const v68k::processor_state& s )
 static void dump_and_raise( const v68k::processor_state& s, int signo )
 {
 	dump( s );
+	
+	atexit_report();
 	
 	raise( signo );
 }
@@ -419,6 +443,8 @@ static void emulation_loop( v68k::emulator& emu )
 	
 	while ( emu.step() )
 	{
+		n_instructions = emu.instruction_count();
+		
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
 			dump_and_raise( emu, SIGXCPU );
@@ -440,10 +466,6 @@ static void report_condition( v68k::emulator& emu )
 			break;
 	}
 }
-
-#define STRLEN( s )  (sizeof "" s - 1)
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 static int bad_usage( const char* text, size_t text_size, const char* arg )
 {
@@ -569,6 +591,13 @@ static int execute_68k( int argc, char** argv )
 					continue;
 				}
 				
+				if ( OPTION_MATCHES( option, size, "verbose" ) )
+				{
+					verbose = true;
+					
+					continue;
+				}
+				
 				return BAD_USAGE( "Unknown option", arg );
 			}
 			
@@ -581,6 +610,13 @@ static int execute_68k( int argc, char** argv )
 				fully_authorized = true;
 				
 				fake_pid = 0;
+				
+				continue;
+			}
+			
+			if ( opt[0] == 'v' )
+			{
+				verbose = true;
 				
 				continue;
 			}
@@ -621,6 +657,8 @@ static int execute_68k( int argc, char** argv )
 	v68k::emulator emu( v68k::mc68000, memory, the_bkpt_handlers );
 	
 	emu.reset();
+	
+	atexit( &atexit_report );
 	
 	emulation_loop( emu );
 	
