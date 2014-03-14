@@ -273,8 +273,8 @@ static void fill_rect( const rectangular_fill_params& params )
 {
 	Pattern pattern = params.pattern;
 	
-	short       v = params.topLeft.v % 8;
-	short const h = params.topLeft.h % 8;
+	short       v = params.topLeft.v & 0x7;
+	short const h = params.topLeft.h & 0x7;
 	
 	if ( h != 0 )
 	{
@@ -313,7 +313,7 @@ static void fill_rect( const rectangular_fill_params& params )
 		
 		p += params.skip_bytes;
 		
-		v = (v + 1) % 8;
+		v = (v + 1) & 0x7;
 	}
 }
 
