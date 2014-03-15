@@ -35,12 +35,12 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 
@@ -209,7 +209,7 @@ namespace Genie
 		{ "type",      PROPERTY( sys_mac_adb_N_type   ) },
 		{ "origin",    PROPERTY( sys_mac_adb_N_origin ) },
 		
-		{ "registers", &new_generated, (void*) &sys_mac_adb_N_registers::Read },
+		{ "registers", &vfs::new_generated, (void*) &sys_mac_adb_N_registers::Read },
 		
 		{ NULL, NULL }
 	};

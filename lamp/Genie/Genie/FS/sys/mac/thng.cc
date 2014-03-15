@@ -27,6 +27,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // relix-kernel
 #include "relix/config/iconsuites.hh"
@@ -34,7 +35,6 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
@@ -412,7 +412,7 @@ namespace Genie
 		{ "name",         PROPERTY( sys_mac_thng_REF_name ) },
 		{ "info",         PROPERTY( sys_mac_thng_REF_info ) },
 		
-		{ "icon",         &new_generated, (void*) &sys_mac_thng_REF_icon::Get },
+		{ "icon",         &vfs::new_generated, (void*) &sys_mac_thng_REF_icon::Get },
 		
 	#if CONFIG_ICONSUITES
 		

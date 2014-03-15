@@ -25,11 +25,11 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/generated_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Generated.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
@@ -206,7 +206,7 @@ namespace Genie
 	{
 		{ "name", PROPERTY( sys_mac_soundin_REF_name ) },
 		
-		{ "icon", &new_generated, (void*) &sys_mac_soundin_N_icon::Get },
+		{ "icon", &vfs::new_generated, (void*) &sys_mac_soundin_N_icon::Get },
 		
 		{ NULL, NULL }
 	};
