@@ -121,15 +121,19 @@ no_USP_store:
 
 void* trace_vector : 0x00000024;
 
-asm void set_trace_handler()
+asm int set_trace_handler()
 {
 	JSR     0xFFFFFFFA ;  // enter_supervisor_mode()
+	
+	BMI.S   bail ;  // D0 is -1 if branch taken
 	
 	LEA     trace_handler,A0
 	MOVE.L  A0,trace_vector
 	
 	MOVE    D0,SR
+	MOVEQ   #0,D0
 	
+bail:
 	RTS
 }
 
