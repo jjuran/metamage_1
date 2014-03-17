@@ -28,8 +28,6 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 static void install_Debugger()
 {
-	set_trace_handler();
-	
 	TBTRAP( Debugger );  // A9FF
 	TBTRAP( DebugStr );  // ABFF
 }
@@ -62,6 +60,9 @@ int asm main( int argc, char** argv )
 	
 	SUBQ.L   #1,8(A6)
 	BLE.S    bail
+	
+	JSR      set_trace_handler
+	BMI.S    bail
 	
 	JSR      install_Debugger
 	
