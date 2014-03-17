@@ -58,8 +58,9 @@ int asm main( int argc, char** argv )
 {
 	LINK     A6,#0
 	
+	MOVEQ.L  #0,D0
 	SUBQ.L   #1,8(A6)
-	BLE.S    bail
+	BLE.S    exit
 	
 	JSR      set_trace_handler
 	BMI.S    bail
@@ -97,7 +98,7 @@ loaded:
 	// not reached
 	
 bail:
-	MOVEQ.L  #0,D0
+	MOVEQ.L  #1,D0
 exit:
 	UNLK     A6
 	RTS
