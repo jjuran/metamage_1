@@ -121,7 +121,7 @@ no_USP_store:
 
 void* trace_vector : 0x00000024;
 
-asm void set_trace_handler()
+asm int set_trace_handler()
 {
 	JSR     0xFFFFFFFA ;  // enter_supervisor_mode()
 	
@@ -131,6 +131,7 @@ asm void set_trace_handler()
 	MOVE.L  A0,trace_vector
 	
 	MOVE    D0,SR
+	MOVEQ   #0,D0
 	
 bail:
 	RTS
