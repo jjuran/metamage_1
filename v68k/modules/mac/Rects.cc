@@ -111,6 +111,14 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	params.skip_bytes = rowBytes - outer_bytes;
 	params.left_mask  = left_mask;
 	params.right_mask = right_mask;
+	
+	if ( int( inner_bytes ) < 0 )
+	{
+		params.left_mask  |= right_mask;
+		params.right_mask  = 0;
+		
+		params.draw_bytes = 0;
+	}
 }
 
 static void erase_rect( const rectangular_op_params& params )
