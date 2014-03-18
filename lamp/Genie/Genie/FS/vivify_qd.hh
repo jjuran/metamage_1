@@ -6,26 +6,15 @@
 #ifndef GENIE_FS_VIVIFYQD_HH
 #define GENIE_FS_VIVIFYQD_HH
 
-// mac-types
-#include "mac_types/Point.hh"
-#include "mac_types/Rect.hh"
+// mac-types-scribe
+#include "mac_types_scribe/vivify_qd.hh"
 
 
 namespace Genie
 {
 	
-	class invalid_decode_input_error {};
-	
-	
-	struct vivify_Point
-	{
-		static mac::types::Point apply( const char* begin, const char* end );
-	};
-	
-	struct vivify_Rect
-	{
-		static mac::types::Rect apply( const char* begin, const char* end );
-	};
+	using mac::types::scribe::vivify_Point;
+	using mac::types::scribe::vivify_Rect;
 	
 }
 

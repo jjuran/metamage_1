@@ -3,7 +3,7 @@
 	------------
 */
 
-#include "Genie/FS/vivify_qd.hh"
+#include "mac_types_scribe/vivify_qd.hh"
 
 // iota
 #include "iota/char_types.hh"
@@ -12,8 +12,9 @@
 #include "gear/parse_decimal.hh"
 
 
-namespace Genie
-{
+namespace mac    {
+namespace types  {
+namespace scribe {
 	
 	using mac::types::Point;
 	using mac::types::Rect;
@@ -69,4 +70,6 @@ namespace Genie
 		return result;
 	}
 	
-}
+}  // namespace scribe
+}  // namespace types
+}  // namespace mac
