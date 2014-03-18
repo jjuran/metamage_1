@@ -41,6 +41,7 @@ static void install_QuickDraw()
 	toolbox_trap_table[ 0x00A1 ] = &FrameRect_patch;
 	toolbox_trap_table[ 0x00A2 ] = &PaintRect_patch;
 	toolbox_trap_table[ 0x00A3 ] = &EraseRect_patch;
+	toolbox_trap_table[ 0x00A4 ] = &InverRect_patch;
 	toolbox_trap_table[ 0x00A5 ] = &FillRect_patch;
 }
 

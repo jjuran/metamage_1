@@ -187,6 +187,48 @@ pascal void PaintRect_patch( const Rect* rect )
 	paint_rect( params );
 }
 
+static void invert_rect( const rectangular_op_params& params )
+{
+	Ptr p = params.start;
+	
+	for ( int i = params.height;  i > 0;  --i )
+	{
+		if ( params.left_mask )
+		{
+			char out = *p &  params.left_mask;
+			char in = ~*p & ~params.left_mask;
+			
+			*p++ = out | in;
+		}
+		
+		for ( int n = params.draw_bytes;  n > 0;  --n )
+		{
+			*p = ~*p;
+			
+			++p;
+		}
+		
+		if ( params.right_mask )
+		{
+			char in = ~*p & ~params.right_mask;
+			char out = *p &  params.right_mask;
+			
+			*p++ = in | out;
+		}
+		
+		p += params.skip_bytes;
+	}
+}
+
+pascal void InverRect_patch( const Rect* rect )
+{
+	rectangular_op_params params;
+	
+	get_rectangular_op_params_for_rect( params, *rect );
+	
+	invert_rect( params );
+}
+
 pascal void FrameRect_patch( const Rect* rect )
 {
 	if ( rect->top >= rect->bottom  ||  rect->left >= rect->right )
