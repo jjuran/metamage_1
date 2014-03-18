@@ -187,6 +187,54 @@ pascal void PaintRect_patch( const Rect* rect )
 	paint_rect( params );
 }
 
+pascal void FrameRect_patch( const Rect* rect )
+{
+	if ( rect->top >= rect->bottom  ||  rect->left >= rect->right )
+	{
+		return;
+	}
+	
+	if ( rect->bottom - rect->top <= 2  ||  rect->right - rect->left <= 2 )
+	{
+		PaintRect_patch( rect );
+		
+		return;
+	}
+	
+	Rect edge;
+	
+	*(Point*) &edge = *(Point*) rect;  // topLeft
+	
+	edge.right = rect->right;
+	
+	edge.bottom = edge.top + 1;
+	
+	PaintRect_patch( &edge );
+	
+	
+	++edge.top;
+	
+	edge.right = edge.left + 1;
+	
+	edge.bottom = rect->bottom - 1;
+	
+	PaintRect_patch( &edge );
+	
+	
+	edge.left  = rect->right - 1;
+	edge.right = rect->right;
+	
+	PaintRect_patch( &edge );
+	
+	edge.left = rect->left;
+	
+	edge.top = edge.bottom;
+	
+	++edge.bottom;
+	
+	PaintRect_patch( &edge );
+}
+
 static void fill_rect( const rectangular_fill_params& params )
 {
 	Pattern pattern = params.pattern;

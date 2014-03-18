@@ -11,6 +11,7 @@ struct Pattern;
 
 pascal void EraseRect_patch( const Rect* rect );
 pascal void PaintRect_patch( const Rect* rect );
+pascal void FrameRect_patch( const Rect* rect );
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern );
 
