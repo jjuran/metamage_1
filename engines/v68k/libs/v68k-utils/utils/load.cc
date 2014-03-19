@@ -63,7 +63,7 @@ static asm void* load_with_size( const char* path : __A0, uint32_t* size ) : __A
 	
 	JSR      load
 	
-	MOVEA.L  -8(A6),A1;
+	MOVEA.L  8(A6),A1
 	MOVE.L   D0,(A1)  ;
 	
 	UNLK     A6       ;
