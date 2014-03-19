@@ -349,7 +349,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_line_9( uint16_t opcode, instruction& storage )
+	static const instruction* decode_ADD_SUB( uint16_t opcode, instruction& storage )
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
 		
@@ -358,15 +358,23 @@ namespace v68k
 		
 		const bool has_0100 = opcode & 0x0100;
 		
-		const bool is_SUB = size_code == 3 ? false
+		const bool normal = size_code == 3 ? false
 		                  : has_0100       ? ea_is_memory_alterable( mode )
 		                  : size_code == 0 ? ea_is_data ( mode, n )
 		                  :                  ea_is_valid( mode, n );
 		
-		storage.code  = &microcode_SUB;
-		storage.flags = loads_and | stores_data | SUB_CCR_update;
+		if ( opcode & 0x4000 )
+		{
+			storage.code  = &microcode_ADD;
+			storage.flags = loads_and | stores_data | ADD_CCR_update;
+		}
+		else
+		{
+			storage.code  = &microcode_SUB;
+			storage.flags = loads_and | stores_data | SUB_CCR_update;
+		}
 		
-		if ( is_SUB )
+		if ( normal )
 		{
 			storage.size  = op_size_in_00C0;
 			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
@@ -380,7 +388,7 @@ namespace v68k
 		{
 			storage.size  = op_size_in_00C0;
 			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
-			storage.flags = loads_and | stores_data | SUBX_CCR_update;
+			storage.flags |= CCR_update_and_Z;
 		}
 		else
 		{
@@ -507,47 +515,6 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static const instruction* decode_line_D( uint16_t opcode, instruction& storage )
-	{
-		const uint16_t size_code = opcode >> 6 & 0x3;
-		
-		const uint16_t mode = opcode >> 3 & 0x7;
-		const uint16_t n    = opcode >> 0 & 0x7;
-		
-		const bool has_0100 = opcode & 0x0100;
-		
-		const bool is_ADD = size_code == 3 ? false
-		                  : has_0100       ? ea_is_memory_alterable( mode )
-		                  : size_code == 0 ? ea_is_data ( mode, n )
-		                  :                  ea_is_valid( mode, n );
-		
-		storage.code  = &microcode_ADD;
-		storage.flags = loads_and | stores_data | ADD_CCR_update;
-		
-		if ( is_ADD )
-		{
-			storage.size  = op_size_in_00C0;
-			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
-		}
-		else if ( size_code == 3 )
-		{
-			storage.size  = op_size_in_0100;
-			storage.fetch = fetches_ADDA;
-		}
-		else if ( mode <= 1 )
-		{
-			storage.size  = op_size_in_00C0;
-			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
-			storage.flags = loads_and | stores_data | ADDX_CCR_update;
-		}
-		else
-		{
-			return 0;  // NULL
-		}
-		
-		return &storage;
-	}
-	
 	static const microcode bit_shift_microcodes[] =
 	{
 		&microcode_ASR,
@@ -619,12 +586,12 @@ namespace v68k
 		&decode_line_7,
 		
 		&decode_line_8,
-		&decode_line_9,
+		&decode_ADD_SUB,
 		&decode_unimplemented,
 		&decode_line_B,
 		
 		&decode_line_C,
-		&decode_line_D,
+		&decode_ADD_SUB,
 		&decode_line_E,
 		&decode_unimplemented
 	};
