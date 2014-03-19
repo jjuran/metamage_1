@@ -460,7 +460,7 @@ namespace v68k
 		
 		const bool has_0100 = opcode & 0x0100;
 		
-		if ( size_code == 0  &&  mode <= 1 )
+		if ( size_code == 0  &&  has_0100  &&  mode <= 1 )
 		{
 			storage.size  = byte_sized;
 			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
