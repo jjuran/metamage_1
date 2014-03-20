@@ -5,11 +5,14 @@
 
 #include "v68k-mac/memory.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <algorithm>
 
-// iota
-#include "iota/endian.hh"
+// v68k
+#include "v68k/endian.hh"
 
 // v68k-mac
 #include "v68k-mac/dynamic_globals.hh"
@@ -94,8 +97,7 @@ static void refresh_dynamic_global( uint8_t tag )
 		case tag_Ticks:
 			longword = get_Ticks();
 			
-			address[ 0 ] = longword >> 16;
-			address[ 1 ] = longword;
+			*(uint32_t*) address = big_longword( longword );
 			
 			break;
 		
@@ -192,25 +194,7 @@ static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
 
 static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
 {
-	const bool big = !iota::is_little_endian();
-	
-	switch ( size )
-	{
-		case 4:
-			// low word
-			words[ g->index + 1 ] = buffer[ 3 - big ] << 8
-			                      | buffer[ 2 + big ];
-			// fall through
-		
-		case 2:
-			words[ g->index     ] = buffer[ 1 - big ] << 8
-			                      | buffer[ 0 + big ];
-			break;
-		
-		default:
-			// There are no other sizes.
-			break;
-	}
+	memcpy( &words[ g->index ], buffer, size );
 	
 	return buffer;
 }
