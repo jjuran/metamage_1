@@ -30,8 +30,9 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 static void install_OSUtils()
 {
-	OSTRAP( Delay   );  // A03B
-	TBTRAP( SysBeep );  // A9C8
+	OSTRAP( Delay     );  // A03B
+	TBTRAP( TickCount );  // A975
+	TBTRAP( SysBeep   );  // A9C8
 }
 
 static void install_QuickDraw()

@@ -13,6 +13,11 @@
 uint32_t Ticks : 0x016A;
 
 
+pascal long TickCount_patch()
+{
+	return Ticks;
+}
+
 pascal long Delay_patch( long numTicks : __A0 ) : __D0
 {
 	const long nanoseconds_per_tick = 1000 * 1000 * 1000 / 60;
