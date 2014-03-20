@@ -450,6 +450,11 @@ static void emulation_loop( v68k::emulator& emu )
 	{
 		n_instructions = emu.instruction_count();
 		
+		if ( short( n_instructions ) == 0 )
+		{
+			kill( 1, 0 );  // Guaranteed yield point in MacRelix
+		}
+		
 		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
 		{
 			print_instruction_limit_exceeded( instruction_limit_var );
