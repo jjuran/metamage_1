@@ -8,6 +8,7 @@
 // v68k
 #include "v68k/fetches.hh"
 #include "v68k/microcode.hh"
+#include "v68k/ops.hh"
 
 
 #define FETCHES_MINOR_REGISTER_NUM  fetches_data_at_0007
@@ -86,7 +87,7 @@ namespace v68k
 	instruction decoded_EXTB =
 	{
 		FETCHES_MINOR_REGISTER_NUM,
-		microcode_EXTB,
+		sign_extend_byte,
 		long_sized,
 		not_before_68020 | loads_and | stores_data | basic_CCR_update
 	};

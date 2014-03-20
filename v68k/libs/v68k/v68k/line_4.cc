@@ -10,6 +10,7 @@
 #include "v68k/fetches.hh"
 #include "v68k/instructions.hh"
 #include "v68k/microcode.hh"
+#include "v68k/ops.hh"
 
 
 #pragma exceptions off
@@ -73,8 +74,8 @@ namespace v68k
 		{
 			storage.fetch = fetches_data_at_0007;
 			
-			storage.code = size_code > 2 ? microcode_EXT_L
-			                             : microcode_EXT_W;
+			storage.code = size_code > 2 ? sign_extend_word
+			                             : sign_extend_byte;
 			
 			storage.size = size_code > 2 ? long_sized
 			                             : word_sized;

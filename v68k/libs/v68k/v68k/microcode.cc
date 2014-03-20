@@ -363,27 +363,6 @@ namespace v68k
 		return Ok;
 	}
 	
-	op_result microcode_EXT_W( processor_state& s, op_params& pb )
-	{
-		pb.result = int8_t( pb.second );
-		
-		return Ok;
-	}
-	
-	op_result microcode_EXT_L( processor_state& s, op_params& pb )
-	{
-		pb.result = int16_t( pb.second );
-		
-		return Ok;
-	}
-	
-	op_result microcode_EXTB( processor_state& s, op_params& pb )
-	{
-		pb.result = int8_t( pb.second );
-		
-		return Ok;
-	}
-	
 	op_result microcode_TAS( processor_state& s, op_params& pb )
 	{
 		const int32_t data = sign_extend( pb.second, byte_sized );

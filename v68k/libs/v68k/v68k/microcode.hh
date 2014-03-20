@@ -70,11 +70,6 @@ namespace v68k
 	
 	op_result microcode_PEA( processor_state& state, op_params& pb );
 	
-	op_result microcode_EXT_W( processor_state& state, op_params& pb );
-	op_result microcode_EXT_L( processor_state& state, op_params& pb );
-	
-	op_result microcode_EXTB( processor_state& state, op_params& pb );
-	
 	op_result microcode_TAS( processor_state& state, op_params& pb );
 	
 	op_result microcode_MOVEM_to  ( processor_state& state, op_params& pb );
