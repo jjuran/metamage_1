@@ -79,7 +79,7 @@ namespace v68k
 			storage.size = size_code > 2 ? long_sized
 			                             : word_sized;
 			
-			storage.flags = basic_CCR_update;
+			storage.flags = loads_and | stores_data | basic_CCR_update;
 			
 			return &storage;
 		}

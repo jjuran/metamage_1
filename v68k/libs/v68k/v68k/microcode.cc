@@ -365,51 +365,21 @@ namespace v68k
 	
 	op_result microcode_EXT_W( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.target;
-		
-		uint32_t& Dn = s.d(n);
-		
-		const int8_t byte = Dn;
-		
-		const int16_t word = byte;
-		
-		Dn = (Dn & 0xFFFF0000) | uint16_t( word );
-		
-		pb.result = word;
+		pb.result = int8_t( pb.second );
 		
 		return Ok;
 	}
 	
 	op_result microcode_EXT_L( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.target;
-		
-		uint32_t& Dn = s.d(n);
-		
-		const int16_t word = Dn;
-		
-		const int32_t longword = word;
-		
-		Dn = longword;
-		
-		pb.result = longword;
+		pb.result = int16_t( pb.second );
 		
 		return Ok;
 	}
 	
 	op_result microcode_EXTB( processor_state& s, op_params& pb )
 	{
-		const uint32_t n = pb.target;
-		
-		uint32_t& Dn = s.d(n);
-		
-		const int8_t byte = Dn;
-		
-		const int32_t longword = byte;
-		
-		Dn = longword;
-		
-		pb.result = longword;
+		pb.result = int8_t( pb.second );
 		
 		return Ok;
 	}

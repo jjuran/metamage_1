@@ -88,7 +88,7 @@ namespace v68k
 		FETCHES_MINOR_REGISTER_NUM,
 		microcode_EXTB,
 		long_sized,
-		not_before_68020 | basic_CCR_update
+		not_before_68020 | loads_and | stores_data | basic_CCR_update
 	};
 	
 	instruction decoded_TRAP =
