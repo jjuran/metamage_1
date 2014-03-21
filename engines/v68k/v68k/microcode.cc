@@ -593,7 +593,7 @@ namespace v68k
 		
 		uint16_t id;
 		
-		if ( !s.mem.get_word( sp + 6, id, s.data_space() ) )
+		if ( !s.mem.get_word( sp + 6, id, supervisor_data_space ) )
 		{
 			s.bus_error();
 			
@@ -613,7 +613,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp + 2, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.get_long( sp + 2, s.regs.pc, supervisor_data_space ) )
 		{
 			s.bus_error();
 			
@@ -622,7 +622,7 @@ namespace v68k
 		
 		uint16_t saved_sr;
 		
-		if ( !s.mem.get_word( sp, saved_sr, s.data_space() ) )
+		if ( !s.mem.get_word( sp, saved_sr, supervisor_data_space ) )
 		{
 			s.bus_error();
 			
