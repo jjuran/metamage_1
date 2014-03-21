@@ -150,16 +150,15 @@ namespace v68k
 			storage.code = immediate_microcodes[ selector ];
 			
 			storage.fetch = fetches_immediate;
-			storage.flags = loads_and | stores_data;
 			
 			if ( selector & 2 )
 			{
-				storage.flags |= (selector & 1) ? ADD_CCR_update
-				                                : SUB_CCR_update;
+				storage.flags = (selector & 1) ? loads_and | stores_data | ADD_CCR_update
+				                               : loads_and | stores_data | SUB_CCR_update;
 			}
 			else
 			{
-				storage.flags |= basic_CCR_update;
+				storage.flags = loads_and | stores_data | basic_CCR_update;
 			}
 			
 			if ( selector == 6 )
@@ -169,7 +168,7 @@ namespace v68k
 			
 			if ( selector == 6  &&  mode == 7  &&  n & 2 )
 			{
-				storage.flags |= not_before_68010;
+				storage.flags = loads_and | stores_data | not_before_68010;
 			}
 			
 			return &storage;
@@ -200,12 +199,12 @@ namespace v68k
 		
 		const uint16_t size_code = opcode >> 12 & 0x3;
 		
-		if ( size_code == 1  &&  (ea_is_address_register( mode )  ||  ea_is_address_register( mode2 )) )
+		const int i = (size_code - 1);
+		
+		if ( i == 0  &&  (ea_is_address_register( mode )  ||  ea_is_address_register( mode2 )) )
 		{
 			return 0;  // NULL
 		}
-		
-		const int i = (size_code - 1);
 		
 		return move_instructions[ i ];
 	}
@@ -353,16 +352,6 @@ namespace v68k
 	{
 		const uint16_t size_code = opcode >> 6 & 0x3;
 		
-		const uint16_t mode = opcode >> 3 & 0x7;
-		const uint16_t n    = opcode >> 0 & 0x7;
-		
-		const bool has_0100 = opcode & 0x0100;
-		
-		const bool normal = size_code == 3 ? false
-		                  : has_0100       ? ea_is_memory_alterable( mode )
-		                  : size_code == 0 ? ea_is_data ( mode, n )
-		                  :                  ea_is_valid( mode, n );
-		
 		if ( opcode & 0x4000 )
 		{
 			storage.code  = &microcode_ADD;
@@ -374,19 +363,31 @@ namespace v68k
 			storage.flags = loads_and | stores_data | SUB_CCR_update;
 		}
 		
-		if ( normal )
-		{
-			storage.size  = op_size_in_00C0;
-			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
-		}
-		else if ( size_code == 3 )
+		if ( size_code == 3 )
 		{
 			storage.size  = op_size_in_0100;
 			storage.fetch = fetches_ADDA;
+			
+			return &storage;
+		}
+		
+		storage.size  = op_size_in_00C0;
+		
+		const uint16_t mode = opcode >> 3 & 0x7;
+		const uint16_t n    = opcode >> 0 & 0x7;
+		
+		const bool has_0100 = opcode & 0x0100;
+		
+		const bool normal = has_0100       ? ea_is_memory_alterable( mode )
+		                  : size_code == 0 ? ea_is_data ( mode, n )
+		                  :                  ea_is_valid( mode, n );
+		
+		if ( normal )
+		{
+			storage.fetch = has_0100 ? fetches_math : fetches_math_to_Dn;
 		}
 		else if ( mode <= 1 )
 		{
-			storage.size  = op_size_in_00C0;
 			storage.fetch = mode == 0 ? fetches_ADDX_Dn : fetches_ADDX_predec;
 			storage.flags |= CCR_update_and_Z;
 		}
