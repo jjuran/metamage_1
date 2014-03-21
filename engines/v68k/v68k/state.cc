@@ -178,9 +178,11 @@ namespace v68k
 		
 		sp -= size;
 		
-		const bool ok = mem.put_word( sp + 0, saved_sr,      data_space() )
-		              & mem.put_long( sp + 2, regs.pc,       data_space() )
-		              & mem.put_word( sp + 6, vector_offset, data_space() );  // format is 0
+		const uint32_t format_and_offset = 0 << 12 | vector_offset;
+		
+		const bool ok = mem.put_word( sp + 0, saved_sr,          supervisor_data_space )
+		              & mem.put_long( sp + 2, regs.pc,           supervisor_data_space )
+		              & mem.put_word( sp + 6, format_and_offset, supervisor_data_space );
 		
 		if ( !ok )
 		{
@@ -192,7 +194,7 @@ namespace v68k
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, data_space() ) )
+		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, supervisor_data_space ) )
 		{
 			return bus_error();
 		}
@@ -221,10 +223,10 @@ namespace v68k
 		
 		const uint32_t format_and_offset = 2 << 12 | vector_offset;
 		
-		const bool ok = mem.put_word( sp + 0, saved_sr,            data_space() )
-		              & mem.put_long( sp + 2, regs.pc,             data_space() )
-		              & mem.put_word( sp + 6, format_and_offset,   data_space() )
-		              & mem.put_long( sp + 8, instruction_address, data_space() );
+		const bool ok = mem.put_word( sp + 0, saved_sr,            supervisor_data_space )
+		              & mem.put_long( sp + 2, regs.pc,             supervisor_data_space )
+		              & mem.put_word( sp + 6, format_and_offset,   supervisor_data_space )
+		              & mem.put_long( sp + 8, instruction_address, supervisor_data_space );
 		
 		if ( !ok )
 		{
@@ -236,7 +238,7 @@ namespace v68k
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, data_space() ) )
+		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, supervisor_data_space ) )
 		{
 			return bus_error();
 		}
