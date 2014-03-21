@@ -800,9 +800,7 @@ namespace v68k
 	
 	op_result microcode_DBcc( processor_state& s, op_params& pb )
 	{
-		const uint16_t cc = pb.second;
-		
-		if ( test_conditional( cc, s.sr.nzvc ) )
+		if ( pb.result )
 		{
 			return Ok;
 		}
@@ -823,15 +821,6 @@ namespace v68k
 			
 			s.pc() = pb.address;
 		}
-		
-		return Ok;
-	}
-	
-	op_result microcode_Scc( processor_state& s, op_params& pb )
-	{
-		const uint16_t cc = pb.second;
-		
-		pb.result = int32_t() - test_conditional( cc, s.sr.nzvc );
 		
 		return Ok;
 	}
@@ -869,9 +858,7 @@ namespace v68k
 	
 	op_result microcode_Bcc( processor_state& s, op_params& pb )
 	{
-		const uint16_t cc = pb.second;
-		
-		if ( test_conditional( cc, s.sr.nzvc ) )
+		if ( pb.result )
 		{
 			s.pc() = pb.address;
 		}

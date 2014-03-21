@@ -6,6 +6,7 @@
 #include "v68k/fetch.hh"
 
 // v68k
+#include "v68k/conditional.hh"
 #include "v68k/effective_address.hh"
 #include "v68k/macros.hh"
 #include "v68k/op_params.hh"
@@ -219,9 +220,13 @@ namespace v68k
 	}
 	
 	
-	void fetch_cc( processor_state& s, op_params& pb )
+	void fetch_conditional( processor_state& s, op_params& pb )
 	{
-		pb.second = s.opcode >> 8 & 0x0F;
+		uint16_t cc = s.opcode >> 8 & 0x0F;
+		
+		int32_t flag = int32_t() - test_conditional( cc, s.sr.nzvc );
+		
+		pb.result = flag;
 	}
 	
 	

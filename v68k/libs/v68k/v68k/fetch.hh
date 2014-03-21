@@ -68,7 +68,7 @@ namespace v68k
 	
 	void fetch_ADDQ_data( processor_state& state, op_params& pb );
 	
-	void fetch_cc( processor_state& state, op_params& pb );
+	void fetch_conditional( processor_state& state, op_params& pb );
 	
 	void fetch_signed_data_at_00FF( processor_state& state, op_params& pb );
 	

@@ -248,7 +248,7 @@ namespace v68k
 		{
 			storage.size  = byte_sized;
 			storage.fetch = fetches_Scc;
-			storage.code  = &microcode_Scc;
+			storage.code  = &microcode_NOP;
 			storage.flags = stores_data;
 			
 			return &storage;

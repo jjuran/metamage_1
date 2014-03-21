@@ -221,7 +221,7 @@ namespace v68k
 	fetcher fetches_DBcc[] =
 	{
 		&fetch_sized_immediate_signed_data,
-		&fetch_cc,
+		&fetch_conditional,
 		&add_first_to_address,
 		&fetch_data_at_0007,
 		0  // NULL
@@ -229,7 +229,7 @@ namespace v68k
 	
 	fetcher fetches_Scc[] =
 	{
-		&fetch_cc,
+		&fetch_conditional,
 		&fetch_effective_address,
 		0  // NULL
 	};
@@ -238,7 +238,7 @@ namespace v68k
 	fetcher fetches_branch_short[] =
 	{
 		&fetch_signed_data_at_00FF,
-		&fetch_cc,
+		&fetch_conditional,
 		&add_first_to_address,
 		0  // NULL
 	};
@@ -246,7 +246,7 @@ namespace v68k
 	fetcher fetches_branch[] =
 	{
 		&fetch_sized_immediate_signed_data,
-		&fetch_cc,
+		&fetch_conditional,
 		&add_first_to_address,
 		0  // NULL
 	};

@@ -105,8 +105,6 @@ namespace v68k
 	
 	op_result microcode_DBcc( processor_state& state, op_params& pb );
 	
-	op_result microcode_Scc( processor_state& state, op_params& pb );
-	
 	#pragma mark -
 	#pragma mark Line 6
 	
