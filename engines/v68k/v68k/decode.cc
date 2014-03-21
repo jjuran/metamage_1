@@ -574,7 +574,7 @@ namespace v68k
 		return 0;  // NULL
 	}
 	
-	static decoder decoder_per_line[] =
+	static const decoder decoder_per_line[] =
 	{
 		&decode_line_0,
 		&decode_MOVE,
