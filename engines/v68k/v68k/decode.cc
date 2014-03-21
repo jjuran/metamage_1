@@ -200,12 +200,12 @@ namespace v68k
 		
 		const uint16_t size_code = opcode >> 12 & 0x3;
 		
-		if ( size_code == 1  &&  (ea_is_address_register( mode )  ||  ea_is_address_register( mode2 )) )
+		const int i = (size_code - 1);
+		
+		if ( i == 0  &&  (ea_is_address_register( mode )  ||  ea_is_address_register( mode2 )) )
 		{
 			return 0;  // NULL
 		}
-		
-		const int i = (size_code - 1);
 		
 		return move_instructions[ i ];
 	}
