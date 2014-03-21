@@ -175,7 +175,7 @@ namespace v68k
 			}
 		}
 		
-		const uint16_t saved_SR = get_SR();
+		const uint8_t saved_ttsm = regs.ttsm;
 		
 		// execute
 		decoded->code( *this, pb );
@@ -217,7 +217,7 @@ namespace v68k
 		
 		++its_instruction_counter;
 		
-		if ( (saved_SR >> 14) - 1 > 0  &&  condition >= normal )
+		if ( (saved_ttsm >> 2) - 1 > 0  &&  condition >= normal )
 		{
 			if ( condition == stopped )
 			{
