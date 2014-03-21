@@ -406,8 +406,6 @@ namespace v68k
 		const uint16_t mode = opcode >> 3 & 0x7;
 		const uint16_t n    = opcode >> 0 & 0x7;
 		
-		const bool has_0100 = opcode & 0x0100;
-		
 		if ( size_code == 3 )
 		{
 			if ( ea_is_valid( mode, n ) )
