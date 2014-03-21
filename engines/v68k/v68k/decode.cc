@@ -150,16 +150,15 @@ namespace v68k
 			storage.code = immediate_microcodes[ selector ];
 			
 			storage.fetch = fetches_immediate;
-			storage.flags = loads_and | stores_data;
 			
 			if ( selector & 2 )
 			{
-				storage.flags |= (selector & 1) ? ADD_CCR_update
-				                                : SUB_CCR_update;
+				storage.flags = (selector & 1) ? loads_and | stores_data | ADD_CCR_update
+				                               : loads_and | stores_data | SUB_CCR_update;
 			}
 			else
 			{
-				storage.flags |= basic_CCR_update;
+				storage.flags = loads_and | stores_data | basic_CCR_update;
 			}
 			
 			if ( selector == 6 )
@@ -169,7 +168,7 @@ namespace v68k
 			
 			if ( selector == 6  &&  mode == 7  &&  n & 2 )
 			{
-				storage.flags |= not_before_68010;
+				storage.flags = loads_and | stores_data | not_before_68010;
 			}
 			
 			return &storage;
