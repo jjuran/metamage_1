@@ -104,17 +104,17 @@ sub command
 	my @f;
 	my @w;
 	
-	if ( $conf->is_apple_gcc )
-	{
-		push @f, "-fpascal-strings";
-		push @w, "-Wno-deprecated-declarations";
-	}
-	
 	my %d;
 	
 	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
 	
-	$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
+	if ( $conf->is_apple_gcc )
+	{
+		push @f, "-fpascal-strings";
+		push @w, "-Wno-deprecated-declarations";
+		
+		$d{ MAC_OS_X_VERSION_MIN_REQUIRED } = 'MAC_OS_X_VERSION_10_2';
+	}
 	
 	my @d = map { "-D$_=" . $d{ $_ } } keys %d;
 	
