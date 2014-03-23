@@ -108,6 +108,11 @@ sub command
 	
 	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
 	
+	if ( $conf->is_carbon )
+	{
+		$d{ TARGET_API_MAC_CARBON } = 1;
+	}
+	
 	if ( $conf->is_apple_gcc )
 	{
 		push @f, "-fpascal-strings";

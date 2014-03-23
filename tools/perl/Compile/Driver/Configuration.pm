@@ -166,6 +166,13 @@ sub arch_option
 	return (-arch => $arch);
 }
 
+sub is_carbon
+{
+	my $self = shift;
+	
+	return ($self->{ mac_api } || "") eq 'carbon';
+}
+
 sub is_apple_gcc
 {
 	my $self = shift;
