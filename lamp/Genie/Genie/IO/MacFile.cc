@@ -302,7 +302,31 @@ namespace Genie
 		
 		const Mac::FSIOPermissions perm = Mac::FSIOPermissions( mac_perm );
 		
-		n::owned< Mac::FSFileRefNum > fileHandle = openFork( fileSpec, perm );
+		n::owned< Mac::FSFileRefNum >
+		
+	#if TARGET_API_MAC_CARBON
+		
+		fileHandle;
+		
+		try
+		{
+	#endif
+		
+			fileHandle = openFork( fileSpec, perm );
+		
+	#if TARGET_API_MAC_CARBON
+		}
+		catch ( const Mac::OSStatus& err )
+		{
+			if ( err != permErr  ||  perm != fsWrPerm )
+			{
+				throw;
+			}
+			
+			fileHandle = openFork( fileSpec, Mac::fsRdWrPerm );
+		}
+		
+	#endif
 		
 		return new MacFileHandle( fileHandle, flags, getFile );
 	}
