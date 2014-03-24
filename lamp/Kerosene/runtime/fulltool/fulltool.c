@@ -41,8 +41,6 @@ extern int        main( int argc, char** argv );
 extern void exit( int );
 
 
-#pragma force_active on
-
 void _lamp_main( int argc, char** argv, char** envp, _relix_system_parameter_block* pb )
 {
 #ifndef __MC68K__
@@ -69,6 +67,3 @@ void _lamp_main( int argc, char** argv, char** envp, _relix_system_parameter_blo
 	
 	exit( main( argc, argv ) );
 }
-
-#pragma force_active reset
-

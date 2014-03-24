@@ -29,7 +29,6 @@ extern int errno;
 extern int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb );
 extern int       main( int argc, char **argv );
 
-#pragma force_active on
 
 int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb )
 {
@@ -55,6 +54,3 @@ int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_bloc
 	
 	return main( argc, argv );
 }
-
-#pragma force_active reset
-
