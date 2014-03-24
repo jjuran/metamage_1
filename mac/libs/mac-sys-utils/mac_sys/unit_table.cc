@@ -23,7 +23,7 @@ namespace sys {
 	
 	mac::types::AuxDCE*** get_unit_table_base()
 	{
-	#if !defined( __APPLE__ )  &&  !TARGET_API_MAC_CARBON
+	#if !TARGET_API_MAC_CARBON
 		
 		return (mac::types::AuxDCE***) ::LMGetUTableBase();
 		
@@ -34,7 +34,7 @@ namespace sys {
 	
 	short get_unit_table_entry_count()
 	{
-	#if !defined( __APPLE__ )  &&  !TARGET_API_MAC_CARBON
+	#if !TARGET_API_MAC_CARBON
 		
 		return ::LMGetUnitTableEntryCount();
 		
