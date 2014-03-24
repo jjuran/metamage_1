@@ -568,10 +568,8 @@ namespace tool
 			{
 				options.DEFINE_MACRO_VALUE( "MAC_OS_X_VERSION_MIN_REQUIRED", MAC_OS_X_VERSION_10_2 );
 			}
-			else
-			{
-				options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
-			}
+			
+			options.DEFINE_MACRO( "TARGET_API_MAC_CARBON" );
 		}
 		else if ( target_info.platform & apiMacBlue )
 		{
