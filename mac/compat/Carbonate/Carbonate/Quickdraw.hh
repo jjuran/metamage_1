@@ -17,6 +17,14 @@
 #error Configuration error:  This file is for classic only
 #endif
 
+#if !ACCESSOR_CALLS_ARE_FUNCTIONS
+
+pascal CGrafPtr CreateNewPort();
+
+pascal void DisposePort( CGrafPtr port );
+
+#endif
+
 /*
 	We need these definitions under the following conditions:
 	1. Accessors are not functions, for including
@@ -393,27 +401,6 @@ CARBONATE_LINKAGE Rect* GetRegionBounds( RgnHandle region, Rect* bounds )
 }
 
 /* IsRegionRectangular */
-
-CARBONATE_LINKAGE CGrafPtr CreateNewPort()
-{
-	Ptr portMem = NewPtr( sizeof (CGrafPort) );
-	
-	CGrafPtr port = (CGrafPtr) portMem;  /* reinterpret_cast */
-	
-	if ( port != NULL )
-	{
-		OpenCPort( port );
-	}
-	
-	return port;
-}
-
-CARBONATE_LINKAGE void DisposePort( CGrafPtr port )
-{
-	CloseCPort( port );
-	
-	DisposePtr( (Ptr) port );  /* reinterpret_cast */
-}
 
 /* SetQDError */
 
