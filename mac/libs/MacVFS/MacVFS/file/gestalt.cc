@@ -23,6 +23,8 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 
 
 namespace vfs
@@ -31,18 +33,7 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	class gestalt_device : public filehandle
-	{
-		public:
-			gestalt_device( const node& that, int flags ) : filehandle( &that, flags )
-			{
-			}
-			
-			void IOCtl( unsigned long request, int* argp );
-	};
-	
-	
-	void gestalt_device::IOCtl( unsigned long request, int* argp )
+	static void gestalt_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
 	{
 		long value;
 		
@@ -64,10 +55,24 @@ namespace vfs
 		}
 	}
 	
+	static const vfs::general_method_set gestalt_general_methods =
+	{
+		NULL,
+		&gestalt_ioctl,
+	};
+	
+	static const vfs::filehandle_method_set gestalt_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		&gestalt_general_methods,
+	};
+	
+	
 	filehandle_ptr open_gestalt( const node* that, int flags, mode_t mode )
 	{
-		return new gestalt_device( *that, flags );
+		return new filehandle( that, flags, &gestalt_methods );
 	}
 	
 }
-
