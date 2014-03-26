@@ -553,6 +553,13 @@ namespace Genie
 		return new relix::process_image();
 	}
 	
+	static boost::intrusive_ptr< relix::process_image >
+	//
+	new_process_image( const vfs::node& exe )
+	{
+		return new relix::process_image( exe );
+	}
+	
 	static vfs::filehandle_ptr open_device( const char* path, size_t length )
 	{
 		return open( *vfs::resolve_absolute_path( *relix::root(), path, length ), O_RDWR, 0 );
@@ -577,7 +584,6 @@ namespace Genie
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		itsProgramFile        ( relix::root() ),
 		its_memory_data       ( root_memory_data() ),
 		itMayDumpCore         ()
 	{
@@ -615,7 +621,6 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		itsProgramFile        ( parent.itsProgramFile ),
 		its_exec_handle       ( parent.its_exec_handle ),
 		its_memory_data       ( parent.its_memory_data ),
 		itMayDumpCore         ( true )
@@ -819,9 +824,7 @@ namespace Genie
 		
 		swap( its_memory_data, new_memory_data );
 		
-		itsProgramFile = context.executable;
-		
-		vfs::program_ptr executable = exec( *itsProgramFile );
+		vfs::program_ptr executable = exec( *context.executable );
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -832,7 +835,7 @@ namespace Genie
 		// Create the new thread
 		looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
-		get_process().set_process_image( *new_process_image() );
+		get_process().set_process_image( *new_process_image( *context.executable ) );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );

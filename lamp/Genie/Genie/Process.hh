@@ -19,9 +19,7 @@
 #include "recall/stack_crawl.hh"
 
 // vfs
-#include "vfs/filehandle_ptr.hh"
 #include "vfs/memory_mapping_fwd.hh"
-#include "vfs/node_ptr.hh"
 #include "vfs/program_ptr.hh"
 
 // relix-kernel
@@ -126,8 +124,6 @@ namespace Genie
 			unsigned itsAsyncOpCount;
 		
 		private:
-			vfs::node_ptr itsProgramFile;
-			
 			vfs::program_ptr  its_exec_handle;
 			
 			boost::intrusive_ptr< relix::memory_data > its_memory_data;
@@ -216,8 +212,6 @@ namespace Genie
 			void AsyncYield();
 			
 			const plus::string& ProgramName()  const  { return itsName;   }
-			
-			const vfs::node_ptr& ProgramFile() const  { return itsProgramFile; }
 			
 			relix::fd_map& FileDescriptors();
 			

@@ -12,6 +12,9 @@
 // plus
 #include "plus/ref_count.hh"
 
+// vfs
+#include "vfs/node_ptr.hh"
+
 
 namespace relix
 {
@@ -22,9 +25,13 @@ namespace relix
 			typedef _relix_user_parameter_block pb;
 			
 			_relix_user_parameter_block its_pb;
+			
+			vfs::node_ptr its_exe;
 		
 		public:
 			process_image();
+			
+			process_image( const vfs::node& exe );
 			
 			~process_image();
 			
@@ -33,6 +40,8 @@ namespace relix
 			int get_errno() const;
 			
 			int set_errno( int errnum ) const;
+			
+			const vfs::node& get_exe() const;
 	};
 	
 }
