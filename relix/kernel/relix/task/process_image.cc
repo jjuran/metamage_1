@@ -5,6 +5,12 @@
 
 #include "relix/task/process_image.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
+// vfs
+#include "vfs/node.hh"
+
 // relix
 #include "relix/glue/userland.hh"
 
@@ -12,10 +18,20 @@
 namespace relix
 {
 	
+	namespace p7 = poseven;
+	
+	
 	typedef _relix_user_parameter_block pb;
 	
 	
 	process_image::process_image()
+	{
+		const _relix_user_parameter_block init = { 0 };  // NULL
+		
+		its_pb = init;
+	}
+	
+	process_image::process_image( const vfs::node& exe ) : its_exe( &exe )
 	{
 		const _relix_user_parameter_block init = { 0 };  // NULL
 		
@@ -60,6 +76,16 @@ namespace relix
 		}
 		
 		return errnum == 0 ? 0 : -1;
+	}
+	
+	const vfs::node& process_image::get_exe() const
+	{
+		if ( its_exe.get() == 0 )  // NULL
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
+		return *its_exe;
 	}
 	
 }
