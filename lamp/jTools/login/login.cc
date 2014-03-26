@@ -67,7 +67,7 @@ static void SetVariables()
 	
 	setenv( "PATH", path, 0 );
 	
-	const char* home = "/home/jr";
+	const char* home = "/";
 	
 	char path_buffer[ 4096 ];
 	
