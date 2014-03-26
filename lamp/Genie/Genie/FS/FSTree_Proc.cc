@@ -46,6 +46,7 @@
 // relix-kernel
 #include "relix/api/current_process.hh"
 #include "relix/api/getcwd.hh"
+#include "relix/api/getexe.hh"
 #include "relix/api/root.hh"
 #include "relix/task/fd_map.hh"
 #include "relix/task/process.hh"
@@ -172,7 +173,7 @@ namespace Genie
 				return getcwd( process.get_process() );
 			
 			case 'e':  // exe
-				return process.ProgramFile();
+				return getexe( process.get_process() );
 			
 			case 'r':  // root
 				return relix::root();
