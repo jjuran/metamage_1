@@ -318,7 +318,7 @@ namespace Genie
 		}
 		catch ( const Mac::OSStatus& err )
 		{
-			if ( err != permErr  ||  perm != fsWrPerm )
+			if ( err != permErr  ||  mac_perm != fsWrPerm )
 			{
 				throw;
 			}
