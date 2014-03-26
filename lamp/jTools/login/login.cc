@@ -18,6 +18,15 @@
 #pragma exceptions off
 
 
+#define ARRAYLEN( a )  (sizeof (a) / sizeof (a)[0])
+
+
+static const char* home_links[] =
+{
+	"/sys/mac/user/prefs/MacRelix/Home",
+	"/sys/mac/user/home",
+};
+
 static void SetVariables()
 {
 	#if defined(__MC68K__)
@@ -58,23 +67,24 @@ static void SetVariables()
 	
 	setenv( "PATH", path, 0 );
 	
+	const char* home = "/home/jr";
+	
 	char path_buffer[ 4096 ];
 	
-	ssize_t size = _readlink( "/sys/mac/user/prefs/MacRelix/Home",
-	                          path_buffer,
-	                          sizeof path_buffer - 1 );
-	
-	const char* home;
-	
-	if ( size < 0 )
+	for ( int i = 0;  i < ARRAYLEN( home_links );  ++i )
 	{
-		home = "/home/jr";
-	}
-	else
-	{
-		path_buffer[ size ] = '\0';
+		ssize_t size = _readlink( home_links[ i ],
+		                          path_buffer,
+		                          sizeof path_buffer - 1 );
 		
-		home = path_buffer;
+		if ( size > 0 )
+		{
+			path_buffer[ size ] = '\0';
+			
+			home = path_buffer;
+			
+			break;
+		}
 	}
 	
 	int changed = chdir( home );
