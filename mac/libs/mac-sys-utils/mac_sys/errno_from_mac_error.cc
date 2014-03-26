@@ -43,6 +43,8 @@ namespace sys {
 			case resNotFound    :  // fall through
 			case afpItemNotFound:  // fall through
 			case fnfErr         :  result = ENOENT;        break;
+			case badMDBErr      :  // fall through
+			case fsDSIntErr     :  // fall through
 			case ioErr          :  result = EIO;           break;
 			case fnOpnErr       :  // fall through
 			case wrPermErr      :  // fall through
