@@ -84,6 +84,7 @@ namespace relix
 			void set_process_group( process_group& pg );
 			void set_process_image( process_image& image );
 			
+			void reset_process_image();
 			void reset_process_resources();
 	};
 	
