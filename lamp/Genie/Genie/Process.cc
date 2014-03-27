@@ -307,8 +307,6 @@ namespace Genie
 			char* const* argv = memory_data.get_argv();
 			char* const* envp = memory_data.get_envp();
 			
-			relix::process_image& image = process->get_process().get_process_image();
-			
 			exit_status = image.enter_start_routine( argc,
 			                                         argv,
 			                                         envp,
