@@ -11,6 +11,10 @@
 // vfs
 #include "vfs/node.hh"
 
+// vfs-relix
+#include "vfs/program.hh"
+#include "vfs/primitives/exec.hh"
+
 // relix
 #include "relix/glue/userland.hh"
 
@@ -31,7 +35,10 @@ namespace relix
 		its_pb = init;
 	}
 	
-	process_image::process_image( const vfs::node& exe ) : its_exe( &exe )
+	process_image::process_image( const vfs::node& exe )
+	:
+		its_exe( &exe ),
+		its_program( exec( exe ) )
 	{
 		const _relix_user_parameter_block init = { 0 };  // NULL
 		
@@ -86,6 +93,24 @@ namespace relix
 		}
 		
 		return *its_exe;
+	}
+	
+	int process_image::enter_start_routine( int                             argc,
+	                                        char* const*                    argv,
+	                                        char* const*                    envp,
+	                                        _relix_system_parameter_block*  pb )
+	{
+		vfs::relix_entry relix_main = its_program->get_main_entry_point();
+		
+		ENTER_USERMAIN();
+		
+		int exit_status = relix_main( argc, argv, envp, pb );
+		
+		EXIT_USERMAIN();
+		
+		// Not reached by regular tools, since they call exit()
+		
+		return exit_status;
 	}
 	
 }

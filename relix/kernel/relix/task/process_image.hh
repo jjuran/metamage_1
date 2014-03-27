@@ -14,6 +14,7 @@
 
 // vfs
 #include "vfs/node_ptr.hh"
+#include "vfs/program_ptr.hh"
 
 
 namespace relix
@@ -27,6 +28,8 @@ namespace relix
 			_relix_user_parameter_block its_pb;
 			
 			vfs::node_ptr its_exe;
+			
+			vfs::program_ptr its_program;
 		
 		public:
 			process_image();
@@ -42,6 +45,11 @@ namespace relix
 			int set_errno( int errnum ) const;
 			
 			const vfs::node& get_exe() const;
+			
+			int enter_start_routine( int                             argc,
+			                         char* const*                    argv,
+			                         char* const*                    envp,
+			                         _relix_system_parameter_block*  pb );
 	};
 	
 }

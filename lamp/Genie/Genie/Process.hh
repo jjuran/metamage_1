@@ -20,7 +20,6 @@
 
 // vfs
 #include "vfs/memory_mapping_fwd.hh"
-#include "vfs/program_ptr.hh"
 
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
@@ -124,8 +123,6 @@ namespace Genie
 			unsigned itsAsyncOpCount;
 		
 		private:
-			vfs::program_ptr  its_exec_handle;
-			
 			boost::intrusive_ptr< relix::memory_data > its_memory_data;
 			
 			void* itsReexecArgs[8];

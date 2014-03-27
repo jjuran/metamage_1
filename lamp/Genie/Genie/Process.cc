@@ -66,10 +66,6 @@
 #include "vfs/primitives/open.hh"
 #include "vfs/primitives/stat.hh"
 
-// vfs-relix
-#include "vfs/program.hh"
-#include "vfs/primitives/exec.hh"
-
 // relix-kernel
 #include "relix/api/getcwd.hh"
 #include "relix/api/root.hh"
@@ -277,25 +273,6 @@ namespace Genie
 			                 itsReexecArgs[ 6 ],
 			                 itsReexecArgs[ 7 ] );
 		}
-		else
-		{
-			int          argc = its_memory_data->get_argc();
-			char* const* argv = its_memory_data->get_argv();
-			char* const* envp = its_memory_data->get_envp();
-			
-			vfs::relix_entry relix_main = its_exec_handle->get_main_entry_point();
-			
-			ENTER_USERMAIN();
-			
-			exit_status = relix_main( argc,
-			                          argv,
-			                          envp,
-			                          &global_parameter_block );
-			
-			EXIT_USERMAIN();
-			
-			// Not reached by regular tools, since they call exit()
-		}
 		
 		return exit_status;
 	}
@@ -316,7 +293,29 @@ namespace Genie
 		// Accumulate any system time between start and entry to main()
 		relix::leave_system();
 		
-		int exit_status = process->Run();
+		int exit_status = 0;
+		
+		if ( process->itsReexecArgs[ 0 ] )
+		{
+			exit_status = process->Run();
+		}
+		else
+		{
+			relix::memory_data& memory_data = *process->its_memory_data;
+			
+			int          argc = memory_data.get_argc();
+			char* const* argv = memory_data.get_argv();
+			char* const* envp = memory_data.get_envp();
+			
+			relix::process_image& image = process->get_process().get_process_image();
+			
+			exit_status = image.enter_start_routine( argc,
+			                                         argv,
+			                                         envp,
+			                                         &global_parameter_block );
+			
+			// Not reached by regular tools, since they call exit()
+		}
 		
 		// Accumulate any time between last syscall (if any) and return from userspace
 		relix::enter_system();
@@ -609,7 +608,6 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		its_exec_handle       ( parent.its_exec_handle ),
 		its_memory_data       ( parent.its_memory_data ),
 		itMayDumpCore         ( true )
 	{
@@ -812,8 +810,6 @@ namespace Genie
 		
 		swap( its_memory_data, new_memory_data );
 		
-		vfs::program_ptr executable = exec( *context.executable );
-		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
@@ -825,18 +821,18 @@ namespace Genie
 		
 		relix::process& proc = get_process();
 		
+		// Save the process image that we're running from and set the new one.
+		boost::intrusive_ptr< relix::process_image > old_image = &proc.get_process_image();
+		
 		proc.set_process_image( *new_process_image( *context.executable ) );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
 		
-		// Save the binary image that we're running from and set the new one.
-		swap( executable, its_exec_handle );
-		
-		// Lose the current executable.  If we're not vforked and the
+		// Lose the current process image.  If we're not vforked and the
 		// execution unit isn't cached, it's now gone.  But that's okay
 		// since the thread terminates in execve().
-		executable.reset();
+		old_image.reset();
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
