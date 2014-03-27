@@ -28,21 +28,39 @@ namespace relix
 	typedef _relix_user_parameter_block pb;
 	
 	
-	process_image::process_image()
+	static inline boost::intrusive_ptr< memory_data > root_memory_data()
+	{
+		boost::intrusive_ptr< memory_data > result( memory_data::create() );
+		
+		char const *const argv[] = { "init", NULL };
+		
+		result->set_argv( argv );
+		result->set_envp( NULL );
+		
+		return result;
+	}
+	
+	process_image::process_image() : its_memory_data( root_memory_data() )
 	{
 		const _relix_user_parameter_block init = { 0 };  // NULL
 		
 		its_pb = init;
 	}
 	
-	process_image::process_image( const vfs::node& exe )
+	process_image::process_image( const vfs::node&    exe,
+	                              const char* const*  argv,
+	                              const char* const*  envp )
 	:
 		its_exe( &exe ),
-		its_program( exec( exe ) )
+		its_program( exec( exe ) ),
+		its_memory_data( memory_data::create() )
 	{
 		const _relix_user_parameter_block init = { 0 };  // NULL
 		
 		its_pb = init;
+		
+		its_memory_data->set_argv( argv );
+		its_memory_data->set_envp( envp );
 	}
 	
 	process_image::~process_image()
@@ -95,11 +113,12 @@ namespace relix
 		return *its_exe;
 	}
 	
-	int process_image::enter_start_routine( int                             argc,
-	                                        char* const*                    argv,
-	                                        char* const*                    envp,
-	                                        _relix_system_parameter_block*  pb )
+	int process_image::enter_start_routine( _relix_system_parameter_block* pb )
 	{
+		int          argc = its_memory_data->get_argc();
+		char* const* argv = its_memory_data->get_argv();
+		char* const* envp = its_memory_data->get_envp();
+		
 		vfs::relix_entry relix_main = its_program->get_main_entry_point();
 		
 		ENTER_USERMAIN();
@@ -111,6 +130,27 @@ namespace relix
 		// Not reached by regular tools, since they call exit()
 		
 		return exit_status;
+	}
+	
+	const plus::string& process_image::get_cmdline() const
+	{
+		return its_memory_data.get() ? its_memory_data.get()->get_cmdline()
+		                             : plus::string::null;
+	}
+	
+	void* process_image::add_memory_mapping( const vfs::memory_mapping* mapping )
+	{
+		return its_memory_data->add_memory_mapping( mapping );
+	}
+	
+	void process_image::msync_memory_mapping( addr_t addr, size_t len, int flags )
+	{
+		its_memory_data->msync_memory_mapping( addr, len, flags );
+	}
+	
+	void process_image::remove_memory_mapping( addr_t key )
+	{
+		its_memory_data->remove_memory_mapping( key );
 	}
 	
 }

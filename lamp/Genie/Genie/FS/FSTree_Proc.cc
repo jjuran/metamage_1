@@ -51,6 +51,7 @@
 #include "relix/task/fd_map.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
+#include "relix/task/process_image.hh"
 #include "relix/task/session.hh"
 
 // Genie
@@ -384,7 +385,7 @@ namespace Genie
 		public:
 			static plus::string Get( const Process& process )
 			{
-				return process.GetCmdLine();
+				return process.get_process().get_cmdline();
 			}
 	};
 	

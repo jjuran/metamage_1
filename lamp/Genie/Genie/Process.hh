@@ -18,9 +18,6 @@
 // Recall
 #include "recall/stack_crawl.hh"
 
-// vfs
-#include "vfs/memory_mapping_fwd.hh"
-
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
 #include "relix/api/os_thread_box.hh"
@@ -38,7 +35,6 @@ namespace relix
 {
 	
 	class fd_map;
-	class memory_data;
 	class process_group;
 	class session;
 	class signal_handlers;
@@ -123,8 +119,6 @@ namespace Genie
 			unsigned itsAsyncOpCount;
 		
 		private:
-			boost::intrusive_ptr< relix::memory_data > its_memory_data;
-			
 			void* itsReexecArgs[8];
 			
 			relix::os_thread_box itsThread;
@@ -169,16 +163,6 @@ namespace Genie
 			static void* thread_start( void* param, const void* bottom, const void* limit );
 			
 			int Run();
-			
-			const plus::string& GetCmdLine() const;
-			
-			typedef void* addr_t;
-			
-			addr_t add_memory_mapping( const vfs::memory_mapping* mapping );
-			
-			void msync_memory_mapping( addr_t addr, size_t len, int flags );
-			
-			void remove_memory_mapping( addr_t key );
 			
 			bool MayDumpCore() const  { return itMayDumpCore; }
 			

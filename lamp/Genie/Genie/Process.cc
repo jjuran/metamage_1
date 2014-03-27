@@ -78,7 +78,6 @@
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/alarm_clock.hh"
 #include "relix/task/fd_map.hh"
-#include "relix/task/memory_data.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
@@ -301,16 +300,7 @@ namespace Genie
 		}
 		else
 		{
-			relix::memory_data& memory_data = *process->its_memory_data;
-			
-			int          argc = memory_data.get_argc();
-			char* const* argv = memory_data.get_argv();
-			char* const* envp = memory_data.get_envp();
-			
-			exit_status = image.enter_start_routine( argc,
-			                                         argv,
-			                                         envp,
-			                                         &global_parameter_block );
+			exit_status = image.enter_start_routine( &global_parameter_block );
 			
 			// Not reached by regular tools, since they call exit()
 		}
@@ -521,18 +511,6 @@ namespace Genie
 		return pgrp;
 	}
 	
-	static inline boost::intrusive_ptr< memory_data > root_memory_data()
-	{
-		boost::intrusive_ptr< memory_data > result( memory_data::create() );
-		
-		char const *const argv[] = { "init", NULL };
-		
-		result->set_argv( argv );
-		result->set_envp( NULL );
-		
-		return result;
-	}
-	
 	static boost::intrusive_ptr< relix::process_image > new_process_image()
 	{
 		return new relix::process_image();
@@ -540,9 +518,11 @@ namespace Genie
 	
 	static boost::intrusive_ptr< relix::process_image >
 	//
-	new_process_image( const vfs::node& exe )
+	new_process_image( const vfs::node&    exe,
+	                   const char* const*  argv,
+	                   const char* const*  envp )
 	{
-		return new relix::process_image( exe );
+		return new relix::process_image( exe, argv, envp );
 	}
 	
 	static vfs::filehandle_ptr open_device( const char* path, size_t length )
@@ -569,7 +549,6 @@ namespace Genie
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		its_memory_data       ( root_memory_data() ),
 		itMayDumpCore         ()
 	{
 		itsReexecArgs[0] =
@@ -606,7 +585,6 @@ namespace Genie
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
-		its_memory_data       ( parent.its_memory_data ),
 		itMayDumpCore         ( true )
 	{
 		itsReexecArgs[0] =
@@ -797,17 +775,6 @@ namespace Genie
 		
 		ResetSignalHandlers();
 		
-		// Members of argv and envp could be living in its_memory_data
-		boost::intrusive_ptr< memory_data > new_memory_data( memory_data::create() );
-		
-		new_memory_data->set_argv( &context.argVector.front() );
-		
-		new_memory_data->set_envp( envp );
-		
-		using std::swap;
-		
-		swap( its_memory_data, new_memory_data );
-		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
@@ -822,7 +789,9 @@ namespace Genie
 		// Save the process image that we're running from and set the new one.
 		boost::intrusive_ptr< relix::process_image > old_image = &proc.get_process_image();
 		
-		proc.set_process_image( *new_process_image( *context.executable ) );
+		proc.set_process_image( *new_process_image( *context.executable,
+		                                            &context.argVector.front(),
+		                                            envp ) );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
@@ -913,27 +882,6 @@ namespace Genie
 		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
 		return looseThread;
-	}
-	
-	const plus::string& Process::GetCmdLine() const
-	{
-		return its_memory_data.get() ? its_memory_data.get()->get_cmdline()
-		                             : plus::string::null;
-	}
-	
-	void* Process::add_memory_mapping( const vfs::memory_mapping* mapping )
-	{
-		return its_memory_data->add_memory_mapping( mapping );
-	}
-	
-	void Process::msync_memory_mapping( addr_t addr, size_t len, int flags )
-	{
-		its_memory_data->msync_memory_mapping( addr, len, flags );
-	}
-	
-	void Process::remove_memory_mapping( addr_t key )
-	{
-		its_memory_data->remove_memory_mapping( key );
 	}
 	
 	pid_t Process::GetPPID() const

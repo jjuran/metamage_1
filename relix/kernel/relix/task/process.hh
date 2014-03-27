@@ -18,6 +18,7 @@
 
 // plus
 #include "plus/ref_count.hh"
+#include "plus/string_fwd.hh"
 
 // relix-kernel
 #include "relix/task/alarm_clock.hh"
@@ -76,6 +77,8 @@ namespace relix
 			void accumulate_child_times( const struct tms& times );
 			
 			alarm_clock& get_alarm_clock()  { return its_alarm_clock; }
+			
+			const plus::string& get_cmdline() const;
 			
 			process_group& get_process_group() const;
 			process_image& get_process_image() const;

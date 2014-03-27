@@ -58,6 +58,13 @@ namespace relix
 		its_times.tms_cstime += times.tms_stime + times.tms_cstime;
 	}
 	
+	const plus::string& process::get_cmdline() const
+	{
+		
+		return its_process_image.get() ? its_process_image.get()->get_cmdline()
+		                               : plus::string::null;
+	}
+	
 	process_group& process::get_process_group() const
 	{
 		return *its_process_group;

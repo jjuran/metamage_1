@@ -15,11 +15,13 @@
 #include "vfs/mmap/functions/map_anonymous.hh"
 
 // relix-kernel
+#include "relix/api/current_process.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/task/process.hh"
+#include "relix/task/process_image.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -48,7 +50,7 @@ namespace Genie
 			const intrusive_ptr memory = anonymous ? vfs::map_anonymous            ( len, prot, flags      )
 			                                       : mmap( &relix::get_fd_handle( fd ), len, prot, flags, off );
 			
-			const addr_t address = current_process().add_memory_mapping( memory.get() );
+			const addr_t address = relix::current_process().get_process_image().add_memory_mapping( memory.get() );
 			
 			return (long) address;
 		}
@@ -69,7 +71,7 @@ namespace Genie
 		
 		try
 		{
-			current_process().remove_memory_mapping( addr );
+			relix::current_process().get_process_image().remove_memory_mapping( addr );
 		}
 		catch ( ... )
 		{
@@ -83,7 +85,7 @@ namespace Genie
 	{
 		try
 		{
-			current_process().msync_memory_mapping( addr, len, flags );
+			relix::current_process().get_process_image().msync_memory_mapping( addr, len, flags );
 		}
 		catch ( ... )
 		{
