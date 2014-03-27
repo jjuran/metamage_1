@@ -1147,7 +1147,7 @@ namespace Genie
 		{
 			get_process().reset_process_resources();
 			
-			get_process().set_process_image( *new_process_image() );
+			get_process().reset_process_image();
 		}
 		
 		itsLifeStage = kProcessZombie;
