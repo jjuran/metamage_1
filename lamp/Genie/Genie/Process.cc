@@ -320,20 +320,11 @@ namespace Genie
 		
 		global_parameter_block.current_user = &pb;
 		
-		try
-		{
-			process->Resume();
-			
-			int exit_status = process->Run();
-			
-			process->Exit( exit_status );
-			
-			// Not reached
-		}
-		catch ( ... )
-		{
-			abort();
-		}
+		process->Resume();
+		
+		int exit_status = process->Run();
+		
+		process->Exit( exit_status );
 		
 		// Not reached
 		
