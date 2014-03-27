@@ -823,7 +823,9 @@ namespace Genie
 		// Create the new thread
 		looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
-		get_process().set_process_image( *new_process_image( *context.executable ) );
+		relix::process& proc = get_process();
+		
+		proc.set_process_image( *new_process_image( *context.executable ) );
 		
 		// Make the new thread belong to this process and save the old one
 		itsThread.swap( looseThread );
