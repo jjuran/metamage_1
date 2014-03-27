@@ -265,9 +265,6 @@ namespace Genie
 	
 	int Process::Run()
 	{
-		// Accumulate any system time between start and entry to main()
-		relix::leave_system();
-		
 		int exit_status = 0;
 		
 		if ( Reexec_Function f = (Reexec_Function) itsReexecArgs[ 0 ] )
@@ -300,9 +297,6 @@ namespace Genie
 			// Not reached by regular tools, since they call exit()
 		}
 		
-		// Accumulate any user time between last system call (if any) and return from main()
-		relix::enter_system();
-		
 		return exit_status;
 	}
 	
@@ -319,7 +313,13 @@ namespace Genie
 		
 		process->Resume();
 		
+		// Accumulate any system time between start and entry to main()
+		relix::leave_system();
+		
 		int exit_status = process->Run();
+		
+		// Accumulate any time between last syscall (if any) and return from userspace
+		relix::enter_system();
 		
 		process->Exit( exit_status );
 		
