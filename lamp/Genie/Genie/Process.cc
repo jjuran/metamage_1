@@ -303,9 +303,6 @@ namespace Genie
 		// Accumulate any user time between last system call (if any) and return from main()
 		relix::enter_system();
 		
-		// For code fragments, static destruction occurs here.
-		its_exec_handle.reset();
-		
 		return exit_status;
 	}
 	
