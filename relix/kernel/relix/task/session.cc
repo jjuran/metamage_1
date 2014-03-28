@@ -12,10 +12,6 @@
 namespace relix
 {
 	
-	session::session()
-	{
-	}
-	
 	session::session( int id ) : its_id( id )
 	{
 	}

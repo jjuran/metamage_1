@@ -24,8 +24,6 @@ namespace relix
 			vfs::filehandle_ptr its_terminal;
 		
 		public:
-			session();
-			
 			session( int id );
 			
 			~session();
