@@ -508,11 +508,6 @@ namespace Genie
 		return pgrp;
 	}
 	
-	static boost::intrusive_ptr< relix::process_image > new_process_image()
-	{
-		return new relix::process_image();
-	}
-	
 	static boost::intrusive_ptr< relix::process_image >
 	//
 	new_process_image( const vfs::node&    exe,
@@ -534,8 +529,7 @@ namespace Genie
 		               *new relix::process( 1,
 		                                    0,
 		                                    *NewProcessGroup( 1,
-		                                                      *NewSession( 1 ) ),
-		                                    *new_process_image() ) ),
+		                                                      *NewSession( 1 ) ) ) ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),

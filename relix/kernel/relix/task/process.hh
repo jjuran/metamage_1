@@ -51,7 +51,7 @@ namespace relix
 			boost::intrusive_ptr< process_rsrcs > its_process_resources;
 		
 		public:
-			process( int id, int ppid, process_group& pg, process_image& image );
+			process( int id, int ppid, process_group& pg );
 			
 			process( int id, process& parent );
 			

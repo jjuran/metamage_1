@@ -14,13 +14,13 @@
 namespace relix
 {
 	
-	process::process( int id, int ppid, process_group& pg, process_image& image )
+	process::process( int id, int ppid, process_group& pg )
 	:
 		its_id           ( id   ),
 		its_ppid         ( ppid ),
 		its_last_activity(      ),
 		its_process_group( &pg  ),
-		its_process_image( &image ),
+		its_process_image( new relix::process_image() ),
 		its_process_resources( new process_resources() )
 	{
 		// Reset resource utilization on fork
