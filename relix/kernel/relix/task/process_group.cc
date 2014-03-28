@@ -16,6 +16,13 @@
 namespace relix
 {
 	
+	process_group::process_group( int id )
+	:
+		its_id     ( id ),
+		its_session( new session( id ) )
+	{
+	}
+	
 	process_group::process_group( int id, session& s )
 	:
 		its_id     ( id ),
