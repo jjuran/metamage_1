@@ -162,8 +162,6 @@ namespace Genie
 			
 			static void* thread_start( void* param, const void* bottom, const void* limit );
 			
-			int Run();
-			
 			bool MayDumpCore() const  { return itMayDumpCore; }
 			
 			void SuppressCoreDump()  { itMayDumpCore = false; }

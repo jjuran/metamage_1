@@ -258,20 +258,17 @@ namespace relix
 namespace Genie
 {
 	
-	int Process::Run()
+	static int reexec_start( void* args[] )
 	{
-		int exit_status = 0;
+		Reexec_Function f = (Reexec_Function) args[ 0 ];
 		
-		if ( Reexec_Function f = (Reexec_Function) itsReexecArgs[ 0 ] )
-		{
-			exit_status = f( itsReexecArgs[ 1 ],
-			                 itsReexecArgs[ 2 ],
-			                 itsReexecArgs[ 3 ],
-			                 itsReexecArgs[ 4 ],
-			                 itsReexecArgs[ 5 ],
-			                 itsReexecArgs[ 6 ],
-			                 itsReexecArgs[ 7 ] );
-		}
+		int exit_status = f( args[ 1 ],
+		                     args[ 2 ],
+		                     args[ 3 ],
+		                     args[ 4 ],
+		                     args[ 5 ],
+		                     args[ 6 ],
+		                     args[ 7 ] );
 		
 		return exit_status;
 	}
@@ -296,7 +293,7 @@ namespace Genie
 		
 		if ( process->itsReexecArgs[ 0 ] )
 		{
-			exit_status = process->Run();
+			exit_status = reexec_start( process->itsReexecArgs );
 		}
 		else
 		{
