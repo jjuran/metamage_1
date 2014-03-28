@@ -526,8 +526,7 @@ namespace Genie
 	:
 		relix::thread( 1,
 		               0,
-		               *new relix::process( 1,
-		                                    0 ) ),
+		               *new relix::process() ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
