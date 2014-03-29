@@ -204,8 +204,6 @@ namespace Genie
 			
 		#endif
 			
-			void ResetSignalHandlers();
-			
 			const struct sigaction& GetSignalAction( int signo ) const;
 			
 			void SetSignalAction( int signo, const struct sigaction& action );

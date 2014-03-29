@@ -761,7 +761,7 @@ namespace Genie
 		
 		clear_signals_pending();
 		
-		ResetSignalHandlers();
+		its_signal_handlers->reset_handlers();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -988,11 +988,6 @@ namespace Genie
 		}
 		
 		return NULL;
-	}
-	
-	void Process::ResetSignalHandlers()
-	{
-		its_signal_handlers->reset_handlers();
 	}
 	
 	const struct sigaction& Process::GetSignalAction( int signo ) const
