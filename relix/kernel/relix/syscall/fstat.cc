@@ -33,7 +33,7 @@ namespace relix
 		
 		try
 		{
-			vfs::filehandle& handle = relix::get_fd_handle( fd );
+			vfs::filehandle& handle = get_fd_handle( fd );
 			
 			stat( *handle.GetFile(), *sb );
 			

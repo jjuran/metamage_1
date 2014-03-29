@@ -41,7 +41,7 @@ namespace relix
 			
 			vfs::program_ptr its_program;
 			
-			boost::intrusive_ptr< relix::memory_data > its_memory_data;
+			boost::intrusive_ptr< memory_data > its_memory_data;
 		
 		public:
 			process_image();

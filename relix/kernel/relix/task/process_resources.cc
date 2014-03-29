@@ -20,8 +20,8 @@ namespace relix
 	
 	process_resources::process_resources()
 	:
-		its_fs_info( relix::fs_info::create( opendir( *relix::root() ) ) ),
-		its_fd_map ( relix::fd_map::create() )
+		its_fs_info( fs_info::create( opendir( *root() ) ) ),
+		its_fd_map ( fd_map::create() )
 	{
 	}
 	

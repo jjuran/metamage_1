@@ -41,7 +41,7 @@ namespace relix
 				const bool close_on_exec = cmd == F_DUPFD_CLOEXEC;
 				
 				return dup_fd( fd,
-				               relix::first_free_fd( param ),
+				               first_free_fd( param ),
 				               close_on_exec );
 			}
 			

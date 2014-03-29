@@ -63,7 +63,7 @@ namespace relix
 			
 			if ( const bool following = (flags & O_NOFOLLOW) == 0 )
 			{
-				vfs::resolve_links_in_place( *relix::root(), file );
+				vfs::resolve_links_in_place( *root(), file );
 			}
 			else if ( is_symlink( *file ) )
 			{

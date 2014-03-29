@@ -35,7 +35,7 @@ namespace relix
 			
 			if ( const bool following_links = !(flags & AT_SYMLINK_NOFOLLOW) )
 			{
-				vfs::resolve_links_in_place( *relix::root(), file );
+				vfs::resolve_links_in_place( *root(), file );
 			}
 			
 			chmod( *file, mode );

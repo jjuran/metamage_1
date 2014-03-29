@@ -20,7 +20,7 @@ namespace relix
 	{
 		try
 		{
-			fsync( relix::get_fd_handle( fd ) );
+			fsync( get_fd_handle( fd ) );
 		}
 		catch ( ... )
 		{

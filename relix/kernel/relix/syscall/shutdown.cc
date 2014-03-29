@@ -20,7 +20,7 @@ namespace relix
 	{
 		try
 		{
-			shutdown( relix::get_fd_handle( fd ), how );
+			shutdown( get_fd_handle( fd ), how );
 		}
 		catch ( ... )
 		{

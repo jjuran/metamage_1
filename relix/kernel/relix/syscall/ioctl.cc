@@ -23,7 +23,7 @@ namespace relix
 	
 	int ioctl( int fd, unsigned long request, int* argp )
 	{
-		relix::fd_map& files = get_fds();
+		fd_map& files = get_fds();
 		
 		try
 		{

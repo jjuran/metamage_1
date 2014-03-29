@@ -24,9 +24,9 @@ namespace relix
 	{
 		try
 		{
-			vfs::node_ptr file = resolve_pathname( *relix::root(), path, *getcwd() );
+			vfs::node_ptr file = resolve_pathname( *root(), path, *getcwd() );
 			
-			vfs::resolve_links_in_place( *relix::root(), file );
+			vfs::resolve_links_in_place( *root(), file );
 			
 			seteof( *file, length );
 		}

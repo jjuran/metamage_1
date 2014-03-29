@@ -32,7 +32,7 @@ namespace relix
 			p7::throw_errno( EBADF );
 		}
 		
-		relix::fd_map& files = relix::get_fds();
+		fd_map& files = get_fds();
 		
 		(files[ fd ] = vfs::filehandle_ptr( &handle )).set_to_close_on_exec( close_on_exec );
 	}

@@ -48,13 +48,13 @@ namespace relix
 		
 		if ( path[0] == '/' )
 		{
-			return vfs::resolve_absolute_path( *relix::root(), path, length );
+			return vfs::resolve_absolute_path( *root(), path, length );
 		}
 		
 		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? getcwd()
 		                                         : get_fd_handle( dirfd ).GetFile();
 		
-		return resolve_pathname( *relix::root(), path, length, *at_dir );
+		return resolve_pathname( *root(), path, length, *at_dir );
 	}
 	
 	vfs::node_ptr resolve_path_at( int dirfd, const plus::string& path )

@@ -20,7 +20,7 @@ namespace relix
 	{
 		try
 		{
-			listen( relix::get_fd_handle( fd ), backlog );
+			listen( get_fd_handle( fd ), backlog );
 		}
 		catch ( ... )
 		{
