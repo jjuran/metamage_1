@@ -855,8 +855,6 @@ namespace Genie
 		
 		clear_signals_pending();
 		
-		ResetSignalHandlers();
-		
 		const std::size_t min_stack = minimum_stack_size();
 		
 		// Create the new thread
