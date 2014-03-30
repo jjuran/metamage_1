@@ -258,8 +258,6 @@ namespace Genie
 	
 	Process* FindProcess( pid_t pid );
 	
-	boost::intrusive_ptr< relix::session > NewSession( pid_t sid );
-	
 }
 
 #endif

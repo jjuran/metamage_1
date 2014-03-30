@@ -1391,11 +1391,6 @@ namespace Genie
 		}
 	}
 	
-	boost::intrusive_ptr< relix::session > NewSession( pid_t sid )
-	{
-		return new relix::session( sid );
-	}
-	
 }
 
 namespace relix
