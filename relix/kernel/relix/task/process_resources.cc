@@ -27,8 +27,8 @@ namespace relix
 	
 	process_resources::process_resources( const process_resources& that )
 	:
-		its_fs_info( duplicate( *that.its_fs_info ) ),
-		its_fd_map ( duplicate( *that.its_fd_map  ) )
+		its_fs_info( that.its_fs_info ),
+		its_fd_map ( that.its_fd_map  )
 	{
 	}
 	
