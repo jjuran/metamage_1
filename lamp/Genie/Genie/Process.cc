@@ -84,7 +84,6 @@
 #include "relix/task/process_resources.hh"
 #include "relix/task/session.hh"
 #include "relix/task/schedule.hh"
-#include "relix/task/signal_handlers.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
@@ -531,7 +530,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( "init" ),
-		its_signal_handlers   ( relix::signal_handlers::create() ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
@@ -567,7 +565,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
 		itsName               ( parent.ProgramName() ),
-		its_signal_handlers   ( parent.its_signal_handlers ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
@@ -603,7 +600,7 @@ namespace Genie
 	
 	void Process::unshare_signal_handlers()
 	{
-		its_signal_handlers = duplicate( *its_signal_handlers );
+		get_process().unshare_signal_handlers();
 	}
 	
 	relix::os_thread_id Process::GetThread() const
@@ -761,7 +758,7 @@ namespace Genie
 		
 		clear_signals_pending();
 		
-		ResetSignalHandlers();
+		get_process().reset_signal_handlers();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -854,8 +851,6 @@ namespace Genie
 		itsReexecArgs[7] = NULL;
 		
 		clear_signals_pending();
-		
-		ResetSignalHandlers();
 		
 		const std::size_t min_stack = minimum_stack_size();
 		
@@ -992,17 +987,12 @@ namespace Genie
 		return NULL;
 	}
 	
-	void Process::ResetSignalHandlers()
-	{
-		its_signal_handlers->reset_handlers();
-	}
-	
 	const struct sigaction& Process::GetSignalAction( int signo ) const
 	{
 		ASSERT( signo >    0 );
 		ASSERT( signo < NSIG );
 		
-		return its_signal_handlers->get( signo - 1 );
+		return get_process().get_sigaction( signo );
 	}
 	
 	void Process::SetSignalAction( int signo, const struct sigaction& action )
@@ -1010,7 +1000,7 @@ namespace Genie
 		ASSERT( signo >    0 );
 		ASSERT( signo < NSIG );
 		
-		its_signal_handlers->set( signo - 1, action );
+		get_process().set_sigaction( signo, action );
 		
 		if ( action.sa_handler == SIG_IGN )
 		{
