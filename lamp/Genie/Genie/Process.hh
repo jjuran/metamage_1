@@ -37,7 +37,6 @@ namespace relix
 	class fd_map;
 	class process_group;
 	class session;
-	class signal_handlers;
 	
 }
 
@@ -107,8 +106,6 @@ namespace Genie
 			recall::stack_frame_pointer itsStackFramePtr;
 			
 			plus::string itsName;
-			
-			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
 			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;

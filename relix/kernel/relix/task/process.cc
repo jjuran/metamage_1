@@ -9,6 +9,7 @@
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/process_resources.hh"
+#include "relix/task/signal_handlers.hh"
 
 
 namespace relix
@@ -21,7 +22,8 @@ namespace relix
 		its_last_activity(   ),
 		its_process_group( new process_group( 1 ) ),
 		its_process_image( new process_image() ),
-		its_process_resources( new process_resources() )
+		its_process_resources( new process_resources() ),
+		its_signal_handlers( signal_handlers::create() )
 	{
 		// Reset resource utilization on fork
 		
@@ -38,7 +40,8 @@ namespace relix
 		its_last_activity(      ),
 		its_process_group( &parent.get_process_group() ),
 		its_process_image( &parent.get_process_image() ),
-		its_process_resources( new process_resources( parent.get_process_resources() ) )
+		its_process_resources( new process_resources( parent.get_process_resources() ) ),
+		its_signal_handlers( parent.its_signal_handlers )
 	{
 		// Reset resource utilization on fork
 		
@@ -98,6 +101,26 @@ namespace relix
 	void process::reset_process_resources()
 	{
 		its_process_resources.reset();
+	}
+	
+	const struct sigaction& process::get_sigaction( int signo ) const
+	{
+		return its_signal_handlers->get( signo - 1 );
+	}
+	
+	void process::set_sigaction( int signo, const struct sigaction& action )
+	{
+		its_signal_handlers->set( signo - 1, action );
+	}
+	
+	void process::unshare_signal_handlers()
+	{
+		its_signal_handlers = duplicate( *its_signal_handlers );
+	}
+	
+	void process::reset_signal_handlers()
+	{
+		its_signal_handlers->reset_handlers();
 	}
 	
 }

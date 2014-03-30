@@ -24,12 +24,16 @@
 #include "relix/task/alarm_clock.hh"
 
 
+struct sigaction;
+
+
 namespace relix
 {
 	
 	class process_group;
 	class process_image;
 	class process_resources;
+	class signal_handlers;
 	
 	typedef process_resources process_rsrcs;
 	
@@ -49,6 +53,8 @@ namespace relix
 			boost::intrusive_ptr< process_group > its_process_group;
 			boost::intrusive_ptr< process_image > its_process_image;
 			boost::intrusive_ptr< process_rsrcs > its_process_resources;
+			
+			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
 		
 		public:
 			explicit process();
@@ -89,6 +95,14 @@ namespace relix
 			
 			void reset_process_image();
 			void reset_process_resources();
+			
+			const struct sigaction& get_sigaction( int signo ) const;
+			
+			void set_sigaction( int signo, const struct sigaction& action );
+			
+			void unshare_signal_handlers();
+			
+			void reset_signal_handlers();
 	};
 	
 }
