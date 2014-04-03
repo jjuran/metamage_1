@@ -24,13 +24,13 @@ namespace MacIO
 	template < class Policy, class Callback >
 	inline typename Policy::Result
 	//
-	GetCatInfo( CInfoPBRec&          pb,
-	            Mac::FSVolumeRefNum  vRefNum,
-	            Mac::FSDirID         dirID,
-	            unsigned char*       name,
-	            SInt16               index,
-	            Callback             callback,
-	            ::IOCompletionUPP    completion = NULL )
+	GetCatInfo( CInfoPBRec&        pb,
+	            SInt16             vRefNum,
+	            SInt32             dirID,
+	            unsigned char*     name,
+	            SInt16             index,
+	            Callback           callback,
+	            ::IOCompletionUPP  completion = NULL )
 	{
 		nucleus::initialize< CInfoPBRec >( pb, vRefNum, dirID, name, index );
 		
