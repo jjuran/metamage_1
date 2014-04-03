@@ -28,15 +28,13 @@
 namespace nucleus
 {
 	
-	namespace N = Nitrogen;
-	
 	CInfoPBRec&
 	//
-	initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
-	                                       N::FSVolumeRefNum  vRefNum,
-	                                       N::FSDirID         dirID,
-	                                       StringPtr          name,
-	                                       SInt16             index )
+	initializer< CInfoPBRec >::operator()( CInfoPBRec&  pb,
+	                                       SInt16       vRefNum,
+	                                       SInt32       dirID,
+	                                       StringPtr    name,
+	                                       SInt16       index )
 	{
 		DirInfo& dirInfo = pb.dirInfo;
 		

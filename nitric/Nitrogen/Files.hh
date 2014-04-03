@@ -380,11 +380,11 @@ namespace nucleus
 	template <>
 	struct initializer< CInfoPBRec >
 	{
-		CInfoPBRec& operator()( CInfoPBRec&               pb,
-		                        Nitrogen::FSVolumeRefNum  vRefNum,
-		                        Nitrogen::FSDirID         dirID,
-		                        StringPtr                 name,
-		                        SInt16                    index );
+		CInfoPBRec& operator()( CInfoPBRec&  pb,
+		                        SInt16       vRefNum,
+		                        SInt32       dirID,
+		                        StringPtr    name,
+		                        SInt16       index );
 	};
 	
 }
