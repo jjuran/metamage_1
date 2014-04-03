@@ -102,12 +102,12 @@ namespace Genie
 	template < class Policy >
 	typename Policy::Result
 	//
-	FSpGetCatInfo( CInfoPBRec&          pb,
-	               bool                 async,
-	               Mac::FSVolumeRefNum  vRefNum,
-	               Mac::FSDirID         dirID,
-	               unsigned char*       name,
-	               SInt16               index )
+	FSpGetCatInfo( CInfoPBRec&     pb,
+	               bool            async,
+	               SInt16          vRefNum,
+	               SInt32          dirID,
+	               unsigned char*  name,
+	               SInt16          index )
 	{
 		//Str255 dummyName = "\p";  // clang hates this
 		
@@ -153,20 +153,20 @@ namespace Genie
 	}
 	
 	template
-	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&          pb,
-	                                  bool                 async,
-	                                  Mac::FSVolumeRefNum  vRefNum,
-	                                  Mac::FSDirID         dirID,
-	                                  unsigned char*       name,
-	                                  SInt16               index );
+	void FSpGetCatInfo< FNF_Throws >( CInfoPBRec&     pb,
+	                                  bool            async,
+	                                  SInt16          vRefNum,
+	                                  SInt32          dirID,
+	                                  unsigned char*  name,
+	                                  SInt16          index );
 	
 	template
-	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&          pb,
-	                                   bool                 async,
-	                                   Mac::FSVolumeRefNum  vRefNum,
-	                                   Mac::FSDirID         dirID,
-	                                   unsigned char*       name,
-	                                   SInt16               index );
+	bool FSpGetCatInfo< FNF_Returns >( CInfoPBRec&     pb,
+	                                   bool            async,
+	                                   SInt16          vRefNum,
+	                                   SInt32          dirID,
+	                                   unsigned char*  name,
+	                                   SInt16          index );
 	
 	
 	template < class Policy >
