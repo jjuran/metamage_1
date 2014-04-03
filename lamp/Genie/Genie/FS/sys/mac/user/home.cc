@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// sys-mac-utils
+#include "mac_sys/get_user_home.hh"
+
 // Nitrogen
 #include "Nitrogen/Folders.hh"
 
@@ -74,12 +77,16 @@ namespace Genie
 	
 	static N::FSDirSpec GetUserHomeFolder()
 	{
-		try
+		mac::types::VRefNum_DirID folder = mac::sys::get_user_home();
+		
+		if ( folder.vRefNum != 0 )
 		{
-			return N::FindFolder( N::kOnAppropriateDisk, N::kCurrentUserFolderType, false );
-		}
-		catch ( ... )
-		{
+			N::FSDirSpec result;
+			
+			result.vRefNum = Mac::FSVolumeRefNum( folder.vRefNum );
+			result.dirID   = Mac::FSDirID       ( folder.dirID   );
+			
+			return result;
 		}
 		
 		return FindUserHomeFolder();
