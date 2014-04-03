@@ -27,9 +27,14 @@ namespace Genie
 	
 	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
 	
-	FSTreePtr FSTreeFromFSDirSpec( const Mac::FSDirSpec& dir );
+	vfs::node_ptr node_from_dirID( short vRefNum, long dirID );
+	
+	template < class Dir >
+	inline vfs::node_ptr FSTreeFromFSDirSpec( const Dir& dir )
+	{
+		return node_from_dirID( dir.vRefNum, dir.dirID );
+	}
 	
 }
 
 #endif
-

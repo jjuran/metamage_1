@@ -571,7 +571,7 @@ namespace Genie
 		return new_HFS_node( cInfo, name );
 	}
 	
-	FSTreePtr FSTreeFromFSDirSpec( const N::FSDirSpec& dir )
+	vfs::node_ptr node_from_dirID( short vRefNum, long dirID )
 	{
 		N::Str31 mac_name = "\p";
 		
@@ -581,8 +581,8 @@ namespace Genie
 		
 		FSpGetCatInfo< FNF_Throws >( cInfo,
 		                             async,
-		                             dir.vRefNum,
-		                             dir.dirID,
+		                             vRefNum,
+		                             dirID,
 		                             mac_name,
 		                             0 );
 		
