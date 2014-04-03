@@ -14,10 +14,20 @@
 #ifndef __FOLDERS__
 #include <Folders.h>
 #endif
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
+
+// mac-types
+#include "mac_types/MultipleUsersState.hh"
 
 
 namespace mac {
 namespace sys {
+	
+	using mac::types::VRefNum_DirID;
+	using mac::types::MultipleUsersState;
+	
 	
 	mac::types::VRefNum_DirID get_user_home()
 	{
@@ -28,6 +38,25 @@ namespace sys {
 		                          kDontCreateFolder,
 		                          &result.vRefNum,
 		                          &result.dirID );
+		
+		if ( err != noErr )
+		{
+			MultipleUsersState** handle;
+			
+			err = ::Gestalt( gestaltMultipleUsersState, (SInt32*) &handle );
+			
+			if ( err == noErr )
+			{
+				MultipleUsersState* state = *handle;
+				
+				const short version = state->giVersion;
+				
+				if ( version > 1 )
+				{
+					return (const VRefNum_DirID&) state->giDocsVRefNum;
+				}
+			}
+		}
 		
 		return result;
 	}
