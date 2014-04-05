@@ -5,7 +5,6 @@
 
 // Standard C/C++
 #include <cerrno>
-#include <cstdlib>
 
 // POSIX
 #include <arpa/inet.h>
@@ -180,7 +179,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Usage:  htget <url>\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		const char* method = "GET";
@@ -197,7 +196,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Can't save null document to file\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		plus::string scheme;

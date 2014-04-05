@@ -5,7 +5,6 @@
 
 // Standard C/C++
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 // POSIX
@@ -110,7 +109,7 @@ namespace tool
 				std::fprintf( stderr, "cp: copying multiple files, but last argument (%s) is not a directory.\n",
 				                                                                      destDir );
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			
 			// Try to copy each file.  Return whether any errors occurred.

@@ -148,7 +148,7 @@ namespace tool
 			{
 				std::fprintf( stderr, "macbin: %s: %s\n", encode_target, std::strerror( ENOENT ) );
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			
 			MacBinary::Encode( targetFile,

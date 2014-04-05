@@ -229,7 +229,7 @@ namespace tool
 			{
 				p7::perror( "th", test_file );
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			
 			const char* test_name = test_file;

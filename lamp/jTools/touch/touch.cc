@@ -3,9 +3,6 @@
  *	========
  */
 
-// Standard C/C++
-#include <cstdlib>
-
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
@@ -30,9 +27,9 @@ int main( int argc, char *const *argv )
 	}
 	
 	// Try to touch each item.  Return whether any errors occurred.
-	int exit_status = EXIT_SUCCESS;
+	int exit_status = 0;
 	
-	for ( std::size_t index = 1;  index < argc;  ++index )
+	for ( size_t index = 1;  index < argc;  ++index )
 	{
 		const char* pathname = argv[ index ];
 		
@@ -54,7 +51,7 @@ int main( int argc, char *const *argv )
 			
 			more::perror( "touch", pathname );
 			
-			exit_status = EXIT_FAILURE;
+			exit_status = 1;
 		}
 	}
 	

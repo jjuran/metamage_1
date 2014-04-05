@@ -262,7 +262,7 @@ namespace tool
 				
 				unlink( outputFile );
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			
 			// FIXME:  test for a regular file
@@ -283,7 +283,7 @@ namespace tool
 						// I'm not sure what the scenario is here.
 						// (EINTR on handled signal?  EIO on disconnected terminal?)
 						// Leave tmp file for recovery.
-						return EXIT_FAILURE;
+						return 1;
 					}
 					
 					if ( bytes_read == 0 )
@@ -315,7 +315,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, response.GetResult() + "\n" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		p7::shutdown( socket_in, p7::shut_rd );

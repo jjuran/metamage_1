@@ -114,7 +114,7 @@ namespace tool
 		
 	#endif
 		
-		return EXIT_SUCCESS;
+		return 0;
 	}
 	
 	int Main( int argc, char** argv )

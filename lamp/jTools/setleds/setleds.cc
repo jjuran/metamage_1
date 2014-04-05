@@ -8,7 +8,6 @@
 
 // Standard C/C++
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 // Mac OS X
@@ -136,7 +135,7 @@ namespace tool
 		
 		p7::write( p7::stderr_fileno, STR_LEN( "setleds: ADB unsupported in Carbon\n" ) );
 		
-		return EXIT_FAILURE;
+		return 1;
 		
 	#else
 		

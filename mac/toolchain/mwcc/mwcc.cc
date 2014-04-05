@@ -335,7 +335,7 @@ namespace tool
 		{
 			std::fprintf( stderr, "%s\n", "mwcc: -o is required" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		std::vector< const char* > command;
@@ -351,7 +351,7 @@ namespace tool
 			case arch_none:
 				std::fprintf( stderr, "%s\n", "mwcc: invalid architecture" );
 				
-				return EXIT_FAILURE;
+				return 1;
 			
 			case arch_m68k:
 				command.push_back( "MWC68K"   );
