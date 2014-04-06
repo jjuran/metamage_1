@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys.hh"
 
-// Standard C++
-#include <algorithm>
-
 // gear
 #include "gear/hexidecimal.hh"
 
@@ -73,27 +70,16 @@ namespace Genie
 		return fixed_dir( parent, name );
 	}
 	
-	class syscall_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( const SystemCall& value ) const
-			{
-				const ino_t inode = &value - GetSystemCall( 0 );
-				
-				plus::string name = name_of_syscall( &value );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	static void syscall_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		syscall_IteratorConverter converter;
-		
-		std::transform( gSystemCallArray,
-		                gSystemCallArray + gLastSystemCall,
-		                std::back_inserter( cache ),
-		                converter );
+		for ( int i = 0;  i < gLastSystemCall;  ++i )
+		{
+			const ino_t inode = i;
+			
+			plus::string name = name_of_syscall( &gSystemCallArray[ i ] );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	static FSTreePtr New_sys_kernel_syscall( const FSTree*        parent,
