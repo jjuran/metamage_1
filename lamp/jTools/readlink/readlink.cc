@@ -40,13 +40,13 @@ int main( int argc, char const *const argv[] )
 			more::perror( "readlink", argv[1] );
 		}
 		
-		return EXIT_FAILURE;
+		return 1;
 	}
 	
 	buffer[ size++ ] = '\n';
 	
 	(void) write( STDOUT_FILENO, buffer, size );
 	
-	return EXIT_SUCCESS;
+	return 0;
 }
 

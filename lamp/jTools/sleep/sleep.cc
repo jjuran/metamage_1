@@ -5,7 +5,6 @@
 
 // Standard C/C++
 #include <cmath>
-#include <cstdlib>
 
 // POSIX
 #include <time.h>
@@ -53,9 +52,9 @@ int main( int argc, char const *const argv[] )
 	{
 		more::perror( "sleep: invalid time interval", argv[1], 0 );
 		
-		return EXIT_FAILURE;
+		return 1;
 	}
 	
-	return EXIT_SUCCESS;
+	return 0;
 }
 

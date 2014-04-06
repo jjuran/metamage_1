@@ -6,7 +6,6 @@
 // Standard C
 #include <errno.h>
 #include <signal.h>
-#include <stdlib.h>
 
 // POSIX
 #include <sys/ptrace.h>
@@ -60,7 +59,7 @@ int main( int argc, char *const argv[] )
 		{
 			more::perror( "ptrace: waitpid" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		if ( WIFSTOPPED( stat ) )

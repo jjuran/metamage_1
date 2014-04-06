@@ -262,7 +262,7 @@ namespace orion
 		
 		p7::write( p7::stdout_fileno, output );
 		
-		exit( EXIT_SUCCESS );
+		exit( 0 );
 	}
 	
 	static void clear_bindings()

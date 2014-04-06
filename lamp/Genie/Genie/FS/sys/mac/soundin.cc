@@ -96,26 +96,6 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_soundin_REF_Mappings );
 	}
 	
-	class soundin_IteratorGenerator
-	{
-		private:
-			std::size_t its_index;
-		
-		public:
-			soundin_IteratorGenerator() : its_index()
-			{
-			}
-			
-			vfs::dir_entry operator()()
-			{
-				const ino_t inode = ++its_index;
-				
-				plus::string name = gear::inscribe_decimal( its_index );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	template < class Sequence >
 	static inline std::size_t distance( const Sequence& sequence )
 	{
@@ -131,9 +111,14 @@ namespace Genie
 	{
 		const std::size_t n = Count_SoundInputDevices();
 		
-		std::generate_n( std::back_inserter( cache ),
-		                 n,
-		                 soundin_IteratorGenerator() );
+		for ( int i = 1;  i <= n;  ++i )
+		{
+			const ino_t inode = i;
+			
+			plus::string name = gear::inscribe_decimal( i );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	

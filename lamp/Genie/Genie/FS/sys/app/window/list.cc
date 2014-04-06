@@ -5,17 +5,21 @@
 
 #include "Genie/FS/sys/app/window/list.hh"
 
-// Standard C++
-#include <algorithm>
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
 
 // plus
 #include "plus/hexidecimal.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// Nitrogen
-#include "Nitrogen/MacWindows.hh"
 
 // vfs
 #include "vfs/dir_contents.hh"
@@ -31,9 +35,6 @@
 
 namespace Genie
 {
-	
-	namespace N = Nitrogen;
-	
 	
 	static bool is_valid_WindowRef_name( const plus::string& name )
 	{
@@ -57,29 +58,20 @@ namespace Genie
 		return fixed_dir( parent, name, sys_app_window_list_REF_Mappings );
 	}
 	
-	class window_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( WindowRef window ) const
-			{
-				const ino_t inode = 0;
-				
-				plus::string name = plus::encode_32_bit_hex( (unsigned) window );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	static void WindowRef_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		window_IteratorConverter converter;
+		WindowRef window = FrontWindow();
 		
-		N::WindowList_Container sequence = N::WindowList();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		while ( window != NULL )
+		{
+			const ino_t inode = 0;
+			
+			plus::string name = plus::encode_32_bit_hex( (unsigned) window );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+			
+			window = GetNextWindow( window );
+		}
 	}
 	
 	FSTreePtr New_FSTree_sys_app_window_list( const FSTree*        parent,

@@ -12,7 +12,6 @@
 #include <cstdio>
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // iota
@@ -602,7 +601,7 @@ namespace tool
 		{
 			std::fprintf( stderr, "%s\n", "ld: -o is required" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		std::vector< const char* > command;
@@ -618,7 +617,7 @@ namespace tool
 			case arch_none:
 				std::fprintf( stderr, "%s\n", "ld: invalid architecture" );
 				
-				return EXIT_FAILURE;
+				return 1;
 			
 			case arch_m68k:
 				check_object_file( gFirstObjectFilePath );
@@ -782,7 +781,7 @@ namespace tool
 		
 		if ( dry_run )
 		{
-			return EXIT_SUCCESS;
+			return 0;
 		}
 		
 		const bool filtering = arch == arch_ppc;

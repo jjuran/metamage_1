@@ -54,7 +54,7 @@ namespace tool
 		}
 		
 		// Print each file in turn.  Return whether any errors occurred.
-		int exit_status = EXIT_SUCCESS;
+		int exit_status = 0;
 		
 		while ( *args != NULL )
 		{
@@ -70,7 +70,7 @@ namespace tool
 			{
 				p7::perror( argv0, pathname, error );
 				
-				exit_status = EXIT_FAILURE;
+				exit_status = 1;
 				
 				continue;
 			}

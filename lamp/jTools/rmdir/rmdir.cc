@@ -3,9 +3,6 @@
  *	========
  */
 
-// Standard C/C++
-#include <cstdlib>
-
 // POSIX
 #include <unistd.h>
 
@@ -32,7 +29,7 @@ int main( int argc, char *const *argv )
 		return 1;
 	}
 	
-	int exit_status = EXIT_SUCCESS;
+	int exit_status = 0;
 	
 	for ( int index = 1;  index < argc;  ++index )
 	{
@@ -42,7 +39,7 @@ int main( int argc, char *const *argv )
 		
 		if ( removed == -1 )
 		{
-			exit_status = EXIT_FAILURE;
+			exit_status = 1;
 			
 			more::perror( "rmdir", argv[ index ] );
 		}

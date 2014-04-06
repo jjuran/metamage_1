@@ -1050,7 +1050,7 @@ void TestMangling( Foo::Bar< int > );
 
 void TestMangling( Foo::Bar< int > )
 {
-	std::abort();
+	abort();
 }
 
 void TestMangling( Foo::Bar_i_ );
@@ -1077,7 +1077,7 @@ typedef DragGrayRgnUPP CallbackUPP;
 
 static pascal void MyCallback()
 {
-	std::abort();
+	abort();
 }
 
 typedef pascal unsigned char (*InitMainProcPtr)( RGBColor* );

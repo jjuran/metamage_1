@@ -6,9 +6,6 @@
 // Standard C/C++
 #include <cstdio>
 
-// Standard C
-#include <stdlib.h>
-
 // iota
 #include "iota/strings.hh"
 
@@ -104,7 +101,7 @@ namespace tool
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "postlink: argument required\n" ) );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
 		const char* target_path = free_args[ 0 ];

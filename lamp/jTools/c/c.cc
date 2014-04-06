@@ -139,7 +139,7 @@ namespace tool
 		std::size_t n_args = o::free_argument_count();
 		
 		// Print each file in turn.  Return whether any errors occurred.
-		int exit_status = EXIT_SUCCESS;
+		int exit_status = 0;
 		
 		while ( *free_args != NULL )
 		{
@@ -183,7 +183,7 @@ namespace tool
 					{
 						p7::perror( "error", path, utf16_error );
 						
-						exit_status = EXIT_FAILURE;
+						exit_status = 1;
 						
 						continue;
 					}
@@ -195,7 +195,7 @@ namespace tool
 				{
 					p7::perror( "error", path, "contains control characters" );
 					
-					exit_status = EXIT_FAILURE;
+					exit_status = 1;
 					
 					continue;
 				}
@@ -264,7 +264,7 @@ namespace tool
 			{
 				p7::perror( "c", path, error );
 				
-				exit_status = EXIT_FAILURE;
+				exit_status = 1;
 				
 				continue;
 			}

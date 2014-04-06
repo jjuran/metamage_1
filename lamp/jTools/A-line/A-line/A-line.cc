@@ -681,7 +681,7 @@ namespace tool
 					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			catch ( const NoSuchUsedProject& ex )
 			{
@@ -694,7 +694,7 @@ namespace tool
 					std::fprintf( stderr, "%s\n", "A-line: (use 'A-line -t' to refresh the project catalog)" );
 				}
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 			catch ( const missing_project_config& missing )
 			{
@@ -765,10 +765,10 @@ namespace tool
 			                      "###\n",     n,      n == 1 ? ""
 			                                                  : "s" );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
-		return EXIT_SUCCESS;
+		return 0;
 	}
 	
 }

@@ -217,7 +217,7 @@ namespace tool
 			p7::throw_errno( OSErrno::ErrnoFromOSStatus( err ) );
 		}
 		
-		return EXIT_SUCCESS;
+		return 0;
 	}
 
 }

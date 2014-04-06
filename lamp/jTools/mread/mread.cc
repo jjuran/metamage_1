@@ -3,6 +3,9 @@
  *	========
  */
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -45,7 +48,7 @@ static char* get_next_cr()
 		
 		if ( bytes_read <= 0 )
 		{
-			std::abort();
+			abort();
 		}
 		
 		global_mark += bytes_read;
@@ -83,7 +86,7 @@ int main( int argc, const char *const argv[] )
 		{
 			if ( equal_strings( buffer, newline, STR_LEN( "OK" ) ) )
 			{
-				return EXIT_SUCCESS;
+				return 0;
 			}
 			
 			*newline = '\n';
@@ -92,7 +95,7 @@ int main( int argc, const char *const argv[] )
 			
 			if ( equal_strings( buffer, newline, STR_LEN( "ERROR" ) ) )
 			{
-				return EXIT_FAILURE;
+				return 1;
 			}
 			
 			if ( equal_strings( buffer, newline, STR_LEN( "BUSY"         ) ) )  break;

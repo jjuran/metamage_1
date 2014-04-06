@@ -5,7 +5,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 
 // Standard C/C++
 #include <cstring>
@@ -181,7 +180,7 @@ namespace tool
 			{
 				p7::perror( "ln", loc );
 				
-				return EXIT_FAILURE;
+				return 1;
 			}
 		}
 		
@@ -194,10 +193,10 @@ namespace tool
 		{
 			p7::perror( "ln", target );
 			
-			return EXIT_FAILURE;
+			return 1;
 		}
 		
-		return EXIT_SUCCESS;
+		return 0;
 	}
 
 }
