@@ -3,6 +3,9 @@
  *	========
  */
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C++
 #include <algorithm>
 
@@ -45,7 +48,7 @@ static char* get_next_cr()
 		
 		if ( bytes_read <= 0 )
 		{
-			std::abort();
+			abort();
 		}
 		
 		global_mark += bytes_read;
