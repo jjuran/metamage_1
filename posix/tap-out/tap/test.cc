@@ -6,9 +6,6 @@
 
 #include "tap/test.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <stdlib.h>
 
@@ -45,7 +42,7 @@ namespace tap
 			return;
 		}
 		
-		const unsigned odd_tests = std::abs( extra_tests );
+		const unsigned odd_tests = abs( extra_tests );
 		
 		const unsigned magnitude = gear::decimal_magnitude( odd_tests );
 		
