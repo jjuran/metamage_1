@@ -115,29 +115,22 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_gdev_list_H_Mappings );
 	}
 	
-	class gdev_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( GDHandle gdH ) const
-			{
-				const ino_t inode = 0;
-				
-				plus::string name = plus::encode_32_bit_hex( (unsigned) gdH );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	static void gdev_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		gdev_IteratorConverter converter;
-		
 		N::DeviceList_Container sequence = N::DeviceList();
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		typedef N::DeviceList_Container::const_iterator Iter;
+		
+		const Iter end = sequence.end();
+		
+		for ( Iter it = sequence.begin();  it != end;  ++it )
+		{
+			const ino_t inode = 0;
+			
+			plus::string name = plus::encode_32_bit_hex( (unsigned) *it );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	
