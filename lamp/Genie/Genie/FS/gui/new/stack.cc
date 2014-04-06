@@ -211,29 +211,22 @@ namespace Genie
 	}
 	
 	
-	class Stack_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( const ViewList::value_type& value ) const
-			{
-				const ino_t inode = 0;
-				
-				return vfs::dir_entry( inode, value.name );
-			}
-	};
-	
 	static void stack_listdir( const FSTree* that, vfs::dir_contents& cache )
 	{
 		typedef ViewList Sequence;
 		
-		Stack_IteratorConverter converter;
-		
 		const Sequence& sequence = gStack_Parameters_Map[ that ].v;
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		typedef Sequence::const_iterator Iter;
+		
+		const Iter end = sequence.end();
+		
+		for ( Iter it = sequence.begin();  it != end;  ++it )
+		{
+			const ino_t inode = 0;
+			
+			cache.push_back( vfs::dir_entry( inode, it->name ) );
+		}
 	}
 	
 	static const dir_method_set stack_dir_methods =

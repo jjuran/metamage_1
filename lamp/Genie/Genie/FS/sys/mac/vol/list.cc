@@ -8,9 +8,6 @@
 // POSIX
 #include <sys/stat.h>
 
-// Standard C++
-#include <algorithm>
-
 // Iota
 #include "iota/strings.hh"
 
@@ -200,29 +197,24 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_vol_N_Mappings );
 	}
 	
-	class vol_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( N::FSVolumeRefNum vRefNum ) const
-			{
-				const ino_t inode = -vRefNum;
-				
-				plus::string name = gear::inscribe_decimal( -vRefNum );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	static void vol_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		vol_IteratorConverter converter;
-		
 		N::Volume_Container sequence = N::Volumes();
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		typedef N::Volume_Container::const_iterator Iter;
+		
+		const Iter end = sequence.end();
+		
+		for ( Iter it = sequence.begin();  it != end;  ++it )
+		{
+			const short vRefNum = *it;
+			
+			const ino_t inode = -vRefNum;
+			
+			plus::string name = gear::inscribe_decimal( -vRefNum );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	

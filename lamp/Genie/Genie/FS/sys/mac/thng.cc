@@ -220,29 +220,22 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_thng_REF_Mappings );
 	}
 	
-	class thng_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( Component component ) const
-			{
-				const ino_t inode = 0;
-				
-				plus::string name = plus::encode_32_bit_hex( (unsigned) component );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	static void thng_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		thng_IteratorConverter converter;
-		
 		N::Component_Container sequence = N::Components();
 		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		typedef N::Component_Container::const_iterator Iter;
+		
+		const Iter end = sequence.end();
+		
+		for ( Iter it = sequence.begin();  it != end;  ++it )
+		{
+			const ino_t inode = 0;
+			
+			plus::string name = plus::encode_32_bit_hex( (unsigned) *it );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	
