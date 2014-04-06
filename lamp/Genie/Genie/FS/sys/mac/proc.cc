@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/mac/proc.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <sys/stat.h>
 
@@ -154,29 +151,27 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_proc_PSN_Mappings );
 	}
 	
-	class psn_IteratorConverter
-	{
-		public:
-			vfs::dir_entry operator()( const ProcessSerialNumber& psn ) const
-			{
-				const ino_t inode = 0;
-				
-				plus::string name = encoded_ProcessSerialNumber( psn );
-				
-				return vfs::dir_entry( inode, name );
-			}
-	};
-	
 	static void psn_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		psn_IteratorConverter converter;
+		ProcessSerialNumber psn = { 0, kNoProcess };
 		
-		N::Process_Container sequence = N::Processes();
-		
-		std::transform( sequence.begin(),
-		                sequence.end(),
-		                std::back_inserter( cache ),
-		                converter );
+		while ( true )
+		{
+			OSErr err = GetNextProcess( &psn );
+			
+			if ( err == procNotFound )
+			{
+				break;
+			}
+			
+			Mac::ThrowOSStatus( err );
+			
+			const ino_t inode = 0;
+			
+			plus::string name = encoded_ProcessSerialNumber( psn );
+			
+			cache.push_back( vfs::dir_entry( inode, name ) );
+		}
 	}
 	
 	
