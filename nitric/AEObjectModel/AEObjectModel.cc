@@ -43,7 +43,7 @@ namespace Nitrogen
 		
 		For kAEMiddle, the item before the midpoint is chosen if count is even.
 		
-		For kAEAny, std::rand() is used.  A scripter who has specialized random
+		For kAEAny, rand() is used.  A scripter who has specialized random
 		number generation requirements should generate those numbers elsewhere
 		and use typeSInt32 instead.
 		
@@ -89,7 +89,7 @@ namespace Nitrogen
 							return (count + 1) / 2;
 						
 						case kAEAny:
-							return UInt32( std::rand() / (RAND_MAX + 1.0) * count ) + 1;
+							return UInt32( rand() / (RAND_MAX + 1.0) * count ) + 1;
 						
 						default:
 							break;
