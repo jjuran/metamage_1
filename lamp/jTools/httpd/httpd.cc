@@ -12,6 +12,8 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+#include <functional>
+
 // iota
 #include "iota/strings.hh"
 
