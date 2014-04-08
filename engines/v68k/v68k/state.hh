@@ -70,6 +70,12 @@ namespace v68k
 		
 		processor_state( processor_model model, const memory& mem, bkpt_handler bkpt );
 		
+		uint32_t& d( int i )  { return regs.d[ i ]; }
+		uint32_t& a( int i )  { return regs.a[ i ]; }
+		
+		const uint32_t& d( int i ) const  { return regs.d[ i ]; }
+		const uint32_t& a( int i ) const  { return regs.a[ i ]; }
+		
 		void prefetch_instruction_word();
 		
 		uint32_t read_mem( uint32_t addr, op_size_t size );
