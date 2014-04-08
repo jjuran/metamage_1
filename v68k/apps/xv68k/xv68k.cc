@@ -175,7 +175,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 	1K	+-----------------------+
 		| OS trap table         |  1K
 	2K	+-----------------------+
-		| OS / supervisor stack |  1K
+		| supervisor stack      |  1K
 	3K	+-----------------------+
 		|                       |
 	4K	|                       |
@@ -185,7 +185,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |  4K
 	7K	+-----------------------+
-		| boot code             |  1K
+		| boot code / OS        |  1K
 	8K	+-----------------------+
 		|                       |
 		|                       |
@@ -243,8 +243,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 const uint32_t params_max_size = 4096;
 const uint32_t code_max_size   = 72 * 1024;
 
-const uint32_t os_address   = 2048;
-const uint32_t boot_address = 7168;
+const uint32_t os_address   = 7168;
 const uint32_t initial_SSP  = 3072;
 const uint16_t initial_USP  = 28672;
 const uint32_t code_address = 28672;
@@ -353,14 +352,11 @@ void load_vectors( v68k::user::os_load_spec& os )
 	using v68k::user::install_exception_handler;
 	using v68k::mac::trap_dispatcher;
 	
+	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	install_exception_handler( os, 10, HANDLER( trap_dispatcher ) );
 	install_exception_handler( os, 32 + 2, HANDLER( syscall_patch_handler ) );
 	
 	install_exception_handler( os, 64, HANDLER( no_op_exception ) );
-	
-	os.mem_used = boot_address;
-	
-	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	
 	using namespace v68k::callout;
 	
