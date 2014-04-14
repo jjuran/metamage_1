@@ -304,9 +304,9 @@ namespace v68k
 		
 		s.opcode = 0x4AFC;  // ILLEGAL
 		
-		if ( bkpt_handler f = s.bkpt.f[ data ] )
+		if ( bkpt_handler f = s.bkpt )
 		{
-			s.opcode = f( s );
+			s.opcode = f( s, data );
 		}
 		
 		s.condition = processor_condition( bkpt_0 + data );

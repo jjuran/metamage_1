@@ -26,9 +26,9 @@ namespace v68k
 	};
 	
 	
-	emulator::emulator( processor_model model, const memory& mem, const bkpt_handlers& bkpts )
+	emulator::emulator( processor_model model, const memory& mem, bkpt_handler bkpt )
 	:
-		processor_state( model, mem, bkpts ),
+		processor_state( model, mem, bkpt ),
 		its_instruction_counter()
 	{
 	}

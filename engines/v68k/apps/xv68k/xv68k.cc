@@ -416,19 +416,20 @@ static uint16_t bkpt_3( v68k::processor_state& s )
 	return 0x4AFC;  // ILLEGAL
 }
 
-static v68k::bkpt_handlers the_bkpt_handlers =
+static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
 {
+	switch ( vector )
 	{
-		NULL,
-		NULL,
-		&bkpt_2,
-		&bkpt_3,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		case 2:
+			return bkpt_2( s );
+		
+		case 3:
+			return bkpt_3( s );
+		
+		default:
+			return 0x4AFC;  // ILLEGAL
 	}
-};
+}
 
 static inline unsigned parse_instruction_limit( const char* var )
 {
@@ -674,7 +675,7 @@ static int execute_68k( int argc, char** argv )
 	
 	const memory_manager memory( mem, mem_size );
 	
-	v68k::emulator emu( v68k::mc68000, memory, the_bkpt_handlers );
+	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
 	
 	emu.reset();
 	

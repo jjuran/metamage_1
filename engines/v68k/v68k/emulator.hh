@@ -24,7 +24,7 @@ namespace v68k
 			void double_bus_fault();
 		
 		public:
-			emulator( processor_model model, const memory& mem, const bkpt_handlers& bkpts );
+			emulator( processor_model model, const memory& mem, bkpt_handler bkpt = 0 );  // NULL
 			
 			unsigned long instruction_count() const  { return its_instruction_counter; }
 			
