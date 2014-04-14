@@ -22,7 +22,9 @@
 #include "extended-api-set/temporary_cwd.hh"
 
 
-#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )  &&  __FreeBSD__ < 8
+#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
+
+#if __FreeBSD__ < 8  // undefined __FreeBSD__ counts as zero
 
 DIR *fdopendir( int fd )
 {
@@ -47,17 +49,6 @@ int fstatat( int dirfd, const char* path, struct stat* sb, int flags )
 	const bool follow = (flags & AT_SYMLINK_NOFOLLOW) == 0;
 	
 	return follow ? stat( path, sb ) : lstat( path, sb );
-}
-
-int futimens( int fd, const struct timespec times[2] )
-{
-	const struct timespec& mtime = times[1];
-	
-	const struct timeval tv = { mtime.tv_sec, mtime.tv_nsec / 1000 };
-	
-	struct timeval tvs[2] = { tv, tv };
-	
-	return futimes( fd, tvs );
 }
 
 static int link_with_flags( const char* oldpath, const char* newpath, int flags )
@@ -149,5 +140,17 @@ int unlinkat( int dirfd, const char* path, int flags )
 	                 : unlink( path );
 }
 
-#endif
+#endif  // #if __FreeBSD__ < 8
 
+int futimens( int fd, const struct timespec times[2] )
+{
+	const struct timespec& mtime = times[1];
+	
+	const struct timeval tv = { mtime.tv_sec, mtime.tv_nsec / 1000 };
+	
+	struct timeval tvs[2] = { tv, tv };
+	
+	return futimes( fd, tvs );
+}
+
+#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )

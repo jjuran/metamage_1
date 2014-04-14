@@ -8,7 +8,7 @@
 #ifndef EXTENDEDAPISET_PART2_H
 #define EXTENDEDAPISET_PART2_H
 
-#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )  &&  __FreeBSD__ < 8
+#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
 // POSIX
 #include <dirent.h>
@@ -17,6 +17,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#if __FreeBSD__ < 8  // undefined __FreeBSD__ counts as zero
 
 /*
 	gcc 4.0.1 build 5247 (PPC) has no O_DIRECTORY.  Define it to match
@@ -78,11 +80,17 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
+#endif  // #if __FreeBSD__ < 8
+
+#if __FreeBSD__ >= 8
+int futimens( int fd, const struct timespec times[2] );
+#endif
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )  &&  __FreeBSD__ < 8
+#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
 #endif
 
