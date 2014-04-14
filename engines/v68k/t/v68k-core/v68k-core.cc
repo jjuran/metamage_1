@@ -55,7 +55,7 @@ static void only_8_bytes()
 	
 	uint8_t mem[ 8 ] = { 0 };
 	
-	const memory_region memory( mem, sizeof mem );
+	const low_memory_region memory( mem, sizeof mem );
 	
 	emulator emu( mc68000, memory );
 	
