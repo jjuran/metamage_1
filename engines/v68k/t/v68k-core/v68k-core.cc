@@ -185,6 +185,17 @@ static void stop_2EFF()
 	ok_if( emu.regs.pc == 1028 );
 }
 
+static int bkpt_vector = -1;
+
+static uint16_t opcode = 0x4AFC;
+
+static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
+{
+	bkpt_vector = vector;
+	
+	return opcode;
+}
+
 static void bkpt()
 {
 	using namespace v68k;
@@ -197,16 +208,18 @@ static void bkpt()
 	
 	mem[1024] = 0x48;  // BKPT  #0
 	mem[1025] = 0x48;
+	mem[1026] = 0xA1;
+	mem[1027] = 0x23;
 	
 	const memory_region memory( mem, sizeof mem );
 	
-	emulator emu( mc68000, memory );
+	emulator emu( mc68000, memory, &::bkpt_handler );
 	
 	emu.reset();
 	
 	ok_if( !emu.step() );
 	
-	ok_if( emu.condition == bkpt_0 );
+	ok_if( bkpt_vector == 0 );
 	
 	ok_if( emu.regs.pc == 1024 );
 	
@@ -214,15 +227,15 @@ static void bkpt()
 	
 	emu.condition = normal;
 	
+	opcode = 0x4E71;
+	
 	emu.step();
 	
-	ok_if( emu.condition == bkpt_7 );
-	
-	emu.acknowledge_breakpoint( 0x4E71 );
+	ok_if( bkpt_vector == 7 );
 	
 	ok_if( emu.condition == normal );
 	
-	ok_if( emu.opcode == 0x4E71 );
+	ok_if( emu.opcode == 0xA123 );
 }
 
 int main( int argc, char** argv )
