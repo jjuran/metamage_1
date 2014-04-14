@@ -48,7 +48,9 @@ static void cmp()
 	code[ 4 ] = big_word( 0xB280 );  // CMP.L  D0,D1
 	code[ 5 ] = big_word( 0xB081 );  // CMP.L  D1,D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -106,7 +108,9 @@ static void cmpa()
 	code[ 0 ] = big_word( 0xB0C0 );  // CMPA.W  D0,A0
 	code[ 1 ] = big_word( 0xB1C0 );  // CMPA.L  D0,A0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -144,7 +148,9 @@ static void cmpm()
 	code[ 0 ] = big_word( 0xB348 );  // CMPM.W  A0,A1
 	code[ 1 ] = big_word( 0xB348 );  // CMPM.W  A0,A1
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

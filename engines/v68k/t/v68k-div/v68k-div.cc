@@ -55,7 +55,9 @@ static void divu()
 	
 	vectors[4] = big_longword( divide_by_zero_address );
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -174,7 +176,9 @@ static void divs()
 	
 	vectors[4] = big_longword( divide_by_zero_address );
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

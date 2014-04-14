@@ -45,7 +45,9 @@ static void illegal_instruction()
 	
 	code[ 0 ] = big_word( 0x4AFC );  // ILLEGAL
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -85,7 +87,9 @@ static void trapv()
 	code[ 1 ] = big_word( 0x4E76 );  // TRAPV
 	code[ 2 ] = big_word( 0x4E76 );  // TRAPV
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -128,7 +132,9 @@ static void privilege_violation()
 	code[ 0 ] = big_word( 0x42C0 );  // MOVE SR,D0
 	
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -141,7 +147,7 @@ static void privilege_violation()
 	ok_if( emu.regs.pc == 1024 + 2 );
 	
 	
-	emulator emu2( mc68010, mem, sizeof mem );
+	emulator emu2( mc68010, memory );
 	
 	emu2.reset();
 	
@@ -173,7 +179,9 @@ static void trap()
 	
 	code[ 0 ] = big_word( 0x4E40 );  // TRAP  #0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -213,7 +221,9 @@ static void line_A_emulator()
 	
 	code[ 0 ] = big_word( 0xA000 );  // unimplemented A-line trap
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -241,7 +251,9 @@ static void line_F_emulator()
 	
 	code[ 0 ] = big_word( 0xF000 );  // unimplemented F-line trap
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

@@ -44,7 +44,9 @@ static void neg()
 	code[ 0 ] = big_word( 0x4400 );  // NEG.B  D0
 	code[ 1 ] = big_word( 0x4440 );  // NEG.W  D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

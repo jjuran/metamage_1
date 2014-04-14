@@ -45,7 +45,9 @@ static void moveq()
 	code[ 1 ] = big_word( 0x707F );  // MOVEQ  #7F,D0
 	code[ 2 ] = big_word( 0x7080 );  // MOVEQ  #80,D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -96,7 +98,9 @@ static void move()
 	code[ 3 ] = big_word( 0x2F02 );  // MOVE.L  D2,-(A7)
 	code[ 4 ] = big_word( 0x1F01 );  // MOVE.B  D1,-(A7)
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

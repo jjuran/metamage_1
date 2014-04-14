@@ -43,7 +43,9 @@ static void eor()
 	
 	code[ 0 ] = big_word( 0xB181 );  // EOR.L  D0,D1
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
