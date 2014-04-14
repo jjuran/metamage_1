@@ -421,10 +421,10 @@ static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
 	switch ( vector )
 	{
 		case 2:
-			return bkpt_2( s );
+			return ::bkpt_2( s );
 		
 		case 3:
-			return bkpt_3( s );
+			return ::bkpt_3( s );
 		
 		default:
 			return 0x4AFC;  // ILLEGAL
