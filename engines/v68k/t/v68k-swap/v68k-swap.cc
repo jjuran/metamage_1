@@ -43,7 +43,9 @@ static void swap()
 	
 	code[ 0 ] = big_word( 0x4840 );  // SWAP  D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -56,7 +58,7 @@ static void swap()
 	
 	ok_if( emu.regs.d[0] == 0x56781234 );
 	
-	ok_if( emu.regs.nzvc == 0xF );
+	ok_if( emu.regs.nzvc == 0x0 );
 }
 
 int main( int argc, char** argv )

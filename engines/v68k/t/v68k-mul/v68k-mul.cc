@@ -45,7 +45,9 @@ static void mulu()
 	code[ 1 ] = big_word( 0xC2C0 );  // MULU.W  D0,D1
 	code[ 2 ] = big_word( 0xC2C0 );  // MULU.W  D0,D1
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -97,7 +99,9 @@ static void muls()
 	code[ 1 ] = big_word( 0xC3C0 );  // MULS.W  D0,D1
 	code[ 2 ] = big_word( 0xC3C0 );  // MULS.W  D0,D1
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

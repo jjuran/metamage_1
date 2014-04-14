@@ -45,7 +45,9 @@ static void btst()
 	code[ 1 ] = big_word( 0x0000 );
 	code[ 2 ] = big_word( 0x60FA );  // BRA.S *-4
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -98,14 +100,16 @@ static void modify()
 	
 	uint16_t* code = (uint16_t*) (mem + 1024);
 	
-	code[ 0 ] = big_word( 0x0380 );  // BSET  D1,D0
-	code[ 1 ] = big_word( 0x0300 );  // BCHG  D1,D0
-	code[ 2 ] = big_word( 0x0380 );  // BSET  D1,D0
-	code[ 3 ] = big_word( 0x0340 );  // BCLR  D1,D0
-	code[ 4 ] = big_word( 0x0340 );  // BCLR  D1,D0
-	code[ 5 ] = big_word( 0x0300 );  // BCHG  D1,D0
+	code[ 0 ] = big_word( 0x03C0 );  // BSET  D1,D0
+	code[ 1 ] = big_word( 0x0340 );  // BCHG  D1,D0
+	code[ 2 ] = big_word( 0x03C0 );  // BSET  D1,D0
+	code[ 3 ] = big_word( 0x0380 );  // BCLR  D1,D0
+	code[ 4 ] = big_word( 0x0380 );  // BCLR  D1,D0
+	code[ 5 ] = big_word( 0x0340 );  // BCHG  D1,D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -176,12 +180,14 @@ static void modulo()
 	
 	uint16_t* code = (uint16_t*) (mem + 1024);
 	
-	code[ 0 ] = big_word( 0x0390 );  // BSET  D1,(A0)
-	code[ 1 ] = big_word( 0x0390 );  // BSET  D1,(A0)
-	code[ 2 ] = big_word( 0x0380 );  // BSET  D1,D0
-	code[ 3 ] = big_word( 0x0380 );  // BSET  D1,D0
+	code[ 0 ] = big_word( 0x03D0 );  // BSET  D1,(A0)
+	code[ 1 ] = big_word( 0x03D0 );  // BSET  D1,(A0)
+	code[ 2 ] = big_word( 0x03C0 );  // BSET  D1,D0
+	code[ 3 ] = big_word( 0x03C0 );  // BSET  D1,D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

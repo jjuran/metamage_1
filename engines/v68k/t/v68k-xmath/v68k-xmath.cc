@@ -46,7 +46,9 @@ static void addx()
 	code[ 2 ] = big_word( 0xD308 );  // ADDX.B  -(A0),-(A1)
 	code[ 3 ] = big_word( 0xD308 );  // ADDX.B  -(A0),-(A1)
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -116,7 +118,9 @@ static void subx()
 	
 	code[ 0 ] = big_word( 0x9340 );  // ADDX.W  D0,D1
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -152,7 +156,9 @@ static void negx()
 	code[ 0 ] = big_word( 0x4000 );  // NEGX.B  D0
 	code[ 1 ] = big_word( 0x4040 );  // NEGX.W  D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

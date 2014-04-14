@@ -23,7 +23,9 @@ static void no_mem()
 {
 	using namespace v68k;
 	
-	emulator emu( mc68000, NULL, 0 );
+	const memory_region memory( NULL, 0 );
+	
+	emulator emu( mc68000, memory );
 	
 	ok_if( emu.condition == startup );
 	
@@ -38,7 +40,9 @@ static void only_7_bytes()
 	
 	uint8_t mem[ 7 ] = { 0 };
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -51,7 +55,9 @@ static void only_8_bytes()
 	
 	uint8_t mem[ 8 ] = { 0 };
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const low_memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -69,7 +75,9 @@ static void only_1026_bytes()
 	
 	uint8_t mem[ 1026 ] = { 0, 0, 0, 0,  0, 0, 4, 0 };  // PC = 1024
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -87,7 +95,9 @@ static void bad_SP_on_reset()
 	
 	uint8_t mem[ 1026 ] = { 0xFF, 0xFF, 0xFF, 0xFF,  0, 0, 4, 0 };  // PC = 1024
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -102,7 +112,9 @@ static void bad_PC_on_reset()
 	
 	uint8_t mem[ 1026 ] = { 0, 0, 0, 0,  0xFF, 0xFF, 0xFF, 0xFF };
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -126,7 +138,9 @@ static void stop_FFFF()
 	mem[1026] = 0xFF;
 	mem[1027] = 0xFF;
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -156,7 +170,9 @@ static void stop_2EFF()
 	mem[1026] = 0x2E;
 	mem[1027] = 0xFF;
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -167,6 +183,17 @@ static void stop_2EFF()
 	ok_if( emu.get_SR() == 0x261F );
 	
 	ok_if( emu.regs.pc == 1028 );
+}
+
+static int bkpt_vector = -1;
+
+static uint16_t opcode = 0x4AFC;
+
+static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
+{
+	bkpt_vector = vector;
+	
+	return opcode;
 }
 
 static void bkpt()
@@ -181,14 +208,18 @@ static void bkpt()
 	
 	mem[1024] = 0x48;  // BKPT  #0
 	mem[1025] = 0x48;
+	mem[1026] = 0xA1;
+	mem[1027] = 0x23;
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory, &::bkpt_handler );
 	
 	emu.reset();
 	
 	ok_if( !emu.step() );
 	
-	ok_if( emu.condition == bkpt_0 );
+	ok_if( bkpt_vector == 0 );
 	
 	ok_if( emu.regs.pc == 1024 );
 	
@@ -196,15 +227,15 @@ static void bkpt()
 	
 	emu.condition = normal;
 	
+	opcode = 0x4E71;
+	
 	emu.step();
 	
-	ok_if( emu.condition == bkpt_7 );
-	
-	emu.acknowledge_breakpoint( 0x4E71 );
+	ok_if( bkpt_vector == 7 );
 	
 	ok_if( emu.condition == normal );
 	
-	ok_if( emu.opcode == 0x4E71 );
+	ok_if( emu.opcode == 0xA123 );
 }
 
 int main( int argc, char** argv )

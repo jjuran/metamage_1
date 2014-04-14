@@ -45,7 +45,9 @@ static void tst()
 	code[ 1 ] = big_word( 0x4A40 );  // TST.W  D0
 	code[ 2 ] = big_word( 0x4A00 );  // TST.B  D0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

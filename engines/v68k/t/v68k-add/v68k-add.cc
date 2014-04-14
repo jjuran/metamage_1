@@ -44,7 +44,9 @@ static void add()
 	code[ 0 ] = big_word( 0xD240 );  // ADD.W  D0,D1
 	code[ 1 ] = big_word( 0xD200 );  // ADD.B  D0,D1
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -87,7 +89,9 @@ static void adda()
 	
 	code[ 0 ] = big_word( 0xD0C0 );  // ADDA.W  D0,A0
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -121,7 +125,9 @@ static void addi()
 	code[ 0 ] = big_word( 0x0640 );  // ADDI.W  #0x1234, D0
 	code[ 1 ] = big_word( 0x1234 );
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

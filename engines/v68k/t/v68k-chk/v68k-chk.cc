@@ -53,7 +53,9 @@ static void chk()
 	
 	vectors[6] = big_longword( chk_address );
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	

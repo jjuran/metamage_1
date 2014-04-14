@@ -53,9 +53,11 @@ static void divu()
 	
 	const uint32_t divide_by_zero_address = 1024 + sizeof (uint16_t) * 10;
 	
-	vectors[4] = big_longword( divide_by_zero_address );
+	vectors[5] = big_longword( divide_by_zero_address );
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
@@ -172,9 +174,11 @@ static void divs()
 	
 	const uint32_t divide_by_zero_address = 1024 + sizeof (uint16_t) * 10;
 	
-	vectors[4] = big_longword( divide_by_zero_address );
+	vectors[5] = big_longword( divide_by_zero_address );
 	
-	emulator emu( mc68000, mem, sizeof mem );
+	const memory_region memory( mem, sizeof mem );
+	
+	emulator emu( mc68000, memory );
 	
 	emu.reset();
 	
