@@ -82,14 +82,14 @@ static uint32_t no_op_callback( v68k::processor_state& s )
 
 static uint32_t load_callback( v68k::processor_state& s )
 {
-	const uint32_t path_addr = s.regs.a[0];
-	const uint32_t path_size = s.regs.d[0];  // includes trailing NUL
+	const uint32_t path_addr = s.a(0);
+	const uint32_t path_size = s.d(0);  // includes trailing NUL
 	
-	s.regs.a[0] = 0;
+	s.a(0) = 0;
 	
 	if ( !fully_authorized )
 	{
-		s.regs.d[1] = EPERM;
+		s.d(1) = EPERM;
 		
 		return rts;
 	}
@@ -101,14 +101,14 @@ static uint32_t load_callback( v68k::processor_state& s )
 	
 	if ( p == NULL )
 	{
-		s.regs.d[1] = EFAULT;
+		s.d(1) = EFAULT;
 		
 		return rts;
 	}
 	
 	if ( path_size == 0  ||  p[0] == '\0'  ||  p[ path_size - 1 ] != '\0' )
 	{
-		s.regs.d[1] = EINVAL;
+		s.d(1) = EINVAL;
 		
 		return rts;
 	}
@@ -120,9 +120,9 @@ static uint32_t load_callback( v68k::processor_state& s )
 	
 	const char* path = (const char*) p;
 	
-	void* alloc = load_file( path, &s.regs.d[0] );
+	void* alloc = load_file( path, &s.d(0) );
 	
-	const size_t n = (s.regs.d[0] + page_size - 1) >> page_size_bits;  // round up
+	const size_t n = (s.d(0) + page_size - 1) >> page_size_bits;  // round up
 	
 	const uint32_t addr = allocate_n_pages( alloc, n );
 	
@@ -130,11 +130,11 @@ static uint32_t load_callback( v68k::processor_state& s )
 	{
 		free( alloc );
 		
-		s.regs.d[1] = ENOMEM;
+		s.d(1) = ENOMEM;
 	}
 	else
 	{
-		s.regs.a[0] = addr;
+		s.a(0) = addr;
 	}
 	
 	return rts;
@@ -145,7 +145,7 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	const uint16_t old_SR = s.get_SR();
 	const uint16_t new_SR = old_SR | 0x2000;
 	
-	s.regs.d[0] = old_SR;
+	s.d(0) = old_SR;
 	
 	if ( old_SR == new_SR )
 	{
@@ -158,13 +158,13 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	{
 		uint32_t return_address;
 		
-		if ( !s.mem.get_long( s.regs.a[7], return_address, s.data_space() ) )
+		if ( !s.mem.get_long( s.a(7), return_address, s.data_space() ) )
 		{
 			abort();  // FIXME
 			return nil;
 		}
 		
-		s.regs.a[7] += 4;
+		s.a(7) += 4;
 		
 		s.set_SR( new_SR );
 		
@@ -176,8 +176,8 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	}
 	else
 	{
-		s.regs.d[0] = 0xFFFFFFFF;
-		s.regs.d[1] = EPERM;
+		s.d(0) = 0xFFFFFFFF;
+		s.d(1) = EPERM;
 		
 		s.regs.nzvc = 8;  // Set N
 	}
@@ -208,7 +208,7 @@ static uint32_t unimplemented_trap_callback( v68k::processor_state& s )
 	
 	char* p = buffer + STRLEN( UNIMPLEMENTED_TRAP_PREFIX );
 	
-	const uint16_t trap = s.regs.d[1];
+	const uint16_t trap = s.d(1);
 	
 	p[1] = hex[ trap >> 8 & 0xF ];
 	p[2] = hex[ trap >> 4 & 0xF ];
@@ -224,11 +224,11 @@ static uint32_t unimplemented_trap_callback( v68k::processor_state& s )
 
 static uint32_t NewPtr_callback( v68k::processor_state& s )
 {
-	const uint32_t size = s.regs.d[0];
+	const uint32_t size = s.d(0);
 	
 	uint32_t addr = v68k::alloc::allocate( size );
 	
-	s.regs.a[0] = addr;
+	s.a(0) = addr;
 	
 	if ( addr == 0 )
 	{
@@ -244,7 +244,7 @@ static uint32_t NewPtr_callback( v68k::processor_state& s )
 
 static uint32_t DisposePtr_callback( v68k::processor_state& s )
 {
-	const uint32_t addr = s.regs.a[0];
+	const uint32_t addr = s.a(0);
 	
 	v68k::alloc::deallocate( addr );
 	
@@ -253,10 +253,10 @@ static uint32_t DisposePtr_callback( v68k::processor_state& s )
 
 static uint32_t BlockMove_callback( v68k::processor_state& s )
 {
-	const uint32_t src = s.regs.a[0];
-	const uint32_t dst = s.regs.a[1];
+	const uint32_t src = s.a(0);
+	const uint32_t dst = s.a(1);
 	
-	const uint32_t n = s.regs.d[0];
+	const uint32_t n = s.d(0);
 	
 	const uint8_t* p = s.mem.translate( src, n, v68k::user_data_space, v68k::mem_read );
 	
@@ -287,7 +287,7 @@ static uint32_t Gestalt_callback( v68k::processor_state& s )
 {
 	const int32_t gestaltUndefSelectorErr = -5551;
 	
-	const uint32_t selector = s.regs.d[0];
+	const uint32_t selector = s.d(0);
 	
 	uint32_t value = 0;
 	int32_t result = 0;
@@ -307,8 +307,8 @@ static uint32_t Gestalt_callback( v68k::processor_state& s )
 			break;
 	}
 	
-	s.regs.d[0] = result;
-	s.regs.a[0] = value;
+	s.d(0) = result;
+	s.a(0) = value;
 	
 	return rts;
 }

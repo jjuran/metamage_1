@@ -29,7 +29,7 @@ namespace v68k
 		
 		if ( target >= 0 )
 		{
-			pb.second = s.regs.d[ target ];
+			pb.second = s.d( target );
 			
 			if ( target > 7 )
 			{
@@ -62,10 +62,10 @@ namespace v68k
 			{
 				// Mask data registers only
 				
-				data = update( s.regs.d[ target ], data, pb.size );
+				data = update( s.d( target ), data, pb.size );
 			}
 			
-			s.regs.d[ target ] = data;
+			s.d( target ) = data;
 			
 			return true;
 		}

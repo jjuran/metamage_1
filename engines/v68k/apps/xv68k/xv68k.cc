@@ -396,7 +396,7 @@ static uint16_t bkpt_2( v68k::processor_state& s )
 	{
 		// FIXME:  Report call number
 		
-		//const uint16_t call_number = emu.regs.d[0];
+		//const uint16_t call_number = emu.d(0);
 		
 		const char* msg = "Unimplemented system call\n";
 		
