@@ -129,7 +129,7 @@ static void privilege_violation()
 	
 	uint16_t* code = (uint16_t*) (mem + 1024);
 	
-	code[ 0 ] = big_word( 0x42C0 );  // MOVE SR,D0
+	code[ 0 ] = big_word( 0x40C0 );  // MOVE SR,D0
 	
 	
 	const memory_region memory( mem, sizeof mem );
