@@ -22,7 +22,7 @@
 #include "extended-api-set/temporary_cwd.hh"
 
 
-#if !defined( __RELIX__ ) && !defined( __linux__ )
+#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )  &&  __FreeBSD__ < 8
 
 DIR *fdopendir( int fd )
 {

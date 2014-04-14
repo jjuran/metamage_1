@@ -8,7 +8,7 @@
 #ifndef EXTENDEDAPISET_PART2_H
 #define EXTENDEDAPISET_PART2_H
 
-#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
+#if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )  &&  __FreeBSD__ < 8
 
 // POSIX
 #include <dirent.h>
@@ -82,7 +82,7 @@ int unlinkat( int dirfd, const char* path, int flags );
 }
 #endif
 
-#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
+#endif  // #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )  &&  __FreeBSD__ < 8
 
 #endif
 
