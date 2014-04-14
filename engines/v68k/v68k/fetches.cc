@@ -263,6 +263,7 @@ namespace v68k
 	{
 		&fetch_sized_data_at_effective_address,
 		&fetch_A_data_from_major_register,
+		&force_long_sized,
 		0  // NULL
 	};
 	

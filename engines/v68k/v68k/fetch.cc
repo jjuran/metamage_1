@@ -285,6 +285,11 @@ namespace v68k
 	}
 	
 	
+	void force_long_sized( processor_state& s, op_params& pb )
+	{
+		pb.size = long_sized;
+	}
+	
 	void assign_first_to_second( processor_state& s, op_params& pb )
 	{
 		pb.second = pb.first;

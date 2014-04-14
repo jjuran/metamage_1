@@ -81,6 +81,8 @@ namespace v68k
 	void fetch_bit_shift_count( processor_state& state, op_params& pb );
 	
 	
+	void force_long_sized( processor_state& state, op_params& pb );
+	
 	void assign_first_to_second( processor_state& state, op_params& pb );
 	
 	void add_first_to_address( processor_state& state, op_params& pb );
