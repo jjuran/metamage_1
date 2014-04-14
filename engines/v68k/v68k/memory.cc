@@ -200,7 +200,7 @@ namespace v68k
 	
 	uint8_t* memory_region::translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const
 	{
-		if ( addr > size - length )
+		if ( length > size  ||  addr > size - length )
 		{
 			return 0;  // NULL
 		}
