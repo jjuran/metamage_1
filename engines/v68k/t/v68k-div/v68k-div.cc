@@ -53,7 +53,7 @@ static void divu()
 	
 	const uint32_t divide_by_zero_address = 1024 + sizeof (uint16_t) * 10;
 	
-	vectors[4] = big_longword( divide_by_zero_address );
+	vectors[5] = big_longword( divide_by_zero_address );
 	
 	const memory_region memory( mem, sizeof mem );
 	
@@ -174,7 +174,7 @@ static void divs()
 	
 	const uint32_t divide_by_zero_address = 1024 + sizeof (uint16_t) * 10;
 	
-	vectors[4] = big_longword( divide_by_zero_address );
+	vectors[5] = big_longword( divide_by_zero_address );
 	
 	const memory_region memory( mem, sizeof mem );
 	
