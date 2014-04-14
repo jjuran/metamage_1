@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 5 + 6 + 4 + 4 + 2 + 2;
+static const unsigned n_tests = 4 + 6 + 4 + 4 + 2 + 2;
 
 
 using v68k::big_word;
@@ -58,8 +58,6 @@ static void illegal_instruction()
 	code[ 0 ] = big_word( 0x4848 );  // BKPT  #0
 	
 	emu.reset();
-	
-	ok_if( !emu.step() );  // Breakpoint 0
 	
 	ok_if( emu.step() );  // Illegal Instruction (unacknowledged breakpoint)
 	
