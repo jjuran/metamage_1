@@ -51,16 +51,16 @@ static void eor()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x00000001;
-	emu.regs.d[1] = 0x00000002;
+	emu.d(0) = 0x00000001;
+	emu.d(1) = 0x00000002;
 	
 	
 	emu.step();
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
-	ok_if( emu.regs.d[0] == 1 );
-	ok_if( emu.regs.d[1] == 3 );
+	ok_if( emu.d(0) == 1 );
+	ok_if( emu.d(1) == 3 );
 }
 
 int main( int argc, char** argv )

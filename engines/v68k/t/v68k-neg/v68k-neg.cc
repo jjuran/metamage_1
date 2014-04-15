@@ -52,21 +52,21 @@ static void neg()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x00000000;
+	emu.d(0) = 0x00000000;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000000 );
+	ok_if( emu.d(0) == 0x00000000 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
 	
-	emu.regs.d[0] = 0x00000001;
+	emu.d(0) = 0x00000001;
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x0000FFFF );
+	ok_if( emu.d(0) == 0x0000FFFF );
 	
 	ok_if( emu.regs.nzvc == 0x9 );
 }

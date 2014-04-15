@@ -55,26 +55,26 @@ static void dbcc()
 	
 	emu.regs.nzvc = 0xF;
 	
-	emu.regs.d[0] = 0x00010001;
+	emu.d(0) = 0x00010001;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00010001 );
+	ok_if( emu.d(0) == 0x00010001 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00010000 );
+	ok_if( emu.d(0) == 0x00010000 );
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x0001FFFF );
+	ok_if( emu.d(0) == 0x0001FFFF );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000000 );
+	ok_if( emu.d(0) == 0x00000000 );
 }
 
 int main( int argc, char** argv )

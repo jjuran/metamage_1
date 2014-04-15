@@ -51,12 +51,12 @@ static void swap()
 	
 	emu.regs.nzvc = 0xF;
 	
-	emu.regs.d[0] = 0x12345678;
+	emu.d(0) = 0x12345678;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x56781234 );
+	ok_if( emu.d(0) == 0x56781234 );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 }

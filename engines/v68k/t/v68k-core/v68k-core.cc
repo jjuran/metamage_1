@@ -65,7 +65,7 @@ static void only_8_bytes()
 	
 	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
-	ok_if( emu.regs.a[7] == 0 );
+	ok_if( emu.a(7) == 0 );
 	ok_if( emu.regs.pc   == 0 );
 }
 
@@ -85,7 +85,7 @@ static void only_1026_bytes()
 	
 	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
-	ok_if( emu.regs.a[7] ==    0 );
+	ok_if( emu.a(7) ==    0 );
 	ok_if( emu.regs.pc   == 1024 );
 }
 
@@ -103,7 +103,7 @@ static void bad_SP_on_reset()
 	
 	ok_if( emu.condition == normal );
 	
-	ok_if( emu.regs.a[7] == 0xFFFFFFFF );
+	ok_if( emu.a(7) == 0xFFFFFFFF );
 }
 
 static void bad_PC_on_reset()

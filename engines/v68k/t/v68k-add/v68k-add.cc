@@ -52,22 +52,22 @@ static void add()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x00000123;
-	emu.regs.d[1] = 0x00000567;
+	emu.d(0) = 0x00000123;
+	emu.d(1) = 0x00000567;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x0000068A );
+	ok_if( emu.d(1) == 0x0000068A );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
-	emu.regs.d[1] = 0x00000567;
+	emu.d(1) = 0x00000567;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x0000058A );
+	ok_if( emu.d(1) == 0x0000058A );
 	
 	ok_if( emu.regs.nzvc == 0xA );
 }
@@ -97,12 +97,12 @@ static void adda()
 	
 	emu.regs.nzvc = 0xF;
 	
-	emu.regs.d[0] = 0x00001234;
-	emu.regs.a[0] = 0x0000FEDC;
+	emu.d(0) = 0x00001234;
+	emu.a(0) = 0x0000FEDC;
 	
 	emu.step();
 	
-	ok_if( emu.regs.a[0] == 0x00011110 );
+	ok_if( emu.a(0) == 0x00011110 );
 	
 	ok_if( emu.regs.nzvc == 0xF );
 }
@@ -133,11 +133,11 @@ static void addi()
 	
 	emu.regs.nzvc = 0x0;
 	
-	emu.regs.d[0] = 0x0000FEDC;
+	emu.d(0) = 0x0000FEDC;
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00001110 );
+	ok_if( emu.d(0) == 0x00001110 );
 	
 	ok_if( emu.regs.nzvc == 0x1 );
 }

@@ -61,8 +61,8 @@ static void chk()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[1] = 0x00000001;
-	emu.regs.d[2] = 0x00000002;
+	emu.d(1) = 0x00000001;
+	emu.d(2) = 0x00000002;
 	
 	
 	// 0 < 1 < 2
@@ -74,7 +74,7 @@ static void chk()
 	
 	// 0 <= 0 < 2
 	
-	emu.regs.d[1] = 0x00000000;
+	emu.d(1) = 0x00000000;
 	
 	emu.step();
 	
@@ -83,7 +83,7 @@ static void chk()
 	
 	// 0 < 2 <= 2
 	
-	emu.regs.d[1] = 0x00000002;
+	emu.d(1) = 0x00000002;
 	
 	emu.step();
 	
@@ -92,7 +92,7 @@ static void chk()
 	
 	// 0 < 3 > 2
 	
-	emu.regs.d[1] = 0x00000003;
+	emu.d(1) = 0x00000003;
 	
 	emu.step();
 	
@@ -105,7 +105,7 @@ static void chk()
 	
 	// 0 > -1 < 2
 	
-	emu.regs.d[1] = 0x0000FFFF;
+	emu.d(1) = 0x0000FFFF;
 	
 	emu.step();
 	

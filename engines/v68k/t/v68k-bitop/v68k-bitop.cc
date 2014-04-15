@@ -52,14 +52,14 @@ static void btst()
 	emu.reset();
 	
 	
-	emu.regs.d[0] = 0x00000123;
+	emu.d(0) = 0x00000123;
 	
 	
 	emu.regs.nzvc = 0x0;
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000123 );
+	ok_if( emu.d(0) == 0x00000123 );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
@@ -77,7 +77,7 @@ static void btst()
 	emu.step();  // BRA.S *-4
 	
 	
-	emu.regs.d[0] = 0x00000122;
+	emu.d(0) = 0x00000122;
 	
 	emu.step();
 	
@@ -114,15 +114,15 @@ static void modify()
 	emu.reset();
 	
 	
-	emu.regs.d[0] = 0x00000123;
-	emu.regs.d[1] = 0x00000000;
+	emu.d(0) = 0x00000123;
+	emu.d(1) = 0x00000000;
 	
 	emu.regs.nzvc = 0x0;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000123 );
+	ok_if( emu.d(0) == 0x00000123 );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
@@ -130,7 +130,7 @@ static void modify()
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000122 );
+	ok_if( emu.d(0) == 0x00000122 );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
@@ -138,28 +138,28 @@ static void modify()
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000123 );
+	ok_if( emu.d(0) == 0x00000123 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000122 );
+	ok_if( emu.d(0) == 0x00000122 );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000122 );
+	ok_if( emu.d(0) == 0x00000122 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000123 );
+	ok_if( emu.d(0) == 0x00000123 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
@@ -192,9 +192,9 @@ static void modulo()
 	emu.reset();
 	
 	
-	emu.regs.d[0] = 0x00000000;
-	emu.regs.d[1] = 0x00000004;
-	emu.regs.a[0] = 1024;
+	emu.d(0) = 0x00000000;
+	emu.d(1) = 0x00000004;
+	emu.a(0) = 1024;
 	
 	
 	emu.step();
@@ -202,7 +202,7 @@ static void modulo()
 	ok_if( mem[1024] == 0x13 );
 	
 	
-	emu.regs.d[1] = 0x0000000A;
+	emu.d(1) = 0x0000000A;
 	
 	
 	emu.step();
@@ -212,15 +212,15 @@ static void modulo()
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000400 );
+	ok_if( emu.d(0) == 0x00000400 );
 	
 	
-	emu.regs.d[1] = 0x00000020;
+	emu.d(1) = 0x00000020;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000401 );
+	ok_if( emu.d(0) == 0x00000401 );
 }
 
 int main( int argc, char** argv )
