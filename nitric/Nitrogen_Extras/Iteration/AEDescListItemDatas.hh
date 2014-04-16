@@ -74,7 +74,7 @@ namespace Nitrogen
 		private:
 			typedef AEDescList_ItemData_ValueIterator< type > This;
 			
-			const AEDescList& list;
+			AEDescList list;
 			size_type position;
 		
 		public:
