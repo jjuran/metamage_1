@@ -152,7 +152,7 @@ namespace v68k
 	{
 		const uint32_t more = pb.first;
 		
-		const int size = 1 << pb.size - 1;  // 1,2,4
+		const int size = byte_count( pb.size );  // 1,2,4
 		
 		const uint16_t reg_id = more >> 12;
 		

@@ -40,7 +40,7 @@ namespace v68k
 	
 	static void set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
 	{
-		const uint32_t ea = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		const uint32_t ea = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
 		
 		(mode <= 1 ? pb.target : pb.address) = ea;
 	}
@@ -121,7 +121,7 @@ namespace v68k
 			return;
 		}
 		
-		const uint32_t addr = fetch_effective_address( s, mode, n, 1 << pb.size - 1 );
+		const uint32_t addr = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
 		
 		const uint32_t data = mode <= 1 ? s.regs.d[ addr ]
 		                                : s.read_mem( addr, pb.size );
@@ -239,7 +239,7 @@ namespace v68k
 		pb.first  = sign_extend( s.read_mem( s.regs.a[ n1 ], pb.size ), pb.size );
 		pb.second = sign_extend( s.read_mem( s.regs.a[ n2 ], pb.size ), pb.size );
 		
-		const int increment = 1 << pb.size - 1;
+		const int increment = byte_count( pb.size );
 		
 		s.regs.a[ n1 ] += increment;
 		s.regs.a[ n2 ] += increment;
@@ -261,8 +261,8 @@ namespace v68k
 		const uint32_t i = (s.opcode & 0x0007) >> 0;
 		const uint32_t j = (s.opcode & 0x0E00) >> 9;
 		
-		s.regs.a[i] -= 1 << pb.size - 1;
-		s.regs.a[j] -= 1 << pb.size - 1;
+		s.regs.a[i] -= byte_count( pb.size );
+		s.regs.a[j] -= byte_count( pb.size );
 		
 		pb.first = s.read_mem( s.regs.a[i], pb.size );
 		
