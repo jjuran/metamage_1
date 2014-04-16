@@ -1289,8 +1289,8 @@ namespace v68k
 				
 				const uint32_t udata = zero_extend( data, pb.size );
 				
-				data = (udata << 1 | s.regs.x) << effective_count - 1
-				     |  udata                  >> anticount + 1;
+				data = (udata << 1 | s.regs.x) << (effective_count - 1)
+				     |  udata                  >> (anticount + 1);
 				
 				s.regs.x = udata >> anticount & 0x1;
 				
