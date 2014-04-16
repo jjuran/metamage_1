@@ -24,7 +24,7 @@ namespace relix
 	
 	inline unsigned sigset_from_signo( int signo )
 	{
-		return 1 << signo - 1;
+		return 1 << (signo - 1);
 	}
 	
 	int sigprocmask( int how, const sigset_t* set, sigset_t* oldset )
