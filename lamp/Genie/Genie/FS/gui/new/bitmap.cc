@@ -326,7 +326,14 @@ namespace Genie
 	
 	static inline short compute_rowBytes_from_bounds( const Rect& bounds )
 	{
-		return (bounds.right - bounds.left) + 15 >> 3 & ~1;
+		const short width = bounds.right - bounds.left;
+		
+		if ( width <= 0 )
+		{
+			return 0;
+		}
+		
+		return (width + 15) >> 3 & ~1;
 	}
 	
 	void BitMapView::Draw( const Rect& bounds, bool erasing )
