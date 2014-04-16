@@ -76,6 +76,23 @@ namespace v68k
 		const uint32_t& d( int i ) const  { return regs.d[ i ]; }
 		const uint32_t& a( int i ) const  { return regs.a[ i ]; }
 		
+		uint32_t& saved_sp()
+		{
+			return + !(regs.ttsm & 0x2) ? regs.usp
+			       : !(regs.ttsm & 0x1) ? regs.isp
+			       :                      regs.msp;
+		}
+		
+		void save_sp()
+		{
+			saved_sp() = a(7);
+		}
+		
+		void load_sp()
+		{
+			a(7) = saved_sp();
+		}
+		
 		void prefetch_instruction_word();
 		
 		uint32_t read_mem( uint32_t addr, op_size_t size );

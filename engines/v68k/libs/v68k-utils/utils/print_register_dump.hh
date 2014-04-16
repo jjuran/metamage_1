@@ -22,8 +22,9 @@ namespace utils {
 
 void print_register_dump( const uint32_t  d[],
                           const uint32_t  a[],
-                          uint32_t        alt_sp,
-                          uint32_t        alt_ssp,
+                          uint32_t        usp,
+                          uint32_t        isp,
+                          uint32_t        msp,
                           uint32_t        pc,
                           uint16_t        sr );
 

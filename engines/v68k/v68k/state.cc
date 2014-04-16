@@ -130,35 +130,14 @@ namespace v68k
 		
 		new_sr &= sr_mask;
 		
-		if ( (regs.ttsm & 0x2) ^ (new_sr >> 12 & 2) )
-		{
-			// S changed:  swap SP with alt SP
-			uint32_t& A7 = a(7);
-			
-			const uint32_t temp = A7;
-			
-			A7 = regs.alt_sp;
-			
-			regs.alt_sp = temp;
-		}
-		
-		if ( (regs.ttsm & 0x1) ^ (new_sr >> 12 & 1) )
-		{
-			// M changed:  swap SSP with alt SSP
-			uint32_t& SSP = (new_sr >> 12 & 2) ? a(7)
-			                                   : regs.alt_sp;
-			
-			const uint32_t temp = SSP;
-			
-			SSP = regs.alt_ssp;
-			
-			regs.alt_ssp = temp;
-		}
+		save_sp();
 		
 		regs.ttsm = new_sr >> 12;
 		regs. iii = new_sr >>  8 & 0xF;
 		regs.   x = new_sr >>  4 & 0xF;
 		regs.nzvc = new_sr >>  0 & 0xF;
+		
+		load_sp();
 	}
 	
 	bool processor_state::take_exception_format_0( uint16_t vector_offset )

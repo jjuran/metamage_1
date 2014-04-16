@@ -56,8 +56,9 @@ static void inscribe_32( char* p, uint32_t x )
 	"D6: 12345678   A6: 12345678" "\n" \
 	"D7: 12345678   A7: 12345678" "\n" \
 	                              "\n" \
-	"Alt SP:  12345678"           "\n" \
-	"Alt SSP: 12345678"           "\n" \
+	"USP: 12345678"               "\n" \
+	"ISP: 12345678"               "\n" \
+	"MSP: 12345678"               "\n" \
 	                              "\n" \
 	"PC:  12345678"               "\n" \
 	"SR:  1234"                   "\n" \
@@ -67,8 +68,9 @@ const size_t dump_size = sizeof DUMP_TEMPLATE - 1;
 
 void print_register_dump( const uint32_t  d[],
                           const uint32_t  a[],
-                          uint32_t        alt_sp,
-                          uint32_t        alt_ssp,
+                          uint32_t        usp,
+                          uint32_t        isp,
+                          uint32_t        msp,
                           uint32_t        pc,
                           uint16_t        sr )
 {
@@ -93,15 +95,21 @@ void print_register_dump( const uint32_t  d[],
 	
 	++p;  // skip newline
 	
-	p += sizeof "Alt SP:  " - 1;
+	p += sizeof "USP: " - 1;
 	
-	inscribe_32( p, alt_sp );
+	inscribe_32( p, usp );
 	
 	p += sizeof "12345678" "\n" - 1;
 	
-	p += sizeof "Alt SSP: " - 1;
+	p += sizeof "ISP: " - 1;
 	
-	inscribe_32( p, alt_ssp );
+	inscribe_32( p, isp );
+	
+	p += sizeof "12345678" "\n" - 1;
+	
+	p += sizeof "MSP: " - 1;
+	
+	inscribe_32( p, msp );
 	
 	p += sizeof "12345678" "\n" - 1;
 	
@@ -124,8 +132,9 @@ void print_register_dump( const registers& regs, uint16_t sr )
 {
 	print_register_dump( regs.d,
 	                     regs.a,
-	                     regs.alt_sp,
-	                     regs.alt_ssp,
+	                     regs.usp,
+	                     regs.isp,
+	                     regs.msp,
 	                     regs.pc,
 	                     sr );
 }

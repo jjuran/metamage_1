@@ -548,7 +548,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.regs.alt_sp = s.a(n);
+		s.regs.usp = s.a(n);
 	}
 	
 	void microcode_MOVE_from_USP( processor_state& s, op_params& pb )
@@ -556,7 +556,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.a(n) = s.regs.alt_sp;
+		s.a(n) = s.regs.usp;
 	}
 	
 	void microcode_NOP( processor_state& s, op_params& pb )
@@ -759,17 +759,16 @@ namespace v68k
 				return &s.regs.dfc;
 			
 			case 0x8:  // 0x800
-				// MOVEC is privileged, so alt SP is always USP
-				return &s.regs.alt_sp;
+				return &s.regs.usp;
 			
 			case 0x9:  // 0x801
 				return &s.regs.vbr;
 			
 			case 0xB:  // 0x803, MSP
+				return &s.regs.msp;
+			
 			case 0xC:  // 0x804, ISP
-				// MOVEC is privileged, so A7 is always SSP
-				return (s.regs.ttsm ^ control_index) & 0x1 ? &s.regs.alt_ssp
-				                                           : &s.a(7);
+				return &s.regs.isp;
 			
 			default:
 				break;
@@ -804,6 +803,8 @@ namespace v68k
 			}
 			else
 			{
+				s.save_sp();  // in case we're accessing the current SP
+				
 				if ( writing )
 				{
 					uint32_t data = s.d( general_id );
@@ -814,6 +815,8 @@ namespace v68k
 					}
 					
 					*control_register = data;
+					
+					s.load_sp();  // in case we're writing the current SP
 				}
 				else
 				{
