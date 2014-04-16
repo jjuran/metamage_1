@@ -569,11 +569,13 @@ namespace tool
 	}
 	
 	
+	static const ConfData empty_conf_data = ConfData();
+	
 	Project::Project()
 	:
-		its_config_data( ConfData() ),
-		its_program_filename  ( plus::string() ),
-		its_prefix_source_path( plus::string() )
+		its_config_data( empty_conf_data ),
+		its_program_filename  ( plus::string::null ),
+		its_prefix_source_path( plus::string::null )
 	{
 	}
 	
