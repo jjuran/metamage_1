@@ -1261,7 +1261,7 @@ namespace Genie
 				return false;
 			}
 			
-			const sigset_t signo_mask = 1 << signo - 1;
+			const sigset_t signo_mask = 1 << (signo - 1);
 			
 			if ( active_signals & signo_mask )
 			{

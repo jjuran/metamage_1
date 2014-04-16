@@ -662,7 +662,7 @@ namespace tool
 			{
 				case 0:
 				case 1:
-					immediate_size = reg + 1 << 1;
+					immediate_size = (reg + 1) << 1;
 					
 					break;
 				
@@ -2232,6 +2232,11 @@ namespace tool
 	};
 	
 	
+	static inline uint32_t n_ones( int n )
+	{
+		return (1 << n) - 1;
+	}
+	
 	static const uint32_t name_validity[] =
 	{
 		0,  // no control chars
@@ -2239,12 +2244,12 @@ namespace tool
 		            1 << (' ' & 31) |  // 0x20
 		            1 << ('%' & 31) |  // 0x25
 		            1 << ('.' & 31) |  // 0x2e
-		(1 << 10) - 1 << ('0' & 31),   // 0x30 - 0x39
+		n_ones( 10 )  << ('0' & 31),   // 0x30 - 0x39
 		
-		(1 << 26) - 1 << ('A' & 31) |  // 0x41 - 0x5A
+		n_ones( 26 )  << ('A' & 31) |  // 0x41 - 0x5A
 		            1 << ('_' & 31),   // 0x5f
 		
-		(1 << 26) - 1 << ('a' & 31)    // 0x61 - 0x7A
+		n_ones( 26 )  << ('a' & 31)    // 0x61 - 0x7A
 	};
 	
 	static inline bool valid_name_char( unsigned char c )

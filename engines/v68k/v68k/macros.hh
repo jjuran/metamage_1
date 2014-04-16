@@ -18,7 +18,7 @@ namespace v68k
 	
 	inline int byte_count( op_size_t size )
 	{
-		return 1 << size - 1;
+		return 1 << (size - 1);
 	}
 	
 	inline int bit_count( op_size_t size )
