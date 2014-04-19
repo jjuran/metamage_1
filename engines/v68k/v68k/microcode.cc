@@ -773,7 +773,7 @@ namespace v68k
 		const uint16_t general_id = registers >> 12;
 		const uint16_t control_id = registers & 0x0FFF;
 		
-		const uint32_t* control_register = 0;  // NULL
+		uint32_t* control_register = 0;  // NULL
 		
 		const uint16_t control_index = index_of_control_register( control_id );
 		
@@ -781,7 +781,7 @@ namespace v68k
 		{
 			// control index is out of range; ergo, control id is invalid
 		}
-		else if ( const uint32_t* control_register = get_control_register( s, control_index ) )
+		else if ( uint32_t* control_register = get_control_register( s, control_index ) )
 		{
 			const uint16_t flags = control_register_flags[ control_index ];
 			
@@ -799,6 +799,8 @@ namespace v68k
 					{
 						data &= 0x7;
 					}
+					
+					*control_register = data;
 				}
 				else
 				{
