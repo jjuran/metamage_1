@@ -15,10 +15,12 @@ namespace v68k
 	
 	struct registers
 	{
+		// General registers:  0 - 15
+		
 		uint32_t d[8];  // D0-D7
 		uint32_t a[8];  // A0-A7
 		
-		uint32_t pc;
+		// Control registers:  16 - 31
 		
 		/*
 			SFC and DFC are actually 3 bits each, but represented as 32 bits
@@ -27,11 +29,32 @@ namespace v68k
 		uint32_t sfc;
 		uint32_t dfc;
 		
+		uint32_t cacr;
+		
+		uint32_t tc;
+		
+		uint32_t itt0;
+		uint32_t itt1;
+		uint32_t dtt0;
+		uint32_t dtt1;
+		
 		uint32_t usp;
+		
 		uint32_t vbr;
+		
+		uint32_t caar;
 		
 		uint32_t msp;
 		uint32_t isp;
+		
+		uint32_t mmusr;
+		
+		uint32_t urp;
+		uint32_t srp;
+		
+		// Other:  32
+		
+		uint32_t pc;
 	};
 	
 	struct status_register
