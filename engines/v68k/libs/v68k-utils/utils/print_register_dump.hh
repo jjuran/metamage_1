@@ -27,7 +27,7 @@ void print_register_dump( const uint32_t  d[],
                           uint32_t        pc,
                           uint16_t        sr );
 
-void print_register_dump( const registers& regs );
+void print_register_dump( const registers& regs, uint16_t sr );
 
 }  // namespace utils
 }  // namespace v68k

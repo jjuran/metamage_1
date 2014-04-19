@@ -120,14 +120,8 @@ void print_register_dump( const uint32_t  d[],
 	write( STDERR_FILENO, dump, dump_size );
 }
 
-void print_register_dump( const registers& regs )
+void print_register_dump( const registers& regs, uint16_t sr )
 {
-	// FIXME:  Duplicates processor_state::get_SR()
-	const uint16_t sr = regs.ttsm << 12
-	                  | regs. iii <<  8
-	                  | regs.   x <<  4
-	                  | regs.nzvc <<  0;
-	
 	print_register_dump( regs.d,
 	                     regs.a,
 	                     regs.alt_sp,

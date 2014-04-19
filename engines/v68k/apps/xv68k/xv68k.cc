@@ -79,7 +79,7 @@ static void dump( const v68k::processor_state& s )
 {
 	using v68k::utils::print_register_dump;
 	
-	print_register_dump( s.regs );
+	print_register_dump( s.regs, s.get_SR() );
 }
 
 static void dump_and_raise( const v68k::processor_state& s, int signo )
