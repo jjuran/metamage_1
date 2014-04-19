@@ -60,14 +60,14 @@ namespace v68k
 		}
 		else
 		{
-			regs.ttsm = 0 << 2  // clear Trace bits
-					  | 1 << 1  // set Supervisor bit
-					  | 0;      // clear Master bit
+			sr.ttsm = 0 << 2  // clear Trace bits
+					| 1 << 1  // set Supervisor bit
+					| 0;      // clear Master bit
 			
-			regs. iii = 7;  // set max Interrupt mask
+			sr. iii = 7;  // set max Interrupt mask
 			
-			regs.   x = 0;  // clear CCR
-			regs.nzvc = 0;
+			sr.   x = 0;  // clear CCR
+			sr.nzvc = 0;
 			
 			const reset_vector* v = (const reset_vector*) zero;
 			
@@ -113,7 +113,7 @@ namespace v68k
 			return illegal_instruction();
 		}
 		
-		if ( (decoded->flags & privilege_mask) > ((regs.ttsm & 0x2) | (model == mc68000)) )
+		if ( (decoded->flags & privilege_mask) > ((sr.ttsm & 0x2) | (model == mc68000)) )
 		{
 			return privilege_violation();
 		}
@@ -175,7 +175,7 @@ namespace v68k
 			}
 		}
 		
-		const uint8_t saved_ttsm = regs.ttsm;
+		const uint8_t saved_ttsm = sr.ttsm;
 		
 		// execute
 		decoded->code( *this, pb );
@@ -203,7 +203,7 @@ namespace v68k
 				
 				if ( decoded->flags & CCR_update_set_X )
 				{
-					regs.x = regs.nzvc & 0x1;
+					sr.x = sr.nzvc & 0x1;
 				}
 			}
 		}

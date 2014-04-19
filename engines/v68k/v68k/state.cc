@@ -95,28 +95,28 @@ namespace v68k
 	
 	uint16_t processor_state::get_CCR() const
 	{
-		const uint16_t ccr = regs.   x <<  4
-		                   | regs.nzvc <<  0;
+		const uint16_t ccr = sr.   x <<  4
+		                   | sr.nzvc <<  0;
 		
 		return ccr;
 	}
 	
 	uint16_t processor_state::get_SR() const
 	{
-		const uint16_t sr = regs.ttsm << 12
-		                  | regs. iii <<  8
-		                  | regs.   x <<  4
-		                  | regs.nzvc <<  0;
+		const uint16_t result = sr.ttsm << 12
+		                      | sr. iii <<  8
+		                      | sr.   x <<  4
+		                      | sr.nzvc <<  0;
 		
-		return sr;
+		return result;
 	}
 	
 	void processor_state::set_CCR( uint16_t new_ccr )
 	{
 		// ...X NZVC  (all processors)
 		
-		regs.   x = new_ccr >>  4 & 0x1;
-		regs.nzvc = new_ccr >>  0 & 0xF;
+		sr.   x = new_ccr >>  4 & 0x1;
+		sr.nzvc = new_ccr >>  0 & 0xF;
 	}
 	
 	void processor_state::set_SR( uint16_t new_sr )
@@ -132,10 +132,10 @@ namespace v68k
 		
 		save_sp();
 		
-		regs.ttsm = new_sr >> 12;
-		regs. iii = new_sr >>  8 & 0xF;
-		regs.   x = new_sr >>  4 & 0xF;
-		regs.nzvc = new_sr >>  0 & 0xF;
+		sr.ttsm = new_sr >> 12;
+		sr. iii = new_sr >>  8 & 0xF;
+		sr.   x = new_sr >>  4 & 0xF;
+		sr.nzvc = new_sr >>  0 & 0xF;
 		
 		load_sp();
 	}

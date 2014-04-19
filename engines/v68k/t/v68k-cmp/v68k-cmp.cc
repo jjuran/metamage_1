@@ -54,7 +54,7 @@ static void cmp()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x80000000;
 	emu.d(1) = 0x80008001;
@@ -62,32 +62,32 @@ static void cmp()
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x9 );
+	ok_if( emu.sr.nzvc == 0x9 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x8 );
+	ok_if( emu.sr.nzvc == 0x8 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x1 );
+	ok_if( emu.sr.nzvc == 0x1 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x9 );
+	ok_if( emu.sr.nzvc == 0x9 );
 }
 
 static void cmpa()
@@ -114,7 +114,7 @@ static void cmpa()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x7654abcd;
 	emu.a(0) = 0x7654abcd;
@@ -122,12 +122,12 @@ static void cmpa()
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x1 );
+	ok_if( emu.sr.nzvc == 0x1 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 }
 
 static void cmpm()
@@ -154,7 +154,7 @@ static void cmpm()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.a(0) = 1024;
 	emu.a(1) = 1024 + 2;
@@ -165,12 +165,12 @@ static void cmpm()
 	ok_if( emu.a(0) == 1024 + 2 );
 	ok_if( emu.a(1) == 1024 + 4 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 }
 
 int main( int argc, char** argv )

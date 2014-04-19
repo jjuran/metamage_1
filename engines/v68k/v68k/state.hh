@@ -58,6 +58,8 @@ namespace v68k
 	{
 		registers regs;
 		
+		status_register sr;
+		
 		const memory& mem;
 		
 		const bkpt_handler bkpt;
@@ -78,9 +80,9 @@ namespace v68k
 		
 		uint32_t& saved_sp()
 		{
-			return + !(regs.ttsm & 0x2) ? regs.usp
-			       : !(regs.ttsm & 0x1) ? regs.isp
-			       :                      regs.msp;
+			return + !(sr.ttsm & 0x2) ? regs.usp
+			       : !(sr.ttsm & 0x1) ? regs.isp
+			       :                    regs.msp;
 		}
 		
 		void save_sp()
@@ -107,14 +109,14 @@ namespace v68k
 		
 		function_code_t data_space() const
 		{
-			return regs.ttsm & 0x2 ? supervisor_data_space
-			                       : user_data_space;
+			return sr.ttsm & 0x2 ? supervisor_data_space
+			                     : user_data_space;
 		}
 		
 		function_code_t program_space() const
 		{
-			return regs.ttsm & 0x2 ? supervisor_program_space
-			                       : user_program_space;
+			return sr.ttsm & 0x2 ? supervisor_program_space
+			                     : user_program_space;
 		}
 		
 		bool badly_aligned_data( uint32_t addr ) const

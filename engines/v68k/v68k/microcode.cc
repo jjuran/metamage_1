@@ -238,11 +238,11 @@ namespace v68k
 		
 		if ( value < 0 )
 		{
-			s.regs.nzvc = 0x8;  // set N, others undefined
+			s.sr.nzvc = 0x8;  // set N, others undefined
 		}
 		else if ( value > bound )
 		{
-			s.regs.nzvc = 0x0;  // clear N, others undefined
+			s.sr.nzvc = 0x0;  // clear N, others undefined
 		}
 		else
 		{
@@ -380,10 +380,10 @@ namespace v68k
 	{
 		const int32_t data = sign_extend( pb.second, byte_sized );
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( 0 );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( 0 );
 		
 		pb.result = data | 0x80;
 	}
@@ -841,7 +841,7 @@ namespace v68k
 	{
 		const uint16_t cc = pb.second;
 		
-		if ( test_conditional( cc, s.regs.nzvc ) )
+		if ( test_conditional( cc, s.sr.nzvc ) )
 		{
 			return;
 		}
@@ -868,7 +868,7 @@ namespace v68k
 	{
 		const uint16_t cc = pb.second;
 		
-		pb.result = int32_t() - test_conditional( cc, s.regs.nzvc );
+		pb.result = int32_t() - test_conditional( cc, s.sr.nzvc );
 	}
 	
 	#pragma mark -
@@ -906,7 +906,7 @@ namespace v68k
 	{
 		const uint16_t cc = pb.second;
 		
-		if ( test_conditional( cc, s.regs.nzvc ) )
+		if ( test_conditional( cc, s.sr.nzvc ) )
 		{
 			s.regs.pc = pb.address;
 		}
@@ -1113,13 +1113,13 @@ namespace v68k
 				data >>= 1;
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1167,13 +1167,13 @@ namespace v68k
 				data = sign_extend( data, pb.size );
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( overflow )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( overflow )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1205,13 +1205,13 @@ namespace v68k
 				data = 0;
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1243,13 +1243,13 @@ namespace v68k
 				data = 0;
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1272,19 +1272,19 @@ namespace v68k
 				
 				const uint32_t udata = zero_extend( data, pb.size );
 				
-				data = (udata << 1 | s.regs.x) << anticount
-				     |  udata                  >> effective_count;
+				data = (udata << 1 | s.sr.x) << anticount
+				     |  udata                >> effective_count;
 				
-				s.regs.x = udata >> (effective_count - 1 ) & 0x1;
+				s.sr.x = udata >> (effective_count - 1 ) & 0x1;
 				
 				data = sign_extend( data, pb.size );
 			}
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( s.regs.x );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( s.sr.x );
 		
 		pb.result = data;
 	}
@@ -1307,19 +1307,19 @@ namespace v68k
 				
 				const uint32_t udata = zero_extend( data, pb.size );
 				
-				data = (udata << 1 | s.regs.x) << (effective_count - 1)
-				     |  udata                  >> (anticount + 1);
+				data = (udata << 1 | s.sr.x) << (effective_count - 1)
+				     |  udata                >> (anticount + 1);
 				
-				s.regs.x = udata >> anticount & 0x1;
+				s.sr.x = udata >> anticount & 0x1;
 				
 				data = sign_extend( data, pb.size );
 			}
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( s.regs.x );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( s.sr.x );
 		
 		pb.result = data;
 	}
@@ -1353,10 +1353,10 @@ namespace v68k
 			last_bit = data < 0;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1390,10 +1390,10 @@ namespace v68k
 			last_bit = data & 0x1;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}

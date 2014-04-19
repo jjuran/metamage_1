@@ -32,7 +32,10 @@ namespace v68k
 		
 		uint32_t msp;
 		uint32_t isp;
-		
+	};
+	
+	struct status_register
+	{
 		uint8_t ttsm;  // T1 T0 S  M
 		uint8_t  iii;  // .  I2 I1 I0
 		uint8_t    x;  // .  .  .  X

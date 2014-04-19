@@ -49,7 +49,7 @@ static void eor()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000001;
 	emu.d(1) = 0x00000002;
@@ -57,7 +57,7 @@ static void eor()
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	ok_if( emu.d(0) == 1 );
 	ok_if( emu.d(1) == 3 );

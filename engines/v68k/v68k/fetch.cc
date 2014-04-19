@@ -302,7 +302,7 @@ namespace v68k
 	
 	void add_X_to_first( processor_state& s, op_params& pb )
 	{
-		pb.first += s.regs.x & 0x1;
+		pb.first += s.sr.x & 0x1;
 	}
 	
 	void shift_NEG_operands( processor_state& s, op_params& pb )

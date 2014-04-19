@@ -50,7 +50,7 @@ static void neg()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000000;
 	
@@ -59,7 +59,7 @@ static void neg()
 	
 	ok_if( emu.d(0) == 0x00000000 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.d(0) = 0x00000001;
@@ -68,7 +68,7 @@ static void neg()
 	
 	ok_if( emu.d(0) == 0x0000FFFF );
 	
-	ok_if( emu.regs.nzvc == 0x9 );
+	ok_if( emu.sr.nzvc == 0x9 );
 }
 
 int main( int argc, char** argv )

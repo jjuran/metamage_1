@@ -52,8 +52,8 @@ static void addx()
 	
 	emu.reset();
 	
-	emu.regs.   x = 1;
-	emu.regs.nzvc = 0;
+	emu.sr.   x = 1;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000123;
 	emu.d(1) = 0x00000567;
@@ -66,20 +66,20 @@ static void addx()
 	
 	ok_if( emu.d(1) == 0x0000068B );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.d(0) = 0x00000000;
 	emu.d(1) = 0x00000000;
 	
-	emu.regs.   x = 0;
-	emu.regs.nzvc = 0;
+	emu.sr.   x = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.step();
 	
 	ok_if( emu.d(1) == 0x00000000 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
@@ -89,16 +89,16 @@ static void addx()
 	
 	ok_if( code[1] == big_word( 0xD3D3 ) );
 	
-	ok_if( emu.regs.   x == 0x0 );
-	ok_if( emu.regs.nzvc == 0x8 );
+	ok_if( emu.sr.   x == 0x0 );
+	ok_if( emu.sr.nzvc == 0x8 );
 	
 	
 	emu.step();
 	
 	ok_if( code[1] == big_word( 0x13D3 ) );
 	
-	ok_if( emu.regs.   x == 0x1 );
-	ok_if( emu.regs.nzvc == 0x1 );
+	ok_if( emu.sr.   x == 0x1 );
+	ok_if( emu.sr.nzvc == 0x1 );
 }
 
 static void subx()
@@ -124,8 +124,8 @@ static void subx()
 	
 	emu.reset();
 	
-	emu.regs.   x = 1;
-	emu.regs.nzvc = 0;
+	emu.sr.   x = 1;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000000;
 	emu.d(1) = 0x00000001;
@@ -135,7 +135,7 @@ static void subx()
 	
 	ok_if( emu.d(1) == 0x00000000 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 }
 
 static void negx()
@@ -162,8 +162,8 @@ static void negx()
 	
 	emu.reset();
 	
-	emu.regs.   x = 1;
-	emu.regs.nzvc = 0;
+	emu.sr.   x = 1;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x000000FF;
 	
@@ -172,16 +172,16 @@ static void negx()
 	
 	ok_if( emu.d(0) == 0x00000000 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
-	emu.regs.x = 1;
+	emu.sr.x = 1;
 	
 	emu.step();
 	
 	ok_if( emu.d(0) == 0x0000FFFF );
 	
-	ok_if( emu.regs.nzvc == 0x9 );
+	ok_if( emu.sr.nzvc == 0x9 );
 }
 
 int main( int argc, char** argv )

@@ -51,24 +51,24 @@ static void tst()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x0000FF80;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x8 );
+	ok_if( emu.sr.nzvc == 0x8 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0x8 );
+	ok_if( emu.sr.nzvc == 0x8 );
 }
 
 int main( int argc, char** argv )

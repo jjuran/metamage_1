@@ -55,23 +55,23 @@ static void btst()
 	emu.d(0) = 0x00000123;
 	
 	
-	emu.regs.nzvc = 0x0;
+	emu.sr.nzvc = 0x0;
 	
 	emu.step();
 	
 	ok_if( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();  // BRA.S *-4
 	
 	
-	emu.regs.nzvc = 0xF;
+	emu.sr.nzvc = 0xF;
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0xB );
+	ok_if( emu.sr.nzvc == 0xB );
 	
 	
 	emu.step();  // BRA.S *-4
@@ -81,7 +81,7 @@ static void btst()
 	
 	emu.step();
 	
-	ok_if( emu.regs.nzvc == 0xF );
+	ok_if( emu.sr.nzvc == 0xF );
 	
 }
 
@@ -117,14 +117,14 @@ static void modify()
 	emu.d(0) = 0x00000123;
 	emu.d(1) = 0x00000000;
 	
-	emu.regs.nzvc = 0x0;
+	emu.sr.nzvc = 0x0;
 	
 	
 	emu.step();
 	
 	ok_if( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	
@@ -132,7 +132,7 @@ static void modify()
 	
 	ok_if( emu.d(0) == 0x00000122 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	
@@ -140,28 +140,28 @@ static void modify()
 	
 	ok_if( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
 	ok_if( emu.d(0) == 0x00000122 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
 	ok_if( emu.d(0) == 0x00000122 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
 	ok_if( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 }
 

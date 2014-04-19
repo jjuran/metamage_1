@@ -51,8 +51,8 @@ namespace v68k
 		const int32_t b = sign_extend( pb.second, pb.size );
 		const int32_t c = sign_extend( pb.result, pb.size );
 		
-		s.regs.nzvc = common_NZ( c )
-		            | additive_VC( a, b, c );
+		s.sr.nzvc = common_NZ( c )
+		          | additive_VC( a, b, c );
 	}
 	
 	static void update_CCR_SUB( processor_state& s, const op_params& pb )
@@ -62,8 +62,8 @@ namespace v68k
 		
 		const int32_t d = b - a;
 		
-		s.regs.nzvc = common_NZ( d )
-		            | additive_VC( a, d, b );  // b is the sum
+		s.sr.nzvc = common_NZ( d )
+		          | additive_VC( a, d, b );  // b is the sum
 	}
 	
 	static void update_CCR_ADDX( processor_state& s, const op_params& pb )
@@ -72,8 +72,8 @@ namespace v68k
 		const int32_t b = sign_extend( pb.second, pb.size );
 		const int32_t c = sign_extend( pb.result, pb.size );
 		
-		s.regs.nzvc = ADDX_NZ( c, s.regs.nzvc )
-		            | additive_VC( a, b, c );
+		s.sr.nzvc = ADDX_NZ( c, s.sr.nzvc )
+		          | additive_VC( a, b, c );
 	}
 	
 	static void update_CCR_SUBX( processor_state& s, const op_params& pb )
@@ -83,23 +83,23 @@ namespace v68k
 		
 		const int32_t d = b - a;
 		
-		s.regs.nzvc = ADDX_NZ( d, s.regs.nzvc )
-		            | additive_VC( a, d, b );  // b is the sum
+		s.sr.nzvc = ADDX_NZ( d, s.sr.nzvc )
+		          | additive_VC( a, d, b );  // b is the sum
 	}
 	
 	static void update_CCR_TST( processor_state& s, const op_params& pb )
 	{
 		const int32_t data = sign_extend( pb.result, pb.size );
 		
-		s.regs.nzvc = common_NZ( data );
+		s.sr.nzvc = common_NZ( data );
 	}
 	
 	static void update_CCR_BTST( processor_state& s, const op_params& pb )
 	{
 		const uint32_t bit = pb.first;
 		
-		s.regs.nzvc &= ~0x4;
-		s.regs.nzvc |= (~pb.second >> bit & 0x1) << 2;
+		s.sr.nzvc &= ~0x4;
+		s.sr.nzvc |= (~pb.second >> bit & 0x1) << 2;
 	}
 	
 	static void update_CCR_DIV( processor_state& s, const op_params& pb )
@@ -113,7 +113,7 @@ namespace v68k
 				So set V and clear N, Z, and C.
 			*/
 			
-			s.regs.nzvc = 0x2;
+			s.sr.nzvc = 0x2;
 		}
 		else
 		{
@@ -127,7 +127,7 @@ namespace v68k
 			
 			const int32_t data = sign_extend( pb.result, word_sized );
 			
-			s.regs.nzvc = common_NZ( data );
+			s.sr.nzvc = common_NZ( data );
 		}
 	}
 	
