@@ -42,7 +42,7 @@ namespace v68k
 	{
 		condition = normal;
 		
-		regs.vbr = 0;
+		regs[ VBR ] = 0;
 		
 		/*
 			The reset vector is taken from Supervisor Program Space, but it

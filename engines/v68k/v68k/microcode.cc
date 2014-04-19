@@ -158,7 +158,7 @@ namespace v68k
 		
 		const uint16_t writing = more & 0x0800;
 		
-		const function_code_t fc = function_code_t( writing ? s.regs.dfc : s.regs.sfc );
+		const function_code_t fc = function_code_t( s.regs[ writing ? DFC : SFC ] );
 		
 		const memory_access_t access = writing ? mem_write : mem_read;
 		
@@ -548,7 +548,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.regs.usp = s.a(n);
+		s.regs[ USP ] = s.a(n);
 	}
 	
 	void microcode_MOVE_from_USP( processor_state& s, op_params& pb )
@@ -556,7 +556,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.a(n) = s.regs.usp;
+		s.a(n) = s.regs[ USP ];
 	}
 	
 	void microcode_NOP( processor_state& s, op_params& pb )
@@ -748,33 +748,9 @@ namespace v68k
 		return id >> 8 | (id & ~0x0800);
 	}
 	
-	static uint32_t* get_control_register( processor_state& s, uint16_t control_index )
+	static inline uint32_t* get_control_register( processor_state& s, uint16_t control_index )
 	{
-		switch ( control_index )
-		{
-			case 0x0:  // 0x000
-				return &s.regs.sfc;
-			
-			case 0x1:  // 0x001
-				return &s.regs.dfc;
-			
-			case 0x8:  // 0x800
-				return &s.regs.usp;
-			
-			case 0x9:  // 0x801
-				return &s.regs.vbr;
-			
-			case 0xB:  // 0x803, MSP
-				return &s.regs.msp;
-			
-			case 0xC:  // 0x804, ISP
-				return &s.regs.isp;
-			
-			default:
-				break;
-		}
-		
-		return 0;  // NULL
+		return &s.regs[ control_register_offset + control_index ];
 	}
 	
 	void microcode_MOVEC( processor_state& s, op_params& pb )

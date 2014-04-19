@@ -168,12 +168,12 @@ namespace v68k
 			return bus_error();
 		}
 		
-		if ( badly_aligned_data( regs.vbr ) )
+		if ( badly_aligned_data( regs[ VBR ] ) )
 		{
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, pc(), supervisor_data_space ) )
+		if ( !mem.get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}
@@ -212,12 +212,12 @@ namespace v68k
 			return bus_error();
 		}
 		
-		if ( badly_aligned_data( regs.vbr ) )
+		if ( badly_aligned_data( regs[ VBR ] ) )
 		{
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, pc(), supervisor_data_space ) )
+		if ( !mem.get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}

@@ -13,48 +13,55 @@
 namespace v68k
 {
 	
-	struct registers
+	enum register_t
 	{
 		// General registers:  0 - 15
 		
-		uint32_t d[8];  // D0-D7
-		uint32_t a[8];  // A0-A7
+		D0, D1, D2, D3, D4, D5, D6, D7,
+		A0, A1, A2, A3, A4, A5, A6, A7,
+		
+		SP = A7,
 		
 		// Control registers:  16 - 31
+		
 		
 		/*
 			SFC and DFC are actually 3 bits each, but represented as 32 bits
 			for convenience in MOVEC.
 		*/
-		uint32_t sfc;
-		uint32_t dfc;
+		SFC,
+		DFC,
 		
-		uint32_t cacr;
+		CACR,
 		
-		uint32_t tc;
+		TC,
 		
-		uint32_t itt0;
-		uint32_t itt1;
-		uint32_t dtt0;
-		uint32_t dtt1;
+		ITT0,
+		ITT1,
+		DTT0,
+		DTT1,
 		
-		uint32_t usp;
+		USP,
 		
-		uint32_t vbr;
+		VBR,
 		
-		uint32_t caar;
+		CAAR,
 		
-		uint32_t msp;
-		uint32_t isp;
+		MSP,
+		ISP,
 		
-		uint32_t mmusr;
+		MMUSR,
 		
-		uint32_t urp;
-		uint32_t srp;
+		URP,
+		SRP,
 		
 		// Other:  32
 		
-		uint32_t pc;
+		PC,
+		
+		n_registers,
+		
+		control_register_offset = SFC,
 	};
 	
 	struct status_register
