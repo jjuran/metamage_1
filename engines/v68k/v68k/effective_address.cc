@@ -50,7 +50,7 @@ namespace v68k
 		// _n == 0- 7:  D0-D7
 		// _n == 8-15:  A0-A7
 		
-		int32_t index = s.regs.d[_n];  // Xn
+		int32_t index = s.d(_n);  // Xn
 		
 		const bool long_sized = extension >> 11 & 0x1;
 		
@@ -136,7 +136,7 @@ namespace v68k
 	
 	uint32_t fetch_effective_address( processor_state& s, uint16_t mode, uint16_t n, int size )
 	{
-		const uint32_t An = s.regs.a[n];
+		const uint32_t An = s.a(n);
 		
 		if ( mode == 3  ||  mode == 4 )
 		{
@@ -160,10 +160,10 @@ namespace v68k
 				return An;
 			
 			case 3:
-				return postincrement( s.regs.a[n], size );
+				return postincrement( s.a(n), size );
 			
 			case 4:
-				return predecrement( s.regs.a[n], size );
+				return predecrement( s.a(n), size );
 			
 			case 5:
 				return read_ea_displaced_address( s, An );

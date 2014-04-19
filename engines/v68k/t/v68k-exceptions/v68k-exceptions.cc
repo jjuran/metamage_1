@@ -138,7 +138,7 @@ static void privilege_violation()
 	
 	emu.set_SR( 0x0700 );  // Clear S
 	
-	emu.regs.a[7] = 3072;
+	emu.a(7) = 3072;
 	
 	ok_if( emu.step() );  // unprivileged on 68000
 	
@@ -151,7 +151,7 @@ static void privilege_violation()
 	
 	emu2.set_SR( 0x0700 );  // Clear S
 	
-	emu2.regs.a[7] = 3072;
+	emu2.a(7) = 3072;
 	
 	ok_if( emu2.step() );  // Privilege Violation
 	

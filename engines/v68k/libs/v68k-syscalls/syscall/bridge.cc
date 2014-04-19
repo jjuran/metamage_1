@@ -42,7 +42,7 @@ static int32_t emulated_pid()
 
 static bool get_stacked_args( const v68k::processor_state& s, uint32_t* out, int n )
 {
-	uint32_t sp = s.regs.a[7];
+	uint32_t sp = s.a(7);
 	
 	while ( n > 0 )
 	{
@@ -62,7 +62,7 @@ static bool get_stacked_args( const v68k::processor_state& s, uint32_t* out, int
 
 static void set_errno( v68k::processor_state& s )
 {
-	s.regs.d[1] = errno;
+	s.d(1) = errno;
 	
 	uint32_t errno_ptr;
 	
@@ -74,7 +74,7 @@ static void set_errno( v68k::processor_state& s )
 
 static inline bool set_result( v68k::processor_state& s, int result )
 {
-	s.regs.d[0] = result;
+	s.d(0) = result;
 	
 	if ( result < 0 )
 	{
@@ -368,7 +368,7 @@ static bool emu_nanosleep( v68k::processor_state& s )
 
 bool bridge_call( v68k::processor_state& s )
 {
-	const uint16_t call_number = s.regs.d[0];
+	const uint16_t call_number = s.d(0);
 	
 	switch ( call_number )
 	{

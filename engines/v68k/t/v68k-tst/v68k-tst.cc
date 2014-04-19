@@ -53,7 +53,7 @@ static void tst()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x0000FF80;
+	emu.d(0) = 0x0000FF80;
 	
 	
 	emu.step();

@@ -58,7 +58,7 @@ namespace v68k
 	{
 		const uint32_t x = pb.target;
 		
-		const uint32_t Dx = s.regs.d[ x ];
+		const uint32_t Dx = s.d( x );
 		
 		uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_write );
 		
@@ -89,7 +89,7 @@ namespace v68k
 	{
 		const uint32_t x = pb.target;
 		
-		uint32_t& Dx = s.regs.d[ x ];
+		uint32_t& Dx = s.d( x );
 		
 		const uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_read );
 		
@@ -173,7 +173,7 @@ namespace v68k
 		
 		if ( writing )
 		{
-			const uint32_t data = s.regs.d[ reg_id ];
+			const uint32_t data = s.d( reg_id );
 			
 			switch ( pb.size )
 			{
@@ -191,7 +191,7 @@ namespace v68k
 		}
 		else
 		{
-			uint32_t& reg = s.regs.d[ reg_id ];
+			uint32_t& reg = s.d( reg_id );
 			
 			uint32_t data = 0;
 			
@@ -256,7 +256,7 @@ namespace v68k
 	{
 		const uint32_t n = pb.target;
 		
-		uint32_t& An = s.regs.a[n];
+		uint32_t& An = s.a(n);
 		
 		An = pb.address;
 	}
@@ -289,11 +289,11 @@ namespace v68k
 	{
 		const uint32_t n = pb.target;
 		
-		const uint32_t data = s.regs.d[n];
+		const uint32_t data = s.d(n);
 		
-		pb.result   =
-		s.regs.d[n] = data << 16
-		            | data >> 16;
+		pb.result =
+		s.d(n)    = data << 16
+		          | data >> 16;
 	}
 	
 	void microcode_BKPT( processor_state& s, op_params& pb )
@@ -314,7 +314,7 @@ namespace v68k
 	
 	void microcode_PEA( processor_state& s, op_params& pb )
 	{
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& sp = s.a(7);
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
@@ -335,7 +335,7 @@ namespace v68k
 	{
 		const uint32_t n = pb.target;
 		
-		uint32_t& Dn = s.regs.d[n];
+		uint32_t& Dn = s.d(n);
 		
 		const int8_t byte = Dn;
 		
@@ -350,7 +350,7 @@ namespace v68k
 	{
 		const uint32_t n = pb.target;
 		
-		uint32_t& Dn = s.regs.d[n];
+		uint32_t& Dn = s.d(n);
 		
 		const int16_t word = Dn;
 		
@@ -365,7 +365,7 @@ namespace v68k
 	{
 		const uint32_t n = pb.target;
 		
-		uint32_t& Dn = s.regs.d[n];
+		uint32_t& Dn = s.d(n);
 		
 		const int8_t byte = Dn;
 		
@@ -408,7 +408,7 @@ namespace v68k
 		{
 			if ( mask & 0x1 )
 			{
-				const uint32_t data = s.regs.d[ update_register ? 15 - r : r ];
+				const uint32_t data = s.d( update_register ? 15 - r : r );
 				
 				const bool ok = longword_sized ? s.mem.put_long( addr, data, s.data_space() )
 											   : s.mem.put_word( addr, data, s.data_space() );
@@ -426,7 +426,7 @@ namespace v68k
 		
 		if ( update_register )
 		{
-			s.regs.d[ update_register ] = addr - increment;
+			s.d( update_register ) = addr - increment;
 		}
 	}
 	
@@ -469,7 +469,7 @@ namespace v68k
 					return;
 				}
 				
-				s.regs.d[r] = data;
+				s.d(r) = data;
 				
 				addr += increment;
 			}
@@ -477,7 +477,7 @@ namespace v68k
 		
 		if ( update_register )
 		{
-			s.regs.d[ update_register ] = addr;
+			s.d( update_register ) = addr;
 		}
 	}
 	
@@ -493,8 +493,8 @@ namespace v68k
 		const uint32_t n    = pb.target;
 		const int32_t  disp = pb.first;
 		
-		uint32_t& An = s.regs.a[n];
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& An = s.a(n);
+		uint32_t& sp = s.a(7);
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
@@ -521,8 +521,8 @@ namespace v68k
 	{
 		const uint32_t n = pb.target;
 		
-		uint32_t& An = s.regs.a[n];
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& An = s.a(n);
+		uint32_t& sp = s.a(7);
 		
 		sp = An;
 		
@@ -548,7 +548,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.regs.alt_sp = s.regs.a[n];
+		s.regs.alt_sp = s.a(n);
 	}
 	
 	void microcode_MOVE_from_USP( processor_state& s, op_params& pb )
@@ -556,7 +556,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.regs.a[n] = s.regs.alt_sp;
+		s.a(n) = s.regs.alt_sp;
 	}
 	
 	void microcode_NOP( processor_state& s, op_params& pb )
@@ -582,7 +582,7 @@ namespace v68k
 	
 	void microcode_RTE( processor_state& s, op_params& pb )
 	{
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& sp = s.a(7);
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
@@ -638,12 +638,12 @@ namespace v68k
 	{
 		microcode_RTS( s, pb );
 		
-		s.regs.a[7] += pb.first;
+		s.a(7) += pb.first;
 	}
 	
 	void microcode_RTS( processor_state& s, op_params& pb )
 	{
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& sp = s.a(7);
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
@@ -672,7 +672,7 @@ namespace v68k
 	
 	void microcode_RTR( processor_state& s, op_params& pb )
 	{
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& sp = s.a(7);
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
@@ -756,7 +756,7 @@ namespace v68k
 			case 0xC:  // 0x804, ISP
 				// MOVEC is privileged, so A7 is always SSP
 				return (s.regs.ttsm ^ control_index) & 0x1 ? &s.regs.alt_ssp
-				                                           : &s.regs.a[7];
+				                                           : &s.a(7);
 			
 			default:
 				break;
@@ -793,7 +793,7 @@ namespace v68k
 			{
 				if ( writing )
 				{
-					uint32_t data = s.regs.d[ general_id ];
+					uint32_t data = s.d( general_id );
 					
 					if ( flags & only_3_bits )
 					{
@@ -802,7 +802,7 @@ namespace v68k
 				}
 				else
 				{
-					s.regs.d[ general_id ] = *control_register;
+					s.d( general_id ) = *control_register;
 				}
 				
 				return;  // Success
@@ -830,17 +830,17 @@ namespace v68k
 		
 		const uint32_t n = pb.target;
 		
-		const int16_t counter = s.regs.d[ n ];
+		const int16_t counter = s.d( n );
 		
 		if ( counter == 0 )
 		{
 			// decrement low word only, which is zero
 			
-			s.regs.d[ n ] += 0x0000FFFF;
+			s.d( n ) += 0x0000FFFF;
 		}
 		else
 		{
-			s.regs.d[ n ] -= 1;  // decrement of non-zero word won't borrow
+			s.d( n ) -= 1;  // decrement of non-zero word won't borrow
 			
 			s.regs.pc = pb.address;
 		}
@@ -863,7 +863,7 @@ namespace v68k
 	
 	void microcode_BSR( processor_state& s, op_params& pb )
 	{
-		uint32_t& sp = s.regs.a[7];
+		uint32_t& sp = s.a(7);
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
@@ -1018,8 +1018,8 @@ namespace v68k
 		const uint32_t x = pb.first;
 		const uint32_t y = pb.second;
 		
-		uint32_t& Rx = s.regs.d[ x ];
-		uint32_t& Ry = s.regs.d[ y ];
+		uint32_t& Rx = s.d( x );
+		uint32_t& Ry = s.d( y );
 		
 		uint32_t temp = Rx;
 		

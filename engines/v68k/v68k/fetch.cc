@@ -123,7 +123,7 @@ namespace v68k
 		
 		const uint32_t addr = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
 		
-		const uint32_t data = mode <= 1 ? s.regs.d[ addr ]
+		const uint32_t data = mode <= 1 ? s.d( addr )
 		                                : s.read_mem( addr, pb.size );
 		
 		pb.first = sign_extend( data, pb.size );
@@ -133,7 +133,7 @@ namespace v68k
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
-		const uint32_t data = s.regs.d[n];
+		const uint32_t data = s.d(n);
 		
 		pb.first = sign_extend( data, pb.size );
 	}
@@ -142,7 +142,7 @@ namespace v68k
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
-		const uint32_t data = s.regs.d[n];
+		const uint32_t data = s.d(n);
 		
 		const uint32_t mask = s.opcode & 0x0038 ?  8 - 1   // memory
 		                                        : 32 - 1;  // data register
@@ -154,9 +154,9 @@ namespace v68k
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
-		const uint32_t data = s.regs.a[n];
+		const uint32_t data = s.a(n);
 		
-		pb.second = s.regs.a[n];
+		pb.second = s.a(n);
 	}
 	
 	
@@ -194,7 +194,7 @@ namespace v68k
 		
 		const int32_t disp = fetch_instruction_word_signed( s );
 		
-		pb.address = s.regs.a[n] + disp;
+		pb.address = s.a(n) + disp;
 	}
 	
 	
@@ -236,13 +236,13 @@ namespace v68k
 		const uint32_t n1 = s.opcode >> 0 & 0x7;
 		const uint32_t n2 = s.opcode >> 9 & 0x7;
 		
-		pb.first  = sign_extend( s.read_mem( s.regs.a[ n1 ], pb.size ), pb.size );
-		pb.second = sign_extend( s.read_mem( s.regs.a[ n2 ], pb.size ), pb.size );
+		pb.first  = sign_extend( s.read_mem( s.a( n1 ), pb.size ), pb.size );
+		pb.second = sign_extend( s.read_mem( s.a( n2 ), pb.size ), pb.size );
 		
 		const int increment = byte_count( pb.size );
 		
-		s.regs.a[ n1 ] += increment;
-		s.regs.a[ n2 ] += increment;
+		s.a( n1 ) += increment;
+		s.a( n2 ) += increment;
 	}
 	
 	
@@ -261,12 +261,12 @@ namespace v68k
 		const uint32_t i = (s.opcode & 0x0007) >> 0;
 		const uint32_t j = (s.opcode & 0x0E00) >> 9;
 		
-		s.regs.a[i] -= byte_count( pb.size );
-		s.regs.a[j] -= byte_count( pb.size );
+		s.a(i) -= byte_count( pb.size );
+		s.a(j) -= byte_count( pb.size );
 		
-		pb.first = s.read_mem( s.regs.a[i], pb.size );
+		pb.first = s.read_mem( s.a(i), pb.size );
 		
-		pb.address = s.regs.a[j];
+		pb.address = s.a(j);
 	}
 	
 	
@@ -280,7 +280,7 @@ namespace v68k
 			branch -- so we do it by hand.
 		*/
 		
-		pb.first = s.opcode & 0x0020 ? s.regs.d[n] % 64
+		pb.first = s.opcode & 0x0020 ? s.d(n) % 64
 		                             : (n - 1 & 8 - 1) + 1;
 	}
 	

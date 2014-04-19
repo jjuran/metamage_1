@@ -71,8 +71,8 @@ namespace v68k
 			
 			const reset_vector* v = (const reset_vector*) zero;
 			
-			regs.a[7] = longword_from_big( v->isp );
-			regs.pc   = longword_from_big( v->pc  );
+			a(7)    = longword_from_big( v->isp );
+			regs.pc = longword_from_big( v->pc  );
 			
 			// prefetch
 			prefetch_instruction_word();

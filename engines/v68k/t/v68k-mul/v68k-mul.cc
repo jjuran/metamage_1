@@ -53,29 +53,29 @@ static void mulu()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x0001FFFF;
-	emu.regs.d[1] = 0x00010000;
+	emu.d(0) = 0x0001FFFF;
+	emu.d(1) = 0x00010000;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x00000000 );
+	ok_if( emu.d(1) == 0x00000000 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
-	emu.regs.d[1] = 0x00000001;
+	emu.d(1) = 0x00000001;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x0000FFFF );
+	ok_if( emu.d(1) == 0x0000FFFF );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0xFFFE0001 );
+	ok_if( emu.d(1) == 0xFFFE0001 );
 	
 	ok_if( emu.regs.nzvc == 0x8 );
 }
@@ -107,29 +107,29 @@ static void muls()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x0001FFFF;
-	emu.regs.d[1] = 0x00010000;
+	emu.d(0) = 0x0001FFFF;
+	emu.d(1) = 0x00010000;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x00000000 );
+	ok_if( emu.d(1) == 0x00000000 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
-	emu.regs.d[1] = 0x00000001;
+	emu.d(1) = 0x00000001;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0xFFFFFFFF );
+	ok_if( emu.d(1) == 0xFFFFFFFF );
 	
 	ok_if( emu.regs.nzvc == 0x8 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x00000001 );
+	ok_if( emu.d(1) == 0x00000001 );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 }

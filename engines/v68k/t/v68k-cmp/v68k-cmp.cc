@@ -56,8 +56,8 @@ static void cmp()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x80000000;
-	emu.regs.d[1] = 0x80008001;
+	emu.d(0) = 0x80000000;
+	emu.d(1) = 0x80008001;
 	
 	
 	emu.step();
@@ -116,8 +116,8 @@ static void cmpa()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x7654abcd;
-	emu.regs.a[0] = 0x7654abcd;
+	emu.d(0) = 0x7654abcd;
+	emu.a(0) = 0x7654abcd;
 	
 	
 	emu.step();
@@ -156,14 +156,14 @@ static void cmpm()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.a[0] = 1024;
-	emu.regs.a[1] = 1024 + 2;
+	emu.a(0) = 1024;
+	emu.a(1) = 1024 + 2;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.a[0] == 1024 + 2 );
-	ok_if( emu.regs.a[1] == 1024 + 4 );
+	ok_if( emu.a(0) == 1024 + 2 );
+	ok_if( emu.a(1) == 1024 + 4 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	

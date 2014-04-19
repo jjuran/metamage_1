@@ -53,26 +53,26 @@ static void moveq()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x12345678;
+	emu.d(0) = 0x12345678;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x00000000 );
+	ok_if( emu.d(0) == 0x00000000 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0x0000007F );
+	ok_if( emu.d(0) == 0x0000007F );
 	
 	ok_if( emu.regs.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[0] == 0xFFFFFF80 );
+	ok_if( emu.d(0) == 0xFFFFFF80 );
 	
 	ok_if( emu.regs.nzvc == 0x8 );
 }
@@ -106,38 +106,38 @@ static void move()
 	
 	emu.regs.nzvc = 0;
 	
-	emu.regs.d[0] = 0x00000000;
-	emu.regs.d[1] = 0x12345678;
-	emu.regs.d[2] = 0xCBA98765;
-	emu.regs.a[0] = 0x12345678;
+	emu.d(0) = 0x00000000;
+	emu.d(1) = 0x12345678;
+	emu.d(2) = 0xCBA98765;
+	emu.a(0) = 0x12345678;
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.d[1] == 0x12345600 );
+	ok_if( emu.d(1) == 0x12345600 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.a[0] == 0x00005600 );
+	ok_if( emu.a(0) == 0x00005600 );
 	
 	ok_if( emu.regs.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.a[0] == 0xFFFF8765 );
+	ok_if( emu.a(0) == 0xFFFF8765 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.regs.a[7] == 0x0FFC );
+	ok_if( emu.a(7) == 0x0FFC );
 	
 	uint32_t x = 0;
 	
-	ok_if( emu.mem.get_long( emu.regs.a[7], x, emu.data_space() ) );
+	ok_if( emu.mem.get_long( emu.a(7), x, emu.data_space() ) );
 	
 	ok_if( x == 0xCBA98765 );
 	
@@ -146,11 +146,11 @@ static void move()
 	
 	emu.step();
 	
-	ok_if( emu.regs.a[7] == 0x0FFA );
+	ok_if( emu.a(7) == 0x0FFA );
 	
 	uint8_t byte = 0;
 	
-	ok_if( emu.mem.get_byte( emu.regs.a[7], byte, emu.data_space() ) );
+	ok_if( emu.mem.get_byte( emu.a(7), byte, emu.data_space() ) );
 	
 	ok_if( byte == 0x00 );
 	
