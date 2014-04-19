@@ -709,6 +709,11 @@ namespace v68k
 		only_3_bits = 0x1
 	};
 	
+	static inline bool model_too_early( processor_model model, uint8_t flags )
+	{
+		return model < flags;
+	}
+	
 	static const uint16_t control_register_flags[] =
 	{
 		0x01,  // SFC, 3 bits
@@ -785,7 +790,7 @@ namespace v68k
 		{
 			const uint16_t flags = control_register_flags[ control_index ];
 			
-			if ( s.model < flags )
+			if ( model_too_early( s.model, flags ) )
 			{
 				// This control register doesn't exist on this processor model
 			}
