@@ -33,11 +33,11 @@ namespace v68k
 	
 	void processor_state::prefetch_instruction_word()
 	{
-		if ( regs.pc & 1 )
+		if ( pc() & 1 )
 		{
 			address_error();
 		}
-		else if ( !mem.get_instruction_word( regs.pc, opcode, program_space() ) )
+		else if ( !mem.get_instruction_word( pc(), opcode, program_space() ) )
 		{
 			bus_error();
 		}
@@ -160,7 +160,7 @@ namespace v68k
 		const uint32_t format_and_offset = 0 << 12 | vector_offset;
 		
 		const bool ok = mem.put_word( sp + 0, saved_sr,          supervisor_data_space )
-		              & mem.put_long( sp + 2, regs.pc,           supervisor_data_space )
+		              & mem.put_long( sp + 2, pc(),              supervisor_data_space )
 		              & mem.put_word( sp + 6, format_and_offset, supervisor_data_space );
 		
 		if ( !ok )
@@ -173,7 +173,7 @@ namespace v68k
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, supervisor_data_space ) )
+		if ( !mem.get_long( regs.vbr + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}
@@ -203,7 +203,7 @@ namespace v68k
 		const uint32_t format_and_offset = 2 << 12 | vector_offset;
 		
 		const bool ok = mem.put_word( sp + 0, saved_sr,            supervisor_data_space )
-		              & mem.put_long( sp + 2, regs.pc,             supervisor_data_space )
+		              & mem.put_long( sp + 2, pc(),                supervisor_data_space )
 		              & mem.put_word( sp + 6, format_and_offset,   supervisor_data_space )
 		              & mem.put_long( sp + 8, instruction_address, supervisor_data_space );
 		
@@ -217,7 +217,7 @@ namespace v68k
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, supervisor_data_space ) )
+		if ( !mem.get_long( regs.vbr + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}

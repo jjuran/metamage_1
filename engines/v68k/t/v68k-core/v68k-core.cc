@@ -66,7 +66,7 @@ static void only_8_bytes()
 	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
 	ok_if( emu.a(7) == 0 );
-	ok_if( emu.regs.pc   == 0 );
+	ok_if( emu.pc()   == 0 );
 }
 
 static void only_1026_bytes()
@@ -86,7 +86,7 @@ static void only_1026_bytes()
 	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
 	ok_if( emu.a(7) ==    0 );
-	ok_if( emu.regs.pc   == 1024 );
+	ok_if( emu.pc()   == 1024 );
 }
 
 static void bad_SP_on_reset()
@@ -120,7 +120,7 @@ static void bad_PC_on_reset()
 	
 	ok_if( emu.condition == halted );
 	
-	ok_if( emu.regs.pc == 0xFFFFFFFF );
+	ok_if( emu.pc() == 0xFFFFFFFF );
 }
 
 static void stop_FFFF()
@@ -152,7 +152,7 @@ static void stop_FFFF()
 	
 	ok_if( emu.get_SR() == 0x2700 );
 	
-	ok_if( emu.regs.pc == 1028 );
+	ok_if( emu.pc() == 1028 );
 }
 
 static void stop_2EFF()
@@ -182,7 +182,7 @@ static void stop_2EFF()
 	
 	ok_if( emu.get_SR() == 0x261F );
 	
-	ok_if( emu.regs.pc == 1028 );
+	ok_if( emu.pc() == 1028 );
 }
 
 static int bkpt_vector = -1;
@@ -221,7 +221,7 @@ static void bkpt()
 	
 	ok_if( bkpt_vector == 0 );
 	
-	ok_if( emu.regs.pc == 1024 );
+	ok_if( emu.pc() == 1024 );
 	
 	emu.opcode = 0x484F;
 	

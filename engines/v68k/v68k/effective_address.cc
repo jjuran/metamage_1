@@ -181,10 +181,10 @@ namespace v68k
 						return fetch_longword( s );
 					
 					case 2:
-						return read_ea_displaced_address( s, s.regs.pc );
+						return read_ea_displaced_address( s, s.pc() );
 					
 					case 3:
-						return read_ea_indexed_address( s, s.regs.pc );
+						return read_ea_indexed_address( s, s.pc() );
 					
 					default:
 						break;

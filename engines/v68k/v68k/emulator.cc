@@ -71,8 +71,8 @@ namespace v68k
 			
 			const reset_vector* v = (const reset_vector*) zero;
 			
-			a(7)    = longword_from_big( v->isp );
-			regs.pc = longword_from_big( v->pc  );
+			a(7) = longword_from_big( v->isp );
+			pc() = longword_from_big( v->pc  );
 			
 			// prefetch
 			prefetch_instruction_word();
@@ -118,10 +118,10 @@ namespace v68k
 			return privilege_violation();
 		}
 		
-		const uint32_t instruction_address = regs.pc;
+		const uint32_t instruction_address = pc();
 		
 		// advance pc
-		regs.pc += 2;
+		pc() += 2;
 		
 		// fetch
 		fetcher* fetch = decoded->fetch;
@@ -143,7 +143,7 @@ namespace v68k
 		}
 		
 		pb.target  = uint32_t( -1 );
-		pb.address = regs.pc;
+		pb.address = pc();
 		
 		while ( *fetch != 0 )  // NULL
 		{

@@ -20,19 +20,19 @@ namespace v68k
 	
 	uint16_t fetch_instruction_word( processor_state& s )
 	{
-		if ( s.regs.pc & 1 )
+		if ( s.pc() & 1 )
 		{
 			return s.address_error();
 		}
 		
 		uint16_t word;
 		
-		if ( !s.mem.get_instruction_word( s.regs.pc, word, s.program_space() ) )
+		if ( !s.mem.get_instruction_word( s.pc(), word, s.program_space() ) )
 		{
 			return s.bus_error();
 		}
 		
-		s.regs.pc += 2;
+		s.pc() += 2;
 		
 		return word;
 	}

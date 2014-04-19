@@ -95,6 +95,11 @@ namespace v68k
 			a(7) = saved_sp();
 		}
 		
+		uint32_t& pc()
+		{
+			return regs.pc;
+		}
+		
 		void prefetch_instruction_word();
 		
 		uint32_t read_mem( uint32_t addr, op_size_t size );

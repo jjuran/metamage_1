@@ -139,7 +139,7 @@ static void divu()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == divide_by_zero_address );
+	ok_if( emu.pc() == divide_by_zero_address );
 	
 	ok_if( emu.d(1) == 0x00050001 );
 	
@@ -260,7 +260,7 @@ static void divs()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == divide_by_zero_address );
+	ok_if( emu.pc() == divide_by_zero_address );
 	
 	ok_if( emu.d(1) == 0x0003C000 );
 	

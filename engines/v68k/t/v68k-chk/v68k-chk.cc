@@ -69,7 +69,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc < chk_address );
+	ok_if( emu.pc() < chk_address );
 	
 	
 	// 0 <= 0 < 2
@@ -78,7 +78,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc < chk_address );
+	ok_if( emu.pc() < chk_address );
 	
 	
 	// 0 < 2 <= 2
@@ -87,7 +87,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc < chk_address );
+	ok_if( emu.pc() < chk_address );
 	
 	
 	// 0 < 3 > 2
@@ -96,7 +96,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == chk_address );
+	ok_if( emu.pc() == chk_address );
 	
 	ok_if( !(emu.sr.nzvc & 0x8) );
 	
@@ -109,7 +109,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == chk_address );
+	ok_if( emu.pc() == chk_address );
 	
 	ok_if( emu.sr.nzvc & 0x8 );
 }

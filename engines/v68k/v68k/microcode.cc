@@ -249,7 +249,7 @@ namespace v68k
 			return;  // within bounds
 		}
 		
-		s.take_exception_format_2( 6 * sizeof (uint32_t), s.regs.pc - 2 );
+		s.take_exception_format_2( 6 * sizeof (uint32_t), s.pc() - 2 );
 	}
 	
 	void microcode_LEA( processor_state& s, op_params& pb )
@@ -300,7 +300,7 @@ namespace v68k
 	{
 		const uint32_t data = pb.target;  // 3-bit breakpoint vector
 		
-		s.regs.pc -= 2;
+		s.pc() -= 2;
 		
 		s.opcode = 0x4AFC;  // ILLEGAL
 		
@@ -613,7 +613,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp + 2, s.regs.pc, supervisor_data_space ) )
+		if ( !s.mem.get_long( sp + 2, s.pc(), supervisor_data_space ) )
 		{
 			s.bus_error();
 			
@@ -652,7 +652,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -666,7 +666,7 @@ namespace v68k
 	{
 		if ( s.get_CCR() & 0x2 )
 		{
-			s.take_exception_format_2( 7 * sizeof (uint32_t), s.regs.pc - 2 );
+			s.take_exception_format_2( 7 * sizeof (uint32_t), s.pc() - 2 );
 		}
 	}
 	
@@ -694,7 +694,7 @@ namespace v68k
 		
 		sp += 2;
 		
-		if ( !s.mem.get_long( sp, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -829,7 +829,7 @@ namespace v68k
 		
 		// Failure
 		
-		s.regs.pc -= 4;
+		s.pc() -= 4;
 		
 		s.take_exception_format_0( 4 * sizeof (uint32_t) );  // Illegal Instruction
 	}
@@ -860,7 +860,7 @@ namespace v68k
 		{
 			s.d( n ) -= 1;  // decrement of non-zero word won't borrow
 			
-			s.regs.pc = pb.address;
+			s.pc() = pb.address;
 		}
 	}
 	
@@ -876,7 +876,7 @@ namespace v68k
 	
 	void microcode_BRA( processor_state& s, op_params& pb )
 	{
-		s.regs.pc = pb.address;
+		s.pc() = pb.address;
 	}
 	
 	void microcode_BSR( processor_state& s, op_params& pb )
@@ -892,14 +892,14 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.put_long( sp, s.pc(), s.data_space() ) )
 		{
 			s.bus_error();
 			
 			return;
 		}
 		
-		s.regs.pc = pb.address;
+		s.pc() = pb.address;
 	}
 	
 	void microcode_Bcc( processor_state& s, op_params& pb )
@@ -908,7 +908,7 @@ namespace v68k
 		
 		if ( test_conditional( cc, s.sr.nzvc ) )
 		{
-			s.regs.pc = pb.address;
+			s.pc() = pb.address;
 		}
 	}
 	

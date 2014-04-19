@@ -170,7 +170,7 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 		
 		s.sr.nzvc = 0;  // Clear N, Z
 		
-		s.regs.pc = return_address - 2;
+		s.pc() = return_address - 2;
 		
 		return nop;
 	}
@@ -187,7 +187,7 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 
 static uint32_t set_trace_mode_callback( v68k::processor_state& s )
 {
-	s.sr.ttsm = (s.sr.ttsm & 0x3) | (uint8_t( s.regs.pc ) << 1 & 0xC);
+	s.sr.ttsm = (s.sr.ttsm & 0x3) | (uint8_t( s.pc() ) << 1 & 0xC);
 	
 	return rts;
 }
@@ -416,7 +416,7 @@ static const function_type the_callbacks[] =
 
 uint32_t bridge( v68k::processor_state& s )
 {
-	const int32_t pc = s.regs.pc;
+	const int32_t pc = s.pc();
 	
 	const uint32_t call_number = pc / -2 - 1;
 	
