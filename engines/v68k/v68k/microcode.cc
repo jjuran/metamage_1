@@ -723,8 +723,8 @@ namespace v68k
 		0x00,  // USP
 		0x00,  // VBR
 		0x20,  // CAAR (not 68040)
-		0x20,  // MSP, 68020+
-		0x20,  // ISP, 68020+
+		0x20,  // MSP
+		0x20,  // ISP
 		0x40,  // MMUSR
 		0x40,  // URP
 		0x40,  // SRP
