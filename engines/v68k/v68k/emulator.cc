@@ -233,19 +233,5 @@ namespace v68k
 		return condition == normal;
 	}
 	
-	bool emulator::acknowledge_breakpoint( uint16_t new_opcode )
-	{
-		if ( !at_breakpoint() )
-		{
-			return false;
-		}
-		
-		opcode = new_opcode;
-		
-		condition = normal;
-		
-		return true;
-	}
-	
 }
 

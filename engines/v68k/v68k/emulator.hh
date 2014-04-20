@@ -37,8 +37,6 @@ namespace v68k
 				return (condition & bkpt_mask) == bkpt_0;
 			}
 			
-			bool acknowledge_breakpoint( uint16_t new_opcode );
-			
 			bool illegal_instruction()  { return take_exception_format_0( 4 * sizeof (uint32_t) ); }
 			bool privilege_violation()  { return take_exception_format_0( 8 * sizeof (uint32_t) ); }
 			
