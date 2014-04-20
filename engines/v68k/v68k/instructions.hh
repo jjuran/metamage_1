@@ -17,13 +17,10 @@ namespace v68k
 	
 	extern instruction decoded_MOVES;
 	
-	extern instruction decoded_MOVE_B_to_Dn;
 	extern instruction decoded_MOVE_B;
 	
-	extern instruction decoded_MOVE_L_to_Rn;
 	extern instruction decoded_MOVE_L;
 	
-	extern instruction decoded_MOVE_W_to_Rn;
 	extern instruction decoded_MOVE_W;
 	
 	extern instruction decoded_LEA;
