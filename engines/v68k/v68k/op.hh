@@ -13,6 +13,8 @@ namespace v68k
 	enum op_result
 	{
 		Ok,
+		
+		Breakpoint = -1,
 	};
 	
 }

@@ -178,12 +178,10 @@ namespace v68k
 		const uint8_t saved_ttsm = sr.ttsm;
 		
 		// execute
-		decoded->code( *this, pb );
+		const op_result result = decoded->code( *this, pb );
 		
-		if ( at_breakpoint() )
+		if ( result == Breakpoint )
 		{
-			condition = normal;
-			
 			goto bkpt_acknowledge;
 		}
 		

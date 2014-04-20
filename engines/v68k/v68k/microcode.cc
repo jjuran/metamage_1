@@ -349,9 +349,7 @@ namespace v68k
 			s.opcode = f( s, data );
 		}
 		
-		s.condition = processor_condition( bkpt_0 + data );
-		
-		return Ok;
+		return Breakpoint;
 	}
 	
 	op_result microcode_PEA( processor_state& s, op_params& pb )
