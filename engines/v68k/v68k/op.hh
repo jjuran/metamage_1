@@ -15,6 +15,10 @@ namespace v68k
 		Ok,
 		
 		Breakpoint = -1,
+		
+		Bus_error     = -2,
+		Address_error = -3,
+		Format_error  = -14,
 	};
 	
 }

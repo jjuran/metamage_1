@@ -74,9 +74,7 @@ namespace v68k
 		
 		if ( p == 0 )  // NULL
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		switch ( (pb.size == long_sized) + 0 )  // clang hates boolean switch conditions
@@ -107,9 +105,7 @@ namespace v68k
 		
 		if ( p == 0 )  // NULL
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		uint32_t data = pb.size == long_sized ? 0 : Dx & 0xFFFF0000;
@@ -188,9 +184,7 @@ namespace v68k
 		
 		if ( p == 0 )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		if ( writing )
@@ -358,16 +352,14 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		sp -= 4;
 		
 		if ( !s.mem.put_long( sp, pb.address, s.data_space() ) )
 		{
-			s.bus_error();
+			return Bus_error;
 		}
 		
 		return Ok;
@@ -465,9 +457,7 @@ namespace v68k
 				
 				if ( !ok )
 				{
-					s.bus_error();
-					
-					return Ok;
+					return Bus_error;
 				}
 				
 				addr += increment;
@@ -516,9 +506,7 @@ namespace v68k
 				
 				if ( !ok )
 				{
-					s.bus_error();
-					
-					return Ok;
+					return Bus_error;
 				}
 				
 				s.regs[ r ] = data;
@@ -554,18 +542,14 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		sp -= 4;
 		
 		if ( !s.mem.put_long( sp, An, s.data_space() ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		An = sp;
@@ -586,16 +570,12 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		if ( !s.mem.get_long( sp, An, s.data_space() ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		sp += 4;
@@ -654,18 +634,14 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		uint16_t id;
 		
 		if ( !s.mem.get_word( sp + 6, id, supervisor_data_space ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		const uint16_t format = id >> 12;
@@ -676,25 +652,19 @@ namespace v68k
 		
 		if ( stack_frame_size == 0 )
 		{
-			s.format_error();
-			
-			return Ok;
+			return Format_error;
 		}
 		
 		if ( !s.mem.get_long( sp + 2, s.pc(), supervisor_data_space ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		uint16_t saved_sr;
 		
 		if ( !s.mem.get_word( sp, saved_sr, supervisor_data_space ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		sp += stack_frame_size;
@@ -719,16 +689,12 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		sp += 4;
@@ -752,18 +718,14 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		uint16_t ccr;
 		
 		if ( !s.mem.get_word( sp, ccr, s.data_space() ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		s.set_CCR( ccr );
@@ -772,9 +734,7 @@ namespace v68k
 		
 		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		sp += 4;
@@ -947,18 +907,14 @@ namespace v68k
 		
 		if ( s.badly_aligned_data( sp ) )
 		{
-			s.address_error();
-			
-			return Ok;
+			return Address_error;
 		}
 		
 		sp -= 4;
 		
 		if ( !s.mem.put_long( sp, s.pc(), s.data_space() ) )
 		{
-			s.bus_error();
-			
-			return Ok;
+			return Bus_error;
 		}
 		
 		s.pc() = pb.address;

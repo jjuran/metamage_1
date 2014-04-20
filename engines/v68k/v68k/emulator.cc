@@ -185,6 +185,13 @@ namespace v68k
 			goto bkpt_acknowledge;
 		}
 		
+		if ( result < 0 )
+		{
+			condition = halted;
+			
+			return false;
+		}
+		
 		// update CCR
 		
 		typedef instruction_flags_t flags_t;
