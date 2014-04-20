@@ -713,21 +713,21 @@ namespace v68k
 	{
 		0x01,  // SFC, 3 bits
 		0x01,  // DFC, 3 bits
-		0,     // CACR
-		0,     // TC
-		0,     // ITT0
-		0,     // ITT1
-		0,     // DTT0
-		0,     // DTT1
+		0x20,  // CACR
+		0x40,  // TC
+		0x40,  // ITT0
+		0x40,  // ITT1
+		0x40,  // DTT0
+		0x40,  // DTT1
 		
 		0x00,  // USP
 		0x00,  // VBR
-		0,     // CAAR
+		0x20,  // CAAR (not 68040)
 		0x20,  // MSP, 68020+
 		0x20,  // ISP, 68020+
-		0,     // MMUSR
-		0,     // URP
-		0      // SRP
+		0x40,  // MMUSR
+		0x40,  // URP
+		0x40,  // SRP
 	};
 	
 	static inline uint16_t index_of_control_register( uint16_t id )
