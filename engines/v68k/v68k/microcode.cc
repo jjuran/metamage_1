@@ -714,6 +714,13 @@ namespace v68k
 		return model < flags;
 	}
 	
+	static inline bool model_too_late( processor_model model, uint16_t flags )
+	{
+		const uint8_t dropped = ~(flags >> 8);  // either FF or 40
+		
+		return model >= dropped;
+	}
+	
 	static const uint16_t control_register_flags[] =
 	{
 		0x01,  // SFC, 3 bits
@@ -727,6 +734,7 @@ namespace v68k
 		
 		0x00,  // USP
 		0x00,  // VBR
+		(~0x40 << 8) |
 		0x20,  // CAAR (not 68040)
 		0x20,  // MSP
 		0x20,  // ISP
@@ -790,7 +798,7 @@ namespace v68k
 		{
 			const uint16_t flags = control_register_flags[ control_index ];
 			
-			if ( model_too_early( s.model, flags ) )
+			if ( model_too_early( s.model, flags )  ||  model_too_late( s.model, flags ) )
 			{
 				// This control register doesn't exist on this processor model
 			}
