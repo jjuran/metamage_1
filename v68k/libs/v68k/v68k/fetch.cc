@@ -39,55 +39,67 @@ namespace v68k
 	}
 	
 	
-	static void set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
+	static op_result set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
 	{
 		const uint32_t ea = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
 		
 		(mode <= 1 ? pb.target : pb.address) = ea;
+		
+		return Ok;
 	}
 	
-	void fetch_effective_address( processor_state& s, op_params& pb )
+	op_result fetch_effective_address( processor_state& s, op_params& pb )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
 		
-		set_effective_address_param( s, mode, n, pb );
+		return set_effective_address_param( s, mode, n, pb );
 	}
 	
-	void fetch_2nd_effective_address( processor_state& s, op_params& pb )
+	op_result fetch_2nd_effective_address( processor_state& s, op_params& pb )
 	{
 		const uint16_t mode = s.opcode >> 6 & 0x7;
 		const uint16_t n    = s.opcode >> 9 & 0x7;
 		
-		set_effective_address_param( s, mode, n, pb );
+		return set_effective_address_param( s, mode, n, pb );
 	}
 	
 	
-	void fetch_zero( processor_state& s, op_params& pb )
+	op_result fetch_zero( processor_state& s, op_params& pb )
 	{
 		pb.first = 0;
+		
+		return Ok;
 	}
 	
-	void fetch_one( processor_state& s, op_params& pb )
+	op_result fetch_one( processor_state& s, op_params& pb )
 	{
 		pb.first = 1;
+		
+		return Ok;
 	}
 	
-	void fetch_ones( processor_state& s, op_params& pb )
+	op_result fetch_ones( processor_state& s, op_params& pb )
 	{
 		pb.first = 0xFFFFFFFF;
+		
+		return Ok;
 	}
 	
-	void fetch_unsigned_word( processor_state& s, op_params& pb )
+	op_result fetch_unsigned_word( processor_state& s, op_params& pb )
 	{
 		pb.first = fetch_instruction_word( s );
+		
+		return Ok;
 	}
 	
-	void fetch_signed_word( processor_state& s, op_params& pb )
+	op_result fetch_signed_word( processor_state& s, op_params& pb )
 	{
 		const int16_t word = fetch_instruction_word( s );
 		
 		pb.first = int32_t( word );
+		
+		return Ok;
 	}
 	
 	uint32_t fetch_longword( processor_state& s )
@@ -98,19 +110,23 @@ namespace v68k
 	}
 	
 	
-	void fetch_sized_immediate_data( processor_state& s, op_params& pb )
+	op_result fetch_sized_immediate_data( processor_state& s, op_params& pb )
 	{
 		pb.first = pb.size == long_sized ? fetch_longword        ( s )
 		                                 : fetch_instruction_word( s );
+		
+		return Ok;
 	}
 	
-	void fetch_sized_immediate_signed_data( processor_state& s, op_params& pb )
+	op_result fetch_sized_immediate_signed_data( processor_state& s, op_params& pb )
 	{
 		pb.first = pb.size == long_sized ? fetch_longword               ( s )
 		                                 : fetch_instruction_word_signed( s );
+		
+		return Ok;
 	}
 	
-	void fetch_sized_data_at_effective_address( processor_state& s, op_params& pb )
+	op_result fetch_sized_data_at_effective_address( processor_state& s, op_params& pb )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x7;
 		const uint16_t n    = s.opcode >> 0 & 0x7;
@@ -119,7 +135,7 @@ namespace v68k
 		{
 			fetch_sized_immediate_data( s, pb );
 			
-			return;
+			return Ok;
 		}
 		
 		const uint32_t addr = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
@@ -128,18 +144,22 @@ namespace v68k
 		                                : s.read_mem( addr, pb.size );
 		
 		pb.first = sign_extend( data, pb.size );
+		
+		return Ok;
 	}
 	
-	void fetch_sized_data_from_major_register( processor_state& s, op_params& pb )
+	op_result fetch_sized_data_from_major_register( processor_state& s, op_params& pb )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
 		const uint32_t data = s.d(n);
 		
 		pb.first = sign_extend( data, pb.size );
+		
+		return Ok;
 	}
 	
-	void fetch_bit_number_from_major_register( processor_state& s, op_params& pb )
+	op_result fetch_bit_number_from_major_register( processor_state& s, op_params& pb )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
@@ -149,57 +169,73 @@ namespace v68k
 		                                        : 32 - 1;  // data register
 		
 		pb.first = data & mask;
+		
+		return Ok;
 	}
 	
-	void fetch_A_data_from_major_register( processor_state& s, op_params& pb )
+	op_result fetch_A_data_from_major_register( processor_state& s, op_params& pb )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
 		const uint32_t data = s.a(n);
 		
 		pb.second = s.a(n);
+		
+		return Ok;
 	}
 	
 	
-	void fetch_data_at_1E00( processor_state& s, op_params& pb )
+	op_result fetch_data_at_1E00( processor_state& s, op_params& pb )
 	{
 		pb.target = s.opcode >> 9 & 0x000F;
+		
+		return Ok;
 	}
 	
-	void fetch_data_at_000F( processor_state& s, op_params& pb )
+	op_result fetch_data_at_000F( processor_state& s, op_params& pb )
 	{
 		pb.first = s.opcode & 0x000F;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_data_at_0E00( processor_state& s, op_params& pb )
+	op_result fetch_data_at_0E00( processor_state& s, op_params& pb )
 	{
 		pb.target = s.opcode >> 9 & 0x0007;
+		
+		return Ok;
 	}
 	
-	void fetch_data_at_0007( processor_state& s, op_params& pb )
+	op_result fetch_data_at_0007( processor_state& s, op_params& pb )
 	{
 		pb.target = s.opcode & 0x0007;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_data_at_0001( processor_state& s, op_params& pb )
+	op_result fetch_data_at_0001( processor_state& s, op_params& pb )
 	{
 		pb.second = s.opcode & 0x0001;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_MOVEP_address( processor_state& s, op_params& pb )
+	op_result fetch_MOVEP_address( processor_state& s, op_params& pb )
 	{
 		const uint32_t n = s.opcode & 0x7;
 		
 		const int32_t disp = fetch_instruction_word_signed( s );
 		
 		pb.address = s.a(n) + disp;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_MOVEM_update( processor_state& s, op_params& pb )
+	op_result fetch_MOVEM_update( processor_state& s, op_params& pb )
 	{
 		const uint16_t mode = s.opcode >> 3 & 0x0007;
 		
@@ -211,32 +247,40 @@ namespace v68k
 		{
 			pb.target = 0;
 		}
+		
+		return Ok;
 	}
 	
 	
-	void fetch_ADDQ_data( processor_state& s, op_params& pb )
+	op_result fetch_ADDQ_data( processor_state& s, op_params& pb )
 	{
 		pb.first = ((s.opcode >> 9) - 1 & 0x0007) + 1;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_conditional( processor_state& s, op_params& pb )
+	op_result fetch_conditional( processor_state& s, op_params& pb )
 	{
 		uint16_t cc = s.opcode >> 8 & 0x0F;
 		
 		int32_t flag = int32_t() - test_conditional( cc, s.sr.nzvc );
 		
 		pb.result = flag;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_signed_data_at_00FF( processor_state& s, op_params& pb )
+	op_result fetch_signed_data_at_00FF( processor_state& s, op_params& pb )
 	{
 		pb.first = int32_t( int8_t( s.opcode & 0x00ff ) );
+		
+		return Ok;
 	}
 	
 	
-	void fetch_CMPM( processor_state& s, op_params& pb )
+	op_result fetch_CMPM( processor_state& s, op_params& pb )
 	{
 		const uint32_t n1 = s.opcode >> 0 & 0x7;
 		const uint32_t n2 = s.opcode >> 9 & 0x7;
@@ -248,20 +292,24 @@ namespace v68k
 		
 		s.a( n1 ) += increment;
 		s.a( n2 ) += increment;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_EXG_first_reg( processor_state& s, op_params& pb )
+	op_result fetch_EXG_first_reg( processor_state& s, op_params& pb )
 	{
 		const uint32_t mode = s.opcode >> 3 & 0x001f;
 		
 		const uint32_t dA = (mode << 3) & mode;  // 0 for D or 8 for A
 		
 		pb.second = dA | (s.opcode & 0x0E00) >> 9;
+		
+		return Ok;
 	}
 	
 	
-	void fetch_ADDX_predecrement( processor_state& s, op_params& pb )
+	op_result fetch_ADDX_predecrement( processor_state& s, op_params& pb )
 	{
 		const uint32_t i = (s.opcode & 0x0007) >> 0;
 		const uint32_t j = (s.opcode & 0x0E00) >> 9;
@@ -272,10 +320,12 @@ namespace v68k
 		pb.first = s.read_mem( s.a(i), pb.size );
 		
 		pb.address = s.a(j);
+		
+		return Ok;
 	}
 	
 	
-	void fetch_bit_shift_count( processor_state& s, op_params& pb )
+	op_result fetch_bit_shift_count( processor_state& s, op_params& pb )
 	{
 		const uint16_t n = s.opcode >> 9 & 0x7;
 		
@@ -287,37 +337,49 @@ namespace v68k
 		
 		pb.first = s.opcode & 0x0020 ? s.d(n) % 64
 		                             : (n - 1 & 8 - 1) + 1;
+		
+		return Ok;
 	}
 	
 	
-	void force_long_sized( processor_state& s, op_params& pb )
+	op_result force_long_sized( processor_state& s, op_params& pb )
 	{
 		pb.size = long_sized;
+		
+		return Ok;
 	}
 	
-	void assign_first_to_second( processor_state& s, op_params& pb )
+	op_result assign_first_to_second( processor_state& s, op_params& pb )
 	{
 		pb.second = pb.first;
+		
+		return Ok;
 	}
 	
-	void add_first_to_address( processor_state& s, op_params& pb )
+	op_result add_first_to_address( processor_state& s, op_params& pb )
 	{
 		pb.address += int32_t( pb.first );
+		
+		return Ok;
 	}
 	
-	void add_X_to_first( processor_state& s, op_params& pb )
+	op_result add_X_to_first( processor_state& s, op_params& pb )
 	{
 		pb.first += s.sr.x & 0x1;
+		
+		return Ok;
 	}
 	
-	void shift_NEG_operands( processor_state& s, op_params& pb )
+	op_result shift_NEG_operands( processor_state& s, op_params& pb )
 	{
 		pb.first  = pb.second;
 		pb.second = 0;
+		
+		return Ok;
 	}
 	
 	
-	void read_address_on_68000( processor_state& s, op_params& pb )
+	op_result read_address_on_68000( processor_state& s, op_params& pb )
 	{
 		/*
 			This routine does nothing but make a memory read access on a 68000
@@ -332,6 +394,8 @@ namespace v68k
 		{
 			(void) s.read_mem( pb.address, pb.size );
 		}
+		
+		return Ok;
 	}
 	
 }

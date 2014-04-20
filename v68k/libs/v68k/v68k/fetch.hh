@@ -9,6 +9,9 @@
 // C99
 #include <stdint.h>
 
+// v68k
+#include "v68k/op.hh"
+
 
 namespace v68k
 {
@@ -27,72 +30,72 @@ namespace v68k
 	uint32_t fetch_longword( processor_state& state );
 	
 	
-	void fetch_effective_address( processor_state& state, op_params& pb );
+	op_result fetch_effective_address( processor_state& state, op_params& pb );
 	
-	void fetch_2nd_effective_address( processor_state& state, op_params& pb );
-	
-	
-	void fetch_zero( processor_state& state, op_params& pb );
-	
-	void fetch_one( processor_state& state, op_params& pb );
-	
-	void fetch_ones( processor_state& state, op_params& pb );
-	
-	void fetch_unsigned_word( processor_state& state, op_params& pb );
-	
-	void fetch_signed_word( processor_state& state, op_params& pb );
-	
-	void fetch_sized_immediate_data( processor_state& state, op_params& pb );
-	
-	void fetch_sized_immediate_signed_data( processor_state& state, op_params& pb );
-	
-	void fetch_sized_data_at_effective_address( processor_state& state, op_params& pb );
-	
-	void fetch_sized_data_from_major_register( processor_state& state, op_params& pb );
-	
-	void fetch_bit_number_from_major_register( processor_state& state, op_params& pb );
-	
-	void fetch_A_data_from_major_register( processor_state& state, op_params& pb );
-	
-	void fetch_data_at_1E00( processor_state& state, op_params& pb );
-	void fetch_data_at_000F( processor_state& state, op_params& pb );
-	
-	void fetch_data_at_0E00( processor_state& state, op_params& pb );
-	void fetch_data_at_0007( processor_state& state, op_params& pb );
-	
-	void fetch_data_at_0001( processor_state& state, op_params& pb );
-	
-	void fetch_MOVEP_address( processor_state& state, op_params& pb );
-	
-	void fetch_MOVEM_update( processor_state& state, op_params& pb );
-	
-	void fetch_ADDQ_data( processor_state& state, op_params& pb );
-	
-	void fetch_conditional( processor_state& state, op_params& pb );
-	
-	void fetch_signed_data_at_00FF( processor_state& state, op_params& pb );
-	
-	void fetch_CMPM( processor_state& state, op_params& pb );
-	
-	void fetch_EXG_first_reg( processor_state& state, op_params& pb );
-	
-	void fetch_ADDX_predecrement( processor_state& state, op_params& pb );
-	
-	void fetch_bit_shift_count( processor_state& state, op_params& pb );
+	op_result fetch_2nd_effective_address( processor_state& state, op_params& pb );
 	
 	
-	void force_long_sized( processor_state& state, op_params& pb );
+	op_result fetch_zero( processor_state& state, op_params& pb );
 	
-	void assign_first_to_second( processor_state& state, op_params& pb );
+	op_result fetch_one( processor_state& state, op_params& pb );
 	
-	void add_first_to_address( processor_state& state, op_params& pb );
+	op_result fetch_ones( processor_state& state, op_params& pb );
 	
-	void add_X_to_first( processor_state& state, op_params& pb );
+	op_result fetch_unsigned_word( processor_state& state, op_params& pb );
 	
-	void shift_NEG_operands( processor_state& state, op_params& pb );
+	op_result fetch_signed_word( processor_state& state, op_params& pb );
+	
+	op_result fetch_sized_immediate_data( processor_state& state, op_params& pb );
+	
+	op_result fetch_sized_immediate_signed_data( processor_state& state, op_params& pb );
+	
+	op_result fetch_sized_data_at_effective_address( processor_state& state, op_params& pb );
+	
+	op_result fetch_sized_data_from_major_register( processor_state& state, op_params& pb );
+	
+	op_result fetch_bit_number_from_major_register( processor_state& state, op_params& pb );
+	
+	op_result fetch_A_data_from_major_register( processor_state& state, op_params& pb );
+	
+	op_result fetch_data_at_1E00( processor_state& state, op_params& pb );
+	op_result fetch_data_at_000F( processor_state& state, op_params& pb );
+	
+	op_result fetch_data_at_0E00( processor_state& state, op_params& pb );
+	op_result fetch_data_at_0007( processor_state& state, op_params& pb );
+	
+	op_result fetch_data_at_0001( processor_state& state, op_params& pb );
+	
+	op_result fetch_MOVEP_address( processor_state& state, op_params& pb );
+	
+	op_result fetch_MOVEM_update( processor_state& state, op_params& pb );
+	
+	op_result fetch_ADDQ_data( processor_state& state, op_params& pb );
+	
+	op_result fetch_conditional( processor_state& state, op_params& pb );
+	
+	op_result fetch_signed_data_at_00FF( processor_state& state, op_params& pb );
+	
+	op_result fetch_CMPM( processor_state& state, op_params& pb );
+	
+	op_result fetch_EXG_first_reg( processor_state& state, op_params& pb );
+	
+	op_result fetch_ADDX_predecrement( processor_state& state, op_params& pb );
+	
+	op_result fetch_bit_shift_count( processor_state& state, op_params& pb );
 	
 	
-	void read_address_on_68000( processor_state& state, op_params& pb );
+	op_result force_long_sized( processor_state& state, op_params& pb );
+	
+	op_result assign_first_to_second( processor_state& state, op_params& pb );
+	
+	op_result add_first_to_address( processor_state& state, op_params& pb );
+	
+	op_result add_X_to_first( processor_state& state, op_params& pb );
+	
+	op_result shift_NEG_operands( processor_state& state, op_params& pb );
+	
+	
+	op_result read_address_on_68000( processor_state& state, op_params& pb );
 	
 }
 

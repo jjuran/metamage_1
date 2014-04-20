@@ -23,7 +23,7 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	void load( processor_state& s, op_params& pb )
+	op_result load( processor_state& s, op_params& pb )
 	{
 		const int32_t target = pb.target;
 		
@@ -34,7 +34,7 @@ namespace v68k
 			if ( target > 7 )
 			{
 				// address register, don't sign-extend
-				return;
+				return Ok;
 			}
 		}
 		else
@@ -43,6 +43,8 @@ namespace v68k
 		}
 		
 		pb.second = sign_extend( pb.second, pb.size );
+		
+		return Ok;
 	}
 	
 	bool store( processor_state& s, const op_params& pb )
