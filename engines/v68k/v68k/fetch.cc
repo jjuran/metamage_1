@@ -123,7 +123,7 @@ namespace v68k
 		
 		const uint32_t addr = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
 		
-		const uint32_t data = mode <= 1 ? s.d( addr )
+		const uint32_t data = mode <= 1 ? s.regs[ addr ]
 		                                : s.read_mem( addr, pb.size );
 		
 		pb.first = sign_extend( data, pb.size );

@@ -173,7 +173,7 @@ namespace v68k
 		
 		if ( writing )
 		{
-			const uint32_t data = s.d( reg_id );
+			const uint32_t data = s.regs[ reg_id ];
 			
 			switch ( pb.size )
 			{
@@ -191,7 +191,7 @@ namespace v68k
 		}
 		else
 		{
-			uint32_t& reg = s.d( reg_id );
+			uint32_t& reg = s.regs[ reg_id ];
 			
 			uint32_t data = 0;
 			
@@ -408,7 +408,7 @@ namespace v68k
 		{
 			if ( mask & 0x1 )
 			{
-				const uint32_t data = s.d( update_register ? 15 - r : r );
+				const uint32_t data = s.regs[ update_register ? 15 - r : r ];
 				
 				const bool ok = longword_sized ? s.mem.put_long( addr, data, s.data_space() )
 											   : s.mem.put_word( addr, data, s.data_space() );
@@ -426,7 +426,7 @@ namespace v68k
 		
 		if ( update_register )
 		{
-			s.d( update_register ) = addr - increment;
+			s.regs[ update_register ] = addr - increment;
 		}
 	}
 	
@@ -469,7 +469,7 @@ namespace v68k
 					return;
 				}
 				
-				s.d(r) = data;
+				s.regs[ r ] = data;
 				
 				addr += increment;
 			}
@@ -477,7 +477,7 @@ namespace v68k
 		
 		if ( update_register )
 		{
-			s.d( update_register ) = addr;
+			s.regs[ update_register ] = addr;
 		}
 	}
 	
@@ -783,7 +783,7 @@ namespace v68k
 				
 				if ( writing )
 				{
-					uint32_t data = s.d( general_id );
+					uint32_t data = s.regs[ general_id ];
 					
 					if ( flags & only_3_bits )
 					{
@@ -796,7 +796,7 @@ namespace v68k
 				}
 				else
 				{
-					s.d( general_id ) = *control_register;
+					s.regs[ general_id ] = *control_register;
 				}
 				
 				return;  // Success
@@ -1012,8 +1012,8 @@ namespace v68k
 		const uint32_t x = pb.first;
 		const uint32_t y = pb.second;
 		
-		uint32_t& Rx = s.d( x );
-		uint32_t& Ry = s.d( y );
+		uint32_t& Rx = s.regs[ x ];
+		uint32_t& Ry = s.regs[ y ];
 		
 		uint32_t temp = Rx;
 		

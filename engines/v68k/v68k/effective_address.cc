@@ -50,7 +50,7 @@ namespace v68k
 		// _n == 0- 7:  D0-D7
 		// _n == 8-15:  A0-A7
 		
-		int32_t index = s.d(_n);  // Xn
+		int32_t index = s.regs[ _n ];  // Xn
 		
 		const bool long_sized = extension >> 11 & 0x1;
 		
