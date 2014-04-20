@@ -42,7 +42,7 @@ namespace v68k
 	{
 		condition = normal;
 		
-		regs.vbr = 0;
+		regs[ VBR ] = 0;
 		
 		/*
 			The reset vector is taken from Supervisor Program Space, but it
@@ -60,19 +60,19 @@ namespace v68k
 		}
 		else
 		{
-			regs.ttsm = 0 << 2  // clear Trace bits
-					  | 1 << 1  // set Supervisor bit
-					  | 0;      // clear Master bit
+			sr.ttsm = 0 << 2  // clear Trace bits
+					| 1 << 1  // set Supervisor bit
+					| 0;      // clear Master bit
 			
-			regs. iii = 7;  // set max Interrupt mask
+			sr. iii = 7;  // set max Interrupt mask
 			
-			regs.   x = 0;  // clear CCR
-			regs.nzvc = 0;
+			sr.   x = 0;  // clear CCR
+			sr.nzvc = 0;
 			
 			const reset_vector* v = (const reset_vector*) zero;
 			
-			a(7)    = longword_from_big( v->isp );
-			regs.pc = longword_from_big( v->pc  );
+			a(7) = longword_from_big( v->isp );
+			pc() = longword_from_big( v->pc  );
 			
 			// prefetch
 			prefetch_instruction_word();
@@ -113,15 +113,15 @@ namespace v68k
 			return illegal_instruction();
 		}
 		
-		if ( (decoded->flags & privilege_mask) > ((regs.ttsm & 0x2) | (model == mc68000)) )
+		if ( (decoded->flags & privilege_mask) > ((sr.ttsm & 0x2) | (model == mc68000)) )
 		{
 			return privilege_violation();
 		}
 		
-		const uint32_t instruction_address = regs.pc;
+		const uint32_t instruction_address = pc();
 		
 		// advance pc
-		regs.pc += 2;
+		pc() += 2;
 		
 		// fetch
 		fetcher* fetch = decoded->fetch;
@@ -143,7 +143,7 @@ namespace v68k
 		}
 		
 		pb.target  = uint32_t( -1 );
-		pb.address = regs.pc;
+		pb.address = pc();
 		
 		while ( *fetch != 0 )  // NULL
 		{
@@ -175,7 +175,7 @@ namespace v68k
 			}
 		}
 		
-		const uint8_t saved_ttsm = regs.ttsm;
+		const uint8_t saved_ttsm = sr.ttsm;
 		
 		// execute
 		decoded->code( *this, pb );
@@ -203,7 +203,7 @@ namespace v68k
 				
 				if ( decoded->flags & CCR_update_set_X )
 				{
-					regs.x = regs.nzvc & 0x1;
+					sr.x = sr.nzvc & 0x1;
 				}
 			}
 		}

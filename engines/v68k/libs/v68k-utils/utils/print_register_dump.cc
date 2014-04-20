@@ -128,14 +128,14 @@ void print_register_dump( const uint32_t  d[],
 	write( STDERR_FILENO, dump, dump_size );
 }
 
-void print_register_dump( const registers& regs, uint16_t sr )
+void print_register_dump( const uint32_t regs[], uint16_t sr )
 {
-	print_register_dump( regs.d,
-	                     regs.a,
-	                     regs.usp,
-	                     regs.isp,
-	                     regs.msp,
-	                     regs.pc,
+	print_register_dump( regs + D0,
+	                     regs + A0,
+	                     regs[ USP ],
+	                     regs[ ISP ],
+	                     regs[ MSP ],
+	                     regs[ PC  ],
 	                     sr );
 }
 

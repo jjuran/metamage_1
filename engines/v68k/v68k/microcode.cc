@@ -158,7 +158,7 @@ namespace v68k
 		
 		const uint16_t writing = more & 0x0800;
 		
-		const function_code_t fc = function_code_t( writing ? s.regs.dfc : s.regs.sfc );
+		const function_code_t fc = function_code_t( s.regs[ writing ? DFC : SFC ] );
 		
 		const memory_access_t access = writing ? mem_write : mem_read;
 		
@@ -173,7 +173,7 @@ namespace v68k
 		
 		if ( writing )
 		{
-			const uint32_t data = s.d( reg_id );
+			const uint32_t data = s.regs[ reg_id ];
 			
 			switch ( pb.size )
 			{
@@ -191,7 +191,7 @@ namespace v68k
 		}
 		else
 		{
-			uint32_t& reg = s.d( reg_id );
+			uint32_t& reg = s.regs[ reg_id ];
 			
 			uint32_t data = 0;
 			
@@ -238,18 +238,18 @@ namespace v68k
 		
 		if ( value < 0 )
 		{
-			s.regs.nzvc = 0x8;  // set N, others undefined
+			s.sr.nzvc = 0x8;  // set N, others undefined
 		}
 		else if ( value > bound )
 		{
-			s.regs.nzvc = 0x0;  // clear N, others undefined
+			s.sr.nzvc = 0x0;  // clear N, others undefined
 		}
 		else
 		{
 			return;  // within bounds
 		}
 		
-		s.take_exception_format_2( 6 * sizeof (uint32_t), s.regs.pc - 2 );
+		s.take_exception_format_2( 6 * sizeof (uint32_t), s.pc() - 2 );
 	}
 	
 	void microcode_LEA( processor_state& s, op_params& pb )
@@ -300,7 +300,7 @@ namespace v68k
 	{
 		const uint32_t data = pb.target;  // 3-bit breakpoint vector
 		
-		s.regs.pc -= 2;
+		s.pc() -= 2;
 		
 		s.opcode = 0x4AFC;  // ILLEGAL
 		
@@ -380,10 +380,10 @@ namespace v68k
 	{
 		const int32_t data = sign_extend( pb.second, byte_sized );
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( 0 );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( 0 );
 		
 		pb.result = data | 0x80;
 	}
@@ -408,7 +408,7 @@ namespace v68k
 		{
 			if ( mask & 0x1 )
 			{
-				const uint32_t data = s.d( update_register ? 15 - r : r );
+				const uint32_t data = s.regs[ update_register ? 15 - r : r ];
 				
 				const bool ok = longword_sized ? s.mem.put_long( addr, data, s.data_space() )
 											   : s.mem.put_word( addr, data, s.data_space() );
@@ -426,7 +426,7 @@ namespace v68k
 		
 		if ( update_register )
 		{
-			s.d( update_register ) = addr - increment;
+			s.regs[ update_register ] = addr - increment;
 		}
 	}
 	
@@ -469,7 +469,7 @@ namespace v68k
 					return;
 				}
 				
-				s.d(r) = data;
+				s.regs[ r ] = data;
 				
 				addr += increment;
 			}
@@ -477,7 +477,7 @@ namespace v68k
 		
 		if ( update_register )
 		{
-			s.d( update_register ) = addr;
+			s.regs[ update_register ] = addr;
 		}
 	}
 	
@@ -548,7 +548,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.regs.usp = s.a(n);
+		s.regs[ USP ] = s.a(n);
 	}
 	
 	void microcode_MOVE_from_USP( processor_state& s, op_params& pb )
@@ -556,7 +556,7 @@ namespace v68k
 		const uint32_t n = pb.target;
 		
 		// MOVE USP is privileged, so USP is never A7 here
-		s.a(n) = s.regs.usp;
+		s.a(n) = s.regs[ USP ];
 	}
 	
 	void microcode_NOP( processor_state& s, op_params& pb )
@@ -613,7 +613,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp + 2, s.regs.pc, supervisor_data_space ) )
+		if ( !s.mem.get_long( sp + 2, s.pc(), supervisor_data_space ) )
 		{
 			s.bus_error();
 			
@@ -652,7 +652,7 @@ namespace v68k
 			return;
 		}
 		
-		if ( !s.mem.get_long( sp, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -666,7 +666,7 @@ namespace v68k
 	{
 		if ( s.get_CCR() & 0x2 )
 		{
-			s.take_exception_format_2( 7 * sizeof (uint32_t), s.regs.pc - 2 );
+			s.take_exception_format_2( 7 * sizeof (uint32_t), s.pc() - 2 );
 		}
 	}
 	
@@ -694,7 +694,7 @@ namespace v68k
 		
 		sp += 2;
 		
-		if ( !s.mem.get_long( sp, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			s.bus_error();
 			
@@ -748,33 +748,9 @@ namespace v68k
 		return id >> 8 | (id & ~0x0800);
 	}
 	
-	static uint32_t* get_control_register( processor_state& s, uint16_t control_index )
+	static inline uint32_t* get_control_register( processor_state& s, uint16_t control_index )
 	{
-		switch ( control_index )
-		{
-			case 0x0:  // 0x000
-				return &s.regs.sfc;
-			
-			case 0x1:  // 0x001
-				return &s.regs.dfc;
-			
-			case 0x8:  // 0x800
-				return &s.regs.usp;
-			
-			case 0x9:  // 0x801
-				return &s.regs.vbr;
-			
-			case 0xB:  // 0x803, MSP
-				return &s.regs.msp;
-			
-			case 0xC:  // 0x804, ISP
-				return &s.regs.isp;
-			
-			default:
-				break;
-		}
-		
-		return 0;  // NULL
+		return &s.regs[ control_register_offset + control_index ];
 	}
 	
 	void microcode_MOVEC( processor_state& s, op_params& pb )
@@ -807,7 +783,7 @@ namespace v68k
 				
 				if ( writing )
 				{
-					uint32_t data = s.d( general_id );
+					uint32_t data = s.regs[ general_id ];
 					
 					if ( flags & only_3_bits )
 					{
@@ -820,7 +796,7 @@ namespace v68k
 				}
 				else
 				{
-					s.d( general_id ) = *control_register;
+					s.regs[ general_id ] = *control_register;
 				}
 				
 				return;  // Success
@@ -829,7 +805,7 @@ namespace v68k
 		
 		// Failure
 		
-		s.regs.pc -= 4;
+		s.pc() -= 4;
 		
 		s.take_exception_format_0( 4 * sizeof (uint32_t) );  // Illegal Instruction
 	}
@@ -841,7 +817,7 @@ namespace v68k
 	{
 		const uint16_t cc = pb.second;
 		
-		if ( test_conditional( cc, s.regs.nzvc ) )
+		if ( test_conditional( cc, s.sr.nzvc ) )
 		{
 			return;
 		}
@@ -860,7 +836,7 @@ namespace v68k
 		{
 			s.d( n ) -= 1;  // decrement of non-zero word won't borrow
 			
-			s.regs.pc = pb.address;
+			s.pc() = pb.address;
 		}
 	}
 	
@@ -868,7 +844,7 @@ namespace v68k
 	{
 		const uint16_t cc = pb.second;
 		
-		pb.result = int32_t() - test_conditional( cc, s.regs.nzvc );
+		pb.result = int32_t() - test_conditional( cc, s.sr.nzvc );
 	}
 	
 	#pragma mark -
@@ -876,7 +852,7 @@ namespace v68k
 	
 	void microcode_BRA( processor_state& s, op_params& pb )
 	{
-		s.regs.pc = pb.address;
+		s.pc() = pb.address;
 	}
 	
 	void microcode_BSR( processor_state& s, op_params& pb )
@@ -892,23 +868,23 @@ namespace v68k
 		
 		sp -= 4;
 		
-		if ( !s.mem.put_long( sp, s.regs.pc, s.data_space() ) )
+		if ( !s.mem.put_long( sp, s.pc(), s.data_space() ) )
 		{
 			s.bus_error();
 			
 			return;
 		}
 		
-		s.regs.pc = pb.address;
+		s.pc() = pb.address;
 	}
 	
 	void microcode_Bcc( processor_state& s, op_params& pb )
 	{
 		const uint16_t cc = pb.second;
 		
-		if ( test_conditional( cc, s.regs.nzvc ) )
+		if ( test_conditional( cc, s.sr.nzvc ) )
 		{
-			s.regs.pc = pb.address;
+			s.pc() = pb.address;
 		}
 	}
 	
@@ -1036,8 +1012,8 @@ namespace v68k
 		const uint32_t x = pb.first;
 		const uint32_t y = pb.second;
 		
-		uint32_t& Rx = s.d( x );
-		uint32_t& Ry = s.d( y );
+		uint32_t& Rx = s.regs[ x ];
+		uint32_t& Ry = s.regs[ y ];
 		
 		uint32_t temp = Rx;
 		
@@ -1113,13 +1089,13 @@ namespace v68k
 				data >>= 1;
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1167,13 +1143,13 @@ namespace v68k
 				data = sign_extend( data, pb.size );
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( overflow )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( overflow )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1205,13 +1181,13 @@ namespace v68k
 				data = 0;
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1243,13 +1219,13 @@ namespace v68k
 				data = 0;
 			}
 			
-			s.regs.x = last_bit;
+			s.sr.x = last_bit;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1272,19 +1248,19 @@ namespace v68k
 				
 				const uint32_t udata = zero_extend( data, pb.size );
 				
-				data = (udata << 1 | s.regs.x) << anticount
-				     |  udata                  >> effective_count;
+				data = (udata << 1 | s.sr.x) << anticount
+				     |  udata                >> effective_count;
 				
-				s.regs.x = udata >> (effective_count - 1 ) & 0x1;
+				s.sr.x = udata >> (effective_count - 1 ) & 0x1;
 				
 				data = sign_extend( data, pb.size );
 			}
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( s.regs.x );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( s.sr.x );
 		
 		pb.result = data;
 	}
@@ -1307,19 +1283,19 @@ namespace v68k
 				
 				const uint32_t udata = zero_extend( data, pb.size );
 				
-				data = (udata << 1 | s.regs.x) << (effective_count - 1)
-				     |  udata                  >> (anticount + 1);
+				data = (udata << 1 | s.sr.x) << (effective_count - 1)
+				     |  udata                >> (anticount + 1);
 				
-				s.regs.x = udata >> anticount & 0x1;
+				s.sr.x = udata >> anticount & 0x1;
 				
 				data = sign_extend( data, pb.size );
 			}
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( s.regs.x );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( s.sr.x );
 		
 		pb.result = data;
 	}
@@ -1353,10 +1329,10 @@ namespace v68k
 			last_bit = data < 0;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}
@@ -1390,10 +1366,10 @@ namespace v68k
 			last_bit = data & 0x1;
 		}
 		
-		s.regs.nzvc = N( data <  0 )
-		            | Z( data == 0 )
-		            | V( 0 )
-		            | C( last_bit );
+		s.sr.nzvc = N( data <  0 )
+		          | Z( data == 0 )
+		          | V( 0 )
+		          | C( last_bit );
 		
 		pb.result = data;
 	}

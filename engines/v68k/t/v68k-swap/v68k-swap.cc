@@ -49,7 +49,7 @@ static void swap()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0xF;
+	emu.sr.nzvc = 0xF;
 	
 	emu.d(0) = 0x12345678;
 	
@@ -58,7 +58,7 @@ static void swap()
 	
 	ok_if( emu.d(0) == 0x56781234 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 }
 
 int main( int argc, char** argv )

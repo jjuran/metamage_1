@@ -56,7 +56,9 @@ namespace v68k
 	
 	struct processor_state
 	{
-		registers regs;
+		uint32_t regs[ n_registers ];
+		
+		status_register sr;
 		
 		const memory& mem;
 		
@@ -70,17 +72,17 @@ namespace v68k
 		
 		processor_state( processor_model model, const memory& mem, bkpt_handler bkpt );
 		
-		uint32_t& d( int i )  { return regs.d[ i ]; }
-		uint32_t& a( int i )  { return regs.a[ i ]; }
+		uint32_t& d( int i )  { return regs[ D0 + i ]; }
+		uint32_t& a( int i )  { return regs[ A0 + i ]; }
 		
-		const uint32_t& d( int i ) const  { return regs.d[ i ]; }
-		const uint32_t& a( int i ) const  { return regs.a[ i ]; }
+		const uint32_t& d( int i ) const  { return regs[ D0 + i ]; }
+		const uint32_t& a( int i ) const  { return regs[ A0 + i ]; }
 		
 		uint32_t& saved_sp()
 		{
-			return + !(regs.ttsm & 0x2) ? regs.usp
-			       : !(regs.ttsm & 0x1) ? regs.isp
-			       :                      regs.msp;
+			return + !(sr.ttsm & 0x2) ? regs[ USP ]
+			       : !(sr.ttsm & 0x1) ? regs[ ISP ]
+			       :                    regs[ MSP ];
 		}
 		
 		void save_sp()
@@ -91,6 +93,11 @@ namespace v68k
 		void load_sp()
 		{
 			a(7) = saved_sp();
+		}
+		
+		uint32_t& pc()
+		{
+			return regs[ PC ];
 		}
 		
 		void prefetch_instruction_word();
@@ -107,14 +114,14 @@ namespace v68k
 		
 		function_code_t data_space() const
 		{
-			return regs.ttsm & 0x2 ? supervisor_data_space
-			                       : user_data_space;
+			return sr.ttsm & 0x2 ? supervisor_data_space
+			                     : user_data_space;
 		}
 		
 		function_code_t program_space() const
 		{
-			return regs.ttsm & 0x2 ? supervisor_program_space
-			                       : user_program_space;
+			return sr.ttsm & 0x2 ? supervisor_program_space
+			                     : user_program_space;
 		}
 		
 		bool badly_aligned_data( uint32_t addr ) const

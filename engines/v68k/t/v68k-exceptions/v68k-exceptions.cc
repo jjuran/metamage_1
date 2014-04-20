@@ -53,7 +53,7 @@ static void illegal_instruction()
 	
 	ok_if( emu.step() );  // Illegal Instruction
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 	
 	code[ 0 ] = big_word( 0x4848 );  // BKPT  #0
 	
@@ -61,7 +61,7 @@ static void illegal_instruction()
 	
 	ok_if( emu.step() );  // Illegal Instruction (unacknowledged breakpoint)
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 }
 
 static void trapv()
@@ -95,19 +95,19 @@ static void trapv()
 	
 	ok_if( emu.step() );  // TRAPV
 	
-	ok_if( emu.regs.pc == 1026 );
+	ok_if( emu.pc() == 1026 );
 	
 	emu.set_CCR( 0x1D );  // X|N|Z|0|C
 	
 	ok_if( emu.step() );  // TRAPV
 	
-	ok_if( emu.regs.pc == 1028 );
+	ok_if( emu.pc() == 1028 );
 	
 	emu.set_CCR( 0x2 );  // V
 	
 	ok_if( emu.step() );  // TRAPV
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 }
 
 static void privilege_violation()
@@ -142,7 +142,7 @@ static void privilege_violation()
 	
 	ok_if( emu.step() );  // unprivileged on 68000
 	
-	ok_if( emu.regs.pc == 1024 + 2 );
+	ok_if( emu.pc() == 1024 + 2 );
 	
 	
 	emulator emu2( mc68010, memory );
@@ -155,7 +155,7 @@ static void privilege_violation()
 	
 	ok_if( emu2.step() );  // Privilege Violation
 	
-	ok_if( emu2.regs.pc == 2048 );
+	ok_if( emu2.pc() == 2048 );
 }
 
 static void trap()
@@ -185,7 +185,7 @@ static void trap()
 	
 	ok_if( emu.step() );  // Trap 0
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 	
 	vectors[32] = 0xFFFFFFFF;  // TRAP  #0
 	
@@ -197,7 +197,7 @@ static void trap()
 	
 	ok_if( emu.step() );  // Trap  15
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 }
 
 static void line_A_emulator()
@@ -227,7 +227,7 @@ static void line_A_emulator()
 	
 	ok_if( emu.step() );  // unimplemented A-line trap
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 }
 
 static void line_F_emulator()
@@ -257,7 +257,7 @@ static void line_F_emulator()
 	
 	ok_if( emu.step() );  // unimplemented F-line trap
 	
-	ok_if( emu.regs.pc == 2048 );
+	ok_if( emu.pc() == 2048 );
 }
 
 int main( int argc, char** argv )

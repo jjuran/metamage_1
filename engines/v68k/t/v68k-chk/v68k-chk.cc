@@ -59,7 +59,7 @@ static void chk()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(1) = 0x00000001;
 	emu.d(2) = 0x00000002;
@@ -69,7 +69,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc < chk_address );
+	ok_if( emu.pc() < chk_address );
 	
 	
 	// 0 <= 0 < 2
@@ -78,7 +78,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc < chk_address );
+	ok_if( emu.pc() < chk_address );
 	
 	
 	// 0 < 2 <= 2
@@ -87,7 +87,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc < chk_address );
+	ok_if( emu.pc() < chk_address );
 	
 	
 	// 0 < 3 > 2
@@ -96,9 +96,9 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == chk_address );
+	ok_if( emu.pc() == chk_address );
 	
-	ok_if( !(emu.regs.nzvc & 0x8) );
+	ok_if( !(emu.sr.nzvc & 0x8) );
 	
 	emu.step();  // RTE
 	
@@ -109,9 +109,9 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == chk_address );
+	ok_if( emu.pc() == chk_address );
 	
-	ok_if( emu.regs.nzvc & 0x8 );
+	ok_if( emu.sr.nzvc & 0x8 );
 }
 
 int main( int argc, char** argv )

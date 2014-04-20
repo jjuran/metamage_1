@@ -50,7 +50,7 @@ static void add()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000123;
 	emu.d(1) = 0x00000567;
@@ -60,7 +60,7 @@ static void add()
 	
 	ok_if( emu.d(1) == 0x0000068A );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	emu.d(1) = 0x00000567;
 	
@@ -69,7 +69,7 @@ static void add()
 	
 	ok_if( emu.d(1) == 0x0000058A );
 	
-	ok_if( emu.regs.nzvc == 0xA );
+	ok_if( emu.sr.nzvc == 0xA );
 }
 
 static void adda()
@@ -95,7 +95,7 @@ static void adda()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0xF;
+	emu.sr.nzvc = 0xF;
 	
 	emu.d(0) = 0x00001234;
 	emu.a(0) = 0x0000FEDC;
@@ -104,7 +104,7 @@ static void adda()
 	
 	ok_if( emu.a(0) == 0x00011110 );
 	
-	ok_if( emu.regs.nzvc == 0xF );
+	ok_if( emu.sr.nzvc == 0xF );
 }
 
 static void addi()
@@ -131,7 +131,7 @@ static void addi()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0x0;
+	emu.sr.nzvc = 0x0;
 	
 	emu.d(0) = 0x0000FEDC;
 	
@@ -139,7 +139,7 @@ static void addi()
 	
 	ok_if( emu.d(0) == 0x00001110 );
 	
-	ok_if( emu.regs.nzvc == 0x1 );
+	ok_if( emu.sr.nzvc == 0x1 );
 }
 
 int main( int argc, char** argv )

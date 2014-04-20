@@ -61,7 +61,7 @@ static void divu()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000001;
 	emu.d(1) = 0x00000000;
@@ -73,7 +73,7 @@ static void divu()
 	
 	ok_if( emu.d(1) == 0x00000000 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 	
 	// 20 / 1 = 20
@@ -84,7 +84,7 @@ static void divu()
 	
 	ok_if( emu.d(1) == 0x0000014 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 20 / 2 = 10
@@ -95,7 +95,7 @@ static void divu()
 	
 	ok_if( emu.d(1) == 0x0000000A );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 10 / 3 = 3r1
@@ -106,7 +106,7 @@ static void divu()
 	
 	ok_if( emu.d(1) == 0x00010003 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 65539 / 1 = *OVERFLOW*
@@ -117,7 +117,7 @@ static void divu()
 	
 	ok_if( emu.d(1) == 0x00010003 );
 	
-	ok_if( emu.regs.nzvc == 0x2 );
+	ok_if( emu.sr.nzvc == 0x2 );
 	
 	
 	// 65539 / 65534 = 1r5
@@ -128,22 +128,22 @@ static void divu()
 	
 	ok_if( emu.d(1) == 0x00050001 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 327681 / 0 = *EXCEPTION*
 	
-	emu.regs.nzvc = 0x1;
+	emu.sr.nzvc = 0x1;
 	
 	emu.d(0) = 0x00000000;
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == divide_by_zero_address );
+	ok_if( emu.pc() == divide_by_zero_address );
 	
 	ok_if( emu.d(1) == 0x00050001 );
 	
-	ok_if( !(emu.regs.nzvc & 0x1) );  // C is always cleared
+	ok_if( !(emu.sr.nzvc & 0x1) );  // C is always cleared
 	
 }
 
@@ -182,7 +182,7 @@ static void divs()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0;
+	emu.sr.nzvc = 0;
 	
 	emu.d(0) = 0x00000001;
 	emu.d(1) = 0x00000000;
@@ -194,7 +194,7 @@ static void divs()
 	
 	ok_if( emu.d(1) == 0x00000000 );
 	
-	ok_if( emu.regs.nzvc == 0x4 );
+	ok_if( emu.sr.nzvc == 0x4 );
 	
 	
 	// 20 / 1 = 20
@@ -205,7 +205,7 @@ static void divs()
 	
 	ok_if( emu.d(1) == 0x0000014 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 20 / 2 = 10
@@ -216,7 +216,7 @@ static void divs()
 	
 	ok_if( emu.d(1) == 0x0000000A );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 10 / 3 = 3r1
@@ -227,7 +227,7 @@ static void divs()
 	
 	ok_if( emu.d(1) == 0x00010003 );
 	
-	ok_if( emu.regs.nzvc == 0x0 );
+	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	// 65539 / 1 = *OVERFLOW*
@@ -238,7 +238,7 @@ static void divs()
 	
 	ok_if( emu.d(1) == 0x00010003 );
 	
-	ok_if( emu.regs.nzvc == 0x2 );
+	ok_if( emu.sr.nzvc == 0x2 );
 	
 	
 	// 65539 / -4 = -16384r3
@@ -249,22 +249,22 @@ static void divs()
 	
 	ok_if( emu.d(1) == 0x0003C000 );
 	
-	ok_if( emu.regs.nzvc == 0x8 );
+	ok_if( emu.sr.nzvc == 0x8 );
 	
 	
 	// 245760 / 0 = *EXCEPTION*
 	
-	emu.regs.nzvc = 0x1;
+	emu.sr.nzvc = 0x1;
 	
 	emu.d(0) = 0x00000000;
 	
 	emu.step();
 	
-	ok_if( emu.regs.pc == divide_by_zero_address );
+	ok_if( emu.pc() == divide_by_zero_address );
 	
 	ok_if( emu.d(1) == 0x0003C000 );
 	
-	ok_if( !(emu.regs.nzvc & 0x1) );  // C is always cleared
+	ok_if( !(emu.sr.nzvc & 0x1) );  // C is always cleared
 	
 }
 

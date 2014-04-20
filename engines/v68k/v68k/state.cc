@@ -33,11 +33,11 @@ namespace v68k
 	
 	void processor_state::prefetch_instruction_word()
 	{
-		if ( regs.pc & 1 )
+		if ( pc() & 1 )
 		{
 			address_error();
 		}
-		else if ( !mem.get_instruction_word( regs.pc, opcode, program_space() ) )
+		else if ( !mem.get_instruction_word( pc(), opcode, program_space() ) )
 		{
 			bus_error();
 		}
@@ -95,28 +95,28 @@ namespace v68k
 	
 	uint16_t processor_state::get_CCR() const
 	{
-		const uint16_t ccr = regs.   x <<  4
-		                   | regs.nzvc <<  0;
+		const uint16_t ccr = sr.   x <<  4
+		                   | sr.nzvc <<  0;
 		
 		return ccr;
 	}
 	
 	uint16_t processor_state::get_SR() const
 	{
-		const uint16_t sr = regs.ttsm << 12
-		                  | regs. iii <<  8
-		                  | regs.   x <<  4
-		                  | regs.nzvc <<  0;
+		const uint16_t result = sr.ttsm << 12
+		                      | sr. iii <<  8
+		                      | sr.   x <<  4
+		                      | sr.nzvc <<  0;
 		
-		return sr;
+		return result;
 	}
 	
 	void processor_state::set_CCR( uint16_t new_ccr )
 	{
 		// ...X NZVC  (all processors)
 		
-		regs.   x = new_ccr >>  4 & 0x1;
-		regs.nzvc = new_ccr >>  0 & 0xF;
+		sr.   x = new_ccr >>  4 & 0x1;
+		sr.nzvc = new_ccr >>  0 & 0xF;
 	}
 	
 	void processor_state::set_SR( uint16_t new_sr )
@@ -132,10 +132,10 @@ namespace v68k
 		
 		save_sp();
 		
-		regs.ttsm = new_sr >> 12;
-		regs. iii = new_sr >>  8 & 0xF;
-		regs.   x = new_sr >>  4 & 0xF;
-		regs.nzvc = new_sr >>  0 & 0xF;
+		sr.ttsm = new_sr >> 12;
+		sr. iii = new_sr >>  8 & 0xF;
+		sr.   x = new_sr >>  4 & 0xF;
+		sr.nzvc = new_sr >>  0 & 0xF;
 		
 		load_sp();
 	}
@@ -160,7 +160,7 @@ namespace v68k
 		const uint32_t format_and_offset = 0 << 12 | vector_offset;
 		
 		const bool ok = mem.put_word( sp + 0, saved_sr,          supervisor_data_space )
-		              & mem.put_long( sp + 2, regs.pc,           supervisor_data_space )
+		              & mem.put_long( sp + 2, pc(),              supervisor_data_space )
 		              & mem.put_word( sp + 6, format_and_offset, supervisor_data_space );
 		
 		if ( !ok )
@@ -168,12 +168,12 @@ namespace v68k
 			return bus_error();
 		}
 		
-		if ( badly_aligned_data( regs.vbr ) )
+		if ( badly_aligned_data( regs[ VBR ] ) )
 		{
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, supervisor_data_space ) )
+		if ( !mem.get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}
@@ -203,7 +203,7 @@ namespace v68k
 		const uint32_t format_and_offset = 2 << 12 | vector_offset;
 		
 		const bool ok = mem.put_word( sp + 0, saved_sr,            supervisor_data_space )
-		              & mem.put_long( sp + 2, regs.pc,             supervisor_data_space )
+		              & mem.put_long( sp + 2, pc(),                supervisor_data_space )
 		              & mem.put_word( sp + 6, format_and_offset,   supervisor_data_space )
 		              & mem.put_long( sp + 8, instruction_address, supervisor_data_space );
 		
@@ -212,12 +212,12 @@ namespace v68k
 			return bus_error();
 		}
 		
-		if ( badly_aligned_data( regs.vbr ) )
+		if ( badly_aligned_data( regs[ VBR ] ) )
 		{
 			return address_error();
 		}
 		
-		if ( !mem.get_long( regs.vbr + vector_offset, regs.pc, supervisor_data_space ) )
+		if ( !mem.get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
 		{
 			return bus_error();
 		}

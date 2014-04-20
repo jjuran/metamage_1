@@ -53,7 +53,7 @@ static void dbcc()
 	
 	emu.reset();
 	
-	emu.regs.nzvc = 0xF;
+	emu.sr.nzvc = 0xF;
 	
 	emu.d(0) = 0x00010001;
 	

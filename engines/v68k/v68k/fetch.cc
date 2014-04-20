@@ -20,19 +20,19 @@ namespace v68k
 	
 	uint16_t fetch_instruction_word( processor_state& s )
 	{
-		if ( s.regs.pc & 1 )
+		if ( s.pc() & 1 )
 		{
 			return s.address_error();
 		}
 		
 		uint16_t word;
 		
-		if ( !s.mem.get_instruction_word( s.regs.pc, word, s.program_space() ) )
+		if ( !s.mem.get_instruction_word( s.pc(), word, s.program_space() ) )
 		{
 			return s.bus_error();
 		}
 		
-		s.regs.pc += 2;
+		s.pc() += 2;
 		
 		return word;
 	}
@@ -123,7 +123,7 @@ namespace v68k
 		
 		const uint32_t addr = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
 		
-		const uint32_t data = mode <= 1 ? s.d( addr )
+		const uint32_t data = mode <= 1 ? s.regs[ addr ]
 		                                : s.read_mem( addr, pb.size );
 		
 		pb.first = sign_extend( data, pb.size );
@@ -302,7 +302,7 @@ namespace v68k
 	
 	void add_X_to_first( processor_state& s, op_params& pb )
 	{
-		pb.first += s.regs.x & 0x1;
+		pb.first += s.sr.x & 0x1;
 	}
 	
 	void shift_NEG_operands( processor_state& s, op_params& pb )
