@@ -187,6 +187,15 @@ namespace v68k
 				case Breakpoint:
 					goto bkpt_acknowledge;
 				
+				case Illegal_instruction:
+				case Trap_0:  case Trap_1:  case Trap_2:  case Trap_3:
+				case Trap_4:  case Trap_5:  case Trap_6:  case Trap_7:
+				case Trap_8:  case Trap_9:  case Trap_A:  case Trap_B:
+				case Trap_C:  case Trap_D:  case Trap_E:  case Trap_F:
+					take_exception_format_0( -result * sizeof (uint32_t) );
+					
+					break;
+				
 				case Bus_error:
 				case Address_error:
 				case Format_error:

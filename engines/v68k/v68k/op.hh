@@ -16,9 +16,27 @@ namespace v68k
 		
 		Breakpoint = -1,
 		
-		Bus_error     = -2,
-		Address_error = -3,
-		Format_error  = -14,
+		Bus_error           = -2,
+		Address_error       = -3,
+		Illegal_instruction = -4,
+		Format_error        = -14,
+		
+		Trap_0 = -32,
+		Trap_1 = -33,
+		Trap_2 = -34,
+		Trap_3 = -35,
+		Trap_4 = -36,
+		Trap_5 = -37,
+		Trap_6 = -38,
+		Trap_7 = -39,
+		Trap_8 = -40,
+		Trap_9 = -41,
+		Trap_A = -42,
+		Trap_B = -43,
+		Trap_C = -44,
+		Trap_D = -45,
+		Trap_E = -46,
+		Trap_F = -47,
 	};
 	
 }

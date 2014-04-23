@@ -527,9 +527,7 @@ namespace v68k
 	{
 		const uint32_t trap_number = pb.first;
 		
-		s.take_exception_format_0( (trap_number + 32) * sizeof (uint32_t) );
-		
-		return Ok;
+		return op_result( -(trap_number + 32) );
 	}
 	
 	op_result microcode_LINK( processor_state& s, op_params& pb )
@@ -845,9 +843,7 @@ namespace v68k
 		
 		s.pc() -= 4;
 		
-		s.take_exception_format_0( 4 * sizeof (uint32_t) );  // Illegal Instruction
-		
-		return Ok;
+		return Illegal_instruction;
 	}
 	
 	#pragma mark -
