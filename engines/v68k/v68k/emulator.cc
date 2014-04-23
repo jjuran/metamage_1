@@ -180,16 +180,21 @@ namespace v68k
 		// execute
 		const op_result result = decoded->code( *this, pb );
 		
-		if ( result == Breakpoint )
-		{
-			goto bkpt_acknowledge;
-		}
-		
 		if ( result < 0 )
 		{
-			condition = halted;
-			
-			return false;
+			switch ( result )
+			{
+				case Breakpoint:
+					goto bkpt_acknowledge;
+				
+				case Bus_error:
+				case Address_error:
+				case Format_error:
+				default:
+					condition = halted;
+					
+					return false;
+			}
 		}
 		
 		// update CCR
