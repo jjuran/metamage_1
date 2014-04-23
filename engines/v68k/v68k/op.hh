@@ -19,6 +19,9 @@ namespace v68k
 		Bus_error           = -2,
 		Address_error       = -3,
 		Illegal_instruction = -4,
+		Division_by_zero    = -5,
+		CHK_exception       = -6,
+		Overflow_trap       = -7,
 		Format_error        = -14,
 		
 		Trap_0 = -32,

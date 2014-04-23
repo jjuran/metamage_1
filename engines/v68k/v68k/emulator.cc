@@ -196,6 +196,13 @@ namespace v68k
 					
 					break;
 				
+				case Division_by_zero:
+				case CHK_exception:
+				case Overflow_trap:
+					take_exception_format_2( -result * sizeof (uint32_t), instruction_address );
+					
+					break;
+				
 				case Bus_error:
 				case Address_error:
 				case Format_error:

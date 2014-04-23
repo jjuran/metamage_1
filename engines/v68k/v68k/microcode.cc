@@ -269,9 +269,7 @@ namespace v68k
 			return Ok;  // within bounds
 		}
 		
-		s.take_exception_format_2( 6 * sizeof (uint32_t), s.pc() - 2 );
-		
-		return Ok;
+		return CHK_exception;
 	}
 	
 	op_result microcode_LEA( processor_state& s, op_params& pb )
@@ -704,7 +702,7 @@ namespace v68k
 	{
 		if ( s.get_CCR() & 0x2 )
 		{
-			s.take_exception_format_2( 7 * sizeof (uint32_t), s.pc() - 2 );
+			return Overflow_trap;
 		}
 		
 		return Ok;
@@ -968,11 +966,9 @@ namespace v68k
 		
 		if ( divisor == 0 )
 		{
-			s.take_exception_format_2( 5 * sizeof (uint32_t), pb.address );
-			
 			pb.size = unsized;  // Don't store the result
 			
-			return Ok;
+			return Division_by_zero;
 		}
 		
 		const int32_t quotient_32 = dividend / divisor;
@@ -1001,11 +997,9 @@ namespace v68k
 		
 		if ( divisor == 0 )
 		{
-			s.take_exception_format_2( 5 * sizeof (uint32_t), pb.address );
-			
 			pb.size = unsized;  // Don't store the result
 			
-			return Ok;
+			return Division_by_zero;
 		}
 		
 		const uint32_t quotient_32 = dividend / divisor;
