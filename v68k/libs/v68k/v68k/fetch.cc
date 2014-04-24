@@ -130,6 +130,12 @@ namespace v68k
 		return result;
 	}
 	
+	static
+	op_result fetch_longword( processor_state& s, op_params& pb )
+	{
+		return fetch_instruction_long( s, pb.first );
+	}
+	
 	uint32_t fetch_longword( processor_state& s )
 	{
 		const uint32_t high = fetch_instruction_word( s );
