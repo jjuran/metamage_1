@@ -6,6 +6,7 @@
 #include "v68k/effective_address.hh"
 
 // v68k
+#include "v68k/endian.hh"
 #include "v68k/fetch.hh"
 #include "v68k/state.hh"
 
@@ -18,16 +19,21 @@ namespace v68k
 	
 	static int32_t read_extended_displacement( processor_state& s, uint16_t size_code )
 	{
+		uint32_t displacement = 0;
+		
 		switch ( size_code )
 		{
-			case 1:
-				return 0;
+		//	case 1:  return 0;
 			
 			case 2:
-				return fetch_instruction_word_signed( s );
+				fetch_instruction_word( s, low_word( displacement ) );
+				
+				return int16_t( displacement );
 			
 			case 3:
-				return fetch_longword( s );
+				fetch_instruction_long( s, displacement );
+				
+				return displacement;
 		}
 		
 		// Assume null displacement on zero size code
