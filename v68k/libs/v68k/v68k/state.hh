@@ -94,6 +94,42 @@ namespace v68k
 		op_result read_word( uint32_t addr, uint32_t& data );
 		op_result read_long( uint32_t addr, uint32_t& data );
 		
+		op_result read_byte_signed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_byte( addr, data );
+			
+			data = int32_t( int8_t( data ) );
+			
+			return result;
+		}
+		
+		op_result read_byte_zeroed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_byte( addr, data );
+			
+			data = uint8_t( data );
+			
+			return result;
+		}
+		
+		op_result read_word_signed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_word( addr, data );
+			
+			data = int32_t( int16_t( data ) );
+			
+			return result;
+		}
+		
+		op_result read_word_zeroed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_word( addr, data );
+			
+			data = uint16_t( data );
+			
+			return result;
+		}
+		
 		uint32_t read_mem( uint32_t addr, op_size_t size );
 		
 		uint16_t get_CCR() const;
