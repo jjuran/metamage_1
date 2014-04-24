@@ -227,9 +227,7 @@ namespace v68k
 	{
 		const uint32_t n = s.opcode & 0x7;
 		
-		const int32_t disp = fetch_instruction_word_signed( s );
-		
-		pb.address = s.a(n) + disp;
+		pb.address = s.a(n);
 		
 		return Ok;
 	}
