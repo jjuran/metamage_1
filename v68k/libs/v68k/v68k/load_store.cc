@@ -31,20 +31,22 @@ namespace v68k
 		{
 			pb.second = s.regs[ target ];
 			
-			if ( target > 7 )
+			if ( target <= 7 )
 			{
-				// address register, don't sign-extend
-				return Ok;
+				// only sign-extend data registers
+				pb.second = sign_extend( pb.second, pb.size );
 			}
+			
+			return Ok;
 		}
-		else
+		
+		switch ( pb.size )
 		{
-			pb.second = s.read_mem( pb.address, pb.size );
+			default:  // shouldn't happen
+			case byte_sized:  return s.read_byte_signed( pb.address, pb.second );
+			case word_sized:  return s.read_word_signed( pb.address, pb.second );
+			case long_sized:  return s.read_long       ( pb.address, pb.second );
 		}
-		
-		pb.second = sign_extend( pb.second, pb.size );
-		
-		return Ok;
 	}
 	
 	bool store( processor_state& s, const op_params& pb )
