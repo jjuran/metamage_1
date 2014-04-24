@@ -8,6 +8,7 @@
 // v68k
 #include "v68k/conditional.hh"
 #include "v68k/effective_address.hh"
+#include "v68k/endian.hh"
 #include "v68k/macros.hh"
 #include "v68k/op_params.hh"
 #include "v68k/state.hh"
@@ -18,6 +19,33 @@
 
 namespace v68k
 {
+	
+	op_result fetch_instruction_word( processor_state& s, uint16_t& word )
+	{
+		if ( s.pc() & 1 )
+		{
+			return Address_error;
+		}
+		
+		if ( !s.mem.get_instruction_word( s.pc(), word, s.program_space() ) )
+		{
+			return Bus_error;
+		}
+		
+		s.pc() += 2;
+		
+		return Ok;
+	}
+	
+	op_result fetch_instruction_long( processor_state& s, uint32_t& longword )
+	{
+		op_result result;
+		
+		result = fetch_instruction_word( s, high_word( longword ) );  if ( result < 0 )  return result;
+		result = fetch_instruction_word( s, low_word ( longword ) );  if ( result < 0 )  return result;
+		
+		return Ok;
+	}
 	
 	uint16_t fetch_instruction_word( processor_state& s )
 	{
