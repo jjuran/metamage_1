@@ -116,18 +116,18 @@ namespace v68k
 	
 	op_result fetch_unsigned_word( processor_state& s, op_params& pb )
 	{
-		pb.first = fetch_instruction_word( s );
+		high_word( pb.first ) = 0;
 		
-		return Ok;
+		return fetch_instruction_word( s, low_word( pb.first ) );
 	}
 	
 	op_result fetch_signed_word( processor_state& s, op_params& pb )
 	{
-		const int16_t word = fetch_instruction_word( s );
+		op_result result = fetch_instruction_word( s, low_word( pb.first ) );
 		
-		pb.first = int32_t( word );
+		pb.first = int32_t( int16_t( pb.first ) );
 		
-		return Ok;
+		return result;
 	}
 	
 	uint32_t fetch_longword( processor_state& s )
