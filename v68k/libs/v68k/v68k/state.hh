@@ -11,6 +11,7 @@
 
 // v68k
 #include "v68k/memory.hh"
+#include "v68k/op.hh"
 #include "v68k/op_params.hh"
 #include "v68k/registers.hh"
 
@@ -88,6 +89,10 @@ namespace v68k
 		{
 			return regs[ PC ];
 		}
+		
+		op_result read_byte( uint32_t addr, uint32_t& data );
+		op_result read_word( uint32_t addr, uint32_t& data );
+		op_result read_long( uint32_t addr, uint32_t& data );
 		
 		uint32_t read_mem( uint32_t addr, op_size_t size );
 		
