@@ -18,37 +18,59 @@
 namespace v68k
 {
 	
-	static int32_t read_extended_displacement( processor_state& s, uint16_t size_code )
+	static
+	op_result read_extended_displacement( processor_state&  s,
+	                                      uint16_t          size_code,
+	                                      int32_t&          displacement )
 	{
-		uint32_t displacement = 0;
+		op_result result = Ok;
+		
+		uint32_t temp = 0;
 		
 		switch ( size_code )
 		{
-		//	case 1:  return 0;
-			
 			case 2:
-				fetch_instruction_word( s, low_word( displacement ) );
+				result = fetch_instruction_word( s, low_word( temp ) );
 				
-				return int16_t( displacement );
+				displacement = int16_t( temp );
+				break;
 			
 			case 3:
-				fetch_instruction_long( s, displacement );
+				result = fetch_instruction_long( s, temp );
+				// fall through
 				
-				return displacement;
+			default:
+				displacement = temp;
+				break;
 		}
 		
 		// Assume null displacement on zero size code
-		return 0;
+		return result;
 	}
 	
-	static uint32_t read_ea_displaced_address( processor_state& s, uint32_t address )
+	static
+	op_result read_ea_displaced_address( processor_state& s, op_params& pb )
 	{
-		return address + fetch_instruction_word_signed( s );
+		uint16_t displacement;
+		
+		op_result result = fetch_instruction_word( s, displacement );
+		
+		pb.address += int16_t( displacement );
+		
+		return result;
 	}
 	
-	static uint32_t read_ea_indexed_address( processor_state& s, uint32_t address )
+	static
+	op_result read_ea_indexed_address( processor_state& s, op_params& pb )
 	{
-		const uint16_t extension = fetch_instruction_word( s );
+		uint16_t extension;
+		
+		op_result result = fetch_instruction_word( s, extension );
+		
+		if ( result < 0 )
+		{
+			return result;
+		}
 		
 		int32_t base_displacement = int8_t( extension & 0xff );
 		
@@ -77,14 +99,26 @@ namespace v68k
 		
 		if ( s.model < mc68020  ||  !full_format )
 		{
-			return address + index + base_displacement;
+			pb.address += index + base_displacement;
+			
+			return Ok;
 		}
 		
 		const bool base_suppress  = extension & 0x80;
 		
 		const uint16_t bd_size = extension >> 4 & 0x3;
 		
-		base_displacement = read_extended_displacement( s, bd_size ) & -!base_suppress;
+		result = read_extended_displacement( s, bd_size, base_displacement );
+		
+		if ( result < 0 )
+		{
+			return result;
+		}
+		
+		if ( base_suppress )
+		{
+			base_displacement = 0;
+		}
 		
 		const bool index_suppress = extension & 0x40;
 		
@@ -99,7 +133,7 @@ namespace v68k
 		
 		const bool memory_indirect = iis != 0;
 		
-		address += base_displacement + !postindexed * index;
+		pb.address += base_displacement + !postindexed * index;
 		
 		if ( memory_indirect )
 		{
@@ -109,22 +143,29 @@ namespace v68k
 				for misaligned data accesses.
 			*/
 			
-			if ( !s.mem.get_long( address, address, s.data_space() ) )
+			if ( !s.mem.get_long( pb.address, pb.address, s.data_space() ) )
 			{
-				return s.bus_error();
+				return Bus_error;
 			}
 			
-			const int32_t outer_displacement = read_extended_displacement( s, iis & 0x3 );
+			int32_t outer_displacement;
 			
-			address += outer_displacement;
+			result = read_extended_displacement( s, iis & 0x3, outer_displacement );
+			
+			if ( result < 0 )
+			{
+				return result;
+			}
+			
+			pb.address += outer_displacement;
 		}
 		
 		if ( postindexed )
 		{
-			address += index;
+			pb.address += index;
 		}
 		
-		return address;
+		return Ok;
 	}
 	
 	static inline uint32_t postincrement( uint32_t& An, int size )
@@ -183,11 +224,14 @@ namespace v68k
 				break;
 			
 			case 5:
-				pb.address = read_ea_displaced_address( s, An );
-				break;
+				pb.address = An;
+				
+				return read_ea_displaced_address( s, pb );
 			
 			case 6:
-				pb.address = read_ea_indexed_address( s, An );
+				pb.address = An;
+				
+				return read_ea_indexed_address( s, pb );
 				break;
 			
 			case 7:
@@ -200,12 +244,14 @@ namespace v68k
 						return fetch_instruction_long( s, pb.address );
 					
 					case 2:
-						pb.address = read_ea_displaced_address( s, s.pc() );
-						break;
+						pb.address = s.pc();
+						
+						return read_ea_displaced_address( s, pb );
 					
 					case 3:
-						pb.address = read_ea_indexed_address( s, s.pc() );
-						break;
+						pb.address = s.pc();
+						
+						return read_ea_indexed_address( s, pb );
 					
 					default:
 						break;
