@@ -25,6 +25,8 @@ namespace v68k
 	op_result fetch_instruction_word( processor_state& s, uint16_t& longword );
 	op_result fetch_instruction_long( processor_state& s, uint32_t& longword );
 	
+	op_result fetch_instruction_word_signed( processor_state& s, uint32_t& longword );
+	
 	inline int16_t fetch_instruction_word_signed( processor_state& state )
 	{
 		return fetch_instruction_word( state );
