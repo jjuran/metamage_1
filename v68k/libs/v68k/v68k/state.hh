@@ -162,6 +162,11 @@ namespace v68k
 			return (model < mc68020) & addr;
 		}
 		
+		void acknowledge_breakpoint( uint16_t new_opcode )
+		{
+			opcode = new_opcode;
+		}
+		
 		uint32_t bus_error    ()  { condition = halted;  return 0; }
 		uint32_t address_error()  { condition = halted;  return 0; }
 	};
