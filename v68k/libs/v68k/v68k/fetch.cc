@@ -406,7 +406,15 @@ namespace v68k
 		
 		if ( s.model < mc68010 )
 		{
-			(void) s.read_mem( pb.address, pb.size );
+			uint32_t dummy;
+			
+			switch ( pb.size )
+			{
+				default:  // not reached
+				byte_sized:  return s.read_byte( pb.address, dummy );
+				word_sized:  return s.read_word( pb.address, dummy );
+				long_sized:  return s.read_long( pb.address, dummy );
+			}
 		}
 		
 		return Ok;
