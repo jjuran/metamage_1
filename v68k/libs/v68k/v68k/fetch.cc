@@ -168,7 +168,12 @@ namespace v68k
 			return Ok;
 		}
 		
-		set_effective_address_param( s, mode, n, pb );
+		op_result result = set_effective_address_param( s, mode, n, pb );
+		
+		if ( result < 0 )
+		{
+			return result;
+		}
 		
 		const uint32_t data = mode <= 1 ? s.regs[ pb.target ]
 		                                : s.read_mem( pb.address, pb.size );
