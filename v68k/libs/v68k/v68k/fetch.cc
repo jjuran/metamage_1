@@ -154,12 +154,22 @@ namespace v68k
 			return result;
 		}
 		
-		const uint32_t data = mode <= 1 ? s.regs[ pb.target ]
-		                                : s.read_mem( pb.address, pb.size );
-		
-		pb.target = uint32_t( -1 );
-		
-		pb.first = sign_extend( data, pb.size );
+		if ( mode <= 1 )
+		{
+			pb.first = sign_extend( s.regs[ pb.target ], pb.size );
+			
+			pb.target = uint32_t( -1 );
+		}
+		else
+		{
+			switch ( pb.size )
+			{
+				default:  // not reached
+				case byte_sized:  return s.read_byte_signed( pb.address, pb.first );
+				case word_sized:  return s.read_word_signed( pb.address, pb.first );
+				case long_sized:  return s.read_long       ( pb.address, pb.first );
+			}
+		}
 		
 		return Ok;
 	}
