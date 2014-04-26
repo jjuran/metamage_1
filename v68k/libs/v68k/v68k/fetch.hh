@@ -27,11 +27,6 @@ namespace v68k
 	
 	op_result fetch_instruction_word_signed( processor_state& s, uint32_t& longword );
 	
-	inline int16_t fetch_instruction_word_signed( processor_state& state )
-	{
-		return fetch_instruction_word( state );
-	}
-	
 	
 	op_result fetch_effective_address( processor_state& state, op_params& pb );
 	
