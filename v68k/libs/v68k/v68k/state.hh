@@ -42,7 +42,7 @@ namespace v68k
 	
 	struct processor_state;
 	
-	typedef uint16_t (*bkpt_handler)(processor_state& s, int vector);
+	typedef op_result (*bkpt_handler)(processor_state& s, int vector);
 	
 	struct processor_state
 	{

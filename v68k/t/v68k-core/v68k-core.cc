@@ -186,11 +186,14 @@ static int bkpt_vector = -1;
 
 static uint16_t opcode = 0x4AFC;
 
-static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
+static
+v68k::op_result bkpt_handler( v68k::processor_state& s, int vector )
 {
 	bkpt_vector = vector;
 	
-	return opcode;
+	s.acknowledge_breakpoint( opcode );
+	
+	return v68k::Ok;
 }
 
 static void bkpt()
