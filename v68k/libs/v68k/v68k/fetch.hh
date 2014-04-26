@@ -20,8 +20,6 @@ namespace v68k
 	struct op_params;
 	
 	
-	uint16_t fetch_instruction_word( processor_state& state );
-	
 	op_result fetch_instruction_word( processor_state& s, uint16_t& longword );
 	op_result fetch_instruction_long( processor_state& s, uint32_t& longword );
 	

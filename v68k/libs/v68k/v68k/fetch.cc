@@ -56,25 +56,6 @@ namespace v68k
 		return Ok;
 	}
 	
-	uint16_t fetch_instruction_word( processor_state& s )
-	{
-		if ( s.pc() & 1 )
-		{
-			return s.address_error();
-		}
-		
-		uint16_t word;
-		
-		if ( !s.mem.get_instruction_word( s.pc(), word, s.program_space() ) )
-		{
-			return s.bus_error();
-		}
-		
-		s.pc() += 2;
-		
-		return word;
-	}
-	
 	
 	static op_result set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
 	{
