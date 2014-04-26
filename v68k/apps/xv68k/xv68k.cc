@@ -451,11 +451,13 @@ void load_code( uint8_t* mem, const char* path )
 static
 v68k::op_result bkpt_2( v68k::processor_state& s )
 {
-	if ( bridge_call( s ) )
+	v68k::op_result result = bridge_call( s );
+	
+	if ( result >= 0 )
 	{
 		s.acknowledge_breakpoint( 0x4E75 );  // RTS
 	}
-	else
+	else if ( result == v68k::Illegal_instruction )
 	{
 		// FIXME:  Report call number
 		
@@ -466,7 +468,7 @@ v68k::op_result bkpt_2( v68k::processor_state& s )
 		write( STDERR_FILENO, msg, strlen( msg ) );
 	}
 	
-	return v68k::Ok;
+	return result;
 }
 
 static
