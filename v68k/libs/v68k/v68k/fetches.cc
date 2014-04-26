@@ -302,8 +302,8 @@ namespace v68k
 	
 	fetcher fetches_ADDX_Dn[] =
 	{
-		&FETCH_MAJOR_REGISTER_NUM,
 		&fetch_sized_data_at_effective_address,
+		&FETCH_MAJOR_REGISTER_NUM,
 		&add_X_to_first,
 		0  // NULL
 	};

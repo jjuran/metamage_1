@@ -168,10 +168,12 @@ namespace v68k
 			return Ok;
 		}
 		
-		const uint32_t addr = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
+		set_effective_address_param( s, mode, n, pb );
 		
-		const uint32_t data = mode <= 1 ? s.regs[ addr ]
-		                                : s.read_mem( addr, pb.size );
+		const uint32_t data = mode <= 1 ? s.regs[ pb.target ]
+		                                : s.read_mem( pb.address, pb.size );
+		
+		pb.target = uint32_t( -1 );
 		
 		pb.first = sign_extend( data, pb.size );
 		
