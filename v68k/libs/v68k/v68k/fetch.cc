@@ -78,11 +78,7 @@ namespace v68k
 	
 	static op_result set_effective_address_param( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
 	{
-		const uint32_t ea = fetch_effective_address( s, mode, n, byte_count( pb.size ) );
-		
-		(mode <= 1 ? pb.target : pb.address) = ea;
-		
-		return Ok;
+		return fetch_effective_address( s, mode, n, pb );
 	}
 	
 	op_result fetch_effective_address( processor_state& s, op_params& pb )

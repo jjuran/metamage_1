@@ -9,14 +9,18 @@
 // C99
 #include <stdint.h>
 
+// v68k
+#include "v68k/op.hh"
+
 
 namespace v68k
 {
 	
+	struct op_params;
 	struct processor_state;
 	
 	
-	uint32_t fetch_effective_address( processor_state& state, uint16_t mode, uint16_t n, int size );
+	op_result fetch_effective_address( processor_state& state, uint16_t mode, uint16_t n, op_params& pb );
 	
 }
 

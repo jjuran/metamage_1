@@ -8,6 +8,7 @@
 // v68k
 #include "v68k/endian.hh"
 #include "v68k/fetch.hh"
+#include "v68k/macros.hh"
 #include "v68k/state.hh"
 
 
@@ -140,17 +141,23 @@ namespace v68k
 		return An -= size;
 	}
 	
-	uint32_t fetch_effective_address( processor_state& s, uint16_t mode, uint16_t n, int size )
+	op_result fetch_effective_address( processor_state& s, uint16_t mode, uint16_t n, op_params& pb )
 	{
 		const uint32_t An = s.a(n);
+		
+		int n_bytes;
 		
 		if ( mode == 3  ||  mode == 4 )
 		{
 		//	ASSERT( size != 0 );
 			
-			if ( size == 1  &&  n == 7 )
+			if ( pb.size == byte_sized  &&  n == 7 )
 			{
-				size = 2;  // SP is kept word-aligned
+				n_bytes = 2;  // SP is kept word-aligned
+			}
+			else
+			{
+				n_bytes = byte_count( pb.size );
 			}
 		}
 		
@@ -160,37 +167,45 @@ namespace v68k
 			case 1:  // Address
 				// Return a register id for Data/Address Register Direct mode.
 				
-				return mode << 3 | n;
+				pb.target = mode << 3 | n;
+				break;
 			
 			case 2:
-				return An;
+				pb.address = An;
+				break;
 			
 			case 3:
-				return postincrement( s.a(n), size );
+				pb.address = postincrement( s.a(n), n_bytes );
+				break;
 			
 			case 4:
-				return predecrement( s.a(n), size );
+				pb.address = predecrement( s.a(n), n_bytes );
+				break;
 			
 			case 5:
-				return read_ea_displaced_address( s, An );
+				pb.address = read_ea_displaced_address( s, An );
+				break;
 			
 			case 6:
-				return read_ea_indexed_address( s, An );
+				pb.address = read_ea_indexed_address( s, An );
+				break;
 			
 			case 7:
 				switch ( n )
 				{
 					case 0:
-						return fetch_instruction_word_signed( s );
+						return fetch_instruction_word_signed( s, pb.address );
 					
 					case 1:
-						return fetch_longword( s );
+						return fetch_instruction_long( s, pb.address );
 					
 					case 2:
-						return read_ea_displaced_address( s, s.pc() );
+						pb.address = read_ea_displaced_address( s, s.pc() );
+						break;
 					
 					case 3:
-						return read_ea_indexed_address( s, s.pc() );
+						pb.address = read_ea_indexed_address( s, s.pc() );
+						break;
 					
 					default:
 						break;
@@ -199,8 +214,7 @@ namespace v68k
 				break;
 		}
 		
-		// Not reached
-		return 0;
+		return Ok;
 	}
 	
 }
