@@ -32,8 +32,6 @@ namespace v68k
 		return fetch_instruction_word( state );
 	}
 	
-	uint32_t fetch_longword( processor_state& state );
-	
 	
 	op_result fetch_effective_address( processor_state& state, op_params& pb );
 	
