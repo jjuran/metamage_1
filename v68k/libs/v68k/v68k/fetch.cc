@@ -363,11 +363,15 @@ namespace v68k
 		s.a(i) -= byte_count( pb.size );
 		s.a(j) -= byte_count( pb.size );
 		
-		pb.first = s.read_mem( s.a(i), pb.size );
-		
 		pb.address = s.a(j);
 		
-		return Ok;
+		switch ( pb.size )
+		{
+			default:  // not reached
+			case byte_sized:  return s.read_byte_signed( s.a(i), pb.first );
+			case word_sized:  return s.read_word_signed( s.a(i), pb.first );
+			case long_sized:  return s.read_long       ( s.a(i), pb.first );
+		}
 	}
 	
 	
