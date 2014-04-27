@@ -32,6 +32,10 @@ namespace v68k
 			
 			bool step();
 			
+			bool take_exception_format_0( uint16_t vector_offset );
+		
+			bool take_exception_format_2( uint16_t vector_offset, uint32_t instruction_address );
+		
 			bool illegal_instruction()  { return take_exception_format_0( 4 * sizeof (uint32_t) ); }
 			bool privilege_violation()  { return take_exception_format_0( 8 * sizeof (uint32_t) ); }
 			
