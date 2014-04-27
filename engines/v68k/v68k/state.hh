@@ -89,8 +89,6 @@ namespace v68k
 			return regs[ PC ];
 		}
 		
-		void prefetch_instruction_word();
-		
 		uint32_t read_mem( uint32_t addr, op_size_t size );
 		
 		uint16_t get_CCR() const;

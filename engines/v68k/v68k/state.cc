@@ -31,18 +31,6 @@ namespace v68k
 		}
 	}
 	
-	void processor_state::prefetch_instruction_word()
-	{
-		if ( pc() & 1 )
-		{
-			address_error();
-		}
-		else if ( !mem.get_instruction_word( pc(), opcode, program_space() ) )
-		{
-			bus_error();
-		}
-	}
-	
 	uint32_t processor_state::read_mem( uint32_t addr, op_size_t size )
 	{
 		if ( size != byte_sized  &&  badly_aligned_data( addr ) )

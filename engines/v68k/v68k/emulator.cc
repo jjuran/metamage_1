@@ -259,6 +259,18 @@ namespace v68k
 		return condition == normal;
 	}
 	
+	void emulator::prefetch_instruction_word()
+	{
+		if ( pc() & 1 )
+		{
+			address_error();
+		}
+		else if ( !mem.get_instruction_word( pc(), opcode, program_space() ) )
+		{
+			bus_error();
+		}
+	}
+	
 	bool emulator::take_exception_format_0( uint16_t vector_offset )
 	{
 		const uint16_t saved_sr = get_SR();
