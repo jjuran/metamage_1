@@ -309,8 +309,30 @@ namespace v68k
 		const uint32_t n1 = s.opcode >> 0 & 0x7;
 		const uint32_t n2 = s.opcode >> 9 & 0x7;
 		
-		pb.first  = sign_extend( s.read_mem( s.a( n1 ), pb.size ), pb.size );
-		pb.second = sign_extend( s.read_mem( s.a( n2 ), pb.size ), pb.size );
+		const uint32_t An1 = s.a( n1 );
+		const uint32_t An2 = s.a( n2 );
+		
+		op_result result;
+		
+		switch ( pb.size )
+		{
+			default:  // not reached
+			case byte_sized:
+				if ( (result = s.read_byte_signed( An1, pb.first  )) < 0 )  return result;
+				if ( (result = s.read_byte_signed( An2, pb.second )) < 0 )  return result;
+				break;
+			
+			case word_sized:
+				if ( (result = s.read_word_signed( An1, pb.first  )) < 0 )  return result;
+				if ( (result = s.read_word_signed( An2, pb.second )) < 0 )  return result;
+				break;
+			
+			case long_sized:
+				if ( (result = s.read_long( An1, pb.first  )) < 0 )  return result;
+				if ( (result = s.read_long( An2, pb.second )) < 0 )  return result;
+				break;
+			
+		}
 		
 		const int increment = byte_count( pb.size );
 		
