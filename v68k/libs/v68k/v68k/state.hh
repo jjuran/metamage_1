@@ -130,8 +130,6 @@ namespace v68k
 			return result;
 		}
 		
-		uint32_t read_mem( uint32_t addr, op_size_t size );
-		
 		uint16_t get_CCR() const;
 		
 		uint16_t get_SR() const;
