@@ -502,6 +502,25 @@ namespace ShellShock
 		{
 			MatchPathnames( from_dir, path, result );
 		}
+		else
+		{
+			const char* remainder = slash + 1;
+			
+			const plus::string filename( path, slash );
+			
+			std::vector< plus::string > matches;
+			
+			MatchPathnames( from_dir, filename.c_str(), matches );
+			
+			typedef std::vector< plus::string >::const_iterator Iter;
+			
+			for ( Iter it = matches.begin();  it != matches.end();  ++it )
+			{
+				plus::string this_dir = *it + "/";
+				
+				ExpandPathnames( from_dir + this_dir, remainder, result );
+			}
+		}
 	}
 	
 	std::vector< plus::string > PathnameExpansion( const plus::string& word )
