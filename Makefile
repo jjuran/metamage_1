@@ -49,10 +49,10 @@ d68k:
 	./build.pl d68k
 
 d68k-hello: d68k
-	$(PACK68K) engines/v68k/demos/hello.p68k | $(D68K)
+	$(PACK68K) v68k/demos/hello.p68k | $(D68K)
 
 d68k-fizzbuzz: d68k
-	$(PACK68K) engines/v68k/demos/fizzbuzz.p68k | $(D68K)
+	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
 
 xv68k:
 	./build.pl xv68k
@@ -61,7 +61,7 @@ xv68k-rts: xv68k
 	echo 4E75 | $(PACK68K) | $(XV68K)
 
 xv68k-hello: xv68k
-	$(PACK68K) engines/v68k/demos/hello.p68k | $(XV68K)
+	$(PACK68K) v68k/demos/hello.p68k | $(XV68K)
 
 xv68k-ill: xv68k
 	echo 4AFC 4E75 | $(PACK68K) | $(XV68K)
