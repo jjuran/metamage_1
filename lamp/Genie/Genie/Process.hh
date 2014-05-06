@@ -218,8 +218,6 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			bool Forked() const  { return itsThread.get() == 0; }
-			
 			relix::os_thread_id GetThread() const;
 			
 			Process& vfork();

@@ -908,8 +908,10 @@ namespace Genie
 		
 		Resume();
 		
-		itsInterdependence = Forked() ? kProcessForked
-		                              : kProcessIndependent;
+		const bool forked = itsThread.get() == 0;
+		
+		itsInterdependence = forked ? kProcessForked
+		                            : kProcessIndependent;
 		
 		pid_t child = itsForkedChildPID;
 		
