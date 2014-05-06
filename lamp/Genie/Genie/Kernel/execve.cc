@@ -45,8 +45,6 @@ namespace Genie
 		{
 			Process& current = current_process();
 			
-			bool forked = current.Forked();
-			
 			// Start a new thread with the child's process context
 			current.Exec( path, argv, envp );
 			

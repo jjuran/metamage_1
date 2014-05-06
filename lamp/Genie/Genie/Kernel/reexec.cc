@@ -27,8 +27,6 @@ namespace Genie
 		{
 			Process& current = current_process();
 			
-			bool forked = current.Forked();
-			
 			// Start a new thread with the child's process context
 			current.Reexec( f, _1, _2, _3, _4, _5, _6, _7 );
 			
