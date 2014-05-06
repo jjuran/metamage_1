@@ -372,7 +372,7 @@ namespace Genie
 		{
 			runState = 'D';
 		}
-		else if ( runState == 'S'  &&  clock() - relix::current_process().get_last_activity() > 20 * 1000 * 1000 )
+		else if ( runState == 'S'  &&  clock() - process.get_process().get_last_activity() > 20 * 1000 * 1000 )
 		{
 			runState = 'I';  // idle
 		}
