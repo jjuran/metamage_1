@@ -18,7 +18,7 @@
 
 // plus
 #include "plus/ref_count.hh"
-#include "plus/string_fwd.hh"
+#include "plus/string.hh"
 
 // relix-kernel
 #include "relix/task/alarm_clock.hh"
@@ -43,6 +43,8 @@ namespace relix
 		private:
 			int its_id;
 			int its_ppid;
+			
+			plus::string its_name;
 			
 			clock_t its_last_activity;
 			
@@ -72,6 +74,10 @@ namespace relix
 			void set_ppid( int ppid )  { its_ppid = ppid; }
 			
 			void clear_ppid()  { its_ppid = 0; }
+			
+			const plus::string& name() const  { return its_name; }
+			
+			void set_name( const plus::string& name )  { its_name = name; }
 			
 			clock_t get_last_activity() const  { return its_last_activity; }
 			

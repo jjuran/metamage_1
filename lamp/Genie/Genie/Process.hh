@@ -12,9 +12,6 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// plus
-#include "plus/string.hh"
-
 // Recall
 #include "recall/stack_crawl.hh"
 
@@ -105,8 +102,6 @@ namespace Genie
 			
 			recall::stack_frame_pointer itsStackFramePtr;
 			
-			plus::string itsName;
-			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;
 			ProcessSchedule         itsSchedule;
@@ -186,8 +181,6 @@ namespace Genie
 			void Breathe();
 			void Yield();
 			void AsyncYield();
-			
-			const plus::string& ProgramName()  const  { return itsName;   }
 			
 			relix::fd_map& FileDescriptors();
 			

@@ -19,6 +19,7 @@ namespace relix
 	:
 		its_id           ( 1 ),
 		its_ppid         ( 0 ),
+		its_name( "init" ),
 		its_last_activity(   ),
 		its_process_group( new process_group( 1 ) ),
 		its_process_image( new process_image() ),
@@ -37,6 +38,7 @@ namespace relix
 	:
 		its_id           ( id   ),
 		its_ppid         ( parent.id() ),
+		its_name( parent.name() ),
 		its_last_activity(      ),
 		its_process_group( &parent.get_process_group() ),
 		its_process_image( &parent.get_process_image() ),

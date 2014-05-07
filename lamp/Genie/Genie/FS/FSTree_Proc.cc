@@ -417,7 +417,7 @@ namespace Genie
 				result += gear::inscribe_decimal( pid );
 				result += " "
 				          "(";
-				result += process.ProgramName();
+				result += process.get_process().name();
 				result += ")"
 				          " ";
 				result += ProcessStateCode( process );
@@ -505,7 +505,7 @@ namespace Genie
 		{
 			pid_t pid = GetKeyFromParent( that );
 			
-			result = GetProcess( pid ).ProgramName();
+			result = GetProcess( pid ).get_process().name();
 		}
 	};
 	

@@ -529,7 +529,6 @@ namespace Genie
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
-		itsName               ( "init" ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
@@ -564,7 +563,6 @@ namespace Genie
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsStackFramePtr      ( NULL ),
-		itsName               ( parent.ProgramName() ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
@@ -732,7 +730,7 @@ namespace Genie
 		CheckProgramFile( programFile );
 		
 		// Do we take the name before or after normalization?
-		itsName = programFile->name();
+		get_process().set_name( programFile->name() );
 		
 		ExecContext context( *programFile, argv );
 		
