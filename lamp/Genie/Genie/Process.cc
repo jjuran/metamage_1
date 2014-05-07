@@ -1190,8 +1190,15 @@ namespace Genie
 		Resume();
 	}
 	
-	void Process::DeliverSignal( int signo )
+	// Doesn't return if the process was current and receives a fatal signal while stopped.
+	// But always returns when *raising* a fatal signal.
+	void Process::Raise( int signo )
 	{
+		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
+		{
+			return;
+		}
+		
 		if ( GetPID() == 1 )
 		{
 			return;
@@ -1212,18 +1219,6 @@ namespace Genie
 		{
 			Continue();
 		}
-	}
-	
-	// Doesn't return if the process was current and receives a fatal signal while stopped.
-	// But always returns when *raising* a fatal signal.
-	void Process::Raise( int signo )
-	{
-		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
-		{
-			return;
-		}
-		
-		DeliverSignal( signo );
 	}
 	
 	// This function doesn't return if the process receives a fatal signal.

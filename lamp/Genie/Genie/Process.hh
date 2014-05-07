@@ -200,8 +200,6 @@ namespace Genie
 			
 			void ResetSignalAction( int signo );
 			
-			void DeliverSignal( int signal );
-			
 			void Raise( int signal );
 			
 			void ResumeAfterFork();
