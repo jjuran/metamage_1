@@ -305,9 +305,11 @@ namespace Genie
 		return NULL;
 	}
 	
-	static void* send_sigterm( void*, pid_t pid, Process& process )
+	static void* send_sigterm_or_sigkill( void*, pid_t pid, Process& process )
 	{
-		process.Raise( SIGTERM );
+		const int signo = process.GetSchedule() == kProcessStopped ? SIGKILL : SIGTERM;
+		
+		process.Raise( signo );
 		
 		return NULL;
 	}
@@ -318,7 +320,7 @@ namespace Genie
 	{
 		if ( !already_quitting )
 		{
-			for_each_process( &send_sigterm );
+			for_each_process( &send_sigterm_or_sigkill );
 			
 			already_quitting = true;
 		}
