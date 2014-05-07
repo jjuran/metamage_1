@@ -1208,7 +1208,10 @@ namespace Genie
 		
 		set_pending_signal( signo );
 		
-		Continue();
+		if ( signo == SIGKILL  ||  signo == SIGCONT )
+		{
+			Continue();
+		}
 	}
 	
 	// Doesn't return if the process was current and receives a fatal signal while stopped.
