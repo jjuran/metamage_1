@@ -579,7 +579,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		relix::mark_thread_active( pid );
+		relix::mark_thread_active( tid );
 	}
 	
 	Process::~Process()
@@ -1328,11 +1328,11 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
-		relix::mark_thread_inactive( itsPID );
+		relix::mark_thread_inactive( gettid() );
 		
 		Pause( kProcessStopped );
 		
-		relix::mark_thread_active( itsPID );
+		relix::mark_thread_active( gettid() );
 	}
 	
 	void Process::Continue()
