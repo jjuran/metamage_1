@@ -82,6 +82,7 @@
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/process_resources.hh"
+#include "relix/task/scheduler.hh"
 #include "relix/task/session.hh"
 #include "relix/time/checkpoint_delta.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
@@ -93,7 +94,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
-#include "Genie/scheduler.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -579,7 +579,7 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
-		mark_process_active( pid );
+		relix::mark_thread_active( pid );
 	}
 	
 	Process::~Process()
@@ -1037,7 +1037,7 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
-		mark_process_inactive( gettid() );
+		relix::mark_thread_inactive( gettid() );
 		
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{
@@ -1328,11 +1328,11 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
-		mark_process_inactive( itsPID );
+		relix::mark_thread_inactive( itsPID );
 		
 		Pause( kProcessStopped );
 		
-		mark_process_active( itsPID );
+		relix::mark_thread_active( itsPID );
 	}
 	
 	void Process::Continue()

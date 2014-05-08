@@ -5,10 +5,12 @@
 
 #include "Genie/api/yield.hh"
 
+// relix-kernel
+#include "relix/task/scheduler.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/scheduler.hh"
 #include "Genie/api/signals.hh"
 
 
@@ -19,7 +21,7 @@ namespace relix
 	{
 		using namespace Genie;
 		
-		mark_process_inactive( current_process().gettid() );
+		mark_thread_inactive( current_process().gettid() );
 		
 		current_process().Yield();
 		

@@ -13,9 +13,11 @@
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"
 
+// relix-kernel
+#include "relix/task/scheduler.hh"
+
 // Genie
 #include "Genie/ProcessList.hh"
-#include "Genie/scheduler.hh"
 
 
 namespace Genie
@@ -64,7 +66,7 @@ namespace Genie
 	
 	App::App()
 	{
-		Ped::gActivelyBusy_Hook = &is_active;
+		Ped::gActivelyBusy_Hook = &relix::is_active;
 		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
 		
 		SetCommandHandler( Ped::kCmdAbout, &About       );

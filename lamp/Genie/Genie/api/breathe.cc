@@ -8,10 +8,12 @@
 // Standard C
 #include <time.h>
 
+// relix-kernel
+#include "relix/task/scheduler.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/scheduler.hh"
 #include "Genie/api/signals.hh"
 
 
@@ -34,7 +36,7 @@ namespace Genie
 		
 		if ( now - the_last_breath_time > 20000 )
 		{
-			mark_process_active( current_process().gettid() );
+			relix::mark_thread_active( current_process().gettid() );
 			
 			current.Breathe();
 			
