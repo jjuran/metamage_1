@@ -995,11 +995,6 @@ namespace Genie
 		return get_process().get_sigaction( signo );
 	}
 	
-	void Process::SetSignalAction( int signo, const struct sigaction& action )
-	{
-		get_process().set_sigaction( signo, action );
-	}
-	
 	bool Process::WaitsForChildren() const
 	{
 		const struct sigaction& chld = GetSignalAction( SIGCHLD );
