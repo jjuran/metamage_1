@@ -1008,13 +1008,6 @@ namespace Genie
 		}
 	}
 	
-	void Process::ResetSignalAction( int signo )
-	{
-		const struct sigaction default_sigaction = { SIG_DFL };
-		
-		SetSignalAction( signo, default_sigaction );
-	}
-	
 	bool Process::WaitsForChildren() const
 	{
 		const struct sigaction& chld = GetSignalAction( SIGCHLD );
@@ -1308,7 +1301,9 @@ namespace Genie
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
-					ResetSignalAction( signo );
+					const struct sigaction default_sigaction = { SIG_DFL };
+					
+					SetSignalAction( signo, default_sigaction );
 				}
 				
 				throw caught;
