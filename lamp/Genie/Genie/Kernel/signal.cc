@@ -10,11 +10,13 @@
 #include "signal.h"
 
 // relix-kernel
+#include "relix/api/current_thread.hh"
 #include "relix/api/errno.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/sigpending.hh"
 #include "relix/syscall/sigprocmask.hh"
+#include "relix/task/process.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -124,11 +126,13 @@ namespace Genie
 			return set_errno( EINVAL );
 		}
 		
-		Process& current = current_process();
+		relix::thread& this_thread = relix::current_thread();
+		
+		relix::process& this_process = this_thread.get_process();
 		
 		if ( oldaction != NULL )
 		{
-			*oldaction = current.GetSignalAction( signo );
+			*oldaction = this_process.get_sigaction( signo );
 		}
 		
 		if ( action != NULL )
@@ -136,6 +140,11 @@ namespace Genie
 			if ( signo == SIGKILL  ||  signo == SIGSTOP )
 			{
 				return set_errno( EINVAL );
+			}
+			
+			if ( action->sa_handler == SIG_IGN )
+			{
+				this_thread.clear_pending_signal( signo );
 			}
 			
 		#ifdef SA_SIGINFO
@@ -147,7 +156,7 @@ namespace Genie
 			
 		#endif
 			
-			current.SetSignalAction( signo, *action );
+			this_process.set_sigaction( signo, *action );
 		}
 		
 		return 0;

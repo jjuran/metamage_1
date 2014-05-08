@@ -995,26 +995,6 @@ namespace Genie
 		return get_process().get_sigaction( signo );
 	}
 	
-	void Process::SetSignalAction( int signo, const struct sigaction& action )
-	{
-		ASSERT( signo >    0 );
-		ASSERT( signo < NSIG );
-		
-		get_process().set_sigaction( signo, action );
-		
-		if ( action.sa_handler == SIG_IGN )
-		{
-			clear_pending_signal( signo );
-		}
-	}
-	
-	void Process::ResetSignalAction( int signo )
-	{
-		const struct sigaction default_sigaction = { SIG_DFL };
-		
-		SetSignalAction( signo, default_sigaction );
-	}
-	
 	bool Process::WaitsForChildren() const
 	{
 		const struct sigaction& chld = GetSignalAction( SIGCHLD );
@@ -1308,7 +1288,9 @@ namespace Genie
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
-					ResetSignalAction( signo );
+					const struct sigaction default_sigaction = { SIG_DFL };
+					
+					get_process().set_sigaction( signo, default_sigaction );
 				}
 				
 				throw caught;

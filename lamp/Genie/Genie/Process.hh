@@ -196,10 +196,6 @@ namespace Genie
 			
 			const struct sigaction& GetSignalAction( int signo ) const;
 			
-			void SetSignalAction( int signo, const struct sigaction& action );
-			
-			void ResetSignalAction( int signo );
-			
 			void Raise( int signal );
 			
 			void ResumeAfterFork();
