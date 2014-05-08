@@ -1303,7 +1303,7 @@ namespace Genie
 				{
 					const struct sigaction default_sigaction = { SIG_DFL };
 					
-					SetSignalAction( signo, default_sigaction );
+					get_process().set_sigaction( signo, default_sigaction );
 				}
 				
 				throw caught;
