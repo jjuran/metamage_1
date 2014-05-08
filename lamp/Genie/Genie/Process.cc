@@ -997,15 +997,7 @@ namespace Genie
 	
 	void Process::SetSignalAction( int signo, const struct sigaction& action )
 	{
-		ASSERT( signo >    0 );
-		ASSERT( signo < NSIG );
-		
 		get_process().set_sigaction( signo, action );
-		
-		if ( action.sa_handler == SIG_IGN )
-		{
-			clear_pending_signal( signo );
-		}
 	}
 	
 	bool Process::WaitsForChildren() const
