@@ -28,7 +28,7 @@ namespace Genie
 			return true;
 		}
 		
-		const uint64_t now = clock();
+		const clock_t now = clock();
 		
 		Process& current = current_process();
 		
