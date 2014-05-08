@@ -8,7 +8,7 @@
 // relix
 #include "relix/api/current_process.hh"
 #include "relix/task/process.hh"
-#include "relix/task/schedule.hh"
+#include "relix/time/checkpoint_delta.hh"
 
 
 namespace relix

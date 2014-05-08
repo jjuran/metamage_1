@@ -1,9 +1,9 @@
 /*
-	schedule.cc
-	-----------
+	checkpoint_delta.cc
+	-------------------
 */
 
-#include "relix/task/schedule.hh"
+#include "relix/time/checkpoint_delta.hh"
 
 // Standard C
 #include <time.h>
@@ -27,4 +27,3 @@ namespace relix
 	}
 	
 }
-

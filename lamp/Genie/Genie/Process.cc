@@ -83,7 +83,7 @@
 #include "relix/task/process_image.hh"
 #include "relix/task/process_resources.hh"
 #include "relix/task/session.hh"
-#include "relix/task/schedule.hh"
+#include "relix/time/checkpoint_delta.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
