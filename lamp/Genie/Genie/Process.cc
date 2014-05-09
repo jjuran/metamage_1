@@ -896,6 +896,29 @@ namespace Genie
 		return get_process().get_process_group().get_session().id();
 	}
 	
+	char Process::run_state_code() const
+	{
+		switch ( itsSchedule )
+		{
+			case kProcessRunning:      return 'R';  // [1]
+			case kProcessSleeping:     return 'S';  // [2]
+			case kProcessStopped:      return 'T';  // set in Process::Stop()
+			case kProcessFrozen:       return 'V';  // set in SpawnVFork() prior to NewProcess()
+			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
+			
+			// [1] set on parent in execve() after child.Exec()
+			//     set on parent in _exit() if forked
+			//     set in Yield() after YieldToAnyThread() returns
+			//     set in StopThread() after SetThreadState() if same thread
+			// [2] set at end of Process::Exec() (after creating new thread for child)
+			//     set in Process::Continue() if thread was stopped
+			//     set in Yield() before YieldToAnyThread() is called
+			
+			default:
+				return '?';
+		}
+	}
+	
 	relix::fd_map& Process::FileDescriptors()
 	{
 		return get_process().get_process_resources().get_fd_map();

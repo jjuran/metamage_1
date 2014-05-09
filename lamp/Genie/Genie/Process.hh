@@ -143,6 +143,8 @@ namespace Genie
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
 			
+			char run_state_code() const;
+			
 			int Result() const  { return itsResult; }
 			
 			unsigned CountAsyncOps() const  { return itsAsyncOpCount; }
