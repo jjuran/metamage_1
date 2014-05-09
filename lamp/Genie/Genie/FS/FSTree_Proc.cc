@@ -313,19 +313,9 @@ namespace Genie
 	
 	static char ProcessStateCode( const Process& process )
 	{
-		ProcessLifeStage lifestage = process.GetLifeStage();
-		
 		char runState = process.run_state_code();
 		
-		if ( lifestage == kProcessReleased )
-		{
-			runState = 'X';
-		}
-		else if ( process.CountAsyncOps() > 0 )
-		{
-			runState = 'D';
-		}
-		else if ( runState == 'S'  &&  clock() - process.get_process().get_last_activity() > 20 * 1000 * 1000 )
+		if ( runState == 'S'  &&  clock() - process.get_process().get_last_activity() > 20 * 1000 * 1000 )
 		{
 			runState = 'I';  // idle
 		}

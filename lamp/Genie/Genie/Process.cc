@@ -898,6 +898,16 @@ namespace Genie
 	
 	char Process::run_state_code() const
 	{
+		if ( itsLifeStage == kProcessReleased )
+		{
+			return 'X';
+		}
+		
+		if ( CountAsyncOps() > 0 )
+		{
+			return 'D';
+		}
+		
 		switch ( itsSchedule )
 		{
 			case kProcessRunning:      return 'R';  // [1]
