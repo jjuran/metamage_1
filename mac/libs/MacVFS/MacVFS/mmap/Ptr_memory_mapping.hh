@@ -15,7 +15,7 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_MEMORY_TYPES_HANDLE_HH
+#ifndef MAC_MEMORY_TYPES_PTR_HH
 #include "Mac/Memory/Types/Ptr.hh"
 #endif
 
