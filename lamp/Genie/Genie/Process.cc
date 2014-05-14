@@ -584,6 +584,7 @@ namespace Genie
 	
 	Process::~Process()
 	{
+		relix::mark_thread_inactive( gettid() );
 	}
 	
 	void Process::unshare_fs_info()
@@ -1017,8 +1018,6 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
-		relix::mark_thread_inactive( gettid() );
-		
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{
 			DumpBacktrace();
