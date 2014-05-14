@@ -110,7 +110,18 @@ int main( int argc, char** argv )
 		}
 	}
 	
-	int remote_fd = connect( host, port );
+	int remote_fd;
+	
+	try
+	{
+		remote_fd = connect( host, port );
+	}
+	catch ( const p7::errno_t& err )
+	{
+		fprintf( stderr, "utcp: %s:%s: %s\n", host, port, strerror( err ) );
+		
+		return 1;
+	}
 	
 	CHECK_N( unet::send_fd( socket_fd, remote_fd ) );
 	CHECK_N( unet::send_fd( socket_fd, remote_fd ) );
