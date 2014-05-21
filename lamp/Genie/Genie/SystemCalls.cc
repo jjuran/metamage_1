@@ -17,6 +17,7 @@
 
 // relix-kernel
 #include "relix/api/current_process.hh"
+#include "relix/api/yield.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
@@ -83,13 +84,9 @@ namespace Genie
 	{
 		try
 		{
-			Process& current = current_process();
-			
 			while ( true )
 			{
-				current.Stop();
-				
-				current.HandlePendingSignals( true );
+				relix::yield( true );  // throw caught signals
 			}
 		}
 		catch ( ... )

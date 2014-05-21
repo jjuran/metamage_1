@@ -12,6 +12,7 @@
 // relix-kernel
 #include "relix/api/current_thread.hh"
 #include "relix/api/errno.hh"
+#include "relix/api/yield.hh"
 #include "relix/signal/caught_signal.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/sigpending.hh"
@@ -182,9 +183,7 @@ namespace Genie
 		{
 			while ( true )
 			{
-				current.Stop();
-				
-				current.HandlePendingSignals( true );
+				relix::yield( true );  // throw caught signals
 			}
 		}
 		catch ( ... )
