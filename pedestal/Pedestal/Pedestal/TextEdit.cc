@@ -48,7 +48,7 @@ namespace Pedestal
 	
 	static short gSelectionAnchor, gSelectionExtent;
 	
-	static const size_t kMaximumTELength = 30000;
+	static const size_t kMaximumTELength = 32000;
 	
 	
 	class NotEnoughSpaceForTEKey   {};
