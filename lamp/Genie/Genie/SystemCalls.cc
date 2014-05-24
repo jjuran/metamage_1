@@ -17,8 +17,6 @@
 
 // relix-kernel
 #include "relix/api/current_process.hh"
-#include "relix/api/yield.hh"
-#include "relix/signal/caught_signal.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
@@ -34,6 +32,7 @@
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
+#include "relix/syscall/sigsuspend.hh"
 #include "relix/syscall/truncate.hh"
 #include "relix/syscall/write.hh"
 #include "relix/syscall/writev.hh"
@@ -82,21 +81,7 @@ namespace Genie
 	
 	static int pause()
 	{
-		try
-		{
-			while ( true )
-			{
-				relix::yield( true );  // throw caught signals
-			}
-		}
-		catch ( ... )
-		{
-			(void) set_errno_from_exception();
-		}
-		
-		relix::prevent_syscall_restart();
-		
-		return -1;  // EINTR
+		return relix::sigsuspend( NULL );
 	}
 	
 	
