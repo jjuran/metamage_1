@@ -392,7 +392,7 @@ namespace tool
 			command.push_back( "full" );
 		}
 		
-		const bool debug = opt[2] <= '2';
+		const bool debug = opt == NULL  ||  opt[2] <= '2';
 		
 		if ( arch == arch_m68k  &&  !debug )
 		{
