@@ -12,11 +12,10 @@
 // relix-kernel
 #include "relix/api/current_thread.hh"
 #include "relix/api/errno.hh"
-#include "relix/api/yield.hh"
-#include "relix/signal/caught_signal.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/sigpending.hh"
 #include "relix/syscall/sigprocmask.hh"
+#include "relix/syscall/sigsuspend.hh"
 #include "relix/task/process.hh"
 
 // Genie
@@ -166,37 +165,7 @@ namespace Genie
 	
 	using relix::sigpending;
 	using relix::sigprocmask;
-	
-	
-	static int sigsuspend( const sigset_t* sigmask )
-	{
-		Process& current = current_process();
-		
-		sigset_t previous = current.signals_blocked();
-		
-		if ( sigmask != NULL )
-		{
-			current.set_signals_blocked( *sigmask );
-		}
-		
-		try
-		{
-			while ( true )
-			{
-				relix::yield( true );  // throw caught signals
-			}
-		}
-		catch ( ... )
-		{
-			(void) set_errno_from_exception();
-		}
-		
-		current.set_signals_blocked( previous );
-		
-		relix::prevent_syscall_restart();
-		
-		return -1;  // EINTR
-	}
+	using relix::sigsuspend;
 	
 	
 	#pragma force_active on
