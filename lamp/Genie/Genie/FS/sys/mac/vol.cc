@@ -41,9 +41,9 @@ namespace Genie
 	
 	static short find_boot_disk()
 	{
-		const N::FSDirSpec system_folder = N::FindFolder( N::kOnSystemDisk,
-		                                                  N::kSystemFolderType,
-		                                                  false );
+		const Mac::FSDirSpec system_folder = N::FindFolder( N::kOnSystemDisk,
+		                                                    N::kSystemFolderType,
+		                                                    false );
 		
 		return system_folder.vRefNum;
 	}
