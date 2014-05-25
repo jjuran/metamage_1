@@ -39,7 +39,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static Mac::FSVolumeRefNum find_boot_disk()
+	static short find_boot_disk()
 	{
 		const N::FSDirSpec system_folder = N::FindFolder( N::kOnSystemDisk,
 		                                                  N::kSystemFolderType,
@@ -95,7 +95,7 @@ namespace Genie
 		return false;
 	}
 	
-	static N::FSVolumeRefNum find_ram_disk()
+	static short find_ram_disk()
 	{
 		typedef N::Volume_Container::const_iterator iterator;
 		
@@ -105,7 +105,7 @@ namespace Genie
 		                                  sequence.end(),
 		                                  volume_is_ram_disk() );
 		
-		return it != sequence.end() ? *it : N::FSVolumeRefNum( 0 );
+		return it != sequence.end() ? *it : 0;
 	}
 	
 	
@@ -113,7 +113,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		typedef Mac::FSVolumeRefNum (*Function)();
+		typedef short (*Function)();
 		
 		Function f = (Function) args;
 		
