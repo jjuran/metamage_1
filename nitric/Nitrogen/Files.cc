@@ -33,10 +33,10 @@ namespace nucleus
 	CInfoPBRec&
 	//
 	initializer< CInfoPBRec >::operator()( CInfoPBRec&        pb,
-		                                   N::FSVolumeRefNum  vRefNum,
-		                                   N::FSDirID         dirID,
-		                                   StringPtr          name,
-		                                   SInt16             index )
+	                                       N::FSVolumeRefNum  vRefNum,
+	                                       N::FSDirID         dirID,
+	                                       StringPtr          name,
+	                                       SInt16             index )
 	{
 		DirInfo& dirInfo = pb.dirInfo;
 		
