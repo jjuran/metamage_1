@@ -178,10 +178,18 @@ namespace Genie
 		
 		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile.name() ) );
 		
-		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
-		                          && std::equal( destName.begin(),
-		                                         destName.end(),
-		                                         (const char*) srcFileSpec.name + 1 );
+		const char* dest = destName.begin();
+		
+		const size_t n_dest = destName.size();
+		
+		const unsigned char* src = srcFileSpec.name;
+		
+		const uint8_t n_src = *src++;
+		
+		const bool keeping_name =    n_dest == n_src
+		                          && std::equal( dest,
+		                                         dest + n_dest,
+		                                         (const char*) n_src );
 		
 		if ( srcFileSpec.parID == destFileSpec.parID )
 		{
