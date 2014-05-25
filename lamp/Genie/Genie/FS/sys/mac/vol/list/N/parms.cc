@@ -47,9 +47,9 @@ namespace Genie
 	}
 	
 	
-	struct GetVolumeParmsAttrib : plus::serialize_hex< UInt32 >
+	struct GetVolumeParmsAttrib : plus::serialize_hex< uint32_t >
 	{
-		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static uint32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			return parmsInfo.vMAttrib;
 		}
@@ -57,7 +57,7 @@ namespace Genie
 	
 	struct GetVolumeParmsHandle : plus::serialize_pointer
 	{
-		static ::Handle Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static void* Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMLocalHand == 0 )
 			{
@@ -68,9 +68,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsServer : plus::serialize_hex< UInt32 >
+	struct GetVolumeParmsServer : plus::serialize_hex< uint32_t >
 	{
-		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static uint32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMServerAdr == 0 )
 			{
@@ -81,9 +81,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsGrade : plus::serialize_int< SInt32 >
+	struct GetVolumeParmsGrade : plus::serialize_int< int32_t >
 	{
-		static SInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static int32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 2  ||  parmsInfo.vMVolumeGrade == 0 )
 			{
@@ -94,9 +94,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsPrivID : plus::serialize_int< SInt16 >
+	struct GetVolumeParmsPrivID : plus::serialize_int< int16_t >
 	{
-		static SInt16 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static int16_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 2 )
 			{
@@ -107,9 +107,9 @@ namespace Genie
 		}
 	};
 	
-	struct GetVolumeParmsExtended : plus::serialize_hex< UInt32 >
+	struct GetVolumeParmsExtended : plus::serialize_hex< uint32_t >
 	{
-		static UInt32 Get( const GetVolParmsInfoBuffer& parmsInfo )
+		static uint32_t Get( const GetVolParmsInfoBuffer& parmsInfo )
 		{
 			if ( parmsInfo.vMVersion < 3 )
 			{
