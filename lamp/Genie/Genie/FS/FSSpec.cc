@@ -19,23 +19,6 @@ namespace Genie
 	namespace n = nucleus;
 	
 	
-	bool VolumeIsOnServer( Mac::FSVolumeRefNum vRefNum )
-	{
-		GetVolParmsInfoBuffer parmsInfo = { 0 };
-		
-		HParamBlockRec pb = { 0 };
-		
-		HIOParam& io = pb.ioParam;
-		
-		io.ioVRefNum  = vRefNum;
-		io.ioBuffer   = (char *) &parmsInfo;
-		io.ioReqCount = sizeof parmsInfo;
-		
-		Mac::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
-		
-		return parmsInfo.vMServerAdr != 0;
-	}
-	
 	Mac::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
 	{
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
