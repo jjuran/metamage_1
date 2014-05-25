@@ -77,21 +77,20 @@ namespace Genie
 		return child;
 	}
 	
-	static N::FSDirSpec GetUserHomeFolder()
+	static VRefNum_DirID GetUserHomeFolder()
 	{
 		VRefNum_DirID folder = mac::sys::get_user_home();
 		
 		if ( folder.vRefNum != 0 )
 		{
-			N::FSDirSpec result;
-			
-			result.vRefNum = Mac::FSVolumeRefNum( folder.vRefNum );
-			result.dirID   = Mac::FSDirID       ( folder.dirID   );
-			
-			return result;
+			return folder;
 		}
 		
-		return FindUserHomeFolder();
+		N::FSDirSpec found = FindUserHomeFolder();
+		
+		VRefNum_DirID result = { found.vRefNum, found.dirID };
+		
+		return result;
 	}
 	
 	
