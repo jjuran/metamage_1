@@ -39,5 +39,12 @@ namespace sys {
 		return err;
 	}
 	
+	bool volume_is_on_server( short vRefNum )
+	{
+		GetVolParmsInfoBuffer buffer;
+		
+		return get_volume_params( buffer, vRefNum ) == noErr  &&  buffer.vMServerAdr != 0;
+	}
+	
 }
 }
