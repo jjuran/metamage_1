@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 
+// mac-types
+#include "mac_types/GetVolParmsInfoBuffer.hh"
+
 // mac-sys-utils
 #include "mac_sys/volume_params.hh"
 
@@ -29,6 +32,9 @@
 
 namespace Genie
 {
+	
+	using mac::types::GetVolParmsInfoBuffer;
+	
 	
 	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
 	{
