@@ -5,9 +5,6 @@
 
 #include "Genie/FS/FSTree_FSSpec.hh"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include "fcntl.h"
 #include "sys/stat.h"
@@ -490,9 +487,9 @@ namespace Genie
 		
 		N::FSDirSpec destDir = io::get_preceding_directory( destFile );
 		
-		const bool renaming = !std::equal( srcFile.name,
-		                                   srcFile.name + 1 + srcFile.name[0],
-		                                   destFile.name );
+		const bool renaming = memcmp( srcFile.name,
+		                              destFile.name,
+		                              1 + srcFile.name[0] ) != 0;
 		
 		ConstStr255Param name = renaming ? destFile.name : NULL;
 		
@@ -898,9 +895,9 @@ namespace Genie
 					
 					const plus::string name = slashes_from_colons( name_MacRoman );
 					
-					const bool equal = std::equal( name.begin(),
-					                               name.end(),
-					                               (const char*) (extra.fsspec.name + 1) );
+					const bool equal = memcmp( name.begin(),
+					                           (extra.fsspec.name + 1),
+					                           name.size() ) == 0;
 					
 					if ( !equal )
 					{
