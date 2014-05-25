@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 
+// mac-sys-utils
+#include "mac_sys/volume_params.hh"
+
 // gear
 #include "gear/parse_decimal.hh"
 
@@ -17,7 +20,6 @@
 
 // Nitrogen
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -125,24 +127,6 @@ namespace Genie
 		}
 	};
 	
-	static void GetVolParmsInfo( GetVolParmsInfoBuffer&  parmsInfo,
-	                             const FSTree*           that )
-	{
-		const Mac::FSVolumeRefNum vRefNum = GetKey( that );
-		
-		memset( &parmsInfo, '\0', sizeof parmsInfo );
-		
-		HParamBlockRec pb = { 0 };
-		
-		HIOParam& io = pb.ioParam;
-		
-		io.ioVRefNum  = vRefNum;
-		io.ioBuffer   = (char *) &parmsInfo;
-		io.ioReqCount = sizeof parmsInfo;
-		
-		Mac::ThrowOSStatus( ::PBHGetVolParmsSync( &pb ) );
-	}
-	
 	
 	template < class Accessor >
 	struct sys_mac_vol_N_Parms_Property : readonly_property
@@ -155,7 +139,7 @@ namespace Genie
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			
-			GetVolParmsInfo( parmsInfo, that );
+			mac::sys::get_volume_params( parmsInfo, GetKey( that ) );
 			
 			const typename Accessor::result_type data = Accessor::Get( parmsInfo );
 			
