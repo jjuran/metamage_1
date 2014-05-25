@@ -22,6 +22,7 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/volume_params.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -1112,7 +1113,7 @@ namespace Genie
 		
 		N::FSDirID dirID = N::FSDirID( cInfo.dirInfo.ioDrDirID );
 		
-		const bool async = !TARGET_CPU_68K && FileIsOnServer( item ) && !MacFeatures::Is_BlueBoxed();
+		const bool async = !TARGET_CPU_68K && mac::sys::item_is_on_server( item ) && !MacFeatures::Is_BlueBoxed();
 		
 		if ( async )
 		{
