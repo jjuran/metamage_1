@@ -21,9 +21,6 @@
 #include "plus/stringify.hh"
 #include "plus/var_string.hh"
 
-// Nitrogen
-#include "Mac/Files/Types/FSVolumeRefNum.hh"
-
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
@@ -36,12 +33,12 @@ namespace Genie
 	using mac::types::GetVolParmsInfoBuffer;
 	
 	
-	static Mac::FSVolumeRefNum GetKeyFromParent( const FSTree* parent )
+	static short GetKeyFromParent( const FSTree* parent )
 	{
-		return Mac::FSVolumeRefNum( -gear::parse_unsigned_decimal( parent->name().c_str() ) );
+		return -gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
 	
-	static Mac::FSVolumeRefNum GetKey( const FSTree* that )
+	static short GetKey( const FSTree* that )
 	{
 		return GetKeyFromParent( that->owner() );
 	}
@@ -138,8 +135,6 @@ namespace Genie
 	struct sys_mac_vol_N_Parms_Property : readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
-		
-		typedef Mac::FSVolumeRefNum Key;
 		
 		static void get( plus::var_string& result, const FSTree* that, bool binary )
 		{
