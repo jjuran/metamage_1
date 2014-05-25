@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/mac/vol.hh"
 
-// Standard C++
-#include <algorithm>
-
 // mac-sys-utils
 #include "mac_sys/unit_table.hh"
 
@@ -21,7 +18,6 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
-#include "Nitrogen/Files.hh"
 #include "Nitrogen/Folders.hh"
 
 // vfs
@@ -30,6 +26,9 @@
 
 // Genie
 #include "Genie/FS/sys/mac/vol/list.hh"
+
+
+#define PSTR_LEN( s )  "\p" s, sizeof s
 
 
 namespace Genie
@@ -49,63 +48,48 @@ namespace Genie
 	}
 	
 	
-	struct volume_is_ram_disk
-	{
-		static bool applies( N::FSVolumeRefNum vRefNum );
-		
-		bool operator()( N::FSVolumeRefNum vRefNum ) const
-		{
-			return applies( vRefNum );
-		}
-	};
-	
-	static void PBHGetVInfoSync( HVolumeParam& pb, N::FSVolumeRefNum vRefNum, StringPtr name = NULL )
-	{
-		pb.ioNamePtr  = name;
-		pb.ioVRefNum  = vRefNum;
-		pb.filler2    = 0;
-		pb.ioVolIndex = 0;
-		
-		Mac::ThrowOSStatus( ::PBHGetVInfoSync( (HParamBlockRec*) &pb ) );
-	}
-	
-	bool volume_is_ram_disk::applies( N::FSVolumeRefNum vRefNum )
+	static short find_ram_disk()
 	{
 		using mac::types::AuxDCE;
 		
-		HVolumeParam pb;
+		AuxDCE*** const unit_table = mac::sys::get_unit_table_base();
 		
-		PBHGetVInfoSync( pb, vRefNum );
+		HParamBlockRec pb;
 		
-		if ( pb.ioVDRefNum == 0 )
+		pb.volumeParam.ioNamePtr = NULL;
+		
+		for ( short index = 1;  ;  ++index )
 		{
-			return false;
+			pb.volumeParam.ioVRefNum  = 0;
+			pb.volumeParam.ioVolIndex = index;
+			
+			if ( OSErr err = ::PBHGetVInfoSync( &pb ) )
+			{
+				if ( err == nsvErr )
+				{
+					break;
+				}
+				
+				// Unexpected error
+				break;
+			}
+			
+			if ( const short dRefNum = pb.volumeParam.ioVDRefNum )
+			{
+				const short unit_number = ~dRefNum;
+				
+				AuxDCE** const dceHandle = unit_table[ unit_number ];
+				
+				const unsigned char* name = mac::sys::get_driver_name( dceHandle );
+				
+				if ( memcmp( name, PSTR_LEN( ".EDisk" ) ) == 0 )
+				{
+					return pb.volumeParam.ioVRefNum;
+				}
+			}
 		}
 		
-		const SInt16 unit_number = ~pb.ioVDRefNum;
-		
-		AuxDCE** const dceHandle = mac::sys::get_unit_table_base()[ unit_number ];
-		
-		const unsigned char* name = mac::sys::get_driver_name( dceHandle );
-		
-		return std::equal( name,
-		                   name + 1 + name[0],
-		                   "\p" ".EDisk" );
-		
-		return false;
-	}
-	
-	static short find_ram_disk()
-	{
-		typedef N::Volume_Container::const_iterator iterator;
-		
-		N::Volume_Container sequence = N::Volumes();
-		
-		const iterator it = std::find_if( sequence.begin(),
-		                                  sequence.end(),
-		                                  volume_is_ram_disk() );
-		
-		return it != sequence.end() ? *it : 0;
+		return 0;
 	}
 	
 	
