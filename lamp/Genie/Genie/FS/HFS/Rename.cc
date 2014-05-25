@@ -48,14 +48,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static bool NamesAreSame( ConstStr63Param a, ConstStr63Param b )
-	{
-		// b may be a null string to indicate a will be reused, so they're the same
-		return b[0] == 0  ||  std::equal( a,
-		                                  a + 1 + a[0],
-		                                  b );
-	}
-	
 	static bool FileIsLocked( const FSSpec& file )
 	{
 		CInfoPBRec cInfo = { 0 };
@@ -97,7 +89,7 @@ namespace Genie
 			}
 	};
 	
-	static void RenameItem( const FSSpec& srcFile, const FSSpec& destFile )
+	static OSErr ForceRenameItem( const FSSpec& srcFile, const FSSpec& destFile )
 	{
 		ASSERT( srcFile.vRefNum == destFile.vRefNum );
 		ASSERT( srcFile.parID   == destFile.parID   );
@@ -105,9 +97,25 @@ namespace Genie
 		FileLockBypass lockBypass( srcFile );
 		
 		// Rename source to dest
-		N::FSpRename( srcFile, destFile.name );
+		OSErr err = ::FSpRename( &srcFile, destFile.name );
+		
+		if ( err == dupFNErr )
+		{
+			err = ::FSpDelete( &destFile );
+			
+			if ( err != noErr )
+			{
+				return err;
+			}
+			
+			err = ::FSpRename( &srcFile, destFile.name );
+		}
+		
+		Mac::ThrowOSStatus( err );
 		
 		lockBypass.SetFile( destFile );
+		
+		return noErr;
 	}
 	
 	
@@ -185,31 +193,12 @@ namespace Genie
 				return;
 			}
 			
-			if ( destExists )
-			{
-				const bool same_file = NamesAreSame( srcFileSpec.name, destFileSpec.name );
-				
-				if ( !same_file )
-				{
-					// Delete existing dest file
-					OSErr err = ::FSpDelete( &destFileSpec );
-					
-					if ( destIsDir  &&  err == fBsyErr )
-					{
-						p7::throw_errno( ENOTEMPTY );
-					}
-					
-					Mac::ThrowOSStatus( err );
-				}
-				
-				// Overwrite actual name with requested name
-				
-				plus::string requested_name = hashed_long_name( destName );
-				
-				N::CopyToPascalString( requested_name, destFileSpec.name, 31 );
-			}
+			OSErr deleteErr = ForceRenameItem( srcFileSpec, destFileSpec );
 			
-			RenameItem( srcFileSpec, destFileSpec );
+			if ( deleteErr == fBsyErr  &&  destIsDir )
+			{
+				p7::throw_errno( ENOTEMPTY );
+			}
 			
 			SetLongName( destFileSpec, destName );
 			
