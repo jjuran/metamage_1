@@ -43,7 +43,19 @@ namespace vfs
 	
 	const unsigned long gestaltROMSize = 'rom ';
 	
-	static const off_t global_rom_size = mac::sys::gestalt( gestaltROMSize );
+	static off_t get_rom_size()
+	{
+		off_t rom_size = mac::sys::gestalt( gestaltROMSize );
+		
+		if ( rom_size == 3 * 1024 * 1024 )
+		{
+			rom_size = 4 * 1024 * 1024;
+		}
+		
+		return rom_size;
+	}
+	
+	static const off_t global_rom_size = get_rom_size();
 	
 	
 	static off_t mac_rom_geteof( const node* that )
