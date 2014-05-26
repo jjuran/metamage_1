@@ -44,6 +44,8 @@ static void install_QuickDraw()
 	TBTRAP( EraseRect );  // A8A3
 	TBTRAP( InverRect );  // A8A4
 	TBTRAP( FillRect  );  // A8A5
+	
+	TBTRAP( InsetRect );  // A8A9
 }
 
 static void install_SegmentLoader()
