@@ -205,6 +205,9 @@ static const uint16_t loader_code[] =
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
 	
+	0x4BF8,  // LEA  (12288).W,A5
+	0x3000,
+	
 	0x21FC,  // MOVE.L  #screen_addr,(ScrnBase).W
 	uint16_t( screen_addr >> 16 ),
 	uint16_t( screen_addr       ),
