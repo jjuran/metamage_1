@@ -9,16 +9,9 @@
 
 QDGlobals qd;
 
-static GrafPtr* thePort_ptr;
-
 
 static void screen_test()
 {
-	asm
-	{
-		LEA  thePort_ptr,A5
-	}
-	
 	::InitGraf( &qd.thePort );
 	
 	const BitMap& screenBits = qd.screenBits;
