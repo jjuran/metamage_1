@@ -37,13 +37,13 @@ static void install_OSUtils()
 
 static void install_QuickDraw()
 {
-	toolbox_trap_table[ 0x006E ] = &InitGraf_patch;
+	TBTRAP( InitGraf );  // A86E
 	
-	toolbox_trap_table[ 0x00A1 ] = &FrameRect_patch;
-	toolbox_trap_table[ 0x00A2 ] = &PaintRect_patch;
-	toolbox_trap_table[ 0x00A3 ] = &EraseRect_patch;
-	toolbox_trap_table[ 0x00A4 ] = &InverRect_patch;
-	toolbox_trap_table[ 0x00A5 ] = &FillRect_patch;
+	TBTRAP( FrameRect );  // A8A1
+	TBTRAP( PaintRect );  // A8A2
+	TBTRAP( EraseRect );  // A8A3
+	TBTRAP( InverRect );  // A8A4
+	TBTRAP( FillRect  );  // A8A5
 }
 
 static void install_SegmentLoader()
