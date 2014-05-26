@@ -18,5 +18,7 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern );
 
 pascal void InsetRect_patch( Rect* rect, short dh, short dv );
 
+pascal unsigned char EmptyRect_patch( const Rect* rect );
+
 #endif
 

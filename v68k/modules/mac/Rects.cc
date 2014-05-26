@@ -343,3 +343,8 @@ pascal void InsetRect_patch( Rect* rect, short dh, short dv )
 	rect->bottom -= dv;
 	rect->right  -= dh;
 }
+
+pascal unsigned char EmptyRect_patch( const Rect* rect )
+{
+	return rect->top >= rect->bottom  ||  rect->left >= rect->right;
+}
