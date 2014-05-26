@@ -24,11 +24,11 @@ namespace Genie
 		
 		std::size_t length = **h;
 		
-		const char* begin = *h + 1;
-		
 		plus::string result;
 		
 		char* p = result.reset( length );
+		
+		const char* begin = *h + 1;
 		
 		memcpy( p, begin, length );
 		
