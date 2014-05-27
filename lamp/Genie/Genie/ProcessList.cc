@@ -151,7 +151,7 @@ namespace Genie
 	{
 		if ( !MacFeatures::Has_Threads() )
 		{
-			p7::throw_errno( ENOSYS );
+			throw ThreadManager_required();
 		}
 		
 		static relix::os_thread_box reaper = relix::new_os_thread( &reaper_thread_start, NULL, 0 );
