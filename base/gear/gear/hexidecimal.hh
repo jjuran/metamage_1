@@ -15,6 +15,7 @@ namespace gear
 	
 	// (nibble & 0x0f) -> ASCII hex digit
 	extern char encoded_hex_table[];
+	extern char encoded_HEX_table[];
 	
 	
 	inline unsigned char decoded_hex_digit( char c )
@@ -27,6 +28,11 @@ namespace gear
 		return encoded_hex_table[ d & 0x0f ];
 	}
 	
+	inline char encoded_HEX_char( unsigned char d )
+	{
+		return encoded_HEX_table[ d & 0x0f ];
+	}
+	
 	
 	unsigned char decode_8_bit_hex( const char* s );
 	
@@ -35,10 +41,13 @@ namespace gear
 	unsigned decode_32_bit_hex( const char* s );
 	
 	void encode_8_bit_hex( unsigned char x, char* s );
+	void encode_8_bit_HEX( unsigned char x, char* s );
 	
 	void encode_16_bit_hex( unsigned short x, char* s );
+	void encode_16_bit_HEX( unsigned short x, char* s );
 	
 	void encode_32_bit_hex( unsigned x, char* s );
+	void encode_32_bit_HEX( unsigned x, char* s );
 	
 	
 	inline unsigned short hexidecimal_magnitude( unsigned x )
@@ -56,6 +65,7 @@ namespace gear
 	}
 	
 	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n );
+	void inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n );
 	
 }
 

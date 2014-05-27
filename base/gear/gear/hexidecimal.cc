@@ -27,6 +27,13 @@ namespace gear
 		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
 	};
 	
+	// (nibble & 0x0f) -> ASCII hex digit
+	char encoded_HEX_table[] =
+	{
+		'0', '1', '2', '3', '4', '5', '6', '7',
+		'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+	};
+	
 	
 	unsigned char decode_8_bit_hex( const char* s )
 	{
@@ -66,12 +73,26 @@ namespace gear
 		s[ 1 ] = encoded_hex_char( x >>  0 );
 	}
 	
+	void encode_8_bit_HEX( unsigned char x, char* s )
+	{
+		s[ 0 ] = encoded_HEX_char( x >>  4 );
+		s[ 1 ] = encoded_HEX_char( x >>  0 );
+	}
+	
 	void encode_16_bit_hex( unsigned short x, char* s )
 	{
 		s[ 0 ] = encoded_hex_char( x >> 12 );
 		s[ 1 ] = encoded_hex_char( x >>  8 );
 		s[ 2 ] = encoded_hex_char( x >>  4 );
 		s[ 3 ] = encoded_hex_char( x >>  0 );
+	}
+	
+	void encode_16_bit_HEX( unsigned short x, char* s )
+	{
+		s[ 0 ] = encoded_HEX_char( x >> 12 );
+		s[ 1 ] = encoded_HEX_char( x >>  8 );
+		s[ 2 ] = encoded_HEX_char( x >>  4 );
+		s[ 3 ] = encoded_HEX_char( x >>  0 );
 	}
 	
 	void encode_32_bit_hex( unsigned x, char* s )
@@ -84,6 +105,18 @@ namespace gear
 		s[ 5 ] = encoded_hex_char( x >>  8 );
 		s[ 6 ] = encoded_hex_char( x >>  4 );
 		s[ 7 ] = encoded_hex_char( x >>  0 );
+	}
+	
+	void encode_32_bit_HEX( unsigned x, char* s )
+	{
+		s[ 0 ] = encoded_HEX_char( x >> 28 );
+		s[ 1 ] = encoded_HEX_char( x >> 24 );
+		s[ 2 ] = encoded_HEX_char( x >> 20 );
+		s[ 3 ] = encoded_HEX_char( x >> 16 );
+		s[ 4 ] = encoded_HEX_char( x >> 12 );
+		s[ 5 ] = encoded_HEX_char( x >>  8 );
+		s[ 6 ] = encoded_HEX_char( x >>  4 );
+		s[ 7 ] = encoded_HEX_char( x >>  0 );
 	}
 	
 	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n )
@@ -128,6 +161,55 @@ namespace gear
 			
 			case 1:
 				*p   = encoded_hex_char( x       );
+				// fall through
+			
+			case 0:
+				break;
+		}
+	}
+	
+	void inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n )
+	{
+		switch ( n )
+		{
+			default:
+				while ( --n >= 8 )
+				{
+					*p++ = '0';
+				}
+				
+				// fall through
+			
+			case 8:
+				*p++ = encoded_HEX_char( x >> 28 );
+				// fall through
+			
+			case 7:
+				*p++ = encoded_HEX_char( x >> 24 );
+				// fall through
+			
+			case 6:
+				*p++ = encoded_HEX_char( x >> 20 );
+				// fall through
+			
+			case 5:
+				*p++ = encoded_HEX_char( x >> 16 );
+				// fall through
+			
+			case 4:
+				*p++ = encoded_HEX_char( x >> 12 );
+				// fall through
+			
+			case 3:
+				*p++ = encoded_HEX_char( x >>  8 );
+				// fall through
+			
+			case 2:
+				*p++ = encoded_HEX_char( x >>  4 );
+				// fall through
+			
+			case 1:
+				*p   = encoded_HEX_char( x       );
 				// fall through
 			
 			case 0:
