@@ -149,9 +149,7 @@ namespace Genie
 	
 	static Process& NewProcess( Process::RootProcess )
 	{
-		static const bool has_ThreadManager = MacFeatures::Has_Threads();
-		
-		if ( !has_ThreadManager )
+		if ( !MacFeatures::Has_Threads() )
 		{
 			p7::throw_errno( ENOSYS );
 		}
