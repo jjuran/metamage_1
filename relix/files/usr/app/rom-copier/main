@@ -1,0 +1,67 @@
+#!/usr/bin/perl
+
+# Our custom MacRelix runtime has no perl library
+#use warnings;
+#use strict;
+
+
+sub set_button_title
+{
+	my ( $title ) = @_;
+	
+	system "echo $title > v/button/v/v/title";
+}
+
+sub wait_for_button
+{
+	open my $in, "<", "v/button/v/v/socket" or die;
+	
+	sysread $in, my( $buffer ), 1 or die;
+}
+
+my $progress = q|perl -pe 'm{^ \s* (\d+) \s* / \s* (\d+) \s* $}x and $_ = ($1/$2 * 10000) . "\n"'|;
+
+if ( -f "/sys/mac/rom" )
+{
+	#set_button_title( "Check" );  # already set in init
+	
+	wait_for_button();
+	
+	my $checksum = `/usr/bin/rom-checksum /sys/mac/rom | /usr/bin/tee v/checksum/v/v/text`;
+	
+	chop $checksum;
+	
+	if ( my $valid = $checksum =~ m{^ [0-9A-Fa-f]{8} $}x )
+	{
+		my $file = "/$checksum.rom";
+		
+		set_button_title( "Copy" );
+		
+	click:
+		
+		wait_for_button();
+		
+		system( "/sys/kernel/bin/beep" ), goto click if -e $file;
+		
+		set_button_title( "Wait" );
+		
+		link "/gui/new/progress", "v/progress/v/view";
+		
+		system "/usr/bin/copy --dump-progress /sys/mac/rom $file | $progress > v/progress/v/v/value";
+		system "/bin/sync";
+		
+		unlink "v/progress/v/view";
+		
+		system "/usr/bin/rom-checksum $file > v/checksum/v/v/text"
+	}
+}
+else
+{
+	system "echo ROM not found > v/checksum/v/v/text";
+}
+
+set_button_title( "Quit" );
+
+wait_for_button();
+
+system( "/sys/kernel/bin/quit" );

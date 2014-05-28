@@ -1,0 +1,72 @@
+#!/bin/sh
+
+set -e
+
+cd /gui/port/rom-copier
+
+exec 0>&2             # save fd 2
+exec 2> /dev/null     # discard stderr
+exec 9> lock || exit  # bail if the lock is taken
+exec 2>&0             # restore fd 2
+exec 0< /dev/null     # clear fd 0
+
+echo 5 > procid
+
+echo 0 > vis
+echo 400,100 > size
+echo ROM Copier > title
+
+/usr/bin/touch window
+
+echo 0 > w/text-font
+
+/bin/ln /gui/new/stack   view
+
+/bin/ln /gui/new/frame v/prompt/view
+/bin/ln /gui/new/frame v/checksum/view
+/bin/ln /gui/new/frame v/button/view
+/bin/ln /gui/new/frame v/progress/view
+
+prompt=v/prompt/v
+checksum=v/checksum/v
+button=v/button/v
+progress=v/progress/v
+
+echo 20 > $prompt/height
+
+echo 13 > $prompt/.margin-top
+echo 13 > $prompt/.margin-left
+echo 13 > $prompt/.margin-right
+
+echo 20 > $checksum/height
+
+echo 35 > $checksum/.margin-top
+echo 13 > $checksum/.margin-left
+echo 13 > $checksum/.margin-right
+
+/bin/ln /gui/new/caption  $prompt/view
+/bin/ln /gui/new/caption  $checksum/view
+/bin/ln /gui/new/button   $button/view
+#/bin/ln /gui/new/progress $progress/view  # added (and removed) in main
+
+echo 5 > $button/.margin-bottom
+echo 13 > $button/.margin-right
+
+echo 20 > $button/height
+echo 60 > $button/width
+
+echo 11 > $progress/height
+
+echo 10 > $progress/.margin-left
+echo 10 > $progress/.margin-bottom
+echo 85 > $progress/.margin-right  # 12 + 60 + 13
+
+echo "Check" > $button/v/title
+
+echo "ROM checksum:" > $prompt/v/text
+
+echo ... > $checksum/v/text
+
+/usr/bin/daemonize --cwd --ctty=tty -- /usr/app/rom-copier/main
+
+echo 1 > vis
