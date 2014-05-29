@@ -35,6 +35,13 @@
 #include "vfs/methods/node_method_set.hh"
 
 
+#if TARGET_API_MAC_CARBON
+
+static inline char* LMGetROMBase()  { return 0; }
+
+#endif
+
+
 namespace vfs
 {
 	
@@ -65,18 +72,15 @@ namespace vfs
 	
 	static filehandle_ptr mac_rom_open( const node* that, int flags, mode_t mode )
 	{
-	#if TARGET_API_MAC_CARBON
-		
-		throw p7::errno_t( EPERM );
-		
-	#else
+		if ( TARGET_API_MAC_CARBON )
+		{
+			throw p7::errno_t( EPERM );
+		}
 		
 		return open_buffer_file( *that,
 		                         flags,
 		                         LMGetROMBase(),
 		                         global_rom_size );
-		
-	#endif
 	}
 	
 	static const data_method_set mac_rom_data_methods =
