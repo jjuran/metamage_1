@@ -58,6 +58,15 @@ namespace vfs
 		{
 			rom_size = 4 * 1024 * 1024;
 		}
+		else if ( TARGET_CPU_68K  &&  rom_size == 256 * 1024 )
+		{
+			uint32_t checksum = *(uint32_t*) LMGetROMBase();
+			
+			if ( checksum == 0xA49F9914)
+			{
+				rom_size = 512 * 1024;  // special case for Mac Classic
+			}
+		}
 		
 		return rom_size;
 	}
