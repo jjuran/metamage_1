@@ -14,6 +14,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Pedestal
+#include "Pedestal/Application.hh"
+
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
@@ -36,6 +39,7 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
+	namespace Ped = Pedestal;
 	
 	
 	typedef const SystemCall* SystemCallPtr;
@@ -107,6 +111,13 @@ namespace Genie
 		return 0;
 	}
 	
+	static int quit_main()
+	{
+		Ped::Quit();
+		
+		return 0;
+	}
+	
 	#define EXEC( main )  &vfs::builtin_factory, (const void*) &main
 	
 	extern const vfs::fixed_mapping sys_kernel_bin_Mappings[];
@@ -117,6 +128,7 @@ namespace Genie
 		{ "false", EXEC( false_main ) },
 		
 		{ "beep",  EXEC( beep_main  ) },
+		{ "quit",  EXEC( quit_main  ) },
 		
 		{ NULL, NULL }
 	};
