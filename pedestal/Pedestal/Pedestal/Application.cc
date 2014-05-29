@@ -1054,5 +1054,10 @@ namespace Pedestal
 		gEventCheckNeeded = true;
 	}
 	
+	void Quit()
+	{
+		gRunState.quitRequested = true;
+	}
+	
 }
 
