@@ -22,7 +22,7 @@
 #endif
 
 // mac-sys-utils
-#include "mac_sys/gestalt.hh"
+#include "mac_sys/rom_size.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -48,33 +48,7 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
-	const unsigned long gestaltROMSize = 'rom ';
-	
-	const unsigned long gestaltMachineType = 'mach';
-	
-	const long gestaltMacClassic = 17;
-	
-	
-	static off_t get_rom_size()
-	{
-		off_t rom_size = mac::sys::gestalt( gestaltROMSize );
-		
-		if ( rom_size == 3 * 1024 * 1024 )
-		{
-			rom_size = 4 * 1024 * 1024;
-		}
-		else if ( TARGET_CPU_68K  &&  rom_size == 256 * 1024 )
-		{
-			if ( mac::sys::gestalt( gestaltMachineType ) == gestaltMacClassic )
-			{
-				rom_size = 512 * 1024;  // special case for Mac Classic
-			}
-		}
-		
-		return rom_size;
-	}
-	
-	static const off_t global_rom_size = get_rom_size();
+	static const off_t global_rom_size = mac::sys::rom_size();
 	
 	
 	static off_t mac_rom_geteof( const node* that )
