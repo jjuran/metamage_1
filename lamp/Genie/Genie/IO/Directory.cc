@@ -50,7 +50,7 @@ namespace Genie
 		return result;
 	}
 	
-	static const vfs::stream_method_set dir_stream_methods =
+	const vfs::stream_method_set dir_stream_methods =
 	{
 		NULL,
 		&dir_read,
