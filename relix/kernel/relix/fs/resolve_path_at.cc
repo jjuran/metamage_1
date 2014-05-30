@@ -20,6 +20,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
 // relix
@@ -52,7 +53,7 @@ namespace relix
 		}
 		
 		vfs::node_ptr at_dir = dirfd == AT_FDCWD ? getcwd()
-		                                         : get_fd_handle( dirfd ).GetFile();
+		                                         : get_file( get_fd_handle( dirfd ) );
 		
 		return resolve_pathname( *root(), path, length, *at_dir );
 	}

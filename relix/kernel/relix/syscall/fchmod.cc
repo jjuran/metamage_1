@@ -8,6 +8,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/primitives/chmod.hh"
 
 // relix
@@ -22,7 +23,7 @@ namespace relix
 	{
 		try
 		{
-			chmod( *get_fd_handle( fd ).GetFile(), mode );
+			chmod( *get_file( get_fd_handle( fd ) ), mode );
 		}
 		catch ( ... )
 		{
