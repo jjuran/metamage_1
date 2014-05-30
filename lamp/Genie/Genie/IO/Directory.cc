@@ -51,7 +51,7 @@ namespace Genie
 		return result;
 	}
 	
-	static const vfs::stream_method_set dir_stream_methods =
+	const vfs::stream_method_set dir_stream_methods =
 	{
 		NULL,
 		&dir_read,
@@ -86,6 +86,14 @@ namespace Genie
 		                 &dir_methods,
 		                 0,
 		                 dtor )
+	{
+	}
+	
+	DirHandle::DirHandle( const vfs::filehandle_method_set& methods )
+	:
+		vfs::filehandle( NULL,
+		                 O_RDONLY | O_DIRECTORY,
+		                 &methods )
 	{
 	}
 	

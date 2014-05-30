@@ -18,6 +18,7 @@
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/general_method_set.hh"
 
 // Nitrogen
 #include "Nitrogen/Files.hh"
@@ -138,6 +139,11 @@ namespace Genie
 		return static_cast< MacFileHandle& >( *file ).Synchronize( true );
 	}
 	
+	static vfs::node_ptr hfs_getfile( vfs::filehandle* file )
+	{
+		return static_cast< MacFileHandle& >( *file ).GetFile();
+	}
+	
 	static const vfs::bstore_method_set hfs_bstore_methods =
 	{
 		&hfs_pread,
@@ -148,9 +154,19 @@ namespace Genie
 		&hfs_fsync,
 	};
 	
+	static const vfs::general_method_set hfs_general_methods =
+	{
+		NULL,
+		NULL,
+		&hfs_getfile,
+	};
+	
 	static const vfs::filehandle_method_set hfs_methods =
 	{
 		&hfs_bstore_methods,
+		NULL,
+		NULL,
+		&hfs_general_methods,
 	};
 	
 	
