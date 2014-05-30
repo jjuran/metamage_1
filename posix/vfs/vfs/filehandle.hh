@@ -88,7 +88,7 @@ namespace vfs
 			
 			virtual void Attach( filehandle* target );
 			
-			virtual node_ptr GetFile();
+			const node* get_file_ptr() const  { return its_file.get(); }
 			
 			void set_file( const node& file );
 	};

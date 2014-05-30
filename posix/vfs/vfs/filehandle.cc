@@ -7,13 +7,6 @@
 
 // POSIX
 #include <fcntl.h>
-#include <sys/stat.h>
-
-// gear
-#include "gear/hexidecimal.hh"
-
-// plus
-#include "plus/var_string.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -21,15 +14,7 @@
 // vfs
 #include "vfs/memory_mapping.hh"
 #include "vfs/node.hh"
-#include "vfs/node/types/anonymous.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
-
-
-#ifndef O_EXEC
-#define O_EXEC  0
-#endif
-
-#define STRLEN( s )  (sizeof "" s - 1)
 
 
 namespace vfs
@@ -113,46 +98,9 @@ namespace vfs
 	}
 	
 	
-	static plus::string anon_name( const void* address, bool is_pipe )
-	{
-		plus::var_string name = is_pipe ? "pipe" : "socket";
-		
-		const size_t hex_offset = name.size() + STRLEN( ":[" );
-		
-		name += ":[12345678]";
-		
-		gear::encode_32_bit_hex( (long) address, &name[ hex_offset ] );
-		
-		return name.move();
-	}
-	
-	static inline mode_t permmode_from_openflags( int flags )
-	{
-		// Not portable, but works in MacRelix
-		const bool reading = flags & O_RDONLY;
-		const bool writing = flags & O_WRONLY;
-		const bool execing = flags & O_EXEC;
-		
-		return reading * 0400 | writing * 0200 | execing * 0100;
-	}
-	
 	void filehandle::Attach( vfs::filehandle* target )
 	{
 		p7::throw_errno( EINVAL );
-	}
-	
-	node_ptr filehandle::GetFile()
-	{
-		if ( its_file.get() )
-		{
-			return its_file;
-		}
-		
-		const bool is_pipe = !(its_methods  &&  its_methods->socket_methods);
-		
-		const mode_t mode = S_IFIFO | permmode_from_openflags( get_flags() );
-		
-		return vfs::new_anonymous_node( anon_name( this, is_pipe ), mode, this );
 	}
 	
 	void filehandle::set_file( const node& file )
