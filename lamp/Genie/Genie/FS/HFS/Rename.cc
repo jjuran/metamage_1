@@ -5,9 +5,6 @@
 
 #include "Genie/FS/HFS/Rename.hh"
 
-// Standard C++
-#include <algorithm>
-
 // MoreFiles
 #include "MoreFiles/MoreFilesExtras.h"
 
@@ -178,10 +175,15 @@ namespace Genie
 		
 		const plus::string& destName = slashes_from_colons( plus::mac_from_utf8( destFile.name() ) );
 		
-		const bool keeping_name =    destName.length() == srcFileSpec.name[0]
-		                          && std::equal( destName.begin(),
-		                                         destName.end(),
-		                                         (const char*) srcFileSpec.name + 1 );
+		const char* dest = destName.begin();
+		
+		const size_t n_dest = destName.size();
+		
+		const unsigned char* src = srcFileSpec.name;
+		
+		const uint8_t n_src = *src++;
+		
+		const bool keeping_name = n_src == n_dest  &&  memcmp( src, dest, n_dest ) == 0;
 		
 		if ( srcFileSpec.parID == destFileSpec.parID )
 		{
