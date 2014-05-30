@@ -64,8 +64,6 @@ namespace vfs
 			
 			virtual ~filehandle();
 			
-			virtual bool IsDirectory  () const  { return false; }
-			
 			int get_flags() const  { return its_flags; }
 			
 			void set_flags( int flags )  { its_flags = flags; }

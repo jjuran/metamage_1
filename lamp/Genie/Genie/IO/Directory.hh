@@ -42,8 +42,6 @@ namespace Genie
 			
 			~DirHandle();
 			
-			bool IsDirectory() const  { return true; }
-			
 			int ReadDir( dirent& entry );
 	};
 	
