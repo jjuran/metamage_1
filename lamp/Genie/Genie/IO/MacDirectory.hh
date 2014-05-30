@@ -24,12 +24,7 @@ namespace Genie
 			Mac::FSDirSpec its_dir_spec;
 		
 		public:
-			MacDirHandle( const Mac::FSDirSpec& dir )
-			:
-				DirHandle( NULL ),
-				its_dir_spec( dir )
-			{
-			}
+			MacDirHandle( const Mac::FSDirSpec& dir );
 			
 			vfs::node_ptr GetFile();
 	};

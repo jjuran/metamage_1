@@ -15,6 +15,13 @@
 namespace Genie
 {
 	
+	MacDirHandle::MacDirHandle( const Mac::FSDirSpec& dir )
+	:
+		DirHandle( NULL ),
+		its_dir_spec( dir )
+	{
+	}
+	
 	vfs::node_ptr MacDirHandle::GetFile()
 	{
 		return FSTreeFromFSDirSpec( its_dir_spec );
