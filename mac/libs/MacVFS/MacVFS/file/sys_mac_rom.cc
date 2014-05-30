@@ -50,6 +50,11 @@ namespace vfs
 	
 	const unsigned long gestaltROMSize = 'rom ';
 	
+	const unsigned long gestaltMachineType = 'mach';
+	
+	const long gestaltMacClassic = 17;
+	
+	
 	static off_t get_rom_size()
 	{
 		off_t rom_size = mac::sys::gestalt( gestaltROMSize );
@@ -60,9 +65,7 @@ namespace vfs
 		}
 		else if ( TARGET_CPU_68K  &&  rom_size == 256 * 1024 )
 		{
-			uint32_t checksum = *(uint32_t*) LMGetROMBase();
-			
-			if ( checksum == 0xA49F9914)
+			if ( mac::sys::gestalt( gestaltMachineType ) == gestaltMacClassic )
 			{
 				rom_size = 512 * 1024;  // special case for Mac Classic
 			}
