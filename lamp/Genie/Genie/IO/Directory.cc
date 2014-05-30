@@ -88,6 +88,14 @@ namespace Genie
 	{
 	}
 	
+	DirHandle::DirHandle( const vfs::filehandle_method_set& methods )
+	:
+		vfs::filehandle( NULL,
+		                 O_RDONLY | O_DIRECTORY,
+		                 &methods )
+	{
+	}
+	
 	DirHandle::~DirHandle()
 	{
 	}

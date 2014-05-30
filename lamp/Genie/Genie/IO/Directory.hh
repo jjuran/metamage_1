@@ -17,6 +17,13 @@
 struct dirent;
 
 
+namespace vfs
+{
+	
+	struct filehandle_method_set;
+	
+}
+
 namespace Genie
 {
 	
@@ -30,6 +37,8 @@ namespace Genie
 		
 		public:
 			DirHandle( const vfs::node* dir, vfs::filehandle_destructor dtor = NULL );
+			
+			DirHandle( const vfs::filehandle_method_set& methods );
 			
 			~DirHandle();
 			
