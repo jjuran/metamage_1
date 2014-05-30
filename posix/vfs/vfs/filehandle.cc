@@ -9,9 +9,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// iota
-#include "iota/strings.hh"
-
 // gear
 #include "gear/hexidecimal.hh"
 
@@ -31,6 +28,8 @@
 #ifndef O_EXEC
 #define O_EXEC  0
 #endif
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 
 namespace vfs
@@ -114,7 +113,7 @@ namespace vfs
 	}
 	
 	
-	static plus::string IOName( const void* address, bool is_pipe )
+	static plus::string anon_name( const void* address, bool is_pipe )
 	{
 		plus::var_string name = is_pipe ? "pipe" : "socket";
 		
@@ -124,7 +123,7 @@ namespace vfs
 		
 		gear::encode_32_bit_hex( (long) address, &name[ hex_offset ] );
 		
-		return name;
+		return name.move();
 	}
 	
 	static inline mode_t permmode_from_openflags( int flags )
@@ -153,7 +152,7 @@ namespace vfs
 		
 		const mode_t mode = S_IFIFO | permmode_from_openflags( get_flags() );
 		
-		return vfs::new_anonymous_node( IOName( this, is_pipe ), mode, this );
+		return vfs::new_anonymous_node( anon_name( this, is_pipe ), mode, this );
 	}
 	
 	void filehandle::set_file( const node& file )
