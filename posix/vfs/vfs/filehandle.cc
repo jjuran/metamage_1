@@ -9,9 +9,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-// iota
-#include "iota/strings.hh"
-
 // gear
 #include "gear/hexidecimal.hh"
 
@@ -31,6 +28,8 @@
 #ifndef O_EXEC
 #define O_EXEC  0
 #endif
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 
 namespace vfs
