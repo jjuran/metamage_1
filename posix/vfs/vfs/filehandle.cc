@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// Extended API Set, part 2
+#include "extended-api-set/part-2.h"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -65,13 +68,9 @@ namespace vfs
 	{
 		if ( !its_methods  ||  !its_methods->bstore_methods )
 		{
-			// This confuses MWCPPC when optimizing:
-			//p7::throw_errno( IsDirectory() ? EISDIR : ESPIPE );
-			// internal compiler error: File: 'PCodeUtilities.c' Line: 80
+			const bool is_directory = its_flags & O_DIRECTORY;
 			
-			const volatile int error = IsDirectory() ? EISDIR : ESPIPE;
-			
-			p7::throw_errno( error );
+			p7::throw_errno( is_directory ? EISDIR : ESPIPE );
 		}
 		
 		return *its_methods->bstore_methods;
