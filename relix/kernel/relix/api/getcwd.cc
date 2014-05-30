@@ -8,6 +8,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // relix-kernel
 #include "relix/api/current_process.hh"
@@ -21,7 +22,7 @@ namespace relix
 	
 	vfs::node_ptr getcwd( const process& proc )
 	{
-		return proc.get_process_resources().get_fs_info().getcwd()->GetFile();
+		return get_file( *proc.get_process_resources().get_fs_info().getcwd() );
 	}
 	
 	vfs::node_ptr getcwd()

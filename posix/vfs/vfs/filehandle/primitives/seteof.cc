@@ -10,6 +10,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/primitives/seteof.hh"
 
 
@@ -26,7 +27,7 @@ namespace vfs
 		}
 		else
 		{
-			seteof( *that.GetFile(), length );
+			seteof( *get_file( that ), length );
 		}
 	}
 	

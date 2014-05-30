@@ -10,14 +10,25 @@
 #include "vfs/dir_contents_box.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/node_fwd.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 
 // POSIX
 //#include <dirent.h>
 struct dirent;
 
 
+namespace vfs
+{
+	
+	struct filehandle_method_set;
+	
+}
+
 namespace Genie
 {
+	
+	extern const vfs::stream_method_set dir_stream_methods;
+	
 	
 	class DirHandle : public vfs::filehandle
 	{
@@ -26,6 +37,8 @@ namespace Genie
 		
 		public:
 			DirHandle( const vfs::node* dir, vfs::filehandle_destructor dtor = NULL );
+			
+			DirHandle( const vfs::filehandle_method_set& methods );
 			
 			~DirHandle();
 			

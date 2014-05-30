@@ -15,6 +15,7 @@
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/primitives/stat.hh"
 
 // relix-kernel
@@ -35,7 +36,7 @@ namespace relix
 		{
 			vfs::filehandle& handle = get_fd_handle( fd );
 			
-			stat( *handle.GetFile(), *sb );
+			stat( *get_file( handle ), *sb );
 			
 			if ( sb->st_size == off_t( -1 ) )
 			{

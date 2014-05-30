@@ -36,6 +36,7 @@
 #include "vfs/filehandle/primitives/append.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/primitives/pread.hh"
 #include "vfs/filehandle/primitives/pwrite.hh"
 #include "vfs/filehandle/primitives/seteof.hh"
@@ -407,7 +408,7 @@ namespace Genie
 				
 				if ( term != NULL )
 				{
-					terminal_name = pathname( *term->GetFile() );
+					terminal_name = pathname( *get_file( *term ) );
 					
 					tpgid = getpgrp( *term );
 				}
@@ -716,7 +717,7 @@ namespace Genie
 	
 	static FSTreePtr proc_fd_link_resolve( const FSTree* that )
 	{
-		return get_proc_fd_handle( that )->GetFile();
+		return get_file( *get_proc_fd_handle( that ) );
 	}
 	
 	FSTreePtr New_FSTree_proc( const FSTree*        parent,

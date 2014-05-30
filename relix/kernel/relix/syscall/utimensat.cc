@@ -12,6 +12,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/touch.hh"
 #include "vfs/primitives/utime.hh"
@@ -53,7 +54,7 @@ namespace relix
 		try
 		{
 			vfs::node_ptr file = path != NULL ? resolve_path_at( fd, path )
-			                                  : get_fd_handle( fd ).GetFile();
+			                                  : get_file( get_fd_handle( fd ) );
 			
 			const bool nofollow = flags & AT_SYMLINK_NOFOLLOW;
 			

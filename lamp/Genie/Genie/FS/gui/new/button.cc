@@ -37,6 +37,7 @@
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -274,7 +275,7 @@ namespace Genie
 	
 	unsigned int Button_socket_Handle::SysPoll()
 	{
-		const FSTree* view = GetFile()->owner();
+		const FSTree* view = get_file( *this )->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
@@ -287,7 +288,7 @@ namespace Genie
 	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
 	{
-		const FSTree* view = GetFile()->owner();
+		const FSTree* view = get_file( *this )->owner();
 		
 	retry:
 		

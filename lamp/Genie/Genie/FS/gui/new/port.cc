@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// vfs
+#include "vfs/filehandle/primitives/get_file.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
@@ -21,7 +24,7 @@ namespace Genie
 	
 	static void remove_port_file( vfs::filehandle* that )
 	{
-		remove_port( that->GetFile().get() );
+		remove_port( get_file( *that ).get() );
 	}
 	
 	static vfs::filehandle_ptr new_port_opendir( const FSTree* that )

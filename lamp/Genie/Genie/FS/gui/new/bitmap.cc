@@ -28,6 +28,7 @@
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // MacVFS
 #include "MacVFS/mmap/Ptr_memory_mapping.hh"
@@ -200,7 +201,7 @@ namespace Genie
 	
 	const FSTree* Bits_IO::ViewKey()
 	{
-		return GetFile()->owner();
+		return get_file( *this )->owner();
 	}
 	
 	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

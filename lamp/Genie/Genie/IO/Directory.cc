@@ -28,6 +28,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/primitives/inode.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/parent_inode.hh"
@@ -50,7 +51,7 @@ namespace Genie
 		return result;
 	}
 	
-	static const vfs::stream_method_set dir_stream_methods =
+	const vfs::stream_method_set dir_stream_methods =
 	{
 		NULL,
 		&dir_read,
@@ -88,6 +89,14 @@ namespace Genie
 	{
 	}
 	
+	DirHandle::DirHandle( const vfs::filehandle_method_set& methods )
+	:
+		vfs::filehandle( NULL,
+		                 O_RDONLY | O_DIRECTORY,
+		                 &methods )
+	{
+	}
+	
 	DirHandle::~DirHandle()
 	{
 	}
@@ -108,7 +117,7 @@ namespace Genie
 	{
 		if ( !its_contents.get() )
 		{
-			its_contents = get_contents( *GetFile() );
+			its_contents = get_contents( *get_file( *this ) );
 		}
 		
 		vfs::dir_contents& contents = *its_contents;

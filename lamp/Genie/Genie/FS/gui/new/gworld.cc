@@ -26,6 +26,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -159,7 +160,7 @@ namespace Genie
 	
 	const FSTree* Pixels_IO::ViewKey()
 	{
-		return GetFile()->owner();
+		return get_file( *this )->owner();
 	}
 	
 	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

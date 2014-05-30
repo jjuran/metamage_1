@@ -13,6 +13,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/touch.hh"
@@ -23,7 +24,7 @@ namespace vfs
 	
 	static ssize_t trigger_write( filehandle* that, const char* buffer, size_t n )
 	{
-		touch( *that->GetFile() );
+		touch( *get_file( *that ) );
 		
 		return n;
 	}

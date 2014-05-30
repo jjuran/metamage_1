@@ -15,6 +15,7 @@
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
@@ -68,7 +69,7 @@ namespace Genie
 			
 			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).its_utf8_text.size(); }
 			
-			void SetEOF( off_t length )  { TextEdit_text_SetEOF( GetFile().get(), length ); }
+			void SetEOF( off_t length )  { TextEdit_text_SetEOF( get_file( *this ).get(), length ); }
 	};
 	
 	
@@ -114,7 +115,7 @@ namespace Genie
 	
 	const FSTree* TextEdit_text_Handle::ViewKey()
 	{
-		return GetFile()->owner();
+		return get_file( *this )->owner();
 	}
 	
 	ssize_t TextEdit_text_Handle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
