@@ -13,6 +13,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 
 namespace vfs
@@ -43,7 +44,7 @@ namespace vfs
 			throw p7::errno_t( EINVAL );
 		}
 		
-		extra.write_hook( that->GetFile()->owner(), buffer, buffer + length, extra.binary );
+		extra.write_hook( get_file( *that )->owner(), buffer, buffer + length, extra.binary );
 		
 		return n;
 	}
