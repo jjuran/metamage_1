@@ -20,6 +20,19 @@ namespace types {
 	
 #pragma options align=reset
 	
+	inline
+	bool operator==( const VRefNum_DirID& a, const VRefNum_DirID& b )
+	{
+		return    a.vRefNum == b.vRefNum
+		       && a.dirID   == b.dirID;
+	}
+	
+	inline
+	bool operator!=( const VRefNum_DirID& a, const VRefNum_DirID& b )
+	{
+		return !( a == b );
+	}
+	
 }
 }
 
