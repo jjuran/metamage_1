@@ -40,6 +40,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
@@ -271,7 +272,7 @@ namespace Genie
 	
 	void Rsrc_IOHandle::FlushResource()
 	{
-		FSTreePtr file = GetFile();
+		FSTreePtr file = get_file( *this );
 		
 		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		

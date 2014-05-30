@@ -26,6 +26,7 @@
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/types/property_reader.hh"
 
 // Pedestal
@@ -174,7 +175,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const FSTree* view = GetFile()->owner();
+		const FSTree* view = get_file( *this )->owner();
 		
 		ListParameters& params = gListParameterMap[ view ];
 		

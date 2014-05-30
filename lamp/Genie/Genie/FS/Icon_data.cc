@@ -33,6 +33,7 @@
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // relix-kernel
 #include "relix/config/color.hh"
@@ -483,7 +484,7 @@ namespace Genie
 	
 	const FSTree* IconDataWriterHandle::ViewKey()
 	{
-		return GetFile()->owner();
+		return get_file( *this )->owner();
 	}
 	
 	ssize_t IconDataWriterHandle::SysWrite( const char* buffer, size_t byteCount )

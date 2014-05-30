@@ -21,6 +21,7 @@
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 
 // Pedestal
 #include "Pedestal/Caption.hh"
@@ -152,7 +153,7 @@ namespace Genie
 			
 			off_t GetEOF()  { return String().size(); }
 			
-			void SetEOF( off_t length )  { CaptionText_SetEOF( GetFile().get(), length ); }
+			void SetEOF( off_t length )  { CaptionText_SetEOF( get_file( *this ).get(), length ); }
 	};
 	
 	
@@ -198,7 +199,7 @@ namespace Genie
 	
 	const FSTree* CaptionTextFileHandle::ViewKey()
 	{
-		return GetFile()->owner();
+		return get_file( *this )->owner();
 	}
 	
 	ssize_t CaptionTextFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )

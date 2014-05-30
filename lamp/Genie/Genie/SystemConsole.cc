@@ -12,6 +12,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/primitives/read.hh"
 #include "vfs/filehandle/primitives/write.hh"
 #include "vfs/functions/file-tests.hh"
@@ -44,7 +45,7 @@ namespace Genie
 	{
 		vfs::node_ptr root = relix::root();
 		
-		vfs::node_ptr port = port_dir.GetFile();
+		vfs::node_ptr port = get_file( port_dir );
 		
 		const vfs::node& cwd = *port;
 		
@@ -95,7 +96,7 @@ namespace Genie
 		
 		MakeWindow( *the_port );
 		
-		return the_port->GetFile();
+		return get_file( *the_port );
 	}
 	
 	static vfs::node_ptr GetConsoleText()

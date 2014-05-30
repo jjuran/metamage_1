@@ -45,6 +45,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/primitives/hangup.hh"
 #include "vfs/functions/new_static_symlink.hh"
 #include "vfs/functions/resolve_pathname.hh"
@@ -656,7 +657,7 @@ namespace Genie
 	
 	static void destroy_port_tty( vfs::filehandle* that )
 	{
-		WindowParameters& params = gWindowParametersMap[ that->GetFile()->owner() ];
+		WindowParameters& params = gWindowParametersMap[ get_file( *that )->owner() ];
 		
 		params.itsTerminal = NULL;
 	}
@@ -678,7 +679,7 @@ namespace Genie
 			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
-		vfs::filehandle_ptr terminal = new TerminalHandle( *tty->GetFile() );
+		vfs::filehandle_ptr terminal = new TerminalHandle( *get_file( *tty ) );
 		
 		if ( has_tty )
 		{
@@ -919,7 +920,7 @@ namespace Genie
 	
 	static void destroy_lock_handle( vfs::filehandle* that )
 	{
-		const vfs::node* port = that->GetFile()->owner();
+		const vfs::node* port = get_file( *that )->owner();
 		
 		gWindowParametersMap[ port ].itIsLocked = false;
 		

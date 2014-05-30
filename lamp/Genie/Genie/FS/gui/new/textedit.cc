@@ -17,6 +17,7 @@
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -104,7 +105,7 @@ namespace Genie
 	
 	unsigned TextEdit_gate_Handle::SysPoll()
 	{
-		const FSTree* view = GetFile()->owner();
+		const FSTree* view = get_file( *this )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -115,7 +116,7 @@ namespace Genie
 	
 	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
 	{
-		const FSTree* view = GetFile()->owner();
+		const FSTree* view = get_file( *this )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
