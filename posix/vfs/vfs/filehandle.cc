@@ -123,7 +123,7 @@ namespace vfs
 		
 		gear::encode_32_bit_hex( (long) address, &name[ hex_offset ] );
 		
-		return name;
+		return name.move();
 	}
 	
 	static inline mode_t permmode_from_openflags( int flags )
