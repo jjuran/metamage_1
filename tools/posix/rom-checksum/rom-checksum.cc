@@ -99,19 +99,28 @@ int main( int argc, char** argv )
 	{
 		main_segment_size = 3 * 1024 * 1024;  // skip PPC extra megabyte
 	}
-	else if ( rom_size == 512 * 1024  &&  stored_sum == 0xA49F9914 )
-	{
-		main_segment_size = 256 * 1024;  // skip Mac Classic disk image
-	}
+	
+	// Halve the size once for 16-bit pointer math, and again for midpoint.
 	
 	const uint16_t* p2  = (uint16_t*) p4;
+	const uint16_t* mid = (uint16_t*) rom + main_segment_size / 2 / 2;
 	const uint16_t* end = (uint16_t*) rom + main_segment_size / 2;
 	
 	uint32_t sum = 0;
 	
-	while ( p2 < end )
+	while ( p2 < mid )
 	{
 		sum += iota::u16_from_big( *p2++ );
+	}
+	
+	// Check the sum at the halfway mark in case this is a Mac Classic ROM.
+	
+	if ( sum != stored_sum )
+	{
+		while ( p2 < end )
+		{
+			sum += iota::u16_from_big( *p2++ );
+		}
 	}
 	
 	char buffer[] = MISMATCH_PREFIX MESSAGE;
