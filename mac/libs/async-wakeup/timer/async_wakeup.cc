@@ -28,6 +28,8 @@
 
 
 #if TARGET_CPU_68K
+	short CPUFlag : 0x12F;
+	
 	#define IN( reg ) : __##reg
 #else
 	#define IN( reg )  /**/
@@ -68,16 +70,23 @@ namespace sys {
 		
 	#if TARGET_CPU_68K
 		
-		register bool acquired = false;  // Initialize to squelch warning
+		const short cpu68000 = 0;
 		
-		asm
+		if ( CPUFlag == cpu68000 )
 		{
-			TAS    (mutex)
-			SEQ    acquired
-			NEG.B  acquired
+			// 68000 only
+			
+			register bool acquired = false;  // Initialize to squelch warning
+			
+			asm
+			{
+				TAS    (mutex)
+				SEQ    acquired
+				NEG.B  acquired
+			}
+			
+			return acquired;
 		}
-		
-		return acquired;
 		
 	#endif
 		
