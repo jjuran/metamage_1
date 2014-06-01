@@ -86,7 +86,7 @@ inline R Invoke##Name##UPP( P1 p1, Name##UPP upp )                              
 }
 
 #define DEFINE_UPP_INVOKER_2( Name, R, P1, P2 )                                                \
-inline R Invoke##Name##UPP( P1 p1, P2 p2, Name##UPP upp )                                     \
+inline R Invoke##Name##UPP( P1 p1, P2 p2, Name##UPP upp )                                      \
 {                                                                                              \
 	return (R) CALL_TWO_PARAMETER_UPP( (UniversalProcPtr) upp, upp##Name##ProcInfo, p1, p1 );  \
 }
