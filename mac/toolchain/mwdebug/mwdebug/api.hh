@@ -10,6 +10,8 @@
 namespace mwdebug
 {
 	
+	const unsigned char* MetroNubVersion();
+	
 	bool IsMetroNubInstalled();
 	
 }

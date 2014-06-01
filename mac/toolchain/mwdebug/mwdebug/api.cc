@@ -52,6 +52,16 @@ namespace mwdebug
 		return nub;
 	}
 	
+	const unsigned char* MetroNubVersion()
+	{
+		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock_raw() )
+		{
+			return nub->nubVersion;
+		}
+		
+		return 0;  // NULL
+	}
+	
 	bool IsMetroNubInstalled()
 	{
 		return GetMetroNubUserEntryBlock();
