@@ -5,11 +5,11 @@
 
 #include "mwdebug/api.hh"
 
+// MacFixup
+#include "UPP.h"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
-
-
-typedef unsigned char Str31[ 32 ];
 
 
 namespace mwdebug
@@ -17,12 +17,27 @@ namespace mwdebug
 	
 	const int kMetroNubUserAPIVersion = 2;
 	
+	typedef pascal Boolean (*IsDebuggerRunningProcPtr)();
+	typedef pascal Boolean (*AmIBeingDebuggedProcPtr )();
+	
+	enum
+	{
+		uppIsDebuggerRunningProcInfo = 0x00000010,
+		uppAmIBeingDebuggedProcInfo  = 0x00000010,
+	};
+	
+	DEFINE_UPP_0( IsDebuggerRunning, Boolean )
+	DEFINE_UPP_0( AmIBeingDebugged,  Boolean )
+	
 	struct MetroNubUserEntryBlock
 	{
 		long   blockLength;
 		short  apiLowVersion;
 		short  apiHiVersion;
 		Str31  nubVersion;
+		
+		IsDebuggerRunningUPP  isDebuggerRunning;
+		AmIBeingDebuggedUPP   amIBeingDebugged;
 	};
 	
 	static inline const MetroNubUserEntryBlock* GetMetroNubUserEntryBlock_raw()
@@ -65,6 +80,26 @@ namespace mwdebug
 	bool IsMetroNubInstalled()
 	{
 		return GetMetroNubUserEntryBlock();
+	}
+	
+	bool IsDebuggerRunning()
+	{
+		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock() )
+		{
+			return InvokeIsDebuggerRunningUPP( nub->isDebuggerRunning );
+		}
+		
+		return false;
+	}
+	
+	bool AmIBeingDebugged()
+	{
+		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock() )
+		{
+			return InvokeAmIBeingDebuggedUPP( nub->amIBeingDebugged );
+		}
+		
+		return false;
 	}
 	
 }

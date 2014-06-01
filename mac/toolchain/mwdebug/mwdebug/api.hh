@@ -14,6 +14,10 @@ namespace mwdebug
 	
 	bool IsMetroNubInstalled();
 	
+	bool IsDebuggerRunning();
+	
+	bool AmIBeingDebugged();
+	
 }
 
 #endif
