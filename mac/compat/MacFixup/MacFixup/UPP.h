@@ -41,6 +41,12 @@ inline R Invoke##Name##UPP( Name##UPP upp )                                     
 	return (R) CALL_ZERO_PARAMETER_UPP( (UniversalProcPtr) upp, upp##Name##ProcInfo );  \
 }
 
+#define DEFINE_UPP_INVOKER_1( Name, R, P1 )                                                \
+inline R Invoke##Name##UPP( P1 p1, Name##UPP upp )                                         \
+{                                                                                          \
+	return (R) CALL_ONE_PARAMETER_UPP( (UniversalProcPtr) upp, upp##Name##ProcInfo, p1 );  \
+}
+
 #else
 
 #define DEFINE_UPP_TYPE( Name )  typedef Name##ProcPtr Name##UPP;
@@ -62,6 +68,12 @@ inline R Invoke##Name##UPP( Name##UPP upp )  \
 	return upp();                            \
 }
 
+#define DEFINE_UPP_INVOKER_1( Name, R, P1 )         \
+inline R Invoke##Name##UPP( P1 p1, Name##UPP upp )  \
+{                                                   \
+	return upp( p1 );                               \
+}
+
 #endif  // #if TARGET_RT_MAC_CFM
 
 #define DEFINE_UPP_0( Name, R )        \
@@ -69,5 +81,11 @@ inline R Invoke##Name##UPP( Name##UPP upp )  \
         DEFINE_UPP_CONSTRUCTOR( Name ) \
         DEFINE_UPP_DESTRUCTOR( Name )  \
         DEFINE_UPP_INVOKER_0( Name, R )
+
+#define DEFINE_UPP_1( Name, R, P1 )    \
+        DEFINE_UPP_TYPE( Name )        \
+        DEFINE_UPP_CONSTRUCTOR( Name ) \
+        DEFINE_UPP_DESTRUCTOR( Name )  \
+        DEFINE_UPP_INVOKER_1( Name, R, P1 )
 
 #endif
