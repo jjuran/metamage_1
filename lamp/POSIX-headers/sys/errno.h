@@ -143,3 +143,5 @@
 #define ENEEDAUTH       81              /* Need authenticator */
 
 #define EOVERFLOW       84              /* Value too large to be stored in data type */
+
+#define EILSEQ          92              /* Illegal byte sequence */
