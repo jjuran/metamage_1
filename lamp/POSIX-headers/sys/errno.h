@@ -94,7 +94,8 @@
 #define ENOPROTOOPT     42              /* Protocol not available */
 #define EPROTONOSUPPORT 43              /* Protocol not supported */
 #define ESOCKTNOSUPPORT 44              /* Socket type not supported */
-#define EOPNOTSUPP      45              /* Operation not supported */
+#define ENOTSUP         45              /* Operation not supported */
+#define EOPNOTSUPP      ENOTSUP         /* Operation not supported on socket*/
 #define EPFNOSUPPORT    46              /* Protocol family not supported */
 #define EAFNOSUPPORT    47              /* Address family not supported by protocol family */
 #define EADDRINUSE      48              /* Address already in use */
