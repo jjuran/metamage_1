@@ -219,8 +219,6 @@ namespace relix
 	
 	os_thread_box new_os_thread( os_thread_start_type start, void* param, int stack_size )
 	{
-		typedef boost::intrusive_ptr< os_thread > intrusive_ptr;
-		
 		return os_thread_box( *new os_thread( start, param, stack_size ) );
 	}
 	
