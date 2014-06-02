@@ -6,6 +6,7 @@
 #include "relix/task/process.hh"
 
 // relix
+#include "relix/api/get_process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/process_resources.hh"
@@ -156,6 +157,37 @@ namespace relix
 	void process::switch_in()
 	{
 		its_process_image->switch_in();
+		
+	#if CONFIG_VM_FORK
+		
+		if ( vm_fork* forked_vm = its_vm_fork.get() )
+		{
+			const pid_t pid = forked_vm->getpid();
+			
+			if ( pid != id() )
+			{
+				try
+				{
+					process& kin = get_process( pid );
+					
+					kin.back_up_memory();
+				}
+				catch ( ... )
+				{
+				}
+				
+				restore_memory();
+				
+				forked_vm->setpid( id() );
+			}
+			
+			if ( its_vm_fork->ref_count() == 1 )
+			{
+				its_vm_fork.reset();
+			}
+		}
+		
+	#endif
 		
 		(void) checkpoint_delta();
 	}
