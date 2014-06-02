@@ -22,8 +22,10 @@
 #include "plus/string.hh"
 
 // relix-kernel
+#include "relix/config/vm_fork.hh"
 #include "relix/signal/sigset_t.hh"
 #include "relix/task/alarm_clock.hh"
+#include "relix/task/vm_fork.hh"
 
 
 struct sigaction;
@@ -64,6 +66,12 @@ namespace relix
 			boost::intrusive_ptr< process_rsrcs > its_process_resources;
 			
 			boost::intrusive_ptr< relix::signal_handlers > its_signal_handlers;
+			
+		#if CONFIG_VM_FORK
+			
+			boost::intrusive_ptr< relix::vm_fork > its_vm_fork;
+			
+		#endif
 		
 		public:
 			explicit process();
