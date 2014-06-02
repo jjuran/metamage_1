@@ -136,6 +136,9 @@ namespace relix
 			
 			void unshare_per_fork();
 			
+			void back_up_memory();
+			void restore_memory();
+			
 			void switch_in();
 			void switch_out();
 			

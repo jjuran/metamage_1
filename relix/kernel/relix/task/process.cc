@@ -137,6 +137,22 @@ namespace relix
 		unshare_signal_handlers();
 	}
 	
+	void process::back_up_memory()
+	{
+		if ( process_image* image = its_process_image.get() )
+		{
+			image->back_up_memory();
+		}
+	}
+	
+	void process::restore_memory()
+	{
+		if ( process_image* image = its_process_image.get() )
+		{
+			image->restore_memory();
+		}
+	}
+	
 	void process::switch_in()
 	{
 		its_process_image->switch_in();
