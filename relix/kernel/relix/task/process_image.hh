@@ -72,6 +72,9 @@ namespace relix
 			
 			void remove_memory_mapping( addr_t key );
 			
+			void back_up_memory();
+			void restore_memory();
+			
 			void switch_in();
 			void switch_out();
 	};

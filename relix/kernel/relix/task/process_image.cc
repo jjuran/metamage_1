@@ -157,6 +157,22 @@ namespace relix
 		its_memory_data->remove_memory_mapping( key );
 	}
 	
+	void process_image::back_up_memory()
+	{
+		if ( memory_data* memory = its_memory_data.get() )
+		{
+			memory->back_up();
+		}
+	}
+	
+	void process_image::restore_memory()
+	{
+		if ( memory_data* memory = its_memory_data.get() )
+		{
+			memory->restore();
+		}
+	}
+	
 	void process_image::switch_in()
 	{
 	#ifdef RELIX_A5_WORLD
