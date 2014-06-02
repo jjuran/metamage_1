@@ -138,6 +138,30 @@ namespace relix
 		unshare_signal_handlers();
 	}
 	
+#if CONFIG_VM_FORK
+	
+	void process::unshare_vm()
+	{
+		ASSERT( its_vm_fork.get() == NULL );
+		
+		const pid_t ppid = getppid();
+		
+		process& parent = get_process( ppid );
+		
+		if ( parent.its_vm_fork.get() == NULL )
+		{
+			parent.its_vm_fork = new vm_fork( ppid );
+		}
+		
+		its_vm_fork = parent.its_vm_fork;
+		
+		its_process_image = its_process_image->clone();
+		
+		back_up_memory();
+	}
+	
+#endif
+	
 	void process::back_up_memory()
 	{
 		if ( process_image* image = its_process_image.get() )

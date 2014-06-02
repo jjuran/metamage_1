@@ -143,6 +143,7 @@ namespace relix
 			void reset_signal_handlers();
 			
 			void unshare_per_fork();
+			void unshare_vm();
 			
 			void back_up_memory();
 			void restore_memory();
