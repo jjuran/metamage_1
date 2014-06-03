@@ -75,6 +75,15 @@ namespace relix
 		its_memory_data->set_envp( envp );
 	}
 	
+	process_image::process_image( const process_image& other )
+	:
+		its_pb( other.its_pb ),
+		its_exe( other.its_exe ),
+		its_program( other.its_program ),
+		its_memory_data( other.its_memory_data->clone() )
+	{
+	}
+	
 	process_image::~process_image()
 	{
 		if ( its_pb.cleanup != 0 )  // NULL
