@@ -11,8 +11,7 @@
 
 
 #ifndef CONFIG_SYSCALL_STACKS
-#define CONFIG_SYSCALL_STACKS  0
+#define CONFIG_SYSCALL_STACKS  (!CONFIG_MINI)
 #endif
 
 #endif
-
