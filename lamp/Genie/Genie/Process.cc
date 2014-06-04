@@ -22,6 +22,7 @@
 
 // mac-sys-utils
 #include "mac_sys/exit_to_shell.hh"
+#include "mac_sys/gestalt.hh"
 
 // relix-include
 #include "relix/syscalls.h"
@@ -566,7 +567,7 @@ namespace Genie
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 	#if CONFIG_SYSCALL_STACKS
-		its_syscall_stack     ( true ),
+		its_syscall_stack     ( TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysv' ) >= 0x0900 ),
 	#endif
 		itsStackFramePtr      ( NULL ),
 		itsLifeStage          ( kProcessStarting ),
