@@ -36,6 +36,9 @@ namespace Genie
 		
 		JSR      current_stack_base
 		
+		MOVE.L   A0,D0    // test the result
+		BEQ.S    restart  // skip stack setup if we don't have one
+		
 		// copy things from current stack to new stack
 		
 		SUBQ     #8,A0  // point after return address, to stack limit

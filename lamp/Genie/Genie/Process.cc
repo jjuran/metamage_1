@@ -528,6 +528,9 @@ namespace Genie
 		               *new relix::process() ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
+	#if CONFIG_SYSCALL_STACKS
+		its_syscall_stack     ( false ),
+	#endif
 		itsStackFramePtr      ( NULL ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
@@ -562,6 +565,9 @@ namespace Genie
 		                          : parent.get_process() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
+	#if CONFIG_SYSCALL_STACKS
+		its_syscall_stack     ( true ),
+	#endif
 		itsStackFramePtr      ( NULL ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),

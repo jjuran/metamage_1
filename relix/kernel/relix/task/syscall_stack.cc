@@ -15,9 +15,14 @@
 namespace relix
 {
 	
-	syscall_stack::syscall_stack() : memory( ::operator new( syscall_stack_size ) )
+	syscall_stack::syscall_stack( bool allocating )
+	:
+		memory( allocating ? ::operator new( syscall_stack_size ) : NULL )
 	{
-		memset( memory, '\0', syscall_stack_size );
+		if ( allocating )
+		{
+			memset( memory, '\0', syscall_stack_size );
+		}
 	}
 	
 	syscall_stack::~syscall_stack()

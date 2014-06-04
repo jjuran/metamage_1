@@ -15,7 +15,7 @@ namespace relix
 	
 	inline void* base_address_of_syscall_stack( void* memory )
 	{
-		return (char*) memory + syscall_stack_size;
+		return memory ? (char*) memory + syscall_stack_size : 0;
 	}
 	
 }
