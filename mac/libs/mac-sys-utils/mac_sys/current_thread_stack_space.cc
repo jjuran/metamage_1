@@ -36,7 +36,7 @@ namespace sys {
 			return 0;
 		}
 		
-		return stackSpace + extra_stack;
+		return stackSpace ? stackSpace + extra_stack : 0;
 		
 	#endif
 		
