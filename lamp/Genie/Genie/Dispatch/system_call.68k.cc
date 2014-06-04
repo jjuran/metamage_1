@@ -38,6 +38,8 @@ namespace Genie
 		
 		// copy things from current stack to new stack
 		
+		SUBQ    #8,A0  // point after return address, to stack limit
+		
 		MOVE.L  4(A6),-(A0)  // return address
 		MOVE.L   (A6),-(A0)  // saved frame pointer (backlink)
 		
