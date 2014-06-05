@@ -4,13 +4,11 @@
 */
 
 // vfs
+#include "vfs/node.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/opendir.hh"
 #include "vfs/filehandle/types/directory.hh"
-
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace vfs
