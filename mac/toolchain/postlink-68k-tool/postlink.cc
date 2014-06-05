@@ -3,9 +3,6 @@
 	-----------
 */
 
-// Standard C/C++
-#include <cstdio>
-
 // iota
 #include "iota/strings.hh"
 
@@ -114,11 +111,6 @@ namespace tool
 		}
 		
 		const bool patched = Patch68KStartup( target_filespec );
-		
-		if ( !patched )
-		{
-			fprintf( stderr, "postlink: %s: already patched\n", target_path );
-		}
 		
 		return 0;
 	}
