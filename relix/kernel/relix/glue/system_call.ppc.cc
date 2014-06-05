@@ -66,7 +66,6 @@ namespace relix
 		
 		// reload syscall number, load backlink
 		lwz     r11,16(SP)
-		lwz     r10, 0(SP)
 		
 		// reload parameters
 		lwz     r5,32(SP)
@@ -76,9 +75,9 @@ namespace relix
 		lwz     r3,48(SP)
 		lwz     r4,52(SP)
 		
-		// save syscall number and backlink in syscall stack
+		// save syscall number and stack pointer in syscall stack
 		stw     r11,16(r12)
-		stw     r10, 0(r12)
+		stw     SP,  0(r12)
 		
 		// save parameters in syscall stack
 		stw     r5,32(r12)
