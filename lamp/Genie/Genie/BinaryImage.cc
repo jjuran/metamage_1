@@ -37,6 +37,15 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	struct code_rsrc_header
+	{
+		uint16_t branch;
+		uint16_t flags;
+		uint32_t type;
+		uint16_t id;
+		uint16_t version;
+	};
+	
 	struct BinaryFileMetadata
 	{
 		UInt32 dataForkLength;
@@ -124,6 +133,18 @@ namespace Genie
 		               offset,
 		               length,
 		               *data.get().Get() );
+		
+		if ( TARGET_CPU_68K )
+		{
+			code_rsrc_header& header = *(code_rsrc_header*) *data.get().Get();
+			
+			// Handle dereferenced here
+			
+			if ( header.branch != 0x600A )
+			{
+				p7::throw_errno( EINVAL );
+			}
+		}
 		
 		return data;
 	}
