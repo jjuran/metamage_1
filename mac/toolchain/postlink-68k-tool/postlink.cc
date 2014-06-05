@@ -3,13 +3,15 @@
 	-----------
 */
 
-// Standard C/C++
-#include <cstdio>
-
 // iota
 #include "iota/strings.hh"
 
+// more-libc
+#include "more/string.h"
+
 // poseven
+#include "poseven/functions/open.hh"
+#include "poseven/functions/truncate.hh"
 #include "poseven/functions/write.hh"
 
 // Nitrogen
@@ -62,7 +64,7 @@ namespace tool
 		return true;
 	}
 	
-	static bool Patch68KStartup( const FSSpec& file )
+	static n::owned< N::Handle > Patch68KStartup( const FSSpec& file )
 	{
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
@@ -77,7 +79,7 @@ namespace tool
 		
 		N::WriteResource( code );
 		
-		return patched;
+		return N::DetachResource( code );
 	}
 	
 	
@@ -85,11 +87,14 @@ namespace tool
 	{
 		bool dry_run = false;
 		bool verbose = false;
+		bool in_data = false;
 		
 		const char* link_map_path = NULL;
 		
 		o::bind_option_to_variable( "-n", dry_run );
 		o::bind_option_to_variable( "-v", verbose );
+		
+		o::bind_option_to_variable( "--data-fork", in_data );
 		
 		o::get_options( argc, argv );
 		
@@ -113,11 +118,31 @@ namespace tool
 			return 0;
 		}
 		
-		const bool patched = Patch68KStartup( target_filespec );
+		n::owned< N::Handle > code = Patch68KStartup( target_filespec );
 		
-		if ( !patched )
+		// System calls can move memory, so just lock the handle
+		N::HLock( code );
+		
+		if ( in_data )
 		{
-			fprintf( stderr, "postlink: %s: already patched\n", target_path );
+			p7::write( p7::open( target_path, p7::o_wronly ),
+			           *code.get().Get(),
+			           N::GetHandleSize( code ));
+			
+			code.reset();
+			
+			plus::string rsrc_path;
+			
+			const size_t len = strlen( target_path );
+			
+			char* p = rsrc_path.reset( len + STRLEN( "/rsrc" ) );
+			
+			const char* begin = p;
+			
+			p = (char*) mempcpy( p, target_path, len );
+			p = (char*) mempcpy( p, STR_LEN( "/rsrc" ) );
+			
+			p7::truncate( begin, 0 );
 		}
 		
 		return 0;
