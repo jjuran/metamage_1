@@ -59,7 +59,7 @@ namespace tool
 		return true;
 	}
 	
-	static bool Patch68KStartup( const FSSpec& file )
+	static n::owned< N::Handle > Patch68KStartup( const FSSpec& file )
 	{
 		N::ResType  resType = N::ResType( 'Wish' );
 		N::ResID    resID   = N::ResID  ( 0      );
@@ -74,7 +74,7 @@ namespace tool
 		
 		N::WriteResource( code );
 		
-		return patched;
+		return N::DetachResource( code );
 	}
 	
 	
@@ -110,7 +110,7 @@ namespace tool
 			return 0;
 		}
 		
-		const bool patched = Patch68KStartup( target_filespec );
+		n::owned< N::Handle > code = Patch68KStartup( target_filespec );
 		
 		return 0;
 	}
