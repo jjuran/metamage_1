@@ -6,7 +6,12 @@
 // iota
 #include "iota/strings.hh"
 
+// more-libc
+#include "more/string.h"
+
 // poseven
+#include "poseven/functions/open.hh"
+#include "poseven/functions/truncate.hh"
 #include "poseven/functions/write.hh"
 
 // Nitrogen
@@ -82,11 +87,14 @@ namespace tool
 	{
 		bool dry_run = false;
 		bool verbose = false;
+		bool in_data = false;
 		
 		const char* link_map_path = NULL;
 		
 		o::bind_option_to_variable( "-n", dry_run );
 		o::bind_option_to_variable( "-v", verbose );
+		
+		o::bind_option_to_variable( "--data-fork", in_data );
 		
 		o::get_options( argc, argv );
 		
@@ -111,6 +119,31 @@ namespace tool
 		}
 		
 		n::owned< N::Handle > code = Patch68KStartup( target_filespec );
+		
+		// System calls can move memory, so just lock the handle
+		N::HLock( code );
+		
+		if ( in_data )
+		{
+			p7::write( p7::open( target_path, p7::o_wronly ),
+			           *code.get().Get(),
+			           N::GetHandleSize( code ));
+			
+			code.reset();
+			
+			plus::string rsrc_path;
+			
+			const size_t len = strlen( target_path );
+			
+			char* p = rsrc_path.reset( len + STRLEN( "/rsrc" ) );
+			
+			const char* begin = p;
+			
+			p = (char*) mempcpy( p, target_path, len );
+			p = (char*) mempcpy( p, STR_LEN( "/rsrc" ) );
+			
+			p7::truncate( begin, 0 );
+		}
 		
 		return 0;
 	}
