@@ -30,7 +30,7 @@ namespace vfs
 			}
 		}
 		
-		return new Genie::DirHandle( &that );
+		return new dir_handle( &that );
 	}
 	
 }

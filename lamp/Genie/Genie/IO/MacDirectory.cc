@@ -33,14 +33,14 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		&dir_stream_methods,
+		&vfs::dir_stream_methods,
 		&macdir_general_methods,
 	};
 	
 	
 	MacDirHandle::MacDirHandle( const Mac::FSDirSpec& dir )
 	:
-		DirHandle( macdir_methods ),
+		vfs::dir_handle( macdir_methods ),
 		its_dir_spec( dir )
 	{
 	}

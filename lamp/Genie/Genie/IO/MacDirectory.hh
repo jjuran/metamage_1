@@ -18,7 +18,7 @@
 namespace Genie
 {
 	
-	class MacDirHandle : public DirHandle
+	class MacDirHandle : public vfs::dir_handle
 	{
 		private:
 			Mac::FSDirSpec its_dir_spec;

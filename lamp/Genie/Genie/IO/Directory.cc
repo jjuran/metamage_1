@@ -34,30 +34,30 @@
 #include "vfs/primitives/parent_inode.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
 	namespace p7 = poseven;
 	
 	
-	static ssize_t dir_read( vfs::filehandle* that, char* buffer, size_t n )
+	static ssize_t dir_read( filehandle* that, char* buffer, size_t n )
 	{
 		ASSERT( n >= sizeof (dirent) );
 		
 		dirent& entry = *(dirent*) buffer;
 		
-		int result = static_cast< DirHandle& >( *that ).ReadDir( entry );
+		int result = static_cast< dir_handle& >( *that ).readdir( entry );
 		
 		return result;
 	}
 	
-	const vfs::stream_method_set dir_stream_methods =
+	const stream_method_set dir_stream_methods =
 	{
 		NULL,
 		&dir_read,
 	};
 	
-	static const vfs::filehandle_method_set dir_methods =
+	static const filehandle_method_set dir_methods =
 	{
 		NULL,
 		NULL,
@@ -65,43 +65,43 @@ namespace Genie
 	};
 	
 	
-	static vfs::dir_contents_box get_contents( const vfs::node& dir )
+	static dir_contents_box get_contents( const node& dir )
 	{
-		vfs::dir_contents_box result;
+		dir_contents_box result;
 		
-		vfs::dir_contents& contents = *result;
+		dir_contents& contents = *result;
 		
-		contents.push_back( vfs::dir_entry( inode       ( dir ), "."  ) );
-		contents.push_back( vfs::dir_entry( parent_inode( dir ), ".." ) );
+		contents.push_back( dir_entry( inode       ( dir ), "."  ) );
+		contents.push_back( dir_entry( parent_inode( dir ), ".." ) );
 		
 		listdir( dir, contents );
 		
 		return result;
 	}
 	
-	DirHandle::DirHandle( const vfs::node* dir, vfs::filehandle_destructor dtor  )
+	dir_handle::dir_handle( const node* dir, filehandle_destructor dtor  )
 	:
-		vfs::filehandle( dir,
-		                 O_RDONLY | O_DIRECTORY,
-		                 &dir_methods,
-		                 0,
-		                 dtor )
+		filehandle( dir,
+		            O_RDONLY | O_DIRECTORY,
+		            &dir_methods,
+		            0,
+		            dtor )
 	{
 	}
 	
-	DirHandle::DirHandle( const vfs::filehandle_method_set& methods )
+	dir_handle::dir_handle( const filehandle_method_set& methods )
 	:
-		vfs::filehandle( NULL,
-		                 O_RDONLY | O_DIRECTORY,
-		                 &methods )
+		filehandle( NULL,
+		            O_RDONLY | O_DIRECTORY,
+		            &methods )
 	{
 	}
 	
-	DirHandle::~DirHandle()
+	dir_handle::~dir_handle()
 	{
 	}
 	
-	static void SetDirEntry( dirent& dir, ino_t inode, const plus::string& name )
+	static void set_dir_entry( dirent& dir, ino_t inode, const plus::string& name )
 	{
 		dir.d_ino = inode;
 		
@@ -113,14 +113,14 @@ namespace Genie
 		std::strcpy( dir.d_name, name.c_str() );
 	}
 	
-	int DirHandle::ReadDir( dirent& entry )
+	int dir_handle::readdir( dirent& entry )
 	{
 		if ( !its_contents.get() )
 		{
 			its_contents = get_contents( *get_file( *this ) );
 		}
 		
-		vfs::dir_contents& contents = *its_contents;
+		dir_contents& contents = *its_contents;
 		
 		const int i = get_mark();
 		
@@ -129,14 +129,13 @@ namespace Genie
 			return 0;
 		}
 		
-		vfs::dir_entry node = contents.at( i );
+		dir_entry node = contents.at( i );
 		
 		advance_mark( 1 );
 		
-		SetDirEntry( entry, node.inode, node.name );
+		set_dir_entry( entry, node.inode, node.name );
 		
 		return sizeof (dirent);
 	}
 	
 }
-

@@ -22,30 +22,24 @@ namespace vfs
 	
 	struct filehandle_method_set;
 	
-}
-
-namespace Genie
-{
-	
-	extern const vfs::stream_method_set dir_stream_methods;
+	extern const stream_method_set dir_stream_methods;
 	
 	
-	class DirHandle : public vfs::filehandle
+	class dir_handle : public filehandle
 	{
 		private:
-			vfs::dir_contents_box  its_contents;
+			dir_contents_box  its_contents;
 		
 		public:
-			DirHandle( const vfs::node* dir, vfs::filehandle_destructor dtor = NULL );
+			dir_handle( const node* dir, filehandle_destructor dtor = NULL );
 			
-			DirHandle( const vfs::filehandle_method_set& methods );
+			dir_handle( const filehandle_method_set& methods );
 			
-			~DirHandle();
+			~dir_handle();
 			
-			int ReadDir( dirent& entry );
+			int readdir( dirent& entry );
 	};
 	
 }
 
 #endif
-

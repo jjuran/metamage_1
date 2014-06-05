@@ -31,7 +31,7 @@ namespace Genie
 	{
 		FSTreePtr dir = new_port();
 		
-		return new DirHandle( dir.get(), &remove_port_file );
+		return new vfs::dir_handle( dir.get(), &remove_port_file );
 	}
 	
 	static const dir_method_set new_port_dir_methods =
