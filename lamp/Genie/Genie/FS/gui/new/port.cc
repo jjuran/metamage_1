@@ -10,13 +10,13 @@
 
 // vfs
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/filehandle/types/directory.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port.hh"
-#include "Genie/IO/Directory.hh"
 
 
 namespace Genie

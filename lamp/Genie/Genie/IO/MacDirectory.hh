@@ -11,8 +11,8 @@
 #include "Mac/Files/Types/FSDirSpec.hh"
 #endif
 
-// Genie
-#include "Genie/IO/Directory.hh"
+// vfs
+#include "vfs/filehandle/types/directory.hh"
 
 
 namespace Genie

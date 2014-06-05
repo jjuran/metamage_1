@@ -5,12 +5,12 @@
 
 // vfs
 #include "vfs/primitives/opendir.hh"
+#include "vfs/filehandle/types/directory.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/dir_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/Directory.hh"
 
 
 namespace vfs

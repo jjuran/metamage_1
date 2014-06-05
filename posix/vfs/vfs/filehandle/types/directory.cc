@@ -1,9 +1,9 @@
-/*	============
- *	Directory.cc
- *	============
- */
+/*
+	directory.cc
+	------------
+*/
 
-#include "Genie/IO/Directory.hh"
+#include "vfs/filehandle/types/directory.hh"
 
 // Standard C/C++
 #include <cstring>

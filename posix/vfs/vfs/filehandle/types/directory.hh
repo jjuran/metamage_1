@@ -1,10 +1,10 @@
-/*	============
- *	Directory.hh
- *	============
- */
+/*
+	directory.hh
+	------------
+*/
 
-#ifndef GENIE_IO_DIRECTORY_HH
-#define GENIE_IO_DIRECTORY_HH
+#ifndef VFS_FILEHANDLE_TYPES_DIRECTORY_HH
+#define VFS_FILEHANDLE_TYPES_DIRECTORY_HH
 
 // vfs
 #include "vfs/dir_contents_box.hh"
