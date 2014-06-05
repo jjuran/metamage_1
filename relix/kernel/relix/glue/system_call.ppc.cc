@@ -39,7 +39,7 @@ namespace relix
 		stw     r0,8(SP)
 		
 		// allocate a stack frame
-		stwu    SP,-64(SP)
+		stwu    SP,-144(SP)
 		
 		// save up to 6 parameters
 		stw     r5,32(SP)
@@ -53,6 +53,8 @@ namespace relix
 		stw     r11,16(SP)
 		
 	#if CONFIG_SYSCALL_STACKS
+		
+		stmw    r13,64(SP)
 		
 		bl      current_stack_base
 		
@@ -147,6 +149,12 @@ namespace relix
 		
 		// restore result
 		lwz     r3,24(SP)
+		
+	#if CONFIG_SYSCALL_STACKS
+		
+		lmw     r13,64(SP)
+		
+	#endif
 		
 		// deallocate our stack frame
 		lwz     SP,0(SP)
