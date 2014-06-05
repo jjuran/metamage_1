@@ -5,13 +5,13 @@
 
 #include "vfs/filehandle/types/directory.hh"
 
-// Standard C/C++
-#include <cstring>
-
 // POSIX
 #include <dirent.h>
 #include "fcntl.h"
 #include "sys/stat.h"
+
+// Standard C
+#include <string.h>
 
 // Extended API Set, part 2
 #include "extended-api-set/part-2.h"
@@ -110,7 +110,7 @@ namespace vfs
 			p7::throw_errno( EOVERFLOW );
 		}
 		
-		std::strcpy( dir.d_name, name.c_str() );
+		strcpy( dir.d_name, name.c_str() );
 	}
 	
 	int dir_handle::readdir( dirent& entry )
