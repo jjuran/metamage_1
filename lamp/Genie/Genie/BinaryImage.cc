@@ -184,7 +184,7 @@ namespace Genie
 			
 			if ( offset >= eof )
 			{
-				p7::throw_errno( ENOEXEC );
+				p7::throw_errno( EINVAL );
 			}
 			
 			length = eof - offset;
