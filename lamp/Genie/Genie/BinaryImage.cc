@@ -37,6 +37,15 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
+	struct code_rsrc_header
+	{
+		uint16_t branch;
+		uint16_t flags;
+		uint32_t type;
+		uint16_t id;
+		uint16_t version;
+	};
+	
 	struct BinaryFileMetadata
 	{
 		UInt32 dataForkLength;
@@ -87,6 +96,57 @@ namespace Genie
 		MacIO::GetCatInfo< MacIO::Throw_All >( pb, file );
 		
 		return BinaryFileMetadata( pb.hFileInfo );
+	}
+	
+	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
+	{
+		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
+		
+		if ( length == kCFragGoesToEOF )
+		{
+			UInt32 eof = N::GetEOF( refNum );
+			
+			if ( offset >= eof )
+			{
+				p7::throw_errno( EINVAL );
+			}
+			
+			length = eof - offset;
+		}
+		
+		BinaryImage data;
+		
+		try
+		{
+			data = N::NewHandle( length );
+		}
+		catch ( ... )
+		{
+			data = N::TempNewHandle( length );
+		}
+		
+		N::HLockHi( data );
+		
+		MacIO::FSRead( MacIO::kThrowEOF_Always,
+		               refNum,
+		               N::fsFromStart,
+		               offset,
+		               length,
+		               *data.get().Get() );
+		
+		if ( TARGET_CPU_68K )
+		{
+			code_rsrc_header& header = *(code_rsrc_header*) *data.get().Get();
+			
+			// Handle dereferenced here
+			
+			if ( header.branch != 0x600A )
+			{
+				p7::throw_errno( EINVAL );
+			}
+		}
+		
+		return data;
 	}
 	
 	
@@ -176,51 +236,37 @@ namespace Genie
 		
 		// Handle no longer used here
 		
-		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
-		
-		if ( length == kCFragGoesToEOF )
-		{
-			UInt32 eof = N::GetEOF( refNum );
-			
-			if ( offset >= eof )
-			{
-				p7::throw_errno( EINVAL );
-			}
-			
-			length = eof - offset;
-		}
-		
-		BinaryImage data;
-		
-		try
-		{
-			data = N::NewHandle( length );
-		}
-		catch ( ... )
-		{
-			data = N::TempNewHandle( length );
-		}
-		
-		N::HLockHi( data );
-		
-		MacIO::FSRead( MacIO::kThrowEOF_Always,
-		               refNum,
-		               N::fsFromStart,
-		               offset,
-		               length,
-		               *data.get().Get() );
-		
-		return data;
+		return ReadProgramFromDataFork( file, offset, length );
 	}
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
-		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+		try
+		{
+			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
+			
+			const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
+			
+			return rsrc ? ReadProgramAsCodeResource(      )
+			            : ReadProgramAsCodeFragment( file );
+		}
+		catch ( const N::OSStatus& err )
+		{
+			if ( err == eofErr )
+			{
+				// Empty resource fork, try data fork
+			}
+			else if ( err == resNotFound )
+			{
+				// No code resource, try data fork
+			}
+			else
+			{
+				throw;
+			}
+		}
 		
-		const bool rsrc = TARGET_CPU_68K && !TARGET_RT_MAC_CFM;
-		
-		return rsrc ? ReadProgramAsCodeResource(      )
-		            : ReadProgramAsCodeFragment( file );
+		return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
 	}
 	
 	static bool CachedImageIsPurged( const BinaryImageCache::value_type& value )
