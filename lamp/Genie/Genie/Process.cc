@@ -567,7 +567,7 @@ namespace Genie
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 	#if CONFIG_SYSCALL_STACKS
-		its_syscall_stack     ( TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysv' ) >= 0x0900 ),
+		its_syscall_stack     ( TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysv' ) >= 0x0850 ),
 	#endif
 		itsStackFramePtr      ( NULL ),
 		itsLifeStage          ( kProcessStarting ),
