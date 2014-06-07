@@ -561,7 +561,7 @@ namespace Genie
 		               parent.signals_blocked(),
 		               tid == pid ? *new relix::process( pid, parent.get_process() )
 		                          : parent.get_process(),
-		               TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysv' ) >= 0x0850 ),
+		               TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysa' ) > 1 ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
