@@ -20,6 +20,7 @@
 
 // relix
 #include "relix/signal/sigset_t.hh"
+#include "relix/task/vfork_context.hh"
 
 
 namespace relix
@@ -28,7 +29,8 @@ namespace relix
 	class process;
 	
 	
-	class thread : public plus::ref_count< thread >
+	class thread : public plus::ref_count< thread >,
+	               public relix::vfork_context
 	{
 		private:
 			int its_id;

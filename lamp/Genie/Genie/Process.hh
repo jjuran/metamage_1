@@ -21,7 +21,6 @@
 #include "relix/config/syscall_stacks.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/thread.hh"
-#include "relix/task/vfork_context.hh"
 
 
 struct sigaction;
@@ -80,8 +79,7 @@ namespace Genie
 	
 	// Genie::Process is actually a thread, not a process.
 	
-	class Process : public relix::thread,
-	                public relix::vfork_context
+	class Process : public relix::thread
 	{
 		public:
 			enum
