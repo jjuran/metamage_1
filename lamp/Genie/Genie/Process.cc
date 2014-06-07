@@ -526,13 +526,10 @@ namespace Genie
 	:
 		relix::thread( 1,
 		               0,
-		               *new relix::process() ),
+		               *new relix::process(),
+		               false ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
-	#if CONFIG_SYSCALL_STACKS
-		its_syscall_stack     ( false ),
-	#endif
-		itsStackFramePtr      ( NULL ),
 		itsLifeStage          ( kProcessLive ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
@@ -563,13 +560,10 @@ namespace Genie
 		relix::thread( tid,
 		               parent.signals_blocked(),
 		               tid == pid ? *new relix::process( pid, parent.get_process() )
-		                          : parent.get_process() ),
+		                          : parent.get_process(),
+		               TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysv' ) >= 0x0850 ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
-	#if CONFIG_SYSCALL_STACKS
-		its_syscall_stack     ( TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysv' ) >= 0x0850 ),
-	#endif
-		itsStackFramePtr      ( NULL ),
 		itsLifeStage          ( kProcessStarting ),
 		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
@@ -643,7 +637,7 @@ namespace Genie
 		itsInterdependence = kProcessForking;
 		itsSchedule        = kProcessFrozen;
 		
-		itsStackFramePtr = (recall::stack_frame_pointer) get_vfork_frame_pointer();
+		mark_vfork_stack_frame();
 		
 		Suspend();
 		
@@ -1146,7 +1140,7 @@ namespace Genie
 	{
 		gCurrentProcess = this;
 		
-		itsStackFramePtr = NULL;  // We don't track this while running
+		clear_stack_frame_mark();  // We don't track this while running
 		
 		itsSchedule = kProcessRunning;
 		
@@ -1159,7 +1153,7 @@ namespace Genie
 		
 		Suspend();
 		
-		itsStackFramePtr = recall::get_stack_frame_pointer();
+		mark_current_stack_frame();
 		
 		const relix::process_image& image = get_process().get_process_image();
 		

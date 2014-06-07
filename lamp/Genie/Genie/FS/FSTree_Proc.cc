@@ -449,7 +449,7 @@ namespace Genie
 		using recall::stack_frame_pointer;
 		using recall::frame_data;
 		
-		stack_frame_pointer top = process.GetStackFramePointer();
+		stack_frame_pointer top = process.marked_stack_frame();
 		
 		if ( top == NULL )
 		{

@@ -12,14 +12,9 @@
 // Boost
 #include <boost/intrusive_ptr.hpp>
 
-// Recall
-#include "recall/stack_crawl.hh"
-
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
 #include "relix/api/os_thread_box.hh"
-#include "relix/config/syscall_stacks.hh"
-#include "relix/task/syscall_stack.hh"
 #include "relix/task/thread.hh"
 
 
@@ -92,14 +87,6 @@ namespace Genie
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			
-		#if CONFIG_SYSCALL_STACKS
-			
-			relix::syscall_stack its_syscall_stack;
-			
-		#endif
-			
-			recall::stack_frame_pointer itsStackFramePtr;
-			
 			ProcessLifeStage        itsLifeStage;
 			ProcessInterdependence  itsInterdependence;
 			ProcessSchedule         itsSchedule;
@@ -165,8 +152,6 @@ namespace Genie
 			pid_t GetPGID() const;
 			pid_t GetSID()  const;
 			
-			recall::stack_frame_pointer GetStackFramePointer() const  { return itsStackFramePtr; }
-			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
 			
@@ -181,16 +166,6 @@ namespace Genie
 			void AsyncYield();
 			
 			relix::fd_map& FileDescriptors();
-			
-		#if CONFIG_SYSCALL_STACKS
-			
-			void* get_syscall_stack_memory() const  { return its_syscall_stack.memory; }
-			
-		#else
-			
-			void* get_syscall_stack_memory() const  { return NULL; }
-			
-		#endif
 			
 			const struct sigaction& GetSignalAction( int signo ) const;
 			
