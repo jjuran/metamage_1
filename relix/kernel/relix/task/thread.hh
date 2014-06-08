@@ -22,6 +22,7 @@
 #include "recall/stack_crawl.hh"
 
 // relix
+#include "relix/api/os_thread_box.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/signal/sigset_t.hh"
 #include "relix/task/syscall_stack.hh"
@@ -54,6 +55,8 @@ namespace relix
 		#endif
 			
 			recall::stack_frame_pointer its_stack_frame_ptr;
+			
+			os_thread_box its_os_thread;
 		
 		public:
 			thread( int id, sigset_t blocked, process& p, bool use_syscall_stack );
@@ -98,6 +101,16 @@ namespace relix
 			}
 			
 			void clear_stack_frame_mark()  { its_stack_frame_ptr =  NULL; }
+			
+			bool has_own_os_thread() const  { return its_os_thread.get() != NULL; }
+			
+			os_thread_id get_os_thread() const;
+			
+			void swap_os_thread( os_thread_box& other )  { its_os_thread.swap( other ); }
+			
+			void swap_os_thread( thread& other )  { its_os_thread.swap( other.its_os_thread ); }
+			
+			void reset_os_thread()  { its_os_thread.reset(); }
 	};
 	
 #if defined( __RELIX__ )  ||  defined( __APPLE__ )

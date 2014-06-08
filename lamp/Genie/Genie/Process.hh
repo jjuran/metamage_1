@@ -13,8 +13,6 @@
 #include <boost/intrusive_ptr.hpp>
 
 // relix-kernel
-#include "relix/api/os_thread_api.hh"
-#include "relix/api/os_thread_box.hh"
 #include "relix/task/thread.hh"
 
 
@@ -98,8 +96,6 @@ namespace Genie
 		private:
 			void* itsReexecArgs[8];
 			
-			relix::os_thread_box itsThread;
-			
 			bool itMayDumpCore;
 		
 		private:
@@ -178,8 +174,6 @@ namespace Genie
 			void Exit( int exit_status );
 		
 		public:
-			relix::os_thread_id GetThread() const;
-			
 			Process& vfork();
 			
 			void Exec( const char*         path,

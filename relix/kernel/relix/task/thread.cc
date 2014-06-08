@@ -6,6 +6,7 @@
 #include "relix/task/thread.hh"
 
 // relix
+#include "relix/api/get_thread.hh"
 #include "relix/task/process.hh"
 
 
@@ -39,6 +40,25 @@ namespace relix
 		const int levels_to_skip = 1;
 		
 		its_stack_frame_ptr = recall::get_stack_frame_pointer( levels_to_skip );
+	}
+	
+	os_thread_id thread::get_os_thread() const
+	{
+		const thread* next_thread = this;
+		
+		while ( next_thread->its_os_thread.get() == 0 )
+		{
+			pid_t ppid = next_thread->get_process().getppid();
+			
+			if ( ppid == 1 )
+			{
+				return 0;
+			}
+			
+			next_thread = &get_thread( ppid );
+		}
+		
+		return get_os_thread_id( *next_thread->its_os_thread.get() );
 	}
 	
 }

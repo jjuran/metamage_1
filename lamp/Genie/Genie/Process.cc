@@ -603,25 +603,6 @@ namespace Genie
 		get_process().unshare_signal_handlers();
 	}
 	
-	relix::os_thread_id Process::GetThread() const
-	{
-		const Process* process = this;
-		
-		while ( process->itsThread.get() == 0 )
-		{
-			pid_t ppid = process->GetPPID();
-			
-			if ( ppid == 1 )
-			{
-				return 0;
-			}
-			
-			process = &GetProcess( ppid );
-		}
-		
-		return get_os_thread_id( *process->itsThread.get() );
-	}
-	
 	Process& Process::vfork()
 	{
 		Process& child = NewProcess( *this );
@@ -779,7 +760,7 @@ namespace Genie
 		                                            envp ) );
 		
 		// Make the new thread belong to this process and save the old one
-		itsThread.swap( looseThread );
+		swap_os_thread( looseThread );
 		
 		// Lose the current process image.  If we're not vforked and the
 		// execution unit isn't cached, it's now gone.  But that's okay
@@ -858,7 +839,7 @@ namespace Genie
 		relix::os_thread_box looseThread = new_os_thread( &Process::thread_start, this, min_stack );
 		
 		// Make the new thread belong to this process and save the old one
-		itsThread.swap( looseThread );
+		swap_os_thread( looseThread );
 		
 		itsLifeStage       = kProcessLive;
 		itsInterdependence = kProcessIndependent;
@@ -908,7 +889,7 @@ namespace Genie
 		
 		Resume();
 		
-		const bool forked = itsThread.get() == 0;
+		const bool forked = !has_own_os_thread();
 		
 		itsInterdependence = forked ? kProcessForked
 		                            : kProcessIndependent;
@@ -942,7 +923,7 @@ namespace Genie
 		
 		child.itsLifeStage       = kProcessLive;
 		
-		child.itsThread.swap( parent.itsThread );
+		child.swap_os_thread( parent );
 		
 		parent.Exit( exit_status );
 		
@@ -1077,7 +1058,7 @@ namespace Genie
 			nulled out when the thread terminates is on the stack).
 		*/
 		
-		itsThread.reset();
+		reset_os_thread();
 		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
@@ -1161,7 +1142,7 @@ namespace Genie
 		
 		if ( newSchedule == kProcessStopped )
 		{
-			relix::stop_os_thread( GetThread() );
+			relix::stop_os_thread( get_os_thread() );
 		}
 		else
 		{
@@ -1317,7 +1298,7 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		relix::os_thread_id thread = GetThread();
+		relix::os_thread_id thread = get_os_thread();
 		
 		if ( thread == 0 )
 		{
