@@ -36,7 +36,6 @@
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/gui/new/scroller.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
