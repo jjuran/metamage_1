@@ -2,18 +2,18 @@
 
 set -e
 
-archive="./archive.pl"
+archive="archive.pl"
 
 date '+export BUILD_DATE="%Y-%m-%d %H:%M"' > /tmp/set-lamp_build_date
 
 . /tmp/set-lamp_build_date
 
-$archive 68k
-$archive 68k~
+perl $archive 68k
+perl $archive 68k~
 
-$archive os9
-$archive os9~
+perl $archive os9
+perl $archive os9~
 
-$archive osx
-$archive osx~
+perl $archive osx
+perl $archive osx~
 
