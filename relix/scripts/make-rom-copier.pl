@@ -112,7 +112,7 @@ exec /usr/app/$NAME/init
 			# Standard
 			\ qw( tee touch ),
 			# Common
-			\ qw( perl ),
+			\ qw( md5sum perl ),
 			# App utilities
 			\ qw( copy daemonize idle ),
 			# Mac-specific

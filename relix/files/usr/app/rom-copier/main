@@ -55,6 +55,15 @@ sub rom_checksum
 	return $output;
 }
 
+sub md5sum
+{
+	my ( $path ) = @_;
+	
+	my $output = `/usr/bin/md5sum $path`;
+	
+	return substr( $output, 0, 32 );
+}
+
 my $progress = q|perl -pe 'm{^ \s* (\d+) \s* / \s* (\d+) \s* $}x and $_ = ($1/$2 * 10000) . "\n"'|;
 
 sub copy_with_progress
@@ -77,6 +86,14 @@ sub rom_copier
 	
 	if ( my $valid = $checksum =~ m{^ [0-9A-Fa-f]{8} $}x )
 	{
+		set_prompt_text( "ROM + MD5 checksum:" );
+		
+		set_checksum_text( "$checksum + (calculating MD5...)");
+		
+		my $md5sum = md5sum( "/sys/mac/rom" );
+		
+		set_checksum_text( "$checksum + $md5sum");
+		
 		my $file = "/$checksum.rom";
 		
 		set_button_title( "Copy" );
@@ -110,6 +127,17 @@ sub rom_copier
 		if ( $new_checksum ne $checksum )
 		{
 			set_prompt_text( "The copy's ROM checksum DOES NOT MATCH" );
+			
+			return;
+		}
+		
+		set_prompt_text( "Verifying MD5 checksum..." );
+		
+		my $new_md5sum = md5sum( $file );
+		
+		if ( $new_md5sum ne $md5sum )
+		{
+			set_prompt_text( "The copy's MD5 checksum DOES NOT MATCH" );
 			
 			return;
 		}
