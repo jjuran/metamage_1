@@ -34,90 +34,60 @@
 #include "relix/signal/broken_pipe.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	namespace p7 = poseven;
 	
-	using relix::broken_pipe;
-	using relix::try_again;
 	
-	
-	class PairedSocket : public vfs::filehandle
+	struct pairedsocket_extra
 	{
-		private:
-			boost::intrusive_ptr< vfs::stream >  itsInput;
-			boost::intrusive_ptr< vfs::stream >  itsOutput;
-		
-		public:
-			PairedSocket( boost::intrusive_ptr< vfs::stream >  input,
-			              boost::intrusive_ptr< vfs::stream >  output,
-			              bool                                 nonblocking );
-			
-			~PairedSocket();
-			
-			unsigned int SysPoll()
-			{
-				return   vfs::Poll_read  * itsInput->is_readable()
-				       | vfs::Poll_write * itsOutput->is_writable();
-			}
-			
-			ssize_t SysRead( char* data, std::size_t byteCount )
-			{
-				return itsInput->read( data, byteCount, is_nonblocking( *this ), &try_again );
-			}
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount )
-			{
-				return itsOutput->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
-			}
-			
-			void IOCtl( unsigned long request, int* argp );
-			
-			void ShutdownReading();
-			void ShutdownWriting();
-			
-			bool conveying() const  { return !itsInput->empty(); }
+		vfs::stream*  input;
+		vfs::stream*  output;
 	};
-	
 	
 	static unsigned pairedsocket_poll( vfs::filehandle* that )
 	{
-		return static_cast< PairedSocket& >( *that ).SysPoll();
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
+		return   vfs::Poll_read  * extra.input ->is_readable()
+		       | vfs::Poll_write * extra.output->is_writable();
 	}
 	
 	static ssize_t pairedsocket_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return static_cast< PairedSocket& >( *that ).SysRead( buffer, n );
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
+		return extra.input->read( buffer, n, is_nonblocking( *that ), &try_again );
 	}
 	
 	static ssize_t pairedsocket_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return static_cast< PairedSocket& >( *that ).SysWrite( buffer, n );
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
+		return extra.output->write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
 	
 	static void pairedsocket_shutdown( vfs::filehandle* that, int how )
 	{
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
 		if ( how != SHUT_WR )
 		{
-			static_cast< PairedSocket& >( *that ).ShutdownReading();
+			extra.input->close_egress();
 		}
 		
 		if ( how != SHUT_RD )
 		{
-			static_cast< PairedSocket& >( *that ).ShutdownWriting();
+			extra.output->close_ingress();
 		}
 	}
 	
 	static int pairedsocket_conveying( vfs::filehandle* that )
 	{
-		return static_cast< PairedSocket& >( *that ).conveying();
-	}
-	
-	PairedSocket::~PairedSocket()
-	{
-		ShutdownReading();
-		ShutdownWriting();
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
+		return !extra.input->empty();
 	}
 	
 	static vfs::filehandle& check_fh( vfs::filehandle& fh )
@@ -134,11 +104,8 @@ namespace Genie
 	
 	static void pairedsocket_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
 	{
-		static_cast< PairedSocket& >( *that ).IOCtl( request, argp );
-	}
-	
-	void PairedSocket::IOCtl( unsigned long request, int* argp )
-	{
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
 		switch ( request )
 		{
 		#ifdef __RELIX__
@@ -146,7 +113,7 @@ namespace Genie
 			case I_SENDFD:
 				// FIXME:  Implement garbage collection to allow cycles
 				
-				itsOutput->send_fd( check_fh( relix::get_fd_handle( (int) argp ) ) );
+				extra.output->send_fd( check_fh( get_fd_handle( (int) argp ) ) );
 				
 				break;
 			
@@ -155,9 +122,9 @@ namespace Genie
 				{
 					strrecvfd* arg = (strrecvfd*) argp;
 					
-					int fd = relix::first_free_fd();
+					int fd = first_free_fd();
 					
-					relix::assign_fd( fd, *itsInput->recv_fd( is_nonblocking( *this ), &try_again ) );
+					assign_fd( fd, *extra.input->recv_fd( is_nonblocking( *that ), &try_again ) );
 					
 					arg->fd = fd;
 					
@@ -180,6 +147,7 @@ namespace Genie
 				break;
 		}
 	}
+	
 	
 	static const vfs::stream_method_set pairedsocket_stream_methods =
 	{
@@ -214,40 +182,33 @@ namespace Genie
 		&pairedsocket_general_methods,
 	};
 	
-	
-	void PairedSocket::ShutdownReading()
+	static void close_paired_socket( vfs::filehandle* that )
 	{
-		itsInput->close_egress();
+		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
+		
+		extra.input ->close_egress();
+		extra.output->close_ingress();
+		
+		intrusive_ptr_release( extra.input  );
+		intrusive_ptr_release( extra.output );
 	}
 	
-	void PairedSocket::ShutdownWriting()
-	{
-		itsOutput->close_ingress();
-	}
-	
-	PairedSocket::PairedSocket( boost::intrusive_ptr< vfs::stream >  input,
-			                    boost::intrusive_ptr< vfs::stream >  output,
-			                    bool                                 nonblocking )
-	:
-		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
-		                             : O_RDWR,
-		              &pairedsocket_methods ),
-		itsInput ( input  ),
-		itsOutput( output )
-	{
-	}
-	
-}
-
-namespace relix
-{
 	
 	vfs::filehandle_ptr new_paired_socket( const boost::intrusive_ptr< vfs::stream >&  input,
 	                                       const boost::intrusive_ptr< vfs::stream >&  output,
 	                                       bool                                        nonblocking )
 	{
-		return new Genie::PairedSocket( input, output, nonblocking );
+		vfs::filehandle* result = new vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK : O_RDWR,
+		                                               &pairedsocket_methods,
+		                                               sizeof (pairedsocket_extra),
+		                                               &close_paired_socket );
+		
+		pairedsocket_extra& extra = *(pairedsocket_extra*) result->extra();
+		
+		intrusive_ptr_add_ref( extra.input  = input .get() );
+		intrusive_ptr_add_ref( extra.output = output.get() );
+		
+		return result;
 	}
 	
 }
-
