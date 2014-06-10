@@ -5,11 +5,22 @@
 #use strict;
 
 
+sub spew
+{
+	my ( $path, $data ) = @_;
+	
+	open my $out, ">", $path or die "$path: $!\n";
+	
+	print $out $data or die "$path: $!\n";
+	
+	close $out or die "$path: $!\n";
+}
+
 sub set_button_title
 {
 	my ( $title ) = @_;
 	
-	system "echo $title > v/button/v/v/title";
+	spew( "v/button/v/v/title", "$title\n" );
 }
 
 sub wait_for_button
