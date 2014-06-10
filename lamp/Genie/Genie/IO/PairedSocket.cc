@@ -81,37 +81,37 @@ namespace Genie
 	};
 	
 	
-	static unsigned pairedsocket_poll( vfs::filehandle* sock )
+	static unsigned pairedsocket_poll( vfs::filehandle* that )
 	{
-		return static_cast< PairedSocket& >( *sock ).SysPoll();
+		return static_cast< PairedSocket& >( *that ).SysPoll();
 	}
 	
-	static ssize_t pairedsocket_read( vfs::filehandle* sock, char* buffer, size_t n )
+	static ssize_t pairedsocket_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return static_cast< PairedSocket& >( *sock ).SysRead( buffer, n );
+		return static_cast< PairedSocket& >( *that ).SysRead( buffer, n );
 	}
 	
-	static ssize_t pairedsocket_write( vfs::filehandle* sock, const char* buffer, size_t n )
+	static ssize_t pairedsocket_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return static_cast< PairedSocket& >( *sock ).SysWrite( buffer, n );
+		return static_cast< PairedSocket& >( *that ).SysWrite( buffer, n );
 	}
 	
-	static void pairedsocket_shutdown( vfs::filehandle* sock, int how )
+	static void pairedsocket_shutdown( vfs::filehandle* that, int how )
 	{
 		if ( how != SHUT_WR )
 		{
-			static_cast< PairedSocket& >( *sock ).ShutdownReading();
+			static_cast< PairedSocket& >( *that ).ShutdownReading();
 		}
 		
 		if ( how != SHUT_RD )
 		{
-			static_cast< PairedSocket& >( *sock ).ShutdownWriting();
+			static_cast< PairedSocket& >( *that ).ShutdownWriting();
 		}
 	}
 	
-	static int pairedsocket_conveying( vfs::filehandle* sock )
+	static int pairedsocket_conveying( vfs::filehandle* that )
 	{
-		return static_cast< PairedSocket& >( *sock ).conveying();
+		return static_cast< PairedSocket& >( *that ).conveying();
 	}
 	
 	static const vfs::stream_method_set pairedsocket_stream_methods =
