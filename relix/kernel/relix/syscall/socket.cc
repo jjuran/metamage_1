@@ -6,6 +6,8 @@
 #include "relix/syscall/socket.hh"
 
 // POSIX
+#include <errno.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
 
 // vfs
@@ -32,9 +34,26 @@ namespace relix
 	
 	int socket( int domain, int type, int protocol )
 	{
-		int fd = first_free_fd();
+		if ( domain != PF_INET )
+		{
+			return set_errno( EAFNOSUPPORT );
+		}
 		
-		// Assume domain is PF_INET, type is SOCK_STREAM, and protocol is INET_TCP
+		if ( short( type ) != SOCK_STREAM )
+		{
+			return set_errno( EPROTOTYPE );
+		}
+		
+		if ( protocol == 0 )
+		{
+			protocol = IPPROTO_TCP;
+		}
+		else if ( protocol != IPPROTO_TCP )
+		{
+			return set_errno( EPROTONOSUPPORT );
+		}
+		
+		int fd = first_free_fd();
 		
 		try
 		{
