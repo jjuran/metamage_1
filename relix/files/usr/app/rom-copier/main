@@ -107,9 +107,18 @@ sub rom_copier
 		
 		copy_with_progress( "/sys/mac/rom", $file );
 		
+		set_prompt_text( "Verifying ROM checksum..." );
+		
 		my $new_checksum = rom_checksum( $file );
 		
-		set_checksum_text( $new_checksum );
+		if ( $new_checksum ne $checksum )
+		{
+			set_prompt_text( "The copy's ROM checksum DOES NOT MATCH" );
+			
+			return;
+		}
+		
+		set_prompt_text( "Copy and verification succeeded." );
 	}
 }
 
