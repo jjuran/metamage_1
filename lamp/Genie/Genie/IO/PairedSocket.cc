@@ -30,16 +30,17 @@
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd_handle.hh"
 #include "relix/api/new_paired_socket.hh"
-
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
+#include "relix/api/try_again.hh"
+#include "relix/signal/broken_pipe.hh"
 
 
 namespace Genie
 {
 	
 	namespace p7 = poseven;
+	
+	using relix::broken_pipe;
+	using relix::try_again;
 	
 	
 	class PairedSocket : public vfs::filehandle
