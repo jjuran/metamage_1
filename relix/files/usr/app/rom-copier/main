@@ -23,6 +23,13 @@ sub set_button_title
 	spew( "v/button/v/v/title", "$title\n" );
 }
 
+sub set_checksum_text
+{
+	my ( $text ) = @_;
+	
+	spew( "v/checksum/v/v/text", $text );
+}
+
 sub wait_for_button
 {
 	open my $in, "<", "v/button/v/v/socket" or die;
@@ -38,9 +45,11 @@ if ( -f "/sys/mac/rom" )
 	
 	wait_for_button();
 	
-	my $checksum = `/usr/bin/rom-checksum /sys/mac/rom | /usr/bin/tee v/checksum/v/v/text`;
+	my $checksum = `/usr/bin/rom-checksum /sys/mac/rom`;
 	
 	chop $checksum;
+	
+	set_checksum_text( $checksum );
 	
 	if ( my $valid = $checksum =~ m{^ [0-9A-Fa-f]{8} $}x )
 	{
@@ -63,12 +72,16 @@ if ( -f "/sys/mac/rom" )
 		
 		unlink "v/progress/v/view";
 		
-		system "/usr/bin/rom-checksum $file > v/checksum/v/v/text"
+		my $new_checksum = `/usr/bin/rom-checksum $file`;
+		
+		#chop $new_checksum;
+		
+		set_checksum_text( $new_checksum );
 	}
 }
 else
 {
-	system "echo ROM not found > v/checksum/v/v/text";
+	set_checksum_text( "ROM not found" );
 }
 
 set_button_title( "Quit" );
