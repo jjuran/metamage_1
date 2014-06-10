@@ -15,7 +15,7 @@
 #include "relix/api/assign_fd.hh"
 #include "relix/api/errno.hh"
 #include "relix/api/first_free_fd.hh"
-#include "relix/api/new_paired_socket.hh"
+#include "relix/socket/paired_socket.hh"
 
 
 #ifndef SOCK_CLOEXEC

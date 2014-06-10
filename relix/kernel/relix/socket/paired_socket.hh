@@ -1,10 +1,10 @@
 /*
-	new_paired_socket.hh
-	--------------------
+	paired_socket.hh
+	----------------
 */
 
-#ifndef RELIX_API_NEWPAIREDSOCKET_HH
-#define RELIX_API_NEWPAIREDSOCKET_HH
+#ifndef RELIX_SOCKET_PAIREDSOCKET_HH
+#define RELIX_SOCKET_PAIREDSOCKET_HH
 
 // Debug
 #include "debug/boost_assert.hh"
@@ -26,4 +26,3 @@ namespace relix
 }
 
 #endif
-

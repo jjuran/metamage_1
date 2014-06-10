@@ -3,6 +3,8 @@
 	----------------
 */
 
+#include "relix/socket/paired_socket.hh"
+
 // STREAMS
 #ifdef __RELIX__
 #include <stropts.h>
@@ -29,7 +31,6 @@
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd_handle.hh"
-#include "relix/api/new_paired_socket.hh"
 #include "relix/api/try_again.hh"
 #include "relix/signal/broken_pipe.hh"
 
