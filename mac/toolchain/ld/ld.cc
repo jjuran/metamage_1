@@ -693,7 +693,7 @@ namespace tool
 				command.push_back( "-main"      );
 				command.push_back( "_lamp_main" );
 				
-				gFileType    = "Wish";
+				gFileType    = "Tool";
 				gFileCreator = "Poof";
 				
 				break;

@@ -527,7 +527,7 @@ resource 'FREF' (128) {
 };
 
 resource 'FREF' (129) {
-	'Wish',
+	'Tool',
 	1,
 	""
 };
