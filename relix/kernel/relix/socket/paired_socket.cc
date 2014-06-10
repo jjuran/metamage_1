@@ -1,6 +1,6 @@
 /*
-	PairedSocket.cc
-	---------------
+	paired_socket.cc
+	----------------
 */
 
 // STREAMS
