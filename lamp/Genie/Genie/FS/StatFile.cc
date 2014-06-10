@@ -45,6 +45,7 @@ namespace Genie
 	{
 		switch ( type )
 		{
+			case 'Tool':
 			case 'Wish':
 			case 'MPST':
 			case 'APPL':
