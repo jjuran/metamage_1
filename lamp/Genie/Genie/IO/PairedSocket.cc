@@ -114,57 +114,6 @@ namespace Genie
 		return static_cast< PairedSocket& >( *that ).conveying();
 	}
 	
-	static const vfs::stream_method_set pairedsocket_stream_methods =
-	{
-		&pairedsocket_poll,
-		&pairedsocket_read,
-		&pairedsocket_write,
-	};
-	
-	static void pairedsocket_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
-	{
-		static_cast< PairedSocket& >( *that ).IOCtl( request, argp );
-	}
-	
-	static const vfs::socket_method_set pairedsocket_socket_methods =
-	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&pairedsocket_shutdown,
-		NULL,
-		NULL,
-		&pairedsocket_conveying,
-	};
-	
-	static const vfs::general_method_set pairedsocket_general_methods =
-	{
-		NULL,
-		&pairedsocket_ioctl,
-	};
-	
-	static const vfs::filehandle_method_set pairedsocket_methods =
-	{
-		NULL,
-		&pairedsocket_socket_methods,
-		&pairedsocket_stream_methods,
-		&pairedsocket_general_methods,
-	};
-	
-	
-	PairedSocket::PairedSocket( boost::intrusive_ptr< vfs::stream >  input,
-			                    boost::intrusive_ptr< vfs::stream >  output,
-			                    bool                                 nonblocking )
-	:
-		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
-		                             : O_RDWR,
-		              &pairedsocket_methods ),
-		itsInput ( input  ),
-		itsOutput( output )
-	{
-	}
-	
 	PairedSocket::~PairedSocket()
 	{
 		ShutdownReading();
@@ -181,6 +130,11 @@ namespace Genie
 		}
 		
 		return fh;
+	}
+	
+	static void pairedsocket_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
+	{
+		static_cast< PairedSocket& >( *that ).IOCtl( request, argp );
 	}
 	
 	void PairedSocket::IOCtl( unsigned long request, int* argp )
@@ -227,6 +181,40 @@ namespace Genie
 		}
 	}
 	
+	static const vfs::stream_method_set pairedsocket_stream_methods =
+	{
+		&pairedsocket_poll,
+		&pairedsocket_read,
+		&pairedsocket_write,
+	};
+	
+	static const vfs::socket_method_set pairedsocket_socket_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&pairedsocket_shutdown,
+		NULL,
+		NULL,
+		&pairedsocket_conveying,
+	};
+	
+	static const vfs::general_method_set pairedsocket_general_methods =
+	{
+		NULL,
+		&pairedsocket_ioctl,
+	};
+	
+	static const vfs::filehandle_method_set pairedsocket_methods =
+	{
+		NULL,
+		&pairedsocket_socket_methods,
+		&pairedsocket_stream_methods,
+		&pairedsocket_general_methods,
+	};
+	
+	
 	void PairedSocket::ShutdownReading()
 	{
 		itsInput->close_egress();
@@ -235,6 +223,18 @@ namespace Genie
 	void PairedSocket::ShutdownWriting()
 	{
 		itsOutput->close_ingress();
+	}
+	
+	PairedSocket::PairedSocket( boost::intrusive_ptr< vfs::stream >  input,
+			                    boost::intrusive_ptr< vfs::stream >  output,
+			                    bool                                 nonblocking )
+	:
+		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
+		                             : O_RDWR,
+		              &pairedsocket_methods ),
+		itsInput ( input  ),
+		itsOutput( output )
+	{
 	}
 	
 }
