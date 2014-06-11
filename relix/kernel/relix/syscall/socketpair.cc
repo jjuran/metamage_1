@@ -40,8 +40,8 @@ namespace relix
 			boost::intrusive_ptr< vfs::stream > east( new vfs::stream );
 			boost::intrusive_ptr< vfs::stream > west( new vfs::stream );
 			
-			vfs::filehandle_ptr san_jose = new_paired_socket( west, east, nonblocking );
-			vfs::filehandle_ptr new_york = new_paired_socket( east, west, nonblocking );
+			vfs::filehandle_ptr san_jose = new_paired_socket( *west, *east, nonblocking );
+			vfs::filehandle_ptr new_york = new_paired_socket( *east, *west, nonblocking );
 			
 			int a = first_free_fd( 3 );
 			int b = first_free_fd( a + 1 );

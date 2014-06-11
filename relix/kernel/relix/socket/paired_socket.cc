@@ -195,9 +195,9 @@ namespace relix
 	}
 	
 	
-	vfs::filehandle_ptr new_paired_socket( const boost::intrusive_ptr< vfs::stream >&  input,
-	                                       const boost::intrusive_ptr< vfs::stream >&  output,
-	                                       bool                                        nonblocking )
+	vfs::filehandle_ptr new_paired_socket( vfs::stream&  input,
+	                                       vfs::stream&  output,
+	                                       bool          nonblocking )
 	{
 		vfs::filehandle* result = new vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK : O_RDWR,
 		                                               &pairedsocket_methods,
@@ -206,8 +206,8 @@ namespace relix
 		
 		pairedsocket_extra& extra = *(pairedsocket_extra*) result->extra();
 		
-		intrusive_ptr_add_ref( extra.input  = input .get() );
-		intrusive_ptr_add_ref( extra.output = output.get() );
+		intrusive_ptr_add_ref( extra.input  = &input  );
+		intrusive_ptr_add_ref( extra.output = &output );
 		
 		return result;
 	}
