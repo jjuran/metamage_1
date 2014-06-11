@@ -10,6 +10,7 @@
 #include "vfs/node/types/generated_file.hh"
 
 // MacVFS
+#include "MacVFS/file/sys_mac_bootrom.hh"
 #include "MacVFS/file/sys_mac_rom.hh"
 
 // relix-kernel
@@ -128,7 +129,8 @@ namespace Genie
 		
 		{ "keys", &vfs::new_generated, (void*) &sys_mac_keys::Read },
 		
-		{ "rom", &vfs::new_sys_mac_rom },
+		{ "rom",     &vfs::new_sys_mac_rom     },
+		{ "bootrom", &vfs::new_sys_mac_bootrom },
 		
 		{ NULL, NULL }
 		
