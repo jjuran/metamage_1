@@ -41,12 +41,6 @@ namespace relix
 	namespace p7 = poseven;
 	
 	
-	struct pairedsocket_extra
-	{
-		vfs::stream*  input;
-		vfs::stream*  output;
-	};
-	
 	static unsigned pairedsocket_poll( vfs::filehandle* that )
 	{
 		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
@@ -69,7 +63,7 @@ namespace relix
 		return extra.output->write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
 	
-	static void pairedsocket_shutdown( vfs::filehandle* that, int how )
+	void pairedsocket_shutdown( vfs::filehandle* that, int how )
 	{
 		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
 		
@@ -84,7 +78,7 @@ namespace relix
 		}
 	}
 	
-	static int pairedsocket_conveying( vfs::filehandle* that )
+	int pairedsocket_conveying( vfs::filehandle* that )
 	{
 		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
 		
@@ -150,7 +144,7 @@ namespace relix
 	}
 	
 	
-	static const vfs::stream_method_set pairedsocket_stream_methods =
+	const vfs::stream_method_set pairedsocket_stream_methods =
 	{
 		&pairedsocket_poll,
 		&pairedsocket_read,
@@ -169,13 +163,13 @@ namespace relix
 		&pairedsocket_conveying,
 	};
 	
-	static const vfs::general_method_set pairedsocket_general_methods =
+	const vfs::general_method_set pairedsocket_general_methods =
 	{
 		NULL,
 		&pairedsocket_ioctl,
 	};
 	
-	static const vfs::filehandle_method_set pairedsocket_methods =
+	const vfs::filehandle_method_set pairedsocket_methods =
 	{
 		NULL,
 		&pairedsocket_socket_methods,
@@ -183,7 +177,7 @@ namespace relix
 		&pairedsocket_general_methods,
 	};
 	
-	static void close_paired_socket( vfs::filehandle* that )
+	void close_paired_socket( vfs::filehandle* that )
 	{
 		pairedsocket_extra& extra = *(pairedsocket_extra*) that->extra();
 		
