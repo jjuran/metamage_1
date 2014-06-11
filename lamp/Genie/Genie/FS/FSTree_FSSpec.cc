@@ -153,6 +153,20 @@ namespace Genie
 	}
 	
 	
+	static void finish_creation( const FSSpec& file, const plus::string& name )
+	{
+		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
+	}
+	
+	static void create_file( const FSSpec& file, const plus::string& name )
+	{
+		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
+		
+		N::FSpCreate( file, sig );
+		
+		finish_creation( file, name );
+	}
+	
 	static plus::string SlurpFile( const FSSpec& file )
 	{
 		plus::string result;
@@ -845,11 +859,6 @@ namespace Genie
 		SpewFile( linkSpec, targetPath );
 	}
 	
-	static void finish_creation( const FSSpec& file, const plus::string& name )
-	{
-		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
-	}
-	
 	static void hfs_symlink( const FSTree*        that,
 	                         const plus::string&  target )
 	{
@@ -858,15 +867,6 @@ namespace Genie
 		CreateSymLink( *that, target );
 		
 		finish_creation( extra.fsspec, that->name() );
-	}
-	
-	static void create_file( const FSSpec& file, const plus::string& name )
-	{
-		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
-		
-		N::FSpCreate( file, sig );
-		
-		finish_creation( file, name );
 	}
 	
 	static vfs::filehandle_ptr hfs_open( const FSTree* that, int flags, mode_t mode )
