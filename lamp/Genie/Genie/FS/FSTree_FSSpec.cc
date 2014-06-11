@@ -403,6 +403,24 @@ namespace Genie
 	
 	static vfs::program_ptr hfs_loadexec( const FSTree* that );
 	
+	static void hfs_mknod( const vfs::node* that, mode_t mode, dev_t dev )
+	{
+		hfs_extra& extra = *(hfs_extra*) that->extra();
+		
+		const mode_t type = mode & S_IFMT;
+		
+		switch ( type )
+		{
+			case 0:
+			case S_IFREG:
+				create_file( extra.fsspec, that->name() );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
 	static const data_method_set hfs_data_methods =
 	{
 		&hfs_open,
@@ -429,7 +447,8 @@ namespace Genie
 		NULL,
 		&hfs_copyfile,
 		NULL,
-		&hfs_loadexec
+		&hfs_loadexec,
+		&hfs_mknod,
 	};
 	
 	static const misc_method_set hfs_misc_methods =
