@@ -409,6 +409,10 @@ namespace Genie
 		
 		const mode_t type = mode & S_IFMT;
 		
+		const Mac::FSCreator Creator = Mac::FSCreator( 'Poof' );
+		
+		const Mac::FSType Type_FIFO = Mac::FSType( 'FIFO' );
+		
 		switch ( type )
 		{
 			case 0:
@@ -416,7 +420,12 @@ namespace Genie
 				create_file( extra.fsspec, that->name() );
 				break;
 			
+			case S_IFIFO:
+				create_file( extra.fsspec, that->name(), Creator, Type_FIFO );
+				break;
+			
 			default:
+				p7::throw_errno( EPERM );
 				break;
 		}
 	}
