@@ -18,6 +18,7 @@
 #include "relix/api/errno.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/new_tcp_socket.hh"
+#include "relix/socket/unix_domain_socket.hh"
 
 
 #ifndef SOCK_CLOEXEC
@@ -34,7 +35,7 @@ namespace relix
 	
 	int socket( int domain, int type, int protocol )
 	{
-		if ( domain != PF_INET )
+		if ( domain != PF_INET  &&  domain != PF_UNIX )
 		{
 			return set_errno( EAFNOSUPPORT );
 		}
@@ -44,32 +45,50 @@ namespace relix
 			return set_errno( EPROTOTYPE );
 		}
 		
-		if ( protocol == 0 )
-		{
-			protocol = IPPROTO_TCP;
-		}
-		else if ( protocol != IPPROTO_TCP )
-		{
-			return set_errno( EPROTONOSUPPORT );
-		}
-		
-		int fd = first_free_fd();
-		
 		try
 		{
 			const bool close_on_exec = type & SOCK_CLOEXEC;
 			const bool nonblocking   = type & SOCK_NONBLOCK;
 			
-			assign_fd( fd,
-						*new_tcp_socket( nonblocking ),
-						close_on_exec );
+			vfs::filehandle_ptr socket;
+			
+			switch ( domain )
+			{
+				case PF_UNIX:
+					if ( protocol == 0 )
+					{
+						socket = new_unix_domain_socket( nonblocking );
+					}
+					
+					break;
+				
+				case PF_INET:
+					if ( protocol == 0  ||  protocol == IPPROTO_TCP )
+					{
+						socket = new_tcp_socket( nonblocking );
+					}
+					
+					break;
+				
+				default:
+					break;
+			}
+			
+			if ( socket.get() == NULL )
+			{
+				return set_errno( EPROTONOSUPPORT );
+			}
+			
+			int fd = first_free_fd();
+			
+			assign_fd( fd, *socket, close_on_exec );
+			
+			return fd;
 		}
 		catch ( ... )
 		{
 			return set_errno_from_exception();
 		}
-		
-		return fd;
 	}
 	
 }
