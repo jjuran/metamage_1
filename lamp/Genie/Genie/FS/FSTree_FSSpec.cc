@@ -62,6 +62,7 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
@@ -925,6 +926,21 @@ namespace Genie
 		finish_creation( extra.fsspec, that->name() );
 	}
 	
+	static void fifo_update( vfs::filehandle& fifo, relix::fifo_state state )
+	{
+		OSType type = 'FIFa' + state;
+		
+		const vfs::node& file = *get_file( fifo );
+		
+		hfs_extra& extra = *(hfs_extra*) file.extra();
+		
+		FInfo fInfo = N::FSpGetFInfo( extra.fsspec );
+		
+		fInfo.fdType = type;
+		
+		N::FSpSetFInfo( extra.fsspec, fInfo );
+	}
+	
 	static bool hfs_is_fifo( const CInfoPBRec& cInfo )
 	{
 		if ( cInfo.hFileInfo.ioResult != noErr )
@@ -989,7 +1005,7 @@ namespace Genie
 		
 		if ( hfs_is_fifo( extra.cinfo ) )
 		{
-			return relix::open_fifo( that, flags );
+			return relix::open_fifo( that, flags, &fifo_update );
 		}
 		
 		if ( hfs_is_socket( extra.cinfo ) )
