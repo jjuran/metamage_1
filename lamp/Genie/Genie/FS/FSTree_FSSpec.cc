@@ -67,6 +67,7 @@
 
 // relix-kernel
 #include "relix/api/root.hh"
+#include "relix/fs/fifo.hh"
 
 // Genie
 #include "Genie/BinaryImage.hh"
@@ -957,7 +958,7 @@ namespace Genie
 		
 		if ( hfs_is_fifo( extra.cinfo ) )
 		{
-			p7::throw_errno( ENOSYS );
+			return relix::open_fifo( that, flags );
 		}
 		
 		const bool async = false;
