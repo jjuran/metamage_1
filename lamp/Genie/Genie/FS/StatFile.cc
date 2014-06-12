@@ -118,6 +118,11 @@ namespace Genie
 			return S_IFLNK | 0777;
 		}
 		
+		if ( fInfo.fdCreator == 'Poof'  &&  (fInfo.fdType & 0xFFFFFF00) == 'FIF\0' )
+		{
+			return S_IFIFO | 0600;
+		}
+		
 		return S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );;
 	}
 	
