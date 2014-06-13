@@ -168,7 +168,7 @@ my %fsmap =
 		bin =>
 		[
 			# Standard
-			\ qw( clear env time touch ),
+			\ qw( clear env mkfifo time touch ),
 			# Common
 			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# unet
