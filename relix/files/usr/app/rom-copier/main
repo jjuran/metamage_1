@@ -44,6 +44,17 @@ sub wait_for_button
 	sysread $in, my( $buffer ), 1 or die;
 }
 
+sub rom_checksum
+{
+	my ( $path ) = @_;
+	
+	my $output = `/usr/bin/rom-checksum $path`;
+	
+	chop $output;
+	
+	return $output;
+}
+
 my $progress = q|perl -pe 'm{^ \s* (\d+) \s* / \s* (\d+) \s* $}x and $_ = ($1/$2 * 10000) . "\n"'|;
 
 if ( -f "/sys/mac/rom" )
@@ -52,9 +63,7 @@ if ( -f "/sys/mac/rom" )
 	
 	wait_for_button();
 	
-	my $checksum = `/usr/bin/rom-checksum /sys/mac/rom`;
-	
-	chop $checksum;
+	my $checksum = rom_checksum( "/sys/mac/rom" );
 	
 	set_checksum_text( $checksum );
 	
@@ -91,9 +100,7 @@ if ( -f "/sys/mac/rom" )
 		
 		unlink "v/progress/v/view";
 		
-		my $new_checksum = `/usr/bin/rom-checksum $file`;
-		
-		#chop $new_checksum;
+		my $new_checksum = rom_checksum( $file );
 		
 		set_checksum_text( $new_checksum );
 	}
