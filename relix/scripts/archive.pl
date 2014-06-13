@@ -129,6 +129,8 @@ my %fsmap =
 			\ qw( A-line ar cpres ld mpwrez mwcc mxcpp postlink-68k-tool strip ),
 			# Debugging
 			\ qw( d68k demangle ),
+			# Functionality testing
+			\ qw( fifo-read fifo-write ),
 			# Exceptions
 			\ qw( abort buserror div0 illegal privileged ),
 			# Mac-specific
