@@ -64,11 +64,21 @@ if ( -f "/sys/mac/rom" )
 		
 		set_button_title( "Copy" );
 		
-	click:
+		if ( -e $file )
+		{
+			set_prompt_text( "The file $file already exists." );
+			
+			return;
+		}
 		
 		wait_for_button();
 		
-		system( "/sys/kernel/bin/beep" ), goto click if -e $file;
+		if ( -e $file )
+		{
+			set_prompt_text( "The file $file DIDN'T exist, but now does." );
+			
+			return;
+		}
 		
 		set_button_title( "Wait" );
 		
