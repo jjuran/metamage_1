@@ -35,6 +35,13 @@
 #include "Orion/Main.hh"
 
 
+#ifdef __RELIX__
+#define DEFAULT_USER_AGENT  "htget (a MacRelix program)"
+#else
+#define DEFAULT_USER_AGENT  "htget"
+#endif
+
+
 namespace tool
 {
 	
@@ -241,6 +248,7 @@ namespace tool
 		
 		plus::string message_header =   HTTP::RequestLine( method, urlPath.c_str(), urlPath.size() )
 		                              + HTTP::HeaderFieldLine( "Host", hostname )
+		                              + "User-Agent: " DEFAULT_USER_AGENT "\r\n"
 		                              + "\r\n";
 		
 		n::owned< p7::fd_t > http_server = p7::connect( ip, port );
