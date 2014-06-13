@@ -61,6 +61,8 @@ namespace plus
 			{
 			}
 			
+			std::size_t pages_used() const  { return its_pages.size(); }
+			
 			bool is_readable() const;
 			bool is_writable() const;
 			
