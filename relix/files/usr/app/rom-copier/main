@@ -94,7 +94,9 @@ sub rom_copier
 		
 		set_checksum_text( "$checksum + $md5sum");
 		
-		my $file = "/$checksum.rom";
+		my $md5sum_12 = substr( $md5sum, 0, 12 );
+		
+		my $file = "/$checksum-$md5sum_12.rom";  # 8 + 1 + 12 + 4 = 25
 		
 		set_button_title( "Copy" );
 		
