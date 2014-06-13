@@ -23,6 +23,13 @@ sub set_button_title
 	spew( "v/button/v/v/title", "$title\n" );
 }
 
+sub set_prompt_text
+{
+	my ( $text ) = @_;
+	
+	spew( "v/prompt/v/v/text", $text );
+}
+
 sub set_checksum_text
 {
 	my ( $text ) = @_;
@@ -64,6 +71,8 @@ if ( -f "/sys/mac/rom" )
 		system( "/sys/kernel/bin/beep" ), goto click if -e $file;
 		
 		set_button_title( "Wait" );
+		
+		set_prompt_text( "Copying..." );
 		
 		link "/gui/new/progress", "v/progress/v/view";
 		
