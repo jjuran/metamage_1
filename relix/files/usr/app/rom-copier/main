@@ -57,6 +57,18 @@ sub rom_checksum
 
 my $progress = q|perl -pe 'm{^ \s* (\d+) \s* / \s* (\d+) \s* $}x and $_ = ($1/$2 * 10000) . "\n"'|;
 
+sub copy_with_progress
+{
+	my ( $src, $dest ) = @_;
+	
+	link "/gui/new/progress", "v/progress/v/view";
+	
+	system "/usr/bin/copy --dump-progress $src $dest | $progress > v/progress/v/v/value";
+	system "/bin/sync";
+	
+	unlink "v/progress/v/view";
+}
+
 if ( -f "/sys/mac/rom" )
 {
 	#set_button_title( "Check" );  # already set in init
@@ -93,12 +105,7 @@ if ( -f "/sys/mac/rom" )
 		
 		set_prompt_text( "Copying..." );
 		
-		link "/gui/new/progress", "v/progress/v/view";
-		
-		system "/usr/bin/copy --dump-progress /sys/mac/rom $file | $progress > v/progress/v/v/value";
-		system "/bin/sync";
-		
-		unlink "v/progress/v/view";
+		copy_with_progress( "/sys/mac/rom", $file );
 		
 		my $new_checksum = rom_checksum( $file );
 		
