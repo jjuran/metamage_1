@@ -153,6 +153,28 @@ namespace Genie
 	}
 	
 	
+	static void finish_creation( const FSSpec& file, const plus::string& name )
+	{
+		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
+	}
+	
+	static void create_file( const FSSpec&        file,
+	                         const plus::string&  name,
+	                         Mac::FSCreator       creator,
+	                         Mac::FSType          type )
+	{
+		N::FSpCreate( file, creator, type );
+		
+		finish_creation( file, name );
+	}
+	
+	static void create_file( const FSSpec& file, const plus::string& name )
+	{
+		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
+		
+		create_file( file, name, sig.creator, sig.type );
+	}
+	
 	static plus::string SlurpFile( const FSSpec& file )
 	{
 		plus::string result;
@@ -381,6 +403,33 @@ namespace Genie
 	
 	static vfs::program_ptr hfs_loadexec( const FSTree* that );
 	
+	static void hfs_mknod( const vfs::node* that, mode_t mode, dev_t dev )
+	{
+		hfs_extra& extra = *(hfs_extra*) that->extra();
+		
+		const mode_t type = mode & S_IFMT;
+		
+		const Mac::FSCreator Creator = Mac::FSCreator( 'Poof' );
+		
+		const Mac::FSType Type_FIFO = Mac::FSType( 'FIFO' );
+		
+		switch ( type )
+		{
+			case 0:
+			case S_IFREG:
+				create_file( extra.fsspec, that->name() );
+				break;
+			
+			case S_IFIFO:
+				create_file( extra.fsspec, that->name(), Creator, Type_FIFO );
+				break;
+			
+			default:
+				p7::throw_errno( EPERM );
+				break;
+		}
+	}
+	
 	static const data_method_set hfs_data_methods =
 	{
 		&hfs_open,
@@ -407,7 +456,8 @@ namespace Genie
 		NULL,
 		&hfs_copyfile,
 		NULL,
-		&hfs_loadexec
+		&hfs_loadexec,
+		&hfs_mknod,
 	};
 	
 	static const misc_method_set hfs_misc_methods =
@@ -845,11 +895,6 @@ namespace Genie
 		SpewFile( linkSpec, targetPath );
 	}
 	
-	static void finish_creation( const FSSpec& file, const plus::string& name )
-	{
-		SetLongName( file, slashes_from_colons( plus::mac_from_utf8( name ) ) );
-	}
-	
 	static void hfs_symlink( const FSTree*        that,
 	                         const plus::string&  target )
 	{
@@ -860,13 +905,16 @@ namespace Genie
 		finish_creation( extra.fsspec, that->name() );
 	}
 	
-	static void create_file( const FSSpec& file, const plus::string& name )
+	static bool hfs_is_fifo( const CInfoPBRec& cInfo )
 	{
-		N::FileSignature sig = PickFileSignatureForName( name.data(), name.size() );
+		if ( cInfo.hFileInfo.ioResult != noErr )
+		{
+			return false;
+		}
 		
-		N::FSpCreate( file, sig );
+		const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
 		
-		finish_creation( file, name );
+		return fInfo.fdCreator == 'Poof'  &&  (fInfo.fdType & 0xFFFFFF00) == 'FIF\0';
 	}
 	
 	static vfs::filehandle_ptr hfs_open( const FSTree* that, int flags, mode_t mode )
@@ -905,6 +953,11 @@ namespace Genie
 					}
 				}
 			}
+		}
+		
+		if ( hfs_is_fifo( extra.cinfo ) )
+		{
+			p7::throw_errno( ENOSYS );
 		}
 		
 		const bool async = false;
