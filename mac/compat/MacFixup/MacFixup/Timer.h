@@ -14,9 +14,8 @@
 #ifndef MACFIXUP_TIMER_H
 #define MACFIXUP_TIMER_H
 
-#ifndef __MIXEDMODE__
-#include <MixedMode.h>
-#endif
+// MacFixup
+#include "UPP.h"
 
 
 #if TARGET_RT_MAC_CFM  &&  !OPAQUE_UPP_TYPES
@@ -57,51 +56,8 @@ enum
 	uppTimerProcInfo = 0x0000B802
 };
 
-#ifdef __cplusplus
-
-#define DEFINE_UPP_CONSTRUCTOR( Name )                                    \
-inline Name##UPP New##Name##UPP( Name##ProcPtr proc )                     \
-{                                                                         \
-	return (Name##UPP) NewRoutineDescriptor( (ProcPtr) (proc),            \
-	                                         upp##Name##ProcInfo,         \
-	                                         GetCurrentArchitecture() );  \
-}
-
-#define DEFINE_UPP_DESTRUCTOR( Name )                    \
-inline void Dispose##Name##UPP( Name##UPP upp)           \
-{                                                        \
-	DisposeRoutineDescriptor( (UniversalProcPtr) upp );  \
-}
-
-#define DEFINE_UPP_INVOKER_1( Name, R, P1 )                                                \
-inline R Invoke##Name##UPP( P1 p1, Name##UPP upp )                                         \
-{                                                                                          \
-	return (R) CALL_ONE_PARAMETER_UPP( (UniversalProcPtr) upp, upp##Name##ProcInfo, p1 );  \
-}
-
-DEFINE_UPP_CONSTRUCTOR( Timer )
-
-DEFINE_UPP_DESTRUCTOR( Timer )
-
-DEFINE_UPP_INVOKER_1( Timer, void, TMTaskPtr )
-
-#undef DEFINE_UPP_CONSTRUCTOR
-#undef DEFINE_UPP_DESTRUCTOR
-
-#undef DEFINE_UPP_INVOKER_1
-
-#else  // defined(__cplusplus)
-
-#define NewTimerUPP( proc ) (TimerUPP) NewRoutineDescriptor( (ProcPtr) (proc), uppTimerProcInfo, GetCurrentArchitecture() )
-
-#define DisposeTimerUPP( upp )  DisposeRoutineDescriptor( (UniversalProcPtr) upp )
-
-#define InvokeTimerUPP( tmTaskPtr, upp )  (void) CALL_ONE_PARAMETER_UPP( (UniversalProcPtr) (upp), uppTimerProcInfo, (tmTaskPtr) )
-
-
-#endif  // defined(__cplusplus)
+DEFINE_UPP_1( Timer, void, TMTaskPtr )
 
 #endif  // TARGET_RT_MAC_CFM  && !OPAQUE_UPP_TYPES
 
 #endif
-
