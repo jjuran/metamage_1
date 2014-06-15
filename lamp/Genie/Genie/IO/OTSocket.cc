@@ -81,7 +81,7 @@ namespace Genie
 		public:
 			n::owned< EndpointRef >  itsEndpoint;
 			OTResult                 its_result;
-			SInt16                   n_incoming_connections;
+			SInt32                   n_incoming_connections;
 			bool                     it_is_bound;
 			bool                     it_is_listener;
 			bool                     it_is_connecting;
@@ -136,7 +136,7 @@ namespace Genie
 						if ( TARGET_API_MAC_CARBON )
 						{
 							// Notifiers may be preempted in OS X
-							::OTAtomicAdd16( 1, &socket->n_incoming_connections );
+							::OTAtomicAdd32( 1, &socket->n_incoming_connections );
 						}
 						else
 						{
@@ -532,7 +532,7 @@ namespace Genie
 			try_again( is_nonblocking( *this ) );
 		}
 		
-		::OTAtomicAdd16( -1, &n_incoming_connections );
+		::OTAtomicAdd32( -1, &n_incoming_connections );
 		
 		N::OTListen( itsEndpoint, &call );
 		
