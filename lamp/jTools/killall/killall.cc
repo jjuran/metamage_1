@@ -42,11 +42,6 @@
 #pragma exceptions off
 
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
-
 static int killall( const char* name_to_kill, int sig )
 {
 	const size_t name_len = strlen( name_to_kill );
