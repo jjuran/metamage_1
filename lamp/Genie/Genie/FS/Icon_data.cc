@@ -49,11 +49,6 @@
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
 
-#ifndef O_BINARY
-#define O_BINARY  0
-#endif
-
-
 namespace Nitrogen
 {
 	
@@ -456,7 +451,7 @@ namespace Genie
 		
 		ssize_t bytes_read = itsData->Read( buffer, byteCount, offset );
 		
-		if ( bytes_read == sizeof (::ResID)  &&  (get_flags() & O_BINARY) == 0 )
+		if ( bytes_read == sizeof (::ResID) )
 		{
 			short resID = 0;
 			
@@ -495,7 +490,7 @@ namespace Genie
 		
 		size_t actual_byte_count = byteCount;
 		
-		if ( (get_flags() & O_BINARY) == 0  &&  byteCount >= 2  && byteCount <= 7 )
+		if ( byteCount >= 2  && byteCount <= 7 )
 		{
 			resID = gear::parse_decimal( buffer );
 			
