@@ -385,6 +385,7 @@ namespace Genie
 		
 		{ "click", &trigger_factory, (void*) &button_click_trigger_extra },
 		
+		{ "clicked", &button_stream_factory },
 		{ "socket", &button_stream_factory },
 		
 		{ NULL, NULL }
