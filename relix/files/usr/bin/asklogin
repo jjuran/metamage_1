@@ -119,7 +119,7 @@ touch window
 echo 0 > w/text-font
 #echo ddd > w/back-color
 
-perl -e 'LOOP: $_ = `select -1 -r{'$ok,$cancel'}/v/socket` or exit 2; /cancel/ && exit 1; readlink( "focus" ) =~ m/user/ and unlink "focus" and symlink "'$pass'/v", "focus" and goto LOOP'
+perl -e 'LOOP: $_ = `select -1 -r{'$ok,$cancel'}/v/clicked` or exit 2; /cancel/ && exit 1; readlink( "focus" ) =~ m/user/ and unlink "focus" and symlink "'$pass'/v", "focus" and goto LOOP'
 
 cat $user/v/text && echo && cat $pass/v/text && echo
 

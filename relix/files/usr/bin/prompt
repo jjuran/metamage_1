@@ -97,5 +97,5 @@ touch window
 echo 0 > w/text-font
 #echo ddd > w/back-color
 
-select -1 -r{$ok,$cancel}/v/socket | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1' && cat $entry/v/text && echo
+select -1 -r{$ok,$cancel}/v/clicked | perl -e '$_ = <STDIN> or exit 2; /cancel/ && exit 1' && cat $entry/v/text && echo
 
