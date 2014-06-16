@@ -70,11 +70,12 @@
 // relix-kernel
 #include "relix/api/getcwd.hh"
 #include "relix/api/root.hh"
+#include "relix/api/terminate_current_process.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
-#include "relix/signal/caught_signal.hh"
 #include "relix/signal/deliver_fatal_signal.hh"
+#include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/alarm_clock.hh"
@@ -1234,6 +1235,8 @@ namespace Genie
 					continue;
 				}
 				
+				relix::signal signal = { signo, action };
+				
 				if ( action.sa_handler == SIG_DFL )
 				{
 					using namespace relix;
@@ -1246,8 +1249,9 @@ namespace Genie
 							break;
 						
 						case signal_terminate:
-							Terminate( signo | (traits & signal_core) );
-							break;
+							signal.number |= traits & signal_core;
+							
+							throw signal;
 						
 						case signal_stop:
 							Stop();
@@ -1268,8 +1272,6 @@ namespace Genie
 					continue;
 				}
 				
-				const relix::caught_signal caught = { signo, action };
-				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
 					const struct sigaction default_sigaction = { SIG_DFL };
@@ -1277,7 +1279,7 @@ namespace Genie
 					get_process().set_sigaction( signo, default_sigaction );
 				}
 				
-				throw caught;
+				throw signal;
 			}
 		}
 		
@@ -1368,5 +1370,9 @@ namespace relix
 		}
 	}
 	
+	void terminate_current_process( int wait_status )
+	{
+		Genie::gCurrentProcess->Terminate( wait_status );
+	}
+	
 }
-

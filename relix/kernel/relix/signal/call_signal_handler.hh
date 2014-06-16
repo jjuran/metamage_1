@@ -10,11 +10,10 @@
 namespace relix
 {
 	
-	struct caught_signal;
+	struct signal;
 	
-	void call_signal_handler( const caught_signal& signal );
+	void call_signal_handler( const signal& sig );
 	
 }
 
 #endif
-

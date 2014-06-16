@@ -15,7 +15,7 @@
 #include "Pedestal/Application.hh"
 
 // relix-kernel
-#include "relix/signal/caught_signal.hh"
+#include "relix/signal/signal.hh"
 
 // Genie
 #include "Genie/current_process.hh"
