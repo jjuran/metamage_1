@@ -11,6 +11,9 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/conduit_max_page_count.hh"
+
 
 namespace plus
 {
@@ -58,7 +61,7 @@ namespace plus
 	
 	bool conduit::is_writable() const
 	{
-		return its_egress_has_closed || its_pages.size() < 20;
+		return its_egress_has_closed || its_pages.size() < conduit_max_page_count;
 	}
 	
 	int conduit::read( char*        buffer,
