@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/conduit.hh"
+#include "plus/conduit_max_page_count.hh"
 #include "plus/string.hh"
 
 // poseven
@@ -56,6 +57,8 @@ namespace relix
 		fifo_connection*     connection;
 		
 		plus::conduit* conduit;
+		
+		fifo_update_f update;
 	};
 	
 	
@@ -78,6 +81,12 @@ namespace relix
 		               : (extra.conduit->is_writable() ? rw : r);
 	}
 	
+	static inline fifo_state fifo_state_for_conduit( const plus::conduit& conduit )
+	{
+		return fifo_state_for_ratio( conduit.pages_used(),
+		                             plus::conduit_max_page_count );
+	}
+	
 	static ssize_t fifo_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
 		fifo_extra& extra = *(fifo_extra*) that->extra();
@@ -94,7 +103,26 @@ namespace relix
 			try_again( is_nonblocking( *that ) );
 		}
 		
-		return extra.conduit->read( buffer, n, is_nonblocking( *that ), &try_again );
+		fifo_update_f update = extra.update;
+		
+		if ( update  &&  !extra.conduit->is_readable() )
+		{
+			update( *that, FIFO_underrun );
+		}
+		
+		ssize_t result = extra.conduit->read( buffer, n, is_nonblocking( *that ), &try_again );
+		
+		if ( update )
+		{
+			plus::conduit& conduit = *extra.conduit;
+			
+			fifo_state state = conduit.is_writable() ? fifo_state_for_conduit( conduit )
+			                                         : FIFO_overrun;
+			
+			update( *that, state );
+		}
+		
+		return result;
 	}
 	
 	static ssize_t fifo_write( vfs::filehandle* that, const char* buffer, size_t n )
@@ -108,11 +136,21 @@ namespace relix
 			p7::throw_errno( EBADF );
 		}
 		
-		return extra.conduit->write( buffer,
-		                             n,
-		                             is_nonblocking( *that ),
-		                             &try_again,
-		                             &broken_pipe );
+		fifo_update_f update = extra.update;
+		
+		if ( update  &&  !extra.conduit->is_writable() )
+		{
+			update( *that, FIFO_overrun );
+		}
+		
+		ssize_t result = extra.conduit->write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
+		
+		if ( update )
+		{
+			update( *that, fifo_state_for_conduit( *extra.conduit ) );
+		}
+		
+		return result;
 	}
 	
 	
@@ -162,6 +200,21 @@ namespace relix
 		
 		us = NULL;
 		
+		fifo_update_f update = extra.update;
+		
+		if ( update )
+		{
+			fifo_state new_state =  connection.writer          ? FIFO_broken_pipe
+			                     : !connection.reader          ? FIFO_closed
+			                     : extra.conduit->pages_used() ? fifo_state()
+			                     :                               FIFO_EOF;
+			
+			if ( new_state != fifo_state() )
+			{
+				update( *that, new_state );
+			}
+		}
+		
 		if ( them == NULL )
 		{
 			the_pending_connections.erase( *extra.key );
@@ -169,7 +222,8 @@ namespace relix
 	}
 	
 	static vfs::filehandle* new_fifo_endpoint_( const vfs::node&  that,
-	                                            int               flags )
+	                                            int               flags,
+	                                            fifo_update_f     update )
 	{
 		vfs::filehandle* result = new vfs::filehandle( &that,
 		                                               flags,
@@ -177,11 +231,16 @@ namespace relix
 		                                               sizeof (fifo_extra),
 		                                               &close_fifo );
 		
+		fifo_extra& extra = *(fifo_extra*) result->extra();
+		
+		extra.update = update;
+		
 		return result;
 	}
 	
 	vfs::filehandle_ptr open_fifo( const vfs::node*  that,
-	                               int               flags )
+	                               int               flags,
+	                               fifo_update_f     update )
 	{
 		plus::string path = pathname( *that );
 		
@@ -222,7 +281,7 @@ namespace relix
 		
 		if ( us == NULL )
 		{
-			us = new_fifo_endpoint_( *that, flags );
+			us = new_fifo_endpoint_( *that, flags, update );
 			
 			fifo_extra& extra = *(fifo_extra*) us->extra();
 			
@@ -233,6 +292,8 @@ namespace relix
 		}
 		
 		result = us;
+		
+		fifo_state new_state = FIFO_empty;
 		
 		if ( them != NULL )
 		{
@@ -248,10 +309,25 @@ namespace relix
 		}
 		else if ( !nonblocking )
 		{
+			if ( update )
+			{
+				update( *us, reading ? FIFO_half_open_reading
+				                     : FIFO_half_open_writing );
+			}
+			
 			while ( them == NULL )
 			{
 				try_again( false );
 			}
+		}
+		else
+		{
+			new_state = FIFO_EOF;
+		}
+		
+		if ( update )
+		{
+			update( *us, new_state );
 		}
 		
 		return result;
