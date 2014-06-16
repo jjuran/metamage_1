@@ -10,7 +10,7 @@
 namespace plus
 {
 	
-	const int conduit_max_page_count = 20;
+	const int conduit_max_page_count = 17;
 	
 }
 
