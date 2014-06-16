@@ -70,6 +70,7 @@
 // relix-kernel
 #include "relix/api/getcwd.hh"
 #include "relix/api/root.hh"
+#include "relix/api/terminate_current_process.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
@@ -1368,5 +1369,9 @@ namespace relix
 		}
 	}
 	
+	void terminate_current_process( int wait_status )
+	{
+		Genie::gCurrentProcess->Terminate( wait_status );
+	}
+	
 }
-
