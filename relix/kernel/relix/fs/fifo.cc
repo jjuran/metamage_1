@@ -116,8 +116,11 @@ namespace relix
 		{
 			plus::conduit& conduit = *extra.conduit;
 			
-			fifo_state state = conduit.is_writable() ? fifo_state_for_conduit( conduit )
-			                                         : FIFO_overrun;
+			bool eof = !extra.connection->writer  &&  conduit.pages_used() == 0;
+			
+			fifo_state state = eof                   ? FIFO_EOF
+			                 : conduit.is_writable() ? fifo_state_for_conduit( conduit )
+			                 :                         FIFO_overrun;
 			
 			update( *that, state );
 		}
