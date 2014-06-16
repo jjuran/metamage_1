@@ -9,6 +9,7 @@
 #include "mac_sys/current_thread_stack_space.hh"
 
 // relix-kernel
+#include "relix/api/terminate_current_process.hh"
 #include "relix/signal/call_signal_handler.hh"
 #include "relix/signal/deliver_fatal_signal.hh"
 #include "relix/signal/signal.hh"
@@ -47,6 +48,11 @@ namespace Genie
 		}
 		catch ( const relix::signal& signal )
 		{
+			if ( signal.number != 0  &&  signal.action.sa_handler == SIG_DFL )
+			{
+				relix::terminate_current_process( signal.number );
+			}
+			
 			relix::leave_system();
 			
 			relix::call_signal_handler( signal );
@@ -59,6 +65,13 @@ namespace Genie
 	
 	bool leave_system_call( int result )
 	{
+		if ( relix::the_signal.number  &&  relix::the_signal.action.sa_handler == SIG_DFL )
+		{
+			relix::the_signal.number = 0;
+			
+			relix::terminate_current_process( relix::the_signal.number );
+		}
+		
 		relix::leave_system();
 		
 		if ( relix::the_signal.number )
