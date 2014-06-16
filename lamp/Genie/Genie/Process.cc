@@ -1235,6 +1235,8 @@ namespace Genie
 					continue;
 				}
 				
+				relix::signal signal = { signo, action };
+				
 				if ( action.sa_handler == SIG_DFL )
 				{
 					using namespace relix;
@@ -1247,8 +1249,9 @@ namespace Genie
 							break;
 						
 						case signal_terminate:
-							Terminate( signo | (traits & signal_core) );
-							break;
+							signal.number |= traits & signal_core;
+							
+							throw signal;
 						
 						case signal_stop:
 							Stop();
@@ -1268,8 +1271,6 @@ namespace Genie
 				{
 					continue;
 				}
-				
-				const relix::signal signal = { signo, action };
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
