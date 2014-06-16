@@ -10,8 +10,8 @@
 
 // relix-kernel
 #include "relix/signal/call_signal_handler.hh"
-#include "relix/signal/caught_signal.hh"
 #include "relix/signal/deliver_fatal_signal.hh"
+#include "relix/signal/signal.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
@@ -45,7 +45,7 @@ namespace Genie
 		{
 			breathe( true );
 		}
-		catch ( const relix::caught_signal& signal )
+		catch ( const relix::signal& signal )
 		{
 			relix::leave_system();
 			
@@ -61,11 +61,11 @@ namespace Genie
 	{
 		relix::leave_system();
 		
-		if ( relix::the_caught_signal.signo )
+		if ( relix::the_signal.number )
 		{
-			const relix::caught_signal signal = relix::the_caught_signal;
+			const relix::signal signal = relix::the_signal;
 			
-			relix::the_caught_signal.signo = 0;
+			relix::the_signal.number = 0;
 			
 			relix::call_signal_handler( signal );
 			
@@ -76,4 +76,3 @@ namespace Genie
 	}
 	
 }
-

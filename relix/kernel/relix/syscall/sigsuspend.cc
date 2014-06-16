@@ -9,7 +9,7 @@
 #include "relix/api/current_thread.hh"
 #include "relix/api/errno.hh"
 #include "relix/api/yield.hh"
-#include "relix/signal/caught_signal.hh"
+#include "relix/signal/signal.hh"
 #include "relix/task/thread.hh"
 
 

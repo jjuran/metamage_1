@@ -7,34 +7,33 @@
 
 // relix
 #include "relix/api/current_thread.hh"
-#include "relix/signal/caught_signal.hh"
+#include "relix/signal/signal.hh"
 #include "relix/task/thread.hh"
 
 
 namespace relix
 {
 	
-	void call_signal_handler( const caught_signal& signal )
+	void call_signal_handler( const signal& sig )
 	{
-		sigset_t signal_mask = signal.action.sa_mask;
+		sigset_t signal_mask = sig.action.sa_mask;
 		
-		if ( !(signal.action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
+		if ( !(sig.action.sa_flags & (SA_NODEFER | SA_RESETHAND)) )
 		{
-			sigaddset( &signal_mask, signal.signo );
+			sigaddset( &signal_mask, sig.number );
 		}
 		
 		thread& self = current_thread();
 		
-		self.clear_pending_signal( signal.signo );
+		self.clear_pending_signal( sig.number );
 		
 		const sigset_t blocked_signals = self.signals_blocked();
 		
 		self.block_signals( signal_mask );
 		
-		signal.action.sa_handler( signal.signo );
+		sig.action.sa_handler( sig.number );
 		
 		self.set_signals_blocked( blocked_signals );
 	}
 	
 }
-

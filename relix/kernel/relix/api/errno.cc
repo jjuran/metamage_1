@@ -14,7 +14,7 @@
 // relix-kernel
 #include "relix/api/current_process.hh"
 #include "relix/api/os_exception.hh"
-#include "relix/signal/caught_signal.hh"
+#include "relix/signal/signal.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_image.hh"
 
@@ -35,9 +35,9 @@ namespace relix
 		{
 			return errnum;
 		}
-		catch ( const caught_signal& signal )
+		catch ( const signal& sig )
 		{
-			the_caught_signal = signal;
+			the_signal = sig;
 			
 			return EINTR;
 		}

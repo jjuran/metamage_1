@@ -73,8 +73,8 @@
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
-#include "relix/signal/caught_signal.hh"
 #include "relix/signal/deliver_fatal_signal.hh"
+#include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/alarm_clock.hh"
@@ -1268,7 +1268,7 @@ namespace Genie
 					continue;
 				}
 				
-				const relix::caught_signal caught = { signo, action };
+				const relix::signal signal = { signo, action };
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
@@ -1277,7 +1277,7 @@ namespace Genie
 					get_process().set_sigaction( signo, default_sigaction );
 				}
 				
-				throw caught;
+				throw signal;
 			}
 		}
 		
