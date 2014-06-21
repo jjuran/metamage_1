@@ -39,6 +39,9 @@
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
+#ifndef _SYS_ERRNO_H_
+#define _SYS_ERRNO_H_
+
 #ifndef _ERRNO_H
 #error You must include <errno.h> before <sys/errno.h>.
 #endif
@@ -145,3 +148,5 @@
 #define EOVERFLOW       84              /* Value too large to be stored in data type */
 
 #define EILSEQ          88              /* Illegal byte sequence */
+
+#endif
