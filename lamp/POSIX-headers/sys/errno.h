@@ -144,4 +144,4 @@
 
 #define EOVERFLOW       84              /* Value too large to be stored in data type */
 
-#define EILSEQ          92              /* Illegal byte sequence */
+#define EILSEQ          88              /* Illegal byte sequence */
