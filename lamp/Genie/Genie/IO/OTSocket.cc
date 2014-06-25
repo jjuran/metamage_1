@@ -438,17 +438,15 @@ namespace Genie
 	retry:
 		
 		{
-			Mac::OTNotifier_Entrance entered( itsEndpoint );
+			const ssize_t sent = ::OTSnd( itsEndpoint,
+			                              (char*) p + n_written,
+			                              byteCount - n_written,
+			                              0 );
 			
 			if ( it_has_received_RST )
 			{
 				p7::throw_errno( ECONNRESET );
 			}
-			
-			const ssize_t sent = ::OTSnd( itsEndpoint,
-			                              (char*) p + n_written,
-			                              byteCount - n_written,
-			                              0 );
 			
 			if ( sent != kOTFlowErr )
 			{
