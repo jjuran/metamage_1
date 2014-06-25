@@ -41,9 +41,6 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
-// Nitrogen
-#include "Mac/OpenTransport/Utilities/OTNotifier_Entrance.hh"
-
 #include "Nitrogen/OpenTransport.hh"
 #include "Nitrogen/OpenTransportProviders.hh"
 #include "Nitrogen/OSUtils.hh"
@@ -397,13 +394,11 @@ namespace Genie
 		
 		while ( true )
 		{
+			err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			
+			if ( it_has_received_FIN )
 			{
-				err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
-				
-				if ( it_has_received_FIN )
-				{
-					return 0;
-				}
+				return 0;
 			}
 			
 			if ( err_count != kOTNoDataErr )
@@ -437,23 +432,21 @@ namespace Genie
 		
 	retry:
 		
+		const ssize_t sent = ::OTSnd( itsEndpoint,
+									  (char*) p + n_written,
+									  byteCount - n_written,
+									  0 );
+		
+		if ( it_has_received_RST )
 		{
-			const ssize_t sent = ::OTSnd( itsEndpoint,
-			                              (char*) p + n_written,
-			                              byteCount - n_written,
-			                              0 );
+			p7::throw_errno( ECONNRESET );
+		}
+		
+		if ( sent != kOTFlowErr )
+		{
+			N::ThrowOTResult( sent );
 			
-			if ( it_has_received_RST )
-			{
-				p7::throw_errno( ECONNRESET );
-			}
-			
-			if ( sent != kOTFlowErr )
-			{
-				N::ThrowOTResult( sent );
-				
-				n_written += sent;
-			}
+			n_written += sent;
 		}
 		
 		if ( is_nonblocking( *this ) )
