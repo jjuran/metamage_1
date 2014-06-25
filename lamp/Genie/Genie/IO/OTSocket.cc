@@ -398,14 +398,12 @@ namespace Genie
 		while ( true )
 		{
 			{
-				Mac::OTNotifier_Entrance entered( itsEndpoint );
+				err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
 				
 				if ( it_has_received_FIN )
 				{
 					return 0;
 				}
-				
-				err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
 			}
 			
 			if ( err_count != kOTNoDataErr )
