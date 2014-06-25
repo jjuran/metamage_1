@@ -447,9 +447,10 @@ namespace Genie
 				p7::throw_errno( ECONNRESET );
 			}
 			
-			const ssize_t sent = N::OTSnd( itsEndpoint,
-			                               data      + n_written,
-			                               byteCount - n_written );
+			const ssize_t sent = ::OTSnd( itsEndpoint,
+			                              (char*) p + n_written,
+			                              byteCount - n_written,
+			                              0 );
 			
 			if ( sent != kOTFlowErr )
 			{
