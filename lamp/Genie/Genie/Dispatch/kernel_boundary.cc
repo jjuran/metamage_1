@@ -67,9 +67,11 @@ namespace Genie
 	{
 		if ( relix::the_signal.number  &&  relix::the_signal.action.sa_handler == SIG_DFL )
 		{
+			int signo = relix::the_signal.number;
+			
 			relix::the_signal.number = 0;
 			
-			relix::terminate_current_process( relix::the_signal.number );
+			relix::terminate_current_process( signo );
 		}
 		
 		relix::leave_system();
