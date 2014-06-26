@@ -37,7 +37,12 @@ namespace relix
 	
 	void thread::mark_current_stack_frame()
 	{
-		const int levels_to_skip = 1;
+		const int levels_to_skip = 2;
+		
+		/*
+			skip recall::get_stack_frame_pointer()
+			skip mark_current_stack_frame()
+		*/
 		
 		its_stack_frame_ptr = recall::get_stack_frame_pointer( levels_to_skip );
 	}
