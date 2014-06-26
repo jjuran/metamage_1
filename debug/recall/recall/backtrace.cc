@@ -167,9 +167,11 @@ namespace recall
 		
 	#ifdef __MACOS__
 		
-		result.arch           = call.is_cfm ? "ppc" : "68k";
-		result.demangled_name = call.is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
-		                                    : get_demangled_symbol_name( call.addr_native );
+		const bool is_cfm = call.is_cfm;
+		
+		result.arch           = is_cfm ? "ppc" : "68k";
+		result.demangled_name = is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
+		                               : get_demangled_symbol_name( call.addr_native );
 		
 		plus::var_string demangled_name;
 		
