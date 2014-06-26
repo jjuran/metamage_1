@@ -129,10 +129,6 @@ my %fsmap =
 			bootstrap => [qw( upgrade-relix check-perl-lib.pl usr-lib-perl.mbin.gz.md5 )],
 		},
 	],
-	home =>
-	{
-		jr => [],
-	},
 	sbin => [qw( about install-usr-lib-perl upgrade )],
 	tmp => [],
 	usr =>
@@ -208,6 +204,7 @@ my %fsmap =
 				www => sub { symlink "../www", $_[0] }
 			},
 		],
+		root => [],
 		www =>
 		[
 			qw( index.html help.html main.css cubes.gif ),

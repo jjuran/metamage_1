@@ -314,14 +314,14 @@ struct passwd* getpwuid( uid_t uid )
 {
 	static struct passwd result =
 	{
-		"jr",
+		"root",
 		"",
 		0,
 		0,
 		0,
 		"",
-		"J. Random User",
-		"/home/jr",
+		"System Administrator",
+		"/var/root",
 		"/bin/sh",
 		0
 	};
