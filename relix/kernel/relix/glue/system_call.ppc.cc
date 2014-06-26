@@ -53,16 +53,7 @@ namespace relix
 		// restore system call number
 		mr      r11,r3
 		
-		// restore parameters
-		lwz     r5,32(SP)
-		lwz     r6,36(SP)
-		lwz     r7,40(SP)
-		lwz     r8,44(SP)
-		lwz     r3,48(SP)
-		lwz     r4,52(SP)
-		
 		// r11 contains the requested system call number
-		// r3-r8 are up to 6 arguments
 		
 		// r12.last = gLastSystemCall;
 		lwz     r12,the_last_syscall
@@ -87,6 +78,14 @@ namespace relix
 		
 		// load system call address for local jump
 		lwz     r0,0(r12)
+		
+		// r3-r8 are up to 6 arguments
+		lwz     r5,32(SP)
+		lwz     r6,36(SP)
+		lwz     r7,40(SP)
+		lwz     r8,44(SP)
+		lwz     r3,48(SP)
+		lwz     r4,52(SP)
 		
 		// jump to system call
 		mtctr   r0
