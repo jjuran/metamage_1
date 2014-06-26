@@ -50,20 +50,17 @@ namespace relix
 		
 		bl      enter_system_call  // returns syscall number
 		
-		// restore system call number
-		mr      r11,r3
-		
-		// r11 contains the requested system call number
+		// r3 contains the requested system call number
 		
 		// r12.last = gLastSystemCall;
 		lwz     r12,the_last_syscall
 		lwz     r12,0(r12)
 		
-		// if ( r11.index > r12.last )
-		cmpl    cr0,r11,r12
+		// if ( r3.index > r12.last )
+		cmpl    cr0,r3,r12
 		blt+    cr0,in_range
-		// r11.index = r12.last;
-		mr      r11,r12
+		// r3.index = r12.last;
+		mr      r3,r12
 		
 	in_range:
 		
@@ -71,9 +68,9 @@ namespace relix
 		lwz     r12,the_syscall_array
 		lwz     r12,0(r12)
 		
-		// r12.f = r12.array[ r11.index ].function
-		mulli   r11,r11,kSystemCallSize
-		add     r12,r12,r11
+		// r12.f = r12.array[ r3.index ].function
+		mulli   r3,r3,kSystemCallSize
+		add     r12,r12,r3
 		lwz     r12,0(r12)
 		
 		// load system call address for local jump
