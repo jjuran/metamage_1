@@ -30,18 +30,6 @@ namespace recall
 		#endif
 		};
 		
-	#if defined( __MACOS__ )
-		
-		typedef bool cfm_flag_t;
-		
-	#else
-		
-		struct cfm_flag_t {};
-		
-	#endif
-		
-		cfm_flag_t is_cfm;
-		
 		frame_data()
 		{
 		}
@@ -49,8 +37,7 @@ namespace recall
 		frame_data( stack_frame_pointer frame, return_address_native addr )
 		:
 			frame_pointer( frame ),
-			addr_native( addr ),
-			is_cfm()
+			addr_native( addr )
 		{
 		}
 		
@@ -58,9 +45,8 @@ namespace recall
 		
 		frame_data( stack_frame_pointer frame, return_address_cfm addr )
 		:
-			frame_pointer( frame ),
-			addr_cfm( addr ),
-			is_cfm( true )
+			frame_pointer( (stack_frame_pointer) ((long) frame + 1) ),
+			addr_cfm( addr )
 		{
 		}
 		
@@ -77,4 +63,3 @@ namespace recall
 }
 
 #endif
-

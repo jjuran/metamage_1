@@ -167,7 +167,12 @@ namespace recall
 		
 	#ifdef __MACOS__
 		
-		const bool is_cfm = call.is_cfm;
+		const long is_cfm = (long) result.frame_pointer & 0x1;
+		
+		if ( is_cfm )
+		{
+			--*(long*) result.frame_pointer;
+		}
 		
 		result.arch           = is_cfm ? "ppc" : "68k";
 		result.demangled_name = is_cfm ? get_demangled_symbol_name( call.addr_cfm    )
