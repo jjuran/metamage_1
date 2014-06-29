@@ -163,7 +163,9 @@ namespace vfs
 	                                const plus::string&  name,
 	                                const node*          parent )
 	{
-		struct stat sb = p7::stat( path );
+		struct stat sb;
+		
+		p7::stat( path, sb );
 		
 		node* result = new node( parent,
 		                         name,
