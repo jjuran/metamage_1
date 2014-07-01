@@ -5,6 +5,9 @@
 
 #include "AEObjectModel/AEObjectModel.hh"
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C++
 #include <algorithm>
 
