@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef RELIX_SYS_WAIT_H
-#define RELIX_SYS_WAIT_H
+#ifndef _SYS_WAIT_H_
+#define _SYS_WAIT_H_
 
 // POSIX
 #include <sys/types.h>
