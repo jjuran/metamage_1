@@ -56,8 +56,6 @@ enum
 	uppTimerProcInfo = 0x0000B802
 };
 
-DEFINE_UPP_1( Timer, void, TMTaskPtr )
-
 #endif  // TARGET_RT_MAC_CFM  && !OPAQUE_UPP_TYPES
 
 #endif
