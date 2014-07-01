@@ -34,8 +34,8 @@
 
 /* Adapted for GUSI by Matthias Neeracher <neeri@iis.ee.ethz.ch> */
 
-#ifndef _USER_SIGNAL_H
-#define _USER_SIGNAL_H
+#ifndef _SIGNAL_H_
+#define _SIGNAL_H_
 
 #include <sys/types.h>
 #include <sys/cdefs.h>
@@ -74,4 +74,4 @@ __END_DECLS
 #define	sigfillset(set)		(*(set) = ~(sigset_t)0, 0)
 #define	sigismember(set, signo)	((*(set) & (1 << ((signo) - 1))) != 0)
 
-#endif	/* !_USER_SIGNAL_H */
+#endif
