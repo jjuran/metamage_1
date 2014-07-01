@@ -666,7 +666,7 @@ namespace tool
 					command.push_back( "c"        );
 					command.push_back( "-rsrcfar" );
 					command.push_back( "-rt"      );
-					command.push_back( "Wish=0"   );
+					command.push_back( "Tool=0"   );
 				}
 				else
 				{

@@ -284,7 +284,7 @@ sub copy_file_to_rsrc
 	
 	if ( -z $src )
 	{
-		$src = "$src/r/0000.Wish";
+		$src = "$src/r/0000.Tool";
 	}
 	
 	my $id = next_id();
