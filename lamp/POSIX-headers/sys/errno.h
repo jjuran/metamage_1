@@ -42,7 +42,7 @@
 #ifndef _SYS_ERRNO_H_
 #define _SYS_ERRNO_H_
 
-#ifndef _ERRNO_H
+#ifndef _ERRNO_H_
 #error You must include <errno.h> before <sys/errno.h>.
 #endif
 
