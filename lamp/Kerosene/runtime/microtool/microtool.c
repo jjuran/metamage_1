@@ -26,11 +26,11 @@ extern char** environ;
 extern int errno;
 
 // Call main() and return
-extern int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb );
-extern int       main( int argc, char **argv );
+extern int _relix_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb );
+extern int        main( int argc, char **argv );
 
 
-int _lamp_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb )
+int _relix_main( int argc, char **argv, char **envp, _relix_system_parameter_block* pb )
 {
 #ifndef __MC68K__
 	

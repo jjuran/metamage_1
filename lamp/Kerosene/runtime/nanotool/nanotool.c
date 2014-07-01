@@ -7,12 +7,12 @@
 
 
 // Call main() and return
-extern int _lamp_main( void );
+extern int _relix_main( void );
 
 extern int main( int argc, char** argv );
 
 
-int _lamp_main( void )
+int _relix_main( void )
 {
 	return main( 0, 0 );  // NULL
 }

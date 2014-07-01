@@ -465,7 +465,7 @@ namespace Genie
 		const frame_data* begin = stack_crawl;
 		const frame_data* end   = stack_crawl + n_frames;
 		
-		// skip _lamp_main
+		// skip _relix_main
 		// skip process_image::enter_start_routine()
 		// skip Process::thread_start()
 		// skip Process_ThreadEntry()

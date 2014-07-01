@@ -460,7 +460,7 @@ namespace tool
 					
 					// Link fulltool first, if present.
 					// This hack is necessary on 68K to ensure that
-					// _lamp_main() resides within the first 32K,
+					// _relix_main() resides within the first 32K,
 					// accessible by JMP or JSR from the startup code.
 					
 					const bool expedited = std::strcmp( lib_name, "fulltool" ) == 0;

@@ -23,7 +23,7 @@ die "Bad path '$exe'\n" if !shell_safe( $exe );
 
 my $tests = << "[END]";
 .main                                                    main
-._lamp_main                                              _lamp_main
+._relix_main                                             _relix_main
 .__sinit                                                 __sinit
 .__sinit_get_options_cc                                  __sinit_get_options_cc
 .__end__catch                                            __end__catch
