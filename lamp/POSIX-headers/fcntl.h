@@ -3,8 +3,8 @@
  *	=======
  */
 
-#ifndef KEROSENE_FCNTL_H
-#define KEROSENE_FCNTL_H
+#ifndef _FCNTL_H_
+#define _FCNTL_H_
 
 #include <sys/types.h>
 
