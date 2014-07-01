@@ -152,7 +152,7 @@ namespace Genie
 	
 	static BinaryImage ReadProgramAsCodeResource()
 	{
-		N::ResType  resType = N::ResType( 'Wish' );
+		N::ResType  resType = N::ResType( 'Tool' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
 		BinaryImage code = N::DetachResource( N::Get1Resource( resType, resID ) );

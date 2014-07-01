@@ -66,7 +66,7 @@ namespace tool
 	
 	static n::owned< N::Handle > Patch68KStartup( const FSSpec& file )
 	{
-		N::ResType  resType = N::ResType( 'Wish' );
+		N::ResType  resType = N::ResType( 'Tool' );
 		N::ResID    resID   = N::ResID  ( 0      );
 		
 		n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, Mac::fsRdWrPerm );
