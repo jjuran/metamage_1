@@ -385,7 +385,7 @@ namespace Genie
 			// Assume that non-FSSpec executables are binaries, not scripts
 		}
 		
-		if ( type == 'Wish'  ||  type == 'Tool' )
+		if ( type == 'Tool' )
 		{
 			return;  // Already normalized
 		}
