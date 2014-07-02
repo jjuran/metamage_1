@@ -3,8 +3,8 @@
  *	======
  */
 
-#ifndef KEROSENE_BOOL_H
-#define KEROSENE_BOOL_H
+#ifndef _BOOL_H_
+#define _BOOL_H_
 
 #ifdef __cplusplus
 	
