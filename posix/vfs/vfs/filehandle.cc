@@ -11,6 +11,12 @@
 // Extended API Set, part 2
 #include "extended-api-set/part-2.h"
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// boost
+#include <boost/intrusive_ptr.hpp>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -32,6 +38,7 @@ namespace vfs
 	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),
+		its_file   (         ),
 		its_flags  ( flags   ),
 		its_methods( methods ),
 		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
@@ -52,10 +59,19 @@ namespace vfs
 		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
 		its_destructor( dtor )
 	{
+		if ( its_file )
+		{
+			intrusive_ptr_add_ref( its_file );
+		}
 	}
 	
 	filehandle::~filehandle()
 	{
+		if ( its_file )
+		{
+			intrusive_ptr_release( its_file );
+		}
+		
 		if ( its_destructor )
 		{
 			its_destructor( this );
@@ -99,6 +115,13 @@ namespace vfs
 	
 	void filehandle::set_file( const node& file )
 	{
+		intrusive_ptr_add_ref( &file );
+		
+		if ( its_file )
+		{
+			intrusive_ptr_release( its_file );
+		}
+		
 		its_file = &file;
 	}
 	

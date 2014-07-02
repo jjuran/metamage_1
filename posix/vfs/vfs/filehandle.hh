@@ -6,11 +6,17 @@
 #ifndef VFS_FILEHANDLE_HH
 #define VFS_FILEHANDLE_HH
 
+// POSIX
+#include <sys/types.h>
+
+// Standard C/C++
+#include <cstddef>
+
 // plus
 #include "plus/ref_count.hh"
 
 // vfs
-#include "vfs/node_ptr.hh"
+#include "vfs/node_fwd.hh"
 
 
 namespace vfs
@@ -38,7 +44,7 @@ namespace vfs
 	{
 		private:
 			off_t                         its_mark;
-			node_ptr                      its_file;
+			const node*                   its_file;
 			int                           its_flags;
 			const filehandle_method_set*  its_methods;
 			void*                         its_extra;
@@ -84,7 +90,7 @@ namespace vfs
 			
 			filehandle_destructor destructor() const  { return its_destructor; }
 			
-			const node* get_file_ptr() const  { return its_file.get(); }
+			const node* get_file_ptr() const  { return its_file; }
 			
 			void set_file( const node& file );
 	};
