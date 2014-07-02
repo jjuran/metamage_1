@@ -51,28 +51,28 @@ my $timestamp = timestamp();
 
 my $relix_files_dir = "$ENV{HOME}/src/tree/metamage/relix/files";
 my $user_builds_dir = "$ENV{HOME}/var/build";
-my $user_lamp_dir   = "$ENV{HOME}/var/archive/MacRelix";
+my $user_relix_dir  = "$ENV{HOME}/var/archive/MacRelix";
 
 my $tmp_dir = tmpdir();
 
 my $unique_dir_name = "$timestamp.$$";
 my $tmp_subdir = "$tmp_dir/$unique_dir_name";
 
-my $build_tree      = "$user_builds_dir/$build_area";
-my $build_output    = "$build_tree/bin";
-my $lamp_builds_dir = "$user_lamp_dir/Builds";
+my $build_tree       = "$user_builds_dir/$build_area";
+my $build_output     = "$build_tree/bin";
+my $relix_builds_dir = "$user_relix_dir/Builds";
 
 -d $build_tree or die "Missing build tree at $build_tree\n";
 
 my $root_name = "relix-${config_short_name}_$timestamp";
 
-my $lamp_dist = "$tmp_subdir/$root_name";
+my $relix_dist = "$tmp_subdir/$root_name";
 
 print "\$FILES  = $relix_files_dir\n";
 print "\$BUILDS = $user_builds_dir\n";
 print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
-print "\$DIST   = $lamp_dist\n";
+print "\$DIST   = $relix_dist\n";
 
 my $vers_1_data;
 my $vers_2_data;
@@ -209,7 +209,7 @@ sub verbose_system
 	$command =~ s{$relix_files_dir}{\$FILES}o;
 	$command =~ s{$user_builds_dir}{\$BUILDS}o;
 	
-	$command =~ s{$lamp_dist}{\$DIST}og;
+	$command =~ s{$relix_dist}{\$DIST}og;
 	#$command =~ s{$tmp_subdir}{\$TMP}og;
 	
 	if ( $command =~ m/^cp / )
@@ -265,7 +265,7 @@ sub spew_to_rsrc
 	
 	my $id = next_id();
 	
-	my $dest_path = "$lamp_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
+	my $dest_path = "$relix_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
 	
 	spew( $dest_path, $contents );
 	
@@ -289,7 +289,7 @@ sub copy_file_to_rsrc
 	
 	my $id = next_id();
 	
-	my $dest_path = "$lamp_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
+	my $dest_path = "$relix_dist/MacRelix/r/" . sprintf( "%.4x", $id ) . ".$type";
 	
 	verbose_system( 'cp', $src, $dest_path );
 	
@@ -419,25 +419,25 @@ want_dir( $tmp_dir );
 
 mkdir $tmp_subdir;
 
-mkdir $lamp_dist;
+mkdir $relix_dist;
 
 # Genie is a different config than its programs on 68K
 (my $genie_build_tree = $build_tree) =~ s/-a4-/-a5-/;
 
-install_umbrella_program( 'Genie/MacRelix', "$lamp_dist/", $genie_build_tree );
+install_umbrella_program( 'Genie/MacRelix', "$relix_dist/", $genie_build_tree );
 
 create_node( "", "." => \%fsmap );
 
-my $installer = "$lamp_dist/MacRelix Installer";
-my $archive   = "$lamp_dist/MacRelix-installer.mbin";
+my $installer = "$relix_dist/MacRelix Installer";
+my $archive   = "$relix_dist/MacRelix-installer.mbin";
 
-rename( "$lamp_dist/MacRelix", $installer );
+rename( "$relix_dist/MacRelix", $installer );
 
 print "Archiving...\n";
 
 make_archive( $installer, $archive );
 
-my $build_area_path = "$lamp_builds_dir/$build_area";
+my $build_area_path = "$relix_builds_dir/$build_area";
 
 want_dirs( $build_area_path );
 
