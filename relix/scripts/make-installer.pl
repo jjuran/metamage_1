@@ -102,7 +102,7 @@ exec /usr/app/installer/init
 [END]
 			platform => sub { spew_to_rsrc( $_[0], "$config_short_name\n", 'Data' ) unless $config_short_name eq 'xxx' },
 			build_date => sub { spew_to_rsrc( $_[0], `date`, 'Data' ) },
-			bootstrap => [qw( upgrade-lamp )],
+			bootstrap => [qw( upgrade-relix )],
 		},
 	],
 	sbin => [qw( about upgrade )],
