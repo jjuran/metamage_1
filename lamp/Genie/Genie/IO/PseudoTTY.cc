@@ -16,6 +16,7 @@
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
+#include "vfs/filehandle/primitives/conjoin.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
 
@@ -100,7 +101,7 @@ namespace Genie
 		
 		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
 		
-		terminal->Attach( slave_handle.get() );
+		conjoin( *terminal, *slave_handle );
 		
 		++index;
 		

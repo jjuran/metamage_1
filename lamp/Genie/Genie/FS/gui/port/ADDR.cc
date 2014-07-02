@@ -44,6 +44,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/conjoin.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/primitives/hangup.hh"
@@ -683,10 +684,10 @@ namespace Genie
 		
 		if ( has_tty )
 		{
-			tty->Attach( terminal.get() );
+			conjoin( *tty, *terminal );
 		}
 		
-		terminal->Attach( tty.get() );
+		conjoin( *terminal, *tty );
 		
 		params.itsTerminal = terminal.get();
 		
