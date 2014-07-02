@@ -2,12 +2,11 @@
 
 set -e
 
-A-line -B lamp git
-A-line -C lamp git
+A-line -B Genie tools tests git
+A-line -C Genie tools tests git
 A-line -B56 Genie
 A-line -B46 tools tests git
-A-line -RB lamp git
-A-line -RC lamp git
+A-line -RB Genie tools tests git
+A-line -RC Genie tools tests git
 A-line -RB56 Genie
 A-line -RB46 tools tests git
-
