@@ -31,15 +31,11 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
-#include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
-#include "vfs/filehandle/primitives/append.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
-#include "vfs/filehandle/primitives/pread.hh"
-#include "vfs/filehandle/primitives/pwrite.hh"
-#include "vfs/filehandle/primitives/seteof.hh"
+#include "vfs/filehandle/types/shadow.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
@@ -630,89 +626,6 @@ namespace Genie
 	}
 	
 	
-	struct shadow_extra
-	{
-		vfs::filehandle* basis;
-	};
-	
-	class shadow_filehandle : public vfs::filehandle
-	{
-		public:
-			shadow_filehandle( const vfs::node&  file,
-			                   int               flags,
-			                   vfs::filehandle&  basis );
-	};
-	
-	static ssize_t shadow_pread( vfs::filehandle* that, char* buffer, size_t n, off_t offset )
-	{
-		shadow_extra& extra = *(shadow_extra*) that->extra();
-		
-		return pread( *extra.basis, buffer, n, offset );
-	}
-	
-	static off_t shadow_geteof( vfs::filehandle* that )
-	{
-		shadow_extra& extra = *(shadow_extra*) that->extra();
-		
-		return geteof( *extra.basis );
-	}
-	
-	static ssize_t shadow_pwrite( vfs::filehandle* that, const char* buffer, size_t n, off_t offset )
-	{
-		shadow_extra& extra = *(shadow_extra*) that->extra();
-		
-		return pwrite( *extra.basis, buffer, n, offset );
-	}
-	
-	static void shadow_seteof( vfs::filehandle* that, off_t offset )
-	{
-		shadow_extra& extra = *(shadow_extra*) that->extra();
-		
-		seteof( *extra.basis, offset );
-	}
-	
-	static ssize_t shadow_append( vfs::filehandle* that, const char* buffer, size_t n )
-	{
-		shadow_extra& extra = *(shadow_extra*) that->extra();
-		
-		return append( *extra.basis, buffer, n );
-	}
-	
-	static const vfs::bstore_method_set shadow_bstore_methods =
-	{
-		&shadow_pread,
-		&shadow_geteof,
-		&shadow_pwrite,
-		&shadow_seteof,
-		&shadow_append,
-	};
-	
-	static const vfs::filehandle_method_set shadow_methods =
-	{
-		&shadow_bstore_methods,
-	};
-	
-	static void destroy_shadow( vfs::filehandle* that )
-	{
-		shadow_extra& extra = *(shadow_extra*) that->extra();
-		
-		intrusive_ptr_release( extra.basis );
-	}
-	
-	shadow_filehandle::shadow_filehandle( const vfs::node&  file,
-	                                      int               flags,
-	                                      vfs::filehandle&  basis )
-	:
-		vfs::filehandle( &file, flags, &shadow_methods, sizeof (shadow_extra), &destroy_shadow )
-	{
-		shadow_extra& extra = *(shadow_extra*) this->extra();
-		
-		extra.basis = &basis;
-		
-		intrusive_ptr_add_ref( extra.basis );
-	}
-	
-	
 	static vfs::filehandle_ptr proc_fd_link_open( const FSTree* that, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
@@ -724,7 +637,7 @@ namespace Genie
 		
 		if ( fh->methods()  &&  fh->methods()->bstore_methods )
 		{
-			return new shadow_filehandle( *that, flags, *fh );
+			return vfs::new_shadow( *that, flags, *fh );
 		}
 		
 		return fh;
@@ -743,4 +656,3 @@ namespace Genie
 	}
 	
 }
-
