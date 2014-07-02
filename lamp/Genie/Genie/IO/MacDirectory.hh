@@ -12,6 +12,7 @@
 #endif
 
 // vfs
+#include "vfs/node_ptr.hh"
 #include "vfs/filehandle/types/directory.hh"
 
 
