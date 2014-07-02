@@ -23,15 +23,17 @@ namespace vfs
 	
 	typedef node_ptr (*getfile_method)( filehandle* that );
 	
+	typedef void (*conjoin_method)( filehandle& that, filehandle& target );
+	
 	
 	struct general_method_set
 	{
 		mmap_method     mmap;
 		ioctl_method    ioctl;
 		getfile_method  getfile;
+		conjoin_method  conjoin;
 	};
 	
 }
 
 #endif
-
