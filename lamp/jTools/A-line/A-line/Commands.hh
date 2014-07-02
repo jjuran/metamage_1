@@ -113,6 +113,11 @@ namespace tool
 			{
 				// Pascal strings are Mac-only, but implied until OS X
 				result.push_back( "-fpascal-strings" );
+				
+				if ( ppc )
+				{
+					result.push_back( "-fasm-blocks" );
+				}
 			}
 			
 			if ( !gnu )
