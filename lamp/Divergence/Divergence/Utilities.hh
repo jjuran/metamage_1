@@ -18,11 +18,8 @@
 #endif
 
 // Mac OS
-#ifndef __AEDATAMODEL__
-#include <AEDataModel.h>
-#endif
-#ifndef __AEINTERACTION__
-#include <AEInteraction.h>
+#ifndef __FILES__
+#include <Files.h>
 #endif
 
 #if !TARGET_RT_MAC_MACHO
