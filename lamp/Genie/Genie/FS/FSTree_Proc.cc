@@ -645,29 +645,29 @@ namespace Genie
 			vfs::filehandle& get() const  { return *its_basis; }
 	};
 	
-	static ssize_t shadow_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	static ssize_t shadow_pread( vfs::filehandle* that, char* buffer, size_t n, off_t offset )
 	{
-		return pread( static_cast< shadow_filehandle& >( *file ).get(), buffer, n, offset );
+		return pread( static_cast< shadow_filehandle& >( *that ).get(), buffer, n, offset );
 	}
 	
-	static off_t shadow_geteof( vfs::filehandle* file )
+	static off_t shadow_geteof( vfs::filehandle* that )
 	{
-		return geteof( static_cast< shadow_filehandle& >( *file ).get() );
+		return geteof( static_cast< shadow_filehandle& >( *that ).get() );
 	}
 	
-	static ssize_t shadow_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
+	static ssize_t shadow_pwrite( vfs::filehandle* that, const char* buffer, size_t n, off_t offset )
 	{
-		return pwrite( static_cast< shadow_filehandle& >( *file ).get(), buffer, n, offset );
+		return pwrite( static_cast< shadow_filehandle& >( *that ).get(), buffer, n, offset );
 	}
 	
-	static void shadow_seteof( vfs::filehandle* file, off_t offset )
+	static void shadow_seteof( vfs::filehandle* that, off_t offset )
 	{
-		seteof( static_cast< shadow_filehandle& >( *file ).get(), offset );
+		seteof( static_cast< shadow_filehandle& >( *that ).get(), offset );
 	}
 	
-	static ssize_t shadow_append( vfs::filehandle* file, const char* buffer, size_t n )
+	static ssize_t shadow_append( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return append( static_cast< shadow_filehandle& >( *file ).get(), buffer, n );
+		return append( static_cast< shadow_filehandle& >( *that ).get(), buffer, n );
 	}
 	
 	static const vfs::bstore_method_set shadow_bstore_methods =
