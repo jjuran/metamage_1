@@ -630,42 +630,52 @@ namespace Genie
 	}
 	
 	
+	struct shadow_extra
+	{
+		vfs::filehandle* basis;
+	};
+	
 	class shadow_filehandle : public vfs::filehandle
 	{
-		private:
-			vfs::filehandle_ptr its_basis;
-		
 		public:
 			shadow_filehandle( const vfs::node&  file,
 			                   int               flags,
 			                   vfs::filehandle&  basis );
-			
-			vfs::filehandle& get() const  { return *its_basis; }
 	};
 	
 	static ssize_t shadow_pread( vfs::filehandle* that, char* buffer, size_t n, off_t offset )
 	{
-		return pread( static_cast< shadow_filehandle& >( *that ).get(), buffer, n, offset );
+		shadow_extra& extra = *(shadow_extra*) that->extra();
+		
+		return pread( *extra.basis, buffer, n, offset );
 	}
 	
 	static off_t shadow_geteof( vfs::filehandle* that )
 	{
-		return geteof( static_cast< shadow_filehandle& >( *that ).get() );
+		shadow_extra& extra = *(shadow_extra*) that->extra();
+		
+		return geteof( *extra.basis );
 	}
 	
 	static ssize_t shadow_pwrite( vfs::filehandle* that, const char* buffer, size_t n, off_t offset )
 	{
-		return pwrite( static_cast< shadow_filehandle& >( *that ).get(), buffer, n, offset );
+		shadow_extra& extra = *(shadow_extra*) that->extra();
+		
+		return pwrite( *extra.basis, buffer, n, offset );
 	}
 	
 	static void shadow_seteof( vfs::filehandle* that, off_t offset )
 	{
-		seteof( static_cast< shadow_filehandle& >( *that ).get(), offset );
+		shadow_extra& extra = *(shadow_extra*) that->extra();
+		
+		seteof( *extra.basis, offset );
 	}
 	
 	static ssize_t shadow_append( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return append( static_cast< shadow_filehandle& >( *that ).get(), buffer, n );
+		shadow_extra& extra = *(shadow_extra*) that->extra();
+		
+		return append( *extra.basis, buffer, n );
 	}
 	
 	static const vfs::bstore_method_set shadow_bstore_methods =
@@ -682,13 +692,24 @@ namespace Genie
 		&shadow_bstore_methods,
 	};
 	
+	static void destroy_shadow( vfs::filehandle* that )
+	{
+		shadow_extra& extra = *(shadow_extra*) that->extra();
+		
+		intrusive_ptr_release( extra.basis );
+	}
+	
 	shadow_filehandle::shadow_filehandle( const vfs::node&  file,
 	                                      int               flags,
 	                                      vfs::filehandle&  basis )
 	:
-		vfs::filehandle( &file, flags, &shadow_methods ),
-		its_basis( &basis )
+		vfs::filehandle( &file, flags, &shadow_methods, sizeof (shadow_extra), &destroy_shadow )
 	{
+		shadow_extra& extra = *(shadow_extra*) this->extra();
+		
+		extra.basis = &basis;
+		
+		intrusive_ptr_add_ref( extra.basis );
 	}
 	
 	
