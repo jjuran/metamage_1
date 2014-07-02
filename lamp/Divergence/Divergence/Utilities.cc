@@ -17,7 +17,7 @@
 	#include "MacFiles/Classic.hh"
 	#include "pfiles/common.hh"
 #else
-	#include "FSSpec_from_stat.h"
+	#include "mac_relix/FSSpec_from_stat.hh"
 #endif
 
 
@@ -50,6 +50,8 @@ namespace Divergence
 		return parent_spec / p7::basename( path );
 		
 	#else
+		
+		using mac::relix::FSSpec_from_stat;
 		
 		struct ::stat stat_buffer;
 		
