@@ -21,6 +21,9 @@
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/volume_params.hh"
 
+// mac-relix-utils
+#include "mac_relix/FSSpec_from_stat.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -51,9 +54,6 @@
 
 // Arcana / MD5
 #include "MD5/MD5.hh"
-
-// MacLamp
-#include "FSSpec_from_stat.h"
 
 // vfs
 #include "vfs/dir_contents.hh"
@@ -732,6 +732,8 @@ namespace Genie
 	
 	FSSpec GetFSSpecFromFSTree( const vfs::node& file )
 	{
+		using mac::relix::FSSpec_from_stat;
+		
 		struct ::stat stat_buffer = { 0 };
 		
 		try
