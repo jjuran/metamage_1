@@ -640,8 +640,6 @@ namespace Genie
 			                   int               flags,
 			                   vfs::filehandle&  basis );
 			
-			~shadow_filehandle();
-			
 			vfs::filehandle& get() const  { return *its_basis; }
 	};
 	
@@ -690,10 +688,6 @@ namespace Genie
 	:
 		vfs::filehandle( &file, flags, &shadow_methods ),
 		its_basis( &basis )
-	{
-	}
-	
-	shadow_filehandle::~shadow_filehandle()
 	{
 	}
 	
