@@ -23,7 +23,7 @@ namespace vfs
 	{
 		const vfs::bstore_method_set& bstore_methods = that.bstore_methods();
 		
-		if ( bstore_methods.pwrite == NULL )
+		if ( bstore_methods.pwrite == 0 )  // NULL
 		{
 			p7::throw_errno( EINVAL );
 		}
@@ -32,4 +32,3 @@ namespace vfs
 	}
 	
 }
-

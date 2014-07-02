@@ -29,7 +29,7 @@ namespace vfs
 		{
 			if ( const bstore_method_set* bstore_methods = methods->bstore_methods )
 			{
-				if ( bstore_methods->fsync != NULL )
+				if ( bstore_methods->fsync )
 				{
 					bstore_methods->fsync( &that );
 				}
@@ -46,4 +46,3 @@ namespace vfs
 	}
 	
 }
-

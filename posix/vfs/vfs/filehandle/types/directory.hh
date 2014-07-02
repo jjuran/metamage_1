@@ -31,7 +31,7 @@ namespace vfs
 			dir_contents_box  its_contents;
 		
 		public:
-			dir_handle( const node* dir, filehandle_destructor dtor = NULL );
+			dir_handle( const node* dir, filehandle_destructor dtor = 0 );  // NULL
 			
 			dir_handle( const filehandle_method_set& methods );
 			

@@ -34,7 +34,7 @@ namespace vfs
 	
 	filehandle::filehandle( int                           flags,
 	                        const filehandle_method_set*  methods,
-	                        std::size_t                   n_extra,
+	                        size_t                        n_extra,
 	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),
@@ -49,7 +49,7 @@ namespace vfs
 	filehandle::filehandle( const node*                   file,
 	                        int                           flags,
 	                        const filehandle_method_set*  methods,
-	                        std::size_t                   n_extra,
+	                        size_t                        n_extra,
 	                        filehandle_destructor         dtor )
 	:
 		its_mark   (         ),

@@ -9,9 +9,6 @@
 // POSIX
 #include <sys/types.h>
 
-// Standard C/C++
-#include <cstddef>
-
 // plus
 #include "plus/ref_count.hh"
 
@@ -58,15 +55,15 @@ namespace vfs
 			typedef bool (filehandle::*Test)() const;
 			
 			filehandle( int                           flags,
-			            const filehandle_method_set*  methods = NULL,
-			            std::size_t                   n_extra = 0,
-			            filehandle_destructor         dtor    = NULL );
+			            const filehandle_method_set*  methods = 0,  // NULL
+			            size_t                        n_extra = 0,
+			            filehandle_destructor         dtor    = 0 );  // NULL
 			
 			filehandle( const node*                   file,
 			            int                           flags,
-			            const filehandle_method_set*  methods = NULL,
-			            std::size_t                   n_extra = 0,
-			            filehandle_destructor         dtor    = NULL );
+			            const filehandle_method_set*  methods = 0,  // NULL
+			            size_t                        n_extra = 0,
+			            filehandle_destructor         dtor    = 0 );  // NULL
 			
 			virtual ~filehandle();
 			

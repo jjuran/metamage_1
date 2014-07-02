@@ -19,7 +19,7 @@ namespace vfs
 	{
 		const vfs::bstore_method_set& bstore_methods = that.bstore_methods();
 		
-		if ( bstore_methods.append == NULL )
+		if ( bstore_methods.append == 0 )  // NULL
 		{
 			const off_t eof_mark = that.set_mark( geteof( that ) );
 			
@@ -30,4 +30,3 @@ namespace vfs
 	}
 	
 }
-
