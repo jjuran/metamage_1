@@ -436,6 +436,11 @@ namespace Genie
 		static_cast< ConsoleTTYHandle& >( *that ).IOCtl( request, argp );
 	}
 	
+	static void consoletty_conjoin( vfs::filehandle& that, vfs::filehandle& target )
+	{
+		static_cast< ConsoleTTYHandle& >( that ).Attach( &target );
+	}
+	
 	static const vfs::stream_method_set consoletty_stream_methods =
 	{
 		&consoletty_poll,
@@ -447,6 +452,8 @@ namespace Genie
 	{
 		NULL,
 		&consoletty_ioctl,
+		NULL,
+		&consoletty_conjoin,
 	};
 	
 	static const vfs::filehandle_method_set consoletty_methods =
