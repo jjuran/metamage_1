@@ -97,11 +97,6 @@ namespace vfs
 	}
 	
 	
-	void filehandle::Attach( vfs::filehandle* target )
-	{
-		p7::throw_errno( EINVAL );
-	}
-	
 	void filehandle::set_file( const node& file )
 	{
 		its_file = &file;

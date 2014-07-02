@@ -85,6 +85,11 @@ namespace Genie
 		static_cast< TerminalHandle& >( *that ).IOCtl( request, argp );
 	}
 	
+	static void terminal_conjoin( vfs::filehandle& that, vfs::filehandle& target )
+	{
+		static_cast< TerminalHandle& >( that ).Attach( &target );
+	}
+	
 	static void terminal_hangup( vfs::filehandle* that )
 	{
 		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
@@ -96,6 +101,8 @@ namespace Genie
 	{
 		NULL,
 		&terminal_ioctl,
+		NULL,
+		&terminal_conjoin,
 	};
 	
 	static const vfs::terminal_method_set terminal_methods =

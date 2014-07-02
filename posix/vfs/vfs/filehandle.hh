@@ -84,8 +84,6 @@ namespace vfs
 			
 			filehandle_destructor destructor() const  { return its_destructor; }
 			
-			virtual void Attach( filehandle* target );
-			
 			const node* get_file_ptr() const  { return its_file.get(); }
 			
 			void set_file( const node& file );
@@ -94,4 +92,3 @@ namespace vfs
 }
 
 #endif
-
