@@ -61,6 +61,7 @@
 
 // relix
 #include "relix/api/root.hh"
+#include "relix/fs/con_tag.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -401,7 +402,7 @@ namespace Genie
 			
 			~ConsoleTTYHandle()
 			{
-				vfs::get_dynamic_group< ConsoleTTYHandle >().erase( itsID );
+				vfs::get_dynamic_group< relix::con_tag >().erase( itsID );
 			}
 			
 			void Attach( vfs::filehandle* terminal );
@@ -820,7 +821,7 @@ namespace Genie
 		
 		vfs::filehandle_ptr result( new ConsoleTTYHandle( *that, id ) );
 		
-		vfs::set_dynamic_element_by_id< ConsoleTTYHandle >( id, result.get() );
+		vfs::set_dynamic_element_by_id< relix::con_tag >( id, result.get() );
 		
 		plus::var_string path = "/dev/con/";
 		

@@ -22,6 +22,7 @@
 
 // relix-kernel
 #include "relix/api/root.hh"
+#include "relix/fs/pts_tag.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
@@ -65,7 +66,7 @@ namespace Genie
 	
 	static inline vfs::dynamic_group& GetPseudoTTYMap()
 	{
-		return vfs::get_dynamic_group< PseudoTTYHandle >();
+		return vfs::get_dynamic_group< relix::pts_tag >();
 	}
 	
 	static inline vfs::filehandle_ptr
@@ -97,7 +98,7 @@ namespace Genie
 		vfs::filehandle_ptr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		vfs::filehandle_ptr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
-		vfs::set_dynamic_element_by_id< PseudoTTYHandle >( index, slave_handle.get() );
+		vfs::set_dynamic_element_by_id< relix::pts_tag >( index, slave_handle.get() );
 		
 		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
 		

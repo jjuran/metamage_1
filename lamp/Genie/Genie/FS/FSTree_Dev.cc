@@ -19,6 +19,7 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/new_static_symlink.hh"
 #include "vfs/node/types/dynamic_group.hh"
@@ -30,6 +31,8 @@
 #include "relix/api/current_process.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/pts.hh"
+#include "relix/fs/con_tag.hh"
+#include "relix/fs/pts_tag.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
@@ -37,7 +40,6 @@
 // Genie
 #include "Genie/FS/data_method_set.hh"
 #include "Genie/FS/node_method_set.hh"
-#include "Genie/IO/PseudoTTY.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
 
@@ -105,9 +107,6 @@ namespace Genie
 	{
 		return open_gestalt( that, flags, mode );
 	}
-	
-	
-	class ConsoleTTYHandle;
 	
 	
 	static vfs::filehandle_ptr simple_device_open( const vfs::node* that, int flags, mode_t mode )
@@ -217,11 +216,11 @@ namespace Genie
 		
 		{ "gestalt", &BasicDevice_Factory< dev_gestalt > },
 		
-		{ "con", &dynamic_group_factory, &dynamic_group_element< ConsoleTTYHandle >::extra },
+		{ "con", &dynamic_group_factory, &dynamic_group_element< relix::con_tag >::extra },
 		
 	#if CONFIG_PTS
 		
-		{ "pts", &dynamic_group_factory, &dynamic_group_element< PseudoTTYHandle  >::extra },
+		{ "pts", &dynamic_group_factory, &dynamic_group_element< relix::pts_tag  >::extra },
 		
 	#endif
 		
