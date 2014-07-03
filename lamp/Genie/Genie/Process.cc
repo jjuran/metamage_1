@@ -69,6 +69,7 @@
 
 // relix-kernel
 #include "relix/api/getcwd.hh"
+#include "relix/api/get_process_group.hh"
 #include "relix/api/root.hh"
 #include "relix/api/terminate_current_process.hh"
 #include "relix/config/mini.hh"
@@ -474,20 +475,11 @@ namespace Genie
 		return NULL;
 	}
 	
-	relix::process_group* FindProcessGroup( pid_t pgid )
-	{
-		void* result = for_each_process( &find_process_group, &pgid );
-		
-		relix::process_group* group = (relix::process_group*) result;
-		
-		return group;
-	}
-	
 	boost::intrusive_ptr< relix::process_group >
 	//
 	GetProcessGroupInSession( pid_t pgid, relix::session& session )
 	{
-		relix::process_group* pgrp = FindProcessGroup( pgid );
+		relix::process_group* pgrp = relix::get_process_group( pgid );
 		
 		if ( pgrp == NULL )
 		{
@@ -1354,6 +1346,13 @@ namespace Genie
 
 namespace relix
 {
+	
+	process_group* get_process_group( pid_t pgid )
+	{
+		using namespace Genie;
+		
+		return (process_group*) for_each_process( &find_process_group, &pgid );
+	}
 	
 	void signal_process_group( int signo, pid_t pgid )
 	{

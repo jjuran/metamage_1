@@ -196,8 +196,6 @@ namespace Genie
 			bool HandlePendingSignals( bool may_throw );
 	};
 	
-	relix::process_group* FindProcessGroup( pid_t pgid );
-	
 	boost::intrusive_ptr< relix::process_group >
 	//
 	GetProcessGroupInSession( pid_t pgid, relix::session& session );

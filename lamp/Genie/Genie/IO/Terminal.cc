@@ -29,6 +29,7 @@
 
 // relix
 #include "relix/api/current_process.hh"
+#include "relix/api/get_process_group.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
@@ -156,7 +157,7 @@ namespace Genie
 			return true;
 		}
 		
-		relix::process_group* pgrp = FindProcessGroup( pgid );
+		relix::process_group* pgrp = relix::get_process_group( pgid );
 		
 		return pgrp  &&  &pgrp->get_session() == &session;
 	}
