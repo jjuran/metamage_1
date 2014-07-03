@@ -30,13 +30,11 @@
 // relix
 #include "relix/api/current_process.hh"
 #include "relix/api/get_process_group.hh"
+#include "relix/api/get_process_group_in_session.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
-
-// Genie
-#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -196,7 +194,7 @@ namespace Genie
 						// This must be the caller's controlling terminal.
 						if ( ctty == this )
 						{
-							setpgrp( GetProcessGroupInSession( *argp, process_session )->id() );
+							setpgrp( relix::get_process_group_in_session( *argp, process_session )->id() );
 						}
 					}
 					

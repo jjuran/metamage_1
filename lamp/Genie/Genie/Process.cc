@@ -475,25 +475,6 @@ namespace Genie
 		return NULL;
 	}
 	
-	boost::intrusive_ptr< relix::process_group >
-	//
-	GetProcessGroupInSession( pid_t pgid, relix::session& session )
-	{
-		relix::process_group* pgrp = relix::get_process_group( pgid );
-		
-		if ( pgrp == NULL )
-		{
-			return new relix::process_group( pgid, session );
-		}
-		
-		if ( &pgrp->get_session() != &session )
-		{
-			p7::throw_errno( EPERM );
-		}
-		
-		return pgrp;
-	}
-	
 	static boost::intrusive_ptr< relix::process_image >
 	//
 	new_process_image( const vfs::node&    exe,

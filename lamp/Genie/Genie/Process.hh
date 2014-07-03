@@ -6,12 +6,6 @@
 #ifndef GENIE_PROCESS_HH
 #define GENIE_PROCESS_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
-
 // relix-kernel
 #include "relix/task/thread.hh"
 
@@ -24,8 +18,6 @@ namespace relix
 {
 	
 	class fd_map;
-	class process_group;
-	class session;
 	
 }
 
@@ -195,10 +187,6 @@ namespace Genie
 			
 			bool HandlePendingSignals( bool may_throw );
 	};
-	
-	boost::intrusive_ptr< relix::process_group >
-	//
-	GetProcessGroupInSession( pid_t pgid, relix::session& session );
 	
 	void SendSignalToProcessGroup( int sig, pid_t pgid );
 	
