@@ -34,6 +34,7 @@
 #include "relix/syscall/pread.hh"
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
+#include "relix/syscall/setsid.hh"
 #include "relix/syscall/sigsuspend.hh"
 #include "relix/syscall/truncate.hh"
 #include "relix/syscall/write.hh"
@@ -163,31 +164,7 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< relix::session > NewSession( pid_t sid )
-	{
-		return new relix::session( sid );
-	}
-	
-	static pid_t setsid()
-	{
-		try
-		{
-			relix::process& current = relix::current_process();
-			
-			const int pid = current.id();
-			
-			// throws EPERM if pgid already exists
-			current.set_process_group( *relix::get_process_group_in_session( pid, *NewSession( pid ) ) );
-			
-			return pid;
-		}
-		catch ( ... )
-		{
-			return set_errno_from_exception();
-		}
-	}
-	
-	
+	using relix::setsid;
 	using relix::truncate;
 	using relix::ftruncate;
 	using relix::pwrite;
