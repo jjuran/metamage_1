@@ -78,53 +78,6 @@ namespace Genie
 		&terminal_write,
 	};
 	
-	static void terminal_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
-	{
-		static_cast< TerminalHandle& >( *that ).IOCtl( request, argp );
-	}
-	
-	static void terminal_conjoin( vfs::filehandle& that, vfs::filehandle& target )
-	{
-		static_cast< TerminalHandle& >( that ).Attach( &target );
-	}
-	
-	static void terminal_hangup( vfs::filehandle* that )
-	{
-		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
-		
-		terminal.Disconnect();
-	}
-	
-	static const vfs::general_method_set terminal_general_methods =
-	{
-		NULL,
-		&terminal_ioctl,
-		NULL,
-		&terminal_conjoin,
-	};
-	
-	static const vfs::terminal_method_set terminal_methods =
-	{
-		&terminal_hangup
-	};
-	
-	static const vfs::filehandle_method_set filehandle_methods =
-	{
-		NULL,
-		NULL,
-		&terminal_stream_methods,
-		&terminal_general_methods,
-		&terminal_methods
-	};
-	
-	TerminalHandle::TerminalHandle( const vfs::node& tty_file )
-	:
-		vfs::filehandle     ( &tty_file, O_RDWR, &filehandle_methods ),
-		its_process_group_id( no_pgid  ),
-		it_is_disconnected  ( false )
-	{
-	}
-	
 	void TerminalHandle::setpgrp( pid_t pgid )
 	{
 		its_process_group_id = pgid;
@@ -153,6 +106,11 @@ namespace Genie
 		relix::process_group* pgrp = relix::get_process_group( pgid );
 		
 		return pgrp  &&  &pgrp->get_session() == &session;
+	}
+	
+	static void terminal_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
+	{
+		static_cast< TerminalHandle& >( *that ).IOCtl( request, argp );
 	}
 	
 	void TerminalHandle::IOCtl( unsigned long request, int* argp )
@@ -230,11 +188,54 @@ namespace Genie
 		};
 	}
 	
+	static void terminal_conjoin( vfs::filehandle& that, vfs::filehandle& target )
+	{
+		static_cast< TerminalHandle& >( that ).Attach( &target );
+	}
+	
+	static void terminal_hangup( vfs::filehandle* that )
+	{
+		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
+		
+		terminal.Disconnect();
+	}
+	
 	void TerminalHandle::Disconnect()
 	{
 		it_is_disconnected = true;
 		
 		relix::signal_process_group( SIGHUP, its_process_group_id );
+	}
+	
+	
+	static const vfs::general_method_set terminal_general_methods =
+	{
+		NULL,
+		&terminal_ioctl,
+		NULL,
+		&terminal_conjoin,
+	};
+	
+	static const vfs::terminal_method_set terminal_methods =
+	{
+		&terminal_hangup
+	};
+	
+	static const vfs::filehandle_method_set filehandle_methods =
+	{
+		NULL,
+		NULL,
+		&terminal_stream_methods,
+		&terminal_general_methods,
+		&terminal_methods
+	};
+	
+	TerminalHandle::TerminalHandle( const vfs::node& tty_file )
+	:
+		vfs::filehandle     ( &tty_file, O_RDWR, &filehandle_methods ),
+		its_process_group_id( no_pgid  ),
+		it_is_disconnected  ( false )
+	{
 	}
 	
 }
