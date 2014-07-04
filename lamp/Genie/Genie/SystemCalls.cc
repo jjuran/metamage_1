@@ -65,28 +65,28 @@ namespace Genie
 	
 	#pragma force_active on
 	
-	REGISTER_SYSTEM_CALL( alarm     );
-	REGISTER_SYSTEM_CALL( chdir     );
-	REGISTER_SYSTEM_CALL( close     );
-	REGISTER_SYSTEM_CALL( dup3      );
-	REGISTER_SYSTEM_CALL( _exit     );
-	REGISTER_SYSTEM_CALL( ftruncate );
-	REGISTER_SYSTEM_CALL( getpgid   );
-	REGISTER_SYSTEM_CALL( getpid    );
-	REGISTER_SYSTEM_CALL( getppid   );
-	REGISTER_SYSTEM_CALL( getsid    );
-	REGISTER_SYSTEM_CALL( gettid    );
-	REGISTER_SYSTEM_CALL( lseek     );
-	REGISTER_SYSTEM_CALL( pause     );
-	REGISTER_SYSTEM_CALL( pipe2     );
-	REGISTER_SYSTEM_CALL( pread     );
-	REGISTER_SYSTEM_CALL( pwrite    );
-	REGISTER_SYSTEM_CALL( read      );
-	REGISTER_SYSTEM_CALL( setpgid   );
-	REGISTER_SYSTEM_CALL( setsid    );
-	REGISTER_SYSTEM_CALL( truncate  );
-	REGISTER_SYSTEM_CALL( write     );
-	REGISTER_SYSTEM_CALL( writev    );
+	REGISTER_SYSTEM_CALL( alarm       );
+	REGISTER_SYSTEM_CALL( chdir       );
+	REGISTER_SYSTEM_CALL( close       );
+	REGISTER_SYSTEM_CALL( dup3        );
+	REGISTER_SYSTEM_CALL( _exit       );
+	REGISTER_SYSTEM_CALL( ftruncate   );
+	REGISTER_SYSTEM_CALL( getpgid     );
+	REGISTER_SYSTEM_CALL( getpid      );
+	REGISTER_SYSTEM_CALL( getppid     );
+	REGISTER_SYSTEM_CALL( getsid      );
+	REGISTER_SYSTEM_CALL( gettid      );
+	REGISTER_SYSTEM_CALL( lseek       );
+	REGISTER_SYSTEM_CALL( pause       );
+	REGISTER_SYSTEM_CALL( pipe2       );
+	REGISTER_SYSTEM_CALL( pread       );
+	REGISTER_SYSTEM_CALL( pwrite      );
+	REGISTER_SYSTEM_CALL( read        );
+	REGISTER_SYSTEM_CALL( setpgid     );
+	REGISTER_SYSTEM_CALL( setsid      );
+	REGISTER_SYSTEM_CALL( truncate    );
+	REGISTER_SYSTEM_CALL( write       );
+	REGISTER_SYSTEM_CALL( writev      );
 	
 	#pragma force_active reset
 	
