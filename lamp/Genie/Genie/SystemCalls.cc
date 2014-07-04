@@ -18,6 +18,7 @@
 // relix-kernel
 #include "relix/api/current_process.hh"
 #include "relix/api/get_process.hh"
+#include "relix/api/get_process_group_in_session.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
@@ -151,7 +152,7 @@ namespace Genie
 				pgid = target_pid;
 			}
 			
-			target.set_process_group( *GetProcessGroupInSession( pgid, target_session ) );
+			target.set_process_group( *relix::get_process_group_in_session( pgid, target_session ) );
 			
 			return 0;
 		}
@@ -176,7 +177,7 @@ namespace Genie
 			const int pid = current.id();
 			
 			// throws EPERM if pgid already exists
-			current.set_process_group( *GetProcessGroupInSession( pid, *NewSession( pid ) ) );
+			current.set_process_group( *relix::get_process_group_in_session( pid, *NewSession( pid ) ) );
 			
 			return pid;
 		}

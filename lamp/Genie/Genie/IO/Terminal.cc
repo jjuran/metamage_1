@@ -29,13 +29,12 @@
 
 // relix
 #include "relix/api/current_process.hh"
+#include "relix/api/get_process_group.hh"
+#include "relix/api/get_process_group_in_session.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
-
-// Genie
-#include "Genie/Process.hh"
 
 
 namespace Genie
@@ -149,6 +148,18 @@ namespace Genie
 		}
 	}
 	
+	static bool session_controls_pgrp( const relix::session& session, pid_t pgid )
+	{
+		if ( pgid == no_pgid )
+		{
+			return true;
+		}
+		
+		relix::process_group* pgrp = relix::get_process_group( pgid );
+		
+		return pgrp  &&  &pgrp->get_session() == &session;
+	}
+	
 	void TerminalHandle::IOCtl( unsigned long request, int* argp )
 	{
 		relix::process& current = relix::current_process();
@@ -178,12 +189,12 @@ namespace Genie
 				{
 					// If the terminal has an existing foreground process group,
 					// it must be in the same session as the calling process.
-					if ( its_process_group_id == no_pgid  ||  &FindProcessGroup( its_process_group_id )->get_session() == &process_session )
+					if ( session_controls_pgrp( process_session, its_process_group_id ) )
 					{
 						// This must be the caller's controlling terminal.
 						if ( ctty == this )
 						{
-							setpgrp( GetProcessGroupInSession( *argp, process_session )->id() );
+							setpgrp( relix::get_process_group_in_session( *argp, process_session )->id() );
 						}
 					}
 					
