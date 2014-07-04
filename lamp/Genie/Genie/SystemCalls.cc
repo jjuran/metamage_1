@@ -17,6 +17,7 @@
 
 // relix-kernel
 #include "relix/api/current_process.hh"
+#include "relix/api/get_process.hh"
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
@@ -99,41 +100,46 @@ namespace Genie
 				p7::throw_errno( EINVAL );
 			}
 			
-			Process& current = current_process();
+			relix::process& current = relix::current_process();
 			
-			Process& target( pid != 0 ? GetProcess( pid )
-			                          : current );
+			relix::process& target = pid != 0 ? relix::get_process( pid )
+			                                  : current;
 			
-			relix::process& target_process = target.get_process();
+			const int current_pid = current.id();
+			const int target_pid  = target .id();
 			
-			relix::session& session = target_process.get_process_group().get_session();
+			relix::session& target_session = target.get_process_group().get_session();
 			
-			bool target_is_self = pid == 0  ||  target.GetPID() == current.GetPID();
+			const int target_sid = target_session.id();
+			
+			bool target_is_self = pid == 0  ||  target_pid == current_pid;
 			
 			if ( target_is_self )
 			{
 				// A session-leading child is in a different session, which we test for
 				
-				if ( target.GetSID() == target.GetPID() )
+				if ( target_sid == target_pid )
 				{
 					p7::throw_errno( EPERM );  // target is a session leader
 				}
 			}
 			else
 			{
-				bool target_is_child = current.GetPID() == target.GetPPID();
+				bool target_is_child = current_pid == target.getppid();
 				
 				if ( !target_is_child )
 				{
 					p7::throw_errno( ESRCH );  // target is not self or a child
 				}
 				
-				if ( target.GetLifeStage() != kProcessStarting )
+				if ( &target.get_process_image() != &current.get_process_image() )
 				{
 					p7::throw_errno( EACCES );  // child already execve'd
 				}
 				
-				if ( current.GetSID() != target.GetSID() )
+				const int current_sid = current.get_process_group().get_session().id();
+				
+				if ( current_sid != target_sid )
 				{
 					p7::throw_errno( EPERM );  // child in different session
 				}
@@ -142,10 +148,10 @@ namespace Genie
 			
 			if ( pgid == 0 )
 			{
-				pgid = target.GetPID();
+				pgid = target_pid;
 			}
 			
-			target_process.set_process_group( *GetProcessGroupInSession( pgid, session ) );
+			target.set_process_group( *GetProcessGroupInSession( pgid, target_session ) );
 			
 			return 0;
 		}
