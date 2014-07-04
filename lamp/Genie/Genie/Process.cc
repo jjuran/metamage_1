@@ -64,6 +64,9 @@
 #include "vfs/primitives/open.hh"
 #include "vfs/primitives/stat.hh"
 
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
+
 // relix-kernel
 #include "relix/api/getcwd.hh"
 #include "relix/api/get_process_group.hh"
@@ -91,7 +94,6 @@
 #include "Genie/Dispatch/system_call.68k.hh"
 #include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
-#include "Genie/FS/FSSpec.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
@@ -373,7 +375,7 @@ namespace Genie
 		
 		try
 		{
-			const FSSpec fileSpec = GetFSSpecFromFSTree( *context.executable );
+			const FSSpec fileSpec = vfs::FSSpec_from_node( *context.executable );
 			
 			type = N::FSpGetFInfo( fileSpec ).fdType;
 		}

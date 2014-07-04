@@ -21,9 +21,6 @@
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/volume_params.hh"
 
-// mac-relix-utils
-#include "mac_relix/FSSpec_from_stat.hh"
-
 // Debug
 #include "debug/assert.hh"
 
@@ -64,6 +61,9 @@
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
+
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
 
 // relix-kernel
 #include "relix/api/root.hh"
@@ -532,7 +532,7 @@ namespace Genie
 		
 		const FSSpec& srcFile = extra.fsspec;
 		
-		const FSSpec destFile = GetFSSpecFromFSTree( *destination );
+		const FSSpec destFile = vfs::FSSpec_from_node( *destination );
 		
 		// Do not resolve links
 		
@@ -730,31 +730,6 @@ namespace Genie
 	}
 	
 	
-	FSSpec GetFSSpecFromFSTree( const vfs::node& file )
-	{
-		using mac::relix::FSSpec_from_stat;
-		
-		struct ::stat stat_buffer = { 0 };
-		
-		try
-		{
-			stat( file, stat_buffer );
-		}
-		catch ( const p7::errno_t& err )
-		{
-			if ( err != ENOENT )
-			{
-				throw;
-			}
-		}
-		
-		FSSpec spec;
-		
-		p7::throw_posix_result( FSSpec_from_stat( stat_buffer, spec ) );
-		
-		return spec;
-	}
-	
 	static void hfs_rename( const FSTree*  that,
 	                        const FSTree*  destFile )
 	{
@@ -854,7 +829,7 @@ namespace Genie
 	
 	static void CreateSymLink( const vfs::node& linkFile, const plus::string& targetPath )
 	{
-		FSSpec linkSpec = GetFSSpecFromFSTree( linkFile );
+		FSSpec linkSpec = vfs::FSSpec_from_node( linkFile );
 		
 		if ( MacFeatures::Is_Running_OSXNative() )
 		{
@@ -873,7 +848,7 @@ namespace Genie
 			
 			// Do not resolve links -- if the target of this link is another symlink, so be it
 			
-			FSSpec targetSpec = GetFSSpecFromFSTree( *target );
+			FSSpec targetSpec = vfs::FSSpec_from_node( *target );
 			
 			CreateAlias( linkSpec, targetSpec );
 			

@@ -23,13 +23,15 @@
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
 
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
+
 // relix-kernel
 #include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/FS/FSSpec.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -45,7 +47,7 @@ namespace Genie
 	
 	static plus::string mac_pathname_from_file( const vfs::node& file )
 	{
-		return GetMacPathname( GetFSSpecFromFSTree( file ) );
+		return GetMacPathname( vfs::FSSpec_from_node( file ) );
 	}
 	
 	
@@ -53,7 +55,7 @@ namespace Genie
 	{
 		try
 		{
-			FSTreePtr file = relix::resolve_path_at( dirfd, path );
+			vfs::node_ptr file = relix::resolve_path_at( dirfd, path );
 			
 			vfs::resolve_links_in_place( *relix::root(), file );
 			

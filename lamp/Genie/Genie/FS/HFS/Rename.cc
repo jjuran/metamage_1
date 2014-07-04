@@ -24,6 +24,9 @@
 // vfs
 #include "vfs/functions/file-tests.hh"
 
+// MacVFS
+#include "MacVFS/util/FSSpec_from_node.hh"
+
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
@@ -31,7 +34,6 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
-#include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
@@ -163,7 +165,7 @@ namespace Genie
 			p7::throw_errno( destIsDir ? EISDIR : ENOTDIR );
 		}
 		
-		FSSpec destFileSpec = GetFSSpecFromFSTree( destFile );
+		FSSpec destFileSpec = vfs::FSSpec_from_node( destFile );
 		
 		// Can't move across volumes
 		if ( srcFileSpec.vRefNum != destFileSpec.vRefNum )
