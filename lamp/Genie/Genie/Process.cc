@@ -48,9 +48,6 @@
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
-// MacIO
-#include "MacIO/FSMakeFSSpec_Sync.hh"
-
 // Recall
 #include "recall/backtrace.hh"
 
@@ -99,7 +96,6 @@
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 
 
 #ifndef SIGSTKFLT
