@@ -22,7 +22,6 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/terminal_method_set.hh"
 #include "vfs/filehandle/primitives/ioctl.hh"
-#include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/primitives/poll.hh"
 #include "vfs/filehandle/primitives/read.hh"
 #include "vfs/filehandle/primitives/write.hh"
@@ -235,9 +234,7 @@ namespace Genie
 	{
 		it_is_disconnected = true;
 		
-		const pid_t pgid = vfs::getpgrp( *this );
-		
-		relix::signal_process_group( SIGHUP, pgid );
+		relix::signal_process_group( SIGHUP, its_process_group_id );
 	}
 	
 }
