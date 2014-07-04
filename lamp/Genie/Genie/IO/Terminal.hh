@@ -17,22 +17,27 @@ namespace Genie
 	
 	const pid_t no_pgid = 0x7fffffff;
 	
+}
+
+namespace relix
+{
+	
+	struct terminal_extra
+	{
+		vfs::filehandle*  tty;
+		pid_t             pgid;
+		bool              disconnected;
+	};
+	
+}
+
+namespace Genie
+{
 	
 	class TerminalHandle : public vfs::filehandle
 	{
-		private:
-			vfs::filehandle_ptr  its_tty;
-			pid_t                its_process_group_id;
-			bool                 it_is_disconnected;
-		
 		public:
 			TerminalHandle( const vfs::node& tty_file );
-			
-			void Attach( vfs::filehandle* target )  { its_tty = target; }
-			
-			vfs::filehandle* Next() const  { return its_tty.get(); }
-			
-			pid_t getpgrp() const  { return its_process_group_id; }
 			
 			void setpgrp( pid_t pgid );
 			

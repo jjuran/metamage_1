@@ -17,12 +17,13 @@ namespace vfs
 	
 	pid_t getpgrp( filehandle& that )
 	{
-		using namespace Genie;
+		using relix::terminal_extra;
 		
 		that.terminal_methods();  // throws if not a terminal
 		
-		return static_cast< TerminalHandle& >( that ).getpgrp();
+		terminal_extra& extra = *(terminal_extra*) that.extra();
+		
+		return extra.pgid;
 	}
 	
 }
-

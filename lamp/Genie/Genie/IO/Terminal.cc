@@ -41,12 +41,14 @@ namespace Genie
 	
 	namespace p7 = poseven;
 	
+	using relix::terminal_extra;
+	
 	
 	static vfs::filehandle& get_tty( vfs::filehandle* that )
 	{
-		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
+		terminal_extra& extra = *(terminal_extra*) that->extra();
 		
-		vfs::filehandle* tty = terminal.Next();
+		vfs::filehandle* tty = extra.tty;
 		
 		if ( tty == NULL )
 		{
@@ -80,9 +82,11 @@ namespace Genie
 	
 	void TerminalHandle::setpgrp( pid_t pgid )
 	{
-		its_process_group_id = pgid;
+		terminal_extra& extra = *(terminal_extra*) this->extra();
 		
-		if ( it_is_disconnected )
+		extra.pgid = pgid;
+		
+		if ( extra.disconnected )
 		{
 			relix::signal_process_group( SIGHUP, pgid );
 		}
@@ -115,6 +119,8 @@ namespace Genie
 	
 	void TerminalHandle::IOCtl( unsigned long request, int* argp )
 	{
+		terminal_extra& extra = *(terminal_extra*) this->extra();
+		
 		relix::process& current = relix::current_process();
 		
 		relix::process_group& process_group = current.get_process_group();
@@ -130,7 +136,7 @@ namespace Genie
 				
 				CheckControllingTerminal( ctty, *this );
 				
-				*argp = its_process_group_id;
+				*argp = extra.pgid;
 				
 				break;
 			
@@ -142,7 +148,7 @@ namespace Genie
 				{
 					// If the terminal has an existing foreground process group,
 					// it must be in the same session as the calling process.
-					if ( session_controls_pgrp( process_session, its_process_group_id ) )
+					if ( session_controls_pgrp( process_session, extra.pgid ) )
 					{
 						// This must be the caller's controlling terminal.
 						if ( ctty == this )
@@ -177,12 +183,12 @@ namespace Genie
 				break;
 			
 			default:
-				if ( its_tty.get() == NULL )
+				if ( extra.tty == NULL )
 				{
 					p7::throw_errno( EINVAL );
 				}
 				
-				ioctl( *its_tty, request, argp );
+				ioctl( *extra.tty, request, argp );
 				
 				break;
 		};
@@ -190,7 +196,16 @@ namespace Genie
 	
 	static void terminal_conjoin( vfs::filehandle& that, vfs::filehandle& target )
 	{
-		static_cast< TerminalHandle& >( that ).Attach( &target );
+		terminal_extra& extra = *(terminal_extra*) that.extra();
+		
+		intrusive_ptr_add_ref( &target );
+		
+		if ( extra.tty )
+		{
+			intrusive_ptr_release( extra.tty );
+		}
+		
+		extra.tty = &target;
 	}
 	
 	static void terminal_hangup( vfs::filehandle* that )
@@ -202,9 +217,11 @@ namespace Genie
 	
 	void TerminalHandle::Disconnect()
 	{
-		it_is_disconnected = true;
+		terminal_extra& extra = *(terminal_extra*) this->extra();
 		
-		relix::signal_process_group( SIGHUP, its_process_group_id );
+		extra.disconnected = true;
+		
+		relix::signal_process_group( SIGHUP, extra.pgid );
 	}
 	
 	
@@ -230,12 +247,25 @@ namespace Genie
 		&terminal_methods
 	};
 	
+	static void destroy_terminal( vfs::filehandle* that )
+	{
+		terminal_extra& extra = *(terminal_extra*) that->extra();
+		
+		if ( extra.tty )
+		{
+			intrusive_ptr_release( extra.tty );
+		}
+	}
+	
 	TerminalHandle::TerminalHandle( const vfs::node& tty_file )
 	:
-		vfs::filehandle     ( &tty_file, O_RDWR, &filehandle_methods ),
-		its_process_group_id( no_pgid  ),
-		it_is_disconnected  ( false )
+		vfs::filehandle( &tty_file, O_RDWR, &filehandle_methods, sizeof (terminal_extra), &destroy_terminal )
 	{
+		terminal_extra& extra = *(terminal_extra*) this->extra();
+		
+		extra.tty          = NULL;
+		extra.pgid         = no_pgid;
+		extra.disconnected = false;
 	}
 	
 }
