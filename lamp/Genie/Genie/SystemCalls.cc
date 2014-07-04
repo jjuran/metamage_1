@@ -3,14 +3,12 @@
  *	==============
  */
 
-// Debug
-#include "debug/assert.hh"
-
 // relix-kernel
 #include "relix/syscall/alarm.hh"
 #include "relix/syscall/chdir.hh"
 #include "relix/syscall/close.hh"
 #include "relix/syscall/dup3.hh"
+#include "relix/syscall/_exit.hh"
 #include "relix/syscall/ftruncate.hh"
 #include "relix/syscall/getpgid.hh"
 #include "relix/syscall/getpid.hh"
@@ -30,8 +28,6 @@
 #include "relix/syscall/writev.hh"
 
 // Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -42,20 +38,7 @@ namespace Genie
 	using relix::chdir;
 	using relix::close;
 	using relix::dup3;
-	
-	
-	static void _exit( int status )
-	{
-		// We don't return to the dispatcher, but Terminate() compensates.
-		
-		Process& current = current_process();
-		
-		current.Exit( status );  // doesn't return
-		
-		ASSERT( false && "Process::Exit() doesn't return" );
-	}
-	
-	
+	using relix::_exit;
 	using relix::getpgid;
 	using relix::getpid;
 	using relix::getppid;
@@ -66,7 +49,7 @@ namespace Genie
 	
 	static int pause()
 	{
-		return relix::sigsuspend( NULL );
+		return relix::sigsuspend( 0 );  // NULL
 	}
 	
 	
