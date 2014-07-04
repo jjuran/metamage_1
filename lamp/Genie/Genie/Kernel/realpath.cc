@@ -27,11 +27,11 @@
 #include "MacVFS/util/FSSpec_from_node.hh"
 
 // relix-kernel
+#include "relix/api/errno.hh"
 #include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
 
 // Genie
-#include "Genie/current_process.hh"
 #include "Genie/SystemCallRegistry.hh"
 
 
@@ -87,7 +87,7 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return set_errno_from_exception();
+			return relix::set_errno_from_exception();
 		}
 	}
 	

@@ -17,6 +17,7 @@
 #include "relix/syscall/fstatat.hh"
 #include "relix/syscall/fsync.hh"
 #include "relix/syscall/ftruncate.hh"
+#include "relix/syscall/getdents.hh"
 #include "relix/syscall/getpgid.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/getppid.hh"
@@ -71,6 +72,7 @@ namespace Genie
 	using relix::fstatat;
 	using relix::fsync;
 	using relix::ftruncate;
+	using relix::getdents;
 	using relix::getpgid;
 	using relix::getpid;
 	using relix::getppid;
@@ -129,6 +131,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( fstatat     );
 	REGISTER_SYSTEM_CALL( fsync       );
 	REGISTER_SYSTEM_CALL( ftruncate   );
+	REGISTER_SYSTEM_CALL( getdents    );
 	REGISTER_SYSTEM_CALL( getpgid     );
 	REGISTER_SYSTEM_CALL( getpid      );
 	REGISTER_SYSTEM_CALL( getppid     );
