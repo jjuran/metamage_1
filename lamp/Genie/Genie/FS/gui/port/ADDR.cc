@@ -680,7 +680,7 @@ namespace Genie
 			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
-		vfs::filehandle_ptr terminal = new TerminalHandle( *get_file( *tty ) );
+		vfs::filehandle_ptr terminal = relix::new_terminal( *get_file( *tty ) );
 		
 		if ( has_tty )
 		{
