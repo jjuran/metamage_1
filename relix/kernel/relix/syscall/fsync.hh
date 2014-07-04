@@ -3,8 +3,8 @@
 	--------
 */
 
-#ifndef RELIX_SYSCALL_FCNTL_HH
-#define RELIX_SYSCALL_FCNTL_HH
+#ifndef RELIX_SYSCALL_FSYNC_HH
+#define RELIX_SYSCALL_FSYNC_HH
 
 
 namespace relix
