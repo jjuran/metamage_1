@@ -30,8 +30,6 @@ namespace Genie
 			
 			~TerminalHandle();
 			
-			bool disconnected() const  { return it_is_disconnected; }
-			
 			void Attach( vfs::filehandle* target )  { its_tty = target; }
 			
 			vfs::filehandle* Next() const  { return its_tty.get(); }
