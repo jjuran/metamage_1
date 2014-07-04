@@ -5,6 +5,16 @@
 
 #include "Genie/Process.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __MACTYPES__
+#include <MacTypes.h>
+#endif
+
 // Standard C++
 #include <vector>
 
@@ -45,9 +55,6 @@
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
 // Recall
 #include "recall/backtrace.hh"
 
@@ -65,7 +72,7 @@
 #include "vfs/primitives/stat.hh"
 
 // MacVFS
-#include "MacVFS/util/FSSpec_from_node.hh"
+#include "MacVFS/util/get_Mac_type_code.hh"
 
 // relix-kernel
 #include "relix/api/getcwd.hh"
@@ -139,8 +146,6 @@ static void DumpBacktrace()
 namespace Genie
 {
 	
-	namespace n = nucleus;
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
 	
@@ -375,9 +380,7 @@ namespace Genie
 		
 		try
 		{
-			const FSSpec fileSpec = vfs::FSSpec_from_node( *context.executable );
-			
-			type = N::FSpGetFInfo( fileSpec ).fdType;
+			type = vfs::get_Mac_type_code( *context.executable );
 		}
 		catch ( ... )
 		{
