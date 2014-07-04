@@ -47,5 +47,12 @@ namespace Genie
 	
 }
 
+namespace relix
+{
+	
+	vfs::filehandle_ptr new_terminal( const vfs::node& tty_file );
+	
+}
+
 #endif
 
