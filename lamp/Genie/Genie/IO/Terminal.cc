@@ -135,7 +135,7 @@ namespace Genie
 		}
 	}
 	
-	static void CheckControllingTerminal( const vfs::filehandle* ctty, const TerminalHandle& tty )
+	static void CheckControllingTerminal( const vfs::filehandle* ctty, const vfs::filehandle& tty )
 	{
 		if ( ctty != &tty )
 		{
