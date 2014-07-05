@@ -199,14 +199,7 @@ namespace Genie
 	
 	static void terminal_hangup( vfs::filehandle* that )
 	{
-		TerminalHandle& terminal = static_cast< TerminalHandle& >( *that );
-		
-		terminal.Disconnect();
-	}
-	
-	void TerminalHandle::Disconnect()
-	{
-		terminal_extra& extra = *(terminal_extra*) this->extra();
+		terminal_extra& extra = *(terminal_extra*) that->extra();
 		
 		extra.disconnected = true;
 		

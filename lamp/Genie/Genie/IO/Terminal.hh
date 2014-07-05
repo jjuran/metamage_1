@@ -40,8 +40,6 @@ namespace Genie
 			TerminalHandle( const vfs::node& tty_file );
 			
 			void IOCtl( unsigned long request, int* argp );
-			
-			void Disconnect();
 	};
 	
 }
