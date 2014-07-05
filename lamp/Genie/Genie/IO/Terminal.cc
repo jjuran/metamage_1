@@ -24,6 +24,7 @@
 #include "vfs/filehandle/primitives/ioctl.hh"
 #include "vfs/filehandle/primitives/poll.hh"
 #include "vfs/filehandle/primitives/read.hh"
+#include "vfs/filehandle/primitives/setpgrp.hh"
 #include "vfs/filehandle/primitives/write.hh"
 
 // relix
@@ -79,18 +80,6 @@ namespace Genie
 		&terminal_read,
 		&terminal_write,
 	};
-	
-	void TerminalHandle::setpgrp( pid_t pgid )
-	{
-		terminal_extra& extra = *(terminal_extra*) this->extra();
-		
-		extra.pgid = pgid;
-		
-		if ( extra.disconnected )
-		{
-			relix::signal_process_group( SIGHUP, pgid );
-		}
-	}
 	
 	static void CheckControllingTerminal( const vfs::filehandle* ctty, const vfs::filehandle& tty )
 	{
@@ -153,7 +142,7 @@ namespace Genie
 						// This must be the caller's controlling terminal.
 						if ( ctty == this )
 						{
-							setpgrp( relix::get_process_group_in_session( *argp, process_session )->id() );
+							setpgrp( *this, relix::get_process_group_in_session( *argp, process_session )->id() );
 						}
 					}
 					
@@ -177,7 +166,7 @@ namespace Genie
 				
 				// Check that we're not the controlling tty of another session
 				
-				this->setpgrp( process_group.id() );
+				setpgrp( *this, process_group.id() );
 				
 				process_session.set_ctty( *this );
 				break;

@@ -39,8 +39,6 @@ namespace Genie
 		public:
 			TerminalHandle( const vfs::node& tty_file );
 			
-			void setpgrp( pid_t pgid );
-			
 			void IOCtl( unsigned long request, int* argp );
 			
 			void Disconnect();
