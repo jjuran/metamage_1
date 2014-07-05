@@ -29,22 +29,6 @@ namespace relix
 		bool              disconnected;
 	};
 	
-}
-
-namespace Genie
-{
-	
-	class TerminalHandle : public vfs::filehandle
-	{
-		public:
-			TerminalHandle( const vfs::node& tty_file );
-	};
-	
-}
-
-namespace relix
-{
-	
 	vfs::filehandle_ptr new_terminal( const vfs::node& tty_file );
 	
 }

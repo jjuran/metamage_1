@@ -234,17 +234,6 @@ namespace Genie
 		}
 	}
 	
-	TerminalHandle::TerminalHandle( const vfs::node& tty_file )
-	:
-		vfs::filehandle( &tty_file, O_RDWR, &filehandle_methods, sizeof (terminal_extra), &destroy_terminal )
-	{
-		terminal_extra& extra = *(terminal_extra*) this->extra();
-		
-		extra.tty          = NULL;
-		extra.pgid         = no_pgid;
-		extra.disconnected = false;
-	}
-	
 }
 
 namespace relix
@@ -254,7 +243,19 @@ namespace relix
 	{
 		using namespace Genie;
 		
-		return new TerminalHandle( tty_file );
+		vfs::filehandle* result = new vfs::filehandle( &tty_file,
+		                                               O_RDWR,
+		                                               &filehandle_methods,
+		                                               sizeof (terminal_extra),
+		                                               &destroy_terminal );
+		
+		terminal_extra& extra = *(terminal_extra*) result->extra();
+		
+		extra.tty          = NULL;
+		extra.pgid         = no_pgid;
+		extra.disconnected = false;
+		
+		return result;
 	}
 	
 }
