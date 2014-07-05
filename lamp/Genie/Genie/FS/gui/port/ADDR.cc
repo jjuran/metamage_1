@@ -43,6 +43,7 @@
 #include "Pedestal/Window.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/conjoin.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
@@ -56,6 +57,7 @@
 
 // relix
 #include "relix/api/root.hh"
+#include "relix/fs/terminal.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -68,7 +70,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-#include "Genie/IO/Terminal.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -680,7 +681,7 @@ namespace Genie
 			tty = new vfs::filehandle( that, 0, NULL, 0, &destroy_port_tty );
 		}
 		
-		vfs::filehandle_ptr terminal = new TerminalHandle( *get_file( *tty ) );
+		vfs::filehandle_ptr terminal = relix::new_terminal( *get_file( *tty ) );
 		
 		if ( has_tty )
 		{

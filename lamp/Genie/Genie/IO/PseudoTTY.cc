@@ -23,12 +23,12 @@
 // relix-kernel
 #include "relix/api/root.hh"
 #include "relix/fs/pts_tag.hh"
+#include "relix/fs/terminal.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/IO/Terminal.hh"
 
 
 namespace Genie
@@ -100,7 +100,7 @@ namespace Genie
 		
 		vfs::set_dynamic_element_by_id< relix::pts_tag >( index, slave_handle.get() );
 		
-		vfs::filehandle_ptr terminal = new TerminalHandle( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
+		vfs::filehandle_ptr terminal = relix::new_terminal( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
 		
 		conjoin( *terminal, *slave_handle );
 		
