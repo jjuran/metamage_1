@@ -28,8 +28,6 @@ namespace Genie
 		public:
 			TerminalHandle( const vfs::node& tty_file );
 			
-			~TerminalHandle();
-			
 			void Attach( vfs::filehandle* target )  { its_tty = target; }
 			
 			vfs::filehandle* Next() const  { return its_tty.get(); }

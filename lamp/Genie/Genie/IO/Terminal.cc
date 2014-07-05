@@ -126,10 +126,6 @@ namespace Genie
 	{
 	}
 	
-	TerminalHandle::~TerminalHandle()
-	{
-	}
-	
 	void TerminalHandle::setpgrp( pid_t pgid )
 	{
 		its_process_group_id = pgid;
