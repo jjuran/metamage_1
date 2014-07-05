@@ -247,3 +247,14 @@ namespace Genie
 	
 }
 
+namespace relix
+{
+	
+	vfs::filehandle_ptr new_terminal( const vfs::node& tty_file )
+	{
+		using namespace Genie;
+		
+		return new TerminalHandle( tty_file );
+	}
+	
+}
