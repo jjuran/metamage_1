@@ -103,12 +103,7 @@ namespace Genie
 	
 	static void terminal_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
 	{
-		static_cast< TerminalHandle& >( *that ).IOCtl( request, argp );
-	}
-	
-	void TerminalHandle::IOCtl( unsigned long request, int* argp )
-	{
-		terminal_extra& extra = *(terminal_extra*) this->extra();
+		terminal_extra& extra = *(terminal_extra*) that->extra();
 		
 		relix::process& current = relix::current_process();
 		
@@ -123,7 +118,7 @@ namespace Genie
 			case TIOCGPGRP:
 				ASSERT( argp != NULL );
 				
-				CheckControllingTerminal( ctty, *this );
+				CheckControllingTerminal( ctty, *that );
 				
 				*argp = extra.pgid;
 				
@@ -132,7 +127,7 @@ namespace Genie
 			case TIOCSPGRP:
 				ASSERT( argp != NULL );
 				
-				CheckControllingTerminal( ctty, *this );
+				CheckControllingTerminal( ctty, *that );
 				
 				{
 					// If the terminal has an existing foreground process group,
@@ -140,9 +135,9 @@ namespace Genie
 					if ( session_controls_pgrp( process_session, extra.pgid ) )
 					{
 						// This must be the caller's controlling terminal.
-						if ( ctty == this )
+						if ( ctty == that )
 						{
-							setpgrp( *this, relix::get_process_group_in_session( *argp, process_session )->id() );
+							setpgrp( *that, relix::get_process_group_in_session( *argp, process_session )->id() );
 						}
 					}
 					
@@ -166,9 +161,9 @@ namespace Genie
 				
 				// Check that we're not the controlling tty of another session
 				
-				setpgrp( *this, process_group.id() );
+				setpgrp( *that, process_group.id() );
 				
-				process_session.set_ctty( *this );
+				process_session.set_ctty( *that );
 				break;
 			
 			default:
