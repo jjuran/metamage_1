@@ -1,10 +1,10 @@
-/*	===========
- *	Terminal.hh
- *	===========
- */
+/*
+	terminal.hh
+	-----------
+*/
 
-#ifndef GENIE_IO_TERMINAL_HH
-#define GENIE_IO_TERMINAL_HH
+#ifndef RELIX_FS_TERMINAL_HH
+#define RELIX_FS_TERMINAL_HH
 
 // vfs
 #include "vfs/filehandle_ptr.hh"

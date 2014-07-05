@@ -8,8 +8,8 @@
 // vfs
 #include "vfs/filehandle.hh"
 
-// Genie
-#include "Genie/IO/Terminal.hh"
+// relix
+#include "relix/fs/terminal.hh"
 
 
 namespace vfs

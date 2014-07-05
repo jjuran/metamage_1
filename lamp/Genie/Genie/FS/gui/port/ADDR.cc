@@ -57,6 +57,7 @@
 
 // relix
 #include "relix/api/root.hh"
+#include "relix/fs/terminal.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
@@ -69,7 +70,6 @@
 #include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-#include "Genie/IO/Terminal.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 

@@ -12,10 +12,8 @@
 #include "vfs/filehandle.hh"
 
 // relix
+#include "relix/fs/terminal.hh"
 #include "relix/signal/signal_process_group.hh"
-
-// Genie
-#include "Genie/IO/Terminal.hh"
 
 
 namespace vfs

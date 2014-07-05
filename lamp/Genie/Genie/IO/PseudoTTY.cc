@@ -23,12 +23,12 @@
 // relix-kernel
 #include "relix/api/root.hh"
 #include "relix/fs/pts_tag.hh"
+#include "relix/fs/terminal.hh"
 
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/IO/Terminal.hh"
 
 
 namespace Genie

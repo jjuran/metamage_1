@@ -1,16 +1,16 @@
-/*	===========
- *	Terminal.cc
- *	===========
- */
+/*
+	terminal.cc
+	-----------
+*/
 
-#include "Genie/IO/Terminal.hh"
+#include "relix/fs/terminal.hh"
 
 // Standard C
 #include <signal.h>
 
 // POSIX
 #include <fcntl.h>
-#include "sys/ttycom.h"
+#include <sys/ioctl.h>
 
 // poseven
 #include "poseven/types/errno_t.hh"
