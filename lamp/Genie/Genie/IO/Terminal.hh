@@ -7,7 +7,6 @@
 #define GENIE_IO_TERMINAL_HH
 
 // vfs
-#include "vfs/filehandle.hh"
 #include "vfs/filehandle_ptr.hh"
 #include "vfs/node_fwd.hh"
 
@@ -34,4 +33,3 @@ namespace relix
 }
 
 #endif
-

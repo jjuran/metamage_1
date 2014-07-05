@@ -43,6 +43,7 @@
 #include "Pedestal/Window.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/conjoin.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
