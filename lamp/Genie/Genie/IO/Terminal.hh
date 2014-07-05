@@ -11,13 +11,6 @@
 #include "vfs/node_fwd.hh"
 
 
-namespace Genie
-{
-	
-	const pid_t no_pgid = 0x7fffffff;
-	
-}
-
 namespace relix
 {
 	

@@ -38,12 +38,10 @@
 #include "relix/task/session.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	namespace p7 = poseven;
-	
-	using relix::terminal_extra;
 	
 	
 	static vfs::filehandle& get_tty( vfs::filehandle* that )
@@ -90,14 +88,14 @@ namespace Genie
 		}
 	}
 	
-	static bool session_controls_pgrp( const relix::session& session, pid_t pgid )
+	static bool session_controls_pgrp( const session& session, pid_t pgid )
 	{
 		if ( pgid == no_pgid )
 		{
 			return true;
 		}
 		
-		relix::process_group* pgrp = relix::get_process_group( pgid );
+		process_group* pgrp = get_process_group( pgid );
 		
 		return pgrp  &&  &pgrp->get_session() == &session;
 	}
@@ -106,11 +104,11 @@ namespace Genie
 	{
 		terminal_extra& extra = *(terminal_extra*) that->extra();
 		
-		relix::process& current = relix::current_process();
+		process& current = current_process();
 		
-		relix::process_group& process_group = current.get_process_group();
+		process_group& process_group = current.get_process_group();
 		
-		relix::session& process_session = process_group.get_session();
+		session& process_session = process_group.get_session();
 		
 		vfs::filehandle* ctty = process_session.get_ctty().get();
 		
@@ -138,7 +136,7 @@ namespace Genie
 						// This must be the caller's controlling terminal.
 						if ( ctty == that )
 						{
-							setpgrp( *that, relix::get_process_group_in_session( *argp, process_session )->id() );
+							setpgrp( *that, get_process_group_in_session( *argp, process_session )->id() );
 						}
 					}
 					
@@ -199,7 +197,7 @@ namespace Genie
 		
 		extra.disconnected = true;
 		
-		relix::signal_process_group( SIGHUP, extra.pgid );
+		signal_process_group( SIGHUP, extra.pgid );
 	}
 	
 	
@@ -235,15 +233,8 @@ namespace Genie
 		}
 	}
 	
-}
-
-namespace relix
-{
-	
 	vfs::filehandle_ptr new_terminal( const vfs::node& tty_file )
 	{
-		using namespace Genie;
-		
 		vfs::filehandle* result = new vfs::filehandle( &tty_file,
 		                                               O_RDWR,
 		                                               &filehandle_methods,
