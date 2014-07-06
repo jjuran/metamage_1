@@ -10,11 +10,11 @@
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/config/pts.hh"
+#include "relix/fs/pseudotty.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/IO/PseudoTTY.hh"
 
 
 /*

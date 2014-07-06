@@ -1,9 +1,9 @@
-/*	============
- *	PseudoTTY.cc
- *	============
- */
+/*
+	pseudotty.cc
+	------------
+*/
 
-#include "Genie/IO/PseudoTTY.hh"
+#include "relix/fs/pseudotty.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"

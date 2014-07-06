@@ -1,10 +1,10 @@
-/*	============
- *	PseudoTTY.hh
- *	============
- */
+/*
+	pseudotty.hh
+	------------
+*/
 
-#ifndef GENIE_IO_PSEUDOTTY_HH
-#define GENIE_IO_PSEUDOTTY_HH
+#ifndef RELIX_FS_PSEUDOTTY_HH
+#define RELIX_FS_PSEUDOTTY_HH
 
 // vfs
 #include "vfs/filehandle_ptr.hh"
