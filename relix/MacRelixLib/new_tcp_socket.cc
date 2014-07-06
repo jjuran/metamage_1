@@ -1,7 +1,7 @@
-/*	===========
- *	OTSocket.cc
- *	===========
- */
+/*
+	new_tcp_socket.cc
+	-----------------
+*/
 
 // Mac OS X
 #ifdef __APPLE__
@@ -44,6 +44,7 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
+// Nitrogen
 #include "Nitrogen/OpenTransport.hh"
 #include "Nitrogen/OpenTransportProviders.hh"
 #include "Nitrogen/OSUtils.hh"
