@@ -30,6 +30,9 @@
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 
+// mac-app-utils
+#include "mac_app/OpenTransport_share.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -51,7 +54,6 @@
 // Genie
 #include "Genie/api/signals.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/Utilities/ShareOpenTransport.hh"
 
 
 namespace Genie
@@ -60,6 +62,8 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	using mac::app::OpenTransport_share;
 	
 	
 	struct InetAddress : private ::InetAddress
@@ -70,7 +74,7 @@ namespace Genie
 	class OTSocket : public vfs::filehandle
 	{
 		private:
-			OpenTransportShare       itsOpenTransport;
+			OpenTransport_share      itsOpenTransport;
 			int                      itsBacklog;
 			InetAddress              itsSocketAddress;
 			InetAddress              itsPeerAddress;

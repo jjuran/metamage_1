@@ -18,6 +18,9 @@
 // POSIX
 #include "netdb.h"
 
+// mac-app-utils
+#include "mac_app/OpenTransport_share.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransportProviders.hh"
 
@@ -25,7 +28,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/SystemCallRegistry.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/Utilities/ShareOpenTransport.hh"
 
 
 namespace Genie
@@ -33,6 +35,8 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	
+	using mac::app::OpenTransport_share;
 	
 	
 	struct netdb_provider_data
@@ -85,7 +89,7 @@ namespace Genie
 	{
 		try
 		{
-			OpenTransportShare sharedOpenTransport;
+			OpenTransport_share shared_OpenTransport;
 			
 			netdb_provider_data data = { 0 };
 			
@@ -117,7 +121,7 @@ namespace Genie
 	{
 		try
 		{
-			OpenTransportShare sharedOpenTransport;
+			OpenTransport_share shared_OpenTransport;
 			
 			netdb_provider_data data = { 0 };
 			
