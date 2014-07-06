@@ -25,13 +25,13 @@
 
 static int ttypair( int fds[ 2 ] )
 {
-	using namespace Genie;
+	using namespace relix;
 	
 	try
 	{
 		vfs::filehandle_ptr master, slave;
 		
-		GetNewPseudoTTYPair( master, slave );
+		relix::new_pseudotty_pair( master, slave );
 		
 		int master_fd = relix::first_free_fd( 3 );
 		int slave_fd  = relix::first_free_fd( master_fd + 1 );

@@ -10,11 +10,11 @@
 #include "vfs/filehandle_ptr.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
-	void GetNewPseudoTTYPair( vfs::filehandle_ptr&  master,
-	                          vfs::filehandle_ptr&  slave );
+	void new_pseudotty_pair( vfs::filehandle_ptr&  master,
+	                         vfs::filehandle_ptr&  slave );
 	
 }
 

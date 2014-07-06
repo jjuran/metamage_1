@@ -37,12 +37,8 @@
 #include "relix/signal/broken_pipe.hh"
 
 
-namespace Genie
+namespace relix
 {
-	
-	using relix::broken_pipe;
-	using relix::try_again;
-	
 	
 	typedef std::size_t TerminalID;
 	
@@ -100,7 +96,7 @@ namespace Genie
 	
 	static inline vfs::dynamic_group& GetPseudoTTYMap()
 	{
-		return vfs::get_dynamic_group< relix::pts_tag >();
+		return vfs::get_dynamic_group< pts_tag >();
 	}
 	
 	static inline vfs::filehandle_ptr
@@ -121,8 +117,8 @@ namespace Genie
 		return result;
 	}
 	
-	void GetNewPseudoTTYPair( vfs::filehandle_ptr&  master,
-	                          vfs::filehandle_ptr&  slave )
+	void new_pseudotty_pair( vfs::filehandle_ptr&  master,
+	                         vfs::filehandle_ptr&  slave )
 	{
 		static TerminalID index = 0;
 		
@@ -132,9 +128,9 @@ namespace Genie
 		vfs::filehandle_ptr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		vfs::filehandle_ptr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
-		vfs::set_dynamic_element_by_id< relix::pts_tag >( index, slave_handle.get() );
+		vfs::set_dynamic_element_by_id< pts_tag >( index, slave_handle.get() );
 		
-		vfs::filehandle_ptr terminal = relix::new_terminal( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
+		vfs::filehandle_ptr terminal = new_terminal( *vfs::resolve_absolute_path( *root(), make_devpts( index ) ) );
 		
 		conjoin( *terminal, *slave_handle );
 		
