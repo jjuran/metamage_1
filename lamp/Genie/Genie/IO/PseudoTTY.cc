@@ -8,10 +8,18 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // plus
+#include "plus/conduit.hh"
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
@@ -35,6 +43,30 @@ namespace Genie
 	using relix::broken_pipe;
 	using relix::try_again;
 	
+	
+	typedef std::size_t TerminalID;
+	
+	class PseudoTTYHandle : public vfs::filehandle
+	{
+		private:
+			TerminalID                             itsID;
+			boost::intrusive_ptr< plus::conduit >  itsInput;
+			boost::intrusive_ptr< plus::conduit >  itsOutput;
+		
+		public:
+			PseudoTTYHandle( std::size_t                            id,
+			                 boost::intrusive_ptr< plus::conduit >  input,
+			                 boost::intrusive_ptr< plus::conduit >  output );
+			
+			~PseudoTTYHandle();
+			
+			unsigned int SysPoll();
+			
+			ssize_t SysRead( char* data, std::size_t byteCount );
+			
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			
+	};
 	
 	static unsigned pseudotty_poll( vfs::filehandle* that )
 	{
@@ -147,4 +179,3 @@ namespace Genie
 	}
 	
 }
-

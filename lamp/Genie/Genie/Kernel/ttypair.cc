@@ -3,6 +3,9 @@
 	----------
 */
 
+// vfs
+#include "vfs/filehandle.hh"
+
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
