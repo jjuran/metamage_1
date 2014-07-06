@@ -51,9 +51,10 @@
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"
 
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
+// relix-kernel
+#include "relix/api/broken_pipe.hh"
+#include "relix/api/try_again.hh"
+#include "relix/api/yield.hh"
 
 
 namespace Genie
@@ -64,6 +65,10 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	using mac::app::OpenTransport_share;
+	
+	using relix::broken_pipe;
+	using relix::try_again;
+	using relix::yield;
 	
 	
 	struct InetAddress : private ::InetAddress
