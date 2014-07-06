@@ -12,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -22,17 +23,18 @@
 
 // relix-kernel
 #include "relix/api/root.hh"
+#include "relix/api/try_again.hh"
 #include "relix/fs/pts_tag.hh"
 #include "relix/fs/terminal.hh"
-
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
-#include "Genie/FS/FSTree.hh"
+#include "relix/signal/broken_pipe.hh"
 
 
 namespace Genie
 {
+	
+	using relix::broken_pipe;
+	using relix::try_again;
+	
 	
 	static unsigned pseudotty_poll( vfs::filehandle* that )
 	{
