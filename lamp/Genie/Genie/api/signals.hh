@@ -7,7 +7,7 @@
 #define GENIE_API_SIGNALS_HH
 
 // relix-kernel
-#include "relix/signal/broken_pipe.hh"
+#include "relix/api/broken_pipe.hh"
 
 
 namespace Genie

@@ -24,8 +24,8 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
 // relix-kernel
+#include "relix/api/broken_pipe.hh"
 #include "relix/api/try_again.hh"
-#include "relix/signal/broken_pipe.hh"
 
 
 namespace relix

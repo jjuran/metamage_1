@@ -29,10 +29,10 @@
 
 // relix-kernel
 #include "relix/api/assign_fd.hh"
+#include "relix/api/broken_pipe.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/api/get_fd_handle.hh"
 #include "relix/api/try_again.hh"
-#include "relix/signal/broken_pipe.hh"
 
 
 namespace relix

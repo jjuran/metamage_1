@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "relix/signal/broken_pipe.hh"
+#include "relix/api/broken_pipe.hh"
 
 // Standard C
 #include <errno.h>
@@ -30,4 +30,3 @@ namespace relix
 	}
 	
 }
-
