@@ -24,7 +24,7 @@
 #include "quad/quad_name.hh"
 
 // nucleus
-#include "nucleus/shared.hh"
+#include "nucleus/owned.hh"
 
 // Nitrogen
 #ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
@@ -227,10 +227,10 @@ namespace Genie
 			Rsrc_IOHandle& operator=( const Rsrc_IOHandle& );
 		
 		public:
-			Rsrc_IOHandle( const vfs::node&               file,
-			               int                            flags,
-			               const n::shared< N::Handle >&  h,
-			               const FSSpec&                  resFile )
+			Rsrc_IOHandle( const vfs::node&        file,
+			               int                     flags,
+			               n::owned< N::Handle >&  h,
+			               const FSSpec&           resFile )
 			:
 				Handle_IOHandle( file, flags, h ),
 				itsFileSpec( resFile )

@@ -7,8 +7,8 @@
 #define GENIE_IO_HANDLE_HH
 
 // nucleus
-#ifndef NUCLEUS_SHARED_HH
-#include "nucleus/shared.hh"
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
 #endif
 
 // Nitrogen
@@ -26,12 +26,12 @@ namespace Genie
 	class Handle_IOHandle : public vfs::filehandle
 	{
 		private:
-			nucleus::shared< Mac::Handle > itsHandle;
+			nucleus::owned< Mac::Handle > itsHandle;
 		
 		public:
-			Handle_IOHandle( const vfs::node&                       file,
-			                 int                                    flags,
-			                 const nucleus::shared< Mac::Handle >&  h );
+			Handle_IOHandle( const vfs::node&               file,
+			                 int                            flags,
+			                 nucleus::owned< Mac::Handle >  h );
 			
 			~Handle_IOHandle();
 			

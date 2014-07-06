@@ -68,9 +68,9 @@ namespace Genie
 	};
 	
 	
-	Handle_IOHandle::Handle_IOHandle( const vfs::node&                       file,
-	                                  int                                    flags,
-	                                  const nucleus::shared< Mac::Handle >&  h )
+	Handle_IOHandle::Handle_IOHandle( const vfs::node&               file,
+	                                  int                            flags,
+	                                  nucleus::owned< Mac::Handle >  h )
 	:
 		vfs::filehandle( &file, flags, &Mac_Handle_methods ),
 		itsHandle( h )
