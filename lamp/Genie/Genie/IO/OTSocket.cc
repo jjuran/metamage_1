@@ -57,7 +57,7 @@
 #include "relix/api/yield.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	namespace n = nucleus;
@@ -65,10 +65,6 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	using mac::app::OpenTransport_share;
-	
-	using relix::broken_pipe;
-	using relix::try_again;
-	using relix::yield;
 	
 	
 	struct InetAddress : private ::InetAddress
@@ -612,7 +608,7 @@ namespace relix
 	{
 	#ifndef MAC_OS_X_VERSION_10_8
 		
-		return new Genie::OTSocket( nonblocking );
+		return new OTSocket( nonblocking );
 		
 	#endif
 		
