@@ -23,32 +23,37 @@
 	in fds.
 */
 
-static int ttypair( int fds[ 2 ] )
+namespace relix
 {
-	using namespace relix;
 	
-	try
+	static int ttypair( int fds[ 2 ] )
 	{
-		vfs::filehandle_ptr master, slave;
+		try
+		{
+			vfs::filehandle_ptr master, slave;
+			
+			new_pseudotty_pair( master, slave );
+			
+			int master_fd = first_free_fd( 3 );
+			int slave_fd  = first_free_fd( master_fd + 1 );
+			
+			assign_fd( master_fd, *master );
+			assign_fd( slave_fd,  *slave  );
+			
+			fds[ 0 ] = master_fd;
+			fds[ 1 ] = slave_fd;
+		}
+		catch ( ... )
+		{
+			return set_errno_from_exception();
+		}
 		
-		relix::new_pseudotty_pair( master, slave );
-		
-		int master_fd = relix::first_free_fd( 3 );
-		int slave_fd  = relix::first_free_fd( master_fd + 1 );
-		
-		relix::assign_fd( master_fd, *master );
-		relix::assign_fd( slave_fd,  *slave  );
-		
-		fds[ 0 ] = master_fd;
-		fds[ 1 ] = slave_fd;
-	}
-	catch ( ... )
-	{
-		return set_errno_from_exception();
+		return 0;
 	}
 	
-	return 0;
 }
+
+using namespace relix;
 
 #pragma force_active on
 
