@@ -43,8 +43,6 @@
 // Nitrogen
 #include "Mac/Sound/Functions/SysBeep.hh"
 
-#include "Nitrogen/Quickdraw.hh"
-
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
@@ -80,7 +78,6 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
-	namespace N = Nitrogen;
 	namespace Ped = Pedestal;
 	
 	
@@ -794,8 +791,12 @@ namespace Genie
 				{
 					const Rect& bounds = ScrollerParameters::Get( view ).itsLastViewBounds;
 					
-					result[0] = params.itsTextDimensions;
-					result[1] = N::SetPt( bounds.right - bounds.left, bounds.bottom - bounds.top );
+					const short width  = bounds.right - bounds.left;
+					const short height = bounds.bottom - bounds.top;
+					
+					result[ 0 ]   = params.itsTextDimensions;
+					result[ 1 ].v = height;
+					result[ 1 ].h = width;
 				}
 				
 				break;
