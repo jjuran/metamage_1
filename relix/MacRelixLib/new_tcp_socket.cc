@@ -1,7 +1,7 @@
-/*	===========
- *	OTSocket.cc
- *	===========
- */
+/*
+	new_tcp_socket.cc
+	-----------------
+*/
 
 // Mac OS X
 #ifdef __APPLE__
@@ -44,6 +44,7 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/methods/socket_method_set.hh"
 
+// Nitrogen
 #include "Nitrogen/OpenTransport.hh"
 #include "Nitrogen/OpenTransportProviders.hh"
 #include "Nitrogen/OSUtils.hh"
@@ -51,12 +52,13 @@
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"
 
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
+// relix-kernel
+#include "relix/api/broken_pipe.hh"
+#include "relix/api/try_again.hh"
+#include "relix/api/yield.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	namespace n = nucleus;
@@ -607,7 +609,7 @@ namespace relix
 	{
 	#ifndef MAC_OS_X_VERSION_10_8
 		
-		return new Genie::OTSocket( nonblocking );
+		return new OTSocket( nonblocking );
 		
 	#endif
 		
