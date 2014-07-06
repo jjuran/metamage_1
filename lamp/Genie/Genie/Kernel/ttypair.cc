@@ -3,15 +3,18 @@
 	----------
 */
 
+// vfs
+#include "vfs/filehandle.hh"
+
 // relix-kernel
 #include "relix/api/assign_fd.hh"
 #include "relix/api/first_free_fd.hh"
 #include "relix/config/pts.hh"
+#include "relix/fs/pseudotty.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/IO/PseudoTTY.hh"
 
 
 /*
@@ -22,13 +25,13 @@
 
 static int ttypair( int fds[ 2 ] )
 {
-	using namespace Genie;
+	using namespace relix;
 	
 	try
 	{
 		vfs::filehandle_ptr master, slave;
 		
-		GetNewPseudoTTYPair( master, slave );
+		relix::new_pseudotty_pair( master, slave );
 		
 		int master_fd = relix::first_free_fd( 3 );
 		int slave_fd  = relix::first_free_fd( master_fd + 1 );

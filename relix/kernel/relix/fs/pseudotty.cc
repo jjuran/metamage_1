@@ -1,17 +1,26 @@
-/*	============
- *	PseudoTTY.cc
- *	============
- */
+/*
+	pseudotty.cc
+	------------
+*/
 
-#include "Genie/IO/PseudoTTY.hh"
+#include "relix/fs/pseudotty.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
 
+// Debug
+#include "debug/boost_assert.hh"
+
+// Boost
+#include <boost/intrusive_ptr.hpp>
+
 // plus
+#include "plus/conduit.hh"
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -22,17 +31,38 @@
 
 // relix-kernel
 #include "relix/api/root.hh"
+#include "relix/api/try_again.hh"
 #include "relix/fs/pts_tag.hh"
 #include "relix/fs/terminal.hh"
-
-// Genie
-#include "Genie/api/signals.hh"
-#include "Genie/api/yield.hh"
-#include "Genie/FS/FSTree.hh"
+#include "relix/signal/broken_pipe.hh"
 
 
-namespace Genie
+namespace relix
 {
+	
+	typedef std::size_t TerminalID;
+	
+	class PseudoTTYHandle : public vfs::filehandle
+	{
+		private:
+			TerminalID                             itsID;
+			boost::intrusive_ptr< plus::conduit >  itsInput;
+			boost::intrusive_ptr< plus::conduit >  itsOutput;
+		
+		public:
+			PseudoTTYHandle( std::size_t                            id,
+			                 boost::intrusive_ptr< plus::conduit >  input,
+			                 boost::intrusive_ptr< plus::conduit >  output );
+			
+			~PseudoTTYHandle();
+			
+			unsigned int SysPoll();
+			
+			ssize_t SysRead( char* data, std::size_t byteCount );
+			
+			ssize_t SysWrite( const char* data, std::size_t byteCount );
+			
+	};
 	
 	static unsigned pseudotty_poll( vfs::filehandle* that )
 	{
@@ -66,7 +96,7 @@ namespace Genie
 	
 	static inline vfs::dynamic_group& GetPseudoTTYMap()
 	{
-		return vfs::get_dynamic_group< relix::pts_tag >();
+		return vfs::get_dynamic_group< pts_tag >();
 	}
 	
 	static inline vfs::filehandle_ptr
@@ -87,8 +117,8 @@ namespace Genie
 		return result;
 	}
 	
-	void GetNewPseudoTTYPair( vfs::filehandle_ptr&  master,
-	                          vfs::filehandle_ptr&  slave )
+	void new_pseudotty_pair( vfs::filehandle_ptr&  master,
+	                         vfs::filehandle_ptr&  slave )
 	{
 		static TerminalID index = 0;
 		
@@ -98,9 +128,9 @@ namespace Genie
 		vfs::filehandle_ptr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
 		vfs::filehandle_ptr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
 		
-		vfs::set_dynamic_element_by_id< relix::pts_tag >( index, slave_handle.get() );
+		vfs::set_dynamic_element_by_id< pts_tag >( index, slave_handle.get() );
 		
-		vfs::filehandle_ptr terminal = relix::new_terminal( *vfs::resolve_absolute_path( *relix::root(), make_devpts( index ) ) );
+		vfs::filehandle_ptr terminal = new_terminal( *vfs::resolve_absolute_path( *root(), make_devpts( index ) ) );
 		
 		conjoin( *terminal, *slave_handle );
 		
@@ -145,4 +175,3 @@ namespace Genie
 	}
 	
 }
-
