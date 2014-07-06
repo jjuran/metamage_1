@@ -1,6 +1,6 @@
 /*
-	ttypair.cc
-	----------
+	pts.cc
+	------
 */
 
 // relix-kernel
