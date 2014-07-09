@@ -7,10 +7,8 @@
 #include <errno.h>
 
 // POSIX
+#include <unistd.h>
 #include <sys/stat.h>
-
-// Relix
-#include "relix/_realpathat.h"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -33,6 +31,15 @@
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
+
+
+#ifndef REALPATH_OUTPUT_HFS
+#define REALPATH_OUTPUT_HFS (-1)
+#endif
+
+#ifndef REALPATH_OUTPUT_HFS_UTF8
+#define REALPATH_OUTPUT_HFS_UTF8 (-1)
+#endif
 
 
 namespace Genie

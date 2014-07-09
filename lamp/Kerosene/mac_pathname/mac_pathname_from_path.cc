@@ -9,9 +9,7 @@
 
 // POSIX
 #include <fcntl.h>
-
-// Relix
-#include "relix/_realpathat.h"
+#include <unistd.h>
 
 // plus
 #include "plus/mac_utf8.hh"

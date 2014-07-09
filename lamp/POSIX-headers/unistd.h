@@ -83,7 +83,9 @@ ssize_t _realpath( const char *path, char *buffer, size_t buffer_size );
 ssize_t _readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags );
 ssize_t _realpathat( int dirfd, const char *path, char *buffer, size_t buffer_size, int flags );
 
-#define REALPATH_MAC  0x0000001
+#define REALPATH_OUTPUT_HFS       0x0000001
+#define REALPATH_OUTPUT_UTF8      0x0000002
+#define REALPATH_OUTPUT_HFS_UTF8  0x0000003
 
 __dead void	 _exit(int);
 int	 access(const char *, int);
