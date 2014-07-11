@@ -30,7 +30,7 @@ namespace Pedestal
 		public:
 			virtual View& Subview() = 0;
 			
-			virtual Rect ApertureFromBounds( const Rect& bounds )  { return bounds; }
+			virtual Rect ApertureFromBounds( const Rect& bounds );
 			
 			void Install( const Rect& bounds );
 			

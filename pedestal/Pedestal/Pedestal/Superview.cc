@@ -12,6 +12,11 @@
 namespace Pedestal
 {
 	
+	Rect Superview::ApertureFromBounds( const Rect& bounds )
+	{
+		return bounds;
+	}
+	
 	void Superview::Install( const Rect& bounds )
 	{
 		View::Install( bounds );
