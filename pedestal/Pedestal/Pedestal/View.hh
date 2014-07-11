@@ -6,16 +6,6 @@
 #ifndef PEDESTAL_VIEW_HH
 #define PEDESTAL_VIEW_HH
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __CONDITIONALMACROS__
-#include <ConditionalMacros.h>
-#endif
-
 // Debug
 #include "debug/boost_assert.hh"
 
@@ -32,25 +22,11 @@
 
 
 struct EventRecord;      // Events.h
-struct MacRegion;        // Quickdraw.h
-struct OpaqueRgnHandle;  // Quickdraw.h
 struct Rect;             // Quickdraw.h
 
 
 namespace Pedestal
 {
-	
-	// same as ::RgnHandle but without the include
-	
-#if !OPAQUE_TOOLBOX_STRUCTS
-	
-	typedef MacRegion** RgnHandle;
-	
-#else
-	
-	typedef OpaqueRgnHandle* RgnHandle;
-	
-#endif
 	
 	class Quasimode;
 	
@@ -84,8 +60,7 @@ namespace Pedestal
 				return current;
 			}
 			
-			virtual bool SetCursor( const EventRecord&  event,
-			                        RgnHandle           mouseRgn  )  { return false; }
+			virtual bool SetCursor( const EventRecord& event )  { return false; }
 			
 			virtual bool UserCommand( CommandCode code  )  { return false; }
 	};

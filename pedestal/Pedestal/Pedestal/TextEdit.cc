@@ -144,8 +144,7 @@ namespace Pedestal
 		}
 	}
 	
-	bool TextEdit::SetCursor( const EventRecord&  event,
-	                          RgnHandle           mouseRgn )
+	bool TextEdit::SetCursor( const EventRecord& event )
 	{
 		N::SetCursor( N::GetCursor( N::iBeamCursor ) );
 		

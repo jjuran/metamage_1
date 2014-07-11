@@ -5,6 +5,12 @@
 
 #include "Pedestal/Caption.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+// We need this to define MAC_OS_X_VERSION_*
+#include <CoreServices/CoreServices.h>
+#endif
+
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAWTEXT_H

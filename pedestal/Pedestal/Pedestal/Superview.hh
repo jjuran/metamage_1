@@ -74,11 +74,11 @@ namespace Pedestal
 				return Subview().Draw( ApertureFromBounds( bounds ), erasing );
 			}
 			
-			bool SetCursor( const EventRecord& event, RgnHandle mouseRgn )
+			bool SetCursor( const EventRecord& event )
 			{
 				if ( HitTest( event ) )
 				{
-					return Subview().SetCursor( event, mouseRgn );
+					return Subview().SetCursor( event );
 				}
 				
 				return false;

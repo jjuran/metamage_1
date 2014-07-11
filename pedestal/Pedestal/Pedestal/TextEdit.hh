@@ -85,8 +85,7 @@ namespace Pedestal
 			//
 			EnterShiftSpaceQuasimode( const EventRecord& event );
 			
-			bool SetCursor( const EventRecord&  event,
-			                RgnHandle           mouseRgn );
+			bool SetCursor( const EventRecord& event );
 			
 			void Draw( const Rect& bounds, bool erasing );
 			

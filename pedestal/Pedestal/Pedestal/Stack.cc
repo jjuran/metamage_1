@@ -168,7 +168,7 @@ namespace Pedestal
 		}
 	}
 	
-	bool Stack::SetCursor( const EventRecord& event, RgnHandle mouseRgn )
+	bool Stack::SetCursor( const EventRecord& event )
 	{
 		const unsigned count = ViewCount();
 		
@@ -178,7 +178,7 @@ namespace Pedestal
 			
 			if ( view.HitTest( event ) )
 			{
-				return view.SetCursor( event, mouseRgn );
+				return view.SetCursor( event );
 				
 				break;
 			}

@@ -283,7 +283,7 @@ namespace Pedestal
 	{
 		if ( Window* window = SetPort_FrontWindow() )
 		{
-			return window->GetView()->SetCursor( event, NULL );
+			return window->GetView()->SetCursor( event );
 		}
 		
 		return false;
