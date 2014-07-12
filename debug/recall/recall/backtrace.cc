@@ -171,7 +171,7 @@ namespace recall
 		
 		if ( is_cfm )
 		{
-			--*(long*) result.frame_pointer;
+			--(long&) result.frame_pointer;
 		}
 		
 		result.arch           = is_cfm ? "ppc" : "68k";
