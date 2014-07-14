@@ -67,14 +67,14 @@ namespace vfs
 	
 	filehandle::~filehandle()
 	{
-		if ( its_file )
-		{
-			intrusive_ptr_release( its_file );
-		}
-		
 		if ( its_destructor )
 		{
 			its_destructor( this );
+		}
+		
+		if ( its_file )
+		{
+			intrusive_ptr_release( its_file );
 		}
 		
 		::operator delete( its_extra );
