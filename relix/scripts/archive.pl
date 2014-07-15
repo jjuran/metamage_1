@@ -142,7 +142,7 @@ my %fsmap =
 			# unet
 			\ qw( hello-unet ulocal uloop utcp ),
 			# Freemount
-			\ qw( fcat fdir fls fping fstat ),
+			\ qw( fcat fdir fget fls fping fstat ),
 			# djb's UCSPI
 			\ qw( argv0 tcpcat tcpclient ),
 			# v68k interpreter
