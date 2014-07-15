@@ -176,8 +176,6 @@ namespace Genie
 		
 		ASSERT( itsTE == NULL );
 		
-		CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
 		itsTE = N::TENew( bounds );
 		
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
