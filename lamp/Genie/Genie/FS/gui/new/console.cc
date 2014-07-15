@@ -705,7 +705,9 @@ namespace Genie
 					{
 						start_of_last_line = &s[ 0 ];
 						
-						for ( int j = start_of_output - 1;  j >= 0;  --j )
+						size_t j;
+						
+						for ( j = start_of_output - 1;  j >= 0;  --j )
 						{
 							if ( s[ j ] == '\n' )
 							{
@@ -714,6 +716,8 @@ namespace Genie
 								break;
 							}
 						}
+						
+						params.itsValidLength = min( params.itsValidLength, j );
 					}
 					
 					p = start_of_last_line;
