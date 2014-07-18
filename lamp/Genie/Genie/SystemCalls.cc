@@ -33,6 +33,7 @@
 #include "relix/syscall/openat.hh"
 #include "relix/syscall/pipe2.hh"
 #include "relix/syscall/pread.hh"
+#include "relix/syscall/pump.hh"
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
 #include "relix/syscall/readlinkat.hh"
@@ -87,6 +88,7 @@ namespace Genie
 	using relix::openat;
 	using relix::pipe2;
 	using relix::pread;
+	using relix::pump;
 	using relix::pwrite;
 	using relix::read;
 	using relix::_readlinkat;
@@ -147,6 +149,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( pause       );
 	REGISTER_SYSTEM_CALL( pipe2       );
 	REGISTER_SYSTEM_CALL( pread       );
+	REGISTER_SYSTEM_CALL( pump        );
 	REGISTER_SYSTEM_CALL( pwrite      );
 	REGISTER_SYSTEM_CALL( read        );
 	REGISTER_SYSTEM_CALL( _readlinkat );
