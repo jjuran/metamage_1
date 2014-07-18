@@ -5,21 +5,13 @@
 
 #include "Genie/Dispatch/kernel_boundary.hh"
 
-// mac-sys-utils
-#include "mac_sys/current_thread_stack_space.hh"
-
 // relix-kernel
 #include "relix/api/breathe.hh"
-#include "relix/api/deliver_fatal_signal.hh"
+#include "relix/api/check_stack_space.hh"
 #include "relix/api/terminate_current_process.hh"
 #include "relix/signal/call_signal_handler.hh"
 #include "relix/signal/signal.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
-
-
-#ifndef SIGSTKFLT
-#define SIGSTKFLT  (-1)
-#endif
 
 
 namespace relix
@@ -29,14 +21,7 @@ namespace relix
 	{
 		enter_system();
 		
-		const unsigned long space = mac::sys::current_thread_stack_space();
-		
-		// space will be 0 if we're not on a Thread Manager stack
-		
-		if ( space != 0  &&  space < 8192 )
-		{
-			deliver_fatal_signal( SIGSTKFLT );
-		}
+		check_stack_space();
 		
 	rebreathe:
 		
