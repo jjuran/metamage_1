@@ -17,7 +17,7 @@
 #include "Genie/api/signals.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	static clock_t the_last_breath_time;
@@ -25,6 +25,8 @@ namespace Genie
 	
 	bool breathe( bool may_throw )
 	{
+		using namespace Genie;
+		
 		if ( check_signals( may_throw ) )
 		{
 			return true;
@@ -50,4 +52,3 @@ namespace Genie
 	}
 	
 }
-

@@ -6,13 +6,15 @@
 #ifndef GENIE_API_BREATHE_HH
 #define GENIE_API_BREATHE_HH
 
+// relix-kernel
+#include "relix/api/breathe.hh"
+
 
 namespace Genie
 {
 	
-	bool breathe( bool may_throw );
+	using relix::breathe;
 	
 }
 
 #endif
-
