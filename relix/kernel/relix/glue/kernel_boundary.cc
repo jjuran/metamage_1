@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "Genie/Dispatch/kernel_boundary.hh"
+#include "relix/glue/kernel_boundary.hh"
 
 // relix-kernel
 #include "relix/api/breathe.hh"
