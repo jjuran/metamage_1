@@ -10,9 +10,9 @@
 
 // relix-kernel
 #include "relix/api/breathe.hh"
+#include "relix/api/deliver_fatal_signal.hh"
 #include "relix/api/terminate_current_process.hh"
 #include "relix/signal/call_signal_handler.hh"
-#include "relix/signal/deliver_fatal_signal.hh"
 #include "relix/signal/signal.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 

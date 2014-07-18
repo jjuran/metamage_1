@@ -3,8 +3,8 @@
 	-----------------------
 */
 
-#ifndef RELIX_SIGNAL_DELIVERFATALSIGNAL_HH
-#define RELIX_SIGNAL_DELIVERFATALSIGNAL_HH
+#ifndef RELIX_API_DELIVERFATALSIGNAL_HH
+#define RELIX_API_DELIVERFATALSIGNAL_HH
 
 
 namespace relix
@@ -15,4 +15,3 @@ namespace relix
 }
 
 #endif
-
