@@ -707,8 +707,10 @@ namespace Genie
 						
 						size_t j;
 						
-						for ( j = start_of_output - 1;  j >= 0;  --j )
+						for ( j = start_of_output;  j > 0; )
 						{
+							--j;
+							
 							if ( s[ j ] == '\n' )
 							{
 								start_of_last_line = &s[ j ] + 1;
