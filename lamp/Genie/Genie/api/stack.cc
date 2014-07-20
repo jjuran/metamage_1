@@ -6,16 +6,14 @@
 #include "Genie/api/stack.hh"
 
 // Relix
+#include "relix/api/current_thread.hh"
 #include "relix/task/syscall_stack_base.hh"
-
-// Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
+#include "relix/task/thread.hh"
 
 
 void* current_stack_base()
 {
-	void* const memory = Genie::current_process().get_syscall_stack_memory();
+	void* const memory = relix::current_thread().get_syscall_stack_memory();
 	
 	if ( memory == NULL )
 	{
