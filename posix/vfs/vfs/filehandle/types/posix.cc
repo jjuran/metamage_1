@@ -10,11 +10,14 @@
 #include "poseven/functions/ftruncate.hh"
 #include "poseven/functions/pread.hh"
 #include "poseven/functions/pwrite.hh"
+#include "poseven/functions/read.hh"
+#include "poseven/functions/write.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
+#include "vfs/filehandle/methods/stream_method_set.hh"
 
 
 namespace vfs
@@ -74,9 +77,36 @@ namespace vfs
 		&posix_seteof,
 	};
 	
+	static ssize_t posix_read( vfs::filehandle* file, char* buffer, size_t n )
+	{
+		posix_file_extra& extra = *(posix_file_extra*) file->extra();
+		
+		const p7::fd_t fd = p7::fd_t( extra.fd );
+		
+		return p7::read( fd, buffer, n );
+	}
+	
+	static ssize_t posix_write( vfs::filehandle* file, const char* buffer, size_t n )
+	{
+		posix_file_extra& extra = *(posix_file_extra*) file->extra();
+		
+		const p7::fd_t fd = p7::fd_t( extra.fd );
+		
+		return p7::write( fd, buffer, n );
+	}
+	
+	static const stream_method_set posix_stream_methods =
+	{
+		NULL,
+		&posix_read,
+		&posix_write,
+	};
+	
 	static const filehandle_method_set posix_methods =
 	{
 		&posix_bstore_methods,
+		NULL,
+		&posix_stream_methods,
 	};
 	
 	static void close_posix_file( filehandle* that )
@@ -101,4 +131,3 @@ namespace vfs
 	}
 	
 }
-
