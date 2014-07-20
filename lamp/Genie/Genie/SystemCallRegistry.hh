@@ -10,7 +10,7 @@
 #include "relix/syscalls.h"
 
 
-namespace Genie
+namespace relix
 {
 	
 #ifdef __MC68K__
@@ -26,7 +26,7 @@ namespace Genie
 	// Register system calls
 	
 	#define REGISTER_SYSTEM_CALL(call)  \
-		::Genie::SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
+		::relix::SystemCallRegistration call##_syscall_( __NR_##call, #call, (void*) call )
 	
 	void RegisterSystemCall( syscall_number_t index, const char* name, void* func );
 	
@@ -52,6 +52,15 @@ namespace Genie
 	extern SystemCall* gSystemCallArray;
 	
 	extern syscall_number_t gLastSystemCall;
+	
+}
+
+namespace Genie
+{
+	
+	using relix::SystemCall;
+	using relix::gLastSystemCall;
+	using relix::gSystemCallArray;
 	
 	const SystemCall* LookUpSystemCallByName( const char* name );
 	

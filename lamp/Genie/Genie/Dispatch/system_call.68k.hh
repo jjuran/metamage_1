@@ -7,7 +7,7 @@
 #define GENIE_DISPATCH_SYSTEMCALL_68K_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	extern "C" void dispatch_68k_system_call( ... );
@@ -15,4 +15,3 @@ namespace Genie
 }
 
 #endif
-

@@ -15,10 +15,19 @@ namespace Genie
 	
 	class Process;
 	
-	extern Process* gCurrentProcess;
+}
+
+namespace relix
+{
 	
+	extern Genie::Process* gCurrentProcess;
 	
-	inline Process& current_process()  { return *gCurrentProcess; }
+}
+
+namespace Genie
+{
+	
+	inline Process& current_process()  { return *relix::gCurrentProcess; }
 	
 	using relix::set_errno;
 	using relix::set_errno_from_exception;
@@ -26,4 +35,3 @@ namespace Genie
 }
 
 #endif
-

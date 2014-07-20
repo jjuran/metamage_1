@@ -7,7 +7,7 @@
 #define GENIE_DISPATCH_KERNELBOUNDARY_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	extern "C" long enter_system_call( long syscall_number, long* params );
@@ -17,4 +17,3 @@ namespace Genie
 }
 
 #endif
-

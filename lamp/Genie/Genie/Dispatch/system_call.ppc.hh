@@ -7,7 +7,7 @@
 #define GENIE_DISPATCH_SYSTEMCALL_PPC_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	extern "C" void dispatch_ppc_system_call( ... );
@@ -15,4 +15,3 @@ namespace Genie
 }
 
 #endif
-

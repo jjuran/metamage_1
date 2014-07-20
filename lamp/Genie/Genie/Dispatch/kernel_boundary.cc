@@ -24,12 +24,12 @@
 #endif
 
 
-namespace Genie
+namespace relix
 {
 	
 	long enter_system_call( long syscall_number, long* params )
 	{
-		relix::enter_system();
+		enter_system();
 		
 		const unsigned long space = mac::sys::current_thread_stack_space();
 		
@@ -37,7 +37,7 @@ namespace Genie
 		
 		if ( space != 0  &&  space < 8192 )
 		{
-			relix::deliver_fatal_signal( SIGSTKFLT );
+			deliver_fatal_signal( SIGSTKFLT );
 		}
 		
 	rebreathe:
@@ -46,18 +46,18 @@ namespace Genie
 		{
 			breathe( true );
 		}
-		catch ( const relix::signal& signal )
+		catch ( const signal& sig )
 		{
-			if ( signal.number != 0  &&  signal.action.sa_handler == SIG_DFL )
+			if ( sig.number != 0  &&  sig.action.sa_handler == SIG_DFL )
 			{
-				relix::terminate_current_process( signal.number );
+				terminate_current_process( sig.number );
 			}
 			
-			relix::leave_system();
+			leave_system();
 			
-			relix::call_signal_handler( signal );
+			call_signal_handler( sig );
 			
-			relix::enter_system();
+			enter_system();
 			
 			goto rebreathe;
 		}
@@ -67,26 +67,26 @@ namespace Genie
 	
 	bool leave_system_call( int result )
 	{
-		if ( relix::the_signal.number  &&  relix::the_signal.action.sa_handler == SIG_DFL )
+		if ( the_signal.number  &&  the_signal.action.sa_handler == SIG_DFL )
 		{
-			int signo = relix::the_signal.number;
+			int signo = the_signal.number;
 			
-			relix::the_signal.number = 0;
+			the_signal.number = 0;
 			
-			relix::terminate_current_process( signo );
+			terminate_current_process( signo );
 		}
 		
-		relix::leave_system();
+		leave_system();
 		
-		if ( relix::the_signal.number )
+		if ( the_signal.number )
 		{
-			const relix::signal signal = relix::the_signal;
+			const signal sig = the_signal;
 			
-			relix::the_signal.number = 0;
+			the_signal.number = 0;
 			
-			relix::call_signal_handler( signal );
+			call_signal_handler( sig );
 			
-			return signal.action.sa_flags & SA_RESTART;
+			return sig.action.sa_flags & SA_RESTART;
 		}
 		
 		return false;

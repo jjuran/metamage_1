@@ -7,7 +7,7 @@
 #define GENIE_FAULTS_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	void InstallExceptionHandlers();
@@ -15,4 +15,3 @@ namespace Genie
 }
 
 #endif
-

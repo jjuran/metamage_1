@@ -13,7 +13,7 @@
 #include "relix/syscall/unimplemented.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	typedef std::vector< SystemCall > SystemCallRegistry;
@@ -23,7 +23,7 @@ namespace Genie
 	syscall_number_t gLastSystemCall = 0;
 	
 	
-	SystemCall::SystemCall() : function( (void*) relix::unimplemented ), name()
+	SystemCall::SystemCall() : function( (void*) unimplemented ), name()
 	{
 		
 	}
@@ -62,6 +62,14 @@ namespace Genie
 		
 		registry[ index ] = SystemCall( func, name );
 	}
+	
+}
+
+namespace Genie
+{
+	
+	using namespace relix;
+	
 	
 	const SystemCall* LookUpSystemCallByName( const char* name )
 	{

@@ -16,7 +16,7 @@
 extern "C" void* current_stack_base();
 
 
-namespace Genie
+namespace relix
 {
 	
 #ifdef __MC68K__

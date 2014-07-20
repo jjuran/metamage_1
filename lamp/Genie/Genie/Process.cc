@@ -142,6 +142,13 @@ static void DumpBacktrace()
 	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
 }
 
+namespace relix
+{
+	
+	Genie::Process* gCurrentProcess;  // extern, declared in Faults.cc
+	
+}
+
 namespace Genie
 {
 	
@@ -165,14 +172,14 @@ namespace Genie
 		sizeof (_relix_system_parameter_block),
 		sizeof (_relix_user_parameter_block),
 		
-		TARGET_CPU_68K ? &dispatch_68k_system_call :
-		TARGET_CPU_PPC ? &dispatch_ppc_system_call
+		TARGET_CPU_68K ? &relix::dispatch_68k_system_call :
+		TARGET_CPU_PPC ? &relix::dispatch_ppc_system_call
 		               : NULL,
 		
 		&microseconds
 	};
 	
-	Process* gCurrentProcess;  // extern, declared in Faults.cc
+	using relix::gCurrentProcess;
 	
 	Process& CurrentProcess()
 	{
@@ -519,7 +526,7 @@ namespace Genie
 		fds[ 1 ] = open_device( STR_LEN( "/dev/null"    ) );
 		fds[ 2 ] = open_device( STR_LEN( "/dev/console" ) );
 		
-		InstallExceptionHandlers();
+		relix::InstallExceptionHandlers();
 	}
 	
 	Process::Process( Process& parent, pid_t pid, pid_t tid ) 

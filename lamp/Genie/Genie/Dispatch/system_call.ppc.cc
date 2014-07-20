@@ -10,7 +10,7 @@
 #include "Genie/Dispatch/kernel_boundary.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 #ifdef __POWERPC__

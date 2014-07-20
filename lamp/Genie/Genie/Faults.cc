@@ -32,7 +32,7 @@
 #include "Genie/Dispatch/system_call.68k.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	extern class Process* gCurrentProcess;  // defined in Process.cc
@@ -40,37 +40,37 @@ namespace Genie
 	
 	static void BusError()
 	{
-		relix::deliver_fatal_signal( SIGSEGV );
+		deliver_fatal_signal( SIGSEGV );
 	}
 	
 	static void AddressError()
 	{
-		relix::deliver_fatal_signal( SIGBUS );
+		deliver_fatal_signal( SIGBUS );
 	}
 	
 	static void IllegalInstruction()
 	{
-		relix::deliver_fatal_signal( SIGILL );
+		deliver_fatal_signal( SIGILL );
 	}
 	
 	static void DivisionByZero()
 	{
-		relix::deliver_fatal_signal( SIGFPE );
+		deliver_fatal_signal( SIGFPE );
 	}
 	
 	static void integer_range_check()
 	{
-		relix::deliver_fatal_signal( SIGFPE );
+		deliver_fatal_signal( SIGFPE );
 	}
 	
 	static void integer_overflow()
 	{
-		relix::deliver_fatal_signal( SIGFPE );
+		deliver_fatal_signal( SIGFPE );
 	}
 	
 	static void PrivilegeViolation()
 	{
-		relix::deliver_fatal_signal( SIGILL );
+		deliver_fatal_signal( SIGILL );
 	}
 	
 #if TARGET_CPU_68K
@@ -352,4 +352,3 @@ namespace Genie
 #endif
 	
 }
-
