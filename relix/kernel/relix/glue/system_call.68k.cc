@@ -6,12 +6,10 @@
 #include "relix/glue/system_call.68k.hh"
 
 // Relix
+#include "relix/api/current_stack_base.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/kernel_boundary.hh"
 #include "relix/syscall/registry.hh"
-
-
-extern "C" void* current_stack_base();
 
 
 namespace relix
