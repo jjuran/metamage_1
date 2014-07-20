@@ -1,9 +1,9 @@
 /*
-	Genie/FS/sys/mac/tempmem.cc
-	---------------------------
+	tempmem.cc
+	----------
 */
 
-#include "Genie/FS/sys/mac/tempmem.hh"
+#include "MacVFS/file/tempmem.hh"
 
 // POSIX
 #include <sys/stat.h>

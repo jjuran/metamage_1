@@ -1,10 +1,10 @@
 /*
-	Genie/FS/sys/mac/tempmem.hh
-	---------------------------
+	tempmem.hh
+	----------
 */
 
-#ifndef GENIE_FS_SYS_MAC_TEMPMEM_HH
-#define GENIE_FS_SYS_MAC_TEMPMEM_HH
+#ifndef MACVFS_FILE_TEMPMEM_HH
+#define MACVFS_FILE_TEMPMEM_HH
 
 // plus
 #include "plus/string_fwd.hh"

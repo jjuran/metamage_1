@@ -12,6 +12,7 @@
 // MacVFS
 #include "MacVFS/file/sys_mac_bootrom.hh"
 #include "MacVFS/file/sys_mac_rom.hh"
+#include "MacVFS/file/tempmem.hh"
 
 // relix-kernel
 #include "relix/config/color.hh"
@@ -31,7 +32,6 @@
 #include "Genie/FS/sys/mac/name.hh"
 #include "Genie/FS/sys/mac/proc.hh"
 #include "Genie/FS/sys/mac/soundin.hh"
-#include "Genie/FS/sys/mac/tempmem.hh"
 #include "Genie/FS/sys/mac/thng.hh"
 #include "Genie/FS/sys/mac/thread.hh"
 #if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
