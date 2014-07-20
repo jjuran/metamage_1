@@ -27,7 +27,7 @@
 namespace Genie
 {
 	
-	void enter_system_call( long syscall_number, long* params )
+	long enter_system_call( long syscall_number, long* params )
 	{
 		relix::enter_system();
 		
@@ -61,6 +61,8 @@ namespace Genie
 			
 			goto rebreathe;
 		}
+		
+		return syscall_number;
 	}
 	
 	bool leave_system_call( int result )

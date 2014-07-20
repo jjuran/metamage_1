@@ -48,10 +48,10 @@ namespace Genie
 		lwz     r3,56(SP)
 		addi    r4,SP,32
 		
-		bl      enter_system_call
+		bl      enter_system_call  // returns syscall number
 		
 		// restore system call number
-		lwz     r11,56(SP)
+		mr      r11,r3
 		
 		// restore parameters
 		lwz     r5,32(SP)

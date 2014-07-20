@@ -55,9 +55,7 @@ namespace Genie
 		
 	restart:
 		
-		JSR      enter_system_call
-		
-		MOVE.L   (SP),D0  // restore D0
+		JSR      enter_system_call  // returns syscall number in D0
 		
 		CMP.W    gLastSystemCall,D0
 		BLT      in_range
