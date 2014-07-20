@@ -25,11 +25,9 @@
 #include "Silver/Traps.hh"
 #endif
 
-// relix-api
+// relix
 #include "relix/api/deliver_fatal_signal.hh"
-
-// Genie
-#include "Genie/Dispatch/system_call.68k.hh"
+#include "relix/glue/system_call.68k.hh"
 
 
 namespace relix

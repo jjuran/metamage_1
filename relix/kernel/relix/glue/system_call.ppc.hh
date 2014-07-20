@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef GENIE_DISPATCH_SYSTEMCALL_PPC_HH
-#define GENIE_DISPATCH_SYSTEMCALL_PPC_HH
+#ifndef RELIX_GLUE_SYSTEMCALL_PPC_HH
+#define RELIX_GLUE_SYSTEMCALL_PPC_HH
 
 
 namespace relix

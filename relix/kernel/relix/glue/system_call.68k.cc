@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "Genie/Dispatch/system_call.68k.hh"
+#include "relix/glue/system_call.68k.hh"
 
 // Relix
 #include "relix/config/syscall_stacks.hh"
@@ -96,6 +96,12 @@ namespace relix
 		UNLK     A6
 		
 		RTS
+	}
+	
+#elif defined( __APPLE__ )
+	
+	void dummy()
+	{
 	}
 	
 #endif

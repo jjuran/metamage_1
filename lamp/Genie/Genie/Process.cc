@@ -82,6 +82,8 @@
 #include "relix/api/terminate_current_process.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
+#include "relix/glue/system_call.68k.hh"
+#include "relix/glue/system_call.ppc.hh"
 #include "relix/glue/userland.hh"
 #include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
@@ -98,8 +100,6 @@
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
-#include "Genie/Dispatch/system_call.68k.hh"
-#include "Genie/Dispatch/system_call.ppc.hh"
 #include "Genie/Faults.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"

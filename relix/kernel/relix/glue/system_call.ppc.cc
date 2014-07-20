@@ -3,7 +3,7 @@
 	------------------
 */
 
-#include "Genie/Dispatch/system_call.ppc.hh"
+#include "relix/glue/system_call.ppc.hh"
 
 // relix
 #include "relix/glue/kernel_boundary.hh"
@@ -112,6 +112,12 @@ namespace relix
 	}
 	
 #endif
+#elif defined( __APPLE__ )
+	
+	void dummy()
+	{
+	}
+	
 #endif
 	
 }
