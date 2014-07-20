@@ -1,7 +1,7 @@
-/*	==========
- *	symlink.cc
- *	==========
- */
+/*
+	link.cc
+	-------
+*/
 
 // Standard C
 #include <errno.h>
