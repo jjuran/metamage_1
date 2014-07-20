@@ -12,8 +12,8 @@
 // mac-sys-utils
 #include "mac_sys/exit_to_shell.hh"
 
-// relix-kernel
-#include "relix/signal/deliver_fatal_signal.hh"
+// relix-api
+#include "relix/api/deliver_fatal_signal.hh"
 
 
 void abort()
@@ -30,4 +30,3 @@ void abort()
 }
 	
 #endif
-

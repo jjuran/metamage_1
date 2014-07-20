@@ -7,10 +7,10 @@
 
 // Relix
 #include "relix/config/syscall_stacks.hh"
+#include "relix/glue/kernel_boundary.hh"
 
 // Genie
 #include "Genie/SystemCallRegistry.hh"
-#include "Genie/Dispatch/kernel_boundary.hh"
 
 
 extern "C" void* current_stack_base();

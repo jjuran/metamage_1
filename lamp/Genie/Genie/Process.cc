@@ -75,6 +75,7 @@
 #include "MacVFS/util/get_Mac_type_code.hh"
 
 // relix-kernel
+#include "relix/api/deliver_fatal_signal.hh"
 #include "relix/api/getcwd.hh"
 #include "relix/api/get_process_group.hh"
 #include "relix/api/root.hh"
@@ -82,7 +83,6 @@
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/userland.hh"
-#include "relix/signal/deliver_fatal_signal.hh"
 #include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"

@@ -3,8 +3,8 @@
 	------------------
 */
 
-#ifndef GENIE_DISPATCH_KERNELBOUNDARY_HH
-#define GENIE_DISPATCH_KERNELBOUNDARY_HH
+#ifndef RELIX_GLUE_KERNELBOUNDARY_HH
+#define RELIX_GLUE_KERNELBOUNDARY_HH
 
 
 namespace relix

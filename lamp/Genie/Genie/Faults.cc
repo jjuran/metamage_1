@@ -25,8 +25,8 @@
 #include "Silver/Traps.hh"
 #endif
 
-// relix-kernel
-#include "relix/signal/deliver_fatal_signal.hh"
+// relix-api
+#include "relix/api/deliver_fatal_signal.hh"
 
 // Genie
 #include "Genie/Dispatch/system_call.68k.hh"
