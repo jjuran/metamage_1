@@ -8,9 +8,7 @@
 // Relix
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/kernel_boundary.hh"
-
-// Genie
-#include "Genie/SystemCallRegistry.hh"
+#include "relix/syscall/registry.hh"
 
 
 extern "C" void* current_stack_base();

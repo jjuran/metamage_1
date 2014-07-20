@@ -5,10 +5,8 @@
 
 // relix-kernel
 #include "relix/config/pts.hh"
+#include "relix/syscall/registry.hh"
 #include "relix/syscall/ttypair.hh"
-
-// Genie
-#include "Genie/SystemCallRegistry.hh"
 
 
 using namespace relix;

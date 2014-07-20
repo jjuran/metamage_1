@@ -10,13 +10,13 @@
 #include "relix/sched.h"
 
 // relix-kernel
+#include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 static const int supported_clone_flags = CLONE_VM
@@ -112,4 +112,3 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 REGISTER_SYSTEM_CALL( _relix_clone );
 
 #pragma force_active reset
-

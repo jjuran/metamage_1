@@ -6,10 +6,12 @@
 // POSIX
 #include "unistd.h"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -54,4 +56,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

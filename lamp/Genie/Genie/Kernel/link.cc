@@ -22,11 +22,11 @@
 // relix-kernel
 #include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
+#include "relix/syscall/registry.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Kernel/make_alias.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 #ifndef AT_SYMLINK_FOLLOW
@@ -89,4 +89,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

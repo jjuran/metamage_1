@@ -16,6 +16,9 @@
 // plus
 #include "plus/string/concat.hh"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
 
@@ -24,7 +27,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie

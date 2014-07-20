@@ -14,13 +14,13 @@
 
 // relix
 #include "relix/api/current_process.hh"
+#include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/SystemCallRegistry.hh"
 #include "Genie/api/yield.hh"
 
 
@@ -216,4 +216,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

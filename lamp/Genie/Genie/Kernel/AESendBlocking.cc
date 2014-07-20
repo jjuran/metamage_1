@@ -5,6 +5,7 @@
 
 // Relix
 #include "relix/AESendBlocking.h"
+#include "relix/syscall/registry.hh"
 
 // Nitrogen
 #include "Mac/Toolbox/Types/OSStatus.hh"
@@ -18,7 +19,6 @@
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace N = Nitrogen;
@@ -58,4 +58,3 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 REGISTER_SYSTEM_CALL( AESendBlocking );
 
 #pragma force_active reset
-

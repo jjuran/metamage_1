@@ -7,9 +7,7 @@
 
 // relix
 #include "relix/glue/kernel_boundary.hh"
-
-// Genie
-#include "Genie/SystemCallRegistry.hh"
+#include "relix/syscall/registry.hh"
 
 
 namespace relix

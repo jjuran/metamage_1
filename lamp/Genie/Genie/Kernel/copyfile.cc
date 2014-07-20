@@ -5,9 +5,7 @@
 
 // relix-kernel
 #include "relix/syscall/copyfileat.hh"
-
-// Genie
-#include "Genie/SystemCallRegistry.hh"
+#include "relix/syscall/registry.hh"
 
 
 namespace {
@@ -22,4 +20,3 @@ REGISTER_SYSTEM_CALL( copyfileat );
 #pragma force_active reset
 
 }  // namespace
-

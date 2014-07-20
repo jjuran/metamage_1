@@ -14,12 +14,10 @@
 #include "relix/syscall/getpeername.hh"
 #include "relix/syscall/getsockname.hh"
 #include "relix/syscall/listen.hh"
+#include "relix/syscall/registry.hh"
 #include "relix/syscall/shutdown.hh"
 #include "relix/syscall/socket.hh"
 #include "relix/syscall/socketpair.hh"
-
-// Genie
-#include "Genie/SystemCallRegistry.hh"
 
 
 #ifndef CONFIG_SOCKETS
@@ -59,4 +57,3 @@ REGISTER_SYSTEM_CALL( shutdown    );
 #endif
 
 }  // namespace
-

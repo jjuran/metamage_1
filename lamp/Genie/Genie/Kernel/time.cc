@@ -16,10 +16,10 @@
 
 // relix-kernel
 #include "relix/signal/signal.hh"
+#include "relix/syscall/registry.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/SystemCallRegistry.hh"
 #include "Genie/api/yield.hh"
 
 
@@ -136,4 +136,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-
