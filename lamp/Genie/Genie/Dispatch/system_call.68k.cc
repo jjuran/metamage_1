@@ -57,13 +57,13 @@ namespace relix
 		
 		JSR      enter_system_call  // returns syscall number in D0
 		
-		CMP.W    gLastSystemCall,D0
+		CMP.W    the_last_syscall,D0
 		BLT      in_range
 		
-		MOVE.W   gLastSystemCall,D0
+		MOVE.W   the_last_syscall,D0
 		
 	in_range:
-		MOVEA.L  gSystemCallArray,A0
+		MOVEA.L  the_syscall_array,A0
 		
 	#if __MC68020__
 		MOVEA.L  (A0,D0.W*8),A0

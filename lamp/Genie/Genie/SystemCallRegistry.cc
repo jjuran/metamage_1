@@ -18,14 +18,14 @@
 namespace relix
 {
 	
-	typedef std::vector< SystemCall > SystemCallRegistry;
+	typedef std::vector< system_call > SystemCallRegistry;
 	
-	SystemCall* gSystemCallArray = NULL;
+	system_call* the_syscall_array = NULL;
 	
-	syscall_number_t gLastSystemCall = 0;
+	syscall_number_t the_last_syscall = 0;
 	
 	
-	SystemCall::SystemCall() : function( (void*) unimplemented ), name()
+	system_call::system_call() : function( (void*) unimplemented ), name()
 	{
 		
 	}
@@ -41,18 +41,18 @@ namespace relix
 	{
 		SystemCallRegistry& registry = TheSystemCallRegistry();
 		
-		if ( index >= gLastSystemCall )
+		if ( index >= the_last_syscall )
 		{
-			gLastSystemCall = index + 1;
+			the_last_syscall = index + 1;
 			
-			const unsigned required_size = gLastSystemCall + 1;
+			const unsigned required_size = the_last_syscall + 1;
 			
 			registry.resize( required_size );
 			
-			gSystemCallArray = &registry[0];
+			the_syscall_array = &registry[0];
 		}
 		
-		registry[ index ] = SystemCall( func, name );
+		registry[ index ] = system_call( func, name );
 	}
 	
 }
@@ -65,8 +65,8 @@ namespace Genie
 	
 	const SystemCall* LookUpSystemCallByName( const char* name )
 	{
-		SystemCall* it  = gSystemCallArray;
-		SystemCall* end = it + gLastSystemCall;
+		SystemCall* it  = the_syscall_array;
+		SystemCall* end = it + the_last_syscall;
 		
 		while ( it < end )
 		{

@@ -25,7 +25,7 @@ namespace relix
 	
 #else
 	
-	enum { kSystemCallSize = sizeof (SystemCall) };
+	enum { kSystemCallSize = sizeof (system_call) };
 	
 	asm void dispatch_ppc_system_call( ... )
 	{
@@ -67,7 +67,7 @@ namespace relix
 		// r3-r8 are up to 6 arguments
 		
 		// r12.last = gLastSystemCall;
-		lwz     r12,gLastSystemCall
+		lwz     r12,the_last_syscall
 		lwz     r12,0(r12)
 		
 		// if ( r11.index > r12.last )
@@ -79,7 +79,7 @@ namespace relix
 	in_range:
 		
 		// r12.array = gSystemCallArray;
-		lwz     r12,gSystemCallArray
+		lwz     r12,the_syscall_array
 		lwz     r12,0(r12)
 		
 		// r12.f = r12.array[ r11.index ].function

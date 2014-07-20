@@ -39,28 +39,26 @@ namespace relix
 			}
 	};
 	
-	struct SystemCall
+	struct system_call
 	{
 		void*        function;
 		const char*  name;
 		
-		SystemCall();
+		system_call();
 		
-		SystemCall( void* f, const char* nom ) : function( f ), name( nom )  {}
+		system_call( void* f, const char* nom ) : function( f ), name( nom )  {}
 	};
 	
-	extern SystemCall* gSystemCallArray;
+	extern system_call* the_syscall_array;
 	
-	extern syscall_number_t gLastSystemCall;
+	extern syscall_number_t the_last_syscall;
 	
 }
 
 namespace Genie
 {
 	
-	using relix::SystemCall;
-	using relix::gLastSystemCall;
-	using relix::gSystemCallArray;
+	typedef relix::system_call SystemCall;
 	
 	const SystemCall* LookUpSystemCallByName( const char* name );
 	
