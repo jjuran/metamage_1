@@ -5,8 +5,10 @@
 
 #include "Genie/SystemCallRegistry.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
-#include <algorithm>
 #include <vector>
 
 // relix-kernel
@@ -26,16 +28,6 @@ namespace relix
 	SystemCall::SystemCall() : function( (void*) unimplemented ), name()
 	{
 		
-	}
-	
-	static bool operator<( const SystemCall& a, const SystemCall& b )
-	{
-		return std::strcmp( a.name, b.name ) < 0;
-	}
-	
-	static bool operator==( const SystemCall& systemCall, const char* name )
-	{
-		return systemCall.name  &&  std::strcmp( systemCall.name, name ) == 0;
 	}
 	
 	static SystemCallRegistry& TheSystemCallRegistry()
@@ -73,17 +65,18 @@ namespace Genie
 	
 	const SystemCall* LookUpSystemCallByName( const char* name )
 	{
-		SystemCallRegistry::iterator begin = TheSystemCallRegistry().begin();
-		SystemCallRegistry::iterator end   = TheSystemCallRegistry().end  ();
+		SystemCall* it  = gSystemCallArray;
+		SystemCall* end = it + gLastSystemCall;
 		
-		SystemCallRegistry::const_iterator it = std::find( begin, end, name );
-		
-		if ( it == end )
+		while ( it < end )
 		{
-			return NULL;
+			if ( strcmp( name, it->name ) == 0 )
+			{
+				return it;
+			}
 		}
 		
-		return &*it;
+		return NULL;
 	}
 	
 }
