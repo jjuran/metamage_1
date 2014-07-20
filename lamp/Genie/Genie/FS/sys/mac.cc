@@ -80,8 +80,8 @@ namespace Genie
 		
 	#endif
 		
-		{ "tempmem", &New_FSTree_sys_mac_tempmem },
-		{ "thng",    &New_FSTree_sys_mac_thng    },
+		{ "tempmem", &vfs::new_sys_mac_tempmem },
+		{ "thng",    &New_FSTree_sys_mac_thng  },
 		
 	#if defined( __MACOS__ )  &&  !TARGET_API_MAC_CARBON
 		

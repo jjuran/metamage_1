@@ -7,20 +7,19 @@
 #define GENIE_FS_SYS_MAC_TEMPMEM_HH
 
 // plus
-#include "plus/string.hh"
+#include "plus/string_fwd.hh"
 
 // Genie
-#include "Genie/FS/FSTreePtr.hh"
+#include "vfs/node_ptr.hh"
 
 
-namespace Genie
+namespace vfs
 {
 	
-	FSTreePtr New_FSTree_sys_mac_tempmem( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args );
+	node_ptr new_sys_mac_tempmem( const node*          parent,
+	                              const plus::string&  name,
+	                              const void*          args );
 	
 }
 
 #endif
-
