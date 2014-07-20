@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys.hh"
 
+// Standard C
+#include <string.h>
+
 // gear
 #include "gear/hexidecimal.hh"
 
@@ -25,6 +28,9 @@
 // vfs-relix
 #include "vfs/node/types/builtin.hh"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
@@ -32,7 +38,6 @@
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
 #include "Genie/FS/sys/type.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -42,7 +47,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef const SystemCall* SystemCallPtr;
+	typedef const relix::system_call* SystemCallPtr;
 	
 	
 	static plus::string name_of_syscall( SystemCallPtr key )
@@ -63,6 +68,24 @@ namespace Genie
 		return key->name;
 	}
 	
+	
+	static const relix::system_call* LookUpSystemCallByName( const char* name )
+	{
+		using namespace relix;
+		
+		system_call* it  = the_syscall_array;
+		system_call* end = it + the_last_syscall;
+		
+		while ( it < end )
+		{
+			if ( strcmp( name, it->name ) == 0 )
+			{
+				return it;
+			}
+		}
+		
+		return NULL;
+	}
 	
 	static FSTreePtr syscall_lookup( const FSTree* parent, const plus::string& name )
 	{
