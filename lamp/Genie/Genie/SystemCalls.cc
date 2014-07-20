@@ -37,6 +37,7 @@
 #include "relix/syscall/pwrite.hh"
 #include "relix/syscall/read.hh"
 #include "relix/syscall/readlinkat.hh"
+#include "relix/syscall/registry.hh"
 #include "relix/syscall/renameat.hh"
 #include "relix/syscall/setpgid.hh"
 #include "relix/syscall/setsid.hh"
@@ -49,9 +50,6 @@
 #include "relix/syscall/utimensat.hh"
 #include "relix/syscall/write.hh"
 #include "relix/syscall/writev.hh"
-
-// Genie
-#include "Genie/SystemCallRegistry.hh"
 
 
 extern "C" void sync();

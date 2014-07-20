@@ -12,6 +12,7 @@
 // relix-kernel
 #include "relix/api/errno.hh"
 #include "relix/syscall/getpid.hh"
+#include "relix/syscall/registry.hh"
 #include "relix/syscall/sigaction.hh"
 #include "relix/syscall/sigpending.hh"
 #include "relix/syscall/sigprocmask.hh"
@@ -21,7 +22,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -135,4 +135,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

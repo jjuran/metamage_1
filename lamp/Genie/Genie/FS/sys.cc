@@ -76,11 +76,11 @@ namespace Genie
 	
 	static void syscall_iterate( const FSTree* parent, vfs::dir_contents& cache )
 	{
-		for ( int i = 0;  i < gLastSystemCall;  ++i )
+		for ( int i = 0;  i < relix::the_last_syscall;  ++i )
 		{
 			const ino_t inode = i;
 			
-			plus::string name = name_of_syscall( &gSystemCallArray[ i ] );
+			plus::string name = name_of_syscall( &relix::the_syscall_array[ i ] );
 			
 			cache.push_back( vfs::dir_entry( inode, name ) );
 		}

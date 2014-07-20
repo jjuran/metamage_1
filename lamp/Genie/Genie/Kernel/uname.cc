@@ -19,8 +19,10 @@
 // plus
 #include "plus/var_string.hh"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // Genie
-#include "Genie/SystemCallRegistry.hh"
 #include "Genie/Utilities/GetWorkstationName.hh"
 
 
@@ -113,4 +115,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

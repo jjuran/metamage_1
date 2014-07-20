@@ -19,13 +19,13 @@
 // relix-kernel
 #include "relix/api/errno.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/syscall/registry.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
 
 // Genie
 #include "Genie/api/yield.hh"
-#include "Genie/SystemCallRegistry.hh"
 
 
 namespace Genie
@@ -137,4 +137,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-

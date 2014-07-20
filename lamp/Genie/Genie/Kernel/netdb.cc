@@ -21,12 +21,14 @@
 // mac-app-utils
 #include "mac_app/OpenTransport_share.hh"
 
+// relix
+#include "relix/syscall/registry.hh"
+
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransportProviders.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/SystemCallRegistry.hh"
 #include "Genie/api/yield.hh"
 
 
@@ -165,4 +167,3 @@ namespace Genie
 }
 
 #endif  // #ifndef MAC_OS_X_VERSION_10_8
-

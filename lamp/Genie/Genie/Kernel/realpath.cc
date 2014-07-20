@@ -28,9 +28,9 @@
 #include "relix/api/errno.hh"
 #include "relix/api/root.hh"
 #include "relix/fs/resolve_path_at.hh"
+#include "relix/syscall/registry.hh"
 
 // Genie
-#include "Genie/SystemCallRegistry.hh"
 
 
 #ifndef REALPATH_OUTPUT_HFS
@@ -105,4 +105,3 @@ namespace Genie
 	#pragma force_active reset
 	
 }
-
