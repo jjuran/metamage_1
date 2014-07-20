@@ -73,8 +73,8 @@ namespace Genie
 	
 	const SystemCall* LookUpSystemCallByName( const char* name )
 	{
-		static SystemCallRegistry::iterator begin = TheSystemCallRegistry().begin();
-		static SystemCallRegistry::iterator end   = TheSystemCallRegistry().end  ();
+		SystemCallRegistry::iterator begin = TheSystemCallRegistry().begin();
+		SystemCallRegistry::iterator end   = TheSystemCallRegistry().end  ();
 		
 		SystemCallRegistry::const_iterator it = std::find( begin, end, name );
 		
