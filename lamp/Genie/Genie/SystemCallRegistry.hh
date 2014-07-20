@@ -53,11 +53,8 @@ namespace Genie
 	
 	extern syscall_number_t gLastSystemCall;
 	
-	const SystemCall* GetSystemCall( syscall_number_t index );
-	
 	const SystemCall* LookUpSystemCallByName( const char* name );
 	
 }
 
 #endif
-

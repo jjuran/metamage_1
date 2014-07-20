@@ -63,20 +63,6 @@ namespace Genie
 		registry[ index ] = SystemCall( func, name );
 	}
 	
-	const SystemCall* GetSystemCall( syscall_number_t index )
-	{
-		const syscall_number_t required_size = index + 1;
-		
-		SystemCallRegistry& registry = TheSystemCallRegistry();
-		
-		if ( registry.size() < required_size )
-		{
-			return NULL;
-		}
-		
-		return &registry[ index ];
-	}
-	
 	const SystemCall* LookUpSystemCallByName( const char* name )
 	{
 		static SystemCallRegistry::iterator begin = TheSystemCallRegistry().begin();
