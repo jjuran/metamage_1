@@ -103,7 +103,6 @@
 #include "Genie/Faults.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
-#include "Genie/SystemCallRegistry.hh"
 #include "Genie/SystemConsole.hh"
 
 
