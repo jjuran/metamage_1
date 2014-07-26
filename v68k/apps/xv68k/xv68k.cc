@@ -297,7 +297,7 @@ static void load_Mac_traps( uint8_t* mem )
 	os_traps[ 0x98 ] = big_no_op;  // HWPriv
 }
 
-static void load_argv( uint8_t* mem, int argc, char** argv )
+static void load_argv( uint8_t* mem, int argc, char* const* argv )
 {
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc      );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
