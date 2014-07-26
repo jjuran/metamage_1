@@ -534,13 +534,9 @@ static bool option_matches( const char*  option,
 
 #define OPTION_MATCHES( option, size, name )  option_matches( option, size, STR_LEN( name ) )
 
-static int execute_68k( int argc, char* const* argv )
+static char* const* get_options( char* const* args )
 {
 	// skip argv[0]
-	--argc;
-	++argv;
-	
-	char* const* args = argv - 1;
 	
 	while ( const char* arg = *++args )
 	{
@@ -664,9 +660,11 @@ static int execute_68k( int argc, char* const* argv )
 		break;
 	}
 	
-	argc -= args - argv;
-	argv  = args;
-	
+	return args;
+}
+
+static int execute_68k( int argc, char* const* argv )
+{
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
@@ -715,6 +713,10 @@ int main( int argc, char** argv )
 		argv = (char**) new_argv;
 	}
 	
-	return execute_68k( argc, argv );
+	char* const* args = get_options( argv );
+	
+	int argn = argc - (args - argv);
+	
+	return execute_68k( argn, args );
 }
 
