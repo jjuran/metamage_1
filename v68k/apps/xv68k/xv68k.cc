@@ -536,12 +536,9 @@ static bool option_matches( const char*  option,
 
 static int execute_68k( int argc, char* const* argv )
 {
-	if ( argc > 0 )
-	{
-		// skip argv[0] if present (which it should be, but we have to check)
-		--argc;
-		++argv;
-	}
+	// skip argv[0]
+	--argc;
+	++argv;
 	
 	char* const* args = argv - 1;
 	
@@ -710,6 +707,14 @@ static int execute_68k( int argc, char* const* argv )
 
 int main( int argc, char** argv )
 {
+	if ( argc == 0 )
+	{
+		static const char* new_argv[] = { "", NULL };
+		
+		argc = 1;
+		argv = (char**) new_argv;
+	}
+	
 	return execute_68k( argc, argv );
 }
 
