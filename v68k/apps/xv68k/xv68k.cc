@@ -618,7 +618,7 @@ static int execute_68k( int argc, char* const* argv )
 						write( STDERR_FILENO, error, strlen( error ) );
 						write( STDERR_FILENO, STR_LEN( "\n" ) );
 						
-						return 1;
+						exit( 1 );
 					}
 					
 					continue;
