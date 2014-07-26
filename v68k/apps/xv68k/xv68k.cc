@@ -534,7 +534,7 @@ static bool option_matches( const char*  option,
 
 #define OPTION_MATCHES( option, size, name )  option_matches( option, size, STR_LEN( name ) )
 
-static int execute_68k( int argc, char** argv )
+static int execute_68k( int argc, char* const* argv )
 {
 	if ( argc > 0 )
 	{
@@ -543,7 +543,7 @@ static int execute_68k( int argc, char** argv )
 		++argv;
 	}
 	
-	char** args = argv - 1;
+	char* const* args = argv - 1;
 	
 	while ( const char* arg = *++args )
 	{
