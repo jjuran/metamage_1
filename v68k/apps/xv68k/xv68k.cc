@@ -503,13 +503,13 @@ static void report_condition( v68k::emulator& emu )
 	}
 }
 
-static int bad_usage( const char* text, size_t text_size, const char* arg )
+static void bad_usage( const char* text, size_t text_size, const char* arg )
 {
 	write( STDERR_FILENO, text, text_size );
 	write( STDERR_FILENO, arg, strlen( arg ) );
 	write( STDERR_FILENO, STR_LEN( "\n" ) );
 	
-	return 2;
+	exit( 2 );
 }
 
 #define BAD_USAGE( text, arg )  bad_usage( STR_LEN( text ": " ), arg )
@@ -582,7 +582,7 @@ static int execute_68k( int argc, char* const* argv )
 						
 						if ( param[0] != '\0' )
 						{
-							return BAD_USAGE( "Invalid option", arg );
+							BAD_USAGE( "Invalid option", arg );
 						}
 					}
 					
@@ -599,7 +599,7 @@ static int execute_68k( int argc, char* const* argv )
 						
 						if ( screen == NULL )
 						{
-							return BAD_USAGE( "Missing argument", option );
+							BAD_USAGE( "Missing argument", option );
 						}
 					}
 					else
@@ -631,7 +631,7 @@ static int execute_68k( int argc, char* const* argv )
 					continue;
 				}
 				
-				return BAD_USAGE( "Unknown option", arg );
+				BAD_USAGE( "Unknown option", arg );
 			}
 			
 			// short option
@@ -657,7 +657,7 @@ static int execute_68k( int argc, char* const* argv )
 				continue;
 			}
 			
-			return BAD_USAGE( "Unknown option", arg );
+			BAD_USAGE( "Unknown option", arg );
 		}
 		
 		// not an option
