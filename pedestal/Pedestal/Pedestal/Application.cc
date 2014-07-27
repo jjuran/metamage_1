@@ -186,7 +186,8 @@ namespace Pedestal
 	{
 		idAppleMENU = 128,  // menu ID = 1
 		idFileMENU,
-		idEditMENU
+		idEditMENU,
+		idWindowMENU,
 		//, idDebugMENU = 255  // menu ID = 128
 	};
 	
@@ -707,6 +708,7 @@ namespace Pedestal
 		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
 		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
+		MenuRef windowMenu = GetAndInsertMenu( N::ResID( idWindowMENU ) );
 		
 		if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutBit ) )
 		{
@@ -719,6 +721,7 @@ namespace Pedestal
 		AddMenu( appleMenu );
 		AddMenu( fileMenu  );
 		AddMenu( editMenu  );
+		AddMenu( windowMenu );
 		
 		if ( !TARGET_API_MAC_CARBON )
 		{
