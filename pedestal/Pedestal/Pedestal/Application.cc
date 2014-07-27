@@ -118,6 +118,8 @@ namespace Pedestal
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
 	
+	static MenuRef the_Window_menu;
+	
 	
 	struct AppleEventSignature
 	{
@@ -709,6 +711,8 @@ namespace Pedestal
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
 		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
 		MenuRef windowMenu = GetAndInsertMenu( N::ResID( idWindowMENU ) );
+		
+		the_Window_menu = windowMenu;
 		
 		if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutBit ) )
 		{
