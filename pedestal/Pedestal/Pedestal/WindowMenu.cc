@@ -84,4 +84,9 @@ namespace Pedestal
 		}
 	}
 	
+	WindowRef get_nth_window( int i )
+	{
+		return (WindowRef) the_windows_in_menu.at( i );
+	}
+	
 }

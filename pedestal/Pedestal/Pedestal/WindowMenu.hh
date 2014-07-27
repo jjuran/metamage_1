@@ -28,6 +28,8 @@ namespace Pedestal
 	
 	void populate_Window_menu( MenuRef menu );
 	
+	WindowRef get_nth_window( int i );
+	
 }
 
 #endif
