@@ -15,6 +15,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __MENUS__
+#include <Menus.h>
+#endif
 
 
 namespace Pedestal
@@ -22,6 +25,8 @@ namespace Pedestal
 	
 	void window_created( WindowRef w );
 	void window_removed( WindowRef w );
+	
+	void populate_Window_menu( MenuRef menu );
 	
 }
 

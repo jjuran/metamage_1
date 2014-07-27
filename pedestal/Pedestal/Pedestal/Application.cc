@@ -73,6 +73,7 @@
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/SetPort_GetWindow.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowMenu.hh"
 
 
 namespace Nitrogen
@@ -423,6 +424,8 @@ namespace Pedestal
 		
 		if ( found.part == N::inMenuBar )
 		{
+			populate_Window_menu( the_Window_menu );
+			
 			HandleMenuChoice( ::MenuSelect( event.where ) );
 			
 			return;
