@@ -22,6 +22,7 @@
 
 // Pedestal
 #include "Pedestal/View.hh"
+#include "Pedestal/WindowMenu.hh"
 
 
 namespace MacGlue
@@ -163,10 +164,12 @@ namespace Pedestal
 		itsWindowRef( CreateWindow( context, this ) ),
 		itsDefProcID( context.procID )
 	{
+		window_created( itsWindowRef.get() );
 	}
 	
 	Window::~Window()
 	{
+		window_removed( itsWindowRef.get() );
 	}
 	
 	void Window::Resize( WindowRef window, short h, short v )
