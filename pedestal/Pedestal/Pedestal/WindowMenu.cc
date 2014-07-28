@@ -7,6 +7,7 @@
 
 // Standard  C++
 #include <algorithm>
+#include <functional>
 #include <vector>
 
 
@@ -57,11 +58,32 @@ namespace Pedestal
 		}
 	}
 	
+	static bool window_title_less( const void* a_, const void* b_ )
+	{
+		Str255 one;
+		Str255 two;
+		
+		GetWTitle( (WindowRef) a_, one );
+		GetWTitle( (WindowRef) b_, two );
+		
+		const unsigned char* a = one + 1;
+		const unsigned char* b = two + 1;
+		
+		const unsigned char* a_end = a + one[ 0 ];
+		const unsigned char* b_end = b + two[ 0 ];
+		
+		return std::lexicographical_compare( a, a_end, b, b_end );
+	}
+	
 	void populate_Window_menu( MenuRef menu )
 	{
 		delete_all_menu_items( menu );
 		
 		the_windows_in_menu = the_windows;
+		
+		std::stable_sort( the_windows_in_menu.begin(),
+		                  the_windows_in_menu.end(),
+		                  std::ptr_fun( window_title_less ) );
 		
 		const std::size_t n = the_windows.size();
 		
