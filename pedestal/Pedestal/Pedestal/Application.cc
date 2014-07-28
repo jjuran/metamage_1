@@ -73,6 +73,7 @@
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/SetPort_GetWindow.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowMenu.hh"
 
 
 namespace Nitrogen
@@ -117,6 +118,8 @@ namespace Pedestal
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
 	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
+	
+	static MenuRef the_Window_menu;
 	
 	
 	struct AppleEventSignature
@@ -186,7 +189,8 @@ namespace Pedestal
 	{
 		idAppleMENU = 128,  // menu ID = 1
 		idFileMENU,
-		idEditMENU
+		idEditMENU,
+		idWindowMENU,
 		//, idDebugMENU = 255  // menu ID = 128
 	};
 	
@@ -420,6 +424,8 @@ namespace Pedestal
 		
 		if ( found.part == N::inMenuBar )
 		{
+			populate_Window_menu( the_Window_menu );
+			
 			HandleMenuChoice( ::MenuSelect( event.where ) );
 			
 			return;
@@ -707,6 +713,9 @@ namespace Pedestal
 		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
 		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
+		MenuRef windowMenu = GetAndInsertMenu( N::ResID( idWindowMENU ) );
+		
+		the_Window_menu = windowMenu;
 		
 		if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutBit ) )
 		{
@@ -719,6 +728,7 @@ namespace Pedestal
 		AddMenu( appleMenu );
 		AddMenu( fileMenu  );
 		AddMenu( editMenu  );
+		AddMenu( windowMenu );
 		
 		if ( !TARGET_API_MAC_CARBON )
 		{
@@ -1004,6 +1014,12 @@ namespace Pedestal
 		if ( CommandCode code = HandleMenuItem( menuID, item ) )
 		{
 			DispatchMenuItem( code );
+		}
+		else if ( menuID == N::GetMenuID( the_Window_menu ) )
+		{
+			WindowRef w = get_nth_window( item - 1 );
+			
+			SelectWindow( w );
 		}
 	}
 	

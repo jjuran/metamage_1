@@ -42,3 +42,13 @@ resource 'MENU' (130, "Edit") {
 	}
 };
 
+resource 'MENU' (131, "Window") {
+	4,
+	textMenuProc,
+	0x7FFFFFFF,
+	enabled,
+	"Window",
+	{	/* array: 0 elements */
+	}
+};
+
