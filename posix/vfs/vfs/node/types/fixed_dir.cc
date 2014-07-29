@@ -124,13 +124,14 @@ namespace vfs
 	node_ptr fixed_dir( const node*            parent,
 	                    const plus::string&    name,
 	                    const fixed_mapping    mappings[],
-	                    void                 (*dtor)(const node*) )
+	                    void                 (*dtor)(const node*),
+	                    size_t                 extra_annex_size )
 	{
 		node* result = new node( parent,
 		                         name,
 		                         S_IFDIR | 0700,
 		                         &fixed_dir_methods,
-		                         sizeof (fixed_dir_extra),
+		                         sizeof (fixed_dir_extra) + extra_annex_size,
 		                         dtor );
 		
 		fixed_dir_extra& extra = *(fixed_dir_extra*) result->extra();
