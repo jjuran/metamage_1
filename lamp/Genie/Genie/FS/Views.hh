@@ -85,6 +85,7 @@ namespace Genie
 	                        ViewFactory                factory,
 	                        const vfs::fixed_mapping*  mappings         = vfs::empty_mappings,
 	                        vfs::node_destructor       dtor             = NULL,
+	                        size_t                     extra_annex_size = 0,
 	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&
