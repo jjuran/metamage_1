@@ -18,7 +18,6 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -27,18 +26,12 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	struct ProgressParameters
+	struct progress_extra : vfs::fixed_dir_extra
 	{
 		int value;  // permyriad, i.e. units of 1/10000
-		
-		ProgressParameters() : value()
-		{
-		}
 	};
 	
-	typedef simple_map< const vfs::node*, ProgressParameters > ProgressParametersMap;
-	
-	static ProgressParametersMap gProgressParametersMap;
+	const size_t progress_annex_size = sizeof (progress_extra) - sizeof (vfs::fixed_dir_extra);
 	
 	
 	class ProgressBar : public Ped::ProgressBar
@@ -58,23 +51,18 @@ namespace Genie
 	
 	int ProgressBar::Value() const
 	{
-		if ( ProgressParameters* it = gProgressParametersMap.find( its_key ) )
-		{
-			return it->value;
-		}
+		progress_extra& extra = *(progress_extra*) its_key->extra();
 		
-		return 0;
+		return extra.value;
 	}
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
+		progress_extra& extra = *(progress_extra*) delegate->extra();
+		
+		extra.value = 0;
+		
 		return new ProgressBar( delegate );
-	}
-	
-	
-	static void DestroyDelegate( const vfs::node* delegate )
-	{
-		gProgressParametersMap.erase( delegate );
 	}
 	
 	
@@ -83,7 +71,9 @@ namespace Genie
 		
 		int& Value( const vfs::node* view )
 		{
-			return gProgressParametersMap[ view ].value;
+			progress_extra& extra = *(progress_extra*) view->extra();
+			
+			return extra.value;
 		}
 		
 	}
@@ -107,7 +97,8 @@ namespace Genie
 		                     name,
 		                     &CreateView,
 		                     local_mappings,
-		                     &DestroyDelegate );
+		                     NULL,
+		                     progress_annex_size );
 	}
 	
 }
