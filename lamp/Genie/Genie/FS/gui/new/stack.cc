@@ -265,6 +265,7 @@ namespace Genie
 		                     &StackFactory,
 		                     NULL,
 		                     &stack_remove,
+		                     0,
 		                     &create_delegate_for_new_stack );
 	}
 	

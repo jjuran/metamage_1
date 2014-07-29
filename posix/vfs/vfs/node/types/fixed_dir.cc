@@ -24,11 +24,6 @@ namespace vfs
 	const fixed_mapping empty_mappings[] = { { NULL, NULL } };
 	
 	
-	struct fixed_dir_extra
-	{
-		fixed_mapping const*  mappings;
-	};
-	
 	static void fixed_dir_remove( const node* dir );
 	
 	static node_ptr fixed_dir_lookup( const node*          dir,
@@ -129,13 +124,14 @@ namespace vfs
 	node_ptr fixed_dir( const node*            parent,
 	                    const plus::string&    name,
 	                    const fixed_mapping    mappings[],
-	                    void                 (*dtor)(const node*) )
+	                    void                 (*dtor)(const node*),
+	                    size_t                 extra_annex_size )
 	{
 		node* result = new node( parent,
 		                         name,
 		                         S_IFDIR | 0700,
 		                         &fixed_dir_methods,
-		                         sizeof (fixed_dir_extra),
+		                         sizeof (fixed_dir_extra) + extra_annex_size,
 		                         dtor );
 		
 		fixed_dir_extra& extra = *(fixed_dir_extra*) result->extra();

@@ -33,10 +33,16 @@ namespace vfs
 	extern const fixed_mapping empty_mappings[];
 	
 	
+	struct fixed_dir_extra
+	{
+		fixed_mapping const*  mappings;
+	};
+	
 	node_ptr fixed_dir( const node*            parent,
 	                    const plus::string&    name,
 	                    const fixed_mapping    mappings[] = empty_mappings,
-	                    void                 (*dtor)(const node*) = NULL );
+	                    void                 (*dtor)(const node*) = NULL,
+	                    size_t                 extra_annex_size = 0 );
 	
 	node_ptr fixed_dir_factory( const node*          parent,
 	                            const plus::string&  name,

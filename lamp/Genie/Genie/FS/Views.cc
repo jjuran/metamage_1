@@ -229,6 +229,7 @@ namespace Genie
 		vfs::node_destructor       destructor;
 		ViewFactory                view_factory;
 		DelegateFactory            delegate_factory;
+		size_t                     extra_annex_size;
 	};
 	
 	FSTreePtr New_new_view( const FSTree*              parent,
@@ -236,6 +237,7 @@ namespace Genie
 	                        ViewFactory                factory,
 	                        const vfs::fixed_mapping*  mappings,
 	                        vfs::node_destructor       dtor,
+	                        size_t                     extra_annex_size,
 	                        DelegateFactory            delegate_factory )
 	
 	{
@@ -251,6 +253,7 @@ namespace Genie
 		extra.destructor       = dtor;
 		extra.view_factory     = factory;
 		extra.delegate_factory = delegate_factory;
+		extra.extra_annex_size = extra_annex_size;
 		
 		return result;
 	}
