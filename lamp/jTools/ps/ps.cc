@@ -277,7 +277,7 @@ namespace tool
 		{
 			if ( monitor )
 			{
-				p7::ftruncate( p7::stdout_fileno, output.size() );
+				p7::ftruncate( p7::stdout_fileno, 0 );
 				
 				p7::pwrite( p7::stdout_fileno, output, 0 );
 				
