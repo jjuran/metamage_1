@@ -2340,7 +2340,10 @@ namespace tool
 			{
 				printf( "; ^^^ %s\n\n", name );
 				
-				decode_data( read_word() );
+				if ( peek_word() <= 256 )
+				{
+					decode_data( read_word() );
+				}
 				
 				return;
 			}
