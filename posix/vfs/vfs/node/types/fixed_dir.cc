@@ -24,11 +24,6 @@ namespace vfs
 	const fixed_mapping empty_mappings[] = { { NULL, NULL } };
 	
 	
-	struct fixed_dir_extra
-	{
-		fixed_mapping const*  mappings;
-	};
-	
 	static void fixed_dir_remove( const node* dir );
 	
 	static node_ptr fixed_dir_lookup( const node*          dir,
