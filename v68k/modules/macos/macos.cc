@@ -22,11 +22,19 @@
 #include "Segments.hh"
 
 
+unsigned long ScrnBase : 0x0824;
+
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
 
 #define OSTRAP( Routine )  (os_trap_table     [ _ ## Routine & 0x00FF ] = &Routine ## _patch)
 #define TBTRAP( Routine )  (toolbox_trap_table[ _ ## Routine & 0x03FF ] = &Routine ## _patch)
+
+
+static void initialize_low_memory_globals()
+{
+	ScrnBase = 0x0001A700;
+}
 
 static void install_OSUtils()
 {
@@ -91,6 +99,8 @@ int main( int argc, char** argv )
 	{
 		return 0;
 	}
+	
+	initialize_low_memory_globals();
 	
 	install_OSUtils();
 	
