@@ -621,6 +621,29 @@ static int execute_68k( int argc, char* const* argv )
 	
 	load_Mac_traps( mem );
 	
+	if ( *module_names )
+	{
+		char* module_argv[] = { NULL };
+		
+		load_argv( mem, 0, module_argv );
+	}
+	
+	for ( const char** m = module_names;  *m;  ++m  )
+	{
+		load_module( mem, *m );
+		
+		emu.reset();
+		
+		emulation_loop( emu );
+		
+		if ( emu.condition != v68k::startup )
+		{
+			more::perror( "xv68k", *m, "Module installation failed" );
+			
+			exit( 1 );
+		}
+	}
+	
 	load_argv( mem, argc, argv );
 	
 	const char* path = argv[0];
