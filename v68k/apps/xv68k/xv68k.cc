@@ -68,10 +68,13 @@ static bool verbose;
 
 static unsigned long n_instructions;
 
+static const char** module_names;
+
 
 enum
 {
 	Opt_authorized = 'A',
+	Opt_module     = 'm',
 	Opt_verbose    = 'v',
 	
 	Opt_last_byte = 255,
@@ -86,6 +89,7 @@ static command::option options[] =
 	{ "verbose", Opt_verbose    },
 	{ "pid",     Opt_pid,    command::Param_optional },
 	{ "screen",  Opt_screen, command::Param_required },
+	{ "module",  Opt_module, command::Param_required },
 };
 
 
@@ -568,6 +572,8 @@ static int execute_68k( int argc, char* const* argv )
 
 static char* const* get_options( char* const* argv )
 {
+	const char** module = module_names;
+	
 	int opt;
 	
 	++argv;  // skip arg 0
@@ -622,10 +628,17 @@ static char* const* get_options( char* const* argv )
 				
 				break;
 			
+			case Opt_module:
+				*module++ = global_result.param;
+				
+				break;
+			
 			default:
 				break;
 		}
 	}
+	
+	*module = NULL;
 	
 	return argv;
 }
@@ -639,6 +652,8 @@ int main( int argc, char** argv )
 		argc = 1;
 		argv = (char**) new_argv;
 	}
+	
+	module_names = (const char**) alloca( argc * sizeof (const char*) );
 	
 	char* const* args = get_options( argv );
 	
