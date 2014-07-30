@@ -185,6 +185,13 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	return rts;
 }
 
+static uint32_t module_suspend_callback( v68k::processor_state& s )
+{
+	s.condition = startup;
+	
+	return rts;
+}
+
 static uint32_t set_trace_mode_callback( v68k::processor_state& s )
 {
 	s.sr.ttsm = (s.sr.ttsm & 0x3) | (uint8_t( s.pc() ) << 1 & 0xC);
@@ -392,7 +399,7 @@ static const function_type the_callbacks[] =
 	&no_op_callback,
 	&load_callback,
 	&enter_supervisor_mode_callback,
-	NULL,
+	&module_suspend_callback,
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
