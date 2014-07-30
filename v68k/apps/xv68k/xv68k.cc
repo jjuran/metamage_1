@@ -351,6 +351,13 @@ static void load_code( uint8_t* mem, const char* path )
 		
 		if ( void* alloc = load_file( path, &size ) )
 		{
+			if ( size == 0 )
+			{
+				write( STDERR_FILENO, STR_LEN( "xv68k: WARNING: Zero-length code file, exiting\n" ) );
+				
+				exit( 1 );
+			}
+			
 			if ( size > code_max_size )
 			{
 				abort();
@@ -374,6 +381,13 @@ static void load_code( uint8_t* mem, const char* path )
 	if ( n_read < 0 )
 	{
 		abort();
+	}
+	
+	if ( n_read == 0 )
+	{
+		write( STDERR_FILENO, STR_LEN( "xv68k: WARNING: Zero-length code input, exiting\n" ) );
+		
+		exit( 1 );
 	}
 	
 	if ( path != NULL )
