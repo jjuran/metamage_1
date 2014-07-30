@@ -81,12 +81,12 @@ namespace v68k
 	
 	bool emulator::step()
 	{
+	bkpt_acknowledge:
+		
 		if ( condition != normal )
 		{
 			return false;
 		}
-		
-	bkpt_acknowledge:
 		
 		// decode (prefetched)
 		instruction storage = { 0 };
