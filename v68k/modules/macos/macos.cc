@@ -8,11 +8,8 @@
 #include <Traps.h>
 #endif
 
-// Standard C
-#include <errno.h>
-
-// Relix
-#include "tool-runtime/parameter_block.h"
+// POSIX
+#include <unistd.h>
 
 // macos
 #include "Debugger.hh"
@@ -20,6 +17,9 @@
 #include "OSUtils.hh"
 #include "Rects.hh"
 #include "Segments.hh"
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 unsigned long ScrnBase : 0x0824;
@@ -74,29 +74,7 @@ static asm void module_suspend()
 	JSR      0xFFFFFFF8
 }
 
-static asm void* load( const char* path : __A0 ) : __A0
-{
-	MOVEA.L  A0,A1    ; // copy A0
-	
-	// ENTER strlen0
-loop:
-	TST.B    (A1)+    ;  // while ( *a1++ != '\0' )
-	BNE.S    loop     ;  //    continue;
-	
-	SUBA     A0,A1    ;  // a1 -= a0;
-	MOVE.L   A1,D0    ;  // d0 = a1;
-	// LEAVE strlen0
-	
-	JSR  0xFFFFFFFC   ;  // the actual load callback
-	
-	MOVE.L   A0,D2    ;  // if ( *a0 != NULL ) ;
-	BNE.S    no_errno ;  // else
-	MOVE.L   D1,errno ;  //     errno = d1;
-no_errno:
-	RTS
-}
-
-typedef int (*main_entry)(int, char**, char**, void*);
+#define NOT_A_PROGRAM  "macos: Not a program; use `xv68k -m macos ...` to load as a module\n"
 
 int main( int argc, char** argv )
 {
@@ -110,24 +88,12 @@ int main( int argc, char** argv )
 	
 	install_Debugger();
 	
-	if ( argc < 2 )
+	if ( argc == 0 )
 	{
 		module_suspend();  // doesn't return
 	}
 	
-	const char* path = argv[1];
+	write( STDERR_FILENO, STR_LEN( NOT_A_PROGRAM ) );
 	
-	void* program = load( path );
-	
-	if ( program == 0 )  // NULL
-	{
-		return errno == ENOENT ? 127 : 126;
-	}
-	
-	main_entry next = (main_entry) program;
-	
-	--argc;
-	++argv;
-	
-	return next( argc, argv, 0, global_system_params );  // NULL
+	return 2;
 }
