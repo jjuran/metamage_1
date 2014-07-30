@@ -1,11 +1,7 @@
-/*	========
- *	httpd.cc
- *	========
- */
-
-// Standard C/C++
-#include <cctype>
-#include <cstdio>
+/*
+	httpd.cc
+	--------
+*/
 
 // POSIX
 #include <arpa/inet.h>
@@ -14,6 +10,10 @@
 
 // Standard C
 #include <stdlib.h>
+
+// Standard C/C++
+#include <cctype>
+#include <cstdio>
 
 // Standard C++
 #include <functional>
@@ -635,4 +635,3 @@ namespace tool
 	}
 
 }
-
