@@ -21,4 +21,3 @@ pascal void InsetRect_patch( Rect* rect, short dh, short dv );
 pascal unsigned char EmptyRect_patch( const Rect* rect );
 
 #endif
-

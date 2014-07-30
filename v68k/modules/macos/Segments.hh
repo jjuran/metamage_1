@@ -9,4 +9,3 @@
 pascal void ExitToShell_patch();
 
 #endif
-

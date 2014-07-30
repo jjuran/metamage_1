@@ -31,4 +31,3 @@ pascal void DebugStr_patch( const unsigned char* message )
 	
 	write( STDERR_FILENO, buffer, length + 1 );
 }
-

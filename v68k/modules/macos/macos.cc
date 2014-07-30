@@ -1,6 +1,6 @@
 /*
-	mac.cc
-	------
+	macos.cc
+	--------
 */
 
 // Mac OS
@@ -14,7 +14,7 @@
 // Relix
 #include "tool-runtime/parameter_block.h"
 
-// mac
+// macos
 #include "Debugger.hh"
 #include "InitGraf.hh"
 #include "OSUtils.hh"
@@ -116,4 +116,3 @@ int main( int argc, char** argv )
 	
 	return next( argc, argv, 0, global_system_params );  // NULL
 }
-

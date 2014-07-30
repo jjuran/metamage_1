@@ -9,4 +9,3 @@
 pascal void InitGraf_patch( struct GrafPort** thePort_ptr );
 
 #endif
-

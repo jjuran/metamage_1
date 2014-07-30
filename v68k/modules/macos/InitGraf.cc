@@ -152,4 +152,3 @@ pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 	
 	qd.thePort = NULL;
 }
-

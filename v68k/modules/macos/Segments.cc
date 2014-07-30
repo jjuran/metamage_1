@@ -13,4 +13,3 @@ pascal void ExitToShell_patch()
 {
 	_exit( 0 );
 }
-

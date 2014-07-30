@@ -43,4 +43,3 @@ pascal void SysBeep_patch( short duration )
 	
 	write( STDOUT_FILENO, &c, sizeof c );
 }
-
