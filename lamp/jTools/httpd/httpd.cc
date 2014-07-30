@@ -12,7 +12,14 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 
+// Standard C
+#include <stdlib.h>
+
+// Standard C++
 #include <functional>
+
+// command
+#include "command/get_option.hh"
 
 // iota
 #include "iota/strings.hh"
@@ -54,7 +61,6 @@ typedef unsigned int OSType;
 #include "HTTP.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -66,13 +72,56 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
 	
 	
 	static const char* gDocumentRoot = "/var/www";
+	
+	
+	enum
+	{
+		Option_doc_root = 'd',
+	};
+	
+	using namespace command::constants;
+	
+	static command::option options[] =
+	{
+		{ "doc-root", Option_doc_root, Param_required },
+	};
+	
+	static char* const* get_options( char* const* argv )
+	{
+		++argv;  // skip arg 0
+		
+		short opt;
+		
+		while ( (opt = command::get_option( &argv, options )) )
+		{
+			switch ( opt )
+			{
+				case Option_doc_root:
+					gDocumentRoot = command::global_result.param;
+					break;
+				
+				case Option_undefined:
+					std::fprintf( stderr, "httpd: Invalid option '%s'\n", argv[ 0 ] );
+					exit( 2 );
+				
+				case Option_param_missing:
+					std::fprintf( stderr, "httpd: Missing parameter for option '%s'\n", argv[ -1 ] );
+					exit( 2 );
+				
+				default:
+					std::fprintf( stderr, "httpd: Unexpected code %d from get_option()\n", opt );
+					abort();
+			}
+		}
+		
+		return argv;
+	}
 	
 	
 	static char ToCGI( char c )
@@ -562,9 +611,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--doc-root", gDocumentRoot );
-		
-		o::get_options( argc, argv );
+		char *const *args = get_options( argv );
 		
 		sockaddr_in peer;
 		socklen_t peerlen = sizeof peer;
