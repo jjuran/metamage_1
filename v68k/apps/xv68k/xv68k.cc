@@ -12,6 +12,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// more
+#include "more/perror.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -372,7 +375,9 @@ static void load_code( uint8_t* mem, const char* path )
 		
 		if ( fd < 0 )
 		{
-			abort();
+			more::perror( "xv68k", path );
+			
+			exit( 1 );
 		}
 	}
 	
