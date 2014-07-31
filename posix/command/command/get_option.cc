@@ -8,8 +8,17 @@
 // Standard C
 #include <string.h>
 
+// command
+#include "command/errors.hh"
+
 
 #pragma exceptions off
+
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define USAGE( text, arg )  usage( STR_LEN( text ": " ), arg )
 
 
 namespace command
@@ -107,7 +116,12 @@ namespace command
 					
 					if ( opt == 0 )  // NULL
 					{
-						return Option_undefined;  // no such option (long)
+						if ( flags & Flag_return_errors )
+						{
+							return Option_undefined;  // no such option (long)
+						}
+						
+						USAGE( "Undefined option", arg );
 					}
 					
 					result.param = 0;  // NULL
@@ -118,7 +132,12 @@ namespace command
 						
 						if ( opt->mode == Param_unwanted )
 						{
-							return Option_param_bogus;  // e.g. --verbose=foo
+							if ( flags & Flag_return_errors )
+							{
+								return Option_param_bogus;  // e.g. --verbose=foo
+							}
+							
+							USAGE( "Bogus parameter in option", arg );
 						}
 						
 						++argv;
@@ -132,7 +151,12 @@ namespace command
 					{
 						if ( *argv == 0 )  // NULL
 						{
-							return Option_param_missing;
+							if ( flags & Flag_return_errors )
+							{
+								return Option_param_missing;
+							}
+							
+							USAGE( "Missing parameter for option", arg );
 						}
 						
 						result.param = *argv++;
@@ -149,11 +173,20 @@ namespace command
 				
 				result.param = 0;  // NULL
 				
-				const option* opt = find_option( options, *arg++ );
+				const unsigned char c = *arg++;
+				
+				const option* opt = find_option( options, c );
 				
 				if ( opt == 0 )  // NULL
 				{
-					return Option_undefined;  // no such option (short)
+					if ( flags & Flag_return_errors )
+					{
+						return Option_undefined;  // no such option (short)
+					}
+					
+					char buffer[ sizeof "-?" ] = { '-', c };
+					
+					USAGE( "Undefined option", buffer );
 				}
 				
 				const bool more = *arg != '\0';
@@ -180,7 +213,14 @@ namespace command
 						}
 						else
 						{
-							return Option_param_missing;
+							if ( flags & Flag_return_errors )
+							{
+								return Option_param_missing;
+							}
+							
+							char buffer[ sizeof "-?" ] = { '-', c };
+							
+							USAGE( "Missing parameter for option", buffer );
 						}
 					}
 				}

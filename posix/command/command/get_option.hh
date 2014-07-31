@@ -27,6 +27,11 @@ namespace command
 			Param_optional,
 		};
 		
+		enum
+		{
+			Flag_return_errors = 0x0001,
+		};
+		
 	}
 	
 	using namespace constants;
