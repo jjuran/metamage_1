@@ -108,16 +108,7 @@ namespace tool
 					gDocumentRoot = command::global_result.param;
 					break;
 				
-				case Option_undefined:
-					std::fprintf( stderr, "httpd: Invalid option '%s'\n", argv[ 0 ] );
-					exit( 2 );
-				
-				case Option_param_missing:
-					std::fprintf( stderr, "httpd: Missing parameter for option '%s'\n", argv[ -1 ] );
-					exit( 2 );
-				
 				default:
-					std::fprintf( stderr, "httpd: Unexpected code %d from get_option()\n", opt );
 					abort();
 			}
 		}
