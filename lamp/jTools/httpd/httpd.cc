@@ -21,9 +21,6 @@
 // command
 #include "command/get_option.hh"
 
-// iota
-#include "iota/strings.hh"
-
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/hexidecimal.hh"
@@ -65,6 +62,10 @@ typedef unsigned int OSType;
 
 
 #define HTTP_VERSION  "HTTP/1.0"
+
+#define STRLEN( str )  (sizeof "" str - 1)
+
+#define STR_LEN( str )  str, STRLEN( str )
 
 
 namespace tool
