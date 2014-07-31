@@ -62,7 +62,10 @@ namespace command
 		return 0;  // NULL
 	}
 	
-	short get_option_( char* const*& argv, const option* options, option_result& result )
+	short get_option_( char* const*&   argv,
+	                   const option*   options,
+	                   int             flags,
+	                   option_result&  result )
 	{
 		if ( const char* arg = *argv )
 		{

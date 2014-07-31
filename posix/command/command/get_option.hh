@@ -46,15 +46,19 @@ namespace command
 	
 	extern option_result global_result;
 	
-	short get_option_( char* const*& argv, const option* options, option_result& result );
+	short get_option_( char* const*&   argv,
+	                   const option*   options,
+	                   int             flags,
+	                   option_result&  result );
 	
 	inline short get_option( char* const**   argvp,
 	                         const option*   options,
+	                         int             flags = 0,
 	                         option_result*  result = &global_result )
 	{
 		if ( argvp == 0 )  return 0;  // NULL (argvp)
 		
-		return get_option_( *argvp, options, *result );
+		return get_option_( *argvp, options, flags, *result );
 	}
 	
 }
