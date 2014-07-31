@@ -90,6 +90,7 @@ namespace tool
 	static command::option options[] =
 	{
 		{ "doc-root", Option_doc_root, Param_required },
+		{ NULL }
 	};
 	
 	static char* const* get_options( char* const* argv )
