@@ -15,7 +15,6 @@
 #pragma exceptions off
 
 
-
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define USAGE( text, arg )  usage( STR_LEN( text ": " ), arg )
