@@ -13,7 +13,6 @@
 
 // Standard C/C++
 #include <cctype>
-#include <cstdio>
 
 // Standard C++
 #include <functional>
@@ -611,9 +610,24 @@ namespace tool
 		
 		if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 		{
-			std::fprintf( stderr, "%s:%d",
-			                       inet_ntoa( peer.sin_addr ),
-			                          peer.sin_port );
+			char buffer[ 21 ];  // 4x "123" + 3x "." + ":" + "12345"
+			
+			if ( inet_ntop( AF_INET, &peer.sin_addr, buffer, sizeof buffer ) != NULL )
+			{
+				const size_t len = strlen( buffer );
+				
+				char *p = buffer + len;
+				
+				*p++ = ':';
+				
+				const size_t port_len = gear::decimal_magnitude( peer.sin_port );
+				
+				gear::inscribe_unsigned_decimal_r( peer.sin_port, p );
+				
+				p += port_len;
+				
+				p7::write( p7::stderr_fileno, buffer, p - buffer );
+			}
 		}
 		
 		HTTP::MessageReceiver request;
