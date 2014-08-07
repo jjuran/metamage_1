@@ -612,7 +612,7 @@ namespace tool
 		{
 			char buffer[ 21 ];  // 4x "123" + 3x "." + ":" + "12345"
 			
-			if ( inet_ntop( AF_INET, &peer.sin_addr, buffer, sizeof buffer ) != NULL )
+			if ( inet_ntop( peer.sin_family, &peer.sin_addr, buffer, sizeof buffer ) != NULL )
 			{
 				const size_t len = strlen( buffer );
 				
