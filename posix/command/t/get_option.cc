@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 1 + 4 * 21;
+static const unsigned n_tests = 1 + 4 * 24;
 
 
 using tap::ok_if;
@@ -60,6 +60,10 @@ static const test_case test_cases[] =
 	{ 'p', 1, { "-p", "foo", NULL } },
 	{ 'o', 2, { "-o", "foo", NULL }, "foo" },
 	
+	{ 'v', 2 << 4, { "-vpo", "foo", NULL } },
+	{ 'p', 2 << 4, { "-pov", "foo", NULL } },
+	{ 'o', 1,      { "-ovp", "foo", NULL }, "vp" },
+	
 	{ 'v', 1, { "--verbose",  "foo", NULL } },
 	{ 'p', 1, { "--progress", "foo", NULL } },
 	{ 'o', 2, { "--output",   "foo", NULL }, "foo" },
@@ -104,6 +108,11 @@ static void other()
 		ok_if( opt == t->opt );
 		
 		short delta = args - (char* const*) t->argv;
+		
+		if ( result.mark )
+		{
+			delta |= (result.mark - *args) << 4;
+		}
 		
 		ok_if( delta == t->delta );
 		
