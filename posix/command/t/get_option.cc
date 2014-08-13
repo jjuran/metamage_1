@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 1 + 4 * 24;
+static const unsigned n_tests = 1 + 4 * 29;
 
 
 using tap::ok_if;
@@ -64,6 +64,12 @@ static const test_case test_cases[] =
 	{ 'p', 2 << 4, { "-pov", "foo", NULL } },
 	{ 'o', 1,      { "-ovp", "foo", NULL }, "vp" },
 	
+	{ 'p', 2 << 8 | 3 << 4, { "-vpo", "foo", NULL } },
+	{ 'o', 2 << 8 | 1,      { "-pov", "foo", NULL }, "v" },
+	
+	{ 'p', 2 << 8 | 1, { "-vp", "foo", NULL } },
+	{ 'v', 2 << 8 | 1, { "-pv", "foo", NULL } },
+	
 	{ 'v', 1, { "--verbose",  "foo", NULL } },
 	{ 'p', 1, { "--progress", "foo", NULL } },
 	{ 'o', 2, { "--output",   "foo", NULL }, "foo" },
@@ -73,6 +79,8 @@ static const test_case test_cases[] =
 	
 	{ -1, 0, { "-x", NULL } },
 	{ -2, 1, { "-o", NULL } },
+	
+	{ -2, 2 << 8 | 1, { "-vo", NULL } },
 	
 	{ -1, 0, { "--foobar", NULL } },
 	{ -2, 1, { "--output", NULL } },
@@ -98,6 +106,11 @@ static void other()
 	{
 		command::option_result result = { 0 };
 		
+		if ( short start = t->delta >> 8 )
+		{
+			result.mark = *t->argv + start;
+		}
+		
 		char* const* args = (char* const*) t->argv;
 		
 		short opt = command::get_option( &args,
@@ -114,7 +127,7 @@ static void other()
 			delta |= (result.mark - *args) << 4;
 		}
 		
-		ok_if( delta == t->delta );
+		ok_if( delta == (t->delta & 0xFF) );
 		
 		ok_if( (result.param != 0) == (t->param != 0) );
 		
