@@ -103,7 +103,9 @@ static void other()
 		
 		ok_if( opt == t->opt );
 		
-		ok_if( args - (char* const*) t->argv == t->delta );
+		short delta = args - (char* const*) t->argv;
+		
+		ok_if( delta == t->delta );
 		
 		ok_if( (result.param != 0) == (t->param != 0) );
 		
