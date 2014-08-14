@@ -32,12 +32,14 @@ using v68k::auth::fully_authorized;
 
 uint32_t errno_ptr_addr;
 
-int32_t fake_pid = 12345;  // fake PID for getpid(), unless 0
+int32_t fake_pid = 0;  // fake PID for getpid(), unless 0 or -1
 
 
 static int32_t emulated_pid()
 {
-	return fake_pid > 0 ? fake_pid : getpid();
+	return + fake_pid > 0 ? fake_pid
+	       : fake_pid < 0 ? getpid()
+	       :                12345;
 }
 
 static bool get_stacked_args( const v68k::processor_state& s, uint32_t* out, int n )

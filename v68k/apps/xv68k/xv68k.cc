@@ -575,7 +575,7 @@ static int execute_68k( int argc, char** argv )
 				{
 					if ( *equals == '\0' )
 					{
-						fake_pid = 0;
+						fake_pid = -1;
 					}
 					else
 					{
@@ -645,7 +645,10 @@ static int execute_68k( int argc, char** argv )
 			{
 				fully_authorized = true;
 				
-				fake_pid = 0;
+				if ( fake_pid == 0 )
+				{
+					fake_pid = -1;
+				}
 				
 				continue;
 			}
