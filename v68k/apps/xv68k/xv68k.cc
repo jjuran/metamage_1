@@ -19,6 +19,9 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// command
+#include "command/get_option.hh"
+
 // v68k
 #include "v68k/emulator.hh"
 #include "v68k/endian.hh"
@@ -64,6 +67,26 @@ using v68k::auth::fully_authorized;
 static bool verbose;
 
 static unsigned long n_instructions;
+
+
+enum
+{
+	Opt_authorized = 'A',
+	Opt_verbose    = 'v',
+	
+	Opt_last_byte = 255,
+	
+	Opt_pid,
+	Opt_screen,
+};
+
+static command::option options[] =
+{
+	{ "",        Opt_authorized },
+	{ "verbose", Opt_verbose    },
+	{ "pid",     Opt_pid,    command::Param_optional },
+	{ "screen",  Opt_screen, command::Param_required },
+};
 
 
 static void atexit_report()
@@ -297,7 +320,7 @@ static void load_Mac_traps( uint8_t* mem )
 	os_traps[ 0x98 ] = big_no_op;  // HWPriv
 }
 
-static void load_argv( uint8_t* mem, int argc, char** argv )
+static void load_argv( uint8_t* mem, int argc, char* const* argv )
 {
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc      );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
@@ -503,173 +526,8 @@ static void report_condition( v68k::emulator& emu )
 	}
 }
 
-static int bad_usage( const char* text, size_t text_size, const char* arg )
+static int execute_68k( int argc, char* const* argv )
 {
-	write( STDERR_FILENO, text, text_size );
-	write( STDERR_FILENO, arg, strlen( arg ) );
-	write( STDERR_FILENO, STR_LEN( "\n" ) );
-	
-	return 2;
-}
-
-#define BAD_USAGE( text, arg )  bad_usage( STR_LEN( text ": " ), arg )
-
-static const char* find_char( const char* begin, char c )
-{
-	while ( *begin != '\0'  &&  *begin != c )
-	{
-		++begin;
-	}
-	
-	return begin;
-}
-
-static bool option_matches( const char*  option,
-                            size_t       option_size,
-                            const char*  name,
-                            size_t       name_size )
-{
-	return option_size == name_size  &&  memcmp( option, name, name_size ) == 0;
-}
-
-#define OPTION_MATCHES( option, size, name )  option_matches( option, size, STR_LEN( name ) )
-
-static int execute_68k( int argc, char** argv )
-{
-	if ( argc > 0 )
-	{
-		// skip argv[0] if present (which it should be, but we have to check)
-		--argc;
-		++argv;
-	}
-	
-	char** args = argv - 1;
-	
-	while ( const char* arg = *++args )
-	{
-		if ( arg[0] == '-' )
-		{
-			if ( arg[1] == '\0' )
-			{
-				// An "-" argument is not an option and means /dev/fd/0
-				break;
-			}
-			
-			if ( arg[1] == '-' )
-			{
-				// long option or "--"
-				
-				const char* option = arg + 2;
-				
-				if ( *option == '\0' )
-				{
-					++args;
-					break;
-				}
-				
-				const char* equals = find_char( option, '=' );
-				
-				const size_t size = equals - option;
-				
-				if ( OPTION_MATCHES( option, size, "pid" ) )
-				{
-					if ( *equals == '\0' )
-					{
-						fake_pid = -1;
-					}
-					else
-					{
-						const char* param = equals + 1;
-						
-						fake_pid = gear::parse_unsigned_decimal( &param );
-						
-						if ( param[0] != '\0' )
-						{
-							return BAD_USAGE( "Invalid option", arg );
-						}
-					}
-					
-					continue;
-				}
-				
-				if ( OPTION_MATCHES( option, size, "screen" ) )
-				{
-					const char* screen;
-					
-					if ( *equals == '\0' )
-					{
-						screen = *++args;
-						
-						if ( screen == NULL )
-						{
-							return BAD_USAGE( "Missing argument", option );
-						}
-					}
-					else
-					{
-						screen = equals + 1;
-					}
-					
-					int nok = set_screen_backing_store_file( screen );
-					
-					if ( nok )
-					{
-						const char* error = strerror( nok );
-						
-						write( STDERR_FILENO, screen, strlen( screen ) );
-						write( STDERR_FILENO, STR_LEN( ": " ) );
-						write( STDERR_FILENO, error, strlen( error ) );
-						write( STDERR_FILENO, STR_LEN( "\n" ) );
-						
-						return 1;
-					}
-					
-					continue;
-				}
-				
-				if ( OPTION_MATCHES( option, size, "verbose" ) )
-				{
-					verbose = true;
-					
-					continue;
-				}
-				
-				return BAD_USAGE( "Unknown option", arg );
-			}
-			
-			// short option
-			
-			const char* opt = arg + 1;
-			
-			if ( opt[0] == 'A' )
-			{
-				fully_authorized = true;
-				
-				if ( fake_pid == 0 )
-				{
-					fake_pid = -1;
-				}
-				
-				continue;
-			}
-			
-			if ( opt[0] == 'v' )
-			{
-				verbose = true;
-				
-				continue;
-			}
-			
-			return BAD_USAGE( "Unknown option", arg );
-		}
-		
-		// not an option
-		break;
-	}
-	
-	argc -= args - argv;
-	argv  = args;
-	
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
 	if ( mem == NULL )
@@ -708,8 +566,84 @@ static int execute_68k( int argc, char** argv )
 	return 1;
 }
 
+static char* const* get_options( char* const* argv )
+{
+	int opt;
+	
+	++argv;  // skip arg 0
+	
+	while ( (opt = command::get_option( &argv, options )) > 0 )
+	{
+		using command::global_result;
+		
+		switch ( opt )
+		{
+			case Opt_authorized:
+				fully_authorized = true;
+				
+				if ( fake_pid == 0 )
+				{
+					fake_pid = -1;
+				}
+				
+				break;
+			
+			case Opt_verbose:
+				verbose = true;
+				break;
+			
+			case Opt_pid:
+				if ( global_result.param )
+				{
+					fake_pid = gear::parse_unsigned_decimal( &global_result.param );
+				}
+				else
+				{
+					fake_pid = -1;
+				}
+				
+				break;
+			
+			case Opt_screen:
+				const char* path;
+				path = global_result.param;
+				
+				if ( int nok = set_screen_backing_store_file( path ) )
+				{
+					const char* error = strerror( nok );
+					
+					write( STDERR_FILENO, path, strlen( path ) );
+					write( STDERR_FILENO, STR_LEN( ": " ) );
+					write( STDERR_FILENO, error, strlen( error ) );
+					write( STDERR_FILENO, STR_LEN( "\n" ) );
+					
+					exit( 1 );
+				}
+				
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	return argv;
+}
+
 int main( int argc, char** argv )
 {
-	return execute_68k( argc, argv );
+	if ( argc == 0 )
+	{
+		static const char* new_argv[] = { "", NULL };
+		
+		argc = 1;
+		argv = (char**) new_argv;
+	}
+	
+	char* const* args = get_options( argv );
+	
+	int argn = argc - (args - argv);
+	
+	return execute_68k( argn, args );
 }
 
