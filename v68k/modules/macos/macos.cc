@@ -69,6 +69,11 @@ static void install_Debugger()
 	TBTRAP( DebugStr );  // ABFF
 }
 
+static asm void module_suspend()
+{
+	JSR      0xFFFFFFF8
+}
+
 static asm void* load( const char* path : __A0 ) : __A0
 {
 	MOVEA.L  A0,A1    ; // copy A0
@@ -95,11 +100,6 @@ typedef int (*main_entry)(int, char**, char**, void*);
 
 int main( int argc, char** argv )
 {
-	if ( argc < 2 )
-	{
-		return 0;
-	}
-	
 	initialize_low_memory_globals();
 	
 	install_OSUtils();
@@ -109,6 +109,11 @@ int main( int argc, char** argv )
 	install_SegmentLoader();
 	
 	install_Debugger();
+	
+	if ( argc < 2 )
+	{
+		module_suspend();  // doesn't return
+	}
 	
 	const char* path = argv[1];
 	
