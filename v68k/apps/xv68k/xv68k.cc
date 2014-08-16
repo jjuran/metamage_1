@@ -607,6 +607,14 @@ static int execute_68k( int argc, char* const* argv )
 		abort();
 	}
 	
+	const memory_manager memory( mem, mem_size );
+	
+	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
+	
+	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
+	
+	atexit( &atexit_report );
+	
 	v68k::user::os_load_spec load = { mem, mem_size, os_address };
 	
 	load_vectors( load );
@@ -619,15 +627,7 @@ static int execute_68k( int argc, char* const* argv )
 	
 	load_code( mem, path );
 	
-	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
-	
-	const memory_manager memory( mem, mem_size );
-	
-	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
-	
 	emu.reset();
-	
-	atexit( &atexit_report );
 	
 	emulation_loop( emu );
 	
