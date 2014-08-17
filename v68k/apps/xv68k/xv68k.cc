@@ -68,10 +68,13 @@ static bool verbose;
 
 static unsigned long n_instructions;
 
+static const char** module_names;
+
 
 enum
 {
 	Opt_authorized = 'A',
+	Opt_module     = 'm',
 	Opt_verbose    = 'v',
 	
 	Opt_last_byte = 255,
@@ -86,6 +89,7 @@ static command::option options[] =
 	{ "verbose", Opt_verbose    },
 	{ "pid",     Opt_pid,    command::Param_optional },
 	{ "screen",  Opt_screen, command::Param_required },
+	{ "module",  Opt_module, command::Param_required },
 };
 
 
@@ -526,6 +530,74 @@ static void report_condition( v68k::emulator& emu )
 	}
 }
 
+static void load_module( uint8_t* mem, const char* module )
+{
+	if ( strchr( module, '/' ) == NULL )
+	{
+		const char* name = module;
+		
+		const char* home = getenv( "HOME" );
+		
+		if ( home == NULL )
+		{
+			home = "";
+		}
+		
+		const char* _68k = "/68k/";
+		
+		const size_t home_len = strlen( home );
+		const size_t _68k_len = STRLEN( "/68k/" );
+		const size_t name_len = strlen( name );
+		
+		char* p = (char*) alloca( home_len + _68k_len + name_len + 1 );
+		
+		module = p;
+		
+		memcpy( p, home, home_len );  p += home_len;
+		memcpy( p, _68k, _68k_len );  p += _68k_len;
+		memcpy( p, name, name_len );  p += name_len;
+		
+		*p = '\0';
+	}
+	
+	uint32_t size;
+	
+	void* alloc = v68k::utils::load_file( module, &size );
+	
+	if ( alloc == NULL )
+	{
+		more::perror( "xv68k", module );
+		
+		exit( 1 );
+	}
+	
+	if ( size == 0 )
+	{
+		write( STDERR_FILENO, STR_LEN( "xv68k: ERROR: Zero-length module file\n" ) );
+		
+		exit( 1 );
+	}
+	
+	using namespace v68k::alloc;
+	
+	const int n = (size + page_size - 1) / page_size;  // round up
+	
+	const uint32_t addr = allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
+	
+	if ( addr == 0 )
+	{
+		more::perror( "xv68k", module, ENOMEM );
+		
+		exit( 1 );
+	}
+	
+	uint16_t* p = (uint16_t*) (mem + code_address);
+	
+	*p++ = iota::big_u16( 0x4EF9 );
+	*p++ = iota::big_u16( addr >> 16 );
+	*p++ = iota::big_u16( addr );
+}
+
 static int execute_68k( int argc, char* const* argv )
 {
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
@@ -535,11 +607,42 @@ static int execute_68k( int argc, char* const* argv )
 		abort();
 	}
 	
+	const memory_manager memory( mem, mem_size );
+	
+	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
+	
+	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
+	
+	atexit( &atexit_report );
+	
 	v68k::user::os_load_spec load = { mem, mem_size, os_address };
 	
 	load_vectors( load );
 	
 	load_Mac_traps( mem );
+	
+	if ( *module_names )
+	{
+		char* module_argv[] = { NULL };
+		
+		load_argv( mem, 0, module_argv );
+	}
+	
+	for ( const char** m = module_names;  *m;  ++m  )
+	{
+		load_module( mem, *m );
+		
+		emu.reset();
+		
+		emulation_loop( emu );
+		
+		if ( emu.condition != v68k::startup )
+		{
+			more::perror( "xv68k", *m, "Module installation failed" );
+			
+			exit( 1 );
+		}
+	}
 	
 	load_argv( mem, argc, argv );
 	
@@ -547,15 +650,7 @@ static int execute_68k( int argc, char* const* argv )
 	
 	load_code( mem, path );
 	
-	errno_ptr_addr = params_addr + 2 * sizeof (uint32_t);
-	
-	const memory_manager memory( mem, mem_size );
-	
-	v68k::emulator emu( v68k::mc68000, memory, bkpt_handler );
-	
 	emu.reset();
-	
-	atexit( &atexit_report );
 	
 	emulation_loop( emu );
 	
@@ -568,6 +663,8 @@ static int execute_68k( int argc, char* const* argv )
 
 static char* const* get_options( char* const* argv )
 {
+	const char** module = module_names;
+	
 	int opt;
 	
 	++argv;  // skip arg 0
@@ -622,10 +719,17 @@ static char* const* get_options( char* const* argv )
 				
 				break;
 			
+			case Opt_module:
+				*module++ = global_result.param;
+				
+				break;
+			
 			default:
 				break;
 		}
 	}
+	
+	*module = NULL;
 	
 	return argv;
 }
@@ -639,6 +743,8 @@ int main( int argc, char** argv )
 		argc = 1;
 		argv = (char**) new_argv;
 	}
+	
+	module_names = (const char**) alloca( argc * sizeof (const char*) );
 	
 	char* const* args = get_options( argv );
 	

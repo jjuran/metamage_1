@@ -18,7 +18,7 @@ enum
 	no_op,
 	load,
 	enter_supervisor_mode,
-	reserved_3,
+	module_suspend,
 	trace_reserved,
 	trace_all,
 	trace_flow,
