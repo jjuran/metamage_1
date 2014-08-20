@@ -14,6 +14,7 @@
 #include "Genie/FS/gui/new/caption.hh"
 #include "Genie/FS/gui/new/console.hh"
 #include "Genie/FS/gui/new/defaultkeys.hh"
+#include "Genie/FS/gui/new/eventtap.hh"
 #include "Genie/FS/gui/new/focuser.hh"
 #include "Genie/FS/gui/new/frame.hh"
 #include "Genie/FS/gui/new/gworld.hh"
@@ -37,6 +38,7 @@ namespace Genie
 		{ "caption",      &New_FSTree_new_caption             },
 		{ "console",      &New_FSTree_new_console             },
 		{ "defaultkeys",  &New_defaultkeys                    },
+		{ "eventtap",     &new_eventtap                       },
 		{ "focuser",      &New_focuser                        },
 		{ "frame",        &New_FSTree_new_frame               },
 		
