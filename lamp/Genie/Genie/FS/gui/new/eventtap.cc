@@ -15,8 +15,18 @@
 #include <Events.h>
 #endif
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
+
 // POSIX
 #include <sys/stat.h>
+
+// iota
+#include "iota/endian.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -44,11 +54,24 @@
 #include "Genie/FS/Views.hh"
 
 
+static inline bool operator==( const Point& a, const Point& b )
+{
+	return a.v == b.v  &&  a.h == b.h;
+}
+
+static inline bool operator!=( const Point& a, const Point& b )
+{
+	return !( a == b );
+}
+
 namespace Genie
 {
 	
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
+	
+	
+	static Point last_cursor_location;
 	
 	
 	class ring_buffer
@@ -153,6 +176,15 @@ namespace Genie
 		uint8_t ascii;
 	};
 	
+	struct eventtap_stream_location_buffer
+	{
+		uint8_t len;
+		uint8_t device;
+		
+		int16_t x;
+		int16_t y;
+	};
+	
 	struct eventtap_stream_client
 	{
 		ring_buffer* buffer;
@@ -173,14 +205,53 @@ namespace Genie
 	{
 		private:
 			const vfs::node* itsKey;
+			Rect             itsBounds;
 		
 		public:
 			eventtap_handler( const vfs::node* key ) : itsKey( key )
 			{
+				*(uint64_t*) &itsBounds = 0;
 			}
 			
+			void Idle   ( const EventRecord& event );
 			bool KeyDown( const EventRecord& event );
+			
+			void Draw( const Rect& bounds, bool erasing );
 	};
+	
+	void eventtap_handler::Idle( const EventRecord& event )
+	{
+		eventtap_stream_server& extra = *(eventtap_stream_server*) itsKey->extra();
+		
+		if ( event.where == last_cursor_location )
+		{
+			return;
+		}
+		
+		Point where = event.where;
+		
+		::GlobalToLocal( &where );
+		
+		if ( !PtInRect( where, &itsBounds ) )
+		{
+			return;
+		}
+		
+		last_cursor_location = event.where;
+		
+		eventtap_stream_location_buffer buffer =
+		{
+			sizeof buffer - 1,
+			0,
+			iota::big_u16( where.h ),
+			iota::big_u16( where.v ),
+		};
+		
+		if ( extra.client )
+		{
+			extra.client->buffer->write( &buffer.len, sizeof buffer );
+		}
+	}
 	
 	bool eventtap_handler::KeyDown( const EventRecord& event )
 	{
@@ -205,6 +276,13 @@ namespace Genie
 		}
 		
 		return true;
+	}
+	
+	void eventtap_handler::Draw( const Rect& bounds, bool erasing )
+	{
+		itsBounds = bounds;
+		
+		View::Draw( bounds, erasing );
 	}
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
