@@ -53,6 +53,15 @@ d68k-hello: d68k
 d68k-fizzbuzz: d68k
 	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
 
+freemount-loop: freemount.git
+	./build.pl fping uloop
+	mkdir -p var/out
+	cp var/build/dbg/bin/fping/fping var/out/
+	cp var/build/dbg/bin/uloop/uloop var/out/
+
+freemount-loop-test: freemount-loop
+	PATH="$$PWD/var/out:$$PATH" var/out/fping
+
 xv68k:
 	./build.pl xv68k
 
