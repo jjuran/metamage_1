@@ -62,6 +62,33 @@ freemount-loop: freemount.git
 freemount-loop-test: freemount-loop
 	PATH="$$PWD/var/out:$$PATH" var/out/fping
 
+freemountd-tcp: freemount.git
+	./build.pl freemountd superd
+	mkdir -p var/out
+	cp var/build/dbg/bin/freemountd/freemountd var/out/
+	cp var/build/dbg/bin/superd/superd var/out/
+
+var/freemount/hello.txt:
+	mkdir -p var/freemount/
+	echo Hello world > var/freemount/hello.txt
+
+freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
+	var/out/superd 4564 var/out/freemountd --root var/freemount
+
+freemount-tcp: freemount.git
+	./build.pl fls fcat fget utcp
+	mkdir -p var/out
+	cp var/build/dbg/bin/fls/fls var/out/
+	cp var/build/dbg/bin/fcat/fcat var/out/
+	cp var/build/dbg/bin/fget/fget var/out/
+	cp var/build/dbg/bin/utcp/utcp var/out/
+
+fls-test: freemount-tcp
+	PATH="$$PWD/var/out:$$PATH" var/out/fls mnt://127.0.0.1
+
+fcat-test: freemount-tcp
+	PATH="$$PWD/var/out:$$PATH" var/out/fcat mnt://127.0.0.1/hello.txt
+
 xv68k:
 	./build.pl xv68k
 
