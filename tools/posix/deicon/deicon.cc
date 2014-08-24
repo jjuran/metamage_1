@@ -39,7 +39,7 @@ static inline int failure( const char* s1, const char* s2 )
 	return 1;
 }
 
-static void print_icon( const uint32_t* icon_data )
+static void print_icon( const uint32_t* icon_data, off_t length )
 {
 	char text_buffer[ text_buffer_width * text_buffer_height ];
 	
@@ -114,7 +114,7 @@ int main( int argc, char** argv )
 		return failure( path, "incomplete read" );
 	}
 	
-	print_icon( icon_data );
+	print_icon( icon_data, length );
 	
 	return 0;
 }
