@@ -95,6 +95,11 @@ int main( int argc, char** argv )
 		return failure( path, "regular file expected" );
 	}
 	
+	if ( length == 256 )
+	{
+		length = 128;  // allow ICN# data but ignore the mask
+	}
+	
 	if ( length != 128 )
 	{
 		return failure( path, "unrecognized icon length" );
