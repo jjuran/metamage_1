@@ -88,7 +88,7 @@ int main( int argc, char** argv )
 		return failure( path );
 	}
 	
-	off_t length = st.st_size;
+	const off_t length = st.st_size;
 	
 	if ( !S_ISREG( st.st_mode ) )
 	{
@@ -100,12 +100,7 @@ int main( int argc, char** argv )
 		return failure( path, "unrecognized icon length" );
 	}
 	
-	if ( length == 256 )
-	{
-		length = 128;  // allow ICN# data but ignore the mask
-	}
-	
-	uint32_t icon_data[ 32 ];
+	uint32_t icon_data[ 32 + 32 ];  // data + mask
 	
 	ssize_t n_read = read( fd, icon_data, length );
 	
