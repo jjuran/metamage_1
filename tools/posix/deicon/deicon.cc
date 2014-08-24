@@ -58,6 +58,35 @@ static void print_icon( const uint32_t* icon_data, off_t length )
 		p[ -1 ] = '\n';
 	}
 	
+	if ( length == 256 )
+	{
+		p = text_buffer;
+		
+		for ( int i = 0;  i < 32;  ++i )
+		{
+			const uint32_t big_row = icon_data[ 32 + i ];
+			
+			if ( ~big_row )
+			{
+				const uint32_t row = iota::u32_from_big( big_row );
+				
+				for ( int j = 31;  j >= 0;  --j )
+				{
+					if ( !(row & (1 << j)) )
+					{
+						*p = *p == ' ' ? '-' : '*';
+					}
+					
+					p += 2;
+				}
+			}
+			else
+			{
+				p += text_buffer_width;
+			}
+		}
+	}
+	
 	write( STDOUT_FILENO, text_buffer, sizeof text_buffer );
 }
 
