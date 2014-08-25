@@ -155,6 +155,8 @@ my %fsmap =
 			\ qw( local-edit-client ),
 			# Apps
 			\ qw( buffer ),
+			# App engines
+			\ qw( icon-editor ),
 			# Script apps
 			qw( asklogin confirm progress prompt psmon ),
 			# App utilities
