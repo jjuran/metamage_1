@@ -1,0 +1,48 @@
+#!/bin/sh
+
+exec 5<> $1 || exit 1
+
+cd /gui/new/port
+
+# Dimensions:
+#   * 65 columns (32 cells + 33 spaces)
+#   * 32 rows
+#   * 6x11 font
+#   * cut 2px from left for 1px between edge and '['
+#   * 4px padding
+#
+# width:  2 * 4px +  6px * (32 + 33) - 2px
+# height: 2 * 4px + 11px *  32
+
+echo 396x360 > size
+
+ln new/stack view
+
+ln new/eventtap v/1/view
+ln new/frame    v/2/view
+ln new/caption  v/2/v/view
+
+echo 4 > v/2/v/padding
+
+echo -2 > v/2/v/.margin-left
+
+echo 0 > v/2/v/v/wrapped
+
+echo 4 > procid
+
+echo $1 > title
+
+touch window
+
+echo 9 > w/text-size
+echo 4 > w/text-font
+
+test -n "$ICONEDITOR" || ICONEDITOR=icon-editor
+
+edit="$ICONEDITOR"
+fd=/dev/fd/5
+in=v/1/v/stream
+out=v/2/v/v/text
+err=/dev/console
+
+daemonize --ctty=tty --cwd --std{in,out,err} -- $edit $fd < $in > $out 2> $err
