@@ -158,7 +158,7 @@ my %fsmap =
 			# App engines
 			\ qw( icon-editor ),
 			# Script apps
-			qw( asklogin confirm progress prompt psmon ),
+			qw( asklogin confirm iconedit progress prompt psmon ),
 			# App utilities
 			\ qw( daemonize follower idle overwrite select ),
 			# Misc
