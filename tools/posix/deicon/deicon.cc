@@ -39,7 +39,7 @@ static inline int failure( const char* s1, const char* s2 )
 	return 1;
 }
 
-static void print_icon( const uint32_t* icon_data )
+static void print_icon( const uint32_t* icon_data, off_t length )
 {
 	char text_buffer[ text_buffer_width * text_buffer_height ];
 	
@@ -56,6 +56,35 @@ static void print_icon( const uint32_t* icon_data )
 		}
 		
 		p[ -1 ] = '\n';
+	}
+	
+	if ( length == 256 )
+	{
+		p = text_buffer;
+		
+		for ( int i = 0;  i < 32;  ++i )
+		{
+			const uint32_t big_row = icon_data[ 32 + i ];
+			
+			if ( ~big_row )
+			{
+				const uint32_t row = iota::u32_from_big( big_row );
+				
+				for ( int j = 31;  j >= 0;  --j )
+				{
+					if ( !(row & (1 << j)) )
+					{
+						*p = *p == ' ' ? '-' : '*';
+					}
+					
+					p += 2;
+				}
+			}
+			else
+			{
+				p += text_buffer_width;
+			}
+		}
 	}
 	
 	write( STDOUT_FILENO, text_buffer, sizeof text_buffer );
@@ -88,24 +117,19 @@ int main( int argc, char** argv )
 		return failure( path );
 	}
 	
-	off_t length = st.st_size;
+	const off_t length = st.st_size;
 	
 	if ( !S_ISREG( st.st_mode ) )
 	{
 		return failure( path, "regular file expected" );
 	}
 	
-	if ( length == 256 )
-	{
-		length = 128;  // allow ICN# data but ignore the mask
-	}
-	
-	if ( length != 128 )
+	if ( length != 128  &&  length != 256 )
 	{
 		return failure( path, "unrecognized icon length" );
 	}
 	
-	uint32_t icon_data[ 32 ];
+	uint32_t icon_data[ 32 + 32 ];  // data + mask
 	
 	ssize_t n_read = read( fd, icon_data, length );
 	
@@ -119,7 +143,7 @@ int main( int argc, char** argv )
 		return failure( path, "incomplete read" );
 	}
 	
-	print_icon( icon_data );
+	print_icon( icon_data, length );
 	
 	return 0;
 }
