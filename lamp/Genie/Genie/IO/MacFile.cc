@@ -314,35 +314,14 @@ namespace Genie
 	                   ForkOpener     openFork,
 	                   FileGetter     getFile )
 	{
-		const int mac_perm = (flags + 1 - O_RDONLY) & 3;
+		const bool writable = (flags + 1 - O_RDONLY) & 2;
 		
-		const Mac::FSIOPermissions perm = Mac::FSIOPermissions( mac_perm );
+		const Mac::FSIOPermissions perm = writable ? Mac::fsRdWrPerm
+		                                           : Mac::fsRdPerm;
 		
 		n::owned< Mac::FSFileRefNum >
 		
-	#if TARGET_API_MAC_CARBON
-		
-		fileHandle;
-		
-		try
-		{
-	#endif
-		
 			fileHandle = openFork( fileSpec, perm );
-		
-	#if TARGET_API_MAC_CARBON
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != permErr  ||  mac_perm != fsWrPerm )
-			{
-				throw;
-			}
-			
-			fileHandle = openFork( fileSpec, Mac::fsRdWrPerm );
-		}
-		
-	#endif
 		
 		return new MacFileHandle( fileHandle, flags, getFile );
 	}
