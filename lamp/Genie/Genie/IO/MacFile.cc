@@ -319,12 +319,9 @@ namespace Genie
 		const Mac::FSIOPermissions perm = writable ? Mac::fsRdWrPerm
 		                                           : Mac::fsRdPerm;
 		
-		n::owned< Mac::FSFileRefNum >
-		
-			fileHandle = openFork( fileSpec, perm );
+		n::owned< Mac::FSFileRefNum > fileHandle = openFork( fileSpec, perm );
 		
 		return new MacFileHandle( fileHandle, flags, getFile );
 	}
 	
 }
-
