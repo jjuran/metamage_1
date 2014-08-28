@@ -240,6 +240,172 @@ static bool emu_gettimeofday( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
+static void load_fdset( fd_set& native, const uint32_t* emulated, int n )
+{
+	FD_ZERO( &native );
+	
+	while ( --n >= 0 )
+	{
+		const uint32_t unit = iota::u32_from_big( emulated[ n >> 5 ] );
+		
+		if ( unit & (1 << (n & 31)) )
+		{
+			FD_SET( n, &native );
+		}
+	}
+}
+
+static int load_fdset( v68k::processor_state&  s,
+                       int                     n_fds,
+                       int                     n_bytes,
+                       uint32_t                addr,
+                       fd_set&                 native )
+{
+	if ( addr == 0 )
+	{
+		return 0;
+	}
+	
+	const uint32_t* fdset_mem = (uint32_t*) s.mem.translate( addr,
+	                                                         n_bytes,
+	                                                         s.data_space(),
+	                                                         v68k::mem_read );
+	
+	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x3 )
+	{
+		errno = EFAULT;
+		
+		return -1;
+	}
+	
+	load_fdset( native, fdset_mem, n_fds );
+	
+	return 1;
+}
+
+static void store_fdset( uint32_t* emulated, const fd_set& native, int n )
+{
+	while ( --n >= 0 )
+	{
+		if ( FD_ISSET( n, &native ) )
+		{
+			emulated[ n >> 5 ] |= iota::big_u32( 1 << (n & 31) );
+		}
+	}
+}
+
+static int store_fdset( v68k::processor_state&  s,
+                        int                     n_fds,
+                        int                     n_bytes,
+                        uint32_t                addr,
+                        fd_set*                 native )
+{
+	if ( native == NULL )
+	{
+		return 0;
+	}
+	
+	uint32_t* fdset_mem = (uint32_t*) s.mem.translate( addr,
+	                                                   n_bytes,
+	                                                   s.data_space(),
+	                                                   v68k::mem_write );
+	
+	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x3 )
+	{
+		errno = EFAULT;
+		
+		return -1;
+	}
+	
+	store_fdset( fdset_mem, *native, n_fds );
+	
+	s.mem.translate( addr, n_bytes, s.data_space(), v68k::mem_update );
+	
+	return 1;
+}
+
+static bool emu_select( v68k::processor_state& s )
+{
+	fd_set read_fds;
+	fd_set write_fds;
+	fd_set except_fds;
+	
+	fd_set* r = NULL;
+	fd_set* w = NULL;
+	fd_set* x = NULL;
+	
+	timeval* t = NULL;
+	
+	uint32_t args[ 5 ];  // n, r, w, x, t
+	
+	if ( !get_stacked_args( s, args, 5 ) )
+	{
+		return s.bus_error();
+	}
+	
+	const int n = args[ 0 ];
+	
+	const int n_fdset_bytes = n + 31 >> 5;
+	
+	const uint32_t rfd_addr = args[ 1 ];
+	const uint32_t wfd_addr = args[ 2 ];
+	const uint32_t xfd_addr = args[ 3 ];
+	
+	int result;
+	
+	if ( n > 0 )
+	{
+		result = load_fdset( s, n, n_fdset_bytes, rfd_addr, read_fds );
+		
+		if ( result < 0 )  return set_result( s, result );
+		if ( result > 0 )  r = &read_fds;
+		
+		result = load_fdset( s, n, n_fdset_bytes, wfd_addr, write_fds );
+		
+		if ( result < 0 )  return set_result( s, result );
+		if ( result > 0 )  w = &write_fds;
+		
+		result = load_fdset( s, n, n_fdset_bytes, xfd_addr, except_fds );
+		
+		if ( result < 0 )  return set_result( s, result );
+		if ( result > 0 )  x = &except_fds;
+	}
+	
+	if ( const uint32_t timeout_addr = args[ 4 ] )
+	{
+		uint32_t seconds;
+		uint32_t useconds;
+		
+		const bool ok = s.mem.get_long( timeout_addr,     seconds,  s.data_space() )
+		              & s.mem.get_long( timeout_addr + 4, useconds, s.data_space() );
+		
+		if ( !ok )
+		{
+			errno = EFAULT;
+			
+			return set_result( s, -1 );
+		}
+		
+		timeval tv;
+		
+		tv.tv_sec  = seconds;
+		tv.tv_usec = useconds;
+		
+		t = &tv;
+	}
+	
+	result = select( n, r, w, x, t );
+	
+	if ( n > 0 )
+	{
+		store_fdset( s, n, n_fdset_bytes, rfd_addr, r );
+		store_fdset( s, n, n_fdset_bytes, wfd_addr, w );
+		store_fdset( s, n, n_fdset_bytes, xfd_addr, x );
+	}
+	
+	return set_result( s, result );
+}
+
 struct iovec_68k
 {
 	uint32_t ptr;
@@ -381,6 +547,7 @@ bool bridge_call( v68k::processor_state& s )
 		case 20:  return emu_getpid( s );
 		case 37:  return emu_kill  ( s );
 		case 78:  return emu_gettimeofday( s );
+		case 82:  return emu_select( s );
 		
 		case 146:  return emu_writev( s );
 		case 162:  return emu_nanosleep( s );
