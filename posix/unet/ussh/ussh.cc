@@ -60,6 +60,8 @@ static int connect( const char** argv )
 		CHECK_N( dup2( fds[ 1 ], 0 ) );
 		CHECK_N( dup2( fds[ 1 ], 1 ) );
 		
+		CHECK_N( close( fds[ 1 ] ) );
+		
 		argv[ 0 ] = "ssh";
 		argv[ 1 ] = "-T";
 		
