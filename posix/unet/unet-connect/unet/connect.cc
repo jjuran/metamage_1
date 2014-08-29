@@ -66,6 +66,8 @@ namespace unet
 			execvp( argv );
 		}
 		
+		::close( fds.release( 1 ) );
+		
 		// Wait for connector
 		
 		if ( wait_t w = waitpid( poseven::pid_t( child ) ) )
