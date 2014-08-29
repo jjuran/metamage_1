@@ -75,6 +75,15 @@ namespace poseven
 				return fd_t( its_fds[ i ] );
 			}
 			
+			fd_t release( int i )
+			{
+				const int fd = its_fds[ i ];
+				
+				its_fds[ i ] = -1;
+				
+				return fd_t( fd );
+			}
+			
 			void release()
 			{
 				its_fds[ 0 ] = -1;
