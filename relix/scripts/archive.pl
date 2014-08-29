@@ -140,7 +140,7 @@ my %fsmap =
 			# Common
 			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
 			# unet
-			\ qw( hello-unet uexec ulocal uloop utcp ),
+			\ qw( uexec ulocal utcp ),
 			# Freemount
 			\ qw( fcat fdir fget fls fping fstat ),
 			# djb's UCSPI
