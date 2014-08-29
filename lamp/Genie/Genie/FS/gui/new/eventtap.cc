@@ -201,8 +201,9 @@ namespace Genie
 				*(uint64_t*) &itsBounds = 0;
 			}
 			
-			void Idle   ( const EventRecord& event );
-			bool KeyDown( const EventRecord& event );
+			void Idle     ( const EventRecord& event );
+			bool MouseDown( const EventRecord& event );
+			bool KeyDown  ( const EventRecord& event );
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};
@@ -239,6 +240,37 @@ namespace Genie
 		{
 			extra.client->buffer->write( &buffer.len, sizeof buffer );
 		}
+	}
+	
+	bool eventtap_handler::MouseDown( const EventRecord& event )
+	{
+		using namespace splode::modes;
+		namespace pointer = splode::pointer;
+		
+		eventtap_stream_server& extra = *(eventtap_stream_server*) itsKey->extra();
+		
+		Idle( event );
+		
+		const uint8_t mask = Command | Shift | Option | Control;
+		
+		const uint8_t general_modifiers = (event.modifiers >> 8) & mask;
+		const uint8_t button_attributes = pointer::press;  // atomic click
+		
+		splode::pointer_event_buffer buffer =
+		{
+			sizeof buffer - 1,
+			general_modifiers,
+			button_attributes,
+			0,  // unspecified device
+			0,  // unspecified button
+		};
+		
+		if ( extra.client )
+		{
+			extra.client->buffer->write( &buffer.len, sizeof buffer );
+		}
+		
+		return true;
 	}
 	
 	bool eventtap_handler::KeyDown( const EventRecord& event )
