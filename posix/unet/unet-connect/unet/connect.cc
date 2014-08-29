@@ -68,17 +68,24 @@ namespace unet
 		
 		::close( fds.release( 1 ) );
 		
-		// Wait for connector
-		
-		if ( wait_t w = waitpid( poseven::pid_t( child ) ) )
-		{
-			throw_errno( EIO );
-		}
-		
 		// Get server fds over control channel
 		
 		n::owned< fd_t > in  = recv_fd_t( fds[ 0 ] );
 		n::owned< fd_t > out = recv_fd_t( fds[ 0 ] );
+		
+		char c;
+		
+		ssize_t n_read = read( fds[ 0 ], &c, sizeof c );
+		
+		if ( n_read == 0 )
+		{
+			// Wait for connector
+		
+			if ( wait_t w = waitpid( poseven::pid_t( child ) ) )
+			{
+				throw_errno( EIO );
+			}
+		}
 		
 		return connection_box( argv, in.release(), out.release() );
 	}
