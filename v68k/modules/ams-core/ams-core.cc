@@ -231,7 +231,8 @@ void install_MemoryManager()
 	OSTRAP( MoveHHi          );  // A064
 	
 	OSTRAP( NewEmptyHandle   );  // A066
-	
+	OSTRAP( HSetRBit         );  // A067
+	OSTRAP( HClrRBit         );  // A068
 	OSTRAP( HGetState        );  // A069
 	OSTRAP( HSetState        );  // A06A
 	

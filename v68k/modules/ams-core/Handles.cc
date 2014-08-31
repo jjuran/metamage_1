@@ -458,6 +458,30 @@ short HNoPurge_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
+short HSetRBit_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = paramErr;
+	}
+	
+	((master_pointer*) h)->flags |= kHandleIsResourceMask;
+	
+	return MemErr = noErr;
+}
+
+short HClrRBit_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = paramErr;
+	}
+	
+	((master_pointer*) h)->flags &= ~kHandleIsResourceMask;
+	
+	return MemErr = noErr;
+}
+
 signed char HGetState_patch( char** h : __A0 )
 {
 	if ( h == NULL )

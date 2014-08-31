@@ -30,6 +30,9 @@ short HUnlock_patch( char** h : __A0 );
 short HPurge_patch  ( char** h : __A0 );
 short HNoPurge_patch( char** h : __A0 );
 
+short HSetRBit_patch( char** h : __A0 );
+short HClrRBit_patch( char** h : __A0 );
+
 signed char HGetState_patch( char** h : __A0 );
 
 short HSetState_patch( char** h : __A0, signed char state : __D0 );
