@@ -17,6 +17,7 @@
 #include "InitGraf.hh"
 #include "OSUtils.hh"
 #include "Rects.hh"
+#include "Regions.hh"
 #include "Segments.hh"
 
 
@@ -34,6 +35,7 @@ void* toolbox_trap_table[] : 3 * 1024;
 enum
 {
 	_ReallocateHandle = _ReallocHandle,
+	_SetRectRgn       = _SetRecRgn,
 };
 
 
@@ -75,6 +77,12 @@ static void install_QuickDraw()
 	TBTRAP( InsetRect  );  // A8A9
 	
 	TBTRAP( EmptyRect  );  // A8AE
+	
+	TBTRAP( NewRgn      );  // A8D8
+	TBTRAP( DisposeRgn  );  // A8D9
+	TBTRAP( SetEmptyRgn );  // A8DD
+	TBTRAP( SetRectRgn  );  // A8DE
+	TBTRAP( RectRgn     );  // A8DF
 }
 
 static void install_SegmentLoader()
