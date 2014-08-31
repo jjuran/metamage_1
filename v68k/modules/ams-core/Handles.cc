@@ -211,6 +211,28 @@ asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 )
 	RTS
 }
 
+char** RecoverHandle_patch( char* p : __A0 )
+{
+	if ( p == NULL )
+	{
+		MemErr = paramErr;
+		
+		return 0;
+	}
+	
+	Handle_header* header = get_header( p );
+	Handle_footer* footer = get_footer( p );
+	
+	if ( header->prologue != Handle_prologue  ||  footer->epilogue != Handle_epilogue )
+	{
+		MemErr = paramErr;
+		
+		return 0;
+	}
+	
+	return (char**) header->backlink;
+}
+
 asm
 char** NewEmptyHandle_patch()
 {

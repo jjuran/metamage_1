@@ -180,7 +180,7 @@ void install_MemoryManager()
 	OSTRAP( SetHandleSize    );  // A024
 	OSTRAP( GetHandleSize    );  // A025
 	OSTRAP( ReallocateHandle );  // A027
-	
+	OSTRAP( RecoverHandle    );  // A028
 	OSTRAP( HLock            );  // A029
 	OSTRAP( HUnlock          );  // A02A
 	OSTRAP( EmptyHandle      );  // A02B

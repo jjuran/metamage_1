@@ -8,6 +8,8 @@
 
 char** NewHandle_patch( long size : __D0, short trap_word : __D1 );
 
+char** RecoverHandle_patch( char* p : __A0 );
+
 char** NewEmptyHandle_patch();
 
 short HLock_patch  ( char** h : __A0 );
