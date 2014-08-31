@@ -64,7 +64,7 @@ static void install_OSUtils()
 
 static void install_QuickDraw()
 {
-	TBTRAP( InitGraf );  // A86E
+	TBTRAP( InitGraf  );  // A86E
 	
 	TBTRAP( FrameRect  );  // A8A1
 	TBTRAP( PaintRect  );  // A8A2
