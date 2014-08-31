@@ -220,6 +220,8 @@ void install_MemoryManager()
 	TBTRAP( HandToHand  );  // A9E1
 	TBTRAP( PtrToXHand  );  // A9E2
 	TBTRAP( PtrToHand   );  // A9E3
+	
+	TBTRAP( PtrAndHand  );  // A9EF
 }
 
 static

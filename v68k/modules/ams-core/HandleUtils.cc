@@ -76,3 +76,34 @@ asm short PtrToXHand_patch( const void* p : __A0, char** h : __A1, long : __D0 )
 end:
 	RTS
 }
+
+asm short PtrAndHand_patch( const void* p : __A0, char** h : __A1, long : __D0 )
+{
+	EXG      D0,D1    // D1 = src size
+	EXG      A0,A1    // place dest in A0 for _SetHandleSize, save src in A1
+	
+	_GetHandleSize
+	BMI.S    end      // bail on error
+	
+	MOVE.L   D0,D2    // copy dest size
+	ADD.L    D1,D0    // D0 = total size
+	BMI.S    end      // size exceeds 0x7FFFFFFF
+	
+	_SetHandleSize
+	BNE.S    end      // fail if MemErr != noErr
+	
+	MOVE.L   D1,D0    // D0 = src size
+	MOVE.L   A0,D1    // save dest
+	
+	EXG      A0,A1    // place src in A0, dest in A1
+	
+	MOVEA.L  (A1),A1  // dereference dest
+	ADDA.L   D2,A1    // dest += dest_size
+	
+	_BlockMove
+	
+	MOVEA.L  D1,A0    // restore h
+	
+end:
+	RTS
+}
