@@ -10,6 +10,12 @@ char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0;
 
 char** NewEmptyHandle_patch() : __A0;
 
+short HLock_patch  ( char** h : __A0 );
+short HUnlock_patch( char** h : __A0 );
+
+short HPurge_patch  ( char** h : __A0 );
+short HNoPurge_patch( char** h : __A0 );
+
 short DisposeHandle_patch( char** h : __A0 );
 
 short SetHandleSize_patch( char**  h         : __A0,

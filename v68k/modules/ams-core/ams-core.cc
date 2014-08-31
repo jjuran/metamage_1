@@ -129,6 +129,9 @@ static void install_MemoryManager()
 	OSTRAP( SetHandleSize    );  // A024
 	OSTRAP( GetHandleSize    );  // A025
 	OSTRAP( ReallocateHandle );  // A027
+	
+	OSTRAP( HLock            );  // A029
+	OSTRAP( HUnlock          );  // A02A
 	OSTRAP( EmptyHandle      );  // A02B
 	
 	OSTRAP( SetApplLimit     );  // A02D
@@ -136,6 +139,10 @@ static void install_MemoryManager()
 	OSTRAP( MoreMasters      );  // A036
 	
 	OSTRAP( ReserveMem       );  // A040
+	
+	OSTRAP( HPurge           );  // A049
+	OSTRAP( HNoPurge         );  // A04A
+	
 	OSTRAP( MaxApplZone      );  // A063
 	OSTRAP( NewEmptyHandle   );  // A066
 	

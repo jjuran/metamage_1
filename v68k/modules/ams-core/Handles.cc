@@ -10,6 +10,13 @@
 #include <string.h>
 
 
+enum
+{
+	kHandleIsResourceMask = 0x20,
+	kHandlePurgeableMask  = 0x40,
+	kHandleLockedMask     = 0x80
+};
+
 const short noErr        = 0;
 const short paramErr     = -50;
 const short memFullErr   = -108;
@@ -189,6 +196,54 @@ char** NewEmptyHandle_patch() : __A0
 	MOVE.W   MemErr,D0
 	
 	RTS
+}
+
+short HLock_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = paramErr;
+	}
+	
+	*(char*) &h[1] |= kHandleLockedMask;
+	
+	return MemErr = noErr;
+}
+
+short HUnlock_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = paramErr;
+	}
+	
+	*(char*) &h[1] &= ~kHandleLockedMask;
+	
+	return MemErr = noErr;
+}
+
+short HPurge_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = paramErr;
+	}
+	
+	*(char*) &h[1] |= kHandlePurgeableMask;
+	
+	return MemErr = noErr;
+}
+
+short HNoPurge_patch( char** h : __A0 )
+{
+	if ( h == NULL )
+	{
+		return MemErr = paramErr;
+	}
+	
+	*(char*) &h[1] &= ~kHandlePurgeableMask;
+	
+	return MemErr = noErr;
 }
 
 short DisposeHandle_patch( char** h : __A0 )
