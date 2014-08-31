@@ -55,3 +55,24 @@ asm short PtrToHand_patch( char* p : __A0, long size : __D0 )
 end:
 	RTS
 }
+
+asm short PtrToXHand_patch( const void* p : __A0, char** h : __A1, long : __D0 )
+{
+	MOVE.L   A0,D2     // save the input pointer
+	MOVE.L   D0,D1     // save the input size
+	MOVEA.L  A1,A0     // place h in A0 for _SetHandleSize
+	
+	_SetHandleSize
+	BNE.S    end       // fail if err != noErr
+	
+	MOVEA.L  (A0),A1   // dereference the handle into A1
+	EXG      D2,A0     // move the data pointer into A0, save the handle
+	MOVE.L   D1,D0     // restore the input size
+	
+	_BlockMove         // copy the data
+	
+	MOVEA.L  D2,A0     // set h as the result
+	
+end:
+	RTS
+}
