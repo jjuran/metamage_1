@@ -175,6 +175,9 @@ void install_MemoryManager()
 	OSTRAP( MaxApplZone      );  // A063
 	OSTRAP( NewEmptyHandle   );  // A066
 	
+	OSTRAP( HGetState        );  // A069
+	OSTRAP( HSetState        );  // A06A
+	
 	OSTRAP( MaxMem           );  // A11D
 	
 	TBTRAP( HandToHand  );  // A9E1

@@ -40,4 +40,8 @@ short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 
 void MaxApplZone_patch();
 
+signed char HGetState_patch( char** h : __A0 ) : __D0;
+
+short HSetState_patch( char** h : __A0, signed char state : __D0 );
+
 #endif
