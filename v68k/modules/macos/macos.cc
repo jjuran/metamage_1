@@ -13,6 +13,7 @@
 
 // macos
 #include "Debugger.hh"
+#include "GrafPorts.hh"
 #include "Handles.hh"
 #include "InitGraf.hh"
 #include "OSUtils.hh"
@@ -64,7 +65,12 @@ static void install_OSUtils()
 
 static void install_QuickDraw()
 {
+	TBTRAP( InitPort  );  // A86D
 	TBTRAP( InitGraf  );  // A86E
+	TBTRAP( OpenPort  );  // A86F
+	TBTRAP( SetPort   );  // A873
+	TBTRAP( GetPort   );  // A874
+	TBTRAP( ClosePort );  // A87D
 	
 	TBTRAP( FrameRect  );  // A8A1
 	TBTRAP( PaintRect  );  // A8A2
