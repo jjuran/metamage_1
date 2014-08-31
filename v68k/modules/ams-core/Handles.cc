@@ -233,6 +233,10 @@ short HNoPurge_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
+void MoveHHi_patch( char** h : __A0 )
+{
+}
+
 short DisposeHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )

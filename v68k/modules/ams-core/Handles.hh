@@ -16,6 +16,8 @@ short HUnlock_patch( char** h : __A0 );
 short HPurge_patch  ( char** h : __A0 );
 short HNoPurge_patch( char** h : __A0 );
 
+pascal void MoveHHi_patch( char** h : __A0 );
+
 short DisposeHandle_patch( char** h : __A0 );
 
 short SetHandleSize_patch( char**  h         : __A0,

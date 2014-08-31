@@ -173,6 +173,8 @@ void install_MemoryManager()
 	OSTRAP( HNoPurge         );  // A04A
 	
 	OSTRAP( MaxApplZone      );  // A063
+	OSTRAP( MoveHHi          );  // A064
+	
 	OSTRAP( NewEmptyHandle   );  // A066
 	
 	OSTRAP( HGetState        );  // A069
