@@ -4,6 +4,7 @@
 */
 
 // Mac OS
+#include <MacMemory.h>
 #include <Quickdraw.h>
 
 
@@ -13,6 +14,10 @@ QDGlobals qd;
 static void screen_test()
 {
 	::InitGraf( &qd.thePort );
+	
+	GrafPtr port = (GrafPtr) NewPtr( sizeof (GrafPort) );
+	
+	OpenPort( port );
 	
 	const BitMap& screenBits = qd.screenBits;
 	
