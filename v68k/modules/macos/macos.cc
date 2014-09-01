@@ -69,7 +69,7 @@ static void install_QuickDraw()
 	TBTRAP( EraseRect  );  // A8A3
 	TBTRAP( InverRect  );  // A8A4
 	TBTRAP( FillRect   );  // A8A5
-	
+	TBTRAP( EqualRect  );  // A8A6
 	TBTRAP( SetRect    );  // A8A7
 	TBTRAP( OffsetRect );  // A8A8
 	TBTRAP( InsetRect  );  // A8A9

@@ -16,6 +16,8 @@ pascal void FrameRect_patch( const Rect* rect );
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern );
 
+pascal unsigned char EqualRect_patch( const Rect* a, const Rect* b );
+
 pascal void SetRect_patch( Rect*  rect,
                            short  left,
                            short  top,

@@ -336,6 +336,14 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	fill_rect( params );
 }
 
+pascal unsigned char EqualRect_patch( const Rect* a, const Rect* b )
+{
+	return a->top    == b->top     &&
+	       a->left   == b->left    &&
+	       a->bottom == b->bottom  &&
+	       a->right  == b->right;
+}
+
 pascal void SetRect_patch( Rect*  rect,
                            short  left,
                            short  top,
