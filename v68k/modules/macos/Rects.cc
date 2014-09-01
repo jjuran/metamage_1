@@ -417,6 +417,12 @@ pascal void Pt2Rect_patch( Point a, Point b, Rect* c )
 	}
 }
 
+pascal unsigned char PtInRect_patch( Point pt, const Rect* rect )
+{
+	return rect->top  <= pt.v  &&  pt.v < rect->bottom  &&  
+	       rect->left <= pt.h  &&  pt.h < rect->right;
+}
+
 pascal unsigned char EmptyRect_patch( const Rect* rect )
 {
 	return rect->top >= rect->bottom  ||  rect->left >= rect->right;
