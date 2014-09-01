@@ -392,6 +392,31 @@ pascal void UnionRect_patch( const Rect* a, const Rect* b, Rect* c )
 	c->right  = a->right  > b->right  ? a->right  : b->right;
 }
 
+pascal void Pt2Rect_patch( Point a, Point b, Rect* c )
+{
+	if ( b.v < a.v )
+	{
+		c->top    = b.v;
+		c->bottom = a.v;
+	}
+	else
+	{
+		c->top    = a.v;
+		c->bottom = b.v;
+	}
+	
+	if ( b.h < a.h )
+	{
+		c->left  = b.h;
+		c->right = a.h;
+	}
+	else
+	{
+		c->left  = a.h;
+		c->right = b.h;
+	}
+}
+
 pascal unsigned char EmptyRect_patch( const Rect* rect )
 {
 	return rect->top >= rect->bottom  ||  rect->left >= rect->right;
