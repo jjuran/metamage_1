@@ -11,6 +11,11 @@
 QDGlobals qd;
 
 
+static inline asm UInt32 mulu_w( UInt16 a : __D1, UInt16 b : __D0 )
+{
+	MULU.W  D1,D0
+}
+
 static void screen_test()
 {
 	::InitGraf( &qd.thePort );
@@ -23,11 +28,11 @@ static void screen_test()
 	
 	const Rect& bounds = screenBits.bounds;
 	
-	const unsigned n_rows = bounds.bottom - bounds.top;
+	const short n_rows = bounds.bottom - bounds.top;
 	
-	const unsigned rowBytes = screenBits.rowBytes;
+	const short rowBytes = screenBits.rowBytes;
 	
-	const uint32_t size = n_rows * rowBytes;
+	const uint32_t size = mulu_w( n_rows, rowBytes );
 	
 	::FillRect( &screenBits.bounds, &qd.gray );
 	
