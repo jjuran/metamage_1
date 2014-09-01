@@ -23,6 +23,7 @@ enum
 	trace_all,
 	trace_flow,
 	trace_off,
+	flush_screen,
 	illegal_instruction,
 	division_by_zero,
 	chk_trap,
