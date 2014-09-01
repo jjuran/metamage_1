@@ -336,6 +336,14 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	fill_rect( params );
 }
 
+pascal void OffsetRect_patch( Rect* rect, short dh, short dv )
+{
+	rect->top    += dv;
+	rect->left   += dh;
+	rect->bottom += dv;
+	rect->right  += dh;
+}
+
 pascal void InsetRect_patch( Rect* rect, short dh, short dv )
 {
 	rect->top    += dv;
