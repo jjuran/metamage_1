@@ -64,15 +64,15 @@ static void install_QuickDraw()
 {
 	TBTRAP( InitGraf );  // A86E
 	
-	TBTRAP( FrameRect );  // A8A1
-	TBTRAP( PaintRect );  // A8A2
-	TBTRAP( EraseRect );  // A8A3
-	TBTRAP( InverRect );  // A8A4
-	TBTRAP( FillRect  );  // A8A5
+	TBTRAP( FrameRect  );  // A8A1
+	TBTRAP( PaintRect  );  // A8A2
+	TBTRAP( EraseRect  );  // A8A3
+	TBTRAP( InverRect  );  // A8A4
+	TBTRAP( FillRect   );  // A8A5
 	
-	TBTRAP( InsetRect );  // A8A9
+	TBTRAP( InsetRect  );  // A8A9
 	
-	TBTRAP( EmptyRect );  // A8AE
+	TBTRAP( EmptyRect  );  // A8AE
 }
 
 static void install_SegmentLoader()
