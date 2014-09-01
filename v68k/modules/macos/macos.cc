@@ -87,6 +87,7 @@ static void install_QuickDraw()
 	TBTRAP( OffsetRect );  // A8A8
 	TBTRAP( InsetRect  );  // A8A9
 	TBTRAP( SectRect   );  // A8AA
+	TBTRAP( UnionRect  );  // A8AB
 	
 	TBTRAP( EmptyRect  );  // A8AE
 	

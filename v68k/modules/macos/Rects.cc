@@ -384,6 +384,14 @@ pascal unsigned char SectRect_patch( const Rect* a, const Rect* b, Rect* c )
 	return true;
 }
 
+pascal void UnionRect_patch( const Rect* a, const Rect* b, Rect* c )
+{
+	c->top    = b->top    < a->top    ? b->top    : a->top;
+	c->left   = b->left   < a->left   ? b->left   : a->left;
+	c->bottom = a->bottom > b->bottom ? a->bottom : b->bottom;
+	c->right  = a->right  > b->right  ? a->right  : b->right;
+}
+
 pascal unsigned char EmptyRect_patch( const Rect* rect )
 {
 	return rect->top >= rect->bottom  ||  rect->left >= rect->right;
