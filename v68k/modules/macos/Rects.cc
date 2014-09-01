@@ -364,6 +364,26 @@ pascal void InsetRect_patch( Rect* rect, short dh, short dv )
 	rect->right  -= dh;
 }
 
+pascal unsigned char SectRect_patch( const Rect* a, const Rect* b, Rect* c )
+{
+	c->top    = a->top    > b->top    ? a->top    : b->top;
+	c->left   = a->left   > b->left   ? a->left   : b->left;
+	c->bottom = b->bottom < a->bottom ? b->bottom : a->bottom;
+	c->right  = b->right  < a->right  ? b->right  : a->right;
+	
+	if ( EmptyRect_patch( c ) )
+	{
+		c->top    = 0;
+		c->left   = 0;
+		c->bottom = 0;
+		c->right  = 0;
+		
+		return false;
+	}
+	
+	return true;
+}
+
 pascal unsigned char EmptyRect_patch( const Rect* rect )
 {
 	return rect->top >= rect->bottom  ||  rect->left >= rect->right;
