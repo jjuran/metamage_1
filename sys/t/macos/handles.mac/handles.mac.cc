@@ -30,7 +30,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2 + 5 + 5 * 4 + 5 + 13 + 14;
+static const unsigned n_tests = 2 + 5 + 5 * 4 + 5 + 13 + 16;
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
@@ -179,13 +179,32 @@ static void resize()
 
 static void errors()
 {
-	ok_if( NewHandle( -1 ) == NULL );
+	const uint32_t sysv = get_sysv();
 	
-	ok_if( MemError() == memSCErr );
+	Handle neg1 = NewHandle( -1 );
+	
+	ok_if( (neg1 == NULL) == (in_v68k()  ||  sysv >= 0x0800) );
+	
+	if ( neg1 != NULL )
+	{
+		ok_if( GetHandleSize( neg1 ) == 0 );
+		
+		DisposeHandle( neg1 );
+	}
+	else
+	{
+		ok_if( MemError() == memSCErr );
+	}
 	
 	ok_if( GetHandleSize( NULL ) == 0 );
 	
+	ok_if( MemError() == nilHandleErr );
+	
 	DisposeHandle( NULL );
+	
+	ok_if( MemError() == ((sysv >= 0x0800  &&  sysv < 0x1000) ? 0 : nilHandleErr) );
+	
+	EmptyHandle( NULL );
 	
 	ok_if( MemError() == (in_os9() ? 0 : nilHandleErr) );
 	

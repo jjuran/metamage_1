@@ -217,6 +217,8 @@ pascal long GetHandleSize_patch( char** h : __A0 ) : __D0
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
+		MemErr = nilHandleErr;
+		
 		return 0;
 	}
 	
@@ -259,7 +261,7 @@ pascal void EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
-		MemErr = paramErr;
+		MemErr = nilHandleErr;
 		
 		return;
 	}
