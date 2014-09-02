@@ -36,6 +36,7 @@ void* toolbox_trap_table[] : 3 * 1024;
 enum
 {
 	_ReallocateHandle = _ReallocHandle,
+	_SetPortBits      = _SetPBits,
 	_SetRectRgn       = _SetRecRgn,
 };
 
@@ -71,6 +72,8 @@ static void install_QuickDraw()
 	TBTRAP( SetPort   );  // A873
 	TBTRAP( GetPort   );  // A874
 	TBTRAP( ClosePort );  // A87D
+	
+	TBTRAP( SetPortBits );  // A875
 	
 	TBTRAP( FrameRect  );  // A8A1
 	TBTRAP( PaintRect  );  // A8A2

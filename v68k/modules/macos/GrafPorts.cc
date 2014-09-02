@@ -97,3 +97,15 @@ pascal void SetPort_patch( struct GrafPort* port )
 {
 	*get_addrof_thePort() = port;
 }
+
+pascal void SetPortBits_patch( const BitMap* bitmap )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	thePort->portBits = *bitmap;
+}

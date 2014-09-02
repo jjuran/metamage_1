@@ -14,4 +14,6 @@ pascal void GetPort_patch( struct GrafPort** port_ptr );
 
 pascal void SetPort_patch( struct GrafPort* port );
 
+pascal void SetPortBits_patch( const struct BitMap* bitmap );
+
 #endif
