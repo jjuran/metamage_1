@@ -200,7 +200,7 @@ static void errors()
 	
 	DisposeHandle( NULL );
 	
-	ok_if( MemError() == (in_os9() ? 0 : nilHandleErr) );
+	ok_if( MemError() == ((sysv >= 0x0800  &&  sysv < 0x1000) ? 0 : nilHandleErr) );
 	
 	ReallocateHandle( NULL, 1 );
 	
