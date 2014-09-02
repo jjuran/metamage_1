@@ -30,7 +30,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2 + 5 + 5 * 4 + 5 + 13 + 15;
+static const unsigned n_tests = 2 + 5 + 5 * 4 + 5 + 13 + 16;
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
@@ -197,6 +197,8 @@ static void errors()
 	}
 	
 	ok_if( GetHandleSize( NULL ) == 0 );
+	
+	ok_if( MemError() == nilHandleErr );
 	
 	DisposeHandle( NULL );
 	
