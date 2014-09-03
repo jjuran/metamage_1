@@ -13,6 +13,9 @@
 // Standard C
 #include <string.h>
 
+// macos
+#include "QDGlobals.hh"
+
 
 struct rectangular_op_params
 {
@@ -44,21 +47,6 @@ static inline short max( short a, short b )
 	return a > b ? a : b;
 }
 
-const int delta_from_screenBits_to_thePort = offsetof(QDGlobals, thePort   )
-                                           - offsetof(QDGlobals, screenBits);
-
-static inline asm const BitMap* get_screenBits_() : __A0
-{
-	MOVEA.L  (A5),A0
-	
-	SUBA.L   delta_from_screenBits_to_thePort,A0
-}
-
-static inline const BitMap& get_screenBits()
-{
-	return *get_screenBits_();
-}
-
 static void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
 {
 	result.top    = max( a.top,    b.top    );
@@ -70,9 +58,11 @@ static void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
 static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
                                                 const Rect&             input_rect )
 {
-	const BitMap& screenBits = get_screenBits();
+	GrafPtr thePort = *get_addrof_thePort();
 	
-	const Rect& bounds = screenBits.bounds;
+	const BitMap& portBits = thePort->portBits;
+	
+	const Rect& bounds = portBits.bounds;
 	
 	Rect rect;
 	
@@ -104,10 +94,10 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	const uint8_t left_mask  = (left  & 0x7) ? ~((1 << 8 - (left  & 0x7)) - 1) : 0;
 	const uint8_t right_mask = (right & 0x7) ?   (1 << 8 - (right & 0x7)) - 1  : 0;
 	
-	const uint32_t rowBytes = screenBits.rowBytes;
+	const uint32_t rowBytes = portBits.rowBytes;
 	
 	params.topLeft    = *(Point*) &rect;
-	params.start      = screenBits.baseAddr + top * rowBytes + outer_left_bytes;
+	params.start      = portBits.baseAddr + top * rowBytes + outer_left_bytes;
 	params.height     = height_px;
 	params.draw_bytes = inner_bytes;
 	params.skip_bytes = rowBytes - outer_bytes;
