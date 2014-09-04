@@ -128,13 +128,15 @@ void* deallocate_existing( uint32_t addr )
 		
 		if ( alloc != NULL  &&  alloc != (void*) -1L )
 		{
+			void* next = alloc;
+			
 			do
 			{
 				alloc_pages[ i++ ] = NULL;
 				
-				alloc = (char*) alloc + page_size;
+				next = (char*) next + page_size;
 			}
-			while ( alloc_pages[ i ] == alloc );
+			while ( alloc_pages[ i ] == next );
 			
 			return alloc;
 		}
