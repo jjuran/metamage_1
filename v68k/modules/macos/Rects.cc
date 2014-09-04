@@ -83,6 +83,8 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	
 	if ( width_px <= 0  ||  height_px <= 0 )
 	{
+		params.height = 0;
+		
 		return;
 	}
 	
