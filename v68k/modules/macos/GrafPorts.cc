@@ -10,14 +10,12 @@
 #include <Quickdraw.h>
 #endif
 
+// macos
+#include "QDGlobals.hh"
+
 
 short MemErr : 0x0220;
 
-
-static inline asm GrafPtr* get_addrof_thePort() : __A0
-{
-	MOVEA.L  (A5),A0
-}
 
 static inline QDGlobals& get_QDGlobals()
 {
