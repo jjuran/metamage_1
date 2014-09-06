@@ -274,7 +274,7 @@ static void fill_rect( const rectangular_fill_params& params )
 	Pattern pattern = params.pattern;
 	
 	short       v = params.topLeft.v & 0x7;
-	short const h = params.topLeft.h & 0x7;
+	short const h = 0;
 	
 	if ( h != 0 )
 	{
