@@ -107,12 +107,16 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	params.port = thePort;
 	
 	const BitMap& portBits = thePort->portBits;
+	const Rect&   portRect = thePort->portRect;
+	const Rect&   bounds   = portBits.bounds;
 	
-	const Rect& bounds = portBits.bounds;
+	Rect rect = input_rect;
 	
-	Rect rect;
+	// local to global
+	OffsetRect_patch( &rect, portRect.left, portRect.top );
 	
-	do_Rect_intersection( rect, bounds, input_rect );
+	do_Rect_intersection( rect, portRect, rect );
+	do_Rect_intersection( rect, bounds,   rect );
 	
 	params.rect = rect;
 	
