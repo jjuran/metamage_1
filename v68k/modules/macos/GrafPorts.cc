@@ -107,3 +107,16 @@ pascal void SetPortBits_patch( const BitMap* bitmap )
 	
 	thePort->portBits = *bitmap;
 }
+
+pascal void PortSize_patch( short width, short height )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	thePort->portRect.bottom = thePort->portRect.top + height;
+	thePort->portRect.right = thePort->portRect.left + width;
+}

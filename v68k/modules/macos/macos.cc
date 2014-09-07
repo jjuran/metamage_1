@@ -74,6 +74,7 @@ static void install_QuickDraw()
 	TBTRAP( ClosePort );  // A87D
 	
 	TBTRAP( SetPortBits );  // A875
+	TBTRAP( PortSize    );  // A876
 	
 	TBTRAP( FrameRect  );  // A8A1
 	TBTRAP( PaintRect  );  // A8A2
