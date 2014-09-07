@@ -18,4 +18,6 @@ pascal void SetPortBits_patch( const struct BitMap* bitmap );
 
 pascal void PortSize_patch( short width, short height );
 
+pascal void MovePortTo_patch( short left, short top );
+
 #endif

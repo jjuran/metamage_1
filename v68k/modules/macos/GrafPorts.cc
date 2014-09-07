@@ -120,3 +120,22 @@ pascal void PortSize_patch( short width, short height )
 	thePort->portRect.bottom = thePort->portRect.top + height;
 	thePort->portRect.right = thePort->portRect.left + width;
 }
+
+pascal void MovePortTo_patch( short left, short top )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	const short dh = left - thePort->portRect.left;
+	const short dv = top  - thePort->portRect.top;
+	
+	thePort->portRect.bottom += dv;
+	thePort->portRect.right  += dh;
+	
+	thePort->portRect.top  = top;
+	thePort->portRect.left = left;
+}
