@@ -24,7 +24,7 @@ namespace iota
 	
 #else
 	
-	// Write out own swap() and save the cost of including <algorithm>
+	// Write our own swap() and save the cost of including <algorithm>
 	
 	template < class T >
 	void swap( T& a, T& b )
@@ -41,4 +41,3 @@ namespace iota
 }
 
 #endif
-
