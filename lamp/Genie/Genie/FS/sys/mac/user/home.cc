@@ -35,6 +35,8 @@ namespace Genie
 	
 	namespace N = Nitrogen;
 	
+	using mac::types::VRefNum_DirID;
+	
 	
 	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
 	{
@@ -77,7 +79,7 @@ namespace Genie
 	
 	static N::FSDirSpec GetUserHomeFolder()
 	{
-		mac::types::VRefNum_DirID folder = mac::sys::get_user_home();
+		VRefNum_DirID folder = mac::sys::get_user_home();
 		
 		if ( folder.vRefNum != 0 )
 		{
