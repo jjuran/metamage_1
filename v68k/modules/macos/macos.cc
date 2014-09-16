@@ -13,15 +13,18 @@
 
 // macos
 #include "Debugger.hh"
+#include "Fonts.hh"
 #include "GrafPorts.hh"
 #include "Handles.hh"
 #include "InitGraf.hh"
+#include "Menus.hh"
 #include "OSUtils.hh"
 #include "Pen.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "Segments.hh"
+#include "Windows.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -131,6 +134,21 @@ static void install_QuickDraw()
 	TBTRAP( XOrRgn      );  // A8E7
 }
 
+static void install_Fonts()
+{
+	TBTRAP( InitFonts );  // A8FE
+}
+
+static void install_Windows()
+{
+	TBTRAP( InitWindows );  // A912
+}
+
+static void install_Menus()
+{
+	TBTRAP( InitMenus );  // A930
+}
+
 static void install_SegmentLoader()
 {
 	TBTRAP( ExitToShell );  // A9F4
@@ -158,6 +176,9 @@ int main( int argc, char** argv )
 	install_OSUtils();
 	
 	install_QuickDraw();
+	install_Fonts();
+	install_Windows();
+	install_Menus();
 	
 	install_SegmentLoader();
 	
