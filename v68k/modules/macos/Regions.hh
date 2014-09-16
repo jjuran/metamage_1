@@ -13,6 +13,8 @@ pascal MacRegion** NewRgn_patch();
 
 pascal void DisposeRgn_patch( MacRegion** rgn );
 
+pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst );
+
 pascal void SetEmptyRgn_patch( MacRegion** rgn );
 
 pascal void SetRectRgn_patch( MacRegion**  rgn,

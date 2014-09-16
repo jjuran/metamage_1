@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 
 pascal MacRegion** NewRgn_patch()
 {
@@ -26,6 +29,25 @@ pascal MacRegion** NewRgn_patch()
 pascal void DisposeRgn_patch( MacRegion** rgn )
 {
 	DisposeHandle( (Handle) rgn );
+}
+
+pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
+{
+	const size_t size = GetHandleSize( (Handle) src );
+	
+	if ( size < sizeof (MacRegion) )
+	{
+		return;
+	}
+	
+	SetHandleSize( (Handle) dst, size );
+	
+	if ( MemError() != noErr )
+	{
+		return;
+	}
+	
+	memcpy( *dst, *src, size );
 }
 
 pascal void SetEmptyRgn_patch( MacRegion** rgn )
