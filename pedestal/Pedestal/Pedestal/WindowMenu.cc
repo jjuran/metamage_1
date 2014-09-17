@@ -75,7 +75,10 @@ namespace Pedestal
 			
 			InsertMenuItem( menu, "\p ", i );
 			
-			SetMenuItemText( menu, i + 1, title );
+			if ( title[ 0 ] > 0 )
+			{
+				SetMenuItemText( menu, i + 1, title );
+			}
 			
 			if ( w == FrontWindow() )
 			{
