@@ -46,6 +46,14 @@ namespace unet
 	
 	connection_box connect( const char* argv[] )
 	{
+		if ( argv[ 0 ] == NULL )
+		{
+			const int protocol_in  = 6;
+			const int protocol_out = 7;
+			
+			return connection_box( argv, protocol_in, protocol_out );
+		}
+		
 		// Create the unet control channel
 		
 		fd_pair fds = socketpair( pf_local, sock_stream );
