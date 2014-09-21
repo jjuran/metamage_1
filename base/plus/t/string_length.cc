@@ -28,7 +28,7 @@ static void reserved()
 	
 	EXPECT( empty.data() == data );
 	
-	empty.reserve( 16 );
+	empty.reserve( 32 );
 	
 	EXPECT( empty.size    () ==  0 );
 	
@@ -44,7 +44,7 @@ static void reserved()
 	
 	EXPECT( s.size    () == 16 );
 	
-	s.reserve( 24 );
+	s.reserve( 48 );
 	
 	EXPECT( s.data() != data );
 	

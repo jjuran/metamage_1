@@ -16,9 +16,12 @@
 static const unsigned n_tests = 3 + 2 + 2 + 5;
 
 
+#define LARGE_STRING  "0123456789abcdef" "ghijklmnopqrstuv"
+
+
 static void large_copy()
 {
-	const char* digits = "0123456789abcdef";
+	const char* digits = LARGE_STRING;
 	
 	plus::string a = digits;
 	
@@ -33,11 +36,11 @@ static void large_copy()
 
 static void handoff()
 {
-	char* buffer = (char*) ::operator new( sizeof "0123456789abcdef" );
+	char* buffer = (char*) ::operator new( sizeof LARGE_STRING );
 	
-	memcpy( buffer, "0123456789abcdef", sizeof "0123456789abcdef" );
+	memcpy( buffer, LARGE_STRING, sizeof LARGE_STRING );
 	
-	plus::string a( buffer, sizeof "0123456789abcdef" - 1, plus::delete_basic );
+	plus::string a( buffer, sizeof LARGE_STRING - 1, plus::delete_basic );
 	
 	EXPECT( a.data() == buffer );
 	
@@ -48,9 +51,9 @@ static void handoff()
 
 static void static_nocopy()
 {
-	const char* digits = "0123456789abcdef";
+	const char* digits = LARGE_STRING;
 	
-	plus::string a( digits, sizeof "0123456789abcdef" - 1, plus::delete_never );
+	plus::string a( digits, sizeof LARGE_STRING - 1, plus::delete_never );
 	
 	EXPECT( a.data() == digits );
 	
@@ -61,9 +64,9 @@ static void static_nocopy()
 
 static void static_varcopy()
 {
-	const char* digits = "0123456789abcdef";
+	const char* digits = LARGE_STRING;
 	
-	plus::string a( digits, sizeof "0123456789abcdef" - 1, plus::delete_never );
+	plus::string a( digits, sizeof LARGE_STRING - 1, plus::delete_never );
 	
 	EXPECT( a.data() == digits );
 	

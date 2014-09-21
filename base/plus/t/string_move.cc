@@ -15,7 +15,7 @@ static const unsigned n_tests = 3;
 
 static void move_to_var_string()
 {
-	plus::string foo = "0123456789abcdef";
+	plus::string foo = "0123456789abcdef" "ghijklmnopqrstuv";
 	plus::string bar = foo;
 	
 	EXPECT( foo.data() == bar.data() );

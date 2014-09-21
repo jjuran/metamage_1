@@ -15,23 +15,23 @@ static const unsigned n_tests = 7;
 
 static void truncation()
 {
-	plus::string twenty = "01234567890123456789";
+	plus::string fifty = "01234567890123456789012345678901234567890123456789";
 	
-	plus::string sixteen( twenty, 0, 16 );
+	plus::string forty( fifty, 0, 40 );
 	
-	EXPECT( twenty.data() == sixteen.data() );
+	EXPECT( fifty.data() == forty.data() );
 	
-	EXPECT( twenty.c_str() == sixteen.data() );
+	EXPECT( fifty.c_str() == forty.data() );
 	
-	EXPECT( sixteen.size() == 16 );
+	EXPECT( forty.size() == 40 );
 	
-	EXPECT( sixteen == "0123456789012345" );
+	EXPECT( forty == "0123456789012345678901234567890123456789" );
 	
-	EXPECT( twenty.data() == sixteen.data() );
+	EXPECT( fifty.data() == forty.data() );
 	
-	EXPECT( sixteen.c_str()[16] == '\0' );
+	EXPECT( forty.c_str()[40] == '\0' );
 	
-	EXPECT( twenty.data() != sixteen.data() );
+	EXPECT( fifty.data() != forty.data() );
 }
 
 int main( int argc, const char *const *argv )

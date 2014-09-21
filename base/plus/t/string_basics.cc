@@ -10,7 +10,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 18 + 15 + 10;
+static const unsigned n_tests = 19 + 16 + 10;
 
 
 static void empty()
@@ -22,7 +22,8 @@ static void empty()
 	EXPECT( empty.size  () == 0 );
 	EXPECT( empty.length() == 0 );
 	
-	EXPECT( empty.capacity() == 15 );
+	EXPECT( empty.capacity() >= 15 );
+	EXPECT( empty.capacity() <= 31 );
 	
 	EXPECT( empty.data () == (void*) &empty );
 	EXPECT( empty.c_str() == (void*) &empty );
@@ -73,7 +74,8 @@ static void small()
 	plus::string fifteen = "0123456789abcde";
 	
 	EXPECT( fifteen.size    () == 15 );
-	EXPECT( fifteen.capacity() == 15 );
+	EXPECT( fifteen.capacity() >= 15 );
+	EXPECT( fifteen.capacity() <= 31 );
 	
 	EXPECT( fifteen.data() == (void*) &fifteen );
 	
@@ -90,23 +92,23 @@ static void small()
 
 static void large()
 {
-	plus::string sixteen = "0123456789abcdef";
+	plus::string thirtytwo = "0123456789abcdef" "ghijklmnopqrstuv";
 	
-	EXPECT( sixteen.size    () == 16 );
-	EXPECT( sixteen.capacity() >= 16 );
+	EXPECT( thirtytwo.size    () == 32 );
+	EXPECT( thirtytwo.capacity() >= 32 );
 	
-	EXPECT( sixteen.data() != (void*) &sixteen );
+	EXPECT( thirtytwo.data() != (void*) &thirtytwo );
 	
-	EXPECT( &sixteen.data()[0] == &sixteen[0] );
+	EXPECT( &thirtytwo.data()[0] == &thirtytwo[0] );
 	
-	EXPECT( sixteen[ 0] == '0' );
-	EXPECT( sixteen[ 1] == '1' );
-	EXPECT( sixteen[14] == 'e' );
-	EXPECT( sixteen[15] == 'f' );
+	EXPECT( thirtytwo[ 0] == '0' );
+	EXPECT( thirtytwo[ 1] == '1' );
+	EXPECT( thirtytwo[30] == 'u' );
+	EXPECT( thirtytwo[31] == 'v' );
 	
-	EXPECT( sixteen.c_str()[16] == '\0' );
+	EXPECT( thirtytwo.c_str()[32] == '\0' );
 	
-	EXPECT( sixteen == "0123456789abcdef" );
+	EXPECT( thirtytwo == "0123456789abcdef" "ghijklmnopqrstuv" );
 	
 }
 

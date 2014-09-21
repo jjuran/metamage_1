@@ -67,12 +67,12 @@ static void small_substring()
 
 static void prefix()
 {
-	plus::string source = "This is definitely a test...";
+	plus::string source = "This is absolutely, positively, a test...";
 	
 	
-	plus::string sub1 = source.substr( 0, 22 );
+	plus::string sub1 = source.substr( 0, 35 );
 	
-	EXPECT( sub1 == "This is definitely a t" );
+	EXPECT( sub1 == "This is absolutely, positively, a t" );
 	
 	const char* data = sub1.data();
 	
@@ -88,31 +88,31 @@ static void prefix()
 	
 	EXPECT( sub1.end()[0] == '\0' );
 	
-	EXPECT( sub1 == "This is definitely a t" );
+	EXPECT( sub1 == "This is absolutely, positively, a t" );
 	
-	sub1 = source.substr( 0, 22 );
+	sub1 = source.substr( 0, 35 );
 	
-	plus::string sub2 = sub1.substr( 0, 16 );
+	plus::string sub2 = sub1.substr( 0, 32 );
 	
-	EXPECT( sub2 == "This is definite" );
+	EXPECT( sub2 == "This is absolutely, positively, " );
 	
 	plus::var_string var = sub1;
 	
 	var[2] = 'u';
 	
-	EXPECT( sub1 == "This is definitely a t" );
+	EXPECT( sub1 == "This is absolutely, positively, a t" );
 	
-	EXPECT( sub2 == "This is definite" );
+	EXPECT( sub2 == "This is absolutely, positively, " );
 }
 
 static void suffix()
 {
-	plus::string source = "This is definitely a test...";
+	plus::string source = "This is absolutely, positively, a test...";
 	
 	
 	plus::string sub1 = source.substr( 5 );
 	
-	EXPECT( sub1 == "is definitely a test..." );
+	EXPECT( sub1 == "is absolutely, positively, a test..." );
 	
 	const char* data = sub1.data();
 	
@@ -122,30 +122,30 @@ static void suffix()
 	
 	plus::string sub2 = sub1.substr( 3 );
 	
-	EXPECT( sub2 == "definitely a test..." );
+	EXPECT( sub2 == "absolutely, positively, a test..." );
 	
 	EXPECT( sub1.data() + 3 == sub2.data() );
 	
 	plus::var_string var = sub1;
 	
-	var[3] = 'D';
+	var[3] = 'A';
 	
-	EXPECT( sub1 == "is definitely a test..." );
+	EXPECT( sub1 == "is absolutely, positively, a test..." );
 	
-	EXPECT( sub2 == "definitely a test..." );
+	EXPECT( sub2 == "absolutely, positively, a test..." );
 }
 
 static void reset()
 {
-	plus::string source = "This is definitely a test...";
+	plus::string source = "This is absolutely, positively, a test...";
 	
-	plus::string sub = source.substr( 0, 25 );
+	plus::string sub = source.substr( 0, 38 );
 	
-	EXPECT( sub == "This is definitely a test" );
+	EXPECT( sub == "This is absolutely, positively, a test" );
 	
 	source.reset();
 	
-	EXPECT( sub == "This is definitely a test" );
+	EXPECT( sub == "This is absolutely, positively, a test" );
 	
 	const char* c_str = sub.c_str();
 	
