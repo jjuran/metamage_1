@@ -88,7 +88,7 @@ namespace tap
 		atexit( &atexit_count_tests );
 	}
 	
-	void ok_if( bool ok, const char* comment )
+	void print( bool ok, const char* comment )
 	{
 		if ( comment == NULL )
 		{
@@ -118,4 +118,3 @@ namespace tap
 	}
 	
 }
-

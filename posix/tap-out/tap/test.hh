@@ -17,16 +17,21 @@ namespace tap
 	void start( const char* program_name, unsigned tests_planned );
 	
 	
-	void ok_if( bool ok, const char* comment = NULL );
+	void print( bool ok, const char* comment = NULL );
+	
+	inline void ok_if( bool ok, const char* comment = NULL )
+	{
+		print( ok, comment );
+	}
 	
 	inline void ok_if_null( const void* p, const char* comment = NULL )
 	{
-		ok_if( p == NULL, comment );
+		print( p == NULL, comment );
 	}
 	
 	inline void ok_if_nonnull( const void* p, const char* comment = NULL )
 	{
-		ok_if( p != NULL, comment );
+		print( p != NULL, comment );
 	}
 	
 	inline void ok_if_strings_equal( const char* a,
@@ -35,10 +40,9 @@ namespace tap
 	{
 		const bool ok = a != NULL  &&  b != NULL  &&  std::strcmp( a, b ) == 0;
 		
-		ok_if( ok, comment );
+		print( ok, comment );
 	}
 	
 }
 
 #endif
-
