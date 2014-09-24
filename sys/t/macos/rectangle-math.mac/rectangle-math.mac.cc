@@ -13,6 +13,9 @@
 #include <Quickdraw.h>
 #endif
 
+// POSIX
+#include <unistd.h>
+
 // tap-out
 #include "tap/test.hh"
 
@@ -20,16 +23,17 @@
 #pragma exceptions off
 
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+
 static const unsigned n_tests = (8 + 8) + 16 + 8 + 8 + 8;
 
 
-static inline void expect( bool condition, const char* comment )
+static inline void expect( bool condition, const char* ref, size_t len )
 {
 	if ( !condition )
 	{
-		tap::ok_if( condition, comment );
-		
-		return;
+		write( STDERR_FILENO, ref, len );
 	}
 	
 	tap::print( condition );
@@ -40,9 +44,9 @@ static inline void expect( bool condition, const char* comment )
 
 // This will fail if the file pathname has "'" or "\\",
 // or if __FILE__ is just a filename.
-#define LINEREF()  "File '" __FILE__ "'; Line " STR(__LINE__)
+#define LINEREF()  "File '" __FILE__ "'; Line " STR(__LINE__) "\n"
 
-#define EXPECT( cond )  expect( cond, LINEREF() )
+#define EXPECT( cond )  expect( cond, STR_LEN( LINEREF() ) )
 
 
 static void basics()
