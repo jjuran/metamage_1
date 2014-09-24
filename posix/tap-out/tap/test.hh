@@ -10,6 +10,17 @@
 // Standard C/C++
 #include <cstring>
 
+// iota
+#include "iota/strings.hh"
+
+
+#define STR_( x ) #x
+#define STR( x ) STR_( x )
+
+#define LINEREF()  __FILE__ ":" STR(__LINE__) ": test failed:\n"
+
+#define EXPECT( cond )  ::tap::expect( cond, STR_LEN( LINEREF() ) )
+
 
 namespace tap
 {
@@ -18,6 +29,8 @@ namespace tap
 	
 	
 	void print( bool ok, const char* comment = NULL );
+	
+	void expect( bool condition, const char* ref, unsigned len );
 	
 	inline void ok_if( bool ok, const char* comment = NULL )
 	{

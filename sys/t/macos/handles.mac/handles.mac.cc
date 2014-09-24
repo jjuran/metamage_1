@@ -33,11 +33,6 @@
 static const unsigned n_tests = 2 + 5 + 5 * 4 + 5 + 13 + 16;
 
 
-#define STRLEN( s )  (sizeof "" s - 1)
-
-#define STR_LEN( s )  "" s, STRLEN( s )
-
-
 using tap::ok_if;
 
 

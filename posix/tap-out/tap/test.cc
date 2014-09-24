@@ -13,9 +13,6 @@
 #include <unistd.h>
 #include <sys/uio.h>
 
-// Iota
-#include "iota/strings.hh"
-
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -115,6 +112,16 @@ namespace tap
 		
 		CHECK( writev( STDOUT_FILENO, iov, sizeof iov / sizeof iov[0] ) );
 		
+	}
+	
+	void expect( bool condition, const char* ref, unsigned len )
+	{
+		if ( !condition )
+		{
+			write( STDERR_FILENO, ref, len );
+		}
+	
+		print( condition );
 	}
 	
 }
