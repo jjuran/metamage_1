@@ -36,7 +36,11 @@ static inline void expect( bool condition, const char* comment )
 #define STR_( x ) #x
 #define STR( x ) STR_( x )
 
-#define EXPECT( cond )  expect( cond, "File '" __FILE__ "'; Line " STR(__LINE__) )
+// This will fail if the file pathname has "'" or "\\",
+// or if __FILE__ is just a filename.
+#define LINEREF()  "File '" __FILE__ "'; Line " STR(__LINE__)
+
+#define EXPECT( cond )  expect( cond, LINEREF() )
 
 
 static void basics()
