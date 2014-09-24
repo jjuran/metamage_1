@@ -42,9 +42,7 @@ static inline void expect( bool condition, const char* ref, size_t len )
 #define STR_( x ) #x
 #define STR( x ) STR_( x )
 
-// This will fail if the file pathname has "'" or "\\",
-// or if __FILE__ is just a filename.
-#define LINEREF()  "File '" __FILE__ "'; Line " STR(__LINE__) "\n"
+#define LINEREF()  __FILE__ ":" STR(__LINE__) ": test failed:\n"
 
 #define EXPECT( cond )  expect( cond, STR_LEN( LINEREF() ) )
 
