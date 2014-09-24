@@ -27,7 +27,9 @@ static inline void expect( bool condition, const char* comment )
 {
 	if ( condition )
 	{
-		comment = NULL;
+		tap::print( condition );
+		
+		return;
 	}
 	
 	tap::ok_if( condition, comment );
