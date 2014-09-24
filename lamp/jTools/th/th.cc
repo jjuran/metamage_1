@@ -34,11 +34,16 @@
 #include "text_input/feed.hh"
 #include "text_input/get_line_from_feed.hh"
 
+#ifndef O_CLOEXEC
+#define O_CLOEXEC  0
+#endif
+
 // poseven
 #include "poseven/extras/fd_reader.hh"
 #include "poseven/functions/close.hh"
 #include "poseven/functions/execv.hh"
 #include "poseven/functions/dup2.hh"
+#include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
 #include "poseven/functions/vfork.hh"
 #include "poseven/functions/wait.hh"
@@ -53,6 +58,30 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
+	
+	
+	class dev_null_fd
+	{
+		private:
+			p7::fd_t its_fd;
+		
+		public:
+			dev_null_fd();
+			
+			operator p7::fd_t() const  { return its_fd; }
+	};
+	
+	dev_null_fd::dev_null_fd()
+	:
+		its_fd( p7::open( "/dev/null", p7::o_wronly | p7::o_cloexec ).release() )
+	{
+		if ( O_CLOEXEC == 0 )
+		{
+			fcntl( its_fd, F_SETFD, FD_CLOEXEC );
+		}
+	}
+	
+	static dev_null_fd dev_null;
 	
 	
 	struct TestResults
@@ -100,6 +129,8 @@ namespace tool
 			int closed = close( pipe_ends[0] );
 			
 			p7::dup2( p7::fd_t( pipe_ends[1] ), p7::stdout_fileno );
+			
+			p7::dup2( dev_null, p7::stderr_fileno );  // discard stderr in th
 			
 			closed = close( pipe_ends[1] );
 			
