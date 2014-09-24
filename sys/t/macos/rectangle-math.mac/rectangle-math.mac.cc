@@ -25,14 +25,14 @@ static const unsigned n_tests = (8 + 8) + 16 + 8 + 8 + 8;
 
 static inline void expect( bool condition, const char* comment )
 {
-	if ( condition )
+	if ( !condition )
 	{
-		tap::print( condition );
+		tap::ok_if( condition, comment );
 		
 		return;
 	}
 	
-	tap::ok_if( condition, comment );
+	tap::print( condition );
 }
 
 #define STR_( x ) #x
