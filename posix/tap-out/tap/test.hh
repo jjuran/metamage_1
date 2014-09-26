@@ -21,6 +21,8 @@
 
 #define EXPECT( cond )  ::tap::expect( cond, STR_LEN( LINEREF() ) )
 
+#define EXPECT_NULL( p )  EXPECT( (p) == NULL )
+
 
 namespace tap
 {
