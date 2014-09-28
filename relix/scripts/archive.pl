@@ -79,9 +79,11 @@ my %fsmap =
 			                                compare
 			                                copy
 			                                copyonwrite
+			                                c_str
 			                                erase
 			                                find
 			                                insert
+			                                move
 			                                replace
 			                                substr
 			                            ) ],
