@@ -16,9 +16,6 @@
 static const unsigned n_tests = 4;
 
 
-using tap::ok_if;
-
-
 static void copyonwrite()
 {
 	plus::var_string a = "0123456789abcdef";
@@ -29,17 +26,17 @@ static void copyonwrite()
 	
 	b += "ghij";  // reallocates due to copy-on-write
 	
-	ok_if( b.size() == 20 );
+	EXPECT( b.size() == 20 );
 	
-	ok_if( b.capacity() >= b.size() );
+	EXPECT( b.capacity() >= b.size() );
 	
 	/*
 		We don't copy on write anymore, so b's initial capacity will be 19,
 		and after expansion might be 36.
 	*/
-	//ok_if( b.capacity() == 23 );
+	//EXPECT( b.capacity() == 23 );
 	
-	ok_if( b == "0123456789abcdefghij" );
+	EXPECT( b == "0123456789abcdefghij" );
 	
 	plus::var_string c = "it's the end of the world as we know it";
 	
@@ -49,7 +46,7 @@ static void copyonwrite()
 	
 	*c_data = 'I';
 	
-	ok_if( foo[0] == 'i' );
+	EXPECT( foo[0] == 'i' );
 }
 
 int main( int argc, const char *const *argv )
@@ -60,4 +57,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

@@ -16,9 +16,6 @@
 static const unsigned n_tests = 2;
 
 
-using tap::ok_if;
-
-
 static void buffer_exceptions()
 {
 	text_input::feed feed;
@@ -39,7 +36,7 @@ static void buffer_exceptions()
 	{
 	}
 	
-	ok_if( buffer_overrun );
+	EXPECT( buffer_overrun );
 	
 	feed.accept_input( STR_LEN( "\n" ) );
 	
@@ -57,7 +54,7 @@ static void buffer_exceptions()
 	{
 	}
 	
-	ok_if( buffer_occupied );
+	EXPECT( buffer_occupied );
 }
 
 int main( int argc, const char *const *argv )
@@ -68,4 +65,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

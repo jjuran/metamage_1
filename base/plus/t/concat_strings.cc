@@ -16,15 +16,12 @@
 static const unsigned n_tests = 4;
 
 
-using tap::ok_if;
-
-
 static void concat()
 {
-	ok_if( plus::concat( STR_LEN( ""    ), STR_LEN( ""    ) ) == ""       );
-	ok_if( plus::concat( STR_LEN( "foo" ), STR_LEN( ""    ) ) == "foo"    );
-	ok_if( plus::concat( STR_LEN( ""    ), STR_LEN( "bar" ) ) == "bar"    );
-	ok_if( plus::concat( STR_LEN( "foo" ), STR_LEN( "bar" ) ) == "foobar" );
+	EXPECT( plus::concat( STR_LEN( ""    ), STR_LEN( ""    ) ) == ""       );
+	EXPECT( plus::concat( STR_LEN( "foo" ), STR_LEN( ""    ) ) == "foo"    );
+	EXPECT( plus::concat( STR_LEN( ""    ), STR_LEN( "bar" ) ) == "bar"    );
+	EXPECT( plus::concat( STR_LEN( "foo" ), STR_LEN( "bar" ) ) == "foobar" );
 }
 
 int main( int argc, const char *const *argv )
@@ -35,4 +32,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

@@ -16,9 +16,6 @@
 static const unsigned n_tests = 26 + 27 + 3 + 3;
 
 
-using tap::ok_if;
-
-
 static void reserved()
 {
 	plus::var_string empty;
@@ -27,64 +24,64 @@ static void reserved()
 	
 	empty.reserve( 10 );
 	
-	ok_if( empty.size    () ==  0 );
-	ok_if( empty.capacity() == 15 );
+	EXPECT( empty.size    () ==  0 );
+	EXPECT( empty.capacity() == 15 );
 	
-	ok_if( empty.data() == data );
+	EXPECT( empty.data() == data );
 	
 	empty.reserve( 16 );
 	
-	ok_if( empty.size    () ==  0 );
-	ok_if( empty.capacity() == 19 );
+	EXPECT( empty.size    () ==  0 );
+	EXPECT( empty.capacity() == 19 );
 	
-	ok_if( empty.data() != data );
+	EXPECT( empty.data() != data );
 	
 	plus::var_string s = "0123456789abcdef";
 	
 	data = s.data();
 	
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.capacity() == 19 );
 	
 	s.reserve( 7 );
 	
-	ok_if( s.data() == data );
+	EXPECT( s.data() == data );
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 19 );
 	
 	s.reserve( 24 );
 	
-	ok_if( s.data() != data );
+	EXPECT( s.data() != data );
 	
 	data = s.data();
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 27 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 27 );
 	
-	ok_if( s == "0123456789abcdef" );
+	EXPECT( s == "0123456789abcdef" );
 	
 	s.reserve( 12 );
 	
-	ok_if( s.data() != data );
+	EXPECT( s.data() != data );
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 19 );
 	
-	ok_if( s == "0123456789abcdef" );
+	EXPECT( s == "0123456789abcdef" );
 	
 	s.assign( "0123456789abcde" );
 	
-	ok_if( s.size    () == 15 );
-	ok_if( s.capacity() == 15 );
+	EXPECT( s.size    () == 15 );
+	EXPECT( s.capacity() == 15 );
 	
-	ok_if( s.data() == (void*) &s );
+	EXPECT( s.data() == (void*) &s );
 	
 	s.reserve( 16 );
 	
-	ok_if( s.size    () == 15 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 15 );
+	EXPECT( s.capacity() == 19 );
 	
-	ok_if( s == "0123456789abcde" );
+	EXPECT( s == "0123456789abcde" );
 	
 	bool caught_length_error = false;
 	
@@ -104,7 +101,7 @@ static void reserved()
 	{
 	}
 	
-	ok_if( !caught_length_error );
+	EXPECT( !caught_length_error );
 	
 	caught_length_error = false;
 	
@@ -120,7 +117,7 @@ static void reserved()
 	{
 	}
 	
-	ok_if( caught_length_error );
+	EXPECT( caught_length_error );
 }
 
 static void resized()
@@ -129,69 +126,69 @@ static void resized()
 	
 	s.resize( 5, 'a' );
 	
-	ok_if( s.size() == 5 );
+	EXPECT( s.size() == 5 );
 	
-	ok_if( s == "aaaaa" );
+	EXPECT( s == "aaaaa" );
 	
 	s.resize( 3 );
 	
-	ok_if( s.size() == 3 );
+	EXPECT( s.size() == 3 );
 	
-	ok_if( s == "aaa" );
+	EXPECT( s == "aaa" );
 	
 	s.resize( 8, 'b' );
 	
-	ok_if( s.size() == 8 );
+	EXPECT( s.size() == 8 );
 	
-	ok_if( s == "aaabbbbb" );
+	EXPECT( s == "aaabbbbb" );
 	
 	s.resize( 9 );
 	
-	ok_if( s.size() == 9 );
+	EXPECT( s.size() == 9 );
 	
-	ok_if( s != "aaabbbbb" );
+	EXPECT( s != "aaabbbbb" );
 	
 	s.resize( 8 );
 	
 	s.resize( 16, 'c' );
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 19 );
 	
-	ok_if( s == "aaabbbbb" "cccccccc" );
+	EXPECT( s == "aaabbbbb" "cccccccc" );
 	
 	s.resize( 17, 'd' );
 	
-	ok_if( s.size    () == 17 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 17 );
+	EXPECT( s.capacity() == 19 );
 	
-	ok_if( s == "aaabbbbb" "cccccccc" "d" );
+	EXPECT( s == "aaabbbbb" "cccccccc" "d" );
 	
 	s.resize( 21, 'e' );
 	
-	ok_if( s.size    () == 21 );
-	ok_if( s.capacity() == 35 );
+	EXPECT( s.size    () == 21 );
+	EXPECT( s.capacity() == 35 );
 	
-	ok_if( s == "aaabbbbb" "cccccccc" "deeee" );
+	EXPECT( s == "aaabbbbb" "cccccccc" "deeee" );
 	
 	s.resize( 16 );
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 35 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 35 );
 	
-	ok_if( s == "aaabbbbb" "cccccccc" );
+	EXPECT( s == "aaabbbbb" "cccccccc" );
 	
 	s.resize( 8 );
 	
-	ok_if( s.size    () ==  8 );
-	ok_if( s.capacity() == 35 );
+	EXPECT( s.size    () ==  8 );
+	EXPECT( s.capacity() == 35 );
 	
-	ok_if( s == "aaabbbbb" );
+	EXPECT( s == "aaabbbbb" );
 	
 	s.resize( 40 );
 	
-	ok_if( s.size    () == 40 );
-	ok_if( s.capacity() == 43 );
+	EXPECT( s.size    () == 40 );
+	EXPECT( s.capacity() == 43 );
 	
 	bool caught_length_error = false;
 	
@@ -211,7 +208,7 @@ static void resized()
 	{
 	}
 	
-	ok_if( !caught_length_error );
+	EXPECT( !caught_length_error );
 	
 	caught_length_error = false;
 	
@@ -227,7 +224,7 @@ static void resized()
 	{
 	}
 	
-	ok_if( caught_length_error );
+	EXPECT( caught_length_error );
 }
 
 static void appended()
@@ -236,10 +233,10 @@ static void appended()
 	
 	s.append( "89abcdef" );
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 19 );
 	
-	ok_if( s == "01234567" "89abcdef" );
+	EXPECT( s == "01234567" "89abcdef" );
 }
 
 static void inserted()
@@ -250,10 +247,10 @@ static void inserted()
 	
 	s.insert( s.begin(), half, half + sizeof "89abcdef" - 1 );
 	
-	ok_if( s.size    () == 16 );
-	ok_if( s.capacity() == 19 );
+	EXPECT( s.size    () == 16 );
+	EXPECT( s.capacity() == 19 );
 	
-	ok_if( s == "89abcdef" "01234567" );
+	EXPECT( s == "89abcdef" "01234567" );
 }
 
 int main( int argc, const char *const *argv )
@@ -270,4 +267,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-
