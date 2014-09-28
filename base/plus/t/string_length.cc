@@ -1,6 +1,6 @@
 /*
-	t/string_capacity.cc
-	--------------------
+	t/string_length.cc
+	------------------
 */
 
 // Standard C++
@@ -13,7 +13,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 26 + 27 + 3 + 3;
+static const unsigned n_tests = 18 + 21 + 2 + 2;
 
 
 static void reserved()
@@ -25,14 +25,12 @@ static void reserved()
 	empty.reserve( 10 );
 	
 	EXPECT( empty.size    () ==  0 );
-	EXPECT( empty.capacity() == 15 );
 	
 	EXPECT( empty.data() == data );
 	
 	empty.reserve( 16 );
 	
 	EXPECT( empty.size    () ==  0 );
-	EXPECT( empty.capacity() == 19 );
 	
 	EXPECT( empty.data() != data );
 	
@@ -40,14 +38,11 @@ static void reserved()
 	
 	data = s.data();
 	
-	EXPECT( s.capacity() == 19 );
-	
 	s.reserve( 7 );
 	
 	EXPECT( s.data() == data );
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 19 );
 	
 	s.reserve( 24 );
 	
@@ -56,7 +51,6 @@ static void reserved()
 	data = s.data();
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 27 );
 	
 	EXPECT( s == "0123456789abcdef" );
 	
@@ -65,21 +59,18 @@ static void reserved()
 	EXPECT( s.data() != data );
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 19 );
 	
 	EXPECT( s == "0123456789abcdef" );
 	
 	s.assign( "0123456789abcde" );
 	
 	EXPECT( s.size    () == 15 );
-	EXPECT( s.capacity() == 15 );
 	
 	EXPECT( s.data() == (void*) &s );
 	
 	s.reserve( 16 );
 	
 	EXPECT( s.size    () == 15 );
-	EXPECT( s.capacity() == 19 );
 	
 	EXPECT( s == "0123456789abcde" );
 	
@@ -153,42 +144,36 @@ static void resized()
 	s.resize( 16, 'c' );
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 19 );
 	
 	EXPECT( s == "aaabbbbb" "cccccccc" );
 	
 	s.resize( 17, 'd' );
 	
 	EXPECT( s.size    () == 17 );
-	EXPECT( s.capacity() == 19 );
 	
 	EXPECT( s == "aaabbbbb" "cccccccc" "d" );
 	
 	s.resize( 21, 'e' );
 	
 	EXPECT( s.size    () == 21 );
-	EXPECT( s.capacity() == 35 );
 	
 	EXPECT( s == "aaabbbbb" "cccccccc" "deeee" );
 	
 	s.resize( 16 );
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 35 );
 	
 	EXPECT( s == "aaabbbbb" "cccccccc" );
 	
 	s.resize( 8 );
 	
 	EXPECT( s.size    () ==  8 );
-	EXPECT( s.capacity() == 35 );
 	
 	EXPECT( s == "aaabbbbb" );
 	
 	s.resize( 40 );
 	
 	EXPECT( s.size    () == 40 );
-	EXPECT( s.capacity() == 43 );
 	
 	bool caught_length_error = false;
 	
@@ -234,7 +219,6 @@ static void appended()
 	s.append( "89abcdef" );
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 19 );
 	
 	EXPECT( s == "01234567" "89abcdef" );
 }
@@ -248,14 +232,13 @@ static void inserted()
 	s.insert( s.begin(), half, half + sizeof "89abcdef" - 1 );
 	
 	EXPECT( s.size    () == 16 );
-	EXPECT( s.capacity() == 19 );
 	
 	EXPECT( s == "89abcdef" "01234567" );
 }
 
 int main( int argc, const char *const *argv )
 {
-	tap::start( "string_capacity", n_tests );
+	tap::start( "string_length", n_tests );
 	
 	reserved();
 	

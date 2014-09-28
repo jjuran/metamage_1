@@ -75,7 +75,6 @@ my %fsmap =
 			                            (
 			                                alloc
 			                                basics
-			                                capacity
 			                                compare
 			                                copy
 			                                copyonwrite
@@ -83,6 +82,7 @@ my %fsmap =
 			                                erase
 			                                find
 			                                insert
+			                                length
 			                                move
 			                                replace
 			                                substr
