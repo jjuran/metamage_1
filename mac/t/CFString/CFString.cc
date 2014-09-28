@@ -27,9 +27,6 @@ namespace N = Nitrogen;
 static const unsigned n_tests = 4 + 4;
 
 
-using tap::ok_if;
-
-
 static void UTF8_from_MacRoman()
 {
 	const char* macRoman = "foo\xA5";
@@ -39,7 +36,7 @@ static void UTF8_from_MacRoman()
 	
 	const CFIndex length = CFStringGetLength( string );
 	
-	ok_if( length == 4 );
+	EXPECT( length == 4 );
 	
 	const CFRange range = CFRangeMake( 0, length );
 	
@@ -56,11 +53,11 @@ static void UTF8_from_MacRoman()
 	                                   sizeof buffer,
 	                                   &n_bytes );
 	
-	ok_if( result == 4 );
+	EXPECT( result == 4 );
 	
-	ok_if( n_bytes == 6 );
+	EXPECT( n_bytes == 6 );
 	
-	ok_if( memcmp( buffer, STR_LEN( "foo\xE2\x80\xA2" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "foo\xE2\x80\xA2" ) ) == 0 );
 }
 
 static void MacRoman_from_UTF8()
@@ -72,7 +69,7 @@ static void MacRoman_from_UTF8()
 	
 	const CFIndex length = CFStringGetLength( string );
 	
-	ok_if( length == 4 );
+	EXPECT( length == 4 );
 	
 	const CFRange range = CFRangeMake( 0, length );
 	
@@ -89,11 +86,11 @@ static void MacRoman_from_UTF8()
 	                                   sizeof buffer,
 	                                   &n_bytes );
 	
-	ok_if( result == 4 );
+	EXPECT( result == 4 );
 	
-	ok_if( n_bytes == 4 );
+	EXPECT( n_bytes == 4 );
 	
-	ok_if( memcmp( buffer, STR_LEN( "foo\xA5" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "foo\xA5" ) ) == 0 );
 }
 
 int main( int argc, char** argv )
@@ -106,4 +103,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-
