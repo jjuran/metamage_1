@@ -23,8 +23,6 @@ static const unsigned n_tests = 4 + 2 + 2;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void add()
 {
@@ -58,18 +56,18 @@ static void add()
 	
 	emu.step();
 	
-	ok_if( emu.d(1) == 0x0000068A );
+	EXPECT( emu.d(1) == 0x0000068A );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	emu.d(1) = 0x00000567;
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(1) == 0x0000058A );
+	EXPECT( emu.d(1) == 0x0000058A );
 	
-	ok_if( emu.sr.nzvc == 0xA );
+	EXPECT( emu.sr.nzvc == 0xA );
 }
 
 static void adda()
@@ -102,9 +100,9 @@ static void adda()
 	
 	emu.step();
 	
-	ok_if( emu.a(0) == 0x00011110 );
+	EXPECT( emu.a(0) == 0x00011110 );
 	
-	ok_if( emu.sr.nzvc == 0xF );
+	EXPECT( emu.sr.nzvc == 0xF );
 }
 
 static void addi()
@@ -137,9 +135,9 @@ static void addi()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00001110 );
+	EXPECT( emu.d(0) == 0x00001110 );
 	
-	ok_if( emu.sr.nzvc == 0x1 );
+	EXPECT( emu.sr.nzvc == 0x1 );
 }
 
 int main( int argc, char** argv )
@@ -154,4 +152,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

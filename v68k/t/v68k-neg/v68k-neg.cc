@@ -23,8 +23,6 @@ static const unsigned n_tests = 4;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void neg()
 {
@@ -57,18 +55,18 @@ static void neg()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000000 );
+	EXPECT( emu.d(0) == 0x00000000 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.d(0) = 0x00000001;
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x0000FFFF );
+	EXPECT( emu.d(0) == 0x0000FFFF );
 	
-	ok_if( emu.sr.nzvc == 0x9 );
+	EXPECT( emu.sr.nzvc == 0x9 );
 }
 
 int main( int argc, char** argv )
@@ -79,4 +77,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

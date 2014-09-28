@@ -23,8 +23,6 @@ static const unsigned n_tests = 2;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void swap()
 {
@@ -56,9 +54,9 @@ static void swap()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x56781234 );
+	EXPECT( emu.d(0) == 0x56781234 );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 }
 
 int main( int argc, char** argv )
@@ -69,4 +67,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

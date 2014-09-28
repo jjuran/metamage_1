@@ -23,8 +23,6 @@ static const unsigned n_tests = 3;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void eor()
 {
@@ -57,10 +55,10 @@ static void eor()
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
-	ok_if( emu.d(0) == 1 );
-	ok_if( emu.d(1) == 3 );
+	EXPECT( emu.d(0) == 1 );
+	EXPECT( emu.d(1) == 3 );
 }
 
 int main( int argc, char** argv )
@@ -71,4 +69,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

@@ -23,8 +23,6 @@ static const unsigned n_tests = 4;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void dbcc()
 {
@@ -60,21 +58,21 @@ static void dbcc()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00010001 );
+	EXPECT( emu.d(0) == 0x00010001 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00010000 );
+	EXPECT( emu.d(0) == 0x00010000 );
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x0001FFFF );
+	EXPECT( emu.d(0) == 0x0001FFFF );
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000000 );
+	EXPECT( emu.d(0) == 0x00000000 );
 }
 
 int main( int argc, char** argv )
@@ -85,4 +83,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-
