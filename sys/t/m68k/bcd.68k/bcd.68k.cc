@@ -20,9 +20,6 @@
 static const unsigned n_tests = 14 + 10 + 10 * 2;
 
 
-using tap::ok_if;
-
-
 static uint16_t the_CCR = 0;
 
 
@@ -138,45 +135,45 @@ static void abcd()
 {
 	the_CCR = 0x00;
 	
-	ok_if( abcd_reg( 0x00, 0x00 ) == 0x00 );
+	EXPECT( abcd_reg( 0x00, 0x00 ) == 0x00 );
 	
-	ok_if( (the_CCR & 0x15) == 0x00 );
+	EXPECT( (the_CCR & 0x15) == 0x00 );
 	
 	
 	the_CCR = 0x0F;
 	
-	ok_if( abcd_reg( 0x00, 0x00 ) == 0x00 );
+	EXPECT( abcd_reg( 0x00, 0x00 ) == 0x00 );
 	
-	ok_if( (the_CCR & 0x15) == 0x04 );
-	
-	
-	the_CCR = 0x1F;
-	
-	ok_if( abcd_reg( 0x00, 0x00 ) == 0x01 );
-	
-	ok_if( (the_CCR & 0x15) == 0x00 );
-	
-	
-	ok_if( abcd_reg( 0x09, 0x90 ) == 0x99 );
-	
-	ok_if( (the_CCR & 0x15) == 0x00 );
+	EXPECT( (the_CCR & 0x15) == 0x04 );
 	
 	
 	the_CCR = 0x1F;
 	
-	ok_if( abcd_reg( 0x09, 0x90 ) == 0x00 );
+	EXPECT( abcd_reg( 0x00, 0x00 ) == 0x01 );
 	
-	ok_if( (the_CCR & 0x15) == 0x15 );
-	
-	
-	ok_if( abcd_2( 0x0003, 0x0002 ) == 0x0006 );
-	
-	ok_if( (the_CCR & 0x15) == 0x00 );
+	EXPECT( (the_CCR & 0x15) == 0x00 );
 	
 	
-	ok_if( abcd_2( 0x6003, 0x4002 ) == 0x0005 );
+	EXPECT( abcd_reg( 0x09, 0x90 ) == 0x99 );
 	
-	ok_if( (the_CCR & 0x15) == 0x11 );
+	EXPECT( (the_CCR & 0x15) == 0x00 );
+	
+	
+	the_CCR = 0x1F;
+	
+	EXPECT( abcd_reg( 0x09, 0x90 ) == 0x00 );
+	
+	EXPECT( (the_CCR & 0x15) == 0x15 );
+	
+	
+	EXPECT( abcd_2( 0x0003, 0x0002 ) == 0x0006 );
+	
+	EXPECT( (the_CCR & 0x15) == 0x00 );
+	
+	
+	EXPECT( abcd_2( 0x6003, 0x4002 ) == 0x0005 );
+	
+	EXPECT( (the_CCR & 0x15) == 0x11 );
 	
 }
 
@@ -184,35 +181,35 @@ static void sbcd()
 {
 	the_CCR = 0x00;
 	
-	ok_if( sbcd_reg( 0x00, 0x00 ) == 0x00 );
+	EXPECT( sbcd_reg( 0x00, 0x00 ) == 0x00 );
 	
-	ok_if( (the_CCR & 0x15) == 0x00 );
+	EXPECT( (the_CCR & 0x15) == 0x00 );
 	
 	
 	the_CCR = 0x0F;
 	
-	ok_if( sbcd_reg( 0x00, 0x00 ) == 0x00 );
+	EXPECT( sbcd_reg( 0x00, 0x00 ) == 0x00 );
 	
-	ok_if( (the_CCR & 0x15) == 0x04 );
-	
-	
-	the_CCR = 0x1F;
-	
-	ok_if( sbcd_reg( 0x00, 0x00 ) == 0x99 );
-	
-	ok_if( (the_CCR & 0x15) == 0x11 );
-	
-	
-	ok_if( sbcd_2( 0x0002, 0x0002 ) == 0x9999 );
-	
-	ok_if( (the_CCR & 0x15) == 0x11 );
+	EXPECT( (the_CCR & 0x15) == 0x04 );
 	
 	
 	the_CCR = 0x1F;
 	
-	ok_if( sbcd_2( 0x1202, 0x1203 ) == 0x0000 );
+	EXPECT( sbcd_reg( 0x00, 0x00 ) == 0x99 );
 	
-	ok_if( (the_CCR & 0x15) == 0x04 );
+	EXPECT( (the_CCR & 0x15) == 0x11 );
+	
+	
+	EXPECT( sbcd_2( 0x0002, 0x0002 ) == 0x9999 );
+	
+	EXPECT( (the_CCR & 0x15) == 0x11 );
+	
+	
+	the_CCR = 0x1F;
+	
+	EXPECT( sbcd_2( 0x1202, 0x1203 ) == 0x0000 );
+	
+	EXPECT( (the_CCR & 0x15) == 0x04 );
 	
 }
 
@@ -223,33 +220,33 @@ static void nbcd( nbcd_call f )
 {
 	the_CCR = 0x00;
 	
-	ok_if( f( 0x00 ) == 0x00 );
+	EXPECT( f( 0x00 ) == 0x00 );
 	
-	ok_if( (the_CCR & 0x15) == 0x00 );
+	EXPECT( (the_CCR & 0x15) == 0x00 );
 	
 	
 	the_CCR = 0x0F;
 	
-	ok_if( f( 0x00 ) == 0x00 );
+	EXPECT( f( 0x00 ) == 0x00 );
 	
-	ok_if( (the_CCR & 0x15) == 0x04 );
+	EXPECT( (the_CCR & 0x15) == 0x04 );
 	
 	
 	the_CCR = 0x1F;
 	
-	ok_if( f( 0x00 ) == 0x99 );
+	EXPECT( f( 0x00 ) == 0x99 );
 	
-	ok_if( (the_CCR & 0x15) == 0x11 );
-	
-	
-	ok_if( f( 0x01 ) == 0x98 );
-	
-	ok_if( (the_CCR & 0x15) == 0x11 );
+	EXPECT( (the_CCR & 0x15) == 0x11 );
 	
 	
-	ok_if( f( 0x99 ) == 0x00 );
+	EXPECT( f( 0x01 ) == 0x98 );
 	
-	ok_if( (the_CCR & 0x15) == 0x11 );
+	EXPECT( (the_CCR & 0x15) == 0x11 );
+	
+	
+	EXPECT( f( 0x99 ) == 0x00 );
+	
+	EXPECT( (the_CCR & 0x15) == 0x11 );
 }
 
 
@@ -266,4 +263,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-
