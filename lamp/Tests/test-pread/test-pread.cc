@@ -35,9 +35,6 @@ namespace tool
 	static const unsigned n_tests = 7;
 	
 	
-	#define RUN_TEST( condition )  tap::ok_if( condition, #condition )
-	
-	
 	static void pread_pipe()
 	{
 		int fds[2];
@@ -48,7 +45,7 @@ namespace tool
 		
 		int n_read = pread( fds[0], buffer, sizeof buffer, 0 );
 		
-		RUN_TEST( n_read == -1  &&  errno == ESPIPE );
+		EXPECT( n_read == -1  &&  errno == ESPIPE );
 		
 		close( fds[0] );
 		close( fds[1] );
@@ -74,18 +71,18 @@ namespace tool
 		
 		int n_read = pread( tmp_file, buffer, length, 0 );
 		
-		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "1234" ) ) == 0 );
+		EXPECT( n_read == length  &&  memcmp( buffer, STR_LEN( "1234" ) ) == 0 );
 		
-		RUN_TEST( p7::lseek( tmp_file ) == 0 );
+		EXPECT( p7::lseek( tmp_file ) == 0 );
 		
 		
 		length = STRLEN( "34567" );
 		
 		n_read = pread( tmp_file, buffer, length, 2 );
 		
-		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "34567" ) ) == 0 );
+		EXPECT( n_read == length  &&  memcmp( buffer, STR_LEN( "34567" ) ) == 0 );
 		
-		RUN_TEST( p7::lseek( tmp_file ) == 0 );
+		EXPECT( p7::lseek( tmp_file ) == 0 );
 		
 		
 		p7::lseek( tmp_file, 6 );
@@ -94,9 +91,9 @@ namespace tool
 		
 		n_read = pread( tmp_file, buffer, length + 3, 11 );
 		
-		RUN_TEST( n_read == length  &&  memcmp( buffer, STR_LEN( "cdef\n" ) ) == 0 );
+		EXPECT( n_read == length  &&  memcmp( buffer, STR_LEN( "cdef\n" ) ) == 0 );
 		
-		RUN_TEST( p7::lseek( tmp_file ) == 6 );
+		EXPECT( p7::lseek( tmp_file ) == 6 );
 	}
 	
 	static void delete_tmp_file()
@@ -120,4 +117,3 @@ namespace tool
 	}
 	
 }
-

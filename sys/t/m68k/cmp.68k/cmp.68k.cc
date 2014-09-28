@@ -20,9 +20,6 @@
 static const unsigned n_tests = 11;
 
 
-using tap::ok_if;
-
-
 static uint16_t the_CCR = 0;
 
 
@@ -60,51 +57,51 @@ static void cmpa()
 	
 	cmpa_l( 0, 0 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x04 );
+	EXPECT( (the_CCR & 0x1F) == 0x04 );
 	
 	cmpa_l( 0, 1 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x00 );
+	EXPECT( (the_CCR & 0x1F) == 0x00 );
 	
 	cmpa_l( 1, 0 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x09 );
+	EXPECT( (the_CCR & 0x1F) == 0x09 );
 	
 	cmpa_l( 0, 0xFFFFFFFF );
 	
-	ok_if( (the_CCR & 0x1F) == 0x08 );
+	EXPECT( (the_CCR & 0x1F) == 0x08 );
 	
 	cmpa_l( 0xFFFFFFFF, 0 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x01 );
+	EXPECT( (the_CCR & 0x1F) == 0x01 );
 	
 	
 	cmpa_w( 0, 0 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x04 );
+	EXPECT( (the_CCR & 0x1F) == 0x04 );
 	
 	cmpa_w( 0, 1 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x00 );
+	EXPECT( (the_CCR & 0x1F) == 0x00 );
 	
 	cmpa_w( 1, 0 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x09 );
+	EXPECT( (the_CCR & 0x1F) == 0x09 );
 	
 	cmpa_w( 0, 0xFFFFFFFF );
 	
-	ok_if( (the_CCR & 0x1F) == 0x08 );
+	EXPECT( (the_CCR & 0x1F) == 0x08 );
 	
 	cmpa_w( 0xFFFFFFFF, 0 );
 	
-	ok_if( (the_CCR & 0x1F) == 0x01 );
+	EXPECT( (the_CCR & 0x1F) == 0x01 );
 	
 	
 	const uint32_t x = 0x7654abcd;
 	
 	cmpa_w( x, x );  // 0x7654abcd - 0xffffabcd
 	
-	ok_if( (the_CCR & 0x1F) == 0x01 );
+	EXPECT( (the_CCR & 0x1F) == 0x01 );
 }
 
 
@@ -116,4 +113,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

@@ -13,9 +13,6 @@
 #include <Quickdraw.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
 // tap-out
 #include "tap/test.hh"
 
@@ -23,28 +20,7 @@
 #pragma exceptions off
 
 
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-
 static const unsigned n_tests = (8 + 8) + 16 + 8 + 8 + 8;
-
-
-static inline void expect( bool condition, const char* ref, size_t len )
-{
-	if ( !condition )
-	{
-		write( STDERR_FILENO, ref, len );
-	}
-	
-	tap::print( condition );
-}
-
-#define STR_( x ) #x
-#define STR( x ) STR_( x )
-
-#define LINEREF()  __FILE__ ":" STR(__LINE__) ": test failed:\n"
-
-#define EXPECT( cond )  expect( cond, STR_LEN( LINEREF() ) )
 
 
 static void basics()

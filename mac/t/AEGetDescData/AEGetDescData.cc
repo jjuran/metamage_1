@@ -30,9 +30,6 @@ static const unsigned n_tests = 2
                               + !TARGET_API_MAC_CARBON * 2;
 
 
-using tap::ok_if;
-
-
 enum Carbon_test_mode
 {
 	test_default,
@@ -62,9 +59,9 @@ static void null_NULL()
 	const bool ok_for_OS_9 = err == noErr;
 	const bool ok_for_OS_X = err == paramErr;
 	
-	ok_if( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
+	EXPECT( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
 	
-	ok_if( memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0 );
 }
 
 static void word_NULL()
@@ -77,12 +74,12 @@ static void word_NULL()
 	
 	OSErr err = AEGetDescData( &word_null, buffer, sizeof buffer - 1 );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
 	const bool unchanged = memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0;
 	const bool got_type  = memcmp( buffer, STR_LEN( "!@#$567890abcdef" ) ) == 0;
 	
-	ok_if( passed_for_mode( unchanged, got_type ) );
+	EXPECT( passed_for_mode( unchanged, got_type ) );
 }
 
 #if TARGET_RT_BIG_ENDIAN
@@ -99,12 +96,12 @@ static void true_NULL()
 	
 	OSErr err = AEGetDescData( &true_null, buffer, sizeof buffer - 1 );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
 	const bool unchanged = memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0;
 	const bool got_type  = memcmp( buffer, STR_LEN( TRUE_STRING "567890abcdef" ) ) == 0;
 	
-	ok_if( passed_for_mode( unchanged, got_type ) );
+	EXPECT( passed_for_mode( unchanged, got_type ) );
 }
 
 static void create_typeNull_with_data()
@@ -118,18 +115,18 @@ static void create_typeNull_with_data()
 		exit( 1 );
 	}
 	
-	ok_if( null_h.dataHandle == NULL );
+	EXPECT( null_h.dataHandle == NULL );
 	
 	OSErr err = AEGetDescData( &null_h, buffer, sizeof buffer - 1 );
 	
 	const bool ok_for_OS_9 = err == noErr;
 	const bool ok_for_OS_X = err == paramErr;
 	
-	ok_if( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
+	EXPECT( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
 	
 	const bool unchanged = memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0;
 	
-	ok_if( unchanged );
+	EXPECT( unchanged );
 }
 
 static void create_with_data_and_set_typeNull()
@@ -150,12 +147,12 @@ static void create_with_data_and_set_typeNull()
 	const bool ok_for_OS_9 = err == noErr;
 	const bool ok_for_OS_X = err == paramErr;
 	
-	ok_if( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
+	EXPECT( passed_for_mode( ok_for_OS_9, ok_for_OS_X ) );
 	
 	const bool got_data  = memcmp( buffer, STR_LEN( "Josh567890abcdef" ) ) == 0;
 	const bool unchanged = memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0;
 	
-	ok_if( passed_for_mode( got_data, unchanged ) );
+	EXPECT( passed_for_mode( got_data, unchanged ) );
 	
 	AEDisposeDesc( &null_h );
 }
@@ -177,11 +174,11 @@ static void purged_handle()
 	
 	OSErr err = AEGetDescData( &desc, buffer, sizeof buffer - 1 );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
 	const bool unchanged = memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0;
 	
-	ok_if( unchanged );
+	EXPECT( unchanged );
 	
 	AEDisposeDesc( &desc );
 	
@@ -218,4 +215,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

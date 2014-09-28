@@ -23,8 +23,6 @@ static const unsigned n_tests = 12 + 2 + 4;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void addx()
 {
@@ -64,9 +62,9 @@ static void addx()
 	
 	emu.step();
 	
-	ok_if( emu.d(1) == 0x0000068B );
+	EXPECT( emu.d(1) == 0x0000068B );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.d(0) = 0x00000000;
@@ -77,28 +75,28 @@ static void addx()
 	
 	emu.step();
 	
-	ok_if( emu.d(1) == 0x00000000 );
+	EXPECT( emu.d(1) == 0x00000000 );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
-	
-	
-	emu.step();
-	
-	ok_if( emu.a(0) == 1026 );
-	ok_if( emu.a(1) == 1027 );
-	
-	ok_if( code[1] == big_word( 0xD3D3 ) );
-	
-	ok_if( emu.sr.   x == 0x0 );
-	ok_if( emu.sr.nzvc == 0x8 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( code[1] == big_word( 0x13D3 ) );
+	EXPECT( emu.a(0) == 1026 );
+	EXPECT( emu.a(1) == 1027 );
 	
-	ok_if( emu.sr.   x == 0x1 );
-	ok_if( emu.sr.nzvc == 0x1 );
+	EXPECT( code[1] == big_word( 0xD3D3 ) );
+	
+	EXPECT( emu.sr.   x == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x8 );
+	
+	
+	emu.step();
+	
+	EXPECT( code[1] == big_word( 0x13D3 ) );
+	
+	EXPECT( emu.sr.   x == 0x1 );
+	EXPECT( emu.sr.nzvc == 0x1 );
 }
 
 static void subx()
@@ -133,9 +131,9 @@ static void subx()
 	
 	emu.step();
 	
-	ok_if( emu.d(1) == 0x00000000 );
+	EXPECT( emu.d(1) == 0x00000000 );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 }
 
 static void negx()
@@ -170,18 +168,18 @@ static void negx()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000000 );
+	EXPECT( emu.d(0) == 0x00000000 );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.sr.x = 1;
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x0000FFFF );
+	EXPECT( emu.d(0) == 0x0000FFFF );
 	
-	ok_if( emu.sr.nzvc == 0x9 );
+	EXPECT( emu.sr.nzvc == 0x9 );
 }
 
 int main( int argc, char** argv )
@@ -196,4 +194,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

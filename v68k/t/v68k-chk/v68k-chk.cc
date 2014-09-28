@@ -23,8 +23,6 @@ static const unsigned n_tests = 7;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void chk()
 {
@@ -69,7 +67,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.pc() < chk_address );
+	EXPECT( emu.pc() < chk_address );
 	
 	
 	// 0 <= 0 < 2
@@ -78,7 +76,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.pc() < chk_address );
+	EXPECT( emu.pc() < chk_address );
 	
 	
 	// 0 < 2 <= 2
@@ -87,7 +85,7 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.pc() < chk_address );
+	EXPECT( emu.pc() < chk_address );
 	
 	
 	// 0 < 3 > 2
@@ -96,9 +94,9 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.pc() == chk_address );
+	EXPECT( emu.pc() == chk_address );
 	
-	ok_if( !(emu.sr.nzvc & 0x8) );
+	EXPECT( !(emu.sr.nzvc & 0x8) );
 	
 	emu.step();  // RTE
 	
@@ -109,9 +107,9 @@ static void chk()
 	
 	emu.step();
 	
-	ok_if( emu.pc() == chk_address );
+	EXPECT( emu.pc() == chk_address );
 	
-	ok_if( emu.sr.nzvc & 0x8 );
+	EXPECT( emu.sr.nzvc & 0x8 );
 }
 
 int main( int argc, char** argv )
@@ -122,4 +120,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

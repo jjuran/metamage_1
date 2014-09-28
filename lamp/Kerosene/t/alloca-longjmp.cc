@@ -114,15 +114,12 @@ Rationale:
 #endif
   
 #ifdef __POWERPC__
-  #define TODO_ALLOCA_LONGJMP " # TODO: alloca/longjmp"
+	const bool alloca_longjmp_TODO = true;
 #else
-  #define TODO_ALLOCA_LONGJMP ""
+	const bool alloca_longjmp_TODO = false;
 #endif
 
 static const unsigned n_tests = N_TESTS;
-
-
-using tap::ok_if;
 
 
 static void emergency_exit()
@@ -151,7 +148,7 @@ static void test_alloca_siglongjmp()
 		
 		void* a = alloca( size );
 		
-		ok_if( local_variable == 101 );
+		EXPECT( local_variable == 101 );
 		
 		local_variable = 102;
 		
@@ -164,15 +161,15 @@ static void test_alloca_siglongjmp()
 		siglongjmp( jump_buffer, 1 );
 	}
 	
-	ok_if( local_variable == 102 );
+	EXPECT( local_variable == 102 );
 	
 	const recall::stack_frame* sp0_p1 = sp0->next;
 	
-	ok_if( sp0 == recall::get_frame_pointer(), "Original frame pointer intact" );
+	EXPECT( sp0 == recall::get_frame_pointer() );  // Original frame pointer intact
 	
-	ok_if( sp1_p1 == sp0_p0, "Linkback unchanged after alloca()" );
+	EXPECT( sp1_p1 == sp0_p0 );  // Linkback unchanged after alloca()
 	
-	ok_if( sp0_p1 == sp0_p0, "Original linkback intact" );
+	EXPECT( sp0_p1 == sp0_p0 );  // Original linkback intact
 	
 	if ( sp0_p1 != sp0_p0 )
 	{
@@ -209,11 +206,18 @@ static void test_alloca_longjmp()
 	
 	const recall::stack_frame* sp0_p1 = sp0->next;
 	
-	ok_if( sp0 == recall::get_frame_pointer(), "Original frame pointer intact" );
+	EXPECT( sp0 == recall::get_frame_pointer() );  // Original frame pointer intact
 	
-	ok_if( sp1_p1 == sp0_p0, "Linkback unchanged after alloca()" );
+	EXPECT( sp1_p1 == sp0_p0 );  // Linkback unchanged after alloca()
 	
-	ok_if( sp0_p1 == sp0_p0, "Original linkback intact" TODO_ALLOCA_LONGJMP );
+	if ( alloca_longjmp_TODO )
+	{
+		EXPECT( true );  // skip
+	}
+	else
+	{
+		EXPECT( sp0_p1 == sp0_p0 );  // Original linkback intact
+	}
 	
 	if ( sp0_p1 != sp0_p0 )
 	{
@@ -236,4 +240,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

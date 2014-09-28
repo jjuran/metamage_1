@@ -23,8 +23,6 @@ static const unsigned n_tests = 6 + 2 + 4;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void cmp()
 {
@@ -62,32 +60,32 @@ static void cmp()
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x9 );
+	EXPECT( emu.sr.nzvc == 0x9 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x8 );
+	EXPECT( emu.sr.nzvc == 0x8 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x1 );
+	EXPECT( emu.sr.nzvc == 0x1 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x9 );
+	EXPECT( emu.sr.nzvc == 0x9 );
 }
 
 static void cmpa()
@@ -122,12 +120,12 @@ static void cmpa()
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x1 );
+	EXPECT( emu.sr.nzvc == 0x1 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 }
 
 static void cmpm()
@@ -162,15 +160,15 @@ static void cmpm()
 	
 	emu.step();
 	
-	ok_if( emu.a(0) == 1024 + 2 );
-	ok_if( emu.a(1) == 1024 + 4 );
+	EXPECT( emu.a(0) == 1024 + 2 );
+	EXPECT( emu.a(1) == 1024 + 4 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 }
 
 int main( int argc, char** argv )
@@ -185,4 +183,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

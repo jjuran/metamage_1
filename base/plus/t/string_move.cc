@@ -13,20 +13,17 @@
 static const unsigned n_tests = 3;
 
 
-using tap::ok_if;
-
-
 static void move_to_var_string()
 {
 	plus::string foo = "0123456789abcdef";
 	plus::string bar = foo;
 	
-	ok_if( foo.data() == bar.data() );
+	EXPECT( foo.data() == bar.data() );
 	
 	plus::var_string baz = bar.move();
 	
-	ok_if( foo.data() != bar.data() );
-	ok_if( foo.data() != baz.data(), "move to var_string gets tainted" );
+	EXPECT( foo.data() != bar.data() );
+	EXPECT( foo.data() != baz.data() );  // move to var_string gets tainted
 }
 
 int main( int argc, const char *const *argv )
@@ -37,4 +34,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

@@ -23,8 +23,6 @@ static const unsigned n_tests = 4 + 12 + 4;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void btst()
 {
@@ -59,9 +57,9 @@ static void btst()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000123 );
+	EXPECT( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();  // BRA.S *-4
@@ -71,7 +69,7 @@ static void btst()
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0xB );
+	EXPECT( emu.sr.nzvc == 0xB );
 	
 	
 	emu.step();  // BRA.S *-4
@@ -81,7 +79,7 @@ static void btst()
 	
 	emu.step();
 	
-	ok_if( emu.sr.nzvc == 0xF );
+	EXPECT( emu.sr.nzvc == 0xF );
 	
 }
 
@@ -122,46 +120,46 @@ static void modify()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000123 );
+	EXPECT( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.sr.nzvc == 0x0 );
-	
-	
-	
-	emu.step();
-	
-	ok_if( emu.d(0) == 0x00000122 );
-	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000123 );
+	EXPECT( emu.d(0) == 0x00000122 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x0 );
 	
-	
-	emu.step();
-	
-	ok_if( emu.d(0) == 0x00000122 );
-	
-	ok_if( emu.sr.nzvc == 0x0 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000122 );
+	EXPECT( emu.d(0) == 0x00000123 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000123 );
+	EXPECT( emu.d(0) == 0x00000122 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x0 );
+	
+	
+	emu.step();
+	
+	EXPECT( emu.d(0) == 0x00000122 );
+	
+	EXPECT( emu.sr.nzvc == 0x4 );
+	
+	
+	emu.step();
+	
+	EXPECT( emu.d(0) == 0x00000123 );
+	
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 }
 
@@ -199,7 +197,7 @@ static void modulo()
 	
 	emu.step();
 	
-	ok_if( mem[1024] == 0x13 );
+	EXPECT( mem[1024] == 0x13 );
 	
 	
 	emu.d(1) = 0x0000000A;
@@ -207,12 +205,12 @@ static void modulo()
 	
 	emu.step();
 	
-	ok_if( mem[1024] == 0x17 );
+	EXPECT( mem[1024] == 0x17 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000400 );
+	EXPECT( emu.d(0) == 0x00000400 );
 	
 	
 	emu.d(1) = 0x00000020;
@@ -220,7 +218,7 @@ static void modulo()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000401 );
+	EXPECT( emu.d(0) == 0x00000401 );
 }
 
 int main( int argc, char** argv )
@@ -235,4 +233,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

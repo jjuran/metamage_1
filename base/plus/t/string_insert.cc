@@ -16,16 +16,13 @@
 static const unsigned n_tests = 6;
 
 
-using tap::ok_if;
-
-
 static void insert()
 {
 	plus::var_string test;
 	
 	test.insert( 0, "" );
 	
-	ok_if( test == "" );
+	EXPECT( test == "" );
 	
 	bool exception_thrown = false;
 	
@@ -38,23 +35,23 @@ static void insert()
 		exception_thrown = true;
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 	
 	test.insert( 0, "bar" );
 	
-	ok_if( test == "bar" );
+	EXPECT( test == "bar" );
 	
 	test.insert( 3, "baz" );
 	
-	ok_if( test == "barbaz" );
+	EXPECT( test == "barbaz" );
 	
 	test.insert( 0, "foo" );
 	
-	ok_if( test == "foobarbaz" );
+	EXPECT( test == "foobarbaz" );
 	
 	test.insert( test.begin() + 6, ' ' );
 	
-	ok_if( test == "foobar baz" );
+	EXPECT( test == "foobar baz" );
 }
 
 int main( int argc, const char *const *argv )
@@ -65,4 +62,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

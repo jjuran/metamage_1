@@ -16,9 +16,6 @@
 static const unsigned n_tests = 1 + 4 * 29;
 
 
-using tap::ok_if;
-
-
 enum
 {
 	Option_verbose  = 'v',
@@ -95,7 +92,7 @@ static void null()
 	                                 options,
 	                                 Flag_return_errors );
 	
-	ok_if( opt == 0 );
+	EXPECT( opt == 0 );
 }
 
 static void other()
@@ -118,7 +115,7 @@ static void other()
 		                                 Flag_return_errors,
 		                                 &result );
 		
-		ok_if( opt == t->opt );
+		EXPECT( opt == t->opt );
 		
 		short delta = args - (char* const*) t->argv;
 		
@@ -127,17 +124,17 @@ static void other()
 			delta |= (result.mark - *args) << 4;
 		}
 		
-		ok_if( delta == (t->delta & 0xFF) );
+		EXPECT( delta == (t->delta & 0xFF) );
 		
-		ok_if( (result.param != 0) == (t->param != 0) );
+		EXPECT( (result.param != 0) == (t->param != 0) );
 		
 		if ( result.param  &&  t->param )
 		{
-			ok_if( strcmp( result.param, t->param ) == 0 );
+			EXPECT( strcmp( result.param, t->param ) == 0 );
 		}
 		else
 		{
-			ok_if( true );
+			EXPECT( true );
 		}
 	}
 }

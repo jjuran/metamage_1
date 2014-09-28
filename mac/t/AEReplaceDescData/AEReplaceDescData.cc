@@ -33,9 +33,6 @@ static const unsigned n_tests = 1
                               + !TARGET_API_MAC_CARBON * 4;
 
 
-using tap::ok_if;
-
-
 enum Carbon_test_mode
 {
 	test_default,
@@ -60,7 +57,7 @@ static void null_NULL_null_NULL()
 	
 	OSErr err = AEReplaceDescData( typeNull, NULL, 0, &null );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 }
 
 static void null_NULL_null_data()
@@ -69,9 +66,9 @@ static void null_NULL_null_data()
 	
 	OSErr err = AEReplaceDescData( typeNull, STR_LEN( "Data" ), &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.dataHandle == NULL );
+	EXPECT( desc.dataHandle == NULL );
 }
 
 static void null_NULL_type_NULL()
@@ -80,21 +77,21 @@ static void null_NULL_type_NULL()
 	
 	OSErr err = AEReplaceDescData( typeType, NULL, 0, &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeType );
+	EXPECT( desc.descriptorType == typeType );
 	
-	ok_if( desc.dataHandle != NULL );
+	EXPECT( desc.dataHandle != NULL );
 	
-	ok_if( AEGetDescDataSize( &desc ) == 0 );
+	EXPECT( AEGetDescDataSize( &desc ) == 0 );
 	
 	char buffer[] = "1234567890abcdef";
 	
 	err = AEGetDescData( &desc, buffer, sizeof buffer - 1 );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "1234567890abcdef" ) ) == 0 );
 	
 	AEDisposeDesc( &desc );
 }
@@ -105,21 +102,21 @@ static void null_NULL_type_data()
 	
 	OSErr err = AEReplaceDescData( typeType, STR_LEN( "Data" ), &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeType );
+	EXPECT( desc.descriptorType == typeType );
 	
-	ok_if( desc.dataHandle != NULL );
+	EXPECT( desc.dataHandle != NULL );
 	
-	ok_if( AEGetDescDataSize( &desc ) == 4 );
+	EXPECT( AEGetDescDataSize( &desc ) == 4 );
 	
 	char buffer[] = "1234567890abcdef";
 	
 	err = AEGetDescData( &desc, buffer, sizeof buffer - 1 );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( memcmp( buffer, STR_LEN( "Data567890abcdef" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "Data567890abcdef" ) ) == 0 );
 	
 	AEDisposeDesc( &desc );
 }
@@ -138,10 +135,10 @@ static void null_data_null()
 	
 	OSErr err = AEReplaceDescData( typeNull, NULL, 0, &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeNull );
-	ok_if( desc.dataHandle     == NULL     );
+	EXPECT( desc.descriptorType == typeNull );
+	EXPECT( desc.dataHandle     == NULL     );
 }
 
 static void type_data_null()
@@ -155,10 +152,10 @@ static void type_data_null()
 	
 	OSErr err = AEReplaceDescData( typeNull, NULL, 0, &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeNull );
-	ok_if( desc.dataHandle     == NULL     );
+	EXPECT( desc.descriptorType == typeNull );
+	EXPECT( desc.dataHandle     == NULL     );
 }
 
 static void null_data_data()
@@ -176,20 +173,20 @@ static void null_data_data()
 	
 	OSErr err = AEReplaceDescData( typeType, &type, sizeof type, &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeType );
-	ok_if( desc.dataHandle     != NULL     );
+	EXPECT( desc.descriptorType == typeType );
+	EXPECT( desc.dataHandle     != NULL     );
 	
-	ok_if( AEGetDescDataSize( &desc ) == 4 );
+	EXPECT( AEGetDescDataSize( &desc ) == 4 );
 	
 	type = 0;
 	
 	err = AEGetDescData( &desc, &type, sizeof type );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( type == 'Type' );
+	EXPECT( type == 'Type' );
 	
 	AEDisposeDesc( &desc );
 }
@@ -208,20 +205,20 @@ static void type_data_data()
 	
 	OSErr err = AEReplaceDescData( typeType, &type, sizeof type, &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeType );
-	ok_if( desc.dataHandle     != NULL     );
+	EXPECT( desc.descriptorType == typeType );
+	EXPECT( desc.dataHandle     != NULL     );
 	
-	ok_if( AEGetDescDataSize( &desc ) == 4 );
+	EXPECT( AEGetDescDataSize( &desc ) == 4 );
 	
 	type = 0;
 	
 	err = AEGetDescData( &desc, &type, sizeof type );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( type == 'Type' );
+	EXPECT( type == 'Type' );
 	
 	AEDisposeDesc( &desc );
 }
@@ -244,12 +241,12 @@ static void purged_handle()
 	
 	OSErr err = AEReplaceDescData( typeType, &type, sizeof type, &desc );
 	
-	ok_if( err == noErr );
+	EXPECT( err == noErr );
 	
-	ok_if( desc.descriptorType == typeType );
-	ok_if( desc.dataHandle     != NULL     );
+	EXPECT( desc.descriptorType == typeType );
+	EXPECT( desc.dataHandle     != NULL     );
 	
-	ok_if( AEGetDescDataSize( &desc ) == 4 );
+	EXPECT( AEGetDescDataSize( &desc ) == 4 );
 	
 	AEDisposeDesc( &desc );
 	
@@ -292,4 +289,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

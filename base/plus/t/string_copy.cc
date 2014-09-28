@@ -22,9 +22,6 @@
 static const unsigned n_tests = 5;
 
 
-using tap::ok_if;
-
-
 static void copy()
 {
 	char buffer[ 8 ];
@@ -35,11 +32,11 @@ static void copy()
 	
 	s.copy( buffer, 4, 3 );
 	
-	ok_if( memcmp( buffer, STR_LEN( "4567____" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "4567____" ) ) == 0 );
 	
 	s.copy( buffer, 5, 7 );
 	
-	ok_if( memcmp( buffer, STR_LEN( "8907____" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "8907____" ) ) == 0 );
 	
 	bool exception_thrown = false;
 	
@@ -52,9 +49,9 @@ static void copy()
 		exception_thrown = true;
 	}
 	
-	ok_if( memcmp( buffer, STR_LEN( "8907____" ) ) == 0 );
+	EXPECT( memcmp( buffer, STR_LEN( "8907____" ) ) == 0 );
 	
-	ok_if( !exception_thrown );
+	EXPECT( !exception_thrown );
 	
 	exception_thrown = false;
 	
@@ -70,7 +67,7 @@ static void copy()
 	{
 	}
 	
-	ok_if( exception_thrown );
+	EXPECT( exception_thrown );
 }
 
 int main( int argc, const char *const *argv )
@@ -81,4 +78,3 @@ int main( int argc, const char *const *argv )
 	
 	return 0;
 }
-

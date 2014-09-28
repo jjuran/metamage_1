@@ -16,9 +16,6 @@
 static const unsigned n_tests = 2 + 1 + 4 + 4 + 2 + 2 + 4 + 4 + 6;
 
 
-using tap::ok_if;
-
-
 static void no_mem()
 {
 	using namespace v68k;
@@ -27,11 +24,11 @@ static void no_mem()
 	
 	emulator emu( mc68000, memory );
 	
-	ok_if( emu.condition == startup );
+	EXPECT( emu.condition == startup );
 	
 	emu.reset();
 	
-	ok_if( emu.condition == halted );
+	EXPECT( emu.condition == halted );
 }
 
 static void only_7_bytes()
@@ -46,7 +43,7 @@ static void only_7_bytes()
 	
 	emu.reset();
 	
-	ok_if( emu.condition == halted );
+	EXPECT( emu.condition == halted );
 }
 
 static void only_8_bytes()
@@ -61,12 +58,12 @@ static void only_8_bytes()
 	
 	emu.reset();
 	
-	ok_if( emu.condition == halted );
+	EXPECT( emu.condition == halted );
 	
-	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
+	EXPECT( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
-	ok_if( emu.a(7) == 0 );
-	ok_if( emu.pc()   == 0 );
+	EXPECT( emu.a(7) == 0 );
+	EXPECT( emu.pc()   == 0 );
 }
 
 static void only_1026_bytes()
@@ -81,12 +78,12 @@ static void only_1026_bytes()
 	
 	emu.reset();
 	
-	ok_if( emu.condition == normal );
+	EXPECT( emu.condition == normal );
 	
-	ok_if( (emu.get_SR() & 0xFFE0) == 0x2700 );
+	EXPECT( (emu.get_SR() & 0xFFE0) == 0x2700 );
 	
-	ok_if( emu.a(7) ==    0 );
-	ok_if( emu.pc()   == 1024 );
+	EXPECT( emu.a(7) ==    0 );
+	EXPECT( emu.pc()   == 1024 );
 }
 
 static void bad_SP_on_reset()
@@ -101,9 +98,9 @@ static void bad_SP_on_reset()
 	
 	emu.reset();
 	
-	ok_if( emu.condition == normal );
+	EXPECT( emu.condition == normal );
 	
-	ok_if( emu.a(7) == 0xFFFFFFFF );
+	EXPECT( emu.a(7) == 0xFFFFFFFF );
 }
 
 static void bad_PC_on_reset()
@@ -118,9 +115,9 @@ static void bad_PC_on_reset()
 	
 	emu.reset();
 	
-	ok_if( emu.condition == halted );
+	EXPECT( emu.condition == halted );
 	
-	ok_if( emu.pc() == 0xFFFFFFFF );
+	EXPECT( emu.pc() == 0xFFFFFFFF );
 }
 
 static void stop_FFFF()
@@ -146,13 +143,13 @@ static void stop_FFFF()
 	
 	emu.set_CCR( 0 );
 	
-	ok_if( !emu.step() );
+	EXPECT( !emu.step() );
 	
-	ok_if( emu.condition == finished );
+	EXPECT( emu.condition == finished );
 	
-	ok_if( emu.get_SR() == 0x2700 );
+	EXPECT( emu.get_SR() == 0x2700 );
 	
-	ok_if( emu.pc() == 1028 );
+	EXPECT( emu.pc() == 1028 );
 }
 
 static void stop_2EFF()
@@ -176,13 +173,13 @@ static void stop_2EFF()
 	
 	emu.reset();
 	
-	ok_if( !emu.step() );
+	EXPECT( !emu.step() );
 	
-	ok_if( emu.condition == stopped );
+	EXPECT( emu.condition == stopped );
 	
-	ok_if( emu.get_SR() == 0x261F );
+	EXPECT( emu.get_SR() == 0x261F );
 	
-	ok_if( emu.pc() == 1028 );
+	EXPECT( emu.pc() == 1028 );
 }
 
 static int bkpt_vector = -1;
@@ -217,11 +214,11 @@ static void bkpt()
 	
 	emu.reset();
 	
-	ok_if( !emu.step() );
+	EXPECT( !emu.step() );
 	
-	ok_if( bkpt_vector == 0 );
+	EXPECT( bkpt_vector == 0 );
 	
-	ok_if( emu.pc() == 1024 );
+	EXPECT( emu.pc() == 1024 );
 	
 	emu.opcode = 0x484F;
 	
@@ -231,11 +228,11 @@ static void bkpt()
 	
 	emu.step();
 	
-	ok_if( bkpt_vector == 7 );
+	EXPECT( bkpt_vector == 7 );
 	
-	ok_if( emu.condition == normal );
+	EXPECT( emu.condition == normal );
 	
-	ok_if( emu.opcode == 0xA123 );
+	EXPECT( emu.opcode == 0xA123 );
 }
 
 int main( int argc, char** argv )
@@ -262,4 +259,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

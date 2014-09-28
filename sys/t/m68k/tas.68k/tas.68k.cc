@@ -20,9 +20,6 @@
 static const unsigned n_tests = 8 * 2;
 
 
-using tap::ok_if;
-
-
 static uint16_t the_CCR = 0;
 
 
@@ -66,28 +63,28 @@ static void tas( test_and_setter test_and_set )
 {
 	the_CCR = 0x00;
 	
-	ok_if( test_and_set( 0x00 ) == 0x80 );
+	EXPECT( test_and_set( 0x00 ) == 0x80 );
 	
-	ok_if( the_CCR == 0x04 );
+	EXPECT( the_CCR == 0x04 );
 	
 	
 	the_CCR = 0x1F;
 	
-	ok_if( test_and_set( 0x7F ) == 0xFF );
+	EXPECT( test_and_set( 0x7F ) == 0xFF );
 	
-	ok_if( the_CCR == 0x10 );
+	EXPECT( the_CCR == 0x10 );
 	
 	
-	ok_if( test_and_set( 0x80 ) == 0x80 );
+	EXPECT( test_and_set( 0x80 ) == 0x80 );
 	
-	ok_if( the_CCR == 0x18 );
+	EXPECT( the_CCR == 0x18 );
 	
 	
 	the_CCR = 0x00;
 	
-	ok_if( test_and_set( 0xFF ) == 0xFF );
+	EXPECT( test_and_set( 0xFF ) == 0xFF );
 	
-	ok_if( the_CCR == 0x08 );
+	EXPECT( the_CCR == 0x08 );
 	
 }
 
@@ -101,4 +98,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

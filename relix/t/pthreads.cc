@@ -22,9 +22,6 @@
 static const unsigned n_tests = 3;
 
 
-using tap::ok_if;
-
-
 static int output;
 
 static void* entry( void* arg )
@@ -66,7 +63,7 @@ static void hello_world()
 	
 	pthread_join( thread, &result );
 	
-	ok_if( errno != 123, "per-thread errno" );
+	EXPECT( errno != 123, "per-thread errno" );
 	
 	const char* s = (const char*) result;
 	
@@ -76,9 +73,9 @@ static void hello_world()
 	
 	ssize_t n_read = CHECK( read( fds[ 0 ], buffer, sizeof buffer ) );
 	
-	ok_if( n_read == sizeof "Hello world!\n" - 1 );
+	EXPECT( n_read == sizeof "Hello world!\n" - 1 );
 	
-	ok_if( memcmp( buffer, "Hello world!\n", n_read ) == 0 );
+	EXPECT( memcmp( buffer, "Hello world!\n", n_read ) == 0 );
 }
 
 int main( int argc, char** argv )
@@ -89,4 +86,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-

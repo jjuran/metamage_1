@@ -23,8 +23,6 @@ static const unsigned n_tests = 6 + 13;
 using v68k::big_word;
 using v68k::big_longword;
 
-using tap::ok_if;
-
 
 static void moveq()
 {
@@ -58,23 +56,23 @@ static void moveq()
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0x00000000 );
+	EXPECT( emu.d(0) == 0x00000000 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
-	
-	
-	emu.step();
-	
-	ok_if( emu.d(0) == 0x0000007F );
-	
-	ok_if( emu.sr.nzvc == 0x0 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.d(0) == 0xFFFFFF80 );
+	EXPECT( emu.d(0) == 0x0000007F );
 	
-	ok_if( emu.sr.nzvc == 0x8 );
+	EXPECT( emu.sr.nzvc == 0x0 );
+	
+	
+	emu.step();
+	
+	EXPECT( emu.d(0) == 0xFFFFFF80 );
+	
+	EXPECT( emu.sr.nzvc == 0x8 );
 }
 
 static void move()
@@ -114,47 +112,47 @@ static void move()
 	
 	emu.step();
 	
-	ok_if( emu.d(1) == 0x12345600 );
+	EXPECT( emu.d(1) == 0x12345600 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
-	
-	
-	emu.step();
-	
-	ok_if( emu.a(0) == 0x00005600 );
-	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.a(0) == 0xFFFF8765 );
+	EXPECT( emu.a(0) == 0x00005600 );
+	
+	EXPECT( emu.sr.nzvc == 0x4 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.a(7) == 0x0FFC );
+	EXPECT( emu.a(0) == 0xFFFF8765 );
+	
+	
+	emu.step();
+	
+	EXPECT( emu.a(7) == 0x0FFC );
 	
 	uint32_t x = 0;
 	
-	ok_if( emu.mem.get_long( emu.a(7), x, emu.data_space() ) );
+	EXPECT( emu.mem.get_long( emu.a(7), x, emu.data_space() ) );
 	
-	ok_if( x == 0xCBA98765 );
+	EXPECT( x == 0xCBA98765 );
 	
-	ok_if( emu.sr.nzvc == 0x8 );
+	EXPECT( emu.sr.nzvc == 0x8 );
 	
 	
 	emu.step();
 	
-	ok_if( emu.a(7) == 0x0FFA );
+	EXPECT( emu.a(7) == 0x0FFA );
 	
 	uint8_t byte = 0;
 	
-	ok_if( emu.mem.get_byte( emu.a(7), byte, emu.data_space() ) );
+	EXPECT( emu.mem.get_byte( emu.a(7), byte, emu.data_space() ) );
 	
-	ok_if( byte == 0x00 );
+	EXPECT( byte == 0x00 );
 	
-	ok_if( emu.sr.nzvc == 0x4 );
+	EXPECT( emu.sr.nzvc == 0x4 );
 }
 
 int main( int argc, char** argv )
@@ -167,4 +165,3 @@ int main( int argc, char** argv )
 	
 	return 0;
 }
-
