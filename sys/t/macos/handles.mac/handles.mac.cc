@@ -33,9 +33,6 @@
 static const unsigned n_tests = 2 + 5 + 5 * 4 + 5 + 13 + 16;
 
 
-using tap::ok_if;
-
-
 static bool in_v68k()
 {
 	static bool b = mac::sys::gestalt_defined( 'v68k' );
@@ -64,8 +61,8 @@ static void new_empty()
 {
 	Handle a = NewEmptyHandle();
 	
-	ok_if( a != NULL );
-	ok_if( *a == NULL );
+	EXPECT( a != NULL );
+	EXPECT( *a == NULL );
 	
 	DisposeHandle( a );
 }
@@ -74,13 +71,13 @@ static void handle_0()
 {
 	Handle a = NewHandle( 0 );
 	
-	ok_if( a != NULL );
-	ok_if( *a != NULL );
+	EXPECT( a != NULL );
+	EXPECT( *a != NULL );
 	
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[  0 ] == 0xC8C8C8C8 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[  0 ] == 0xC8C8C8C8 );
 	
-	ok_if( GetHandleSize( a ) == 0 );
+	EXPECT( GetHandleSize( a ) == 0 );
 	
 	DisposeHandle( a );
 }
@@ -89,13 +86,13 @@ static void handle_1234( int n )
 {
 	Handle a = NewHandle( n );
 	
-	ok_if( a != NULL );
-	ok_if( *a != NULL );
+	EXPECT( a != NULL );
+	EXPECT( *a != NULL );
 	
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[  1 ] == 0xC8C8C8C8 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[  1 ] == 0xC8C8C8C8 );
 	
-	ok_if( GetHandleSize( a ) == n );
+	EXPECT( GetHandleSize( a ) == n );
 	
 	DisposeHandle( a );
 }
@@ -104,13 +101,13 @@ static void handle_5()
 {
 	Handle a = NewHandle( 5 );
 	
-	ok_if( a != NULL );
-	ok_if( *a != NULL );
+	EXPECT( a != NULL );
+	EXPECT( *a != NULL );
 	
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[  2 ] == 0xC8C8C8C8 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[  2 ] == 0xC8C8C8C8 );
 	
-	ok_if( GetHandleSize( a ) == 5 );
+	EXPECT( GetHandleSize( a ) == 5 );
 	
 	DisposeHandle( a );
 }
@@ -134,12 +131,12 @@ static void resize()
 	
 	Handle a = NewHandleClear( size );
 	
-	ok_if( a != NULL );
-	ok_if( *a != NULL );
+	EXPECT( a != NULL );
+	EXPECT( *a != NULL );
 	
-	ok_if( GetHandleSize( a ) == size );
+	EXPECT( GetHandleSize( a ) == size );
 	
-	ok_if( is_clear( *a, *a + size ) );
+	EXPECT( is_clear( *a, *a + size ) );
 	
 	memcpy( *a, STR_LEN( "This is a test." ) );
 	
@@ -147,27 +144,27 @@ static void resize()
 	
 	SetHandleSize( a, size );
 	
-	ok_if( GetHandleSize( a ) == size );
+	EXPECT( GetHandleSize( a ) == size );
 	
-	ok_if( memcmp( *a, STR_LEN( "This is a te" ) ) == 0 );
+	EXPECT( memcmp( *a, STR_LEN( "This is a te" ) ) == 0 );
 	
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[  3 ] == 0xC8C8C8C8 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[  3 ] == 0xC8C8C8C8 );
 	
 	size = 100;
 	
 	SetHandleSize( a, size );
 	
-	ok_if( GetHandleSize( a ) == size );
+	EXPECT( GetHandleSize( a ) == size );
 	
-	ok_if( memcmp( *a, STR_LEN( "This is a te" ) ) == 0 );
+	EXPECT( memcmp( *a, STR_LEN( "This is a te" ) ) == 0 );
 	
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
-	ok_if( !in_v68k()  ||  ((uint32_t*) *a)[ 25 ] == 0xC8C8C8C8 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[ -1 ] == 0xC7C7C7C7 );
+	EXPECT( !in_v68k()  ||  ((uint32_t*) *a)[ 25 ] == 0xC8C8C8C8 );
 	
 	EmptyHandle( a );
 	
-	ok_if( *a == NULL );
+	EXPECT( *a == NULL );
 	
 	DisposeHandle( a );
 }
@@ -178,77 +175,77 @@ static void errors()
 	
 	Handle neg1 = NewHandle( -1 );
 	
-	ok_if( (neg1 == NULL) == (in_v68k()  ||  sysv >= 0x0800) );
+	EXPECT( (neg1 == NULL) == (in_v68k()  ||  sysv >= 0x0800) );
 	
 	if ( neg1 != NULL )
 	{
-		ok_if( GetHandleSize( neg1 ) == 0 );
+		EXPECT( GetHandleSize( neg1 ) == 0 );
 		
 		DisposeHandle( neg1 );
 	}
 	else
 	{
-		ok_if( MemError() == memSCErr );
+		EXPECT( MemError() == memSCErr );
 	}
 	
-	ok_if( GetHandleSize( NULL ) == 0 );
+	EXPECT( GetHandleSize( NULL ) == 0 );
 	
-	ok_if( MemError() == nilHandleErr );
+	EXPECT( MemError() == nilHandleErr );
 	
 	DisposeHandle( NULL );
 	
-	ok_if( MemError() == ((sysv >= 0x0800  &&  sysv < 0x1000) ? 0 : nilHandleErr) );
+	EXPECT( MemError() == ((sysv >= 0x0800  &&  sysv < 0x1000) ? 0 : nilHandleErr) );
 	
 	EmptyHandle( NULL );
 	
-	ok_if( MemError() == (in_os9() ? 0 : nilHandleErr) );
+	EXPECT( MemError() == (in_os9() ? 0 : nilHandleErr) );
 	
 	ReallocateHandle( NULL, 1 );
 	
-	ok_if( MemError() == (in_os9() ? 0 : nilHandleErr) );
+	EXPECT( MemError() == (in_os9() ? 0 : nilHandleErr) );
 	
 	ReallocateHandle( NULL, -1 );
 	
-	ok_if( MemError() == (in_os9() ? 0 : nilHandleErr) );
+	EXPECT( MemError() == (in_os9() ? 0 : nilHandleErr) );
 	
 	Handle a = NewEmptyHandle();
 	
-	ok_if( GetHandleSize( a ) == 0 );
+	EXPECT( GetHandleSize( a ) == 0 );
 	
 	SetHandleSize( a, 1 );
 	
-	ok_if( MemError() == nilHandleErr );
+	EXPECT( MemError() == nilHandleErr );
 	
 	SetHandleSize( NULL, 1 );
 	
-	ok_if( MemError() == nilHandleErr );
+	EXPECT( MemError() == nilHandleErr );
 	
 	SetHandleSize( NULL, -1 );
 	
-	ok_if( MemError() == nilHandleErr );
+	EXPECT( MemError() == nilHandleErr );
 	
 	Handle b = NewHandle( 1 );
 	
 	SetHandleSize( b, -1 );
 	
-	ok_if( MemError() == (in_os9() ? 0 : memSCErr) );
+	EXPECT( MemError() == (in_os9() ? 0 : memSCErr) );
 	
-	ok_if( in_os9() ? GetHandleSize( b ) == 0 : true );
+	EXPECT( in_os9() ? GetHandleSize( b ) == 0 : true );
 	
 	if ( !in_osx() )
 	{
 		SetHandleSize( b, 1024 * 1024 * 1024 );  // 1 GiB
 		
-		ok_if( MemError() == memFullErr );
+		EXPECT( MemError() == memFullErr );
 		
 		Handle c = NewHandle( 1024 * 1024 * 1024 );  // 1 GiB
 		
-		ok_if( MemError() == memFullErr );
+		EXPECT( MemError() == memFullErr );
 	}
 	else
 	{
-		ok_if( true );
-		ok_if( true );
+		EXPECT( true );
+		EXPECT( true );
 	}
 }
 
