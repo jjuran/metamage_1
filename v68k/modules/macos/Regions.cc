@@ -75,12 +75,24 @@ pascal void SetRectRgn_patch( MacRegion**  rgn,
                               short        right,
                               short        bottom )
 {
-	const Rect r = { top, left, bottom, right };
-	
-	set_rect_region( rgn, r );
+	if ( top >= bottom  ||  left >= right )
+	{
+		set_rect_region( rgn, emptyRect );
+	}
+	else
+	{
+		const Rect r = { top, left, bottom, right };
+		
+		set_rect_region( rgn, r );
+	}
 }
 
 pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 {
+	if ( r->top >= r->bottom  ||  r->left >= r->right )
+	{
+		r = &emptyRect;
+	}
+	
 	set_rect_region( rgn, *r );
 }
