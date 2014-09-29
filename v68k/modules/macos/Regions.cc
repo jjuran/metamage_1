@@ -14,6 +14,9 @@
 #include <string.h>
 
 
+static const Rect emptyRect = { 0, 0, 0, 0 };
+
+
 pascal MacRegion** NewRgn_patch()
 {
 	RgnHandle h = (RgnHandle) NewHandleClear( sizeof (MacRegion) );
@@ -50,18 +53,20 @@ pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 	memcpy( *dst, *src, size );
 }
 
-pascal void SetEmptyRgn_patch( MacRegion** rgn )
+static void set_rect_region( MacRegion** rgn, const Rect& r )
 {
 	MacRegion& region = **rgn;
 	
 	region.rgnSize = sizeof (MacRegion);
 	
-	region.rgnBBox.top    = 0;
-	region.rgnBBox.left   = 0;
-	region.rgnBBox.bottom = 0;
-	region.rgnBBox.right  = 0;
+	region.rgnBBox = r;
 	
 	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
+}
+
+pascal void SetEmptyRgn_patch( MacRegion** rgn )
+{
+	set_rect_region( rgn, emptyRect );
 }
 
 pascal void SetRectRgn_patch( MacRegion**  rgn,
@@ -70,25 +75,12 @@ pascal void SetRectRgn_patch( MacRegion**  rgn,
                               short        right,
                               short        bottom )
 {
-	MacRegion& region = **rgn;
+	const Rect r = { top, left, bottom, right };
 	
-	region.rgnSize = sizeof (MacRegion);
-	
-	region.rgnBBox.top    = top;
-	region.rgnBBox.left   = left;
-	region.rgnBBox.bottom = bottom;
-	region.rgnBBox.right  = right;
-	
-	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
+	set_rect_region( rgn, r );
 }
 
 pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 {
-	MacRegion& region = **rgn;
-	
-	region.rgnSize = sizeof (MacRegion);
-	
-	region.rgnBBox = *r;
-	
-	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
+	set_rect_region( rgn, *r );
 }
