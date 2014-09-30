@@ -14,6 +14,9 @@
 #include <string.h>
 
 
+static const Rect emptyRect = { 0, 0, 0, 0 };
+
+
 pascal MacRegion** NewRgn_patch()
 {
 	RgnHandle h = (RgnHandle) NewHandleClear( sizeof (MacRegion) );
@@ -50,18 +53,20 @@ pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 	memcpy( *dst, *src, size );
 }
 
-pascal void SetEmptyRgn_patch( MacRegion** rgn )
+static void set_rect_region( MacRegion** rgn, const Rect& r )
 {
 	MacRegion& region = **rgn;
 	
 	region.rgnSize = sizeof (MacRegion);
 	
-	region.rgnBBox.top    = 0;
-	region.rgnBBox.left   = 0;
-	region.rgnBBox.bottom = 0;
-	region.rgnBBox.right  = 0;
+	region.rgnBBox = r;
 	
 	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
+}
+
+pascal void SetEmptyRgn_patch( MacRegion** rgn )
+{
+	set_rect_region( rgn, emptyRect );
 }
 
 pascal void SetRectRgn_patch( MacRegion**  rgn,
@@ -70,25 +75,42 @@ pascal void SetRectRgn_patch( MacRegion**  rgn,
                               short        right,
                               short        bottom )
 {
-	MacRegion& region = **rgn;
-	
-	region.rgnSize = sizeof (MacRegion);
-	
-	region.rgnBBox.top    = top;
-	region.rgnBBox.left   = left;
-	region.rgnBBox.bottom = bottom;
-	region.rgnBBox.right  = right;
-	
-	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
+	if ( top >= bottom  ||  left >= right )
+	{
+		set_rect_region( rgn, emptyRect );
+	}
+	else
+	{
+		const Rect r = { top, left, bottom, right };
+		
+		set_rect_region( rgn, r );
+	}
 }
 
 pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 {
+	if ( r->top >= r->bottom  ||  r->left >= r->right )
+	{
+		r = &emptyRect;
+	}
+	
+	set_rect_region( rgn, *r );
+}
+
+pascal unsigned char EmptyRgn_patch( MacRegion** rgn )
+{
 	MacRegion& region = **rgn;
 	
-	region.rgnSize = sizeof (MacRegion);
+	const Rect& bounds = region.rgnBBox;
 	
-	region.rgnBBox = *r;
+	/*
+		Empty regions should be 0,0 - 0,0, but Postel's Law suggests we
+		allow for the caller manipulating the bounding box directly --
+		i.e. don't just check for all zero data.
+	*/
 	
-	SetHandleSize( (Handle) rgn, sizeof (MacRegion) );
+	if ( bounds.top >= bounds.bottom )  return true;
+	if ( bounds.left >= bounds.right )  return true;
+	
+	return false;
 }
