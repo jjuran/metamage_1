@@ -20,7 +20,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 21;
+static const unsigned n_tests = 26;
 
 
 static void empty()
@@ -55,6 +55,17 @@ static void empty()
 	EXPECT( a[0]->rgnBBox.bottom == 0 );
 	
 	SetRectRgn( a, 1, 0, 10000, 0 );
+	
+	EXPECT( EmptyRgn( a ) );
+	
+	EXPECT( a[0]->rgnBBox.top    == 0 );
+	EXPECT( a[0]->rgnBBox.left   == 0 );
+	EXPECT( a[0]->rgnBBox.right  == 0 );
+	EXPECT( a[0]->rgnBBox.bottom == 0 );
+	
+	const Rect r = { 1, 2, -3, -4 };
+	
+	RectRgn( a, &r );
 	
 	EXPECT( EmptyRgn( a ) );
 	
