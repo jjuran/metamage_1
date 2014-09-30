@@ -20,7 +20,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 26;
+static const unsigned n_tests = 26 + 10;
 
 
 static void empty()
@@ -77,12 +77,40 @@ static void empty()
 	DisposeRgn( a );
 }
 
+static void unary()
+{
+	RgnHandle a = NewRgn();
+	
+	SetRectRgn( a, 1, 2, 4, 8 );
+	
+	EXPECT( !EmptyRgn( a ) );
+	
+	EXPECT( a[0]->rgnBBox.top    == 2 );
+	EXPECT( a[0]->rgnBBox.left   == 1 );
+	EXPECT( a[0]->rgnBBox.bottom == 8 );
+	EXPECT( a[0]->rgnBBox.right  == 4 );
+	
+	const Rect r = { 1, 2, 3, 5 };
+	
+	RectRgn( a, &r );
+	
+	EXPECT( !EmptyRgn( a ) );
+	
+	EXPECT( a[0]->rgnBBox.top    == 1 );
+	EXPECT( a[0]->rgnBBox.left   == 2 );
+	EXPECT( a[0]->rgnBBox.bottom == 3 );
+	EXPECT( a[0]->rgnBBox.right  == 5 );
+	
+	DisposeRgn( a );
+}
+
 
 int main( int argc, char** argv )
 {
 	tap::start( "region-math.mac", n_tests );
 	
 	empty();
+	unary();
 	
 	return 0;
 }
