@@ -20,8 +20,33 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 26 + 10;
+static const unsigned n_tests = 11 + 4;
 
+
+#define EXPECT_RGN( rgn, mem )  EXPECT_CMP( *(rgn), (rgn)[0]->rgnSize, (mem), sizeof (mem) )
+
+
+static short empty_region[] = { sizeof (MacRegion), 0, 0, 0, 0 };
+
+
+struct rect_region
+{
+	short data[ 5 ];
+	
+	rect_region( short top, short left, short bottom, short right )
+	{
+		short* p = data;
+		
+		*p++ = sizeof (MacRegion);
+		
+		*p++ = top;
+		*p++ = left;
+		*p++ = bottom;
+		*p++ = right;
+	}
+	
+	operator const short*()  { return data; }
+};
 
 static void empty()
 {
@@ -31,37 +56,25 @@ static void empty()
 	
 	EXPECT( EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 0 );
-	EXPECT( a[0]->rgnBBox.left   == 0 );
-	EXPECT( a[0]->rgnBBox.right  == 0 );
-	EXPECT( a[0]->rgnBBox.bottom == 0 );
+	EXPECT_RGN( a, empty_region );
 	
 	SetRectRgn( a, 1, 2, -3, -4 );
 	
 	EXPECT( EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 0 );
-	EXPECT( a[0]->rgnBBox.left   == 0 );
-	EXPECT( a[0]->rgnBBox.right  == 0 );
-	EXPECT( a[0]->rgnBBox.bottom == 0 );
+	EXPECT_RGN( a, empty_region );
 	
 	SetRectRgn( a, 20, 0, 20, 512 );
 	
 	EXPECT( EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 0 );
-	EXPECT( a[0]->rgnBBox.left   == 0 );
-	EXPECT( a[0]->rgnBBox.right  == 0 );
-	EXPECT( a[0]->rgnBBox.bottom == 0 );
+	EXPECT_RGN( a, empty_region );
 	
 	SetRectRgn( a, 1, 0, 10000, 0 );
 	
 	EXPECT( EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 0 );
-	EXPECT( a[0]->rgnBBox.left   == 0 );
-	EXPECT( a[0]->rgnBBox.right  == 0 );
-	EXPECT( a[0]->rgnBBox.bottom == 0 );
+	EXPECT_RGN( a, empty_region );
 	
 	const Rect r = { 1, 2, -3, -4 };
 	
@@ -69,10 +82,7 @@ static void empty()
 	
 	EXPECT( EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 0 );
-	EXPECT( a[0]->rgnBBox.left   == 0 );
-	EXPECT( a[0]->rgnBBox.right  == 0 );
-	EXPECT( a[0]->rgnBBox.bottom == 0 );
+	EXPECT_RGN( a, empty_region );
 	
 	DisposeRgn( a );
 }
@@ -85,10 +95,7 @@ static void unary()
 	
 	EXPECT( !EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 2 );
-	EXPECT( a[0]->rgnBBox.left   == 1 );
-	EXPECT( a[0]->rgnBBox.bottom == 8 );
-	EXPECT( a[0]->rgnBBox.right  == 4 );
+	EXPECT_RGN( a, rect_region( 2, 1, 8, 4 ) );
 	
 	const Rect r = { 1, 2, 3, 5 };
 	
@@ -96,10 +103,7 @@ static void unary()
 	
 	EXPECT( !EmptyRgn( a ) );
 	
-	EXPECT( a[0]->rgnBBox.top    == 1 );
-	EXPECT( a[0]->rgnBBox.left   == 2 );
-	EXPECT( a[0]->rgnBBox.bottom == 3 );
-	EXPECT( a[0]->rgnBBox.right  == 5 );
+	EXPECT_RGN( a, rect_region( 1, 2, 3, 5 ) );
 	
 	DisposeRgn( a );
 }
