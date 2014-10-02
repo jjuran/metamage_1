@@ -36,6 +36,11 @@ pascal void DisposeRgn_patch( MacRegion** rgn )
 
 pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 {
+	if ( src == dst )
+	{
+		return;
+	}
+	
 	const size_t size = GetHandleSize( (Handle) src );
 	
 	if ( size < sizeof (MacRegion) )
