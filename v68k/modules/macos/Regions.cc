@@ -13,6 +13,9 @@
 // Standard C
 #include <string.h>
 
+// macos
+#include "Rect-utils.hh"
+
 
 static const Rect emptyRect = { 0, 0, 0, 0 };
 
@@ -99,18 +102,11 @@ pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 
 pascal unsigned char EmptyRgn_patch( MacRegion** rgn )
 {
-	MacRegion& region = **rgn;
-	
-	const Rect& bounds = region.rgnBBox;
-	
 	/*
 		Empty regions should be 0,0 - 0,0, but Postel's Law suggests we
 		allow for the caller manipulating the bounding box directly --
 		i.e. don't just check for all zero data.
 	*/
 	
-	if ( bounds.top >= bounds.bottom )  return true;
-	if ( bounds.left >= bounds.right )  return true;
-	
-	return false;
+	return empty_rect( rgn[0]->rgnBBox );
 }
