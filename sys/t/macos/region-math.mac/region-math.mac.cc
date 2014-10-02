@@ -20,10 +20,12 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 11 + 4;
+static const unsigned n_tests = 11 + 4 + 4 + 4;
 
 
 #define EXPECT_RGN( rgn, mem )  EXPECT_CMP( *(rgn), (rgn)[0]->rgnSize, (mem), sizeof (mem) )
+
+#define EXPECT_RGNS( a, b )  EXPECT_CMP( *(a), (a)[0]->rgnSize, *(b), (b)[0]->rgnSize )
 
 
 static short empty_region[] = { sizeof (MacRegion), 0, 0, 0, 0 };
@@ -108,6 +110,150 @@ static void unary()
 	DisposeRgn( a );
 }
 
+static void binary()
+{
+	RgnHandle a = NewRgn();
+	RgnHandle b = NewRgn();
+	
+	
+	SetRectRgn( a,  1, 2,  4, 3 );
+	SetRectRgn( b, 16, 5, 64, 8 );
+	
+	XorRgn( a, b, a );
+	
+	const short dexter[] =
+	{
+		44, 2, 1, 8, 64,
+		
+		2,  1, 4,          0x7FFF,
+		3,  1, 4,          0x7FFF,
+		5,        16, 64,  0x7FFF,
+		8,        16, 64,  0x7FFF,
+		
+		0x7FFF
+	};
+	
+	EXPECT_RGN( a, dexter );
+	
+	
+	SetRectRgn( a, 16, 2, 64, 3 );
+	SetRectRgn( b,  1, 5,  4, 8 );
+	
+	XorRgn( a, b, a );
+	
+	const short sinister[] =
+	{
+		44, 2, 1, 8, 64,
+		
+		2,        16, 64,  0x7FFF,
+		3,        16, 64,  0x7FFF,
+		5,  1, 4,          0x7FFF,
+		8,  1, 4,          0x7FFF,
+		
+		0x7FFF
+	};
+	
+	EXPECT_RGN( a, sinister );
+	
+	
+	SetRectRgn( a, 1, 2, 64, 8 );
+	SetRectRgn( b, 4, 3, 16, 5 );
+	
+	XorRgn( a, b, a );
+	
+	const short hollow[] =
+	{
+		44, 2, 1, 8, 64,
+		
+		2,  1,        64,  0x7FFF,
+		3,     4, 16,      0x7FFF,
+		5,     4, 16,      0x7FFF,
+		8,  1,        64,  0x7FFF,
+		
+		0x7FFF
+	};
+	
+	EXPECT_RGN( a, hollow );
+	
+	
+	SetRectRgn( a, 1, 2, 16, 5 );
+	SetRectRgn( b, 4, 3, 64, 8 );
+	
+	XorRgn( a, b, a );
+	
+	const short overlap[] =
+	{
+		44, 2, 1, 8, 64,
+		
+		2,  1,    16,      0x7FFF,
+		3,     4,     64,  0x7FFF,
+		5,  1,    16,      0x7FFF,
+		8,     4,     64,  0x7FFF,
+		
+		0x7FFF
+	};
+	
+	EXPECT_RGN( a, overlap );
+	
+	
+	DisposeRgn( a );
+	DisposeRgn( b );
+}
+
+static void cancel()
+{
+	RgnHandle a = NewRgn();
+	RgnHandle b = NewRgn();
+	RgnHandle c = NewRgn();
+	
+	
+	SetRectRgn( a, 4, 1, 5, 2 );
+	SetRectRgn( b, 4, 1, 6, 3 );
+	
+	XorRgn( a, b, c );
+	
+	const short corner[] =
+	{
+		36, 1, 4, 3, 6,
+		
+		1,     5, 6,  0x7FFF,
+		2,  4, 5,     0x7FFF,
+		3,  4,    6,  0x7FFF,
+		
+		0x7FFF
+	};
+	
+	EXPECT_RGN( c, corner );
+	
+	
+	XorRgn( a, c, c );
+	
+	EXPECT_RGNS( c, b );
+	
+	
+	XorRgn( b, c, c );
+	
+	EXPECT_RGN( c, empty_region );
+	
+	
+	SetRectRgn( a, 4, 1, 6, 3 );
+	SetRectRgn( b, 4, 3, 6, 5 );
+	
+	XorRgn( a, b, c );
+	
+	const short blocks[] =
+	{
+		10, 1, 4, 5, 6
+	};
+	
+	EXPECT_RGN( c, blocks );
+	
+	
+	DisposeRgn( a );
+	DisposeRgn( b );
+	DisposeRgn( c );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -115,6 +261,9 @@ int main( int argc, char** argv )
 	
 	empty();
 	unary();
+	
+	binary();
+	cancel();
 	
 	return 0;
 }
