@@ -23,6 +23,8 @@
 
 #define EXPECT_NULL( p )  EXPECT( (p) == NULL )
 
+#define EXPECT_CMP( p, p_len, q, q_len )  EXPECT( ::tap::cmp( (p), (p_len), (q), (q_len) ) == 0 )
+
 
 namespace tap
 {
@@ -33,6 +35,8 @@ namespace tap
 	void print( bool ok, const char* comment = NULL );
 	
 	void expect( bool condition, const char* ref, unsigned len );
+	
+	int cmp( const void* p, unsigned p_len, const void* q, unsigned q_len );
 	
 	inline void ok_if( bool ok, const char* comment = NULL )
 	{
