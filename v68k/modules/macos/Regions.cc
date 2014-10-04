@@ -13,8 +13,15 @@
 // Standard C
 #include <string.h>
 
+// quickdraw
+#include "qd/xor_region.hh"
+
 // macos
 #include "Rect-utils.hh"
+#include "Region-ops.hh"
+
+
+using quickdraw::xor_region;
 
 
 static const Rect emptyRect = { 0, 0, 0, 0 };
@@ -98,6 +105,11 @@ pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 	}
 	
 	set_rect_region( rgn, *r );
+}
+
+pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+{
+	binary_region_op( a, b, dst, &xor_region );
 }
 
 pascal unsigned char EmptyRgn_patch( MacRegion** rgn )

@@ -25,6 +25,8 @@ pascal void SetRectRgn_patch( MacRegion**  rgn,
 
 pascal void RectRgn_patch( MacRegion** rgn, const Rect* r );
 
+pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst );
+
 pascal unsigned char EmptyRgn_patch( MacRegion** rgn );
 
 #endif

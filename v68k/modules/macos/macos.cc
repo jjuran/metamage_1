@@ -99,6 +99,7 @@ static void install_QuickDraw()
 	TBTRAP( SetRectRgn  );  // A8DE
 	TBTRAP( RectRgn     );  // A8DF
 	TBTRAP( EmptyRgn    );  // A8E2
+	TBTRAP( XOrRgn      );  // A8E7
 }
 
 static void install_SegmentLoader()
