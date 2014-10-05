@@ -5,9 +5,6 @@
 
 #include "qd/regions.hh"
 
-// quickdraw
-#include "qd/rect.hh"
-
 
 namespace quickdraw
 {
@@ -53,7 +50,7 @@ namespace quickdraw
 		return p[ -2 ];
 	}
 	
-	void set_region_bbox( Rect& bbox, const short* extent )
+	void set_region_bbox( short* bbox, const short* extent )
 	{
 		short v = 0;
 		
@@ -61,7 +58,7 @@ namespace quickdraw
 		
 		// pointing at first v coordinate
 		
-		bbox.top  = *extent++;
+		*bbox++ = *extent++;  // top
 		
 		short left = *extent++;
 		
@@ -92,9 +89,9 @@ namespace quickdraw
 			// pointing at next v coordinate, or v terminator
 		}
 		
-		bbox.left   = left;
-		bbox.bottom = bottom;
-		bbox.right  = right;
+		*bbox++ = left;
+		*bbox++ = bottom;
+		*bbox++ = right;
 	}
 	
 }

@@ -4,7 +4,6 @@
 */
 
 // quickdraw
-#include "qd/rect.hh"
 #include "qd/regions.hh"
 
 // tap-out
@@ -56,7 +55,7 @@ static void geometry()
 
 static void bbox()
 {
-	Rect bbox;
+	short bbox[ 4 ];
 	
 	const short dexter[] =
 	{
