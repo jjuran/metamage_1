@@ -62,32 +62,39 @@ namespace quickdraw
 		// pointing at first v coordinate
 		
 		bbox.top  = *extent++;
-		bbox.left = *extent++;
 		
-		bbox.right = scan_for_last_h_coord( extent );
+		short left = *extent++;
+		
+		short right = scan_for_last_h_coord( extent );
+		
+		short bottom;
 		
 		// pointing at second v coordinate
 		
 		while ( *extent != 0x7FFF )
 		{
-			bbox.bottom = *extent++;
+			bottom = *extent++;
 			
 			// pointing at first h coordinate in the line
 			
-			if ( *extent < bbox.left )
+			if ( *extent < left )
 			{
-				bbox.left = *extent;
+				left = *extent;
 			}
 			
 			const short last = scan_for_last_h_coord( extent );
 			
-			if ( last > bbox.right )
+			if ( last > right )
 			{
-				bbox.right = last;
+				right = last;
 			}
 			
 			// pointing at next v coordinate, or v terminator
 		}
+		
+		bbox.left   = left;
+		bbox.bottom = bottom;
+		bbox.right  = right;
 	}
 	
 }
