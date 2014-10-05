@@ -46,6 +46,13 @@ namespace quickdraw
 		return result;
 	}
 	
+	static short scan_for_last_h_coord( const short*& p )
+	{
+		while ( *p++ != 0x7FFF )  continue;
+		
+		return p[ -2 ];
+	}
+	
 	void set_region_bbox( Rect& bbox, const short* extent )
 	{
 		short v = 0;
@@ -57,12 +64,7 @@ namespace quickdraw
 		bbox.top  = *extent++;
 		bbox.left = *extent++;
 		
-		while ( *extent != 0x7FFF )
-		{
-			bbox.right = *extent++;
-		}
-		
-		++extent;
+		bbox.right = scan_for_last_h_coord( extent );
 		
 		// pointing at second v coordinate
 		
@@ -77,19 +79,12 @@ namespace quickdraw
 				bbox.left = *extent;
 			}
 			
-			short last;
-			
-			while ( *extent != 0x7FFF )
-			{
-				last = *extent++;
-			}
+			const short last = scan_for_last_h_coord( extent );
 			
 			if ( last > bbox.right )
 			{
 				bbox.right = last;
 			}
-			
-			++extent;
 			
 			// pointing at next v coordinate, or v terminator
 		}
