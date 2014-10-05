@@ -41,12 +41,7 @@ pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 		return;
 	}
 	
-	const size_t size = GetHandleSize( (Handle) src );
-	
-	if ( size < sizeof (MacRegion) )
-	{
-		return;
-	}
+	const size_t size = src[0]->rgnSize;
 	
 	SetHandleSize( (Handle) dst, size );
 	
