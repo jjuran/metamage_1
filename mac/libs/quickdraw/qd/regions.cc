@@ -53,7 +53,7 @@ namespace quickdraw
 		return p[ -2 ];
 	}
 	
-	void set_region_bbox( short* bbox, const short* extent )
+	const short* set_region_bbox( short* bbox, const short* extent )
 	{
 		// pointing at first v coordinate
 		
@@ -91,6 +91,8 @@ namespace quickdraw
 		*bbox++ = left;
 		*bbox++ = bottom;
 		*bbox++ = right;
+		
+		return extent + 1;
 	}
 	
 }

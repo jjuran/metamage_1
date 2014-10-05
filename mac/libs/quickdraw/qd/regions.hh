@@ -18,7 +18,7 @@ namespace quickdraw
 	
 	region_geometry_t region_geometry( const short* extent );
 	
-	void set_region_bbox( short* bbox, const short* extent );
+	const short* set_region_bbox( short* bbox, const short* extent );
 	
 }
 
