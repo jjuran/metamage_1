@@ -77,16 +77,16 @@ namespace quickdraw
 				bbox.left = *extent;
 			}
 			
-			short right;
+			short last;
 			
 			while ( *extent != 0x7FFF )
 			{
-				right = *extent++;
+				last = *extent++;
 			}
 			
-			if ( right > bbox.right )
+			if ( last > bbox.right )
 			{
-				bbox.right = right;
+				bbox.right = last;
 			}
 			
 			++extent;
