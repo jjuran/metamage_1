@@ -52,10 +52,6 @@ namespace quickdraw
 	
 	void set_region_bbox( short* bbox, const short* extent )
 	{
-		short v = 0;
-		
-		short max_h = 0;
-		
 		// pointing at first v coordinate
 		
 		*bbox++ = *extent++;  // top
