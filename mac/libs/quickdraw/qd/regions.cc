@@ -5,6 +5,9 @@
 
 #include "qd/regions.hh"
 
+// quickdraw
+#include "qd/region_detail.hh"
+
 
 namespace quickdraw
 {
@@ -17,7 +20,7 @@ namespace quickdraw
 		
 		// pointing at first v coordinate
 		
-		while ( *extent++ != 0x7FFF )
+		while ( *extent++ != Region_end )
 		{
 			++v;
 			
@@ -25,7 +28,7 @@ namespace quickdraw
 			
 			short h = 0;
 			
-			while ( *extent++ != 0x7FFF )
+			while ( *extent++ != Region_end )
 			{
 				++h;
 			}
@@ -45,7 +48,7 @@ namespace quickdraw
 	
 	static short scan_for_last_h_coord( const short*& p )
 	{
-		while ( *p++ != 0x7FFF )  continue;
+		while ( *p++ != Region_end )  continue;
 		
 		return p[ -2 ];
 	}
@@ -64,7 +67,7 @@ namespace quickdraw
 		
 		// pointing at second v coordinate
 		
-		while ( *extent != 0x7FFF )
+		while ( *extent != Region_end )
 		{
 			bottom = *extent++;
 			

@@ -5,6 +5,7 @@
 
 // quickdraw
 #include "qd/regions.hh"
+#include "qd/region_detail.hh"
 
 // tap-out
 #include "tap/test.hh"
@@ -19,18 +20,21 @@ static const unsigned n_tests = 4 + 2;
 typedef quickdraw::region_geometry_t  geometry_t;
 
 
+const short End = quickdraw::Region_end;
+
+
 static void geometry()
 {
 	geometry_t g;
 	
 	const short disjoint[] =
 	{
-		2,  1, 4,          0x7FFF,
-		3,  1, 4,          0x7FFF,
-		5,        16, 64,  0x7FFF,
-		8,        16, 64,  0x7FFF,
+		2,  1, 4,          End,
+		3,  1, 4,          End,
+		5,        16, 64,  End,
+		8,        16, 64,  End,
 		
-		0x7FFF
+		End
 	};
 	
 	g = quickdraw::region_geometry( disjoint );
@@ -40,11 +44,11 @@ static void geometry()
 	
 	const short tangent[] =
 	{
-		2,  1, 4,          0x7FFF,
-		3,  1, 4, 16, 64,  0x7FFF,
-		5,        16, 64,  0x7FFF,
+		2,  1, 4,          End,
+		3,  1, 4, 16, 64,  End,
+		5,        16, 64,  End,
 		
-		0x7FFF
+		End
 	};
 	
 	g = quickdraw::region_geometry( tangent );
@@ -61,12 +65,12 @@ static void bbox()
 	{
 		2, 1, 8, 64,
 		
-		2,  1, 4,          0x7FFF,
-		3,  1, 4,          0x7FFF,
-		5,        16, 64,  0x7FFF,
-		8,        16, 64,  0x7FFF,
+		2,  1, 4,          End,
+		3,  1, 4,          End,
+		5,        16, 64,  End,
+		8,        16, 64,  End,
 		
-		0x7FFF
+		End
 	};
 	
 	quickdraw::set_region_bbox( bbox, dexter + 4 );
@@ -77,12 +81,12 @@ static void bbox()
 	{
 		2, 1, 8, 64,
 		
-		2,        16, 64,  0x7FFF,
-		3,        16, 64,  0x7FFF,
-		5,  1, 4,          0x7FFF,
-		8,  1, 4,          0x7FFF,
+		2,        16, 64,  End,
+		3,        16, 64,  End,
+		5,  1, 4,          End,
+		8,  1, 4,          End,
 		
-		0x7FFF
+		End
 	};
 	
 	quickdraw::set_region_bbox( bbox, sinister + 4 );
