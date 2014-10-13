@@ -1,4 +1,3 @@
-#include <Gestalt.h>
 #include <Sound.h>
 
 static QDGlobals qd;
@@ -9,12 +8,8 @@ int main()
 	
 	InitGraf( &qd.thePort );
 	
-	if ( Gestalt( 'v68k', &dummy ) != noErr )
-	{
-		InitWindows();
-		
-		InitMenus();
-	}
+	InitWindows();
+	InitMenus();
 	
 	SysBeep( 30 );
 	
