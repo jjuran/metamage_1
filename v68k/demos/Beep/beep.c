@@ -8,6 +8,7 @@ int main()
 	
 	InitGraf( &qd.thePort );
 	
+	InitFonts();
 	InitWindows();
 	InitMenus();
 	
