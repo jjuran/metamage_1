@@ -19,6 +19,7 @@
 
 // macos
 #include "Debugger.hh"
+#include "Events.hh"
 #include "Fonts.hh"
 #include "GrafPorts.hh"
 #include "Handles.hh"
@@ -178,6 +179,11 @@ static void install_Menus()
 	TBTRAP( InitMenus );  // A930
 }
 
+static void install_EventManager()
+{
+	TBTRAP( GetNextEvent );  // A970
+}
+
 static void install_SegmentLoader()
 {
 	TBTRAP( ExitToShell );  // A9F4
@@ -250,6 +256,8 @@ int main( int argc, char** argv )
 	install_Fonts();
 	install_Windows();
 	install_Menus();
+	
+	install_EventManager();
 	
 	install_SegmentLoader();
 	
