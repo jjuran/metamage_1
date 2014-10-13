@@ -95,4 +95,25 @@ namespace quickdraw
 		return extent + 1;
 	}
 	
+	void offset_region( short* extent, short dh, short dv )
+	{
+		// pointing at first v coordinate
+		
+		while ( *extent != Region_end )
+		{
+			*extent++ += dv;
+			
+			// pointing at first h coordinate in the line
+			
+			while ( *extent != Region_end )
+			{
+				*extent++ += dh;
+			}
+			
+			++extent;
+			
+			// pointing at next v coordinate, or v terminator
+		}
+	}
+	
 }
