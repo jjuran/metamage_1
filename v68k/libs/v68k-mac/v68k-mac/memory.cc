@@ -31,6 +31,8 @@ enum
 	tag_MemErr,
 	tag_ScrnBase,
 	tag_ScrnBase_low_word,
+	tag_Mouse,
+	tag_Mouse_low_word,
 	tag_WMgrPort,
 	tag_WMgrPort_low_word,
 	tag_MBarHeight,
@@ -64,6 +66,7 @@ static const global globals[] =
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0824, 4,    tag_ScrnBase    },
+	{ 0x0830, 4,    tag_Mouse       },
 	{ 0x09DE, 4,    tag_WMgrPort    },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
