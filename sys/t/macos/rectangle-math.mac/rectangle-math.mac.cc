@@ -20,7 +20,10 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = (8 + 8) + 16 + 8 + 8 + 8;
+static const unsigned n_tests = (8 + 8) + 16 + 8 + 8 + 8 + 4;
+
+
+#define EXPECT_RECTS( a, b )  EXPECT_CMP( &(a), sizeof (Rect), &(b), sizeof (Rect) )
 
 
 static void basics()
@@ -183,6 +186,22 @@ static void within()
 	EXPECT( !PtInRect( bottomRight, &box ) );
 }
 
+static void border()
+{
+	const Rect r_ = { -32767, -32767, 32767, 32767 };
+	const Rect rt = { -32768, -32767, 32766, 32767 };
+	const Rect rl = { -32767, -32768, 32767, 32766 };
+	const Rect rb = { -32766, -32767, -32768, 32767 };
+	const Rect rr = { -32767, -32766, 32767, -32768 };
+	
+	Rect r;
+	
+	OffsetRect( &(r = r_),  0, -1 );  EXPECT_RECTS( r, rt );
+	OffsetRect( &(r = r_), -1,  0 );  EXPECT_RECTS( r, rl );
+	OffsetRect( &(r = r_),  0,  1 );  EXPECT_RECTS( r, rb );
+	OffsetRect( &(r = r_),  1,  0 );  EXPECT_RECTS( r, rr );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -193,6 +212,7 @@ int main( int argc, char** argv )
 	common();
 	unions();
 	within();
+	border();
 	
 	return 0;
 }
