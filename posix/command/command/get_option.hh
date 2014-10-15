@@ -23,8 +23,9 @@ namespace command
 		enum
 		{
 			Param_unwanted,
-			Param_required,
 			Param_optional,
+			Param_required,
+			Param_required_can_be_array,
 		};
 		
 		enum

@@ -28,7 +28,7 @@ namespace command
 	
 	static inline bool is_required( int param_mode )
 	{
-		return param_mode == Param_required;
+		return param_mode >= Param_required;
 	}
 	
 	static const char* find_char( const char* begin, char c )
