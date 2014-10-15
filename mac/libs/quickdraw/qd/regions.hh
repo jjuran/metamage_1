@@ -20,6 +20,8 @@ namespace quickdraw
 	
 	const short* set_region_bbox( short* bbox, const short* extent );
 	
+	void offset_region( short* extent, short dh, short dv );
+	
 }
 
 #endif

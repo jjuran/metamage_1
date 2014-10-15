@@ -20,7 +20,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 11 + 4 + 4 + 4;
+static const unsigned n_tests = 11 + 4 + 4 + 4 + 2;
 
 
 #define EXPECT_RGN( rgn, mem )  EXPECT_CMP( *(rgn), (rgn)[0]->rgnSize, (mem), sizeof (mem) )
@@ -254,6 +254,44 @@ static void cancel()
 	DisposeRgn( c );
 }
 
+static void shifts()
+{
+	const short centered[] = { 10, -300, -400, 300, 400 };
+	
+	RgnHandle a = NewRgn();
+	RgnHandle b = NewRgn();
+	
+	SetRectRgn( a, 0, 0, 800, 600 );
+	
+	OffsetRgn( a, -400, -300 );
+	
+	EXPECT_RGN( a, centered );
+	
+	SetRectRgn( b, -2, -2, 2, 2 );
+	
+	XorRgn( a, b, a );
+	
+	OffsetRgn( a, 400, 300 );
+	
+	const short punctured[] =
+	{
+		44,
+		0, 0, 600, 800,
+		
+		0,    0,           800,  0x7FFF,
+		298,     398, 402,       0x7FFF,
+		302,     398, 402,       0x7FFF,
+		600,  0,           800,  0x7FFF,
+		
+		0x7FFF
+	};
+	
+	EXPECT_RGN( a, punctured );
+	
+	DisposeRgn( a );
+	DisposeRgn( b );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -264,6 +302,7 @@ int main( int argc, char** argv )
 	
 	binary();
 	cancel();
+	shifts();
 	
 	return 0;
 }
