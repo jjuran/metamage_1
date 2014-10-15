@@ -48,6 +48,9 @@ namespace command
 	{
 		const char*  param;
 		const char*  mark;
+		
+		short  array_offset;
+		short  array_length;
 	};
 	
 	extern option_result global_result;
