@@ -26,6 +26,11 @@ namespace command
 	option_result global_result;
 	
 	
+	static inline bool is_required( int param_mode )
+	{
+		return param_mode == Param_required;
+	}
+	
 	static const char* find_char( const char* begin, char c )
 	{
 		while ( *begin != '\0'  &&  *begin != c )
@@ -146,7 +151,7 @@ namespace command
 					
 					++argv;
 					
-					if ( opt->mode == Param_required )
+					if ( is_required( opt->mode ) )
 					{
 						if ( *argv == 0 )  // NULL
 						{
@@ -190,7 +195,7 @@ namespace command
 				
 				const bool more = *arg != '\0';
 				
-				if ( more  &&  opt->mode != Param_required )
+				if ( more  &&  !is_required( opt->mode ) )
 				{
 					result.mark = arg;
 				}
@@ -200,7 +205,7 @@ namespace command
 					
 					++argv;
 					
-					if ( opt->mode == Param_required )
+					if ( is_required( opt->mode ) )
 					{
 						if ( more )
 						{
