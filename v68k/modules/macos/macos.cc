@@ -8,9 +8,6 @@
 #include <Traps.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
 // macos
 #include "Debugger.hh"
 #include "Fonts.hh"
@@ -25,9 +22,6 @@
 #include "Regions.hh"
 #include "Segments.hh"
 #include "Windows.hh"
-
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 unsigned long ScrnBase : 0x0824;
@@ -165,8 +159,6 @@ static asm void module_suspend()
 	JSR      0xFFFFFFF8
 }
 
-#define NOT_A_PROGRAM  "macos: Not a program; use `xv68k -m macos ...` to load as a module\n"
-
 int main( int argc, char** argv )
 {
 	initialize_low_memory_globals();
@@ -184,12 +176,5 @@ int main( int argc, char** argv )
 	
 	install_Debugger();
 	
-	if ( argc == 0 )
-	{
-		module_suspend();  // doesn't return
-	}
-	
-	write( STDERR_FILENO, STR_LEN( NOT_A_PROGRAM ) );
-	
-	return 2;
+	module_suspend();  // doesn't return
 }
