@@ -68,7 +68,12 @@ static bool verbose;
 
 static unsigned long n_instructions;
 
-static const char** module_names;
+struct module_spec
+{
+	const char*  name;
+};
+
+static module_spec* module_specs;
 
 
 enum
@@ -621,16 +626,16 @@ static int execute_68k( int argc, char* const* argv )
 	
 	load_Mac_traps( mem );
 	
-	if ( *module_names )
+	if ( *module_specs )
 	{
 		char* module_argv[] = { NULL };
 		
 		load_argv( mem, 0, module_argv );
 	}
 	
-	for ( const char** m = module_names;  *m;  ++m  )
+	for ( const module_spec* m = module_specs;  m->name != NULL;  ++m  )
 	{
-		load_module( mem, *m );
+		load_module( mem, m->name );
 		
 		emu.reset();
 		
@@ -638,7 +643,7 @@ static int execute_68k( int argc, char* const* argv )
 		
 		if ( emu.condition != v68k::startup )
 		{
-			more::perror( "xv68k", *m, "Module installation failed" );
+			more::perror( "xv68k", m->name, "Module installation failed" );
 			
 			exit( 1 );
 		}
@@ -663,7 +668,7 @@ static int execute_68k( int argc, char* const* argv )
 
 static char* const* get_options( char* const* argv )
 {
-	const char** module = module_names;
+	module_spec* module = module_specs;
 	
 	int opt;
 	
@@ -720,7 +725,9 @@ static char* const* get_options( char* const* argv )
 				break;
 			
 			case Opt_module:
-				*module++ = global_result.param;
+				module->name = global_result.param;
+				
+				++module;
 				
 				break;
 			
@@ -729,7 +736,7 @@ static char* const* get_options( char* const* argv )
 		}
 	}
 	
-	*module = NULL;
+	module->name = NULL;
 	
 	return argv;
 }
@@ -744,7 +751,7 @@ int main( int argc, char** argv )
 		argv = (char**) new_argv;
 	}
 	
-	module_names = (const char**) alloca( argc * sizeof (const char*) );
+	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	
 	char* const* args = get_options( argv );
 	
