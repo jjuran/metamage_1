@@ -626,15 +626,16 @@ static int execute_68k( int argc, char* const* argv )
 	
 	load_Mac_traps( mem );
 	
-	if ( *module_specs )
-	{
-		char* module_argv[] = { NULL };
-		
-		load_argv( mem, 0, module_argv );
-	}
+	char* empty_module_argv[] = { NULL };
 	
 	for ( const module_spec* m = module_specs;  m->name != NULL;  ++m  )
 	{
+		int module_argc = 0;
+		
+		char* const* module_argv = empty_module_argv;
+		
+		load_argv( mem, module_argc, module_argv );
+		
 		load_module( mem, m->name );
 		
 		emu.reset();
