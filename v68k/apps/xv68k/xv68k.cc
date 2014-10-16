@@ -71,6 +71,9 @@ static unsigned long n_instructions;
 struct module_spec
 {
 	const char*  name;
+	
+	char* const*  begin;
+	char* const*  end;
 };
 
 static module_spec* module_specs;
@@ -634,6 +637,12 @@ static int execute_68k( int argc, char* const* argv )
 		
 		char* const* module_argv = empty_module_argv;
 		
+		if ( m->begin != NULL )
+		{
+			module_argv = m->begin;
+			module_argc = m->end - m->begin;
+		}
+		
 		load_argv( mem, module_argc, module_argv );
 		
 		load_module( mem, m->name );
@@ -667,7 +676,17 @@ static int execute_68k( int argc, char* const* argv )
 	return 1;
 }
 
-static char* const* get_options( char* const* argv )
+static inline bool begins_array( const char* param )
+{
+	return param[ 0 ] == '['  &&  param[ 1 ] == '\0';
+}
+
+static inline bool ends_array( const char* param )
+{
+	return param[ 0 ] == ']'  &&  param[ 1 ] == '\0';
+}
+
+static char* const* get_options( char** argv )
 {
 	module_spec* module = module_specs;
 	
@@ -675,7 +694,7 @@ static char* const* get_options( char* const* argv )
 	
 	++argv;  // skip arg 0
 	
-	while ( (opt = command::get_option( &argv, options )) > 0 )
+	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
 	{
 		using command::global_result;
 		
@@ -727,6 +746,46 @@ static char* const* get_options( char* const* argv )
 			
 			case Opt_module:
 				module->name = global_result.param;
+				
+				if ( begins_array( global_result.param ) )
+				{
+					module->name = *argv;
+					
+					module->begin = argv;
+					
+					while ( true )
+					{
+						if ( *argv == NULL )
+						{
+							write( STDERR_FILENO, STR_LEN( "Unterminated module argument vector\n" ) );
+							
+							exit( 2 );
+						}
+						
+						if ( ends_array( *argv ) )
+						{
+							break;
+						}
+						
+						++argv;
+					}
+					
+					if ( module->begin == argv )
+					{
+						write( STDERR_FILENO, STR_LEN( "Empty module argument vector\n" ) );
+						
+						exit( 2 );
+					}
+					
+					*argv = NULL;
+					
+					module->end = argv++;
+				}
+				else
+				{
+					module->begin = NULL;
+					module->end   = NULL;
+				}
 				
 				++module;
 				
