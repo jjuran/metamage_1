@@ -16,6 +16,11 @@
 static const unsigned n_tests = 13;
 
 
+#ifndef NULL
+#define NULL  0
+#endif
+
+
 static void newlines()
 {
 	text_input::feed feed;

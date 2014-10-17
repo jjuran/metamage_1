@@ -8,6 +8,7 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // POSIX
 #include <unistd.h>
