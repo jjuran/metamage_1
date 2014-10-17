@@ -94,28 +94,19 @@ namespace tap
 		atexit( &atexit_count_tests );
 	}
 	
-	void print( bool ok, const char* comment )
+	void print( bool ok )
 	{
-		if ( comment == NULL )
-		{
-			comment = "";
-		}
-		
 		const bool not_ok = !ok;
 		
 		const unsigned magnitude = gear::decimal_magnitude( ++global_tests_run );
 		
 		const char* tests_str = gear::inscribe_unsigned_decimal( global_tests_run );
 		
-		const bool has_comment = comment[0] != '\0';
-		
 		struct iovec iov[] =
 		{
 			{ (void*) STR_LEN( "not " ) * not_ok      },
 			{ (void*) STR_LEN( "ok "  )               },
 			{ (void*) tests_str, magnitude            },
-			{ (void*) STR_LEN( " - "  ) * has_comment },
-			{ (void*) comment,   strlen( comment )    },
 			{ (void*) STR_LEN( "\n"   )               },
 		};
 		

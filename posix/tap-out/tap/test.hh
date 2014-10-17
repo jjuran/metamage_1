@@ -32,7 +32,7 @@ namespace tap
 	void start( const char* program_name, unsigned tests_planned );
 	
 	
-	void print( bool ok, const char* comment = NULL );
+	void print( bool ok );
 	
 	void expect( bool condition, const char* ref, unsigned len );
 	
