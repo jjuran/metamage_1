@@ -38,30 +38,6 @@ namespace tap
 	
 	int cmp( const void* p, unsigned p_len, const void* q, unsigned q_len );
 	
-	inline void ok_if( bool ok, const char* comment = NULL )
-	{
-		print( ok, comment );
-	}
-	
-	inline void ok_if_null( const void* p, const char* comment = NULL )
-	{
-		print( p == NULL, comment );
-	}
-	
-	inline void ok_if_nonnull( const void* p, const char* comment = NULL )
-	{
-		print( p != NULL, comment );
-	}
-	
-	inline void ok_if_strings_equal( const char* a,
-	                                 const char* b,
-	                                 const char* comment = NULL )
-	{
-		const bool ok = a != NULL  &&  b != NULL  &&  std::strcmp( a, b ) == 0;
-		
-		print( ok, comment );
-	}
-	
 }
 
 #endif
