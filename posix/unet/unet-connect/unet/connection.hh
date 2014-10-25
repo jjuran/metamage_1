@@ -16,8 +16,6 @@ namespace unet
 	class connection : public plus::ref_count< connection >
 	{
 		private:
-			const char* const* its_argv;
-			
 			int its_input;
 			int its_output;
 			
@@ -37,7 +35,6 @@ namespace unet
 	
 	inline connection::connection( const char* argv[], int in, int out )
 	:
-		its_argv( argv ),
 		its_input ( in  ),
 		its_output( out )
 	{
