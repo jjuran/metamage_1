@@ -63,7 +63,7 @@ namespace unet
 		swap( its_connection, that.its_connection );
 	}
 	
-	connection_box::connection_box( const char* argv[], int in, int out )
+	connection_box::connection_box( int in, int out )
 	:
 		its_connection( new connection( in, out ) )
 	{

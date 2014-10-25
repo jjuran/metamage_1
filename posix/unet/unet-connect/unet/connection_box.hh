@@ -30,7 +30,7 @@ namespace unet
 			
 			void swap( connection_box& that );
 			
-			connection_box( const char* argv[], int in, int out );
+			connection_box( int in, int out );
 			
 			connection* get() const  { return its_connection; }
 			
