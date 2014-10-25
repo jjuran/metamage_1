@@ -65,7 +65,7 @@ namespace unet
 	
 	connection_box::connection_box( const char* argv[], int in, int out )
 	:
-		its_connection( new connection( argv, in, out ) )
+		its_connection( new connection( in, out ) )
 	{
 		intrusive_ptr_add_ref( its_connection );
 	}
