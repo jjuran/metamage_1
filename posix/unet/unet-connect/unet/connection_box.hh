@@ -47,8 +47,6 @@ namespace unet
 		a.swap( b );
 	}
 	
-	connection_box connect( const char* argv[] );
-	
 }
 
 #endif
