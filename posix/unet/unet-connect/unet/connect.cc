@@ -51,7 +51,7 @@ namespace unet
 			const int protocol_in  = 6;
 			const int protocol_out = 7;
 			
-			return connection_box( argv, protocol_in, protocol_out );
+			return connection_box( protocol_in, protocol_out );
 		}
 		
 		// Create the unet control channel
@@ -95,7 +95,7 @@ namespace unet
 			}
 		}
 		
-		return connection_box( argv, in.release(), out.release() );
+		return connection_box( in.release(), out.release() );
 	}
 	
 }
