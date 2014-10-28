@@ -148,11 +148,14 @@ namespace relix
 		
 		pipe_ends result;
 		
-		const int open_flags = nonblock ? O_RDONLY | O_NONBLOCK
-		                                : O_RDONLY;
+		const int r_flags = nonblock ? O_RDONLY | O_NONBLOCK
+		                             : O_RDONLY;
 		
-		result.writer.reset( new pipe_end( conduit, open_flags, Pipe_writer ) );
-		result.reader.reset( new pipe_end( conduit, open_flags, Pipe_reader ) );
+		const int w_flags = nonblock ? O_WRONLY | O_NONBLOCK
+		                             : O_WRONLY;
+		
+		result.writer.reset( new pipe_end( conduit, w_flags, Pipe_writer ) );
+		result.reader.reset( new pipe_end( conduit, r_flags, Pipe_reader ) );
 		
 		return result;
 	}
