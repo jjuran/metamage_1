@@ -24,6 +24,7 @@ qw
 	__atexit
 	__exit
 	
+	__read_console
 	__write_console
 	
 	__open_file

@@ -25,6 +25,7 @@ enum __io_results
      __io_EOF
 };
 
+extern "C" int __read_console ( __file_handle handle, unsigned char* buffer, size_t* count );
 extern "C" int __write_console( __file_handle handle, unsigned char* buffer, size_t* count );
 
 
@@ -59,6 +60,15 @@ int __write_console( __file_handle handle, unsigned char* buffer, size_t* count 
 	*count = write( handle, buffer, *count );
 	
 	return *count >= 0 ? __no_io_error : __io_error;
+}
+
+int __read_console( __file_handle handle, unsigned char* buffer, size_t* count )
+{
+	*count = read( handle, buffer, *count );
+	
+	return + *count >  0 ? __no_io_error
+	       : *count == 0 ? __io_EOF
+	       :               __io_error;
 }
 
 #endif  // #if defined(__MWERKS__) && !defined(__MACH__)
