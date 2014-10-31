@@ -7,6 +7,7 @@
 
 // Standard C/C++
 #include <cctype>
+#include <cstdlib>
 #include <cstring>
 
 // Standard C++
@@ -346,8 +347,34 @@ namespace ShellShock
 	
 	plus::string TildeExpansion( const plus::string& word )
 	{
-		// ~jjuran -> /home/jjuran
+		// POSIX.1-2013 Description (2.6.1 Tilde Expansion):
+		// http://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_06_01
 		
+		const char* path = word.c_str();
+		
+		// Look for a tilde at the start of the first path element.
+		if ( path[ 0 ] == '~' )
+		{
+			if ( path[ 1 ] == '\0'  ||  path[ 1 ] == '/' )
+			{
+				// Tilde is single first path element; expand to $HOME.
+				// ~ -> /home/jjuran
+				
+				const char* homedir = std::getenv( "HOME" );
+				
+				// ... but only if $HOME is defined.
+				if ( homedir != NULL )
+				{
+					return homedir + word.substr( 1 );
+				}
+			}
+			else
+			{
+				// ~jjuran -> /home/jjuran
+			}
+		}
+		
+		// No tilde substitution performed.
 		return word;
 	}
 	
