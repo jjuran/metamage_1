@@ -7,6 +7,7 @@
 
 // POSIX
 #include <dirent.h>
+#include <pwd.h>
 
 // Standard C/C++
 #include <cctype>
@@ -370,7 +371,32 @@ namespace ShellShock
 			}
 			else
 			{
+				// ~username format. Expand to appropriate user's home directory.
 				// ~jjuran -> /home/jjuran
+				
+				const size_t first_slash = word.find( '/' );
+				
+				const plus::string username = word.substr( 1, first_slash - 1 );
+				
+				struct passwd* userinfo = getpwnam( username.c_str() );
+				
+				if ( userinfo != NULL )
+				{
+					// We got something in ~username format. Try to substitute the path.
+					const char* homedir = userinfo->pw_dir;
+					
+					if ( homedir[ 0 ] != '\0' )
+					{
+						if ( first_slash != plus::string::npos )
+						{
+							return homedir + word.substr( first_slash );
+						}
+						else
+						{
+							return homedir;
+						}
+					}
+				}
 			}
 		}
 		
