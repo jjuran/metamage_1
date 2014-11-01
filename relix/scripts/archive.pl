@@ -103,6 +103,8 @@ my %fsmap =
 			qw( system ),
 			# aevt wrappers
 			qw( File Line activate quit ),
+			# Git repository repair
+			qw( gitfix.pl ),
 			# Misc scripts
 			qw( filter-mwlink-warnings.pl ramdisk.pl report run-tests strip-all ),
 		],
