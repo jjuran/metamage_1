@@ -141,6 +141,10 @@ my %fsmap =
 			\ qw( clear env mkfifo time touch ),
 			# Common
 			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			# Git utilities
+			{
+				sha1 => \ "git/test-sha1",
+			},
 			# unet
 			\ qw( uexec ulocal utcp ),
 			# Freemount
