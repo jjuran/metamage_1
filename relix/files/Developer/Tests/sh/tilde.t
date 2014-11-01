@@ -51,3 +51,9 @@ $ HOME="/foo/bar" sh -c "echo \'~/baz\'"
 $ HOME="~/foo/bar" sh -c "echo ~"
 
 1 >= "~/foo/bar"
+
+%%
+
+$ HOME="/foo/bar" sh -c "echo \~/baz"
+
+1 >= "~/baz"
