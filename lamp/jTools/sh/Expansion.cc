@@ -602,18 +602,27 @@ namespace ShellShock
 					
 					while ( *q != '\0'  &&  *q != '"' )
 					{
+						const char* mark = q;
+						
 						if ( *q == '\\' )
 						{
-							newstr.append( p, q - p );
+							++q;
 							
-							p = q + 1;
+							const char c = *q;
 							
-							if ( *p == '\0' )
+							if ( c == '\0' )
 							{
 								break;
 							}
 							
-							q = p + 1;
+							if ( c == '\\'  ||  c == '"' )
+							{
+								newstr.append( p, mark );
+								
+								p = q;
+							}
+							
+							++q;
 						}
 						else
 						{
