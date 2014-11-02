@@ -613,7 +613,7 @@ namespace ShellShock
 								break;
 							}
 							
-							if ( c == '\\'  ||  c == '"' )
+							if ( c == '\\'  ||  c == '"'  ||  c == '$' )
 							{
 								newstr.append( p, mark );
 								
