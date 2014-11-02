@@ -604,10 +604,8 @@ namespace ShellShock
 					{
 						const char* mark = q;
 						
-						if ( *q == '\\' )
+						if ( *q++ == '\\' )
 						{
-							++q;
-							
 							const char c = *q;
 							
 							if ( c == '\0' )
@@ -623,10 +621,6 @@ namespace ShellShock
 							}
 							
 							++q;
-						}
-						else
-						{
-							q++;
 						}
 					}
 					
