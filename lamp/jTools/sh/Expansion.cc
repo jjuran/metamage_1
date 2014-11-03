@@ -5,6 +5,9 @@
 
 #include "Expansion.hh"
 
+// POSIX
+#include <dirent.h>
+
 // Standard C/C++
 #include <cctype>
 #include <cstdlib>
@@ -12,9 +15,6 @@
 
 // Standard C++
 #include <functional>
-
-// POSIX
-#include "dirent.h"
 
 // gear
 #include "gear/find.hh"
