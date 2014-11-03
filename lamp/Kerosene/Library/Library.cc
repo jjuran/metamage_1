@@ -303,33 +303,38 @@ struct group* getgrnam( const char *name )
 #pragma mark -
 #pragma mark ** pwd **
 
+static struct passwd root_pw =
+{
+	"root",
+	"",
+	0,
+	0,
+	0,
+	"",
+	"System Administrator",
+	"/var/root",
+	"/bin/sh",
+	0
+};
+
 struct passwd* getpwnam( const char* name )
 {
-	errno = ESRCH;
+	if ( strcmp( name, "root" ) == 0 )
+	{
+		return &root_pw;
+	}
 	
 	return NULL;
 }
 
 struct passwd* getpwuid( uid_t uid )
 {
-	static struct passwd result =
+	if ( uid == 0 )
 	{
-		"root",
-		"",
-		0,
-		0,
-		0,
-		"",
-		"System Administrator",
-		"/var/root",
-		"/bin/sh",
-		0
-	};
+		return &root_pw;
+	}
 	
-	result.pw_uid =
-	result.pw_gid = uid;
-	
-	return &result;
+	return NULL;
 }
 
 #pragma mark -
