@@ -129,6 +129,7 @@ namespace relix
 	
 	
 	static void* saved_trap_0_handler = NULL;
+	static void* saved_trap_2_handler = NULL;
 	
 	static asm void trap_0_exception_handler()
 	{
@@ -136,6 +137,22 @@ namespace relix
 		BNE		recover
 		
 		MOVEA.L	saved_trap_0_handler,A0  // get the handler address
+		
+		JMP		(A0)
+		
+	recover:
+		LEA		dispatch_68k_system_call,A0
+		MOVE.L	A0,2(SP)  // set the stacked PC to the dispatcher
+		
+		RTE
+	}
+	
+	static asm void trap_2_exception_handler()
+	{
+		TST.L	gCurrentProcess
+		BNE		recover
+		
+		MOVEA.L	saved_trap_2_handler,A0  // get the handler address
 		
 		JMP		(A0)
 		
@@ -166,7 +183,8 @@ namespace relix
 		
 		saved_trap_0_handler = system_vectors[ 32 ];
 		
-		system_vectors[ 32 ] = trap_0_exception_handler;
+		system_vectors[ 32 + 0 ] = trap_0_exception_handler;
+		system_vectors[ 32 + 2 ] = trap_2_exception_handler;
 	}
 	
 	static void remove_68k_exception_handlers()
@@ -181,7 +199,8 @@ namespace relix
 			}
 		}
 		
-		system_vectors[ 32 ] = saved_trap_0_handler;
+		system_vectors[ 32 + 0 ] = saved_trap_0_handler;
+		system_vectors[ 32 + 2 ] = saved_trap_2_handler;
 	}
 	
 	
