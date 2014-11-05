@@ -169,11 +169,11 @@ static void trap()
 	vectors[0] = big_longword( 4096 );  // isp
 	vectors[1] = big_longword( 1024 );  // pc
 	
-	vectors[32] = big_longword( 2048 );  // TRAP  #0
+	vectors[32 + 2] = big_longword( 2048 );  // TRAP  #2
 	
 	uint16_t* code = (uint16_t*) (mem + 1024);
 	
-	code[ 0 ] = big_word( 0x4E40 );  // TRAP  #0
+	code[ 0 ] = big_word( 0x4E42 );  // TRAP  #2
 	
 	const memory_region memory( mem, sizeof mem );
 	
