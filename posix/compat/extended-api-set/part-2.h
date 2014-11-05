@@ -10,6 +10,10 @@
 
 #if !defined( __RELIX__ )  &&  !defined( __linux__ )  &&  !defined( __CYGWIN__ )
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#endif
+
 // POSIX
 #include <dirent.h>
 #include <sys/types.h>
@@ -17,6 +21,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+#ifndef MAC_OS_X_VERSION_10_10
 
 #if __FreeBSD__ < 8  // undefined __FreeBSD__ counts as zero
 
@@ -80,6 +86,7 @@ int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
 #endif  // #if __FreeBSD__ < 8
+#endif  // #ifndef MAC_OS_X_VERSION_10_10
 
 int futimens( int fd, const struct timespec times[2] );
 
