@@ -63,7 +63,7 @@ static void hello_world()
 	
 	pthread_join( thread, &result );
 	
-	EXPECT( errno != 123, "per-thread errno" );
+	EXPECT( errno != 123 );
 	
 	const char* s = (const char*) result;
 	
