@@ -346,6 +346,11 @@ namespace ShellShock
 		return expansion;
 	}
 	
+	static plus::string quoted_tilde_expansion( const char* homedir, const plus::string& subpath )
+	{
+		return homedir + subpath;
+	}
+	
 	plus::string TildeExpansion( const plus::string& word )
 	{
 		// POSIX.1-2013 Description (2.6.1 Tilde Expansion):
@@ -366,7 +371,7 @@ namespace ShellShock
 				// ... but only if $HOME is defined.
 				if ( homedir != NULL )
 				{
-					return homedir + word.substr( 1 );
+					return quoted_tilde_expansion( homedir, word.substr( 1 ) );
 				}
 			}
 			else
@@ -387,14 +392,14 @@ namespace ShellShock
 					
 					if ( homedir[ 0 ] != '\0' )
 					{
+						plus::string subpath;
+						
 						if ( first_slash != plus::string::npos )
 						{
-							return homedir + word.substr( first_slash );
+							subpath = word.substr( first_slash );
 						}
-						else
-						{
-							return homedir;
-						}
+						
+						return quoted_tilde_expansion( homedir, subpath );
 					}
 				}
 			}
