@@ -18,7 +18,7 @@
 
 // plus
 #include "plus/cow_string.hh"
-#include "plus/var_string.hh"
+#include "plus/own_string.hh"
 
 #ifdef __MWERKS__
 #pragma once off
@@ -163,4 +163,3 @@ int main( int argc, char **argv )
 	
 	return 0;
 }
-
