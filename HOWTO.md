@@ -13,5 +13,5 @@ The Metamage codebase has several build mechanisms:
 	- Don't be fooled -- this is not a typical Makefile, and trying to use it like one won't have the results you expect.  It's mainly a convenient place for little scripts.
 
 * pack.pl
-	- This is a simple Perl script that takes hexidecimal codes as input and produces the corresponding raw bytestream as output, discarding comments.  It's used to transcribe 68K machine code from relatively human-readable text to the raw form expected by v68k and d68k.
+	- This is a simple Perl script that takes hexadecimal codes as input and produces the corresponding raw bytestream as output, discarding comments.  It's used to transcribe 68K machine code from relatively human-readable text to the raw form expected by v68k and d68k.
 

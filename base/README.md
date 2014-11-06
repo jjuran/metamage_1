@@ -7,7 +7,7 @@ This is a collection of utility libraries that are frequently useful:
 	- MacRoman <-> UTF-8 conversion
 
 * gear
-	- Coding of integers (decimal and hexidecimal) and floats
+	- Coding of integers (decimal and hexadecimal) and floats
 	- String search
 
 * iota
