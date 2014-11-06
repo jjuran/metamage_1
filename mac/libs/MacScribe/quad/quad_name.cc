@@ -9,7 +9,7 @@
 #include <cctype>
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/quad.hh"
 
 

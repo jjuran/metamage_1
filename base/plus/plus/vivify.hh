@@ -7,7 +7,7 @@
 #define PLUS_VIVIFY_HH
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/parse_decimal.hh"
 
 

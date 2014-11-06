@@ -16,7 +16,7 @@
 #include "iota/endian.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 
 #define PROGRAM  "rom-checksum"

@@ -9,7 +9,7 @@
 #include <sys/stat.h>
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // Nitrogen
 #include "Nitrogen/Processes.hh"

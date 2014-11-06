@@ -22,11 +22,11 @@
 
 // gear
 #include "gear/inscribe_decimal.hh"
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/argv.hh"
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 
 // poseven

@@ -13,10 +13,10 @@
 #include <sys/stat.h>
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/mac_utf8.hh"
 #include "plus/var_string.hh"
 

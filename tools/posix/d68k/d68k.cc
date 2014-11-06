@@ -17,7 +17,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus
@@ -92,7 +92,7 @@ namespace tool
 	{
 		const uint16_t min_digits = min_bytes * 2;
 		
-		const uint16_t magnitude = gear::hexidecimal_magnitude( x );
+		const uint16_t magnitude = gear::hexadecimal_magnitude( x );
 		
 		const uint16_t even_magnitude = magnitude + (magnitude & 0x1 );
 		

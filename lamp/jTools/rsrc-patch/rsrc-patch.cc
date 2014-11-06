@@ -11,7 +11,7 @@
 #include <string.h>
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 #include "gear/quad.hh"

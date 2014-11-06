@@ -21,11 +21,11 @@
 #include <cstring>
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/deconstruct.hh"
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/reconstruct.hh"
 #include "plus/serialize.hh"
 #include "plus/var_string.hh"

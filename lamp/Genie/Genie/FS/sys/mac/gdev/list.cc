@@ -10,7 +10,7 @@
 
 // plus
 #include "plus/contains.hh"
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 

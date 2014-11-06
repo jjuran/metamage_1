@@ -14,7 +14,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 
 struct rom_info

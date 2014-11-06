@@ -9,7 +9,7 @@
 #include <stdint.h>
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 
 
 namespace vfs

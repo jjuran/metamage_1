@@ -7,7 +7,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // plus

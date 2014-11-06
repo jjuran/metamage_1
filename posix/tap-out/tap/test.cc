@@ -18,7 +18,7 @@
 #include "more/string.h"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 
 // tap-out

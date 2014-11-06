@@ -9,7 +9,7 @@
 #include "more/string.h"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // MacScribe
 #include "quad/quad_name.hh"

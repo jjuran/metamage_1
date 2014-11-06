@@ -13,7 +13,7 @@
 #include "gear/inscribe_decimal.hh"
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/var_string.hh"
 
 

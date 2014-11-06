@@ -1,12 +1,12 @@
 /*
-	plus/hexidecimal.cc
+	plus/hexadecimal.cc
 	-------------------
 */
 
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
@@ -91,4 +91,3 @@ namespace plus
 	}
 	
 }
-

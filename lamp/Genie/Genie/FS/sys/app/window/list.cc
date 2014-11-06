@@ -16,7 +16,7 @@
 #endif
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"

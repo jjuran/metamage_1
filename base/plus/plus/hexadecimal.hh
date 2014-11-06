@@ -1,10 +1,10 @@
 /*
-	plus/hexidecimal.hh
+	plus/hexadecimal.hh
 	-------------------
 */
 
-#ifndef PLUS_HEXIDECIMAL_HH
-#define PLUS_HEXIDECIMAL_HH
+#ifndef PLUS_HEXADECIMAL_HH
+#define PLUS_HEXADECIMAL_HH
 
 // plus
 #include "plus/string.hh"

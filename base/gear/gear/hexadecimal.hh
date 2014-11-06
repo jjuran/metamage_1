@@ -1,10 +1,10 @@
 /*
-	gear/hexidecimal.hh
+	gear/hexadecimal.hh
 	-------------------
 */
 
-#ifndef GEAR_HEXIDECIMAL_HH
-#define GEAR_HEXIDECIMAL_HH
+#ifndef GEAR_HEXADECIMAL_HH
+#define GEAR_HEXADECIMAL_HH
 
 
 namespace gear
@@ -50,7 +50,7 @@ namespace gear
 	void encode_32_bit_HEX( unsigned x, char* s );
 	
 	
-	inline unsigned short hexidecimal_magnitude( unsigned x )
+	inline unsigned short hexadecimal_magnitude( unsigned x )
 	{
 		const unsigned short result = x >= 0x10000000 ? 8
 		                            : x >= 0x01000000 ? 7
@@ -70,4 +70,3 @@ namespace gear
 }
 
 #endif
-

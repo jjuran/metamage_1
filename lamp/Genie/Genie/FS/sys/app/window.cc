@@ -19,7 +19,7 @@
 #include "iota/strings.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/var_string.hh"

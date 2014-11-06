@@ -1,9 +1,9 @@
 /*
-	gear/hexidecimal.cc
+	gear/hexadecimal.cc
 	-------------------
 */
 
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 
 namespace gear
@@ -218,4 +218,3 @@ namespace gear
 	}
 	
 }
-

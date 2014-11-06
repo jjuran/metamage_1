@@ -9,7 +9,7 @@
 #include <algorithm>
 
 // plus
-#include "plus/hexidecimal.hh"
+#include "plus/hexadecimal.hh"
 #include "plus/quad.hh"
 #include "plus/var_string.hh"
 

@@ -6,7 +6,7 @@
 #include "Genie/FS/append_hex_encoded_byte.hh"
 
 // gear
-#include "gear/hexidecimal.hh"
+#include "gear/hexadecimal.hh"
 
 // plus
 #include "plus/var_string.hh"
