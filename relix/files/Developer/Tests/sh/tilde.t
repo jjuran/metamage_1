@@ -69,3 +69,9 @@ $ HOME="*" sh -c "echo ~"
 $ HOME='$STAR' STAR="*" sh -c "echo ~"
 
 1 >= "$STAR"
+
+%%
+
+$ HOME='/Users/O'\''Brien' sh -c "echo ~"
+
+1 >= "/Users/O'Brien"
