@@ -1,9 +1,9 @@
 /*
-	var_string.cc
+	own_string.cc
 	-------------
 */
 
-#include "plus/var_string.hh"
+#include "plus/own_string.hh"
 
 // Standard C++
 #include <algorithm>
@@ -22,7 +22,7 @@
 namespace plus
 {
 	
-	var_string& var_string::assign( datum_movable& m )
+	own_string& own_string::assign( datum_movable& m )
 	{
 		if ( &m != &store )
 		{
@@ -34,7 +34,7 @@ namespace plus
 		return *this;
 	}
 	
-	char* var_string::erase_unchecked( char* p, size_type n )
+	char* own_string::erase_unchecked( char* p, size_type n )
 	{
 		const size_type old_size = size();
 		
@@ -52,7 +52,7 @@ namespace plus
 		return p;
 	}
 	
-	var_string& var_string::erase( size_type pos, size_type n )
+	own_string& own_string::erase( size_type pos, size_type n )
 	{
 		const size_type old_size = size();
 		
@@ -72,7 +72,7 @@ namespace plus
 		return *this;
 	}
 	
-	char* var_string::erase( char* p, char* q )
+	char* own_string::erase( char* p, char* q )
 	{
 		char* begin = const_cast< char* >( data() );
 		char* end   = begin + size();
@@ -86,7 +86,7 @@ namespace plus
 		return erase_unchecked( p, n );
 	}
 	
-	char* var_string::embiggen( size_type new_length )
+	char* own_string::embiggen( size_type new_length )
 	{
 		string_check_size( new_length );
 		
@@ -110,7 +110,7 @@ namespace plus
 		return data;
 	}
 	
-	void var_string::resize( size_type new_size, char c )
+	void own_string::resize( size_type new_size, char c )
 	{
 		// embiggen() will throw if new_size exceeds max_size()
 		
@@ -124,7 +124,7 @@ namespace plus
 		}
 	}
 	
-	char* var_string::insert_uninitialized( char* p, size_type n )
+	char* own_string::insert_uninitialized( char* p, size_type n )
 	{
 		check_size( n );
 		
@@ -153,7 +153,7 @@ namespace plus
 		return p;
 	}
 	
-	var_string& var_string::insert( size_type pos, const string& s )
+	own_string& own_string::insert( size_type pos, const string& s )
 	{
 		if ( pos > size() )
 		{
@@ -163,7 +163,7 @@ namespace plus
 		return insert( pos, s.data(), s.size() );
 	}
 	
-	var_string& var_string::insert( size_type pos, const string& s, size_type offset, size_type n )
+	own_string& own_string::insert( size_type pos, const string& s, size_type offset, size_type n )
 	{
 		const size_type s_size = s.size();
 		
@@ -177,7 +177,7 @@ namespace plus
 		return insert( pos, s.data() + offset, n );
 	}
 	
-	var_string& var_string::insert( size_type pos, const char* s, size_type n )
+	own_string& own_string::insert( size_type pos, const char* s, size_type n )
 	{
 		// insert_uninitialized() will throw if n exceeds max_size()
 		
@@ -193,12 +193,12 @@ namespace plus
 		return *this;
 	}
 	
-	var_string& var_string::insert( size_type pos, const char* s )
+	own_string& own_string::insert( size_type pos, const char* s )
 	{
 		return insert( pos, s, strlen( s ) );
 	}
 	
-	var_string& var_string::insert( size_type pos, size_type n, char c )
+	own_string& own_string::insert( size_type pos, size_type n, char c )
 	{
 		// insert_uninitialized() will throw if n exceeds max_size()
 		
@@ -214,7 +214,7 @@ namespace plus
 		return *this;
 	}
 	
-	void var_string::insert( char* p, const char* i, const char* j )
+	void own_string::insert( char* p, const char* i, const char* j )
 	{
 		ASSERT( i <= j );
 		
@@ -225,14 +225,14 @@ namespace plus
 		std::copy( i, j, insert_uninitialized( p, n ) );
 	}
 	
-	void var_string::insert( char* p, size_type n, char c )
+	void own_string::insert( char* p, size_type n, char c )
 	{
 		// insert_uninitialized() will throw if n exceeds max_size()
 		
 		memset( insert_uninitialized( p, n ), c, n );
 	}
 	
-	char* var_string::insert( char* p, char c )
+	char* own_string::insert( char* p, char c )
 	{
 		p = insert_uninitialized( p, 1 );
 		
@@ -241,7 +241,7 @@ namespace plus
 		return p;
 	}
 	
-	var_string& var_string::append( const char* p, size_type length )
+	own_string& own_string::append( const char* p, size_type length )
 	{
 		check_size( length );
 		
@@ -264,7 +264,7 @@ namespace plus
 		return *this;
 	}
 	
-	var_string& var_string::append( const char* s )
+	own_string& own_string::append( const char* s )
 	{
 		ASSERT( s != NULL );
 		
@@ -273,14 +273,14 @@ namespace plus
 		return append( s, length );
 	}
 	
-	var_string& var_string::append( size_type n, char c )
+	own_string& own_string::append( size_type n, char c )
 	{
 		resize( size() + n, c );
 		
 		return *this;
 	}
 	
-	var_string& var_string::append( const string& other, size_type pos, size_type n )
+	own_string& own_string::append( const string& other, size_type pos, size_type n )
 	{
 		const size_type other_size = other.size();
 		
@@ -295,7 +295,7 @@ namespace plus
 	}
 	
 	
-	char* var_string::replace_setup( char* p, size_type m, difference_type delta )
+	char* own_string::replace_setup( char* p, size_type m, difference_type delta )
 	{
 		// delta is signed and therefore can't exceed max_size()
 		
@@ -320,7 +320,7 @@ namespace plus
 		return p;
 	}
 	
-	var_string& var_string::replace( size_type pos, size_type m, const string& s )
+	own_string& own_string::replace( size_type pos, size_type m, const string& s )
 	{
 		if ( pos > size() )
 		{
@@ -330,7 +330,7 @@ namespace plus
 		return replace( pos, m, s.data(), s.size() );
 	}
 	
-	var_string& var_string::replace( size_type pos, size_type m, const string& s, size_type offset, size_type n )
+	own_string& own_string::replace( size_type pos, size_type m, const string& s, size_type offset, size_type n )
 	{
 		const size_type s_size = s.size();
 		
@@ -344,7 +344,7 @@ namespace plus
 		return replace( pos, m, s.data() + offset, n );
 	}
 	
-	var_string& var_string::replace( size_type pos, size_type m, const char* s, size_type n )
+	own_string& own_string::replace( size_type pos, size_type m, const char* s, size_type n )
 	{
 		check_size( n );
 		
@@ -368,12 +368,12 @@ namespace plus
 		return *this;
 	}
 	
-	var_string& var_string::replace( size_type pos, size_type m, const char* s )
+	own_string& own_string::replace( size_type pos, size_type m, const char* s )
 	{
 		return replace( pos, m, s, strlen( s ) );
 	}
 	
-	var_string& var_string::replace( size_type pos, size_type m, size_type n, char c )
+	own_string& own_string::replace( size_type pos, size_type m, size_type n, char c )
 	{
 		check_size( n );
 		
@@ -397,12 +397,12 @@ namespace plus
 		return *this;
 	}
 	
-	void var_string::replace( char* p, char* q, const string& s )
+	void own_string::replace( char* p, char* q, const string& s )
 	{
 		replace( p, q, s.data(), s.size() );
 	}
 	
-	void var_string::replace( char* p, char* q, const char *i, size_type n )
+	void own_string::replace( char* p, char* q, const char *i, size_type n )
 	{
 		check_size( n );
 		
@@ -425,12 +425,12 @@ namespace plus
 		memcpy( p, i, n );
 	}
 	
-	void var_string::replace( char* p, char* q, const char *s )
+	void own_string::replace( char* p, char* q, const char *s )
 	{
 		replace( p, q, s, strlen( s ) );
 	}
 	
-	void var_string::replace( char* p, char* q, size_type n, char c )
+	void own_string::replace( char* p, char* q, size_type n, char c )
 	{
 		check_size( n );
 		
@@ -449,7 +449,7 @@ namespace plus
 		memset( p, c, n );
 	}
 	
-	void var_string::replace( char* p, char* q, const char *i, const char *j )
+	void own_string::replace( char* p, char* q, const char *i, const char *j )
 	{
 		ASSERT( i <= j );
 		
@@ -459,4 +459,3 @@ namespace plus
 	}
 	
 }
-

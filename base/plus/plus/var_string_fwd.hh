@@ -10,9 +10,10 @@
 namespace plus
 {
 	
-	class var_string;
+	class own_string;
+	
+	typedef own_string var_string;
 	
 }
 
 #endif
-
