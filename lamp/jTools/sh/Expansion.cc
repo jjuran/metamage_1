@@ -346,6 +346,59 @@ namespace ShellShock
 		return expansion;
 	}
 	
+	static plus::string quoted_tilde_expansion( const char* homedir, const plus::string& subpath )
+	{
+		const size_t home_len = std::strlen( homedir );
+		const size_t path_len = subpath.size();
+		
+		size_t n_quotes = 0;
+		
+		const char* end = homedir + home_len;
+		
+		for ( const char* p = homedir;  p < end;  ++p )
+		{
+			if ( *p == '\'' )
+			{
+				++n_quotes;
+			}
+		}
+		
+		const size_t result_len = 1 + home_len + n_quotes * 3 + 1 + path_len;
+		
+		plus::string result;
+		
+		char* q = result.reset( result_len );
+		
+		*q++ = '\'';
+		
+		if ( n_quotes != 0 )
+		{
+			for ( const char* p = homedir;  p < end; )
+			{
+				const char c = *q++ = *p++;
+				
+				if ( c == '\'' )
+				{
+					*q++ = '\\';
+					*q++ = '\'';
+					*q++ = '\'';
+				}
+			}
+		}
+		else
+		{
+			memcpy( q, homedir, home_len );
+			
+			q += home_len;
+		}
+		
+		*q++ = '\'';
+		
+		memcpy( q, subpath.data(), path_len );
+		
+		return result;
+	}
+	
 	plus::string TildeExpansion( const plus::string& word )
 	{
 		// POSIX.1-2013 Description (2.6.1 Tilde Expansion):
@@ -366,7 +419,7 @@ namespace ShellShock
 				// ... but only if $HOME is defined.
 				if ( homedir != NULL )
 				{
-					return homedir + word.substr( 1 );
+					return quoted_tilde_expansion( homedir, word.substr( 1 ) );
 				}
 			}
 			else
@@ -387,14 +440,14 @@ namespace ShellShock
 					
 					if ( homedir[ 0 ] != '\0' )
 					{
+						plus::string subpath;
+						
 						if ( first_slash != plus::string::npos )
 						{
-							return homedir + word.substr( first_slash );
+							subpath = word.substr( first_slash );
 						}
-						else
-						{
-							return homedir;
-						}
+						
+						return quoted_tilde_expansion( homedir, subpath );
 					}
 				}
 			}
