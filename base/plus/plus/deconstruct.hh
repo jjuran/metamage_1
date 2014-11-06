@@ -6,12 +6,12 @@
 #ifndef PLUS_DECONSTRUCT_HH
 #define PLUS_DECONSTRUCT_HH
 
+// plus
+#include "plus/var_string_fwd.hh"
+
 
 namespace plus
 {
-	
-	class var_string;
-	
 	
 	template < class Freeze, class Stringify >
 	struct deconstruct
@@ -36,4 +36,3 @@ namespace plus
 }
 
 #endif
-

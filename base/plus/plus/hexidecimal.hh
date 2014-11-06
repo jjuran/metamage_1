@@ -8,12 +8,11 @@
 
 // plus
 #include "plus/string.hh"
+#include "plus/var_string_fwd.hh"
 
 
 namespace plus
 {
-	
-	class var_string;
 	
 	unsigned decode_32_bit_hex( const string& s );
 	
@@ -32,4 +31,3 @@ namespace plus
 }
 
 #endif
-
