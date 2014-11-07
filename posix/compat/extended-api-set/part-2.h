@@ -62,7 +62,6 @@ int renameat( int olddirfd, const char* oldpath, int newdirfd, const char* newpa
 
 // sys/stat
 int fstatat( int dirfd, const char* path, struct stat* sb, int flags );
-int futimens( int fd, const struct timespec times[2] );
 int mkdirat( int dirfd, const char* path, mode_t mode );
 int mkfifoat( int dirfd, const char* path, mode_t mode );
 int mknodat( int dirfd, const char* path, mode_t mode, dev_t dev );
@@ -82,9 +81,7 @@ int unlinkat( int dirfd, const char* path, int flags );
 
 #endif  // #if __FreeBSD__ < 8
 
-#if __FreeBSD__ >= 8
 int futimens( int fd, const struct timespec times[2] );
-#endif
 
 #ifdef __cplusplus
 }
