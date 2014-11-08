@@ -54,6 +54,21 @@ sub repair_file
 	rename( $path, $hash ) or die "$path: $!\n";
 }
 
+sub repair_pack
+{
+	my ( $name ) = @_;
+	
+	my ( $prefix, $ext ) = $name =~ m{^ ( pack-[0-9a-f]{14} ) .* \. (idx|pack) }x or return;
+	
+	my $new_name = "$prefix.$ext";
+	
+	-f $new_name and warn "$name: $new_name exists\n";
+	
+	warn "$new_name\n";
+	
+	rename( $name, $new_name ) or die "$name: $!\n";
+}
+
 if ( @ARGV )
 {
 	repair_file( $_ ) for @ARGV;
@@ -79,5 +94,18 @@ if ( -d ".git" )
 		{
 			repair_file( "$initial/$file" );
 		}
+	}
+	
+	exit if ! -d "pack";
+	
+	chdir "pack" or die "pack: $!\n";
+	
+	opendir( $d, "." ) or die "$!\n";
+	
+	my @packs = grep { ! m{^ [.]{1,2} $}x } readdir $d;
+	
+	foreach my $pack ( @packs )
+	{
+		repair_pack( $pack );
 	}
 }
