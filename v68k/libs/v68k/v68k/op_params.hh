@@ -27,6 +27,10 @@ namespace v68k
 		
 		op_size_shift_mask = 6|8,
 		
+		byte_access = 0x8000,  // all access is byte-sized:  MOVEP
+		
+		op_size_in_0040_byte_access = op_size_in_0040 | byte_access,
+		
 		unsized = 0
 	};
 	
@@ -45,4 +49,3 @@ namespace v68k
 }
 
 #endif
-
