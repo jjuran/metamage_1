@@ -67,7 +67,7 @@ namespace v68k
 	{
 		if ( (opcode & 0xf138) == 0x0108 )
 		{
-			storage.size  = op_size_in_0040;
+			storage.size  = op_size_in_0040_byte_access;
 			storage.fetch = fetches_MOVEP;
 			
 			storage.code = opcode & 0x0080 ? microcode_MOVEP_to

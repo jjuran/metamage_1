@@ -157,7 +157,11 @@ namespace v68k
 		
 		// load/store prep
 		
-		if ( pb.size > byte_sized  &&  badly_aligned_data( pb.address ) )
+		if (
+			+ pb.size > byte_sized              &&
+			+ badly_aligned_data( pb.address )  &&
+			+ int16_t( decoded->size ) >= 0     &&
+			+ true )
 		{
 			// pb.address is left set to the PC (which is always even) if unused.
 			return address_error();
