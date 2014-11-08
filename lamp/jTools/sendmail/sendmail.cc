@@ -17,8 +17,10 @@
 #endif
 
 // Mac OS
+#ifndef MAC_OS_X_VERSION_10_8
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
+#endif
 #endif
 
 // POSIX
@@ -51,10 +53,14 @@
 #include "Orion/Main.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_8
+
 inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 {
 	return a.preference < b.preference;
 }
+
+#endif
 
 
 namespace tool
