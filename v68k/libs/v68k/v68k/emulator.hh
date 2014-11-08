@@ -34,10 +34,20 @@ namespace v68k
 			
 			void prefetch_instruction_word();
 			
-			bool take_exception_format_0( uint16_t vector_offset );
+			bool take_exception( uint16_t  format,
+			                     uint16_t  vector_offset,
+			                     uint32_t  instruction_address = 0 );
+			
+			bool take_exception_format_0( uint16_t vector_offset )
+			{
+				return take_exception( 0, vector_offset );
+			}
 		
-			bool take_exception_format_2( uint16_t vector_offset, uint32_t instruction_address );
-		
+			bool take_exception_format_2( uint16_t vector_offset, uint32_t instruction_address )
+			{
+				return take_exception( 2, vector_offset, instruction_address );
+			}
+			
 			bool illegal_instruction()  { return take_exception_format_0( 4 * sizeof (uint32_t) ); }
 			bool privilege_violation()  { return take_exception_format_0( 8 * sizeof (uint32_t) ); }
 			
@@ -48,4 +58,3 @@ namespace v68k
 }
 
 #endif
-

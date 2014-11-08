@@ -271,7 +271,9 @@ namespace v68k
 		}
 	}
 	
-	bool emulator::take_exception_format_0( uint16_t vector_offset )
+	bool emulator::take_exception( uint16_t  format,
+	                               uint16_t  vector_offset,
+	                               uint32_t  instruction_address )
 	{
 		const uint16_t saved_sr = get_SR();
 		
@@ -284,59 +286,20 @@ namespace v68k
 			return address_error();
 		}
 		
-		const uint32_t size = 8;
+		const uint32_t size = format <= 1 ? 8 : 12;
 		
 		sp -= size;
 		
-		const uint32_t format_and_offset = 0 << 12 | vector_offset;
+		const uint16_t format_and_offset = format << 12 | vector_offset;
 		
-		const bool ok = mem.put_word( sp + 0, saved_sr,          supervisor_data_space )
-		              & mem.put_long( sp + 2, pc(),              supervisor_data_space )
-		              & mem.put_word( sp + 6, format_and_offset, supervisor_data_space );
+		bool ok = mem.put_word( sp + 0, saved_sr,            supervisor_data_space )
+		        & mem.put_long( sp + 2, pc(),                supervisor_data_space )
+		        & mem.put_word( sp + 6, format_and_offset,   supervisor_data_space );
 		
-		if ( !ok )
+		if ( ok  &&  format == 2 )
 		{
-			return bus_error();
+			ok = mem.put_long( sp + 8, instruction_address, supervisor_data_space );
 		}
-		
-		if ( badly_aligned_data( regs[ VBR ] ) )
-		{
-			return address_error();
-		}
-		
-		if ( !mem.get_long( regs[ VBR ] + vector_offset, pc(), supervisor_data_space ) )
-		{
-			return bus_error();
-		}
-		
-		prefetch_instruction_word();
-		
-		return true;
-	}
-	
-	bool emulator::take_exception_format_2( uint16_t vector_offset, uint32_t instruction_address )
-	{
-		const uint16_t saved_sr = get_SR();
-		
-		set_SR( (saved_sr & 0x3FFF) | 0x2000 );  // Clear T1/T0, set S
-		
-		uint32_t& sp = a(7);
-		
-		if ( badly_aligned_data( sp ) )
-		{
-			return address_error();
-		}
-		
-		const uint32_t size = 12;
-		
-		sp -= size;
-		
-		const uint32_t format_and_offset = 2 << 12 | vector_offset;
-		
-		const bool ok = mem.put_word( sp + 0, saved_sr,            supervisor_data_space )
-		              & mem.put_long( sp + 2, pc(),                supervisor_data_space )
-		              & mem.put_word( sp + 6, format_and_offset,   supervisor_data_space )
-		              & mem.put_long( sp + 8, instruction_address, supervisor_data_space );
 		
 		if ( !ok )
 		{
