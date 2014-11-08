@@ -38,21 +38,11 @@ namespace v68k
 			                     uint16_t  vector_offset,
 			                     uint32_t  instruction_address = 0 );
 			
-			bool take_exception_format_0( uint16_t vector_offset )
-			{
-				return take_exception( 0, vector_offset );
-			}
-		
-			bool take_exception_format_2( uint16_t vector_offset, uint32_t instruction_address )
-			{
-				return take_exception( 2, vector_offset, instruction_address );
-			}
+			bool illegal_instruction()  { return take_exception( 0, 4 * sizeof (uint32_t) ); }
+			bool privilege_violation()  { return take_exception( 0, 8 * sizeof (uint32_t) ); }
 			
-			bool illegal_instruction()  { return take_exception_format_0( 4 * sizeof (uint32_t) ); }
-			bool privilege_violation()  { return take_exception_format_0( 8 * sizeof (uint32_t) ); }
-			
-			bool line_A_emulator()  { return take_exception_format_0( 10 * sizeof (uint32_t) ); }
-			bool line_F_emulator()  { return take_exception_format_0( 11 * sizeof (uint32_t) ); }
+			bool line_A_emulator()  { return take_exception( 0, 10 * sizeof (uint32_t) ); }
+			bool line_F_emulator()  { return take_exception( 0, 11 * sizeof (uint32_t) ); }
 	};
 	
 }

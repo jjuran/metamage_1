@@ -192,14 +192,14 @@ namespace v68k
 				case Trap_4:  case Trap_5:  case Trap_6:  case Trap_7:
 				case Trap_8:  case Trap_9:  case Trap_A:  case Trap_B:
 				case Trap_C:  case Trap_D:  case Trap_E:  case Trap_F:
-					take_exception_format_0( -result * sizeof (uint32_t) );
+					take_exception( 0, -result * sizeof (uint32_t) );
 					
 					break;
 				
 				case Division_by_zero:
 				case CHK_exception:
 				case Overflow_trap:
-					take_exception_format_2( -result * sizeof (uint32_t), instruction_address );
+					take_exception( 2, -result * sizeof (uint32_t), instruction_address );
 					
 					break;
 				
@@ -250,7 +250,7 @@ namespace v68k
 				condition = normal;  // Traced STOP instructions don't stop
 			}
 			
-			take_exception_format_2( 9 * sizeof (uint32_t), instruction_address );
+			take_exception( 2, 9 * sizeof (uint32_t), instruction_address );
 		}
 		
 		// prefetch next
