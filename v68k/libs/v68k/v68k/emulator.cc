@@ -160,7 +160,7 @@ namespace v68k
 		if (
 			+ pb.size > byte_sized              &&
 			+ badly_aligned_data( pb.address )  &&
-			+ int16_t( decoded->flags ) >= 0    &&
+			+ !decoded->accesses_bytes_only()   &&
 			+ true )
 		{
 			// pb.address is left set to the PC (which is always even) if unused.

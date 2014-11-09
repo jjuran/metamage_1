@@ -82,9 +82,10 @@ namespace v68k
 		microcode  code;
 		op_size_t  size;
 		flags_t    flags;
+		
+		bool accesses_bytes_only() const  { return flags & byte_access; }
 	};
 	
 }
 
 #endif
-
