@@ -51,6 +51,7 @@ namespace v68k     {
 namespace callback {
 
 using v68k::auth::fully_authorized;
+using v68k::auth::supervisor_mode_switch_allowed;
 using v68k::screen::lock_level;
 
 
@@ -160,7 +161,7 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 		return rts;
 	}
 	
-	if ( fully_authorized )
+	if ( supervisor_mode_switch_allowed )
 	{
 		uint32_t return_address;
 		

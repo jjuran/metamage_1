@@ -66,6 +66,7 @@
 using v68k::big_longword;
 
 using v68k::auth::fully_authorized;
+using v68k::auth::supervisor_mode_switch_allowed;
 using v68k::screen::ignore_screen_locks;
 
 static bool tracing;
@@ -88,6 +89,7 @@ static module_spec* module_specs;
 enum
 {
 	Opt_authorized = 'A',
+	Opt_supervisor = 'S',
 	Opt_trace      = 'T',
 	Opt_module     = 'm',
 	Opt_verbose    = 'v',
@@ -102,13 +104,14 @@ enum
 
 static command::option options[] =
 {
-	{ "",        Opt_authorized },
-	{ "trace",   Opt_trace      },
-	{ "verbose", Opt_verbose    },
-	{ "pid",     Opt_pid,    command::Param_optional },
-	{ "raster",  Opt_raster, command::Param_required },
-	{ "screen",  Opt_screen, command::Param_required },
-	{ "module",  Opt_module, command::Param_required },
+	{ "",           Opt_authorized },
+	{ "supervisor", Opt_supervisor },
+	{ "trace",      Opt_trace      },
+	{ "verbose",    Opt_verbose    },
+	{ "pid",        Opt_pid,    command::Param_optional },
+	{ "raster",     Opt_raster, command::Param_required },
+	{ "screen",     Opt_screen, command::Param_required },
+	{ "module",     Opt_module, command::Param_required },
 	
 	{ "ignore-screen-locks", Opt_ignore_screen_locks },
 	
@@ -754,6 +757,10 @@ char* const* get_options( char** argv )
 					fake_pid = -1;
 				}
 				
+				// fall through
+			
+			case Opt_supervisor:
+				supervisor_mode_switch_allowed = true;
 				break;
 			
 			case Opt_ignore_screen_locks:
