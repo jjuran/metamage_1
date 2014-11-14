@@ -325,7 +325,7 @@ namespace v68k
 			return &storage;
 		}
 		
-		if ( size_code == 3  &&  ea_is_data_alterable( mode, n ) )
+		if ( size_code == 3  &&  ea_is_data( mode, n ) )
 		{
 			storage.size  = long_sized;
 			storage.fetch = fetches_math_to_Dn;
@@ -478,7 +478,7 @@ namespace v68k
 			return &storage;
 		}
 		
-		if ( size_code == 3  &&  ea_is_data_alterable( mode, n ) )
+		if ( size_code == 3  &&  ea_is_data( mode, n ) )
 		{
 			storage.size  = word_sized;
 			storage.fetch = fetches_math_to_Dn;
