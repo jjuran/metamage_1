@@ -194,7 +194,6 @@ namespace tool
 		std::vector< const char* > command;
 		
 		command.push_back( "tlsrvr"   );
-		command.push_back( "--switch" );  // bring ToolServer to front
 		command.push_back( "--escape" );  // escape arguments to prevent expansion
 		command.push_back( "--"       );  // stop interpreting options here
 		
