@@ -623,6 +623,8 @@ namespace tool
 		
 		char const *const *freeArgs = o::free_arguments();
 		
+		setenv( "TLSRVR_FRONTMOST", "always", 0 );
+		
 	#if defined( __APPLE__ )  &&  defined( __POWERPC__ )
 		
 		// Developer Tools 5247 (Xcode 2.2) complains if this is not set
