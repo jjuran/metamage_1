@@ -623,7 +623,17 @@ namespace tool
 		
 		char const *const *freeArgs = o::free_arguments();
 		
+	#if TARGET_API_MAC_CARBON
+		
+		/*
+			Bringing ToolServer frontmost to run commands seems to improve
+			performance when MacRelix is running natively in OS X, but hurt
+			it in OS 9 (including Classic).
+		*/
+		
 		setenv( "TLSRVR_FRONTMOST", "always", 0 );
+		
+	#endif
 		
 	#if defined( __APPLE__ )  &&  defined( __POWERPC__ )
 		
