@@ -7,6 +7,8 @@
 #include <cctype>
 
 // Standard C
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 // gear
@@ -117,6 +119,24 @@ namespace tool
 		o::get_options( argc, argv );
 		
 		char const *const *free_args = o::free_arguments();
+		
+		if ( const char* frontmost = getenv( "TLSRVR_FRONTMOST" ) )
+		{
+			if ( strcmp( frontmost, "always" ) == 0 )
+			{
+				switchLayers = true;
+			}
+			else if ( strcmp( frontmost, "never" ) == 0 )
+			{
+				// do nothing
+			}
+			else
+			{
+				fprintf( stderr, "TLSRVR_FRONTMOST must be always|never, not %s\n", frontmost );
+				
+				return 2;
+			}
+		}
 		
 		plus::string command = MakeCommand( free_args,
 		                                    free_args + o::free_argument_count(),
