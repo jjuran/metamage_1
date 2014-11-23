@@ -12,6 +12,7 @@
 
 // macos
 #include "QDGlobals.hh"
+#include "Rects.hh"
 
 
 short MemErr : 0x0220;
@@ -130,12 +131,10 @@ pascal void MovePortTo_patch( short left, short top )
 		return;
 	}
 	
-	const short dh = left - thePort->portRect.left;
-	const short dv = top  - thePort->portRect.top;
+	Rect& bounds = thePort->portBits.bounds;
 	
-	thePort->portRect.bottom += dv;
-	thePort->portRect.right  += dh;
+	const short dh = left + bounds.left;
+	const short dv = top  + bounds.top;
 	
-	thePort->portRect.top  = top;
-	thePort->portRect.left = left;
+	OffsetRect_patch( &bounds, -dh, -dv );
 }
