@@ -20,4 +20,9 @@ pascal void PortSize_patch( short width, short height );
 
 pascal void MovePortTo_patch( short left, short top );
 
+pascal void SetClip_patch( struct MacRegion** clipRgn );
+pascal void GetClip_patch( struct MacRegion** clipRgn );
+
+pascal void ClipRect_patch( const struct Rect* clipRect );
+
 #endif

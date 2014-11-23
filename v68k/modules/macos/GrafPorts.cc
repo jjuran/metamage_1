@@ -13,6 +13,7 @@
 // macos
 #include "QDGlobals.hh"
 #include "Rects.hh"
+#include "Regions.hh"
 
 
 short MemErr : 0x0220;
@@ -137,4 +138,40 @@ pascal void MovePortTo_patch( short left, short top )
 	const short dv = top  + bounds.top;
 	
 	OffsetRect_patch( &bounds, -dh, -dv );
+}
+
+pascal void SetClip_patch( struct MacRegion** clipRgn )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	CopyRgn_patch( clipRgn, thePort->clipRgn );
+}
+
+pascal void GetClip_patch( struct MacRegion** clipRgn )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	CopyRgn_patch( thePort->clipRgn, clipRgn );
+}
+
+pascal void ClipRect_patch( const struct Rect* clipRect )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	RectRgn_patch( thePort->clipRgn, clipRect );
 }
