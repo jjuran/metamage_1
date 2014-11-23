@@ -11,7 +11,11 @@
 #endif
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
+
+// quickdraw
+#include "qd/region_raster.hh"
 
 // macos
 #include "QDGlobals.hh"
@@ -35,6 +39,11 @@ static inline bool operator==( const Pattern& a, black_t )
 	const UInt32* p = (const UInt32*) a.pat;
 	
 	return *p++ == 0xFFFFFFFF  &&  *p == 0xFFFFFFFF;
+}
+
+static inline QDGlobals& get_QDGlobals()
+{
+	return *(QDGlobals*) ((char*) get_addrof_thePort() - offsetof(QDGlobals, thePort));
 }
 
 struct rectangular_op_params
@@ -74,7 +83,8 @@ static void do_Rect_intersection( Rect& result, const Rect& a, const Rect& b )
 }
 
 static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
-                                                const Rect&             input_rect )
+                                                const Rect&             input_rect,
+                                                bool                    clipping )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
@@ -117,17 +127,27 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	params.topLeft    = *(Point*) &rect;
 	params.start      = portBits.baseAddr + top * rowBytes + outer_left_bytes;
 	params.height     = height_px;
-	params.draw_bytes = inner_bytes;
 	params.skip_bytes = rowBytes - outer_bytes;
-	params.left_mask  = left_mask;
-	params.right_mask = right_mask;
 	
-	if ( int( inner_bytes ) < 0 )
+	if ( clipping )
 	{
-		params.left_mask  |= right_mask;
-		params.right_mask  = 0;
+		params.draw_bytes = outer_bytes;
+		params.left_mask  = 0;
+		params.right_mask = 0;
+	}
+	else
+	{
+		params.draw_bytes = inner_bytes;
+		params.left_mask  = left_mask;
+		params.right_mask = right_mask;
+	
+		if ( int( inner_bytes ) < 0 )
+		{
+			params.left_mask  |= right_mask;
+			params.right_mask  = 0;
 		
-		params.draw_bytes = 0;
+			params.draw_bytes = 0;
+		}
 	}
 }
 
@@ -308,6 +328,81 @@ static void fill_rect( const rectangular_op_params& params )
 	}
 }
 
+static void draw_rect( const rectangular_op_params&  params,
+                       short                         pattern_transfer_mode,
+                       const Rect&                   clipRect,
+                       RgnHandle                     clipRgn )
+{
+	const short* bbox   = (short*) &clipRect;
+	const short* extent = (short*) (clipRgn ? *clipRgn + 1 : NULL);
+	
+	unsigned size = quickdraw::region_raster::mask_size( bbox );
+	
+	char* temp = (char*) malloc( size );
+	
+	quickdraw::region_raster clip( bbox, extent, temp, size );
+	
+	Pattern& pattern = *params.pattern;
+	
+	if ( const bool negated = pattern_transfer_mode & 0x04 )
+	{
+		for ( int i = 0;  i < 8;  ++i )
+		{
+			pattern.pat[i] = ~pattern.pat[i];
+		}
+	}
+	
+	short       v = params.topLeft.v & 0x7;
+	short const h = params.origin_h & 0x07;
+	
+	if ( h != 0 )
+	{
+		for ( int i = 0;  i < 8;  ++i )
+		{
+			pattern.pat[i] = pattern.pat[i] <<      h
+			               | pattern.pat[i] >> (8 - h);
+		}
+	}
+	
+	Ptr p = params.start;
+	
+	const short top    = params.topLeft.v;
+	const short bottom = params.topLeft.v + params.height;
+	
+	for ( int i = top;  i < bottom;  ++i )
+	{
+		clip.load_mask( i );
+		
+		const char* clip_mask = temp;
+		
+		const uint8_t pat = pattern.pat[v];
+		
+		for ( uint16_t j = params.draw_bytes;  j > 0;  --j )
+		{
+			const uint8_t mask = *clip_mask++;
+			
+			const uint8_t src = pat & mask;
+			
+			switch ( pattern_transfer_mode & 0x03 )
+			{
+				// Use src vs. pat modes because we stripped off the 8 bit
+				case srcCopy:  *p = (*p  & ~mask) |  src;  break;
+				case srcOr:    *p =  *p           |  src;  break;
+				case srcXor:   *p =  *p           ^  src;  break;
+				case srcBic:   *p =  *p           & ~src;  break;
+			}
+			
+			++p;
+		}
+		
+		p += params.skip_bytes;
+		
+		v = (v + 1) & 0x7;
+	}
+	
+	free( temp );
+}
+
 pascal void StdRect_patch( signed char verb, const Rect* r )
 {
 	if ( verb == kQDGrafVerbFrame )
@@ -321,18 +416,45 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	Rect clipRect = port.clipRgn[0]->rgnBBox;
 	
-	SectRect( r, &clipRect, &clipRect );
+	SectRect( r,                     &clipRect, &clipRect );
+	SectRect( &port.portBits.bounds, &clipRect, &clipRect );
+	
+	RgnHandle clipRgn = NULL;
+	
+	bool clipping_to_rect = port.clipRgn[0]->rgnSize <= sizeof (MacRegion);
+	
+	if ( !clipping_to_rect )
+	{
+		clipRgn = NewRgn();
+		
+		RectRgn( clipRgn, &clipRect );
+		
+		SectRgn( port.clipRgn, clipRgn, clipRgn );
+		
+		clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
+		
+		if ( clipping_to_rect )
+		{
+			clipRect = clipRgn[0]->rgnBBox;
+			
+			DisposeRgn( clipRgn );
+			
+			clipRgn = NULL;
+		}
+	}
 	
 	rectangular_op_params params;
 	
-	get_rectangular_op_params_for_rect( params, clipRect );
+	get_rectangular_op_params_for_rect( params, clipRect, !clipping_to_rect );
 	
 	params.pattern = &port.fillPat;
 	params.origin_h = port.portBits.bounds.left;
 	
+	short patMode = patCopy;
+	
 	if ( verb == kQDGrafVerbErase )
 	{
-		if ( port.bkPat == White )
+		if ( clipping_to_rect  &&  port.bkPat == White )
 		{
 			erase_rect( params );
 			
@@ -343,23 +465,44 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	}
 	else if ( verb == kQDGrafVerbPaint )
 	{
-		if ( port.pnPat == Black )
+		if ( clipping_to_rect  &&  port.pnPat == Black )
 		{
 			paint_rect( params );
 			
 			return;
 		}
 		
+		patMode      = port.pnMode;
 		port.fillPat = port.pnPat;
 	}
 	else if ( verb == kQDGrafVerbInvert )
 	{
-		invert_rect( params );
+		if ( clipping_to_rect )
+		{
+			invert_rect( params );
+		
+			return;
+		}
+		
+		const QDGlobals& qd = get_QDGlobals();
+		
+		patMode      = patXor;
+		port.fillPat = qd.black;
+	}
+	
+	if ( clipping_to_rect  &&  patMode == patCopy )
+	{
+		fill_rect( params );
 		
 		return;
 	}
 	
-	fill_rect( params );
+	draw_rect( params, patMode, clipRect, clipRgn );
+	
+	if ( clipRgn != NULL )
+	{
+		DisposeRgn( clipRgn );
+	}
 }
 
 pascal void EraseRect_patch( const Rect* rect )
