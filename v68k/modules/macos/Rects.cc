@@ -35,6 +35,7 @@ struct rectangular_op_params
 struct rectangular_fill_params : rectangular_op_params
 {
 	Pattern pattern;
+	short   origin_h;
 };
 
 static inline short min( short a, short b )
@@ -274,7 +275,7 @@ static void fill_rect( const rectangular_fill_params& params )
 	Pattern pattern = params.pattern;
 	
 	short       v = params.topLeft.v & 0x7;
-	short const h = 0;
+	short const h = params.origin_h & 0x07;
 	
 	if ( h != 0 )
 	{
@@ -323,7 +324,11 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	
 	get_rectangular_op_params_for_rect( params, *rect );
 	
+	const GrafPort& port = **get_addrof_thePort();
+	
 	params.pattern = *pattern;
+	
+	params.origin_h = port.portBits.bounds.left;
 	
 	fill_rect( params );
 }
