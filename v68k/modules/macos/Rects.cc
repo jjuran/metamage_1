@@ -35,8 +35,6 @@ struct rectangular_op_params
 	short     origin_h;
 };
 
-typedef rectangular_op_params rectangular_fill_params;
-
 static inline short min( short a, short b )
 {
 	return b < a ? b : a;
@@ -269,7 +267,7 @@ pascal void FrameRect_patch( const Rect* rect )
 	PaintRect_patch( &edge );
 }
 
-static void fill_rect( const rectangular_fill_params& params )
+static void fill_rect( const rectangular_op_params& params )
 {
 	Pattern& pattern = *params.pattern;
 	
@@ -319,7 +317,7 @@ static void fill_rect( const rectangular_fill_params& params )
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 {
-	rectangular_fill_params params;
+	rectangular_op_params params;
 	
 	get_rectangular_op_params_for_rect( params, *rect );
 	
