@@ -135,15 +135,6 @@ static void erase_rect( const rectangular_op_params& params )
 	}
 }
 
-pascal void EraseRect_patch( const Rect* rect )
-{
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	erase_rect( params );
-}
-
 static void paint_rect( const rectangular_op_params& params )
 {
 	Ptr p = params.start;
@@ -166,15 +157,6 @@ static void paint_rect( const rectangular_op_params& params )
 		
 		p += params.skip_bytes;
 	}
-}
-
-pascal void PaintRect_patch( const Rect* rect )
-{
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	paint_rect( params );
 }
 
 static void invert_rect( const rectangular_op_params& params )
@@ -208,15 +190,6 @@ static void invert_rect( const rectangular_op_params& params )
 		
 		p += params.skip_bytes;
 	}
-}
-
-pascal void InverRect_patch( const Rect* rect )
-{
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	invert_rect( params );
 }
 
 static void frame_rect( const Rect* rect )
@@ -267,11 +240,6 @@ static void frame_rect( const Rect* rect )
 	PaintRect_patch( &edge );
 }
 
-pascal void FrameRect_patch( const Rect* rect )
-{
-	frame_rect( rect );
-}
-
 static void fill_rect( const rectangular_op_params& params )
 {
 	Pattern& pattern = *params.pattern;
@@ -318,6 +286,38 @@ static void fill_rect( const rectangular_op_params& params )
 		
 		v = (v + 1) & 0x7;
 	}
+}
+
+pascal void EraseRect_patch( const Rect* rect )
+{
+	rectangular_op_params params;
+	
+	get_rectangular_op_params_for_rect( params, *rect );
+	
+	erase_rect( params );
+}
+
+pascal void PaintRect_patch( const Rect* rect )
+{
+	rectangular_op_params params;
+	
+	get_rectangular_op_params_for_rect( params, *rect );
+	
+	paint_rect( params );
+}
+
+pascal void InverRect_patch( const Rect* rect )
+{
+	rectangular_op_params params;
+	
+	get_rectangular_op_params_for_rect( params, *rect );
+	
+	invert_rect( params );
+}
+
+pascal void FrameRect_patch( const Rect* rect )
+{
+	frame_rect( rect );
 }
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
