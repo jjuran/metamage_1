@@ -201,7 +201,7 @@ static void frame_rect( const Rect* rect )
 	
 	if ( rect->bottom - rect->top <= 2  ||  rect->right - rect->left <= 2 )
 	{
-		PaintRect_patch( rect );
+		StdRect_patch( kQDGrafVerbPaint, rect );
 		
 		return;
 	}
@@ -214,7 +214,7 @@ static void frame_rect( const Rect* rect )
 	
 	edge.bottom = edge.top + 1;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
 	++edge.top;
@@ -223,13 +223,13 @@ static void frame_rect( const Rect* rect )
 	
 	edge.bottom = rect->bottom - 1;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
 	edge.left  = rect->right - 1;
 	edge.right = rect->right;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	edge.left = rect->left;
 	
@@ -237,7 +237,7 @@ static void frame_rect( const Rect* rect )
 	
 	++edge.bottom;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 }
 
 static void fill_rect( const rectangular_op_params& params )
