@@ -81,6 +81,7 @@ static void install_QuickDraw()
 	TBTRAP( GetClip  );  // A87A
 	TBTRAP( ClipRect );  // A87B
 	
+	TBTRAP( StdRect    );  // A8A0
 	TBTRAP( FrameRect  );  // A8A1
 	TBTRAP( PaintRect  );  // A8A2
 	TBTRAP( EraseRect  );  // A8A3

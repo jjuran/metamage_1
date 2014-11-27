@@ -10,6 +10,8 @@ struct Rect;
 struct Pattern;
 struct Point;
 
+pascal void StdRect_patch( signed char verb, const Rect* r );
+
 pascal void EraseRect_patch( const Rect* rect );
 pascal void PaintRect_patch( const Rect* rect );
 pascal void InverRect_patch( const Rect* rect );

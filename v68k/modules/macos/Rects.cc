@@ -288,6 +288,36 @@ static void fill_rect( const rectangular_op_params& params )
 	}
 }
 
+pascal void StdRect_patch( signed char verb, const Rect* r )
+{
+	if ( verb == kQDGrafVerbFrame )
+	{
+		frame_rect( r );
+		
+		return;
+	}
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	rectangular_op_params params;
+	
+	get_rectangular_op_params_for_rect( params, *r );
+	
+	params.pattern = &port.fillPat;
+	params.origin_h = port.portBits.bounds.left;
+	
+	switch ( verb )
+	{
+		case kQDGrafVerbPaint:   paint_rect ( params );  break;
+		case kQDGrafVerbErase:   erase_rect ( params );  break;
+		case kQDGrafVerbInvert:  invert_rect( params );  break;
+		case kQDGrafVerbFill:    fill_rect  ( params );  break;
+		
+		default:
+			break;
+	}
+}
+
 pascal void EraseRect_patch( const Rect* rect )
 {
 	rectangular_op_params params;
