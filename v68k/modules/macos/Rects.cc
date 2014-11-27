@@ -299,9 +299,13 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	GrafPort& port = **get_addrof_thePort();
 	
+	Rect clipRect = port.clipRgn[0]->rgnBBox;
+	
+	SectRect( r, &clipRect, &clipRect );
+	
 	rectangular_op_params params;
 	
-	get_rectangular_op_params_for_rect( params, *r );
+	get_rectangular_op_params_for_rect( params, clipRect );
 	
 	params.pattern = &port.fillPat;
 	params.origin_h = port.portBits.bounds.left;
