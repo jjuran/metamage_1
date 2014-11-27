@@ -34,8 +34,8 @@ struct rectangular_op_params
 
 struct rectangular_fill_params : rectangular_op_params
 {
-	Pattern pattern;
-	short   origin_h;
+	Pattern*  pattern;
+	short     origin_h;
 };
 
 static inline short min( short a, short b )
@@ -272,7 +272,7 @@ pascal void FrameRect_patch( const Rect* rect )
 
 static void fill_rect( const rectangular_fill_params& params )
 {
-	Pattern pattern = params.pattern;
+	Pattern& pattern = *params.pattern;
 	
 	short       v = params.topLeft.v & 0x7;
 	short const h = params.origin_h & 0x07;
@@ -328,7 +328,7 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	
 	port.fillPat = *pattern;
 	
-	params.pattern  = port.fillPat;
+	params.pattern = &port.fillPat;
 	params.origin_h = port.portBits.bounds.left;
 	
 	fill_rect( params );
