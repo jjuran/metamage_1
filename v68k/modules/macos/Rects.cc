@@ -320,50 +320,31 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 
 pascal void EraseRect_patch( const Rect* rect )
 {
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	erase_rect( params );
+	StdRect( kQDGrafVerbErase, rect );
 }
 
 pascal void PaintRect_patch( const Rect* rect )
 {
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	paint_rect( params );
+	StdRect( kQDGrafVerbPaint, rect );
 }
 
 pascal void InverRect_patch( const Rect* rect )
 {
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	invert_rect( params );
+	StdRect( kQDGrafVerbInvert, rect );
 }
 
 pascal void FrameRect_patch( const Rect* rect )
 {
-	frame_rect( rect );
+	StdRect( kQDGrafVerbFrame, rect );
 }
 
 pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 {
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
 	GrafPort& port = **get_addrof_thePort();
 	
 	port.fillPat = *pattern;
 	
-	params.pattern = &port.fillPat;
-	params.origin_h = port.portBits.bounds.left;
-	
-	fill_rect( params );
+	StdRect( kQDGrafVerbFill, rect );
 }
 
 pascal unsigned char EqualRect_patch( const Rect* a, const Rect* b )
