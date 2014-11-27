@@ -219,7 +219,7 @@ pascal void InverRect_patch( const Rect* rect )
 	invert_rect( params );
 }
 
-pascal void FrameRect_patch( const Rect* rect )
+static void frame_rect( const Rect* rect )
 {
 	if ( rect->top >= rect->bottom  ||  rect->left >= rect->right )
 	{
@@ -265,6 +265,11 @@ pascal void FrameRect_patch( const Rect* rect )
 	++edge.bottom;
 	
 	PaintRect_patch( &edge );
+}
+
+pascal void FrameRect_patch( const Rect* rect )
+{
+	frame_rect( rect );
 }
 
 static void fill_rect( const rectangular_op_params& params )
