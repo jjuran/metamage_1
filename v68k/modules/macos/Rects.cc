@@ -30,13 +30,12 @@ struct rectangular_op_params
 	
 	uint8_t left_mask;
 	uint8_t right_mask;
-};
-
-struct rectangular_fill_params : rectangular_op_params
-{
+	
 	Pattern*  pattern;
 	short     origin_h;
 };
+
+typedef rectangular_op_params rectangular_fill_params;
 
 static inline short min( short a, short b )
 {
