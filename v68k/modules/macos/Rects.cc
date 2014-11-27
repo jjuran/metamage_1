@@ -324,10 +324,11 @@ pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
 	
 	get_rectangular_op_params_for_rect( params, *rect );
 	
-	const GrafPort& port = **get_addrof_thePort();
+	GrafPort& port = **get_addrof_thePort();
 	
-	params.pattern = *pattern;
+	port.fillPat = *pattern;
 	
+	params.pattern  = port.fillPat;
 	params.origin_h = port.portBits.bounds.left;
 	
 	fill_rect( params );
