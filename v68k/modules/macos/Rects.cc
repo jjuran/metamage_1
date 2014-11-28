@@ -30,12 +30,9 @@ struct rectangular_op_params
 	
 	uint8_t left_mask;
 	uint8_t right_mask;
-};
-
-struct rectangular_fill_params : rectangular_op_params
-{
-	Pattern pattern;
-	short   origin_h;
+	
+	Pattern*  pattern;
+	short     origin_h;
 };
 
 static inline short min( short a, short b )
@@ -138,15 +135,6 @@ static void erase_rect( const rectangular_op_params& params )
 	}
 }
 
-pascal void EraseRect_patch( const Rect* rect )
-{
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	erase_rect( params );
-}
-
 static void paint_rect( const rectangular_op_params& params )
 {
 	Ptr p = params.start;
@@ -169,15 +157,6 @@ static void paint_rect( const rectangular_op_params& params )
 		
 		p += params.skip_bytes;
 	}
-}
-
-pascal void PaintRect_patch( const Rect* rect )
-{
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	paint_rect( params );
 }
 
 static void invert_rect( const rectangular_op_params& params )
@@ -213,16 +192,7 @@ static void invert_rect( const rectangular_op_params& params )
 	}
 }
 
-pascal void InverRect_patch( const Rect* rect )
-{
-	rectangular_op_params params;
-	
-	get_rectangular_op_params_for_rect( params, *rect );
-	
-	invert_rect( params );
-}
-
-pascal void FrameRect_patch( const Rect* rect )
+static void frame_rect( const Rect* rect )
 {
 	if ( rect->top >= rect->bottom  ||  rect->left >= rect->right )
 	{
@@ -231,7 +201,7 @@ pascal void FrameRect_patch( const Rect* rect )
 	
 	if ( rect->bottom - rect->top <= 2  ||  rect->right - rect->left <= 2 )
 	{
-		PaintRect_patch( rect );
+		StdRect_patch( kQDGrafVerbPaint, rect );
 		
 		return;
 	}
@@ -244,7 +214,7 @@ pascal void FrameRect_patch( const Rect* rect )
 	
 	edge.bottom = edge.top + 1;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
 	++edge.top;
@@ -253,13 +223,13 @@ pascal void FrameRect_patch( const Rect* rect )
 	
 	edge.bottom = rect->bottom - 1;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
 	edge.left  = rect->right - 1;
 	edge.right = rect->right;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	edge.left = rect->left;
 	
@@ -267,12 +237,12 @@ pascal void FrameRect_patch( const Rect* rect )
 	
 	++edge.bottom;
 	
-	PaintRect_patch( &edge );
+	StdRect_patch( kQDGrafVerbPaint, &edge );
 }
 
-static void fill_rect( const rectangular_fill_params& params )
+static void fill_rect( const rectangular_op_params& params )
 {
-	Pattern pattern = params.pattern;
+	Pattern& pattern = *params.pattern;
 	
 	short       v = params.topLeft.v & 0x7;
 	short const h = params.origin_h & 0x07;
@@ -318,19 +288,63 @@ static void fill_rect( const rectangular_fill_params& params )
 	}
 }
 
-pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
+pascal void StdRect_patch( signed char verb, const Rect* r )
 {
-	rectangular_fill_params params;
+	if ( verb == kQDGrafVerbFrame )
+	{
+		frame_rect( r );
+		
+		return;
+	}
 	
-	get_rectangular_op_params_for_rect( params, *rect );
+	GrafPort& port = **get_addrof_thePort();
 	
-	const GrafPort& port = **get_addrof_thePort();
+	rectangular_op_params params;
 	
-	params.pattern = *pattern;
+	get_rectangular_op_params_for_rect( params, *r );
 	
+	params.pattern = &port.fillPat;
 	params.origin_h = port.portBits.bounds.left;
 	
-	fill_rect( params );
+	switch ( verb )
+	{
+		case kQDGrafVerbPaint:   paint_rect ( params );  break;
+		case kQDGrafVerbErase:   erase_rect ( params );  break;
+		case kQDGrafVerbInvert:  invert_rect( params );  break;
+		case kQDGrafVerbFill:    fill_rect  ( params );  break;
+		
+		default:
+			break;
+	}
+}
+
+pascal void EraseRect_patch( const Rect* rect )
+{
+	StdRect( kQDGrafVerbErase, rect );
+}
+
+pascal void PaintRect_patch( const Rect* rect )
+{
+	StdRect( kQDGrafVerbPaint, rect );
+}
+
+pascal void InverRect_patch( const Rect* rect )
+{
+	StdRect( kQDGrafVerbInvert, rect );
+}
+
+pascal void FrameRect_patch( const Rect* rect )
+{
+	StdRect( kQDGrafVerbFrame, rect );
+}
+
+pascal void FillRect_patch( const Rect* rect, const Pattern* pattern )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.fillPat = *pattern;
+	
+	StdRect( kQDGrafVerbFill, rect );
 }
 
 pascal unsigned char EqualRect_patch( const Rect* a, const Rect* b )
