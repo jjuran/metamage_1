@@ -19,6 +19,7 @@
 #endif
 
 // POSIX
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/uio.h>
 
@@ -74,6 +75,31 @@ namespace unet
 		{
 			return -1;
 		}
+		
+	#ifdef __APPLE__
+		
+		/*
+			In Mac OS X 10.4.11 at least, two consecutive fd sends can fail
+			if the the first isn't received prior to the second.  To ensure
+			this doesn't happen, block after sending until the receiver
+			acknowledges.
+		*/
+		
+		char buffer;
+		
+		ssize_t n_read = read( socket_fd, &buffer, sizeof buffer );
+		
+		if ( n_read <= 0 )
+		{
+			if ( n_read == 0 )
+			{
+				errno = ENOTCONN;
+			}
+			
+			return -1;
+		}
+		
+	#endif
 		
 		return 0;
 	}
@@ -137,6 +163,12 @@ namespace unet
 			     &&  cmsg.header.cmsg_type  == SCM_RIGHTS
 			     &&  cmsg.header.cmsg_len   == control_len )
 			{
+			#ifdef __APPLE__
+				
+				(void) write( socket_fd, "", 1 );
+				
+			#endif
+				
 				int result_fd = *(int*) CMSG_DATA( &cmsg.header );
 				
 				return result_fd;
