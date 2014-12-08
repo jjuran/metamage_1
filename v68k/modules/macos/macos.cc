@@ -66,20 +66,19 @@ static void install_OSUtils()
 
 static void install_QuickDraw()
 {
-	TBTRAP( InitPort  );  // A86D
-	TBTRAP( InitGraf  );  // A86E
-	TBTRAP( OpenPort  );  // A86F
-	TBTRAP( SetPort   );  // A873
-	TBTRAP( GetPort   );  // A874
-	TBTRAP( ClosePort );  // A87D
-	
+	TBTRAP( InitPort    );  // A86D
+	TBTRAP( InitGraf    );  // A86E
+	TBTRAP( OpenPort    );  // A86F
+	TBTRAP( SetPort     );  // A873
+	TBTRAP( GetPort     );  // A874
 	TBTRAP( SetPortBits );  // A875
 	TBTRAP( PortSize    );  // A876
 	TBTRAP( MovePortTo  );  // A877
 	
-	TBTRAP( SetClip  );  // A879
-	TBTRAP( GetClip  );  // A87A
-	TBTRAP( ClipRect );  // A87B
+	TBTRAP( SetClip     );  // A879
+	TBTRAP( GetClip     );  // A87A
+	TBTRAP( ClipRect    );  // A87B
+	TBTRAP( ClosePort   );  // A87D
 	
 	TBTRAP( StdRect    );  // A8A0
 	TBTRAP( FrameRect  );  // A8A1
