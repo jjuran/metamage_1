@@ -17,6 +17,17 @@
 #include "QDGlobals.hh"
 
 
+class white_t {};
+
+static const white_t White = white_t();
+
+static inline bool operator==( const Pattern& a, white_t )
+{
+	const UInt32* p = (const UInt32*) a.pat;
+	
+	return *p++ == '\0'  &&  *p == '\0';
+}
+
 struct rectangular_op_params
 {
 	Point topLeft;
@@ -310,10 +321,23 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	params.pattern = &port.fillPat;
 	params.origin_h = port.portBits.bounds.left;
 	
+	if ( verb == kQDGrafVerbErase )
+	{
+		if ( port.bkPat == White )
+		{
+			erase_rect( params );
+			
+			return;
+		}
+		
+		port.fillPat = port.bkPat;
+		
+		verb = kQDGrafVerbFill;
+	}
+	
 	switch ( verb )
 	{
 		case kQDGrafVerbPaint:   paint_rect ( params );  break;
-		case kQDGrafVerbErase:   erase_rect ( params );  break;
 		case kQDGrafVerbInvert:  invert_rect( params );  break;
 		case kQDGrafVerbFill:    fill_rect  ( params );  break;
 		
