@@ -25,4 +25,6 @@ pascal void GetClip_patch( struct MacRegion** clipRgn );
 
 pascal void ClipRect_patch( const struct Rect* clipRect );
 
+pascal void BackPat_patch( const struct Pattern* pat );
+
 #endif

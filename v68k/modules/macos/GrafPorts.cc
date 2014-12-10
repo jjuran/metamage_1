@@ -175,3 +175,15 @@ pascal void ClipRect_patch( const struct Rect* clipRect )
 	
 	RectRgn_patch( thePort->clipRgn, clipRect );
 }
+
+pascal void BackPat_patch( const struct Pattern* pat )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	thePort->bkPat = *pat;
+}
