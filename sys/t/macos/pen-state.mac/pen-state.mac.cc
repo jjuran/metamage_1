@@ -18,7 +18,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 4;
+static const unsigned n_tests = 9;
 
 
 #define EXPECT_PENSTATE( a, b )  EXPECT_CMP( &a, sizeof (PenState), &b, sizeof (PenState) )
@@ -84,6 +84,23 @@ static void get_set()
 	
 	GetPen( &pnLoc );
 	EXPECT( pnLoc.v == 2  &&  pnLoc.h == 3 );
+	
+	PenSize( 7, 6 );
+	EXPECT( qd.thePort->pnSize.v == 6  &&  qd.thePort->pnSize.h == 7 );
+	
+	PenMode( patXor );
+	EXPECT( qd.thePort->pnMode == patXor );
+	
+	PenPat( &qd.dkGray );
+	EXPECT_CMP( &qd.thePort->pnPat, sizeof (Pattern), &qd.dkGray, sizeof (Pattern) );
+	
+	PenNormal();
+	
+	GetPenState( &penState );
+	EXPECT( penState.pnLoc.v == 2  &&  penState.pnLoc.h == 3 );
+	
+	penState.pnLoc = default_penState.pnLoc;
+	EXPECT_PENSTATE( penState, default_penState );
 }
 
 
