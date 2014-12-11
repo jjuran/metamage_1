@@ -14,6 +14,13 @@
 #include "QDGlobals.hh"
 
 
+pascal void GetPen_patch( Point* pt )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	*pt = thePort->pnLoc;
+}
+
 pascal void GetPenState_patch( PenState* state )
 {
 	GrafPtr thePort = *get_addrof_thePort();

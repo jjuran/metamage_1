@@ -84,6 +84,7 @@ static void install_QuickDraw()
 	
 	TBTRAP( GetPenState );  // A898
 	TBTRAP( SetPenState );  // A899
+	TBTRAP( GetPen      );  // A89A
 	
 	TBTRAP( StdRect    );  // A8A0
 	TBTRAP( FrameRect  );  // A8A1
