@@ -21,7 +21,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 1;
+static const unsigned n_tests = 1 + 1;
 
 
 #define _ 0
@@ -130,6 +130,19 @@ static void backpat( const char* base, const Rect& bounds )
 	EXPECT_ICONS( base, ltGray_32 );
 }
 
+static void penpat( const char* base, const Rect& bounds )
+{
+	Rect rect = bounds;
+	
+	PaintRect( &rect );
+	
+	PenPat( &qd.ltGray );
+	
+	PaintRect( &rect );
+	
+	EXPECT_ICONS( base, ltGray_32 );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -141,6 +154,7 @@ int main( int argc, char** argv )
 	const Rect& bounds = testing_grafPort->portBits.bounds;
 	
 	backpat( base, bounds );
+	penpat ( base, bounds );
 	
 	term();
 	
