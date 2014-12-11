@@ -17,6 +17,7 @@
 #include "Handles.hh"
 #include "InitGraf.hh"
 #include "OSUtils.hh"
+#include "Pen.hh"
 #include "Rects.hh"
 #include "Regions.hh"
 #include "Segments.hh"
@@ -80,6 +81,9 @@ static void install_QuickDraw()
 	TBTRAP( ClipRect    );  // A87B
 	TBTRAP( BackPat     );  // A87C
 	TBTRAP( ClosePort   );  // A87D
+	
+	TBTRAP( GetPenState );  // A898
+	TBTRAP( SetPenState );  // A899
 	
 	TBTRAP( StdRect    );  // A8A0
 	TBTRAP( FrameRect  );  // A8A1
