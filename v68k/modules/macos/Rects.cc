@@ -18,14 +18,23 @@
 
 
 class white_t {};
+class black_t {};
 
 static const white_t White = white_t();
+static const black_t Black = black_t();
 
 static inline bool operator==( const Pattern& a, white_t )
 {
 	const UInt32* p = (const UInt32*) a.pat;
 	
 	return *p++ == '\0'  &&  *p == '\0';
+}
+
+static inline bool operator==( const Pattern& a, black_t )
+{
+	const UInt32* p = (const UInt32*) a.pat;
+	
+	return *p++ == 0xFFFFFFFF  &&  *p == 0xFFFFFFFF;
 }
 
 struct rectangular_op_params
@@ -334,10 +343,22 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		
 		verb = kQDGrafVerbFill;
 	}
+	else if ( verb == kQDGrafVerbPaint )
+	{
+		if ( port.pnPat == Black )
+		{
+			paint_rect( params );
+			
+			return;
+		}
+		
+		port.fillPat = port.pnPat;
+		
+		verb = kQDGrafVerbFill;
+	}
 	
 	switch ( verb )
 	{
-		case kQDGrafVerbPaint:   paint_rect ( params );  break;
 		case kQDGrafVerbInvert:  invert_rect( params );  break;
 		case kQDGrafVerbFill:    fill_rect  ( params );  break;
 		
