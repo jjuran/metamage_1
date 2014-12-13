@@ -21,7 +21,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 3;
+static const unsigned n_tests = 5;
 
 
 #define _ 0
@@ -203,15 +203,24 @@ static void nondiagonal( const char* base, const Rect& bounds )
 	
 	EXPECT_ICONS( base, line_1 );
 	
+	ShowPen();
 	Move( -2, -1 );
 	Line( 0, 6 );
 	
 	EXPECT_ICONS( base, line_2 );
 	
+	HidePen();
 	PenPat( &qd.gray );
 	Line( 8, 0 );
 	
 	EXPECT_ICONS( base, line_3 );
+	
+	HidePen();
+	Line( 0, 10 );
+	
+	EXPECT_ICONS( base, line_3 );
+	
+	EXPECT( qd.thePort->pnLoc.v == 18 );
 }
 
 
