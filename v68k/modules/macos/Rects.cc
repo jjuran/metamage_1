@@ -340,8 +340,6 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 		
 		port.fillPat = port.bkPat;
-		
-		verb = kQDGrafVerbFill;
 	}
 	else if ( verb == kQDGrafVerbPaint )
 	{
@@ -353,8 +351,6 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 		
 		port.fillPat = port.pnPat;
-		
-		verb = kQDGrafVerbFill;
 	}
 	else if ( verb == kQDGrafVerbInvert )
 	{
@@ -363,13 +359,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
-	switch ( verb )
-	{
-		case kQDGrafVerbFill:    fill_rect  ( params );  break;
-		
-		default:
-			break;
-	}
+	fill_rect( params );
 }
 
 pascal void EraseRect_patch( const Rect* rect )
