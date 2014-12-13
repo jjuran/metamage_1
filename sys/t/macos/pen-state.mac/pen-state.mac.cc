@@ -18,7 +18,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 9;
+static const unsigned n_tests = 11;
 
 
 #define EXPECT_PENSTATE( a, b )  EXPECT_CMP( &a, sizeof (PenState), &b, sizeof (PenState) )
@@ -101,6 +101,12 @@ static void get_set()
 	
 	penState.pnLoc = default_penState.pnLoc;
 	EXPECT_PENSTATE( penState, default_penState );
+	
+	MoveTo( -9, -8 );
+	EXPECT( qd.thePort->pnLoc.v == -8  &&  qd.thePort->pnLoc.h == -9 );
+	
+	Move( 1, 2 );
+	EXPECT( qd.thePort->pnLoc.v == -6  &&  qd.thePort->pnLoc.h == -8 );
 }
 
 
