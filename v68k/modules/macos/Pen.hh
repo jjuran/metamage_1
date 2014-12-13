@@ -12,6 +12,9 @@ struct Point;
 
 pascal void StdLine_patch( Point newPt );
 
+pascal void HidePen_patch();
+pascal void ShowPen_patch();
+
 pascal void GetPen_patch( Point* pt );
 
 pascal void GetPenState_patch(       PenState* state );

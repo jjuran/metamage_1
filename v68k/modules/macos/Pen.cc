@@ -51,6 +51,20 @@ pascal void StdLine_patch( Point newPt )
 	}
 }
 
+pascal void HidePen_patch()
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	--thePort->pnVis;
+}
+
+pascal void ShowPen_patch()
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	++thePort->pnVis;
+}
+
 pascal void GetPen_patch( Point* pt )
 {
 	GrafPtr thePort = *get_addrof_thePort();
