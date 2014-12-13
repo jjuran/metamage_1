@@ -356,10 +356,15 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		
 		verb = kQDGrafVerbFill;
 	}
+	else if ( verb == kQDGrafVerbInvert )
+	{
+		invert_rect( params );
+		
+		return;
+	}
 	
 	switch ( verb )
 	{
-		case kQDGrafVerbInvert:  invert_rect( params );  break;
 		case kQDGrafVerbFill:    fill_rect  ( params );  break;
 		
 		default:
