@@ -82,6 +82,9 @@ static void install_QuickDraw()
 	TBTRAP( BackPat     );  // A87C
 	TBTRAP( ClosePort   );  // A87D
 	
+	TBTRAP( MoveTo  );  // A893
+	TBTRAP( Move    );  // A894
+	
 	TBTRAP( GetPenState );  // A898
 	TBTRAP( SetPenState );  // A899
 	TBTRAP( GetPen      );  // A89A

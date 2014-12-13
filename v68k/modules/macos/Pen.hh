@@ -22,4 +22,7 @@ pascal void PenPat_patch( const Pattern* pat );
 
 pascal void PenNormal_patch();
 
+pascal void MoveTo_patch( short h,  short v  );
+pascal void Move_patch  ( short dh, short dv );
+
 #endif

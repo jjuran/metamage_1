@@ -74,3 +74,19 @@ pascal void PenNormal_patch()
 	thePort->pnMode = patCopy;
 	thePort->pnPat  = qd.black;
 }
+
+pascal void MoveTo_patch( short h, short v )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	thePort->pnLoc.v = v;
+	thePort->pnLoc.h = h;
+}
+
+pascal void Move_patch( short dh, short dv )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	thePort->pnLoc.v += dv;
+	thePort->pnLoc.h += dh;
+}
