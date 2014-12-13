@@ -5,6 +5,9 @@
 
 #include "Pen.hh"
 
+// iota
+#include "iota/swap.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 
@@ -21,11 +24,56 @@ short max( short a, short b )
 	return a > b ? a : b;
 }
 
+static void even_dexter( Point a, UInt16 n )
+{
+	Rect r = { a.v, a.h, a.v + 1, a.h + 1 };
+	
+	PaintRect( &r );
+	
+	while ( n > 0 )
+	{
+		++r.top;
+		++r.left;
+		++r.bottom;
+		++r.right;
+		
+		PaintRect( &r );
+		
+		--n;
+	}
+}
+
+static void even_sinister( Point a, UInt16 n )
+{
+	Rect r = { a.v, a.h, a.v + 1, a.h + 1 };
+	
+	PaintRect( &r );
+	
+	while ( n > 0 )
+	{
+		++r.top;
+		--r.left;
+		++r.bottom;
+		--r.right;
+		
+		PaintRect( &r );
+		
+		--n;
+	}
+}
+
 pascal void StdLine_patch( Point newPt )
 {
 	GrafPtr thePort = *get_addrof_thePort();
 	
-	const Point pnLoc = thePort->pnLoc;
+	Point pnLoc = thePort->pnLoc;
+	
+	if ( pnLoc.v > newPt.v )
+	{
+		using iota::swap;
+		
+		swap( pnLoc, newPt );
+	}
 	
 	Rect line;
 	
@@ -40,6 +88,23 @@ pascal void StdLine_patch( Point newPt )
 		line.right  += thePort->pnSize.h;
 		
 		PaintRect( &line );
+		
+		return;
+	}
+	
+	const UInt16 descent = line.bottom - line.top;
+	const UInt16 advance = line.right - line.left;
+	
+	if ( advance == descent )
+	{
+		if ( newPt.h >= pnLoc.h )
+		{
+			even_dexter( pnLoc, descent );
+		}
+		else
+		{
+			even_sinister( pnLoc, descent );
+		}
 	}
 }
 
