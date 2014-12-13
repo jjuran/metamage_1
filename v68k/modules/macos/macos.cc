@@ -82,6 +82,9 @@ static void install_QuickDraw()
 	TBTRAP( BackPat     );  // A87C
 	TBTRAP( ClosePort   );  // A87D
 	
+	TBTRAP( StdLine );  // A890
+	TBTRAP( LineTo  );  // A891
+	TBTRAP( Line    );  // A892
 	TBTRAP( MoveTo  );  // A893
 	TBTRAP( Move    );  // A894
 	

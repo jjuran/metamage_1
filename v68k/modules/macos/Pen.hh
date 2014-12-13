@@ -10,6 +10,8 @@ struct Pattern;
 struct PenState;
 struct Point;
 
+pascal void StdLine_patch( Point newPt );
+
 pascal void GetPen_patch( Point* pt );
 
 pascal void GetPenState_patch(       PenState* state );
@@ -24,5 +26,7 @@ pascal void PenNormal_patch();
 
 pascal void MoveTo_patch( short h,  short v  );
 pascal void Move_patch  ( short dh, short dv );
+pascal void LineTo_patch( short h,  short v  );
+pascal void Line_patch  ( short dh, short dv );
 
 #endif
