@@ -13,7 +13,9 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap );
 
 pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv );
 
-pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst );
-pascal void XOrRgn_patch ( MacRegion** a, MacRegion** b, MacRegion** dst );
+pascal void SectRgn_patch ( MacRegion** a, MacRegion** b, MacRegion** dst );
+pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst );
+pascal void DiffRgn_patch ( MacRegion** a, MacRegion** b, MacRegion** dst );
+pascal void XOrRgn_patch  ( MacRegion** a, MacRegion** b, MacRegion** dst );
 
 #endif

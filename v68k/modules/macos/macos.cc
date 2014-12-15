@@ -126,6 +126,8 @@ static void install_QuickDraw()
 	TBTRAP( OffsetRgn   );  // A8E0
 	TBTRAP( EmptyRgn    );  // A8E2
 	TBTRAP( SectRgn     );  // A8E4
+	TBTRAP( UnionRgn    );  // A8E5
+	TBTRAP( DiffRgn     );  // A8E6
 	TBTRAP( XOrRgn      );  // A8E7
 }
 

@@ -408,6 +408,36 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	DisposeRgn( b );
 }
 
+pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+{
+	RgnHandle tmp = NewRgn();
+	
+	SectRgn( a, b, tmp );
+	
+	XorRgn( a, tmp, tmp );
+	XorRgn( b, tmp, dst );
+	
+	DisposeRgn( tmp );
+}
+
+pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+{
+	if ( empty_rect( a[0]->rgnBBox ) )
+	{
+		SetEmptyRgn( dst );
+		
+		return;
+	}
+	
+	RgnHandle tmp = NewRgn();
+	
+	SectRgn( a, b, tmp );
+	
+	XorRgn( a, tmp, dst );
+	
+	DisposeRgn( tmp );
+}
+
 pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
 	if ( empty_rect( a[0]->rgnBBox ) )
