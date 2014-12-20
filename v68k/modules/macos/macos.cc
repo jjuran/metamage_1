@@ -19,6 +19,7 @@
 #include "OSUtils.hh"
 #include "Pen.hh"
 #include "Rects.hh"
+#include "Region-ops.hh"
 #include "Regions.hh"
 #include "Segments.hh"
 

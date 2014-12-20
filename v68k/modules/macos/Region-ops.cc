@@ -13,14 +13,17 @@
 // quickdraw
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
+#include "qd/xor_region.hh"
 
 // macos
 #include "Rect-utils.hh"
 
 
+using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;
 using quickdraw::set_region_bbox;
+using quickdraw::xor_region;
 
 typedef quickdraw::region_geometry_t geometry_t;
 
@@ -113,6 +116,19 @@ static short region_size( MacRegion* region, const short* end )
 	return rgn_size;
 }
 
+pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
+{
+	rgn[0]->rgnBBox.top    += dv;
+	rgn[0]->rgnBBox.left   += dh;
+	rgn[0]->rgnBBox.bottom += dv;
+	rgn[0]->rgnBBox.right  += dh;
+	
+	if ( rgn[0]->rgnSize > sizeof (MacRegion) )
+	{
+		offset_region( rgn_extent( *rgn ), dh, dv );
+	}
+}
+
 void binary_region_op( MacRegion**  a,
                        MacRegion**  b,
                        MacRegion**  dst,
@@ -166,4 +182,9 @@ void binary_region_op( MacRegion**  a,
 	}
 	
 	DisposeHandle( h );
+}
+
+pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
+{
+	binary_region_op( a, b, dst, &xor_region );
 }
