@@ -115,6 +115,8 @@ static void install_QuickDraw()
 	TBTRAP( PtInRect   );  // A8AD
 	TBTRAP( EmptyRect  );  // A8AE
 	
+	TBTRAP( BitMapToRegion );  // A8D7
+	
 	TBTRAP( NewRgn      );  // A8D8
 	TBTRAP( DisposeRgn  );  // A8D9
 	TBTRAP( CopyRgn     );  // A8DC

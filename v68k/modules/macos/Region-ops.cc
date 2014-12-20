@@ -13,6 +13,7 @@
 // quickdraw
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
+#include "qd/region_scanner.hh"
 #include "qd/xor_region.hh"
 
 // macos
@@ -22,10 +23,14 @@
 using quickdraw::offset_region;
 using quickdraw::Region_end;
 using quickdraw::region_geometry;
+using quickdraw::region_scanner;
 using quickdraw::set_region_bbox;
 using quickdraw::xor_region;
 
 typedef quickdraw::region_geometry_t geometry_t;
+
+
+short MemErr : 0x0220;
 
 
 static inline short max( short a, short b )
@@ -114,6 +119,82 @@ static short region_size( MacRegion* region, const short* end )
 	}
 	
 	return rgn_size;
+}
+
+pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
+{
+	typedef unsigned short uint16_t;
+	
+	const Rect& bounds = bitmap->bounds;
+	
+	if ( bounds.bottom <= bounds.top  ||  bounds.right <= bounds.left )
+	{
+		SetEmptyRgn( rgn );
+		
+		return noErr;
+	}
+	
+	const short rowBytes = bitmap->rowBytes;
+	
+	const UInt16 height = bounds.bottom - bounds.top;
+	const UInt16 width  = bounds.right - bounds.left;
+	
+	// width and height are at least 1 and at most 65534 (32767 - -32767)
+	
+	const UInt16 max_h_coords = width + 1 & ~0x1;
+	
+	const unsigned max_h_bytes = (1 + max_h_coords + 1) * 2;
+	const unsigned max_rgn_size = 10 + max_h_bytes * (height + 1) + 2;
+	
+	SetHandleSize( (Handle) rgn, max_rgn_size + rowBytes );
+	
+	uint16_t* temp_space = (uint16_t*) *rgn + max_rgn_size / 2;
+	
+	if ( MemErr )
+	{
+		return MemErr;
+	}
+	
+	int margin = -width & 0xF;
+	
+	short v = bounds.top;
+	
+	short* extent = rgn_extent( *rgn );
+	
+	region_scanner scanner( extent, temp_space, rowBytes );
+	
+	const uint16_t* p = (const uint16_t*) bitmap->baseAddr;
+	
+	const uint16_t* prev = temp_space;
+	
+	do
+	{
+		scanner.scan( bounds.left, v, p, prev, margin );
+		
+		prev = p;
+		
+		p += rowBytes / 2;
+	}
+	while ( ++v < bounds.bottom );
+	
+	scanner.finish( bounds.left, v, prev, margin );
+	
+	if ( *extent == Region_end )
+	{
+		SetEmptyRgn( rgn );
+		
+		return noErr;
+	}
+	
+	const short* end = set_region_bbox( &rgn[0]->rgnBBox.top, extent );
+	
+	const short rgn_size = region_size( *rgn, end );
+	
+	rgn[0]->rgnSize = rgn_size;
+	
+	SetHandleSize( (Handle) rgn, rgn_size );
+	
+	return noErr;
 }
 
 pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
