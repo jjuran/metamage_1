@@ -129,10 +129,7 @@ pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
 	}
 }
 
-void binary_region_op( MacRegion**  a,
-                       MacRegion**  b,
-                       MacRegion**  dst,
-                       region_op_2  f )
+pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
 	if ( empty_rect( a[0]->rgnBBox ) )
 	{
@@ -166,7 +163,7 @@ void binary_region_op( MacRegion**  a,
 	
 	RgnHandle r = (RgnHandle) h;
 	
-	f( rgn_extent( *a ), rgn_extent( *b ), rgn_extent( *r ) );
+	xor_region( rgn_extent( *a ), rgn_extent( *b ), rgn_extent( *r ) );
 	
 	if ( *rgn_extent( *r ) == Region_end )
 	{
@@ -182,9 +179,4 @@ void binary_region_op( MacRegion**  a,
 	}
 	
 	DisposeHandle( h );
-}
-
-pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
-{
-	binary_region_op( a, b, dst, &xor_region );
 }
