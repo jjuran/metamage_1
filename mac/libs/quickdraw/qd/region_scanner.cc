@@ -20,6 +20,7 @@ namespace quickdraw
 	
 	typedef unsigned short uint16_t;
 	
+	
 	static bool bit_eq( const uint16_t* a, const uint16_t* b, unsigned n )
 	{
 		const int bits_per_word = 16;
