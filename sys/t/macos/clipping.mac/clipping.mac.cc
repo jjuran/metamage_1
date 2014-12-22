@@ -24,7 +24,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2;
+static const unsigned n_tests = 2 + 1;
 
 
 #define _ 0
@@ -147,6 +147,42 @@ static const icon clipped_frame_2[] =
 	BIG32( _,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,X,_ ),
 };
 
+static const icon cross[] =
+{
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( X,X,X,X,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,X,X,X,X ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,X,X,X,X,X,X,X,X,_,_,_,_,_,_,_,_,_,_,_,_ ),
+};
+
 static inline int rowBytes_from_bitwidth( int bits )
 {
 	return (bits + 15) / 16 * 2;
@@ -218,6 +254,35 @@ static void clip_rect( const char* base, const Rect& bounds )
 	EXPECT_ICONS( base, clipped_frame_2 );
 }
 
+static void clip_rgn( const char* base, const Rect& bounds )
+{
+	Rect rect = bounds;
+	
+	RgnHandle a = NewRgn();
+	RgnHandle b = NewRgn();
+	
+	ClipRect ( &rect );
+	EraseRect( &rect );
+	
+	InsetRect( &rect, 0, 12 );
+	RectRgn( a, &rect );
+	
+	rect = bounds;
+	InsetRect( &rect, 12, 0 );
+	RectRgn( b, &rect );
+	
+	XorRgn( a, b, a );
+	
+	SetClip( a );
+	
+	PaintRect( &bounds );
+	
+	EXPECT_ICONS( base, cross );
+	
+	DisposeRgn( a );
+	DisposeRgn( b );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -229,6 +294,7 @@ int main( int argc, char** argv )
 	const Rect& bounds = testing_grafPort->portBits.bounds;
 	
 	clip_rect( base, bounds );
+	clip_rgn ( base, bounds );
 	
 	term();
 	
