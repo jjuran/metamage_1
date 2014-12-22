@@ -31,8 +31,8 @@ namespace quickdraw
 			code shouldn't be called).
 		*/
 		
-		const short left  = (bbox[ 1 ]     >> 3);
-		const short right = (bbox[ 3 ] - 1 >> 3) + 1;
+		const short left  = ( bbox[ 1 ]      >> 3);
+		const short right = ((bbox[ 3 ] - 1) >> 3) + 1;
 		
 		return right - left;
 	}

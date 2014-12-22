@@ -57,7 +57,7 @@ namespace quickdraw
 		
 		const unsigned short words_before_left_margin = (rect[ 1 ] - rounded_left) >> 4;
 		
-		const uint16_t left_margin_mask = (1 << 16 - (rect[ 1 ] & 0xF)) - 1;
+		const uint16_t left_margin_mask = (1 << (16 - (rect[ 1 ] & 0xF))) - 1;
 		
 		short v = rect[ 0 ];
 		
