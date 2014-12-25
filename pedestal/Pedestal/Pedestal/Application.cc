@@ -849,13 +849,33 @@ namespace Pedestal
 	
 	static bool gIdleNeeded = false;
 	
+	static void set_pixel_region( RgnHandle rgn, Point pt )
+	{
+		Rect rect = { pt.v, pt.h, pt.v + 1, pt.h + 1 };
+		
+		RectRgn( rgn, &rect );
+	}
+	
 	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
 	{
+		static Point last_global_mouse = { 0, 0 };
+		
+		static RgnHandle current_mouse_location = NewRgn();
+		
+		if ( mouseRgn == NULL )
+		{
+			mouseRgn = current_mouse_location;
+		}
+		
 		EventRecord event;
 		
 		(void) ::WaitNextEvent( everyEvent, &event, sleep, mouseRgn );
 		
 		mac::sys::clear_async_wakeup();
+		
+		last_global_mouse = event.where;
+		
+		set_pixel_region( current_mouse_location, last_global_mouse );
 		
 		return event;
 	}
