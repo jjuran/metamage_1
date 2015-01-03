@@ -8,6 +8,9 @@
 // more-libc
 #include "more/string.h"
 
+// posix-utils
+#include "posix/open_or_connect.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -53,13 +56,22 @@ namespace vfs
 		sb = extra.status;
 	}
 	
+	static n::owned< p7::fd_t > open_or_connect( const char* path, int flags, mode_t mode )
+	{
+		const int fd = posix::open_or_connect( path, flags, mode );
+		
+		p7::throw_posix_result( fd );
+		
+		return n::owned< p7::fd_t >::seize( p7::fd_t( fd ) );
+	}
+	
 	static filehandle_ptr posix_open( const node* that, int flags, mode_t mode )
 	{
 		posix_extra& extra = *(posix_extra*) that->extra();
 		
 		const plus::string& path = reinterpret_cast< const plus::string& >( extra.path );
 		
-		n::owned< p7::fd_t > fd = p7::open( path.c_str(), p7::open_flags_t( flags ), p7::mode_t( mode ) );
+		n::owned< p7::fd_t > fd = open_or_connect( path.c_str(), flags, mode );
 		
 		filehandle_ptr result = new_posix_fd( flags, fd.get() );
 		
