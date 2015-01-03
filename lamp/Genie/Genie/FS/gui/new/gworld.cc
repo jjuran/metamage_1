@@ -27,6 +27,8 @@
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Pedestal
 #include "Pedestal/View.hh"
@@ -38,8 +40,6 @@
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -265,13 +265,13 @@ namespace Genie
 		return new Pixels_IO( *that, flags );
 	}
 	
-	static const data_method_set gworld_pixels_data_methods =
+	static const vfs::data_method_set gworld_pixels_data_methods =
 	{
 		&gworld_pixels_open,
 		&gworld_pixels_geteof
 	};
 	
-	static const node_method_set gworld_pixels_methods =
+	static const vfs::node_method_set gworld_pixels_methods =
 	{
 		NULL,
 		NULL,

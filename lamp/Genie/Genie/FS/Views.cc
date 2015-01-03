@@ -31,6 +31,9 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/null.hh"
 #include "vfs/primitives/listdir.hh"
 #include "vfs/primitives/lookup.hh"
@@ -38,9 +41,6 @@
 #include "vfs/primitives/remove.hh"
 
 // Genie
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -202,14 +202,14 @@ namespace Genie
 	static void new_view_hardlink( const FSTree*  that,
 	                               const FSTree*  dest );
 	
-	static const file_method_set new_view_file_methods =
+	static const vfs::file_method_set new_view_file_methods =
 	{
 		NULL,
 		NULL,
 		&new_view_hardlink
 	};
 	
-	static const node_method_set new_view_methods =
+	static const vfs::node_method_set new_view_methods =
 	{
 		NULL,
 		NULL,
@@ -332,14 +332,14 @@ namespace Genie
 		install_view_in_port( view, windowKey );
 	}
 	
-	static const dir_method_set unview_dir_methods =
+	static const vfs::dir_method_set unview_dir_methods =
 	{
 		NULL,
 		NULL,
 		&unview_mkdir
 	};
 	
-	static const node_method_set unview_methods =
+	static const vfs::node_method_set unview_methods =
 	{
 		NULL,
 		NULL,
@@ -395,13 +395,13 @@ namespace Genie
 		listdir( *GetViewDelegate( that ), cache );
 	}
 	
-	static const dir_method_set view_dir_methods =
+	static const vfs::dir_method_set view_dir_methods =
 	{
 		&view_lookup,
 		&view_listdir
 	};
 	
-	static const node_method_set view_methods =
+	static const vfs::node_method_set view_methods =
 	{
 		NULL,
 		NULL,
@@ -414,7 +414,7 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	static const node_method_set viewdir_methods =
+	static const vfs::node_method_set viewdir_methods =
 	{
 		NULL,
 		NULL,
@@ -438,8 +438,8 @@ namespace Genie
 		                  : name.size() == 1 ? S_IFDIR | 0700
 		                  :                    S_IFREG | 0600;
 		
-		const node_method_set& methods = exists ? view_methods
-		                                        : unview_methods;
+		const vfs::node_method_set& methods = exists ? view_methods
+		                                             : unview_methods;
 		
 		FSTree* result = new FSTree( parent,
 		                             name,

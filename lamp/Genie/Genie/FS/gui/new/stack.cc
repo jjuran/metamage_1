@@ -17,14 +17,14 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/remove.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -229,13 +229,13 @@ namespace Genie
 		}
 	}
 	
-	static const dir_method_set stack_dir_methods =
+	static const vfs::dir_method_set stack_dir_methods =
 	{
 		&stack_lookup,
 		&stack_listdir
 	};
 	
-	static const node_method_set stack_methods =
+	static const vfs::node_method_set stack_methods =
 	{
 		NULL,
 		NULL,

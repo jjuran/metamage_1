@@ -33,14 +33,14 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/misc_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -96,13 +96,13 @@ namespace Genie
 		return FSTreeFromFSDirSpec( dir );
 	}
 	
-	static const link_method_set volumes_link_link_methods =
+	static const vfs::link_method_set volumes_link_link_methods =
 	{
 		NULL,
 		&volumes_link_resolve
 	};
 	
-	static const node_method_set volumes_link_methods =
+	static const vfs::node_method_set volumes_link_methods =
 	{
 		NULL,
 		NULL,
@@ -161,20 +161,20 @@ namespace Genie
 		return fsRtParID;
 	}
 	
-	static const dir_method_set volumes_dir_methods =
+	static const vfs::dir_method_set volumes_dir_methods =
 	{
 		&volumes_lookup,
 		&volumes_listdir
 	};
 	
-	static const misc_method_set volumes_misc_methods =
+	static const vfs::misc_method_set volumes_misc_methods =
 	{
 		NULL,
 		NULL,
 		&volumes_inode
 	};
 	
-	static const node_method_set volumes_methods =
+	static const vfs::node_method_set volumes_methods =
 	{
 		NULL,
 		NULL,

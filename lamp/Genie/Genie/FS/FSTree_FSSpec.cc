@@ -59,6 +59,12 @@
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/pathname.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/misc_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/union.hh"
 #include "vfs/primitives/stat.hh"
 
@@ -79,12 +85,6 @@
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/FS/HFS/Rename.hh"
 #include "Genie/FS/HFS/SetFileTimes.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/misc_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/resfs.hh"
 #include "Genie/FS/sys/mac/errata.hh"
 #include "Genie/FS/sys/mac/vol/list.hh"
@@ -431,20 +431,20 @@ namespace Genie
 		}
 	}
 	
-	static const data_method_set hfs_data_methods =
+	static const vfs::data_method_set hfs_data_methods =
 	{
 		&hfs_open,
 		&hfs_geteof,
 	};
 	
-	static const link_method_set hfs_link_methods =
+	static const vfs::link_method_set hfs_link_methods =
 	{
 		&hfs_readlink,
 		&hfs_resolve,
 		&hfs_symlink
 	};
 	
-	static const dir_method_set hfs_dir_methods =
+	static const vfs::dir_method_set hfs_dir_methods =
 	{
 		&hfs_lookup,
 		&hfs_listdir,
@@ -452,7 +452,7 @@ namespace Genie
 		&hfs_opendir
 	};
 	
-	static const file_method_set hfs_file_methods =
+	static const vfs::file_method_set hfs_file_methods =
 	{
 		NULL,
 		&hfs_copyfile,
@@ -461,14 +461,14 @@ namespace Genie
 		&hfs_mknod,
 	};
 	
-	static const misc_method_set hfs_misc_methods =
+	static const vfs::misc_method_set hfs_misc_methods =
 	{
 		&hfs_parent,
 		&hfs_parent_inode,
 		&hfs_inode
 	};
 	
-	static const node_method_set hfs_methods =
+	static const vfs::node_method_set hfs_methods =
 	{
 		&hfs_stat,
 		&hfs_chmod,

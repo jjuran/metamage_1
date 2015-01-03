@@ -26,13 +26,13 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/node_ptr.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/generated_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -106,13 +106,13 @@ namespace Genie
 		return FSTreeFromFSDirSpec( dir );
 	}
 	
-	static const link_method_set desktop_dir_link_methods =
+	static const vfs::link_method_set desktop_dir_link_methods =
 	{
 		NULL,
 		&desktop_dir_resolve
 	};
 	
-	static const node_method_set desktop_dir_methods =
+	static const vfs::node_method_set desktop_dir_methods =
 	{
 		NULL,
 		NULL,
@@ -145,13 +145,13 @@ namespace Genie
 		return FSTreeFromFSSpec( file );
 	}
 	
-	static const link_method_set latest_appl_link_link_methods =
+	static const vfs::link_method_set latest_appl_link_link_methods =
 	{
 		NULL,
 		&latest_appl_link_resolve
 	};
 	
-	static const node_method_set latest_appl_link_methods =
+	static const vfs::node_method_set latest_appl_link_methods =
 	{
 		NULL,
 		NULL,
@@ -174,13 +174,13 @@ namespace Genie
 		return FSTreeFromFSSpec( file );
 	}
 	
-	static const link_method_set dt_appls_QUAD_list_N__link_methods =
+	static const vfs::link_method_set dt_appls_QUAD_list_N__link_methods =
 	{
 		NULL,
 		&dt_appls_QUAD_list_N_resolve
 	};
 	
-	static const node_method_set dt_appls_QUAD_list_N_methods =
+	static const vfs::node_method_set dt_appls_QUAD_list_N_methods =
 	{
 		NULL,
 		NULL,

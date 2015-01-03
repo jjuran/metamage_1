@@ -22,6 +22,8 @@
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Pedestal
 #include "Pedestal/Caption.hh"
@@ -30,8 +32,6 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -258,14 +258,14 @@ namespace Genie
 		return new CaptionTextFileHandle( *that, flags );
 	}
 	
-	static const data_method_set caption_text_data_methods =
+	static const vfs::data_method_set caption_text_data_methods =
 	{
 		&caption_text_open,
 		&caption_text_geteof,
 		&caption_text_seteof
 	};
 	
-	static const node_method_set caption_text_methods =
+	static const vfs::node_method_set caption_text_methods =
 	{
 		NULL,
 		NULL,

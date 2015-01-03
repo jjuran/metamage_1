@@ -16,13 +16,13 @@
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -181,14 +181,14 @@ namespace Genie
 		return new TextEdit_text_Handle( *that, flags );
 	}
 	
-	static const data_method_set textedit_text_data_methods =
+	static const vfs::data_method_set textedit_text_data_methods =
 	{
 		&textedit_text_open,
 		&textedit_text_geteof,
 		&textedit_text_seteof
 	};
 	
-	static const node_method_set textedit_text_methods =
+	static const vfs::node_method_set textedit_text_methods =
 	{
 		NULL,
 		NULL,

@@ -23,14 +23,14 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -94,14 +94,14 @@ namespace Genie
 		value = target;
 	}
 	
-	static const link_method_set unused_cmd_slot_link_methods =
+	static const vfs::link_method_set unused_cmd_slot_link_methods =
 	{
 		NULL,
 		NULL,
 		&unused_cmd_slot_symlink
 	};
 	
-	static const node_method_set unused_cmd_slot_methods =
+	static const vfs::node_method_set unused_cmd_slot_methods =
 	{
 		NULL,
 		NULL,

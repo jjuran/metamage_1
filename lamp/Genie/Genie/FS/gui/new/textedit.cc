@@ -18,6 +18,8 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -28,8 +30,6 @@
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -134,12 +134,12 @@ namespace Genie
 		return new TextEdit_gate_Handle( *that, flags );
 	}
 	
-	static const data_method_set textedit_gate_data_methods =
+	static const vfs::data_method_set textedit_gate_data_methods =
 	{
 		&textedit_gate_open
 	};
 	
-	static const node_method_set textedit_gate_methods =
+	static const vfs::node_method_set textedit_gate_methods =
 	{
 		NULL,
 		NULL,

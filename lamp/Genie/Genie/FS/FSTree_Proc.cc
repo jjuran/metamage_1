@@ -37,6 +37,10 @@
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/types/shadow.hh"
 #include "vfs/functions/pathname.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 
@@ -55,10 +59,6 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
@@ -106,13 +106,13 @@ namespace Genie
 		sequence.for_each( &iterate_one_fd, &cache );
 	}
 	
-	static const dir_method_set proc_fd_dir_methods =
+	static const vfs::dir_method_set proc_fd_dir_methods =
 	{
 		&proc_fd_lookup,
 		&proc_fd_listdir
 	};
 	
-	static const node_method_set proc_fd_methods =
+	static const vfs::node_method_set proc_fd_methods =
 	{
 		NULL,
 		NULL,
@@ -132,19 +132,19 @@ namespace Genie
 	
 	static FSTreePtr proc_fd_link_resolve( const FSTree* that );
 	
-	static const data_method_set proc_fd_link_data_methods =
+	static const vfs::data_method_set proc_fd_link_data_methods =
 	{
 		&proc_fd_link_open,
 		&proc_fd_link_geteof
 	};
 	
-	static const link_method_set proc_fd_link_link_methods =
+	static const vfs::link_method_set proc_fd_link_link_methods =
 	{
 		NULL,
 		&proc_fd_link_resolve
 	};
 	
-	static const node_method_set proc_fd_link_methods =
+	static const vfs::node_method_set proc_fd_link_methods =
 	{
 		NULL,
 		NULL,
@@ -182,13 +182,13 @@ namespace Genie
 		}
 	}
 	
-	static const link_method_set proc_link_link_methods =
+	static const vfs::link_method_set proc_link_link_methods =
 	{
 		NULL,
 		&proc_link_resolve
 	};
 	
-	static const node_method_set proc_link_methods =
+	static const vfs::node_method_set proc_link_methods =
 	{
 		NULL,
 		NULL,
@@ -219,12 +219,12 @@ namespace Genie
 		return gear::inscribe_unsigned_decimal( CurrentProcess().GetPID() );
 	}
 	
-	static const link_method_set proc_self_link_methods =
+	static const vfs::link_method_set proc_self_link_methods =
 	{
 		&proc_self_readlink
 	};
 	
-	static const node_method_set proc_self_methods =
+	static const vfs::node_method_set proc_self_methods =
 	{
 		NULL,
 		NULL,
@@ -537,7 +537,7 @@ namespace Genie
 		}
 	}
 	
-	static const node_method_set proc_pid_core_methods =
+	static const vfs::node_method_set proc_pid_core_methods =
 	{
 		NULL,
 		&proc_pid_core_chmod

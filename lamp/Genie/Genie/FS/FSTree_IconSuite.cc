@@ -10,11 +10,9 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/attach.hh"
-
-// Genie
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -26,13 +24,13 @@ namespace Genie
 	
 	static void iconsuite_copyfile( const FSTree* that, const FSTree* target );
 	
-	static const file_method_set iconsuite_file_methods =
+	static const vfs::file_method_set iconsuite_file_methods =
 	{
 		NULL,
 		&iconsuite_copyfile
 	};
 	
-	static const node_method_set iconsuite_methods =
+	static const vfs::node_method_set iconsuite_methods =
 	{
 		NULL,
 		NULL,

@@ -20,6 +20,10 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
 
 // Nitrogen
@@ -27,10 +31,6 @@
 
 // Genie
 #include "Genie/code/prepare_executable.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/Handle.hh"
 
 
@@ -100,13 +100,13 @@ namespace Genie
 		}
 	}
 	
-	static const dir_method_set resfs_dir_dirmethods =
+	static const vfs::dir_method_set resfs_dir_dirmethods =
 	{
 		&resfs_dir_lookup,
 		&resfs_dir_listdir
 	};
 	
-	static const node_method_set resfs_dir_methods =
+	static const vfs::node_method_set resfs_dir_methods =
 	{
 		NULL,
 		NULL,
@@ -184,13 +184,13 @@ namespace Genie
 		return prepare_executable( unit );
 	}
 	
-	static const data_method_set resfs_file_datamethods =
+	static const vfs::data_method_set resfs_file_datamethods =
 	{
 		&resfs_file_open,
 		&resfs_file_geteof
 	};
 	
-	static const file_method_set resfs_file_filemethods =
+	static const vfs::file_method_set resfs_file_filemethods =
 	{
 		NULL,
 		NULL,
@@ -198,7 +198,7 @@ namespace Genie
 		&resfs_file_loadexec
 	};
 	
-	static const node_method_set resfs_file_methods =
+	static const vfs::node_method_set resfs_file_methods =
 	{
 		&resfs_file_stat,
 		NULL,

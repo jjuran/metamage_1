@@ -20,12 +20,12 @@
 
 // vfs
 #include "vfs/functions/file-tests.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/resources.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -40,14 +40,14 @@ namespace Genie
 	
 	static void empty_rsrc_fork_mkdir( const FSTree* that, mode_t mode );
 	
-	static const dir_method_set empty_rsrc_fork_dir_methods =
+	static const vfs::dir_method_set empty_rsrc_fork_dir_methods =
 	{
 		NULL,
 		NULL,
 		&empty_rsrc_fork_mkdir
 	};
 	
-	static const node_method_set empty_rsrc_fork_methods =
+	static const vfs::node_method_set empty_rsrc_fork_methods =
 	{
 		NULL,
 		NULL,
@@ -70,13 +70,13 @@ namespace Genie
 	static void resfile_dir_listdir( const FSTree*       that,
 	                                 vfs::dir_contents&  cache );
 	
-	static const dir_method_set resfile_dir_dir_methods =
+	static const vfs::dir_method_set resfile_dir_dir_methods =
 	{
 		&resfile_dir_lookup,
 		&resfile_dir_listdir
 	};
 	
-	static const node_method_set resfile_dir_methods =
+	static const vfs::node_method_set resfile_dir_methods =
 	{
 		NULL,
 		NULL,
@@ -203,8 +203,8 @@ namespace Genie
 		
 		const mode_t mode = exists ? S_IFDIR | 0700 : 0;
 		
-		const node_method_set* methods = exists ? &resfile_dir_methods
-		                                        : &empty_rsrc_fork_methods;
+		const vfs::node_method_set* methods = exists ? &resfile_dir_methods
+		                                             : &empty_rsrc_fork_methods;
 		
 		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
 		

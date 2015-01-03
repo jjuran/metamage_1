@@ -8,11 +8,13 @@
 // POSIX
 #include <sys/stat.h>
 
+// vfs
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/GetAppFolder.hh"
 
 
@@ -24,13 +26,13 @@ namespace Genie
 		return FSTreeFromFSDirSpec( GetAppFolder() );
 	}
 	
-	static const link_method_set app_dir_link_methods =
+	static const vfs::link_method_set app_dir_link_methods =
 	{
 		NULL,
 		&app_dir_resolve
 	};
 	
-	static const node_method_set app_dir_methods =
+	static const vfs::node_method_set app_dir_methods =
 	{
 		NULL,
 		NULL,

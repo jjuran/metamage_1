@@ -34,6 +34,9 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // relix-kernel
 #include "relix/config/color.hh"
@@ -43,9 +46,6 @@
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
 
@@ -572,18 +572,18 @@ namespace Genie
 	#endif
 	}
 	
-	static const data_method_set icon_data_data_methods =
+	static const vfs::data_method_set icon_data_data_methods =
 	{
 		&icon_data_open,
 		&icon_data_geteof
 	};
 	
-	static const file_method_set icon_data_file_methods =
+	static const vfs::file_method_set icon_data_file_methods =
 	{
 		&icon_data_attach
 	};
 	
-	static const node_method_set icon_data_methods =
+	static const vfs::node_method_set icon_data_methods =
 	{
 		NULL,
 		NULL,

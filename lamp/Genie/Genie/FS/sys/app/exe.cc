@@ -11,11 +11,13 @@
 // mac-sys-utils
 #include "mac_sys/get_process_file.hh"
 
+// vfs
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
+
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 
 
 namespace Genie
@@ -26,13 +28,13 @@ namespace Genie
 		return FSTreeFromFSSpec( mac::sys::get_process_file() );
 	}
 	
-	static const link_method_set app_exe_link_methods =
+	static const vfs::link_method_set app_exe_link_methods =
 	{
 		NULL,
 		&app_exe_resolve
 	};
 	
-	static const node_method_set app_exe_methods =
+	static const vfs::node_method_set app_exe_methods =
 	{
 		NULL,
 		NULL,

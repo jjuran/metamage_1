@@ -14,13 +14,13 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/StatFile.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -74,12 +74,12 @@ namespace Genie
 		                          &GetRsrcForkFSTree );
 	}
 	
-	static const data_method_set rsrcfile_data_methods =
+	static const vfs::data_method_set rsrcfile_data_methods =
 	{
 		&rsrcfile_open
 	};
 	
-	static const node_method_set rsrcfile_methods =
+	static const vfs::node_method_set rsrcfile_methods =
 	{
 		&rsrcfile_stat,
 		NULL,

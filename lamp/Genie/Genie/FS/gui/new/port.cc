@@ -11,11 +11,11 @@
 // vfs
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/types/directory.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/gui/port.hh"
 
 
@@ -34,7 +34,7 @@ namespace Genie
 		return new vfs::dir_handle( dir.get(), &remove_port_file );
 	}
 	
-	static const dir_method_set new_port_dir_methods =
+	static const vfs::dir_method_set new_port_dir_methods =
 	{
 		NULL,
 		NULL,
@@ -42,7 +42,7 @@ namespace Genie
 		&new_port_opendir
 	};
 	
-	static const node_method_set new_port_methods =
+	static const vfs::node_method_set new_port_methods =
 	{
 		NULL,
 		NULL,

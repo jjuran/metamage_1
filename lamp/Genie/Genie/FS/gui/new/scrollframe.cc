@@ -22,6 +22,8 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/primitives/lookup.hh"
 
@@ -30,8 +32,6 @@
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
@@ -340,14 +340,14 @@ namespace Genie
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}
 	
-	static const link_method_set scrollframe_target_link_methods =
+	static const vfs::link_method_set scrollframe_target_link_methods =
 	{
 		&scrollframe_target_readlink,
 		NULL,
 		&scrollframe_target_symlink
 	};
 	
-	static const node_method_set scrollframe_target_methods =
+	static const vfs::node_method_set scrollframe_target_methods =
 	{
 		NULL,
 		NULL,

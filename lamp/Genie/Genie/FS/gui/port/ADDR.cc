@@ -51,6 +51,10 @@
 #include "vfs/filehandle/primitives/hangup.hh"
 #include "vfs/functions/new_static_symlink.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/open.hh"
@@ -64,10 +68,6 @@
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/file_method_set.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -510,14 +510,14 @@ namespace Genie
 		gWindowParametersMap[ window_key ].itsFocus = targeted_file.get();
 	}
 	
-	static const link_method_set unfocus_link_methods =
+	static const vfs::link_method_set unfocus_link_methods =
 	{
 		NULL,
 		NULL,
 		&unfocus_symlink
 	};
 	
-	static const node_method_set unfocus_methods =
+	static const vfs::node_method_set unfocus_methods =
 	{
 		NULL,
 		NULL,
@@ -540,13 +540,13 @@ namespace Genie
 		throw p7::errno_t( ENOENT );
 	}
 	
-	static const link_method_set focus_link_methods =
+	static const vfs::link_method_set focus_link_methods =
 	{
 		NULL,  // FIXME:  Use relative path
 		&focus_resolve
 	};
 	
-	static const node_method_set focus_methods =
+	static const vfs::node_method_set focus_methods =
 	{
 		NULL,
 		NULL,
@@ -607,12 +607,12 @@ namespace Genie
 		return result;
 	}
 	
-	static const link_method_set window_link_methods =
+	static const vfs::link_method_set window_link_methods =
 	{
 		&window_readlink
 	};
 	
-	static const node_method_set window_methods =
+	static const vfs::node_method_set window_methods =
 	{
 		NULL,
 		NULL,
@@ -632,17 +632,17 @@ namespace Genie
 		gWindowParametersMap[ that->owner() ].itsTTYDelegate = target;
 	}
 	
-	static const data_method_set port_tty_data_methods =
+	static const vfs::data_method_set port_tty_data_methods =
 	{
 		&port_tty_open
 	};
 	
-	static const file_method_set port_tty_file_methods =
+	static const vfs::file_method_set port_tty_file_methods =
 	{
 		&port_tty_attach
 	};
 	
-	static const node_method_set port_tty_methods =
+	static const vfs::node_method_set port_tty_methods =
 	{
 		NULL,
 		NULL,
@@ -715,12 +715,12 @@ namespace Genie
 	
 	static plus::string gesture_readlink( const FSTree* that );
 	
-	static const link_method_set gesture_link_methods =
+	static const vfs::link_method_set gesture_link_methods =
 	{
 		&gesture_readlink
 	};
 	
-	static const node_method_set gesture_methods =
+	static const vfs::node_method_set gesture_methods =
 	{
 		NULL,
 		NULL,
@@ -755,14 +755,14 @@ namespace Genie
 		params.itsGesturePaths[ index ] = target_path;
 	}
 	
-	static const link_method_set ungesture_link_methods =
+	static const vfs::link_method_set ungesture_link_methods =
 	{
 		NULL,
 		NULL,
 		&ungesture_symlink
 	};
 	
-	static const node_method_set ungesture_methods =
+	static const vfs::node_method_set ungesture_methods =
 	{
 		NULL,
 		NULL,
@@ -953,12 +953,12 @@ namespace Genie
 		return result;
 	}
 	
-	static const data_method_set lock_data_methods =
+	static const vfs::data_method_set lock_data_methods =
 	{
 		&lock_open
 	};
 	
-	static const node_method_set lock_methods =
+	static const vfs::node_method_set lock_methods =
 	{
 		NULL,
 		NULL,
@@ -986,12 +986,12 @@ namespace Genie
 		return new vfs::filehandle( flags );
 	}
 	
-	static const data_method_set unwindow_data_methods =
+	static const vfs::data_method_set unwindow_data_methods =
 	{
 		&unwindow_open
 	};
 	
-	static const node_method_set unwindow_methods =
+	static const vfs::node_method_set unwindow_methods =
 	{
 		NULL,
 		NULL,
@@ -1024,8 +1024,8 @@ namespace Genie
 		                  : name.size() == 1 ? S_IFLNK | 0777
 		                  :                    S_IFREG | 0600;
 		
-		const node_method_set& methods = exists ? window_methods
-		                                        : unwindow_methods;
+		const vfs::node_method_set& methods = exists ? window_methods
+		                                             : unwindow_methods;
 		
 		return new FSTree( parent, name, mode, &methods );
 	}
@@ -1039,8 +1039,8 @@ namespace Genie
 		const mode_t mode = exists ? S_IFLNK | 0777
 		                           : 0;
 		
-		const node_method_set* const methods = exists ? &focus_methods
-		                                              : &unfocus_methods;
+		const vfs::node_method_set* const methods = exists ? &focus_methods
+		                                                   : &unfocus_methods;
 		
 		return new FSTree( parent, name, mode, methods );
 	}

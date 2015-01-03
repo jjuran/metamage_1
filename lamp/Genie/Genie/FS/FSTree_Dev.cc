@@ -22,6 +22,8 @@
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/new_static_symlink.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/dynamic_group.hh"
 
 // MacVFS
@@ -38,8 +40,6 @@
 #include "relix/task/session.hh"
 
 // Genie
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/IO/SerialDevice.hh"
 #include "Genie/IO/SimpleDevice.hh"
 
@@ -52,6 +52,9 @@ namespace Genie
 {
 	
 	namespace p7 = poseven;
+	
+	using vfs::data_method_set;
+	using vfs::node_method_set;
 	
 	
 	struct CallOut_Traits

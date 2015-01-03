@@ -41,12 +41,12 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/dir_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
@@ -310,12 +310,12 @@ namespace Genie
 	
 	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode );
 	
-	static const data_method_set unrsrc_file_data_methods =
+	static const vfs::data_method_set unrsrc_file_data_methods =
 	{
 		&unrsrc_file_open
 	};
 	
-	static const node_method_set unrsrc_file_methods =
+	static const vfs::node_method_set unrsrc_file_methods =
 	{
 		NULL,
 		NULL,
@@ -381,18 +381,18 @@ namespace Genie
 		return new_property( that, name, &params );
 	}
 	
-	static const data_method_set rsrc_file_data_methods =
+	static const vfs::data_method_set rsrc_file_data_methods =
 	{
 		&rsrc_file_open,
 		&rsrc_file_geteof
 	};
 	
-	static const dir_method_set rsrc_file_dirmethods =
+	static const vfs::dir_method_set rsrc_file_dirmethods =
 	{
 		&rsrc_file_lookup
 	};
 	
-	static const node_method_set rsrc_file_methods =
+	static const vfs::node_method_set rsrc_file_methods =
 	{
 		NULL,
 		NULL,
@@ -545,8 +545,8 @@ namespace Genie
 		// FIXME:  Check perms
 		const mode_t mode = exists ? S_IFREG | 0400 : 0;
 		
-		const node_method_set* methods = exists ? &rsrc_file_methods
-		                                        : &unrsrc_file_methods;
+		const vfs::node_method_set* methods = exists ? &rsrc_file_methods
+		                                             : &unrsrc_file_methods;
 		
 		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
 		

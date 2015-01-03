@@ -28,6 +28,8 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/types/property_reader.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 // Pedestal
 #include "Pedestal/ListView.hh"
@@ -35,8 +37,6 @@
 // Genie
 #include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -278,14 +278,14 @@ namespace Genie
 		return new List_data_Handle( *that, flags );
 	}
 	
-	static const data_method_set list_data_data_methods =
+	static const vfs::data_method_set list_data_data_methods =
 	{
 		&list_data_open,
 		&list_data_geteof,
 		&list_data_seteof
 	};
 	
-	static const node_method_set list_data_methods =
+	static const vfs::node_method_set list_data_methods =
 	{
 		NULL,
 		NULL,

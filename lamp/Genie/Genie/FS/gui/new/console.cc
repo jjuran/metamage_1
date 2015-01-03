@@ -55,6 +55,8 @@
 #include "vfs/filehandle/primitives/getpgrp.hh"
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/attach.hh"
 
 // relix
@@ -69,8 +71,6 @@
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/FS/data_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/Utilities/simple_map.hh"
 
 
@@ -839,12 +839,12 @@ namespace Genie
 		return result;
 	}
 	
-	static const data_method_set console_tty_data_methods =
+	static const vfs::data_method_set console_tty_data_methods =
 	{
 		&console_tty_open
 	};
 	
-	static const node_method_set console_tty_methods =
+	static const vfs::node_method_set console_tty_methods =
 	{
 		NULL,
 		NULL,

@@ -20,6 +20,8 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
@@ -27,8 +29,6 @@
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
@@ -208,13 +208,13 @@ namespace Genie
 		return FSTreeFromFSSpec( file );
 	}
 	
-	static const link_method_set mac_proc_exe_link_methods =
+	static const vfs::link_method_set mac_proc_exe_link_methods =
 	{
 		NULL,
 		&mac_proc_exe_resolve
 	};
 	
-	static const node_method_set mac_proc_exe_methods =
+	static const vfs::node_method_set mac_proc_exe_methods =
 	{
 		NULL,
 		NULL,

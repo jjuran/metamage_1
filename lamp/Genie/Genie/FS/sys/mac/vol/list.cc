@@ -41,6 +41,8 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
@@ -52,8 +54,6 @@
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/link_method_set.hh"
-#include "Genie/FS/node_method_set.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/Trigger.hh"
@@ -441,13 +441,13 @@ namespace Genie
 		return FSTreeFromFSDirSpec( N::FindFolder( vRefNum, type, false ) );
 	}
 	
-	static const link_method_set folder_link_link_methods =
+	static const vfs::link_method_set folder_link_link_methods =
 	{
 		NULL,
 		&folder_link_resolve
 	};
 	
-	static const node_method_set folder_link_methods =
+	static const vfs::node_method_set folder_link_methods =
 	{
 		NULL,
 		NULL,
