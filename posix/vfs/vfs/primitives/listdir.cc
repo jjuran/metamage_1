@@ -10,6 +10,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/access.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
@@ -22,6 +23,8 @@ namespace vfs
 	
 	void listdir( const node& that, vfs::dir_contents& contents )
 	{
+		access( that, R_OK );
+		
 		const node_method_set* methods = that.methods();
 		
 		const dir_method_set* dir_methods;
