@@ -101,4 +101,3 @@ void* _create_new_stack()
 	
 	return base;
 }
-

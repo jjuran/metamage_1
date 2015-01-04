@@ -181,4 +181,3 @@ struct tm* localtime( const time_t* time_p )
 	
 	return localtime_r( time_p, &static_tm );
 }
-

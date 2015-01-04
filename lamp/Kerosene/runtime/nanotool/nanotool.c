@@ -16,4 +16,3 @@ int _relix_main( void )
 {
 	return main( 0, 0 );  // NULL
 }
-

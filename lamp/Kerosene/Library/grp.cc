@@ -14,4 +14,3 @@ struct group* getgrgid( gid_t gid )
 {
 	return NULL;
 }
-

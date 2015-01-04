@@ -51,4 +51,3 @@ struct hostent* gethostbyname( const char* name )
 	
 	return &host_entry;
 }
-

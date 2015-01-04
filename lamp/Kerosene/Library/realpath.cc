@@ -45,4 +45,3 @@ char* realpath( const char *path, char *buffer )
 	
 	return buffer;
 }
-

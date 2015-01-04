@@ -131,4 +131,3 @@ DEFINE_SYSCALL( sendto )
 DEFINE_SYSCALL( recvfrom )
 DEFINE_SYSCALL( sendmsg )
 DEFINE_SYSCALL( recvmsg )
-

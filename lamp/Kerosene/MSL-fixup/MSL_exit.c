@@ -81,4 +81,3 @@ void exit( int status )
 #endif  // defined( __MC68K__ ) && !__A5__
 
 #endif
-

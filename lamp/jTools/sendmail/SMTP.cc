@@ -74,4 +74,3 @@ namespace SMTP
 	}  // namespace Client
 	
 }  // namespace SMTP
-

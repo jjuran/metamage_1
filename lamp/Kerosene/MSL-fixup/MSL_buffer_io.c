@@ -22,4 +22,3 @@ void __convert_to_newlines( unsigned char*, size_t* )
 }
 
 #endif
-

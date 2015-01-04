@@ -110,4 +110,3 @@ int dirfd( DIR* dir )
 {
 	return dir->fd;
 }
-

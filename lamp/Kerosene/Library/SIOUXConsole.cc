@@ -72,4 +72,3 @@ int __read_console( __file_handle handle, unsigned char* buffer, size_t* count )
 }
 
 #endif  // #if defined(__MWERKS__) && !defined(__MACH__)
-

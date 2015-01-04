@@ -54,4 +54,3 @@ namespace tool
 }
 
 #endif
-

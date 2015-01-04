@@ -218,4 +218,3 @@ void	logwakeup(void);
 
 #endif /* !_KERNEL */
 #endif /* !_SYS_SYSLOG_H_ */
-

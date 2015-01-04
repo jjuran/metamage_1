@@ -64,4 +64,3 @@ asm void _relix_restack( unsigned param_length, const void* f, ... )
 }
 
 #endif
-

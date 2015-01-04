@@ -42,4 +42,3 @@ namespace tool
 }
 
 #endif
-

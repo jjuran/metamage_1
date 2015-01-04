@@ -6,4 +6,3 @@
 #undef _POSIX
 
 #endif
-

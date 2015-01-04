@@ -39,4 +39,3 @@ int clearenv()
 {
 	return mutable_environment_is_unimplemented();
 }
-

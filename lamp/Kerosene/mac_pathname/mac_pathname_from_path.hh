@@ -15,4 +15,3 @@
 plus::string mac_pathname_from_path( const char* path, bool utf8 = false );
 
 #endif
-
