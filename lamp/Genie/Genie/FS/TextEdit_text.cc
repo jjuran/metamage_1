@@ -191,11 +191,6 @@ namespace Genie
 	static const vfs::node_method_set textedit_text_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&textedit_text_data_methods
 	};
 	

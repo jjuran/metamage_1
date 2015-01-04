@@ -43,6 +43,7 @@
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
@@ -318,11 +319,6 @@ namespace Genie
 	static const vfs::node_method_set unrsrc_file_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&unrsrc_file_data_methods
 	};
 	
@@ -381,6 +377,16 @@ namespace Genie
 		return new_property( that, name, &params );
 	}
 	
+	static const vfs::item_method_set rsrc_file_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&rsrc_file_remove,
+		&rsrc_file_rename,
+	};
+	
 	static const vfs::data_method_set rsrc_file_data_methods =
 	{
 		&rsrc_file_open,
@@ -394,12 +400,7 @@ namespace Genie
 	
 	static const vfs::node_method_set rsrc_file_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&rsrc_file_remove,
-		&rsrc_file_rename,
+		&rsrc_file_item_methods,
 		&rsrc_file_data_methods,
 		NULL,
 		&rsrc_file_dirmethods

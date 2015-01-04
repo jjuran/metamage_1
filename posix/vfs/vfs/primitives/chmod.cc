@@ -10,6 +10,7 @@
 
 // Genie
 #include "vfs/node.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 
@@ -23,11 +24,16 @@ namespace vfs
 	{
 		const node_method_set* methods = that.methods();
 		
-		if ( methods  &&  methods->chmod )
+		const item_method_set* item_methods;
+		
+		if ( methods  &&  (item_methods = methods->item_methods) )
 		{
-			methods->chmod( &that, mode );
-			
-			return;
+			if ( item_methods->chmod )
+			{
+				item_methods->chmod( &that, mode );
+				
+				return;
+			}
 		}
 		
 		p7::throw_errno( EPERM );

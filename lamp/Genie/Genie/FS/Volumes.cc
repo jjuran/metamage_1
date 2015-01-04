@@ -106,11 +106,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&volumes_link_link_methods
 	};
 	
@@ -176,11 +171,6 @@ namespace Genie
 	
 	static const vfs::node_method_set volumes_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,

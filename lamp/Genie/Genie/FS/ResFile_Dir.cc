@@ -21,6 +21,7 @@
 // vfs
 #include "vfs/functions/file-tests.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
@@ -52,11 +53,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&empty_rsrc_fork_dir_methods
 	};
 	
@@ -70,6 +66,15 @@ namespace Genie
 	static void resfile_dir_listdir( const FSTree*       that,
 	                                 vfs::dir_contents&  cache );
 	
+	static const vfs::item_method_set resfile_dir_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&resfile_dir_remove,
+	};
+	
 	static const vfs::dir_method_set resfile_dir_dir_methods =
 	{
 		&resfile_dir_lookup,
@@ -78,12 +83,7 @@ namespace Genie
 	
 	static const vfs::node_method_set resfile_dir_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&resfile_dir_remove,
-		NULL,
+		&resfile_dir_item_methods,
 		NULL,
 		NULL,
 		&resfile_dir_dir_methods

@@ -364,11 +364,6 @@ namespace Genie
 	static const vfs::node_method_set eventtap_stream_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&eventtap_stream_data_methods
 	};
 	

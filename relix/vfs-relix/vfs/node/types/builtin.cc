@@ -56,11 +56,6 @@ namespace vfs
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&builtin_file_methods
 	};
 	

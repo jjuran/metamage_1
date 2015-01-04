@@ -55,11 +55,6 @@ namespace vfs
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&basic_dir_methods
 	};
 	

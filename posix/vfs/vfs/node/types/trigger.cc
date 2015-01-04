@@ -15,6 +15,7 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/touch.hh"
 
@@ -56,6 +57,13 @@ namespace vfs
 	
 	static filehandle_ptr trigger_open( const node* that, int flags, mode_t mode );
 	
+	static const item_method_set trigger_item_methods =
+	{
+		NULL,
+		NULL,
+		&trigger_touch,
+	};
+	
 	static const data_method_set trigger_data_methods =
 	{
 		&trigger_open
@@ -63,12 +71,7 @@ namespace vfs
 	
 	static const node_method_set trigger_methods =
 	{
-		NULL,
-		NULL,
-		&trigger_touch,
-		NULL,
-		NULL,
-		NULL,
+		&trigger_item_methods,
 		&trigger_data_methods
 	};
 	

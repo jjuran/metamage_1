@@ -119,11 +119,6 @@ namespace vfs
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&union_dir_methods
 	};
 	

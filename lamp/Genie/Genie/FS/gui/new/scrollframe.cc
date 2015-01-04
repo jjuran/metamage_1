@@ -22,6 +22,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
@@ -340,6 +341,15 @@ namespace Genie
 		return gScrollFrameParametersMap[ view ].itsTargetPath;
 	}
 	
+	static const vfs::item_method_set scrollframe_target_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&scrollframe_target_remove,
+	};
+	
 	static const vfs::link_method_set scrollframe_target_link_methods =
 	{
 		&scrollframe_target_readlink,
@@ -349,12 +359,7 @@ namespace Genie
 	
 	static const vfs::node_method_set scrollframe_target_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&scrollframe_target_remove,
-		NULL,
+		&scrollframe_target_item_methods,
 		NULL,
 		&scrollframe_target_link_methods
 	};

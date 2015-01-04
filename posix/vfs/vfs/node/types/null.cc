@@ -40,11 +40,6 @@ namespace vfs
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&null_misc_methods
 	};
 	

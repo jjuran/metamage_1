@@ -14,6 +14,7 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/node_method_set.hh"
 
 
 namespace vfs
@@ -49,6 +50,15 @@ namespace vfs
 		return reinterpret_cast< const plus::string& >( extra.target );
 	}
 	
+	static const item_method_set item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&remove,
+	};
+	
 	static const link_method_set link_methods =
 	{
 		&readlink
@@ -56,12 +66,7 @@ namespace vfs
 	
 	static const node_method_set methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&remove,
-		NULL,
+		&item_methods,
 		NULL,
 		&link_methods
 	};

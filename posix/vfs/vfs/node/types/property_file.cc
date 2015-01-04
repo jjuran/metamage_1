@@ -132,11 +132,6 @@ namespace vfs
 	static const node_method_set property_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&property_data_methods
 	};
 	

@@ -77,11 +77,6 @@ namespace vfs
 	static const node_method_set mac_tempmem_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&mac_tempmem_data_methods
 	};
 	

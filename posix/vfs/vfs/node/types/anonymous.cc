@@ -35,11 +35,6 @@ namespace vfs
 	static const node_method_set anonymous_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&anonymous_data_methods
 	};
 	

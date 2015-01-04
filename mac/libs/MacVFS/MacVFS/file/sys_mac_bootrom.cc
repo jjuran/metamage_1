@@ -61,11 +61,6 @@ namespace vfs
 	static const node_method_set mac_bootrom_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&mac_bootrom_data_methods
 	};
 	

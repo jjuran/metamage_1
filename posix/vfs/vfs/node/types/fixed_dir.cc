@@ -14,6 +14,7 @@
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/null.hh"
 
@@ -33,6 +34,15 @@ namespace vfs
 	static void fixed_dir_listdir( const node*         dir,
 	                               vfs::dir_contents&  cache );
 	
+	static const item_method_set fixed_dir_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&fixed_dir_remove,
+	};
+	
 	static const dir_method_set fixed_dir_dir_methods =
 	{
 		&fixed_dir_lookup,
@@ -41,12 +51,7 @@ namespace vfs
 	
 	static const node_method_set fixed_dir_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&fixed_dir_remove,
-		NULL,
+		&fixed_dir_item_methods,
 		NULL,
 		NULL,
 		&fixed_dir_dir_methods

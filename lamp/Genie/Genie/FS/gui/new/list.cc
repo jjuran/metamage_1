@@ -288,11 +288,6 @@ namespace Genie
 	static const vfs::node_method_set list_data_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&list_data_data_methods
 	};
 	

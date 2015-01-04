@@ -586,11 +586,6 @@ namespace Genie
 	static const vfs::node_method_set icon_data_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&icon_data_data_methods,
 		NULL,
 		NULL,

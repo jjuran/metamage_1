@@ -301,11 +301,6 @@ namespace Genie
 	static const vfs::node_method_set bitmap_bits_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&bitmap_bits_data_methods
 	};
 	

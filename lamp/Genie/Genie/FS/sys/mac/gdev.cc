@@ -79,11 +79,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&gdev_main_link_methods
 	};
 	

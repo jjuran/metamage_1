@@ -18,6 +18,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/remove.hh"
 
@@ -229,6 +230,15 @@ namespace Genie
 		}
 	}
 	
+	static const vfs::item_method_set stack_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&stack_remove,
+	};
+	
 	static const vfs::dir_method_set stack_dir_methods =
 	{
 		&stack_lookup,
@@ -237,12 +247,7 @@ namespace Genie
 	
 	static const vfs::node_method_set stack_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&stack_remove,
-		NULL,
+		&stack_item_methods,
 		NULL,
 		NULL,
 		&stack_dir_methods

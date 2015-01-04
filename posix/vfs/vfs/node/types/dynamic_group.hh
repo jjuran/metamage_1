@@ -67,11 +67,6 @@ namespace vfs
 	const node_method_set dynamic_group_element< Handle >::node_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&data_methods
 	};
 	

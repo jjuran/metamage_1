@@ -78,11 +78,6 @@ namespace vfs
 	static const node_method_set mac_rom_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&mac_rom_data_methods
 	};
 	

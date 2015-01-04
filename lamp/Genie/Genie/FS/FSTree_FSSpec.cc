@@ -62,6 +62,7 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/misc_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
@@ -431,6 +432,16 @@ namespace Genie
 		}
 	}
 	
+	static const vfs::item_method_set hfs_item_methods =
+	{
+		&hfs_stat,
+		&hfs_chmod,
+		NULL,
+		&hfs_utime,
+		&hfs_remove,
+		&hfs_rename,
+	};
+	
 	static const vfs::data_method_set hfs_data_methods =
 	{
 		&hfs_open,
@@ -470,12 +481,7 @@ namespace Genie
 	
 	static const vfs::node_method_set hfs_methods =
 	{
-		&hfs_stat,
-		&hfs_chmod,
-		NULL,
-		&hfs_utime,
-		&hfs_remove,
-		&hfs_rename,
+		&hfs_item_methods,
 		&hfs_data_methods,
 		&hfs_link_methods,
 		&hfs_dir_methods,

@@ -274,11 +274,6 @@ namespace Genie
 	static const vfs::node_method_set gworld_pixels_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&gworld_pixels_data_methods
 	};
 	

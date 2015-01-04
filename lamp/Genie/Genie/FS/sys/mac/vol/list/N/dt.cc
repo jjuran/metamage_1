@@ -116,11 +116,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&desktop_dir_link_methods
 	};
 	
@@ -155,11 +150,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&latest_appl_link_link_methods
 	};
 	
@@ -182,11 +172,6 @@ namespace Genie
 	
 	static const vfs::node_method_set dt_appls_QUAD_list_N_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&dt_appls_QUAD_list_N__link_methods

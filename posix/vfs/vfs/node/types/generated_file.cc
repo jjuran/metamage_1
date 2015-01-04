@@ -40,11 +40,6 @@ namespace vfs
 	static const node_method_set generated_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&generated_data_methods
 	};
 	

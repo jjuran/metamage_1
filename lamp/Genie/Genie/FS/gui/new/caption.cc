@@ -268,11 +268,6 @@ namespace Genie
 	static const vfs::node_method_set caption_text_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&caption_text_data_methods
 	};
 	

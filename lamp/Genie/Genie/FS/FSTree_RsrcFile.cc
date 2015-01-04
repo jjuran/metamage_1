@@ -15,6 +15,7 @@
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
@@ -79,14 +80,14 @@ namespace Genie
 		&rsrcfile_open
 	};
 	
-	static const vfs::node_method_set rsrcfile_methods =
+	static const vfs::item_method_set rsrcfile_item_methods =
 	{
 		&rsrcfile_stat,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+	};
+	
+	static const vfs::node_method_set rsrcfile_methods =
+	{
+		&rsrcfile_item_methods,
 		&rsrcfile_data_methods
 	};
 	

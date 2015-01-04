@@ -90,11 +90,6 @@ namespace vfs
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&dynamic_group_dir_methods
 	};
 	

@@ -345,11 +345,6 @@ namespace Genie
 	static const vfs::node_method_set button_stream_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&button_stream_data_methods
 	};
 	

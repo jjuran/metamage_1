@@ -56,6 +56,7 @@
 #include "vfs/filehandle/types/dynamic_group.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/methods/data_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/attach.hh"
 
@@ -839,12 +840,7 @@ namespace Genie
 		return result;
 	}
 	
-	static const vfs::data_method_set console_tty_data_methods =
-	{
-		&console_tty_open
-	};
-	
-	static const vfs::node_method_set console_tty_methods =
+	static const vfs::item_method_set console_tty_item_methods =
 	{
 		NULL,
 		NULL,
@@ -852,6 +848,16 @@ namespace Genie
 		NULL,
 		NULL,
 		&console_tty_rename,
+	};
+	
+	static const vfs::data_method_set console_tty_data_methods =
+	{
+		&console_tty_open
+	};
+	
+	static const vfs::node_method_set console_tty_methods =
+	{
+		&console_tty_item_methods,
 		&console_tty_data_methods
 	};
 	

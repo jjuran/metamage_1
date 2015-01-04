@@ -33,6 +33,7 @@
 #include "vfs/node.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/null.hh"
 #include "vfs/primitives/listdir.hh"
@@ -215,11 +216,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&new_view_file_methods
 	};
 	
@@ -344,11 +340,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&unview_dir_methods
 	};
 	
@@ -395,6 +386,15 @@ namespace Genie
 		listdir( *GetViewDelegate( that ), cache );
 	}
 	
+	static const vfs::item_method_set view_item_methods =
+	{
+		NULL,
+		NULL,
+		&view_touch,
+		NULL,
+		&view_remove,
+	};
+	
 	static const vfs::dir_method_set view_dir_methods =
 	{
 		&view_lookup,
@@ -403,12 +403,7 @@ namespace Genie
 	
 	static const vfs::node_method_set view_methods =
 	{
-		NULL,
-		NULL,
-		&view_touch,
-		NULL,
-		&view_remove,
-		NULL,
+		&view_item_methods,
 		NULL,
 		NULL,
 		&view_dir_methods
@@ -416,11 +411,6 @@ namespace Genie
 	
 	static const vfs::node_method_set viewdir_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		NULL,

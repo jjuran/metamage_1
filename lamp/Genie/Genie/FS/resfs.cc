@@ -23,6 +23,7 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/file_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
 
@@ -111,11 +112,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&resfs_dir_dirmethods
 	};
 	
@@ -184,6 +180,11 @@ namespace Genie
 		return prepare_executable( unit );
 	}
 	
+	static const vfs::item_method_set resfs_file_itemmethods =
+	{
+		&resfs_file_stat,
+	};
+	
 	static const vfs::data_method_set resfs_file_datamethods =
 	{
 		&resfs_file_open,
@@ -200,12 +201,7 @@ namespace Genie
 	
 	static const vfs::node_method_set resfs_file_methods =
 	{
-		&resfs_file_stat,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		&resfs_file_itemmethods,
 		&resfs_file_datamethods,
 		NULL,
 		NULL,

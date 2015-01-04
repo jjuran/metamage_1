@@ -28,6 +28,7 @@
 #include "vfs/filehandle/types/posix.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 
@@ -135,6 +136,11 @@ namespace vfs
 		}
 	}
 	
+	static const item_method_set posix_item_methods =
+	{
+		&posix_stat,
+	};
+	
 	static const data_method_set posix_data_methods =
 	{
 		&posix_open,
@@ -153,12 +159,7 @@ namespace vfs
 	
 	static const node_method_set posix_methods =
 	{
-		&posix_stat,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
+		&posix_item_methods,
 		&posix_data_methods,
 		NULL,
 		&posix_dir_methods,

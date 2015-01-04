@@ -54,6 +54,7 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/file_method_set.hh"
 #include "vfs/methods/link_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
@@ -521,11 +522,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&unfocus_link_methods
 	};
 	
@@ -540,6 +536,15 @@ namespace Genie
 		throw p7::errno_t( ENOENT );
 	}
 	
+	static const vfs::item_method_set focus_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&focus_remove,
+	};
+	
 	static const vfs::link_method_set focus_link_methods =
 	{
 		NULL,  // FIXME:  Use relative path
@@ -548,12 +553,7 @@ namespace Genie
 	
 	static const vfs::node_method_set focus_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&focus_remove,
-		NULL,
+		&focus_item_methods,
 		NULL,
 		&focus_link_methods
 	};
@@ -607,6 +607,15 @@ namespace Genie
 		return result;
 	}
 	
+	static const vfs::item_method_set window_item_methods =
+	{
+		NULL,
+		NULL,
+		&window_touch,
+		NULL,
+		&window_remove,
+	};
+	
 	static const vfs::link_method_set window_link_methods =
 	{
 		&window_readlink
@@ -614,12 +623,7 @@ namespace Genie
 	
 	static const vfs::node_method_set window_methods =
 	{
-		NULL,
-		NULL,
-		&window_touch,
-		NULL,
-		&window_remove,
-		NULL,
+		&window_item_methods,
 		NULL,
 		&window_link_methods
 	};
@@ -644,11 +648,6 @@ namespace Genie
 	
 	static const vfs::node_method_set port_tty_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		&port_tty_data_methods,
 		NULL,
@@ -715,6 +714,15 @@ namespace Genie
 	
 	static plus::string gesture_readlink( const FSTree* that );
 	
+	static const vfs::item_method_set gesture_item_methods =
+	{
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		&gesture_remove,
+	};
+	
 	static const vfs::link_method_set gesture_link_methods =
 	{
 		&gesture_readlink
@@ -722,12 +730,7 @@ namespace Genie
 	
 	static const vfs::node_method_set gesture_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		&gesture_remove,
-		NULL,
+		&gesture_item_methods,
 		NULL,
 		&gesture_link_methods
 	};
@@ -764,11 +767,6 @@ namespace Genie
 	
 	static const vfs::node_method_set ungesture_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&ungesture_link_methods
@@ -961,11 +959,6 @@ namespace Genie
 	static const vfs::node_method_set lock_methods =
 	{
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&lock_data_methods
 	};
 	
@@ -986,6 +979,13 @@ namespace Genie
 		return new vfs::filehandle( flags );
 	}
 	
+	static const vfs::item_method_set unwindow_item_methods =
+	{
+		NULL,
+		NULL,
+		&unwindow_touch,
+	};
+	
 	static const vfs::data_method_set unwindow_data_methods =
 	{
 		&unwindow_open
@@ -993,12 +993,7 @@ namespace Genie
 	
 	static const vfs::node_method_set unwindow_methods =
 	{
-		NULL,
-		NULL,
-		&unwindow_touch,
-		NULL,
-		NULL,
-		NULL,
+		&unwindow_item_methods,
 		&unwindow_data_methods
 	};
 	

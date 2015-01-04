@@ -11,7 +11,7 @@
 
 // vfs
 #include "vfs/node_ptr.hh"
-#include "vfs/methods/node_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 
 
 namespace vfs

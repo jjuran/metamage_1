@@ -39,6 +39,7 @@
 #include "vfs/functions/pathname.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
+#include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
@@ -117,11 +118,6 @@ namespace Genie
 		NULL,
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&proc_fd_dir_methods
 	};
 	
@@ -146,11 +142,6 @@ namespace Genie
 	
 	static const vfs::node_method_set proc_fd_link_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		&proc_fd_link_data_methods,
 		&proc_fd_link_link_methods
@@ -192,11 +183,6 @@ namespace Genie
 	{
 		NULL,
 		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		&proc_link_link_methods
 	};
 	
@@ -226,11 +212,6 @@ namespace Genie
 	
 	static const vfs::node_method_set proc_self_methods =
 	{
-		NULL,
-		NULL,
-		NULL,
-		NULL,
-		NULL,
 		NULL,
 		NULL,
 		&proc_self_link_methods
@@ -537,10 +518,15 @@ namespace Genie
 		}
 	}
 	
-	static const vfs::node_method_set proc_pid_core_methods =
+	static const vfs::item_method_set proc_pid_core_item_methods =
 	{
 		NULL,
 		&proc_pid_core_chmod
+	};
+	
+	static const vfs::node_method_set proc_pid_core_methods =
+	{
+		&proc_pid_core_item_methods,
 	};
 	
 	static FSTreePtr core_Factory( const FSTree*        parent,
