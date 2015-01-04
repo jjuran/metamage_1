@@ -34,4 +34,3 @@ namespace Genie
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode );
 	
 }
-

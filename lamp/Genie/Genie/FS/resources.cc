@@ -555,4 +555,3 @@ namespace Genie
 		return result;
 	}
 }
-

@@ -37,4 +37,3 @@ char* __ttyname( long )
 }
 
 #endif  // #ifdef __MWERKS__
-

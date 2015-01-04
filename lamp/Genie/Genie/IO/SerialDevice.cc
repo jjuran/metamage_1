@@ -377,4 +377,3 @@ namespace Genie
 #endif
 	
 }
-

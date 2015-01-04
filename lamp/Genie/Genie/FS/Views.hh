@@ -106,4 +106,3 @@ namespace Genie
 }
 
 #endif
-

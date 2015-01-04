@@ -238,4 +238,3 @@ namespace Genie
 }
 
 #endif
-
