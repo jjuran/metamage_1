@@ -121,4 +121,3 @@ namespace HTTP
 	plus::string GetContentLengthLine( poseven::fd_t message_body );
 	
 }
-

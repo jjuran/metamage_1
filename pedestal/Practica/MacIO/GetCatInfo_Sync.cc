@@ -64,4 +64,3 @@ namespace MacIO
 	                               SInt16          index );
 	
 }
-
