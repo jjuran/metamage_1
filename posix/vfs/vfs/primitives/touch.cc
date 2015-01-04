@@ -35,13 +35,13 @@ namespace vfs
 		if ( methods  &&  methods->touch )
 		{
 			methods->touch( &that );
-		}
-		else
-		{
-			const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
 			
-			utime( that, times );
+			return;
 		}
+		
+		const struct timespec times[2] = { { 0, UTIME_NOW }, { 0, UTIME_NOW } };
+		
+		utime( that, times );
 	}
 	
 }

@@ -26,11 +26,11 @@ namespace vfs
 		if ( methods  &&  methods->utime )
 		{
 			methods->utime( &that, times );
+			
+			return;
 		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
+		
+		p7::throw_errno( EPERM );
 	}
 	
 }

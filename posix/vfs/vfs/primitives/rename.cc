@@ -26,11 +26,11 @@ namespace vfs
 		if ( methods  &&  methods->rename )
 		{
 			methods->rename( &that, &target );
+			
+			return;
 		}
-		else
-		{
-			p7::throw_errno( EPERM );
-		}
+		
+		p7::throw_errno( EPERM );
 	}
 	
 }
