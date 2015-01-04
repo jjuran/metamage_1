@@ -4,4 +4,3 @@
  */
 
 #include "ClassicToolbox/MacWindows.hh"
-

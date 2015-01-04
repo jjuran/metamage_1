@@ -519,4 +519,3 @@ namespace Nitrogen
 }
 
 #endif
-

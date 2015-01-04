@@ -212,4 +212,3 @@ namespace Nitrogen
 #include "nucleus/operators.hh"
 
 #endif
-

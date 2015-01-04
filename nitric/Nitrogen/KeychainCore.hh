@@ -439,4 +439,3 @@ Marshall sez: this is icky because it returns two things that need to be owned.
 	}
 
 #endif
-

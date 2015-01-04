@@ -19,4 +19,3 @@ plus::string GetMacPathname( const Mac::FSDirSpec&  dir  );
 plus::string GetMacPathname( const FSSpec&          file );
 
 #endif
-

@@ -121,4 +121,3 @@ namespace Nitrogen
 }
 
 #endif
-

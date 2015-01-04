@@ -263,4 +263,3 @@ namespace Nitrogen
       RegisterOSStatus< afpIconTypeError       >();
      }
 }
-

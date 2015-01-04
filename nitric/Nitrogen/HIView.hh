@@ -770,4 +770,3 @@ namespace Nitrogen {
 	 }
 	
 #endif /* NITROGEN_HIVIEW_HH */
-

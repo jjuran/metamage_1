@@ -115,4 +115,3 @@ namespace Nitrogen {
 	}
 
 #endif
-

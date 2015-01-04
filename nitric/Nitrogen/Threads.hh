@@ -484,4 +484,3 @@ namespace Nitrogen
 }
 
 #endif
-

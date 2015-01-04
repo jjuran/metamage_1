@@ -39,4 +39,3 @@ namespace nucleus
 }
 
 #endif
-

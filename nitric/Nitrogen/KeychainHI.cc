@@ -20,4 +20,3 @@ namespace Nitrogen {
 	static KeychainErrorsRegistrationDependency gKeychainErrorsRegistrationDependency;
 
 	}
-
