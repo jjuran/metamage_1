@@ -23,4 +23,3 @@ namespace recall
 }
 
 #endif
-
