@@ -39,4 +39,3 @@ inline pascal InetSvcRef OTOpenInternetServices( OTConfigurationRef   config,
 #endif
 
 #endif
-

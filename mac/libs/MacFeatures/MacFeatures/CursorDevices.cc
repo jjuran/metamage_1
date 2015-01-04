@@ -28,4 +28,3 @@ namespace MacFeatures
 }
 
 #endif  // #if TARGET_CPU_68K
-

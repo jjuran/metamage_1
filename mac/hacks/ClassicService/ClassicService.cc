@@ -310,4 +310,3 @@ int main()
 {
 	return Silver::Install( ClassicService::Installer );
 }
-

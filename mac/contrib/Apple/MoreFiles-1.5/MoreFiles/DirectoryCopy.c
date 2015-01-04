@@ -677,4 +677,3 @@ pascal	OSErr	FSpDirectoryCopy(const FSSpec *srcSpec,
 }
 
 /*****************************************************************************/
-

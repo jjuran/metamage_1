@@ -44,4 +44,3 @@ namespace MacFeatures
 #endif
 	
 }
-

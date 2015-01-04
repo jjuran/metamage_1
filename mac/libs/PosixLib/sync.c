@@ -35,4 +35,3 @@ void sync( void )
 	}
 	while ( err != nsvErr );
 }
-

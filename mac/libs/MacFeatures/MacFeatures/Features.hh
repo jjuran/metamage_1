@@ -50,4 +50,3 @@ namespace MacFeatures
 }
 
 #endif
-

@@ -76,4 +76,3 @@ CARBONATE_LINKAGE void SetListViewBounds( ListHandle list, const Rect* view )
 #endif
 
 #endif
-

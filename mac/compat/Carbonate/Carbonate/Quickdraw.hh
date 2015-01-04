@@ -409,4 +409,3 @@ CARBONATE_LINKAGE Rect* GetRegionBounds( RgnHandle region, Rect* bounds )
 #endif
 
 #endif
-

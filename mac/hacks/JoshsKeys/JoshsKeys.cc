@@ -323,4 +323,3 @@ int main()
 {
 	return Ag::Install( Installer );
 }
-

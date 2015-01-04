@@ -37,4 +37,3 @@ inline pascal UInt32 LMGetTicks()
 #endif
 
 #endif
-

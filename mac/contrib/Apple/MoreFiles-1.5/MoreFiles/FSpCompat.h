@@ -491,4 +491,3 @@ pascal	void	FSpCreateResFileCompat(const FSSpec *spec,
 #include "MoreFiles/OptimizationEnd.h"
 
 #endif	/* __FSPCOMPAT__ */
-

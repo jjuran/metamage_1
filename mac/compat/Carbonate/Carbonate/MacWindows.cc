@@ -34,4 +34,3 @@ OSStatus GetWindowAlpha( WindowRef window, float* outAlpha )
 	
 	return noErr;
 }
-
