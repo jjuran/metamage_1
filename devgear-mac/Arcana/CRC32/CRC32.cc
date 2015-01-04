@@ -80,4 +80,3 @@ namespace CRC32
 	}
 	
 }  // namespace CRC32
-

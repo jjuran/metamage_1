@@ -47,4 +47,3 @@ namespace MD5
 }
 
 #endif
-

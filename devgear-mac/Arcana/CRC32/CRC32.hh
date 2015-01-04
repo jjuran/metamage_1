@@ -14,4 +14,3 @@ namespace CRC32
 	unsigned int Checksum( const void* data, unsigned int bytes );
 	
 }
-
