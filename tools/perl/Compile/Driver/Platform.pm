@@ -40,4 +40,3 @@ sub mask_for_values
 }
 
 1;
-
