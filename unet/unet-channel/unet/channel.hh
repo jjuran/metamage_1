@@ -7,7 +7,9 @@
 #define UNET_CHANNEL_HH
 
 // poseven
+#ifndef POSEVEN_EXTRAS_COPROCESSBOX_HH
 #include "poseven/extras/coprocess_box.hh"
+#endif
 
 
 namespace unet
