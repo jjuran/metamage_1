@@ -49,4 +49,3 @@ _temporary_cwd::~_temporary_cwd()
 		errno = saved_errno;
 	}
 }
-

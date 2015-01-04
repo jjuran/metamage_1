@@ -110,4 +110,3 @@ int _dual_path_at( dual_path_filing_op  op,
 	
 	return op( oldpath, newpath, flags );
 }
-

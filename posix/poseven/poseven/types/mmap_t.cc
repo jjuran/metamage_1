@@ -14,4 +14,3 @@ namespace nucleus
 	null_resource< ::poseven::mmap_t >::value = { MAP_FAILED };
 	
 }
-

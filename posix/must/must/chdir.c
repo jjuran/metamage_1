@@ -23,4 +23,3 @@ int must_chdir( const char* path )
 	
 	return changed;
 }
-
