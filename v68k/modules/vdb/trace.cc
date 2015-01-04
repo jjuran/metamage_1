@@ -136,4 +136,3 @@ asm int set_trace_handler()
 bail:
 	RTS
 }
-

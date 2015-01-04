@@ -21,4 +21,3 @@ extern const uint16_t trap_dispatcher[ trap_dispatcher_word_count ];
 }  // namespace v68k
 
 #endif
-

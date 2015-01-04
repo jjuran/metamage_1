@@ -60,4 +60,3 @@ int main( int argc, char** argv )
 	
 	return next( argc, argv, NULL, global_system_params );
 }
-

@@ -60,4 +60,3 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	return its_callback_memory.translate( addr, length, fc, access );
 }
-

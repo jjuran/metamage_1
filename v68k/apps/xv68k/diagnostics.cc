@@ -63,4 +63,3 @@ void print_breakpoint( int number )
 	
 	write( STDERR_FILENO, msg, sizeof msg - 1 );
 }
-

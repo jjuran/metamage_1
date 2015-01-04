@@ -455,4 +455,3 @@ uint32_t bridge( v68k::processor_state& s )
 
 }  // namespace callback
 }  // namespace v68k
-

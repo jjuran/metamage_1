@@ -13,4 +13,3 @@ bool fully_authorized = false;
 
 }  // namespace auth
 }  // namespace v68k
-

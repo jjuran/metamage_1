@@ -53,4 +53,3 @@ uint32_t bridge( v68k::processor_state& emu );
 
 
 #endif
-
