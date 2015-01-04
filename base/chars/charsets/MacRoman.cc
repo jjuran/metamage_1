@@ -276,4 +276,3 @@ const struct unicode_mapping MacRoman_encoder_map[] =
 };
 
 }
-

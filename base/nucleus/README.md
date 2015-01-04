@@ -8,4 +8,3 @@ been made by Josh Juran, including a style overhaul.
 Nucleus is distributed under the [Boost license][].
 
 [Boost license]:  <../../contrib/boost/LICENSE_1_0.txt>
-

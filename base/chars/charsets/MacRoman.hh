@@ -20,4 +20,3 @@ namespace chars
 }
 
 #endif
-

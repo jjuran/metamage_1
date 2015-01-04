@@ -47,4 +47,3 @@ namespace iota
 }
 
 #endif
-
