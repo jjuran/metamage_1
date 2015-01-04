@@ -21,4 +21,3 @@ All other components are copyright Joshua Juran and released under the [GNU GPL 
 
 [GPL]:  <GPLv3.txt>
 [Boost license]:  <contrib/boost/LICENSE_1_0.txt>
-
