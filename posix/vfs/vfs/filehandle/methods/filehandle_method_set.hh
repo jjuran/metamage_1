@@ -29,4 +29,3 @@ namespace vfs
 }
 
 #endif
-
