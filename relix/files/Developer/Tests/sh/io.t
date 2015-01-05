@@ -84,4 +84,3 @@ END
 $ echo false | sh -c '. /dev/fd/0 2>&1; echo $?'
 
 1 >= 1
-

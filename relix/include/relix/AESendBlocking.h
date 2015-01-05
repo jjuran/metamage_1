@@ -19,4 +19,3 @@ long AESendBlocking( const struct AEDesc *appleEvent, struct AEDesc *reply );
 #endif
 
 #endif
-

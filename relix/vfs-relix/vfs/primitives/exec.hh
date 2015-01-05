@@ -14,4 +14,3 @@ namespace vfs
 	program_ptr exec( const node& that );
 	
 }
-

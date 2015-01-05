@@ -25,4 +25,3 @@ INPUT
 1..1
 ok 1 # TODO foo
 OUTPUT
-

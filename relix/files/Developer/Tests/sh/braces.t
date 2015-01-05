@@ -21,4 +21,3 @@ $ echo {a,b{c,d}}{1,2}
 $ echo {foo}{bar}
 
 1 >= "{foo}{bar}"
-

@@ -6,4 +6,3 @@ $ sh -c 'echo foo; echo bar'
 foo
 bar
 [END]
-

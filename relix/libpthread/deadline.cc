@@ -37,4 +37,3 @@ bool deadline_expired( const timespec& deadline )
 	
 	return now >= deadline;
 }
-

@@ -146,4 +146,3 @@ my $link_output = <>;
 $filter->() for $link_output;
 
 print $link_output;
-

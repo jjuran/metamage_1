@@ -70,4 +70,3 @@ struct _vfork_pad
 };
 
 #endif
-

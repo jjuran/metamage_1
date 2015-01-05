@@ -17,4 +17,3 @@ long _OTInetStringToAddress( char* name, struct InetHostInfo* result );
 #endif
 
 #endif
-

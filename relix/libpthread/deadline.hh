@@ -14,4 +14,3 @@ struct timespec;
 bool deadline_expired( const timespec& deadline );
 
 #endif
-

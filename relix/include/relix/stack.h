@@ -17,4 +17,3 @@ unsigned _relix_stack_space( void );
 #endif
 
 #endif
-

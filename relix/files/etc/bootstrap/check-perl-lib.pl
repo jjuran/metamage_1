@@ -28,4 +28,3 @@ check_library( "$ENV{HOME}/Library" )  if defined $ENV{HOME};
 check_library( "/sys/mac/user/prefs/.." );
 
 print "Run '/sbin/install-usr-lib-perl' to install the perl library.\n\n"
-

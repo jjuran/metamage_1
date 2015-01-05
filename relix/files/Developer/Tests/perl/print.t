@@ -17,4 +17,3 @@ $ perl -e 'print STDERR "foo", "\n"'
 1 >> ""
 
 2 >= foo
-

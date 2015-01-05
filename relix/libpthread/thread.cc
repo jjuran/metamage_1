@@ -129,4 +129,3 @@ int pthread_join( pthread_t id, void** result )
 	
 	return ESRCH;
 }
-

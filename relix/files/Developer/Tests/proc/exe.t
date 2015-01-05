@@ -15,4 +15,3 @@ $ readlink /proc/self/exe
 $ perl -e 'print readlink( "/proc/self/exe" ) . "\n"'
 
 1 >= /usr/bin/perl
-

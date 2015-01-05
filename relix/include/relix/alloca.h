@@ -78,4 +78,3 @@ inline void* signalling_alloca( size_t length )
 #endif
 
 #endif
-

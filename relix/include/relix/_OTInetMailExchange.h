@@ -19,4 +19,3 @@ long _OTInetMailExchange( char *domain, unsigned short *count, struct InetMailEx
 #endif
 
 #endif
-

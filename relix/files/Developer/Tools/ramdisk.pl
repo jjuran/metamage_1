@@ -262,4 +262,3 @@ my %handler_for =
 my $handler = $handler_for{$command};
 
 $handler->() if defined $handler;
-

@@ -41,4 +41,3 @@ echo good
 END
 
 1 >= good
-

@@ -67,4 +67,3 @@ $ FOO=foo BAR=bar sh -c 'echo $FOO $BAR'
 $ true | FOO=foo BAR=bar sh -c 'echo $FOO $BAR'
 
 1 >= "foo bar"
-

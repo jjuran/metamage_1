@@ -39,4 +39,3 @@ inline pid_t fork_and_exit( int status )
 #endif
 
 #endif
-

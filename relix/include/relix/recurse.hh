@@ -242,4 +242,3 @@ inline R recurse( R (*f)( F_1, F_2, F_3, F_4, F_5 ), A1 a1, A2 a2, A3 a3, A4 a4,
 }
 
 #endif
-
