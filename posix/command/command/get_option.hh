@@ -23,8 +23,9 @@ namespace command
 		enum
 		{
 			Param_unwanted,
-			Param_required,
 			Param_optional,
+			Param_required,
+			Param_required_can_be_array,
 		};
 		
 		enum
@@ -47,6 +48,9 @@ namespace command
 	{
 		const char*  param;
 		const char*  mark;
+		
+		short  array_offset;
+		short  array_length;
 	};
 	
 	extern option_result global_result;
