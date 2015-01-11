@@ -16,5 +16,7 @@ int main()
 	
 	Delay( 30, (UInt32*) &dummy );
 	
+	ExitToShell();
+	
 	return 0;
 }
