@@ -8,3 +8,4 @@
 
 
 bool linger_on_exit;
+bool synchronized_quickdraw;

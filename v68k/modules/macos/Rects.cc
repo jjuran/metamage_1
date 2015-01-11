@@ -19,7 +19,13 @@
 
 // macos
 #include "QDGlobals.hh"
+#include "options.hh"
 
+
+static inline asm void flush_screen()
+{
+	JSR  0xFFFFFFEE
+}
 
 class white_t {};
 class black_t {};
@@ -62,6 +68,14 @@ struct rectangular_op_params
 	
 	Pattern*  pattern;
 	short     origin_h;
+	
+	~rectangular_op_params()
+	{
+		if ( synchronized_quickdraw )
+		{
+			flush_screen();
+		}
+	}
 };
 
 static inline short min( short a, short b )
@@ -124,8 +138,15 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	
 	const uint32_t rowBytes = portBits.rowBytes;
 	
+	char* baseAddr = portBits.baseAddr;
+	
+	if ( synchronized_quickdraw  &&  baseAddr == (char*) 0x0001A700 )
+	{
+		baseAddr += 0x00010000;
+	}
+	
 	params.topLeft    = *(Point*) &rect;
-	params.start      = portBits.baseAddr + top * rowBytes + outer_left_bytes;
+	params.start      = baseAddr + top * rowBytes + outer_left_bytes;
 	params.height     = height_px;
 	params.skip_bytes = rowBytes - outer_bytes;
 	
