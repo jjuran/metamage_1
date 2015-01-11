@@ -176,6 +176,13 @@ static bool emu_getpid( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
+static bool emu_pause( v68k::processor_state& s )
+{
+	int result = pause();
+	
+	return set_result( s, result );
+}
+
 static bool emu_kill( v68k::processor_state& s )
 {
 	uint32_t args[2];  // pid, sig
@@ -545,6 +552,7 @@ bool bridge_call( v68k::processor_state& s )
 		case 4:  return emu_write( s );
 		
 		case 20:  return emu_getpid( s );
+		case 29:  return emu_pause ( s );
 		case 37:  return emu_kill  ( s );
 		case 78:  return emu_gettimeofday( s );
 		case 82:  return emu_select( s );
