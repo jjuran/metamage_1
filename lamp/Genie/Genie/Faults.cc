@@ -181,7 +181,8 @@ namespace relix
 			}
 		}
 		
-		saved_trap_0_handler = system_vectors[ 32 ];
+		saved_trap_0_handler = system_vectors[ 32 + 0 ];
+		saved_trap_2_handler = system_vectors[ 32 + 2 ];
 		
 		system_vectors[ 32 + 0 ] = trap_0_exception_handler;
 		system_vectors[ 32 + 2 ] = trap_2_exception_handler;
