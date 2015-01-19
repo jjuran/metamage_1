@@ -19,7 +19,6 @@
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
-#include "vfs/filehandle/primitives/seteof.hh"
 
 
 namespace vfs
