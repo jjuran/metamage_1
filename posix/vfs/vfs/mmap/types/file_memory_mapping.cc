@@ -31,7 +31,14 @@ namespace vfs
 	
 	file_memory_mapping::~file_memory_mapping()
 	{
-		msync( get_address(), get_size(), MS_SYNC );
+		try
+		{
+			msync( get_address(), get_size(), MS_SYNC );
+		}
+		catch ( ... )
+		{
+			// We get here if a pwrite() error occurs.
+		}
 	}
 	
 	void file_memory_mapping::msync( void* addr, size_t len, int flags ) const
