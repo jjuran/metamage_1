@@ -18,7 +18,7 @@
 #include "tap/test.hh"
 
 
-static const unsigned n_tests = 4 + 4;
+static const unsigned n_tests = 4 + 4 + 2;
 
 
 #define TMP_DIR  "/tmp/rwperm-tests-" __TIME__
@@ -65,6 +65,35 @@ static void wronly()
 	CHECK( close( fd ) );
 }
 
+static void mmapped()
+{
+	int fd = CHECK( open( "wronly", O_RDONLY, 0 ) );
+	
+	void* mem = mmap( NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0 );
+	
+	EXPECT( mem == MAP_FAILED  &&  errno == EACCES );
+	
+	if ( mem != MAP_FAILED )
+	{
+		CHECK( munmap( mem, 4096 ) );
+	}
+	
+	CHECK( close( fd ) );
+	
+	fd = CHECK( open( "wronly", O_WRONLY, 0 ) );
+	
+	mem = mmap( NULL, 4096, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0 );
+	
+	EXPECT( mem == MAP_FAILED  &&  errno == EACCES );
+	
+	if ( mem != MAP_FAILED )
+	{
+		CHECK( munmap( mem, 4096 ) );
+	}
+	
+	CHECK( close( fd ) );
+}
+
 
 static void cleanup()
 {
@@ -83,6 +112,8 @@ int main( int argc, char** argv )
 	
 	rdonly();
 	wronly();
+	
+	mmapped();
 	
 	cleanup();
 	
