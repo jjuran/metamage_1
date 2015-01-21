@@ -14,6 +14,9 @@
 // gear
 #include "gear/is_binary_data.hh"
 
+// poseven
+#include "poseven/types/errno_t.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
@@ -38,6 +41,7 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	namespace p7 = poseven;
 	
 	
 	class MacFileHandle : public vfs::filehandle
@@ -247,6 +251,13 @@ namespace Genie
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
 	{
+		const bool readable = (get_flags() + 1 - O_RDONLY) & 1;
+		
+		if ( !readable )
+		{
+			p7::throw_errno( EBADF );
+		}
+		
 		ssize_t read = MacIO::FSRead( MacIO::kThrowEOF_Never,
 		                              itsRefNum,
 		                              N::fsFromStart,
