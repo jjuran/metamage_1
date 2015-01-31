@@ -30,6 +30,7 @@ namespace vfs
 			const node*             its_owner;
 			plus::string            its_name;
 			mode_t                  its_mode;
+			uid_t                   its_user;
 			const node_method_set*  its_methods;
 			void*                   its_extra;
 			node_destructor         its_destructor;
@@ -48,6 +49,14 @@ namespace vfs
 			      std::size_t             n_extra = 0,
 			      node_destructor         dtor    = NULL );
 			
+			node( const node*             owner,
+			      const plus::string&     name,
+			      mode_t                  mode,
+			      uid_t                   user,
+			      const node_method_set*  methods = NULL,
+			      std::size_t             n_extra = 0,
+			      node_destructor         dtor    = NULL );
+			
 			~node();
 			
 			const node* owner() const  { return its_owner; }
@@ -55,6 +64,7 @@ namespace vfs
 			const plus::string& name() const  { return its_name; }
 			
 			mode_t filemode() const  { return its_mode; }
+			uid_t  user    () const  { return its_user; }
 			
 			const node_method_set* methods() const  { return its_methods; }
 			

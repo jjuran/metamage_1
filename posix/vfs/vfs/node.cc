@@ -19,6 +19,7 @@ namespace vfs
 	:
 		its_owner     (),
 		its_mode      (),
+		its_user      (),
 		its_methods   (),
 		its_extra     (),
 		its_destructor()
@@ -41,6 +42,30 @@ namespace vfs
 		its_name   ( name[0] == '/' ? name_of_ptr( this )
 		                            : name ),
 		its_mode   ( mode    ),
+		its_user   (         ),
+		its_methods( methods ),
+		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
+		its_destructor( dtor )
+	{
+		if ( owner )
+		{
+			intrusive_ptr_add_ref( owner );
+		}
+	}
+	
+	node::node( const node*             owner,
+	            const plus::string&     name,
+	            mode_t                  mode,
+	            uid_t                   user,
+	            const node_method_set*  methods,
+	            std::size_t             n_extra,
+	            node_destructor         dtor )
+	:
+		its_owner  ( owner   ),
+		its_name   ( name[0] == '/' ? name_of_ptr( this )
+		                            : name ),
+		its_mode   ( mode    ),
+		its_user   ( user    ),
 		its_methods( methods ),
 		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
 		its_destructor( dtor )
