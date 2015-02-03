@@ -211,6 +211,18 @@ namespace Genie
 	                                                                  const plus::string&  name,
 	                                                                  const void*          args )
 	{
+		try
+		{
+			const FSSpec file = DTGetAPPL( parent );
+		}
+		catch ( const Mac::OSStatus& err )
+		{
+			if ( err == paramErr )
+			{
+				p7::throw_errno( ENOENT );
+			}
+		}
+		
 		return new vfs::node( parent, name, S_IFLNK | 0777, &latest_appl_link_methods );
 	}
 	
