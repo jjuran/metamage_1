@@ -10,6 +10,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/functions/access.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/primitives/parent.hh"
@@ -25,6 +26,8 @@ namespace vfs
 	                 const plus::string&  name,
 	                 const node*          surrogate )
 	{
+		access( that, X_OK );
+		
 		if ( name == "." )
 		{
 			return &that;

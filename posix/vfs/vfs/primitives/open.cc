@@ -15,8 +15,17 @@
 #include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/functions/truncate.hh"
+#include "vfs/functions/access.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+
+
+#ifndef O_EXEC
+#define O_EXEC  0
+#endif
+#ifndef O_SEARCH
+#define O_SEARCH  0
+#endif
 
 
 namespace vfs
@@ -25,8 +34,43 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	static inline int amode_from_oflags( int flags )
+	{
+		int amode = 0;
+		
+		const int accmode = flags & O_ACCMODE;
+		
+		switch ( accmode )
+		{
+			case O_RDONLY:  amode = R_OK;       break;
+			case O_WRONLY:  amode = W_OK;       break;
+			case O_RDWR:    amode = R_OK|W_OK;  break;
+			
+			default:
+				break;
+		}
+		
+		if ( flags & (O_EXEC|O_SEARCH) )
+		{
+			amode |= X_OK;
+		}
+		
+		return amode;
+	}
+	
 	filehandle_ptr open( const node& that, int flags, mode_t mode )
 	{
+		const bool creating = flags & O_CREAT;
+		
+		if ( creating  &&  that.filemode() == 0 )
+		{
+			// File doesn't exist -- skip access check
+		}
+		else
+		{
+			access( that, amode_from_oflags( flags ) );
+		}
+		
 		const node_method_set* methods = that.methods();
 		
 		const data_method_set* data_methods;
@@ -51,7 +95,7 @@ namespace vfs
 			p7::throw_errno( EPERM );
 		}
 		
-		throw p7::errno_t( flags & O_CREAT ? EPERM : ENOENT );
+		throw p7::errno_t( creating ? EPERM : ENOENT );
 	}
 	
 }
