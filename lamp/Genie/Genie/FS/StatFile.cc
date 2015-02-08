@@ -103,7 +103,7 @@ namespace Genie
 				return S_IFLNK | 0777;
 			}
 			
-			return S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
+			return S_IFDIR | 0755;
 		}
 		
 		const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
