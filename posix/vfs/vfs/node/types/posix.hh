@@ -16,7 +16,7 @@
 namespace vfs
 {
 	
-	node_ptr new_posix_root( const plus::string& path );
+	node_ptr new_posix_root( const plus::string& path, uid_t user = 0 );
 	
 }
 

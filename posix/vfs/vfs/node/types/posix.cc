@@ -41,7 +41,8 @@ namespace vfs
 	
 	static node_ptr new_posix_file( plus::string         path,
 	                                const plus::string&  name,
-	                                const node*          parent );
+	                                const node*          parent,
+	                                uid_t                user );
 	
 	struct posix_extra
 	{
@@ -109,7 +110,7 @@ namespace vfs
 		
 		mempcpy( p, name.data(), name_size );
 		
-		return new_posix_file( path.move(), name, parent );
+		return new_posix_file( path.move(), name, parent, that->user() );
 	}
 	
 	static void posix_listdir( const node*         that,
@@ -174,7 +175,8 @@ namespace vfs
 	
 	static node_ptr new_posix_file( plus::string         path,
 	                                const plus::string&  name,
-	                                const node*          parent )
+	                                const node*          parent,
+	                                uid_t                user )
 	{
 		struct stat sb;
 		
@@ -183,6 +185,7 @@ namespace vfs
 		node* result = new node( parent,
 		                         name,
 		                         sb.st_mode,
+		                         user,
 		                         &posix_methods,
 		                         sizeof (posix_extra),
 		                         &dispose_posix_file );
@@ -196,9 +199,9 @@ namespace vfs
 		return result;
 	}
 	
-	node_ptr new_posix_root( const plus::string& path )
+	node_ptr new_posix_root( const plus::string& path, uid_t user )
 	{
-		return new_posix_file( path, plus::string::null, NULL );
+		return new_posix_file( path, plus::string::null, NULL, user );
 	}
 	
 }
