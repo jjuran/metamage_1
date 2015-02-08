@@ -34,6 +34,13 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	static inline bool writing( int flags )
+	{
+		flags &= O_ACCMODE;
+		
+		return flags == O_WRONLY  ||  flags == O_RDWR;
+	}
+	
 	static inline int amode_from_oflags( int flags )
 	{
 		int amode = 0;
@@ -60,6 +67,11 @@ namespace vfs
 	
 	filehandle_ptr open( const node& that, int flags, mode_t mode )
 	{
+		if ( flags & O_TRUNC  &&  !writing( flags ) )
+		{
+			p7::throw_errno( EINVAL );
+		}
+		
 		const bool creating = flags & O_CREAT;
 		
 		if ( creating  &&  that.filemode() == 0 )
