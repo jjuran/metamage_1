@@ -76,7 +76,7 @@ namespace Genie
 		const FInfo& info = hFileInfo.ioFlFndrInfo;
 		bool executable = FInfoIsExecutable( info );
 		
-		return ( writable ? S_IWUSR : 0 ) | ( executable ? S_IXUSR : 0 );
+		return ( writable ? 0200 : 0 ) | ( executable ? 0111 : 0 );
 	}
 	
 	static inline bool is_osx_symlink( const FInfo& fInfo )
@@ -122,7 +122,7 @@ namespace Genie
 			return S_IFIFO | 0600;
 		}
 		
-		return S_IFREG | S_IRUSR | FileWXModeBits( hFileInfo );;
+		return S_IFREG | 0444 | FileWXModeBits( hFileInfo );
 	}
 	
 	void Stat_HFS( bool                  async,
