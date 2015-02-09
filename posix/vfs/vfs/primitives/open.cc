@@ -18,6 +18,7 @@
 #include "vfs/functions/access.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/primitives/parent.hh"
 
 
 #ifndef O_EXEC
@@ -76,7 +77,8 @@ namespace vfs
 		
 		if ( creating  &&  that.filemode() == 0 )
 		{
-			// File doesn't exist -- skip access check
+			// File doesn't exist -- check write access to parent node.
+			access( *parent( that ), W_OK );
 		}
 		else
 		{
