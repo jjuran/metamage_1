@@ -23,6 +23,8 @@ namespace poseven
 		{
 			if ( errno == ENOENT  ||  errno == ENOTDIR )
 			{
+				sb.st_mode = 0;
+				
 				return false;
 			}
 			
