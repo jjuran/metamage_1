@@ -92,15 +92,13 @@ namespace Genie
 	}
 	
 	static void add_view_parameters( const FSTree*     parent,
-	                                 const FSTreePtr&  delegate,
+	                                 const vfs::node&  delegate,
 	                                 ViewFactory       factory )
 	{
-		ASSERT( delegate.get() != NULL );
-		
 		ViewParameters& params = gViewParametersMap[ parent ];
 		
 		params.itsFactory  = factory;
-		params.itsDelegate = delegate;
+		params.itsDelegate = &delegate;
 	}
 	
 	static void add_view_port_key( const FSTree* parent, const FSTree* windowKey )
@@ -276,7 +274,7 @@ namespace Genie
 		
 		FSTreePtr delegate = extra.delegate_factory( that, parent, "v" );
 		
-		add_view_parameters( key, delegate, extra.view_factory );
+		add_view_parameters( key, *delegate, extra.view_factory );
 		
 		mkdir( *target, 0 );  // mode is ignored
 	}
