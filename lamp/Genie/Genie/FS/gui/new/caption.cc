@@ -19,6 +19,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
@@ -30,7 +31,6 @@
 #include "Pedestal/Caption.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -53,7 +53,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, CaptionParameters > CaptionParametersMap;
+	typedef simple_map< const vfs::node*, CaptionParameters > CaptionParametersMap;
 	
 	static CaptionParametersMap gCaptionParametersMap;
 	
@@ -61,7 +61,7 @@ namespace Genie
 	class Caption : public Ped::Caption
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 			bool  itIsActive;
@@ -113,21 +113,21 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new Caption( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gCaptionParametersMap.erase( delegate );
 	}
 	
 	
-	static void CaptionText_SetEOF( const FSTree* text, off_t length )
+	static void CaptionText_SetEOF( const vfs::node* text, off_t length )
 	{
-		const FSTree* view = text->owner();
+		const vfs::node* view = text->owner();
 		
 		CaptionParameters& params = gCaptionParametersMap[ view ];
 		
@@ -143,7 +143,7 @@ namespace Genie
 		public:
 			CaptionTextFileHandle( const vfs::node& file, int flags );
 			
-			const FSTree* ViewKey();
+			const vfs::node* ViewKey();
 			
 			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].its_utf8_text; }
 			
@@ -197,7 +197,7 @@ namespace Genie
 	{
 	}
 	
-	const FSTree* CaptionTextFileHandle::ViewKey()
+	const vfs::node* CaptionTextFileHandle::ViewKey()
 	{
 		return get_file( *this )->owner();
 	}
@@ -220,7 +220,7 @@ namespace Genie
 	
 	ssize_t CaptionTextFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		CaptionParameters& params = gCaptionParametersMap[ view ];
 		
@@ -243,17 +243,17 @@ namespace Genie
 	}
 	
 	
-	static void caption_text_seteof( const FSTree* that, off_t length )
+	static void caption_text_seteof( const vfs::node* that, off_t length )
 	{
 		CaptionText_SetEOF( that, length );
 	}
 	
-	static off_t caption_text_geteof( const FSTree* that )
+	static off_t caption_text_geteof( const vfs::node* that )
 	{
 		return gCaptionParametersMap[ that->owner() ].its_utf8_text.size();
 	}
 	
-	static vfs::filehandle_ptr caption_text_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr caption_text_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new CaptionTextFileHandle( *that, flags );
 	}
@@ -275,19 +275,19 @@ namespace Genie
 	                                           const plus::string&  name,
 	                                           const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &caption_text_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &caption_text_methods );
 	}
 	
 	
 	namespace
 	{
 		
-		bool& Wrapped( const FSTree* view )
+		bool& Wrapped( const vfs::node* view )
 		{
 			return gCaptionParametersMap[ view ].itIsWrapped;
 		}
 		
-		bool& Disabling( const FSTree* view )
+		bool& Disabling( const vfs::node* view )
 		{
 			return gCaptionParametersMap[ view ].disabling;
 		}

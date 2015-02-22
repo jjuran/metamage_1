@@ -26,6 +26,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -35,7 +36,6 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
@@ -171,7 +171,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static Component GetKeyFromParent( const FSTree* parent )
+	static Component GetKeyFromParent( const vfs::node* parent )
 	{
 		return (Component) plus::decode_32_bit_hex( parent->name() );
 	}
@@ -220,7 +220,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_thng_REF_Mappings );
 	}
 	
-	static void thng_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void thng_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		N::Component_Container sequence = N::Components();
 		
@@ -268,7 +268,7 @@ namespace Genie
 	{
 		static const int fixed_size = sizeof (::OSType);
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const Component comp = GetKeyFromParent( that );
 			
@@ -304,7 +304,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_name : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const Component comp = GetKeyFromParent( that );
 			
@@ -318,7 +318,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_info : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const Component comp = GetKeyFromParent( that );
 			
@@ -335,7 +335,7 @@ namespace Genie
 	
 	struct sys_mac_thng_REF_icon
 	{
-		static plus::string Get( const FSTree* parent, const plus::string& name )
+		static plus::string Get( const vfs::node* parent, const plus::string& name )
 		{
 			const Component comp = GetKeyFromParent( parent );
 			

@@ -9,12 +9,12 @@
 #include <sys/stat.h>
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/Utilities/GetAppFolder.hh"
 
 
@@ -43,7 +43,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &app_dir_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &app_dir_methods );
 	}
 	
 }

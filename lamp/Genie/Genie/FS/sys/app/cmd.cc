@@ -31,7 +31,6 @@
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Genie
@@ -68,7 +67,7 @@ namespace Genie
 	}
 	
 	
-	static void unused_cmd_slot_symlink( const FSTree*        node,
+	static void unused_cmd_slot_symlink( const vfs::node*     node,
 	                                     const plus::string&  target )
 	{
 		if ( target.c_str()[0] != '/' )
@@ -110,7 +109,7 @@ namespace Genie
 	};
 	
 	
-	static void cmd_symlink_remove( const FSTree* that )
+	static void cmd_symlink_remove( const vfs::node* that )
 	{
 		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( that->name() ) );
 		
@@ -140,10 +139,10 @@ namespace Genie
 			                               &cmd_symlink_remove );
 		}
 		
-		return new FSTree( parent, name, 0, &unused_cmd_slot_methods );
+		return new vfs::node( parent, name, 0, &unused_cmd_slot_methods );
 	}
 	
-	static void cmd_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void cmd_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		typedef cmd_map::iterator iterator;
 		

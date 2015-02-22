@@ -6,6 +6,7 @@
 #include "Genie/FS/sys/mac.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -20,7 +21,6 @@
 #include "relix/config/mini.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"

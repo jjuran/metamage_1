@@ -33,6 +33,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/misc_method_set.hh"
@@ -40,7 +41,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie
@@ -114,13 +114,13 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const vfs::node*     parent )
 	{
-		return new FSTree( parent,
-		                   name,
-		                   S_IFLNK | 0777,
-		                   &volumes_link_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFLNK | 0777,
+		                      &volumes_link_methods );
 	}
 	
-	static void volumes_listdir( const FSTree*       that,
+	static void volumes_listdir( const vfs::node*    that,
 	                             vfs::dir_contents&  cache )
 	{
 		for ( int i = 1;  true;  ++i )
@@ -151,7 +151,7 @@ namespace Genie
 	}
 	
 	
-	static ino_t volumes_inode( const FSTree* that )
+	static ino_t volumes_inode( const vfs::node* that )
 	{
 		return fsRtParID;
 	}
@@ -184,10 +184,10 @@ namespace Genie
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		return new FSTree( parent,
-		                   name,
-		                   S_IFDIR | 0700,
-		                   &volumes_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFDIR | 0700,
+		                      &volumes_methods );
 	}
 	
 }

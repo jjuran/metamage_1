@@ -31,6 +31,7 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
@@ -59,7 +60,6 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
@@ -72,13 +72,13 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static pid_t GetKeyFromParent( const FSTree* parent )
+	static pid_t GetKeyFromParent( const vfs::node* parent )
 	{
 		return pid_t( gear::parse_unsigned_decimal( parent->name().c_str() ) );
 	}
 	
 	
-	static const relix::fd_map& fd_sequence( const FSTree* that )
+	static const relix::fd_map& fd_sequence( const vfs::node* that )
 	{
 		const pid_t pid = gear::parse_unsigned_decimal( that->owner()->name().c_str() );
 		
@@ -100,7 +100,7 @@ namespace Genie
 	                                     const plus::string&  name,
 	                                     const vfs::node*     parent );
 	
-	static void proc_fd_listdir( const FSTree* that, vfs::dir_contents& cache )
+	static void proc_fd_listdir( const vfs::node* that, vfs::dir_contents& cache )
 	{
 		const relix::fd_map& sequence = fd_sequence( that );
 		
@@ -122,9 +122,9 @@ namespace Genie
 	};
 	
 	
-	static vfs::filehandle_ptr proc_fd_link_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr proc_fd_link_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static off_t proc_fd_link_geteof( const FSTree* that );
+	static off_t proc_fd_link_geteof( const vfs::node* that );
 	
 	static vfs::node_ptr proc_fd_link_resolve( const vfs::node* that );
 	
@@ -200,7 +200,7 @@ namespace Genie
 		}
 	};
 	
-	static plus::string proc_self_readlink( const FSTree* that )
+	static plus::string proc_self_readlink( const vfs::node* that )
 	{
 		return gear::inscribe_unsigned_decimal( CurrentProcess().GetPID() );
 	}
@@ -222,7 +222,7 @@ namespace Genie
 	{
 		if ( name == "self" )
 		{
-			return new FSTree( parent, name, S_IFLNK | 0777, &proc_self_methods );
+			return new vfs::node( parent, name, S_IFLNK | 0777, &proc_self_methods );
 		}
 		
 		if ( !valid_name_of_pid::applies( name ) )
@@ -246,7 +246,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static void proc_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void proc_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		for_each_process( &iterate_one_process, &cache );
 	}
@@ -469,7 +469,7 @@ namespace Genie
 	{
 		typedef pid_t Key;
 		
-		static plus::string Read( const FSTree* parent, const plus::string& name )
+		static plus::string Read( const vfs::node* parent, const plus::string& name )
 		{
 			Key pid = GetKeyFromParent( parent );
 			
@@ -479,7 +479,7 @@ namespace Genie
 	
 	struct proc_PID_name : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			pid_t pid = GetKeyFromParent( that );
 			
@@ -491,18 +491,18 @@ namespace Genie
 	                                 const plus::string&  name,
 	                                 const void*          args )
 	{
-		return new FSTree( parent, name, S_IFDIR | 0700, &proc_fd_methods );
+		return new vfs::node( parent, name, S_IFDIR | 0700, &proc_fd_methods );
 	}
 	
 	static vfs::node_ptr link_factory( const vfs::node*     parent,
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &proc_link_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &proc_link_methods );
 	}
 	
-	static void proc_pid_core_chmod( const FSTree*  that,
-	                                 mode_t         mode )
+	static void proc_pid_core_chmod( const vfs::node*  that,
+	                                 mode_t            mode )
 	{
 		const pid_t pid = GetKeyFromParent( that->owner() );
 		
@@ -533,7 +533,7 @@ namespace Genie
 	                                   const plus::string&  name,
 	                                   const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
 	
 	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
@@ -574,14 +574,14 @@ namespace Genie
 			poseven::throw_errno( ENOENT );
 		}
 		
-		return new FSTree( parent,
-		                   name,
-		                   S_IFLNK | 0777,
-		                   &proc_fd_link_methods );
+		return new vfs::node( parent,
+		                      name,
+		                      S_IFLNK | 0777,
+		                      &proc_fd_link_methods );
 	}
 	
 	
-	static vfs::filehandle* get_proc_fd_handle( const FSTree* that )
+	static vfs::filehandle* get_proc_fd_handle( const vfs::node* that )
 	{
 		const char* fd_name  = that                  ->name().c_str();
 		const char* pid_name = that->owner()->owner()->name().c_str();
@@ -599,7 +599,7 @@ namespace Genie
 		return files.at( fd ).handle.get();
 	}
 	
-	static off_t proc_fd_link_geteof( const FSTree* that )
+	static off_t proc_fd_link_geteof( const vfs::node* that )
 	{
 		vfs::filehandle* handle = get_proc_fd_handle( that );
 		
@@ -612,7 +612,7 @@ namespace Genie
 	}
 	
 	
-	static vfs::filehandle_ptr proc_fd_link_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr proc_fd_link_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		if ( flags & O_NOFOLLOW )
 		{
@@ -629,7 +629,7 @@ namespace Genie
 		return fh;
 	}
 	
-	static vfs::node_ptr proc_fd_link_resolve( const FSTree* that )
+	static vfs::node_ptr proc_fd_link_resolve( const vfs::node* that )
 	{
 		return get_file( *get_proc_fd_handle( that ) );
 	}

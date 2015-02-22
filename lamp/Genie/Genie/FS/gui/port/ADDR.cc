@@ -106,7 +106,7 @@ namespace Genie
 		boost::intrusive_ptr< Ped::Window >  itsWindow;
 		boost::intrusive_ptr< Ped::View   >  itsSubview;
 		
-		const FSTree* itsFocus;
+		const vfs::node* itsFocus;
 		
 		plus::string itsGesturePaths[ n_gestures ];
 		
@@ -126,7 +126,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, WindowParameters > WindowParametersMap;
+	typedef simple_map< const vfs::node*, WindowParameters > WindowParametersMap;
 	
 	static WindowParametersMap gWindowParametersMap;
 	
@@ -152,10 +152,10 @@ namespace Genie
 	class Window : public Ped::Window
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			Window( const FSTree*                 key,
+			Window( const vfs::node*              key,
 			        const Ped::NewWindowContext&  context )
 			:
 				Ped::Window( context ),
@@ -186,7 +186,7 @@ namespace Genie
 		return false;
 	}
 	
-	static void Destroy_Window( boost::intrusive_ptr< Ped::Window >& window, const FSTree* key )
+	static void Destroy_Window( boost::intrusive_ptr< Ped::Window >& window, const vfs::node* key )
 	{
 		if ( window.get() )
 		{
@@ -196,7 +196,7 @@ namespace Genie
 		}
 	}
 	
-	static void CloseUserWindow( const FSTree* key )
+	static void CloseUserWindow( const vfs::node* key )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
@@ -214,10 +214,10 @@ namespace Genie
 	class UserWindowCloseHandler : public Ped::WindowCloseHandler
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			UserWindowCloseHandler( const FSTree* key ) : itsKey( key )
+			UserWindowCloseHandler( const vfs::node* key ) : itsKey( key )
 			{
 			}
 			
@@ -227,10 +227,10 @@ namespace Genie
 	class WindowResizeHandler : public Ped::WindowResizeHandler
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			WindowResizeHandler( const FSTree* key ) : itsKey( key )
+			WindowResizeHandler( const vfs::node* key ) : itsKey( key )
 			{
 			}
 			
@@ -255,17 +255,17 @@ namespace Genie
 	}
 	
 	
-	static bool port_is_locked( const FSTree* key )
+	static bool port_is_locked( const vfs::node* key )
 	{
 		return gWindowParametersMap[ key ].itIsLocked;
 	}
 	
-	static bool port_has_window( const FSTree* key )
+	static bool port_has_window( const vfs::node* key )
 	{
 		return gWindowParametersMap[ key ].itsWindow.get() != NULL;
 	}
 	
-	static void CreateUserWindow( const FSTree* key )
+	static void CreateUserWindow( const vfs::node* key )
 	{
 		WindowParameters* it = gWindowParametersMap.find( key );
 		
@@ -321,7 +321,7 @@ namespace Genie
 		params.itsSubview->Activate( true );
 	}
 	
-	void remove_window_and_views_from_port( const FSTree* key )
+	void remove_window_and_views_from_port( const vfs::node* key )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
@@ -337,7 +337,7 @@ namespace Genie
 		RemoveAllViewParameters( key );
 	}
 	
-	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view )
+	void notify_port_of_view_loss( const vfs::node* port_key, const vfs::node* view )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( port_key ) )
 		{
@@ -386,7 +386,7 @@ namespace Genie
 		Ped::ScheduleImmediateEventCheck();
 	}
 	
-	static WindowRef GetWindowRef( const FSTree* key )
+	static WindowRef GetWindowRef( const vfs::node* key )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
@@ -401,7 +401,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static void FocusViewInWindow( Ped::View& view, const FSTree* window_key )
+	static void FocusViewInWindow( Ped::View& view, const vfs::node* window_key )
 	{
 		if ( WindowRef window = GetWindowRef( window_key ) )
 		{
@@ -414,7 +414,7 @@ namespace Genie
 		}
 	}
 	
-	static void BlurViewInWindow( Ped::View& view, const FSTree* window_key )
+	static void BlurViewInWindow( Ped::View& view, const vfs::node* window_key )
 	{
 		if ( WindowRef window = GetWindowRef( window_key ) )
 		{
@@ -427,7 +427,7 @@ namespace Genie
 		}
 	}
 	
-	bool invalidate_port_WindowRef( const FSTree* key )
+	bool invalidate_port_WindowRef( const vfs::node* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -439,7 +439,7 @@ namespace Genie
 		return false;
 	}
 	
-	void install_view_in_port( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
+	void install_view_in_port( const boost::intrusive_ptr< Ped::View >& view, const vfs::node* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -458,7 +458,7 @@ namespace Genie
 		}
 	}
 	
-	void uninstall_view_from_port( const boost::intrusive_ptr< Ped::View >& view, const FSTree* key )
+	void uninstall_view_from_port( const boost::intrusive_ptr< Ped::View >& view, const vfs::node* key )
 	{
 		if ( WindowRef window = GetWindowRef( key ) )
 		{
@@ -471,11 +471,11 @@ namespace Genie
 	}
 	
 	
-	static void focus_remove( const FSTree* that )
+	static void focus_remove( const vfs::node* that )
 	{
-		const FSTree* window = that->owner();
+		const vfs::node* window = that->owner();
 		
-		const FSTree* focus_file = gWindowParametersMap[ window ].itsFocus;
+		const vfs::node* focus_file = gWindowParametersMap[ window ].itsFocus;
 		
 		if ( Ped::View* focus_view = get_focusable_view( focus_file ) )
 		{
@@ -485,10 +485,10 @@ namespace Genie
 		gWindowParametersMap[ window ].itsFocus = NULL;
 	}
 	
-	static void unfocus_symlink( const FSTree*        that,
+	static void unfocus_symlink( const vfs::node*     that,
 	                             const plus::string&  target )
 	{
-		const FSTree* parent = that->owner();
+		const vfs::node* parent = that->owner();
 		
 		const vfs::node_ptr targeted_file = lookup( *resolve_pathname( *relix::root(), target, *parent ), plus::string::null );
 		
@@ -500,7 +500,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		const FSTree* window_key = parent;
+		const vfs::node* window_key = parent;
 		
 		FocusViewInWindow( *target_view, window_key );
 		
@@ -524,7 +524,7 @@ namespace Genie
 	
 	static vfs::node_ptr focus_resolve( const vfs::node* that )
 	{
-		if ( const FSTree* focus = gWindowParametersMap[ that->owner() ].itsFocus )
+		if ( const vfs::node* focus = gWindowParametersMap[ that->owner() ].itsFocus )
 		{
 			return focus;
 		}
@@ -555,7 +555,7 @@ namespace Genie
 	};
 	
 	
-	const FSTree* get_port_focus( const FSTree* port )
+	const vfs::node* get_port_focus( const vfs::node* port )
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( port ) )
 		{
@@ -567,25 +567,25 @@ namespace Genie
 		return NULL;
 	}
 	
-	void set_port_focus( const FSTree* port, const FSTree* focus )
+	void set_port_focus( const vfs::node* port, const vfs::node* focus )
 	{
 		gWindowParametersMap[ port ].itsFocus = focus;
 	}
 	
 	
-	static void window_touch( const FSTree* that )
+	static void window_touch( const vfs::node* that )
 	{
 		invalidate_port_WindowRef( that->owner() );
 	}
 	
-	static void window_remove( const FSTree* that )
+	static void window_remove( const vfs::node* that )
 	{
 		CloseUserWindow( that->owner() );
 	}
 	
 	#define SYS_APP_WINDOW_LIST  "/sys/app/window/list/"
 	
-	static plus::string window_readlink( const FSTree* that )
+	static plus::string window_readlink( const vfs::node* that )
 	{
 		WindowRef windowPtr = GetWindowRef( that->owner() );
 		
@@ -625,9 +625,9 @@ namespace Genie
 	};
 	
 	
-	static vfs::filehandle_ptr port_tty_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr port_tty_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static void port_tty_attach( const FSTree* that, const FSTree* target )
+	static void port_tty_attach( const vfs::node* that, const vfs::node* target )
 	{
 		gWindowParametersMap[ that->owner() ].itsTTYDelegate = target;
 	}
@@ -659,7 +659,7 @@ namespace Genie
 		params.itsTerminal = NULL;
 	}
 	
-	static vfs::filehandle_ptr port_tty_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr port_tty_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		WindowParameters& params = gWindowParametersMap[ that->owner() ];
 		
@@ -706,9 +706,9 @@ namespace Genie
 	}
 	
 	
-	static void gesture_remove( const FSTree* that );
+	static void gesture_remove( const vfs::node* that );
 	
-	static plus::string gesture_readlink( const FSTree* that );
+	static plus::string gesture_readlink( const vfs::node* that );
 	
 	static const vfs::item_method_set gesture_item_methods =
 	{
@@ -731,9 +731,9 @@ namespace Genie
 		&gesture_link_methods
 	};
 	
-	static void gesture_remove( const FSTree* that )
+	static void gesture_remove( const vfs::node* that )
 	{
-		const FSTree* view = that->owner();
+		const vfs::node* view = that->owner();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
@@ -742,10 +742,10 @@ namespace Genie
 		params.itsGesturePaths[ index ].reset();
 	}
 	
-	static void ungesture_symlink( const FSTree*        that,
+	static void ungesture_symlink( const vfs::node*     that,
 	                               const plus::string&  target_path )
 	{
-		const FSTree* view = that->owner();
+		const vfs::node* view = that->owner();
 		
 		WindowParameters& params = gWindowParametersMap[ view ];
 		
@@ -768,9 +768,9 @@ namespace Genie
 		&ungesture_link_methods
 	};
 	
-	static plus::string gesture_readlink( const FSTree* that )
+	static plus::string gesture_readlink( const vfs::node* that )
 	{
-		const FSTree* view = that->owner();
+		const vfs::node* view = that->owner();
 		
 		const int index = LookupGesture( that->name() );
 		
@@ -788,7 +788,7 @@ namespace Genie
 	namespace
 	{
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
+		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
 		{
 			return gWindowParametersMap[ key ].itsSubview;
 		}
@@ -796,7 +796,7 @@ namespace Genie
 	}
 	
 	
-	static WindowParameters& Find( const FSTree* key )
+	static WindowParameters& Find( const vfs::node* key )
 	{
 		WindowParameters* it = gWindowParametersMap.find( key );
 		
@@ -813,12 +813,12 @@ namespace Genie
 	{
 		static const int fixed_size = -1;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = Find( that ).itsTitle;
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			WindowParameters& params = gWindowParametersMap[ that ];
 			
@@ -831,7 +831,7 @@ namespace Genie
 	{
 		static const int fixed_size = Serialize::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			typedef typename Serialize::result_type result_type;
 			
@@ -840,7 +840,7 @@ namespace Genie
 			Serialize::deconstruct::apply( result, value, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			WindowParameters& params = gWindowParametersMap[ that ];
 			
@@ -923,7 +923,7 @@ namespace Genie
 		remove_window_and_views_from_port( port );
 	}
 	
-	static vfs::filehandle_ptr lock_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr lock_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		if ( gWindowParametersMap[ that->owner() ].itIsLocked )
 		{
@@ -958,7 +958,7 @@ namespace Genie
 		&lock_data_methods
 	};
 	
-	static void unwindow_touch( const FSTree* that )
+	static void unwindow_touch( const vfs::node* that )
 	{
 		CreateUserWindow( that->owner() );
 	}
@@ -1002,7 +1002,7 @@ namespace Genie
 		const mode_t mode = exists ? S_IFREG | 0000
 		                           : 0;
 		
-		return new FSTree( parent, name, mode, &lock_methods );
+		return new vfs::node( parent, name, mode, &lock_methods );
 	}
 	
 	static vfs::node_ptr new_window( const vfs::node*     parent,
@@ -1018,7 +1018,7 @@ namespace Genie
 		const vfs::node_method_set& methods = exists ? window_methods
 		                                             : unwindow_methods;
 		
-		return new FSTree( parent, name, mode, &methods );
+		return new vfs::node( parent, name, mode, &methods );
 	}
 	
 	static vfs::node_ptr new_focus( const vfs::node*     parent,
@@ -1033,14 +1033,14 @@ namespace Genie
 		const vfs::node_method_set* const methods = exists ? &focus_methods
 		                                                   : &unfocus_methods;
 		
-		return new FSTree( parent, name, mode, methods );
+		return new vfs::node( parent, name, mode, methods );
 	}
 	
 	static vfs::node_ptr new_gesture( const vfs::node*     parent,
 	                                  const plus::string&  name,
 	                                  const void*          args )
 	{
-		const FSTree* view = parent;
+		const vfs::node* view = parent;
 		
 		const int index = LookupGesture( name );
 		
@@ -1048,17 +1048,17 @@ namespace Genie
 		
 		if ( exists )
 		{
-			return new FSTree( parent, name, S_IFLNK | 0777, &gesture_methods );
+			return new vfs::node( parent, name, S_IFLNK | 0777, &gesture_methods );
 		}
 		
-		return new FSTree( parent, name, 0, &ungesture_methods );
+		return new vfs::node( parent, name, 0, &ungesture_methods );
 	}
 	
 	static vfs::node_ptr new_tty( const vfs::node*     parent,
 	                              const plus::string&  name,
 	                              const void*          args )
 	{
-		return new FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods );
+		return new vfs::node( parent, name, S_IFCHR | 0600, &port_tty_methods );
 	}
 	
 	static vfs::node_ptr new_port_property( const vfs::node*     parent,

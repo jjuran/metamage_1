@@ -30,7 +30,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -120,7 +119,7 @@ namespace Genie
 	{
 		static const int fixed_size = 1;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			plus::deconstruct_bool::apply( result, Erratum::Test(), binary );
 		}

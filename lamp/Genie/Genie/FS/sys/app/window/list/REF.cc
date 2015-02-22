@@ -47,6 +47,7 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Pedestal
@@ -56,7 +57,6 @@
 #include "relix/config/color.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
@@ -383,7 +383,7 @@ namespace Genie
 		}
 	};
 	
-	static void select_trigger( const FSTree* that )
+	static void select_trigger( const vfs::node* that )
 	{
 		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
@@ -393,7 +393,7 @@ namespace Genie
 	}
 	
 	
-	static WindowRef GetKeyFromParent( const FSTree* parent )
+	static WindowRef GetKeyFromParent( const vfs::node* parent )
 	{
 		return (WindowRef) plus::decode_32_bit_hex( parent->name() );
 	}
@@ -405,7 +405,7 @@ namespace Genie
 		
 		typedef WindowRef Key;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			
@@ -431,7 +431,7 @@ namespace Genie
 		
 		typedef WindowRef Key;
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			

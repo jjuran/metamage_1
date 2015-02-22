@@ -18,11 +18,11 @@
 #include "Pedestal/View.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Icon_data.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -56,7 +56,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, Icon_Parameters > IconMap;
+	typedef simple_map< const vfs::node*, Icon_Parameters > IconMap;
 	
 	static IconMap gIconMap;
 	
@@ -64,7 +64,7 @@ namespace Genie
 	class Icon : public Ped::View
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -122,13 +122,13 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new Icon( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gIconMap.erase( delegate );
 	}
@@ -137,27 +137,27 @@ namespace Genie
 	namespace
 	{
 		
-		N::IconAlignmentType& Alignment( const FSTree* view )
+		N::IconAlignmentType& Alignment( const vfs::node* view )
 		{
 			return gIconMap[ view ].align;
 		}
 		
-		N::IconTransformType& Transform( const FSTree* view )
+		N::IconTransformType& Transform( const vfs::node* view )
 		{
 			return gIconMap[ view ].xform;
 		}
 		
-		char& Label( const FSTree* view )
+		char& Label( const vfs::node* view )
 		{
 			return gIconMap[ view ].label;
 		}
 		
-		bool& Selected( const FSTree* view )
+		bool& Selected( const vfs::node* view )
 		{
 			return gIconMap[ view ].selected;
 		}
 		
-		bool& Disabling( const FSTree* view )
+		bool& Disabling( const vfs::node* view )
 		{
 			return gIconMap[ view ].disabling;
 		}

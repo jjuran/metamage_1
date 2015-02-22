@@ -13,6 +13,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
@@ -20,7 +21,6 @@
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/Views.hh"
 
@@ -38,9 +38,9 @@ namespace Genie
 	}
 	
 	
-	static void TextEdit_text_SetEOF( const FSTree* text, off_t length )
+	static void TextEdit_text_SetEOF( const vfs::node* text, off_t length )
 	{
-		const FSTree* view = text->owner();
+		const vfs::node* view = text->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -61,7 +61,7 @@ namespace Genie
 		public:
 			TextEdit_text_Handle( const vfs::node& file, int flags );
 			
-			const FSTree* ViewKey();
+			const vfs::node* ViewKey();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -113,14 +113,14 @@ namespace Genie
 	{
 	}
 	
-	const FSTree* TextEdit_text_Handle::ViewKey()
+	const vfs::node* TextEdit_text_Handle::ViewKey()
 	{
 		return get_file( *this )->owner();
 	}
 	
 	ssize_t TextEdit_text_Handle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -140,7 +140,7 @@ namespace Genie
 	
 	ssize_t TextEdit_text_Handle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -166,17 +166,17 @@ namespace Genie
 	}
 	
 	
-	static off_t textedit_text_geteof( const FSTree* that )
+	static off_t textedit_text_geteof( const vfs::node* that )
 	{
 		return TextEditParameters::Get( that->owner() ).its_utf8_text.size();
 	}
 	
-	static void textedit_text_seteof( const FSTree* that, off_t length )
+	static void textedit_text_seteof( const vfs::node* that, off_t length )
 	{
 		TextEdit_text_SetEOF( that, length );
 	}
 	
-	static vfs::filehandle_ptr textedit_text_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr textedit_text_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new TextEdit_text_Handle( *that, flags );
 	}
@@ -198,7 +198,7 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &textedit_text_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &textedit_text_methods );
 	}
 	
 }

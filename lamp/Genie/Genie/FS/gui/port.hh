@@ -12,16 +12,13 @@
 // vfs
 #include "vfs/node_ptr.hh"
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
-
 
 namespace Genie
 {
 	
 	vfs::node_ptr new_port();
 	
-	void remove_port( const FSTree* port );
+	void remove_port( const vfs::node* port );
 	
 	
 	vfs::node_ptr new_gui_port( const vfs::node*     parent,

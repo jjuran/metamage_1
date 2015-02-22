@@ -28,10 +28,10 @@
 #include "Nitrogen/Str.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -63,7 +63,7 @@ namespace Genie
 	};
 	
 	
-	static MenuRef GetKeyFromParent( const FSTree* parent )
+	static MenuRef GetKeyFromParent( const vfs::node* parent )
 	{
 		return GetMenuRef( gear::parse_decimal( parent->name().c_str() ) );
 	}
@@ -73,7 +73,7 @@ namespace Genie
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			MenuRef menu = GetKeyFromParent( that );
 			
@@ -89,7 +89,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			MenuRef menu = GetKeyFromParent( that );
 			

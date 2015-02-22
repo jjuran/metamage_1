@@ -14,7 +14,6 @@
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -28,25 +27,25 @@ namespace Pedestal
 namespace Genie
 {
 	
-	void RemoveAllViewParameters( const FSTree* parent );
+	void RemoveAllViewParameters( const vfs::node* parent );
 	
 	
-	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
+	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const vfs::node* delegate );
 	
 	typedef vfs::node_ptr (*DelegateFactory)( const vfs::node*,
 	                                          const vfs::node*,
 	                                          const plus::string& );
 	
 	
-	const FSTree* GetViewWindowKey( const FSTree* view );
+	const vfs::node* GetViewWindowKey( const vfs::node* view );
 	
-	bool InvalidateWindowForView( const FSTree* view );
+	bool InvalidateWindowForView( const vfs::node* view );
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct Const_View_Property : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			typedef typename Serialize::result_type result_type;
 			
@@ -56,10 +55,10 @@ namespace Genie
 		}
 	};
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct View_Property : readwrite_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			typedef typename Serialize::result_type result_type;
 			
@@ -68,7 +67,7 @@ namespace Genie
 			Serialize::deconstruct::apply( result, value, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Access( that ) = Serialize::reconstruct::apply( begin, end, binary );
 			
@@ -91,9 +90,9 @@ namespace Genie
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&
 	//
-	(*ViewGetter)( const FSTree*, const plus::string& name );
+	(*ViewGetter)( const vfs::node*, const plus::string& name );
 	
-	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
+	typedef void (*ViewPurger)( const vfs::node*, const plus::string& name );
 	
 	vfs::node_ptr New_View( const vfs::node*     parent,
 	                        const plus::string&  name,

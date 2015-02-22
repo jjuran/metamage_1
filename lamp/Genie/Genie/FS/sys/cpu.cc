@@ -31,7 +31,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -182,7 +181,7 @@ namespace Genie
 	template < class Accessor >
 	struct sys_cpu_Property : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = Accessor::Get();
 		}

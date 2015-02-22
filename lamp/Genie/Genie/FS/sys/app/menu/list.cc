@@ -28,10 +28,10 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/sys/app/menu/list/ID.hh"
 
 
@@ -50,7 +50,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_app_menu_list_ID_Mappings );
 	}
 	
-	static void menulist_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void menulist_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 	#if !TARGET_API_MAC_CARBON
 		

@@ -11,8 +11,8 @@
 #include "Pedestal/Scroller_beta.hh"
 #endif
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
+// vfs
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
@@ -44,33 +44,33 @@ namespace Genie
 		{
 		}
 		
-		static ScrollerParameters* Find( const FSTree* key );
-		static ScrollerParameters& Get ( const FSTree* key );
+		static ScrollerParameters* Find( const vfs::node* key );
+		static ScrollerParameters& Get ( const vfs::node* key );
 		
-		static void Erase( const FSTree* key );
+		static void Erase( const vfs::node* key );
 		
-		static int& Width ( const FSTree* view )  { return Get( view ).itsClientWidth;  }
-		static int& Height( const FSTree* view )  { return Get( view ).itsClientHeight; }
+		static int& Width ( const vfs::node* view )  { return Get( view ).itsClientWidth;  }
+		static int& Height( const vfs::node* view )  { return Get( view ).itsClientHeight; }
 		
-		static int& HOffset( const FSTree* view )  { return Get( view ).itsHOffset; }
-		static int& VOffset( const FSTree* view )  { return Get( view ).itsVOffset; }
+		static int& HOffset( const vfs::node* view )  { return Get( view ).itsHOffset; }
+		static int& VOffset( const vfs::node* view )  { return Get( view ).itsVOffset; }
 		
-		static Rect& ViewBounds( const FSTree* view )  { return Get( view ).itsLastViewBounds; }
+		static Rect& ViewBounds( const vfs::node* view )  { return Get( view ).itsLastViewBounds; }
 	};
 	
-	short GetScrollerLastViewWidth ( const FSTree* scroller );
-	short GetScrollerLastViewHeight( const FSTree* scroller );
+	short GetScrollerLastViewWidth ( const vfs::node* scroller );
+	short GetScrollerLastViewHeight( const vfs::node* scroller );
 	
-	int GetScrollerClientWidth ( const FSTree* scroller );
-	int GetScrollerClientHeight( const FSTree* scroller );
+	int GetScrollerClientWidth ( const vfs::node* scroller );
+	int GetScrollerClientHeight( const vfs::node* scroller );
 	
-	int GetScrollerHOffset( const FSTree* scroller );
-	int GetScrollerVOffset( const FSTree* scroller );
+	int GetScrollerHOffset( const vfs::node* scroller );
+	int GetScrollerVOffset( const vfs::node* scroller );
 	
-	void SetScrollerHOffset( const FSTree* scroller, int h );
-	void SetScrollerVOffset( const FSTree* scroller, int v );
+	void SetScrollerHOffset( const vfs::node* scroller, int h );
+	void SetScrollerVOffset( const vfs::node* scroller, int v );
 	
-	Rect GetScrollerLastViewBounds( const FSTree* scroller );
+	Rect GetScrollerLastViewBounds( const vfs::node* scroller );
 	
 	bool IsScrolledToBottom( const ScrollerParameters& params );
 	
@@ -78,7 +78,7 @@ namespace Genie
 	class ScrollerProxy : public Pedestal::ScrollerAPI
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key  itsKey;
 		
@@ -110,7 +110,7 @@ namespace Genie
 	class ScrollerBase : public Pedestal::Superview, public Scroller
 	{
 		public:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 		
 		private:
 			Key  itsKey;

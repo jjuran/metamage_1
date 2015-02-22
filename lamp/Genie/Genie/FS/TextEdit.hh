@@ -25,7 +25,6 @@
 #endif
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/ScrollerBase.hh"
 
@@ -50,30 +49,30 @@ namespace Genie
 		
 		TextEditParameters();
 		
-		static TextEditParameters* Find( const FSTree* key );
-		static TextEditParameters& Get ( const FSTree* key );
+		static TextEditParameters* Find( const vfs::node* key );
+		static TextEditParameters& Get ( const vfs::node* key );
 		
-		static void Erase( const FSTree* key );
+		static void Erase( const vfs::node* key );
 		
-		static bool& Active  ( const FSTree* view )  { return Get( view ).itIsActive;   }
-		static bool& Secret  ( const FSTree* view )  { return Get( view ).itIsSecret;   }
-		static bool& Singular( const FSTree* view )  { return Get( view ).itIsSingular; }
-		static bool& Wrapped ( const FSTree* view )  { return Get( view ).itIsWrapped;  }
+		static bool& Active  ( const vfs::node* view )  { return Get( view ).itIsActive;   }
+		static bool& Secret  ( const vfs::node* view )  { return Get( view ).itIsSecret;   }
+		static bool& Singular( const vfs::node* view )  { return Get( view ).itIsSingular; }
+		static bool& Wrapped ( const vfs::node* view )  { return Get( view ).itIsWrapped;  }
 	};
 	
 	
 	struct Selection_Property : readwrite_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary );
+		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary );
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary );
 	};
 	
 	
 	class TextEdit : public Pedestal::TextEdit
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
 			
@@ -129,7 +128,7 @@ namespace Genie
 			
 			bool UserCommand( Pedestal::CommandCode code );
 			
-			const FSTree* GetKey() const  { return itsKey; }
+			const vfs::node* GetKey() const  { return itsKey; }
 			
 			TEHandle Get() const  { return itsTE; }
 			
@@ -150,7 +149,7 @@ namespace Genie
 			TextEdit  itsSubview;
 		
 		public:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			typedef bool (*KeyDown_Hook)( TextEdit&, const EventRecord& );
 			

@@ -24,13 +24,13 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -44,7 +44,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static UInt16 GetKeyFromParent( const FSTree* parent )
+	static UInt16 GetKeyFromParent( const vfs::node* parent )
 	{
 		return gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
@@ -107,7 +107,7 @@ namespace Genie
 		return distance( N::SoundInputDevice_Names() );
 	}
 	
-	static void soundin_Iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void soundin_Iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		const std::size_t n = Count_SoundInputDevices();
 		
@@ -148,7 +148,7 @@ namespace Genie
 	
 	struct sys_mac_soundin_REF_name : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const UInt16 index = GetKeyFromParent( that );
 			
@@ -160,7 +160,7 @@ namespace Genie
 	
 	struct sys_mac_soundin_N_icon
 	{
-		static plus::string Get( const FSTree* parent, const plus::string& name )
+		static plus::string Get( const vfs::node* parent, const plus::string& name )
 		{
 			const UInt16 index = GetKeyFromParent( parent );
 			

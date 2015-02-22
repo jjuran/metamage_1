@@ -15,7 +15,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
@@ -56,7 +55,7 @@ namespace Genie
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			

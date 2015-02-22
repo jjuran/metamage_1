@@ -17,6 +17,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
@@ -24,7 +25,6 @@
 #include "vfs/primitives/remove.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -105,7 +105,7 @@ namespace Genie
 		return v.back();
 	}
 	
-	typedef simple_map< const FSTree*, Stack_Parameters > Stack_Parameters_Map;
+	typedef simple_map< const vfs::node*, Stack_Parameters > Stack_Parameters_Map;
 	
 	static Stack_Parameters_Map gStack_Parameters_Map;
 	
@@ -113,7 +113,7 @@ namespace Genie
 	class Stack : public Ped::Stack
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -128,7 +128,7 @@ namespace Genie
 	};
 	
 	
-	static boost::intrusive_ptr< Ped::View > StackFactory( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > StackFactory( const vfs::node* delegate )
 	{
 		return new Stack( delegate );
 	}
@@ -136,14 +136,14 @@ namespace Genie
 	
 	static boost::intrusive_ptr< Pedestal::View >&
 	//
-	get_subview( const FSTree* layer, const plus::string& name )
+	get_subview( const vfs::node* layer, const plus::string& name )
 	{
 		Stack_Parameters& params = gStack_Parameters_Map[ layer->owner() ];
 		
 		return find_or_append_subview( params, layer->name() ).view;
 	}
 	
-	static void destroy_layer( const FSTree* that )
+	static void destroy_layer( const vfs::node* that )
 	{
 		Stack_Parameters& params = gStack_Parameters_Map[ that->owner() ];
 		
@@ -176,7 +176,7 @@ namespace Genie
 	};
 	
 	
-	static void stack_remove( const FSTree* that )
+	static void stack_remove( const vfs::node* that )
 	{
 		Stack_Parameters& params = gStack_Parameters_Map[ that ];
 		
@@ -214,7 +214,7 @@ namespace Genie
 	}
 	
 	
-	static void stack_listdir( const FSTree* that, vfs::dir_contents& cache )
+	static void stack_listdir( const vfs::node* that, vfs::dir_contents& cache )
 	{
 		typedef ViewList Sequence;
 		
@@ -260,7 +260,7 @@ namespace Genie
 	                                                    const vfs::node*     parent,
 	                                                    const plus::string&  name )
 	{
-		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
+		return new vfs::node( parent, name, S_IFDIR | 0700, &stack_methods );
 	}
 	
 	vfs::node_ptr New_stack( const vfs::node*     parent,

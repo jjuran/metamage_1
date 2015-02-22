@@ -41,11 +41,11 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/sys/mac/gdev/list.hh"
 
 
@@ -55,7 +55,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static plus::string gdev_main_readlink( const FSTree* that )
+	static plus::string gdev_main_readlink( const vfs::node* that )
 	{
 		const GDHandle gdH = ::GetMainDevice();
 		
@@ -91,7 +91,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new FSTree( parent, name, S_IFLNK | 0777, &gdev_main_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &gdev_main_methods );
 	}
 	
 	const vfs::fixed_mapping sys_mac_gdev_Mappings[] =

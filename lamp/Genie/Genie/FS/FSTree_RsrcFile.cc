@@ -14,13 +14,13 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/StatFile.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Utilities/AsyncIO.hh"
@@ -49,8 +49,8 @@ namespace Genie
 	}
 	
 	
-	static void rsrcfile_stat( const FSTree*   that,
-	                           struct ::stat&  sb )
+	static void rsrcfile_stat( const vfs::node*  that,
+	                           struct ::stat&    sb )
 	{
 		CInfoPBRec cInfo = { 0 };
 		
@@ -65,7 +65,7 @@ namespace Genie
 		Stat_HFS( async, &sb, cInfo, fileSpec.name, true );
 	}
 	
-	static vfs::filehandle_ptr rsrcfile_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr rsrcfile_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -96,11 +96,11 @@ namespace Genie
 	{
 		vfs::node_ptr parent = FSTreeFromFSSpec( file );
 		
-		FSTree* result = new FSTree( parent.get(),
-		                             "rsrc",
-		                             file_mode( file ),
-		                             &rsrcfile_methods,
-		                             sizeof (FSSpec) );
+		vfs::node* result = new vfs::node( parent.get(),
+		                                   "rsrc",
+		                                   file_mode( file ),
+		                                   &rsrcfile_methods,
+		                                   sizeof (FSSpec) );
 		
 		*(FSSpec*) result->extra() = file;
 		

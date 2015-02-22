@@ -22,16 +22,13 @@
 // vfs
 #include "vfs/node_ptr.hh"
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
-
 
 namespace Genie
 {
 	
 	vfs::node_ptr
 	//
-	New_FSTree_IconSuite( const FSTree*                             parent,
+	New_FSTree_IconSuite( const vfs::node*                          parent,
 			              const plus::string&                       name,
 			              nucleus::owned< Nitrogen::IconSuiteRef >  iconSuite );
 	

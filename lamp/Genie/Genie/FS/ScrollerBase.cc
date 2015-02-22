@@ -15,27 +15,27 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef simple_map< const FSTree*, ScrollerParameters > ScrollerParametersMap;
+	typedef simple_map< const vfs::node*, ScrollerParameters > ScrollerParametersMap;
 	
 	static ScrollerParametersMap gScrollerParametersMap;
 	
 	
-	ScrollerParameters* ScrollerParameters::Find( const FSTree* key )
+	ScrollerParameters* ScrollerParameters::Find( const vfs::node* key )
 	{
 		return gScrollerParametersMap.find( key );
 	}
 	
-	ScrollerParameters& ScrollerParameters::Get( const FSTree* key )
+	ScrollerParameters& ScrollerParameters::Get( const vfs::node* key )
 	{
 		return gScrollerParametersMap[ key ];
 	}
 	
-	void ScrollerParameters::Erase( const FSTree* key )
+	void ScrollerParameters::Erase( const vfs::node* key )
 	{
 		gScrollerParametersMap.erase( key );
 	}
 	
-	int GetScrollerClientWidth( const FSTree* scroller )
+	int GetScrollerClientWidth( const vfs::node* scroller )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -45,7 +45,7 @@ namespace Genie
 		return 0;
 	}
 	
-	int GetScrollerClientHeight( const FSTree* scroller )
+	int GetScrollerClientHeight( const vfs::node* scroller )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -55,7 +55,7 @@ namespace Genie
 		return 0;
 	}
 	
-	int GetScrollerHOffset( const FSTree* scroller )
+	int GetScrollerHOffset( const vfs::node* scroller )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -65,7 +65,7 @@ namespace Genie
 		return 0;
 	}
 	
-	int GetScrollerVOffset( const FSTree* scroller )
+	int GetScrollerVOffset( const vfs::node* scroller )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -75,7 +75,7 @@ namespace Genie
 		return 0;
 	}
 	
-	void SetScrollerHOffset( const FSTree* scroller, int h )
+	void SetScrollerHOffset( const vfs::node* scroller, int h )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -92,7 +92,7 @@ namespace Genie
 		}
 	}
 	
-	void SetScrollerVOffset( const FSTree* scroller, int v )
+	void SetScrollerVOffset( const vfs::node* scroller, int v )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -109,7 +109,7 @@ namespace Genie
 		}
 	}
 	
-	short GetScrollerLastViewWidth( const FSTree* scroller )
+	short GetScrollerLastViewWidth( const vfs::node* scroller )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -121,7 +121,7 @@ namespace Genie
 		return 0;
 	}
 	
-	short GetScrollerLastViewHeight( const FSTree* scroller )
+	short GetScrollerLastViewHeight( const vfs::node* scroller )
 	{
 		if ( ScrollerParameters* params = ScrollerParameters::Find( scroller ) )
 		{
@@ -133,7 +133,7 @@ namespace Genie
 		return 0;
 	}
 	
-	Rect GetScrollerLastViewBounds( const FSTree* scroller )
+	Rect GetScrollerLastViewBounds( const vfs::node* scroller )
 	{
 		Rect result = { 0 };
 		

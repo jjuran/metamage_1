@@ -21,7 +21,6 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -35,12 +34,12 @@ namespace Genie
 	{
 		static const int fixed_size = sizeof gTextFileCreator;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = plus::encode_quad( gTextFileCreator );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			const size_t length = end - begin;
 			

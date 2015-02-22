@@ -61,7 +61,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, ListParameters > ListParameterMap;
+	typedef simple_map< const vfs::node*, ListParameters > ListParameterMap;
 	
 	static ListParameterMap gListParameterMap;
 	
@@ -69,7 +69,7 @@ namespace Genie
 	class ListView : public Ped::ListView
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -121,13 +121,13 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new ListView( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gListParameterMap.erase( delegate );
 	}
@@ -175,7 +175,7 @@ namespace Genie
 			p7::throw_errno( EINVAL );
 		}
 		
-		const FSTree* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *this )->owner();
 		
 		ListParameters& params = gListParameterMap[ view ];
 		
@@ -223,12 +223,12 @@ namespace Genie
 		return result;
 	}
 	
-	static off_t list_data_geteof( const FSTree* that )
+	static off_t list_data_geteof( const vfs::node* that )
 	{
 		return measure_strings( gListParameterMap[ that->owner() ].itsStrings );
 	}
 	
-	static void list_data_seteof( const FSTree* that, off_t length )
+	static void list_data_seteof( const vfs::node* that, off_t length )
 	{
 		if ( length != 0 )
 		{
@@ -257,7 +257,7 @@ namespace Genie
 		return result;
 	}
 	
-	static vfs::filehandle_ptr list_data_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr list_data_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		if ( flags == O_RDONLY )
 		{
@@ -295,24 +295,24 @@ namespace Genie
 	                                        const plus::string&  name,
 	                                        const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &list_data_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &list_data_methods );
 	}
 	
 	
 	namespace
 	{
 		
-		bool& Overlap( const FSTree* view )
+		bool& Overlap( const vfs::node* view )
 		{
 			return gListParameterMap[ view ].itIntersectsGrowBox;
 		}
 		
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct List_Property : View_Property< Serialize, Access >
 	{
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			View_Property< Serialize, Access >::set( that, begin, end, binary );
 			

@@ -6,13 +6,13 @@
 #ifndef GENIE_FILESYSTEM_TRACKSCROLLBAR_HH
 #define GENIE_FILESYSTEM_TRACKSCROLLBAR_HH
 
+// vfs
+#include "vfs/node_fwd.hh"
+
 // Pedestal
 #ifndef PEDESTAL_TRACKSCROLLBAR_HH
 #include "Pedestal/TrackScrollbar.hh"
 #endif
-
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Genie
@@ -20,7 +20,7 @@ namespace Genie
 	
 	struct Scrollbar_UserData : Pedestal::Scrollbar_UserData
 	{
-		const FSTree*  key;
+		const vfs::node*  key;
 		
 		Scrollbar_UserData() : key()
 		{

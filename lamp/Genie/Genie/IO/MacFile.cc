@@ -19,6 +19,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
@@ -32,7 +33,6 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 

@@ -22,10 +22,10 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -35,12 +35,12 @@ namespace Genie
 	using mac::types::GetVolParmsInfoBuffer;
 	
 	
-	static short GetKeyFromParent( const FSTree* parent )
+	static short GetKeyFromParent( const vfs::node* parent )
 	{
 		return -gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
 	
-	static short GetKey( const FSTree* that )
+	static short GetKey( const vfs::node* that )
 	{
 		return GetKeyFromParent( that->owner() );
 	}
@@ -138,7 +138,7 @@ namespace Genie
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			

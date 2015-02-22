@@ -20,6 +20,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
@@ -28,7 +29,6 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
@@ -104,7 +104,7 @@ namespace Genie
 	}
 	
 	
-	static ProcessSerialNumber GetKeyFromParent( const FSTree* parent )
+	static ProcessSerialNumber GetKeyFromParent( const vfs::node* parent )
 	{
 		return decoded_ProcessSerialNumber( parent->name() );
 	}
@@ -151,7 +151,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_proc_PSN_Mappings );
 	}
 	
-	static void psn_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void psn_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		ProcessSerialNumber psn = { 0, kNoProcess };
 		
@@ -181,7 +181,7 @@ namespace Genie
 			typedef ProcessSerialNumber Key;
 		
 		public:
-			static void get( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const vfs::node* that, bool binary )
 			{
 				Key key = GetKeyFromParent( that );
 				
@@ -226,7 +226,7 @@ namespace Genie
 	                                         const plus::string&  name,
 	                                         const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
 	}
 	
 	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value

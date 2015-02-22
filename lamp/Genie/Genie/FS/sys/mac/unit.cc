@@ -32,12 +32,12 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -65,7 +65,7 @@ namespace Genie
 		}
 	};
 	
-	static UnitNumber GetKey( const FSTree* that )
+	static UnitNumber GetKey( const vfs::node* that )
 	{
 		return UnitNumber( decode_unit_number::apply( that->name() ) );
 	}
@@ -196,7 +196,7 @@ namespace Genie
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			UnitNumber key = GetKey( that );
 			
@@ -236,7 +236,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_unit_N_Mappings );
 	}
 	
-	static void unit_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void unit_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		const short n = mac::sys::get_unit_table_entry_count();
 		

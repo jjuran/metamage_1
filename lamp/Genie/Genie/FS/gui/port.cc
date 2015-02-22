@@ -37,7 +37,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	typedef std::map< plus::string, const FSTree* > map_of_ports;
+	typedef std::map< plus::string, const vfs::node* > map_of_ports;
 	
 	static map_of_ports the_ports;
 	
@@ -60,13 +60,13 @@ namespace Genie
 		return it->second;
 	}
 	
-	static void port_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void port_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		map_of_ports::const_iterator end = the_ports.end();
 		
 		for ( map_of_ports::const_iterator it = the_ports.begin();  it != end;  ++it )
 		{
-			const FSTree* port = it->second;
+			const vfs::node* port = it->second;
 			
 			ino_t inode = (ino_t) port;  // coerce pointer to integer
 			
@@ -76,14 +76,14 @@ namespace Genie
 		}
 	}
 	
-	void remove_port( const FSTree* port )
+	void remove_port( const vfs::node* port )
 	{
 		remove_window_and_views_from_port( port );
 		
 		the_ports.erase( port->name() );
 	}
 	
-	static const FSTree* gui_port()
+	static const vfs::node* gui_port()
 	{
 		static vfs::node_ptr port = vfs::resolve_absolute_path( *relix::root(), STR_LEN( "/gui/port" ) );
 		
@@ -92,7 +92,7 @@ namespace Genie
 	
 	vfs::node_ptr new_port()
 	{
-		const FSTree* parent = gui_port();
+		const vfs::node* parent = gui_port();
 		
 		vfs::node_ptr port = fixed_dir( parent, "/", gui_port_ADDR_Mappings, &remove_port );
 		

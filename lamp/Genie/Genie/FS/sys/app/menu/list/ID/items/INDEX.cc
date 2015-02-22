@@ -30,13 +30,13 @@
 #include "Nitrogen/Str.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Pedestal
 #include "Pedestal/MenuItemCommands.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -117,12 +117,12 @@ namespace Genie
 	};
 	
 	
-	static MenuRef get_MenuRef( const FSTree* that )
+	static MenuRef get_MenuRef( const vfs::node* that )
 	{
 		return GetMenuRef( gear::parse_decimal( that->owner()->owner()->name().c_str() ) );
 	}
 	
-	static UInt16 get_menu_item_index( const FSTree* that )
+	static UInt16 get_menu_item_index( const vfs::node* that )
 	{
 		return gear::parse_decimal( that->name().c_str() );
 	}
@@ -132,7 +132,7 @@ namespace Genie
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const MenuRef menu = get_MenuRef( that );
 			
@@ -150,7 +150,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			const MenuRef menu = get_MenuRef( that );
 			

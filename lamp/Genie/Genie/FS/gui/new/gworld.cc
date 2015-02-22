@@ -68,7 +68,7 @@ namespace Genie
 		n::shared< GWorldPtr >          gworld;
 	};
 	
-	typedef simple_map< const FSTree*, GWorld_Parameters > GWorldMap;
+	typedef simple_map< const vfs::node*, GWorld_Parameters > GWorldMap;
 	
 #if CONFIG_GUI_NEW_GWORLD
 	
@@ -92,7 +92,7 @@ namespace Genie
 		return n_rows * rowBytes;
 	}
 	
-	static off_t Pixels_GetEOF( const FSTree* key )
+	static off_t Pixels_GetEOF( const vfs::node* key )
 	{
 		if ( GWorldPtr gworld = gGWorldMap[ key ].gworld.get() )
 		{
@@ -112,7 +112,7 @@ namespace Genie
 		public:
 			Pixels_IO( const vfs::node& file, int flags );
 			
-			const FSTree* ViewKey();
+			const vfs::node* ViewKey();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -158,14 +158,14 @@ namespace Genie
 	{
 	}
 	
-	const FSTree* Pixels_IO::ViewKey()
+	const vfs::node* Pixels_IO::ViewKey()
 	{
 		return get_file( *this )->owner();
 	}
 	
 	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		GWorld_Parameters& params = gGWorldMap[ view ];
 		
@@ -203,7 +203,7 @@ namespace Genie
 	
 	ssize_t Pixels_IO::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		GWorld_Parameters& params = gGWorldMap[ view ];
 		
@@ -245,7 +245,7 @@ namespace Genie
 	}
 	
 	
-	static bool has_pixels( const FSTree* view )
+	static bool has_pixels( const vfs::node* view )
 	{
 		if ( GWorldPtr gworld = gGWorldMap[ view ].gworld.get() )
 		{
@@ -255,12 +255,12 @@ namespace Genie
 		return false;
 	}
 	
-	static off_t gworld_pixels_geteof( const FSTree* that )
+	static off_t gworld_pixels_geteof( const vfs::node* that )
 	{
 		return Pixels_GetEOF( that->owner() );
 	}
 	
-	static vfs::filehandle_ptr gworld_pixels_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr gworld_pixels_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new Pixels_IO( *that, flags );
 	}
@@ -283,14 +283,14 @@ namespace Genie
 	{
 		const mode_t mode = has_pixels( parent ) ? S_IFREG | 0600 : 0;
 		
-		return new FSTree( parent, name, mode, &gworld_pixels_methods );
+		return new vfs::node( parent, name, mode, &gworld_pixels_methods );
 	}
 	
 	
 	class GWorld : public Ped::View
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -355,7 +355,7 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		GWorld_Parameters& params = gGWorldMap[ delegate ];
 		
@@ -366,7 +366,7 @@ namespace Genie
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gGWorldMap.erase( delegate );
 	}
@@ -473,7 +473,7 @@ namespace Genie
 		UpdateGWorld_from_params( params );
 	}
 	
-	static n::shared< GWorldPtr >& get_gworldptr( const FSTree* that )
+	static n::shared< GWorldPtr >& get_gworldptr( const vfs::node* that )
 	{
 		GWorld_Parameters* it = gGWorldMap.find( that );
 		
@@ -485,7 +485,7 @@ namespace Genie
 		return it->gworld;
 	}
 	
-	static PixMapHandle get_pixmap( const FSTree* that )
+	static PixMapHandle get_pixmap( const vfs::node* that )
 	{
 		return ::GetGWorldPixMap( get_gworldptr( that ).get() );
 	}
@@ -499,7 +499,7 @@ namespace Genie
 		
 		typedef typename Accessor::result_type result_type;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			PixMapHandle pix = get_pixmap( that );
 			
@@ -508,7 +508,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			GWorld_Parameters& params = gGWorldMap[ that ];
 			

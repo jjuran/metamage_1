@@ -22,11 +22,11 @@
 #include "Pedestal/Scroller_beta.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
@@ -50,7 +50,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, BasicScrollerParameters > BasicScrollerParametersMap;
+	typedef simple_map< const vfs::node*, BasicScrollerParameters > BasicScrollerParametersMap;
 	
 	static BasicScrollerParametersMap  gBasicScrollerParametersMap;
 	
@@ -132,13 +132,13 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new BasicScroller( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		ScrollerParameters::Erase( delegate );
 		
@@ -149,7 +149,7 @@ namespace Genie
 	namespace
 	{
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
+		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
 		{
 			return gBasicScrollerParametersMap[ key ].itsSubview;
 		}

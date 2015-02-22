@@ -23,13 +23,13 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -39,7 +39,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static inline N::CRMDeviceID GetKeyFromParent( const FSTree* parent )
+	static inline N::CRMDeviceID GetKeyFromParent( const vfs::node* parent )
 	{
 		return N::CRMDeviceID( gear::parse_decimal( parent->name().c_str() ) );
 	}
@@ -102,7 +102,7 @@ namespace Genie
 			}
 	};
 	
-	static void serial_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void serial_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		crm_IteratorConverter converter;
 		
@@ -117,7 +117,7 @@ namespace Genie
 	
 	typedef StringHandle CRMSerialRecord::*StringSelector;
 	
-	static plus::string GetSelectedString( const FSTree* that, StringSelector selector )
+	static plus::string GetSelectedString( const vfs::node* that, StringSelector selector )
 	{
 		N::CRMDeviceID key = GetKeyFromParent( that );
 		
@@ -134,7 +134,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_name : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::name );
 		}
@@ -142,7 +142,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_input : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::inputDriverName );
 		}
@@ -150,7 +150,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_output : readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::outputDriverName );
 		}
@@ -159,7 +159,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_icon
 	{
-		static plus::string Read( const FSTree* parent, const plus::string& name )
+		static plus::string Read( const vfs::node* parent, const plus::string& name )
 		{
 			N::CRMDeviceID key = GetKeyFromParent( parent );
 			

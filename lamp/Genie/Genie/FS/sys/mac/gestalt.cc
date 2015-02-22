@@ -33,11 +33,11 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie
@@ -96,7 +96,7 @@ namespace Genie
 			}
 	};
 	
-	static void gestalt_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void gestalt_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		gestalt_IteratorConverter converter;
 		

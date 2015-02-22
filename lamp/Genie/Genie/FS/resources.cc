@@ -309,7 +309,7 @@ namespace Genie
 	}
 	
 	
-	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode );
 	
 	static const vfs::data_method_set unrsrc_file_data_methods =
 	{
@@ -323,13 +323,13 @@ namespace Genie
 	};
 	
 	
-	static void rsrc_file_remove( const FSTree* that );
+	static void rsrc_file_remove( const vfs::node* that );
 	
 	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination );
 	
-	static vfs::filehandle_ptr rsrc_file_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static off_t rsrc_file_geteof( const FSTree* that );
+	static off_t rsrc_file_geteof( const vfs::node* that );
 	
 	static vfs::node_ptr rsrc_file_lookup( const vfs::node*     that,
 	                                       const plus::string&  name,
@@ -414,7 +414,7 @@ namespace Genie
 		return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 	}
 	
-	static void rsrc_file_remove( const FSTree* that )
+	static void rsrc_file_remove( const vfs::node* that )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -465,7 +465,7 @@ namespace Genie
 		N::SetResInfo( r, new_resSpec.id, resInfo.name );
 	}
 	
-	static off_t rsrc_file_geteof( const FSTree* that )
+	static off_t rsrc_file_geteof( const vfs::node* that )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -478,7 +478,7 @@ namespace Genie
 		return N::GetHandleSize( r );
 	}
 	
-	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -515,7 +515,7 @@ namespace Genie
 		return result;
 	}
 	
-	static vfs::filehandle_ptr rsrc_file_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -549,7 +549,7 @@ namespace Genie
 		const vfs::node_method_set* methods = exists ? &rsrc_file_methods
 		                                             : &unrsrc_file_methods;
 		
-		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
+		vfs::node* result = new vfs::node( parent, name, mode, methods, sizeof (FSSpec) );
 		
 		*(FSSpec*) result->extra() = file;
 		

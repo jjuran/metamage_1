@@ -9,13 +9,13 @@
 #include <sys/stat.h>
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/types/directory.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/gui/port.hh"
 
 
@@ -27,7 +27,7 @@ namespace Genie
 		remove_port( get_file( *that ).get() );
 	}
 	
-	static vfs::filehandle_ptr new_port_opendir( const FSTree* that )
+	static vfs::filehandle_ptr new_port_opendir( const vfs::node* that )
 	{
 		vfs::node_ptr dir = new_port();
 		
@@ -55,7 +55,7 @@ namespace Genie
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
-		return new FSTree( parent, name, S_IFDIR | 0100, &new_port_methods );
+		return new vfs::node( parent, name, S_IFDIR | 0100, &new_port_methods );
 	}
 	
 }

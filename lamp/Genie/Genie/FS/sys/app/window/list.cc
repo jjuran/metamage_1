@@ -24,10 +24,10 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/sys/app/window/list/REF.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 #include "Genie/Utilities/WindowList_contains.hh"
@@ -58,7 +58,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_app_window_list_REF_Mappings );
 	}
 	
-	static void WindowRef_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void WindowRef_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		WindowRef window = FrontWindow();
 		

@@ -68,7 +68,7 @@ namespace Genie
 		BitMap               bitmap;
 	};
 	
-	typedef simple_map< const FSTree*, BitMap_Parameters > BitMapMap;
+	typedef simple_map< const vfs::node*, BitMap_Parameters > BitMapMap;
 	
 	static BitMapMap gBitMapMap;
 	
@@ -82,7 +82,7 @@ namespace Genie
 		return n_rows * rowBytes;
 	}
 	
-	static off_t Bits_GetEOF( const FSTree* key )
+	static off_t Bits_GetEOF( const vfs::node* key )
 	{
 		return BitMap_n_bytes( gBitMapMap[ key ].bitmap );
 	}
@@ -97,7 +97,7 @@ namespace Genie
 		public:
 			Bits_IO( const vfs::node* file, int flags );
 			
-			const FSTree* ViewKey();
+			const vfs::node* ViewKey();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -199,14 +199,14 @@ namespace Genie
 	}
 	
 	
-	const FSTree* Bits_IO::ViewKey()
+	const vfs::node* Bits_IO::ViewKey()
 	{
 		return get_file( *this )->owner();
 	}
 	
 	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		BitMap_Parameters& params = gBitMapMap[ view ];
 		
@@ -228,7 +228,7 @@ namespace Genie
 	
 	ssize_t Bits_IO::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		BitMap_Parameters& params = gBitMapMap[ view ];
 		
@@ -277,17 +277,17 @@ namespace Genie
 	}
 	
 	
-	static bool has_bits( const FSTree* view )
+	static bool has_bits( const vfs::node* view )
 	{
 		return gBitMapMap[ view ].bits.get() != NULL;
 	}
 	
-	static off_t bitmap_bits_geteof( const FSTree* that )
+	static off_t bitmap_bits_geteof( const vfs::node* that )
 	{
 		return Bits_GetEOF( that->owner() );
 	}
 	
-	static vfs::filehandle_ptr bitmap_bits_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr bitmap_bits_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new Bits_IO( that, flags );
 	}
@@ -308,7 +308,7 @@ namespace Genie
 	class BitMapView : public Ped::View
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -368,7 +368,7 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		BitMap_Parameters& params = gBitMapMap[ delegate ];
 		
@@ -384,7 +384,7 @@ namespace Genie
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gBitMapMap.erase( delegate );
 	}
@@ -454,7 +454,7 @@ namespace Genie
 		params.bitmap.rowBytes = rowBytes;
 	}
 	
-	static const BitMap& get_bitmap( const FSTree* that )
+	static const BitMap& get_bitmap( const vfs::node* that )
 	{
 		BitMap_Parameters* it = gBitMapMap.find( that );
 		
@@ -475,7 +475,7 @@ namespace Genie
 		
 		typedef typename Accessor::result_type result_type;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const BitMap& bits = get_bitmap( that );
 			
@@ -484,7 +484,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			BitMap_Parameters& params = gBitMapMap[ that ];
 			
@@ -503,7 +503,7 @@ namespace Genie
 	{
 		const mode_t mode = has_bits( parent ) ? S_IFREG | 0600 : 0;
 		
-		return new FSTree( parent, name, mode, &bitmap_bits_methods );
+		return new vfs::node( parent, name, mode, &bitmap_bits_methods );
 	}
 	
 	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< BitMap_Property< prop > >::value

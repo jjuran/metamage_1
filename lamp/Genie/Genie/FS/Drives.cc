@@ -25,15 +25,17 @@
 #include "Nitrogen/Files.hh"
 #endif
 
+// vfs
+#include "vfs/node.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Trigger.hh"
 
 
 namespace Genie
 {
 	
-	void volume_flush_trigger( const FSTree* that )
+	void volume_flush_trigger( const vfs::node* that )
 	{
 		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
@@ -44,7 +46,7 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	void volume_eject_trigger( const FSTree* that )
+	void volume_eject_trigger( const vfs::node* that )
 	{
 		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
@@ -53,7 +55,7 @@ namespace Genie
 		Nitrogen::Eject( vRefNum );
 	}
 	
-	void volume_mount_trigger( const FSTree* that )
+	void volume_mount_trigger( const vfs::node* that )
 	{
 		trigger_extra& extra = *(trigger_extra*) that->extra();
 		
@@ -64,7 +66,7 @@ namespace Genie
 	
 #endif
 	
-	void volume_unmount_trigger( const FSTree* that )
+	void volume_unmount_trigger( const vfs::node* that )
 	{
 		trigger_extra& extra = *(trigger_extra*) that->extra();
 		

@@ -35,7 +35,6 @@
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
@@ -85,7 +84,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static GDHandle GetKeyFromParent( const FSTree* parent )
+	static GDHandle GetKeyFromParent( const vfs::node* parent )
 	{
 		return (GDHandle) plus::decode_32_bit_hex( parent->name() );
 	}
@@ -116,7 +115,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_gdev_list_H_Mappings );
 	}
 	
-	static void gdev_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void gdev_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		N::DeviceList_Container sequence = N::DeviceList();
 		
@@ -167,7 +166,7 @@ namespace Genie
 		
 		typedef GDHandle Key;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			

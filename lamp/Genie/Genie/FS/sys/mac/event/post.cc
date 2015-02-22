@@ -14,7 +14,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/property.hh"
 
@@ -37,7 +36,7 @@ namespace Genie
 	
 	struct sys_mac_event_post_click
 	{
-		static void trigger( const FSTree* that )
+		static void trigger( const vfs::node* that )
 		{
 			N::PostEvent( N::mouseDown, 0 );
 			N::PostEvent( N::mouseUp,   0 );
@@ -51,7 +50,7 @@ namespace Genie
 	
 	struct sys_mac_event_post_key : writeonly_property
 	{
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			for ( const char* p = begin;  p != end;  ++p )
 			{

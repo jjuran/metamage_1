@@ -9,9 +9,6 @@
 // vfs
 #include "vfs/node/types/fixed_dir.hh"
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
-
 
 namespace Pedestal
 {
@@ -25,18 +22,18 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping gui_port_ADDR_Mappings[];
 	
-	void notify_port_of_view_loss( const FSTree* port_key, const FSTree* view );
+	void notify_port_of_view_loss( const vfs::node* port_key, const vfs::node* view );
 	
-	void remove_window_and_views_from_port( const FSTree* key );
+	void remove_window_and_views_from_port( const vfs::node* key );
 	
-	bool invalidate_port_WindowRef( const FSTree* key );
+	bool invalidate_port_WindowRef( const vfs::node* key );
 	
-	void install_view_in_port    ( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
-	void uninstall_view_from_port( const boost::intrusive_ptr< Pedestal::View >& view, const FSTree* key );
+	void install_view_in_port    ( const boost::intrusive_ptr< Pedestal::View >& view, const vfs::node* key );
+	void uninstall_view_from_port( const boost::intrusive_ptr< Pedestal::View >& view, const vfs::node* key );
 	
-	const FSTree* get_port_focus( const FSTree* port );
+	const vfs::node* get_port_focus( const vfs::node* port );
 	
-	void set_port_focus( const FSTree* port, const FSTree* focus );
+	void set_port_focus( const vfs::node* port, const vfs::node* focus );
 	
 }
 

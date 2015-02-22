@@ -30,6 +30,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -43,7 +44,6 @@
 #include "relix/config/iconsuites.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/Copy_IconSuite.hh"
@@ -409,7 +409,7 @@ namespace Genie
 			                      int                                      flags,
 			                      const boost::intrusive_ptr< IconData >&  data );
 			
-			const FSTree* ViewKey();
+			const vfs::node* ViewKey();
 			
 			ssize_t SysWrite( const char* buffer, size_t n_bytes );
 	};
@@ -477,7 +477,7 @@ namespace Genie
 		return bytes_read;
 	}
 	
-	const FSTree* IconDataWriterHandle::ViewKey()
+	const vfs::node* IconDataWriterHandle::ViewKey()
 	{
 		return get_file( *this )->owner();
 	}
@@ -501,7 +501,7 @@ namespace Genie
 		
 		itsData->Write( buffer, actual_byte_count );
 		
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		InvalidateWindowForView( view );
 		
@@ -514,7 +514,7 @@ namespace Genie
 		IconData* data;
 	};
 	
-	static void dispose_icon_data( const FSTree* that )
+	static void dispose_icon_data( const vfs::node* that )
 	{
 		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
@@ -522,7 +522,7 @@ namespace Genie
 	}
 	
 	
-	static vfs::filehandle_ptr icon_data_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr icon_data_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
@@ -547,14 +547,14 @@ namespace Genie
 		return result;
 	}
 	
-	static off_t icon_data_geteof( const FSTree* that )
+	static off_t icon_data_geteof( const vfs::node* that )
 	{
 		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
 		return extra.data->GetSize();
 	}
 	
-	static void icon_data_attach( const FSTree* that, const FSTree* target )
+	static void icon_data_attach( const vfs::node* that, const vfs::node* target )
 	{
 	#if CONFIG_ICONSUITES
 		
@@ -599,12 +599,12 @@ namespace Genie
 	{
 		ASSERT( data.get() != NULL );
 		
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0600,
-		                             &icon_data_methods,
-		                             sizeof (icon_data_extra),
-		                             &dispose_icon_data );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFREG | 0600,
+		                                   &icon_data_methods,
+		                                   sizeof (icon_data_extra),
+		                                   &dispose_icon_data );
 		
 		icon_data_extra& extra = *(icon_data_extra*) result->extra();
 		

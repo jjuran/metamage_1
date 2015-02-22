@@ -25,10 +25,10 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/sys/app/menu/list/ID/items/INDEX.hh"
 
 
@@ -62,7 +62,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_app_menu_list_ID_items_INDEX_Mappings );
 	}
 	
-	static void menu_items_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void menu_items_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		

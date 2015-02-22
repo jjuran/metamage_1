@@ -26,11 +26,11 @@
 #include "Pedestal/Frame.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -122,7 +122,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, FrameParameters > FrameParametersMap;
+	typedef simple_map< const vfs::node*, FrameParameters > FrameParametersMap;
 	
 	static FrameParametersMap gFrameParametersMap;
 	
@@ -130,7 +130,7 @@ namespace Genie
 	class Frame : public Ped::Frame
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 		
@@ -283,13 +283,13 @@ namespace Genie
 		return *subview;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new Frame( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gFrameParametersMap.erase( delegate );
 	}
@@ -299,57 +299,57 @@ namespace Genie
 	namespace
 	{
 		
-		Value& Width( const FSTree* view )
+		Value& Width( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].width;
 		}
 		
-		Value& Height( const FSTree* view )
+		Value& Height( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].height;
 		}
 		
-		Value& Margin_Top( const FSTree* view )
+		Value& Margin_Top( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].margin_top;
 		}
 		
-		Value& Margin_Right( const FSTree* view )
+		Value& Margin_Right( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].margin_right;
 		}
 		
-		Value& Margin_Bottom( const FSTree* view )
+		Value& Margin_Bottom( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].margin_bottom;
 		}
 		
-		Value& Margin_Left( const FSTree* view )
+		Value& Margin_Left( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].margin_left;
 		}
 		
-		int& Padding( const FSTree* view )
+		int& Padding( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].padding;
 		}
 		
-		int& Outline_Width( const FSTree* view )
+		int& Outline_Width( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].outline_width;
 		}
 		
-		int& Outline_Offset( const FSTree* view )
+		int& Outline_Offset( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].outline_offset;
 		}
 		
-		int& Outline_Curvature( const FSTree* view )
+		int& Outline_Curvature( const vfs::node* view )
 		{
 			return gFrameParametersMap[ view ].outline_curvature;
 		}
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const FSTree* key, const plus::string& name )
+		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
 		{
 			return gFrameParametersMap[ key ].itsSubview;
 		}
@@ -357,10 +357,10 @@ namespace Genie
 	}
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct Frame_Property : View_Property< Serialize, Access >
 	{
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			View_Property< Serialize, Access >::set( that, begin, end, binary );
 			

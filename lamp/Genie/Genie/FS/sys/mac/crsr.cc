@@ -31,7 +31,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
@@ -112,7 +111,7 @@ namespace Genie
 		
 		typedef typename Accessor::result_type result_type;
 		
-		static CursorDevicePtr GetCursorDevice( const FSTree* that )
+		static CursorDevicePtr GetCursorDevice( const vfs::node* that )
 		{
 			static const bool has_CDM = MacFeatures::Has_CursorDevices();
 			
@@ -131,7 +130,7 @@ namespace Genie
 			return device;
 		}
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
@@ -140,7 +139,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
