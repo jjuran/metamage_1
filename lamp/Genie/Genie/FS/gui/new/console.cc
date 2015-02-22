@@ -58,6 +58,7 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 #include "vfs/primitives/attach.hh"
 
 // relix
@@ -68,7 +69,6 @@
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
@@ -881,7 +881,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
 	

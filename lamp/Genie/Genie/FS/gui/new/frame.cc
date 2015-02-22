@@ -27,10 +27,10 @@
 
 // vfs
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -368,8 +368,8 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY_VALUE( access )  &new_property, &property_params_factory< Frame_Property<       serialize_Value,      access > >::value
-	#define PROPERTY_INT(   access )  &new_property, &property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
+	#define PROPERTY_VALUE( access )  &vfs::new_property, &property_params_factory< Frame_Property<       serialize_Value,      access > >::value
+	#define PROPERTY_INT(   access )  &vfs::new_property, &property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

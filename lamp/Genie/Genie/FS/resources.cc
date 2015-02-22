@@ -45,9 +45,9 @@
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
@@ -374,7 +374,7 @@ namespace Genie
 		const property_params& params = mac ? mac_factory ::value
 		                                    : utf8_factory::value;
 		
-		return new_property( that, name, &params );
+		return vfs::new_property( that, name, &params );
 	}
 	
 	static const vfs::item_method_set rsrc_file_item_methods =

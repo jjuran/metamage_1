@@ -29,12 +29,12 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -178,7 +178,7 @@ namespace Genie
 		
 		if ( el == NULL )
 		{
-			throw undefined_property();
+			throw vfs::undefined_property();
 		}
 		
 		return *el;
@@ -210,7 +210,7 @@ namespace Genie
 		return trigger_factory( parent, name, &extra );
 	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_drive_N_Mappings[] =
 	{

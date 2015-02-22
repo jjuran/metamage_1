@@ -56,6 +56,7 @@
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
 #include "vfs/primitives/lookup.hh"
 #include "vfs/primitives/open.hh"
@@ -67,7 +68,6 @@
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
@@ -802,7 +802,7 @@ namespace Genie
 		
 		if ( it == NULL )
 		{
-			throw undefined_property();
+			throw vfs::undefined_property();
 		}
 		
 		return *it;
@@ -1078,7 +1078,7 @@ namespace Genie
 			                               "w/" + name );
 		}
 		
-		return new_property( parent, name, params_ );
+		return vfs::new_property( parent, name, params_ );
 	}
 	
 	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value

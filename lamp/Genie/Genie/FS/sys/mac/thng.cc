@@ -28,6 +28,7 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
+#include "vfs/node/types/property_file.hh"
 
 // relix-kernel
 #include "relix/config/iconsuites.hh"
@@ -36,7 +37,6 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
@@ -394,7 +394,7 @@ namespace Genie
 		return New_FSTree_IconSuite( parent, name, iconSuite );
 	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_thng_REF_Mappings[] =
 	{

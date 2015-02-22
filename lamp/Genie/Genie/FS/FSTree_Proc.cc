@@ -44,6 +44,7 @@
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
+#include "vfs/node/types/property_file.hh"
 
 // relix-kernel
 #include "relix/api/current_process.hh"
@@ -59,7 +60,6 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
@@ -536,7 +536,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	#define GENERATED( gen )  &vfs::new_generated, (void*) &proc_PID_Property< gen >::Read
 	

@@ -11,12 +11,12 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Pedestal
 #include "Pedestal/ProgressBar.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
 
 
@@ -80,7 +80,7 @@ namespace Genie
 	
 	typedef View_Property< plus::serialize_int< int >, Value > Value_Property;
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

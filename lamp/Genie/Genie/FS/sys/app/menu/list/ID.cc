@@ -27,9 +27,11 @@
 // Nitrogen
 #include "Nitrogen/Str.hh"
 
+// vfs
+#include "vfs/node/types/property_file.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -101,7 +103,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	typedef sys_app_menu_list_ID_Property< menu_title > sys_app_menu_list_ID_title;
 	

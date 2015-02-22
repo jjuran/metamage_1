@@ -33,11 +33,11 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -202,7 +202,7 @@ namespace Genie
 			
 			if ( !is_valid_unit_number( key ) )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			AuxDCEHandle dceHandle = mac::sys::get_unit_table_base()[ key ];
@@ -256,7 +256,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_unit_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< sys_mac_unit_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_unit_N_Mappings[] =
 	{

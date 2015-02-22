@@ -19,10 +19,10 @@
 
 // vfs
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Icon_data.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -179,7 +179,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	typedef View_Property< plus::serialize_unsigned< N::IconAlignmentType >, Alignment >  Alignment_Property;
 	typedef View_Property< plus::serialize_unsigned< N::IconTransformType >, Transform >  Transform_Property;

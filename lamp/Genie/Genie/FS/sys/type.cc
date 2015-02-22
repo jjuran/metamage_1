@@ -17,10 +17,11 @@
 
 // vfs
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -52,7 +53,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	extern const vfs::fixed_mapping sys_type_text_Mappings[] =
 	{

@@ -27,8 +27,11 @@
 // MacFeatures
 #include "MacFeatures/CursorDevices.hh"
 
+// vfs
+#include "vfs/node/types/property_file.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
@@ -78,7 +81,7 @@ namespace Genie
 			
 			if ( device->whichCursor == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			const CursorData& data = *device->whichCursor;
@@ -122,7 +125,7 @@ namespace Genie
 			
 			if ( device == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return device;
@@ -148,7 +151,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_crsr_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< sys_mac_crsr_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_crsr_Mappings[] =
 	{

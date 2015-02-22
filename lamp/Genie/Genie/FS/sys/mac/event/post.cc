@@ -10,8 +10,11 @@
 
 #include "Nitrogen/Events.hh"
 
+// vfs
+#include "vfs/node/types/property_file.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/property.hh"
 
@@ -62,7 +65,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_event_post_Mappings[] =
 	{

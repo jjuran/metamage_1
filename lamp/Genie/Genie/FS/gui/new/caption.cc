@@ -24,13 +24,13 @@
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Pedestal
 #include "Pedestal/Caption.hh"
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
 
@@ -297,7 +297,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Wrapped   > Wrapped_Property;
 	typedef View_Property< plus::serialize_bool, Disabling > Disabling_Property;
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

@@ -21,9 +21,11 @@
 #include "plus/stringify.hh"
 #include "plus/var_string.hh"
 
+// vfs
+#include "vfs/node/types/property_file.hh"
+
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -58,7 +60,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMLocalHand == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMLocalHand;
@@ -71,7 +73,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMServerAdr == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMServerAdr;
@@ -84,7 +86,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 2  ||  parmsInfo.vMVolumeGrade == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMVolumeGrade;
@@ -97,7 +99,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 2 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMForeignPrivID;
@@ -110,7 +112,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 3 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMExtendedAttributes;
@@ -123,7 +125,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 4  ||  parmsInfo.vMDeviceID == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return (const char*) parmsInfo.vMDeviceID;
@@ -149,7 +151,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_vol_N_parms_Mappings[] =
 	{

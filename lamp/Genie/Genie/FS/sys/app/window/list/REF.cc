@@ -46,6 +46,9 @@
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// vfs
+#include "vfs/node/types/property_file.hh"
+
 // Pedestal
 #include "Pedestal/Window.hh"
 
@@ -54,7 +57,6 @@
 
 // Genie
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
@@ -465,7 +467,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
 	

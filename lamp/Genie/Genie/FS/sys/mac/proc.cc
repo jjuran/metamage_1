@@ -23,12 +23,12 @@
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
@@ -229,7 +229,7 @@ namespace Genie
 		return new FSTree( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
 	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[] =
 	{
