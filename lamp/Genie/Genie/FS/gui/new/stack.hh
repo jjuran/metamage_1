@@ -9,16 +9,16 @@
 // plus
 #include "plus/string_fwd.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr New_stack( const FSTree*        parent,
-	                     const plus::string&  name,
-	                     const void*          args );
+	vfs::node_ptr New_stack( const vfs::node*     parent,
+	                         const plus::string&  name,
+	                         const void*          args );
 	
 }
 

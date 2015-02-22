@@ -10,10 +10,11 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/node_ptr.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
-#include "Genie/FS/FSTreePtr.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 #include "Genie/FS/property.hh"
 
 
@@ -32,9 +33,9 @@ namespace Genie
 	
 	typedef boost::intrusive_ptr< Pedestal::View > (*ViewFactory)( const FSTree* delegate );
 	
-	typedef FSTreePtr (*DelegateFactory)( const FSTree*,
-	                                      const FSTree*,
-	                                      const plus::string& );
+	typedef vfs::node_ptr (*DelegateFactory)( const vfs::node*,
+	                                          const vfs::node*,
+	                                          const plus::string& );
 	
 	
 	const FSTree* GetViewWindowKey( const FSTree* view );
@@ -76,17 +77,17 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr create_default_delegate_for_new_view( const FSTree*        node,
-	                                                const FSTree*        parent,
-	                                                const plus::string&  name );
+	vfs::node_ptr create_default_delegate_for_new_view( const vfs::node*     node,
+	                                                    const vfs::node*     parent,
+	                                                    const plus::string&  name );
 	
-	FSTreePtr New_new_view( const FSTree*              parent,
-	                        const plus::string&        name,
-	                        ViewFactory                factory,
-	                        const vfs::fixed_mapping*  mappings         = vfs::empty_mappings,
-	                        vfs::node_destructor       dtor             = NULL,
-	                        size_t                     extra_annex_size = 0,
-	                        DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
+	vfs::node_ptr New_new_view( const vfs::node*           parent,
+	                            const plus::string&        name,
+	                            ViewFactory                factory,
+	                            const vfs::fixed_mapping*  mappings         = vfs::empty_mappings,
+	                            vfs::node_destructor       dtor             = NULL,
+	                            size_t                     extra_annex_size = 0,
+	                            DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
 	typedef boost::intrusive_ptr< Pedestal::View >&
 	//
@@ -94,10 +95,10 @@ namespace Genie
 	
 	typedef void (*ViewPurger)( const FSTree*, const plus::string& name );
 	
-	FSTreePtr New_View( const FSTree*        parent,
-	                    const plus::string&  name,
-	                    ViewGetter           get,
-	                    ViewPurger           purge );
+	vfs::node_ptr New_View( const vfs::node*     parent,
+	                        const plus::string&  name,
+	                        ViewGetter           get,
+	                        ViewPurger           purge );
 	
 	vfs::node_ptr new_view_dir( const vfs::node*     parent,
 	                            const plus::string&  name,

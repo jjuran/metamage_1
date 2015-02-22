@@ -291,9 +291,9 @@ namespace Genie
 		&list_data_data_methods
 	};
 	
-	static FSTreePtr list_data_factory( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	static vfs::node_ptr list_data_factory( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		return new FSTree( parent, name, S_IFREG | 0600, &list_data_methods );
 	}
@@ -334,9 +334,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_list( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	vfs::node_ptr New_FSTree_new_list( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

@@ -92,7 +92,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_adb_N_Mappings[];
 	
-	static FSTreePtr adb_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr adb_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !name_is_valid_ADBAddress( name ) )
 		{
@@ -214,9 +214,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_adb( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_adb( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		if ( !MacFeatures::Has_ADB() )
 		{

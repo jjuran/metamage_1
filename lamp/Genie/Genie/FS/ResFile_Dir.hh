@@ -9,8 +9,8 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 // Files.h
 struct FSSpec;
@@ -19,9 +19,9 @@ struct FSSpec;
 namespace Genie
 {
 	
-	FSTreePtr Get_ResFileDir_FSTree( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const FSSpec&        file );
+	vfs::node_ptr Get_ResFileDir_FSTree( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const FSSpec&        file );
 	
 }
 

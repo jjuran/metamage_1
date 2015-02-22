@@ -50,7 +50,7 @@ namespace Genie
 		return false;
 	}
 	
-	static FSTreePtr menu_items_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr menu_items_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
@@ -79,9 +79,9 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr New_FSTree_sys_app_menu_list_ID_items( const FSTree*        parent,
-	                                                 const plus::string&  name,
-	                                                 const void*          args )
+	vfs::node_ptr New_FSTree_sys_app_menu_list_ID_items( const vfs::node*     parent,
+	                                                     const plus::string&  name,
+	                                                     const void*          args )
 	{
 		return new_basic_directory( parent, name, menu_items_lookup, menu_items_iterate );
 	}

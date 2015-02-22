@@ -210,7 +210,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_thng_REF_Mappings[];
 	
-	static FSTreePtr thng_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr thng_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !is_valid_Component_name( name ) )
 		{
@@ -365,9 +365,9 @@ namespace Genie
 		return c;
 	}
 	
-	static FSTreePtr IconSuite_Factory( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	static vfs::node_ptr IconSuite_Factory( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		const Component comp = GetKeyFromParent( parent );
 		
@@ -416,9 +416,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_thng( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_thng( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return new_basic_directory( parent, name, thng_lookup, thng_iterate );
 	}

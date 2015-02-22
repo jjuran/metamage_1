@@ -96,7 +96,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr mac_user_home_resolve( const FSTree* that )
+	static vfs::node_ptr mac_user_home_resolve( const vfs::node* that )
 	{
 		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
 	}
@@ -114,9 +114,9 @@ namespace Genie
 		&mac_user_home_link_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_user_home( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_user_home( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &mac_user_home_methods );
 	}

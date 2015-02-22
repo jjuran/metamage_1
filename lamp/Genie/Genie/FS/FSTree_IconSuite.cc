@@ -75,7 +75,7 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr
+	vfs::node_ptr
 	//
 	New_FSTree_IconSuite( const FSTree*                parent,
 			              const plus::string&          name,

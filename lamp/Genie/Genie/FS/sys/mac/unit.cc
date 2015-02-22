@@ -226,7 +226,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_unit_N_Mappings[];
 	
-	static FSTreePtr unit_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr unit_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_unit_number::applies( name ) )
 		{
@@ -279,9 +279,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_unit( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return new_basic_directory( parent, name, unit_lookup, unit_iterate );
 	}

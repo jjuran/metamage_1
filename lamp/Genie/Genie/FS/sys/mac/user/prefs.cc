@@ -46,7 +46,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr mac_user_prefs_resolve( const FSTree* that )
+	static vfs::node_ptr mac_user_prefs_resolve( const vfs::node* that )
 	{
 		return FSTreeFromFSDirSpec( GetPrefsFolder() );
 	}
@@ -64,9 +64,9 @@ namespace Genie
 		&mac_user_prefs_link_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_user_prefs( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_user_prefs( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &mac_user_prefs_methods );
 	}

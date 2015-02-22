@@ -86,7 +86,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[];
 	
-	static FSTreePtr soundin_Lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr soundin_Lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_soundin_device::applies( name ) )
 		{
@@ -196,9 +196,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_soundin( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_soundin( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
 		return new_basic_directory( parent, name, soundin_Lookup, soundin_Iterate );
 	}

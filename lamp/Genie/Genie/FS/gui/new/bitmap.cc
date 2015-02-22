@@ -497,9 +497,9 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr bitmap_bits_Factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr bitmap_bits_Factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
 		const mode_t mode = has_bits( parent ) ? S_IFREG | 0600 : 0;
 		
@@ -519,9 +519,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_bitmap( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void* )
+	vfs::node_ptr New_FSTree_new_bitmap( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void* )
 	{
 		return New_new_view( parent,
 		                     name,

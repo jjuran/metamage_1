@@ -55,9 +55,9 @@ namespace Genie
 	
 	struct ViewParameters
 	{
-		FSTreePtr      itsDelegate;
-		ViewFactory    itsFactory;
-		const FSTree*  itsWindowKey;
+		vfs::node_ptr     itsDelegate;
+		ViewFactory       itsFactory;
+		const vfs::node*  itsWindowKey;
 		
 		ViewParameters() : itsFactory(), itsWindowKey()
 		{
@@ -110,11 +110,11 @@ namespace Genie
 		gViewParametersMap[ parent ].itsWindowKey = windowKey;
 	}
 	
-	static void DeleteDelegate( FSTreePtr& delegate_ref )
+	static void DeleteDelegate( vfs::node_ptr& delegate_ref )
 	{
 		if ( const FSTree* delegate = delegate_ref.get() )
 		{
-			FSTreePtr delegate_copy;
+			vfs::node_ptr delegate_copy;
 			
 			delegate_copy.swap( delegate_ref );
 			
@@ -170,7 +170,7 @@ namespace Genie
 		return boost::intrusive_ptr< Ped::View >();
 	}
 	
-	static const FSTreePtr& GetViewDelegate( const FSTree* view )
+	static const vfs::node_ptr& GetViewDelegate( const FSTree* view )
 	{
 		const ViewParameters* params = find_view( view->owner() );
 		
@@ -226,13 +226,13 @@ namespace Genie
 		size_t                     extra_annex_size;
 	};
 	
-	FSTreePtr New_new_view( const FSTree*              parent,
-	                        const plus::string&        name,
-	                        ViewFactory                factory,
-	                        const vfs::fixed_mapping*  mappings,
-	                        vfs::node_destructor       dtor,
-	                        size_t                     extra_annex_size,
-	                        DelegateFactory            delegate_factory )
+	vfs::node_ptr New_new_view( const vfs::node*           parent,
+	                            const plus::string&        name,
+	                            ViewFactory                factory,
+	                            const vfs::fixed_mapping*  mappings,
+	                            vfs::node_destructor       dtor,
+	                            size_t                     extra_annex_size,
+	                            DelegateFactory            delegate_factory )
 	
 	{
 		FSTree* result = new FSTree( parent,
@@ -252,13 +252,13 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr create_default_delegate_for_new_view( const FSTree*        that,
-	                                                const FSTree*        parent,
-	                                                const plus::string&  name )
+	vfs::node_ptr create_default_delegate_for_new_view( const vfs::node*     that,
+	                                                    const vfs::node*     parent,
+	                                                    const plus::string&  name )
 	{
 		new_view_extra& extra = *(new_view_extra*) that->extra();
 		
-		FSTreePtr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
+		vfs::node_ptr delegate = fixed_dir( parent, name, extra.mappings, extra.destructor );
 		
 		return delegate;
 	}
@@ -272,7 +272,7 @@ namespace Genie
 		
 		const FSTree* key = parent;
 		
-		FSTreePtr delegate = extra.delegate_factory( that, parent, "v" );
+		vfs::node_ptr delegate = extra.delegate_factory( that, parent, "v" );
 		
 		add_view_parameters( key, *delegate, extra.view_factory );
 		
@@ -369,9 +369,9 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr view_lookup( const FSTree*        that,
-	                              const plus::string&  name,
-	                              const FSTree*        parent )
+	static vfs::node_ptr view_lookup( const vfs::node*     that,
+	                                  const plus::string&  name,
+	                                  const vfs::node*     parent )
 	{
 		const plus::string& real_name = name.empty() ? plus::string( "." ) : name;
 		
@@ -415,10 +415,10 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	FSTreePtr New_View( const FSTree*        parent,
-	                    const plus::string&  name,
-	                    ViewGetter           get,
-	                    ViewPurger           purge )
+	vfs::node_ptr New_View( const vfs::node*     parent,
+	                        const plus::string&  name,
+	                        ViewGetter           get,
+	                        ViewPurger           purge )
 	{
 		const bool exists = view_exists( parent );
 		

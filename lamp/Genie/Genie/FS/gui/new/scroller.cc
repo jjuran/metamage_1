@@ -179,9 +179,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scroller( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_new_scroller( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

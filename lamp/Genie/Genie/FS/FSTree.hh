@@ -11,7 +11,6 @@
 
 // Genie
 #include "Genie/FS/FSTree_fwd.hh"
-#include "Genie/FS/FSTreePtr.hh"
 
 
 namespace Genie

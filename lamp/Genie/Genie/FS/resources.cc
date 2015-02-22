@@ -273,7 +273,7 @@ namespace Genie
 	
 	void Rsrc_IOHandle::FlushResource()
 	{
-		FSTreePtr file = get_file( *this );
+		vfs::node_ptr file = get_file( *this );
 		
 		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
@@ -503,9 +503,9 @@ namespace Genie
 		
 		// that refers to an unrsrc; make a new one that's a live rsrc
 		
-		FSTreePtr new_node = Get_RsrcFile_FSTree( that->owner(),
-		                                          that->name(),
-		                                          fileSpec );
+		vfs::node_ptr new_node = Get_RsrcFile_FSTree( that->owner(),
+		                                              that->name(),
+		                                              fileSpec );
 		
 		that = new_node.get();
 		
@@ -535,9 +535,9 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr Get_RsrcFile_FSTree( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const FSSpec&        file )
+	vfs::node_ptr Get_RsrcFile_FSTree( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const FSSpec&        file )
 	{
 		const ResSpec resSpec = GetResSpec_from_name( name );
 		

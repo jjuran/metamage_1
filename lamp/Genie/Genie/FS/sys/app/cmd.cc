@@ -31,6 +31,7 @@
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/FS/basic_directory.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Genie
@@ -125,7 +126,7 @@ namespace Genie
 		Ped::SetCommandHandler( code, NULL );
 	}
 	
-	static FSTreePtr cmd_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr cmd_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		cmd_map::const_iterator it = the_command_map.find( parse_utf8_quad_name( name ) );
 		
@@ -163,9 +164,9 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr New_FSTree_sys_app_cmd( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_app_cmd( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return new_basic_directory( parent, name, cmd_lookup, cmd_iterate );
 	}

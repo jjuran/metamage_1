@@ -19,14 +19,17 @@
 #include "Nitrogen/Icons.hh"
 #endif
 
+// vfs
+#include "vfs/node_ptr.hh"
+
 // Genie
-#include "Genie/FS/FSTreePtr.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr
+	vfs::node_ptr
 	//
 	New_FSTree_IconSuite( const FSTree*                             parent,
 			              const plus::string&                       name,

@@ -277,9 +277,9 @@ namespace Genie
 		&gworld_pixels_data_methods
 	};
 	
-	static FSTreePtr gworld_pixels_factory( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	static vfs::node_ptr gworld_pixels_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
 		const mode_t mode = has_pixels( parent ) ? S_IFREG | 0600 : 0;
 		
@@ -534,9 +534,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_gworld( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void* )
+	vfs::node_ptr New_FSTree_new_gworld( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void* )
 	{
 		return New_new_view( parent,
 		                     name,

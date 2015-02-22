@@ -391,9 +391,9 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Horizontal >  Horizontal_Property;
 	typedef View_Property< plus::serialize_bool, Vertical   >  Vertical_Property;
 	
-	static FSTreePtr target_factory( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	static vfs::node_ptr target_factory( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		if ( const bool exists = scrollframe_target_exists( parent ) )
 		{
@@ -416,9 +416,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_scrollframe( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	vfs::node_ptr New_FSTree_new_scrollframe( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

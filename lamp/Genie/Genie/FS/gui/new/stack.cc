@@ -192,7 +192,9 @@ namespace Genie
 		gStack_Parameters_Map.erase( that );
 	}
 	
-	static FSTreePtr stack_lookup( const FSTree* that, const plus::string& name, const FSTree* parent )
+	static vfs::node_ptr stack_lookup( const vfs::node*     that,
+	                                   const plus::string&  name,
+	                                   const vfs::node*     parent )
 	{
 		Named_Subview& layer = find_or_append_subview( gStack_Parameters_Map[ that ], name );
 		
@@ -254,16 +256,16 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr create_delegate_for_new_stack( const FSTree*        that,
-	                                                const FSTree*        parent,
-	                                                const plus::string&  name )
+	static vfs::node_ptr create_delegate_for_new_stack( const vfs::node*     that,
+	                                                    const vfs::node*     parent,
+	                                                    const plus::string&  name )
 	{
 		return new FSTree( parent, name, S_IFDIR | 0700, &stack_methods );
 	}
 	
-	FSTreePtr New_stack( const FSTree*        parent,
-	                     const plus::string&  name,
-	                     const void*          args )
+	vfs::node_ptr New_stack( const vfs::node*     parent,
+	                         const plus::string&  name,
+	                         const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

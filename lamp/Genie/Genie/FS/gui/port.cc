@@ -42,7 +42,7 @@ namespace Genie
 	static map_of_ports the_ports;
 	
 	
-	static FSTreePtr port_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr port_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		map_of_ports::const_iterator it;
 		
@@ -50,7 +50,7 @@ namespace Genie
 		
 		if ( it == the_ports.end() )
 		{
-			FSTreePtr port = fixed_dir( parent, name, gui_port_ADDR_Mappings, &remove_port );
+			vfs::node_ptr port = fixed_dir( parent, name, gui_port_ADDR_Mappings, &remove_port );
 			
 			the_ports[ name ] = port.get();
 			
@@ -90,20 +90,20 @@ namespace Genie
 		return port.get();
 	}
 	
-	FSTreePtr new_port()
+	vfs::node_ptr new_port()
 	{
 		const FSTree* parent = gui_port();
 		
-		FSTreePtr port = fixed_dir( parent, "/", gui_port_ADDR_Mappings, &remove_port );
+		vfs::node_ptr port = fixed_dir( parent, "/", gui_port_ADDR_Mappings, &remove_port );
 		
 		the_ports[ port->name() ] = port.get();
 		
 		return port;
 	}
 	
-	FSTreePtr new_gui_port( const FSTree*        parent,
-	                        const plus::string&  name,
-	                        const void*          args )
+	vfs::node_ptr new_gui_port( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          args )
 	{
 		return new_basic_directory( parent, name, port_lookup, port_iterate );
 	}

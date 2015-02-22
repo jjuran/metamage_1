@@ -82,9 +82,9 @@ namespace Genie
 		&gdev_main_link_methods
 	};
 	
-	static FSTreePtr gdev_main_factory( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	static vfs::node_ptr gdev_main_factory( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		if ( !MacFeatures::Has_ColorQuickdraw() )
 		{

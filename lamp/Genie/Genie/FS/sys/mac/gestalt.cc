@@ -64,7 +64,7 @@ namespace Genie
 		return mac::sys::gestalt_defined( decoded );
 	}
 	
-	static FSTreePtr gestalt_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr gestalt_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !is_valid_Gestalt_Selector_name( name ) )
 		{
@@ -124,9 +124,9 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_gestalt( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
 		return new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
 	}

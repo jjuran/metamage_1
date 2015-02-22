@@ -146,9 +146,9 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr gate_factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	static vfs::node_ptr gate_factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return new FSTree( parent, name, S_IFREG | 0400, &textedit_gate_methods );
 	}
@@ -226,9 +226,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_textedit( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_new_textedit( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

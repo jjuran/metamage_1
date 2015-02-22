@@ -444,18 +444,18 @@ namespace Genie
 	
 	
 	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	static vfs::node_ptr Trigger_Factory( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		WindowRef key = GetKeyFromParent( parent );
 		
 		return new Trigger( parent, name, key );
 	}
 	
-	static FSTreePtr window_trigger_factory( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	static vfs::node_ptr window_trigger_factory( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
 		const WindowRef window = GetKeyFromParent( parent );
 		

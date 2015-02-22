@@ -348,9 +348,9 @@ namespace Genie
 		&button_stream_data_methods
 	};
 	
-	static FSTreePtr button_stream_factory( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	static vfs::node_ptr button_stream_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
 		return new FSTree( parent, name, S_IFREG | 0400, &button_stream_methods );
 	}
@@ -385,9 +385,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_button( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	vfs::node_ptr New_FSTree_new_button( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

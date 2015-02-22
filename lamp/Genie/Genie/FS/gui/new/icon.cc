@@ -164,9 +164,9 @@ namespace Genie
 		
 	}
 	
-	static FSTreePtr Data_Factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	static vfs::node_ptr Data_Factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		boost::intrusive_ptr< IconData >& data = gIconMap[ parent ].data;
 		
@@ -202,9 +202,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_icon( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	vfs::node_ptr New_FSTree_new_icon( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

@@ -92,9 +92,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr GetRsrcForkFSTree( const FSSpec& file )
+	vfs::node_ptr GetRsrcForkFSTree( const FSSpec& file )
 	{
-		FSTreePtr parent = FSTreeFromFSSpec( file );
+		vfs::node_ptr parent = FSTreeFromFSSpec( file );
 		
 		FSTree* result = new FSTree( parent.get(),
 		                             "rsrc",

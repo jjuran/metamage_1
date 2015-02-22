@@ -59,9 +59,9 @@ namespace Genie
 	
 	static void resfile_dir_remove( const FSTree* that );
 	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        that,
-	                                     const plus::string&  name,
-	                                     const FSTree*        parent );
+	static vfs::node_ptr resfile_dir_lookup( const vfs::node*     that,
+	                                         const plus::string&  name,
+	                                         const vfs::node*     parent );
 	
 	static void resfile_dir_listdir( const FSTree*       that,
 	                                 vfs::dir_contents&  cache );
@@ -172,9 +172,9 @@ namespace Genie
 		                     Mac::smSystemScript );
 	}
 	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        that,
-	                                     const plus::string&  name,
-	                                     const FSTree*        parent )
+	static vfs::node_ptr resfile_dir_lookup( const vfs::node*     that,
+	                                         const plus::string&  name,
+	                                         const vfs::node*     parent )
 	{
 		if ( !exists( *that ) )
 		{
@@ -195,9 +195,9 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Get_ResFileDir_FSTree( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const FSSpec&        file )
+	vfs::node_ptr Get_ResFileDir_FSTree( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const FSSpec&        file )
 	{
 		const bool exists = ResFile_dir_exists( file );
 		

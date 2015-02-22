@@ -96,9 +96,9 @@ namespace Genie
 		cache.push_back( vfs::dir_entry( inode, name ) );
 	}
 	
-	static FSTreePtr proc_fd_lookup( const FSTree*        that,
-	                                 const plus::string&  name,
-	                                 const FSTree*        parent );
+	static vfs::node_ptr proc_fd_lookup( const vfs::node*     that,
+	                                     const plus::string&  name,
+	                                     const vfs::node*     parent );
 	
 	static void proc_fd_listdir( const FSTree* that, vfs::dir_contents& cache )
 	{
@@ -126,7 +126,7 @@ namespace Genie
 	
 	static off_t proc_fd_link_geteof( const FSTree* that );
 	
-	static FSTreePtr proc_fd_link_resolve( const FSTree* that );
+	static vfs::node_ptr proc_fd_link_resolve( const vfs::node* that );
 	
 	static const vfs::data_method_set proc_fd_link_data_methods =
 	{
@@ -148,7 +148,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr proc_link_resolve( const FSTree* that )
+	static vfs::node_ptr proc_link_resolve( const vfs::node* that )
 	{
 		const pid_t pid = GetKeyFromParent( that->owner() );
 		
@@ -218,7 +218,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr proc_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr proc_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( name == "self" )
 		{
@@ -487,16 +487,16 @@ namespace Genie
 		}
 	};
 	
-	static FSTreePtr fd_Factory( const FSTree*        parent,
-	                             const plus::string&  name,
-	                             const void*          args )
+	static vfs::node_ptr fd_Factory( const vfs::node*     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args )
 	{
 		return new FSTree( parent, name, S_IFDIR | 0700, &proc_fd_methods );
 	}
 	
-	static FSTreePtr link_factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	static vfs::node_ptr link_factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return new FSTree( parent, name, S_IFLNK | 0777, &proc_link_methods );
 	}
@@ -529,9 +529,9 @@ namespace Genie
 		&proc_pid_core_item_methods,
 	};
 	
-	static FSTreePtr core_Factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	static vfs::node_ptr core_Factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
 		return new FSTree( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
@@ -561,9 +561,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	static FSTreePtr proc_fd_lookup( const FSTree*        that,
-	                                 const plus::string&  name,
-	                                 const FSTree*        parent )
+	static vfs::node_ptr proc_fd_lookup( const vfs::node*     that,
+	                                     const plus::string&  name,
+	                                     const vfs::node*     parent )
 	{
 		const int key = gear::parse_unsigned_decimal( name.c_str() );
 		
@@ -629,14 +629,14 @@ namespace Genie
 		return fh;
 	}
 	
-	static FSTreePtr proc_fd_link_resolve( const FSTree* that )
+	static vfs::node_ptr proc_fd_link_resolve( const FSTree* that )
 	{
 		return get_file( *get_proc_fd_handle( that ) );
 	}
 	
-	FSTreePtr New_FSTree_proc( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args )
+	vfs::node_ptr New_FSTree_proc( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return new_basic_directory( parent, name, proc_lookup, proc_iterate );
 	}

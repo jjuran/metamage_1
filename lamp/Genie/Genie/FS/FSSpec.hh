@@ -11,8 +11,8 @@
 #include "Mac/Files/Types/FSDirSpec.hh"
 #endif
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 // Files.h
 struct FSSpec;
@@ -25,7 +25,7 @@ namespace Genie
 	
 	Mac::FSDirSpec Dir_From_FSSpec( const FSSpec& dir );
 	
-	FSTreePtr FSTreeFromFSSpec( const FSSpec& item );
+	vfs::node_ptr FSTreeFromFSSpec( const FSSpec& item );
 	
 	vfs::node_ptr node_from_dirID( short vRefNum, long dirID );
 	

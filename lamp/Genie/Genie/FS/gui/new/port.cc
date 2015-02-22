@@ -29,7 +29,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr new_port_opendir( const FSTree* that )
 	{
-		FSTreePtr dir = new_port();
+		vfs::node_ptr dir = new_port();
 		
 		return new vfs::dir_handle( dir.get(), &remove_port_file );
 	}
@@ -51,9 +51,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_new_port( const FSTree*        parent,
-	                        const plus::string&  name,
-	                        const void*          args )
+	vfs::node_ptr New_new_port( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          args )
 	{
 		return new FSTree( parent, name, S_IFDIR | 0100, &new_port_methods );
 	}

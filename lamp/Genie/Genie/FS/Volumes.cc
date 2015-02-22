@@ -82,7 +82,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr volumes_link_resolve( const FSTree* that )
+	static vfs::node_ptr volumes_link_resolve( const vfs::node* that )
 	{
 		// Convert UTF-8 to MacRoman, ':' to '/'
 		plus::var_string mac_name = slashes_from_colons( plus::mac_from_utf8( that->name() ) );
@@ -110,9 +110,9 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr volumes_lookup( const FSTree*        that,
-	                                 const plus::string&  name,
-	                                 const FSTree*        parent )
+	static vfs::node_ptr volumes_lookup( const vfs::node*     that,
+	                                     const plus::string&  name,
+	                                     const vfs::node*     parent )
 	{
 		return new FSTree( parent,
 		                   name,
@@ -180,9 +180,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Volumes( const FSTree*        parent,
-	                              const plus::string&  name,
-	                              const void*          args )
+	vfs::node_ptr New_FSTree_Volumes( const vfs::node*     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		return new FSTree( parent,
 		                   name,

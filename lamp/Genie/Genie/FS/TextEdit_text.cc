@@ -194,9 +194,9 @@ namespace Genie
 		&textedit_text_data_methods
 	};
 	
-	FSTreePtr New_FSTree_TextEdit_text( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          args )
+	vfs::node_ptr New_FSTree_TextEdit_text( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          args )
 	{
 		return new FSTree( parent, name, S_IFREG | 0600, &textedit_text_methods );
 	}

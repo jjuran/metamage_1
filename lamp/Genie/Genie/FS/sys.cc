@@ -87,7 +87,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static FSTreePtr syscall_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr syscall_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( LookUpSystemCallByName( name.c_str() ) == NULL )
 		{
@@ -109,9 +109,9 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr New_sys_kernel_syscall( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	static vfs::node_ptr New_sys_kernel_syscall( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
 		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
 	}

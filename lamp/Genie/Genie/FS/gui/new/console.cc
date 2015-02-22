@@ -390,8 +390,8 @@ namespace Genie
 	class ConsoleTTYHandle : public vfs::filehandle
 	{
 		private:
-			FSTreePtr  itsTTYFile;
-			unsigned   itsID;
+			vfs::node_ptr  itsTTYFile;
+			unsigned       itsID;
 			
 			const FSTree* ViewKey() const;
 		
@@ -861,9 +861,9 @@ namespace Genie
 		&console_tty_data_methods
 	};
 	
-	static FSTreePtr console_tty_factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr console_tty_factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
 		return new FSTree( parent, name, S_IFCHR | 0600, &console_tty_methods );
 	}
@@ -916,9 +916,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_console( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_new_console( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

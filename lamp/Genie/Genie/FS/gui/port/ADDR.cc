@@ -522,7 +522,7 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr focus_resolve( const FSTree* that )
+	static vfs::node_ptr focus_resolve( const vfs::node* that )
 	{
 		if ( const FSTree* focus = gWindowParametersMap[ that->owner() ].itsFocus )
 		{
@@ -993,9 +993,9 @@ namespace Genie
 		&unwindow_data_methods
 	};
 	
-	static FSTreePtr new_lock( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args )
+	static vfs::node_ptr new_lock( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		const bool exists = port_is_locked( parent );
 		
@@ -1005,9 +1005,9 @@ namespace Genie
 		return new FSTree( parent, name, mode, &lock_methods );
 	}
 	
-	static FSTreePtr new_window( const FSTree*        parent,
-	                             const plus::string&  name,
-	                             const void*          args )
+	static vfs::node_ptr new_window( const vfs::node*     parent,
+	                                 const plus::string&  name,
+	                                 const void*          args )
 	{
 		const bool exists = port_has_window( parent );
 		
@@ -1021,9 +1021,9 @@ namespace Genie
 		return new FSTree( parent, name, mode, &methods );
 	}
 	
-	static FSTreePtr new_focus( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const void*          args )
+	static vfs::node_ptr new_focus( const vfs::node*     parent,
+	                                const plus::string&  name,
+	                                const void*          args )
 	{
 		const bool exists = gWindowParametersMap[ parent ].itsFocus != NULL;
 		
@@ -1036,9 +1036,9 @@ namespace Genie
 		return new FSTree( parent, name, mode, methods );
 	}
 	
-	static FSTreePtr new_gesture( const FSTree*        parent,
-	                              const plus::string&  name,
-	                              const void*          args )
+	static vfs::node_ptr new_gesture( const vfs::node*     parent,
+	                                  const plus::string&  name,
+	                                  const void*          args )
 	{
 		const FSTree* view = parent;
 		
@@ -1054,16 +1054,16 @@ namespace Genie
 		return new FSTree( parent, name, 0, &ungesture_methods );
 	}
 	
-	static FSTreePtr new_tty( const FSTree*        parent,
-	                          const plus::string&  name,
-	                          const void*          args )
+	static vfs::node_ptr new_tty( const vfs::node*     parent,
+	                              const plus::string&  name,
+	                              const void*          args )
 	{
 		return new FSTree( parent, name, S_IFCHR | 0600, &port_tty_methods );
 	}
 	
-	static FSTreePtr new_port_property( const FSTree*        parent,
-	                                    const plus::string&  name,
-	                                    const void*          params_ )
+	static vfs::node_ptr new_port_property( const vfs::node*     parent,
+	                                        const plus::string&  name,
+	                                        const void*          params_ )
 	{
 		const port_property_params& params = *(const port_property_params*) params_;
 		

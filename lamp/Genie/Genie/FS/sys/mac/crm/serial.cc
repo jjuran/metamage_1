@@ -72,7 +72,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[];
 	
-	static FSTreePtr serial_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr serial_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		const N::CRMDeviceID key = N::CRMDeviceID( gear::parse_decimal( name.c_str() ) );
 		
@@ -194,9 +194,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_crm_serial( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
 		return new_basic_directory( parent, name, serial_lookup, serial_iterate );
 	}

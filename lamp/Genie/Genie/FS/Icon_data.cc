@@ -593,9 +593,9 @@ namespace Genie
 	};
 	
 	
-	FSTreePtr New_FSTree_Icon_data( const FSTree*                            parent,
-	                                const plus::string&                      name,
-	                                const boost::intrusive_ptr< IconData >&  data )
+	vfs::node_ptr New_FSTree_Icon_data( const vfs::node*                         parent,
+	                                    const plus::string&                      name,
+	                                    const boost::intrusive_ptr< IconData >&  data )
 	{
 		ASSERT( data.get() != NULL );
 		

@@ -10,7 +10,7 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTreePtr.hh"
+#include "Genie/FS/FSTree_fwd.hh"
 
 
 namespace Genie
