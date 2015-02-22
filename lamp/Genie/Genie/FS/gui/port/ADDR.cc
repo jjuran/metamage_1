@@ -255,17 +255,13 @@ namespace Genie
 	}
 	
 	
-	static bool port_is_locked( const FSTreePtr& port )
+	static bool port_is_locked( const FSTree* key )
 	{
-		const FSTree* key = port.get();
-		
 		return gWindowParametersMap[ key ].itIsLocked;
 	}
 	
-	static bool port_has_window( const FSTreePtr& port )
+	static bool port_has_window( const FSTree* key )
 	{
-		const FSTree* key = port.get();
-		
 		return gWindowParametersMap[ key ].itsWindow.get() != NULL;
 	}
 	
