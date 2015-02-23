@@ -32,6 +32,7 @@
 #include "vfs/filehandle.hh"
 #include "vfs/file_descriptor.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/geteof.hh"
 #include "vfs/filehandle/primitives/getpgrp.hh"
@@ -60,7 +61,6 @@
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -477,7 +477,7 @@ namespace Genie
 		}
 	};
 	
-	struct proc_PID_name : readonly_property
+	struct proc_PID_name : vfs::readonly_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -536,7 +536,7 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFREG | 0600, &proc_pid_core_methods );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define GENERATED( gen )  &vfs::new_generated, (void*) &proc_PID_Property< gen >::Read
 	

@@ -7,6 +7,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -68,7 +69,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_Mappings[] =
 	{

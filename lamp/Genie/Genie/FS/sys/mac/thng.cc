@@ -27,6 +27,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -37,7 +38,6 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
 
@@ -264,7 +264,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_thng_REF_code : readonly_property
+	struct sys_mac_thng_REF_code : vfs::readonly_property
 	{
 		static const int fixed_size = sizeof (::OSType);
 		
@@ -302,7 +302,7 @@ namespace Genie
 		return plus::string( result );
 	}
 	
-	struct sys_mac_thng_REF_name : readonly_property
+	struct sys_mac_thng_REF_name : vfs::readonly_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -316,7 +316,7 @@ namespace Genie
 		}
 	};
 	
-	struct sys_mac_thng_REF_info : readonly_property
+	struct sys_mac_thng_REF_info : vfs::readonly_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -394,7 +394,7 @@ namespace Genie
 		return New_FSTree_IconSuite( parent, name, iconSuite );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_thng_REF_Mappings[] =
 	{

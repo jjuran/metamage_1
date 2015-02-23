@@ -297,7 +297,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Wrapped   > Wrapped_Property;
 	typedef View_Property< plus::serialize_bool, Disabling > Disabling_Property;
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

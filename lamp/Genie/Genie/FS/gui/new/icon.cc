@@ -179,7 +179,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef View_Property< plus::serialize_unsigned< N::IconAlignmentType >, Alignment >  Alignment_Property;
 	typedef View_Property< plus::serialize_unsigned< N::IconTransformType >, Transform >  Transform_Property;

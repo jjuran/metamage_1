@@ -208,7 +208,7 @@ namespace Genie
 	}
 	
 	
-	struct Button_Title : readwrite_property
+	struct Button_Title : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -370,7 +370,7 @@ namespace Genie
 		&button_click_trigger
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

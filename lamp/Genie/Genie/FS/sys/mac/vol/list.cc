@@ -40,6 +40,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/functions/resolve_pathname.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
@@ -54,7 +55,6 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
@@ -384,7 +384,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_mac_vol_N_Property : readonly_property
+	struct sys_mac_vol_N_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -533,7 +533,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_mac_vol_N_Property< access > )
 	

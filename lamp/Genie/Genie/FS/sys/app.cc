@@ -13,11 +13,11 @@
 #include "plus/serialize.hh"
 
 // vfs
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/property.hh"
 #include "Genie/FS/sys/app/cmd.hh"
 #include "Genie/FS/sys/app/dir.hh"
 #include "Genie/FS/sys/app/exe.hh"
@@ -45,7 +45,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_app_Property : readonly_property
+	struct sys_app_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -62,7 +62,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_Property< access > )
 	

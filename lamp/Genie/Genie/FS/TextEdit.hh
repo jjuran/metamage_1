@@ -19,13 +19,15 @@
 #include "Mac/TextEdit/Types/TEHandle.hh"
 #endif
 
+// vfs
+#include "vfs/property.hh"
+
 // Pedestal
 #ifndef PEDESTAL_TEXTEDIT_HH
 #include "Pedestal/TextEdit.hh"
 #endif
 
 // Genie
-#include "Genie/FS/property.hh"
 #include "Genie/FS/ScrollerBase.hh"
 
 
@@ -61,7 +63,7 @@ namespace Genie
 	};
 	
 	
-	struct Selection_Property : readwrite_property
+	struct Selection_Property : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary );
 		

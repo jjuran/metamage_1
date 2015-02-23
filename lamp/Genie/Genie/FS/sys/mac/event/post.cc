@@ -11,11 +11,11 @@
 #include "Nitrogen/Events.hh"
 
 // vfs
+#include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/Trigger.hh"
-#include "Genie/FS/property.hh"
 
 
 namespace Nitrogen
@@ -48,7 +48,7 @@ namespace Genie
 		&sys_mac_event_post_click::trigger
 	};
 	
-	struct sys_mac_event_post_key : writeonly_property
+	struct sys_mac_event_post_key : vfs::writeonly_property
 	{
 		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
@@ -64,7 +64,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_event_post_Mappings[] =
 	{

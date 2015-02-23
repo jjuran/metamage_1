@@ -31,13 +31,13 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Pedestal
 #include "Pedestal/MenuItemCommands.hh"
 
 // Genie
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
@@ -128,7 +128,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_app_menu_list_ID_items_INDEX_Property : readwrite_property
+	struct sys_app_menu_list_ID_items_INDEX_Property : vfs::readwrite_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -166,7 +166,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_ACCESS( access )  PROPERTY( sys_app_menu_list_ID_items_INDEX_Property< access > )
 	

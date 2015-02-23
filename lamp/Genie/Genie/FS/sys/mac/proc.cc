@@ -21,6 +21,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
@@ -29,7 +30,6 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
 
@@ -175,7 +175,7 @@ namespace Genie
 	}
 	
 	
-	class sys_mac_proc_PSN_name : public readonly_property
+	class sys_mac_proc_PSN_name : public vfs::readonly_property
 	{
 		private:
 			typedef ProcessSerialNumber Key;
@@ -229,7 +229,7 @@ namespace Genie
 		return new vfs::node( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[] =
 	{

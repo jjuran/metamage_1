@@ -28,6 +28,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
@@ -36,7 +37,6 @@
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/Trigger.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -185,7 +185,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_mac_drive_N_Property : readonly_property
+	struct sys_mac_drive_N_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -210,7 +210,7 @@ namespace Genie
 		return trigger_factory( parent, name, &extra );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< sys_mac_drive_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_drive_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_drive_N_Mappings[] =
 	{

@@ -6,14 +6,14 @@
 #ifndef GENIE_FS_SYS_MAC_THREAD_DEFAULTSTACKSIZE_HH
 #define GENIE_FS_SYS_MAC_THREAD_DEFAULTSTACKSIZE_HH
 
-// Genie
-#include "Genie/FS/property.hh"
+// vfs
+#include "vfs/property.hh"
 
 
 namespace Genie
 {
 	
-	struct sys_mac_thread_defaultstacksize : readonly_property
+	struct sys_mac_thread_defaultstacksize : vfs::readonly_property
 	{
 		static const int fixed_size = 4;
 		

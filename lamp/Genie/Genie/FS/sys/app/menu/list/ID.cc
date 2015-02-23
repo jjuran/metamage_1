@@ -29,10 +29,10 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/app/menu/list/ID/items.hh"
@@ -69,7 +69,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_app_menu_list_ID_Property : readwrite_property
+	struct sys_app_menu_list_ID_Property : vfs::readwrite_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -103,7 +103,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef sys_app_menu_list_ID_Property< menu_title > sys_app_menu_list_ID_title;
 	

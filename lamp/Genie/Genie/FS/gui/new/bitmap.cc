@@ -467,7 +467,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct BitMap_Property : readwrite_property
+	struct BitMap_Property : vfs::readwrite_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -506,7 +506,7 @@ namespace Genie
 		return new vfs::node( parent, name, mode, &bitmap_bits_methods );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< BitMap_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< BitMap_Property< prop > >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

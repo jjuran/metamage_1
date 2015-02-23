@@ -321,7 +321,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef List_Property< plus::serialize_bool, Overlap >  Overlap_Property;
 	

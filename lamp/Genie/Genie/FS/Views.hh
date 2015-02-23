@@ -11,10 +11,8 @@
 
 // vfs
 #include "vfs/node_ptr.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
-
-// Genie
-#include "Genie/FS/property.hh"
 
 
 namespace Pedestal
@@ -43,7 +41,7 @@ namespace Genie
 	
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct Const_View_Property : readonly_property
+	struct Const_View_Property : vfs::readonly_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -56,7 +54,7 @@ namespace Genie
 	};
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
-	struct View_Property : readwrite_property
+	struct View_Property : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{

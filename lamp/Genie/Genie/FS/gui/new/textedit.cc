@@ -181,7 +181,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
 	

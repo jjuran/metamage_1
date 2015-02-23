@@ -809,7 +809,7 @@ namespace Genie
 	}
 	
 	
-	struct Window_Title : readwrite_property
+	struct Window_Title : vfs::readwrite_property
 	{
 		static const int fixed_size = -1;
 		
@@ -827,7 +827,7 @@ namespace Genie
 	};
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( WindowParameters& ) >
-	struct Window_Property : readwrite_property
+	struct Window_Property : vfs::readwrite_property
 	{
 		static const int fixed_size = Serialize::fixed_size;
 		
@@ -892,8 +892,8 @@ namespace Genie
 	
 	struct port_property_params
 	{
-		const property_params  _;
-		const bool             is_mutable;
+		const vfs::property_params  _;
+		const bool                  is_mutable;
 	};
 	
 	template < class Property, bool variable >

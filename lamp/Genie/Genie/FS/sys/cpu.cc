@@ -28,10 +28,8 @@
 #include "plus/var_string.hh"
 
 // vfs
+#include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
-
-// Genie
-#include "Genie/FS/property.hh"
 
 
 #if UNIVERSAL_INTERFACES_VERSION <= 0x0342
@@ -179,7 +177,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_cpu_Property : readonly_property
+	struct sys_cpu_Property : vfs::readonly_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -187,7 +185,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_cpu_Mappings[] =
 	{

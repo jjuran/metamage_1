@@ -48,6 +48,7 @@
 
 // vfs
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Pedestal
@@ -58,7 +59,6 @@
 
 // Genie
 #include "Genie/FS/Trigger.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -399,7 +399,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct sys_app_window_list_REF_Const_Property : readonly_property
+	struct sys_app_window_list_REF_Const_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -467,7 +467,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
 	

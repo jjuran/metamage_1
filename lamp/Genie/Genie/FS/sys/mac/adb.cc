@@ -35,6 +35,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -42,7 +43,6 @@
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/property.hh"
 
 
 namespace Genie
@@ -127,7 +127,7 @@ namespace Genie
 		                converter );
 	}
 	
-	class sys_mac_adb_N_type : public readonly_property
+	class sys_mac_adb_N_type : public vfs::readonly_property
 	{
 		private:
 			typedef N::ADBAddress Key;
@@ -145,7 +145,7 @@ namespace Genie
 			}
 	};
 	
-	class sys_mac_adb_N_origin : public readonly_property
+	class sys_mac_adb_N_origin : public vfs::readonly_property
 	{
 		private:
 			typedef N::ADBAddress Key;
@@ -202,7 +202,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_adb_N_Mappings[] =
 	{

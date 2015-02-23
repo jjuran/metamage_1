@@ -368,8 +368,8 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY_VALUE( access )  &vfs::new_property, &property_params_factory< Frame_Property<       serialize_Value,      access > >::value
-	#define PROPERTY_INT(   access )  &vfs::new_property, &property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
+	#define PROPERTY_VALUE( access )  &vfs::new_property, &vfs::property_params_factory< Frame_Property<       serialize_Value,      access > >::value
+	#define PROPERTY_INT(   access )  &vfs::new_property, &vfs::property_params_factory< Frame_Property< plus::serialize_int< int >, access > >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

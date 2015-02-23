@@ -491,7 +491,7 @@ namespace Genie
 	}
 	
 	template < class Accessor >
-	struct PixMap_Property : readwrite_property
+	struct PixMap_Property : vfs::readwrite_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -520,7 +520,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< PixMap_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< PixMap_Property< prop > >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{

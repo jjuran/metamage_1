@@ -40,6 +40,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
@@ -48,7 +49,6 @@
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
@@ -159,7 +159,7 @@ namespace Genie
 	}
 	
 	
-	struct resource_name : readwrite_property
+	struct resource_name : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -368,11 +368,11 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		typedef property_params_factory<                     resource_name   > mac_factory;
-		typedef property_params_factory< utf8_text_property< resource_name > > utf8_factory;
+		typedef vfs::property_params_factory<                     resource_name   > mac_factory;
+		typedef vfs::property_params_factory< utf8_text_property< resource_name > > utf8_factory;
 		
-		const property_params& params = mac ? mac_factory ::value
-		                                    : utf8_factory::value;
+		const vfs::property_params& params = mac ? mac_factory ::value
+		                                         : utf8_factory::value;
 		
 		return vfs::new_property( that, name, &params );
 	}

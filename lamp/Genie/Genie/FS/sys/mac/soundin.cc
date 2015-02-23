@@ -25,6 +25,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -32,7 +33,6 @@
 // Genie
 #include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -146,7 +146,7 @@ namespace Genie
 		return plus::string( result );
 	}
 	
-	struct sys_mac_soundin_REF_name : readonly_property
+	struct sys_mac_soundin_REF_name : vfs::readonly_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -185,7 +185,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_soundin_REF_Mappings[] =
 	{

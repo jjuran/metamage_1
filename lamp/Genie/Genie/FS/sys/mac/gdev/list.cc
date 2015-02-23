@@ -30,13 +30,13 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
@@ -160,7 +160,7 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_gdev_list_N_Property : readonly_property
+	struct sys_mac_gdev_list_N_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
@@ -189,7 +189,7 @@ namespace Genie
 		return vfs::new_symbolic_link( parent, name, unit );
 	}
 	
-	#define PROPERTY( prop )  &vfs::new_property, &property_params_factory< sys_mac_gdev_list_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_gdev_list_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_gdev_list_H_Mappings[] =
 	{
