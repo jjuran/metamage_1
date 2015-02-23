@@ -16,6 +16,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -37,7 +38,6 @@
 
 // Genie
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -61,7 +61,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, ListParameters > ListParameterMap;
+	typedef plus::simple_map< const vfs::node*, ListParameters > ListParameterMap;
 	
 	static ListParameterMap gListParameterMap;
 	

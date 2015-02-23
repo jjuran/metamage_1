@@ -7,6 +7,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
@@ -25,7 +26,6 @@
 // Genie
 #include "Genie/FS/Icon_data.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Nitrogen
@@ -56,7 +56,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, Icon_Parameters > IconMap;
+	typedef plus::simple_map< const vfs::node*, Icon_Parameters > IconMap;
 	
 	static IconMap gIconMap;
 	

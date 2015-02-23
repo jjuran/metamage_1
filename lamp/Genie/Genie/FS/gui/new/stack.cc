@@ -11,6 +11,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// plus
+#include "plus/simple_map.hh"
+
 // Pedestal
 #include "Pedestal/Stack.hh"
 
@@ -26,7 +29,6 @@
 
 // Genie
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 /*
@@ -105,7 +107,7 @@ namespace Genie
 		return v.back();
 	}
 	
-	typedef simple_map< const vfs::node*, Stack_Parameters > Stack_Parameters_Map;
+	typedef plus::simple_map< const vfs::node*, Stack_Parameters > Stack_Parameters_Map;
 	
 	static Stack_Parameters_Map gStack_Parameters_Map;
 	

@@ -21,6 +21,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/simple_map.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -42,7 +43,6 @@
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -53,7 +53,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef simple_map< const vfs::node*, TextEditParameters > TextEditParametersMap;
+	typedef plus::simple_map< const vfs::node*, TextEditParameters > TextEditParametersMap;
 	
 	static TextEditParametersMap gTextEditParametersMap;
 	

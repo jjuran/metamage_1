@@ -15,6 +15,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
 // vfs
@@ -32,7 +33,6 @@
 
 // Genie
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -53,7 +53,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, CaptionParameters > CaptionParametersMap;
+	typedef plus::simple_map< const vfs::node*, CaptionParameters > CaptionParametersMap;
 	
 	static CaptionParametersMap gCaptionParametersMap;
 	

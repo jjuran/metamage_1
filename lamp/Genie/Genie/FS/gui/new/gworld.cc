@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -40,7 +41,6 @@
 // Genie
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -68,7 +68,7 @@ namespace Genie
 		n::shared< GWorldPtr >          gworld;
 	};
 	
-	typedef simple_map< const vfs::node*, GWorld_Parameters > GWorldMap;
+	typedef plus::simple_map< const vfs::node*, GWorld_Parameters > GWorldMap;
 	
 #if CONFIG_GUI_NEW_GWORLD
 	

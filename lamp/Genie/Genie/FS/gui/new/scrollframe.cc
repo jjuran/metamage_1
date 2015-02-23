@@ -10,6 +10,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // Nitrogen
 #include "Nitrogen/Controls.hh"
@@ -37,7 +38,6 @@
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/TrackScrollbar.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -72,7 +72,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, ScrollFrameParameters > ScrollFrameParametersMap;
+	typedef plus::simple_map< const vfs::node*, ScrollFrameParameters > ScrollFrameParametersMap;
 	
 	static ScrollFrameParametersMap gScrollFrameParametersMap;
 	

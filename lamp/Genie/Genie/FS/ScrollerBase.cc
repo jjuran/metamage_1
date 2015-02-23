@@ -5,8 +5,8 @@
 
 #include "Genie/FS/ScrollerBase.hh"
 
-// Genie
-#include "Genie/Utilities/simple_map.hh"
+// plus
+#include "plus/simple_map.hh"
 
 
 namespace Genie
@@ -15,7 +15,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef simple_map< const vfs::node*, ScrollerParameters > ScrollerParametersMap;
+	typedef plus::simple_map< const vfs::node*, ScrollerParameters > ScrollerParametersMap;
 	
 	static ScrollerParametersMap gScrollerParametersMap;
 	

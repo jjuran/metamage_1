@@ -19,6 +19,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// plus
+#include "plus/simple_map.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -49,7 +52,6 @@
 #include "Genie/api/yield.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -79,7 +81,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, Button_Parameters > ButtonMap;
+	typedef plus::simple_map< const vfs::node*, Button_Parameters > ButtonMap;
 	
 	static ButtonMap gButtonMap;
 	

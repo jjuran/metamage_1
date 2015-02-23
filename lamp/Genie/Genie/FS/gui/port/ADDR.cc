@@ -20,6 +20,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/string/concat.hh"
 
 // nucleus
@@ -71,7 +72,6 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -126,7 +126,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, WindowParameters > WindowParametersMap;
+	typedef plus::simple_map< const vfs::node*, WindowParameters > WindowParametersMap;
 	
 	static WindowParametersMap gWindowParametersMap;
 	

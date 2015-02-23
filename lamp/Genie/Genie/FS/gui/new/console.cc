@@ -35,6 +35,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -72,7 +73,6 @@
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -120,7 +120,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, ConsoleParameters > ConsoleParametersMap;
+	typedef plus::simple_map< const vfs::node*, ConsoleParameters > ConsoleParametersMap;
 	
 	static ConsoleParametersMap gConsoleParametersMap;
 	

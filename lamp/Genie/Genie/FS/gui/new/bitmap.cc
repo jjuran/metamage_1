@@ -11,6 +11,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // nucleus
 #include "nucleus/shared.hh"
@@ -42,7 +43,6 @@
 // Genie
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -68,7 +68,7 @@ namespace Genie
 		BitMap               bitmap;
 	};
 	
-	typedef simple_map< const vfs::node*, BitMap_Parameters > BitMapMap;
+	typedef plus::simple_map< const vfs::node*, BitMap_Parameters > BitMapMap;
 	
 	static BitMapMap gBitMapMap;
 	

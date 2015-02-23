@@ -17,6 +17,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
@@ -33,7 +34,6 @@
 // Genie
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -122,7 +122,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, FrameParameters > FrameParametersMap;
+	typedef plus::simple_map< const vfs::node*, FrameParameters > FrameParametersMap;
 	
 	static FrameParametersMap gFrameParametersMap;
 	

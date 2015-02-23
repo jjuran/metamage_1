@@ -23,10 +23,13 @@
 // Debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/simple_map.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// PEdestal
+// Pedestal
 #include "Pedestal/EmptyView.hh"
 
 // vfs
@@ -43,7 +46,6 @@
 
 // Genie
 #include "Genie/FS/gui/port/ADDR.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -76,7 +78,7 @@ namespace Genie
 		swap( itsWindowKey, other.itsWindowKey );
 	}
 	
-	typedef simple_map< const vfs::node*, ViewParameters > ViewParametersMap;
+	typedef plus::simple_map< const vfs::node*, ViewParameters > ViewParametersMap;
 	
 	static ViewParametersMap gViewParametersMap;
 	

@@ -7,6 +7,7 @@
 
 // plus
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -30,7 +31,6 @@
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/subview.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -50,7 +50,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const vfs::node*, BasicScrollerParameters > BasicScrollerParametersMap;
+	typedef plus::simple_map< const vfs::node*, BasicScrollerParameters > BasicScrollerParametersMap;
 	
 	static BasicScrollerParametersMap  gBasicScrollerParametersMap;
 	
