@@ -24,6 +24,7 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // vfs-relix
@@ -33,7 +34,6 @@
 #include "relix/syscall/registry.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
@@ -113,7 +113,7 @@ namespace Genie
 	                                             const plus::string&  name,
 	                                             const void*          args )
 	{
-		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
+		return vfs::new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
 	}
 	
 	

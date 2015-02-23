@@ -44,6 +44,7 @@
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
@@ -60,7 +61,6 @@
 #include "relix/task/session.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
@@ -638,7 +638,7 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		return new_basic_directory( parent, name, proc_lookup, proc_iterate );
+		return vfs::new_basic_directory( parent, name, proc_lookup, proc_iterate );
 	}
 	
 }

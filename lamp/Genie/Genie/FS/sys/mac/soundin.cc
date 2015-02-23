@@ -26,12 +26,12 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSTree_IconSuite.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -200,7 +200,7 @@ namespace Genie
 	                                          const plus::string&  name,
 	                                          const void*          args )
 	{
-		return new_basic_directory( parent, name, soundin_Lookup, soundin_Iterate );
+		return vfs::new_basic_directory( parent, name, soundin_Lookup, soundin_Iterate );
 	}
 	
 }

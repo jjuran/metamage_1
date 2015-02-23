@@ -34,10 +34,8 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
-
-// Genie
-#include "Genie/FS/basic_directory.hh"
 
 
 namespace Genie
@@ -128,7 +126,7 @@ namespace Genie
 	                                          const plus::string&  name,
 	                                          const void*          args )
 	{
-		return new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
+		return vfs::new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
 	}
 	
 }

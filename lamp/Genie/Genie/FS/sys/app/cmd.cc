@@ -26,11 +26,11 @@
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/ProcessList.hh"
-#include "Genie/FS/basic_directory.hh"
 
 
 namespace Genie
@@ -167,7 +167,7 @@ namespace Genie
 	                                      const plus::string&  name,
 	                                      const void*          args )
 	{
-		return new_basic_directory( parent, name, cmd_lookup, cmd_iterate );
+		return vfs::new_basic_directory( parent, name, cmd_lookup, cmd_iterate );
 	}
 	
 }

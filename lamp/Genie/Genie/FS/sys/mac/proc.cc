@@ -24,11 +24,11 @@
 #include "vfs/property.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
@@ -246,7 +246,7 @@ namespace Genie
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
-		return new_basic_directory( parent, name, psn_lookup, psn_iterate );
+		return vfs::new_basic_directory( parent, name, psn_lookup, psn_iterate );
 	}
 	
 }

@@ -22,12 +22,12 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_pathname.hh"
+#include "vfs/node/types/basic_directory.hh"
 
 // relix-kernel
 #include "relix/api/root.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 
 
@@ -105,7 +105,7 @@ namespace Genie
 	                            const plus::string&  name,
 	                            const void*          args )
 	{
-		return new_basic_directory( parent, name, port_lookup, port_iterate );
+		return vfs::new_basic_directory( parent, name, port_lookup, port_iterate );
 	}
 	
 }

@@ -28,10 +28,10 @@
 #include "vfs/node_ptr.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/generated_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -218,7 +218,7 @@ namespace Genie
 	                                                                const plus::string&  name,
 	                                                                const void*          args )
 	{
-		return new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
+		return vfs::new_basic_directory( parent, name, appl_QUAD_list_lookup, appl_QUAD_list_iterate );
 	}
 	
 	extern const vfs::fixed_mapping sys_mac_vol_list_N_dt_appls_QUAD_Mappings[];
@@ -342,14 +342,14 @@ namespace Genie
 	{
 		validate_quad_name( name );
 		
-		return new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
+		return vfs::new_basic_directory( parent, name, icon_QUAD_QUAD_lookup, icon_QUAD_QUAD_iterate );
 	}
 	
 	static vfs::node_ptr icon_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		validate_quad_name( name );
 		
-		return new_basic_directory( parent, name, icon_QUAD_lookup, NULL );
+		return vfs::new_basic_directory( parent, name, icon_QUAD_lookup, NULL );
 	}
 	
 	static vfs::node_ptr new_sys_mac_vol_list_N_dt_dir( const vfs::node*     parent,
@@ -363,14 +363,14 @@ namespace Genie
 	                                                      const plus::string&  name,
 	                                                      const void*          args )
 	{
-		return new_basic_directory( parent, name, appl_lookup, NULL );
+		return vfs::new_basic_directory( parent, name, appl_lookup, NULL );
 	}
 	
 	static vfs::node_ptr new_sys_mac_vol_list_N_dt_icons( const vfs::node*     parent,
 	                                                      const plus::string&  name,
 	                                                      const void*          args )
 	{
-		return new_basic_directory( parent, name, icon_lookup, NULL );
+		return vfs::new_basic_directory( parent, name, icon_lookup, NULL );
 	}
 	
 	

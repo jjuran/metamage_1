@@ -31,12 +31,12 @@
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
@@ -209,7 +209,7 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new_basic_directory( parent, name, gdev_lookup, gdev_iterate );
+		return vfs::new_basic_directory( parent, name, gdev_lookup, gdev_iterate );
 	}
 	
 }
