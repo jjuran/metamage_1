@@ -23,6 +23,8 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // vfs-relix
@@ -32,8 +34,6 @@
 #include "relix/syscall/registry.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/sys/app.hh"
 #include "Genie/FS/sys/cpu.hh"
 #include "Genie/FS/sys/mac.hh"
@@ -87,7 +87,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	static FSTreePtr syscall_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr syscall_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( LookUpSystemCallByName( name.c_str() ) == NULL )
 		{
@@ -97,7 +97,7 @@ namespace Genie
 		return fixed_dir( parent, name );
 	}
 	
-	static void syscall_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void syscall_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		for ( int i = 0;  i < relix::the_last_syscall;  ++i )
 		{
@@ -109,11 +109,11 @@ namespace Genie
 		}
 	}
 	
-	static FSTreePtr New_sys_kernel_syscall( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	static vfs::node_ptr New_sys_kernel_syscall( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
-		return new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
+		return vfs::new_basic_directory( parent, name, syscall_lookup, syscall_iterate );
 	}
 	
 	

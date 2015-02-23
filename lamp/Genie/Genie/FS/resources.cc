@@ -40,15 +40,15 @@
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/IO/Handle.hh"
 #include "Genie/Utilities/RdWr_OpenResFile_Scope.hh"
@@ -159,7 +159,7 @@ namespace Genie
 	}
 	
 	
-	struct resource_name : readwrite_property
+	struct resource_name : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
@@ -273,7 +273,7 @@ namespace Genie
 	
 	void Rsrc_IOHandle::FlushResource()
 	{
-		FSTreePtr file = get_file( *this );
+		vfs::node_ptr file = get_file( *this );
 		
 		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
@@ -309,7 +309,7 @@ namespace Genie
 	}
 	
 	
-	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode );
 	
 	static const vfs::data_method_set unrsrc_file_data_methods =
 	{
@@ -323,13 +323,13 @@ namespace Genie
 	};
 	
 	
-	static void rsrc_file_remove( const FSTree* that );
+	static void rsrc_file_remove( const vfs::node* that );
 	
 	static void rsrc_file_rename( const vfs::node* that, const vfs::node* destination );
 	
-	static vfs::filehandle_ptr rsrc_file_open( const FSTree* that, int flags, mode_t mode );
+	static vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mode );
 	
-	static off_t rsrc_file_geteof( const FSTree* that );
+	static off_t rsrc_file_geteof( const vfs::node* that );
 	
 	static vfs::node_ptr rsrc_file_lookup( const vfs::node*     that,
 	                                       const plus::string&  name,
@@ -368,13 +368,13 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		typedef property_params_factory<                     resource_name   > mac_factory;
-		typedef property_params_factory< utf8_text_property< resource_name > > utf8_factory;
+		typedef vfs::property_params_factory<                     resource_name   > mac_factory;
+		typedef vfs::property_params_factory< utf8_text_property< resource_name > > utf8_factory;
 		
-		const property_params& params = mac ? mac_factory ::value
-		                                    : utf8_factory::value;
+		const vfs::property_params& params = mac ? mac_factory ::value
+		                                         : utf8_factory::value;
 		
-		return new_property( that, name, &params );
+		return vfs::new_property( that, name, &params );
 	}
 	
 	static const vfs::item_method_set rsrc_file_item_methods =
@@ -414,7 +414,7 @@ namespace Genie
 		return ::Get1Resource( resSpec.type, resSpec.id ) != NULL;
 	}
 	
-	static void rsrc_file_remove( const FSTree* that )
+	static void rsrc_file_remove( const vfs::node* that )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -465,7 +465,7 @@ namespace Genie
 		N::SetResInfo( r, new_resSpec.id, resInfo.name );
 	}
 	
-	static off_t rsrc_file_geteof( const FSTree* that )
+	static off_t rsrc_file_geteof( const vfs::node* that )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -478,7 +478,7 @@ namespace Genie
 		return N::GetHandleSize( r );
 	}
 	
-	static vfs::filehandle_ptr unrsrc_file_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr unrsrc_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -503,9 +503,9 @@ namespace Genie
 		
 		// that refers to an unrsrc; make a new one that's a live rsrc
 		
-		FSTreePtr new_node = Get_RsrcFile_FSTree( that->owner(),
-		                                          that->name(),
-		                                          fileSpec );
+		vfs::node_ptr new_node = Get_RsrcFile_FSTree( that->owner(),
+		                                              that->name(),
+		                                              fileSpec );
 		
 		that = new_node.get();
 		
@@ -515,7 +515,7 @@ namespace Genie
 		return result;
 	}
 	
-	static vfs::filehandle_ptr rsrc_file_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr rsrc_file_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		const bool writing = flags + (1 - O_RDONLY) & 2;
 		
@@ -535,9 +535,9 @@ namespace Genie
 		return result;
 	}
 	
-	FSTreePtr Get_RsrcFile_FSTree( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const FSSpec&        file )
+	vfs::node_ptr Get_RsrcFile_FSTree( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const FSSpec&        file )
 	{
 		const ResSpec resSpec = GetResSpec_from_name( name );
 		
@@ -549,7 +549,7 @@ namespace Genie
 		const vfs::node_method_set* methods = exists ? &rsrc_file_methods
 		                                             : &unrsrc_file_methods;
 		
-		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
+		vfs::node* result = new vfs::node( parent, name, mode, methods, sizeof (FSSpec) );
 		
 		*(FSSpec*) result->extra() = file;
 		

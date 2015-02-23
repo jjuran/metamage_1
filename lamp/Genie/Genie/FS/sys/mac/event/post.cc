@@ -10,10 +10,10 @@
 
 #include "Nitrogen/Events.hh"
 
-// Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Trigger.hh"
-#include "Genie/FS/property.hh"
+// vfs
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
 
 
 namespace Nitrogen
@@ -34,21 +34,21 @@ namespace Genie
 	
 	struct sys_mac_event_post_click
 	{
-		static void trigger( const FSTree* that )
+		static void trigger( const vfs::node* that )
 		{
 			N::PostEvent( N::mouseDown, 0 );
 			N::PostEvent( N::mouseUp,   0 );
 		}
 	};
 	
-	static const trigger_extra click_extra =
+	static const vfs::trigger_extra click_extra =
 	{
 		&sys_mac_event_post_click::trigger
 	};
 	
-	struct sys_mac_event_post_key : writeonly_property
+	struct sys_mac_event_post_key : vfs::writeonly_property
 	{
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			for ( const char* p = begin;  p != end;  ++p )
 			{
@@ -62,11 +62,11 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_event_post_Mappings[] =
 	{
-		{ "click", &trigger_factory, (void*) &click_extra },
+		{ "click", &vfs::trigger_factory, (void*) &click_extra },
 		
 		{ "key",   PROPERTY( sys_mac_event_post_key ) },
 		

@@ -9,21 +9,21 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr new_port();
+	vfs::node_ptr new_port();
 	
-	void remove_port( const FSTree* port );
+	void remove_port( const vfs::node* port );
 	
 	
-	FSTreePtr new_gui_port( const FSTree*        parent,
-	                        const plus::string&  name,
-	                        const void*          args );
+	vfs::node_ptr new_gui_port( const vfs::node*     parent,
+	                            const plus::string&  name,
+	                            const void*          args );
 	
 }
 

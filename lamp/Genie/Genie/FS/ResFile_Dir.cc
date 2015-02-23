@@ -19,6 +19,7 @@
 #include "Nitrogen/Resources.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/methods/dir_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
@@ -26,7 +27,6 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/resources.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
@@ -39,7 +39,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static void empty_rsrc_fork_mkdir( const FSTree* that, mode_t mode );
+	static void empty_rsrc_fork_mkdir( const vfs::node* that, mode_t mode );
 	
 	static const vfs::dir_method_set empty_rsrc_fork_dir_methods =
 	{
@@ -57,13 +57,13 @@ namespace Genie
 	};
 	
 	
-	static void resfile_dir_remove( const FSTree* that );
+	static void resfile_dir_remove( const vfs::node* that );
 	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        that,
-	                                     const plus::string&  name,
-	                                     const FSTree*        parent );
+	static vfs::node_ptr resfile_dir_lookup( const vfs::node*     that,
+	                                         const plus::string&  name,
+	                                         const vfs::node*     parent );
 	
-	static void resfile_dir_listdir( const FSTree*       that,
+	static void resfile_dir_listdir( const vfs::node*    that,
 	                                 vfs::dir_contents&  cache );
 	
 	static const vfs::item_method_set resfile_dir_item_methods =
@@ -128,7 +128,7 @@ namespace Genie
 		                                                      '.' );
 	}
 	
-	static void resfile_dir_remove( const FSTree* that )
+	static void resfile_dir_remove( const vfs::node* that )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -142,7 +142,7 @@ namespace Genie
 		N::SetEOF( resource_fork, 0 );
 	}
 	
-	static void empty_rsrc_fork_mkdir( const FSTree* that, mode_t mode )
+	static void empty_rsrc_fork_mkdir( const vfs::node* that, mode_t mode )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
@@ -172,9 +172,9 @@ namespace Genie
 		                     Mac::smSystemScript );
 	}
 	
-	static FSTreePtr resfile_dir_lookup( const FSTree*        that,
-	                                     const plus::string&  name,
-	                                     const FSTree*        parent )
+	static vfs::node_ptr resfile_dir_lookup( const vfs::node*     that,
+	                                         const plus::string&  name,
+	                                         const vfs::node*     parent )
 	{
 		if ( !exists( *that ) )
 		{
@@ -186,7 +186,7 @@ namespace Genie
 		return Get_RsrcFile_FSTree( parent, name, fileSpec );
 	}
 	
-	static void resfile_dir_listdir( const FSTree*       that,
+	static void resfile_dir_listdir( const vfs::node*    that,
 	                                 vfs::dir_contents&  cache )
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
@@ -195,9 +195,9 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr Get_ResFileDir_FSTree( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const FSSpec&        file )
+	vfs::node_ptr Get_ResFileDir_FSTree( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const FSSpec&        file )
 	{
 		const bool exists = ResFile_dir_exists( file );
 		
@@ -206,7 +206,7 @@ namespace Genie
 		const vfs::node_method_set* methods = exists ? &resfile_dir_methods
 		                                             : &empty_rsrc_fork_methods;
 		
-		FSTree* result = new FSTree( parent, name, mode, methods, sizeof (FSSpec) );
+		vfs::node* result = new vfs::node( parent, name, mode, methods, sizeof (FSSpec) );
 		
 		*(FSSpec*) result->extra() = file;
 		

@@ -25,10 +25,10 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/sys/app/menu/list/ID/items/INDEX.hh"
 
 
@@ -50,7 +50,7 @@ namespace Genie
 		return false;
 	}
 	
-	static FSTreePtr menu_items_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr menu_items_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
@@ -62,7 +62,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_app_menu_list_ID_items_INDEX_Mappings );
 	}
 	
-	static void menu_items_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void menu_items_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		MenuRef menu = GetMenuRef( gear::parse_decimal( parent->owner()->name().c_str() ) );
 		
@@ -79,11 +79,11 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr New_FSTree_sys_app_menu_list_ID_items( const FSTree*        parent,
-	                                                 const plus::string&  name,
-	                                                 const void*          args )
+	vfs::node_ptr New_FSTree_sys_app_menu_list_ID_items( const vfs::node*     parent,
+	                                                     const plus::string&  name,
+	                                                     const void*          args )
 	{
-		return new_basic_directory( parent, name, menu_items_lookup, menu_items_iterate );
+		return vfs::new_basic_directory( parent, name, menu_items_lookup, menu_items_iterate );
 	}
 	
 }

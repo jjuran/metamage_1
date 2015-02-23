@@ -19,6 +19,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// plus
+#include "plus/simple_map.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -33,6 +36,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -41,15 +45,13 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
 
 // Genie
 #include "Genie/api/yield.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -79,14 +81,14 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, Button_Parameters > ButtonMap;
+	typedef plus::simple_map< const vfs::node*, Button_Parameters > ButtonMap;
 	
 	static ButtonMap gButtonMap;
 	
 	
 	struct Control_UserData : Pedestal::Control_UserData
 	{
-		const FSTree*  key;
+		const vfs::node*  key;
 		
 		Control_UserData() : key()
 		{
@@ -100,7 +102,7 @@ namespace Genie
 		ASSERT( userData      != NULL );
 		ASSERT( userData->key != NULL );
 		
-		const FSTree* button = userData->key;
+		const vfs::node* button = userData->key;
 		
 		if ( Button_Parameters* it = gButtonMap.find( button ) )
 		{
@@ -111,7 +113,7 @@ namespace Genie
 	class PushButton : public Ped::PushButton
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Control_UserData itsUserData;
 		
@@ -196,26 +198,26 @@ namespace Genie
 		}
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new PushButton( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gButtonMap.erase( delegate );
 	}
 	
 	
-	struct Button_Title : readwrite_property
+	struct Button_Title : vfs::readwrite_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = gButtonMap[ that ].title;
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Button_Parameters& params = gButtonMap[ that ];
 			
@@ -275,7 +277,7 @@ namespace Genie
 	
 	unsigned int Button_socket_Handle::SysPoll()
 	{
-		const FSTree* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *this )->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
@@ -288,7 +290,7 @@ namespace Genie
 	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
 	{
-		const FSTree* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *this )->owner();
 		
 	retry:
 		
@@ -323,9 +325,9 @@ namespace Genie
 	}
 	
 	
-	static vfs::filehandle_ptr button_stream_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr button_stream_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		const FSTree* view = that->owner();
+		const vfs::node* view = that->owner();
 		
 		const Button_Parameters* it = gButtonMap.find( view );
 		
@@ -348,29 +350,29 @@ namespace Genie
 		&button_stream_data_methods
 	};
 	
-	static FSTreePtr button_stream_factory( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	static vfs::node_ptr button_stream_factory( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0400, &button_stream_methods );
+		return new vfs::node( parent, name, S_IFREG | 0400, &button_stream_methods );
 	}
 	
 	
-	static void button_click_trigger( const FSTree* that )
+	static void button_click_trigger( const vfs::node* that )
 	{
-		const FSTree* view = that->owner();
+		const vfs::node* view = that->owner();
 		
 		gButtonMap[ view ].pseudoclicked = true;
 		
 		Ped::AdjustSleepForTimer( 1 );
 	}
 	
-	static const trigger_extra button_click_trigger_extra =
+	static const vfs::trigger_extra button_click_trigger_extra =
 	{
 		&button_click_trigger
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
@@ -378,16 +380,16 @@ namespace Genie
 		
 		{ "title", PROPERTY( utf8_text_property< Button_Title > ) },
 		
-		{ "click", &trigger_factory, (void*) &button_click_trigger_extra },
+		{ "click", &vfs::trigger_factory, (void*) &button_click_trigger_extra },
 		
 		{ "clicked", &button_stream_factory },
 		
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_button( const FSTree*        parent,
-	                                 const plus::string&  name,
-	                                 const void*          args )
+	vfs::node_ptr New_FSTree_new_button( const vfs::node*     parent,
+	                                     const plus::string&  name,
+	                                     const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

@@ -20,16 +20,16 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
 
@@ -104,7 +104,7 @@ namespace Genie
 	}
 	
 	
-	static ProcessSerialNumber GetKeyFromParent( const FSTree* parent )
+	static ProcessSerialNumber GetKeyFromParent( const vfs::node* parent )
 	{
 		return decoded_ProcessSerialNumber( parent->name() );
 	}
@@ -137,7 +137,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[];
 	
-	static FSTreePtr psn_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr psn_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		const ProcessSerialNumber psn = decoded_ProcessSerialNumber( name.c_str() );
 		
@@ -151,7 +151,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_proc_PSN_Mappings );
 	}
 	
-	static void psn_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void psn_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		ProcessSerialNumber psn = { 0, kNoProcess };
 		
@@ -175,13 +175,13 @@ namespace Genie
 	}
 	
 	
-	class sys_mac_proc_PSN_name : public readonly_property
+	class sys_mac_proc_PSN_name : public vfs::readonly_property
 	{
 		private:
 			typedef ProcessSerialNumber Key;
 		
 		public:
-			static void get( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const vfs::node* that, bool binary )
 			{
 				Key key = GetKeyFromParent( that );
 				
@@ -199,7 +199,7 @@ namespace Genie
 			}
 	};
 	
-	static FSTreePtr mac_proc_exe_resolve( const FSTree* that )
+	static vfs::node_ptr mac_proc_exe_resolve( const vfs::node* that )
 	{
 		ProcessSerialNumber psn = GetKeyFromParent( that->owner() );
 		
@@ -222,14 +222,14 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr Executable_Factory( const FSTree*        parent,
-	                                     const plus::string&  name,
-	                                     const void*          args )
+	static vfs::node_ptr Executable_Factory( const vfs::node*     parent,
+	                                         const plus::string&  name,
+	                                         const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &mac_proc_exe_methods );
 	}
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_proc_PSN_Mappings[] =
 	{
@@ -242,11 +242,11 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_proc( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_proc( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
-		return new_basic_directory( parent, name, psn_lookup, psn_iterate );
+		return vfs::new_basic_directory( parent, name, psn_lookup, psn_iterate );
 	}
 	
 }

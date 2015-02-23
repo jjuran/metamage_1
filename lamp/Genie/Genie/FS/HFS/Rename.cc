@@ -22,6 +22,7 @@
 #include "Nitrogen/Files.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
 
 // MacVFS
@@ -34,7 +35,6 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/HFS/hashed_long_name.hh"
 #include "Genie/FS/HFS/LongName.hh"
 #include "Genie/Utilities/AsyncIO.hh"

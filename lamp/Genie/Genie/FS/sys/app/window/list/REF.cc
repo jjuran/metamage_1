@@ -46,6 +46,12 @@
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// vfs
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
+
 // Pedestal
 #include "Pedestal/Window.hh"
 
@@ -53,10 +59,6 @@
 #include "relix/config/color.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/Trigger.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -381,9 +383,9 @@ namespace Genie
 		}
 	};
 	
-	static void select_trigger( const FSTree* that )
+	static void select_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		const WindowRef window = (WindowRef) extra.data;
 		
@@ -391,19 +393,19 @@ namespace Genie
 	}
 	
 	
-	static WindowRef GetKeyFromParent( const FSTree* parent )
+	static WindowRef GetKeyFromParent( const vfs::node* parent )
 	{
 		return (WindowRef) plus::decode_32_bit_hex( parent->name() );
 	}
 	
 	template < class Accessor >
-	struct sys_app_window_list_REF_Const_Property : readonly_property
+	struct sys_app_window_list_REF_Const_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef WindowRef Key;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			
@@ -429,7 +431,7 @@ namespace Genie
 		
 		typedef WindowRef Key;
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			Key key = GetKeyFromParent( that );
 			
@@ -444,28 +446,28 @@ namespace Genie
 	
 	
 	template < class Trigger >
-	static FSTreePtr Trigger_Factory( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	static vfs::node_ptr Trigger_Factory( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		WindowRef key = GetKeyFromParent( parent );
 		
 		return new Trigger( parent, name, key );
 	}
 	
-	static FSTreePtr window_trigger_factory( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	static vfs::node_ptr window_trigger_factory( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
 		const WindowRef window = GetKeyFromParent( parent );
 		
-		const trigger_extra extra = { &select_trigger, (intptr_t) window };
+		const vfs::trigger_extra extra = { &select_trigger, (intptr_t) window };
 		
-		return trigger_factory( parent, name, &extra );
+		return vfs::trigger_factory( parent, name, &extra );
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	#define PROPERTY_CONST_ACCESS( access )  PROPERTY( sys_app_window_list_REF_Const_Property< access > )
 	

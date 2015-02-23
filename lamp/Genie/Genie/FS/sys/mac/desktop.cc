@@ -11,9 +11,11 @@
 // Nitrogen
 #include "Nitrogen/Quickdraw.hh"
 
+// vfs
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
 
@@ -49,11 +51,11 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_desktop_Property : readonly_property
+	struct sys_mac_desktop_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			const BitMap& screenBits = N::GetQDGlobalsScreenBits();
 			
@@ -63,7 +65,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_desktop_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_desktop_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_desktop_Mappings[] =
 	{

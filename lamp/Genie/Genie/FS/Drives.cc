@@ -25,17 +25,17 @@
 #include "Nitrogen/Files.hh"
 #endif
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/Trigger.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/node/types/trigger.hh"
 
 
 namespace Genie
 {
 	
-	void volume_flush_trigger( const FSTree* that )
+	void volume_flush_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -44,18 +44,18 @@ namespace Genie
 	
 #if !TARGET_API_MAC_CARBON
 	
-	void volume_eject_trigger( const FSTree* that )
+	void volume_eject_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
 		Nitrogen::Eject( vRefNum );
 	}
 	
-	void volume_mount_trigger( const FSTree* that )
+	void volume_mount_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -64,9 +64,9 @@ namespace Genie
 	
 #endif
 	
-	void volume_unmount_trigger( const FSTree* that )
+	void volume_unmount_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		

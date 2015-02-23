@@ -21,10 +21,10 @@
 #include "plus/stringify.hh"
 #include "plus/var_string.hh"
 
-// Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
+// vfs
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
 
 
 namespace Genie
@@ -33,12 +33,12 @@ namespace Genie
 	using mac::types::GetVolParmsInfoBuffer;
 	
 	
-	static short GetKeyFromParent( const FSTree* parent )
+	static short GetKeyFromParent( const vfs::node* parent )
 	{
 		return -gear::parse_unsigned_decimal( parent->name().c_str() );
 	}
 	
-	static short GetKey( const FSTree* that )
+	static short GetKey( const vfs::node* that )
 	{
 		return GetKeyFromParent( that->owner() );
 	}
@@ -58,7 +58,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMLocalHand == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMLocalHand;
@@ -71,7 +71,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMServerAdr == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMServerAdr;
@@ -84,7 +84,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 2  ||  parmsInfo.vMVolumeGrade == 0 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMVolumeGrade;
@@ -97,7 +97,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 2 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMForeignPrivID;
@@ -110,7 +110,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 3 )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return parmsInfo.vMExtendedAttributes;
@@ -123,7 +123,7 @@ namespace Genie
 		{
 			if ( parmsInfo.vMVersion < 4  ||  parmsInfo.vMDeviceID == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return (const char*) parmsInfo.vMDeviceID;
@@ -132,11 +132,11 @@ namespace Genie
 	
 	
 	template < class Accessor >
-	struct sys_mac_vol_N_Parms_Property : readonly_property
+	struct sys_mac_vol_N_Parms_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			GetVolParmsInfoBuffer parmsInfo;
 			
@@ -149,7 +149,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_vol_N_Parms_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_vol_N_parms_Mappings[] =
 	{

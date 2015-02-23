@@ -3,11 +3,11 @@
  *	==================
  */
 
-#ifndef GENIE_FILESYSTEM_FSTREE_RSRCFILE_HH
-#define GENIE_FILESYSTEM_FSTREE_RSRCFILE_HH
+#ifndef GENIE_FS_FSTREERSRCFILE_HH
+#define GENIE_FS_FSTREERSRCFILE_HH
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 // Files.h
 struct FSSpec;
@@ -16,7 +16,7 @@ struct FSSpec;
 namespace Genie
 {
 	
-	FSTreePtr GetRsrcForkFSTree( const FSSpec& file );
+	vfs::node_ptr GetRsrcForkFSTree( const FSSpec& file );
 	
 }
 

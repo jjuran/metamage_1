@@ -33,11 +33,9 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
-
-// Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
 
 
 namespace Genie
@@ -64,7 +62,7 @@ namespace Genie
 		return mac::sys::gestalt_defined( decoded );
 	}
 	
-	static FSTreePtr gestalt_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr gestalt_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !is_valid_Gestalt_Selector_name( name ) )
 		{
@@ -96,7 +94,7 @@ namespace Genie
 			}
 	};
 	
-	static void gestalt_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void gestalt_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		gestalt_IteratorConverter converter;
 		
@@ -124,11 +122,11 @@ namespace Genie
 		}
 	}
 	
-	FSTreePtr New_FSTree_sys_mac_gestalt( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_gestalt( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		return new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
+		return vfs::new_basic_directory( parent, name, gestalt_lookup, gestalt_iterate );
 	}
 	
 }

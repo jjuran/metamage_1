@@ -23,14 +23,12 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
-
-// Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
+#include "vfs/node/types/property_file.hh"
 
 
 namespace Genie
@@ -39,7 +37,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static inline N::CRMDeviceID GetKeyFromParent( const FSTree* parent )
+	static inline N::CRMDeviceID GetKeyFromParent( const vfs::node* parent )
 	{
 		return N::CRMDeviceID( gear::parse_decimal( parent->name().c_str() ) );
 	}
@@ -72,7 +70,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[];
 	
-	static FSTreePtr serial_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr serial_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		const N::CRMDeviceID key = N::CRMDeviceID( gear::parse_decimal( name.c_str() ) );
 		
@@ -102,7 +100,7 @@ namespace Genie
 			}
 	};
 	
-	static void serial_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void serial_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		crm_IteratorConverter converter;
 		
@@ -117,7 +115,7 @@ namespace Genie
 	
 	typedef StringHandle CRMSerialRecord::*StringSelector;
 	
-	static plus::string GetSelectedString( const FSTree* that, StringSelector selector )
+	static plus::string GetSelectedString( const vfs::node* that, StringSelector selector )
 	{
 		N::CRMDeviceID key = GetKeyFromParent( that );
 		
@@ -132,25 +130,25 @@ namespace Genie
 	
 	// These are necessary because CW Pro 6 doesn't support pointer-to-member template parameters.
 	
-	struct sys_mac_crm_serial_N_name : readonly_property
+	struct sys_mac_crm_serial_N_name : vfs::readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::name );
 		}
 	};
 	
-	struct sys_mac_crm_serial_N_input : readonly_property
+	struct sys_mac_crm_serial_N_input : vfs::readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::inputDriverName );
 		}
 	};
 	
-	struct sys_mac_crm_serial_N_output : readonly_property
+	struct sys_mac_crm_serial_N_output : vfs::readonly_property
 	{
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = GetSelectedString( that, &CRMSerialRecord::outputDriverName );
 		}
@@ -159,7 +157,7 @@ namespace Genie
 	
 	struct sys_mac_crm_serial_N_icon
 	{
-		static plus::string Read( const FSTree* parent, const plus::string& name )
+		static plus::string Read( const vfs::node* parent, const plus::string& name )
 		{
 			N::CRMDeviceID key = GetKeyFromParent( parent );
 			
@@ -181,7 +179,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_crm_serial_N_Mappings[] =
 	{
@@ -194,11 +192,11 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_crm_serial( const FSTree*        parent,
-	                                         const plus::string&  name,
-	                                         const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_crm_serial( const vfs::node*     parent,
+	                                             const plus::string&  name,
+	                                             const void*          args )
 	{
-		return new_basic_directory( parent, name, serial_lookup, serial_iterate );
+		return vfs::new_basic_directory( parent, name, serial_lookup, serial_iterate );
 	}
 	
 }

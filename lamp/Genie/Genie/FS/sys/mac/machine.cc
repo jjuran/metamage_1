@@ -5,8 +5,11 @@
 
 #include "Genie/FS/sys/mac/machine.hh"
 
+// vfs
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/sys/mac/machine/id.hh"
 #include "Genie/FS/sys/mac/machine/name.hh"
 
@@ -14,7 +17,7 @@
 namespace Genie
 {
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_machine_Mappings[] =
 	{

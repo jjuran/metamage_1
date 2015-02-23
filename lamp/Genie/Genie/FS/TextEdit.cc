@@ -21,6 +21,7 @@
 
 // plus
 #include "plus/mac_utf8.hh"
+#include "plus/simple_map.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -42,7 +43,6 @@
 #include "Genie/FS/ScrollerBase.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -53,7 +53,7 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	typedef simple_map< const FSTree*, TextEditParameters > TextEditParametersMap;
+	typedef plus::simple_map< const vfs::node*, TextEditParameters > TextEditParametersMap;
 	
 	static TextEditParametersMap gTextEditParametersMap;
 	
@@ -72,23 +72,23 @@ namespace Genie
 	{
 	}
 	
-	TextEditParameters* TextEditParameters::Find( const FSTree* key )
+	TextEditParameters* TextEditParameters::Find( const vfs::node* key )
 	{
 		return gTextEditParametersMap.find( key );
 	}
 	
-	TextEditParameters& TextEditParameters::Get( const FSTree* key )
+	TextEditParameters& TextEditParameters::Get( const vfs::node* key )
 	{
 		return gTextEditParametersMap[ key ];
 	}
 	
-	void TextEditParameters::Erase( const FSTree* key )
+	void TextEditParameters::Erase( const vfs::node* key )
 	{
 		gTextEditParametersMap.erase( key );
 	}
 	
 	
-	void Selection_Property::get( plus::var_string& result, const FSTree* that, bool binary )
+	void Selection_Property::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		const Ped::TextSelection& selection = TextEditParameters::Get( that ).itsSelection;
 		
@@ -102,7 +102,7 @@ namespace Genie
 		}
 	}
 	
-	void Selection_Property::set( const FSTree* that, const char* begin, const char* end, bool binary )
+	void Selection_Property::set( const vfs::node* that, const char* begin, const char* end, bool binary )
 	{
 		TextEditParameters& params = TextEditParameters::Get( that );
 		
@@ -149,7 +149,7 @@ namespace Genie
 	}
 	
 	
-	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey );
+	static void Update_TE_From_Model( TEHandle hTE, const vfs::node* viewKey );
 	
 	static void DeleteRange( TextEditParameters& params, short start, short end )
 	{
@@ -306,7 +306,7 @@ namespace Genie
 	{
 		Ped::TextEdit::Focus();
 		
-		const FSTree* windowKey = GetViewWindowKey( itsKey );
+		const vfs::node* windowKey = GetViewWindowKey( itsKey );
 		
 		set_port_focus( windowKey, itsKey );
 	}
@@ -455,7 +455,7 @@ namespace Genie
 	
 	void TextEdit_Scroller::SetBounds( const Rect& bounds )
 	{
-		const FSTree* key = GetKey();
+		const vfs::node* key = GetKey();
 		
 		ScrollerParameters& params = ScrollerParameters::Get( key );
 		
@@ -493,7 +493,7 @@ namespace Genie
 	{
 		N::TEPinScroll( dh, dv, itsSubview.Get() );
 		
-		const FSTree* key = GetKey();
+		const vfs::node* key = GetKey();
 		
 		TextEditParameters::Get( key ).itIsAtBottom = IsScrolledToBottom( ScrollerParameters::Get( key ) );
 	}
@@ -504,7 +504,7 @@ namespace Genie
 		
 		ASSERT( hTE != NULL );
 		
-		const FSTree* key = GetKey();
+		const vfs::node* key = GetKey();
 		
 		Update_TE_From_Model( hTE, key );
 		
@@ -512,7 +512,7 @@ namespace Genie
 	}
 	
 	
-	static void Update_TE_From_Model( TEHandle hTE, const FSTree *viewKey )
+	static void Update_TE_From_Model( TEHandle hTE, const vfs::node *viewKey )
 	{
 		TextEditParameters& params = TextEditParameters::Get( viewKey );
 		

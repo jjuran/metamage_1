@@ -6,8 +6,11 @@
 #include "Genie/FS/sys/mac.hh"
 
 // vfs
+#include "vfs/node.hh"
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
+#include "vfs/node/types/property_file.hh"
 
 // MacVFS
 #include "MacVFS/file/sys_mac_bootrom.hh"
@@ -19,8 +22,6 @@
 #include "relix/config/mini.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/sys/mac/desktop.hh"
 #include "Genie/FS/sys/mac/errata.hh"
@@ -68,7 +69,7 @@ namespace Genie
 	
 	#define PREMAPPED( map )  &vfs::fixed_dir_factory, (const void*) map
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_Mappings[] =
 	{

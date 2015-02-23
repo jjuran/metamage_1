@@ -14,11 +14,11 @@
 #include "Pedestal/Window.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/node/types/fixed_dir.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/gui/port/ADDR.hh"
 
@@ -32,10 +32,10 @@ namespace Genie
 	class Focuser : public Ped::View
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			Focuser( const FSTree* key ) : itsKey( key )
+			Focuser( const vfs::node* key ) : itsKey( key )
 			{
 			}
 			
@@ -50,7 +50,7 @@ namespace Genie
 	
 	Ped::View* Focuser::GetFocus() const
 	{
-		const FSTree* focus = get_port_focus( GetViewWindowKey( itsKey ) );
+		const vfs::node* focus = get_port_focus( GetViewWindowKey( itsKey ) );
 			
 		return get_focusable_view( focus );
 	}
@@ -206,15 +206,15 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new Focuser( delegate );
 	}
 	
 	
-	FSTreePtr New_focuser( const FSTree*        parent,
-	                       const plus::string&  name,
-	                       const void*          args )
+	vfs::node_ptr New_focuser( const vfs::node*     parent,
+	                           const plus::string&  name,
+	                           const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

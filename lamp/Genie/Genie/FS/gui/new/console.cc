@@ -35,6 +35,7 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
 // poseven
@@ -58,6 +59,7 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 #include "vfs/primitives/attach.hh"
 
 // relix
@@ -68,11 +70,9 @@
 // Genie
 #include "Genie/ProcessList.hh"
 #include "Genie/api/yield.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -120,7 +120,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, ConsoleParameters > ConsoleParametersMap;
+	typedef plus::simple_map< const vfs::node*, ConsoleParameters > ConsoleParametersMap;
 	
 	static ConsoleParametersMap gConsoleParametersMap;
 	
@@ -129,7 +129,7 @@ namespace Genie
 	{
 		bool handled = false;
 		
-		const FSTree* key = that.GetKey();
+		const vfs::node* key = that.GetKey();
 		
 		TextEditParameters& textParams = TextEditParameters::Get( key );
 		
@@ -187,7 +187,7 @@ namespace Genie
 		RunShellCommand( plus::utf8_from_mac( command ) );
 	}
 	
-	static void SendSignalToProcessGroupForKey( int signo, const FSTree* key )
+	static void SendSignalToProcessGroupForKey( int signo, const vfs::node* key )
 	{
 		ConsoleParameters& params = gConsoleParametersMap[ key ];
 		
@@ -215,7 +215,7 @@ namespace Genie
 		}
 		else if ( event.modifiers & kEitherControlKey  &&  c < 0x20 )
 		{
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			const Key key = that.GetKey();
 			
@@ -266,7 +266,7 @@ namespace Genie
 	
 	static void Console_Postprocess_Key( TextEdit& that )
 	{
-		const FSTree* key = that.GetKey();
+		const vfs::node* key = that.GetKey();
 		
 		TextEditParameters& params = TextEditParameters::Get( key );
 		
@@ -282,7 +282,7 @@ namespace Genie
 	
 	static bool Console_KeyDown( TextEdit& that, const EventRecord& event )
 	{
-		typedef const FSTree* Key;
+		typedef const vfs::node* Key;
 		
 		const Key viewKey = that.GetKey();
 		
@@ -367,7 +367,7 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		typedef TextEdit_Scroller View;
 		
@@ -377,7 +377,7 @@ namespace Genie
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		ScrollerParameters::Erase( delegate );
 		
@@ -390,10 +390,10 @@ namespace Genie
 	class ConsoleTTYHandle : public vfs::filehandle
 	{
 		private:
-			FSTreePtr  itsTTYFile;
-			unsigned   itsID;
+			vfs::node_ptr  itsTTYFile;
+			unsigned       itsID;
 			
-			const FSTree* ViewKey() const;
+			const vfs::node* ViewKey() const;
 		
 		public:
 			ConsoleTTYHandle( const vfs::node& file, unsigned id );
@@ -474,21 +474,21 @@ namespace Genie
 	
 	void ConsoleTTYHandle::Attach( vfs::filehandle* terminal )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
 		params.itsTerminal = terminal;
 	}
 	
-	const FSTree* ConsoleTTYHandle::ViewKey() const
+	const vfs::node* ConsoleTTYHandle::ViewKey() const
 	{
 		return itsTTYFile->owner();
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll()
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
@@ -527,7 +527,7 @@ namespace Genie
 	
 	ssize_t ConsoleTTYHandle::SysRead( char* buffer, std::size_t byteCount )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		TextEditParameters& text_params = TextEditParameters::Get( view );
 		
@@ -596,7 +596,7 @@ namespace Genie
 	
 	ssize_t ConsoleTTYHandle::SysWrite( const char* buffer, std::size_t byteCount )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -785,7 +785,7 @@ namespace Genie
 	
 	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -816,12 +816,12 @@ namespace Genie
 	}
 	
 	
-	static void console_tty_rename( const FSTree* that, const FSTree* destination )
+	static void console_tty_rename( const vfs::node* that, const vfs::node* destination )
 	{
 		attach( *destination, *that );
 	}
 	
-	static vfs::filehandle_ptr console_tty_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr console_tty_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		static unsigned gLastID = 0;
 		
@@ -861,18 +861,18 @@ namespace Genie
 		&console_tty_data_methods
 	};
 	
-	static FSTreePtr console_tty_factory( const FSTree*        parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
+	static vfs::node_ptr console_tty_factory( const vfs::node*     parent,
+	                                          const plus::string&  name,
+	                                          const void*          args )
 	{
-		return new FSTree( parent, name, S_IFCHR | 0600, &console_tty_methods );
+		return new vfs::node( parent, name, S_IFCHR | 0600, &console_tty_methods );
 	}
 	
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct Console_View_Property : public View_Property< Serialize, Access >
 	{
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			TextEditParameters::Get( that ).itHasChangedAttributes = true;
 			
@@ -881,7 +881,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
 	
@@ -916,9 +916,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_console( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_new_console( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

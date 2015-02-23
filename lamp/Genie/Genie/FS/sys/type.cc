@@ -16,12 +16,12 @@
 #include "poseven/types/errno_t.hh"
 
 // vfs
+#include "vfs/property.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 
 
 namespace Genie
@@ -30,16 +30,16 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	struct sys_type_text_wildcard : readwrite_property
+	struct sys_type_text_wildcard : vfs::readwrite_property
 	{
 		static const int fixed_size = sizeof gTextFileCreator;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = plus::encode_quad( gTextFileCreator );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			const size_t length = end - begin;
 			
@@ -52,7 +52,7 @@ namespace Genie
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	extern const vfs::fixed_mapping sys_type_text_Mappings[] =
 	{

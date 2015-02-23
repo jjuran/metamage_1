@@ -27,9 +27,11 @@
 // MacFeatures
 #include "MacFeatures/CursorDevices.hh"
 
+// vfs
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
+
 // Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_qd.hh"
 
 
@@ -78,7 +80,7 @@ namespace Genie
 			
 			if ( device->whichCursor == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			const CursorData& data = *device->whichCursor;
@@ -103,13 +105,13 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_crsr_Property : readwrite_property
+	struct sys_mac_crsr_Property : vfs::readwrite_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
 		typedef typename Accessor::result_type result_type;
 		
-		static CursorDevicePtr GetCursorDevice( const FSTree* that )
+		static CursorDevicePtr GetCursorDevice( const vfs::node* that )
 		{
 			static const bool has_CDM = MacFeatures::Has_CursorDevices();
 			
@@ -122,13 +124,13 @@ namespace Genie
 			
 			if ( device == NULL )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			return device;
 		}
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
@@ -137,7 +139,7 @@ namespace Genie
 			Accessor::deconstruct::apply( result, data, binary );
 		}
 		
-		static void set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			CursorDevicePtr device = GetCursorDevice( that );
 			
@@ -148,7 +150,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_crsr_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_crsr_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_crsr_Mappings[] =
 	{

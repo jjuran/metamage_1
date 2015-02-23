@@ -22,12 +22,12 @@
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // vfs
+#include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/GetAppFolder.hh"
 
@@ -96,7 +96,7 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr mac_user_home_resolve( const FSTree* that )
+	static vfs::node_ptr mac_user_home_resolve( const vfs::node* that )
 	{
 		return FSTreeFromFSDirSpec( GetUserHomeFolder() );
 	}
@@ -114,11 +114,11 @@ namespace Genie
 		&mac_user_home_link_methods
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_user_home( const FSTree*        parent,
-	                                        const plus::string&  name,
-	                                        const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_user_home( const vfs::node*     parent,
+	                                            const plus::string&  name,
+	                                            const void*          args )
 	{
-		return new FSTree( parent, name, S_IFLNK | 0777, &mac_user_home_methods );
+		return new vfs::node( parent, name, S_IFLNK | 0777, &mac_user_home_methods );
 	}
 	
 }

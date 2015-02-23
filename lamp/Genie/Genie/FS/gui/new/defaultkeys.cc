@@ -41,19 +41,19 @@ namespace Genie
 	class DefaultKey_Handler : public Ped::View
 	{
 		private:
-			const FSTree* itsKey;
+			const vfs::node* itsKey;
 		
 		public:
-			DefaultKey_Handler( const FSTree* key ) : itsKey( key )
+			DefaultKey_Handler( const vfs::node* key ) : itsKey( key )
 			{
 			}
 			
 			bool KeyDown( const EventRecord& event );
 	};
 	
-	static void Update( const FSTree* that, const char* name )
+	static void Update( const vfs::node* that, const char* name )
 	{
-		const FSTree* window = GetViewWindowKey( that );
+		const vfs::node* window = GetViewWindowKey( that );
 		
 		ASSERT( window != NULL );
 		
@@ -104,15 +104,15 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new DefaultKey_Handler( delegate );
 	}
 	
 	
-	FSTreePtr New_defaultkeys( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args )
+	vfs::node_ptr New_defaultkeys( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

@@ -5,17 +5,19 @@
 
 #include "Genie/FS/subview.hh"
 
+// vfs
+#include "vfs/node.hh"
+
 // Genie
-#include "Genie/FS/FSTree.hh"
 #include "Genie/FS/Views.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr subview_factory( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args )
+	vfs::node_ptr subview_factory( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args )
 	{
 		ViewGetter getter = (ViewGetter) args;  // reinterpret_cast
 		

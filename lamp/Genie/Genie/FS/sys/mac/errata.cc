@@ -26,9 +26,9 @@
 // MacFeatures
 #include "MacFeatures/BlueBoxed.hh"
 
-// Genie
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
+// vfs
+#include "vfs/property.hh"
+#include "vfs/node/types/property_file.hh"
 
 
 namespace Genie
@@ -113,17 +113,17 @@ namespace Genie
 	
 	
 	template < class Erratum >
-	struct sys_mac_errata_Property : readonly_property
+	struct sys_mac_errata_Property : vfs::readonly_property
 	{
 		static const int fixed_size = 1;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			plus::deconstruct_bool::apply( result, Erratum::Test(), binary );
 		}
 	};
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_errata_Mappings[] =
 	{

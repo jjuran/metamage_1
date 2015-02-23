@@ -19,6 +19,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
@@ -32,7 +33,6 @@
 
 // Genie
 #include "Genie/FileSignature.hh"
-#include "Genie/FS/FSTree.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
@@ -47,7 +47,7 @@ namespace Genie
 	class MacFileHandle : public vfs::filehandle
 	{
 		private:
-			typedef FSTreePtr (*FileGetter)( const FSSpec& );
+			typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
 			
 			n::owned< Nitrogen::FSFileRefNum >  itsRefNum;
 			FileGetter                          itsFileGetter;
@@ -59,7 +59,7 @@ namespace Genie
 			
 			~MacFileHandle();
 			
-			FSTreePtr GetFile();
+			vfs::node_ptr GetFile();
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
@@ -244,7 +244,7 @@ namespace Genie
 	{
 	}
 	
-	FSTreePtr MacFileHandle::GetFile()
+	vfs::node_ptr MacFileHandle::GetFile()
 	{
 		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
 	}

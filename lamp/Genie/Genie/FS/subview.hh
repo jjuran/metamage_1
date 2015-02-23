@@ -9,16 +9,16 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTreePtr.hh"
+// vfs
+#include "vfs/node_ptr.hh"
 
 
 namespace Genie
 {
 	
-	FSTreePtr subview_factory( const FSTree*        parent,
-	                           const plus::string&  name,
-	                           const void*          args );
+	vfs::node_ptr subview_factory( const vfs::node*     parent,
+	                               const plus::string&  name,
+	                               const void*          args );
 	
 }
 

@@ -32,13 +32,13 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
@@ -65,7 +65,7 @@ namespace Genie
 		}
 	};
 	
-	static UnitNumber GetKey( const FSTree* that )
+	static UnitNumber GetKey( const vfs::node* that )
 	{
 		return UnitNumber( decode_unit_number::apply( that->name() ) );
 	}
@@ -192,17 +192,17 @@ namespace Genie
 	};
 	
 	template < class Accessor >
-	struct sys_mac_unit_N_Property : readonly_property
+	struct sys_mac_unit_N_Property : vfs::readonly_property
 	{
 		static const int fixed_size = Accessor::fixed_size;
 		
-		static void get( plus::var_string& result, const FSTree* that, bool binary )
+		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			UnitNumber key = GetKey( that );
 			
 			if ( !is_valid_unit_number( key ) )
 			{
-				throw undefined_property();
+				throw vfs::undefined_property();
 			}
 			
 			AuxDCEHandle dceHandle = mac::sys::get_unit_table_base()[ key ];
@@ -226,7 +226,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_unit_N_Mappings[];
 	
-	static FSTreePtr unit_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr unit_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !valid_name_of_unit_number::applies( name ) )
 		{
@@ -236,7 +236,7 @@ namespace Genie
 		return fixed_dir( parent, name, sys_mac_unit_N_Mappings );
 	}
 	
-	static void unit_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void unit_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		const short n = mac::sys::get_unit_table_entry_count();
 		
@@ -256,7 +256,7 @@ namespace Genie
 	}
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< sys_mac_unit_N_Property< prop > >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_unit_N_Property< prop > >::value
 	
 	const vfs::fixed_mapping sys_mac_unit_N_Mappings[] =
 	{
@@ -279,11 +279,11 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_unit( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_unit( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
-		return new_basic_directory( parent, name, unit_lookup, unit_iterate );
+		return vfs::new_basic_directory( parent, name, unit_lookup, unit_iterate );
 	}
 	
 }

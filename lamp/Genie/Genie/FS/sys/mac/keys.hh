@@ -9,8 +9,8 @@
 // plus
 #include "plus/string.hh"
 
-// Genie
-#include "Genie/FS/FSTree_fwd.hh"
+// vfs
+#include "vfs/node_fwd.hh"
 
 
 namespace Genie
@@ -18,7 +18,7 @@ namespace Genie
 	
 	struct sys_mac_keys
 	{
-		static plus::string Read( const FSTree* parent, const plus::string& name );
+		static plus::string Read( const vfs::node* parent, const plus::string& name );
 	};
 	
 }

@@ -15,24 +15,24 @@
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/serialize.hh"
+#include "plus/simple_map.hh"
 #include "plus/var_string.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/filehandle/methods/bstore_method_set.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Pedestal
 #include "Pedestal/Caption.hh"
 
 // Genie
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/Views.hh"
-#include "Genie/Utilities/simple_map.hh"
 
 
 namespace Genie
@@ -53,7 +53,7 @@ namespace Genie
 		}
 	};
 	
-	typedef simple_map< const FSTree*, CaptionParameters > CaptionParametersMap;
+	typedef plus::simple_map< const vfs::node*, CaptionParameters > CaptionParametersMap;
 	
 	static CaptionParametersMap gCaptionParametersMap;
 	
@@ -61,7 +61,7 @@ namespace Genie
 	class Caption : public Ped::Caption
 	{
 		private:
-			typedef const FSTree* Key;
+			typedef const vfs::node* Key;
 			
 			Key itsKey;
 			bool  itIsActive;
@@ -113,21 +113,21 @@ namespace Genie
 		return false;
 	}
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new Caption( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		gCaptionParametersMap.erase( delegate );
 	}
 	
 	
-	static void CaptionText_SetEOF( const FSTree* text, off_t length )
+	static void CaptionText_SetEOF( const vfs::node* text, off_t length )
 	{
-		const FSTree* view = text->owner();
+		const vfs::node* view = text->owner();
 		
 		CaptionParameters& params = gCaptionParametersMap[ view ];
 		
@@ -143,7 +143,7 @@ namespace Genie
 		public:
 			CaptionTextFileHandle( const vfs::node& file, int flags );
 			
-			const FSTree* ViewKey();
+			const vfs::node* ViewKey();
 			
 			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].its_utf8_text; }
 			
@@ -197,7 +197,7 @@ namespace Genie
 	{
 	}
 	
-	const FSTree* CaptionTextFileHandle::ViewKey()
+	const vfs::node* CaptionTextFileHandle::ViewKey()
 	{
 		return get_file( *this )->owner();
 	}
@@ -220,7 +220,7 @@ namespace Genie
 	
 	ssize_t CaptionTextFileHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
-		const FSTree* view = ViewKey();
+		const vfs::node* view = ViewKey();
 		
 		CaptionParameters& params = gCaptionParametersMap[ view ];
 		
@@ -243,17 +243,17 @@ namespace Genie
 	}
 	
 	
-	static void caption_text_seteof( const FSTree* that, off_t length )
+	static void caption_text_seteof( const vfs::node* that, off_t length )
 	{
 		CaptionText_SetEOF( that, length );
 	}
 	
-	static off_t caption_text_geteof( const FSTree* that )
+	static off_t caption_text_geteof( const vfs::node* that )
 	{
 		return gCaptionParametersMap[ that->owner() ].its_utf8_text.size();
 	}
 	
-	static vfs::filehandle_ptr caption_text_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr caption_text_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new CaptionTextFileHandle( *that, flags );
 	}
@@ -271,23 +271,23 @@ namespace Genie
 		&caption_text_data_methods
 	};
 	
-	static FSTreePtr caption_text_factory( const FSTree*        parent,
-	                                       const plus::string&  name,
-	                                       const void*          args )
+	static vfs::node_ptr caption_text_factory( const vfs::node*     parent,
+	                                           const plus::string&  name,
+	                                           const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0600, &caption_text_methods );
+		return new vfs::node( parent, name, S_IFREG | 0600, &caption_text_methods );
 	}
 	
 	
 	namespace
 	{
 		
-		bool& Wrapped( const FSTree* view )
+		bool& Wrapped( const vfs::node* view )
 		{
 			return gCaptionParametersMap[ view ].itIsWrapped;
 		}
 		
-		bool& Disabling( const FSTree* view )
+		bool& Disabling( const vfs::node* view )
 		{
 			return gCaptionParametersMap[ view ].disabling;
 		}
@@ -297,7 +297,7 @@ namespace Genie
 	typedef View_Property< plus::serialize_bool, Wrapped   > Wrapped_Property;
 	typedef View_Property< plus::serialize_bool, Disabling > Disabling_Property;
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	static const vfs::fixed_mapping local_mappings[] =
 	{
@@ -309,9 +309,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_caption( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_new_caption( const vfs::node*    parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

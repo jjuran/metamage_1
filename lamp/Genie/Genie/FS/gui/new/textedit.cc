@@ -13,6 +13,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/node.hh"
 #include "vfs/enum/poll_result.hh"
 #include "vfs/filehandle/functions/nonblocking.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -21,14 +22,13 @@
 #include "vfs/methods/data_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
+#include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
 
 // Genie
 #include "Genie/api/yield.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
 
 
@@ -38,13 +38,13 @@ namespace Genie
 	namespace Ped = Pedestal;
 	
 	
-	static boost::intrusive_ptr< Ped::View > CreateView( const FSTree* delegate )
+	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
 	{
 		return new TextEdit_Scroller( delegate );
 	}
 	
 	
-	static void DestroyDelegate( const FSTree* delegate )
+	static void DestroyDelegate( const vfs::node* delegate )
 	{
 		ScrollerParameters::Erase( delegate );
 		
@@ -52,9 +52,9 @@ namespace Genie
 	}
 	
 	
-	static void textedit_lock_trigger( const FSTree* that )
+	static void textedit_lock_trigger( const vfs::node* that )
 	{
-		const FSTree* view = that->owner();
+		const vfs::node* view = that->owner();
 		
 		const bool locked = that->name()[0] != 'u';
 		
@@ -105,7 +105,7 @@ namespace Genie
 	
 	unsigned TextEdit_gate_Handle::SysPoll()
 	{
-		const FSTree* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *this )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -116,7 +116,7 @@ namespace Genie
 	
 	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
 	{
-		const FSTree* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *this )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -129,7 +129,7 @@ namespace Genie
 	}
 	
 	
-	static vfs::filehandle_ptr textedit_gate_open( const FSTree* that, int flags, mode_t mode )
+	static vfs::filehandle_ptr textedit_gate_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		return new TextEdit_gate_Handle( *that, flags );
 	}
@@ -146,17 +146,17 @@ namespace Genie
 	};
 	
 	
-	static FSTreePtr gate_factory( const FSTree*        parent,
-	                               const plus::string&  name,
-	                               const void*          args )
+	static vfs::node_ptr gate_factory( const vfs::node*     parent,
+	                                   const plus::string&  name,
+	                                   const void*          args )
 	{
-		return new FSTree( parent, name, S_IFREG | 0400, &textedit_gate_methods );
+		return new vfs::node( parent, name, S_IFREG | 0400, &textedit_gate_methods );
 	}
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct TE_View_Property : public View_Property< Serialize, Access >
 	{
-		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void Set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			TextEditParameters::Get( that ).itHasChangedAttributes = true;
 			
@@ -164,10 +164,10 @@ namespace Genie
 		}
 	};
 	
-	template < class Serialize, typename Serialize::result_type& (*Access)( const FSTree* ) >
+	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
 	struct TextInvalidating_View_Property : public View_Property< Serialize, Access >
 	{
-		static void Set( const FSTree* that, const char* begin, const char* end, bool binary )
+		static void Set( const vfs::node* that, const char* begin, const char* end, bool binary )
 		{
 			TextEditParameters::Get( that ).itsValidLength = 0;
 			
@@ -175,13 +175,13 @@ namespace Genie
 		}
 	};
 	
-	static const trigger_extra textedit_lock_trigger_extra =
+	static const vfs::trigger_extra textedit_lock_trigger_extra =
 	{
 		&textedit_lock_trigger
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	typedef Const_View_Property< plus::serialize_bool, TextEditParameters::Active >  Active_Property;
 	
@@ -200,8 +200,8 @@ namespace Genie
 	{
 		{ "text", &New_FSTree_TextEdit_text },
 		
-		{ "lock",   &trigger_factory, &textedit_lock_trigger_extra },
-		{ "unlock", &trigger_factory, &textedit_lock_trigger_extra },
+		{ "lock",   &vfs::trigger_factory, &textedit_lock_trigger_extra },
+		{ "unlock", &vfs::trigger_factory, &textedit_lock_trigger_extra },
 		
 		{ "gate", &gate_factory },
 		
@@ -226,9 +226,9 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_new_textedit( const FSTree*        parent,
-	                                   const plus::string&  name,
-	                                   const void*          args )
+	vfs::node_ptr New_FSTree_new_textedit( const vfs::node*     parent,
+	                                       const plus::string&  name,
+	                                       const void*          args )
 	{
 		return New_new_view( parent,
 		                     name,

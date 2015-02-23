@@ -22,7 +22,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	
-	static void iconsuite_copyfile( const FSTree* that, const FSTree* target );
+	static void iconsuite_copyfile( const vfs::node* that, const vfs::node* target );
 	
 	static const vfs::file_method_set iconsuite_file_methods =
 	{
@@ -40,7 +40,7 @@ namespace Genie
 	};
 	
 	
-	static void dispose_iconsuite( const FSTree* that )
+	static void dispose_iconsuite( const vfs::node* that )
 	{
 		::IconSuiteRef& extra = *(::IconSuiteRef*) that->extra();
 		
@@ -65,7 +65,7 @@ namespace Genie
 		}
 	};
 	
-	static void iconsuite_copyfile( const FSTree* that, const FSTree* target )
+	static void iconsuite_copyfile( const vfs::node* that, const vfs::node* target )
 	{
 		::IconSuiteRef extra = *(::IconSuiteRef*) that->extra();
 		
@@ -75,18 +75,18 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr
+	vfs::node_ptr
 	//
-	New_FSTree_IconSuite( const FSTree*                parent,
+	New_FSTree_IconSuite( const vfs::node*             parent,
 			              const plus::string&          name,
 			              n::owned< N::IconSuiteRef >  iconSuite )
 	{
-		FSTree* result = new FSTree( parent,
-		                             name,
-		                             S_IFREG | 0400,
-		                             &iconsuite_methods,
-		                             sizeof (::IconSuiteRef),
-		                             &dispose_iconsuite );
+		vfs::node* result = new vfs::node( parent,
+		                                   name,
+		                                   S_IFREG | 0400,
+		                                   &iconsuite_methods,
+		                                   sizeof (::IconSuiteRef),
+		                                   &dispose_iconsuite );
 		
 		::IconSuiteRef& extra = *(::IconSuiteRef*) result->extra();
 		

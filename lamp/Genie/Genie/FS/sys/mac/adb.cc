@@ -34,15 +34,15 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/node.hh"
+#include "vfs/property.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/generated_file.hh"
+#include "vfs/node/types/property_file.hh"
 
 // Genie
 #include "Genie/FS/append_hex_encoded_byte.hh"
-#include "Genie/FS/basic_directory.hh"
-#include "Genie/FS/FSTree.hh"
-#include "Genie/FS/FSTree_Property.hh"
-#include "Genie/FS/property.hh"
 
 
 namespace Genie
@@ -52,7 +52,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	
-	static inline N::ADBAddress GetKeyFromParent( const FSTree* parent )
+	static inline N::ADBAddress GetKeyFromParent( const vfs::node* parent )
 	{
 		return N::ADBAddress( gear::decoded_hex_digit( parent->name()[0] ) );
 	}
@@ -92,7 +92,7 @@ namespace Genie
 	
 	extern const vfs::fixed_mapping sys_mac_adb_N_Mappings[];
 	
-	static FSTreePtr adb_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr adb_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		if ( !name_is_valid_ADBAddress( name ) )
 		{
@@ -115,7 +115,7 @@ namespace Genie
 			}
 	};
 	
-	static void adb_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void adb_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		adb_IteratorConverter converter;
 		
@@ -127,7 +127,7 @@ namespace Genie
 		                converter );
 	}
 	
-	class sys_mac_adb_N_type : public readonly_property
+	class sys_mac_adb_N_type : public vfs::readonly_property
 	{
 		private:
 			typedef N::ADBAddress Key;
@@ -135,7 +135,7 @@ namespace Genie
 		public:
 			static const int fixed_size = 2;
 			
-			static void get( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const vfs::node* that, bool binary )
 			{
 				Key key = GetKeyFromParent( that );
 				
@@ -145,7 +145,7 @@ namespace Genie
 			}
 	};
 	
-	class sys_mac_adb_N_origin : public readonly_property
+	class sys_mac_adb_N_origin : public vfs::readonly_property
 	{
 		private:
 			typedef N::ADBAddress Key;
@@ -153,7 +153,7 @@ namespace Genie
 		public:
 			static const int fixed_size = 1;
 			
-			static void get( plus::var_string& result, const FSTree* that, bool binary )
+			static void get( plus::var_string& result, const vfs::node* that, bool binary )
 			{
 				Key key = GetKeyFromParent( that );
 				
@@ -186,7 +186,7 @@ namespace Genie
 	
 	struct sys_mac_adb_N_registers
 	{
-		static plus::string Read( const FSTree* parent, const plus::string& name )
+		static plus::string Read( const vfs::node* parent, const plus::string& name )
 		{
 			N::ADBAddress key = GetKeyFromParent( parent );
 			
@@ -202,7 +202,7 @@ namespace Genie
 	};
 	
 	
-	#define PROPERTY( prop )  &new_property, &property_params_factory< prop >::value
+	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
 	
 	const vfs::fixed_mapping sys_mac_adb_N_Mappings[] =
 	{
@@ -214,16 +214,16 @@ namespace Genie
 		{ NULL, NULL }
 	};
 	
-	FSTreePtr New_FSTree_sys_mac_adb( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_mac_adb( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
 		if ( !MacFeatures::Has_ADB() )
 		{
 			p7::throw_errno( ENOENT );
 		}
 		
-		return new_basic_directory( parent, name, adb_lookup, adb_iterate );
+		return vfs::new_basic_directory( parent, name, adb_lookup, adb_iterate );
 	}
 	
 }

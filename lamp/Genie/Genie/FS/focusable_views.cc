@@ -20,12 +20,12 @@ namespace Genie
 	static Map the_map;
 	
 	
-	void add_focusable_view( const FSTree* key, Ped::View* value )
+	void add_focusable_view( const vfs::node* key, Ped::View* value )
 	{
 		the_map[ (unsigned long) key ] = value;
 	}
 	
-	Ped::View* get_focusable_view( const FSTree* key )
+	Ped::View* get_focusable_view( const vfs::node* key )
 	{
 		Map::const_iterator it = the_map.find( (unsigned long) key );
 		
@@ -37,7 +37,7 @@ namespace Genie
 		return NULL;
 	}
 	
-	void remove_focusable_view( const FSTree* key )
+	void remove_focusable_view( const vfs::node* key )
 	{
 		the_map.erase( (unsigned long) key );
 	}

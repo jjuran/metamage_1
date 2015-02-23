@@ -26,11 +26,11 @@
 #include "vfs/methods/link_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node.hh"
+#include "vfs/node/types/basic_directory.hh"
 #include "vfs/node/types/symbolic_link.hh"
 
 // Genie
 #include "Genie/ProcessList.hh"
-#include "Genie/FS/basic_directory.hh"
 
 
 namespace Genie
@@ -67,7 +67,7 @@ namespace Genie
 	}
 	
 	
-	static void unused_cmd_slot_symlink( const FSTree*        node,
+	static void unused_cmd_slot_symlink( const vfs::node*     node,
 	                                     const plus::string&  target )
 	{
 		if ( target.c_str()[0] != '/' )
@@ -109,7 +109,7 @@ namespace Genie
 	};
 	
 	
-	static void cmd_symlink_remove( const FSTree* that )
+	static void cmd_symlink_remove( const vfs::node* that )
 	{
 		const Ped::CommandCode code = Ped::CommandCode( parse_utf8_quad_name( that->name() ) );
 		
@@ -125,7 +125,7 @@ namespace Genie
 		Ped::SetCommandHandler( code, NULL );
 	}
 	
-	static FSTreePtr cmd_lookup( const FSTree* parent, const plus::string& name )
+	static vfs::node_ptr cmd_lookup( const vfs::node* parent, const plus::string& name )
 	{
 		cmd_map::const_iterator it = the_command_map.find( parse_utf8_quad_name( name ) );
 		
@@ -139,10 +139,10 @@ namespace Genie
 			                               &cmd_symlink_remove );
 		}
 		
-		return new FSTree( parent, name, 0, &unused_cmd_slot_methods );
+		return new vfs::node( parent, name, 0, &unused_cmd_slot_methods );
 	}
 	
-	static void cmd_iterate( const FSTree* parent, vfs::dir_contents& cache )
+	static void cmd_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
 		typedef cmd_map::iterator iterator;
 		
@@ -163,11 +163,11 @@ namespace Genie
 	}
 	
 	
-	FSTreePtr New_FSTree_sys_app_cmd( const FSTree*        parent,
-	                                  const plus::string&  name,
-	                                  const void*          args )
+	vfs::node_ptr New_FSTree_sys_app_cmd( const vfs::node*     parent,
+	                                      const plus::string&  name,
+	                                      const void*          args )
 	{
-		return new_basic_directory( parent, name, cmd_lookup, cmd_iterate );
+		return vfs::new_basic_directory( parent, name, cmd_lookup, cmd_iterate );
 	}
 	
 }

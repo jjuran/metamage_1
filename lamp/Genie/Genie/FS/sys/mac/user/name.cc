@@ -98,12 +98,12 @@ namespace Genie
 		return plus::string::null;
 	}
 	
-	void sys_mac_user_macname::get( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_user_macname::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetUserName( false );
 	}
 	
-	void sys_mac_user_name::get( plus::var_string& result, const FSTree* that, bool binary )
+	void sys_mac_user_name::get( plus::var_string& result, const vfs::node* that, bool binary )
 	{
 		result = GetUserName( true );
 	}

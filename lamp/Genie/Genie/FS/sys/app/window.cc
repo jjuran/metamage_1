@@ -60,9 +60,9 @@ namespace Genie
 	}
 	
 	
-	static FSTreePtr new_front( const FSTree*        parent,
-	                            const plus::string&  name,
-	                            const void*          args )
+	static vfs::node_ptr new_front( const vfs::node*     parent,
+	                                const plus::string&  name,
+	                                const void*          args )
 	{
 		return vfs::new_symbolic_link( parent, name, sys_app_window_front_ReadLink() );
 	}
