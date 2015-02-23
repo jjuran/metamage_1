@@ -27,9 +27,7 @@
 
 // vfs
 #include "vfs/node.hh"
-
-// Genie
-#include "Genie/FS/Trigger.hh"
+#include "vfs/node/types/trigger.hh"
 
 
 namespace Genie
@@ -37,7 +35,7 @@ namespace Genie
 	
 	void volume_flush_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -48,7 +46,7 @@ namespace Genie
 	
 	void volume_eject_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -57,7 +55,7 @@ namespace Genie
 	
 	void volume_mount_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		
@@ -68,7 +66,7 @@ namespace Genie
 	
 	void volume_unmount_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( extra.data );
 		

@@ -43,10 +43,10 @@
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
 
 // Genie
 #include "Genie/api/yield.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/Utilities/simple_map.hh"
@@ -365,7 +365,7 @@ namespace Genie
 		Ped::AdjustSleepForTimer( 1 );
 	}
 	
-	static const trigger_extra button_click_trigger_extra =
+	static const vfs::trigger_extra button_click_trigger_extra =
 	{
 		&button_click_trigger
 	};
@@ -378,7 +378,7 @@ namespace Genie
 		
 		{ "title", PROPERTY( utf8_text_property< Button_Title > ) },
 		
-		{ "click", &trigger_factory, (void*) &button_click_trigger_extra },
+		{ "click", &vfs::trigger_factory, (void*) &button_click_trigger_extra },
 		
 		{ "clicked", &button_stream_factory },
 		

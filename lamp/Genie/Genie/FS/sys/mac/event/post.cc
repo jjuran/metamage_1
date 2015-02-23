@@ -13,9 +13,7 @@
 // vfs
 #include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
-
-// Genie
-#include "Genie/FS/Trigger.hh"
+#include "vfs/node/types/trigger.hh"
 
 
 namespace Nitrogen
@@ -43,7 +41,7 @@ namespace Genie
 		}
 	};
 	
-	static const trigger_extra click_extra =
+	static const vfs::trigger_extra click_extra =
 	{
 		&sys_mac_event_post_click::trigger
 	};
@@ -68,7 +66,7 @@ namespace Genie
 	
 	const vfs::fixed_mapping sys_mac_event_post_Mappings[] =
 	{
-		{ "click", &trigger_factory, (void*) &click_extra },
+		{ "click", &vfs::trigger_factory, (void*) &click_extra },
 		
 		{ "key",   PROPERTY( sys_mac_event_post_key ) },
 		

@@ -23,12 +23,12 @@
 #include "vfs/methods/node_method_set.hh"
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
 
 // Genie
 #include "Genie/api/yield.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/Views.hh"
 
 
@@ -175,7 +175,7 @@ namespace Genie
 		}
 	};
 	
-	static const trigger_extra textedit_lock_trigger_extra =
+	static const vfs::trigger_extra textedit_lock_trigger_extra =
 	{
 		&textedit_lock_trigger
 	};
@@ -200,8 +200,8 @@ namespace Genie
 	{
 		{ "text", &New_FSTree_TextEdit_text },
 		
-		{ "lock",   &trigger_factory, &textedit_lock_trigger_extra },
-		{ "unlock", &trigger_factory, &textedit_lock_trigger_extra },
+		{ "lock",   &vfs::trigger_factory, &textedit_lock_trigger_extra },
+		{ "unlock", &vfs::trigger_factory, &textedit_lock_trigger_extra },
 		
 		{ "gate", &gate_factory },
 		

@@ -33,10 +33,10 @@
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
+#include "vfs/node/types/trigger.hh"
 
 // Genie
 #include "Genie/FS/Drives.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -205,9 +205,9 @@ namespace Genie
 	{
 		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *parent );
 		
-		const trigger_extra extra = { (trigger_function) args, vRefNum };
+		const vfs::trigger_extra extra = { (vfs::trigger_function) args, vRefNum };
 		
-		return trigger_factory( parent, name, &extra );
+		return vfs::trigger_factory( parent, name, &extra );
 	}
 	
 	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< sys_mac_drive_N_Property< prop > >::value

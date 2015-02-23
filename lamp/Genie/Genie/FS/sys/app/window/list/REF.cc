@@ -50,6 +50,7 @@
 #include "vfs/node.hh"
 #include "vfs/property.hh"
 #include "vfs/node/types/property_file.hh"
+#include "vfs/node/types/trigger.hh"
 
 // Pedestal
 #include "Pedestal/Window.hh"
@@ -58,7 +59,6 @@
 #include "relix/config/color.hh"
 
 // Genie
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -385,7 +385,7 @@ namespace Genie
 	
 	static void select_trigger( const vfs::node* that )
 	{
-		trigger_extra& extra = *(trigger_extra*) that->extra();
+		vfs::trigger_extra& extra = *(vfs::trigger_extra*) that->extra();
 		
 		const WindowRef window = (WindowRef) extra.data;
 		
@@ -461,9 +461,9 @@ namespace Genie
 	{
 		const WindowRef window = GetKeyFromParent( parent );
 		
-		const trigger_extra extra = { &select_trigger, (intptr_t) window };
+		const vfs::trigger_extra extra = { &select_trigger, (intptr_t) window };
 		
-		return trigger_factory( parent, name, &extra );
+		return vfs::trigger_factory( parent, name, &extra );
 	}
 	
 	

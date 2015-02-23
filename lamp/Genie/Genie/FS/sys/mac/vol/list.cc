@@ -48,6 +48,7 @@
 #include "vfs/node/types/fixed_dir.hh"
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/symbolic_link.hh"
+#include "vfs/node/types/trigger.hh"
 
 // relix-kernel
 #include "relix/api/root.hh"
@@ -56,7 +57,6 @@
 #include "Genie/FS/Drives.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/serialize_Str255.hh"
-#include "Genie/FS/Trigger.hh"
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 #include "Genie/FS/utf8_text_property.hh"
@@ -525,9 +525,9 @@ namespace Genie
 	{
 		const Mac::FSVolumeRefNum vRefNum = GetKeyFromParent( *parent );
 		
-		const trigger_extra extra = { (trigger_function) args, vRefNum };
+		const vfs::trigger_extra extra = { (vfs::trigger_function) args, vRefNum };
 		
-		return trigger_factory( parent, name, &extra );
+		return vfs::trigger_factory( parent, name, &extra );
 	}
 	
 	
