@@ -14,6 +14,7 @@
 
 // relix
 #include "relix/api/current_process.hh"
+#include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
 
@@ -21,7 +22,6 @@
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 #include "Genie/ProcessList.hh"
-#include "Genie/api/yield.hh"
 
 
 #ifndef __RELIX__
@@ -197,7 +197,7 @@ namespace Genie
 					return 0;
 				}
 				
-				try_again( false );
+				relix::try_again( false );
 			}
 		}
 		catch ( ... )

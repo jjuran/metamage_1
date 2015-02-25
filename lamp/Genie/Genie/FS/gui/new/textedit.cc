@@ -25,8 +25,10 @@
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/trigger.hh"
 
+// relix-kernel
+#include "relix/api/try_again.hh"
+
 // Genie
-#include "Genie/api/yield.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
@@ -122,7 +124,7 @@ namespace Genie
 		
 		while ( params.itIsInterlocked )
 		{
-			try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *this ) );
 		}
 		
 		return 0;

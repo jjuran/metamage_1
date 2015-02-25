@@ -50,8 +50,8 @@
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
-// Genie
-#include "Genie/api/yield.hh"
+// relix-kernel
+#include "relix/api/try_again.hh"
 
 
 enum
@@ -201,7 +201,7 @@ namespace Genie
 		
 		while ( same != NULL )
 		{
-			try_again( nonblocking );
+			relix::try_again( nonblocking );
 		}
 		
 		vfs::filehandle_ptr result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
@@ -358,7 +358,7 @@ namespace Genie
 				}
 			}
 			
-			try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Read( itsInputRefNum, data, byteCount );
@@ -368,7 +368,7 @@ namespace Genie
 	{
 		while ( Preempted() )
 		{
-			try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Write( itsOutputRefNum, data, byteCount );

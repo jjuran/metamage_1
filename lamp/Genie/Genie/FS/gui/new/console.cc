@@ -64,12 +64,12 @@
 
 // relix
 #include "relix/api/root.hh"
+#include "relix/api/try_again.hh"
 #include "relix/fs/con_tag.hh"
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
 #include "Genie/ProcessList.hh"
-#include "Genie/api/yield.hh"
 #include "Genie/FS/TextEdit.hh"
 #include "Genie/FS/TextEdit_text.hh"
 #include "Genie/FS/Views.hh"
@@ -558,7 +558,7 @@ namespace Genie
 				break;
 			}
 			
-			try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *this ) );
 		}
 		
 		if ( params.itHasReceivedEOF )

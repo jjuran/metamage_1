@@ -19,13 +19,11 @@
 // relix-kernel
 #include "relix/api/errno.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
 
 // Pedestal
 #include "Pedestal/Application.hh"
-
-// Genie
-#include "Genie/api/yield.hh"
 
 
 namespace Genie
@@ -73,7 +71,7 @@ namespace Genie
 					Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
 				}
 				
-				try_again( false );
+				relix::try_again( false );
 				
 				if ( timeout )
 				{

@@ -15,12 +15,12 @@
 #include "Pedestal/Application.hh"
 
 // relix-kernel
+#include "relix/api/try_again.hh"
 #include "relix/signal/signal.hh"
 #include "relix/syscall/registry.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/api/yield.hh"
 
 
 #ifndef NANOSLEEP_DOZE
@@ -103,7 +103,7 @@ namespace Genie
 					Ped::AdjustSleepForTimer( remaining_ticks );
 				}
 				
-				try_again( false );
+				relix::try_again( false );
 				
 				remaining_microseconds = end_microseconds - clock();
 			}

@@ -22,6 +22,7 @@
 #include "mac_app/OpenTransport_share.hh"
 
 // relix
+#include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
 
 // ClassicToolbox
@@ -29,7 +30,6 @@
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/api/yield.hh"
 
 
 namespace Genie
@@ -108,7 +108,7 @@ namespace Genie
 			
 			while ( data.code == 0 )
 			{
-				try_again( false );
+				relix::try_again( false );
 			}
 			
 			return data.result;
@@ -141,7 +141,7 @@ namespace Genie
 			
 			while ( data.code == 0 )
 			{
-				try_again( false );
+				relix::try_again( false );
 			}
 			
 			return data.result;

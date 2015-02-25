@@ -3,9 +3,8 @@
 	--------
 */
 
-#include "Genie/api/yield.hh"
-
 // relix-kernel
+#include "relix/api/yield.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie

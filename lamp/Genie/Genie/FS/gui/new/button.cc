@@ -48,8 +48,10 @@
 #include "vfs/node/types/property_file.hh"
 #include "vfs/node/types/trigger.hh"
 
+// relix-kernel
+#include "relix/api/try_again.hh"
+
 // Genie
-#include "Genie/api/yield.hh"
 #include "Genie/FS/utf8_text_property.hh"
 #include "Genie/FS/Views.hh"
 
@@ -305,7 +307,7 @@ namespace Genie
 		
 		if ( params.seed == itsSeed )
 		{
-			try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *this ) );
 			
 			goto retry;
 		}
