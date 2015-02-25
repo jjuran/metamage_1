@@ -7,7 +7,7 @@
 #define GENIE_API_SIGNALS_HH
 
 
-namespace Genie
+namespace relix
 {
 	
 	bool check_signals( bool may_throw );

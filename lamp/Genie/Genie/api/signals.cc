@@ -21,13 +21,10 @@ namespace relix
 		Genie::current_process().Raise( signo );
 	}
 	
-}
-
-namespace Genie
-{
-	
 	bool check_signals( bool may_throw )
 	{
+		using namespace Genie;
+		
 		Process& current = current_process();
 		
 		return current.HandlePendingSignals( may_throw );
