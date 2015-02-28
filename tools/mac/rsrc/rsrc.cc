@@ -3,6 +3,9 @@
 	-------
 */
 
+// Standard C
+#include <errno.h>
+
 // gear
 #include "gear/parse_decimal.hh"
 
@@ -164,6 +167,8 @@ namespace tool
 		Mac::Handle h = N::Get1Resource( the_type, the_id );
 		
 		print_rsrc_by_handle( h, showing );
+		
+		return 0;
 	}
 	
 	int Main( int argc, char** argv )
