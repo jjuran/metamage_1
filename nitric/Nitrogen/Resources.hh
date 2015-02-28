@@ -27,6 +27,9 @@
 #include <Resources.h>
 #endif
 
+// mac-types
+#include "mac_types/ResInfo.hh"
+
 // iota
 #include "iota/string_traits.hh"
 
@@ -268,9 +271,17 @@ namespace Nitrogen
 		ResID   id;
 		ResType type;
 		::Str255  name;
+		
+		GetResInfo_Result( const mac::types::ResInfo& info )
+		{
+			id   = ResID  ( info.id   );
+			type = ResType( info.type );
+			
+			std::memcpy( name, info.name, 1 + info.name[ 0 ] );
+		}
 	};
 	
-	GetResInfo_Result GetResInfo( Handle r );
+	mac::types::ResInfo GetResInfo( Handle r );
 	
 	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
 	

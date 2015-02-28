@@ -199,17 +199,12 @@ namespace Nitrogen
 		return attrs;
 	}
 	
-	GetResInfo_Result GetResInfo( Handle r )
+	mac::types::ResInfo GetResInfo( Handle r )
 	{
-		GetResInfo_Result result;
-		::ResID id;
-		::ResType type;
+		mac::types::ResInfo result;
 		
-		::GetResInfo( r, &id, &type, result.name );
+		::GetResInfo( r, &result.id, &result.type, result.name );
 		ResError();
-		
-		result.id   = ResID  ( id   );
-		result.type = ResType( type );
 		
 		return result;
 	}
