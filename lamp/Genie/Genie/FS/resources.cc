@@ -108,7 +108,7 @@ namespace Genie
 			{
 				const N::Handle r = N::Get1IndResource( type, j );
 				
-				const N::GetResInfo_Result info = N::GetResInfo( r );
+				const mac::types::ResInfo info = N::GetResInfo( r );
 				
 				plus::var_string name = plus::encode_16_bit_hex( info.id );
 				
@@ -174,7 +174,7 @@ namespace Genie
 			const N::Handle r = (ResLoad_false_scope(),
 			                     N::Get1Resource( resSpec.type, resSpec.id ));
 			
-			const N::GetResInfo_Result resInfo = N::GetResInfo( r );
+			const mac::types::ResInfo resInfo = N::GetResInfo( r );
 			
 			::ReleaseResource( r );
 			
@@ -460,7 +460,7 @@ namespace Genie
 		
 		const N::Handle r = N::Get1Resource( old_resSpec.type, old_resSpec.id );
 		
-		const N::GetResInfo_Result resInfo = N::GetResInfo( r );
+		const mac::types::ResInfo resInfo = N::GetResInfo( r );
 		
 		N::SetResInfo( r, new_resSpec.id, resInfo.name );
 	}
