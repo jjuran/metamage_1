@@ -62,7 +62,7 @@ namespace tool
 	
 	static void list_rsrc_by_handle( N::Handle h )
 	{
-		N::GetResInfo_Result resInfo = N::GetResInfo( h );
+		mac::types::ResInfo resInfo = N::GetResInfo( h );
 		
 		plus::string name = MacScribe::get_utf8_name_from_ResInfo( resInfo );
 		
