@@ -42,7 +42,7 @@ namespace vfs
 		its_name   ( name[0] == '/' ? name_of_ptr( this )
 		                            : name ),
 		its_mode   ( mode    ),
-		its_user   (         ),
+		its_user   ( owner ? owner->user() : 0 ),
 		its_methods( methods ),
 		its_extra  ( n_extra ? ::operator new( n_extra ) : NULL ),
 		its_destructor( dtor )
