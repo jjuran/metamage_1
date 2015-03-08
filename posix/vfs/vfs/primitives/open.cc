@@ -7,6 +7,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <sys/stat.h>
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -95,7 +96,7 @@ namespace vfs
 			{
 				filehandle_ptr result = data_methods->open( &that, flags, mode );
 				
-				if ( flags & O_TRUNC )
+				if ( flags & O_TRUNC  &&  S_ISREG( that.filemode() ) )
 				{
 					truncate( *result );
 				}
