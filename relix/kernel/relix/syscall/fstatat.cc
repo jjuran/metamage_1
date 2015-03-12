@@ -14,7 +14,6 @@
 // vfs
 #include "vfs/node.hh"
 #include "vfs/functions/resolve_links_in_place.hh"
-#include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/stat.hh"
 
 // relix
@@ -35,8 +34,6 @@ namespace relix
 	{
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
-		sb->st_size = off_t( -1 );
-		
 		try
 		{
 			vfs::node_ptr file = resolve_path_at( dirfd, path );
@@ -47,11 +44,6 @@ namespace relix
 			}
 			
 			stat( *file, *sb );
-			
-			if ( sb->st_size == off_t( -1 ) )
-			{
-				sb->st_size = geteof( *file );
-			}
 		}
 		catch ( ... )
 		{

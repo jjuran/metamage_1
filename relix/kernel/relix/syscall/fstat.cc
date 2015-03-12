@@ -30,15 +30,13 @@ namespace relix
 	{
 		std::memset( (void*) sb, '\0', sizeof (struct stat) );
 		
-		sb->st_size = off_t( -1 );
-		
 		try
 		{
 			vfs::filehandle& handle = get_fd_handle( fd );
 			
 			stat( *get_file( handle ), *sb );
 			
-			if ( sb->st_size == off_t( -1 ) )
+			if ( sb->st_size == 0 )
 			{
 				try
 				{
@@ -46,7 +44,6 @@ namespace relix
 				}
 				catch ( ... )
 				{
-					sb->st_size = 0;
 				}
 			}
 		}

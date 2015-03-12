@@ -16,6 +16,7 @@
 #include "vfs/node.hh"
 #include "vfs/methods/item_method_set.hh"
 #include "vfs/methods/node_method_set.hh"
+#include "vfs/primitives/geteof.hh"
 #include "vfs/primitives/inode.hh"
 
 
@@ -54,7 +55,7 @@ namespace vfs
 		
 		sb.st_nlink = 1;
 		
-		// fstatat() or fstat() will fill in sb.st_size
+		sb.st_size = geteof( that );
 		
 		sb.st_blksize = 4096;
 		
