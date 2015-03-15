@@ -76,7 +76,7 @@ namespace Genie
 		system_call* it  = the_syscall_array;
 		system_call* end = it + the_last_syscall;
 		
-		while ( it < end )
+		for ( ;  it < end;  ++it )
 		{
 			if ( strcmp( name, it->name ) == 0 )
 			{
