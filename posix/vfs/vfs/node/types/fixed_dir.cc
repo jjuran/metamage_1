@@ -134,7 +134,7 @@ namespace vfs
 	{
 		node* result = new node( parent,
 		                         name,
-		                         S_IFDIR | 0700,
+		                         S_IFDIR | 0755,
 		                         &fixed_dir_methods,
 		                         sizeof (fixed_dir_extra) + extra_annex_size,
 		                         dtor );
