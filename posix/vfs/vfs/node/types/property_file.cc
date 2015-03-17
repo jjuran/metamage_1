@@ -153,7 +153,7 @@ namespace vfs
 				
 				get_hook( data, parent, binary_vs_text );
 				
-				result |= S_IRUSR;
+				result |= 0444;  // all-readable
 			}
 			catch ( ... )
 			{
