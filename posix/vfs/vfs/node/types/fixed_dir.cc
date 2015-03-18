@@ -126,14 +126,13 @@ namespace vfs
 	}
 	
 	
-	node_ptr fixed_dir( const plus::string&    name,
-	                    uid_t                  user,
+	node_ptr fixed_dir( uid_t                  user,
 	                    const fixed_mapping    mappings[],
 	                    void                 (*dtor)(const node*),
 	                    size_t                 extra_annex_size )
 	{
 		node* result = new node( NULL,
-		                         name,
+		                         plus::string::null,
 		                         S_IFDIR | 0755,
 		                         user,
 		                         &fixed_dir_methods,

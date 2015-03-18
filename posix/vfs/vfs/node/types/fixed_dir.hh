@@ -38,8 +38,7 @@ namespace vfs
 		fixed_mapping const*  mappings;
 	};
 	
-	node_ptr fixed_dir( const plus::string&    name,
-	                    uid_t                  user,
+	node_ptr fixed_dir( uid_t                  user,
 	                    const fixed_mapping    mappings[] = empty_mappings,
 	                    void                 (*dtor)(const node*) = NULL,
 	                    size_t                 extra_annex_size = 0 );
