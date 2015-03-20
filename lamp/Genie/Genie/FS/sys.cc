@@ -78,7 +78,7 @@ namespace Genie
 		
 		for ( ;  it < end;  ++it )
 		{
-			if ( strcmp( name, it->name ) == 0 )
+			if ( it->name != NULL  &&  strcmp( name, it->name ) == 0 )
 			{
 				return it;
 			}
