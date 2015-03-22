@@ -50,12 +50,60 @@ namespace vfs
 		struct stat          status;
 	};
 	
+	static void fix_loose_filemode( struct ::stat& st )
+	{
+		if ( st.st_mode & 0002  &&  st.st_mode & 0111 )
+		{
+			// world-writable AND executable
+			
+			if ( S_ISREG( st.st_mode ) )
+			{
+				/*
+					This is a problem.  A regular file can be not only be
+					written by anybody (which is bad enough), but it's
+					executable.  This may be the result of brokenly creating
+					files too permissively on a Unix filesystem, or mounting
+					a brain-damaged filesystem that doesn't store permissions
+					and simply reports 0777 for all files.
+					
+					Note that a file with 0666 may still be a problem, but
+					the particular failure mode we're addressing here leaves
+					files with 0777, which can't ever be desirable.  At least
+					with 0666 it's presumably *intentional*, and therefore
+					your own fault rather than someone else's if a file gets
+					clobbered.
+					
+					To mitigate, set the file permissions to zero.  This does
+					two things:  It prevents all access except by privileged
+					users, and it prevents users from inadvertantly executing
+					the file.
+				*/
+				
+				st.st_mode = S_IFREG | 0000;
+			}
+			else
+			{
+				/*
+					This is perfectly normal for symlinks and reasonable for
+					certain directories, like /tmp.  Files of other types
+					probably shouldn't be executable at all (what does x mean
+					for a device, socket, or FIFO?), but the brain damage in
+					question is specific to regular files (since the missing
+					knowledge of POSIX file modes includes type as well as
+					permissions).
+				*/
+			}
+		}
+	}
+	
 	static void posix_stat( const node*     that,
 	                        struct ::stat&  sb )
 	{
 		posix_extra& extra = *(posix_extra*) that->extra();
 		
 		sb = extra.status;
+		
+		fix_loose_filemode( sb );
 	}
 	
 	static n::owned< p7::fd_t > open_or_connect( const char* path, int flags, mode_t mode )
@@ -181,6 +229,8 @@ namespace vfs
 		struct stat sb;
 		
 		p7::stat( path, sb );
+		
+		fix_loose_filemode( sb );
 		
 		node* result = new node( parent,
 		                         name,
