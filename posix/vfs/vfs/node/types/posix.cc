@@ -5,6 +5,9 @@
 
 #include "vfs/node/types/posix.hh"
 
+// Standard C
+#include <string.h>
+
 // more-libc
 #include "more/string.h"
 
@@ -19,6 +22,7 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/opendir.hh"
 #include "poseven/functions/stat.hh"
+#include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/dir_contents.hh"
@@ -147,6 +151,18 @@ namespace vfs
 		
 		const size_t path_size = size( extra.path );
 		const size_t name_size = name.size();
+		
+		if ( strlen( name.c_str() ) < name_size )
+		{
+			/*
+				This name has an embedded NUL.  It couldn't have come from
+				any POSIX subsystem (e.g. MacRelix system calls), but it's
+				possible over Freemount.  Presumably it's a path resolution
+				attack.  Such names can't exist in POSIX, so report ENOENT.
+			*/
+			
+			p7::throw_errno( ENOENT );
+		}
 		
 		plus::string path;
 		
