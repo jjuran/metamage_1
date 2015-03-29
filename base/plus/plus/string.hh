@@ -362,7 +362,7 @@ namespace plus
 		return s.data();
 	}
 	
-	inline std::size_t get_string_size( const string& s )
+	inline string::size_type get_string_size( const string& s )
 	{
 		return s.size();
 	}
