@@ -6,9 +6,6 @@
 #ifndef IOTA_PASCALSTRING_HH
 #define IOTA_PASCALSTRING_HH
 
-// more-libc
-#include "more/size.h"
-
 
 #if defined( __MACOS__ )  ||  defined( __APPLE__ )
 #define IOTA_HAS_PASCAL_STRINGS  1
@@ -25,7 +22,7 @@ namespace iota
 		return (const char*) s + 1;
 	}
 	
-	inline std::size_t get_pascal_string_size( const unsigned char* s )
+	inline unsigned char get_pascal_string_size( const unsigned char* s )
 	{
 		return s[0];
 	}
