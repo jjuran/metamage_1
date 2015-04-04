@@ -69,4 +69,28 @@ namespace tap
 		log_mem( buffer, STR_LEN( "RECEIVED: " ), (const char*) p, p_len );
 	}
 	
+	static void log_message( const char* msg, size_t len, const iota::span& s )
+	{
+		const size_t buffer_size = len + s.len + 1;
+		
+		char* buffer = (char*) alloca( buffer_size );
+		
+		char* mid = (char*) mempcpy( buffer, msg, len );
+		char* end = (char*) mempcpy( mid, s.ptr, s.len );
+		
+		*end++ = '\n';
+		
+		write( STDERR_FILENO, buffer, buffer_size );
+	}
+	
+	void log_expected( const iota::span& s )
+	{
+		log_message( STR_LEN( "EXPECTED: " ), s );
+	}
+	
+	void log_received( const iota::span& s )
+	{
+		log_message( STR_LEN( "RECEIVED: " ), s );
+	}
+	
 }

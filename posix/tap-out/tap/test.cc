@@ -19,7 +19,6 @@
 
 // tap-out
 #include "tap/check.hh"
-#include "tap/log.hh"
 
 
 #pragma exceptions off
