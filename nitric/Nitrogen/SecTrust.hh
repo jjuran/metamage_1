@@ -23,10 +23,6 @@
 #include "nucleus/owned.hh"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
 
 namespace Nitrogen {
 
@@ -87,34 +83,34 @@ namespace Nitrogen
 	inline void CFShow ( SecTrustRef tr ) { ::CFShow ( tr ); }
 	
 	inline nucleus::owned<SecTrustRef> SecTrustCreateWithCertificates ( CFArrayRef certificates, CFTypeRef policies ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		SecTrustRef	result;
 		Mac::ThrowOSStatus ( ::SecTrustCreateWithCertificates ( certificates, policies, &result ));
   	    return nucleus::owned<SecTrustRef>::seize( result );
 		}
 
 	inline void SecTrustSetParameters ( SecTrustRef trustRef, CSSM_TP_ACTION action, CFDataRef actionData ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecTrustSetParameters ( trustRef, action, actionData ));
 		}
 
 	inline void SecTrustSetAnchorCertificates ( SecTrustRef trust, CFArrayRef anchorCertificates ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecTrustSetAnchorCertificates ( trust, anchorCertificates ));
 		}
 	
 	inline void SecTrustSetKeychains ( SecTrustRef trust, CFTypeRef keychainOrArray ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecTrustSetKeychains ( trust, keychainOrArray ));
 		}
 
 	inline void SecTrustSetVerifyDate ( SecTrustRef trust, CFDateRef verifyDate ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecTrustSetVerifyDate ( trust, verifyDate ));
 		}
 
 	inline SecTrustResultType SecTrustEvaluate ( SecTrustRef trust ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		::SecTrustResultType result;
 		Mac::ThrowOSStatus ( ::SecTrustEvaluate ( trust, &result ));
 		return result;
@@ -127,7 +123,7 @@ namespace Nitrogen
 		};
 	
 	inline SecTrustGetResult_Result SecTrustGetResult ( SecTrustRef trustRef ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		SecTrustGetResult_Result result;
 		CFArrayRef arrRef;
 		Mac::ThrowOSStatus ( ::SecTrustGetResult ( trustRef, &result.resultType, &arrRef, &result.statusChain ));
@@ -136,21 +132,21 @@ namespace Nitrogen
 		}
 	
 	inline CSSM_TP_VERIFY_CONTEXT_RESULT_PTR SecTrustGetCssmResult ( SecTrustRef trust ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		::CSSM_TP_VERIFY_CONTEXT_RESULT_PTR result;
 		Mac::ThrowOSStatus ( ::SecTrustGetCssmResult ( trust, &result ));
 		return result;
 		}
 
 	inline CSSM_TP_HANDLE SecTrustGetTPHandle ( SecTrustRef trust ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		::CSSM_TP_HANDLE result;
 		Mac::ThrowOSStatus ( ::SecTrustGetTPHandle ( trust, &result ));
 		return result;
 		}
 
 	inline nucleus::owned<CFArrayRef> SecTrustCopyAnchorCertificates () {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		CFArrayRef	result;
 		Mac::ThrowOSStatus ( ::SecTrustCopyAnchorCertificates ( &result ));
   	    return nucleus::owned<CFArrayRef>::seize( result );
@@ -163,21 +159,21 @@ namespace Nitrogen
 		};
 	
 	inline SecTrustGetCSSMAnchorCertificates_Result SecTrustGetCSSMAnchorCertificates () {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		SecTrustGetCSSMAnchorCertificates_Result result;
 		Mac::ThrowOSStatus ( ::SecTrustGetCSSMAnchorCertificates ( &result.cssmAnchors, &result.cssmAnchorCount ));
 		return result;
 		}
 		
 	inline SecTrustUserSetting SecTrustGetUserTrust ( SecCertificateRef certificate, SecPolicyRef policy ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		::SecTrustUserSetting result;
 		Mac::ThrowOSStatus ( ::SecTrustGetUserTrust ( certificate, policy, &result ));
 		return result;
 		}
 
 	inline void SecTrustSetUserTrust ( SecCertificateRef certificate, SecPolicyRef policy, SecTrustUserSetting trustSetting ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecTrustSetUserTrust ( certificate, policy, trustSetting ));
 		}
 	}

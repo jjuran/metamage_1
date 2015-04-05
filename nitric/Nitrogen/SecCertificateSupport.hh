@@ -35,34 +35,34 @@ namespace Nitrogen {
 	void RegisterSecCertificateErrors ();
 	
 	inline nucleus::owned<SecIdentityRef> SecChooseIdentity ( CFStringRef displayInfo, CFArrayRef identities ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		SecIdentityRef	result;
 		Mac::ThrowOSStatus ( ::SecChooseIdentity ( displayInfo, identities, &result ));
   	    return nucleus::owned<SecIdentityRef>::seize( result );
 		}
 
 	inline void SecChooseIdentityAsSheet ( WindowRef parentWindow, EventTargetRef inTarget, CFStringRef displayInfo, CFArrayRef identities ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecChooseIdentityAsSheet ( parentWindow, inTarget, displayInfo, identities ));
 		}
 	
 	inline void SecDisplayCertificate ( SecCertificateRef certificate, CFArrayRef keychainList ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecDisplayCertificate ( certificate, keychainList ));
 		}
 
 	inline void SecDisplayCertificateGroup ( const CSSM_CERTGROUP *certificates, CFArrayRef keychainList ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecDisplayCertificateGroup ( certificates, keychainList ));
 		}
 
 	inline void SecEditTrust ( CFStringRef displayInfo, SecTrustRef trust ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecEditTrust ( displayInfo, trust ));
 		}
 
 	inline void SecEditTrustAsSheet ( WindowRef parentWindow, EventTargetRef inTarget, CFStringRef displayInfo, SecTrustRef trust ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		Mac::ThrowOSStatus ( ::SecEditTrustAsSheet ( parentWindow, inTarget, displayInfo, trust ));
 		}
 

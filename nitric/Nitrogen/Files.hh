@@ -732,7 +732,7 @@ namespace Nitrogen
    
   }
 
-namespace Nucleus
+namespace nucleus
   {
    inline bool operator==( const ::FSRef& ref1, const ::FSRef& ref2 )   { return Nitrogen::FSCompareFSRefs( ref1, ref2 ); }
    inline bool operator!=( const ::FSRef& ref1, const ::FSRef& ref2 )   { return !( ref1 == ref2 ); }
