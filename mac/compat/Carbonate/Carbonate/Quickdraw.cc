@@ -172,4 +172,3 @@ pascal void QDFlushPortBuffer( CGrafPtr port, RgnHandle region )
 // QDDisposeRegionBits
 
 #endif
-

@@ -434,4 +434,3 @@ namespace MacCDROM
 #endif  // CALL_NOT_IN_CARBON
 	
 }
-

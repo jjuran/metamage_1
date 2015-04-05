@@ -74,4 +74,3 @@ char* ttyname( int fd )
 	
 	return buffer;
 }
-

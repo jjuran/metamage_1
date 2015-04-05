@@ -44,4 +44,3 @@ pascal void DebugStr_patch( const unsigned char* message )
 	
 	trace_on();
 }
-

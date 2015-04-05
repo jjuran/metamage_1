@@ -39,4 +39,3 @@ namespace Nitrogen
 }
 
 #endif  // #if TARGET_RT_MAC_MACHO || TARGET_API_MAC_OSX
-

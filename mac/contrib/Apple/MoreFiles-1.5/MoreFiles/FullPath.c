@@ -275,4 +275,3 @@ pascal OSErr LocationFromFullPath(short fullPathLength,
 }
 
 /*****************************************************************************/
-

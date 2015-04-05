@@ -23,4 +23,3 @@ const struct CFragSystem7InitBlock* SavedCFragInitBlock();
 #endif
 
 #endif
-

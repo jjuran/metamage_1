@@ -43,4 +43,3 @@ class memory_manager : public v68k::memory
 };
 
 #endif
-

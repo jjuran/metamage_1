@@ -968,4 +968,3 @@ namespace MacBinary
 	}
 	
 }
-

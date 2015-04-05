@@ -135,4 +135,3 @@ int main( int argc, char const *const argv[] )
 	
 	return kills > 0 ? 0 : 1;
 }
-

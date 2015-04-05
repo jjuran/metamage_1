@@ -34,4 +34,3 @@ OSErr Initialize_SavedCFragInitBlock( const CFragInitBlock* initBlock )
 	
 	return noErr;
 }
-

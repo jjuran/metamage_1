@@ -15,4 +15,3 @@
 #include "Carbonate/Quickdraw.hh"
 
 #endif
-

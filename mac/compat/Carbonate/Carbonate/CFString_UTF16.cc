@@ -113,4 +113,3 @@ unsigned put_code_point_into_UTF16( unsigned int uc, char* p, const char* end )
 	
 	return sizeof (UTF16Char);
 }
-

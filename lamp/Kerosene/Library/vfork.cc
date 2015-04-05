@@ -169,4 +169,3 @@ static asm void _resume_vfork( const _vfork_pad* pad )
 }
 
 #endif
-

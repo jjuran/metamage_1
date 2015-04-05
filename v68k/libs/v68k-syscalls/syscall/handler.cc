@@ -20,4 +20,3 @@ const uint16_t system_call[ system_call_word_count ] =
 	
 	0x4E73   // RTE
 };
-

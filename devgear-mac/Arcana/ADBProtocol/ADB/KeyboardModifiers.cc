@@ -30,4 +30,3 @@ void SetKeyboardModifiersDistinctness( Nitrogen::ADBAddress address, bool distin
 }
 
 #endif
-

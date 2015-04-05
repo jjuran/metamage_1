@@ -52,4 +52,3 @@ namespace Nitrogen
 }
 
 #endif
-

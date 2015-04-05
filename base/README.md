@@ -23,4 +23,3 @@ This is a collection of utility libraries that are frequently useful:
 	- A library that conditions text input to be newline-agnostic
 
 [nucleus]:  <nucleus/README.md>
-

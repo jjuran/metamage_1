@@ -63,4 +63,3 @@ int ComparePointToLineUsingPolar(Point pt, Point a, Point b)
 */
 
 #endif
-

@@ -508,4 +508,3 @@ NavTranslateFile(
 	
 
 #endif /* NITROGEN_NAVIGATION_HH */
-

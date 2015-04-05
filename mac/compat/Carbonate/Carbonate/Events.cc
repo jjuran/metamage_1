@@ -126,4 +126,3 @@ pascal Boolean CheckEventQueueForUserCancel()
 }
 
 #endif
-

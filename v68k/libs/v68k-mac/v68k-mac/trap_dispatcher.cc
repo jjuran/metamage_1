@@ -116,4 +116,3 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 
 }  // namespace user
 }  // namespace v68k
-

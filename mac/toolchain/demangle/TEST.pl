@@ -82,4 +82,3 @@ foreach my $test ( @tests )
 	
 	print "ok " . ++$nth . "\n";
 }
-

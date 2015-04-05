@@ -155,4 +155,3 @@ namespace Nitrogen
 
 
 #endif /* NITROGEN_HISHAPE_HH */
-

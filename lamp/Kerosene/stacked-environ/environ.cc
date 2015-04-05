@@ -101,4 +101,3 @@ int clearenv()
 	
 	return 0;
 }
-

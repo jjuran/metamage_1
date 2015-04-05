@@ -167,4 +167,3 @@ namespace Test
 	#define TEST_ASSERT(condition)  (void)NULL
 	
 #endif
-

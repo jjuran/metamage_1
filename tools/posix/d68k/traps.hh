@@ -15,4 +15,3 @@ namespace tool
 }
 
 #endif
-

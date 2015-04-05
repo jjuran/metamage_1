@@ -20,4 +20,3 @@ namespace poseven
 }
 
 #endif
-

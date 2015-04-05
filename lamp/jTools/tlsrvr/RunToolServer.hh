@@ -37,4 +37,3 @@ namespace tool
 	int RunCommandInToolServer( const plus::string& command, bool switch_layers );
 	
 }
-

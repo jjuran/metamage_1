@@ -19,4 +19,3 @@ const uint16_t line_A_shim[ line_A_shim_word_count ] =
 
 }  // namespace user
 }  // namespace v68k
-

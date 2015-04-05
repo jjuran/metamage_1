@@ -21,4 +21,3 @@ struct strrecvfd
 #endif
 
 #endif /* _STROPTS_H_ */
-

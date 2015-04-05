@@ -28,4 +28,3 @@ int utime( const char* path, const struct utimbuf *time_buffer )
 	
 	return utimensat( AT_FDCWD, path, t, 0 );
 }
-

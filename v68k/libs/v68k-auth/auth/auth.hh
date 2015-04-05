@@ -17,4 +17,3 @@ extern bool fully_authorized;
 
 
 #endif
-

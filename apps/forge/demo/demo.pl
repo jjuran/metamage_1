@@ -8,4 +8,3 @@ use FindBin '$RealBin';
 $ENV{ DEMO } = $RealBin;
 
 exec "$RealBin/demo";
-

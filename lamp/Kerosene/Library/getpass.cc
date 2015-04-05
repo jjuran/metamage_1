@@ -91,4 +91,3 @@ char* getpass( const char* prompt )
 	
 	return password;
 }
-

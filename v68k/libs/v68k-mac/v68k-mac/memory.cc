@@ -235,4 +235,3 @@ uint8_t* low_memory::translate( uint32_t               addr,
 
 }  // namespace mac
 }  // namespace v68k
-

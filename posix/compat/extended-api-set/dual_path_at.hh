@@ -17,4 +17,3 @@ int _dual_path_at( dual_path_filing_op  op,
                    int                  flags = 0 );
 
 #endif
-

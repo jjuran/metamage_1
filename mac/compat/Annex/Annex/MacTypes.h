@@ -32,4 +32,3 @@ typedef UInt32 URefCon;
 #endif  // #ifndef MAC_OS_X_VERSION_10_5
 
 #endif
-

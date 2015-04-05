@@ -60,4 +60,3 @@ inline pascal OSStatus OTAsyncOpenEndpoint( OTConfigurationRef  config,
 #endif
 
 #endif
-

@@ -50,4 +50,3 @@ namespace kerosene
 }
 
 #endif
-

@@ -18,4 +18,3 @@ bool bridge_call( v68k::processor_state& s );
 
 
 #endif
-

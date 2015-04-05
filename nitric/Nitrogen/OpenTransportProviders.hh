@@ -225,4 +225,3 @@ namespace Nitrogen
 #endif  // #ifndef MAC_OS_X_VERSION_10_8
 
 #endif
-

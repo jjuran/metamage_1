@@ -199,4 +199,3 @@ uint8_t* memory::translate( uint32_t               addr,
 
 }  // namespace alloc
 }  // namespace v68k
-

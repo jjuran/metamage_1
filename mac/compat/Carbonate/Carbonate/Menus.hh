@@ -100,4 +100,3 @@ CARBONATE_LINKAGE void SetMenuTitle( MenuRef menu, ConstStr255Param title )
 #endif
 
 #endif
-

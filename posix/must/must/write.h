@@ -24,4 +24,3 @@ ssize_t must_write( int fd, const void* buffer, size_t n );
 
 
 #endif
-

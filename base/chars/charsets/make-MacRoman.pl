@@ -85,4 +85,3 @@ const struct unicode_mapping encoder_map[] =
 };
 
 =cut
-

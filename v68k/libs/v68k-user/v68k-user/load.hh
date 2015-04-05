@@ -30,4 +30,3 @@ bool install_exception_handler( os_load_spec&    os,
 }  // namespace v68k
 
 #endif
-

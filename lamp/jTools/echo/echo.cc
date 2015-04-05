@@ -52,4 +52,3 @@ int main( int argc, char **argv )
 	
 	return n_written < 0 ? 1 : 0;
 }
-

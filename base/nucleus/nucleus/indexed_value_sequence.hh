@@ -101,4 +101,3 @@ namespace nucleus
 }
 
 #endif
-

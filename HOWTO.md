@@ -14,4 +14,3 @@ The Metamage codebase has several build mechanisms:
 
 * pack.pl
 	- This is a simple Perl script that takes hexadecimal codes as input and produces the corresponding raw bytestream as output, discarding comments.  It's used to transcribe 68K machine code from relatively human-readable text to the raw form expected by v68k and d68k.
-

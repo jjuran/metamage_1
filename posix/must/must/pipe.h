@@ -21,4 +21,3 @@ int must_pipe( int fds[2] );
 
 
 #endif
-

@@ -470,4 +470,3 @@ namespace Nitrogen {
 	}
 
 #endif /* __HITHEME__ */
-

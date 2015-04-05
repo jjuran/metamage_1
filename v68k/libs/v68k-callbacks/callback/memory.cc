@@ -49,4 +49,3 @@ uint8_t* memory::translate( uint32_t               addr,
 
 }  // namespace callback
 }  // namespace v68k
-

@@ -105,4 +105,3 @@ void print_registers( const registers& regs )
 	                 regs.pc,
 	                 regs.sr );
 }
-

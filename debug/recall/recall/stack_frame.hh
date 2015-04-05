@@ -127,4 +127,3 @@ namespace recall
 }
 
 #endif
-

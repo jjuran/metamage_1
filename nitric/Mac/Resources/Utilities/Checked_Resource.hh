@@ -46,4 +46,3 @@ namespace Mac
 }
 
 #endif
-

@@ -178,4 +178,3 @@ namespace Nitrogen
 	}
 
 #endif /* NITROGEN_HIOBJECT_HH */
-

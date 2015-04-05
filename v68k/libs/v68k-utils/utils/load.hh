@@ -20,4 +20,3 @@ void* load_file( const char* path, uint32_t* size = 0 );  // NULL
 
 
 #endif
-

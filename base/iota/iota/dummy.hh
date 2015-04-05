@@ -32,4 +32,3 @@ namespace iota
 #endif  // #ifdef __APPLE__
 
 #endif
-

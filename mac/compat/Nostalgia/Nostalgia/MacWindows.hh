@@ -48,4 +48,3 @@ inline pascal void ValidRgn( RgnHandle rgn )
 #endif
 
 #endif
-

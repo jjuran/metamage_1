@@ -40,4 +40,3 @@ namespace UseEdit
 }
 
 #endif
-

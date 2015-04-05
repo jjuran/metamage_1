@@ -57,4 +57,3 @@ typedef u_int32_t n_time;		/* ms since 00:00 GMT, byte rev */
 n_time	 iptime(void);
 #endif /* _KERNEL */
 #endif /* _NETINET_IN_SYSTM_H_ */
-

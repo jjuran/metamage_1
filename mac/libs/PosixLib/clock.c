@@ -20,4 +20,3 @@ clock_t clock( void )
 	
 	return result;
 }
-
