@@ -27,11 +27,6 @@
 #include "nucleus/owned.hh"
 #endif
 
-#ifndef NUCLEUS_ONLYONCE_H
-#include "Nucleus/OnlyOnce.h"
-#endif
-
-
 
 namespace Nitrogen {
 	void RegisterSecCertificateErrors ();
@@ -91,14 +86,14 @@ namespace Nitrogen
 	inline void CFShow ( SecKeyRef kr )			{ ::CFShow ( kr ); }
 
 	inline nucleus::owned<SecCertificateRef> SecIdentityCopyCertificate ( SecIdentityRef identityRef ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		SecCertificateRef	result;
 		Mac::ThrowOSStatus ( ::SecIdentityCopyCertificate ( identityRef, &result ));
   	    return nucleus::owned<SecCertificateRef>::seize( result );
 		}
 
 	inline nucleus::owned<SecKeyRef> SecIdentityCopyPrivateKey ( SecIdentityRef identityRef ) {
-		Nucleus::OnlyOnce<RegisterSecCertificateErrors>();
+		RegisterSecCertificateErrors();
 		SecKeyRef	result;
 		Mac::ThrowOSStatus ( ::SecIdentityCopyPrivateKey ( identityRef, &result ));
   	    return nucleus::owned<SecKeyRef>::seize( result );
