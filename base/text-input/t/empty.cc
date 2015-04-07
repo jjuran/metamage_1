@@ -16,7 +16,7 @@
 static const unsigned n_tests = 4 * 3;
 
 
-static void empty( const char* newline, std::size_t length )
+static void empty( const char* newline, unsigned long length )
 {
 	text_input::feed feed;
 	
