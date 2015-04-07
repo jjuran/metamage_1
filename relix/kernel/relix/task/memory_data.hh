@@ -51,6 +51,7 @@ namespace relix
 			char* const* get_envp();
 			
 			typedef void* addr_t;
+			typedef unsigned long size_t;  // FIXME for 64-bit Windows
 			
 			addr_t add_memory_mapping( const vfs::memory_mapping* mapping );
 			
