@@ -5,8 +5,8 @@
 
 #include "gear/parse_decimal.hh"
 
-// Standard C/C++
-#include <cctype>
+// iota
+#include "iota/char_types.hh"
 
 
 namespace gear
@@ -18,7 +18,7 @@ namespace gear
 		
 		unsigned result = 0;
 		
-		while ( std::isdigit( *p ) )
+		while ( iota::is_digit( *p ) )
 		{
 			result = result * 10 + *p++ - '0';
 		}

@@ -5,8 +5,8 @@
 
 #include "gear/parse_float.hh"
 
-// Standard C/C++
-#include <cctype>
+// iota
+#include "iota/char_types.hh"
 
 
 namespace gear
@@ -18,7 +18,7 @@ namespace gear
 		
 		float result = 0.0;
 		
-		while ( std::isspace( *p ) )
+		while ( iota::is_space( *p ) )
 		{
 			++p;
 		}
@@ -27,7 +27,7 @@ namespace gear
 		
 		p += negative;
 		
-		while ( std::isdigit( *p ) )
+		while ( iota::is_digit( *p ) )
 		{
 			result = result * 10 + (*p - '0');
 			
@@ -38,7 +38,7 @@ namespace gear
 		{
 			float divisor = 1;
 			
-			while ( std::isdigit( *++p ) )
+			while ( iota::is_digit( *++p ) )
 			{
 				divisor *= 10;
 				
