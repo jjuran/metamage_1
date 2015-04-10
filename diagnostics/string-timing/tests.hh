@@ -6,7 +6,8 @@
 #if defined( I )  &&  I == 0
 	
 	// default construction
-	STRING s;
+	//STRING s;  // this gets optimized away on modern compilers
+	STRING strings[ 2 ];
 	
 #elif I == 1
 	

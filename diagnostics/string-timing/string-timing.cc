@@ -85,7 +85,7 @@ class timer
 
 const char* test_names[] =
 {
-	"default ctor   ",
+	"default ctor x2",
 	"small   ctor   ",
 	"normal  ctor   ",
 	"small    copy  ",
