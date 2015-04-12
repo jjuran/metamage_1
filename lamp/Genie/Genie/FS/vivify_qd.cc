@@ -5,8 +5,8 @@
 
 #include "Genie/FS/vivify_qd.hh"
 
-// Standard C
-#include <ctype.h>
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -25,7 +25,7 @@ namespace Genie
 		{
 			while ( ++p < end )
 			{
-				if ( isdigit( p[ p[ 0 ] == '-' ] ) )
+				if ( iota::is_digit( p[ p[ 0 ] == '-' ] ) )
 				{
 					return;
 				}
