@@ -8,7 +8,6 @@
 #include <vector>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 
 // Mac OS X
@@ -29,6 +28,9 @@
 
 // Standard C
 #include <stdlib.h>
+
+// iota
+#include "iota/char_types.hh"
 
 // command
 #include "command/get_option.hh"
@@ -264,7 +266,7 @@ namespace tool
 	
 	static bool IsControlChar( char c )
 	{
-		return std::iscntrl( c );
+		return iota::is_cntrl( c );
 	}
 	
 	template < class Stream >
