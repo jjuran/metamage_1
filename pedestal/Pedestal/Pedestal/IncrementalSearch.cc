@@ -8,8 +8,8 @@
 // Standard C++
 #include <vector>
 
-// Standard C/C++
-#include <cctype>
+// iota
+#include "iota/char_types.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -143,7 +143,7 @@ namespace Pedestal
 		{
 			// A lower-case pattern char can match an upper-case text char.
 			
-			if ( *text != *pattern  &&  std::tolower( *text ) != *pattern )
+			if ( *text != *pattern  &&  iota::to_lower( *text ) != *pattern )
 			{
 				return false;
 			}
