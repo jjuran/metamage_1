@@ -3,13 +3,13 @@
  *	=========
  */
 
-// Standard C/C++
-#include <cctype>
-
 // Standard C
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// iota
+#include "iota/char_types.hh"
 
 // command
 #include "command/get_option.hh"
@@ -105,7 +105,7 @@ namespace tool
 		{
 			while ( *q != '\0'  &&  *q != '\'' )
 			{
-				needsQuoting = needsQuoting || !std::isalnum( *q );
+				needsQuoting = needsQuoting || !iota::is_alnum( *q );
 				++q;
 			}
 			
