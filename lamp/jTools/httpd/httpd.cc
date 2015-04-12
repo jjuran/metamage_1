@@ -11,11 +11,11 @@
 // Standard C
 #include <stdlib.h>
 
-// Standard C/C++
-#include <cctype>
-
 // Standard C++
 #include <functional>
+
+// iota
+#include "iota/char_types.hh"
 
 // command
 #include "command/get_option.hh"
@@ -119,7 +119,7 @@ namespace tool
 	
 	static char ToCGI( char c )
 	{
-		return c == '-' ? '_' : std::toupper( c );
+		return c == '-' ? '_' : iota::to_upper( c );
 	}
 	
 	static bool eq( const char* a, size_t a_size,
@@ -352,7 +352,7 @@ namespace tool
 	
 	static inline char check_xdigit( char c )
 	{
-		if ( !std::isxdigit( c ) )
+		if ( !iota::is_xdigit( c ) )
 		{
 			p7::throw_errno( ENOENT );  // FIXME
 		}
