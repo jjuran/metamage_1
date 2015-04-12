@@ -12,7 +12,6 @@
 #include <vector>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 #include <cstring>
 
@@ -23,7 +22,8 @@
 #include "fcntl.h"
 #include <sys/wait.h>
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // command
@@ -289,7 +289,7 @@ namespace tool
 		
 		for ( const char* p = word.c_str();  *p != '\0';  ++p )
 		{
-			if ( !std::isalnum( *p )  &&  *p != '_' )
+			if ( !iota::is_alnum( *p )  &&  *p != '_' )
 			{
 				switch ( *p )
 				{
