@@ -7,11 +7,11 @@
 
 #include "Genie/FS/sys/mac/adb.hh"
 
-// Standard C
-#include <ctype.h>
-
 // Standard C++
 #include <algorithm>
+
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -74,7 +74,7 @@ namespace Genie
 	{
 		static bool applies( const plus::string& name )
 		{
-			return name.size() == 1  &&  name[0] & 0x20  && isxdigit( name[0] );
+			return name.size() == 1  &&  name[0] & 0x20  && iota::is_xdigit( name[0] );
 		}
 	};
 	

@@ -7,8 +7,8 @@
 
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
 
-// Standard C
-#include <ctype.h>
+// iota
+#include "iota/char_types.hh"
 
 // plus
 #include "plus/contains.hh"
@@ -27,7 +27,7 @@ namespace Genie
 			// * ['A' - 'Z']  0x41 - 0x5a
 			// * ['a' - 'z']  0x61 - 0x7a
 			
-			return c & 0x20  &&  isxdigit( c );  // accept only 0-9, a-z
+			return c & 0x20  &&  iota::is_xdigit( c );  // accept only 0-9, a-z
 		}
 		
 		bool operator()( char c ) const
