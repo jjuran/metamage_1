@@ -6,11 +6,13 @@
 */
 
 // Standard C
-#include <ctype.h>
 #include <string.h>
 
 // POSIX
 #include <unistd.h>
+
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -78,7 +80,7 @@ static int populate_version_buffer( char *buffer, const char *short_version )
 	
 	const char* p = short_version;
 	
-	while ( *p == '.'  ||  isdigit( *p ) )
+	while ( *p == '.'  ||  iota::is_digit( *p ) )
 	{
 		++p;
 	}
