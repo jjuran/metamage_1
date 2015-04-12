@@ -34,7 +34,6 @@
 #include "stdlib.h"
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 
 // Standard C++
@@ -47,6 +46,9 @@
 #include "sys/stat.h"
 #include "sys/wait.h"
 #include "unistd.h"
+
+// iota
+//#include "iota/char_types.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -576,7 +578,7 @@ static std::string Capitalize( std::string s )
 {
 	char& c = s[ 0 ];
 	
-	if ( std::islower( c ) )
+	if ( iota::is_lower( c ) )
 	{
 		c -= ' ';
 	}
