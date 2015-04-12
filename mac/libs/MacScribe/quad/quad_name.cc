@@ -5,8 +5,8 @@
 
 #include "quad/quad_name.hh"
 
-// Standard C/C++
-#include <cctype>
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -56,7 +56,7 @@ namespace MacScribe
 	
 	static bool char_is_initial_safe( char c )
 	{
-		return std::isalnum( c )  ||  c == '_'  ||  c & 0x80;
+		return iota::is_alnum( c )  ||  c == '_'  ||  c & 0x80;
 	}
 	
 	static bool char_is_safe( char c )
