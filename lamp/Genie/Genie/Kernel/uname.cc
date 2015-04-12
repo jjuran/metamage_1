@@ -4,13 +4,13 @@
  */
 
 // Standard C
-#include <ctype.h>
 #include <string.h>
 
 // POSIX
 #include "sys/utsname.h"
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // Debug
@@ -89,7 +89,7 @@ namespace Genie
 		{
 			const char c = *p;
 			
-			if ( c & 0x80  ||  !isalnum( c ) )
+			if ( ! iota::is_alnum( c ) )
 			{
 				*p = '-';
 			}
