@@ -54,6 +54,7 @@ namespace plus
 		return capacity | (1 << n_missing_bits_of_precision) - 1;
 	}
 	
+	static
 	char* allocate( datum_storage& datum, long length, long capacity )
 	{
 		ASSERT( length   >= 0      );
@@ -84,6 +85,12 @@ namespace plus
 		new_pointer[ length ] = '\0';
 		
 		return new_pointer;
+	}
+	
+	static inline
+	char* allocate( datum_storage& datum, long length )
+	{
+		return allocate( datum, length, length );
 	}
 	
 	char* allocate_data( datum_storage& datum, const char* p, long n )

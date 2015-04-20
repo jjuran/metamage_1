@@ -45,13 +45,6 @@ namespace plus
 	void assign_from_move( datum_storage& x, datum_movable& y );
 	
 	
-	char* allocate( datum_storage& datum, long length, long capacity );
-	
-	inline char* allocate( datum_storage& datum, long length )
-	{
-		return allocate( datum, length, length );
-	}
-	
 	char* allocate_data( datum_storage& datum, const char* p, long n );
 	
 	void construct_from_copy( datum_storage& x, const datum_storage& y, bool taint = false );
