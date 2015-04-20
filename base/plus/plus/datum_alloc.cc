@@ -49,6 +49,7 @@ namespace plus
 	struct datum_alloc_header
 	{
 		size_t refcount;
+		size_t capacity;
 	};
 	
 	static inline unsigned long adjusted_capacity( unsigned long capacity )
@@ -75,6 +76,7 @@ namespace plus
 			datum_alloc_header* header = (datum_alloc_header*) ::operator new( buffer_length );
 			
 			header->refcount = 1;
+			header->capacity = capacity + 1;  // actual capacity including NUL
 			
 			new_pointer = reinterpret_cast< char* >( header + 1 );
 			
