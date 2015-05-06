@@ -97,19 +97,33 @@ namespace mixerfs
 		return plus::string( buffer, n_read );
 	}
 	
-	struct route : vfs::readonly_property
+	struct route : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = mixctl( "route" ).move();
 		}
+		
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		{
+			plus::string arg( begin, end );
+			
+			mixctl( "route", arg.c_str() );
+		}
 	};
 	
-	struct volume : vfs::readonly_property
+	struct volume : vfs::readwrite_property
 	{
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
 			result = mixctl( "volume" ).move();
+		}
+		
+		static void set( const vfs::node* that, const char* begin, const char* end, bool binary )
+		{
+			plus::string arg( begin, end );
+			
+			mixctl( "volume", arg.c_str() );
 		}
 	};
 	
