@@ -36,11 +36,16 @@ enum
 {
 	Option_quiet = 'q',
 	Option_user  = 'u',
+	
+	Option_last_byte = 255,
+	
+	Option_root,
 };
 
 static command::option options[] =
 {
 	{ "quiet", Option_quiet },
+	{ "root",  Option_root, Param_required },
 	{ "user",  Option_user },
 	{ NULL }
 };
@@ -55,6 +60,11 @@ static const vfs::node& root()
 	return *root;
 }
 
+
+static bool is_root( const char* path )
+{
+	return (path[ 0 ] == '/'  ||  path[ 0 ] == '.')  &&  path[ 1 ] == '\0';
+}
 
 static char* const* get_options( char* const* argv )
 {
@@ -73,6 +83,13 @@ static char* const* get_options( char* const* argv )
 				dup2( dev_null, STDERR_FILENO );
 				
 				close( dev_null );
+				break;
+			
+			case Option_root:
+				if ( ! is_root( command::global_result.param ) )
+				{
+					abort();
+				}
 				break;
 			
 			case Option_user:
