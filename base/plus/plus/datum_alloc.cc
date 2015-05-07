@@ -14,6 +14,7 @@
 
 // plus
 #include "plus/datum_access.hh"
+#include "plus/extent.hh"
 
 
 namespace plus
@@ -46,12 +47,6 @@ namespace plus
 		construct_from_move( x, y );
 	}
 	
-	struct datum_alloc_header
-	{
-		size_t refcount;
-		size_t capacity;
-	};
-	
 	static inline unsigned long adjusted_capacity( unsigned long capacity )
 	{
 		const int n_missing_bits_of_precision = 2;
@@ -70,15 +65,8 @@ namespace plus
 		{
 			capacity = adjusted_capacity( capacity );
 			
-			const size_t buffer_length = sizeof (datum_alloc_header) + capacity + 1;
-			
 			// may throw
-			datum_alloc_header* header = (datum_alloc_header*) ::operator new( buffer_length );
-			
-			header->refcount = 1;
-			header->capacity = capacity + 1;  // actual capacity including NUL
-			
-			new_pointer = reinterpret_cast< char* >( header + 1 );
+			new_pointer = extent_alloc( capacity + 1 );  // includes NUL
 			
 			datum.alloc.pointer  = new_pointer;
 			datum.alloc.length   = length;
@@ -113,9 +101,7 @@ namespace plus
 		{
 			if ( margin( y ) == ~delete_shared )
 			{
-				datum_alloc_header* header = (datum_alloc_header*) y.alloc.pointer - 1;
-				
-				++header->refcount;
+				extent_add_ref( y.alloc.pointer );
 			}
 			
 			x = y;
@@ -142,21 +128,8 @@ namespace plus
 		{
 			case ~delete_shared:
 			case ~delete_owned:
-			{
-				// This casts away const, but it's only the characters that are
-				// const, not the header.
-				
-				datum_alloc_header* header = (datum_alloc_header*) pointer - 1;
-				
-				if ( --header->refcount > 0 )
-				{
-					break;
-				}
-				
-				pointer = (char*) header;
-			}
-			
-			// fall through
+				extent_release( pointer );
+				break;
 			
 			case ~delete_basic:
 				::operator delete( (void*) pointer );
@@ -250,11 +223,7 @@ namespace plus
 		
 		if ( margin( datum ) == ~delete_shared )
 		{
-			datum_alloc_header* header = (datum_alloc_header*) datum.alloc.pointer - 1;
-			
-			ASSERT( header->refcount != 0 );
-			
-			if ( header->refcount == 1 )
+			if ( extent_refcount( datum.alloc.pointer ) == 1 )
 			{
 				p = const_cast< char* >( datum.alloc.pointer + alloc_substr_offset( datum ) );
 				
