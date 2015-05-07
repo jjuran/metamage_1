@@ -19,22 +19,6 @@
 namespace plus
 {
 	
-	/*
-		These can be changed to use malloc() and free() when we're ready to
-		take advantage of realloc().
-	*/
-	
-	char* datum_alloc( unsigned long size )
-	{
-		return (char*) ::operator new( size );
-	}
-	
-	void datum_free( char* mem )
-	{
-		::operator delete( mem );
-	}
-	
-	
 	void construct_from_move_untaint_policy( datum_storage&  x,
 	                                         datum_movable&  y,
 	                                         signed char     _old_policy )
