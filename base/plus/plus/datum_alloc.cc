@@ -131,10 +131,6 @@ namespace plus
 				extent_release( pointer );
 				break;
 			
-			case ~delete_basic:
-				::operator delete( (void*) pointer );
-				break;
-			
 			case ~delete_free:
 				free( (void*) pointer );
 				break;
