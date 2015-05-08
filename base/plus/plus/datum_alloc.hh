@@ -68,6 +68,13 @@ namespace plus
 		assign_from_copy( x, y, true );
 	}
 	
+	inline bool has_dynamic_extent( const datum_storage& datum )
+	{
+		const signed char _policy = datum.small[ datum_max_offset ];
+		
+		return _policy < ~delete_never;
+	}
+	
 	void destroy( datum_storage& datum );
 	
 	char* reallocate( datum_storage& datum, long length );

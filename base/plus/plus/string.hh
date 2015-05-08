@@ -89,7 +89,10 @@ namespace plus
 			
 			~string()
 			{
-				destroy( store );
+				if ( has_dynamic_extent( store ) )
+				{
+					destroy( store );
+				}
 			}
 			
 			string( datum_movable& m )
