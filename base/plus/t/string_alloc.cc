@@ -36,11 +36,16 @@ static void large_copy()
 
 static void handoff()
 {
-	char* buffer = (char*) ::operator new( sizeof LARGE_STRING );
+	char* buffer = (char*) malloc( sizeof LARGE_STRING );
+	
+	if ( buffer == NULL )
+	{
+		abort();
+	}
 	
 	memcpy( buffer, LARGE_STRING, sizeof LARGE_STRING );
 	
-	plus::string a( buffer, sizeof LARGE_STRING - 1, plus::delete_basic );
+	plus::string a( buffer, sizeof LARGE_STRING - 1, plus::delete_free );
 	
 	EXPECT( a.data() == buffer );
 	
