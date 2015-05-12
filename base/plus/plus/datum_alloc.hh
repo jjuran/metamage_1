@@ -22,10 +22,6 @@ namespace plus
 		delete_free    // Calls free(), not operator delete()
 	};
 	
-	char* datum_alloc( unsigned long size );
-	
-	void datum_free( char* mem );
-	
 	
 	inline void construct_from_default( datum_storage& x )
 	{
