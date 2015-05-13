@@ -90,21 +90,21 @@ static void set( uint32_t* grid )
 {
 	uint32_t& row = grid[ cursor_y ];
 	
-	row |= 1 << 31 - cursor_x;
+	row |= 1 << (31 - cursor_x);
 }
 
 static void clear( uint32_t* grid )
 {
 	uint32_t& row = grid[ cursor_y ];
 	
-	row &= ~(1 << 31 - cursor_x);
+	row &= ~(1 << (31 - cursor_x));
 }
 
 static void toggle( uint32_t* grid )
 {
 	uint32_t& row = grid[ cursor_y ];
 	
-	row ^= 1 << 31 - cursor_x;
+	row ^= 1 << (31 - cursor_x);
 }
 
 static bool on_char( char c )
