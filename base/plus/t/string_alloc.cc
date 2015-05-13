@@ -4,6 +4,7 @@
 */
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // plus
