@@ -132,9 +132,9 @@ namespace tool
 		
 		o::get_options( argc, argv );
 		
-		char const *const *freeArgs = o::free_arguments();
+		char const *const *args = o::free_arguments();
 		
-		std::size_t n_args = o::free_argument_count();
+		std::size_t argn = o::free_argument_count();
 		
 		if ( globally_using_data_fork  &&  ( !TARGET_API_MAC_CARBON || ::FSOpenResourceFile == NULL ) )
 		{
@@ -146,16 +146,16 @@ namespace tool
 		int fail = 0;
 		
 		// Check for sufficient number of args
-		if ( n_args < 2 )
+		if ( argn < 2 )
 		{
-			std::fprintf( stderr, "cpres: missing %s\n", (n_args == 0) ? "file arguments"
-			                                                           : "destination file" );
+			std::fprintf( stderr, "cpres: missing %s\n", (argn == 0) ? "file arguments"
+			                                                         : "destination file" );
 			
 			return 1;
 		}
 		
 		// Last arg should be the destination file.
-		const char* dest_path = freeArgs[ n_args - 1 ];
+		const char* dest_path = args[ argn - 1 ];
 		
 		FSSpec dest;
 		
@@ -201,9 +201,9 @@ namespace tool
 		n::owned< N::ResFileRefNum > resFileH( open_res_file( dest, N::fsRdWrPerm ) );
 		
 		// Try to copy each file.  Return whether any errors occurred.
-		for ( int index = 0;  index < n_args - 1;  ++index )
+		for ( int index = 0;  index < argn - 1;  ++index )
 		{
-			const char* source_path = freeArgs[ index ];
+			const char* source_path = args[ index ];
 			
 			try
 			{
