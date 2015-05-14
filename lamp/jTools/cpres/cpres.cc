@@ -253,11 +253,12 @@ namespace tool
 			{
 				++fail;
 				
-				plus::string destName( dest.name );
+				const char* slash = strrchr( dest_path, '/' );
+				const char* dest_name = slash ? slash + 1 : dest_path;
 				
 				std::fprintf( stderr, "OSStatus %ld copying from %s to %s.\n",
 				                                err.Get(),       source_path,
-				                                                       destName.c_str() );
+				                                                       dest_name );
 			}
 		}
 		
