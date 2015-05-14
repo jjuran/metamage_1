@@ -155,15 +155,17 @@ namespace tool
 		}
 		
 		// Last arg should be the destination file.
+		const char* dest_path = freeArgs[ n_args - 1 ];
+		
 		FSSpec dest;
 		
 		try
 		{
-			dest = Div::ResolvePathToFSSpec( freeArgs[ n_args - 1 ] );
+			dest = Div::ResolvePathToFSSpec( dest_path );
 		}
 		catch ( ... )
 		{
-			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", freeArgs[ n_args - 1 ] );
+			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", dest_path );
 			
 			return 1;
 		}
