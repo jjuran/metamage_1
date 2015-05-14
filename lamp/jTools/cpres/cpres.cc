@@ -3,8 +3,17 @@
  *	========
  */
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C/C++
 #include <cstdio>
+
+// Standard C++
+#include <algorithm>
+
+// command
+#include "command/get_option.hh"
 
 // plus
 #include "plus/string.hh"
@@ -25,7 +34,6 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -34,14 +42,48 @@ namespace N = Nitrogen;
 namespace Div = Divergence;
 
 
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_data_fork,
+};
+
+static command::option options[] =
+{
+	{ "data",      Option_data_fork },
+	{ "data-fork", Option_data_fork },
+	{ NULL }
+};
+
+static bool globally_using_data_fork = false;
+
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_data_fork:
+				globally_using_data_fork = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
-	
-	namespace o = orion;
-	
-	
-	static bool globally_using_data_fork = false;
-	
 	
 	static n::owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
 	                                                                  N::FSIOPermssn  perm )
@@ -128,13 +170,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--data", globally_using_data_fork );
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
-		
-		char const *const *args = o::free_arguments();
-		
-		std::size_t argn = o::free_argument_count();
+		const int argn = argc - (args - argv);
 		
 		if ( globally_using_data_fork  &&  ( !TARGET_API_MAC_CARBON || ::FSOpenResourceFile == NULL ) )
 		{
