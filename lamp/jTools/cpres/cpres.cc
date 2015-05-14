@@ -100,20 +100,19 @@ namespace tool
 				
 				N::GetResInfo_Result resInfo = N::GetResInfo( h );
 				
-				try
+				Handle existing = ::Get1Resource( resInfo.type, resInfo.id );
+				
+				if ( existing )
 				{
-					Handle existing = N::Get1Resource( resInfo.type, resInfo.id );
-					
-					if ( existing )
-					{
-						::RemoveResource( existing );
-					}
+					::RemoveResource( existing );
 				}
-				catch ( const Mac::OSStatus& err )
+				else
 				{
+					OSErr err = ResError();
+					
 					if ( err != resNotFound )
 					{
-						throw;
+						Mac::ThrowOSStatus( err );
 					}
 					
 					// Okay, resource didn't exist in dest file
