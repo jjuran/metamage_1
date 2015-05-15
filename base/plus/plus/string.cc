@@ -600,6 +600,11 @@ namespace plus
 	}
 	
 	
+	int cmp( const string& a, const string& b )
+	{
+		return string_compare( a.data(), a.size(), b.data(), b.size() );
+	}
+	
 	bool operator==( const string& a, const string& b )
 	{
 		return string_equal( a.data(), a.size(), b.data(), b.size() );
