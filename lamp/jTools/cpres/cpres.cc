@@ -3,8 +3,17 @@
  *	========
  */
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C/C++
 #include <cstdio>
+
+// Standard C++
+#include <algorithm>
+
+// command
+#include "command/get_option.hh"
 
 // plus
 #include "plus/string.hh"
@@ -25,7 +34,6 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -34,14 +42,48 @@ namespace N = Nitrogen;
 namespace Div = Divergence;
 
 
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_data_fork,
+};
+
+static command::option options[] =
+{
+	{ "data",      Option_data_fork },
+	{ "data-fork", Option_data_fork },
+	{ NULL }
+};
+
+static bool globally_using_data_fork = false;
+
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_data_fork:
+				globally_using_data_fork = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
-	
-	namespace o = orion;
-	
-	
-	static bool globally_using_data_fork = false;
-	
 	
 	static n::owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
 	                                                                  N::FSIOPermssn  perm )
@@ -128,13 +170,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--data", globally_using_data_fork );
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
-		
-		std::size_t n_args = o::free_argument_count();
+		const int argn = argc - (args - argv);
 		
 		if ( globally_using_data_fork  &&  ( !TARGET_API_MAC_CARBON || ::FSOpenResourceFile == NULL ) )
 		{
@@ -146,24 +184,26 @@ namespace tool
 		int fail = 0;
 		
 		// Check for sufficient number of args
-		if ( n_args < 2 )
+		if ( argn < 2 )
 		{
-			std::fprintf( stderr, "cpres: missing %s\n", (n_args == 0) ? "file arguments"
-			                                                           : "destination file" );
+			std::fprintf( stderr, "cpres: missing %s\n", (argn == 0) ? "file arguments"
+			                                                         : "destination file" );
 			
 			return 1;
 		}
 		
 		// Last arg should be the destination file.
+		const char* dest_path = args[ argn - 1 ];
+		
 		FSSpec dest;
 		
 		try
 		{
-			dest = Div::ResolvePathToFSSpec( freeArgs[ n_args - 1 ] );
+			dest = Div::ResolvePathToFSSpec( dest_path );
 		}
 		catch ( ... )
 		{
-			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", freeArgs[ n_args - 1 ] );
+			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", dest_path );
 			
 			return 1;
 		}
@@ -199,9 +239,9 @@ namespace tool
 		n::owned< N::ResFileRefNum > resFileH( open_res_file( dest, N::fsRdWrPerm ) );
 		
 		// Try to copy each file.  Return whether any errors occurred.
-		for ( int index = 0;  index < n_args - 1;  ++index )
+		for ( int index = 0;  index < argn - 1;  ++index )
 		{
-			const char* source_path = freeArgs[ index ];
+			const char* source_path = args[ index ];
 			
 			try
 			{
