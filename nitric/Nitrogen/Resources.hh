@@ -334,6 +334,10 @@ namespace Nitrogen
 	// FSpOpenOrphanResFile
 	// GetTopResourceFile
 	// GetNextResourceFile
+	// FSOpenResFile
+	// FSCreateResFile
+	// FSResourceFileAlreadyOpen
+	// FSCreateResourceFile
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                                    UniCharCount    forkNameLength,
@@ -363,11 +367,6 @@ namespace Nitrogen
 		                           get_string_data( forkName ),
 		                           permissions );
 	}
-	
-	// FSCreateResFile
-	// FSResourceFileAlreadyOpen
-	// FSCreateResourceFile
-	// FSOpenResourceFile
 	
 	class ResFile
 	{
