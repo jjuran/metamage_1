@@ -226,9 +226,12 @@ namespace Nitrogen
 		return h.release();
 	}
 	
-	Handle AddResource( nucleus::owned< Handle > h, const GetResInfo_Result& resInfo )
+	Handle AddResource( nucleus::owned< Handle > h, const mac::types::ResInfo& resInfo )
 	{
-		return AddResource( h, resInfo.type, resInfo.id, resInfo.name );
+		const ResType type = ResType( resInfo.type );
+		const ResID   id   = ResID  ( resInfo.id   );
+		
+		return AddResource( h, type, id, resInfo.name );
 	}
 	
 	std::size_t GetResourceSizeOnDisk( Handle r )

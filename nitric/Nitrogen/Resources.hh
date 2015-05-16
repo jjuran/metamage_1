@@ -290,7 +290,7 @@ namespace Nitrogen
 	                    ResID                     resID,
 	                    ConstStr255Param          name );
 	
-	Handle AddResource( nucleus::owned< Handle > h, const GetResInfo_Result& resInfo );
+	Handle AddResource( nucleus::owned< Handle > h, const mac::types::ResInfo& resInfo );
 	
 	std::size_t GetResourceSizeOnDisk( Handle r );
 	
