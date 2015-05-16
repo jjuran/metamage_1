@@ -48,6 +48,9 @@
 #ifndef MAC_FILES_TYPES_FSIOPERM_HH
 #include "Mac/Files/Types/FSIOPerm.hh"
 #endif
+#ifndef MAC_FILES_TYPES_FSREFNAMESPEC_HH
+#include "Mac/Files/Types/FSRefNameSpec.hh"
+#endif
 #ifndef MAC_FILES_TYPES_FSSIGNATURE_HH
 #include "Mac/Files/Types/FSSignature.hh"
 #endif
@@ -337,7 +340,8 @@ namespace Nitrogen
 	// FSOpenResFile
 	// FSCreateResFile
 	// FSResourceFileAlreadyOpen
-	// FSCreateResourceFile
+	
+	void FSCreateResourceFile( const Mac::FSRefNameSpec& file );
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                                    UniCharCount    forkNameLength,
