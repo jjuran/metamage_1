@@ -691,6 +691,12 @@ namespace nucleus
 namespace Nitrogen
 {
 	
+	struct FSRefNameSpec
+	{
+		FSRef         parent;
+		HFSUniStr255  name;
+	};
+	
 	FSRef FSMakeFSRefUnicode( const FSRef&   parentRef,
 	                          UniCharCount   nameLength,
 	                          const UniChar *name,
@@ -701,6 +707,12 @@ namespace Nitrogen
 	                                 TextEncoding        textEncodingHint )
 	{
 		return FSMakeFSRefUnicode( parentRef, name.length, name.unicode, textEncodingHint );
+	}
+	
+	inline FSRef FSMakeFSRefUnicode( const FSRefNameSpec&  file,
+	                                 TextEncoding          textEncodingHint )
+	{
+		return FSMakeFSRefUnicode( file.parent, file.name, textEncodingHint );
 	}
 	
 	template < class UniString >
