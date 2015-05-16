@@ -266,21 +266,6 @@ namespace Nitrogen
 	
 	ResAttributes GetResAttrs( Handle r );
 	
-	struct GetResInfo_Result
-	{
-		ResID   id;
-		ResType type;
-		::Str255  name;
-		
-		GetResInfo_Result( const mac::types::ResInfo& info )
-		{
-			id   = ResID  ( info.id   );
-			type = ResType( info.type );
-			
-			std::memcpy( name, info.name, 1 + info.name[ 0 ] );
-		}
-	};
-	
 	mac::types::ResInfo GetResInfo( Handle r );
 	
 	void SetResInfo( Handle r, ResID id, ConstStr255Param name );
