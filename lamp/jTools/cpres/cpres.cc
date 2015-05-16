@@ -140,7 +140,7 @@ namespace tool
 				
 				n::saved< N::ResFile > savedResFile( destRes );
 				
-				N::GetResInfo_Result resInfo = N::GetResInfo( h );
+				mac::types::ResInfo resInfo = N::GetResInfo( h );
 				
 				Handle existing = ::Get1Resource( resInfo.type, resInfo.id );
 				
