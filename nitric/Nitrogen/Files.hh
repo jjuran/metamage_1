@@ -69,6 +69,9 @@
 #ifndef MAC_FILES_TYPES_FSIOPOSMODE_HH
 #include "Mac/Files/Types/FSIOPosMode.hh"
 #endif
+#ifndef MAC_FILES_TYPES_FSREFNAMESPEC_HH
+#include "Mac/Files/Types/FSRefNameSpec.hh"
+#endif
 #ifndef MAC_FILES_TYPES_FSSHARINGFLAGS_HH
 #include "Mac/Files/Types/FSSharingFlags.hh"
 #endif
@@ -691,11 +694,8 @@ namespace nucleus
 namespace Nitrogen
 {
 	
-	struct FSRefNameSpec
-	{
-		FSRef         parent;
-		HFSUniStr255  name;
-	};
+	using Mac::FSRefNameSpec;
+	
 	
 	FSRef FSMakeFSRefUnicode( const FSRef&   parentRef,
 	                          UniCharCount   nameLength,
