@@ -144,7 +144,7 @@ namespace tool
 		
 		if ( hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			if ( memcmp( name, PSTR_LEN( "CVS" ) == 0 ) )
+			if ( memcmp( name, PSTR_LEN( "CVS" ) ) == 0 )
 			{
 				bool has_other_files = false;
 				
