@@ -272,7 +272,7 @@ namespace tool
 				}
 				catch ( ... )
 				{
-					fprintf( stderr, "%s: OSStatus %d\n", path, err.Get() );
+					fprintf( stderr, "%s: OSStatus %ld\n", path, err.Get() );
 				}
 			}
 		}
