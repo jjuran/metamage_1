@@ -83,7 +83,7 @@ namespace tool
 	
 	static void remove_CVS_files( p7::fd_t dirfd )
 	{
-		const char* const* begin = cvs_filenames;
+		const char* const* begin = cvs_filenames + 2;
 		const char* const* end   = begin + ARRAYLEN( cvs_filenames );
 		
 		while ( begin < end )
