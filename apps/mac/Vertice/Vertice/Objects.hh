@@ -274,25 +274,17 @@ namespace Vertice
 			}
 	};
 	
-}
-
-namespace std
-{
-	
-	template <>
-	inline void swap( Vertice::ImageTile& a, Vertice::ImageTile& b )
+	inline void swap( ImageTile& a, ImageTile& b )
 	{
 		a.Swap( b );
 	}
 	
-	template <>
-	inline void swap( Vertice::PointMesh& a, Vertice::PointMesh& b )
+	inline void swap( PointMesh& a, PointMesh& b )
 	{
 		a.Swap( b );
 	}
 	
-	template <>
-	inline void swap( Vertice::MeshPolygon& a, Vertice::MeshPolygon& b )
+	inline void swap( MeshPolygon& a, MeshPolygon& b )
 	{
 		a.Swap( b );
 	}
