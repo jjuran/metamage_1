@@ -73,9 +73,9 @@ static void hello_world()
 	
 	ssize_t n_read = CHECK( read( fds[ 0 ], buffer, sizeof buffer ) );
 	
-	EXPECT( n_read == sizeof "Hello world!\n" - 1 );
+	EXPECT_EQ( n_read, sizeof "Hello world!\n" - 1 );
 	
-	EXPECT( memcmp( buffer, "Hello world!\n", n_read ) == 0 );
+	EXPECT_CMP( buffer, n_read, "Hello world!\n", n_read );
 }
 
 int main( int argc, char** argv )
