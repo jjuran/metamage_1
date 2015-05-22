@@ -7,7 +7,7 @@
 #define IOTA_ITERATOR_HH
 
 // Standard C/C++
-#include <cstddef>
+#include <cstring>
 
 
 namespace iota
@@ -28,6 +28,38 @@ namespace iota
 	
 	template < class T > std::size_t size( const T& x )  { return x.size(); }
 	
+	struct span
+	{
+		const char*  ptr;
+		std::size_t  len;
+		
+		span( const char* p, std::size_t n ) : ptr( p ), len( n )
+		{
+		}
+		
+		const char* begin() const  { return ptr;       }
+		const char* end  () const  { return ptr + len; }
+		const char* data () const  { return ptr;       }
+		std::size_t size () const  { return       len; }
+		
+		const char& operator[]( std::size_t i ) const  { return ptr[ i ]; }
+	};
+	
+	inline span make_span( const span& s )
+	{
+		return s;
+	}
+	
+	inline span make_span( const char* s )
+	{
+		return span( s, std::strlen( s ) );
+	}
+	
+	template < class T >
+	inline span make_span( const T& x )
+	{
+		return span( data( x ), size( x ) );
+	}
 }
 
 #endif
