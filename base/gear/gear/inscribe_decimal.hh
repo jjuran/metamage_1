@@ -58,6 +58,39 @@ namespace gear
 		return end;
 	}
 	
+	template < unsigned base, class Type >
+	inline char* inscribe_signed_r( Type x, char* buffer )
+	{
+		if ( x < 0 )
+		{
+			*buffer++ = '-';
+			
+			const Type nadir = 1LL << (sizeof x * 8 - 1);
+			
+			if ( x != nadir )
+			{
+				x = -x;
+			}
+		}
+		
+		if ( sizeof x == sizeof (long long) )
+		{
+			return inscribe_unsigned_r< base, unsigned long long >( x, buffer );
+		}
+		
+		if ( sizeof x == sizeof (long) )
+		{
+			return inscribe_unsigned_r< base, unsigned long >( x, buffer );
+		}
+		
+		if ( sizeof x == sizeof (int) )
+		{
+			return inscribe_unsigned_r< base, unsigned int >( x, buffer );
+		}
+		
+		return inscribe_unsigned_r< base, unsigned short >( x, buffer );
+	}
+	
 	inline unsigned pure_decimal_magnitude( unsigned x )
 	{
 		return pure_magnitude< 10 >( x );
