@@ -110,12 +110,6 @@ namespace tool
 	#define COMMENT  "    // "
 	
 	
-	struct str_len
-	{
-		const char*  string;
-		size_t       length;
-	};
-	
 	static inline int sign_extend_char( signed char x )
 	{
 		return x;
@@ -944,16 +938,16 @@ namespace tool
 #pragma mark -
 #pragma mark ** Line 4 **
 	
-	static const str_len unary_ops[] =
+	static char const* const unary_ops[] =
 	{
-		{ STR_LEN( "NEGX" ) },
-		{ STR_LEN( "CLR"  ) },
-		{ STR_LEN( "NEG"  ) },
-		{ STR_LEN( "NOT"  ) },
-		{ STR_LEN( ""     ) },
-		{ STR_LEN( "TST"  ) },
-		{ STR_LEN( ""     ) },
-		{ STR_LEN( ""     ) }
+		"NEGX",
+		"CLR",
+		"NEG",
+		"NOT",
+		"",
+		"TST",
+		"",
+		""
 	};
 	
 	static void decode_unary( uint16_t op )
@@ -967,9 +961,9 @@ namespace tool
 		
 		char format[] = "%s.%c    %s" "\n";
 		
-		const str_len& name = unary_ops[ op >> 9 & 0x7 ];
+		const char* name = unary_ops[ op >> 9 & 0x7 ];
 		
-		if ( op & 0x0100  ||  name.length == 0 )
+		if ( op & 0x0100  ||  *name == '\0' )
 		{
 			throw illegal_instruction();
 		}
@@ -978,7 +972,7 @@ namespace tool
 		
 		const plus::string ea = read_ea( op & 0x3f, immediate_size );
 		
-		printf( format, name.string, size_codes[ size_index ], ea.c_str() );
+		printf( format, name, size_codes[ size_index ], ea.c_str() );
 	}
 	
 	static const char* move_ccr_sr[] =
