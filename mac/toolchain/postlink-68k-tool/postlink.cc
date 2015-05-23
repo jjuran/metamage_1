@@ -9,6 +9,9 @@
 // more-libc
 #include "more/string.h"
 
+// plus
+#include "plus/string.hh"
+
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/truncate.hh"
