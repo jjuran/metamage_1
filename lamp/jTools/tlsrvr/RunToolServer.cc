@@ -310,8 +310,7 @@ namespace tool
 		plus::string inner_script = make_script_from_command( command );
 		
 		p7::spew( p7::open( temp_file_paths[ kScriptFile ], p7::o_wronly ),
-		          inner_script.data(),
-		          inner_script.size() );
+		          inner_script );
 		
 		nucleus::string script = MakeToolServerScript( temp_file_paths[ kScriptFile ],
 		                                               temp_file_paths[ kOutputFile ],
