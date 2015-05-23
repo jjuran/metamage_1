@@ -68,7 +68,7 @@ namespace tool
 		{
 			const plus::string& line = *s;
 			
-			if ( line.length() < STRLEN( "A123 _X" ) )
+			if ( line.size() < STRLEN( "A123 _X" ) )
 			{
 				break;
 			}

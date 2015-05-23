@@ -73,16 +73,6 @@ namespace tool
 		size_t       length;
 	};
 	
-	struct string_length
-	{
-		const char*  string;
-		size_t       length;
-		
-		string_length( const char* s, size_t len ) : string( s ), length( len )
-		{
-		}
-	};
-	
 	static inline int sign_extend_char( signed char x )
 	{
 		return x;
@@ -925,7 +915,7 @@ namespace tool
 		
 		char format[] = "%s.%c    %s" "\n";
 		
-		const str_len name = unary_ops[ op >> 9 & 0x7 ];
+		const str_len& name = unary_ops[ op >> 9 & 0x7 ];
 		
 		if ( op & 0x0100  ||  name.length == 0 )
 		{
