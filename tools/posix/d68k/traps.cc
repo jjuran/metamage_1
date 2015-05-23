@@ -12,6 +12,7 @@
 #include <stdint.h>
 
 // iota
+#include "iota/iterator.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -66,7 +67,7 @@ namespace tool
 		
 		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
 		{
-			const plus::string& line = *s;
+			const iota::span line( s->data(), s->size() );
 			
 			if ( line.size() < STRLEN( "A123 _X" ) )
 			{
