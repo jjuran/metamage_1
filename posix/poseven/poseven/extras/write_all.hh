@@ -12,9 +12,9 @@
 // POSIX
 #include <sys/types.h>
 
-// plus
-#ifndef PLUS_STRING_HH
-#include "plus/string.hh"
+// iota
+#ifndef IOTA_ITERATOR_HH
+#include "iota/iterator.hh"
 #endif
 
 // poseven
@@ -28,20 +28,24 @@ namespace poseven
 	
 	ssize_t write_some( fd_t fd, const char* buffer, size_t n_bytes );
 	
-	inline ssize_t write_some( fd_t fd, const plus::string& string )
+	template < class String >
+	inline ssize_t write_some( fd_t fd, const String& s )
 	{
-		return write_some( fd,
-		                   string.data(),
-		                   string.size() );
+		using iota::data;
+		using iota::size;
+		
+		return write_some( fd, data( s ), size( s ) );
 	}
 	
 	ssize_t write_all( fd_t fd, const char* buffer, size_t n_bytes );
 	
-	inline ssize_t write_all( fd_t fd, const plus::string& string )
+	template < class String >
+	inline ssize_t write_all( fd_t fd, const String& s )
 	{
-		return write_all( fd,
-		                  string.data(),
-		                  string.size() );
+		using iota::data;
+		using iota::size;
+		
+		return write_all( fd, data( s ), size( s ) );
 	}
 	
 }
