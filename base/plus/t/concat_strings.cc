@@ -26,7 +26,7 @@ static void concat()
 
 int main( int argc, const char *const *argv )
 {
-	tap::start( "string_copy", n_tests );
+	tap::start( "concat_strings", n_tests );
 	
 	concat();
 	
