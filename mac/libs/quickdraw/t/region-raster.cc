@@ -53,7 +53,7 @@ static void mask_sizes()
 	{
 		const test_case& t = test_cases[ i ];
 		
-		EXPECT( region_raster::mask_size( t.bbox ) == t.mask_size );
+		EXPECT_EQ( region_raster::mask_size( t.bbox ), t.mask_size );
 	}
 }
 

@@ -39,8 +39,8 @@ static void geometry()
 	
 	g = quickdraw::region_geometry( disjoint );
 	
-	EXPECT( g.n_v_coords == 4 );
-	EXPECT( g.n_h_coords == 2 );
+	EXPECT_EQ( g.n_v_coords, 4 );
+	EXPECT_EQ( g.n_h_coords, 2 );
 	
 	const short tangent[] =
 	{
@@ -53,8 +53,8 @@ static void geometry()
 	
 	g = quickdraw::region_geometry( tangent );
 	
-	EXPECT( g.n_v_coords == 3 );
-	EXPECT( g.n_h_coords == 4 );
+	EXPECT_EQ( g.n_v_coords, 3 );
+	EXPECT_EQ( g.n_h_coords, 4 );
 }
 
 static void bbox()
