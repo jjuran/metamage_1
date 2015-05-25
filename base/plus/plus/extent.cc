@@ -5,7 +5,9 @@
 
 #include "plus/extent.hh"
 
+// Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // debug
 #include "debug/assert.hh"
@@ -70,6 +72,17 @@ namespace plus
 		return header;
 	}
 	
+	static char* extent_duplicate( const char* buffer )
+	{
+		extent_header* header = header_from_buffer( buffer );
+		
+		char* duplicate = extent_alloc( header->capacity );
+		
+		memcpy( duplicate, buffer, header->capacity );
+		
+		return duplicate;
+	}
+	
 	void extent_add_ref( const char* buffer )
 	{
 		extent_header* header = header_from_buffer( buffer );
@@ -85,6 +98,20 @@ namespace plus
 		{
 			extent_free( header );
 		}
+	}
+	
+	char* extent_unshare( char* buffer )
+	{
+		extent_header* header = header_from_buffer( buffer );
+		
+		if ( header->refcount != 1 )
+		{
+			buffer = extent_duplicate( buffer );
+			
+			--header->refcount;
+		}
+		
+		return buffer;
 	}
 	
 	unsigned long extent_refcount( const char* buffer )
