@@ -27,6 +27,10 @@
 
 #include "Nitrogen/Resources.hh"
 
+// poseven
+#include "poseven/functions/stat.hh"
+#include "poseven/types/mode_t.hh"
+
 // Io: MacFiles
 #include "MacFiles/Classic.hh"
 
@@ -39,6 +43,7 @@
 
 namespace n = nucleus;
 namespace N = Nitrogen;
+namespace p7 = poseven;
 namespace Div = Divergence;
 
 
@@ -115,7 +120,9 @@ namespace tool
 	                       const FSSpec&     source,
 	                       N::ResFileRefNum  destRes )
 	{
-		if ( io::directory_exists( source ) )
+		struct stat st = p7::stat( source_path );
+		
+		if ( p7::s_isdir( st ) )
 		{
 			// Source item is a directory.
 			std::fprintf( stderr, "cpres: %s: omitting directory\n", source_path );
@@ -195,18 +202,18 @@ namespace tool
 		// Last arg should be the destination file.
 		const char* dest_path = args[ argn - 1 ];
 		
-		FSSpec dest;
+		struct stat st;
 		
-		try
-		{
-			dest = Div::ResolvePathToFSSpec( dest_path );
-		}
-		catch ( ... )
+		const bool exists = p7::stat( dest_path, st );
+		
+		if ( exists  &&  p7::s_isdir( st ) )
 		{
 			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", dest_path );
 			
 			return 1;
 		}
+		
+		FSSpec dest = Div::ResolvePathToFSSpec( dest_path );
 		
 		if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
 		{
