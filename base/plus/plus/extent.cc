@@ -5,6 +5,8 @@
 
 #include "plus/extent.hh"
 
+#include <stdlib.h>
+
 // debug
 #include "debug/assert.hh"
 
@@ -25,11 +27,23 @@ namespace plus
 	
 	char* extent_alloc( unsigned long capacity )
 	{
-		ASSERT( long( capacity ) >= 0 );
+		unsigned long extent_size = sizeof (extent_header) + capacity;
 		
-		capacity += sizeof (extent_header);
+		ASSERT( extent_size > capacity );
 		
-		extent_header* header = (extent_header*) ::operator new( capacity );
+		if ( extent_size < capacity )
+		{
+			/*
+				Overflow occurred.  The capacity is too large, and the
+				address space can't fit the entire extent including the header.
+				This is a programming error -- if you need gigabytes of RAM,
+				this is the wrong facility to use.
+			*/
+			
+			abort();
+		}
+		
+		extent_header* header = (extent_header*) ::operator new( extent_size );
 		
 		header->refcount = 1;
 		header->capacity = capacity;
