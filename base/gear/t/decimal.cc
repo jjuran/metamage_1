@@ -45,8 +45,8 @@ static void magnitude()
 	EXPECT( pure_magnitude< 10 >( 999999999 ) == 9 );
 	EXPECT( pure_magnitude< 10 >( 1000000000 ) == 10 );
 	EXPECT( pure_magnitude< 10 >( 2147483647 ) == 10 );
-	EXPECT( pure_magnitude< 10 >( 2147483648 ) == 10 );
-	EXPECT( pure_magnitude< 10 >( 4294967295 ) == 10 );
+	EXPECT( pure_magnitude< 10 >( 2147483648u ) == 10 );
+	EXPECT( pure_magnitude< 10 >( 4294967295u ) == 10 );
 	EXPECT( pure_magnitude< 10 >( 4294967296 ) == 10 );
 	EXPECT( pure_magnitude< 10 >( 9223372036854775807 ) == 19 );
 	EXPECT( pure_magnitude< 10 >( 9223372036854775808u ) == 19 );
@@ -97,7 +97,7 @@ static void inscribe_unsigned()
 	
 	EXPECT_CMP( buffer, 8, "12345xxx", 8 );
 	
-	end = inscribe_unsigned_r< 10 >( 2147483648, buffer );
+	end = inscribe_unsigned_r< 10 >( 2147483648u, buffer );
 	
 	EXPECT_CMP( buffer, 12, "2147483648xx", 12 );
 	
@@ -130,7 +130,7 @@ static void inscribe_signed()
 	
 	EXPECT_CMP( buffer, 8, "12345xxx", 8 );
 	
-	end = inscribe_signed_r< 10 >( 2147483648, buffer );
+	end = inscribe_signed_r< 10 >( 2147483648u, buffer );
 	
 	EXPECT_CMP( buffer, 12, "2147483648xx", 12 );
 	
