@@ -117,7 +117,6 @@ namespace tool
 	
 	
 	static int TryResCopy( const char*       source_path,
-	                       const FSSpec&     source,
 	                       N::ResFileRefNum  destRes )
 	{
 		struct stat st = p7::stat( source_path );
@@ -129,6 +128,8 @@ namespace tool
 			
 			return 1;
 		}
+		
+		FSSpec source = Div::ResolvePathToFSSpec( source_path );
 		
 		n::owned< N::ResFileRefNum > sourceRes( open_res_file( source, N::fsRdPerm ) );
 		
@@ -252,9 +253,7 @@ namespace tool
 			
 			try
 			{
-				FSSpec source = Div::ResolvePathToFSSpec( source_path );
-				
-				fail += TryResCopy( source_path, source, resFileH );
+				fail += TryResCopy( source_path, resFileH );
 			}
 			catch ( const Mac::OSStatus& err )
 			{
