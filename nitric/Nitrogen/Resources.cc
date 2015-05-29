@@ -330,15 +330,17 @@ namespace Nitrogen
 		ResError();
 	}
 	
-	void FSCreateResourceFile( const Mac::FSRefNameSpec& file )
+	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
+	                           UniCharCount               forkNameLength,
+	                           const UniChar*             forkName )
 	{
 		Mac::ThrowOSStatus( ::FSCreateResourceFile( &file.parent,
 		                                            file.name.length,
 		                                            file.name.unicode,
 		                                            FSCatalogInfoBitmap(),
 		                                            NULL,
-		                                            0,
-		                                            NULL,
+		                                            forkNameLength,
+		                                            forkName,
 		                                            NULL,
 		                                            NULL ) );
 	}

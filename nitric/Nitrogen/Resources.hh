@@ -341,7 +341,27 @@ namespace Nitrogen
 	// FSCreateResFile
 	// FSResourceFileAlreadyOpen
 	
-	void FSCreateResourceFile( const Mac::FSRefNameSpec& file );
+	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
+	                           UniCharCount               forkNameLength,
+	                           const UniChar*             forkName );
+	
+	template < class UniString >
+	inline
+	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
+	                           const UniString&           forkName )
+	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		FSCreateResourceFile( file,
+		                      get_string_size( forkName ),
+		                      get_string_data( forkName ) );
+	}
+	
+	inline void FSCreateResourceFile( const Mac::FSRefNameSpec& file )
+	{
+		FSCreateResourceFile( file, 0, NULL );
+	}
 	
 	nucleus::owned< ResFileRefNum > FSOpenResourceFile( const FSRef&    ref,
 	                                                    UniCharCount    forkNameLength,
