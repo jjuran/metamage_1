@@ -260,7 +260,7 @@ namespace Genie
 		Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum();
 		Mac::FSDirID        dirID   = Mac::FSDirID       ();
 		
-		if ( TARGET_API_MAC_CARBON )
+		if ( TARGET_API_MAC_CARBON  &&  &GetProcessBundleLocation != NULL )
 		{
 			const ProcessSerialNumber current = { 0, kCurrentProcess };
 			
