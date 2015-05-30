@@ -9,14 +9,8 @@
 // Standard C/C++
 #include <cstdio>
 
-// Standard C++
-#include <algorithm>
-
 // command
 #include "command/get_option.hh"
-
-// plus
-#include "plus/string.hh"
 
 // nucleus
 #include "nucleus/saved.hh"
@@ -25,21 +19,20 @@
 #include "Mac/Toolbox/Types/OSStatus.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
-#include "Nitrogen/Resources.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
-// Divergence
-#include "Divergence/Utilities.hh"
+// poseven
+#include "poseven/functions/stat.hh"
+#include "poseven/types/mode_t.hh"
 
 // Orion
 #include "Orion/Main.hh"
 
+// cpres
+#include "res_file.hh"
+
 
 namespace n = nucleus;
 namespace N = Nitrogen;
-namespace Div = Divergence;
+namespace p7 = poseven;
 
 
 enum
@@ -85,37 +78,13 @@ static char* const* get_options( char* const* argv )
 namespace tool
 {
 	
-	static n::owned< N::ResFileRefNum > open_res_file_from_data_fork( const FSSpec&   filespec,
-	                                                                  N::FSIOPermssn  perm )
-	{
-		FSRef fileref = N::FSpMakeFSRef( filespec );
-		
-		return N::FSOpenResourceFile( fileref, perm );
-	}
-	
-	static n::owned< N::ResFileRefNum > open_res_file( const FSSpec&   filespec,
-	                                                   N::FSIOPermssn  perm )
-	{
-		try
-		{
-			if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
-			{
-				return open_res_file_from_data_fork( filespec, perm );
-			}
-		}
-		catch ( ... )
-		{
-		}
-		
-		return N::FSpOpenResFile( filespec, perm );
-	}
-	
-	
 	static int TryResCopy( const char*       source_path,
-	                       const FSSpec&     source,
-	                       N::ResFileRefNum  destRes )
+	                       N::ResFileRefNum  destRes,
+	                       ForkType          fork )
 	{
-		if ( io::directory_exists( source ) )
+		struct stat st = p7::stat( source_path );
+		
+		if ( p7::s_isdir( st ) )
 		{
 			// Source item is a directory.
 			std::fprintf( stderr, "cpres: %s: omitting directory\n", source_path );
@@ -123,7 +92,7 @@ namespace tool
 			return 1;
 		}
 		
-		n::owned< N::ResFileRefNum > sourceRes( open_res_file( source, N::fsRdPerm ) );
+		n::owned< N::ResFileRefNum > sourceRes = open_res_file( source_path, fork );
 		
 		int types = N::Count1Types();
 		
@@ -195,48 +164,20 @@ namespace tool
 		// Last arg should be the destination file.
 		const char* dest_path = args[ argn - 1 ];
 		
-		FSSpec dest;
+		struct stat st;
 		
-		try
-		{
-			dest = Div::ResolvePathToFSSpec( dest_path );
-		}
-		catch ( ... )
+		const bool exists = p7::stat( dest_path, st );
+		
+		if ( exists  &&  p7::s_isdir( st ) )
 		{
 			std::fprintf( stderr, "cpres: last argument (%s) is not a file.\n", dest_path );
 			
 			return 1;
 		}
 		
-		if ( TARGET_API_MAC_CARBON && globally_using_data_fork )
-		{
-			FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( dest ) );
-			
-			FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
-			
-			
-			HFSUniStr255 name = { dest.name[ 0 ] };
-			
-			std::copy( dest.name + 1,
-			           dest.name + 1 + dest.name[ 0 ],
-			           name.unicode );
-			
-			Mac::ThrowOSStatus( ::FSCreateResourceFile( &parent_ref,
-			                                            name.length,
-			                                            name.unicode,
-			                                            FSCatalogInfoBitmap(),
-			                                            NULL,
-			                                            0,
-			                                            NULL,
-			                                            NULL,
-			                                            NULL ) );
-		}
-		else
-		{
-			::FSpCreateResFile( &dest, 'RSED', 'rsrc', smRoman );
-		}
+		ForkType fork = globally_using_data_fork ? dataFork : rsrcFork;
 		
-		n::owned< N::ResFileRefNum > resFileH( open_res_file( dest, N::fsRdWrPerm ) );
+		n::owned< N::ResFileRefNum > resFileH = open_res_file( dest_path, fork, exists );
 		
 		// Try to copy each file.  Return whether any errors occurred.
 		for ( int index = 0;  index < argn - 1;  ++index )
@@ -245,9 +186,7 @@ namespace tool
 			
 			try
 			{
-				FSSpec source = Div::ResolvePathToFSSpec( source_path );
-				
-				fail += TryResCopy( source_path, source, resFileH );
+				fail += TryResCopy( source_path, resFileH, fork );
 			}
 			catch ( const Mac::OSStatus& err )
 			{
