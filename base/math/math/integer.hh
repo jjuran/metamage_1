@@ -99,6 +99,24 @@ namespace integer {
 	                  limb_t const*  b_high,
 	                  size_t         b_size );
 	
+	inline
+	cmp_t compare( bool is_little_endian,
+	               limb_t const* a, size_t a_size,
+	               limb_t const* b, size_t b_size )
+	{
+		if ( is_little_endian )
+		{
+			a += a_size;
+			b += b_size;
+			
+			return compare_le( a, a_size, b, b_size );
+		}
+		else
+		{
+			return compare_be( a, a_size, b, b_size );
+		}
+	}
+	
 	/*
 		Addition
 		--------
@@ -119,6 +137,24 @@ namespace integer {
 	size_t sum_size_desc_le( limb_t const* a_high, size_t a_size,
 	                         limb_t const* b_high, size_t b_size );
 	
+	inline
+	size_t sum_size_desc( bool is_little_endian,
+	                      limb_t const* a, size_t a_size,
+	                      limb_t const* b, size_t b_size )
+	{
+		if ( is_little_endian )
+		{
+			a += a_size;
+			b += b_size;
+			
+			return sum_size_desc_le( a, a_size, b, b_size );
+		}
+		else
+		{
+			return sum_size_desc_be( a, a_size, b, b_size );
+		}
+	}
+	
 #ifdef __MC68K__
 	
 	void add_be( limb_t*        x_high : __A0,
@@ -136,6 +172,24 @@ namespace integer {
 	void add_le( limb_t*        x_low,
 	             limb_t const*  y_low,
 	             size_t         n );
+	
+	inline
+	void add( bool           is_little_endian,
+	          limb_t*        x, size_t x_size,
+	          limb_t const*  y, size_t y_size )
+	{
+		if ( is_little_endian )
+		{
+			add_le( x, y, y_size );
+		}
+		else
+		{
+			x += x_size;
+			y += y_size;
+			
+			add_be( x, y, y_size );
+		}
+	}
 	
 }
 }
