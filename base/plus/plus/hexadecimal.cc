@@ -8,6 +8,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -86,6 +89,46 @@ namespace plus
 		var_string result;
 		
 		encode_32_bit_hex( result, x );
+		
+		return result;
+	}
+	
+	string unhex( const char* data, unsigned long size, align_t align )
+	{
+		// Alignment must be a power of two.
+		
+		ASSERT( align != 0 );
+		
+		const unsigned mask = align - 1;
+		
+		ASSERT( (align ^ mask) == (align + mask) );
+		
+		string::size_type n_data_bytes = size / 2 + (size & 1);
+		string::size_type n_zero_bytes = mask - (n_data_bytes + mask & mask);
+		string::size_type n_bytes      = n_data_bytes + n_zero_bytes;
+		
+		string result;
+		
+		char* p = result.reset( n_bytes );
+		
+		while ( n_zero_bytes-- )
+		{
+			*p++ = 0;
+		}
+		
+		string::size_type n = n_data_bytes;
+		
+		if ( const bool has_unpaired_digit = size & 1 )
+		{
+			*p++ = gear::decoded_hex_digit( *data++ );
+			--n;
+		}
+		
+		for ( ;  n > 0;  --n )
+		{
+			*p++ = gear::decode_8_bit_hex( data );
+			data += 2;
+		}
 		
 		return result;
 	}
