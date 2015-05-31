@@ -16,19 +16,17 @@
 #define DEBUGGER_TEXT  "User Break"
 
 
-inline asm void trace_on()
+enum
 {
-	JSR  0xFFFFFFF4
-}
+	trace_on = 0xFFFFFFF4
+};
 
-pascal void Debugger_patch()
+static void Debugger_message()
 {
 	write( STDERR_FILENO, DEBUGGER_TEXT "\n", sizeof DEBUGGER_TEXT - 1 + 1 );
-	
-	trace_on();
 }
 
-pascal void DebugStr_patch( const unsigned char* message )
+static void DebugStr_message( const unsigned char* message : __A0 )
 {
 	const size_t max_length = 255;
 	
@@ -41,6 +39,27 @@ pascal void DebugStr_patch( const unsigned char* message )
 	buffer[ length ] = '\n';
 	
 	write( STDERR_FILENO, buffer, length + 1 );
+}
+
+asm
+pascal void Debugger_patch()
+{
+	LINK     A6,#0
+	JSR      Debugger_message
+	UNLK     A6
 	
-	trace_on();
+	JMP      trace_on
+}
+
+asm
+pascal void DebugStr_patch( const unsigned char* message )
+{
+	MOVEA.L  4(SP),A0
+	MOVE.L   (SP)+,(SP)
+	
+	LINK     A6,#0
+	JSR      DebugStr_message
+	UNLK     A6
+	
+	JMP      trace_on
 }
