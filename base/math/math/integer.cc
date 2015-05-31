@@ -9,6 +9,11 @@
 namespace math    {
 namespace integer {
 	
+	/*
+		Comparison
+		----------
+	*/
+	
 #ifdef __MC68K__
 	
 	asm
@@ -104,6 +109,11 @@ namespace integer {
 		
 		return 0;
 	}
+	
+	/*
+		Addition
+		--------
+	*/
 	
 #ifdef __MC68K__
 	

@@ -73,6 +73,11 @@ namespace integer {
 		               : a >  zenith - b;
 	}
 	
+	/*
+		Comparison
+		----------
+	*/
+	
 #ifdef __MC68K__
 	
 	cmp_t compare_be( limb_t const*  a_low  : __A0,
@@ -93,6 +98,11 @@ namespace integer {
 	                  size_t         a_size,
 	                  limb_t const*  b_high,
 	                  size_t         b_size );
+	
+	/*
+		Addition
+		--------
+	*/
 	
 #ifdef __MC68K__
 	
