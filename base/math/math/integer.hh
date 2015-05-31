@@ -47,10 +47,14 @@
 	Functions
 	  * will_carry:   Returns true if the sum of its arguments would overflow
 	                  a limb, false otherwise.
+	  * will_borrow:  Returns true if the difference of its arguments would
+	                  underflow, false otherwise.
 	  * compare:      Returns -1 for a < b, 0 for a == b, and 1 for a > b.
 	  * sum_size:     Returns the size needed to store the result of adding
 	                  the two operands.
 	  * add:          Adds the second operand to the first one.
+	  * subtract:     Subtracts the second operand from the first one.  This
+	                  is strictly a cancellation function, requiring x >= y.
 	
 	Caveats
 	  * Integer operands must contain at least one limb.
@@ -71,6 +75,13 @@ namespace integer {
 	{
 		return carried ? a >= zenith - b
 		               : a >  zenith - b;
+	}
+	
+	inline
+	bool will_borrow( limb_t a, limb_t b, bool borrowed = false )
+	{
+		return borrowed ? a <= b
+		                : a <  b;
 	}
 	
 	/*
@@ -188,6 +199,37 @@ namespace integer {
 			y += y_size;
 			
 			add_be( x, y, y_size );
+		}
+	}
+	
+	/*
+		Subtraction
+		-----------
+	*/
+	
+	void subtract_be( limb_t*        x_high,
+	                  limb_t const*  y_high,
+	                  size_t         n );
+	
+	void subtract_le( limb_t*        x_low,
+	                  limb_t const*  y_low,
+	                  size_t         n );
+	
+	inline
+	void subtract( bool           is_little_endian,
+	               limb_t*        x, size_t x_size,
+	               limb_t const*  y, size_t y_size )
+	{
+		if ( is_little_endian )
+		{
+			subtract_le( x, y, y_size );
+		}
+		else
+		{
+			x += x_size;
+			y += y_size;
+			
+			subtract_be( x, y, y_size );
 		}
 	}
 	

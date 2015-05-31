@@ -296,5 +296,78 @@ namespace integer {
 		}
 	}
 	
+	/*
+		Subtraction
+		-----------
+	*/
+	
+	void subtract_be( limb_t*        x_high,
+	                  limb_t const*  y_high,
+	                  size_t         n )
+	{
+		limb_t* r = x_high;
+		
+		limb_t const* p = x_high;
+		limb_t const* q = y_high;
+		
+		bool borrowing = false;
+		
+		do
+		{
+			const limb_t a = *--p;
+			const limb_t b = *--q;
+			
+			const limb_t diff = a - b - borrowing;
+			
+			*--r = diff;
+			
+			borrowing = will_borrow( a, b, borrowing );
+		}
+		while ( --n > 0 );
+		
+		while ( borrowing )
+		{
+			const limb_t a = *--p;
+			
+			borrowing = a == 0;
+			
+			*--r = a - 1;
+		}
+	}
+	
+	void subtract_le( limb_t*        x_low,
+	                  limb_t const*  y_low,
+	                  size_t         n )
+	{
+		limb_t* r = x_low;
+		
+		limb_t const* p = x_low;
+		limb_t const* q = y_low;
+		
+		bool borrowing = false;
+		
+		do
+		{
+			const limb_t a = *p++;
+			const limb_t b = *q++;
+			
+			const limb_t diff = a - b - borrowing;
+			
+			*r++ = diff;
+			
+			borrowing = will_borrow( a, b, borrowing );
+		}
+		while ( --n > 0 );
+		
+		while ( borrowing )
+		{
+			const limb_t a = *p++;
+			
+			borrowing = a == 0;
+			
+			*r++ = a - 1;
+		}
+	}
+	
 }
 }
