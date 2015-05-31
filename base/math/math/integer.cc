@@ -150,7 +150,7 @@ namespace integer {
 			
 			if ( a + b != zenith )
 			{
-				return a_size + carries( a, b );
+				return a_size + will_carry( a, b );
 			}
 		}
 		while ( --n > 0 );
@@ -175,7 +175,7 @@ namespace integer {
 			
 			if ( a + b != zenith )
 			{
-				return a_size + carries( a, b );
+				return a_size + will_carry( a, b );
 			}
 		}
 		while ( --n > 0 );
@@ -225,28 +225,28 @@ namespace integer {
 		limb_t const* p = x_high;
 		limb_t const* q = y_high;
 		
-		bool carry = false;
+		bool carrying = false;
 		
 		do
 		{
 			const limb_t a = *--p;
 			const limb_t b = *--q;
 			
-			const limb_t sum = a + b + carry;
+			const limb_t sum = a + b + carrying;
 			
 			*--r = sum;
 			
-			carry = carries( a, b, carry );
+			carrying = will_carry( a, b, carrying );
 		}
 		while ( --n > 0 );
 		
-		while ( carry )
+		while ( carrying )
 		{
 			const limb_t a = *--p + 1;
 			
 			*--r = a;
 			
-			carry = a == 0;
+			carrying = a == 0;
 		}
 	}
 	
@@ -261,28 +261,28 @@ namespace integer {
 		limb_t const* p = x_low;
 		limb_t const* q = y_low;
 		
-		bool carry = false;
+		bool carrying = false;
 		
 		do
 		{
 			const limb_t a = *p++;
 			const limb_t b = *q++;
 			
-			const limb_t sum = a + b + carry;
+			const limb_t sum = a + b + carrying;
 			
 			*r++ = sum;
 			
-			carry = carries( a, b, carry );
+			carrying = will_carry( a, b, carrying );
 		}
 		while ( --n > 0 );
 		
-		while ( carry )
+		while ( carrying )
 		{
 			const limb_t a = *p++ + 1;
 			
 			*r++ = a;
 			
-			carry = a == 0;
+			carrying = a == 0;
 		}
 	}
 	

@@ -45,12 +45,12 @@
 	  * "size":         Always a count of limbs, not bytes.
 	
 	Functions
-	  * carries:   Returns true if the sum of its arguments would overflow a
-	               limb, false otherwise.
-	  * compare:   Returns -1 for a < b, 0 for a == b, and 1 for a > b.
-	  * sum_size:  Returns the size needed to store the result of adding the
-	               two operands.
-	  * add:       Adds the second operand to the first one.
+	  * will_carry:   Returns true if the sum of its arguments would overflow
+	                  a limb, false otherwise.
+	  * compare:      Returns -1 for a < b, 0 for a == b, and 1 for a > b.
+	  * sum_size:     Returns the size needed to store the result of adding
+	                  the two operands.
+	  * add:          Adds the second operand to the first one.
 	
 	Caveats
 	  * Integer operands must contain at least one limb.
@@ -66,7 +66,8 @@ namespace integer {
 	
 	const limb_t zenith = limb_t( -1 );
 	
-	static inline bool carries( limb_t a, limb_t b, bool carried = false )
+	inline
+	bool will_carry( limb_t a, limb_t b, bool carried = false )
 	{
 		return carried ? a >= zenith - b
 		               : a >  zenith - b;
