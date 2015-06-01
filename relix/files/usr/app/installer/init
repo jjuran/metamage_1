@@ -1,6 +1,6 @@
 #!/bin/sh
 
-/usr/bin/confirm "Proceed with automatic installation of MacRelix?" || exit
+/usr/bin/confirm "Proceed with automatic download of MacRelix?" || exit
 
 cd /gui/port/install
 
