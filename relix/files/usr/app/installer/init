@@ -1,6 +1,16 @@
 #!/bin/sh
 
-/usr/bin/confirm "Proceed with automatic download of MacRelix?" || exit
+PLATFORM=osx
+/bin/test -e /sys/mac/gestalt/bbox || PLATFORM=os9
+/bin/test -e /sys/mac/gestalt/ppcf || PLATFORM=68k
+
+export PLATFORM
+
+flavor="Carbon"
+/bin/test -e /sys/mac/gestalt/bbox || flavor="PPC"
+/bin/test -e /sys/mac/gestalt/ppcf || flavor="68K"
+
+/usr/bin/confirm "Proceed with automatic download of MacRelix/$flavor?" || exit
 
 cd /gui/port/install
 
