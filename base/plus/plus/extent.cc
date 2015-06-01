@@ -58,33 +58,28 @@ namespace plus
 		::operator delete( header );
 	}
 	
-	static extent_header* header_from_buffer( const char* buffer )
+	static inline extent_header* header_from_buffer( const char* buffer )
 	{
 		// This casts away const, but it's only the characters that are
 		// const, not the header.
 		
 		extent_header* header = (extent_header*) buffer - 1;
 		
+		ASSERT( long( header->refcount ) > 0 );
+		
 		return header;
 	}
 	
 	void extent_add_ref( const char* buffer )
 	{
-		// This casts away const, but it's only the characters that are
-		// const, not the header.
-		
 		extent_header* header = header_from_buffer( buffer );
 		
 		++header->refcount;
-		
-		ASSERT( long( header->refcount ) >= 0 );
 	}
 	
 	void extent_release( const char* buffer )
 	{
 		extent_header* header = header_from_buffer( buffer );
-		
-		ASSERT( long( header->refcount ) > 0 );
 		
 		if ( --header->refcount == 0 )
 		{
@@ -95,8 +90,6 @@ namespace plus
 	unsigned long extent_refcount( const char* buffer )
 	{
 		const extent_header* header = header_from_buffer( buffer );
-		
-		ASSERT( long( header->refcount ) > 0 );
 		
 		return header->refcount;
 	}
