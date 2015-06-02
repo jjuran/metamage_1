@@ -6,6 +6,9 @@
 #ifndef MATH_INTEGER_HH
 #define MATH_INTEGER_HH
 
+// math
+#include "math/integer_types.hh"
+
 /*
 	Metamage Integer Numerics Library
 	---------------------------------
@@ -77,10 +80,6 @@
 
 namespace math    {
 namespace integer {
-	
-	typedef unsigned long   limb_t;
-	typedef unsigned short  size_t;
-	typedef signed char     cmp_t;
 	
 	const limb_t zenith = limb_t( -1 );
 	
