@@ -450,11 +450,58 @@ namespace integer {
 	const unsigned twigs_per_limb = sizeof (limb_t) / sizeof (twig_t);
 	const unsigned limbs_per_long = sizeof (long_t) / sizeof (limb_t);
 	
+#ifdef __MC68K__
+	
+	static asm
+	void long_multiply( long_t*  x : __A0,
+	                    twig_t   a : __D0,
+	                    twig_t   b : __D1 )
+	{
+		/*
+			Multiply 32-bit operands using a FOIL (first/outer/inner/last)
+			strategy.  Instead of first and last, we have upper and lower
+			words, which we'll distinguish in the comments by letter case:
+			A, a, B, and b.  The result is just X, with the portion in use
+			at any given step commented explicitly.
+		*/
+		
+		MOVE.L   D0,D2
+		MULU.W   D1,D2
+		MOVE.L   D2,4(A0)  // a * b -> X (low longword)
+		
+		MOVEA.L  D0,A1     // save a for later
+		SWAP     D0        // load A
+		MOVE.L   D0,D2
+		MULU.W   D1,D2     // A * b -> D2
+		SWAP     D1        // load B
+		MULU.W   D1,D0
+		MOVE.L   D0,(A0)   // A * B -> X (high longword)
+		
+		MOVE.L   A1,D0     // load a
+		MULU.W   D1,D0     // a * B -> D0
+		
+		MOVEQ.L  #0,D1
+		ADD.L    D2,D0     // add (A * b) to (a * B)
+		ADDX.W   D1,D1     // save carry bit in D1
+		
+		MOVEQ.L  #0,D2
+		ADD.L    D0,2(A0)  // add (A * b) + (a * B) to X (middle)
+		ADDX.W   D2,D1     // add carry bit to D1
+		
+		ADD.W    D1,(A0)   // add the carries to X (high longword)
+		
+		RTS
+	}
+	
+#else
+	
 	static inline
 	void long_multiply( long_t* x, twig_t a, twig_t b )
 	{
 		*x = (long_t) a * b;
 	}
+	
+#endif
 	
 	void multiply_be( limb_t*       x_low, size_t x_size,
 	                  limb_t const* y_low, size_t y_size )
