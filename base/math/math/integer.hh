@@ -221,9 +221,19 @@ namespace integer {
 		-----------
 	*/
 	
+#ifdef __MC68K__
+	
+	void subtract_be( limb_t*        x_high : __A0,
+	                  limb_t const*  y_high : __A1,
+	                  size_t         n      : __D1 );
+	
+#else
+	
 	void subtract_be( limb_t*        x_high,
 	                  limb_t const*  y_high,
 	                  size_t         n );
+	
+#endif
 	
 	void subtract_le( limb_t*        x_low,
 	                  limb_t const*  y_low,

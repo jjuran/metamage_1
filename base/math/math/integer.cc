@@ -301,6 +301,39 @@ namespace integer {
 		-----------
 	*/
 	
+#ifdef __MC68K__
+	
+	asm
+	void subtract_be( limb_t*        x_high : __A0,
+	                  limb_t const*  y_high : __A1,
+	                  size_t         n      : __D1 )
+	{
+		LINK     A6,#0
+		
+		// Subtract the contents, from least to most significant.
+		
+		SUBQ.W   #1,D1
+	subtract_loop:
+		SUBX.L   -(A1),-(A0)
+		DBRA.S   D1,subtract_loop
+		
+		// The second operand is exhausted.
+		
+		BCC.S    end
+		
+		// Subtract the carry bit.
+		
+	borrow_loop:
+		SUBQ.L   #1,-(A0)
+		BCS.S    borrow_loop
+		
+	end:
+		UNLK     A6
+		RTS
+	}
+	
+#else
+	
 	void subtract_be( limb_t*        x_high,
 	                  limb_t const*  y_high,
 	                  size_t         n )
@@ -334,6 +367,8 @@ namespace integer {
 			*--r = a - 1;
 		}
 	}
+	
+#endif
 	
 	void subtract_le( limb_t*        x_low,
 	                  limb_t const*  y_low,
