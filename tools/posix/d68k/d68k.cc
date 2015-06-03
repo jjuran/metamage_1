@@ -2064,8 +2064,8 @@ namespace tool
 		
 		if ( const bool addx = (op & 0x0130) == 0x0100  &&  !adda )
 		{
-			const char* format = op & 0x08 ? "%sX.%c   %s-(A%d),-(A%d)" "\n"
-			                               : "%sX.%c   %sD%d,D%d" "\n";
+			const char* format = op & 0x08 ? "%sX.%c   -(A%d),-(A%d)" "\n"
+			                               : "%sX.%c   D%d,D%d" "\n";
 			
 			printf( format, name, size_code, op & 0x7, reg );
 			
