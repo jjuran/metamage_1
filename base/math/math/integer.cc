@@ -369,5 +369,78 @@ namespace integer {
 		}
 	}
 	
+	/*
+		Multiplication
+		--------------
+	*/
+	
+	typedef unsigned long long long_t;
+	typedef unsigned int       twig_t;
+	
+	const unsigned twigs_per_limb = sizeof (limb_t) / sizeof (twig_t);
+	const unsigned limbs_per_long = sizeof (long_t) / sizeof (limb_t);
+	
+	static inline
+	long_t long_multiply( twig_t a, twig_t b )
+	{
+		return (long_t) a * b;
+	}
+	
+	void multiply_le( limb_t*       x_high, size_t x_size,
+	                  limb_t const* y_high, size_t y_size )
+	{
+		twig_t* p = (twig_t*) x_high;
+		
+		for ( int i = x_size * twigs_per_limb;  i > 0;  --i )
+		{
+			if ( const long_t a = *--p )
+			{
+				*p = 0;
+				
+				twig_t const* q = (twig_t const*) y_high;
+				
+				for ( int j = y_size * twigs_per_limb - 1;  j >= 0;  --j )
+				{
+					if ( const twig_t b = *--q )
+					{
+						const long_t product = long_multiply( a, b );
+						
+						add_le( (limb_t*) (p + j),
+						        (limb_t const*) &product,
+						        limbs_per_long );
+					}
+				}
+			}
+		}
+	}
+	
+	void multiply_be( limb_t*       x_low, size_t x_size,
+	                  limb_t const* y_low, size_t y_size )
+	{
+		twig_t* p = (twig_t*) x_low;
+		
+		for ( int i = x_size * twigs_per_limb;  i > 0;  --i )
+		{
+			if ( const twig_t a = *p++ )
+			{
+				p[ -1 ] = 0;
+				
+				twig_t const* q = (twig_t const*) y_low;
+				
+				for ( int j = y_size * twigs_per_limb - 1;  j >= 0;  --j )
+				{
+					if ( const twig_t b = *q++ )
+					{
+						const long_t product = long_multiply( a, b );
+						
+						add_be( (limb_t*) (p - j),
+						        (limb_t const*) (&product + 1),
+						        limbs_per_long );
+					}
+				}
+			}
+		}
+	}
+	
 }
 }

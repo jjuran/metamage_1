@@ -25,6 +25,12 @@
 	Types
 	  * limb_t:  A machine word of convenient size for arithmetic, generally
 	             the native register width.
+	  * long_t:  An unsigned integer type for a multiplication result, either
+	             twice the size of limb_t, or the same size if no intrinsic
+	             operation exists to multiply two limbs.
+	  * twig_t:  An unsigned integer type half the size of long_t (i.e. either
+	             the same size as limb_t or half the size, as above), used for
+	             multiplication operands.
 	  * size_t:  A limb count.  A 16-bit unsigned value allows 64K - 1 limbs,
 	             which is either 256K - 4 or 512K - 8 bytes of integer data.
 	  * cmp_t:   The result type of compare functions.  It's only one byte, to
@@ -58,6 +64,7 @@
 	
 	Caveats
 	  * Integer operands must contain at least one limb.
+	  * It's assumed that a limb_t can be accessed with twig_t alignment.
 */
 
 
@@ -230,6 +237,35 @@ namespace integer {
 			y += y_size;
 			
 			subtract_be( x, y, y_size );
+		}
+	}
+	
+	/*
+		Multiplication
+		--------------
+	*/
+	
+	void multiply_le( limb_t*       x_high, size_t x_size,
+	                  limb_t const* y_high, size_t y_size );
+	
+	void multiply_be( limb_t*       x_low, size_t x_size,
+	                  limb_t const* y_low, size_t y_size );
+	
+	inline
+	void multiply( bool           is_little_endian,
+	               limb_t*        x, size_t x_size,
+	               limb_t const*  y, size_t y_size )
+	{
+		if ( is_little_endian )
+		{
+			x += x_size;
+			y += y_size;
+			
+			multiply_le( x, x_size, y, y_size );
+		}
+		else
+		{
+			multiply_be( x, x_size, y, y_size );
 		}
 	}
 	
