@@ -61,9 +61,16 @@
 	  * add:          Adds the second operand to the first one.
 	  * subtract:     Subtracts the second operand from the first one.  This
 	                  is strictly a cancellation function, requiring x >= y.
+	  * multiply:     Multiplies the first operand by the second one.
+	                  
 	
 	Caveats
 	  * Integer operands must contain at least one limb.
+	  * It's the caller's responsibility to ensure the x operand is big enough
+	    to store the result.  For add, sum_size, will provide the answer.  For
+	    multiply, the sum of the two operand sizes will be sufficient.  (Since
+	    subtraction is strictly a diminishing operation, the result will never
+	    exceed the left operand.
 	  * It's assumed that a limb_t can be accessed with twig_t alignment.
 */
 
@@ -245,11 +252,11 @@ namespace integer {
 		--------------
 	*/
 	
-	void multiply_le( limb_t*       x_high, size_t x_size,
-	                  limb_t const* y_high, size_t y_size );
-	
 	void multiply_be( limb_t*       x_low, size_t x_size,
 	                  limb_t const* y_low, size_t y_size );
+	
+	void multiply_le( limb_t*       x_high, size_t x_size,
+	                  limb_t const* y_high, size_t y_size );
 	
 	inline
 	void multiply( bool           is_little_endian,
