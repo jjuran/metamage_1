@@ -116,12 +116,20 @@ namespace integer {
 	*/
 	
 #ifdef __MC68K__
-	
+
 	asm
-	size_t sum_size_desc_be( limb_t const* a_low : __A0, size_t a_size : __D0,
-	                         limb_t const* b_low : __A1, size_t b_size : __D1 )
+	size_t sum_size_be( limb_t const* a_low : __A0, size_t a_size : __D0,
+	                    limb_t const* b_low : __A1, size_t b_size : __D1 )
 	{
 		LINK     A6,#0
+		
+		// Swap a and b if in ascending order.
+		
+		CMP.W    D1,D0
+		BCC.S    descending
+		EXG      A0,A1
+		EXG      D0,D1
+	descending:
 		
 		// While b is zero, compare a against 0xFFFFFFFF.
 		

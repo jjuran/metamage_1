@@ -149,15 +149,13 @@ namespace integer {
 	
 #ifdef __MC68K__
 	
-	size_t sum_size_desc_be( limb_t const* a_low : __A0, size_t a_size : __D0,
-	                         limb_t const* b_low : __A1, size_t b_size : __D1 );
+	size_t sum_size_be( limb_t const* a_low : __A0, size_t a_size : __D0,
+	                    limb_t const* b_low : __A1, size_t b_size : __D1 );
 	
-#else
+#endif
 	
 	size_t sum_size_desc_be( limb_t const* a_low, size_t a_size,
 	                         limb_t const* b_low, size_t b_size );
-	
-#endif
 	
 	size_t sum_size_desc_le( limb_t const* a_high, size_t a_size,
 	                         limb_t const* b_high, size_t b_size );
@@ -185,6 +183,12 @@ namespace integer {
 	                 limb_t const* a, size_t a_size,
 	                 limb_t const* b, size_t b_size )
 	{
+	#ifdef __MC68K__
+		
+		return sum_size_be( a, a_size, b, b_size );
+		
+	#endif
+		
 		if ( a_size < b_size )
 		{
 			limb_t const* x;
