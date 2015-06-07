@@ -180,6 +180,24 @@ namespace integer {
 		}
 	}
 	
+	inline
+	size_t sum_size( bool is_little_endian,
+	                 limb_t const* a, size_t a_size,
+	                 limb_t const* b, size_t b_size )
+	{
+		if ( a_size < b_size )
+		{
+			limb_t const* x;
+			size_t n;
+			
+			x = a, n      = a_size;
+			a = b, a_size = b_size;
+			b = x, b_size = n;
+		}
+		
+		return sum_size_desc( is_little_endian, a, a_size, b, b_size );
+	}
+	
 #ifdef __MC68K__
 	
 	void add_be( limb_t*        x_high : __A0,
