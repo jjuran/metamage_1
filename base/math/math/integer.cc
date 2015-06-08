@@ -123,6 +123,17 @@ namespace integer {
 	{
 		LINK     A6,#0
 		
+		// While b is zero, compare a against 0xFFFFFFFF.
+		
+		MOVE.W   D0,D2
+		SUB.W    D1,D2
+		BRA.S    a_only_loop_start
+	a_only_loop:
+		CMPI.L   #-1,(A0)+
+		BNE.S    end
+	a_only_loop_start:
+		DBRA.S   D2,a_only_loop
+		
 		// Compare contents until we know adding will or won't carry.
 		
 		SUBQ.W   #1,D1
@@ -151,7 +162,17 @@ namespace integer {
 		limb_t const* p = a_low;
 		limb_t const* q = b_low;
 		
-		size_t n = b_size;
+		size_t n = a_size;
+		
+		while ( n > b_size )
+		{
+			if ( *p++ != zenith )
+			{
+				return a_size;
+			}
+			
+			--n;
+		}
 		
 		do
 		{
@@ -176,7 +197,17 @@ namespace integer {
 		limb_t const* p = a_high;
 		limb_t const* q = b_high;
 		
-		size_t n = b_size;
+		size_t n = a_size;
+		
+		while ( n > b_size )
+		{
+			if ( *--p != zenith )
+			{
+				return a_size;
+			}
+			
+			--n;
+		}
 		
 		do
 		{
