@@ -491,10 +491,19 @@ namespace integer {
 	void multiply_le( limb_t*       x_high, size_t x_size,
 	                  limb_t const* y_high, size_t y_size )
 	{
+		const bool needs_alignment = sizeof (twig_t) < sizeof (limb_t);
+		
 		twig_t* p = (twig_t*) x_high;
+		
+		bool p_is_aligned = true;
 		
 		for ( int i = x_size * twigs_per_limb;  i > 0;  --i )
 		{
+			if ( needs_alignment )
+			{
+				p_is_aligned = ! p_is_aligned;
+			}
+			
 			if ( const long_t a = *--p )
 			{
 				*p = 0;
@@ -506,6 +515,23 @@ namespace integer {
 					if ( const twig_t b = *--q )
 					{
 						const long_t product = long_multiply( a, b );
+						
+						if ( needs_alignment  &&  p_is_aligned == (j & 1) )
+						{
+							const int n_bits = sizeof (twig_t) * 8;
+							
+							if ( const limb_t upper = product >> n_bits )
+							{
+								add_le( (limb_t*) (p + j + 1), &upper, 1 );
+							}
+							
+							if ( const limb_t lower = product << n_bits )
+							{
+								add_le( (limb_t*) (p + j - 1), &lower, 1 );
+							}
+							
+							continue;
+						}
 						
 						add_le( (limb_t*) (p + j),
 						        (limb_t const*) &product,
