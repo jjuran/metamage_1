@@ -373,7 +373,7 @@ namespace v68k
 		
 		const int16_t word = byte;
 		
-		Dn = (Dn & 0xFFFF0000) | word;
+		Dn = (Dn & 0xFFFF0000) | uint16_t( word );
 		
 		pb.result = word;
 		
