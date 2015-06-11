@@ -17,7 +17,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2 * 6;
+static const unsigned n_tests = 2 * 8;
 
 
 static uint16_t the_CCR = 0;
@@ -62,6 +62,10 @@ static void ext_word()
 	EXPECT( ext_W( 0xDCBA7600 ) == 0xDCBA0000 );
 	
 	EXPECT( the_CCR == 0x04 );
+	
+	EXPECT( ext_W( 0x7890ABCD ) == 0x7890FFCD );
+	
+	EXPECT( the_CCR == 0x08 );
 }
 
 static void ext_long()
@@ -79,6 +83,10 @@ static void ext_long()
 	EXPECT( ext_L( 0xDCBA7600 ) == 0x00007600 );
 	
 	EXPECT( the_CCR == 0x00 );
+	
+	EXPECT( ext_L( 0x7890ABCD ) == 0xFFFFABCD );
+	
+	EXPECT( the_CCR == 0x08 );
 }
 
 
