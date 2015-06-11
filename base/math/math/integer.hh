@@ -81,6 +81,9 @@
 namespace math    {
 namespace integer {
 	
+	typedef unsigned long long long_t;
+	typedef unsigned int       twig_t;
+	
 	const limb_t zenith = limb_t( -1 );
 	
 	inline
@@ -282,6 +285,12 @@ namespace integer {
 		Multiplication
 		--------------
 	*/
+	
+	inline
+	long_t long_multiply( twig_t a, twig_t b )
+	{
+		return (long_t) a * b;
+	}
 	
 	void multiply_be( limb_t*       x_low, size_t x_size,
 	                  limb_t const* y_low, size_t y_size );

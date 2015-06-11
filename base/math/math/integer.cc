@@ -448,17 +448,8 @@ namespace integer {
 		--------------
 	*/
 	
-	typedef unsigned long long long_t;
-	typedef unsigned int       twig_t;
-	
 	const unsigned twigs_per_limb = sizeof (limb_t) / sizeof (twig_t);
 	const unsigned limbs_per_long = sizeof (long_t) / sizeof (limb_t);
-	
-	static inline
-	long_t long_multiply( twig_t a, twig_t b )
-	{
-		return (long_t) a * b;
-	}
 	
 	void multiply_be( limb_t*       x_low, size_t x_size,
 	                  limb_t const* y_low, size_t y_size )
