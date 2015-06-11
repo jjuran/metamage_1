@@ -65,6 +65,8 @@ namespace plus
 			
 			void invert()  { box.invert(); }
 			
+			void absolve()  { if ( is_negative() )  invert(); }
+			
 			friend cmp_t abs_compare( const integer& a, const integer& b )
 			{
 				return abs_compare( a.box, b.box );
@@ -137,6 +139,14 @@ namespace plus
 	const integer& operator+( const integer& a )
 	{
 		return a;
+	}
+	
+	inline
+	integer abs( integer x )
+	{
+		x.absolve();
+		
+		return x;
 	}
 	
 	inline
