@@ -27,12 +27,12 @@ namespace MD5
 	class Table
 	{
 		private:
-			unsigned int data[ 64 ];
+			u32 data[ 64 ];
 		
 		public:
 			Table();
 			
-			unsigned int operator[]( int i ) const  { return data[ i - 1 ]; }
+			u32 operator[]( int i ) const  { return data[ i - 1 ]; }
 	};
 	
 	static Table gTable;
@@ -44,7 +44,7 @@ namespace MD5
 		
 		for ( int i = 1;  i <= 64;  ++i )
 		{
-			data[ i - 1 ] = unsigned( 4294967296.0 * abs( sin( double( i ) ) ) );
+			data[ i - 1 ] = u32( 4294967296.0 * abs( sin( double( i ) ) ) );
 		}
 	}
 	
@@ -55,7 +55,7 @@ namespace MD5
 	{
 	}
 	
-	static inline unsigned int rotate_left( unsigned int x, unsigned char bits )
+	static inline u32 rotate_left( u32 x, unsigned char bits )
 	{
 		return (x << bits) | (x >> (32 - bits));
 	}
