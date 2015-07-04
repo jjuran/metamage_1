@@ -76,6 +76,25 @@ namespace iota
 	}
 	
 	
+	inline uint16_t swap_2_bytes_little( uint16_t u16 )
+	{
+		return is_little_endian() ?               u16
+		                          : swap_2_bytes( u16 );
+	}
+	
+	inline uint32_t swap_4_bytes_little( uint32_t u32 )
+	{
+		return is_little_endian() ?               u32
+		                          : swap_4_bytes( u32 );
+	}
+	
+	inline uint64_t swap_8_bytes_little( uint64_t u64 )
+	{
+		return is_little_endian() ?               u64
+		                          : swap_8_bytes( u64 );
+	}
+	
+	
 	inline uint16_t big_u16( uint16_t u16 )
 	{
 		return swap_2_bytes_big( u16 );
@@ -104,6 +123,37 @@ namespace iota
 	inline uint64_t u64_from_big( uint64_t u64 )
 	{
 		return swap_8_bytes_big( u64 );
+	}
+	
+	
+	inline uint16_t little_u16( uint16_t u16 )
+	{
+		return swap_2_bytes_little( u16 );
+	}
+	
+	inline uint16_t u16_from_little( uint16_t u16 )
+	{
+		return swap_2_bytes_little( u16 );
+	}
+	
+	inline uint32_t little_u32( uint32_t u32 )
+	{
+		return swap_4_bytes_little( u32 );
+	}
+	
+	inline uint32_t u32_from_little( uint32_t u32 )
+	{
+		return swap_4_bytes_little( u32 );
+	}
+	
+	inline uint64_t little_u64( uint64_t u64 )
+	{
+		return swap_8_bytes_little( u64 );
+	}
+	
+	inline uint64_t u64_from_little( uint64_t u64 )
+	{
+		return swap_8_bytes_little( u64 );
 	}
 	
 }
