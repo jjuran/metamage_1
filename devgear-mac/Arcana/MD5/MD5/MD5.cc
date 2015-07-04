@@ -131,7 +131,7 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( int i = 16 + 1;  i <= 32;  )
+		for ( unsigned i = 16 + 1;  i <= 32;  )
 		{
 			op( a,b,c,d, (i     ) % 16,  5, i );  ++i;
 			op( d,a,b,c, (i +  4) % 16,  9, i );  ++i;
@@ -148,7 +148,7 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( int i = 32 + 1;  i <= 48;  )
+		for ( unsigned i = 32 + 1;  i <= 48;  )
 		{
 			op( a,b,c,d, (48 - i +  6) % 16,  4, i );  ++i;
 			op( d,a,b,c, (48 - i + 10) % 16, 11, i );  ++i;
@@ -165,7 +165,7 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( int i = 48 + 1;  i <= 64;  )
+		for ( unsigned i = 48 + 1;  i <= 64;  )
 		{
 			op( a,b,c,d, (64 - i + 1) % 16,  6, i );  ++i;
 			op( d,a,b,c, (64 - i + 9) % 16, 10, i );  ++i;
@@ -211,19 +211,19 @@ namespace MD5
 		++blockCount;
 	}
 	
-	void Engine::Finish( const void* input, int bits )
+	void Engine::Finish( const void* input, unsigned bits )
 	{
-		BitCount totalBits = blockCount * 512 + BitCount( bits );
-		int inputBytes = bits / 8;
-		int inputWords = inputBytes / 4;
+		const BitCount totalBits = blockCount * 512 + BitCount( bits );
+		const unsigned inputBytes = bits / 8;
+		const unsigned inputWords = inputBytes / 4;
 		
-		int bitsBeyondBoundary = (bits + 64) % 512;
-		int bitsToPad = 512 - bitsBeyondBoundary;  // Between 1 and 512, inclusive
-		int textBits = bits + bitsToPad + 64;
+		const unsigned bitsBeyondBoundary = (bits + 64) % 512;
+		const unsigned bitsToPad = 512 - bitsBeyondBoundary;  // Between 1 and 512, inclusive
+		const unsigned textBits = bits + bitsToPad + 64;
 		
-		int textBytes = textBits / 8;
-		int textWords = textBytes / 4;
-		int textBlocks = textWords / 16;
+		const unsigned textBytes = textBits / 8;
+		const unsigned textWords = textBytes / 4;
+		const unsigned textBlocks = textWords / 16;
 		
 		Block block1, block2;
 		std::vector< const Block* > blocks;
@@ -244,7 +244,7 @@ namespace MD5
 		// Extra input bits and padding bits.
 		
 		// How many bits are left over that don't make a full byte?
-		int extraBits = bits % 8;
+		const unsigned extraBits = bits % 8;
 		
 		// Make a mask with ones where the extra bits are, and zeroes afterword.
 		unsigned char extraMask = (0xFF << (8 - extraBits));
@@ -287,7 +287,7 @@ namespace MD5
 	Result Digest_Bits( const void* input, const BitCount& bitCount )
 	{
 		const Block* inputAsBlocks = reinterpret_cast< const Block* >( input );
-		int blockCount = bitCount / 512;
+		const unsigned blockCount = bitCount / 512;
 		const Block* end = inputAsBlocks + blockCount;
 		Engine engine;
 		
@@ -296,7 +296,7 @@ namespace MD5
 			engine.DoBlock( inputAsBlocks++ );
 		}
 		
-		int bits = bitCount % 512;
+		const unsigned bits = bitCount % 512;
 		engine.Finish( inputAsBlocks, bits );
 		
 		return engine.GetResult();
