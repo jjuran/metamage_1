@@ -10,45 +10,21 @@
 #include <cmath>
 #include <vector>
 
+// iota
+#include "iota/endian.hh"
+
 #include "MD5/MD5.hh"
 
 
 namespace MD5
 {
 	
+	using iota::swap_4_bytes;
+	using iota::little_u32;
+	using iota::u32_from_little;
+	
+	
 	typedef unsigned int Word;
-	
-	static inline unsigned int byteswap4( unsigned int word )
-	{
-		return (word &  0xFF)        << 24
-			 | (word & (0xFF <<  8)) <<  8
-			 | (word & (0xFF << 16)) >>  8
-			 | (word & (0xFF << 24)) >> 24;
-	}
-	
-	// MWC68K doesn't define __BIG_ENDIAN__, so we have to use __LITTLE_ENDIAN__.
-	
-	static inline unsigned int HostFromLittle32( unsigned int word )
-	{
-	#ifndef __LITTLE_ENDIAN__
-		
-		word = byteswap4( word );
-		
-	#endif
-		
-		return word;
-	}
-	
-	static inline unsigned int LittleFromHost32( unsigned int word )
-	{
-	#ifndef __LITTLE_ENDIAN__
-		
-		word = byteswap4( word );
-		
-	#endif
-		
-		return word;
-	}
 	
 	class Table
 	{
@@ -74,10 +50,10 @@ namespace MD5
 		}
 	}
 	
-	Buffer::Buffer() : a( byteswap4( 0x01234567 ) ),
-	                   b( byteswap4( 0x89abcdef ) ),
-	                   c( byteswap4( 0xfedcba98 ) ),
-	                   d( byteswap4( 0x76543210 ) )
+	Buffer::Buffer() : a( swap_4_bytes( 0x01234567 ) ),
+	                   b( swap_4_bytes( 0x89abcdef ) ),
+	                   c( swap_4_bytes( 0xfedcba98 ) ),
+	                   d( swap_4_bytes( 0x76543210 ) )
 	{
 	}
 	
@@ -202,7 +178,7 @@ namespace MD5
 		// Fill the block, swapping into big-endian.
 		for ( int j = 0;  j < 16;  ++j )
 		{
-			block[ j ] = HostFromLittle32( leBlock[ j ] );
+			block[ j ] = u32_from_little( leBlock[ j ] );
 		}
 		
 		Buffer oldState = state;
@@ -269,8 +245,8 @@ namespace MD5
 		firstPadByte = (partialByte & extraMask) | (0x80 >> extraBits);
 		
 		// Append the bit length
-		bitLengthLoc[ 0 ] = HostFromLittle32(  totalBits        & 0xFFFFFFFF );
-		bitLengthLoc[ 1 ] = HostFromLittle32( (totalBits >> 32) & 0xFFFFFFFF );
+		bitLengthLoc[ 0 ] = u32_from_little(  totalBits        & 0xFFFFFFFF );
+		bitLengthLoc[ 1 ] = u32_from_little( (totalBits >> 32) & 0xFFFFFFFF );
 		
 		std::copy( inputAsBytes,
 		           inputAsBytes + inputBytes,
@@ -287,10 +263,10 @@ namespace MD5
 		std::fill( block1.words, block1.words + 16, 0 );
 		std::fill( block2.words, block2.words + 16, 0 );
 		
-		state.a = LittleFromHost32( state.a );
-		state.b = LittleFromHost32( state.b );
-		state.c = LittleFromHost32( state.c );
-		state.d = LittleFromHost32( state.d );
+		state.a = little_u32( state.a );
+		state.b = little_u32( state.b );
+		state.c = little_u32( state.c );
+		state.d = little_u32( state.d );
 	}
 	
 	const Result& Engine::GetResult()
