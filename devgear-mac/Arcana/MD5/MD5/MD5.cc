@@ -121,6 +121,182 @@ namespace MD5
 		return x + rotate_left( w, s );
 	}
 	
+#ifdef __MC68K__
+	
+	static
+	asm void do_rounds( u32* const block : __A0, Buffer& buffer : __A1 )
+	{
+		LINK     A6,#0
+		MOVEM.L  D3-D7/A2-A4,-(SP)
+		
+		MOVE.L   (A1)+,D0
+		MOVE.L   (A1)+,D1
+		MOVE.L   (A1)+,D2
+		MOVE.L   (A1)+,D3
+		
+		LEA      gTable,A2
+		
+		MOVEQ.L  #0,D7
+		
+	round1:
+		MOVEQ.L  #7,D6
+		
+	round1_inner:
+		// F
+		MOVE.L   D1,D4
+		AND.L    D2,D4
+		MOVE.L   D1,D5
+		NOT.L    D5
+		AND.L    D3,D5
+		OR.L     D5,D4
+		
+		ADD.L    D4,D0
+		
+		ADD.L    (A0,D7.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADDQ.W   #5,D6
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #22,D6
+		BLE.S    round1_inner
+		CMPI.W   #64,D7
+		BLT.S    round1
+		
+	round2:
+		MOVEQ.L  #5,D6
+		MOVEA.W  #4,A3
+		MOVEA.L  A3,A4
+		
+	round2_inner:
+		
+		// G
+		MOVE.L   D3,D4
+		AND.L    D1,D4
+		MOVE.L   D3,D5
+		NOT.L    D5
+		AND.L    D2,D5
+		OR.L     D5,D4
+		
+		ADD.L    D4,D0
+		
+		MOVE.L   A4,D4
+		ADD.L    D7,D4
+		ANDI.L   #0x3F,D4
+		
+		ADD.L    (A0,D4.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADD.W    A3,D6
+		ADDQ.L   #1,A3
+		ADDA.W   #16,A4
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #20,D6
+		BLE.S    round2_inner
+		CMPI.W   #128,D7
+		BLT.S    round2
+		
+		MOVEQ.L  #7,D5
+	round3:
+		MOVEQ.L  #4,D6
+		MOVEA.W  #20,A4
+		
+	round3_inner:
+		
+		// H
+		MOVE.L   D1,D4
+		EOR.L    D2,D4
+		EOR.L    D3,D4
+		
+		ADD.L    D4,D0
+		
+		MOVE.L   A4,D4
+		SUB.L    D7,D4
+		ANDI.L   #0x3F,D4
+		
+		ADD.L    (A0,D4.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADD.W    D5,D6
+		EORI.L   #2,D5
+		ADDA.W   #16,A4
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #23,D6
+		BLE.S    round3_inner
+		CMPI.W   #192,D7
+		BLT.S    round3
+		
+		MOVEQ.L  #0,D5
+	round4:
+		MOVEQ.L  #6,D6
+		MOVEA.W  #4,A3
+		
+	round4_inner:
+		
+		// I
+		MOVE.L   D3,D4
+		NOT.L    D4
+		OR.L     D1,D4
+		EOR.L    D2,D4
+		
+		ADD.L    D4,D0
+		
+		MOVE.L   D5,D4
+		SUB.L    D7,D4
+		ANDI.L   #0x3F,D4
+		
+		ADD.L    (A0,D4.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADD.W    A3,D6
+		ADDQ.L   #1,A3
+		EORI.W   #32,D5
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #21,D6
+		BLE.S    round4_inner
+		CMPI.W   #256,D7
+		BLT.S    round4
+		
+		// Accumulate the result.
+		ADD.L    D3,-(A1)
+		ADD.L    D2,-(A1)
+		ADD.L    D1,-(A1)
+		ADD.L    D0,-(A1)
+		
+		MOVEM.L  (SP)+,D3-D7/A2-A4
+		UNLK     A6
+		RTS
+	}
+	
+#else
+	
 	static void do_rounds( u32* const block, Buffer& buffer )
 	{
 		u32 a = buffer.a;
@@ -165,6 +341,8 @@ namespace MD5
 		buffer.c += c;
 		buffer.d += d;
 	}
+	
+#endif
 	
 	union Block
 	{
