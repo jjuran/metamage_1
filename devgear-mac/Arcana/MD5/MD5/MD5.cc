@@ -123,10 +123,10 @@ namespace MD5
 	
 	static void do_rounds( u32* const block, Buffer& buffer )
 	{
-		u32& a( buffer.a );
-		u32& b( buffer.b );
-		u32& c( buffer.c );
-		u32& d( buffer.d );
+		u32 a = buffer.a;
+		u32 b = buffer.b;
+		u32 c = buffer.c;
+		u32 d = buffer.d;
 		
 		for ( int i = 0;  i < 16;  )
 		{
@@ -159,6 +159,11 @@ namespace MD5
 			c = mix< 4 >( block, c,d,a,b, (64 - i + 0) % 16, 15, i );  ++i;
 			b = mix< 4 >( block, b,c,d,a, (64 - i + 8) % 16, 21, i );  ++i;
 		}
+		
+		buffer.a += a;
+		buffer.b += b;
+		buffer.c += c;
+		buffer.d += d;
 	}
 	
 	union Block
@@ -178,19 +183,12 @@ namespace MD5
 			block[ j ] = u32_from_little( leBlock[ j ] );
 		}
 		
-		Buffer oldState = state;
-		
 		do_rounds( block, state );
 		
 		// Zero the block in case it contains sensitive material.
 		std::fill( block,
 		           block + 16,
 		           0 );
-		
-		state.a += oldState.a;
-		state.b += oldState.b;
-		state.c += oldState.c;
-		state.d += oldState.d;
 		
 		++blockCount;
 	}
