@@ -77,37 +77,52 @@ namespace MD5
 	static inline u32 H( u32 x, u32 y, u32 z )  { return (x ^ y ^ z); }
 	static inline u32 I( u32 x, u32 y, u32 z )  { return (y ^ (x | ~z)); }
 	
-	template < class Munger >
-	class Operator
+	
+	template < int round >
+	struct munger;
+	
+	template <>
+	struct munger< 1 >
 	{
-		private:
-			Munger munger;
-			u32* block;
-		
-		public:
-			Operator( Munger munger, u32* block ) : munger( munger ), block( block )  {}
-			
-			void operator()( u32&  a,
-			                 u32   b,
-			                 u32   c,
-			                 u32   d,
-			                 int   k,
-			                 int   s,
-			                 int   i ) const
-			{
-				a = b + rotate_left( a + munger( b, c, d ) + block[ k ] + gTable[ i ],
-				                     s );
-			}
+		static u32 f( u32 x, u32 y, u32 z )  { return F( x, y, z ); }
 	};
 	
-	template < class Munger >
-	Operator< Munger > MakeOperator( Munger munger, u32* block )
+	template <>
+	struct munger< 2 >
 	{
-		return Operator< Munger >( munger, block );
+		static u32 f( u32 x, u32 y, u32 z )  { return G( x, y, z ); }
+	};
+	
+	template <>
+	struct munger< 3 >
+	{
+		static u32 f( u32 x, u32 y, u32 z )  { return H( x, y, z ); }
+	};
+	
+	template <>
+	struct munger< 4 >
+	{
+		static u32 f( u32 x, u32 y, u32 z )  { return I( x, y, z ); }
+	};
+	
+	
+	template < int round >
+	static u32 mix( u32 const*  block,
+	                u32         w,
+	                u32         x,
+	                u32         y,
+	                u32         z,
+	                int         k,
+	                int         s,
+	                int         i )
+	{
+		w += munger< round >::f( x, y, z ) + block[ k ] + gTable[ i ];
+		
+		return x + rotate_left( w, s );
 	}
 	
-	template < class Operator >
-	void Round1( Operator op, Buffer& buffer )
+	static
+	void Round1( u32 const* block, Buffer& buffer )
 	{
 		u32& a( buffer.a );
 		u32& b( buffer.b );
@@ -116,15 +131,15 @@ namespace MD5
 		
 		for ( int i = 0;  i < 16;  )
 		{
-			op( a,b,c,d, i,  7, i );  ++i;
-			op( d,a,b,c, i, 12, i );  ++i;
-			op( c,d,a,b, i, 17, i );  ++i;
-			op( b,c,d,a, i, 22, i );  ++i;
+			a = mix< 1 >( block, a,b,c,d, i,  7, i );  ++i;
+			d = mix< 1 >( block, d,a,b,c, i, 12, i );  ++i;
+			c = mix< 1 >( block, c,d,a,b, i, 17, i );  ++i;
+			b = mix< 1 >( block, b,c,d,a, i, 22, i );  ++i;
 		}
 	}
 	
-	template < class Operator >
-	void Round2( Operator op, Buffer& buffer )
+	static
+	void Round2( u32 const* block, Buffer& buffer )
 	{
 		u32& a( buffer.a );
 		u32& b( buffer.b );
@@ -133,15 +148,15 @@ namespace MD5
 		
 		for ( unsigned i = 16;  i < 32;  )
 		{
-			op( a,b,c,d, (i +  1) % 16,  5, i );  ++i;
-			op( d,a,b,c, (i +  5) % 16,  9, i );  ++i;
-			op( c,d,a,b, (i +  9) % 16, 14, i );  ++i;
-			op( b,c,d,a, (i + 13) % 16, 20, i );  ++i;
+			a = mix< 2 >( block, a,b,c,d, (i +  1) % 16,  5, i );  ++i;
+			d = mix< 2 >( block, d,a,b,c, (i +  5) % 16,  9, i );  ++i;
+			c = mix< 2 >( block, c,d,a,b, (i +  9) % 16, 14, i );  ++i;
+			b = mix< 2 >( block, b,c,d,a, (i + 13) % 16, 20, i );  ++i;
 		}
 	}
 	
-	template < class Operator >
-	void Round3( Operator op, Buffer& buffer )
+	static
+	void Round3( u32 const* block, Buffer& buffer )
 	{
 		u32& a( buffer.a );
 		u32& b( buffer.b );
@@ -150,15 +165,15 @@ namespace MD5
 		
 		for ( unsigned i = 32;  i < 48;  )
 		{
-			op( a,b,c,d, (48 - i +  5) % 16,  4, i );  ++i;
-			op( d,a,b,c, (48 - i +  9) % 16, 11, i );  ++i;
-			op( c,d,a,b, (48 - i + 13) % 16, 16, i );  ++i;
-			op( b,c,d,a, (48 - i + 17) % 16, 23, i );  ++i;
+			a = mix< 3 >( block, a,b,c,d, (48 - i +  5) % 16,  4, i );  ++i;
+			d = mix< 3 >( block, d,a,b,c, (48 - i +  9) % 16, 11, i );  ++i;
+			c = mix< 3 >( block, c,d,a,b, (48 - i + 13) % 16, 16, i );  ++i;
+			b = mix< 3 >( block, b,c,d,a, (48 - i + 17) % 16, 23, i );  ++i;
 		}
 	}
 	
-	template < class Operator >
-	void Round4( Operator op, Buffer& buffer )
+	static
+	void Round4( u32 const* block, Buffer& buffer )
 	{
 		u32& a( buffer.a );
 		u32& b( buffer.b );
@@ -167,10 +182,10 @@ namespace MD5
 		
 		for ( unsigned i = 48;  i < 64;  )
 		{
-			op( a,b,c,d, (64 - i + 0) % 16,  6, i );  ++i;
-			op( d,a,b,c, (64 - i + 8) % 16, 10, i );  ++i;
-			op( c,d,a,b, (64 - i + 0) % 16, 15, i );  ++i;
-			op( b,c,d,a, (64 - i + 8) % 16, 21, i );  ++i;
+			a = mix< 4 >( block, a,b,c,d, (64 - i + 0) % 16,  6, i );  ++i;
+			d = mix< 4 >( block, d,a,b,c, (64 - i + 8) % 16, 10, i );  ++i;
+			c = mix< 4 >( block, c,d,a,b, (64 - i + 0) % 16, 15, i );  ++i;
+			b = mix< 4 >( block, b,c,d,a, (64 - i + 8) % 16, 21, i );  ++i;
 		}
 	}
 	
@@ -193,10 +208,10 @@ namespace MD5
 		
 		Buffer oldState = state;
 		
-		Round1( MakeOperator( F, block ), state );
-		Round2( MakeOperator( G, block ), state );
-		Round3( MakeOperator( H, block ), state );
-		Round4( MakeOperator( I, block ), state );
+		Round1( block, state );
+		Round2( block, state );
+		Round3( block, state );
+		Round4( block, state );
 		
 		// Zero the block in case it contains sensitive material.
 		std::fill( block,
