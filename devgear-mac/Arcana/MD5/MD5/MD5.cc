@@ -32,7 +32,7 @@ namespace MD5
 		public:
 			Table();
 			
-			u32 operator[]( int i ) const  { return data[ i - 1 ]; }
+			u32 operator[]( int i ) const  { return data[ i ]; }
 	};
 	
 	static Table gTable;
@@ -114,12 +114,12 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( int i = 1;  i <= 16;  )
+		for ( int i = 0;  i < 16;  )
 		{
-			op( a,b,c,d, i - 1,  7, i );  ++i;
-			op( d,a,b,c, i - 1, 12, i );  ++i;
-			op( c,d,a,b, i - 1, 17, i );  ++i;
-			op( b,c,d,a, i - 1, 22, i );  ++i;
+			op( a,b,c,d, i,  7, i );  ++i;
+			op( d,a,b,c, i, 12, i );  ++i;
+			op( c,d,a,b, i, 17, i );  ++i;
+			op( b,c,d,a, i, 22, i );  ++i;
 		}
 	}
 	
@@ -131,12 +131,12 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( unsigned i = 16 + 1;  i <= 32;  )
+		for ( unsigned i = 16;  i < 32;  )
 		{
-			op( a,b,c,d, (i     ) % 16,  5, i );  ++i;
-			op( d,a,b,c, (i +  4) % 16,  9, i );  ++i;
-			op( c,d,a,b, (i +  8) % 16, 14, i );  ++i;
-			op( b,c,d,a, (i + 12) % 16, 20, i );  ++i;
+			op( a,b,c,d, (i +  1) % 16,  5, i );  ++i;
+			op( d,a,b,c, (i +  5) % 16,  9, i );  ++i;
+			op( c,d,a,b, (i +  9) % 16, 14, i );  ++i;
+			op( b,c,d,a, (i + 13) % 16, 20, i );  ++i;
 		}
 	}
 	
@@ -148,12 +148,12 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( unsigned i = 32 + 1;  i <= 48;  )
+		for ( unsigned i = 32;  i < 48;  )
 		{
-			op( a,b,c,d, (48 - i +  6) % 16,  4, i );  ++i;
-			op( d,a,b,c, (48 - i + 10) % 16, 11, i );  ++i;
-			op( c,d,a,b, (48 - i + 14) % 16, 16, i );  ++i;
-			op( b,c,d,a, (48 - i + 18) % 16, 23, i );  ++i;
+			op( a,b,c,d, (48 - i +  5) % 16,  4, i );  ++i;
+			op( d,a,b,c, (48 - i +  9) % 16, 11, i );  ++i;
+			op( c,d,a,b, (48 - i + 13) % 16, 16, i );  ++i;
+			op( b,c,d,a, (48 - i + 17) % 16, 23, i );  ++i;
 		}
 	}
 	
@@ -165,12 +165,12 @@ namespace MD5
 		u32& c( buffer.c );
 		u32& d( buffer.d );
 		
-		for ( unsigned i = 48 + 1;  i <= 64;  )
+		for ( unsigned i = 48;  i < 64;  )
 		{
-			op( a,b,c,d, (64 - i + 1) % 16,  6, i );  ++i;
-			op( d,a,b,c, (64 - i + 9) % 16, 10, i );  ++i;
-			op( c,d,a,b, (64 - i + 1) % 16, 15, i );  ++i;
-			op( b,c,d,a, (64 - i + 9) % 16, 21, i );  ++i;
+			op( a,b,c,d, (64 - i + 0) % 16,  6, i );  ++i;
+			op( d,a,b,c, (64 - i + 8) % 16, 10, i );  ++i;
+			op( c,d,a,b, (64 - i + 0) % 16, 15, i );  ++i;
+			op( b,c,d,a, (64 - i + 8) % 16, 21, i );  ++i;
 		}
 	}
 	
