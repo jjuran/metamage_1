@@ -55,10 +55,22 @@ namespace MD5
 	{
 	}
 	
+#ifdef __MC68K__
+	
+	static
+	inline asm u32 rotate_left( u32 x : __D0, unsigned char n : __D1 ) : __D0
+	{
+		ROL.L  D1,D0
+	}
+	
+#else
+	
 	static inline u32 rotate_left( u32 x, unsigned char bits )
 	{
 		return (x << bits) | (x >> (32 - bits));
 	}
+	
+#endif
 	
 	static inline u32 F( u32 x, u32 y, u32 z )  { return (x & y)  |  (~x & z); }
 	static inline u32 G( u32 x, u32 y, u32 z )  { return (x & z)  |  (y & ~z); }
