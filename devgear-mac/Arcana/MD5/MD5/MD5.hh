@@ -10,7 +10,7 @@
 namespace MD5
 {
 	
-	typedef unsigned int Word;
+	typedef unsigned int u32;
 	typedef unsigned long long BitCount;
 	
 	struct Result
@@ -28,7 +28,7 @@ namespace MD5
 	struct Buffer
 	{
 		Buffer();
-		Word a, b, c, d;
+		u32 a, b, c, d;
 	};
 	
 	class Engine

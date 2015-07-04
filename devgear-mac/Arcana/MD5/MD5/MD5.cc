@@ -24,8 +24,6 @@ namespace MD5
 	using iota::u32_from_little;
 	
 	
-	typedef unsigned int Word;
-	
 	class Table
 	{
 		private:
@@ -62,28 +60,28 @@ namespace MD5
 		return (x << bits) | (x >> (32 - bits));
 	}
 	
-	static inline Word F( Word x, Word y, Word z )  { return (x & y)  |  (~x & z); }
-	static inline Word G( Word x, Word y, Word z )  { return (x & z)  |  (y & ~z); }
-	static inline Word H( Word x, Word y, Word z )  { return (x ^ y ^ z); }
-	static inline Word I( Word x, Word y, Word z )  { return (y ^ (x | ~z)); }
+	static inline u32 F( u32 x, u32 y, u32 z )  { return (x & y)  |  (~x & z); }
+	static inline u32 G( u32 x, u32 y, u32 z )  { return (x & z)  |  (y & ~z); }
+	static inline u32 H( u32 x, u32 y, u32 z )  { return (x ^ y ^ z); }
+	static inline u32 I( u32 x, u32 y, u32 z )  { return (y ^ (x | ~z)); }
 	
 	template < class Munger >
 	class Operator
 	{
 		private:
 			Munger munger;
-			Word* block;
+			u32* block;
 		
 		public:
-			Operator( Munger munger, Word* block ) : munger( munger ), block( block )  {}
+			Operator( Munger munger, u32* block ) : munger( munger ), block( block )  {}
 			
-			void operator()( Word&  a,
-			                 Word   b,
-			                 Word   c,
-			                 Word   d,
-			                 int    k,
-			                 int    s,
-			                 int    i ) const
+			void operator()( u32&  a,
+			                 u32   b,
+			                 u32   c,
+			                 u32   d,
+			                 int   k,
+			                 int   s,
+			                 int   i ) const
 			{
 				a = b + rotate_left( a + munger( b, c, d ) + block[ k ] + gTable[ i ],
 				                     s );
@@ -91,7 +89,7 @@ namespace MD5
 	};
 	
 	template < class Munger >
-	Operator< Munger > MakeOperator( Munger munger, Word* block )
+	Operator< Munger > MakeOperator( Munger munger, u32* block )
 	{
 		return Operator< Munger >( munger, block );
 	}
@@ -99,10 +97,10 @@ namespace MD5
 	template < class Operator >
 	void Round1( Operator op, Buffer& buffer )
 	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
+		u32& a( buffer.a );
+		u32& b( buffer.b );
+		u32& c( buffer.c );
+		u32& d( buffer.d );
 		
 		for ( int i = 1;  i <= 16;  )
 		{
@@ -116,10 +114,10 @@ namespace MD5
 	template < class Operator >
 	void Round2( Operator op, Buffer& buffer )
 	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
+		u32& a( buffer.a );
+		u32& b( buffer.b );
+		u32& c( buffer.c );
+		u32& d( buffer.d );
 		
 		for ( int i = 16 + 1;  i <= 32;  )
 		{
@@ -133,10 +131,10 @@ namespace MD5
 	template < class Operator >
 	void Round3( Operator op, Buffer& buffer )
 	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
+		u32& a( buffer.a );
+		u32& b( buffer.b );
+		u32& c( buffer.c );
+		u32& d( buffer.d );
 		
 		for ( int i = 32 + 1;  i <= 48;  )
 		{
@@ -150,10 +148,10 @@ namespace MD5
 	template < class Operator >
 	void Round4( Operator op, Buffer& buffer )
 	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
+		u32& a( buffer.a );
+		u32& b( buffer.b );
+		u32& c( buffer.c );
+		u32& d( buffer.d );
 		
 		for ( int i = 48 + 1;  i <= 64;  )
 		{
@@ -167,13 +165,13 @@ namespace MD5
 	union Block
 	{
 		unsigned char  bytes[ 64 ];
-		Word           words[ 16 ];
+		u32            words[ 16 ];
 	};
 	
 	void Engine::DoBlock( const void* input )
 	{
-		Word block[ 16 ];
-		const Word* leBlock = reinterpret_cast< const Word* >( input );
+		u32 block[ 16 ];
+		const u32* leBlock = reinterpret_cast< const u32* >( input );
 		
 		// Fill the block, swapping into big-endian.
 		for ( int j = 0;  j < 16;  ++j )
@@ -229,7 +227,7 @@ namespace MD5
 		std::fill( block2.words, block2.words + 16, 0 );
 		
 		unsigned char& firstPadByte = padBlock.bytes[ inputBytes ];
-		Word* bitLengthLoc = endBlock.words + 16 - 2;
+		u32* bitLengthLoc = endBlock.words + 16 - 2;
 		
 		// Extra input bits and padding bits.
 		
