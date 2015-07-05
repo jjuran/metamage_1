@@ -189,6 +189,14 @@ namespace MD5
 		}
 	}
 	
+	static void do_rounds( u32* const block, Buffer& state )
+	{
+		Round1( block, state );
+		Round2( block, state );
+		Round3( block, state );
+		Round4( block, state );
+	}
+	
 	union Block
 	{
 		unsigned char  bytes[ 64 ];
@@ -208,10 +216,7 @@ namespace MD5
 		
 		Buffer oldState = state;
 		
-		Round1( block, state );
-		Round2( block, state );
-		Round3( block, state );
-		Round4( block, state );
+		do_rounds( block, state );
 		
 		// Zero the block in case it contains sensitive material.
 		std::fill( block,
