@@ -121,8 +121,7 @@ namespace MD5
 		return x + rotate_left( w, s );
 	}
 	
-	static
-	void Round1( u32 const* block, Buffer& buffer )
+	static void do_rounds( u32* const block, Buffer& buffer )
 	{
 		u32& a( buffer.a );
 		u32& b( buffer.b );
@@ -136,15 +135,6 @@ namespace MD5
 			c = mix< 1 >( block, c,d,a,b, i, 17, i );  ++i;
 			b = mix< 1 >( block, b,c,d,a, i, 22, i );  ++i;
 		}
-	}
-	
-	static
-	void Round2( u32 const* block, Buffer& buffer )
-	{
-		u32& a( buffer.a );
-		u32& b( buffer.b );
-		u32& c( buffer.c );
-		u32& d( buffer.d );
 		
 		for ( unsigned i = 16;  i < 32;  )
 		{
@@ -153,15 +143,6 @@ namespace MD5
 			c = mix< 2 >( block, c,d,a,b, (i +  9) % 16, 14, i );  ++i;
 			b = mix< 2 >( block, b,c,d,a, (i + 13) % 16, 20, i );  ++i;
 		}
-	}
-	
-	static
-	void Round3( u32 const* block, Buffer& buffer )
-	{
-		u32& a( buffer.a );
-		u32& b( buffer.b );
-		u32& c( buffer.c );
-		u32& d( buffer.d );
 		
 		for ( unsigned i = 32;  i < 48;  )
 		{
@@ -170,15 +151,6 @@ namespace MD5
 			c = mix< 3 >( block, c,d,a,b, (48 - i + 13) % 16, 16, i );  ++i;
 			b = mix< 3 >( block, b,c,d,a, (48 - i + 17) % 16, 23, i );  ++i;
 		}
-	}
-	
-	static
-	void Round4( u32 const* block, Buffer& buffer )
-	{
-		u32& a( buffer.a );
-		u32& b( buffer.b );
-		u32& c( buffer.c );
-		u32& d( buffer.d );
 		
 		for ( unsigned i = 48;  i < 64;  )
 		{
@@ -187,14 +159,6 @@ namespace MD5
 			c = mix< 4 >( block, c,d,a,b, (64 - i + 0) % 16, 15, i );  ++i;
 			b = mix< 4 >( block, b,c,d,a, (64 - i + 8) % 16, 21, i );  ++i;
 		}
-	}
-	
-	static void do_rounds( u32* const block, Buffer& state )
-	{
-		Round1( block, state );
-		Round2( block, state );
-		Round3( block, state );
-		Round4( block, state );
 	}
 	
 	union Block
