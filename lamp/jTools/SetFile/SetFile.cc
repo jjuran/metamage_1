@@ -3,9 +3,11 @@
  *	==========
  */
 
-// Standard C++
-#include <functional>
-#include <vector>
+// Standard C
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -29,8 +31,58 @@
 #include "OSErrno/OSErrno.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_creator = 'c',
+	Option_type    = 't',
+};
+
+static command::option options[] =
+{
+	{ "", Option_creator, Param_required },
+	{ "", Option_type,    Param_required },
+	
+	{ NULL }
+};
+
+static const char* creator_arg = NULL;
+static const char* type_arg    = NULL;
+
+static OSType the_creator;
+static OSType the_type;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_creator:
+				creator_arg = command::global_result.param;
+				the_creator = gear::decode_quad( creator_arg );
+				break;
+			
+			case Option_type:
+				type_arg = command::global_result.param;
+				the_type = gear::decode_quad( type_arg );
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -39,63 +91,7 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
-	
-	class InfoMutator
-	{
-		public:
-			virtual ~InfoMutator()
-			{
-			}
-			
-			virtual void operator()( CInfoPBRec& cInfo ) const = 0;
-	};
-	
-	
-	class SignatureSetter : public InfoMutator
-	{
-		private:
-			OSType          itsCode;
-			OSType  FInfo::*itsField;
-		
-		public:
-			SignatureSetter( const char* param, OSType FInfo::*field )
-			:
-				itsCode ( gear::decode_quad( param ) ),
-				itsField( field                      )
-			{
-			}
-			
-			void operator()( CInfoPBRec& cInfo ) const
-			{
-				FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
-				
-				fInfo.*itsField = itsCode;
-			}
-	};
-	
-	class InfoMutationApplier
-	{
-		private:
-			CInfoPBRec& itsCInfo;
-		
-		public:
-			InfoMutationApplier( CInfoPBRec& cInfo ) : itsCInfo( cInfo )  {}
-			
-			void operator()( const InfoMutator* mutator ) const  { mutator[0]( itsCInfo ); }
-	};
-	
-	
-	static std::vector< const InfoMutator* > gInfoMutators;
-	
-	
-	static void ApplyInfoMutations( CInfoPBRec& cInfo )
-	{
-		std::for_each( gInfoMutators.begin(),
-		               gInfoMutators.end(),
-		               InfoMutationApplier( cInfo ) );
-	}
 	
 	static void SetFileInfo( const FSSpec& file )
 	{
@@ -103,7 +99,17 @@ namespace tool
 		
 		N::FSpGetCatInfo( file, cInfo );
 		
-		ApplyInfoMutations( cInfo );
+		FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+		
+		if ( creator_arg )
+		{
+			fInfo.fdCreator = the_creator;
+		}
+		
+		if ( type_arg )
+		{
+			fInfo.fdType = the_type;
+		}
 		
 		cInfo.hFileInfo.ioNamePtr = const_cast< StringPtr >( file.name );
 		cInfo.hFileInfo.ioDirID   = file.parID;
@@ -112,28 +118,13 @@ namespace tool
 	}
 	
 	
-	static void CreatorOptor( const char* param )
-	{
-		static SignatureSetter setter( param, &FInfo::fdCreator );
-		
-		gInfoMutators.push_back( &setter );
-	}
-	
-	static void TypeOptor( const char* param )
-	{
-		static SignatureSetter setter( param, &FInfo::fdType );
-		
-		gInfoMutators.push_back( &setter );
-	}
-	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_trigger_with_param( "-c", std::ptr_fun( CreatorOptor ) );
-		o::bind_option_trigger_with_param( "-t", std::ptr_fun( TypeOptor    ) );
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
-		char const *const *free_args = o::free_arguments();
+		char const *const *free_args = args;
 		
 		int exit_status = 0;
 		
