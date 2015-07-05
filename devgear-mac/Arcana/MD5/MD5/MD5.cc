@@ -24,17 +24,15 @@ namespace MD5
 	using iota::u32_from_little;
 	
 	
-	typedef unsigned int Word;
-	
 	class Table
 	{
 		private:
-			unsigned int data[ 64 ];
+			u32 data[ 64 ];
 		
 		public:
 			Table();
 			
-			unsigned int operator[]( int i ) const  { return data[ i - 1 ]; }
+			u32 operator[]( int i ) const  { return data[ i ]; }
 	};
 	
 	static Table gTable;
@@ -46,7 +44,7 @@ namespace MD5
 		
 		for ( int i = 1;  i <= 64;  ++i )
 		{
-			data[ i - 1 ] = unsigned( 4294967296.0 * abs( sin( double( i ) ) ) );
+			data[ i - 1 ] = u32( 4294967296.0 * abs( sin( double( i ) ) ) );
 		}
 	}
 	
@@ -57,123 +55,305 @@ namespace MD5
 	{
 	}
 	
-	static inline unsigned int rotate_left( unsigned int x, unsigned char bits )
+#ifdef __MC68K__
+	
+	static
+	inline asm u32 rotate_left( u32 x : __D0, unsigned char n : __D1 ) : __D0
+	{
+		ROL.L  D1,D0
+	}
+	
+#else
+	
+	static inline u32 rotate_left( u32 x, unsigned char bits )
 	{
 		return (x << bits) | (x >> (32 - bits));
 	}
 	
-	static inline Word F( Word x, Word y, Word z )  { return (x & y)  |  (~x & z); }
-	static inline Word G( Word x, Word y, Word z )  { return (x & z)  |  (y & ~z); }
-	static inline Word H( Word x, Word y, Word z )  { return (x ^ y ^ z); }
-	static inline Word I( Word x, Word y, Word z )  { return (y ^ (x | ~z)); }
+#endif
 	
-	template < class Munger >
-	class Operator
+	static inline u32 F( u32 x, u32 y, u32 z )  { return (x & y)  |  (~x & z); }
+	static inline u32 G( u32 x, u32 y, u32 z )  { return (x & z)  |  (y & ~z); }
+	static inline u32 H( u32 x, u32 y, u32 z )  { return (x ^ y ^ z); }
+	static inline u32 I( u32 x, u32 y, u32 z )  { return (y ^ (x | ~z)); }
+	
+	
+	template < int round >
+	struct munger;
+	
+	template <>
+	struct munger< 1 >
 	{
-		private:
-			Munger munger;
-			Word* block;
-		
-		public:
-			Operator( Munger munger, Word* block ) : munger( munger ), block( block )  {}
-			
-			void operator()( Word&  a,
-			                 Word   b,
-			                 Word   c,
-			                 Word   d,
-			                 int    k,
-			                 int    s,
-			                 int    i ) const
-			{
-				a = b + rotate_left( a + munger( b, c, d ) + block[ k ] + gTable[ i ],
-				                     s );
-			}
+		static u32 f( u32 x, u32 y, u32 z )  { return F( x, y, z ); }
 	};
 	
-	template < class Munger >
-	Operator< Munger > MakeOperator( Munger munger, Word* block )
+	template <>
+	struct munger< 2 >
 	{
-		return Operator< Munger >( munger, block );
+		static u32 f( u32 x, u32 y, u32 z )  { return G( x, y, z ); }
+	};
+	
+	template <>
+	struct munger< 3 >
+	{
+		static u32 f( u32 x, u32 y, u32 z )  { return H( x, y, z ); }
+	};
+	
+	template <>
+	struct munger< 4 >
+	{
+		static u32 f( u32 x, u32 y, u32 z )  { return I( x, y, z ); }
+	};
+	
+	
+	template < int round >
+	static u32 mix( u32 const*  block,
+	                u32         w,
+	                u32         x,
+	                u32         y,
+	                u32         z,
+	                int         k,
+	                int         s,
+	                int         i )
+	{
+		w += munger< round >::f( x, y, z ) + block[ k ] + gTable[ i ];
+		
+		return x + rotate_left( w, s );
 	}
 	
-	template < class Operator >
-	void Round1( Operator op, Buffer& buffer )
+#ifdef __MC68K__
+	
+	static
+	asm void do_rounds( u32* const block : __A0, Buffer& buffer : __A1 )
 	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
+		LINK     A6,#0
+		MOVEM.L  D3-D7/A2-A4,-(SP)
 		
-		for ( int i = 1;  i <= 16;  )
-		{
-			op( a,b,c,d, i - 1,  7, i );  ++i;
-			op( d,a,b,c, i - 1, 12, i );  ++i;
-			op( c,d,a,b, i - 1, 17, i );  ++i;
-			op( b,c,d,a, i - 1, 22, i );  ++i;
-		}
+		MOVE.L   (A1)+,D0
+		MOVE.L   (A1)+,D1
+		MOVE.L   (A1)+,D2
+		MOVE.L   (A1)+,D3
+		
+		LEA      gTable,A2
+		
+		MOVEQ.L  #0,D7
+		
+	round1:
+		MOVEQ.L  #7,D6
+		
+	round1_inner:
+		// F
+		MOVE.L   D1,D4
+		AND.L    D2,D4
+		MOVE.L   D1,D5
+		NOT.L    D5
+		AND.L    D3,D5
+		OR.L     D5,D4
+		
+		ADD.L    D4,D0
+		
+		ADD.L    (A0,D7.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADDQ.W   #5,D6
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #22,D6
+		BLE.S    round1_inner
+		CMPI.W   #64,D7
+		BLT.S    round1
+		
+	round2:
+		MOVEQ.L  #5,D6
+		MOVEA.W  #4,A3
+		MOVEA.L  A3,A4
+		
+	round2_inner:
+		
+		// G
+		MOVE.L   D3,D4
+		AND.L    D1,D4
+		MOVE.L   D3,D5
+		NOT.L    D5
+		AND.L    D2,D5
+		OR.L     D5,D4
+		
+		ADD.L    D4,D0
+		
+		MOVE.L   A4,D4
+		ADD.L    D7,D4
+		ANDI.L   #0x3F,D4
+		
+		ADD.L    (A0,D4.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADD.W    A3,D6
+		ADDQ.L   #1,A3
+		ADDA.W   #16,A4
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #20,D6
+		BLE.S    round2_inner
+		CMPI.W   #128,D7
+		BLT.S    round2
+		
+		MOVEQ.L  #7,D5
+	round3:
+		MOVEQ.L  #4,D6
+		MOVEA.W  #20,A4
+		
+	round3_inner:
+		
+		// H
+		MOVE.L   D1,D4
+		EOR.L    D2,D4
+		EOR.L    D3,D4
+		
+		ADD.L    D4,D0
+		
+		MOVE.L   A4,D4
+		SUB.L    D7,D4
+		ANDI.L   #0x3F,D4
+		
+		ADD.L    (A0,D4.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADD.W    D5,D6
+		EORI.L   #2,D5
+		ADDA.W   #16,A4
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #23,D6
+		BLE.S    round3_inner
+		CMPI.W   #192,D7
+		BLT.S    round3
+		
+		MOVEQ.L  #0,D5
+	round4:
+		MOVEQ.L  #6,D6
+		MOVEA.W  #4,A3
+		
+	round4_inner:
+		
+		// I
+		MOVE.L   D3,D4
+		NOT.L    D4
+		OR.L     D1,D4
+		EOR.L    D2,D4
+		
+		ADD.L    D4,D0
+		
+		MOVE.L   D5,D4
+		SUB.L    D7,D4
+		ANDI.L   #0x3F,D4
+		
+		ADD.L    (A0,D4.W),D0
+		ADD.L    (A2,D7.W),D0
+		ROL.L    D6,D0
+		ADD.L    D1,D0
+		
+		ADD.W    A3,D6
+		ADDQ.L   #1,A3
+		EORI.W   #32,D5
+		
+		ADDQ.W   #4,D7
+		EXG      D3,D2
+		EXG      D2,D1
+		EXG      D1,D0
+		
+		CMPI.W   #21,D6
+		BLE.S    round4_inner
+		CMPI.W   #256,D7
+		BLT.S    round4
+		
+		// Accumulate the result.
+		ADD.L    D3,-(A1)
+		ADD.L    D2,-(A1)
+		ADD.L    D1,-(A1)
+		ADD.L    D0,-(A1)
+		
+		MOVEM.L  (SP)+,D3-D7/A2-A4
+		UNLK     A6
+		RTS
 	}
 	
-	template < class Operator >
-	void Round2( Operator op, Buffer& buffer )
+#else
+	
+	static void do_rounds( u32* const block, Buffer& buffer )
 	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
+		u32 a = buffer.a;
+		u32 b = buffer.b;
+		u32 c = buffer.c;
+		u32 d = buffer.d;
 		
-		for ( int i = 16 + 1;  i <= 32;  )
+		for ( int i = 0;  i < 16;  )
 		{
-			op( a,b,c,d, (i     ) % 16,  5, i );  ++i;
-			op( d,a,b,c, (i +  4) % 16,  9, i );  ++i;
-			op( c,d,a,b, (i +  8) % 16, 14, i );  ++i;
-			op( b,c,d,a, (i + 12) % 16, 20, i );  ++i;
+			a = mix< 1 >( block, a,b,c,d, i,  7, i );  ++i;
+			d = mix< 1 >( block, d,a,b,c, i, 12, i );  ++i;
+			c = mix< 1 >( block, c,d,a,b, i, 17, i );  ++i;
+			b = mix< 1 >( block, b,c,d,a, i, 22, i );  ++i;
 		}
+		
+		for ( unsigned i = 16;  i < 32;  )
+		{
+			a = mix< 2 >( block, a,b,c,d, (i +  1) % 16,  5, i );  ++i;
+			d = mix< 2 >( block, d,a,b,c, (i +  5) % 16,  9, i );  ++i;
+			c = mix< 2 >( block, c,d,a,b, (i +  9) % 16, 14, i );  ++i;
+			b = mix< 2 >( block, b,c,d,a, (i + 13) % 16, 20, i );  ++i;
+		}
+		
+		for ( unsigned i = 32;  i < 48;  )
+		{
+			a = mix< 3 >( block, a,b,c,d, (48 - i +  5) % 16,  4, i );  ++i;
+			d = mix< 3 >( block, d,a,b,c, (48 - i +  9) % 16, 11, i );  ++i;
+			c = mix< 3 >( block, c,d,a,b, (48 - i + 13) % 16, 16, i );  ++i;
+			b = mix< 3 >( block, b,c,d,a, (48 - i + 17) % 16, 23, i );  ++i;
+		}
+		
+		for ( unsigned i = 48;  i < 64;  )
+		{
+			a = mix< 4 >( block, a,b,c,d, (64 - i + 0) % 16,  6, i );  ++i;
+			d = mix< 4 >( block, d,a,b,c, (64 - i + 8) % 16, 10, i );  ++i;
+			c = mix< 4 >( block, c,d,a,b, (64 - i + 0) % 16, 15, i );  ++i;
+			b = mix< 4 >( block, b,c,d,a, (64 - i + 8) % 16, 21, i );  ++i;
+		}
+		
+		buffer.a += a;
+		buffer.b += b;
+		buffer.c += c;
+		buffer.d += d;
 	}
 	
-	template < class Operator >
-	void Round3( Operator op, Buffer& buffer )
-	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
-		
-		for ( int i = 32 + 1;  i <= 48;  )
-		{
-			op( a,b,c,d, (48 - i +  6) % 16,  4, i );  ++i;
-			op( d,a,b,c, (48 - i + 10) % 16, 11, i );  ++i;
-			op( c,d,a,b, (48 - i + 14) % 16, 16, i );  ++i;
-			op( b,c,d,a, (48 - i + 18) % 16, 23, i );  ++i;
-		}
-	}
-	
-	template < class Operator >
-	void Round4( Operator op, Buffer& buffer )
-	{
-		Word& a( buffer.a );
-		Word& b( buffer.b );
-		Word& c( buffer.c );
-		Word& d( buffer.d );
-		
-		for ( int i = 48 + 1;  i <= 64;  )
-		{
-			op( a,b,c,d, (64 - i + 1) % 16,  6, i );  ++i;
-			op( d,a,b,c, (64 - i + 9) % 16, 10, i );  ++i;
-			op( c,d,a,b, (64 - i + 1) % 16, 15, i );  ++i;
-			op( b,c,d,a, (64 - i + 9) % 16, 21, i );  ++i;
-		}
-	}
+#endif
 	
 	union Block
 	{
 		unsigned char  bytes[ 64 ];
-		Word           words[ 16 ];
+		u32            words[ 16 ];
 	};
 	
 	void Engine::DoBlock( const void* input )
 	{
-		Word block[ 16 ];
-		const Word* leBlock = reinterpret_cast< const Word* >( input );
+		u32 block[ 16 ];
+		const u32* leBlock = reinterpret_cast< const u32* >( input );
 		
 		// Fill the block, swapping into big-endian.
 		for ( int j = 0;  j < 16;  ++j )
@@ -181,39 +361,29 @@ namespace MD5
 			block[ j ] = u32_from_little( leBlock[ j ] );
 		}
 		
-		Buffer oldState = state;
-		
-		Round1( MakeOperator( F, block ), state );
-		Round2( MakeOperator( G, block ), state );
-		Round3( MakeOperator( H, block ), state );
-		Round4( MakeOperator( I, block ), state );
+		do_rounds( block, state );
 		
 		// Zero the block in case it contains sensitive material.
 		std::fill( block,
 		           block + 16,
 		           0 );
 		
-		state.a += oldState.a;
-		state.b += oldState.b;
-		state.c += oldState.c;
-		state.d += oldState.d;
-		
 		++blockCount;
 	}
 	
-	void Engine::Finish( const void* input, int bits )
+	void Engine::Finish( const void* input, unsigned bits )
 	{
-		BitCount totalBits = blockCount * 512 + BitCount( bits );
-		int inputBytes = bits / 8;
-		int inputWords = inputBytes / 4;
+		const BitCount totalBits = blockCount * 512 + BitCount( bits );
+		const unsigned inputBytes = bits / 8;
+		const unsigned inputWords = inputBytes / 4;
 		
-		int bitsBeyondBoundary = (bits + 64) % 512;
-		int bitsToPad = 512 - bitsBeyondBoundary;  // Between 1 and 512, inclusive
-		int textBits = bits + bitsToPad + 64;
+		const unsigned bitsBeyondBoundary = (bits + 64) % 512;
+		const unsigned bitsToPad = 512 - bitsBeyondBoundary;  // Between 1 and 512, inclusive
+		const unsigned textBits = bits + bitsToPad + 64;
 		
-		int textBytes = textBits / 8;
-		int textWords = textBytes / 4;
-		int textBlocks = textWords / 16;
+		const unsigned textBytes = textBits / 8;
+		const unsigned textWords = textBytes / 4;
+		const unsigned textBlocks = textWords / 16;
 		
 		Block block1, block2;
 		std::vector< const Block* > blocks;
@@ -229,12 +399,12 @@ namespace MD5
 		std::fill( block2.words, block2.words + 16, 0 );
 		
 		unsigned char& firstPadByte = padBlock.bytes[ inputBytes ];
-		Word* bitLengthLoc = endBlock.words + 16 - 2;
+		u32* bitLengthLoc = endBlock.words + 16 - 2;
 		
 		// Extra input bits and padding bits.
 		
 		// How many bits are left over that don't make a full byte?
-		int extraBits = bits % 8;
+		const unsigned extraBits = bits % 8;
 		
 		// Make a mask with ones where the extra bits are, and zeroes afterword.
 		unsigned char extraMask = (0xFF << (8 - extraBits));
@@ -277,7 +447,7 @@ namespace MD5
 	Result Digest_Bits( const void* input, const BitCount& bitCount )
 	{
 		const Block* inputAsBlocks = reinterpret_cast< const Block* >( input );
-		int blockCount = bitCount / 512;
+		const unsigned blockCount = bitCount / 512;
 		const Block* end = inputAsBlocks + blockCount;
 		Engine engine;
 		
@@ -286,7 +456,7 @@ namespace MD5
 			engine.DoBlock( inputAsBlocks++ );
 		}
 		
-		int bits = bitCount % 512;
+		const unsigned bits = bitCount % 512;
 		engine.Finish( inputAsBlocks, bits );
 		
 		return engine.GetResult();

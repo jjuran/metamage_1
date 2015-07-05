@@ -10,7 +10,7 @@
 namespace MD5
 {
 	
-	typedef unsigned int Word;
+	typedef unsigned int u32;
 	typedef unsigned long long BitCount;
 	
 	struct Result
@@ -28,19 +28,19 @@ namespace MD5
 	struct Buffer
 	{
 		Buffer();
-		Word a, b, c, d;
+		u32 a, b, c, d;
 	};
 	
 	class Engine
 	{
 		private:
-			int blockCount;
+			unsigned blockCount;
 			Buffer state;
 		
 		public:
 			Engine() : blockCount( 0 )  {}
 			void DoBlock( const void* input );  // 64 bytes
-			void Finish( const void* input, int bitCount );
+			void Finish( const void* input, unsigned bitCount );
 			const Result& GetResult();
 	};
 	
