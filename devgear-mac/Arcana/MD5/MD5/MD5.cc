@@ -8,7 +8,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <vector>
 
 // iota
 #include "iota/endian.hh"
@@ -386,7 +385,6 @@ namespace MD5
 		const unsigned textBlocks = textWords / 16;
 		
 		Block block1, block2;
-		std::vector< const Block* > blocks;
 		
 		const unsigned char* inputAsBytes = reinterpret_cast< const unsigned char* >( input );
 		
