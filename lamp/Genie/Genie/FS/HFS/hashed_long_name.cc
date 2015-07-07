@@ -11,18 +11,22 @@
 // gear
 #include "gear/find.hh"
 
+// crypto
+#include "md5/md5.hh"
+
 // Debug
 #include "debug/assert.hh"
 
 // plus
 #include "plus/var_string.hh"
 
-// Arcana / MD5
-#include "MD5/MD5.hh"
-
 
 namespace Genie
 {
+	
+	using crypto::md5;
+	using crypto::md5_digest;
+	
 	
 	static char base32_encode( unsigned x )
 	{
@@ -72,7 +76,9 @@ namespace Genie
 		
 		ASSERT( shortened_base_length >= minimum_remaining_base );
 		
-		MD5::Result hash = MD5::Digest_Bytes( begin, long_length );
+		md5_digest hash = md5( begin, long_length );
+		
+		const unsigned char* data = (const unsigned char*) &hash;
 		
 		plus::var_string hashed_name( begin, shortened_base_length );
 		
@@ -80,7 +86,7 @@ namespace Genie
 		
 		for ( int i = 0;  i != hash_length;  ++i )
 		{
-			hashed_name += base32_encode( hash.data[ i ] >> 3 );
+			hashed_name += base32_encode( data[ i ] >> 3 );
 		}
 		
 		hashed_name.append( base_end, end );
