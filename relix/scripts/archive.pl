@@ -155,8 +155,6 @@ my %fsmap =
 			qw( cidlistener cidmon mcmd ),
 			# Text translation
 			\ qw( c cr2lf lf2cr lf2crlf mac2utf8 mread stripcr striplf utf82mac ),
-			# Local editor
-			\ qw( local-edit-client ),
 			# Apps
 			\ qw( buffer ),
 			# App engines
