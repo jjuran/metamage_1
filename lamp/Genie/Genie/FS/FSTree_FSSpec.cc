@@ -49,9 +49,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// Arcana / MD5
-#include "MD5/MD5.hh"
-
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
