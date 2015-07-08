@@ -118,7 +118,6 @@
 
 // Arcana
 #include "CRC32.hh"
-#include "MD5/MD5.hh"
 
 // Vectoria
 #include "Vectoria/Matrix.hh"
@@ -547,56 +546,6 @@ static int TestCRC32( int argc, char** argv )
 	unsigned int crc = CRC32::Checksum(text, std::strlen(text));
 	
 	std::printf( "%.8x\n", crc );
-	
-	return 0;
-}
-
-static MD5::Result MD5String( const char* text )
-{
-	return MD5::Digest_Bytes( text, std::strlen( text ) );
-}
-
-	static plus::string md5_hex( const MD5::Result& md5 )
-	{
-		plus::string result;
-		
-		char* p = result.reset( sizeof md5.data * 2 );
-		
-		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
-		{
-			p[ i * 2     ] = gear::encoded_hex_char( md5.data[ i ] >> 4 );
-			p[ i * 2 + 1 ] = gear::encoded_hex_char( md5.data[ i ] >> 0 );
-		}
-		
-		return result;
-	}
-	
-static plus::string MD5Hex( const char* text )
-{
-	return md5_hex( MD5String( text ) );
-}
-
-TEST( MD5 )
-{
-	TEST_ASSERT( "d41d8cd98f00b204e9800998ecf8427e" == MD5Hex( "" ) );
-	TEST_ASSERT( "0cc175b9c0f1b6a831c399e269772661" == MD5Hex( "a" ) );
-	TEST_ASSERT( "900150983cd24fb0d6963f7d28e17f72" == MD5Hex( "abc" ) );
-	TEST_ASSERT( "f96b697d7cb7938d525a2f31aaf161d0" == MD5Hex( "message digest" ) );
-	TEST_ASSERT( "c3fcd3d76192e4007dfb496cca67e13b" == MD5Hex( "abcdefghijklmnop" "qrstuvwxyz" ) );
-	TEST_ASSERT( "d174ab98d277d9f5a5611c2c9f419d9f" == MD5Hex( "ABCDEFGHIJKLMNOP" "QRSTUVWXYZabcdef" "ghijklmnopqrstuv" "wxyz0123456789" ) );
-	TEST_ASSERT( "57edf4a22be3c955ac49da2e2107b67a" == MD5Hex( "1234567890123456" "7890123456789012" "3456789012345678" "9012345678901234"
-	                                                           "5678901234567890" ) );
-}
-
-static int TestMD5( int argc, char** argv )
-{
-	if (argc < 3)  return 1;
-	
-	const char* text = argv[ 2 ];
-	
-	plus::string message = MD5Hex( text ) + "\n";
-	
-	p7::write( p7::stdout_fileno, message );
 	
 	return 0;
 }
@@ -1375,7 +1324,6 @@ static const command_t global_commands[] =
 	{ "loc",       TestReadLoc    },
 	{ "mangling",  TestMangling   },
 	{ "map",       TestMap        },
-	{ "md5",       TestMD5        },
 	{ "null",      TestNull       },
 	{ "owned",     TestNucleusOwnedShared },
 	{ "path",      TestPath       },
