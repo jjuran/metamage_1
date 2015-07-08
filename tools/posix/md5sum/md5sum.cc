@@ -15,12 +15,12 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// crypto
+#include "md5/md5.hh"
+
 // poseven
 #include "poseven/functions/open.hh"
 #include "poseven/functions/read.hh"
-
-// Arcana
-#include "MD5/MD5.hh"
 
 // Orion
 #include "Orion/Main.hh"
@@ -31,18 +31,25 @@ namespace tool
 	
 	namespace p7 = poseven;
 	
+	using crypto::md5_digest;
+	using crypto::md5_engine;
+	
 	
 	static inline size_t min( size_t a, size_t b )
 	{
 		return a < b ? a : b;
 	}
 	
-	static void md5_hex( char* result, const MD5::Result& md5 )
+	static void md5_hex( char* result, const md5_digest& digest )
 	{
-		for ( size_t i = 0;  i < sizeof md5.data;  ++i )
+		const char* p = (const char*) &digest;
+		
+		for ( size_t i = 0;  i < sizeof (md5_digest);  ++i )
 		{
-			result[ i * 2     ] = gear::encoded_hex_char( md5.data[ i ] >> 4 );
-			result[ i * 2 + 1 ] = gear::encoded_hex_char( md5.data[ i ] >> 0 );
+			const char c = *p++;
+			
+			result[ i * 2     ] = gear::encoded_hex_char( c >> 4 );
+			result[ i * 2 + 1 ] = gear::encoded_hex_char( c >> 0 );
 		}
 	}
 	
@@ -76,17 +83,17 @@ namespace tool
 		
 		char data[ blockSize ];
 		std::size_t bytes;
-		MD5::Engine engine;
+		md5_engine engine;
 		
 		// loop exits on a partial block or at EOF
 		while ( ( bytes = buffered_read( input, data, blockSize ) ) == blockSize )
 		{
-			engine.DoBlock( data );
+			engine.digest_block( data );
 		}
 		
-		engine.Finish( data, bytes * 8 );
+		const md5_digest& digest = engine.finish( data, bytes );
 		
-		md5_hex( result, engine.GetResult() );
+		md5_hex( result, digest );
 	}
 	
 	int Main( int argc, char** argv )
