@@ -49,7 +49,6 @@
 #include "unistd.h"
 
 // gear
-#include "gear/hexadecimal.hh"
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
