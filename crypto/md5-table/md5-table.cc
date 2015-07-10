@@ -36,6 +36,9 @@
 #include "iota/endian.hh"
 
 
+#pragma exceptions off
+
+
 int main()
 {
 	uint32_t data[ 64 ];

@@ -20,6 +20,9 @@
 #include "md5/rounds.hh"
 
 
+#pragma exceptions off
+
+
 namespace crypto
 {
 	
