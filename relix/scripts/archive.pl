@@ -138,7 +138,7 @@ my %fsmap =
 			# Standard
 			\ qw( clear env mkfifo time touch ),
 			# Common
-			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds tty which ),
+			\ qw( git gzip htget killall md5sum nohup open osascript perl setleds sha1sum tty which ),
 			# Git utilities
 			{
 				sha1 => \ "git/test-sha1",
