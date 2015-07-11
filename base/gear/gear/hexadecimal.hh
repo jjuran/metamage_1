@@ -67,6 +67,9 @@ namespace gear
 	void inscribe_n_hex_digits( char* p, unsigned long x, unsigned short n );
 	void inscribe_n_HEX_digits( char* p, unsigned long x, unsigned short n );
 	
+	char* hexpcpy_lower( char* out, const void* in, unsigned long n );
+	char* hexpcpy_upper( char* out, const void* in, unsigned long n );
+	
 }
 
 #endif

@@ -217,4 +217,34 @@ namespace gear
 		}
 	}
 	
+	char* hexpcpy_lower( char* out, const void* in, unsigned long n )
+	{
+		const char* p = (const char*) in;
+		
+		while ( n-- )
+		{
+			const unsigned char c = *p++;
+			
+			*out++ = encoded_hex_char( c >> 4 );
+			*out++ = encoded_hex_char( c >> 0 );
+		}
+		
+		return out;
+	}
+	
+	char* hexpcpy_upper( char* out, const void* in, unsigned long n )
+	{
+		const char* p = (const char*) in;
+		
+		while ( n-- )
+		{
+			const unsigned char c = *p++;
+			
+			*out++ = encoded_HEX_char( c >> 4 );
+			*out++ = encoded_HEX_char( c >> 0 );
+		}
+		
+		return out;
+	}
+	
 }
