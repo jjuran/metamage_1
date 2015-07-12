@@ -70,6 +70,12 @@ namespace crypto
 		return a;
 	}
 	
+#ifdef __MC68K__
+	
+	// Defined in rounds.68k.cc
+	
+#else
+	
 	void sha1_extend_block( u32* block )
 	{
 		u32* w = block;
@@ -134,5 +140,7 @@ namespace crypto
 		*--h += b;
 		*--h += a;
 	}
+	
+#endif
 	
 }  // namespace crypto
