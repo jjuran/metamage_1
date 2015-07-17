@@ -37,7 +37,6 @@
 #include "MacBinary.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -47,7 +46,6 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
 	
 	// Operations:
@@ -61,8 +59,8 @@ namespace tool
 	
 	static int Usage()
 	{
-		p7::write( p7::stderr_fileno, STR_LEN( "Usage: macbin --encode Source [dest.mbin]\n"
-		                                       "       macbin --decode source.bin [dest-dir]\n" ) );
+		p7::write( p7::stderr_fileno, STR_LEN( "Usage: macbin encode Source [dest.mbin]\n"
+		                                       "       macbin decode source.bin [dest-dir]\n" ) );
 		
 		return 1;
 	}
@@ -121,21 +119,33 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
+		if ( argc < 1 + 2 )
+		{
+			return Usage();
+		}
+		
+		const char* command = argv[ 1 ];
+		const char* target  = argv[ 2 ];
+		const char* dest    = argv[ 3 ];
+		
+		if ( command[ 0 ] == '-'  &&  command[ 1 ] == '-' )
+		{
+			command += 2;
+		}
+		
 		const char* encode_target = NULL;
 		const char* decode_target = NULL;
 		
-		o::bind_option_to_variable( "--encode", encode_target );
-		o::bind_option_to_variable( "--decode", decode_target );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
-		
-		const size_t n_args = o::free_argument_count();
-		
-		if ( bool both_or_neither = (encode_target == NULL) == (decode_target == NULL) )
+		if ( strcmp( command, "encode" ) == 0 )
 		{
-			// There can be only one!
+			encode_target = target;
+		}
+		else if ( strcmp( command, "decode" ) == 0 )
+		{
+			decode_target = target;
+		}
+		else
+		{
 			return Usage();
 		}
 		
@@ -153,12 +163,12 @@ namespace tool
 			
 			MacBinary::Encode( targetFile,
 			                   &BlockWrite,
-			                   p7::open( n_args > 0 ? free_args[ 0 ] : make_archive_name( encode_target ).c_str(),
+			                   p7::open( dest ? dest : make_archive_name( encode_target ).c_str(),
 			                             p7::o_wronly | p7::o_excl | p7::o_creat ) );
 		}
 		else if ( decode_target )
 		{
-			const char* destDirPath = n_args > 0 ? free_args[ 0 ] : ".";
+			const char* destDirPath = dest ? dest : ".";
 			
 			try
 			{
