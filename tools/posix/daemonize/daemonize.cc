@@ -3,15 +3,16 @@
 	------------
 */
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C
 #include <errno.h>
 #include <signal.h>
+#include <stdlib.h>
 
 // POSIX
 #include <termios.h>
+
+// command
+#include "command/get_option.hh"
 
 // must
 #include "must/chdir.h"
@@ -30,8 +31,79 @@
 #include "poseven/functions/perror.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_keep_cwd,
+	Option_keep_stdin,
+	Option_keep_stdout,
+	Option_keep_stderr,
+	Option_new_ctty,
+};
+
+static command::option options[] =
+{
+	{ "cwd",    Option_keep_cwd    },
+	{ "stdin",  Option_keep_stdin  },
+	{ "stdout", Option_keep_stdout },
+	{ "stderr", Option_keep_stderr },
+	
+	{ "ctty",   Option_new_ctty, Param_required },
+	
+	{ NULL }
+};
+
+static bool keep_cwd    = false;
+static bool keep_stdin  = false;
+static bool keep_stdout = false;
+static bool keep_stderr = false;
+
+static const char* ctty = NULL;
+
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_keep_cwd:
+				keep_cwd = true;
+				break;
+			
+			case Option_keep_stdin:
+				keep_stdin = true;
+				break;
+			
+			case Option_keep_stdout:
+				keep_stdout = true;
+				break;
+			
+			case Option_keep_stderr:
+				keep_stderr = true;
+				break;
+			
+			case Option_new_ctty:
+				ctty = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -39,7 +111,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static int usage()
@@ -51,27 +122,11 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool keep_cwd    = false;
-		bool keep_stdin  = false;
-		bool keep_stdout = false;
-		bool keep_stderr = false;
+		char *const *args = get_options( argv );
 		
-		const char* ctty = NULL;
+		const int argn = argc - (args - argv);
 		
-		o::bind_option_to_variable( "--cwd",    keep_cwd    );
-		o::bind_option_to_variable( "--stdin",  keep_stdin  );
-		o::bind_option_to_variable( "--stdout", keep_stdout );
-		o::bind_option_to_variable( "--stderr", keep_stderr );
-		
-		o::bind_option_to_variable( "--ctty", ctty );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
-		
-		std::size_t n_args = o::free_argument_count();
-		
-		if ( n_args < 1 )
+		if ( argn < 1 )
 		{
 			return usage();
 		}
@@ -133,7 +188,7 @@ namespace tool
 		
 		p7::close( stdio );
 		
-		(void) execvp( *free_args, (char**) free_args );
+		(void) execvp( *args, (char**) args );
 		
 		bool noSuchFile = errno == ENOENT;
 		
