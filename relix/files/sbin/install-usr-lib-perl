@@ -33,8 +33,8 @@ htget -O $url
 echo "-> gzip -d $gzarchive"
 gzip -d $gzarchive
 
-echo "-> macbin --decode $archive $lib/"
-macbin --decode $archive $lib/
+echo "-> macbin decode $archive $lib/"
+macbin decode $archive $lib/
 
 echo "-> ln -s $lib/perl /usr/lib/"
 ln -s $lib/perl /usr/lib/

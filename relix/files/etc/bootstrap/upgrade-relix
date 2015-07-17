@@ -15,7 +15,7 @@ echo Decompressing...
 gzip -d --name $1.gz
 
 echo Decoding archive...
-macbin --decode $1.$MBIN
+macbin decode $1.$MBIN
 
 mv $1 $dest
 
