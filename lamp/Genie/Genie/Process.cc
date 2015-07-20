@@ -588,13 +588,44 @@ namespace Genie
 		save_the_A5_world();
 	}
 	
+	static
+	inline bool in_supervisor_mode()
+	{
+	#ifdef __MC68K__
+		
+		UInt16 status;
+		
+		asm
+		{
+			MOVE.W   SR,status
+		}
+		
+		return status & (1 << 13);
+		
+	#endif
+		
+		return false;
+	}
+	
+	static
+	inline bool syscall_stacks_are_safe()
+	{
+		if ( ! TARGET_CPU_68K     )  return false;
+		if ( in_supervisor_mode() )  return false;
+		
+		if ( mac::sys::gestalt( 'sysa' ) > 1 )  return true;
+		if ( mac::sys::gestalt( 'addr' ) & 1 )  return false;
+		
+		return true;
+	}
+	
 	Process::Process( Process& parent, pid_t pid, pid_t tid ) 
 	:
 		relix::thread( tid,
 		               parent.signals_blocked(),
 		               tid == pid ? *new relix::process( pid, parent.get_process() )
 		                          : parent.get_process(),
-		               TARGET_CPU_68K  &&  mac::sys::gestalt( 'sysa' ) > 1 ),
+		               syscall_stacks_are_safe() ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
