@@ -124,7 +124,7 @@ sub make_macbin
 		$archive_path = "$tree_path.$ext";
 	}
 	
-	$system->( 'macbin', '--encode', $tree_path, $archive_path );
+	$system->( 'macbin', 'encode', $tree_path, $archive_path );
 	
 	return $archive_path;
 }
