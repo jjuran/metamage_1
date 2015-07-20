@@ -305,7 +305,7 @@ namespace Genie
 	
 	static void* send_sigterm_or_sigkill( void*, pid_t pid, Process& process )
 	{
-		const int signo = process.GetSchedule() == kProcessStopped ? SIGKILL : SIGTERM;
+		const int signo = process.is_stopped() ? SIGKILL : SIGTERM;
 		
 		process.Raise( signo );
 		

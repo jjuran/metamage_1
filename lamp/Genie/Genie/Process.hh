@@ -141,7 +141,10 @@ namespace Genie
 			pid_t GetSID()  const;
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
-			ProcessSchedule   GetSchedule () const  { return itsSchedule;  }
+			
+			bool is_stopped() const  { return itsSchedule == kProcessStopped; }
+			
+			char run_state_code() const;
 			
 			int Result() const  { return itsResult; }
 			
