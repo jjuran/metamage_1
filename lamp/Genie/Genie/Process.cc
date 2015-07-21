@@ -1165,11 +1165,6 @@ namespace Genie
 		notify_reaper();
 	}
 	
-	void Process::Suspend()
-	{
-		gCurrentProcess = NULL;
-	}
-	
 	void Process::Resume()
 	{
 		gCurrentProcess = this;
@@ -1183,7 +1178,7 @@ namespace Genie
 	{
 		itsSchedule = newSchedule;
 		
-		Suspend();
+		gCurrentProcess = NULL;
 		
 		mark_current_stack_frame();
 		
