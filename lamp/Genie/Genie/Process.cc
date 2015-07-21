@@ -724,6 +724,15 @@ namespace Genie
 		}
 	}
 	
+	static relix::os_thread_box new_thread( Process& task )
+	{
+		const std::size_t min_stack = minimum_stack_size();
+		
+		return new_os_thread( &Process::thread_start,
+		                      &task,
+		                      min_stack );
+	}
+	
 	void Process::Exec( const char*         path,
 	                    const char* const   argv[],
 	                    const char* const*  envp )
@@ -774,10 +783,8 @@ namespace Genie
 		// If we've forked, then the thread is null, but if not, it's the
 		// current thread -- be careful!
 		
-		const std::size_t min_stack = minimum_stack_size();
-		
 		// Create the new thread
-		looseThread = new_os_thread( &Process::thread_start, this, min_stack );
+		looseThread = new_thread( *this );
 		
 		relix::process& proc = get_process();
 		
@@ -862,10 +869,8 @@ namespace Genie
 		
 		clear_signals_pending();
 		
-		const std::size_t min_stack = minimum_stack_size();
-		
 		// Create the new thread
-		relix::os_thread_box looseThread = new_os_thread( &Process::thread_start, this, min_stack );
+		relix::os_thread_box looseThread = new_thread( *this );
 		
 		// Make the new thread belong to this process and save the old one
 		swap_os_thread( looseThread );
