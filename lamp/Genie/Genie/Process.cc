@@ -1063,8 +1063,6 @@ namespace Genie
 		if ( gettid() == pid )
 		{
 			get_process().reset_process_resources();
-			
-			get_process().reset_process_image();
 		}
 		
 		itsLifeStage = kProcessZombie;
