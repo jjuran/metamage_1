@@ -616,11 +616,6 @@ namespace Genie
 		relix::mark_thread_active( tid );
 	}
 	
-	Process::~Process()
-	{
-		relix::mark_thread_inactive( gettid() );
-	}
-	
 	void Process::unshare_fs_info()
 	{
 		get_process().get_process_resources().unshare_fs_info();

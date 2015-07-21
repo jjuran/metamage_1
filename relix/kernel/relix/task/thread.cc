@@ -8,6 +8,7 @@
 // relix
 #include "relix/api/get_thread.hh"
 #include "relix/task/process.hh"
+#include "relix/task/scheduler.hh"
 
 
 namespace relix
@@ -28,6 +29,7 @@ namespace relix
 	
 	thread::~thread()
 	{
+		mark_thread_inactive( its_id );
 	}
 	
 	process& thread::get_process() const

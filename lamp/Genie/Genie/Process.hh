@@ -119,8 +119,6 @@ namespace Genie
 			Process( RootProcess );
 			Process( Process& parent, pid_t pid, pid_t tid );
 			
-			~Process();
-			
 			void unshare_fs_info();
 			void unshare_files();
 			void unshare_signal_handlers();
