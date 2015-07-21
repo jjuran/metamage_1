@@ -16,9 +16,9 @@
 // Nitrogen Extras / AEFramework
 #include "AEFramework/AEFramework.h"
 
-// Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
+// relix
+#include "relix/api/current_thread.hh"
+#include "relix/task/thread.hh"
 
 
 namespace N = Nitrogen;
@@ -26,7 +26,7 @@ namespace N = Nitrogen;
 
 OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 {
-	using namespace Genie;
+	using namespace relix;
 	
 	try
 	{
@@ -43,7 +43,7 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		N::ExpectReply( returnID, &reply );
 		
 		// Sleep until the reply is delivered
-		current_process().Stop();
+		stop_os_thread( current_thread().get_os_thread() );
 	}
 	catch ( const Mac::OSStatus& err )
 	{
