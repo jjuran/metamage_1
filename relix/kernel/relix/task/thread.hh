@@ -61,7 +61,7 @@ namespace relix
 		public:
 			thread( int id, sigset_t blocked, process& p, bool use_syscall_stack );
 			
-			virtual ~thread();
+			~thread();
 			
 			int id() const  { return its_id; }
 			
