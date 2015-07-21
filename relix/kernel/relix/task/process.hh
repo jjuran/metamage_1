@@ -109,6 +109,9 @@ namespace relix
 			void unshare_signal_handlers();
 			
 			void reset_signal_handlers();
+			
+			void switch_in();
+			void switch_out();
 	};
 	
 }

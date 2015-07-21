@@ -10,6 +10,7 @@
 #include "relix/task/process_image.hh"
 #include "relix/task/process_resources.hh"
 #include "relix/task/signal_handlers.hh"
+#include "relix/time/checkpoint_delta.hh"
 
 
 namespace relix
@@ -123,6 +124,16 @@ namespace relix
 	void process::reset_signal_handlers()
 	{
 		its_signal_handlers->reset_handlers();
+	}
+	
+	void process::switch_in()
+	{
+		(void) checkpoint_delta();
+	}
+	
+	void process::switch_out()
+	{
+		add_system_cpu_time( checkpoint_delta() );
 	}
 	
 }

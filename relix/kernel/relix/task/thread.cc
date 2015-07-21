@@ -72,12 +72,20 @@ namespace relix
 	
 	void thread::switch_in()
 	{
-		get_process().get_process_image().set_errno( its_saved_errno );
+		process& proc = get_process();
+		
+		proc.switch_in();
+		
+		proc.get_process_image().set_errno( its_saved_errno );
 	}
 	
 	void thread::switch_out()
 	{
-		its_saved_errno = get_process().get_process_image().get_errno();
+		process& proc = get_process();
+		
+		its_saved_errno = proc.get_process_image().get_errno();
+		
+		proc.switch_out();
 	}
 	
 }

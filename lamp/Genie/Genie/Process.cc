@@ -97,7 +97,6 @@
 #include "relix/task/process_resources.hh"
 #include "relix/task/scheduler.hh"
 #include "relix/task/session.hh"
-#include "relix/time/checkpoint_delta.hh"
 #include "relix/time/cpu_time_checkpoint.hh"
 
 // Genie
@@ -1176,8 +1175,6 @@ namespace Genie
 	
 	void Process::Suspend()
 	{
-		get_process().add_system_cpu_time( relix::checkpoint_delta() );
-		
 		gCurrentProcess = NULL;
 	}
 	
@@ -1188,8 +1185,6 @@ namespace Genie
 		clear_stack_frame_mark();  // We don't track this while running
 		
 		itsSchedule = kProcessRunning;
-		
-		(void) relix::checkpoint_delta();
 	}
 	
 	void Process::Pause( ProcessSchedule newSchedule )
