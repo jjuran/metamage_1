@@ -1152,8 +1152,6 @@ namespace Genie
 		
 		mark_current_stack_frame();
 		
-		GrafPort** my_A5_world = relix::swap_A5_worlds();
-		
 		if ( newSchedule == kProcessStopped )
 		{
 			relix::stop_os_thread( get_os_thread() );
@@ -1162,8 +1160,6 @@ namespace Genie
 		{
 			relix::os_thread_yield();
 		}
-		
-		relix::load_A5_world( my_A5_world );
 		
 		Resume();
 	}
