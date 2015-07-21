@@ -643,8 +643,6 @@ namespace Genie
 		
 		itsForkedChildPID = child.GetPID();
 		
-		itsInterdependence = kProcessForking;
-		
 		mark_vfork_stack_frame();
 		
 		// activate child
@@ -949,8 +947,6 @@ namespace Genie
 	
 	void Process::ResumeAfterFork()
 	{
-		ASSERT( itsInterdependence == kProcessForking );
-		
 		ASSERT( itsForkedChildPID != 0 );
 		
 		const int depth = 4 + TARGET_CPU_68K;
@@ -966,11 +962,6 @@ namespace Genie
 		const bool stack_fault = !CONFIG_SYSCALL_STACKS  &&  stack_fp >= vfork_fp;
 		
 		Resume();
-		
-		const bool forked = !has_own_os_thread();
-		
-		itsInterdependence = forked ? kProcessForked
-		                            : kProcessIndependent;
 		
 		pid_t child = itsForkedChildPID;
 		

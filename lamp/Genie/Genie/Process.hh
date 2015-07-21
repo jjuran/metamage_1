@@ -39,7 +39,6 @@ namespace Genie
 	enum ProcessInterdependence
 	{
 		kProcessIndependent,
-		kProcessForking,
 		kProcessForked
 	};
 	
