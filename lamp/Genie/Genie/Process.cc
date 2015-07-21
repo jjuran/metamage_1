@@ -722,6 +722,8 @@ namespace Genie
 	{
 		Process& thread = *(Process*) param;
 		
+		gCurrentProcess = &thread;
+		
 		thread.switch_in();
 	}
 	
@@ -730,6 +732,8 @@ namespace Genie
 		Process& thread = *(Process*) param;
 		
 		thread.switch_out();
+		
+		gCurrentProcess = NULL;
 	}
 	
 	static relix::os_thread_box new_thread( Process& task )
@@ -1170,8 +1174,6 @@ namespace Genie
 	void Process::Pause( ProcessSchedule newSchedule )
 	{
 		itsSchedule = newSchedule;
-		
-		gCurrentProcess = NULL;
 		
 		mark_current_stack_frame();
 		
