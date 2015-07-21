@@ -929,6 +929,11 @@ namespace Genie
 			return 'T';
 		}
 		
+		if ( relix::is_os_thread_stopped( get_os_thread() ) )
+		{
+			return 'W';
+		}
+		
 		switch ( itsSchedule )
 		{
 			case kProcessRunning:      return 'R';  // [1]
