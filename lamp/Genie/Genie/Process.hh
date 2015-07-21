@@ -48,7 +48,6 @@ namespace Genie
 		kProcessRunning,
 		kProcessSleeping,
 		kProcessStopped,
-		kProcessFrozen,
 		kProcessUnscheduled
 	};
 	

@@ -644,7 +644,6 @@ namespace Genie
 		itsForkedChildPID = child.GetPID();
 		
 		itsInterdependence = kProcessForking;
-		itsSchedule        = kProcessFrozen;
 		
 		mark_vfork_stack_frame();
 		
@@ -918,12 +917,16 @@ namespace Genie
 			return 'D';
 		}
 		
+		if ( itsForkedChildPID != 0 )
+		{
+			return 'V';
+		}
+		
 		switch ( itsSchedule )
 		{
 			case kProcessRunning:      return 'R';  // [1]
 			case kProcessSleeping:     return 'S';  // [2]
 			case kProcessStopped:      return 'T';  // set in Process::Stop()
-			case kProcessFrozen:       return 'V';  // set in SpawnVFork() prior to NewProcess()
 			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
 			
 			// [1] set on parent in execve() after child.Exec()
@@ -947,7 +950,6 @@ namespace Genie
 	void Process::ResumeAfterFork()
 	{
 		ASSERT( itsInterdependence == kProcessForking );
-		ASSERT( itsSchedule        == kProcessFrozen  );
 		
 		ASSERT( itsForkedChildPID != 0 );
 		
@@ -1352,7 +1354,7 @@ namespace Genie
 			return;
 		}
 		
-		if ( itsSchedule == kProcessFrozen )
+		if ( itsForkedChildPID != 0 )
 		{
 			return;
 		}
