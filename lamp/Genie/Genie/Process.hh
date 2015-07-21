@@ -101,8 +101,6 @@ namespace Genie
 			
 			bool DeliverPendingSignals( bool may_throw );
 			
-			bool WaitsForChildren() const;
-			
 			void Terminate();
 			
 			static void* notify_process( void* param, pid_t, Process& process );

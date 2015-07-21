@@ -80,6 +80,7 @@
 #include "relix/api/get_process_group.hh"
 #include "relix/api/root.hh"
 #include "relix/api/terminate_current_process.hh"
+#include "relix/api/waits_for_children.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/glue/system_call.68k.hh"
@@ -1039,25 +1040,6 @@ namespace Genie
 		return get_process().get_sigaction( signo );
 	}
 	
-	bool Process::WaitsForChildren() const
-	{
-		const struct sigaction& chld = GetSignalAction( SIGCHLD );
-		
-		enum
-		{
-			sa_nocldwait
-			
-		#ifdef SA_NOCLDWAIT
-			
-			= SA_NOCLDWAIT
-			
-		#endif
-			
-		};
-		
-		return chld.sa_handler != SIG_IGN  &&  (chld.sa_flags & sa_nocldwait) == 0;
-	}
-	
 	// This function doesn't return if the process is current.
 	void Process::Terminate()
 	{
@@ -1091,7 +1073,7 @@ namespace Genie
 		{
 			Process& parent = GetProcess( ppid );
 			
-			if ( ppid > 1  &&  parent.WaitsForChildren() )
+			if ( ppid > 1  &&  waits_for_children( parent.get_process() ) )
 			{
 				parent.Raise( SIGCHLD );
 			}
