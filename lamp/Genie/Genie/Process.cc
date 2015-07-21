@@ -818,6 +818,11 @@ namespace Genie
 		return get_process().get_process_group().id();
 	}
 	
+	bool Process::is_stopped() const
+	{
+		return get_process().is_stopped();
+	}
+	
 	char Process::run_state_code() const
 	{
 		if ( itsLifeStage == kProcessReleased )
@@ -1175,14 +1180,12 @@ namespace Genie
 							throw signal;
 						
 						case signal_stop:
+							proc.signal_stop();
 							Stop();
 							break;
 						
 						case signal_continue:
-							if ( itsSchedule == kProcessStopped )
-							{
-								itsSchedule = kProcessSleeping;
-							}
+							proc.signal_continue();
 							break;
 					}
 					
@@ -1219,7 +1222,7 @@ namespace Genie
 		
 		relix::mark_thread_inactive( gettid() );
 		
-		Pause( kProcessStopped );
+		Pause( kProcessSleeping );
 		
 		relix::mark_thread_active( gettid() );
 	}

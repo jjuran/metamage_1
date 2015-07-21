@@ -36,7 +36,6 @@ namespace Genie
 	{
 		kProcessRunning,
 		kProcessSleeping,
-		kProcessStopped,
 		kProcessUnscheduled
 	};
 	
@@ -105,7 +104,7 @@ namespace Genie
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			
-			bool is_stopped() const  { return itsSchedule == kProcessStopped; }
+			bool is_stopped() const;
 			
 			char run_state_code() const;
 			
