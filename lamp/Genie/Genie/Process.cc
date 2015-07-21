@@ -648,8 +648,6 @@ namespace Genie
 		
 		mark_vfork_stack_frame();
 		
-		Suspend();
-		
 		// activate child
 		
 		child.itsInterdependence = kProcessForked;
@@ -827,8 +825,6 @@ namespace Genie
 			return;
 		}
 		
-		Suspend();
-		
 		if ( looseThread.get() == 0 )
 		{
 			resume.enable( GetPPID() );
@@ -862,8 +858,6 @@ namespace Genie
 		{
 			return;
 		}
-		
-		Suspend();
 		
 		if ( looseThread.get() == 0 )
 		{
@@ -1109,8 +1103,6 @@ namespace Genie
 		{
 			return;
 		}
-		
-		Suspend();
 		
 		restore_the_A5_world();
 		
