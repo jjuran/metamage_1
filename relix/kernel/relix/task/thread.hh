@@ -42,6 +42,7 @@ namespace relix
 			typedef recall::stack_frame_pointer frame_ptr;
 			
 			int its_id;
+			int its_saved_errno;
 			
 			sigset_t its_pending_signals;
 			sigset_t its_blocked_signals;
@@ -111,6 +112,9 @@ namespace relix
 			void swap_os_thread( thread& other )  { its_os_thread.swap( other.its_os_thread ); }
 			
 			void reset_os_thread()  { its_os_thread.reset(); }
+			
+			void switch_in();
+			void switch_out();
 	};
 	
 #if defined( __RELIX__ )  ||  defined( __APPLE__ )

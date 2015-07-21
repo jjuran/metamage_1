@@ -8,6 +8,7 @@
 // relix
 #include "relix/api/get_thread.hh"
 #include "relix/task/process.hh"
+#include "relix/task/process_image.hh"
 #include "relix/task/scheduler.hh"
 
 
@@ -17,6 +18,7 @@ namespace relix
 	thread::thread( int id, sigset_t blocked, process& p, bool use_syscall_stack )
 	:
 		its_id( id ),
+		its_saved_errno(),
 		its_pending_signals(),  // reset pending signals on new threads
 		its_blocked_signals( blocked ),
 		its_process( &p ),
@@ -66,6 +68,16 @@ namespace relix
 		}
 		
 		return get_os_thread_id( *next_thread->its_os_thread.get() );
+	}
+	
+	void thread::switch_in()
+	{
+		get_process().get_process_image().set_errno( its_saved_errno );
+	}
+	
+	void thread::switch_out()
+	{
+		its_saved_errno = get_process().get_process_image().get_errno();
 	}
 	
 }

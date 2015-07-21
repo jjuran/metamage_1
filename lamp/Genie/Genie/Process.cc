@@ -724,13 +724,29 @@ namespace Genie
 		}
 	}
 	
+	static void thread_switch_in( void* param )
+	{
+		Process& thread = *(Process*) param;
+		
+		thread.switch_in();
+	}
+	
+	static void thread_switch_out( void* param )
+	{
+		Process& thread = *(Process*) param;
+		
+		thread.switch_out();
+	}
+	
 	static relix::os_thread_box new_thread( Process& task )
 	{
 		const std::size_t min_stack = minimum_stack_size();
 		
 		return new_os_thread( &Process::thread_start,
 		                      &task,
-		                      min_stack );
+		                      min_stack,
+		                      &thread_switch_in,
+		                      &thread_switch_out );
 	}
 	
 	void Process::Exec( const char*         path,
@@ -1184,10 +1200,6 @@ namespace Genie
 		
 		mark_current_stack_frame();
 		
-		const relix::process_image& image = get_process().get_process_image();
-		
-		const int saved_errno = image.get_errno();
-		
 		GrafPort** my_A5_world = swap_A5_worlds();
 		
 		if ( newSchedule == kProcessStopped )
@@ -1200,8 +1212,6 @@ namespace Genie
 		}
 		
 		load_A5_world( my_A5_world );
-		
-		image.set_errno( saved_errno );
 		
 		Resume();
 	}
