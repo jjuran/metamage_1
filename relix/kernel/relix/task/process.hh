@@ -45,6 +45,8 @@ namespace relix
 			int its_ppid;
 			int its_status;
 			
+			bool it_is_stopped;
+			
 			plus::string its_name;
 			
 			clock_t its_last_activity;
@@ -119,6 +121,11 @@ namespace relix
 			
 			void switch_in();
 			void switch_out();
+			
+			bool is_stopped() const  { return it_is_stopped; }
+			
+			void signal_stop();
+			void signal_continue();
 	};
 	
 }

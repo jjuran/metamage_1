@@ -21,6 +21,7 @@ namespace relix
 		its_id           ( 1 ),
 		its_ppid         ( 0 ),
 		its_status       (   ),
+		it_is_stopped    (   ),
 		its_name( "init" ),
 		its_last_activity(   ),
 		its_process_group( new process_group( 1 ) ),
@@ -41,6 +42,7 @@ namespace relix
 		its_id           ( id   ),
 		its_ppid         ( parent.id() ),
 		its_status       (),
+		it_is_stopped    (),
 		its_name( parent.name() ),
 		its_last_activity(      ),
 		its_process_group( &parent.get_process_group() ),
@@ -148,6 +150,16 @@ namespace relix
 		add_system_cpu_time( checkpoint_delta() );
 		
 		its_process_image->switch_out();
+	}
+	
+	void process::signal_stop()
+	{
+		it_is_stopped = true;
+	}
+	
+	void process::signal_continue()
+	{
+		it_is_stopped = false;
 	}
 	
 }
