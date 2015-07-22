@@ -110,6 +110,8 @@ namespace relix
 			
 			void reset_signal_handlers();
 			
+			void unshare_per_fork();
+			
 			void switch_in();
 			void switch_out();
 	};

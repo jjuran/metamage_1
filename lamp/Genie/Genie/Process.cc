@@ -647,28 +647,11 @@ namespace Genie
 		relix::mark_thread_active( tid );
 	}
 	
-	void Process::unshare_fs_info()
-	{
-		get_process().get_process_resources().unshare_fs_info();
-	}
-	
-	void Process::unshare_files()
-	{
-		get_process().get_process_resources().unshare_fd_map();
-	}
-	
-	void Process::unshare_signal_handlers()
-	{
-		get_process().unshare_signal_handlers();
-	}
-	
 	Process& Process::vfork()
 	{
 		Process& child = NewProcess( *this );
 		
-		child.unshare_fs_info();
-		child.unshare_files();
-		child.unshare_signal_handlers();
+		child.get_process().unshare_per_fork();
 		
 		// suspend parent for vfork
 		

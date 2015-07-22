@@ -12,6 +12,7 @@
 // relix-kernel
 #include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
+#include "relix/task/process_resources.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -74,24 +75,27 @@ int _relix_clone( int (*f)( void* ), void* stack_base, size_t stack_size, int fl
 		Process& child = clone_thread ? NewThread ( caller )
 		                              : NewProcess( caller );
 		
+		relix::process&           proc = child.get_process();
+		relix::process_resources& rsrcs = proc.get_process_resources();
+		
 		if ( share_parent )
 		{
-			child.get_process().set_ppid( caller.GetPPID() );
+			proc.set_ppid( caller.GetPPID() );
 		}
 		
 		if ( !share_fs )
 		{
-			child.unshare_fs_info();
+			rsrcs.unshare_fs_info();
 		}
 		
 		if ( !share_files )
 		{
-			child.unshare_files();
+			rsrcs.unshare_fd_map();
 		}
 		
 		if ( !share_sighand )
 		{
-			child.unshare_signal_handlers();
+			proc.unshare_signal_handlers();
 		}
 		
 		child.SpawnThread( f, arg );

@@ -33,6 +33,7 @@
 #include "relix/config/mini.hh"
 #include "relix/api/os_thread_api.hh"
 #include "relix/api/os_thread_box.hh"
+#include "relix/task/process.hh"
 
 // Genie
 #include "Genie/Process.hh"
@@ -232,9 +233,7 @@ namespace Genie
 		
 		Process& child = NewProcess( parent );
 		
-		child.unshare_fs_info();
-		child.unshare_files();
-		child.unshare_signal_handlers();
+		child.get_process().unshare_per_fork();
 		
 		try
 		{

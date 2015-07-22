@@ -126,6 +126,14 @@ namespace relix
 		its_signal_handlers->reset_handlers();
 	}
 	
+	void process::unshare_per_fork()
+	{
+		its_process_resources->unshare_fs_info();
+		its_process_resources->unshare_fd_map();
+		
+		unshare_signal_handlers();
+	}
+	
 	void process::switch_in()
 	{
 		(void) checkpoint_delta();

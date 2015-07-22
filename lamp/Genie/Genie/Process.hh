@@ -114,10 +114,6 @@ namespace Genie
 			Process( RootProcess );
 			Process( Process& parent, pid_t pid, pid_t tid );
 			
-			void unshare_fs_info();
-			void unshare_files();
-			void unshare_signal_handlers();
-			
 			static void* thread_start( void* param, const void* bottom, const void* limit );
 			
 			bool MayDumpCore() const  { return itMayDumpCore; }
