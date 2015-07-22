@@ -14,9 +14,6 @@
 // gear
 #include "gear/find.hh"
 
-// plus
-#include "plus/string.hh"
-
 // MacFeatures
 #include "MacFeatures/Features.hh"
 
