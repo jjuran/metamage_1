@@ -8,19 +8,14 @@
 // POSIX
 #include <fcntl.h>
 
-// Standard C++
-#include <algorithm>
-
-// plus
-#include "plus/string.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
+// Standard C
+#include <string.h>
 
 // vfs
 #include "vfs/filehandle.hh"
 #include "vfs/memory_mapping.hh"
 #include "vfs/node.hh"
+#include "vfs/filehandle/primitives/get_file.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
 #include "vfs/filehandle/methods/general_method_set.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
@@ -32,78 +27,6 @@
 
 namespace Genie
 {
-	
-	namespace p7 = poseven;
-	
-	
-	// General
-	
-	static ssize_t ReadNull( char*, std::size_t )
-	{
-		return 0;
-	}
-	
-	static ssize_t WriteVoid( const char*, std::size_t byteCount )
-	{
-		return byteCount;
-	}
-	
-	// Zero
-	
-	static ssize_t ReadZero( char* data, std::size_t byteCount )
-	{
-		std::fill( data,
-		           data + byteCount,
-		           '\0' );
-		
-		return byteCount;
-	}
-	
-	// Console
-	
-	static ssize_t WriteConsole( const char* data, std::size_t byteCount )
-	{
-		return relix::console::log( data, byteCount );
-	}
-	
-	typedef ssize_t (*Reader)( char      *, std::size_t );
-	typedef ssize_t (*Writer)( char const*, std::size_t );
-	
-	struct DeviceIOSpec
-	{
-		const char* name;
-		Reader reader;
-		Writer writer;
-	};
-	
-	static DeviceIOSpec gDeviceIOSpecs[] =
-	{
-		{ "null",    ReadNull, WriteVoid    },
-		{ "zero",    ReadZero, WriteVoid    },
-		{ "console", ReadNull, WriteConsole },
-		{ NULL,      NULL,     NULL         }
-	};
-	
-	static inline bool operator==( const DeviceIOSpec& device, const plus::string& s )
-	{
-		return device.name == s;
-	}
-	
-	static const DeviceIOSpec& FindDevice( const plus::string& name )
-	{
-		const DeviceIOSpec* begin = gDeviceIOSpecs;
-		const DeviceIOSpec* end   = begin + sizeof gDeviceIOSpecs / sizeof gDeviceIOSpecs[0];
-		
-		const DeviceIOSpec* it = std::find( begin, end, name );
-		
-		if ( it == NULL )
-		{
-			throw p7::errno_t( ENOENT );
-		}
-		
-		return *it;
-	}
-	
 	
 	static vfs::memory_mapping_ptr
 	//
@@ -118,28 +41,29 @@ namespace Genie
 	};
 	
 	
-	class SimpleDeviceHandle : public vfs::filehandle
-	{
-		private:
-			const DeviceIOSpec& io;
-		
-		public:
-			SimpleDeviceHandle( const vfs::node& file );
-			
-			ssize_t SysRead( char* data, std::size_t byteCount );
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
-	};
-	
-	
 	static ssize_t simpledevice_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		return static_cast< SimpleDeviceHandle& >( *that ).SysRead( buffer, n );
+		const char c = get_file( *that )->name()[ 0 ];
+		
+		if ( c == 'z' )
+		{
+			memset( buffer, '\0', n );
+			return n;
+		}
+		
+		return 0;
 	}
 	
 	static ssize_t simpledevice_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		return static_cast< SimpleDeviceHandle& >( *that ).SysWrite( buffer, n );
+		const char c = get_file( *that )->name()[ 0 ];
+		
+		if ( c == 'c' )
+		{
+			return relix::console::log( buffer, n );
+		}
+		
+		return n;
 	}
 	
 	static const vfs::stream_method_set simpledevice_stream_methods =
@@ -158,27 +82,9 @@ namespace Genie
 	};
 	
 	
-	SimpleDeviceHandle::SimpleDeviceHandle( const vfs::node& file )
-	:
-		vfs::filehandle( &file, O_RDWR, &simpledevice_methods ),
-		io( FindDevice( file.name() ) )
-	{
-	}
-	
-	ssize_t SimpleDeviceHandle::SysRead( char* data, std::size_t byteCount )
-	{
-		return io.reader( data, byteCount );
-	}
-	
-	ssize_t SimpleDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
-	{
-		return io.writer( data, byteCount );
-	}
-	
-	
 	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file )
 	{
-		return new SimpleDeviceHandle( file );
+		return new vfs::filehandle( &file, O_RDWR, &simpledevice_methods );
 	}
 	
 }
