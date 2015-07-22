@@ -1,9 +1,9 @@
-/*	===============
- *	SimpleDevice.cc
- *	===============
- */
+/*
+	simple_device.cc
+	----------------
+*/
 
-#include "Genie/IO/SimpleDevice.hh"
+#include "relix/fs/simple_device.hh"
 
 // POSIX
 #include <fcntl.h>
@@ -25,7 +25,7 @@
 #include "relix/fs/console.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	static vfs::memory_mapping_ptr
@@ -60,7 +60,7 @@ namespace Genie
 		
 		if ( c == 'c' )
 		{
-			return relix::console::log( buffer, n );
+			return console::log( buffer, n );
 		}
 		
 		return n;
@@ -82,7 +82,7 @@ namespace Genie
 	};
 	
 	
-	vfs::filehandle_ptr GetSimpleDeviceHandle( const vfs::node& file )
+	vfs::filehandle_ptr open_simple_device( const vfs::node& file )
 	{
 		return new vfs::filehandle( &file, O_RDWR, &simpledevice_methods );
 	}

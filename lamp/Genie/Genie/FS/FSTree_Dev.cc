@@ -35,13 +35,13 @@
 #include "relix/config/pts.hh"
 #include "relix/fs/con_tag.hh"
 #include "relix/fs/pts_tag.hh"
+#include "relix/fs/simple_device.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_group.hh"
 #include "relix/task/session.hh"
 
 // Genie
 #include "Genie/IO/SerialDevice.hh"
-#include "Genie/IO/SimpleDevice.hh"
 
 
 #ifndef CONFIG_DEV_SERIAL
@@ -114,7 +114,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr simple_device_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return GetSimpleDeviceHandle( *that );
+		return relix::open_simple_device( *that );
 	}
 	
 	static const data_method_set simple_device_data_methods =
