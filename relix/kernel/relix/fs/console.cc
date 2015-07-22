@@ -1,12 +1,15 @@
-// SystemConsole.cc
+/*
+	console.cc
+	----------
+*/
 
-#include "Genie/SystemConsole.hh"
+#include "relix/fs/console.hh"
 
 // POSIX
 #include <errno.h>
 #include <fcntl.h>
 
-// Iota
+// iota
 #include "iota/strings.hh"
 
 // vfs
@@ -28,20 +31,22 @@
 #include "relix/api/root.hh"
 
 
-namespace Genie
+namespace relix
+{
+namespace console
 {
 	
-	static ssize_t Spew( const vfs::node& file, const char* buffer, std::size_t length )
+	static ssize_t spew( const vfs::node& file, const char* buffer, std::size_t length )
 	{
 		return write( *open( file, O_WRONLY | O_TRUNC, 0 ), buffer, length );
 	}
 	
-	static ssize_t Append( const vfs::node& file, const char* buffer, std::size_t length )
+	static ssize_t append( const vfs::node& file, const char* buffer, std::size_t length )
 	{
 		return write( *open( file, O_WRONLY | O_APPEND, 0 ), buffer, length );
 	}
 	
-	static void MakeWindow( vfs::filehandle& port_dir )
+	static void make_window( vfs::filehandle& port_dir )
 	{
 		vfs::node_ptr root = relix::root();
 		
@@ -65,14 +70,14 @@ namespace Genie
 			view = resolve_relative_path( *root, STR_LEN( "view" ), cwd );
 		}
 		
-		Spew( *resolve_relative_path( *root, STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
+		spew( *resolve_relative_path( *root, STR_LEN( "title" ), cwd ), STR_LEN( "System Console" "\n" ) );
 		
-		Spew( *resolve_relative_path( *root, STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
+		spew( *resolve_relative_path( *root, STR_LEN( "size" ),  cwd ), STR_LEN( "495x272" "\n" ) );
 		
 		touch( *window );
 		
-		Spew( *resolve_relative_path( *root, STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
-		Spew( *resolve_relative_path( *root, STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
+		spew( *resolve_relative_path( *root, STR_LEN( "w/text-font" ), cwd ), STR_LEN( "4" "\n" ) );
+		spew( *resolve_relative_path( *root, STR_LEN( "w/text-size" ), cwd ), STR_LEN( "9" "\n" ) );
 		
 		hardlink( *vfs::resolve_absolute_path( *root, STR_LEN( "/gui/new/scrollframe" ) ), *view );
 		
@@ -86,31 +91,31 @@ namespace Genie
 		
 		symlink( *resolve_relative_path( *root, STR_LEN( "v/target" ), cwd ), "v/v" );
 		
-		Spew( *resolve_relative_path( *root, STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
-		Spew( *resolve_relative_path( *root, STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
+		spew( *resolve_relative_path( *root, STR_LEN( "v/vertical"  ), cwd ), STR_LEN( "1" "\n" ) );
+		spew( *resolve_relative_path( *root, STR_LEN( "v/v/padding" ), cwd ), STR_LEN( "4" "\n" ) );
 	}
 	
-	static vfs::node_ptr GetConsoleWindow()
+	static vfs::node_ptr get_console_window()
 	{
-		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( *relix::root(), STR_LEN( "/gui/new/port" ) ) );
+		static const vfs::filehandle_ptr the_port = opendir( *vfs::resolve_absolute_path( *root(), STR_LEN( "/gui/new/port" ) ) );
 		
-		MakeWindow( *the_port );
+		make_window( *the_port );
 		
 		return get_file( *the_port );
 	}
 	
-	static vfs::node_ptr GetConsoleText()
+	static vfs::node_ptr get_console_text()
 	{
-		vfs::node_ptr text = resolve_relative_path( *relix::root(), STR_LEN( "v/v/v/text" ), *GetConsoleWindow() );
+		vfs::node_ptr text = resolve_relative_path( *root(), STR_LEN( "v/v/v/text" ), *get_console_window() );
 		
 		return text;
 	}
 	
-	int WriteToSystemConsole( const char* data, unsigned byteCount )
+	long log( const char* buffer, unsigned long n )
 	{
 		try
 		{
-			return Append( *GetConsoleText(), data, byteCount );
+			return append( *get_console_text(), buffer, n );
 		}
 		catch ( ... )
 		{
@@ -121,4 +126,5 @@ namespace Genie
 		return -1;
 	}
 	
-}
+}  // namespace console
+}  // namespace relix

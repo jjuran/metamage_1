@@ -14,11 +14,11 @@
 #include "AEFramework/AEFramework.h"
 
 // relix-kernel
+#include "relix/fs/console.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/ProcessList.hh"
-#include "Genie/SystemConsole.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -88,7 +88,7 @@ namespace Genie
 		}
 		catch ( ThreadManager_required )
 		{
-			WriteToSystemConsole( STR_LEN( THREAD_FAIL ) );
+			relix::console::log( STR_LEN( THREAD_FAIL ) );
 		}
 	}
 	

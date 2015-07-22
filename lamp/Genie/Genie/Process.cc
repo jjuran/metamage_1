@@ -83,6 +83,7 @@
 #include "relix/api/waits_for_children.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
+#include "relix/fs/console.hh"
 #include "relix/glue/system_call.68k.hh"
 #include "relix/glue/system_call.ppc.hh"
 #include "relix/glue/userland.hh"
@@ -103,7 +104,6 @@
 #include "Genie/Faults.hh"
 #include "Genie/ProcessList.hh"
 #include "Genie/Process/AsyncYield.hh"
-#include "Genie/SystemConsole.hh"
 
 
 #ifndef SIGSTKFLT
@@ -142,7 +142,7 @@ static void DumpBacktrace()
 	
 	make_report_from_stack_crawl( report, begin, end );
 	
-	(void) Genie::WriteToSystemConsole( report.data(), report.size() );
+	(void) relix::console::log( report.data(), report.size() );
 }
 
 namespace relix
@@ -1365,7 +1365,7 @@ namespace Genie
 		
 		if ( thread == 0 )
 		{
-			WriteToSystemConsole( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
+			relix::console::log( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
 			
 			return;
 		}

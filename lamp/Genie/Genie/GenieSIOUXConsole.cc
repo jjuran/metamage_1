@@ -8,8 +8,8 @@
 // Metrowerks Standard Library
 #include <console.h>
 
-// Genie
-#include "Genie/SystemConsole.hh"
+// relix
+#include "relix/fs/console.hh"
 
 
 short InstallConsole( short /*fd*/ )
@@ -23,7 +23,7 @@ void RemoveConsole()
 
 long WriteCharsToConsole( char* buffer, long n )
 {
-	return Genie::WriteToSystemConsole( buffer, n );
+	return relix::console::log( buffer, n );
 }
 
 long ReadCharsFromConsole( char* /*buffer*/, long /*n*/ )

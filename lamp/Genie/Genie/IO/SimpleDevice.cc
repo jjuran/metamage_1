@@ -26,8 +26,8 @@
 #include "vfs/filehandle/methods/stream_method_set.hh"
 #include "vfs/mmap/functions/map_anonymous.hh"
 
-// Genie
-#include "Genie/SystemConsole.hh"
+// relix
+#include "relix/fs/console.hh"
 
 
 namespace Genie
@@ -63,7 +63,7 @@ namespace Genie
 	
 	static ssize_t WriteConsole( const char* data, std::size_t byteCount )
 	{
-		return WriteToSystemConsole( data, byteCount );
+		return relix::console::log( data, byteCount );
 	}
 	
 	typedef ssize_t (*Reader)( char      *, std::size_t );
