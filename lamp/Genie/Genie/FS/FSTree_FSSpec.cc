@@ -21,6 +21,9 @@
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/volume_params.hh"
 
+// mac-app-utils
+#include "mac_app/create_alias.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -94,7 +97,6 @@
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Utilities/AsyncIO.hh"
-#include "Genie/Utilities/CreateAlias.hh"
 
 
 namespace Genie
@@ -858,9 +860,12 @@ namespace Genie
 			
 			FSSpec targetSpec = vfs::FSSpec_from_node( *target );
 			
-			CreateAlias( linkSpec, targetSpec );
+			OSErr err = mac::app::create_alias( linkSpec, targetSpec );
 			
-			goto created;
+			if ( err == noErr )
+			{
+				goto created;
+			}
 		}
 		catch ( const p7::errno_t& err )
 		{
