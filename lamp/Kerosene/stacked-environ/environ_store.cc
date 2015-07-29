@@ -263,18 +263,19 @@ namespace kerosene
 			}
 		}
 		
+		const std::size_t value_len = std::strlen( value );
+		
 		if ( inserting )
 		{
-			char *const new_var = copy_var( name, std::strlen( name ), value, std::strlen( value ) );
+			char *const new_var = copy_var( name, std::strlen( name ), value, value_len );
 			
 			its_vars.insert( it, new_var );  // won't throw
 		}
 		else
 		{
 			const std::size_t name_length  = match - var - 1;
-			const std::size_t value_length = std::strlen( value );
 			
-			char *const new_var = copy_var( name, name_length, value, value_length );
+			char *const new_var = copy_var( name, name_length, value, value_len );
 			
 			overwrite< false >( it, new_var );
 		}
