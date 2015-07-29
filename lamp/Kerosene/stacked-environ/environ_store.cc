@@ -255,13 +255,21 @@ namespace kerosene
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		const bool inserting = !match;
 		
+		if ( ! inserting )
+		{
+			if ( ! overwriting )
+			{
+				return;
+			}
+		}
+		
 		if ( inserting )
 		{
 			char *const new_var = copy_var( name, std::strlen( name ), value, std::strlen( value ) );
 			
 			its_vars.insert( it, new_var );  // won't throw
 		}
-		else if ( overwriting )
+		else
 		{
 			const std::size_t name_length  = match - var - 1;
 			const std::size_t value_length = std::strlen( value );
