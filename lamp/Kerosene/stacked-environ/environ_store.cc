@@ -287,21 +287,6 @@ namespace kerosene
 		}
 	}
 	
-	template < bool putting >
-	void environ_store::overwrite( std::vector< char* >::iterator  it,
-	                               char                           *string )
-	{
-		char *const var = *it;
-		
-		*it = string;
-		
-		erase( var );
-	}
-	
-	void environ_store::reset()
-	{
-	}
-	
 	char* environ_store::get( const char* name )
 	{
 		std::vector< char* >::iterator it = find_var( its_vars, name );
@@ -317,7 +302,7 @@ namespace kerosene
 		
 		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
-		const char *const var = *it;
+		char *const var = *it;
 		
 		// Did we find the right environment variable?
 		const char *const match = var_match( var, name );
@@ -355,7 +340,9 @@ namespace kerosene
 		}
 		else
 		{
-			overwrite< false >( it, new_var );
+			*it = new_var;
+			
+			erase( var );
 		}
 		
 		p = (char*) mempcpy( p, name,  name_len  );
@@ -370,7 +357,7 @@ namespace kerosene
 		
 		std::vector< char* >::iterator it = find_var( its_vars, string );
 		
-		const char *const var = *it;
+		char *const var = *it;
 		
 		// Did we find the right environment variable?
 		const char *const match = var_match( var, string );
@@ -384,7 +371,9 @@ namespace kerosene
 		}
 		else
 		{
-			overwrite< true >( it, string );
+			*it = string;
+			
+			erase( var );
 		}
 	}
 	
@@ -408,8 +397,6 @@ namespace kerosene
 	
 	void environ_store::clear()
 	{
-		reset();
-		
 		its_vars.clear();
 		
 		its_vars.resize( 1, NULL );
