@@ -157,6 +157,11 @@ namespace kerosene
 		update_environ();
 	}
 	
+	void environ_store::erase( char* var )
+	{
+		delete [] var;
+	}
+	
 	template < bool putting >
 	void environ_store::overwrite( std::vector< char* >::iterator  it,
 	                               char                           *string )
@@ -187,7 +192,7 @@ namespace kerosene
 		}
 		else
 		{
-			delete [] var;
+			erase( var );
 		}
 	}
 	
@@ -297,7 +302,7 @@ namespace kerosene
 	{
 		std::vector< char* >::iterator it = find_var( its_vars, name );
 		
-		const char *const var = *it;
+		char *const var = *it;
 		
 		// Did we find the right environment variable?
 		const bool match = var_match( var, name );
@@ -315,7 +320,7 @@ namespace kerosene
 			}
 			else
 			{
-				delete [] var;
+				erase( var );
 			}
 			
 			its_vars.erase( it );

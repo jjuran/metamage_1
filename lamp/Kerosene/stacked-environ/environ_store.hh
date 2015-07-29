@@ -29,6 +29,8 @@ namespace kerosene
 			void update_environ();
 			void preallocate();
 			
+			void erase( char* var );
+			
 			template < bool putting >
 			void overwrite( std::vector< char* >::iterator  it,
 	                        char                           *string );
