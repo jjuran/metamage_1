@@ -115,6 +115,15 @@ namespace kerosene
 		return buffer;
 	}
 	
+	static bool ptr_within( void const* p, void const* block, std::size_t n )
+	{
+		uintptr_t addr  = (uintptr_t) p;
+		uintptr_t begin = (uintptr_t) block;
+		uintptr_t end   = (uintptr_t) block + n;
+		
+		return addr >= begin  &&  addr < end;
+	}
+	
 	static char* find_space( char* buffer, std::size_t n )
 	{
 		/*
@@ -188,11 +197,9 @@ namespace kerosene
 		
 		char* p = buffer;
 		
-		std::set< const char* >::iterator end = its_user_owned_vars.end();
-		
 		for ( char** vars = &its_vars[0];  *vars != NULL;  ++vars )
 		{
-			const bool is_managed = its_user_owned_vars.find( *vars ) == end;
+			const bool is_managed = ptr_within( *vars, its_buffer, its_length );
 			
 			if ( is_managed )
 			{
@@ -274,46 +281,25 @@ namespace kerosene
 	
 	void environ_store::erase( char* var )
 	{
-		std::memset( var, '\0', std::strlen( var ) );
+		if ( ptr_within( var, its_buffer, its_length ) )
+		{
+			std::memset( var, '\0', std::strlen( var ) );
+		}
 	}
 	
 	template < bool putting >
 	void environ_store::overwrite( std::vector< char* >::iterator  it,
 	                               char                           *string )
 	{
-		// true for putenv(), false for setenv(), known at compile time.
-		const bool new_is_user_owned = putting;
-		
 		char *const var = *it;
-		
-		std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( var );
-		
-		// true for putenv(), false for setenv(), known at runtime.
-		const bool old_is_user_owned = user_ownership != its_user_owned_vars.end();
-		
-		// User-owned var strings don't get allocated or deallocated here,
-		// but instead we have to mark them so we don't delete them later.
-		
-		if ( new_is_user_owned )
-		{
-			its_user_owned_vars.insert( string );  // may throw
-		}
 		
 		*it = string;
 		
-		if ( old_is_user_owned )
-		{
-			its_user_owned_vars.erase( user_ownership );
-		}
-		else
-		{
-			erase( var );
-		}
+		erase( var );
 	}
 	
 	void environ_store::reset()
 	{
-		its_user_owned_vars.clear();
 	}
 	
 	char* environ_store::get( const char* name )
@@ -394,8 +380,6 @@ namespace kerosene
 		
 		if ( inserting )
 		{
-			its_user_owned_vars.insert( string );  // may throw
-			
 			its_vars.insert( it, string );  // memory already reserved
 		}
 		else
@@ -416,18 +400,7 @@ namespace kerosene
 		
 		if ( match )
 		{
-			std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( var );
-			
-			const bool user_owned = user_ownership != its_user_owned_vars.end();
-			
-			if ( user_owned )
-			{
-				its_user_owned_vars.erase( user_ownership );
-			}
-			else
-			{
-				erase( var );
-			}
+			erase( var );
 			
 			its_vars.erase( it );
 		}

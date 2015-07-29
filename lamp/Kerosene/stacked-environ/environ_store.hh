@@ -7,7 +7,6 @@
 #define KEROSENE_ENVIRONSTORE_HH
 
 // Standard C++
-#include <set>
 #include <vector>
 
 
@@ -17,10 +16,9 @@ namespace kerosene
 	class environ_store
 	{
 		private:
-			char*                    its_buffer;
-			std::size_t              its_length;
-			std::vector< char* >     its_vars;
-			std::set< const char* >  its_user_owned_vars;
+			char*                 its_buffer;
+			std::size_t           its_length;
+			std::vector< char* >  its_vars;
 			
 		private:
 			// Non-copyable
