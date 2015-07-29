@@ -17,6 +17,8 @@ namespace kerosene
 	class environ_store
 	{
 		private:
+			char*                    its_buffer;
+			std::size_t              its_length;
 			std::vector< char* >     its_vars;
 			std::set< const char* >  its_user_owned_vars;
 			
@@ -26,6 +28,7 @@ namespace kerosene
 			environ_store& operator=( const environ_store& );
 			
 		private:
+			char* find_space_or_reallocate( std::size_t extra_space );
 			void update_environ();
 			void preallocate();
 			

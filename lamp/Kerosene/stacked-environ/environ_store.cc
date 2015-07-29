@@ -5,8 +5,14 @@
 
 #include "environ_store.hh"
 
+// Standard C
+#include <stdint.h>
+
 // Standard C/C++
 #include <cstring>
+
+// more-libc
+#include "more/string.h"
 
 
 char** environ = NULL;
@@ -15,56 +21,26 @@ char** environ = NULL;
 namespace kerosene
 {
 	
+	static inline uintptr_t max( uintptr_t a, uintptr_t b )
+	{
+		return a > b ? a : b;
+	}
+	
+	static std::size_t sizeof_argv( char** argv )
+	{
+		std::size_t size = 0;
+		
+		while ( *argv != NULL )
+		{
+			size += std::strlen( *argv++ ) + 1;
+		}
+		
+		return size;
+	}
+	
 	static bool cstr_less( const char* a, const char* b )
 	{
 		return std::strcmp( a, b ) < 0;
-	}
-	
-	static inline char* copy_string( const char* s )
-	{
-		const std::size_t len = std::strlen( s );
-		
-		char *const result = new char[ len + 1 ];
-		
-		std::copy( s, s + len + 1, result );
-		
-		return result;
-	}
-	
-	static void delete_vars( std::vector< char* >& result )
-	{
-		for ( int i = result.size() - 1;  i >= 0;  --i )
-		{
-			delete [] result[ i ];
-		}
-	}
-	
-	static inline void copy_vars( char const *const *vars, std::vector< char* >& result  )
-	{
-		try
-		{
-			if ( vars != NULL )
-			{
-				while ( *vars )
-				{
-					// This ensures push_back() won't (fail to) allocate memory
-					result.push_back( NULL );
-					result.pop_back();
-					
-					result.push_back( copy_string( *vars++ ) );
-				}
-			}
-			
-			std::sort( result.begin(), result.end(), std::ptr_fun( &cstr_less ) );
-			
-			result.push_back( NULL );
-		}
-		catch ( ... )
-		{
-			delete_vars( result );
-			
-			throw;
-		}
 	}
 	
 	
@@ -128,16 +104,155 @@ namespace kerosene
 	}
 	
 	
+	static char* new_buffer( std::size_t size )
+	{
+		char* buffer = (char*) ::operator new( size + 1 );
+		
+		std::memset( buffer, '\0', size );
+		
+		buffer[ size ] = '=';
+		
+		return buffer;
+	}
+	
+	static char* find_space( char* buffer, std::size_t n )
+	{
+		/*
+			The buffer's unused bytes contain zero.  The last byte of an
+			environment string is also zero, so therefore the last byte of
+			the buffer itself must be zero at all times.  The byte after that
+			is valid memory containing '=', which never otherwise follows a
+			zero byte.
+			
+			buffer may be NULL, but it may not be empty (i.e. a zero-length
+			series of zero bytes, i.e. pointing at the trailing '=').
+			
+			n is the number of bytes needed, including trailing NUL.
+		*/
+		
+		if ( buffer == NULL )
+		{
+			return NULL;
+		}
+		
+		char* p = buffer;
+		
+		if ( *p == '\0' )
+		{
+			// Without this we couldn't reuse the first byte once zeroed.
+			goto leading_NUL;
+		}
+		
+		while ( true )
+		{
+			// This skips the trailing NUL of the previous entry.
+			while ( *p++ != '\0' )  continue;
+			
+		leading_NUL:
+			char* q = p;
+			
+			while ( *q++ == '\0' )  continue;
+			
+			/*
+				q now points to the byte after the non-NUL after the last NUL.
+				q is off by one, so q - 1 - p is the number of NUL bytes in
+				this sequence.  It's enough if it's at least n, so we need
+				q - 1 - p >= n, which is q - p > n.
+			*/
+			
+			if ( q - p > n )
+			{
+				return p;
+			}
+			
+			p = q;  // The non-NUL is already checked; try the next byte.
+			
+			if ( *--q == '=' )
+			{
+				// We reached the end.
+				return NULL;
+			}
+		}
+	}
+	
+	char* environ_store::find_space_or_reallocate( std::size_t extra_space )
+	{
+		if ( char* result = find_space( its_buffer, extra_space ) )
+		{
+			return result;
+		}
+		
+		std::size_t size = max( its_length * 2, its_length + extra_space );
+		
+		char* buffer = new_buffer( size );
+		
+		char* p = buffer;
+		
+		std::set< const char* >::iterator end = its_user_owned_vars.end();
+		
+		for ( char** vars = &its_vars[0];  *vars != NULL;  ++vars )
+		{
+			const bool is_managed = its_user_owned_vars.find( *vars ) == end;
+			
+			if ( is_managed )
+			{
+				const char* var = *vars;
+				
+				*vars = p;
+				
+				p = (char*) mempcpy( p, var, std::strlen( var ) + 1 );
+			}
+		}
+		
+		::operator delete( its_buffer );
+		
+		its_buffer = buffer;
+		its_length = size;
+		
+		return p;
+	}
+	
 	environ_store::environ_store( char** envp )
 	{
-		copy_vars( envp, its_vars );
+		its_buffer = NULL;
+		its_length = 0;
+		
+		if ( envp != NULL  &&  *envp != NULL )
+		{
+			char** env = envp;
+			
+			while ( *env++ ) continue;
+			
+			const int envc = env - envp;  // var count + 1
+			
+			its_vars.reserve( envc );
+			
+			its_length = sizeof_argv( envp ) * 2;  // leave room for more vars
+			
+			its_buffer = new_buffer( its_length );
+			
+			char* p = its_buffer;
+			
+			while ( const char* var = *envp++ )
+			{
+				its_vars.push_back( p );
+				
+				p = (char*) mempcpy( p, var, std::strlen( var ) + 1 );
+			}
+			
+			std::sort( its_vars.begin(),
+			           its_vars.end(),
+			           std::ptr_fun( &cstr_less ) );
+		}
+		
+		its_vars.push_back( NULL );
 		
 		update_environ();
 	}
 	
 	environ_store::~environ_store()
 	{
-		reset();
+		::operator delete( its_buffer );
 	}
 	
 	void environ_store::update_environ()
@@ -159,7 +274,7 @@ namespace kerosene
 	
 	void environ_store::erase( char* var )
 	{
-		delete [] var;
+		std::memset( var, '\0', std::strlen( var ) );
 	}
 	
 	template < bool putting >
@@ -198,23 +313,7 @@ namespace kerosene
 	
 	void environ_store::reset()
 	{
-		// Here we zero out user-owned var string storage.  This is a convenience
-		// that allows us to subsequently call delete_vars() safely without
-		// giving it a dependency on the user ownership structure.
-		
-		for ( std::vector< char* >::iterator it = its_vars.begin();  it != its_vars.end();  ++it )
-		{
-			std::set< const char* >::iterator user_ownership = its_user_owned_vars.find( *it );
-			
-			if ( user_ownership != its_user_owned_vars.end() )
-			{
-				*it = NULL;
-			}
-		}
-		
 		its_user_owned_vars.clear();
-		
-		delete_vars( its_vars );
 	}
 	
 	char* environ_store::get( const char* name )
@@ -224,21 +323,6 @@ namespace kerosene
 		char *const var = *it;
 		
 		return var_match( var, name );
-	}
-	
-	static char* copy_var( const char* name, std::size_t name_length, const char* value, std::size_t value_length )
-	{
-		const std::size_t total_length = name_length + 1 + value_length;
-		
-		char *const result = new char[ total_length + 1 ];
-		
-		std::memcpy( result, name, name_length );
-		
-		result[ name_length ] = '=';
-		
-		std::memcpy( result + name_length + 1, value, value_length + 1 );
-		
-		return result;
 	}
 	
 	void environ_store::set( const char* name, const char* value, bool overwriting )
@@ -273,7 +357,11 @@ namespace kerosene
 		
 		const std::size_t value_len = std::strlen( value );
 		
-		char *const new_var = copy_var( name, name_len, value, value_len );
+		const std::size_t var_len = name_len + 1 + value_len + 1;
+		
+		char* new_var = find_space_or_reallocate( var_len );
+		
+		char* p = new_var;
 		
 		if ( inserting )
 		{
@@ -283,6 +371,11 @@ namespace kerosene
 		{
 			overwrite< false >( it, new_var );
 		}
+		
+		p = (char*) mempcpy( p, name,  name_len  );
+		*p++ = '=';
+		p = (char*) mempcpy( p, value, value_len );
+		// *p is already NUL
 	}
 	
 	void environ_store::put( char* string )
