@@ -255,28 +255,32 @@ namespace kerosene
 		// If it doesn't match, we insert (otherwise, we possibly overwrite)
 		const bool inserting = !match;
 		
+		std::size_t name_len;
+		
 		if ( ! inserting )
 		{
 			if ( ! overwriting )
 			{
 				return;
 			}
+			
+			name_len = match - var - 1;
+		}
+		else
+		{
+			name_len = std::strlen( name );
 		}
 		
 		const std::size_t value_len = std::strlen( value );
 		
+		char *const new_var = copy_var( name, name_len, value, value_len );
+		
 		if ( inserting )
 		{
-			char *const new_var = copy_var( name, std::strlen( name ), value, value_len );
-			
 			its_vars.insert( it, new_var );  // won't throw
 		}
 		else
 		{
-			const std::size_t name_length  = match - var - 1;
-			
-			char *const new_var = copy_var( name, name_length, value, value_len );
-			
 			overwrite< false >( it, new_var );
 		}
 	}
