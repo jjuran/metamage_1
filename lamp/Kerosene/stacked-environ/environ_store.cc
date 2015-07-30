@@ -313,10 +313,12 @@ namespace kerosene
 			{
 				its_user_owned_vars.erase( user_ownership );
 			}
+			else
+			{
+				delete [] var;
+			}
 			
 			its_vars.erase( it );
-			
-			delete [] var;
 		}
 	}
 	
