@@ -3,11 +3,17 @@
 	-----------
 */
 
+// Standard C
+#include <stdlib.h>
+
 // iota
 #include "iota/strings.hh"
 
 // more-libc
 #include "more/string.h"
+
+// command
+#include "command/get_option.hh"
 
 // plus
 #include "plus/string.hh"
@@ -24,8 +30,64 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_dry_run = 'n',
+	Option_verbose = 'v',
+	
+	Option_last_byte = 255,
+	
+	Option_data_fork,
+};
+
+static command::option options[] =
+{
+	{ "data-fork", Option_data_fork },
+	
+	{ "", Option_dry_run },
+	{ "", Option_verbose },
+	
+	{ NULL }
+};
+
+static bool dry_run = false;
+static bool verbose = false;
+static bool in_data = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_dry_run:
+				dry_run = true;
+				break;
+			
+			case Option_verbose:
+				verbose = true;
+				break;
+			
+			case Option_data_fork:
+				in_data = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -35,7 +97,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
 	
 	static bool Patch68KStartupCode( ::Handle code )
@@ -88,31 +149,18 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool dry_run = false;
-		bool verbose = false;
-		bool in_data = false;
+		char *const *args = get_options( argv );
 		
-		const char* link_map_path = NULL;
+		const int argn = argc - (args - argv);
 		
-		o::bind_option_to_variable( "-n", dry_run );
-		o::bind_option_to_variable( "-v", verbose );
-		
-		o::bind_option_to_variable( "--data-fork", in_data );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
-		
-		const std::size_t n_args = o::free_argument_count();
-		
-		if ( n_args == 0 )
+		if ( argn == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "postlink: argument required\n" ) );
 			
 			return 1;
 		}
 		
-		const char* target_path = free_args[ 0 ];
+		const char* target_path = args[ 0 ];
 		
 		FSSpec target_filespec = Div::ResolvePathToFSSpec( target_path );
 		
