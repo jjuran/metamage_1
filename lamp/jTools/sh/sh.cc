@@ -109,7 +109,7 @@ namespace tool
 		setenv( "PS2", "> ", 0 );
 		setenv( "PS4", "+ ", 0 );
 		
-		const char* command = NULL;
+		const char* the_command = NULL;
 		
 		bool interactive = false;
 		bool monitor = false;
@@ -118,7 +118,7 @@ namespace tool
 		bool verboseInput = false;
 		bool verboseExecution = false;
 		
-		o::bind_option_to_variable( "-c", command );
+		o::bind_option_to_variable( "-c", the_command );
 		
 		o::bind_option_to_variable( "-l", gLoginShell );
 		o::bind_option_to_variable( "-i", interactive );
@@ -135,22 +135,22 @@ namespace tool
 		
 		gArgZero = argv[ 0 ];
 		
-		char const *const *freeArgs = o::free_arguments();
+		char const *const *args = o::free_arguments();
 		
-		const size_t n_args = o::free_argument_count();
+		const size_t argn = o::free_argument_count();
 		
 		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
 		gLoginShell = gLoginShell  ||  argv[ 0 ][ 0 ] == '-';
 		
-		interactive = interactive  ||  (*freeArgs == NULL && command == NULL && isatty( 0 ) && isatty( 2 ));
+		interactive = interactive  ||  (*args == NULL && the_command == NULL && isatty( 0 ) && isatty( 2 ));
 		
 		monitor = monitor || interactive;
 		
 		SetOption( kOptionInteractive, interactive );
 		SetOption( kOptionMonitor,     monitor     );
 		
-		gParameters = freeArgs;
-		gParameterCount = n_args;
+		gParameters = args;
+		gParameterCount = argn;
 		
 		p7::fd_t input( p7::stdin_fileno );
 		
@@ -162,14 +162,14 @@ namespace tool
 		// Unset stale PWD and OLDPWD, cd . to prime PWD, export unset OLDPWD
 		ExecuteCmdLine( "unset PWD; unset OLDPWD; cd .; export OLDPWD" );
 		
-		if ( *freeArgs != NULL )
+		if ( *args != NULL )
 		{
 			gArgZero = gParameters[ 0 ];
 			
 			++gParameters;
 			--gParameterCount;
 			
-			if ( command == NULL )
+			if ( the_command == NULL )
 			{
 			#ifdef O_CLOEXEC
 				
@@ -202,10 +202,10 @@ namespace tool
 			}
 		}
 		
-		if ( command != NULL )
+		if ( the_command != NULL )
 		{
 			// Run a single command
-			return n::convert< p7::exit_t >( ExecuteCmdLine( command ) );
+			return n::convert< p7::exit_t >( ExecuteCmdLine( the_command ) );
 		}
 		
 		OnExit onExit;
