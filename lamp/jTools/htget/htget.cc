@@ -3,15 +3,19 @@
  *	========
  */
 
-// Standard C/C++
-#include <cerrno>
-
 // POSIX
 #include <fcntl.h>
 #include <netdb.h>
 
+// Standard C
+#include <errno.h>
+#include <stdlib.h>
+
 // Iota
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/find.hh"
@@ -27,7 +31,6 @@
 #include "HTTP.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -38,15 +41,92 @@
 #endif
 
 
+using namespace command::constants;
+
+enum
+{
+	Option_HEAD = 'I',
+	Option_save = 'O',
+	Option_dump = 'i',
+	Option_file = 'o',
+	
+	Option_last_byte = 255,
+	
+	Option_progress,
+};
+
+static command::option options[] =
+{
+	{ "head", Option_HEAD },
+	{ "save", Option_save },
+	
+	{ "remote-name", Option_save },
+	
+	{ "headers", Option_dump },
+	{ "include", Option_dump },
+	
+	{ "dump-progress", Option_progress },
+	
+	{ "", Option_file, Param_required },
+	
+	{ NULL }
+};
+
+static const char* const defaultOutput = "/dev/fd/1";
+
+static const char* outputFile = defaultOutput;
+
+static bool sendHEADRequest = false;
+static bool dumpHeader      = false;
+static bool saveToFile      = false;
+
+static bool dumping_progress = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_HEAD:
+				sendHEADRequest = true;
+				break;
+			
+			case Option_save:
+				saveToFile = true;
+				break;
+			
+			case Option_dump:
+				dumpHeader = true;
+				break;
+			
+			case Option_progress:
+				dumping_progress = true;
+				break;
+			
+			case Option_file:
+				outputFile = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
-	
-	static bool dumping_progress = false;
 	
 	static size_t content_length = 0;
 	
@@ -127,36 +207,11 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool sendHEADRequest = false;
-		bool dumpHeader      = false;
-		bool saveToFile      = false;
+		char *const *args = get_options( argv );
 		
-		const char* defaultOutput = "/dev/fd/1";
+		const int argn = argc - (args - argv);
 		
-		const char* outputFile = defaultOutput;
-		
-		o::bind_option_to_variable( "-i", dumpHeader      );
-		o::bind_option_to_variable( "-I", sendHEADRequest );
-		o::bind_option_to_variable( "-o", outputFile      );
-		o::bind_option_to_variable( "-O", saveToFile      );
-		
-		o::bind_option_to_variable( "--dump-progress", dumping_progress );
-		
-		o::alias_option( "-i", "--headers" );
-		o::alias_option( "-i", "--include" );
-		
-		o::alias_option( "-I", "--head" );
-		
-		o::alias_option( "-O", "--remote-name" );
-		o::alias_option( "-O", "--save"        );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
-		
-		const size_t n_args = o::free_argument_count();
-		
-		if ( n_args == 0 )
+		if ( argn == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "htget: Usage:  htget <url>\n" ) );
 			
@@ -187,7 +242,7 @@ namespace tool
 		
 		const char* default_port = "";
 		
-		bool parsed = ParseURL( freeArgs[ 0 ], scheme, hostname, portStr, urlPath );
+		bool parsed = ParseURL( args[ 0 ], scheme, hostname, portStr, urlPath );
 		
 		// FIXME:  Eliminate . and .. from urlPath
 		
