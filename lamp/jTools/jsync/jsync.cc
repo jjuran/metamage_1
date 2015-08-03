@@ -994,7 +994,6 @@ namespace tool
 		bool bidirectional = false;
 		bool null          = false;
 		
-		o::bind_option_to_variable( "-v", globally_verbose );
 		o::bind_option_to_variable( "-n", global_dry_run   );
 		o::bind_option_to_variable( "-v", globally_verbose );
 		
