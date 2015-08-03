@@ -8,7 +8,11 @@
 #include <vector>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -36,8 +40,40 @@
 #include "OSErrno/OSErrno.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_type,
+	Option_id,
+	Option_file,
+	Option_load,
+	Option_seek,
+	Option_find,
+	Option_find_hex,
+	Option_write,
+	Option_write_hex,
+};
+
+static command::option options[] =
+{
+	{ "type",      Option_type,      Param_required },
+	{ "id",        Option_id,        Param_required },
+	{ "file",      Option_file,      Param_required },
+	{ "load",      Option_load                       },
+	{ "seek",      Option_seek,      Param_required },
+	{ "find",      Option_find,      Param_required },
+	{ "find-hex",  Option_find_hex,  Param_required },
+	{ "write",     Option_write,     Param_required },
+	{ "write-hex", Option_write_hex, Param_required },
+	
+	{ NULL }
+};
 
 
 namespace tool
@@ -47,7 +83,6 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
 	
 	static const char* gResFilePathname = NULL;
@@ -185,26 +220,74 @@ namespace tool
 		Write( decoded_hex( param ) );
 	}
 	
+}
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		using namespace tool;
+		
+		switch ( opt )
+		{
+			case Option_type:
+				gResType = command::global_result.param;
+				break;
+			
+			case Option_id:
+				gResID = command::global_result.param;
+				break;
+			
+			case Option_file:
+				FileOptor( command::global_result.param );
+				break;
+			
+			case Option_load:
+				LoadOptor( command::global_result.param );
+				break;
+			
+			case Option_seek:
+				SeekOptor( command::global_result.param );
+				break;
+			
+			case Option_find:
+				FindOptor( command::global_result.param );
+				break;
+			
+			case Option_find_hex:
+				FindHexOptor( command::global_result.param );
+				break;
+			
+			case Option_write:
+				WriteOptor( command::global_result.param );
+				break;
+			
+			case Option_write_hex:
+				WriteHexOptor( command::global_result.param );
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+namespace tool
+{
+	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--type", gResType );
-		o::bind_option_to_variable( "--id",   gResID   );
-		
-		o::bind_option_trigger( "--file", std::ptr_fun( FileOptor ) );
-		o::bind_option_trigger( "--load", std::ptr_fun( LoadOptor ) );
-		o::bind_option_trigger( "--find", std::ptr_fun( FindOptor ) );
-		o::bind_option_trigger( "--seek", std::ptr_fun( SeekOptor ) );
-		
-		o::bind_option_trigger( "--write", std::ptr_fun( WriteOptor ) );
-		
-		o::bind_option_trigger( "--find-hex",  std::ptr_fun( FindHexOptor  ) );
-		o::bind_option_trigger( "--write-hex", std::ptr_fun( WriteHexOptor ) );
-		
-		//o::alias_option( "--type", "-t" );
-		
 		try
 		{
-			o::get_options( argc, argv );
+			char *const *args = get_options( argv );
+			
+			const int argn = argc - (args - argv);
 		}
 		catch ( const Mac::OSStatus& err )
 		{
