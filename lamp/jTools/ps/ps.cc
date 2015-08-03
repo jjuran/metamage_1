@@ -6,8 +6,17 @@
 // POSIX
 #include <dirent.h>
 
+// Standard C
+#include <stdlib.h>
+
+// Standard C++
+#include <algorithm>
+
 // iota
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -28,9 +37,64 @@
 #include "poseven/functions/write.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_monitor,
+	Option_sleep,
+	Option_wide,
+};
+
+static command::option options[] =
+{
+	{ "monitor", Option_monitor               },
+	{ "sleep",   Option_sleep, Param_required },
+	{ "wide",    Option_wide                  },
+	
+	{ NULL }
+};
+
+static bool globally_wide = false;
+static bool monitor = false;
+
+static float min_sleep = 1.0;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_sleep:
+				min_sleep = gear::parse_float( command::global_result.param );
+				
+				// fall through
+			
+			case Option_monitor:
+				monitor = true;
+				break;
+			
+			case Option_wide:
+				globally_wide = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 static struct timespec timespec_from_seconds( float time )
 {
@@ -47,10 +111,7 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
-	
-	static bool globally_wide = false;
 	
 	static p7::fd_t g_proc = p7::open( "/proc", p7::o_rdonly | p7::o_directory ).release();
 	
@@ -236,26 +297,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool monitor = false;
+		char *const *args = get_options( argv );
 		
-		const char* sleep_arg = NULL;
-		
-		o::bind_option_to_variable( "--monitor", monitor );
-		
-		o::bind_option_to_variable( "--wide", globally_wide );
-		
-		o::bind_option_to_variable( "--sleep", sleep_arg );
-		
-		o::get_options( argc, argv );
-		
-		float min_sleep = 1.0;
-		
-		if ( sleep_arg )
-		{
-			monitor = true;
-			
-			min_sleep = gear::parse_float( sleep_arg );
-		}
+		const int argn = argc - (args - argv);
 		
 		const struct timespec minimum = timespec_from_seconds( min_sleep );
 		
