@@ -83,7 +83,7 @@ namespace tool
 	
 	static void remove_CVS_files( p7::fd_t dirfd )
 	{
-		const char* const* begin = cvs_filenames;
+		const char* const* begin = cvs_filenames + 2;
 		const char* const* end   = begin + ARRAYLEN( cvs_filenames );
 		
 		while ( begin < end )
@@ -144,7 +144,7 @@ namespace tool
 		
 		if ( hFileInfo.ioFlAttrib & kioFlAttribDirMask )
 		{
-			if ( memcmp( name, PSTR_LEN( "CVS" ) == 0 ) )
+			if ( memcmp( name, PSTR_LEN( "CVS" ) ) == 0 )
 			{
 				bool has_other_files = false;
 				
@@ -272,7 +272,7 @@ namespace tool
 				}
 				catch ( ... )
 				{
-					fprintf( stderr, "%s: OSStatus %d\n", path, err.Get() );
+					fprintf( stderr, "%s: OSStatus %ld\n", path, err.Get() );
 				}
 			}
 		}
