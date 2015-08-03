@@ -3,12 +3,18 @@
  *	=====
  */
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
 
 // Iota
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // poseven
 #include "poseven/functions/stat.hh"
@@ -23,18 +29,63 @@
 #include "io/walk.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_Recursive = 'R',
+	Option_force     = 'f',
+	Option_recursive = 'r',
+};
+
+static command::option options[] =
+{
+	{ "", Option_force     },
+	{ "", Option_recursive },
+	{ "", Option_Recursive },
+	
+	{ NULL }
+};
+
+static bool globally_forced = false;
+static bool recursive = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_force:
+				globally_forced = true;
+				break;
+			
+			case Option_recursive:
+			case Option_Recursive:
+				recursive = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace o = orion;
 	
-	
-	static bool globally_forced = false;
 	
 	static p7::exit_t global_exit_status = p7::exit_success;
 	
@@ -77,23 +128,12 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool recursive = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "-r", recursive       );
-		o::bind_option_to_variable( "-f", globally_forced );
-		
-		o::alias_option( "-r", "-R" );
-		o::alias_option( "-r", "--recursive" );
-		o::alias_option( "-f", "--force" );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
-		
-		const size_t n_args = o::free_argument_count();
+		const int argn = argc - (args - argv);
 		
 		// Check for sufficient number of args
-		if ( n_args < 1 )
+		if ( argn < 1 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "rm: missing arguments\n" ) );
 			
@@ -105,9 +145,9 @@ namespace tool
 		deleter_f deleter = recursive ? recursive_delete
 		                              : delete_file;
 		
-		for ( int index = 0;  index < n_args;  ++index )
+		for ( int index = 0;  index < argn;  ++index )
 		{
-			const char* path = free_args[ index ];
+			const char* path = args[ index ];
 			
 			deleter( path );
 		}
