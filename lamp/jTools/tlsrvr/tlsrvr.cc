@@ -11,6 +11,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// command
+#include "command/get_option.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -28,7 +31,6 @@
 #include "OSErrno/OSErrno.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // tlsrvr
@@ -36,11 +38,58 @@
 #include "RunToolServer.hh"
 
 
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_escape,
+	Option_switch,
+};
+
+static command::option options[] =
+{
+	{ "escape", Option_escape },
+	{ "switch", Option_switch },
+	
+	{ NULL }
+};
+
+static bool escapeForMPW = false;
+static bool switchLayers = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_escape:
+				escapeForMPW = true;
+				break;
+			
+			case Option_switch:
+				switchLayers = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static plus::string QuoteForMPW( const plus::string& str )
@@ -110,15 +159,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool escapeForMPW = false;
-		bool switchLayers = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "--escape", escapeForMPW );
-		o::bind_option_to_variable( "--switch", switchLayers );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
+		const int argn = argc - (args - argv);
 		
 		if ( const char* frontmost = getenv( "TLSRVR_FRONTMOST" ) )
 		{
@@ -138,8 +181,8 @@ namespace tool
 			}
 		}
 		
-		plus::string command = MakeCommand( free_args,
-		                                    free_args + o::free_argument_count(),
+		plus::string command = MakeCommand( args,
+		                                    args + argn,
 		                                    escapeForMPW );
 		
 		try
