@@ -26,6 +26,12 @@
 // Iota
 #include "iota/strings.hh"
 
+// command
+#include "command/get_option.hh"
+
+// gear
+#include "gear/parse_decimal.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -50,7 +56,6 @@
 //#include "Utilities/Processes.h"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // A-line
@@ -68,19 +73,142 @@
 #include "A-line/Task.hh"
 
 
+using namespace command::constants;
+
+using tool::OptionsRecord;
+using tool::Platform;
+using tool::BuildVariety;
+using tool::platformUnspecified;
+using tool::buildDefault;
+
+enum
+{
+	Option_A4      = '4',
+	Option_A5      = '5',
+	Option_68K     = '6',
+	Option_x86     = '8',
+	Option_Blue    = 'B',
+	Option_Carbon  = 'C',
+	Option_CFM     = 'F',
+	Option_MachO   = 'O',
+	Option_PPC     = 'P',
+	Option_release = 'R',
+	Option_sym     = 'X',
+	Option_all     = 'a',
+	Option_debug   = 'g',
+	Option_n_jobs  = 'j',
+	Option_dry_run = 'n',
+	Option_catalog = 't',
+	Option_verbose = 'v',
+};
+
+static command::option options[] =
+{
+	{ "", Option_n_jobs, command::Param_required },
+	
+	{ "all",     Option_all     },
+	{ "catalog", Option_catalog },
+	{ "dry-run", Option_dry_run },
+	{ "verbose", Option_verbose },
+	
+	{ "68k", Option_68K },
+	{ "ppc", Option_PPC },
+	{ "x86", Option_x86 },
+	
+	{ "a4",    Option_A4    },
+	{ "a5",    Option_A5    },
+	{ "cfm",   Option_CFM   },
+	{ "macho", Option_MachO },
+	
+	{ "blue",   Option_Blue   },
+	{ "carbon", Option_Carbon },
+	
+	{ "sym",     Option_sym     },
+	{ "debug",   Option_debug   },
+	{ "release", Option_release },
+	
+	{ NULL }
+};
+
+static bool gDryRun = false;
+
+static OptionsRecord gOptions;
+
+static std::size_t global_job_limit = 1;
+
+static Platform arch    = platformUnspecified;
+static Platform runtime = platformUnspecified;
+static Platform macAPI  = platformUnspecified;
+
+static BuildVariety buildVariety = buildDefault;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		using namespace tool;
+		
+		using command::global_result;
+		
+		switch ( opt )
+		{
+			case Option_all:
+				gOptions.all = true;
+				break;
+			
+			case Option_catalog:
+				gOptions.catalog = true;
+				break;
+			
+			case Option_dry_run:
+				gDryRun = true;
+				break;
+			
+			case Option_verbose:
+				gOptions.verbose = true;
+				break;
+			
+			case Option_n_jobs:
+				global_job_limit = gear::parse_decimal( global_result.param );
+				break;
+			
+			case Option_68K:  arch = arch68K;  break;
+			case Option_PPC:  arch = archPPC;  break;
+			case Option_x86:  arch = archX86;  break;
+			
+			case Option_A4:     runtime = runtimeA4CodeResource;  break;
+			case Option_A5:     runtime = runtimeA5CodeSegments;  break;
+			case Option_CFM:    runtime = runtimeCodeFragments;   break;
+			case Option_MachO:  runtime = runtimeMachO;           break;
+			
+			case Option_Blue:    macAPI = apiMacBlue;    break;
+			case Option_Carbon:  macAPI = apiMacCarbon;  break;
+			
+			case Option_sym:      buildVariety = buildSymbolics;  break;
+			case Option_debug:    buildVariety = buildDebug;      break;
+			case Option_release:  buildVariety = buildRelease;    break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
 	
-	
-	static bool gDryRun = false;
-	
-	static OptionsRecord gOptions;
 	
 	OptionsRecord& Options()
 	{
@@ -384,8 +512,6 @@ namespace tool
 		}
 	}
 	
-	static std::size_t global_job_limit = 1;
-	
 	static void wait_for_jobs()
 	{
 		// If all the available slots are taken, wait for a job to exit
@@ -555,73 +681,11 @@ namespace tool
 	{
 		if ( argc <= 1 )  return 0;
 		
-		Platform arch    = platformUnspecified;
-		Platform runtime = platformUnspecified;
-		Platform macAPI  = platformUnspecified;
+		char *const *args = get_options( argv );
 		
-		BuildVariety buildVariety = buildDefault;
+		const int argn = argc - (args - argv);
 		
-		// General
-		
-		o::bind_option_to_variable( "-v", gOptions.verbose );
-		
-		o::alias_option( "-v", "--verbose" );
-		
-		// Actions
-		
-		o::bind_option_to_variable( "-a", gOptions.all );
-		
-		o::alias_option( "-a", "--all" );
-		
-		o::bind_option_to_variable( "-n", gDryRun );
-		
-		o::alias_option( "-n", "--dry-run" );
-		
-		o::bind_option_to_variable( "-t", gOptions.catalog );
-		
-		o::alias_option( "-t", "--catalog" );
-		
-		// Targeting
-		
-		o::bind_option_to_variable( "-6", arch, arch68K );
-		o::bind_option_to_variable( "-P", arch, archPPC );
-		o::bind_option_to_variable( "-8", arch, archX86 );
-		
-		o::bind_option_to_variable( "-4", runtime, runtimeA4CodeResource );
-		o::bind_option_to_variable( "-5", runtime, runtimeA5CodeSegments );
-		o::bind_option_to_variable( "-F", runtime, runtimeCodeFragments  );
-		o::bind_option_to_variable( "-O", runtime, runtimeMachO          );
-		
-		o::bind_option_to_variable( "-B", macAPI, apiMacBlue   );
-		o::bind_option_to_variable( "-C", macAPI, apiMacCarbon );
-		
-		o::bind_option_to_variable( "-X", buildVariety, buildSymbolics );
-		o::bind_option_to_variable( "-g", buildVariety, buildDebug     );
-		o::bind_option_to_variable( "-R", buildVariety, buildRelease   );
-		
-		o::alias_option( "-6", "--68k" );
-		o::alias_option( "-P", "--ppc" );
-		o::alias_option( "-8", "--x86" );
-		
-		o::alias_option( "-4", "--a4"    );
-		o::alias_option( "-5", "--a5"    );
-		o::alias_option( "-F", "--cfm"   );
-		o::alias_option( "-O", "--macho" );
-		
-		o::alias_option( "-B", "--blue"   );
-		o::alias_option( "-C", "--carbon" );
-		
-		o::alias_option( "-X", "--sym    " );
-		o::alias_option( "-g", "--debug"   );
-		o::alias_option( "-R", "--release" );
-		
-		// Performance
-		
-		o::bind_option_to_variable( "-j", global_job_limit );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
+		char const *const *freeArgs = args;
 		
 	#if TARGET_API_MAC_CARBON
 		
