@@ -6,6 +6,12 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
+
 // plus
 #include "plus/var_string.hh"
 
@@ -22,8 +28,56 @@
 #include "poseven/sequences/directory_contents.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_driver,
+	Option_ramdisk,
+};
+
+static command::option options[] =
+{
+	{ "driver", Option_driver  },
+	{ "ram",    Option_ramdisk },
+	
+	{ NULL }
+};
+
+static const char* wanted_driver_name = NULL;
+
+static bool ramdisk_only = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_driver:
+				wanted_driver_name = command::global_result.param;
+				break;
+			
+			case Option_ramdisk:
+				ramdisk_only = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -31,7 +85,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static plus::string slurp_file( p7::fd_t dirfd, const char* name )
@@ -55,15 +108,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		const char* wanted_driver_name = NULL;
+		char *const *args = get_options( argv );
 		
-		bool ramdisk_only = false;
-		
-		o::bind_option_to_variable( "--driver", wanted_driver_name );
-		
-		o::bind_option_to_variable( "--ram", ramdisk_only );
-		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		if ( ramdisk_only )
 		{
