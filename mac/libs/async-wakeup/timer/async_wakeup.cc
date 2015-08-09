@@ -129,7 +129,7 @@ namespace sys {
 	
 	void clear_async_wakeup()
 	{
-		if ( ! TARGET_API_MAC_CARBON )
+		if ( ! TARGET_API_MAC_CARBON  &&  wakeup_requested )
 		{
 			::RmvTime( (QElemPtr) &the_wakeup_task );
 			
