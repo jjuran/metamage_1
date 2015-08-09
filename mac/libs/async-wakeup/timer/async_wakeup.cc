@@ -38,6 +38,8 @@
 namespace mac {
 namespace sys {
 	
+	static volatile bool wakeup_requested;
+	
 	struct wakeup_TMTask
 	{
 		TMTask                      tm;
@@ -46,6 +48,15 @@ namespace sys {
 	
 	static pascal void async_wakeup_proc( TMTaskPtr task IN( a1 ) )
 	{
+		if ( TARGET_API_MAC_CARBON  &&  ! wakeup_requested )
+		{
+			::RmvTime( (QElemPtr) task );
+			
+			task->qLink = 0;  // Release the lock.
+			
+			return;
+		}
+		
 		::WakeUpProcess( ((const wakeup_TMTask*) task)->psn );
 		
 		::PrimeTime( (QElemPtr) task, 10 );  // 10ms
@@ -101,6 +112,8 @@ namespace sys {
 	
 	void request_async_wakeup()
 	{
+		wakeup_requested = true;
+		
 		if ( lock_timer() )
 		{
 			the_wakeup_task.tm.tmWakeUp   = 0;
@@ -116,9 +129,14 @@ namespace sys {
 	
 	void clear_async_wakeup()
 	{
-		::RmvTime( (QElemPtr) &the_wakeup_task );
+		if ( ! TARGET_API_MAC_CARBON )
+		{
+			::RmvTime( (QElemPtr) &the_wakeup_task );
+			
+			the_wakeup_task.tm.qLink = 0;  // release the lock
+		}
 		
-		the_wakeup_task.tm.qLink = 0;  // release the lock
+		wakeup_requested = false;
 	}
 	
 }
