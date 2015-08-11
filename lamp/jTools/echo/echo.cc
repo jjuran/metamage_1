@@ -4,14 +4,12 @@
  */
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // POSIX
 #include <unistd.h>
 #include <sys/uio.h>
-
-// Historical
-#include <alloca.h>
 
 
 #pragma exceptions off
