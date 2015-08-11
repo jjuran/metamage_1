@@ -16,6 +16,7 @@
 
 // POSIX
 #include <dirent.h>
+#include <fcntl.h>
 #include <sys/types.h>
 
 #ifdef __cplusplus
@@ -25,6 +26,7 @@ extern "C" {
 #ifndef MAC_OS_X_VERSION_10_10
 
 #if __FreeBSD__ < 8  // undefined __FreeBSD__ counts as zero
+#if !(__OpenBSD__ && AT_FDCWD)
 
 /*
 	gcc 4.0.1 build 5247 (PPC) has no O_DIRECTORY.  Define it to match
@@ -85,6 +87,7 @@ ssize_t readlinkat( int dirfd, const char *path, char *buffer, size_t buffer_siz
 int symlinkat( const char* target_path, int newdirfd, const char* newpath );
 int unlinkat( int dirfd, const char* path, int flags );
 
+#endif  // #if !(__OpenBSD__ && AT_FDCWD)
 #endif  // #if __FreeBSD__ < 8
 #endif  // #ifndef MAC_OS_X_VERSION_10_10
 

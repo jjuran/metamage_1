@@ -12,7 +12,6 @@
 #include <stdio.h>
 
 // POSIX
-#include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/time.h>
