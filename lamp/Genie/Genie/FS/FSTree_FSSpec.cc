@@ -411,6 +411,7 @@ namespace Genie
 		const Mac::FSCreator Creator = Mac::FSCreator( 'Poof' );
 		
 		const Mac::FSType Type_FIFO = Mac::FSType( 'FIFO' );
+		const Mac::FSType Type_SOCK = Mac::FSType( 'SOCK' );
 		
 		switch ( type )
 		{
@@ -421,6 +422,10 @@ namespace Genie
 			
 			case S_IFIFO:
 				create_file( extra.fsspec, that->name(), Creator, Type_FIFO );
+				break;
+			
+			case S_IFSOCK:
+				create_file( extra.fsspec, that->name(), Creator, Type_SOCK );
 				break;
 			
 			default:

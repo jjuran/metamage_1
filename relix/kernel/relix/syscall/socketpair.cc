@@ -6,6 +6,7 @@
 #include "relix/syscall/socketpair.hh"
 
 // POSIX
+#include <errno.h>
 #include <sys/socket.h>
 
 // vfs
@@ -32,6 +33,21 @@ namespace relix
 	
 	int socketpair( int domain, int type, int protocol, int fds[2] )
 	{
+		if ( domain != PF_UNIX )
+		{
+			return set_errno( EAFNOSUPPORT );
+		}
+		
+		if ( short( type ) != SOCK_STREAM )
+		{
+			return set_errno( EPROTOTYPE );
+		}
+		
+		if ( protocol != 0 )
+		{
+			return set_errno( EPROTONOSUPPORT );
+		}
+		
 		try
 		{
 			const bool close_on_exec = type & SOCK_CLOEXEC;
