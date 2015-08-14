@@ -96,6 +96,23 @@ namespace tool
 		return derived_pathname( dir_path, target_path, ".txt" );
 	}
 	
+	static const plus::string& get_Interfaces()
+	{
+		static plus::string interfaces = find_InterfacesAndLibraries() + "/" "Interfaces" "/";
+		
+		return interfaces;
+	}
+	
+	static plus::string get_Interfaces_subdir( const char* name )
+	{
+		if ( const char* path = getenv( name ) )
+		{
+			return path;
+		}
+		
+		return get_Interfaces() + name;
+	}
+	
 	class CompilingTask : public FileTask
 	{
 		private:
@@ -129,11 +146,9 @@ namespace tool
 				
 				if ( options.Target().envType & envRelix )
 				{
-					static const plus::string interfaces = find_InterfacesAndLibraries() + "/" "Interfaces" "/";
-					
-					static const plus::string cwansiincludes = interfaces + "CWANSIIncludes";
-					static const plus::string cwcincludes    = interfaces + "CWCIncludes";
-					static const plus::string cincludes      = interfaces + "CIncludes";
+					static const plus::string cwansiincludes = get_Interfaces_subdir( "CWANSIIncludes" );
+					static const plus::string cwcincludes    = get_Interfaces_subdir( "CWCIncludes" );
+					static const plus::string cincludes      = get_Interfaces_subdir( "CIncludes" );
 					
 					its_options.AppendIncludeDir( cwansiincludes );
 					its_options.AppendIncludeDir( cwcincludes    );
