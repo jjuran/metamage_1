@@ -144,7 +144,7 @@ my %fsmap =
 				sha1 => \ "git/test-sha1",
 			},
 			# unet
-			\ qw( uexec ulocal utcp ),
+			\ qw( uexec utcp uunix ),
 			# Freemount
 			\ qw( fcat fdir fget fls fping fstat ),
 			# djb's UCSPI

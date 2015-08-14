@@ -1,6 +1,6 @@
 /*
-	ulocal.cc
-	---------
+	uunix.cc
+	--------
 */
 
 #include "unet/pass_fd.hh"
@@ -20,7 +20,7 @@
 #include "poseven/types/errno_t.hh"
 
 
-#define PROGRAM  "ulocal"
+#define PROGRAM  "uunix"
 
 #define USAGE  "usage: " PROGRAM " path\n"  \
                "       (stdout must be a local socket)\n"
@@ -93,7 +93,7 @@ int main( int argc, char** argv )
 	}
 	catch ( const p7::errno_t& err )
 	{
-		fprintf( stderr, "ulocal: %s: %s\n", path, strerror( err ) );
+		fprintf( stderr, PROGRAM ": %s: %s\n", path, strerror( err ) );
 		
 		return 1;
 	}
