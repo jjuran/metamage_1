@@ -125,7 +125,6 @@ namespace tool
 		MWPPC_LIB( "MSL C.PPC.Lib"        ),
 		MWPPC_LIB( "MSL C++.PPC.Lib"      ),
 		MWPPC_LIB( "MSL RuntimePPC.Lib"   ),
-		MWPPC_LIB( "PLStringFuncsPPC.lib" ),
 		
 		MW68K_LIB( "MacOS.lib" ),
 		
@@ -144,9 +143,6 @@ namespace tool
 		MW68K_LIB( "MSL MWCFM68KRuntime.Lib" ),
 		MW68K_LIB( "MSL Runtime68K.Lib"      ),
 		MW68K_LIB( "MSL Runtime68K.A4.Lib"   ),
-		
-		MW68K_LIB( "PLStringFuncs.glue"      ),
-		MW68K_LIB( "PLStringFuncsCFM68K.lib" ),
 		
 		{ NULL, NULL }
 	};
