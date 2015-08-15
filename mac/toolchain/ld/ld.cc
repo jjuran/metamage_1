@@ -11,6 +11,7 @@
 #include <cstdio>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // iota
@@ -141,6 +142,11 @@ namespace tool
 	
 	static plus::string get_Libraries_subdir( const char* name )
 	{
+		if ( const char* path = getenv( name ) )
+		{
+			return path;
+		}
+		
 		return get_Libraries_pathname() + name;
 	}
 	
