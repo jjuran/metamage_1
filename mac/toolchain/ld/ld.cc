@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <list>
-#include <map>
 #include <vector>
 
 // Standard C/C++
@@ -155,86 +154,6 @@ namespace tool
 		return get_Libraries_subdir( "SharedLibraries" );
 	}
 	
-	
-	#define SHARED_LIB( lib )  { lib "", "SharedLibraries" }
-	
-	#define PPC_LIB( lib )  { lib "", "PPCLibraries" }
-	
-	#define MW68K_LIB( lib )  { lib "", "MW68KLibraries" }
-	#define MWPPC_LIB( lib )  { lib "", "MWPPCLibraries" }
-	
-	typedef const char* StringPair[2];
-	
-	static StringPair gSystemLibraries[] =
-	{
-		SHARED_LIB( "AppearanceLib"      ),
-		SHARED_LIB( "AppleScriptLib"     ),
-		SHARED_LIB( "CarbonLib"          ),
-		SHARED_LIB( "ControlsLib"        ),
-		SHARED_LIB( "InterfaceLib"       ),
-		SHARED_LIB( "InternetConfigLib"  ),
-		SHARED_LIB( "MathLib"            ),
-		SHARED_LIB( "MenusLib"           ),
-		SHARED_LIB( "ObjectSupportLib"   ),
-		SHARED_LIB( "OpenTptInternetLib" ),
-		SHARED_LIB( "OpenTransportLib"   ),
-		SHARED_LIB( "QuickTimeLib"       ),
-		SHARED_LIB( "ThreadsLib"         ),
-		SHARED_LIB( "WindowsLib"         ),
-		
-		PPC_LIB( "CarbonAccessors.o"        ),
-		PPC_LIB( "CursorDevicesGlue.o"      ),
-		PPC_LIB( "OpenTransportAppPPC.o"    ),
-		PPC_LIB( "OpenTptInetPPC.o"         ),
-		PPC_LIB( "PascalPreCarbonUPPGlue.o" ),
-		
-		MWPPC_LIB( "MSL C.Carbon.Lib"     ),
-		MWPPC_LIB( "MSL C.PPC.Lib"        ),
-		MWPPC_LIB( "MSL C++.PPC.Lib"      ),
-		MWPPC_LIB( "MSL RuntimePPC.Lib"   ),
-		
-		MW68K_LIB( "MacOS.lib" ),
-		
-		MW68K_LIB( "MathLib68K Fa(4i_8d).Lib"    ),
-		MW68K_LIB( "MathLib68K Fa(4i_8d).A4.Lib" ),
-		MW68K_LIB( "MathLibCFM68K (4i_8d).Lib"   ),
-		
-		MW68K_LIB( "MSL C.68K Fa(4i_8d).Lib"    ),
-		MW68K_LIB( "MSL C.68K Fa(4i_8d).A4.Lib" ),
-		MW68K_LIB( "MSL C.CFM68K Fa(4i_8d).Lib" ),
-		
-		MW68K_LIB( "MSL C++.68K Fa(4i_8d).Lib"    ),
-		MW68K_LIB( "MSL C++.68K Fa(4i_8d).A4.Lib" ),
-		MW68K_LIB( "MSL C++.CFM68K Fa(4i_8d).Lib" ),
-		
-		MW68K_LIB( "MSL MWCFM68KRuntime.Lib" ),
-		MW68K_LIB( "MSL Runtime68K.Lib"      ),
-		MW68K_LIB( "MSL Runtime68K.A4.Lib"   ),
-		
-		{ NULL, NULL }
-	};
-	
-	typedef std::map< plus::string, const char* > LibraryMap;
-	
-	static LibraryMap MakeLibraryMap()
-	{
-		LibraryMap map;
-		
-		for ( StringPair* it = gSystemLibraries;  it[0][0] != NULL;  ++it )
-		{
-			map[ it[0][0] ] = it[0][1];
-		}
-		
-		return map;
-	}
-	
-	static LibraryMap& TheLibraryMap()
-	{
-		static LibraryMap gLibraryMap = MakeLibraryMap();
-		
-		return gLibraryMap;
-	}
-	
 	static plus::string FindSystemLibrary( const plus::string& libName )
 	{
 		char const* const MWLibs_name = arch == arch_m68k ? "MW68KLibraries"
@@ -271,26 +190,6 @@ namespace tool
 		std::fprintf( stderr, "System library missing: %s\n", libName.c_str() );
 		
 		throw p7::exit_failure;
-		
-		LibraryMap::const_iterator it = TheLibraryMap().find( libName );
-		
-		if ( it == TheLibraryMap().end() )
-		{
-			return libName;
-		}
-		
-		const char* subdir = it->second;
-		
-		plus::string pathname = get_Libraries_pathname() / subdir / libName;
-		
-		if ( !io::file_exists( pathname ) )
-		{
-			std::fprintf( stderr, "System library missing: %s\n", pathname.c_str() );
-			
-			throw p7::exit_failure;
-		}
-		
-		return pathname;
 	}
 	
 	
