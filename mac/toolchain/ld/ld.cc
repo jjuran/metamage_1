@@ -135,9 +135,24 @@ namespace tool
 	
 	static const plus::string& get_Libraries_pathname()
 	{
-		static plus::string libraries = find_InterfacesAndLibraries() + "/Libraries";
+		static plus::string libraries = find_InterfacesAndLibraries() + "/Libraries/";
 		
 		return libraries;
+	}
+	
+	static plus::string get_Libraries_subdir( const char* name )
+	{
+		return get_Libraries_pathname() + name;
+	}
+	
+	static plus::string get_PPCLibraries()
+	{
+		return get_Libraries_subdir( "PPCLibraries" );
+	}
+	
+	static plus::string get_SharedLibraries()
+	{
+		return get_Libraries_subdir( "SharedLibraries" );
 	}
 	
 	
@@ -222,6 +237,41 @@ namespace tool
 	
 	static plus::string FindSystemLibrary( const plus::string& libName )
 	{
+		char const* const MWLibs_name = arch == arch_m68k ? "MW68KLibraries"
+		                              : arch == arch_ppc  ? "MWPPCLibraries"
+		                              :                     "NoArchitecture";
+		
+		const plus::string a = get_Libraries_subdir( MWLibs_name ) / libName;
+		
+		if ( io::file_exists( a ) )
+		{
+			return a;
+		}
+		
+		if ( arch == arch_ppc )
+		{
+			const plus::string b = get_PPCLibraries() / libName;
+			
+			if ( io::file_exists( a ) )
+			{
+				return b;
+			}
+		}
+		
+		if ( arch == arch_ppc  ||  gCFM68K )
+		{
+			const plus::string c = get_SharedLibraries() / libName;
+			
+			if ( io::file_exists( c ) )
+			{
+				return c;
+			}
+		}
+		
+		std::fprintf( stderr, "System library missing: %s\n", libName.c_str() );
+		
+		throw p7::exit_failure;
+		
 		LibraryMap::const_iterator it = TheLibraryMap().find( libName );
 		
 		if ( it == TheLibraryMap().end() )
