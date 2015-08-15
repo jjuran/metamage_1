@@ -61,6 +61,58 @@ namespace tool
 	using namespace io::path_descent_operators;
 	
 	
+	enum MacAPI
+	{
+		kMacAPINone,
+		kMacAPIBlue,
+		kMacAPICarbon
+	};
+	
+	const char* gMacAPINames[] =
+	{
+		"(None)",
+		"(Blue)",
+		"Carbon"
+	};
+	
+	static MacAPI gMacAPI = kMacAPINone;
+	
+	static bool gCFM68K = false;
+	
+	static const char* gFirstObjectFilePath = NULL;
+	
+	
+	enum Architecture
+	{
+		arch_none,
+		arch_m68k,
+		arch_ppc,
+		
+	#if __MC68K__
+		
+		arch_default = arch_m68k
+		
+	#elif __POWERPC__
+		
+		arch_default = arch_ppc
+		
+	#else
+		
+		arch_default = arch_none
+		
+	#endif
+	};
+	
+	static Architecture arch = arch_default;
+	
+	static const char* output_pathname = NULL;
+	
+	static bool sym     = true;
+	static bool debug   = true;
+	static bool dry_run = false;
+	static bool verbose = false;
+	
+	
 	template < class Iter >
 	plus::string join( Iter begin, Iter end, const plus::string& glue = "" )
 	{
@@ -192,48 +244,6 @@ namespace tool
 	}
 	
 	
-	enum MacAPI
-	{
-		kMacAPINone,
-		kMacAPIBlue,
-		kMacAPICarbon
-	};
-	
-	const char* gMacAPINames[] =
-	{
-		"(None)",
-		"(Blue)",
-		"Carbon"
-	};
-	
-	static MacAPI gMacAPI = kMacAPINone;
-	
-	static bool gCFM68K = false;
-	
-	static const char* gFirstObjectFilePath = NULL;
-	
-	
-	enum Architecture
-	{
-		arch_none,
-		arch_m68k,
-		arch_ppc,
-		
-	#if __MC68K__
-		
-		arch_default = arch_m68k
-		
-	#elif __POWERPC__
-		
-		arch_default = arch_ppc
-		
-	#else
-		
-		arch_default = arch_none
-		
-	#endif
-	};
-	
 	static Architecture read_arch( const char* arch )
 	{
 		if ( std::strcmp( arch, "m68k" ) == 0 )
@@ -359,15 +369,6 @@ namespace tool
 		check_object_file( p7::open( path, p7::o_rdonly ) );
 	}
 	
-	
-	static Architecture arch = arch_default;
-	
-	static const char* output_pathname = NULL;
-	
-	static bool sym     = true;
-	static bool debug   = true;
-	static bool dry_run = false;
-	static bool verbose = false;
 	
 	static void do_hyphen_option( char**& argv, std::vector< const char* >& command_args )
 	{
