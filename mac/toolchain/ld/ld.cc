@@ -568,6 +568,8 @@ namespace tool
 			if ( base_length > 0  &&  memcmp( &arg[ base_length ], STR_LEN( ".o" ) ) == 0 )
 			{
 				gFirstObjectFilePath = arg;
+				
+				check_object_file( gFirstObjectFilePath );
 			}
 		}
 		
@@ -616,8 +618,6 @@ namespace tool
 				return 1;
 			
 			case arch_m68k:
-				check_object_file( gFirstObjectFilePath );
-				
 				command.push_back( "MWLink68K" );
 				command.push_back( "-model"    );
 				command.push_back( gCFM68K ? "CFMflatdf" : "far" );
