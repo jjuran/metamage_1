@@ -1,4 +1,4 @@
-# Genie shell profile
+# MacRelix shell profile
 
 # You don't need these except for development, although some are still useful
 PATH=$PATH:/Developer/Tools
