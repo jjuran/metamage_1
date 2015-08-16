@@ -15,11 +15,11 @@
 #include <AERegistry.h>
 #endif
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C++
 #include <algorithm>
-
-// Standard C/C++
-#include <cstdio>
 
 // Iota
 #include "iota/strings.hh"
@@ -199,6 +199,13 @@ namespace tool
 			{
 				throw;
 			}
+		}
+		
+		if ( const char* ToolServer_path = getenv( "ToolServer" ) )
+		{
+			FSSpec ToolServer = Div::ResolvePathToFSSpec( ToolServer_path );
+			
+			return N::LaunchApplication( ToolServer );
 		}
 		
 		if ( const int device = device_of_ramdisk() )
