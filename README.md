@@ -19,5 +19,5 @@ All other components are copyright Joshua Juran and released under the [GNU GPL 
 
 [Nucleus]:  <base/nucleus/README.md>
 
-[GPL]:  <GPLv3.txt>
+[GPL]:  <LICENSE/GPL-3.0.txt>
 [Boost license]:  <contrib/boost/LICENSE_1_0.txt>
