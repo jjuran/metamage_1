@@ -13,11 +13,12 @@ The following components are not original Metamage code:
 
 Any other credits are acknowledged in the individual source files in which they appear.
 
-All other components are copyright Joshua Juran and released under the [GNU GPL version 3][GPL] (or later).
+All other components are copyright Joshua Juran and released under either the [GNU GPL version 3][GPL] (or later) or the [GNU AGPL version 3][AGPL] (or later).
 
 [HOWTO]:  <HOWTO.md>
 
 [Nucleus]:  <base/nucleus/README.md>
 
-[GPL]:  <GPLv3.txt>
+[GPL]:  <LICENSE/GPL-3.0.txt>
+[AGPL]:  <LICENSE/AGPL-3.0.txt>
 [Boost license]:  <contrib/boost/LICENSE_1_0.txt>
