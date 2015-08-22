@@ -1,0 +1,75 @@
+/*
+	precedence.cc
+	-------------
+*/
+
+#include "vc/precedence.hh"
+
+
+#define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
+#define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
+
+
+namespace vc
+{
+	
+	enum precedence_level
+	{
+		Precedence_none = 0,
+		
+		Precedence_unary_math,      // + -
+		Precedence_multiplication,  // * /
+		Precedence_addition,        // + -
+		Precedence_end,             // ;
+	};
+	
+	struct precedence_mapping
+	{
+		precedence_level  precedence;
+		op_type           op;
+	};
+	
+	static const precedence_mapping precedence_table[] =
+	{
+		{ Precedence_unary_math, Op_unary_plus  },
+		{ Precedence_unary_math, Op_unary_minus },
+		
+		{ Precedence_multiplication, Op_multiply },
+		
+		{ Precedence_addition, Op_add      },
+		{ Precedence_addition, Op_subtract },
+		
+		{ Precedence_end, Op_end },
+	};
+	
+	static precedence_level op_precedence( op_type op )
+	{
+		const precedence_mapping* begin = precedence_table;
+		const precedence_mapping* end   = ARRAY_END( precedence_table );
+		
+		for ( const precedence_mapping* it = begin;  it < end;  ++it )
+		{
+			if ( it->op == op )
+			{
+				return it->precedence;
+			}
+		}
+		
+		return Precedence_none;
+	}
+	
+	bool decreasing_op_precedence( op_type left, op_type right )
+	{
+		const precedence_level pr_left  = op_precedence( left  );
+		const precedence_level pr_right = op_precedence( right );
+		
+		/*
+			Precedence levels start at 1 and *increase* numerically with
+			*lower* precedence, so decreasing precedence means the right
+			is greater than the left.
+		*/
+		
+		return pr_right >= pr_left;
+	}
+	
+}

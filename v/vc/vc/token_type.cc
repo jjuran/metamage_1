@@ -1,0 +1,117 @@
+/*
+	token_type.cc
+	-------------
+*/
+
+#include "vc/token_type.hh"
+
+// iota
+#include "iota/char_types.hh"
+
+
+#define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
+#define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
+
+
+namespace vc
+{
+	
+	using iota::is_space;
+	using iota::is_digit;
+	
+	
+	struct op_token
+	{
+		const char*  name;
+		token_type   type;
+	};
+	
+	static const op_token op_tokens[] =
+	{
+		{ "(",   Token_lparen },
+		{ ")",   Token_rparen },
+		
+		{ "*",   Token_asterisk },
+		
+		{ "+",   Token_plus },
+		
+		{ "-",   Token_minus },
+	};
+	
+	static const char* matches( const char* s, const char* pattern )
+	{
+		while ( *pattern != '\0' )
+		{
+			if ( *pattern++ != *s++ )
+			{
+				return 0;  // NULL
+			}
+		}
+		
+		return s;
+	}
+	
+	static const op_token* find_op_token( const char*& p )
+	{
+		const op_token* begin = op_tokens;
+		const op_token* end   = ARRAY_END( op_tokens );
+		
+		const op_token* it = end;
+		
+		char c = *p++;
+		
+		while ( it > begin )
+		{
+			const char* name = (--it)->name;
+			
+			const char nc = *name++;
+			
+			if ( c < nc )  continue;
+			if ( c > nc )  return 0;  // NULL
+			
+			if ( const char* q = matches( p, name ) )
+			{
+				p = q;
+				
+				return it;
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
+	token_type next_token_type( const char*& p )
+	{
+		if ( *p == '\0' )
+		{
+			return Token_end;
+		}
+		
+		if ( is_space( *p ) )
+		{
+			while ( is_space( *++p ) )  continue;
+			
+			return Token_whitespace;
+		}
+		
+		if ( *p < ' ' )
+		{
+			return Token_invalid;  // control character
+		}
+		
+		if ( is_digit( *p ) )
+		{
+			while ( is_digit( *++p ) )  continue;
+			
+			return Token_digits;
+		}
+		
+		if ( const op_token* token = find_op_token( p ) )
+		{
+			return token->type;
+		}
+		
+		return Token_invalid;
+	}
+	
+}
