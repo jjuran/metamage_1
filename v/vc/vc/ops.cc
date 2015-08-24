@@ -35,6 +35,8 @@ namespace vc
 		{ Token_plus,     Op_add      },
 		{ Token_minus,    Op_subtract },
 		{ Token_asterisk, Op_multiply },
+		{ Token_slash,    Op_divide   },
+		{ Token_percent,  Op_remain   },
 	};
 	
 	static

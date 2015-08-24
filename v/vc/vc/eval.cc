@@ -12,6 +12,17 @@
 namespace vc
 {
 	
+	static
+	const plus::integer& nonzero( const plus::integer& x )
+	{
+		if ( x.is_zero() )
+		{
+			DOMAIN_ERROR( "division by zero" );
+		}
+		
+		return x;
+	}
+	
 	plus::integer eval( const plus::integer&  left,
 	                    op_type               op,
 	                    const plus::integer&  right )
@@ -24,6 +35,8 @@ namespace vc
 			case Op_add:       return left + right;
 			case Op_subtract:  return left - right;
 			case Op_multiply:  return left * right;
+			case Op_divide:    return left / nonzero( right );
+			case Op_remain:    return left % nonzero( right );
 			
 			default:
 				break;

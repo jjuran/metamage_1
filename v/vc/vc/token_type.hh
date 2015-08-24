@@ -23,6 +23,8 @@ namespace vc
 		Token_plus,
 		Token_minus,
 		Token_asterisk,
+		Token_slash,
+		Token_percent,
 	};
 	
 	token_type next_token_type( const char*& p );

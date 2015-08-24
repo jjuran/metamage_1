@@ -13,6 +13,7 @@
 
 #define INTERNAL_ERROR( s )  VC_ERROR( "INTERNAL", s )
 #define SYNTAX_ERROR( s )    VC_ERROR( "SYNTAX",   s )
+#define DOMAIN_ERROR( s )    VC_ERROR( "DOMAIN",   s )
 
 	
 namespace vc

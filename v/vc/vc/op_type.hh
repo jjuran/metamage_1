@@ -16,6 +16,8 @@ namespace vc
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_multiply,
+		Op_divide,
+		Op_remain,
 		Op_add,
 		Op_subtract,
 		Op_end,

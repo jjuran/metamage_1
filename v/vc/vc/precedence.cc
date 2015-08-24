@@ -35,6 +35,8 @@ namespace vc
 		{ Precedence_unary_math, Op_unary_minus },
 		
 		{ Precedence_multiplication, Op_multiply },
+		{ Precedence_multiplication, Op_divide   },
+		{ Precedence_multiplication, Op_remain   },
 		
 		{ Precedence_addition, Op_add      },
 		{ Precedence_addition, Op_subtract },

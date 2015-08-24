@@ -28,6 +28,8 @@ namespace vc
 	
 	static const op_token op_tokens[] =
 	{
+		{ "%",   Token_percent },
+		
 		{ "(",   Token_lparen },
 		{ ")",   Token_rparen },
 		
@@ -36,6 +38,8 @@ namespace vc
 		{ "+",   Token_plus },
 		
 		{ "-",   Token_minus },
+		
+		{ "/",   Token_slash },
 	};
 	
 	static const char* matches( const char* s, const char* pattern )
