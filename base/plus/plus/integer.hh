@@ -63,6 +63,7 @@ namespace plus
 			
 			ibox::sign_t sign() const  { return box.sign(); }
 			
+			void halve()   { box.halve();  }
 			void invert()  { box.invert(); }
 			
 			void absolve()  { if ( is_negative() )  invert(); }
@@ -97,6 +98,13 @@ namespace plus
 	void swap( integer& a, integer& b )
 	{
 		a.swap( b );
+	}
+	
+	inline
+	integer half( integer x )
+	{
+		x.halve();
+		return x;
 	}
 	
 	inline
