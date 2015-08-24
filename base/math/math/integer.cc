@@ -533,5 +533,50 @@ namespace integer {
 		}
 	}
 	
+	/*
+		Bit shifts
+		----------
+	*/
+	
+	void shift_right_be( limb_t* x_low, size_t n )
+	{
+		const int n_bits = sizeof (limb_t) * 8;
+		
+		limb_t* x = x_low;
+		
+		limb_t carried_bit = 0;
+		
+		while ( n-- > 0 )
+		{
+			limb_t lsb = *x & 1;
+			
+			*x >>= 1;
+			
+			*x++ |= carried_bit << (n_bits - 1);
+			
+			carried_bit = lsb;
+		}
+	}
+	
+	void shift_right_le( limb_t* x_high, size_t n )
+	{
+		const int n_bits = sizeof (limb_t) * 8;
+		
+		limb_t* x = x_high;
+		
+		limb_t carried_bit = 0;
+		
+		while ( n-- > 0 )
+		{
+			limb_t lsb = *--x & 1;
+			
+			*x >>= 1;
+			
+			*x |= carried_bit << (n_bits - 1);
+			
+			carried_bit = lsb;
+		}
+	}
+	
 }
 }
