@@ -16,6 +16,10 @@
 namespace plus
 {
 	
+	struct division_by_zero
+	{
+	};
+	
 	class integer
 	{
 		public:
@@ -80,6 +84,8 @@ namespace plus
 			integer& operator+=( const integer& y );
 			integer& operator-=( const integer& y );
 			integer& operator*=( const integer& y );
+			integer& operator/=( const integer& y );
+			integer& operator%=( const integer& y );
 	};
 	
 	
@@ -163,6 +169,26 @@ namespace plus
 		integer result = a;
 		
 		result *= b;
+		
+		return result;
+	}
+	
+	inline
+	integer operator/( const integer& a, const integer& b )
+	{
+		integer result = a;
+		
+		result /= b;
+		
+		return result;
+	}
+	
+	inline
+	integer operator%( const integer& a, const integer& b )
+	{
+		integer result = a;
+		
+		result %= b;
 		
 		return result;
 	}
