@@ -20,6 +20,10 @@ namespace plus
 	{
 	};
 	
+	struct negative_exponent
+	{
+	};
+	
 	class integer
 	{
 		public:
@@ -203,6 +207,8 @@ namespace plus
 	{
 		return a.modulo_by( b );
 	}
+	
+	integer raise_to_power( integer base, integer exponent );
 	
 }
 
