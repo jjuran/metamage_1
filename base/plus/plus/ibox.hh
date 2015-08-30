@@ -187,6 +187,9 @@ namespace plus
 				return has_extent() ? its_pointer : &its_integer;
 			}
 			
+			bool odd() const;
+			bool even() const { return ! odd(); }
+			
 			sign_t sign() const  { return its_sign; }
 			
 			void invert()

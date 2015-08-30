@@ -61,6 +61,9 @@ namespace plus
 			bool is_positive() const  { return box.sign() > 0; }
 			bool is_negative() const  { return box.sign() < 0; }
 			
+			bool is_odd()  const  { return box.odd();  }
+			bool is_even() const  { return box.even(); }
+			
 			ibox::sign_t sign() const  { return box.sign(); }
 			
 			void halve()   { box.halve();  }
