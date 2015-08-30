@@ -16,6 +16,7 @@ namespace vc
 		Op_function,
 		Op_unary_plus,
 		Op_unary_minus,
+		Op_empower,
 		Op_multiply,
 		Op_divide,
 		Op_remain,

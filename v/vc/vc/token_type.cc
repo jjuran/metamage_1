@@ -42,6 +42,8 @@ namespace vc
 		{ "-",   Token_minus },
 		
 		{ "/",   Token_slash },
+		
+		{ "^",   Token_caret },
 	};
 	
 	static const char* matches( const char* s, const char* pattern )
