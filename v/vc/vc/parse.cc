@@ -18,6 +18,7 @@
 #include "vc/dyad.hh"
 #include "vc/error.hh"
 #include "vc/eval.hh"
+#include "vc/named_ops.hh"
 #include "vc/ops.hh"
 #include "vc/precedence.hh"
 #include "vc/token.hh"
@@ -184,6 +185,27 @@ namespace vc
 			
 			case Token_digits:
 				receive_value( decode_decimal( token.text ) );
+				break;
+			
+			case Token_bareword:
+				op_type op;
+				
+				if ( expecting_value() )
+				{
+					// There are no named left unary operators.
+					SYNTAX_ERROR( "bareword where value expected" );
+				}
+				else
+				{
+					op = op_from_name( token.text );
+					
+					if ( op == Op_none )
+					{
+						SYNTAX_ERROR( "invalid named operator" );
+					}
+				}
+				
+				receive_op( op );
 				break;
 			
 			default:

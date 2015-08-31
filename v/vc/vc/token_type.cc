@@ -18,6 +18,8 @@ namespace vc
 	
 	using iota::is_space;
 	using iota::is_digit;
+	using iota::is_alpha;
+	using iota::is_alnum;
 	
 	
 	struct op_token
@@ -108,6 +110,13 @@ namespace vc
 			while ( is_digit( *++p ) )  continue;
 			
 			return Token_digits;
+		}
+		
+		if ( is_alpha( *p ) )
+		{
+			while ( is_alnum( *++p ) )  continue;
+			
+			return Token_bareword;
 		}
 		
 		if ( const op_token* token = find_op_token( p ) )
