@@ -14,6 +14,7 @@ namespace vc
 	{
 		Function_none,
 		Function_abs,
+		Function_half,
 	};
 	
 }

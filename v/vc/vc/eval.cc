@@ -31,6 +31,10 @@ namespace vc
 		{
 			arg.absolve();
 		}
+		else if ( f == Function_half )
+		{
+			arg.halve();
+		}
 		else
 		{
 			INTERNAL_ERROR( "unimplemented function" );

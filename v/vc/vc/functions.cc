@@ -22,7 +22,8 @@ namespace vc
 	static
 	const function_mapping functions[] =
 	{
-		{ "abs", Function_abs },
+		{ "abs",  Function_abs  },
+		{ "half", Function_half },
 	};
 	
 	static
