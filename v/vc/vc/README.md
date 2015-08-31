@@ -10,6 +10,8 @@ Level 0
 
 `op_type.hh`:  Defines `enum op_type`, with members for each operator.
 
+`function_id.hh`:  Defines `enum function_id`, with members for each function.
+
 Level 1
 -------
 
@@ -18,6 +20,8 @@ Level 1
 `ops.*`:  Defines `op_from_token()`, which converts a token and a state flag into an operator.
 
 `named_ops.*`:  Defines `op_from_name()`, which converts a string into a binary infix operator.
+
+`functions.*`:  Defines `function_from_name()`, which converts a string into a function ID.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 

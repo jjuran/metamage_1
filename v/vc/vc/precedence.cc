@@ -31,6 +31,7 @@ namespace vc
 	
 	static const precedence_mapping precedence_table[] =
 	{
+		{ Precedence_unary_math, Op_function    },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
 		
@@ -61,6 +62,11 @@ namespace vc
 		return Precedence_none;
 	}
 	
+	static bool is_right_associative( op_type op )
+	{
+		return op == Op_function;
+	}
+	
 	bool decreasing_op_precedence( op_type left, op_type right )
 	{
 		const precedence_level pr_left  = op_precedence( left  );
@@ -70,9 +76,12 @@ namespace vc
 			Precedence levels start at 1 and *increase* numerically with
 			*lower* precedence, so decreasing precedence means the right
 			is greater than the left.
+			
+			If the operator is right-associative, then fudge the level so
+			the left is lower-precedence than the right.
 		*/
 		
-		return pr_right >= pr_left;
+		return pr_right >= pr_left + is_right_associative( right );
 	}
 	
 }

@@ -13,6 +13,7 @@ namespace vc
 	enum op_type
 	{
 		Op_none,
+		Op_function,
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_multiply,

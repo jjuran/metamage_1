@@ -18,6 +18,7 @@
 #include "vc/dyad.hh"
 #include "vc/error.hh"
 #include "vc/eval.hh"
+#include "vc/functions.hh"
 #include "vc/named_ops.hh"
 #include "vc/ops.hh"
 #include "vc/precedence.hh"
@@ -192,8 +193,16 @@ namespace vc
 				
 				if ( expecting_value() )
 				{
-					// There are no named left unary operators.
-					SYNTAX_ERROR( "bareword where value expected" );
+					const function_id f = function_from_name( token.text );
+					
+					if ( f == Function_none )
+					{
+						SYNTAX_ERROR( "invalid function" );
+					}
+					
+					receive_value( f );
+					
+					op = Op_function;
 				}
 				else
 				{

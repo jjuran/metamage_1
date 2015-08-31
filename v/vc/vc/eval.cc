@@ -7,6 +7,7 @@
 
 // vc
 #include "vc/error.hh"
+#include "vc/function_id.hh"
 
 
 namespace vc
@@ -21,6 +22,21 @@ namespace vc
 		}
 		
 		return x;
+	}
+	
+	static
+	plus::integer eval_function( const plus::integer& f, plus::integer arg )
+	{
+		if ( f == Function_abs )
+		{
+			arg.absolve();
+		}
+		else
+		{
+			INTERNAL_ERROR( "unimplemented function" );
+		}
+		
+		return arg;
 	}
 	
 	plus::integer eval( const plus::integer&  left,
@@ -38,6 +54,8 @@ namespace vc
 			case Op_divide:    return left / nonzero( right );
 			case Op_remain:    return left % nonzero( right );
 			case Op_modulo:    return modulo( left, nonzero( right ) );
+			
+			case Op_function:  return eval_function( left, right );
 			
 			default:
 				break;
