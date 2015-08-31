@@ -37,6 +37,7 @@ namespace vc
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },
 		{ Precedence_multiplication, Op_remain   },
+		{ Precedence_multiplication, Op_modulo   },
 		
 		{ Precedence_addition, Op_add      },
 		{ Precedence_addition, Op_subtract },

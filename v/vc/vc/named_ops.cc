@@ -23,6 +23,7 @@ namespace vc
 	const named_op_mapping named_ops[] =
 	{
 		{ "div", Op_divide },
+		{ "mod", Op_modulo },
 	};
 	
 	static

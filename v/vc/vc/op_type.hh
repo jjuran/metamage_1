@@ -18,6 +18,7 @@ namespace vc
 		Op_multiply,
 		Op_divide,
 		Op_remain,
+		Op_modulo,
 		Op_add,
 		Op_subtract,
 		Op_end,

@@ -37,6 +37,7 @@ namespace vc
 			case Op_multiply:  return left * right;
 			case Op_divide:    return left / nonzero( right );
 			case Op_remain:    return left % nonzero( right );
+			case Op_modulo:    return modulo( left, nonzero( right ) );
 			
 			default:
 				break;
