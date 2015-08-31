@@ -65,16 +65,17 @@
 	  * subtract:     Subtracts the second operand from the first one.  This
 	                  is strictly a cancellation function, requiring x >= y.
 	  * multiply:     Multiplies the first operand by the second one.
-	                  
 	
 	Caveats
 	  * Integer operands must contain at least one limb.
 	  * It's the caller's responsibility to ensure the x operand is big enough
-	    to store the result.  For add, sum_size, will provide the answer.  For
+	    to store the result.  For add, sum_size will provide the answer.  For
 	    multiply, the sum of the two operand sizes will be sufficient.  (Since
 	    subtraction is strictly a diminishing operation, the result will never
-	    exceed the left operand.
-	  * It's assumed that a limb_t can be accessed with twig_t alignment.
+	    exceed the left operand.)
+	  * It's assumed that a limb_t can be accessed with twig_t alignment on
+	    big-endian systems.  FIXME:  Port the little-endian alignment-ensurance
+	    code and test on 64-bit PowerPC.
 */
 
 
