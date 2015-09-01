@@ -188,6 +188,18 @@ namespace plus
 		return *this;
 	}
 	
+	integer& integer::modulo_by( const integer& modulus )
+	{
+		divide( modulus, *this );
+		
+		if ( -sign() == modulus.sign() )
+		{
+			*this += modulus;
+		}
+		
+		return *this;
+	}
+	
 	void integer::copy_into( char* buffer ) const
 	{
 		memcpy( buffer, box.data(), byte_size() );

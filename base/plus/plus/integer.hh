@@ -86,6 +86,8 @@ namespace plus
 			integer& operator*=( const integer& y );
 			integer& operator/=( const integer& y );
 			integer& operator%=( const integer& y );
+			
+			integer& modulo_by( const integer& modulus );
 	};
 	
 	
@@ -191,6 +193,12 @@ namespace plus
 		result %= b;
 		
 		return result;
+	}
+	
+	inline
+	integer modulo( integer a, const integer& b )
+	{
+		return a.modulo_by( b );
 	}
 	
 }
