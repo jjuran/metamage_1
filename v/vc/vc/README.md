@@ -17,6 +17,8 @@ Level 1
 
 `ops.*`:  Defines `op_from_token()`, which converts a token and a state flag into an operator.
 
+`named_ops.*`:  Defines `op_from_name()`, which converts a string into a binary infix operator.
+
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.

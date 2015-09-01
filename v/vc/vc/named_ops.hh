@@ -7,11 +7,10 @@
 #define VC_NAMEDOPS_HH
 
 // plus
-#include "plus/string_fwd.hh"
+#include "plus/string.hh"
 
 // vc
 #include "vc/op_type.hh"
-#include "vc/token.hh"
 
 
 namespace vc
