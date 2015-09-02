@@ -140,59 +140,41 @@ namespace plus
 	}
 	
 	inline
-	integer operator-( const integer& a )
+	integer operator-( integer a )
 	{
-		integer result = a;
+		a.invert();
 		
-		result.invert();
-		
-		return result;
+		return a;
 	}
 	
 	inline
-	integer operator+( const integer& a, const integer& b )
+	integer operator+( integer a, const integer& b )
 	{
-		integer result = a;
-		
-		result += b;
-		
-		return result;
+		return a += b;
 	}
 	
 	inline
-	integer operator-( const integer& a, const integer& b )
+	integer operator-( integer a, const integer& b )
 	{
-		return a + -b;
+		return a -= b;
 	}
 	
 	inline
-	integer operator*( const integer& a, const integer& b )
+	integer operator*( integer a, const integer& b )
 	{
-		integer result = a;
-		
-		result *= b;
-		
-		return result;
+		return a *= b;
 	}
 	
 	inline
-	integer operator/( const integer& a, const integer& b )
+	integer operator/( integer a, const integer& b )
 	{
-		integer result = a;
-		
-		result /= b;
-		
-		return result;
+		return a /= b;
 	}
 	
 	inline
-	integer operator%( const integer& a, const integer& b )
+	integer operator%( integer a, const integer& b )
 	{
-		integer result = a;
-		
-		result %= b;
-		
-		return result;
+		return a %= b;
 	}
 	
 	inline
