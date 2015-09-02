@@ -46,6 +46,8 @@ namespace plus
 		
 			typedef math::integer::size_t  size_t;
 			typedef short                  sign_t;
+			
+			struct limb_count_overflow {};
 		
 		private:
 			union

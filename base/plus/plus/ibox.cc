@@ -142,6 +142,11 @@ namespace plus
 	
 	void ibox::extend( size_t n )
 	{
+		if ( n < its_size )
+		{
+			throw limb_count_overflow();
+		}
+		
 		ASSERT( n > 1        );
 		ASSERT( n > its_size );
 		
