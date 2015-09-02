@@ -6,6 +6,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C++
+#include <new>
+
 // must
 #include "must/write.h"
 
@@ -19,6 +22,15 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+#define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
+
+
+static int fail( const char* msg, unsigned len )
+{
+	must_write( STDERR_FILENO, msg, len );
+	
+	return 1;
+}
 
 static void print( const plus::integer& i )
 {
@@ -41,7 +53,18 @@ int main( int argc, char** argv )
 	
 	while ( const char* expr = *argv++ )
 	{
-		print( vc::parse_and_eval( expr ) );
+		try
+		{
+			print( vc::parse_and_eval( expr ) );
+		}
+		catch ( const std::bad_alloc& )
+		{
+			return FAIL( "Out of memory!" );
+		}
+		catch ( const plus::ibox::limb_count_overflow& )
+		{
+			return FAIL( "Max bigint size exceeded" );
+		}
 	}
 	
 	return 0;
