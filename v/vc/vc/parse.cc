@@ -149,7 +149,7 @@ namespace vc
 	{
 		if ( op == Op_none )
 		{
-			INTERNAL_ERROR( "recognized token is not an operator" );
+			SYNTAX_ERROR( "operator used out of context" );
 		}
 		
 		if ( expecting_value() )
