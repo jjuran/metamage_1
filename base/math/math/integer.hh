@@ -65,6 +65,9 @@
 	  * subtract:     Subtracts the second operand from the first one.  This
 	                  is strictly a cancellation function, requiring x >= y.
 	  * multiply:     Multiplies the first operand by the second one.
+	  * shift_right:  Shifts the operand to the right by one bit.  The most
+	                  significant one bit is replaced by a zero; the least
+	                  significant bit is discarded.
 	
 	Caveats
 	  * Integer operands must contain at least one limb.
@@ -314,6 +317,29 @@ namespace integer {
 		else
 		{
 			multiply_be( x, x_size, y, y_size );
+		}
+	}
+	
+	/*
+		Bit shifts
+		----------
+	*/
+	
+	void shift_right_be( limb_t* x_low, size_t n );
+	void shift_right_le( limb_t* x_high, size_t n );
+	
+	inline
+	void shift_right( bool is_little_endian, limb_t* x, size_t size )
+	{
+		if ( is_little_endian )
+		{
+			x += size;
+			
+			shift_right_le( x, size );
+		}
+		else
+		{
+			shift_right_be( x, size );
 		}
 	}
 	

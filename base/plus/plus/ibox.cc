@@ -466,4 +466,28 @@ namespace plus
 		its_sign *= y.its_sign;
 	}
 	
+	void ibox::halve()
+	{
+		if ( has_extent() )
+		{
+			using math::integer::shift_right;
+			
+			unshare();
+			
+			shift_right( iota::is_little_endian(), its_pointer, size() );
+			
+			shrink_to_fit();
+		}
+		else
+		{
+			its_integer /= 2;
+			
+			if ( its_integer == 0 )
+			{
+				its_sign = 0;
+			}
+		}
+		
+	}
+	
 }

@@ -200,6 +200,8 @@ namespace plus
 			void subtract       ( const ibox& y );
 			
 			void multiply_by( const ibox& y );
+			
+			void halve();
 	};
 	
 	math::integer::cmp_t abs_compare( const ibox& a, const ibox& b );
