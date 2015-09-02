@@ -26,6 +26,7 @@ namespace vc
 		Token_asterisk,
 		Token_slash,
 		Token_percent,
+		Token_caret,
 	};
 	
 	token_type next_token_type( const char*& p );

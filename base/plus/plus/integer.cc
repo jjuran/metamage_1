@@ -200,6 +200,30 @@ namespace plus
 		return *this;
 	}
 	
+	integer raise_to_power( integer base, integer exponent )
+	{
+		if ( exponent.is_negative() )
+		{
+			throw negative_exponent();
+		}
+		
+		integer result = 1;
+		
+		while ( ! exponent.is_zero() )
+		{
+			if ( exponent.is_odd() )
+			{
+				result *= base;
+			}
+			
+			base *= base;
+			
+			exponent.halve();
+		}
+		
+		return result;
+	}
+	
 	void integer::copy_into( char* buffer ) const
 	{
 		memcpy( buffer, box.data(), byte_size() );

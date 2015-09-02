@@ -18,6 +18,7 @@ namespace vc
 		Precedence_none = 0,
 		
 		Precedence_unary_math,      // + -
+		Precedence_exponentiation,  // ^
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
 		Precedence_end,             // ;
@@ -34,6 +35,8 @@ namespace vc
 		{ Precedence_unary_math, Op_function    },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
+		
+		{ Precedence_exponentiation, Op_empower },
 		
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },
@@ -64,7 +67,7 @@ namespace vc
 	
 	static bool is_right_associative( op_type op )
 	{
-		return op == Op_function;
+		return op <= Op_empower;
 	}
 	
 	bool decreasing_op_precedence( op_type left, op_type right )

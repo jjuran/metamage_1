@@ -20,6 +20,10 @@ namespace plus
 	{
 	};
 	
+	struct negative_exponent
+	{
+	};
+	
 	class integer
 	{
 		public:
@@ -60,6 +64,9 @@ namespace plus
 			bool is_zero() const  { return box.sign() == 0; }
 			bool is_positive() const  { return box.sign() > 0; }
 			bool is_negative() const  { return box.sign() < 0; }
+			
+			bool is_odd()  const  { return box.odd();  }
+			bool is_even() const  { return box.even(); }
 			
 			ibox::sign_t sign() const  { return box.sign(); }
 			
@@ -200,6 +207,8 @@ namespace plus
 	{
 		return a.modulo_by( b );
 	}
+	
+	integer raise_to_power( integer base, integer exponent );
 	
 }
 

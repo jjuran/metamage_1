@@ -37,6 +37,7 @@ namespace vc
 		{ Token_asterisk, Op_multiply },
 		{ Token_slash,    Op_divide   },
 		{ Token_percent,  Op_remain   },
+		{ Token_caret,    Op_empower  },
 	};
 	
 	static

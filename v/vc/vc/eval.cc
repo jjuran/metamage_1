@@ -59,6 +59,8 @@ namespace vc
 			case Op_remain:    return left % nonzero( right );
 			case Op_modulo:    return modulo( left, nonzero( right ) );
 			
+			case Op_empower:   return raise_to_power( left, right );
+			
 			case Op_function:  return eval_function( left, right );
 			
 			default:
