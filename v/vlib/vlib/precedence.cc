@@ -27,6 +27,7 @@ namespace vlib
 		Precedence_addition,        // + -
 		Precedence_range,           // .. ->
 		Precedence_intersection,    // &
+		Precedence_exclusion,       // (+)
 		Precedence_union,           // |
 		Precedence_in,              // in
 		Precedence_not,             // not
@@ -81,6 +82,7 @@ namespace vlib
 		{ Precedence_unary_math, Op_named_unary },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
+		{ Precedence_unary_math, Op_unary_negate },
 		{ Precedence_unary_math, Op_unary_count },
 		{ Precedence_unary_math, Op_unary_deref },
 		{ Precedence_unary_math, Op_unary_refer },
@@ -97,6 +99,7 @@ namespace vlib
 		{ Precedence_range, Op_delta },
 		
 		{ Precedence_intersection, Op_intersection },
+		{ Precedence_exclusion,    Op_exclusion    },
 		{ Precedence_union,        Op_union        },
 		
 		{ Precedence_in, Op_in },

@@ -85,6 +85,7 @@ namespace vlib
 		Token_slash_equals,
 		Token_percent_equals,
 		Token_semicolon,
+		Token_tilde,
 	};
 	
 	token_type next_token_type( const char*& p );

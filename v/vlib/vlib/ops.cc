@@ -28,6 +28,7 @@ namespace vlib
 	{
 		{ Token_plus,  Op_unary_plus  },
 		{ Token_minus, Op_unary_minus },
+		{ Token_tilde, Op_unary_negate },
 		{ Token_plus_x2,  Op_preinc },
 		{ Token_minus_x2, Op_predec },
 		{ Token_parens_plus, Op_unary_count },
@@ -77,8 +78,9 @@ namespace vlib
 		
 		{ Token_lt_minus_x2, Op_push },
 		
-		{ Token_ampersand, Op_intersection },
-		{ Token_pipe,      Op_union        },
+		{ Token_ampersand,   Op_intersection },
+		{ Token_parens_plus, Op_exclusion    },
+		{ Token_pipe,        Op_union        },
 	};
 	
 	static

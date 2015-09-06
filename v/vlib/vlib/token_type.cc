@@ -154,6 +154,8 @@ namespace vlib
 		{ "|",   Token_pipe   },
 		{ "||",  Token_pipe_x2 },
 		{ "}",   Token_rbrace },
+		
+		{ "~",   Token_tilde },
 	};
 	
 	static const char* matches( const char* s, const char* pattern )
