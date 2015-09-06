@@ -49,6 +49,8 @@ namespace vlib
 		Token_slash,
 		Token_percent,
 		Token_caret,
+		Token_ampersand,
+		Token_pipe,
 		Token_equals_x2,
 		Token_bang_equals,
 		Token_lt,

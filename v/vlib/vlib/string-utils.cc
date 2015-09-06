@@ -82,6 +82,9 @@ namespace vlib
 			case Op_add:       return " + ";
 			case Op_subtract:  return " - ";
 			
+			case Op_intersection:  return " & ";
+			case Op_union:         return " | ";
+			
 			case Op_repeat:  return " (*) ";
 			
 			case Op_map:  return " map ";
