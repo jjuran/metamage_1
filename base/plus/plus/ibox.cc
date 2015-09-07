@@ -140,6 +140,30 @@ namespace plus
 		(ibox_structure&) i = tmp;
 	}
 	
+	limb_t ibox::extent_top() const
+	{
+		ASSERT( has_extent() );
+		
+		const bool be = ! iota::is_little_endian();
+		
+		limb_t const* biggest = be ? its_pointer
+		                           : its_pointer + its_size - 1;
+		
+		return *biggest;
+	}
+	
+	limb_t ibox::extent_bottom() const
+	{
+		ASSERT( has_extent() );
+		
+		const bool le = iota::is_little_endian();
+		
+		limb_t const* littlest = le ? its_pointer
+		                            : its_pointer + its_size - 1;
+		
+		return *littlest;
+	}
+	
 	void ibox::extend( size_t n )
 	{
 		if ( n < its_size )

@@ -101,6 +101,9 @@ namespace plus
 			
 			void construct( int_t const* data, size_t n, sign_t sign );
 			
+			int_t extent_top() const;
+			int_t extent_bottom() const;
+			
 			void extend( size_t n );
 			
 			void shrink_to_fit();
@@ -185,6 +188,16 @@ namespace plus
 			int_t const* data() const
 			{
 				return has_extent() ? its_pointer : &its_integer;
+			}
+			
+			int_t top() const
+			{
+				return has_extent() ? extent_top() : its_integer;
+			}
+			
+			int_t bottom() const
+			{
+				return has_extent() ? extent_bottom() : its_integer;
 			}
 			
 			bool odd() const;
