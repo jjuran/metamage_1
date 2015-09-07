@@ -1353,8 +1353,15 @@ namespace v68k
 				
 				const uint32_t udata = zero_extend( data, pb.size );
 				
-				data = (udata << 1 | s.sr.x) << (effective_count - 1)
-				     |  udata                >> (anticount + 1);
+				if ( effective_count == 1 )
+				{
+					data = udata << 1 | s.sr.x;
+				}
+				else
+				{
+					data = (udata << 1 | s.sr.x) << (effective_count - 1)
+					     |  udata                >> (anticount + 1);
+				}
 				
 				s.sr.x = udata >> anticount & 0x1;
 				
