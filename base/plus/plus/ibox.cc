@@ -289,22 +289,6 @@ namespace plus
 	}
 	
 	
-	bool ibox::odd() const
-	{
-		if ( has_extent() )
-		{
-			const bool le = iota::is_little_endian();
-			
-			limb_t const* littlest = le ? its_pointer
-			                            : its_pointer + size() - 1;
-			
-			return *littlest & 1;
-		}
-		
-		return its_integer & 1;
-	}
-	
-	
 	static inline
 	bool sum_is_one_limb( ibox::size_t  a_size,
 	                      ibox::size_t  b_size,

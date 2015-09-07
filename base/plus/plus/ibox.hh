@@ -200,7 +200,7 @@ namespace plus
 				return has_extent() ? extent_bottom() : its_integer;
 			}
 			
-			bool odd() const;
+			bool odd() const { return bottom() & 1; }
 			bool even() const { return ! odd(); }
 			
 			sign_t sign() const  { return its_sign; }
