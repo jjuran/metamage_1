@@ -70,6 +70,8 @@ namespace plus
 			
 			ibox::sign_t sign() const  { return box.sign(); }
 			
+			int_t clipped() const  { return box.bottom(); }
+			
 			void halve()   { box.halve();  }
 			void invert()  { box.invert(); }
 			
