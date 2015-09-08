@@ -27,17 +27,13 @@ namespace vc
 	static
 	plus::integer eval_function( const plus::integer& f, plus::integer arg )
 	{
-		if ( f == Function_abs )
+		switch ( f.clipped() )
 		{
-			arg.absolve();
-		}
-		else if ( f == Function_half )
-		{
-			arg.halve();
-		}
-		else
-		{
-			INTERNAL_ERROR( "unimplemented function" );
+			case Function_abs:   arg.absolve();  break;
+			case Function_half:  arg.halve();    break;
+			
+			default:
+				INTERNAL_ERROR( "unimplemented function" );
 		}
 		
 		return arg;
