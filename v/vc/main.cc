@@ -12,8 +12,12 @@
 // must
 #include "must/write.h"
 
+// command
+#include "command/get_option.hh"
+
 // plus
 #include "plus/decimal.hh"
+#include "plus/integer_hex.hh"
 #include "plus/string/concat.hh"
 
 // vc
@@ -25,6 +29,18 @@
 #define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
 
 
+enum
+{
+	Opt_hex_output = 'x',
+};
+
+static command::option options[] =
+{
+	{ "hex",  Opt_hex_output },
+};
+
+static bool hex_output = false;
+
 static int fail( const char* msg, unsigned len )
 {
 	must_write( STDERR_FILENO, msg, len );
@@ -34,24 +50,44 @@ static int fail( const char* msg, unsigned len )
 
 static void print( const plus::integer& i )
 {
-	plus::string s = encode_decimal( i ) + "\n";
+	plus::string s = (hex_output ? hex( i ) : encode_decimal( i )) + "\n";
 	
 	must_write( STDOUT_FILENO, s.data(), s.size() );
 }
 
 
-int main( int argc, char** argv )
+static char* const* get_options( char** argv )
 {
-	if ( argc < 2 )
+	int opt;
+	
+	++argv;  // skip arg 0
+	
+	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
 	{
-		must_write( STDERR_FILENO, STR_LEN( "Argument required\n" ) );
-		
-		return 2;
+		switch ( opt )
+		{
+			case Opt_hex_output:
+				hex_output = true;
+				break;
+			
+			default:
+				break;
+		}
 	}
 	
-	++argv;
+	return argv;
+}
+
+int main( int argc, char** argv )
+{
+	if ( argc == 0 )
+	{
+		return 0;
+	}
 	
-	while ( const char* expr = *argv++ )
+	char* const* args = get_options( argv );
+	
+	while ( const char* expr = *args++ )
 	{
 		try
 		{
