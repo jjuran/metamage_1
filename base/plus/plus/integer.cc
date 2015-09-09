@@ -5,9 +5,6 @@
 
 #include "plus/integer.hh"
 
-// Standard C
-#include <string.h>
-
 // relix-compat
 #include "relix/recurse.hh"
 
@@ -222,11 +219,6 @@ namespace plus
 		}
 		
 		return result;
-	}
-	
-	void integer::copy_into( char* buffer ) const
-	{
-		memcpy( buffer, box.data(), byte_size() );
 	}
 	
 }

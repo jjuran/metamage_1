@@ -6,6 +6,9 @@
 #ifndef PLUS_INTEGER_HH
 #define PLUS_INTEGER_HH
 
+// iota
+#include "iota/iterator.hh"
+
 // math
 #include "math/integer_types.hh"
 
@@ -59,7 +62,10 @@ namespace plus
 			
 			unsigned long byte_size() const  { return size() * sizeof (int_t); }
 			
-			void copy_into( char* buffer ) const;
+			iota::span buffer() const
+			{
+				return iota::span( (const char*) box.data(), byte_size() );
+			}
 			
 			bool is_zero() const  { return box.sign() == 0; }
 			bool is_positive() const  { return box.sign() > 0; }
