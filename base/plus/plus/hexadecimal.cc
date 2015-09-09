@@ -133,4 +133,31 @@ namespace plus
 		return result;
 	}
 	
+	string hex_lower( const void* in, unsigned long n )
+	{
+		string result;
+		
+		ASSERT( n <= (unsigned long) -1 / 2 );
+		
+		char* p = result.reset( n * 2 );
+		
+		gear::hexpcpy_lower( p, in, n );
+		
+		return result;
+	}
+	
+	string hex_upper( const void* in, unsigned long n )
+	{
+		string result;
+		
+		ASSERT( n <= (unsigned long) -1 / 2 );
+		
+		char* p = result.reset( n * 2 );
+		
+		gear::hexpcpy_upper( p, in, n );
+		
+		return result;
+	}
+	
+	
 }

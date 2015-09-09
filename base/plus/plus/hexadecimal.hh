@@ -39,6 +39,9 @@ namespace plus
 		return unhex( get_string_data( s ), get_string_size( s ), align );
 	}
 	
+	string hex_lower( const void* in, unsigned long n );
+	string hex_upper( const void* in, unsigned long n );
+	
 }
 
 #endif
