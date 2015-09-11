@@ -8,6 +8,7 @@
 
 // plus
 #include "plus/integer.hh"
+#include "plus/string.hh"
 
 // vc
 #include "vc/symbol_id.hh"
@@ -25,6 +26,7 @@ namespace vc
 		Value_symbol,
 		Value_boolean,
 		Value_number,
+		Value_string,
 	};
 	
 	inline
@@ -37,6 +39,7 @@ namespace vc
 	{
 		value_type     type;
 		plus::integer  number;
+		plus::string   string;
 		
 		Value( value_type type = value_type() ) : type( type )
 		{
@@ -51,6 +54,14 @@ namespace vc
 		}
 		
 		Value( const plus::integer& i ) : type( Value_number ), number( i )
+		{
+		}
+		
+		Value( const plus::string& s ) : type( Value_string ), string( s )
+		{
+		}
+		
+		Value( const char* s ) : type( Value_string ), string( s )
 		{
 		}
 	};

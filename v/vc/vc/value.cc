@@ -18,6 +18,7 @@ namespace vc
 		
 		swap( a.type,   b.type   );
 		swap( a.number, b.number );
+		swap( a.string, b.string );
 	}
 	
 }

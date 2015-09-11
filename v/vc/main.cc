@@ -83,6 +83,9 @@ static plus::string stringify( const vc::Value& v )
 		
 		case Value_number:
 			return stringify( v.number );
+		
+		case Value_string:
+			return v.string;
 	}
 }
 

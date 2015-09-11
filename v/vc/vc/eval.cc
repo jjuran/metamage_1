@@ -84,6 +84,10 @@ namespace vc
 				
 				break;
 			
+			case Value_string:
+				SYNTAX_ERROR( "unary operator not defined for string values" );
+				break;
+			
 			default:
 				break;
 		}
@@ -144,6 +148,29 @@ namespace vc
 		return Value();
 	}
 	
+	static
+	Value eval_str( const plus::string&  left,
+	                op_type               op,
+	                const plus::string&  right )
+	{
+		switch ( op )
+		{
+			case Op_equal:    return left == right;
+			case Op_unequal:  return left != right;
+			case Op_lt:       return left <  right;
+			case Op_lte:      return left <= right;
+			case Op_gt:       return left >  right;
+			case Op_gte:      return left >= right;
+			
+			default:
+				break;
+		}
+		
+		SYNTAX_ERROR( "operator not defined for string values" );
+		
+		return Value();
+	}
+	
 	Value eval( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -184,6 +211,9 @@ namespace vc
 				
 				case Value_number:
 					return eval( left.number, op, right.number );
+				
+				case Value_string:
+					return eval_str( left.string, op, right.string );
 				
 				default:
 					break;
