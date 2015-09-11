@@ -200,7 +200,7 @@ namespace vc
 						SYNTAX_ERROR( "invalid function" );
 					}
 					
-					receive_value( f );
+					receive_value( plus::integer( f ) );
 					
 					op = Op_function;
 				}

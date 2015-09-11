@@ -53,6 +53,21 @@ static plus::string stringify( const plus::integer& i )
 	return hex_output ? hex( i ) : encode_decimal( i );
 }
 
+static plus::string stringify( const vc::Value& v )
+{
+	switch ( v.type )
+	{
+		using namespace vc;
+		
+		default:
+		case Value_none:
+			return "UNIMPLEMENTED";
+		
+		case Value_number:
+			return stringify( v.number );
+	}
+}
+
 static void print( const vc::Value& v )
 {
 	plus::string s = stringify( v ) + "\n";

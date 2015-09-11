@@ -12,7 +12,7 @@ Level 0
 
 `function_id.hh`:  Defines `enum function_id`, with members for each function.
 
-`value.hh`:  Defines `Value` as a type alias of `plus::integer`.
+`value.*`:  Defines `enum value_type` and `struct Value`.
 
 Level 1
 -------
