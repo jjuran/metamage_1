@@ -785,3 +785,48 @@ $ vc 'bool str 0'
 
 $ vc 'bool hex 2'
 1 >= true
+
+%
+
+$ vc '"Hello world"'
+1 >= "Hello world"
+
+%
+
+$ vc 'str "string"'
+1 >= string
+
+%
+
+$ vc 'str ("foo", "bar")'
+1 >= foobar
+
+%
+
+$ vc 'bool "Boolean"'
+1 >= true
+
+%
+
+$ vc 'bool ""'
+1 >= false
+
+%
+
+$ vc 'bool "0"'
+1 >= true
+
+%
+
+$ vc 'hex "0"'
+1 >= 30
+
+%
+
+$ vc 'hex "hex"'
+1 >= 686578
+
+%
+
+$ vc 'hex ""'
+1 >= ""

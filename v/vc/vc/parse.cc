@@ -22,12 +22,14 @@
 #include "vc/named_ops.hh"
 #include "vc/ops.hh"
 #include "vc/precedence.hh"
+#include "vc/quote.hh"
 #include "vc/symbol_table.hh"
 #include "vc/token.hh"
 
 
 namespace vc
 {
+	
 	
 	class Parser
 	{
@@ -211,6 +213,10 @@ namespace vc
 			
 			case Token_digits:
 				receive_value( decode_decimal( token.text ) );
+				break;
+			
+			case Token_string:
+				receive_value( unquote_string( token.text ) );
 				break;
 			
 			case Token_bareword:

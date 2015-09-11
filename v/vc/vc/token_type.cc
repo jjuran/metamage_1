@@ -132,6 +132,26 @@ namespace vc
 			return Token_bareword;
 		}
 		
+		if ( *p == '"' )
+		{
+			++p;
+			
+			while ( const char c = *p++ )
+			{
+				if ( c == '"' )
+				{
+					return Token_string;
+				}
+				
+				if ( c == '\\' )
+				{
+					break;  // FIXME:  Add escape sequences.
+				}
+			}
+			
+			return Token_invalid;
+		}
+		
 		if ( const op_token* token = find_op_token( p ) )
 		{
 			return token->type;
