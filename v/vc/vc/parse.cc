@@ -89,7 +89,7 @@ namespace vc
 			dyad right = stack.back();  stack.pop_back();
 			dyad& left = stack.back();
 			
-			left.i  = eval( left.i, left.op, right.i );
+			left.v  = eval( left.v, left.op, right.v );
 		}
 		
 		stack.back().op = op;
@@ -101,7 +101,7 @@ namespace vc
 		
 		ASSERT( stack.size() == 1 );
 		
-		return stack.front().i;
+		return stack.front().v;
 	}
 	
 	void Parser::push()

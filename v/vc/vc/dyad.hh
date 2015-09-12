@@ -11,6 +11,7 @@
 
 // vc
 #include "vc/op_type.hh"
+#include "vc/value.hh"
 
 
 namespace vc
@@ -18,16 +19,14 @@ namespace vc
 	
 	struct dyad
 	{
-		typedef plus::integer integer;
-		
-		integer  i;
+		Value    v;
 		op_type  op;
 		
 		dyad( op_type op ) : op( op )
 		{
 		}
 		
-		dyad( const integer& i ) : i( i ), op()
+		dyad( const Value& v ) : v( v ), op()
 		{
 		}
 		
