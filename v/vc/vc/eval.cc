@@ -73,6 +73,15 @@ namespace vc
 	                 op_type               op,
 	                 const plus::integer&  right )
 	{
+		switch ( op )
+		{
+			case Op_equal:    return left == right;
+			case Op_unequal:  return left != right;
+			
+			default:
+				break;
+		}
+		
 		SYNTAX_ERROR( "operator not defined for boolean values" );
 		
 		return 0;
@@ -85,6 +94,9 @@ namespace vc
 	{
 		switch ( op )
 		{
+			case Op_equal:     return left == right;
+			case Op_unequal:   return left != right;
+			
 			case Op_add:       return left + right;
 			case Op_subtract:  return left - right;
 			case Op_multiply:  return left * right;

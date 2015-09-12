@@ -23,6 +23,8 @@ namespace vc
 		Op_modulo,
 		Op_add,
 		Op_subtract,
+		Op_equal,
+		Op_unequal,
 		Op_end,
 	};
 	

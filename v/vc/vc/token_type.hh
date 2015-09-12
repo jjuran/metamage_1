@@ -27,6 +27,8 @@ namespace vc
 		Token_slash,
 		Token_percent,
 		Token_caret,
+		Token_equals_x2,
+		Token_bang_equals,
 	};
 	
 	token_type next_token_type( const char*& p );

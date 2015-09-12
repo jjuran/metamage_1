@@ -30,6 +30,8 @@ namespace vc
 	
 	static const op_token op_tokens[] =
 	{
+		{ "!=",  Token_bang_equals },
+		
 		{ "%",   Token_percent },
 		
 		{ "(",   Token_lparen },
@@ -42,6 +44,8 @@ namespace vc
 		{ "-",   Token_minus },
 		
 		{ "/",   Token_slash },
+		
+		{ "==",  Token_equals_x2 },
 		
 		{ "^",   Token_caret },
 	};
