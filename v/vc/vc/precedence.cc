@@ -17,8 +17,8 @@ namespace vc
 	{
 		Precedence_none = 0,
 		
-		Precedence_unary_math,      // + -
 		Precedence_exponentiation,  // ^
+		Precedence_unary_math,      // + -
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
 		Precedence_end,             // ;
@@ -32,11 +32,11 @@ namespace vc
 	
 	static const precedence_mapping precedence_table[] =
 	{
+		{ Precedence_exponentiation, Op_empower },
+		
 		{ Precedence_unary_math, Op_function    },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
-		
-		{ Precedence_exponentiation, Op_empower },
 		
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },
