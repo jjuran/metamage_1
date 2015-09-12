@@ -53,9 +53,9 @@ static plus::string stringify( const plus::integer& i )
 	return hex_output ? hex( i ) : encode_decimal( i );
 }
 
-static void print( const plus::integer& i )
+static void print( const vc::Value& v )
 {
-	plus::string s = stringify( i ) + "\n";
+	plus::string s = stringify( v ) + "\n";
 	
 	must_write( STDOUT_FILENO, s.data(), s.size() );
 }
