@@ -48,9 +48,14 @@ static int fail( const char* msg, unsigned len )
 	return 1;
 }
 
+static plus::string stringify( const plus::integer& i )
+{
+	return hex_output ? hex( i ) : encode_decimal( i );
+}
+
 static void print( const plus::integer& i )
 {
-	plus::string s = (hex_output ? hex( i ) : encode_decimal( i )) + "\n";
+	plus::string s = stringify( i ) + "\n";
 	
 	must_write( STDOUT_FILENO, s.data(), s.size() );
 }
