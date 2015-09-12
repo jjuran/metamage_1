@@ -16,6 +16,7 @@ namespace vc
 	enum value_type
 	{
 		Value_none,
+		Value_boolean,
 		Value_number,
 	};
 	
@@ -25,6 +26,10 @@ namespace vc
 		plus::integer  number;
 		
 		Value() : type()
+		{
+		}
+		
+		Value( bool b ) : type( Value_boolean ), number( b )
 		{
 		}
 		

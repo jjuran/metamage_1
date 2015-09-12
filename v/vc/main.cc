@@ -63,6 +63,9 @@ static plus::string stringify( const vc::Value& v )
 		case Value_none:
 			return "UNIMPLEMENTED";
 		
+		case Value_boolean:
+			return v.number.is_zero() ? "false" : "true";
+		
 		case Value_number:
 			return stringify( v.number );
 	}

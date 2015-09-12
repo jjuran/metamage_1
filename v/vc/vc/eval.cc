@@ -44,6 +44,7 @@ namespace vc
 	{
 		switch ( v.type )
 		{
+			case Value_boolean:
 			case Value_number:
 				switch ( op )
 				{
@@ -60,6 +61,16 @@ namespace vc
 		INTERNAL_ERROR( "unsupported operator in eval_unary()" );
 		
 		return Value();
+	}
+	
+	static
+	Value eval_bool( const plus::integer&  left,
+	                 op_type               op,
+	                 const plus::integer&  right )
+	{
+		SYNTAX_ERROR( "operator not defined for boolean values" );
+		
+		return 0;
 	}
 	
 	static
@@ -102,6 +113,9 @@ namespace vc
 		{
 			switch ( left.type )
 			{
+				case Value_boolean:
+					return eval_bool( left.number, op, right.number );
+				
 				case Value_number:
 					return eval( left.number, op, right.number );
 				
