@@ -29,6 +29,10 @@ namespace vc
 		Token_caret,
 		Token_equals_x2,
 		Token_bang_equals,
+		Token_lt,
+		Token_lt_equals,
+		Token_gt,
+		Token_gt_equals,
 	};
 	
 	token_type next_token_type( const char*& p );

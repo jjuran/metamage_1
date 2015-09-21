@@ -96,6 +96,10 @@ namespace vc
 		{
 			case Op_equal:     return left == right;
 			case Op_unequal:   return left != right;
+			case Op_lt:        return left <  right;
+			case Op_lte:       return left <= right;
+			case Op_gt:        return left >  right;
+			case Op_gte:       return left >= right;
 			
 			case Op_add:       return left + right;
 			case Op_subtract:  return left - right;

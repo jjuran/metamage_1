@@ -25,6 +25,10 @@ namespace vc
 		Op_subtract,
 		Op_equal,
 		Op_unequal,
+		Op_lt,
+		Op_lte,
+		Op_gt,
+		Op_gte,
 		Op_end,
 	};
 	

@@ -40,6 +40,10 @@ namespace vc
 		{ Token_caret,       Op_empower  },
 		{ Token_equals_x2,   Op_equal    },
 		{ Token_bang_equals, Op_unequal  },
+		{ Token_lt,          Op_lt       },
+		{ Token_lt_equals,   Op_lte      },
+		{ Token_gt,          Op_gt       },
+		{ Token_gt_equals,   Op_gte      },
 	};
 	
 	static

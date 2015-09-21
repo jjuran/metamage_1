@@ -21,6 +21,7 @@ namespace vc
 		Precedence_unary_math,      // + -
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
+		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
 		Precedence_end,             // ;
 	};
@@ -46,6 +47,11 @@ namespace vc
 		
 		{ Precedence_addition, Op_add      },
 		{ Precedence_addition, Op_subtract },
+		
+		{ Precedence_inequality, Op_lt  },
+		{ Precedence_inequality, Op_lte },
+		{ Precedence_inequality, Op_gt  },
+		{ Precedence_inequality, Op_gte },
 		
 		{ Precedence_equality, Op_equal   },
 		{ Precedence_equality, Op_unequal },
