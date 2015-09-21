@@ -32,6 +32,11 @@ namespace vc
 			case Function_abs:   arg.number.absolve();  break;
 			case Function_half:  arg.number.halve();    break;
 			
+			case Function_bool:
+				arg.type   = Value_boolean;
+				arg.number = ! arg.number.is_zero();
+				break;
+			
 			default:
 				INTERNAL_ERROR( "unimplemented function" );
 		}

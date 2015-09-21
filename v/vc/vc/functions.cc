@@ -23,6 +23,7 @@ namespace vc
 	const function_mapping functions[] =
 	{
 		{ "abs",  Function_abs  },
+		{ "bool", Function_bool },
 		{ "half", Function_half },
 	};
 	
