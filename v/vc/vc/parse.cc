@@ -199,9 +199,19 @@ namespace vc
 						
 						op = Op_function;
 					}
+					else if ( token.text == "true" )
+					{
+						receive_value( true );
+						break;
+					}
+					else if ( token.text == "false" )
+					{
+						receive_value( false );
+						break;
+					}
 					else
 					{
-						SYNTAX_ERROR( "invalid function" );
+						SYNTAX_ERROR( "invalid constant or function" );
 					}
 				}
 				else
