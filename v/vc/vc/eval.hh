@@ -11,14 +11,15 @@
 
 // vc
 #include "vc/op_type.hh"
+#include "vc/value.hh"
 
 
 namespace vc
 {
 	
-	plus::integer eval( const plus::integer&  left,
-	                    op_type               op,
-	                    const plus::integer&  right );
+	Value eval( const Value&  left,
+	            op_type       op,
+	            const Value&  right );
 	
 }
 

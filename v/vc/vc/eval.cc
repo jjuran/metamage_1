@@ -39,15 +39,36 @@ namespace vc
 		return arg;
 	}
 	
+	static
+	Value eval_unary( op_type op, const Value& v )
+	{
+		switch ( v.type )
+		{
+			case Value_number:
+				switch ( op )
+				{
+					case Op_unary_plus:   return  v.number;
+					case Op_unary_minus:  return -v.number;
+					
+					default:  break;
+				}
+				
+			default:
+				break;
+		}
+		
+		INTERNAL_ERROR( "unsupported operator in eval_unary()" );
+		
+		return Value();
+	}
+	
+	static
 	plus::integer eval( const plus::integer&  left,
 	                    op_type               op,
 	                    const plus::integer&  right )
 	{
 		switch ( op )
 		{
-			case Op_unary_plus:   return  right;
-			case Op_unary_minus:  return -right;
-			
 			case Op_add:       return left + right;
 			case Op_subtract:  return left - right;
 			case Op_multiply:  return left * right;
@@ -66,6 +87,32 @@ namespace vc
 		INTERNAL_ERROR( "unsupported operator in eval()" );
 		
 		return 0;
+	}
+	
+	Value eval( const Value&  left,
+	            op_type       op,
+	            const Value&  right )
+	{
+		if ( left.type == Value_none )
+		{
+			return eval_unary( op, right );
+		}
+		
+		if ( left.type == right.type )
+		{
+			switch ( left.type )
+			{
+				case Value_number:
+					return eval( left.number, op, right.number );
+				
+				default:
+					break;
+			}
+		}
+		
+		SYNTAX_ERROR( "operator not defined on mixed types" );
+		
+		return Value();
 	}
 	
 }

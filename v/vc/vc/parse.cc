@@ -45,19 +45,19 @@ namespace vc
 			
 			void fold_ops_and_add( op_type op );
 			
-			plus::integer result_from_subexpression();
+			Value result_from_subexpression();
 			
 			void push();
 			void pop();
 			
-			void receive_value( const plus::integer& term );
+			void receive_value( const Value& term );
 			
 			void receive_op( op_type op );
 			
 			void receive_token( const Token& token );
 		
 		public:
-			plus::integer parse_and_eval( const char* p );
+			Value parse_and_eval( const char* p );
 	};
 	
 	bool Parser::expecting_value() const
@@ -89,19 +89,19 @@ namespace vc
 			dyad right = stack.back();  stack.pop_back();
 			dyad& left = stack.back();
 			
-			left.i  = eval( left.i, left.op, right.i );
+			left.v  = eval( left.v, left.op, right.v );
 		}
 		
 		stack.back().op = op;
 	}
 	
-	plus::integer Parser::result_from_subexpression()
+	Value Parser::result_from_subexpression()
 	{
 		fold_ops_and_add( Op_end );
 		
 		ASSERT( stack.size() == 1 );
 		
-		return stack.front().i;
+		return stack.front().v;
 	}
 	
 	void Parser::push()
@@ -127,7 +127,7 @@ namespace vc
 			SYNTAX_ERROR( "unbalanced right parenthesis" );
 		}
 		
-		plus::integer result = result_from_subexpression();
+		Value result = result_from_subexpression();
 		
 		stack = metastack.back();
 		metastack.pop_back();
@@ -135,7 +135,7 @@ namespace vc
 		stack.push_back( result );
 	}
 	
-	void Parser::receive_value( const plus::integer& x )
+	void Parser::receive_value( const Value& x )
 	{
 		if ( ! expecting_value() )
 		{
@@ -200,7 +200,7 @@ namespace vc
 						SYNTAX_ERROR( "invalid function" );
 					}
 					
-					receive_value( f );
+					receive_value( plus::integer( f ) );
 					
 					op = Op_function;
 				}
@@ -223,7 +223,7 @@ namespace vc
 		}
 	}
 	
-	plus::integer Parser::parse_and_eval( const char* p )
+	Value Parser::parse_and_eval( const char* p )
 	{
 		while ( Token token = next_token( p ) )
 		{
@@ -243,7 +243,7 @@ namespace vc
 		return result_from_subexpression();
 	}
 	
-	plus::integer parse_and_eval( const char* p )
+	Value parse_and_eval( const char* p )
 	{
 		Parser parser;
 		

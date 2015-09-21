@@ -16,7 +16,7 @@ namespace vc
 	{
 		using iota::swap;
 		
-		swap( i,  b.i  );
+		swap( v,  b.v  );
 		swap( op, b.op );
 	}
 	

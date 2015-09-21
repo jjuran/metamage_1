@@ -12,6 +12,8 @@ Level 0
 
 `function_id.hh`:  Defines `enum function_id`, with members for each function.
 
+`value.*`:  Defines `enum value_type` and `struct Value`.
+
 Level 1
 -------
 
