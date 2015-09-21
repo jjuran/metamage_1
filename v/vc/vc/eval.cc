@@ -89,8 +89,6 @@ namespace vc
 			
 			case Op_empower:   return raise_to_power( left, right );
 			
-			case Op_function:  return eval_function( left, right );
-			
 			default:
 				break;
 		}
@@ -107,6 +105,11 @@ namespace vc
 		if ( left.type == Value_none )
 		{
 			return eval_unary( op, right );
+		}
+		
+		if ( op == Op_function )
+		{
+			return eval_function( left.number, right );
 		}
 		
 		if ( left.type == right.type )
