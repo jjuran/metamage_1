@@ -193,16 +193,16 @@ namespace vc
 				
 				if ( expecting_value() )
 				{
-					const function_id f = function_from_name( token.text );
-					
-					if ( f == Function_none )
+					if ( function_id f = function_from_name( token.text ) )
+					{
+						receive_value( plus::integer( f ) );
+						
+						op = Op_function;
+					}
+					else
 					{
 						SYNTAX_ERROR( "invalid function" );
 					}
-					
-					receive_value( plus::integer( f ) );
-					
-					op = Op_function;
 				}
 				else
 				{
