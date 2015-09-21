@@ -25,12 +25,12 @@ namespace vc
 	}
 	
 	static
-	plus::integer eval_function( const plus::integer& f, plus::integer arg )
+	Value eval_function( const plus::integer& f, Value arg )
 	{
 		switch ( f.clipped() )
 		{
-			case Function_abs:   arg.absolve();  break;
-			case Function_half:  arg.halve();    break;
+			case Function_abs:   arg.number.absolve();  break;
+			case Function_half:  arg.number.halve();    break;
 			
 			default:
 				INTERNAL_ERROR( "unimplemented function" );
@@ -74,9 +74,9 @@ namespace vc
 	}
 	
 	static
-	plus::integer eval( const plus::integer&  left,
-	                    op_type               op,
-	                    const plus::integer&  right )
+	Value eval( const plus::integer&  left,
+	            op_type               op,
+	            const plus::integer&  right )
 	{
 		switch ( op )
 		{
