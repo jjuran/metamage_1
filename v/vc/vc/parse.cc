@@ -13,6 +13,7 @@
 
 // plus
 #include "plus/decimal.hh"
+#include "plus/string/concat.hh"
 
 // vc
 #include "vc/dyad.hh"
@@ -162,6 +163,17 @@ namespace vc
 	{
 		if ( ! expecting_value() )
 		{
+			Value& last = stack.back().v;
+			
+			// Try string concatenation.
+			
+			if ( last.type == Value_string  &&  x.type == Value_string )
+			{
+				last.string = last.string + x.string;
+				
+				return;
+			}
+			
 			SYNTAX_ERROR( "value where operator expected" );
 		}
 		
