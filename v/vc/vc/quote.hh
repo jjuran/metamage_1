@@ -19,6 +19,8 @@ namespace vc
 		return s.substr( 1, s.size() - 2 );
 	}
 	
+	plus::string unquote_escaped_string( const plus::string& s );
+	
 }
 
 #endif

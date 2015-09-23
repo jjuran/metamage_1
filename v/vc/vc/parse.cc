@@ -219,6 +219,10 @@ namespace vc
 				receive_value( unquote_string( token.text ) );
 				break;
 			
+			case Token_string_escaped:
+				receive_value( unquote_escaped_string( token.text ) );
+				break;
+			
 			case Token_bareword:
 				op_type op;
 				

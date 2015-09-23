@@ -31,7 +31,7 @@ Level 1
 
 `precedence.*`:  Defines `decreasing_op_precedence()`, which implements operator precedence and determines whether a stacked operation can be evaluated immediately, or only after further input.
 
-`quote.hh`:  Defines `unquote_string()`, for decoding string literals.
+`quote.*`:  Defines routines for decoding string literals, including escape sequences.
 
 Level 2
 -------

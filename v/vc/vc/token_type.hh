@@ -19,6 +19,7 @@ namespace vc
 		Token_whitespace,
 		Token_digits,
 		Token_string,
+		Token_string_escaped,
 		Token_bareword,
 		Token_lparen,
 		Token_rparen,

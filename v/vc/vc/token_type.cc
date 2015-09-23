@@ -136,16 +136,23 @@ namespace vc
 		{
 			++p;
 			
+			bool escaped = false;
+			
 			while ( const char c = *p++ )
 			{
 				if ( c == '"' )
 				{
-					return Token_string;
+					return escaped ? Token_string_escaped : Token_string;
 				}
 				
 				if ( c == '\\' )
 				{
-					break;  // FIXME:  Add escape sequences.
+					if ( *p++ == '\0' )
+					{
+						break;
+					}
+					
+					escaped = true;
 				}
 			}
 			
