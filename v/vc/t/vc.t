@@ -550,3 +550,103 @@ $ vc 'const y = var x = 5'
 
 $ vc 'var x = 3;' 'const x' x
 1 >= 3
+
+%
+
+$ vc 'str 0'
+1 >= 0
+
+%
+
+$ vc 'str -43'
+1 >= -43
+
+%
+
+$ vc 'str 2^64'
+1 >= 18446744073709551616
+
+%
+
+$ vc 'str str 1234'
+1 >= 1234
+
+%
+
+$ vc 'str false'
+1 >= false
+
+%
+
+$ vc 'str true'
+1 >= true
+
+%
+
+$ vc 'hex 0'
+1 >= ""
+
+%
+
+$ vc 'hex 1'
+1 >= 01
+
+%
+
+$ vc 'hex (2^252 + 27742317777372353535851937790883648493)'
+1 >= 1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed
+
+%
+
+$ vc 'hex 1234'
+1 >= 04d2
+
+%
+
+$ vc 'str hex 1234'
+1 >= 04d2
+
+%
+
+$ vc 'hex str 1234'
+1 >= 31323334
+
+%
+
+$ vc 'hex hex 1234'
+1 >= 30346432
+
+%
+
+$ vc 'str 0 == str -0'
+1 >= true
+
+%
+
+$ vc 'str 0 != hex 0'
+1 >= true
+
+%
+
+$ vc 'str 64 == hex 100'
+1 >= true
+
+%
+
+$ vc 'str 2 > str 12'
+1 >= true
+
+%
+
+$ vc 'str 2 >= str 12'
+1 >= true
+
+%
+
+$ vc 'str 2 < str 12'
+1 >= false
+
+%
+
+$ vc 'str 2 <= str 12'
+1 >= false

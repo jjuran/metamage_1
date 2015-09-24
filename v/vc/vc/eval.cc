@@ -5,6 +5,11 @@
 
 #include "vc/eval.hh"
 
+// plus
+#include "plus/decimal.hh"
+#include "plus/hexadecimal.hh"
+#include "plus/integer_hex.hh"
+
 // vc
 #include "vc/error.hh"
 #include "vc/function_id.hh"
@@ -13,6 +18,11 @@
 
 namespace vc
 {
+	
+	static plus::string hex( const plus::string& s )
+	{
+		return plus::hex_lower( s.data(), s.size() );
+	}
 	
 	static
 	const plus::integer& nonzero( const plus::integer& x )
@@ -31,6 +41,11 @@ namespace vc
 		switch ( arg.type )
 		{
 			case Value_boolean:
+				if ( f == Function_str )
+				{
+					return arg.number.is_zero() ? "false" : "true";
+				}
+				
 				if ( f != Function_bool )
 				{
 					SYNTAX_ERROR( "function unimplemented for boolean values" );
@@ -49,8 +64,30 @@ namespace vc
 						arg.number = ! arg.number.is_zero();
 						break;
 					
+					case Function_hex:
+						return hex( arg.number );
+					
+					case Function_str:
+						return encode_decimal( arg.number );
+					
 					default:
 						INTERNAL_ERROR( "unimplemented function" );
+				}
+				
+				break;
+			
+			case Value_string:
+				switch ( f )
+				{
+					case Function_hex:
+						arg.string = hex( arg.string );
+						break;
+					
+					case Function_str:
+						break;
+					
+					default:
+						SYNTAX_ERROR( "function unimplemented for strings" );
 				}
 				
 				break;

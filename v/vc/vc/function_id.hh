@@ -16,6 +16,8 @@ namespace vc
 		Function_abs,
 		Function_bool,
 		Function_half,
+		Function_hex,
+		Function_str,
 	};
 	
 }

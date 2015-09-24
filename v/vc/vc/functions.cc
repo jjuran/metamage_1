@@ -25,6 +25,8 @@ namespace vc
 		{ "abs",  Function_abs  },
 		{ "bool", Function_bool },
 		{ "half", Function_half },
+		{ "hex",  Function_hex  },
+		{ "str",  Function_str  },
 	};
 	
 	static
