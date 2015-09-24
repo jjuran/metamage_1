@@ -107,7 +107,7 @@ namespace vc
 		
 		SYNTAX_ERROR( "operator not defined for boolean values" );
 		
-		return 0;
+		return Value();
 	}
 	
 	static
@@ -139,7 +139,7 @@ namespace vc
 		
 		INTERNAL_ERROR( "unsupported operator in eval()" );
 		
-		return 0;
+		return Value();
 	}
 	
 	Value eval( const Value&  left,
