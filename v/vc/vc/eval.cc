@@ -25,9 +25,9 @@ namespace vc
 	}
 	
 	static
-	Value eval_function( const plus::integer& f, Value arg )
+	Value eval_function( unsigned f, Value arg )
 	{
-		switch ( f.clipped() )
+		switch ( f )
 		{
 			case Function_abs:   arg.number.absolve();  break;
 			case Function_half:  arg.number.halve();    break;
@@ -130,7 +130,7 @@ namespace vc
 		
 		if ( op == Op_function )
 		{
-			return eval_function( left.number, right );
+			return eval_function( left.number.clipped(), right );
 		}
 		
 		if ( left.type == right.type )
