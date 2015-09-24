@@ -22,6 +22,7 @@
 #include "vc/named_ops.hh"
 #include "vc/ops.hh"
 #include "vc/precedence.hh"
+#include "vc/symbol_table.hh"
 #include "vc/token.hh"
 
 
@@ -198,14 +199,9 @@ namespace vc
 						
 						op = Op_function;
 					}
-					else if ( token.text == "true" )
+					else if ( symbol_id sym = locate_symbol( token.text ) )
 					{
-						receive_value( true );
-						break;
-					}
-					else if ( token.text == "false" )
-					{
-						receive_value( false );
+						receive_value( lookup_symbol( sym ) );
 						break;
 					}
 					else

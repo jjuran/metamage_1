@@ -12,6 +12,8 @@ Level 0
 
 `function_id.hh`:  Defines `enum function_id`, with members for each function.
 
+`symbol_id.hh`:  Defines `enum symbol_id`, the type of an index into the symbol table.
+
 `value.*`:  Defines `enum value_type` and `struct Value`.
 
 Level 1
@@ -24,6 +26,8 @@ Level 1
 `named_ops.*`:  Defines `op_from_name()`, which converts a string into a binary infix operator.
 
 `functions.*`:  Defines `function_from_name()`, which converts a string into a function ID.
+
+`symbol_table.*`:  Defines functions for querying the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
