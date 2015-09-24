@@ -9,6 +9,9 @@
 // plus
 #include "plus/integer.hh"
 
+// vc
+#include "vc/symbol_id.hh"
+
 
 namespace vc
 {
@@ -18,9 +21,16 @@ namespace vc
 		Value_nothing,
 		Value_dummy_operand,
 		Value_undefined,
+		Value_symbol,
 		Value_boolean,
 		Value_number,
 	};
+	
+	inline
+	bool is_symbol( value_type type )
+	{
+		return type == Value_symbol;
+	}
 	
 	struct Value
 	{
@@ -28,6 +38,10 @@ namespace vc
 		plus::integer  number;
 		
 		Value( value_type type = value_type() ) : type( type )
+		{
+		}
+		
+		Value( symbol_id sym ) : type( Value_symbol ), number( sym )
 		{
 		}
 		

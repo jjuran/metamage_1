@@ -14,10 +14,10 @@ Level 0
 
 `symbol_id.hh`:  Defines `enum symbol_id`, the type of an index into the symbol table.
 
-`value.*`:  Defines `enum value_type` and `struct Value`.
-
 Level 1
 -------
+
+`value.*`:  Defines `enum value_type` and `struct Value`.
 
 `token.*`:  Defines `struct token` and `next_token()`, which wrap `token_type` and `next_token_type()` to include the string of text from which the token was scanned.
 
@@ -27,15 +27,18 @@ Level 1
 
 `functions.*`:  Defines `function_from_name()`, which converts a string into a function ID.
 
+`precedence.*`:  Defines `decreasing_op_precedence()`, which implements operator precedence and determines whether a stacked operation can be evaluated immediately, or only after further input.
+
+Level 2
+-------
+
 `symbol_table.*`:  Defines functions for querying the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
-`precedence.*`:  Defines `decreasing_op_precedence()`, which implements operator precedence and determines whether a stacked operation can be evaluated immediately, or only after further input.
-
-Level 2
+Level 3
 -------
 
 `parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.
