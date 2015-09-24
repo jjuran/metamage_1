@@ -27,18 +27,35 @@ namespace vc
 	static
 	Value eval_function( unsigned f, Value arg )
 	{
-		switch ( f )
+		switch ( arg.type )
 		{
-			case Function_abs:   arg.number.absolve();  break;
-			case Function_half:  arg.number.halve();    break;
+			case Value_boolean:
+				if ( f != Function_bool )
+				{
+					SYNTAX_ERROR( "function unimplemented for boolean values" );
+				}
+				
+				break;
 			
-			case Function_bool:
-				arg.type   = Value_boolean;
-				arg.number = ! arg.number.is_zero();
+			case Value_number:
+				switch ( f )
+				{
+					case Function_abs:   arg.number.absolve();  break;
+					case Function_half:  arg.number.halve();    break;
+					
+					case Function_bool:
+						arg.type   = Value_boolean;
+						arg.number = ! arg.number.is_zero();
+						break;
+					
+					default:
+						INTERNAL_ERROR( "unimplemented function" );
+				}
+				
 				break;
 			
 			default:
-				INTERNAL_ERROR( "unimplemented function" );
+				INTERNAL_ERROR( "invalid type in eval_function()" );
 		}
 		
 		return arg;
