@@ -208,13 +208,14 @@ namespace vc
 						
 						op = Op_function;
 					}
-					else if ( symbol_id sym = locate_symbol( token.text ) )
-					{
-						receive_value( sym );
-						break;
-					}
 					else
 					{
+						if ( symbol_id sym = locate_symbol( token.text ) )
+						{
+							receive_value( sym );
+							break;
+						}
+						
 						SYNTAX_ERROR( "undeclared symbol" );
 					}
 				}
