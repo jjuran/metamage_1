@@ -23,6 +23,7 @@ namespace vc
 		Precedence_addition,        // + -
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
+		Precedence_assignment,      // =
 		Precedence_end,             // ;
 	};
 	
@@ -55,6 +56,8 @@ namespace vc
 		
 		{ Precedence_equality, Op_equal   },
 		{ Precedence_equality, Op_unequal },
+		
+		{ Precedence_assignment, Op_duplicate },
 		
 		{ Precedence_end, Op_end },
 	};

@@ -36,9 +36,12 @@ Level 2
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
+Level 3
+-------
+
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
-Level 3
+Level 4
 -------
 
 `parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.

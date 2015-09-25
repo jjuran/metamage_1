@@ -16,6 +16,7 @@ namespace vc
 		Op_function,
 		Op_unary_plus,
 		Op_unary_minus,
+		Op_duplicate,
 		Op_empower,
 		Op_multiply,
 		Op_divide,
@@ -31,6 +32,12 @@ namespace vc
 		Op_gte,
 		Op_end,
 	};
+	
+	inline
+	bool is_left_varop( op_type op )
+	{
+		return op == Op_duplicate;
+	}
 	
 }
 

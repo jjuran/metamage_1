@@ -8,6 +8,7 @@
 // vc
 #include "vc/error.hh"
 #include "vc/function_id.hh"
+#include "vc/symbol_table.hh"
 
 
 namespace vc
@@ -148,6 +149,18 @@ namespace vc
 		if ( op == Op_function )
 		{
 			return eval_function( left.number.clipped(), right );
+		}
+		
+		if ( op == Op_duplicate )
+		{
+			if ( ! is_symbol( left.type ) )
+			{
+				SYNTAX_ERROR( "left operand of assignment not a symbol" );
+			}
+			
+			assign_symbol( symbol_id( left.number.clipped() ), right );
+			
+			return Value();
 		}
 		
 		if ( left.type == right.type )

@@ -86,7 +86,7 @@ namespace vc
 	{
 		Value& prev = stack.back().v;
 		
-		if ( is_symbol( prev.type ) )
+		if ( is_symbol( prev.type )  &&  ! is_left_varop( op ) )
 		{
 			symbol_id sym = symbol_id( prev.number.clipped() );
 			
