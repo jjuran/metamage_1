@@ -427,3 +427,28 @@ $ vc -- 'bool false'
 
 $ vc -- 'bool true'
 1 >= true
+
+%
+
+$ vc '3;5'
+1 >= 5
+
+%
+
+$ vc ';3'
+1 >= 3
+
+%
+
+$ vc '3;'
+1 >= NOTHING
+
+%
+
+$ vc ';'
+1 >= NOTHING
+
+%
+
+$ vc ''
+1 >= NOTHING

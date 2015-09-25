@@ -234,22 +234,44 @@ namespace vc
 	
 	Value Parser::parse_and_eval( const char* p )
 	{
-		while ( Token token = next_token( p ) )
+		while ( true )
 		{
-			receive_token( token );
+			Token token;
+			
+			while (( token = next_token( p ) ))
+			{
+				if ( token == Token_semicolon )
+				{
+					break;
+				}
+				
+				receive_token( token );
+			}
+			
+			if ( ! metastack.empty() )
+			{
+				SYNTAX_ERROR( "premature end of parenthesized expression" );
+			}
+			
+			Value result;  // nothing
+			
+			if ( ! stack.empty() )
+			{
+				if ( expecting_value() )
+				{
+					SYNTAX_ERROR( "premature end of expression" );
+				}
+				
+				result = result_from_subexpression();
+				
+				stack.pop_back();
+			}
+			
+			if ( ! token )
+			{
+				return result;
+			}
 		}
-		
-		if ( ! metastack.empty() )
-		{
-			SYNTAX_ERROR( "premature end of parenthesized expression" );
-		}
-		
-		if ( expecting_value() )
-		{
-			SYNTAX_ERROR( "premature end of expression" );
-		}
-		
-		return result_from_subexpression();
 	}
 	
 	Value parse_and_eval( const char* p )

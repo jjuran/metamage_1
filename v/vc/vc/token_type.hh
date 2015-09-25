@@ -33,6 +33,7 @@ namespace vc
 		Token_lt_equals,
 		Token_gt,
 		Token_gt_equals,
+		Token_semicolon,
 	};
 	
 	token_type next_token_type( const char*& p );
