@@ -503,12 +503,22 @@ $ vc 'const x = 3;' x
 
 %
 
+$ vc 'const x = 3'
+1 >= 3
+
+%
+
 $ vc 'const x' 'x = 3' x
 1 >= 3
 
 %
 
 $ vc 'var x = 3;' x
+1 >= 3
+
+%
+
+$ vc 'var x = 3'
 1 >= 3
 
 %
@@ -525,3 +535,13 @@ $ vc 'var x = 3;' 'x = 5' x
 
 $ vc 'var x = 0; var i = 1;' 'x = x + i * +((i % 3) * (i % 5) == 0); i = i + 1; PC = PC - +(i < 1000)' x
 1 >= 233168
+
+%
+
+$ vc 'var y = const x = 3'
+1 >= 3
+
+%
+
+$ vc 'const y = var x = 5'
+1 >= 5

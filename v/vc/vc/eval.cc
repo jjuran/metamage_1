@@ -165,6 +165,11 @@ namespace vc
 			
 			assign_symbol( symbol_id( left.number.clipped() ), right );
 			
+			if ( left.type == Value_symbol_declarator )
+			{
+				return right;
+			}
+			
 			return Value();
 		}
 		
