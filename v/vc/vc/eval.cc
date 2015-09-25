@@ -75,7 +75,7 @@ namespace vc
 					
 					default:  break;
 				}
-				
+			
 			default:
 				break;
 		}

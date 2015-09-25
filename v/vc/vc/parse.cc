@@ -28,7 +28,6 @@
 namespace vc
 {
 	
-	
 	class Parser
 	{
 		private:
