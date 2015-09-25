@@ -88,9 +88,21 @@ namespace vc
 		
 		if ( is_symbol( prev.type )  &&  ! is_left_varop( op ) )
 		{
-			symbol_id sym = symbol_id( prev.number.clipped() );
-			
-			prev = lookup_symbol( sym );
+			if ( prev.type == Value_symbol_declarator )
+			{
+				prev = Value();
+			}
+			else
+			{
+				symbol_id sym = symbol_id( prev.number.clipped() );
+				
+				prev = lookup_symbol( sym );
+				
+				if ( prev.type == Value_undefined )
+				{
+					SYMBOL_ERROR( "undefined symbol" );
+				}
+			}
 		}
 		
 		while ( has_higher_precedence_op_than( op ) )
@@ -208,15 +220,48 @@ namespace vc
 						
 						op = Op_function;
 					}
+					else if ( token.text == "const" )
+					{
+						op = Op_const;
+					}
+					else if ( token.text == "var" )
+					{
+						op = Op_var;
+					}
 					else
 					{
+						symbol_id sym;
+						
+						if ( ! stack.empty() )
+						{
+							if ( declares_symbols( stack.back().op ) )
+							{
+								bool is_var = stack.back().op - Op_const;
+								symbol_type type = symbol_type( is_var );
+								
+								sym = create_symbol( token.text, type );
+								
+								if ( ! sym )
+								{
+									SYMBOL_ERROR( "duplicate symbol" );
+								}
+								
+								stack.pop_back();
+								
+								receive_value( sym );
+								
+								stack.back().v.type = Value_symbol_declarator;
+								break;
+							}
+						}
+						
 						if ( symbol_id sym = locate_symbol( token.text ) )
 						{
 							receive_value( sym );
 							break;
 						}
 						
-						SYNTAX_ERROR( "undeclared symbol" );
+						SYMBOL_ERROR( "undeclared symbol" );
 					}
 				}
 				else

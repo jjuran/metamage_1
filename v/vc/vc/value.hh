@@ -21,6 +21,7 @@ namespace vc
 		Value_nothing,
 		Value_dummy_operand,
 		Value_undefined,
+		Value_symbol_declarator,
 		Value_symbol,
 		Value_boolean,
 		Value_number,
@@ -29,7 +30,7 @@ namespace vc
 	inline
 	bool is_symbol( value_type type )
 	{
-		return type == Value_symbol;
+		return type == Value_symbol  ||  type == Value_symbol_declarator;
 	}
 	
 	struct Value

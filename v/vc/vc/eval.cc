@@ -65,6 +65,11 @@ namespace vc
 	static
 	Value eval_unary( op_type op, const Value& v )
 	{
+		if ( op == Op_const  ||  op == Op_var )
+		{
+			SYNTAX_ERROR( "const/var operand not a symbol" );
+		}
+		
 		switch ( v.type )
 		{
 			case Value_boolean:

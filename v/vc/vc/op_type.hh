@@ -14,6 +14,8 @@ namespace vc
 	{
 		Op_none,
 		Op_function,
+		Op_const,
+		Op_var,
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_duplicate,
@@ -32,6 +34,12 @@ namespace vc
 		Op_gte,
 		Op_end,
 	};
+	
+	inline
+	bool declares_symbols( op_type op )
+	{
+		return op == Op_const  ||  op == Op_var;
+	}
 	
 	inline
 	bool is_left_varop( op_type op )

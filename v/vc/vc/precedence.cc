@@ -38,6 +38,8 @@ namespace vc
 		{ Precedence_exponentiation, Op_empower },
 		
 		{ Precedence_unary_math, Op_function    },
+		{ Precedence_unary_math, Op_const       },
+		{ Precedence_unary_math, Op_var         },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
 		
