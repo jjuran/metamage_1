@@ -32,7 +32,7 @@ Level 1
 Level 2
 -------
 
-`symbol_table.*`:  Defines functions for querying the global symbol table.
+`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 

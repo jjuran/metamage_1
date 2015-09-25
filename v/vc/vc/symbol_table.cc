@@ -8,6 +8,9 @@
 // Standard C++
 #include <vector>
 
+// vc
+#include "vc/error.hh"
+
 
 namespace vc
 {
@@ -16,15 +19,17 @@ namespace vc
 	{
 		plus::string  name;
 		Value         value;
+		symbol_type   type;
 		
-		Symbol()
+		Symbol() : type()
 		{
 		}
 		
-		Symbol( const plus::string& name, const Value& value )
+		Symbol( const plus::string& name, const Value& value, symbol_type type )
 		:
 			name( name ),
-			value( value )
+			value( value ),
+			type( type )
 		{
 		}
 	};
@@ -50,6 +55,32 @@ namespace vc
 		return symbol_id_none;
 	}
 	
+	symbol_id create_symbol( const plus::string& name, symbol_type type )
+	{
+		if ( locate_symbol( name ) )
+		{
+			return symbol_id_none;
+		}
+		
+		symbol_id result = symbol_id( symbol_table.size() );
+		
+		symbol_table.push_back( Symbol( name, Value_undefined, type ) );
+		
+		return result;
+	}
+	
+	void assign_symbol( symbol_id id, const Value& value )
+	{
+		Symbol& var = symbol_table[ id ];
+		
+		if ( var.type == Symbol_const  &&  var.value.type != Value_undefined )
+		{
+			SYMBOL_ERROR( "reassignment of constant" );
+		}
+		
+		var.value = value;
+	}
+	
 	const Value& lookup_symbol( symbol_id id )
 	{
 		return symbol_table[ id ].value;
@@ -59,7 +90,7 @@ namespace vc
 	static inline
 	Symbol constant( const char* name, const Value& value )
 	{
-		return Symbol( name, value );
+		return Symbol( name, value, Symbol_const );
 	}
 	
 	struct symbol_table_init

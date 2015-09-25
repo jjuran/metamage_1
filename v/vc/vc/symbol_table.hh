@@ -17,7 +17,16 @@
 namespace vc
 {
 	
+	enum symbol_type
+	{
+		Symbol_const,
+		Symbol_var,
+	};
+	
 	symbol_id locate_symbol( const plus::string& name );
+	symbol_id create_symbol( const plus::string& name, symbol_type type );
+	
+	void assign_symbol( symbol_id id, const Value& value );
 	
 	const Value& lookup_symbol( symbol_id id );
 	
