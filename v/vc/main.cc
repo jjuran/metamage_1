@@ -81,6 +81,11 @@ static plus::string stringify( const vc::Value& v )
 
 static void print( const vc::Value& v )
 {
+	if ( ! v.type )
+	{
+		return;
+	}
+	
 	plus::string s = stringify( v ) + "\n";
 	
 	must_write( STDOUT_FILENO, s.data(), s.size() );
