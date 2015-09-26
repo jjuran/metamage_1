@@ -57,8 +57,17 @@ namespace vc
 	
 	symbol_id create_symbol( const plus::string& name, symbol_type type )
 	{
-		if ( locate_symbol( name ) )
+		if ( symbol_id sym = locate_symbol( name ) )
 		{
+			Symbol& var = symbol_table[ sym ];
+			
+			if ( type == Symbol_const  &&  var.type != Symbol_const )
+			{
+				var.type = Symbol_const;
+				
+				return sym;
+			}
+			
 			return symbol_id_none;
 		}
 		

@@ -545,3 +545,8 @@ $ vc 'var y = const x = 3'
 
 $ vc 'const y = var x = 5'
 1 >= 5
+
+%
+
+$ vc 'var x = 3;' 'const x' x
+1 >= 3
