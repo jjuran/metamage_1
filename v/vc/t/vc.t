@@ -267,3 +267,63 @@ $ vc 'false != false'
 
 $ vc 'false != true'
 1 >= true
+
+%
+
+$ vc '3 < 4'
+1 >= true
+
+%
+
+$ vc '3 <= 4'
+1 >= true
+
+%
+
+$ vc '3 > 4'
+1 >= false
+
+%
+
+$ vc '3 >= 4'
+1 >= false
+
+%
+
+$ vc '4 < 4'
+1 >= false
+
+%
+
+$ vc '4 <= 4'
+1 >= true
+
+%
+
+$ vc '4 > 4'
+1 >= false
+
+%
+
+$ vc '4 >= 4'
+1 >= true
+
+%
+
+$ vc '5 < 4'
+1 >= false
+
+%
+
+$ vc '5 <= 4'
+1 >= false
+
+%
+
+$ vc '5 > 4'
+1 >= true
+
+%
+
+$ vc '5 >= 4'
+1 >= true
