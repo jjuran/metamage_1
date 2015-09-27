@@ -30,6 +30,8 @@ namespace vc
 	
 	const Value& lookup_symbol( symbol_id id );
 	
+	Value& modify_symbol( symbol_id id );
+	
 }
 
 #endif

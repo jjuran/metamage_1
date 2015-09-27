@@ -95,6 +95,16 @@ namespace vc
 		return symbol_table[ id ].value;
 	}
 	
+	Value& modify_symbol( symbol_id id )
+	{
+		if ( symbol_table[ id ].type == Symbol_const )
+		{
+			SYMBOL_ERROR( "modification of constant" );
+		}
+		
+		return symbol_table[ id ].value;
+	}
+	
 	
 	static inline
 	Symbol constant( const char* name, const Value& value )
