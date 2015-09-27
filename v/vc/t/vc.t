@@ -392,3 +392,38 @@ $ vc '+true'
 
 $ vc -- '-true'
 1 >= -1
+
+%
+
+$ vc -- 'bool 0'
+1 >= false
+
+%
+
+$ vc -- 'bool 1'
+1 >= true
+
+%
+
+$ vc -- 'bool 17'
+1 >= true
+
+%
+
+$ vc -- 'bool -1'
+1 >= true
+
+%
+
+$ vc -- 'bool 2^32'
+1 >= true
+
+%
+
+$ vc -- 'bool false'
+1 >= false
+
+%
+
+$ vc -- 'bool true'
+1 >= true
