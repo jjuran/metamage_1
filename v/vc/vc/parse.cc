@@ -215,7 +215,7 @@ namespace vc
 					}
 					else
 					{
-						SYNTAX_ERROR( "invalid constant or function" );
+						SYNTAX_ERROR( "undeclared symbol" );
 					}
 				}
 				else
