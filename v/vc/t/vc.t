@@ -207,3 +207,63 @@ $ vc true
 
 $ vc false
 1 >= false
+
+%
+
+$ vc '2 + 2 == 4'
+1 >= true
+
+%
+
+$ vc '2 + 2 == 5'
+1 >= false
+
+%
+
+$ vc '2 + 2 != 4'
+1 >= false
+
+%
+
+$ vc '2 + 2 != 5'
+1 >= true
+
+%
+
+$ vc 'true == true'
+1 >= true
+
+%
+
+$ vc 'true == false'
+1 >= false
+
+%
+
+$ vc 'false == false'
+1 >= true
+
+%
+
+$ vc 'false == true'
+1 >= false
+
+%
+
+$ vc 'true != true'
+1 >= false
+
+%
+
+$ vc 'true != false'
+1 >= true
+
+%
+
+$ vc 'false != false'
+1 >= false
+
+%
+
+$ vc 'false != true'
+1 >= true
