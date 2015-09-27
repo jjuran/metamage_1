@@ -6,6 +6,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <signal.h>
+
 // Standard C++
 #include <new>
 
@@ -21,12 +24,16 @@
 #include "plus/string/concat.hh"
 
 // vc
+#include "vc/error.hh"
 #include "vc/parse.hh"
+#include "vc/symbol_table.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
+
+#define ADDRESS_ERROR( s )  VC_ERROR( "ADDRESS", s )
 
 
 enum
@@ -114,6 +121,37 @@ static char* const* get_options( char** argv )
 	return argv;
 }
 
+static inline
+void breathe()
+{
+#ifdef __RELIX__
+	
+	kill( 1, 0 );
+	
+#endif
+}
+
+static
+int get_int( const vc::Value& v )
+{
+	if ( v.type != vc::Value_number )
+	{
+		ADDRESS_ERROR( "PC is non-numeric" );
+	}
+	
+	if ( v.number.is_negative() )
+	{
+		ADDRESS_ERROR( "PC is negative" );
+	}
+	
+	if ( v.number > 10000 )
+	{
+		ADDRESS_ERROR( "PC is exorbitant" );
+	}
+	
+	return v.number.clipped();
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -123,8 +161,23 @@ int main( int argc, char** argv )
 	
 	char* const* args = get_options( argv );
 	
-	while ( const char* expr = *args++ )
+	const int argn = argc - (args - argv);
+	
+	if ( argn == 0 )
 	{
+		return 0;
+	}
+	
+	vc::symbol_id pc = vc::create_symbol( "PC", vc::Symbol_var );
+	
+	int i = 0;
+	
+	do
+	{
+		const char* expr = args[ i ];
+		
+		vc::assign_symbol( pc, plus::integer( i + 1 ) );
+		
 		try
 		{
 			print( vc::parse_and_eval( expr ) );
@@ -137,7 +190,12 @@ int main( int argc, char** argv )
 		{
 			return FAIL( "Max bigint size exceeded" );
 		}
+		
+		breathe();
+		
+		i = get_int( vc::lookup_symbol( pc ) );
 	}
+	while ( i < argn );
 	
 	return 0;
 }
