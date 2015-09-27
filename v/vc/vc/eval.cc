@@ -140,7 +140,7 @@ namespace vc
 	            op_type       op,
 	            const Value&  right )
 	{
-		if ( left.type == Value_none )
+		if ( left.type == Value_dummy_operand )
 		{
 			return eval_unary( op, right );
 		}

@@ -60,8 +60,16 @@ static plus::string stringify( const vc::Value& v )
 		using namespace vc;
 		
 		default:
-		case Value_none:
 			return "UNIMPLEMENTED";
+		
+		case Value_nothing:
+			return "NOTHING";
+		
+		case Value_dummy_operand:
+			return "DUMMY OPERAND";
+		
+		case Value_undefined:
+			return "UNDEFINED";
 		
 		case Value_boolean:
 			return v.number.is_zero() ? "false" : "true";

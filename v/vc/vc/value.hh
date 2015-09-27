@@ -15,7 +15,9 @@ namespace vc
 	
 	enum value_type
 	{
-		Value_none,
+		Value_nothing,
+		Value_dummy_operand,
+		Value_undefined,
 		Value_boolean,
 		Value_number,
 	};
@@ -25,7 +27,7 @@ namespace vc
 		value_type     type;
 		plus::integer  number;
 		
-		Value() : type()
+		Value( value_type type = value_type() ) : type( type )
 		{
 		}
 		

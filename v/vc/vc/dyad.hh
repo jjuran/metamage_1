@@ -22,7 +22,7 @@ namespace vc
 		Value    v;
 		op_type  op;
 		
-		dyad( op_type op ) : op( op )
+		dyad( op_type op ) : v( Value_dummy_operand ), op( op )
 		{
 		}
 		
