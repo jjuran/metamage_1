@@ -32,7 +32,8 @@ namespace vc
 	{
 		{ "!=",  Token_bang_equals },
 		
-		{ "%",   Token_percent },
+		{ "%",   Token_percent        },
+		{ "%=",  Token_percent_equals },
 		
 		{ "(",   Token_lparen },
 		{ "()",  Token_parens },
@@ -40,13 +41,19 @@ namespace vc
 		{ "(+)", Token_parens_plus },
 		{ ")",   Token_rparen },
 		
-		{ "*",   Token_asterisk },
+		{ "*",   Token_asterisk        },
+		{ "*=",  Token_asterisk_equals },
 		
-		{ "+",   Token_plus },
+		{ "+",   Token_plus        },
+		{ "+=",  Token_plus_equals },
+		
 		{ ",",   Token_comma },
-		{ "-",   Token_minus },
 		
-		{ "/",   Token_slash },
+		{ "-",   Token_minus        },
+		{ "-=",  Token_minus_equals },
+		
+		{ "/",   Token_slash        },
+		{ "/=",  Token_slash_equals },
 		
 		{ ";",   Token_semicolon },
 		{ "<",   Token_lt        },

@@ -41,6 +41,11 @@ namespace vc
 		Token_gt_equals,
 		Token_comma,
 		Token_equals,
+		Token_plus_equals,
+		Token_minus_equals,
+		Token_asterisk_equals,
+		Token_slash_equals,
+		Token_percent_equals,
 		Token_semicolon,
 	};
 	

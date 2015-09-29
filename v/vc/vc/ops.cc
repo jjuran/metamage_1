@@ -48,6 +48,12 @@ namespace vc
 		{ Token_gt_equals,   Op_gte       },
 		{ Token_comma,       Op_list      },
 		{ Token_equals,      Op_duplicate },
+		
+		{ Token_plus_equals,     Op_increase_by },
+		{ Token_minus_equals,    Op_decrease_by },
+		{ Token_asterisk_equals, Op_multiply_by },
+		{ Token_slash_equals,    Op_divide_by   },
+		{ Token_percent_equals,  Op_remain_by   },
 	};
 	
 	static

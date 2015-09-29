@@ -69,7 +69,12 @@ namespace vc
 		
 		{ Precedence_list, Op_list },
 		
-		{ Precedence_assignment, Op_duplicate },
+		{ Precedence_assignment, Op_duplicate   },
+		{ Precedence_assignment, Op_increase_by },
+		{ Precedence_assignment, Op_decrease_by },
+		{ Precedence_assignment, Op_multiply_by },
+		{ Precedence_assignment, Op_divide_by   },
+		{ Precedence_assignment, Op_remain_by   },
 		
 		{ Precedence_end, Op_end },
 	};

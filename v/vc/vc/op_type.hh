@@ -21,6 +21,11 @@ namespace vc
 		Op_unary_minus,
 		Op_unary_count,
 		Op_duplicate,
+		Op_increase_by,
+		Op_decrease_by,
+		Op_multiply_by,
+		Op_divide_by,
+		Op_remain_by,
 		Op_empower,
 		Op_multiply,
 		Op_divide,
@@ -48,7 +53,7 @@ namespace vc
 	inline
 	bool is_left_varop( op_type op )
 	{
-		return op == Op_duplicate;
+		return op >= Op_duplicate  &&  op < Op_empower;
 	}
 	
 }
