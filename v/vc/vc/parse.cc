@@ -22,6 +22,7 @@
 #include "vc/named_ops.hh"
 #include "vc/ops.hh"
 #include "vc/precedence.hh"
+#include "vc/symbol_table.hh"
 #include "vc/token.hh"
 
 
@@ -83,6 +84,15 @@ namespace vc
 	
 	void Parser::fold_ops_and_add( op_type op )
 	{
+		Value& prev = stack.back().v;
+		
+		if ( is_symbol( prev.type ) )
+		{
+			symbol_id sym = symbol_id( prev.number.clipped() );
+			
+			prev = lookup_symbol( sym );
+		}
+		
 		while ( has_higher_precedence_op_than( op ) )
 		{
 			dyad right = stack.back();  stack.pop_back();
@@ -198,14 +208,9 @@ namespace vc
 						
 						op = Op_function;
 					}
-					else if ( token.text == "true" )
+					else if ( symbol_id sym = locate_symbol( token.text ) )
 					{
-						receive_value( true );
-						break;
-					}
-					else if ( token.text == "false" )
-					{
-						receive_value( false );
+						receive_value( sym );
 						break;
 					}
 					else
