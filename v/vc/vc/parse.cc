@@ -35,11 +35,9 @@ namespace vc
 	class Parser
 	{
 		private:
-			typedef std::vector< dyad  > Stack;
-			typedef std::vector< Stack > Metastack;
+			typedef std::vector< dyad > Stack;
 			
-			Stack      stack;
-			Metastack  metastack;
+			Stack stack;
 		
 		private:
 			bool expecting_value() const;
@@ -105,8 +103,7 @@ namespace vc
 			fold_ops_and_add( Op_function );
 		}
 		
-		metastack.push_back( stack );
-		stack.clear();
+		stack.push_back( Op_parens );
 	}
 	
 	void Parser::pop()
@@ -116,17 +113,17 @@ namespace vc
 			SYNTAX_ERROR( "right parenthesis where value expected" );
 		}
 		
-		if ( metastack.empty() )
-		{
-			SYNTAX_ERROR( "unbalanced right parenthesis" );
-		}
-		
 		fold_ops_and_add( Op_end );
 		
 		Value result = stack.back().v;
 		
-		stack = metastack.back();
-		metastack.pop_back();
+		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != Op_parens )
+		{
+			SYNTAX_ERROR( "unbalanced right parenthesis" );
+		}
+		
+		stack.pop_back();  // result
+		stack.pop_back();  // sentinel
 		
 		stack.push_back( result );
 	}
@@ -307,11 +304,6 @@ namespace vc
 				receive_token( token );
 			}
 			
-			if ( ! metastack.empty() )
-			{
-				SYNTAX_ERROR( "premature end of parenthesized expression" );
-			}
-			
 			Value result;  // nothing
 			
 			if ( ! stack.empty() )
@@ -326,6 +318,11 @@ namespace vc
 				result = stack.back().v;
 				
 				stack.pop_back();
+				
+				if ( ! stack.empty() )
+				{
+					SYNTAX_ERROR( "premature end of parenthetical group" );
+				}
 			}
 			
 			if ( ! token )

@@ -28,6 +28,7 @@ namespace vc
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
 		Precedence_end,             // ;
+		Precedence_group,           // (
 	};
 	
 	struct precedence_mapping
@@ -78,6 +79,8 @@ namespace vc
 		{ Precedence_assignment, Op_remain_by   },
 		
 		{ Precedence_end, Op_end },
+		
+		{ Precedence_group, Op_parens },
 	};
 	
 	static precedence_level op_precedence( op_type op )
