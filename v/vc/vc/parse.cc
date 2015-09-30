@@ -48,8 +48,6 @@ namespace vc
 			
 			void fold_ops_and_add( op_type op );
 			
-			Value result_from_subexpression();
-			
 			void push();
 			void pop();
 			
@@ -98,13 +96,6 @@ namespace vc
 		stack.back().op = op;
 	}
 	
-	Value Parser::result_from_subexpression()
-	{
-		fold_ops_and_add( Op_end );
-		
-		return stack.back().v;
-	}
-	
 	void Parser::push()
 	{
 		if ( ! expecting_value() )
@@ -130,7 +121,9 @@ namespace vc
 			SYNTAX_ERROR( "unbalanced right parenthesis" );
 		}
 		
-		Value result = result_from_subexpression();
+		fold_ops_and_add( Op_end );
+		
+		Value result = stack.back().v;
 		
 		stack = metastack.back();
 		metastack.pop_back();
@@ -328,7 +321,9 @@ namespace vc
 					SYNTAX_ERROR( "premature end of expression" );
 				}
 				
-				result = result_from_subexpression();
+				fold_ops_and_add( Op_end );
+				
+				result = stack.back().v;
 				
 				stack.pop_back();
 			}
