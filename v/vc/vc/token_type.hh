@@ -21,6 +21,7 @@ namespace vc
 		Token_bareword,
 		Token_lparen,
 		Token_rparen,
+		Token_parens,
 		Token_plus,
 		Token_minus,
 		Token_asterisk,

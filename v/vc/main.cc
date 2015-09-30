@@ -78,6 +78,9 @@ static plus::string stringify( const vc::Value& v )
 		case Value_undefined:
 			return "UNDEFINED";
 		
+		case Value_empty_list:
+			return "()";
+		
 		case Value_boolean:
 			return v.number.is_zero() ? "false" : "true";
 		

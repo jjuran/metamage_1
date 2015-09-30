@@ -22,6 +22,7 @@ namespace vc
 		Value_nothing,
 		Value_dummy_operand,
 		Value_undefined,
+		Value_empty_list,
 		Value_symbol_declarator,
 		Value_symbol,
 		Value_boolean,

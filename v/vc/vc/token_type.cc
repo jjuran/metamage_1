@@ -35,6 +35,7 @@ namespace vc
 		{ "%",   Token_percent },
 		
 		{ "(",   Token_lparen },
+		{ "()",  Token_parens },
 		{ ")",   Token_rparen },
 		
 		{ "*",   Token_asterisk },

@@ -56,11 +56,19 @@ namespace vc
 	{
 		if ( a.type != b.type )
 		{
+			if ( a.type == Value_empty_list  ||  b.type == Value_empty_list )
+			{
+				return false;
+			}
+			
 			TYPE_ERROR( "mismatched types in equality relation" );
 		}
 		
 		switch ( a.type )
 		{
+			case Value_empty_list:
+				return true;
+			
 			case Value_boolean:
 			case Value_number:
 				return a.number == b.number;
@@ -105,14 +113,15 @@ namespace vc
 	{
 		switch ( value.type )
 		{
+			case Value_empty_list:  // ""
+			case Value_string:
+				return value.string;
+			
 			case Value_boolean:
 				return value.number.is_zero() ? "false" : "true";
 			
 			case Value_number:
 				return encode_decimal( value.number );
-			
-			case Value_string:
-				return value.string;
 			
 			default:
 				break;
@@ -132,6 +141,16 @@ namespace vc
 		
 		switch ( arg.type )
 		{
+			case Value_empty_list:
+				if ( f != Function_bool )
+				{
+					SYNTAX_ERROR( "function unimplemented for empty list" );
+				}
+				
+				arg.type = Value_boolean;
+				
+				break;
+			
 			case Value_boolean:
 				if ( f != Function_bool )
 				{
@@ -190,6 +209,7 @@ namespace vc
 		
 		switch ( v.type )
 		{
+			case Value_empty_list:
 			case Value_boolean:
 			case Value_number:
 				switch ( op )
@@ -289,6 +309,9 @@ namespace vc
 		{
 			switch ( left.type )
 			{
+				case Value_empty_list:
+					SYNTAX_ERROR( "operator not defined for empty list" );
+				
 				case Value_boolean:
 					SYNTAX_ERROR( "operator not defined for boolean values" );
 				

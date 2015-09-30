@@ -205,6 +205,10 @@ namespace vc
 				pop();
 				break;
 			
+			case Token_parens:
+				receive_value( Value_empty_list );
+				break;
+			
 			case Token_digits:
 				receive_value( decode_decimal( token.text ) );
 				break;
