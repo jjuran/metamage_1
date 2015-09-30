@@ -115,17 +115,17 @@ namespace vc
 		
 		fold_ops_and_add( Op_end );
 		
-		Value result = stack.back().v;
-		
 		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != Op_parens )
 		{
 			SYNTAX_ERROR( "unbalanced right parenthesis" );
 		}
 		
-		stack.pop_back();  // result
-		stack.pop_back();  // sentinel
+		// Remove the sentinel and clear Op_end.
 		
-		stack.push_back( result );
+		stack.end()[ -2 ].v  = stack.end()[ -1 ].v;
+		stack.end()[ -2 ].op = Op_none;
+		
+		stack.pop_back();
 	}
 	
 	void Parser::receive_value( const Value& x )
