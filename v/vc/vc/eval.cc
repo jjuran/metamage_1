@@ -9,6 +9,7 @@
 #include "plus/decimal.hh"
 #include "plus/hexadecimal.hh"
 #include "plus/integer_hex.hh"
+#include "plus/string/concat.hh"
 
 // vc
 #include "vc/error.hh"
@@ -76,6 +77,10 @@ namespace vc
 			case Value_string:
 				return a.string == b.string;
 			
+			case Value_pair:
+				SYNTAX_ERROR( "equality for lists unimplemented" );
+				break;
+			
 			default:
 				INTERNAL_ERROR( "unsupported type in equal()" );
 				break;
@@ -126,6 +131,12 @@ namespace vc
 			default:
 				break;
 		}
+		
+		if ( Expr* expr = value.expr.get() )
+		{
+			return make_string( expr->left ) + make_string( expr->right );
+		}
+		
 		INTERNAL_ERROR( "unsupported type in make_string()" );
 		
 		return plus::string::null;
@@ -192,6 +203,18 @@ namespace vc
 				
 				break;
 			
+			case Value_pair:
+				switch ( f )
+				{
+					case Function_bool:
+						return true;  // All pairs are true.
+					
+					default:
+						SYNTAX_ERROR( "function unimplemented for lists" );
+				}
+				
+				break;
+			
 			default:
 				INTERNAL_ERROR( "invalid type in eval_function()" );
 		}
@@ -224,6 +247,10 @@ namespace vc
 			
 			case Value_string:
 				SYNTAX_ERROR( "unary operator not defined for string values" );
+				break;
+			
+			case Value_pair:
+				SYNTAX_ERROR( "unary operator not defined for lists" );
 				break;
 			
 			default:
@@ -260,6 +287,19 @@ namespace vc
 		return Value();
 	}
 	
+	static
+	Value make_pair( const Value& left, const Value& right )
+	{
+		if ( left.type != Value_pair )
+		{
+			return Value( left, right );
+		}
+		
+		Expr& expr = *left.expr.get();
+		
+		return Value( expr.left, make_pair( expr.right, right ) );
+	}
+	
 	Value eval( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -286,6 +326,21 @@ namespace vc
 			case Op_gte:  return compare( left, right ) >= 0;
 			
 			default:  break;
+		}
+		
+		if ( op == Op_list )
+		{
+			if ( left.type == Value_empty_list )
+			{
+				return right;
+			}
+			
+			if ( right.type == Value_empty_list )
+			{
+				return left;
+			}
+			
+			return make_pair( left, right );
 		}
 		
 		if ( op == Op_duplicate )
@@ -320,6 +375,9 @@ namespace vc
 				
 				case Value_string:
 					SYNTAX_ERROR( "operator not defined for string values" );
+				
+				case Value_pair:
+					SYNTAX_ERROR( "operator not defined for lists" );
 				
 				default:
 					break;

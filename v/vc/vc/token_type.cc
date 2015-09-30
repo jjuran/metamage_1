@@ -41,7 +41,7 @@ namespace vc
 		{ "*",   Token_asterisk },
 		
 		{ "+",   Token_plus },
-		
+		{ ",",   Token_comma },
 		{ "-",   Token_minus },
 		
 		{ "/",   Token_slash },

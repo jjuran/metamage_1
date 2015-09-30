@@ -34,6 +34,7 @@ namespace vc
 		Token_lt_equals,
 		Token_gt,
 		Token_gt_equals,
+		Token_comma,
 		Token_equals,
 		Token_semicolon,
 	};

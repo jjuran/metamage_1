@@ -32,6 +32,7 @@ namespace vc
 		Op_lte,
 		Op_gt,
 		Op_gte,
+		Op_list,
 		Op_end,
 	};
 	

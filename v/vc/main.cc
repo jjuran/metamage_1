@@ -89,6 +89,15 @@ static plus::string stringify( const vc::Value& v )
 		
 		case Value_string:
 			return v.string;
+		
+		case Value_pair:
+			{
+				const Expr& expr = *v.expr.get();
+				
+				return stringify( expr.left ) + ", " + stringify( expr.right );
+			}
+		
+			break;
 	}
 }
 
