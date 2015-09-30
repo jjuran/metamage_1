@@ -15,12 +15,6 @@
 #include <Threads.h>
 #endif
 
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
-
 // mac-sys-utils
 #include "mac_sys/current_thread_stack_space.hh"
 #include "mac_sys/init_thread.hh"
