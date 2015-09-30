@@ -790,7 +790,7 @@ namespace vlib
 		
 		if ( op == Op_then  ||  op == Op_else )
 		{
-			return Value( Value_pair, left, op, right );
+			return Value( left, op, right );
 		}
 		
 		if ( op == Op_repeat )

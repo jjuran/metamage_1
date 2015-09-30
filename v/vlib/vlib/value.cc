@@ -65,9 +65,9 @@ namespace vlib
 		new ((void*) its_box.pointer()) Expr( Value_dummy_operand, op, v );
 	}
 	
-	Value::Value( value_type type, const Value& a, op_type op, const Value& b )
+	Value::Value( const Value& a, op_type op, const Value& b )
 	:
-		its_box( sizeof (Expr), &pair_destructor, type )
+		its_box( sizeof (Expr), &pair_destructor, Value_pair )
 	{
 		new ((void*) its_box.pointer()) Expr( a, op, b );
 	}
@@ -114,7 +114,7 @@ namespace vlib
 			return bind_args( expr->left, Value( expr->right, arguments ) );
 		}
 		
-		return Value( Value_pair, f, Op_bind_args, arguments );
+		return Value( f, Op_bind_args, arguments );
 	}
 	
 	unsigned long area( const Value& v )

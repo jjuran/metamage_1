@@ -45,7 +45,7 @@ namespace vlib
 			return eval( left, op, right );
 		}
 		
-		return Value( Value_pair, left, op, right );
+		return Value( left, op, right );
 	}
 	
 	class Parser
@@ -479,7 +479,7 @@ namespace vlib
 			}
 			else
 			{
-				result = Value( Value_pair, result, Op_end, value );
+				result = Value( result, Op_end, value );
 			}
 			
 			if ( ! token )
@@ -504,7 +504,7 @@ namespace vlib
 			
 			if ( expr->op == Op_block )
 			{
-				return Value( Value_pair, invoke, Op_block, expr->right );
+				return Value( invoke, Op_block, expr->right );
 			}
 			
 			const Value* left  = &expr->left;

@@ -130,7 +130,7 @@ namespace vlib
 			
 			Value( op_type op, const Value& v );
 			
-			Value( value_type vt, const Value& a, op_type op, const Value& b );
+			Value( const Value& a, op_type op, const Value& b );
 			
 			value_type type() const
 			{

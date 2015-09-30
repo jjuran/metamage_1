@@ -114,7 +114,7 @@ namespace vlib
 	static const Value integer = integer_vtype;
 	static const Value string  = string_vtype;
 	
-	static const Value u32_2 = Value( Value_pair, u32_vtype, Op_duplicate, 2 );
+	static const Value u32_2 = Value( u32_vtype, Op_duplicate, 2 );
 	static const Value mince = Value( string, u32_2 );
 	
 	const proc_info proc_abs    = { &v_abs,   "abs",   &integer };
