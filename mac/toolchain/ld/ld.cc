@@ -177,7 +177,7 @@ namespace tool
 		{
 			const plus::string b = get_PPCLibraries() / libName;
 			
-			if ( io::file_exists( a ) )
+			if ( io::file_exists( b ) )
 			{
 				return b;
 			}
