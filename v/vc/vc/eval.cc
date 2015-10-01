@@ -19,6 +19,9 @@
 namespace vc
 {
 	
+	using math::integer::cmp_t;
+	
+	
 	static plus::string hex( const plus::string& s )
 	{
 		return plus::hex_lower( s.data(), s.size() );
@@ -33,6 +36,68 @@ namespace vc
 		}
 		
 		return x;
+	}
+	
+	static
+	void validate( const Value& value )
+	{
+		switch ( value.type )
+		{
+			case Value_nothing:
+				SYNTAX_ERROR( "invalid void state during evaluation" );
+			
+			default:
+				break;
+		}
+	}
+	
+	static
+	bool equal( const Value& a, const Value& b )
+	{
+		if ( a.type != b.type )
+		{
+			return false;
+		}
+		
+		switch ( a.type )
+		{
+			case Value_boolean:
+			case Value_number:
+				return a.number == b.number;
+			
+			case Value_string:
+				return a.string == b.string;
+			
+			default:
+				INTERNAL_ERROR( "unsupported type in equal()" );
+				break;
+		}
+		
+		return false;
+	}
+	
+	static
+	cmp_t compare( const Value& a, const Value& b )
+	{
+		if ( a.type != b.type )
+		{
+			INTERNAL_ERROR( "mismatched types in compare()" );
+		}
+		
+		switch ( a.type )
+		{
+			case Value_number:
+				return compare( a.number, b.number );
+			
+			case Value_string:
+				return compare( a.string, b.string );
+			
+			default:
+				INTERNAL_ERROR( "unsupported type in compare()" );
+				break;
+		}
+		
+		return 0;
 	}
 	
 	static
@@ -135,38 +200,12 @@ namespace vc
 	}
 	
 	static
-	Value eval_bool( const plus::integer&  left,
-	                 op_type               op,
-	                 const plus::integer&  right )
-	{
-		switch ( op )
-		{
-			case Op_equal:    return left == right;
-			case Op_unequal:  return left != right;
-			
-			default:
-				break;
-		}
-		
-		SYNTAX_ERROR( "operator not defined for boolean values" );
-		
-		return Value();
-	}
-	
-	static
 	Value eval( const plus::integer&  left,
 	            op_type               op,
 	            const plus::integer&  right )
 	{
 		switch ( op )
 		{
-			case Op_equal:     return left == right;
-			case Op_unequal:   return left != right;
-			case Op_lt:        return left <  right;
-			case Op_lte:       return left <= right;
-			case Op_gt:        return left >  right;
-			case Op_gte:       return left >= right;
-			
 			case Op_add:       return left + right;
 			case Op_subtract:  return left - right;
 			case Op_multiply:  return left * right;
@@ -185,29 +224,6 @@ namespace vc
 		return Value();
 	}
 	
-	static
-	Value eval_str( const plus::string&  left,
-	                op_type               op,
-	                const plus::string&  right )
-	{
-		switch ( op )
-		{
-			case Op_equal:    return left == right;
-			case Op_unequal:  return left != right;
-			case Op_lt:       return left <  right;
-			case Op_lte:      return left <= right;
-			case Op_gt:       return left >  right;
-			case Op_gte:      return left >= right;
-			
-			default:
-				break;
-		}
-		
-		SYNTAX_ERROR( "operator not defined for string values" );
-		
-		return Value();
-	}
-	
 	Value eval( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -217,9 +233,23 @@ namespace vc
 			return eval_unary( op, right );
 		}
 		
-		if ( op == Op_function )
+		validate( left  );
+		validate( right );
+		
+		switch ( op )
 		{
-			return eval_function( left.number.clipped(), right );
+			case Op_function:
+				return eval_function( left.number.clipped(), right );
+			
+			case Op_equal:    return equal( left, right );
+			case Op_unequal:  return ! equal( left, right );
+			
+			case Op_lt:   return compare( left, right ) <  0;
+			case Op_lte:  return compare( left, right ) <= 0;
+			case Op_gt:   return compare( left, right ) >  0;
+			case Op_gte:  return compare( left, right ) >= 0;
+			
+			default:  break;
 		}
 		
 		if ( op == Op_duplicate )
@@ -244,13 +274,13 @@ namespace vc
 			switch ( left.type )
 			{
 				case Value_boolean:
-					return eval_bool( left.number, op, right.number );
+					SYNTAX_ERROR( "operator not defined for boolean values" );
 				
 				case Value_number:
 					return eval( left.number, op, right.number );
 				
 				case Value_string:
-					return eval_str( left.string, op, right.string );
+					SYNTAX_ERROR( "operator not defined for string values" );
 				
 				default:
 					break;

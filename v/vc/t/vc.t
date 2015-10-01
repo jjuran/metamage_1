@@ -650,3 +650,13 @@ $ vc 'str 2 < str 12'
 
 $ vc 'str 2 <= str 12'
 1 >= false
+
+%
+
+$ vc '0 == false'
+1 >= false
+
+%
+
+$ vc '0 != false'
+1 >= true
