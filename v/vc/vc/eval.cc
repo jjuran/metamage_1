@@ -101,16 +101,38 @@ namespace vc
 	}
 	
 	static
+	plus::string make_string( const Value& value )
+	{
+		switch ( value.type )
+		{
+			case Value_boolean:
+				return value.number.is_zero() ? "false" : "true";
+			
+			case Value_number:
+				return encode_decimal( value.number );
+			
+			case Value_string:
+				return value.string;
+			
+			default:
+				break;
+		}
+		INTERNAL_ERROR( "unsupported type in make_string()" );
+		
+		return plus::string::null;
+	}
+	
+	static
 	Value eval_function( unsigned f, Value arg )
 	{
+		if ( f == Function_str )
+		{
+			return make_string( arg );
+		}
+		
 		switch ( arg.type )
 		{
 			case Value_boolean:
-				if ( f == Function_str )
-				{
-					return arg.number.is_zero() ? "false" : "true";
-				}
-				
 				if ( f != Function_bool )
 				{
 					SYNTAX_ERROR( "function unimplemented for boolean values" );
@@ -132,9 +154,6 @@ namespace vc
 					case Function_hex:
 						return hex( arg.number );
 					
-					case Function_str:
-						return encode_decimal( arg.number );
-					
 					default:
 						INTERNAL_ERROR( "unimplemented function" );
 				}
@@ -146,9 +165,6 @@ namespace vc
 				{
 					case Function_hex:
 						arg.string = hex( arg.string );
-						break;
-					
-					case Function_str:
 						break;
 					
 					default:
