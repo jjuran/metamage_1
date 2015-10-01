@@ -600,7 +600,7 @@ namespace plus
 	}
 	
 	
-	int cmp( const string& a, const string& b )
+	int compare( const string& a, const string& b )
 	{
 		return string_compare( a.data(), a.size(), b.data(), b.size() );
 	}

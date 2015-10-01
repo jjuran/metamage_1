@@ -269,7 +269,7 @@ namespace plus
 	};
 	
 	
-	int cmp( const string& a, const string& b );
+	int compare( const string& a, const string& b );
 	
 	bool operator==( const string& a, const string& b );
 	
