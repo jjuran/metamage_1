@@ -11,7 +11,7 @@
 #include "relix/parameter_block.h"
 #include "relix/restack.h"
 #include "relix/stack.h"
-#ifndef __A5__
+#if ! __A5__
 #include "tool-runtime/parameter_block.h"
 #endif
 
@@ -57,7 +57,7 @@ static _relix_stack_footer* get_top_stack()
 	return NULL;
 }
 
-#ifndef __A5__
+#if ! __A5__
 
 static inline const void* get_stack_limit()
 {
@@ -83,7 +83,7 @@ unsigned _relix_stack_space()
 	return stack_pointer - stack_limit;
 }
 
-#endif  // #ifndef __A5__
+#endif  // #if ! __A5__
 
 void* _create_new_stack()
 {
