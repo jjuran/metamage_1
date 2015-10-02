@@ -56,7 +56,7 @@ namespace vc
 	{
 		if ( a.type != b.type )
 		{
-			return false;
+			TYPE_ERROR( "mismatched types in equality relation" );
 		}
 		
 		switch ( a.type )

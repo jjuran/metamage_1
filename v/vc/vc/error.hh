@@ -11,10 +11,11 @@
 
 #define VC_ERROR( type, s )  ::vc::error( STR_LEN( type " ERROR: " s "\n" ) )
 
+#define DOMAIN_ERROR( s )    VC_ERROR( "DOMAIN",   s )
 #define INTERNAL_ERROR( s )  VC_ERROR( "INTERNAL", s )
 #define SYMBOL_ERROR( s )    VC_ERROR( "SYMBOL",   s )
 #define SYNTAX_ERROR( s )    VC_ERROR( "SYNTAX",   s )
-#define DOMAIN_ERROR( s )    VC_ERROR( "DOMAIN",   s )
+#define TYPE_ERROR( s )      VC_ERROR( "TYPE",     s )
 
 	
 namespace vc
