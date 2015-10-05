@@ -89,7 +89,7 @@ namespace vc
 	{
 		if ( a.type != b.type )
 		{
-			INTERNAL_ERROR( "mismatched types in compare()" );
+			TYPE_ERROR( "mismatched types in compare()" );
 		}
 		
 		switch ( a.type )
@@ -101,7 +101,7 @@ namespace vc
 				return compare( a.string, b.string );
 			
 			default:
-				INTERNAL_ERROR( "unsupported type in compare()" );
+				TYPE_ERROR( "unsupported type in compare()" );
 				break;
 		}
 		
