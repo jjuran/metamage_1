@@ -1213,3 +1213,43 @@ $ FOO=foo vc 'print getenv "FOO"'
 
 $ FOO=BAR BAR=BAZ vc 'print getenv getenv "FOO"'
 1 >= BAZ
+
+%
+
+$ vc '() == ()'
+1 >= true
+
+%
+
+$ vc '(1, 2, 3) == (1, 2, 3)'
+1 >= true
+
+%
+
+$ vc '(1, 2, 3) == (3, 2, 1)'
+1 >= false
+
+%
+
+$ vc '(1, 2, 3) == (1, 2)'
+1 >= false
+
+%
+
+$ vc '(1, 2, 3) == 1'
+1 >= false
+
+%
+
+$ vc '(1, 2, 3) == ()'
+1 >= false
+
+%
+
+$ vc '(1, 2, 3) == (1, 3, "five")'
+1 >= false
+
+%
+
+$ vc 'true (*) 2 == (true, true)'
+1 >= true

@@ -39,7 +39,7 @@ namespace vc
 	}
 	
 	static
-	bool equal( const Value& a, const Value& b )
+	bool equal_atoms( const Value& a, const Value& b )
 	{
 		if ( a.type != b.type )
 		{
@@ -65,18 +65,37 @@ namespace vc
 			
 			case Value_function:
 				return a.function == b.function;
-				break;
-			
-			case Value_pair:
-				SYNTAX_ERROR( "equality for lists unimplemented" );
-				break;
 			
 			default:
-				INTERNAL_ERROR( "unsupported type in equal()" );
+				INTERNAL_ERROR( "unsupported type in equal_atoms()" );
 				break;
 		}
 		
 		return false;
+	}
+	
+	static
+	bool equal( const Value& one, const Value& two )
+	{
+		const Value* a = &one;
+		const Value* b = &two;
+		
+	next:
+		
+		if ( ! equal_atoms( first( *a ), first( *b ) ) )
+		{
+			return false;
+		}
+		
+		if ( a->type != Value_pair  &&  b->type != Value_pair )
+		{
+			return true;
+		}
+		
+		a = &rest( *a );
+		b = &rest( *b );
+		
+		goto next;
 	}
 	
 	static
