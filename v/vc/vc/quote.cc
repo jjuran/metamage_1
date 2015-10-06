@@ -64,10 +64,44 @@ namespace vc
 	}
 	
 	static
+	chars::unichar_t decode_braced_unicode_escape( const char*& p )
+	{
+		using iota::is_xdigit;
+		using gear::decoded_hex_digit;
+		
+		chars::unichar_t uc = 0;
+		
+		char c;
+		
+		while ( is_xdigit( c = *p++ ) )
+		{
+			if ( uc > 0x0FFFFFFF )
+			{
+				SYNTAX_ERROR( "invalid unicode escape sequence" );
+			}
+			
+			uc <<= 4;
+			uc |= decoded_hex_digit( c );
+		}
+		
+		if ( c != '}' )
+		{
+			SYNTAX_ERROR( "invalid unicode escape sequence" );
+		}
+		
+		return uc;
+	}
+	
+	static
 	chars::unichar_t decode_unicode_escape( const char*& p )
 	{
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
+		
+		if ( *p == '{' )
+		{
+			return decode_braced_unicode_escape( ++p );
+		}
 		
 		const unsigned char c1 = *p++;
 		const unsigned char c2 = *p++;
