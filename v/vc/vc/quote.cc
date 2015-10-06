@@ -8,6 +8,9 @@
 // iota
 #include "iota/char_types.hh"
 
+// chars
+#include "encoding/utf8.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -60,6 +63,34 @@ namespace vc
 		       | decoded_hex_digit( c2 ) << 0;
 	}
 	
+	static
+	chars::unichar_t decode_unicode_escape( const char*& p )
+	{
+		using iota::is_xdigit;
+		using gear::decoded_hex_digit;
+		
+		const unsigned char c1 = *p++;
+		const unsigned char c2 = *p++;
+		
+		if ( ! is_xdigit( c1 )  ||  ! is_xdigit( c2 ) )
+		{
+			SYNTAX_ERROR( "invalid unicode escape sequence" );
+		}
+		
+		const unsigned char c3 = *p++;
+		const unsigned char c4 = *p++;
+		
+		if ( ! is_xdigit( c3 )  ||  ! is_xdigit( c4 ) )
+		{
+			SYNTAX_ERROR( "invalid unicode escape sequence" );
+		}
+		
+		return + decoded_hex_digit( c1 ) << 12
+		       | decoded_hex_digit( c2 ) <<  8
+		       | decoded_hex_digit( c3 ) <<  4
+		       | decoded_hex_digit( c4 ) <<  0;
+	}
+	
 	plus::string unquote_escaped_string( const plus::string& s )
 	{
 		plus::string result;
@@ -88,6 +119,28 @@ namespace vc
 				
 				if ( is_alpha( c ) )
 				{
+					if ( c == 'u' )
+					{
+						using chars::unichar_t;
+						using chars::measure_utf8_bytes_for_unicode;
+						using chars::put_code_point_into_utf8;
+						
+						const unichar_t uc = decode_unicode_escape( p );
+						
+						const unsigned n = measure_utf8_bytes_for_unicode( uc );
+						
+						if ( n == 0 )
+						{
+							SYNTAX_ERROR( "invalid Unicode code point" );
+						}
+						
+						put_code_point_into_utf8( uc, n, q );
+						
+						q += n;
+						
+						continue;
+					}
+					
 					switch ( c )
 					{
 						case 'a':  c = '\a';  break;
