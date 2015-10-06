@@ -770,3 +770,18 @@ $ vc 'var x = (); x = x, 1; x = x, 2, 3; x'
 
 $ vc 'const nil = (); var x = 1, 2; var y = 3, 4; var z = x, nil, y'
 1 >= "1, 2, 3, 4"
+
+%
+
+$ vc 'bool str ()'
+1 >= false
+
+%
+
+$ vc 'bool str 0'
+1 >= true
+
+%
+
+$ vc 'bool hex 2'
+1 >= true

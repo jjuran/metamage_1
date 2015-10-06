@@ -193,6 +193,10 @@ namespace vc
 			case Value_string:
 				switch ( f )
 				{
+					case Function_bool:
+						return ! arg.string.empty();
+						break;
+					
 					case Function_hex:
 						arg.string = hex( arg.string );
 						break;
