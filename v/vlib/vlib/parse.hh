@@ -13,7 +13,9 @@
 namespace vlib
 {
 	
-	Value parse_and_eval( const char* p );
+	Value parse( const char* p );
+	
+	Value eval_tree( const Value& tree );
 	
 }
 

@@ -34,6 +34,18 @@
 namespace vlib
 {
 	
+	static
+	Value expression( const Value&  left,
+	                  op_type       op,
+	                  const Value&  right )
+	{
+		if ( op == Op_denote )
+		{
+			return eval( left, op, right );
+		}
+		
+		return Value( Value_pair, left, op, right );
+	}
 	
 	class Parser
 	{
@@ -59,7 +71,7 @@ namespace vlib
 			void receive_token( const Token& token );
 		
 		public:
-			Value parse_and_eval( const char* p );
+			Value parse( const char* p );
 	};
 	
 	bool Parser::expecting_value() const
@@ -91,7 +103,7 @@ namespace vlib
 			dyad right = stack.back();  stack.pop_back();
 			dyad& left = stack.back();
 			
-			left.v  = eval( left.v, left.op, right.v );
+			left.v  = expression( left.v, left.op, right.v );
 		}
 		
 		stack.back().op = op;
@@ -327,8 +339,10 @@ namespace vlib
 		}
 	}
 	
-	Value Parser::parse_and_eval( const char* p )
+	Value Parser::parse( const char* p )
 	{
+		Value result;  // nothing
+		
 		while ( true )
 		{
 			Token token;
@@ -343,7 +357,7 @@ namespace vlib
 				receive_token( token );
 			}
 			
-			Value result;  // nothing
+			Value value;  // nothing
 			
 			if ( ! stack.empty() )
 			{
@@ -354,7 +368,7 @@ namespace vlib
 				
 				fold_ops_and_add( Op_end );
 				
-				result = stack.back().v;
+				value = stack.back().v;
 				
 				stack.pop_back();
 				
@@ -364,6 +378,15 @@ namespace vlib
 				}
 			}
 			
+			if ( ! result.type() )
+			{
+				result = value;
+			}
+			else
+			{
+				result = Value( Value_pair, result, Op_end, value );
+			}
+			
 			if ( ! token )
 			{
 				return eval( result );
@@ -371,13 +394,40 @@ namespace vlib
 		}
 	}
 	
-	Value parse_and_eval( const char* p )
+	Value eval_tree( const Value& tree )
+	{
+		if ( Expr* expr = tree.expr() )
+		{
+			if ( expr->op == Op_end )
+			{
+				return eval_tree( expr->left ), eval_tree( expr->right );
+			}
+			
+			if ( is_left_varop( expr->op ) )
+			{
+				return eval( expr->left, expr->op, eval_tree( expr->right ) );
+			}
+			
+			return eval( eval_tree( expr->left ),
+			             expr->op,
+			             eval_tree( expr->right ) );
+		}
+		
+		if ( tree.type() == Value_symbol )
+		{
+			return lookup_symbol( tree.sym() );
+		}
+		
+		return tree;
+	}
+	
+	Value parse( const char* p )
 	{
 		static bool installed = install_basic_symbols();
 		
 		Parser parser;
 		
-		return parser.parse_and_eval( p );
+		return parser.parse( p );
 	}
 	
 }

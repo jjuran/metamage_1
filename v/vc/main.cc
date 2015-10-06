@@ -176,7 +176,9 @@ int main( int argc, char** argv )
 			
 			assign_symbol( pc, i + 1 );
 			
-			reproduce( parse_and_eval( expr ) );
+			const Value tree = parse( expr );
+			
+			reproduce( eval_tree( tree ) );
 			
 			breathe();
 			
