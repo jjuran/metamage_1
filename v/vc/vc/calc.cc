@@ -130,6 +130,32 @@ namespace vc
 	}
 	
 	static
+	Value v_bool( const Value& arg )
+	{
+		switch ( arg.type )
+		{
+			default:
+				INTERNAL_ERROR( "invalid type in v_bool()" );
+			
+			case Value_empty_list:
+				return false;
+			
+			case Value_boolean:
+				return arg;
+			
+			case Value_number:
+				return ! arg.number.is_zero();
+			
+			case Value_string:
+				return ! arg.string.empty();
+			
+			case Value_function:
+			case Value_pair:
+				return true;
+		}
+	}
+	
+	static
 	Value calc_function( unsigned f, Value arg )
 	{
 		if ( f == Function_str )
@@ -137,24 +163,19 @@ namespace vc
 			return make_string( arg );
 		}
 		
+		if ( f == Function_bool )
+		{
+			return v_bool( arg );
+		}
+		
 		switch ( arg.type )
 		{
 			case Value_empty_list:
-				if ( f != Function_bool )
-				{
-					SYNTAX_ERROR( "function unimplemented for empty list" );
-				}
-				
-				arg.type = Value_boolean;
-				
+				SYNTAX_ERROR( "function unimplemented for empty list" );
 				break;
 			
 			case Value_boolean:
-				if ( f != Function_bool )
-				{
-					SYNTAX_ERROR( "function unimplemented for boolean values" );
-				}
-				
+				SYNTAX_ERROR( "function unimplemented for boolean values" );
 				break;
 			
 			case Value_number:
@@ -162,11 +183,6 @@ namespace vc
 				{
 					case Function_abs:   arg.number.absolve();  break;
 					case Function_half:  arg.number.halve();    break;
-					
-					case Function_bool:
-						arg.type   = Value_boolean;
-						arg.number = ! arg.number.is_zero();
-						break;
 					
 					case Function_hex:
 						return hex( arg.number );
@@ -180,10 +196,6 @@ namespace vc
 			case Value_string:
 				switch ( f )
 				{
-					case Function_bool:
-						return ! arg.string.empty();
-						break;
-					
 					case Function_hex:
 						arg.string = hex( arg.string );
 						break;
@@ -195,15 +207,7 @@ namespace vc
 				break;
 			
 			case Value_pair:
-				switch ( f )
-				{
-					case Function_bool:
-						return true;  // All pairs are true.
-					
-					default:
-						SYNTAX_ERROR( "function unimplemented for lists" );
-				}
-				
+				SYNTAX_ERROR( "function unimplemented for lists" );
 				break;
 			
 			default:

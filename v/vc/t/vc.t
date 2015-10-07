@@ -948,3 +948,8 @@ $ vc '1^time()'
 
 $ vc 'str time'
 1 >= time
+
+%
+
+$ vc 'bool time'
+1 >= true
