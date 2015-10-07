@@ -185,7 +185,8 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	vc::define( "time", &vc::v_time );
+	vc::define( "getenv", &vc::v_getenv );
+	vc::define( "time",   &vc::v_time   );
 	
 	vc::symbol_id pc = vc::create_symbol( "PC", vc::Symbol_var );
 	

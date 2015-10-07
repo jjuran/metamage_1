@@ -15,7 +15,8 @@ namespace vc
 	
 	void define( const char* name, function_type f );
 	
-	Value v_time( const Value& );
+	Value v_getenv( const Value& );
+	Value v_time  ( const Value& );
 	
 }
 

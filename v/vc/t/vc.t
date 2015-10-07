@@ -908,3 +908,18 @@ $ vc '(var x); (x) = 5; x'
 
 $ vc 'time() > 1444456789'
 1 >= true
+
+%
+
+$ vc 'getenv "This environment variable is almost certainly not defined."'
+1 >= "()"
+
+%
+
+$ FOO=foo vc 'getenv "FOO"'
+1 >= foo
+
+%
+
+$ FOO="" vc 'getenv "FOO"'
+1 >= ""
