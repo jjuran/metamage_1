@@ -11,6 +11,7 @@
 
 // Standard C++
 #include <new>
+#include <vector>
 
 // must
 #include "must/write.h"
@@ -160,6 +161,8 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
+	std::vector< Value > parse_trees( argn );
+	
 	define( proc_getenv );
 	define( proc_print  );
 	define( proc_time   );
@@ -176,7 +179,12 @@ int main( int argc, char** argv )
 			
 			assign_symbol( pc, i + 1 );
 			
-			const Value tree = parse( expr );
+			if ( parse_trees[ i ].type() == Value_nothing )
+			{
+				parse_trees[ i ] = parse( expr );
+			}
+			
+			const Value& tree = parse_trees[ i ];
 			
 			reproduce( eval_tree( tree ) );
 			
