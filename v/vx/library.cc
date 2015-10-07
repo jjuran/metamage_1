@@ -27,8 +27,8 @@
 #include "vlib/interpret.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
-#include "vlib/value.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/stdint.hh"
 
 
 namespace vlib
@@ -72,6 +72,14 @@ namespace vlib
 		must_write( STDOUT_FILENO, s.data(), s.size() );
 		
 		return Value();
+	}
+	
+	static
+	Value v_sleep( const Value& v )
+	{
+		sleep( v.number().clipped() );
+		
+		return Value_nothing;
 	}
 	
 	static
@@ -141,6 +149,7 @@ namespace vlib
 	}
 	
 	static const Value c_str = c_str_vtype;
+	static const Value u32   = u32_vtype;
 	
 	static const Value maybe_cstr( c_str_vtype, Op_union, Value_empty_list );
 	
@@ -151,6 +160,7 @@ namespace vlib
 	const proc_info proc_eval   = { &v_eval,   "eval",   &eval       };
 	const proc_info proc_getenv = { &v_getenv, "getenv", &c_str      };
 	const proc_info proc_print  = { &v_print,  "print",  NULL        };
+	const proc_info proc_sleep  = { &v_sleep,  "sleep",  &u32        };
 	const proc_info proc_system = { &v_system, "system", &empty_list };
 	const proc_info proc_SYSTEM = { &v_SYSTEM, "system", &maybe_cstr };
 	const proc_info proc_time   = { &v_time,   "time",   &empty_list };
