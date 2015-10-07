@@ -177,6 +177,7 @@ int main( int argc, char** argv )
 		define( proc_system );
 	}
 	
+	define( proc_eval   );
 	define( proc_getenv );
 	define( proc_load   );
 	define( proc_print  );

@@ -22,6 +22,7 @@
 
 // vlib
 #include "vlib/exceptions.hh"
+#include "vlib/interpret.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/value.hh"
@@ -29,6 +30,23 @@
 
 namespace vlib
 {
+	
+	static
+	void eval_error_handler( const plus::string& msg, const source_spec& src )
+	{
+		throw user_exception( msg, src );
+	}
+	
+	static
+	Value v_eval( const Value& v )
+	{
+		Expr* expr = v.expr();
+		
+		const char* code = expr->left .string().c_str();
+		const char* file = expr->right.string().c_str();
+		
+		return interpret( code, file, NULL, &eval_error_handler );
+	}
 	
 	static
 	Value v_getenv( const Value& v )
@@ -123,6 +141,11 @@ namespace vlib
 	
 	static const Value maybe_cstr( c_str_vtype, Op_union, Value_empty_list );
 	
+	static const Value cstr_eval = Value( c_str_vtype, Op_duplicate, "<eval>" );
+	
+	static const Value eval = Value( c_str, cstr_eval );
+	
+	const proc_info proc_eval   = { &v_eval,   "eval",   &eval       };
 	const proc_info proc_getenv = { &v_getenv, "getenv", &c_str      };
 	const proc_info proc_print  = { &v_print,  "print",  NULL        };
 	const proc_info proc_system = { &v_system, "system", &empty_list };

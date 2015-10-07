@@ -13,6 +13,7 @@
 namespace vlib
 {
 	
+	extern const proc_info proc_eval;
 	extern const proc_info proc_getenv;
 	extern const proc_info proc_print;
 	extern const proc_info proc_system;
