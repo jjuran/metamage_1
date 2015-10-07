@@ -25,6 +25,7 @@
 
 // vc
 #include "vc/error.hh"
+#include "vc/library.hh"
 #include "vc/parse.hh"
 #include "vc/symbol_table.hh"
 
@@ -88,6 +89,7 @@ static plus::string stringify( const vc::Value& v )
 			return stringify( v.number );
 		
 		case Value_string:
+		case Value_function:
 			return v.string;
 		
 		case Value_pair:
@@ -182,6 +184,8 @@ int main( int argc, char** argv )
 	{
 		return 0;
 	}
+	
+	vc::define( "time", &vc::v_time );
 	
 	vc::symbol_id pc = vc::create_symbol( "PC", vc::Symbol_var );
 	

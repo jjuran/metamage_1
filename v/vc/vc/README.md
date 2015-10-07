@@ -47,6 +47,8 @@ Level 3
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
+`library.*`:  Defines various library functions, and `define()` for installing them.
+
 Level 4
 -------
 
