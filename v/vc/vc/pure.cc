@@ -302,6 +302,16 @@ namespace vc
 		switch ( op )
 		{
 			case Op_function:
+				if ( left.type == Value_function )
+				{
+					return left.function( right );
+				}
+				
+				if ( left.type != Value_builtin_function )
+				{
+					SYNTAX_ERROR( "attempted call of non-function" );
+				}
+				
 				return eval_function( left.number.clipped(), right );
 			
 			case Op_equal:    return equal( left, right );

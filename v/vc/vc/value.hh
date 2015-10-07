@@ -33,6 +33,7 @@ namespace vc
 		Value_boolean,
 		Value_number,
 		Value_string,
+		Value_function,
 		Value_pair,
 	};
 	
@@ -42,11 +43,16 @@ namespace vc
 		return type == Value_symbol  ||  type == Value_symbol_declarator;
 	}
 	
+	struct Value;
+	
+	typedef Value (*function_type)( const Value& argument );
+	
 	struct Value
 	{
 		value_type     type;
 		plus::integer  number;
 		plus::string   string;
+		function_type  function;
 		expr_box       expr;
 		
 		Value( value_type type = value_type() ) : type( type )
@@ -74,6 +80,14 @@ namespace vc
 		}
 		
 		Value( const char* s ) : type( Value_string ), string( s )
+		{
+		}
+		
+		Value( function_type f, const plus::string& name )
+		:
+			type( Value_function ),
+			string( name ),
+			function( f )
 		{
 		}
 		

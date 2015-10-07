@@ -111,7 +111,9 @@ namespace vc
 	{
 		if ( ! expecting_value() )
 		{
-			SYNTAX_ERROR( "left parenthesis where operator expected" );
+			// Assume a function call.
+			
+			fold_ops_and_add( Op_function );
 		}
 		
 		metastack.push_back( stack );
@@ -153,7 +155,9 @@ namespace vc
 				return;
 			}
 			
-			SYNTAX_ERROR( "value where operator expected" );
+			// Assume a function call.
+			
+			fold_ops_and_add( Op_function );
 		}
 		
 		stack.push_back( dyad( x ) );
