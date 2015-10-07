@@ -24,7 +24,6 @@ namespace plus
 	
 	inline void construct_from_default( datum_storage& x )
 	{
-		x.small[ 0                ] = '\0';
 		x.small[ datum_max_offset ] = datum_max_offset;
 	}
 	

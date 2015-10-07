@@ -134,7 +134,6 @@ namespace plus
 	
 	string::string( const char* p, const char* q )
 	{
-		store.small[ 0          ] = '\0';
 		store.small[ max_offset ] = max_offset;
 		
 		assign( p, q );
@@ -142,7 +141,6 @@ namespace plus
 	
 	string::string( const char* s )
 	{
-		store.small[ 0          ] = '\0';
 		store.small[ max_offset ] = max_offset;
 		
 		assign( s );
@@ -170,6 +168,10 @@ namespace plus
 		
 		if ( (int8_t) *last >= 0 )
 		{
+			char* tail = last - *last;
+			
+			*tail = '\0';
+			
 			return store.small;  // always terminated
 		}
 		
