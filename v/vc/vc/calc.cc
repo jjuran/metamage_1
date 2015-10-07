@@ -168,6 +168,28 @@ namespace vc
 	}
 	
 	static
+	Value v_abs( const Value& arg )
+	{
+		if ( arg.type != Value_number )
+		{
+			TYPE_ERROR( "invalid argument to abs()" );
+		}
+		
+		return abs( arg.number );
+	}
+	
+	static
+	Value v_half( const Value& arg )
+	{
+		if ( arg.type != Value_number )
+		{
+			TYPE_ERROR( "invalid argument to half()" );
+		}
+		
+		return half( arg.number );
+	}
+	
+	static
 	Value calc_function( unsigned f, Value arg )
 	{
 		if ( f == Function_str )
@@ -185,39 +207,17 @@ namespace vc
 			return v_hex( arg );
 		}
 		
-		switch ( arg.type )
+		if ( f == Function_abs )
 		{
-			case Value_empty_list:
-				SYNTAX_ERROR( "function unimplemented for empty list" );
-				break;
-			
-			case Value_boolean:
-				SYNTAX_ERROR( "function unimplemented for boolean values" );
-				break;
-			
-			case Value_number:
-				switch ( f )
-				{
-					case Function_abs:   arg.number.absolve();  break;
-					case Function_half:  arg.number.halve();    break;
-					
-					default:
-						INTERNAL_ERROR( "unimplemented function" );
-				}
-				
-				break;
-			
-			case Value_string:
-				SYNTAX_ERROR( "function unimplemented for strings" );
-				break;
-			
-			case Value_pair:
-				SYNTAX_ERROR( "function unimplemented for lists" );
-				break;
-			
-			default:
-				INTERNAL_ERROR( "invalid type in calc_function()" );
+			return v_abs( arg );
 		}
+		
+		if ( f == Function_half )
+		{
+			return v_half( arg );
+		}
+		
+		INTERNAL_ERROR( "unimplemented function" );
 		
 		return arg;
 	}
