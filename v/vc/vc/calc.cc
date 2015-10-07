@@ -156,6 +156,18 @@ namespace vc
 	}
 	
 	static
+	Value v_hex( const Value& arg )
+	{
+		switch ( arg.type )
+		{
+			default:  TYPE_ERROR( "invalid argument to hex()" );
+			
+			case Value_number:  return hex( arg.number );
+			case Value_string:  return hex( arg.string );
+		}
+	}
+	
+	static
 	Value calc_function( unsigned f, Value arg )
 	{
 		if ( f == Function_str )
@@ -166,6 +178,11 @@ namespace vc
 		if ( f == Function_bool )
 		{
 			return v_bool( arg );
+		}
+		
+		if ( f == Function_hex )
+		{
+			return v_hex( arg );
 		}
 		
 		switch ( arg.type )
@@ -184,9 +201,6 @@ namespace vc
 					case Function_abs:   arg.number.absolve();  break;
 					case Function_half:  arg.number.halve();    break;
 					
-					case Function_hex:
-						return hex( arg.number );
-					
 					default:
 						INTERNAL_ERROR( "unimplemented function" );
 				}
@@ -194,16 +208,7 @@ namespace vc
 				break;
 			
 			case Value_string:
-				switch ( f )
-				{
-					case Function_hex:
-						arg.string = hex( arg.string );
-						break;
-					
-					default:
-						SYNTAX_ERROR( "function unimplemented for strings" );
-				}
-				
+				SYNTAX_ERROR( "function unimplemented for strings" );
 				break;
 			
 			case Value_pair:
