@@ -164,7 +164,11 @@ namespace plus
 	
 	const char* string::c_str() const
 	{
-		if ( is_small() )
+		datum_storage& u = const_cast< datum_storage& >( store );
+		
+		char* last = u.small + max_offset;
+		
+		if ( (int8_t) *last >= 0 )
 		{
 			return store.small;  // always terminated
 		}
@@ -179,8 +183,6 @@ namespace plus
 		datum_storage temp;
 		
 		char* p = allocate_data( temp, begin, store.alloc.length );
-		
-		datum_storage& u = const_cast< datum_storage& >( store );
 		
 		destroy( u );
 		
