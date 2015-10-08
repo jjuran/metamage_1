@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
 
@@ -45,6 +46,10 @@ namespace vlib
 		if ( v.type() == Value_symbol )
 		{
 			v = defined( lookup_symbol( v.sym() ) );
+		}
+		else if ( Expr* expr = v.listexpr() )
+		{
+			v = Value( eval( expr->left ), eval( expr->right ) );
 		}
 	}
 	
@@ -173,6 +178,22 @@ namespace vlib
 		return value;
 	}
 	
+	static
+	bool is_symbolic( const Value& v )
+	{
+		if ( is_symbol( v ) )
+		{
+			return true;
+		}
+		
+		if ( Expr* expr = v.listexpr() )
+		{
+			return is_symbolic( expr->left );
+		}
+		
+		return false;
+	}
+	
 	Value eval( Value    left,
 	            op_type  op,
 	            Value    right )
@@ -182,11 +203,32 @@ namespace vlib
 			return Value_nothing;
 		}
 		
+		if ( op == Op_list )
+		{
+			if ( is_symbolic( left )  &&  is_symbolic( right ) )
+			{
+				return make_pair( left, right );
+			}
+		}
+		
 		resolve( right );
 		validate( right );
 		
 		if ( is_left_varop( op ) )
 		{
+			if ( Expr* ax = left.listexpr() )
+			{
+				if ( Expr* bx = right.listexpr() )
+				{
+					eval( ax->left,  op, bx->left  );
+					eval( ax->right, op, bx->right );
+					
+					return right;
+				}
+				
+				SYNTAX_ERROR( "too few values in list assignment" );
+			}
+			
 			if ( ! is_symbol( left ) )
 			{
 				SYNTAX_ERROR( "left operand of assignment not a symbol" );

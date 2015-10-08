@@ -2287,3 +2287,23 @@ $ vc 'var x = 0; var i = 0; while ++i < 1000 do {if (i % 3) * (i % 5) then {cont
 
 $ vc 'const t = {[bool, int, str][_]}; var x (t 0) := 0; var y (t 1) := 0; var z (t 2) := 0; x, y, z'
 1 >= '(false, 0, "0")'
+
+%
+
+$ vc 'var x, var y = 1, 2; [x], [y]'
+1 >= '([1], [2])'
+
+%
+
+$ vc 'var x, var y = 1, 2'
+1 >= '(1, 2)'
+
+%
+
+$ vc 'var x; var y; x, y = 3, 4'
+1 >= '(3, 4)'
+
+%
+
+$ vc 'var x, var y = 1, 2; x, y = y, x'
+1 >= '(2, 1)'
