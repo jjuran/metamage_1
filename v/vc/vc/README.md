@@ -40,6 +40,8 @@ Level 2
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
+`pure.*`:  Defines `eval_pure()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
+
 Level 3
 -------
 

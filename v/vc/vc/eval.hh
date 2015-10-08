@@ -6,9 +6,6 @@
 #ifndef VC_EVAL_HH
 #define VC_EVAL_HH
 
-// plus
-#include "plus/integer.hh"
-
 // vc
 #include "vc/op_type.hh"
 #include "vc/value.hh"
