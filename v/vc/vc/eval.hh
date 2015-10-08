@@ -14,9 +14,11 @@
 namespace vc
 {
 	
-	Value eval( const Value&  left,
-	            op_type       op,
-	            const Value&  right );
+	Value eval( Value v );
+	
+	Value eval( Value    left,
+	            op_type  op,
+	            Value    right );
 	
 }
 

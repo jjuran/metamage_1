@@ -87,27 +87,6 @@ namespace vc
 	
 	void Parser::fold_ops_and_add( op_type op )
 	{
-		Value& prev = stack.back().v;
-		
-		if ( is_symbol( prev.type )  &&  ! is_left_varop( op ) )
-		{
-			if ( prev.type == Value_symbol_declarator )
-			{
-				prev = Value();
-			}
-			else
-			{
-				symbol_id sym = symbol_id( prev.number.clipped() );
-				
-				prev = lookup_symbol( sym );
-				
-				if ( prev.type == Value_undefined )
-				{
-					SYMBOL_ERROR( "undefined symbol" );
-				}
-			}
-		}
-		
 		while ( has_higher_precedence_op_than( op ) )
 		{
 			dyad right = stack.back();  stack.pop_back();
@@ -346,7 +325,7 @@ namespace vc
 			
 			if ( ! token )
 			{
-				return result;
+				return eval( result );
 			}
 		}
 	}

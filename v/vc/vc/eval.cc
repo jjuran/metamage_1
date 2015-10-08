@@ -27,11 +27,44 @@ namespace vc
 		}
 	}
 	
-	Value eval( const Value&  left,
-	            op_type       op,
-	            const Value&  right )
+	static
+	const Value& defined( const Value& v )
 	{
-		validate( left  );
+		if ( v.type == Value_undefined )
+		{
+			SYMBOL_ERROR( "undefined symbol" );
+		}
+		
+		return v;
+	}
+	
+	static
+	void resolve( Value& v )
+	{
+		if ( v.type == Value_symbol_declarator )
+		{
+			v = Value_nothing;
+		}
+		else if ( v.type == Value_symbol )
+		{
+			const symbol_id sym = symbol_id( v.number.clipped() );
+			
+			v = defined( lookup_symbol( sym ) );
+		}
+	}
+	
+	Value eval( Value v )
+	{
+		resolve( v );
+		
+		return v;
+	}
+	
+	Value eval( Value    left,
+	            op_type  op,
+	            Value    right )
+	{
+		resolve( right );
 		validate( right );
 		
 		if ( op == Op_duplicate )
@@ -50,6 +83,9 @@ namespace vc
 			
 			return Value();
 		}
+		
+		resolve( left );
+		validate( left );
 		
 		return eval_pure( left, op, right );
 	}
