@@ -221,7 +221,7 @@ namespace vc
 				{
 					if ( function_id f = function_from_name( token.text ) )
 					{
-						receive_value( plus::integer( f ) );
+						receive_value( f );
 						
 						op = Op_function;
 					}
