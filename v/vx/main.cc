@@ -34,6 +34,9 @@
 #include "library.hh"
 #include "posixfs.hh"
 
+// vx
+#include "library.hh"
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -47,14 +50,18 @@ using namespace vlib;
 
 enum
 {
+	Opt_unrestricted  = 'Z',
 	Opt_inline_script = 'e',
 };
 
 static command::option options[] =
 {
 	{ "inline-script",  Opt_inline_script, Param_required },
+	{ "unrestricted",   Opt_unrestricted },
 	{ NULL }
 };
+
+static bool unrestricted = false;
 
 static const char* inline_script = NULL;
 
@@ -81,6 +88,10 @@ static char* const* get_options( char** argv )
 		{
 			case Opt_inline_script:
 				inline_script = command::global_result.param;
+				break;
+			
+			case Opt_unrestricted:
+				unrestricted = true;
 				break;
 			
 			default:
@@ -156,6 +167,15 @@ int main( int argc, char** argv )
 	                 :                 "-";
 	
 	set_argv( arg0, argn, args );
+	
+	if ( unrestricted )
+	{
+		define( proc_SYSTEM );
+	}
+	else
+	{
+		define( proc_system );
+	}
 	
 	define( proc_getenv );
 	define( proc_load   );
