@@ -185,10 +185,12 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	vc::define( "getenv", &vc::v_getenv );
-	vc::define( "time",   &vc::v_time   );
+	using namespace vc;
 	
-	vc::symbol_id pc = vc::create_symbol( "PC", vc::Symbol_var );
+	define( "getenv", &v_getenv );
+	define( "time",   &v_time   );
+	
+	symbol_id pc = create_symbol( "PC", Symbol_var );
 	
 	int i = 0;
 	
@@ -196,11 +198,11 @@ int main( int argc, char** argv )
 	{
 		const char* expr = args[ i ];
 		
-		vc::assign_symbol( pc, i + 1 );
+		assign_symbol( pc, i + 1 );
 		
 		try
 		{
-			print( vc::parse_and_eval( expr ) );
+			print( parse_and_eval( expr ) );
 		}
 		catch ( const std::bad_alloc& )
 		{
@@ -213,7 +215,7 @@ int main( int argc, char** argv )
 		
 		breathe();
 		
-		i = get_int( vc::lookup_symbol( pc ) );
+		i = get_int( lookup_symbol( pc ) );
 	}
 	while ( i < argn );
 	
