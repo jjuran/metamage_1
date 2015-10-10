@@ -6,8 +6,8 @@
 #include "vc/eval.hh"
 
 // vc
+#include "vc/calc.hh"
 #include "vc/error.hh"
-#include "vc/pure.hh"
 #include "vc/symbol_table.hh"
 
 
@@ -87,7 +87,7 @@ namespace vc
 		resolve( left );
 		validate( left );
 		
-		return eval_pure( left, op, right );
+		return calc( left, op, right );
 	}
 	
 }

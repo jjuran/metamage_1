@@ -1,9 +1,9 @@
 /*
-	pure.cc
+	calc.cc
 	-------
 */
 
-#include "vc/pure.hh"
+#include "vc/calc.hh"
 
 // plus
 #include "plus/decimal.hh"
@@ -129,7 +129,7 @@ namespace vc
 	}
 	
 	static
-	Value eval_function( unsigned f, Value arg )
+	Value calc_function( unsigned f, Value arg )
 	{
 		if ( f == Function_str )
 		{
@@ -206,14 +206,14 @@ namespace vc
 				break;
 			
 			default:
-				INTERNAL_ERROR( "invalid type in eval_function()" );
+				INTERNAL_ERROR( "invalid type in calc_function()" );
 		}
 		
 		return arg;
 	}
 	
 	static
-	Value eval_unary( op_type op, const Value& v )
+	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
 		{
@@ -247,13 +247,13 @@ namespace vc
 				break;
 		}
 		
-		INTERNAL_ERROR( "unsupported operator in eval_unary()" );
+		INTERNAL_ERROR( "unsupported operator in calc_unary()" );
 		
 		return Value();
 	}
 	
 	static
-	Value eval( const plus::integer&  left,
+	Value calc( const plus::integer&  left,
 	            op_type               op,
 	            const plus::integer&  right )
 	{
@@ -272,7 +272,7 @@ namespace vc
 				break;
 		}
 		
-		INTERNAL_ERROR( "unsupported operator in eval()" );
+		INTERNAL_ERROR( "unsupported operator in calc()" );
 		
 		return Value();
 	}
@@ -290,13 +290,13 @@ namespace vc
 		return Value( expr.left, make_pair( expr.right, right ) );
 	}
 	
-	Value eval_pure( const Value&  left,
-	                 op_type       op,
-	                 const Value&  right )
+	Value calc( const Value&  left,
+	            op_type       op,
+	            const Value&  right )
 	{
 		if ( left.type == Value_dummy_operand )
 		{
-			return eval_unary( op, right );
+			return calc_unary( op, right );
 		}
 		
 		switch ( op )
@@ -312,7 +312,7 @@ namespace vc
 					SYNTAX_ERROR( "attempted call of non-function" );
 				}
 				
-				return eval_function( left.number.clipped(), right );
+				return calc_function( left.number.clipped(), right );
 			
 			case Op_equal:    return equal( left, right );
 			case Op_unequal:  return ! equal( left, right );
@@ -351,7 +351,7 @@ namespace vc
 					SYNTAX_ERROR( "operator not defined for boolean values" );
 				
 				case Value_number:
-					return eval( left.number, op, right.number );
+					return calc( left.number, op, right.number );
 				
 				case Value_string:
 					SYNTAX_ERROR( "operator not defined for string values" );
