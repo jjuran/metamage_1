@@ -14,6 +14,7 @@ namespace vc
 	{
 		Op_none,
 		Op_function,
+		Op_named_unary,
 		Op_const,
 		Op_var,
 		Op_unary_plus,

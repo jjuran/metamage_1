@@ -302,6 +302,7 @@ namespace vc
 		switch ( op )
 		{
 			case Op_function:
+			case Op_named_unary:
 				if ( left.type == Value_function )
 				{
 					return left.function( right );

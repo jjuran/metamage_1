@@ -129,7 +129,11 @@ namespace vc
 		{
 			while ( is_alnum( *++p ) )  continue;
 			
-			return Token_bareword;
+			const char* q = p;
+			
+			while ( is_space( *q ) )  ++q;
+			
+			return *q == '(' ? Token_bareword_function : Token_bareword;
 		}
 		
 		if ( *p == '"' )

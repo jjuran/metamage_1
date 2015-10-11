@@ -21,6 +21,7 @@ namespace vc
 		Token_string,
 		Token_string_escaped,
 		Token_bareword,
+		Token_bareword_function,
 		Token_lparen,
 		Token_rparen,
 		Token_parens,

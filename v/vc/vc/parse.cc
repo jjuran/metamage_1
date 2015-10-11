@@ -219,6 +219,7 @@ namespace vc
 				break;
 			
 			case Token_bareword:
+			case Token_bareword_function:
 				op_type op;
 				
 				if ( expecting_value() )
@@ -227,7 +228,8 @@ namespace vc
 					{
 						receive_value( f );
 						
-						op = Op_function;
+						op = token == Token_bareword_function ? Op_function
+						                                      : Op_named_unary;
 					}
 					else if ( token.text == "const" )
 					{

@@ -17,8 +17,9 @@ namespace vc
 	{
 		Precedence_none = 0,
 		
+		Precedence_juxtaposition,   // f(x)
 		Precedence_exponentiation,  // ^
-		Precedence_unary_math,      // + -
+		Precedence_unary_math,      // + - (f x)
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
 		Precedence_inequality,      // < <= > >=
@@ -36,9 +37,11 @@ namespace vc
 	
 	static const precedence_mapping precedence_table[] =
 	{
+		{ Precedence_juxtaposition, Op_function },
+		
 		{ Precedence_exponentiation, Op_empower },
 		
-		{ Precedence_unary_math, Op_function    },
+		{ Precedence_unary_math, Op_named_unary },
 		{ Precedence_unary_math, Op_const       },
 		{ Precedence_unary_math, Op_var         },
 		{ Precedence_unary_math, Op_unary_plus  },

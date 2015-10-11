@@ -923,3 +923,23 @@ $ FOO=foo vc 'getenv "FOO"'
 
 $ FOO="" vc 'getenv "FOO"'
 1 >= ""
+
+%
+
+$ vc 'half(2)^2'
+1 >= 1
+
+%
+
+$ vc '2^half(2)'
+1 >= 2
+
+%
+
+$ vc 'time()^0'
+1 >= 1
+
+%
+
+$ vc '1^time()'
+1 >= 1
