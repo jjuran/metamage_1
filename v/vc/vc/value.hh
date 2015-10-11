@@ -71,6 +71,15 @@ namespace vc
 		{
 		}
 		
+		Value( unsigned int i ) : type( Value_number ), number( i ) {}
+		Value(          int i ) : type( Value_number ), number( i ) {}
+		
+		Value( unsigned long i ) : type( Value_number ), number( i ) {}
+		Value(          long i ) : type( Value_number ), number( i ) {}
+		
+		Value( unsigned long long i ) : type( Value_number ), number( i ) {}
+		Value(          long long i ) : type( Value_number ), number( i ) {}
+		
 		Value( const plus::integer& i ) : type( Value_number ), number( i )
 		{
 		}

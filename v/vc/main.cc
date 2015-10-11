@@ -196,7 +196,7 @@ int main( int argc, char** argv )
 	{
 		const char* expr = args[ i ];
 		
-		vc::assign_symbol( pc, plus::integer( i + 1 ) );
+		vc::assign_symbol( pc, i + 1 );
 		
 		try
 		{

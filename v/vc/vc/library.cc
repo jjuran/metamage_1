@@ -53,7 +53,7 @@ namespace vc
 		
 		const time_t t = time( NULL );
 		
-		return plus::integer( t );
+		return t;
 	}
 	
 }
