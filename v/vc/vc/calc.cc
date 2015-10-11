@@ -197,7 +197,6 @@ namespace vc
 		return make_string( p, expr->right );
 	}
 	
-	static
 	Value v_str( const Value& value )
 	{
 		const plus::string::size_type size = composite_length( value );
