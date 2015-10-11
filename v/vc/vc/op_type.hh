@@ -27,6 +27,7 @@ namespace vc
 		Op_divide_by,
 		Op_remain_by,
 		Op_empower,
+		Op_member,
 		Op_multiply,
 		Op_divide,
 		Op_remain,

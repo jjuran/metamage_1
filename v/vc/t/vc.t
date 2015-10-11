@@ -1120,3 +1120,58 @@ $ vc 'var x = 7; x %= 3; x'
 
 $ vc 'var x = 0; var i = 1;' 'x += i * +((i % 3) * (i % 5) == 0); i += 1; PC -= +(i < 1000)' x
 1 >= 233168
+
+%
+
+$ vc '"Hello".length'
+1 >= 5
+
+%
+
+$ vc '"".length'
+1 >= 0
+
+%
+
+$ vc '"\0".length'
+1 >= 1
+
+%
+
+$ vc '"\xa0".length'
+1 >= 1
+
+%
+
+$ vc '"\u{}".length'
+1 >= 1
+
+%
+
+$ vc '"\u{a0}".length'
+1 >= 2
+
+%
+
+$ vc '"\u{2022}".length'
+1 >= 3
+
+%
+
+$ vc '"\u{1f4a9}".length'
+1 >= 4
+
+%
+
+$ vc '"three".length ^ "two".length'
+1 >= 125
+
+%
+
+$ THREE=3 vc 'getenv("THREE").length'
+1 >= 1
+
+%
+
+$ vc 'str().length'
+1 >= 0

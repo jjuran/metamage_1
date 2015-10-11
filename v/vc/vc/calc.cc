@@ -354,6 +354,33 @@ namespace vc
 	}
 	
 	static
+	Value calc_member( const Value& left, const Value& right )
+	{
+		if ( right.type != Value_string )
+		{
+			SYNTAX_ERROR( "non-string member name" );
+		}
+		
+		switch ( left.type )
+		{
+			case Value_string:
+				if ( right.string == "length" )
+				{
+					return left.string.size();
+				}
+				break;
+			
+			default:
+				SYNTAX_ERROR( "unsupported type for member access" );
+				break;
+		}
+		
+		SYNTAX_ERROR( "unsupported member name" );
+		
+		return Value();
+	}
+	
+	static
 	Value calc( const plus::integer&  left,
 	            op_type               op,
 	            const plus::integer&  right )
@@ -478,6 +505,9 @@ namespace vc
 		
 		switch ( op )
 		{
+			case Op_member:
+				return calc_member( left, right );
+			
 			case Op_function:
 			case Op_named_unary:
 				if ( left.type == Value_function )

@@ -52,6 +52,8 @@ namespace vc
 		{ "-",   Token_minus        },
 		{ "-=",  Token_minus_equals },
 		
+		{ ".",   Token_dot },
+		
 		{ "/",   Token_slash        },
 		{ "/=",  Token_slash_equals },
 		

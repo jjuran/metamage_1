@@ -33,6 +33,7 @@ namespace vc
 	
 	const op_mapping when_value_acquired[] =
 	{
+		{ Token_dot,         Op_member    },
 		{ Token_plus,        Op_add       },
 		{ Token_minus,       Op_subtract  },
 		{ Token_asterisk,    Op_multiply  },

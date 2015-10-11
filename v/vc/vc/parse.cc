@@ -245,6 +245,12 @@ namespace vc
 						
 						if ( ! stack.empty() )
 						{
+							if ( stack.back().op == Op_member )
+							{
+								receive_value( token.text );
+								break;
+							}
+							
 							if ( declares_symbols( stack.back().op ) )
 							{
 								bool is_var = stack.back().op - Op_const;
