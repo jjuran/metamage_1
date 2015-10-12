@@ -1253,3 +1253,43 @@ $ vc '(1, 2, 3) == (1, 3, "five")'
 
 $ vc 'true (*) 2 == (true, true)'
 1 >= true
+
+%
+
+$ vc 'join ""'
+1 >= '""'
+
+%
+
+$ vc 'join "nope"'
+1 >= '""'
+
+%
+
+$ vc 'join( "also nope", "one" )'
+1 >= '"one"'
+
+%
+
+$ vc 'join( "", "foo", "bar" )'
+1 >= '"foobar"'
+
+%
+
+$ vc 'join "", "foo", "bar"'
+1 >= '"", "foo", "bar"'
+
+%
+
+$ vc 'join( " ", "foo", "bar", "baz" )'
+1 >= '"foo bar baz"'
+
+%
+
+$ vc 'join( ", ", 1, 2, 3 )'
+1 >= '"1, 2, 3"'
+
+%
+
+$ vc 'join( "", "x" * 1000 ) == str( "x" (*) 1000 )'
+1 >= 'true'

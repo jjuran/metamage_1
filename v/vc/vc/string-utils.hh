@@ -20,6 +20,8 @@ namespace vc
 	
 	plus::string repeat( const plus::string& s, plus::string::size_type n );
 	
+	plus::string join( const plus::string& glue, const Value& v, unsigned n );
+	
 }
 
 #endif

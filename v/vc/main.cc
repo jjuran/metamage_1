@@ -24,6 +24,7 @@
 #include "plus/string/concat.hh"
 
 // vc
+#include "vc/calc.hh"
 #include "vc/error.hh"
 #include "vc/library.hh"
 #include "vc/parse.hh"
@@ -191,6 +192,7 @@ int main( int argc, char** argv )
 	using namespace vc;
 	
 	define( "getenv", &v_getenv );
+	define( "join",   &v_join   );
 	define( "print",  &v_print  );
 	define( "time",   &v_time   );
 	

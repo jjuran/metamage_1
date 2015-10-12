@@ -202,6 +202,20 @@ namespace vc
 		}
 	}
 	
+	Value v_join( const Value& args )
+	{
+		const Value& glue = first( args );
+		
+		if ( glue.type != Value_string )
+		{
+			TYPE_ERROR( "join glue must be a string" );
+		}
+		
+		const Value pieces = rest( args );
+		
+		return join( glue.string, pieces, count( pieces ) );
+	}
+	
 	static
 	Value calc_unary( op_type op, const Value& v )
 	{

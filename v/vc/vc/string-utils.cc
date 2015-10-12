@@ -154,4 +154,42 @@ namespace vc
 		return result;
 	}
 	
+	plus::string join( const plus::string& glue, const Value& v, unsigned n )
+	{
+		if ( n <= 1  ||  glue.empty() )
+		{
+			return make_string( v );
+		}
+		
+		plus::integer size = glue.size();
+		
+		size *= n - 1;
+		
+		size += composite_length( v );
+		
+		if ( size > size_t( -1 ) )
+		{
+			DOMAIN_ERROR( "excessively large arguments to join()" );
+		}
+		
+		plus::string result;
+		
+		char* p = result.reset( size.clipped() );
+		
+		const Value* next = &v;
+		
+		while ( Expr* expr = next->expr.get() )
+		{
+			p = make_string( p, expr->left );
+			
+			p = mempcpy( p, glue );
+			
+			next = &expr->right;
+		}
+		
+		make_string( p, *next );
+		
+		return result;
+	}
+	
 }
