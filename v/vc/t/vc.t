@@ -1298,3 +1298,83 @@ $ vc 'join( "", "x" * 1000 ) == str( "x" (*) 1000 )'
 
 $ vc 'print 2^2'
 1 >= 4
+
+%
+
+$ vc '(+) (time % ())'
+1 >= 1
+
+%
+
+$ vc '(+) (getenv % "TERM")'
+1 >= 1
+
+%
+
+$ vc '(+) (join % (" ", 0))'
+1 >= 1
+
+%
+
+$ vc '(+) ("foo", join % "bar")'
+1 >= 2
+
+%
+
+$ vc '(+) (join % "foo", "bar")'
+1 >= 2
+
+%
+
+$ vc 'time % ()'
+1 >= time
+
+%
+
+$ vc 'time % () == time'
+1 >= true
+
+%
+
+$ vc 'getenv % "TERM"'
+1 >= '(getenv % "TERM")'
+
+%
+
+$ vc '(getenv % "TERM")() == getenv "TERM"'
+1 >= true
+
+%
+
+$ vc 'const csv = join % ","; csv (1, 2, 3)'
+1 >= '"1,2,3"'
+
+%
+
+$ vc 'join % (getenv % "TERM")'
+1 >= '(join % (getenv % "TERM"))'
+
+%
+
+$ vc 'join % "," % 0'
+1 >= '(join % (",", 0))'
+
+%
+
+$ vc 'join % "," % 0 == join % (",", 0)'
+1 >= true
+
+%
+
+$ vc '"foo", join % "bar"'
+1 >= '("foo", (join % "bar"))'
+
+%
+
+$ vc 'join % "foo", "bar"'
+1 >= '((join % "foo"), "bar")'
+
+%
+
+$ vc 'join % 0, join % 1, join % 2'
+1 >= '((join % 0), (join % 1), (join % 2))'

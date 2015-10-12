@@ -42,6 +42,7 @@ namespace vc
 		Op_gt,
 		Op_gte,
 		Op_list,
+		Op_bind_args,
 		Op_parens,
 		Op_end,
 	};

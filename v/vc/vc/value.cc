@@ -19,6 +19,13 @@ namespace vc
 	{
 	}
 	
+	Value::Value( value_type type, const Value& a, op_type op, const Value& b )
+	:
+		type( type ),
+		expr( a, op, b )
+	{
+	}
+	
 	void swap( Value& a, Value& b )
 	{
 		using iota::swap;
@@ -35,6 +42,21 @@ namespace vc
 		left( a ),
 		right( b )
 	{
+	}
+	
+	Value bind_args( const Value& f, const Value& arguments )
+	{
+		if ( is_empty( arguments ) )
+		{
+			return f;
+		}
+		
+		if ( Expr* expr = f.expr.get() )
+		{
+			return bind_args( expr->left, Value( expr->right, arguments ) );
+		}
+		
+		return Value( Value_pair, f, Op_bind_args, arguments );
 	}
 	
 }

@@ -89,6 +89,8 @@ namespace vc
 		}
 		
 		Value( const Value& a, const Value& b );
+		
+		Value( value_type type, const Value& a, op_type op, const Value& b );
 	};
 	
 	void swap( Value& a, Value& b );
@@ -119,6 +121,27 @@ namespace vc
 	{
 		return v.type == Value_symbol  ||  v.type == Value_symbol_declarator;
 	}
+	
+	inline
+	bool is_function( const Value& v )
+	{
+		if ( v.type == Value_function )
+		{
+			return true;
+		}
+		
+		if ( Expr* expr = v.expr.get() )
+		{
+			if ( expr->op == Op_bind_args )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	Value bind_args( const Value& f, const Value& arguments );
 	
 }
 

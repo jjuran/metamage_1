@@ -112,11 +112,31 @@ static plus::string stringify_list( const vc::Value& v )
 	
 	const Value* next = &v;
 	
+	if ( v.expr.get()->op != Op_list )
+	{
+		const char* op_token = " % ";
+		
+		vc::Expr& expr = *v.expr.get();
+		
+		result += stringify( expr.left );
+		result += op_token;
+		result += stringify( expr.right );
+		result += ")";
+		
+		return result.move();
+	}
+	
 	while ( const Expr* expr = next->expr.get() )
 	{
+		if ( expr->op != Op_list )
+		{
+			break;
+		}
+		
 		next = &expr->right;
 		
 		result += stringify( expr->left );
+		
 		result += ", ";
 	}
 	

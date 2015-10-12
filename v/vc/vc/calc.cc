@@ -299,6 +299,14 @@ namespace vc
 			return f.function( arguments );
 		}
 		
+		if ( Expr* expr = f.expr.get() )
+		{
+			const Value& method = expr->left;
+			const Value& object = expr->right;
+			
+			return call_function( method, calc( object, Op_list, arguments ) );
+		}
+		
 		TYPE_ERROR( "attempted call of non-function" );
 		
 		return Value();  // not reached
@@ -351,6 +359,11 @@ namespace vc
 		if ( op == Op_repeat )
 		{
 			return repeat_list( left, right );
+		}
+		
+		if ( op == Op_remain  &&  is_function( left ) )
+		{
+			return bind_args( left, right );
 		}
 		
 		if ( left.type == right.type )
