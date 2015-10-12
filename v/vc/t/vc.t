@@ -953,3 +953,13 @@ $ vc 'str time'
 
 $ vc 'bool time'
 1 >= true
+
+%
+
+$ vc 'time == time'
+1 >= true
+
+%
+
+$ vc 'time == getenv'
+1 >= false

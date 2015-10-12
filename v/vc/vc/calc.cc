@@ -63,6 +63,10 @@ namespace vc
 			case Value_string:
 				return a.string == b.string;
 			
+			case Value_function:
+				return a.function == b.function;
+				break;
+			
 			case Value_pair:
 				SYNTAX_ERROR( "equality for lists unimplemented" );
 				break;
