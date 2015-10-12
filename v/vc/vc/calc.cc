@@ -196,6 +196,11 @@ namespace vc
 				{
 					return left.string.size();
 				}
+				
+				if ( right.string == "join" )
+				{
+					return bind_args( Value( &v_join, right.string ), left );
+				}
 				break;
 			
 			default:
