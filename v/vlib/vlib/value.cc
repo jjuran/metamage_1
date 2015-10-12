@@ -21,8 +21,10 @@
 namespace vlib
 {
 	
-	const Value nothing    = Value_nothing;
-	const Value empty_list = Value_empty_list;
+	const Value nothing       = Value_nothing;
+	const Value dummy_operand = Value_dummy_operand;
+	const Value undefined     = Value_undefined;
+	const Value empty_list    = Value_empty_list;
 	
 	static
 	void symbol_destructor( void* pointer )

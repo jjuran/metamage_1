@@ -420,13 +420,13 @@ namespace vlib
 					else if ( token.text == "break" )
 					{
 						receive_op( Op_break );
-						receive_value( Value_dummy_operand );
+						receive_value( dummy_operand );
 						break;
 					}
 					else if ( token.text == "continue" )
 					{
 						receive_op( Op_continue );
-						receive_value( Value_dummy_operand );
+						receive_value( dummy_operand );
 						break;
 					}
 					else

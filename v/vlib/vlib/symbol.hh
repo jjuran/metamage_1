@@ -41,7 +41,7 @@ namespace vlib
 			
 			Symbol( symbol_type          type,
 					const plus::string&  name,
-					const Value&         value = Value_undefined )
+					const Value&         value = undefined )
 			:
 				its_name( name ),
 				its_value( value ),
