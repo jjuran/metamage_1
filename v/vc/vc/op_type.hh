@@ -13,7 +13,6 @@ namespace vc
 	enum op_type
 	{
 		Op_none,
-		Op_function,
 		Op_named_unary,
 		Op_const,
 		Op_var,
@@ -27,6 +26,7 @@ namespace vc
 		Op_divide_by,
 		Op_remain_by,
 		Op_empower,
+		Op_function,
 		Op_member,
 		Op_multiply,
 		Op_divide,
