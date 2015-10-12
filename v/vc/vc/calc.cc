@@ -106,6 +106,7 @@ namespace vc
 		{
 			case Value_empty_list:  // ""
 			case Value_string:
+			case Value_function:
 				return value.string;
 			
 			case Value_boolean:

@@ -943,3 +943,8 @@ $ vc 'time()^0'
 
 $ vc '1^time()'
 1 >= 1
+
+%
+
+$ vc 'str time'
+1 >= time
