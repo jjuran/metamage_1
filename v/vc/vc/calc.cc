@@ -190,36 +190,18 @@ namespace vc
 	}
 	
 	static
-	Value calc_function( unsigned f, Value arg )
+	Value calc_function( unsigned f, const Value& arg )
 	{
-		if ( f == Function_str )
+		switch ( f )
 		{
-			return make_string( arg );
+			default:  INTERNAL_ERROR( "unimplemented function" );
+			
+			case Function_abs:   return v_abs ( arg );
+			case Function_bool:  return v_bool( arg );
+			case Function_half:  return v_half( arg );
+			case Function_hex:   return v_hex ( arg );
+			case Function_str:   return make_string( arg );
 		}
-		
-		if ( f == Function_bool )
-		{
-			return v_bool( arg );
-		}
-		
-		if ( f == Function_hex )
-		{
-			return v_hex( arg );
-		}
-		
-		if ( f == Function_abs )
-		{
-			return v_abs( arg );
-		}
-		
-		if ( f == Function_half )
-		{
-			return v_half( arg );
-		}
-		
-		INTERNAL_ERROR( "unimplemented function" );
-		
-		return arg;
 	}
 	
 	static
