@@ -15,6 +15,8 @@
 namespace vlib
 {
 	
+	const Value empty_list = Value_empty_list;
+	
 	void pair_destructor( void* pointer )
 	{
 		Expr* expr = (Expr*) pointer;

@@ -9,9 +9,6 @@
 namespace vlib
 {
 	
-	static const Value empty_list = Value_empty_list;
-	
-	
 	const Value& first( const Value& list )
 	{
 		if ( get_type( list ) == Value_pair )

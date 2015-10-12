@@ -156,6 +156,8 @@ namespace vlib
 		a.swap( b );
 	}
 	
+	extern const Value empty_list;
+	
 	struct Expr
 	{
 		const op_type  op;

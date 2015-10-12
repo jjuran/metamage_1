@@ -192,7 +192,7 @@ namespace vlib
 				break;
 			
 			case Token_parens:
-				receive_value( Value_empty_list );
+				receive_value( empty_list );
 				break;
 			
 			case Token_bin:
