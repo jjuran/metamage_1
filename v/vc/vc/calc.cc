@@ -427,6 +427,46 @@ namespace vc
 		return result;
 	}
 	
+	static
+	Value repeat_list( const Value& list, const Value& factor )
+	{
+		if ( factor.type != Value_number )
+		{
+			TYPE_ERROR( "non-numeric list repetition factor" );
+		}
+		
+		if ( factor.number.is_negative() )
+		{
+			DOMAIN_ERROR( "negative list repetition factor" );
+		}
+		
+		if ( factor.number.is_zero()  ||  list.type == Value_empty_list )
+		{
+			return Value_empty_list;
+		}
+		
+		if ( factor.number > size_t( -1 ) )
+		{
+			DOMAIN_ERROR( "excessively large list multiplier" );
+		}
+		
+		size_t n = factor.number.clipped();
+		
+		if ( n == 1 )
+		{
+			return list;
+		}
+		
+		Value result = list;
+		
+		while ( --n > 0 )
+		{
+			result = make_pair( list, result );
+		}
+		
+		return result;
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -476,6 +516,11 @@ namespace vc
 			}
 			
 			return make_pair( left, right );
+		}
+		
+		if ( op == Op_repeat )
+		{
+			return repeat_list( left, right );
 		}
 		
 		if ( left.type == right.type )

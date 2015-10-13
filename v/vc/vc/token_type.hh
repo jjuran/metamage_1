@@ -25,6 +25,7 @@ namespace vc
 		Token_lparen,
 		Token_rparen,
 		Token_parens,
+		Token_parens_star,
 		Token_parens_plus,
 		Token_plus,
 		Token_minus,

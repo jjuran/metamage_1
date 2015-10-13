@@ -39,6 +39,7 @@ namespace vc
 		{ Token_slash,       Op_divide    },
 		{ Token_percent,     Op_remain    },
 		{ Token_caret,       Op_empower   },
+		{ Token_parens_star, Op_repeat    },
 		{ Token_equals_x2,   Op_equal     },
 		{ Token_bang_equals, Op_unequal   },
 		{ Token_lt,          Op_lt        },
