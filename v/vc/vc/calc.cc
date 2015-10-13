@@ -5,6 +5,9 @@
 
 #include "vc/calc.hh"
 
+// more-libc
+#include "more/string.h"
+
 // plus
 #include "plus/decimal.hh"
 #include "plus/hexadecimal.hh"
@@ -286,6 +289,42 @@ namespace vc
 		return Value( expr.left, make_pair( expr.right, right ) );
 	}
 	
+	static
+	plus::string repeat( const plus::string& s, plus::integer n )
+	{
+		typedef plus::string::size_type size_t;
+		
+		if ( n.is_negative() )
+		{
+			DOMAIN_ERROR( "negative string multiplier" );
+		}
+		
+		const char*  data = s.data();
+		const size_t size = s.size();
+		
+		size_t n_times = n.clipped();
+		
+		n *= size;
+		
+		if ( n > size_t( -1 ) )
+		{
+			DOMAIN_ERROR( "excessively large string multiplier" );
+		}
+		
+		const size_t n_bytes = n.clipped();
+		
+		plus::string result;
+		
+		char* p = result.reset( n_bytes );
+		
+		while ( n_times-- > 0 )
+		{
+			p = (char*) mempcpy( p, data, size );
+		}
+		
+		return result;
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -358,6 +397,14 @@ namespace vc
 				
 				default:
 					break;
+			}
+		}
+		
+		if ( op == Op_multiply  &&  left.type == Value_string )
+		{
+			if ( right.type == Value_number )
+			{
+				return repeat( left.string, right.number );
 			}
 		}
 		

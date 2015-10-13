@@ -963,3 +963,34 @@ $ vc 'time == time'
 
 $ vc 'time == getenv'
 1 >= false
+
+%
+
+$ vc '"hey" * 3'
+1 >= heyheyhey
+
+%
+
+$ vc '"THE CAKE IS A LIE\n" * 4'
+1 >> .
+THE CAKE IS A LIE
+THE CAKE IS A LIE
+THE CAKE IS A LIE
+THE CAKE IS A LIE
+
+.
+
+%
+
+$ vc '"one" * 1'
+1 >= one
+
+%
+
+$ vc '"zero" * 0'
+1 >= ""
+
+%
+
+$ vc '"" * 3'
+1 >= ""
