@@ -402,7 +402,7 @@ namespace vc
 		
 		if ( op == Op_multiply  &&  left.type == Value_string )
 		{
-			if ( right.type == Value_number )
+			if ( right.type == Value_boolean  ||  right.type == Value_number )
 			{
 				return repeat( left.string, right.number );
 			}

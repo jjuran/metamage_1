@@ -994,3 +994,18 @@ $ vc '"zero" * 0'
 
 $ vc '"" * 3'
 1 >= ""
+
+%
+
+$ vc '"one" * true'
+1 >= one
+
+%
+
+$ vc '"zero" * false'
+1 >= ""
+
+%
+
+$ vc '"" * true'
+1 >= ""
