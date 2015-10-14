@@ -25,6 +25,14 @@ namespace vc
 	using math::integer::cmp_t;
 	
 	
+	using ::mempcpy;
+	
+	static inline
+	char* mempcpy( char* p, const plus::string& s )
+	{
+		return (char*) mempcpy( p, s.data(), s.size() );
+	}
+	
 	static plus::string hex( const plus::string& s )
 	{
 		return plus::hex_lower( s.data(), s.size() );
@@ -145,33 +153,62 @@ namespace vc
 	}
 	
 	static
-	plus::string make_string( const Value& value )
+	char* make_string( char* p, const Value& value )
 	{
 		switch ( value.type )
 		{
 			case Value_empty_list:  // ""
 			case Value_string:
 			case Value_function:
-				return value.string;
+				return mempcpy( p, value.string );
 			
 			case Value_boolean:
-				return value.number.is_zero() ? "false" : "true";
+				if ( value.number.is_zero() )
+				{
+					return (char*) mempcpy( p, STR_LEN( "false" ) );
+				}
+				else
+				{
+					return (char*) mempcpy( p, STR_LEN( "true" ) );
+				}
 			
 			case Value_number:
-				return encode_decimal( value.number );
+				return encode_decimal( p, value.number );
+			
+			case Value_pair:
+				break;
 			
 			default:
+				INTERNAL_ERROR( "unsupported type in make_string()" );
 				break;
 		}
 		
-		if ( Expr* expr = value.expr.get() )
+		Expr* expr = value.expr.get();
+		
+		p = (char*) make_string( p, expr->left );
+		
+		while ( Expr* next = expr->right.expr.get() )
 		{
-			return make_string( expr->left ) + make_string( expr->right );
+			p = (char*) make_string( p, next->left );
+			
+			expr = next;
 		}
 		
-		INTERNAL_ERROR( "unsupported type in make_string()" );
+		return (char*) make_string( p, expr->right );
+	}
+	
+	static
+	Value v_str( const Value& value )
+	{
+		const plus::string::size_type size = composite_length( value );
 		
-		return plus::string::null;
+		plus::string result;
+		
+		char* p = result.reset( size );
+		
+		make_string( p, value );
+		
+		return result;
 	}
 	
 	static
@@ -245,7 +282,7 @@ namespace vc
 			case Function_bool:  return v_bool( arg );
 			case Function_half:  return v_half( arg );
 			case Function_hex:   return v_hex ( arg );
-			case Function_str:   return make_string( arg );
+			case Function_str:   return v_str ( arg );
 		}
 	}
 	
