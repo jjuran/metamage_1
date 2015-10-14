@@ -36,6 +36,13 @@ namespace vc
 			expr_box( const Value& left, op_type op, const Value& right );
 			
 			Expr* get() const  { return its_expr; }
+			
+			Expr* release()
+			{
+				Expr* result = get();
+				its_expr = 0;
+				return result;
+			}
 	};
 	
 	inline

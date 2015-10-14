@@ -19,6 +19,20 @@ namespace vc
 	{
 		if ( its_expr )
 		{
+			while ( Expr* next = its_expr->right.expr.get() )
+			{
+				if ( intrusive_ptr_ref_count( its_expr ) > 1 )
+				{
+					break;
+				}
+				
+				const_cast< Value& >( its_expr->right ).expr.release();
+				
+				intrusive_ptr_release( its_expr );
+				
+				its_expr = next;
+			}
+			
 			intrusive_ptr_release( its_expr );
 		}
 	}
