@@ -107,6 +107,44 @@ namespace vc
 	}
 	
 	static
+	plus::string::size_type composite_length( const Value& value )
+	{
+		switch ( value.type )
+		{
+			case Value_empty_list:  // ""
+			case Value_string:
+			case Value_function:
+				return value.string.size();
+			
+			case Value_boolean:
+				return 4 + value.number.is_zero();  // "true" or "false"
+			
+			case Value_number:
+				return decimal_length( value.number );
+			
+			case Value_pair:
+				break;
+			
+			default:
+				INTERNAL_ERROR( "unsupported type in composite_length()" );
+				break;
+		}
+		
+		Expr* expr = value.expr.get();
+		
+		plus::string::size_type total = composite_length( expr->left );
+		
+		while ( Expr* next = expr->right.expr.get() )
+		{
+			total += composite_length( next->left );
+			
+			expr = next;
+		}
+		
+		return total + composite_length( expr->right );
+	}
+	
+	static
 	plus::string make_string( const Value& value )
 	{
 		switch ( value.type )
