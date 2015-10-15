@@ -55,11 +55,15 @@ namespace plus
 	}
 	
 	
-	string encode_decimal( const integer& x )
+	
+	static
+	char* encode_decimal( char* r, string::size_type n, const integer& x )
 	{
 		if ( x.is_zero() )
 		{
-			return "0";
+			*r++ = '0';
+			
+			return r;
 		}
 		
 		integer remains = x;
@@ -70,12 +74,6 @@ namespace plus
 		{
 			remains.invert();
 		}
-		
-		string::size_type n = count_decimal_digits( remains );
-		
-		plus::string result;
-		
-		char* r = result.reset( negative + n );
 		
 		if ( negative )
 		{
@@ -96,6 +94,23 @@ namespace plus
 			
 			*r++ = '0' + i;
 		}
+		
+		return r;
+	}
+	
+	string encode_decimal( const integer& x )
+	{
+		const bool negative = x.is_negative();
+		
+		string::size_type n = count_decimal_digits( x );
+		
+		string::size_type size = n + ! x.is_positive();  // "-" or "0"
+		
+		plus::string result;
+		
+		char* r = result.reset( size );
+		
+		encode_decimal( r, n, x );
 		
 		return result;
 	}
