@@ -30,6 +30,10 @@ namespace plus
 	}
 	
 	
+	string::size_type decimal_length( const integer& x );
+	
+	char* encode_decimal( char* r, const integer& x );
+	
 	string encode_decimal( const integer& x );
 	
 	inline

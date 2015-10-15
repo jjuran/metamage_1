@@ -54,6 +54,10 @@ namespace plus
 		return power;
 	}
 	
+	string::size_type decimal_length( const integer& x )
+	{
+		return count_decimal_digits( x ) + ! x.is_positive();
+	}
 	
 	
 	static
@@ -96,6 +100,13 @@ namespace plus
 		}
 		
 		return r;
+	}
+	
+	char* encode_decimal( char* r, const integer& x )
+	{
+		string::size_type n = count_decimal_digits( x );
+		
+		return encode_decimal( r, n, x );
 	}
 	
 	string encode_decimal( const integer& x )
