@@ -36,6 +36,7 @@ namespace vc
 		
 		{ "(",   Token_lparen },
 		{ "()",  Token_parens },
+		{ "(+)", Token_parens_plus },
 		{ ")",   Token_rparen },
 		
 		{ "*",   Token_asterisk },

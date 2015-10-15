@@ -19,6 +19,7 @@ namespace vc
 		Op_var,
 		Op_unary_plus,
 		Op_unary_minus,
+		Op_unary_count,
 		Op_duplicate,
 		Op_empower,
 		Op_multiply,

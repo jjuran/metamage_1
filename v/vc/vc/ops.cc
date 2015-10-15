@@ -28,6 +28,7 @@ namespace vc
 	{
 		{ Token_plus,  Op_unary_plus  },
 		{ Token_minus, Op_unary_minus },
+		{ Token_parens_plus, Op_unary_count },
 	};
 	
 	const op_mapping when_value_acquired[] =
