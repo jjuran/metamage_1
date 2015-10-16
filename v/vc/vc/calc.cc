@@ -185,16 +185,16 @@ namespace vc
 		
 		Expr* expr = value.expr.get();
 		
-		p = (char*) make_string( p, expr->left );
+		p = make_string( p, expr->left );
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
-			p = (char*) make_string( p, next->left );
+			p = make_string( p, next->left );
 			
 			expr = next;
 		}
 		
-		return (char*) make_string( p, expr->right );
+		return make_string( p, expr->right );
 	}
 	
 	static
