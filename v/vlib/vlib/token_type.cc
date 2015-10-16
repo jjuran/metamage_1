@@ -106,8 +106,10 @@ namespace vlib
 		{ "-",   Token_minus        },
 		{ "--",  Token_minus_x2     },
 		{ "-=",  Token_minus_equals },
+		{ "->",  Token_minus_gt     },
 		
 		{ ".",   Token_dot    },
+		{ "..",  Token_dot_x2 },
 		{ "...", Token_dot_x3 },
 		
 		{ "/",   Token_slash        },

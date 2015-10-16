@@ -60,6 +60,8 @@ namespace vlib
 		Op_gt,
 		Op_gte,
 		Op_mapping,
+		Op_gamut,
+		Op_delta,
 		Op_list,
 		Op_assert,
 		Op_return,

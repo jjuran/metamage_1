@@ -23,6 +23,7 @@ namespace vlib
 		Precedence_unary_math,      // + - (f x)
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
+		Precedence_range,           // .. ->
 		Precedence_intersection,    // &
 		Precedence_union,           // |
 		Precedence_repeat,          // (*)
@@ -75,6 +76,9 @@ namespace vlib
 		
 		{ Precedence_addition, Op_add      },
 		{ Precedence_addition, Op_subtract },
+		
+		{ Precedence_range, Op_gamut },
+		{ Precedence_range, Op_delta },
 		
 		{ Precedence_intersection, Op_intersection },
 		{ Precedence_union,        Op_union        },

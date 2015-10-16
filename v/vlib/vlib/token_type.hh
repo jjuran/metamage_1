@@ -42,11 +42,13 @@ namespace vlib
 		Token_parens_plus,
 		Token_dot_punct,  // '.' followed by punctuation
 		Token_dot,
+		Token_dot_x2,
 		Token_dot_x3,
 		Token_plus,
 		Token_plus_x2,
 		Token_minus,
 		Token_minus_x2,
+		Token_minus_gt,
 		Token_asterisk,
 		Token_slash,
 		Token_percent,

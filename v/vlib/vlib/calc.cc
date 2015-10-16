@@ -220,6 +220,36 @@ namespace vlib
 	}
 	
 	static
+	Value expand_range( const Value& range )
+	{
+		Expr* expr = range.expr();
+		
+		const plus::integer& left  = expr->left.number();
+		const plus::integer& right = expr->right.number();
+		
+		plus::integer i = right;
+		
+		if ( expr->op == Op_delta )
+		{
+			--i;
+		}
+		
+		if ( left > i )
+		{
+			return empty_list;
+		}
+		
+		Value result = Integer( i );
+		
+		while ( --i >= left )
+		{
+			result = Value( Integer( i ), result );
+		}
+		
+		return result;
+	}
+	
+	static
 	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
@@ -261,6 +291,15 @@ namespace vlib
 					}
 					
 					THROW( "unary operator not defined for arrays" );
+				
+				case Op_gamut:
+				case Op_delta:
+					if ( op == Op_unary_deref )
+					{
+						return expand_range( v );
+					}
+					
+					THROW( "unary operator not defined for ranges" );
 				
 				case Op_invocation:
 					THROW( "unary operator not defined for blocks" );
@@ -958,6 +997,15 @@ namespace vlib
 		}
 	}
 	
+	static
+	void check_range_operand( const Value& point )
+	{
+		if ( point.type() != Value_number )
+		{
+			THROW( "non-integer range operand" );
+		}
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -1015,6 +1063,13 @@ namespace vlib
 			case Op_function:
 			case Op_named_unary:
 				return call_function( left, right );
+			
+			case Op_gamut:
+			case Op_delta:
+				check_range_operand( left  );
+				check_range_operand( right );
+				
+				goto no_op;
 			
 			case Op_map:      return map( left, right );
 			case Op_isa:      return Bool(   isa  ( left, right ) );
