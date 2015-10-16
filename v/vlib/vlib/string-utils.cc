@@ -54,6 +54,9 @@ namespace vlib
 			
 			case Op_empower:  return "^";
 			
+			case Op_preinc:   return "++";
+			case Op_predec:   return "--";
+			
 			case Op_unary_plus:   return "+";
 			case Op_unary_minus:  return "-";
 			case Op_unary_deref:  return "*";

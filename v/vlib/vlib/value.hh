@@ -39,11 +39,12 @@ namespace vlib
 		Value_function,
 		Value_pair,
 		
-		V_decl = Value_symbol_declarator,
-		V_bool = Value_boolean,
-		V_int  = Value_number,
-		V_str  = Value_string,
-		V_proc = Value_function,
+		V_dummy = Value_dummy_operand,
+		V_decl  = Value_symbol_declarator,
+		V_bool  = Value_boolean,
+		V_int   = Value_number,
+		V_str   = Value_string,
+		V_proc  = Value_function,
 	};
 	
 	class Value

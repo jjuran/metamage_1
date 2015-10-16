@@ -83,7 +83,7 @@ namespace vlib
 			SYMBOL_ERROR( "update of undefined symbol" );
 		}
 		
-		if ( value.type() != right.type() )
+		if ( value.type() != right.type()  &&  right.type() != V_dummy )
 		{
 			TYPE_ERROR( "update between mixed types not supported" );
 		}
@@ -111,6 +111,9 @@ namespace vlib
 				
 				switch ( op )
 				{
+					case Op_preinc:       result = a + 1;  break;
+					case Op_predec:       result = a - 1;  break;
+					
 					case Op_increase_by:  result = a + b;  break;
 					case Op_decrease_by:  result = a - b;  break;
 					case Op_multiply_by:  result = a * b;  break;
@@ -129,6 +132,9 @@ namespace vlib
 		
 		switch ( op )
 		{
+			case Op_preinc:  ++a;  break;
+			case Op_predec:  --a;  break;
+			
 			case Op_increase_by:  a += b;  break;
 			case Op_decrease_by:  a -= b;  break;
 			case Op_multiply_by:  a *= b;  break;
