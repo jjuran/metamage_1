@@ -36,6 +36,9 @@ namespace vlib
 	
 	const op_mapping when_value_acquired[] =
 	{
+		{ Token_plus_x2,  Op_postinc },
+		{ Token_minus_x2, Op_postdec },
+		
 		{ Token_dot,         Op_member    },
 		{ Token_plus,        Op_add       },
 		{ Token_minus,       Op_subtract  },

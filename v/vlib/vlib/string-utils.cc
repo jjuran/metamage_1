@@ -56,6 +56,8 @@ namespace vlib
 			
 			case Op_preinc:   return "++";
 			case Op_predec:   return "--";
+			case Op_postinc:  return "++";
+			case Op_postdec:  return "--";
 			
 			case Op_unary_plus:   return "+";
 			case Op_unary_minus:  return "-";

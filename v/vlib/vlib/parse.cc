@@ -225,6 +225,11 @@ namespace vlib
 			// infix binary operator
 			
 			fold_ops_and_add( op );
+			
+			if ( is_right_unary( op ) )
+			{
+				stack.push_back( dyad( Op_none ) );  // dummy right operand
+			}
 		}
 	}
 	

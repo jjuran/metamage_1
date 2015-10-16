@@ -109,6 +109,17 @@ namespace vlib
 			{
 				Value result;
 				
+				if ( op == Op_postinc  ||  op == Op_postdec )
+				{
+					const bool inc = op == Op_postinc;
+					
+					result = value;
+					
+					sym->assign( a + (inc ? 1 : -1) );
+					
+					return result;
+				}
+				
 				switch ( op )
 				{
 					case Op_preinc:       result = a + 1;  break;
@@ -132,6 +143,9 @@ namespace vlib
 		
 		switch ( op )
 		{
+			case Op_postinc:  return a++;
+			case Op_postdec:  return a--;
+			
 			case Op_preinc:  ++a;  break;
 			case Op_predec:  --a;  break;
 			

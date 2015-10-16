@@ -41,6 +41,8 @@ namespace vlib
 	{
 		{ Precedence_juxtaposition, Op_preinc   },
 		{ Precedence_juxtaposition, Op_predec   },
+		{ Precedence_juxtaposition, Op_postinc  },
+		{ Precedence_juxtaposition, Op_postdec  },
 		{ Precedence_juxtaposition, Op_function },
 		{ Precedence_juxtaposition, Op_member   },
 		{ Precedence_juxtaposition, Op_denote   },
