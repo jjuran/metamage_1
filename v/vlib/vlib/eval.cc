@@ -76,24 +76,24 @@ namespace vlib
 			return sym->get();
 		}
 		
-		Value& left = modify_symbol( sym );
+		Value& value = modify_symbol( sym );
 		
-		if ( is_undefined( left ) )
+		if ( is_undefined( value ) )
 		{
 			SYMBOL_ERROR( "update of undefined symbol" );
 		}
 		
-		if ( left.type() != right.type() )
+		if ( value.type() != right.type() )
 		{
 			TYPE_ERROR( "update between mixed types not supported" );
 		}
 		
-		if ( left.type() != Value_number )
+		if ( value.type() != Value_number )
 		{
 			TYPE_ERROR( "non-numeric update not supported" );
 		}
 		
-		plus::integer&       a = get_int( left  );
+		plus::integer&       a = get_int( value );
 		plus::integer const& b = get_int( right );
 		
 		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
@@ -123,7 +123,7 @@ namespace vlib
 				
 				sym->assign( result );
 				
-				return left;
+				return value;
 			}
 		}
 		
@@ -139,7 +139,7 @@ namespace vlib
 				INTERNAL_ERROR( "unrecognized update assignment operator" );
 		}
 		
-		return left;
+		return value;
 	}
 	
 	Value eval( Value    left,
