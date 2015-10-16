@@ -581,9 +581,9 @@ namespace vlib
 	            op_type       op,
 	            const Value&  right )
 	{
-		if ( left.type() == Value_dummy_operand )
+		if ( right.type() == Value_dummy_operand )
 		{
-			return calc_unary( op, right );
+			return calc_unary( op, left );
 		}
 		
 		switch ( op )
