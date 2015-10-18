@@ -102,9 +102,7 @@ namespace vc
 	{
 		fold_ops_and_add( Op_end );
 		
-		ASSERT( stack.size() == 1 );
-		
-		return stack.front().v;
+		return stack.back().v;
 	}
 	
 	void Parser::push()
