@@ -191,6 +191,23 @@ namespace vlib
 			case Token_whitespace:
 				break;
 			
+			case Token_lbracket:
+				if ( expecting_value() )
+				{
+					SYNTAX_ERROR( "array literals unimplemented" );
+				}
+				else
+				{
+					fold_ops_and_add( Op_subscript );
+				}
+				
+				push( Op_brackets );
+				break;
+			
+			case Token_rbracket:
+				pop( Op_brackets );
+				break;
+			
 			case Token_lparen:
 				push( Op_parens );
 				break;

@@ -120,6 +120,9 @@ namespace vlib
 		{ ">",   Token_gt        },
 		{ ">=",  Token_gt_equals },
 		
+		{ "[",   Token_lbracket },
+		{ "]",   Token_rbracket },
+		
 		{ "^",   Token_caret },
 	};
 	

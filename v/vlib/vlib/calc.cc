@@ -339,6 +339,29 @@ namespace vlib
 		return Value();  // not reached
 	}
 	
+	static
+	Value string_subscript( const plus::string& s, const Value& i )
+	{
+		if ( i.type() != Value_number )
+		{
+			TYPE_ERROR( "non-integer string subscript" );
+		}
+		
+		const plus::integer& index = i.number();
+		
+		if ( index.is_negative() )
+		{
+			DOMAIN_ERROR( "negative string subscript" );
+		}
+		
+		if ( index >= s.size() )
+		{
+			DOMAIN_ERROR( "subscript exceeds string bounds" );
+		}
+		
+		return Value::byte( s[ index.clipped() ] );
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -421,6 +444,18 @@ namespace vlib
 				
 				default:
 					break;
+			}
+		}
+		
+		if ( op == Op_subscript )
+		{
+			switch ( left.type() )
+			{
+				case Value_string:
+					return string_subscript( left.string(), right );
+				
+				default:
+					TYPE_ERROR( "type not subscriptable" );
 			}
 		}
 		
