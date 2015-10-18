@@ -35,11 +35,9 @@ namespace vc
 	class Parser
 	{
 		private:
-			typedef std::vector< dyad  > Stack;
-			typedef std::vector< Stack > Metastack;
+			typedef std::vector< dyad > Stack;
 			
-			Stack      stack;
-			Metastack  metastack;
+			Stack stack;
 		
 		private:
 			bool expecting_value() const;
@@ -47,8 +45,6 @@ namespace vc
 			bool has_higher_precedence_op_than( op_type new_op ) const;
 			
 			void fold_ops_and_add( op_type op );
-			
-			Value result_from_subexpression();
 			
 			void push();
 			void pop();
@@ -98,15 +94,6 @@ namespace vc
 		stack.back().op = op;
 	}
 	
-	Value Parser::result_from_subexpression()
-	{
-		fold_ops_and_add( Op_end );
-		
-		ASSERT( stack.size() == 1 );
-		
-		return stack.front().v;
-	}
-	
 	void Parser::push()
 	{
 		if ( ! expecting_value() )
@@ -116,8 +103,7 @@ namespace vc
 			fold_ops_and_add( Op_function );
 		}
 		
-		metastack.push_back( stack );
-		stack.clear();
+		stack.push_back( Op_parens );
 	}
 	
 	void Parser::pop()
@@ -127,17 +113,19 @@ namespace vc
 			SYNTAX_ERROR( "right parenthesis where value expected" );
 		}
 		
-		if ( metastack.empty() )
+		fold_ops_and_add( Op_end );
+		
+		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != Op_parens )
 		{
 			SYNTAX_ERROR( "unbalanced right parenthesis" );
 		}
 		
-		Value result = result_from_subexpression();
+		// Remove the sentinel and clear Op_end.
 		
-		stack = metastack.back();
-		metastack.pop_back();
+		stack.end()[ -2 ].v  = stack.end()[ -1 ].v;
+		stack.end()[ -2 ].op = Op_none;
 		
-		stack.push_back( result );
+		stack.pop_back();
 	}
 	
 	void Parser::receive_value( const Value& x )
@@ -316,11 +304,6 @@ namespace vc
 				receive_token( token );
 			}
 			
-			if ( ! metastack.empty() )
-			{
-				SYNTAX_ERROR( "premature end of parenthesized expression" );
-			}
-			
 			Value result;  // nothing
 			
 			if ( ! stack.empty() )
@@ -330,9 +313,16 @@ namespace vc
 					SYNTAX_ERROR( "premature end of expression" );
 				}
 				
-				result = result_from_subexpression();
+				fold_ops_and_add( Op_end );
+				
+				result = stack.back().v;
 				
 				stack.pop_back();
+				
+				if ( ! stack.empty() )
+				{
+					SYNTAX_ERROR( "premature end of parenthetical group" );
+				}
 			}
 			
 			if ( ! token )
