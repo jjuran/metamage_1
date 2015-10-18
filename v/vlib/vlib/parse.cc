@@ -48,8 +48,8 @@ namespace vlib
 			
 			void fold_ops_and_add( op_type op );
 			
-			void push();
-			void pop();
+			void push( op_type op );
+			void pop( op_type op );
 			
 			void receive_value( const Value& term );
 			
@@ -96,9 +96,9 @@ namespace vlib
 		stack.back().op = op;
 	}
 	
-	void Parser::push()
+	void Parser::push( op_type op )
 	{
-		if ( ! expecting_value() )
+		if ( op == Op_parens  &&  ! expecting_value() )
 		{
 			// Assume a function call.
 			op_type op = Op_function;
@@ -112,21 +112,21 @@ namespace vlib
 			fold_ops_and_add( op );
 		}
 		
-		stack.push_back( Op_parens );
+		stack.push_back( op );
 	}
 	
-	void Parser::pop()
+	void Parser::pop( op_type op )
 	{
 		if ( expecting_value() )
 		{
-			SYNTAX_ERROR( "right parenthesis where value expected" );
+			SYNTAX_ERROR( "right delimiter where value expected" );
 		}
 		
 		fold_ops_and_add( Op_end );
 		
-		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != Op_parens )
+		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != op )
 		{
-			SYNTAX_ERROR( "unbalanced right parenthesis" );
+			SYNTAX_ERROR( "unbalanced right delimiter" );
 		}
 		
 		// Remove the sentinel and clear Op_end.
@@ -192,11 +192,11 @@ namespace vlib
 				break;
 			
 			case Token_lparen:
-				push();
+				push( Op_parens );
 				break;
 			
 			case Token_rparen:
-				pop();
+				pop( Op_parens );
 				break;
 			
 			case Token_parens:
@@ -338,7 +338,7 @@ namespace vlib
 				
 				if ( ! stack.empty() )
 				{
-					SYNTAX_ERROR( "premature end of parenthetical group" );
+					SYNTAX_ERROR( "premature end of delimited group" );
 				}
 			}
 			
