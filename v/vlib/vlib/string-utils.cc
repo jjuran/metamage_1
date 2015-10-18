@@ -112,7 +112,9 @@ namespace vlib
 	
 	
 	static
-	size_t composite_length( const Value& value, stringification mode )
+	size_t composite_length( const Value&     value,
+	                         stringification  mode,
+	                         bool             print_parens = true )
 	{
 		switch ( get_type( value ) )
 		{
@@ -165,9 +167,14 @@ namespace vlib
 		
 		Expr* expr = get_expr( value );
 		
+		if ( expr->op == Op_block )
+		{
+			return 2 + composite_length( expr->right, mode, false );
+		}
+		
 		size_t total = composite_length( expr->left, mode );
 		
-		total += 2 * use_parens( mode );  // 2 for parentheses
+		total += 2 * use_parens( mode ) * print_parens;  // 2 for parentheses
 		
 		if ( use_parens( mode )  &&  expr->op != Op_list )
 		{
@@ -198,7 +205,10 @@ namespace vlib
 	}
 	
 	static
-	char* make_string( char* p, const Value& value, stringification mode )
+	char* make_string( char*            p,
+	                   const Value&     value,
+	                   stringification  mode,
+	                   bool             print_parens = true )
 	{
 		switch ( get_type( value ) )
 		{
@@ -269,7 +279,18 @@ namespace vlib
 		
 		Expr* expr = get_expr( value );
 		
-		if ( use_parens( mode ) )
+		if ( expr->op == Op_block )
+		{
+			*p++ = '{';
+			
+			p = make_string( p, expr->right, mode, false );
+			
+			*p++ = '}';
+			
+			return p;
+		}
+		
+		if ( use_parens( mode )  &&  print_parens )
 		{
 			*p++ = '(';
 		}
@@ -297,7 +318,10 @@ namespace vlib
 					*p++ = *q++ & 0x7f;
 				}
 				
-				*p++ = ')';
+				if ( print_parens )
+				{
+					*p++ = ')';
+				}
 				
 				return p;
 			}
@@ -324,7 +348,7 @@ namespace vlib
 		
 		p = make_string( p, expr->right, mode );
 		
-		if ( use_parens( mode ) )
+		if ( use_parens( mode )  &&  print_parens )
 		{
 			*p++ = ')';
 		}

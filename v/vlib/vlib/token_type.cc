@@ -125,6 +125,9 @@ namespace vlib
 		{ "]",   Token_rbracket },
 		
 		{ "^",   Token_caret },
+		
+		{ "{",   Token_lbrace },
+		{ "}",   Token_rbrace },
 	};
 	
 	static const char* matches( const char* s, const char* pattern )

@@ -50,6 +50,13 @@ namespace vlib
 		new ((void*) its_box.pointer()) Expr( a, Op_list, b );
 	}
 	
+	Value::Value( op_type op, const Value& v )
+	:
+		its_box( sizeof (Expr), &pair_destructor, Value_pair )
+	{
+		new ((void*) its_box.pointer()) Expr( Value_dummy_operand, op, v );
+	}
+	
 	Value::Value( value_type type, const Value& a, op_type op, const Value& b )
 	:
 		its_box( sizeof (Expr), &pair_destructor, type )

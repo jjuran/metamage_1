@@ -127,6 +127,8 @@ namespace vlib
 			
 			Value( const Value& a, const Value& b );
 			
+			Value( op_type op, const Value& v );
+			
 			Value( value_type vt, const Value& a, op_type op, const Value& b );
 			
 			value_type type() const
@@ -272,7 +274,7 @@ namespace vlib
 		
 		if ( Expr* expr = v.expr() )
 		{
-			if ( expr->op == Op_bind_args )
+			if ( expr->op == Op_bind_args  ||  expr->op == Op_block )
 			{
 				return true;
 			}
