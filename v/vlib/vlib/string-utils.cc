@@ -168,8 +168,13 @@ namespace vlib
 		
 		Expr* expr = get_expr( value );
 		
-		if ( expr->op == Op_block )
+		if ( expr->op == Op_array  ||  expr->op == Op_block )
 		{
+			if ( expr->op == Op_array  &&  is_empty( expr->right ) )
+			{
+				return 2;  // "[]"
+			}
+			
 			return 2 + composite_length( expr->right, mode, false );
 		}
 		
@@ -279,6 +284,20 @@ namespace vlib
 		}
 		
 		Expr* expr = get_expr( value );
+		
+		if ( expr->op == Op_array )
+		{
+			*p++ = '[';
+			
+			if ( ! is_empty( expr->right ) )
+			{
+				p = make_string( p, expr->right, mode, false );
+			}
+			
+			*p++ = ']';
+			
+			return p;
+		}
 		
 		if ( expr->op == Op_block )
 		{

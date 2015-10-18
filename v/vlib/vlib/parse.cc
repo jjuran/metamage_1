@@ -140,6 +140,17 @@ namespace vlib
 		return stack.back().op == Op_end  ||  stack.back().op == Op_braces;
 	}
 	
+	static
+	bool is_empty_array( const std::vector< dyad >& stack )
+	{
+		if ( stack.empty() )
+		{
+			return false;  // Only happens if ']' wasn't balanced.
+		}
+		
+		return stack.back().op == Op_brackets;
+	}
+	
 	void Parser::pop( op_type op )
 	{
 		if ( expecting_value() )
@@ -147,6 +158,10 @@ namespace vlib
 			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
 			{
 				receive_value( Value_nothing );
+			}
+			else if ( op == Op_brackets  &&  is_empty_array( stack ) )
+			{
+				receive_value( Value_empty_list );
 			}
 			else
 			{
@@ -226,7 +241,7 @@ namespace vlib
 			case Token_lbracket:
 				if ( expecting_value() )
 				{
-					SYNTAX_ERROR( "array literals unimplemented" );
+					stack.push_back( Op_array );
 				}
 				else
 				{

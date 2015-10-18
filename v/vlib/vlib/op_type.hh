@@ -31,6 +31,7 @@ namespace vlib
 		Op_denote,
 		Op_empower,
 		Op_function,
+		Op_array,
 		Op_subscript,
 		Op_block,
 		Op_member,

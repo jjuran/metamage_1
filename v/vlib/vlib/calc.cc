@@ -58,6 +58,7 @@ namespace vlib
 		switch ( get_type( a ) )
 		{
 			case Value_nothing:
+			case Value_dummy_operand:
 			case Value_empty_list:
 				return true;
 			
@@ -204,7 +205,7 @@ namespace vlib
 			SYNTAX_ERROR( "const/var operand not a symbol" );
 		}
 		
-		if ( op == Op_block )
+		if ( op == Op_array  ||  op == Op_block )
 		{
 			return Value( op, v );
 		}
@@ -220,6 +221,14 @@ namespace vlib
 			{
 				case Op_list:
 					SYNTAX_ERROR( "unary operator not defined for lists" );
+				
+				case Op_array:
+					if ( op == Op_unary_deref )
+					{
+						return expr->right;
+					}
+					
+					SYNTAX_ERROR( "unary operator not defined for arrays" );
 				
 				case Op_block:
 					SYNTAX_ERROR( "unary operator not defined for blocks" );
