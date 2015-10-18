@@ -554,67 +554,67 @@ $ vc 'var x = 3;' 'const x' x
 %
 
 $ vc 'str 0'
-1 >= 0
+1 >= '"0"'
 
 %
 
 $ vc 'str -43'
-1 >= -43
+1 >= '"-43"'
 
 %
 
 $ vc 'str 2^64'
-1 >= 18446744073709551616
+1 >= '"18446744073709551616"'
 
 %
 
 $ vc 'str str 1234'
-1 >= 1234
+1 >= '"1234"'
 
 %
 
 $ vc 'str false'
-1 >= false
+1 >= '"false"'
 
 %
 
 $ vc 'str true'
-1 >= true
+1 >= '"true"'
 
 %
 
 $ vc 'hex 0'
-1 >= ""
+1 >= '""'
 
 %
 
 $ vc 'hex 1'
-1 >= 01
+1 >= '"01"'
 
 %
 
 $ vc 'hex (2^252 + 27742317777372353535851937790883648493)'
-1 >= 1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed
+1 >= '"1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"'
 
 %
 
 $ vc 'hex 1234'
-1 >= 04d2
+1 >= '"04d2"'
 
 %
 
 $ vc 'str hex 1234'
-1 >= 04d2
+1 >= '"04d2"'
 
 %
 
 $ vc 'hex str 1234'
-1 >= 31323334
+1 >= '"31323334"'
 
 %
 
 $ vc 'hex hex 1234'
-1 >= 30346432
+1 >= '"30346432"'
 
 %
 
@@ -674,7 +674,7 @@ $ vc 'bool ()'
 %
 
 $ vc 'str ()'
-1 >= ""
+1 >= '""'
 
 %
 
@@ -744,7 +744,7 @@ $ vc 'bool (0, false)'
 %
 
 $ vc 'str (-1, true, hex 3)'
-1 >= -1true03
+1 >= '"-1true03"'
 
 %
 
@@ -789,17 +789,17 @@ $ vc 'bool hex 2'
 %
 
 $ vc '"Hello world"'
-1 >= "Hello world"
+1 >= '"Hello world"'
 
 %
 
 $ vc 'str "string"'
-1 >= string
+1 >= '"string"'
 
 %
 
 $ vc 'str ("foo", "bar")'
-1 >= foobar
+1 >= '"foobar"'
 
 %
 
@@ -819,31 +819,31 @@ $ vc 'bool "0"'
 %
 
 $ vc 'hex "0"'
-1 >= 30
+1 >= '"30"'
 
 %
 
 $ vc 'hex "hex"'
-1 >= 686578
+1 >= '"686578"'
 
 %
 
 $ vc 'hex ""'
-1 >= ""
+1 >= '""'
 
 %
 
 $ vc 'str "\x58"'
-1 >= X
+1 >= '"X"'
 
 %
 
 $ vc 'str "\117"'
-1 >= O
+1 >= '"O"'
 
 %
 
-$ vc 'str "\n"'
+$ vc 'print "\n"'
 1 >> .
 
 
@@ -852,42 +852,42 @@ $ vc 'str "\n"'
 %
 
 $ vc 'hex "\377\000\a\b\f\n\r\t\v\0"'
-1 >= ff0007080c0a0d090b00
+1 >= '"ff0007080c0a0d090b00"'
 
 %
 
 $ vc '"foo" "bar"'
-1 >= foobar
+1 >= '"foobar"'
 
 %
 
 $ vc 'hex "1" "2"'
-1 >= 3132
+1 >= '"3132"'
 
 %
 
 $ vc '"\u0055"'
-1 >= U
+1 >= '"U"'
 
 %
 
 $ vc 'hex "\u2022"'
-1 >= e280a2
+1 >= '"e280a2"'
 
 %
 
 $ vc 'hex "\u1f4a9"'
-1 >= e1bd8a39
+1 >= '"e1bd8a39"'
 
 %
 
 $ vc 'hex "\u{1f4a9}"'
-1 >= f09f92a9
+1 >= '"f09f92a9"'
 
 %
 
 $ vc 'hex "\u{}"'
-1 >= 00
+1 >= '"00"'
 
 %
 
@@ -917,12 +917,12 @@ $ vc 'getenv "This environment variable is almost certainly not defined."'
 %
 
 $ FOO=foo vc 'getenv "FOO"'
-1 >= foo
+1 >= '"foo"'
 
 %
 
 $ FOO="" vc 'getenv "FOO"'
-1 >= ""
+1 >= '""'
 
 %
 
@@ -947,7 +947,7 @@ $ vc '1^time()'
 %
 
 $ vc 'str time'
-1 >= time
+1 >= '"time"'
 
 %
 
@@ -967,11 +967,11 @@ $ vc 'time == getenv'
 %
 
 $ vc '"hey" * 3'
-1 >= heyheyhey
+1 >= '"heyheyhey"'
 
 %
 
-$ vc '"THE CAKE IS A LIE\n" * 4'
+$ vc 'print ("THE CAKE IS A LIE\n" * 4)'
 1 >> .
 THE CAKE IS A LIE
 THE CAKE IS A LIE
@@ -983,32 +983,32 @@ THE CAKE IS A LIE
 %
 
 $ vc '"one" * 1'
-1 >= one
+1 >= '"one"'
 
 %
 
 $ vc '"zero" * 0'
-1 >= ""
+1 >= '""'
 
 %
 
 $ vc '"" * 3'
-1 >= ""
+1 >= '""'
 
 %
 
 $ vc '"one" * true'
-1 >= one
+1 >= '"one"'
 
 %
 
 $ vc '"zero" * false'
-1 >= ""
+1 >= '""'
 
 %
 
 $ vc '"" * true'
-1 >= ""
+1 >= '""'
 
 %
 
@@ -1063,7 +1063,7 @@ $ vc 'const x = (4, 5, 6); (+) x, x'
 %
 
 $ vc '"foo" (*) 3'
-1 >= "foo, foo, foo"
+1 >= '"foo", "foo", "foo"'
 
 %
 

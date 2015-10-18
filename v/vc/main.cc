@@ -27,6 +27,7 @@
 #include "vc/error.hh"
 #include "vc/library.hh"
 #include "vc/parse.hh"
+#include "vc/quote.hh"
 #include "vc/symbol_table.hh"
 
 
@@ -89,6 +90,8 @@ static plus::string stringify( const vc::Value& v )
 			return stringify( v.number );
 		
 		case Value_string:
+			return quote_string( v.string );
+		
 		case Value_function:
 			return v.string;
 		
@@ -103,7 +106,7 @@ static plus::string stringify( const vc::Value& v )
 	}
 }
 
-static void print( const vc::Value& v )
+static void reproduce( const vc::Value& v )
 {
 	if ( ! v.type )
 	{
@@ -203,7 +206,7 @@ int main( int argc, char** argv )
 		
 		try
 		{
-			print( parse_and_eval( expr ) );
+			reproduce( parse_and_eval( expr ) );
 		}
 		catch ( const std::bad_alloc& )
 		{

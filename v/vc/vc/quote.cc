@@ -213,4 +213,83 @@ namespace vc
 		return result.substr( 0, q - begin );
 	}
 	
+	static
+	plus::string::size_type quoted_length( const plus::string& s )
+	{
+		typedef plus::string::size_type size_t;
+		
+		const char* p = s.data();
+		size_t      n = s.size();
+		
+		plus::string::size_type length = 2;  // the enclosing quotes
+		
+		while ( n-- > 0 )
+		{
+			unsigned char c = *p++;
+			
+			if ( (c >= '\a'  &&  c <= '\r')  ||  c == '\\'  ||  c == '"' )
+			{
+				length += 2;  // e.g. "\n" or "\\"
+			}
+			else if ( iota::is_cntrl( c ) )
+			{
+				length += 4;  // e.g. "\x00"
+			}
+			else
+			{
+				length += 1;
+			}
+		}
+		
+		return length;
+	}
+	
+	plus::string quote_string( const plus::string& s )
+	{
+		typedef plus::string::size_type size_t;
+		
+		const char* p = s.data();
+		size_t      n = s.size();
+		
+		plus::string result;
+		
+		char* q = result.reset( quoted_length( s ) );
+		
+		*q++ = '"';
+		
+		while ( n-- > 0 )
+		{
+			unsigned char c = *p++;
+			
+			if ( ! iota::is_cntrl( c ) )
+			{
+				if ( c == '\\'  ||  c == '"' )
+				{
+					*q++ = '\\';
+				}
+				
+				*q++ = c;
+				continue;
+			}
+			
+			*q++ = '\\';
+			
+			if ( c >= '\a'  &&  c <= '\r' )
+			{
+				const char* escapes = "abtnvfr";
+				
+				*q++ = escapes[ c - '\a' ];
+				continue;
+			}
+			
+			*q++ = 'x';
+			*q++ = gear::encoded_hex_char( c >> 4 );
+			*q++ = gear::encoded_hex_char( c >> 0 );
+		}
+		
+		*q++ = '"';
+		
+		return result;
+	}
+	
 }
