@@ -1175,3 +1175,26 @@ $ THREE=3 vc 'getenv("THREE").length'
 
 $ vc 'str().length'
 1 >= 0
+
+%
+
+$ vc 'print ""'
+1 >= ""
+
+%
+
+$ vc 'print ()'
+1 >= ""
+
+%
+
+$ vc 'print "\n"'
+1 >> .
+
+
+.
+
+%
+
+$ vc 'print (1, 2, 3)'
+1 >= 123

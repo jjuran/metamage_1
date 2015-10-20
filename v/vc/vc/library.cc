@@ -5,11 +5,21 @@
 
 #include "vc/library.hh"
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
 #include <stdlib.h>
 #include <time.h>
 
+// must
+#include "must/write.h"
+
+// plus
+#include "plus/string/concat.hh"
+
 // vc
+#include "vc/calc.hh"
 #include "vc/error.hh"
 #include "vc/symbol_table.hh"
 
@@ -42,6 +52,15 @@ namespace vc
 		}
 		
 		return Value_empty_list;
+	}
+	
+	Value v_print( const Value& v )
+	{
+		const plus::string s = v_str( v ).string + "\n";
+		
+		must_write( STDOUT_FILENO, s.data(), s.size() );
+		
+		return Value();
 	}
 	
 	Value v_time( const Value& v )

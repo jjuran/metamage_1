@@ -188,6 +188,7 @@ int main( int argc, char** argv )
 	using namespace vc;
 	
 	define( "getenv", &v_getenv );
+	define( "print",  &v_print  );
 	define( "time",   &v_time   );
 	
 	symbol_id pc = create_symbol( "PC", Symbol_var );
