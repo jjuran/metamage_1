@@ -216,7 +216,9 @@ int main( int argc, char** argv )
 		
 		if ( *args != NULL )
 		{
-			write( STDERR_FILENO, STR_LEN( "macos: Warning: ignored non-option arguments\n" ) );
+			write( STDERR_FILENO, STR_LEN( "macos: no arguments allowed\n" ) );
+			
+			_exit( 1 );
 		}
 	}
 	
