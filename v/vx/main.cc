@@ -32,6 +32,7 @@
 
 // vx
 #include "library.hh"
+#include "posixfs.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -157,6 +158,7 @@ int main( int argc, char** argv )
 	set_argv( arg0, argn, args );
 	
 	define( proc_getenv );
+	define( proc_load   );
 	define( proc_print  );
 	define( proc_time   );
 	
