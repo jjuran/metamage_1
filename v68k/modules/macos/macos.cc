@@ -22,6 +22,7 @@
 #include "InitGraf.hh"
 #include "Menus.hh"
 #include "OSUtils.hh"
+#include "QDUtils.hh"
 #include "Pen.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
@@ -88,6 +89,8 @@ static void install_OSUtils()
 
 static void install_QuickDraw()
 {
+	TBTRAP( Random );  // A861
+	
 	TBTRAP( InitPort    );  // A86D
 	TBTRAP( InitGraf    );  // A86E
 	TBTRAP( OpenPort    );  // A86F
