@@ -19,8 +19,8 @@
 #include "plus/string/concat.hh"
 
 // vc
-#include "vc/calc.hh"
 #include "vc/error.hh"
+#include "vc/string-utils.hh"
 #include "vc/symbol_table.hh"
 
 
@@ -56,7 +56,7 @@ namespace vc
 	
 	Value v_print( const Value& v )
 	{
-		const plus::string s = v_str( v ).string + "\n";
+		const plus::string s = make_string( v ) + "\n";
 		
 		must_write( STDOUT_FILENO, s.data(), s.size() );
 		

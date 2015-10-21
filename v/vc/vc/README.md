@@ -36,20 +36,25 @@ Level 1
 Level 2
 -------
 
+`string-utils.*`:  Defines functions for computations of strings.
+
 `symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
-`calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
-
 Level 3
 -------
 
-`eval.*`:  Defines `eval()`, which evaluates a binary operation.
+`calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 
 `library.*`:  Defines various library functions, and `define()` for installing them.
 
 Level 4
+-------
+
+`eval.*`:  Defines `eval()`, which evaluates a binary operation.
+
+Level 5
 -------
 
 `parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.

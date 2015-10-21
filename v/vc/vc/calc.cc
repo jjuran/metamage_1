@@ -5,18 +5,14 @@
 
 #include "vc/calc.hh"
 
-// more-libc
-#include "more/string.h"
-
 // plus
-#include "plus/decimal.hh"
 #include "plus/hexadecimal.hh"
 #include "plus/integer_hex.hh"
-#include "plus/string/concat.hh"
 
 // vc
 #include "vc/error.hh"
 #include "vc/function_id.hh"
+#include "vc/string-utils.hh"
 
 
 namespace vc
@@ -24,14 +20,6 @@ namespace vc
 	
 	using math::integer::cmp_t;
 	
-	
-	using ::mempcpy;
-	
-	static inline
-	char* mempcpy( char* p, const plus::string& s )
-	{
-		return (char*) mempcpy( p, s.data(), s.size() );
-	}
 	
 	static plus::string hex( const plus::string& s )
 	{
@@ -114,100 +102,9 @@ namespace vc
 		return 0;
 	}
 	
-	static
-	plus::string::size_type composite_length( const Value& value )
-	{
-		switch ( value.type )
-		{
-			case Value_empty_list:  // ""
-			case Value_string:
-			case Value_function:
-				return value.string.size();
-			
-			case Value_boolean:
-				return 4 + value.number.is_zero();  // "true" or "false"
-			
-			case Value_number:
-				return decimal_length( value.number );
-			
-			case Value_pair:
-				break;
-			
-			default:
-				INTERNAL_ERROR( "unsupported type in composite_length()" );
-				break;
-		}
-		
-		Expr* expr = value.expr.get();
-		
-		plus::string::size_type total = composite_length( expr->left );
-		
-		while ( Expr* next = expr->right.expr.get() )
-		{
-			total += composite_length( next->left );
-			
-			expr = next;
-		}
-		
-		return total + composite_length( expr->right );
-	}
-	
-	static
-	char* make_string( char* p, const Value& value )
-	{
-		switch ( value.type )
-		{
-			case Value_empty_list:  // ""
-			case Value_string:
-			case Value_function:
-				return mempcpy( p, value.string );
-			
-			case Value_boolean:
-				if ( value.number.is_zero() )
-				{
-					return (char*) mempcpy( p, STR_LEN( "false" ) );
-				}
-				else
-				{
-					return (char*) mempcpy( p, STR_LEN( "true" ) );
-				}
-			
-			case Value_number:
-				return encode_decimal( p, value.number );
-			
-			case Value_pair:
-				break;
-			
-			default:
-				INTERNAL_ERROR( "unsupported type in make_string()" );
-				break;
-		}
-		
-		Expr* expr = value.expr.get();
-		
-		p = make_string( p, expr->left );
-		
-		while ( Expr* next = expr->right.expr.get() )
-		{
-			p = make_string( p, next->left );
-			
-			expr = next;
-		}
-		
-		return make_string( p, expr->right );
-	}
-	
 	Value v_str( const Value& value )
 	{
-		const plus::string::size_type size = composite_length( value );
-		
-		plus::string result;
-		
-		char* p = result.reset( size );
-		
-		make_string( p, value );
-		
-		return result;
+		return make_string( value );
 	}
 	
 	static
@@ -418,7 +315,7 @@ namespace vc
 	}
 	
 	static
-	plus::string repeat( const plus::string& s, plus::integer n )
+	plus::string repeat_string( const plus::string& s, const plus::integer& n )
 	{
 		typedef plus::string::size_type size_t;
 		
@@ -427,30 +324,12 @@ namespace vc
 			DOMAIN_ERROR( "negative string multiplier" );
 		}
 		
-		const char*  data = s.data();
-		const size_t size = s.size();
-		
-		size_t n_times = n.clipped();
-		
-		n *= size;
-		
 		if ( n > size_t( -1 ) )
 		{
 			DOMAIN_ERROR( "excessively large string multiplier" );
 		}
 		
-		const size_t n_bytes = n.clipped();
-		
-		plus::string result;
-		
-		char* p = result.reset( n_bytes );
-		
-		while ( n_times-- > 0 )
-		{
-			p = (char*) mempcpy( p, data, size );
-		}
-		
-		return result;
+		return repeat( s, n.clipped() );
 	}
 	
 	static
@@ -580,7 +459,7 @@ namespace vc
 		{
 			if ( right.type == Value_boolean  ||  right.type == Value_number )
 			{
-				return repeat( left.string, right.number );
+				return repeat_string( left.string, right.number );
 			}
 		}
 		
