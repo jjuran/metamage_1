@@ -28,6 +28,8 @@ namespace vlib
 	
 	plus::string join( const plus::string& glue, const Value& v, unsigned n );
 	
+	Value lines( const plus::string& s );
+	
 }
 
 #endif

@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// Standard C++
+#include <vector>
+
 // more-libc
 #include "more/string.h"
 
@@ -476,6 +479,55 @@ namespace vlib
 		make_string( p, *next, Stringified_to_print );
 		
 		return result;
+	}
+	
+	Value lines( const plus::string& s )
+	{
+		const char* p = s.data();
+		size_t      n = s.size();
+		
+		if ( n == 0 )
+		{
+			return Value( Op_array, Value_empty_list );
+		}
+		
+		const char* end = p + n;
+		
+		if ( end[ -1 ] != '\n' )
+		{
+			DOMAIN_ERROR( "final newline missing" );
+		}
+		
+		std::vector< const char* > starts;
+		
+		while ( p < end )
+		{
+			starts.push_back( p );
+			
+			while ( *p++ != '\n' )  continue;
+		}
+		
+		typedef std::vector< char const* >::const_iterator Iter;
+		
+		Iter begin = starts.begin();
+		Iter it    = starts.end();
+		
+		const char* start = *--it;
+		
+		Value result = plus::string( start, p - 1 );
+		
+		while ( it > begin )
+		{
+			p = start;
+			
+			start = *--it;
+			
+			plus::string line( start, p - 1 );
+			
+			result = Value( Value( line ), result );
+		}
+		
+		return Value( Op_array, result );
 	}
 	
 }

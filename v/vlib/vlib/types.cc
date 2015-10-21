@@ -21,6 +21,8 @@
 namespace vlib
 {
 	
+	extern const proc_info proc_lines;
+	
 	static
 	Value assign_to_boolean( const Value& v )
 	{
@@ -202,6 +204,11 @@ namespace vlib
 			return bind_args( proc_join, obj );
 		}
 		
+		if ( member == "lines" )
+		{
+			return bind_args( proc_lines, obj );
+		}
+		
 		SYNTAX_ERROR( "nonexistent string member" );
 		
 		return Value_nothing;
@@ -351,6 +358,12 @@ namespace vlib
 	}
 	
 	static
+	Value v_lines( const Value& v )
+	{
+		return lines( v.string() );
+	}
+	
+	static
 	Value v_typeof( const Value& v )
 	{
 		if ( is_function( v ) )
@@ -397,9 +410,11 @@ namespace vlib
 		return reversed( Value( v_typeof( *next ), reversed_result ) );
 	}
 	
+	static const Value string     = string_vtype;
 	static const Value string_etc = Value( string_vtype, etc_vtype );
 	
 	const proc_info proc_join   = { &v_join,   "join",   &string_etc };
+	const proc_info proc_lines  = { &v_lines,  "lines",  &string     };
 	const proc_info proc_typeof = { &v_typeof, "typeof", NULL        };
 	
 }
