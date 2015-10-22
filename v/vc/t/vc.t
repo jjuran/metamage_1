@@ -1633,3 +1633,28 @@ $ vc 'typeof true'
 
 $ vc 'typeof typeof true'
 1 >= type
+
+%
+
+$ vc boolean
+1 >= boolean
+
+%
+
+$ vc function
+1 >= function
+
+%
+
+$ vc integer
+1 >= integer
+
+%
+
+$ vc string
+1 >= string
+
+%
+
+$ vc type
+1 >= type
