@@ -47,6 +47,8 @@ namespace vlib
 			
 			void constify()  { its_type = Symbol_const; }
 			
+			void denote( const Value& vtype );
+			
 			void assign( const Value& v );
 			
 			Value& deref();

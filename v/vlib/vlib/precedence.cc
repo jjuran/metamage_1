@@ -41,6 +41,7 @@ namespace vlib
 	{
 		{ Precedence_juxtaposition, Op_function },
 		{ Precedence_juxtaposition, Op_member   },
+		{ Precedence_juxtaposition, Op_denote   },
 		
 		{ Precedence_exponentiation, Op_empower },
 		

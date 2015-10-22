@@ -16,6 +16,19 @@
 namespace vlib
 {
 	
+	void Symbol::denote( const Value& vtype )
+	{
+		if ( vtype.type() != Value_base_type )
+		{
+			SYNTAX_ERROR( "type annotation not a single type" );
+		}
+		
+		if ( is_defined() )
+		{
+			SYNTAX_ERROR( "type annotation of defined symbol" );
+		}
+	}
+	
 	void Symbol::assign( const Value& v )
 	{
 		if ( is_const()  &&  is_defined() )

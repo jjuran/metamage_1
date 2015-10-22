@@ -1658,3 +1658,33 @@ $ vc string
 
 $ vc type
 1 >= type
+
+%
+
+$ vc 'var x (boolean) = true'
+1 >= true
+
+%
+
+$ vc 'var x (integer) = 123'
+1 >= 123
+
+%
+
+$ vc 'var x (string) = "hello"'
+1 >= '"hello"'
+
+%
+
+$ vc 'var x (function) = join'
+1 >= join
+
+%
+
+$ vc 'var x (function) = join % "."'
+1 >= '(join % ".")'
+
+%
+
+$ vc 'var x (type) = string'
+1 >= string
