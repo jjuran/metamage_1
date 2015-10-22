@@ -86,6 +86,16 @@ namespace vlib
 	plus::string::size_type substr_offset( const plus::string&   s,
 	                                       const plus::integer&  offset )
 	{
+		if ( offset.is_negative() )
+		{
+			if ( -offset > s.size() )
+			{
+				DOMAIN_ERROR( "negative substr offset exceeds string length" );
+			}
+			
+			return s.size() - offset.clipped();
+		}
+		
 		if ( offset > s.size() )
 		{
 			DOMAIN_ERROR( "substr offset exceeds string length" );
@@ -154,7 +164,8 @@ namespace vlib
 	static const Value u32_2 = Value( u32_vtype, Op_duplicate, 2 );
 	static const Value mince = Value( string, u32_2 );
 	
-	static const Value s_offset( u32_vtype, Op_duplicate, 0 );
+	static const Value x32( u32_vtype, Op_union, i32_vtype );
+	static const Value s_offset( x32, Op_duplicate, 0 );
 	static const Value s_length( u32_vtype, Op_duplicate, uint32_t( -1 ) );
 	static const Value substr( string_vtype, Value( s_offset, s_length ) );
 	

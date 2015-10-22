@@ -2295,3 +2295,18 @@ $ vc 'var x (str|int) = 123'
 
 $ vc 'var x (u8 & i8) = 123'
 1 >= '123'
+
+%
+
+$ vc 'substr( "Hello world", -5 )'
+1 >= '"world"'
+
+%
+
+$ vc 'substr( "Hello world", -5, 17 )'
+1 >= '"world"'
+
+%
+
+$ vc 'substr( "Hello world", -11, 4 )'
+1 >= '"Hell"'
