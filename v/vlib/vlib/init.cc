@@ -69,6 +69,7 @@ namespace vlib
 		define_keyword( proc_join   );
 		define_keyword( proc_mince  );
 		define_keyword( proc_rep    );
+		define_keyword( proc_substr );
 		define_keyword( proc_typeof );
 		define_keyword( proc_unbin  );
 		define_keyword( proc_unhex  );

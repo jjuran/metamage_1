@@ -83,6 +83,44 @@ namespace vlib
 	}
 	
 	static
+	plus::string::size_type substr_offset( const plus::string&   s,
+	                                       const plus::integer&  offset )
+	{
+		if ( offset > s.size() )
+		{
+			DOMAIN_ERROR( "substr offset exceeds string length" );
+		}
+		
+		return offset.clipped();
+	}
+	
+	static inline
+	plus::string::size_type substr_length( const plus::string&   s,
+	                                       const plus::integer&  length )
+	{
+		return length.clipped();
+	}
+	
+	static
+	Value v_substr( const Value& v )
+	{
+		const Value& arg1 = first( v );
+		const Value& arg1_ = rest( v );
+		const Value& arg2 = first( arg1_ );
+		const Value& arg2_ = rest( arg1_ );
+		const Value& arg3 = first( arg2_ );
+		
+		typedef plus::string::size_type size_t;
+		
+		const plus::string& s = arg1.string();
+		
+		const size_t offset = substr_offset( s, arg2.number() );
+		const size_t length = substr_length( s, arg3.number() );
+		
+		return s.substr( offset, length );
+	}
+	
+	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
@@ -116,13 +154,18 @@ namespace vlib
 	static const Value u32_2 = Value( u32_vtype, Op_duplicate, 2 );
 	static const Value mince = Value( string, u32_2 );
 	
-	const proc_info proc_abs    = { &v_abs,   "abs",   &integer };
-	const proc_info proc_area   = { &v_area,  "area",  NULL     };
-	const proc_info proc_half   = { &v_half,  "half",  &integer };
-	const proc_info proc_hex    = { &v_hex,   "hex",   NULL     };
-	const proc_info proc_mince  = { &v_mince, "mince", &mince   };
-	const proc_info proc_rep    = { &v_rep,   "rep",   NULL     };
-	const proc_info proc_unbin  = { &v_unbin, "unbin", &string  };
-	const proc_info proc_unhex  = { &v_unhex, "unhex", &string  };
+	static const Value s_offset( u32_vtype, Op_duplicate, 0 );
+	static const Value s_length( u32_vtype, Op_duplicate, uint32_t( -1 ) );
+	static const Value substr( string_vtype, Value( s_offset, s_length ) );
+	
+	const proc_info proc_abs    = { &v_abs,    "abs",    &integer };
+	const proc_info proc_area   = { &v_area,   "area",   NULL     };
+	const proc_info proc_half   = { &v_half,   "half",   &integer };
+	const proc_info proc_hex    = { &v_hex,    "hex",    NULL     };
+	const proc_info proc_mince  = { &v_mince,  "mince",  &mince   };
+	const proc_info proc_rep    = { &v_rep,    "rep",    NULL     };
+	const proc_info proc_substr = { &v_substr, "substr", &substr  };
+	const proc_info proc_unbin  = { &v_unbin,  "unbin",  &string  };
+	const proc_info proc_unhex  = { &v_unhex,  "unhex",  &string  };
 	
 }

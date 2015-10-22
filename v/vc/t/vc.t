@@ -2245,3 +2245,38 @@ $ vc 'var x (int[][]); x = []; x = [[]]; x = [[], [1], [2, 3]]'
 
 $ vc 'var x (...[]); x = []; x = [1, true, "3"]'
 1 >= '[1, true, "3"]'
+
+%
+
+$ vc 'substr( "Test" )'
+1 >= '"Test"'
+
+%
+
+$ vc 'substr( "Test", 0 )'
+1 >= '"Test"'
+
+%
+
+$ vc 'substr( "Test", 0, 4 )'
+1 >= '"Test"'
+
+%
+
+$ vc 'substr( "Test", 0, 4^4 )'
+1 >= '"Test"'
+
+%
+
+$ vc 'substr( "Test", 0, (4^4)^4 - 1 )'
+1 >= '"Test"'
+
+%
+
+$ vc 'substr( "Test", 1 )'
+1 >= '"est"'
+
+%
+
+$ vc 'substr( "Test", 1, 2 )'
+1 >= '"es"'
