@@ -105,6 +105,26 @@ namespace vlib
 	}
 	
 	static
+	Value v_typeof( const Value& v )
+	{
+		if ( is_function( v ) )
+		{
+			return "function";
+		}
+		
+		switch ( v.type() )
+		{
+			case Value_empty_list:  return v;
+			
+			case Value_boolean:   return "boolean";
+			case Value_number:    return "integer";
+			case Value_string:    return "string";
+			
+			default:  return "???";
+		}
+	}
+	
+	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
@@ -142,14 +162,15 @@ namespace vlib
 		return unhex( get_str( v ) );
 	}
 	
-	const proc_info proc_abs   = { &v_abs,   "abs"   };
-	const proc_info proc_area  = { &v_area,  "area"  };
-	const proc_info proc_bool  = { &v_bool,  "bool"  };
-	const proc_info proc_half  = { &v_half,  "half"  };
-	const proc_info proc_hex   = { &v_hex,   "hex"   };
-	const proc_info proc_rep   = { &v_rep,   "rep"   };
-	const proc_info proc_str   = { &v_str,   "str"   };
-	const proc_info proc_unbin = { &v_unbin, "unbin" };
-	const proc_info proc_unhex = { &v_unhex, "unhex" };
+	const proc_info proc_abs    = { &v_abs,   "abs"   };
+	const proc_info proc_area   = { &v_area,  "area"  };
+	const proc_info proc_bool   = { &v_bool,  "bool"  };
+	const proc_info proc_half   = { &v_half,  "half"  };
+	const proc_info proc_hex    = { &v_hex,   "hex"   };
+	const proc_info proc_rep    = { &v_rep,   "rep"   };
+	const proc_info proc_str    = { &v_str,   "str"   };
+	const proc_info proc_typeof = { &v_typeof, "typeof" };
+	const proc_info proc_unbin  = { &v_unbin, "unbin" };
+	const proc_info proc_unhex  = { &v_unhex, "unhex" };
 	
 }
