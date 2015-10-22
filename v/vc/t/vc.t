@@ -1198,3 +1198,18 @@ $ vc 'print "\n"'
 
 $ vc 'print (1, 2, 3)'
 1 >= 123
+
+%
+
+$ vc 'const x = 3; print x'
+1 >= 3
+
+%
+
+$ FOO=foo vc 'print getenv "FOO"'
+1 >= foo
+
+%
+
+$ FOO=BAR BAR=BAZ vc 'print getenv getenv "FOO"'
+1 >= BAZ

@@ -212,6 +212,15 @@ namespace vc
 				
 				if ( expecting_value() )
 				{
+					op = Op_none;
+				}
+				else
+				{
+					op = op_from_name( token.text );
+				}
+				
+				if ( op == Op_none )
+				{
 					if ( function_id f = function_from_name( token.text ) )
 					{
 						receive_value( f );
@@ -267,15 +276,6 @@ namespace vc
 						}
 						
 						SYMBOL_ERROR( "undeclared symbol" );
-					}
-				}
-				else
-				{
-					op = op_from_name( token.text );
-					
-					if ( op == Op_none )
-					{
-						SYNTAX_ERROR( "invalid named operator" );
 					}
 				}
 				
