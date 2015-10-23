@@ -286,7 +286,7 @@ namespace vc
 	}
 	
 	static
-	size_t count( const Value& list )
+	unsigned long count( const Value& list )
 	{
 		if ( list.type != Value_pair )
 		{
@@ -295,7 +295,7 @@ namespace vc
 		
 		Expr* expr = list.expr.get();
 		
-		size_t total = count( expr->left );
+		unsigned long total = count( expr->left );
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
@@ -471,12 +471,12 @@ namespace vc
 			return Value_empty_list;
 		}
 		
-		if ( factor.number > size_t( -1 ) )
+		if ( factor.number > 0xFFFFFFFFu )
 		{
 			DOMAIN_ERROR( "excessively large list multiplier" );
 		}
 		
-		size_t n = factor.number.clipped();
+		unsigned long n = factor.number.clipped();
 		
 		if ( n == 1 )
 		{
