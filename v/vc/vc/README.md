@@ -38,6 +38,8 @@ Level 2
 
 `string-utils.*`:  Defines functions for computations of strings.
 
+`lists-utils.*`:  Defines functions for computations of lists.
+
 `symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.

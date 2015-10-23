@@ -12,6 +12,7 @@
 // vc
 #include "vc/error.hh"
 #include "vc/function_id.hh"
+#include "vc/list-utils.hh"
 #include "vc/string-utils.hh"
 
 
@@ -183,28 +184,6 @@ namespace vc
 	}
 	
 	static
-	unsigned long count( const Value& list )
-	{
-		if ( list.type != Value_pair )
-		{
-			return list.type != Value_empty_list;
-		}
-		
-		Expr* expr = list.expr.get();
-		
-		unsigned long total = count( expr->left );
-		
-		while ( Expr* next = expr->right.expr.get() )
-		{
-			total += count( next->left );
-			
-			expr = next;
-		}
-		
-		return total + count( expr->right );
-	}
-	
-	static
 	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
@@ -299,19 +278,6 @@ namespace vc
 		INTERNAL_ERROR( "unsupported operator in calc()" );
 		
 		return Value();
-	}
-	
-	static
-	Value make_pair( const Value& left, const Value& right )
-	{
-		if ( left.type != Value_pair )
-		{
-			return Value( left, right );
-		}
-		
-		Expr& expr = *left.expr.get();
-		
-		return Value( expr.left, make_pair( expr.right, right ) );
 	}
 	
 	static
