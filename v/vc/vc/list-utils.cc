@@ -9,6 +9,33 @@
 namespace vc
 {
 	
+	static const Value empty_list = Value_empty_list;
+	
+	
+	const Value& first( const Value& list )
+	{
+		if ( list.type == Value_pair )
+		{
+			Expr* expr = list.expr.get();
+			
+			return expr->left;
+		}
+		
+		return list;  // not a (non-empty) list
+	}
+	
+	const Value& rest( const Value& list )
+	{
+		if ( list.type == Value_pair )
+		{
+			Expr* expr = list.expr.get();
+			
+			return expr->right;
+		}
+		
+		return empty_list;
+	}
+	
 	unsigned long count( const Value& list )
 	{
 		if ( list.type != Value_pair )
