@@ -22,6 +22,7 @@
 #include "plus/decimal.hh"
 #include "plus/integer_hex.hh"
 #include "plus/string/concat.hh"
+#include "plus/var_string.hh"
 
 // vc
 #include "vc/calc.hh"
@@ -63,6 +64,8 @@ static plus::string stringify( const plus::integer& i )
 	return hex_output ? hex( i ) : encode_decimal( i );
 }
 
+static plus::string stringify_list( const vc::Value& v );
+
 static plus::string stringify( const vc::Value& v )
 {
 	switch ( v.type )
@@ -97,14 +100,29 @@ static plus::string stringify( const vc::Value& v )
 			return v.string;
 		
 		case Value_pair:
-			{
-				const Expr& expr = *v.expr.get();
-				
-				return stringify( expr.left ) + ", " + stringify( expr.right );
-			}
-		
-			break;
+			return stringify_list( v );
 	}
+}
+
+static plus::string stringify_list( const vc::Value& v )
+{
+	using namespace vc;
+	
+	plus::var_string result;
+	
+	const Value* next = &v;
+	
+	while ( const Expr* expr = next->expr.get() )
+	{
+		next = &expr->right;
+		
+		result += stringify( expr->left );
+		result += ", ";
+	}
+	
+	result += stringify( *next );
+	
+	return result.move();
 }
 
 static void reproduce( const vc::Value& v )
