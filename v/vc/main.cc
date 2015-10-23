@@ -108,7 +108,7 @@ static plus::string stringify_list( const vc::Value& v )
 {
 	using namespace vc;
 	
-	plus::var_string result;
+	plus::var_string result = "(";
 	
 	const Value* next = &v;
 	
@@ -121,6 +121,7 @@ static plus::string stringify_list( const vc::Value& v )
 	}
 	
 	result += stringify( *next );
+	result += ")";
 	
 	return result.move();
 }
