@@ -109,6 +109,12 @@ namespace vc
 	};
 	
 	inline
+	bool is_undefined( const Value& v )
+	{
+		return v.type == Value_undefined;
+	}
+	
+	inline
 	bool is_empty( const Value& v )
 	{
 		return v.type == Value_empty_list;

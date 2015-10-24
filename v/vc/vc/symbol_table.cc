@@ -82,7 +82,7 @@ namespace vc
 	{
 		Symbol& var = symbol_table[ id ];
 		
-		if ( var.type == Symbol_const  &&  var.value.type != Value_undefined )
+		if ( var.type == Symbol_const  &&  ! is_undefined( var.value ) )
 		{
 			SYMBOL_ERROR( "reassignment of constant" );
 		}

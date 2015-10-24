@@ -30,7 +30,7 @@ namespace vc
 	static
 	const Value& defined( const Value& v )
 	{
-		if ( v.type == Value_undefined )
+		if ( is_undefined( v ) )
 		{
 			SYMBOL_ERROR( "undefined symbol" );
 		}
@@ -72,7 +72,7 @@ namespace vc
 		
 		Value& left = modify_symbol( sym );
 		
-		if ( left.type == Value_undefined )
+		if ( is_undefined( left ) )
 		{
 			SYMBOL_ERROR( "update of undefined symbol" );
 		}
