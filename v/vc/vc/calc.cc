@@ -446,6 +446,9 @@ namespace vc
 				case Value_string:
 					SYNTAX_ERROR( "operator not defined for string values" );
 				
+				case Value_function:
+					SYNTAX_ERROR( "operator not defined for functions" );
+				
 				case Value_pair:
 					SYNTAX_ERROR( "operator not defined for lists" );
 				
