@@ -145,7 +145,7 @@ namespace vc
 			
 			// Assume a function call.
 			
-			fold_ops_and_add( Op_function );
+			fold_ops_and_add( is_empty( x ) ? Op_function : Op_named_unary );
 		}
 		
 		stack.push_back( dyad( x ) );
