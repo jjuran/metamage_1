@@ -119,7 +119,7 @@ namespace vc
 		
 		if ( is_left_varop( op ) )
 		{
-			if ( ! is_symbol( left.type ) )
+			if ( ! is_symbol( left ) )
 			{
 				SYNTAX_ERROR( "left operand of assignment not a symbol" );
 			}

@@ -37,12 +37,6 @@ namespace vc
 		Value_pair,
 	};
 	
-	inline
-	bool is_symbol( value_type type )
-	{
-		return type == Value_symbol  ||  type == Value_symbol_declarator;
-	}
-	
 	struct Value;
 	
 	typedef Value (*function_type)( const Value& argument );
@@ -113,6 +107,12 @@ namespace vc
 		
 		Expr( const Value& a, op_type op, const Value& b );
 	};
+	
+	inline
+	bool is_symbol( const Value& v )
+	{
+		return v.type == Value_symbol  ||  v.type == Value_symbol_declarator;
+	}
 	
 }
 
