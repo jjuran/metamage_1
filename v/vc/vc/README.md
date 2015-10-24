@@ -38,7 +38,7 @@ Level 2
 
 `string-utils.*`:  Defines functions for computations of strings.
 
-`lists-utils.*`:  Defines functions for computations of lists.
+`list-utils.*`:  Defines functions for computations of lists.
 
 `symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
