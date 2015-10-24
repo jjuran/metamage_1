@@ -18,7 +18,10 @@ namespace vc
 		{
 			Expr* expr = list.expr.get();
 			
-			return expr->left;
+			if ( expr->op == Op_list )
+			{
+				return expr->left;
+			}
 		}
 		
 		return list;  // not a (non-empty) list
@@ -30,7 +33,10 @@ namespace vc
 		{
 			Expr* expr = list.expr.get();
 			
-			return expr->right;
+			if ( expr->op == Op_list )
+			{
+				return expr->right;
+			}
 		}
 		
 		return empty_list;
@@ -45,10 +51,20 @@ namespace vc
 		
 		Expr* expr = list.expr.get();
 		
+		if ( expr->op != Op_list )
+		{
+			return 1;
+		}
+		
 		unsigned long total = count( expr->left );
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
+			if ( next->op != Op_list )
+			{
+				return total + 1;
+			}
+			
 			total += count( next->left );
 			
 			expr = next;
@@ -63,7 +79,10 @@ namespace vc
 		{
 			Expr& expr = *left.expr.get();
 			
-			return Value( expr.left, make_pair( expr.right, right ) );
+			if ( expr.op == Op_list )
+			{
+				return Value( expr.left, make_pair( expr.right, right ) );
+			}
 		}
 		
 		return Value( left, right );

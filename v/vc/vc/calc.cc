@@ -56,6 +56,16 @@ namespace vc
 			case Value_function:
 				return a.function == b.function;
 			
+			case Value_pair:
+				{
+					Expr& ax = *a.expr.get();
+					Expr& bx = *b.expr.get();
+					
+					return ax.op == bx.op                     &&
+					       equal_atoms( ax.left,  bx.left  )  &&
+					       equal_atoms( ax.right, bx.right );
+				}
+			
 			default:
 				INTERNAL_ERROR( "unsupported type in equal_atoms()" );
 				break;
