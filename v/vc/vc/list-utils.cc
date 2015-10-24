@@ -59,14 +59,14 @@ namespace vc
 	
 	Value make_pair( const Value& left, const Value& right )
 	{
-		if ( left.type != Value_pair )
+		if ( left.type == Value_pair )
 		{
-			return Value( left, right );
+			Expr& expr = *left.expr.get();
+			
+			return Value( expr.left, make_pair( expr.right, right ) );
 		}
 		
-		Expr& expr = *left.expr.get();
-		
-		return Value( expr.left, make_pair( expr.right, right ) );
+		return Value( left, right );
 	}
 	
 }
