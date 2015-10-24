@@ -109,6 +109,12 @@ namespace vc
 	};
 	
 	inline
+	bool is_empty( const Value& v )
+	{
+		return v.type == Value_empty_list;
+	}
+	
+	inline
 	bool is_symbol( const Value& v )
 	{
 		return v.type == Value_symbol  ||  v.type == Value_symbol_declarator;

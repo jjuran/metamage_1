@@ -40,7 +40,7 @@ namespace vc
 	{
 		if ( list.type != Value_pair )
 		{
-			return list.type != Value_empty_list;
+			return ! is_empty( list );
 		}
 		
 		Expr* expr = list.expr.get();

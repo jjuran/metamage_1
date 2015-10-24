@@ -65,7 +65,7 @@ namespace vc
 	
 	Value v_time( const Value& v )
 	{
-		if ( v.type != Value_empty_list )
+		if ( ! is_empty( v ) )
 		{
 			TYPE_ERROR( "time takes no arguments" );
 		}

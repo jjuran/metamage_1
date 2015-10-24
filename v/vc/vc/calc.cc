@@ -43,7 +43,7 @@ namespace vc
 	{
 		if ( a.type != b.type )
 		{
-			if ( a.type == Value_empty_list  ||  b.type == Value_empty_list )
+			if ( is_empty( a )  ||  is_empty( b ) )
 			{
 				return false;
 			}
@@ -344,7 +344,7 @@ namespace vc
 			DOMAIN_ERROR( "negative list repetition factor" );
 		}
 		
-		if ( factor.number.is_zero()  ||  list.type == Value_empty_list )
+		if ( factor.number.is_zero()  ||  is_empty( list ) )
 		{
 			return Value_empty_list;
 		}
@@ -412,12 +412,12 @@ namespace vc
 		
 		if ( op == Op_list )
 		{
-			if ( left.type == Value_empty_list )
+			if ( is_empty( left ) )
 			{
 				return right;
 			}
 			
-			if ( right.type == Value_empty_list )
+			if ( is_empty( right ) )
 			{
 				return left;
 			}
