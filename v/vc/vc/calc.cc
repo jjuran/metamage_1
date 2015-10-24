@@ -281,6 +281,19 @@ namespace vc
 		return result;
 	}
 	
+	static
+	Value call_function( const Value& f, const Value& arguments )
+	{
+		if ( f.type == Value_function )
+		{
+			return f.function( arguments );
+		}
+		
+		TYPE_ERROR( "attempted call of non-function" );
+		
+		return Value();  // not reached
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -297,13 +310,7 @@ namespace vc
 			
 			case Op_function:
 			case Op_named_unary:
-				if ( left.type == Value_function )
-				{
-					return left.function( right );
-				}
-				
-				SYNTAX_ERROR( "attempted call of non-function" );
-				break;
+				return call_function( left, right );
 			
 			case Op_equal:    return equal( left, right );
 			case Op_unequal:  return ! equal( left, right );
