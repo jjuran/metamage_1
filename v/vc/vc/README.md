@@ -10,8 +10,6 @@ Level 0
 
 `op_type.hh`:  Defines `enum op_type`, with members for each operator.
 
-`function_id.hh`:  Defines `enum function_id`, with members for each function.
-
 `symbol_id.hh`:  Defines `enum symbol_id`, the type of an index into the symbol table.
 
 Level 1
@@ -26,8 +24,6 @@ Level 1
 `ops.*`:  Defines `op_from_token()`, which converts a token and a state flag into an operator.
 
 `named_ops.*`:  Defines `op_from_name()`, which converts a string into a binary infix operator.
-
-`functions.*`:  Defines `function_from_name()`, which converts a string into a function ID.
 
 `precedence.*`:  Defines `decreasing_op_precedence()`, which implements operator precedence and determines whether a stacked operation can be evaluated immediately, or only after further input.
 
@@ -46,6 +42,8 @@ Level 2
 
 Level 3
 -------
+
+`functions.*`:  Defines `function_from_name()`, which converts a string into a function pointer.
 
 `calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 

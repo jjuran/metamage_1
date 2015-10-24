@@ -13,7 +13,6 @@
 
 // vc
 #include "vc/expr_box.hh"
-#include "vc/function_id.hh"
 #include "vc/op_type.hh"
 #include "vc/symbol_id.hh"
 
@@ -29,7 +28,6 @@ namespace vc
 		Value_empty_list,
 		Value_symbol_declarator,
 		Value_symbol,
-		Value_builtin_function,
 		Value_boolean,
 		Value_number,
 		Value_string,
@@ -54,10 +52,6 @@ namespace vc
 		}
 		
 		Value( symbol_id sym ) : type( Value_symbol ), number( sym )
-		{
-		}
-		
-		Value( function_id f ) : type( Value_builtin_function ), number( f )
 		{
 		}
 		

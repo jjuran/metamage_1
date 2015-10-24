@@ -5,6 +5,14 @@
 
 #include "vc/functions.hh"
 
+// plus
+#include "plus/hexadecimal.hh"
+#include "plus/integer_hex.hh"
+
+// vc
+#include "vc/error.hh"
+#include "vc/string-utils.hh"
+
 
 #define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
 #define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
@@ -13,20 +21,92 @@
 namespace vc
 {
 	
+	static
+	plus::string hex( const plus::string& s )
+	{
+		return plus::hex_lower( s.data(), s.size() );
+	}
+	
+	static
+	Value v_str( const Value& value )
+	{
+		return make_string( value );
+	}
+	
+	static
+	Value v_bool( const Value& arg )
+	{
+		switch ( arg.type )
+		{
+			default:
+				INTERNAL_ERROR( "invalid type in v_bool()" );
+			
+			case Value_empty_list:
+				return false;
+			
+			case Value_boolean:
+				return arg;
+			
+			case Value_number:
+				return ! arg.number.is_zero();
+			
+			case Value_string:
+				return ! arg.string.empty();
+			
+			case Value_function:
+			case Value_pair:
+				return true;
+		}
+	}
+	
+	static
+	Value v_hex( const Value& arg )
+	{
+		switch ( arg.type )
+		{
+			default:  TYPE_ERROR( "invalid argument to hex()" );
+			
+			case Value_number:  return hex( arg.number );
+			case Value_string:  return hex( arg.string );
+		}
+	}
+	
+	static
+	Value v_abs( const Value& arg )
+	{
+		if ( arg.type != Value_number )
+		{
+			TYPE_ERROR( "invalid argument to abs()" );
+		}
+		
+		return abs( arg.number );
+	}
+	
+	static
+	Value v_half( const Value& arg )
+	{
+		if ( arg.type != Value_number )
+		{
+			TYPE_ERROR( "invalid argument to half()" );
+		}
+		
+		return half( arg.number );
+	}
+	
 	struct function_mapping
 	{
-		const char*  name;
-		function_id  f;
+		const char*    name;
+		function_type  f;
 	};
 	
 	static
 	const function_mapping functions[] =
 	{
-		{ "abs",  Function_abs  },
-		{ "bool", Function_bool },
-		{ "half", Function_half },
-		{ "hex",  Function_hex  },
-		{ "str",  Function_str  },
+		{ "abs",  &v_abs  },
+		{ "bool", &v_bool },
+		{ "half", &v_half },
+		{ "hex",  &v_hex  },
+		{ "str",  &v_str  },
 	};
 	
 	static
@@ -50,14 +130,14 @@ namespace vc
 		return 0;  // NULL
 	}
 	
-	function_id function_from_name( const plus::string& name )
+	function_type function_from_name( const plus::string& name )
 	{
 		if ( const function_mapping* it = find( name ) )
 		{
 			return it->f;
 		}
 		
-		return Function_none;
+		return 0;  // NULL
 	}
 	
 }

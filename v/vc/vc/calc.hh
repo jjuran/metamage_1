@@ -14,8 +14,6 @@
 namespace vc
 {
 	
-	Value v_str( const Value& value );
-	
 	Value v_join( const Value& args );
 	
 	Value calc( const Value&  left,

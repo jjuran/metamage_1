@@ -221,9 +221,9 @@ namespace vc
 				
 				if ( op == Op_none )
 				{
-					if ( function_id f = function_from_name( token.text ) )
+					if ( function_type f = function_from_name( token.text ) )
 					{
-						receive_value( f );
+						receive_value( Value( f, token.text ) );
 						
 						op = token == Token_bareword_function ? Op_function
 						                                      : Op_named_unary;

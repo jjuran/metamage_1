@@ -10,13 +10,13 @@
 #include "plus/string.hh"
 
 // vc
-#include "vc/function_id.hh"
+#include "vc/value.hh"
 
 
 namespace vc
 {
 	
-	function_id function_from_name( const plus::string& name );
+	function_type function_from_name( const plus::string& name );
 	
 }
 

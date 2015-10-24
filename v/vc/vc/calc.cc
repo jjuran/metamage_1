@@ -5,13 +5,8 @@
 
 #include "vc/calc.hh"
 
-// plus
-#include "plus/hexadecimal.hh"
-#include "plus/integer_hex.hh"
-
 // vc
 #include "vc/error.hh"
-#include "vc/function_id.hh"
 #include "vc/list-utils.hh"
 #include "vc/string-utils.hh"
 
@@ -21,11 +16,6 @@ namespace vc
 	
 	using math::integer::cmp_t;
 	
-	
-	static plus::string hex( const plus::string& s )
-	{
-		return plus::hex_lower( s.data(), s.size() );
-	}
 	
 	static
 	const plus::integer& nonzero( const plus::integer& x )
@@ -120,86 +110,6 @@ namespace vc
 		}
 		
 		return 0;
-	}
-	
-	Value v_str( const Value& value )
-	{
-		return make_string( value );
-	}
-	
-	static
-	Value v_bool( const Value& arg )
-	{
-		switch ( arg.type )
-		{
-			default:
-				INTERNAL_ERROR( "invalid type in v_bool()" );
-			
-			case Value_empty_list:
-				return false;
-			
-			case Value_boolean:
-				return arg;
-			
-			case Value_number:
-				return ! arg.number.is_zero();
-			
-			case Value_string:
-				return ! arg.string.empty();
-			
-			case Value_function:
-			case Value_pair:
-				return true;
-		}
-	}
-	
-	static
-	Value v_hex( const Value& arg )
-	{
-		switch ( arg.type )
-		{
-			default:  TYPE_ERROR( "invalid argument to hex()" );
-			
-			case Value_number:  return hex( arg.number );
-			case Value_string:  return hex( arg.string );
-		}
-	}
-	
-	static
-	Value v_abs( const Value& arg )
-	{
-		if ( arg.type != Value_number )
-		{
-			TYPE_ERROR( "invalid argument to abs()" );
-		}
-		
-		return abs( arg.number );
-	}
-	
-	static
-	Value v_half( const Value& arg )
-	{
-		if ( arg.type != Value_number )
-		{
-			TYPE_ERROR( "invalid argument to half()" );
-		}
-		
-		return half( arg.number );
-	}
-	
-	static
-	Value calc_function( unsigned f, const Value& arg )
-	{
-		switch ( f )
-		{
-			default:  INTERNAL_ERROR( "unimplemented function" );
-			
-			case Function_abs:   return v_abs ( arg );
-			case Function_bool:  return v_bool( arg );
-			case Function_half:  return v_half( arg );
-			case Function_hex:   return v_hex ( arg );
-			case Function_str:   return v_str ( arg );
-		}
 	}
 	
 	Value v_join( const Value& args )
@@ -392,12 +302,8 @@ namespace vc
 					return left.function( right );
 				}
 				
-				if ( left.type != Value_builtin_function )
-				{
-					SYNTAX_ERROR( "attempted call of non-function" );
-				}
-				
-				return calc_function( left.number.clipped(), right );
+				SYNTAX_ERROR( "attempted call of non-function" );
+				break;
 			
 			case Op_equal:    return equal( left, right );
 			case Op_unequal:  return ! equal( left, right );
