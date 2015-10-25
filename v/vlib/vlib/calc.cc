@@ -534,6 +534,49 @@ namespace vlib
 		return Value::byte( s[ index.clipped() ] );
 	}
 	
+	static
+	Value get_nth( const Value& list, unsigned i )
+	{
+		const Value* next = &list;
+		
+		while ( i-- > 0  &&  ! is_empty( *next ) )
+		{
+			next = &rest( *next );
+		}
+		
+		return first( *next );
+	}
+	
+	static
+	Value array_subscript( const Expr& expr, const Value& index )
+	{
+		if ( index.type() != Value_number )
+		{
+			TYPE_ERROR( "non-integer array subscript" );
+		}
+		
+		if ( index.number().is_negative() )
+		{
+			DOMAIN_ERROR( "negative array subscript" );
+		}
+		
+		if ( index.number() > 0xFFFFFFFFu )
+		{
+			DOMAIN_ERROR( "Array subscript is too large" );
+		}
+		
+		unsigned i = index.number().clipped();
+		
+		Value nth = get_nth( expr.right, i );
+		
+		if ( is_empty( nth ) )
+		{
+			DOMAIN_ERROR( "subscript exceeds array bounds" );
+		}
+		
+		return nth;
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -621,6 +664,14 @@ namespace vlib
 		
 		if ( op == Op_subscript )
 		{
+			if ( Expr* expr = left.expr() )
+			{
+				if ( expr->op == Op_array )
+				{
+					return array_subscript( *expr, right );
+				}
+			}
+			
 			switch ( left.type() )
 			{
 				case Value_string:
