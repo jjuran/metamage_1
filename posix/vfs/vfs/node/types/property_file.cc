@@ -76,11 +76,13 @@ namespace vfs
 		
 		const bool binary = name[0] == '.'  &&  name[1] == '~';
 		
-		if ( flags == O_RDONLY )
+		const int fewer_flags = flags & ~O_NONBLOCK;
+		
+		if ( fewer_flags == O_RDONLY )
 		{
 			return open_for_read( *that, flags, binary );
 		}
-		else if ( (flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
+		else if ( (fewer_flags & ~O_CREAT) == (O_WRONLY | O_TRUNC) )
 		{
 			// return below to silence Metrowerks warning
 		}
