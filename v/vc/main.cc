@@ -24,22 +24,22 @@
 #include "plus/string/concat.hh"
 #include "plus/var_string.hh"
 
-// vc
-#include "vc/calc.hh"
-#include "vc/error.hh"
-#include "vc/library.hh"
-#include "vc/parse.hh"
-#include "vc/quote.hh"
-#include "vc/symbol_table.hh"
+// vlib
+#include "vlib/calc.hh"
+#include "vlib/error.hh"
+#include "vlib/library.hh"
+#include "vlib/parse.hh"
+#include "vlib/quote.hh"
+#include "vlib/symbol_table.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
 
-#define ADDRESS_ERROR( s )  VC_ERROR( "ADDRESS", s )
+#define ADDRESS_ERROR( s )  VLIB_ERROR( "ADDRESS", s )
 
-using namespace vc;
+using namespace vlib;
 
 
 enum
