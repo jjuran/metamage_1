@@ -207,7 +207,10 @@ int main( int argc, char** argv )
 	if ( unrestricted )
 	{
 		define( proc_append );
+		define( proc_chdir  );
+		define( proc_link   );
 		define( proc_tcpconnect );
+		define( proc_touch  );
 		define( proc_truncate );
 	}
 	

@@ -13,6 +13,7 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <utime.h>
 #include <sys/stat.h>
 
 // Standard C
@@ -142,6 +143,21 @@ namespace vlib
 	}
 	
 	static
+	Value v_chdir( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		int nok = chdir( path );
+		
+		if ( nok )
+		{
+			path_error( path );
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value v_close( const Value& v )
 	{
 		const int fd = fd_cast( v );
@@ -210,6 +226,33 @@ namespace vlib
 		}
 		
 		return make_stat( st );
+	}
+	
+	static
+	Value v_link( const Value& v )
+	{
+		const char* target = first( v ).string().c_str();
+		const char* dest   = rest ( v ).string().c_str();
+		
+		int nok = link( target, dest );
+		
+		if ( nok )
+		{
+			int saved_errno = errno;
+			
+			struct stat st;
+			
+			nok = stat( target, &st );
+			
+			if ( nok )
+			{
+				path_error( target );
+			}
+			
+			path_error( dest, saved_errno );
+		}
+		
+		return Value_nothing;
 	}
 	
 	static
@@ -413,6 +456,21 @@ namespace vlib
 	}
 	
 	static
+	Value v_touch( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		int nok = utime( path, 0 );  // NULL
+		
+		if ( nok )
+		{
+			path_error( path );
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value v_truncate( const Value& v )
 	{
 		const char*  path   = first( v ).string().c_str();
@@ -454,6 +512,8 @@ namespace vlib
 	
 	static const Value fd( Type( fd_vtype ), Op_union, int32 );
 	
+	static const Value c_str_x2 = Value( c_str, c_str );
+	
 	static const Value fd_x2( fd, fd );
 	static const Value fd_u32 ( fd, uint32 );
 	
@@ -463,11 +523,13 @@ namespace vlib
 	static const Value c_str_bytes( c_str, bytes );
 	static const Value c_str_u32( c_str, uint32 );
 	
+	const proc_info proc_chdir    = { "chdir",    &v_chdir,    &c_str };
 	const proc_info proc_close    = { "close",    &v_close,    &fd    };
 	const proc_info proc_dirname  = { "dirname",  &v_dirname,  &c_str };
 	const proc_info proc_dup      = { "dup",      &v_dup,      &fd    };
 	const proc_info proc_dup2     = { "dup2",     &v_dup2,     &fd_x2 };
 	const proc_info proc_fstat    = { "fstat",    &v_fstat,    &fd    };
+	const proc_info proc_link     = { "link",     &v_link,     &c_str_x2 };
 	const proc_info proc_listdir  = { "listdir",  &v_listdir,  &c_str };
 	const proc_info proc_load     = { "load",     &v_load,     &c_str };
 	const proc_info proc_lstat    = { "lstat",    &v_lstat,    &c_str };
@@ -475,6 +537,7 @@ namespace vlib
 	const proc_info proc_read     = { "read",     &v_read,     &fd_u32 };
 	const proc_info proc_realpath = { "realpath", &v_realpath, &c_str };
 	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
+	const proc_info proc_touch    = { "touch",    &v_touch,    &c_str };
 	const proc_info proc_write    = { "write",    &v_write,    &fd_bytes };
 	
 	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };

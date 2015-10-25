@@ -13,11 +13,13 @@
 namespace vlib
 {
 	
+	extern const proc_info proc_chdir;
 	extern const proc_info proc_close;
 	extern const proc_info proc_dirname;
 	extern const proc_info proc_dup;
 	extern const proc_info proc_dup2;
 	extern const proc_info proc_fstat;
+	extern const proc_info proc_link;
 	extern const proc_info proc_listdir;
 	extern const proc_info proc_load;
 	extern const proc_info proc_lstat;
@@ -25,6 +27,7 @@ namespace vlib
 	extern const proc_info proc_read;
 	extern const proc_info proc_realpath;
 	extern const proc_info proc_stat;
+	extern const proc_info proc_touch;
 	extern const proc_info proc_write;
 	
 	extern const proc_info proc_append;
