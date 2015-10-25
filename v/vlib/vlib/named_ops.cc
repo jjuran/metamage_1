@@ -25,6 +25,7 @@ namespace vlib
 		{ "div",  Op_divide },
 		{ "else", Op_else   },
 		{ "isa",  Op_isa    },
+		{ "map",  Op_map    },
 		{ "mod",  Op_modulo },
 		{ "then", Op_then   },
 	};

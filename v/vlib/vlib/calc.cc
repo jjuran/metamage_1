@@ -537,6 +537,44 @@ namespace vlib
 	}
 	
 	static
+	Value map( const Value& array, const Value& f )
+	{
+		Value result = Value_empty_list;
+		
+		Expr* expr = array.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_array )
+		{
+			TYPE_ERROR( "map requires an array" );
+		}
+		
+		if ( ! is_functional( f ) )
+		{
+			TYPE_ERROR( "map requires a function" );
+		}
+		
+		const Value* next = &expr->right;
+		
+		while ( ! is_empty( *next ) )
+		{
+			const Value& x = first( *next );
+			
+			if ( is_empty( x ) )
+			{
+				break;
+			}
+			
+			Value f_x = call_function( f, x );
+			
+			result = calc( result, Op_list, f_x );
+			
+			next = &rest( *next );
+		}
+		
+		return Value( Op_array, result );
+	}
+	
+	static
 	Value string_subscript( const plus::string& s, const Value& i )
 	{
 		if ( i.type() != Value_number )
@@ -697,6 +735,7 @@ namespace vlib
 			case Op_named_unary:
 				return call_function( left, right );
 			
+			case Op_map:      return map( left, right );
 			case Op_isa:      return isa( left, right );
 			case Op_equal:    return equal( left, right );
 			case Op_unequal:  return ! equal( left, right );

@@ -23,6 +23,7 @@ namespace vlib
 		Precedence_multiplication,  // * /
 		Precedence_addition,        // + -
 		Precedence_repeat,          // (*)
+		Precedence_map,             // map
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
 		Precedence_list,            // ,
@@ -67,6 +68,8 @@ namespace vlib
 		{ Precedence_addition, Op_subtract },
 		
 		{ Precedence_repeat, Op_repeat },
+		
+		{ Precedence_map, Op_map },
 		
 		{ Precedence_inequality, Op_lt  },
 		{ Precedence_inequality, Op_lte },
