@@ -18,8 +18,46 @@ namespace vlib
 	
 	using iota::is_space;
 	using iota::is_digit;
+	using iota::is_xdigit;
 	using iota::is_alpha;
 	using iota::is_alnum;
+	
+	
+	inline bool is_bin_digit( char c )
+	{
+		return c >= '0'  &&  c <= '1';
+	}
+	
+	template < token_type type >
+	struct is;
+	
+	template <>
+	struct is< Token_bin >
+	{
+		static bool digit( char c )  { return is_bin_digit( c ); }
+	};
+	
+	template <>
+	struct is< Token_hex >
+	{
+		static bool digit( char c )  { return is_xdigit( c ); }
+	};
+	
+	template < token_type type >
+	inline
+	bool scan_digits( const char*& p )
+	{
+		if ( ! is< type >::digit( *p++ ) )
+		{
+			return false;
+		}
+		
+		while ( is< type >::digit( *p++ ) )  continue;
+		
+		--p;
+		
+		return true;
+	};
 	
 	
 	struct op_token
@@ -127,6 +165,29 @@ namespace vlib
 		if ( *p < ' ' )
 		{
 			return Token_invalid;  // control character
+		}
+		
+		if ( *p == '0' )
+		{
+			++p;
+			
+			if ( ! is_alnum( *p ) )
+			{
+				return Token_digits;
+			}
+			
+			char c = *p++;
+			
+			switch ( c )
+			{
+				case 'b': if ( scan_digits< Token_bin >( p ) ) return Token_bin;
+				case 'x': if ( scan_digits< Token_hex >( p ) ) return Token_hex;
+				
+				default:
+					break;
+			}
+			
+			return Token_invalid;
 		}
 		
 		if ( is_digit( *p ) )

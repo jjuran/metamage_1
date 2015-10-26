@@ -17,6 +17,8 @@ namespace vlib
 		Token_end = 0,
 		
 		Token_whitespace,
+		Token_bin,
+		Token_hex,
 		Token_digits,
 		Token_string,
 		Token_string_escaped,

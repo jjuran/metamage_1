@@ -13,6 +13,7 @@
 
 // plus
 #include "plus/decimal.hh"
+#include "plus/decode_binoid_int.hh"
 #include "plus/string/concat.hh"
 
 // vlib
@@ -192,6 +193,14 @@ namespace vlib
 			
 			case Token_parens:
 				receive_value( Value_empty_list );
+				break;
+			
+			case Token_bin:
+				receive_value( unbin_int( token.text.substr( 2 ) ) );
+				break;
+			
+			case Token_hex:
+				receive_value( unhex_int( token.text.substr( 2 ) ) );
 				break;
 			
 			case Token_digits:
