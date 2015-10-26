@@ -6,14 +6,24 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <new>
 
 // must
 #include "must/write.h"
 
+// more-posix
+#include "more/perror.hh"
+
 // command
 #include "command/get_option.hh"
+
+// poseven
+#include "poseven/extras/slurp.hh"
+#include "poseven/types/errno_t.hh"
 
 // vlib
 #include "vlib/calc.hh"
@@ -25,6 +35,8 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
+
+namespace p7 = poseven;
 
 using namespace command::constants;
 using namespace vlib;
@@ -102,6 +114,19 @@ int main( int argc, char** argv )
 		{
 			execute( inline_script );
 		}
+		else
+		{
+			path = args[ 0 ] ? args++[ 0 ] : "/dev/fd/0";
+			
+			plus::string program = p7::slurp( path );
+			
+			if ( strlen( program.c_str() ) != program.size() )
+			{
+				FAIL( "Program contains NUL bytes" );
+			}
+			
+			execute( program.c_str() );
+		}
 	}
 	catch ( const std::bad_alloc& )
 	{
@@ -118,6 +143,12 @@ int main( int argc, char** argv )
 	catch ( const transfer_via_continue& )
 	{
 		return FAIL( "`continue` used outside of loop" );
+	}
+	catch ( const p7::errno_t& err )
+	{
+		more::perror( "vx", path, err );
+		
+		return 1;
 	}
 	
 	return 0;
