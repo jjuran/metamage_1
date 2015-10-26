@@ -366,7 +366,7 @@ namespace vlib
 			return repeat_list( left, right );
 		}
 		
-		if ( op == Op_remain  &&  is_function( left ) )
+		if ( op == Op_bind_args  &&  is_function( left ) )
 		{
 			return bind_args( left, right );
 		}

@@ -53,7 +53,7 @@ namespace vlib
 		
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },
-		{ Precedence_multiplication, Op_remain   },
+		{ Precedence_multiplication, Op_percent  },
 		{ Precedence_multiplication, Op_modulo   },
 		
 		{ Precedence_addition, Op_add      },
@@ -76,7 +76,7 @@ namespace vlib
 		{ Precedence_assignment, Op_decrease_by },
 		{ Precedence_assignment, Op_multiply_by },
 		{ Precedence_assignment, Op_divide_by   },
-		{ Precedence_assignment, Op_remain_by   },
+		{ Precedence_assignment, Op_percent_by  },
 		
 		{ Precedence_end, Op_end },
 		

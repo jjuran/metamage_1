@@ -38,7 +38,7 @@ namespace vlib
 		{ Token_minus,       Op_subtract  },
 		{ Token_asterisk,    Op_multiply  },
 		{ Token_slash,       Op_divide    },
-		{ Token_percent,     Op_remain    },
+		{ Token_percent,     Op_percent   },
 		{ Token_caret,       Op_empower   },
 		{ Token_parens_star, Op_repeat    },
 		{ Token_equals_x2,   Op_equal     },
@@ -54,7 +54,7 @@ namespace vlib
 		{ Token_minus_equals,    Op_decrease_by },
 		{ Token_asterisk_equals, Op_multiply_by },
 		{ Token_slash_equals,    Op_divide_by   },
-		{ Token_percent_equals,  Op_remain_by   },
+		{ Token_percent_equals,  Op_percent_by  },
 	};
 	
 	static
