@@ -39,6 +39,8 @@
 
 #define ADDRESS_ERROR( s )  VC_ERROR( "ADDRESS", s )
 
+using namespace vc;
+
 
 enum
 {
@@ -65,14 +67,12 @@ static plus::string stringify( const plus::integer& i )
 	return hex_output ? hex( i ) : encode_decimal( i );
 }
 
-static plus::string stringify_list( const vc::Value& v );
+static plus::string stringify_list( const Value& v );
 
-static plus::string stringify( const vc::Value& v )
+static plus::string stringify( const Value& v )
 {
 	switch ( v.type )
 	{
-		using namespace vc;
-		
 		default:
 			return "UNIMPLEMENTED";
 		
@@ -105,10 +105,8 @@ static plus::string stringify( const vc::Value& v )
 	}
 }
 
-static plus::string stringify_list( const vc::Value& v )
+static plus::string stringify_list( const Value& v )
 {
-	using namespace vc;
-	
 	plus::var_string result = "(";
 	
 	const Value* next = &v;
@@ -117,7 +115,7 @@ static plus::string stringify_list( const vc::Value& v )
 	{
 		const char* op_token = " % ";
 		
-		vc::Expr& expr = *v.expr.get();
+		Expr& expr = *v.expr.get();
 		
 		result += stringify( expr.left );
 		result += op_token;
@@ -147,7 +145,7 @@ static plus::string stringify_list( const vc::Value& v )
 	return result.move();
 }
 
-static void reproduce( const vc::Value& v )
+static void reproduce( const Value& v )
 {
 	if ( ! v.type )
 	{
@@ -193,9 +191,9 @@ void breathe()
 }
 
 static
-int get_int( const vc::Value& v )
+int get_int( const Value& v )
 {
-	if ( v.type != vc::Value_number )
+	if ( v.type != Value_number )
 	{
 		ADDRESS_ERROR( "PC is non-numeric" );
 	}
@@ -228,8 +226,6 @@ int main( int argc, char** argv )
 	{
 		return 0;
 	}
-	
-	using namespace vc;
 	
 	define( "getenv", &v_getenv );
 	define( "join",   &v_join   );
