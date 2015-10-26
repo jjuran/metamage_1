@@ -48,6 +48,7 @@ enum
 static command::option options[] =
 {
 	{ "hex",  Opt_hex_output },
+	{ NULL },
 };
 
 static bool hex_output = false;
