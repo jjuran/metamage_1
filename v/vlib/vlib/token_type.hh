@@ -31,6 +31,7 @@ namespace vlib
 		Token_newline,
 		Token_comment,
 		Token_bin,
+		Token_oct,
 		Token_hex,
 		Token_digits,
 		Token_decimal,

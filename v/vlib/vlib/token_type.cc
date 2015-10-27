@@ -47,6 +47,11 @@ namespace vlib
 		return c >= '0'  &&  c <= '1';
 	}
 	
+	inline bool is_oct_digit( char c )
+	{
+		return c >= '0'  &&  c <= '7';
+	}
+	
 	template < token_type type >
 	struct is;
 	
@@ -54,6 +59,12 @@ namespace vlib
 	struct is< Token_bin >
 	{
 		static bool digit( char c )  { return is_bin_digit( c ); }
+	};
+	
+	template <>
+	struct is< Token_oct >
+	{
+		static bool digit( char c )  { return is_oct_digit( c ); }
 	};
 	
 	template <>
@@ -335,6 +346,7 @@ namespace vlib
 			switch ( c )
 			{
 				case 'b': if ( scan_digits< Token_bin >( p ) ) return Token_bin;
+				case 'o': if ( scan_digits< Token_oct >( p ) ) return Token_oct;
 				case 'x': if ( scan_digits< Token_hex >( p ) ) return Token_hex;
 				
 				default:

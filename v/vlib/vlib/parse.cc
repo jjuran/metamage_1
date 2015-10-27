@@ -21,6 +21,7 @@
 #include "bignum/decimal.hh"
 #include "bignum/decode_binoid_int.hh"
 #include "bignum/fraction.hh"
+#include "bignum/octal.hh"
 
 // vlib
 #include "vlib/dyad.hh"
@@ -332,6 +333,7 @@ namespace vlib
 		using bignum::unbin_int;
 		using bignum::unhex_int;
 		using bignum::decode_decimal;
+		using bignum::decode_octal;
 		
 		switch ( token )
 		{
@@ -436,6 +438,10 @@ namespace vlib
 			
 			case Token_bin:
 				receive_value( Integer( unbin_int( token.text.substr( 2 ) ) ) );
+				break;
+			
+			case Token_oct:
+				receive_value( Integer( decode_octal( token.text.substr( 2 ) ) ) );
 				break;
 			
 			case Token_hex:
