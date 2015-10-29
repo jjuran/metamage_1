@@ -27,6 +27,7 @@
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
+#include "vlib/functions.hh"
 #include "vlib/library.hh"
 #include "vlib/parse.hh"
 #include "vlib/quote.hh"
@@ -231,6 +232,8 @@ int main( int argc, char** argv )
 	define( "join",   &v_join   );
 	define( "print",  &v_print  );
 	define( "time",   &v_time   );
+	define( "unbin",  &v_unbin  );
+	define( "unhex",  &v_unhex  );
 	
 	symbol_id pc = create_symbol( "PC", Symbol_var );
 	
