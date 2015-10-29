@@ -89,6 +89,10 @@ namespace vlib
 				return encode_decimal( p, value.number );
 			
 			case Value_pair:
+				if ( is_function( value ) )
+				{
+					TYPE_ERROR( "stringification of compound function" );
+				}
 				break;
 			
 			default:
