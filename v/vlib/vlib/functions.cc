@@ -110,6 +110,11 @@ namespace vlib
 		return true;
 	}
 	
+	Value v_rep( const Value& v )
+	{
+		return make_string( v, Stringified_to_reproduce );
+	}
+	
 	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
