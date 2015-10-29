@@ -83,6 +83,8 @@ namespace plus
 			
 			void absolve()  { if ( is_negative() )  invert(); }
 			
+			friend unsigned long area( const integer& i )  { return area( i.box ); }
+			
 			friend cmp_t abs_compare( const integer& a, const integer& b )
 			{
 				return abs_compare( a.box, b.box );
