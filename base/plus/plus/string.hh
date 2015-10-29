@@ -214,6 +214,8 @@ namespace plus
 			
 			friend datum_movable& move( string& s )  { return s.move(); }
 			
+			friend unsigned long area( const string& s )  { return area( s.store ); }
+			
 			size_type copy( char* buffer, size_type n, size_type pos = 0 ) const;
 			
 			size_type find( const string& s, size_type pos = 0 ) const;
