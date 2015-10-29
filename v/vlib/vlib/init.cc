@@ -66,6 +66,7 @@ namespace vlib
 		define( proc_half   );
 		define( proc_hex    );
 		define( proc_join   );
+		define( proc_mince  );
 		define( proc_rep    );
 		define( proc_typeof );
 		define( proc_unbin  );
