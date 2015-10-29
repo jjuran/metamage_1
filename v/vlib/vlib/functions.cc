@@ -6,6 +6,8 @@
 #include "vlib/functions.hh"
 
 // plus
+#include "plus/binary.hh"
+#include "plus/decode_binoid_int.hh"
 #include "plus/hexadecimal.hh"
 #include "plus/integer_hex.hh"
 
@@ -91,6 +93,42 @@ namespace vlib
 		}
 		
 		return half( arg.number );
+	}
+	
+	static
+	bool is_0x_numeral( const plus::string& s, char x )
+	{
+		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
+	}
+	
+	Value v_unbin( const Value& v )
+	{
+		if ( v.type != Value_string )
+		{
+			TYPE_ERROR( "unbin() argument must be a string" );
+		}
+		
+		if ( is_0x_numeral( v.string, 'b' ) )
+		{
+			return unbin_int( v.string.substr( 2 ) );
+		}
+		
+		return unbin( v.string );
+	}
+	
+	Value v_unhex( const Value& v )
+	{
+		if ( v.type != Value_string )
+		{
+			TYPE_ERROR( "unhex() argument must be a string" );
+		}
+		
+		if ( is_0x_numeral( v.string, 'x' ) )
+		{
+			return unhex_int( v.string.substr( 2 ) );
+		}
+		
+		return unhex( v.string );
 	}
 	
 	struct function_mapping

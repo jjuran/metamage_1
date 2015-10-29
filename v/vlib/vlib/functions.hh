@@ -16,6 +16,9 @@
 namespace vlib
 {
 	
+	Value v_unbin( const Value& v );
+	Value v_unhex( const Value& v );
+	
 	function_type function_from_name( const plus::string& name );
 	
 }
