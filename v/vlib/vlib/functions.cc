@@ -16,10 +16,12 @@
 #include "plus/decode_binoid_int.hh"
 #include "plus/hexadecimal.hh"
 #include "plus/integer_hex.hh"
+#include "plus/var_string.hh"
 
 // vlib
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/lib/ed25519.hh"
@@ -156,6 +158,79 @@ namespace vlib
 	}
 	
 	static
+	void translate_core( plus::var_string&    s,
+	                     const plus::string&  pat,
+	                     const plus::string&  sub )
+	{
+		const char* p_pat = pat.data();
+		const char* p_sub = sub.data();
+		
+		char*   p = s.begin();
+		size_t  n = s.size();
+		
+		size_t n_pat = pat.size();
+		size_t n_sub = sub.size();
+		
+		if ( n_pat != n_sub )
+		{
+			THROW( "translate()'s find/replace sets must be the same length" );
+		}
+		
+		if ( n_pat > 0 )
+		{
+			// map
+			
+			char map[ 256 ];
+			
+			for ( int i = 0;  i < 256;  ++i )
+			{
+				map[ i ] = i;
+			}
+			
+			while ( n_pat > 0 )
+			{
+				unsigned char x = p_pat[ --n_pat ];
+				unsigned char c = p_sub[   n_pat ];
+				
+				map[ x ] = c;
+			}
+			
+			while ( n-- )
+			{
+				char c = *p;
+				
+				*p++ = map[ c ];
+			}
+		}
+	}
+	
+	static
+	Value v_trans( const Value& v )
+	{
+		list_iterator args( v );
+		
+		const Value& arg1 = args.use();
+		const Value& arg2 = args.use();
+		const Value& arg3 = args.get();
+		
+		Target target = make_target( arg1.expr()->right );
+		
+		Value& text = *target.addr;
+		
+		// FIXME:  Modify string buffer in-place.
+		
+		plus::var_string s      = text.string();
+		const plus::string& pat = arg2.string();
+		const plus::string& sub = arg3.string();
+		
+		translate_core( s, pat, sub );
+		
+		text = s;
+		
+		return text;
+	}
+	
+	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
@@ -260,6 +335,11 @@ namespace vlib
 	static const Value s_length( u32_vtype, Op_duplicate, npos );
 	static const Value substr( string_vtype, Value( s_offset, s_length ) );
 	
+	static const Value string_ref = Value( Op_unary_deref, string_vtype );
+	static const Value trans( string_ref, Value( string_vtype, string_vtype ) );
+	
+	#define TRANS  "translate"
+	
 	const proc_info proc_abs    = { "abs",    &v_abs,    &integer };
 	const proc_info proc_areaof = { "areaof", &v_areaof, NULL     };
 	const proc_info proc_half   = { "half",   &v_half,   &integer };
@@ -268,6 +348,7 @@ namespace vlib
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL     };
 	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes   };
 	const proc_info proc_substr = { "substr", &v_substr, &substr  };
+	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans   };
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string  };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string  };
 	
