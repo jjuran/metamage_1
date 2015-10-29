@@ -207,6 +207,16 @@ namespace vlib
 				receive_value( decode_decimal( token.text ) );
 				break;
 			
+			case Token_unbin:
+				receive_value( Value( &v_unbin, "unbin" ) );
+				fold_ops_and_add( Op_function );
+				break;
+			
+			case Token_unhex:
+				receive_value( Value( &v_unhex, "unhex" ) );
+				fold_ops_and_add( Op_function );
+				break;
+			
 			case Token_string:
 				receive_value( unquote_string( token.text ) );
 				break;

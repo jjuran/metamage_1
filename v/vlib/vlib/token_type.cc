@@ -199,6 +199,12 @@ namespace vlib
 		
 		if ( is_alpha( *p ) )
 		{
+			if ( p[ 1 ] == '"' )
+			{
+				if ( *p == 'b' )  return ++p, Token_unbin;
+				if ( *p == 'x' )  return ++p, Token_unhex;
+			}
+			
 			while ( is_alnum( *++p ) )  continue;
 			
 			const char* q = p;
