@@ -28,7 +28,7 @@ namespace vlib
 	
 	
 	static
-	size_t composite_length( const Value& value )
+	size_t composite_length( const Value& value, stringification mode )
 	{
 		switch ( value.type )
 		{
@@ -53,20 +53,20 @@ namespace vlib
 		
 		Expr* expr = value.expr.get();
 		
-		size_t total = composite_length( expr->left );
+		size_t total = composite_length( expr->left, mode );
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
-			total += composite_length( next->left );
+			total += composite_length( next->left, mode );
 			
 			expr = next;
 		}
 		
-		return total + composite_length( expr->right );
+		return total + composite_length( expr->right, mode );
 	}
 	
 	static
-	char* make_string( char* p, const Value& value )
+	char* make_string( char* p, const Value& value, stringification mode )
 	{
 		switch ( value.type )
 		{
@@ -102,27 +102,27 @@ namespace vlib
 		
 		Expr* expr = value.expr.get();
 		
-		p = make_string( p, expr->left );
+		p = make_string( p, expr->left, mode );
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
-			p = make_string( p, next->left );
+			p = make_string( p, next->left, mode );
 			
 			expr = next;
 		}
 		
-		return make_string( p, expr->right );
+		return make_string( p, expr->right, mode );
 	}
 	
-	plus::string make_string( const Value& value )
+	plus::string make_string( const Value& value, stringification mode )
 	{
-		const size_t size = composite_length( value );
+		const size_t size = composite_length( value, mode );
 		
 		plus::string result;
 		
 		char* p = result.reset( size );
 		
-		make_string( p, value );
+		make_string( p, value, mode );
 		
 		return result;
 	}
@@ -160,14 +160,14 @@ namespace vlib
 	{
 		if ( n <= 1  ||  glue.empty() )
 		{
-			return make_string( v );
+			return make_string( v, Stringified_to_print );
 		}
 		
 		plus::integer size = glue.size();
 		
 		size *= n - 1;
 		
-		size += composite_length( v );
+		size += composite_length( v, Stringified_to_print );
 		
 		if ( size > size_t( -1 ) )
 		{
@@ -182,14 +182,14 @@ namespace vlib
 		
 		while ( Expr* expr = next->expr.get() )
 		{
-			p = make_string( p, expr->left );
+			p = make_string( p, expr->left, Stringified_to_print );
 			
 			p = mempcpy( p, glue );
 			
 			next = &expr->right;
 		}
 		
-		make_string( p, *next );
+		make_string( p, *next, Stringified_to_print );
 		
 		return result;
 	}

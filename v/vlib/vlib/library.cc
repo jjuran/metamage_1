@@ -48,7 +48,7 @@ namespace vlib
 	
 	Value v_print( const Value& v )
 	{
-		const plus::string s = make_string( v ) + "\n";
+		const plus::string s = make_string( v, Stringified_to_print ) + "\n";
 		
 		must_write( STDOUT_FILENO, s.data(), s.size() );
 		

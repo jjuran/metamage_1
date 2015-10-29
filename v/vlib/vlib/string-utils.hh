@@ -16,7 +16,12 @@
 namespace vlib
 {
 	
-	plus::string make_string( const Value& value );
+	enum stringification
+	{
+		Stringified_to_print,
+	};
+	
+	plus::string make_string( const Value& value, stringification mode );
 	
 	plus::string repeat( const plus::string& s, plus::string::size_type n );
 	
