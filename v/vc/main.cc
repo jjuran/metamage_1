@@ -183,6 +183,7 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
+	define( "area",   &v_area   );
 	define( "getenv", &v_getenv );
 	define( "join",   &v_join   );
 	define( "print",  &v_print  );
