@@ -231,6 +231,7 @@ int main( int argc, char** argv )
 	define( "getenv", &v_getenv );
 	define( "join",   &v_join   );
 	define( "print",  &v_print  );
+	define( "rep",    &v_rep    );
 	define( "time",   &v_time   );
 	define( "unbin",  &v_unbin  );
 	define( "unhex",  &v_unhex  );

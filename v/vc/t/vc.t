@@ -1538,3 +1538,53 @@ $ vc 'x"4E75"'
 
 $ vc 'x"73776f726466697368".length'
 1 >= 9
+
+%
+
+$ vc 'print rep ()'
+1 >= "()"
+
+%
+
+$ vc 'print rep true'
+1 >= true
+
+%
+
+$ vc 'print rep (12345)'
+1 >= 12345
+
+%
+
+$ vc 'print rep "test"'
+1 >= '"test"'
+
+%
+
+$ vc 'print rep "\007\x0a"'
+1 >= '"\a\n"'
+
+%
+
+$ vc 'rep "\\ \"" == "\"\\\\ \\\"\""'
+1 >= true
+
+%
+
+$ vc 'print rep time'
+1 >= time
+
+%
+
+$ vc 'print rep (join % ",")'
+1 >= '(join % ",")'
+
+%
+
+$ vc 'print rep (1, 2, 3)'
+1 >= "(1, 2, 3)"
+
+%
+
+$ vc 'print rep (join % "1" % "2", join % (getenv % "3"))'
+1 >= '((join % ("1", "2")), (join % (getenv % "3")))'
