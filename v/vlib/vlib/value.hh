@@ -15,6 +15,7 @@
 #include "vlib/expr_box.hh"
 #include "vlib/op_type.hh"
 #include "vlib/symbol_id.hh"
+#include "vlib/vbox.hh"
 
 
 namespace vlib
@@ -48,62 +49,62 @@ namespace vlib
 	class Value
 	{
 		private:
-			value_type     its_type;
-			plus::integer  its_int;
-			plus::string   its_str;
-			proc_t         its_proc;
-			expr_box       its_expr;
+			vbox      its_box;
+			expr_box  its_expr;
 			
 			friend class expr_box;
 		
 		public:
-			Value( value_type type = value_type() ) : its_type( type )
+			Value( value_type type = value_type() ) : its_box( type )
 			{
 			}
 			
-			Value( symbol_id sym ) : its_type( Value_symbol ), its_int( sym )
+		#define IBOX( i )  plus::ibox( i ).move()
+			
+			Value( symbol_id sym ) : its_box( IBOX( (long) sym ), Value_symbol )
 			{
 			}
 			
-			Value( symbol_id sym, int ) : its_type( V_decl ), its_int( sym )
+			Value( symbol_id sym, int ) : its_box( IBOX( (long) sym ), V_decl )
 			{
 			}
 			
-			Value( bool b ) : its_type( Value_boolean ), its_int( b )
+			Value( bool b ) : its_box( IBOX( (long) b ), Value_boolean )
 			{
 			}
 			
-			Value( unsigned int i ) : its_type( V_int ), its_int( i ) {}
-			Value(          int i ) : its_type( V_int ), its_int( i ) {}
+			Value( unsigned i ) : its_box( IBOX( (unsigned long) i ), V_int ) {}
+			Value(      int i ) : its_box( IBOX( (long)          i ), V_int ) {}
 			
-			Value( unsigned long i ) : its_type( V_int ), its_int( i ) {}
-			Value(          long i ) : its_type( V_int ), its_int( i ) {}
+			Value( unsigned long i ) : its_box( IBOX( i ), V_int ) {}
+			Value(          long i ) : its_box( IBOX( i ), V_int ) {}
 			
-			Value( unsigned long long i ) : its_type( V_int ), its_int( i ) {}
-			Value(          long long i ) : its_type( V_int ), its_int( i ) {}
+			Value( unsigned long long i ) : its_box( IBOX( i ), V_int ) {}
+			Value(          long long i ) : its_box( IBOX( i ), V_int ) {}
+			
+		#undef IBOX
 			
 			Value( const plus::integer& i )
 			:
-				its_type( V_int ), its_int( i )
+				its_box( (const vu_ibox&) i, V_int )
 			{
 			}
 			
 			Value( const plus::string& s )
 			:
-				its_type( V_str ), its_str( s )
+				its_box( (const vu_string&) s, V_str )
 			{
 			}
 			
 			Value( const char* s )
 			:
-				its_type( V_str ), its_str( s )
+				its_box( (const vu_string&) plus::string( s ).move(), V_str )
 			{
 			}
 			
 			Value( const proc_info& proc )
 			:
-				its_type( Value_function ),
-				its_proc( &proc )
+				its_box( &proc, V_proc )
 			{
 			}
 			
@@ -113,27 +114,27 @@ namespace vlib
 			
 			value_type type() const
 			{
-				return its_type;
+				return value_type( its_box.semantics() );
 			}
 			
 			plus::integer& number()
 			{
-				return its_int;
+				return *(plus::integer*) &its_box;
 			}
 			
 			const plus::integer& number() const
 			{
-				return its_int;
+				return *(const plus::integer*) &its_box;
 			}
 			
 			const plus::string& string() const
 			{
-				return its_str;
+				return *(const plus::string*) &its_box;
 			}
 			
 			const proc_info& proc() const
 			{
-				return *its_proc;
+				return *(const proc_info*) its_box.pointer();
 			}
 			
 			Expr* expr() const  { return its_expr.get(); }
@@ -256,11 +257,9 @@ namespace vlib
 	unsigned long area( const Value& v )
 	{
 		return + sizeof (Value)
-		       - sizeof v.its_str
-		       - sizeof v.its_int
+		       - sizeof v.its_box
 		       - sizeof v.its_expr
-		       + area( v.its_str  )
-		       + area( v.its_int  )
+		       + area( v.its_box  )
 		       + area( v.its_expr );
 	}
 	
