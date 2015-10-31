@@ -30,10 +30,11 @@ namespace vlib
 	{
 		using iota::swap;
 		
-		swap( a.type,   b.type   );
-		swap( a.number, b.number );
-		swap( a.string, b.string );
-		swap( a.expr,   b.expr   );
+		swap( a.type,     b.type     );
+		swap( a.number,   b.number   );
+		swap( a.string,   b.string   );
+		swap( a.function, b.function );
+		swap( a.expr,     b.expr     );
 	}
 	
 	Expr::Expr( const Value& a, op_type op, const Value& b )
