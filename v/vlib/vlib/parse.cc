@@ -274,9 +274,7 @@ namespace vlib
 								
 								stack.pop_back();
 								
-								receive_value( sym );
-								
-								stack.back().v.type = Value_symbol_declarator;
+								receive_value( Value( sym, int() ) );
 								break;
 							}
 						}

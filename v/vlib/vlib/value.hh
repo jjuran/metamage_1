@@ -35,6 +35,8 @@ namespace vlib
 		Value_string,
 		Value_function,
 		Value_pair,
+		
+		V_decl = Value_symbol_declarator,
 	};
 	
 	typedef const proc_info* proc_t;
@@ -52,6 +54,10 @@ namespace vlib
 		}
 		
 		Value( symbol_id sym ) : type( Value_symbol ), number( sym )
+		{
+		}
+		
+		Value( symbol_id sym, int ) : type( V_decl ), number( sym )
 		{
 		}
 		
