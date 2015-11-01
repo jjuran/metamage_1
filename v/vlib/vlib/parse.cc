@@ -208,12 +208,12 @@ namespace vlib
 				break;
 			
 			case Token_unbin:
-				receive_value( Value( &v_unbin, "unbin" ) );
+				receive_value( lookup_symbol( locate_symbol( "unbin" ) ) );
 				fold_ops_and_add( Op_function );
 				break;
 			
 			case Token_unhex:
-				receive_value( Value( &v_unhex, "unhex" ) );
+				receive_value( lookup_symbol( locate_symbol( "unhex" ) ) );
 				fold_ops_and_add( Op_function );
 				break;
 			
