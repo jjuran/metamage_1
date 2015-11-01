@@ -204,7 +204,7 @@ namespace vlib
 				
 				if ( right.string == "join" )
 				{
-					return bind_args( Value( &v_join, right.string ), left );
+					return bind_args( proc_join, left );
 				}
 				break;
 			

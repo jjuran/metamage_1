@@ -14,6 +14,7 @@
 // vlib
 #include "vlib/expr_box.hh"
 #include "vlib/op_type.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/symbol_id.hh"
 
 
@@ -34,10 +35,6 @@ namespace vlib
 		Value_function,
 		Value_pair,
 	};
-	
-	struct Value;
-	
-	typedef Value (*function_type)( const Value& argument );
 	
 	struct Value
 	{
@@ -80,11 +77,11 @@ namespace vlib
 		{
 		}
 		
-		Value( function_type f, const plus::string& name )
+		Value( const proc_info& proc )
 		:
 			type( Value_function ),
-			string( name ),
-			function( f )
+			string( proc.name ),
+			function( proc.addr )
 		{
 		}
 		

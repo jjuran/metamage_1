@@ -24,7 +24,7 @@ namespace vlib
 	{
 		const symbol_id sym = create_symbol( proc.name, Symbol_const );
 		
-		assign_symbol( sym, Value( proc.addr, proc.name ) );
+		assign_symbol( sym, proc );
 	}
 	
 	static
