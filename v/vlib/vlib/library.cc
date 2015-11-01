@@ -21,18 +21,10 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/symbol_table.hh"
 
 
 namespace vlib
 {
-	
-	void define( const char* name, function_type f )
-	{
-		const symbol_id sym = create_symbol( name, Symbol_const );
-		
-		assign_symbol( sym, Value( f, name ) );
-	}
 	
 	Value v_getenv( const Value& v )
 	{

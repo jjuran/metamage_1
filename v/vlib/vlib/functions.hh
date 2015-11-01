@@ -16,6 +16,8 @@
 namespace vlib
 {
 	
+	void define( const char* name, function_type f );
+	
 	Value v_unbin( const Value& v );
 	Value v_unhex( const Value& v );
 	
