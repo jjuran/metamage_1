@@ -183,14 +183,14 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	define( "area",   &v_area   );
-	define( "getenv", &v_getenv );
-	define( "join",   &v_join   );
-	define( "print",  &v_print  );
-	define( "rep",    &v_rep    );
-	define( "time",   &v_time   );
-	define( "unbin",  &v_unbin  );
-	define( "unhex",  &v_unhex  );
+	define( proc_area   );
+	define( proc_getenv );
+	define( proc_join   );
+	define( proc_print  );
+	define( proc_rep    );
+	define( proc_time   );
+	define( proc_unbin  );
+	define( proc_unhex  );
 	
 	symbol_id pc = create_symbol( "PC", Symbol_var );
 	

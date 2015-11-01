@@ -122,6 +122,7 @@ namespace vlib
 		return 0;
 	}
 	
+	static
 	Value v_join( const Value& args )
 	{
 		const Value& glue = first( args );
@@ -135,6 +136,8 @@ namespace vlib
 		
 		return join( glue.string, pieces, count( pieces ) );
 	}
+	
+	const proc_info proc_join = { &v_join, "join" };
 	
 	static
 	Value calc_unary( op_type op, const Value& v )

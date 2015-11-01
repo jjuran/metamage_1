@@ -7,15 +7,16 @@
 #define VLIB_LIBRARY_HH
 
 // vlib
+#include "vlib/proc_info.hh"
 #include "vlib/value.hh"
 
 
 namespace vlib
 {
 	
-	Value v_getenv( const Value& );
-	Value v_print ( const Value& );
-	Value v_time  ( const Value& );
+	extern const proc_info proc_getenv;
+	extern const proc_info proc_print;
+	extern const proc_info proc_time;
 	
 }
 

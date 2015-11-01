@@ -10,20 +10,21 @@
 #include "plus/string.hh"
 
 // vlib
+#include "vlib/proc_info.hh"
 #include "vlib/value.hh"
 
 
 namespace vlib
 {
 	
-	void define( const char* name, function_type f );
+	void define( const proc_info& proc );
 	
 	bool install_basic_functions();
 	
-	Value v_area ( const Value& v );
-	Value v_rep  ( const Value& v );
-	Value v_unbin( const Value& v );
-	Value v_unhex( const Value& v );
+	extern const proc_info proc_area;
+	extern const proc_info proc_rep;
+	extern const proc_info proc_unbin;
+	extern const proc_info proc_unhex;
 	
 }
 
