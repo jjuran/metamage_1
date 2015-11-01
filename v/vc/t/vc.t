@@ -340,7 +340,7 @@ $ vc 'abs 8'
 
 %
 
-$ vc 'abs -8'
+$ vc 'abs (-8)'
 1 >= 8
 
 %
@@ -360,12 +360,12 @@ $ vc 'half 7'
 
 %
 
-$ vc 'half -8'
+$ vc 'half (-8)'
 1 >= -4
 
 %
 
-$ vc 'half -7'
+$ vc 'half (-7)'
 1 >= -3
 
 %
@@ -410,7 +410,7 @@ $ vc -- 'bool 17'
 
 %
 
-$ vc -- 'bool -1'
+$ vc -- 'bool (-1)'
 1 >= true
 
 %
@@ -558,7 +558,7 @@ $ vc 'str 0'
 
 %
 
-$ vc 'str -43'
+$ vc 'str (-43)'
 1 >= '"-43"'
 
 %
@@ -618,7 +618,7 @@ $ vc 'hex hex 1234'
 
 %
 
-$ vc 'str 0 == str -0'
+$ vc 'str 0 == str (-0)'
 1 >= true
 
 %

@@ -240,14 +240,7 @@ namespace vlib
 				
 				if ( op == Op_none )
 				{
-					if ( function_type f = function_from_name( token.text ) )
-					{
-						receive_value( Value( f, token.text ) );
-						
-						op = token == Token_bareword_function ? Op_function
-						                                      : Op_named_unary;
-					}
-					else if ( token.text == "const" )
+					if ( token.text == "const" )
 					{
 						op = Op_const;
 					}
@@ -353,6 +346,8 @@ namespace vlib
 	
 	Value parse_and_eval( const char* p )
 	{
+		static bool installed = install_basic_functions();
+		
 		Parser parser;
 		
 		return parser.parse_and_eval( p );

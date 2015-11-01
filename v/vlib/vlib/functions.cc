@@ -17,10 +17,6 @@
 #include "vlib/symbol_table.hh"
 
 
-#define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
-#define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
-
-
 namespace vlib
 {
 	
@@ -103,6 +99,17 @@ namespace vlib
 		return half( arg.number );
 	}
 	
+	bool install_basic_functions()
+	{
+		define( "abs",  &v_abs  );
+		define( "bool", &v_bool );
+		define( "half", &v_half );
+		define( "hex",  &v_hex  );
+		define( "str",  &v_str  );
+		
+		return true;
+	}
+	
 	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
@@ -137,53 +144,6 @@ namespace vlib
 		}
 		
 		return unhex( v.string );
-	}
-	
-	struct function_mapping
-	{
-		const char*    name;
-		function_type  f;
-	};
-	
-	static
-	const function_mapping functions[] =
-	{
-		{ "abs",  &v_abs  },
-		{ "bool", &v_bool },
-		{ "half", &v_half },
-		{ "hex",  &v_hex  },
-		{ "str",  &v_str  },
-	};
-	
-	static
-	const function_mapping* find( const plus::string& name )
-	{
-		const function_mapping* begin = functions;
-		const function_mapping* end   = ARRAY_END( functions );
-		
-		const function_mapping* it = begin;
-		
-		while ( it < end )
-		{
-			if ( it->name == name )
-			{
-				return it;
-			}
-			
-			++it;
-		}
-		
-		return 0;  // NULL
-	}
-	
-	function_type function_from_name( const plus::string& name )
-	{
-		if ( const function_mapping* it = find( name ) )
-		{
-			return it->f;
-		}
-		
-		return 0;  // NULL
 	}
 	
 }
