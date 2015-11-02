@@ -5,6 +5,9 @@
 
 #include "vlib/string-utils.hh"
 
+// Standard C
+#include <string.h>
+
 // more-libc
 #include "more/string.h"
 
@@ -13,6 +16,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/quote.hh"
 
 
 namespace vlib
@@ -26,14 +30,53 @@ namespace vlib
 		return (char*) mempcpy( p, s.data(), s.size() );
 	}
 	
+	static inline
+	char* mempcpy( char* p, const char* s )
+	{
+		return (char*) mempcpy( p, s, strlen( s ) );
+	}
+	
+	
+	static inline
+	const char* reproduce_op( op_type op )
+	{
+		// This is the only one, for now.
+		return " % ";
+	}
+	
+	static inline
+	bool use_quotes( stringification mode )
+	{
+		return mode != Stringified_to_print;
+	}
+	
+	static inline
+	bool use_parens( stringification mode )
+	{
+		return mode != Stringified_to_print;
+	}
+	
+	static inline
+	bool use_commas( stringification mode )
+	{
+		return mode != Stringified_to_print;
+	}
 	
 	static
 	size_t composite_length( const Value& value, stringification mode )
 	{
 		switch ( value.type )
 		{
-			case Value_empty_list:  // ""
+			case Value_empty_list:  // "()", ""
+				return 2 * use_parens( mode );
+			
 			case Value_string:
+				if ( use_quotes( mode ) )
+				{
+					return quote_string( value.string ).size();
+				}
+				
+				// goto next case
 			case Value_function:
 				return value.string.size();
 			
@@ -55,9 +98,29 @@ namespace vlib
 		
 		size_t total = composite_length( expr->left, mode );
 		
+		total += 2 * use_parens( mode );  // 2 for parentheses
+		
+		if ( use_parens( mode )  &&  expr->op != Op_list )
+		{
+			total += strlen( reproduce_op( expr->op ) );
+			
+			total += composite_length( expr->right, Stringified_to_reproduce );
+			
+			return total;
+		}
+		
+		total += 2 * use_commas( mode );  // 2 for first comma
+		
 		while ( Expr* next = expr->right.expr.get() )
 		{
+			if ( next->op != Op_list )
+			{
+				break;
+			}
+			
 			total += composite_length( next->left, mode );
+			
+			total += 2 * use_commas( mode );
 			
 			expr = next;
 		}
@@ -71,7 +134,20 @@ namespace vlib
 		switch ( value.type )
 		{
 			case Value_empty_list:  // ""
+				if ( use_parens( mode ) )
+				{
+					p = (char*) mempcpy( p, STR_LEN( "()" ) );
+				}
+				
+				return p;
+			
 			case Value_string:
+				if ( use_quotes( mode ) )
+				{
+					return mempcpy( p, quote_string( value.string ) );
+				}
+				
+				// goto next case
 			case Value_function:
 				return mempcpy( p, value.string );
 			
@@ -89,7 +165,7 @@ namespace vlib
 				return encode_decimal( p, value.number );
 			
 			case Value_pair:
-				if ( is_function( value ) )
+				if ( ! use_parens( mode )  &&  is_function( value ) )
 				{
 					TYPE_ERROR( "stringification of compound function" );
 				}
@@ -102,16 +178,54 @@ namespace vlib
 		
 		Expr* expr = value.expr.get();
 		
+		if ( use_parens( mode ) )
+		{
+			*p++ = '(';
+		}
+		
 		p = make_string( p, expr->left, mode );
+		
+		if ( use_parens( mode ) )
+		{
+			if ( expr->op != Op_list )
+			{
+				p = mempcpy( p, reproduce_op( expr->op ) );
+				
+				p = make_string( p, expr->right, Stringified_to_reproduce );
+				
+				*p++ = ')';
+				
+				return p;
+			}
+			
+			p = (char*) mempcpy( p, STR_LEN( ", " ) );
+		}
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
+			if ( next->op != Op_list )
+			{
+				break;
+			}
+			
 			p = make_string( p, next->left, mode );
+			
+			if ( use_commas( mode ) )
+			{
+				p = (char*) mempcpy( p, STR_LEN( ", " ) );
+			}
 			
 			expr = next;
 		}
 		
-		return make_string( p, expr->right, mode );
+		p = make_string( p, expr->right, mode );
+		
+		if ( use_parens( mode ) )
+		{
+			*p++ = ')';
+		}
+		
+		return p;
 	}
 	
 	plus::string make_string( const Value& value, stringification mode )

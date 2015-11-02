@@ -19,6 +19,7 @@ namespace vlib
 	enum stringification
 	{
 		Stringified_to_print,
+		Stringified_to_reproduce,
 	};
 	
 	plus::string make_string( const Value& value, stringification mode );
