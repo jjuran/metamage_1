@@ -36,7 +36,7 @@ namespace vlib
 	static
 	Value v_str( const Value& value )
 	{
-		return make_string( value );
+		return make_string( value, Stringified_to_print );
 	}
 	
 	static
@@ -108,6 +108,11 @@ namespace vlib
 		define( "str",  &v_str  );
 		
 		return true;
+	}
+	
+	Value v_rep( const Value& v )
+	{
+		return make_string( v, Stringified_to_reproduce );
 	}
 	
 	static

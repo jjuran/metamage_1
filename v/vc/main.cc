@@ -22,7 +22,6 @@
 #include "plus/decimal.hh"
 #include "plus/integer_hex.hh"
 #include "plus/string/concat.hh"
-#include "plus/var_string.hh"
 
 // vlib
 #include "vlib/calc.hh"
@@ -30,7 +29,7 @@
 #include "vlib/functions.hh"
 #include "vlib/library.hh"
 #include "vlib/parse.hh"
-#include "vlib/quote.hh"
+#include "vlib/string-utils.hh"
 #include "vlib/symbol_table.hh"
 
 
@@ -87,63 +86,19 @@ static plus::string stringify( const Value& v )
 			return "UNDEFINED";
 		
 		case Value_empty_list:
-			return "()";
-		
 		case Value_boolean:
-			return v.number.is_zero() ? "false" : "true";
+			break;
 		
 		case Value_number:
 			return stringify( v.number );
 		
 		case Value_string:
-			return quote_string( v.string );
-		
 		case Value_function:
-			return v.string;
-		
 		case Value_pair:
-			return stringify_list( v );
-	}
-}
-
-static plus::string stringify_list( const Value& v )
-{
-	plus::var_string result = "(";
-	
-	const Value* next = &v;
-	
-	if ( v.expr.get()->op != Op_list )
-	{
-		const char* op_token = " % ";
-		
-		Expr& expr = *v.expr.get();
-		
-		result += stringify( expr.left );
-		result += op_token;
-		result += stringify( expr.right );
-		result += ")";
-		
-		return result.move();
-	}
-	
-	while ( const Expr* expr = next->expr.get() )
-	{
-		if ( expr->op != Op_list )
-		{
 			break;
-		}
-		
-		next = &expr->right;
-		
-		result += stringify( expr->left );
-		
-		result += ", ";
 	}
 	
-	result += stringify( *next );
-	result += ")";
-	
-	return result.move();
+	return make_string( v, Stringified_to_reproduce );
 }
 
 static void reproduce( const Value& v )
@@ -231,6 +186,7 @@ int main( int argc, char** argv )
 	define( "getenv", &v_getenv );
 	define( "join",   &v_join   );
 	define( "print",  &v_print  );
+	define( "rep",    &v_rep    );
 	define( "time",   &v_time   );
 	define( "unbin",  &v_unbin  );
 	define( "unhex",  &v_unhex  );

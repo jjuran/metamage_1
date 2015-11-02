@@ -20,6 +20,7 @@ namespace vlib
 	
 	bool install_basic_functions();
 	
+	Value v_rep  ( const Value& v );
 	Value v_unbin( const Value& v );
 	Value v_unhex( const Value& v );
 	
