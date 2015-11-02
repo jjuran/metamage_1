@@ -306,7 +306,7 @@ namespace vlib
 	{
 		if ( f.type == Value_function )
 		{
-			return f.function( arguments );
+			return f.function->addr( arguments );
 		}
 		
 		if ( Expr* expr = f.expr.get() )

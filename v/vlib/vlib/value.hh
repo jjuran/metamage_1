@@ -14,12 +14,13 @@
 // vlib
 #include "vlib/expr_box.hh"
 #include "vlib/op_type.hh"
-#include "vlib/proc_info.hh"
 #include "vlib/symbol_id.hh"
 
 
 namespace vlib
 {
+	
+	struct proc_info;
 	
 	enum value_type
 	{
@@ -36,12 +37,14 @@ namespace vlib
 		Value_pair,
 	};
 	
+	typedef const proc_info* proc_t;
+	
 	struct Value
 	{
 		value_type     type;
 		plus::integer  number;
 		plus::string   string;
-		function_type  function;
+		proc_t         function;
 		expr_box       expr;
 		
 		Value( value_type type = value_type() ) : type( type )
@@ -80,8 +83,7 @@ namespace vlib
 		Value( const proc_info& proc )
 		:
 			type( Value_function ),
-			string( proc.name ),
-			function( proc.addr )
+			function( &proc )
 		{
 		}
 		

@@ -16,6 +16,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
 
 
@@ -76,9 +77,10 @@ namespace vlib
 					return quote_string( value.string ).size();
 				}
 				
-				// goto next case
-			case Value_function:
 				return value.string.size();
+			
+			case Value_function:
+				return strlen( value.function->name );
 			
 			case Value_boolean:
 				return 4 + value.number.is_zero();  // "true" or "false"
@@ -147,9 +149,10 @@ namespace vlib
 					return mempcpy( p, quote_string( value.string ) );
 				}
 				
-				// goto next case
-			case Value_function:
 				return mempcpy( p, value.string );
+			
+			case Value_function:
+				return mempcpy( p, value.function->name );
 			
 			case Value_boolean:
 				if ( value.number.is_zero() )
