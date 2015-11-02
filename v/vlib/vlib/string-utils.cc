@@ -28,7 +28,7 @@ namespace vlib
 	
 	
 	static
-	plus::string::size_type composite_length( const Value& value )
+	size_t composite_length( const Value& value )
 	{
 		switch ( value.type )
 		{
@@ -53,7 +53,7 @@ namespace vlib
 		
 		Expr* expr = value.expr.get();
 		
-		plus::string::size_type total = composite_length( expr->left );
+		size_t total = composite_length( expr->left );
 		
 		while ( Expr* next = expr->right.expr.get() )
 		{
@@ -116,7 +116,7 @@ namespace vlib
 	
 	plus::string make_string( const Value& value )
 	{
-		const plus::string::size_type size = composite_length( value );
+		const size_t size = composite_length( value );
 		
 		plus::string result;
 		
@@ -129,8 +129,6 @@ namespace vlib
 	
 	plus::string repeat( const plus::string& s, plus::string::size_type n )
 	{
-		typedef plus::string::size_type size_t;
-		
 		if ( n > 65535 )
 		{
 			DOMAIN_ERROR( "excessively large string multiplier" );
