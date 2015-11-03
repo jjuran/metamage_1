@@ -152,6 +152,8 @@ namespace vlib
 		switch ( v.type )
 		{
 			case Value_empty_list:
+				return 0;
+			
 			case Value_boolean:
 			case Value_number:
 				switch ( op )
