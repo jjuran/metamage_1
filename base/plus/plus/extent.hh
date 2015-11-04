@@ -18,6 +18,9 @@ namespace plus
 	char* extent_unshare( char* buffer );
 	
 	unsigned long extent_refcount( const char* buffer );
+	
+	unsigned long extent_area( const char* buffer );
+	
 }
 
 #endif

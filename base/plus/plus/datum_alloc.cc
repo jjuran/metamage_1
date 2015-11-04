@@ -248,4 +248,14 @@ namespace plus
 		return p;
 	}
 	
+	unsigned long area( const datum_storage& datum )
+	{
+		if ( is_small( datum ) )
+		{
+			return sizeof (datum_storage);
+		}
+		
+		return sizeof (datum_storage) + extent_area( datum.alloc.pointer );
+	}
+	
 }

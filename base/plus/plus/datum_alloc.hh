@@ -87,6 +87,8 @@ namespace plus
 	
 	char* copy_on_write( datum_storage& datum, bool tainting );
 	
+	unsigned long area( const datum_storage& datum );
+	
 }
 
 #endif

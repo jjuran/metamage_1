@@ -60,4 +60,11 @@ namespace vlib
 		return Value( Value_pair, f, Op_bind_args, arguments );
 	}
 	
+	unsigned long area( const Expr& expr )
+	{
+		return + sizeof (Expr) - 2 * sizeof (Value)
+		       + area( expr.left  )
+		       + area( expr.right );
+	}
+	
 }

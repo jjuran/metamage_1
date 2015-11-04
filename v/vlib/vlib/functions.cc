@@ -110,6 +110,11 @@ namespace vlib
 		return true;
 	}
 	
+	Value v_area( const Value& v )
+	{
+		return area( v );
+	}
+	
 	Value v_rep( const Value& v )
 	{
 		return make_string( v, Stringified_to_reproduce );

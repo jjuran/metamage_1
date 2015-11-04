@@ -121,4 +121,11 @@ namespace plus
 		return header->refcount;
 	}
 	
+	unsigned long extent_area( const char* buffer )
+	{
+		const extent_header* header = header_from_buffer( buffer );
+		
+		return sizeof (extent_header) + header->capacity;
+	}
+	
 }

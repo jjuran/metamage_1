@@ -514,4 +514,14 @@ namespace plus
 		
 	}
 	
+	unsigned long ibox::area() const
+	{
+		if ( ! has_extent() )
+		{
+			return sizeof (ibox);
+		}
+		
+		return sizeof (ibox) + extent_area( (const char*) its_pointer );
+	}
+	
 }

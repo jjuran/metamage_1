@@ -218,6 +218,8 @@ namespace plus
 			void multiply_by( const ibox& y );
 			
 			void halve();
+			
+			unsigned long area() const;
 	};
 	
 	math::integer::cmp_t abs_compare( const ibox& a, const ibox& b );
@@ -227,6 +229,12 @@ namespace plus
 	void swap( ibox& a, ibox& b )
 	{
 		a.swap( b );
+	}
+	
+	inline
+	unsigned long area( const ibox& box )
+	{
+		return box.area();
 	}
 	
 }
