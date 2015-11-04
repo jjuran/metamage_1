@@ -52,7 +52,7 @@ namespace vlib
 			return f;
 		}
 		
-		if ( Expr* expr = f.expr.get() )
+		if ( Expr* expr = get_expr( f ) )
 		{
 			return bind_args( expr->left, Value( expr->right, arguments ) );
 		}

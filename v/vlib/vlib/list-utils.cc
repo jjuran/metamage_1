@@ -14,9 +14,9 @@ namespace vlib
 	
 	const Value& first( const Value& list )
 	{
-		if ( list.type == Value_pair )
+		if ( get_type( list ) == Value_pair )
 		{
-			Expr* expr = list.expr.get();
+			Expr* expr = get_expr( list );
 			
 			if ( expr->op == Op_list )
 			{
@@ -29,9 +29,9 @@ namespace vlib
 	
 	const Value& rest( const Value& list )
 	{
-		if ( list.type == Value_pair )
+		if ( get_type( list ) == Value_pair )
 		{
-			Expr* expr = list.expr.get();
+			Expr* expr = get_expr( list );
 			
 			if ( expr->op == Op_list )
 			{
@@ -44,12 +44,12 @@ namespace vlib
 	
 	unsigned long count( const Value& list )
 	{
-		if ( list.type != Value_pair )
+		if ( get_type( list ) != Value_pair )
 		{
 			return ! is_empty( list );
 		}
 		
-		Expr* expr = list.expr.get();
+		Expr* expr = get_expr( list );
 		
 		if ( expr->op != Op_list )
 		{
@@ -58,7 +58,7 @@ namespace vlib
 		
 		unsigned long total = count( expr->left );
 		
-		while ( Expr* next = expr->right.expr.get() )
+		while ( Expr* next = get_expr( expr->right ) )
 		{
 			if ( next->op != Op_list )
 			{
@@ -75,9 +75,9 @@ namespace vlib
 	
 	Value make_pair( const Value& left, const Value& right )
 	{
-		if ( left.type == Value_pair )
+		if ( get_type( left ) == Value_pair )
 		{
-			Expr& expr = *left.expr.get();
+			Expr& expr = *get_expr( left );
 			
 			if ( expr.op == Op_list )
 			{

@@ -66,7 +66,7 @@ namespace vlib
 	static
 	size_t composite_length( const Value& value, stringification mode )
 	{
-		switch ( value.type )
+		switch ( get_type( value ) )
 		{
 			case Value_empty_list:  // "()", ""
 				return 2 * use_parens( mode );
@@ -74,19 +74,19 @@ namespace vlib
 			case Value_string:
 				if ( use_quotes( mode ) )
 				{
-					return quote_string( value.string ).size();
+					return quote_string( get_str( value ) ).size();
 				}
 				
-				return value.string.size();
+				return get_str( value ).size();
 			
 			case Value_function:
-				return strlen( value.function->name );
+				return strlen( get_proc( value ).name );
 			
 			case Value_boolean:
-				return 4 + value.number.is_zero();  // "true" or "false"
+				return 4 + ! get_bool( value );  // "true" or "false"
 			
 			case Value_number:
-				return decimal_length( value.number );
+				return decimal_length( get_int( value ) );
 			
 			case Value_pair:
 				break;
@@ -96,7 +96,7 @@ namespace vlib
 				break;
 		}
 		
-		Expr* expr = value.expr.get();
+		Expr* expr = get_expr( value );
 		
 		size_t total = composite_length( expr->left, mode );
 		
@@ -113,7 +113,7 @@ namespace vlib
 		
 		total += 2 * use_commas( mode );  // 2 for first comma
 		
-		while ( Expr* next = expr->right.expr.get() )
+		while ( Expr* next = get_expr( expr->right ) )
 		{
 			if ( next->op != Op_list )
 			{
@@ -133,7 +133,7 @@ namespace vlib
 	static
 	char* make_string( char* p, const Value& value, stringification mode )
 	{
-		switch ( value.type )
+		switch ( get_type( value ) )
 		{
 			case Value_empty_list:  // ""
 				if ( use_parens( mode ) )
@@ -146,16 +146,16 @@ namespace vlib
 			case Value_string:
 				if ( use_quotes( mode ) )
 				{
-					return mempcpy( p, quote_string( value.string ) );
+					return mempcpy( p, quote_string( get_str( value ) ) );
 				}
 				
-				return mempcpy( p, value.string );
+				return mempcpy( p, get_str( value ) );
 			
 			case Value_function:
-				return mempcpy( p, value.function->name );
+				return mempcpy( p, get_proc( value ).name );
 			
 			case Value_boolean:
-				if ( value.number.is_zero() )
+				if ( ! get_bool( value ) )
 				{
 					return (char*) mempcpy( p, STR_LEN( "false" ) );
 				}
@@ -165,7 +165,7 @@ namespace vlib
 				}
 			
 			case Value_number:
-				return encode_decimal( p, value.number );
+				return encode_decimal( p, get_int( value ) );
 			
 			case Value_pair:
 				if ( ! use_parens( mode )  &&  is_function( value ) )
@@ -179,7 +179,7 @@ namespace vlib
 				break;
 		}
 		
-		Expr* expr = value.expr.get();
+		Expr* expr = get_expr( value );
 		
 		if ( use_parens( mode ) )
 		{
@@ -204,7 +204,7 @@ namespace vlib
 			p = (char*) mempcpy( p, STR_LEN( ", " ) );
 		}
 		
-		while ( Expr* next = expr->right.expr.get() )
+		while ( Expr* next = get_expr( expr->right ) )
 		{
 			if ( next->op != Op_list )
 			{
@@ -297,7 +297,7 @@ namespace vlib
 		
 		const Value* next = &v;
 		
-		while ( Expr* expr = next->expr.get() )
+		while ( Expr* expr = get_expr( *next ) )
 		{
 			p = make_string( p, expr->left, Stringified_to_print );
 			

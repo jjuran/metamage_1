@@ -137,9 +137,9 @@ namespace vlib
 			
 			// Try string concatenation.
 			
-			if ( last.type == Value_string  &&  x.type == Value_string )
+			if ( get_type( last ) == V_str  &&  get_type( x ) == V_str )
 			{
-				last.string = last.string + x.string;
+				last = get_str( last ) + get_str( x );
 				
 				return;
 			}

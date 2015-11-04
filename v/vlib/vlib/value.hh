@@ -37,6 +37,10 @@ namespace vlib
 		Value_pair,
 		
 		V_decl = Value_symbol_declarator,
+		V_bool = Value_boolean,
+		V_int  = Value_number,
+		V_str  = Value_string,
+		V_proc = Value_function,
 	};
 	
 	typedef const proc_info* proc_t;
@@ -110,27 +114,69 @@ namespace vlib
 	};
 	
 	inline
+	value_type get_type( const Value& v )
+	{
+		return v.type;
+	}
+	
+	inline
+	bool get_bool( const Value& v )
+	{
+		return ! v.number.is_zero();
+	}
+	
+	inline
+	plus::integer& get_int( Value& v )
+	{
+		return v.number;
+	}
+	
+	inline
+	const plus::integer& get_int( const Value& v )
+	{
+		return v.number;
+	}
+	
+	inline
+	const plus::string& get_str( const Value& v )
+	{
+		return v.string;
+	}
+	
+	inline
+	const proc_info& get_proc( const Value& v )
+	{
+		return *v.function;
+	}
+	
+	inline
+	Expr* get_expr( const Value& v )
+	{
+		return v.expr.get();
+	}
+	
+	inline
 	bool is_undefined( const Value& v )
 	{
-		return v.type == Value_undefined;
+		return get_type( v ) == Value_undefined;
 	}
 	
 	inline
 	bool is_empty( const Value& v )
 	{
-		return v.type == Value_empty_list;
+		return get_type( v ) == Value_empty_list;
 	}
 	
 	inline
 	bool is_symbol( const Value& v )
 	{
-		return v.type == Value_symbol  ||  v.type == Value_symbol_declarator;
+		return get_type( v ) == Value_symbol  ||  get_type( v ) == V_decl;
 	}
 	
 	inline
 	bool is_function( const Value& v )
 	{
-		if ( v.type == Value_function )
+		if ( get_type( v ) == Value_function )
 		{
 			return true;
 		}

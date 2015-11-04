@@ -71,7 +71,7 @@ static plus::string stringify_list( const Value& v );
 
 static plus::string stringify( const Value& v )
 {
-	switch ( v.type )
+	switch ( get_type( v ) )
 	{
 		default:
 			return "UNIMPLEMENTED";
@@ -90,7 +90,7 @@ static plus::string stringify( const Value& v )
 			break;
 		
 		case Value_number:
-			return stringify( v.number );
+			return stringify( vlib::get_int( v ) );
 		
 		case Value_string:
 		case Value_function:
@@ -103,7 +103,7 @@ static plus::string stringify( const Value& v )
 
 static void reproduce( const Value& v )
 {
-	if ( ! v.type )
+	if ( ! get_type( v ) )
 	{
 		return;
 	}
@@ -149,22 +149,22 @@ void breathe()
 static
 int get_int( const Value& v )
 {
-	if ( v.type != Value_number )
+	if ( get_type( v ) != Value_number )
 	{
 		ADDRESS_ERROR( "PC is non-numeric" );
 	}
 	
-	if ( v.number.is_negative() )
+	if ( vlib::get_int( v ).is_negative() )
 	{
 		ADDRESS_ERROR( "PC is negative" );
 	}
 	
-	if ( v.number > 10000 )
+	if ( vlib::get_int( v ) > 10000 )
 	{
 		ADDRESS_ERROR( "PC is exorbitant" );
 	}
 	
-	return v.number.clipped();
+	return vlib::get_int( v ).clipped();
 }
 
 int main( int argc, char** argv )
@@ -217,7 +217,7 @@ int main( int argc, char** argv )
 		
 		breathe();
 		
-		i = get_int( lookup_symbol( pc ) );
+		i = ::get_int( lookup_symbol( pc ) );
 	}
 	while ( i < argn );
 	

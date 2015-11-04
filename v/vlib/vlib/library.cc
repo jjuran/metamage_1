@@ -29,17 +29,17 @@ namespace vlib
 	static
 	Value v_getenv( const Value& v )
 	{
-		if ( v.type != Value_string )
+		if ( get_type( v ) != Value_string )
 		{
 			TYPE_ERROR( "getenv() argument must be a string" );
 		}
 		
-		if ( strlen( v.string.c_str() ) != v.string.size() )
+		if ( strlen( get_str( v ).c_str() ) != get_str( v ).size() )
 		{
 			TYPE_ERROR( "getenv() argument must not contain NUL bytes" );
 		}
 		
-		if ( const char* var = getenv( v.string.c_str() ) )
+		if ( const char* var = getenv( get_str( v ).c_str() ) )
 		{
 			return var;
 		}

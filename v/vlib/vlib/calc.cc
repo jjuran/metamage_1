@@ -31,7 +31,7 @@ namespace vlib
 	static
 	bool equal_atoms( const Value& a, const Value& b )
 	{
-		if ( a.type != b.type )
+		if ( get_type( a ) != get_type( b ) )
 		{
 			if ( is_empty( a )  ||  is_empty( b ) )
 			{
@@ -41,25 +41,25 @@ namespace vlib
 			TYPE_ERROR( "mismatched types in equality relation" );
 		}
 		
-		switch ( a.type )
+		switch ( get_type( a ) )
 		{
 			case Value_empty_list:
 				return true;
 			
 			case Value_boolean:
 			case Value_number:
-				return a.number == b.number;
+				return get_int( a ) == get_int( b );
 			
 			case Value_string:
-				return a.string == b.string;
+				return get_str( a ) == get_str( b );
 			
 			case Value_function:
-				return a.function == b.function;
+				return &get_proc( a ) == &get_proc( b );
 			
 			case Value_pair:
 				{
-					Expr& ax = *a.expr.get();
-					Expr& bx = *b.expr.get();
+					Expr& ax = *get_expr( a );
+					Expr& bx = *get_expr( b );
 					
 					return ax.op == bx.op                     &&
 					       equal_atoms( ax.left,  bx.left  )  &&
@@ -87,7 +87,7 @@ namespace vlib
 			return false;
 		}
 		
-		if ( a->type != Value_pair  &&  b->type != Value_pair )
+		if ( get_type( *a ) != Value_pair  &&  get_type( *b ) != Value_pair )
 		{
 			return true;
 		}
@@ -101,18 +101,18 @@ namespace vlib
 	static
 	cmp_t compare( const Value& a, const Value& b )
 	{
-		if ( a.type != b.type )
+		if ( get_type( a ) != get_type( b ) )
 		{
 			TYPE_ERROR( "mismatched types in compare()" );
 		}
 		
-		switch ( a.type )
+		switch ( get_type( a ) )
 		{
 			case Value_number:
-				return compare( a.number, b.number );
+				return compare( get_int( a ), get_int( b ) );
 			
 			case Value_string:
-				return compare( a.string, b.string );
+				return compare( get_str( a ), get_str( b ) );
 			
 			default:
 				TYPE_ERROR( "unsupported type in compare()" );
@@ -127,14 +127,14 @@ namespace vlib
 	{
 		const Value& glue = first( args );
 		
-		if ( glue.type != Value_string )
+		if ( get_type( glue ) != Value_string )
 		{
 			TYPE_ERROR( "join glue must be a string" );
 		}
 		
 		const Value pieces = rest( args );
 		
-		return join( glue.string, pieces, count( pieces ) );
+		return join( get_str( glue ), pieces, count( pieces ) );
 	}
 	
 	const proc_info proc_join = { &v_join, "join" };
@@ -152,7 +152,7 @@ namespace vlib
 			return count( v );
 		}
 		
-		switch ( v.type )
+		switch ( get_type( v ) )
 		{
 			case Value_empty_list:
 				return 0;
@@ -161,8 +161,8 @@ namespace vlib
 			case Value_number:
 				switch ( op )
 				{
-					case Op_unary_plus:   return  v.number;
-					case Op_unary_minus:  return -v.number;
+					case Op_unary_plus:   return  get_int( v );
+					case Op_unary_minus:  return -get_int( v );
 					
 					default:  break;
 				}
@@ -189,20 +189,20 @@ namespace vlib
 	static
 	Value calc_member( const Value& left, const Value& right )
 	{
-		if ( right.type != Value_string )
+		if ( get_type( right ) != Value_string )
 		{
 			SYNTAX_ERROR( "non-string member name" );
 		}
 		
-		switch ( left.type )
+		switch ( get_type( left ) )
 		{
 			case Value_string:
-				if ( right.string == "length" )
+				if ( get_str( right ) == "length" )
 				{
-					return left.string.size();
+					return get_str( left ).size();
 				}
 				
-				if ( right.string == "join" )
+				if ( get_str( right ) == "join" )
 				{
 					return bind_args( proc_join, left );
 				}
@@ -264,27 +264,27 @@ namespace vlib
 	static
 	Value repeat_list( const Value& list, const Value& factor )
 	{
-		if ( factor.type != Value_number )
+		if ( get_type( factor ) != Value_number )
 		{
 			TYPE_ERROR( "non-numeric list repetition factor" );
 		}
 		
-		if ( factor.number.is_negative() )
+		if ( get_int( factor ).is_negative() )
 		{
 			DOMAIN_ERROR( "negative list repetition factor" );
 		}
 		
-		if ( factor.number.is_zero()  ||  is_empty( list ) )
+		if ( get_int( factor ).is_zero()  ||  is_empty( list ) )
 		{
 			return Value_empty_list;
 		}
 		
-		if ( factor.number > 0xFFFFFFFFu )
+		if ( get_int( factor ) > 0xFFFFFFFFu )
 		{
 			DOMAIN_ERROR( "excessively large list multiplier" );
 		}
 		
-		unsigned long n = factor.number.clipped();
+		unsigned long n = get_int( factor ).clipped();
 		
 		if ( n == 1 )
 		{
@@ -304,12 +304,12 @@ namespace vlib
 	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
-		if ( f.type == Value_function )
+		if ( get_type( f ) == Value_function )
 		{
-			return f.function->addr( arguments );
+			return get_proc( f ).addr( arguments );
 		}
 		
-		if ( Expr* expr = f.expr.get() )
+		if ( Expr* expr = get_expr( f ) )
 		{
 			const Value& method = expr->left;
 			const Value& object = expr->right;
@@ -326,7 +326,7 @@ namespace vlib
 	            op_type       op,
 	            const Value&  right )
 	{
-		if ( left.type == Value_dummy_operand )
+		if ( get_type( left ) == Value_dummy_operand )
 		{
 			return calc_unary( op, right );
 		}
@@ -376,9 +376,9 @@ namespace vlib
 			return bind_args( left, right );
 		}
 		
-		if ( left.type == right.type )
+		if ( get_type( left ) == get_type( right ) )
 		{
-			switch ( left.type )
+			switch ( get_type( left ) )
 			{
 				case Value_empty_list:
 					SYNTAX_ERROR( "operator not defined for empty list" );
@@ -387,7 +387,7 @@ namespace vlib
 					SYNTAX_ERROR( "operator not defined for boolean values" );
 				
 				case Value_number:
-					return calc( left.number, op, right.number );
+					return calc( get_int( left ), op, get_int( right ) );
 				
 				case Value_string:
 					SYNTAX_ERROR( "operator not defined for string values" );
@@ -403,11 +403,11 @@ namespace vlib
 			}
 		}
 		
-		if ( op == Op_multiply  &&  left.type == Value_string )
+		if ( op == Op_multiply  &&  get_type( left ) == Value_string )
 		{
-			if ( right.type == Value_boolean  ||  right.type == Value_number )
+			if ( get_type( right ) == V_bool  ||  get_type( right ) == V_int )
 			{
-				return repeat_string( left.string, right.number );
+				return repeat_string( get_str( left ), get_int( right ) );
 			}
 		}
 		

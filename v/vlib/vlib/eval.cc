@@ -17,7 +17,7 @@ namespace vlib
 	static
 	void validate( const Value& value )
 	{
-		switch ( value.type )
+		switch ( get_type( value ) )
 		{
 			case Value_nothing:
 				SYNTAX_ERROR( "invalid void state during evaluation" );
@@ -41,13 +41,13 @@ namespace vlib
 	static
 	void resolve( Value& v )
 	{
-		if ( v.type == Value_symbol_declarator )
+		if ( get_type( v ) == Value_symbol_declarator )
 		{
 			v = Value_nothing;
 		}
-		else if ( v.type == Value_symbol )
+		else if ( get_type( v ) == Value_symbol )
 		{
-			const symbol_id sym = symbol_id( v.number.clipped() );
+			const symbol_id sym = symbol_id( get_int( v ).clipped() );
 			
 			v = defined( lookup_symbol( sym ) );
 		}
@@ -77,18 +77,18 @@ namespace vlib
 			SYMBOL_ERROR( "update of undefined symbol" );
 		}
 		
-		if ( left.type != right.type )
+		if ( get_type( left ) != get_type( right ) )
 		{
 			TYPE_ERROR( "update between mixed types not supported" );
 		}
 		
-		if ( left.type != Value_number )
+		if ( get_type( left ) != Value_number )
 		{
 			TYPE_ERROR( "non-numeric update not supported" );
 		}
 		
-		plus::integer&       a = left.number;
-		plus::integer const& b = right.number;
+		plus::integer&       a = get_int( left  );
+		plus::integer const& b = get_int( right );
 		
 		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
 		{
@@ -124,11 +124,11 @@ namespace vlib
 				SYNTAX_ERROR( "left operand of assignment not a symbol" );
 			}
 			
-			const symbol_id sym = symbol_id( left.number.clipped() );
+			const symbol_id sym = symbol_id( get_int( left ).clipped() );
 			
 			const Value result = eval_assignment( sym, op, right );
 			
-			if ( left.type == Value_symbol_declarator )
+			if ( get_type( left ) == Value_symbol_declarator )
 			{
 				return result;
 			}
