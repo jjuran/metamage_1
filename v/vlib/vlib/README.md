@@ -12,6 +12,8 @@ Level 0
 
 `symbol_id.hh`:  Defines `enum symbol_id`, the type of an index into the symbol table.
 
+`proc_info.hh`:  Defines `struct proc_info`, which groups a function pointer with a name.
+
 Level 1
 -------
 

@@ -26,6 +26,7 @@
 namespace vlib
 {
 	
+	static
 	Value v_getenv( const Value& v )
 	{
 		if ( v.type != Value_string )
@@ -46,6 +47,7 @@ namespace vlib
 		return Value_empty_list;
 	}
 	
+	static
 	Value v_print( const Value& v )
 	{
 		const plus::string s = make_string( v, Stringified_to_print ) + "\n";
@@ -55,6 +57,7 @@ namespace vlib
 		return Value();
 	}
 	
+	static
 	Value v_time( const Value& v )
 	{
 		if ( ! is_empty( v ) )
@@ -66,5 +69,9 @@ namespace vlib
 		
 		return t;
 	}
+	
+	const proc_info proc_getenv = { &v_getenv, "getenv" };
+	const proc_info proc_print  = { &v_print,  "print"  };
+	const proc_info proc_time   = { &v_time,   "time"   };
 	
 }

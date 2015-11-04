@@ -122,6 +122,7 @@ namespace vlib
 		return 0;
 	}
 	
+	static
 	Value v_join( const Value& args )
 	{
 		const Value& glue = first( args );
@@ -135,6 +136,8 @@ namespace vlib
 		
 		return join( glue.string, pieces, count( pieces ) );
 	}
+	
+	const proc_info proc_join = { &v_join, "join" };
 	
 	static
 	Value calc_unary( op_type op, const Value& v )
@@ -201,7 +204,7 @@ namespace vlib
 				
 				if ( right.string == "join" )
 				{
-					return bind_args( Value( &v_join, right.string ), left );
+					return bind_args( proc_join, left );
 				}
 				break;
 			
@@ -303,7 +306,7 @@ namespace vlib
 	{
 		if ( f.type == Value_function )
 		{
-			return f.function( arguments );
+			return f.function->addr( arguments );
 		}
 		
 		if ( Expr* expr = f.expr.get() )

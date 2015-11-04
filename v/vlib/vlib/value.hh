@@ -20,6 +20,8 @@
 namespace vlib
 {
 	
+	struct proc_info;
+	
 	enum value_type
 	{
 		Value_nothing,
@@ -35,16 +37,14 @@ namespace vlib
 		Value_pair,
 	};
 	
-	struct Value;
-	
-	typedef Value (*function_type)( const Value& argument );
+	typedef const proc_info* proc_t;
 	
 	struct Value
 	{
 		value_type     type;
 		plus::integer  number;
 		plus::string   string;
-		function_type  function;
+		proc_t         function;
 		expr_box       expr;
 		
 		Value( value_type type = value_type() ) : type( type )
@@ -80,11 +80,10 @@ namespace vlib
 		{
 		}
 		
-		Value( function_type f, const plus::string& name )
+		Value( const proc_info& proc )
 		:
 			type( Value_function ),
-			string( name ),
-			function( f )
+			function( &proc )
 		{
 		}
 		

@@ -20,11 +20,11 @@
 namespace vlib
 {
 	
-	void define( const char* name, function_type f )
+	void define( const proc_info& proc )
 	{
-		const symbol_id sym = create_symbol( name, Symbol_const );
+		const symbol_id sym = create_symbol( proc.name, Symbol_const );
 		
-		assign_symbol( sym, Value( f, name ) );
+		assign_symbol( sym, proc );
 	}
 	
 	static
@@ -99,22 +99,30 @@ namespace vlib
 		return half( arg.number );
 	}
 	
+	static const proc_info proc_abs  = { &v_abs,  "abs"  };
+	static const proc_info proc_bool = { &v_bool, "bool" };
+	static const proc_info proc_half = { &v_half, "half" };
+	static const proc_info proc_hex  = { &v_hex,  "hex"  };
+	static const proc_info proc_str  = { &v_str,  "str"  };
+	
 	bool install_basic_functions()
 	{
-		define( "abs",  &v_abs  );
-		define( "bool", &v_bool );
-		define( "half", &v_half );
-		define( "hex",  &v_hex  );
-		define( "str",  &v_str  );
+		define( proc_abs  );
+		define( proc_bool );
+		define( proc_half );
+		define( proc_hex  );
+		define( proc_str  );
 		
 		return true;
 	}
 	
+	static
 	Value v_area( const Value& v )
 	{
 		return area( v );
 	}
 	
+	static
 	Value v_rep( const Value& v )
 	{
 		return make_string( v, Stringified_to_reproduce );
@@ -126,6 +134,7 @@ namespace vlib
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
 	}
 	
+	static
 	Value v_unbin( const Value& v )
 	{
 		if ( v.type != Value_string )
@@ -141,6 +150,7 @@ namespace vlib
 		return unbin( v.string );
 	}
 	
+	static
 	Value v_unhex( const Value& v )
 	{
 		if ( v.type != Value_string )
@@ -155,5 +165,10 @@ namespace vlib
 		
 		return unhex( v.string );
 	}
+	
+	const proc_info proc_area  = { &v_area,  "area"  };
+	const proc_info proc_rep   = { &v_rep,   "rep"   };
+	const proc_info proc_unbin = { &v_unbin, "unbin" };
+	const proc_info proc_unhex = { &v_unhex, "unhex" };
 	
 }
