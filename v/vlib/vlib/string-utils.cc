@@ -71,6 +71,10 @@ namespace vlib
 	{
 		switch ( get_type( value ) )
 		{
+			case Value_nothing:
+			case Value_dummy_operand:
+				return 0;
+			
 			case Value_empty_list:  // "()", ""
 				return 2 * use_parens( mode );
 			
@@ -153,6 +157,10 @@ namespace vlib
 	{
 		switch ( get_type( value ) )
 		{
+			case Value_nothing:
+			case Value_dummy_operand:
+				return p;
+			
 			case Value_empty_list:  // ""
 				if ( use_parens( mode ) )
 				{
