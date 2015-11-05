@@ -10,7 +10,7 @@
 namespace vlib
 {
 	
-	struct Value;
+	class Value;
 	
 	typedef Value (*function_type)( const Value& argument );
 	

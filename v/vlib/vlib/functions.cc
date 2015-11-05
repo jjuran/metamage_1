@@ -42,7 +42,7 @@ namespace vlib
 	static
 	Value v_bool( const Value& arg )
 	{
-		switch ( arg.type )
+		switch ( get_type( arg ) )
 		{
 			default:
 				INTERNAL_ERROR( "invalid type in v_bool()" );
@@ -54,10 +54,10 @@ namespace vlib
 				return arg;
 			
 			case Value_number:
-				return ! arg.number.is_zero();
+				return ! get_int( arg ).is_zero();
 			
 			case Value_string:
-				return ! arg.string.empty();
+				return ! get_str( arg ).empty();
 			
 			case Value_function:
 			case Value_pair:
@@ -68,35 +68,35 @@ namespace vlib
 	static
 	Value v_hex( const Value& arg )
 	{
-		switch ( arg.type )
+		switch ( get_type( arg ) )
 		{
 			default:  TYPE_ERROR( "invalid argument to hex()" );
 			
-			case Value_number:  return hex( arg.number );
-			case Value_string:  return hex( arg.string );
+			case Value_number:  return hex( get_int( arg ) );
+			case Value_string:  return hex( get_str( arg ) );
 		}
 	}
 	
 	static
 	Value v_abs( const Value& arg )
 	{
-		if ( arg.type != Value_number )
+		if ( get_type( arg ) != Value_number )
 		{
 			TYPE_ERROR( "invalid argument to abs()" );
 		}
 		
-		return abs( arg.number );
+		return abs( get_int( arg ) );
 	}
 	
 	static
 	Value v_half( const Value& arg )
 	{
-		if ( arg.type != Value_number )
+		if ( get_type( arg ) != Value_number )
 		{
 			TYPE_ERROR( "invalid argument to half()" );
 		}
 		
-		return half( arg.number );
+		return half( get_int( arg ) );
 	}
 	
 	static const proc_info proc_abs  = { &v_abs,  "abs"  };
@@ -137,33 +137,33 @@ namespace vlib
 	static
 	Value v_unbin( const Value& v )
 	{
-		if ( v.type != Value_string )
+		if ( get_type( v ) != Value_string )
 		{
 			TYPE_ERROR( "unbin() argument must be a string" );
 		}
 		
-		if ( is_0x_numeral( v.string, 'b' ) )
+		if ( is_0x_numeral( get_str( v ), 'b' ) )
 		{
-			return unbin_int( v.string.substr( 2 ) );
+			return unbin_int( get_str( v ).substr( 2 ) );
 		}
 		
-		return unbin( v.string );
+		return unbin( get_str( v ) );
 	}
 	
 	static
 	Value v_unhex( const Value& v )
 	{
-		if ( v.type != Value_string )
+		if ( get_type( v ) != Value_string )
 		{
 			TYPE_ERROR( "unhex() argument must be a string" );
 		}
 		
-		if ( is_0x_numeral( v.string, 'x' ) )
+		if ( is_0x_numeral( get_str( v ), 'x' ) )
 		{
-			return unhex_int( v.string.substr( 2 ) );
+			return unhex_int( get_str( v ).substr( 2 ) );
 		}
 		
-		return unhex( v.string );
+		return unhex( get_str( v ) );
 	}
 	
 	const proc_info proc_area  = { &v_area,  "area"  };

@@ -14,7 +14,7 @@ namespace vlib
 {
 	
 	struct Expr;
-	struct Value;
+	class Value;
 	
 	class expr_box
 	{
