@@ -38,6 +38,24 @@ namespace plus
 		don't see a use case.
 	*/
 	
+	struct ibox_structure
+	{
+		typedef math::integer::limb_t   int_t;
+		typedef math::integer::limb_t*  ptr_t;
+	
+		typedef math::integer::size_t  size_t;
+		typedef short                  sign_t;
+		
+		union
+		{
+			int_t  integer;
+			ptr_t  pointer;
+		};
+		
+		size_t  size;  // 0 if small, otherwise the number of limbs
+		sign_t  sign;  // 0 if zero, 1 for positive, -1 for negative
+	};
+	
 	class ibox
 	{
 		public:
@@ -50,17 +68,10 @@ namespace plus
 			struct limb_count_overflow {};
 		
 		private:
-			union
-			{
-				int_t  its_integer;
-				ptr_t  its_pointer;
-			};
-			
-			size_t  its_size;  // 0 if small, otherwise the number of limbs
-			sign_t  its_sign;  // 0 if zero, 1 for positive, -1 for negative
+			ibox_structure  its;
 		
 		private:
-			bool has_extent() const  { return its_size != 0; }
+			bool has_extent() const  { return its.size != 0; }
 			
 			void destroy_extent();
 			
@@ -76,15 +87,15 @@ namespace plus
 			
 			void construct( unsigned long i )
 			{
-				its_integer = i;
-				its_size    = 0;
-				its_sign    = i > 0;
+				its.integer = i;
+				its.size    = 0;
+				its.sign    = i > 0;
 			}
 			
 			void construct( long i )
 			{
-				its_size = 0;
-				its_sign = (i > 0) - (i < 0);
+				its.size = 0;
+				its.sign = (i > 0) - (i < 0);
 				
 				// 0x8000 0000 [0000 0000]
 				const long nadir = 1L << (sizeof (long) * 8 - 1);
@@ -94,7 +105,7 @@ namespace plus
 					i = -i;
 				}
 				
-				its_integer = i;
+				its.integer = i;
 			}
 			
 			void construct( long long i );
@@ -114,8 +125,11 @@ namespace plus
 				destroy();
 			}
 			
-			ibox() : its_integer(), its_size(), its_sign()
+			ibox()
 			{
+				its.integer = 0;
+				its.size    = 0;
+				its.sign    = 0;
 			}
 			
 			ibox( int_t const* data, size_t n, sign_t sign = Sign_positive )
@@ -182,32 +196,32 @@ namespace plus
 			
 			size_t size() const
 			{
-				return has_extent() ? its_size : its_integer != 0;
+				return has_extent() ? its.size : its.integer != 0;
 			}
 			
 			int_t const* data() const
 			{
-				return has_extent() ? its_pointer : &its_integer;
+				return has_extent() ? its.pointer : &its.integer;
 			}
 			
 			int_t top() const
 			{
-				return has_extent() ? extent_top() : its_integer;
+				return has_extent() ? extent_top() : its.integer;
 			}
 			
 			int_t bottom() const
 			{
-				return has_extent() ? extent_bottom() : its_integer;
+				return has_extent() ? extent_bottom() : its.integer;
 			}
 			
 			bool odd() const { return bottom() & 1; }
 			bool even() const { return ! odd(); }
 			
-			sign_t sign() const  { return its_sign; }
+			sign_t sign() const  { return its.sign; }
 			
 			void invert()
 			{
-				its_sign = -its_sign;
+				its.sign = -its.sign;
 			}
 			
 			void add( const ibox& y );

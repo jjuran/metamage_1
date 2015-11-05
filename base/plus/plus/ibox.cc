@@ -28,28 +28,16 @@ namespace plus
 	using math::integer::cmp_t;
 	
 	
-	struct ibox_structure
-	{
-		union
-		{
-			ibox::int_t  integer;
-			ibox::ptr_t  pointer;
-		};
-		
-		ibox::size_t  size;
-		ibox::sign_t  sign;
-	};
-	
 	void ibox::destroy_extent()
 	{
-		extent_release( (char*) its_pointer );
+		extent_release( (char*) its.pointer );
 	}
 	
 	void ibox::unshare()
 	{
 		if ( has_extent() )
 		{
-			its_pointer = (ptr_t) extent_unshare( (char*) its_pointer );
+			its.pointer = (ptr_t) extent_unshare( (char*) its.pointer );
 		}
 	}
 	
@@ -66,7 +54,7 @@ namespace plus
 			{
 				construct( (unsigned long) -i );
 				
-				its_sign = Sign_negative;
+				its.sign = Sign_negative;
 				
 				return;
 			}
@@ -99,9 +87,9 @@ namespace plus
 		
 		std::copy( data, data + n, (int_t*) extent );
 		
-		its_pointer = (ptr_t) extent;
-		its_size    = n;
-		its_sign    = sign;
+		its.pointer = (ptr_t) extent;
+		its.size    = n;
+		its.sign    = sign;
 	}
 	
 	ibox::ibox( const ibox& that )
@@ -110,7 +98,7 @@ namespace plus
 		
 		if ( that.has_extent() )
 		{
-			extent_add_ref( (char*) that.its_pointer );
+			extent_add_ref( (char*) that.its.pointer );
 		}
 	}
 	
@@ -124,7 +112,7 @@ namespace plus
 			
 			if ( that.has_extent() )
 			{
-				extent_add_ref( (char*) that.its_pointer );
+				extent_add_ref( (char*) that.its.pointer );
 			}
 		}
 		
@@ -146,8 +134,8 @@ namespace plus
 		
 		const bool be = ! iota::is_little_endian();
 		
-		limb_t const* biggest = be ? its_pointer
-		                           : its_pointer + its_size - 1;
+		limb_t const* biggest = be ? its.pointer
+		                           : its.pointer + its.size - 1;
 		
 		return *biggest;
 	}
@@ -158,21 +146,21 @@ namespace plus
 		
 		const bool le = iota::is_little_endian();
 		
-		limb_t const* littlest = le ? its_pointer
-		                            : its_pointer + its_size - 1;
+		limb_t const* littlest = le ? its.pointer
+		                            : its.pointer + its.size - 1;
 		
 		return *littlest;
 	}
 	
 	void ibox::extend( size_t n )
 	{
-		if ( n < its_size )
+		if ( n < its.size )
 		{
 			throw limb_count_overflow();
 		}
 		
 		ASSERT( n > 1        );
-		ASSERT( n > its_size );
+		ASSERT( n > its.size );
 		
 		int_t const* old_data = data();
 		const size_t old_size = size();
@@ -202,58 +190,58 @@ namespace plus
 		
 		destroy();
 		
-		its_pointer = new_data;
-		its_size    = n;
+		its.pointer = new_data;
+		its.size    = n;
 	}
 	
 	void ibox::shrink_to_fit()
 	{
-		ASSERT( its_size > 1 );
+		ASSERT( its.size > 1 );
 		
 		if ( iota::is_little_endian() )
 		{
-			size_t size = its_size;
+			size_t size = its.size;
 			
-			while ( its_pointer[ size - 1 ] == 0 )
+			while ( its.pointer[ size - 1 ] == 0 )
 			{
 				--size;
 				
 				ASSERT( size != 0 );
 			}
 			
-			its_size = size;
+			its.size = size;
 		}
 		else
 		{
 			size_t n_zeros  = 0;
 			
-			while ( its_pointer[ n_zeros ] == 0 )
+			while ( its.pointer[ n_zeros ] == 0 )
 			{
 				++n_zeros;
 				
-				ASSERT( n_zeros != its_size );
+				ASSERT( n_zeros != its.size );
 			}
 			
 			if ( n_zeros != 0 )
 			{
-				std::copy( its_pointer + n_zeros,
-				           its_pointer + its_size,
-				           its_pointer );
+				std::copy( its.pointer + n_zeros,
+				           its.pointer + its.size,
+				           its.pointer );
 			}
 			
-			its_size -= n_zeros;
+			its.size -= n_zeros;
 		}
 		
-		if ( its_size == 1 )
+		if ( its.size == 1 )
 		{
-			const int_t x = *its_pointer;
+			const int_t x = *its.pointer;
 			
 			ASSERT( x != 0 );
 			
 			destroy_extent();
 			
-			its_size = 0;
-			its_integer = x;
+			its.size = 0;
+			its.integer = x;
 		}
 	}
 	
@@ -356,12 +344,12 @@ namespace plus
 	
 	void ibox::add( const ibox& y )
 	{
-		const bool single = sum_is_one_limb( its_size,    y.its_size,
-		                                     its_integer, y.its_integer );
+		const bool single = sum_is_one_limb( its.size,    y.its.size,
+		                                     its.integer, y.its.integer );
 		
 		if ( single )
 		{
-			its_integer += y.its_integer;
+			its.integer += y.its.integer;
 			
 			return;
 		}
@@ -396,7 +384,7 @@ namespace plus
 			unshare();
 		}
 		
-		add( iota::is_little_endian(), its_pointer, x_size, y_data, y_size );
+		add( iota::is_little_endian(), its.pointer, x_size, y_data, y_size );
 	}
 	
 	void ibox::subtract_lesser( const ibox& y )
@@ -405,7 +393,7 @@ namespace plus
 		
 		if ( ! has_extent() )
 		{
-			its_integer -= y.its_integer;
+			its.integer -= y.its.integer;
 			
 			return;
 		}
@@ -416,7 +404,7 @@ namespace plus
 		
 		unshare();
 		
-		limb_t*       x_data = its_pointer;
+		limb_t*       x_data = its.pointer;
 		size_t        x_size = size();
 		limb_t const* y_data = tmp.data();
 		size_t        y_size = tmp.size();
@@ -454,15 +442,15 @@ namespace plus
 	
 	void ibox::multiply_by( const ibox& y )
 	{
-		ASSERT(   its_sign != 0 );
-		ASSERT( y.its_sign != 0 );
+		ASSERT(   its.sign != 0 );
+		ASSERT( y.its.sign != 0 );
 		
-		const limb_t product = one_limb_product( its_size,    y.its_size,
-		                                         its_integer, y.its_integer );
+		const limb_t product = one_limb_product( its.size,    y.its.size,
+		                                         its.integer, y.its.integer );
 		
 		if ( product != 0 )
 		{
-			its_integer = product;
+			its.integer = product;
 		}
 		else
 		{
@@ -477,7 +465,7 @@ namespace plus
 			
 			extend( x_size );
 			
-			limb_t*       x_data = its_pointer;
+			limb_t*       x_data = its.pointer;
 			limb_t const* y_data = tmp.data();
 			
 			multiply( iota::is_little_endian(),
@@ -487,7 +475,7 @@ namespace plus
 			shrink_to_fit();
 		}
 		
-		its_sign *= y.its_sign;
+		its.sign *= y.its.sign;
 	}
 	
 	void ibox::halve()
@@ -498,17 +486,17 @@ namespace plus
 			
 			unshare();
 			
-			shift_right( iota::is_little_endian(), its_pointer, size() );
+			shift_right( iota::is_little_endian(), its.pointer, size() );
 			
 			shrink_to_fit();
 		}
 		else
 		{
-			its_integer /= 2;
+			its.integer /= 2;
 			
-			if ( its_integer == 0 )
+			if ( its.integer == 0 )
 			{
-				its_sign = 0;
+				its.sign = 0;
 			}
 		}
 		
@@ -521,7 +509,7 @@ namespace plus
 			return sizeof (ibox);
 		}
 		
-		return sizeof (ibox) + extent_area( (const char*) its_pointer );
+		return sizeof (ibox) + extent_area( (const char*) its.pointer );
 	}
 	
 }
