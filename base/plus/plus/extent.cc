@@ -20,6 +20,7 @@ namespace plus
 	{
 		unsigned long refcount;
 		unsigned long capacity;
+		destructor    dtor;
 	};
 	
 	/*
@@ -49,6 +50,7 @@ namespace plus
 		
 		header->refcount = 1;
 		header->capacity = capacity;
+		header->dtor     = NULL;
 		
 		char* buffer = reinterpret_cast< char* >( header + 1 );
 		
@@ -96,6 +98,11 @@ namespace plus
 		
 		if ( --header->refcount == 0 )
 		{
+			if ( destructor dtor = header->dtor )
+			{
+				dtor( (void*) buffer );
+			}
+			
 			extent_free( header );
 		}
 	}
@@ -112,6 +119,13 @@ namespace plus
 		}
 		
 		return buffer;
+	}
+	
+	void extent_set_destructor( const char* buffer, destructor dtor )
+	{
+		extent_header* header = header_from_buffer( buffer );
+		
+		header->dtor = dtor;
 	}
 	
 	unsigned long extent_refcount( const char* buffer )
