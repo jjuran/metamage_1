@@ -47,59 +47,61 @@ namespace vlib
 	
 	struct Value
 	{
-		value_type     type;
-		plus::integer  number;
-		plus::string   string;
-		proc_t         function;
-		expr_box       expr;
+		public:
+			value_type     type;
+			plus::integer  number;
+			plus::string   string;
+			proc_t         function;
+			expr_box       expr;
 		
-		Value( value_type type = value_type() ) : type( type )
-		{
-		}
+		public:
+			Value( value_type type = value_type() ) : type( type )
+			{
+			}
 		
-		Value( symbol_id sym ) : type( Value_symbol ), number( sym )
-		{
-		}
+			Value( symbol_id sym ) : type( Value_symbol ), number( sym )
+			{
+			}
 		
-		Value( symbol_id sym, int ) : type( V_decl ), number( sym )
-		{
-		}
+			Value( symbol_id sym, int ) : type( V_decl ), number( sym )
+			{
+			}
 		
-		Value( bool b ) : type( Value_boolean ), number( b )
-		{
-		}
+			Value( bool b ) : type( Value_boolean ), number( b )
+			{
+			}
 		
-		Value( unsigned int i ) : type( Value_number ), number( i ) {}
-		Value(          int i ) : type( Value_number ), number( i ) {}
+			Value( unsigned int i ) : type( Value_number ), number( i ) {}
+			Value(          int i ) : type( Value_number ), number( i ) {}
 		
-		Value( unsigned long i ) : type( Value_number ), number( i ) {}
-		Value(          long i ) : type( Value_number ), number( i ) {}
+			Value( unsigned long i ) : type( Value_number ), number( i ) {}
+			Value(          long i ) : type( Value_number ), number( i ) {}
 		
-		Value( unsigned long long i ) : type( Value_number ), number( i ) {}
-		Value(          long long i ) : type( Value_number ), number( i ) {}
+			Value( unsigned long long i ) : type( Value_number ), number( i ) {}
+			Value(          long long i ) : type( Value_number ), number( i ) {}
 		
-		Value( const plus::integer& i ) : type( Value_number ), number( i )
-		{
-		}
+			Value( const plus::integer& i ) : type( Value_number ), number( i )
+			{
+			}
 		
-		Value( const plus::string& s ) : type( Value_string ), string( s )
-		{
-		}
+			Value( const plus::string& s ) : type( Value_string ), string( s )
+			{
+			}
 		
-		Value( const char* s ) : type( Value_string ), string( s )
-		{
-		}
+			Value( const char* s ) : type( Value_string ), string( s )
+			{
+			}
 		
-		Value( const proc_info& proc )
-		:
-			type( Value_function ),
-			function( &proc )
-		{
-		}
+			Value( const proc_info& proc )
+			:
+				type( Value_function ),
+				function( &proc )
+			{
+			}
 		
-		Value( const Value& a, const Value& b );
+			Value( const Value& a, const Value& b );
 		
-		Value( value_type type, const Value& a, op_type op, const Value& b );
+			Value( value_type vt, const Value& a, op_type op, const Value& b );
 	};
 	
 	void swap( Value& a, Value& b );
