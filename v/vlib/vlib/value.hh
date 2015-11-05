@@ -82,15 +82,21 @@ namespace vlib
 			Value( unsigned long long i ) : its_type( V_int ), its_int( i ) {}
 			Value(          long long i ) : its_type( V_int ), its_int( i ) {}
 			
-			Value( const plus::integer& i ) : its_type( V_int ), its_int( i )
+			Value( const plus::integer& i )
+			:
+				its_type( V_int ), its_int( i )
 			{
 			}
 			
-			Value( const plus::string& s ) : its_type( V_str ), its_str( s )
+			Value( const plus::string& s )
+			:
+				its_type( V_str ), its_str( s )
 			{
 			}
 			
-			Value( const char* s ) : its_type( V_str ), its_str( s )
+			Value( const char* s )
+			:
+				its_type( V_str ), its_str( s )
 			{
 			}
 			
@@ -105,13 +111,30 @@ namespace vlib
 			
 			Value( value_type vt, const Value& a, op_type op, const Value& b );
 			
-			value_type type() const  { return its_type; }
+			value_type type() const
+			{
+				return its_type;
+			}
 			
-			plus::integer&       number()        { return its_int; }
-			const plus::integer& number() const  { return its_int; }
-			const plus::string&  string() const  { return its_str; }
+			plus::integer& number()
+			{
+				return its_int;
+			}
 			
-			const proc_info& proc() const  { return *its_proc; }
+			const plus::integer& number() const
+			{
+				return its_int;
+			}
+			
+			const plus::string& string() const
+			{
+				return its_str;
+			}
+			
+			const proc_info& proc() const
+			{
+				return *its_proc;
+			}
 			
 			Expr* expr() const  { return its_expr.get(); }
 			
