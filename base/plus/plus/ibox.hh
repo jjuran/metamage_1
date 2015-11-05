@@ -56,6 +56,8 @@ namespace plus
 		sign_t  sign;  // 0 if zero, 1 for positive, -1 for negative
 	};
 	
+	typedef ibox_structure ibox_movable;
+	
 	class ibox
 	{
 		public:
@@ -193,6 +195,8 @@ namespace plus
 			ibox& operator=( const ibox& that );
 			
 			void swap( ibox& i );
+			
+			ibox_movable& move()  { return (ibox_movable&) *this; }
 			
 			size_t size() const
 			{
