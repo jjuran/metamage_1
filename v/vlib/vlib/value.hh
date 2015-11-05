@@ -45,7 +45,7 @@ namespace vlib
 	
 	typedef const proc_info* proc_t;
 	
-	struct Value
+	class Value
 	{
 		public:
 			value_type     type;
