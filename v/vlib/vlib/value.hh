@@ -47,64 +47,84 @@ namespace vlib
 	
 	class Value
 	{
-		public:
-			value_type     type;
-			plus::integer  number;
-			plus::string   string;
-			proc_t         function;
-			expr_box       expr;
+		private:
+			value_type     its_type;
+			plus::integer  its_int;
+			plus::string   its_str;
+			proc_t         its_proc;
+			expr_box       its_expr;
+			
+			friend class expr_box;
 		
 		public:
-			Value( value_type type = value_type() ) : type( type )
+			Value( value_type type = value_type() ) : its_type( type )
 			{
 			}
-		
-			Value( symbol_id sym ) : type( Value_symbol ), number( sym )
+			
+			Value( symbol_id sym ) : its_type( Value_symbol ), its_int( sym )
 			{
 			}
-		
-			Value( symbol_id sym, int ) : type( V_decl ), number( sym )
+			
+			Value( symbol_id sym, int ) : its_type( V_decl ), its_int( sym )
 			{
 			}
-		
-			Value( bool b ) : type( Value_boolean ), number( b )
+			
+			Value( bool b ) : its_type( Value_boolean ), its_int( b )
 			{
 			}
-		
-			Value( unsigned int i ) : type( Value_number ), number( i ) {}
-			Value(          int i ) : type( Value_number ), number( i ) {}
-		
-			Value( unsigned long i ) : type( Value_number ), number( i ) {}
-			Value(          long i ) : type( Value_number ), number( i ) {}
-		
-			Value( unsigned long long i ) : type( Value_number ), number( i ) {}
-			Value(          long long i ) : type( Value_number ), number( i ) {}
-		
-			Value( const plus::integer& i ) : type( Value_number ), number( i )
+			
+			Value( unsigned int i ) : its_type( V_int ), its_int( i ) {}
+			Value(          int i ) : its_type( V_int ), its_int( i ) {}
+			
+			Value( unsigned long i ) : its_type( V_int ), its_int( i ) {}
+			Value(          long i ) : its_type( V_int ), its_int( i ) {}
+			
+			Value( unsigned long long i ) : its_type( V_int ), its_int( i ) {}
+			Value(          long long i ) : its_type( V_int ), its_int( i ) {}
+			
+			Value( const plus::integer& i ) : its_type( V_int ), its_int( i )
 			{
 			}
-		
-			Value( const plus::string& s ) : type( Value_string ), string( s )
+			
+			Value( const plus::string& s ) : its_type( V_str ), its_str( s )
 			{
 			}
-		
-			Value( const char* s ) : type( Value_string ), string( s )
+			
+			Value( const char* s ) : its_type( V_str ), its_str( s )
 			{
 			}
-		
+			
 			Value( const proc_info& proc )
 			:
-				type( Value_function ),
-				function( &proc )
+				its_type( Value_function ),
+				its_proc( &proc )
 			{
 			}
-		
+			
 			Value( const Value& a, const Value& b );
-		
+			
 			Value( value_type vt, const Value& a, op_type op, const Value& b );
+			
+			value_type type() const  { return its_type; }
+			
+			plus::integer&       number()        { return its_int; }
+			const plus::integer& number() const  { return its_int; }
+			const plus::string&  string() const  { return its_str; }
+			
+			const proc_info& proc() const  { return *its_proc; }
+			
+			Expr* expr() const  { return its_expr.get(); }
+			
+			void swap( Value& that );
+			
+			friend unsigned long area( const Value& v );
 	};
 	
-	void swap( Value& a, Value& b );
+	inline
+	void swap( Value& a, Value& b )
+	{
+		a.swap( b );
+	}
 	
 	struct Expr : public plus::ref_count< Expr >
 	{
@@ -118,43 +138,43 @@ namespace vlib
 	inline
 	value_type get_type( const Value& v )
 	{
-		return v.type;
+		return v.type();
 	}
 	
 	inline
 	bool get_bool( const Value& v )
 	{
-		return ! v.number.is_zero();
+		return ! v.number().is_zero();
 	}
 	
 	inline
 	plus::integer& get_int( Value& v )
 	{
-		return v.number;
+		return v.number();
 	}
 	
 	inline
 	const plus::integer& get_int( const Value& v )
 	{
-		return v.number;
+		return v.number();
 	}
 	
 	inline
 	const plus::string& get_str( const Value& v )
 	{
-		return v.string;
+		return v.string();
 	}
 	
 	inline
 	const proc_info& get_proc( const Value& v )
 	{
-		return *v.function;
+		return v.proc();
 	}
 	
 	inline
 	Expr* get_expr( const Value& v )
 	{
-		return v.expr.get();
+		return v.expr();
 	}
 	
 	inline
@@ -183,7 +203,7 @@ namespace vlib
 			return true;
 		}
 		
-		if ( Expr* expr = v.expr.get() )
+		if ( Expr* expr = v.expr() )
 		{
 			if ( expr->op == Op_bind_args )
 			{
@@ -213,12 +233,12 @@ namespace vlib
 	unsigned long area( const Value& v )
 	{
 		return + sizeof (Value)
-		       - sizeof v.string
-		       - sizeof v.number
-		       - sizeof v.expr
-		       + area( v.string )
-		       + area( v.number )
-		       + area( v.expr   );
+		       - sizeof v.its_str
+		       - sizeof v.its_int
+		       - sizeof v.its_expr
+		       + area( v.its_str  )
+		       + area( v.its_int  )
+		       + area( v.its_expr );
 	}
 	
 }

@@ -19,14 +19,14 @@ namespace vlib
 	{
 		if ( its_expr )
 		{
-			while ( Expr* next = its_expr->right.expr.get() )
+			while ( Expr* next = its_expr->right.its_expr.get() )
 			{
 				if ( intrusive_ptr_ref_count( its_expr ) > 1 )
 				{
 					break;
 				}
 				
-				const_cast< Value& >( its_expr->right ).expr.release();
+				const_cast< Value& >( its_expr->right ).its_expr.release();
 				
 				intrusive_ptr_release( its_expr );
 				
