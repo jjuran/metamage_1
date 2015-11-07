@@ -101,7 +101,7 @@ namespace vlib
 	
 	static bool is_right_associative( op_type op )
 	{
-		return op <= Op_empower;
+		return op <= Op_empower  ||  op == Op_list;
 	}
 	
 	bool decreasing_op_precedence( op_type left, op_type right )
