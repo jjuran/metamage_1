@@ -12,7 +12,6 @@
 #include "plus/string.hh"
 
 // vlib
-#include "vlib/expr_box.hh"
 #include "vlib/op_type.hh"
 #include "vlib/symbol_id.hh"
 #include "vlib/vbox.hh"
@@ -22,6 +21,7 @@ namespace vlib
 {
 	
 	struct proc_info;
+	struct Expr;
 	
 	enum value_type
 	{
@@ -49,10 +49,9 @@ namespace vlib
 	class Value
 	{
 		private:
-			vbox      its_box;
-			expr_box  its_expr;
+			vbox  its_box;
 			
-			friend class expr_box;
+			friend void pair_destructor( void* pointer );
 		
 		public:
 			Value( value_type type = value_type() ) : its_box( type )
@@ -137,7 +136,15 @@ namespace vlib
 				return *(const proc_info*) its_box.pointer();
 			}
 			
-			Expr* expr() const  { return its_expr.get(); }
+			Expr* expr() const
+			{
+				if ( its_box.semantics() == Value_pair )
+				{
+					return (Expr*) its_box.pointer();
+				}
+				
+				return 0;  // NULL
+			}
 			
 			void swap( Value& that );
 			

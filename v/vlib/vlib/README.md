@@ -21,8 +21,6 @@ Level 1
 
 `value.*`:  Defines `enum value_type`, `struct Value`, and `struct Expr`.
 
-`expr_box.*`:  Defines `class expr_box`, an intrusive smart pointer to an `Expr`.
-
 `token.*`:  Defines `struct token` and `next_token()`, which wrap `token_type` and `next_token_type()` to include the string of text from which the token was scanned.
 
 `ops.*`:  Defines `op_from_token()`, which converts a token and a state flag into an operator.
