@@ -14,6 +14,8 @@
 namespace vlib
 {
 	
+	typedef void (*destructor)( void* );
+	
 	enum vbox_type
 	{
 		Vbox_alloc = -1,
@@ -84,6 +86,8 @@ namespace vlib
 				u.alloc.type      = Vbox_pointer;
 				u.alloc.semantics = semantics;
 			}
+			
+			vbox( unsigned long n, destructor dtor, char semantics );
 			
 			vbox( const vbox& that );
 			

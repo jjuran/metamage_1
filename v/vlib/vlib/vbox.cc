@@ -95,6 +95,15 @@ namespace vlib
 		u.alloc.semantics = semantics;
 	}
 	
+	vbox::vbox( unsigned long n, destructor dtor, char semantics )
+	{
+		char* extent = plus::extent_alloc( n, dtor );
+		
+		u.alloc.pointer   = extent;
+		u.alloc.type      = Vbox_alloc;
+		u.alloc.semantics = semantics;
+	}
+	
 	void vbox::swap( vbox& v )
 	{
 		using iota::swap;
