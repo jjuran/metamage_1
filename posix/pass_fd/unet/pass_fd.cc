@@ -26,6 +26,9 @@
 // Standard C
 #include <errno.h>
 
+// pass_fd
+#include "unet/monitor_fdpass.hh"
+
 
 namespace unet
 {
@@ -44,6 +47,12 @@ namespace unet
 	#if USE_STREAMS
 		
 		return ioctl( socket_fd, I_SENDFD, (int*) payload_fd );
+		
+	#endif
+		
+	#if __OpenBSD__
+		
+		return openbsd::mm_send_fd( socket_fd, payload_fd );
 		
 	#endif
 		
@@ -113,6 +122,12 @@ namespace unet
 		int ioc = ioctl( socket_fd, I_RECVFD, (int*) &recvfd );
 		
 		return ioc < 0 ? ioc : recvfd.fd;
+		
+	#endif
+		
+	#if __OpenBSD__
+		
+		return openbsd::mm_receive_fd( socket_fd );
 		
 	#endif
 		
