@@ -700,6 +700,16 @@ namespace Genie
 					Mac::SysBeep();
 					break;
 				
+				case '\b':
+					if ( p > &s[ 0 ] )
+					{
+						if ( *--p == '\n' )
+						{
+							++p;  // oops, undo
+						}
+					}
+					break;
+				
 				case '\r':
 					if ( start_of_last_line == NULL )
 					{
