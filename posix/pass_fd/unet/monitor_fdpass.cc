@@ -1,3 +1,10 @@
+/*
+	monitor_fdpass.cc
+	-----------------
+	
+	This file has been modified.  See version control for details.
+*/
+
 /* $OpenBSD: monitor_fdpass.c,v 1.20 2015/02/25 23:05:47 djm Exp $ */
 /*
  * Copyright 2001 Niels Provos <provos@citi.umich.edu>
@@ -32,9 +39,13 @@
 #include <poll.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdio.h>
 
-#include "log.h"
-#include "monitor_fdpass.h"
+//#include "log.h"
+#include "monitor_fdpass.hh"
+
+namespace openbsd
+{
 
 int
 mm_send_fd(int sock, int fd)
@@ -69,17 +80,17 @@ mm_send_fd(int sock, int fd)
 	pfd.events = POLLOUT;
 	while ((n = sendmsg(sock, &msg, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
-		debug3("%s: sendmsg(%d): %s", __func__, fd, strerror(errno));
+		//debug3("%s: sendmsg(%d): %s", __func__, fd, strerror(errno));
 		(void)poll(&pfd, 1, -1);
 	}
 	if (n == -1) {
-		error("%s: sendmsg(%d): %s", __func__, fd,
+		fprintf(stderr, "%s: sendmsg(%d): %s", __func__, fd,
 		    strerror(errno));
 		return -1;
 	}
 
 	if (n != 1) {
-		error("%s: sendmsg: expected sent 1 got %ld",
+		fprintf(stderr, "%s: sendmsg: expected sent 1 got %ld",
 		    __func__, (long)n);
 		return -1;
 	}
@@ -114,31 +125,33 @@ mm_receive_fd(int sock)
 	pfd.events = POLLIN;
 	while ((n = recvmsg(sock, &msg, 0)) == -1 &&
 	    (errno == EAGAIN || errno == EINTR)) {
-		debug3("%s: recvmsg: %s", __func__, strerror(errno));
+		//debug3("%s: recvmsg: %s", __func__, strerror(errno));
 		(void)poll(&pfd, 1, -1);
 	}
 	if (n == -1) {
-		error("%s: recvmsg: %s", __func__, strerror(errno));
+		fprintf(stderr, "%s: recvmsg: %s", __func__, strerror(errno));
 		return -1;
 	}
 
 	if (n != 1) {
-		error("%s: recvmsg: expected received 1 got %ld",
+		fprintf(stderr, "%s: recvmsg: expected received 1 got %ld",
 		    __func__, (long)n);
 		return -1;
 	}
 
 	cmsg = CMSG_FIRSTHDR(&msg);
 	if (cmsg == NULL) {
-		error("%s: no message header", __func__);
+		fprintf(stderr, "%s: no message header", __func__);
 		return -1;
 	}
 
 	if (cmsg->cmsg_type != SCM_RIGHTS) {
-		error("%s: expected type %d got %d", __func__,
+		fprintf(stderr, "%s: expected type %d got %d", __func__,
 		    SCM_RIGHTS, cmsg->cmsg_type);
 		return -1;
 	}
 	fd = (*(int *)CMSG_DATA(cmsg));
 	return fd;
 }
+
+}  // namespace openbsd
