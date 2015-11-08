@@ -60,6 +60,18 @@ namespace tool
 	namespace p7 = poseven;
 	
 	
+	static inline
+	bool can_backspace()
+	{
+		#ifdef __RELIX__
+			
+			return false;
+			
+		#endif
+			
+			return isatty( STDOUT_FILENO );
+	}
+	
 	class dev_null_fd
 	{
 		private:
@@ -118,6 +130,8 @@ namespace tool
 	
 	static TestResults run_test( const char* test_file )
 	{
+		const bool show_progress = can_backspace();
+		
 		int pipe_ends[2];
 		
 		int piped = pipe( pipe_ends );
@@ -160,6 +174,8 @@ namespace tool
 		
 		results.planned = gear::parse_unsigned_decimal( plan->c_str() + 3 );
 		
+		unsigned magnitude = 0;
+		
 		unsigned next_test_number = 1;
 		
 		while ( const plus::string* s = get_line_bare_from_feed( feed, reader ) )
@@ -200,9 +216,21 @@ namespace tool
 				return results;
 			}
 			
+			if ( show_progress )
+			{
+				write( STDOUT_FILENO, "\b\b\b\b\b\b\b\b\b\b", magnitude );
+				
+				magnitude = gear::magnitude< 10 >( next_test_number );
+			}
+			
 			if ( gear::parse_unsigned_decimal( number ) != next_test_number++ )
 			{
 				return results;
+			}
+			
+			if ( show_progress )
+			{
+				write( STDOUT_FILENO, number, magnitude );
 			}
 			
 			int& result = passed ? todo ? results.unexpected
@@ -211,6 +239,13 @@ namespace tool
 			                            : results.failed;
 			
 			++result;
+		}
+		
+		if ( show_progress )
+		{
+			write( STDOUT_FILENO, "\b\b\b\b\b\b\b\b\b\b", magnitude );
+			write( STDOUT_FILENO, "          ",           magnitude );
+			write( STDOUT_FILENO, "\b\b\b\b\b\b\b\b\b\b", magnitude );
 		}
 		
 		p7::wait_t wait_status = p7::wait();
