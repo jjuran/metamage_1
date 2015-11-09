@@ -240,28 +240,7 @@ namespace vlib
 	
 	Value bind_args( const Value& f, const Value& arguments );
 	
-	unsigned long area( const Expr& expr );
-	
-	inline
-	unsigned long area( const expr_box& box )
-	{
-		if ( Expr* expr = box.get() )
-		{
-			return sizeof (expr_box) + area( *expr );
-		}
-		
-		return sizeof (expr_box);
-	}
-	
-	inline
-	unsigned long area( const Value& v )
-	{
-		return + sizeof (Value)
-		       - sizeof v.its_box
-		       - sizeof v.its_expr
-		       + area( v.its_box  )
-		       + area( v.its_expr );
-	}
+	unsigned long area( const Value& v );
 	
 }
 
