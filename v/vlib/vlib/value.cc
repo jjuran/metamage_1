@@ -58,22 +58,20 @@ namespace vlib
 	}
 	
 	static
-	unsigned long area( const Expr& expr )
-	{
-		return + sizeof (Expr) - 2 * sizeof (Value)
-		       + area( expr.left  )
-		       + area( expr.right );
-	}
-	
-	static
 	unsigned long area( const expr_box& box )
 	{
-		if ( Expr* expr = box.get() )
+		Expr* expr = box.get();
+		
+		unsigned long total = sizeof (expr_box);
+		
+		if ( expr != NULL )
 		{
-			return sizeof (expr_box) + area( *expr );
+			total += sizeof (Expr) - 2 * sizeof (Value);
+			total += area( expr->left );
+			total += area( expr->right );
 		}
 		
-		return sizeof (expr_box);
+		return total;
 	}
 	
 	unsigned long area( const Value& v )
