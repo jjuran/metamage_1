@@ -57,11 +57,37 @@ namespace vlib
 		return Value( Value_pair, f, Op_bind_args, arguments );
 	}
 	
-	unsigned long area( const Expr& expr )
+	static
+	unsigned long area( const expr_box& box )
 	{
-		return + sizeof (Expr) - 2 * sizeof (Value)
-		       + area( expr.left  )
-		       + area( expr.right );
+		Expr* expr = box.get();
+		
+		unsigned long total = sizeof (expr_box);
+		
+		while ( expr != NULL )
+		{
+			total += sizeof (Expr) - sizeof (Value);
+			total += area( expr->left );
+			
+			if ( expr->right.type() != Value_pair )
+			{
+				total += area( expr->right ) - sizeof (Value);
+				break;
+			}
+			
+			expr = expr->right.expr();
+		}
+		
+		return total;
+	}
+	
+	unsigned long area( const Value& v )
+	{
+		return + sizeof (Value)
+		       - sizeof v.its_box
+		       - sizeof v.its_expr
+		       + area( v.its_box  )
+		       + area( v.its_expr );
 	}
 	
 }
