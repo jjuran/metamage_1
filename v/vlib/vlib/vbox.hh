@@ -34,7 +34,7 @@ namespace vlib
 	
 	struct vu_chars
 	{
-		char data[ sizeof (vu_string) ];
+		signed char data[ sizeof (vu_string) ];
 	};
 	
 	union vu
