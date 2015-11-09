@@ -111,6 +111,21 @@ namespace vlib
 		swap( u, v.u );
 	}
 	
+	const void* vbox::transfer_extent()
+	{
+		if ( has_extent() )
+		{
+			const void* pointer = u.alloc.pointer;
+			
+			u.alloc.pointer = 0;  // NULL
+			u.alloc.type    = 0;
+			
+			return pointer;
+		}
+		
+		return 0;  // NULL
+	}
+	
 	unsigned long vbox::refcount() const
 	{
 		if ( has_extent() )
