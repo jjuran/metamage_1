@@ -14,6 +14,8 @@ Level 0
 
 `proc_info.hh`:  Defines `struct proc_info`, which groups a function pointer with a name.
 
+`vbox.*`:  Defines `class vbox`, a type that generalizes storage of dynamic values, with small-object optimization.
+
 Level 1
 -------
 
