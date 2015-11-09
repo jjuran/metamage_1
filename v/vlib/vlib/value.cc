@@ -64,11 +64,18 @@ namespace vlib
 		
 		unsigned long total = sizeof (expr_box);
 		
-		if ( expr != NULL )
+		while ( expr != NULL )
 		{
-			total += sizeof (Expr) - 2 * sizeof (Value);
+			total += sizeof (Expr) - sizeof (Value);
 			total += area( expr->left );
-			total += area( expr->right );
+			
+			if ( expr->right.type() != Value_pair )
+			{
+				total += area( expr->right ) - sizeof (Value);
+				break;
+			}
+			
+			expr = expr->right.expr();
 		}
 		
 		return total;
