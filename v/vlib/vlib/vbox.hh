@@ -95,6 +95,8 @@ namespace vlib
 			
 			void swap( vbox& b );
 			
+			unsigned long refcount() const;
+			
 			vbox_type type() const  { return vbox_type( u.alloc.type ); }
 			
 			char semantics() const  { return u.alloc.semantics; }

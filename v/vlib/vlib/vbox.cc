@@ -111,6 +111,16 @@ namespace vlib
 		swap( u, v.u );
 	}
 	
+	unsigned long vbox::refcount() const
+	{
+		if ( has_extent() )
+		{
+			return plus::extent_refcount( u.alloc.pointer );
+		}
+		
+		return 0;
+	}
+	
 	unsigned long area( const vbox& box )
 	{
 		if ( box.has_extent() )
