@@ -193,6 +193,21 @@ namespace vlib
 			return Token_invalid;  // control character
 		}
 		
+		if ( *p == '#' )
+		{
+			++p;
+			
+			while ( char c = *p++ )
+			{
+				if ( c == '\n'  ||  c == '\r' )
+				{
+					return Token_comment;
+				}
+			}
+			
+			return Token_invalid;  // missing trailing newline
+		}
+		
 		if ( *p == '0' )
 		{
 			++p;
