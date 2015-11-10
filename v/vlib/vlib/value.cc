@@ -5,6 +5,9 @@
 
 #include "vlib/value.hh"
 
+// Standard C++
+#include <new>
+
 // iota
 #include "iota/swap.hh"
 
@@ -12,26 +15,51 @@
 namespace vlib
 {
 	
+	void pair_destructor( void* pointer )
+	{
+		Expr* expr = (Expr*) pointer;
+		
+		while ( expr->op )
+		{
+			Value& next = const_cast< Value& >( expr->right );
+			
+			Expr* next_extent = NULL;
+			
+			if ( next.type() == Value_pair )
+			{
+				next_extent = (Expr*) next.its_box.transfer_extent();
+			}
+			
+			expr->~Expr();
+			
+			if ( next_extent == NULL )
+			{
+				break;
+			}
+			
+			expr = next_extent;
+		}
+	}
+	
 	Value::Value( const Value& a, const Value& b )
 	:
-		its_box( Value_pair ),
-		its_expr( a, Op_list, b )
+		its_box( sizeof (Expr), &pair_destructor, Value_pair )
 	{
+		new ((void*) its_box.pointer()) Expr( a, Op_list, b );
 	}
 	
 	Value::Value( value_type type, const Value& a, op_type op, const Value& b )
 	:
-		its_box( type ),
-		its_expr( a, op, b )
+		its_box( sizeof (Expr), &pair_destructor, type )
 	{
+		new ((void*) its_box.pointer()) Expr( a, op, b );
 	}
 	
 	void Value::swap( Value& that )
 	{
 		using iota::swap;
 		
-		swap( its_box,  that.its_box  );
-		swap( its_expr, that.its_expr );
+		swap( its_box, that.its_box );
 	}
 	
 	Expr::Expr( const Value& a, op_type op, const Value& b )
@@ -57,21 +85,26 @@ namespace vlib
 		return Value( Value_pair, f, Op_bind_args, arguments );
 	}
 	
-	static
-	unsigned long area( const expr_box& box )
+	unsigned long area( const Value& v )
 	{
-		Expr* expr = box.get();
+		unsigned long total = area( v.its_box );
 		
-		unsigned long total = sizeof (expr_box);
+		if ( v.type() != Value_pair )
+		{
+			return total;
+		}
+		
+		Expr* expr = v.expr();
 		
 		while ( expr != NULL )
 		{
-			total += sizeof (Expr) - sizeof (Value);
+			total -= 2 * sizeof (Value);
+			
 			total += area( expr->left );
+			total += area( expr->right.its_box );
 			
 			if ( expr->right.type() != Value_pair )
 			{
-				total += area( expr->right ) - sizeof (Value);
 				break;
 			}
 			
@@ -79,15 +112,6 @@ namespace vlib
 		}
 		
 		return total;
-	}
-	
-	unsigned long area( const Value& v )
-	{
-		return + sizeof (Value)
-		       - sizeof v.its_box
-		       - sizeof v.its_expr
-		       + area( v.its_box  )
-		       + area( v.its_expr );
 	}
 	
 }

@@ -14,6 +14,8 @@
 namespace vlib
 {
 	
+	typedef void (*destructor)( void* );
+	
 	enum vbox_type
 	{
 		Vbox_alloc = -1,
@@ -85,11 +87,17 @@ namespace vlib
 				u.alloc.semantics = semantics;
 			}
 			
+			vbox( unsigned long n, destructor dtor, char semantics );
+			
 			vbox( const vbox& that );
 			
 			vbox& operator=( const vbox& that );
 			
 			void swap( vbox& b );
+			
+			const void* transfer_extent();
+			
+			unsigned long refcount() const;
 			
 			vbox_type type() const  { return vbox_type( u.alloc.type ); }
 			

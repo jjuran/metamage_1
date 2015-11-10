@@ -95,11 +95,45 @@ namespace vlib
 		u.alloc.semantics = semantics;
 	}
 	
+	vbox::vbox( unsigned long n, destructor dtor, char semantics )
+	{
+		char* extent = plus::extent_alloc( n, dtor );
+		
+		u.alloc.pointer   = extent;
+		u.alloc.type      = Vbox_alloc;
+		u.alloc.semantics = semantics;
+	}
+	
 	void vbox::swap( vbox& v )
 	{
 		using iota::swap;
 		
 		swap( u, v.u );
+	}
+	
+	const void* vbox::transfer_extent()
+	{
+		if ( has_extent() )
+		{
+			const void* pointer = u.alloc.pointer;
+			
+			u.alloc.pointer = 0;  // NULL
+			u.alloc.type    = 0;
+			
+			return pointer;
+		}
+		
+		return 0;  // NULL
+	}
+	
+	unsigned long vbox::refcount() const
+	{
+		if ( has_extent() )
+		{
+			return plus::extent_refcount( u.alloc.pointer );
+		}
+		
+		return 0;
 	}
 	
 	unsigned long area( const vbox& box )
