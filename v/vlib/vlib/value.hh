@@ -8,7 +8,6 @@
 
 // plus
 #include "plus/integer.hh"
-#include "plus/ref_count.hh"
 #include "plus/string.hh"
 
 // vlib
@@ -157,7 +156,7 @@ namespace vlib
 		a.swap( b );
 	}
 	
-	struct Expr : public plus::ref_count< Expr >
+	struct Expr
 	{
 		const op_type  op;
 		const Value    left;
