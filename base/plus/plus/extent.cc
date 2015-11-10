@@ -57,6 +57,17 @@ namespace plus
 		return buffer;
 	}
 	
+	char* extent_alloc( unsigned long capacity, destructor dtor )
+	{
+		char* extent = extent_alloc( capacity );
+		
+		memset( extent, '\0', capacity );
+		
+		extent_set_destructor( extent, dtor );
+		
+		return extent;
+	}
+	
 	static inline void extent_free( extent_header* header )
 	{
 		::operator delete( header );

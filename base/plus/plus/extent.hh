@@ -13,6 +13,7 @@ namespace plus
 	typedef void (*destructor)( void* );
 	
 	char* extent_alloc( unsigned long capacity );
+	char* extent_alloc( unsigned long capacity, destructor dtor );
 	
 	void extent_add_ref( const char* buffer );
 	void extent_release( const char* buffer );
