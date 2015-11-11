@@ -41,7 +41,7 @@ namespace vlib
 	static
 	void resolve( Value& v )
 	{
-		if ( get_type( v ) == Value_symbol_declarator )
+		if ( is_symbol_declarator( v ) )
 		{
 			v = Value_nothing;
 		}
@@ -128,7 +128,7 @@ namespace vlib
 			
 			const Value result = eval_assignment( sym, op, right );
 			
-			if ( get_type( left ) == Value_symbol_declarator )
+			if ( is_symbol_declarator( left ) )
 			{
 				return result;
 			}

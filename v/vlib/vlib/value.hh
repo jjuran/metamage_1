@@ -226,6 +226,12 @@ namespace vlib
 	}
 	
 	inline
+	bool is_symbol_declarator( const Value& v )
+	{
+		return get_type( v ) == V_decl;
+	}
+	
+	inline
 	bool is_function( const Value& v )
 	{
 		if ( get_type( v ) == Value_function )
