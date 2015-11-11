@@ -91,6 +91,7 @@ namespace vlib
 		}
 		
 		u.alloc.semantics = semantics;
+		u.alloc.flags     = 0;
 	}
 	
 	vbox::vbox( const vu_ibox& ix, char semantics )
@@ -109,6 +110,7 @@ namespace vlib
 		}
 		
 		u.alloc.semantics = semantics;
+		u.alloc.flags     = 0;
 	}
 	
 	vbox::vbox( unsigned long n, destructor dtor, char semantics )
@@ -118,6 +120,7 @@ namespace vlib
 		u.alloc.pointer   = extent;
 		u.alloc.type      = Vbox_alloc;
 		u.alloc.semantics = semantics;
+		u.alloc.flags     = 0;
 	}
 	
 	void vbox::swap( vbox& v )

@@ -69,6 +69,7 @@ namespace vlib
 		
 		Char  type;       // vbox_type
 		Char  semantics;  // value_type
+		short flags;
 	};
 	
 	struct vu_chars
@@ -107,6 +108,7 @@ namespace vlib
 			{
 				u.alloc.type      = Vbox_empty;
 				u.alloc.semantics = semantics;
+				u.alloc.flags     = 0;
 			}
 			
 			vbox( const vu_ibox& ix, char semantics );
@@ -118,6 +120,7 @@ namespace vlib
 				u.alloc.pointer   = (char*) p;
 				u.alloc.type      = Vbox_pointer;
 				u.alloc.semantics = semantics;
+				u.alloc.flags     = 0;
 			}
 			
 			vbox( unsigned long n, destructor dtor, char semantics );
@@ -135,6 +138,10 @@ namespace vlib
 			bool has_extent() const  { return int8_t( u.alloc.type ) < 0; }
 			
 			char semantics() const  { return u.alloc.semantics; }
+			
+			short flags() const  { return u.alloc.flags; }
+			
+			void set_flags( short flags )  { u.alloc.flags = flags; }
 			
 			const void* pointer() const  { return u.alloc.pointer; }
 			
