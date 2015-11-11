@@ -18,6 +18,12 @@
 namespace vlib
 {
 	
+	enum symbol_type
+	{
+		Symbol_const,
+		Symbol_var,
+	};
+	
 	struct proc_info;
 	struct type_info;
 	struct Expr;
@@ -119,6 +125,8 @@ namespace vlib
 				its_box( &type, Value_base_type )
 			{
 			}
+			
+			Value( symbol_type symtype, const plus::string& name );
 			
 			Value( const Value& a, const Value& b );
 			

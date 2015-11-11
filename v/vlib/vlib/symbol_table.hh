@@ -23,7 +23,7 @@ namespace vlib
 	class symbol_table
 	{
 		private:
-			std::list< Symbol > its_symbols;
+			std::list< Value > its_symbols;
 		
 		public:
 			void define_constant( const char* name, const Value& v );
