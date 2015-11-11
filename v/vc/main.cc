@@ -160,14 +160,9 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	define( proc_area   );
 	define( proc_getenv );
-	define( proc_join   );
 	define( proc_print  );
-	define( proc_rep    );
 	define( proc_time   );
-	define( proc_unbin  );
-	define( proc_unhex  );
 	
 	symbol_id pc = create_symbol( "PC", Symbol_var );
 	
