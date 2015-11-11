@@ -47,9 +47,7 @@ namespace vlib
 		}
 		else if ( get_type( v ) == Value_symbol )
 		{
-			const symbol_id sym = symbol_id( get_int( v ).clipped() );
-			
-			v = defined( lookup_symbol( sym ) );
+			v = defined( lookup_symbol( v.sym() ) );
 		}
 	}
 	
@@ -124,9 +122,7 @@ namespace vlib
 				SYNTAX_ERROR( "left operand of assignment not a symbol" );
 			}
 			
-			const symbol_id sym = symbol_id( get_int( left ).clipped() );
-			
-			const Value result = eval_assignment( sym, op, right );
+			const Value result = eval_assignment( left.sym(), op, right );
 			
 			if ( is_symbol_declarator( left ) )
 			{

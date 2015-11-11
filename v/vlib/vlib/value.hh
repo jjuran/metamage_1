@@ -133,6 +133,11 @@ namespace vlib
 				return *(const proc_info*) its_box.pointer();
 			}
 			
+			symbol_id sym() const
+			{
+				return symbol_id( number().clipped() );
+			}
+			
 			Expr* expr() const
 			{
 				if ( its_box.semantics() == Value_pair )
