@@ -43,8 +43,6 @@ namespace vlib
 		V_proc = Value_function,
 	};
 	
-	typedef const proc_info* proc_t;
-	
 	class Value
 	{
 		private:
