@@ -69,7 +69,7 @@ namespace vlib
 				return sym;
 			}
 			
-			return NULL;
+			SYMBOL_ERROR( "duplicate symbol" );
 		}
 		
 		symbol_table.push_back( Symbol( type, name ) );

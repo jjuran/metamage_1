@@ -267,11 +267,6 @@ namespace vlib
 								
 								sym = create_symbol( token.text, type );
 								
-								if ( ! sym )
-								{
-									SYMBOL_ERROR( "duplicate symbol" );
-								}
-								
 								stack.pop_back();
 								
 								receive_value( Value( sym, int() ) );
