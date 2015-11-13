@@ -15,25 +15,42 @@
 namespace vlib
 {
 	
-	struct Symbol
+	class Symbol
 	{
-		plus::string  name;
-		Value         value;
-		symbol_type   type;
+		private:
+			plus::string  its_name;
+			Value         its_value;
+			symbol_type   its_type;
 		
-		Symbol() : type()
-		{
-		}
-		
-		Symbol( symbol_type          type,
-		        const plus::string&  name,
-		        const Value&         value = Value_undefined )
-		:
-			name( name ),
-			value( value ),
-			type( type )
-		{
-		}
+		public:
+			Symbol() : its_type()
+			{
+			}
+			
+			Symbol( symbol_type          type,
+					const plus::string&  name,
+					const Value&         value = Value_undefined )
+			:
+				its_name( name ),
+				its_value( value ),
+				its_type( type )
+			{
+			}
+			
+			void constify()  { its_type = Symbol_const; }
+			
+			void assign( const Value& v )  { its_value = v; }
+			
+			Value& deref()  { return its_value; }
+			
+			const Value& get() const  { return its_value; }
+			
+			bool is_const() const  { return its_type == Symbol_const; }
+			bool is_var()   const  { return its_type != Symbol_const; }
+			
+			const plus::string& name() const  { return its_name; }
+			
+			bool is_defined() const  { return ! is_undefined( its_value ); }
 	};
 	
 	static std::vector< Symbol > symbol_table;
@@ -48,7 +65,7 @@ namespace vlib
 		
 		while ( --it > begin )
 		{
-			if ( name == it->name )
+			if ( name == it->name() )
 			{
 				return symbol_id( it - begin );
 			}
@@ -63,9 +80,9 @@ namespace vlib
 		{
 			Symbol& var = symbol_table[ sym ];
 			
-			if ( type == Symbol_const  &&  var.type != Symbol_const )
+			if ( type == Symbol_const  &&  var.is_var() )
 			{
-				var.type = Symbol_const;
+				var.constify();
 				
 				return sym;
 			}
@@ -84,27 +101,27 @@ namespace vlib
 	{
 		Symbol& var = symbol_table[ id ];
 		
-		if ( var.type == Symbol_const  &&  ! is_undefined( var.value ) )
+		if ( var.is_const()  &&  var.is_defined() )
 		{
 			SYMBOL_ERROR( "reassignment of constant" );
 		}
 		
-		var.value = value;
+		var.assign( value );
 	}
 	
 	const Value& lookup_symbol( symbol_id id )
 	{
-		return symbol_table[ id ].value;
+		return symbol_table[ id ].get();
 	}
 	
 	Value& modify_symbol( symbol_id id )
 	{
-		if ( symbol_table[ id ].type == Symbol_const )
+		if ( symbol_table[ id ].is_const() )
 		{
 			SYMBOL_ERROR( "modification of constant" );
 		}
 		
-		return symbol_table[ id ].value;
+		return symbol_table[ id ].deref();
 	}
 	
 	
