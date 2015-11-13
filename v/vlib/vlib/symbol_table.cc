@@ -15,15 +15,15 @@
 namespace vlib
 {
 	
-	static std::list< Symbol > symbol_table;
+	static std::list< Symbol > global_symbol_table;
 	
 	
 	symbol_id locate_symbol( const plus::string& name )
 	{
 		typedef std::list< Symbol >::iterator Iter;
 		
-		Iter begin = symbol_table.begin();
-		Iter it    = symbol_table.end();
+		Iter begin = global_symbol_table.begin();
+		Iter it    = global_symbol_table.end();
 		
 		while ( it != begin )
 		{
@@ -54,9 +54,9 @@ namespace vlib
 			SYMBOL_ERROR( "duplicate symbol" );
 		}
 		
-		symbol_table.push_back( Symbol( type, name ) );
+		global_symbol_table.push_back( Symbol( type, name ) );
 		
-		return &symbol_table.back();
+		return &global_symbol_table.back();
 	}
 	
 }
