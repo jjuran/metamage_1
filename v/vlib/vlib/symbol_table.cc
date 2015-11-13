@@ -15,44 +15,6 @@
 namespace vlib
 {
 	
-	class Symbol
-	{
-		private:
-			plus::string  its_name;
-			Value         its_value;
-			symbol_type   its_type;
-		
-		public:
-			Symbol() : its_type()
-			{
-			}
-			
-			Symbol( symbol_type          type,
-					const plus::string&  name,
-					const Value&         value = Value_undefined )
-			:
-				its_name( name ),
-				its_value( value ),
-				its_type( type )
-			{
-			}
-			
-			void constify()  { its_type = Symbol_const; }
-			
-			void assign( const Value& v );
-			
-			Value& deref();
-			
-			const Value& get() const  { return its_value; }
-			
-			bool is_const() const  { return its_type == Symbol_const; }
-			bool is_var()   const  { return its_type != Symbol_const; }
-			
-			const plus::string& name() const  { return its_name; }
-			
-			bool is_defined() const  { return ! is_undefined( its_value ); }
-	};
-	
 	void Symbol::assign( const Value& v )
 	{
 		if ( is_const()  &&  is_defined() )
@@ -113,21 +75,6 @@ namespace vlib
 		symbol_table.push_back( Symbol( type, name ) );
 		
 		return &symbol_table.back();
-	}
-	
-	void assign_symbol( symbol_id id, const Value& value )
-	{
-		id->assign( value );
-	}
-	
-	const Value& lookup_symbol( symbol_id id )
-	{
-		return id->get();
-	}
-	
-	Value& modify_symbol( symbol_id id )
-	{
-		return id->deref();
 	}
 	
 	
