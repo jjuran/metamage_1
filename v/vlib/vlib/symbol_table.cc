@@ -25,7 +25,9 @@ namespace vlib
 		{
 		}
 		
-		Symbol( const plus::string& name, const Value& value, symbol_type type )
+		Symbol( symbol_type          type,
+		        const plus::string&  name,
+		        const Value&         value = Value_undefined )
 		:
 			name( name ),
 			value( value ),
@@ -73,7 +75,7 @@ namespace vlib
 		
 		symbol_id result = symbol_id( symbol_table.size() );
 		
-		symbol_table.push_back( Symbol( name, Value_undefined, type ) );
+		symbol_table.push_back( Symbol( type, name ) );
 		
 		return result;
 	}
@@ -109,7 +111,7 @@ namespace vlib
 	static inline
 	Symbol constant( const char* name, const Value& value )
 	{
-		return Symbol( name, value, Symbol_const );
+		return Symbol( Symbol_const, name, value );
 	}
 	
 	struct symbol_table_init
