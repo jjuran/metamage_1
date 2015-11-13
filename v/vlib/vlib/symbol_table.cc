@@ -39,9 +39,9 @@ namespace vlib
 			
 			void constify()  { its_type = Symbol_const; }
 			
-			void assign( const Value& v )  { its_value = v; }
+			void assign( const Value& v );
 			
-			Value& deref()  { return its_value; }
+			Value& deref();
 			
 			const Value& get() const  { return its_value; }
 			
@@ -52,6 +52,26 @@ namespace vlib
 			
 			bool is_defined() const  { return ! is_undefined( its_value ); }
 	};
+	
+	void Symbol::assign( const Value& v )
+	{
+		if ( is_const()  &&  is_defined() )
+		{
+			SYMBOL_ERROR( "reassignment of constant" );
+		}
+		
+		its_value = v;
+	}
+	
+	Value& Symbol::deref()
+	{
+		if ( is_const() )
+		{
+			SYMBOL_ERROR( "modification of constant" );
+		}
+		
+		return its_value;
+	}
 	
 	static std::vector< Symbol > symbol_table;
 	
@@ -101,11 +121,6 @@ namespace vlib
 	{
 		Symbol& var = symbol_table[ id ];
 		
-		if ( var.is_const()  &&  var.is_defined() )
-		{
-			SYMBOL_ERROR( "reassignment of constant" );
-		}
-		
 		var.assign( value );
 	}
 	
@@ -116,11 +131,6 @@ namespace vlib
 	
 	Value& modify_symbol( symbol_id id )
 	{
-		if ( symbol_table[ id ].is_const() )
-		{
-			SYMBOL_ERROR( "modification of constant" );
-		}
-		
 		return symbol_table[ id ].deref();
 	}
 	
