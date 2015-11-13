@@ -5,9 +5,6 @@
 
 #include "vlib/symbol_table.hh"
 
-// Standard C++
-#include <list>
-
 // vlib
 #include "vlib/error.hh"
 
@@ -15,15 +12,20 @@
 namespace vlib
 {
 	
-	static std::list< Symbol > global_symbol_table;
+	static symbol_table global_symbol_table;
 	
 	
-	symbol_id locate_symbol( const plus::string& name )
+	void symbol_table::define_constant( const char* name, const Value& v )
+	{
+		its_symbols.push_back( Symbol( Symbol_const, name, v ) );
+	}
+	
+	symbol_id symbol_table::locate( const plus::string& name )
 	{
 		typedef std::list< Symbol >::iterator Iter;
 		
-		Iter begin = global_symbol_table.begin();
-		Iter it    = global_symbol_table.end();
+		Iter begin = its_symbols.begin();
+		Iter it    = its_symbols.end();
 		
 		while ( it != begin )
 		{
@@ -38,9 +40,9 @@ namespace vlib
 		return NULL;
 	}
 	
-	symbol_id create_symbol( const plus::string& name, symbol_type type )
+	symbol_id symbol_table::create( const plus::string& name, symbol_type type )
 	{
-		if ( symbol_id sym = locate_symbol( name ) )
+		if ( symbol_id sym = locate( name ) )
 		{
 			Symbol& var = *sym;
 			
@@ -54,9 +56,19 @@ namespace vlib
 			SYMBOL_ERROR( "duplicate symbol" );
 		}
 		
-		global_symbol_table.push_back( Symbol( type, name ) );
+		its_symbols.push_back( Symbol( type, name ) );
 		
-		return &global_symbol_table.back();
+		return &its_symbols.back();
+	}
+	
+	symbol_id locate_symbol( const plus::string& name )
+	{
+		return global_symbol_table.locate( name );
+	}
+	
+	symbol_id create_symbol( const plus::string& name, symbol_type type )
+	{
+		return global_symbol_table.create( name, type );
 	}
 	
 }
