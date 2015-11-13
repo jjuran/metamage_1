@@ -6,7 +6,7 @@
 #include "vlib/symbol_table.hh"
 
 // Standard C++
-#include <vector>
+#include <list>
 
 // vlib
 #include "vlib/error.hh"
@@ -73,32 +73,32 @@ namespace vlib
 		return its_value;
 	}
 	
-	static std::vector< Symbol > symbol_table;
+	static std::list< Symbol > symbol_table;
 	
 	
 	symbol_id locate_symbol( const plus::string& name )
 	{
-		typedef std::vector< Symbol >::const_iterator Iter;
+		typedef std::list< Symbol >::iterator Iter;
 		
 		Iter begin = symbol_table.begin();
 		Iter it    = symbol_table.end();
 		
-		while ( --it > begin )
+		while ( --it != begin )
 		{
 			if ( name == it->name() )
 			{
-				return symbol_id( it - begin );
+				return &*it;
 			}
 		}
 		
-		return symbol_id_none;
+		return NULL;
 	}
 	
 	symbol_id create_symbol( const plus::string& name, symbol_type type )
 	{
 		if ( symbol_id sym = locate_symbol( name ) )
 		{
-			Symbol& var = symbol_table[ sym ];
+			Symbol& var = *sym;
 			
 			if ( type == Symbol_const  &&  var.is_var() )
 			{
@@ -107,31 +107,27 @@ namespace vlib
 				return sym;
 			}
 			
-			return symbol_id_none;
+			return NULL;
 		}
-		
-		symbol_id result = symbol_id( symbol_table.size() );
 		
 		symbol_table.push_back( Symbol( type, name ) );
 		
-		return result;
+		return &symbol_table.back();
 	}
 	
 	void assign_symbol( symbol_id id, const Value& value )
 	{
-		Symbol& var = symbol_table[ id ];
-		
-		var.assign( value );
+		id->assign( value );
 	}
 	
 	const Value& lookup_symbol( symbol_id id )
 	{
-		return symbol_table[ id ].get();
+		return id->get();
 	}
 	
 	Value& modify_symbol( symbol_id id )
 	{
-		return symbol_table[ id ].deref();
+		return id->deref();
 	}
 	
 	
