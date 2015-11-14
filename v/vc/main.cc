@@ -67,35 +67,11 @@ static plus::string stringify( const plus::integer& i )
 	return hex_output ? hex( i ) : encode_decimal( i );
 }
 
-static plus::string stringify_list( const Value& v );
-
 static plus::string stringify( const Value& v )
 {
-	switch ( get_type( v ) )
+	if ( v.type() == Value_number )
 	{
-		default:
-			return "UNIMPLEMENTED";
-		
-		case Value_nothing:
-			return "NOTHING";
-		
-		case Value_dummy_operand:
-			return "DUMMY OPERAND";
-		
-		case Value_undefined:
-			return "UNDEFINED";
-		
-		case Value_empty_list:
-		case Value_boolean:
-			break;
-		
-		case Value_number:
-			return stringify( vlib::get_int( v ) );
-		
-		case Value_string:
-		case Value_function:
-		case Value_pair:
-			break;
+		return stringify( vlib::get_int( v ) );
 	}
 	
 	return make_string( v, Stringified_to_reproduce );
