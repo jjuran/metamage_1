@@ -55,15 +55,15 @@ namespace vlib
 			{
 			}
 			
+			Value( symbol_id sym ) : its_box( sym, Value_symbol )
+			{
+			}
+			
+			Value( symbol_id sym, int ) : its_box( sym, V_decl )
+			{
+			}
+			
 		#define IBOX( i )  plus::ibox( i ).move()
-			
-			Value( symbol_id sym ) : its_box( IBOX( (long) sym ), Value_symbol )
-			{
-			}
-			
-			Value( symbol_id sym, int ) : its_box( IBOX( (long) sym ), V_decl )
-			{
-			}
 			
 			Value( bool b ) : its_box( IBOX( (long) b ), Value_boolean )
 			{
@@ -135,7 +135,7 @@ namespace vlib
 			
 			symbol_id sym() const
 			{
-				return symbol_id( number().clipped() );
+				return (symbol_id) its_box.pointer();
 			}
 			
 			Expr* expr() const

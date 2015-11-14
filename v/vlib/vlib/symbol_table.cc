@@ -6,7 +6,7 @@
 #include "vlib/symbol_table.hh"
 
 // Standard C++
-#include <vector>
+#include <list>
 
 // vlib
 #include "vlib/error.hh"
@@ -15,101 +15,73 @@
 namespace vlib
 {
 	
-	struct Symbol
+	void Symbol::assign( const Value& v )
 	{
-		plus::string  name;
-		Value         value;
-		symbol_type   type;
-		
-		Symbol() : type()
+		if ( is_const()  &&  is_defined() )
 		{
+			SYMBOL_ERROR( "reassignment of constant" );
 		}
 		
-		Symbol( const plus::string& name, const Value& value, symbol_type type )
-		:
-			name( name ),
-			value( value ),
-			type( type )
-		{
-		}
-	};
+		its_value = v;
+	}
 	
-	static std::vector< Symbol > symbol_table;
+	Value& Symbol::deref()
+	{
+		if ( is_const() )
+		{
+			SYMBOL_ERROR( "modification of constant" );
+		}
+		
+		return its_value;
+	}
+	
+	static std::list< Symbol > symbol_table;
 	
 	
 	symbol_id locate_symbol( const plus::string& name )
 	{
-		typedef std::vector< Symbol >::const_iterator Iter;
+		typedef std::list< Symbol >::iterator Iter;
 		
 		Iter begin = symbol_table.begin();
 		Iter it    = symbol_table.end();
 		
-		while ( --it > begin )
+		while ( --it != begin )
 		{
-			if ( name == it->name )
+			if ( name == it->name() )
 			{
-				return symbol_id( it - begin );
+				return &*it;
 			}
 		}
 		
-		return symbol_id_none;
+		return NULL;
 	}
 	
 	symbol_id create_symbol( const plus::string& name, symbol_type type )
 	{
 		if ( symbol_id sym = locate_symbol( name ) )
 		{
-			Symbol& var = symbol_table[ sym ];
+			Symbol& var = *sym;
 			
-			if ( type == Symbol_const  &&  var.type != Symbol_const )
+			if ( type == Symbol_const  &&  var.is_var() )
 			{
-				var.type = Symbol_const;
+				var.constify();
 				
 				return sym;
 			}
 			
-			return symbol_id_none;
+			return NULL;
 		}
 		
-		symbol_id result = symbol_id( symbol_table.size() );
+		symbol_table.push_back( Symbol( type, name ) );
 		
-		symbol_table.push_back( Symbol( name, Value_undefined, type ) );
-		
-		return result;
-	}
-	
-	void assign_symbol( symbol_id id, const Value& value )
-	{
-		Symbol& var = symbol_table[ id ];
-		
-		if ( var.type == Symbol_const  &&  ! is_undefined( var.value ) )
-		{
-			SYMBOL_ERROR( "reassignment of constant" );
-		}
-		
-		var.value = value;
-	}
-	
-	const Value& lookup_symbol( symbol_id id )
-	{
-		return symbol_table[ id ].value;
-	}
-	
-	Value& modify_symbol( symbol_id id )
-	{
-		if ( symbol_table[ id ].type == Symbol_const )
-		{
-			SYMBOL_ERROR( "modification of constant" );
-		}
-		
-		return symbol_table[ id ].value;
+		return &symbol_table.back();
 	}
 	
 	
 	static inline
 	Symbol constant( const char* name, const Value& value )
 	{
-		return Symbol( name, value, Symbol_const );
+		return Symbol( Symbol_const, name, value );
 	}
 	
 	struct symbol_table_init
