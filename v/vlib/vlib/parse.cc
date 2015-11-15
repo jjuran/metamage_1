@@ -26,6 +26,7 @@
 #include "vlib/ops.hh"
 #include "vlib/precedence.hh"
 #include "vlib/quote.hh"
+#include "vlib/scope.hh"
 #include "vlib/source.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/token.hh"
@@ -47,6 +48,8 @@ namespace vlib
 	{
 		private:
 			typedef std::vector< dyad > Stack;
+			
+			lexical_scope_box scope;
 			
 			Stack stack;
 			
@@ -241,6 +244,12 @@ namespace vlib
 		}
 	}
 	
+	static
+	Value enscope_block( const lexical_scope_box& scope, const Value& v )
+	{
+		return Value( scope->symbols(), Op_scope, v );
+	}
+	
 	void Parser::receive_token( const Token& token )
 	{
 		switch ( token )
@@ -285,11 +294,21 @@ namespace vlib
 				
 				stack.push_back( Op_block );
 				
+				scope.push();
+				
 				push( Op_braces );
 				break;
 			
 			case Token_rbrace:
 				pop( Op_braces );
+				
+				{
+					Value& v = stack.back().v;
+					
+					v = enscope_block( scope, v );
+				}
+				
+				scope.pop();
 				break;
 			
 			case Token_lparen:
@@ -387,8 +406,6 @@ namespace vlib
 					}
 					else
 					{
-						symbol_id sym;
-						
 						if ( ! stack.empty() )
 						{
 							if ( stack.back().op == Op_member )
@@ -402,14 +419,11 @@ namespace vlib
 								bool is_var = stack.back().op - Op_const;
 								symbol_type type = symbol_type( is_var );
 								
-								sym = create_symbol( token.text, type );
-								
-								receive_value( sym );
-								break;
+								scope->declare( token.text, type );
 							}
 						}
 						
-						if ( symbol_id sym = locate_symbol( token.text ) )
+						if ( const Value& sym = scope->resolve( token.text ) )
 						{
 							receive_value( sym );
 							break;
@@ -514,7 +528,7 @@ namespace vlib
 			
 			if ( ! token )
 			{
-				return result;
+				return enscope_block( scope, result );
 			}
 		}
 	}

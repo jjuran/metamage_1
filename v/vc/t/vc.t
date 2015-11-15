@@ -2307,3 +2307,47 @@ $ vc 'var x; var y; x, y = 3, 4'
 
 $ vc 'var x, var y = 1, 2; x, y = y, x'
 1 >= '(2, 1)'
+
+%
+
+$ vc 'const f = {var i = 0; while ++i <= _ do {print i}}; f 3'
+1 >> .
+1
+2
+3
+.
+
+%
+
+$ vc 'var x = (); const f = {var y; y = _; if _ > 0 then {f( y - 1 ); x = x, y};}; f( 3 ); x'
+1 >= '(1, 2, 3)'
+
+%
+
+$ vc 'var x = (); const f = {var y = _; if _ > 0 then {f( y - 1 ); x = x, y};}; f( 3 ); x'
+1 >= '(1, 2, 3)'
+
+%
+
+$ vc 'var x = (); const f = {var y = _; if _ > 0 then {f( _ - 1 ); x = x, y};}; f( 3 ); x'
+1 >= '(1, 2, 3)'
+
+%
+
+$ vc 'const counter = {var x = 0; {++x}}; const f = counter(); [1 (*) 3] map f'
+1 >= '[1, 2, 3]'
+
+%
+
+$ vc 'const f = {const x = 123}; f(); f()'
+1 >= '123'
+
+%
+
+$ vc 'const f = {const x = 456}; if 1 then f; if 1 then f'
+1 >= '456'
+
+%
+
+$ vc 'var i = 0; while ++i < 3 do {const x = 789}'
+1 >= '789'
