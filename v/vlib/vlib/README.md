@@ -38,8 +38,6 @@ Level 3
 
 `symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
-`string-utils.*`:  Defines functions for computations of strings.
-
 `list-utils.*`:  Defines functions for computations of lists.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
@@ -47,9 +45,14 @@ Level 3
 Level 4
 -------
 
-`types.*`:  Defines a `type_info` for each V base type.
+`string-utils.*`:  Defines functions for computations of strings.
 
 Level 5
+-------
+
+`types.*`:  Defines a `type_info` for each V base type.
+
+Level 6
 -------
 
 `functions.*`:  Defines various built-in V functions.
@@ -58,14 +61,14 @@ Level 5
 
 `calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 
-Level 6
+Level 7
 -------
 
 `init.*`:  Defines `define()`, which installs a function as a constant in the symbol table, and `install_basic_functions()`.
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
-Level 7
+Level 8
 -------
 
 `parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.

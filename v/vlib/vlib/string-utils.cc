@@ -18,6 +18,7 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
+#include "vlib/symbol_table.hh"
 #include "vlib/type_info.hh"
 
 
@@ -94,6 +95,10 @@ namespace vlib
 			
 			case Value_base_type:
 				return strlen( value.typeinfo().name );
+			
+			case Value_symbol_declarator:
+			case Value_symbol:
+				return value.sym()->name().size();
 			
 			case Value_boolean:
 				return 4 + ! get_bool( value );  // "true" or "false"
@@ -179,6 +184,10 @@ namespace vlib
 				
 			case Value_base_type:
 				return mempcpy( p, value.typeinfo().name );
+			
+			case Value_symbol_declarator:
+			case Value_symbol:
+				return mempcpy( p, value.sym()->name() );
 			
 			case Value_boolean:
 				if ( ! get_bool( value ) )
