@@ -1618,3 +1618,8 @@ $ vc 'print typeof time'
 
 $ vc 'print typeof (join % ",")'
 1 >= function
+
+%
+
+$ vc 'typeof (1, true, "thee", hex)'
+1 >= '("integer", "boolean", "string", "function")'

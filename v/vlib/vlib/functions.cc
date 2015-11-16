@@ -105,6 +105,33 @@ namespace vlib
 	}
 	
 	static
+	Value reversed( const Value& list )
+	{
+		Expr* expr = list.expr();
+		
+		if ( expr == NULL )
+		{
+			return list;
+		}
+		
+		Value result = expr->left;
+		
+		const Value* next = &expr->right;
+		
+		expr = next->expr();
+		
+		while ( expr  &&  expr->op == Op_list )
+		{
+			result = Value( expr->left, result );
+			
+			next = &expr->right;
+			expr = next->expr();
+		}
+		
+		return Value( *next, result );
+	}
+	
+	static
 	Value v_typeof( const Value& v )
 	{
 		if ( is_function( v ) )
@@ -120,8 +147,28 @@ namespace vlib
 			case Value_number:    return "integer";
 			case Value_string:    return "string";
 			
+			case Value_pair:  break;
+			
 			default:  return "???";
 		}
+		
+		Expr* expr = v.expr();
+		
+		Value reversed_result = v_typeof( expr->left );
+		
+		const Value* next = &expr->right;
+		
+		expr = next->expr();
+		
+		while ( expr  &&  expr->op == Op_list )
+		{
+			reversed_result = Value( v_typeof( expr->left ), reversed_result );
+			
+			next = &expr->right;
+			expr = next->expr();
+		}
+		
+		return reversed( Value( v_typeof( *next ), reversed_result ) );
 	}
 	
 	static
