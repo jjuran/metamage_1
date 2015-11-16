@@ -21,8 +21,6 @@ Level 1
 Level 2
 -------
 
-`types.*`:  Defines a `type_info` for each V base type.
-
 `value.*`:  Defines `enum value_type`, `struct Value`, and `struct Expr`.
 
 `token.*`:  Defines `struct token` and `next_token()`, which wrap `token_type` and `next_token_type()` to include the string of text from which the token was scanned.
@@ -38,16 +36,18 @@ Level 2
 Level 3
 -------
 
+`types.*`:  Defines a `type_info` for each V base type.
+
 `string-utils.*`:  Defines functions for computations of strings.
 
 `list-utils.*`:  Defines functions for computations of lists.
-
-`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
 Level 4
 -------
+
+`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `functions.*`:  Defines various built-in V functions.
 
