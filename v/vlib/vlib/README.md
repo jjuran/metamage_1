@@ -1,7 +1,7 @@
 vlib Source Code Roadmap
 ========================
 
-Level 0
+Level 1
 -------
 
 `error.*`:  Defines utility macros `SYNTAX_ERROR()` and `INTERNAL_ERROR()`.
@@ -16,7 +16,7 @@ Level 0
 
 `vbox.*`:  Defines `class vbox`, a type that generalizes storage of dynamic values, with small-object optimization.
 
-Level 1
+Level 2
 -------
 
 `value.*`:  Defines `enum value_type`, `struct Value`, and `struct Expr`.
@@ -31,7 +31,7 @@ Level 1
 
 `quote.*`:  Defines routines for decoding string literals, including escape sequences.
 
-Level 2
+Level 3
 -------
 
 `string-utils.*`:  Defines functions for computations of strings.
@@ -42,7 +42,7 @@ Level 2
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
-Level 3
+Level 4
 -------
 
 `functions.*`:  Defines `function_from_name()`, which converts a string into a function pointer.
@@ -51,12 +51,12 @@ Level 3
 
 `library.*`:  Defines various library functions, and `define()` for installing them.
 
-Level 4
+Level 5
 -------
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
-Level 5
+Level 6
 -------
 
 `parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.
