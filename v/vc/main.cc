@@ -27,6 +27,7 @@
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
 #include "vlib/functions.hh"
+#include "vlib/init.hh"
 #include "vlib/library.hh"
 #include "vlib/parse.hh"
 #include "vlib/string-utils.hh"

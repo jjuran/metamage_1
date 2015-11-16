@@ -21,6 +21,7 @@
 #include "vlib/error.hh"
 #include "vlib/eval.hh"
 #include "vlib/functions.hh"
+#include "vlib/init.hh"
 #include "vlib/named_ops.hh"
 #include "vlib/ops.hh"
 #include "vlib/precedence.hh"

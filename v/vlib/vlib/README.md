@@ -45,7 +45,7 @@ Level 3
 Level 4
 -------
 
-`functions.*`:  Defines `function_from_name()`, which converts a string into a function pointer.
+`functions.*`:  Defines various built-in V functions.
 
 `calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 
@@ -53,6 +53,8 @@ Level 4
 
 Level 5
 -------
+
+`init.*`:  Defines `define()`, which installs a function as a constant in the symbol table, and `install_basic_functions()`.
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 

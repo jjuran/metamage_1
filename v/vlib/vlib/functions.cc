@@ -15,18 +15,10 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/symbol_table.hh"
 
 
 namespace vlib
 {
-	
-	void define( const proc_info& proc )
-	{
-		const symbol_id sym = create_symbol( proc.name, Symbol_const );
-		
-		assign_symbol( sym, proc );
-	}
 	
 	static
 	plus::string hex( const plus::string& s )
@@ -98,17 +90,6 @@ namespace vlib
 		}
 		
 		return half( get_int( arg ) );
-	}
-	
-	bool install_basic_functions()
-	{
-		define( proc_abs  );
-		define( proc_bool );
-		define( proc_half );
-		define( proc_hex  );
-		define( proc_str  );
-		
-		return true;
 	}
 	
 	static

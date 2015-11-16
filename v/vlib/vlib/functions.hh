@@ -12,10 +12,6 @@ namespace vlib
 	
 	struct proc_info;
 	
-	void define( const proc_info& proc );
-	
-	bool install_basic_functions();
-	
 	extern const proc_info proc_abs;
 	extern const proc_info proc_area;
 	extern const proc_info proc_bool;
