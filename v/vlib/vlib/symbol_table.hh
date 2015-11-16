@@ -27,6 +27,7 @@ namespace vlib
 	{
 		private:
 			plus::string  its_name;
+			Value         its_vtype;
 			Value         its_value;
 			symbol_type   its_type;
 		
