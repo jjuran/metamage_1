@@ -15,6 +15,7 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/types.hh"
 
 
 namespace vlib
@@ -136,16 +137,17 @@ namespace vlib
 	{
 		if ( is_function( v ) )
 		{
-			return "function";
+			return function_vtype;
 		}
 		
 		switch ( v.type() )
 		{
 			case Value_empty_list:  return v;
 			
-			case Value_boolean:   return "boolean";
-			case Value_number:    return "integer";
-			case Value_string:    return "string";
+			case Value_base_type:  return type_vtype;
+			case Value_boolean:    return boolean_vtype;
+			case Value_number:     return integer_vtype;
+			case Value_string:     return string_vtype;
 			
 			case Value_pair:  break;
 			

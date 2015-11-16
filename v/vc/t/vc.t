@@ -1622,4 +1622,14 @@ $ vc 'print typeof (join % ",")'
 %
 
 $ vc 'typeof (1, true, "thee", hex)'
-1 >= '("integer", "boolean", "string", "function")'
+1 >= '(integer, boolean, string, function)'
+
+%
+
+$ vc 'typeof true'
+1 >= boolean
+
+%
+
+$ vc 'typeof typeof true'
+1 >= type

@@ -14,10 +14,14 @@ Level 1
 
 `proc_info.hh`:  Defines `struct proc_info`, which groups a function pointer with a name.
 
+`type_info.hh`:  Defines `struct type_info`, which provides a type's name.
+
 `vbox.*`:  Defines `class vbox`, a type that generalizes storage of dynamic values, with small-object optimization.
 
 Level 2
 -------
+
+`types.*`:  Defines a `type_info` for each V base type.
 
 `value.*`:  Defines `enum value_type`, `struct Value`, and `struct Expr`.
 
