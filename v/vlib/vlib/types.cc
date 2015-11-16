@@ -106,7 +106,7 @@ namespace vlib
 	}
 	
 	#define DEFINE_TYPE_INFO( type )  \
-	const type_info type##_vtype = { #type, &assign_to_##type, 0 }
+	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( integer  );
@@ -117,6 +117,7 @@ namespace vlib
 		"boolean",
 		&assign_to_boolean,
 		&coerce_to_boolean,
+		0,
 	};
 	
 	const type_info string_vtype =
@@ -124,6 +125,7 @@ namespace vlib
 		"string",
 		&assign_to_string,
 		&coerce_to_string,
+		0,
 	};
 	
 	static
