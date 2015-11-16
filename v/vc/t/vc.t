@@ -1588,3 +1588,48 @@ $ vc 'print rep (1, 2, 3)'
 
 $ vc 'print rep (join % "1" % "2", join % (getenv % "3"))'
 1 >= '((join % ("1", "2")), (join % (getenv % "3")))'
+
+%
+
+$ vc 'typeof ()'
+1 >= "()"
+
+%
+
+$ vc 'print typeof true'
+1 >= boolean
+
+%
+
+$ vc 'print typeof 0'
+1 >= integer
+
+%
+
+$ vc 'print typeof ""'
+1 >= string
+
+%
+
+$ vc 'print typeof time'
+1 >= function
+
+%
+
+$ vc 'print typeof (join % ",")'
+1 >= function
+
+%
+
+$ vc 'typeof (1, true, "thee", hex)'
+1 >= '(integer, boolean, string, function)'
+
+%
+
+$ vc 'typeof true'
+1 >= boolean
+
+%
+
+$ vc 'typeof typeof true'
+1 >= type

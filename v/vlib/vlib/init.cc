@@ -24,16 +24,17 @@ namespace vlib
 	
 	bool install_basic_functions()
 	{
-		define( proc_abs   );
-		define( proc_area  );
-		define( proc_bool  );
-		define( proc_half  );
-		define( proc_hex   );
-		define( proc_join  );
-		define( proc_rep   );
-		define( proc_str   );
-		define( proc_unbin );
-		define( proc_unhex );
+		define( proc_abs    );
+		define( proc_area   );
+		define( proc_bool   );
+		define( proc_half   );
+		define( proc_hex    );
+		define( proc_join   );
+		define( proc_rep    );
+		define( proc_str    );
+		define( proc_typeof );
+		define( proc_unbin  );
+		define( proc_unhex  );
 		
 		return true;
 	}
