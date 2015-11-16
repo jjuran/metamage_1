@@ -122,6 +122,13 @@ namespace vlib
 				SYNTAX_ERROR( "left operand of assignment not a symbol" );
 			}
 			
+			if ( op == Op_denote )
+			{
+				left.sym()->denote( right );
+				
+				return left;
+			}
+			
 			const Value result = eval_assignment( left.sym(), op, right );
 			
 			if ( is_symbol_declarator( left ) )

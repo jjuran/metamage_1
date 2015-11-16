@@ -101,8 +101,15 @@ namespace vlib
 		if ( ! expecting_value() )
 		{
 			// Assume a function call.
+			op_type op = Op_function;
 			
-			fold_ops_and_add( Op_function );
+			if ( get_type( stack.back().v ) == Value_symbol_declarator )
+			{
+				// Nope, it's a type annotation.
+				op = Op_denote;
+			}
+			
+			fold_ops_and_add( op );
 		}
 		
 		stack.push_back( Op_parens );
