@@ -13,6 +13,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol_table.hh"
 
@@ -99,12 +100,6 @@ namespace vlib
 		return half( get_int( arg ) );
 	}
 	
-	static const proc_info proc_abs  = { &v_abs,  "abs"  };
-	static const proc_info proc_bool = { &v_bool, "bool" };
-	static const proc_info proc_half = { &v_half, "half" };
-	static const proc_info proc_hex  = { &v_hex,  "hex"  };
-	static const proc_info proc_str  = { &v_str,  "str"  };
-	
 	bool install_basic_functions()
 	{
 		define( proc_abs  );
@@ -166,8 +161,13 @@ namespace vlib
 		return unhex( get_str( v ) );
 	}
 	
+	const proc_info proc_abs   = { &v_abs,   "abs"   };
 	const proc_info proc_area  = { &v_area,  "area"  };
+	const proc_info proc_bool  = { &v_bool,  "bool"  };
+	const proc_info proc_half  = { &v_half,  "half"  };
+	const proc_info proc_hex   = { &v_hex,   "hex"   };
 	const proc_info proc_rep   = { &v_rep,   "rep"   };
+	const proc_info proc_str   = { &v_str,   "str"   };
 	const proc_info proc_unbin = { &v_unbin, "unbin" };
 	const proc_info proc_unhex = { &v_unhex, "unhex" };
 	

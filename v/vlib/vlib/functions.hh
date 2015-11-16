@@ -6,23 +6,23 @@
 #ifndef VLIB_FUNCTIONS_HH
 #define VLIB_FUNCTIONS_HH
 
-// plus
-#include "plus/string.hh"
-
-// vlib
-#include "vlib/proc_info.hh"
-#include "vlib/value.hh"
-
 
 namespace vlib
 {
+	
+	struct proc_info;
 	
 	void define( const proc_info& proc );
 	
 	bool install_basic_functions();
 	
+	extern const proc_info proc_abs;
 	extern const proc_info proc_area;
+	extern const proc_info proc_bool;
+	extern const proc_info proc_half;
+	extern const proc_info proc_hex;
 	extern const proc_info proc_rep;
+	extern const proc_info proc_str;
 	extern const proc_info proc_unbin;
 	extern const proc_info proc_unhex;
 	
