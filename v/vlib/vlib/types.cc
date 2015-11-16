@@ -105,6 +105,25 @@ namespace vlib
 		return make_string( v, Stringified_to_print );
 	}
 	
+	static
+	Value string_member( const Value& obj,
+	                     const plus::string& member )
+	{
+		if ( member == "length" )
+		{
+			return obj.string().size();
+		}
+		
+		if ( member == "join" )
+		{
+			return bind_args( proc_join, obj );
+		}
+		
+		SYNTAX_ERROR( "nonexistent string member" );
+		
+		return Value_nothing;
+	}
+	
 	#define DEFINE_TYPE_INFO( type )  \
 	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
@@ -125,7 +144,7 @@ namespace vlib
 		"string",
 		&assign_to_string,
 		&coerce_to_string,
-		0,
+		&string_member,
 	};
 	
 	static
