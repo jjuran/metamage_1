@@ -19,6 +19,7 @@ namespace vlib
 	extern const proc_info proc_hex;
 	extern const proc_info proc_rep;
 	extern const proc_info proc_str;
+	extern const proc_info proc_typeof;
 	extern const proc_info proc_unbin;
 	extern const proc_info proc_unhex;
 	

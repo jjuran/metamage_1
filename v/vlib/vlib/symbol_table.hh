@@ -27,6 +27,7 @@ namespace vlib
 	{
 		private:
 			plus::string  its_name;
+			Value         its_vtype;
 			Value         its_value;
 			symbol_type   its_type;
 		
@@ -46,6 +47,8 @@ namespace vlib
 			}
 			
 			void constify()  { its_type = Symbol_const; }
+			
+			void denote( const Value& vtype );
 			
 			void assign( const Value& v );
 			

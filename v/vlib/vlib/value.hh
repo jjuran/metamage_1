@@ -20,6 +20,7 @@ namespace vlib
 {
 	
 	struct proc_info;
+	struct type_info;
 	struct Expr;
 	
 	enum value_type
@@ -30,6 +31,7 @@ namespace vlib
 		Value_empty_list,
 		Value_symbol_declarator,
 		Value_symbol,
+		Value_base_type,
 		Value_boolean,
 		Value_number,
 		Value_string,
@@ -104,6 +106,12 @@ namespace vlib
 			{
 			}
 			
+			Value( const type_info& type )
+			:
+				its_box( &type, Value_base_type )
+			{
+			}
+			
 			Value( const Value& a, const Value& b );
 			
 			Value( value_type vt, const Value& a, op_type op, const Value& b );
@@ -131,6 +139,11 @@ namespace vlib
 			const proc_info& proc() const
 			{
 				return *(const proc_info*) its_box.pointer();
+			}
+			
+			const type_info& typeinfo() const
+			{
+				return *(const type_info*) its_box.pointer();
 			}
 			
 			symbol_id sym() const

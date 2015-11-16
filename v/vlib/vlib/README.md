@@ -14,6 +14,8 @@ Level 1
 
 `proc_info.hh`:  Defines `struct proc_info`, which groups a function pointer with a name.
 
+`type_info.hh`:  Defines `struct type_info`, which provides a type's name.
+
 `vbox.*`:  Defines `class vbox`, a type that generalizes storage of dynamic values, with small-object optimization.
 
 Level 2
@@ -34,16 +36,18 @@ Level 2
 Level 3
 -------
 
+`types.*`:  Defines a `type_info` for each V base type.
+
 `string-utils.*`:  Defines functions for computations of strings.
 
 `list-utils.*`:  Defines functions for computations of lists.
-
-`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
 Level 4
 -------
+
+`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `functions.*`:  Defines various built-in V functions.
 

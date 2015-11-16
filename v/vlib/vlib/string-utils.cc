@@ -18,6 +18,7 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
+#include "vlib/type_info.hh"
 
 
 namespace vlib
@@ -63,6 +64,7 @@ namespace vlib
 		return mode != Stringified_to_print;
 	}
 	
+	
 	static
 	size_t composite_length( const Value& value, stringification mode )
 	{
@@ -81,6 +83,9 @@ namespace vlib
 			
 			case Value_function:
 				return strlen( get_proc( value ).name );
+			
+			case Value_base_type:
+				return strlen( value.typeinfo().name );
 			
 			case Value_boolean:
 				return 4 + ! get_bool( value );  // "true" or "false"
@@ -153,6 +158,9 @@ namespace vlib
 			
 			case Value_function:
 				return mempcpy( p, get_proc( value ).name );
+				
+			case Value_base_type:
+				return mempcpy( p, value.typeinfo().name );
 			
 			case Value_boolean:
 				if ( ! get_bool( value ) )
