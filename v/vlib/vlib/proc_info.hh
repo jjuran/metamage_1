@@ -18,6 +18,7 @@ namespace vlib
 	{
 		function_type const  addr;
 		char const* const    name;
+		const Value* const   prototype;
 	};
 	
 }
