@@ -15,7 +15,6 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/types.hh"
 
 
 namespace vlib
@@ -107,74 +106,6 @@ namespace vlib
 	}
 	
 	static
-	Value reversed( const Value& list )
-	{
-		Expr* expr = list.expr();
-		
-		if ( expr == NULL )
-		{
-			return list;
-		}
-		
-		Value result = expr->left;
-		
-		const Value* next = &expr->right;
-		
-		expr = next->expr();
-		
-		while ( expr  &&  expr->op == Op_list )
-		{
-			result = Value( expr->left, result );
-			
-			next = &expr->right;
-			expr = next->expr();
-		}
-		
-		return Value( *next, result );
-	}
-	
-	static
-	Value v_typeof( const Value& v )
-	{
-		if ( is_function( v ) )
-		{
-			return function_vtype;
-		}
-		
-		switch ( v.type() )
-		{
-			case Value_empty_list:  return v;
-			
-			case Value_base_type:  return type_vtype;
-			case Value_boolean:    return boolean_vtype;
-			case Value_number:     return integer_vtype;
-			case Value_string:     return string_vtype;
-			
-			case Value_pair:  break;
-			
-			default:  return "???";
-		}
-		
-		Expr* expr = v.expr();
-		
-		Value reversed_result = v_typeof( expr->left );
-		
-		const Value* next = &expr->right;
-		
-		expr = next->expr();
-		
-		while ( expr  &&  expr->op == Op_list )
-		{
-			reversed_result = Value( v_typeof( expr->left ), reversed_result );
-			
-			next = &expr->right;
-			expr = next->expr();
-		}
-		
-		return reversed( Value( v_typeof( *next ), reversed_result ) );
-	}
-	
-	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
@@ -219,7 +150,6 @@ namespace vlib
 	const proc_info proc_hex    = { &v_hex,   "hex"   };
 	const proc_info proc_rep    = { &v_rep,   "rep"   };
 	const proc_info proc_str    = { &v_str,   "str"   };
-	const proc_info proc_typeof = { &v_typeof, "typeof" };
 	const proc_info proc_unbin  = { &v_unbin, "unbin" };
 	const proc_info proc_unhex  = { &v_unhex, "unhex" };
 	

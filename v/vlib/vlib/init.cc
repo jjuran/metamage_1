@@ -10,6 +10,7 @@
 #include "vlib/functions.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/symbol_table.hh"
+#include "vlib/types.hh"
 
 
 namespace vlib
