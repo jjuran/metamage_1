@@ -239,6 +239,14 @@ namespace vlib
 	DEFINE_ADAPT_TO_INT( i, 8  )
 	DEFINE_ADAPT_TO_INT( u, 8  )
 	
+	static
+	Value identity( const Value& v )
+	{
+		return v;
+	}
+	
+	const type_info etc_vtype = { "...", &identity, 0, 0 };
+	
 	#define DEFINE_TYPE_INFO( type )  \
 	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
