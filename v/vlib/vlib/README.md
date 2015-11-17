@@ -49,12 +49,12 @@ Level 4
 
 `types.*`:  Defines a `type_info` for each V base type.
 
+Level 5
+-------
+
 `functions.*`:  Defines various built-in V functions.
 
 `library.*`:  Defines various library functions, and `define()` for installing them.
-
-Level 5
--------
 
 `calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 

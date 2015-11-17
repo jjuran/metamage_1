@@ -330,11 +330,6 @@ namespace vlib
 	{
 		const Value& glue = first( args );
 		
-		if ( glue.type() != Value_string )
-		{
-			TYPE_ERROR( "join glue must be a string" );
-		}
-		
 		const Value pieces = rest( args );
 		
 		return join( glue.string(), pieces, count( pieces ) );
@@ -382,7 +377,9 @@ namespace vlib
 		return reversed( Value( v_typeof( *next ), reversed_result ) );
 	}
 	
-	const proc_info proc_join   = { &v_join,   "join"   };
-	const proc_info proc_typeof = { &v_typeof, "typeof" };
+	static const Value string_etc = Value( string_vtype, etc_vtype );
+	
+	const proc_info proc_join   = { &v_join,   "join",   &string_etc };
+	const proc_info proc_typeof = { &v_typeof, "typeof", NULL        };
 	
 }
