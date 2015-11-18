@@ -1688,3 +1688,8 @@ $ vc 'var x (function) = join % "."'
 
 $ vc 'var x (type) = string'
 1 >= string
+
+%
+
+$ vc int
+1 >= integer

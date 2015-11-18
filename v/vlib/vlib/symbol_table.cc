@@ -135,6 +135,7 @@ namespace vlib
 		symbol_table.push_back( constant( "boolean",  boolean_vtype  ) );
 		symbol_table.push_back( constant( "function", function_vtype ) );
 		symbol_table.push_back( constant( "integer",  integer_vtype  ) );
+		symbol_table.push_back( constant( "int",      integer_vtype  ) );
 		symbol_table.push_back( constant( "string",   string_vtype   ) );
 		symbol_table.push_back( constant( "type",     type_vtype     ) );
 	}
