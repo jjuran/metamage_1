@@ -141,6 +141,25 @@ namespace vlib
 	const proc_info proc_join = { &v_join, "join" };
 	
 	static
+	Value string_member( const Value& obj,
+	                     const plus::string& member )
+	{
+		if ( member == "length" )
+		{
+			return obj.string().size();
+		}
+		
+		if ( member == "join" )
+		{
+			return bind_args( proc_join, obj );
+		}
+		
+		SYNTAX_ERROR( "nonexistent string member" );
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
@@ -195,26 +214,12 @@ namespace vlib
 			SYNTAX_ERROR( "non-string member name" );
 		}
 		
-		switch ( get_type( left ) )
+		if ( left.type() == Value_string )
 		{
-			case Value_string:
-				if ( get_str( right ) == "length" )
-				{
-					return get_str( left ).size();
-				}
-				
-				if ( get_str( right ) == "join" )
-				{
-					return bind_args( proc_join, left );
-				}
-				break;
-			
-			default:
-				SYNTAX_ERROR( "unsupported type for member access" );
-				break;
+			return string_member( left, right.string() );
 		}
 		
-		SYNTAX_ERROR( "unsupported member name" );
+		SYNTAX_ERROR( "unsupported type for member access" );
 		
 		return Value();
 	}
