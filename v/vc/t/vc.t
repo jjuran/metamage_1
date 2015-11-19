@@ -1693,3 +1693,18 @@ $ vc 'var x (type) = string'
 
 $ vc int
 1 >= integer
+
+%
+
+$ vc 'bool int'
+1 >= true
+
+%
+
+$ vc 'bool typeof ""'
+1 >= true
+
+%
+
+$ vc 'bool typeof ()'
+1 >= false

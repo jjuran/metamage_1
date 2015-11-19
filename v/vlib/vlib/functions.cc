@@ -53,6 +53,7 @@ namespace vlib
 			case Value_string:
 				return ! get_str( arg ).empty();
 			
+			case Value_base_type:
 			case Value_function:
 			case Value_pair:
 				return true;
