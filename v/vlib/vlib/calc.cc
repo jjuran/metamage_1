@@ -8,7 +8,9 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/types.hh"
 #include "vlib/type_info.hh"
 
 
@@ -122,23 +124,6 @@ namespace vlib
 		
 		return 0;
 	}
-	
-	static
-	Value v_join( const Value& args )
-	{
-		const Value& glue = first( args );
-		
-		if ( get_type( glue ) != Value_string )
-		{
-			TYPE_ERROR( "join glue must be a string" );
-		}
-		
-		const Value pieces = rest( args );
-		
-		return join( get_str( glue ), pieces, count( pieces ) );
-	}
-	
-	const proc_info proc_join = { &v_join, "join" };
 	
 	static
 	Value string_member( const Value& obj,

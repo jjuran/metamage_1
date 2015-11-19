@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/type_info.hh"
@@ -153,6 +154,21 @@ namespace vlib
 	}
 	
 	static
+	Value v_join( const Value& args )
+	{
+		const Value& glue = first( args );
+		
+		if ( glue.type() != Value_string )
+		{
+			TYPE_ERROR( "join glue must be a string" );
+		}
+		
+		const Value pieces = rest( args );
+		
+		return join( glue.string(), pieces, count( pieces ) );
+	}
+	
+	static
 	Value v_typeof( const Value& v )
 	{
 		if ( is_function( v ) )
@@ -193,6 +209,7 @@ namespace vlib
 		return reversed( Value( v_typeof( *next ), reversed_result ) );
 	}
 	
+	const proc_info proc_join   = { &v_join,   "join"   };
 	const proc_info proc_typeof = { &v_typeof, "typeof" };
 	
 }

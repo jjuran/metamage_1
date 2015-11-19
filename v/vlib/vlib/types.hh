@@ -19,6 +19,7 @@ namespace vlib
 	extern const type_info integer_vtype;
 	extern const type_info function_vtype;
 	
+	extern const proc_info proc_join;
 	extern const proc_info proc_typeof;
 	
 }
