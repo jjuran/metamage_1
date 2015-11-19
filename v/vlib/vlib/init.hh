@@ -14,7 +14,7 @@ namespace vlib
 	
 	void define( const proc_info& proc );
 	
-	bool install_basic_functions();
+	bool install_basic_symbols();
 	
 }
 

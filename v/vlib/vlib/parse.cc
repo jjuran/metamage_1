@@ -347,7 +347,7 @@ namespace vlib
 	
 	Value parse_and_eval( const char* p )
 	{
-		static bool installed = install_basic_functions();
+		static bool installed = install_basic_symbols();
 		
 		Parser parser;
 		
