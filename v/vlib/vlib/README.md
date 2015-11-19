@@ -38,8 +38,6 @@ Level 3
 
 `symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
-`types.*`:  Defines a `type_info` for each V base type.
-
 `string-utils.*`:  Defines functions for computations of strings.
 
 `list-utils.*`:  Defines functions for computations of lists.
@@ -48,6 +46,8 @@ Level 3
 
 Level 4
 -------
+
+`types.*`:  Defines a `type_info` for each V base type.
 
 `functions.*`:  Defines various built-in V functions.
 

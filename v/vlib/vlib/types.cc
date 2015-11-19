@@ -6,7 +6,9 @@
 #include "vlib/types.hh"
 
 // vlib
+#include "vlib/error.hh"
 #include "vlib/proc_info.hh"
+#include "vlib/string-utils.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
 
@@ -69,14 +71,59 @@ namespace vlib
 		return Value_nothing;
 	}
 	
+	static
+	Value coerce_to_boolean( const Value& v )
+	{
+		switch ( v.type() )
+		{
+			default:
+				INTERNAL_ERROR( "invalid type in coerce_to_boolean()" );
+			
+			case Value_empty_list:
+				return false;
+			
+			case Value_boolean:
+				return v;
+			
+			case Value_number:
+				return ! v.number().is_zero();
+			
+			case Value_string:
+				return ! v.string().empty();
+			
+			case Value_base_type:
+			case Value_function:
+			case Value_pair:
+				return true;
+		}
+	}
+	
+	static
+	Value coerce_to_string( const Value& v )
+	{
+		return make_string( v, Stringified_to_print );
+	}
+	
 	#define DEFINE_TYPE_INFO( type )  \
 	const type_info type##_vtype = { #type, &assign_to_##type, 0 }
 	
-	DEFINE_TYPE_INFO( boolean  );
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( integer  );
-	DEFINE_TYPE_INFO( string   );
 	DEFINE_TYPE_INFO( type     );
+	
+	const type_info boolean_vtype =
+	{
+		"boolean",
+		&assign_to_boolean,
+		&coerce_to_boolean,
+	};
+	
+	const type_info string_vtype =
+	{
+		"string",
+		&assign_to_string,
+		&coerce_to_string,
+	};
 	
 	static
 	Value reversed( const Value& list )
