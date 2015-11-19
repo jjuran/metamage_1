@@ -268,6 +268,12 @@ namespace vlib
 		return false;
 	}
 	
+	inline
+	bool is_functional( const Value& v )
+	{
+		return is_function( v )  ||  v.type() == Value_base_type;
+	}
+	
 	Value bind_args( const Value& f, const Value& arguments );
 	
 	unsigned long area( const Value& v );

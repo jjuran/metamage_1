@@ -37,20 +37,20 @@ namespace vlib
 		define( "true",  Value( true  ) );
 		
 		define( "boolean",  boolean_vtype  );
+		define( "bool",     boolean_vtype  );
 		define( "function", function_vtype );
 		define( "integer",  integer_vtype  );
 		define( "int",      integer_vtype  );
 		define( "string",   string_vtype   );
+		define( "str",      string_vtype   );
 		define( "type",     type_vtype     );
 		
 		define( proc_abs    );
 		define( proc_area   );
-		define( proc_bool   );
 		define( proc_half   );
 		define( proc_hex    );
 		define( proc_join   );
 		define( proc_rep    );
-		define( proc_str    );
 		define( proc_typeof );
 		define( proc_unbin  );
 		define( proc_unhex  );

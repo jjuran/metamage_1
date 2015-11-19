@@ -27,39 +27,6 @@ namespace vlib
 	}
 	
 	static
-	Value v_str( const Value& value )
-	{
-		return make_string( value, Stringified_to_print );
-	}
-	
-	static
-	Value v_bool( const Value& arg )
-	{
-		switch ( get_type( arg ) )
-		{
-			default:
-				INTERNAL_ERROR( "invalid type in v_bool()" );
-			
-			case Value_empty_list:
-				return false;
-			
-			case Value_boolean:
-				return arg;
-			
-			case Value_number:
-				return ! get_int( arg ).is_zero();
-			
-			case Value_string:
-				return ! get_str( arg ).empty();
-			
-			case Value_base_type:
-			case Value_function:
-			case Value_pair:
-				return true;
-		}
-	}
-	
-	static
 	Value v_hex( const Value& arg )
 	{
 		switch ( get_type( arg ) )
@@ -145,11 +112,9 @@ namespace vlib
 	
 	const proc_info proc_abs    = { &v_abs,   "abs"   };
 	const proc_info proc_area   = { &v_area,  "area"  };
-	const proc_info proc_bool   = { &v_bool,  "bool"  };
 	const proc_info proc_half   = { &v_half,  "half"  };
 	const proc_info proc_hex    = { &v_hex,   "hex"   };
 	const proc_info proc_rep    = { &v_rep,   "rep"   };
-	const proc_info proc_str    = { &v_str,   "str"   };
 	const proc_info proc_unbin  = { &v_unbin, "unbin" };
 	const proc_info proc_unhex  = { &v_unhex, "unhex" };
 	

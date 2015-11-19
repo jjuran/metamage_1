@@ -1708,3 +1708,43 @@ $ vc 'bool typeof ""'
 
 $ vc 'bool typeof ()'
 1 >= false
+
+%
+
+$ vc 'int 80'
+1 >= 80
+
+%
+
+$ vc '(function join) % ","'
+1 >= '(join % ",")'
+
+%
+
+$ vc 'function (join % ",")'
+1 >= '(join % ",")'
+
+%
+
+$ vc 'function (join % ",")'
+1 >= '(join % ",")'
+
+%
+
+$ vc 'function int'
+1 >= integer
+
+%
+
+$ vc 'const stringify (function) = string'
+1 >= string
+
+%
+
+$ vc 'const stringify (function) = string'
+1 >= string
+
+%
+
+$ vc 'const raven = string % "nevermore"; raven()'
+1 >= '"nevermore"'

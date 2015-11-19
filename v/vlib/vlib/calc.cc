@@ -9,6 +9,7 @@
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/type_info.hh"
 
 
 namespace vlib
@@ -309,6 +310,25 @@ namespace vlib
 			return get_proc( f ).addr( arguments );
 		}
 		
+		if ( f.type() == Value_base_type )
+		{
+			const type_info& typeinfo = f.typeinfo();
+			
+			if ( coerce_proc coerce = typeinfo.coerce )
+			{
+				return coerce( arguments );
+			}
+			
+			const Value coerced = typeinfo.assign( arguments );
+			
+			if ( coerced.type() )
+			{
+				return coerced;
+			}
+			
+			TYPE_ERROR( "invalid type conversion arguments" );
+		}
+		
 		if ( Expr* expr = get_expr( f ) )
 		{
 			const Value& method = expr->left;
@@ -371,7 +391,7 @@ namespace vlib
 			return repeat_list( left, right );
 		}
 		
-		if ( op == Op_bind_args  &&  is_function( left ) )
+		if ( op == Op_bind_args  &&  is_functional( left ) )
 		{
 			return bind_args( left, right );
 		}
