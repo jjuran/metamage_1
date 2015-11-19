@@ -70,7 +70,7 @@ namespace vlib
 	}
 	
 	#define DEFINE_TYPE_INFO( type )  \
-	const type_info type##_vtype = { #type, &assign_to_##type }
+	const type_info type##_vtype = { #type, &assign_to_##type, 0 }
 	
 	DEFINE_TYPE_INFO( boolean  );
 	DEFINE_TYPE_INFO( function );

@@ -314,6 +314,11 @@ namespace vlib
 		{
 			const type_info& typeinfo = f.typeinfo();
 			
+			if ( coerce_proc coerce = typeinfo.coerce )
+			{
+				return coerce( arguments );
+			}
+			
 			const Value coerced = typeinfo.assign( arguments );
 			
 			if ( coerced.type() )
