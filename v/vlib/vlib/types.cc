@@ -28,7 +28,7 @@ namespace vlib
 	static
 	Value assign_to_function( const Value& v )
 	{
-		if ( is_function( v ) )
+		if ( is_functional( v ) )
 		{
 			return v;
 		}
