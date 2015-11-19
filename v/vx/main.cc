@@ -30,6 +30,7 @@
 #include "vlib/init.hh"
 #include "vlib/library.hh"
 #include "vlib/parse.hh"
+#include "vlib/symbol_table.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -91,6 +92,45 @@ static char* const* get_options( char** argv )
 	return argv;
 }
 
+static
+Value make_argv( int argn, char* const* args )
+{
+	char* const* argp = args + argn;
+	
+	Value result = *--argp;
+	
+	while ( argp > args )
+	{
+		result = Value( *--argp, result );
+	}
+	
+	return result;
+}
+
+static
+void set_argv( const char* arg0, int argn, char* const* args )
+{
+	Value argv = Value_empty_list;
+	
+	if ( argn )
+	{
+		argv = make_argv( argn, args );
+		
+		if ( arg0 )
+		{
+			argv = Value( arg0, argv );
+		}
+	}
+	else if ( arg0 )
+	{
+		argv = arg0;
+	}
+	
+	symbol_id argv_sym = create_symbol( "argv", Symbol_const );
+	
+	assign_symbol( argv_sym, make_array( argv ) );
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -101,6 +141,12 @@ int main( int argc, char** argv )
 	char* const* args = get_options( argv );
 	
 	const int argn = argc - (args - argv);
+	
+	const char* arg0 = inline_script ? "-e"
+	                 : args[ 0 ]     ? NULL
+	                 :                 "-";
+	
+	set_argv( arg0, argn, args );
 	
 	define( proc_getenv );
 	define( proc_print  );
