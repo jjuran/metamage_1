@@ -1748,3 +1748,8 @@ $ vc 'const stringify (function) = string'
 
 $ vc 'const raven = string % "nevermore"; raven()'
 1 >= '"nevermore"'
+
+%
+
+$ vc 'const to_string = string'
+1 >= string

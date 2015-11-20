@@ -23,6 +23,16 @@ namespace vlib
 	using iota::is_alnum;
 	
 	
+	inline bool is_initial( char c )
+	{
+		return iota::is_alpha( c )  ||  c == '_';
+	}
+	
+	inline bool is_name( char c )
+	{
+		return iota::is_alnum( c )  ||  c == '_';
+	}
+	
 	inline bool is_bin_digit( char c )
 	{
 		return c >= '0'  &&  c <= '1';
@@ -197,7 +207,7 @@ namespace vlib
 			return Token_digits;
 		}
 		
-		if ( is_alpha( *p ) )
+		if ( is_initial( *p ) )
 		{
 			if ( p[ 1 ] == '"' )
 			{
@@ -205,7 +215,7 @@ namespace vlib
 				if ( *p == 'x' )  return ++p, Token_unhex;
 			}
 			
-			while ( is_alnum( *++p ) )  continue;
+			while ( is_name( *++p ) )  continue;
 			
 			const char* q = p;
 			
