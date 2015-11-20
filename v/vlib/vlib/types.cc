@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/type_info.hh"
@@ -104,8 +105,27 @@ namespace vlib
 		return make_string( v, Stringified_to_print );
 	}
 	
+	static
+	Value string_member( const Value& obj,
+	                     const plus::string& member )
+	{
+		if ( member == "length" )
+		{
+			return obj.string().size();
+		}
+		
+		if ( member == "join" )
+		{
+			return bind_args( proc_join, obj );
+		}
+		
+		SYNTAX_ERROR( "nonexistent string member" );
+		
+		return Value_nothing;
+	}
+	
 	#define DEFINE_TYPE_INFO( type )  \
-	const type_info type##_vtype = { #type, &assign_to_##type, 0 }
+	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( integer  );
@@ -116,6 +136,7 @@ namespace vlib
 		"boolean",
 		&assign_to_boolean,
 		&coerce_to_boolean,
+		0,
 	};
 	
 	const type_info string_vtype =
@@ -123,6 +144,7 @@ namespace vlib
 		"string",
 		&assign_to_string,
 		&coerce_to_string,
+		&string_member,
 	};
 	
 	static
@@ -150,6 +172,21 @@ namespace vlib
 		}
 		
 		return Value( *next, result );
+	}
+	
+	static
+	Value v_join( const Value& args )
+	{
+		const Value& glue = first( args );
+		
+		if ( glue.type() != Value_string )
+		{
+			TYPE_ERROR( "join glue must be a string" );
+		}
+		
+		const Value pieces = rest( args );
+		
+		return join( glue.string(), pieces, count( pieces ) );
 	}
 	
 	static
@@ -193,6 +230,7 @@ namespace vlib
 		return reversed( Value( v_typeof( *next ), reversed_result ) );
 	}
 	
+	const proc_info proc_join   = { &v_join,   "join"   };
 	const proc_info proc_typeof = { &v_typeof, "typeof" };
 	
 }

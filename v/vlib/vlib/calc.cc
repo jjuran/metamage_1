@@ -8,7 +8,9 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/types.hh"
 #include "vlib/type_info.hh"
 
 
@@ -124,23 +126,6 @@ namespace vlib
 	}
 	
 	static
-	Value v_join( const Value& args )
-	{
-		const Value& glue = first( args );
-		
-		if ( get_type( glue ) != Value_string )
-		{
-			TYPE_ERROR( "join glue must be a string" );
-		}
-		
-		const Value pieces = rest( args );
-		
-		return join( get_str( glue ), pieces, count( pieces ) );
-	}
-	
-	const proc_info proc_join = { &v_join, "join" };
-	
-	static
 	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
@@ -195,26 +180,19 @@ namespace vlib
 			SYNTAX_ERROR( "non-string member name" );
 		}
 		
-		switch ( get_type( left ) )
+		Value vtype = proc_typeof.addr( left );
+		
+		if ( vtype.type() == Value_base_type )
 		{
-			case Value_string:
-				if ( get_str( right ) == "length" )
-				{
-					return get_str( left ).size();
-				}
-				
-				if ( get_str( right ) == "join" )
-				{
-					return bind_args( proc_join, left );
-				}
-				break;
+			const type_info& typeinfo = vtype.typeinfo();
 			
-			default:
-				SYNTAX_ERROR( "unsupported type for member access" );
-				break;
+			if ( member_proc member = typeinfo.member )
+			{
+				return member( left, right.string() );
+			}
 		}
 		
-		SYNTAX_ERROR( "unsupported member name" );
+		SYNTAX_ERROR( "unsupported type for member access" );
 		
 		return Value();
 	}

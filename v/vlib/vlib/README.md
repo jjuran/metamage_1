@@ -51,18 +51,21 @@ Level 4
 
 `functions.*`:  Defines various built-in V functions.
 
-`calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
-
 `library.*`:  Defines various library functions, and `define()` for installing them.
 
 Level 5
+-------
+
+`calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
+
+Level 6
 -------
 
 `init.*`:  Defines `define()`, which installs a function as a constant in the symbol table, and `install_basic_functions()`.
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
-Level 6
+Level 7
 -------
 
 `parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.
