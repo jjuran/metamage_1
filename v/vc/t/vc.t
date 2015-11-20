@@ -1878,3 +1878,23 @@ $ vc '128 isa u8, 128 isa i8'
 
 $ vc 'i32 isa int, i32() isa u8, i32 isa type, i32 isa function'
 1 >= '(false, true, true, true)'
+
+%
+
+$ vc 'c_str ""'
+1 >= '""'
+
+%
+
+$ vc 'var s (c_str) = "\001"'
+1 >= '"\x01"'
+
+%
+
+$ vc 'typeof c_str ""'
+1 >= string
+
+%
+
+$ vc '"\0" isa c_str, "\000foo" isa c_str, "bar\0" isa c_str, "baz0" isa c_str'
+1 >= '(false, false, false, true)'

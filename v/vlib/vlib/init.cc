@@ -46,6 +46,7 @@ namespace vlib
 		define( "int",      integer_vtype  );
 		define( "string",   string_vtype   );
 		define( "str",      string_vtype   );
+		define( "c_str",    c_str_vtype    );
 		define( "type",     type_vtype     );
 		define( "i64",      i64_vtype      );
 		define( "u64",      u64_vtype      );

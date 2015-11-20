@@ -7,6 +7,7 @@
 
 // Standard C
 #include <stdint.h>
+#include <string.h>
 
 // vlib
 #include "vlib/error.hh"
@@ -59,6 +60,22 @@ namespace vlib
 		if ( v.type() == Value_string )
 		{
 			return v;
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
+	Value assign_to_c_str( const Value& v )
+	{
+		if ( v.type() == Value_string )
+		{
+			const plus::string& s = v.string();
+			
+			if ( strlen( s.c_str() ) == s.size() )
+			{
+				return v;
+			}
 		}
 		
 		return Value_nothing;
@@ -199,6 +216,7 @@ namespace vlib
 	const type_info T##_vtype = { #T, &assign_to_##T, &coerce_to_##T, 0 }
 	
 	DEFINE_TYPE_INFO( function );
+	DEFINE_TYPE_INFO( c_str    );
 	DEFINE_TYPE_INFO( type     );
 	
 	DEFINE_TYPE_INFO_A_C( i64 );
