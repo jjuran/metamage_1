@@ -100,6 +100,25 @@ namespace vlib
 	}
 	
 	static
+	Value coerce_to_integer( const Value& v )
+	{
+		switch ( v.type() )
+		{
+			default:
+				TYPE_ERROR( "integer conversion not defined for type" );
+			
+			case Value_empty_list:
+				return 0;
+			
+			case Value_boolean:
+				return v.number();
+			
+			case Value_number:
+				return v;
+		}
+	}
+	
+	static
 	Value coerce_to_string( const Value& v )
 	{
 		return make_string( v, Stringified_to_print );
@@ -128,7 +147,6 @@ namespace vlib
 	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
 	DEFINE_TYPE_INFO( function );
-	DEFINE_TYPE_INFO( integer  );
 	DEFINE_TYPE_INFO( type     );
 	
 	const type_info boolean_vtype =
@@ -136,6 +154,14 @@ namespace vlib
 		"boolean",
 		&assign_to_boolean,
 		&coerce_to_boolean,
+		0,
+	};
+	
+	const type_info integer_vtype =
+	{
+		"integer",
+		&assign_to_integer,
+		&coerce_to_integer,
 		0,
 	};
 	

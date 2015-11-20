@@ -1763,3 +1763,13 @@ $ vc 'var x (bool) := 1337; x'
 
 $ vc 'var x (string) := area, 51'
 1 >= '"area51"'
+
+%
+
+$ vc 'int()'
+1 >= 0
+
+%
+
+$ vc 'var x (int) := true'
+1 >= 1
