@@ -73,6 +73,7 @@ namespace vlib
 		{ Precedence_list, Op_list },
 		
 		{ Precedence_assignment, Op_duplicate   },
+		{ Precedence_assignment, Op_approximate },
 		{ Precedence_assignment, Op_increase_by },
 		{ Precedence_assignment, Op_decrease_by },
 		{ Precedence_assignment, Op_multiply_by },

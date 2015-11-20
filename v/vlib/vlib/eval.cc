@@ -68,6 +68,13 @@ namespace vlib
 			return right;
 		}
 		
+		if ( op == Op_approximate )
+		{
+			sym->assign( right, true );
+			
+			return sym->get();
+		}
+		
 		Value& left = modify_symbol( sym );
 		
 		if ( is_undefined( left ) )

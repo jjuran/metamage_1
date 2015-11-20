@@ -1753,3 +1753,13 @@ $ vc 'const raven = string % "nevermore"; raven()'
 
 $ vc 'const to_string = string'
 1 >= string
+
+%
+
+$ vc 'var x (bool) := 1337; x'
+1 >= true
+
+%
+
+$ vc 'var x (string) := area, 51'
+1 >= '"area51"'

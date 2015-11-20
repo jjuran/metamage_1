@@ -105,6 +105,10 @@ namespace vlib
 		{ "/",   Token_slash        },
 		{ "/=",  Token_slash_equals },
 		
+		// 0 - 9
+		
+		{ ":=",  Token_colon_equals },
+		
 		{ ";",   Token_semicolon },
 		{ "<",   Token_lt        },
 		{ "<=",  Token_lt_equals },

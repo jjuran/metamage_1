@@ -50,6 +50,8 @@ namespace vlib
 		{ Token_comma,       Op_list      },
 		{ Token_equals,      Op_duplicate },
 		
+		{ Token_colon_equals,    Op_approximate },
+		
 		{ Token_plus_equals,     Op_increase_by },
 		{ Token_minus_equals,    Op_decrease_by },
 		{ Token_asterisk_equals, Op_multiply_by },
