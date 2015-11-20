@@ -2591,3 +2591,18 @@ $ vc 'sha256 sha256 ""'
 
 $ vc 'bool data(), bool data byte()'
 1 >= '(false, true)'
+
+%
+
+$ vc 'int "010"'
+1 >= '10'
+
+%
+
+$ vc 'int "-010"'
+1 >= '-10'
+
+%
+
+$ vc 'int "-0"'
+1 >= '0'

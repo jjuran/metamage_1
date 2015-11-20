@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include <string.h>
 
+// plus
+#include "plus/decimal.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
@@ -191,6 +194,9 @@ namespace vlib
 			
 			case Value_number:
 				return v;
+			
+			case Value_string:
+				return decode_decimal( v.string() );
 		}
 	}
 	
