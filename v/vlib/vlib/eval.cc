@@ -165,7 +165,7 @@ namespace vlib
 			
 			const Value result = eval_assignment( left.sym(), op, right );
 			
-			if ( is_symbol_declarator( left ) )
+			if ( is_symbol_declarator( left )  ||  op != Op_duplicate )
 			{
 				return result;
 			}
