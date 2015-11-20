@@ -50,7 +50,7 @@ namespace vlib
 			
 			void denote( const Value& vtype );
 			
-			void assign( const Value& v );
+			void assign( const Value& v, bool coercive = false );
 			
 			Value& deref();
 			

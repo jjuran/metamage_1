@@ -36,7 +36,7 @@ namespace vlib
 		its_vtype = vtype;
 	}
 	
-	void Symbol::assign( const Value& v )
+	void Symbol::assign( const Value& v, bool coercive )
 	{
 		if ( is_const()  &&  is_defined() )
 		{
@@ -45,7 +45,12 @@ namespace vlib
 		
 		if ( its_vtype.type() )
 		{
-			const Value coerced = its_vtype.typeinfo().assign( v );
+			const type_info& type = its_vtype.typeinfo();
+			
+			coerce_proc coerce = coercive  &&  type.coerce ? type.coerce
+			                                               : type.assign;
+			
+			const Value coerced = coerce( v );
 			
 			if ( ! coerced.type() )
 			{
