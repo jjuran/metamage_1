@@ -58,6 +58,7 @@ namespace vlib
 		Token_gt,
 		Token_gt_equals,
 		Token_comma,
+		Token_equals_gt,
 		Token_equals,
 		Token_colon_equals,
 		Token_plus_equals,

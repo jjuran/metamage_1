@@ -2379,3 +2379,43 @@ $ vc 'const empty (bool) := []; empty, bool ([])'
 
 $ vc 'const has_spam = {bool (_ map {if _ == "spam" then {_}})}; has_spam(["egg", "bacon"]), has_spam(["egg", "spam"])'
 1 >= '(false, true)'
+
+%
+
+$ vc '"this is a mapping" => true'
+1 >= '("this is a mapping" => true)'
+
+%
+
+$ vc 'typeof ("this is a mapping" => true)'
+1 >= '(string => boolean)'
+
+%
+
+$ vc 'const m = ("this is a mapping" => 1); m isa (str => bool), m isa (str => int)'
+1 >= '(false, true)'
+
+%
+
+$ vc 'const x (str => bool) = ("this is a type-checked mapping" => true)'
+1 >= '("this is a type-checked mapping" => true)'
+
+%
+
+$ vc '1 => 2 => 3'
+1 >= '(1 => (2 => 3))'
+
+%
+
+$ vc '1 => 2, 3 => 4'
+1 >= '((1 => 2), (3 => 4))'
+
+%
+
+$ vc 'const nombres ((int => str)[]) = [1 => "one", 2 => "two", 3 => "three"]'
+1 >= '[(1 => "one"), (2 => "two"), (3 => "three")]'
+
+%
+
+$ vc 'const nombres = [1 => "one", 2 => "two", 3 => "three"]; nombres[1]'
+1 >= '(2 => "two")'

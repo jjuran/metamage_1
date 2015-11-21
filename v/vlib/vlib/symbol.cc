@@ -45,6 +45,14 @@ namespace vlib
 		return true;
 	}
 	
+	static
+	bool is_mapping( Expr* tx, Expr* vx )
+	{
+		return      vx != NULL  &&  vx->op == Op_mapping
+		        &&  as_assigned( tx->left,  vx->left  ).type()
+		        &&  as_assigned( tx->right, vx->right ).type();
+	}
+	
 	Value as_assigned( const Value& type, const Value& v )
 	{
 		if ( Expr* expr = type.expr() )
@@ -52,6 +60,11 @@ namespace vlib
 			if ( expr->op == Op_subscript )
 			{
 				return is_homogenous_array( expr->left, v ) ? v : nothing;
+			}
+			
+			if ( expr->op == Op_mapping )
+			{
+				return is_mapping( expr, v.expr() ) ? v : nothing;
 			}
 			
 			Value result = as_assigned( expr->left, v );

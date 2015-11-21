@@ -362,6 +362,12 @@ namespace vlib
 			return Value( etc_vtype, Op_subscript, empty_list );
 		}
 		
+		if ( expr->op == Op_mapping )
+		{
+			return Value( v_typeof( expr->left  ), expr->op,
+			              v_typeof( expr->right ) );
+		}
+		
 		Value result = Value( empty_list, v_typeof( expr->left ) );
 		
 		Expr* r = result.expr();

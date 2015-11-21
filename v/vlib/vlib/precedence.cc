@@ -29,6 +29,7 @@ namespace vlib
 		Precedence_map,             // map
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
+		Precedence_mapping,         // =>
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
 		Precedence_conditional,     // if then else while do
@@ -87,6 +88,8 @@ namespace vlib
 		{ Precedence_equality, Op_equal   },
 		{ Precedence_equality, Op_unequal },
 		
+		{ Precedence_mapping, Op_mapping },
+		
 		{ Precedence_list, Op_list },
 		
 		{ Precedence_assignment, Op_duplicate   },
@@ -129,7 +132,7 @@ namespace vlib
 	
 	static bool is_right_associative( op_type op )
 	{
-		return op <= Op_empower  ||  (op >= Op_list  &&  op < Op_end);
+		return op <= Op_empower  ||  (op >= Op_mapping  &&  op < Op_end);
 	}
 	
 	bool decreasing_op_precedence( op_type left, op_type right )
