@@ -117,6 +117,8 @@ namespace plus
 			int_t extent_top() const;
 			int_t extent_bottom() const;
 			
+			unsigned long long long_bottom() const;
+			
 			void extend( size_t n );
 			
 			void shrink_to_fit();
