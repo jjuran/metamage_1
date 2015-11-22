@@ -223,6 +223,8 @@ namespace plus
 			
 			sign_t sign() const  { return its.sign; }
 			
+			template < class Int >  bool demotes_to() const;
+			
 			void invert()
 			{
 				its.sign = -its.sign;
@@ -239,6 +241,79 @@ namespace plus
 			
 			unsigned long area() const;
 	};
+	
+	template < class Int >
+	inline
+	bool ibox::demotes_to() const
+	{
+		const bool smaller_type = sizeof (Int) < sizeof (int_t);
+		const bool larger_type  = sizeof (Int) > sizeof (int_t);
+		const int limbs_per_int = sizeof (Int) / sizeof (int_t);
+		
+		/*
+			First cut:  Reject an integer with more limbs than the target
+			type has.
+		*/
+		
+		if ( larger_type  &&  its.size > limbs_per_int )
+		{
+			return false;
+		}
+		
+		if ( ! larger_type  &&  has_extent() )
+		{
+			return false;
+		}
+		
+		/*
+			Second cut:  Reject a negative integer if the target type is
+			unsigned.
+		*/
+		
+		const Int signed_min = Int( 1 ) << (sizeof (Int) * 8 - 1);
+		const Int signed_max = Int( ~signed_min );
+		
+		const bool is_signed = Int( -1 ) < 0;
+		
+		if ( ! is_signed  &&  sign() < 0 )
+		{
+			return false;
+		}
+		
+		/*
+			Third cut:  Reject an integer that overflows a large signed type.
+			Accept a large result that hasn't been rejected.
+		*/
+		
+		if ( larger_type )
+		{
+			if ( ! is_signed  ||  its.size < limbs_per_int )
+			{
+				return true;
+			}
+			
+			// FIXME:  This assumes that Int is the same size as long long.
+			unsigned long long result = *(unsigned long long*) data();
+			
+			return result - (sign() < 0) <= signed_max;
+		}
+		
+		/*
+			Fourth cut:  Reject an integer that overflows the target type.
+		*/
+		
+		if ( is_signed )
+		{
+			return its.integer - (sign() < 0) <= signed_max;
+		}
+		
+		if ( smaller_type )
+		{
+			return its.integer <= Int( -1 );
+		}
+		
+		return true;
+	}
 	
 	math::integer::cmp_t abs_compare( const ibox& a, const ibox& b );
 	math::integer::cmp_t     compare( const ibox& a, const ibox& b );
