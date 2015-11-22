@@ -78,6 +78,9 @@ namespace plus
 			
 			int_t clipped() const  { return box.bottom(); }
 			
+			template < class Int >  Int  clipped_to() const;
+			template < class Int >  bool demotes_to() const;
+			
 			void halve()   { box.halve();  }
 			void invert()  { box.invert(); }
 			
@@ -110,6 +113,20 @@ namespace plus
 			integer& modulo_by( const integer& modulus );
 	};
 	
+	
+	template < class Int >
+	inline
+	Int integer::clipped_to() const
+	{
+		return box.clipped_to< Int >();
+	}
+	
+	template < class Int >
+	inline
+	bool integer::demotes_to() const
+	{
+		return box.demotes_to< Int >();
+	}
 	
 	inline
 	void swap( integer& a, integer& b )

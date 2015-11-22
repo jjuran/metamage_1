@@ -152,6 +152,25 @@ namespace plus
 		return *littlest;
 	}
 	
+	unsigned long long ibox::long_bottom() const
+	{
+		if ( ! has_extent() )
+		{
+			return its.integer;
+		}
+		
+		ASSERT( sizeof (int_t) * 2 >= sizeof (unsigned long long) );
+		
+		unsigned long long result = 0;
+		
+		const bool le = iota::is_little_endian();
+		
+		limb_t const* littlest = le ? its.pointer
+		                            : its.pointer + its.size - 2;
+		
+		return *(const unsigned long long*) littlest;
+	}
+	
 	void ibox::extend( size_t n )
 	{
 		if ( n < its.size )
