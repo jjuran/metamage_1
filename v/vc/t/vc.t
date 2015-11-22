@@ -1863,3 +1863,8 @@ $ vc '(int, str) == (int, str), (int, str) == (str, int)'
 
 $ vc 'typeof typeof == function'
 1 >= true
+
+%
+
+$ vc '(size_t == u32) != (size_t == u64)'
+1 >= true

@@ -5,6 +5,9 @@
 
 #include "vlib/init.hh"
 
+// Standard C
+#include <stddef.h>
+
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/functions.hh"
@@ -52,6 +55,9 @@ namespace vlib
 		define( "u16",      u16_vtype      );
 		define( "i8",       i8_vtype       );
 		define( "u8",       u8_vtype       );
+		
+		if ( sizeof (size_t) == 4 )  define( "size_t", u32_vtype );
+		if ( sizeof (size_t) == 8 )  define( "size_t", u64_vtype );
 		
 		define( proc_abs    );
 		define( proc_area   );
