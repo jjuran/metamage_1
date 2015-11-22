@@ -173,15 +173,15 @@ static void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |
-		= user code             =  x8
+		= user code             =  x10
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
-		|                       |  64K
-	80K	+-----------------------+
+		|                       |  80K
+	96K	+-----------------------+
 		
 	104	+-----------------------+
 		|                       |  screen memory begins 0x0001A700  (1792 bytes after)
@@ -206,7 +206,7 @@ static void dump_and_raise( const v68k::processor_state& s, int signo )
 */
 
 const uint32_t params_max_size = 4096;
-const uint32_t code_max_size   = 64 * 1024;
+const uint32_t code_max_size   = 80 * 1024;
 
 const uint32_t os_address   = 2048;
 const uint32_t boot_address = 7168;
