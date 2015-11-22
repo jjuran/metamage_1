@@ -44,6 +44,14 @@ namespace vlib
 		define( "string",   string_vtype   );
 		define( "str",      string_vtype   );
 		define( "type",     type_vtype     );
+		define( "i64",      i64_vtype      );
+		define( "u64",      u64_vtype      );
+		define( "i32",      i32_vtype      );
+		define( "u32",      u32_vtype      );
+		define( "i16",      i16_vtype      );
+		define( "u16",      u16_vtype      );
+		define( "i8",       i8_vtype       );
+		define( "u8",       u8_vtype       );
 		
 		define( proc_abs    );
 		define( proc_area   );
