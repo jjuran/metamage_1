@@ -225,6 +225,7 @@ namespace plus
 			
 			sign_t sign() const  { return its.sign; }
 			
+			template < class Int >  Int  clipped_to() const;
 			template < class Int >  bool demotes_to() const;
 			
 			void invert()
@@ -243,6 +244,36 @@ namespace plus
 			
 			unsigned long area() const;
 	};
+	
+	template < class Int >
+	inline
+	Int ibox::clipped_to() const
+	{
+		const bool larger_type = sizeof (Int) > sizeof (int_t);
+		
+		if ( larger_type )
+		{
+			unsigned long long x = long_bottom();
+			
+			if ( sign() < 0 )
+			{
+				x = -x;
+			}
+			
+			return Int( x );
+		}
+		else
+		{
+			int_t x = bottom();
+			
+			if ( sign() < 0 )
+			{
+				x = -x;
+			}
+			
+			return Int( x );
+		}
+	}
 	
 	template < class Int >
 	inline
