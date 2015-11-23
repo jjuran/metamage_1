@@ -164,7 +164,7 @@ namespace vlib
 	template <>  struct stdint< u, 64 > { typedef uint64_t type; };
 	
 	static
-	unsigned long long coerced_int( const Value& v )
+	uint64_t coerced_int( const Value& v )
 	{
 		const Value coerced = coerce_to_integer( v );
 		
