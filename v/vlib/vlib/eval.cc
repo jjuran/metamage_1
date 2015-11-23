@@ -9,6 +9,7 @@
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
 #include "vlib/symbol_table.hh"
+#include "vlib/types.hh"
 
 
 namespace vlib
@@ -98,6 +99,32 @@ namespace vlib
 		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
 		{
 			DOMAIN_ERROR( "division by zero" );
+		}
+		
+		const Value& vtype = sym->vtype();
+		
+		if ( vtype.type() == Value_base_type )
+		{
+			if ( &vtype.typeinfo() != &integer_vtype )
+			{
+				Value result;
+				
+				switch ( op )
+				{
+					case Op_increase_by:  result = a + b;  break;
+					case Op_decrease_by:  result = a - b;  break;
+					case Op_multiply_by:  result = a * b;  break;
+					case Op_divide_by:    result = a / b;  break;
+					case Op_remain_by:    result = a % b;  break;
+			
+					default:
+						INTERNAL_ERROR( "no such update assignment operator" );
+				}
+				
+				sym->assign( result );
+				
+				return left;
+			}
 		}
 		
 		switch ( op )
