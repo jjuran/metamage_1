@@ -59,6 +59,9 @@ namespace vlib
 			case Value_function:
 				return &get_proc( a ) == &get_proc( b );
 			
+			case Value_base_type:
+				return &a.typeinfo() == &b.typeinfo();
+			
 			case Value_pair:
 				{
 					Expr& ax = *get_expr( a );
@@ -392,6 +395,9 @@ namespace vlib
 				
 				case Value_function:
 					SYNTAX_ERROR( "operator not defined for functions" );
+				
+				case Value_base_type:
+					SYNTAX_ERROR( "operator not defined for types" );
 				
 				case Value_pair:
 					SYNTAX_ERROR( "operator not defined for lists" );

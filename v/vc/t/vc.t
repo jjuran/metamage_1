@@ -1838,3 +1838,28 @@ $ vc 'var x (u8) := -1'
 
 $ vc 'var x (u64) := -1; x + 1 == 2^64'
 1 >= true
+
+%
+
+$ vc 'str == string'
+1 >= true
+
+%
+
+$ vc 'i8 == u8, u8 == bool, i32 == int'
+1 >= '(false, false, false)'
+
+%
+
+$ vc 'int != (int, int)'
+1 >= true
+
+%
+
+$ vc '(int, str) == (int, str), (int, str) == (str, int)'
+1 >= '(true, false)'
+
+%
+
+$ vc 'typeof typeof == function'
+1 >= true
