@@ -9,6 +9,9 @@
 #include "iota/char_types.hh"
 
 
+#pragma exceptions off
+
+
 #define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
 #define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
 

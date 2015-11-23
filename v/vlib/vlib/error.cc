@@ -13,6 +13,9 @@
 #include "must/write.h"
 
 
+#pragma exceptions off
+
+
 namespace vlib
 {
 	
