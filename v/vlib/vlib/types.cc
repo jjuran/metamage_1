@@ -166,11 +166,7 @@ namespace vlib
 	static
 	uint64_t coerced_int( const Value& v )
 	{
-		const Value coerced = coerce_to_integer( v );
-		
-		const plus::integer& i = coerced.number();
-		
-		return i.clipped_to< uint64_t >();
+		return coerce_to_integer( v ).number().clipped_to< uint64_t >();
 	}
 	
 	#define DEFINE_ADAPT_TO_INT( s, n )       \
