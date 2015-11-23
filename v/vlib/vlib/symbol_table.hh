@@ -56,6 +56,8 @@ namespace vlib
 			
 			const Value& get() const  { return its_value; }
 			
+			const Value& vtype() const  { return its_vtype; }
+			
 			bool is_const() const  { return its_type == Symbol_const; }
 			bool is_var()   const  { return its_type != Symbol_const; }
 			
