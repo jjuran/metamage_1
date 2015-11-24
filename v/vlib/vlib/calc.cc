@@ -300,6 +300,28 @@ namespace vlib
 		return result;
 	}
 	
+	static inline
+	const type_info& get_typeinfo( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->left.typeinfo();
+		}
+		
+		return v.typeinfo();
+	}
+	
+	static inline
+	const Value* get_default_arg( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return &expr->right;
+		}
+		
+		return NULL;
+	}
+	
 	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
@@ -313,14 +335,22 @@ namespace vlib
 			TYPE_ERROR( "too many arguments" );
 		}
 		
-		const type_info& typeinfo = first( prototype ).typeinfo();
+		const Value& type = first( prototype );
+		
+		const type_info& typeinfo = get_typeinfo( type );
 		
 		if ( &typeinfo == &etc_vtype )
 		{
 			return arguments;
 		}
 		
-		const Value r = typeinfo.assign( first( arguments ) );
+		const Value& arg = first( arguments );
+		
+		const Value* default_arg = get_default_arg( type );
+		
+		const bool defaulted = is_empty( arg )  &&  default_arg != NULL;
+		
+		const Value r = typeinfo.assign( defaulted ? *default_arg : arg );
 		
 		if ( r.type() == Value_nothing )
 		{
