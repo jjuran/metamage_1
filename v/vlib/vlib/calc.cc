@@ -30,6 +30,20 @@ namespace vlib
 		
 		return x;
 	}
+	static
+	bool isa( const Value& v, const Value& t )
+	{
+		if ( t.type() != Value_base_type )
+		{
+			// TODO:  Support type lists.
+			
+			TYPE_ERROR( "`isa` right operand must be a type" );
+		}
+		
+		const type_info& typeinfo = t.typeinfo();
+		
+		return typeinfo.assign( v ).type();
+	}
 	
 	static
 	bool equal_atoms( const Value& a, const Value& b )
@@ -341,6 +355,7 @@ namespace vlib
 			case Op_named_unary:
 				return call_function( left, right );
 			
+			case Op_isa:      return isa( left, right );
 			case Op_equal:    return equal( left, right );
 			case Op_unequal:  return ! equal( left, right );
 			

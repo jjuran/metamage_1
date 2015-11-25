@@ -1868,3 +1868,13 @@ $ vc 'typeof typeof == function'
 
 $ vc '(size_t == u32) != (size_t == u64)'
 1 >= true
+
+%
+
+$ vc '128 isa u8, 128 isa i8'
+1 >= '(true, false)'
+
+%
+
+$ vc 'i32 isa int, i32() isa u8, i32 isa type, i32 isa function'
+1 >= '(false, true, true, true)'

@@ -40,6 +40,7 @@ namespace vlib
 		Op_add,
 		Op_subtract,
 		Op_repeat,  // multiply list
+		Op_isa,
 		Op_equal,
 		Op_unequal,
 		Op_lt,

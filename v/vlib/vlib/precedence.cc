@@ -67,6 +67,7 @@ namespace vlib
 		{ Precedence_inequality, Op_gt  },
 		{ Precedence_inequality, Op_gte },
 		
+		{ Precedence_equality, Op_isa     },
 		{ Precedence_equality, Op_equal   },
 		{ Precedence_equality, Op_unequal },
 		
