@@ -33,6 +33,7 @@ namespace vlib
 		Value_symbol,
 		Value_base_type,
 		Value_boolean,
+		Value_byte,
 		Value_number,
 		Value_string,
 		Value_function,
@@ -53,6 +54,12 @@ namespace vlib
 			friend void pair_destructor( void* pointer );
 		
 		public:
+			enum byte
+			{
+				byte_min = 0,
+				byte_max = 255,
+			};
+			
 			Value( value_type type = value_type() ) : its_box( type )
 			{
 			}
@@ -68,6 +75,12 @@ namespace vlib
 		#define IBOX( i )  plus::ibox( i ).move()
 			
 			Value( bool b ) : its_box( IBOX( (long) b ), Value_boolean )
+			{
+			}
+			
+			Value( byte c )
+			:
+				its_box( IBOX( (unsigned long) c ), Value_byte )
 			{
 			}
 			

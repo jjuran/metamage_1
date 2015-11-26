@@ -64,6 +64,7 @@ namespace vlib
 				return true;
 			
 			case Value_boolean:
+			case Value_byte:
 			case Value_number:
 				return get_int( a ) == get_int( b );
 			

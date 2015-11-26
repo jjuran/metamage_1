@@ -44,6 +44,17 @@ namespace vlib
 	}
 	
 	static
+	Value assign_to_byte( const Value& v )
+	{
+		if ( v.type() == Value_byte )
+		{
+			return v;
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value assign_to_integer( const Value& v )
 	{
 		if ( v.type() == Value_number )
@@ -120,6 +131,23 @@ namespace vlib
 	}
 	
 	static
+	Value coerce_to_byte( const Value& v )
+	{
+		switch ( v.type() )
+		{
+			default:
+				INTERNAL_ERROR( "invalid type in coerce_to_byte()" );
+			
+			case Value_empty_list:
+				return Value::byte();
+			
+			case Value_byte:
+			case Value_number:
+				return Value::byte( uint8_t( v.number().clipped() * v.number().sign() ) );
+		}
+	}
+	
+	static
 	Value coerce_to_integer( const Value& v )
 	{
 		switch ( v.type() )
@@ -131,6 +159,7 @@ namespace vlib
 				return 0;
 			
 			case Value_boolean:
+			case Value_byte:
 				return v.number();
 			
 			case Value_number:
@@ -236,6 +265,14 @@ namespace vlib
 		0,
 	};
 	
+	const type_info byte_vtype =
+	{
+		"byte",
+		&assign_to_byte,
+		&coerce_to_byte,
+		0,
+	};
+	
 	const type_info integer_vtype =
 	{
 		"integer",
@@ -308,6 +345,7 @@ namespace vlib
 			
 			case Value_base_type:  return type_vtype;
 			case Value_boolean:    return boolean_vtype;
+			case Value_byte:       return byte_vtype;
 			case Value_number:     return integer_vtype;
 			case Value_string:     return string_vtype;
 			
