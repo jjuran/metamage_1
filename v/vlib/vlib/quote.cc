@@ -22,11 +22,11 @@ namespace vlib
 {
 	
 	static
-	char decode_octal_escape( char c, const char*& p )
+	char decode_octal_escape( char c, const char*& p, char quote )
 	{
 		c -= '0';
 		
-		if ( c == 0  &&  *p == '"' )
+		if ( c == 0  &&  *p == quote )
 		{
 			// `\0` is allowed at the end of a string.
 			return c;
@@ -200,7 +200,7 @@ namespace vlib
 						SYNTAX_ERROR( "invalid numeric escape sequence" );
 					}
 					
-					c = decode_octal_escape( c, p );
+					c = decode_octal_escape( c, p, '"' );
 				}
 			}
 			
