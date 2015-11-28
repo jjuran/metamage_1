@@ -231,6 +231,29 @@ namespace vlib
 			return *q == '(' ? Token_bareword_function : Token_bareword;
 		}
 		
+		if ( *p == '\'' )
+		{
+			++p;
+			
+			while ( const char c = *p++ )
+			{
+				if ( c == '\'' )
+				{
+					return Token_byte;
+				}
+				
+				if ( c == '\\' )
+				{
+					if ( *p++ == '\0' )
+					{
+						break;
+					}
+				}
+			}
+			
+			return Token_invalid;
+		}
+		
 		if ( *p == '"' )
 		{
 			++p;

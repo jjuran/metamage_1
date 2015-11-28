@@ -225,6 +225,10 @@ namespace vlib
 				fold_ops_and_add( Op_function );
 				break;
 			
+			case Token_byte:
+				receive_value( Value::byte( unquote_byte( token.text ) ) );
+				break;
+			
 			case Token_string:
 				receive_value( unquote_string( token.text ) );
 				break;

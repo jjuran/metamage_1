@@ -125,6 +125,80 @@ namespace vlib
 		       | decoded_hex_digit( c4 ) <<  0;
 	}
 	
+	static
+	char decode_escaped_byte( const char*& p )
+	{
+		using iota::is_alpha;
+		using iota::is_digit;
+		
+		char c = *p++;
+		
+		if ( is_alpha( c ) )
+		{
+			switch ( c )
+			{
+				case 'a':  c = '\a';  break;
+				case 'b':  c = '\b';  break;
+				case 't':  c = '\t';  break;
+				case 'n':  c = '\n';  break;
+				case 'v':  c = '\v';  break;
+				case 'f':  c = '\f';  break;
+				case 'r':  c = '\r';  break;
+				
+				case 'x':
+					c = decode_hex_escape( p );
+					break;
+				
+				default:
+					SYNTAX_ERROR( "invalid escape sequence" );
+			}
+		}
+		else if ( is_digit( c ) )
+		{
+			if ( c > '3' )
+			{
+				SYNTAX_ERROR( "invalid numeric escape sequence" );
+			}
+			
+			c = decode_octal_escape( c, p, '\'' );
+		}
+		
+		return c;
+	}
+	
+	unsigned char unquote_byte( const plus::string& s )
+	{
+		typedef plus::string::size_type size_t;
+		
+		const size_t size = s.size();
+		
+		if ( size == 2 )
+		{
+			SYNTAX_ERROR( "invalid empty byte literal" );
+		}
+		
+		const char* p = s.c_str() + 1;
+		
+		if ( size == 3 )
+		{
+			return *p;
+		}
+		
+		if ( *p++ != '\\' )
+		{
+			SYNTAX_ERROR( "multibyte byte literals not supported" );
+		}
+		
+		char c = decode_escaped_byte( p );
+		
+		if ( *p != '\'' )
+		{
+			SYNTAX_ERROR( "multibyte byte literals not supported" );
+		}
+		
+		return c;
+	}
+	
 	plus::string unquote_escaped_string( const plus::string& s )
 	{
 		plus::string result;
