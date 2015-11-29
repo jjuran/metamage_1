@@ -73,6 +73,14 @@ namespace vlib
 			case Value_empty_list:  // "()", ""
 				return 2 * use_parens( mode );
 			
+			case Value_byte:
+				if ( use_quotes( mode ) )
+				{
+					return quote_byte( value.number().clipped() ).size();
+				}
+				
+				return 1;
+			
 			case Value_string:
 				if ( use_quotes( mode ) )
 				{
@@ -145,6 +153,16 @@ namespace vlib
 				{
 					p = (char*) mempcpy( p, STR_LEN( "()" ) );
 				}
+				
+				return p;
+			
+			case Value_byte:
+				if ( use_quotes( mode ) )
+				{
+					return mempcpy( p, quote_byte( value.number().clipped() ) );
+				}
+				
+				*p++ = value.number().clipped();
 				
 				return p;
 			

@@ -22,6 +22,7 @@ namespace vlib
 		Token_digits,
 		Token_unbin,
 		Token_unhex,
+		Token_byte,
 		Token_string,
 		Token_string_escaped,
 		Token_bareword,

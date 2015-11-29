@@ -1898,3 +1898,48 @@ $ vc 'typeof c_str ""'
 
 $ vc '"\0" isa c_str, "\000foo" isa c_str, "bar\0" isa c_str, "baz0" isa c_str'
 1 >= '(false, false, false, true)'
+
+%
+
+$ vc byte
+1 >= byte
+
+%
+
+$ vc 'typeof byte'
+1 >= type
+
+%
+
+$ vc 'byte(), byte 10, byte 39, byte 65, byte 92, byte 255'
+1 >= "('\x00', '\n', '\'', 'A', '\\', '\xff')"
+
+%
+
+$ vc 'typeof byte(), int byte 128'
+1 >= '(byte, 128)'
+
+%
+
+$ vc 'byte 256 == byte 0'
+1 >= true
+
+%
+
+$ vc 'str (byte 65, byte 66, byte 67)'
+1 >= '"ABC"'
+
+%
+
+$ vc 'str (byte 0xf0, byte 0x9f, byte 0x92, byte 0xa9) == "\u{1f4a9}"'
+1 >= true
+
+%
+
+$ vc "typeof '0', int '0'"
+1 >= '(byte, 48)'
+
+%
+
+$ vc "'A', '\n', '\\\\', '\\'', '\0', '\123', '\xFF'"
+1 >= "('A', '\n', '\\', '\'', '\x00', 'S', '\xff')"

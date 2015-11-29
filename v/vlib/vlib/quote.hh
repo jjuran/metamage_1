@@ -13,6 +13,8 @@
 namespace vlib
 {
 	
+	unsigned char unquote_byte( const plus::string& s );
+	
 	inline
 	plus::string unquote_string( const plus::string& s )
 	{
@@ -20,6 +22,8 @@ namespace vlib
 	}
 	
 	plus::string unquote_escaped_string( const plus::string& s );
+	
+	plus::string quote_byte( unsigned char c );
 	
 	plus::string quote_string( const plus::string& s );
 	
