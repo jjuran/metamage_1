@@ -117,6 +117,7 @@ namespace vlib
 			case Value_boolean:
 				return v;
 			
+			case Value_byte:
 			case Value_number:
 				return ! v.number().is_zero();
 			
