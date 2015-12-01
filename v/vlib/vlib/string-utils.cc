@@ -40,11 +40,56 @@ namespace vlib
 	}
 	
 	
-	static inline
+	static
 	const char* reproduce_op( op_type op )
 	{
-		// This is the only one, for now.
-		return " % ";
+		switch ( op )
+		{
+			case Op_subscript:  return "\xdd" "[";  // '[' <-> ']' + 0x80
+			
+			case Op_function:     return "";
+			case Op_named_unary:  return " ";
+			
+			case Op_member:  return ".";
+			
+			case Op_empower:  return "^";
+			
+			case Op_unary_plus:   return "+";
+			case Op_unary_minus:  return "-";
+			case Op_unary_count:  return "(+) ";
+			
+			case Op_multiply:  return " * ";
+			case Op_divide:    return " / ";
+			case Op_percent:   return " % ";
+			case Op_modulo:    return " mod ";
+			
+			case Op_add:       return " + ";
+			case Op_subtract:  return " - ";
+			
+			case Op_repeat:  return " (*) ";
+			
+			case Op_lt:  return " < ";
+			case Op_gt:  return " > ";
+			
+			case Op_lte:  return " <= ";
+			case Op_gte:  return " >= ";
+			
+			case Op_isa:       return " isa ";
+			case Op_equal:     return " == ";
+			case Op_unequal:   return " != ";
+			
+			case Op_duplicate:    return " = ";
+			case Op_approximate:  return " := ";
+			case Op_increase_by:  return " += ";
+			case Op_decrease_by:  return " -= ";
+			case Op_multiply_by:  return " *= ";
+			case Op_divide_by:    return " /= ";
+			case Op_percent_by:   return " %= ";
+			
+			case Op_end:  return "; ";
+			
+			default:  return " ?? ";
+		}
 	}
 	
 	static inline
