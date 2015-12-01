@@ -129,6 +129,7 @@ namespace vlib
 		
 		switch ( get_type( a ) )
 		{
+			case Value_byte:
 			case Value_number:
 				return compare( get_int( a ), get_int( b ) );
 			
