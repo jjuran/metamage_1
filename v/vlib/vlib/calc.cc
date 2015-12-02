@@ -12,6 +12,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
+#include "vlib/types.hh"
 
 
 namespace vlib
@@ -300,11 +301,53 @@ namespace vlib
 	}
 	
 	static
+	Value apply_prototype( const Value& prototype, const Value& arguments )
+	{
+		if ( is_empty( prototype ) )
+		{
+			if ( is_empty( arguments ) )
+			{
+				return arguments;
+			}
+			
+			TYPE_ERROR( "too many arguments" );
+		}
+		
+		const type_info& typeinfo = first( prototype ).typeinfo();
+		
+		if ( &typeinfo == &etc_vtype )
+		{
+			return arguments;
+		}
+		
+		const Value r = typeinfo.assign( first( arguments ) );
+		
+		if ( r.type() == Value_nothing )
+		{
+			TYPE_ERROR( "arguments don't match function prototype" );
+		}
+		
+		const Value remaining = apply_prototype( rest( prototype ),
+		                                         rest( arguments ) );
+		
+		return is_empty( remaining ) ? r : Value( r, remaining );
+	}
+	
+	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
 		if ( get_type( f ) == Value_function )
 		{
-			return get_proc( f ).addr( arguments );
+			const proc_info& proc = f.proc();
+			
+			if ( const Value* prototype = proc.prototype )
+			{
+				const Value args = apply_prototype( *prototype, arguments );
+				
+				return proc.addr( args );
+			}
+			
+			return proc.addr( arguments );
 		}
 		
 		if ( f.type() == Value_base_type )

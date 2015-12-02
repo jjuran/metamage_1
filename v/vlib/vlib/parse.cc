@@ -28,6 +28,7 @@
 #include "vlib/quote.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/token.hh"
+#include "vlib/types.hh"
 
 
 namespace vlib
@@ -218,6 +219,10 @@ namespace vlib
 			
 			case Token_parens:
 				receive_value( empty_list );
+				break;
+			
+			case Token_dot_x3:
+				receive_value( etc_vtype );
 				break;
 			
 			case Token_bin:

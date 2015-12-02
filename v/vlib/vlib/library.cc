@@ -21,6 +21,7 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/types.hh"
 
 
 namespace vlib
@@ -29,16 +30,6 @@ namespace vlib
 	static
 	Value v_getenv( const Value& v )
 	{
-		if ( get_type( v ) != Value_string )
-		{
-			TYPE_ERROR( "getenv() argument must be a string" );
-		}
-		
-		if ( strlen( get_str( v ).c_str() ) != get_str( v ).size() )
-		{
-			TYPE_ERROR( "getenv() argument must not contain NUL bytes" );
-		}
-		
 		if ( const char* var = getenv( get_str( v ).c_str() ) )
 		{
 			return var;
@@ -60,18 +51,15 @@ namespace vlib
 	static
 	Value v_time( const Value& v )
 	{
-		if ( ! is_empty( v ) )
-		{
-			TYPE_ERROR( "time takes no arguments" );
-		}
-		
 		const time_t t = time( NULL );
 		
 		return t;
 	}
 	
-	const proc_info proc_getenv = { &v_getenv, "getenv" };
-	const proc_info proc_print  = { &v_print,  "print"  };
-	const proc_info proc_time   = { &v_time,   "time"   };
+	static const Value c_str = c_str_vtype;
+	
+	const proc_info proc_getenv = { &v_getenv, "getenv", &c_str      };
+	const proc_info proc_print  = { &v_print,  "print",  NULL        };
+	const proc_info proc_time   = { &v_time,   "time",   &empty_list };
 	
 }

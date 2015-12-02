@@ -239,6 +239,14 @@ namespace vlib
 	DEFINE_ADAPT_TO_INT( i, 8  )
 	DEFINE_ADAPT_TO_INT( u, 8  )
 	
+	static
+	Value identity( const Value& v )
+	{
+		return v;
+	}
+	
+	const type_info etc_vtype = { "...", &identity, 0, 0 };
+	
 	#define DEFINE_TYPE_INFO( type )  \
 	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
@@ -322,11 +330,6 @@ namespace vlib
 	{
 		const Value& glue = first( args );
 		
-		if ( glue.type() != Value_string )
-		{
-			TYPE_ERROR( "join glue must be a string" );
-		}
-		
 		const Value pieces = rest( args );
 		
 		return join( glue.string(), pieces, count( pieces ) );
@@ -374,7 +377,9 @@ namespace vlib
 		return reversed( Value( v_typeof( *next ), reversed_result ) );
 	}
 	
-	const proc_info proc_join   = { &v_join,   "join"   };
-	const proc_info proc_typeof = { &v_typeof, "typeof" };
+	static const Value string_etc = Value( string_vtype, etc_vtype );
+	
+	const proc_info proc_join   = { &v_join,   "join",   &string_etc };
+	const proc_info proc_typeof = { &v_typeof, "typeof", NULL        };
 	
 }
