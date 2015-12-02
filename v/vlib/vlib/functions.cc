@@ -6,6 +6,9 @@
 #include "vlib/functions.hh"
 
 // plus
+#include "plus/string/mince.hh"
+
+// plus
 #include "plus/binary.hh"
 #include "plus/decode_binoid_int.hh"
 #include "plus/hexadecimal.hh"
@@ -13,6 +16,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
@@ -58,6 +62,22 @@ namespace vlib
 	}
 	
 	static
+	Value v_mince( const Value& v )
+	{
+		typedef plus::string::size_type size_t;
+		
+		const plus::string& string = first( v ).string();
+		const size_t        stride = rest ( v ).number().clipped();
+		
+		if ( stride == 0 )
+		{
+			DOMAIN_ERROR( "mince() stride must be positive" );
+		}
+		
+		return mince( string, stride );
+	}
+	
+	static
 	Value v_rep( const Value& v )
 	{
 		return make_string( v, Stringified_to_reproduce );
@@ -94,10 +114,14 @@ namespace vlib
 	static const Value integer = integer_vtype;
 	static const Value string  = string_vtype;
 	
+	static const Value u32_2 = Value( Value_pair, u32_vtype, Op_duplicate, 2 );
+	static const Value mince = Value( string, u32_2 );
+	
 	const proc_info proc_abs    = { &v_abs,   "abs",   &integer };
 	const proc_info proc_area   = { &v_area,  "area",  NULL     };
 	const proc_info proc_half   = { &v_half,  "half",  &integer };
 	const proc_info proc_hex    = { &v_hex,   "hex",   NULL     };
+	const proc_info proc_mince  = { &v_mince, "mince", &mince   };
 	const proc_info proc_rep    = { &v_rep,   "rep",   NULL     };
 	const proc_info proc_unbin  = { &v_unbin, "unbin", &string  };
 	const proc_info proc_unhex  = { &v_unhex, "unhex", &string  };
