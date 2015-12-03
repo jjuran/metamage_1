@@ -168,30 +168,30 @@ int main( int argc, char** argv )
 	
 	int i = 0;
 	
-	do
+	try
 	{
-		const char* expr = args[ i ];
-		
-		assign_symbol( pc, i + 1 );
-		
-		try
+		do
 		{
+			const char* expr = args[ i ];
+			
+			assign_symbol( pc, i + 1 );
+			
 			reproduce( parse_and_eval( expr ) );
+			
+			breathe();
+			
+			i = ::get_int( lookup_symbol( pc ) );
 		}
-		catch ( const std::bad_alloc& )
-		{
-			return FAIL( "Out of memory!" );
-		}
-		catch ( const plus::ibox::limb_count_overflow& )
-		{
-			return FAIL( "Max bigint size exceeded" );
-		}
-		
-		breathe();
-		
-		i = ::get_int( lookup_symbol( pc ) );
+		while ( i < argn );
 	}
-	while ( i < argn );
+	catch ( const std::bad_alloc& )
+	{
+		return FAIL( "Out of memory!" );
+	}
+	catch ( const plus::ibox::limb_count_overflow& )
+	{
+		return FAIL( "Max bigint size exceeded" );
+	}
 	
 	return 0;
 }
