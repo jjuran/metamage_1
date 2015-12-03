@@ -72,6 +72,8 @@ namespace vlib
 		define( proc_unbin  );
 		define( proc_unhex  );
 		
+		create_symbol( "_", Symbol_var );
+		
 		return true;
 	}
 	

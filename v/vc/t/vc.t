@@ -2013,3 +2013,13 @@ $ vc 'var x = 3; var f = {x^2}; var r = f, f();' 'x = 4; r, f()'
 
 $ vc 'var x = 3; {x += 1}(); x'
 1 >= 4
+
+%
+
+$ vc 'var id = {_}; id, id(), id("id"), id(id), id(1, 2, 3)'
+1 >= '({_}, "id", {_}, 1, 2, 3)'
+
+%
+
+$ vc 'var twice = {_ * 2}; twice, twice("twice"), twice(12)'
+1 >= '({_ * 2}, "twicetwice", 24)'

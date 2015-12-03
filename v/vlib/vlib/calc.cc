@@ -10,6 +10,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types.hh"
@@ -411,7 +412,17 @@ namespace vlib
 				const Value& invoke = expr->left;
 				const Value& block  = expr->right;
 				
-				return invoke.proc().addr( block );
+				const symbol_id underscore = locate_symbol( "_" );
+				
+				const Value previous = underscore->get();
+				
+				underscore->assign( arguments );
+				
+				const Value result = invoke.proc().addr( block );
+				
+				underscore->assign( previous );
+				
+				return result;
 			}
 			
 			const Value& method = expr->left;
