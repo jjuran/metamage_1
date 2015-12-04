@@ -129,11 +129,29 @@ namespace vlib
 		stack.push_back( op );
 	}
 	
+	static
+	bool ends_in_empty_statement( const std::vector< dyad >& stack )
+	{
+		if ( stack.empty() )
+		{
+			return false;  // Only happens if '}' wasn't balanced.
+		}
+		
+		return stack.back().op == Op_end  ||  stack.back().op == Op_braces;
+	}
+	
 	void Parser::pop( op_type op )
 	{
 		if ( expecting_value() )
 		{
-			SYNTAX_ERROR( "right delimiter where value expected" );
+			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
+			{
+				receive_value( Value_nothing );
+			}
+			else
+			{
+				SYNTAX_ERROR( "right delimiter where value expected" );
+			}
 		}
 		
 		fold_ops_and_add( Op_end );
