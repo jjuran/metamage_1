@@ -357,6 +357,31 @@ namespace vlib
 		}
 	}
 	
+	static
+	op_type last_open( const std::vector< dyad >& stack )
+	{
+		typedef std::vector< dyad >::const_iterator Iter;
+		
+		Iter begin = stack.begin();
+		Iter it    = stack.end();
+		
+		while ( --it >= begin )
+		{
+			switch ( it->op )
+			{
+				case Op_parens:
+				case Op_brackets:
+				case Op_braces:
+					return it->op;
+				
+				default:
+					break;
+			}
+		}
+		
+		return Op_none;
+	}
+	
 	Value Parser::parse( const char* p )
 	{
 		Value result;  // nothing
@@ -386,11 +411,17 @@ namespace vlib
 				
 				fold_ops_and_add( Op_end );
 				
-				value = stack.back().v;
-				
-				stack.pop_back();
-				
-				if ( ! stack.empty() )
+				if ( stack.size() == 1 )
+				{
+					value = stack.back().v;
+					
+					stack.pop_back();
+				}
+				else if ( last_open( stack ) == Op_braces )
+				{
+					continue;
+				}
+				else
 				{
 					SYNTAX_ERROR( "premature end of delimited group" );
 				}
