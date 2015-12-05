@@ -29,6 +29,7 @@ namespace vlib
 		{ Token_plus,  Op_unary_plus  },
 		{ Token_minus, Op_unary_minus },
 		{ Token_parens_plus, Op_unary_count },
+		{ Token_asterisk,    Op_unary_deref },
 	};
 	
 	const op_mapping when_value_acquired[] =

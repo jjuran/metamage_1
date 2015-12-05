@@ -19,6 +19,7 @@ namespace vlib
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_unary_count,
+		Op_unary_deref,
 		Op_duplicate,
 		Op_approximate,
 		Op_increase_by,

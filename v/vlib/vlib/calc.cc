@@ -147,6 +147,31 @@ namespace vlib
 	}
 	
 	static
+	Value deref_string( const plus::string& s )
+	{
+		typedef plus::string::size_type size_t;
+		
+		const size_t size = s.size();
+		
+		if ( size == 0 )
+		{
+			return Value_empty_list;
+		}
+		
+		const char* begin = s.data();
+		const char* it    = begin + size;
+		
+		Value result = Value::byte( *--it );
+		
+		while ( it > begin )
+		{
+			result = Value( Value::byte( *--it ), result );
+		}
+		
+		return result;
+	}
+	
+	static
 	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
@@ -179,9 +204,14 @@ namespace vlib
 					default:  break;
 				}
 				
+				SYNTAX_ERROR( "unary operator not defined for integers" );
 				break;
 			
 			case Value_string:
+				if ( op == Op_unary_deref )
+				{
+					return deref_string( v.string() );
+				}
 				SYNTAX_ERROR( "unary operator not defined for string values" );
 				break;
 			
