@@ -32,6 +32,7 @@ namespace vlib
 	// begin left-var
 		Op_move,
 		Op_swap,
+		Op_unary_refer,
 		Op_preinc,
 		Op_predec,
 		Op_postinc,
@@ -166,7 +167,7 @@ namespace vlib
 	inline
 	bool is_right_varop( op_type op )
 	{
-		return op >= Op_move  &&  op <= Op_swap;
+		return op >= Op_move  &&  op <= Op_unary_refer;
 	}
 	
 	inline

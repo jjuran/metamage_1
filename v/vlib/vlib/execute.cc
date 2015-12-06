@@ -562,6 +562,13 @@ namespace vlib
 				return short_circuit_logic( expr, bail_on_truth, stack );
 			}
 			
+			if ( expr->op == Op_unary_refer )
+			{
+				const Value& v = expr->right;
+				
+				return Value( Op_unary_refer, resolve_symbol_expr( v, stack ) );
+			}
+			
 			const Value* left  = &expr->left;
 			const Value* right = &expr->right;
 			

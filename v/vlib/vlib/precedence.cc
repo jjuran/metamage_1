@@ -79,6 +79,7 @@ namespace vlib
 		{ Precedence_unary_math, Op_unary_minus },
 		{ Precedence_unary_math, Op_unary_count },
 		{ Precedence_unary_math, Op_unary_deref },
+		{ Precedence_unary_math, Op_unary_refer },
 		
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },

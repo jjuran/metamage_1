@@ -77,6 +77,9 @@ namespace vlib
 			case Value_empty_list:
 				return true;
 			
+			case Value_symbol:
+				return a.sym() == b.sym();
+			
 			case Value_boolean:
 				return a.boolean() == b.boolean();
 			
