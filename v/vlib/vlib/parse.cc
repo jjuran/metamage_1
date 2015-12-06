@@ -413,12 +413,7 @@ namespace vlib
 			             eval_tree( expr->right ) );
 		}
 		
-		if ( tree.type() == Value_symbol )
-		{
-			return lookup_symbol( tree.sym() );
-		}
-		
-		return tree;
+		return eval( tree );
 	}
 	
 	Value parse( const char* p )
