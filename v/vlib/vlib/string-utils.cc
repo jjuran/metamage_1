@@ -235,9 +235,22 @@ namespace vlib
 		{
 			if ( expr->op != Op_list )
 			{
-				p = mempcpy( p, reproduce_op( expr->op ) );
+				const char* op_str = reproduce_op( expr->op );
+				const char* r = op_str;
+				
+				while ( int8_t( *r ) < 0 )
+				{
+					++r;
+				}
+				
+				p = mempcpy( p, r );
 				
 				p = make_string( p, expr->right, Stringified_to_reproduce );
+				
+				for ( const char* q = op_str;  q < r; )
+				{
+					*p++ = *q++ & 0x7f;
+				}
 				
 				*p++ = ')';
 				
