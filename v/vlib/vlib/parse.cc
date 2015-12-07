@@ -424,7 +424,12 @@ namespace vlib
 			{
 				if ( expecting_value() )
 				{
-					SYNTAX_ERROR( "premature end of expression" );
+					if ( ! ends_in_empty_statement( stack ) )
+					{
+						SYNTAX_ERROR( "premature end of expression" );
+					}
+					
+					receive_value( Value_nothing );
 				}
 				
 				fold_ops_and_add( Op_end );
