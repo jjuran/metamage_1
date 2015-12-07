@@ -2023,3 +2023,40 @@ $ vc 'var id = {_}; id, id(), id("id"), id(id), id(1, 2, 3)'
 
 $ vc 'var twice = {_ * 2}; twice, twice("twice"), twice(12)'
 1 >= '({_ * 2}, "twicetwice", 24)'
+
+%
+
+$ vc 'var x = 3; {x += 1; x}()'
+1 >= 4
+
+%
+
+$ vc 'var n = 0; var one_3n = {3 * _ + 1}; var f = {n += 1; one_3n (*) _ % 2, half (*) 1 - _ % 2}; var wonder = {(wonder (*) +(_ != 1), {n} (*) +(_ == 1))(f(_)(_))}; wonder 27'
+1 >= 112
+
+%
+
+$ vc 'var x = 3; {x += 1;}(); x'
+1 >= 4
+
+%
+
+$ vc '{}'
+1 >= '{}'
+
+%
+
+$ vc '{}()'
+1 >> .
+.
+
+%
+
+$ vc '{"hello";;;}()'
+1 >> .
+.
+
+%
+
+$ vc '{;;;"hello"}()'
+1 >= '"hello"'

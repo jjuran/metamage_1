@@ -129,11 +129,29 @@ namespace vlib
 		stack.push_back( op );
 	}
 	
+	static
+	bool ends_in_empty_statement( const std::vector< dyad >& stack )
+	{
+		if ( stack.empty() )
+		{
+			return false;  // Only happens if '}' wasn't balanced.
+		}
+		
+		return stack.back().op == Op_end  ||  stack.back().op == Op_braces;
+	}
+	
 	void Parser::pop( op_type op )
 	{
 		if ( expecting_value() )
 		{
-			SYNTAX_ERROR( "right delimiter where value expected" );
+			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
+			{
+				receive_value( Value_nothing );
+			}
+			else
+			{
+				SYNTAX_ERROR( "right delimiter where value expected" );
+			}
 		}
 		
 		fold_ops_and_add( Op_end );
@@ -357,6 +375,31 @@ namespace vlib
 		}
 	}
 	
+	static
+	op_type last_open( const std::vector< dyad >& stack )
+	{
+		typedef std::vector< dyad >::const_iterator Iter;
+		
+		Iter begin = stack.begin();
+		Iter it    = stack.end();
+		
+		while ( --it >= begin )
+		{
+			switch ( it->op )
+			{
+				case Op_parens:
+				case Op_brackets:
+				case Op_braces:
+					return it->op;
+				
+				default:
+					break;
+			}
+		}
+		
+		return Op_none;
+	}
+	
 	Value Parser::parse( const char* p )
 	{
 		Value result;  // nothing
@@ -381,16 +424,27 @@ namespace vlib
 			{
 				if ( expecting_value() )
 				{
-					SYNTAX_ERROR( "premature end of expression" );
+					if ( ! ends_in_empty_statement( stack ) )
+					{
+						SYNTAX_ERROR( "premature end of expression" );
+					}
+					
+					receive_value( Value_nothing );
 				}
 				
 				fold_ops_and_add( Op_end );
 				
-				value = stack.back().v;
-				
-				stack.pop_back();
-				
-				if ( ! stack.empty() )
+				if ( stack.size() == 1 )
+				{
+					value = stack.back().v;
+					
+					stack.pop_back();
+				}
+				else if ( last_open( stack ) == Op_braces )
+				{
+					continue;
+				}
+				else
 				{
 					SYNTAX_ERROR( "premature end of delimited group" );
 				}
