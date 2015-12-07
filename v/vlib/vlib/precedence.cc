@@ -85,6 +85,7 @@ namespace vlib
 		
 		{ Precedence_group, Op_parens   },
 		{ Precedence_group, Op_brackets },
+		{ Precedence_group, Op_braces   },
 	};
 	
 	static precedence_level op_precedence( op_type op )

@@ -153,6 +153,11 @@ namespace vlib
 			SYNTAX_ERROR( "const/var operand not a symbol" );
 		}
 		
+		if ( op == Op_block )
+		{
+			return Value( op, v );
+		}
+		
 		if ( op == Op_unary_count )
 		{
 			return count( v );
@@ -401,6 +406,14 @@ namespace vlib
 		
 		if ( Expr* expr = get_expr( f ) )
 		{
+			if ( expr->op == Op_block )
+			{
+				const Value& invoke = expr->left;
+				const Value& block  = expr->right;
+				
+				return invoke.proc().addr( block );
+			}
+			
 			const Value& method = expr->left;
 			const Value& object = expr->right;
 			

@@ -18,6 +18,7 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
+#include "vlib/symbol_table.hh"
 #include "vlib/type_info.hh"
 
 
@@ -39,11 +40,56 @@ namespace vlib
 	}
 	
 	
-	static inline
+	static
 	const char* reproduce_op( op_type op )
 	{
-		// This is the only one, for now.
-		return " % ";
+		switch ( op )
+		{
+			case Op_subscript:  return "\xdd" "[";  // '[' <-> ']' + 0x80
+			
+			case Op_function:     return "";
+			case Op_named_unary:  return " ";
+			
+			case Op_member:  return ".";
+			
+			case Op_empower:  return "^";
+			
+			case Op_unary_plus:   return "+";
+			case Op_unary_minus:  return "-";
+			case Op_unary_count:  return "(+) ";
+			
+			case Op_multiply:  return " * ";
+			case Op_divide:    return " / ";
+			case Op_percent:   return " % ";
+			case Op_modulo:    return " mod ";
+			
+			case Op_add:       return " + ";
+			case Op_subtract:  return " - ";
+			
+			case Op_repeat:  return " (*) ";
+			
+			case Op_lt:  return " < ";
+			case Op_gt:  return " > ";
+			
+			case Op_lte:  return " <= ";
+			case Op_gte:  return " >= ";
+			
+			case Op_isa:       return " isa ";
+			case Op_equal:     return " == ";
+			case Op_unequal:   return " != ";
+			
+			case Op_duplicate:    return " = ";
+			case Op_approximate:  return " := ";
+			case Op_increase_by:  return " += ";
+			case Op_decrease_by:  return " -= ";
+			case Op_multiply_by:  return " *= ";
+			case Op_divide_by:    return " /= ";
+			case Op_percent_by:   return " %= ";
+			
+			case Op_end:  return "; ";
+			
+			default:  return " ?? ";
+		}
 	}
 	
 	static inline
@@ -66,10 +112,16 @@ namespace vlib
 	
 	
 	static
-	size_t composite_length( const Value& value, stringification mode )
+	size_t composite_length( const Value&     value,
+	                         stringification  mode,
+	                         bool             print_parens = true )
 	{
 		switch ( get_type( value ) )
 		{
+			case Value_nothing:
+			case Value_dummy_operand:
+				return 0;
+			
 			case Value_empty_list:  // "()", ""
 				return 2 * use_parens( mode );
 			
@@ -95,6 +147,10 @@ namespace vlib
 			case Value_base_type:
 				return strlen( value.typeinfo().name );
 			
+			case Value_symbol_declarator:
+			case Value_symbol:
+				return value.sym()->name().size();
+			
 			case Value_boolean:
 				return 4 + ! get_bool( value );  // "true" or "false"
 			
@@ -111,9 +167,14 @@ namespace vlib
 		
 		Expr* expr = get_expr( value );
 		
+		if ( expr->op == Op_block )
+		{
+			return 2 + composite_length( expr->right, mode, false );
+		}
+		
 		size_t total = composite_length( expr->left, mode );
 		
-		total += 2 * use_parens( mode );  // 2 for parentheses
+		total += 2 * use_parens( mode ) * print_parens;  // 2 for parentheses
 		
 		if ( use_parens( mode )  &&  expr->op != Op_list )
 		{
@@ -144,10 +205,17 @@ namespace vlib
 	}
 	
 	static
-	char* make_string( char* p, const Value& value, stringification mode )
+	char* make_string( char*            p,
+	                   const Value&     value,
+	                   stringification  mode,
+	                   bool             print_parens = true )
 	{
 		switch ( get_type( value ) )
 		{
+			case Value_nothing:
+			case Value_dummy_operand:
+				return p;
+			
 			case Value_empty_list:  // ""
 				if ( use_parens( mode ) )
 				{
@@ -180,6 +248,10 @@ namespace vlib
 			case Value_base_type:
 				return mempcpy( p, value.typeinfo().name );
 			
+			case Value_symbol_declarator:
+			case Value_symbol:
+				return mempcpy( p, value.sym()->name() );
+			
 			case Value_boolean:
 				if ( ! get_bool( value ) )
 				{
@@ -207,7 +279,18 @@ namespace vlib
 		
 		Expr* expr = get_expr( value );
 		
-		if ( use_parens( mode ) )
+		if ( expr->op == Op_block )
+		{
+			*p++ = '{';
+			
+			p = make_string( p, expr->right, mode, false );
+			
+			*p++ = '}';
+			
+			return p;
+		}
+		
+		if ( use_parens( mode )  &&  print_parens )
 		{
 			*p++ = '(';
 		}
@@ -218,11 +301,27 @@ namespace vlib
 		{
 			if ( expr->op != Op_list )
 			{
-				p = mempcpy( p, reproduce_op( expr->op ) );
+				const char* op_str = reproduce_op( expr->op );
+				const char* r = op_str;
+				
+				while ( int8_t( *r ) < 0 )
+				{
+					++r;
+				}
+				
+				p = mempcpy( p, r );
 				
 				p = make_string( p, expr->right, Stringified_to_reproduce );
 				
-				*p++ = ')';
+				for ( const char* q = op_str;  q < r; )
+				{
+					*p++ = *q++ & 0x7f;
+				}
+				
+				if ( print_parens )
+				{
+					*p++ = ')';
+				}
 				
 				return p;
 			}
@@ -249,7 +348,7 @@ namespace vlib
 		
 		p = make_string( p, expr->right, mode );
 		
-		if ( use_parens( mode ) )
+		if ( use_parens( mode )  &&  print_parens )
 		{
 			*p++ = ')';
 		}

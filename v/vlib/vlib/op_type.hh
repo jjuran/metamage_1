@@ -31,6 +31,7 @@ namespace vlib
 		Op_empower,
 		Op_function,
 		Op_subscript,
+		Op_block,
 		Op_member,
 		Op_multiply,
 		Op_divide,
@@ -51,6 +52,7 @@ namespace vlib
 		Op_list,
 		Op_parens,
 		Op_brackets,
+		Op_braces,
 		Op_end,
 	};
 	

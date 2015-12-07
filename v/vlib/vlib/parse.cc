@@ -25,6 +25,7 @@
 #include "vlib/named_ops.hh"
 #include "vlib/ops.hh"
 #include "vlib/precedence.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/token.hh"
@@ -221,6 +222,23 @@ namespace vlib
 				pop( Op_brackets );
 				break;
 			
+			case Token_lbrace:
+				if ( expecting_value() )
+				{
+					stack.push_back( Op_block );
+				}
+				else
+				{
+					SYNTAX_ERROR( "left brace where operator expected" );
+				}
+				
+				push( Op_braces );
+				break;
+			
+			case Token_rbrace:
+				pop( Op_braces );
+				break;
+			
 			case Token_lparen:
 				push( Op_parens );
 				break;
@@ -394,6 +412,10 @@ namespace vlib
 		}
 	}
 	
+	static proc_info proc_invoke = { &eval_tree, "invoke", 0 };
+	
+	static const Value invoke = proc_invoke;
+	
 	Value eval_tree( const Value& tree )
 	{
 		if ( Expr* expr = tree.expr() )
@@ -403,10 +425,21 @@ namespace vlib
 				return eval_tree( expr->left ), eval_tree( expr->right );
 			}
 			
+			if ( expr->op == Op_block )
+			{
+				return Value( Value_pair, invoke, Op_block, expr->right );
+			}
+			
 			if ( is_left_varop( expr->op ) )
 			{
 				return eval( expr->left, expr->op, eval_tree( expr->right ) );
 			}
+			
+			/*
+				WARNING:  This recursion is unsafe.  It can be abused with a
+				sufficiently long program, and recursive user-defined blocks
+				only make this easier.
+			*/
 			
 			return eval( eval_tree( expr->left ),
 			             expr->op,

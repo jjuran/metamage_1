@@ -27,6 +27,8 @@ namespace vlib
 		Token_string_escaped,
 		Token_bareword,
 		Token_bareword_function,
+		Token_lbrace,
+		Token_rbrace,
 		Token_lbracket,
 		Token_rbracket,
 		Token_lparen,
