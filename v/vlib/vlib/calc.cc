@@ -189,6 +189,21 @@ namespace vlib
 			return count( v );
 		}
 		
+		if ( Expr* expr = v.expr() )
+		{
+			switch ( expr->op )
+			{
+				case Op_list:
+					SYNTAX_ERROR( "unary operator not defined for lists" );
+				
+				case Op_block:
+					SYNTAX_ERROR( "unary operator not defined for blocks" );
+				
+				default:
+					INTERNAL_ERROR( "unary operator not defined for pairs" );
+			}
+		}
+		
 		switch ( get_type( v ) )
 		{
 			case Value_empty_list:
@@ -213,10 +228,6 @@ namespace vlib
 					return deref_string( v.string() );
 				}
 				SYNTAX_ERROR( "unary operator not defined for string values" );
-				break;
-			
-			case Value_pair:
-				SYNTAX_ERROR( "unary operator not defined for lists" );
 				break;
 			
 			default:
