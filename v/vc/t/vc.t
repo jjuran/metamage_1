@@ -2075,3 +2075,13 @@ $ vc '*"J"'
 
 $ vc '*"Hello"'
 1 >= "('H', 'e', 'l', 'l', 'o')"
+
+%
+
+$ vc '(0, 1) == (false, true)'
+1 >= false
+
+%
+
+$ vc '{0} == {false}'
+1 >= false

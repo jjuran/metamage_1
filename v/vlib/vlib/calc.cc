@@ -52,12 +52,7 @@ namespace vlib
 	{
 		if ( get_type( a ) != get_type( b ) )
 		{
-			if ( is_empty( a )  ||  is_empty( b ) )
-			{
-				return false;
-			}
-			
-			TYPE_ERROR( "mismatched types in equality relation" );
+			return false;
 		}
 		
 		switch ( get_type( a ) )
@@ -98,8 +93,37 @@ namespace vlib
 	}
 	
 	static
+	bool single_type_mismatch( const Value& one, const Value& two )
+	{
+		if ( ! is_single( one )  ||  ! is_single( two ) )
+		{
+			return false;
+		}
+		
+		if ( one.type() != two.type() )
+		{
+			return true;
+		}
+		
+		if ( one.type() == Value_pair )
+		{
+			Expr& ax = *one.expr();
+			Expr& bx = *two.expr();
+			
+			return ax.op != bx.op;
+		}
+		
+		return false;
+	}
+	
+	static
 	bool equal( const Value& one, const Value& two )
 	{
+		if ( single_type_mismatch( one, two ) )
+		{
+			TYPE_ERROR( "mismatched types in equality relation" );
+		}
+		
 		const Value* a = &one;
 		const Value* b = &two;
 		
