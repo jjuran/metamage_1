@@ -57,6 +57,7 @@ namespace vlib
 		
 		switch ( get_type( a ) )
 		{
+			case Value_nothing:
 			case Value_empty_list:
 				return true;
 			
