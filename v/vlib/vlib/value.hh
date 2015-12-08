@@ -176,6 +176,8 @@ namespace vlib
 				return 0;  // NULL
 			}
 			
+			Expr* listexpr() const;
+			
 			void swap( Value& that );
 			
 			friend unsigned long area( const Value& v );

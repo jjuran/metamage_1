@@ -64,6 +64,19 @@ namespace vlib
 		new ((void*) its_box.pointer()) Expr( a, op, b );
 	}
 	
+	Expr* Value::listexpr() const
+	{
+		if ( Expr* exp = expr() )
+		{
+			if ( exp->op == Op_list )
+			{
+				return exp;
+			}
+		}
+		
+		return 0;  // NULL
+	}
+	
 	void Value::swap( Value& that )
 	{
 		using iota::swap;
