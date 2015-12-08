@@ -255,6 +255,12 @@ namespace vlib
 	}
 	
 	inline
+	bool is_single( const Value& v )
+	{
+		return ! is_empty( v )  &&  ! v.listexpr();
+	}
+	
+	inline
 	bool is_symbol( const Value& v )
 	{
 		return get_type( v ) == Value_symbol  ||  get_type( v ) == V_decl;
