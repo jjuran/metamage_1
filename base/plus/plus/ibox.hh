@@ -320,7 +320,8 @@ namespace plus
 		
 		if ( larger_type )
 		{
-			if ( ! is_signed  ||  its.size < limbs_per_int )
+			// Multiplying by the condition is a no-op to shut up a warning.
+			if ( ! is_signed  ||  its.size * larger_type < limbs_per_int )
 			{
 				return true;
 			}
@@ -337,12 +338,14 @@ namespace plus
 		
 		if ( is_signed )
 		{
-			return its.integer - (sign() < 0) <= signed_max;
+			// Multiplying by the condition is a no-op to shut up a warning.
+			return its.integer - (sign() < 0) <= signed_max * ! larger_type;
 		}
 		
 		if ( smaller_type )
 		{
-			return its.integer <= Int( -1 );
+			// Multiplying by the condition is a no-op to shut up a warning.
+			return its.integer <= Int( -1 ) * smaller_type;
 		}
 		
 		return true;
