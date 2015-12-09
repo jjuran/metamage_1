@@ -178,4 +178,60 @@ namespace vlib
 		return keyed_subscript( array, key );
 	}
 	
+	static
+	Value& find_key_mutable( Value& list, const Value& key )
+	{
+		Value* it = &list;
+		
+		while ( true )
+		{
+			Value& next = first_mutable( *it );
+			
+			if ( equal_keys( next.expr()->left, key ) )
+			{
+				return next.unshare().expr()->right;
+			}
+			
+			if ( it->listexpr() == 0 )
+			{
+				// Key not found; create a new mapping.
+				
+				*it = Value( *it, empty_list );
+				
+				return it->expr()->right;
+			}
+			
+			it = &rest_mutable( *it );
+		}
+	}
+	
+	Value* get_table_subscript_addr( Expr* array_expr, const Value& key )
+	{
+		Value& array = array_expr->right.unshare();
+		
+		Value* it;
+		
+		if ( ! is_empty_array( array ) )
+		{
+			Value& list  = array.expr()->right;
+			
+			it = &find_key_mutable( list, key );
+			
+			if ( ! is_empty_list( *it ) )
+			{
+				return it;
+			}
+		}
+		else
+		{
+			array = make_array( Value() );
+			
+			it = &array.expr()->right;
+		}
+		
+		*it = Value( key, Op_mapping, Value() );
+		
+		return &it->expr()->right;
+	}
+	
 }

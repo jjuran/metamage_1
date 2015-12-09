@@ -158,6 +158,32 @@ namespace vlib
 		return Value();
 	}
 	
+	static inline
+	const Value& array_subtype( const Expr* type_expr )
+	{
+		return type_expr->left;
+	}
+	
+	void get_array_index_type( const Value& array_type, const Value*& base_type )
+	{
+		if ( array_type.type() )
+		{
+			Expr* expr = array_type.expr();
+			
+			if ( expr != NULL  &&  expr->op == Op_subscript )
+			{
+				base_type = &array_subtype( expr );
+			}
+		}
+	}
+	
+	Value* get_array_subscript_addr( Expr* array_expr, const Value& index )
+	{
+		Value& list = array_expr->right;
+		
+		return &get_nth_mutable( list, subscript_integer( index ) );
+	}
+	
 	void push( const Target& target, const Value& list )
 	{
 		Value&       array = *target.addr;

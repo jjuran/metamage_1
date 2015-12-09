@@ -3111,3 +3111,33 @@ $ vc '"spam" in str^[]'
 
 $ vc 'str^[foo: 1, bar: 2] map {_.value => _.key}'
 1 >= '[(1 => "foo"), (2 => "bar")]'
+
+%
+
+$ vc 'var x = [1, 2, 5]; x[ 2 ] = 3; x'
+1 >= '[1, 2, 3]'
+
+%
+
+$ vc 'var x = [1, 2, 5]; x[ x[1] ] = 3; x'
+1 >= '[1, 2, 3]'
+
+%
+
+$ vc 'var x = [1, 2, 5]; x[ 2 ] = x; x'
+1 >= '[1, 2, [1, 2, 5]]'
+
+%
+
+$ vc 'var x = str^[foo: 1, bar: 2]; x[ "bar" ] = null; x'
+1 >= '(string^[("foo" => 1), ("bar" => null)])'
+
+%
+
+$ vc 'var x = str^[foo: 1, bar: 2]; x[ "baz" ] = null; x'
+1 >= '(string^[("foo" => 1), ("bar" => 2), ("baz" => null)])'
+
+%
+
+$ vc 'var x = str^[foo: 1, bar: 2]; x[ "foo" ] = x; x'
+1 >= '(string^[("foo" => (string^[("foo" => 1), ("bar" => 2)])), ("bar" => 2)])'
