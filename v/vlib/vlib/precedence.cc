@@ -27,7 +27,7 @@ namespace vlib
 		Precedence_equality,        // == !=
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
-		Precedence_conditional,     // if then
+		Precedence_conditional,     // if then else
 		Precedence_end,             // ;
 		Precedence_group,           // (
 	};
@@ -89,6 +89,7 @@ namespace vlib
 		
 		{ Precedence_conditional, Op_if   },
 		{ Precedence_conditional, Op_then },
+		{ Precedence_conditional, Op_else },
 		
 		{ Precedence_end, Op_end },
 		

@@ -2200,3 +2200,18 @@ $ vc 'if 2 + 2 == 5 then {print "Slavery"}'
 
 $ vc 'var x = 0; var i = 1;' 'if (i % 3) * (i % 5) == 0 then {x += i}; ++i; if i < 1000 then {--PC};' x
 1 >= 233168
+
+%
+
+$ vc 'if 2 + 2 == 4 then {print "Freedom"} else {print "Slavery"}'
+1 >= Freedom
+
+%
+
+$ vc 'if 2 + 2 == 5 then {print "Freedom"} else {print "Slavery"}'
+1 >= Slavery
+
+%
+
+$ vc 'var items = {str( (+) _, " ", if (+) _ == 1 then{"item"} else {"items"})}; items(), items 1, items(1, 2)'
+1 >= '("0 items", "1 item", "2 items")'

@@ -596,6 +596,7 @@ namespace vlib
 	struct conditional_resolution
 	{
 		const Value* affirm;
+		const Value* negate;
 	};
 	
 	static inline
@@ -611,9 +612,26 @@ namespace vlib
 	{
 		if ( is_block( extension ) )
 		{
-			conditional_resolution result = { &extension };
+			conditional_resolution result = { &extension, NULL };
 			
 			return result;
+		}
+		
+		Expr* expr = extension.expr();
+		
+		if ( expr != NULL  &&  expr->op == Op_else )
+		{
+			const Value& affirm = expr->left;
+			const Value& negate = expr->right;
+			
+			if ( is_block( affirm )  &&  is_block( negate ) )
+			{
+				conditional_resolution result = { &affirm, &negate };
+				
+				return result;
+			}
+			
+			SYNTAX_ERROR( "`if ... then ... else` requires blocks" );
 		}
 		
 		SYNTAX_ERROR( "`if ... then` requires a block" );
@@ -638,6 +656,10 @@ namespace vlib
 		if ( condition )
 		{
 			return do_block( *resolution.affirm );
+		}
+		else if ( resolution.negate != NULL )
+		{
+			return do_block( *resolution.negate );
 		}
 		
 		return Value_nothing;
@@ -693,7 +715,7 @@ namespace vlib
 			return make_pair( left, right );
 		}
 		
-		if ( op == Op_then )
+		if ( op == Op_then  ||  op == Op_else )
 		{
 			return Value( Value_pair, left, op, right );
 		}

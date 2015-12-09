@@ -58,6 +58,7 @@ namespace vlib
 		Op_list,
 		Op_if,
 		Op_then,
+		Op_else,
 		Op_parens,
 		Op_brackets,
 		Op_braces,

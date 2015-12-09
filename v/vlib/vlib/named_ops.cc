@@ -23,6 +23,7 @@ namespace vlib
 	const named_op_mapping named_ops[] =
 	{
 		{ "div",  Op_divide },
+		{ "else", Op_else   },
 		{ "isa",  Op_isa    },
 		{ "mod",  Op_modulo },
 		{ "then", Op_then   },
