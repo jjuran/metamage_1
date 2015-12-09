@@ -27,6 +27,7 @@ namespace vlib
 		Precedence_equality,        // == !=
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
+		Precedence_conditional,     // if then
 		Precedence_end,             // ;
 		Precedence_group,           // (
 	};
@@ -86,6 +87,9 @@ namespace vlib
 		{ Precedence_assignment, Op_divide_by   },
 		{ Precedence_assignment, Op_percent_by  },
 		
+		{ Precedence_conditional, Op_if   },
+		{ Precedence_conditional, Op_then },
+		
 		{ Precedence_end, Op_end },
 		
 		{ Precedence_group, Op_parens   },
@@ -111,7 +115,7 @@ namespace vlib
 	
 	static bool is_right_associative( op_type op )
 	{
-		return op <= Op_empower  ||  op == Op_list;
+		return op <= Op_empower  ||  (op >= Op_list  &&  op < Op_end);
 	}
 	
 	bool decreasing_op_precedence( op_type left, op_type right )

@@ -22,9 +22,10 @@ namespace vlib
 	static
 	const named_op_mapping named_ops[] =
 	{
-		{ "div", Op_divide },
-		{ "isa", Op_isa    },
-		{ "mod", Op_modulo },
+		{ "div",  Op_divide },
+		{ "isa",  Op_isa    },
+		{ "mod",  Op_modulo },
+		{ "then", Op_then   },
 	};
 	
 	static

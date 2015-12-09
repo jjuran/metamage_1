@@ -2184,3 +2184,19 @@ $ vc 'var x (u8) = 0; x++' x x-- x
 1
 0
 .
+
+%
+
+$ vc 'if 2 + 2 == 4 then {print "Freedom"}'
+1 >= Freedom
+
+%
+
+$ vc 'if 2 + 2 == 5 then {print "Slavery"}'
+1 >> .
+.
+
+%
+
+$ vc 'var x = 0; var i = 1;' 'if (i % 3) * (i % 5) == 0 then {x += i}; ++i; if i < 1000 then {--PC};' x
+1 >= 233168

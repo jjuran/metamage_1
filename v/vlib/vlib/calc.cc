@@ -445,6 +445,22 @@ namespace vlib
 	}
 	
 	static
+	Value do_block( const Value& block )
+	{
+		Expr* expr = block.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_block )
+		{
+			INTERNAL_ERROR( "not a block" );
+		}
+		
+		const Value& invoke = expr->left;
+		const Value& body   = expr->right;
+		
+		return invoke.proc().addr( body );
+	}
+	
+	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
 		if ( f.type() == Value_function )
@@ -577,10 +593,65 @@ namespace vlib
 		return nth;
 	}
 	
+	struct conditional_resolution
+	{
+		const Value* affirm;
+	};
+	
+	static inline
+	bool is_block( const Value& v )
+	{
+		Expr* expr = v.expr();
+		
+		return expr != NULL  &&  expr->op == Op_block;
+	}
+	
+	static
+	conditional_resolution resolution_for_if( const Value& extension )
+	{
+		if ( is_block( extension ) )
+		{
+			conditional_resolution result = { &extension };
+			
+			return result;
+		}
+		
+		SYNTAX_ERROR( "`if ... then` requires a block" );
+		
+		return conditional_resolution();
+	}
+	
+	static
+	Value calc_if( const Value& then )
+	{
+		Expr* expr = then.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_then )
+		{
+			SYNTAX_ERROR( "`if` requires `then`" );
+		}
+		
+		conditional_resolution resolution = resolution_for_if( expr->right );
+		
+		const bool condition = get_bool( boolean_vtype.coerce( expr->left ) );
+		
+		if ( condition )
+		{
+			return do_block( *resolution.affirm );
+		}
+		
+		return Value_nothing;
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
 	{
+		if ( op == Op_if )
+		{
+			return calc_if( left );
+		}
+		
 		if ( right.type() == Value_dummy_operand )
 		{
 			return calc_unary( op, left );
@@ -620,6 +691,11 @@ namespace vlib
 			}
 			
 			return make_pair( left, right );
+		}
+		
+		if ( op == Op_then )
+		{
+			return Value( Value_pair, left, op, right );
 		}
 		
 		if ( op == Op_repeat )

@@ -56,6 +56,8 @@ namespace vlib
 		Op_gt,
 		Op_gte,
 		Op_list,
+		Op_if,
+		Op_then,
 		Op_parens,
 		Op_brackets,
 		Op_braces,

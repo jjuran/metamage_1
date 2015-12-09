@@ -350,6 +350,10 @@ namespace vlib
 					{
 						op = Op_var;
 					}
+					else if ( token.text == "if" )
+					{
+						op = Op_if;
+					}
 					else
 					{
 						symbol_id sym;
