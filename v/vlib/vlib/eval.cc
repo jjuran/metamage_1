@@ -18,7 +18,7 @@ namespace vlib
 	static
 	void validate( const Value& value )
 	{
-		switch ( get_type( value ) )
+		switch ( value.type() )
 		{
 			case Value_nothing:
 				SYNTAX_ERROR( "invalid void state during evaluation" );
@@ -46,7 +46,7 @@ namespace vlib
 		{
 			v = Value_nothing;
 		}
-		else if ( get_type( v ) == Value_symbol )
+		else if ( v.type() == Value_symbol )
 		{
 			v = defined( lookup_symbol( v.sym() ) );
 		}
@@ -83,12 +83,12 @@ namespace vlib
 			SYMBOL_ERROR( "update of undefined symbol" );
 		}
 		
-		if ( get_type( left ) != get_type( right ) )
+		if ( left.type() != right.type() )
 		{
 			TYPE_ERROR( "update between mixed types not supported" );
 		}
 		
-		if ( get_type( left ) != Value_number )
+		if ( left.type() != Value_number )
 		{
 			TYPE_ERROR( "non-numeric update not supported" );
 		}

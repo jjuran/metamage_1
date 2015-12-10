@@ -117,7 +117,7 @@ namespace vlib
 	                         stringification  mode,
 	                         bool             print_parens = true )
 	{
-		switch ( get_type( value ) )
+		switch ( value.type() )
 		{
 			case Value_nothing:
 			case Value_dummy_operand:
@@ -216,7 +216,7 @@ namespace vlib
 	                   stringification  mode,
 	                   bool             print_parens = true )
 	{
-		switch ( get_type( value ) )
+		switch ( value.type() )
 		{
 			case Value_nothing:
 			case Value_dummy_operand:

@@ -201,12 +201,6 @@ namespace vlib
 	};
 	
 	inline
-	value_type get_type( const Value& v )
-	{
-		return v.type();
-	}
-	
-	inline
 	bool get_bool( const Value& v )
 	{
 		return ! v.number().is_zero();
@@ -245,13 +239,13 @@ namespace vlib
 	inline
 	bool is_undefined( const Value& v )
 	{
-		return get_type( v ) == Value_undefined;
+		return v.type() == Value_undefined;
 	}
 	
 	inline
 	bool is_empty( const Value& v )
 	{
-		return get_type( v ) == Value_empty_list;
+		return v.type() == Value_empty_list;
 	}
 	
 	inline
@@ -263,19 +257,19 @@ namespace vlib
 	inline
 	bool is_symbol( const Value& v )
 	{
-		return get_type( v ) == Value_symbol  ||  get_type( v ) == V_decl;
+		return v.type() == Value_symbol  ||  v.type() == V_decl;
 	}
 	
 	inline
 	bool is_symbol_declarator( const Value& v )
 	{
-		return get_type( v ) == V_decl;
+		return v.type() == V_decl;
 	}
 	
 	inline
 	bool is_function( const Value& v )
 	{
-		if ( get_type( v ) == Value_function )
+		if ( v.type() == Value_function )
 		{
 			return true;
 		}

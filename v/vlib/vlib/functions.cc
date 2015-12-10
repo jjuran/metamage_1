@@ -34,7 +34,7 @@ namespace vlib
 	static
 	Value v_hex( const Value& arg )
 	{
-		switch ( get_type( arg ) )
+		switch ( arg.type() )
 		{
 			default:  TYPE_ERROR( "invalid argument to hex()" );
 			

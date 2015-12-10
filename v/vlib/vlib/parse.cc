@@ -117,7 +117,7 @@ namespace vlib
 			// Assume a function call.
 			op_type op = Op_function;
 			
-			if ( get_type( stack.back().v ) == Value_symbol_declarator )
+			if ( stack.back().v.type() == Value_symbol_declarator )
 			{
 				// Nope, it's a type annotation.
 				op = Op_denote;
@@ -192,7 +192,7 @@ namespace vlib
 			
 			// Try string concatenation.
 			
-			if ( get_type( last ) == V_str  &&  get_type( x ) == V_str )
+			if ( last.type() == V_str  &&  x.type() == V_str )
 			{
 				last = get_str( last ) + get_str( x );
 				

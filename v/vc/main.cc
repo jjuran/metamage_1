@@ -81,7 +81,7 @@ static plus::string stringify( const Value& v )
 
 static void reproduce( const Value& v )
 {
-	if ( ! get_type( v ) )
+	if ( ! v.type() )
 	{
 		return;
 	}
@@ -127,7 +127,7 @@ void breathe()
 static
 int get_int( const Value& v )
 {
-	if ( get_type( v ) != Value_number )
+	if ( v.type() != Value_number )
 	{
 		ADDRESS_ERROR( "PC is non-numeric" );
 	}

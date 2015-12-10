@@ -50,12 +50,12 @@ namespace vlib
 	static
 	bool equal_atoms( const Value& a, const Value& b )
 	{
-		if ( get_type( a ) != get_type( b ) )
+		if ( a.type() != b.type() )
 		{
 			return false;
 		}
 		
-		switch ( get_type( a ) )
+		switch ( a.type() )
 		{
 			case Value_nothing:
 			case Value_dummy_operand:
@@ -136,7 +136,7 @@ namespace vlib
 			return false;
 		}
 		
-		if ( get_type( *a ) != Value_pair  &&  get_type( *b ) != Value_pair )
+		if ( a->type() != Value_pair  &&  b->type() != Value_pair )
 		{
 			return true;
 		}
@@ -150,12 +150,12 @@ namespace vlib
 	static
 	cmp_t compare( const Value& a, const Value& b )
 	{
-		if ( get_type( a ) != get_type( b ) )
+		if ( a.type() != b.type() )
 		{
 			TYPE_ERROR( "mismatched types in compare()" );
 		}
 		
-		switch ( get_type( a ) )
+		switch ( a.type() )
 		{
 			case Value_byte:
 			case Value_number:
@@ -238,7 +238,7 @@ namespace vlib
 			}
 		}
 		
-		switch ( get_type( v ) )
+		switch ( v.type() )
 		{
 			case Value_empty_list:
 				return 0;
@@ -276,7 +276,7 @@ namespace vlib
 	static
 	Value calc_member( const Value& left, const Value& right )
 	{
-		if ( get_type( right ) != Value_string )
+		if ( right.type() != Value_string )
 		{
 			SYNTAX_ERROR( "non-string member name" );
 		}
@@ -344,7 +344,7 @@ namespace vlib
 	static
 	Value repeat_list( const Value& list, const Value& factor )
 	{
-		if ( get_type( factor ) != Value_number )
+		if ( factor.type() != Value_number )
 		{
 			TYPE_ERROR( "non-numeric list repetition factor" );
 		}
@@ -447,7 +447,7 @@ namespace vlib
 	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
-		if ( get_type( f ) == Value_function )
+		if ( f.type() == Value_function )
 		{
 			const proc_info& proc = f.proc();
 			
@@ -581,7 +581,7 @@ namespace vlib
 	            op_type       op,
 	            const Value&  right )
 	{
-		if ( get_type( left ) == Value_dummy_operand )
+		if ( left.type() == Value_dummy_operand )
 		{
 			return calc_unary( op, right );
 		}
@@ -632,9 +632,9 @@ namespace vlib
 			return bind_args( left, right );
 		}
 		
-		if ( get_type( left ) == get_type( right ) )
+		if ( left.type() == right.type() )
 		{
-			switch ( get_type( left ) )
+			switch ( left.type() )
 			{
 				case Value_empty_list:
 					SYNTAX_ERROR( "operator not defined for empty list" );
@@ -682,9 +682,9 @@ namespace vlib
 			}
 		}
 		
-		if ( op == Op_multiply  &&  get_type( left ) == Value_string )
+		if ( op == Op_multiply  &&  left.type() == Value_string )
 		{
-			if ( get_type( right ) == V_bool  ||  get_type( right ) == V_int )
+			if ( right.type() == V_bool  ||  right.type() == V_int )
 			{
 				return repeat_string( get_str( left ), get_int( right ) );
 			}
