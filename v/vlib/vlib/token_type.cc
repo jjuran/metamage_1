@@ -96,11 +96,13 @@ namespace vlib
 		{ "*=",  Token_asterisk_equals },
 		
 		{ "+",   Token_plus        },
+		{ "++",  Token_plus_x2     },
 		{ "+=",  Token_plus_equals },
 		
 		{ ",",   Token_comma },
 		
 		{ "-",   Token_minus        },
+		{ "--",  Token_minus_x2     },
 		{ "-=",  Token_minus_equals },
 		
 		{ ".",   Token_dot    },

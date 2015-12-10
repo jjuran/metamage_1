@@ -20,6 +20,10 @@ namespace vlib
 		Op_unary_minus,
 		Op_unary_count,
 		Op_unary_deref,
+		Op_preinc,
+		Op_predec,
+		Op_postinc,
+		Op_postdec,
 		Op_duplicate,
 		Op_approximate,
 		Op_increase_by,
@@ -67,7 +71,13 @@ namespace vlib
 	inline
 	bool is_left_varop( op_type op )
 	{
-		return op >= Op_duplicate  &&  op < Op_empower;
+		return op >= Op_preinc  &&  op < Op_empower;
+	}
+	
+	inline
+	bool is_right_unary( op_type op )
+	{
+		return op == Op_postinc  ||  op == Op_postdec;
 	}
 	
 }

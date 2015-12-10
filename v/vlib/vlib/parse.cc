@@ -225,6 +225,11 @@ namespace vlib
 			// infix binary operator
 			
 			fold_ops_and_add( op );
+			
+			if ( is_right_unary( op ) )
+			{
+				stack.push_back( dyad( Op_none ) );  // dummy right operand
+			}
 		}
 	}
 	
@@ -499,9 +504,19 @@ namespace vlib
 				return Value( Value_pair, invoke, Op_block, expr->right );
 			}
 			
+			const Value* left  = &expr->left;
+			const Value* right = &expr->right;
+			
+			if ( left->type() == Value_dummy_operand )
+			{
+				using iota::swap;
+				
+				swap( left, right );
+			}
+			
 			if ( is_left_varop( expr->op ) )
 			{
-				return eval( expr->left, expr->op, eval_tree( expr->right ) );
+				return eval( *left, expr->op, eval_tree( *right ) );
 			}
 			
 			/*
@@ -510,9 +525,9 @@ namespace vlib
 				only make this easier.
 			*/
 			
-			return eval( eval_tree( expr->left ),
+			return eval( eval_tree( *left ),
 			             expr->op,
-			             eval_tree( expr->right ) );
+			             eval_tree( *right ) );
 		}
 		
 		return eval( tree );

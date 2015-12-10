@@ -76,24 +76,24 @@ namespace vlib
 			return sym->get();
 		}
 		
-		Value& left = modify_symbol( sym );
+		Value& value = modify_symbol( sym );
 		
-		if ( is_undefined( left ) )
+		if ( is_undefined( value ) )
 		{
 			SYMBOL_ERROR( "update of undefined symbol" );
 		}
 		
-		if ( left.type() != right.type() )
+		if ( value.type() != right.type()  &&  right.type() != V_dummy )
 		{
 			TYPE_ERROR( "update between mixed types not supported" );
 		}
 		
-		if ( left.type() != Value_number )
+		if ( value.type() != Value_number )
 		{
 			TYPE_ERROR( "non-numeric update not supported" );
 		}
 		
-		plus::integer&       a = get_int( left  );
+		plus::integer&       a = get_int( value );
 		plus::integer const& b = get_int( right );
 		
 		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
@@ -109,8 +109,22 @@ namespace vlib
 			{
 				Value result;
 				
+				if ( op == Op_postinc  ||  op == Op_postdec )
+				{
+					const bool inc = op == Op_postinc;
+					
+					result = value;
+					
+					sym->assign( a + (inc ? 1 : -1) );
+					
+					return result;
+				}
+				
 				switch ( op )
 				{
+					case Op_preinc:       result = a + 1;  break;
+					case Op_predec:       result = a - 1;  break;
+					
 					case Op_increase_by:  result = a + b;  break;
 					case Op_decrease_by:  result = a - b;  break;
 					case Op_multiply_by:  result = a * b;  break;
@@ -123,12 +137,18 @@ namespace vlib
 				
 				sym->assign( result );
 				
-				return left;
+				return value;
 			}
 		}
 		
 		switch ( op )
 		{
+			case Op_postinc:  return a++;
+			case Op_postdec:  return a--;
+			
+			case Op_preinc:  ++a;  break;
+			case Op_predec:  --a;  break;
+			
 			case Op_increase_by:  a += b;  break;
 			case Op_decrease_by:  a -= b;  break;
 			case Op_multiply_by:  a *= b;  break;
@@ -139,7 +159,7 @@ namespace vlib
 				INTERNAL_ERROR( "unrecognized update assignment operator" );
 		}
 		
-		return left;
+		return value;
 	}
 	
 	Value eval( Value    left,
