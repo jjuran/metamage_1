@@ -2270,3 +2270,13 @@ $ vc '[1, 2, 3] map str map { _ * 2 }'
 
 $ vc 'var f = {if _ isa array then {*(_ map f)} else {_}}; f ([1, [2, [3]], 4])'
 1 >= '(1, 2, 3, 4)'
+
+%
+
+$ vc 'var x = (); var i = 0; while i < 3 do {x = x, ++i}; x'
+1 >= '(1, 2, 3)'
+
+%
+
+$ vc 'var x = 0; var i = 0; while ++i < 1000 do {if (i % 3) * (i % 5) == 0 then {x += i}}; x'
+1 >= 233168

@@ -11,6 +11,7 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
+#include "vlib/os.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol_table.hh"
@@ -671,6 +672,11 @@ namespace vlib
 		const Value* negate;
 	};
 	
+	struct loop_block_set
+	{
+		const Value* loop;  // the loop body
+	};
+	
 	static inline
 	bool is_block( const Value& v )
 	{
@@ -712,6 +718,21 @@ namespace vlib
 	}
 	
 	static
+	loop_block_set blocks_for_while( const Value& extension )
+	{
+		if ( is_block( extension ) )
+		{
+			loop_block_set result = { &extension };
+			
+			return result;
+		}
+		
+		SYNTAX_ERROR( "`while ... do` requires a block" );
+		
+		return loop_block_set();
+	}
+	
+	static
 	Value calc_if( const Value& then )
 	{
 		Expr* expr = then.expr();
@@ -737,6 +758,30 @@ namespace vlib
 		return Value_nothing;
 	}
 	
+	static
+	Value calc_while( const Value& _do_ )
+	{
+		Expr* expr = _do_.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_do )
+		{
+			SYNTAX_ERROR( "`while` requires `do`" );
+		}
+		
+		loop_block_set blocks = blocks_for_while( expr->right );
+		
+		Value result;
+		
+		while ( get_bool( boolean_vtype.coerce( do_block( expr->left ) ) ) )
+		{
+			result = do_block( *blocks.loop );
+			
+			periodic_yield();
+		}
+		
+		return result;
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -744,6 +789,11 @@ namespace vlib
 		if ( op == Op_if )
 		{
 			return calc_if( left );
+		}
+		
+		if ( op == Op_while )
+		{
+			return calc_while( left );
 		}
 		
 		if ( right.type() == Value_dummy_operand )
@@ -788,7 +838,7 @@ namespace vlib
 			return make_pair( left, right );
 		}
 		
-		if ( op == Op_then  ||  op == Op_else )
+		if ( op == Op_then  ||  op == Op_else  ||  op == Op_do )
 		{
 			return Value( left, op, right );
 		}

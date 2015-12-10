@@ -353,6 +353,10 @@ namespace vlib
 					{
 						op = Op_if;
 					}
+					else if ( token.text == "while" )
+					{
+						op = Op_while;
+					}
 					else
 					{
 						symbol_id sym;
@@ -505,6 +509,13 @@ namespace vlib
 			if ( expr->op == Op_block )
 			{
 				return Value( invoke, Op_block, expr->right );
+			}
+			
+			if ( expr->op == Op_do )
+			{
+				const Value test( invoke, Op_block, expr->left );
+				
+				return Value( test, Op_do, eval_tree( expr->right ) );
 			}
 			
 			const Value* left  = &expr->left;

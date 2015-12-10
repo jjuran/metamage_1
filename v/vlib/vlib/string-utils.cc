@@ -96,6 +96,9 @@ namespace vlib
 			case Op_then:  return " then ";
 			case Op_else:  return " else ";
 			
+			case Op_while:  return "while ";
+			case Op_do:     return " do ";
+			
 			case Op_duplicate:    return " = ";
 			case Op_approximate:  return " := ";
 			case Op_increase_by:  return " += ";
