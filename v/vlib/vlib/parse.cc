@@ -261,14 +261,12 @@ namespace vlib
 				break;
 			
 			case Token_lbrace:
-				if ( expecting_value() )
-				{
-					stack.push_back( Op_block );
-				}
-				else
+				if ( ! expecting_value() )
 				{
 					SYNTAX_ERROR( "left brace where operator expected" );
 				}
+				
+				stack.push_back( Op_block );
 				
 				push( Op_braces );
 				break;
