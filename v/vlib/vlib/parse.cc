@@ -263,7 +263,8 @@ namespace vlib
 			case Token_lbrace:
 				if ( ! expecting_value() )
 				{
-					SYNTAX_ERROR( "left brace where operator expected" );
+					// Assume a function call.
+					fold_ops_and_add( Op_function );
 				}
 				
 				stack.push_back( Op_block );

@@ -2215,3 +2215,8 @@ $ vc 'if 2 + 2 == 5 then {print "Freedom"} else {print "Slavery"}'
 
 $ vc 'var items = {str( (+) _, " ", if (+) _ == 1 then{"item"} else {"items"})}; items(), items 1, items(1, 2)'
 1 >= '("0 items", "1 item", "2 items")'
+
+%
+
+$ vc 'rep {}'
+1 >= '"{}"'
