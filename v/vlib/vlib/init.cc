@@ -9,7 +9,6 @@
 #include <stddef.h>
 
 // vlib
-#include "vlib/calc.hh"
 #include "vlib/functions.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/symbol_table.hh"

@@ -57,14 +57,14 @@ Level 6
 
 `functions.*`:  Defines various built-in V functions.
 
-`library.*`:  Defines various library functions, and `define()` for installing them.
+`library.*`:  Defines various impure library functions.
 
 `calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 
 Level 7
 -------
 
-`init.*`:  Defines `define()`, which installs a function as a constant in the symbol table, and `install_basic_functions()`.
+`init.*`:  Defines `define()`, which installs a function as a constant in the symbol table, and `install_basic_symbols()`.
 
 `eval.*`:  Defines `eval()`, which evaluates a binary operation.
 
