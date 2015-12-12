@@ -261,7 +261,16 @@ namespace vlib
 				{
 					return deref_string( v.string() );
 				}
+				
 				SYNTAX_ERROR( "unary operator not defined for string values" );
+				break;
+			
+			case Value_base_type:
+				SYNTAX_ERROR( "unary operator not defined for types" );
+				break;
+			
+			case Value_function:
+				SYNTAX_ERROR( "unary operator not defined for functions" );
 				break;
 			
 			default:
