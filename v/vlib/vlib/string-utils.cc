@@ -184,12 +184,14 @@ namespace vlib
 		
 		if ( expr->op == Op_array  ||  expr->op == Op_block )
 		{
+			const size_t n_brackets = use_parens( mode ) * 2;
+			
 			if ( expr->op == Op_array  &&  is_empty( expr->right ) )
 			{
-				return 2;  // "[]"
+				return n_brackets;  // "[]"
 			}
 			
-			return 2 + composite_length( expr->right, mode, false );
+			return n_brackets + composite_length( expr->right, mode, false );
 		}
 		
 		size_t total = composite_length( expr->left, mode );
@@ -301,14 +303,20 @@ namespace vlib
 		
 		if ( expr->op == Op_array )
 		{
-			*p++ = '[';
+			if ( use_parens( mode ) )
+			{
+				*p++ = '[';
+			}
 			
 			if ( ! is_empty( expr->right ) )
 			{
 				p = make_string( p, expr->right, mode, false );
 			}
 			
-			*p++ = ']';
+			if ( use_parens( mode ) )
+			{
+				*p++ = ']';
+			}
 			
 			return p;
 		}
