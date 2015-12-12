@@ -11,6 +11,9 @@
 // iota
 #include "iota/swap.hh"
 
+// plus
+#include "plus/extent.hh"
+
 
 namespace vlib
 {
@@ -37,6 +40,11 @@ namespace vlib
 			if ( next_extent == NULL )
 			{
 				break;
+			}
+			
+			if ( expr != pointer )
+			{
+				plus::extent_release( (char*) expr );
 			}
 			
 			expr = next_extent;
