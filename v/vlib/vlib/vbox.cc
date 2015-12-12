@@ -113,7 +113,7 @@ namespace vlib
 	
 	const void* vbox::transfer_extent()
 	{
-		if ( has_extent() )
+		if ( refcount() == 1 )
 		{
 			const void* pointer = u.alloc.pointer;
 			

@@ -11,6 +11,9 @@
 // more-libc
 #include "more/string.h"
 
+// debug
+#include "debug/assert.hh"
+
 // plus
 #include "plus/decimal.hh"
 
@@ -176,6 +179,8 @@ namespace vlib
 		}
 		
 		Expr* expr = get_expr( value );
+		
+		ASSERT( expr != NULL );
 		
 		if ( expr->op == Op_array  ||  expr->op == Op_block )
 		{
