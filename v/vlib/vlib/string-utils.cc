@@ -80,6 +80,8 @@ namespace vlib
 			
 			case Op_repeat:  return " (*) ";
 			
+			case Op_map:  return " map ";
+			
 			case Op_lt:  return " < ";
 			case Op_gt:  return " > ";
 			
