@@ -37,14 +37,14 @@ namespace vlib
 			
 			expr->~Expr();
 			
-			if ( next_extent == NULL )
-			{
-				break;
-			}
-			
 			if ( expr != pointer )
 			{
 				plus::extent_release( (char*) expr );
+			}
+			
+			if ( next_extent == NULL )
+			{
+				break;
 			}
 			
 			expr = next_extent;
