@@ -6,9 +6,6 @@
 // POSIX
 #include <unistd.h>
 
-// Standard C
-#include <signal.h>
-
 // Standard C++
 #include <new>
 #include <vector>
@@ -30,6 +27,7 @@
 #include "vlib/functions.hh"
 #include "vlib/init.hh"
 #include "vlib/library.hh"
+#include "vlib/os.hh"
 #include "vlib/parse.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol_table.hh"
@@ -114,16 +112,6 @@ static char* const* get_options( char** argv )
 	return argv;
 }
 
-static inline
-void breathe()
-{
-#ifdef __RELIX__
-	
-	kill( 1, 0 );
-	
-#endif
-}
-
 static
 int get_int( const Value& v )
 {
@@ -188,7 +176,7 @@ int main( int argc, char** argv )
 			
 			reproduce( eval_tree( tree ) );
 			
-			breathe();
+			periodic_yield();
 			
 			i = ::get_int( lookup_symbol( pc ) );
 		}
