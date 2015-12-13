@@ -5,6 +5,9 @@
 
 #include "vlib/calc.hh"
 
+// relix-compat
+#include "relix/recurse.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
@@ -470,6 +473,28 @@ namespace vlib
 	}
 	
 	static
+	void recursive_call( function_type invoke, const Value& f, Value& result )
+	{
+		result = invoke( f );
+	}
+	
+	static
+	Value recurse( function_type f, const Value& v )
+	{
+		using relix::recurse;
+		
+		typedef function_type  F;
+		typedef const Value&   V;
+		typedef       Value&   R;
+		
+		Value result;
+		
+		recurse< void, F, F, V, V, R, R >( &recursive_call, f, v, result );
+		
+		return result;
+	}
+	
+	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
 		if ( f.type() == Value_function )
@@ -518,7 +543,7 @@ namespace vlib
 				
 				underscore->assign( arguments );
 				
-				const Value result = invoke.proc().addr( block );
+				const Value result = recurse( invoke.proc().addr, block );
 				
 				underscore->assign( previous );
 				
