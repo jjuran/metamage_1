@@ -14,7 +14,6 @@
 
 // vlib
 #include "vlib/symbol.hh"
-#include "vlib/symbol_id.hh"
 
 
 namespace vlib

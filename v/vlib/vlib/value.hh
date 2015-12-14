@@ -69,10 +69,6 @@ namespace vlib
 			{
 			}
 			
-			Value( Symbol* sym ) : its_box( sym, Value_symbol )
-			{
-			}
-			
 		#define IBOX( i )  plus::ibox( i ).move()
 			
 			Value( bool b ) : its_box( b, Value_boolean )
@@ -181,6 +177,11 @@ namespace vlib
 			
 			Symbol* decl_sym() const;
 			
+			operator Symbol*() const
+			{
+				return sym();
+			}
+			
 			Expr* expr() const
 			{
 				if ( its_box.semantics() == Value_pair )
@@ -205,6 +206,8 @@ namespace vlib
 	}
 	
 	extern const Value empty_list;
+	
+	typedef Value symbol_id;
 	
 	struct Expr
 	{

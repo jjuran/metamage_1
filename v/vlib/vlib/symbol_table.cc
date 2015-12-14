@@ -51,7 +51,7 @@ namespace vlib
 	{
 		if ( const Value* it = find_symbol( its_symbols, name ) )
 		{
-			return it->sym();
+			return *it;
 		}
 		
 		return symbol_id();
@@ -61,7 +61,7 @@ namespace vlib
 	{
 		if ( const Value* it = find_symbol( its_symbols, name ) )
 		{
-			symbol_id sym = it->sym();
+			symbol_id sym = *it;
 			
 			Symbol& var = *sym;
 			
@@ -77,7 +77,7 @@ namespace vlib
 		
 		its_symbols.push_back( Value( type, name ) );
 		
-		return its_symbols.back().sym();
+		return its_symbols.back();
 	}
 	
 	symbol_id locate_symbol( const plus::string& name )

@@ -12,8 +12,6 @@ Level 1
 
 `op_type.hh`:  Defines `enum op_type`, with members for each operator.
 
-`symbol_id.hh`:  Defines `symbol_id` as an alias of `Symbol*`.
-
 `proc_info.hh`:  Defines `struct proc_info`, which groups a function pointer with a name.
 
 `type_info.hh`:  Defines `struct type_info`, which provides a type's name.
