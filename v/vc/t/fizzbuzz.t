@@ -1,6 +1,6 @@
 #!/usr/bin/env jtest
 
-$ vc 'var p=print;var i=1' 'PC=PC+5*+(i>99);i=i+1' 'PC=PC+ +(i%3<1)+2*+(i%5<1)' 'p(i);PC=1' 'p"Fizz";PC=1' 'p"Buzz";PC=1' 'p"FizzBuzz";PC=1'
+$ vc 'var i = 0; while ++i <= 100 do {print ([i, "Fizz", "Buzz", "FizzBuzz"][+(i % 3 < 1) + 2 * +(i % 5 < 1)])}'
 1 >> .
 1
 2
