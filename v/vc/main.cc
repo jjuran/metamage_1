@@ -16,7 +16,6 @@
 #include "command/get_option.hh"
 
 // plus
-#include "plus/decimal.hh"
 #include "plus/integer_hex.hh"
 #include "plus/string/concat.hh"
 
@@ -54,16 +53,11 @@ static int fail( const char* msg, unsigned len )
 	return 1;
 }
 
-static plus::string stringify( const plus::integer& i )
-{
-	return hex_output ? hex( i ) : encode_decimal( i );
-}
-
 static plus::string stringify( const Value& v )
 {
-	if ( v.type() == Value_number )
+	if ( hex_output  &&  v.type() == Value_number )
 	{
-		return stringify( vlib::get_int( v ) );
+		return hex( v.number() );
 	}
 	
 	return make_string( v, Stringified_to_reproduce );
