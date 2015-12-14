@@ -458,46 +458,6 @@ $ vc ''
 
 %
 
-$ vc PC
-1 >= 1
-
-%
-
-$ vc -- -PC
-1 >= -1
-
-%
-
-$ vc ';' PC
-1 >= 2
-
-%
-
-$ vc 'PC = 1; PC'
-1 >= 1
-
-%
-
-$ vc 'PC = 3; PC' 1 2
-1 >= 3
-
-%
-
-$ vc 'PC = 3; PC'
-1 >= 3
-
-%
-
-$ vc 'PC = 3; PC' 1/0 undef
-1 >= 3
-
-%
-
-$ vc PC=3 1/0 undef 'PC = 5; PC'
-1 >= 5
-
-%
-
 $ vc 'const x = 3;' x
 1 >= 3
 
@@ -530,11 +490,6 @@ $ vc 'var x' 'x = 3' x
 
 $ vc 'var x = 3;' 'x = 5' x
 1 >= 5
-
-%
-
-$ vc 'var x = 0; var i = 1;' 'x = x + i * +((i % 3) * (i % 5) == 0); i = i + 1; PC = PC - +(i < 1000)' x
-1 >= 233168
 
 %
 
@@ -1114,11 +1069,6 @@ $ vc 'var x = 7; x /= 3; x'
 
 $ vc 'var x = 7; x %= 3; x'
 1 >= 1
-
-%
-
-$ vc 'var x = 0; var i = 1;' 'x += i * +((i % 3) * (i % 5) == 0); i += 1; PC -= +(i < 1000);' x
-1 >= 233168
 
 %
 
@@ -2195,11 +2145,6 @@ $ vc 'if 2 + 2 == 4 then {print "Freedom"}'
 $ vc 'if 2 + 2 == 5 then {print "Slavery"}'
 1 >> .
 .
-
-%
-
-$ vc 'var x = 0; var i = 1;' 'if (i % 3) * (i % 5) == 0 then {x += i}; ++i; if i < 1000 then {--PC};' x
-1 >= 233168
 
 %
 

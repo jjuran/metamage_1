@@ -8,7 +8,6 @@
 
 // Standard C++
 #include <new>
-#include <vector>
 
 // must
 #include "must/write.h"
@@ -22,22 +21,15 @@
 #include "plus/string/concat.hh"
 
 // vlib
-#include "vlib/calc.hh"
-#include "vlib/error.hh"
-#include "vlib/functions.hh"
 #include "vlib/init.hh"
 #include "vlib/library.hh"
-#include "vlib/os.hh"
 #include "vlib/parse.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/symbol_table.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
-
-#define ADDRESS_ERROR( s )  VLIB_ERROR( "ADDRESS", s )
 
 using namespace vlib;
 
@@ -112,27 +104,6 @@ static char* const* get_options( char** argv )
 	return argv;
 }
 
-static
-int get_int( const Value& v )
-{
-	if ( v.type() != Value_number )
-	{
-		ADDRESS_ERROR( "PC is non-numeric" );
-	}
-	
-	if ( vlib::get_int( v ).is_negative() )
-	{
-		ADDRESS_ERROR( "PC is negative" );
-	}
-	
-	if ( vlib::get_int( v ) > 10000 )
-	{
-		ADDRESS_ERROR( "PC is exorbitant" );
-	}
-	
-	return vlib::get_int( v ).clipped();
-}
-
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -149,13 +120,9 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
-	std::vector< Value > parse_trees( argn );
-	
 	define( proc_getenv );
 	define( proc_print  );
 	define( proc_time   );
-	
-	symbol_id pc = create_symbol( "PC", Symbol_var );
 	
 	int i = 0;
 	
@@ -165,22 +132,11 @@ int main( int argc, char** argv )
 		{
 			const char* expr = args[ i ];
 			
-			assign_symbol( pc, i + 1 );
-			
-			if ( parse_trees[ i ].type() == Value_nothing )
-			{
-				parse_trees[ i ] = parse( expr );
-			}
-			
-			const Value& tree = parse_trees[ i ];
+			const Value tree = parse( expr );
 			
 			reproduce( eval_tree( tree ) );
-			
-			periodic_yield();
-			
-			i = ::get_int( lookup_symbol( pc ) );
 		}
-		while ( i < argn );
+		while ( ++i < argn );
 	}
 	catch ( const std::bad_alloc& )
 	{
