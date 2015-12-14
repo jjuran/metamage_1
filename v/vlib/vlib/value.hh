@@ -12,7 +12,6 @@
 
 // vlib
 #include "vlib/op_type.hh"
-#include "vlib/symbol_id.hh"
 #include "vlib/vbox.hh"
 
 
@@ -22,6 +21,7 @@ namespace vlib
 	struct proc_info;
 	struct type_info;
 	struct Expr;
+	class Symbol;
 	
 	enum value_type
 	{
@@ -65,11 +65,11 @@ namespace vlib
 			{
 			}
 			
-			Value( symbol_id sym ) : its_box( sym, Value_symbol )
+			Value( Symbol* sym ) : its_box( sym, Value_symbol )
 			{
 			}
 			
-			Value( symbol_id sym, int ) : its_box( sym, V_decl )
+			Value( Symbol* sym, int ) : its_box( sym, V_decl )
 			{
 			}
 			
@@ -162,9 +162,9 @@ namespace vlib
 				return *(const type_info*) its_box.pointer();
 			}
 			
-			symbol_id sym() const
+			Symbol* sym() const
 			{
-				return (symbol_id) its_box.pointer();
+				return (Symbol*) its_box.pointer();
 			}
 			
 			Expr* expr() const

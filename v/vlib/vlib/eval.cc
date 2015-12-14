@@ -60,7 +60,7 @@ namespace vlib
 	}
 	
 	static
-	Value eval_assignment( symbol_id sym, op_type op, const Value& right )
+	Value eval_assignment( Symbol* sym, op_type op, const Value& right )
 	{
 		if ( op == Op_duplicate )
 		{
