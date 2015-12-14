@@ -458,7 +458,7 @@ $ vc ''
 
 %
 
-$ vc 'const x = 3;' x
+$ vc 'const x = 3; x'
 1 >= 3
 
 %
@@ -468,12 +468,24 @@ $ vc 'const x = 3'
 
 %
 
-$ vc 'const x' 'x = 3' x
+$ vc 'const x'
+1 >> .
+.
+
+%
+
+$ vc 'const x; x = 3'
+1 >> .
+.
+
+%
+
+$ vc 'const x; x = 3; x'
 1 >= 3
 
 %
 
-$ vc 'var x = 3;' x
+$ vc 'var x = 3; x'
 1 >= 3
 
 %
@@ -483,12 +495,12 @@ $ vc 'var x = 3'
 
 %
 
-$ vc 'var x' 'x = 3' x
+$ vc 'var x; x = 3; x'
 1 >= 3
 
 %
 
-$ vc 'var x = 3;' 'x = 5' x
+$ vc 'var x = 3; x = 5; x'
 1 >= 5
 
 %
@@ -503,7 +515,7 @@ $ vc 'const y = var x = 5'
 
 %
 
-$ vc 'var x = 3;' 'const x' x
+$ vc 'var x = 3; const x; x'
 1 >= 3
 
 %
@@ -1955,7 +1967,7 @@ $ vc 'var x = 42; var f = {{x}}; f, f(), f()()'
 
 %
 
-$ vc 'var x = 3; var f = {x^2}; var r = f, f();' 'x = 4; r, f()'
+$ vc 'var x = 3; var f = {x^2}; var r = f, f(); x = 4; r, f()'
 1 >= '({x^2}, 9, 16)'
 
 %
@@ -2097,7 +2109,7 @@ $ vc 'var x = [join % ",", {x}, {x[_]}]; x[2] 2'
 
 %
 
-$ vc 'var x = 3; ++x' x --x x
+$ vc 'var x = 3; print (++x); print x; print (--x); print x;'
 1 >> .
 4
 4
@@ -2107,7 +2119,7 @@ $ vc 'var x = 3; ++x' x --x x
 
 %
 
-$ vc 'var x (u8) = 0; ++x' x --x x
+$ vc 'var x (u8) = 0; print (++x); print x; print (--x); print x;'
 1 >> .
 1
 1
@@ -2117,7 +2129,7 @@ $ vc 'var x (u8) = 0; ++x' x --x x
 
 %
 
-$ vc 'var x = 3; x++' x x-- x
+$ vc 'var x = 3; print x++; print x; print x--; print x;'
 1 >> .
 3
 4
@@ -2127,7 +2139,7 @@ $ vc 'var x = 3; x++' x x-- x
 
 %
 
-$ vc 'var x (u8) = 0; x++' x x-- x
+$ vc 'var x (u8) = 0; print x++; print x; print x--; print x;'
 1 >> .
 0
 1
