@@ -85,7 +85,7 @@ namespace vlib
 		Iter begin = symbol_table.begin();
 		Iter it    = symbol_table.end();
 		
-		while ( --it != begin )
+		while ( it-- != begin )
 		{
 			if ( name == it->name() )
 			{
@@ -116,24 +116,5 @@ namespace vlib
 		
 		return &symbol_table.back();
 	}
-	
-	
-	static inline
-	Symbol constant( const char* name, const Value& value )
-	{
-		return Symbol( Symbol_const, name, value );
-	}
-	
-	struct symbol_table_init
-	{
-		symbol_table_init();
-	};
-	
-	symbol_table_init::symbol_table_init()
-	{
-		symbol_table.push_back( constant( "", Value_undefined ) );
-	}
-	
-	static symbol_table_init init;
 	
 }
