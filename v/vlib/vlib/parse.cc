@@ -493,7 +493,33 @@ namespace vlib
 		}
 	}
 	
-	static proc_info proc_invoke = { &eval_tree, "invoke", 0 };
+	static
+	Value v_invoke( const Value& v )
+	{
+		Expr* expr = v.expr();
+		
+		if ( expr != NULL  &&  expr->op == Op_bind_args )
+		{
+			const Value& block = expr->left;
+			const Value& args  = expr->right;
+			
+			Symbol* const underscore = locate_symbol( "_" );
+			
+			const Value previous = underscore->get();
+			
+			underscore->assign( args );
+			
+			const Value result = eval_tree( block );
+			
+			underscore->assign( previous );
+			
+			return result;
+		}
+		
+		return eval_tree( v );
+	}
+	
+	static proc_info proc_invoke = { &v_invoke, "invoke", 0 };
 	
 	static const Value invoke = proc_invoke;
 	
