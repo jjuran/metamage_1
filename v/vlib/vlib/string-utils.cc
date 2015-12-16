@@ -196,6 +196,11 @@ namespace vlib
 		
 		ASSERT( expr != NULL );
 		
+		if ( (expr->op & 0xFF) == Op_scope )
+		{
+			return composite_length( expr->right, mode, print_parens );
+		}
+		
 		if ( expr->op == Op_array  ||  (expr->op & 0xFF) == Op_block )
 		{
 			const size_t n_brackets = use_parens( mode ) * 2;
@@ -313,6 +318,11 @@ namespace vlib
 		}
 		
 		Expr* expr = get_expr( value );
+		
+		if ( (expr->op & 0xFF) == Op_scope )
+		{
+			return make_string( p, expr->right, mode, print_parens );
+		}
 		
 		if ( expr->op == Op_array )
 		{
