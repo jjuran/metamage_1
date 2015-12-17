@@ -37,6 +37,7 @@ namespace vlib
 		Value_expired,
 		Value_empty_list,
 		Value_symbol,
+		Value_symbol_descriptor,
 		Value_base_type,
 		Value_boolean,
 		Value_byte,
@@ -46,6 +47,7 @@ namespace vlib
 		Value_pair,
 		
 		V_dummy = Value_dummy_operand,
+		V_desc  = Value_symbol_descriptor,
 		V_bool  = Value_boolean,
 		V_int   = Value_number,
 		V_str   = Value_string,
@@ -66,7 +68,17 @@ namespace vlib
 				byte_max = 255,
 			};
 			
+			enum symdesc
+			{
+				symdesc_min = 0,
+				symdesc_max = 0xFFFFFFFFu,
+			};
+			
 			Value( value_type type = value_type() ) : its_box( type )
+			{
+			}
+			
+			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
 			{
 			}
 			
@@ -164,6 +176,16 @@ namespace vlib
 			const type_info& typeinfo() const
 			{
 				return *(const type_info*) its_box.pointer();
+			}
+			
+			symdesc desc() const
+			{
+				if ( type() == V_desc )
+				{
+					return symdesc( its_box.u32() );
+				}
+				
+				return symdesc( -1 );
 			}
 			
 			Symbol* sym() const
