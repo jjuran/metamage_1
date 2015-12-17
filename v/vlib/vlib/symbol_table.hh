@@ -31,6 +31,10 @@ namespace vlib
 		public:
 			void define_constant( const char* name, const Value& v );
 			
+			int offset( const plus::string& name ) const;
+			
+			Value list() const;
+			
 			const Value& locate( const plus::string& name ) const
 			{
 				return locate_symbol( its_symbols, name );
