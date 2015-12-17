@@ -8,7 +8,7 @@
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
-#include "vlib/symbol_table.hh"
+#include "vlib/symbol.hh"
 #include "vlib/types.hh"
 
 

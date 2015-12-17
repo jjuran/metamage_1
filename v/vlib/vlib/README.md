@@ -36,7 +36,7 @@ Level 2
 Level 3
 -------
 
-`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
+`symbol.*`:  Defines `class Symbol`.
 
 `list-utils.*`:  Defines functions for computations of lists.
 
@@ -44,6 +44,8 @@ Level 3
 
 Level 4
 -------
+
+`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
 
 `string-utils.*`:  Defines functions for computations of strings.
 

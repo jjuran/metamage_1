@@ -24,7 +24,7 @@
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
-#include "vlib/symbol_table.hh"
+#include "vlib/symbol.hh"
 #include "vlib/type_info.hh"
 
 
