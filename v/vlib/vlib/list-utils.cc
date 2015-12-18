@@ -29,6 +29,18 @@ namespace vlib
 		return empty_list;
 	}
 	
+	const Value& get_nth( const Value& list, unsigned i )
+	{
+		const Value* next = &list;
+		
+		while ( i-- > 0  &&  ! is_empty( *next ) )
+		{
+			next = &rest( *next );
+		}
+		
+		return first( *next );
+	}
+	
 	unsigned long count( const Value& list )
 	{
 		Expr* expr = list.listexpr();

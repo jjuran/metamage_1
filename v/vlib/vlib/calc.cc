@@ -633,19 +633,6 @@ namespace vlib
 	}
 	
 	static
-	const Value& get_nth( const Value& list, unsigned i )
-	{
-		const Value* next = &list;
-		
-		while ( i-- > 0  &&  ! is_empty( *next ) )
-		{
-			next = &rest( *next );
-		}
-		
-		return first( *next );
-	}
-	
-	static
 	Value array_subscript( const Expr& expr, const Value& index )
 	{
 		if ( index.type() != Value_number )
