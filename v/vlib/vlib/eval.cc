@@ -42,11 +42,7 @@ namespace vlib
 	static
 	void resolve( Value& v )
 	{
-		if ( is_symbol_declarator( v ) )
-		{
-			v = Value_nothing;
-		}
-		else if ( v.type() == Value_symbol )
+		if ( v.type() == Value_symbol )
 		{
 			v = defined( lookup_symbol( v.sym() ) );
 		}

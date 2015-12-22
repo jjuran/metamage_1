@@ -530,6 +530,11 @@ namespace vlib
 	{
 		if ( Expr* expr = tree.expr() )
 		{
+			if ( expr->op == Op_var  ||  expr->op == Op_const )
+			{
+				return Value_nothing;
+			}
+			
 			if ( expr->op == Op_end )
 			{
 				return eval_tree( expr->left ), eval_tree( expr->right );
