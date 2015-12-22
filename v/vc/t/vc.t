@@ -2236,3 +2236,8 @@ $ vc 'var x = (); var i = 0; while i < 3 do {x = x, ++i}; x'
 
 $ vc 'var x = 0; var i = 0; while ++i < 1000 do {if (i % 3) * (i % 5) == 0 then {x += i}}; x'
 1 >= 233168
+
+%
+
+$ vc '{var x; const y}'
+1 >= '{(var x); (const y)}'

@@ -376,8 +376,6 @@ namespace vlib
 								
 								sym = create_symbol( token.text, type );
 								
-								stack.pop_back();
-								
 								receive_value( Value( sym, int() ) );
 								break;
 							}
