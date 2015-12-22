@@ -117,7 +117,7 @@ namespace vlib
 			// Assume a function call.
 			op_type op = Op_function;
 			
-			if ( stack.back().v.type() == Value_symbol_declarator )
+			if ( is_symbol_declarator( stack.back().v ) )
 			{
 				// Nope, it's a type annotation.
 				op = Op_denote;

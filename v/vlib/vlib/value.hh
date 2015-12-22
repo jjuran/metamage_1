@@ -164,7 +164,12 @@ namespace vlib
 			
 			Symbol* sym() const
 			{
-				return (Symbol*) its_box.pointer();
+				if ( type() == Value_symbol  ||  type() == V_decl )
+				{
+					return (Symbol*) its_box.pointer();
+				}
+				
+				return 0;  // NULL
 			}
 			
 			Expr* expr() const
@@ -256,15 +261,15 @@ namespace vlib
 	}
 	
 	inline
-	bool is_symbol( const Value& v )
-	{
-		return v.type() == Value_symbol  ||  v.type() == V_decl;
-	}
-	
-	inline
 	bool is_symbol_declarator( const Value& v )
 	{
 		return v.type() == V_decl;
+	}
+	
+	inline
+	bool is_symbol( const Value& v )
+	{
+		return v.type() == Value_symbol  ||  is_symbol_declarator( v );
 	}
 	
 	inline
