@@ -166,6 +166,11 @@ namespace vlib
 	            op_type  op,
 	            Value    right )
 	{
+		if ( op == Op_var  ||  op == Op_const )
+		{
+			return Value_nothing;
+		}
+		
 		resolve( right );
 		validate( right );
 		

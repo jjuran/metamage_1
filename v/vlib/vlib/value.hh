@@ -169,8 +169,10 @@ namespace vlib
 					return (Symbol*) its_box.pointer();
 				}
 				
-				return 0;  // NULL
+				return decl_sym();
 			}
+			
+			Symbol* decl_sym() const;
 			
 			Expr* expr() const
 			{
@@ -205,6 +207,20 @@ namespace vlib
 		
 		Expr( const Value& a, op_type op, const Value& b );
 	};
+	
+	inline
+	Symbol* Value::decl_sym() const
+	{
+		if ( Expr* ex = expr() )
+		{
+			if ( ex->op == Op_var  ||  ex->op == Op_const )
+			{
+				return ex->right.sym();
+			}
+		}
+		
+		return 0;  // NULL
+	}
 	
 	inline
 	bool get_bool( const Value& v )
@@ -263,6 +279,11 @@ namespace vlib
 	inline
 	bool is_symbol_declarator( const Value& v )
 	{
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->op == Op_var  ||  expr->op == Op_const;
+		}
+		
 		return v.type() == V_decl;
 	}
 	
