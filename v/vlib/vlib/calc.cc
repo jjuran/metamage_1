@@ -615,7 +615,7 @@ namespace vlib
 	}
 	
 	static
-	Value get_nth( const Value& list, unsigned i )
+	const Value& get_nth( const Value& list, unsigned i )
 	{
 		const Value* next = &list;
 		
@@ -647,7 +647,7 @@ namespace vlib
 		
 		unsigned i = index.number().clipped();
 		
-		Value nth = get_nth( expr.right, i );
+		const Value& nth = get_nth( expr.right, i );
 		
 		if ( is_empty( nth ) )
 		{
