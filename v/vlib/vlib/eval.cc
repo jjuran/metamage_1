@@ -183,14 +183,7 @@ namespace vlib
 				return left;
 			}
 			
-			const Value result = eval_assignment( left.sym(), op, right );
-			
-			if ( is_symbol_declarator( left )  ||  op != Op_duplicate )
-			{
-				return result;
-			}
-			
-			return Value();
+			return eval_assignment( left.sym(), op, right );
 		}
 		
 		resolve( left );
