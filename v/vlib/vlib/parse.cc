@@ -117,10 +117,15 @@ namespace vlib
 			// Assume a function call.
 			op_type op = Op_function;
 			
-			if ( is_symbol_declarator( stack.back().v ) )
+			if ( is_symbol( stack.back().v )  &&  stack.size() >= 2 )
 			{
-				// Nope, it's a type annotation.
-				op = Op_denote;
+				const op_type prev_op = stack.end()[ -2 ].op;
+				
+				if ( prev_op == Op_const  ||  prev_op == Op_var )
+				{
+					// Nope, it's a type annotation.
+					op = Op_denote;
+				}
 			}
 			
 			fold_ops_and_add( op );
