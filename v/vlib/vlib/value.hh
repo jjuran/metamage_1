@@ -271,6 +271,17 @@ namespace vlib
 	}
 	
 	inline
+	bool is_type_annotation( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->op == Op_denote;
+		}
+		
+		return false;
+	}
+	
+	inline
 	bool is_symbol_declarator( const Value& v )
 	{
 		if ( Expr* expr = v.expr() )

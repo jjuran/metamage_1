@@ -40,11 +40,6 @@ namespace vlib
 	                  op_type       op,
 	                  const Value&  right )
 	{
-		if ( op == Op_denote )
-		{
-			return eval( left, op, right );
-		}
-		
 		return Value( left, op, right );
 	}
 	
@@ -574,7 +569,7 @@ namespace vlib
 				swap( left, right );
 			}
 			
-			if ( is_left_varop( expr->op ) )
+			if ( is_left_varop( expr->op )  &&  ! is_type_annotation( *left ) )
 			{
 				return eval( *left, expr->op, eval_tree( *right ) );
 			}

@@ -51,6 +51,7 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_denote:     return "\xa9" " (";  // " (" <-> ')' + 0x80
 			case Op_subscript:  return "\xdd" "[";  // '[' <-> ']' + 0x80
 			
 			case Op_var:    return "var ";

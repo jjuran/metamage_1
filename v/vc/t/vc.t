@@ -2282,3 +2282,8 @@ $ vc 'const stop = {break}; var i = 0; while true do {print i; if ++i > 3 then s
 
 $ vc 'var x = 0; var i = 0; while ++i < 1000 do {if (i % 3) * (i % 5) then {continue}; x += i }; x'
 1 >= 233168
+
+%
+
+$ vc 'const t = {[bool, int, str][_]}; var x (t 0) := 0; var y (t 1) := 0; var z (t 2) := 0; x, y, z'
+1 >= '(false, 0, "0")'
