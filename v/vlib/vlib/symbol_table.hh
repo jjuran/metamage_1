@@ -7,7 +7,7 @@
 #define VLIB_SYMBOLTABLE_HH
 
 // Standard C++
-#include <list>
+#include <vector>
 
 // plus
 #include "plus/string.hh"
@@ -19,7 +19,7 @@
 namespace vlib
 {
 	
-	typedef std::list< Value > Symbols;
+	typedef std::vector< Value > Symbols;
 	
 	class symbol_table
 	{
