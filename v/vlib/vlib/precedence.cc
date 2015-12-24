@@ -17,6 +17,7 @@ namespace vlib
 	{
 		Precedence_none = 0,
 		
+		Precedence_declarator,      // const var
 		Precedence_juxtaposition,   // . f(x)
 		Precedence_exponentiation,  // ^
 		Precedence_unary_math,      // + - (f x)
@@ -41,6 +42,9 @@ namespace vlib
 	
 	static const precedence_mapping precedence_table[] =
 	{
+		{ Precedence_declarator, Op_const },
+		{ Precedence_declarator, Op_var   },
+		
 		{ Precedence_juxtaposition, Op_preinc   },
 		{ Precedence_juxtaposition, Op_predec   },
 		{ Precedence_juxtaposition, Op_postinc  },
@@ -52,8 +56,6 @@ namespace vlib
 		{ Precedence_exponentiation, Op_empower },
 		
 		{ Precedence_unary_math, Op_named_unary },
-		{ Precedence_unary_math, Op_const       },
-		{ Precedence_unary_math, Op_var         },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
 		{ Precedence_unary_math, Op_unary_count },
