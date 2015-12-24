@@ -25,9 +25,9 @@ namespace vlib
 	}
 	
 	static
-	const Value* find_symbol( const std::list< Value >& symbols, const plus::string& name )
+	const Value* find_symbol( const Symbols& symbols, const plus::string& name )
 	{
-		typedef std::list< Value >::const_iterator Iter;
+		typedef Symbols::const_iterator Iter;
 		
 		Iter begin = symbols.begin();
 		Iter it    = symbols.end();

@@ -19,10 +19,12 @@
 namespace vlib
 {
 	
+	typedef std::list< Value > Symbols;
+	
 	class symbol_table
 	{
 		private:
-			std::list< Value > its_symbols;
+			Symbols its_symbols;
 		
 		public:
 			void define_constant( const char* name, const Value& v );
