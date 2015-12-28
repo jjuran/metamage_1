@@ -16,6 +16,13 @@
 namespace vlib
 {
 	
+	enum mark_type
+	{
+		Mark_none,   // not participating in GC
+		Mark_white,  // not reached
+		Mark_black,  // reachable from a root
+	};
+	
 	class Symbol
 	{
 		private:
@@ -23,9 +30,10 @@ namespace vlib
 			Value         its_vtype;
 			Value         its_value;
 			symbol_type   its_type;
+			mark_type     its_mark;
 		
 		public:
-			Symbol() : its_type()
+			Symbol() : its_type(), its_mark()
 			{
 			}
 			
@@ -35,7 +43,8 @@ namespace vlib
 			:
 				its_name( name ),
 				its_value( value ),
-				its_type( type )
+				its_type( type ),
+				its_mark()
 			{
 			}
 			
@@ -51,6 +60,10 @@ namespace vlib
 			void assign( const Value& v, bool coercive = false );
 			
 			Value& deref();
+			
+			void set_mark( mark_type mark )  { its_mark = mark; }
+			
+			mark_type mark() const  { return its_mark; }
 			
 			const Value& get() const  { return its_value; }
 			
