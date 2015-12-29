@@ -29,7 +29,6 @@ namespace vlib
 		Value_dummy_operand,
 		Value_undefined,
 		Value_empty_list,
-		Value_symbol_declarator,
 		Value_symbol,
 		Value_base_type,
 		Value_boolean,
@@ -40,7 +39,6 @@ namespace vlib
 		Value_pair,
 		
 		V_dummy = Value_dummy_operand,
-		V_decl  = Value_symbol_declarator,
 		V_bool  = Value_boolean,
 		V_int   = Value_number,
 		V_str   = Value_string,
@@ -66,10 +64,6 @@ namespace vlib
 			}
 			
 			Value( Symbol* sym ) : its_box( sym, Value_symbol )
-			{
-			}
-			
-			Value( Symbol* sym, int ) : its_box( sym, V_decl )
 			{
 			}
 			
@@ -164,8 +158,15 @@ namespace vlib
 			
 			Symbol* sym() const
 			{
-				return (Symbol*) its_box.pointer();
+				if ( type() == Value_symbol )
+				{
+					return (Symbol*) its_box.pointer();
+				}
+				
+				return decl_sym();
 			}
+			
+			Symbol* decl_sym() const;
 			
 			Expr* expr() const
 			{
@@ -200,6 +201,20 @@ namespace vlib
 		
 		Expr( const Value& a, op_type op, const Value& b );
 	};
+	
+	inline
+	Symbol* Value::decl_sym() const
+	{
+		if ( Expr* ex = expr() )
+		{
+			if ( ex->op == Op_var  ||  ex->op == Op_const )
+			{
+				return ex->right.sym();
+			}
+		}
+		
+		return 0;  // NULL
+	}
 	
 	inline
 	bool get_bool( const Value& v )
@@ -256,15 +271,20 @@ namespace vlib
 	}
 	
 	inline
-	bool is_symbol( const Value& v )
+	bool is_symbol_declarator( const Value& v )
 	{
-		return v.type() == Value_symbol  ||  v.type() == V_decl;
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->op == Op_var  ||  expr->op == Op_const;
+		}
+		
+		return false;
 	}
 	
 	inline
-	bool is_symbol_declarator( const Value& v )
+	bool is_symbol( const Value& v )
 	{
-		return v.type() == V_decl;
+		return v.type() == Value_symbol  ||  is_symbol_declarator( v );
 	}
 	
 	inline

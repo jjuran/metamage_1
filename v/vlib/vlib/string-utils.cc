@@ -53,6 +53,9 @@ namespace vlib
 		{
 			case Op_subscript:  return "\xdd" "[";  // '[' <-> ']' + 0x80
 			
+			case Op_var:    return "var ";
+			case Op_const:  return "const ";
+			
 			case Op_function:     return "";
 			case Op_named_unary:  return " ";
 			
@@ -168,7 +171,6 @@ namespace vlib
 			case Value_base_type:
 				return strlen( value.typeinfo().name );
 			
-			case Value_symbol_declarator:
 			case Value_symbol:
 				return value.sym()->name().size();
 			
@@ -278,7 +280,6 @@ namespace vlib
 			case Value_base_type:
 				return mempcpy( p, value.typeinfo().name );
 			
-			case Value_symbol_declarator:
 			case Value_symbol:
 				return mempcpy( p, value.sym()->name() );
 			

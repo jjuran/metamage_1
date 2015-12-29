@@ -117,10 +117,15 @@ namespace vlib
 			// Assume a function call.
 			op_type op = Op_function;
 			
-			if ( stack.back().v.type() == Value_symbol_declarator )
+			if ( is_symbol( stack.back().v )  &&  stack.size() >= 2 )
 			{
-				// Nope, it's a type annotation.
-				op = Op_denote;
+				const op_type prev_op = stack.end()[ -2 ].op;
+				
+				if ( prev_op == Op_const  ||  prev_op == Op_var )
+				{
+					// Nope, it's a type annotation.
+					op = Op_denote;
+				}
 			}
 			
 			fold_ops_and_add( op );
@@ -376,9 +381,7 @@ namespace vlib
 								
 								sym = create_symbol( token.text, type );
 								
-								stack.pop_back();
-								
-								receive_value( Value( sym, int() ) );
+								receive_value( sym );
 								break;
 							}
 						}
@@ -527,6 +530,11 @@ namespace vlib
 	{
 		if ( Expr* expr = tree.expr() )
 		{
+			if ( expr->op == Op_var  ||  expr->op == Op_const )
+			{
+				return Value_nothing;
+			}
+			
 			if ( expr->op == Op_end )
 			{
 				return eval_tree( expr->left ), eval_tree( expr->right );
