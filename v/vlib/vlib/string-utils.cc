@@ -171,7 +171,6 @@ namespace vlib
 			case Value_base_type:
 				return strlen( value.typeinfo().name );
 			
-			case Value_symbol_declarator:
 			case Value_symbol:
 				return value.sym()->name().size();
 			
@@ -281,7 +280,6 @@ namespace vlib
 			case Value_base_type:
 				return mempcpy( p, value.typeinfo().name );
 			
-			case Value_symbol_declarator:
 			case Value_symbol:
 				return mempcpy( p, value.sym()->name() );
 			

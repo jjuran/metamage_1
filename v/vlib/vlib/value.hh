@@ -29,7 +29,6 @@ namespace vlib
 		Value_dummy_operand,
 		Value_undefined,
 		Value_empty_list,
-		Value_symbol_declarator,
 		Value_symbol,
 		Value_base_type,
 		Value_boolean,
@@ -40,7 +39,6 @@ namespace vlib
 		Value_pair,
 		
 		V_dummy = Value_dummy_operand,
-		V_decl  = Value_symbol_declarator,
 		V_bool  = Value_boolean,
 		V_int   = Value_number,
 		V_str   = Value_string,
@@ -66,10 +64,6 @@ namespace vlib
 			}
 			
 			Value( Symbol* sym ) : its_box( sym, Value_symbol )
-			{
-			}
-			
-			Value( Symbol* sym, int ) : its_box( sym, V_decl )
 			{
 			}
 			
@@ -164,7 +158,7 @@ namespace vlib
 			
 			Symbol* sym() const
 			{
-				if ( type() == Value_symbol  ||  type() == V_decl )
+				if ( type() == Value_symbol )
 				{
 					return (Symbol*) its_box.pointer();
 				}
@@ -284,7 +278,7 @@ namespace vlib
 			return expr->op == Op_var  ||  expr->op == Op_const;
 		}
 		
-		return v.type() == V_decl;
+		return false;
 	}
 	
 	inline
