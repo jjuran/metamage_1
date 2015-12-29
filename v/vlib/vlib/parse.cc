@@ -381,7 +381,7 @@ namespace vlib
 								
 								sym = create_symbol( token.text, type );
 								
-								receive_value( Value( sym, int() ) );
+								receive_value( sym );
 								break;
 							}
 						}
