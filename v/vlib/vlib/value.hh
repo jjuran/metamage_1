@@ -57,6 +57,7 @@ namespace vlib
 		Value_packed,
 		Value_function,
 		Value_pair,
+		Value_other,
 		
 		V_dummy = Value_dummy_operand,
 		V_desc  = Value_symbol_descriptor,
