@@ -5,6 +5,9 @@
 
 #include "vlib/functions.hh"
 
+// crypto
+#include "sha256/sha256.hh"
+
 // plus
 #include "plus/string/mince.hh"
 
@@ -28,6 +31,14 @@ namespace vlib
 	plus::string hex( const plus::string& s )
 	{
 		return plus::hex_lower( s.data(), s.size() );
+	}
+	
+	static
+	plus::string sha256( const plus::string& s )
+	{
+		crypto::sha256_hash hash = crypto::sha256( s.data(), s.size() );
+		
+		return plus::string( (const char*) &hash, sizeof hash );
 	}
 	
 	static
@@ -132,6 +143,12 @@ namespace vlib
 	}
 	
 	static
+	Value v_sha256( const Value& v )
+	{
+		return make_data( sha256( v.string() ) );
+	}
+	
+	static
 	bool is_0x_numeral( const plus::string& s, char x )
 	{
 		return s.size() > 2  &&  s[ 0 ] == '0'  &&  s[ 1 ] == x;
@@ -165,6 +182,7 @@ namespace vlib
 	static const Value u32_2 = Value( u32_vtype, Op_duplicate, 2 );
 	static const Value mince = Value( string, u32_2 );
 	
+	static const Value bytes( string_vtype, Op_union, data_vtype );
 	static const Value x32( u32_vtype, Op_union, i32_vtype );
 	static const Value s_offset( x32, Op_duplicate, 0 );
 	static const Value s_length( u32_vtype, Op_duplicate, uint32_t( -1 ) );
@@ -176,6 +194,7 @@ namespace vlib
 	const proc_info proc_hex    = { &v_hex,    "hex",    NULL     };
 	const proc_info proc_mince  = { &v_mince,  "mince",  &mince   };
 	const proc_info proc_rep    = { &v_rep,    "rep",    NULL     };
+	const proc_info proc_sha256 = { &v_sha256, "sha256", &bytes   };
 	const proc_info proc_substr = { &v_substr, "substr", &substr  };
 	const proc_info proc_unbin  = { &v_unbin,  "unbin",  &string  };
 	const proc_info proc_unhex  = { &v_unhex,  "unhex",  &string  };
