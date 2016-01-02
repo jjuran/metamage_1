@@ -43,6 +43,11 @@ namespace vlib
 			
 			void denote( const Value& vtype );
 			
+			void expire()
+			{
+				its_value = Value_expired;
+			}
+			
 			void assign( const Value& v, bool coercive = false );
 			
 			Value& deref();

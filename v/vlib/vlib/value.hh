@@ -34,6 +34,7 @@ namespace vlib
 		Value_nothing,
 		Value_dummy_operand,
 		Value_undefined,
+		Value_expired,
 		Value_empty_list,
 		Value_symbol,
 		Value_base_type,
