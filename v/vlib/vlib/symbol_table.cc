@@ -25,11 +25,13 @@ namespace vlib
 		Iter begin = symbol_table.begin();
 		Iter it    = symbol_table.end();
 		
-		while ( it-- != begin )
+		while ( it != begin )
 		{
-			if ( name == it->name() )
+			Symbol* sym = &*--it;
+			
+			if ( name == sym->name() )
 			{
-				return &*it;
+				return sym;
 			}
 		}
 		
