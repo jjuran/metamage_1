@@ -99,9 +99,22 @@ namespace vlib
 		
 		const Value& vtype = sym->vtype();
 		
-		if ( vtype.type() == Value_base_type )
+		/*
+			The next section of code below explicitly assigns a result (in
+			order to check type constraints).  The section below that one
+			updates a plus::integer in place instead of creating a new Value.
+			This is a problem when the new and old values differ in whether
+			they require allocation, since the vbox doesn't get updated to
+			match.  If the new result is allocated but the old isn't, then
+			the memory will be leaked.  If the old is allocated but the new
+			one isn't, then the next access to the refcount will segfault.
+			
+			As a temporary fix, always go through assign().
+		*/
+		
+		//if ( vtype.type() == Value_base_type )
 		{
-			if ( &vtype.typeinfo() != &integer_vtype )
+			//if ( &vtype.typeinfo() != &integer_vtype )
 			{
 				Value result;
 				
@@ -136,6 +149,8 @@ namespace vlib
 				return value;
 			}
 		}
+		
+		// This is temporarily dead code -- see above.
 		
 		switch ( op )
 		{

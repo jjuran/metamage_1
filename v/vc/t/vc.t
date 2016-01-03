@@ -2241,3 +2241,15 @@ $ vc 'var x = 0; var i = 0; while ++i < 1000 do {if (i % 3) * (i % 5) == 0 then 
 
 $ vc '{var x; const y}'
 1 >= '{(var x); (const y)}'
+
+%
+
+$ vc 'var x = size_t( -1 ); ++x;'
+1 >> .
+.
+
+%
+
+$ vc 'var x = size_t( -1 ); var y = x + 1; --y;'
+1 >> .
+.
