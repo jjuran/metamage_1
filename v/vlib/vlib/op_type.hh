@@ -62,6 +62,8 @@ namespace vlib
 		Op_else,
 		Op_while,
 		Op_do,
+		Op_break,
+		Op_continue,
 		Op_parens,
 		Op_brackets,
 		Op_braces,

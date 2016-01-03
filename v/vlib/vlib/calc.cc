@@ -765,7 +765,20 @@ namespace vlib
 		
 		while ( get_bool( boolean_vtype.coerce( do_block( expr->left ) ) ) )
 		{
-			result = do_block( *blocks.loop );
+			try
+			{
+				result = do_block( *blocks.loop );
+			}
+			catch ( const transfer_via_break& )
+			{
+				return Value_nothing;
+			}
+			catch ( const transfer_via_continue& )
+			{
+				result = Value_nothing;
+				
+				continue;
+			}
 			
 			periodic_yield();
 		}
@@ -785,6 +798,16 @@ namespace vlib
 		if ( op == Op_while )
 		{
 			return calc_while( left );
+		}
+		
+		if ( op == Op_break )
+		{
+			throw transfer_via_break();
+		}
+		
+		if ( op == Op_continue )
+		{
+			throw transfer_via_continue();
 		}
 		
 		if ( right.type() == Value_dummy_operand )

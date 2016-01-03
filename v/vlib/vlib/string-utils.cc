@@ -102,6 +102,9 @@ namespace vlib
 			case Op_while:  return "while ";
 			case Op_do:     return " do ";
 			
+			case Op_break:     return "break";
+			case Op_continue:  return "continue";
+			
 			case Op_duplicate:    return " = ";
 			case Op_approximate:  return " := ";
 			case Op_increase_by:  return " += ";

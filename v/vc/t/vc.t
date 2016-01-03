@@ -2253,3 +2253,32 @@ $ vc 'var x = size_t( -1 ); ++x;'
 $ vc 'var x = size_t( -1 ); var y = x + 1; --y;'
 1 >> .
 .
+
+%
+
+$ vc 'while true do {print "breaking"; break}'
+1 >= 'breaking'
+
+%
+
+$ vc 'var i = 0; while ++i <= 3 do {while true do {print i; break}}'
+1 >> .
+1
+2
+3
+.
+
+%
+
+$ vc 'const stop = {break}; var i = 0; while true do {print i; if ++i > 3 then stop}'
+1 >> .
+0
+1
+2
+3
+.
+
+%
+
+$ vc 'var x = 0; var i = 0; while ++i < 1000 do {if (i % 3) * (i % 5) then {continue}; x += i }; x'
+1 >= 233168

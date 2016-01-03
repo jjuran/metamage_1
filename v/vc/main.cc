@@ -20,6 +20,7 @@
 #include "plus/string/concat.hh"
 
 // vlib
+#include "vlib/calc.hh"
 #include "vlib/init.hh"
 #include "vlib/library.hh"
 #include "vlib/parse.hh"
@@ -139,6 +140,14 @@ int main( int argc, char** argv )
 	catch ( const plus::ibox::limb_count_overflow& )
 	{
 		return FAIL( "Max bigint size exceeded" );
+	}
+	catch ( const transfer_via_break& )
+	{
+		return FAIL( "`break` used outside of loop" );
+	}
+	catch ( const transfer_via_continue& )
+	{
+		return FAIL( "`continue` used outside of loop" );
 	}
 	
 	return 0;

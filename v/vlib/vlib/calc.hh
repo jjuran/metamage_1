@@ -14,6 +14,10 @@
 namespace vlib
 {
 	
+	class transfer_via_break    {};
+	class transfer_via_continue {};
+	
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right );
