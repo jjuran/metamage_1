@@ -8,15 +8,18 @@
 // relix-compat
 #include "relix/recurse.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/os.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/symbol.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
-#include "vlib/types.hh"
 
 
 namespace vlib
@@ -444,6 +447,40 @@ namespace vlib
 	}
 	
 	static
+	bool is_etc( const Value& type )
+	{
+		if ( type.type() == Value_base_type )
+		{
+			const type_info& typeinfo = type.typeinfo();
+			
+			return &typeinfo == &etc_vtype;
+		}
+		
+		return false;
+	}
+	
+	static
+	Value as_assigned_or_default( const Value& type, const Value& v )
+	{
+		if ( Expr* expr = type.expr() )
+		{
+			if ( expr->op == Op_duplicate )
+			{
+				if ( is_empty( v ) )
+				{
+					ASSERT( as_assigned( expr->left, expr->right ).type() );
+					
+					return expr->right;
+				}
+				
+				return as_assigned( expr->left, v );
+			}
+		}
+		
+		return as_assigned( type, v );
+	}
+	
+	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
 		if ( is_empty( prototype ) )
@@ -458,20 +495,14 @@ namespace vlib
 		
 		const Value& type = first( prototype );
 		
-		const type_info& typeinfo = get_typeinfo( type );
-		
-		if ( &typeinfo == &etc_vtype )
+		if ( is_etc( type ) )
 		{
 			return arguments;
 		}
 		
 		const Value& arg = first( arguments );
 		
-		const Value* default_arg = get_default_arg( type );
-		
-		const bool defaulted = is_empty( arg )  &&  default_arg != NULL;
-		
-		const Value r = typeinfo.assign( defaulted ? *default_arg : arg );
+		const Value r = as_assigned_or_default( type, arg );
 		
 		if ( r.type() == Value_nothing )
 		{

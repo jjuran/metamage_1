@@ -16,7 +16,6 @@
 namespace vlib
 {
 	
-	static
 	Value as_assigned( const Value& type, const Value& v );
 	
 	static
