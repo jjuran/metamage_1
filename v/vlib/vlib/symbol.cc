@@ -47,14 +47,12 @@ namespace vlib
 			coerce_proc coerce = coercive  &&  type.coerce ? type.coerce
 			                                               : type.assign;
 			
-			const Value coerced = coerce( v );
+			its_value = coerce( v );
 			
-			if ( ! coerced.type() )
+			if ( ! its_value.type() )
 			{
 				TYPE_ERROR( "type mismatch in assignment" );
 			}
-			
-			its_value = coerced;
 		}
 		else
 		{
