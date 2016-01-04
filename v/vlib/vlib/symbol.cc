@@ -5,6 +5,9 @@
 
 #include "vlib/symbol.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"
@@ -12,6 +15,24 @@
 
 namespace vlib
 {
+	
+	static
+	Value as_assigned( const Value& type, const Value& v )
+	{
+		ASSERT( type.type() == Value_base_type );
+		
+		return type.typeinfo().assign( v );
+	}
+	
+	static
+	Value as_coerced( const Value& type, const Value& v )
+	{
+		ASSERT( type.type() == Value_base_type );
+		
+		const type_info& typeinfo = type.typeinfo();
+		
+		return (typeinfo.coerce ? typeinfo.coerce : typeinfo.assign)( v );
+	}
 	
 	void Symbol::denote( const Value& vtype )
 	{
@@ -42,12 +63,7 @@ namespace vlib
 		
 		if ( its_vtype.type() )
 		{
-			const type_info& type = its_vtype.typeinfo();
-			
-			coerce_proc coerce = coercive  &&  type.coerce ? type.coerce
-			                                               : type.assign;
-			
-			its_value = coerce( v );
+			its_value = (coercive ? as_coerced : as_assigned)( its_vtype, v );
 			
 			if ( ! its_value.type() )
 			{
