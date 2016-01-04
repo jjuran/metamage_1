@@ -880,6 +880,14 @@ namespace vlib
 			}
 		}
 		
+		if ( op == Op_intersection  ||  op == Op_union )
+		{
+			if ( is_type( left )  &&  is_type( right ) )
+			{
+				return Value( left, op, right );
+			}
+		}
+		
 		if ( op == Op_repeat )
 		{
 			return repeat_list( left, right );

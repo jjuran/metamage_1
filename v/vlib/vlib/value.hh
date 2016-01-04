@@ -351,6 +351,11 @@ namespace vlib
 					return is_empty( expr->right );
 				}
 			}
+			
+			if ( expr->op == Op_intersection  ||  expr->op == Op_union )
+			{
+				return is_type( expr->left )  &&  is_type( expr->right );
+			}
 		}
 		
 		return v.type() == Value_base_type;

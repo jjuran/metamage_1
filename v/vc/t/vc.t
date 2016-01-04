@@ -2280,3 +2280,18 @@ $ vc 'substr( "Test", 1 )'
 
 $ vc 'substr( "Test", 1, 2 )'
 1 >= '"es"'
+
+%
+
+$ vc 'var x (str|int) = "123"'
+1 >= '"123"'
+
+%
+
+$ vc 'var x (str|int) = 123'
+1 >= '123'
+
+%
+
+$ vc 'var x (u8 & i8) = 123'
+1 >= '123'
