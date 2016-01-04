@@ -588,7 +588,7 @@ namespace vlib
 			next = &rest( *next );
 		}
 		
-		return Value( Op_array, result );
+		return make_array( result );
 	}
 	
 	static

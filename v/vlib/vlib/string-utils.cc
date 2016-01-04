@@ -498,7 +498,7 @@ namespace vlib
 		
 		if ( n == 0 )
 		{
-			return Value( Op_array, Value_empty_list );
+			return make_array( Value_empty_list );
 		}
 		
 		const char* end = p + n;
@@ -537,7 +537,7 @@ namespace vlib
 			result = Value( Value( line ), result );
 		}
 		
-		return Value( Op_array, result );
+		return make_array( result );
 	}
 	
 }

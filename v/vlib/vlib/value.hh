@@ -323,6 +323,12 @@ namespace vlib
 		return is_function( v )  ||  v.type() == Value_base_type;
 	}
 	
+	inline
+	Value make_array( const Value& list )
+	{
+		return Value( Op_array, list );
+	}
+	
 	Value bind_args( const Value& f, const Value& arguments );
 	
 	unsigned long area( const Value& v );
