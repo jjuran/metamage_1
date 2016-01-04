@@ -241,6 +241,7 @@ namespace vlib
 				SYNTAX_ERROR( "invalid token" );
 			
 			case Token_whitespace:
+			case Token_comment:
 				break;
 			
 			case Token_lbracket:

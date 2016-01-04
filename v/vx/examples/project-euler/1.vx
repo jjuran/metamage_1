@@ -1,0 +1,14 @@
+#!/usr/bin/env vx
+
+var x = 0;
+var i = 0;
+
+while ++i < 1000 do
+{
+	if (i % 3) * (i % 5) == 0 then
+	{
+		x += i;
+	}
+};
+
+print x;
