@@ -2272,6 +2272,11 @@ $ vc 'substr( "Test", 1, 2 )'
 
 %
 
+$ vc 'var x (()) = ()'
+1 >= '()'
+
+%
+
 $ vc 'var x (str|int) = "123"'
 1 >= '"123"'
 
@@ -2279,6 +2284,16 @@ $ vc 'var x (str|int) = "123"'
 
 $ vc 'var x (str|int) = 123'
 1 >= '123'
+
+%
+
+$ vc 'var x (str|()) = "foo"'
+1 >= '"foo"'
+
+%
+
+$ vc 'var x (str|()) = ()'
+1 >= '()'
 
 %
 

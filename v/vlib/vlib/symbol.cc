@@ -55,6 +55,11 @@ namespace vlib
 	
 	Value as_assigned( const Value& type, const Value& v )
 	{
+		if ( is_empty( type ) )
+		{
+			return is_empty( v ) ? v : Value_nothing;
+		}
+		
 		if ( Expr* expr = type.expr() )
 		{
 			if ( expr->op == Op_subscript )
@@ -90,6 +95,11 @@ namespace vlib
 	static
 	Value as_coerced( const Value& type, const Value& v )
 	{
+		if ( is_empty( type ) )
+		{
+			return is_empty( v ) ? v : Value_nothing;
+		}
+		
 		if ( Expr* expr = type.expr() )
 		{
 			TYPE_ERROR( "coercion to expression types is undefined" );

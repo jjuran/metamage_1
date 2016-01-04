@@ -382,7 +382,7 @@ namespace vlib
 			}
 		}
 		
-		return v.type() == Value_base_type;
+		return v.type() == Value_base_type  ||  is_empty( v );
 	}
 	
 	inline
