@@ -99,6 +99,15 @@ namespace vlib
 			
 			fail( msg, e.source );
 		}
+		catch ( const undeclared_symbol_error& e )
+		{
+			plus::var_string msg = "ERROR: undeclared symbol '";
+			
+			msg += e.name;
+			msg += "'";
+			
+			fail( msg, e.source );
+		}
 		
 		return Value();
 	}

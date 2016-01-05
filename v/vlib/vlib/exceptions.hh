@@ -29,6 +29,19 @@ namespace vlib
 		}
 	};
 	
+	struct undeclared_symbol_error
+	{
+		const plus::string  name;
+		const source_spec   source;
+		
+		undeclared_symbol_error( const plus::string& n, const source_spec& src )
+		:
+			name  ( n   ),
+			source( src )
+		{
+		}
+	};
+	
 }
 
 #endif

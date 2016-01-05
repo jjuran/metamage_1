@@ -417,7 +417,7 @@ namespace vlib
 							break;
 						}
 						
-						SYMBOL_ERROR( "undeclared symbol" );
+						throw undeclared_symbol_error( token.text, its_source );
 					}
 				}
 				
