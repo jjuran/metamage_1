@@ -73,4 +73,9 @@ Level 7
 Level 8
 -------
 
-`parse.*`:  Defines `parse_and_eval()`, which parses the text of an arithmetic expression, evaluates it, and returns the result.
+`parse.*`:  Defines `parse()`, which parses the text of a program into an expression tree, and `eval_tree()`, which evaluates an expression tree and returns the result.
+
+Level 9
+-------
+
+`interpret.*`:  Defines `interpret()`, which parses and evaluates a program and reports any errors.

@@ -6,9 +6,6 @@
 // POSIX
 #include <unistd.h>
 
-// Standard C++
-#include <new>
-
 // must
 #include "must/write.h"
 
@@ -20,16 +17,11 @@
 #include "plus/string/concat.hh"
 
 // vlib
-#include "vlib/calc.hh"
 #include "vlib/init.hh"
+#include "vlib/interpret.hh"
 #include "vlib/library.hh"
-#include "vlib/parse.hh"
 #include "vlib/string-utils.hh"
 
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-#define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
 
 using namespace vlib;
 
@@ -46,13 +38,6 @@ static command::option options[] =
 };
 
 static bool hex_output = false;
-
-static int fail( const char* msg, unsigned len )
-{
-	must_write( STDERR_FILENO, msg, len );
-	
-	return 1;
-}
 
 static plus::string stringify( const Value& v )
 {
@@ -121,34 +106,15 @@ int main( int argc, char** argv )
 	
 	int i = 0;
 	
-	try
+	do
 	{
-		do
-		{
-			const char* expr = args[ i ];
-			
-			const Value tree = parse( expr );
-			
-			reproduce( eval_tree( tree ) );
-		}
-		while ( ++i < argn );
+		const char* expr = args[ i ];
+		
+		const Value result = interpret( expr );
+		
+		reproduce( result );
 	}
-	catch ( const std::bad_alloc& )
-	{
-		return FAIL( "Out of memory!" );
-	}
-	catch ( const plus::ibox::limb_count_overflow& )
-	{
-		return FAIL( "Max bigint size exceeded" );
-	}
-	catch ( const transfer_via_break& )
-	{
-		return FAIL( "`break` used outside of loop" );
-	}
-	catch ( const transfer_via_continue& )
-	{
-		return FAIL( "`continue` used outside of loop" );
-	}
+	while ( ++i < argn );
 	
 	return 0;
 }

@@ -26,10 +26,9 @@
 #include "poseven/types/errno_t.hh"
 
 // vlib
-#include "vlib/calc.hh"
 #include "vlib/init.hh"
+#include "vlib/interpret.hh"
 #include "vlib/library.hh"
-#include "vlib/parse.hh"
 #include "vlib/symbol_table.hh"
 
 
@@ -63,12 +62,6 @@ static int fail( const char* msg, unsigned len )
 	return 1;
 }
 
-
-static
-void execute( const char* program )
-{
-	eval_tree( parse( program ) );
-}
 
 static char* const* get_options( char** argv )
 {
@@ -158,7 +151,7 @@ int main( int argc, char** argv )
 	{
 		if ( inline_script != NULL )
 		{
-			execute( inline_script );
+			interpret( inline_script );
 		}
 		else
 		{
@@ -171,24 +164,12 @@ int main( int argc, char** argv )
 				return FAIL( "Program contains NUL bytes" );
 			}
 			
-			execute( program.c_str() );
+			interpret( program.c_str() );
 		}
 	}
 	catch ( const std::bad_alloc& )
 	{
 		return FAIL( "Out of memory!" );
-	}
-	catch ( const plus::ibox::limb_count_overflow& )
-	{
-		return FAIL( "Max bigint size exceeded" );
-	}
-	catch ( const transfer_via_break& )
-	{
-		return FAIL( "`break` used outside of loop" );
-	}
-	catch ( const transfer_via_continue& )
-	{
-		return FAIL( "`continue` used outside of loop" );
 	}
 	catch ( const p7::errno_t& err )
 	{
