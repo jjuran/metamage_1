@@ -27,6 +27,7 @@
 #include "vlib/precedence.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
+#include "vlib/source.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/token.hh"
 #include "vlib/types.hh"
@@ -49,6 +50,8 @@ namespace vlib
 			typedef std::vector< dyad > Stack;
 			
 			Stack stack;
+			
+			source_spec  its_source;
 		
 		private:
 			bool expecting_value() const;
@@ -68,6 +71,8 @@ namespace vlib
 		
 		public:
 			Parser( const char* file )
+			:
+				its_source( file )
 			{
 			}
 			
@@ -249,7 +254,10 @@ namespace vlib
 			
 			case Token_whitespace:
 			case Token_comment:
+				break;
+			
 			case Token_newline:
+				++its_source.line;
 				break;
 			
 			case Token_lbracket:
