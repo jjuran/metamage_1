@@ -20,6 +20,7 @@
 #include "vlib/dyad.hh"
 #include "vlib/error.hh"
 #include "vlib/eval.hh"
+#include "vlib/exceptions.hh"
 #include "vlib/functions.hh"
 #include "vlib/init.hh"
 #include "vlib/named_ops.hh"
@@ -250,7 +251,7 @@ namespace vlib
 				SYNTAX_ERROR( "invalid control character in source" );
 			
 			case Token_invalid:
-				SYNTAX_ERROR( "invalid token" );
+				throw invalid_token_error( token.text, its_source );
 			
 			case Token_whitespace:
 			case Token_comment:

@@ -90,6 +90,15 @@ namespace vlib
 		{
 			FAIL( "`continue` used outside of loop" );
 		}
+		catch ( const invalid_token_error& e )
+		{
+			plus::var_string msg = "ERROR: invalid token '";
+			
+			msg += e.token;
+			msg += "'";
+			
+			fail( msg, e.source );
+		}
 		
 		return Value();
 	}
