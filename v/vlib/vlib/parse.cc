@@ -245,6 +245,7 @@ namespace vlib
 			
 			case Token_whitespace:
 			case Token_comment:
+			case Token_newline:
 				break;
 			
 			case Token_lbracket:
