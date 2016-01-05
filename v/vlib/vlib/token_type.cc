@@ -190,7 +190,9 @@ namespace vlib
 		
 		if ( *p < ' ' )
 		{
-			return Token_invalid;  // control character
+			++p;
+			
+			return Token_control;  // control character
 		}
 		
 		if ( *p == '#' )

@@ -12,6 +12,7 @@ namespace vlib
 	
 	enum token_type
 	{
+		Token_control = -2,  // a control character
 		Token_invalid = -1,
 		
 		Token_end = 0,

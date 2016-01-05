@@ -237,6 +237,9 @@ namespace vlib
 	{
 		switch ( token )
 		{
+			case Token_control:
+				SYNTAX_ERROR( "invalid control character in source" );
+			
 			case Token_invalid:
 				SYNTAX_ERROR( "invalid token" );
 			
