@@ -168,7 +168,7 @@ int main( int argc, char** argv )
 			
 			if ( strlen( program.c_str() ) != program.size() )
 			{
-				FAIL( "Program contains NUL bytes" );
+				return FAIL( "Program contains NUL bytes" );
 			}
 			
 			execute( program.c_str() );
