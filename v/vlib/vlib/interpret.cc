@@ -38,11 +38,11 @@ namespace vlib
 		exit( 1 );
 	}
 	
-	Value interpret( const char* program )
+	Value interpret( const char* program, const char* file )
 	{
 		try
 		{
-			return eval_tree( parse( program ) );
+			return eval_tree( parse( program, file ) );
 		}
 		catch ( const std::bad_alloc& )
 		{

@@ -67,6 +67,10 @@ namespace vlib
 			void receive_token( const Token& token );
 		
 		public:
+			Parser( const char* file )
+			{
+			}
+			
 			Value parse( const char* p );
 	};
 	
@@ -593,11 +597,11 @@ namespace vlib
 		return eval( tree );
 	}
 	
-	Value parse( const char* p )
+	Value parse( const char* p, const char* file )
 	{
 		static bool installed = install_basic_symbols();
 		
-		Parser parser;
+		Parser parser( file );
 		
 		return parser.parse( p );
 	}
