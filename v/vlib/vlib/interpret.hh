@@ -3,8 +3,8 @@
 	------------
 */
 
-#ifndef VLIB_FUNCTIONS_HH
-#define VLIB_FUNCTIONS_HH
+#ifndef VLIB_INTERPRET_HH
+#define VLIB_INTERPRET_HH
 
 // vlib
 #include "vlib/value.hh"
