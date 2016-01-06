@@ -17,8 +17,15 @@
 // must
 #include "must/write.h"
 
+// gear
+#include "gear/inscribe_decimal.hh"
+
+// plus
+#include "plus/var_string.hh"
+
 // vlib
 #include "vlib/calc.hh"
+#include "vlib/exceptions.hh"
 #include "vlib/parse.hh"
 
 
@@ -35,6 +42,29 @@ namespace vlib
 	{
 		must_write( STDERR_FILENO, msg, len );
 	
+		exit( 1 );
+	}
+	
+	static
+	void fail( const plus::string& s, const source_spec& src )
+	{
+		plus::var_string msg;
+		
+		if ( src.file != NULL )
+		{
+			const char* line_num = gear::inscribe_unsigned_decimal( src.line );
+			
+			msg += src.file;
+			msg += ":";
+			msg += line_num;
+			msg += "\n    ";
+		}
+		
+		msg += s;
+		msg += "\n";
+		
+		must_write( STDERR_FILENO, msg.data(), msg.size() );
+		
 		exit( 1 );
 	}
 	
