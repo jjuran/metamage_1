@@ -13,7 +13,7 @@
 namespace vlib
 {
 	
-	Value interpret( const char* program );
+	Value interpret( const char* program, const char* file = 0 );  // NULL
 	
 }
 

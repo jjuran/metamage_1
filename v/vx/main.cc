@@ -164,7 +164,7 @@ int main( int argc, char** argv )
 				return FAIL( "Program contains NUL bytes" );
 			}
 			
-			interpret( program.c_str() );
+			interpret( program.c_str(), path );
 		}
 	}
 	catch ( const std::bad_alloc& )

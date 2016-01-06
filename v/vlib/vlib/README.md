@@ -6,6 +6,8 @@ Level 1
 
 `error.*`:  Defines utility macros `SYNTAX_ERROR()` and `INTERNAL_ERROR()`.
 
+`source.*`:  Defines `struct source_spec`, which stores the filename and line number in a source file where a token was seen.
+
 `token_type.*`:  Defines `enum token_type`, with members for each token type, and `next_token_type()`, which scans source text for the next whole token.
 
 `op_type.hh`:  Defines `enum op_type`, with members for each operator.
@@ -32,6 +34,8 @@ Level 2
 `precedence.*`:  Defines `decreasing_op_precedence()`, which implements operator precedence and determines whether a stacked operation can be evaluated immediately, or only after further input.
 
 `quote.*`:  Defines routines for decoding string literals, including escape sequences.
+
+`exceptions.*`:  Defines exception classes.
 
 Level 3
 -------

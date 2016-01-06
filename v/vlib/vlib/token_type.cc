@@ -183,7 +183,23 @@ namespace vlib
 		
 		if ( is_space( *p ) )
 		{
-			while ( is_space( *++p ) )  continue;
+			do
+			{
+				char c = *p++;
+				
+				if ( c == '\n' )
+				{
+					return Token_newline;
+				}
+				
+				if ( c == '\r' )
+				{
+					if ( *p == '\n' )  ++p;
+					
+					return Token_newline;
+				}
+			}
+			while ( is_space( *p ) );
 			
 			return Token_whitespace;
 		}
@@ -203,6 +219,8 @@ namespace vlib
 			{
 				if ( c == '\n'  ||  c == '\r' )
 				{
+					--p;
+					
 					return Token_comment;
 				}
 			}
