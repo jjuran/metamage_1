@@ -176,6 +176,8 @@ namespace vlib
 				return 0;
 			
 			case Value_boolean:
+				return v.boolean() + 0;
+			
 			case Value_byte:
 				return v.number();
 			

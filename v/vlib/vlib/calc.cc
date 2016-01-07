@@ -66,6 +66,8 @@ namespace vlib
 				return true;
 			
 			case Value_boolean:
+				return a.boolean() == b.boolean();
+			
 			case Value_byte:
 			case Value_number:
 				return get_int( a ) == get_int( b );
@@ -247,6 +249,17 @@ namespace vlib
 				return 0;
 			
 			case Value_boolean:
+				switch ( op )
+				{
+					case Op_unary_plus:   return 0 + v.boolean();
+					case Op_unary_minus:  return 0 - v.boolean();
+					
+					default:  break;
+				}
+				
+				SYNTAX_ERROR( "unary operator not defined for booleans" );
+				break;
+			
 			case Value_number:
 				switch ( op )
 				{
@@ -356,6 +369,11 @@ namespace vlib
 	static
 	Value repeat_list( const Value& list, const Value& factor )
 	{
+		if ( factor.type() == Value_boolean )
+		{
+			return factor.boolean() ? list : Value_empty_list;
+		}
+		
 		if ( factor.type() != Value_number )
 		{
 			TYPE_ERROR( "non-numeric list repetition factor" );
@@ -921,6 +939,11 @@ namespace vlib
 		{
 			if ( right.type() == V_bool  ||  right.type() == V_int )
 			{
+				if ( right.type() == V_bool )
+				{
+					return right.boolean() ? left.string() : plus::string::null;
+				}
+				
 				return repeat_string( get_str( left ), get_int( right ) );
 			}
 		}

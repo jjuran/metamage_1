@@ -69,7 +69,7 @@ namespace vlib
 			
 		#define IBOX( i )  plus::ibox( i ).move()
 			
-			Value( bool b ) : its_box( IBOX( (long) b ), Value_boolean )
+			Value( bool b ) : its_box( b, Value_boolean )
 			{
 			}
 			
@@ -129,6 +129,11 @@ namespace vlib
 			value_type type() const
 			{
 				return value_type( its_box.semantics() );
+			}
+			
+			bool boolean() const
+			{
+				return its_box.boolean();
 			}
 			
 			plus::integer& number()
@@ -219,7 +224,7 @@ namespace vlib
 	inline
 	bool get_bool( const Value& v )
 	{
-		return ! v.number().is_zero();
+		return v.boolean();
 	}
 	
 	inline
