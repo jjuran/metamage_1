@@ -48,13 +48,23 @@ Level 3
 
 `string-utils.*`:  Defines functions for computations of strings.
 
+`iterator.*`:  Defines `class full_iterator` for visiting all known objects.
+
+`stack.*`:  Defines `nth_frame()` for crawling the call stack.
+
 Level 4
 -------
 
 `types.*`:  Defines a `type_info` for each V base type.
 
+`symdesc.*`:  Defines a `make_metasymbol()` and `resolve_symbol()`, used with symbol descriptors.
+
+`tracker.*`:  Implements a mark-and-sweep garbage collector.
+
 Level 5
 -------
+
+`scope.*`:  Defines `class lexical_scope` (and `class lexical_scope_box`).
 
 `functions.*`:  Defines various built-in V functions.
 
