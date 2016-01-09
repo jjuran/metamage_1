@@ -196,7 +196,7 @@ namespace vlib
 		
 		ASSERT( expr != NULL );
 		
-		if ( expr->op == Op_array  ||  expr->op == Op_block )
+		if ( expr->op == Op_array  ||  (expr->op & 0xFF) == Op_block )
 		{
 			const size_t n_brackets = use_parens( mode ) * 2;
 			
@@ -334,7 +334,7 @@ namespace vlib
 			return p;
 		}
 		
-		if ( expr->op == Op_block )
+		if ( (expr->op & 0xFF) == Op_block )
 		{
 			*p++ = '{';
 			

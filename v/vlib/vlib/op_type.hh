@@ -68,6 +68,8 @@ namespace vlib
 		Op_brackets,
 		Op_braces,
 		Op_end,
+		
+		Op_invocation = 0x100 | Op_block,
 	};
 	
 	inline

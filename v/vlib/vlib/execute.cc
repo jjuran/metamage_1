@@ -60,12 +60,12 @@ namespace vlib
 			
 			if ( expr->op == Op_block )
 			{
-				return Value( invoke, Op_block, expr->right );
+				return Value( invoke, Op_invocation, expr->right );
 			}
 			
 			if ( expr->op == Op_do )
 			{
-				const Value test( invoke, Op_block, expr->left );
+				const Value test( invoke, Op_invocation, expr->left );
 				
 				return Value( test, Op_do, execute( expr->right ) );
 			}

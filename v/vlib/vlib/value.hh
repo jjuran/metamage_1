@@ -313,7 +313,7 @@ namespace vlib
 		
 		if ( Expr* expr = v.expr() )
 		{
-			if ( expr->op == Op_bind_args  ||  expr->op == Op_block )
+			if ( expr->op == Op_bind_args  ||  expr->op == Op_invocation )
 			{
 				return true;
 			}

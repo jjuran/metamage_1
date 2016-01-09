@@ -235,7 +235,7 @@ namespace vlib
 					
 					SYNTAX_ERROR( "unary operator not defined for arrays" );
 				
-				case Op_block:
+				case Op_invocation:
 					SYNTAX_ERROR( "unary operator not defined for blocks" );
 				
 				default:
@@ -479,9 +479,9 @@ namespace vlib
 	{
 		Expr* expr = block.expr();
 		
-		if ( expr == NULL  ||  expr->op != Op_block )
+		if ( expr == NULL  ||  expr->op != Op_invocation )
 		{
-			INTERNAL_ERROR( "not a block" );
+			INTERNAL_ERROR( "not a block invocation" );
 		}
 		
 		const Value& invoke = expr->left;
@@ -550,7 +550,7 @@ namespace vlib
 		
 		if ( Expr* expr = get_expr( f ) )
 		{
-			if ( expr->op == Op_block )
+			if ( expr->op == Op_invocation )
 			{
 				const Value& invoke = expr->left;
 				const Value& block  = expr->right;
@@ -691,7 +691,7 @@ namespace vlib
 	{
 		Expr* expr = v.expr();
 		
-		return expr != NULL  &&  expr->op == Op_block;
+		return expr != NULL  &&  expr->op == Op_invocation;
 	}
 	
 	static
