@@ -15,8 +15,6 @@ namespace vlib
 	
 	Value parse( const char* p, const char* file );
 	
-	Value eval_tree( const Value& tree );
-	
 }
 
 #endif

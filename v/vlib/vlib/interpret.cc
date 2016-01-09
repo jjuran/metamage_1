@@ -26,6 +26,7 @@
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/exceptions.hh"
+#include "vlib/execute.hh"
 #include "vlib/parse.hh"
 
 
@@ -72,7 +73,7 @@ namespace vlib
 	{
 		try
 		{
-			return eval_tree( parse( program, file ) );
+			return execute( parse( program, file ) );
 		}
 		catch ( const std::bad_alloc& )
 		{

@@ -26,7 +26,6 @@
 #include "vlib/named_ops.hh"
 #include "vlib/ops.hh"
 #include "vlib/precedence.hh"
-#include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
 #include "vlib/source.hh"
 #include "vlib/symbol_table.hh"
@@ -519,91 +518,6 @@ namespace vlib
 				return eval( result );
 			}
 		}
-	}
-	
-	static
-	Value v_invoke( const Value& v )
-	{
-		Expr* expr = v.expr();
-		
-		if ( expr != NULL  &&  expr->op == Op_bind_args )
-		{
-			const Value& block = expr->left;
-			const Value& args  = expr->right;
-			
-			Symbol* const underscore = locate_symbol( "_" );
-			
-			const Value previous = underscore->get();
-			
-			underscore->assign( args );
-			
-			const Value result = eval_tree( block );
-			
-			underscore->assign( previous );
-			
-			return result;
-		}
-		
-		return eval_tree( v );
-	}
-	
-	static proc_info proc_invoke = { &v_invoke, "invoke", 0 };
-	
-	static const Value invoke = proc_invoke;
-	
-	Value eval_tree( const Value& tree )
-	{
-		if ( Expr* expr = tree.expr() )
-		{
-			if ( expr->op == Op_var  ||  expr->op == Op_const )
-			{
-				return Value_nothing;
-			}
-			
-			if ( expr->op == Op_end )
-			{
-				return eval_tree( expr->left ), eval_tree( expr->right );
-			}
-			
-			if ( expr->op == Op_block )
-			{
-				return Value( invoke, Op_block, expr->right );
-			}
-			
-			if ( expr->op == Op_do )
-			{
-				const Value test( invoke, Op_block, expr->left );
-				
-				return Value( test, Op_do, eval_tree( expr->right ) );
-			}
-			
-			const Value* left  = &expr->left;
-			const Value* right = &expr->right;
-			
-			if ( left->type() == Value_dummy_operand )
-			{
-				using iota::swap;
-				
-				swap( left, right );
-			}
-			
-			if ( is_left_varop( expr->op )  &&  ! is_type_annotation( *left ) )
-			{
-				return eval( *left, expr->op, eval_tree( *right ) );
-			}
-			
-			/*
-				WARNING:  This recursion is unsafe.  It can be abused with a
-				sufficiently long program, and recursive user-defined blocks
-				only make this easier.
-			*/
-			
-			return eval( eval_tree( *left ),
-			             expr->op,
-			             eval_tree( *right ) );
-		}
-		
-		return eval( tree );
 	}
 	
 	Value parse( const char* p, const char* file )
