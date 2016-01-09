@@ -15,6 +15,9 @@ namespace vlib
 {
 	
 	static
+	Value execute( const Value& tree, const Value& stack );
+	
+	static
 	Value v_invoke( const Value& v )
 	{
 		Expr* expr = v.expr();
@@ -30,19 +33,19 @@ namespace vlib
 			
 			underscore->assign( args );
 			
-			const Value result = execute( block );
+			const Value result = execute( block, args );
 			
 			underscore->assign( previous );
 			
 			return result;
 		}
 		
-		return execute( v );
+		return execute( v, empty_list );
 	}
 	
 	static proc_info proc_invoke = { &v_invoke, "invoke", 0 };
 	
-	Value execute( const Value& tree )
+	Value execute( const Value& tree, const Value& stack )
 	{
 		if ( Expr* expr = tree.expr() )
 		{
@@ -53,7 +56,9 @@ namespace vlib
 			
 			if ( expr->op == Op_end )
 			{
-				return execute( expr->left ), execute( expr->right );
+				execute( expr->left, stack );
+				
+				return execute( expr->right, stack );
 			}
 			
 			if ( expr->op == Op_block )
@@ -65,7 +70,7 @@ namespace vlib
 			{
 				const Value test( proc_invoke, Op_invocation, expr->left );
 				
-				return Value( test, Op_do, execute( expr->right ) );
+				return Value( test, Op_do, execute( expr->right, stack ) );
 			}
 			
 			const Value* left  = &expr->left;
@@ -80,7 +85,9 @@ namespace vlib
 			
 			if ( is_left_varop( expr->op )  &&  ! is_type_annotation( *left ) )
 			{
-				return eval( *left, expr->op, execute( *right ) );
+				return eval( *left,
+				             expr->op,
+				             execute( *right, stack ) );
 			}
 			
 			/*
@@ -89,12 +96,17 @@ namespace vlib
 				only make this easier.
 			*/
 			
-			return eval( execute( *left ),
+			return eval( execute( *left, stack ),
 			             expr->op,
-			             execute( *right ) );
+			             execute( *right, stack ) );
 		}
 		
 		return eval( tree );
+	}
+	
+	Value execute( const Value& root )
+	{
+		return execute( root, empty_list );
 	}
 	
 }
