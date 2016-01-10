@@ -95,7 +95,9 @@ namespace vlib
 	{
 		Expr* expr = v.expr();
 		
-		if ( expr != NULL  &&  expr->op == Op_bind_args )
+		ASSERT( expr != NULL );
+		
+		if ( expr->op == Op_bind_args )
 		{
 			const Value& block = expr->left;
 			const Value& args  = expr->right;
