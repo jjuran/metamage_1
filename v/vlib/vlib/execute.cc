@@ -42,8 +42,6 @@ namespace vlib
 	
 	static proc_info proc_invoke = { &v_invoke, "invoke", 0 };
 	
-	static const Value invoke = proc_invoke;
-	
 	Value execute( const Value& tree )
 	{
 		if ( Expr* expr = tree.expr() )
@@ -60,12 +58,12 @@ namespace vlib
 			
 			if ( expr->op == Op_block )
 			{
-				return Value( invoke, Op_invocation, expr->right );
+				return Value( proc_invoke, Op_invocation, expr->right );
 			}
 			
 			if ( expr->op == Op_do )
 			{
-				const Value test( invoke, Op_invocation, expr->left );
+				const Value test( proc_invoke, Op_invocation, expr->left );
 				
 				return Value( test, Op_do, execute( expr->right ) );
 			}
