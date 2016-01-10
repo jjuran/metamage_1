@@ -119,7 +119,7 @@ void set_argv( const char* arg0, int argn, char* const* args )
 		argv = arg0;
 	}
 	
-	symbol_id argv_sym = create_symbol( "argv", Symbol_const );
+	const Value& argv_sym = create_symbol( "argv", Symbol_const );
 	
 	assign_symbol( argv_sym, make_array( argv ) );
 }

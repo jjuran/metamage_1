@@ -205,6 +205,7 @@ namespace vlib
 		a.swap( b );
 	}
 	
+	extern const Value nothing;
 	extern const Value empty_list;
 	
 	typedef Value symbol_id;

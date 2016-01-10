@@ -27,12 +27,12 @@ namespace vlib
 		public:
 			void define_constant( const char* name, const Value& v );
 			
-			symbol_id locate( const plus::string& name ) const;
-			symbol_id create( const plus::string& name, symbol_type type );
+			const Value& locate( const plus::string& name ) const;
+			const Value& create( const plus::string& name, symbol_type type );
 	};
 	
-	symbol_id locate_symbol( const plus::string& name );
-	symbol_id create_symbol( const plus::string& name, symbol_type type );
+	const Value& locate_symbol( const plus::string& name );
+	const Value& create_symbol( const plus::string& name, symbol_type type );
 	
 }
 

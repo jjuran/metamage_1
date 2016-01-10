@@ -21,6 +21,7 @@
 namespace vlib
 {
 	
+	const Value nothing    = Value_nothing;
 	const Value empty_list = Value_empty_list;
 	
 	static

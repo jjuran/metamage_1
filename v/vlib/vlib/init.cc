@@ -21,14 +21,14 @@ namespace vlib
 	static
 	void define( const char* name, const Value& v )
 	{
-		const symbol_id sym = create_symbol( name, Symbol_const );
+		const Value& sym = create_symbol( name, Symbol_const );
 		
 		assign_symbol( sym, v );
 	}
 	
 	void define( const proc_info& proc )
 	{
-		const symbol_id sym = create_symbol( proc.name, Symbol_const );
+		const Value& sym = create_symbol( proc.name, Symbol_const );
 		
 		assign_symbol( sym, proc );
 	}

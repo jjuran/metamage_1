@@ -47,21 +47,21 @@ namespace vlib
 		return NULL;
 	}
 	
-	symbol_id symbol_table::locate( const plus::string& name ) const
+	const Value& symbol_table::locate( const plus::string& name ) const
 	{
 		if ( const Value* it = find_symbol( its_symbols, name ) )
 		{
 			return *it;
 		}
 		
-		return symbol_id();
+		return nothing;
 	}
 	
-	symbol_id symbol_table::create( const plus::string& name, symbol_type type )
+	const Value& symbol_table::create( const plus::string& name, symbol_type type )
 	{
 		if ( const Value* it = find_symbol( its_symbols, name ) )
 		{
-			symbol_id sym = *it;
+			const Value& sym = *it;
 			
 			Symbol& var = *sym;
 			
@@ -80,12 +80,12 @@ namespace vlib
 		return its_symbols.back();
 	}
 	
-	symbol_id locate_symbol( const plus::string& name )
+	const Value& locate_symbol( const plus::string& name )
 	{
 		return global_symbol_table.locate( name );
 	}
 	
-	symbol_id create_symbol( const plus::string& name, symbol_type type )
+	const Value& create_symbol( const plus::string& name, symbol_type type )
 	{
 		return global_symbol_table.create( name, type );
 	}
