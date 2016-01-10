@@ -59,6 +59,8 @@ namespace vlib
 			bool is_defined() const  { return ! is_undefined( its_value ); }
 			
 			bool is_immutable() const  { return is_const()  &&  is_defined(); }
+			
+			Value clone() const;
 	};
 	
 	inline
