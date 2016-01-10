@@ -90,6 +90,21 @@ namespace vlib
 		return op == Op_postinc  ||  op == Op_postdec;
 	}
 	
+	inline
+	bool is_supporting( op_type op )
+	{
+		switch ( op )
+		{
+			case Op_then:
+			case Op_else:
+			case Op_do:
+				return true;
+			
+			default:
+				return false;
+		}
+	}
+	
 }
 
 #endif

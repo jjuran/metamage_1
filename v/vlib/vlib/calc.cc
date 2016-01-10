@@ -870,7 +870,7 @@ namespace vlib
 			return make_pair( left, right );
 		}
 		
-		if ( op == Op_then  ||  op == Op_else  ||  op == Op_do )
+		if ( is_supporting( op ) )
 		{
 			return Value( left, op, right );
 		}
