@@ -47,9 +47,9 @@ namespace vlib
 		return NULL;
 	}
 	
-	const Value& symbol_table::locate( const plus::string& name ) const
+	const Value& locate_symbol( const Symbols& syms, const plus::string& name )
 	{
-		if ( const Value* it = find_symbol( its_symbols, name ) )
+		if ( const Value* it = find_symbol( syms, name ) )
 		{
 			return *it;
 		}
