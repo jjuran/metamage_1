@@ -69,7 +69,32 @@ namespace vlib
 		Op_braces,
 		Op_end,
 		
+		Op_frame,  // links caller's stack to a new stack frame
+		Op_scope,  // links a set of symbols to the code declaring them
+		
+		/*
+			An invocation is a transformed block.  The dummy left operand is
+			replaced with `&proc_invoke` (a use of dependency injection that
+			prevents `calc` from depending on `execute`), and the scope is
+			replaced with an activation.  (Actually, an invocation's right
+			operand could also be a non-block expression.)
+			
+			An activation is a transformed scope.  The placeholder `_` is
+			replaced with the one in the current stack frame, though this
+			value is only used when entering a scope -- if a block is called
+			with arguments, they replace the value in `_`.  The new set of
+			symbols (i.e. `_` and the local presets) become a new stack frame
+			and the new stack replaces the symbols as the left operand.
+			
+			An expression also binds code to a stack (and is further bound
+			to proc_invoke in an invocation), but it doesn't create a lexical
+			scope.  The one example so far is the condition of while-do.
+		*/
+		
+		Op_expression,
+		
 		Op_invocation = 0x100 | Op_block,
+		Op_activation = 0x100 | Op_scope,
 	};
 	
 	inline
@@ -98,6 +123,7 @@ namespace vlib
 			case Op_then:
 			case Op_else:
 			case Op_do:
+			case Op_scope:
 				return true;
 			
 			default:
