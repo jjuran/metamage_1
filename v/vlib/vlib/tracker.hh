@@ -12,7 +12,7 @@ namespace vlib
 	
 	class Value;
 	
-	void track_symbol( const Value& v );
+	void track_symbol( const Value& v, const Value& new_value );
 	
 	void add_root( const Value& v );
 	void del_root( const Value& v );

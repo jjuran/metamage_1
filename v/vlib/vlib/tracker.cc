@@ -61,13 +61,18 @@ namespace vlib
 		return false;
 	}
 	
-	void track_symbol( const Value& v )
+	void track_symbol( const Value& v, const Value& new_value )
 	{
 		ASSERT( is_symbol( v ) );
 		
 		Symbol* sym = v.sym();
 		
 		ASSERT( sym );
+		
+		if ( new_value.expr() == NULL )
+		{
+			return;
+		}
 		
 		if ( ! is_tracked( sym ) )
 		{

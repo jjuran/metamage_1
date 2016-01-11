@@ -242,7 +242,7 @@ namespace vlib
 				return left;
 			}
 			
-			track_symbol( left );
+			track_symbol( left, right );
 			
 			return eval_assignment( left.sym(), op, right );
 		}

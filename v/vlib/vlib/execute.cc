@@ -25,7 +25,7 @@ namespace vlib
 	{
 		const Value symbol( Symbol_var, name );
 		
-		track_symbol( symbol );
+		track_symbol( symbol, v );
 		
 		symbol.sym()->assign( v );
 		
