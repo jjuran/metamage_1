@@ -6,19 +6,41 @@
 #ifndef VLIB_SYMBOLTABLE_HH
 #define VLIB_SYMBOLTABLE_HH
 
+// Standard C++
+#include <vector>
+
 // plus
 #include "plus/string.hh"
 
 // vlib
 #include "vlib/symbol.hh"
-#include "vlib/symbol_id.hh"
 
 
 namespace vlib
 {
 	
-	symbol_id locate_symbol( const plus::string& name );
-	symbol_id create_symbol( const plus::string& name, symbol_type type );
+	typedef std::vector< Value > Symbols;
+	
+	const Value& locate_symbol( const Symbols& syms, const plus::string& name );
+	
+	class symbol_table
+	{
+		private:
+			Symbols its_symbols;
+		
+		public:
+			void define_constant( const char* name, const Value& v );
+			
+			const Value& locate( const plus::string& name ) const
+			{
+				return locate_symbol( its_symbols, name );
+			}
+			
+			const Value& create( const plus::string& name, symbol_type type );
+	};
+	
+	const Value& locate_symbol( const plus::string& name );
+	const Value& create_symbol( const plus::string& name, symbol_type type );
 	
 }
 

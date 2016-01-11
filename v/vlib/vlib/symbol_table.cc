@@ -5,9 +5,6 @@
 
 #include "vlib/symbol_table.hh"
 
-// Standard C++
-#include <list>
-
 // vlib
 #include "vlib/error.hh"
 
@@ -15,33 +12,57 @@
 namespace vlib
 {
 	
-	static std::list< Symbol > symbol_table;
+	static symbol_table global_symbol_table;
 	
 	
-	symbol_id locate_symbol( const plus::string& name )
+	void symbol_table::define_constant( const char* name, const Value& v )
 	{
-		typedef std::list< Symbol >::iterator Iter;
+		Value constant( Symbol_const, name );
 		
-		Iter begin = symbol_table.begin();
-		Iter it    = symbol_table.end();
+		constant.sym()->assign( v );
+		
+		its_symbols.push_back( constant );
+	}
+	
+	static
+	const Value* find_symbol( const Symbols& symbols, const plus::string& name )
+	{
+		typedef Symbols::const_iterator Iter;
+		
+		Iter begin = symbols.begin();
+		Iter it    = symbols.end();
 		
 		while ( it != begin )
 		{
-			Symbol* sym = &*--it;
+			const Value& v = *--it;
+			
+			Symbol* sym = v.sym();
 			
 			if ( name == sym->name() )
 			{
-				return sym;
+				return &v;
 			}
 		}
 		
 		return NULL;
 	}
 	
-	symbol_id create_symbol( const plus::string& name, symbol_type type )
+	const Value& locate_symbol( const Symbols& syms, const plus::string& name )
 	{
-		if ( symbol_id sym = locate_symbol( name ) )
+		if ( const Value* it = find_symbol( syms, name ) )
 		{
+			return *it;
+		}
+		
+		return nothing;
+	}
+	
+	const Value& symbol_table::create( const plus::string& name, symbol_type type )
+	{
+		if ( const Value* it = find_symbol( its_symbols, name ) )
+		{
+			const Value& sym = *it;
+			
 			Symbol& var = *sym;
 			
 			if ( type == Symbol_const  &&  var.is_var() )
@@ -54,9 +75,19 @@ namespace vlib
 			SYMBOL_ERROR( "duplicate symbol" );
 		}
 		
-		symbol_table.push_back( Symbol( type, name ) );
+		its_symbols.push_back( Value( type, name ) );
 		
-		return &symbol_table.back();
+		return its_symbols.back();
+	}
+	
+	const Value& locate_symbol( const plus::string& name )
+	{
+		return global_symbol_table.locate( name );
+	}
+	
+	const Value& create_symbol( const plus::string& name, symbol_type type )
+	{
+		return global_symbol_table.create( name, type );
 	}
 	
 }

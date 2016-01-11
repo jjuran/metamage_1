@@ -16,12 +16,6 @@
 namespace vlib
 {
 	
-	enum symbol_type
-	{
-		Symbol_const,
-		Symbol_var,
-	};
-	
 	class Symbol
 	{
 		private:

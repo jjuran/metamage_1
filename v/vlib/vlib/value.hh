@@ -18,6 +18,12 @@
 namespace vlib
 {
 	
+	enum symbol_type
+	{
+		Symbol_const,
+		Symbol_var,
+	};
+	
 	struct proc_info;
 	struct type_info;
 	struct Expr;
@@ -60,10 +66,6 @@ namespace vlib
 			};
 			
 			Value( value_type type = value_type() ) : its_box( type )
-			{
-			}
-			
-			Value( Symbol* sym ) : its_box( sym, Value_symbol )
 			{
 			}
 			
@@ -120,6 +122,8 @@ namespace vlib
 			{
 			}
 			
+			Value( symbol_type symtype, const plus::string& name );
+			
 			Value( const Value& a, const Value& b );
 			
 			Value( op_type op, const Value& v );
@@ -173,6 +177,11 @@ namespace vlib
 			
 			Symbol* decl_sym() const;
 			
+			operator Symbol*() const
+			{
+				return sym();
+			}
+			
 			Expr* expr() const
 			{
 				if ( its_box.semantics() == Value_pair )
@@ -196,7 +205,10 @@ namespace vlib
 		a.swap( b );
 	}
 	
+	extern const Value nothing;
 	extern const Value empty_list;
+	
+	typedef Value symbol_id;
 	
 	struct Expr
 	{

@@ -14,11 +14,30 @@
 // plus
 #include "plus/extent.hh"
 
+// vlib
+#include "vlib/symbol.hh"  // codependent
+
 
 namespace vlib
 {
 	
+	const Value nothing    = Value_nothing;
 	const Value empty_list = Value_empty_list;
+	
+	static
+	void symbol_destructor( void* pointer )
+	{
+		Symbol* symbol = (Symbol*) pointer;
+		
+		symbol->~Symbol();
+	}
+	
+	Value::Value( symbol_type symtype, const plus::string& name )
+	:
+		its_box( sizeof (Symbol), &symbol_destructor, Value_symbol )
+	{
+		new ((void*) its_box.pointer()) Symbol( symtype, name );
+	}
 	
 	void pair_destructor( void* pointer )
 	{
