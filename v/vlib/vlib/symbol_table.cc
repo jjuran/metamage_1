@@ -17,33 +17,52 @@ namespace vlib
 	
 	void symbol_table::define_constant( const char* name, const Value& v )
 	{
-		its_symbols.push_back( Symbol( Symbol_const, name, v ) );
+		Value constant( Symbol_const, name );
+		
+		constant.sym()->assign( v );
+		
+		its_symbols.push_back( constant );
 	}
 	
-	symbol_id symbol_table::locate( const plus::string& name )
+	static
+	const Value* find_symbol( const std::list< Value >& symbols, const plus::string& name )
 	{
-		typedef std::list< Symbol >::iterator Iter;
+		typedef std::list< Value >::const_iterator Iter;
 		
-		Iter begin = its_symbols.begin();
-		Iter it    = its_symbols.end();
+		Iter begin = symbols.begin();
+		Iter it    = symbols.end();
 		
 		while ( it != begin )
 		{
-			Symbol* sym = &*--it;
+			const Value& v = *--it;
+			
+			Symbol* sym = v.sym();
 			
 			if ( name == sym->name() )
 			{
-				return sym;
+				return &v;
 			}
 		}
 		
 		return NULL;
 	}
 	
+	symbol_id symbol_table::locate( const plus::string& name ) const
+	{
+		if ( const Value* it = find_symbol( its_symbols, name ) )
+		{
+			return *it;
+		}
+		
+		return symbol_id();
+	}
+	
 	symbol_id symbol_table::create( const plus::string& name, symbol_type type )
 	{
-		if ( symbol_id sym = locate( name ) )
+		if ( const Value* it = find_symbol( its_symbols, name ) )
 		{
+			symbol_id sym = *it;
+			
 			Symbol& var = *sym;
 			
 			if ( type == Symbol_const  &&  var.is_var() )
@@ -56,9 +75,9 @@ namespace vlib
 			SYMBOL_ERROR( "duplicate symbol" );
 		}
 		
-		its_symbols.push_back( Symbol( type, name ) );
+		its_symbols.push_back( Value( type, name ) );
 		
-		return &its_symbols.back();
+		return its_symbols.back();
 	}
 	
 	symbol_id locate_symbol( const plus::string& name )

@@ -14,7 +14,6 @@
 
 // vlib
 #include "vlib/symbol.hh"
-#include "vlib/symbol_id.hh"
 
 
 namespace vlib
@@ -23,12 +22,12 @@ namespace vlib
 	class symbol_table
 	{
 		private:
-			std::list< Symbol > its_symbols;
+			std::list< Value > its_symbols;
 		
 		public:
 			void define_constant( const char* name, const Value& v );
 			
-			symbol_id locate( const plus::string& name );
+			symbol_id locate( const plus::string& name ) const;
 			symbol_id create( const plus::string& name, symbol_type type );
 	};
 	
