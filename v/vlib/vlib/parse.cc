@@ -19,7 +19,6 @@
 // vlib
 #include "vlib/dyad.hh"
 #include "vlib/error.hh"
-#include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/functions.hh"
 #include "vlib/init.hh"
@@ -515,7 +514,7 @@ namespace vlib
 			
 			if ( ! token )
 			{
-				return eval( result );
+				return result;
 			}
 		}
 	}
