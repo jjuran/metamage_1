@@ -35,7 +35,7 @@ namespace vlib
 	
 	void Symbol::assign( const Value& v, bool coercive )
 	{
-		if ( is_const()  &&  is_defined() )
+		if ( is_immutable() )
 		{
 			SYMBOL_ERROR( "reassignment of constant" );
 		}
