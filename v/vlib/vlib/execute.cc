@@ -21,6 +21,7 @@
 #include "vlib/symbol.hh"
 #include "vlib/symdesc.hh"
 #include "vlib/throw.hh"
+#include "vlib/tracker.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
@@ -106,12 +107,16 @@ namespace vlib
 		const Value new_frame( underscore, unshare_symbols( rest( locals ) ) );
 		const Value new_stack( caller, Op_frame, new_frame );
 		
+		scoped_root scope( new_stack );
+		
 		return execute( entry, new_stack );
 	}
 	
 	static
 	Value v_invoke( const Value& v )
 	{
+		scoped_root scope( v );
+		
 		Expr* expr = v.expr();
 		
 		ASSERT( expr != 0 );  // NULL
@@ -527,6 +532,8 @@ namespace vlib
 	
 	Value execute( const Value& root )
 	{
+		scoped_root scope( root );
+		
 		Expr* expr = root.expr();
 		
 		const Value stack( Value_nothing, Op_frame, expr->left );
