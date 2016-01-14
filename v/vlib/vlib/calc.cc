@@ -86,9 +86,19 @@ namespace vlib
 					Expr& ax = *get_expr( a );
 					Expr& bx = *get_expr( b );
 					
-					return ax.op == bx.op                     &&
-					       equal_atoms( ax.left,  bx.left  )  &&
-					       equal_atoms( ax.right, bx.right );
+					if ( ax.op != bx.op )
+					{
+						return false;
+					}
+					
+					const bool compare_left = (ax.op & 0xFF) != Op_scope;
+					
+					if ( compare_left  &&  ! equal_atoms( ax.left, bx.left ) )
+					{
+						return false;
+					}
+					
+					return equal_atoms( ax.right, bx.right );
 				}
 			
 			default:

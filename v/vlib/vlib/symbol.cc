@@ -72,4 +72,20 @@ namespace vlib
 		return its_value;
 	}
 	
+	Value Symbol::clone() const
+	{
+		Value result( its_type, name() );
+		
+		Symbol* sym = result.sym();
+		
+		if ( its_vtype.type() )
+		{
+			sym->denote( its_vtype );
+		}
+		
+		sym->assign( its_value );
+		
+		return result;
+	}
+	
 }

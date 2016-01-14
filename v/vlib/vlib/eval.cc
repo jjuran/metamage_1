@@ -10,6 +10,7 @@
 #include "vlib/error.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
+#include "vlib/tracker.hh"
 #include "vlib/types.hh"
 
 
@@ -240,6 +241,8 @@ namespace vlib
 				
 				return left;
 			}
+			
+			track_symbol( left );
 			
 			return eval_assignment( left.sym(), op, right );
 		}

@@ -47,6 +47,16 @@ namespace vlib
 		return NULL;
 	}
 	
+	int symbol_table::offset( const plus::string& name ) const
+	{
+		if ( const Value* it = find_symbol( its_symbols, name ) )
+		{
+			return it - &*its_symbols.begin();
+		}
+		
+		return -1;
+	}
+	
 	const Value& locate_symbol( const Symbols& syms, const plus::string& name )
 	{
 		if ( const Value* it = find_symbol( syms, name ) )
@@ -78,6 +88,28 @@ namespace vlib
 		its_symbols.push_back( Value( type, name ) );
 		
 		return its_symbols.back();
+	}
+	
+	Value symbol_table::list() const
+	{
+		if ( its_symbols.empty() )
+		{
+			return Value_empty_list;
+		}
+		
+		typedef Symbols::const_iterator Iter;
+		
+		Iter begin = its_symbols.begin();
+		Iter it    = its_symbols.end();
+		
+		Value result = *--it;
+		
+		while ( it != begin )
+		{
+			result = Value( *--it, result );
+		}
+		
+		return result;
 	}
 	
 	const Value& locate_symbol( const plus::string& name )

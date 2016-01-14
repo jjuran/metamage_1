@@ -7,3 +7,8 @@ $ vx v/vx/examples/project-euler/1.vx
 
 $ vx v/vx/examples/project-euler/2.vx
 1 >= 4613732
+
+%
+
+$ vx v/vx/examples/project-euler/3.vx
+1 >= 6857

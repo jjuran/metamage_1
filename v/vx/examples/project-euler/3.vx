@@ -1,0 +1,73 @@
+#!/usr/bin/env vx
+
+var primes = [ 2, 3 ];
+
+const next_prime =
+{
+	const n = (+) *primes;
+	
+	var x = primes[ n - 1 ];
+	
+	while true do
+	{
+		x += 2;  # after 2, primes are always odd
+		
+		var i = 0;
+		while i < n do
+		{
+			if primes[ i ] ^ 2 > x then
+			{
+				break;
+			};
+			
+			if x % primes[ i ] == 0 then
+			{
+				i = n;
+			};
+			++i;
+		};
+		if i <= n then
+		{
+			primes = [*primes, x];
+			break;
+		};
+	};
+	x
+};
+
+const nth_prime =
+{
+	const n = (+) *primes;
+	
+	if _ < n then
+	{
+		primes[ _ ]
+	}
+	else
+	{
+		while --_ >= n do
+		{
+			next_prime();
+		};
+		next_prime()
+	}
+};
+
+var product = 600851475143;
+var result = 1;
+var i = 0;
+
+while product > 1 do
+{
+	const factor = nth_prime( i );
+	
+	while product % factor == 0 do
+	{
+		product /= factor;
+		result = factor;
+	};
+	
+	++i;
+};
+
+print result
