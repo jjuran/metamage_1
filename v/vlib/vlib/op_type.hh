@@ -65,7 +65,7 @@ namespace vlib
 		Op_then,
 		Op_else,
 		Op_while,
-		Op_do,
+		Op_do_2,  // `do` clause of `while` statement
 		Op_break,
 		Op_continue,
 		Op_parens,
@@ -127,7 +127,7 @@ namespace vlib
 			case Op_mapping:
 			case Op_then:
 			case Op_else:
-			case Op_do:
+			case Op_do_2:
 			case Op_scope:
 				return true;
 			

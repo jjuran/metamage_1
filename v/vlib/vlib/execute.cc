@@ -177,12 +177,12 @@ namespace vlib
 				return Value( proc_invoke, Op_invocation, activation );
 			}
 			
-			if ( expr->op == Op_do )
+			if ( expr->op == Op_do_2 )
 			{
 				const Value expression( stack, Op_expression, expr->left );
 				const Value test( proc_invoke, Op_invocation, expression );
 				
-				return Value( test, Op_do, execute( expr->right, stack ) );
+				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
 			const Value* left  = &expr->left;

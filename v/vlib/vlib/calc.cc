@@ -846,7 +846,7 @@ namespace vlib
 	{
 		Expr* expr = _do_.expr();
 		
-		if ( expr == NULL  ||  expr->op != Op_do )
+		if ( expr == NULL  ||  expr->op != Op_do_2 )
 		{
 			SYNTAX_ERROR( "`while` requires `do`" );
 		}

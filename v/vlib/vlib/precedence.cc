@@ -105,7 +105,7 @@ namespace vlib
 		{ Precedence_conditional, Op_else },
 		
 		{ Precedence_conditional, Op_while },
-		{ Precedence_conditional, Op_do    },
+		{ Precedence_conditional, Op_do_2  },
 		
 		{ Precedence_end, Op_end },
 		
