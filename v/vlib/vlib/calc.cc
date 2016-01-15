@@ -780,6 +780,8 @@ namespace vlib
 		
 		while ( get_bool( boolean_vtype.coerce( do_block( expr->left ) ) ) )
 		{
+			periodic_yield();
+			
 			try
 			{
 				result = do_block( *blocks.loop );
@@ -794,8 +796,6 @@ namespace vlib
 				
 				continue;
 			}
-			
-			periodic_yield();
 		}
 		
 		return result;
