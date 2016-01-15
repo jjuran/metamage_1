@@ -65,6 +65,7 @@ namespace vlib
 		Op_then,
 		Op_else,
 		Op_while,
+		Op_do,    // `do` statement
 		Op_do_2,  // `do` clause of `while` statement
 		Op_break,
 		Op_continue,

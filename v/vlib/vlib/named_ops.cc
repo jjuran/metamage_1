@@ -35,6 +35,7 @@ namespace vlib
 	const named_op_mapping named_unary_ops[] =
 	{
 		{ "const", Op_const },
+		{ "do",    Op_do    },
 		{ "if",    Op_if    },
 		{ "var",   Op_var   },
 		{ "while", Op_while },

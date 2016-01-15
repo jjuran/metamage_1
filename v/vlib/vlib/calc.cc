@@ -878,6 +878,19 @@ namespace vlib
 		return result;
 	}
 	
+	static
+	Value calc_do( const Value& block )
+	{
+		if ( is_block( block ) )
+		{
+			return do_block( block );
+		}
+		
+		SYNTAX_ERROR( "`do` requires a block" );
+		
+		return Value();
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -890,6 +903,11 @@ namespace vlib
 		if ( op == Op_while )
 		{
 			return calc_while( left );
+		}
+		
+		if ( op == Op_do )
+		{
+			return calc_do( left );
 		}
 		
 		if ( op == Op_break )
