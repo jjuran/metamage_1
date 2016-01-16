@@ -886,9 +886,37 @@ namespace vlib
 			return do_block( block );
 		}
 		
-		SYNTAX_ERROR( "`do` requires a block" );
+		Expr* expr = block.expr();
 		
-		return Value();
+		if ( expr == NULL  ||  expr->op != Op_while_2 )
+		{
+			SYNTAX_ERROR( "`do` requires a block" );
+		}
+		
+		Value result;
+		
+		do
+		{
+			periodic_yield();
+			
+			try
+			{
+				result = do_block( expr->left );
+			}
+			catch ( const transfer_via_break& )
+			{
+				return Value_nothing;
+			}
+			catch ( const transfer_via_continue& )
+			{
+				result = Value_nothing;
+				
+				continue;
+			}
+		}
+		while ( get_bool( boolean_vtype.coerce( do_block( expr->right ) ) ) );
+		
+		return result;
 	}
 	
 	Value calc( const Value&  left,

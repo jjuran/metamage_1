@@ -185,6 +185,14 @@ namespace vlib
 				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
+			if ( expr->op == Op_while_2 )
+			{
+				const Value expression( stack, Op_expression, expr->right );
+				const Value test( proc_invoke, Op_invocation, expression  );
+				
+				return Value( execute( expr->left, stack ), Op_while_2, test );
+			}
+			
 			const Value* left  = &expr->left;
 			const Value* right = &expr->right;
 			

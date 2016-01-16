@@ -2459,3 +2459,13 @@ $ vc 'var x; {do {x = _}}( "Greetings" ); x'
 
 $ vc 'var x = "break"; while true do {do {break}; x = "not reached"; break}; x'
 1 >= '"break"'
+
+%
+
+$ vc 'var x = "break"; while true do {do {break} while false; x = "not broken"; break}; x'
+1 >= '"not broken"'
+
+%
+
+$ vc 'var x = (); var i = 0; do {x = x, ++i} while i < 3; x'
+1 >= '(1, 2, 3)'
