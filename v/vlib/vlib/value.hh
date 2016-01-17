@@ -339,6 +339,24 @@ namespace vlib
 	}
 	
 	inline
+	bool is_type( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			if ( expr->op == Op_subscript )
+			{
+				if ( is_type( expr->left ) )
+				{
+					// subscript type
+					return is_empty( expr->right );
+				}
+			}
+		}
+		
+		return v.type() == Value_base_type;
+	}
+	
+	inline
 	bool is_function( const Value& v )
 	{
 		if ( v.type() == Value_function )
