@@ -16,7 +16,6 @@
 
 // vlib
 #include "vlib/error.hh"
-#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"

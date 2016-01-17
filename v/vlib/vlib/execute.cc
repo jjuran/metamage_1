@@ -10,7 +10,6 @@
 
 // vlib
 #include "vlib/eval.hh"
-#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/symbol.hh"
 #include "vlib/symdesc.hh"

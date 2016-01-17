@@ -13,9 +13,6 @@
 namespace vlib
 {
 	
-	const Value& first( const Value& list );
-	const Value& rest ( const Value& list );
-	
 	const Value& get_nth( const Value& list, unsigned i );
 	
 	unsigned long count( const Value& list );

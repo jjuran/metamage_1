@@ -9,26 +9,6 @@
 namespace vlib
 {
 	
-	const Value& first( const Value& list )
-	{
-		if ( Expr* expr = list.listexpr() )
-		{
-			return expr->left;
-		}
-		
-		return list;  // not a (non-empty) list
-	}
-	
-	const Value& rest( const Value& list )
-	{
-		if ( Expr* expr = list.listexpr() )
-		{
-			return expr->right;
-		}
-		
-		return empty_list;
-	}
-	
 	const Value& get_nth( const Value& list, unsigned i )
 	{
 		const Value* next = &list;
