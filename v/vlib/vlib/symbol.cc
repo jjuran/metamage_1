@@ -5,6 +5,9 @@
 
 #include "vlib/symbol.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"
@@ -13,11 +16,71 @@
 namespace vlib
 {
 	
+	static
+	Value as_assigned( const Value& type, const Value& v );
+	
+	static
+	bool is_homogenous_array( const Value& type, const Value& array )
+	{
+		Expr* expr = array.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_array )
+		{
+			return false;
+		}
+		
+		const Value* list = &expr->right;
+		
+		while ( ! is_empty( *list ) )
+		{
+			const Value& next = first( *list );
+			
+			if ( ! as_assigned( type, next ).type() )
+			{
+				return false;
+			}
+			
+			list = &rest( *list );
+		}
+		
+		return true;
+	}
+	
+	Value as_assigned( const Value& type, const Value& v )
+	{
+		if ( Expr* expr = type.expr() )
+		{
+			if ( expr->op == Op_subscript )
+			{
+				return is_homogenous_array( expr->left, v ) ? v : nothing;
+			}
+		}
+		
+		ASSERT( type.type() == Value_base_type );
+		
+		return type.typeinfo().assign( v );
+	}
+	
+	static
+	Value as_coerced( const Value& type, const Value& v )
+	{
+		if ( Expr* expr = type.expr() )
+		{
+			TYPE_ERROR( "coercion to expression types is undefined" );
+		}
+		
+		ASSERT( type.type() == Value_base_type );
+		
+		const type_info& typeinfo = type.typeinfo();
+		
+		return (typeinfo.coerce ? typeinfo.coerce : typeinfo.assign)( v );
+	}
+	
 	void Symbol::denote( const Value& vtype )
 	{
-		if ( vtype.type() != Value_base_type )
+		if ( ! is_type( vtype ) )
 		{
-			SYNTAX_ERROR( "type annotation not a single type" );
+			SYNTAX_ERROR( "type annotation not a type" );
 		}
 		
 		if ( its_vtype.type() != Value_nothing )
@@ -42,12 +105,7 @@ namespace vlib
 		
 		if ( its_vtype.type() )
 		{
-			const type_info& type = its_vtype.typeinfo();
-			
-			coerce_proc coerce = coercive  &&  type.coerce ? type.coerce
-			                                               : type.assign;
-			
-			its_value = coerce( v );
+			its_value = (coercive ? as_coerced : as_assigned)( its_vtype, v );
 			
 			if ( ! its_value.type() )
 			{

@@ -2351,3 +2351,18 @@ $ vc 'const f = {const x = 456}; if 1 then f; if 1 then f'
 
 $ vc 'var i = 0; while ++i < 3 do {const x = 789}'
 1 >= '789'
+
+%
+
+$ vc 'var x (int[]); x = []; x = [1]; x = [1, 2, 3]'
+1 >= '[1, 2, 3]'
+
+%
+
+$ vc 'var x (int[][]); x = []; x = [[]]; x = [[], [1], [2, 3]]'
+1 >= '[[], [1], [2, 3]]'
+
+%
+
+$ vc 'var x (...[]); x = []; x = [1, true, "3"]'
+1 >= '[1, true, "3"]'

@@ -30,6 +30,7 @@
 #include "vlib/interpret.hh"
 #include "vlib/library.hh"
 #include "vlib/symbol_table.hh"
+#include "vlib/types.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -120,6 +121,8 @@ void set_argv( const char* arg0, int argn, char* const* args )
 	}
 	
 	const Value& argv_sym = create_symbol( "argv", Symbol_const );
+	
+	argv_sym.sym()->denote( Value( c_str_vtype, Op_subscript, empty_list ) );
 	
 	assign_symbol( argv_sym, make_array( argv ) );
 }

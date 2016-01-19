@@ -872,6 +872,14 @@ namespace vlib
 			return Value( left, op, right );
 		}
 		
+		if ( op == Op_subscript )
+		{
+			if ( is_type( left )  &&  is_empty( right ) )
+			{
+				return Value( left, op, right );
+			}
+		}
+		
 		if ( op == Op_repeat )
 		{
 			return repeat_list( left, right );
