@@ -43,22 +43,10 @@ namespace vlib
 	static tracked_set tracked_roots;
 	
 	
-	static
+	static inline
 	bool is_tracked( const Symbol* sym )
 	{
-		typedef tracked_set::const_iterator Iter;
-		
-		const Iter end = tracked_symbols.end();
-		
-		for ( Iter it = tracked_symbols.begin();  it != end;  ++it )
-		{
-			if ( it->sym() == sym )
-			{
-				return true;
-			}
-		}
-		
-		return false;
+		return sym->mark() != Mark_none;
 	}
 	
 	void track_symbol( const Value& v, const Value& new_value )
