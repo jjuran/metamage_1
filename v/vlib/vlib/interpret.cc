@@ -69,11 +69,13 @@ namespace vlib
 		exit( 1 );
 	}
 	
-	Value interpret( const char* program, const char* file )
+	Value interpret( const char*     program,
+	                 const char*     file,
+	                 lexical_scope*  globals )
 	{
 		try
 		{
-			return execute( parse( program, file ) );
+			return execute( parse( program, file, globals ) );
 		}
 		catch ( const std::bad_alloc& )
 		{
