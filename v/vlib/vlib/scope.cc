@@ -71,9 +71,9 @@ namespace vlib
 	
 	void lexical_scope_box::pop()
 	{
-		ASSERT( its_lexical_scope != NULL );
+		ASSERT( its_lexical_scope != its_bottom_scope );
 		
-		if ( its_lexical_scope != NULL )
+		if ( its_lexical_scope != its_bottom_scope )
 		{
 			lexical_scope* popped = its_lexical_scope;
 			

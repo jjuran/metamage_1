@@ -44,6 +44,7 @@ namespace vlib
 	class lexical_scope_box
 	{
 		private:
+			lexical_scope* its_bottom_scope;
 			lexical_scope* its_lexical_scope;
 		
 		private:
@@ -52,9 +53,10 @@ namespace vlib
 			lexical_scope_box& operator=( const lexical_scope_box& );
 		
 		public:
-			lexical_scope_box()
+			lexical_scope_box( lexical_scope* parent = NULL )
 			:
-				its_lexical_scope( new lexical_scope() )
+				its_bottom_scope( parent ),
+				its_lexical_scope( new lexical_scope( parent ) )
 			{
 			}
 			
@@ -68,7 +70,7 @@ namespace vlib
 					
 					delete its_lexical_scope;
 				}
-				while ( parent );
+				while ( parent != its_bottom_scope );
 			}
 			
 			void push()
