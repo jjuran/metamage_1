@@ -18,7 +18,7 @@ namespace vlib
 	
 	const Value& lexical_scope::resolve( const plus::string& name, int depth )
 	{
-		if ( const Value& sym = locate_symbol( name ) )
+		if ( const Value& sym = locate_keyword( name ) )
 		{
 			return sym;
 		}
@@ -61,7 +61,7 @@ namespace vlib
 	const Value& lexical_scope::declare( const plus::string&  name,
 	                                     symbol_type          type )
 	{
-		if ( locate_symbol( name ).type() )
+		if ( locate_keyword( name ).type() )
 		{
 			SYMBOL_ERROR( "keyword override attempt" );
 		}

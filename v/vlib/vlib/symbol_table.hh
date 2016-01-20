@@ -48,8 +48,8 @@ namespace vlib
 			}
 	};
 	
-	const Value& locate_symbol( const plus::string& name );
-	const Value& create_symbol( const plus::string& name, symbol_type type );
+	const Value& locate_keyword( const plus::string& name );
+	const Value& create_keyword( const plus::string& name );
 	
 }
 

@@ -19,58 +19,59 @@ namespace vlib
 {
 	
 	static
-	void define( const char* name, const Value& v )
+	void define_keyword( const char* name, const Value& v )
 	{
-		const Value& sym = create_symbol( name, Symbol_const );
+		const Value& sym = create_keyword( name );
 		
 		assign_symbol( sym, v );
 	}
 	
-	void define( const proc_info& proc )
+	static
+	void define_keyword( const proc_info& proc )
 	{
-		const Value& sym = create_symbol( proc.name, Symbol_const );
+		const Value& sym = create_keyword( proc.name );
 		
 		assign_symbol( sym, proc );
 	}
 	
-	bool install_basic_symbols()
+	bool install_keywords()
 	{
-		define( "false", Value( false ) );
-		define( "true",  Value( true  ) );
+		define_keyword( "false", false );
+		define_keyword( "true",  true  );
 		
-		define( "boolean",  boolean_vtype  );
-		define( "bool",     boolean_vtype  );
-		define( "function", function_vtype );
-		define( "integer",  integer_vtype  );
-		define( "int",      integer_vtype  );
-		define( "string",   string_vtype   );
-		define( "str",      string_vtype   );
-		define( "c_str",    c_str_vtype    );
-		define( "array",    array_vtype    );
-		define( "type",     type_vtype     );
-		define( "byte",     byte_vtype     );
-		define( "i64",      i64_vtype      );
-		define( "u64",      u64_vtype      );
-		define( "i32",      i32_vtype      );
-		define( "u32",      u32_vtype      );
-		define( "i16",      i16_vtype      );
-		define( "u16",      u16_vtype      );
-		define( "i8",       i8_vtype       );
-		define( "u8",       u8_vtype       );
+		define_keyword( "boolean",  boolean_vtype  );
+		define_keyword( "bool",     boolean_vtype  );
+		define_keyword( "function", function_vtype );
+		define_keyword( "integer",  integer_vtype  );
+		define_keyword( "int",      integer_vtype  );
+		define_keyword( "string",   string_vtype   );
+		define_keyword( "str",      string_vtype   );
+		define_keyword( "c_str",    c_str_vtype    );
+		define_keyword( "array",    array_vtype    );
+		define_keyword( "type",     type_vtype     );
+		define_keyword( "byte",     byte_vtype     );
+		define_keyword( "i64",      i64_vtype      );
+		define_keyword( "u64",      u64_vtype      );
+		define_keyword( "i32",      i32_vtype      );
+		define_keyword( "u32",      u32_vtype      );
+		define_keyword( "i16",      i16_vtype      );
+		define_keyword( "u16",      u16_vtype      );
+		define_keyword( "i8",       i8_vtype       );
+		define_keyword( "u8",       u8_vtype       );
 		
-		if ( sizeof (size_t) == 4 )  define( "size_t", u32_vtype );
-		if ( sizeof (size_t) == 8 )  define( "size_t", u64_vtype );
+		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_vtype );
+		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_vtype );
 		
-		define( proc_abs    );
-		define( proc_area   );
-		define( proc_half   );
-		define( proc_hex    );
-		define( proc_join   );
-		define( proc_mince  );
-		define( proc_rep    );
-		define( proc_typeof );
-		define( proc_unbin  );
-		define( proc_unhex  );
+		define_keyword( proc_abs    );
+		define_keyword( proc_area   );
+		define_keyword( proc_half   );
+		define_keyword( proc_hex    );
+		define_keyword( proc_join   );
+		define_keyword( proc_mince  );
+		define_keyword( proc_rep    );
+		define_keyword( proc_typeof );
+		define_keyword( proc_unbin  );
+		define_keyword( proc_unhex  );
 		
 		return true;
 	}

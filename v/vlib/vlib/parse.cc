@@ -536,7 +536,7 @@ namespace vlib
 	
 	Value parse( const char* p, const char* file, lexical_scope* globals )
 	{
-		static bool installed = install_basic_symbols();
+		static bool installed = install_keywords();
 		
 		Parser parser( globals, file );
 		
