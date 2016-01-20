@@ -27,9 +27,11 @@
 
 // vlib
 #include "vlib/interpret.hh"
-#include "vlib/library.hh"
 #include "vlib/scope.hh"
 #include "vlib/types.hh"
+
+// vx
+#include "library.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)

@@ -3,12 +3,11 @@
 	----------
 */
 
-#ifndef VLIB_LIBRARY_HH
-#define VLIB_LIBRARY_HH
+#ifndef LIBRARY_HH
+#define LIBRARY_HH
 
 // vlib
 #include "vlib/proc_info.hh"
-#include "vlib/value.hh"
 
 
 namespace vlib

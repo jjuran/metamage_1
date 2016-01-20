@@ -68,8 +68,6 @@ Level 5
 
 `functions.*`:  Defines various built-in V functions.
 
-`library.*`:  Defines various impure library functions.
-
 `calc.*`:  Defines `calc()`, which evaluates a pure binary operation (i.e. without side effects or dependence on run-time state other than its operands).
 
 Level 6

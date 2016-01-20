@@ -3,7 +3,7 @@
 	----------
 */
 
-#include "vlib/library.hh"
+#include "library.hh"
 
 // POSIX
 #include <unistd.h>
@@ -22,6 +22,7 @@
 #include "vlib/error.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
+#include "vlib/value.hh"
 
 
 namespace vlib
