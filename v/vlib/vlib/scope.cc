@@ -41,9 +41,15 @@ namespace vlib
 				continue;
 			}
 			
-			const Value metasymbol = make_metasymbol( name, depth, offset );
+			const Value& symbol = scope->its_symbols[ offset ];
 			
-			its_symbol_cache.push_back( metasymbol );
+			const bool immutable = symbol.sym()->is_immutable();
+			
+			
+			const Value& s = immutable ? symbol
+			                           : make_metasymbol( name, depth, offset );
+			
+			its_symbol_cache.push_back( s );
 			
 			return its_symbol_cache.back();
 		}
