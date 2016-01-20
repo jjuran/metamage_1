@@ -41,10 +41,15 @@ namespace vlib
 			}
 			
 			const Value& create( const plus::string& name, symbol_type type );
+			
+			const Value& operator[]( std::size_t i ) const
+			{
+				return its_symbols[ i ];
+			}
 	};
 	
-	const Value& locate_symbol( const plus::string& name );
-	const Value& create_symbol( const plus::string& name, symbol_type type );
+	const Value& locate_keyword( const plus::string& name );
+	const Value& create_keyword( const plus::string& name );
 	
 }
 

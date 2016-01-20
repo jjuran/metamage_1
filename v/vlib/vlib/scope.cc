@@ -18,7 +18,7 @@ namespace vlib
 	
 	const Value& lexical_scope::resolve( const plus::string& name, int depth )
 	{
-		if ( const Value& sym = locate_symbol( name ) )
+		if ( const Value& sym = locate_keyword( name ) )
 		{
 			return sym;
 		}
@@ -41,9 +41,15 @@ namespace vlib
 				continue;
 			}
 			
-			const Value metasymbol = make_metasymbol( name, depth, offset );
+			const Value& symbol = scope->its_symbols[ offset ];
 			
-			its_symbol_cache.push_back( metasymbol );
+			const bool immutable = symbol.sym()->is_immutable();
+			
+			
+			const Value& s = immutable ? symbol
+			                           : make_metasymbol( name, depth, offset );
+			
+			its_symbol_cache.push_back( s );
 			
 			return its_symbol_cache.back();
 		}
@@ -55,7 +61,7 @@ namespace vlib
 	const Value& lexical_scope::declare( const plus::string&  name,
 	                                     symbol_type          type )
 	{
-		if ( locate_symbol( name ).type() )
+		if ( locate_keyword( name ).type() )
 		{
 			SYMBOL_ERROR( "keyword override attempt" );
 		}
@@ -65,9 +71,9 @@ namespace vlib
 	
 	void lexical_scope_box::pop()
 	{
-		ASSERT( its_lexical_scope != NULL );
+		ASSERT( its_lexical_scope != its_bottom_scope );
 		
-		if ( its_lexical_scope != NULL )
+		if ( its_lexical_scope != its_bottom_scope )
 		{
 			lexical_scope* popped = its_lexical_scope;
 			

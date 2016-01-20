@@ -26,10 +26,9 @@
 #include "poseven/types/errno_t.hh"
 
 // vlib
-#include "vlib/init.hh"
 #include "vlib/interpret.hh"
 #include "vlib/library.hh"
-#include "vlib/symbol_table.hh"
+#include "vlib/scope.hh"
 #include "vlib/types.hh"
 
 
@@ -55,6 +54,9 @@ static command::option options[] =
 };
 
 static const char* inline_script = NULL;
+
+static lexical_scope globals;
+
 
 static int fail( const char* msg, unsigned len )
 {
@@ -120,11 +122,19 @@ void set_argv( const char* arg0, int argn, char* const* args )
 		argv = arg0;
 	}
 	
-	const Value& argv_sym = create_symbol( "argv", Symbol_const );
+	const Value& argv_sym = globals.declare( "argv", Symbol_const );
 	
 	argv_sym.sym()->denote( Value( c_str_vtype, Op_subscript, empty_list ) );
 	
 	assign_symbol( argv_sym, make_array( argv ) );
+}
+
+static
+void define( const proc_info& proc )
+{
+	const Value& sym = globals.declare( proc.name, Symbol_const );
+	
+	assign_symbol( sym, proc );
 }
 
 int main( int argc, char** argv )
@@ -154,7 +164,7 @@ int main( int argc, char** argv )
 	{
 		if ( inline_script != NULL )
 		{
-			interpret( inline_script );
+			interpret( inline_script, NULL, &globals );
 		}
 		else
 		{
@@ -167,7 +177,7 @@ int main( int argc, char** argv )
 				return FAIL( "Program contains NUL bytes" );
 			}
 			
-			interpret( program.c_str(), path );
+			interpret( program.c_str(), path, &globals );
 		}
 	}
 	catch ( const std::bad_alloc& )

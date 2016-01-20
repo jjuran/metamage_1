@@ -13,7 +13,11 @@
 namespace vlib
 {
 	
-	Value interpret( const char* program, const char* file = 0 );  // NULL
+	class lexical_scope;
+	
+	Value interpret( const char*     program,
+	                 const char*     file    = 0,
+	                 lexical_scope*  globals = 0 );  // NULL
 	
 }
 

@@ -12,7 +12,7 @@
 namespace vlib
 {
 	
-	static symbol_table global_symbol_table;
+	static symbol_table keyword_symbol_table;
 	
 	
 	void symbol_table::define_constant( const char* name, const Value& v )
@@ -112,14 +112,14 @@ namespace vlib
 		return result;
 	}
 	
-	const Value& locate_symbol( const plus::string& name )
+	const Value& locate_keyword( const plus::string& name )
 	{
-		return global_symbol_table.locate( name );
+		return keyword_symbol_table.locate( name );
 	}
 	
-	const Value& create_symbol( const plus::string& name, symbol_type type )
+	const Value& create_keyword( const plus::string& name )
 	{
-		return global_symbol_table.create( name, type );
+		return keyword_symbol_table.create( name, Symbol_const );
 	}
 	
 }

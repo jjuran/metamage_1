@@ -72,8 +72,9 @@ namespace vlib
 			void receive_token( const Token& token );
 		
 		public:
-			Parser( const char* file )
+			Parser( lexical_scope* globals, const char* file )
 			:
+				scope( globals ),
 				its_source( file )
 			{
 			}
@@ -533,11 +534,11 @@ namespace vlib
 		}
 	}
 	
-	Value parse( const char* p, const char* file )
+	Value parse( const char* p, const char* file, lexical_scope* globals )
 	{
-		static bool installed = install_basic_symbols();
+		static bool installed = install_keywords();
 		
-		Parser parser( file );
+		Parser parser( globals, file );
 		
 		return parser.parse( p );
 	}
