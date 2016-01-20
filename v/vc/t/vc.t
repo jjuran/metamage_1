@@ -877,21 +877,6 @@ $ vc 'time() > 1444456789'
 
 %
 
-$ vc 'getenv "This environment variable is almost certainly not defined."'
-1 >= "()"
-
-%
-
-$ FOO=foo vc 'getenv "FOO"'
-1 >= '"foo"'
-
-%
-
-$ FOO="" vc 'getenv "FOO"'
-1 >= '""'
-
-%
-
 $ vc 'half(2)^2'
 1 >= 1
 
@@ -1128,11 +1113,6 @@ $ vc '"three".length ^ "two".length'
 
 %
 
-$ THREE=3 vc 'getenv("THREE").length'
-1 >= 1
-
-%
-
 $ vc 'str().length'
 1 >= 0
 
@@ -1163,16 +1143,6 @@ $ vc 'print (1, 2, 3)'
 
 $ vc 'const x = 3; print x'
 1 >= 3
-
-%
-
-$ FOO=foo vc 'print getenv "FOO"'
-1 >= foo
-
-%
-
-$ FOO=BAR BAR=BAZ vc 'print getenv getenv "FOO"'
-1 >= BAZ
 
 %
 
