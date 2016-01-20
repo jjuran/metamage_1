@@ -17,9 +17,7 @@
 #include "plus/string/concat.hh"
 
 // vlib
-#include "vlib/init.hh"
 #include "vlib/interpret.hh"
-#include "vlib/library.hh"
 #include "vlib/string-utils.hh"
 
 
@@ -99,10 +97,6 @@ int main( int argc, char** argv )
 	{
 		return 0;
 	}
-	
-	define( proc_getenv );
-	define( proc_print  );
-	define( proc_time   );
 	
 	int i = 0;
 	

@@ -809,14 +809,6 @@ $ vc 'str "\117"'
 
 %
 
-$ vc 'print "\n"'
-1 >> .
-
-
-.
-
-%
-
 $ vc 'hex "\377\000\a\b\f\n\r\t\v\0"'
 1 >= '"ff0007080c0a0d090b00"'
 
@@ -872,11 +864,6 @@ $ vc '(var x); (x) = 5; x'
 
 %
 
-$ vc 'time() > 1444456789'
-1 >= true
-
-%
-
 $ vc 'half(2)^2'
 1 >= 1
 
@@ -887,49 +874,38 @@ $ vc '2^half(2)'
 
 %
 
-$ vc 'time()^0'
+$ vc '123456789^0'
 1 >= 1
 
 %
 
-$ vc '1^time()'
+$ vc '1^234567890'
 1 >= 1
 
 %
 
-$ vc 'str time'
-1 >= '"time"'
+$ vc 'str join'
+1 >= '"join"'
 
 %
 
-$ vc 'bool time'
+$ vc 'bool join'
 1 >= true
 
 %
 
-$ vc 'time == time'
+$ vc 'join == join'
 1 >= true
 
 %
 
-$ vc 'time == getenv'
+$ vc 'hex == join'
 1 >= false
 
 %
 
 $ vc '"hey" * 3'
 1 >= '"heyheyhey"'
-
-%
-
-$ vc 'print ("THE CAKE IS A LIE\n" * 4)'
-1 >> .
-THE CAKE IS A LIE
-THE CAKE IS A LIE
-THE CAKE IS A LIE
-THE CAKE IS A LIE
-
-.
 
 %
 
@@ -983,7 +959,7 @@ $ vc '(+) false'
 
 %
 
-$ vc '(+) time'
+$ vc '(+) join'
 1 >= 1
 
 %
@@ -1118,34 +1094,6 @@ $ vc 'str().length'
 
 %
 
-$ vc 'print ""'
-1 >= ""
-
-%
-
-$ vc 'print ()'
-1 >= ""
-
-%
-
-$ vc 'print "\n"'
-1 >> .
-
-
-.
-
-%
-
-$ vc 'print (1, 2, 3)'
-1 >= 123
-
-%
-
-$ vc 'const x = 3; print x'
-1 >= 3
-
-%
-
 $ vc '() == ()'
 1 >= true
 
@@ -1226,17 +1174,12 @@ $ vc 'join( "", "x" * 1000 ) == str( "x" (*) 1000 )'
 
 %
 
-$ vc 'print 2^2'
-1 >= 4
-
-%
-
-$ vc '(+) (time % ())'
+$ vc '(+) (join % ())'
 1 >= 1
 
 %
 
-$ vc '(+) (getenv % "TERM")'
+$ vc '(+) (hex % "Nu")'
 1 >= 1
 
 %
@@ -1256,22 +1199,22 @@ $ vc '(+) (join % "foo", "bar")'
 
 %
 
-$ vc 'time % ()'
-1 >= time
+$ vc 'join % ()'
+1 >= join
 
 %
 
-$ vc 'time % () == time'
+$ vc 'join % () == join'
 1 >= true
 
 %
 
-$ vc 'getenv % "TERM"'
-1 >= '(getenv % "TERM")'
+$ vc 'hex % "Nu"'
+1 >= '(hex % "Nu")'
 
 %
 
-$ vc '(getenv % "TERM")() == getenv "TERM"'
+$ vc '(hex % "Nu")() == hex "Nu"'
 1 >= true
 
 %
@@ -1281,8 +1224,8 @@ $ vc 'const csv = join % ","; csv (1, 2, 3)'
 
 %
 
-$ vc 'join % (getenv % "TERM")'
-1 >= '(join % (getenv % "TERM"))'
+$ vc 'join % (hex % "Nu")'
+1 >= '(join % (hex % "Nu"))'
 
 %
 
@@ -1471,27 +1414,27 @@ $ vc 'x"73776f726466697368".length'
 
 %
 
-$ vc 'print rep ()'
+$ vc '()'
 1 >= "()"
 
 %
 
-$ vc 'print rep true'
+$ vc 'true'
 1 >= true
 
 %
 
-$ vc 'print rep (12345)'
+$ vc '(12345)'
 1 >= 12345
 
 %
 
-$ vc 'print rep "test"'
+$ vc '"test"'
 1 >= '"test"'
 
 %
 
-$ vc 'print rep "\007\x0a"'
+$ vc '"\007\x0a"'
 1 >= '"\a\n"'
 
 %
@@ -1501,23 +1444,23 @@ $ vc 'rep "\\ \"" == "\"\\\\ \\\"\""'
 
 %
 
-$ vc 'print rep time'
-1 >= time
+$ vc 'join'
+1 >= join
 
 %
 
-$ vc 'print rep (join % ",")'
+$ vc '(join % ",")'
 1 >= '(join % ",")'
 
 %
 
-$ vc 'print rep (1, 2, 3)'
+$ vc '(1, 2, 3)'
 1 >= "(1, 2, 3)"
 
 %
 
-$ vc 'print rep (join % "1" % "2", join % (getenv % "3"))'
-1 >= '((join % ("1", "2")), (join % (getenv % "3")))'
+$ vc '(join % "1" % "2", join % (hex % "3"))'
+1 >= '((join % ("1", "2")), (join % (hex % "3")))'
 
 %
 
@@ -1526,27 +1469,27 @@ $ vc 'typeof ()'
 
 %
 
-$ vc 'print typeof true'
+$ vc 'typeof true'
 1 >= boolean
 
 %
 
-$ vc 'print typeof 0'
+$ vc 'typeof 0'
 1 >= integer
 
 %
 
-$ vc 'print typeof ""'
+$ vc 'typeof ""'
 1 >= string
 
 %
 
-$ vc 'print typeof time'
+$ vc 'typeof join'
 1 >= function
 
 %
 
-$ vc 'print typeof (join % ",")'
+$ vc 'typeof (join % ",")'
 1 >= function
 
 %
@@ -1906,8 +1849,8 @@ $ vc 'const x = "1234567890"; mince( x, 1 ), mince x, mince( x, 3 )'
 
 %
 
-$ vc '{()}, {time}, {1, 2}'
-1 >= '({()}, {time}, {1, 2})'
+$ vc '{()}, {join}, {1, 2}'
+1 >= '({()}, {join}, {1, 2})'
 
 %
 
@@ -2078,64 +2021,43 @@ $ vc 'var x = [join % ",", {x}, {x[_]}]; x[2] 2'
 
 %
 
-$ vc 'var x = 3; print (++x); print x; print (--x); print x;'
-1 >> .
-4
-4
-3
-3
-.
+$ vc 'var x = 3; var a = ++x; var b = x; var c = --x; a, b, c, x'
+1 >= '(4, 4, 3, 3)'
 
 %
 
-$ vc 'var x (u8) = 0; print (++x); print x; print (--x); print x;'
-1 >> .
-1
-1
-0
-0
-.
+$ vc 'var x (u8) = 0; var a = ++x; var b = x; var c = --x; a, b, c, x'
+1 >= '(1, 1, 0, 0)'
 
 %
 
-$ vc 'var x = 3; print x++; print x; print x--; print x;'
-1 >> .
-3
-4
-4
-3
-.
+$ vc 'var x = 3; var a = x++; var b = x; var c = x--; a, b, c, x'
+1 >= '(3, 4, 4, 3)'
 
 %
 
-$ vc 'var x (u8) = 0; print x++; print x; print x--; print x;'
-1 >> .
-0
-1
-1
-0
-.
+$ vc 'var x (u8) = 0; var a = x++; var b = x; var c = x--; a, b, c, x'
+1 >= '(0, 1, 1, 0)'
 
 %
 
-$ vc 'if 2 + 2 == 4 then {print "Freedom"}'
-1 >= Freedom
+$ vc 'var x = (); if 2 + 2 == 4 then {x = "Freedom"}; x'
+1 >= '"Freedom"'
 
 %
 
-$ vc 'if 2 + 2 == 5 then {print "Slavery"}'
-1 >> .
-.
+$ vc 'var x = (); if 2 + 2 == 5 then {x = "Slavery"}; x'
+1 >= '()'
 
 %
 
-$ vc 'if 2 + 2 == 4 then {print "Freedom"} else {print "Slavery"}'
-1 >= Freedom
+$ vc 'if 2 + 2 == 4 then {"Freedom"} else {"Slavery"}'
+1 >= '"Freedom"'
 
 %
 
-$ vc 'if 2 + 2 == 5 then {print "Freedom"} else {print "Slavery"}'
-1 >= Slavery
+$ vc 'if 2 + 2 == 5 then {"Freedom"} else {"Slavery"}'
+1 >= '"Slavery"'
 
 %
 
@@ -2226,27 +2148,18 @@ $ vc 'var x = size_t( -1 ); var y = x + 1; --y;'
 
 %
 
-$ vc 'while true do {print "breaking"; break}'
-1 >= 'breaking'
+$ vc 'var x = 0; while true do {x = "breaking"; break}; x'
+1 >= '"breaking"'
 
 %
 
-$ vc 'var i = 0; while ++i <= 3 do {while true do {print i; break}}'
-1 >> .
-1
-2
-3
-.
+$ vc 'var x = (); var i = 0; while ++i <= 3 do {while true do {x = x, i; break}}; x'
+1 >= '(1, 2, 3)'
 
 %
 
-$ vc 'const stop = {break}; var i = 0; while true do {print i; if ++i > 3 then stop}'
-1 >> .
-0
-1
-2
-3
-.
+$ vc 'var x = (); const stop = {break}; var i = 0; while true do {x = x, i; if ++i > 3 then stop}; x'
+1 >= '(0, 1, 2, 3)'
 
 %
 
@@ -2280,12 +2193,8 @@ $ vc 'var x, var y = 1, 2; x, y = y, x'
 
 %
 
-$ vc 'const f = {var i = 0; while ++i <= _ do {print i}}; f 3'
-1 >> .
-1
-2
-3
-.
+$ vc 'var x = (); const f = {var i = 0; while ++i <= _ do {x = x, i}}; f 3'
+1 >= '(1, 2, 3)'
 
 %
 
