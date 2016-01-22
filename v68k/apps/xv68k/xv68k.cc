@@ -101,7 +101,8 @@ static command::option options[] =
 };
 
 
-static void atexit_report()
+static
+void atexit_report()
 {
 	if ( verbose )
 	{
@@ -113,14 +114,16 @@ static void atexit_report()
 	}
 }
 
-static void dump( const v68k::processor_state& s )
+static
+void dump( const v68k::processor_state& s )
 {
 	using v68k::utils::print_register_dump;
 	
 	print_register_dump( s.regs, s.get_SR() );
 }
 
-static void dump_and_raise( const v68k::processor_state& s, int signo )
+static
+void dump_and_raise( const v68k::processor_state& s, int signo )
 {
 	dump( s );
 	
@@ -232,7 +235,8 @@ const uint16_t argv_addr = params_addr + 44;  // 4 bytes
 const uint32_t args_addr = params_addr + 48;
 
 
-static void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
+static
+void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
 {
 	const uint32_t unimplemented = v68k::big_longword( address );
 	
@@ -243,7 +247,8 @@ static void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
 }
 
 
-static const uint16_t loader_code[] =
+static
+const uint16_t loader_code[] =
 {
 	0x027C,  // ANDI #DFFF,SR  ; clear S
 	0xDFFF,
@@ -288,7 +293,8 @@ static const uint16_t loader_code[] =
 
 #define HANDLER( handler )  handler, sizeof handler
 
-static void load_vectors( v68k::user::os_load_spec& os )
+static
+void load_vectors( v68k::user::os_load_spec& os )
 {
 	uint32_t* vectors = (uint32_t*) os.mem_base;
 	
@@ -318,7 +324,8 @@ static void load_vectors( v68k::user::os_load_spec& os )
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
 }
 
-static void load_Mac_traps( uint8_t* mem )
+static
+void load_Mac_traps( uint8_t* mem )
 {
 	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
 	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
@@ -343,7 +350,8 @@ static void load_Mac_traps( uint8_t* mem )
 	os_traps[ 0x98 ] = big_no_op;  // HWPriv
 }
 
-static void load_argv( uint8_t* mem, int argc, char* const* argv )
+static
+void load_argv( uint8_t* mem, int argc, char* const* argv )
 {
 	(uint32_t&) mem[ argc_addr ] = big_longword( argc      );
 	(uint32_t&) mem[ argv_addr ] = big_longword( args_addr );
@@ -384,7 +392,8 @@ static void load_argv( uint8_t* mem, int argc, char* const* argv )
 	*args = 0;  // trailing NULL of argv
 }
 
-static void load_code( uint8_t* mem, const char* path )
+static
+void load_code( uint8_t* mem, const char* path )
 {
 	int fd;
 	
@@ -447,7 +456,8 @@ static void load_code( uint8_t* mem, const char* path )
 	}
 }
 
-static uint16_t bkpt_2( v68k::processor_state& s )
+static
+uint16_t bkpt_2( v68k::processor_state& s )
 {
 	if ( bridge_call( s ) )
 	{
@@ -467,7 +477,8 @@ static uint16_t bkpt_2( v68k::processor_state& s )
 	}
 }
 
-static uint16_t bkpt_3( v68k::processor_state& s )
+static
+uint16_t bkpt_3( v68k::processor_state& s )
 {
 	if ( uint32_t new_opcode = v68k::callback::bridge( s ) )
 	{
@@ -477,7 +488,8 @@ static uint16_t bkpt_3( v68k::processor_state& s )
 	return 0x4AFC;  // ILLEGAL
 }
 
-static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
+static
+uint16_t bkpt_handler( v68k::processor_state& s, int vector )
 {
 	switch ( vector )
 	{
@@ -492,7 +504,8 @@ static uint16_t bkpt_handler( v68k::processor_state& s, int vector )
 	}
 }
 
-static inline unsigned parse_instruction_limit( const char* var )
+static inline
+unsigned parse_instruction_limit( const char* var )
 {
 	if ( var == NULL )
 	{
@@ -502,7 +515,8 @@ static inline unsigned parse_instruction_limit( const char* var )
 	return gear::parse_unsigned_decimal( var );
 }
 
-static void emulation_loop( v68k::emulator& emu )
+static
+void emulation_loop( v68k::emulator& emu )
 {
 	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
@@ -526,7 +540,8 @@ static void emulation_loop( v68k::emulator& emu )
 	}
 }
 
-static void report_condition( v68k::emulator& emu )
+static
+void report_condition( v68k::emulator& emu )
 {
 	print_blank_line();
 	
@@ -549,7 +564,8 @@ static void report_condition( v68k::emulator& emu )
 	}
 }
 
-static void load_module( uint8_t* mem, const char* module )
+static
+void load_module( uint8_t* mem, const char* module )
 {
 	if ( strchr( module, '/' ) == NULL )
 	{
@@ -617,7 +633,8 @@ static void load_module( uint8_t* mem, const char* module )
 	*p++ = iota::big_u16( addr );
 }
 
-static int execute_68k( int argc, char* const* argv )
+static
+int execute_68k( int argc, char* const* argv )
 {
 	uint8_t* mem = (uint8_t*) calloc( 1, mem_size );
 	
@@ -687,17 +704,20 @@ static int execute_68k( int argc, char* const* argv )
 	return 1;
 }
 
-static inline bool begins_array( const char* param )
+static inline
+bool begins_array( const char* param )
 {
 	return param[ 0 ] == '['  &&  param[ 1 ] == '\0';
 }
 
-static inline bool ends_array( const char* param )
+static inline
+bool ends_array( const char* param )
 {
 	return param[ 0 ] == ']'  &&  param[ 1 ] == '\0';
 }
 
-static char* const* get_options( char** argv )
+static
+char* const* get_options( char** argv )
 {
 	module_spec* module = module_specs;
 	
