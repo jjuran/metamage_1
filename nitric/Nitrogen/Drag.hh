@@ -25,7 +25,7 @@
 #endif
 
 // iota
-#include "iota/distance.hh"
+#include "iota/ptr_diff.hh"
 
 // nucleus
 #ifndef NUCLEUS_ENUMERATIONTRAITS_HH
@@ -192,7 +192,7 @@ namespace Nitrogen
          
          void operator()( const void *begin, const void *end ) const
            {
-            Nitrogen::AddDragItemFlavor( drag, item, type, begin, iota::distance( begin, end ), flags );
+            Nitrogen::AddDragItemFlavor( drag, item, type, begin, iota::ptr_diff( begin, end ), flags );
            }
      };
    
@@ -248,7 +248,7 @@ namespace Nitrogen
          
          void operator()( const void *begin, const void *end ) const
            {
-            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, iota::distance( begin, end ), offset );
+            Nitrogen::SetDragItemFlavorData( drag, item, type, begin, iota::ptr_diff( begin, end ), offset );
            }
      };
 
@@ -335,7 +335,7 @@ namespace Nitrogen
          
          void operator()( void *begin, void *end ) const
            {
-            Nitrogen::GetFlavorData( drag, item, type, begin, iota::distance( begin, end ), offset );
+            Nitrogen::GetFlavorData( drag, item, type, begin, iota::ptr_diff( begin, end ), offset );
            }
      };
 

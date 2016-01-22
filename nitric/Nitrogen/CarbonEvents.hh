@@ -31,7 +31,7 @@
 #endif
 
 // iota
-#include "iota/distance.hh"
+#include "iota/ptr_diff.hh"
 
 // nucleus
 #ifndef NUCLEUS_ARRAYSINGLETON_HH
@@ -553,7 +553,7 @@ namespace Nitrogen
 				Nitrogen::SetEventParameter( myEvent,
 				                             myName,
 				                             myType,
-				                             iota::distance( begin, end ),
+				                             iota::ptr_diff( begin, end ),
 				                             begin );
 			}
 	};
@@ -623,7 +623,7 @@ namespace Nitrogen
 				GetEventParameter( myEvent,
 				                   myName,
 				                   desiredType,
-				                   iota::distance( begin, end ),
+				                   iota::ptr_diff( begin, end ),
 				                   begin );
 			}
 	};
