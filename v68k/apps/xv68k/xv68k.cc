@@ -416,35 +416,9 @@ void load_code( uint8_t* mem, const char* path )
 	}
 	else
 	{
-		using v68k::utils::load_file;
+		load_file( mem, path );
 		
-		uint32_t size;
-		
-		if ( void* alloc = load_file( path, &size ) )
-		{
-			if ( size == 0 )
-			{
-				EXIT( 1, "xv68k: WARNING: Zero-length code file, exiting" );
-			}
-			
-			if ( size > code_max_size )
-			{
-				abort();
-			}
-			
-			memcpy( mem + code_address, alloc, size );
-			
-			return;
-		}
-		
-		fd = open( path, O_RDONLY );
-		
-		if ( fd < 0 )
-		{
-			more::perror( "xv68k", path );
-			
-			exit( 1 );
-		}
+		return;
 	}
 	
 	ssize_t n_read = read( fd, mem + code_address, code_max_size );
