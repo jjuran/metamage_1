@@ -62,15 +62,17 @@ namespace vlib
 			
 			~lexical_scope_box()
 			{
-				lexical_scope* parent;
+				lexical_scope* scope = its_lexical_scope;
 				
 				do
 				{
-					parent = its_lexical_scope->parent();
+					lexical_scope* parent = scope->parent();
 					
-					delete its_lexical_scope;
+					delete scope;
+					
+					scope = parent;
 				}
-				while ( parent != its_bottom_scope );
+				while ( scope != its_bottom_scope );
 			}
 			
 			void push()
