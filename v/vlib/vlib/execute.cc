@@ -44,7 +44,7 @@ namespace vlib
 		
 		const Symbol* sym = head.sym();
 		
-		const Value& new_head = sym->is_immutable() ? head : sym->clone();
+		const Value new_head = sym->is_immutable() ? head : sym->clone();
 		
 		if ( is_empty( tail ) )
 		{
