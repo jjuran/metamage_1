@@ -149,8 +149,8 @@ my %fsmap =
 			\ qw( fcat fdir fget fls fping fstat ),
 			# djb's UCSPI
 			\ qw( argv0 tcpcat tcpclient ),
-			# V calculator
-			\ qw( vc ),
+			# V calculator / executor
+			\ qw( vc vx ),
 			# v68k interpreter
 			\ qw( xv68k ),
 			# Modem-related scripts
