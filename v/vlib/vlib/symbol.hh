@@ -16,6 +16,8 @@
 namespace vlib
 {
 	
+	Value as_assigned( const Value& type, const Value& v );
+	
 	enum mark_type
 	{
 		Mark_none,   // not participating in GC

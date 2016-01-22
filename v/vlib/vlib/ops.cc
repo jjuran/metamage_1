@@ -63,6 +63,9 @@ namespace vlib
 		{ Token_asterisk_equals, Op_multiply_by },
 		{ Token_slash_equals,    Op_divide_by   },
 		{ Token_percent_equals,  Op_percent_by  },
+		
+		{ Token_ampersand, Op_intersection },
+		{ Token_pipe,      Op_union        },
 	};
 	
 	static

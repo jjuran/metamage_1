@@ -16,7 +16,6 @@
 namespace vlib
 {
 	
-	static
 	Value as_assigned( const Value& type, const Value& v );
 	
 	static
@@ -54,6 +53,15 @@ namespace vlib
 			{
 				return is_homogenous_array( expr->left, v ) ? v : nothing;
 			}
+			
+			Value result = as_assigned( expr->left, v );
+			
+			if ( (! result.type()) == (expr->op == Op_union) )
+			{
+				result = as_assigned( expr->right, v );
+			}
+			
+			return result;
 		}
 		
 		ASSERT( type.type() == Value_base_type );

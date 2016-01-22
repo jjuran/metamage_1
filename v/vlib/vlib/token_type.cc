@@ -86,6 +86,8 @@ namespace vlib
 		{ "%",   Token_percent        },
 		{ "%=",  Token_percent_equals },
 		
+		{ "&",   Token_ampersand },
+		
 		{ "(",   Token_lparen },
 		{ "()",  Token_parens },
 		{ "(*)", Token_parens_star },
@@ -129,6 +131,7 @@ namespace vlib
 		{ "^",   Token_caret },
 		
 		{ "{",   Token_lbrace },
+		{ "|",   Token_pipe   },
 		{ "}",   Token_rbrace },
 	};
 	
