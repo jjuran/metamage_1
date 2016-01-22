@@ -403,6 +403,9 @@ void load_argv( uint8_t* mem, int argc, char* const* argv )
 }
 
 static
+void load_file( uint8_t* mem, const char* path );
+
+static
 void load_code( uint8_t* mem, const char* path )
 {
 	int fd;
@@ -601,15 +604,20 @@ void load_module( uint8_t* mem, const char* module )
 		*p = '\0';
 	}
 	
+	load_file( mem, module );
+}
+
+void load_file( uint8_t* mem, const char* path )
+{
 	typedef uint32_t u32;
 	
 	u32 size;
 	
-	void* alloc = v68k::utils::load_file( module, &size );
+	void* alloc = v68k::utils::load_file( path, &size );
 	
 	if ( alloc == NULL )
 	{
-		more::perror( "xv68k", module );
+		more::perror( "xv68k", path );
 		
 		exit( 1 );
 	}
@@ -627,7 +635,7 @@ void load_module( uint8_t* mem, const char* module )
 	
 	if ( addr == 0 )
 	{
-		more::perror( "xv68k", module, ENOMEM );
+		more::perror( "xv68k", path, ENOMEM );
 		
 		exit( 1 );
 	}
