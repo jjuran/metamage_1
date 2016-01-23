@@ -197,8 +197,8 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 	96K	+-----------------------+
 		
 	104	+-----------------------+
-		|                       |  screen memory begins 0x0001A700  (1792 bytes after)
-		|                       |  screen memory ends   0x0001FC80  (896 bytes before)
+		|                       |  screen memory begins 0x0001A700  (1792 after)
+		|                       |  screen memory ends   0x0001FC80  (896 before)
 		|                       |
 		= screen memory buffer  =  x6
 		|                       |
@@ -207,8 +207,8 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 	128	+-----------------------+
 	
 	168	+-----------------------+
-		|                       |  screen memory begins 0x0002A700  (1792 bytes after)
-		|                       |  screen memory ends   0x0002FC80  (896 bytes before)
+		|                       |  screen memory begins 0x0002A700  (1792 after)
+		|                       |  screen memory ends   0x0002FC80  (896 before)
 		|                       |
 		= no-sync screen memory =  x6
 		|                       |
@@ -269,7 +269,7 @@ const uint16_t loader_code[] =
 	0x4BF8,  // LEA  (12288).W,A5
 	0x3000,
 	
-	0x42B8,  // CLR.L  user_pb_addr + 2 * sizeof (uint32_t)  ; user_pb->errno_var
+	0x42B8,  // CLR.L  user_pb_addr + 2 * sizeof (u32)  ; user_pb->errno_var
 	user_pb_addr + 2 * sizeof (uint32_t),
 	
 	0x21FC,  // MOVE.L  #user_pb_addr,(system_pb_addr).W  ; pb->current_user
@@ -337,22 +337,22 @@ void load_vectors( v68k::user::os_load_spec& os )
 static
 void load_Mac_traps( uint8_t* mem )
 {
+	using namespace v68k::callback;
+	
 	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
 	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
 	
-	const uint32_t unimplemented = callback_address( v68k::callback::unimplemented_trap );
+	const uint32_t unimplemented = callback_address( unimplemented_trap );
 	
 	init_trap_table( os_traps, os_traps + os_trap_count, unimplemented );
 	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
-	
-	using namespace v68k::callback;
 	
 	os_traps[ 0x1E ] = big_longword( callback_address( NewPtr_trap     ) );
 	os_traps[ 0x1F ] = big_longword( callback_address( DisposePtr_trap ) );
 	os_traps[ 0x2E ] = big_longword( callback_address( BlockMove_trap  ) );
 	os_traps[ 0xAD ] = big_longword( callback_address( Gestalt_trap    ) );
 	
-	const uint32_t big_no_op = big_longword( callback_address( v68k::callback::no_op ) );
+	const uint32_t big_no_op = big_longword( callback_address( no_op ) );
 	
 	os_traps[ 0x46 ] = big_no_op;  // GetTrapAddress
 	os_traps[ 0x47 ] = big_no_op;  // SetTrapAddress
@@ -526,7 +526,7 @@ void emulation_loop( v68k::emulator& emu )
 {
 	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
-	const unsigned instruction_limit = parse_instruction_limit( instruction_limit_var );
+	const unsigned max_steps = parse_instruction_limit( instruction_limit_var );
 	
 	while ( emu.step() )
 	{
@@ -537,7 +537,7 @@ void emulation_loop( v68k::emulator& emu )
 			kill( 1, 0 );  // Guaranteed yield point in MacRelix
 		}
 		
-		if ( instruction_limit != 0  &&  emu.instruction_count() > instruction_limit )
+		if ( max_steps != 0  &&  emu.instruction_count() > max_steps )
 		{
 			print_instruction_limit_exceeded( instruction_limit_var );
 			
@@ -601,7 +601,9 @@ void load_module( uint8_t* mem, const char* module )
 		*p = '\0';
 	}
 	
-	uint32_t size;
+	typedef uint32_t u32;
+	
+	u32 size;
 	
 	void* alloc = v68k::utils::load_file( module, &size );
 	
@@ -621,7 +623,7 @@ void load_module( uint8_t* mem, const char* module )
 	
 	const int n = (size + page_size - 1) / page_size;  // round up
 	
-	const uint32_t addr = allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
+	const u32 addr = allocate_n_pages_for_existing_alloc_unchecked( n, alloc );
 	
 	if ( addr == 0 )
 	{
@@ -752,7 +754,9 @@ char* const* get_options( char** argv )
 			case Opt_pid:
 				if ( global_result.param )
 				{
-					fake_pid = gear::parse_unsigned_decimal( &global_result.param );
+					using gear::parse_unsigned_decimal;
+					
+					fake_pid = parse_unsigned_decimal( &global_result.param );
 				}
 				else
 				{
