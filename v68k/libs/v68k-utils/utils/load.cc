@@ -44,7 +44,7 @@ loop:
 	TST.B    (A1)+    ;  // while ( *a1++ != '\0' )
 	BNE.S    loop     ;  //    continue;
 	
-	SUBA     A0,A1    ;  // a1 -= a0;
+	SUBA.L   A0,A1    ;  // a1 -= a0;
 	MOVE.L   A1,D0    ;  // d0 = a1;
 	// LEAVE strlen0
 	
