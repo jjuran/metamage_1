@@ -150,6 +150,38 @@ void deallocate( uint32_t addr )
 	free( deallocate_existing( addr ) );
 }
 
+static
+unsigned verify_n_pages( unsigned first, unsigned n )
+{
+	if ( first >= n_alloc_pages  ||  first + n > n_alloc_pages )
+	{
+		return 0;
+	}
+	
+	void* page_alloc = alloc_pages[ first ];
+	
+	if ( page_alloc == NULL  ||  page_alloc == (void*) -1L )
+	{
+		// Address is not mapped, or reserved
+		
+		return 0;
+	}
+	
+	void* next = page_alloc;
+	
+	for ( int i = 1;  i < n; ++i )
+	{
+		next = (char*) next + page_size;
+		
+		if ( alloc_pages[ first + i ] != next )
+		{
+			return 0;
+		}
+	}
+	
+	return n;
+}
+
 
 uint8_t* memory::translate( uint32_t               addr,
                             uint32_t               length,
@@ -178,21 +210,16 @@ uint8_t* memory::translate( uint32_t               addr,
 	const int index  = addr / page_size;
 	const int offset = addr % page_size;
 	
-	void* page_alloc = alloc_pages[ index ];
+	const unsigned count = (offset + length - 1) / page_size + 1;
 	
-	if ( page_alloc == NULL  ||  page_alloc == (void*) -1L )
-	{
-		// Address is not mapped, or reserved
-		
-		return 0;
-	}
-	
-	if ( offset + length > page_size  &&  alloc_pages[ index + 1 ] != (char*) page_alloc + page_size )
+	if ( ! verify_n_pages( index, count ) )
 	{
 		// Access runs off end of block
 		
 		return 0;
 	}
+	
+	void* page_alloc = alloc_pages[ index ];
 	
 	return (uint8_t*) page_alloc + offset;
 }
