@@ -101,6 +101,16 @@ static command::option options[] =
 };
 
 
+#define EXIT( status, msg )  exit_with_message( STR_LEN( msg "\n" ), status )
+
+static
+void exit_with_message( const char* msg, unsigned len, int status )
+{
+	write( STDERR_FILENO, msg, len );
+	
+	exit( status );
+}
+
 static
 void atexit_report()
 {
@@ -411,9 +421,7 @@ void load_code( uint8_t* mem, const char* path )
 		{
 			if ( size == 0 )
 			{
-				write( STDERR_FILENO, STR_LEN( "xv68k: WARNING: Zero-length code file, exiting\n" ) );
-				
-				exit( 1 );
+				EXIT( 1, "xv68k: WARNING: Zero-length code file, exiting" );
 			}
 			
 			if ( size > code_max_size )
@@ -445,9 +453,7 @@ void load_code( uint8_t* mem, const char* path )
 	
 	if ( n_read == 0 )
 	{
-		write( STDERR_FILENO, STR_LEN( "xv68k: WARNING: Zero-length code input, exiting\n" ) );
-		
-		exit( 1 );
+		EXIT( 1, "xv68k: WARNING: Zero-length code input, exiting" );
 	}
 	
 	if ( path != NULL )
@@ -608,9 +614,7 @@ void load_module( uint8_t* mem, const char* module )
 	
 	if ( size == 0 )
 	{
-		write( STDERR_FILENO, STR_LEN( "xv68k: ERROR: Zero-length module file\n" ) );
-		
-		exit( 1 );
+		EXIT( 1, "xv68k: ERROR: Zero-length module file" );
 	}
 	
 	using namespace v68k::alloc;
@@ -788,9 +792,7 @@ char* const* get_options( char** argv )
 					{
 						if ( *argv == NULL )
 						{
-							write( STDERR_FILENO, STR_LEN( "Unterminated module argument vector\n" ) );
-							
-							exit( 2 );
+							EXIT( 2, "Unterminated module argument vector" );
 						}
 						
 						if ( ends_array( *argv ) )
@@ -803,9 +805,7 @@ char* const* get_options( char** argv )
 					
 					if ( module->begin == argv )
 					{
-						write( STDERR_FILENO, STR_LEN( "Empty module argument vector\n" ) );
-						
-						exit( 2 );
+						EXIT( 2, "Empty module argument vector" );
 					}
 					
 					*argv = NULL;
