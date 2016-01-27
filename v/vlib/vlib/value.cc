@@ -84,11 +84,14 @@ namespace vlib
 		new ((void*) its_box.pointer()) Expr( Value_dummy_operand, op, v );
 	}
 	
-	Value::Value( const Value& a, op_type op, const Value& b )
+	Value::Value( const Value&        a,
+	              op_type             op,
+	              const Value&        b,
+	              const source_spec&  s )
 	:
 		its_box( sizeof (Expr), &pair_destructor, Value_pair )
 	{
-		new ((void*) its_box.pointer()) Expr( a, op, b );
+		new ((void*) its_box.pointer()) Expr( a, op, b, s );
 	}
 	
 	Expr* Value::listexpr() const
@@ -111,11 +114,15 @@ namespace vlib
 		swap( its_box, that.its_box );
 	}
 	
-	Expr::Expr( const Value& a, op_type op, const Value& b )
+	Expr::Expr( const Value&        a,
+	            op_type             op,
+	            const Value&        b,
+	            const source_spec&  s )
 	:
 		op( op ),
 		left( a ),
-		right( b )
+		right( b ),
+		source( s )
 	{
 	}
 	

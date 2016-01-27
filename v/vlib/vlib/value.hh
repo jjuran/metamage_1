@@ -12,6 +12,7 @@
 
 // vlib
 #include "vlib/op_type.hh"
+#include "vlib/source.hh"
 #include "vlib/vbox.hh"
 
 
@@ -141,7 +142,10 @@ namespace vlib
 			
 			Value( op_type op, const Value& v );
 			
-			Value( const Value& a, op_type op, const Value& b );
+			Value( const Value&        a,
+			       op_type             op,
+			       const Value&        b,
+			       const source_spec&  s = source_spec( 0 ) );
 			
 			value_type type() const
 			{
@@ -239,7 +243,12 @@ namespace vlib
 		Value          left;
 		Value          right;
 		
-		Expr( const Value& a, op_type op, const Value& b );
+		const source_spec source;
+		
+		Expr( const Value&        a,
+		      op_type             op,
+		      const Value&        b,
+		      const source_spec&  s = source_spec( 0 ) );  // NULL
 	};
 	
 	inline
