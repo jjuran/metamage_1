@@ -18,7 +18,7 @@ namespace vlib
 {
 	
 	static
-	void validate( const Value& value )
+	const Value& validate( const Value& value )
 	{
 		switch ( value.type() )
 		{
@@ -28,6 +28,8 @@ namespace vlib
 			default:
 				break;
 		}
+		
+		return value;
 	}
 	
 	static
@@ -42,21 +44,26 @@ namespace vlib
 	}
 	
 	static
-	void resolve( Value& v )
+	Value resolve( const Value& v )
 	{
 		if ( v.type() == Value_symbol )
 		{
-			v = defined( lookup_symbol( v.sym() ) );
+			return defined( lookup_symbol( v.sym() ) );
 		}
 		else if ( Expr* expr = v.listexpr() )
 		{
-			v = Value( eval( expr->left ), eval( expr->right ) );
+			return Value( resolve( expr->left ), resolve( expr->right ) );
 		}
+		
+		return v;
 	}
 	
 	Value eval( Value v )
 	{
-		resolve( v );
+		if ( v.type() == Value_symbol )
+		{
+			return defined( lookup_symbol( v.sym() ) );
+		}
 		
 		return v;
 	}
@@ -195,6 +202,11 @@ namespace vlib
 		return false;
 	}
 	
+	static
+	Value eval_part_2( const Value&  left,
+	                   op_type       op,
+	                   const Value&  right );
+	
 	Value eval( Value    left,
 	            op_type  op,
 	            Value    right )
@@ -212,9 +224,13 @@ namespace vlib
 			}
 		}
 		
-		resolve( right );
-		validate( right );
-		
+		return eval_part_2( left, op, validate( resolve( right ) ) );
+	}
+	
+	Value eval_part_2( const Value&  left,
+	                   op_type       op,
+	                   const Value&  right )
+	{
 		if ( is_left_varop( op ) )
 		{
 			if ( Expr* ax = left.listexpr() )
@@ -247,10 +263,7 @@ namespace vlib
 			return eval_assignment( left.sym(), op, right );
 		}
 		
-		resolve( left );
-		validate( left );
-		
-		return calc( left, op, right );
+		return calc( validate( resolve( left ) ), op, right );
 	}
 	
 }
