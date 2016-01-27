@@ -16,10 +16,9 @@
 #include "must/write.h"
 
 // plus
-#include "plus/string/concat.hh"
+#include "plus/var_string.hh"
 
 // vlib
-#include "vlib/error.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/value.hh"
@@ -42,7 +41,9 @@ namespace vlib
 	static
 	Value v_print( const Value& v )
 	{
-		const plus::string s = make_string( v, Stringified_to_print ) + "\n";
+		plus::var_string s = make_string( v, Stringified_to_print ).move();
+		
+		s += "\n";
 		
 		must_write( STDOUT_FILENO, s.data(), s.size() );
 		

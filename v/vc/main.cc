@@ -14,7 +14,7 @@
 
 // plus
 #include "plus/integer_hex.hh"
-#include "plus/string/concat.hh"
+#include "plus/var_string.hh"
 
 // vlib
 #include "vlib/interpret.hh"
@@ -54,7 +54,9 @@ static void reproduce( const Value& v )
 		return;
 	}
 	
-	plus::string s = stringify( v ) + "\n";
+	plus::var_string s = stringify( v ).move();
+	
+	s += "\n";
 	
 	must_write( STDOUT_FILENO, s.data(), s.size() );
 }
