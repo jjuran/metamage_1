@@ -61,6 +61,7 @@ namespace vlib
 		Op_gte,
 		Op_mapping,
 		Op_list,
+		Op_assert,
 		Op_if,
 		Op_then,
 		Op_else,

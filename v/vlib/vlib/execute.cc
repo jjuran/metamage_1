@@ -8,9 +8,14 @@
 // debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // vlib
 #include "vlib/eval.hh"
+#include "vlib/exceptions.hh"
 #include "vlib/proc_info.hh"
+#include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/symdesc.hh"
 #include "vlib/tracker.hh"
@@ -18,6 +23,12 @@
 
 namespace vlib
 {
+	
+	static
+	language_error assertion_result_not_boolean( const source_spec& source )
+	{
+		return language_error( "assertion result not boolean", source );
+	}
 	
 	static
 	Value gensym( symbol_type type, const plus::string& name, const Value &v )
@@ -191,6 +202,29 @@ namespace vlib
 				const Value test( proc_invoke, Op_invocation, expression  );
 				
 				return Value( execute( expr->left, stack ), Op_while_2, test );
+			}
+			
+			if ( expr->op == Op_assert )
+			{
+				const Value& test = expr->right;
+				
+				const Value result = execute( test, stack );
+				
+				if ( result.type() != V_bool )
+				{
+					throw assertion_result_not_boolean( expr->source );
+				}
+				
+				if ( ! result.boolean() )
+				{
+					plus::var_string s = "assertion failed: ";
+					
+					s += rep( test );
+					
+					throw language_error( s, expr->source );
+				}
+				
+				return Value();
 			}
 			
 			const Value* left  = &expr->left;

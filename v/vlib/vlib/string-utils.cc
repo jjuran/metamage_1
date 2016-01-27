@@ -122,6 +122,8 @@ namespace vlib
 			case Op_divide_by:    return " /= ";
 			case Op_percent_by:   return " %= ";
 			
+			case Op_assert:  return "assert ";
+			
 			case Op_end:  return "; ";
 			
 			default:  return " ?? ";

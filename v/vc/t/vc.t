@@ -2469,3 +2469,15 @@ $ vc 'var x = "break"; while true do {do {break} while false; x = "not broken"; 
 
 $ vc 'var x = (); var i = 0; do {x = x, ++i} while i < 3; x'
 1 >= '(1, 2, 3)'
+
+%
+
+$ vc 'assert true; assert 2 + 2 == 4'
+1 >> .
+.
+
+%
+
+$ vc 'assert (1 == 2) == (3 == 4)'
+1 >> .
+.
