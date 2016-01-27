@@ -58,7 +58,7 @@ namespace vlib
 		return v;
 	}
 	
-	Value eval( Value v )
+	const Value& eval( const Value& v )
 	{
 		if ( v.type() == Value_symbol )
 		{
@@ -207,9 +207,9 @@ namespace vlib
 	                   op_type       op,
 	                   const Value&  right );
 	
-	Value eval( Value    left,
-	            op_type  op,
-	            Value    right )
+	Value eval( const Value&  left,
+	            op_type       op,
+	            const Value&  right )
 	{
 		if ( op == Op_var  ||  op == Op_const )
 		{

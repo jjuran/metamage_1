@@ -14,11 +14,11 @@
 namespace vlib
 {
 	
-	Value eval( Value v );
+	const Value& eval( const Value& v );
 	
-	Value eval( Value    left,
-	            op_type  op,
-	            Value    right );
+	Value eval( const Value&  left,
+	            op_type       op,
+	            const Value&  right );
 	
 }
 
