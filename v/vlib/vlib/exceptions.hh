@@ -17,6 +17,24 @@
 namespace vlib
 {
 	
+	struct transfer_via_break
+	{
+		const source_spec  source;
+		
+		transfer_via_break( const source_spec& src ) : source( src )
+		{
+		}
+	};
+	
+	struct transfer_via_continue
+	{
+		const source_spec  source;
+		
+		transfer_via_continue( const source_spec& src ) : source( src )
+		{
+		}
+	};
+	
 	struct language_error
 	{
 		const plus::string  text;

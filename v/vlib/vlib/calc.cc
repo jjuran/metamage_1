@@ -993,12 +993,12 @@ namespace vlib
 		
 		if ( op == Op_break )
 		{
-			throw transfer_via_break();
+			throw transfer_via_break( source_spec( NULL ) );
 		}
 		
 		if ( op == Op_continue )
 		{
-			throw transfer_via_continue();
+			throw transfer_via_continue( source_spec( NULL ) );
 		}
 		
 		if ( op == Op_try )

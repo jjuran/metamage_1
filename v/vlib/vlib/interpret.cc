@@ -24,7 +24,6 @@
 #include "plus/var_string.hh"
 
 // vlib
-#include "vlib/calc.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
 #include "vlib/parse.hh"
@@ -86,13 +85,17 @@ namespace vlib
 		{
 			FAIL( "Max bigint size exceeded" );
 		}
-		catch ( const transfer_via_break& )
+		catch ( const transfer_via_break& e )
 		{
-			FAIL( "`break` used outside of loop" );
+			plus::string msg = "ERROR: `break` used outside of loop";
+			
+			fail( msg, e.source );
 		}
-		catch ( const transfer_via_continue& )
+		catch ( const transfer_via_continue& e )
 		{
-			FAIL( "`continue` used outside of loop" );
+			plus::string msg = "ERROR: `continue` used outside of loop";
+			
+			fail( msg, e.source );
 		}
 		catch ( const language_error& e )
 		{
