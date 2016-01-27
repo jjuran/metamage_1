@@ -136,7 +136,7 @@ namespace vlib
 			{
 				const Value& left = resolve_symbol( expr->left, stack );
 				
-				return eval( left, Op_denote, expr->right );
+				return eval( left, Op_denote, expr->right, expr->source );
 			}
 			
 			if ( expr->op == Op_list )
@@ -241,7 +241,8 @@ namespace vlib
 			{
 				return eval( resolve_symbol_list( *left, stack ),
 				             expr->op,
-				             execute( *right, stack ) );
+				             execute( *right, stack ),
+				             expr->source );
 			}
 			
 			/*
@@ -252,7 +253,8 @@ namespace vlib
 			
 			return eval( execute( *left, stack ),
 			             expr->op,
-			             execute( *right, stack ) );
+			             execute( *right, stack ),
+			             expr->source );
 		}
 		
 		const Value& resolved = resolve_symbol( tree, stack );

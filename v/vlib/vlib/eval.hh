@@ -14,11 +14,14 @@
 namespace vlib
 {
 	
+	struct source_spec;
+	
 	const Value& eval( const Value& v );
 	
-	Value eval( const Value&  left,
-	            op_type       op,
-	            const Value&  right );
+	Value eval( const Value&        left,
+	            op_type             op,
+	            const Value&        right,
+	            const source_spec&  source );
 	
 }
 

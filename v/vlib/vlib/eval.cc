@@ -192,9 +192,10 @@ namespace vlib
 	                   op_type       op,
 	                   const Value&  right );
 	
-	Value eval( const Value&  left,
-	            op_type       op,
-	            const Value&  right )
+	Value eval( const Value&        left,
+	            op_type             op,
+	            const Value&        right,
+	            const source_spec&  source )
 	{
 		if ( op == Op_var  ||  op == Op_const )
 		{
@@ -222,8 +223,8 @@ namespace vlib
 			{
 				if ( Expr* bx = right.listexpr() )
 				{
-					eval( ax->left,  op, bx->left  );
-					eval( ax->right, op, bx->right );
+					eval( ax->left,  op, bx->left,  source_spec( NULL ) );
+					eval( ax->right, op, bx->right, source_spec( NULL ) );
 					
 					return right;
 				}
