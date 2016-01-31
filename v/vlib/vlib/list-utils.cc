@@ -24,6 +24,18 @@ namespace vlib
 		return *it;
 	}
 	
+	Value& get_nth_mutable( Value& list, unsigned i )
+	{
+		Value* next = &list;
+		
+		while ( i-- > 0  &&  ! is_empty_list( *next ) )
+		{
+			next = &rest_mutable( *next );
+		}
+		
+		return first_mutable( *next );
+	}
+	
 	unsigned long count( const Value& list )
 	{
 		list_iterator it( list );

@@ -15,6 +15,8 @@ namespace vlib
 	
 	const Value& get_nth( const Value& list, unsigned i );
 	
+	Value& get_nth_mutable( Value& list, unsigned i );
+	
 	unsigned long count( const Value& list );
 	
 	void splice_lists( Value& left, const Value& right );
