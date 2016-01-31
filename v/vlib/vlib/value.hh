@@ -402,6 +402,9 @@ namespace vlib
 	const Value& first( const Value& list );
 	const Value& rest ( const Value& list );
 	
+	Value& first_mutable( Value& list );
+	Value& rest_mutable ( Value& list );
+	
 }
 
 #endif

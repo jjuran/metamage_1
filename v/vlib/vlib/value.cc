@@ -21,6 +21,8 @@
 namespace vlib
 {
 	
+	struct mutable_list_overrun {};
+	
 	const Value nothing       = Value_nothing;
 	const Value dummy_operand = Value_dummy_operand;
 	const Value undefined     = Value_undefined;
@@ -220,6 +222,30 @@ namespace vlib
 		}
 		
 		return empty_list;
+	}
+	
+	Value& first_mutable( Value& list )
+	{
+		list.unshare();
+		
+		if ( Expr* expr = list.listexpr() )
+		{
+			return expr->left;
+		}
+		
+		return list;  // not a (non-empty) list
+	}
+	
+	Value& rest_mutable( Value& list )
+	{
+		list.unshare();
+		
+		if ( Expr* expr = list.listexpr() )
+		{
+			return expr->right;
+		}
+		
+		throw mutable_list_overrun();
 	}
 	
 }
