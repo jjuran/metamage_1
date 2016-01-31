@@ -221,6 +221,8 @@ namespace vlib
 			
 			void swap( Value& that );
 			
+			Value& unshare();
+			
 			friend unsigned long area( const Value& v );
 	};
 	

@@ -79,8 +79,6 @@ namespace vlib
 			vu u;
 		
 		private:
-			bool has_extent() const  { return int8_t( u.alloc.type ) < 0; }
-			
 			void destroy_extent();
 			
 			void destroy()
@@ -90,8 +88,6 @@ namespace vlib
 					destroy_extent();
 				}
 			}
-			
-			void unshare();
 		
 		public:
 			~vbox()  { destroy(); }
@@ -188,6 +184,8 @@ namespace vlib
 			
 			unsigned long refcount() const;
 			
+			bool has_extent() const  { return int8_t( u.alloc.type ) < 0; }
+			
 			char semantics() const  { return u.alloc.semantics; }
 			
 			bool boolean() const  { return u.ints.boolean; }
@@ -202,6 +200,8 @@ namespace vlib
 			uint64_t u64() const  { return u.ints.u64; }
 			
 			const void* pointer() const  { return u.alloc.pointer; }
+			
+			void unshare();
 			
 			friend unsigned long area( const vbox& box );
 	};

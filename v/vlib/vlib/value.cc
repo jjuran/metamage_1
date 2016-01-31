@@ -119,6 +119,31 @@ namespace vlib
 		swap( its_box, that.its_box );
 	}
 	
+	static
+	void add_ref( vbox& box )
+	{
+		if ( box.has_extent() )
+		{
+			plus::extent_add_ref( (const char*) box.pointer() );
+		}
+	}
+	
+	Value& Value::unshare()
+	{
+		if ( its_box.refcount() > 1 )
+		{
+			if ( Expr* exp = expr() )
+			{
+				add_ref( exp->left .its_box );
+				add_ref( exp->right.its_box );
+			}
+			
+			its_box.unshare();
+		}
+		
+		return *this;
+	}
+	
 	Expr::Expr( const Value&        a,
 	            op_type             op,
 	            const Value&        b,
