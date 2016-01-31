@@ -236,8 +236,8 @@ namespace vlib
 	struct Expr
 	{
 		const op_type  op;
-		const Value    left;
-		const Value    right;
+		Value          left;
+		Value          right;
 		
 		Expr( const Value& a, op_type op, const Value& b );
 	};

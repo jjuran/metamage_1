@@ -45,7 +45,7 @@ namespace vlib
 		
 		while ( expr->op )
 		{
-			Value& next = const_cast< Value& >( expr->right );
+			Value& next = expr->right;
 			
 			Expr* next_extent = NULL;
 			
