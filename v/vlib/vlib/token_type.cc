@@ -207,9 +207,17 @@ namespace vlib
 			return Token_whitespace;
 		}
 		
-		if ( *p < ' ' )
+		if ( (signed char) *p < ' ' )
 		{
-			++p;
+			if ( (signed char) *p++ < 0 )
+			{
+				while ( (signed char) *p < 0 )
+				{
+					++p;
+				}
+				
+				return Token_invalid;  // non-ASCII sequence
+			}
 			
 			return Token_control;  // control character
 		}
