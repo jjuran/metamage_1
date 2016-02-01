@@ -15,6 +15,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
+#include "vlib/target.hh"
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
@@ -60,17 +61,28 @@ namespace vlib
 	}
 	
 	static
-	Value assign_symbol( Symbol* sym, const Value& v, bool coercive )
+	Value assign_target( const Target& target, const Value& v, bool coercive )
 	{
-		sym->assign( v, coercive );
+		assign( target, v, coercive );
 		
-		return sym->get();
+		return *target.addr;
+	}
+	
+	static
+	Target make_target( const Value& v )
+	{
+		if ( ! is_symbol( v ) )
+		{
+			THROW( "assignment target not a symbol" );
+		}
+		
+		return v.sym()->target();
 	}
 	
 	static
 	Value eval_assignment( const Value& left, op_type op, const Value& right )
 	{
-		Symbol* sym = left.sym();
+		Target target = make_target( left );
 		
 		if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
@@ -78,17 +90,17 @@ namespace vlib
 			
 			const bool coercive = op == Op_approximate;
 			
-			return assign_symbol( sym, right, coercive );
+			return assign_target( target, right, coercive );
 		}
 		
 		if ( op == Op_push )
 		{
 			push( left, right );
 			
-			return sym->get();
+			return *target.addr;
 		}
 		
-		Value& value = modify_symbol( sym );
+		Value& value = *target.addr;
 		
 		if ( is_undefined( value ) )
 		{
@@ -113,7 +125,7 @@ namespace vlib
 			THROW( "division by zero in update" );
 		}
 		
-		const Value& vtype = sym->vtype();
+		const Value& vtype = *target.type;
 		
 		/*
 			The next section of code below explicitly assigns a result (in
@@ -138,7 +150,7 @@ namespace vlib
 					
 					Value result = value;
 					
-					sym->assign( Integer( a + (inc ? 1 : -1) ) );
+					assign( target, Integer( a + (inc ? 1 : -1) ) );
 					
 					return result;
 				}
@@ -160,7 +172,7 @@ namespace vlib
 						INTERNAL_ERROR( "no such update assignment operator" );
 				}
 				
-				sym->assign( Integer( result ) );
+				assign( target, Integer( result ) );
 				
 				return value;
 			}
