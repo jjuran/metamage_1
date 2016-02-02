@@ -323,33 +323,6 @@ namespace vlib
 	};
 	
 	static
-	Value reversed( const Value& list )
-	{
-		Expr* expr = list.expr();
-		
-		if ( expr == NULL )
-		{
-			return list;
-		}
-		
-		Value result = expr->left;
-		
-		const Value* next = &expr->right;
-		
-		expr = next->expr();
-		
-		while ( expr  &&  expr->op == Op_list )
-		{
-			result = Value( expr->left, result );
-			
-			next = &expr->right;
-			expr = next->expr();
-		}
-		
-		return Value( *next, result );
-	}
-	
-	static
 	Value v_join( const Value& args )
 	{
 		const Value& glue = first( args );
@@ -395,7 +368,9 @@ namespace vlib
 			return array_vtype;
 		}
 		
-		Value reversed_result = v_typeof( expr->left );
+		Value result = Value( empty_list, v_typeof( expr->left ) );
+		
+		Expr* r = result.expr();
 		
 		const Value* next = &expr->right;
 		
@@ -403,13 +378,16 @@ namespace vlib
 		
 		while ( expr  &&  expr->op == Op_list )
 		{
-			reversed_result = Value( v_typeof( expr->left ), reversed_result );
+			r->right = Value( r->right, v_typeof( expr->left ) );
 			
 			next = &expr->right;
 			expr = next->expr();
+			r = r->right.expr();
 		}
 		
-		return reversed( Value( v_typeof( *next ), reversed_result ) );
+		r->right = Value( r->right, v_typeof( *next ) );
+		
+		return result.expr()->right;
 	}
 	
 	static const Value string     = string_vtype;
