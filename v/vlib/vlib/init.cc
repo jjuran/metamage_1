@@ -47,7 +47,6 @@ namespace vlib
 		define_keyword( "string",   string_vtype   );
 		define_keyword( "str",      string_vtype   );
 		define_keyword( "c_str",    c_str_vtype    );
-		define_keyword( "array",    array_vtype    );
 		define_keyword( "type",     type_vtype     );
 		define_keyword( "byte",     byte_vtype     );
 		define_keyword( "i64",      i64_vtype      );
@@ -58,6 +57,8 @@ namespace vlib
 		define_keyword( "u16",      u16_vtype      );
 		define_keyword( "i8",       i8_vtype       );
 		define_keyword( "u8",       u8_vtype       );
+		
+		define_keyword( "array", Value( etc_vtype, Op_subscript, empty_list ) );
 		
 		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_vtype );
 		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_vtype );
