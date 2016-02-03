@@ -144,10 +144,7 @@ namespace vlib
 	static
 	bool ends_in_empty_statement( const std::vector< dyad >& stack )
 	{
-		if ( stack.empty() )
-		{
-			return false;  // Only happens if '}' wasn't balanced.
-		}
+		ASSERT( ! stack.empty() );
 		
 		return stack.back().op == Op_end  ||  stack.back().op == Op_braces;
 	}
@@ -155,10 +152,7 @@ namespace vlib
 	static
 	bool is_empty_array( const std::vector< dyad >& stack )
 	{
-		if ( stack.empty() )
-		{
-			return false;  // Only happens if ']' wasn't balanced.
-		}
+		ASSERT( ! stack.empty() );
 		
 		return stack.back().op == Op_brackets;
 	}
@@ -167,6 +161,11 @@ namespace vlib
 	{
 		if ( expecting_value() )
 		{
+			if ( stack.empty() )
+			{
+				SYNTAX_ERROR( "unbalanced right delimiter" );
+			}
+			
 			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
 			{
 				receive_value( Value_nothing );
