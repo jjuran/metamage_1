@@ -166,18 +166,21 @@ namespace vlib
 				SYNTAX_ERROR( "unbalanced right delimiter" );
 			}
 			
+			value_type nil = Value_empty_list;
+			
 			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
 			{
-				receive_value( Value_nothing );
+				nil = Value_nothing;
 			}
 			else if ( op == Op_brackets  &&  is_empty_array( stack ) )
 			{
-				receive_value( Value_empty_list );
 			}
 			else
 			{
 				SYNTAX_ERROR( "right delimiter where value expected" );
 			}
+			
+			receive_value( nil );
 		}
 		
 		fold_ops_and_add( Op_end );
