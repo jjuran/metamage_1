@@ -38,19 +38,11 @@ namespace vlib
 		
 		return x;
 	}
+	
 	static
 	bool isa( const Value& v, const Value& t )
 	{
-		if ( t.type() != Value_base_type )
-		{
-			// TODO:  Support type lists.
-			
-			TYPE_ERROR( "`isa` right operand must be a type" );
-		}
-		
-		const type_info& typeinfo = t.typeinfo();
-		
-		return typeinfo.assign( v ).type();
+		return as_assigned( t, v ).type();
 	}
 	
 	static

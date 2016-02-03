@@ -64,7 +64,12 @@ namespace vlib
 			return result;
 		}
 		
-		ASSERT( type.type() == Value_base_type );
+		if ( type.type() != Value_base_type )
+		{
+			// TODO:  Support type lists.
+			
+			TYPE_ERROR( "`isa` right operand must be a type" );
+		}
 		
 		return type.typeinfo().assign( v );
 	}

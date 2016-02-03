@@ -2329,3 +2329,28 @@ $ vc '{""[(1 + 2)]}'
 
 $ vc '{int[()]}'
 1 >= '{int[]}'
+
+%
+
+$ vc '0 isa (str|int), "0" isa (str|int)'
+1 >= '(true, true)'
+
+%
+
+$ vc '127 isa (u8 & i8), 128 isa (u8 & i8)'
+1 >= '(true, false)'
+
+%
+
+$ vc '[] isa (int[] & str[])'
+1 >= true
+
+%
+
+$ vc '[1, "two"] isa (int|str)[], [1, true] isa (int|str)[]'
+1 >= '(true, false)'
+
+%
+
+$ vc '[] isa int[][], [1, 2, 3] isa int[][], [[1, 2], [3, 4]] isa int[][]'
+1 >= '(true, false, true)'
