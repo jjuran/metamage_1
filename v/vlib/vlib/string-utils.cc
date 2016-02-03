@@ -226,7 +226,9 @@ namespace vlib
 		{
 			total += strlen( reproduce_op( expr->op ) );
 			
-			total += composite_length( expr->right, Stringified_to_reproduce );
+			const bool subparens = expr->op != Op_subscript;
+			
+			total += composite_length( expr->right, mode, subparens );
 			
 			return total;
 		}
@@ -384,7 +386,9 @@ namespace vlib
 				
 				p = mempcpy( p, r );
 				
-				p = make_string( p, expr->right, Stringified_to_reproduce );
+				const bool subparens = expr->op != Op_subscript;
+				
+				p = make_string( p, expr->right, mode, subparens );
 				
 				for ( const char* q = op_str;  q < r; )
 				{
