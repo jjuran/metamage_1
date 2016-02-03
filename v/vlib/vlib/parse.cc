@@ -144,41 +144,32 @@ namespace vlib
 	static
 	bool ends_in_empty_statement( const std::vector< dyad >& stack )
 	{
-		if ( stack.empty() )
-		{
-			return false;  // Only happens if '}' wasn't balanced.
-		}
+		ASSERT( ! stack.empty() );
 		
 		return stack.back().op == Op_end  ||  stack.back().op == Op_braces;
-	}
-	
-	static
-	bool is_empty_array( const std::vector< dyad >& stack )
-	{
-		if ( stack.empty() )
-		{
-			return false;  // Only happens if ']' wasn't balanced.
-		}
-		
-		return stack.back().op == Op_brackets;
 	}
 	
 	void Parser::pop( op_type op )
 	{
 		if ( expecting_value() )
 		{
+			if ( stack.empty() )
+			{
+				SYNTAX_ERROR( "unbalanced right delimiter" );
+			}
+			
+			value_type nil = Value_empty_list;
+			
 			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
 			{
-				receive_value( Value_nothing );
+				nil = Value_nothing;
 			}
-			else if ( op == Op_brackets  &&  is_empty_array( stack ) )
-			{
-				receive_value( Value_empty_list );
-			}
-			else
+			else if ( op != stack.back().op )
 			{
 				SYNTAX_ERROR( "right delimiter where value expected" );
 			}
+			
+			receive_value( nil );
 		}
 		
 		fold_ops_and_add( Op_end );

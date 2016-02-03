@@ -2310,3 +2310,13 @@ $ vc 'substr( "Hello world", -5, 17 )'
 
 $ vc 'substr( "Hello world", -11, 4 )'
 1 >= '"Hell"'
+
+%
+
+$ vc '( )'
+1 >= '()'
+
+%
+
+$ vc '( ) == ()'
+1 >= true
