@@ -160,7 +160,7 @@ namespace vlib
 			
 			value_type nil = Value_empty_list;
 			
-			if ( op == Op_braces  &&  ends_in_empty_statement( stack ) )
+			if ( op == Op_braces  &&  stack.back().op == Op_end )
 			{
 				nil = Value_nothing;
 			}
