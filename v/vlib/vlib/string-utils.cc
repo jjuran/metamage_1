@@ -201,7 +201,9 @@ namespace vlib
 		
 		if ( (expr->op & 0xFF) == Op_block )
 		{
-			return composite_length( expr->right, mode, print_parens );
+			expr = expr->right.expr();
+			
+			ASSERT( expr != NULL );
 		}
 		
 		if ( expr->op == Op_array  ||  (expr->op & 0xFF) == Op_scope )
@@ -324,7 +326,7 @@ namespace vlib
 		
 		if ( (expr->op & 0xFF) == Op_block )
 		{
-			return make_string( p, expr->right, mode, print_parens );
+			expr = expr->right.expr();
 		}
 		
 		if ( expr->op == Op_array )
