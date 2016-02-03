@@ -210,9 +210,9 @@ namespace vlib
 		{
 			const size_t n_brackets = use_parens( mode ) * 2;
 			
-			if ( expr->op == Op_array  &&  is_empty( expr->right ) )
+			if ( is_empty( expr->right ) )
 			{
-				return n_brackets;  // "[]"
+				return n_brackets;  // "[]" or "{}"
 			}
 			
 			return n_brackets + composite_length( expr->right, mode, false );
@@ -353,7 +353,10 @@ namespace vlib
 		{
 			*p++ = '{';
 			
-			p = make_string( p, expr->right, mode, false );
+			if ( ! is_empty( expr->right ) )
+			{
+				p = make_string( p, expr->right, mode, false );
+			}
 			
 			*p++ = '}';
 			
