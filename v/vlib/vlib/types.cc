@@ -365,7 +365,7 @@ namespace vlib
 		
 		if ( expr->op == Op_array )
 		{
-			return array_vtype;
+			return Value( etc_vtype, Op_subscript, empty_list );
 		}
 		
 		Value result = Value( empty_list, v_typeof( expr->left ) );
