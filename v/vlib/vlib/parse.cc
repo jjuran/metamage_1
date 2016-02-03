@@ -149,14 +149,6 @@ namespace vlib
 		return stack.back().op == Op_end  ||  stack.back().op == Op_braces;
 	}
 	
-	static
-	bool is_empty_array( const std::vector< dyad >& stack )
-	{
-		ASSERT( ! stack.empty() );
-		
-		return stack.back().op == Op_brackets;
-	}
-	
 	void Parser::pop( op_type op )
 	{
 		if ( expecting_value() )
@@ -172,10 +164,7 @@ namespace vlib
 			{
 				nil = Value_nothing;
 			}
-			else if ( op == Op_brackets  &&  is_empty_array( stack ) )
-			{
-			}
-			else
+			else if ( op != stack.back().op )
 			{
 				SYNTAX_ERROR( "right delimiter where value expected" );
 			}
