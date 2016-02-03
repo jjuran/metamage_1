@@ -228,7 +228,10 @@ namespace vlib
 			
 			const bool subparens = expr->op != Op_subscript;
 			
-			total += composite_length( expr->right, mode, subparens );
+			if ( subparens  ||  ! is_empty( expr->right ) )
+			{
+				total += composite_length( expr->right, mode, subparens );
+			}
 			
 			return total;
 		}
@@ -388,7 +391,10 @@ namespace vlib
 				
 				const bool subparens = expr->op != Op_subscript;
 				
-				p = make_string( p, expr->right, mode, subparens );
+				if ( subparens  ||  ! is_empty( expr->right ) )
+				{
+					p = make_string( p, expr->right, mode, subparens );
+				}
 				
 				for ( const char* q = op_str;  q < r; )
 				{
