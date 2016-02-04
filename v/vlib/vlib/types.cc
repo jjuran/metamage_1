@@ -106,20 +106,6 @@ namespace vlib
 	}
 	
 	static
-	Value assign_to_array( const Value& v )
-	{
-		if ( v.type() == Value_pair )
-		{
-			if ( v.expr()->op == Op_array )
-			{
-				return v;
-			}
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
 	Value coerce_to_boolean( const Value& v )
 	{
 		switch ( v.type() )
@@ -278,7 +264,6 @@ namespace vlib
 	
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( c_str    );
-	DEFINE_TYPE_INFO( array    );
 	DEFINE_TYPE_INFO( type     );
 	
 	DEFINE_TYPE_INFO_A_C( i64 );
@@ -365,7 +350,7 @@ namespace vlib
 		
 		if ( expr->op == Op_array )
 		{
-			return array_vtype;
+			return Value( etc_vtype, Op_subscript, empty_list );
 		}
 		
 		Value result = Value( empty_list, v_typeof( expr->left ) );
