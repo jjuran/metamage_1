@@ -29,7 +29,7 @@ namespace vlib
 		Precedence_map,             // map
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
-		Precedence_mapping,         // =>
+		Precedence_mapping,         // => :
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
 		Precedence_conditional,     // if then else while do

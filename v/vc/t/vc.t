@@ -2424,3 +2424,8 @@ $ vc 'const nombres = [1 => "one", 2 => "two", 3 => "three"]; nombres[1]'
 
 $ vc 'const x = 2 => "/dev/null"; [x.key], [x.value]'
 1 >= '([2], ["/dev/null"])'
+
+%
+
+$ vc 'var x := 1; x => x, x: x, x :(x), 2: 3, true: 4, (x): 5'
+1 >= '((1 => 1), ("x" => 1), ("x" => 1), (2 => 3), ("true" => 4), (1 => 5))'
