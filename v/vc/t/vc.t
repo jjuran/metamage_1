@@ -2354,3 +2354,8 @@ $ vc '[1, "two"] isa (int|str)[], [1, true] isa (int|str)[]'
 
 $ vc '[] isa int[][], [1, 2, 3] isa int[][], [[1, 2], [3, 4]] isa int[][]'
 1 >= '(true, false, true)'
+
+%
+
+$ vc '[].length, [""].length, [1, 2, 5].length'
+1 >= '(0, 1, 3)'

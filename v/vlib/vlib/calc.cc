@@ -304,6 +304,24 @@ namespace vlib
 	}
 	
 	static
+	Value array_member( const Value& array, const plus::string& name )
+	{
+		Expr* expr = array.expr();
+		
+		ASSERT( expr != NULL );
+		ASSERT( expr->op == Op_array );
+		
+		if ( name == "length" )
+		{
+			return count( expr->right );
+		}
+		
+		SYNTAX_ERROR( "nonexistent array member" );
+		
+		return Value();
+	}
+	
+	static
 	Value calc_member( const Value& left, const Value& right )
 	{
 		if ( right.type() != Value_string )
@@ -312,6 +330,14 @@ namespace vlib
 		}
 		
 		Value vtype = proc_typeof.addr( left );
+		
+		if ( Expr* expr = vtype.expr() )
+		{
+			if ( expr->op == Op_subscript )
+			{
+				return array_member( left, right.string() );
+			}
+		}
 		
 		if ( vtype.type() == Value_base_type )
 		{
