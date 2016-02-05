@@ -2419,3 +2419,8 @@ $ vc 'const nombres ((int => str)[]) = [1 => "one", 2 => "two", 3 => "three"]'
 
 $ vc 'const nombres = [1 => "one", 2 => "two", 3 => "three"]; nombres[1]'
 1 >= '(2 => "two")'
+
+%
+
+$ vc 'const x = 2 => "/dev/null"; [x.key], [x.value]'
+1 >= '([2], ["/dev/null"])'
