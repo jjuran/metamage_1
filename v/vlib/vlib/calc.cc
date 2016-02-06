@@ -810,7 +810,7 @@ namespace vlib
 			return do_block( *resolution.negate );
 		}
 		
-		return Value_nothing;
+		return Value_empty_list;
 	}
 	
 	static

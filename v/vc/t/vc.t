@@ -2359,3 +2359,13 @@ $ vc '[] isa int[][], [1, 2, 3] isa int[][], [[1, 2], [3, 4]] isa int[][]'
 
 $ vc '[].length, [""].length, [1, 2, 5].length'
 1 >= '(0, 1, 3)'
+
+%
+
+$ vc 'if false then {"not-appearing"}'
+1 >= '()'
+
+%
+
+$ vc '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10] map {if _ % 3 == 0 then {_}}'
+1 >= '[3, 6, 9]'
