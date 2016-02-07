@@ -129,6 +129,15 @@ namespace vlib
 			case Value_base_type:
 			case Value_function:
 			case Value_pair:
+				if ( Expr* expr = v.expr() )
+				{
+					if ( expr->op == Op_array )
+					{
+						// Empty array is false.
+						return ! is_empty( expr->right );
+					}
+				}
+				
 				return true;
 		}
 	}

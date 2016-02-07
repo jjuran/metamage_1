@@ -2369,3 +2369,13 @@ $ vc 'if false then {"not-appearing"}'
 
 $ vc '[1, 2, 3, 4, 5, 6, 7, 8, 9, 10] map {if _ % 3 == 0 then {_}}'
 1 >= '[3, 6, 9]'
+
+%
+
+$ vc 'const empty (bool) := []; empty, bool ([])'
+1 >= '(false, false)'
+
+%
+
+$ vc 'const has_spam = {bool (_ map {if _ == "spam" then {_}})}; has_spam(["egg", "bacon"]), has_spam(["egg", "spam"])'
+1 >= '(false, true)'
