@@ -352,6 +352,11 @@ namespace vlib
 				}
 			}
 			
+			if ( expr->op == Op_mapping )
+			{
+				return is_type( expr->left )  &&  is_type( expr->right );
+			}
+			
 			if ( expr->op == Op_intersection  ||  expr->op == Op_union )
 			{
 				return is_type( expr->left )  &&  is_type( expr->right );

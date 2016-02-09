@@ -322,6 +322,29 @@ namespace vlib
 	}
 	
 	static
+	Value mapping_member( const Value& mapping, const plus::string& name )
+	{
+		Expr* expr = mapping.expr();
+		
+		ASSERT( expr != NULL );
+		ASSERT( expr->op == Op_mapping );
+		
+		if ( name == "key" )
+		{
+			return expr->left;
+		}
+		
+		if ( name == "value" )
+		{
+			return expr->right;
+		}
+		
+		SYNTAX_ERROR( "nonexistent mapping member" );
+		
+		return Value();
+	}
+	
+	static
 	Value calc_member( const Value& left, const Value& right )
 	{
 		if ( right.type() != Value_string )
@@ -336,6 +359,11 @@ namespace vlib
 			if ( expr->op == Op_subscript )
 			{
 				return array_member( left, right.string() );
+			}
+			
+			if ( expr->op == Op_mapping )
+			{
+				return mapping_member( left, right.string() );
 			}
 		}
 		

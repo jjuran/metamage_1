@@ -99,6 +99,8 @@ namespace vlib
 			case Op_equal:     return " == ";
 			case Op_unequal:   return " != ";
 			
+			case Op_mapping:  return " => ";
+			
 			case Op_if:    return "if ";
 			case Op_then:  return " then ";
 			case Op_else:  return " else ";

@@ -58,6 +58,7 @@ namespace vlib
 		Op_lte,
 		Op_gt,
 		Op_gte,
+		Op_mapping,
 		Op_list,
 		Op_if,
 		Op_then,
@@ -122,6 +123,7 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_mapping:
 			case Op_then:
 			case Op_else:
 			case Op_do:

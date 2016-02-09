@@ -353,6 +353,10 @@ namespace vlib
 				receive_value( unquote_escaped_string( token.text ) );
 				break;
 			
+			case Token_bareword_map_key:
+				receive_value( token.text );
+				break;
+			
 			case Token_bareword:
 			case Token_bareword_function:
 				op_type op;
