@@ -114,6 +114,11 @@ namespace vlib
 			
 			inscribe_unicode( q, uc );
 			
+			if ( c == ' '  ||  c == '\t' )
+			{
+				continue;
+			}
+			
 			if ( c != '}' )
 			{
 				SYNTAX_ERROR( "invalid unicode escape sequence" );
