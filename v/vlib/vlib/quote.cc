@@ -134,6 +134,27 @@ namespace vlib
 	}
 	
 	static
+	void decode_unicode_escape( char*& q, const char*& p )
+	{
+		using chars::unichar_t;
+		using chars::measure_utf8_bytes_for_unicode;
+		using chars::put_code_point_into_utf8;
+		
+		const unichar_t uc = decode_unicode_escape( p );
+		
+		const unsigned n = measure_utf8_bytes_for_unicode( uc );
+		
+		if ( n == 0 )
+		{
+			SYNTAX_ERROR( "invalid Unicode code point" );
+		}
+		
+		put_code_point_into_utf8( uc, n, q );
+		
+		q += n;
+	}
+	
+	static
 	char decode_escaped_byte( const char*& p )
 	{
 		using iota::is_alpha;
@@ -237,23 +258,7 @@ namespace vlib
 				{
 					if ( c == 'u' )
 					{
-						using chars::unichar_t;
-						using chars::measure_utf8_bytes_for_unicode;
-						using chars::put_code_point_into_utf8;
-						
-						const unichar_t uc = decode_unicode_escape( p );
-						
-						const unsigned n = measure_utf8_bytes_for_unicode( uc );
-						
-						if ( n == 0 )
-						{
-							SYNTAX_ERROR( "invalid Unicode code point" );
-						}
-						
-						put_code_point_into_utf8( uc, n, q );
-						
-						q += n;
-						
+						decode_unicode_escape( q, p );
 						continue;
 					}
 					
