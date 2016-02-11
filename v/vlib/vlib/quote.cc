@@ -64,6 +64,24 @@ namespace vlib
 	}
 	
 	static
+	void inscribe_unicode( char*& q, chars::unichar_t uc )
+	{
+		using chars::measure_utf8_bytes_for_unicode;
+		using chars::put_code_point_into_utf8;
+		
+		const unsigned n = measure_utf8_bytes_for_unicode( uc );
+		
+		if ( n == 0 )
+		{
+			SYNTAX_ERROR( "invalid Unicode code point" );
+		}
+		
+		put_code_point_into_utf8( uc, n, q );
+		
+		q += n;
+	}
+	
+	static
 	chars::unichar_t decode_braced_unicode_escape( const char*& p )
 	{
 		using iota::is_xdigit;
@@ -137,21 +155,10 @@ namespace vlib
 	void decode_unicode_escape( char*& q, const char*& p )
 	{
 		using chars::unichar_t;
-		using chars::measure_utf8_bytes_for_unicode;
-		using chars::put_code_point_into_utf8;
 		
 		const unichar_t uc = decode_unicode_escape( p );
 		
-		const unsigned n = measure_utf8_bytes_for_unicode( uc );
-		
-		if ( n == 0 )
-		{
-			SYNTAX_ERROR( "invalid Unicode code point" );
-		}
-		
-		put_code_point_into_utf8( uc, n, q );
-		
-		q += n;
+		inscribe_unicode( q, uc );
 	}
 	
 	static
