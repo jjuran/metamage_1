@@ -82,7 +82,7 @@ namespace vlib
 	}
 	
 	static
-	chars::unichar_t decode_braced_unicode_escape( const char*& p )
+	void decode_braced_unicode_escape( char*& q, const char*& p )
 	{
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
@@ -110,24 +110,19 @@ namespace vlib
 			SYNTAX_ERROR( "invalid unicode escape sequence" );
 		}
 		
+		inscribe_unicode( q, uc );
+		
 		if ( c != '}' )
 		{
 			SYNTAX_ERROR( "invalid unicode escape sequence" );
 		}
-		
-		return uc;
 	}
 	
 	static
-	chars::unichar_t decode_unicode_escape( const char*& p )
+	chars::unichar_t decode_unicode_bmp_escape( const char*& p )
 	{
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
-		
-		if ( *p == '{' )
-		{
-			return decode_braced_unicode_escape( ++p );
-		}
 		
 		const unsigned char c1 = *p++;
 		const unsigned char c2 = *p++;
@@ -156,7 +151,13 @@ namespace vlib
 	{
 		using chars::unichar_t;
 		
-		const unichar_t uc = decode_unicode_escape( p );
+		if ( *p == '{' )
+		{
+			decode_braced_unicode_escape( q, ++p );
+			return;
+		}
+		
+		const unichar_t uc = decode_unicode_bmp_escape( p );
 		
 		inscribe_unicode( q, uc );
 	}
