@@ -87,34 +87,39 @@ namespace vlib
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
 		
-		bool has_digits = false;
-		chars::unichar_t uc = 0;
-		
-		char c;
-		
-		while ( is_xdigit( c = *p++ ) )
+		while ( true )
 		{
-			if ( uc > 0x0FFFFFFF )
+			bool has_digits = false;
+			chars::unichar_t uc = 0;
+			
+			char c;
+			
+			while ( is_xdigit( c = *p++ ) )
+			{
+				if ( uc > 0x0FFFFFFF )
+				{
+					SYNTAX_ERROR( "invalid unicode escape sequence" );
+				}
+				
+				uc <<= 4;
+				uc |= decoded_hex_digit( c );
+				
+				has_digits = true;
+			}
+			
+			if ( ! has_digits )
 			{
 				SYNTAX_ERROR( "invalid unicode escape sequence" );
 			}
 			
-			uc <<= 4;
-			uc |= decoded_hex_digit( c );
+			inscribe_unicode( q, uc );
 			
-			has_digits = true;
-		}
-		
-		if ( ! has_digits )
-		{
-			SYNTAX_ERROR( "invalid unicode escape sequence" );
-		}
-		
-		inscribe_unicode( q, uc );
-		
-		if ( c != '}' )
-		{
-			SYNTAX_ERROR( "invalid unicode escape sequence" );
+			if ( c != '}' )
+			{
+				SYNTAX_ERROR( "invalid unicode escape sequence" );
+			}
+			
+			break;
 		}
 	}
 	
