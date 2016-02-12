@@ -64,52 +64,75 @@ namespace vlib
 	}
 	
 	static
-	chars::unichar_t decode_braced_unicode_escape( const char*& p )
+	void inscribe_unicode( char*& q, chars::unichar_t uc )
+	{
+		using chars::measure_utf8_bytes_for_unicode;
+		using chars::put_code_point_into_utf8;
+		
+		const unsigned n = measure_utf8_bytes_for_unicode( uc );
+		
+		if ( n == 0 )
+		{
+			SYNTAX_ERROR( "invalid Unicode code point" );
+		}
+		
+		put_code_point_into_utf8( uc, n, q );
+		
+		q += n;
+	}
+	
+	static
+	void decode_braced_unicode_escape( char*& q, const char*& p )
 	{
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
 		
-		bool has_digits = false;
-		chars::unichar_t uc = 0;
-		
-		char c;
-		
-		while ( is_xdigit( c = *p++ ) )
+		while ( true )
 		{
-			if ( uc > 0x0FFFFFFF )
+			bool has_digits = false;
+			chars::unichar_t uc = 0;
+			
+			char c;
+			
+			while ( is_xdigit( c = *p++ ) )
+			{
+				if ( uc > 0x0FFFFFFF )
+				{
+					SYNTAX_ERROR( "invalid unicode escape sequence" );
+				}
+				
+				uc <<= 4;
+				uc |= decoded_hex_digit( c );
+				
+				has_digits = true;
+			}
+			
+			if ( ! has_digits )
 			{
 				SYNTAX_ERROR( "invalid unicode escape sequence" );
 			}
 			
-			uc <<= 4;
-			uc |= decoded_hex_digit( c );
+			inscribe_unicode( q, uc );
 			
-			has_digits = true;
+			if ( c == ' '  ||  c == '\t' )
+			{
+				continue;
+			}
+			
+			if ( c != '}' )
+			{
+				SYNTAX_ERROR( "invalid unicode escape sequence" );
+			}
+			
+			break;
 		}
-		
-		if ( ! has_digits )
-		{
-			SYNTAX_ERROR( "invalid unicode escape sequence" );
-		}
-		
-		if ( c != '}' )
-		{
-			SYNTAX_ERROR( "invalid unicode escape sequence" );
-		}
-		
-		return uc;
 	}
 	
 	static
-	chars::unichar_t decode_unicode_escape( const char*& p )
+	chars::unichar_t decode_unicode_bmp_escape( const char*& p )
 	{
 		using iota::is_xdigit;
 		using gear::decoded_hex_digit;
-		
-		if ( *p == '{' )
-		{
-			return decode_braced_unicode_escape( ++p );
-		}
 		
 		const unsigned char c1 = *p++;
 		const unsigned char c2 = *p++;
@@ -131,6 +154,22 @@ namespace vlib
 		       | decoded_hex_digit( c2 ) <<  8
 		       | decoded_hex_digit( c3 ) <<  4
 		       | decoded_hex_digit( c4 ) <<  0;
+	}
+	
+	static
+	void decode_unicode_escape( char*& q, const char*& p )
+	{
+		using chars::unichar_t;
+		
+		if ( *p == '{' )
+		{
+			decode_braced_unicode_escape( q, ++p );
+			return;
+		}
+		
+		const unichar_t uc = decode_unicode_bmp_escape( p );
+		
+		inscribe_unicode( q, uc );
 	}
 	
 	static
@@ -237,23 +276,7 @@ namespace vlib
 				{
 					if ( c == 'u' )
 					{
-						using chars::unichar_t;
-						using chars::measure_utf8_bytes_for_unicode;
-						using chars::put_code_point_into_utf8;
-						
-						const unichar_t uc = decode_unicode_escape( p );
-						
-						const unsigned n = measure_utf8_bytes_for_unicode( uc );
-						
-						if ( n == 0 )
-						{
-							SYNTAX_ERROR( "invalid Unicode code point" );
-						}
-						
-						put_code_point_into_utf8( uc, n, q );
-						
-						q += n;
-						
+						decode_unicode_escape( q, p );
 						continue;
 					}
 					
