@@ -30,6 +30,8 @@ namespace vlib
 	
 	Value lines( const plus::string& s );
 	
+	plus::string format( const plus::string& form, const Value& params );
+	
 }
 
 #endif

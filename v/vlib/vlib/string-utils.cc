@@ -19,6 +19,7 @@
 
 // plus
 #include "plus/decimal.hh"
+#include "plus/var_string.hh"
 
 // vlib
 #include "vlib/error.hh"
@@ -568,6 +569,65 @@ namespace vlib
 		}
 		
 		return make_array( result );
+	}
+	
+	plus::string format( const plus::string& form, const Value& params )
+	{
+		const char* p = form.c_str();
+		
+		const Value* remaining = &params;
+		
+		plus::var_string result;
+		
+		while ( true )
+		{
+			const char* q = p;
+			
+			while ( *q != '\0'  &&  *q != '%' )
+			{
+				++q;
+			}
+			
+			result.append( p, q );
+			
+			if ( *q++ == '\0' )
+			{
+				break;
+			}
+			
+			p = q;
+			
+			const char c = *p++;
+			
+			if ( c == '%' )
+			{
+				result += c;
+				continue;
+			}
+			
+			if ( c != 's' )
+			{
+				TYPE_ERROR( "bad format string" );
+			}
+			
+			const Value& param = first( *remaining );
+			
+			if ( is_empty( param ) )
+			{
+				TYPE_ERROR( "not enough format arguments" );
+			}
+			
+			result += make_string( param, Stringified_to_print );
+			
+			remaining = &rest( *remaining );
+		}
+		
+		if ( ! is_empty( *remaining ) )
+		{
+			TYPE_ERROR( "too many format arguments" );
+		}
+		
+		return result.move();
 	}
 	
 }

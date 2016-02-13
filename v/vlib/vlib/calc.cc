@@ -970,6 +970,11 @@ namespace vlib
 			return repeat_list( left, right );
 		}
 		
+		if ( op == Op_format  &&  left.type() == Value_string )
+		{
+			return format( left.string(), right );
+		}
+		
 		if ( op == Op_bind_args  &&  is_functional( left ) )
 		{
 			return bind_args( left, right );

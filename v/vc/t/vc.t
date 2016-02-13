@@ -2429,3 +2429,18 @@ $ vc '"\u{1D563 1D566 1D553 1D56A}" == "\u{1D563}\u{1D566}\u{1D553}\u{1D56A}"'
 
 $ vc '"\u{65 73 63 61 70 65 20 73 65 71 75 65 6E 63 65 73}"'
 1 >= '"escape sequences"'
+
+%
+
+$ vc '"" % (), "Hello" % (), "100%%" % ()'
+1 >= '("", "Hello", "100%")'
+
+%
+
+$ vc '"Hello %s" % "world", "%s%s%s" % ("foo", "", "bar")'
+1 >= '("Hello world", "foobar")'
+
+%
+
+$ vc '"I hate to be the %s, but you would be %s..." % (-1, -2)'
+1 >= '"I hate to be the -1, but you would be -2..."'

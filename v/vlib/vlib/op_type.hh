@@ -43,6 +43,7 @@ namespace vlib
 		Op_divide,
 		Op_percent,
 		Op_remain    = Op_percent,
+		Op_format    = Op_percent,
 		Op_bind_args = Op_percent,
 		Op_modulo,
 		Op_add,
