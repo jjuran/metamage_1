@@ -797,8 +797,8 @@ namespace tool
 			const char *const postlink_argv[] =
 			{
 				"postlink-68k-tool",
-				output_pathname,
-				sym ? NULL : "--data-fork",
+				sym ? output_pathname : "--data-fork",
+				sym ? NULL            : output_pathname,
 				NULL
 			};
 			
