@@ -15,6 +15,7 @@ namespace Pedestal
 		kCmdNone = 0,
 		
 		kCmdAbout = 'abou',
+		kCmdOpen  = 'open',
 		kCmdNew   = 'new ',
 		
 		kCmdClose = 'clos',
