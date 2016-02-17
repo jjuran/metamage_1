@@ -18,7 +18,6 @@
 
 // vlib
 #include "vlib/dyad.hh"
-#include "vlib/error.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/functions.hh"
 #include "vlib/init.hh"
@@ -35,6 +34,42 @@
 
 namespace vlib
 {
+	
+	static
+	language_error invalid_control_character( const source_spec& source )
+	{
+		return language_error( "invalid control character in source", source );
+	}
+	
+	static
+	language_error operator_out_of_context( const source_spec& source )
+	{
+		return language_error( "operator used out of context", source );
+	}
+	
+	static
+	language_error unbalanced_right_delimiter( const source_spec& source )
+	{
+		return language_error( "unbalanced right delimiter", source );
+	}
+	
+	static
+	language_error unexpected_right_delimiter( const source_spec& source )
+	{
+		return language_error( "right delimiter where value expected", source );
+	}
+	
+	static
+	language_error premature_end_of_expression( const source_spec& source )
+	{
+		return language_error( "premature end of expression", source );
+	}
+	
+	static
+	language_error premature_end_of_delimited_group( const source_spec& source )
+	{
+		return language_error( "premature end of delimited group", source );
+	}
 	
 	static
 	Value expression( const Value&  left,
@@ -155,7 +190,7 @@ namespace vlib
 		{
 			if ( stack.empty() )
 			{
-				SYNTAX_ERROR( "unbalanced right delimiter" );
+				throw unbalanced_right_delimiter( its_source );
 			}
 			
 			value_type nil = Value_empty_list;
@@ -166,7 +201,7 @@ namespace vlib
 			}
 			else if ( op != stack.back().op )
 			{
-				SYNTAX_ERROR( "right delimiter where value expected" );
+				throw unexpected_right_delimiter( its_source );
 			}
 			
 			receive_value( nil );
@@ -176,7 +211,7 @@ namespace vlib
 		
 		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != op )
 		{
-			SYNTAX_ERROR( "unbalanced right delimiter" );
+			throw unbalanced_right_delimiter( its_source );
 		}
 		
 		// Remove the sentinel and clear Op_end.
@@ -244,7 +279,7 @@ namespace vlib
 		switch ( token )
 		{
 			case Token_control:
-				SYNTAX_ERROR( "invalid control character in source" );
+				throw invalid_control_character( its_source );
 			
 			case Token_invalid:
 				throw invalid_token_error( token.text, its_source );
@@ -423,8 +458,7 @@ namespace vlib
 					break;
 				}
 				
-				SYNTAX_ERROR( "operator used out of context" );
-				break;
+				throw operator_out_of_context( its_source );
 		}
 	}
 	
@@ -479,7 +513,7 @@ namespace vlib
 				{
 					if ( ! ends_in_empty_statement( stack ) )
 					{
-						SYNTAX_ERROR( "premature end of expression" );
+						throw premature_end_of_expression( its_source );
 					}
 					
 					receive_value( Value_nothing );
@@ -499,7 +533,7 @@ namespace vlib
 				}
 				else
 				{
-					SYNTAX_ERROR( "premature end of delimited group" );
+					throw premature_end_of_delimited_group( its_source );
 				}
 			}
 			
