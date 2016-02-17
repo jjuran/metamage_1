@@ -106,8 +106,10 @@ namespace vlib
 			case Op_then:  return " then ";
 			case Op_else:  return " else ";
 			
-			case Op_while:  return "while ";
-			case Op_do:     return " do ";
+			case Op_while:    return "while ";
+			case Op_do:       return "do ";
+			case Op_do_2:     return " do ";
+			case Op_while_2:  return " while ";
 			
 			case Op_break:     return "break";
 			case Op_continue:  return "continue";

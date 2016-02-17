@@ -846,7 +846,7 @@ namespace vlib
 	{
 		Expr* expr = _do_.expr();
 		
-		if ( expr == NULL  ||  expr->op != Op_do )
+		if ( expr == NULL  ||  expr->op != Op_do_2 )
 		{
 			SYNTAX_ERROR( "`while` requires `do`" );
 		}
@@ -878,6 +878,47 @@ namespace vlib
 		return result;
 	}
 	
+	static
+	Value calc_do( const Value& block )
+	{
+		if ( is_block( block ) )
+		{
+			return do_block( block );
+		}
+		
+		Expr* expr = block.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_while_2 )
+		{
+			SYNTAX_ERROR( "`do` requires a block" );
+		}
+		
+		Value result;
+		
+		do
+		{
+			periodic_yield();
+			
+			try
+			{
+				result = do_block( expr->left );
+			}
+			catch ( const transfer_via_break& )
+			{
+				return Value_nothing;
+			}
+			catch ( const transfer_via_continue& )
+			{
+				result = Value_nothing;
+				
+				continue;
+			}
+		}
+		while ( get_bool( boolean_vtype.coerce( do_block( expr->right ) ) ) );
+		
+		return result;
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -890,6 +931,11 @@ namespace vlib
 		if ( op == Op_while )
 		{
 			return calc_while( left );
+		}
+		
+		if ( op == Op_do )
+		{
+			return calc_do( left );
 		}
 		
 		if ( op == Op_break )

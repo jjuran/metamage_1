@@ -2444,3 +2444,28 @@ $ vc '"Hello %s" % "world", "%s%s%s" % ("foo", "", "bar")'
 
 $ vc '"I hate to be the %s, but you would be %s..." % (-1, -2)'
 1 >= '"I hate to be the -1, but you would be -2..."'
+
+%
+
+$ vc 'var x = 5; const y = do {x -= 2; "blue"}; x, y'
+1 >= '(3, "blue")'
+
+%
+
+$ vc 'var x; {do {x = _}}( "Greetings" ); x'
+1 >= '"Greetings"'
+
+%
+
+$ vc 'var x = "break"; while true do {do {break}; x = "not reached"; break}; x'
+1 >= '"break"'
+
+%
+
+$ vc 'var x = "break"; while true do {do {break} while false; x = "not broken"; break}; x'
+1 >= '"not broken"'
+
+%
+
+$ vc 'var x = (); var i = 0; do {x = x, ++i} while i < 3; x'
+1 >= '(1, 2, 3)'

@@ -22,19 +22,21 @@ namespace vlib
 	static
 	const named_op_mapping named_ops[] =
 	{
-		{ "div",  Op_divide },
-		{ "do",   Op_do     },
-		{ "else", Op_else   },
-		{ "isa",  Op_isa    },
-		{ "map",  Op_map    },
-		{ "mod",  Op_modulo },
-		{ "then", Op_then   },
+		{ "div",   Op_divide  },
+		{ "do",    Op_do_2    },
+		{ "else",  Op_else    },
+		{ "isa",   Op_isa     },
+		{ "map",   Op_map     },
+		{ "mod",   Op_modulo  },
+		{ "then",  Op_then    },
+		{ "while", Op_while_2 },
 	};
 	
 	static
 	const named_op_mapping named_unary_ops[] =
 	{
 		{ "const", Op_const },
+		{ "do",    Op_do    },
 		{ "if",    Op_if    },
 		{ "var",   Op_var   },
 		{ "while", Op_while },
