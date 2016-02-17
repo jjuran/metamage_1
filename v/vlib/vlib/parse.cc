@@ -372,21 +372,8 @@ namespace vlib
 				
 				if ( op == Op_none )
 				{
-					if ( token.text == "const" )
+					if ( (op = unary_op_from_name( token.text )) )
 					{
-						op = Op_const;
-					}
-					else if ( token.text == "var" )
-					{
-						op = Op_var;
-					}
-					else if ( token.text == "if" )
-					{
-						op = Op_if;
-					}
-					else if ( token.text == "while" )
-					{
-						op = Op_while;
 					}
 					else if ( token.text == "break" )
 					{

@@ -32,6 +32,15 @@ namespace vlib
 	};
 	
 	static
+	const named_op_mapping named_unary_ops[] =
+	{
+		{ "const", Op_const },
+		{ "if",    Op_if    },
+		{ "var",   Op_var   },
+		{ "while", Op_while },
+	};
+	
+	static
 	const named_op_mapping* find( const named_op_mapping*  begin,
 	                              const named_op_mapping*  end,
 	                              const plus::string&      name )
@@ -56,6 +65,16 @@ namespace vlib
 	op_type op_from_name( const plus::string& name )
 	{
 		if ( const named_op_mapping* it = FIND( named_ops, name ) )
+		{
+			return it->op;
+		}
+		
+		return Op_none;
+	}
+	
+	op_type unary_op_from_name( const plus::string& name )
+	{
+		if ( const named_op_mapping* it = FIND( named_unary_ops, name ) )
 		{
 			return it->op;
 		}

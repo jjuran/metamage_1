@@ -18,6 +18,8 @@ namespace vlib
 	
 	op_type op_from_name( const plus::string& name );
 	
+	op_type unary_op_from_name( const plus::string& name );
+	
 }
 
 #endif
