@@ -16,6 +16,19 @@
 namespace vlib
 {
 	
+	struct language_error
+	{
+		const plus::string  text;
+		const source_spec   source;
+		
+		language_error( const plus::string& txt, const source_spec& src )
+		:
+			text  ( txt ),
+			source( src )
+		{
+		}
+	};
+	
 	struct invalid_token_error
 	{
 		const plus::string  token;
