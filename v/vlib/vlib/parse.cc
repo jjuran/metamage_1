@@ -212,10 +212,7 @@ namespace vlib
 	
 	void Parser::receive_op( op_type op )
 	{
-		if ( op == Op_none )
-		{
-			SYNTAX_ERROR( "operator used out of context" );
-		}
+		ASSERT( op != Op_none );
 		
 		if ( expecting_value() )
 		{
@@ -420,7 +417,13 @@ namespace vlib
 				break;
 			
 			default:
-				receive_op( op_from_token( token, expecting_value() ) );
+				if ( op_type op = op_from_token( token, expecting_value() ) )
+				{
+					receive_op( op );
+					break;
+				}
+				
+				SYNTAX_ERROR( "operator used out of context" );
 				break;
 		}
 	}
