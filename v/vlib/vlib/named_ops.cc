@@ -32,11 +32,10 @@ namespace vlib
 	};
 	
 	static
-	const named_op_mapping* find( const plus::string& name )
+	const named_op_mapping* find( const named_op_mapping*  begin,
+	                              const named_op_mapping*  end,
+	                              const plus::string&      name )
 	{
-		const named_op_mapping* begin = named_ops;
-		const named_op_mapping* end   = ARRAY_END( named_ops );
-		
 		const named_op_mapping* it = begin;
 		
 		while ( it < end )
@@ -52,9 +51,11 @@ namespace vlib
 		return 0;  // NULL
 	}
 	
+	#define FIND( array, key )  find( array, ARRAY_END( array ), key )
+	
 	op_type op_from_name( const plus::string& name )
 	{
-		if ( const named_op_mapping* it = find( name ) )
+		if ( const named_op_mapping* it = FIND( named_ops, name ) )
 		{
 			return it->op;
 		}
