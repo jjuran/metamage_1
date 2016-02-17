@@ -44,7 +44,7 @@ static plus::string stringify( const Value& v )
 		return hex( v.number() );
 	}
 	
-	return make_string( v, Stringified_to_reproduce );
+	return rep( v );
 }
 
 static void reproduce( const Value& v )

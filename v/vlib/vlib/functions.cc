@@ -79,7 +79,7 @@ namespace vlib
 	static
 	Value v_rep( const Value& v )
 	{
-		return make_string( v, Stringified_to_reproduce );
+		return rep( v );
 	}
 	
 	static
