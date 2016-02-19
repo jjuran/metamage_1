@@ -88,6 +88,9 @@ namespace vlib
 			
 			case Op_repeat:  return " (*) ";
 			
+			case Op_try:    return "try ";
+			case Op_catch:  return " catch ";
+			
 			case Op_map:  return " map ";
 			
 			case Op_lt:  return " < ";

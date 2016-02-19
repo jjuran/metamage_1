@@ -925,6 +925,39 @@ namespace vlib
 		return result;
 	}
 	
+	static
+	Value calc_try( const Value& operand )
+	{
+		Expr* expr = operand.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_catch )
+		{
+			SYNTAX_ERROR( "`try` requires catch" );
+		}
+		
+		const Value& attempt = expr->left;
+		const Value& catcher = expr->right;
+		
+		if ( ! is_block( attempt ) )
+		{
+			SYNTAX_ERROR( "`try` requires a block" );
+		}
+		
+		if ( ! is_block( catcher ) )
+		{
+			SYNTAX_ERROR( "`catch` requires a block" );
+		}
+		
+		try
+		{
+			return do_block( attempt );
+		}
+		catch ( const user_exception& e )
+		{
+			return call_function( catcher, e.object );
+		}
+	}
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -952,6 +985,11 @@ namespace vlib
 		if ( op == Op_continue )
 		{
 			throw transfer_via_continue();
+		}
+		
+		if ( op == Op_try )
+		{
+			return calc_try( left );
 		}
 		
 		if ( right.type() == Value_dummy_operand )

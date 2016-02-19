@@ -26,6 +26,7 @@ namespace vlib
 		Precedence_intersection,    // &
 		Precedence_union,           // |
 		Precedence_repeat,          // (*)
+		Precedence_try,             // try catch
 		Precedence_map,             // map
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
@@ -77,6 +78,9 @@ namespace vlib
 		{ Precedence_union,        Op_union        },
 		
 		{ Precedence_repeat, Op_repeat },
+		
+		{ Precedence_try, Op_try   },
+		{ Precedence_try, Op_catch },
 		
 		{ Precedence_map, Op_map },
 		

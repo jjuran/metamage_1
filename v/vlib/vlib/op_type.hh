@@ -63,6 +63,8 @@ namespace vlib
 		Op_list,
 		Op_assert,
 		Op_throw,
+		Op_try,
+		Op_catch,
 		Op_if,
 		Op_then,
 		Op_else,
@@ -133,6 +135,7 @@ namespace vlib
 			case Op_else:
 			case Op_do_2:
 			case Op_while_2:
+			case Op_catch:
 			case Op_scope:
 				return true;
 			

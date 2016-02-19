@@ -2481,3 +2481,18 @@ $ vc 'assert true; assert 2 + 2 == 4'
 $ vc 'assert (1 == 2) == (3 == 4)'
 1 >> .
 .
+
+%
+
+$ vc 'try {throw "foo"} catch {"bar"}'
+1 >= '"bar"'
+
+%
+
+$ vc 'const f = {throw "foo"}; try {f()} catch {"baz"}'
+1 >= '"baz"'
+
+%
+
+$ vc 'try {throw "foo"} catch {str(_, "bar")}'
+1 >= '"foobar"'
