@@ -13,6 +13,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/os.hh"
 #include "vlib/proc_info.hh"
@@ -223,6 +224,11 @@ namespace vlib
 		if ( op == Op_unary_count )
 		{
 			return count( v );
+		}
+		
+		if ( op == Op_throw )
+		{
+			throw user_exception( v, source_spec( NULL ) );
 		}
 		
 		if ( Expr* expr = v.expr() )

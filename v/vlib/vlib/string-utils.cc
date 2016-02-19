@@ -123,6 +123,7 @@ namespace vlib
 			case Op_percent_by:   return " %= ";
 			
 			case Op_assert:  return "assert ";
+			case Op_throw:   return "throw ";
 			
 			case Op_end:  return "; ";
 			

@@ -39,6 +39,7 @@ namespace vlib
 		{ "const",  Op_const  },
 		{ "do",     Op_do     },
 		{ "if",     Op_if     },
+		{ "throw",  Op_throw  },
 		{ "var",    Op_var    },
 		{ "while",  Op_while  },
 	};

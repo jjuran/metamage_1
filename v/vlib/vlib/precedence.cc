@@ -33,7 +33,7 @@ namespace vlib
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
 		Precedence_conditional,     // if then else while do
-		Precedence_command,         // assert
+		Precedence_command,         // assert throw
 		Precedence_end,             // ;
 		Precedence_group,           // (
 	};
@@ -111,6 +111,7 @@ namespace vlib
 		{ Precedence_conditional, Op_while_2 },
 		
 		{ Precedence_command, Op_assert },
+		{ Precedence_command, Op_throw  },
 		
 		{ Precedence_end, Op_end },
 		
