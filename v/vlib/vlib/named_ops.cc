@@ -22,6 +22,7 @@ namespace vlib
 	static
 	const named_op_mapping named_ops[] =
 	{
+		{ "catch", Op_catch   },
 		{ "div",   Op_divide  },
 		{ "do",    Op_do_2    },
 		{ "else",  Op_else    },
@@ -39,6 +40,8 @@ namespace vlib
 		{ "const",  Op_const  },
 		{ "do",     Op_do     },
 		{ "if",     Op_if     },
+		{ "throw",  Op_throw  },
+		{ "try",    Op_try    },
 		{ "var",    Op_var    },
 		{ "while",  Op_while  },
 	};

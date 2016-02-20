@@ -28,6 +28,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
 #include "vlib/parse.hh"
+#include "vlib/string-utils.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -98,6 +99,14 @@ namespace vlib
 			plus::var_string msg = "ERROR: ";
 			
 			msg += e.text;
+			
+			fail( msg, e.source );
+		}
+		catch ( const user_exception& e )
+		{
+			plus::var_string msg = "ERROR: uncaught exception: ";
+			
+			msg += rep( e.object );
 			
 			fail( msg, e.source );
 		}

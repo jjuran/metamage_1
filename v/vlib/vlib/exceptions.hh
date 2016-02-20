@@ -11,6 +11,7 @@
 
 // vlib
 #include "vlib/source.hh"
+#include "vlib/value.hh"
 
 
 namespace vlib
@@ -24,6 +25,19 @@ namespace vlib
 		language_error( const plus::string& txt, const source_spec& src )
 		:
 			text  ( txt ),
+			source( src )
+		{
+		}
+	};
+	
+	struct user_exception
+	{
+		const Value        object;
+		const source_spec  source;
+		
+		user_exception( const Value& obj, const source_spec& src )
+		:
+			object( obj ),
 			source( src )
 		{
 		}

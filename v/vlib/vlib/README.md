@@ -35,10 +35,10 @@ Level 2
 
 `quote.*`:  Defines routines for decoding string literals, including escape sequences.
 
-`exceptions.*`:  Defines exception classes.
-
 Level 3
 -------
+
+`exceptions.*`:  Defines exception classes.
 
 `list-utils.*`:  Defines functions for computations of lists.
 

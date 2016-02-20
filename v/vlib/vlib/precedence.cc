@@ -26,6 +26,7 @@ namespace vlib
 		Precedence_intersection,    // &
 		Precedence_union,           // |
 		Precedence_repeat,          // (*)
+		Precedence_try,             // try catch
 		Precedence_map,             // map
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
@@ -33,7 +34,7 @@ namespace vlib
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
 		Precedence_conditional,     // if then else while do
-		Precedence_command,         // assert
+		Precedence_command,         // assert throw
 		Precedence_end,             // ;
 		Precedence_group,           // (
 	};
@@ -78,6 +79,9 @@ namespace vlib
 		
 		{ Precedence_repeat, Op_repeat },
 		
+		{ Precedence_try, Op_try   },
+		{ Precedence_try, Op_catch },
+		
 		{ Precedence_map, Op_map },
 		
 		{ Precedence_inequality, Op_lt  },
@@ -111,6 +115,7 @@ namespace vlib
 		{ Precedence_conditional, Op_while_2 },
 		
 		{ Precedence_command, Op_assert },
+		{ Precedence_command, Op_throw  },
 		
 		{ Precedence_end, Op_end },
 		
