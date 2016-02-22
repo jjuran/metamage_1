@@ -95,6 +95,8 @@ namespace vlib
 			case Op_try:    return "try ";
 			case Op_catch:  return " catch ";
 			
+			case Op_lambda:  return "lambda ";
+			
 			case Op_map:  return " map ";
 			
 			case Op_lt:  return " < ";
@@ -130,6 +132,7 @@ namespace vlib
 			case Op_percent_by:   return " %= ";
 			
 			case Op_assert:  return "assert ";
+			case Op_return:  return "return ";
 			case Op_throw:   return "throw ";
 			
 			case Op_end:  return "; ";

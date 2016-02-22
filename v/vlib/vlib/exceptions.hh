@@ -17,6 +17,19 @@
 namespace vlib
 {
 	
+	struct transfer_via_return
+	{
+		const Value        object;
+		const source_spec  source;
+		
+		transfer_via_return( const Value& obj, const source_spec& src )
+		:
+			object( obj ),
+			source( src )
+		{
+		}
+	};
+	
 	struct transfer_via_break
 	{
 		const source_spec  source;

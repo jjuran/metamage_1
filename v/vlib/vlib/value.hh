@@ -412,6 +412,11 @@ namespace vlib
 			{
 				return true;
 			}
+			
+			if ( expr->op == Op_lambda )
+			{
+				return true;
+			}
 		}
 		
 		return false;

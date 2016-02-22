@@ -40,6 +40,8 @@ namespace vlib
 		{ "const",  Op_const  },
 		{ "do",     Op_do     },
 		{ "if",     Op_if     },
+		{ "lambda", Op_lambda },
+		{ "return", Op_return },
 		{ "throw",  Op_throw  },
 		{ "try",    Op_try    },
 		{ "var",    Op_var    },

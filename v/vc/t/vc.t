@@ -2666,3 +2666,33 @@ $ vc 'null isa type, null isa null, null isa (), () isa null'
 
 $ vc 'rep if ... then {...}'
 1 >= '"..."'
+
+%
+
+$ vc 'const f = lambda {return "return"; "leave"}; f()'
+1 >= '"return"'
+
+%
+
+$ vc 'const f = lambda {if true then {return 1}; return 2; 3 }; f()'
+1 >= '1'
+
+%
+
+$ vc 'const f = lambda {while true do {return 1; break;}; return 2; 3 }; f()'
+1 >= '1'
+
+%
+
+$ vc 'const f = lambda {_}; f("round")'
+1 >= '"round"'
+
+%
+
+$ vc 'const f = lambda {return _;}; f("trip")'
+1 >= '"trip"'
+
+%
+
+$ vc 'const f = lambda {}; f, bool f, f isa function'
+1 >= '((lambda {}), true, true)'

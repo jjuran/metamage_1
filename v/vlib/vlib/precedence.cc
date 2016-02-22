@@ -34,7 +34,7 @@ namespace vlib
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
 		Precedence_conditional,     // if then else while do
-		Precedence_command,         // assert throw
+		Precedence_command,         // assert return throw
 		Precedence_end,             // ;
 		Precedence_group,           // (
 	};
@@ -61,6 +61,7 @@ namespace vlib
 		
 		{ Precedence_exponentiation, Op_empower },
 		
+		{ Precedence_unary_math, Op_lambda      },
 		{ Precedence_unary_math, Op_named_unary },
 		{ Precedence_unary_math, Op_unary_plus  },
 		{ Precedence_unary_math, Op_unary_minus },
@@ -116,6 +117,7 @@ namespace vlib
 		{ Precedence_conditional, Op_while_2 },
 		
 		{ Precedence_command, Op_assert },
+		{ Precedence_command, Op_return },
 		{ Precedence_command, Op_throw  },
 		
 		{ Precedence_end, Op_end },

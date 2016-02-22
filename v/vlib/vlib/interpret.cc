@@ -103,6 +103,15 @@ namespace vlib
 			
 			handler( msg, e.source );
 		}
+		catch ( const transfer_via_return& e )
+		{
+			plus::var_string msg = "ERROR: `return` of value ";
+			
+			msg += rep( e.object );
+			msg += " outside of function.";
+			
+			fail( msg, e.source );
+		}
 		catch ( const language_error& e )
 		{
 			plus::var_string msg = "ERROR: ";

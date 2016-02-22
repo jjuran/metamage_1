@@ -232,6 +232,11 @@ namespace vlib
 			return count( v );
 		}
 		
+		if ( op == Op_return )
+		{
+			throw transfer_via_return( v, source_spec() );
+		}
+		
 		if ( op == Op_throw )
 		{
 			throw user_exception( v, source_spec() );
@@ -666,6 +671,26 @@ namespace vlib
 		
 		if ( Expr* expr = get_expr( f ) )
 		{
+			if ( expr->op == Op_lambda )
+			{
+				try
+				{
+					return call_function( expr->right, arguments );
+				}
+				catch ( const transfer_via_return& e )
+				{
+					return e.object;
+				}
+				catch ( const transfer_via_break& e )
+				{
+					THROW( "`break` used outside of loop" );
+				}
+				catch ( const transfer_via_continue& e )
+				{
+					THROW( "`continue` used outside of loop" );
+				}
+			}
+			
 			if ( expr->op == Op_invocation )
 			{
 				const Value& invoke = expr->left;
@@ -1013,6 +1038,16 @@ namespace vlib
 		if ( op == Op_try )
 		{
 			return calc_try( left );
+		}
+		
+		if ( op == Op_lambda )
+		{
+			if ( ! is_block( left ) )
+			{
+				THROW( "`lambda` requires a block" );
+			}
+			
+			return Value( Op_lambda, left );
 		}
 		
 		if ( right.type() == Value_dummy_operand )
