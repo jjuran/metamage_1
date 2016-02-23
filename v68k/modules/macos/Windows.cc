@@ -25,10 +25,11 @@
 #include "QDGlobals.hh"
 
 
-GrafPtr   WMgrPort    : 0x09DE;
-RgnHandle GrayRgn     : 0x09EE;
-Pattern   DeskPattern : 0x0A3C;
-short     MBarHeight  : 0x0BAA;
+WindowPeek WindowList  : 0x09D6;
+GrafPtr    WMgrPort    : 0x09DE;
+RgnHandle  GrayRgn     : 0x09EE;
+Pattern    DeskPattern : 0x0A3C;
+short      MBarHeight  : 0x0BAA;
 
 /*
 	BezelRgn is a made-up global (i.e. not a Mac OS low memory global).
@@ -165,6 +166,8 @@ static void subtract_corner( RgnHandle     clipRgn,
 
 pascal void InitWindows_patch()
 {
+	WindowList = NULL;
+	
 	WMgrPort = (GrafPtr) NewPtr( sizeof (GrafPort) );
 	
 	OpenPort( WMgrPort );
