@@ -210,6 +210,8 @@ enum
 	tag_CurActivate_low_word,
 	tag_CurDeactive,
 	tag_CurDeactive_low_word,
+	tag_DeskHook,
+	tag_DeskHook_low_word,
 	tag_ApplScratch,
 	tag_ApplScratch_word_5 = tag_ApplScratch + 5,  // 12 bytes
 	tag_ACount,
@@ -421,6 +423,7 @@ static const global globals[] =
 	{ 0x0A62, 2,    tag_TaskFScaleD },  // TaskLock, FScaleDisable
 	{ 0x0A64, 4,    tag_CurActivate },
 	{ 0x0A68, 4,    tag_CurDeactive },
+	{ 0x0A6C, 4,    tag_DeskHook    },
 	{ 0x0A78, 12,   tag_ApplScratch },
 	{ 0x0A9A, 2,    tag_ACount      },
 	{ 0x0AA0, 16,   tag_DAStrings   },
