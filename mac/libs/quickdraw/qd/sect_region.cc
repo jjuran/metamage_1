@@ -79,6 +79,11 @@ namespace quickdraw
 			v = raster.next_v();
 		}
 		
+		if ( v > rect[ 2 ] )
+		{
+			v = rect[ 2 ];
+		}
+		
 		scanner.finish( rounded_left, v, mask, margin );
 		
 		free( mask );
