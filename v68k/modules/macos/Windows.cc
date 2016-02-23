@@ -134,4 +134,16 @@ pascal void InitWindows_patch()
 	const QDGlobals& qd = get_QDGlobals();
 	
 	FillRect( &bounds, &qd.gray );
+	
+	const short default_MBarHeight = 20;
+	
+	Rect menubar = bounds;
+	
+	menubar.bottom = default_MBarHeight;
+	
+	EraseRect( &menubar );
+	
+	menubar.top = default_MBarHeight - 1;
+	
+	PaintRect( &menubar );
 }
