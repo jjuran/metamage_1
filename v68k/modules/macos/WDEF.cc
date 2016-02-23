@@ -14,10 +14,20 @@
 #endif
 
 
+/*
+	This is the height added by a title bar.  This means that in window
+	coordinates, the top of the structure region is -19 instead of -1.
+*/
+const short title_bar_height = 18;
+
+const short stripes_v_offset = 3;
+const short stripes_h_offset = 1;
+
 static inline
 short shadow_for_variant( short varCode )
 {
 	const short shadow_px = varCode == altDBoxProc ? 2
+	                      : (varCode & 3) == 0     ? 1
 	                      :                          0;
 	
 	return shadow_px;
@@ -32,7 +42,15 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	Rect frame = content;
 	
+	const bool has_title_bar = (varCode & 3) == 0;
+	
+	if ( has_title_bar )
+	{
+		frame.top -= title_bar_height;
+	}
+	
 	InsetRect( &frame, -1, -1 );
+	
 	FrameRect( &frame );
 	
 	if ( const short shadow_px = shadow_for_variant( varCode ) )
@@ -49,6 +67,38 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		PaintRect( &frame );
 	}
 	
+	if ( ! has_title_bar )
+	{
+		return 0;
+	}
+	
+	Rect edge = content;
+	edge.bottom = edge.top--;
+	
+	Rect title_bar =
+	{
+		content.top - title_bar_height,
+		content.left,
+		edge.top,
+		content.right,
+	};
+	
+	EraseRect( &title_bar );
+	
+	PaintRect( &edge );
+	
+	if ( ! window->hilited )
+	{
+		return 0;
+	}
+	
+	InsetRect( &title_bar, stripes_h_offset, stripes_v_offset );
+	
+	Pattern odd_stripes  = { 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00 };
+	Pattern even_stripes = { 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF };
+	
+	FillRect( &title_bar, content.top & 1 ? &odd_stripes : &even_stripes );
+	
 	return 0;
 }
 
@@ -57,9 +107,27 @@ long WDEF_0_Hit( short varCode, GrafPort* w, Point where )
 {
 	WindowPeek window = (WindowPeek) w;
 	
-	if ( PtInRect( where, &window->contRgn[0]->rgnBBox ) )
+	const Rect& content = window->contRgn[0]->rgnBBox;
+	
+	if ( PtInRect( where, &content ) )
 	{
 		return wInContent;
+	}
+	
+	const bool has_title_bar = (varCode & 3) == 0;
+	
+	if ( has_title_bar  &&  where.v < content.top )
+	{
+		const Rect& frame = window->strucRgn[0]->rgnBBox;
+		
+		const bool in_title_bar = where.v >= frame.top   &&
+		                          where.h >= frame.left  &&
+		                          where.h <= content.right;
+		
+		if ( in_title_bar )
+		{
+			return wInDrag;
+		}
 	}
 	
 	return wNoHit;
@@ -79,6 +147,13 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	RectRgn( window->contRgn, &rect );
 	
 	InsetRect( &rect, -1, -1 );
+	
+	const bool has_title_bar = (varCode & 3) == 0;
+	
+	if ( has_title_bar )
+	{
+		rect.top -= title_bar_height;
+	}
 	
 	RectRgn( window->strucRgn, &rect );
 	
