@@ -23,6 +23,11 @@ const short title_bar_height = 18;
 const short stripes_v_offset = 3;
 const short stripes_h_offset = 1;
 
+const short close_box_v_offset = 3;
+const short close_box_h_offset = 8;
+const short close_box_margin   = 1;
+const short close_box_width    = 11;
+
 static inline
 short shadow_for_variant( short varCode )
 {
@@ -99,6 +104,18 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	
 	FillRect( &title_bar, content.top & 1 ? &odd_stripes : &even_stripes );
 	
+	if ( window->goAwayFlag )
+	{
+		Rect box = title_bar;
+		
+		box.left += close_box_h_offset - close_box_margin - stripes_h_offset;
+		box.right = box.left + close_box_width + close_box_margin * 2;
+		
+		EraseRect( &box );
+		InsetRect( &box, close_box_margin, 0 );
+		FrameRect( &box );
+	}
+	
 	return 0;
 }
 
@@ -126,6 +143,22 @@ long WDEF_0_Hit( short varCode, GrafPort* w, Point where )
 		
 		if ( in_title_bar )
 		{
+			const short top  = frame.top  + 1 + close_box_v_offset;
+			const short left = frame.left + 1 + close_box_h_offset;
+			
+			const Rect close_box =
+			{
+				top,
+				left,
+				top  + close_box_width,
+				left + close_box_width,
+			};
+			
+			if ( window->goAwayFlag  &&  PtInRect( where, &close_box ) )
+			{
+				return wInGoAway;
+			}
+			
 			return wInDrag;
 		}
 	}
