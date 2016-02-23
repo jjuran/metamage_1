@@ -33,6 +33,7 @@ enum
 	tag_ScrnBase_low_word,
 	tag_WMgrPort,
 	tag_WMgrPort_low_word,
+	tag_MBarHeight,
 	tag_last_A_trap,
 	n_words
 };
@@ -66,6 +67,7 @@ static const global globals[] =
 	{ 0x09DE, 4,    tag_WMgrPort    },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
+	{ 0x0BAA, 2,    tag_MBarHeight  },
 	{ 0x0BFE, 2,    tag_last_A_trap }
 };
 
