@@ -13,7 +13,22 @@ short MBarHeight : 0x0BAA;
 
 const short default_MBarHeight = 20;
 
+static
+void draw_menu_bar_from_WMgr_port()
+{
+	const QDGlobals& qd = get_QDGlobals();
+	
+	Rect menu_bar = qd.screenBits.bounds;
+	
+	const short bottom = MBarHeight;
+	
+	menu_bar.bottom = bottom;      EraseRect( &menu_bar );
+	menu_bar.top    = bottom - 1;  PaintRect( &menu_bar );
+}
+
 pascal void InitMenus_patch()
 {
 	MBarHeight = default_MBarHeight;
+	
+	draw_menu_bar_from_WMgr_port();
 }
