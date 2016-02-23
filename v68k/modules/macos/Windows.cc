@@ -16,6 +16,9 @@
 #include <Resources.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // quickdraw
 #include "qd/region_detail.hh"
 
@@ -23,6 +26,7 @@
 #include "Desk.hh"
 #include "MBDF.hh"
 #include "QDGlobals.hh"
+#include "WDEF.hh"
 
 
 WindowPeek WindowList  : 0x09D6;
@@ -48,11 +52,38 @@ RgnHandle BezelRgn;
 const short End = quickdraw::Region_end;
 
 
+static
+void draw_window( short varCode, const WindowRecord& window )
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	WDEF_0( varCode, (WindowPtr) &window, wDraw, 0 );
+	
+	qd.thePort = saved_port;
+}
+
+static
+void draw_window( WindowPeek window )
+{
+	draw_window( *(Byte*) &window->windowDefProc, *window );
+}
+
 pascal void ClipAbove_patch( WindowPeek window )
 {
 	RgnHandle clipRgn = WMgrPort->clipRgn;
 	
 	SectRgn( clipRgn, GrayRgn, clipRgn );
+	
+	WindowPeek w = WindowList;
+	
+	if ( w != window )
+	{
+		DiffRgn( clipRgn, w->strucRgn, clipRgn );
+	}
 }
 
 pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
@@ -76,12 +107,25 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 	{
 		draw_desktop_from_WMgrPort();
 	}
+	else
+	{
+		const short varCode = *(Byte*) &window->windowDefProc;
+		
+		WDEF_0( varCode, (WindowPtr) window, wDraw, 0 );
+	}
 	
 	qd.thePort = saved_port;
 }
 
 pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 {
+	WindowPeek w = window;
+	
+	if ( w != NULL )
+	{
+		PaintOne_patch( w, clobbered_region );
+	}
+	
 	PaintOne_patch( NULL, clobbered_region );
 }
 
@@ -218,6 +262,118 @@ pascal void InitWindows_patch()
 	draw_menu_bar_from_WMgr_port();
 }
 
+static
+Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
+{
+	const WindowPtr all = GrafPtr( -1 );  // Place all windows behind this one.
+	
+	if ( behind == all  ||  behind == (GrafPtr) WindowList  ||  ! WindowList )
+	{
+		window->nextWindow = WindowList;
+		
+		WindowList = window;
+		
+		return -true;
+	}
+	
+	return false;
+}
+
+static
+void remove_from_window_list( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		WindowList = window->nextWindow;
+	}
+}
+
+pascal struct GrafPort* NewWindow_patch( void*                 storage,
+                                         const struct Rect*    bounds,
+                                         const unsigned char*  title,
+                                         short                 visible,
+                                         short                 procID,
+                                         struct GrafPort*      behind,
+                                         short                 closeBox,
+                                         long                  refCon )
+{
+	if ( WindowList != NULL )
+	{
+		return NULL;  // Only one window allowed, for now.
+	}
+	
+	WindowPeek window = (WindowPeek) storage;
+	
+	if ( window == NULL )
+	{
+		window = (WindowPeek) NewPtr( sizeof (WindowRecord) );
+		
+		if ( window == NULL )
+		{
+			return NULL;
+		}
+	}
+	
+	memset( window, '\0', sizeof (WindowRecord) );
+	
+	GrafPtr port = &window->port;
+	
+	OpenPort( port );
+	
+	if ( port->device < 0 )  goto fail_0;
+	
+	window->strucRgn = NewRgn();  if ( window->strucRgn == NULL )  goto fail_1;
+	window->contRgn  = NewRgn();  if ( window->contRgn  == NULL )  goto fail_2;
+	
+	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
+	
+	MovePortTo( bounds->left, bounds->top );
+	
+	window->windowKind = userKind;
+	window->visible    = -(visible != 0);
+	window->hilited    = -true;
+	window->goAwayFlag = closeBox;
+	window->refCon     = refCon;
+	
+	const short varCode = procID & 0x0F;
+	
+	*(Byte*) &window->windowDefProc = varCode;
+	
+	const Boolean frontmost = insert_into_window_list( window, behind );
+	
+	window->hilited = frontmost;
+	
+	WDEF_0( varCode, (WindowPtr) window, wCalcRgns, 0 );
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	return (WindowPtr) window;
+	
+fail_2:
+	
+	DisposeRgn( window->strucRgn );
+	
+fail_1:
+	
+	ClosePort( (WindowPtr) window );
+	
+fail_0:
+	
+	if ( ! storage )
+	{
+		DisposePtr( (Ptr) window );
+	}
+	
+	return NULL;
+}
+
+pascal void DisposeWindow_patch( struct GrafPort* window )
+{
+	CloseWindow( window );
+	
+	DisposePtr( (Ptr) window );
+}
+
 pascal WindowRef FrontWindow_patch()
 {
 	return (WindowRef) WindowList;
@@ -232,5 +388,35 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 		return inMenuBar;
 	}
 	
+	WindowPeek w = WindowList;
+	
+	if ( w != NULL )
+	{
+		const short varCode = *(Byte*) &w->windowDefProc;
+		
+		WindowPtr ptr = (WindowPtr) w;
+		
+		if ( short hit = WDEF_0( varCode, ptr, wHit, *(long*) &pt ) )
+		{
+			*window = ptr;
+			
+			return hit + 2;
+		}
+	}
+	
 	return inDesk;
+}
+
+pascal void CloseWindow_patch( struct GrafPort* port )
+{
+	WindowPeek window = (WindowPeek) port;
+	
+	remove_from_window_list( window );
+	
+	PaintBehind( (WindowRef) window->nextWindow, window->strucRgn );
+	
+	DisposeRgn( window->strucRgn );
+	DisposeRgn( window->contRgn  );
+	
+	ClosePort( port );
 }

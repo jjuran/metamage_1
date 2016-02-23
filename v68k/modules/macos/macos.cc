@@ -174,12 +174,18 @@ static void install_Fonts()
 
 static void install_Windows()
 {
-	TBTRAP( ClipAbove   );  // A90B
-	TBTRAP( PaintOne    );  // A90C
-	TBTRAP( PaintBehind );  // A90D
-	TBTRAP( InitWindows );  // A912
-	TBTRAP( FrontWindow );  // A924
-	TBTRAP( FindWindow  );  // A92C
+	TBTRAP( ClipAbove     );  // A90B
+	TBTRAP( PaintOne      );  // A90C
+	TBTRAP( PaintBehind   );  // A90D
+	
+	TBTRAP( InitWindows   );  // A912
+	TBTRAP( NewWindow     );  // A913
+	TBTRAP( DisposeWindow );  // A914
+	
+	TBTRAP( FrontWindow   );  // A924
+	
+	TBTRAP( FindWindow    );  // A92C
+	TBTRAP( CloseWindow   );  // A92D
 }
 
 static void install_Menus()
