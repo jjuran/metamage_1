@@ -22,6 +22,13 @@
 #include "Pedestal/WindowStorage.hh"
 
 
+#if TARGET_API_MAC_CARBON
+#define NONCARBON_INLINE  /**/
+#else
+#define NONCARBON_INLINE  inline
+#endif
+
+
 namespace Pedestal
 {
 	
@@ -29,11 +36,19 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static NONCARBON_INLINE void ResizedWindow( WindowRef window );
+	
 	static
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
+		ResizedWindow( window );
+	}
+	
+	static NONCARBON_INLINE
+	void ResizedWindow( WindowRef window )
+	{
 		// Don't rely on the requested size because it might have been tweaked
 		Rect bounds = mac::qd::get_portRect( GetWindowPort( window ) );
 		
@@ -56,6 +71,19 @@ namespace Pedestal
 	
 	void ResizingWindow( WindowRef window, Point start )
 	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			if ( bool changed = ::ResizeWindow( window, start, NULL, NULL ) )
+			{
+				if ( GetWindowKind( window ) == kApplicationWindowKind )
+				{
+					ResizedWindow( window );
+				}
+			}
+			
+			return;
+		}
+		
 		Rect sizeRect = { 30, 50, 10000, 10000 };
 		
 		Point grown = N::GrowWindow( window, start, sizeRect );
