@@ -14,6 +14,9 @@
 // command
 #include "command/get_option.hh"
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // macos
 #include "Debugger.hh"
 #include "Fonts.hh"
@@ -39,12 +42,18 @@ enum
 {
 	Opt_linger = 'L',  // linger on ExitToShell
 	Opt_qdsync = 'Q',
+	
+	Opt_last_byte = 255,
+	
+	Opt_events_fd,
 };
 
 static command::option options[] =
 {
 	{ "linger",  Opt_linger },
 	{ "qd-sync", Opt_qdsync },
+	
+	{ "events-fd", Opt_events_fd, command::Param_required },
 };
 
 
@@ -187,6 +196,8 @@ static asm void module_suspend()
 
 static char* const* get_options( char** argv )
 {
+	using command::global_result;
+	
 	int opt;
 	
 	++argv;  // skip arg 0
@@ -201,6 +212,10 @@ static char* const* get_options( char** argv )
 			
 			case Opt_qdsync:
 				synchronized_quickdraw = true;
+				break;
+			
+			case Opt_events_fd:
+				events_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
 			default:

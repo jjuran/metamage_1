@@ -9,4 +9,6 @@
 extern bool linger_on_exit;
 extern bool synchronized_quickdraw;
 
+extern int events_fd;
+
 #endif
