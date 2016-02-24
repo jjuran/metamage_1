@@ -55,9 +55,13 @@ namespace quickdraw
 		
 		const int margin = -rect[ 3 ] & 0xF;
 		
-		const unsigned short words_before_left_margin = (rect[ 1 ] - rounded_left) >> 4;
+		const short words_before_left_margin  = (rect[ 1 ] - rounded_left) >> 4;
+		const short words_before_right_margin = (rect[ 3 ] - rounded_left - 1) >> 4;
 		
-		const uint16_t left_margin_mask = (1 << (16 - (rect[ 1 ] & 0xF))) - 1;
+		const uint16_t left_margin_mask  =  (1 << (16 - (rect[ 1 ] & 0xF))) - 1;
+		const uint16_t right_margin_mask = -(1 << ((16 - rect[ 3 ]) & 0xF));
+		
+		uint16_t* mask_right_margin = mask + words_before_right_margin + 1;
 		
 		short v = rect[ 0 ];
 		
@@ -69,7 +73,10 @@ namespace quickdraw
 			
 			memset( mask, '\0', words_before_left_margin * 2 );
 			
+			memset( mask_right_margin, '\0', (temp - mask_right_margin) * 2 );
+			
 			mask[ words_before_left_margin  ] &= iota::big_u16( left_margin_mask );
+			mask[ words_before_right_margin ] &= iota::big_u16( right_margin_mask );
 			
 			if ( scanner.scan( rounded_left, v, mask, temp, margin ) )
 			{
