@@ -21,6 +21,7 @@
 
 
 UInt32 Ticks : 0x016A;
+Point  Mouse : 0x0830;
 
 
 static inline
@@ -52,6 +53,13 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 {
 	return direct ? direct_read( fd, buffer, n )
 	              : normal_read( fd, buffer, n );
+}
+
+static inline
+void SetMouse( const splode::pointer_location_buffer& buffer )
+{
+	Mouse.h = buffer.x;
+	Mouse.v = buffer.y;
 }
 
 static
@@ -104,9 +112,16 @@ bool read_event( int fd, EventRecord* event )
 			event->message = ((ascii_synth_buffer*) buffer)->ascii;
 			kind_to_queue  = keyUp;
 			break;
+		
+		case 5:
+			using splode::pointer_location_buffer;
+			
+			SetMouse( *(pointer_location_buffer*) buffer );
+			break;
 	}
 	
-	event->when = Ticks;
+	event->when  = Ticks;
+	event->where = Mouse;
 	
 	if ( kind_to_queue )
 	{
