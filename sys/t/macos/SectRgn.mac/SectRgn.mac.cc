@@ -24,7 +24,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2;
+static const unsigned n_tests = 4;
 
 
 #define EXPECT_RECTS( a, b )  EXPECT_CMP( &a, 8, &b, 8 )
@@ -42,7 +42,7 @@ static void init()
 
 static void menu_bottom()
 {
-	const Rect menuBottom = { 19, 0, 20, 512 };
+	Rect menuBottom = { 19, 0, 20, 512 };
 	
 	RgnHandle rgn = NewRgn();
 	RgnHandle tmp = NewRgn();
@@ -53,6 +53,18 @@ static void menu_bottom()
 	SectRgn( WMgrPort->clipRgn, rgn, rgn );
 	
 	EXPECT_RECTS( tmp[0]->rgnBBox, menuBottom );
+	EXPECT_RECTS( rgn[0]->rgnBBox, menuBottom );
+	
+	menuBottom.left += 50;
+	RectRgn( rgn, &menuBottom );
+	SectRgn( WMgrPort->clipRgn, rgn, rgn );
+	
+	EXPECT_RECTS( rgn[0]->rgnBBox, menuBottom );
+	
+	menuBottom.right -= 50;
+	RectRgn( rgn, &menuBottom );
+	SectRgn( WMgrPort->clipRgn, rgn, rgn );
+	
 	EXPECT_RECTS( rgn[0]->rgnBBox, menuBottom );
 	
 	DisposeRgn( tmp );
