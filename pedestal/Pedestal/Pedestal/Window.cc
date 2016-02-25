@@ -64,7 +64,7 @@ namespace Pedestal
 		if ( Window* base = N::GetWRefCon( window ) )
 		{
 			// Resize the window
-			base->Resize( window, newSize.h, newSize.v );
+			base->Resize( window );
 			
 			// Don't rely on the requested size because it might have been tweaked
 			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
@@ -167,7 +167,7 @@ namespace Pedestal
 		window_removed( itsWindowRef.get() );
 	}
 	
-	void Window::Resize( WindowRef window, short h, short v )
+	void Window::Resize( WindowRef window )
 	{
 		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
 		{
