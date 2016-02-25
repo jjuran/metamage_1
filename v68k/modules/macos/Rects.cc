@@ -5,11 +5,6 @@
 
 #include "Rects.hh"
 
-// Mac OS
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
-#endif
-
 // Standard C
 #include <stdlib.h>
 #include <string.h>
@@ -45,11 +40,6 @@ static inline bool operator==( const Pattern& a, black_t )
 	const UInt32* p = (const UInt32*) a.pat;
 	
 	return *p++ == 0xFFFFFFFF  &&  *p == 0xFFFFFFFF;
-}
-
-static inline QDGlobals& get_QDGlobals()
-{
-	return *(QDGlobals*) ((char*) get_addrof_thePort() - offsetof(QDGlobals, thePort));
 }
 
 struct rectangular_op_params

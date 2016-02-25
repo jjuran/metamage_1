@@ -5,11 +5,6 @@
 
 #include "GrafPorts.hh"
 
-// Mac OS
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
-#endif
-
 // macos
 #include "QDGlobals.hh"
 #include "Rects.hh"
@@ -18,11 +13,6 @@
 
 short MemErr : 0x0220;
 
-
-static inline QDGlobals& get_QDGlobals()
-{
-	return *(QDGlobals*) ((char*) get_addrof_thePort() - offsetof(QDGlobals, thePort));
-}
 
 pascal void OpenPort_patch( struct GrafPort* port )
 {

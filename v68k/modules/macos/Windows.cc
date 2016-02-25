@@ -9,9 +9,6 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
-#endif
 
 // quickdraw
 #include "qd/region_detail.hh"
@@ -24,11 +21,6 @@ GrafPtr WMgrPort : 0x09DE;
 
 const short End = quickdraw::Region_end;
 
-
-static inline QDGlobals& get_QDGlobals()
-{
-	return *(QDGlobals*) ((char*) get_addrof_thePort() - offsetof(QDGlobals, thePort));
-}
 
 static const short corner_size = (1 + 4 + 4 * 5 + 1) * sizeof (short);  // 52
 

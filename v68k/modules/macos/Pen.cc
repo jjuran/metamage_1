@@ -5,11 +5,6 @@
 
 #include "Pen.hh"
 
-// Mac OS
-#ifndef __QUICKDRAW__
-#include <Quickdraw.h>
-#endif
-
 // macos
 #include "QDGlobals.hh"
 
@@ -22,11 +17,6 @@ static inline short min( short a, short b )
 static inline short max( short a, short b )
 {
 	return a > b ? a : b;
-}
-
-static inline QDGlobals& get_QDGlobals()
-{
-	return *(QDGlobals*) ((char*) get_addrof_thePort() - offsetof(QDGlobals, thePort));
 }
 
 pascal void StdLine_patch( Point newPt )
