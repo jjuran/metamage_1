@@ -250,8 +250,6 @@ namespace Genie
 	
 	void WindowResizeHandler::operator()( WindowRef window, short h, short v ) const
 	{
-		N::SizeWindow( window, h, v, true );
-		
 		if ( WindowParameters* it = gWindowParametersMap.find( itsKey ) )
 		{
 			WindowParameters& params = *it;

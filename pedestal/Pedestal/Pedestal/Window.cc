@@ -167,13 +167,11 @@ namespace Pedestal
 	{
 		InvalidateWindowGrowBox( window );  // assume grow box present on resize
 		
+		N::SizeWindow( window, h, v, true );
+		
 		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
 		{
 			(*handler)( window, h, v );
-		}
-		else
-		{
-			N::SizeWindow( window, h, v, true );
 		}
 	}
 	
