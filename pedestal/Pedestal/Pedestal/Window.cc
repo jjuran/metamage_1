@@ -57,6 +57,10 @@ namespace Pedestal
 	
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
+		InvalidateWindowGrowBox( window );  // assume grow box present on resize
+		
+		N::SizeWindow( window, newSize.h, newSize.v, true );
+		
 		if ( Window* base = N::GetWRefCon( window ) )
 		{
 			// Resize the window
@@ -165,10 +169,6 @@ namespace Pedestal
 	
 	void Window::Resize( WindowRef window, short h, short v )
 	{
-		InvalidateWindowGrowBox( window );  // assume grow box present on resize
-		
-		N::SizeWindow( window, h, v, true );
-		
 		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
 		{
 			(*handler)( window );
