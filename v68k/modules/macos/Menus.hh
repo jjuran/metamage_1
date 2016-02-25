@@ -8,4 +8,6 @@
 
 pascal void InitMenus_patch();
 
+pascal void FlashMenuBar_patch( short menuID );
+
 #endif

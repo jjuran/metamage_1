@@ -176,7 +176,8 @@ static void install_Windows()
 
 static void install_Menus()
 {
-	TBTRAP( InitMenus );  // A930
+	TBTRAP( InitMenus    );  // A930
+	TBTRAP( FlashMenuBar );  // A94C
 }
 
 static void install_EventManager()

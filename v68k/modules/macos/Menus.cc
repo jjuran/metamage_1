@@ -32,3 +32,18 @@ pascal void InitMenus_patch()
 	
 	draw_menu_bar_from_WMgr_port();
 }
+
+pascal void FlashMenuBar_patch( short menuID )
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	Rect menu_bar = qd.screenBits.bounds;
+	
+	menu_bar.bottom = MBarHeight;
+	
+	InvertRect( &menu_bar );
+	
+	qd.thePort = saved_port;
+}
