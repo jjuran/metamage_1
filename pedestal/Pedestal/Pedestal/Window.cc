@@ -171,7 +171,7 @@ namespace Pedestal
 		
 		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
 		{
-			(*handler)( window, h, v );
+			(*handler)( window );
 		}
 	}
 	

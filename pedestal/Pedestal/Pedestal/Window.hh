@@ -132,7 +132,7 @@ namespace Pedestal
 			{
 			}
 			
-			virtual void operator()( WindowRef window, short h, short v ) const = 0;
+			virtual void operator()( WindowRef window ) const = 0;
 	};
 	
 	class Window : public plus::ref_count< Window >

@@ -245,10 +245,10 @@ namespace Genie
 			{
 			}
 			
-			void operator()( WindowRef window, short h, short v ) const;
+			void operator()( WindowRef window ) const;
 	};
 	
-	void WindowResizeHandler::operator()( WindowRef window, short h, short v ) const
+	void WindowResizeHandler::operator()( WindowRef window ) const
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( itsKey ) )
 		{
