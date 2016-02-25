@@ -55,6 +55,31 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 	              : normal_read( fd, buffer, n );
 }
 
+static
+short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
+{
+	using namespace splode::modes;
+	using namespace splode::pointer;
+	using splode::uint8_t;
+	
+	const uint8_t mode_mask = Command | Shift | Option | Control;
+	
+	event.modifiers = (buffer.modes & mode_mask) << 8;
+	
+	const uint8_t action = buffer.attrs & action_mask;
+	
+	if ( action == 0 )
+	{
+		event.what = mouseDown;
+		
+		return mouseUp;
+	}
+	
+	event.what = action + (mouseDown - splode::pointer::down);
+	
+	return 0;
+}
+
 static inline
 void SetMouse( const splode::pointer_location_buffer& buffer )
 {
@@ -111,6 +136,12 @@ bool read_event( int fd, EventRecord* event )
 			event->what    = keyDown;
 			event->message = ((ascii_synth_buffer*) buffer)->ascii;
 			kind_to_queue  = keyUp;
+			break;
+		
+		case 4:
+			using splode::pointer_event_buffer;
+			
+			kind_to_queue = populate( *event, *(pointer_event_buffer*) buffer );
 			break;
 		
 		case 5:
