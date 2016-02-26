@@ -45,6 +45,23 @@ namespace modes
 	};
 }
 	
+namespace key
+{
+	// Key event attributes
+	
+	enum
+	{
+		press = 0,  // atomic down/up action
+		down  = 1,
+		up    = 2,
+		held  = 3,  // a.k.a. auto-key
+		
+		action_mask = 3,
+		
+		Alpha = 4,
+	};
+}
+	
 namespace pointer
 {
 	// Pointer event attributes
@@ -79,6 +96,17 @@ namespace pointer
 	struct pointer_event_buffer
 	{
 		uint8_t len;
+		uint8_t modes;
+		uint8_t attrs;
+		uint8_t device;
+	};
+	
+	// Type/length 4:  ASCII key event.
+	
+	struct ascii_event_buffer
+	{
+		uint8_t len;
+		uint8_t ascii;
 		uint8_t modes;
 		uint8_t attrs;
 		uint8_t device;
