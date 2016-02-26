@@ -54,7 +54,7 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 static
 bool read_event( int fd, EventRecord* event )
 {
-	memset( event, '\0', sizeof event );
+	memset( event, '\0', sizeof (EventRecord) );
 	
 	unsigned char buffer[ 256 ];
 	
