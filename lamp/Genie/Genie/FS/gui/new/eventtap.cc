@@ -206,6 +206,7 @@ namespace Genie
 			bool MouseDown( const EventRecord& event );
 			void MouseUp  ( const EventRecord& event ) { MouseDown( event ); }
 			bool KeyDown  ( const EventRecord& event );
+			void KeyUp    ( const EventRecord& event ) { KeyDown( event ); }
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};
@@ -278,6 +279,9 @@ namespace Genie
 	
 	bool eventtap_handler::KeyDown( const EventRecord& event )
 	{
+		using namespace splode::modes;
+		using namespace splode::key;
+		
 		eventtap_stream_server& extra = *(eventtap_stream_server*) itsKey->extra();
 		
 		const signed char c = char( event.message );
@@ -287,10 +291,18 @@ namespace Genie
 			throw non_ascii_char();
 		}
 		
-		splode::ascii_synth_buffer buffer =
+		const uint8_t mode_mask = Command | Shift | Option | Control;
+		const uint8_t attr_mask = Alpha;
+		
+		// 3/4/5 -> 1/2/3
+		const uint8_t action = event.what - 2;
+		
+		splode::ascii_event_buffer buffer =
 		{
 			sizeof buffer - 1,
-			c
+			c,
+			 (event.modifiers >> 8) & mode_mask,
+			((event.modifiers >> 8) & attr_mask) | action,
 		};
 		
 		if ( extra.client )
