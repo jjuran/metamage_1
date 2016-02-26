@@ -54,6 +54,19 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 static
 bool read_event( int fd, EventRecord* event )
 {
+	static EventRecord queued_event;
+	
+	if ( queued_event.what )
+	{
+		*event = queued_event;
+		
+		queued_event.what = 0;
+		
+		return true;
+	}
+	
+	EventKind kind_to_queue = 0;
+	
 	memset( event, '\0', sizeof (EventRecord) );
 	
 	unsigned char buffer[ 256 ];
@@ -83,10 +96,18 @@ bool read_event( int fd, EventRecord* event )
 		case 1:
 			event->what    = keyDown;
 			event->message = buffer[ 1 ];
+			kind_to_queue  = keyUp;
 			break;
 	}
 	
 	event->when = Ticks;
+	
+	if ( kind_to_queue )
+	{
+		queued_event = *event;
+		
+		queued_event.what = kind_to_queue;
+	}
 	
 	return true;
 }
