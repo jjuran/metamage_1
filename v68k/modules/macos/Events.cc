@@ -117,6 +117,36 @@ short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 	return 0;
 }
 
+static
+short populate( EventRecord& event, const splode::ascii_event_buffer& buffer )
+{
+	using namespace splode::modes;
+	using namespace splode::key;
+	using splode::uint8_t;
+	
+	event.message = buffer.ascii;
+	
+	const uint8_t mode_mask = Command | Shift | Option | Control;
+	const uint8_t attr_mask = Alpha;
+	
+	const uint8_t mod = (buffer.modes & mode_mask) | (buffer.attrs & attr_mask);
+	
+	event.modifiers = mod << 8;
+	
+	const uint8_t action = buffer.attrs & action_mask;
+	
+	if ( action == 0 )
+	{
+		event.what = keyDown;
+		
+		return keyUp;
+	}
+	
+	event.what = action + (keyDown - splode::key::down);
+	
+	return 0;
+}
+
 static inline
 void SetMouse( const splode::pointer_location_buffer& buffer )
 {
@@ -163,6 +193,11 @@ EventKind read_event( int fd, EventRecord* event )
 			using splode::pointer_event_buffer;
 			
 			return populate( *event, *(pointer_event_buffer*) buffer );
+		
+		case 4:
+			using splode::ascii_event_buffer;
+			
+			return populate( *event, *(ascii_event_buffer*) buffer );
 		
 		case 5:
 			using splode::pointer_location_buffer;
