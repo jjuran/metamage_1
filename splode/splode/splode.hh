@@ -14,6 +14,7 @@ namespace splode
 {
 	
 	typedef unsigned char  uint8_t;
+	typedef short          int16_t;
 	
 namespace ascii
 {
@@ -40,6 +41,18 @@ namespace ascii
 	{
 		uint8_t len;
 		uint8_t ascii;
+	};
+	
+	// Type/length 5:  Pointer location.
+	
+	struct pointer_location_buffer
+	{
+		uint8_t len;
+		uint8_t device;
+		
+		// Big-endian
+		int16_t x;
+		int16_t y;
 	};
 	
 }
