@@ -28,6 +28,37 @@ namespace ascii
 	};
 }
 	
+namespace modes
+{
+	// General modes
+	
+	enum
+	{
+		Command = 1 << 0,
+		Shift   = 1 << 1,
+		Alt     = 1 << 2,
+		Option  = 1 << 3,
+		Control = 1 << 4,
+		Meta    = 1 << 5,
+		Super   = 1 << 6,
+		Hyper   = 1 << 7,
+	};
+}
+	
+namespace pointer
+{
+	// Pointer event attributes
+	
+	enum
+	{
+		press = 0,  // atomic down/up action
+		down  = 1,
+		up    = 2,
+		
+		action_mask = 3,
+	};
+}
+	
 	// Type/length 0:  Null message.
 	
 	struct null_message_buffer
@@ -41,6 +72,17 @@ namespace ascii
 	{
 		uint8_t len;
 		uint8_t ascii;
+	};
+	
+	// Type/length 4:  Pointer input event.
+	
+	struct pointer_event_buffer
+	{
+		uint8_t len;
+		uint8_t modes;
+		uint8_t attrs;
+		uint8_t device;
+		uint8_t button;
 	};
 	
 	// Type/length 5:  Pointer location.
