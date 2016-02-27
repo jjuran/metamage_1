@@ -28,6 +28,9 @@
 // iota
 #include "iota/endian.hh"
 
+// splode
+#include "splode/splode.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -170,21 +173,6 @@ namespace Genie
 		}
 	}
 	
-	struct eventtap_stream_char_buffer
-	{
-		uint8_t len;
-		uint8_t ascii;
-	};
-	
-	struct eventtap_stream_location_buffer
-	{
-		uint8_t len;
-		uint8_t device;
-		
-		int16_t x;
-		int16_t y;
-	};
-	
 	struct eventtap_stream_client
 	{
 		ring_buffer* buffer;
@@ -239,7 +227,7 @@ namespace Genie
 		
 		last_cursor_location = event.where;
 		
-		eventtap_stream_location_buffer buffer =
+		splode::pointer_location_buffer buffer =
 		{
 			sizeof buffer - 1,
 			0,
@@ -264,9 +252,9 @@ namespace Genie
 			throw non_ascii_char();
 		}
 		
-		eventtap_stream_char_buffer buffer =
+		splode::ascii_synth_buffer buffer =
 		{
-			1,
+			sizeof buffer - 1,
 			c
 		};
 		
