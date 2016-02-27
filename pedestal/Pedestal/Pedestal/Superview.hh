@@ -55,6 +55,11 @@ namespace Pedestal
 				return Subview().KeyDown( event );
 			}
 			
+			void KeyUp( const EventRecord& event )
+			{
+				Subview().KeyUp( event );
+			}
+			
 			bool HitTest( const EventRecord& event )
 			{
 				return Subview().HitTest( event );

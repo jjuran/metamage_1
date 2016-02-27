@@ -139,6 +139,18 @@ namespace Pedestal
 		return false;
 	}
 	
+	void Stack::KeyUp( const EventRecord& event )
+	{
+		const unsigned count = ViewCount();
+		
+		for ( unsigned i = 1;  i <= count;  ++i )
+		{
+			View& view = GetNthView( i );
+			
+			view.KeyUp( event );
+		}
+	}
+	
 	bool Stack::HitTest( const EventRecord& event )
 	{
 		const unsigned count = ViewCount();
