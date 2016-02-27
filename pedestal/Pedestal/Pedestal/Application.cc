@@ -959,6 +959,8 @@ namespace Pedestal
 		
 		gNeedToConfigureKeyboard = gRunState.inForeground;
 		
+		SetEventMask( everyEvent );
+		
 		EventLoop();
 		
 		return 0;
