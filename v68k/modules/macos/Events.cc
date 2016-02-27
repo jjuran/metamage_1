@@ -13,6 +13,9 @@
 // POSIX
 #include <unistd.h>
 
+// splode
+#include "splode/splode.hh"
+
 // macos
 #include "options.hh"
 
@@ -91,11 +94,14 @@ bool read_event( int fd, EventRecord* event )
 	{
 		default:
 		case 0:
+			using splode::null_message_buffer;
 			break;
 		
 		case 1:
+			using splode::ascii_synth_buffer;
+			
 			event->what    = keyDown;
-			event->message = buffer[ 1 ];
+			event->message = ((ascii_synth_buffer*) buffer)->ascii;
 			kind_to_queue  = keyUp;
 			break;
 	}
