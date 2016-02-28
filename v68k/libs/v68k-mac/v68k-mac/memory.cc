@@ -163,7 +163,7 @@ static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 				refresh_dynamic_global( g->index );
 			}
 			
-			return (uint8_t*) &words[ g->index ];
+			return (uint8_t*) &words[ g->index ] + (addr - g->addr);
 		}
 		
 		addr += width;
@@ -189,9 +189,11 @@ static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 
 static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
 {
-	if ( g->addr == addr  &&  g->size_ == size )
+	const uint32_t offset = addr - g->addr;
+	
+	if ( offset + size <= g->size_ )
 	{
-		return buffer;
+		return buffer + offset;
 	}
 	
 	return NULL;
@@ -199,7 +201,9 @@ static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
 
 static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
 {
-	memcpy( &words[ g->index ], buffer, size );
+	const uint32_t offset = addr - g->addr;
+	
+	memcpy( (char*) &words[ g->index ] + offset, buffer + offset, size );
 	
 	return buffer;
 }
