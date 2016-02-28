@@ -9,6 +9,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
+#include "Pedestal/ClickTarget.hh"
 #include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/Quasimode.hh"
 
@@ -27,6 +28,7 @@ namespace Pedestal
 		// field class, just do it here.
 		
 		Unfocus( this );
+		Untarget( this );
 	}
 	
 	void View::Draw( const Rect& bounds, bool erasing )

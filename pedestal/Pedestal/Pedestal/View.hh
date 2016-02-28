@@ -42,6 +42,7 @@ namespace Pedestal
 			
 			virtual void Idle     ( const EventRecord& event )  {}
 			virtual bool MouseDown( const EventRecord& event )  { return true;  }
+			virtual void MouseUp  ( const EventRecord& event )  {}
 			virtual bool KeyDown  ( const EventRecord& event )  { return false; }
 			virtual bool HitTest  ( const EventRecord& event )  { return true;  }
 			

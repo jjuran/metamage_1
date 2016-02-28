@@ -66,6 +66,7 @@
 #endif
 
 // Pedestal
+#include "Pedestal/ClickTarget.hh"
 #include "Pedestal/Commands.hh"
 #include "Pedestal/Initialize.hh"
 #include "Pedestal/MenuBar.hh"
@@ -408,6 +409,17 @@ namespace Pedestal
 		}
 	}
 	
+	static
+	void DispatchMouseUp( const EventRecord& event )
+	{
+		if ( View* target = Get_ClickTarget() )
+		{
+			target->MouseUp( event );
+			
+			Reset_ClickTarget();
+		}
+	}
+	
 	static void DispatchMouseDown( const EventRecord& event )
 	{
 		ASSERT( event.what == mouseDown );
@@ -634,6 +646,7 @@ namespace Pedestal
 		//	case nullEvent:        DispatchNullEvent     ( event );  break;
 			case kHighLevelEvent:  DispatchHighLevelEvent( event );  break;
 			case mouseDown:        DispatchMouseDown     ( event );  break;
+			case mouseUp:          DispatchMouseUp       ( event );  break;
 			case keyDown:
 				case autoKey:      DispatchKey           ( event );  break;
 			case activateEvt:      DispatchActivate      ( event );  break;
