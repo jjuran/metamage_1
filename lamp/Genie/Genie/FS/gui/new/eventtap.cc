@@ -35,6 +35,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Pedestal
+#include "Pedestal/ClickTarget.hh"
 #include "Pedestal/View.hh"
 
 // vfs
@@ -203,6 +204,7 @@ namespace Genie
 			
 			void Idle     ( const EventRecord& event );
 			bool MouseDown( const EventRecord& event );
+			void MouseUp  ( const EventRecord& event ) { MouseDown( event ); }
 			bool KeyDown  ( const EventRecord& event );
 			
 			void Draw( const Rect& bounds, bool erasing );
@@ -254,7 +256,7 @@ namespace Genie
 		const uint8_t mask = Command | Shift | Option | Control;
 		
 		const uint8_t general_modifiers = (event.modifiers >> 8) & mask;
-		const uint8_t button_attributes = pointer::press;  // atomic click
+		const uint8_t button_attributes = event.what;  // Yes, the codes match.
 		
 		splode::pointer_event_buffer buffer =
 		{
@@ -269,6 +271,8 @@ namespace Genie
 		{
 			extra.client->buffer->write( &buffer.len, sizeof buffer );
 		}
+		
+		Set_ClickTarget( this );
 		
 		return true;
 	}
