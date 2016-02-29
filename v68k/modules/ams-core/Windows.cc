@@ -151,9 +151,16 @@ pascal void ClipAbove_patch( WindowPeek window )
 	
 	WindowPeek w = WindowList;
 	
-	if ( w != window )
+	while ( w != window )
 	{
+		if ( w == NULL )
+		{
+			break;
+		}
+		
 		DiffRgn( clipRgn, w->strucRgn, clipRgn );
+		
+		w = w->nextWindow;
 	}
 }
 
@@ -202,9 +209,11 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 {
 	WindowPeek w = window;
 	
-	if ( w != NULL )
+	while ( w != NULL )
 	{
 		PaintOne_patch( w, clobbered_region );
+		
+		w = w->nextWindow;
 	}
 	
 	SaveUpdate = true;
@@ -232,7 +241,7 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 {
 	WindowPeek w = WindowList;
 	
-	if ( w != NULL )
+	while ( w != NULL )
 	{
 		if ( window_needs_update( w ) )
 		{
@@ -243,6 +252,8 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 			
 			return true;
 		}
+		
+		w = w->nextWindow;
 	}
 	
 	return false;
@@ -1032,7 +1043,7 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	
 	WindowPeek w = WindowList;
 	
-	if ( w != NULL )
+	while ( w != NULL )
 	{
 		const short varCode = *(Byte*) &w->windowDefProc;
 		
@@ -1044,6 +1055,8 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 			
 			return hit + 2;
 		}
+		
+		w = w->nextWindow;
 	}
 	
 	return inDesk;
