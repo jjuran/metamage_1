@@ -9,6 +9,7 @@
 #include "QDGlobals.hh"
 
 
+GrafPtr WMgrPort : 0x09DE;
 short MBarHeight : 0x0BAA;
 
 const short default_MBarHeight = 20;
@@ -38,6 +39,8 @@ pascal void FlashMenuBar_patch( short menuID )
 	QDGlobals& qd = get_QDGlobals();
 	
 	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
 	
 	Rect menu_bar = qd.screenBits.bounds;
 	
