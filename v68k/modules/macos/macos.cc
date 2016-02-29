@@ -148,6 +148,13 @@ static void install_QuickDraw()
 	TBTRAP( PtInRect   );  // A8AD
 	TBTRAP( EmptyRect  );  // A8AE
 	
+	TBTRAP( StdRgn      );  // A8D1
+	
+	TBTRAP( PaintRgn    );  // A8D3
+	TBTRAP( EraseRgn    );  // A8D4
+	TBTRAP( InverRgn    );  // A8D5
+	TBTRAP( FillRgn     );  // A8D6
+	
 	TBTRAP( BitMapToRegion );  // A8D7
 	
 	TBTRAP( NewRgn      );  // A8D8

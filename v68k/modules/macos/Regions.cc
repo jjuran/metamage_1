@@ -14,11 +14,70 @@
 #include <string.h>
 
 // macos
+#include "QDGlobals.hh"
 #include "Rect-utils.hh"
+#include "Rects.hh"
 
 
 static const Rect emptyRect = { 0, 0, 0, 0 };
 
+
+pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
+{
+	RgnHandle tmp = NewRgn();
+	
+	if ( tmp == NULL )
+	{
+		return;
+	}
+	
+	if ( verb == kQDGrafVerbFrame )
+	{
+		// FIXME:  Needs special treatment
+	}
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	RgnHandle clipRgn = tmp;
+	
+	SectRgn( port.clipRgn, rgn, clipRgn );
+	
+	RgnHandle saved_clipRgn = port.clipRgn;
+	
+	port.clipRgn = clipRgn;
+	
+	const Rect& box = clipRgn[0]->rgnBBox;
+	
+	StdRect_patch( verb, &box );
+	
+	port.clipRgn = saved_clipRgn;
+	
+	DisposeRgn( tmp );
+}
+
+pascal void PaintRgn_patch( MacRegion** rgn )
+{
+	StdRgn( kQDGrafVerbPaint, rgn );
+}
+
+pascal void EraseRgn_patch( MacRegion** rgn )
+{
+	StdRgn( kQDGrafVerbErase, rgn );
+}
+
+pascal void InverRgn_patch( MacRegion** rgn )
+{
+	StdRgn( kQDGrafVerbInvert, rgn );
+}
+
+pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.fillPat = *pattern;
+	
+	StdRgn( kQDGrafVerbFill, rgn );
+}
 
 pascal MacRegion** NewRgn_patch()
 {

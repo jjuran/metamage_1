@@ -7,7 +7,16 @@
 #define REGIONS_HH
 
 struct MacRegion;
+struct Pattern;
 struct Rect;
+
+pascal void StdRgn_patch( signed char verb, MacRegion** rgn );
+
+pascal void PaintRgn_patch( MacRegion** rgn );
+pascal void EraseRgn_patch( MacRegion** rgn );
+pascal void InverRgn_patch( MacRegion** rgn );
+
+pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern );
 
 pascal MacRegion** NewRgn_patch();
 
