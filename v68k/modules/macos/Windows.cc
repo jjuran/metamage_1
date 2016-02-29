@@ -9,6 +9,9 @@
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
 
 // quickdraw
 #include "qd/region_detail.hh"
@@ -17,7 +20,8 @@
 #include "QDGlobals.hh"
 
 
-GrafPtr WMgrPort : 0x09DE;
+GrafPtr WMgrPort   : 0x09DE;
+short   MBarHeight : 0x0BAA;
 
 const short End = quickdraw::Region_end;
 
@@ -138,4 +142,16 @@ pascal void InitWindows_patch()
 	menubar.top = default_MBarHeight - 1;
 	
 	PaintRect( &menubar );
+}
+
+pascal short FindWindow_patch( Point pt, WindowPtr* window )
+{
+	*window = NULL;
+	
+	if ( pt.v < MBarHeight )
+	{
+		return inMenuBar;
+	}
+	
+	return inDesk;
 }

@@ -172,6 +172,7 @@ static void install_Fonts()
 static void install_Windows()
 {
 	TBTRAP( InitWindows );  // A912
+	TBTRAP( FindWindow  );  // A92C
 }
 
 static void install_Menus()
