@@ -416,6 +416,20 @@ Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
 		return -true;
 	}
 	
+	WindowPeek prev = NULL;
+	WindowPeek next = WindowList;
+	
+	do
+	{
+		prev = next;
+		
+		next = next->nextWindow;
+	}
+	while ( next != NULL  &&  (GrafPtr) next != behind );
+	
+	window->nextWindow = next;
+	prev->nextWindow = window;
+	
 	return false;
 }
 
@@ -425,6 +439,23 @@ void remove_from_window_list( WindowPeek window )
 	if ( window == WindowList )
 	{
 		WindowList = window->nextWindow;
+		
+		return;
+	}
+	
+	WindowPeek prev;
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		prev = w;
+		
+		w = w->nextWindow;
+	}
+	
+	if ( w != NULL )
+	{
+		prev->nextWindow = window->nextWindow;
 	}
 }
 
