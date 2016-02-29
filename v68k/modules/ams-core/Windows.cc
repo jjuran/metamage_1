@@ -143,6 +143,49 @@ pascal void DrawGrowIcon_patch( WindowPeek window )
 	qd.thePort = saved_port;
 }
 
+pascal void CalcVis_patch( WindowPeek window )
+{
+	RgnHandle visRgn = window->port.visRgn;
+	
+	SectRgn( window->contRgn, GrayRgn, visRgn );
+	
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			return;  // Specified window doesn't exist.
+		}
+		
+		DiffRgn( visRgn, w->strucRgn, visRgn );
+		
+		w = w->nextWindow;
+	}
+}
+
+pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	while ( w != NULL )
+	{
+		CalcVis_patch( w );
+		
+		w = w->nextWindow;
+	}
+}
+
 pascal void ClipAbove_patch( WindowPeek window )
 {
 	RgnHandle clipRgn = WMgrPort->clipRgn;

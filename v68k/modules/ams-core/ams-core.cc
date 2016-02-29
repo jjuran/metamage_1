@@ -291,6 +291,8 @@ static void install_Windows()
 	TBTRAP( DrawGrowIcon  );  // A904
 	TBTRAP( DragGrayRgn   );  // A905
 	
+	TBTRAP( CalcVis       );  // A909
+	TBTRAP( CalcVBehind   );  // A90A
 	TBTRAP( ClipAbove     );  // A90B
 	TBTRAP( PaintOne      );  // A90C
 	TBTRAP( PaintBehind   );  // A90D
