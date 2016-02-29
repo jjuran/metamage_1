@@ -874,6 +874,46 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	return is_inside;
 }
 
+pascal void BringToFront_patch( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		return;
+	}
+	
+	WindowPeek w = WindowList;
+	
+	do
+	{
+		if ( w == NULL )
+		{
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	while ( w != window );
+	
+	// Calculate the obscured region of the window (including its structure).
+	
+	RectRgn( WMgrPort->clipRgn, &window->strucRgn[0]->rgnBBox );
+	
+	ClipAbove_patch( window );
+	
+	DiffRgn( window->strucRgn, WMgrPort->clipRgn, WMgrPort->clipRgn );
+	
+	remove_from_window_list( window );
+	insert_into_window_list( window, GrafPtr( -1 ) );
+	
+	// Repaint only the previously hidden area.
+	
+	Rect r = WMgrPort->clipRgn[0]->rgnBBox;
+	
+	PaintOne_patch( window, WMgrPort->clipRgn );
+	
+	CalcVBehind_patch( window, window->strucRgn );
+}
+
 pascal void BeginUpdate_patch( struct GrafPort* window )
 {
 	WindowPeek w = (WindowPeek) window;

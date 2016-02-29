@@ -310,6 +310,8 @@ static void install_Windows()
 	TBTRAP( SizeWindow    );  // A91D
 	TBTRAP( TrackGoAway   );  // A91E
 	
+	TBTRAP( BringToFront  );  // A920
+	
 	TBTRAP( BeginUpdate   );  // A922
 	TBTRAP( EndUpdate     );  // A923
 	TBTRAP( FrontWindow   );  // A924

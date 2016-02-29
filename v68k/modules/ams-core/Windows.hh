@@ -50,6 +50,8 @@ pascal void HiliteWindow_patch( WindowRecord* window, unsigned char hilite );
 
 pascal unsigned char TrackGoAway_patch( struct GrafPort* w, struct Point pt );
 
+pascal void BringToFront_patch( WindowRecord* window );
+
 pascal void BeginUpdate_patch( struct GrafPort* window );
 pascal void EndUpdate_patch  ( struct GrafPort* window );
 
