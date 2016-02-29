@@ -511,11 +511,6 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          unsigned char         closeBox,
                                          long                  refCon )
 {
-	if ( WindowList != NULL )
-	{
-		return NULL;  // Only one window allowed, for now.
-	}
-	
 	WindowPeek window = (WindowPeek) storage;
 	
 	if ( window == NULL )
@@ -551,17 +546,6 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	MovePortTo( bounds->left, bounds->top );
 	
-	if ( visible )
-	{
-		RectRgn( port->visRgn, bounds );
-		
-		CurActivate = (WindowRef) window;
-	}
-	else
-	{
-		SetEmptyRgn( port->visRgn );
-	}
-	
 	window->windowKind = userKind;
 	window->visible    = -(visible != 0);
 	window->hilited    = -true;
@@ -576,9 +560,22 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	window->hilited = frontmost;
 	
+	if ( frontmost  &&  window->nextWindow )
+	{
+		if ( CurActivate != (WindowRef) window->nextWindow )
+		{
+			CurDeactive = (WindowRef) window->nextWindow;
+		}
+		
+		HiliteWindow_patch( window->nextWindow, false );
+	}
+	
+	CurActivate = (WindowRef) window;
+	
 	WDEF_0( varCode, (WindowPtr) window, wCalcRgns, 0 );
 	
-	PaintOne_patch( window, window->strucRgn );
+	CalcVBehind_patch( window, window->strucRgn );
+	PaintOne_patch   ( window, window->strucRgn );
 	
 	return (WindowPtr) window;
 	
