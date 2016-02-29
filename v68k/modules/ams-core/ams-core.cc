@@ -303,6 +303,7 @@ static void install_Windows()
 	TBTRAP( GetWTitle     );  // A919
 	TBTRAP( SetWTitle     );  // A91A
 	TBTRAP( MoveWindow    );  // A91B
+	TBTRAP( HiliteWindow  );  // A91C
 	
 	TBTRAP( SizeWindow    );  // A91D
 	TBTRAP( TrackGoAway   );  // A91E

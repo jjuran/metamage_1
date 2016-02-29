@@ -701,6 +701,24 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	PaintBehind_patch( w, exposed );
 }
 
+pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
+{
+	if ( window->hilited == hilite )
+	{
+		return;
+	}
+	
+	window->hilited = hilite;
+	
+	SaveUpdate = false;
+	PaintWhite = false;
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	SaveUpdate = true;
+	PaintWhite = true;
+}
+
 pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 {
 	RgnHandle mouseRgn = NewRgn();
