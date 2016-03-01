@@ -61,6 +61,13 @@ namespace quickdraw
 		const short bottom = min( rect[ 2 ], bbox[ 2 ] );
 		const short right  = min( rect[ 3 ], bbox[ 3 ] );
 		
+		if ( top >= bottom  ||  left >= right )
+		{
+			*r = Region_end;
+			
+			return;
+		}
+		
 		const unsigned mask_size = region_raster::mask_size( bbox ) + 1 & ~0x1;
 		
 		uint16_t* mask = (uint16_t*) malloc( mask_size * 2 );
