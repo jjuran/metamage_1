@@ -24,6 +24,18 @@ namespace quickdraw
 	typedef unsigned short uint16_t;
 	
 	
+	static
+	short min( short a, short b )
+	{
+		return b < a ? b : a;
+	}
+	
+	static
+	short max( short a, short b )
+	{
+		return a > b ? a : b;
+	}
+	
 	static void memand( uint16_t*        dst,
 	                    const uint16_t*  a,
 	                    const uint16_t*  b,
@@ -42,6 +54,13 @@ namespace quickdraw
 	                       const short*  extent,
 	                       short*        r )
 	{
+		// Clip the rectangle to the region bounding box.
+		
+		const short top    = max( rect[ 0 ], bbox[ 0 ] );
+		const short left   = max( rect[ 1 ], bbox[ 1 ] );
+		const short bottom = min( rect[ 2 ], bbox[ 2 ] );
+		const short right  = min( rect[ 3 ], bbox[ 3 ] );
+		
 		const unsigned mask_size = region_raster::mask_size( bbox ) + 1 & ~0x1;
 		
 		uint16_t* mask = (uint16_t*) malloc( mask_size * 2 );
@@ -53,19 +72,19 @@ namespace quickdraw
 		
 		const short rounded_left = bbox[ 1 ] & ~0xF;
 		
-		const int margin = -rect[ 3 ] & 0xF;
+		const int margin = -right & 0xF;
 		
-		const short words_before_left_margin  = (rect[ 1 ] - rounded_left) >> 4;
-		const short words_before_right_margin = (rect[ 3 ] - rounded_left - 1) >> 4;
+		const short words_before_left_margin  = (left  - rounded_left) >> 4;
+		const short words_before_right_margin = (right - rounded_left - 1) >> 4;
 		
-		const uint16_t left_margin_mask  =  (1 << (16 - (rect[ 1 ] & 0xF))) - 1;
-		const uint16_t right_margin_mask = -(1 << ((16 - rect[ 3 ]) & 0xF));
+		const uint16_t left_margin_mask  =  (1 << (16 - (left & 0xF))) - 1;
+		const uint16_t right_margin_mask = -(1 << ((16 - right) & 0xF));
 		
 		uint16_t* mask_right_margin = mask + words_before_right_margin + 1;
 		
-		short v = rect[ 0 ];
+		short v = top;
 		
-		while ( v < rect[ 2 ] )
+		while ( v < bottom )
 		{
 			raster.load_mask( v );
 			
@@ -86,9 +105,9 @@ namespace quickdraw
 			v = raster.next_v();
 		}
 		
-		if ( v > rect[ 2 ] )
+		if ( v > bottom )
 		{
-			v = rect[ 2 ];
+			v = bottom;
 		}
 		
 		scanner.finish( rounded_left, v, mask, margin );
