@@ -25,9 +25,10 @@
 #include "QDGlobals.hh"
 
 
-GrafPtr WMgrPort    : 0x09DE;
-Pattern DeskPattern : 0x0A3C;
-short   MBarHeight  : 0x0BAA;
+GrafPtr   WMgrPort    : 0x09DE;
+RgnHandle GrayRgn     : 0x09EE;
+Pattern   DeskPattern : 0x0A3C;
+short     MBarHeight  : 0x0BAA;
 
 /*
 	BezelRgn is a made-up global (i.e. not a Mac OS low memory global).
@@ -161,6 +162,16 @@ pascal void InitWindows_patch()
 	}
 	
 	calculate_menu_bar_height();
+	
+	GrayRgn = NewRgn();
+	
+	Rect menubar = bounds;
+	
+	menubar.bottom = MBarHeight;
+	
+	RectRgn( GrayRgn, &menubar );
+	
+	DiffRgn( BezelRgn, GrayRgn, GrayRgn );
 	
 	draw_desktop_from_WMgrPort();
 	draw_menu_bar_from_WMgr_port();
