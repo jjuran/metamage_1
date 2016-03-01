@@ -874,6 +874,35 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	return is_inside;
 }
 
+pascal void SelectWindow_patch( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		return;
+	}
+	
+	/*
+		Guard against calling SelectWindow() twice in a row for different
+		windows:  Don't give the front window a deactivate event if an
+		activate event is pending for it, since (a) it's already in an
+		inactive state, and (b) we'd be clobbering the deactivate event for
+		the previous front window (if that too were still pending).
+	*/
+	
+	if ( CurActivate != (WindowRef) WindowList )
+	{
+		CurDeactive = (WindowRef) WindowList;
+	}
+	
+	CurActivate = (WindowRef) window;
+	
+	WindowPeek leader = WindowList;
+	
+	BringToFront_patch( window );
+	HiliteWindow_patch( leader, false );
+	HiliteWindow_patch( window, true  );
+}
+
 pascal void BringToFront_patch( WindowPeek window )
 {
 	if ( window == WindowList )
