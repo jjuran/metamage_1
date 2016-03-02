@@ -159,7 +159,6 @@ namespace Pedestal
 	static RunState gRunState;
 	
 	static UInt32 gTickCountAtLastContextSwitch = 0;
-	static UInt32 gTickCountAtLastUserEvent     = 0;
 	
 	static Point gLastMouseLocation;
 	
@@ -206,11 +205,6 @@ namespace Pedestal
 	static bool ReadyToExit()
 	{
 		return gReadyToExit_Hook ? gReadyToExit_Hook() : true;
-	}
-	
-	static void UpdateLastUserEvent()
-	{
-		gTickCountAtLastUserEvent = ::LMGetTicks();
 	}
 	
 	static bool DoCommand( CommandCode code );
@@ -418,8 +412,6 @@ namespace Pedestal
 	{
 		ASSERT( event.what == mouseDown );
 		
-		UpdateLastUserEvent();
-		
 		N::FindWindow_Result found = N::FindWindow( event.where );
 		
 		if ( found.part == N::inMenuBar )
@@ -460,8 +452,6 @@ namespace Pedestal
 			default:
 				break;
 		}
-		
-		UpdateLastUserEvent();
 	}
 	
 	static inline bool CharIsArrowKey( char c )
@@ -518,8 +508,6 @@ namespace Pedestal
 	static void DispatchKey( const EventRecord& event )
 	{
 		ASSERT( event.what == keyDown || event.what == autoKey );
-		
-		UpdateLastUserEvent();
 		
 	#if !TARGET_API_MAC_CARBON
 		
@@ -653,10 +641,6 @@ namespace Pedestal
 			case diskEvt:          DispatchDiskInsert    ( event );  break;
 			case osEvt:            DispatchOSEvent       ( event );  break;
 			
-			case mouseUp:
-				UpdateLastUserEvent();
-				break;
-			
 			default:
 				break;
 		}
@@ -748,8 +732,6 @@ namespace Pedestal
 		if ( mouseLocation != gLastMouseLocation )
 		{
 			gLastMouseLocation = mouseLocation;
-			
-			UpdateLastUserEvent();
 		}
 	}
 	
