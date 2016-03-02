@@ -5,6 +5,15 @@ use strict;
 
 use FindBin '$RealBin';
 
+my $NAME = "Beep";
+
+my $base = lc $NAME;
+
+my $dir = $NAME;
+my $app = $NAME;
+my $src = "$base.c";
+my $obj = "$base.o";
+
 sub run
 {
 	system( @_ ) == 0 or exit 1;
@@ -12,17 +21,17 @@ sub run
 
 my $home = $ENV{ HOME };
 
-my $out = "$home/var/build/misc/Beep";
+my $out = "$home/var/build/misc/$dir";
 
 run( qw( mkdir -p ), $out );
 
 chdir $out or die "chdir: $out: $!\n";
 
-unlink "beep.c";
+unlink $src;  # alias to source file
 
-run( "ln", "-a", "$RealBin/beep.c", "beep.c" );
+run( "ln", "-a", "$RealBin/$src", "$src" );
 
-run( qw( tlsrvr -- SC beep.c -o beep.o ) );
-run( qw( tlsrvr -- Link -m main beep.o -o Beep ) );
+run( split / /, "tlsrvr -- SC $src -o $obj" );
+run( split / /, "tlsrvr -- Link -m main $obj -o $app" );
 
 run( "open", $out );
