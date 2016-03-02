@@ -636,6 +636,22 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	GrafPort& port = **get_addrof_thePort();
 	
+	/*
+		csdx, csdy:  Coordinate system deltas
+		
+		These are deltas from the global coordinate system to the local
+		coordinate system.  Add them to global points to get local, and
+		subtract them from local points to get global.
+		
+		Note that for a local origin below and to the right of the global
+		origin, these values will be negative -- for example, to get from
+		local (0,0) to global (100,80), you must add positive numbers or
+		subtract negative ones.
+	*/
+	
+	const short csdx = port.portBits.bounds.left;
+	const short csdy = port.portBits.bounds.top;
+	
 	Rect clipRect = port.clipRgn[0]->rgnBBox;
 	
 	SectRect( r,                     &clipRect, &clipRect );
@@ -643,26 +659,27 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	RgnHandle clipRgn = NULL;
 	
-	bool clipping_to_rect = port.clipRgn[0]->rgnSize <= sizeof (MacRegion);
+	clipRgn = NewRgn();
 	
-	if ( !clipping_to_rect )
+	OffsetRect( &clipRect, -csdx, -csdy );  // convert to global coordinates
+	
+	RectRgn( clipRgn, &clipRect );
+	
+	SectRgn( port.visRgn, clipRgn, clipRgn );
+	
+	OffsetRgn( clipRgn, csdx, csdy );  // convert back to local coordinates
+	
+	SectRgn( port.clipRgn, clipRgn, clipRgn );
+	
+	clipRect = clipRgn[0]->rgnBBox;
+	
+	bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
+	
+	if ( clipping_to_rect )
 	{
-		clipRgn = NewRgn();
+		DisposeRgn( clipRgn );
 		
-		RectRgn( clipRgn, &clipRect );
-		
-		SectRgn( port.clipRgn, clipRgn, clipRgn );
-		
-		clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
-		
-		if ( clipping_to_rect )
-		{
-			clipRect = clipRgn[0]->rgnBBox;
-			
-			DisposeRgn( clipRgn );
-			
-			clipRgn = NULL;
-		}
+		clipRgn = NULL;
 	}
 	
 	rectangular_op_params params;
