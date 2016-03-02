@@ -1,0 +1,27 @@
+#!/bin/sh
+
+cd /gui/new/port
+
+echo 512x342 > size
+
+ln new/stack view
+
+ln new/eventtap v/events/view
+ln new/bitmap   v/screen/view
+
+events=v/events/v/stream
+screen=v/screen/v/bits
+
+echo 4 > procid
+
+touch window
+
+perl -e 'sleep 0 while !-f "v/screen/v/bits"'
+
+CTTY=--ctty=tty
+SCREEN=--screen=$screen
+EVENTS=--events-fd=8
+
+TEST=$HOME/var/build/misc/Test/Test/r/0001.CODE
+
+daemonize --cwd $CTTY -- xv68k $SCREEN -m [ macos $EVENTS ] $TEST 8< $events
