@@ -5,7 +5,7 @@ use strict;
 
 use FindBin '$RealBin';
 
-my $NAME = "Beep";
+my $NAME = "Test";
 
 my $base = lc $NAME;
 
