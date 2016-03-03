@@ -13,6 +13,9 @@
 // iota
 #include "iota/swap.hh"
 
+// debug
+#include "debug/assert.hh"
+
 // quickdraw
 #include "qd/regions.hh"
 #include "qd/region_detail.hh"
@@ -39,6 +42,11 @@ typedef quickdraw::region_geometry_t geometry_t;
 
 short MemErr : 0x0220;
 
+
+static inline short min( short a, short b )
+{
+	return b < a ? b : a;
+}
 
 static inline short max( short a, short b )
 {
@@ -128,6 +136,88 @@ static short region_size( MacRegion* region, const short* end )
 	return rgn_size;
 }
 
+static
+bool is_valid_region( RgnHandle rgn )
+{
+	const short End = 0x7FFF;
+	
+	ASSERT(  rgn != NULL );
+	ASSERT( *rgn != NULL );
+	
+	const Size h_size = GetHandleSize( (Handle) rgn );
+	
+	ASSERT( h_size >= sizeof (MacRegion) );
+	
+	const short rgn_size = rgn[0]->rgnSize;
+	
+	ASSERT( h_size >= rgn_size );
+	
+	ASSERT( rgn_size % 2 == 0 );
+	
+	Rect bbox = rgn[0]->rgnBBox;
+	
+	ASSERT( bbox.top <= bbox.bottom );
+	ASSERT( bbox.left <= bbox.right );
+	
+	if ( rgn_size == sizeof (MacRegion) )
+	{
+		return true;
+	}
+	
+	ASSERT( rgn_size >= 28 );
+	
+	const short n = rgn_size / 2 - sizeof (MacRegion) / 2;
+	
+	const short* extent = rgn_extent( *rgn );
+	
+	ASSERT( extent[ n - 1 ] == End );  // vertical sentinel
+	ASSERT( extent[ n - 2 ] == End );  // horizontal sentinel of last row
+	
+	short top  = bbox.top;
+	short left = 32767;
+	short bottom = -32767;
+	short right  = -32767;
+	
+	ASSERT( extent[ 0 ] == top );
+	
+	const short* p = extent;
+	
+	short v = -32768;
+	
+	while ( *p != End )
+	{
+		ASSERT( *p > v );
+		
+		v = *p++;
+		
+		top    = min( top,    v );
+		bottom = max( bottom, v );
+		
+		ASSERT( *p != End );
+		
+		short h = -32768;
+		
+		while ( *p != End )
+		{
+			ASSERT( *p > h );
+			
+			h = *p++;
+			
+			left  = min( left,  h );
+			right = max( right, h );
+		}
+		
+		++p;
+	}
+	
+	ASSERT( top    == bbox.top    );
+	ASSERT( left   == bbox.left   );
+	ASSERT( bottom == bbox.bottom );
+	ASSERT( right  == bbox.right  );
+	
+	return true;
+}
+
 pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 {
 	typedef unsigned short uint16_t;
@@ -206,6 +296,8 @@ pascal short BitMapToRegion_patch( MacRegion** rgn, const BitMap* bitmap )
 
 pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
 {
+	ASSERT( is_valid_region( rgn ) );
+	
 	rgn[0]->rgnBBox.top    += dv;
 	rgn[0]->rgnBBox.left   += dh;
 	rgn[0]->rgnBBox.bottom += dv;
@@ -235,6 +327,9 @@ static void finish_region( RgnHandle r )
 
 static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 {
+	ASSERT( is_valid_region( a ) );
+	ASSERT( is_valid_region( b ) );
+	
 	SetHandleSize( (Handle) dst, a[0]->rgnSize + b[0]->rgnSize );  // TODO:  Prove this is enough
 	
 	sect_regions( (const short*) &a[0]->rgnBBox,
@@ -247,6 +342,8 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 
 static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 {
+	ASSERT( is_valid_region( src ) );
+	
 	SetHandleSize( (Handle) dst, src[0]->rgnSize );  // TODO:  Prove this is enough
 	
 	sect_rect_region( (const short*) &rect,
@@ -268,6 +365,9 @@ static RgnHandle new_sect_rect_region( const Rect& rect, RgnHandle src )
 
 pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
+	ASSERT( is_valid_region( a ) );
+	ASSERT( is_valid_region( b ) );
+	
 	if ( empty_rect( a[0]->rgnBBox )  ||  empty_rect( b[0]->rgnBBox ) )
 	{
 		SetEmptyRgn( dst );
@@ -441,6 +541,9 @@ pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 
 pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
+	ASSERT( is_valid_region( a ) );
+	ASSERT( is_valid_region( b ) );
+	
 	if ( empty_rect( a[0]->rgnBBox ) )
 	{
 		CopyRgn( b, dst );
