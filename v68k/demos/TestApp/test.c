@@ -20,14 +20,24 @@ int main()
 		
 		if ( GetNextEvent( everyEvent, &event ) )
 		{
+			WindowRef window;
+			
 			switch ( event.what )
 			{
 				case mouseDown:
-					if ( ! inverted_menu_bar )
+					switch ( FindWindow( event.where, &window ) )
 					{
-						inverted_menu_bar = true;
+						case inMenuBar:
+							if ( ! inverted_menu_bar )
+							{
+								inverted_menu_bar = true;
+								
+								FlashMenuBar( 0 );
+							}
+							break;
 						
-						FlashMenuBar( 0 );
+						default:
+							break;
 					}
 					break;
 					
