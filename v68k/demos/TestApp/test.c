@@ -17,7 +17,7 @@ int main()
 	{
 		EventRecord event;
 		
-		if ( GetNextEvent( everyEvent, &event ) )
+		if ( WaitNextEvent( everyEvent, &event, 0x7FFFFFFF, NULL ) )
 		{
 			WindowRef window;
 			
