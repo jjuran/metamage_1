@@ -15,6 +15,7 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/select.h>
 
 // splode
 #include "splode/splode.hh"
@@ -26,6 +27,37 @@
 UInt32 Ticks : 0x016A;
 Point  Mouse : 0x0830;
 
+
+const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
+
+static timeval wait_timeout;
+
+static
+timeval timeval_from_ticks( unsigned long ticks )
+{
+	const long microseconds_per_tick = 1000 * 1000 / 60;
+	
+	const long seconds      = ticks / 60;
+	const long microseconds = ticks % 60 * microseconds_per_tick;
+	
+	timeval tv = { seconds, microseconds };
+	
+	return tv;
+}
+
+static
+bool wait_for_fd( int fd, timeval* timeout )
+{
+	fd_set readfds;
+	FD_ZERO( &readfds );
+	FD_SET( fd, &readfds );
+	
+	const int max_fd = fd;
+	
+	int selected = select( max_fd + 1, &readfds, NULL, NULL, timeout );
+	
+	return selected > 0;
+}
 
 static inline
 ssize_t direct_read( int fd, unsigned char* buffer, size_t n )
@@ -91,23 +123,8 @@ void SetMouse( const splode::pointer_location_buffer& buffer )
 }
 
 static
-bool read_event( int fd, EventRecord* event )
+EventKind read_event( int fd, EventRecord* event )
 {
-	static EventRecord queued_event;
-	
-	if ( queued_event.what )
-	{
-		*event = queued_event;
-		
-		queued_event.what = 0;
-		
-		return true;
-	}
-	
-	EventKind kind_to_queue = 0;
-	
-	memset( event, '\0', sizeof (EventRecord) );
-	
 	unsigned char buffer[ 256 ];
 	
 	/*
@@ -138,14 +155,12 @@ bool read_event( int fd, EventRecord* event )
 			
 			event->what    = keyDown;
 			event->message = ((ascii_synth_buffer*) buffer)->ascii;
-			kind_to_queue  = keyUp;
-			break;
+			return keyUp;
 		
 		case 4:
 			using splode::pointer_event_buffer;
 			
-			kind_to_queue = populate( *event, *(pointer_event_buffer*) buffer );
-			break;
+			return populate( *event, *(pointer_event_buffer*) buffer );
 		
 		case 5:
 			using splode::pointer_location_buffer;
@@ -153,6 +168,34 @@ bool read_event( int fd, EventRecord* event )
 			SetMouse( *(pointer_location_buffer*) buffer );
 			break;
 	}
+	
+	return 0;
+}
+
+static
+bool get_event( int fd, EventRecord* event )
+{
+	static EventRecord queued_event;
+	
+	if ( queued_event.what )
+	{
+		*event = queued_event;
+		
+		queued_event.what = 0;
+		
+		return true;
+	}
+	
+	EventKind kind_to_queue = 0;
+	
+	memset( event, '\0', sizeof (EventRecord) );
+	
+	if ( wait_for_fd( fd, &wait_timeout ) )
+	{
+		kind_to_queue = read_event( fd, event );
+	}
+	
+	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
 	
 	event->when  = Ticks;
 	event->where = Mouse;
@@ -164,11 +207,11 @@ bool read_event( int fd, EventRecord* event )
 		queued_event.what = kind_to_queue;
 	}
 	
-	return true;
+	return event->what != nullEvent;
 }
 
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
-	return read_event( events_fd, event );
+	return get_event( events_fd, event );
 }
