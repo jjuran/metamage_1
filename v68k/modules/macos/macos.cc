@@ -184,7 +184,8 @@ static void install_Menus()
 
 static void install_EventManager()
 {
-	TBTRAP( GetNextEvent );  // A970
+	TBTRAP( WaitNextEvent );  // A860
+	TBTRAP( GetNextEvent  );  // A970
 }
 
 static void install_SegmentLoader()

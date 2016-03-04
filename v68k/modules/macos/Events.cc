@@ -21,6 +21,8 @@
 #include "splode/splode.hh"
 
 // macos
+#include "Region-ops.hh"
+#include "Regions.hh"
 #include "options.hh"
 
 
@@ -208,6 +210,80 @@ bool get_event( int fd, EventRecord* event )
 	}
 	
 	return event->what != nullEvent;
+}
+
+static inline
+asm UInt32 add_pinned( UInt32 a : __D0, UInt32 b : __D1 ) : __D0
+{
+	ADD.L    D1,D0
+	BCC.S    no_carry
+	MOVEQ    #-1,D0
+no_carry:
+}
+
+pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
+                                          EventRecord*    event,
+                                          unsigned long   sleep,
+                                          RgnHandle       mouseRgn )
+{
+	if ( mouseRgn != NULL  &&  EmptyRgn_patch( mouseRgn ) )
+	{
+		mouseRgn = NULL;
+	}
+	
+	/*
+		Time is fleeting.  Keep a local, non-volatile copy of Ticks.
+		
+		In theory, Ticks could be (future - 1) at the end of the loop and
+		advance to (future + 1) before the timeval_from_ticks() call, since
+		each load of Ticks makes a fresh call to gettimeofday() (and the
+		same concern would apply it if were updated at interrupt time).
+	*/
+	
+	UInt32 now = Ticks;
+	
+	/*
+		Pin the addition of Ticks and sleep.  In the improbable (but very
+		possible) event that an instance of macos runs for over a year,
+		Ticks may exceed 2^31, at which point adding 0x7FFFFFFF (2^31 - 1)
+		will overflow.  This is bad, because it means that WaitNextEvent()
+		calls with a sleep argument of 0x7FFFFFFF (which are intended to
+		sleep for an arbitrarily long time) will return immediately, and
+		thereby (in all likelihood) consume all available CPU for the next
+		year or so (until Ticks passes 2^32 - 1 and overflows on its own).
+		
+		By pinning the addition to 2^32 - 1, busy-polling is limited to
+		one tick (1/60 of a second) after two years or so -- which isn't
+		bad at all.  (Though you may have other issues if you let Ticks
+		overflow.  I strongly don't recommend it...)
+	*/
+	
+	const UInt32 future = add_pinned( now, sleep );
+	
+	do
+	{
+		wait_timeout = timeval_from_ticks( future - now );
+		
+		const bool got = GetNextEvent( eventMask, event );
+		
+		if ( got  ||  event->what != nullEvent )
+		{
+			return got;
+		}
+		
+		if ( mouseRgn != NULL  &&  ! PtInRgn_patch( event->where, mouseRgn ) )
+		{
+			event->what    = osEvt;
+			event->message = mouseMovedMessage << 24;
+			
+			return true;
+		}
+		
+		now = Ticks;
+	}
+	while ( now < future );
+	
+	return false;
 }
 
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,

@@ -7,6 +7,12 @@
 #define EVENTS_HH
 
 struct EventRecord;
+struct MacRegion;
+
+pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
+                                          EventRecord*    event,
+                                          unsigned long   sleep,
+                                          MacRegion**     mouseRgn );
 
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event );
