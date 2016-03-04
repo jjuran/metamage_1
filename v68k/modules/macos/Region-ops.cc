@@ -22,6 +22,7 @@
 
 // macos
 #include "Rect-utils.hh"
+#include "Rects.hh"
 
 
 using quickdraw::offset_region;
@@ -488,4 +489,37 @@ pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	}
 	
 	DisposeHandle( h );
+}
+
+pascal unsigned char PtInRgn_patch( Point pt, MacRegion** rgn )
+{
+	if ( ! PtInRect_patch( pt, &rgn[0]->rgnBBox ) )
+	{
+		return false;
+	}
+	
+	if ( const bool is_rectangular = rgn[0]->rgnSize <= 10 )
+	{
+		return true;
+	}
+	
+	bool contained = false;
+	
+	const short* extent = rgn_extent( *rgn );
+	
+	while ( *extent++ <= pt.v )
+	{
+		const short* h1 = extent;
+		
+		while ( *extent <= pt.h )
+		{
+			++extent;
+		}
+		
+		contained ^= (extent - h1) & 1;
+		
+		while ( *extent++ != Region_end )  continue;
+	}
+	
+	return contained;
 }
