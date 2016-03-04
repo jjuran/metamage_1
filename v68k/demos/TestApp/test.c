@@ -1,17 +1,38 @@
+/*
+	test.c
+	------
+*/
+
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __SOUND__
 #include <Sound.h>
+#endif
+
+#if ! TARGET_API_MAC_CARBON
 
 static QDGlobals qd;
+
+#endif
 
 int main()
 {
 	Boolean quitting = false;
 	Boolean inverted_menu_bar = false;
 	
+#if ! TARGET_API_MAC_CARBON
+	
 	InitGraf( &qd.thePort );
 	
 	InitFonts();
 	InitWindows();
 	InitMenus();
+	
+#endif
 	
 	while ( ! quitting )
 	{
