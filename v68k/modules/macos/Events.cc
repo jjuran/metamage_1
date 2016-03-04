@@ -167,7 +167,8 @@ bool read_event( int fd, EventRecord* event )
 	return true;
 }
 
-pascal unsigned char GetNextEvent_patch( short eventMask, EventRecord* event )
+pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
+                                         EventRecord*    event )
 {
 	return read_event( events_fd, event );
 }

@@ -6,6 +6,9 @@
 #ifndef EVENTS_HH
 #define EVENTS_HH
 
-pascal unsigned char GetNextEvent_patch( short eventMask, struct EventRecord* event );
+struct EventRecord;
+
+pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
+                                         EventRecord*    event );
 
 #endif
