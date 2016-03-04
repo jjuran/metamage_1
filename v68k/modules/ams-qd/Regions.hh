@@ -41,6 +41,8 @@ pascal void RectRgn_patch( MacRegion** rgn, const Rect* r );
 
 pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn );
 
+pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b );
+
 pascal unsigned char EmptyRgn_patch( MacRegion** rgn );
 
 #endif

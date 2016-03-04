@@ -226,6 +226,26 @@ pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn )
 	return SectRect_patch( r, &rgn[0]->rgnBBox, &intersection );
 }
 
+pascal unsigned char EqualRgn_patch( MacRegion** a, MacRegion** b )
+{
+	if ( a == b )
+	{
+		return true;
+	}
+	
+	if ( a[0]->rgnSize != b[0]->rgnSize )
+	{
+		return false;
+	}
+	
+	if ( EmptyRgn_patch( a )  &&  EmptyRgn_patch( b ) )
+	{
+		return true;
+	}
+	
+	return fast_memcmp( *a, *b, a[0]->rgnSize ) == 0;
+}
+
 pascal unsigned char EmptyRgn_patch( MacRegion** rgn )
 {
 	/*
