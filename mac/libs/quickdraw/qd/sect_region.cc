@@ -9,6 +9,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Standard C++
+#include <algorithm>
+#include <vector>
+
 // iota
 #include "iota/endian.hh"
 
@@ -16,6 +20,7 @@
 #include "qd/region_detail.hh"
 #include "qd/region_raster.hh"
 #include "qd/region_scanner.hh"
+#include "qd/regions.hh"
 
 
 namespace quickdraw
@@ -49,6 +54,61 @@ namespace quickdraw
 		}
 	}
 	
+	static
+	void xor_segments( std::vector< short >& segments, short coord )
+	{
+		if ( segments.empty()  ||  coord > segments.back() )
+		{
+			segments.push_back( coord );
+			return;
+		}
+		
+		typedef std::vector< short >::iterator Iter;
+		
+		Iter it = std::lower_bound( segments.begin(), segments.end(), coord );
+		
+		if ( *it == coord )
+		{
+			segments.erase( it );
+		}
+		else
+		{
+			segments.insert( it, coord );
+		}
+	}
+	
+	static inline
+	void copy_segments( short*& r, const short* begin, const short* end )
+	{
+		memcpy( r, begin, (end - begin) * sizeof (short) );
+		
+		r += end - begin;
+	}
+	
+	template < class Container >
+	static
+	void copy_segments( short*& r, const Container& container )
+	{
+		copy_segments( r, &*container.begin(), &*container.end() );
+	}
+	
+	template < class Container >
+	static
+	void accumulate_row( short*& r, short v, const Container& segments )
+	{
+		if ( ! segments.empty() )
+		{
+			*r++ = v;
+			
+			copy_segments( r, segments );
+			
+			if ( r[ -1 ] != Region_end )
+			{
+				*r++ = Region_end;
+			}
+		}
+	}
+	
 	void sect_rect_region( const short*  rect,
 	                       const short*  bbox,
 	                       const short*  extent,
@@ -68,58 +128,104 @@ namespace quickdraw
 			return;
 		}
 		
-		const unsigned mask_size = region_raster::mask_size( bbox ) + 1 & ~0x1;
+		std::vector< short > segments;
 		
-		uint16_t* mask = (uint16_t*) malloc( mask_size * 2 );
-		uint16_t* temp = mask + mask_size / 2;
+		short v, h;
 		
-		region_raster raster( bbox, extent, mask, mask_size );
-		
-		region_scanner scanner( r, temp, mask_size );
-		
-		const short rounded_left = bbox[ 1 ] & ~0xF;
-		
-		const int margin = -right & 0xF;
-		
-		const short words_before_left_margin  = (left  - rounded_left) >> 4;
-		const short words_before_right_margin = (right - rounded_left - 1) >> 4;
-		
-		const uint16_t left_margin_mask  =  (1 << (16 - (left & 0xF))) - 1;
-		const uint16_t right_margin_mask = -(1 << ((16 - right) & 0xF));
-		
-		uint16_t* mask_right_margin = mask + words_before_right_margin + 1;
-		
-		short v = top;
-		
-		while ( v < bottom )
+		while ( (v = *extent++) <= top )
 		{
-			raster.load_mask( v );
+			const short* h0 = extent;
 			
-			// Trim the mask left of the intersecting rect
-			
-			memset( mask, '\0', words_before_left_margin * 2 );
-			
-			memset( mask_right_margin, '\0', (temp - mask_right_margin) * 2 );
-			
-			mask[ words_before_left_margin  ] &= iota::big_u16( left_margin_mask );
-			mask[ words_before_right_margin ] &= iota::big_u16( right_margin_mask );
-			
-			if ( scanner.scan( rounded_left, v, mask, temp, margin ) )
+			while ( *extent <= left )
 			{
-				memcpy( temp, mask, mask_size );
+				++extent;
 			}
 			
-			v = raster.next_v();
+			bool contained = (extent - h0) & 1;
+			
+			if ( contained )
+			{
+				xor_segments( segments, left );
+			}
+			
+			while ( (h = *extent++) < right )
+			{
+				xor_segments( segments, h );
+			}
+			
+			contained = (extent - h0) & 1;
+			
+			if ( ! contained )
+			{
+				xor_segments( segments, right );
+			}
+			
+			if ( h != Region_end )
+			{
+				while ( *extent++ < Region_end )  continue;
+			}
 		}
 		
-		if ( v > bottom )
+		--extent;
+		
+		accumulate_row( r, top, segments );
+		
+		while ( (v = *extent++) < bottom )
 		{
-			v = bottom;
+			*r++ = v;
+			
+			short* r0 = r;
+			
+			const short* h0 = extent;
+			
+			while ( *extent <= left )
+			{
+				++extent;
+			}
+			
+			bool contained = (extent - h0) & 1;
+			
+			if ( contained )
+			{
+				*r++ = left;
+				
+				xor_segments( segments, left );
+			}
+			
+			while ( (h = *extent++) < right )
+			{
+				*r++ = h;
+				
+				xor_segments( segments, h );
+			}
+			
+			contained = (extent - h0) & 1;
+			
+			if ( ! contained )
+			{
+				*r++ = right;
+				
+				xor_segments( segments, right );
+			}
+			
+			if ( r == r0 )
+			{
+				--r;
+			}
+			else if ( r[ -1 ] != Region_end )
+			{
+				*r++ = Region_end;
+			}
+			
+			if ( h != Region_end )
+			{
+				while ( *extent++ < Region_end )  continue;
+			}
 		}
 		
-		scanner.finish( rounded_left, v, mask, margin );
+		accumulate_row( r, bottom, segments );
 		
-		free( mask );
+		*r++ = Region_end;
 	}
 	
 	void sect_regions( const short*  bbox,
