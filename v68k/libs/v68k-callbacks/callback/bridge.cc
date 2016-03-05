@@ -291,7 +291,7 @@ static uint32_t BlockMove_callback( v68k::processor_state& s )
 		return nil;  // FIXME
 	}
 	
-	memcpy( q, p, n );
+	memmove( q, p, n );
 	
 	s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
 	
