@@ -247,13 +247,64 @@ static bool emu_gettimeofday( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-static void load_fdset( fd_set& native, const uint32_t* emulated, int n )
+static inline
+void copy_u32_aligned_x2( void* dst, const void* src )
+{
+	const uint16_t* p = (const uint16_t*) src;
+	
+	uint16_t* q = (uint16_t*) dst;
+	
+	*q++ = *p++;
+	*q++ = *p++;
+}
+
+static inline
+void copy_u32_swapped( void* dst, const void* src )
+{
+	const uint8_t* p = (const uint8_t*) src;
+	
+	uint8_t* q = (uint8_t*) dst + sizeof (uint32_t);
+	
+	*--q = *p++;
+	*--q = *p++;
+	*--q = *p++;
+	*--q = *p++;
+}
+
+static inline
+void copy_u32_aligned_x2_from_big( void* dst, const void* src )
+{
+	if ( iota::is_little_endian() )
+	{
+		copy_u32_swapped( dst, src );
+	}
+	else
+	{
+		copy_u32_aligned_x2( dst, src );
+	}
+}
+
+static inline
+void copy_big_u32_aligned_x2( void* dst, const void* src )
+{
+	if ( iota::is_little_endian() )
+	{
+		copy_u32_swapped( dst, src );
+	}
+	else
+	{
+		copy_u32_aligned_x2( dst, src );
+	}
+}
+
+static void load_fdset( fd_set& native, const uint8_t* emulated, int n )
 {
 	FD_ZERO( &native );
 	
 	while ( --n >= 0 )
 	{
-		const uint32_t unit = iota::u32_from_big( emulated[ n >> 5 ] );
+		uint32_t unit;
+		copy_u32_aligned_x2_from_big( &unit, emulated + (n >> 5) * 4 );
 		
 		if ( unit & (1 << (n & 31)) )
 		{
@@ -273,12 +324,12 @@ static int load_fdset( v68k::processor_state&  s,
 		return 0;
 	}
 	
-	const uint32_t* fdset_mem = (uint32_t*) s.mem.translate( addr,
-	                                                         n_bytes,
-	                                                         s.data_space(),
-	                                                         v68k::mem_read );
+	const uint8_t* fdset_mem = s.mem.translate( addr,
+	                                            n_bytes,
+	                                            s.data_space(),
+	                                            v68k::mem_read );
 	
-	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x3 )
+	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x1 )
 	{
 		errno = EFAULT;
 		
@@ -290,13 +341,18 @@ static int load_fdset( v68k::processor_state&  s,
 	return 1;
 }
 
-static void store_fdset( uint32_t* emulated, const fd_set& native, int n )
+static void store_fdset( uint8_t* emulated, const fd_set& native, int n )
 {
 	while ( --n >= 0 )
 	{
 		if ( FD_ISSET( n, &native ) )
 		{
-			emulated[ n >> 5 ] |= iota::big_u32( 1 << (n & 31) );
+			uint32_t unit;
+			copy_u32_aligned_x2_from_big( &unit, emulated + (n >> 5) * 4 );
+			
+			unit |= 1 << (n & 31);
+			
+			copy_big_u32_aligned_x2( emulated + (n >> 5) * 4, &unit );
 		}
 	}
 }
@@ -312,12 +368,12 @@ static int store_fdset( v68k::processor_state&  s,
 		return 0;
 	}
 	
-	uint32_t* fdset_mem = (uint32_t*) s.mem.translate( addr,
-	                                                   n_bytes,
-	                                                   s.data_space(),
-	                                                   v68k::mem_write );
+	uint8_t* fdset_mem = s.mem.translate( addr,
+	                                      n_bytes,
+	                                      s.data_space(),
+	                                      v68k::mem_write );
 	
-	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x3 )
+	if ( fdset_mem == NULL  ||  (uintptr_t) fdset_mem & 0x1 )
 	{
 		errno = EFAULT;
 		
@@ -352,7 +408,7 @@ static bool emu_select( v68k::processor_state& s )
 	
 	const int n = args[ 0 ];
 	
-	const int n_fdset_bytes = (n + 31) >> 5;
+	const int n_fdset_bytes = ((n + 31) >> 5) * sizeof (uint32_t);
 	
 	const uint32_t rfd_addr = args[ 1 ];
 	const uint32_t wfd_addr = args[ 2 ];
@@ -378,6 +434,8 @@ static bool emu_select( v68k::processor_state& s )
 		if ( result > 0 )  x = &except_fds;
 	}
 	
+	timeval tv;
+	
 	if ( const uint32_t timeout_addr = args[ 4 ] )
 	{
 		uint32_t seconds;
@@ -392,8 +450,6 @@ static bool emu_select( v68k::processor_state& s )
 			
 			return set_result( s, -1 );
 		}
-		
-		timeval tv;
 		
 		tv.tv_sec  = seconds;
 		tv.tv_usec = useconds;
