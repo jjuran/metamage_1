@@ -6,7 +6,6 @@ int main()
 {
 	Boolean quitting = false;
 	Boolean inverted_menu_bar = false;
-	SInt32 dummy;
 	
 	InitGraf( &qd.thePort );
 	
@@ -66,8 +65,6 @@ int main()
 			}
 		}
 	}
-	
-	Delay( 30, (UInt32*) &dummy );
 	
 	ExitToShell();
 	
