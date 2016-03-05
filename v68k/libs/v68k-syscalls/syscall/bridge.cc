@@ -352,7 +352,7 @@ static bool emu_select( v68k::processor_state& s )
 	
 	const int n = args[ 0 ];
 	
-	const int n_fdset_bytes = (n + 31) >> 5;
+	const int n_fdset_bytes = ((n + 31) >> 5) * sizeof (uint32_t);
 	
 	const uint32_t rfd_addr = args[ 1 ];
 	const uint32_t wfd_addr = args[ 2 ];
