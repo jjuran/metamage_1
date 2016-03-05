@@ -9,6 +9,9 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
+#ifndef __PROCESSES__
+#include <Processes.h>
+#endif
 
 // POSIX
 #include <unistd.h>
@@ -120,7 +123,7 @@ bool read_event( int fd, EventRecord* event )
 	
 	if ( 1 + len != n_read )
 	{
-		return false;
+		ExitToShell();
 	}
 	
 	switch ( len )
