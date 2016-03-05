@@ -434,6 +434,8 @@ static bool emu_select( v68k::processor_state& s )
 		if ( result > 0 )  x = &except_fds;
 	}
 	
+	timeval tv;
+	
 	if ( const uint32_t timeout_addr = args[ 4 ] )
 	{
 		uint32_t seconds;
@@ -448,8 +450,6 @@ static bool emu_select( v68k::processor_state& s )
 			
 			return set_result( s, -1 );
 		}
-		
-		timeval tv;
 		
 		tv.tv_sec  = seconds;
 		tv.tv_usec = useconds;
