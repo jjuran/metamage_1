@@ -22,6 +22,21 @@ pascal void InitMenus_patch()
 	draw_menu_bar_from_WMgr_port();
 }
 
+pascal void DrawMenuBar_patch()
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( BezelRgn );
+	
+	draw_menu_bar_from_WMgr_port();
+	
+	qd.thePort = saved_port;
+}
+
 pascal void FlashMenuBar_patch( short menuID )
 {
 	QDGlobals& qd = get_QDGlobals();

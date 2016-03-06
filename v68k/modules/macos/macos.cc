@@ -183,6 +183,7 @@ static void install_Windows()
 static void install_Menus()
 {
 	TBTRAP( InitMenus    );  // A930
+	TBTRAP( DrawMenuBar  );  // A937
 	TBTRAP( FlashMenuBar );  // A94C
 }
 
