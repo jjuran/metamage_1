@@ -17,11 +17,13 @@
 #include "qd/region_detail.hh"
 
 // macos
+#include "Desk.hh"
 #include "QDGlobals.hh"
 
 
-GrafPtr WMgrPort   : 0x09DE;
-short   MBarHeight : 0x0BAA;
+GrafPtr WMgrPort    : 0x09DE;
+Pattern DeskPattern : 0x0A3C;
+short   MBarHeight  : 0x0BAA;
 
 const short End = quickdraw::Region_end;
 
@@ -129,7 +131,9 @@ pascal void InitWindows_patch()
 	
 	const QDGlobals& qd = get_QDGlobals();
 	
-	FillRect( &bounds, &qd.gray );
+	DeskPattern = qd.gray;
+	
+	draw_desktop_from_WMgrPort();
 	
 	const short default_MBarHeight = 20;
 	
