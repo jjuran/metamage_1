@@ -169,6 +169,33 @@ static bool emu_write( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
+static bool emu_close( v68k::processor_state& s )
+{
+	uint32_t args[ 1 ];  // fd
+	
+	if ( !get_stacked_args( s, args, 1 ) )
+	{
+		return s.bus_error();
+	}
+	
+	int result;
+	
+	if ( fully_authorized )
+	{
+		const int fd = int32_t( args[ 0 ] );
+		
+		result = close( fd );
+	}
+	else
+	{
+		result = -1;
+		
+		errno = EPERM;
+	}
+	
+	return set_result( s, result );
+}
+
 static bool emu_getpid( v68k::processor_state& s )
 {
 	int32_t result = emulated_pid();
@@ -606,6 +633,7 @@ bool bridge_call( v68k::processor_state& s )
 		case 1:  return emu_exit ( s );
 		case 3:  return emu_read ( s );
 		case 4:  return emu_write( s );
+		case 6:  return emu_close( s );
 		
 		case 20:  return emu_getpid( s );
 		case 29:  return emu_pause ( s );
