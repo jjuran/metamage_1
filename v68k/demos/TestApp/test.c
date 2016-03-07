@@ -9,6 +9,9 @@
 #endif
 
 // Mac OS
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -18,6 +21,14 @@
 static QDGlobals qd;
 
 #endif
+
+static
+void set_desktop_pattern( const Pattern* pattern )
+{
+	LMSetDeskPattern( pattern );
+	
+	PaintOne( NULL, LMGetWMgrPort()->visRgn );
+}
 
 int main()
 {
@@ -71,6 +82,12 @@ int main()
 				case keyDown:
 					switch( (char) event.message )
 					{
+						case '1': set_desktop_pattern( &qd.white  );  break;
+						case '2': set_desktop_pattern( &qd.ltGray );  break;
+						case '3': set_desktop_pattern( &qd.gray   );  break;
+						case '4': set_desktop_pattern( &qd.dkGray );  break;
+						case '5': set_desktop_pattern( &qd.black  );  break;
+						
 						case 'q':
 							quitting = true;
 							break;
