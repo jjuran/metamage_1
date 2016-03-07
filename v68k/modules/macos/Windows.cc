@@ -29,6 +29,20 @@ GrafPtr WMgrPort    : 0x09DE;
 Pattern DeskPattern : 0x0A3C;
 short   MBarHeight  : 0x0BAA;
 
+/*
+	BezelRgn is a made-up global (i.e. not a Mac OS low memory global).
+	It includes the entire screen minus the rounded corners.
+	
+	Rationale:
+	 * It's suitable as a clip region for the Window Manager port while
+	   drawing the menu bar.
+	 * It can be used to calculate GrayRgn (by subtracting the menu bar rect)
+	   when the menu bar height changes (which includes hiding and showing
+	   the menu bar).
+*/
+
+RgnHandle BezelRgn;
+
 const short End = quickdraw::Region_end;
 
 
@@ -120,18 +134,20 @@ pascal void InitWindows_patch()
 	
 	PaintRect( &bounds );
 	
-	RgnHandle clipRgn = WMgrPort->clipRgn;
+	BezelRgn = NewRgn();
 	
-	RectRgn( clipRgn, &bounds );
+	RectRgn( BezelRgn, &bounds );
 	
 	RgnHandle corner = (RgnHandle) NewHandle( corner_size );
 	
-	subtract_corner( clipRgn, corner, topLeft,     0,            0             );
-	subtract_corner( clipRgn, corner, topRight,    bounds.right, 0             );
-	subtract_corner( clipRgn, corner, bottomLeft,  0,            bounds.bottom );
-	subtract_corner( clipRgn, corner, bottomRight, bounds.right, bounds.bottom );
+	subtract_corner( BezelRgn, corner, topLeft,     0,            0             );
+	subtract_corner( BezelRgn, corner, topRight,    bounds.right, 0             );
+	subtract_corner( BezelRgn, corner, bottomLeft,  0,            bounds.bottom );
+	subtract_corner( BezelRgn, corner, bottomRight, bounds.right, bounds.bottom );
 	
 	DisposeHandle( (Handle) corner );
+	
+	SetClip( BezelRgn );
 	
 	const QDGlobals& qd = get_QDGlobals();
 	
