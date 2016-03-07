@@ -8,6 +8,7 @@
 // macos
 #include "MBDF.hh"
 #include "QDGlobals.hh"
+#include "Windows.hh"
 
 
 GrafPtr WMgrPort : 0x09DE;
@@ -28,6 +29,8 @@ pascal void FlashMenuBar_patch( short menuID )
 	GrafPtr saved_port = qd.thePort;
 	
 	qd.thePort = WMgrPort;
+	
+	SetClip( BezelRgn );
 	
 	Rect menu_bar = qd.screenBits.bounds;
 	

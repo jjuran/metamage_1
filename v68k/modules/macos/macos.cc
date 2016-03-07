@@ -174,6 +174,8 @@ static void install_Fonts()
 
 static void install_Windows()
 {
+	TBTRAP( ClipAbove   );  // A90B
+	TBTRAP( PaintOne    );  // A90C
 	TBTRAP( InitWindows );  // A912
 	TBTRAP( FindWindow  );  // A92C
 }

@@ -47,6 +47,39 @@ RgnHandle BezelRgn;
 const short End = quickdraw::Region_end;
 
 
+pascal void ClipAbove_patch( WindowPeek window )
+{
+	RgnHandle clipRgn = WMgrPort->clipRgn;
+	
+	SectRgn( clipRgn, GrayRgn, clipRgn );
+}
+
+pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
+{
+	if ( clobbered_region == NULL )
+	{
+		return;
+	}
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( clobbered_region );
+	
+	ClipAbove_patch( window );
+	
+	if ( window == NULL )
+	{
+		draw_desktop_from_WMgrPort();
+	}
+	
+	qd.thePort = saved_port;
+}
+
+
 static const short corner_size = (1 + 4 + 4 * 5 + 1) * sizeof (short);  // 52
 
 static const short topLeft[] =
