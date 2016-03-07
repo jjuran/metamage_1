@@ -35,7 +35,7 @@ namespace utils {
 
 #ifdef __MC68K__
 
-static asm void* load( const char* path : __A0 ) : __A0
+asm void* load( const char* path : __A0 ) : __A0
 {
 	MOVEA.L  A0,A1    ; // copy A0
 	
