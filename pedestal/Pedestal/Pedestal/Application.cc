@@ -732,7 +732,7 @@ namespace Pedestal
 			PopulateAppleMenu( appleMenu );
 		}
 		
-		N::InvalMenuBar();
+		DrawMenuBar();
 	}
 	
 	
