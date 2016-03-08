@@ -1931,18 +1931,17 @@ namespace tool
 	
 	static void decode_B_line( uint16_t op )
 	{
-		uint16_t size_index = op >> 6 & 0x3;
+		const uint16_t size_bits = op >> 6 & 0x3;
 		
 		const uint16_t reg = op >> 9 & 0x7;
 		
-		if ( size_index == 3 )
-		{
-			size_index = op & 0x0100 ? 2 : 1;
-		}
+		const uint16_t size_index = size_bits < 3 ? size_bits
+		                          : op & 0x0100   ? 2
+		                          :                 1;
 		
 		const char size_code = size_codes[ size_index ];
 		
-		if ( size_index != 3  &&  (op & 0x0138) == 0x0108 )
+		if ( size_bits != 3  &&  (op & 0x0138) == 0x0108 )
 		{
 			printf( "CMPM.%c   (A%d)+,(A%d)+" "\n", size_code, op & 0x7, reg );
 			
@@ -1951,7 +1950,7 @@ namespace tool
 		
 		const plus::string ea = read_ea( op & 0x3f, sizes[ size_index ] );
 		
-		if ( size_index == 3 )
+		if ( size_bits == 3 )
 		{
 			printf( "CMPA.%c   %s,A%d" "\n", size_code, ea.c_str(), reg );
 		}
