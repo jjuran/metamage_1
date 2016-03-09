@@ -39,6 +39,7 @@ enum
 	tag_DeskPattern_1,
 	tag_DeskPattern_2,
 	tag_DeskPattern_3,
+	tag_ResErr,
 	tag_MBarHeight,
 	tag_last_A_trap,
 	n_words
@@ -75,6 +76,7 @@ static const global globals[] =
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
 	{ 0x0A3C, 8,    tag_DeskPattern },
+	{ 0x0A60, 2,    tag_ResErr      },
 	{ 0x0BAA, 2,    tag_MBarHeight  },
 	{ 0x0BFE, 2,    tag_last_A_trap }
 };
