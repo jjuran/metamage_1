@@ -1,7 +1,7 @@
-/*	============
- *	GenieMain.cc
- *	============
- */
+/*
+	App.cc
+	------
+*/
 
 // Nitrogen
 #include "Nitrogen/AppleEvents.hh"
