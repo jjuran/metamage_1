@@ -112,7 +112,8 @@ namespace Pedestal
 	using Mac::kCoreEventClass;
 	using Mac::kAEQuitApplication;
 	
-	const uint32_t gestaltMenuMgrAttr = 'menu';
+	const uint32_t gestaltMenuMgrAttr   = 'menu';
+	const uint32_t gestaltSystemVersion = 'sysv';
 	
 	const int gestaltMenuMgrAquaLayoutBit = 1;
 	
@@ -121,6 +122,11 @@ namespace Pedestal
 	static const UInt32 kEitherControlKey = controlKey | rightControlKey;
 	
 	static MenuRef the_Window_menu;
+	
+	
+	const uint32_t sysv = mac::sys::gestalt( gestaltSystemVersion );
+	
+	const bool apple_events_present = ! TARGET_CPU_68K  ||  sysv >= 0x0700;
 	
 	
 	struct AppleEventSignature
@@ -704,8 +710,11 @@ namespace Pedestal
 		
 		Init_Memory( 0 );
 		
-		N::AEInstallEventHandler< AppleEvent::Handler >( kCoreEventClass,
-		                                                 N::AEEventID( typeWildCard ) ).release();
+		if ( apple_events_present )
+		{
+			N::AEInstallEventHandler< AppleEvent::Handler >( kCoreEventClass,
+			                                                 N::AEEventID( typeWildCard ) ).release();
+		}
 		
 		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
 		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
@@ -732,7 +741,7 @@ namespace Pedestal
 			PopulateAppleMenu( appleMenu );
 		}
 		
-		N::InvalMenuBar();
+		DrawMenuBar();
 	}
 	
 	
@@ -1038,8 +1047,15 @@ namespace Pedestal
 				break;
 			
 			case 'quit':
-				// Direct dispatch
-				N::AESend( kCoreEventClass, kAEQuitApplication );
+				if ( apple_events_present )
+				{
+					// Direct dispatch
+					N::AESend( kCoreEventClass, kAEQuitApplication );
+				}
+				else
+				{
+					gRunState.quitRequested = true;
+				}
 				break;
 			
 			default:

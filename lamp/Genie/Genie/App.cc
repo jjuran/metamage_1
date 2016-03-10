@@ -74,13 +74,18 @@ namespace Genie
 	
 	App::App()
 	{
+		using Ped::apple_events_present;
+		
 		Ped::gActivelyBusy_Hook = &relix::is_active;
 		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
 		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
-		Reply_AppleEvent::Install_Handler();
+		if ( ! TARGET_CPU_68K  ||  apple_events_present )
+		{
+			Reply_AppleEvent::Install_Handler();
+		}
 		
 		try
 		{
