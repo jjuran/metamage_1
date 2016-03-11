@@ -25,6 +25,7 @@
 #include "iota/strings.hh"
 
 // mac-sys-utils
+#include "mac_sys/current_process.hh"
 #include "mac_sys/is_front_process.hh"
 
 // plus
@@ -429,13 +430,15 @@ namespace tool
 	
 	int RunCommandInToolServer( const plus::string& command, bool switch_layers )
 	{
+		const ProcessSerialNumber& self = mac::sys::current_process();
+		
 		const ProcessSerialNumber toolServer = find_or_launch_ToolServer();
 		
 		// This is a bit of a hack.
 		// It really ought to happen just after we send the event.
 		if ( switch_layers )
 		{
-			switch_process( N::CurrentProcess(), toolServer );
+			switch_process( self, toolServer );
 		}
 		
 		int result = GetResult( AESendBlocking( CreateScriptEvent( toolServer,
@@ -443,7 +446,7 @@ namespace tool
 		
 		if ( switch_layers )
 		{
-			switch_process( toolServer, N::CurrentProcess() );
+			switch_process( toolServer, self );
 		}
 		
 		if ( result == -9 )
