@@ -31,7 +31,9 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/is_front_process.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -49,7 +51,6 @@
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
-#include "Nitrogen/Processes.hh"
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Resources.hh"
 #include "Nitrogen/Threads.hh"
@@ -951,7 +952,10 @@ namespace Pedestal
 	
 	int Application::Run()
 	{
-		gRunState.inForeground = N::SameProcess( N::GetFrontProcess(), N::CurrentProcess() );
+		using mac::sys::current_process;
+		using mac::sys::is_front_process;
+		
+		gRunState.inForeground = is_front_process( current_process() );
 		
 		gNeedToConfigureKeyboard = gRunState.inForeground;
 		
