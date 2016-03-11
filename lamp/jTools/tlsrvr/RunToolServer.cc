@@ -24,6 +24,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// mac-sys-utils
+#include "mac_sys/is_front_process.hh"
+
 // plus
 #include "plus/mac_utf8.hh"
 #include "plus/pointer_to_function.hh"
@@ -411,11 +414,13 @@ namespace tool
 	static void switch_process( const ProcessSerialNumber& from,
 	                            const ProcessSerialNumber& to )
 	{
-		if ( N::SameProcess( from, N::GetFrontProcess() ) )
+		using mac::sys::is_front_process;
+		
+		if ( is_front_process( from ) )
 		{
 			N::SetFrontProcess( to );
 			
-			while ( N::SameProcess( from, N::GetFrontProcess() ) )
+			while ( is_front_process( from ) )
 			{
 				sleep( 0 );
 			}
