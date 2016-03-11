@@ -13,6 +13,10 @@
 // gear
 #include "gear/quad.hh"
 
+// mac-sys-utils
+#include "mac_sys/current_process.hh"
+#include "mac_sys/is_front_process.hh"
+
 // Nitrogen
 #include "Mac/Files/Types/FSCreator.hh"
 
@@ -125,7 +129,10 @@ namespace tool
 		
 		if ( gActivate )
 		{
-			while ( !N::SameProcess( psn, N::GetFrontProcess() ) )
+			using mac::sys::current_process;
+			using mac::sys::is_front_process;
+			
+			while ( ! is_front_process( current_process() ) )
 			{
 				sleep( 0 );
 			}
