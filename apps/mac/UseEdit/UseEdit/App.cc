@@ -9,6 +9,10 @@
 // iota
 #include "iota/convert_string.hh"
 
+// mac-sys-utils
+#include "mac_sys/current_process.hh"
+#include "mac_sys/is_front_process.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -17,7 +21,6 @@
 #include "Nitrogen/AEObjects.hh"
 #include "Nitrogen/CarbonEvents.hh"
 #include "Nitrogen/MacWindows.hh"
-#include "Nitrogen/Processes.hh"
 
 // Iteration
 #include "Iteration/AEDescListItemDatas.hh"
@@ -214,7 +217,15 @@ namespace UseEdit
 		                                               const Mac::AEDesc_Token&  containerToken,
 		                                               Mac::AEObjectClass        containerClass )
 		{
-			return N::AECreateDesc< Mac::typeBoolean, Mac::AEDesc_Token >( N::SameProcess( N::CurrentProcess(), N::GetFrontProcess() ) );
+			using mac::sys::current_process;
+			using mac::sys::is_front_process;
+			
+			const bool frontmost = is_front_process( current_process() );
+			
+			using Mac::typeBoolean;
+			using Mac::AEDesc_Token;
+			
+			return N::AECreateDesc< typeBoolean, AEDesc_Token >( frontmost );
 		}
 		
 		static void Install_Accessor()
