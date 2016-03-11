@@ -24,6 +24,19 @@ namespace sys {
 	
 	bool is_front_process( const ProcessSerialNumber& psn )
 	{
+		if ( TARGET_CPU_68K  &&  psn.lowLongOfPSN == 0 )
+		{
+			/*
+				We're running in a single-process system, which means
+				we're always the front process.  It's assumed that you're
+				passing in mac::sys::current_process() -- in a multi-process
+				environment, PSNs are never zero; in single-process, where
+				else would you get a PSN than current_process()?
+			*/
+			
+			return true;
+		}
+		
 		ProcessSerialNumber front;
 		
 		if ( OSErr err = GetFrontProcess( &front ) )
