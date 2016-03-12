@@ -4,9 +4,11 @@ resource 'MENU' (128, "Apple") {
 	allEnabled,
 	enabled,
 	apple,
-	{	/* array: 1 elements */
+	{	/* array: 2 elements */
 		/* [1] */
-		"About MacRelix… [abou]", noIcon, noKey, noMark, plain
+		"About MacRelix… [abou]", noIcon, noKey, noMark, plain,
+		/* [2] */
+		"-", noIcon, noKey, noMark, plain
 	}
 };
 
