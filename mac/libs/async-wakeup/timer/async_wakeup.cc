@@ -75,6 +75,26 @@ namespace sys {
 		&current_process()
 	};
 	
+	/*
+		Determine whether the ProcessSerialNumber for this process (as
+		determined by mac-sys-utils) is real or not.  In the absence of
+		System 7 or MultiFinder, it's zero in both fields (which is the
+		same as {0, kNoProcess}, which GetCurrentProcess() will never
+		return.)
+		
+		In a single-process system, there's no need to request wakeups,
+		since this process is always in front and WaitNextEvent() will
+		always return nullEvents instead of sleeping.
+	*/
+	
+	static inline
+	bool is_multiproc_PSN( const ProcessSerialNumber& psn )
+	{
+		return ! TARGET_CPU_68K  ||  psn.lowLongOfPSN != 0;
+	}
+	
+	const bool multiproc_available = is_multiproc_PSN( *the_wakeup_task.psn );
+	
 	static bool lock_timer()
 	{
 		register void** mutex = (void**) &the_wakeup_task.tm.qLink;
@@ -112,6 +132,11 @@ namespace sys {
 	
 	void request_async_wakeup()
 	{
+		if ( ! multiproc_available )
+		{
+			return;
+		}
+		
 		wakeup_requested = true;
 		
 		if ( lock_timer() )
@@ -129,6 +154,11 @@ namespace sys {
 	
 	void clear_async_wakeup()
 	{
+		if ( ! multiproc_available )
+		{
+			return;
+		}
+		
 		if ( ! TARGET_API_MAC_CARBON  &&  wakeup_requested )
 		{
 			::RmvTime( (QElemPtr) &the_wakeup_task );
