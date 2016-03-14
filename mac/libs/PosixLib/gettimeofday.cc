@@ -7,12 +7,12 @@
 #ifndef __DATETIMEUTILS__
 #include <DateTimeUtils.h>
 #endif
-#ifndef __TIMER__
-#include <Timer.h>
-#endif
 
 // POSIX
 #include <sys/time.h>
+
+// mac-sys-utils
+#include "mac_sys/microseconds.hh"
 
 // TimeOff
 #include "TimeOff/TimeOff.hh"
@@ -37,15 +37,6 @@ namespace PosixLib
 		return GetGlobalDateTime() - TimeOff::MacUnixEpochOffset();
 	}
 	
-	static inline UInt64 Microseconds()
-	{
-		UInt64 result;
-		
-		::Microseconds( (UnsignedWide*) &result );
-		
-		return result;
-	}
-	
 	class MicrosecondUnixTimeClock
 	{
 		private:
@@ -58,7 +49,7 @@ namespace PosixLib
 			
 			static UInt64 Offset()
 			{
-				return UnixTime() * 1000000ULL - Microseconds();
+				return UnixTime() * 1000000ULL - mac::sys::microseconds();
 			}
 			
 			UInt64 Now()
@@ -72,7 +63,7 @@ namespace PosixLib
 					offset = new_offset;
 				}
 				
-				return Microseconds() + offset;
+				return mac::sys::microseconds() + offset;
 			}
 	};
 	
