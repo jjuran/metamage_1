@@ -201,7 +201,7 @@ namespace Genie
 	{
 		const bool exists = ResFile_dir_exists( file );
 		
-		const mode_t mode = exists ? S_IFDIR | 0700 : 0;
+		const mode_t mode = exists ? S_IFDIR | 0755 : 0;
 		
 		const vfs::node_method_set* methods = exists ? &resfile_dir_methods
 		                                             : &empty_rsrc_fork_methods;

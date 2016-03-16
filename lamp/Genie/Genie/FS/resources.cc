@@ -544,7 +544,7 @@ namespace Genie
 		const bool exists = has_resource( file, resSpec );
 		
 		// FIXME:  Check perms
-		const mode_t mode = exists ? S_IFREG | 0400 : 0;
+		const mode_t mode = exists ? S_IFREG | 0444 : 0;
 		
 		const vfs::node_method_set* methods = exists ? &rsrc_file_methods
 		                                             : &unrsrc_file_methods;
