@@ -8,4 +8,6 @@
 
 pascal short Random_patch();
 
+pascal struct Pattern** GetPattern_patch( short id );
+
 #endif

@@ -163,6 +163,8 @@ static void install_QuickDraw()
 	TBTRAP( DiffRgn     );  // A8E6
 	TBTRAP( XOrRgn      );  // A8E7
 	TBTRAP( PtInRgn     );  // A8E8
+	
+	TBTRAP( GetPattern  );  // A9B8
 }
 
 static void install_Fonts()
