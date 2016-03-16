@@ -5,6 +5,9 @@
 
 #include "vfs/primitives/lookup.hh"
 
+// POSIX
+#include <sys/stat.h>
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -26,7 +29,15 @@ namespace vfs
 	                 const plus::string&  name,
 	                 const node*          surrogate )
 	{
-		access( that, X_OK );
+		/*
+			For lookups when `that` is a non-directory (e.g. "rsrc" and "r"
+			subdirs of Mac resource files), check the 'r' bit, since 'x'
+			means execute, not search.
+		*/
+		
+		const int amode = S_ISDIR( that.filemode() ) ? X_OK : R_OK;
+		
+		access( that, amode );
 		
 		if ( name == "." )
 		{
