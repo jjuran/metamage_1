@@ -12,6 +12,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 
 // quickdraw
 #include "qd/region_detail.hh"
@@ -132,6 +135,13 @@ pascal void InitWindows_patch()
 	const QDGlobals& qd = get_QDGlobals();
 	
 	DeskPattern = qd.gray;
+	
+	if ( PatHandle deskPat = GetPattern( deskPatID ) )
+	{
+		DeskPattern = **deskPat;
+		
+		ReleaseResource( (Handle) deskPat );
+	}
 	
 	draw_desktop_from_WMgrPort();
 	
