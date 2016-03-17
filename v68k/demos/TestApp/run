@@ -24,4 +24,4 @@ EVENTS=--events-fd=8
 
 TEST=$HOME/var/build/misc/Test/Test/r/0001.CODE
 
-daemonize --cwd $CTTY -- xv68k $SCREEN -m [ macos $EVENTS ] $TEST 8< $events
+daemonize --cwd $CTTY -- xv68k $SCREEN -m [ macos $EVENTS ] -m macrsrc $TEST 8< $events
