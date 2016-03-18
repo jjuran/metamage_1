@@ -39,9 +39,6 @@
 #include "MacIO/EOF_Policy.hh"
 #include "MacIO/ThrowOSStatus.hh"
 
-// Genie
-#include "Genie/Process/AsyncYield.hh"
-
 
 #ifndef O_MAC_ASYNC
 #define O_MAC_ASYNC  0

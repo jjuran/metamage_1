@@ -24,6 +24,9 @@
 #include "MacIO/GetCatInfo_Async.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
+// Genie
+#include "Genie/Process/AsyncYield.hh"
+
 
 #define CALLBACK  plus::ptr_fun( AsyncYield )
 

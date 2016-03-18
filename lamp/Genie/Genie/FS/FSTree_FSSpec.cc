@@ -96,6 +96,7 @@
 #include "Genie/IO/MacDirectory.hh"
 #include "Genie/IO/MacFile.hh"
 #include "Genie/Kernel/native_syscalls.hh"
+#include "Genie/Process/AsyncYield.hh"
 #include "Genie/Utilities/AsyncIO.hh"
 
 
