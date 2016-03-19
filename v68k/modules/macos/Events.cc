@@ -160,7 +160,6 @@ EventKind read_event( int fd, EventRecord* event )
 			return keyUp;
 		
 		case 3:
-		case 4:
 			using splode::pointer_event_buffer;
 			
 			return populate( *event, *(pointer_event_buffer*) buffer );
