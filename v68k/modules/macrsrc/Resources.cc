@@ -29,8 +29,9 @@
 #define STRLEN( s )  (sizeof "" s - 1)
 
 
-short MemErr : 0x0220;
-short ResErr : 0x0A60;
+short MemErr    : 0x0220;
+Str31 CurApName : 0x0910;
+short ResErr    : 0x0A60;
 
 const short memFullErr  = -108;
 const short resNotFound = -192;
@@ -107,7 +108,21 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	
 	char** result = 0;  // NULL
 	
-	const bool got = try_to_get( sys_path, rsrc );
+	bool got = false;
+	
+	if ( CurApName[ 0 ] != '\0' )
+	{
+		plus::var_string app_path = CurApName;
+		
+		app_path += sys_path + STRLEN( "System" );
+		
+		got = try_to_get( app_path, rsrc );
+	}
+	
+	if ( ! got )
+	{
+		got = try_to_get( sys_path, rsrc );
+	}
 	
 	if ( ! got )
 	{
