@@ -19,6 +19,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // freemount-client
 #include "freemount/synced.hh"
 
@@ -26,8 +29,9 @@
 #define STRLEN( s )  (sizeof "" s - 1)
 
 
-short MemErr : 0x0220;
-short ResErr : 0x0A60;
+short MemErr    : 0x0220;
+Str31 CurApName : 0x0910;
+short ResErr    : 0x0A60;
 
 const short memFullErr  = -108;
 const short resNotFound = -192;
@@ -60,22 +64,9 @@ class temp_A4
 		}
 };
 
-pascal char** GetResource_patch( unsigned long type, short id )
+static
+bool try_to_get( const plus::string& path, plus::var_string& data )
 {
-	temp_A4 a4;
-	
-	char path[] = "System/r/1234.TYPE";
-	
-	char* p = path + STRLEN( "System/r/" );
-	
-	gear::encode_16_bit_hex( id, p );
-	
-	p += 5;
-	
-	*(unsigned long*) p = type;
-	
-	char** result = 0;  // NULL
-	
 	try
 	{
 		namespace F = freemount;
@@ -83,19 +74,9 @@ pascal char** GetResource_patch( unsigned long type, short id )
 		const int in  = 6;
 		const int out = 7;
 		
-		plus::string got = F::synced_get( in, out, path );
+		data = F::synced_get( in, out, path ).move();
 		
-		const unsigned long size = got.size();
-		
-		result = NewHandle( size );
-		
-		if ( result == 0 )  // NULL
-		{
-			ResErr = MemErr;
-			return result;
-		}
-		
-		memcpy( *result, got.data(), size );
+		return true;
 	}
 	catch ( const std::bad_alloc& )
 	{
@@ -105,6 +86,61 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	{
 		ResErr = resNotFound;
 	}
+	
+	return false;
+}
+
+pascal char** GetResource_patch( unsigned long type, short id )
+{
+	temp_A4 a4;
+	
+	char sys_path[] = "System/r/1234.TYPE";
+	
+	char* p = sys_path + STRLEN( "System/r/" );
+	
+	gear::encode_16_bit_hex( id, p );
+	
+	p += 5;
+	
+	*(unsigned long*) p = type;
+	
+	plus::var_string rsrc;
+	
+	char** result = 0;  // NULL
+	
+	bool got = false;
+	
+	if ( CurApName[ 0 ] != '\0' )
+	{
+		plus::var_string app_path = CurApName;
+		
+		app_path += sys_path + STRLEN( "System" );
+		
+		got = try_to_get( app_path, rsrc );
+	}
+	
+	if ( ! got )
+	{
+		got = try_to_get( sys_path, rsrc );
+	}
+	
+	if ( ! got )
+	{
+		// ResErr is already set.
+		return result;
+	}
+	
+	const unsigned long size = rsrc.size();
+	
+	result = NewHandle( size );
+	
+	if ( result == 0 )  // NULL
+	{
+		ResErr = MemErr;
+		return result;
+	}
+	
+	memcpy( *result, rsrc.data(), size );
 	
 	return result;
 }
