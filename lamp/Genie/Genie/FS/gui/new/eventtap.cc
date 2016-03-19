@@ -264,7 +264,6 @@ namespace Genie
 			general_modifiers,
 			button_attributes,
 			0,  // unspecified device
-			0,  // unspecified button
 		};
 		
 		if ( extra.client )

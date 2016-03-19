@@ -74,7 +74,7 @@ namespace pointer
 		uint8_t ascii;
 	};
 	
-	// Type/length 4:  Pointer input event.
+	// Type/length 3:  Pointer input event.
 	
 	struct pointer_event_buffer
 	{
@@ -82,7 +82,6 @@ namespace pointer
 		uint8_t modes;
 		uint8_t attrs;
 		uint8_t device;
-		uint8_t button;
 	};
 	
 	// Type/length 5:  Pointer location.

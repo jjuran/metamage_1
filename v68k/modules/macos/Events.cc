@@ -159,7 +159,7 @@ EventKind read_event( int fd, EventRecord* event )
 			event->message = ((ascii_synth_buffer*) buffer)->ascii;
 			return keyUp;
 		
-		case 4:
+		case 3:
 			using splode::pointer_event_buffer;
 			
 			return populate( *event, *(pointer_event_buffer*) buffer );
