@@ -22,7 +22,7 @@ static QDGlobals qd;
 int main()
 {
 	Boolean quitting = false;
-	Boolean inverted_menu_bar = false;
+	int menu_bar_inversion_level = 0;
 	
 #if ! TARGET_API_MAC_CARBON
 	
@@ -48,10 +48,8 @@ int main()
 					switch ( FindWindow( event.where, &window ) )
 					{
 						case inMenuBar:
-							if ( ! inverted_menu_bar )
+							if ( menu_bar_inversion_level-- == 0 )
 							{
-								inverted_menu_bar = true;
-								
 								FlashMenuBar( 0 );
 							}
 							break;
@@ -62,10 +60,8 @@ int main()
 					break;
 					
 				case mouseUp:
-					if ( inverted_menu_bar )
+					if ( ++menu_bar_inversion_level == 0 )
 					{
-						inverted_menu_bar = false;
-						
 						FlashMenuBar( 0 );
 					}
 					break;
