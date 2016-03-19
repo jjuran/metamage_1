@@ -74,6 +74,8 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	
 	*(unsigned long*) p = type;
 	
+	plus::string rsrc;
+	
 	char** result = 0;  // NULL
 	
 	try
@@ -83,19 +85,8 @@ pascal char** GetResource_patch( unsigned long type, short id )
 		const int in  = 6;
 		const int out = 7;
 		
-		plus::string got = F::synced_get( in, out, sys_path );
+		rsrc = F::synced_get( in, out, sys_path );
 		
-		const unsigned long size = got.size();
-		
-		result = NewHandle( size );
-		
-		if ( result == 0 )  // NULL
-		{
-			ResErr = MemErr;
-			return result;
-		}
-		
-		memcpy( *result, got.data(), size );
 	}
 	catch ( const std::bad_alloc& )
 	{
@@ -105,6 +96,18 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	{
 		ResErr = resNotFound;
 	}
+	
+	const unsigned long size = rsrc.size();
+	
+	result = NewHandle( size );
+	
+	if ( result == 0 )  // NULL
+	{
+		ResErr = MemErr;
+		return result;
+	}
+	
+	memcpy( *result, rsrc.data(), size );
 	
 	return result;
 }
