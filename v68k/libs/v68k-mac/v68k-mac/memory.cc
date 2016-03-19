@@ -26,6 +26,7 @@ namespace mac  {
 
 enum
 {
+	tag_SysEvtMask,
 	tag_Ticks,
 	tag_Ticks_low_word,
 	tag_MemErr,
@@ -67,6 +68,7 @@ static const global globals[] =
 {
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 0x82, 64              },  // ScreenRow
+	{ 0x0144, 2,    tag_SysEvtMask  },
 	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
