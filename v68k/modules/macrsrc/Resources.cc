@@ -19,6 +19,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// plus
+#include "plus/var_string.hh"
+
 // freemount-client
 #include "freemount/synced.hh"
 
@@ -60,6 +63,32 @@ class temp_A4
 		}
 };
 
+static
+bool try_to_get( const plus::string& path, plus::var_string& data )
+{
+	try
+	{
+		namespace F = freemount;
+		
+		const int in  = 6;
+		const int out = 7;
+		
+		data = F::synced_get( in, out, path ).move();
+		
+		return true;
+	}
+	catch ( const std::bad_alloc& )
+	{
+		ResErr = memFullErr;
+	}
+	catch ( ... )
+	{
+		ResErr = resNotFound;
+	}
+	
+	return false;
+}
+
 pascal char** GetResource_patch( unsigned long type, short id )
 {
 	temp_A4 a4;
@@ -74,27 +103,16 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	
 	*(unsigned long*) p = type;
 	
-	plus::string rsrc;
+	plus::var_string rsrc;
 	
 	char** result = 0;  // NULL
 	
-	try
+	const bool got = try_to_get( sys_path, rsrc );
+	
+	if ( ! got )
 	{
-		namespace F = freemount;
-		
-		const int in  = 6;
-		const int out = 7;
-		
-		rsrc = F::synced_get( in, out, sys_path );
-		
-	}
-	catch ( const std::bad_alloc& )
-	{
-		ResErr = memFullErr;
-	}
-	catch ( ... )
-	{
-		ResErr = resNotFound;
+		// ResErr is already set.
+		return result;
 	}
 	
 	const unsigned long size = rsrc.size();
