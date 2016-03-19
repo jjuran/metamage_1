@@ -526,13 +526,23 @@ namespace Pedestal
 	
 	static void DispatchKey( const EventRecord& event )
 	{
-		ASSERT( event.what == keyDown || event.what == autoKey );
+		ASSERT( event.what >= keyDown  &&  event.what <= autoKey );
 		
 	#if !TARGET_API_MAC_CARBON
 		
 		gLastKeyboard = GetKeyboardFromEvent( event );
 		
 	#endif
+		
+		if ( event.what == keyUp )
+		{
+			if ( Window* window = SetPort_FrontWindow() )
+			{
+				window->GetView()->KeyUp( event );
+			}
+			
+			return;
+		}
 		
 		const char c = event.message & charCodeMask;
 		
@@ -655,6 +665,7 @@ namespace Pedestal
 			case mouseDown:        DispatchMouseDown     ( event );  break;
 			case mouseUp:          DispatchMouseUp       ( event );  break;
 			case keyDown:
+			case keyUp:
 				case autoKey:      DispatchKey           ( event );  break;
 			case activateEvt:      DispatchActivate      ( event );  break;
 			case updateEvt:        DispatchUpdate        ( event );  break;
@@ -958,6 +969,8 @@ namespace Pedestal
 		gRunState.inForeground = is_front_process( current_process() );
 		
 		gNeedToConfigureKeyboard = gRunState.inForeground;
+		
+		SetEventMask( everyEvent );
 		
 		EventLoop();
 		

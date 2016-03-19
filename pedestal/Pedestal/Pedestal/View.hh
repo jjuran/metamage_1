@@ -44,6 +44,7 @@ namespace Pedestal
 			virtual bool MouseDown( const EventRecord& event )  { return true;  }
 			virtual void MouseUp  ( const EventRecord& event )  {}
 			virtual bool KeyDown  ( const EventRecord& event )  { return false; }
+			virtual void KeyUp    ( const EventRecord& event )  {}
 			virtual bool HitTest  ( const EventRecord& event )  { return true;  }
 			
 			virtual boost::intrusive_ptr< Quasimode > EnterShiftSpaceQuasimode( const EventRecord& );

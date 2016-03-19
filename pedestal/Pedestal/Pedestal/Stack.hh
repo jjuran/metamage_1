@@ -32,6 +32,7 @@ namespace Pedestal
 			bool MouseDown( const EventRecord& event );
 			
 			bool KeyDown( const EventRecord& event );
+			void KeyUp  ( const EventRecord& event );
 			
 			bool HitTest( const EventRecord& event );
 			
