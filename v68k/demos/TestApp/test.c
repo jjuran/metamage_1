@@ -34,6 +34,8 @@ int main()
 	
 #endif
 	
+	SetEventMask( everyEvent );
+	
 	while ( ! quitting )
 	{
 		EventRecord event;
@@ -67,13 +69,32 @@ int main()
 					break;
 					
 				case keyDown:
-					if ( (char) event.message == 'q' )
+					switch( (char) event.message )
 					{
-						quitting = true;
+						case 'q':
+							quitting = true;
+							break;
+						
+						case ' ':
+							if ( menu_bar_inversion_level-- == 0 )
+							{
+								FlashMenuBar( 0 );
+							}
+							break;
+						
+						default:
+							SysBeep( 30 );
+							break;
 					}
-					else
+					break;
+				
+				case keyUp:
+					if ( (char) event.message == ' ' )
 					{
-						SysBeep( 30 );
+						if ( ++menu_bar_inversion_level == 0 )
+						{
+							FlashMenuBar( 0 );
+						}
 					}
 					break;
 				
