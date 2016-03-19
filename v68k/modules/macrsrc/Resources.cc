@@ -64,9 +64,9 @@ pascal char** GetResource_patch( unsigned long type, short id )
 {
 	temp_A4 a4;
 	
-	char path[] = "System/r/1234.TYPE";
+	char sys_path[] = "System/r/1234.TYPE";
 	
-	char* p = path + STRLEN( "System/r/" );
+	char* p = sys_path + STRLEN( "System/r/" );
 	
 	gear::encode_16_bit_hex( id, p );
 	
@@ -83,7 +83,7 @@ pascal char** GetResource_patch( unsigned long type, short id )
 		const int in  = 6;
 		const int out = 7;
 		
-		plus::string got = F::synced_get( in, out, path );
+		plus::string got = F::synced_get( in, out, sys_path );
 		
 		const unsigned long size = got.size();
 		
