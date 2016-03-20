@@ -277,3 +277,7 @@ pascal void EmptyHandle_patch( char** h : __A0 )
 	
 	*h = NULL;
 }
+
+pascal void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
+{
+}

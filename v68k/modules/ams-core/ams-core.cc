@@ -91,6 +91,7 @@ void* toolbox_trap_table[] : 3 * 1024;
 enum
 {
 	_ReallocateHandle = _ReallocHandle,
+	_ReserveMem       = _ResrvMem,
 	_SetPortBits      = _SetPBits,
 	_SetRectRgn       = _SetRecRgn,
 };
@@ -120,6 +121,7 @@ static void install_MemoryManager()
 	OSTRAP( GetHandleSize    );  // A025
 	OSTRAP( ReallocateHandle );  // A027
 	OSTRAP( EmptyHandle      );  // A02B
+	OSTRAP( ReserveMem       );  // A040
 	OSTRAP( NewEmptyHandle   );  // A066
 }
 
