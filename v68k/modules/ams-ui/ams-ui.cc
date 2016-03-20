@@ -16,6 +16,7 @@
 
 // ams-ui
 #include "Controls.hh"
+#include "Dialogs.hh"
 #include "Drag.hh"
 #include "Icons.hh"
 #include "Menus.hh"
@@ -123,6 +124,11 @@ static void install_Controls()
 	TBTRAP( FindControl    );  // A96C
 }
 
+static void install_Dialogs()
+{
+	TBTRAP( InitDialogs );  // A97B
+}
+
 static void install_TextEdit()
 {
 	TBTRAP( TEInit );  // A9CC
@@ -160,6 +166,7 @@ int main( int argc, char** argv )
 	install_Menus();
 	install_Controls();
 	install_TextEdit();
+	install_Dialogs();
 	
 	install_IconUtilities();
 	
