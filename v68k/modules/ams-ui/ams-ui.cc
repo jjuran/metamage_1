@@ -20,6 +20,7 @@
 #include "Icons.hh"
 #include "Menus.hh"
 #include "StrUtils.hh"
+#include "TextEdit.hh"
 #include "Windows.hh"
 
 
@@ -122,6 +123,11 @@ static void install_Controls()
 	TBTRAP( FindControl    );  // A96C
 }
 
+static void install_TextEdit()
+{
+	TBTRAP( TEInit );  // A9CC
+}
+
 static
 void install_IconUtilities()
 {
@@ -153,6 +159,7 @@ int main( int argc, char** argv )
 	install_Windows();
 	install_Menus();
 	install_Controls();
+	install_TextEdit();
 	
 	install_IconUtilities();
 	
