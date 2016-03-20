@@ -53,6 +53,8 @@ enum
 	tag_SdVolEnable,
 	tag_ROM85,
 	tag_PortABUse,
+	tag_ApplZone,
+	tag_ApplZone_low_word,
 	tag_ROMBase,
 	tag_ROMBase_low_word,
 	tag_HpChk,
@@ -205,6 +207,7 @@ static const global globals[] =
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
 	{ 0x028E, 2,    tag_ROM85       },
 	{ 0x0290, 2,    tag_PortABUse   },  // PortAUse, PortBUse
+	{ 0x02AA, 4,    tag_ApplZone    },
 	{ 0x02AE, 4,    tag_ROMBase     },
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
