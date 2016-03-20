@@ -42,6 +42,8 @@ enum
 	tag_ScrnBase_low_word,
 	tag_Mouse,
 	tag_Mouse_low_word,
+	tag_CurStackBase,
+	tag_CurStackBase_low_word,
 	tag_CurApName,
 	tag_CurApName_word_15 = tag_CurApName + 15,  // 32 bytes
 	tag_CurJTOffset,
@@ -112,6 +114,7 @@ static const global globals[] =
 	{ 0x0804, 4,    tag_JShowCursor },
 	{ 0x0824, 4,    tag_ScrnBase    },
 	{ 0x0830, 4,    tag_Mouse       },
+	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0934, 2,    tag_CurJTOffset },
 	{ 0x0980, 4,    tag_ROMFont0    },
