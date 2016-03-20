@@ -20,6 +20,8 @@ pascal void ReallocateHandle_patch( char** h : __A0, long size : __D0, short tra
 
 pascal void EmptyHandle_patch( char** h : __A0 );
 
+pascal void SetApplLimit_patch( char* p : __A0 );
+
 pascal void ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 
 pascal void MaxApplZone_patch();
