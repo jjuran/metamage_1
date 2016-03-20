@@ -123,6 +123,8 @@ static void install_MemoryManager()
 	
 	OSTRAP( SetApplLimit     );  // A02D
 	
+	OSTRAP( MoreMasters      );  // A036
+	
 	OSTRAP( ReserveMem       );  // A040
 	OSTRAP( MaxApplZone      );  // A063
 	OSTRAP( NewEmptyHandle   );  // A066

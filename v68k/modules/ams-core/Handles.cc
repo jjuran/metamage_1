@@ -282,6 +282,10 @@ pascal void SetApplLimit_patch( char* p : __A0 )
 {
 }
 
+pascal void MoreMasters_patch()
+{
+}
+
 pascal void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 {
 }
