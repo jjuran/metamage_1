@@ -21,7 +21,8 @@
 #include "options.hh"
 
 
-Str31 CurApName : 0x0910;
+Str31 CurApName   : 0x0910;
+short CurJTOffset : 0x0934;
 
 
 struct jump_table_header
@@ -64,6 +65,8 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	const jump_table_header header = *(jump_table_header*) *code0;
 	
+	CurJTOffset = header.jmptable_offset;
+	
 	const uint32_t total_a5_size = header.above_a5_size
 	                             + header.below_a5_size;
 	
@@ -71,7 +74,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	void* new_a5 = (char*) alloc + header.below_a5_size;
 	
-	void* jump_table = (char*) new_a5 + header.jmptable_offset;
+	void* jump_table = (char*) new_a5 + CurJTOffset;
 	
 	memcpy( jump_table, (jump_table_header*) *code0 + 1, header.jmptable_size );
 	
