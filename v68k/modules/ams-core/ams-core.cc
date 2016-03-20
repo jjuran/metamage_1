@@ -162,6 +162,7 @@ static void install_EventManager()
 	OSTRAP( PostEvent    );  // A02F
 	OSTRAP( OSEventAvail );  // A030
 	OSTRAP( GetOSEvent   );  // A031
+	OSTRAP( FlushEvents  );  // A032
 	
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970

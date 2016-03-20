@@ -130,3 +130,7 @@ pascal char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 ) : _
 	
 	return -(it == NULL);
 }
+
+pascal void FlushEvents_patch( unsigned long masks : __D0 )
+{
+}
