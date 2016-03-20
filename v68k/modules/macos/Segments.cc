@@ -33,11 +33,102 @@ struct jump_table_header
 	uint32_t jmptable_offset;
 };
 
+struct jump_table_entry_unloaded
+{
+	uint16_t offset;
+	uint16_t opcode;
+	uint16_t segnum;
+	uint16_t trap;
+};
+
+struct jump_table_entry_loaded
+{
+	uint16_t segnum;
+	uint16_t opcode;
+	uint32_t addr;
+};
+
+union jump_table_entry
+{
+	jump_table_entry_loaded    loaded;
+	jump_table_entry_unloaded  unloaded;
+};
+
+struct segment_header
+{
+	uint16_t table_offset;
+	uint16_t entry_count;
+};
+
 struct LaunchParamBlockRec
 {
 	uint32_t reserved1;
 	// ...
 };
+
+static inline
+asm jump_table_entry* get_jump_table_offset( uint16_t offset : __D0 ) : __A0
+{
+	MOVEA.L  A5,A0
+	ADDA.W   CurJTOffset,A0
+	ADDA.W   D0,A0
+}
+
+const uint16_t push_opcode = 0x3F3C;  // MOVE.W   #n,-(SP)
+const uint16_t jump_opcode = 0x4EF9;  // JMP      0xABCD1234
+
+static
+void LoadSegment( short segnum : __D0 )
+{
+	Handle code = GetResource( 'CODE', segnum );
+	
+	if ( code == NULL )
+	{
+		ExitToShell_patch();
+	}
+	
+	const segment_header* segment = (segment_header*) *code;
+	
+	uint16_t offset = segment->table_offset;
+	uint16_t count  = segment->entry_count;
+	
+	const void* start = segment + 1;  // skip header
+	
+	jump_table_entry* it = get_jump_table_offset( offset );
+	
+	do
+	{
+		jump_table_entry_unloaded&  unloaded = it->unloaded;
+		jump_table_entry_loaded&    loaded   = it->loaded;
+		
+		const uint16_t offset = unloaded.offset;
+		
+		loaded.segnum = segnum;
+		loaded.opcode = jump_opcode;
+		loaded.addr   = (uint32_t) start + offset;
+		
+		++it;
+	}
+	while ( --count != 0 );
+}
+
+pascal asm void LoadSeg_patch( short segnum )
+{
+	LINK     A6,#0
+	MOVEM.L  D0-D2/A0-A1,-(SP)
+	
+	MOVE.W   8(A6),D0
+	JSR      LoadSegment
+	
+	MOVEM.L  (SP)+,D0-D2/A0-A1
+	UNLK     A6
+	
+	MOVE.L   (SP),2(SP)
+	ADDQ.L   #2,SP
+	
+	SUBQ.L   #6,(SP)
+	RTS
+}
 
 pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 {
@@ -80,17 +171,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	ReleaseResource( code0 );
 	
-	/*
-		This is a temporary hack until we implement _LoadSeg, and it only
-		works on (a) single-segment applications that (b) have their startup
-		code linked as the first jump table entry.  This works out fine for
-		applications built with CodeWarrior's single-segment option, and for
-		TestApp built with SC (as long as main() is defined first).
-	*/
-	
-	Handle code1 = GetResource( 'CODE', 1 );
-	
-	void* start = *code1 + sizeof (uint32_t);
+	void* start = (char*) jump_table + 2;
 	
 	asm
 	{

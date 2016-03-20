@@ -192,6 +192,7 @@ static void install_EventManager()
 
 static void install_SegmentLoader()
 {
+	TBTRAP( LoadSeg     );  // A9F0
 	TBTRAP( Launch      );  // A9F2
 	TBTRAP( ExitToShell );  // A9F4
 }
