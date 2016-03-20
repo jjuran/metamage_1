@@ -30,4 +30,6 @@ pascal short GetResAttrs_patch( char** resource );
 
 pascal long SizeRsrc_patch( char** resource );
 
+pascal void SetResPurge_patch( unsigned char install );
+
 #endif

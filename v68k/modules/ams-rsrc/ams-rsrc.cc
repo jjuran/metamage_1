@@ -36,7 +36,7 @@ static
 void install_ResourceManager()
 {
 	TBTRAP( DetachResource  );  // A992
-	
+	TBTRAP( SetResPurge     );  // A993
 	TBTRAP( CurResFile      );  // A994
 	
 	TBTRAP( RsrcZoneInit    );  // A996

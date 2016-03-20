@@ -564,3 +564,7 @@ pascal long SizeRsrc_patch( Handle resource )
 {
 	return GetHandleSize( resource );
 }
+
+pascal void SetResPurge_patch( unsigned char install )
+{
+}
