@@ -21,6 +21,7 @@
 
 // macos
 #include "Desk.hh"
+#include "MBDF.hh"
 #include "QDGlobals.hh"
 
 
@@ -143,19 +144,10 @@ pascal void InitWindows_patch()
 		ReleaseResource( (Handle) deskPat );
 	}
 	
+	calculate_menu_bar_height();
+	
 	draw_desktop_from_WMgrPort();
-	
-	const short default_MBarHeight = 20;
-	
-	Rect menubar = bounds;
-	
-	menubar.bottom = default_MBarHeight;
-	
-	EraseRect( &menubar );
-	
-	menubar.top = default_MBarHeight - 1;
-	
-	PaintRect( &menubar );
+	draw_menu_bar_from_WMgr_port();
 }
 
 pascal short FindWindow_patch( Point pt, WindowPtr* window )
