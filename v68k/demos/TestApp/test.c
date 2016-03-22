@@ -30,6 +30,30 @@ void set_desktop_pattern( const Pattern* pattern )
 	PaintOne( NULL, LMGetWMgrPort()->visRgn );
 }
 
+static
+void clobber_screen()
+{
+	GrafPort port;
+	
+	GrafPtr saved_port;
+	GetPort( &saved_port );
+	
+	OpenPort( &port );
+	
+	FillRect( &port.portRect, &qd.black );
+	
+	ClosePort( &port );
+	
+	SetPort( saved_port );
+}
+
+static
+void refresh_screen()
+{
+	DrawMenuBar();
+	PaintBehind( NULL, LMGetGrayRgn() );
+}
+
 int main()
 {
 	Boolean quitting = false;
@@ -82,6 +106,9 @@ int main()
 				case keyDown:
 					switch( (char) event.message )
 					{
+						case 0x08:  clobber_screen();  break;  // Delete
+						case 0x1B:  refresh_screen();  break;  // Esc
+						
 						case '1': set_desktop_pattern( &qd.white  );  break;
 						case '2': set_desktop_pattern( &qd.ltGray );  break;
 						case '3': set_desktop_pattern( &qd.gray   );  break;
