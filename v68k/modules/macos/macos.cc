@@ -176,6 +176,7 @@ static void install_Windows()
 {
 	TBTRAP( ClipAbove   );  // A90B
 	TBTRAP( PaintOne    );  // A90C
+	TBTRAP( PaintBehind );  // A90D
 	TBTRAP( InitWindows );  // A912
 	TBTRAP( FindWindow  );  // A92C
 }
