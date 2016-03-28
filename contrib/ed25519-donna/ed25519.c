@@ -14,6 +14,11 @@
 #define ED25519_FN2(fn,suffix) ED25519_FN3(fn,suffix)
 #define ED25519_FN(fn)         ED25519_FN2(fn,ED25519_SUFFIX)
 
+#ifdef __RELIX__
+#define ED25519_CUSTOMRANDOM
+#define ED25519_REFHASH
+#endif
+
 #include "ed25519-donna.h"
 #include "ed25519.h"
 #include "ed25519-randombytes.h"
