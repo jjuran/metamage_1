@@ -5,12 +5,15 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
+#include <QuickTime/QuickTime.h>
 #endif
 
 // Mac OS
 #ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
+#ifndef __MOVIES__
+#include <Movies.h>
 #endif
 #ifndef __SOUND__
 #include <Sound.h>
@@ -61,6 +64,50 @@ void refresh_screen()
 	PaintBehind( NULL, LMGetGrayRgn() );
 	
 #endif
+}
+
+static Ptr fullscreen_context;
+
+static
+void enter_fullscreen()
+{
+	if ( TARGET_API_MAC_CARBON )
+	{
+		if ( fullscreen_context == NULL )
+		{
+			WindowRef window;
+			
+			OSErr err = BeginFullScreen( &fullscreen_context,
+			                             NULL,  // gd
+			                             NULL,  // width
+			                             NULL,  // height
+			                             &window,
+			                             NULL,  // color
+			                             0 );
+		}
+	}
+	else
+	{
+		clobber_screen();
+	}
+}
+
+static
+void leave_fullscreen()
+{
+	if ( TARGET_API_MAC_CARBON )
+	{
+		if ( fullscreen_context != NULL )
+		{
+			EndFullScreen( fullscreen_context, 0 );
+			
+			fullscreen_context = NULL;
+		}
+	}
+	else
+	{
+		refresh_screen();
+	}
 }
 
 int main()
@@ -115,8 +162,8 @@ int main()
 				case keyDown:
 					switch( (char) event.message )
 					{
-						case 0x08:  clobber_screen();  break;  // Delete
-						case 0x1B:  refresh_screen();  break;  // Esc
+						case 0x08:  enter_fullscreen();  break;  // Delete
+						case 0x1B:  leave_fullscreen();  break;  // Esc
 						
 					#if ! TARGET_API_MAC_CARBON
 						
