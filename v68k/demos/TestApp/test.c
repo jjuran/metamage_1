@@ -20,8 +20,6 @@
 
 static QDGlobals qd;
 
-#endif
-
 static
 void set_desktop_pattern( const Pattern* pattern )
 {
@@ -30,9 +28,13 @@ void set_desktop_pattern( const Pattern* pattern )
 	PaintOne( NULL, LMGetWMgrPort()->visRgn );
 }
 
+#endif
+
 static
 void clobber_screen()
 {
+#if ! TARGET_API_MAC_CARBON
+	
 	GrafPort port;
 	
 	GrafPtr saved_port;
@@ -45,13 +47,20 @@ void clobber_screen()
 	ClosePort( &port );
 	
 	SetPort( saved_port );
+	
+#endif
 }
 
 static
 void refresh_screen()
 {
 	DrawMenuBar();
+	
+#if ! TARGET_API_MAC_CARBON
+	
 	PaintBehind( NULL, LMGetGrayRgn() );
+	
+#endif
 }
 
 int main()
@@ -109,11 +118,15 @@ int main()
 						case 0x08:  clobber_screen();  break;  // Delete
 						case 0x1B:  refresh_screen();  break;  // Esc
 						
+					#if ! TARGET_API_MAC_CARBON
+						
 						case '1': set_desktop_pattern( &qd.white  );  break;
 						case '2': set_desktop_pattern( &qd.ltGray );  break;
 						case '3': set_desktop_pattern( &qd.gray   );  break;
 						case '4': set_desktop_pattern( &qd.dkGray );  break;
 						case '5': set_desktop_pattern( &qd.black  );  break;
+						
+					#endif
 						
 						case 'q':
 							quitting = true;
