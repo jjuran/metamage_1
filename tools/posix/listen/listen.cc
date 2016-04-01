@@ -24,7 +24,7 @@
 
 #define PROGRAM  "listen"
 
-#define USAGE "Usage: PROGRAM address command\n"
+#define USAGE "Usage: " PROGRAM " address command\n"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
