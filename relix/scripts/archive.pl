@@ -166,7 +166,7 @@ my %fsmap =
 			# App utilities
 			\ qw( daemonize follower idle overwrite select ),
 			# Misc
-			\ qw( chain copier divide jtest pause ptrace th zpipe ),
+			\ qw( chain copier divide graft jtest pause ptrace th zpipe ),
 			# Mac-specific
 			\ qw( beep cds deicon err2text keymods macbin rom-checksum rominfo vols ),
 			# Mac-specific scripts
