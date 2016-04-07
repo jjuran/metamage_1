@@ -73,6 +73,7 @@ namespace sys {
 			case kOTFlowErr     :  // fall through
 			case kOTNoDataErr   :  result = EAGAIN;        break;
 			case bdNamErr       :  result = ENAMETOOLONG;  break;
+			case kOTBadAddressErr:  result = EADDRINUSE;   break;
 			
 			default:
 				result = -1;
