@@ -9,6 +9,9 @@
 #endif
 
 // Mac OS
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
 #endif
@@ -71,6 +74,24 @@ void refresh_screen()
 	*/
 	
 	qd.thePort = LMGetWMgrPort();
+	
+#endif
+}
+
+static inline
+void cleanup_screen()
+{
+#if ! TARGET_API_MAC_CARBON
+	
+	if ( qd.thePort == &fullscreen_port )
+	{
+		SInt32 v68k = 0;
+		
+		if ( ! TARGET_CPU_68K  ||  Gestalt( 'v68k', &v68k ) != noErr )
+		{
+			refresh_screen();
+		}
+	}
 	
 #endif
 }
@@ -220,6 +241,8 @@ int main()
 			}
 		}
 	}
+	
+	cleanup_screen();
 	
 	ExitToShell();
 	
