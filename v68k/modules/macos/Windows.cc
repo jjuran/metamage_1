@@ -218,6 +218,11 @@ pascal void InitWindows_patch()
 	draw_menu_bar_from_WMgr_port();
 }
 
+pascal WindowRef FrontWindow_patch()
+{
+	return (WindowRef) WindowList;
+}
+
 pascal short FindWindow_patch( Point pt, WindowPtr* window )
 {
 	*window = NULL;
