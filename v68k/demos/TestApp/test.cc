@@ -23,6 +23,8 @@
 
 static QDGlobals qd;
 
+static GrafPort fullscreen_port;
+
 static
 void set_desktop_pattern( const Pattern* pattern )
 {
@@ -38,18 +40,12 @@ void clobber_screen()
 {
 #if ! TARGET_API_MAC_CARBON
 	
-	GrafPort port;
+	if ( fullscreen_port.visRgn == NULL )
+	{
+		OpenPort( &fullscreen_port );
+	}
 	
-	GrafPtr saved_port;
-	GetPort( &saved_port );
-	
-	OpenPort( &port );
-	
-	FillRect( &port.portRect, &qd.black );
-	
-	ClosePort( &port );
-	
-	SetPort( saved_port );
+	FillRect( &fullscreen_port.portRect, &qd.black );
 	
 #endif
 }
