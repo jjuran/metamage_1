@@ -5,6 +5,8 @@
 
 #include "mac_sys/errno_from_mac_error.hh"
 
+#define OTUNIXERRORS 1
+
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -28,9 +30,9 @@ namespace sys {
 	{
 	#if OTUNIXERRORS
 		
-		if ( ::IsEError( err ) )
+		if ( IsEError( err ) )
 		{
-			return ::OSStatus2E( err );
+			return OSStatus2E( err );
 		}
 		
 	#endif
