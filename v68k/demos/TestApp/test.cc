@@ -44,6 +44,10 @@ void clobber_screen()
 	{
 		OpenPort( &fullscreen_port );
 	}
+	else
+	{
+		SetPort( &fullscreen_port );
+	}
 	
 	FillRect( &fullscreen_port.portRect, &qd.black );
 	
@@ -58,6 +62,15 @@ void refresh_screen()
 #if ! TARGET_API_MAC_CARBON
 	
 	PaintBehind( NULL, LMGetGrayRgn() );
+	
+	/*
+		This is just to make sure that fullscreen_port is no longer set as
+		the current port.  We call SetPortWindowPort( FrontWindow() ) below,
+		but we can't rely on it setting thePort if there are no windows.
+		(In Mac OS 9 at least, it ignores NULL arguments.)
+	*/
+	
+	qd.thePort = LMGetWMgrPort();
 	
 #endif
 }
@@ -80,6 +93,8 @@ void enter_fullscreen()
 			                             &window,
 			                             NULL,  // color
 			                             0 );
+			
+			SetPortWindowPort( window );
 		}
 	}
 	else
@@ -104,6 +119,8 @@ void leave_fullscreen()
 	{
 		refresh_screen();
 	}
+	
+	SetPortWindowPort( FrontWindow() );
 }
 
 int main()
