@@ -1,6 +1,6 @@
 /*
-	test.c
-	------
+	test.cc
+	-------
 */
 
 // Mac OS X

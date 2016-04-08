@@ -22,6 +22,8 @@ CTTY=--ctty=tty
 SCREEN=--screen=$screen
 EVENTS=--events-fd=8
 
-TEST=$HOME/var/build/misc/Test/Test/r/0001.CODE
+FS=$HOME/68k
+APP=$FS/app
+App=TestApp
 
-daemonize --cwd $CTTY -- xv68k $SCREEN -m [ macos $EVENTS ] -m macrsrc $TEST 8< $events
+daemonize --cwd $CTTY -- graft freemountd --root $FS // xv68k $SCREEN -m [ macos $EVENTS ] -m macrsrc $APP $App 8< $events
