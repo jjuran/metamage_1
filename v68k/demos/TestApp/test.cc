@@ -5,26 +5,23 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <QuickTime/QuickTime.h>
+#include <Carbon/Carbon.h>
 #endif
 
 // Mac OS
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 #ifndef __LOWMEM__
 #include <LowMem.h>
-#endif
-#ifndef __MOVIES__
-#include <Movies.h>
 #endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
 
-#if ! TARGET_API_MAC_CARBON
+// TestApp
+#include "fullscreen.hh"
+#include "fullscreen_port.hh"
 
-static GrafPort fullscreen_port;
+
+#if ! TARGET_API_MAC_CARBON
 
 static
 void set_desktop_pattern( const Pattern* pattern )
@@ -35,112 +32,6 @@ void set_desktop_pattern( const Pattern* pattern )
 }
 
 #endif
-
-static
-void clobber_screen()
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	if ( fullscreen_port.visRgn == NULL )
-	{
-		OpenPort( &fullscreen_port );
-	}
-	else
-	{
-		SetPort( &fullscreen_port );
-	}
-	
-	FillRect( &fullscreen_port.portRect, &qd.black );
-	
-#endif
-}
-
-static
-void refresh_screen()
-{
-	DrawMenuBar();
-	
-#if ! TARGET_API_MAC_CARBON
-	
-	PaintBehind( NULL, LMGetGrayRgn() );
-	
-	/*
-		This is just to make sure that fullscreen_port is no longer set as
-		the current port.  We call SetPortWindowPort( FrontWindow() ) below,
-		but we can't rely on it setting thePort if there are no windows.
-		(In Mac OS 9 at least, it ignores NULL arguments.)
-	*/
-	
-	qd.thePort = LMGetWMgrPort();
-	
-#endif
-}
-
-static inline
-void cleanup_screen()
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	if ( qd.thePort == &fullscreen_port )
-	{
-		SInt32 v68k = 0;
-		
-		if ( ! TARGET_CPU_68K  ||  Gestalt( 'v68k', &v68k ) != noErr )
-		{
-			refresh_screen();
-		}
-	}
-	
-#endif
-}
-
-static Ptr fullscreen_context;
-
-static
-void enter_fullscreen()
-{
-	if ( TARGET_API_MAC_CARBON )
-	{
-		if ( fullscreen_context == NULL )
-		{
-			WindowRef window;
-			
-			OSErr err = BeginFullScreen( &fullscreen_context,
-			                             NULL,  // gd
-			                             NULL,  // width
-			                             NULL,  // height
-			                             &window,
-			                             NULL,  // color
-			                             0 );
-			
-			SetPortWindowPort( window );
-		}
-	}
-	else
-	{
-		clobber_screen();
-	}
-}
-
-static
-void leave_fullscreen()
-{
-	if ( TARGET_API_MAC_CARBON )
-	{
-		if ( fullscreen_context != NULL )
-		{
-			EndFullScreen( fullscreen_context, 0 );
-			
-			fullscreen_context = NULL;
-		}
-	}
-	else
-	{
-		refresh_screen();
-	}
-	
-	SetPortWindowPort( FrontWindow() );
-}
 
 int main()
 {
