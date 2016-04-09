@@ -15,6 +15,8 @@ pascal void PaintBehind_patch( struct WindowRecord* w, struct MacRegion** rgn );
 
 pascal void InitWindows_patch();
 
+pascal struct GrafPort* FrontWindow_patch();
+
 pascal short FindWindow_patch( struct Point pt, struct GrafPort** window );
 
 #endif

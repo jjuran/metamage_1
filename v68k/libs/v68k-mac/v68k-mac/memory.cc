@@ -51,6 +51,8 @@ enum
 	tag_CurApName_14,
 	tag_CurApName_15,
 	tag_CurJTOffset,
+	tag_WindowList,
+	tag_WindowList_low_word,
 	tag_WMgrPort,
 	tag_WMgrPort_low_word,
 	tag_GrayRgn,
@@ -95,6 +97,7 @@ static const global globals[] =
 	{ 0x0830, 4,    tag_Mouse       },
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0934, 2,    tag_CurJTOffset },
+	{ 0x09D6, 4,    tag_WindowList  },
 	{ 0x09DE, 4,    tag_WMgrPort    },
 	{ 0x09EE, 4,    tag_GrayRgn     },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
