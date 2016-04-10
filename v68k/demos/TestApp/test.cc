@@ -24,8 +24,6 @@
 
 #if ! TARGET_API_MAC_CARBON
 
-static QDGlobals qd;
-
 static GrafPort fullscreen_port;
 
 static
