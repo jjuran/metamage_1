@@ -240,7 +240,10 @@ int main()
 		}
 	}
 	
-	cleanup_screen();
+	if ( ! TARGET_API_MAC_CARBON )
+	{
+		cleanup_screen();
+	}
 	
 	ExitToShell();
 	
