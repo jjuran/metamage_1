@@ -9,29 +9,15 @@
 #endif
 
 // Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
 
 // TestApp
+#include "desktop.hh"
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 
-
-#if ! TARGET_API_MAC_CARBON
-
-static
-void set_desktop_pattern( const Pattern* pattern )
-{
-	LMSetDeskPattern( pattern );
-	
-	PaintOne( NULL, LMGetWMgrPort()->visRgn );
-}
-
-#endif
 
 int main()
 {
@@ -90,11 +76,11 @@ int main()
 						
 					#if ! TARGET_API_MAC_CARBON
 						
-						case '1': set_desktop_pattern( &qd.white  );  break;
-						case '2': set_desktop_pattern( &qd.ltGray );  break;
-						case '3': set_desktop_pattern( &qd.gray   );  break;
-						case '4': set_desktop_pattern( &qd.dkGray );  break;
-						case '5': set_desktop_pattern( &qd.black  );  break;
+						case '1': set_desktop_pattern( qd.white  );  break;
+						case '2': set_desktop_pattern( qd.ltGray );  break;
+						case '3': set_desktop_pattern( qd.gray   );  break;
+						case '4': set_desktop_pattern( qd.dkGray );  break;
+						case '5': set_desktop_pattern( qd.black  );  break;
 						
 					#endif
 						
