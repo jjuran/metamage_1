@@ -9,6 +9,9 @@
 #include <errno.h>
 #include <sys/mman.h>
 
+// v68k-callbacks
+#include "callback/bridge.hh"
+
 // xv68k
 #include "shared_memory.hh"
 
@@ -45,6 +48,8 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 	
 	try
 	{
+		using v68k::callback::screen_lock_level;
+		
 		if ( length > screen_size )
 		{
 			// The memory access is somehow wider than the buffer is long
@@ -58,7 +63,7 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 		
 		uint8_t* p = (uint8_t*) the_screen_buffer + addr;
 		
-		if ( access == v68k::mem_update )
+		if ( access == v68k::mem_update  &&  screen_lock_level >= 0 )
 		{
 			msync( the_screen_buffer, screen_size, MS_SYNC );
 		}
