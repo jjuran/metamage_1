@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __GESTALT__
+#include <Gestalt.h>
+#endif
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
@@ -20,9 +23,31 @@
 #include "fullscreen_port.hh"
 
 
-void enter_fullscreen()
+static inline
+bool has_QT_v2_5()
 {
 	if ( TARGET_API_MAC_CARBON )
+	{
+		/*
+			Actually, we might be running in Mac OS 9 with the QuickTime
+			extension disabled, but port-based screen clobbering doesn't
+			work in Carbon anyway.  TODO:  Deal with this eventually.
+		*/
+		return true;
+	}
+	
+	const SInt32 v2_5 = 02500000;
+	
+	SInt32 qtim = 0;
+	
+	return Gestalt( 'qtim', &qtim ) == noErr  &&  qtim >= v2_5;
+}
+
+static const bool has_QT_fullscreen = has_QT_v2_5();
+
+void enter_fullscreen()
+{
+	if ( has_QT_fullscreen )
 	{
 		begin_fullscreen();
 	}
@@ -34,7 +59,7 @@ void enter_fullscreen()
 
 void leave_fullscreen()
 {
-	if ( TARGET_API_MAC_CARBON )
+	if ( has_QT_fullscreen )
 	{
 		end_fullscreen();
 	}
