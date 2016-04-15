@@ -48,6 +48,8 @@ namespace callback {
 using v68k::auth::fully_authorized;
 
 
+short screen_lock_level;
+
 enum
 {
 	nop = 0x4E71,
@@ -205,6 +207,25 @@ static uint32_t flush_screen_callback( v68k::processor_state& s )
 	                 21888,
 	                 v68k::user_data_space,
 	                 v68k::mem_update );
+	
+	return rts;
+}
+
+static
+uint32_t lock_screen_callback( v68k::processor_state& s )
+{
+	--screen_lock_level;
+	
+	return rts;
+}
+
+static
+uint32_t unlock_screen_callback( v68k::processor_state& s )
+{
+	if ( ++screen_lock_level == 0 )
+	{
+		flush_screen_callback( s );
+	}
 	
 	return rts;
 }
@@ -415,6 +436,8 @@ static const function_type the_callbacks[] =
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
 	&flush_screen_callback,
+	&lock_screen_callback,
+	&unlock_screen_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
 	&chk_trap_callback,

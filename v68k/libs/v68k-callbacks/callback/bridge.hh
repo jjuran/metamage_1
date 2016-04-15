@@ -24,6 +24,8 @@ enum
 	trace_flow,
 	trace_off,
 	flush_screen,
+	lock_screen,
+	unlock_screen,
 	illegal_instruction,
 	division_by_zero,
 	chk_trap,
@@ -41,6 +43,8 @@ enum
 	n
 };
 
+extern short screen_lock_level;
+
 inline uint32_t callback_address( int index )
 {
 	return uint32_t( (index + 1) * -2 );
@@ -48,8 +52,8 @@ inline uint32_t callback_address( int index )
 
 uint32_t bridge( v68k::processor_state& emu );
 
-}  // namespace v68k
 }  // namespace callback
+}  // namespace v68k
 
 
 #endif
