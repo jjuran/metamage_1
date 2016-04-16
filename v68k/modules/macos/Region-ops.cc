@@ -330,6 +330,11 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	ASSERT( is_valid_region( a ) );
 	ASSERT( is_valid_region( b ) );
 	
+	ASSERT( a[0]->rgnSize > sizeof (MacRegion) );
+	ASSERT( b[0]->rgnSize > sizeof (MacRegion) );
+	
+	ASSERT( EqualRect_patch( &a[0]->rgnBBox, &b[0]->rgnBBox ) );
+	
 	SetHandleSize( (Handle) dst, a[0]->rgnSize + b[0]->rgnSize );  // TODO:  Prove this is enough
 	
 	sect_regions( (const short*) &a[0]->rgnBBox,
