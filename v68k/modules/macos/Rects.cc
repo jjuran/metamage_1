@@ -345,12 +345,54 @@ static void fill_rect( const rectangular_op_params& params )
 }
 
 static void draw_rect( const rectangular_op_params&  params,
+                       short                         pattern_transfer_mode )
+{
+	Pattern& pattern = *params.pattern;
+	
+	Ptr p = params.start;
+	
+	const short top    = params.topLeft.v;
+	const short bottom = params.topLeft.v + params.height;
+	
+	short pat_v = top & 0x7;
+	
+	for ( int i = top;  i < bottom;  ++i )
+	{
+		const uint8_t pat = pattern.pat[ pat_v ];
+		
+		if ( params.left_mask )
+		{
+			const uint8_t mask = ~params.left_mask;
+			
+			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
+		}
+		
+		for ( uint16_t j = params.draw_bytes;  j > 0;  --j )
+		{
+			const uint8_t mask = 0xFF;
+			
+			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
+		}
+		
+		if ( params.right_mask )
+		{
+			const uint8_t mask = ~params.right_mask;
+			
+			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
+		}
+		
+		p += params.skip_bytes;
+		
+		pat_v = (pat_v + 1) & 0x7;
+	}
+}
+
+static void draw_rect( const rectangular_op_params&  params,
                        short                         pattern_transfer_mode,
-                       const Rect&                   clipRect,
                        RgnHandle                     clipRgn )
 {
-	const short* bbox   = (short*) &clipRect;
-	const short* extent = (short*) (clipRgn ? *clipRgn + 1 : NULL);
+	const short* bbox   = (short*)  *clipRgn + 1;
+	const short* extent = (short*) (*clipRgn + 1);
 	
 	unsigned size = quickdraw::region_raster::mask_size( bbox );
 	
@@ -507,11 +549,15 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 	}
 	
-	draw_rect( params, patMode, clipRect, clipRgn );
-	
 	if ( clipRgn != NULL )
 	{
+		draw_rect( params, patMode, clipRgn );
+		
 		DisposeRgn( clipRgn );
+	}
+	else
+	{
+		draw_rect( params, patMode );
 	}
 }
 
