@@ -24,6 +24,8 @@
 
 static unsigned n_steps;
 
+static uint32_t step_over;
+
 static void debugger_loop( registers& regs )
 {
 	static uint32_t troff_address = 0;
@@ -47,6 +49,16 @@ static void debugger_loop( registers& regs )
 		--n_steps;
 		
 		return;
+	}
+	
+	if ( step_over )
+	{
+		if ( regs.pc < step_over  ||  regs.pc > step_over + 22 )
+		{
+			return;
+		}
+		
+		step_over = 0;
 	}
 	
 	if ( (regs.sr & 0xC000) == 0 )
@@ -95,6 +107,10 @@ static void debugger_loop( registers& regs )
 					}
 				}
 				
+				return;
+			
+			case 'o':
+				step_over = regs.pc;
 				return;
 			
 			case 'r':
