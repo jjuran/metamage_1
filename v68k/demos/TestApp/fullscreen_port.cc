@@ -52,7 +52,7 @@ void refresh_screen()
 	
 #if ! TARGET_API_MAC_CARBON
 	
-	PaintBehind( NULL, LMGetGrayRgn() );
+	PaintBehind( LMGetWindowList(), LMGetGrayRgn() );
 	
 	/*
 		This is just to make sure that fullscreen_port is no longer set as
