@@ -15,7 +15,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 4 + 3;
+static const unsigned n_tests = 4 + 3 + 1;
 
 
 #define ARRAY_LEN( a )  (sizeof a / sizeof a[0])
@@ -198,6 +198,56 @@ static void sect_rgns()
 	}
 }
 
+static void complex()
+{
+	const short a_data[] =
+	{
+		0x002C,
+		0x0078, 0x002D, 0x0123, 0x00F8,
+		0x0078, 0x002D, 0x00F7, 0x7FFF,
+		0x0079, 0x00F7, 0x00F8, 0x7FFF,
+		0x0122, 0x002D, 0x002E, 0x7FFF,
+		0x0123, 0x002E, 0x00F8, 0x7FFF,
+		0x7FFF
+	};
+	
+	const short b_data[] =
+	{
+		0x002C,
+		0x0078, 0x002D, 0x0123, 0x00F8,
+		0x0078, 0x002D, 0x0082, 0x7FFF,
+		0x00D7, 0x0082, 0x0083, 0x7FFF,
+		0x00D8, 0x0083, 0x00F8, 0x7FFF,
+		0x0123, 0x002D, 0x00F8, 0x7FFF,
+		0x7FFF
+	};
+	
+	const short c_data[] =
+	{
+		0x0034,
+		0x0078, 0x002D, 0x0123, 0x00F8,
+		0x0078, 0x002D, 0x0082, 0x7FFF,
+		0x00D7, 0x0082, 0x0083, 0x7FFF,
+		0x00D8, 0x0083, 0x00F8, 0x7FFF,
+		0x0122, 0x002D, 0x002E, 0x7FFF,
+		0x0123, 0x002E, 0x00F8, 0x7FFF,
+		0x7FFF
+	};
+	
+	short result[ 0x0034 / 2 ];
+	
+	using quickdraw::sect_regions;
+	
+	sect_regions( a_data + 1,
+	              a_data + 5,
+	              b_data + 5,
+	              result );
+	
+	const unsigned len = c_data[ 0 ] - 5 * sizeof (short);
+	
+	EXPECT_CMP( result, len, c_data + 5, len );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -205,6 +255,8 @@ int main( int argc, char** argv )
 	
 	sect_rect_rgn();
 	sect_rgns();
+	
+	complex();
 	
 	return 0;
 }
