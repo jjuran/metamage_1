@@ -18,8 +18,6 @@
 
 // quickdraw
 #include "qd/region_detail.hh"
-#include "qd/region_raster.hh"
-#include "qd/region_scanner.hh"
 #include "qd/regions.hh"
 
 
@@ -39,19 +37,6 @@ namespace quickdraw
 	short max( short a, short b )
 	{
 		return a > b ? a : b;
-	}
-	
-	static void memand( uint16_t*        dst,
-	                    const uint16_t*  a,
-	                    const uint16_t*  b,
-	                    unsigned         size )
-	{
-		while ( size > 0 )
-		{
-			size -= 2;
-			
-			*dst++ = *a++ & *b++;
-		}
 	}
 	
 	static
@@ -74,6 +59,94 @@ namespace quickdraw
 		else
 		{
 			segments.insert( it, coord );
+		}
+	}
+	
+	static
+	void xor_segments( std::vector< short >&        a,
+	                   const std::vector< short >&  b )
+	{
+		typedef std::vector< short >::const_iterator Iter;
+		
+		Iter it = b.begin();
+		
+		while ( it != b.end() )
+		{
+			xor_segments( a, *it++ );
+		}
+	}
+	
+	static
+	void and_segments( const std::vector< short >&  a,
+	                   const std::vector< short >&  b,
+	                   std::vector< short >&        c )
+	{
+		c.clear();
+		
+		if ( a.empty()  ||  b.empty() )
+		{
+			return;
+		}
+		
+		typedef std::vector< short >::const_iterator Iter;
+		
+		bool in_a = false;
+		bool in_b = false;
+		
+		Iter it_a = a.begin();
+		Iter it_b = b.begin();
+		
+		short x = *it_a++;
+		short y = *it_b++;
+		
+		bool was_in = false;
+		
+		short min;
+		
+		while ( true )
+		{
+			if ( x <= y )
+			{
+				in_a = ! in_a;
+				
+				min = x;
+			}
+			
+			if ( y <= x )
+			{
+				in_b = ! in_b;
+				
+				min = y;
+			}
+			
+			bool is_in = in_a  &&  in_b;
+			
+			if ( is_in != was_in )
+			{
+				c.push_back( min );
+			}
+			
+			was_in = is_in;
+			
+			if ( x == min )
+			{
+				if ( it_a == a.end() )
+				{
+					break;
+				}
+				
+				x = *it_a++;
+			}
+			
+			if ( y == min )
+			{
+				if ( it_b == b.end() )
+				{
+					break;
+				}
+				
+				y = *it_b++;
+			}
 		}
 	}
 	
@@ -233,46 +306,53 @@ namespace quickdraw
 	                   const short*  b_extent,
 	                   short*        r )
 	{
-		const unsigned mask_size = region_raster::mask_size( bbox ) + 1 & ~0x1;
+		std::vector< short > a_segments;
+		std::vector< short > b_segments;
+		std::vector< short > c_segments;
+		std::vector< short > r_segments;
 		
-		uint16_t* mask_a = (uint16_t*) malloc( mask_size * 4 );
-		uint16_t* mask_b = mask_a + mask_size / 2;
-		uint16_t* mask_c = mask_b + mask_size / 2;
-		uint16_t* mask_d = mask_c + mask_size / 2;
-		
-		region_raster a_raster( bbox, a_extent, mask_a, mask_size );
-		region_raster b_raster( bbox, b_extent, mask_b, mask_size );
-		
-		region_scanner scanner( r, mask_d, mask_size );
-		
-		const short rounded_left = bbox[ 1 ] & ~0xF;
-		
-		short va = a_raster.next_v();
-		short vb = b_raster.next_v();
-		
-		short v = precedes_in_region( va, vb ) ? vb : va;
+		short va = *a_extent++;
+		short vb = *b_extent++;
 		
 		while ( va != Region_end  &&  vb != Region_end )
 		{
-			a_raster.load_mask( v );
-			b_raster.load_mask( v );
+			short v = va;
 			
-			memand( mask_c, mask_a, mask_b, mask_size );
-			
-			if ( scanner.scan( rounded_left, v, mask_c, mask_d ) )
+			if ( ! precedes_in_region( vb, va ) )
 			{
-				memcpy( mask_d, mask_c, mask_size );
+				short h;
+				
+				while ( (h = *a_extent++) != Region_end )
+				{
+					xor_segments( a_segments, h );
+				}
+				
+				va = *a_extent++;
 			}
 			
-			va = a_raster.next_v();
-			vb = b_raster.next_v();
+			if ( ! precedes_in_region( v, vb ) )
+			{
+				v = vb;
+				
+				short h;
+				
+				while ( (h = *b_extent++) != Region_end )
+				{
+					xor_segments( b_segments, h );
+				}
+				
+				vb = *b_extent++;
+			}
 			
-			v = precedes_in_region( va, vb ) ? va : vb;
+			and_segments( a_segments, b_segments, c_segments );
+			xor_segments( r_segments, c_segments );
+			
+			accumulate_row( r, v, r_segments );
+			
+			r_segments = c_segments;
 		}
 		
-		scanner.finish( rounded_left, v, mask_d );
-		
-		free( mask_a );
+		*r++ = Region_end;
 	}
 	
 }
