@@ -10,11 +10,15 @@
 #include <string.h>
 
 // quickdraw
-#include "qd/region_raster.hh"
+#include "qd/region_detail.hh"
+#include "qd/segments.hh"
 
 // macos
 #include "QDGlobals.hh"
 #include "screen_lock.hh"
+
+
+using quickdraw::segments_box;
 
 
 class white_t {};
@@ -39,6 +43,8 @@ static inline bool operator==( const Pattern& a, black_t )
 
 struct rectangular_op_params
 {
+	GrafPtr port;
+	
 	Point topLeft;
 	
 	Ptr start;
@@ -78,6 +84,8 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
                                                 bool                    clipping )
 {
 	GrafPtr thePort = *get_addrof_thePort();
+	
+	params.port = thePort;
 	
 	const BitMap& portBits = thePort->portBits;
 	
@@ -162,6 +170,66 @@ Ptr draw_masked_byte( Ptr      start,
 		case srcOr:    *p++ |=  src;  break;
 		case srcXor:   *p++ ^=  src;  break;
 		case srcBic:   *p++ &= ~src;  break;
+	}
+	
+	return p;
+}
+
+static
+Ptr draw_segment( Ptr      start,
+                  short    n_pixels_skipped,
+                  short    n_pixels_drawn,
+                  short    transfer_mode_AND_0x03,
+                  uint8_t  pattern_sample )
+{
+	Ptr p = start;
+	
+	if ( n_pixels_skipped )
+	{
+		uint8_t mask = (1 << (8 - n_pixels_skipped)) - 1;
+		
+		n_pixels_drawn -= 8 - n_pixels_skipped;
+		
+		if ( n_pixels_drawn < 0 )
+		{
+			n_pixels_skipped = -n_pixels_drawn;
+			
+			mask &= -(1 << n_pixels_skipped);
+			
+			n_pixels_drawn = 0;
+		}
+		
+		p = draw_masked_byte( p,
+		                      mask,
+		                      transfer_mode_AND_0x03,
+		                      pattern_sample );
+	}
+	
+	if ( n_pixels_drawn > 0 )
+	{
+		short n_bytes = n_pixels_drawn / 8;
+		
+		while ( n_bytes-- > 0 )
+		{
+			p = draw_masked_byte( p,
+			                      0xFF,
+			                      transfer_mode_AND_0x03,
+			                      pattern_sample );
+		}
+		
+		n_pixels_drawn &= 0x7;
+		
+		if ( n_pixels_drawn > 0 )
+		{
+			n_pixels_skipped = 8 - n_pixels_drawn;
+			
+			const uint8_t mask = -(1 << n_pixels_skipped);
+			
+			p = draw_masked_byte( p,
+			                      mask,
+			                      transfer_mode_AND_0x03,
+			                      pattern_sample );
+		}
 	}
 	
 	return p;
@@ -392,45 +460,89 @@ void draw_region( const rectangular_op_params&  params,
                   short                         pattern_transfer_mode,
                   RgnHandle                     region )
 {
-	const short* bbox   = (short*)  *region + 1;
 	const short* extent = (short*) (*region + 1);
 	
-	unsigned size = quickdraw::region_raster::mask_size( bbox );
+	using quickdraw::Region_end;
 	
-	char* temp = (char*) malloc( size );
-	
-	quickdraw::region_raster clip( bbox, extent, temp, size );
+	segments_box segments( region[0]->rgnSize );
 	
 	Pattern& pattern = *params.pattern;
 	
-	Ptr p = params.start;
+	const BitMap& portBits = params.port->portBits;
 	
-	const short top    = params.topLeft.v;
-	const short bottom = params.topLeft.v + params.height;
+	const Rect& bounds = portBits.bounds;
 	
-	short pat_v = top & 0x7;
+	short v0 = *extent++;
 	
-	for ( int i = top;  i < bottom;  ++i )
+	short pat_v = v0 & 0x7;
+	
+	Ptr rowBase = portBits.baseAddr + v0 * portBits.rowBytes;
+	
+	while ( true )
 	{
-		clip.load_mask( i );
+		while ( true )
+		{
+			short h = *extent++;
+			
+			if ( h == Region_end )
+			{
+				break;
+			}
+			
+			segments ^= h;
+		}
 		
-		const char* clip_mask = temp;
+		if ( segments.size() & 0x1 )
+		{
+			segments ^= 0x7FFF;
+		}
+		
+		short v1 = *extent++;
+		
+		if ( segments.empty()  &&  v1 == Region_end )
+		{
+			break;
+		}
+		
+		typedef segments_box::const_iterator Iter;
+		
+	next_row:
 		
 		const uint8_t pat = pattern.pat[ pat_v ];
 		
-		for ( uint16_t j = params.draw_bytes;  j > 0;  --j )
+		Iter it = segments.begin();
+		
+		while ( it != segments.end() )
 		{
-			const uint8_t mask = *clip_mask++;
+			short h0 = *it++;
+			short h1 = *it++;
 			
-			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
+			Ptr start = rowBase + (h0 - bounds.left) / 8;
+			
+			const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
+			const short n_pixels_drawn   =  h1 - h0;
+			
+			draw_segment( start,
+			              n_pixels_skipped,
+			              n_pixels_drawn,
+			              pattern_transfer_mode & 0x03,
+			              pat );
 		}
 		
-		p += params.skip_bytes;
-		
 		pat_v = (pat_v + 1) & 0x7;
+		
+		rowBase += portBits.rowBytes;
+		
+		if ( quickdraw::precedes_in_region( ++v0, v1 ) )
+		{
+			goto next_row;
+		}
+		
+		if ( v0 == Region_end )
+		{
+			break;
+		}
 	}
-	
-	free( temp );
 }
 
 pascal void StdRect_patch( signed char verb, const Rect* r )
