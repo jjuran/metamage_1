@@ -208,6 +208,35 @@ Ptr draw_even_segment( Ptr      start,
 		pattern_sample = ~pattern_sample;
 	}
 	
+	uint32_t src = pattern_sample << 8 | pattern_sample;
+	
+	src |= src << 16;
+	
+	while ( (uintptr_t) p & 0x3 )
+	{
+		p = draw_one_byte( p, transfer_mode_AND_0x03, pattern_sample );
+		--n_bytes;
+	}
+	
+	short n_longs = n_bytes / 4;
+	
+	uint32_t* q = (uint32_t*) p;
+	
+	switch ( transfer_mode_AND_0x03 )
+	{
+		// Use src vs. pat modes because we stripped off the 8 bit
+		// For srcBic, src is already negated.
+		
+		case srcCopy:  while ( --n_longs >= 0 )  *q++  = src;  break;
+		case srcOr:    while ( --n_longs >= 0 )  *q++ |= src;  break;
+		case srcXor:   while ( --n_longs >= 0 )  *q++ ^= src;  break;
+		case srcBic:   while ( --n_longs >= 0 )  *q++ &= src;  break;
+	}
+	
+	p = (Ptr) q;
+	
+	n_bytes &= 0x3;
+	
 	while ( --n_bytes >= 0 )
 	{
 		p = draw_one_byte( p, transfer_mode_AND_0x03, pattern_sample );
