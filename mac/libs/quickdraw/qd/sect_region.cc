@@ -345,7 +345,7 @@ namespace quickdraw
 			
 			accumulate_row( r, v, r_segments );
 			
-			r_segments = c_segments;
+			r_segments.swap( c_segments );
 		}
 		
 		*r++ = Region_end;
