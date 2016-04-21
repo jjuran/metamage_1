@@ -18,14 +18,10 @@
 
 // quickdraw
 #include "qd/region_detail.hh"
-#include "qd/regions.hh"
 
 
 namespace quickdraw
 {
-	
-	typedef unsigned short uint16_t;
-	
 	
 	static
 	short min( short a, short b )
