@@ -206,16 +206,6 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |  24K (21.375K used)
 	128	+-----------------------+
 	
-	168	+-----------------------+
-		|                       |  screen memory begins 0x0002A700  (1792 after)
-		|                       |  screen memory ends   0x0002FC80  (896 before)
-		|                       |
-		= no-sync screen memory =  x6
-		|                       |
-		|                       |
-		|                       |  24K (21.375K used)
-	192	+-----------------------+
-	
 */
 
 const uint32_t params_max_size = 4096;

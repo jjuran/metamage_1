@@ -41,18 +41,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return its_screen.translate( addr - screen_addr, length, fc, access );
 	}
 	
-	const uint32_t screen_alias = 0x0002A700;
-	
-	if ( addr >= screen_alias  &&  addr < screen_alias + screen_size )
-	{
-		if ( access == v68k::mem_update )
-		{
-			return 0;  // don't msync()
-		}
-		
-		return its_screen.translate( addr - screen_alias, length, fc, access );
-	}
-	
 	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
 	{
 		return its_alloc_mem.translate( addr, length, fc, access );
