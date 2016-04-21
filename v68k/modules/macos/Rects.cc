@@ -14,13 +14,8 @@
 
 // macos
 #include "QDGlobals.hh"
-#include "options.hh"
+#include "screen_lock.hh"
 
-
-static inline asm void flush_screen()
-{
-	JSR  0xFFFFFFEE
-}
 
 class white_t {};
 class black_t {};
@@ -58,14 +53,6 @@ struct rectangular_op_params
 	
 	Pattern*  pattern;
 	short     origin_h;
-	
-	~rectangular_op_params()
-	{
-		if ( synchronized_quickdraw )
-		{
-			flush_screen();
-		}
-	}
 };
 
 static inline short min( short a, short b )
@@ -129,11 +116,6 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	const uint32_t rowBytes = portBits.rowBytes;
 	
 	char* baseAddr = portBits.baseAddr;
-	
-	if ( synchronized_quickdraw  &&  baseAddr == (char*) 0x0001A700 )
-	{
-		baseAddr += 0x00010000;
-	}
 	
 	params.topLeft    = *(Point*) &rect;
 	params.start      = baseAddr + top * rowBytes + outer_left_bytes;
@@ -416,6 +398,8 @@ static void draw_rect( const rectangular_op_params&  params,
 
 pascal void StdRect_patch( signed char verb, const Rect* r )
 {
+	screen_lock lock;
+	
 	if ( verb == kQDGrafVerbFrame )
 	{
 		frame_rect( r );
