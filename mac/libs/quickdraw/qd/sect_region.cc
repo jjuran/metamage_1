@@ -11,19 +11,17 @@
 
 // Standard C++
 #include <algorithm>
-#include <vector>
 
 // iota
 #include "iota/endian.hh"
 
 // quickdraw
 #include "qd/region_detail.hh"
+#include "qd/segments.hh"
 
 
 namespace quickdraw
 {
-	
-	typedef std::vector< short > segments_box;
 	
 	static
 	short min( short a, short b )
@@ -196,7 +194,7 @@ namespace quickdraw
 			return;
 		}
 		
-		std::vector< short > segments;
+		segments_box segments( max_bytes );
 		
 		short v, h;
 		
@@ -303,10 +301,12 @@ namespace quickdraw
 	                   unsigned      b_max_bytes,
 	                   short*        r )
 	{
-		std::vector< short > a_segments;
-		std::vector< short > b_segments;
-		std::vector< short > c_segments;
-		std::vector< short > r_segments;
+		const size_t r_max_bytes = a_max_bytes + b_max_bytes;
+		
+		segments_box a_segments( a_max_bytes );
+		segments_box b_segments( b_max_bytes );
+		segments_box c_segments( r_max_bytes );
+		segments_box r_segments( r_max_bytes );
 		
 		short va = *a_extent++;
 		short vb = *b_extent++;
