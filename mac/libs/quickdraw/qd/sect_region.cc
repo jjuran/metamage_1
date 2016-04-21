@@ -179,6 +179,7 @@ namespace quickdraw
 	void sect_rect_region( const short*  rect,
 	                       const short*  bbox,
 	                       const short*  extent,
+	                       unsigned      max_bytes,
 	                       short*        r )
 	{
 		// Clip the rectangle to the region bounding box.
@@ -297,7 +298,9 @@ namespace quickdraw
 	
 	void sect_regions( const short*  bbox,
 	                   const short*  a_extent,
+	                   unsigned      a_max_bytes,
 	                   const short*  b_extent,
+	                   unsigned      b_max_bytes,
 	                   short*        r )
 	{
 		std::vector< short > a_segments;
