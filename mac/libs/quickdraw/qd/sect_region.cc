@@ -38,17 +38,13 @@ namespace quickdraw
 	static
 	void xor_segments( std::vector< short >& segments, short coord )
 	{
-		if ( segments.empty()  ||  coord > segments.back() )
-		{
-			segments.push_back( coord );
-			return;
-		}
-		
 		typedef std::vector< short >::iterator Iter;
 		
-		Iter it = std::lower_bound( segments.begin(), segments.end(), coord );
+		Iter end = segments.end();
 		
-		if ( *it == coord )
+		Iter it = std::lower_bound( segments.begin(), end, coord );
+		
+		if ( it != end  &&  *it == coord )
 		{
 			segments.erase( it );
 		}
