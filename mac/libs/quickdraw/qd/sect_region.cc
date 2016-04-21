@@ -23,6 +23,8 @@
 namespace quickdraw
 {
 	
+	typedef std::vector< short > segments_box;
+	
 	static
 	short min( short a, short b )
 	{
@@ -36,9 +38,9 @@ namespace quickdraw
 	}
 	
 	static
-	void xor_segments( std::vector< short >& segments, short coord )
+	void xor_segments( segments_box& segments, short coord )
 	{
-		typedef std::vector< short >::iterator Iter;
+		typedef segments_box::iterator Iter;
 		
 		Iter end = segments.end();
 		
@@ -55,10 +57,10 @@ namespace quickdraw
 	}
 	
 	static
-	void xor_segments( std::vector< short >&        a,
-	                   const std::vector< short >&  b )
+	void xor_segments( segments_box&        a,
+	                   segments_box const&  b )
 	{
-		typedef std::vector< short >::const_iterator Iter;
+		typedef segments_box::const_iterator Iter;
 		
 		Iter it = b.begin();
 		
@@ -69,9 +71,9 @@ namespace quickdraw
 	}
 	
 	static
-	void and_segments( const std::vector< short >&  a,
-	                   const std::vector< short >&  b,
-	                   std::vector< short >&        c )
+	void and_segments( segments_box const&  a,
+	                   segments_box const&  b,
+	                   segments_box&        c )
 	{
 		c.clear();
 		
@@ -80,7 +82,7 @@ namespace quickdraw
 			return;
 		}
 		
-		typedef std::vector< short >::const_iterator Iter;
+		typedef segments_box::const_iterator Iter;
 		
 		bool in_a = false;
 		bool in_b = false;
