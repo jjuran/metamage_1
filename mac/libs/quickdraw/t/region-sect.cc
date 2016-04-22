@@ -178,7 +178,7 @@ static void sect_rect_rgn()
 		
 		quickdraw::set_region_bbox( bbox, test.b );
 		
-		quickdraw::sect_rect_region( test.a, bbox, test.b, r );
+		quickdraw::sect_rect_region( test.a, bbox, test.b, sizeof r, r );
 		
 		EXPECT_CMP( r, test.c_len, test.c, test.c_len );
 	}
@@ -192,7 +192,9 @@ static void sect_rgns()
 		
 		const rgn_test_case& test = sect_rgns_tests[ i ];
 		
-		quickdraw::sect_regions( rect_2_1_8_64, test.a, test.b, r );
+		const size_t max = sizeof r;
+		
+		quickdraw::sect_regions( rect_2_1_8_64, test.a, max, test.b, max, r );
 		
 		EXPECT_CMP( r, test.c_len, test.c, test.c_len );
 	}
@@ -240,7 +242,9 @@ static void complex()
 	
 	sect_regions( a_data + 1,
 	              a_data + 5,
+	              sizeof a_data,
 	              b_data + 5,
+	              sizeof b_data,
 	              result );
 	
 	const unsigned len = c_data[ 0 ] - 5 * sizeof (short);

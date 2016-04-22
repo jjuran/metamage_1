@@ -335,11 +335,16 @@ static void sect_regions( RgnHandle a, RgnHandle b, RgnHandle dst )
 	
 	ASSERT( EqualRect_patch( &a[0]->rgnBBox, &b[0]->rgnBBox ) );
 	
-	SetHandleSize( (Handle) dst, a[0]->rgnSize + b[0]->rgnSize );  // TODO:  Prove this is enough
+	const size_t a_max_bytes = a[0]->rgnSize;
+	const size_t b_max_bytes = b[0]->rgnSize;
+	
+	SetHandleSize( (Handle) dst, a_max_bytes + b_max_bytes );  // TODO:  Prove this is enough
 	
 	sect_regions( (const short*) &a[0]->rgnBBox,
 	              rgn_extent( *a ),
+	              a_max_bytes,
 	              rgn_extent( *b ),
+	              b_max_bytes,
 	              rgn_extent( *dst ) );
 	
 	finish_region( dst );
@@ -349,11 +354,14 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 {
 	ASSERT( is_valid_region( src ) );
 	
-	SetHandleSize( (Handle) dst, src[0]->rgnSize );  // TODO:  Prove this is enough
+	const size_t max_bytes = src[0]->rgnSize;
+	
+	SetHandleSize( (Handle) dst, max_bytes );  // TODO:  Prove this is enough
 	
 	sect_rect_region( (const short*) &rect,
 	                  (const short*) &src[0]->rgnBBox,
 	                  rgn_extent( *src ),
+	                  max_bytes,
 	                  rgn_extent( *dst ) );
 	
 	finish_region( dst );

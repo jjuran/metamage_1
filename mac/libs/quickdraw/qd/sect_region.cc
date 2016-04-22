@@ -11,13 +11,13 @@
 
 // Standard C++
 #include <algorithm>
-#include <vector>
 
 // iota
 #include "iota/endian.hh"
 
 // quickdraw
 #include "qd/region_detail.hh"
+#include "qd/segments.hh"
 
 
 namespace quickdraw
@@ -35,30 +35,17 @@ namespace quickdraw
 		return a > b ? a : b;
 	}
 	
-	static
-	void xor_segments( std::vector< short >& segments, short coord )
+	static inline
+	void xor_segments( segments_box& segments, short coord )
 	{
-		typedef std::vector< short >::iterator Iter;
-		
-		Iter end = segments.end();
-		
-		Iter it = std::lower_bound( segments.begin(), end, coord );
-		
-		if ( it != end  &&  *it == coord )
-		{
-			segments.erase( it );
-		}
-		else
-		{
-			segments.insert( it, coord );
-		}
+		segments ^= coord;
 	}
 	
 	static
-	void xor_segments( std::vector< short >&        a,
-	                   const std::vector< short >&  b )
+	void xor_segments( segments_box&        a,
+	                   segments_box const&  b )
 	{
-		typedef std::vector< short >::const_iterator Iter;
+		typedef segments_box::const_iterator Iter;
 		
 		Iter it = b.begin();
 		
@@ -69,9 +56,9 @@ namespace quickdraw
 	}
 	
 	static
-	void and_segments( const std::vector< short >&  a,
-	                   const std::vector< short >&  b,
-	                   std::vector< short >&        c )
+	void and_segments( segments_box const&  a,
+	                   segments_box const&  b,
+	                   segments_box&        c )
 	{
 		c.clear();
 		
@@ -80,7 +67,7 @@ namespace quickdraw
 			return;
 		}
 		
-		typedef std::vector< short >::const_iterator Iter;
+		typedef segments_box::const_iterator Iter;
 		
 		bool in_a = false;
 		bool in_b = false;
@@ -177,6 +164,7 @@ namespace quickdraw
 	void sect_rect_region( const short*  rect,
 	                       const short*  bbox,
 	                       const short*  extent,
+	                       unsigned      max_bytes,
 	                       short*        r )
 	{
 		// Clip the rectangle to the region bounding box.
@@ -193,7 +181,7 @@ namespace quickdraw
 			return;
 		}
 		
-		std::vector< short > segments;
+		segments_box segments( max_bytes );
 		
 		short v, h;
 		
@@ -295,13 +283,17 @@ namespace quickdraw
 	
 	void sect_regions( const short*  bbox,
 	                   const short*  a_extent,
+	                   unsigned      a_max_bytes,
 	                   const short*  b_extent,
+	                   unsigned      b_max_bytes,
 	                   short*        r )
 	{
-		std::vector< short > a_segments;
-		std::vector< short > b_segments;
-		std::vector< short > c_segments;
-		std::vector< short > r_segments;
+		const size_t r_max_bytes = a_max_bytes + b_max_bytes;
+		
+		segments_box a_segments( a_max_bytes );
+		segments_box b_segments( b_max_bytes );
+		segments_box c_segments( r_max_bytes );
+		segments_box r_segments( r_max_bytes );
 		
 		short va = *a_extent++;
 		short vb = *b_extent++;
