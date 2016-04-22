@@ -144,6 +144,29 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	}
 }
 
+static
+Ptr draw_masked_byte( Ptr      start,
+                      uint8_t  mask,
+                      short    transfer_mode_AND_0x03,
+                      uint8_t  pattern_sample )
+{
+	Ptr p = start;
+	
+	const uint8_t src = pattern_sample & mask;
+	
+	switch ( transfer_mode_AND_0x03 )
+	{
+		// Use src vs. pat modes because we stripped off the 8 bit
+		
+		case srcCopy:  *p   &= ~mask;  // fall through
+		case srcOr:    *p++ |=  src;  break;
+		case srcXor:   *p++ ^=  src;  break;
+		case srcBic:   *p++ &= ~src;  break;
+	}
+	
+	return p;
+}
+
 static void erase_rect( const rectangular_op_params& params )
 {
 	Ptr p = params.start;
@@ -356,18 +379,7 @@ static void draw_rect( const rectangular_op_params&  params,
 		{
 			const uint8_t mask = *clip_mask++;
 			
-			const uint8_t src = pat & mask;
-			
-			switch ( pattern_transfer_mode & 0x03 )
-			{
-				// Use src vs. pat modes because we stripped off the 8 bit
-				case srcCopy:  *p = (*p  & ~mask) |  src;  break;
-				case srcOr:    *p =  *p           |  src;  break;
-				case srcXor:   *p =  *p           ^  src;  break;
-				case srcBic:   *p =  *p           & ~src;  break;
-			}
-			
-			++p;
+			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
 		}
 		
 		p += params.skip_bytes;
