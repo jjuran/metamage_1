@@ -50,7 +50,15 @@ namespace quickdraw
 			
 			void push_back( short h );
 			
+			void toggle( short h );
+			
 			void swap( segments_box& that );
+			
+			segments_box& operator^=( short h )
+			{
+				toggle( h );
+				return *this;
+			}
 	};
 	
 }

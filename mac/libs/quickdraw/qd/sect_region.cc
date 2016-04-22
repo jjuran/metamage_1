@@ -35,23 +35,10 @@ namespace quickdraw
 		return a > b ? a : b;
 	}
 	
-	static
+	static inline
 	void xor_segments( segments_box& segments, short coord )
 	{
-		typedef segments_box::iterator Iter;
-		
-		Iter end = segments.end();
-		
-		Iter it = std::lower_bound( segments.begin(), end, coord );
-		
-		if ( it != end  &&  *it == coord )
-		{
-			segments.erase( it );
-		}
-		else
-		{
-			segments.insert( it, coord );
-		}
+		segments ^= coord;
 	}
 	
 	static

@@ -49,6 +49,24 @@ namespace quickdraw
 		its_data[ its_size++ ] = h;
 	}
 	
+	void segments_box::toggle( short h )
+	{
+		typedef segments_box::iterator Iter;
+		
+		Iter the_end = end();
+		
+		Iter it = std::lower_bound( begin(), the_end, h );
+		
+		if ( it != the_end  &&  *it == h )
+		{
+			erase( it );
+		}
+		else
+		{
+			insert( it, h );
+		}
+	}
+	
 	void segments_box::swap( segments_box& that )
 	{
 		using std::swap;
