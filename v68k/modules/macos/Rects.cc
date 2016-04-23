@@ -337,26 +337,7 @@ static void draw_rect( const rectangular_op_params&  params,
 	
 	Pattern& pattern = *params.pattern;
 	
-	if ( const bool negated = pattern_transfer_mode & 0x04 )
-	{
-		for ( int i = 0;  i < 8;  ++i )
-		{
-			pattern.pat[i] = ~pattern.pat[i];
-		}
-	}
-	
 	short       v = params.topLeft.v & 0x7;
-	short const h = params.origin_h & 0x07;
-	
-	if ( h != 0 )
-	{
-		for ( int i = 0;  i < 8;  ++i )
-		{
-			pattern.pat[i] = pattern.pat[i] <<      h
-			               | pattern.pat[i] >> (8 - h);
-		}
-	}
-	
 	Ptr p = params.start;
 	
 	const short top    = params.topLeft.v;
@@ -490,6 +471,27 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		fill_rect( params );
 		
 		return;
+	}
+	
+	Pattern& pattern = *params.pattern;
+	
+	if ( const bool negated = patMode & 0x04 )
+	{
+		patMode -= 0x04;
+		
+		for ( int i = 0;  i < 8;  ++i )
+		{
+			pattern.pat[ i ] = ~pattern.pat[ i ];
+		}
+	}
+	
+	if ( const short h = params.origin_h & 0x07 )
+	{
+		for ( int i = 0;  i < 8;  ++i )
+		{
+			pattern.pat[ i ] = pattern.pat[ i ] <<      h
+			                 | pattern.pat[ i ] >> (8 - h);
+		}
 	}
 	
 	draw_rect( params, patMode, clipRect, clipRgn );
