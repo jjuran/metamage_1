@@ -337,11 +337,12 @@ static void draw_rect( const rectangular_op_params&  params,
 	
 	Pattern& pattern = *params.pattern;
 	
-	short       v = params.topLeft.v & 0x7;
 	Ptr p = params.start;
 	
 	const short top    = params.topLeft.v;
 	const short bottom = params.topLeft.v + params.height;
+	
+	short pat_v = top & 0x7;
 	
 	for ( int i = top;  i < bottom;  ++i )
 	{
@@ -349,7 +350,7 @@ static void draw_rect( const rectangular_op_params&  params,
 		
 		const char* clip_mask = temp;
 		
-		const uint8_t pat = pattern.pat[v];
+		const uint8_t pat = pattern.pat[ pat_v ];
 		
 		for ( uint16_t j = params.draw_bytes;  j > 0;  --j )
 		{
@@ -371,7 +372,7 @@ static void draw_rect( const rectangular_op_params&  params,
 		
 		p += params.skip_bytes;
 		
-		v = (v + 1) & 0x7;
+		pat_v = (pat_v + 1) & 0x7;
 	}
 	
 	free( temp );
