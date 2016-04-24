@@ -387,12 +387,13 @@ static void draw_rect( const rectangular_op_params&  params,
 	}
 }
 
-static void draw_rect( const rectangular_op_params&  params,
-                       short                         pattern_transfer_mode,
-                       RgnHandle                     clipRgn )
+static
+void draw_region( const rectangular_op_params&  params,
+                  short                         pattern_transfer_mode,
+                  RgnHandle                     region )
 {
-	const short* bbox   = (short*)  *clipRgn + 1;
-	const short* extent = (short*) (*clipRgn + 1);
+	const short* bbox   = (short*)  *region + 1;
+	const short* extent = (short*) (*region + 1);
 	
 	unsigned size = quickdraw::region_raster::mask_size( bbox );
 	
@@ -551,7 +552,7 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	if ( clipRgn != NULL )
 	{
-		draw_rect( params, patMode, clipRgn );
+		draw_region( params, patMode, clipRgn );
 		
 		DisposeRgn( clipRgn );
 	}
