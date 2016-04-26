@@ -20,7 +20,6 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	WindowPeek window = (WindowPeek) w;
 	
 	FrameRect( &window->strucRgn[0]->rgnBBox );
-	EraseRect( &window->contRgn [0]->rgnBBox );
 	
 	return 0;
 }
