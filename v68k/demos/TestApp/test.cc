@@ -15,6 +15,7 @@
 
 // TestApp
 #include "desktop.hh"
+#include "display.hh"
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 
@@ -35,6 +36,8 @@ int main()
 #endif
 	
 	SetEventMask( everyEvent );
+	
+	WindowRef main_window = NULL;
 	
 	while ( ! quitting )
 	{
@@ -83,6 +86,37 @@ int main()
 						case '5': set_desktop_pattern( qd.black  );  break;
 						
 					#endif
+						
+						case 'n':
+							if ( main_window == NULL )
+							{
+								Rect bounds = main_display_bounds();
+								
+								bounds.left  += bounds.right / 4;
+								bounds.right -= bounds.left;
+								
+								bounds.top    += bounds.bottom / 4;
+								bounds.bottom -= bounds.top;
+								
+								main_window = NewWindow( NULL,
+								                         &bounds,
+								                         "\p",
+								                         true,
+								                         plainDBox,
+								                         (WindowRef) -1,
+								                         false,
+								                         0 );
+							}
+							break;
+						
+						case 'w':
+							if ( main_window != NULL )
+							{
+								DisposeWindow( main_window );
+								
+								main_window = NULL;
+							}
+							break;
 						
 						case 'q':
 							quitting = true;
