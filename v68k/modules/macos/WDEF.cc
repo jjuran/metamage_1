@@ -14,12 +14,40 @@
 #endif
 
 
+static inline
+short shadow_for_variant( short varCode )
+{
+	const short shadow_px = varCode == altDBoxProc ? 2
+	                      :                          0;
+	
+	return shadow_px;
+}
+
 static
 long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 {
 	WindowPeek window = (WindowPeek) w;
 	
-	FrameRect( &window->strucRgn[0]->rgnBBox );
+	const Rect& content = window->contRgn[0]->rgnBBox;
+	
+	Rect frame = content;
+	
+	InsetRect( &frame, -1, -1 );
+	FrameRect( &frame );
+	
+	if ( const short shadow_px = shadow_for_variant( varCode ) )
+	{
+		OffsetRect( &frame, shadow_px, shadow_px );
+		
+		const Point topLeft = (const Point&) frame;
+		
+		frame.left = frame.right - shadow_px;
+		PaintRect( &frame );
+		frame.left = topLeft.h;
+		
+		frame.top = frame.bottom - shadow_px;
+		PaintRect( &frame );
+	}
 	
 	return 0;
 }
@@ -53,6 +81,19 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	InsetRect( &rect, -1, -1 );
 	
 	RectRgn( window->strucRgn, &rect );
+	
+	if ( const short shadow_px = shadow_for_variant( varCode ) )
+	{
+		OffsetRect( &rect, shadow_px, shadow_px );
+		
+		RgnHandle shadow = NewRgn();
+		
+		RectRgn( shadow, &rect );
+		
+		UnionRgn( window->strucRgn, shadow, window->strucRgn );
+		
+		DisposeRgn( shadow );
+	}
 	
 	return 0;
 }
