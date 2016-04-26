@@ -102,7 +102,7 @@ int main()
 								                         &bounds,
 								                         "\p",
 								                         true,
-								                         altDBoxProc,
+								                         noGrowDocProc,
 								                         (WindowRef) -1,
 								                         false,
 								                         0 );
