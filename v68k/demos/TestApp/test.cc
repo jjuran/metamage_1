@@ -102,7 +102,7 @@ int main()
 								                         &bounds,
 								                         "\p",
 								                         true,
-								                         plainDBox,
+								                         altDBoxProc,
 								                         (WindowRef) -1,
 								                         false,
 								                         0 );
