@@ -296,7 +296,7 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          short                 visible,
                                          short                 procID,
                                          struct GrafPort*      behind,
-                                         short                 closeBox,
+                                         unsigned char         closeBox,
                                          long                  refCon )
 {
 	if ( WindowList != NULL )
