@@ -104,7 +104,7 @@ int main()
 								                         true,
 								                         noGrowDocProc,
 								                         (WindowRef) -1,
-								                         false,
+								                         true,
 								                         0 );
 							}
 							break;
