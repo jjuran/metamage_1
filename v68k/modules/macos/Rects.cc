@@ -176,6 +176,22 @@ Ptr draw_masked_byte( Ptr      start,
 }
 
 static
+Ptr draw_even_segment( Ptr      start,
+                       short    n_bytes,
+                       short    transfer_mode_AND_0x03,
+                       uint8_t  pattern_sample )
+{
+	Ptr p = start;
+	
+	while ( --n_bytes >= 0 )
+	{
+		p = draw_masked_byte( p, 0xFF, transfer_mode_AND_0x03, pattern_sample );
+	}
+	
+	return p;
+}
+
+static
 Ptr draw_segment( Ptr      start,
                   short    n_pixels_skipped,
                   short    n_pixels_drawn,
@@ -209,13 +225,10 @@ Ptr draw_segment( Ptr      start,
 	{
 		short n_bytes = n_pixels_drawn / 8;
 		
-		while ( n_bytes-- > 0 )
-		{
-			p = draw_masked_byte( p,
-			                      0xFF,
-			                      transfer_mode_AND_0x03,
-			                      pattern_sample );
-		}
+		p = draw_even_segment( p,
+		                       n_bytes,
+		                       transfer_mode_AND_0x03,
+		                       pattern_sample );
 		
 		n_pixels_drawn &= 0x7;
 		
@@ -435,12 +448,10 @@ static void draw_rect( const rectangular_op_params&  params,
 			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
 		}
 		
-		for ( uint16_t j = params.draw_bytes;  j > 0;  --j )
-		{
-			const uint8_t mask = 0xFF;
-			
-			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
-		}
+		p = draw_even_segment( p,
+		                       params.draw_bytes,
+		                       pattern_transfer_mode & 0x03,
+		                       pat );
 		
 		if ( params.right_mask )
 		{
