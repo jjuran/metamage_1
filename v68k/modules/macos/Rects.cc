@@ -153,6 +153,26 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 }
 
 static
+Ptr draw_one_byte( Ptr      start,
+                   short    transfer_mode_AND_0x03,
+                   uint8_t  src )
+{
+	Ptr p = start;
+	
+	switch ( transfer_mode_AND_0x03 )
+	{
+		// Use src vs. pat modes because we stripped off the 8 bit
+		
+		case srcCopy:  *p++  = src;  break;
+		case srcOr:    *p++ |= src;  break;
+		case srcXor:   *p++ ^= src;  break;
+		case srcBic:   *p++ &= src;  break;  // src is already negated
+	}
+	
+	return p;
+}
+
+static
 Ptr draw_masked_byte( Ptr      start,
                       uint8_t  mask,
                       short    transfer_mode_AND_0x03,
@@ -183,9 +203,14 @@ Ptr draw_even_segment( Ptr      start,
 {
 	Ptr p = start;
 	
+	if ( transfer_mode_AND_0x03 == srcBic )
+	{
+		pattern_sample = ~pattern_sample;
+	}
+	
 	while ( --n_bytes >= 0 )
 	{
-		p = draw_masked_byte( p, 0xFF, transfer_mode_AND_0x03, pattern_sample );
+		p = draw_one_byte( p, transfer_mode_AND_0x03, pattern_sample );
 	}
 	
 	return p;
