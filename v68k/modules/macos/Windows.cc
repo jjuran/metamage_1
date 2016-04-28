@@ -376,6 +376,65 @@ pascal void DisposeWindow_patch( struct GrafPort* window )
 	DisposePtr( (Ptr) window );
 }
 
+pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
+{
+	RgnHandle mouseRgn = NewRgn();
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	const short varCode = *(Byte*) &w->windowDefProc;
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( w->strucRgn );
+	
+	bool was_inside = false;
+	bool is_inside = true;
+	
+	while ( true )
+	{
+		short hit = WDEF_0( varCode, window, wHit, *(long*) &pt );
+		
+		is_inside = hit == wInGoAway;
+		
+		if ( is_inside != was_inside )
+		{
+			was_inside = is_inside;
+			
+			WDEF_0( varCode, window, wDraw, wInGoAway );
+		}
+		
+		SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
+		
+		EventRecord event;
+		
+		if ( WaitNextEvent( mouseUp, &event, 0x7fffffff, mouseRgn ) )
+		{
+			if ( event.what == mouseUp )
+			{
+				break;
+			}
+		}
+		
+		pt = event.where;
+	}
+	
+	if ( is_inside )
+	{
+		WDEF_0( varCode, window, wDraw, wInGoAway );
+	}
+	
+	qd.thePort = saved_port;
+	
+	DisposeRgn( mouseRgn );
+	
+	return is_inside;
+}
+
 pascal WindowRef FrontWindow_patch()
 {
 	return (WindowRef) WindowList;
