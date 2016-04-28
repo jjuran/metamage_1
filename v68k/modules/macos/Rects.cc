@@ -501,39 +501,37 @@ static void draw_rect( const rectangular_op_params&  params,
 {
 	Pattern& pattern = *params.pattern;
 	
-	Ptr p = params.start;
+	const BitMap& portBits = params.port->portBits;
+	
+	const Rect& bounds = portBits.bounds;
+	
+	const Rect& rect = params.rect;
 	
 	const short top    = params.topLeft.v;
 	const short bottom = params.topLeft.v + params.height;
 	
 	short pat_v = top & 0x7;
 	
+	Ptr rowBase = portBits.baseAddr + top * portBits.rowBytes;
+	
 	for ( int i = top;  i < bottom;  ++i )
 	{
 		const uint8_t pat = pattern.pat[ pat_v ];
 		
-		if ( params.left_mask )
-		{
-			const uint8_t mask = ~params.left_mask;
-			
-			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
-		}
+		Ptr start = rowBase + (rect.left - bounds.left) / 8;
 		
-		p = draw_even_segment( p,
-		                       params.draw_bytes,
-		                       pattern_transfer_mode & 0x03,
-		                       pat );
+		const short n_pixels_skipped = (rect.left - bounds.left) & 0x7;
+		const short n_pixels_drawn   = rect.right - rect.left;
 		
-		if ( params.right_mask )
-		{
-			const uint8_t mask = ~params.right_mask;
-			
-			p = draw_masked_byte( p, mask, pattern_transfer_mode & 0x03, pat );
-		}
-		
-		p += params.skip_bytes;
+		draw_segment( start,
+		              n_pixels_skipped,
+		              n_pixels_drawn,
+		              pattern_transfer_mode & 0x03,
+		              pat );
 		
 		pat_v = (pat_v + 1) & 0x7;
+		
+		rowBase += portBits.rowBytes;
 	}
 }
 
