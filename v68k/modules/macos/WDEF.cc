@@ -42,9 +42,37 @@ short shadow_for_variant( short varCode )
 }
 
 static
+long toggle_close_box( WindowPeek window )
+{
+	const Rect& frame = window->strucRgn[0]->rgnBBox;
+	
+	const short frame_thickness = 1;
+	
+	const short top  = frame.top  + frame_thickness + close_box_v_offset;
+	const short left = frame.left + frame_thickness + close_box_h_offset;
+	
+	const Rect close_box =
+	{
+		top,
+		left,
+		top  + close_box_width,
+		left + close_box_width,
+	};
+	
+	InvertRect( &close_box );
+	
+	return 0;
+}
+
+static
 long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 {
 	WindowPeek window = (WindowPeek) w;
+	
+	if ( param == wInGoAway )
+	{
+		return toggle_close_box( window );
+	}
 	
 	screen_lock lock;
 	
