@@ -59,6 +59,14 @@ int main()
 							}
 							break;
 						
+						case inGoAway:
+							if ( TrackGoAway( window, event.where ) )
+							{
+								DisposeWindow( main_window );
+								
+								main_window = NULL;
+							}
+						
 						default:
 							break;
 					}
