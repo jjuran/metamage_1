@@ -43,6 +43,8 @@ static inline bool operator==( const Pattern& a, black_t )
 
 struct rectangular_op_params
 {
+	Rect rect;
+	
 	GrafPtr port;
 	
 	Point topLeft;
@@ -94,6 +96,8 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 	Rect rect;
 	
 	do_Rect_intersection( rect, bounds, input_rect );
+	
+	params.rect = rect;
 	
 	const int width_px  = rect.right - rect.left;
 	const int height_px = rect.bottom - rect.top;
