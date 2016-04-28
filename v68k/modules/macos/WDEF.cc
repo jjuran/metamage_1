@@ -31,6 +31,65 @@ const short close_box_h_offset = 8;
 const short close_box_margin   = 1;
 const short close_box_width    = 11;
 
+#define PACK16( _15, _14, _13,_12,  \
+                _11, _10,  _9, _8,  \
+                 _7,  _6,  _5, _4,  \
+                 _3,  _2,  _1, _0 ) \
+	(                            \
+		+ (_15 << 15)  \
+		| (_14 << 14)  \
+		| (_13 << 13)  \
+		| (_12 << 12)  \
+		| (_11 << 11)  \
+		| (_10 << 10)  \
+		| ( _9 <<  9)  \
+		| ( _8 <<  8)  \
+		| ( _7 <<  7)  \
+		| ( _6 <<  6)  \
+		| ( _5 <<  5)  \
+		| ( _4 <<  4)  \
+		| ( _3 <<  3)  \
+		| ( _2 <<  2)  \
+		| ( _1 <<  1)  \
+		| ( _0 <<  0)  \
+	)
+
+#define PACK9( _8, _7, _6, _5, _4, _3, _2, _1, _0 )  \
+	PACK16( _8, _7, _6, _5, _4, _3, _2, _1, _0, 0, 0, 0, 0, 0, 0, 0 )
+
+#define _ 0
+#define X 1
+
+static const uint16_t splat_bits[] =
+{
+	PACK9( _,_,_,_,X,_,_,_,_ ),
+	PACK9( _,X,_,_,X,_,_,X,_ ),
+	PACK9( _,_,X,_,X,_,X,_,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( X,X,X,_,_,_,X,X,X ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( _,_,X,_,X,_,X,_,_ ),
+	PACK9( _,X,_,_,X,_,_,X,_ ),
+	PACK9( _,_,_,_,X,_,_,_,_ ),
+};
+
+static BitMap splat_bitmap =
+{
+	(Ptr) splat_bits,
+	2,
+	{ 0, 0, 9, 9 },
+};
+
+static
+RgnHandle make_splat()
+{
+	RgnHandle rgn = NewRgn();
+	
+	BitMapToRegion( rgn, &splat_bitmap );
+	
+	return rgn;
+}
+
 static inline
 short shadow_for_variant( short varCode )
 {
@@ -44,22 +103,32 @@ short shadow_for_variant( short varCode )
 static
 long toggle_close_box( WindowPeek window )
 {
+	static RgnHandle splat_rgn = make_splat();
+	
 	const Rect& frame = window->strucRgn[0]->rgnBBox;
 	
+	/*
+		Add one to the frame coordinate to get inside the frame.
+		Add one to the box coordinate to get inside the box.
+	*/
 	const short frame_thickness = 1;
 	
-	const short top  = frame.top  + frame_thickness + close_box_v_offset;
-	const short left = frame.left + frame_thickness + close_box_h_offset;
+	const short top  = frame.top  + frame_thickness + close_box_v_offset + 1;
+	const short left = frame.left + frame_thickness + close_box_h_offset + 1;
 	
-	const Rect close_box =
+	const short dv = top  - splat_rgn[0]->rgnBBox.top;
+	const short dh = left - splat_rgn[0]->rgnBBox.left;
+	
+	if ( dh  ||  dv )
 	{
-		top,
-		left,
-		top  + close_box_width,
-		left + close_box_width,
-	};
+		OffsetRgn( splat_rgn, dh, dv );
+	}
 	
-	InvertRect( &close_box );
+	PenMode( patXor );
+	
+	PaintRgn( splat_rgn );
+	
+	PenNormal();
 	
 	return 0;
 }
