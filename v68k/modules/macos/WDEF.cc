@@ -13,6 +13,9 @@
 #include <MacWindows.h>
 #endif
 
+// macos
+#include "screen_lock.hh"
+
 
 /*
 	This is the height added by a title bar.  This means that in window
@@ -42,6 +45,8 @@ static
 long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 {
 	WindowPeek window = (WindowPeek) w;
+	
+	screen_lock lock;
 	
 	const Rect& content = window->contRgn[0]->rgnBBox;
 	
