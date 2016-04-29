@@ -309,6 +309,105 @@ pascal void OffsetRgn_patch( MacRegion** rgn, short dh, short dv )
 	}
 }
 
+/*
+	For {squish,stretch}_region_[hv]():
+	
+	tmp must be a copy of rgn.
+*/
+
+static
+void squish_region_h( RgnHandle rgn, short dh, RgnHandle tmp )
+{
+	for ( short i = dh;  i > 0;  --i )
+	{
+		OffsetRgn( rgn, -1, 0 );
+		SectRgn( rgn, tmp, rgn );
+		
+		OffsetRgn( tmp, 1, 0 );
+		SectRgn( rgn, tmp, rgn );
+	}
+}
+
+static
+void squish_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
+{
+	for ( short i = dv;  i > 0;  --i )
+	{
+		OffsetRgn( rgn, 0, -1 );
+		SectRgn( rgn, tmp, rgn );
+		
+		OffsetRgn( tmp, 0, 1 );
+		SectRgn( rgn, tmp, rgn );
+	}
+}
+
+/*
+	For stretch_region_h() and stretch_region_v():
+	
+	dh/dv is negative.
+*/
+
+static
+void stretch_region_h( RgnHandle rgn, short dh, RgnHandle tmp )
+{
+	for ( short i = dh;  i < 0;  ++i )
+	{
+		OffsetRgn( rgn, 0, -1 );
+		UnionRgn( rgn, tmp, rgn );
+		
+		OffsetRgn( tmp, 0, 1 );
+		UnionRgn( rgn, tmp, rgn );
+	}
+}
+
+static
+void stretch_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
+{
+	for ( short i = dv;  i < 0;  ++i )
+	{
+		OffsetRgn( rgn, -1, 0 );
+		UnionRgn( rgn, tmp, rgn );
+		
+		OffsetRgn( tmp, 1, 0 );
+		UnionRgn( rgn, tmp, rgn );
+	}
+}
+
+pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
+{
+	RgnHandle tmp = NewRgn();
+	
+	if ( dh != 0 )
+	{
+		CopyRgn( rgn, tmp );
+		
+		if ( dh > 0 )
+		{
+			squish_region_h( rgn, dh, tmp );
+		}
+		else
+		{
+			stretch_region_h( rgn, dh, tmp );
+		}
+	}
+	
+	if ( dv != 0 )
+	{
+		CopyRgn( rgn, tmp );
+		
+		if ( dv > 0 )
+		{
+			squish_region_v( rgn, dv, tmp );
+		}
+		else
+		{
+			stretch_region_v( rgn, dv, tmp );
+		}
+	}
+	
+	DisposeRgn( tmp );
+}
+
 static void finish_region( RgnHandle r )
 {
 	if ( const bool empty = *rgn_extent( *r ) == Region_end )
