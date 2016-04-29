@@ -21,7 +21,7 @@
 #pragma exceptions off
 
 
-static const unsigned n_tests = 2 + 4 + 8;
+static const unsigned n_tests = 2 + 4 + 8 + 2;
 
 
 #define EXPECT_RGN( rgn, mem )  EXPECT_CMP( *(rgn), (rgn)[0]->rgnSize, (mem), sizeof (mem) )
@@ -297,6 +297,84 @@ static void complex( const BitMap& bitmap )
 	DisposeRgn( r );
 }
 
+#define PACK16( _15, _14, _13,_12,  \
+                _11, _10,  _9, _8,  \
+                 _7,  _6,  _5, _4,  \
+                 _3,  _2,  _1, _0 ) \
+	(                            \
+		+ (_15 << 15)  \
+		| (_14 << 14)  \
+		| (_13 << 13)  \
+		| (_12 << 12)  \
+		| (_11 << 11)  \
+		| (_10 << 10)  \
+		| ( _9 <<  9)  \
+		| ( _8 <<  8)  \
+		| ( _7 <<  7)  \
+		| ( _6 <<  6)  \
+		| ( _5 <<  5)  \
+		| ( _4 <<  4)  \
+		| ( _3 <<  3)  \
+		| ( _2 <<  2)  \
+		| ( _1 <<  1)  \
+		| ( _0 <<  0)  \
+	)
+
+#define PACK9( _8, _7, _6, _5, _4, _3, _2, _1, _0 )  \
+	PACK16( _8, _7, _6, _5, _4, _3, _2, _1, _0, 0, 0, 0, 0, 0, 0, 0 )
+
+#define _ 0
+#define X 1
+
+static const uint16_t splat_bits[] =
+{
+	PACK9( _,_,_,_,X,_,_,_,_ ),
+	PACK9( _,X,_,_,X,_,_,X,_ ),
+	PACK9( _,_,X,_,X,_,X,_,_ ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( X,X,X,_,_,_,X,X,X ),
+	PACK9( _,_,_,_,_,_,_,_,_ ),
+	PACK9( _,_,X,_,X,_,X,_,_ ),
+	PACK9( _,X,_,_,X,_,_,X,_ ),
+	PACK9( _,_,_,_,X,_,_,_,_ ),
+};
+
+static BitMap splat_bitmap =
+{
+	(Ptr) splat_bits,
+	2,
+	{ 0, 0, 9, 9 },
+};
+
+static void splat()
+{
+	const short splat_rgn[] =
+	{
+		66 * 2,
+		0, 0, 9, 9,
+		
+		0,             4, 5,             0x7FFF,
+		1,    1, 2,             7, 8,    0x7FFF,
+		2,    1,    3,       6,    8,    0x7FFF,
+		3,       2, 3, 4, 5, 6, 7,       0x7FFF,
+		4, 0,       3,       6,       9, 0x7FFF,
+		5, 0,       3,       6,       9, 0x7FFF,
+		6,       2, 3, 4, 5, 6, 7,       0x7FFF,
+		7,    1,    3,       6,    8,    0x7FFF,
+		8,    1, 2,             7, 8,    0x7FFF,
+		9,             4, 5,             0x7FFF,
+		
+		0x7FFF
+	};
+	
+	RgnHandle r = NewRgn();
+	
+	OSErr err = BitMapToRegion( r, &splat_bitmap );
+	
+	EXPECT( err == noErr );
+	EXPECT_RGN( r, splat_rgn );
+}
+
 
 int main( int argc, char** argv )
 {
@@ -307,6 +385,8 @@ int main( int argc, char** argv )
 	empty      ( testing_grafPort->portBits );
 	rectangular( testing_grafPort->portBits );
 	complex    ( testing_grafPort->portBits );
+	
+	splat();
 	
 	term();
 	
