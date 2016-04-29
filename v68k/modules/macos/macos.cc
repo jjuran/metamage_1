@@ -163,7 +163,7 @@ static void install_QuickDraw()
 	TBTRAP( EmptyRect  );  // A8AE
 	
 	TBTRAP( StdRgn      );  // A8D1
-	
+	TBTRAP( FrameRgn    );  // A8D2
 	TBTRAP( PaintRgn    );  // A8D3
 	TBTRAP( EraseRgn    );  // A8D4
 	TBTRAP( InverRgn    );  // A8D5

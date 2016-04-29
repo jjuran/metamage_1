@@ -33,7 +33,19 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
-		// FIXME:  Needs special treatment
+		RgnHandle frame = tmp;
+		
+		CopyRgn( rgn, frame );
+		
+		GrafPort& port = **get_addrof_thePort();
+		
+		InsetRgn( frame, port.pnSize.h, port.pnSize.v );
+		
+		DiffRgn( rgn, frame, frame );
+		
+		verb = kQDGrafVerbPaint;
+		
+		rgn = frame;
 	}
 	
 	GrafPort& port = **get_addrof_thePort();
@@ -53,6 +65,11 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	port.clipRgn = saved_clipRgn;
 	
 	DisposeRgn( tmp );
+}
+
+pascal void FrameRgn_patch( MacRegion** rgn )
+{
+	StdRgn( kQDGrafVerbFrame, rgn );
 }
 
 pascal void PaintRgn_patch( MacRegion** rgn )

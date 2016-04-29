@@ -12,6 +12,7 @@ struct Rect;
 
 pascal void StdRgn_patch( signed char verb, MacRegion** rgn );
 
+pascal void FrameRgn_patch( MacRegion** rgn );
 pascal void PaintRgn_patch( MacRegion** rgn );
 pascal void EraseRgn_patch( MacRegion** rgn );
 pascal void InverRgn_patch( MacRegion** rgn );
