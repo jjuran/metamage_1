@@ -277,12 +277,13 @@ Ptr draw_segment( Ptr      start,
 	
 	if ( n_pixels_drawn > 0 )
 	{
-		short n_bytes = n_pixels_drawn / 8;
-		
-		p = draw_even_segment( p,
-		                       n_bytes,
-		                       transfer_mode_AND_0x03,
-		                       pattern_sample );
+		if ( short n_bytes = n_pixels_drawn / 8 )
+		{
+			p = draw_even_segment( p,
+			                       n_bytes,
+			                       transfer_mode_AND_0x03,
+			                       pattern_sample );
+		}
 		
 		n_pixels_drawn &= 0x7;
 		
