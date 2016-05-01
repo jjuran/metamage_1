@@ -1107,9 +1107,18 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	
 	WindowPeek window = (WindowPeek) port;
 	
+	const bool frontmost = window == WindowList;
+	
 	remove_from_window_list( window );
 	
 	PaintBehind( (WindowRef) window->nextWindow, window->strucRgn );
+	
+	if ( frontmost  &&  WindowList != NULL )
+	{
+		CurActivate = (WindowRef) WindowList;
+		
+		HiliteWindow_patch( WindowList, true );
+	}
 	
 	DisposeRgn( window->strucRgn  );
 	DisposeRgn( window->contRgn   );
