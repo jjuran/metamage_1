@@ -6,6 +6,10 @@
 #ifndef WINDOWS_HH
 #define WINDOWS_HH
 
+struct GrafPort;
+struct Point;
+struct Rect;
+
 extern struct MacRegion** BezelRgn;
 
 pascal void ClipAbove_patch( struct WindowRecord* window );
@@ -31,6 +35,8 @@ pascal void MoveWindow_patch( GrafPort* w, short h, short v, char activate );
 pascal unsigned char TrackGoAway_patch( struct GrafPort* w, struct Point pt );
 
 pascal struct GrafPort* FrontWindow_patch();
+
+pascal void DragWindow_patch( GrafPort* w, Point start, const Rect* bounds );
 
 pascal short FindWindow_patch( struct Point pt, struct GrafPort** window );
 

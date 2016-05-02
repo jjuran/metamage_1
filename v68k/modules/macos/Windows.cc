@@ -476,6 +476,33 @@ pascal WindowRef FrontWindow_patch()
 	return (WindowRef) WindowList;
 }
 
+pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
+{
+	WindowPeek window = (WindowPeek) w;
+	
+	RgnHandle drag_region = NewRgn();
+	
+	CopyRgn( window->strucRgn, drag_region );
+	
+	long delta = DragGrayRgn( drag_region, start, bounds, bounds, 0, NULL );
+	
+	if ( delta != 0  &&  delta != 0x80008000 )
+	{
+		const short dh = delta;
+		const short dv = delta >> 16;
+	
+		short v = -w->portBits.bounds.top;
+		short h = -w->portBits.bounds.left;
+	
+		h += dh;
+		v += dv;
+	
+		MoveWindow( w, h, v, true );
+	}
+	
+	DisposeRgn( drag_region );
+}
+
 pascal short FindWindow_patch( Point pt, WindowPtr* window )
 {
 	*window = NULL;

@@ -198,7 +198,7 @@ static void install_Windows()
 	TBTRAP( TrackGoAway   );  // A91E
 	
 	TBTRAP( FrontWindow   );  // A924
-	
+	TBTRAP( DragWindow    );  // A925
 	TBTRAP( DragTheRgn    );  // A926
 	
 	TBTRAP( FindWindow    );  // A92C
