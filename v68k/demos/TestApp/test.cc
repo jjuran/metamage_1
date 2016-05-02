@@ -9,6 +9,9 @@
 #endif
 
 // Mac OS
+#ifndef __LOWMEM__
+#include <LowMem.h>
+#endif
 #ifndef __SOUND__
 #include <Sound.h>
 #endif
@@ -54,6 +57,18 @@ void move_front_window( short dh, short dv )
 	}
 }
 
+static
+const Rect* drag_bounds()
+{
+#if ! TARGET_API_MAC_CARBON
+	
+	return &LMGetGrayRgn()[0]->rgnBBox;
+	
+#endif
+	
+	return NULL;  // DragWindow() bounds may be NULL in Carbon
+}
+
 int main()
 {
 	Boolean quitting = false;
@@ -91,6 +106,10 @@ int main()
 							{
 								FlashMenuBar( 0 );
 							}
+							break;
+						
+						case inDrag:
+							DragWindow( window, event.where, drag_bounds() );
 							break;
 						
 						case inGoAway:
