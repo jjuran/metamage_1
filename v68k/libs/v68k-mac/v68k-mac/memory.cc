@@ -57,6 +57,10 @@ enum
 	tag_WMgrPort_low_word,
 	tag_GrayRgn,
 	tag_GrayRgn_low_word,
+	tag_DragPattern,
+	tag_DragPattern_1,
+	tag_DragPattern_2,
+	tag_DragPattern_3,
 	tag_DeskPattern,
 	tag_DeskPattern_1,
 	tag_DeskPattern_2,
@@ -102,6 +106,7 @@ static const global globals[] =
 	{ 0x09EE, 4,    tag_GrayRgn     },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
+	{ 0x0A34, 8,    tag_DragPattern },
 	{ 0x0A3C, 8,    tag_DeskPattern },
 	{ 0x0A60, 2,    tag_ResErr      },
 	{ 0x0BAA, 2,    tag_MBarHeight  },
