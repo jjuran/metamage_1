@@ -376,6 +376,42 @@ pascal void DisposeWindow_patch( struct GrafPort* window )
 	DisposePtr( (Ptr) window );
 }
 
+pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
+{
+	WindowPeek window = (WindowPeek) w;
+	
+	const short top  = -w->portBits.bounds.top;
+	const short left = -w->portBits.bounds.left;
+	
+	const short dh = h - left;
+	const short dv = v - top;
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = w;
+	
+	MovePortTo( h, v );
+	
+	qd.thePort = saved_port;
+	
+	RgnHandle exposed = NewRgn();
+	
+	CopyRgn( window->strucRgn, exposed );
+	
+	OffsetRgn( window->strucRgn, dh, dv );
+	OffsetRgn( window->contRgn,  dh, dv );
+	
+	DiffRgn( exposed, window->strucRgn, exposed );
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	PaintBehind_patch( window->nextWindow, exposed );
+	
+	DisposeRgn( exposed );
+}
+
 pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 {
 	RgnHandle mouseRgn = NewRgn();
