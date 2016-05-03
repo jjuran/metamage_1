@@ -5,8 +5,6 @@
 
 #include "mac_sys/errno_from_mac_error.hh"
 
-#define OTUNIXERRORS 1
-
 // Mac OS X
 #ifdef __APPLE__
 #include <CoreServices/CoreServices.h>
@@ -14,6 +12,7 @@
 
 // Mac OS
 #ifndef MAC_OS_X_VERSION_10_8
+#define OTUNIXERRORS 1
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif
