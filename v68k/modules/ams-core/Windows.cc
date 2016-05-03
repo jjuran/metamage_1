@@ -655,6 +655,11 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	qd.thePort = saved_port;
 	
 	DisposeRgn( uncovered );
+	
+	if ( activate  &&  ! window->hilited )
+	{
+		SelectWindow_patch( window );
+	}
 }
 
 pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
