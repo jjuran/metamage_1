@@ -20,6 +20,40 @@
 #include "fullscreen_port.hh"
 
 
+static
+Point get_window_topLeft( WindowRef w )
+{
+#if ! TARGET_API_MAC_CARBON
+	
+	const Rect& bitmap_bounds = w->portBits.bounds;
+	
+	Point topLeft = { -bitmap_bounds.top, -bitmap_bounds.left };
+	
+	return topLeft;
+	
+#endif
+	
+	Rect bounds;
+	
+	GetWindowBounds( w, kWindowContentRgn, &bounds );
+	
+	return *(Point*) &bounds;
+}
+
+static
+void move_front_window( short dh, short dv )
+{
+	if ( WindowRef front = FrontWindow() )
+	{
+		Point topLeft = get_window_topLeft( front );
+		
+		topLeft.h += dh;
+		topLeft.v += dv;
+		
+		MoveWindow( front, topLeft.h, topLeft.v, false );
+	}
+}
+
 int main()
 {
 	Boolean quitting = false;
@@ -84,6 +118,11 @@ int main()
 					{
 						case 0x08:  enter_fullscreen();  break;  // Delete
 						case 0x1B:  leave_fullscreen();  break;  // Esc
+						
+						case 0x1C:  move_front_window( -8, 0 );  break;
+						case 0x1D:  move_front_window(  8, 0 );  break;
+						case 0x1E:  move_front_window( 0, -8 );  break;
+						case 0x1F:  move_front_window( 0,  8 );  break;
 						
 					#if ! TARGET_API_MAC_CARBON
 						

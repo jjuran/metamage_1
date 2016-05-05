@@ -193,6 +193,8 @@ static void install_Windows()
 	TBTRAP( NewWindow     );  // A913
 	TBTRAP( DisposeWindow );  // A914
 	
+	TBTRAP( MoveWindow    );  // A91B
+	
 	TBTRAP( TrackGoAway   );  // A91E
 	
 	TBTRAP( FrontWindow   );  // A924

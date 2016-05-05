@@ -215,7 +215,11 @@ Ptr draw_even_segment( Ptr      start,
 	while ( (uintptr_t) p & 0x3 )
 	{
 		p = draw_one_byte( p, transfer_mode_AND_0x03, pattern_sample );
-		--n_bytes;
+		
+		if ( --n_bytes == 0 )
+		{
+			return p;
+		}
 	}
 	
 	short n_longs = n_bytes / 4;
