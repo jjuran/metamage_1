@@ -211,6 +211,12 @@ int main()
 					}
 					break;
 				
+				case updateEvt:
+					window = (WindowRef) event.message;
+					BeginUpdate( window );
+					EndUpdate  ( window );
+					break;
+				
 				default:
 					break;
 			}
