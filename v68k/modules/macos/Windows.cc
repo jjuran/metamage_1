@@ -376,6 +376,42 @@ pascal void DisposeWindow_patch( struct GrafPort* window )
 	DisposePtr( (Ptr) window );
 }
 
+pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
+{
+	WindowPeek window = (WindowPeek) w;
+	
+	const short top  = -w->portBits.bounds.top;
+	const short left = -w->portBits.bounds.left;
+	
+	const short dh = h - left;
+	const short dv = v - top;
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = w;
+	
+	MovePortTo( h, v );
+	
+	qd.thePort = saved_port;
+	
+	RgnHandle exposed = NewRgn();
+	
+	CopyRgn( window->strucRgn, exposed );
+	
+	OffsetRgn( window->strucRgn, dh, dv );
+	OffsetRgn( window->contRgn,  dh, dv );
+	
+	DiffRgn( exposed, window->strucRgn, exposed );
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	PaintBehind_patch( window->nextWindow, exposed );
+	
+	DisposeRgn( exposed );
+}
+
 pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 {
 	RgnHandle mouseRgn = NewRgn();
@@ -438,6 +474,33 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 pascal WindowRef FrontWindow_patch()
 {
 	return (WindowRef) WindowList;
+}
+
+pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
+{
+	WindowPeek window = (WindowPeek) w;
+	
+	RgnHandle drag_region = NewRgn();
+	
+	CopyRgn( window->strucRgn, drag_region );
+	
+	long delta = DragGrayRgn( drag_region, start, bounds, bounds, 0, NULL );
+	
+	if ( delta != 0  &&  delta != 0x80008000 )
+	{
+		const short dh = delta;
+		const short dv = delta >> 16;
+	
+		short v = -w->portBits.bounds.top;
+		short h = -w->portBits.bounds.left;
+	
+		h += dh;
+		v += dv;
+	
+		MoveWindow( w, h, v, true );
+	}
+	
+	DisposeRgn( drag_region );
 }
 
 pascal short FindWindow_patch( Point pt, WindowPtr* window )

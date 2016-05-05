@@ -19,6 +19,7 @@
 
 // macos
 #include "Debugger.hh"
+#include "Drag.hh"
 #include "Events.hh"
 #include "Fonts.hh"
 #include "GrafPorts.hh"
@@ -182,6 +183,8 @@ static void install_Fonts()
 
 static void install_Windows()
 {
+	TBTRAP( DragGrayRgn   );  // A905
+	
 	TBTRAP( ClipAbove     );  // A90B
 	TBTRAP( PaintOne      );  // A90C
 	TBTRAP( PaintBehind   );  // A90D
@@ -190,9 +193,13 @@ static void install_Windows()
 	TBTRAP( NewWindow     );  // A913
 	TBTRAP( DisposeWindow );  // A914
 	
+	TBTRAP( MoveWindow    );  // A91B
+	
 	TBTRAP( TrackGoAway   );  // A91E
 	
 	TBTRAP( FrontWindow   );  // A924
+	TBTRAP( DragWindow    );  // A925
+	TBTRAP( DragTheRgn    );  // A926
 	
 	TBTRAP( FindWindow    );  // A92C
 	TBTRAP( CloseWindow   );  // A92D
