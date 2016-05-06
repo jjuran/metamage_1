@@ -395,7 +395,15 @@ static void frame_rect( const Rect* rect )
 		return;
 	}
 	
-	if ( rect->bottom - rect->top <= 2  ||  rect->right - rect->left <= 2 )
+	QDGlobals& qd = get_QDGlobals();
+	
+	const short penWidth  = qd.thePort->pnSize.h;
+	const short penHeight = qd.thePort->pnSize.v;
+	
+	const short w2 = penWidth  * 2;
+	const short h2 = penHeight * 2;
+	
+	if ( rect->bottom - rect->top <= h2  ||  rect->right - rect->left <= w2 )
 	{
 		StdRect_patch( kQDGrafVerbPaint, rect );
 		
@@ -408,21 +416,21 @@ static void frame_rect( const Rect* rect )
 	
 	edge.right = rect->right;
 	
-	edge.bottom = edge.top + 1;
+	edge.bottom = edge.top + penHeight;
 	
 	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
-	++edge.top;
+	edge.top += penHeight;
 	
-	edge.right = edge.left + 1;
+	edge.right = edge.left + penWidth;
 	
-	edge.bottom = rect->bottom - 1;
+	edge.bottom = rect->bottom - penHeight;
 	
 	StdRect_patch( kQDGrafVerbPaint, &edge );
 	
 	
-	edge.left  = rect->right - 1;
+	edge.left  = rect->right - penWidth;
 	edge.right = rect->right;
 	
 	StdRect_patch( kQDGrafVerbPaint, &edge );
@@ -431,7 +439,7 @@ static void frame_rect( const Rect* rect )
 	
 	edge.top = edge.bottom;
 	
-	++edge.bottom;
+	edge.bottom += penHeight;
 	
 	StdRect_patch( kQDGrafVerbPaint, &edge );
 }
