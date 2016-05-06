@@ -15,7 +15,7 @@
 
 // macos
 #include "QDGlobals.hh"
-#include "screen_lock.hh"
+#include "raster_lock.hh"
 
 
 using quickdraw::segments_box;
@@ -625,7 +625,7 @@ void draw_region( const rectangular_op_params&  params,
 
 pascal void StdRect_patch( signed char verb, const Rect* r )
 {
-	screen_lock lock;
+	raster_lock lock;
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
