@@ -21,6 +21,7 @@
 #include "splode/splode.hh"
 
 // macos
+#include "Cursor.hh"
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "options.hh"
@@ -152,6 +153,8 @@ void SetMouse( const splode::pointer_location_buffer& buffer )
 {
 	Mouse.h = buffer.x;
 	Mouse.v = buffer.y;
+	
+	update_cursor_location();
 }
 
 static
