@@ -82,6 +82,8 @@ int main()
 	InitWindows();
 	InitMenus();
 	
+	InitCursor();
+	
 #endif
 	
 	SetEventMask( everyEvent );
