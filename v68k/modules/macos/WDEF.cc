@@ -14,6 +14,7 @@
 #endif
 
 // macos
+#include "QDGlobals.hh"
 #include "screen_lock.hh"
 
 
@@ -156,9 +157,32 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		frame.top -= title_bar_height;
 	}
 	
-	InsetRect( &frame, -1, -1 );
+	const short frame_inset = varCode == dBoxProc ? -8 : -1;
 	
+	InsetRect( &frame, frame_inset, frame_inset );
 	FrameRect( &frame );
+	
+	if ( varCode == dBoxProc )
+	{
+		QDGlobals& qd = get_QDGlobals();
+		
+		PenSize( 2, 2 );
+		
+		InsetRect( &frame, 3, 3 );
+		FrameRect( &frame );
+		
+		PenPat( &qd.white );
+		
+		InsetRect( &frame, -2, -2 );
+		FrameRect( &frame );
+		
+		PenSize( 3, 3 );
+		
+		InsetRect( &frame, 4, 4 );
+		FrameRect( &frame );
+		
+		PenNormal();
+	}
 	
 	if ( const short shadow_px = shadow_for_variant( varCode ) )
 	{
@@ -281,7 +305,9 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	
 	RectRgn( window->contRgn, &rect );
 	
-	InsetRect( &rect, -1, -1 );
+	const short frame_inset = varCode == dBoxProc ? -8 : -1;
+	
+	InsetRect( &rect, frame_inset, frame_inset );
 	
 	const bool has_title_bar = (varCode & 3) == 0;
 	
