@@ -203,6 +203,13 @@ pascal void InitCursor_patch()
 	paint_cursor( Mouse.h, Mouse.v );
 }
 
+pascal void SetCursor_patch( const Cursor* crsr )
+{
+	TheCrsr = *crsr;
+	
+	update_cursor_location();
+}
+
 pascal void HideCursor_patch()
 {
 	hide_cursor();

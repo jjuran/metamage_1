@@ -105,7 +105,7 @@ static void install_OSUtils()
 static void install_QuickDraw()
 {
 	TBTRAP( InitCursor );  // A850
-	
+	TBTRAP( SetCursor  );  // A851
 	TBTRAP( HideCursor );  // A852
 	TBTRAP( ShowCursor );  // A853
 	
