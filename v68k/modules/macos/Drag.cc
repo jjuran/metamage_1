@@ -87,6 +87,8 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	
 	bool was_inside = true;
 	
+	long sleep = 0;
+	
 	while ( true )
 	{
 		EventRecord event;
@@ -103,6 +105,27 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 		const Point& where = event.where;
 		
 		SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		
+		if ( event.what != nullEvent )
+		{
+			/*
+				Discard any mouse-moved events without redrawing the region.
+				This can be prohibitively CPU-taxing on lightweight systems.
+				
+				Set sleep to 0 to ensure that we get a null event afterward.
+			*/
+			
+			sleep = 0;
+			
+			continue;
+		}
+		
+		/*
+			We got a null event -- redraw the dotted region outline (if it
+			actually moved, that is), and set sleep back to forever (approx).
+		*/
+		
+		sleep = 0x7fffffff;
 		
 		if ( *(long*) &pt != *(long*) &event.where )
 		{
