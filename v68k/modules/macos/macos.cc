@@ -60,6 +60,7 @@ static command::option options[] =
 
 
 unsigned long ScrnBase : 0x0824;
+Point         Mouse    : 0x0830;
 
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
@@ -78,6 +79,8 @@ enum
 static void initialize_low_memory_globals()
 {
 	ScrnBase = 0x0001A700;
+	
+	*(long*) &Mouse = 0x000F000F;  // 15, 15
 }
 
 static void install_MemoryManager()
