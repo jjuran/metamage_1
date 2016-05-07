@@ -91,12 +91,13 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	{
 		EventRecord event;
 		
-		if ( WaitNextEvent( mouseUp, &event, 0x7fffffff, mouseRgn ) )
+		const bool eventful = WaitNextEvent( mouseUp, &event, sleep, mouseRgn );
+		
+		// Events for DAs won't occur here, so we don't need to check.
+		
+		if ( event.what == mouseUp )
 		{
-			if ( event.what == mouseUp )
-			{
-				break;
-			}
+			break;
 		}
 		
 		const Point& where = event.where;
