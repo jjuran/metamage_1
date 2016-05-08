@@ -65,7 +65,11 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 		
 		if ( access == v68k::mem_update  &&  screen_lock_level >= 0 )
 		{
+		#ifdef __RELIX__
+			
 			msync( the_screen_buffer, screen_size, MS_SYNC );
+			
+		#endif
 		}
 		
 		return p;
