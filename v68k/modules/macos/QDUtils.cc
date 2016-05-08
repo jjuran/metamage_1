@@ -27,3 +27,8 @@ pascal PatHandle GetPattern_patch( short id )
 {
 	return (PatHandle) GetResource( 'PAT ', id );
 }
+
+pascal CursHandle GetCursor_patch( short id )
+{
+	return (CursHandle) GetResource( 'CURS', id );
+}
