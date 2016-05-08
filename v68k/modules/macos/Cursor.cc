@@ -67,13 +67,13 @@ void plot_cursor( Ptr addr, short rowBytes, short shift, short h_trim, short v_s
 		if ( h_trim >= 0 )
 		{
 			*q   &= ~(mask >> shift);
-			*q++ |=   data >> shift;
+			*q++ ^=   data >> shift;
 		}
 		
 		if ( shift  &&  h_trim <= 0 )
 		{
 			*q &= ~(mask << (16 - shift));
-			*q |=   data << (16 - shift);
+			*q ^=   data << (16 - shift);
 		}
 		
 		addr += rowBytes;
