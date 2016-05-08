@@ -146,6 +146,7 @@ static const global globals[] =
 	{ 0x0824, 4,    tag_ScrnBase    },
 	{ 0x0830, 4,    tag_Mouse       },
 	{ 0x0834, 8,    tag_CrsrPin     },
+	{ 0x0900, 0x82, 2               },  // CurApRefNum
 	{ 0x0904, 4,    tag_CurrentA5   },
 	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
