@@ -18,6 +18,7 @@
 #include "gear/parse_decimal.hh"
 
 // macos
+#include "Cursor.hh"
 #include "Debugger.hh"
 #include "Drag.hh"
 #include "Events.hh"
@@ -103,6 +104,11 @@ static void install_OSUtils()
 
 static void install_QuickDraw()
 {
+	TBTRAP( InitCursor );  // A850
+	
+	TBTRAP( HideCursor );  // A852
+	TBTRAP( ShowCursor );  // A853
+	
 	TBTRAP( Random );  // A861
 	
 	TBTRAP( InitPort    );  // A86D

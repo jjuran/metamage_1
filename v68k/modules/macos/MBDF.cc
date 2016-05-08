@@ -7,7 +7,7 @@
 
 // macos
 #include "QDGlobals.hh"
-#include "screen_lock.hh"
+#include "raster_lock.hh"
 
 
 short MBarHeight : 0x0BAA;
@@ -30,7 +30,7 @@ void draw_menu_bar_from_WMgr_port()
 	
 	const short bottom = MBarHeight;
 	
-	screen_lock lock;
+	raster_lock lock;
 	
 	menu_bar.bottom = bottom;      EraseRect( &menu_bar );
 	menu_bar.top    = bottom - 1;  PaintRect( &menu_bar );

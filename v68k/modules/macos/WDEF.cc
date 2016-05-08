@@ -15,7 +15,7 @@
 
 // macos
 #include "QDGlobals.hh"
-#include "screen_lock.hh"
+#include "raster_lock.hh"
 
 
 /*
@@ -144,7 +144,7 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 		return toggle_close_box( window );
 	}
 	
-	screen_lock lock;
+	raster_lock lock;
 	
 	const Rect& content = window->contRgn[0]->rgnBBox;
 	

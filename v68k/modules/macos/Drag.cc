@@ -12,7 +12,7 @@
 
 // macos
 #include "QDGlobals.hh"
-#include "screen_lock.hh"
+#include "raster_lock.hh"
 
 
 GrafPtr   WMgrPort    : 0x09DE;
@@ -129,7 +129,7 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 		
 		if ( *(long*) &pt != *(long*) &event.where )
 		{
-			screen_lock lock;
+			raster_lock lock;
 			
 			if ( was_inside )
 			{
