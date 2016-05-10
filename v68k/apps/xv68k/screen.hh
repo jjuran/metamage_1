@@ -15,7 +15,7 @@ const uint32_t screen_addr = 0x0001A700;
 const uint32_t screen_size = 21888;  // 512x342x1 / 8
 
 
-int set_screen_backing_store_file( const char* path );
+int set_screen_backing_store_file( const char* path, bool is_raster );
 
 class screen_memory : public v68k::memory
 {

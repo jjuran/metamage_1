@@ -89,6 +89,7 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_pid,
+	Opt_raster,
 	Opt_screen,
 };
 
@@ -97,6 +98,7 @@ static command::option options[] =
 	{ "",        Opt_authorized },
 	{ "verbose", Opt_verbose    },
 	{ "pid",     Opt_pid,    command::Param_optional },
+	{ "raster",  Opt_raster, command::Param_required },
 	{ "screen",  Opt_screen, command::Param_required },
 	{ "module",  Opt_module, command::Param_required },
 };
@@ -746,11 +748,12 @@ char* const* get_options( char** argv )
 				
 				break;
 			
+			case Opt_raster:
 			case Opt_screen:
 				if ( has_screen )
 				{
 					write( STDERR_FILENO,
-					       STR_LEN( "xv68k: duplicate --screen option\n" ) );
+					       STR_LEN( "xv68k: duplicate --screen/--raster\n" ) );
 					
 					exit( 2 );
 				}
@@ -758,7 +761,10 @@ char* const* get_options( char** argv )
 				const char* path;
 				path = global_result.param;
 				
-				if ( int nok = set_screen_backing_store_file( path ) )
+				int nok;
+				nok = set_screen_backing_store_file( path, opt == Opt_raster );
+				
+				if ( nok )
 				{
 					const char* error = strerror( nok );
 					
