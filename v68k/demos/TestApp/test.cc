@@ -16,12 +16,28 @@
 #include <Sound.h>
 #endif
 
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAW_H
+#include "missing/Quickdraw.h"
+#endif
+#endif
+
+// Nostalgia
+#include "Nostalgia/MacWindows.hh"
+
 // TestApp
 #include "desktop.hh"
 #include "display.hh"
 #include "fullscreen.hh"
 #include "fullscreen_port.hh"
 
+
+static const Rect grow_size =
+{
+	50, 50,
+	32767, 32767,
+};
 
 static
 Point get_window_topLeft( WindowRef w )
@@ -69,6 +85,48 @@ const Rect* drag_bounds()
 	return NULL;  // DragWindow() bounds may be NULL in Carbon
 }
 
+#if ! TARGET_API_MAC_CARBON
+
+static inline
+const Rect& get_window_portRect( WindowRef window )
+{
+	return window->portRect;
+}
+
+#else
+
+static inline
+Rect get_window_portRect( WindowRef window )
+{
+	Rect bounds;
+	GetPortBounds( GetWindowPort( window ), &bounds );
+	
+	return bounds;
+}
+
+#endif
+
+static
+void invalidate_scroll_bar_areas( WindowRef window )
+{
+	const Rect& portRect = get_window_portRect( window );
+	
+	const short right  = portRect.right;
+	const short bottom = portRect.bottom;
+	
+	const Rect vstrip = { 0, right - 15,  bottom, right };
+	const Rect hstrip = { bottom - 15, 0, bottom, right };
+	
+	InvalRect( &vstrip );
+	InvalRect( &hstrip );
+}
+
+static inline
+void EraseRect( const Rect& rect )
+{
+	EraseRect( &rect );
+}
+
 int main()
 {
 	Boolean quitting = false;
@@ -112,6 +170,20 @@ int main()
 						
 						case inDrag:
 							DragWindow( window, event.where, drag_bounds() );
+							break;
+						
+						case inGrow:
+							if ( long grown = GrowWindow( window, event.where, &grow_size ) )
+							{
+								invalidate_scroll_bar_areas( window );
+								
+								short h = grown;
+								short v = grown >> 16;
+								
+								SizeWindow( window, h, v, true );
+								
+								invalidate_scroll_bar_areas( window );
+							}
 							break;
 						
 						case inGoAway:
@@ -170,7 +242,7 @@ int main()
 								                         &bounds,
 								                         "\p",
 								                         true,
-								                         noGrowDocProc,
+								                         documentProc,
 								                         (WindowRef) -1,
 								                         true,
 								                         0 );
@@ -216,6 +288,13 @@ int main()
 				case updateEvt:
 					window = (WindowRef) event.message;
 					BeginUpdate( window );
+					
+					SetPortWindowPort( window );
+					
+					EraseRect( get_window_portRect( window ) );
+					
+					DrawGrowIcon( window );
+					
 					EndUpdate  ( window );
 					break;
 				
