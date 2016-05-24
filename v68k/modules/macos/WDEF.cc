@@ -334,6 +334,73 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	return 0;
 }
 
+static
+long WDEF_0_DrawGIcon( short varCode, WindowPtr w )
+{
+	const bool has_grow_box = (varCode & 0x7) == 0;
+	
+	if ( ! has_grow_box )
+	{
+		return 0;
+	}
+	
+	WindowPeek window = (WindowPeek) w;
+	
+	const Rect& content = w->portRect;
+	
+	const Rect vline =
+	{
+		0,
+		content.right - 15,
+		content.bottom,
+		content.right - 14,
+	};
+	
+	const Rect hline =
+	{
+		content.bottom - 15,
+		0,
+		content.bottom - 14,
+		content.right,
+	};
+	
+	PaintRect( &vline );
+	PaintRect( &hline );
+	
+	const Rect grow_box =
+	{
+		content.bottom - 14,
+		content.right  - 14,
+		content.bottom,
+		content.right,
+	};
+	
+	EraseRect( &grow_box );
+	
+	const Rect mini_box =
+	{
+		grow_box.top  + 4,
+		grow_box.left + 4,
+		grow_box.bottom - 1,
+		grow_box.right  - 1,
+	};
+	
+	FrameRect( &mini_box );
+	
+	const Rect tiny_box =
+	{
+		grow_box.top  + 2,
+		grow_box.left + 2,
+		grow_box.bottom - 5,
+		grow_box.right  - 5,
+	};
+	
+	EraseRect( &tiny_box );
+	FrameRect( &tiny_box );
+	
+	return 0;
+}
+
 long WDEF_0( short varCode, WindowPtr w, short message, long param )
 {
 	switch ( message )
@@ -350,7 +417,11 @@ long WDEF_0( short varCode, WindowPtr w, short message, long param )
 		case wNew:
 		case wDispose:
 		case wGrow:
+			break;
+		
 		case wDrawGIcon:
+			return WDEF_0_DrawGIcon( varCode, w );
+		
 		default:
 			break;
 	}
