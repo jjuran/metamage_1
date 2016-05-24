@@ -252,6 +252,22 @@ long WDEF_0_Hit( short varCode, GrafPort* w, Point where )
 	
 	const Rect& content = window->contRgn[0]->rgnBBox;
 	
+	if ( const bool has_grow_box = (varCode & 7) == 0 )
+	{
+		const Rect grow_box =
+		{
+			content.bottom - 15,
+			content.right  - 15,
+			content.bottom,
+			content.right,
+		};
+		
+		if ( PtInRect( where, &grow_box ) )
+		{
+			return wInGrow;
+		}
+	}
+	
 	if ( PtInRect( where, &content ) )
 	{
 		return wInContent;
