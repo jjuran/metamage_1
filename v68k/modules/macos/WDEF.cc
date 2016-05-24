@@ -335,6 +335,61 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 }
 
 static
+long WDEF_0_Grow( short varCode, WindowPtr w, const Rect& rect )
+{
+	WindowPeek window = (WindowPeek) w;
+	
+	if ( rect.top >= rect.bottom  ||  rect.left >= rect.right )
+	{
+		return 0;
+	}
+	
+	Rect r =
+	{
+		rect.top   - 19,
+		rect.left  -  1,
+		rect.bottom + 1,
+		rect.right  + 1,
+	};
+	
+	if ( r.bottom < rect.top )
+	{
+		r.bottom = rect.top;
+	}
+	
+	FrameRect( &r );
+	
+	++r.left;
+	--r.right;
+	
+	r.top    = rect.top - 1;
+	r.bottom = rect.top;
+	
+	FrameRect( &r );
+	
+	r.top    = rect.bottom - 15;
+	r.bottom = rect.bottom - 14;
+	
+	if ( r.top > rect.top )
+	{
+		FrameRect( &r );
+	}
+	
+	r.top    = rect.top;
+	r.bottom = rect.bottom;
+	
+	r.left  = rect.right - 15;
+	r.right = rect.right - 14;
+	
+	if ( r.left > rect.left )
+	{
+		FrameRect( &r );
+	}
+	
+	return 0;
+}
+
+static
 long WDEF_0_DrawGIcon( short varCode, WindowPtr w )
 {
 	const bool has_grow_box = (varCode & 0x7) == 0;
@@ -416,8 +471,10 @@ long WDEF_0( short varCode, WindowPtr w, short message, long param )
 		
 		case wNew:
 		case wDispose:
-		case wGrow:
 			break;
+		
+		case wGrow:
+			return WDEF_0_Grow( varCode, w, *(Rect*) param );
 		
 		case wDrawGIcon:
 			return WDEF_0_DrawGIcon( varCode, w );
