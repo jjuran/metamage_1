@@ -36,6 +36,7 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 pascal void DisposeWindow_patch( struct GrafPort* window );
 
 pascal void MoveWindow_patch( GrafPort* w, short h, short v, char activate );
+pascal void SizeWindow_patch( GrafPort* w, short h, short v, char update   );
 
 pascal unsigned char TrackGoAway_patch( struct GrafPort* w, struct Point pt );
 

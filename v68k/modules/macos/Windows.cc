@@ -495,6 +495,54 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	DisposeRgn( exposed );
 }
 
+pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
+{
+	WindowPeek w = (WindowPeek) window;
+	
+	CopyRgn( w->strucRgn, OldStructure );
+	CopyRgn( w->contRgn,  OldContent   );
+	
+	const Rect& portRect = window->portRect;
+	
+	const short old_height = portRect.bottom - portRect.top;
+	const short old_width  = portRect.right - portRect.left;
+	
+	PortSize( h, v );
+	
+	const short varCode = *(Byte*) &w->windowDefProc;
+	
+	WDEF_0( varCode, window, wCalcRgns, 0 );
+	
+	XorRgn( OldStructure, w->strucRgn, OldStructure );
+	XorRgn( OldContent,   w->contRgn,  OldContent   );
+	
+	if ( w->visible )
+	{
+		SectRgn( w->contRgn, GrayRgn, window->visRgn );
+	}
+	
+	RgnHandle exposed = OldStructure;
+	
+	UnionRgn( OldStructure, OldContent, exposed );
+	
+	/*
+		Add the newly-sized window frame to the exposed region.
+		We have to do this because resizing the window invalidates at least
+		the window title, and potentially more -- and that's up to the WDEF,
+		so to be conservative, consider the entire window frame exposed.
+	*/
+	
+	RgnHandle frame = OldContent;
+	
+	XorRgn( w->strucRgn, w->contRgn, frame );
+	
+	UnionRgn( exposed, frame, exposed );
+	
+	SaveUpdate = update;
+	
+	PaintBehind_patch( w, exposed );
+}
+
 pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 {
 	RgnHandle mouseRgn = NewRgn();
