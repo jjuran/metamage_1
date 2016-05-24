@@ -45,6 +45,7 @@ pascal void EndUpdate_patch  ( struct GrafPort* window );
 pascal struct GrafPort* FrontWindow_patch();
 
 pascal void DragWindow_patch( GrafPort* w, Point start, const Rect* bounds );
+pascal long GrowWindow_patch( GrafPort* w, Point start, const Rect* size   );
 
 pascal short FindWindow_patch( struct Point pt, struct GrafPort** window );
 

@@ -30,6 +30,7 @@
 #include "MBDF.hh"
 #include "QDGlobals.hh"
 #include "WDEF.hh"
+#include "raster_lock.hh"
 
 
 WindowPeek WindowList  : 0x09D6;
@@ -602,6 +603,110 @@ pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
 	}
 	
 	DisposeRgn( drag_region );
+}
+
+pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
+{
+	WindowPeek window = (WindowPeek) w;
+	
+	RgnHandle mouseRgn = NewRgn();
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( GrayRgn );
+	
+	PenMode( notPatXor );
+	PenPat( &qd.gray );
+	
+	Rect grow_rect = window->contRgn[0]->rgnBBox;
+	
+	Point pt = start;
+	
+	SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
+	
+	const short varCode = *(Byte*) &window->windowDefProc;
+	
+	WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+	
+	long sleep = 0;
+	
+	while ( true )
+	{
+		EventRecord event;
+		
+		const bool eventful = WaitNextEvent( mouseUp, &event, sleep, mouseRgn );
+		
+		// Events for DAs won't occur here, so we don't need to check.
+		
+		if ( event.what == mouseUp )
+		{
+			break;
+		}
+		
+		const Point& where = event.where;
+		
+		SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		
+		if ( event.what != nullEvent )
+		{
+			/*
+				Discard any mouse-moved events without redrawing the region.
+				This can be prohibitively CPU-taxing on lightweight systems.
+				
+				Set sleep to 0 to ensure that we get a null event afterward.
+			*/
+			
+			sleep = 0;
+			
+			continue;
+		}
+		
+		/*
+			We got a null event -- redraw the dotted grow region (if it
+			actually moved, that is), and set sleep back to forever (approx).
+		*/
+		
+		sleep = 0x7fffffff;
+		
+		if ( *(long*) &pt != *(long*) &event.where )
+		{
+			raster_lock lock;
+			
+			WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+			
+			grow_rect.bottom += event.where.v - pt.v;
+			grow_rect.right  += event.where.h - pt.h;
+			
+			WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+			
+			pt = event.where;
+		}
+	}
+	
+	WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+	
+	PenNormal();
+	
+	qd.thePort = saved_port;
+	
+	DisposeRgn( mouseRgn );
+	
+	if ( *(long*) &pt == *(long*) &start )
+	{
+		return 0;
+	}
+	
+	Point new_size =
+	{
+		grow_rect.bottom - grow_rect.top,
+		grow_rect.right - grow_rect.left,
+	};
+	
+	return *(long*) &new_size;
 }
 
 pascal short FindWindow_patch( Point pt, WindowPtr* window )
