@@ -78,6 +78,23 @@ void draw_window( WindowPeek window )
 	draw_window( *(Byte*) &window->windowDefProc, *window );
 }
 
+pascal void DrawGrowIcon_patch( WindowPeek window )
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	GrafPort* const port = &window->port;
+	
+	qd.thePort = port;
+	
+	const short varCode = *(Byte*) &window->windowDefProc;
+	
+	WDEF_0( varCode, port, wDrawGIcon, 0 );
+	
+	qd.thePort = saved_port;
+}
+
 pascal void ClipAbove_patch( WindowPeek window )
 {
 	RgnHandle clipRgn = WMgrPort->clipRgn;

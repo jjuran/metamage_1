@@ -13,6 +13,8 @@ struct Rect;
 
 extern struct MacRegion** BezelRgn;
 
+pascal void DrawGrowIcon_patch( struct WindowRecord* window );
+
 pascal void ClipAbove_patch( struct WindowRecord* window );
 
 pascal void PaintOne_patch   ( struct WindowRecord* w, struct MacRegion** rgn );

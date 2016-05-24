@@ -196,6 +196,7 @@ static void install_Fonts()
 
 static void install_Windows()
 {
+	TBTRAP( DrawGrowIcon  );  // A904
 	TBTRAP( DragGrayRgn   );  // A905
 	
 	TBTRAP( ClipAbove     );  // A90B
