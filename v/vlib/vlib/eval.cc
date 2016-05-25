@@ -25,7 +25,7 @@ namespace vlib
 		switch ( value.type() )
 		{
 			case Value_nothing:
-				SYNTAX_ERROR( "invalid void state during evaluation" );
+				THROW( "invalid void state during evaluation" );
 			
 			default:
 				break;
@@ -39,7 +39,7 @@ namespace vlib
 	{
 		if ( is_undefined( v ) )
 		{
-			SYMBOL_ERROR( "undefined symbol" );
+			THROW( "undefined symbol" );
 		}
 		
 		return v;
@@ -76,17 +76,17 @@ namespace vlib
 		
 		if ( is_undefined( value ) )
 		{
-			SYMBOL_ERROR( "update of undefined symbol" );
+			THROW( "update of undefined symbol" );
 		}
 		
 		if ( value.type() != right.type()  &&  right.type() != V_dummy )
 		{
-			TYPE_ERROR( "update between mixed types not supported" );
+			THROW( "update between mixed types not supported" );
 		}
 		
 		if ( value.type() != Value_number )
 		{
-			TYPE_ERROR( "non-numeric update not supported" );
+			THROW( "non-numeric update not supported" );
 		}
 		
 		plus::integer&       a = get_int( value );
@@ -94,7 +94,7 @@ namespace vlib
 		
 		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
 		{
-			DOMAIN_ERROR( "division by zero" );
+			THROW( "division by zero in update" );
 		}
 		
 		const Value& vtype = sym->vtype();
@@ -268,12 +268,12 @@ namespace vlib
 					return right;
 				}
 				
-				SYNTAX_ERROR( "too few values in list assignment" );
+				THROW( "too few values in list assignment" );
 			}
 			
 			if ( ! is_symbol( left ) )
 			{
-				SYNTAX_ERROR( "left operand of assignment not a symbol" );
+				THROW( "left operand of assignment not a symbol" );
 			}
 			
 			if ( op == Op_denote )

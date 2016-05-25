@@ -9,7 +9,7 @@
 #include "debug/assert.hh"
 
 // vlib
-#include "vlib/error.hh"
+#include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 
 
@@ -86,7 +86,7 @@ namespace vlib
 		{
 			// TODO:  Support type lists.
 			
-			TYPE_ERROR( "`isa` right operand must be a type" );
+			THROW( "`isa` right operand must be a type" );
 		}
 		
 		return type.typeinfo().assign( v );
@@ -102,7 +102,7 @@ namespace vlib
 		
 		if ( Expr* expr = type.expr() )
 		{
-			TYPE_ERROR( "coercion to expression types is undefined" );
+			THROW( "coercion to expression types is undefined" );
 		}
 		
 		ASSERT( type.type() == Value_base_type );
@@ -116,17 +116,17 @@ namespace vlib
 	{
 		if ( ! is_type( vtype ) )
 		{
-			SYNTAX_ERROR( "type annotation not a type" );
+			THROW( "type annotation not a type" );
 		}
 		
 		if ( its_vtype.type() != Value_nothing )
 		{
-			SYNTAX_ERROR( "reannotation of type-annotated symbol" );
+			THROW( "reannotation of type-annotated symbol" );
 		}
 		
 		if ( is_defined() )
 		{
-			SYNTAX_ERROR( "type annotation of defined symbol" );
+			THROW( "type annotation of defined symbol" );
 		}
 		
 		its_vtype = vtype;
@@ -136,7 +136,7 @@ namespace vlib
 	{
 		if ( is_immutable() )
 		{
-			SYMBOL_ERROR( "reassignment of constant" );
+			THROW( "reassignment of constant" );
 		}
 		
 		if ( its_vtype.type() )
@@ -145,7 +145,7 @@ namespace vlib
 			
 			if ( ! its_value.type() )
 			{
-				TYPE_ERROR( "type mismatch in assignment" );
+				THROW( "type mismatch in assignment" );
 			}
 		}
 		else
@@ -158,7 +158,7 @@ namespace vlib
 	{
 		if ( is_const() )
 		{
-			SYMBOL_ERROR( "modification of constant" );
+			THROW( "modification of constant" );
 		}
 		
 		return its_value;

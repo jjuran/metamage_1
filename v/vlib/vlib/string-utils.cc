@@ -29,6 +29,7 @@
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
 #include "vlib/symbol.hh"
+#include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 
 
@@ -174,7 +175,7 @@ namespace vlib
 					break;  // handled below
 				
 				default:
-					TYPE_ERROR( "byte packing not supported for type" );
+					THROW( "byte packing not supported for type" );
 			}
 		}
 		
@@ -308,7 +309,7 @@ namespace vlib
 					break;  // handled below
 				
 				default:
-					TYPE_ERROR( "byte packing not supported for type" );
+					THROW( "byte packing not supported for type" );
 			}
 		}
 		
@@ -389,7 +390,7 @@ namespace vlib
 			case Value_pair:
 				if ( ! use_parens( mode )  &&  is_function( value ) )
 				{
-					TYPE_ERROR( "stringification of compound function" );
+					THROW( "stringification of compound function" );
 				}
 				break;
 			
@@ -527,7 +528,7 @@ namespace vlib
 	{
 		if ( n > 65535 )
 		{
-			DOMAIN_ERROR( "excessively large string multiplier" );
+			THROW( "excessively large string multiplier" );
 		}
 		
 		const char*  data = s.data();
@@ -535,7 +536,7 @@ namespace vlib
 		
 		if ( size > 65535 )
 		{
-			DOMAIN_ERROR( "excessively large string multiplicand" );
+			THROW( "excessively large string multiplicand" );
 		}
 		
 		const size_t n_bytes = n * size;
@@ -567,7 +568,7 @@ namespace vlib
 		
 		if ( size > size_t( -1 ) )
 		{
-			DOMAIN_ERROR( "excessively large arguments to join()" );
+			THROW( "excessively large arguments to join()" );
 		}
 		
 		plus::string result;
@@ -604,7 +605,7 @@ namespace vlib
 		
 		if ( end[ -1 ] != '\n' )
 		{
-			DOMAIN_ERROR( "final newline missing" );
+			THROW( "final newline missing" );
 		}
 		
 		std::vector< const char* > starts;
@@ -675,14 +676,14 @@ namespace vlib
 			
 			if ( c != 's' )
 			{
-				TYPE_ERROR( "bad format string" );
+				THROW( "bad format string" );
 			}
 			
 			const Value& param = first( *remaining );
 			
 			if ( is_empty( param ) )
 			{
-				TYPE_ERROR( "not enough format arguments" );
+				THROW( "not enough format arguments" );
 			}
 			
 			result += make_string( param, Stringified_to_print );
@@ -692,7 +693,7 @@ namespace vlib
 		
 		if ( ! is_empty( *remaining ) )
 		{
-			TYPE_ERROR( "too many format arguments" );
+			THROW( "too many format arguments" );
 		}
 		
 		return result.move();

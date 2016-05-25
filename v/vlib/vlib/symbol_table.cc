@@ -6,7 +6,7 @@
 #include "vlib/symbol_table.hh"
 
 // vlib
-#include "vlib/error.hh"
+#include "vlib/throw.hh"
 
 
 namespace vlib
@@ -82,7 +82,7 @@ namespace vlib
 				return sym;
 			}
 			
-			SYMBOL_ERROR( "duplicate symbol" );
+			THROW( "duplicate symbol" );
 		}
 		
 		its_symbols.push_back( Value( type, name ) );

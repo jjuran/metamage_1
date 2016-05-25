@@ -14,6 +14,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
 
@@ -160,7 +161,7 @@ namespace vlib
 		switch ( v.type() )
 		{
 			default:
-				TYPE_ERROR( "byte conversion not defined for type" );
+				THROW( "byte conversion not defined for type" );
 			
 			case Value_empty_list:
 				return Value::byte();
@@ -177,7 +178,7 @@ namespace vlib
 		switch ( v.type() )
 		{
 			default:
-				TYPE_ERROR( "integer conversion not defined for type" );
+				THROW( "integer conversion not defined for type" );
 			
 			case Value_empty_list:
 				return 0;
@@ -199,7 +200,7 @@ namespace vlib
 		switch ( v.type() )
 		{
 			default:
-				TYPE_ERROR( "type not convertible to data" );
+				THROW( "type not convertible to data" );
 			
 			case Value_empty_list:
 				return make_data( plus::string::null );
@@ -236,7 +237,7 @@ namespace vlib
 			return obj.string();
 		}
 		
-		SYNTAX_ERROR( "nonexistent data member" );
+		THROW( "nonexistent data member" );
 		
 		return Value_nothing;
 	}
@@ -260,7 +261,7 @@ namespace vlib
 			return bind_args( proc_lines, obj );
 		}
 		
-		SYNTAX_ERROR( "nonexistent string member" );
+		THROW( "nonexistent string member" );
 		
 		return Value_nothing;
 	}

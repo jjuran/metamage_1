@@ -9,8 +9,8 @@
 #include "debug/assert.hh"
 
 // vlib
-#include "vlib/error.hh"
 #include "vlib/symdesc.hh"
+#include "vlib/throw.hh"
 
 
 namespace vlib
@@ -63,7 +63,7 @@ namespace vlib
 	{
 		if ( locate_keyword( name ).type() )
 		{
-			SYMBOL_ERROR( "keyword override attempt" );
+			THROW( "keyword override attempt" );
 		}
 		
 		return its_symbols.create( name, type );
