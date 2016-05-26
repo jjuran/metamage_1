@@ -19,6 +19,14 @@
 #define ED25519_REFHASH
 #endif
 
+#if defined( __APPLE__ )  &&  ! MAC_OS_X_VERSION_10_5
+/*
+	This is known to be needed on 10.4 and not needed on 10.8.
+	Bump the version upward as necessary for 10.5, 10.6, and 10.7.
+*/
+#define ED25519_REFHASH
+#endif
+
 #include "ed25519-donna.h"
 #include "ed25519.h"
 #include "ed25519-randombytes.h"
