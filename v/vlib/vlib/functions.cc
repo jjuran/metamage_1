@@ -22,6 +22,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/lib/ed25519.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -182,17 +183,78 @@ namespace vlib
 		return make_vector( unhex( v.string() ) );
 	}
 	
+	static
+	void check_ed25519_key_size( const plus::string& key )
+	{
+		if ( key.size() != 32 )
+		{
+			THROW( "Ed25519 keys must be 32 bytes" );
+		}
+	}
+	
+	static
+	void check_ed25519_sig_size( const plus::string& sig )
+	{
+		if ( sig.size() != 64 )
+		{
+			THROW( "Ed25519 signatures must be 64 bytes" );
+		}
+	}
+	
+	static
+	Value v_mkpub( const Value& v )
+	{
+		const plus::string& secret_key = v.string();
+		
+		check_ed25519_key_size( secret_key );
+		
+		return Vector( ed25519::publickey( secret_key ) );
+	}
+	
+	static
+	Value v_sign( const Value& v )
+	{
+		list_iterator args( v );
+		
+		const plus::string& key = args.use().string();
+		const plus::string& msg = args.get().string();
+		
+		check_ed25519_key_size( key );
+		
+		return Vector( ed25519::sign( key, msg ) );
+	}
+	
+	static
+	Value v_verify( const Value& v )
+	{
+		list_iterator args( v );
+		
+		const plus::string& key = args.use().string();
+		const plus::string& msg = args.use().string();
+		const plus::string& sig = args.get().string();
+		
+		check_ed25519_key_size( key );
+		check_ed25519_sig_size( sig );
+		
+		bool b = ed25519::verify( key, msg, sig );
+		
+		return Bool( b );
+	}
+	
 	static const Integer zero = Integer( 0 );
 	static const Integer two  = Integer( 2 );
 	static const Integer npos = Integer( uint32_t( -1 ) );
 	
 	static const Value integer = integer_vtype;
 	static const Value string  = string_vtype;
+	static const Value vector  = vector_vtype;
 	
 	static const Value u32_2 = Value( u32_vtype, Op_duplicate, two );
 	static const Value mince = Value( string, u32_2 );
 	
 	static const Value bytes( string_vtype, Op_union, vector_vtype );
+	static const Value sign( vector_vtype, bytes );
+	static const Value verify( vector_vtype, Value( bytes, vector_vtype ) );
 	static const Value x32( u32_vtype, Op_union, i32_vtype );
 	static const Value s_offset( x32, Op_duplicate, zero );
 	static const Value s_length( u32_vtype, Op_duplicate, npos );
@@ -208,5 +270,9 @@ namespace vlib
 	const proc_info proc_substr = { "substr", &v_substr, &substr  };
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string  };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string  };
+	
+	const proc_info proc_mkpub  = { "ed25519-publickey", &v_mkpub,  &vector };
+	const proc_info proc_sign   = { "ed25519-sign",      &v_sign,   &sign   };
+	const proc_info proc_verify = { "ed25519-verify",    &v_verify, &verify };
 	
 }
