@@ -2496,3 +2496,13 @@ $ vc 'const f = {throw "foo"}; try {f()} catch {"baz"}'
 
 $ vc 'try {throw "foo"} catch {str(_, "bar")}'
 1 >= '"foobar"'
+
+%
+
+$ vc '(abs .-42), (rep .[])'
+1 >= '(42, "[]")'
+
+%
+
+$ vc '(rep .[].length), (half .(4)^2)'
+1 >= '("0", 8)'

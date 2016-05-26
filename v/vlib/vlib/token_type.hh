@@ -40,6 +40,7 @@ namespace vlib
 		Token_parens,
 		Token_parens_star,
 		Token_parens_plus,
+		Token_dot_punct,  // '.' followed by punctuation
 		Token_dot,
 		Token_dot_x3,
 		Token_plus,

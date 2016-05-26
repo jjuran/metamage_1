@@ -39,6 +39,8 @@ namespace vlib
 		{ Token_plus_x2,  Op_postinc },
 		{ Token_minus_x2, Op_postdec },
 		
+		{ Token_dot_punct, Op_named_unary },
+		
 		{ Token_dot,         Op_member    },
 		{ Token_plus,        Op_add       },
 		{ Token_minus,       Op_subtract  },
