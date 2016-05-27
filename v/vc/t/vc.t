@@ -2551,3 +2551,8 @@ $ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str data x, x == data( x ).string'
 
 $ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*data x, (+) *data x'
 1 >= "(true, 11)"
+
+%
+
+$ vc 'str .*data( "foo", *"bar", data "baz" )'
+1 >= '"foobarbaz"'

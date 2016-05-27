@@ -207,7 +207,8 @@ namespace vlib
 				return make_data( v.string() );
 			
 			case Value_byte:
-				return make_data( plus::string( 1, v.number().clipped() ) );
+			case Value_pair:
+				return pack( v );
 			
 			case Value_data:
 				return v;

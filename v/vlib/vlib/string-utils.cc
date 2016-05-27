@@ -140,19 +140,19 @@ namespace vlib
 	static inline
 	bool use_quotes( stringification mode )
 	{
-		return mode != Stringified_to_print;
+		return mode > Stringified_to_print;
 	}
 	
 	static inline
 	bool use_parens( stringification mode )
 	{
-		return mode != Stringified_to_print;
+		return mode > Stringified_to_print;
 	}
 	
 	static inline
 	bool use_commas( stringification mode )
 	{
-		return mode != Stringified_to_print;
+		return mode > Stringified_to_print;
 	}
 	
 	
@@ -161,6 +161,23 @@ namespace vlib
 	                         stringification  mode,
 	                         bool             print_parens = true )
 	{
+		if ( mode == Stringified_to_pack )
+		{
+			switch ( value.type() )
+			{
+				case Value_data:
+				case Value_string:
+					return value.string().size();
+				
+				case Value_byte:
+				case Value_pair:
+					break;  // handled below
+				
+				default:
+					TYPE_ERROR( "byte packing not supported for type" );
+			}
+		}
+		
 		switch ( value.type() )
 		{
 			case Value_nothing:
@@ -278,6 +295,23 @@ namespace vlib
 	                   stringification  mode,
 	                   bool             print_parens = true )
 	{
+		if ( mode == Stringified_to_pack )
+		{
+			switch ( value.type() )
+			{
+				case Value_data:
+				case Value_string:
+					return mempcpy( p, value.string() );
+				
+				case Value_byte:
+				case Value_pair:
+					break;  // handled below
+				
+				default:
+					TYPE_ERROR( "byte packing not supported for type" );
+			}
+		}
+		
 		switch ( value.type() )
 		{
 			case Value_nothing:

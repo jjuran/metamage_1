@@ -18,6 +18,7 @@ namespace vlib
 	
 	enum stringification
 	{
+		Stringified_to_pack = -1,
 		Stringified_to_print,
 		Stringified_to_reproduce,
 	};
@@ -28,6 +29,12 @@ namespace vlib
 	plus::string rep( const Value& v )
 	{
 		return make_string( v, Stringified_to_reproduce );
+	}
+	
+	inline
+	Value pack( const Value& v )
+	{
+		return make_data( make_string( v, Stringified_to_pack ) );
 	}
 	
 	plus::string repeat( const plus::string& s, plus::string::size_type n );
