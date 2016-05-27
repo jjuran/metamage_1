@@ -18,7 +18,7 @@ namespace vlib
 		Precedence_none = 0,
 		
 		Precedence_declarator,      // const var
-		Precedence_juxtaposition,   // . f(x)
+		Precedence_adjacency,       // . f(x)
 		Precedence_exponentiation,  // ^
 		Precedence_unary_math,      // + - (f x)
 		Precedence_multiplication,  // * /
@@ -50,13 +50,13 @@ namespace vlib
 		{ Precedence_declarator, Op_const },
 		{ Precedence_declarator, Op_var   },
 		
-		{ Precedence_juxtaposition, Op_preinc   },
-		{ Precedence_juxtaposition, Op_predec   },
-		{ Precedence_juxtaposition, Op_postinc  },
-		{ Precedence_juxtaposition, Op_postdec  },
-		{ Precedence_juxtaposition, Op_function },
-		{ Precedence_juxtaposition, Op_member   },
-		{ Precedence_juxtaposition, Op_denote   },
+		{ Precedence_adjacency, Op_preinc   },
+		{ Precedence_adjacency, Op_predec   },
+		{ Precedence_adjacency, Op_postinc  },
+		{ Precedence_adjacency, Op_postdec  },
+		{ Precedence_adjacency, Op_function },
+		{ Precedence_adjacency, Op_member   },
+		{ Precedence_adjacency, Op_denote   },
 		
 		{ Precedence_exponentiation, Op_empower },
 		
