@@ -120,6 +120,7 @@ namespace vlib
 		
 		{ ";",   Token_semicolon },
 		{ "<",   Token_lt        },
+		{ "<<<<<<<", Token_invalid },
 		{ "<=",  Token_lt_equals },
 		{ "=",   Token_equals    },
 		{ "==",  Token_equals_x2 },
