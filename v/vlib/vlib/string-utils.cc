@@ -14,6 +14,9 @@
 // more-libc
 #include "more/string.h"
 
+// gear
+#include "gear/hexadecimal.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -175,6 +178,9 @@ namespace vlib
 				
 				return 1;
 			
+			case Value_data:
+				return value.string().size() * 2 + use_quotes( mode ) * 3;
+			
 			case Value_string:
 				if ( use_quotes( mode ) )
 				{
@@ -293,6 +299,26 @@ namespace vlib
 				}
 				
 				*p++ = value.number().clipped();
+				
+				return p;
+			
+			case Value_data:
+				if ( use_quotes( mode ) )
+				{
+					*p++ = 'x';
+					*p++ = '"';
+				}
+				
+				{
+					const plus::string& s = value.string();
+					
+					p = gear::hexpcpy_lower( p, s.data(), s.size() );
+				}
+				
+				if ( use_quotes( mode ) )
+				{
+					*p++ = '"';
+				}
 				
 				return p;
 			

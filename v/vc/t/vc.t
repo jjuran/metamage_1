@@ -2521,3 +2521,33 @@ $ vc '"" == "", "" < ".", "\x01" < "\xFF", "\xFF" > "\x01", "\xFF" < "\xFF\x01"'
 
 $ vc 'const zeros = "0" * 2^8 * 2^8; "0" < zeros, "1" > zeros'
 1 >= '(true, true)'
+
+%
+
+$ vc 'data(), data "Nu", data byte 7'
+1 >= '(x"", x"4e75", x"07")'
+
+%
+
+$ vc 'data() == data "", data "" < data "\0"'
+1 >= '(true, true)'
+
+%
+
+$ vc 'data "\x01" < data "\xFF", "\xFF" < "\xFF\x01"'
+1 >= '(true, true)'
+
+%
+
+$ vc 'const x = data "Hi\0"; *x, x[0]'
+1 >= "('H', 'i', '\x00', 'H')"
+
+%
+
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str data x, x == data( x ).string'
+1 >= "(false, true)"
+
+%
+
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*data x, (+) *data x'
+1 >= "(true, 11)"

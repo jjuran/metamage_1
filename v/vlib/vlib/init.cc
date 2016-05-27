@@ -48,6 +48,7 @@ namespace vlib
 		define_keyword( "str",      string_vtype   );
 		define_keyword( "c_str",    c_str_vtype    );
 		define_keyword( "type",     type_vtype     );
+		define_keyword( "data",     data_vtype     );
 		define_keyword( "byte",     byte_vtype     );
 		define_keyword( "i64",      i64_vtype      );
 		define_keyword( "u64",      u64_vtype      );

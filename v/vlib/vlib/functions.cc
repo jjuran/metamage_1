@@ -38,6 +38,7 @@ namespace vlib
 			default:  TYPE_ERROR( "invalid argument to hex()" );
 			
 			case Value_number:  return hex( get_int( arg ) );
+			case Value_data:
 			case Value_string:  return hex( get_str( arg ) );
 		}
 	}
