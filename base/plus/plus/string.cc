@@ -16,6 +16,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// gear
+#include "gear/compare.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -28,26 +31,18 @@ namespace plus
 	
 	const string string::null;
 	
+	typedef signed char cmp_t;
 	
-	static int lexicographical_compare_3way( const char* a, const char* a_end,
-	                                         const char* b, const char* b_end )
+	
+	static inline
+	cmp_t string_compare( const char* a, size_t a_size,
+	                      const char* b, size_t b_size )
 	{
-		while ( a < a_end  &&  b < b_end )
-		{
-			if ( const int diff = *a++ - *b++ )
-			{
-				return diff;
-			}
-		}
+		using gear::compare_bytes;
+		using gear::byte_t;
 		
-		return (a != a_end) - (b != b_end);
-	}
-	
-	static int string_compare( const char* a, size_t a_size,
-	                           const char* b, size_t b_size )
-	{
-		return lexicographical_compare_3way( a, a + a_size,
-		                                     b, b + b_size );
+		return compare_bytes( (const byte_t*) a, a_size,
+		                      (const byte_t*) b, b_size );
 	}
 	
 	static
