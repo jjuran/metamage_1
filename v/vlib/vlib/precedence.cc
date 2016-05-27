@@ -50,13 +50,14 @@ namespace vlib
 		{ Precedence_declarator, Op_const },
 		{ Precedence_declarator, Op_var   },
 		
-		{ Precedence_adjacency, Op_preinc   },
-		{ Precedence_adjacency, Op_predec   },
-		{ Precedence_adjacency, Op_postinc  },
-		{ Precedence_adjacency, Op_postdec  },
-		{ Precedence_adjacency, Op_function },
-		{ Precedence_adjacency, Op_member   },
-		{ Precedence_adjacency, Op_denote   },
+		{ Precedence_adjacency, Op_preinc    },
+		{ Precedence_adjacency, Op_predec    },
+		{ Precedence_adjacency, Op_postinc   },
+		{ Precedence_adjacency, Op_postdec   },
+		{ Precedence_adjacency, Op_function  },
+		{ Precedence_adjacency, Op_subscript },
+		{ Precedence_adjacency, Op_member    },
+		{ Precedence_adjacency, Op_denote    },
 		
 		{ Precedence_exponentiation, Op_empower },
 		
