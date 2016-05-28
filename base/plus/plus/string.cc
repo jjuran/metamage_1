@@ -50,8 +50,9 @@ namespace plus
 		                                     b, b + b_size );
 	}
 	
-	static int string_equal( const char* a, size_t a_size,
-	                         const char* b, size_t b_size )
+	static
+	bool string_equal( const char* a, size_t a_size,
+	                   const char* b, size_t b_size )
 	{
 		return a_size == b_size  &&  string_compare( a, a_size,
 		                                             b, b_size ) == 0;
