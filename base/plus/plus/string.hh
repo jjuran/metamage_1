@@ -19,6 +19,8 @@
 namespace plus
 {
 	
+	typedef signed char cmp_t;
+	
 	class string
 	{
 		public:
@@ -271,7 +273,7 @@ namespace plus
 	};
 	
 	
-	int compare( const string& a, const string& b );
+	cmp_t compare( const string& a, const string& b );
 	
 	bool operator==( const string& a, const string& b );
 	

@@ -31,8 +31,6 @@ namespace plus
 	
 	const string string::null;
 	
-	typedef signed char cmp_t;
-	
 	
 	static inline
 	cmp_t string_compare( const char* a, size_t a_size,
@@ -596,7 +594,7 @@ namespace plus
 	}
 	
 	
-	int compare( const string& a, const string& b )
+	cmp_t compare( const string& a, const string& b )
 	{
 		return string_compare( a.data(), a.size(), b.data(), b.size() );
 	}
