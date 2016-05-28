@@ -2511,3 +2511,13 @@ $ vc '(rep .[].length), (half .(4)^2)'
 
 $ vc 'str("test")[0], [str, int][1]()'
 1 >= "('t', 0)"
+
+%
+
+$ vc '"" == "", "" < ".", "\x01" < "\xFF", "\xFF" > "\x01", "\xFF" < "\xFF\x01"'
+1 >= '(true, true, true, true, true)'
+
+%
+
+$ vc 'const zeros = "0" * 2^8 * 2^8; "0" < zeros, "1" > zeros'
+1 >= '(true, true)'
