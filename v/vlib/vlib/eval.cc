@@ -43,21 +43,6 @@ namespace vlib
 		return v;
 	}
 	
-	static
-	Value resolve( const Value& v )
-	{
-		if ( v.type() == Value_symbol )
-		{
-			return defined( lookup_symbol( v.sym() ) );
-		}
-		else if ( Expr* expr = v.listexpr() )
-		{
-			return Value( resolve( expr->left ), resolve( expr->right ) );
-		}
-		
-		return v;
-	}
-	
 	const Value& eval( const Value& v )
 	{
 		if ( v.type() == Value_symbol )
@@ -224,7 +209,7 @@ namespace vlib
 			}
 		}
 		
-		return eval_part_2( left, op, validate( resolve( right ) ) );
+		return eval_part_2( left, op, validate( right ) );
 	}
 	
 	Value eval_part_2( const Value&  left,
@@ -263,7 +248,7 @@ namespace vlib
 			return eval_assignment( left.sym(), op, right );
 		}
 		
-		return calc( validate( resolve( left ) ), op, right );
+		return calc( validate( left ), op, right );
 	}
 	
 }
