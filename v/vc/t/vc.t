@@ -2556,3 +2556,8 @@ $ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*data x, (+) *data x'
 
 $ vc 'str .*data( "foo", *"bar", data "baz" )'
 1 >= '"foobarbaz"'
+
+%
+
+$ vc 'data().size, data("\u{1f4a9}\0").size'
+1 >= '(0, 5)'

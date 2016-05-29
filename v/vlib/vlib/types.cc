@@ -225,6 +225,11 @@ namespace vlib
 	Value data_member( const Value&         obj,
 	                   const plus::string&  member )
 	{
+		if ( member == "size" )
+		{
+			return obj.string().size();
+		}
+		
 		if ( member == "string" )
 		{
 			return obj.string();
