@@ -143,6 +143,8 @@ my %fsmap =
 			{
 				sha1 => \ "git/test-sha1",
 			},
+			# Ed25519
+			\ qw( ed-mkpub ed-sign ed-verify ),
 			# unet
 			\ qw( uexec utcp uunix ),
 			# Freemount
