@@ -68,6 +68,7 @@ namespace vlib
 			case Value_number:
 				return get_int( a ) == get_int( b );
 			
+			case Value_data:
 			case Value_string:
 				return get_str( a ) == get_str( b );
 			
@@ -172,6 +173,7 @@ namespace vlib
 			case Value_number:
 				return compare( get_int( a ), get_int( b ) );
 			
+			case Value_data:
 			case Value_string:
 				return compare( get_str( a ), get_str( b ) );
 			
@@ -282,6 +284,18 @@ namespace vlib
 				
 				SYNTAX_ERROR( "unary operator not defined for integers" );
 				break;
+			
+			case Value_data:
+				if ( op == Op_unary_deref )
+				{
+					// fall through below
+				}
+				else
+				{
+					SYNTAX_ERROR( "unary operator not defined for raw data" );
+				}
+				
+				// fall through
 			
 			case Value_string:
 				if ( op == Op_unary_deref )
@@ -1112,6 +1126,7 @@ namespace vlib
 			
 			switch ( left.type() )
 			{
+				case Value_data:
 				case Value_string:
 					return string_subscript( left.string(), right );
 				

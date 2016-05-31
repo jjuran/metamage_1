@@ -1354,52 +1354,52 @@ $ vc 'unhex "0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"
 
 %
 
-$ vc 'unbin "0" == "\0"'
+$ vc 'unbin "0" == data "\0"'
 1 >= true
 
 %
 
-$ vc 'unbin "01001" == "\t"'
+$ vc 'unbin "01001" == data "\t"'
 1 >= true
 
 %
 
-$ vc 'unbin "11110000100111111001001010101001" == "\u{1f4a9}"'
+$ vc 'unbin "11110000100111111001001010101001" == data "\u{1f4a9}"'
 1 >= true
 
 %
 
-$ vc 'unhex "0" == "\0"'
+$ vc 'unhex "0" == data "\0"'
 1 >= true
 
 %
 
-$ vc 'unhex "01001" == "\x00\x10\x01"'
+$ vc 'unhex "01001" == data "\x00\x10\x01"'
 1 >= true
 
 %
 
-$ vc 'unhex "73776f726466697368"'
+$ vc '(unhex "73776f726466697368").string'
 1 >= '"swordfish"'
 
 %
 
-$ vc 'b"01000110011011110110111100001010"'
+$ vc 'b"01000110011011110110111100001010".string'
 1 >= '"Foo\n"'
 
 %
 
-$ vc 'b"00100000".join(1, 2, 3)'
+$ vc 'b"00100000".string.join(1, 2, 3)'
 1 >= '"1 2 3"'
 
 %
 
-$ vc 'x"4E75"'
+$ vc 'x"4E75".string'
 1 >= '"Nu"'
 
 %
 
-$ vc 'x"73776f726466697368".length'
+$ vc 'x"73776f726466697368".size'
 1 >= 9
 
 %
@@ -2521,3 +2521,43 @@ $ vc '"" == "", "" < ".", "\x01" < "\xFF", "\xFF" > "\x01", "\xFF" < "\xFF\x01"'
 
 $ vc 'const zeros = "0" * 2^8 * 2^8; "0" < zeros, "1" > zeros'
 1 >= '(true, true)'
+
+%
+
+$ vc 'data(), data "Nu", data byte 7'
+1 >= '(x"", x"4e75", x"07")'
+
+%
+
+$ vc 'data() == data "", data "" < data "\0"'
+1 >= '(true, true)'
+
+%
+
+$ vc 'data "\x01" < data "\xFF", "\xFF" < "\xFF\x01"'
+1 >= '(true, true)'
+
+%
+
+$ vc 'const x = data "Hi\0"; *x, x[0]'
+1 >= "('H', 'i', '\x00', 'H')"
+
+%
+
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str data x, x == data( x ).string'
+1 >= "(false, true)"
+
+%
+
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*data x, (+) *data x'
+1 >= "(true, 11)"
+
+%
+
+$ vc 'str .*data( "foo", *"bar", data "baz" )'
+1 >= '"foobarbaz"'
+
+%
+
+$ vc 'data().size, data("\u{1f4a9}\0").size'
+1 >= '(0, 5)'

@@ -14,6 +14,9 @@
 // more-libc
 #include "more/string.h"
 
+// gear
+#include "gear/hexadecimal.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -137,19 +140,19 @@ namespace vlib
 	static inline
 	bool use_quotes( stringification mode )
 	{
-		return mode != Stringified_to_print;
+		return mode > Stringified_to_print;
 	}
 	
 	static inline
 	bool use_parens( stringification mode )
 	{
-		return mode != Stringified_to_print;
+		return mode > Stringified_to_print;
 	}
 	
 	static inline
 	bool use_commas( stringification mode )
 	{
-		return mode != Stringified_to_print;
+		return mode > Stringified_to_print;
 	}
 	
 	
@@ -158,6 +161,23 @@ namespace vlib
 	                         stringification  mode,
 	                         bool             print_parens = true )
 	{
+		if ( mode == Stringified_to_pack )
+		{
+			switch ( value.type() )
+			{
+				case Value_data:
+				case Value_string:
+					return value.string().size();
+				
+				case Value_byte:
+				case Value_pair:
+					break;  // handled below
+				
+				default:
+					TYPE_ERROR( "byte packing not supported for type" );
+			}
+		}
+		
 		switch ( value.type() )
 		{
 			case Value_nothing:
@@ -174,6 +194,9 @@ namespace vlib
 				}
 				
 				return 1;
+			
+			case Value_data:
+				return value.string().size() * 2 + use_quotes( mode ) * 3;
 			
 			case Value_string:
 				if ( use_quotes( mode ) )
@@ -272,6 +295,23 @@ namespace vlib
 	                   stringification  mode,
 	                   bool             print_parens = true )
 	{
+		if ( mode == Stringified_to_pack )
+		{
+			switch ( value.type() )
+			{
+				case Value_data:
+				case Value_string:
+					return mempcpy( p, value.string() );
+				
+				case Value_byte:
+				case Value_pair:
+					break;  // handled below
+				
+				default:
+					TYPE_ERROR( "byte packing not supported for type" );
+			}
+		}
+		
 		switch ( value.type() )
 		{
 			case Value_nothing:
@@ -293,6 +333,26 @@ namespace vlib
 				}
 				
 				*p++ = value.number().clipped();
+				
+				return p;
+			
+			case Value_data:
+				if ( use_quotes( mode ) )
+				{
+					*p++ = 'x';
+					*p++ = '"';
+				}
+				
+				{
+					const plus::string& s = value.string();
+					
+					p = gear::hexpcpy_lower( p, s.data(), s.size() );
+				}
+				
+				if ( use_quotes( mode ) )
+				{
+					*p++ = '"';
+				}
 				
 				return p;
 			

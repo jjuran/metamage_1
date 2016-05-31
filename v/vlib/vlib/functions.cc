@@ -38,6 +38,7 @@ namespace vlib
 			default:  TYPE_ERROR( "invalid argument to hex()" );
 			
 			case Value_number:  return hex( get_int( arg ) );
+			case Value_data:
 			case Value_string:  return hex( get_str( arg ) );
 		}
 	}
@@ -144,7 +145,7 @@ namespace vlib
 			return unbin_int( get_str( v ).substr( 2 ) );
 		}
 		
-		return unbin( get_str( v ) );
+		return make_data( unbin( get_str( v ) ) );
 	}
 	
 	static
@@ -155,7 +156,7 @@ namespace vlib
 			return unhex_int( get_str( v ).substr( 2 ) );
 		}
 		
-		return unhex( get_str( v ) );
+		return make_data( unhex( get_str( v ) ) );
 	}
 	
 	static const Value integer = integer_vtype;

@@ -44,6 +44,7 @@ namespace vlib
 		Value_byte,
 		Value_number,
 		Value_string,
+		Value_data,
 		Value_function,
 		Value_pair,
 		
@@ -52,8 +53,11 @@ namespace vlib
 		V_bool  = Value_boolean,
 		V_int   = Value_number,
 		V_str   = Value_string,
+		V_data  = Value_data,
 		V_proc  = Value_function,
 	};
+	
+	struct data_tag {};
 	
 	class Value
 	{
@@ -109,6 +113,12 @@ namespace vlib
 			Value( const plus::integer& i )
 			:
 				its_box( (const vu_ibox&) i, V_int )
+			{
+			}
+			
+			Value( const plus::string& s, data_tag )
+			:
+				its_box( (const vu_string&) s, V_data )
 			{
 			}
 			
@@ -398,6 +408,12 @@ namespace vlib
 	bool is_functional( const Value& v )
 	{
 		return is_function( v )  ||  v.type() == Value_base_type;
+	}
+	
+	inline
+	Value make_data( const plus::string& s )
+	{
+		return Value( s, data_tag() );
 	}
 	
 	inline
