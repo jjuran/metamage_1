@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
+#include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/tracker.hh"
@@ -210,7 +211,22 @@ namespace vlib
 			}
 		}
 		
-		return eval_part_2( left, op, validate( right ) );
+		try
+		{
+			return eval_part_2( left, op, validate( right ) );
+		}
+		catch ( const user_exception& e )
+		{
+			if ( e.source.file == NULL )
+			{
+				throw user_exception( e.object, source );
+			}
+			
+			throw;
+		}
+		
+		// Silence Metrowerks warning
+		return Value();
 	}
 	
 	Value eval_part_2( const Value&  left,
