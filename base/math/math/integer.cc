@@ -40,10 +40,9 @@ namespace integer {
 		
 	compared:
 		SCS      D0
-		BCS.S    end
+		BLS.S    end
 		
-		SNE      D0
-		NEG.B    D0
+		MOVEQ.L  #1,D0
 		
 	end:
 		UNLK     A6
