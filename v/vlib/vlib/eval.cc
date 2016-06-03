@@ -224,6 +224,24 @@ namespace vlib
 			
 			throw;
 		}
+		catch ( const transfer_via_break& e )
+		{
+			if ( e.source.file == NULL )
+			{
+				throw transfer_via_break( source );
+			}
+			
+			throw;
+		}
+		catch ( const transfer_via_continue& e )
+		{
+			if ( e.source.file == NULL )
+			{
+				throw transfer_via_continue( source );
+			}
+			
+			throw;
+		}
 		
 		// Silence Metrowerks warning
 		return Value();
