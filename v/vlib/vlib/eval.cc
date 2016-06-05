@@ -11,6 +11,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
+#include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
 
@@ -214,6 +215,10 @@ namespace vlib
 		try
 		{
 			return eval_part_2( left, op, validate( right ) );
+		}
+		catch ( const exception& e )
+		{
+			throw user_exception( e.message, source );
 		}
 		catch ( const user_exception& e )
 		{

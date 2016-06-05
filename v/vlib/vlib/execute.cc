@@ -18,6 +18,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/symdesc.hh"
+#include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 
 
@@ -268,7 +269,17 @@ namespace vlib
 		
 		const Value stack( Value_nothing, Op_frame, expr->left );
 		
-		return execute( expr->right, stack );
+		try
+		{
+			return execute( expr->right, stack );
+		}
+		catch ( const exception& e )
+		{
+			throw user_exception( e.message, expr->source );
+		}
+		
+		// Silence Metrowerks C++ warning
+		return Value();
 	}
 	
 }
