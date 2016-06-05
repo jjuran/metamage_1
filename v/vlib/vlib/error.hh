@@ -11,11 +11,7 @@
 
 #define VLIB_ERROR( type, s )  ::vlib::error( STR_LEN( type " ERROR: " s "\n" ) )
 
-#define DOMAIN_ERROR( s )    VLIB_ERROR( "DOMAIN",   s )
 #define INTERNAL_ERROR( s )  VLIB_ERROR( "INTERNAL", s )
-#define SYMBOL_ERROR( s )    VLIB_ERROR( "SYMBOL",   s )
-#define SYNTAX_ERROR( s )    VLIB_ERROR( "SYNTAX",   s )
-#define TYPE_ERROR( s )      VLIB_ERROR( "TYPE",     s )
 
 	
 namespace vlib
