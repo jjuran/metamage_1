@@ -69,10 +69,22 @@ namespace vlib
 		exit( 1 );
 	}
 	
+	static
+	void fail_handler( const plus::string& msg, const source_spec& src )
+	{
+		fail( msg, src );
+	}
+	
 	Value interpret( const char*     program,
 	                 const char*     file,
-	                 lexical_scope*  globals )
+	                 lexical_scope*  globals,
+	                 error_handler   handler )
 	{
+		if ( handler == NULL )
+		{
+			handler = &fail_handler;
+		}
+		
 		try
 		{
 			return execute( parse( program, file, globals ) );
@@ -85,13 +97,13 @@ namespace vlib
 		{
 			plus::string msg = "ERROR: `break` used outside of loop";
 			
-			fail( msg, e.source );
+			handler( msg, e.source );
 		}
 		catch ( const transfer_via_continue& e )
 		{
 			plus::string msg = "ERROR: `continue` used outside of loop";
 			
-			fail( msg, e.source );
+			handler( msg, e.source );
 		}
 		catch ( const language_error& e )
 		{
@@ -99,7 +111,7 @@ namespace vlib
 			
 			msg += e.text;
 			
-			fail( msg, e.source );
+			handler( msg, e.source );
 		}
 		catch ( const user_exception& e )
 		{
@@ -107,7 +119,7 @@ namespace vlib
 			
 			msg += rep( e.object );
 			
-			fail( msg, e.source );
+			handler( msg, e.source );
 		}
 		catch ( const invalid_token_error& e )
 		{
@@ -116,7 +128,7 @@ namespace vlib
 			msg += e.token;
 			msg += "'";
 			
-			fail( msg, e.source );
+			handler( msg, e.source );
 		}
 		catch ( const undeclared_symbol_error& e )
 		{
@@ -125,7 +137,7 @@ namespace vlib
 			msg += e.name;
 			msg += "'";
 			
-			fail( msg, e.source );
+			handler( msg, e.source );
 		}
 		
 		return Value();
