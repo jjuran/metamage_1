@@ -1096,7 +1096,15 @@ namespace vlib
 					THROW( "operator not defined for boolean values" );
 				
 				case Value_number:
-					return calc( get_int( left ), op, get_int( right ) );
+					try
+					{
+						return calc( get_int( left ), op, get_int( right ) );
+					}
+					catch ( const plus::ibox::limb_count_overflow& )
+					{
+						THROW( "bigint overflow" );
+					}
+					// not reached
 				
 				case Value_string:
 					THROW( "operator not defined for string values" );

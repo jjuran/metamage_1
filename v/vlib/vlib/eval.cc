@@ -285,7 +285,14 @@ namespace vlib
 			
 			track_symbol( left, right );
 			
-			return eval_assignment( left.sym(), op, right );
+			try
+			{
+				return eval_assignment( left.sym(), op, right );
+			}
+			catch ( const plus::ibox::limb_count_overflow& )
+			{
+				THROW( "bigint overflow" );
+			}
 		}
 		
 		return calc( validate( left ), op, right );

@@ -81,10 +81,6 @@ namespace vlib
 		{
 			FAIL( "Out of memory!" );
 		}
-		catch ( const plus::ibox::limb_count_overflow& )
-		{
-			FAIL( "Max bigint size exceeded" );
-		}
 		catch ( const transfer_via_break& e )
 		{
 			plus::string msg = "ERROR: `break` used outside of loop";
