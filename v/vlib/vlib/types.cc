@@ -159,7 +159,7 @@ namespace vlib
 		switch ( v.type() )
 		{
 			default:
-				INTERNAL_ERROR( "invalid type in coerce_to_byte()" );
+				TYPE_ERROR( "byte conversion not defined for type" );
 			
 			case Value_empty_list:
 				return Value::byte();
