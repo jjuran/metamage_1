@@ -18,9 +18,9 @@
 #include "plus/integer_hex.hh"
 
 // vlib
-#include "vlib/error.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/throw.hh"
 #include "vlib/types.hh"
 
 
@@ -46,7 +46,7 @@ namespace vlib
 	{
 		switch ( arg.type() )
 		{
-			default:  TYPE_ERROR( "invalid argument to hex()" );
+			default:  THROW( "invalid argument to hex()" );
 			
 			case Value_number:  return hex( get_int( arg ) );
 			case Value_data:
@@ -82,7 +82,7 @@ namespace vlib
 		
 		if ( stride == 0 )
 		{
-			DOMAIN_ERROR( "mince() stride must be positive" );
+			THROW( "mince() stride must be positive" );
 		}
 		
 		return mince( string, stride );
@@ -102,7 +102,7 @@ namespace vlib
 		{
 			if ( -offset > s.size() )
 			{
-				DOMAIN_ERROR( "negative substr offset exceeds string length" );
+				THROW( "negative substr offset exceeds string length" );
 			}
 			
 			return s.size() - offset.clipped();
@@ -110,7 +110,7 @@ namespace vlib
 		
 		if ( offset > s.size() )
 		{
-			DOMAIN_ERROR( "substr offset exceeds string length" );
+			THROW( "substr offset exceeds string length" );
 		}
 		
 		return offset.clipped();

@@ -28,6 +28,7 @@
 #include "vlib/scope.hh"
 #include "vlib/source.hh"
 #include "vlib/symbol_table.hh"
+#include "vlib/throw.hh"
 #include "vlib/token.hh"
 #include "vlib/types.hh"
 
@@ -114,6 +115,8 @@ namespace vlib
 				its_source( file )
 			{
 			}
+			
+			const source_spec& source() const  { return its_source; }
 			
 			Value parse( const char* p );
 	};
@@ -560,7 +563,17 @@ namespace vlib
 		
 		Parser parser( globals, file );
 		
-		return parser.parse( p );
+		try
+		{
+			return parser.parse( p );
+		}
+		catch ( const exception& e )
+		{
+			throw user_exception( e.message, parser.source() );
+		}
+		
+		// Silence Metrowerks C++ warning
+		return Value();
 	}
 	
 }

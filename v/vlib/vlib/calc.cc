@@ -19,6 +19,7 @@
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
+#include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
 
@@ -34,7 +35,7 @@ namespace vlib
 	{
 		if ( x.is_zero() )
 		{
-			DOMAIN_ERROR( "division by zero" );
+			THROW( "division by zero" );
 		}
 		
 		return x;
@@ -135,7 +136,7 @@ namespace vlib
 	{
 		if ( single_type_mismatch( one, two ) )
 		{
-			TYPE_ERROR( "mismatched types in equality relation" );
+			THROW( "mismatched types in equality relation" );
 		}
 		
 		const Value* a = &one;
@@ -164,7 +165,7 @@ namespace vlib
 	{
 		if ( a.type() != b.type() )
 		{
-			TYPE_ERROR( "mismatched types in compare()" );
+			THROW( "mismatched types in compare()" );
 		}
 		
 		switch ( a.type() )
@@ -178,7 +179,7 @@ namespace vlib
 				return compare( get_str( a ), get_str( b ) );
 			
 			default:
-				TYPE_ERROR( "unsupported type in compare()" );
+				THROW( "unsupported type in compare()" );
 				break;
 		}
 		
@@ -215,7 +216,7 @@ namespace vlib
 	{
 		if ( op == Op_const  ||  op == Op_var )
 		{
-			SYNTAX_ERROR( "const/var operand not a symbol" );
+			THROW( "const/var operand not a symbol" );
 		}
 		
 		if ( op == Op_array  ||  op == Op_block )
@@ -238,7 +239,7 @@ namespace vlib
 			switch ( expr->op )
 			{
 				case Op_list:
-					SYNTAX_ERROR( "unary operator not defined for lists" );
+					THROW( "unary operator not defined for lists" );
 				
 				case Op_array:
 					if ( op == Op_unary_deref )
@@ -246,10 +247,10 @@ namespace vlib
 						return expr->right;
 					}
 					
-					SYNTAX_ERROR( "unary operator not defined for arrays" );
+					THROW( "unary operator not defined for arrays" );
 				
 				case Op_invocation:
-					SYNTAX_ERROR( "unary operator not defined for blocks" );
+					THROW( "unary operator not defined for blocks" );
 				
 				default:
 					INTERNAL_ERROR( "unary operator not defined for pairs" );
@@ -270,7 +271,7 @@ namespace vlib
 					default:  break;
 				}
 				
-				SYNTAX_ERROR( "unary operator not defined for booleans" );
+				THROW( "unary operator not defined for booleans" );
 				break;
 			
 			case Value_number:
@@ -282,7 +283,7 @@ namespace vlib
 					default:  break;
 				}
 				
-				SYNTAX_ERROR( "unary operator not defined for integers" );
+				THROW( "unary operator not defined for integers" );
 				break;
 			
 			case Value_data:
@@ -292,7 +293,7 @@ namespace vlib
 				}
 				else
 				{
-					SYNTAX_ERROR( "unary operator not defined for raw data" );
+					THROW( "unary operator not defined for raw data" );
 				}
 				
 				// fall through
@@ -303,15 +304,15 @@ namespace vlib
 					return deref_string( v.string() );
 				}
 				
-				SYNTAX_ERROR( "unary operator not defined for string values" );
+				THROW( "unary operator not defined for string values" );
 				break;
 			
 			case Value_base_type:
-				SYNTAX_ERROR( "unary operator not defined for types" );
+				THROW( "unary operator not defined for types" );
 				break;
 			
 			case Value_function:
-				SYNTAX_ERROR( "unary operator not defined for functions" );
+				THROW( "unary operator not defined for functions" );
 				break;
 			
 			default:
@@ -336,7 +337,7 @@ namespace vlib
 			return count( expr->right );
 		}
 		
-		SYNTAX_ERROR( "nonexistent array member" );
+		THROW( "nonexistent array member" );
 		
 		return Value();
 	}
@@ -359,7 +360,7 @@ namespace vlib
 			return expr->right;
 		}
 		
-		SYNTAX_ERROR( "nonexistent mapping member" );
+		THROW( "nonexistent mapping member" );
 		
 		return Value();
 	}
@@ -369,7 +370,7 @@ namespace vlib
 	{
 		if ( right.type() != Value_string )
 		{
-			SYNTAX_ERROR( "non-string member name" );
+			THROW( "non-string member name" );
 		}
 		
 		Value vtype = proc_typeof.addr( left );
@@ -397,7 +398,7 @@ namespace vlib
 			}
 		}
 		
-		SYNTAX_ERROR( "unsupported type for member access" );
+		THROW( "unsupported type for member access" );
 		
 		return Value();
 	}
@@ -434,12 +435,12 @@ namespace vlib
 		
 		if ( n.is_negative() )
 		{
-			DOMAIN_ERROR( "negative string multiplier" );
+			THROW( "negative string multiplier" );
 		}
 		
 		if ( n > size_t( -1 ) )
 		{
-			DOMAIN_ERROR( "excessively large string multiplier" );
+			THROW( "excessively large string multiplier" );
 		}
 		
 		return repeat( s, n.clipped() );
@@ -455,12 +456,12 @@ namespace vlib
 		
 		if ( factor.type() != Value_number )
 		{
-			TYPE_ERROR( "non-numeric list repetition factor" );
+			THROW( "non-numeric list repetition factor" );
 		}
 		
 		if ( get_int( factor ).is_negative() )
 		{
-			DOMAIN_ERROR( "negative list repetition factor" );
+			THROW( "negative list repetition factor" );
 		}
 		
 		if ( get_int( factor ).is_zero()  ||  is_empty( list ) )
@@ -470,7 +471,7 @@ namespace vlib
 		
 		if ( get_int( factor ) > 0xFFFFFFFFu )
 		{
-			DOMAIN_ERROR( "excessively large list multiplier" );
+			THROW( "excessively large list multiplier" );
 		}
 		
 		unsigned long n = get_int( factor ).clipped();
@@ -556,7 +557,7 @@ namespace vlib
 				return arguments;
 			}
 			
-			TYPE_ERROR( "too many arguments" );
+			THROW( "too many arguments" );
 		}
 		
 		const Value& type = first( prototype );
@@ -572,7 +573,7 @@ namespace vlib
 		
 		if ( r.type() == Value_nothing )
 		{
-			TYPE_ERROR( "arguments don't match function prototype" );
+			THROW( "arguments don't match function prototype" );
 		}
 		
 		const Value remaining = apply_prototype( rest( prototype ),
@@ -652,7 +653,7 @@ namespace vlib
 				return coerced;
 			}
 			
-			TYPE_ERROR( "invalid type conversion arguments" );
+			THROW( "invalid type conversion arguments" );
 		}
 		
 		if ( Expr* expr = get_expr( f ) )
@@ -673,7 +674,7 @@ namespace vlib
 			return call_function( method, calc( object, Op_list, arguments ) );
 		}
 		
-		TYPE_ERROR( "attempted call of non-function" );
+		THROW( "attempted call of non-function" );
 		
 		return Value();  // not reached
 	}
@@ -687,12 +688,12 @@ namespace vlib
 		
 		if ( expr == NULL  ||  expr->op != Op_array )
 		{
-			TYPE_ERROR( "map requires an array" );
+			THROW( "map requires an array" );
 		}
 		
 		if ( ! is_functional( f ) )
 		{
-			TYPE_ERROR( "map requires a function" );
+			THROW( "map requires a function" );
 		}
 		
 		const Value* next = &expr->right;
@@ -721,19 +722,19 @@ namespace vlib
 	{
 		if ( i.type() != Value_number )
 		{
-			TYPE_ERROR( "non-integer string subscript" );
+			THROW( "non-integer string subscript" );
 		}
 		
 		const plus::integer& index = i.number();
 		
 		if ( index.is_negative() )
 		{
-			DOMAIN_ERROR( "negative string subscript" );
+			THROW( "negative string subscript" );
 		}
 		
 		if ( index >= s.size() )
 		{
-			DOMAIN_ERROR( "subscript exceeds string bounds" );
+			THROW( "subscript exceeds string bounds" );
 		}
 		
 		return Value::byte( s[ index.clipped() ] );
@@ -744,17 +745,17 @@ namespace vlib
 	{
 		if ( index.type() != Value_number )
 		{
-			TYPE_ERROR( "non-integer array subscript" );
+			THROW( "non-integer array subscript" );
 		}
 		
 		if ( index.number().is_negative() )
 		{
-			DOMAIN_ERROR( "negative array subscript" );
+			THROW( "negative array subscript" );
 		}
 		
 		if ( index.number() > 0xFFFFFFFFu )
 		{
-			DOMAIN_ERROR( "Array subscript is too large" );
+			THROW( "Array subscript is too large" );
 		}
 		
 		unsigned i = index.number().clipped();
@@ -763,7 +764,7 @@ namespace vlib
 		
 		if ( is_empty( nth ) )
 		{
-			DOMAIN_ERROR( "subscript exceeds array bounds" );
+			THROW( "subscript exceeds array bounds" );
 		}
 		
 		return nth;
@@ -812,10 +813,10 @@ namespace vlib
 				return result;
 			}
 			
-			SYNTAX_ERROR( "`if ... then ... else` requires blocks" );
+			THROW( "`if ... then ... else` requires blocks" );
 		}
 		
-		SYNTAX_ERROR( "`if ... then` requires a block" );
+		THROW( "`if ... then` requires a block" );
 		
 		return conditional_resolution();
 	}
@@ -830,7 +831,7 @@ namespace vlib
 			return result;
 		}
 		
-		SYNTAX_ERROR( "`while ... do` requires a block" );
+		THROW( "`while ... do` requires a block" );
 		
 		return loop_block_set();
 	}
@@ -842,7 +843,7 @@ namespace vlib
 		
 		if ( expr == NULL  ||  expr->op != Op_then )
 		{
-			SYNTAX_ERROR( "`if` requires `then`" );
+			THROW( "`if` requires `then`" );
 		}
 		
 		conditional_resolution resolution = resolution_for_if( expr->right );
@@ -868,7 +869,7 @@ namespace vlib
 		
 		if ( expr == NULL  ||  expr->op != Op_do_2 )
 		{
-			SYNTAX_ERROR( "`while` requires `do`" );
+			THROW( "`while` requires `do`" );
 		}
 		
 		loop_block_set blocks = blocks_for_while( expr->right );
@@ -910,7 +911,7 @@ namespace vlib
 		
 		if ( expr == NULL  ||  expr->op != Op_while_2 )
 		{
-			SYNTAX_ERROR( "`do` requires a block" );
+			THROW( "`do` requires a block" );
 		}
 		
 		Value result;
@@ -946,7 +947,7 @@ namespace vlib
 		
 		if ( expr == NULL  ||  expr->op != Op_catch )
 		{
-			SYNTAX_ERROR( "`try` requires catch" );
+			THROW( "`try` requires catch" );
 		}
 		
 		const Value& attempt = expr->left;
@@ -954,12 +955,12 @@ namespace vlib
 		
 		if ( ! is_block( attempt ) )
 		{
-			SYNTAX_ERROR( "`try` requires a block" );
+			THROW( "`try` requires a block" );
 		}
 		
 		if ( ! is_block( catcher ) )
 		{
-			SYNTAX_ERROR( "`catch` requires a block" );
+			THROW( "`catch` requires a block" );
 		}
 		
 		try
@@ -1089,25 +1090,25 @@ namespace vlib
 			switch ( left.type() )
 			{
 				case Value_empty_list:
-					SYNTAX_ERROR( "operator not defined for empty list" );
+					THROW( "operator not defined for empty list" );
 				
 				case Value_boolean:
-					SYNTAX_ERROR( "operator not defined for boolean values" );
+					THROW( "operator not defined for boolean values" );
 				
 				case Value_number:
 					return calc( get_int( left ), op, get_int( right ) );
 				
 				case Value_string:
-					SYNTAX_ERROR( "operator not defined for string values" );
+					THROW( "operator not defined for string values" );
 				
 				case Value_function:
-					SYNTAX_ERROR( "operator not defined for functions" );
+					THROW( "operator not defined for functions" );
 				
 				case Value_base_type:
-					SYNTAX_ERROR( "operator not defined for types" );
+					THROW( "operator not defined for types" );
 				
 				case Value_pair:
-					SYNTAX_ERROR( "operator not defined for lists" );
+					THROW( "operator not defined for lists" );
 				
 				default:
 					break;
@@ -1131,7 +1132,7 @@ namespace vlib
 					return string_subscript( left.string(), right );
 				
 				default:
-					TYPE_ERROR( "type not subscriptable" );
+					THROW( "type not subscriptable" );
 			}
 		}
 		
@@ -1148,7 +1149,7 @@ namespace vlib
 			}
 		}
 		
-		SYNTAX_ERROR( "operator not defined on mixed types" );
+		THROW( "operator not defined on mixed types" );
 		
 		return Value();
 	}

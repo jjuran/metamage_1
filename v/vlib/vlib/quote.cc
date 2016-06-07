@@ -15,7 +15,7 @@
 #include "gear/hexadecimal.hh"
 
 // vlib
-#include "vlib/error.hh"
+#include "vlib/throw.hh"
 
 
 namespace vlib
@@ -38,7 +38,7 @@ namespace vlib
 			
 			if ( c1 > 7  ||  c2 > 7 )
 			{
-				SYNTAX_ERROR( "invalid octal escape sequence" );
+				THROW( "invalid octal escape sequence" );
 			}
 			
 			return c * 64 + c1 * 8 + c2;
@@ -56,7 +56,7 @@ namespace vlib
 		
 		if ( ! is_xdigit( c1 )  ||  ! is_xdigit( c2 ) )
 		{
-			SYNTAX_ERROR( "invalid hexadecimal escape sequence" );
+			THROW( "invalid hexadecimal escape sequence" );
 		}
 		
 		return + decoded_hex_digit( c1 ) << 4
@@ -73,7 +73,7 @@ namespace vlib
 		
 		if ( n == 0 )
 		{
-			SYNTAX_ERROR( "invalid Unicode code point" );
+			THROW( "invalid Unicode code point" );
 		}
 		
 		put_code_point_into_utf8( uc, n, q );
@@ -98,7 +98,7 @@ namespace vlib
 			{
 				if ( uc > 0x0FFFFFFF )
 				{
-					SYNTAX_ERROR( "invalid unicode escape sequence" );
+					THROW( "invalid unicode escape sequence" );
 				}
 				
 				uc <<= 4;
@@ -109,7 +109,7 @@ namespace vlib
 			
 			if ( ! has_digits )
 			{
-				SYNTAX_ERROR( "invalid unicode escape sequence" );
+				THROW( "invalid unicode escape sequence" );
 			}
 			
 			inscribe_unicode( q, uc );
@@ -121,7 +121,7 @@ namespace vlib
 			
 			if ( c != '}' )
 			{
-				SYNTAX_ERROR( "invalid unicode escape sequence" );
+				THROW( "invalid unicode escape sequence" );
 			}
 			
 			break;
@@ -139,7 +139,7 @@ namespace vlib
 		
 		if ( ! is_xdigit( c1 )  ||  ! is_xdigit( c2 ) )
 		{
-			SYNTAX_ERROR( "invalid unicode escape sequence" );
+			THROW( "invalid unicode escape sequence" );
 		}
 		
 		const unsigned char c3 = *p++;
@@ -147,7 +147,7 @@ namespace vlib
 		
 		if ( ! is_xdigit( c3 )  ||  ! is_xdigit( c4 ) )
 		{
-			SYNTAX_ERROR( "invalid unicode escape sequence" );
+			THROW( "invalid unicode escape sequence" );
 		}
 		
 		return + decoded_hex_digit( c1 ) << 12
@@ -197,14 +197,14 @@ namespace vlib
 					break;
 				
 				default:
-					SYNTAX_ERROR( "invalid escape sequence" );
+					THROW( "invalid escape sequence" );
 			}
 		}
 		else if ( is_digit( c ) )
 		{
 			if ( c > '3' )
 			{
-				SYNTAX_ERROR( "invalid numeric escape sequence" );
+				THROW( "invalid numeric escape sequence" );
 			}
 			
 			c = decode_octal_escape( c, p, '\'' );
@@ -221,7 +221,7 @@ namespace vlib
 		
 		if ( size == 2 )
 		{
-			SYNTAX_ERROR( "invalid empty byte literal" );
+			THROW( "invalid empty byte literal" );
 		}
 		
 		const char* p = s.c_str() + 1;
@@ -233,14 +233,14 @@ namespace vlib
 		
 		if ( *p++ != '\\' )
 		{
-			SYNTAX_ERROR( "multibyte byte literals not supported" );
+			THROW( "multibyte byte literals not supported" );
 		}
 		
 		char c = decode_escaped_byte( p );
 		
 		if ( *p != '\'' )
 		{
-			SYNTAX_ERROR( "multibyte byte literals not supported" );
+			THROW( "multibyte byte literals not supported" );
 		}
 		
 		return c;
@@ -295,14 +295,14 @@ namespace vlib
 							break;
 						
 						default:
-							SYNTAX_ERROR( "invalid escape sequence" );
+							THROW( "invalid escape sequence" );
 					}
 				}
 				else if ( is_digit( c ) )
 				{
 					if ( c > '3' )
 					{
-						SYNTAX_ERROR( "invalid numeric escape sequence" );
+						THROW( "invalid numeric escape sequence" );
 					}
 					
 					c = decode_octal_escape( c, p, '"' );
