@@ -134,6 +134,7 @@ namespace vlib
 			case Value_number:
 				return ! v.number().is_zero();
 			
+			case Value_data:
 			case Value_string:
 				return ! v.string().empty();
 			
