@@ -174,11 +174,19 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |
+		|                       |
+		|                       |
+		|                       |
+		|                       |
 		| user stack            |
 		|                       |
 		|                       |
-		|                       |  4K
-	16K	+-----------------------+
+		|                       |
+		|                       |
+		|                       |
+		|                       |
+		|                       |  8K
+	20K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -194,7 +202,7 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |  80K
-	96K	+-----------------------+
+	100	+-----------------------+
 		
 	104	+-----------------------+
 		|                       |  screen memory begins 0x0001A700  (1792 after)
@@ -214,8 +222,8 @@ const uint32_t code_max_size   = 80 * 1024;
 const uint32_t os_address   = 2048;
 const uint32_t boot_address = 7168;
 const uint32_t initial_SSP  = 3072;
-const uint16_t initial_USP  = 16384;
-const uint32_t code_address = 16384;
+const uint16_t initial_USP  = 20480;
+const uint32_t code_address = 20480;
 
 const uint32_t os_trap_table_address = 1024;
 const uint32_t tb_trap_table_address = 3072;
