@@ -8,7 +8,7 @@ Level 1
 
 `throw.*`:  Defines the generic `exception` class and the `THROW()` macro.
 
-`source.*`:  Defines `struct source_spec`, which stores the filename and line number in a source file where a token was seen.
+`source.*`:  Defines `class source_spec`, which stores the filename and line number in a source file where a token was seen.
 
 `token_type.*`:  Defines `enum token_type`, with members for each token type, and `next_token_type()`, which scans source text for the next whole token.
 

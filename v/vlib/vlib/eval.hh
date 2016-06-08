@@ -14,7 +14,7 @@
 namespace vlib
 {
 	
-	struct source_spec;
+	class source_spec;
 	
 	const Value& eval( const Value& v );
 	

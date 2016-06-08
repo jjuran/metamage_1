@@ -293,7 +293,7 @@ namespace vlib
 				break;
 			
 			case Token_newline:
-				++its_source.line;
+				its_source.next_line();
 				break;
 			
 			case Token_lbracket:

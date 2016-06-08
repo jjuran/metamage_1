@@ -222,7 +222,7 @@ namespace vlib
 		}
 		catch ( const user_exception& e )
 		{
-			if ( e.source.file == NULL )
+			if ( e.source.empty() )
 			{
 				throw user_exception( e.object, source );
 			}
@@ -231,7 +231,7 @@ namespace vlib
 		}
 		catch ( const transfer_via_break& e )
 		{
-			if ( e.source.file == NULL )
+			if ( e.source.empty() )
 			{
 				throw transfer_via_break( source );
 			}
@@ -240,7 +240,7 @@ namespace vlib
 		}
 		catch ( const transfer_via_continue& e )
 		{
-			if ( e.source.file == NULL )
+			if ( e.source.empty() )
 			{
 				throw transfer_via_continue( source );
 			}

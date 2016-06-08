@@ -51,13 +51,11 @@ namespace vlib
 	{
 		plus::var_string msg;
 		
-		if ( src.file != NULL )
+		if ( ! src.empty() )
 		{
-			const char* line_num = gear::inscribe_unsigned_decimal( src.line );
-			
-			msg += src.file;
+			msg += src.file();
 			msg += ":";
-			msg += line_num;
+			msg += gear::inscribe_unsigned_decimal( src.line() );
 			msg += "\n    ";
 		}
 		
