@@ -231,7 +231,7 @@ namespace vlib
 		
 		if ( op == Op_throw )
 		{
-			throw user_exception( v, source_spec( NULL ) );
+			throw user_exception( v, source_spec() );
 		}
 		
 		if ( Expr* expr = v.expr() )
@@ -994,12 +994,12 @@ namespace vlib
 		
 		if ( op == Op_break )
 		{
-			throw transfer_via_break( source_spec( NULL ) );
+			throw transfer_via_break( source_spec() );
 		}
 		
 		if ( op == Op_continue )
 		{
-			throw transfer_via_continue( source_spec( NULL ) );
+			throw transfer_via_continue( source_spec() );
 		}
 		
 		if ( op == Op_try )

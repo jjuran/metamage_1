@@ -103,7 +103,7 @@ namespace vlib
 			
 			Value exception( command, Value( error, desc ) );
 			
-			throw user_exception( exception, source_spec( NULL ) );
+			throw user_exception( exception, source_spec() );
 		}
 		
 		if ( WIFSIGNALED( status ) )
@@ -114,7 +114,7 @@ namespace vlib
 			
 			Value exception( command, signal );
 			
-			throw user_exception( exception, source_spec( NULL ) );
+			throw user_exception( exception, source_spec() );
 		}
 		
 		if ( int exit_status = WEXITSTATUS( status ) )
@@ -123,7 +123,7 @@ namespace vlib
 			
 			Value exception( command, exit );
 			
-			throw user_exception( exception, source_spec( NULL ) );
+			throw user_exception( exception, source_spec() );
 		}
 		
 		return status;  // not reached

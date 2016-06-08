@@ -262,8 +262,8 @@ namespace vlib
 			{
 				if ( Expr* bx = right.listexpr() )
 				{
-					eval( ax->left,  op, bx->left,  source_spec( NULL ) );
-					eval( ax->right, op, bx->right, source_spec( NULL ) );
+					eval( ax->left,  op, bx->left,  source_spec() );
+					eval( ax->right, op, bx->right, source_spec() );
 					
 					return right;
 				}

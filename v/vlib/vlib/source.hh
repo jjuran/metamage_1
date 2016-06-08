@@ -20,7 +20,7 @@ namespace vlib
 			unsigned      its_line;
 		
 		public:
-			source_spec( const char* path ) : its_file(), its_line()
+			source_spec( const char* path = NULL ) : its_file(), its_line()
 			{
 				if ( path != NULL )
 				{

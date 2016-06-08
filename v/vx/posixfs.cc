@@ -31,7 +31,7 @@ namespace vlib
 		
 		Value exception( error, Value( desc, path_ ) );
 		
-		throw user_exception( exception, source_spec( NULL ) );
+		throw user_exception( exception, source_spec() );
 	}
 	
 	static
@@ -42,7 +42,7 @@ namespace vlib
 		
 		Value exception( desc, path_ );
 		
-		throw user_exception( exception, source_spec( NULL ) );
+		throw user_exception( exception, source_spec() );
 	}
 	
 	static

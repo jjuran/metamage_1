@@ -155,7 +155,7 @@ namespace vlib
 			Value( const Value&        a,
 			       op_type             op,
 			       const Value&        b,
-			       const source_spec&  s = source_spec( 0 ) );
+			       const source_spec&  s = source_spec() );
 			
 			value_type type() const
 			{
@@ -258,7 +258,7 @@ namespace vlib
 		Expr( const Value&        a,
 		      op_type             op,
 		      const Value&        b,
-		      const source_spec&  s = source_spec( 0 ) );  // NULL
+		      const source_spec&  s = source_spec() );
 	};
 	
 	inline
