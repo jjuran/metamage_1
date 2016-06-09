@@ -31,12 +31,22 @@ namespace plus
 		
 		bool negative = false;
 		
-		if ( n != 0  &&  *p == '-' )
+		if ( n != 0 )
 		{
-			negative = true;
-			
-			++p;
-			--n;
+			switch ( *p )
+			{
+				case '-':
+					negative = true;
+					// fall through
+				
+				case '+':
+					++p;
+					--n;
+					break;
+				
+				default:
+					break;
+			}
 		}
 		
 		while ( n-- )
