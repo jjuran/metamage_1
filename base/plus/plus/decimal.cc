@@ -29,6 +29,16 @@ namespace plus
 	{
 		integer result;
 		
+		bool negative = false;
+		
+		if ( n != 0  &&  *p == '-' )
+		{
+			negative = true;
+			
+			++p;
+			--n;
+		}
+		
 		while ( n-- )
 		{
 			if ( char c = *p++ - '0' )
@@ -37,6 +47,11 @@ namespace plus
 			
 				result += nth_power_of_ten( n ) * digit;
 			}
+		}
+		
+		if ( negative )
+		{
+			result.invert();
 		}
 		
 		return result;
