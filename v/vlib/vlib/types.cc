@@ -9,6 +9,9 @@
 #include <stdint.h>
 #include <string.h>
 
+// iota
+#include "iota/char_types.hh"
+
 // plus
 #include "plus/decimal.hh"
 
@@ -176,6 +179,47 @@ namespace vlib
 	}
 	
 	static
+	bool is_decimal( const char* p, size_t n )
+	{
+		if ( n == 0 )
+		{
+			return false;
+		}
+		
+		if ( *p == '-'  ||  *p == '+' )
+		{
+			++p;
+			
+			if ( --n == 0 )
+			{
+				return false;
+			}
+		}
+		
+		do
+		{
+			if ( ! iota::is_digit( *p++ ) )
+			{
+				return false;
+			}
+		}
+		while ( --n );
+		
+		return true;
+	}
+	
+	static
+	plus::integer decode_int( const plus::string& s )
+	{
+		if ( ! is_decimal( s.data(), s.size() ) )
+		{
+			THROW( "not a decimal integer" );
+		}
+		
+		return plus::decode_decimal( s );
+	}
+	
+	static
 	Value coerce_to_integer( const Value& v )
 	{
 		switch ( v.type() )
@@ -196,7 +240,7 @@ namespace vlib
 				return v;
 			
 			case Value_string:
-				return decode_decimal( v.string() );
+				return decode_int( v.string() );
 		}
 	}
 	

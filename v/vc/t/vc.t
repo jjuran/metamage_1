@@ -2606,3 +2606,23 @@ $ vc 'int "-010"'
 
 $ vc 'int "-0"'
 1 >= '0'
+
+%
+
+$ vc 'try {int "foo"} catch {"not"}'
+1 >= '"not"'
+
+%
+
+$ vc 'try {int "-"} catch {"not"}'
+1 >= '"not"'
+
+%
+
+$ vc 'try {int ""} catch {"not"}'
+1 >= '"not"'
+
+%
+
+$ vc 'int "+123"'
+1 >= '123'
