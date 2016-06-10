@@ -24,6 +24,7 @@
 #include "vlib/value.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/byte.hh"
 
 
 namespace vlib
@@ -35,17 +36,6 @@ namespace vlib
 	Value assign_to_function( const Value& v )
 	{
 		if ( is_functional( v ) )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_byte( const Value& v )
-	{
-		if ( v.type() == Value_byte )
 		{
 			return v;
 		}
@@ -111,23 +101,6 @@ namespace vlib
 		}
 		
 		return Value_nothing;
-	}
-	
-	static
-	Value coerce_to_byte( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				THROW( "byte conversion not defined for type" );
-			
-			case Value_empty_list:
-				return Value::byte();
-			
-			case Value_byte:
-			case Value_number:
-				return Value::byte( uint8_t( v.number().clipped() * v.number().sign() ) );
-		}
 	}
 	
 	static
@@ -332,14 +305,6 @@ namespace vlib
 	DEFINE_TYPE_INFO_A_C( u16 );
 	DEFINE_TYPE_INFO_A_C( i8  );
 	DEFINE_TYPE_INFO_A_C( u8  );
-	
-	const type_info byte_vtype =
-	{
-		"byte",
-		&assign_to_byte,
-		&coerce_to_byte,
-		0,
-	};
 	
 	const type_info integer_vtype =
 	{
