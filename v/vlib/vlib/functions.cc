@@ -23,6 +23,7 @@
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/stdint.hh"
 
 
 namespace vlib

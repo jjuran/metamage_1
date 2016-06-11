@@ -17,6 +17,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/stdint.hh"
 
 
 namespace vlib
