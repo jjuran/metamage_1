@@ -9,12 +9,6 @@
 #include <stdint.h>
 #include <string.h>
 
-// iota
-#include "iota/char_types.hh"
-
-// plus
-#include "plus/decimal.hh"
-
 // vlib
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
@@ -25,6 +19,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -36,17 +31,6 @@ namespace vlib
 	Value assign_to_function( const Value& v )
 	{
 		if ( is_functional( v ) )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_integer( const Value& v )
-	{
-		if ( v.type() == Value_number )
 		{
 			return v;
 		}
@@ -101,72 +85,6 @@ namespace vlib
 		}
 		
 		return Value_nothing;
-	}
-	
-	static
-	bool is_decimal( const char* p, size_t n )
-	{
-		if ( n == 0 )
-		{
-			return false;
-		}
-		
-		if ( *p == '-'  ||  *p == '+' )
-		{
-			++p;
-			
-			if ( --n == 0 )
-			{
-				return false;
-			}
-		}
-		
-		do
-		{
-			if ( ! iota::is_digit( *p++ ) )
-			{
-				return false;
-			}
-		}
-		while ( --n );
-		
-		return true;
-	}
-	
-	static
-	plus::integer decode_int( const plus::string& s )
-	{
-		if ( ! is_decimal( s.data(), s.size() ) )
-		{
-			THROW( "not a decimal integer" );
-		}
-		
-		return plus::decode_decimal( s );
-	}
-	
-	static
-	Value coerce_to_integer( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				THROW( "integer conversion not defined for type" );
-			
-			case Value_empty_list:
-				return 0;
-			
-			case Value_boolean:
-				return v.boolean() + 0;
-			
-			case Value_byte:
-				return v.number();
-			
-			case Value_number:
-				return v;
-			
-			case Value_string:
-				return decode_int( v.string() );
-		}
 	}
 	
 	static
@@ -261,7 +179,7 @@ namespace vlib
 	static
 	uint64_t coerced_int( const Value& v )
 	{
-		return coerce_to_integer( v ).number().clipped_to< uint64_t >();
+		return Integer::coerce( v ).number().clipped_to< uint64_t >();
 	}
 	
 	#define DEFINE_ADAPT_TO_INT( s, n )       \
@@ -305,14 +223,6 @@ namespace vlib
 	DEFINE_TYPE_INFO_A_C( u16 );
 	DEFINE_TYPE_INFO_A_C( i8  );
 	DEFINE_TYPE_INFO_A_C( u8  );
-	
-	const type_info integer_vtype =
-	{
-		"integer",
-		&assign_to_integer,
-		&coerce_to_integer,
-		0,
-	};
 	
 	const type_info data_vtype =
 	{
