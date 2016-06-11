@@ -14,6 +14,7 @@
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/boolean.hh"
 
 
 namespace vlib

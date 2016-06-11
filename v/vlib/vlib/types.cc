@@ -16,7 +16,6 @@
 #include "plus/decimal.hh"
 
 // vlib
-#include "vlib/error.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
@@ -24,23 +23,13 @@
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/boolean.hh"
 
 
 namespace vlib
 {
 	
 	extern const proc_info proc_lines;
-	
-	static
-	Value assign_to_boolean( const Value& v )
-	{
-		if ( v.type() == Value_boolean )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
 	
 	static
 	Value assign_to_function( const Value& v )
@@ -122,44 +111,6 @@ namespace vlib
 		}
 		
 		return Value_nothing;
-	}
-	
-	static
-	Value coerce_to_boolean( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				INTERNAL_ERROR( "invalid type in coerce_to_boolean()" );
-			
-			case Value_empty_list:
-				return false;
-			
-			case Value_boolean:
-				return v;
-			
-			case Value_byte:
-			case Value_number:
-				return ! v.number().is_zero();
-			
-			case Value_data:
-			case Value_string:
-				return ! v.string().empty();
-			
-			case Value_base_type:
-			case Value_function:
-			case Value_pair:
-				if ( Expr* expr = v.expr() )
-				{
-					if ( expr->op == Op_array )
-					{
-						// Empty array is false.
-						return ! is_empty( expr->right );
-					}
-				}
-				
-				return true;
-		}
 	}
 	
 	static
@@ -381,14 +332,6 @@ namespace vlib
 	DEFINE_TYPE_INFO_A_C( u16 );
 	DEFINE_TYPE_INFO_A_C( i8  );
 	DEFINE_TYPE_INFO_A_C( u8  );
-	
-	const type_info boolean_vtype =
-	{
-		"boolean",
-		&assign_to_boolean,
-		&coerce_to_boolean,
-		0,
-	};
 	
 	const type_info byte_vtype =
 	{
