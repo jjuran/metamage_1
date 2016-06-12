@@ -27,8 +27,6 @@ namespace vlib
 	
 	char* quote_byte( char* p, unsigned char c );
 	
-	plus::string quote_byte( unsigned char c );
-	
 	plus::string quote_string( const plus::string& s );
 	
 }

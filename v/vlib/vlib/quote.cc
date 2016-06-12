@@ -402,17 +402,6 @@ namespace vlib
 		return q;
 	}
 	
-	plus::string quote_byte( unsigned char c )
-	{
-		plus::string result;
-		
-		char* q = result.reset( quoted_length( c ) );
-		
-		quote_byte( q, c );
-		
-		return result;
-	}
-	
 	plus::string quote_string( const plus::string& s )
 	{
 		typedef plus::string::size_type size_t;
