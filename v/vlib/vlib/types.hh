@@ -21,7 +21,6 @@ namespace vlib
 	extern const type_info u32_vtype;
 	extern const type_info i64_vtype;
 	extern const type_info u64_vtype;
-	extern const type_info etc_vtype;
 	extern const type_info byte_vtype;
 	extern const type_info data_vtype;
 	extern const type_info type_vtype;

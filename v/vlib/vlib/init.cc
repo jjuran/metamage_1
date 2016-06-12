@@ -13,6 +13,7 @@
 #include "vlib/proc_info.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
+#include "vlib/types/any.hh"
 
 
 namespace vlib

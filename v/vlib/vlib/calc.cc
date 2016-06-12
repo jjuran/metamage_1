@@ -22,6 +22,7 @@
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
+#include "vlib/types/any.hh"
 
 
 namespace vlib
