@@ -66,6 +66,19 @@ namespace vlib
 			
 			friend void pair_destructor( void* pointer );
 		
+		protected:
+			Value( const vu_ibox& ix, value_type type )
+			:
+				its_box( ix, type )
+			{
+			}
+			
+			Value( const vu_string& sx, value_type type )
+			:
+				its_box( sx, type )
+			{
+			}
+		
 		public:
 			enum byte
 			{
