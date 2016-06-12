@@ -18,6 +18,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/null.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 
@@ -55,6 +56,7 @@ namespace vlib
 		define_keyword( "str",      string_vtype   );
 		define_keyword( "c_str",    c_str_vtype    );
 		define_keyword( "type",     type_vtype     );
+		define_keyword( "null",     null_vtype     );
 		define_keyword( "data",     data_vtype     );
 		define_keyword( "byte",     byte_vtype     );
 		define_keyword( "i64",      i64_vtype      );

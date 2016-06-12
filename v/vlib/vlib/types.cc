@@ -17,6 +17,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/null.hh"
 #include "vlib/types/string.hh"
 
 
@@ -74,6 +75,12 @@ namespace vlib
 		if ( is_function( v ) )
 		{
 			return function_vtype;
+		}
+		
+		if ( v.type() == Value_base_type  &&  &v.typeinfo() == &null_vtype )
+		{
+			// null is its own type
+			return null_vtype;
 		}
 		
 		switch ( v.type() )

@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"
+#include "vlib/types/null.hh"
 
 
 namespace vlib
@@ -35,6 +36,8 @@ namespace vlib
 				return ! v.string().empty();
 			
 			case Value_base_type:
+				return &v.typeinfo() != &null_vtype;
+			
 			case Value_function:
 			case Value_pair:
 				if ( Expr* expr = v.expr() )

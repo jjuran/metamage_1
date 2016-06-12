@@ -2646,3 +2646,18 @@ $ vc 'const x = "foo"; x .[0], x "B"[0]'
 
 $ vc 'const x = "foo"; x [0], x"B"[0]'
 1 >= "('f', '\v')"
+
+%
+
+$ vc 'null, str null, rep null'
+1 >= '(null, "null", "null")'
+
+%
+
+$ vc '(+) null, bool null, null null, null()'
+1 >= '(1, false, null, null)'
+
+%
+
+$ vc 'null isa type, null isa null, null isa (), () isa null'
+1 >= '(true, true, false, false)'
