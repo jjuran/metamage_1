@@ -318,7 +318,6 @@ namespace vlib
 		return result.substr( 0, q - begin );
 	}
 	
-	static
 	plus::string::size_type quoted_length( unsigned char c )
 	{
 		const plus::string::size_type n = 2;  // the enclosing quotes
@@ -367,12 +366,8 @@ namespace vlib
 		return length;
 	}
 	
-	plus::string quote_byte( unsigned char c )
+	char* quote_byte( char* q, unsigned char c )
 	{
-		plus::string result;
-		
-		char* q = result.reset( quoted_length( c ) );
-		
 		*q++ = '\'';
 		
 		if ( ! iota::is_cntrl( c )  &&  iota::is_ascii( c ) )
@@ -403,6 +398,17 @@ namespace vlib
 		}
 		
 		*q++ = '\'';
+		
+		return q;
+	}
+	
+	plus::string quote_byte( unsigned char c )
+	{
+		plus::string result;
+		
+		char* q = result.reset( quoted_length( c ) );
+		
+		quote_byte( q, c );
 		
 		return result;
 	}
