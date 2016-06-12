@@ -18,6 +18,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 
 
@@ -30,17 +31,6 @@ namespace vlib
 	Value assign_to_function( const Value& v )
 	{
 		if ( is_functional( v ) )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_data( const Value& v )
-	{
-		if ( v.type() == Value_data )
 		{
 			return v;
 		}
@@ -87,51 +77,9 @@ namespace vlib
 	}
 	
 	static
-	Value coerce_to_data( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				THROW( "type not convertible to data" );
-			
-			case Value_empty_list:
-				return make_data( plus::string::null );
-			
-			case Value_string:
-				return make_data( v.string() );
-			
-			case Value_byte:
-			case Value_pair:
-				return pack( v );
-			
-			case Value_data:
-				return v;
-		}
-	}
-	
-	static
 	Value coerce_to_string( const Value& v )
 	{
 		return make_string( v, Stringified_to_print );
-	}
-	
-	static
-	Value data_member( const Value&         obj,
-	                   const plus::string&  member )
-	{
-		if ( member == "size" )
-		{
-			return obj.string().size();
-		}
-		
-		if ( member == "string" )
-		{
-			return obj.string();
-		}
-		
-		THROW( "nonexistent data member" );
-		
-		return Value_nothing;
 	}
 	
 	static
@@ -165,15 +113,6 @@ namespace vlib
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( c_str    );
 	DEFINE_TYPE_INFO( type     );
-	
-	
-	const type_info data_vtype =
-	{
-		"data",
-		&assign_to_data,
-		&coerce_to_data,
-		&data_member,
-	};
 	
 	const type_info string_vtype =
 	{
