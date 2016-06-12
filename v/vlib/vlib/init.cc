@@ -19,6 +19,7 @@
 #include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
