@@ -31,6 +31,7 @@
 #include "vlib/throw.hh"
 #include "vlib/token.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/byte.hh"
 
 
 namespace vlib
@@ -378,7 +379,7 @@ namespace vlib
 				break;
 			
 			case Token_byte:
-				receive_value( Value::byte( unquote_byte( token.text ) ) );
+				receive_value( Byte( unquote_byte( token.text ) ) );
 				break;
 			
 			case Token_string:
