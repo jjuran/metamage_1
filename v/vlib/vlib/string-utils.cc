@@ -194,7 +194,9 @@ namespace vlib
 			case Value_byte:
 				if ( use_quotes( mode ) )
 				{
-					return quote_byte( value.number().clipped() ).size();
+					unsigned char c = value.number().clipped();
+					
+					return quoted_length( c );
 				}
 				
 				return 1;
@@ -333,7 +335,7 @@ namespace vlib
 			case Value_byte:
 				if ( use_quotes( mode ) )
 				{
-					return mempcpy( p, quote_byte( value.number().clipped() ) );
+					return quote_byte( p, value.number().clipped() );
 				}
 				
 				*p++ = value.number().clipped();
