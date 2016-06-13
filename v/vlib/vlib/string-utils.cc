@@ -28,6 +28,8 @@
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/stringify.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/string.hh"
@@ -185,10 +187,39 @@ namespace vlib
 	
 	
 	static
+	const stringify* get_str_methods( const Value& v, stringification mode )
+	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const stringifiers* s = methods->to_string )
+			{
+				if ( mode < 0 )
+				{
+					return s->vec;
+				}
+				
+				if ( mode > 0  &&  s->rep != NULL )
+				{
+					return s->rep;
+				}
+				
+				return s->str;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	static
 	size_t composite_length( const Value&     value,
 	                         stringification  mode,
 	                         bool             print_parens = true )
 	{
+		if ( const stringify* str = get_str_methods( value, mode ) )
+		{
+			return get_stringified_size( *str, value );
+		}
+		
 		if ( mode == Stringified_to_pack )
 		{
 			switch ( value.type() )
@@ -329,6 +360,11 @@ namespace vlib
 	                   stringification  mode,
 	                   bool             print_parens = true )
 	{
+		if ( const stringify* str = get_str_methods( value, mode ) )
+		{
+			return copy_stringified( p, *str, value );
+		}
+		
 		if ( mode == Stringified_to_pack )
 		{
 			switch ( value.type() )
