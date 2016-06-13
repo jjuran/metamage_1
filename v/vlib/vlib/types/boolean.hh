@@ -28,7 +28,7 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Boolean( bool b = false ) : Value( Bool( b ) )
+			Boolean( bool b = false ) : Value( Bool( b ), &boolean_dispatch )
 			{
 			}
 			
