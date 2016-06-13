@@ -6,89 +6,27 @@
 #include "vlib/types.hh"
 
 // Standard C
-#include <stdint.h>
 #include <string.h>
 
-// iota
-#include "iota/char_types.hh"
-
-// plus
-#include "plus/decimal.hh"
-
 // vlib
-#include "vlib/error.hh"
-#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
-#include "vlib/string-utils.hh"
-#include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
+#include "vlib/types/any.hh"
+#include "vlib/types/boolean.hh"
+#include "vlib/types/byte.hh"
+#include "vlib/types/data.hh"
+#include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
 {
 	
-	extern const proc_info proc_lines;
-	
-	static
-	Value assign_to_boolean( const Value& v )
-	{
-		if ( v.type() == Value_boolean )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
 	static
 	Value assign_to_function( const Value& v )
 	{
 		if ( is_functional( v ) )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_byte( const Value& v )
-	{
-		if ( v.type() == Value_byte )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_integer( const Value& v )
-	{
-		if ( v.type() == Value_number )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_data( const Value& v )
-	{
-		if ( v.type() == Value_data )
-		{
-			return v;
-		}
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value assign_to_string( const Value& v )
-	{
-		if ( v.type() == Value_string )
 		{
 			return v;
 		}
@@ -123,327 +61,12 @@ namespace vlib
 		return Value_nothing;
 	}
 	
-	static
-	Value coerce_to_boolean( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				INTERNAL_ERROR( "invalid type in coerce_to_boolean()" );
-			
-			case Value_empty_list:
-				return false;
-			
-			case Value_boolean:
-				return v;
-			
-			case Value_byte:
-			case Value_number:
-				return ! v.number().is_zero();
-			
-			case Value_data:
-			case Value_string:
-				return ! v.string().empty();
-			
-			case Value_base_type:
-			case Value_function:
-			case Value_pair:
-				if ( Expr* expr = v.expr() )
-				{
-					if ( expr->op == Op_array )
-					{
-						// Empty array is false.
-						return ! is_empty( expr->right );
-					}
-				}
-				
-				return true;
-		}
-	}
-	
-	static
-	Value coerce_to_byte( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				THROW( "byte conversion not defined for type" );
-			
-			case Value_empty_list:
-				return Value::byte();
-			
-			case Value_byte:
-			case Value_number:
-				return Value::byte( uint8_t( v.number().clipped() * v.number().sign() ) );
-		}
-	}
-	
-	static
-	bool is_decimal( const char* p, size_t n )
-	{
-		if ( n == 0 )
-		{
-			return false;
-		}
-		
-		if ( *p == '-'  ||  *p == '+' )
-		{
-			++p;
-			
-			if ( --n == 0 )
-			{
-				return false;
-			}
-		}
-		
-		do
-		{
-			if ( ! iota::is_digit( *p++ ) )
-			{
-				return false;
-			}
-		}
-		while ( --n );
-		
-		return true;
-	}
-	
-	static
-	plus::integer decode_int( const plus::string& s )
-	{
-		if ( ! is_decimal( s.data(), s.size() ) )
-		{
-			THROW( "not a decimal integer" );
-		}
-		
-		return plus::decode_decimal( s );
-	}
-	
-	static
-	Value coerce_to_integer( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				THROW( "integer conversion not defined for type" );
-			
-			case Value_empty_list:
-				return 0;
-			
-			case Value_boolean:
-				return v.boolean() + 0;
-			
-			case Value_byte:
-				return v.number();
-			
-			case Value_number:
-				return v;
-			
-			case Value_string:
-				return decode_int( v.string() );
-		}
-	}
-	
-	static
-	Value coerce_to_data( const Value& v )
-	{
-		switch ( v.type() )
-		{
-			default:
-				THROW( "type not convertible to data" );
-			
-			case Value_empty_list:
-				return make_data( plus::string::null );
-			
-			case Value_string:
-				return make_data( v.string() );
-			
-			case Value_byte:
-			case Value_pair:
-				return pack( v );
-			
-			case Value_data:
-				return v;
-		}
-	}
-	
-	static
-	Value coerce_to_string( const Value& v )
-	{
-		return make_string( v, Stringified_to_print );
-	}
-	
-	static
-	Value data_member( const Value&         obj,
-	                   const plus::string&  member )
-	{
-		if ( member == "size" )
-		{
-			return obj.string().size();
-		}
-		
-		if ( member == "string" )
-		{
-			return obj.string();
-		}
-		
-		THROW( "nonexistent data member" );
-		
-		return Value_nothing;
-	}
-	
-	static
-	Value string_member( const Value& obj,
-	                     const plus::string& member )
-	{
-		if ( member == "length" )
-		{
-			return obj.string().size();
-		}
-		
-		if ( member == "join" )
-		{
-			return bind_args( proc_join, obj );
-		}
-		
-		if ( member == "lines" )
-		{
-			return bind_args( proc_lines, obj );
-		}
-		
-		THROW( "nonexistent string member" );
-		
-		return Value_nothing;
-	}
-	
-	enum signedness
-	{
-		u,
-		i,
-	};
-	
-	template < bool S, int N >  struct stdint;
-	
-	template <>  struct stdint< i,  8 > { typedef int8_t   type; };
-	template <>  struct stdint< u,  8 > { typedef uint8_t  type; };
-	template <>  struct stdint< i, 16 > { typedef int16_t  type; };
-	template <>  struct stdint< u, 16 > { typedef uint16_t type; };
-	template <>  struct stdint< i, 32 > { typedef int32_t  type; };
-	template <>  struct stdint< u, 32 > { typedef uint32_t type; };
-	template <>  struct stdint< i, 64 > { typedef int64_t  type; };
-	template <>  struct stdint< u, 64 > { typedef uint64_t type; };
-	
-	static
-	uint64_t coerced_int( const Value& v )
-	{
-		return coerce_to_integer( v ).number().clipped_to< uint64_t >();
-	}
-	
-	#define DEFINE_ADAPT_TO_INT( s, n )       \
-	static                                    \
-	Value assign_to_##s##n( const Value& v )  \
-	{                                         \
-		if ( v.type() == Value_number )  \
-		{                                \
-			if ( v.number().demotes_to< stdint< s, n >::type >() )  return v;  \
-		}                                \
-		return Value_nothing;            \
-	}                                         \
-	static                                    \
-	Value coerce_to_##s##n( const Value& v )  \
-	{ return (stdint< s, n >::type) coerced_int( v ); }
-	
-	DEFINE_ADAPT_TO_INT( i, 64 )
-	DEFINE_ADAPT_TO_INT( u, 64 )
-	DEFINE_ADAPT_TO_INT( i, 32 )
-	DEFINE_ADAPT_TO_INT( u, 32 )
-	DEFINE_ADAPT_TO_INT( i, 16 )
-	DEFINE_ADAPT_TO_INT( u, 16 )
-	DEFINE_ADAPT_TO_INT( i, 8  )
-	DEFINE_ADAPT_TO_INT( u, 8  )
-	
-	static
-	Value identity( const Value& v )
-	{
-		return v;
-	}
-	
-	const type_info etc_vtype = { "...", &identity, 0, 0 };
-	
 	#define DEFINE_TYPE_INFO( type )  \
 	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
-	
-	#define DEFINE_TYPE_INFO_A_C( T )  \
-	const type_info T##_vtype = { #T, &assign_to_##T, &coerce_to_##T, 0 }
 	
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( c_str    );
 	DEFINE_TYPE_INFO( type     );
-	
-	DEFINE_TYPE_INFO_A_C( i64 );
-	DEFINE_TYPE_INFO_A_C( u64 );
-	DEFINE_TYPE_INFO_A_C( i32 );
-	DEFINE_TYPE_INFO_A_C( u32 );
-	DEFINE_TYPE_INFO_A_C( i16 );
-	DEFINE_TYPE_INFO_A_C( u16 );
-	DEFINE_TYPE_INFO_A_C( i8  );
-	DEFINE_TYPE_INFO_A_C( u8  );
-	
-	const type_info boolean_vtype =
-	{
-		"boolean",
-		&assign_to_boolean,
-		&coerce_to_boolean,
-		0,
-	};
-	
-	const type_info byte_vtype =
-	{
-		"byte",
-		&assign_to_byte,
-		&coerce_to_byte,
-		0,
-	};
-	
-	const type_info integer_vtype =
-	{
-		"integer",
-		&assign_to_integer,
-		&coerce_to_integer,
-		0,
-	};
-	
-	const type_info data_vtype =
-	{
-		"data",
-		&assign_to_data,
-		&coerce_to_data,
-		&data_member,
-	};
-	
-	const type_info string_vtype =
-	{
-		"string",
-		&assign_to_string,
-		&coerce_to_string,
-		&string_member,
-	};
-	
-	static
-	Value v_join( const Value& args )
-	{
-		const Value& glue = first( args );
-		
-		const Value pieces = rest( args );
-		
-		return join( glue.string(), pieces, count( pieces ) );
-	}
-	
-	static
-	Value v_lines( const Value& v )
-	{
-		return lines( v.string() );
-	}
 	
 	static
 	Value v_typeof( const Value& v )
@@ -504,11 +127,6 @@ namespace vlib
 		return result.expr()->right;
 	}
 	
-	static const Value string     = string_vtype;
-	static const Value string_etc = Value( string_vtype, etc_vtype );
-	
-	const proc_info proc_join   = { &v_join,   "join",   &string_etc };
-	const proc_info proc_lines  = { &v_lines,  "lines",  &string     };
-	const proc_info proc_typeof = { &v_typeof, "typeof", NULL        };
+	const proc_info proc_typeof = { &v_typeof, "typeof", NULL };
 	
 }

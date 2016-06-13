@@ -275,6 +275,18 @@ namespace vlib
 		return 0;  // NULL
 	}
 	
+	template < class Type >
+	static
+	Value assign_to( const Value& v )
+	{
+		if ( Type::test( v ) )
+		{
+			return v;
+		}
+		
+		return Value_nothing;
+	}
+	
 	inline
 	bool get_bool( const Value& v )
 	{

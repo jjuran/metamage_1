@@ -21,7 +21,10 @@
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
-#include "vlib/types.hh"
+#include "vlib/types/data.hh"
+#include "vlib/types/integer.hh"
+#include "vlib/types/stdint.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
