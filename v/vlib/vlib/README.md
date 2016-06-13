@@ -4,7 +4,7 @@ vlib Source Code Roadmap
 Level 1
 -------
 
-`error.*`:  Defines utility macros `SYNTAX_ERROR()` and `INTERNAL_ERROR()`.
+`error.*`:  Defines utility macro `INTERNAL_ERROR()`.
 
 `throw.*`:  Defines the generic `exception` class and the `THROW()` macro.
 
@@ -16,7 +16,7 @@ Level 1
 
 `proc_info.hh`:  Defines `struct proc_info`, which groups a function pointer with a name.
 
-`type_info.hh`:  Defines `struct type_info`, which provides a type's name.
+`type_info.hh`:  Defines `struct type_info`, which provides a type's name, as well as functions for checking assignability and convertibility and for member lookup.
 
 `vbox.*`:  Defines `class vbox`, a type that generalizes storage of dynamic values, with small-object optimization.
 
@@ -35,7 +35,7 @@ Level 2
 
 `precedence.*`:  Defines `decreasing_op_precedence()`, which implements operator precedence and determines whether a stacked operation can be evaluated immediately, or only after further input.
 
-`quote.*`:  Defines routines for decoding string literals, including escape sequences.
+`quote.*`:  Defines routines for encoding and decoding string literals, including escape sequences.
 
 Level 3
 -------
@@ -46,7 +46,7 @@ Level 3
 
 `dyad.*`:  Defines `struct dyad`, which holds a left operand and an operator.
 
-`symbol_table.*`:  Defines functions for querying and updating the global symbol table.
+`symbol_table.*`:  Defines functions for querying and updating symbol tables.
 
 `string-utils.*`:  Defines functions for computations of strings.
 
@@ -57,7 +57,7 @@ Level 3
 Level 4
 -------
 
-`types.*`:  Defines a `type_info` for each V base type.
+`types.*` and `types/*`:  Defines a `type_info` for each V base type.
 
 `symdesc.*`:  Defines a `make_metasymbol()` and `resolve_symbol()`, used with symbol descriptors.
 
