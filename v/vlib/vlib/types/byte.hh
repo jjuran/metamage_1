@@ -13,7 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct type_info;
+	
+	extern const dispatch byte_dispatch;
 	
 	class Byte : public Value
 	{
