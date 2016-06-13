@@ -31,6 +31,7 @@ namespace vlib
 		Symbol_var,
 	};
 	
+	struct dispatch;
 	struct proc_info;
 	struct type_info;
 	struct Expr;
@@ -69,7 +70,8 @@ namespace vlib
 	class Value
 	{
 		private:
-			vbox  its_box;
+			const dispatch*  its_dispatch;
+			vbox             its_box;
 			
 			friend void pair_destructor( void* pointer );
 		
@@ -78,12 +80,14 @@ namespace vlib
 			:
 				its_box( ix, type )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( const vu_string& sx, value_type type )
 			:
 				its_box( sx, type )
 			{
+				its_dispatch = 0;  // NULL
 			}
 		
 		public:
@@ -102,38 +106,45 @@ namespace vlib
 			
 			Value( value_type type = value_type() ) : its_box( type )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( Bool b ) : its_box( bool( b ), Value_boolean )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( const plus::string& s )
 			:
 				its_box( (const vu_string&) s, V_str )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( const char* s )
 			:
 				its_box( (const vu_string&) plus::string( s ).move(), V_str )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( const proc_info& proc )
 			:
 				its_box( &proc, V_proc )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( const type_info& type )
 			:
 				its_box( &type, Value_base_type )
 			{
+				its_dispatch = 0;  // NULL
 			}
 			
 			Value( symbol_type symtype, const plus::string& name );
@@ -146,6 +157,11 @@ namespace vlib
 			       op_type             op,
 			       const Value&        b,
 			       const source_spec&  s = source_spec() );
+			
+			const dispatch* dispatch_methods() const
+			{
+				return its_dispatch;
+			}
 			
 			value_type type() const
 			{

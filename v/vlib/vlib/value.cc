@@ -39,6 +39,7 @@ namespace vlib
 	:
 		its_box( sizeof (Symbol), &symbol_destructor, Value_symbol )
 	{
+		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Symbol( symtype, name );
 	}
 	
@@ -80,6 +81,7 @@ namespace vlib
 	:
 		its_box( sizeof (Expr), &pair_destructor, Value_pair )
 	{
+		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( a, Op_list, b );
 	}
 	
@@ -87,6 +89,7 @@ namespace vlib
 	:
 		its_box( sizeof (Expr), &pair_destructor, Value_pair )
 	{
+		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( Value_dummy_operand, op, v );
 	}
 	
@@ -97,6 +100,7 @@ namespace vlib
 	:
 		its_box( sizeof (Expr), &pair_destructor, Value_pair )
 	{
+		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( a, op, b, s );
 	}
 	
@@ -117,7 +121,8 @@ namespace vlib
 	{
 		using iota::swap;
 		
-		swap( its_box, that.its_box );
+		swap( its_dispatch, that.its_dispatch );
+		swap( its_box,      that.its_box      );
 	}
 	
 	static
