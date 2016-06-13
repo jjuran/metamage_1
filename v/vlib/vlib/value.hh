@@ -80,12 +80,6 @@ namespace vlib
 			}
 		
 		public:
-			enum byte
-			{
-				byte_min = 0,
-				byte_max = 255,
-			};
-			
 			enum symdesc
 			{
 				symdesc_min = 0,
@@ -103,12 +97,6 @@ namespace vlib
 		#define IBOX( i )  plus::ibox( i ).move()
 			
 			Value( bool b ) : its_box( b, Value_boolean )
-			{
-			}
-			
-			Value( byte c )
-			:
-				its_box( IBOX( (unsigned long) c ), Value_byte )
 			{
 			}
 			

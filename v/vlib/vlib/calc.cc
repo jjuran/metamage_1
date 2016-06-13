@@ -24,6 +24,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/byte.hh"
 
 
 namespace vlib
@@ -203,11 +204,11 @@ namespace vlib
 		const char* begin = s.data();
 		const char* it    = begin + size;
 		
-		Value result = Value::byte( *--it );
+		Value result = Byte( *--it );
 		
 		while ( it > begin )
 		{
-			result = Value( Value::byte( *--it ), result );
+			result = Value( Byte( *--it ), result );
 		}
 		
 		return result;
@@ -739,7 +740,7 @@ namespace vlib
 			THROW( "subscript exceeds string bounds" );
 		}
 		
-		return Value::byte( s[ index.clipped() ] );
+		return Byte( s[ index.clipped() ] );
 	}
 	
 	static

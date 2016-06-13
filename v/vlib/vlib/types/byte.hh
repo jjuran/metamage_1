@@ -25,9 +25,13 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Byte( unsigned char c = 0 ) : Value( Value::byte( c ) )
+		#define IBOX( i )  plus::ibox( (unsigned long) i ).move()
+			
+			Byte( unsigned char c = 0 ) : Value( IBOX( c ), Value_byte )
 			{
 			}
+			
+		#undef IBOX
 	};
 	
 	extern const type_info byte_vtype;
