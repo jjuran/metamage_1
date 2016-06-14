@@ -12,7 +12,6 @@
 
 // Mac OS
 #ifndef MAC_OS_X_VERSION_10_8
-#define OTUNIXERRORS 1
 #ifndef __OPENTRANSPORT__
 #include <OpenTransport.h>
 #endif
@@ -27,14 +26,10 @@ namespace sys {
 	
 	int errno_from_mac_error( long err )
 	{
-	#if OTUNIXERRORS
-		
-		if ( IsEError( err ) )
+		if ( err <= kEPERMErr  &&  err >= kENOMSGErr )
 		{
-			return OSStatus2E( err );
+			return 1 + kEPERMErr - err;
 		}
-		
-	#endif
 		
 		int result;
 		
