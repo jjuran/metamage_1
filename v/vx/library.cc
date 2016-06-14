@@ -6,6 +6,7 @@
 #include "library.hh"
 
 // POSIX
+#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -18,6 +19,7 @@
 #include "must/write.h"
 
 // plus
+#include "plus/integer.hh"
 #include "plus/var_string.hh"
 
 // vlib

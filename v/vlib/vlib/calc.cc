@@ -11,6 +11,9 @@
 // debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/integer.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"

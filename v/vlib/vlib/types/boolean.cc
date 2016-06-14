@@ -5,6 +5,9 @@
 
 #include "vlib/types/boolean.hh"
 
+// plus
+#include "plus/integer.hh"
+
 // vlib
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"

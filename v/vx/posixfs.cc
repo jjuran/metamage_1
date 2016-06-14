@@ -12,6 +12,7 @@
 
 // Standard C
 #include <errno.h>
+#include <string.h>
 
 // vlib
 #include "vlib/exceptions.hh"

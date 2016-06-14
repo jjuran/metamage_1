@@ -5,6 +5,9 @@
 
 #include "vlib/types/byte.hh"
 
+// plus
+#include "plus/integer.hh"
+
 // vlib
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"

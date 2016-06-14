@@ -5,6 +5,9 @@
 
 #include "vlib/eval.hh"
 
+// plus
+#include "plus/integer.hh"
+
 // vlib
 #include "vlib/calc.hh"
 #include "vlib/error.hh"

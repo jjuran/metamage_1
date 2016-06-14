@@ -8,6 +8,9 @@
 // Standard C
 #include <stdint.h>
 
+// plus
+#include "plus/integer.hh"
+
 // vlib
 #include "vlib/type_info.hh"
 #include "vlib/types/integer.hh"
