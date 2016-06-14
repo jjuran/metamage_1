@@ -14,6 +14,7 @@
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -116,18 +117,18 @@ namespace vlib
 		{
 			//if ( &vtype.typeinfo() != &integer_vtype )
 			{
-				Value result;
-				
 				if ( op == Op_postinc  ||  op == Op_postdec )
 				{
 					const bool inc = op == Op_postinc;
 					
-					result = value;
+					Value result = value;
 					
-					sym->assign( a + (inc ? 1 : -1) );
+					sym->assign( Integer( a + (inc ? 1 : -1) ) );
 					
 					return result;
 				}
+				
+				plus::integer result;
 				
 				switch ( op )
 				{
@@ -144,7 +145,7 @@ namespace vlib
 						INTERNAL_ERROR( "no such update assignment operator" );
 				}
 				
-				sym->assign( result );
+				sym->assign( Integer( result ) );
 				
 				return value;
 			}
@@ -154,8 +155,8 @@ namespace vlib
 		
 		switch ( op )
 		{
-			case Op_postinc:  return a++;
-			case Op_postdec:  return a--;
+			case Op_postinc:  return Integer( a++ );
+			case Op_postdec:  return Integer( a-- );
 			
 			case Op_preinc:  ++a;  break;
 			case Op_predec:  --a;  break;

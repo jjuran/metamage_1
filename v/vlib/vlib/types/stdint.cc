@@ -51,7 +51,7 @@ namespace vlib
 	}                                         \
 	static                                    \
 	Value coerce_to_##s##n( const Value& v )  \
-	{ return (stdint< s, n >::type) coerced_int( v ); }
+	{ return Integer( (stdint< s, n >::type) coerced_int( v ) ); }
 	
 	DEFINE_ADAPT_TO_INT( i, 64 )
 	DEFINE_ADAPT_TO_INT( u, 64 )

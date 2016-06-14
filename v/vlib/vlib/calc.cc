@@ -25,6 +25,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -229,7 +230,7 @@ namespace vlib
 		
 		if ( op == Op_unary_count )
 		{
-			return count( v );
+			return Integer( count( v ) );
 		}
 		
 		if ( op == Op_return )
@@ -268,13 +269,13 @@ namespace vlib
 		switch ( v.type() )
 		{
 			case Value_empty_list:
-				return 0;
+				return Integer();
 			
 			case Value_boolean:
 				switch ( op )
 				{
-					case Op_unary_plus:   return 0 + v.boolean();
-					case Op_unary_minus:  return 0 - v.boolean();
+					case Op_unary_plus:   return Integer(  v.boolean() );
+					case Op_unary_minus:  return Integer( -v.boolean() );
 					
 					default:  break;
 				}
@@ -285,8 +286,8 @@ namespace vlib
 			case Value_number:
 				switch ( op )
 				{
-					case Op_unary_plus:   return  get_int( v );
-					case Op_unary_minus:  return -get_int( v );
+					case Op_unary_plus:   return v;
+					case Op_unary_minus:  return Integer( -v.number() );
 					
 					default:  break;
 				}
@@ -342,7 +343,7 @@ namespace vlib
 		
 		if ( name == "length" )
 		{
-			return count( expr->right );
+			return Integer( count( expr->right ) );
 		}
 		
 		THROW( "nonexistent array member" );
@@ -412,9 +413,9 @@ namespace vlib
 	}
 	
 	static
-	Value calc( const plus::integer&  left,
-	            op_type               op,
-	            const plus::integer&  right )
+	plus::integer calc( const plus::integer&  left,
+	                    op_type               op,
+	                    const plus::integer&  right )
 	{
 		switch ( op )
 		{
@@ -433,7 +434,7 @@ namespace vlib
 		
 		INTERNAL_ERROR( "unsupported operator in calc()" );
 		
-		return Value();
+		return 0;
 	}
 	
 	static
@@ -1141,7 +1142,10 @@ namespace vlib
 				case Value_number:
 					try
 					{
-						return calc( get_int( left ), op, get_int( right ) );
+						const plus::integer& a = left.number();
+						const plus::integer& b = right.number();
+						
+						return Integer( calc( a, op, b ) );
 					}
 					catch ( const plus::ibox::limb_count_overflow& )
 					{
