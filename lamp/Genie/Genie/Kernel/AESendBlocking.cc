@@ -18,6 +18,7 @@
 
 // relix
 #include "relix/api/current_thread.hh"
+#include "relix/task/scheduler.hh"
 #include "relix/task/thread.hh"
 
 
@@ -42,8 +43,15 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		// Subscribe to AEFramework's queued reply delivery and wake-up service
 		N::ExpectReply( returnID, &reply );
 		
+		const thread& current = current_thread();
+		const pid_t   tid     = current.id();
+		
+		relix::mark_thread_inactive( tid );
+		
 		// Sleep until the reply is delivered
-		stop_os_thread( current_thread().get_os_thread() );
+		stop_os_thread( current.get_os_thread() );
+		
+		relix::mark_thread_active( tid );
 	}
 	catch ( const Mac::OSStatus& err )
 	{
