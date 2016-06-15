@@ -368,7 +368,7 @@ static int load_fdset( v68k::processor_state&  s,
 	return 1;
 }
 
-static void store_fdset( uint8_t* emulated, const fd_set& native, int n )
+static void store_fdset( uint8_t* emulated, fd_set& native, int n )
 {
 	while ( --n >= 0 )
 	{
