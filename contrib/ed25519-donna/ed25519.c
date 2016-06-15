@@ -19,10 +19,10 @@
 #define ED25519_REFHASH
 #endif
 
-#if defined( __APPLE__ )  &&  ! MAC_OS_X_VERSION_10_5
+#if defined( __APPLE__ )  &&  ! MAC_OS_X_VERSION_10_6
 /*
-	This is known to be needed on 10.4 and not needed on 10.8.
-	Bump the version upward as necessary for 10.5, 10.6, and 10.7.
+	This is known to be needed on 10.5 and not needed on 10.8.
+	Bump the version upward as necessary for 10.6 and 10.7.
 */
 #define ED25519_REFHASH
 #endif
