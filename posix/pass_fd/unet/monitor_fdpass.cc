@@ -44,6 +44,14 @@
 //#include "log.h"
 #include "monitor_fdpass.hh"
 
+#ifdef __APPLE__
+// Fix "array bound is not an integer constant" error on 10.5.
+// (This code is not used on OS X at all.)
+#undef CMSG_SPACE
+#define CMSG_SPACE( x )  (x)
+#endif
+
+
 namespace openbsd
 {
 
