@@ -19,14 +19,16 @@
 #include "vfs/functions/resolve_links_in_place.hh"
 #include "vfs/primitives/hardlink.hh"
 
-// relix-kernel
+// relix-api
+#include "relix/api/make_alias.hh"
 #include "relix/api/root.hh"
+
+// relix-kernel
 #include "relix/fs/resolve_path_at.hh"
 #include "relix/syscall/registry.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/Kernel/make_alias.hh"
 
 
 #ifndef AT_SYMLINK_FOLLOW
@@ -66,7 +68,7 @@ namespace Genie
 			
 			if ( flags & AT_LINK_ALIAS )
 			{
-				make_alias( *oldFile, *newFile );
+				relix::make_alias( *oldFile, *newFile );
 			}
 			else
 			{

@@ -3,14 +3,14 @@
 	-------------
 */
 
-#ifndef GENIE_KERNEL_MAKEALIAS_HH
-#define GENIE_KERNEL_MAKEALIAS_HH
+#ifndef RELIX_API_MAKEALIAS_HH
+#define RELIX_API_MAKEALIAS_HH
 
 // vfs
 #include "vfs/node_fwd.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	void make_alias( const vfs::node& target, const vfs::node& alias );

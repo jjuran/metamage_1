@@ -3,7 +3,7 @@
 	-------------
 */
 
-#include "Genie/Kernel/make_alias.hh"
+#include "relix/api/make_alias.hh"
 
 // mac-app-utils
 #include "mac_app/create_alias.hh"
@@ -15,7 +15,7 @@
 #include "MacVFS/util/FSSpec_from_node.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
 	void make_alias( const vfs::node& target, const vfs::node& alias )
