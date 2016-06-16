@@ -24,6 +24,7 @@
 #include "relix/syscall/getsid.hh"
 #include "relix/syscall/gettid.hh"
 #include "relix/syscall/ioctl.hh"
+#include "relix/syscall/linkat.hh"
 #include "relix/syscall/lseek.hh"
 #include "relix/syscall/mkdirat.hh"
 #include "relix/syscall/mknodat.hh"
@@ -78,6 +79,7 @@ namespace Genie
 	using relix::getsid;
 	using relix::gettid;
 	using relix::ioctl;
+	using relix::linkat;
 	using relix::lseek;
 	using relix::mkdirat;
 	using relix::mknodat;
@@ -138,6 +140,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( getsid      );
 	REGISTER_SYSTEM_CALL( gettid      );
 	REGISTER_SYSTEM_CALL( ioctl       );
+	REGISTER_SYSTEM_CALL( linkat      );
 	REGISTER_SYSTEM_CALL( lseek       );
 	REGISTER_SYSTEM_CALL( mkdirat     );
 	REGISTER_SYSTEM_CALL( mknodat     );

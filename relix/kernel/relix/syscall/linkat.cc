@@ -1,14 +1,16 @@
 /*
-	link.cc
-	-------
+	linkat.cc
+	---------
 */
+
+#include "relix/syscall/linkat.hh"
+
+// POSIX
+#include <unistd.h>
+#include <sys/stat.h>
 
 // Standard C
 #include <errno.h>
-
-// POSIX
-#include "sys/stat.h"
-#include "unistd.h"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -20,15 +22,12 @@
 #include "vfs/primitives/hardlink.hh"
 
 // relix-api
+#include "relix/api/errno.hh"
 #include "relix/api/make_alias.hh"
 #include "relix/api/root.hh"
 
 // relix-kernel
 #include "relix/fs/resolve_path_at.hh"
-#include "relix/syscall/registry.hh"
-
-// Genie
-#include "Genie/current_process.hh"
 
 
 #ifndef AT_SYMLINK_FOLLOW
@@ -40,13 +39,10 @@
 #endif
 
 
-namespace Genie
+namespace relix
 {
 	
-	namespace p7 = poseven;
-	
-	
-	static int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
+	int linkat( int olddirfd, const char* oldpath, int newdirfd, const char* newpath, int flags )
 	{
 		try
 		{
@@ -82,12 +78,5 @@ namespace Genie
 		
 		return 0;
 	}
-	
-	
-	#pragma force_active on
-	
-	REGISTER_SYSTEM_CALL( linkat );
-	
-	#pragma force_active reset
 	
 }
