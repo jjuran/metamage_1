@@ -5,11 +5,14 @@
 
 #include "Genie/Kernel/make_alias.hh"
 
+// mac-app-utils
+#include "mac_app/create_alias.hh"
+
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+
 // MacVFS
 #include "MacVFS/util/FSSpec_from_node.hh"
-
-// Genie
-#include "Genie/Utilities/CreateAlias.hh"
 
 
 namespace Genie
@@ -22,7 +25,7 @@ namespace Genie
 		const FSSpec targetSpec = vfs::FSSpec_from_node( target );
 		const FSSpec aliasSpec  = vfs::FSSpec_from_node( alias  );
 		
-		CreateAlias( aliasSpec, targetSpec );
+		Mac::ThrowOSStatus( mac::app::create_alias( aliasSpec, targetSpec ) );
 	}
 	
 }
