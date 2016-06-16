@@ -136,12 +136,16 @@ namespace relix
 	
 	void process::switch_in()
 	{
+		its_process_image->switch_in();
+		
 		(void) checkpoint_delta();
 	}
 	
 	void process::switch_out()
 	{
 		add_system_cpu_time( checkpoint_delta() );
+		
+		its_process_image->switch_out();
 	}
 	
 }

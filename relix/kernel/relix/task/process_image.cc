@@ -153,4 +153,12 @@ namespace relix
 		its_memory_data->remove_memory_mapping( key );
 	}
 	
+	void process_image::switch_in()
+	{
+	}
+	
+	void process_image::switch_out()
+	{
+	}
+	
 }
