@@ -17,6 +17,12 @@
 
 // relix
 #include "relix/glue/userland.hh"
+#include "relix/task/A5_world.hh"
+
+
+#if defined( __MC68K__ )  &&  defined( __MACOS__ )
+#define RELIX_A5_WORLD
+#endif
 
 
 namespace relix
@@ -58,6 +64,12 @@ namespace relix
 		const _relix_user_parameter_block init = { 0 };  // NULL
 		
 		its_pb = init;
+		
+	#ifdef RELIX_A5_WORLD
+		
+		its_pb.a5_world = the_saved_A5_world;  // copy the host's A5 world
+		
+	#endif
 		
 		its_memory_data->set_argv( argv );
 		its_memory_data->set_envp( envp );
@@ -151,6 +163,24 @@ namespace relix
 	void process_image::remove_memory_mapping( addr_t key )
 	{
 		its_memory_data->remove_memory_mapping( key );
+	}
+	
+	void process_image::switch_in()
+	{
+	#ifdef RELIX_A5_WORLD
+		
+		load_A5_world( (a5_world_t) its_pb.a5_world );
+		
+	#endif
+	}
+	
+	void process_image::switch_out()
+	{
+	#ifdef RELIX_A5_WORLD
+		
+		its_pb.a5_world = swap_A5_worlds();
+		
+	#endif
 	}
 	
 }

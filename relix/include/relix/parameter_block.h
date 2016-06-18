@@ -23,6 +23,7 @@ struct _relix_user_parameter_block
 #ifdef __MC68K__
 	
 	void* globals;
+	void* a5_world;
 	
 #endif
 };

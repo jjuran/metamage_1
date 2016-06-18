@@ -71,6 +71,9 @@ namespace relix
 			void msync_memory_mapping( addr_t addr, size_t len, int flags );
 			
 			void remove_memory_mapping( addr_t key );
+			
+			void switch_in();
+			void switch_out();
 	};
 	
 }

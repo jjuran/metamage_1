@@ -90,6 +90,7 @@
 #include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
+#include "relix/task/A5_world.hh"
 #include "relix/task/alarm_clock.hh"
 #include "relix/task/fd_map.hh"
 #include "relix/task/process.hh"
@@ -118,9 +119,6 @@
 	#undef SIGSEGV
 	#undef SIGTERM
 #endif
-
-
-struct GrafPort;
 
 
 static void DumpBacktrace()
@@ -160,60 +158,6 @@ namespace Genie
 	
 	using relix::memory_data;
 	
-	
-#ifdef __MC68K__
-	
-	static GrafPort** the_saved_A5_world;
-	
-	static inline asm GrafPort*** get_A5()
-	{
-		MOVEA.L  A5,A0
-	}
-	
-	static inline void save_the_A5_world()
-	{
-		the_saved_A5_world = *get_A5();
-	}
-	
-	static inline void restore_the_A5_world()
-	{
-		*get_A5() = the_saved_A5_world;
-	}
-	
-	static inline GrafPort** swap_A5_worlds()
-	{
-		GrafPort** result = *get_A5();
-		
-		*get_A5() = the_saved_A5_world;
-		
-		return result;
-	}
-	
-	static inline void load_A5_world( GrafPort** new_a5_world )
-	{
-		*get_A5() = new_a5_world;
-	}
-	
-#else
-	
-	static inline void save_the_A5_world()
-	{
-	}
-	
-	static inline void restore_the_A5_world()
-	{
-	}
-	
-	static inline GrafPort** swap_A5_worlds()
-	{
-		return NULL;
-	}
-	
-	static inline void load_A5_world( GrafPort** new_a5_world )
-	{
-	}
-	
-#endif
 	
 	static uint64_t microseconds()
 	{
@@ -585,7 +529,7 @@ namespace Genie
 		
 		relix::InstallExceptionHandlers();
 		
-		save_the_A5_world();
+		relix::save_the_A5_world();
 	}
 	
 	static
@@ -1124,7 +1068,7 @@ namespace Genie
 			return;
 		}
 		
-		restore_the_A5_world();
+		relix::restore_the_A5_world();
 		
 		/*
 			For a vforked process (with null thread) this does nothing.
@@ -1208,8 +1152,6 @@ namespace Genie
 		
 		mark_current_stack_frame();
 		
-		GrafPort** my_A5_world = swap_A5_worlds();
-		
 		if ( newSchedule == kProcessStopped )
 		{
 			relix::stop_os_thread( get_os_thread() );
@@ -1218,8 +1160,6 @@ namespace Genie
 		{
 			relix::os_thread_yield();
 		}
-		
-		load_A5_world( my_A5_world );
 		
 		Resume();
 	}
