@@ -125,8 +125,8 @@ namespace Genie
 		
 		{ "gestalt", &New_FSTree_sys_mac_gestalt },
 		
-		{ ".mac-name", PROPERTY(                     sys_mac_name   ) },
-		{      "name", PROPERTY( utf8_text_property< sys_mac_name > ) },
+		{ ".mac-name", PROPERTY( sys_mac_macname ) },
+		{      "name", PROPERTY( sys_mac_name    ) },
 		
 		{ "keys", &vfs::new_generated, (void*) &sys_mac_keys::Read },
 		
