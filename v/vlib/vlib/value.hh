@@ -43,6 +43,7 @@ namespace vlib
 		Value_undefined,
 		Value_expired,
 		Value_empty_list,
+		Value_empty_array,
 		Value_symbol,
 		Value_symbol_descriptor,
 		Value_base_type,
@@ -295,12 +296,7 @@ namespace vlib
 	inline
 	bool is_empty_array( const Value& v )
 	{
-		if ( Expr* expr = v.expr() )
-		{
-			return expr->op == Op_array  &&  is_empty_list( expr->right );
-		}
-		
-		return false;
+		return v.type() == Value_empty_array;
 	}
 	
 	inline
@@ -404,7 +400,8 @@ namespace vlib
 	inline
 	Value make_array( const Value& list )
 	{
-		return Value( Op_array, list );
+		return is_empty_list( list ) ? empty_array
+		                             : Value( Op_array, list );
 	}
 	
 	Value bind_args( const Value& f, const Value& arguments );

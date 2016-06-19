@@ -331,6 +331,21 @@ namespace vlib
 			case Value_empty_list:
 				return Integer();
 			
+			case Value_empty_array:
+				if ( op == Op_unary_deref )
+				{
+					return Value_empty_list;
+				}
+				
+				if ( op == Op_unary_minus )
+				{
+					return v;
+				}
+				
+				THROW( "unary operator not defined for (empty) arrays" );
+				break;
+			
+			
 			case Value_boolean:
 				switch ( op )
 				{

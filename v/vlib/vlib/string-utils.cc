@@ -183,6 +183,9 @@ namespace vlib
 		{
 			switch ( value.type() )
 			{
+				case Value_empty_array:
+					return 0;
+				
 				case Value_data:
 				case Value_string:
 					return value.string().size();
@@ -203,6 +206,7 @@ namespace vlib
 				return 0;
 			
 			case Value_empty_list:  // "()", ""
+			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
 			
 			case Value_byte:
@@ -319,6 +323,9 @@ namespace vlib
 		{
 			switch ( value.type() )
 			{
+				case Value_empty_array:
+					return p;
+				
 				case Value_data:
 				case Value_string:
 					return mempcpy( p, value.string() );
@@ -339,9 +346,16 @@ namespace vlib
 				return p;
 			
 			case Value_empty_list:  // ""
+			case Value_empty_array:
 				if ( use_parens( mode ) )
 				{
-					p = (char*) mempcpy( p, STR_LEN( "()" ) );
+					const char* tokens[] = { "()", "[]" };
+					
+					int index = value.type() - Value_empty_list;
+					
+					const char* empty = tokens[ index ];
+					
+					p = (char*) mempcpy( p, empty, 2 );
 				}
 				
 				return p;
