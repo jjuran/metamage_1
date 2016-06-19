@@ -2626,3 +2626,23 @@ $ vc 'try {int ""} catch {"not"}'
 
 $ vc 'int "+123"'
 1 >= '123'
+
+%
+
+$ vc 'const x = "foo"; x "bar"'
+1 >= '"foobar"'
+
+%
+
+$ vc 'const x = "foo"; x x, x 2, x true, x "U"[0], x()'
+1 >= '("foofoo", "foo2", "footrue", "fooU", "foo")'
+
+%
+
+$ vc 'const x = "foo"; x .[0], x "B"[0]'
+1 >= '("foo0", "fooB")'
+
+%
+
+$ vc 'const x = "foo"; x [0], x"B"[0]'
+1 >= "('f', '\v')"

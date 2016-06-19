@@ -626,6 +626,11 @@ namespace vlib
 	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
+		if ( f.type() == V_str )
+		{
+			return str( Value( f, arguments ) );
+		}
+		
 		if ( f.type() == Value_function )
 		{
 			const proc_info& proc = f.proc();
