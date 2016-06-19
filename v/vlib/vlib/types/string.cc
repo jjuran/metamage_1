@@ -21,7 +21,7 @@ namespace vlib
 	
 	Value String::coerce( const Value& v )
 	{
-		return make_string( v, Stringified_to_print );
+		return str( v );
 	}
 	
 	static

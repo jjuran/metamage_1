@@ -686,7 +686,7 @@ namespace vlib
 				THROW( "not enough format arguments" );
 			}
 			
-			result += make_string( param, Stringified_to_print );
+			result += str( param );
 			
 			remaining = &rest( *remaining );
 		}

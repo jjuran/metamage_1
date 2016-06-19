@@ -26,6 +26,12 @@ namespace vlib
 	plus::string make_string( const Value& value, stringification mode );
 	
 	inline
+	plus::string str( const Value& v )
+	{
+		return make_string( v, Stringified_to_print );
+	}
+	
+	inline
 	plus::string rep( const Value& v )
 	{
 		return make_string( v, Stringified_to_reproduce );

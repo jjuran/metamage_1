@@ -62,7 +62,7 @@ namespace vlib
 	static
 	Value v_print( const Value& v )
 	{
-		plus::var_string s = make_string( v, Stringified_to_print ).move();
+		plus::var_string s = str( v ).move();
 		
 		s += "\n";
 		
