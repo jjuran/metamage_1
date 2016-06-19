@@ -10,6 +10,7 @@
 namespace vlib
 {
 	
+	class Value;
 	struct proc_info;
 	struct type_info;
 	
@@ -18,6 +19,8 @@ namespace vlib
 	extern const type_info function_vtype;
 	
 	extern const proc_info proc_typeof;
+	
+	extern Value generic_array_type;
 	
 }
 

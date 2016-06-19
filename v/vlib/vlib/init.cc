@@ -13,7 +13,6 @@
 #include "vlib/proc_info.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
-#include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/data.hh"
@@ -64,7 +63,7 @@ namespace vlib
 		define_keyword( "i8",       i8_vtype       );
 		define_keyword( "u8",       u8_vtype       );
 		
-		define_keyword( "array", Value( etc_vtype, Op_subscript, empty_list ) );
+		define_keyword( "array", generic_array_type );
 		
 		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_vtype );
 		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_vtype );

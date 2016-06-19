@@ -103,7 +103,7 @@ namespace vlib
 		
 		if ( expr->op == Op_array )
 		{
-			return Value( etc_vtype, Op_subscript, empty_list );
+			return generic_array_type;
 		}
 		
 		if ( expr->op == Op_mapping )
@@ -135,5 +135,7 @@ namespace vlib
 	}
 	
 	const proc_info proc_typeof = { "typeof", &v_typeof, NULL };
+	
+	Value generic_array_type( etc_vtype, Op_subscript, Value_empty_list );
 	
 }
