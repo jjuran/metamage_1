@@ -37,20 +37,12 @@ const next_prime =
 
 const nth_prime =
 {
-	const n = primes.length;
+	while primes.length <= _ do
+	{
+		next_prime();
+	};
 	
-	if _ < n then
-	{
-		primes[ _ ]
-	}
-	else
-	{
-		while --_ >= n do
-		{
-			next_prime();
-		};
-		next_prime()
-	}
+	primes[ _ ]
 };
 
 var product = 600851475143;
