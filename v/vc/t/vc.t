@@ -2661,3 +2661,8 @@ $ vc '(+) null, bool null, null null, null()'
 
 $ vc 'null isa type, null isa null, null isa (), () isa null'
 1 >= '(true, true, false, false)'
+
+%
+
+$ vc 'rep if ... then {...}'
+1 >= '"..."'

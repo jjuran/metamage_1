@@ -411,6 +411,10 @@ namespace vlib
 				{
 					if ( (op = unary_op_from_name( token.text )) )
 					{
+						if ( ! expecting_value() )
+						{
+							receive_op( Op_named_unary );
+						}
 					}
 					else if ( token.text == "break" )
 					{
