@@ -247,6 +247,15 @@ namespace vlib
 			
 			throw;
 		}
+		catch ( const transfer_via_return& e )
+		{
+			if ( e.source.empty() )
+			{
+				throw transfer_via_return( e.object, source );
+			}
+			
+			throw;
+		}
 		
 		// Silence Metrowerks warning
 		return Value();
