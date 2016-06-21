@@ -178,15 +178,15 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |
-		| user stack            |
+		| user stack            =  x2
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
-		|                       |  8K
-	20K	+-----------------------+
+		|                       |  16K
+	28K	+-----------------------+
 		|                       |
 		|                       |
 		|                       |
@@ -194,14 +194,14 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 		|                       |
 		|                       |
 		|                       |
-		= user code             =  x10
+		= user code             =  x9
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
 		|                       |
-		|                       |  80K
+		|                       |  72K
 	100	+-----------------------+
 		
 	104	+-----------------------+
@@ -217,13 +217,13 @@ void dump_and_raise( const v68k::processor_state& s, int signo )
 */
 
 const uint32_t params_max_size = 4096;
-const uint32_t code_max_size   = 80 * 1024;
+const uint32_t code_max_size   = 72 * 1024;
 
 const uint32_t os_address   = 2048;
 const uint32_t boot_address = 7168;
 const uint32_t initial_SSP  = 3072;
-const uint16_t initial_USP  = 20480;
-const uint32_t code_address = 20480;
+const uint16_t initial_USP  = 28672;
+const uint32_t code_address = 28672;
 
 const uint32_t os_trap_table_address = 1024;
 const uint32_t tb_trap_table_address = 3072;
