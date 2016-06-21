@@ -2,7 +2,7 @@
 
 var primes = [ 2, 3 ];
 
-const next_prime =
+const next_prime = lambda
 {
 	const n = primes.length;
 	
@@ -17,7 +17,7 @@ const next_prime =
 		{
 			if primes[ i ] ^ 2 > x then
 			{
-				break;
+				return x;
 			};
 			
 			if x % primes[ i ] == 0 then
@@ -26,12 +26,11 @@ const next_prime =
 			};
 			++i;
 		};
-		if i <= n then
+		if i == n then
 		{
-			break;
+			return x;
 		};
 	};
-	x
 };
 
 const nth_prime =
