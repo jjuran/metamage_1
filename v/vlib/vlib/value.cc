@@ -58,6 +58,9 @@ namespace vlib
 			
 			if ( expr != pointer )
 			{
+				// Don't call pair_destructor() recursively -- we iterate.
+				plus::extent_set_destructor( (char*) expr, NULL );
+				
 				plus::extent_release( (char*) expr );
 			}
 			
