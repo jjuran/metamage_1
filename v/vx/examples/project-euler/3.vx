@@ -4,7 +4,7 @@ var primes = [ 2, 3 ];
 
 const next_prime =
 {
-	const n = (+) *primes;
+	const n = primes.length;
 	
 	var x = primes[ n - 1 ];
 	
@@ -37,7 +37,7 @@ const next_prime =
 
 const nth_prime =
 {
-	const n = (+) *primes;
+	const n = primes.length;
 	
 	if _ < n then
 	{
