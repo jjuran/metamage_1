@@ -13,22 +13,17 @@ const next_prime = lambda
 		x += 2;  # after 2, primes are always odd
 		
 		var i = 0;
-		while i < n do
+		while x % primes[ i ] != 0 do
 		{
 			if primes[ i ] ^ 2 > x then
 			{
 				return x;
 			};
 			
-			if x % primes[ i ] == 0 then
+			if ++i == n then
 			{
-				i = n;
+				return x;
 			};
-			++i;
-		};
-		if i == n then
-		{
-			return x;
 		};
 	};
 };
