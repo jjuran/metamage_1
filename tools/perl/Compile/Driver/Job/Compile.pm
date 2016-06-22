@@ -106,6 +106,7 @@ sub command
 	
 	my %d;
 	
+	$d{ CONFIG_DEBUGGING } = $conf->debugging + 0;
 	$d{ TARGET_CONFIG_DEBUGGING } = $conf->debugging + 0;
 	
 	if ( $conf->is_carbon )
