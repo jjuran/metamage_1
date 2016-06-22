@@ -251,7 +251,7 @@ namespace relix
 			gCurrentProcess->Terminate( signo | 0x80 );
 		}
 		
-		if ( TARGET_CONFIG_DEBUGGING )
+		if ( CONFIG_DEBUGGING )
 		{
 			::DebugStr( "\p" "Fatal condition occurred on main thread" );
 		}
