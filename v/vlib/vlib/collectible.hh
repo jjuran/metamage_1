@@ -10,8 +10,11 @@
 namespace vlib
 {
 	
+	struct Target;
 	class Symbol;
 	class Value;
+	
+	bool target_is_collectible( const Target& target );
 	
 	bool symbol_is_collectible( const Symbol& symbol, const Value& v );
 

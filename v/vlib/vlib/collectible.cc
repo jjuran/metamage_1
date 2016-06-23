@@ -115,6 +115,13 @@ namespace vlib
 		return true;
 	}
 	
+	bool target_is_collectible( const Target& target )
+	{
+		const Value& v = *target.addr;
+		
+		return v.expr() != 0  &&  type_is_collectible( *target.type );
+	}
+	
 	bool symbol_is_collectible( const Symbol& symbol, const Value& v )
 	{
 		return v.expr() != 0  &&  type_is_collectible( symbol.vtype() );
