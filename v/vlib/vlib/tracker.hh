@@ -17,6 +17,8 @@ namespace vlib
 	void add_root( const Value& v );
 	void del_root( const Value& v );
 	
+	void cull_unreachable_objects();
+	
 	class scoped_root
 	{
 		private:

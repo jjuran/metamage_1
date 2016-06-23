@@ -12,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // vlib
+#include "vlib/collectible.hh"
 #include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
@@ -30,6 +31,31 @@
 
 namespace vlib
 {
+	
+	class gc_cleanup
+	{
+		private:
+			const Value& its_symbol_list;
+			
+			// non-copyable
+			gc_cleanup           ( const gc_cleanup& );
+			gc_cleanup& operator=( const gc_cleanup& );
+		
+		public:
+			gc_cleanup( const Value& symlist ) : its_symbol_list( symlist )
+			{
+			}
+			
+			~gc_cleanup();
+	};
+	
+	gc_cleanup::~gc_cleanup()
+	{
+		if ( symbol_list_is_collectible( its_symbol_list ) )
+		{
+			cull_unreachable_objects();
+		}
+	}
 	
 	static
 	language_error assertion_result_not_boolean( const source_spec& source )
@@ -106,6 +132,11 @@ namespace vlib
 		
 		const Value new_frame( underscore, unshare_symbols( rest( locals ) ) );
 		const Value new_stack( caller, Op_frame, new_frame );
+		
+		const Value& unshared_locals = is_call ? new_frame
+		                                       : new_frame.expr()->right;
+		
+		gc_cleanup gc( unshared_locals );
 		
 		scoped_root scope( new_stack );
 		
