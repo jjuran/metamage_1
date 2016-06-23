@@ -1,4 +1,4 @@
-var primes = [ 2, 3 ];
+var primes (int[]) = [ 2, 3 ];
 
 var last_index = 1;
 var last_prime = 3;
