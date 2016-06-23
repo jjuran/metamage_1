@@ -64,7 +64,7 @@ namespace vlib
 	{
 		if ( op == Op_duplicate )
 		{
-			assign_symbol( sym, right );
+			sym->assign( right, false );
 			
 			return right;
 		}

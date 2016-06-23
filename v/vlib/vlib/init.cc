@@ -29,17 +29,13 @@ namespace vlib
 	static
 	void define_keyword( const char* name, const Value& v )
 	{
-		const Value& sym = create_keyword( name );
-		
-		assign_symbol( sym, v );
+		create_keyword( name ).sym()->assign( v );
 	}
 	
 	static
 	void define_keyword( const proc_info& proc )
 	{
-		const Value& sym = create_keyword( proc.name );
-		
-		assign_symbol( sym, proc );
+		create_keyword( proc.name ).sym()->assign( proc );
 	}
 	
 	bool install_keywords()

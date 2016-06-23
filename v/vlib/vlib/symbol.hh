@@ -84,12 +84,6 @@ namespace vlib
 	};
 	
 	inline
-	void assign_symbol( Symbol* symbol, const Value& value )
-	{
-		symbol->assign( value );
-	}
-	
-	inline
 	const Value& lookup_symbol( const Symbol* symbol )
 	{
 		return symbol->get();

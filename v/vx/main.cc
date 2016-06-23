@@ -136,19 +136,19 @@ void set_argv( const char* arg0, int argn, char* const* args )
 		argv = arg0;
 	}
 	
-	const Value& argv_sym = globals.declare( "argv", Symbol_const );
+	const Value& argv_symbol = globals.declare( "argv", Symbol_const );
 	
-	argv_sym.sym()->denote( Value( c_str_vtype, Op_subscript, empty_list ) );
+	Symbol& sym = *argv_symbol.sym();
 	
-	assign_symbol( argv_sym, make_array( argv ) );
+	sym.denote( Value( c_str_vtype, Op_subscript, empty_list ) );
+	
+	sym.assign( make_array( argv ) );
 }
 
 static
 void define( const proc_info& proc )
 {
-	const Value& sym = globals.declare( proc.name, Symbol_const );
-	
-	assign_symbol( sym, proc );
+	globals.declare( proc.name, Symbol_const ).sym()->assign( proc );
 }
 
 int main( int argc, char** argv )
