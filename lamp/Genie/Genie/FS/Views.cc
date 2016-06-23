@@ -126,7 +126,7 @@ namespace Genie
 			}
 			catch ( ... )
 			{
-				if ( TARGET_CONFIG_DEBUGGING )
+				if ( CONFIG_DEBUGGING )
 				{
 					// This might happen in __destroy_global_chain(),
 					// so don't ASSERT which relies on trashed infrastructure.

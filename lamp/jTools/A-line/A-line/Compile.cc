@@ -605,11 +605,11 @@ namespace tool
 		
 		if ( target_info.build != buildRelease )
 		{
-			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 1 );
+			options.DEFINE_MACRO_VALUE( "CONFIG_DEBUGGING", 1 );
 		}
 		else
 		{
-			options.DEFINE_MACRO_VALUE( "TARGET_CONFIG_DEBUGGING", 0 );
+			options.DEFINE_MACRO_VALUE( "CONFIG_DEBUGGING", 0 );
 		}
 	}
 	

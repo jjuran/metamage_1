@@ -35,7 +35,7 @@ namespace Orion
 	
 	static void ShowDebuggingContext( const void* stack_bottom_limit )
 	{
-	#if TARGET_CONFIG_DEBUGGING
+	#if CONFIG_DEBUGGING
 		
 		using namespace recall;
 		
