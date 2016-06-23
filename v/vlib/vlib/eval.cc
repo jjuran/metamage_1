@@ -59,22 +59,26 @@ namespace vlib
 	}
 	
 	static
+	Value assign_symbol( Symbol* sym, const Value& v, bool coercive )
+	{
+		sym->assign( v, coercive );
+		
+		return sym->get();
+	}
+	
+	static
 	Value eval_assignment( const Value& left, op_type op, const Value& right )
 	{
 		Symbol* sym = left.sym();
 		
 		if ( op == Op_duplicate )
 		{
-			sym->assign( right, false );
-			
-			return right;
+			return assign_symbol( sym, right, false );
 		}
 		
 		if ( op == Op_approximate )
 		{
-			sym->assign( right, true );
-			
-			return sym->get();
+			return assign_symbol( sym, right, true );
 		}
 		
 		if ( op == Op_push )
