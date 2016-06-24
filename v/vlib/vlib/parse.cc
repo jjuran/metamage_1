@@ -22,6 +22,7 @@
 #include "vlib/functions.hh"
 #include "vlib/init.hh"
 #include "vlib/named_ops.hh"
+#include "vlib/new_line.hh"
 #include "vlib/ops.hh"
 #include "vlib/precedence.hh"
 #include "vlib/quote.hh"
@@ -514,6 +515,8 @@ namespace vlib
 		
 		while ( true )
 		{
+			bool new_line = false;
+			
 			Token token;
 			
 			while (( token = next_token( p ) ))
@@ -525,10 +528,31 @@ namespace vlib
 				
 				if ( token == Token_semicolon )
 				{
+					new_line = false;
 					break;
 				}
 				
+				if ( new_line )
+				{
+					if ( ! new_line_continues( token ) )
+					{
+						break;
+					}
+					
+					new_line = false;
+				}
+				
 				receive_token( token );
+				
+				if ( token == Token_newline  &&  ! expecting_value() )
+				{
+					const op_type last = last_open( stack );
+					
+					if ( last == Op_none  ||  last == Op_braces )
+					{
+						new_line = true;
+					}
+				}
 			}
 			
 			Value value;  // nothing
@@ -555,6 +579,11 @@ namespace vlib
 				}
 				else if ( last_open( stack ) == Op_braces )
 				{
+					if ( new_line )
+					{
+						receive_token( token );
+					}
+					
 					continue;
 				}
 				else
@@ -575,6 +604,11 @@ namespace vlib
 			if ( ! token )
 			{
 				return enscope_block( scope, result );
+			}
+			
+			if ( new_line )
+			{
+				receive_token( token );
 			}
 		}
 	}
