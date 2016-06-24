@@ -348,6 +348,20 @@ namespace vlib
 			return Token_invalid;
 		}
 		
+		if ( *p == '\\' )
+		{
+			++p;
+			
+			if ( *p++ == '\n' )
+			{
+				return Token_escaped_newline;
+			}
+			
+			--p;
+			
+			return Token_invalid;
+		}
+		
 		if ( const op_token* token = find_op_token( p ) )
 		{
 			if ( token->type == Token_dot )

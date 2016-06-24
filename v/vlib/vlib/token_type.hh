@@ -18,6 +18,7 @@ namespace vlib
 		Token_end = 0,
 		
 		Token_whitespace,
+		Token_escaped_newline,
 		Token_newline,
 		Token_comment,
 		Token_bin,

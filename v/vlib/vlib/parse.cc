@@ -299,6 +299,7 @@ namespace vlib
 				throw invalid_token_error( token.text, its_source );
 			
 			case Token_newline:
+			case Token_escaped_newline:
 				its_source.next_line();
 				break;
 			
