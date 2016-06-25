@@ -93,7 +93,7 @@ namespace vlib
 	{
 		if ( is_empty( v ) )
 		{
-			return system( NULL ) != 0;
+			return Bool( system( NULL ) != 0 );
 		}
 		
 		const int status = system( v.string().c_str() );

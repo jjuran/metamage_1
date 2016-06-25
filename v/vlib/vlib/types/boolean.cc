@@ -28,18 +28,18 @@ namespace vlib
 				INTERNAL_ERROR( "invalid type in coerce_to_boolean()" );
 			
 			case Value_empty_list:
-				return Boolean();
+				return Bool();
 			
 			case Value_byte:
 			case Value_number:
-				return ! v.number().is_zero();
+				return Bool( ! v.number().is_zero() );
 			
 			case Value_data:
 			case Value_string:
-				return ! v.string().empty();
+				return Bool( ! v.string().empty() );
 			
 			case Value_base_type:
-				return &v.typeinfo() != &null_vtype;
+				return Bool( &v.typeinfo() != &null_vtype );
 			
 			case Value_function:
 			case Value_pair:
@@ -48,11 +48,11 @@ namespace vlib
 					if ( expr->op == Op_array )
 					{
 						// Empty array is false.
-						return ! is_empty( expr->right );
+						return Bool( ! is_empty( expr->right ) );
 					}
 				}
 				
-				return true;
+				return True;
 		}
 	}
 	
