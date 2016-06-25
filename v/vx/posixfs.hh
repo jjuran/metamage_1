@@ -26,6 +26,7 @@ namespace vlib
 	extern const proc_info proc_lstat;
 	extern const proc_info proc_pipe;
 	extern const proc_info proc_read;
+	extern const proc_info proc_reader;
 	extern const proc_info proc_realpath;
 	extern const proc_info proc_rewrite;
 	extern const proc_info proc_stat;
