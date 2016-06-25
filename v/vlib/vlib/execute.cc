@@ -106,7 +106,7 @@ namespace vlib
 	{
 		Expr* expr = v.expr();
 		
-		ASSERT( expr != NULL );
+		ASSERT( expr != 0 );  // NULL
 		
 		if ( expr->op == Op_bind_args )
 		{

@@ -23,7 +23,7 @@ namespace vlib
 	{
 		Expr* expr = array.expr();
 		
-		if ( expr == NULL  ||  expr->op != Op_array )
+		if ( expr == 0  ||  expr->op != Op_array )  // NULL
 		{
 			return false;
 		}
@@ -48,7 +48,7 @@ namespace vlib
 	static
 	bool is_mapping( Expr* tx, Expr* vx )
 	{
-		return      vx != NULL  &&  vx->op == Op_mapping
+		return      vx != 0  &&  vx->op == Op_mapping  // NULL
 		        &&  as_assigned( tx->left,  vx->left  ).type()
 		        &&  as_assigned( tx->right, vx->right ).type();
 	}

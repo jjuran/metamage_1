@@ -25,7 +25,7 @@ namespace vlib
 	{
 		Expr* expr = list.listexpr();
 		
-		if ( expr == NULL )
+		if ( expr == 0 )  // NULL
 		{
 			return ! is_empty( list );
 		}

@@ -20,7 +20,7 @@ namespace vlib
 		{
 			Expr* expr = frame->expr();
 			
-			ASSERT( expr != NULL );
+			ASSERT( expr != 0 );  // NULL
 			ASSERT( expr->op == Op_frame );
 			
 			frame = &expr->left;
