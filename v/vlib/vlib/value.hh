@@ -19,6 +19,12 @@
 namespace vlib
 {
 	
+	enum Bool
+	{
+		False,
+		True,
+	};
+	
 	enum symbol_type
 	{
 		Symbol_const,
@@ -91,6 +97,10 @@ namespace vlib
 			}
 			
 			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
+			{
+			}
+			
+			Value( Bool b ) : its_box( bool( b ), Value_boolean )
 			{
 			}
 			
