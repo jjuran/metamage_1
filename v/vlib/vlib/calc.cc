@@ -1069,14 +1069,14 @@ namespace vlib
 				return call_function( left, right );
 			
 			case Op_map:      return map( left, right );
-			case Op_isa:      return isa( left, right );
-			case Op_equal:    return equal( left, right );
-			case Op_unequal:  return ! equal( left, right );
+			case Op_isa:      return Bool(   isa  ( left, right ) );
+			case Op_equal:    return Bool(   equal( left, right ) );
+			case Op_unequal:  return Bool( ! equal( left, right ) );
 			
-			case Op_lt:   return compare( left, right ) <  0;
-			case Op_lte:  return compare( left, right ) <= 0;
-			case Op_gt:   return compare( left, right ) >  0;
-			case Op_gte:  return compare( left, right ) >= 0;
+			case Op_lt:   return Bool( compare( left, right ) <  0 );
+			case Op_lte:  return Bool( compare( left, right ) <= 0 );
+			case Op_gt:   return Bool( compare( left, right ) >  0 );
+			case Op_gte:  return Bool( compare( left, right ) >= 0 );
 			
 			default:  break;
 		}

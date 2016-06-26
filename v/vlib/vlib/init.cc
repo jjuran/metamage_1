@@ -44,8 +44,8 @@ namespace vlib
 	
 	bool install_keywords()
 	{
-		define_keyword( "false", false );
-		define_keyword( "true",  true  );
+		define_keyword( "false", False );
+		define_keyword( "true",  True  );
 		
 		define_keyword( "boolean",  boolean_vtype  );
 		define_keyword( "bool",     boolean_vtype  );
