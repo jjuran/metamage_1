@@ -32,6 +32,7 @@
 #include "vlib/token.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -357,15 +358,15 @@ namespace vlib
 				break;
 			
 			case Token_bin:
-				receive_value( unbin_int( token.text.substr( 2 ) ) );
+				receive_value( Integer( unbin_int( token.text.substr( 2 ) ) ) );
 				break;
 			
 			case Token_hex:
-				receive_value( unhex_int( token.text.substr( 2 ) ) );
+				receive_value( Integer( unhex_int( token.text.substr( 2 ) ) ) );
 				break;
 			
 			case Token_digits:
-				receive_value( decode_decimal( token.text ) );
+				receive_value( Integer( decode_decimal( token.text ) ) );
 				break;
 			
 			case Token_unbin:

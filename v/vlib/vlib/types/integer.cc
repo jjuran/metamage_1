@@ -77,10 +77,10 @@ namespace vlib
 				return Integer( v.boolean() + 0 );
 			
 			case Value_byte:
-				return v.number();
+				return Integer( v.number() );
 			
 			case Value_string:
-				return decode_int( v.string() );
+				return Integer( decode_int( v.string() ) );
 		}
 	}
 	

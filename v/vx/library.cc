@@ -6,6 +6,7 @@
 #include "library.hh"
 
 // POSIX
+#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -18,6 +19,7 @@
 #include "must/write.h"
 
 // plus
+#include "plus/integer.hh"
 #include "plus/var_string.hh"
 
 // vlib
@@ -26,6 +28,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/value.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -89,7 +92,7 @@ namespace vlib
 		
 		if ( status == 0 )
 		{
-			return 0;
+			return Integer();
 		}
 		
 		Value command( "command", Op_mapping, v );
@@ -98,7 +101,7 @@ namespace vlib
 		{
 			int err = errno;
 			
-			Value error( "errno", Op_mapping,           err   );
+			Value error( "errno", Op_mapping, Integer ( err ) );
 			Value desc ( "desc",  Op_mapping, strerror( err ) );
 			
 			Value exception( command, Value( error, desc ) );
@@ -108,7 +111,7 @@ namespace vlib
 		
 		if ( WIFSIGNALED( status ) )
 		{
-			const int signo = WTERMSIG( status );
+			const Integer signo = WTERMSIG( status );
 			
 			Value signal( "signal", Op_mapping, signo );
 			
@@ -119,14 +122,14 @@ namespace vlib
 		
 		if ( int exit_status = WEXITSTATUS( status ) )
 		{
-			Value exit( "exit", Op_mapping, exit_status );
+			Value exit( "exit", Op_mapping, Integer( exit_status ) );
 			
 			Value exception( command, exit );
 			
 			throw user_exception( exception, source_spec() );
 		}
 		
-		return status;  // not reached
+		return Integer();  // not reached
 	}
 	
 	static
@@ -134,7 +137,7 @@ namespace vlib
 	{
 		const time_t t = time( NULL );
 		
-		return t;
+		return Integer( t );
 	}
 	
 	static const Value c_str = c_str_vtype;

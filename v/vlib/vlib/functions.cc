@@ -60,19 +60,19 @@ namespace vlib
 	static
 	Value v_abs( const Value& arg )
 	{
-		return abs( get_int( arg ) );
+		return Integer( abs( arg.number() ) );
 	}
 	
 	static
 	Value v_half( const Value& arg )
 	{
-		return half( get_int( arg ) );
+		return Integer( half( arg.number() ) );
 	}
 	
 	static
 	Value v_area( const Value& v )
 	{
-		return area( v );
+		return Integer( area( v ) );
 	}
 	
 	static
@@ -162,7 +162,7 @@ namespace vlib
 	{
 		if ( is_0x_numeral( get_str( v ), 'b' ) )
 		{
-			return unbin_int( get_str( v ).substr( 2 ) );
+			return Integer( unbin_int( get_str( v ).substr( 2 ) ) );
 		}
 		
 		return make_data( unbin( get_str( v ) ) );
@@ -173,22 +173,26 @@ namespace vlib
 	{
 		if ( is_0x_numeral( get_str( v ), 'x' ) )
 		{
-			return unhex_int( get_str( v ).substr( 2 ) );
+			return Integer( unhex_int( get_str( v ).substr( 2 ) ) );
 		}
 		
 		return make_data( unhex( get_str( v ) ) );
 	}
 	
+	static const Integer zero = Integer( 0 );
+	static const Integer two  = Integer( 2 );
+	static const Integer npos = Integer( uint32_t( -1 ) );
+	
 	static const Value integer = integer_vtype;
 	static const Value string  = string_vtype;
 	
-	static const Value u32_2 = Value( u32_vtype, Op_duplicate, 2 );
+	static const Value u32_2 = Value( u32_vtype, Op_duplicate, two );
 	static const Value mince = Value( string, u32_2 );
 	
 	static const Value bytes( string_vtype, Op_union, data_vtype );
 	static const Value x32( u32_vtype, Op_union, i32_vtype );
-	static const Value s_offset( x32, Op_duplicate, 0 );
-	static const Value s_length( u32_vtype, Op_duplicate, uint32_t( -1 ) );
+	static const Value s_offset( x32, Op_duplicate, zero );
+	static const Value s_length( u32_vtype, Op_duplicate, npos );
 	static const Value substr( string_vtype, Value( s_offset, s_length ) );
 	
 	const proc_info proc_abs    = { &v_abs,    "abs",    &integer };

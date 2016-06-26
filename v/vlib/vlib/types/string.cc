@@ -12,6 +12,7 @@
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -30,7 +31,7 @@ namespace vlib
 	{
 		if ( member == "length" )
 		{
-			return obj.string().size();
+			return Integer( obj.string().size() );
 		}
 		
 		if ( member == "join" )

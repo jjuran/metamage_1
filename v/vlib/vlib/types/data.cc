@@ -9,6 +9,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -42,7 +43,7 @@ namespace vlib
 	{
 		if ( member == "size" )
 		{
-			return obj.string().size();
+			return Integer( obj.string().size() );
 		}
 		
 		if ( member == "string" )

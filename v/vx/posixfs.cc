@@ -12,11 +12,12 @@
 
 // Standard C
 #include <errno.h>
+#include <string.h>
 
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/types.hh"
-#include "vlib/value.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -25,7 +26,7 @@ namespace vlib
 	static
 	void path_error( const char* path, int err = errno )
 	{
-		Value error( "errno", Op_mapping,           err   );
+		Value error( "errno", Op_mapping, Integer ( err ) );
 		Value desc ( "desc",  Op_mapping, strerror( err ) );
 		Value path_( "path",  Op_mapping, path );
 		

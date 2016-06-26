@@ -7,7 +7,7 @@
 #define VLIB_VALUE_HH
 
 // plus
-#include "plus/integer.hh"
+#include "plus/integer_fwd.hh"
 #include "plus/string.hh"
 
 // vlib

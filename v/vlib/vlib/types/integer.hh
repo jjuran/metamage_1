@@ -17,6 +17,8 @@ namespace vlib
 	
 	class Integer : public Value
 	{
+		typedef plus::integer integer;
+		
 		public:
 			static bool test( const Value& v )
 			{
@@ -25,16 +27,22 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Integer() : Value( 0 ) {}
+		#define IBOX( i )  plus::ibox( i ).move()
 			
-			Integer( unsigned i ) : Value( i ) {}
-			Integer(      int i ) : Value( i ) {}
+			Integer() : Value( IBOX( 0ul ), V_int ) {}
 			
-			Integer( unsigned long i ) : Value( i ) {}
-			Integer(          long i ) : Value( i ) {}
+			Integer( unsigned i ) : Value( IBOX( (unsigned long) i ), V_int ) {}
+			Integer(      int i ) : Value( IBOX( (long)          i ), V_int ) {}
 			
-			Integer( unsigned long long i ) : Value( i ) {}
-			Integer(          long long i ) : Value( i ) {}
+			Integer( unsigned long i ) : Value( IBOX( i ), V_int ) {}
+			Integer(          long i ) : Value( IBOX( i ), V_int ) {}
+			
+			Integer( unsigned long long i ) : Value( IBOX( i ), V_int ) {}
+			Integer(          long long i ) : Value( IBOX( i ), V_int ) {}
+			
+		#undef IBOX
+			
+			Integer( const integer& i ) : Value( (const vu_ibox&) i, V_int ) {}
 	};
 	
 	extern const type_info integer_vtype;
