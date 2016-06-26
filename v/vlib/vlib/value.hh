@@ -104,29 +104,6 @@ namespace vlib
 			{
 			}
 			
-		#define IBOX( i )  plus::ibox( i ).move()
-			
-			Value( bool b ) : its_box( b, Value_boolean )
-			{
-			}
-			
-			Value( unsigned i ) : its_box( IBOX( (unsigned long) i ), V_int ) {}
-			Value(      int i ) : its_box( IBOX( (long)          i ), V_int ) {}
-			
-			Value( unsigned long i ) : its_box( IBOX( i ), V_int ) {}
-			Value(          long i ) : its_box( IBOX( i ), V_int ) {}
-			
-			Value( unsigned long long i ) : its_box( IBOX( i ), V_int ) {}
-			Value(          long long i ) : its_box( IBOX( i ), V_int ) {}
-			
-		#undef IBOX
-			
-			Value( const plus::integer& i )
-			:
-				its_box( (const vu_ibox&) i, V_int )
-			{
-			}
-			
 			Value( const plus::string& s, data_tag )
 			:
 				its_box( (const vu_string&) s, V_data )
