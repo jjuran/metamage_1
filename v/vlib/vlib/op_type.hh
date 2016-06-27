@@ -15,7 +15,10 @@ namespace vlib
 	// begin right-associative
 		
 		Op_none,
-		Op_named_unary,
+		Op_return,
+		Op_throw,
+		Op_break,
+		Op_continue,
 		
 	// begin declares-symbols
 		Op_const,
@@ -23,11 +26,6 @@ namespace vlib
 		Op_def,
 		Op_for,
 	// end declares-symbols
-		
-		Op_unary_plus,
-		Op_unary_minus,
-		Op_unary_count,
-		Op_unary_deref,
 		
 	// begin left-var
 		Op_preinc,
@@ -48,9 +46,15 @@ namespace vlib
 		
 	// end left-var
 		Op_empower,
+		Op_named_unary,
 	// end right-associative
 		
 		Op_function,
+		
+		Op_unary_plus,
+		Op_unary_minus,
+		Op_unary_count,
+		Op_unary_deref,
 		Op_array,
 		Op_subscript,
 		Op_block,
@@ -87,8 +91,6 @@ namespace vlib
 		Op_delta,
 		Op_list,
 		Op_assert,
-		Op_return,
-		Op_throw,
 		Op_lambda,
 		Op_try,
 		Op_catch,
@@ -99,8 +101,6 @@ namespace vlib
 		Op_while_2,  // `while` clause of `do` statement
 		Op_do,    // `do` statement
 		Op_do_2,  // `do` clause of `while` statement
-		Op_break,
-		Op_continue,
 		Op_parens,
 		Op_brackets,
 		Op_braces,
@@ -151,7 +151,7 @@ namespace vlib
 	inline
 	bool is_right_associative( op_type op )
 	{
-		return op <= Op_empower  ||  (op >= Op_mapping  &&  op < Op_end);
+		return op <= Op_named_unary  ||  (op >= Op_mapping  &&  op < Op_end);
 	}
 	
 	inline
