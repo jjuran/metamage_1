@@ -15,6 +15,7 @@
 #include "plus/integer.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
@@ -754,59 +755,6 @@ namespace vlib
 		return make_array( result );
 	}
 	
-	static
-	Value string_subscript( const plus::string& s, const Value& i )
-	{
-		if ( i.type() != Value_number )
-		{
-			THROW( "non-integer string subscript" );
-		}
-		
-		const plus::integer& index = i.number();
-		
-		if ( index.is_negative() )
-		{
-			THROW( "negative string subscript" );
-		}
-		
-		if ( index >= s.size() )
-		{
-			THROW( "subscript exceeds string bounds" );
-		}
-		
-		return Byte( s[ index.clipped() ] );
-	}
-	
-	static
-	Value array_subscript( const Expr& expr, const Value& index )
-	{
-		if ( index.type() != Value_number )
-		{
-			THROW( "non-integer array subscript" );
-		}
-		
-		if ( index.number().is_negative() )
-		{
-			THROW( "negative array subscript" );
-		}
-		
-		if ( index.number() > 0xFFFFFFFFu )
-		{
-			THROW( "Array subscript is too large" );
-		}
-		
-		unsigned i = index.number().clipped();
-		
-		const Value& nth = get_nth( expr.right, i );
-		
-		if ( is_empty( nth ) )
-		{
-			THROW( "subscript exceeds array bounds" );
-		}
-		
-		return nth;
-	}
-	
 	struct conditional_resolution
 	{
 		const Value* affirm;
@@ -1132,6 +1080,25 @@ namespace vlib
 			return bind_args( left, right );
 		}
 		
+		if ( op == Op_subscript )
+		{
+			const Value v = linear_subscript( left, right );
+			
+			if ( Expr* expr = right.expr() )
+			{
+				switch ( left.type() )
+				{
+					case Value_data:    return pack( v );
+					case Value_string:  return str ( v );
+					
+					default:
+						break;
+				}
+			}
+			
+			return v;
+		}
+		
 		if ( left.type() == right.type() )
 		{
 			switch ( left.type() )
@@ -1170,27 +1137,6 @@ namespace vlib
 				
 				default:
 					break;
-			}
-		}
-		
-		if ( op == Op_subscript )
-		{
-			if ( Expr* expr = left.expr() )
-			{
-				if ( expr->op == Op_array )
-				{
-					return array_subscript( *expr, right );
-				}
-			}
-			
-			switch ( left.type() )
-			{
-				case Value_data:
-				case Value_string:
-					return string_subscript( left.string(), right );
-				
-				default:
-					THROW( "type not subscriptable" );
 			}
 		}
 		

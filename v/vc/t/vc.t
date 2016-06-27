@@ -2696,3 +2696,38 @@ $ vc 'const f = lambda {return _;}; f("trip")'
 
 $ vc 'const f = lambda {}; f, bool f, f isa function'
 1 >= '((lambda {}), true, true)'
+
+%
+
+$ vc '[1, 2, 3, 4, 5][[4]]'
+1 >= '[5]'
+
+%
+
+$ vc '[1, 2, 3, 4, 5][[2, 0, 3, 0]]'
+1 >= '[3, 1, 4, 1]'
+
+%
+
+$ vc '"Hello world"[[4]]'
+1 >= '"o"'
+
+%
+
+$ vc '"Hello world"[[3, 1, 6, 10]]'
+1 >= '"lewd"'
+
+%
+
+$ vc 'x"FACEDEAD"[[3]]'
+1 >= 'x"ad"'
+
+%
+
+$ vc 'x"FACEDEAD"[[0, 2]]'
+1 >= 'x"fade"'
+
+%
+
+$ vc '[][[]], ""[[]], x""[[]]'
+1 >= '([], "", x"")'
