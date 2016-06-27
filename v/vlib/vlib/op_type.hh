@@ -132,6 +132,12 @@ namespace vlib
 	}
 	
 	inline
+	bool is_right_associative( op_type op )
+	{
+		return op <= Op_empower  ||  (op >= Op_mapping  &&  op < Op_end);
+	}
+	
+	inline
 	bool is_right_unary( op_type op )
 	{
 		return op == Op_postinc  ||  op == Op_postdec;

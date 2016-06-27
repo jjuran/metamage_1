@@ -164,11 +164,6 @@ namespace vlib
 		return Precedence_none;
 	}
 	
-	static bool is_right_associative( op_type op )
-	{
-		return op <= Op_empower  ||  (op >= Op_mapping  &&  op < Op_end);
-	}
-	
 	bool decreasing_op_precedence( op_type left, op_type right )
 	{
 		const precedence_level pr_left  = op_precedence( left  );
