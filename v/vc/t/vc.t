@@ -2281,8 +2281,8 @@ $ vc '( ) == ()'
 
 %
 
-$ vc '{""[(1 + 2)]}'
-1 >= '{""[1 + 2]}'
+$ vc 'var x = 1; {""[(x + 2)]}'
+1 >= '{""[x + 2]}'
 
 %
 
@@ -2813,8 +2813,8 @@ $ vc '"foo" <=> "bar", "Foo" <=> "bar", "foo" "bar" <=> "foobar"'
 
 %
 
-$ vc '{0 > 1 <=> 2}'
-1 >= '{0 > (1 <=> 2)}'
+$ vc 'var x = 0; var y = 1; var z = 2; {x > y <=> z}'
+1 >= '{x > (y <=> z)}'
 
 %
 
@@ -2843,8 +2843,8 @@ $ vc '[null, 0, "", [], false, true, "0", [[]]] map {x or ...}'
 
 %
 
-$ vc '{1 and 2 or 3, 1 or 2 and 3}'
-1 >= '{((1 and 2) or 3), (1 or (2 and 3))}'
+$ vc 'var a = 1; var b = 2; var c = 3; {a and b or c, a or b and c}'
+1 >= '{((a and b) or c), (a or (b and c))}'
 
 %
 
