@@ -12,16 +12,24 @@ namespace vlib
 	
 	enum op_type
 	{
+	// begin right-associative
+		
 		Op_none,
 		Op_named_unary,
+		
+	// begin declares-symbols
 		Op_const,
 		Op_var,
 		Op_def,
 		Op_for,
+	// end declares-symbols
+		
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_unary_count,
 		Op_unary_deref,
+		
+	// begin left-var
 		Op_preinc,
 		Op_predec,
 		Op_postinc,
@@ -35,8 +43,13 @@ namespace vlib
 		Op_percent_by,
 		Op_remain_by = Op_percent_by,
 		Op_push,
+		
 		Op_denote,
+		
+	// end left-var
 		Op_empower,
+	// end right-associative
+		
 		Op_function,
 		Op_array,
 		Op_subscript,
@@ -67,6 +80,8 @@ namespace vlib
 		Op_gt,
 		Op_gte,
 		Op_cmp,
+		
+	// begin right-associative
 		Op_mapping,
 		Op_gamut,
 		Op_delta,
@@ -89,6 +104,8 @@ namespace vlib
 		Op_parens,
 		Op_brackets,
 		Op_braces,
+		
+	// end right-associative
 		Op_end,
 		
 		Op_frame,  // links caller's stack to a new stack frame
