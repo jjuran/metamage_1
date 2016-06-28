@@ -2781,3 +2781,8 @@ $ vc '1..1, 1..0, 0->0'
 
 $ vc '1..0 == 2..1, 0->0 == 1->1'
 1 >= '(false, false)'
+
+%
+
+$ vc 'const az = "_abcdefghijklmnopqrstuvwxyz"; az[ 14 .. 16 ], az[ 24 -> 27 ]'
+1 >= '("nop", "xyz")'

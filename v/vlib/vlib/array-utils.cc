@@ -123,6 +123,25 @@ namespace vlib
 					results = Value( indexed_subscript( array, i ), results );
 				}
 			}
+			else if ( expr->op == Op_gamut  ||  expr->op == Op_delta )
+			{
+				const unsigned a = expr->left.number().clipped();
+				const unsigned b = expr->right.number().clipped();
+				
+				unsigned i = b - (expr->op == Op_delta);
+				
+				if ( a > i )
+				{
+					return make_array( empty_list );
+				}
+				
+				results = indexed_subscript( array, i );
+				
+				while ( i > a )
+				{
+					results = Value( indexed_subscript( array, --i ), results );
+				}
+			}
 		}
 		
 		return make_array( results );
@@ -140,6 +159,11 @@ namespace vlib
 		if ( Expr* expr = index.expr() )
 		{
 			if ( expr->op == Op_array )
+			{
+				return sliced_subscript( array, index );
+			}
+			
+			if ( expr->op == Op_gamut  ||  expr->op == Op_delta )
 			{
 				return sliced_subscript( array, index );
 			}
