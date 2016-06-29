@@ -1046,14 +1046,14 @@ namespace vlib
 		
 		if ( is_supporting( op ) )
 		{
-			return Value( left, op, right );
+			goto no_op;
 		}
 		
 		if ( op == Op_subscript )
 		{
 			if ( is_type( left )  &&  is_empty( right ) )
 			{
-				return Value( left, op, right );
+				goto no_op;
 			}
 		}
 		
@@ -1061,7 +1061,7 @@ namespace vlib
 		{
 			if ( is_type( left )  &&  is_type( right ) )
 			{
-				return Value( left, op, right );
+				goto no_op;
 			}
 		}
 		
@@ -1155,7 +1155,9 @@ namespace vlib
 		
 		THROW( "operator not defined on mixed types" );
 		
-		return Value();
+	no_op:
+		
+		return Value( left, op, right );
 	}
 	
 }
