@@ -138,7 +138,7 @@ namespace vlib
 			return f;
 		}
 		
-		Expr* expr = get_expr( f );
+		Expr* expr = f.expr();
 		
 		if ( expr != NULL  &&  expr->op == Op_bind_args )
 		{

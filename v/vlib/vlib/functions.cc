@@ -51,9 +51,9 @@ namespace vlib
 		{
 			default:  THROW( "invalid argument to hex()" );
 			
-			case Value_number:  return hex( get_int( arg ) );
+			case Value_number:  return hex( arg.number() );
 			case Value_data:
-			case Value_string:  return hex( get_str( arg ) );
+			case Value_string:  return hex( arg.string() );
 		}
 	}
 	
@@ -160,23 +160,23 @@ namespace vlib
 	static
 	Value v_unbin( const Value& v )
 	{
-		if ( is_0x_numeral( get_str( v ), 'b' ) )
+		if ( is_0x_numeral( v.string(), 'b' ) )
 		{
-			return Integer( unbin_int( get_str( v ).substr( 2 ) ) );
+			return Integer( unbin_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_data( unbin( get_str( v ) ) );
+		return make_data( unbin( v.string() ) );
 	}
 	
 	static
 	Value v_unhex( const Value& v )
 	{
-		if ( is_0x_numeral( get_str( v ), 'x' ) )
+		if ( is_0x_numeral( v.string(), 'x' ) )
 		{
-			return Integer( unhex_int( get_str( v ).substr( 2 ) ) );
+			return Integer( unhex_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_data( unhex( get_str( v ) ) );
+		return make_data( unhex( v.string() ) );
 	}
 	
 	static const Integer zero = Integer( 0 );

@@ -54,7 +54,7 @@ namespace vlib
 	static
 	Value v_getenv( const Value& v )
 	{
-		if ( const char* var = getenv( get_str( v ).c_str() ) )
+		if ( const char* var = getenv( v.string().c_str() ) )
 		{
 			return var;
 		}

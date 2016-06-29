@@ -75,22 +75,22 @@ namespace vlib
 			
 			case Value_byte:
 			case Value_number:
-				return get_int( a ) == get_int( b );
+				return a.number() == b.number();
 			
 			case Value_data:
 			case Value_string:
-				return get_str( a ) == get_str( b );
+				return a.string() == b.string();
 			
 			case Value_function:
-				return &get_proc( a ) == &get_proc( b );
+				return &a.proc() == &b.proc();
 			
 			case Value_base_type:
 				return &a.typeinfo() == &b.typeinfo();
 			
 			case Value_pair:
 				{
-					Expr& ax = *get_expr( a );
-					Expr& bx = *get_expr( b );
+					Expr& ax = *a.expr();
+					Expr& bx = *b.expr();
 					
 					if ( ax.op != bx.op )
 					{
@@ -180,11 +180,11 @@ namespace vlib
 		{
 			case Value_byte:
 			case Value_number:
-				return compare( get_int( a ), get_int( b ) );
+				return compare( a.number(), b.number() );
 			
 			case Value_data:
 			case Value_string:
-				return compare( get_str( a ), get_str( b ) );
+				return compare( a.string(), b.string() );
 			
 			default:
 				THROW( "unsupported type in compare()" );
@@ -511,22 +511,22 @@ namespace vlib
 			THROW( "non-numeric list repetition factor" );
 		}
 		
-		if ( get_int( factor ).is_negative() )
+		if ( factor.number().is_negative() )
 		{
 			THROW( "negative list repetition factor" );
 		}
 		
-		if ( get_int( factor ).is_zero()  ||  is_empty( list ) )
+		if ( factor.number().is_zero()  ||  is_empty( list ) )
 		{
 			return Value_empty_list;
 		}
 		
-		if ( get_int( factor ) > 0xFFFFFFFFu )
+		if ( factor.number() > 0xFFFFFFFFu )
 		{
 			THROW( "excessively large list multiplier" );
 		}
 		
-		unsigned long n = get_int( factor ).clipped();
+		unsigned long n = factor.number().clipped();
 		
 		if ( n == 1 )
 		{
@@ -713,7 +713,7 @@ namespace vlib
 			THROW( "invalid type conversion arguments" );
 		}
 		
-		if ( Expr* expr = get_expr( f ) )
+		if ( Expr* expr = f.expr() )
 		{
 			if ( expr->op == Op_lambda )
 			{
@@ -872,7 +872,7 @@ namespace vlib
 		
 		conditional_resolution resolution = resolution_for_if( expr->right );
 		
-		const bool condition = get_bool( boolean_vtype.coerce( expr->left ) );
+		const bool condition = boolean_vtype.coerce( expr->left ).boolean();
 		
 		if ( condition )
 		{
@@ -900,7 +900,7 @@ namespace vlib
 		
 		Value result;
 		
-		while ( get_bool( boolean_vtype.coerce( do_block( expr->left ) ) ) )
+		while ( boolean_vtype.coerce( do_block( expr->left ) ).boolean() )
 		{
 			periodic_yield();
 			
@@ -959,7 +959,7 @@ namespace vlib
 				continue;
 			}
 		}
-		while ( get_bool( boolean_vtype.coerce( do_block( expr->right ) ) ) );
+		while ( boolean_vtype.coerce( do_block( expr->right ) ).boolean() );
 		
 		return result;
 	}
@@ -1204,7 +1204,7 @@ namespace vlib
 					return right.boolean() ? left.string() : plus::string::null;
 				}
 				
-				return repeat_string( get_str( left ), get_int( right ) );
+				return repeat_string( left.string(), right.number() );
 			}
 		}
 		

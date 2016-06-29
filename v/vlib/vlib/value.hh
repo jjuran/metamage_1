@@ -278,42 +278,6 @@ namespace vlib
 	}
 	
 	inline
-	bool get_bool( const Value& v )
-	{
-		return v.boolean();
-	}
-	
-	inline
-	plus::integer& get_int( Value& v )
-	{
-		return v.number();
-	}
-	
-	inline
-	const plus::integer& get_int( const Value& v )
-	{
-		return v.number();
-	}
-	
-	inline
-	const plus::string& get_str( const Value& v )
-	{
-		return v.string();
-	}
-	
-	inline
-	const proc_info& get_proc( const Value& v )
-	{
-		return v.proc();
-	}
-	
-	inline
-	Expr* get_expr( const Value& v )
-	{
-		return v.expr();
-	}
-	
-	inline
 	bool is_undefined( const Value& v )
 	{
 		return v.type() == Value_undefined;

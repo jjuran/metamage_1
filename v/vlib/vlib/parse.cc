@@ -238,7 +238,7 @@ namespace vlib
 			
 			if ( last.type() == V_str  &&  x.type() == V_str )
 			{
-				last = get_str( last ) + get_str( x );
+				last = last.string() + x.string();
 				
 				return;
 			}

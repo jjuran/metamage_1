@@ -32,7 +32,7 @@ namespace vlib
 		
 		unsigned long total = count( expr->left );
 		
-		while ( Expr* next = get_expr( expr->right ) )
+		while ( Expr* next = expr->right.expr() )
 		{
 			if ( next->op != Op_list )
 			{

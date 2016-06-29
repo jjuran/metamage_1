@@ -93,8 +93,8 @@ namespace vlib
 			THROW( "non-numeric update not supported" );
 		}
 		
-		plus::integer&       a = get_int( value );
-		plus::integer const& b = right.type() == V_dummy ? a : get_int( right );
+		plus::integer&       a = value.number();
+		plus::integer const& b = right.type() == V_dummy ? a : right.number();
 		
 		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
 		{
