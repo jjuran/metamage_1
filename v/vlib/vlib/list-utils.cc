@@ -47,11 +47,30 @@ namespace vlib
 		return total + count( expr->right );
 	}
 	
+	static
+	Value& last_mutable( Value& list )
+	{
+		Value* next = &list;
+		
+		while ( next->listexpr() != 0 )  // NULL
+		{
+			next = &rest_mutable( *next );
+		}
+		
+		return *next;
+	}
+	
 	Value make_pair( const Value& left, const Value& right )
 	{
 		if ( Expr* expr = left.listexpr() )
 		{
-			return Value( expr->left, make_pair( expr->right, right ) );
+			Value list = left;
+			
+			Value& last = last_mutable( list );
+			
+			last = Value( last, right );
+			
+			return list;
 		}
 		
 		return Value( left, right );
