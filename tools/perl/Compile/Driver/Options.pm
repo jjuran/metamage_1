@@ -18,6 +18,7 @@ my %Spec_for_option = qw
 	W m64
 	
 	R opt
+	X sym
 );
 
 my %Flags;
