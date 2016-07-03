@@ -91,6 +91,9 @@ namespace plus
 		
 		char* duplicate = extent_alloc( header->capacity );
 		
+		// TODO:  We'll often need a copy constructor as well.
+		extent_set_destructor( duplicate, header->dtor );
+		
 		memcpy( duplicate, buffer, header->capacity );
 		
 		return duplicate;
