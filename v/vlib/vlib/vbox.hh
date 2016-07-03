@@ -79,7 +79,7 @@ namespace vlib
 			vu u;
 		
 		private:
-			bool has_extent() const  { return type() < 0; }
+			bool has_extent() const  { return int8_t( u.alloc.type ) < 0; }
 			
 			void destroy_extent();
 			
@@ -187,8 +187,6 @@ namespace vlib
 			const void* transfer_extent();
 			
 			unsigned long refcount() const;
-			
-			vbox_type type() const  { return vbox_type( u.alloc.type ); }
 			
 			char semantics() const  { return u.alloc.semantics; }
 			
