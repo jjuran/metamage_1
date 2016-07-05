@@ -413,11 +413,11 @@ namespace Nitrogen
 		return nucleus::owned< Mac::AppleEvent >::seize( result );
 	}
 	
-	void AEPutParamPtr( Mac::AppleEvent&  appleEvent,
-	                    Mac::AEKeyword    keyword,
-	                    Mac::DescType     typeCode,
-	                    const void*       dataPtr,
-	                    std::size_t       dataSize )
+	void AEPutParamPtr( AppleEvent&     appleEvent,
+	                    Mac::AEKeyword  keyword,
+	                    Mac::DescType   typeCode,
+	                    const void*     dataPtr,
+	                    std::size_t     dataSize )
 	{
 		ThrowOSStatus( ::AEPutParamPtr( &appleEvent,
 		                                keyword,
@@ -439,9 +439,9 @@ namespace Nitrogen
 		               dataSize );
 	}
 	
-	void AEPutParamDesc( Mac::AppleEvent&  appleEvent,
-	                     Mac::AEKeyword    keyword,
-	                     const AEDesc&     desc )
+	void AEPutParamDesc( AppleEvent&     appleEvent,
+	                     Mac::AEKeyword  keyword,
+	                     const AEDesc&   desc )
 	{
 		ThrowOSStatus( ::AEPutParamDesc( &appleEvent, keyword, &desc ) );
 	}
@@ -453,11 +453,11 @@ namespace Nitrogen
 		AEPutParamDesc( Detail::mutable_AEDesc( appleEvent ), keyword, desc );
 	}
 	
-	AEGetParamPtr_Result AEGetParamPtr( const Mac::AppleEvent&  appleEvent,
-	                                    Mac::AEKeyword          keyword,
-	                                    Mac::DescType           desiredType,
-	                                    void*                   dataPtr,
-	                                    std::size_t             maximumSize )
+	AEGetParamPtr_Result AEGetParamPtr( const AppleEvent&  appleEvent,
+	                                    Mac::AEKeyword     keyword,
+	                                    Mac::DescType      desiredType,
+	                                    void*              dataPtr,
+	                                    std::size_t        maximumSize )
 	{
 		::DescType typeCode;
 		::Size dataSize;
@@ -480,9 +480,9 @@ namespace Nitrogen
 	
 	nucleus::owned< Mac::AEDesc_Data >
 	//
-	AEGetParamDesc( const Mac::AppleEvent&  appleEvent,
-	                Mac::AEKeyword          keyword,
-	                Mac::DescType           desiredType )
+	AEGetParamDesc( const AppleEvent&  appleEvent,
+	                Mac::AEKeyword     keyword,
+	                Mac::DescType      desiredType )
 	{
 		Mac::AEDesc_Data result;
 		
@@ -494,8 +494,8 @@ namespace Nitrogen
 		return nucleus::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
-	AESizeOfParam_Result AESizeOfParam( const Mac::AppleEvent&  appleEvent,
-	                                    Mac::AEKeyword          keyword )
+	AESizeOfParam_Result AESizeOfParam( const AppleEvent&  appleEvent,
+	                                    Mac::AEKeyword     keyword )
 	{
 		::DescType typeCode;
 		::Size dataSize;
@@ -513,7 +513,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void AEDeleteParam( Mac::AppleEvent& appleEvent, Mac::AEKeyword keyword )
+	void AEDeleteParam( AppleEvent& appleEvent, Mac::AEKeyword keyword )
 	{
 		ThrowOSStatus( ::AEDeleteParam( &appleEvent, keyword ) );
 	}
@@ -524,11 +524,11 @@ namespace Nitrogen
 		AEDeleteParam( Detail::mutable_AEDesc( appleEvent ), keyword );
 	}
 	
-	void AEPutAttributePtr( Mac::AppleEvent&  appleEvent,
-	                        Mac::AEKeyword    keyword,
-	                        Mac::DescType     typeCode,
-	                        const void*       dataPtr,
-	                        std::size_t       dataSize )
+	void AEPutAttributePtr( AppleEvent&     appleEvent,
+	                        Mac::AEKeyword  keyword,
+	                        Mac::DescType   typeCode,
+	                        const void*     dataPtr,
+	                        std::size_t     dataSize )
 	{
 		ThrowOSStatus( ::AEPutAttributePtr( &appleEvent,
 		                                    keyword,
@@ -550,9 +550,9 @@ namespace Nitrogen
 		                   dataSize );
 	}
 	
-	void AEPutAttributeDesc( Mac::AppleEvent&  appleEvent,
-	                         Mac::AEKeyword    keyword,
-	                         const AEDesc&     desc )
+	void AEPutAttributeDesc( AppleEvent&     appleEvent,
+	                         Mac::AEKeyword  keyword,
+	                         const AEDesc&   desc )
 	{
 		ThrowOSStatus( ::AEPutAttributeDesc( &appleEvent, keyword, &desc ) );
 	}
@@ -564,11 +564,11 @@ namespace Nitrogen
 		AEPutAttributeDesc( Detail::mutable_AEDesc( appleEvent ), keyword, desc );
 	}
 	
-	AEGetAttributePtr_Result AEGetAttributePtr( const Mac::AppleEvent&  appleEvent,
-	                                            Mac::AEKeyword          keyword,
-	                                            Mac::DescType           desiredType,
-	                                            void*                   dataPtr,
-	                                            std::size_t             maximumSize )
+	AEGetAttributePtr_Result AEGetAttributePtr( const AppleEvent&  appleEvent,
+	                                            Mac::AEKeyword     keyword,
+	                                            Mac::DescType      desiredType,
+	                                            void*              dataPtr,
+	                                            std::size_t        maximumSize )
 	{
 		::DescType typeCode;
 		::Size     dataSize;
@@ -591,9 +591,9 @@ namespace Nitrogen
 	
 	nucleus::owned< Mac::AEDesc_Data >
 	//
-	AEGetAttributeDesc( const Mac::AppleEvent&  appleEvent,
-	                    Mac::AEKeyword          keyword,
-	                    Mac::DescType           desiredType )
+	AEGetAttributeDesc( const AppleEvent&  appleEvent,
+	                    Mac::AEKeyword     keyword,
+	                    Mac::DescType      desiredType )
 	{
 		Mac::AEDesc_Data result;
 		
@@ -605,8 +605,8 @@ namespace Nitrogen
 		return nucleus::owned< Mac::AEDesc_Data >::seize( result );
 	}
 	
-	AESizeOfAttribute_Result AESizeOfAttribute( const Mac::AppleEvent&  appleEvent,
-	                                            Mac::AEKeyword          keyword )
+	AESizeOfAttribute_Result AESizeOfAttribute( const AppleEvent&  appleEvent,
+	                                            Mac::AEKeyword     keyword )
 	{
 		::DescType typeCode;
 		::Size dataSize;
