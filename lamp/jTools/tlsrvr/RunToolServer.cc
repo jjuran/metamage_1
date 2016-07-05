@@ -264,18 +264,11 @@ namespace tool
 	
 	static n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& appleEvent )
 	{
-		n::owned< Mac::AppleEvent > replyEvent = N::AEInitializeDesc< Mac::AppleEvent >();
+		Mac::AppleEvent reply;
 		
-		// Declare a block to limit the scope of mutableReply
-		{
-			N::Detail::AEDescEditor< Mac::AppleEvent > mutableReply( replyEvent );
-			
-			Mac::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &mutableReply.Get() ) );
-			
-			// Reply is available.  End scope to restore the reply.
-		}
+		Mac::ThrowOSStatus( Div::AESendBlocking( &appleEvent, &reply ) );
 		
-		return replyEvent;
+		return n::owned< Mac::AppleEvent >::seize( reply );
 	}
 	
 	enum
