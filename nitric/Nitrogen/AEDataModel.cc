@@ -303,7 +303,7 @@ namespace Nitrogen
 	
 	void AEDeleteItem( nucleus::owned< Mac::AEDescList_Data >& list, long index )
 	{
-		AEDeleteItem( Detail::AEDescEditor< Mac::AEDescList_Data >( list ), index );
+		AEDeleteItem( Detail::mutable_AEDesc( list ), index );
 	}
 	
 	void AEPutKeyPtr( AERecord&       record,
@@ -432,7 +432,7 @@ namespace Nitrogen
 	                    const void*                         dataPtr,
 	                    std::size_t                         dataSize )
 	{
-		AEPutParamPtr( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ),
+		AEPutParamPtr( Detail::mutable_AEDesc( appleEvent ),
 		               keyword,
 		               typeCode,
 		               dataPtr,
@@ -450,7 +450,7 @@ namespace Nitrogen
 	                     Mac::AEKeyword                      keyword,
 	                     const AEDesc&                       desc )
 	{
-		AEPutParamDesc( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), keyword, desc );
+		AEPutParamDesc( Detail::mutable_AEDesc( appleEvent ), keyword, desc );
 	}
 	
 	AEGetParamPtr_Result AEGetParamPtr( const Mac::AppleEvent&  appleEvent,
@@ -521,7 +521,7 @@ namespace Nitrogen
 	void AEDeleteParam( nucleus::owned< Mac::AppleEvent >&  appleEvent,
 	                    Mac::AEKeyword                      keyword )
 	{
-		AEDeleteParam( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), keyword );
+		AEDeleteParam( Detail::mutable_AEDesc( appleEvent ), keyword );
 	}
 	
 	void AEPutAttributePtr( Mac::AppleEvent&  appleEvent,
@@ -543,7 +543,7 @@ namespace Nitrogen
 	                        const void*                         dataPtr,
 	                        std::size_t                         dataSize )
 	{
-		AEPutAttributePtr( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ),
+		AEPutAttributePtr( Detail::mutable_AEDesc( appleEvent ),
 		                   keyword,
 		                   typeCode,
 		                   dataPtr,
@@ -561,7 +561,7 @@ namespace Nitrogen
 	                         Mac::AEKeyword                      keyword,
 	                         const AEDesc&                       desc )
 	{
-		AEPutAttributeDesc( Detail::AEDescEditor< Mac::AppleEvent >( appleEvent ), keyword, desc );
+		AEPutAttributeDesc( Detail::mutable_AEDesc( appleEvent ), keyword, desc );
 	}
 	
 	AEGetAttributePtr_Result AEGetAttributePtr( const Mac::AppleEvent&  appleEvent,
@@ -645,7 +645,7 @@ namespace Nitrogen
 		AEReplaceDescData( typeCode,
 		                   dataPtr,
 		                   dataSize,
-		                   Detail::AEDescEditor< Mac::AEDesc_Data >( result ) );
+		                   Detail::mutable_AEDesc( result ) );
 	}
 	
 	void RegisterAppleEventManagerErrors()
