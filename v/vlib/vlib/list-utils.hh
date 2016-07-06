@@ -19,6 +19,8 @@ namespace vlib
 	
 	Value make_pair( const Value& left, const Value& right );
 	
+	Value reverse_list( const Value& list );
+	
 }
 
 #endif

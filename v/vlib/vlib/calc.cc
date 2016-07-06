@@ -13,6 +13,7 @@
 
 // plus
 #include "plus/integer.hh"
+#include "plus/reverse.hh"
 
 // vlib
 #include "vlib/array-utils.hh"
@@ -250,6 +251,18 @@ namespace vlib
 	}
 	
 	static
+	Value reversed_bytes( Value v )
+	{
+		v.unshare();
+		
+		const plus::string& s = v.string();
+		
+		plus::reverse( (char*) s.data(), s.size() );
+		
+		return v;
+	}
+	
+	static
 	Value calc_unary( op_type op, const Value& v )
 	{
 		if ( op == Op_const  ||  op == Op_var )
@@ -290,6 +303,11 @@ namespace vlib
 						return expr->right;
 					}
 					
+					if ( op == Op_unary_minus )
+					{
+						return make_array( reverse_list( expr->right ) );
+					}
+					
 					THROW( "unary operator not defined for arrays" );
 				
 				case Op_gamut:
@@ -297,6 +315,11 @@ namespace vlib
 					if ( op == Op_unary_deref )
 					{
 						return expand_range( v );
+					}
+					
+					if ( op == Op_unary_minus )
+					{
+						return make_array( reverse_list( expand_range( v ) ) );
 					}
 					
 					THROW( "unary operator not defined for ranges" );
@@ -339,7 +362,7 @@ namespace vlib
 				break;
 			
 			case Value_data:
-				if ( op == Op_unary_deref )
+				if ( op == Op_unary_deref  ||  op == Op_unary_minus )
 				{
 					// fall through below
 				}
@@ -354,6 +377,11 @@ namespace vlib
 				if ( op == Op_unary_deref )
 				{
 					return deref_string( v.string() );
+				}
+				
+				if ( op == Op_unary_minus )
+				{
+					return reversed_bytes( v );
 				}
 				
 				THROW( "unary operator not defined for string values" );

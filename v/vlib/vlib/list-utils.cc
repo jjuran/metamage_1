@@ -76,4 +76,27 @@ namespace vlib
 		return Value( left, right );
 	}
 	
+	Value reverse_list( const Value& list )
+	{
+		Expr* expr = list.listexpr();
+		
+		if ( expr == 0 )  // NULL
+		{
+			return list;  // empty list or single item
+		}
+		
+		const Value* next = &expr->right;
+		
+		Value result = expr->left;
+		
+		while (( expr = next->listexpr() ))
+		{
+			result = Value( expr->left, result );
+			
+			next = &expr->right;
+		}
+		
+		return Value( *next, result );
+	}
+	
 }
