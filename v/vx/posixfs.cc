@@ -112,6 +112,6 @@ namespace vlib
 	
 	static const Value c_str = c_str_vtype;
 	
-	const proc_info proc_load = { &v_load, "load", &c_str };
+	const proc_info proc_load = { "load", &v_load, &c_str };
 	
 }

@@ -195,15 +195,15 @@ namespace vlib
 	static const Value s_length( u32_vtype, Op_duplicate, npos );
 	static const Value substr( string_vtype, Value( s_offset, s_length ) );
 	
-	const proc_info proc_abs    = { &v_abs,    "abs",    &integer };
-	const proc_info proc_area   = { &v_area,   "area",   NULL     };
-	const proc_info proc_half   = { &v_half,   "half",   &integer };
-	const proc_info proc_hex    = { &v_hex,    "hex",    NULL     };
-	const proc_info proc_mince  = { &v_mince,  "mince",  &mince   };
-	const proc_info proc_rep    = { &v_rep,    "rep",    NULL     };
-	const proc_info proc_sha256 = { &v_sha256, "sha256", &bytes   };
-	const proc_info proc_substr = { &v_substr, "substr", &substr  };
-	const proc_info proc_unbin  = { &v_unbin,  "unbin",  &string  };
-	const proc_info proc_unhex  = { &v_unhex,  "unhex",  &string  };
+	const proc_info proc_abs    = { "abs",    &v_abs,    &integer };
+	const proc_info proc_area   = { "area",   &v_area,   NULL     };
+	const proc_info proc_half   = { "half",   &v_half,   &integer };
+	const proc_info proc_hex    = { "hex",    &v_hex,    NULL     };
+	const proc_info proc_mince  = { "mince",  &v_mince,  &mince   };
+	const proc_info proc_rep    = { "rep",    &v_rep,    NULL     };
+	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes   };
+	const proc_info proc_substr = { "substr", &v_substr, &substr  };
+	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string  };
+	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string  };
 	
 }

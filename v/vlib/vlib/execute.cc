@@ -126,7 +126,7 @@ namespace vlib
 		return execute( expr->right, expr->left );
 	}
 	
-	static proc_info proc_invoke = { &v_invoke, "invoke", 0 };
+	static proc_info proc_invoke = { "invoke", &v_invoke, 0 };
 	
 	static
 	Value resolve_symbol_list( const Value& v, const Value& stack )

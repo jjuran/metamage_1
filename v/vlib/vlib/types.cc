@@ -134,6 +134,6 @@ namespace vlib
 		return result.expr()->right;
 	}
 	
-	const proc_info proc_typeof = { &v_typeof, "typeof", NULL };
+	const proc_info proc_typeof = { "typeof", &v_typeof, NULL };
 	
 }

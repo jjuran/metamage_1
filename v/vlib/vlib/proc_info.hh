@@ -16,8 +16,8 @@ namespace vlib
 	
 	struct proc_info
 	{
-		function_type const  addr;
 		char const* const    name;
+		function_type const  addr;
 		const Value* const   prototype;
 	};
 	

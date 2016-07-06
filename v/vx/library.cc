@@ -157,12 +157,12 @@ namespace vlib
 	
 	static const Value eval = Value( c_str, cstr_eval );
 	
-	const proc_info proc_eval   = { &v_eval,   "eval",   &eval       };
-	const proc_info proc_getenv = { &v_getenv, "getenv", &c_str      };
-	const proc_info proc_print  = { &v_print,  "print",  NULL        };
-	const proc_info proc_sleep  = { &v_sleep,  "sleep",  &u32        };
-	const proc_info proc_system = { &v_system, "system", &empty_list };
-	const proc_info proc_SYSTEM = { &v_SYSTEM, "system", &maybe_cstr };
-	const proc_info proc_time   = { &v_time,   "time",   &empty_list };
+	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
+	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
+	const proc_info proc_print  = { "print",  &v_print,  NULL        };
+	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &u32        };
+	const proc_info proc_system = { "system", &v_system, &empty_list };
+	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };
+	const proc_info proc_time   = { "time",   &v_time,   &empty_list };
 	
 }
