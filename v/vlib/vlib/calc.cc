@@ -37,6 +37,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/iterator.hh"
 #include "vlib/types/lambda.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
@@ -292,6 +293,11 @@ namespace vlib
 						return make_array( reverse_list( expr->right ) );
 					}
 					
+					if ( op == Op_each )
+					{
+						return Iterator( expr->right );
+					}
+					
 					THROW( "unary operator not defined for arrays" );
 				
 				case Op_empower:
@@ -319,6 +325,9 @@ namespace vlib
 				case Op_invocation:
 					THROW( "unary operator not defined for blocks" );
 				
+				case Op_each:
+					THROW( "unary operator not defined for iterators" );
+				
 				default:
 					INTERNAL_ERROR( "unary operator not defined for pairs" );
 			}
@@ -327,12 +336,22 @@ namespace vlib
 		switch ( v.type() )
 		{
 			case Value_empty_list:
+				if ( op == Op_each )
+				{
+					return Iterator( empty_list );
+				}
+				
 				return Integer();
 			
 			case Value_empty_array:
 				if ( op == Op_unary_minus )
 				{
 					return v;
+				}
+				
+				if ( op == Op_each )
+				{
+					return Iterator( empty_list );
 				}
 				
 				THROW( "unary operator not defined for (empty) arrays" );
