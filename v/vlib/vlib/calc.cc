@@ -1006,6 +1006,11 @@ namespace vlib
 		}
 	}
 	
+	static
+	Value safe_calc( const Value&  left,
+	                 op_type       op,
+	                 const Value&  right );
+	
 	Value calc( const Value&  left,
 	            op_type       op,
 	            const Value&  right )
@@ -1040,6 +1045,23 @@ namespace vlib
 			return calc_try( left );
 		}
 		
+		if ( op == Op_function  ||  op == Op_named_unary )
+		{
+			return call_function( left, right );
+		}
+		
+		if ( op == Op_map )
+		{
+			return map( left, right );
+		}
+		
+		return safe_calc( left, op, right );
+	}
+	
+	Value safe_calc( const Value&  left,
+	                 op_type       op,
+	                 const Value&  right )
+	{
 		if ( op == Op_lambda )
 		{
 			if ( ! is_block( left ) )
@@ -1060,10 +1082,6 @@ namespace vlib
 			case Op_member:
 				return calc_member( left, right );
 			
-			case Op_function:
-			case Op_named_unary:
-				return call_function( left, right );
-			
 			case Op_gamut:
 			case Op_delta:
 				check_range_operand( left  );
@@ -1071,7 +1089,6 @@ namespace vlib
 				
 				goto no_op;
 			
-			case Op_map:      return map( left, right );
 			case Op_isa:      return Bool(   isa  ( left, right ) );
 			case Op_equal:    return Bool(   equal( left, right ) );
 			case Op_unequal:  return Bool( ! equal( left, right ) );
