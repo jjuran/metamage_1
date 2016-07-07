@@ -11,7 +11,7 @@
 // plus
 #include "plus/binary.hh"
 #include "plus/hexadecimal.hh"
-#include "plus/var_string.hh"
+#include "plus/reverse.hh"
 
 
 namespace plus
@@ -21,29 +21,6 @@ namespace plus
 	
 	typedef string (*int_decoder)( const char*, unsigned long, align_t );
 	
-	
-	static void reverse( char* begin, char* end )
-	{
-		char* p = begin;
-		char* q = end;
-		
-		while ( p < q )
-		{
-			// Decrement q, swap *p and *q, increment p.
-			const char c = *--q;
-			*q = *p;
-			*p++ = c;
-		}
-	}
-	
-	static void reverse_in_place( plus::string& s )
-	{
-		plus::var_string vs = s.move();
-		
-		reverse( vs.begin(), vs.end() );
-		
-		s = vs.move();
-	}
 	
 	static
 	integer decode_binoid_int( int_decoder f, const char* p, const char* q )
