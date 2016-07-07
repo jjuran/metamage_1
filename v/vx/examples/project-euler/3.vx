@@ -2,11 +2,13 @@
 
 var primes = [ 2, 3 ];
 
+var last_prime = 3;
+
 const next_prime = lambda
 {
 	const n = primes.length;
 	
-	var x = primes[ n - 1 ];
+	var x = last_prime;
 	
 	while true do
 	{
@@ -32,10 +34,12 @@ const nth_prime =
 {
 	while primes.length <= _ do
 	{
-		primes = [*primes, next_prime()];
+		last_prime = next_prime();
+		
+		primes = [ *primes, last_prime ];
 	};
 	
-	primes[ _ ]
+	last_prime
 };
 
 var product = 600851475143;
