@@ -2,9 +2,9 @@
 
 var primes = [ 2, 3 ];
 
-const next_prime =
+const next_prime = lambda
 {
-	const n = (+) *primes;
+	const n = primes.length;
 	
 	var x = primes[ n - 1 ];
 	
@@ -13,44 +13,29 @@ const next_prime =
 		x += 2;  # after 2, primes are always odd
 		
 		var i = 0;
-		while i < n do
+		while x % primes[ i ] != 0 do
 		{
 			if primes[ i ] ^ 2 > x then
 			{
-				break;
+				return x;
 			};
 			
-			if x % primes[ i ] == 0 then
+			if ++i == n then
 			{
-				i = n;
+				return x;
 			};
-			++i;
-		};
-		if i <= n then
-		{
-			primes = [*primes, x];
-			break;
 		};
 	};
-	x
 };
 
 const nth_prime =
 {
-	const n = (+) *primes;
+	while primes.length <= _ do
+	{
+		primes = [*primes, next_prime()];
+	};
 	
-	if _ < n then
-	{
-		primes[ _ ]
-	}
-	else
-	{
-		while --_ >= n do
-		{
-			next_prime();
-		};
-		next_prime()
-	}
+	primes[ _ ]
 };
 
 var product = 600851475143;
