@@ -13,6 +13,7 @@
 
 // vlib
 #include "vlib/list-utils.hh"
+#include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/types/byte.hh"
 
@@ -172,6 +173,37 @@ namespace vlib
 		THROW( "unsupported subscript type" );
 		
 		return Value();
+	}
+	
+	void push( const Value& array_target, const Value& list )
+	{
+		if ( ! is_symbol( array_target ) )
+		{
+			THROW( "push() destination must be a symbol" );
+		}
+		
+		Symbol& sym = *array_target.sym();
+		
+		Value& array = sym.deref();
+		
+		Expr* expr = array.expr();
+		
+		if ( expr == NULL  ||  expr->op != Op_array )
+		{
+			THROW( "push() destination must be an array" );
+		}
+		
+		if ( sym.vtype().type() )
+		{
+			Value assigned = as_assigned( sym.vtype(), make_array( list ) );
+			
+			if ( assigned.type() == Value_nothing )
+			{
+				THROW( "push() elements are the wrong type" );
+			}
+		}
+		
+		splice_lists( expr->right, list );
 	}
 	
 }
