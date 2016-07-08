@@ -790,22 +790,15 @@ namespace vlib
 			THROW( "map requires a function" );
 		}
 		
-		const Value* next = &expr->right;
+		list_iterator it( expr->right );
 		
-		while ( ! is_empty( *next ) )
+		while ( it )
 		{
-			const Value& x = first( *next );
-			
-			if ( is_empty( x ) )
-			{
-				break;
-			}
+			const Value& x = it.use();
 			
 			Value f_x = call_function( f, x );
 			
 			result = make_list( result, f_x );
-			
-			next = &rest( *next );
 		}
 		
 		return make_array( result );
