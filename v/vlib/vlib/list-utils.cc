@@ -60,15 +60,20 @@ namespace vlib
 		return *next;
 	}
 	
+	void splice_lists( Value& left, const Value& right )
+	{
+		Value& last = last_mutable( left );
+		
+		last = Value( last, right );
+	}
+	
 	Value make_pair( const Value& left, const Value& right )
 	{
 		if ( Expr* expr = left.listexpr() )
 		{
 			Value list = left;
 			
-			Value& last = last_mutable( list );
-			
-			last = Value( last, right );
+			splice_lists( list, right );
 			
 			return list;
 		}
