@@ -27,6 +27,7 @@
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
@@ -148,23 +149,20 @@ namespace vlib
 			THROW( "mismatched types in equality relation" );
 		}
 		
-		const Value* a = &one;
-		const Value* b = &two;
+		list_iterator a( one );
+		list_iterator b( two );
 		
 	next:
 		
-		if ( ! equal_atoms( first( *a ), first( *b ) ) )
+		if ( ! equal_atoms( a.use(), b.use() ) )
 		{
 			return false;
 		}
 		
-		if ( a->type() != Value_pair  &&  b->type() != Value_pair )
+		if ( a.finished()  &&  b.finished() )
 		{
 			return true;
 		}
-		
-		a = &rest( *a );
-		b = &rest( *b );
 		
 		goto next;
 	}
