@@ -15,6 +15,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/byte.hh"
 
 
@@ -102,14 +103,13 @@ namespace vlib
 					return index;  // empty array
 				}
 				
-				const Value* next = &list;
+				list_iterator next_item( list );
 				
-				while ( ! is_empty( *next ) )
+				do
 				{
-					indices.push_back( subscript_integer( first( *next ) ) );
-					
-					next = &rest( *next );
+					indices.push_back( subscript_integer( next_item.use() ) );
 				}
+				while ( next_item );
 				
 				typedef std::vector< unsigned >::const_iterator Iter;
 				
