@@ -5,6 +5,9 @@
 
 #include "vlib/list-utils.hh"
 
+// vlib
+#include "vlib/iterators/list_iterator.hh"
+
 
 namespace vlib
 {
@@ -23,28 +26,16 @@ namespace vlib
 	
 	unsigned long count( const Value& list )
 	{
-		Expr* expr = list.listexpr();
+		list_iterator it( list );
 		
-		if ( expr == 0 )  // NULL
+		unsigned long total = 0;
+		
+		while ( it.next() )
 		{
-			return ! is_empty( list );
+			++total;
 		}
 		
-		unsigned long total = count( expr->left );
-		
-		while ( Expr* next = expr->right.expr() )
-		{
-			if ( next->op != Op_list )
-			{
-				return total + 1;
-			}
-			
-			total += count( next->left );
-			
-			expr = next;
-		}
-		
-		return total + count( expr->right );
+		return total;
 	}
 	
 	static
