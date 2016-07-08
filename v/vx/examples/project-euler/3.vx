@@ -38,7 +38,7 @@ const nth_prime =
 		last_prime = next_prime();
 		++n_primes;
 		
-		primes = [ *primes, last_prime ];
+		primes <-- last_prime;
 	};
 	
 	last_prime
