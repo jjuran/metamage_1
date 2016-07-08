@@ -12,9 +12,9 @@
 #include "debug/assert.hh"
 
 // vlib
-#include "vlib/iterator.hh"
 #include "vlib/symbol.hh"
 #include "vlib/value.hh"
+#include "vlib/iterators/full_iterator.hh"
 
 
 namespace vlib

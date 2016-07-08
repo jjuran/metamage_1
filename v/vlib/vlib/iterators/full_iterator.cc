@@ -1,9 +1,9 @@
 /*
-	iterator.cc
-	-----------
+	full_iterator.cc
+	----------------
 */
 
-#include "vlib/iterator.hh"
+#include "vlib/iterators/full_iterator.hh"
 
 // debug
 #include "debug/assert.hh"
