@@ -619,36 +619,45 @@ namespace vlib
 	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
-		if ( is_empty( prototype ) )
+		Value result = Value_empty_list;
+		
+		list_iterator defs( prototype );
+		list_iterator args( arguments );
+		
+		while ( defs )
 		{
-			if ( is_empty( arguments ) )
+			const Value& type = defs.use();
+			
+			if ( is_etc( type ) )
 			{
-				return arguments;
+				if ( defs )
+				{
+					THROW( "`...` must be last in a prototype" );
+				}
+				
+				result = calc( result, Op_list, args.rest() );
+				
+				return result;
 			}
 			
+			const Value& arg = args.use();
+			
+			const Value r = as_assigned_or_default( type, arg );
+			
+			if ( r.type() == Value_nothing )
+			{
+				THROW( "arguments don't match function prototype" );
+			}
+			
+			result = calc( result, Op_list, r );
+		}
+		
+		if ( args )
+		{
 			THROW( "too many arguments" );
 		}
 		
-		const Value& type = first( prototype );
-		
-		if ( is_etc( type ) )
-		{
-			return arguments;
-		}
-		
-		const Value& arg = first( arguments );
-		
-		const Value r = as_assigned_or_default( type, arg );
-		
-		if ( r.type() == Value_nothing )
-		{
-			THROW( "arguments don't match function prototype" );
-		}
-		
-		const Value remaining = apply_prototype( rest( prototype ),
-		                                         rest( arguments ) );
-		
-		return is_empty( remaining ) ? r : Value( r, remaining );
+		return result;
 	}
 	
 	static
