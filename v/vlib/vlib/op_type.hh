@@ -32,6 +32,7 @@ namespace vlib
 		Op_divide_by,
 		Op_percent_by,
 		Op_remain_by = Op_percent_by,
+		Op_push,
 		Op_denote,
 		Op_empower,
 		Op_function,

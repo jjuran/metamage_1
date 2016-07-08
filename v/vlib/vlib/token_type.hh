@@ -64,6 +64,7 @@ namespace vlib
 		Token_comma,
 		Token_equals_gt,
 		Token_equals,
+		Token_lt_minus_x2,
 		Token_colon,
 		Token_colon_equals,
 		Token_plus_equals,

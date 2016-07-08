@@ -110,6 +110,7 @@ namespace vlib
 		{ Precedence_assignment, Op_multiply_by },
 		{ Precedence_assignment, Op_divide_by   },
 		{ Precedence_assignment, Op_percent_by  },
+		{ Precedence_assignment, Op_push        },
 		
 		{ Precedence_conditional, Op_if   },
 		{ Precedence_conditional, Op_then },

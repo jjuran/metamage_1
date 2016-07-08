@@ -9,6 +9,7 @@
 #include "plus/integer.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/calc.hh"
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"
@@ -72,6 +73,13 @@ namespace vlib
 		if ( op == Op_approximate )
 		{
 			sym->assign( right, true );
+			
+			return sym->get();
+		}
+		
+		if ( op == Op_push )
+		{
+			push( left, right );
 			
 			return sym->get();
 		}

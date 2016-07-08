@@ -70,6 +70,8 @@ namespace vlib
 		{ Token_slash_equals,    Op_divide_by   },
 		{ Token_percent_equals,  Op_percent_by  },
 		
+		{ Token_lt_minus_x2, Op_push },
+		
 		{ Token_ampersand, Op_intersection },
 		{ Token_pipe,      Op_union        },
 	};
