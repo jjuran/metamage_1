@@ -152,19 +152,15 @@ namespace vlib
 		list_iterator a( one );
 		list_iterator b( two );
 		
-	next:
-		
-		if ( ! equal_atoms( a.use(), b.use() ) )
+		while ( a  ||  b )
 		{
-			return false;
+			if ( ! equal_atoms( a.use(), b.use() ) )
+			{
+				return false;
+			}
 		}
 		
-		if ( a.finished()  &&  b.finished() )
-		{
-			return true;
-		}
-		
-		goto next;
+		return true;
 	}
 	
 	static
