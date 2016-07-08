@@ -18,6 +18,7 @@
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/integer.hh"
 
 
@@ -287,11 +288,21 @@ namespace vlib
 		{
 			if ( Expr* ax = left.listexpr() )
 			{
-				if ( Expr* bx = right.listexpr() )
+				list_iterator a( left  );
+				list_iterator b( right );
+				
+				while ( b )
 				{
-					eval( ax->left,  op, bx->left,  source_spec() );
-					eval( ax->right, op, bx->right, source_spec() );
+					if ( ! a )
+					{
+						THROW( "too many values in list assignment" );
+					}
 					
+					eval( a.use(), op, b.use(), source_spec() );
+				}
+				
+				if ( a.finished() )
+				{
 					return right;
 				}
 				
