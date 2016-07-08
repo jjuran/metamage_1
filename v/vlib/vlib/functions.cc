@@ -21,6 +21,7 @@
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
@@ -80,8 +81,10 @@ namespace vlib
 	{
 		typedef plus::string::size_type size_t;
 		
-		const plus::string& string = first( v ).string();
-		const size_t        stride = rest ( v ).number().clipped();
+		list_iterator args( v );
+		
+		const plus::string& string = args.use().string();
+		const size_t        stride = args.get().number().clipped();
 		
 		if ( stride == 0 )
 		{
@@ -129,11 +132,11 @@ namespace vlib
 	static
 	Value v_substr( const Value& v )
 	{
-		const Value& arg1 = first( v );
-		const Value& arg1_ = rest( v );
-		const Value& arg2 = first( arg1_ );
-		const Value& arg2_ = rest( arg1_ );
-		const Value& arg3 = first( arg2_ );
+		list_iterator args( v );
+		
+		const Value& arg1 = args.use();
+		const Value& arg2 = args.use();
+		const Value& arg3 = args.get();
 		
 		typedef plus::string::size_type size_t;
 		
