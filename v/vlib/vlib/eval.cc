@@ -11,6 +11,7 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/calc.hh"
+#include "vlib/collectible.hh"
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
@@ -138,6 +139,15 @@ namespace vlib
 	}
 	
 	static
+	void track_symbol_if_collectible( const Value& symbol, const Value& v )
+	{
+		if ( symbol_is_collectible( *symbol.sym(), v ) )
+		{
+			track_symbol( symbol, v );
+		}
+	}
+	
+	static
 	Value eval_assignment( const Value& left, op_type op, const Value& right )
 	{
 		Target target = make_target( left );
@@ -146,7 +156,7 @@ namespace vlib
 		{
 			if ( is_symbol( left ) )
 			{
-				track_symbol( left, right );
+				track_symbol_if_collectible( left, right );
 			}
 			
 			const bool coercive = op == Op_approximate;
@@ -175,12 +185,12 @@ namespace vlib
 			
 			if ( Symbol* sym = left.sym() )
 			{
-				track_symbol( left, *second.addr );
+				track_symbol_if_collectible( left, *second.addr );
 			}
 			
 			if ( op == Op_swap  &&  right.sym() )
 			{
-				track_symbol( right, *target.addr );
+				track_symbol_if_collectible( right, *target.addr );
 			}
 			
 			if ( op == Op_move )
