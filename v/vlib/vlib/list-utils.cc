@@ -14,14 +14,14 @@ namespace vlib
 	
 	const Value& get_nth( const Value& list, unsigned i )
 	{
-		const Value* next = &list;
+		list_iterator it( list );
 		
-		while ( i-- > 0  &&  ! is_empty( *next ) )
+		while ( i-- > 0  &&  it.next() )
 		{
-			next = &rest( *next );
+			// advance silently
 		}
 		
-		return first( *next );
+		return *it;
 	}
 	
 	unsigned long count( const Value& list )
