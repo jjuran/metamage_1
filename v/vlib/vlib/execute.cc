@@ -201,7 +201,7 @@ namespace vlib
 	}
 	
 	static
-	Value resolve_symbol_list( const Value& v, const Value& stack )
+	Value resolve_symbol_expr( const Value& v, const Value& stack )
 	{
 		if ( Expr* expr = v.expr() )
 		{
@@ -212,11 +212,12 @@ namespace vlib
 				return eval( left, Op_denote, expr->right, expr->source );
 			}
 			
-			if ( expr->op == Op_list )
-			{
-				return Value( resolve_symbol_list( expr->left,  stack ),
-				              resolve_symbol_list( expr->right, stack ) );
-			}
+			const bool decl = declares_symbols( expr->op );
+			
+			return Value( decl ? expr->left
+			                   : resolve_symbol_expr( expr->left, stack ),
+			              expr->op,
+			              resolve_symbol_expr( expr->right, stack ) );
 		}
 		
 		return resolve_symbol( v, stack );
@@ -324,7 +325,7 @@ namespace vlib
 					THROW( "function prototypes are unimplemented" );
 				}
 				
-				return eval( resolve_symbol_list( *left, stack ),
+				return eval( resolve_symbol_expr( *left, stack ),
 				             expr->op,
 				             execute( *right, stack ),
 				             expr->source );
