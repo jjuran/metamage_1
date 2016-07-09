@@ -218,6 +218,13 @@ namespace vlib
 		{
 			validate( right );
 			
+			if ( ! is_left_varop( op ) )
+			{
+				validate( left );
+				
+				return calc( left, op, right );
+			}
+			
 			return eval_part_2( left, op, right );
 		}
 		catch ( const exception& e )
@@ -269,7 +276,6 @@ namespace vlib
 	                   op_type       op,
 	                   const Value&  right )
 	{
-		if ( is_left_varop( op ) )
 		{
 			if ( Expr* ax = left.listexpr() )
 			{
@@ -308,9 +314,7 @@ namespace vlib
 			}
 		}
 		
-		validate( left );
-		
-		return calc( left, op, right );
+		return Value();  // not reached
 	}
 	
 }
