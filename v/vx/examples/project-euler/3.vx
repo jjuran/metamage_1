@@ -2,13 +2,11 @@
 
 var primes = [ 2, 3 ];
 
-var n_primes   = 2;
+var last_index = 1;
 var last_prime = 3;
 
 const next_prime = lambda
 {
-	const n = n_primes;
-	
 	var x = last_prime;
 	
 	while true do
@@ -23,7 +21,7 @@ const next_prime = lambda
 				return x;
 			};
 			
-			if ++i == n then
+			if ++i > last_index then
 			{
 				return x;
 			};
@@ -33,10 +31,10 @@ const next_prime = lambda
 
 const nth_prime =
 {
-	while n_primes <= _ do
+	while last_index < _ do
 	{
 		last_prime = next_prime();
-		++n_primes;
+		++last_index;
 		
 		primes <-- last_prime;
 	};
