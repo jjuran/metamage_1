@@ -161,6 +161,8 @@ namespace vlib
 			THROW( "modification of constant" );
 		}
 		
+		its_value.unshare();
+		
 		return its_value;
 	}
 	
