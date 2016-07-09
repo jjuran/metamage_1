@@ -80,16 +80,11 @@ namespace vlib
 	
 	Value make_pair( const Value& left, const Value& right )
 	{
-		if ( Expr* expr = left.listexpr() )
-		{
-			Value list = left;
-			
-			splice_lists( list, right );
-			
-			return list;
-		}
+		Value list = left;
 		
-		return Value( left, right );
+		splice_lists( list, right );
+		
+		return list;
 	}
 	
 	Value reverse_list( const Value& list )
