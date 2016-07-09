@@ -212,7 +212,7 @@ namespace vlib
 		{
 			if ( is_symbolic( left )  &&  is_symbolic( right ) )
 			{
-				return make_pair( left, right );
+				return make_list( left, right );
 			}
 		}
 		

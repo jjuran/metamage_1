@@ -17,7 +17,9 @@ namespace vlib
 	
 	unsigned long count( const Value& list );
 	
-	Value make_pair( const Value& left, const Value& right );
+	void splice_lists( Value& left, const Value& right );
+	
+	Value make_list( const Value& left, const Value& right );
 	
 	Value reverse_list( const Value& list );
 	

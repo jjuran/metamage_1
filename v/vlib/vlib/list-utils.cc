@@ -60,20 +60,31 @@ namespace vlib
 		return *next;
 	}
 	
-	Value make_pair( const Value& left, const Value& right )
+	void splice_lists( Value& left, const Value& right )
 	{
-		if ( Expr* expr = left.listexpr() )
+		if ( is_empty( right ) )
 		{
-			Value list = left;
-			
-			Value& last = last_mutable( list );
-			
-			last = Value( last, right );
-			
-			return list;
+			return;
 		}
 		
-		return Value( left, right );
+		if ( is_empty( left ) )
+		{
+			left = right;
+			return;
+		}
+		
+		Value& last = last_mutable( left );
+		
+		last = Value( last, right );
+	}
+	
+	Value make_list( const Value& left, const Value& right )
+	{
+		Value list = left;
+		
+		splice_lists( list, right );
+		
+		return list;
 	}
 	
 	Value reverse_list( const Value& list )

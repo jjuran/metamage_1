@@ -565,7 +565,7 @@ namespace vlib
 		
 		while ( --n > 0 )
 		{
-			result = make_pair( list, result );
+			result = make_list( list, result );
 		}
 		
 		return result;
@@ -776,7 +776,7 @@ namespace vlib
 			const Value& method = expr->left;
 			const Value& object = expr->right;
 			
-			return call_function( method, calc( object, Op_list, arguments ) );
+			return call_function( method, make_list( object, arguments ) );
 		}
 		
 		THROW( "attempted call of non-function" );
@@ -814,7 +814,7 @@ namespace vlib
 			
 			Value f_x = call_function( f, x );
 			
-			result = calc( result, Op_list, f_x );
+			result = make_list( result, f_x );
 			
 			next = &rest( *next );
 		}
@@ -1131,17 +1131,7 @@ namespace vlib
 		
 		if ( op == Op_list )
 		{
-			if ( is_empty( left ) )
-			{
-				return right;
-			}
-			
-			if ( is_empty( right ) )
-			{
-				return left;
-			}
-			
-			return make_pair( left, right );
+			return make_list( left, right );
 		}
 		
 		if ( is_supporting( op ) )
