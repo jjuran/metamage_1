@@ -62,6 +62,17 @@ namespace vlib
 	
 	void splice_lists( Value& left, const Value& right )
 	{
+		if ( is_empty( right ) )
+		{
+			return;
+		}
+		
+		if ( is_empty( left ) )
+		{
+			left = right;
+			return;
+		}
+		
 		Value& last = last_mutable( left );
 		
 		last = Value( last, right );
