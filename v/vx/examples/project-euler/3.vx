@@ -39,7 +39,7 @@ const nth_prime =
 		primes <-- last_prime;
 	};
 	
-	last_prime
+	if _ == last_index then { last_prime } else { primes[ _ ] }
 };
 
 var product = 600851475143;
