@@ -213,16 +213,18 @@ namespace vlib
 			}
 			
 			const bool decl = declares_symbols( expr->op );
+			const bool exec = ! decl  &&  expr->op != Op_list;
 			
 			return Value( decl ? expr->left
 			                   : resolve_symbol_expr( expr->left, stack ),
 			              expr->op,
-			              resolve_symbol_expr( expr->right, stack ) );
+			              exec ? execute            ( expr->right, stack )
+			                   : resolve_symbol_expr( expr->right, stack ) );
 		}
 		
 		if ( v.type() != Value_symbol )
 		{
-			THROW( "mutable operand must be a symbol" );
+			THROW( "mutable operand must be a symbol (or component thereof)" );
 		}
 		
 		return resolve_symbol( v, stack );
