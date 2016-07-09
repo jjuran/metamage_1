@@ -19,7 +19,7 @@ namespace vlib
 	
 	void splice_lists( Value& left, const Value& right );
 	
-	Value make_pair( const Value& left, const Value& right );
+	Value make_list( const Value& left, const Value& right );
 	
 	Value reverse_list( const Value& list );
 	

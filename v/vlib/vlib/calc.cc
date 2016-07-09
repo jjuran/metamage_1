@@ -565,7 +565,7 @@ namespace vlib
 		
 		while ( --n > 0 )
 		{
-			result = make_pair( list, result );
+			result = make_list( list, result );
 		}
 		
 		return result;
@@ -1141,7 +1141,7 @@ namespace vlib
 				return left;
 			}
 			
-			return make_pair( left, right );
+			return make_list( left, right );
 		}
 		
 		if ( is_supporting( op ) )
