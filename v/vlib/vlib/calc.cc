@@ -776,7 +776,7 @@ namespace vlib
 			const Value& method = expr->left;
 			const Value& object = expr->right;
 			
-			return call_function( method, calc( object, Op_list, arguments ) );
+			return call_function( method, make_list( object, arguments ) );
 		}
 		
 		THROW( "attempted call of non-function" );
@@ -814,7 +814,7 @@ namespace vlib
 			
 			Value f_x = call_function( f, x );
 			
-			result = calc( result, Op_list, f_x );
+			result = make_list( result, f_x );
 			
 			next = &rest( *next );
 		}
