@@ -24,7 +24,7 @@ namespace vlib
 {
 	
 	static
-	const Value& validate( const Value& value )
+	void validate( const Value& value )
 	{
 		switch ( value.type() )
 		{
@@ -34,8 +34,6 @@ namespace vlib
 			default:
 				break;
 		}
-		
-		return value;
 	}
 	
 	static
@@ -218,7 +216,9 @@ namespace vlib
 		
 		try
 		{
-			return eval_part_2( left, op, validate( right ) );
+			validate( right );
+			
+			return eval_part_2( left, op, right );
 		}
 		catch ( const exception& e )
 		{
@@ -308,7 +308,9 @@ namespace vlib
 			}
 		}
 		
-		return calc( validate( left ), op, right );
+		validate( left );
+		
+		return calc( left, op, right );
 	}
 	
 }
