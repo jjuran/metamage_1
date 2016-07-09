@@ -58,8 +58,10 @@ namespace vlib
 	}
 	
 	static
-	Value eval_assignment( Symbol* sym, op_type op, const Value& right )
+	Value eval_assignment( const Value& left, op_type op, const Value& right )
 	{
+		Symbol* sym = left.sym();
+		
 		if ( op == Op_duplicate )
 		{
 			sym->assign( right, false );
@@ -306,7 +308,7 @@ namespace vlib
 			
 			try
 			{
-				return eval_assignment( left.sym(), op, right );
+				return eval_assignment( left, op, right );
 			}
 			catch ( const plus::ibox::limb_count_overflow& )
 			{
