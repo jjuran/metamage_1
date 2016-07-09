@@ -1131,16 +1131,6 @@ namespace vlib
 		
 		if ( op == Op_list )
 		{
-			if ( is_empty( left ) )
-			{
-				return right;
-			}
-			
-			if ( is_empty( right ) )
-			{
-				return left;
-			}
-			
 			return make_list( left, right );
 		}
 		
