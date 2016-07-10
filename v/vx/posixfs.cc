@@ -14,6 +14,9 @@
 #include <errno.h>
 #include <string.h>
 
+// plus
+#include "plus/posix/dirname.hh"
+
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/types.hh"
@@ -44,6 +47,12 @@ namespace vlib
 		Value exception( desc, path_ );
 		
 		throw user_exception( exception, source_spec() );
+	}
+	
+	static
+	Value v_dirname( const Value& v )
+	{
+		return plus::dirname( v.string() );
 	}
 	
 	static
@@ -112,6 +121,7 @@ namespace vlib
 	
 	static const Value c_str = c_str_vtype;
 	
-	const proc_info proc_load = { "load", &v_load, &c_str };
+	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
+	const proc_info proc_load    = { "load",    &v_load,    &c_str };
 	
 }

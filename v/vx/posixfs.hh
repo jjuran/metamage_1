@@ -13,6 +13,7 @@
 namespace vlib
 {
 	
+	extern const proc_info proc_dirname;
 	extern const proc_info proc_load;
 	
 }
