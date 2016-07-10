@@ -1,48 +1,9 @@
 #!/usr/bin/env vx
 
-var primes = [ 2, 3 ];
+const libdir = { (dirname argv[ 0 ]) "/lib/" };
+const import = { eval load libdir() _ ".vm"  };
 
-var n_primes   = 2;
-var last_prime = 3;
-
-const next_prime = lambda
-{
-	const n = n_primes;
-	
-	var x = last_prime;
-	
-	while true do
-	{
-		x += 2;  # after 2, primes are always odd
-		
-		var i = 0;
-		while x % primes[ i ] != 0 do
-		{
-			if primes[ i ] ^ 2 > x then
-			{
-				return x;
-			};
-			
-			if ++i == n then
-			{
-				return x;
-			};
-		};
-	};
-};
-
-const nth_prime =
-{
-	while n_primes <= _ do
-	{
-		last_prime = next_prime();
-		++n_primes;
-		
-		primes <-- last_prime;
-	};
-	
-	last_prime
-};
+const nth_prime = import "nth_prime";
 
 var product = 600851475143;
 var result = 1;
