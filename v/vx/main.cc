@@ -29,6 +29,7 @@
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
 #include "vlib/types.hh"
+#include "vlib/types/integer.hh"
 
 // vx
 #include "library.hh"
@@ -151,6 +152,12 @@ void define( const proc_info& proc )
 	globals.declare( proc.name, Symbol_const ).sym()->assign( proc );
 }
 
+static
+void define( const char* name, int i )
+{
+	globals.declare( name, Symbol_const ).sym()->assign( Integer( i ) );
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -167,6 +174,10 @@ int main( int argc, char** argv )
 	                 :                 "-";
 	
 	set_argv( arg0, argn, args );
+	
+	define( "IN",  0 );
+	define( "OUT", 1 );
+	define( "ERR", 2 );
 	
 	if ( unrestricted )
 	{
