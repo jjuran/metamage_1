@@ -71,14 +71,11 @@ namespace vlib
 	{
 		Symbol* sym = left.sym();
 		
-		if ( op == Op_duplicate )
+		if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
-			return assign_symbol( sym, right, false );
-		}
-		
-		if ( op == Op_approximate )
-		{
-			return assign_symbol( sym, right, true );
+			const bool coercive = op == Op_approximate;
+			
+			return assign_symbol( sym, right, coercive );
 		}
 		
 		if ( op == Op_push )
