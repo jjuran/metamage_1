@@ -73,6 +73,8 @@ namespace vlib
 		
 		if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
+			track_symbol( left, right );
+			
 			const bool coercive = op == Op_approximate;
 			
 			return assign_symbol( sym, right, coercive );
@@ -312,8 +314,6 @@ namespace vlib
 				
 				return left;
 			}
-			
-			track_symbol( left, right );
 			
 			try
 			{
