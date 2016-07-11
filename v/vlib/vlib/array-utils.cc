@@ -158,16 +158,10 @@ namespace vlib
 		return Value();
 	}
 	
-	void push( const Value& array_target, const Value& list )
+	void push( const Target& target, const Value& list )
 	{
-		if ( ! is_symbol( array_target ) )
-		{
-			THROW( "push() destination must be a symbol" );
-		}
-		
-		Symbol& sym = *array_target.sym();
-		
-		Value& array = sym.deref();
+		Value&       array = *target.addr;
+		Value const& type  = *target.type;
 		
 		if ( is_empty_array( array ) )
 		{
@@ -182,9 +176,9 @@ namespace vlib
 			THROW( "push() destination must be an array" );
 		}
 		
-		if ( sym.vtype().type() )
+		if ( type.type() )
 		{
-			Value assigned = as_assigned( sym.vtype(), make_array( list ) );
+			Value assigned = as_assigned( type, make_array( list ) );
 			
 			if ( assigned.type() == Value_nothing )
 			{

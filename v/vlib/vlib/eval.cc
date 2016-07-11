@@ -95,7 +95,7 @@ namespace vlib
 		
 		if ( op == Op_push )
 		{
-			push( left, right );
+			push( target, right );
 			
 			return *target.addr;
 		}
