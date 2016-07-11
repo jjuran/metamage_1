@@ -27,6 +27,7 @@
 #include "bignum/integer.hh"
 
 // vlib
+#include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
@@ -59,6 +60,17 @@ namespace vlib
 		Value fd_   = mapping( "fd",    Integer(           fd    ) );
 		
 		Value exception( error, Value( desc, fd_ ) );
+		
+		throw_exception_object( exception );
+	}
+	
+	static
+	void fd_error( int fd, const char* msg )
+	{
+		Value desc  = mapping( "desc", String( msg ) );
+		Value fd_   = mapping( "fd",   Integer( fd ) );
+		
+		Value exception( desc, fd_ );
 		
 		throw_exception_object( exception );
 	}
@@ -519,5 +531,26 @@ namespace vlib
 	
 	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };
 	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
+	
+	void send_data( int fd, const Value& v )
+	{
+		const Packed data = pack( v );
+		
+		const plus::string& buffer = data.string();
+		
+		const size_t size = buffer.size();
+		
+		ssize_t n_written = write( fd, buffer.data(), size );
+		
+		if ( n_written < 0 )
+		{
+			fd_error( fd );
+		}
+		
+		if ( n_written != size )
+		{
+			fd_error( fd, "partial write" );
+		}
+	}
 	
 }

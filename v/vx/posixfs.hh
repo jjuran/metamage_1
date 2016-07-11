@@ -30,6 +30,8 @@ namespace vlib
 	extern const proc_info proc_append;
 	extern const proc_info proc_truncate;
 	
+	void send_data( int fd, const Value& v );
+	
 }
 
 #endif

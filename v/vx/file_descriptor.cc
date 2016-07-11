@@ -20,6 +20,9 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/type.hh"
 
+// vx
+#include "posixfs.hh"
+
 
 namespace vlib
 {
@@ -149,9 +152,28 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value binary_op_handler( op_type op, const Value& a, const Value& b )
+	{
+		const FileDescriptor& that = static_cast< const FileDescriptor& >( a );
+		
+		switch ( op )
+		{
+			case Op_send:
+				send_data( that.get(), b );
+				return a;
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
+		&binary_op_handler,
 	};
 	
 	const dispatch fd_dispatch =
