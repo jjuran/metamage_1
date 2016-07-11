@@ -104,6 +104,7 @@ namespace vlib
 		Op_gamut,
 		Op_delta,
 		Op_list,
+		Op_send,
 		Op_assert,
 		Op_lambda,
 		Op_try,

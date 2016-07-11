@@ -159,6 +159,7 @@ namespace vlib
 			case Op_move:  return " <- ";
 			case Op_swap:  return " <-> ";
 			case Op_push:  return " <-- ";
+			case Op_send:  return " <== ";
 			
 			case Op_assert:  return "assert ";
 			case Op_return:  return "return ";
