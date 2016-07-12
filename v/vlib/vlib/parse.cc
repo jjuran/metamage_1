@@ -441,7 +441,7 @@ namespace vlib
 							
 							if ( declares_symbols( stack.back().op ) )
 							{
-								bool is_var = stack.back().op - Op_const;
+								bool is_var = stack.back().op == Op_var;
 								symbol_type type = symbol_type( is_var );
 								
 								scope->declare( token.text, type );
