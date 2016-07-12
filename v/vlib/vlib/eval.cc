@@ -214,11 +214,6 @@ namespace vlib
 	            const Value&        right,
 	            const source_spec&  source )
 	{
-		if ( op == Op_var  ||  op == Op_const )
-		{
-			return Value_nothing;
-		}
-		
 		if ( op == Op_list )
 		{
 			if ( is_symbolic( left )  &&  is_symbolic( right ) )
