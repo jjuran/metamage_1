@@ -265,11 +265,6 @@ namespace vlib
 	static
 	Value calc_unary( op_type op, const Value& v )
 	{
-		if ( op == Op_const  ||  op == Op_var )
-		{
-			THROW( "const/var operand not a symbol" );
-		}
-		
 		if ( op == Op_array  ||  op == Op_block )
 		{
 			return Value( op, v );
