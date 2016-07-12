@@ -207,7 +207,7 @@ namespace vlib
 	{
 		if ( Expr* expr = tree.expr() )
 		{
-			if ( expr->op == Op_var  ||  expr->op == Op_const )
+			if ( declares_symbols( expr->op ) )
 			{
 				if ( expr->right.type() != Value_symbol )
 				{

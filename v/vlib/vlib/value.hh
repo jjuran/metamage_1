@@ -258,7 +258,7 @@ namespace vlib
 	{
 		if ( Expr* ex = expr() )
 		{
-			if ( ex->op == Op_var  ||  ex->op == Op_const )
+			if ( declares_symbols( ex->op ) )
 			{
 				return ex->right.sym();
 			}
@@ -313,7 +313,7 @@ namespace vlib
 	{
 		if ( Expr* expr = v.expr() )
 		{
-			return expr->op == Op_var  ||  expr->op == Op_const;
+			return declares_symbols( expr->op );
 		}
 		
 		return false;
