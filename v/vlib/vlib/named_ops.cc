@@ -38,6 +38,7 @@ namespace vlib
 	{
 		{ "assert", Op_assert },
 		{ "const",  Op_const  },
+		{ "def",    Op_def    },
 		{ "do",     Op_do     },
 		{ "if",     Op_if     },
 		{ "lambda", Op_lambda },
