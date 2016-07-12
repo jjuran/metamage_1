@@ -214,11 +214,6 @@ namespace vlib
 	            const Value&        right,
 	            const source_spec&  source )
 	{
-		if ( op == Op_var  ||  op == Op_const )
-		{
-			return Value_nothing;
-		}
-		
 		if ( op == Op_list )
 		{
 			if ( is_symbolic( left )  &&  is_symbolic( right ) )
@@ -313,6 +308,14 @@ namespace vlib
 				left.sym()->denote( right );
 				
 				return left;
+			}
+			
+			if ( Expr* expr = left.expr() )
+			{
+				if ( expr->right.type() != Value_symbol )
+				{
+					THROW( "declarator operand must be a symbol" );
+				}
 			}
 			
 			try

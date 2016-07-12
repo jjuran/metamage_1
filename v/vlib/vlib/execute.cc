@@ -156,6 +156,11 @@ namespace vlib
 		{
 			if ( expr->op == Op_var  ||  expr->op == Op_const )
 			{
+				if ( expr->right.type() != Value_symbol )
+				{
+					THROW( "declarator operand must be a symbol" );
+				}
+				
 				return Value_nothing;
 			}
 			
