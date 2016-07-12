@@ -315,6 +315,14 @@ namespace vlib
 				return left;
 			}
 			
+			if ( Expr* expr = left.expr() )
+			{
+				if ( expr->right.type() != Value_symbol )
+				{
+					THROW( "declarator operand must be a symbol" );
+				}
+			}
+			
 			try
 			{
 				return eval_assignment( left, op, right );
