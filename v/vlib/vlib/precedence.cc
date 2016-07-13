@@ -17,7 +17,7 @@ namespace vlib
 	{
 		Precedence_none = 0,
 		
-		Precedence_declarator,      // const var
+		Precedence_declarator,      // const var def
 		Precedence_adjacency,       // . f(x)
 		Precedence_exponentiation,  // ^
 		Precedence_unary_math,      // + - (f x)
@@ -50,6 +50,7 @@ namespace vlib
 	{
 		{ Precedence_declarator, Op_const },
 		{ Precedence_declarator, Op_var   },
+		{ Precedence_declarator, Op_def   },
 		
 		{ Precedence_adjacency, Op_preinc    },
 		{ Precedence_adjacency, Op_predec    },

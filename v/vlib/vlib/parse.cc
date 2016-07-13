@@ -169,7 +169,7 @@ namespace vlib
 			{
 				const op_type prev_op = stack.end()[ -2 ].op;
 				
-				if ( prev_op == Op_const  ||  prev_op == Op_var )
+				if ( declares_symbols( prev_op ) )
 				{
 					// Nope, it's a type annotation.
 					op = Op_denote;
@@ -441,7 +441,7 @@ namespace vlib
 							
 							if ( declares_symbols( stack.back().op ) )
 							{
-								bool is_var = stack.back().op - Op_const;
+								bool is_var = stack.back().op == Op_var;
 								symbol_type type = symbol_type( is_var );
 								
 								scope->declare( token.text, type );

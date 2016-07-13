@@ -203,15 +203,44 @@ namespace vlib
 		return resolve_symbol( v, stack );
 	}
 	
+	static
+	Value v_define( const Value& v )
+	{
+		const Value& name = first( v );
+		const Value& body = rest ( v );
+		
+		Expr* expr = body.expr();
+		
+		if ( expr == 0  ||  expr->op != Op_invocation )  // NULL
+		{
+			THROW( "`def` requires a block" );
+		}
+		
+		const Value lambda( Op_lambda, body );
+		
+		eval( name, Op_duplicate, lambda, expr->source );
+		
+		return name;
+	}
+	
+	static const proc_info proc_define = { "define", &v_define, 0 };  // NULL
+	
 	Value execute( const Value& tree, const Value& stack )
 	{
 		if ( Expr* expr = tree.expr() )
 		{
-			if ( expr->op == Op_var  ||  expr->op == Op_const )
+			if ( declares_symbols( expr->op ) )
 			{
 				if ( expr->right.type() != Value_symbol )
 				{
 					THROW( "declarator operand must be a symbol" );
+				}
+				
+				if ( expr->op == Op_def )
+				{
+					const Value resolved = resolve_symbol( expr->right, stack );
+					
+					return bind_args( proc_define, resolved );
 				}
 				
 				return Value_nothing;
@@ -264,6 +293,11 @@ namespace vlib
 			
 			if ( is_left_varop( expr->op )  &&  ! is_type_annotation( *left ) )
 			{
+				if ( expr->op == Op_denote  &&  left->expr()->op == Op_def )
+				{
+					THROW( "function prototypes are unimplemented" );
+				}
+				
 				return eval( resolve_symbol_list( *left, stack ),
 				             expr->op,
 				             execute( *right, stack ),

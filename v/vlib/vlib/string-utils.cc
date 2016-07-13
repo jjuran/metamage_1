@@ -61,6 +61,7 @@ namespace vlib
 			
 			case Op_var:    return "var ";
 			case Op_const:  return "const ";
+			case Op_def:    return "def ";
 			
 			case Op_function:     return "";
 			case Op_named_unary:  return " ";

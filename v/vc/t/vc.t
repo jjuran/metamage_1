@@ -2826,3 +2826,13 @@ $ vc 'var x = []; x <-- 3, 4; x'
 
 $ vc 'var x = [1, 2]; x <-- 3, 4; x'
 1 >= '[1, 2, 3, 4]'
+
+%
+
+$ vc 'def len { _.length }; len "Hello"'
+1 >= '5'
+
+%
+
+$ vc 'def quine { const qq = "\""; return qq _ qq " " _; }; quine "is quoted"'
+1 >= '"\"is quoted\" is quoted"'
