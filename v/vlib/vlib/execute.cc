@@ -151,6 +151,15 @@ namespace vlib
 	}
 	
 	static
+	Value make_test_expression( const Value& tree, const Value& stack )
+	{
+		const Value expr( stack,       Op_expression, tree );
+		const Value test( proc_invoke, Op_invocation, expr );
+		
+		return test;
+	}
+	
+	static
 	Value resolve_symbol_list( const Value& v, const Value& stack )
 	{
 		if ( Expr* expr = v.expr() )
@@ -202,16 +211,14 @@ namespace vlib
 			
 			if ( expr->op == Op_do_2 )
 			{
-				const Value expression( stack, Op_expression, expr->left );
-				const Value test( proc_invoke, Op_invocation, expression );
+				const Value test = make_test_expression( expr->left, stack );
 				
 				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
 			if ( expr->op == Op_while_2 )
 			{
-				const Value expression( stack, Op_expression, expr->right );
-				const Value test( proc_invoke, Op_invocation, expression  );
+				const Value test = make_test_expression( expr->right, stack );
 				
 				return Value( execute( expr->left, stack ), Op_while_2, test );
 			}
