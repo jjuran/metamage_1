@@ -2836,3 +2836,8 @@ $ vc 'def len { _.length }; len "Hello"'
 
 $ vc 'def quine { const qq = "\""; return qq _ qq " " _; }; quine "is quoted"'
 1 >= '"\"is quoted\" is quoted"'
+
+%
+
+$ vc '[1, 2,], {3, 4,}, (5, 6,)'
+1 >= '([1, 2], {3, 4}, 5, 6)'

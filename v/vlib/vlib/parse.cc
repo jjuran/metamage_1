@@ -199,18 +199,25 @@ namespace vlib
 				throw unbalanced_right_delimiter( its_source );
 			}
 			
-			value_type nil = Value_empty_list;
-			
-			if ( op == Op_braces  &&  stack.back().op == Op_end )
+			if ( stack.back().op == Op_list )
 			{
-				nil = Value_nothing;
+				stack.back().op = Op_none;
 			}
-			else if ( op != stack.back().op )
+			else
 			{
-				throw unexpected_right_delimiter( its_source );
+				value_type nil = Value_empty_list;
+				
+				if ( op == Op_braces  &&  stack.back().op == Op_end )
+				{
+					nil = Value_nothing;
+				}
+				else if ( op != stack.back().op )
+				{
+					throw unexpected_right_delimiter( its_source );
+				}
+				
+				receive_value( nil );
 			}
-			
-			receive_value( nil );
 		}
 		
 		fold_ops_and_add( Op_end );
