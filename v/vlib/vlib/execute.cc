@@ -160,6 +160,28 @@ namespace vlib
 	}
 	
 	static
+	void test_assertion( const Expr* expr, const Value& stack )
+	{
+		const Value& test = expr->right;
+		
+		const Value result = execute( test, stack );
+		
+		if ( result.type() != V_bool )
+		{
+			throw assertion_result_not_boolean( expr->source );
+		}
+		
+		if ( ! result.boolean() )
+		{
+			plus::var_string s = "assertion failed: ";
+			
+			s += rep( test );
+			
+			throw language_error( s, expr->source );
+		}
+	}
+	
+	static
 	Value resolve_symbol_list( const Value& v, const Value& stack )
 	{
 		if ( Expr* expr = v.expr() )
@@ -225,23 +247,7 @@ namespace vlib
 			
 			if ( expr->op == Op_assert )
 			{
-				const Value& test = expr->right;
-				
-				const Value result = execute( test, stack );
-				
-				if ( result.type() != V_bool )
-				{
-					throw assertion_result_not_boolean( expr->source );
-				}
-				
-				if ( ! result.boolean() )
-				{
-					plus::var_string s = "assertion failed: ";
-					
-					s += rep( test );
-					
-					throw language_error( s, expr->source );
-				}
+				test_assertion( expr, stack );
 				
 				return Value();
 			}
