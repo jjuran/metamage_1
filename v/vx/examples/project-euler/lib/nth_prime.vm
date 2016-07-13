@@ -3,7 +3,7 @@ var primes = [ 2, 3 ];
 var last_index = 1;
 var last_prime = 3;
 
-const next_prime = lambda
+def next_prime
 {
 	var x = last_prime;
 	
@@ -27,7 +27,7 @@ const next_prime = lambda
 	};
 };
 
-const nth_prime =
+def nth_prime
 {
 	while last_index < _ do
 	{
