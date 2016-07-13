@@ -129,6 +129,28 @@ namespace vlib
 	static proc_info proc_invoke = { "invoke", &v_invoke, 0 };
 	
 	static
+	Value make_block_invocation( const Value& scope, const Value& stack )
+	{
+		const Expr* expr = scope.expr();
+		
+		ASSERT( expr );
+		
+		ASSERT( expr->op == Op_scope );
+		
+		const Value& data = expr->left;   // args and local symbols
+		const Value& code = expr->right;  // expression tree
+		
+		const Value& underscore = first( stack.expr()->right );
+		
+		const Value new_frame( underscore, rest( data ) );
+		
+		const Value new_stack( stack, Op_frame, new_frame );
+		const Value activation( new_stack, Op_activation, code );
+		
+		return Value( proc_invoke, Op_invocation, activation );
+	}
+	
+	static
 	Value resolve_symbol_list( const Value& v, const Value& stack )
 	{
 		if ( Expr* expr = v.expr() )
@@ -175,23 +197,7 @@ namespace vlib
 			{
 				const Value& scope = expr->right;
 				
-				expr = scope.expr();
-				
-				ASSERT( expr );
-				
-				ASSERT( expr->op == Op_scope );
-				
-				const Value& data = expr->left;   // args and local symbols
-				const Value& code = expr->right;  // expression tree
-				
-				const Value& underscore = first( stack.expr()->right );
-				
-				const Value new_frame( underscore, rest( data ) );
-				
-				const Value new_stack( stack, Op_frame, new_frame );
-				const Value activation( new_stack, Op_activation, code );
-				
-				return Value( proc_invoke, Op_invocation, activation );
+				return make_block_invocation( scope, stack );
 			}
 			
 			if ( expr->op == Op_do_2 )
