@@ -220,6 +220,11 @@ namespace vlib
 			              resolve_symbol_expr( expr->right, stack ) );
 		}
 		
+		if ( v.type() != Value_symbol )
+		{
+			THROW( "mutable operand must be a symbol" );
+		}
+		
 		return resolve_symbol( v, stack );
 	}
 	
