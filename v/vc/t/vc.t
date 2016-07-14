@@ -2861,3 +2861,18 @@ $ vc '"foo" <=> "bar", "Foo" <=> "bar", "foo" "bar" <=> "foobar"'
 
 $ vc '{0 > 1 <=> 2}'
 1 >= '{0 > (1 <=> 2)}'
+
+%
+
+$ vc 'not true, not false'
+1 >= '(false, true)'
+
+%
+
+$ vc 'not not true, not not false'
+1 >= '(true, false)'
+
+%
+
+$ vc 'def ok {str ("not " (*) not _, "ok")}; ok true, ok false'
+1 >= '("ok", "not ok")'

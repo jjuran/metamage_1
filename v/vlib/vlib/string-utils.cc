@@ -95,6 +95,8 @@ namespace vlib
 			case Op_intersection:  return " & ";
 			case Op_union:         return " | ";
 			
+			case Op_not:  return "not ";
+			
 			case Op_repeat:  return " (*) ";
 			
 			case Op_try:    return "try ";

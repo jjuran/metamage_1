@@ -42,6 +42,7 @@ namespace vlib
 		{ "do",     Op_do     },
 		{ "if",     Op_if     },
 		{ "lambda", Op_lambda },
+		{ "not",    Op_not    },
 		{ "return", Op_return },
 		{ "throw",  Op_throw  },
 		{ "try",    Op_try    },

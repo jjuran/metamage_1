@@ -52,6 +52,7 @@ namespace vlib
 		Op_subtract,
 		Op_intersection,
 		Op_union,
+		Op_not,
 		Op_repeat,  // multiply list
 		Op_map,
 		Op_isa,
