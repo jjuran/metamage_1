@@ -1117,6 +1117,8 @@ namespace vlib
 			case Op_gt:   return Bool( compare( left, right ) >  0 );
 			case Op_gte:  return Bool( compare( left, right ) >= 0 );
 			
+			case Op_cmp:  return Integer( compare( left, right ) );
+			
 			default:  break;
 		}
 		

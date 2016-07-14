@@ -53,6 +53,7 @@ namespace vlib
 		{ Token_bang_equals, Op_unequal   },
 		{ Token_lt,          Op_lt        },
 		{ Token_lt_equals,   Op_lte       },
+		{ Token_lt_equals_gt,Op_cmp       },
 		{ Token_gt,          Op_gt        },
 		{ Token_gt_equals,   Op_gte       },
 		{ Token_equals_gt,   Op_mapping   },

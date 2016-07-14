@@ -125,6 +125,7 @@ namespace vlib
 		{ "<--", Token_lt_minus_x2 },
 		{ "<<<<<<<", Token_invalid },
 		{ "<=",  Token_lt_equals },
+		{ "<=>", Token_lt_equals_gt },
 		{ "=",   Token_equals    },
 		{ "==",  Token_equals_x2 },
 		{ "=>",  Token_equals_gt },

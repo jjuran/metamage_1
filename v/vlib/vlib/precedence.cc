@@ -29,6 +29,7 @@ namespace vlib
 		Precedence_repeat,          // (*)
 		Precedence_try,             // try catch
 		Precedence_map,             // map
+		Precedence_comparison,      // <=>
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
 		Precedence_mapping,         // => :
@@ -90,6 +91,8 @@ namespace vlib
 		{ Precedence_try, Op_catch },
 		
 		{ Precedence_map, Op_map },
+		
+		{ Precedence_comparison, Op_cmp },
 		
 		{ Precedence_inequality, Op_lt  },
 		{ Precedence_inequality, Op_lte },

@@ -61,6 +61,7 @@ namespace vlib
 		Op_lte,
 		Op_gt,
 		Op_gte,
+		Op_cmp,
 		Op_mapping,
 		Op_gamut,
 		Op_delta,

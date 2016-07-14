@@ -110,6 +110,8 @@ namespace vlib
 			case Op_lte:  return " <= ";
 			case Op_gte:  return " >= ";
 			
+			case Op_cmp:  return " <=> ";
+			
 			case Op_isa:       return " isa ";
 			case Op_equal:     return " == ";
 			case Op_unequal:   return " != ";
