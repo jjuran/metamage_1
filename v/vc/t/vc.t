@@ -2971,3 +2971,138 @@ $ vc '0 .. 0 map { _^2 }, 0 -> 0 map { _^2 }'
 
 $ vc -- '-3 .. 1 map { _^2 }, -2 -> -1 map { _^2 }'
 1 >= '([9, 4, 1, 0, 1], [4])'
+
+%
+
+$ vc '"spam" in ""'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in "SPAM"'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in "spam"'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in "spam\0"'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in "My hovercraft is full of spam"'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in x"7370616d"'
+1 >= 'true'
+
+%
+
+$ vc 'not "spam" in -"maps"'
+1 >= 'false'
+
+%
+
+$ vc 'const x = 1 .. 3; 3 in x, 4 in x, 2 in x, 5 in x, 1 in x, 0 in x'
+1 >= '(true, false, true, false, true, false)'
+
+%
+
+$ vc 'const x = 0 -> 2^64; -1 in x, 0 in x, 2^64 - 1 in x, 2^64 in x'
+1 >= '(false, true, true, false)'
+
+%
+
+$ vc '"spam" in ["egg", "bacon"]'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in ["egg", "sausage", "bacon"]'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in ["egg", "spam"]'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in ["egg", "sausage", "spam"]'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in ["bacon", "egg", "sausage", "spam"]'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in ["spam", "egg", "sausage", "spam"]'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in ["spam" (*) 6, "baked beans", "spam" (*) 4]'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in ["spammy"]'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in ["spam\0"]'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in ["spam"]'
+1 >= 'true'
+
+%
+
+$ vc '"spam" in ["bloody Vikings"]'
+1 >= 'false'
+
+%
+
+$ vc '"spam" in []'
+1 >= 'false'
+
+%
+
+$ vc 'const x = [1: 2, 3: 4]; (1: 1) in x, (2: 2) in x, (1: 2) in x'
+1 >= '(false, false, true)'
+
+%
+
+$ vc 'const x = [1: 2, 3: 4]; try { 1 in x } catch { "nope" }'
+1 >= '"nope"'
+
+%
+
+$ vc 'const x = int^[1: 2, 3: 4]; 1 in x, 2 in x'
+1 >= '(true, false)'
+
+%
+
+$ vc 'const x = int^[1: 2, 3: 4]; try { (1: 2) in x } catch { "nope" }'
+1 >= '"nope"'
+
+%
+
+$ vc 'const x = int^[1: 2, 3: 4]; try { "1" in x } catch { "nope" }'
+1 >= '"nope"'
+
+%
+
+$ vc '"spam" in str^[]'
+1 >= 'false'

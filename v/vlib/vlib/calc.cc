@@ -194,6 +194,101 @@ namespace vlib
 	}
 	
 	static
+	bool in_list( const Value& v, const Value& list )
+	{
+		list_iterator it( list );
+		
+		while ( it )
+		{
+			if ( equal( v, it.use() ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	static
+	bool in_array_mapping_keys( const Value& v, const Value& array )
+	{
+		array_iterator it( array );
+		
+		while ( it )
+		{
+			const Value& mapping = it.use();
+			const Value& key = mapping.expr()->left;
+			
+			if ( equal( key, v ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	static
+	bool in_string( const Value& v, const plus::string& s )
+	{
+		switch ( v.type() )
+		{
+			case Value_byte:
+				return s.find( v.number().clipped() ) != plus::string::npos;
+			
+			case V_str:
+			case V_data:
+				return s.find( v.string() ) != plus::string::npos;
+			
+			default:
+				break;
+		}
+		
+		THROW( "unsupported pattern type for `in` with string/data container" );
+		return false;
+	}
+	
+	static
+	bool in( const Value& v, const Value& container )
+	{
+		if ( Expr* expr = container.expr() )
+		{
+			switch ( expr->op )
+			{
+				case Op_gamut:
+				case Op_delta:
+					return compare( v, expr->left  ) >= 0  &&
+					       compare( v, expr->right ) < (expr->op == Op_gamut);
+				
+				case Op_array:
+					return in_list( v, expr->right );
+				
+				case Op_empower:
+					return in_array_mapping_keys( v, expr->right );
+				
+				default:
+					break;
+			}
+		}
+		
+		switch ( container.type() )
+		{
+			case Value_empty_array:
+				return false;
+			
+			case V_str:
+			case V_data:
+				return in_string( v, container.string() );
+			
+			default:
+				break;
+		}
+		
+		THROW( "unsupported container type for `in`" );
+		return false;
+	}
+	
+	static
 	Value deref_string( const plus::string& s )
 	{
 		typedef plus::string::size_type size_t;
@@ -1200,6 +1295,7 @@ namespace vlib
 				
 				goto no_op;
 			
+			case Op_in:       return Bool(   in   ( left, right ) );
 			case Op_isa:      return Bool(   isa  ( left, right ) );
 			case Op_equal:    return Bool(   equal( left, right ) );
 			case Op_unequal:  return Bool( ! equal( left, right ) );

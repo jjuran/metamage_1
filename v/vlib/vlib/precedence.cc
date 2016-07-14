@@ -26,6 +26,7 @@ namespace vlib
 		Precedence_range,           // .. ->
 		Precedence_intersection,    // &
 		Precedence_union,           // |
+		Precedence_in,              // in
 		Precedence_not,             // not
 		Precedence_repeat,          // (*)
 		Precedence_try,             // try catch
@@ -87,6 +88,8 @@ namespace vlib
 		
 		{ Precedence_intersection, Op_intersection },
 		{ Precedence_union,        Op_union        },
+		
+		{ Precedence_in, Op_in },
 		
 		{ Precedence_not, Op_not },
 		

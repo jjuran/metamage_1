@@ -52,6 +52,7 @@ namespace vlib
 		Op_subtract,
 		Op_intersection,
 		Op_union,
+		Op_in,
 		Op_not,
 		Op_and,
 		Op_or,
