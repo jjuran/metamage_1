@@ -33,6 +33,8 @@ namespace vlib
 		Precedence_comparison,      // <=>
 		Precedence_inequality,      // < <= > >=
 		Precedence_equality,        // == !=
+		Precedence_and,             // and
+		Precedence_or,              // or
 		Precedence_mapping,         // => :
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
@@ -105,6 +107,9 @@ namespace vlib
 		{ Precedence_equality, Op_isa     },
 		{ Precedence_equality, Op_equal   },
 		{ Precedence_equality, Op_unequal },
+		
+		{ Precedence_and, Op_and },
+		{ Precedence_or,  Op_or  },
 		
 		{ Precedence_mapping, Op_mapping },
 		

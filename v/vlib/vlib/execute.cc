@@ -20,6 +20,8 @@
 #include "vlib/symdesc.hh"
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
+#include "vlib/type_info.hh"
+#include "vlib/types/boolean.hh"
 
 
 namespace vlib
@@ -182,6 +184,23 @@ namespace vlib
 	}
 	
 	static
+	Value short_circuit_logic( const Expr* expr, bool bail, const Value& stack )
+	{
+		const Value& test = expr->left;
+		
+		const Value result = execute( expr->left, stack );
+		
+		const bool truth = boolean_vtype.coerce( result ).boolean();
+		
+		if ( truth == bail )
+		{
+			return result;
+		}
+		
+		return execute( expr->right, stack );
+	}
+	
+	static
 	Value resolve_symbol_list( const Value& v, const Value& stack )
 	{
 		if ( Expr* expr = v.expr() )
@@ -279,6 +298,13 @@ namespace vlib
 				test_assertion( expr, stack );
 				
 				return Value();
+			}
+			
+			if ( expr->op == Op_and  ||  expr->op == Op_or )
+			{
+				bool bail_on_truth = expr->op == Op_or;
+				
+				return short_circuit_logic( expr, bail_on_truth, stack );
 			}
 			
 			const Value* left  = &expr->left;

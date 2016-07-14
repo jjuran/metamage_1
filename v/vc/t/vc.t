@@ -2876,3 +2876,18 @@ $ vc 'not not true, not not false'
 
 $ vc 'def ok {str ("not " (*) not _, "ok")}; ok true, ok false'
 1 >= '("ok", "not ok")'
+
+%
+
+$ vc '[null, 0, "", [], false, true, "0", [[]]] map {_ and ...}'
+1 >= '[null, 0, "", [], false, ..., ..., ...]'
+
+%
+
+$ vc '[null, 0, "", [], false, true, "0", [[]]] map {_ or ...}'
+1 >= '[..., ..., ..., ..., ..., true, "0", [[]]]'
+
+%
+
+$ vc '{1 and 2 or 3, 1 or 2 and 3}'
+1 >= '{((1 and 2) or 3), (1 or (2 and 3))}'
