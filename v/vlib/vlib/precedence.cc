@@ -39,7 +39,7 @@ namespace vlib
 		Precedence_mapping,         // => :
 		Precedence_list,            // ,
 		Precedence_assignment,      // =
-		Precedence_conditional,     // if then else while do
+		Precedence_conditional,     // if then else while do for
 		Precedence_command,         // assert return throw
 		Precedence_end,             // ;
 		Precedence_group,           // (
@@ -131,6 +131,7 @@ namespace vlib
 		{ Precedence_conditional, Op_then },
 		{ Precedence_conditional, Op_else },
 		
+		{ Precedence_conditional, Op_for     },
 		{ Precedence_conditional, Op_while   },
 		{ Precedence_conditional, Op_do      },
 		{ Precedence_conditional, Op_do_2    },

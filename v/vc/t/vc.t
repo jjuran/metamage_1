@@ -3141,3 +3141,33 @@ $ vc 'var x = str^[foo: 1, bar: 2]; x[ "baz" ] = null; x'
 
 $ vc 'var x = str^[foo: 1, bar: 2]; x[ "foo" ] = x; x'
 1 >= '(string^[("foo" => (string^[("foo" => 1), ("bar" => 2)])), ("bar" => 2)])'
+
+%
+
+$ vc 'var a = []; for i in 1 .. 3 do { a <-- i }; a'
+1 >= '[1, 2, 3]'
+
+%
+
+$ vc 'var a = []; for i in -(1 .. 5) do { a <-- i }; a'
+1 >= '[5, 4, 3, 2, 1]'
+
+%
+
+$ vc 'var a = []; for i in 1 -> 1 do { a <-- i }; a'
+1 >= '[]'
+
+%
+
+$ vc 'var a = []; for x in ["foo", "bar", "baz"] do { a <-- x }; a'
+1 >= '["foo", "bar", "baz"]'
+
+%
+
+$ vc 'var a = []; for x in [] do { a <-- x }; a'
+1 >= '[]'
+
+%
+
+$ vc 'var a = []; for x in str^[foo: 1, bar: 2] do { a <-- x }; a'
+1 >= '[("foo" => 1), ("bar" => 2)]'

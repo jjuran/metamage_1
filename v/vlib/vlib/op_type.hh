@@ -17,6 +17,7 @@ namespace vlib
 		Op_const,
 		Op_var,
 		Op_def,
+		Op_for,
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_unary_count,
@@ -121,7 +122,7 @@ namespace vlib
 	inline
 	bool declares_symbols( op_type op )
 	{
-		return op >= Op_const  &&  op <= Op_def;
+		return op >= Op_const  &&  op <= Op_for;
 	}
 	
 	inline

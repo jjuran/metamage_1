@@ -14,6 +14,7 @@
 // vlib
 #include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
@@ -21,6 +22,8 @@
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/generic_iterator.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
 
 
@@ -162,6 +165,127 @@ namespace vlib
 	}
 	
 	static
+	void run_for_loop( const Value& do_clause, const Value& stack )
+	{
+		/*
+			right operand is `x in container do {...}`:
+			
+			for
+						x
+					in
+						container
+				do
+					{...}
+		*/
+		
+		Expr* expr = do_clause.expr();
+		
+		if ( expr == 0  ||  expr->op != Op_do_2 )  // NULL
+		{
+			THROW( "`for` expects `do`" );
+		}
+		
+		const Value& in_clause = expr->left;
+		const Value& do_block = expr->right;
+		
+		expr = in_clause.expr();
+		
+		if ( expr == 0  ||  expr->op != Op_in )  // NULL
+		{
+			THROW( "`for` expects `in`" );
+		}
+		
+		const Value& declarate = expr->left;
+		
+		Value container = execute( expr->right, stack );
+		
+		int index = 0;
+		
+		if ( Symbol* sym = declarate.sym() )
+		{
+			const Value& v = sym->get();
+			
+			ASSERT( v.type() == V_desc );
+			
+			const Value::symdesc desc = v.desc();
+			
+			index = (short) desc;
+			
+			ASSERT( desc - index == 0 );
+		}
+		else
+		{
+			THROW( "`for` expects an iteration symbol" );
+		}
+		
+		Value invocation = execute( do_block, stack );
+		
+		invocation.unshare();
+		
+		expr = invocation.expr();
+		
+		ASSERT( expr != 0 );  // NULL
+		ASSERT( expr->op == Op_invocation );
+		
+		
+		Value& activation = expr->right;
+		
+		activation.unshare();
+		
+		expr = activation.expr();
+		
+		ASSERT( expr != 0 );  // NULL
+		ASSERT( expr->op == Op_activation );
+		
+		
+		Value& stack_head = expr->left;
+		
+		stack_head.unshare();
+		
+		expr = stack_head.expr();
+		
+		ASSERT( expr != 0 );  // NULL
+		ASSERT( expr->op == Op_frame );
+		
+		
+		Value& stack_next = expr->left;
+		
+		stack_next.unshare();
+		
+		expr = stack_next.expr();
+		
+		ASSERT( expr != 0 );  // NULL
+		ASSERT( expr->op == Op_frame );
+		
+		
+		Value& stack_frame = expr->right;
+		
+		Value& variable = get_nth_mutable( stack_frame, index );
+		
+		expr = container.expr();
+		
+		generic_iterator it( container );
+		
+		while ( it )
+		{
+			variable.sym()->deref_unsafe() = it.use();
+			
+			try
+			{
+				v_invoke( activation );
+			}
+			catch ( const transfer_via_break& )
+			{
+				break;
+			}
+			catch ( const transfer_via_continue& )
+			{
+				continue;  // no-op
+			}
+		}
+	}
+	
+	static
 	void test_assertion( const Expr* expr, const Value& stack )
 	{
 		const Value& test = expr->right;
@@ -256,6 +380,13 @@ namespace vlib
 	{
 		if ( Expr* expr = tree.expr() )
 		{
+			if ( expr->op == Op_for )
+			{
+				run_for_loop( expr->right, stack );
+				
+				return Value();
+			}
+			
 			if ( declares_symbols( expr->op ) )
 			{
 				if ( expr->right.type() != Value_symbol )
