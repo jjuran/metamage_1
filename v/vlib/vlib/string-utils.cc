@@ -31,6 +31,7 @@
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/list_iterator.hh"
 
 
 namespace vlib
@@ -655,6 +656,8 @@ namespace vlib
 	{
 		const char* p = form.c_str();
 		
+		list_iterator next_param( params );
+		
 		const Value* remaining = &params;
 		
 		plus::var_string result;
@@ -690,19 +693,17 @@ namespace vlib
 				THROW( "bad format string" );
 			}
 			
-			const Value& param = first( *remaining );
-			
-			if ( is_empty( param ) )
+			if ( ! next_param )
 			{
 				THROW( "not enough format arguments" );
 			}
 			
-			result += str( param );
+			const Value& param = next_param.use();
 			
-			remaining = &rest( *remaining );
+			result += str( param );
 		}
 		
-		if ( ! is_empty( *remaining ) )
+		if ( next_param )
 		{
 			THROW( "too many format arguments" );
 		}

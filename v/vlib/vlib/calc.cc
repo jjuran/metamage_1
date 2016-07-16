@@ -27,6 +27,7 @@
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
@@ -148,25 +149,18 @@ namespace vlib
 			THROW( "mismatched types in equality relation" );
 		}
 		
-		const Value* a = &one;
-		const Value* b = &two;
+		list_iterator a( one );
+		list_iterator b( two );
 		
-	next:
-		
-		if ( ! equal_atoms( first( *a ), first( *b ) ) )
+		while ( a  ||  b )
 		{
-			return false;
+			if ( ! equal_atoms( a.use(), b.use() ) )
+			{
+				return false;
+			}
 		}
 		
-		if ( a->type() != Value_pair  &&  b->type() != Value_pair )
-		{
-			return true;
-		}
-		
-		a = &rest( *a );
-		b = &rest( *b );
-		
-		goto next;
+		return true;
 	}
 	
 	static
@@ -625,36 +619,45 @@ namespace vlib
 	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
-		if ( is_empty( prototype ) )
+		Value result = Value_empty_list;
+		
+		list_iterator defs( prototype );
+		list_iterator args( arguments );
+		
+		while ( defs )
 		{
-			if ( is_empty( arguments ) )
+			const Value& type = defs.use();
+			
+			if ( is_etc( type ) )
 			{
-				return arguments;
+				if ( defs )
+				{
+					THROW( "`...` must be last in a prototype" );
+				}
+				
+				result = calc( result, Op_list, args.rest() );
+				
+				return result;
 			}
 			
+			const Value& arg = args.use();
+			
+			const Value r = as_assigned_or_default( type, arg );
+			
+			if ( r.type() == Value_nothing )
+			{
+				THROW( "arguments don't match function prototype" );
+			}
+			
+			result = calc( result, Op_list, r );
+		}
+		
+		if ( args )
+		{
 			THROW( "too many arguments" );
 		}
 		
-		const Value& type = first( prototype );
-		
-		if ( is_etc( type ) )
-		{
-			return arguments;
-		}
-		
-		const Value& arg = first( arguments );
-		
-		const Value r = as_assigned_or_default( type, arg );
-		
-		if ( r.type() == Value_nothing )
-		{
-			THROW( "arguments don't match function prototype" );
-		}
-		
-		const Value remaining = apply_prototype( rest( prototype ),
-		                                         rest( arguments ) );
-		
-		return is_empty( remaining ) ? r : Value( r, remaining );
+		return result;
 	}
 	
 	static
@@ -796,22 +799,15 @@ namespace vlib
 			THROW( "map requires a function" );
 		}
 		
-		const Value* next = &expr->right;
+		list_iterator it( expr->right );
 		
-		while ( ! is_empty( *next ) )
+		while ( it )
 		{
-			const Value& x = first( *next );
-			
-			if ( is_empty( x ) )
-			{
-				break;
-			}
+			const Value& x = it.use();
 			
 			Value f_x = call_function( f, x );
 			
 			result = make_list( result, f_x );
-			
-			next = &rest( *next );
 		}
 		
 		return make_array( result );

@@ -11,6 +11,7 @@
 // vlib
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/list_iterator.hh"
 
 
 namespace vlib
@@ -28,18 +29,14 @@ namespace vlib
 			return false;
 		}
 		
-		const Value* list = &expr->right;
+		list_iterator it( expr->right );
 		
-		while ( ! is_empty( *list ) )
+		while ( it )
 		{
-			const Value& next = first( *list );
-			
-			if ( ! as_assigned( type, next ).type() )
+			if ( ! as_assigned( type, it.use() ).type() )
 			{
 				return false;
 			}
-			
-			list = &rest( *list );
 		}
 		
 		return true;

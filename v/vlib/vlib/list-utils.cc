@@ -5,46 +5,37 @@
 
 #include "vlib/list-utils.hh"
 
+// vlib
+#include "vlib/iterators/list_iterator.hh"
+
 
 namespace vlib
 {
 	
 	const Value& get_nth( const Value& list, unsigned i )
 	{
-		const Value* next = &list;
+		list_iterator it( list );
 		
-		while ( i-- > 0  &&  ! is_empty( *next ) )
+		while ( i-- > 0  &&  it.next() )
 		{
-			next = &rest( *next );
+			// advance silently
 		}
 		
-		return first( *next );
+		return *it;
 	}
 	
 	unsigned long count( const Value& list )
 	{
-		Expr* expr = list.listexpr();
+		list_iterator it( list );
 		
-		if ( expr == 0 )  // NULL
+		unsigned long total = 0;
+		
+		while ( it.next() )
 		{
-			return ! is_empty( list );
+			++total;
 		}
 		
-		unsigned long total = count( expr->left );
-		
-		while ( Expr* next = expr->right.expr() )
-		{
-			if ( next->op != Op_list )
-			{
-				return total + 1;
-			}
-			
-			total += count( next->left );
-			
-			expr = next;
-		}
-		
-		return total + count( expr->right );
+		return total;
 	}
 	
 	static
@@ -89,25 +80,21 @@ namespace vlib
 	
 	Value reverse_list( const Value& list )
 	{
-		Expr* expr = list.listexpr();
-		
-		if ( expr == 0 )  // NULL
+		if ( list.listexpr() == 0 )  // NULL
 		{
 			return list;  // empty list or single item
 		}
 		
-		const Value* next = &expr->right;
+		list_iterator it( list );
 		
-		Value result = expr->left;
+		Value result = it.use();
 		
-		while (( expr = next->listexpr() ))
+		while ( it )
 		{
-			result = Value( expr->left, result );
-			
-			next = &expr->right;
+			result = Value( it.use(), result );
 		}
 		
-		return Value( *next, result );
+		return result;
 	}
 	
 }

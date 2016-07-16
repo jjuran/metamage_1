@@ -1,10 +1,10 @@
 /*
-	iterator.hh
-	-----------
+	full_iterator.hh
+	----------------
 */
 
-#ifndef VLIB_ITERATOR_HH
-#define VLIB_ITERATOR_HH
+#ifndef VLIB_ITERATORS_FULLITERATOR_HH
+#define VLIB_ITERATORS_FULLITERATOR_HH
 
 // Standard C++
 #include <vector>
