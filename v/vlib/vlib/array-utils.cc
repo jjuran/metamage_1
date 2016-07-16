@@ -157,6 +157,11 @@ namespace vlib
 			return indexed_subscript( array, i );
 		}
 		
+		if ( is_empty_array( index ) )
+		{
+			return sliced_subscript( array, index );
+		}
+		
 		if ( Expr* expr = index.expr() )
 		{
 			if ( expr->op == Op_array )
@@ -185,6 +190,12 @@ namespace vlib
 		Symbol& sym = *array_target.sym();
 		
 		Value& array = sym.deref();
+		
+		if ( is_empty_array( array ) )
+		{
+			array = make_array( list );
+			return;
+		}
 		
 		Expr* expr = array.expr();
 		

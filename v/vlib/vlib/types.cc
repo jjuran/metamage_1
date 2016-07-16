@@ -83,6 +83,11 @@ namespace vlib
 			return null_vtype;
 		}
 		
+		if ( is_empty_array( v ) )
+		{
+			return generic_array_type;
+		}
+		
 		switch ( v.type() )
 		{
 			case Value_empty_list:  return v;

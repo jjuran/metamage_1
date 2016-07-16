@@ -403,6 +403,16 @@ namespace vlib
 	static
 	Value array_member( const Value& array, const plus::string& name )
 	{
+		if ( is_empty_array( array ) )
+		{
+			if ( name == "length" )
+			{
+				return Integer();
+			}
+			
+			THROW( "nonexistent array member" );
+		}
+		
 		Expr* expr = array.expr();
 		
 		ASSERT( expr != NULL );
@@ -792,6 +802,11 @@ namespace vlib
 	static
 	Value map( const Value& array, const Value& f )
 	{
+		if ( is_empty_array( array ) )
+		{
+			return array;
+		}
+		
 		Value result = Value_empty_list;
 		
 		Expr* expr = array.expr();
@@ -1174,7 +1189,7 @@ namespace vlib
 		{
 			const Value v = linear_subscript( left, right );
 			
-			if ( Expr* expr = right.expr() )
+			if ( is_empty_array( right )  ||  right.expr() != 0 )  // NULL
 			{
 				switch ( left.type() )
 				{
