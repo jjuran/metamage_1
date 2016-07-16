@@ -29,6 +29,7 @@
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
@@ -881,26 +882,14 @@ namespace vlib
 	}
 	
 	static
-	Value map( const Value& array, const Value& f )
+	Value map( const Value& container, const Value& f )
 	{
-		if ( is_empty_array( array ) )
-		{
-			return array;
-		}
-		
-		Expr* expr = array.expr();
-		
-		if ( expr == NULL  ||  expr->op != Op_array )
-		{
-			THROW( "map requires an array" );
-		}
-		
 		if ( ! is_functional( f ) )
 		{
 			THROW( "map requires a function" );
 		}
 		
-		list_iterator it( expr->right );
+		generic_iterator it( container );
 		
 		list_builder result;
 		

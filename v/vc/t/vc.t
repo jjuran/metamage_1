@@ -2956,3 +2956,18 @@ $ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x[["baz", "foo"]], x[[]]'
 
 $ vc 'str^[] isa str^[], str^[] isa int^[], str^[foo: 1, bar: 2] isa str^[]'
 1 >= '(true, false, true)'
+
+%
+
+$ vc '0 .. 5 map { _^2 }'
+1 >= '[0, 1, 4, 9, 16, 25]'
+
+%
+
+$ vc '0 .. 0 map { _^2 }, 0 -> 0 map { _^2 }'
+1 >= '([0], [])'
+
+%
+
+$ vc -- '-3 .. 1 map { _^2 }, -2 -> -1 map { _^2 }'
+1 >= '([9, 4, 1, 0, 1], [4])'
