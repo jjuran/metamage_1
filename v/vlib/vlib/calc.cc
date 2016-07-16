@@ -259,6 +259,11 @@ namespace vlib
 	static
 	Value calc_unary( op_type op, const Value& v )
 	{
+		if ( op == Op_array  &&  is_empty_list( v ) )
+		{
+			return empty_array;
+		}
+		
 		if ( op == Op_array  ||  op == Op_block )
 		{
 			return Value( op, v );
