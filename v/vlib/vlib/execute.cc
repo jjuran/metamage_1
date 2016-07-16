@@ -48,7 +48,7 @@ namespace vlib
 	static
 	Value unshare_symbols( const Value& presets )
 	{
-		if ( is_empty( presets ) )
+		if ( is_empty_list( presets ) )
 		{
 			return Value_empty_list;
 		}
@@ -60,7 +60,7 @@ namespace vlib
 		
 		const Value new_head = sym->is_immutable() ? head : sym->clone();
 		
-		if ( is_empty( tail ) )
+		if ( is_empty_list( tail ) )
 		{
 			return new_head;
 		}

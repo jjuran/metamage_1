@@ -52,9 +52,9 @@ namespace vlib
 	
 	Value as_assigned( const Value& type, const Value& v )
 	{
-		if ( is_empty( type ) )
+		if ( is_empty_list( type ) )
 		{
-			return is_empty( v ) ? v : Value_nothing;
+			return is_empty_list( v ) ? v : Value_nothing;
 		}
 		
 		if ( Expr* expr = type.expr() )
@@ -92,9 +92,9 @@ namespace vlib
 	static
 	Value as_coerced( const Value& type, const Value& v )
 	{
-		if ( is_empty( type ) )
+		if ( is_empty_list( type ) )
 		{
-			return is_empty( v ) ? v : Value_nothing;
+			return is_empty_list( v ) ? v : Value_nothing;
 		}
 		
 		if ( Expr* expr = type.expr() )

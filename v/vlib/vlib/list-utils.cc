@@ -53,12 +53,12 @@ namespace vlib
 	
 	void splice_lists( Value& left, const Value& right )
 	{
-		if ( is_empty( right ) )
+		if ( is_empty_list( right ) )
 		{
 			return;
 		}
 		
-		if ( is_empty( left ) )
+		if ( is_empty_list( left ) )
 		{
 			left = right;
 			return;

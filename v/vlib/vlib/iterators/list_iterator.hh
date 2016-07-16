@@ -24,7 +24,7 @@ namespace vlib
 		public:
 			list_iterator( const Value& list );
 			
-			bool finished() const  { return is_empty( *its_mark ); }
+			bool finished() const  { return is_empty_list( *its_mark ); }
 			
 			const Value& get() const;
 			

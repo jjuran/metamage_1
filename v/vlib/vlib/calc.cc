@@ -535,7 +535,7 @@ namespace vlib
 			THROW( "negative list repetition factor" );
 		}
 		
-		if ( factor.number().is_zero()  ||  is_empty( list ) )
+		if ( factor.number().is_zero()  ||  is_empty_list( list ) )
 		{
 			return Value_empty_list;
 		}
@@ -604,7 +604,7 @@ namespace vlib
 		{
 			if ( expr->op == Op_duplicate )
 			{
-				if ( is_empty( v ) )
+				if ( is_empty_list( v ) )
 				{
 					ASSERT( as_assigned( expr->left, expr->right ).type() );
 					
@@ -1136,7 +1136,7 @@ namespace vlib
 		
 		if ( op == Op_subscript )
 		{
-			if ( is_type( left )  &&  is_empty( right ) )
+			if ( is_type( left )  &&  is_empty_list( right ) )
 			{
 				goto no_op;
 			}

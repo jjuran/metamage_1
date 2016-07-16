@@ -286,7 +286,7 @@ namespace vlib
 	}
 	
 	inline
-	bool is_empty( const Value& v )
+	bool is_empty_list( const Value& v )
 	{
 		return v.type() == Value_empty_list;
 	}
@@ -294,7 +294,7 @@ namespace vlib
 	inline
 	bool is_single( const Value& v )
 	{
-		return ! is_empty( v )  &&  ! v.listexpr();
+		return ! is_empty_list( v )  &&  ! v.listexpr();
 	}
 	
 	inline
@@ -335,7 +335,7 @@ namespace vlib
 				if ( is_type( expr->left ) )
 				{
 					// subscript type
-					return is_empty( expr->right );
+					return is_empty_list( expr->right );
 				}
 			}
 			
@@ -350,7 +350,7 @@ namespace vlib
 			}
 		}
 		
-		return v.type() == Value_base_type  ||  is_empty( v );
+		return v.type() == Value_base_type  ||  is_empty_list( v );
 	}
 	
 	inline

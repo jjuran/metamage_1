@@ -91,7 +91,7 @@ namespace vlib
 	static
 	Value v_SYSTEM( const Value& v )
 	{
-		if ( is_empty( v ) )
+		if ( is_empty_list( v ) )
 		{
 			return Bool( system( NULL ) != 0 );
 		}

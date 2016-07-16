@@ -77,7 +77,7 @@ namespace vlib
 	{
 		const Value nth = get_nth_element( array, i );
 		
-		if ( is_empty( nth ) )
+		if ( is_empty_list( nth ) )
 		{
 			THROW( "subscript exceeds array bounds" );
 		}
@@ -98,7 +98,7 @@ namespace vlib
 				
 				const Value& list = expr->right;
 				
-				if ( is_empty( list ) )
+				if ( is_empty_list( list ) )
 				{
 					return index;  // empty array
 				}

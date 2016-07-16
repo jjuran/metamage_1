@@ -48,7 +48,7 @@ namespace vlib
 					if ( expr->op == Op_array )
 					{
 						// Empty array is false.
-						return Bool( ! is_empty( expr->right ) );
+						return Bool( ! is_empty_list( expr->right ) );
 					}
 				}
 				

@@ -252,7 +252,8 @@ namespace vlib
 			
 			// Assume a function call.
 			
-			fold_ops_and_add( is_empty( x ) ? Op_function : Op_named_unary );
+			fold_ops_and_add( is_empty_list( x ) ? Op_function
+			                                     : Op_named_unary );
 		}
 		
 		stack.push_back( dyad( x ) );

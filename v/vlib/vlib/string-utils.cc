@@ -264,7 +264,7 @@ namespace vlib
 		{
 			const size_t n_brackets = use_parens( mode ) * 2;
 			
-			if ( is_empty( expr->right ) )
+			if ( is_empty_list( expr->right ) )
 			{
 				return n_brackets;  // "[]" or "{}"
 			}
@@ -282,7 +282,7 @@ namespace vlib
 			
 			const bool subparens = expr->op != Op_subscript;
 			
-			if ( subparens  ||  ! is_empty( expr->right ) )
+			if ( subparens  ||  ! is_empty_list( expr->right ) )
 			{
 				total += composite_length( expr->right, mode, subparens );
 			}
@@ -432,7 +432,7 @@ namespace vlib
 				*p++ = '[';
 			}
 			
-			if ( ! is_empty( expr->right ) )
+			if ( ! is_empty_list( expr->right ) )
 			{
 				p = make_string( p, expr->right, mode, false );
 			}
@@ -449,7 +449,7 @@ namespace vlib
 		{
 			*p++ = '{';
 			
-			if ( ! is_empty( expr->right ) )
+			if ( ! is_empty_list( expr->right ) )
 			{
 				p = make_string( p, expr->right, mode, false );
 			}
@@ -482,7 +482,7 @@ namespace vlib
 				
 				const bool subparens = expr->op != Op_subscript;
 				
-				if ( subparens  ||  ! is_empty( expr->right ) )
+				if ( subparens  ||  ! is_empty_list( expr->right ) )
 				{
 					p = make_string( p, expr->right, mode, subparens );
 				}

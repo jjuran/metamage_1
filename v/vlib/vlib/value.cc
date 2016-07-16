@@ -160,7 +160,7 @@ namespace vlib
 	
 	Value bind_args( const Value& f, const Value& arguments )
 	{
-		if ( is_empty( arguments ) )
+		if ( is_empty_list( arguments ) )
 		{
 			return f;
 		}
