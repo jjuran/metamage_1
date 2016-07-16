@@ -588,7 +588,7 @@ namespace vlib
 		
 		const Value* next = &v;
 		
-		while ( Expr* expr = next->expr() )
+		while ( Expr* expr = next->listexpr() )
 		{
 			p = make_string( p, expr->left, Stringified_to_print );
 			

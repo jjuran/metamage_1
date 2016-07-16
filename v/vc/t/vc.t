@@ -2841,3 +2841,8 @@ $ vc 'def quine { const qq = "\""; return qq _ qq " " _; }; quine "is quoted"'
 
 $ vc '[1, 2,], {3, 4,}, (5, 6,)'
 1 >= '([1, 2], {3, 4}, 5, 6)'
+
+%
+
+$ vc 'try { " ".join( 1, {2}) } catch {"nope"}'
+1 >= '"nope"'
