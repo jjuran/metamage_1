@@ -14,12 +14,7 @@ def next_prime
 		var i = 0;
 		while x % primes[ i ] != 0 do
 		{
-			if primes[ i ] ^ 2 > x then
-			{
-				return x;
-			};
-			
-			if ++i > last_index then
+			if (primes[ i ] ^ 2 > x) or (++i > last_index) then
 			{
 				return x;
 			};
