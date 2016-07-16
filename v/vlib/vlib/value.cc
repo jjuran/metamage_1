@@ -27,6 +27,7 @@ namespace vlib
 	const Value dummy_operand = Value_dummy_operand;
 	const Value undefined     = Value_undefined;
 	const Value empty_list    = Value_empty_list;
+	const Value empty_array   = Value( Op_array, empty_list );
 	
 	static
 	void symbol_destructor( void* pointer )

@@ -236,6 +236,7 @@ namespace vlib
 	extern const Value dummy_operand;
 	extern const Value undefined;
 	extern const Value empty_list;
+	extern const Value empty_array;
 	
 	typedef Value symbol_id;
 	
