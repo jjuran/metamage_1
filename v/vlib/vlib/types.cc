@@ -69,6 +69,11 @@ namespace vlib
 	DEFINE_TYPE_INFO( c_str    );
 	DEFINE_TYPE_INFO( type     );
 	
+	bool is_null( const Value& v )
+	{
+		return v.type() == Value_base_type  &&  &v.typeinfo() == &null_vtype;
+	}
+	
 	static
 	Value v_typeof( const Value& v )
 	{
@@ -77,7 +82,7 @@ namespace vlib
 			return function_vtype;
 		}
 		
-		if ( v.type() == Value_base_type  &&  &v.typeinfo() == &null_vtype )
+		if ( is_null( v ) )
 		{
 			// null is its own type
 			return null_vtype;
