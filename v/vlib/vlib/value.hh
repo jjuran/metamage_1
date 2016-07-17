@@ -300,6 +300,17 @@ namespace vlib
 	}
 	
 	inline
+	bool is_array( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->op == Op_array;
+		}
+		
+		return is_empty_array( v );
+	}
+	
+	inline
 	bool is_single( const Value& v )
 	{
 		return ! is_empty_list( v )  &&  ! v.listexpr();
