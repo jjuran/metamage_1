@@ -259,6 +259,11 @@ namespace vlib
 	static
 	Value calc_unary( op_type op, const Value& v )
 	{
+		if ( op == Op_array  &&  is_empty_list( v ) )
+		{
+			return empty_array;
+		}
+		
 		if ( op == Op_array  ||  op == Op_block )
 		{
 			return Value( op, v );
@@ -325,6 +330,21 @@ namespace vlib
 		{
 			case Value_empty_list:
 				return Integer();
+			
+			case Value_empty_array:
+				if ( op == Op_unary_deref )
+				{
+					return Value_empty_list;
+				}
+				
+				if ( op == Op_unary_minus )
+				{
+					return v;
+				}
+				
+				THROW( "unary operator not defined for (empty) arrays" );
+				break;
+			
 			
 			case Value_boolean:
 				switch ( op )
@@ -398,6 +418,16 @@ namespace vlib
 	static
 	Value array_member( const Value& array, const plus::string& name )
 	{
+		if ( is_empty_array( array ) )
+		{
+			if ( name == "length" )
+			{
+				return Integer();
+			}
+			
+			THROW( "nonexistent array member" );
+		}
+		
 		Expr* expr = array.expr();
 		
 		ASSERT( expr != NULL );
@@ -787,6 +817,11 @@ namespace vlib
 	static
 	Value map( const Value& array, const Value& f )
 	{
+		if ( is_empty_array( array ) )
+		{
+			return array;
+		}
+		
 		Value result = Value_empty_list;
 		
 		Expr* expr = array.expr();
@@ -1169,7 +1204,7 @@ namespace vlib
 		{
 			const Value v = linear_subscript( left, right );
 			
-			if ( Expr* expr = right.expr() )
+			if ( is_empty_array( right )  ||  right.expr() != 0 )  // NULL
 			{
 				switch ( left.type() )
 				{

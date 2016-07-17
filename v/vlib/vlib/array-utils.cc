@@ -88,6 +88,11 @@ namespace vlib
 	static
 	Value sliced_subscript( const Value& array, const Value& index )
 	{
+		if ( is_empty_array( index ) )
+		{
+			return index;
+		}
+		
 		Value results;
 		
 		if ( Expr* expr = index.expr() )
@@ -97,11 +102,6 @@ namespace vlib
 				std::vector< unsigned > indices;
 				
 				const Value& list = expr->right;
-				
-				if ( is_empty_list( list ) )
-				{
-					return index;  // empty array
-				}
 				
 				list_iterator next_item( list );
 				
@@ -157,6 +157,11 @@ namespace vlib
 			return indexed_subscript( array, i );
 		}
 		
+		if ( is_empty_array( index ) )
+		{
+			return sliced_subscript( array, index );
+		}
+		
 		if ( Expr* expr = index.expr() )
 		{
 			if ( expr->op == Op_array )
@@ -185,6 +190,12 @@ namespace vlib
 		Symbol& sym = *array_target.sym();
 		
 		Value& array = sym.deref();
+		
+		if ( is_empty_array( array ) )
+		{
+			array = make_array( list );
+			return;
+		}
 		
 		Expr* expr = array.expr();
 		

@@ -43,6 +43,7 @@ namespace vlib
 		Value_undefined,
 		Value_expired,
 		Value_empty_list,
+		Value_empty_array,
 		Value_symbol,
 		Value_symbol_descriptor,
 		Value_base_type,
@@ -236,6 +237,7 @@ namespace vlib
 	extern const Value dummy_operand;
 	extern const Value undefined;
 	extern const Value empty_list;
+	extern const Value empty_array;
 	
 	typedef Value symbol_id;
 	
@@ -289,6 +291,12 @@ namespace vlib
 	bool is_empty_list( const Value& v )
 	{
 		return v.type() == Value_empty_list;
+	}
+	
+	inline
+	bool is_empty_array( const Value& v )
+	{
+		return v.type() == Value_empty_array;
 	}
 	
 	inline
@@ -392,7 +400,8 @@ namespace vlib
 	inline
 	Value make_array( const Value& list )
 	{
-		return Value( Op_array, list );
+		return is_empty_list( list ) ? empty_array
+		                             : Value( Op_array, list );
 	}
 	
 	Value bind_args( const Value& f, const Value& arguments );

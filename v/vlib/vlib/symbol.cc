@@ -22,6 +22,11 @@ namespace vlib
 	static
 	bool is_homogenous_array( const Value& type, const Value& array )
 	{
+		if ( is_empty_array( array ) )
+		{
+			return true;
+		}
+		
 		Expr* expr = array.expr();
 		
 		if ( expr == 0  ||  expr->op != Op_array )  // NULL

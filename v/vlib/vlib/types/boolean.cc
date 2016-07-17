@@ -28,6 +28,7 @@ namespace vlib
 				INTERNAL_ERROR( "invalid type in coerce_to_boolean()" );
 			
 			case Value_empty_list:
+			case Value_empty_array:
 				return Bool();
 			
 			case Value_byte:
@@ -43,15 +44,6 @@ namespace vlib
 			
 			case Value_function:
 			case Value_pair:
-				if ( Expr* expr = v.expr() )
-				{
-					if ( expr->op == Op_array )
-					{
-						// Empty array is false.
-						return Bool( ! is_empty_list( expr->right ) );
-					}
-				}
-				
 				return True;
 		}
 	}
