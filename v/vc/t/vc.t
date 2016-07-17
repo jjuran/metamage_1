@@ -2891,3 +2891,18 @@ $ vc '[null, 0, "", [], false, true, "0", [[]]] map {_ or ...}'
 
 $ vc '{1 and 2 or 3, 1 or 2 and 3}'
 1 >= '{((1 and 2) or 3), (1 or (2 and 3))}'
+
+%
+
+$ vc 'null: null, 0: [1, 2, 3]'
+1 >= '(("null" => null), (0 => [1, 2, 3]))'
+
+%
+
+$ vc '[[null], [], [1], [1, 2, 3]] map {try {value: *_} catch {"nope"}}'
+1 >= '[("value" => null), "nope", ("value" => 1), "nope"]'
+
+%
+
+$ vc '[[null], [], [1], [1, 2, 3]] map {try {*_ => "key"} catch {"nope"}}'
+1 >= '["nope", "nope", (1 => "key"), "nope"]'

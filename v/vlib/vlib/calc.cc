@@ -1164,6 +1164,19 @@ namespace vlib
 			return make_list( left, right );
 		}
 		
+		if ( op == Op_mapping )
+		{
+			if ( ! is_single( left )  ||  is_null( left ) )
+			{
+				THROW( "mapping keys must be singular and non-null" );
+			}
+			
+			if ( ! is_single( right ) )
+			{
+				THROW( "mapping values must be singular" );
+			}
+		}
+		
 		if ( is_supporting( op ) )
 		{
 			goto no_op;
