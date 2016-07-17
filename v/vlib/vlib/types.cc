@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/proc_info.hh"
+#include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
 #include "vlib/types/any.hh"
@@ -120,6 +121,24 @@ namespace vlib
 		{
 			return Value( v_typeof( expr->left  ), expr->op,
 			              v_typeof( expr->right ) );
+		}
+		
+		if ( expr->op == Op_empower )
+		{
+			if ( is_type( expr->left ) )
+			{
+				if ( is_empty_array( expr->right ) )
+				{
+					return v;  // typeof type^[] is type^[]
+				}
+				
+				if ( is_array( expr->right ) )
+				{
+					return Value( expr->left, expr->op, Value_empty_array );
+				}
+			}
+			
+			THROW( "abuse of power" );
 		}
 		
 		Value result = Value( empty_list, v_typeof( expr->left ) );

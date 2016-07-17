@@ -2906,3 +2906,48 @@ $ vc '[[null], [], [1], [1, 2, 3]] map {try {value: *_} catch {"nope"}}'
 
 $ vc '[[null], [], [1], [1, 2, 3]] map {try {*_ => "key"} catch {"nope"}}'
 1 >= '["nope", "nope", (1 => "key"), "nope"]'
+
+%
+
+$ vc 'byte^[], bool str^[], typeof data^[], int^[] | ()'
+1 >= '((byte^[]), false, (data^[]), ((integer^[]) | ()))'
+
+%
+
+$ vc 'str^[foo: 1, bar: "none", baz: null]'
+1 >= '(string^[("foo" => 1), ("bar" => "none"), ("baz" => null)])'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x.length, bool x'
+1 >= '(3, true)'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x.keys'
+1 >= '["foo", "bar", "baz"]'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x.values'
+1 >= '[1, "none", null]'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; *x'
+1 >= '(("foo" => 1), ("bar" => "none"), ("baz" => null))'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; -x'
+1 >= '(string^[("baz" => null), ("bar" => "none"), ("foo" => 1)])'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x["bar"], x["foo"]'
+1 >= '("none", 1)'
+
+%
+
+$ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x[["baz", "foo"]], x[[]]'
+1 >= '([null, 1], [])'

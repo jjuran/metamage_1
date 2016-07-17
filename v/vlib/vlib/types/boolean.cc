@@ -44,6 +44,14 @@ namespace vlib
 			
 			case Value_function:
 			case Value_pair:
+				if ( Expr* expr = v.expr() )
+				{
+					if ( expr->op == Op_empower )
+					{
+						// Check if the array is empty.
+						return Bool( expr->right.expr() != 0 );  // NULL
+					}
+				}
 				return True;
 		}
 	}

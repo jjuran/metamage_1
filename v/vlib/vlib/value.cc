@@ -172,6 +172,11 @@ namespace vlib
 				}
 			}
 			
+			if ( expr->op == Op_empower )
+			{
+				return is_type( expr->left )  &&  is_empty_array( expr->right );
+			}
+			
 			if ( expr->op == Op_mapping )
 			{
 				return is_type( expr->left )  &&  is_type( expr->right );

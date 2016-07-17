@@ -24,9 +24,11 @@
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
+#include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
@@ -304,6 +306,24 @@ namespace vlib
 					
 					THROW( "unary operator not defined for arrays" );
 				
+				case Op_empower:
+					if ( op == Op_unary_deref )
+					{
+						return expr->right.expr()->right;
+					}
+					
+					if ( op == Op_unary_minus )
+					{
+						const Value& old_list = expr->right.expr()->right;
+						
+						const Value new_list  = reverse_list( old_list );
+						const Value new_array = make_array  ( new_list );
+						
+						return Value( expr->left, expr->op, new_array );
+					}
+					
+					THROW( "unary operator not defined for arrays" );
+				
 				case Op_gamut:
 				case Op_delta:
 					if ( op == Op_unary_deref )
@@ -467,6 +487,46 @@ namespace vlib
 	}
 	
 	static
+	Value table_member( const Value& table, const plus::string& name )
+	{
+		const Value& array = table.expr()->right;
+		
+		if ( name == "length" )
+		{
+			return array_member( array, name );
+		}
+		
+		if ( name == "keys"  ||  name == "values" )
+		{
+			if ( is_empty_array( array ) )
+			{
+				return array;
+			}
+			
+			const bool keys = name == "keys";
+			
+			Value results = Value_empty_list;
+			
+			array_iterator it( array );
+			
+			while ( it )
+			{
+				const Value& mapping = it.use();
+				
+				Expr* expr = mapping.expr();
+				
+				results = make_list( results, keys ? expr->left : expr->right );
+			}
+			
+			return make_array( results );
+		}
+		
+		THROW( "nonexistent table member" );
+		
+		return Value();
+	}
+	
+	static
 	Value calc_member( const Value& left, const Value& right )
 	{
 		if ( right.type() != Value_string )
@@ -486,6 +546,11 @@ namespace vlib
 			if ( expr->op == Op_mapping )
 			{
 				return mapping_member( left, right.string() );
+			}
+			
+			if ( expr->op == Op_empower )
+			{
+				return table_member( left, right.string() );
 			}
 		}
 		
@@ -1198,6 +1263,14 @@ namespace vlib
 			}
 		}
 		
+		if ( op == Op_empower )
+		{
+			if ( is_type( left )  &&  is_array( right ) )
+			{
+				return make_table( left, right );
+			}
+		}
+		
 		if ( op == Op_repeat )
 		{
 			return repeat_list( left, right );
@@ -1215,6 +1288,11 @@ namespace vlib
 		
 		if ( op == Op_subscript )
 		{
+			if ( is_table( left ) )
+			{
+				return associative_subscript( left, right );
+			}
+			
 			const Value v = linear_subscript( left, right );
 			
 			if ( is_empty_array( right )  ||  right.expr() != 0 )  // NULL
