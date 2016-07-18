@@ -51,7 +51,6 @@ namespace vlib
 		return Value( key_type, Op_empower, array );
 	}
 	
-	static
 	bool equal_keys( const Value& a, const Value& b )
 	{
 		if ( a.type() != b.type() )

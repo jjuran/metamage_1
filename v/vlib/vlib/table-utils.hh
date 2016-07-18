@@ -29,6 +29,8 @@ namespace vlib
 	
 	Value make_table( const Value& key_type, const Value& array );
 	
+	bool equal_keys( const Value& a, const Value& b );
+	
 	Value associative_subscript( const Value& table, const Value& key );
 	
 }
