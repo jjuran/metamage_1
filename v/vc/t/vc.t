@@ -2951,3 +2951,8 @@ $ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x["bar"], x["foo"]'
 
 $ vc 'const x = str^[foo: 1, bar: "none", baz: null]; x[["baz", "foo"]], x[[]]'
 1 >= '([null, 1], [])'
+
+%
+
+$ vc 'str^[] isa str^[], str^[] isa int^[], str^[foo: 1, bar: 2] isa str^[]'
+1 >= '(true, false, true)'

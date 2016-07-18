@@ -9,6 +9,7 @@
 #include "debug/assert.hh"
 
 // vlib
+#include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/list_iterator.hh"
@@ -55,6 +56,12 @@ namespace vlib
 		        &&  as_assigned( tx->right, vx->right ).type();
 	}
 	
+	static
+	bool is_table( Expr* tx, const Value& v )
+	{
+		return is_table( v )  &&  equal_keys( tx->left, v.expr()->left );
+	}
+	
 	Value as_assigned( const Value& type, const Value& v )
 	{
 		if ( is_empty_list( type ) )
@@ -72,6 +79,11 @@ namespace vlib
 			if ( expr->op == Op_mapping )
 			{
 				return is_mapping( expr, v.expr() ) ? v : nothing;
+			}
+			
+			if ( expr->op == Op_empower )
+			{
+				return is_table( expr, v ) ? v : nothing;
 			}
 			
 			Value result = as_assigned( expr->left, v );
