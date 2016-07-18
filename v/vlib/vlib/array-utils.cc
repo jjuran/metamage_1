@@ -129,9 +129,10 @@ namespace vlib
 				const unsigned a = expr->left.number().clipped();
 				const unsigned b = expr->right.number().clipped();
 				
+				// This will overflow if op is Op_delta and b == 0.
 				unsigned i = b - (expr->op == Op_delta);
 				
-				if ( a > i )
+				if ( a > i  ||  i > b )
 				{
 					return make_array( empty_list );
 				}
