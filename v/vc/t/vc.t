@@ -3106,3 +3106,8 @@ $ vc 'const x = int^[1: 2, 3: 4]; try { "1" in x } catch { "nope" }'
 
 $ vc '"spam" in str^[]'
 1 >= 'false'
+
+%
+
+$ vc 'str^[foo: 1, bar: 2] map {_.value => _.key}'
+1 >= '[(1 => "foo"), (2 => "bar")]'

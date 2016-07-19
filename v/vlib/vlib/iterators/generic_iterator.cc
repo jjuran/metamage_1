@@ -34,6 +34,10 @@ namespace vlib
 		{
 			switch ( expr->op )
 			{
+				case Op_empower:
+					expr = expr->right.expr();
+					// fall through
+				
 				case Op_array:
 					its_impl = new_iterator< list_iterator >( expr->right );
 					return;
