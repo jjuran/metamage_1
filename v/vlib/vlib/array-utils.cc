@@ -5,9 +5,6 @@
 
 #include "vlib/array-utils.hh"
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/integer.hh"
 
@@ -15,6 +12,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/byte.hh"
 
@@ -93,55 +91,34 @@ namespace vlib
 			return index;
 		}
 		
-		Value results;
+		list_builder results;
 		
 		if ( Expr* expr = index.expr() )
 		{
 			if ( expr->op == Op_array )
 			{
-				std::vector< unsigned > indices;
-				
 				const Value& list = expr->right;
 				
 				list_iterator next_item( list );
 				
 				do
 				{
-					indices.push_back( subscript_integer( next_item.use() ) );
+					const unsigned i = subscript_integer( next_item.use() );
+					
+					results.append( indexed_subscript( array, i ) );
 				}
 				while ( next_item );
-				
-				typedef std::vector< unsigned >::const_iterator Iter;
-				
-				Iter it = indices.end();
-				
-				results = indexed_subscript( array, *--it );
-				
-				while ( it > indices.begin() )
-				{
-					const unsigned i = *--it;
-					
-					results = Value( indexed_subscript( array, i ), results );
-				}
 			}
 			else if ( expr->op == Op_gamut  ||  expr->op == Op_delta )
 			{
-				const unsigned a = expr->left.number().clipped();
-				const unsigned b = expr->right.number().clipped();
+				const unsigned a = subscript_integer( expr->left  );
+				const unsigned b = subscript_integer( expr->right );
 				
-				// This will overflow if op is Op_delta and b == 0.
-				unsigned i = b - (expr->op == Op_delta);
+				unsigned i = a;
 				
-				if ( a > i  ||  i > b )
+				while ( i < b  ||  (expr->op == Op_gamut  &&  i == b) )
 				{
-					return make_array( empty_list );
-				}
-				
-				results = indexed_subscript( array, i );
-				
-				while ( i > a )
-				{
-					results = Value( indexed_subscript( array, --i ), results );
+					results.append( indexed_subscript( array, i++ ) );
 				}
 			}
 		}

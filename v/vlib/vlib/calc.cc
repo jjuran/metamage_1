@@ -29,6 +29,7 @@
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
@@ -505,7 +506,7 @@ namespace vlib
 			
 			const bool keys = name == "keys";
 			
-			Value results = Value_empty_list;
+			list_builder results;
 			
 			array_iterator it( array );
 			
@@ -515,7 +516,7 @@ namespace vlib
 				
 				Expr* expr = mapping.expr();
 				
-				results = make_list( results, keys ? expr->left : expr->right );
+				results.append( keys ? expr->left : expr->right );
 			}
 			
 			return make_array( results );
@@ -716,7 +717,7 @@ namespace vlib
 	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
-		Value result = Value_empty_list;
+		list_builder result;
 		
 		list_iterator defs( prototype );
 		list_iterator args( arguments );
@@ -732,7 +733,7 @@ namespace vlib
 					THROW( "`...` must be last in a prototype" );
 				}
 				
-				result = calc( result, Op_list, args.rest() );
+				result.append( args.rest() );
 				
 				return result;
 			}
@@ -746,7 +747,7 @@ namespace vlib
 				THROW( "arguments don't match function prototype" );
 			}
 			
-			result = calc( result, Op_list, r );
+			result.append( r );
 		}
 		
 		if ( args )
@@ -887,8 +888,6 @@ namespace vlib
 			return array;
 		}
 		
-		Value result = Value_empty_list;
-		
 		Expr* expr = array.expr();
 		
 		if ( expr == NULL  ||  expr->op != Op_array )
@@ -903,13 +902,15 @@ namespace vlib
 		
 		list_iterator it( expr->right );
 		
+		list_builder result;
+		
 		while ( it )
 		{
 			const Value& x = it.use();
 			
 			Value f_x = call_function( f, x );
 			
-			result = make_list( result, f_x );
+			result.append( f_x );
 		}
 		
 		return make_array( result );

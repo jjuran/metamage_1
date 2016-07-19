@@ -5,9 +5,6 @@
 
 #include "vlib/table-utils.hh"
 
-// Standard C++
-#include <vector>
-
 // plus
 #include "plus/integer.hh"
 
@@ -17,6 +14,7 @@
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/byte.hh"
 
@@ -142,36 +140,21 @@ namespace vlib
 			return key;
 		}
 		
-		Value results;
+		list_builder results;
 		
 		if ( Expr* expr = key.expr() )
 		{
 			if ( expr->op == Op_array )
 			{
-				std::vector< Value > keys;
-				
 				const Value& list = expr->right;
 				
 				list_iterator next_item( list );
 				
 				do
 				{
-					keys.push_back( next_item.use() );
+					results.append( keyed_subscript( table, next_item.use() ) );
 				}
 				while ( next_item );
-				
-				typedef std::vector< Value >::const_iterator Iter;
-				
-				Iter it = keys.end();
-				
-				results = keyed_subscript( table, *--it );
-				
-				while ( it > keys.begin() )
-				{
-					const Value& k = *--it;
-					
-					results = Value( keyed_subscript( table, k ), results );
-				}
 			}
 		}
 		
