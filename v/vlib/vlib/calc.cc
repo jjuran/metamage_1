@@ -717,7 +717,7 @@ namespace vlib
 	static
 	Value apply_prototype( const Value& prototype, const Value& arguments )
 	{
-		Value result = Value_empty_list;
+		list_builder result;
 		
 		list_iterator defs( prototype );
 		list_iterator args( arguments );
@@ -733,7 +733,7 @@ namespace vlib
 					THROW( "`...` must be last in a prototype" );
 				}
 				
-				result = calc( result, Op_list, args.rest() );
+				result.append( args.rest() );
 				
 				return result;
 			}
@@ -747,7 +747,7 @@ namespace vlib
 				THROW( "arguments don't match function prototype" );
 			}
 			
-			result = calc( result, Op_list, r );
+			result.append( r );
 		}
 		
 		if ( args )
