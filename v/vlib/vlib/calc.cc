@@ -29,6 +29,7 @@
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
@@ -887,8 +888,6 @@ namespace vlib
 			return array;
 		}
 		
-		Value result = Value_empty_list;
-		
 		Expr* expr = array.expr();
 		
 		if ( expr == NULL  ||  expr->op != Op_array )
@@ -903,13 +902,15 @@ namespace vlib
 		
 		list_iterator it( expr->right );
 		
+		list_builder result;
+		
 		while ( it )
 		{
 			const Value& x = it.use();
 			
 			Value f_x = call_function( f, x );
 			
-			result = make_list( result, f_x );
+			result.append( f_x );
 		}
 		
 		return make_array( result );
