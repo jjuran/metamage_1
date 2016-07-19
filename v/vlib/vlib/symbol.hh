@@ -66,6 +66,8 @@ namespace vlib
 			
 			Value& deref();
 			
+			Value& deref_unsafe()  { return its_value; }
+			
 			void set_mark( mark_type mark )  { its_mark = mark; }
 			
 			mark_type mark() const  { return its_mark; }
