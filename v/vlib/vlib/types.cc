@@ -13,6 +13,8 @@
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
+#include "vlib/iterators/list_builder.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
@@ -141,26 +143,16 @@ namespace vlib
 			THROW( "abuse of power" );
 		}
 		
-		Value result = Value( empty_list, v_typeof( expr->left ) );
+		list_builder result;
 		
-		Expr* r = result.expr();
+		list_iterator it( v );
 		
-		const Value* next = &expr->right;
-		
-		expr = next->expr();
-		
-		while ( expr  &&  expr->op == Op_list )
+		while ( it )
 		{
-			r->right = Value( r->right, v_typeof( expr->left ) );
-			
-			next = &expr->right;
-			expr = next->expr();
-			r = r->right.expr();
+			result.append( v_typeof( it.use() ) );
 		}
 		
-		r->right = Value( r->right, v_typeof( *next ) );
-		
-		return result.expr()->right;
+		return result;
 	}
 	
 	const proc_info proc_typeof = { "typeof", &v_typeof, NULL };
