@@ -506,7 +506,7 @@ namespace vlib
 			
 			const bool keys = name == "keys";
 			
-			Value results = Value_empty_list;
+			list_builder results;
 			
 			array_iterator it( array );
 			
@@ -516,7 +516,7 @@ namespace vlib
 				
 				Expr* expr = mapping.expr();
 				
-				results = make_list( results, keys ? expr->left : expr->right );
+				results.append( keys ? expr->left : expr->right );
 			}
 			
 			return make_array( results );
