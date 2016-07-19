@@ -1624,8 +1624,8 @@ $ vc 'var x (bool) := 1337; x'
 
 %
 
-$ vc 'var x (string) := area, 51'
-1 >= '"area51"'
+$ vc 'var x (string) := substr, 8'
+1 >= '"substr8"'
 
 %
 

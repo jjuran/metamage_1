@@ -71,7 +71,7 @@ namespace vlib
 	}
 	
 	static
-	Value v_area( const Value& v )
+	Value v_areaof( const Value& v )
 	{
 		return Integer( area( v ) );
 	}
@@ -199,7 +199,7 @@ namespace vlib
 	static const Value substr( string_vtype, Value( s_offset, s_length ) );
 	
 	const proc_info proc_abs    = { "abs",    &v_abs,    &integer };
-	const proc_info proc_area   = { "area",   &v_area,   NULL     };
+	const proc_info proc_areaof = { "areaof", &v_areaof, NULL     };
 	const proc_info proc_half   = { "half",   &v_half,   &integer };
 	const proc_info proc_hex    = { "hex",    &v_hex,    NULL     };
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince   };

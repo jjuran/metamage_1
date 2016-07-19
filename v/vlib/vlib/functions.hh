@@ -13,7 +13,7 @@ namespace vlib
 	struct proc_info;
 	
 	extern const proc_info proc_abs;
-	extern const proc_info proc_area;
+	extern const proc_info proc_areaof;
 	extern const proc_info proc_half;
 	extern const proc_info proc_hex;
 	extern const proc_info proc_mince;

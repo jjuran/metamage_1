@@ -69,7 +69,7 @@ namespace vlib
 		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_vtype );
 		
 		define_keyword( proc_abs    );
-		define_keyword( proc_area   );
+		define_keyword( proc_areaof );
 		define_keyword( proc_half   );
 		define_keyword( proc_hex    );
 		define_keyword( proc_join   );
