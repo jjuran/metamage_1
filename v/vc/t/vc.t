@@ -3211,3 +3211,23 @@ $ vc 'if 0 then {2} else if 3 then {4} else {5}'
 
 $ vc 'if 0 then {2} else if 0 then {4} else {5}'
 1 >= 5
+
+%
+
+$ vc 'var x = 3; var y = 4; x <-> y; x, y'
+1 >= '(4, 3)'
+
+%
+
+$ vc 'var x; var y = "moved"; x <- y; x'
+1 >= '"moved"'
+
+%
+
+$ vc 'var x = 0; var y = 1; var z = 2; x <- y <- z; x, y'
+1 >= '(1, 2)'
+
+%
+
+$ vc 'var x = 0; var y = 1; var z = 2; x <- y <- z = 3; x, y, z'
+1 >= '(1, 2, 3)'

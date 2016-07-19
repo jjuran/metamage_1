@@ -337,6 +337,11 @@ namespace vlib
 				return eval( left, Op_denote, expr->right, expr->source );
 			}
 			
+			if ( expr->op == Op_move )
+			{
+				return execute( v, stack );
+			}
+			
 			const bool decl = declares_symbols( expr->op );
 			const bool exec = ! decl  &&  expr->op != Op_list;
 			
@@ -478,6 +483,14 @@ namespace vlib
 				using iota::swap;
 				
 				swap( left, right );
+			}
+			
+			if ( is_right_varop( expr->op ) )
+			{
+				return eval( resolve_symbol_expr( *left, stack ),
+				             expr->op,
+				             resolve_symbol_expr( *right, stack ),
+				             expr->source );
 			}
 			
 			if ( is_left_varop( expr->op )  &&  ! is_type_annotation( *left ) )

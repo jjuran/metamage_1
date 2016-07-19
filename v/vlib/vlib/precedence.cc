@@ -38,7 +38,8 @@ namespace vlib
 		Precedence_or,              // or
 		Precedence_mapping,         // => :
 		Precedence_list,            // ,
-		Precedence_assignment,      // =
+		Precedence_move,            // <- <->
+		Precedence_assignment,      // = :=
 		Precedence_conditional,     // if then else while do for
 		Precedence_command,         // assert return throw
 		Precedence_end,             // ;
@@ -117,6 +118,9 @@ namespace vlib
 		{ Precedence_mapping, Op_mapping },
 		
 		{ Precedence_list, Op_list },
+		
+		{ Precedence_move, Op_move },
+		{ Precedence_move, Op_swap },
 		
 		{ Precedence_assignment, Op_duplicate   },
 		{ Precedence_assignment, Op_approximate },

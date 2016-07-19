@@ -124,6 +124,20 @@ namespace vlib
 	}
 	
 	static
+	void check_type( const Value& type, const Value& v )
+	{
+		if ( is_undefined( v ) )
+		{
+			THROW( "undefined value" );
+		}
+		
+		if ( type.type()  &&  ! as_assigned( type, v ).type() )
+		{
+			THROW( "type mismatch in assignment" );
+		}
+	}
+	
+	static
 	Value eval_assignment( const Value& left, op_type op, const Value& right )
 	{
 		Target target = make_target( left );
@@ -138,6 +152,43 @@ namespace vlib
 			const bool coercive = op == Op_approximate;
 			
 			return assign_target( target, right, coercive );
+		}
+		
+		if ( is_right_varop( op ) )
+		{
+			Target second = make_target( right );
+			
+			check_type( *target.type, *second.addr );
+			
+			if ( op == Op_move )
+			{
+				if ( right.sym() == 0 )  // NULL
+				{
+					THROW( "can't move from a container element" );
+				}
+				
+				*target.addr = *second.addr;
+				*second.addr = Value_undefined;
+			}
+			
+			if ( op == Op_swap )
+			{
+				check_type( *second.type, *target.addr );
+				
+				target.addr->swap( *second.addr );
+			}
+			
+			if ( Symbol* sym = left.sym() )
+			{
+				track_symbol( left, *target.addr );
+			}
+			
+			if ( Symbol* sym = right.sym() )
+			{
+				track_symbol( right, *second.addr );
+			}
+			
+			return right;
 		}
 		
 		if ( op == Op_push )

@@ -63,6 +63,9 @@ namespace vlib
 		{ Token_comma,       Op_list      },
 		{ Token_equals,      Op_duplicate },
 		
+		{ Token_lt_minus,    Op_move },
+		{ Token_lt_minus_gt, Op_swap },
+		
 		{ Token_colon_equals,    Op_approximate },
 		
 		{ Token_plus_equals,     Op_increase_by },
