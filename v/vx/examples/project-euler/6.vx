@@ -1,0 +1,23 @@
+#!/usr/bin/env vx
+
+def sum
+{
+	var total = 0;
+	
+	for x in _ do
+	{
+		total += x;
+	};
+	
+	return total;
+};
+
+const set = 1 .. 10000;
+
+const square_of_sum = sum( set )^2;
+
+const sum_of_squares = sum( set map { _^2 });
+
+const diff = square_of_sum - sum_of_squares;
+
+print diff;
