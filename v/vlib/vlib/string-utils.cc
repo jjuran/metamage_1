@@ -607,22 +607,23 @@ namespace vlib
 			THROW( "excessively large arguments to join()" );
 		}
 		
+		list_iterator it( v );
+		
 		plus::string result;
 		
 		char* p = result.reset( size.clipped() );
 		
-		const Value* next = &v;
+		goto loop_start;
 		
-		while ( Expr* expr = next->listexpr() )
+		do
 		{
-			p = make_string( p, expr->left, Stringified_to_print );
-			
 			p = mempcpy( p, glue );
 			
-			next = &expr->right;
+		loop_start:
+			
+			p = make_string( p, it.use(), Stringified_to_print );
 		}
-		
-		make_string( p, *next, Stringified_to_print );
+		while ( it );
 		
 		return result;
 	}
