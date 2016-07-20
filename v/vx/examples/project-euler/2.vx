@@ -14,7 +14,8 @@ while b <= max do
 		sum += b;
 	}
 	
-	a, b = b, a + b;
+	a <-> b;
+	b += a;
 }
 
 print sum;
