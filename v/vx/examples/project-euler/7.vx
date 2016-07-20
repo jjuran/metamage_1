@@ -1,0 +1,8 @@
+#!/usr/bin/env vx
+
+const libdir = { (dirname argv[ 0 ]) "/lib/" };
+const import = { eval load libdir() _ ".vm"  };
+
+const nth_prime = import "nth_prime";
+
+print nth_prime (10001 - 1);
