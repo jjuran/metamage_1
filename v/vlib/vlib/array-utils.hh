@@ -13,9 +13,11 @@
 namespace vlib
 {
 	
+	struct Target;
+	
 	Value linear_subscript( const Value& array, const Value& index );
 	
-	void push( const Value& array_target, const Value& list );
+	void push( const Target& array_target, const Value& list );
 	
 }
 

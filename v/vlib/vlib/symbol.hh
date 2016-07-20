@@ -11,6 +11,7 @@
 
 // vlib
 #include "vlib/value.hh"
+#include "vlib/target.hh"
 
 
 namespace vlib
@@ -61,6 +62,8 @@ namespace vlib
 			
 			void assign( const Value& v, bool coercive = false );
 			
+			Target target();
+			
 			Value& deref();
 			
 			void set_mark( mark_type mark )  { its_mark = mark; }
@@ -82,6 +85,8 @@ namespace vlib
 			
 			Value clone() const;
 	};
+	
+	void assign( const Target& target, const Value& v, bool coercive = false );
 	
 	inline
 	const Value& lookup_symbol( const Symbol* symbol )

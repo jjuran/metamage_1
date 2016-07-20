@@ -148,23 +148,38 @@ namespace vlib
 	
 	void Symbol::assign( const Value& v, bool coercive )
 	{
+		vlib::assign( target(), v, coercive );
+	}
+	
+	Target Symbol::target()
+	{
 		if ( is_immutable() )
 		{
 			THROW( "reassignment of constant" );
 		}
 		
-		if ( its_vtype.type() )
+		Target result = { &its_value, &its_vtype };
+		
+		return result;
+	}
+	
+	void assign( const Target& target, const Value& v, bool coercive )
+	{
+		Value& dst         = *target.addr;
+		Value const& vtype = *target.type;
+		
+		if ( vtype.type() )
 		{
-			its_value = (coercive ? as_coerced : as_assigned)( its_vtype, v );
+			dst = (coercive ? as_coerced : as_assigned)( vtype, v );
 			
-			if ( ! its_value.type() )
+			if ( ! dst.type() )
 			{
 				THROW( "type mismatch in assignment" );
 			}
 		}
 		else
 		{
-			its_value = v;
+			dst = v;
 		}
 	}
 	
