@@ -10,6 +10,7 @@
 #include "vlib/iterators/iterator_template.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/iterators/range_iterator.hh"
+#include "vlib/iterators/string_iterator.hh"
 
 
 namespace vlib
@@ -28,6 +29,17 @@ namespace vlib
 		{
 			its_impl = new_iterator< list_iterator >( empty_list );
 			return;
+		}
+		
+		switch ( container.type() )
+		{
+			case V_str:
+			case V_data:
+				its_impl = new_iterator< string_iterator >( container );
+				return;
+			
+			default:
+				break;
 		}
 		
 		if ( Expr* expr = container.expr() )
