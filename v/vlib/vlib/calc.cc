@@ -194,6 +194,34 @@ namespace vlib
 	}
 	
 	static
+	Value generic_deref( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			if ( expr->op == Op_array )
+			{
+				return expr->right;
+			}
+			
+			if ( expr->op == Op_empower )
+			{
+				return generic_deref( expr->right );
+			}
+		}
+		
+		generic_iterator it( v );
+		
+		list_builder result;
+		
+		while ( it )
+		{
+			result.append( it.use() );
+		}
+		
+		return result;
+	}
+	
+	static
 	bool in_list( const Value& v, const Value& list )
 	{
 		list_iterator it( list );
@@ -289,61 +317,6 @@ namespace vlib
 	}
 	
 	static
-	Value deref_string( const plus::string& s )
-	{
-		typedef plus::string::size_type size_t;
-		
-		const size_t size = s.size();
-		
-		if ( size == 0 )
-		{
-			return Value_empty_list;
-		}
-		
-		const char* begin = s.data();
-		const char* it    = begin + size;
-		
-		Value result = Byte( *--it );
-		
-		while ( it > begin )
-		{
-			result = Value( Byte( *--it ), result );
-		}
-		
-		return result;
-	}
-	
-	static
-	Value expand_range( const Value& range )
-	{
-		Expr* expr = range.expr();
-		
-		const plus::integer& left  = expr->left.number();
-		const plus::integer& right = expr->right.number();
-		
-		plus::integer i = right;
-		
-		if ( expr->op == Op_delta )
-		{
-			--i;
-		}
-		
-		if ( left > i )
-		{
-			return empty_list;
-		}
-		
-		Value result = Integer( i );
-		
-		while ( --i >= left )
-		{
-			result = Value( Integer( i ), result );
-		}
-		
-		return result;
-	}
-	
-	static
 	Value reversed_bytes( Value v )
 	{
 		v.unshare();
@@ -373,6 +346,11 @@ namespace vlib
 			return Integer( count( v ) );
 		}
 		
+		if ( op == Op_unary_deref )
+		{
+			return generic_deref( v );
+		}
+		
 		if ( op == Op_return )
 		{
 			throw transfer_via_return( v, source_spec() );
@@ -391,11 +369,6 @@ namespace vlib
 					THROW( "unary operator not defined for lists" );
 				
 				case Op_array:
-					if ( op == Op_unary_deref )
-					{
-						return expr->right;
-					}
-					
 					if ( op == Op_unary_minus )
 					{
 						return make_array( reverse_list( expr->right ) );
@@ -404,11 +377,6 @@ namespace vlib
 					THROW( "unary operator not defined for arrays" );
 				
 				case Op_empower:
-					if ( op == Op_unary_deref )
-					{
-						return expr->right.expr()->right;
-					}
-					
 					if ( op == Op_unary_minus )
 					{
 						const Value& old_list = expr->right.expr()->right;
@@ -423,14 +391,9 @@ namespace vlib
 				
 				case Op_gamut:
 				case Op_delta:
-					if ( op == Op_unary_deref )
-					{
-						return expand_range( v );
-					}
-					
 					if ( op == Op_unary_minus )
 					{
-						return make_array( reverse_list( expand_range( v ) ) );
+						return make_array( reverse_list( generic_deref( v ) ) );
 					}
 					
 					THROW( "unary operator not defined for ranges" );
@@ -449,11 +412,6 @@ namespace vlib
 				return Integer();
 			
 			case Value_empty_array:
-				if ( op == Op_unary_deref )
-				{
-					return Value_empty_list;
-				}
-				
 				if ( op == Op_unary_minus )
 				{
 					return v;
@@ -490,7 +448,7 @@ namespace vlib
 				break;
 			
 			case Value_data:
-				if ( op == Op_unary_deref  ||  op == Op_unary_minus )
+				if ( op == Op_unary_minus )
 				{
 					// fall through below
 				}
@@ -502,11 +460,6 @@ namespace vlib
 				// fall through
 			
 			case Value_string:
-				if ( op == Op_unary_deref )
-				{
-					return deref_string( v.string() );
-				}
-				
 				if ( op == Op_unary_minus )
 				{
 					return reversed_bytes( v );
