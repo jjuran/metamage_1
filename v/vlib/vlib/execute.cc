@@ -43,7 +43,7 @@ namespace vlib
 		
 		track_symbol( symbol, v );
 		
-		symbol.sym()->assign( v );
+		symbol.sym()->deref_unsafe() = v;
 		
 		return symbol;
 	}
