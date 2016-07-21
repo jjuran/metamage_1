@@ -3171,3 +3171,8 @@ $ vc 'var a = []; for x in [] do { a <-- x }; a'
 
 $ vc 'var a = []; for x in str^[foo: 1, bar: 2] do { a <-- x }; a'
 1 >= '[("foo" => 1), ("bar" => 2)]'
+
+%
+
+$ vc 'var x = [1, 2, 3]; var y = x; x <-- 4; x, y'
+1 >= '([1, 2, 3, 4], [1, 2, 3])'

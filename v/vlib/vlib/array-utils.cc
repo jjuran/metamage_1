@@ -195,7 +195,7 @@ namespace vlib
 			return;
 		}
 		
-		Expr* expr = array.expr();
+		Expr* expr = array.unshare().expr();
 		
 		if ( expr == NULL  ||  expr->op != Op_array )
 		{
