@@ -635,7 +635,7 @@ namespace vlib
 		
 		if ( n == 0 )
 		{
-			return make_array( Value_empty_list );
+			return Value_empty_array;
 		}
 		
 		const char* end = p + n;
