@@ -1,0 +1,21 @@
+#!/usr/bin/env vx
+
+const target = 1000;
+
+def answer
+{
+	for b in 2 -> 500 do
+	{
+		for a in 1 -> b do
+		{
+			const c = target - (a + b);
+			
+			if a^2 + b^2 == c^2 then
+			{
+				return a * b * c;
+			};
+		};
+	};
+};
+
+print answer();
