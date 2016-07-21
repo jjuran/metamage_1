@@ -8,9 +8,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <vector>
-
 // more-libc
 #include "more/string.h"
 
@@ -31,6 +28,7 @@
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 
 
@@ -645,33 +643,17 @@ namespace vlib
 			THROW( "final newline missing" );
 		}
 		
-		std::vector< const char* > starts;
+		list_builder result;
+		
+		const char* q = p;  // q trails p
 		
 		while ( p < end )
 		{
-			starts.push_back( p );
-			
 			while ( *p++ != '\n' )  continue;
-		}
-		
-		typedef std::vector< char const* >::const_iterator Iter;
-		
-		Iter begin = starts.begin();
-		Iter it    = starts.end();
-		
-		const char* start = *--it;
-		
-		Value result = plus::string( start, p - 1 );
-		
-		while ( it > begin )
-		{
-			p = start;
 			
-			start = *--it;
+			result.append( plus::string( q, p - 1 ) );
 			
-			plus::string line( start, p - 1 );
-			
-			result = Value( Value( line ), result );
+			q = p;
 		}
 		
 		return make_array( result );
