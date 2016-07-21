@@ -121,6 +121,15 @@ namespace plus
 		// remainder is in `dividend`
 	}
 	
+	static inline
+	bool builtin_division_usable( const integer& divisor,
+	                              const integer& dividend )
+	{
+		const unsigned long max = (unsigned long) -1;
+		
+		return divisor.is_positive()  &&  divisor <= max  &&  dividend <= max;
+	}
+	
 	static
 	integer divide( const integer&  divisor,
 	                integer&        dividend )
@@ -146,7 +155,18 @@ namespace plus
 				dividend.invert();
 			}
 			
-			divide( divisor, dividend, quotient );
+			if ( builtin_division_usable( divisor, dividend ) )
+			{
+				const unsigned long divid = dividend.clipped();
+				const unsigned long divis = divisor .clipped();
+				
+				dividend = divid % divis;  // remainder
+				quotient = divid / divis;
+			}
+			else
+			{
+				divide( divisor, dividend, quotient );
+			}
 			
 			/*
 				 7 /  3 ->  2r1
