@@ -21,6 +21,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/os.hh"
+#include "vlib/peephole.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
@@ -1228,7 +1229,11 @@ namespace vlib
 				THROW( "`lambda` requires a block" );
 			}
 			
-			return Value( Op_lambda, left );
+			const Value lambda( Op_lambda, left );
+			
+			optimize_lambda_body( lambda.expr()->right );
+			
+			return lambda;
 		}
 		
 		if ( right.type() == Value_dummy_operand )

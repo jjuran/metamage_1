@@ -15,6 +15,7 @@
 #include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
+#include "vlib/peephole.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
@@ -367,7 +368,9 @@ namespace vlib
 			THROW( "`def` requires a block" );
 		}
 		
-		const Value lambda( Op_lambda, body );
+		Value lambda( Op_lambda, body );
+		
+		optimize_lambda_body( lambda.expr()->right );
 		
 		eval( name, Op_duplicate, lambda, expr->source );
 		
