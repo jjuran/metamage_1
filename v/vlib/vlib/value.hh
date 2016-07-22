@@ -134,6 +134,17 @@ namespace vlib
 			};
 			
 			template < class Type >
+			Type const* is() const
+			{
+				if ( Type::test( *this ) )
+				{
+					return static_cast< Type const* >( this );
+				}
+				
+				return 0;  // NULL
+			}
+			
+			template < class Type >
 			Type to() const
 			{
 				Value const& coerced = Type::coerce( *this );
