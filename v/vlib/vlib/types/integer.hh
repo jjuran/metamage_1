@@ -49,6 +49,8 @@ namespace vlib
 			Integer( const integer& i ) : Value( (const vu_ibox&) i, V_INT ) {}
 			
 		#undef V_INT
+			
+			operator const plus::integer&() const  { return number(); }
 	};
 	
 	extern const type_info integer_vtype;
