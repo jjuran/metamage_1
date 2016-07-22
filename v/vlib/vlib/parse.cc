@@ -298,10 +298,6 @@ namespace vlib
 			case Token_invalid:
 				throw invalid_token_error( token.text, its_source );
 			
-			case Token_whitespace:
-			case Token_comment:
-				break;
-			
 			case Token_newline:
 				its_source.next_line();
 				break;
@@ -505,6 +501,12 @@ namespace vlib
 		return Op_none;
 	}
 	
+	static
+	bool ignorable( token_type token )
+	{
+		return token == Token_whitespace  ||  token == Token_comment;
+	}
+	
 	Value Parser::parse( const char* p )
 	{
 		Value result;  // nothing
@@ -515,6 +517,11 @@ namespace vlib
 			
 			while (( token = next_token( p ) ))
 			{
+				if ( ignorable( token ) )
+				{
+					continue;
+				}
+				
 				if ( token == Token_semicolon )
 				{
 					break;
