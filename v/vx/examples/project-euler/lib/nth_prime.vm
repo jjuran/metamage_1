@@ -32,7 +32,7 @@ def nth_prime
 		primes <-- last_prime;
 	};
 	
-	if _ == last_index then { last_prime } else { primes[ _ ] }
+	return if _ == last_index then { last_prime } else { primes[ _ ] };
 };
 
 nth_prime
