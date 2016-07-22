@@ -66,6 +66,8 @@ namespace vlib
 	
 	struct mutable_list_overrun {};
 	
+	struct invalid_cast {};
+	
 	class Value
 	{
 		private:
@@ -152,6 +154,17 @@ namespace vlib
 				}
 				
 				return 0;  // NULL
+			}
+			
+			template < class Type >
+			Type const& as() const
+			{
+				if ( Type const* that = is< Type >() )
+				{
+					return *that;
+				}
+				
+				throw invalid_cast();
 			}
 			
 			template < class Type >
