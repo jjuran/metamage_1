@@ -1032,7 +1032,7 @@ namespace vlib
 		
 		conditional_resolution resolution = resolution_for_if( expr->right );
 		
-		const bool condition = boolean_vtype.coerce( expr->left ).boolean();
+		const bool condition = expr->left.to< Boolean >();
 		
 		if ( condition )
 		{
@@ -1060,7 +1060,7 @@ namespace vlib
 		
 		Value result;
 		
-		while ( boolean_vtype.coerce( do_block( expr->left ) ).boolean() )
+		while ( do_block( expr->left ).to< Boolean >() )
 		{
 			periodic_yield();
 			
@@ -1119,7 +1119,7 @@ namespace vlib
 				continue;
 			}
 		}
-		while ( boolean_vtype.coerce( do_block( expr->right ) ).boolean() );
+		while ( do_block( expr->right ).to< Boolean >() );
 		
 		return result;
 	}

@@ -315,7 +315,7 @@ namespace vlib
 		
 		const Value result = execute( expr->left, stack );
 		
-		const bool truth = boolean_vtype.coerce( result ).boolean();
+		const bool truth = result.to< Boolean >();
 		
 		if ( truth == bail )
 		{

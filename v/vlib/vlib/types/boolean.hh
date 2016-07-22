@@ -28,6 +28,8 @@ namespace vlib
 			Boolean( bool b = false ) : Value( Bool( b ) )
 			{
 			}
+			
+			operator bool() const  { return boolean(); }
 	};
 	
 	extern const type_info boolean_vtype;

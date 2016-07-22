@@ -93,6 +93,13 @@ namespace vlib
 				symdesc_max = 0xFFFFFFFFu,
 			};
 			
+			template < class Type >
+			Type to() const
+			{
+				Value const& coerced = Type::coerce( *this );
+				return static_cast< Type const& >( coerced );
+			}
+			
 			Value( value_type type = value_type() ) : its_box( type )
 			{
 			}
