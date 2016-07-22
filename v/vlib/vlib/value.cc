@@ -139,6 +139,15 @@ namespace vlib
 			{
 				add_ref( exp->left .its_box );
 				add_ref( exp->right.its_box );
+				
+				typedef const plus::datum_storage string_datum;
+				
+				string_datum& datum = (string_datum&) exp->source.file();
+				
+				if ( plus::has_dynamic_extent( datum ) )
+				{
+					plus::extent_add_ref( datum.alloc.pointer );
+				}
 			}
 			
 			its_box.unshare();
