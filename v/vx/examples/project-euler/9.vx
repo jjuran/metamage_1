@@ -13,9 +13,9 @@ def answer
 			if a^2 + b^2 == c^2 then
 			{
 				return a * b * c;
-			};
-		};
-	};
-};
+			}
+		}
+	}
+}
 
 print answer();

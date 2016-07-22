@@ -8,6 +8,6 @@ for i in 1 -> 1000 do
 	{
 		x += i;
 	}
-};
+}
 
 print x;

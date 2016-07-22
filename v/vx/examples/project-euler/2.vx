@@ -12,9 +12,9 @@ while b <= max do
 	if b % 2 == 0 then
 	{
 		sum += b;
-	};
+	}
 	
 	a, b = b, a + b;
-};
+}
 
 print sum;

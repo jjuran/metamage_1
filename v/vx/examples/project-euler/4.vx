@@ -11,7 +11,7 @@ while a >= min do
 	if a^2 < solution then
 	{
 		break;
-	};
+	}
 	
 	var b = a;
 	while b >= min do
@@ -21,7 +21,7 @@ while a >= min do
 		if x <= solution then
 		{
 			break;
-		};
+		}
 		
 		const s = str x;
 		
@@ -29,12 +29,12 @@ while a >= min do
 		{
 			solution = x;
 			break;
-		};
+		}
 		
 		--b;
-	};
+	}
 	
 	--a;
-};
+}
 
 print solution;

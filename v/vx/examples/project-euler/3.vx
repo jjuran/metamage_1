@@ -17,9 +17,9 @@ while product > 1 do
 	{
 		product /= factor;
 		result = factor;
-	};
+	}
 	
 	++i;
-};
+}
 
 print result

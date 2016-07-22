@@ -17,10 +17,10 @@ def next_prime
 			if (primes[ i ] ^ 2 > x) or (++i > last_index) then
 			{
 				return x;
-			};
-		};
-	};
-};
+			}
+		}
+	}
+}
 
 def nth_prime
 {
@@ -30,9 +30,9 @@ def nth_prime
 		++last_index;
 		
 		primes <-- last_prime;
-	};
+	}
 	
 	return if _ == last_index then { last_prime } else { primes[ _ ] };
-};
+}
 
 nth_prime

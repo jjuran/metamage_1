@@ -31,10 +31,10 @@ def digit_product
 	for x in _ do
 	{
 		total *= int x - 0x30;
-	};
+	}
 	
 	return total;
-};
+}
 
 const last = number.length - width;
 
@@ -49,7 +49,7 @@ for i in 0 .. last do
 	if max_product < product then
 	{
 		max_product = product;
-	};
-};
+	}
+}
 
 print max_product;

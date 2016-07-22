@@ -7,10 +7,10 @@ def sum
 	for x in _ do
 	{
 		total += x;
-	};
+	}
 	
 	return total;
-};
+}
 
 const set = 1 .. 10000;
 
