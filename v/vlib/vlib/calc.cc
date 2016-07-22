@@ -921,14 +921,14 @@ namespace vlib
 	static
 	plus::string repeat_bytes( const plus::string& bytes, const Value& right )
 	{
-		if ( right.type() == V_int )
+		if ( const Integer* integer = right.is< Integer >() )
 		{
-			return repeat_string( bytes, right.number() );
+			return repeat_string( bytes, *integer );
 		}
 		
-		if ( right.type() == V_bool )
+		if ( const Boolean* boolean = right.is< Boolean >() )
 		{
-			return right.boolean() ? bytes : plus::string::null;
+			return *boolean ? bytes : plus::string::null;
 		}
 		
 		THROW( "string/pack repetition requires int or bool" );
