@@ -296,6 +296,7 @@ namespace vlib
 			case Token_control:
 				throw invalid_control_character( its_source );
 			
+			case Token_reserved:
 			case Token_invalid:
 				throw invalid_token_error( token.text, its_source );
 			

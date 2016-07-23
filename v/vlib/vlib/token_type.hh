@@ -12,8 +12,16 @@ namespace vlib
 	
 	enum token_type
 	{
+		Token_reserved = -3,
 		Token_control = -2,  // a control character
 		Token_invalid = -1,
+		
+		Token_ampersand_x2 = Token_reserved,
+		Token_slash_x2     = Token_reserved,
+		Token_colon_x2     = Token_reserved,
+		Token_lt_x2        = Token_reserved,
+		Token_gt_x2        = Token_reserved,
+		Token_pipe_x2      = Token_reserved,
 		
 		Token_end = 0,
 		

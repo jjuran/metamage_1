@@ -87,6 +87,7 @@ namespace vlib
 		{ "%=",  Token_percent_equals },
 		
 		{ "&",   Token_ampersand },
+		{ "&&",  Token_ampersand_x2 },
 		
 		{ "(",   Token_lparen },
 		{ "()",  Token_parens },
@@ -113,16 +114,19 @@ namespace vlib
 		{ "...", Token_dot_x3 },
 		
 		{ "/",   Token_slash        },
+		{ "//",  Token_slash_x2     },
 		{ "/=",  Token_slash_equals },
 		
 		// 0 - 9
 		
 		{ ":",   Token_colon        },
+		{ "::",  Token_colon_x2     },
 		{ ":=",  Token_colon_equals },
 		
 		{ ";",   Token_semicolon },
 		{ "<",   Token_lt        },
 		{ "<--", Token_lt_minus_x2 },
+		{ "<<",  Token_lt_x2     },
 		{ "<<<<<<<", Token_invalid },
 		{ "<=",  Token_lt_equals },
 		{ "<=>", Token_lt_equals_gt },
@@ -131,6 +135,7 @@ namespace vlib
 		{ "=>",  Token_equals_gt },
 		{ ">",   Token_gt        },
 		{ ">=",  Token_gt_equals },
+		{ ">>",  Token_gt_x2 },
 		
 		{ "[",   Token_lbracket },
 		{ "]",   Token_rbracket },
@@ -139,6 +144,7 @@ namespace vlib
 		
 		{ "{",   Token_lbrace },
 		{ "|",   Token_pipe   },
+		{ "||",  Token_pipe_x2 },
 		{ "}",   Token_rbrace },
 	};
 	
