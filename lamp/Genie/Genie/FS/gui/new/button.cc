@@ -356,7 +356,7 @@ namespace Genie
 	                                            const plus::string&  name,
 	                                            const void*          args )
 	{
-		return new vfs::node( parent, name, S_IFREG | 0400, &button_stream_methods );
+		return new vfs::node( parent, name, S_IFCHR | 0400, &button_stream_methods );
 	}
 	
 	
