@@ -18,10 +18,14 @@
 #include "debug/assert.hh"
 
 // vlib
+#include "vlib/namespace_info.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/value.hh"
 #include "vlib/iterators/full_iterator.hh"
+#include "vlib/types/integer.hh"
+#include "vlib/types/proc.hh"
 
 
 namespace vlib
@@ -250,5 +254,44 @@ namespace vlib
 	};
 	
 	static garbage_collector gc;
+	
+	static
+	Value v_cull( const Value& )
+	{
+		cull_unreachable_objects();
+		
+		return nothing;
+	}
+	
+	static const proc_info proc_cull = { "cull", &v_cull, &empty_list };
+	
+	static
+	Value tracker_getter( const plus::string& name )
+	{
+		if ( name == "symbols" )
+		{
+			return Integer( tracked_symbols.size() );
+		}
+		
+		if ( name == "roots" )
+		{
+			return Integer( tracked_roots.size() );
+		}
+		
+		if ( name == "cull" )
+		{
+			return Proc( proc_cull );
+		}
+		
+		THROW( "nonexistent tracker member" );
+		
+		return Value();
+	}
+	
+	const namespace_info namespace_tracker =
+	{
+		"tracker",
+		&tracker_getter,
+	};
 	
 }
