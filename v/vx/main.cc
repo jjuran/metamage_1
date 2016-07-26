@@ -180,6 +180,7 @@ int main( int argc, char** argv )
 	define( proc_dirname );
 	define( proc_eval    );
 	define( proc_getenv  );
+	define( proc_listdir );
 	define( proc_load    );
 	define( proc_print   );
 	define( proc_sleep   );

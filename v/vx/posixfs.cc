@@ -6,6 +6,7 @@
 #include "posixfs.hh"
 
 // POSIX
+#include <dirent.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
@@ -20,6 +21,7 @@
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/types.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
 
 
@@ -53,6 +55,38 @@ namespace vlib
 	Value v_dirname( const Value& v )
 	{
 		return plus::dirname( v.string() );
+	}
+	
+	static
+	Value v_listdir( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		DIR* dir = opendir( path );
+		
+		if ( dir == NULL )
+		{
+			path_error( path );
+		}
+		
+		list_builder list;
+		
+		while ( const dirent* entry = readdir( dir ) )
+		{
+			const char* name = entry->d_name;
+			
+			if ( name[ 0 ] == '.'  &&  name[ 1 + (name[ 1 ] == '.') ] == '\0' )
+			{
+				// "." or ".."
+				continue;
+			}
+			
+			list.append( name );
+		}
+		
+		closedir( dir );
+		
+		return make_array( list );
 	}
 	
 	static
@@ -122,6 +156,7 @@ namespace vlib
 	static const Value c_str = c_str_vtype;
 	
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
+	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
 	const proc_info proc_load    = { "load",    &v_load,    &c_str };
 	
 }
