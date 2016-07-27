@@ -3196,3 +3196,18 @@ $ vc '"" map {_}'
 
 $ vc '*str^[]'
 1 >= '()'
+
+%
+
+$ vc 'if 1 then {2} else if 3 then {4} else {5}'
+1 >= 2
+
+%
+
+$ vc 'if 0 then {2} else if 3 then {4} else {5}'
+1 >= 4
+
+%
+
+$ vc 'if 0 then {2} else if 0 then {4} else {5}'
+1 >= 5

@@ -379,6 +379,20 @@ namespace vlib
 	
 	static const proc_info proc_define = { "define", &v_define, 0 };  // NULL
 	
+	static
+	bool is_elseif( const Expr* expr )
+	{
+		if ( expr->op == Op_else )
+		{
+			if (( expr = expr->right.expr() ))
+			{
+				return expr->op == Op_if;
+			}
+		}
+		
+		return false;
+	}
+	
 	Value execute( const Value& tree, const Value& stack )
 	{
 		if ( Expr* expr = tree.expr() )
@@ -433,6 +447,13 @@ namespace vlib
 				const Value test = invocable_expression( expr->right, stack );
 				
 				return Value( execute( expr->left, stack ), Op_while_2, test );
+			}
+			
+			if ( is_elseif( expr ) )
+			{
+				const Value proc = invocable_expression( expr->right, stack );
+				
+				return Value( execute( expr->left, stack ), Op_else, proc );
 			}
 			
 			if ( expr->op == Op_assert )
