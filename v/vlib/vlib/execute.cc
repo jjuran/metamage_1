@@ -157,12 +157,12 @@ namespace vlib
 	}
 	
 	static
-	Value make_test_expression( const Value& tree, const Value& stack )
+	Value invocable_expression( const Value& tree, const Value& stack )
 	{
 		const Value expr( stack,       Op_expression, tree );
-		const Value test( proc_invoke, Op_invocation, expr );
+		const Value proc( proc_invoke, Op_invocation, expr );
 		
-		return test;
+		return proc;
 	}
 	
 	static
@@ -423,14 +423,14 @@ namespace vlib
 			
 			if ( expr->op == Op_do_2 )
 			{
-				const Value test = make_test_expression( expr->left, stack );
+				const Value test = invocable_expression( expr->left, stack );
 				
 				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
 			if ( expr->op == Op_while_2 )
 			{
-				const Value test = make_test_expression( expr->right, stack );
+				const Value test = invocable_expression( expr->right, stack );
 				
 				return Value( execute( expr->left, stack ), Op_while_2, test );
 			}
