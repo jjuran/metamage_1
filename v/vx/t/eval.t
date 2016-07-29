@@ -42,3 +42,28 @@ $ vx -e 'const x = try { eval "1 / 0" } catch {"divided by zero"}; print rep x;'
 
 $ vx -e 'const x = try { eval "eval str 0" } catch {"nope"}; print rep x;'
 1 >= '"nope"'
+
+%
+
+$ vx -e 'print rep eval "const end = str 1;   3 + 4\nend .\nlength"'
+1 >= 1
+
+%
+
+$ vx -e 'print rep eval "const end = str 12;  3 + 4\n end.\nlength"'
+1 >= 2
+
+%
+
+$ vx -e 'print rep eval "const end = str 123; 3 + 4\nend. \nlength"'
+1 >= 3
+
+%
+
+$ vx -e 'print rep eval "const end = str 0; 3 + 4\nend.\nlength"'
+1 >= 7
+
+%
+
+$ vx -e 'print rep eval "const end = str 0; 3 + 4\nend.\nNot parsed ` ! @ $"'
+1 >= 7

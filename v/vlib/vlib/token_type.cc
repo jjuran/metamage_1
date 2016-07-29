@@ -5,6 +5,9 @@
 
 #include "vlib/token_type.hh"
 
+// Standard C
+#include <string.h>
+
 // iota
 #include "iota/char_types.hh"
 
@@ -14,6 +17,9 @@
 
 #define ARRAY_LEN( a ) (sizeof (a) / sizeof (a)[0])
 #define ARRAY_END( a ) ((a) + ARRAY_LEN(a))
+
+#define STRLEN( s ) (sizeof "" s - 1)
+#define STR_LEN( s ) "" s, STRLEN( s )
 
 
 namespace vlib
@@ -192,6 +198,22 @@ namespace vlib
 		return 0;  // NULL
 	}
 	
+	static
+	token_type new_line( const char* p )
+	{
+		if ( memcmp( p, STR_LEN( "end." ) ) == 0 )
+		{
+			p += STRLEN( "end." );
+			
+			if ( *p == '\n'  ||  *p == '\r' )
+			{
+				return Token_end;
+			}
+		}
+		
+		return Token_newline;
+	}
+	
 	token_type next_token_type( const char*& p )
 	{
 		if ( *p == '\0' )
@@ -207,14 +229,14 @@ namespace vlib
 				
 				if ( c == '\n' )
 				{
-					return Token_newline;
+					return new_line( p );
 				}
 				
 				if ( c == '\r' )
 				{
 					if ( *p == '\n' )  ++p;
 					
-					return Token_newline;
+					return new_line( p );
 				}
 			}
 			while ( is_space( *p ) );
