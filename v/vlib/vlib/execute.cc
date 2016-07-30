@@ -21,7 +21,6 @@
 #include "vlib/symbol.hh"
 #include "vlib/symdesc.hh"
 #include "vlib/throw.hh"
-#include "vlib/tracker.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
@@ -42,7 +41,10 @@ namespace vlib
 	{
 		const Value symbol( Symbol_var, name );
 		
-		track_symbol( symbol, v );
+		/*
+			`_` doesn't need to be tracked, because it's never closed over
+			and therefore can't be involved in a reference loop.
+		*/
 		
 		symbol.sym()->deref_unsafe() = v;
 		
