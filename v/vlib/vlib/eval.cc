@@ -160,32 +160,38 @@ namespace vlib
 			
 			check_type( *target.type, *second.addr );
 			
+			if ( op == Op_swap )
+			{
+				check_type( *second.type, *target.addr );
+			}
+			
 			if ( op == Op_move )
 			{
 				if ( right.sym() == 0 )  // NULL
 				{
 					THROW( "can't move from a container element" );
 				}
-				
+			}
+			
+			if ( Symbol* sym = left.sym() )
+			{
+				track_symbol( left, *second.addr );
+			}
+			
+			if ( op == Op_swap  &&  right.sym() )
+			{
+				track_symbol( right, *target.addr );
+			}
+			
+			if ( op == Op_move )
+			{
 				*target.addr = *second.addr;
 				*second.addr = Value_undefined;
 			}
 			
 			if ( op == Op_swap )
 			{
-				check_type( *second.type, *target.addr );
-				
 				target.addr->swap( *second.addr );
-			}
-			
-			if ( Symbol* sym = left.sym() )
-			{
-				track_symbol( left, *target.addr );
-			}
-			
-			if ( Symbol* sym = right.sym() )
-			{
-				track_symbol( right, *second.addr );
 			}
 			
 			return right;
