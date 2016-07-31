@@ -159,9 +159,18 @@ namespace vlib
 				track_symbol_if_collectible( left, right );
 			}
 			
+			const bool collectible = target_is_collectible( target );
+			
 			const bool coercive = op == Op_approximate;
 			
-			return assign_target( target, right, coercive );
+			assign_target( target, right, coercive );
+			
+			if ( collectible )
+			{
+				cull_unreachable_objects();
+			}
+			
+			return *target.addr;
 		}
 		
 		if ( is_right_varop( op ) )
@@ -195,8 +204,15 @@ namespace vlib
 			
 			if ( op == Op_move )
 			{
+				const bool collectible = target_is_collectible( target );
+				
 				*target.addr = *second.addr;
 				*second.addr = Value_undefined;
+				
+				if ( collectible )
+				{
+					cull_unreachable_objects();
+				}
 			}
 			
 			if ( op == Op_swap )

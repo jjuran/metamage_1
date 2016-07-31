@@ -9,6 +9,7 @@
 #include "vlib/error.hh"
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
+#include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 
 
@@ -114,9 +115,33 @@ namespace vlib
 		return true;
 	}
 	
+	bool target_is_collectible( const Target& target )
+	{
+		const Value& v = *target.addr;
+		
+		return v.expr() != 0  &&  type_is_collectible( *target.type );
+	}
+	
 	bool symbol_is_collectible( const Symbol& symbol, const Value& v )
 	{
 		return v.expr() != 0  &&  type_is_collectible( symbol.vtype() );
+	}
+	
+	bool symbol_list_is_collectible( const Value& symlist )
+	{
+		list_iterator it( symlist );
+		
+		while ( const Symbol* sym = it.use().sym() )
+		{
+			const Value& v = sym->get();
+			
+			if ( symbol_is_collectible( *sym, v ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 }

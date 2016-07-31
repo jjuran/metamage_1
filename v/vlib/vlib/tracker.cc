@@ -208,7 +208,6 @@ namespace vlib
 		sweep( garbage );
 	}
 	
-	static
 	void cull_unreachable_objects()
 	{
 		tracked_set garbage;
