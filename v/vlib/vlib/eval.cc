@@ -192,6 +192,7 @@ namespace vlib
 			if ( op == Op_swap )
 			{
 				target.addr->swap( *second.addr );
+				return Value();
 			}
 			
 			return right;
