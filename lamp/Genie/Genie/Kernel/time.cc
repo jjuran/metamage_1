@@ -12,13 +12,11 @@
 #include "sys/time.h"
 
 // relix-kernel
+#include "relix/api/errno.hh"
 #include "relix/api/request_timed_wakeup.hh"
 #include "relix/api/try_again.hh"
 #include "relix/signal/signal.hh"
 #include "relix/syscall/registry.hh"
-
-// Genie
-#include "Genie/current_process.hh"
 
 
 #ifndef NANOSLEEP_DOZE
@@ -54,7 +52,7 @@ namespace Genie
 	{
 		if ( requested == NULL )
 		{
-			return set_errno( EFAULT );
+			return relix::set_errno( EFAULT );
 		}
 		
 		const bool dozing = requested->tv_nsec == NANOSLEEP_DOZE;
@@ -92,7 +90,7 @@ namespace Genie
 		{
 			remaining_microseconds = end_microseconds - clock();
 			
-			result = set_errno_from_exception();
+			result = relix::set_errno_from_exception();
 			
 			relix::prevent_syscall_restart();
 		}
