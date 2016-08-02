@@ -20,6 +20,9 @@
 #include <cstdio>
 #include <cstring>
 
+// mac-sys-utils
+#include "mac_sys/windowlist_contains.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -62,7 +65,6 @@
 #include "Genie/FS/serialize_Str255.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/utf8_text_property.hh"
-#include "Genie/Utilities/WindowList_contains.hh"
 
 
 namespace Nitrogen
@@ -409,7 +411,7 @@ namespace Genie
 		{
 			Key key = GetKeyFromParent( that );
 			
-			if ( !WindowList_contains( key ) )
+			if ( ! mac::sys::windowlist_contains( key ) )
 			{
 				p7::throw_errno( EIO );
 			}
@@ -435,7 +437,7 @@ namespace Genie
 		{
 			Key key = GetKeyFromParent( that );
 			
-			if ( !WindowList_contains( key ) )
+			if ( ! mac::sys::windowlist_contains( key ) )
 			{
 				p7::throw_errno( EIO );
 			}

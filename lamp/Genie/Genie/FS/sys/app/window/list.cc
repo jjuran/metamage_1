@@ -15,6 +15,9 @@
 #include <MacWindows.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/windowlist_contains.hh"
+
 // plus
 #include "plus/hexadecimal.hh"
 
@@ -30,7 +33,6 @@
 // Genie
 #include "Genie/FS/sys/app/window/list/REF.hh"
 #include "Genie/Utilities/canonical_32_bit_hex.hh"
-#include "Genie/Utilities/WindowList_contains.hh"
 
 
 namespace Genie
@@ -45,7 +47,7 @@ namespace Genie
 		
 		const WindowRef window = (WindowRef) plus::decode_32_bit_hex( name );
 		
-		return WindowList_contains( window );
+		return mac::sys::windowlist_contains( window );
 	}
 	
 	static vfs::node_ptr WindowRef_lookup( const vfs::node* parent, const plus::string& name )
