@@ -11,10 +11,8 @@
 #include "errno.h"
 #include "sys/time.h"
 
-// Pedestal
-#include "Pedestal/Application.hh"
-
 // relix-kernel
+#include "relix/api/request_timed_wakeup.hh"
 #include "relix/api/try_again.hh"
 #include "relix/signal/signal.hh"
 #include "relix/syscall/registry.hh"
@@ -30,9 +28,6 @@
 
 namespace Genie
 {
-	
-	namespace Ped = Pedestal;
-	
 	
 	static inline uint64_t microseconds_from_timespec( const struct timespec& time )
 	{
@@ -85,23 +80,7 @@ namespace Genie
 			// Yield at least once, even for 0 seconds
 			do
 			{
-				// Ticks are exactly 1/60 second in OS X, but not in OS 9.
-				// Here we pass the number of OS X ticks remaining.
-				// The number of OS 9 ticks remaining is slightly larger,
-				// since OS 9 ticks are slightly smaller and a few more of them are
-				// needed to fill a certain length of time.
-				// So our delay will be short-changed, but that's okay because
-				// we keep recomputing it, so as remaining_microseconds approaches
-				// zero, the error becomes insignificant.
-				// And we keep looping until remaining_microseconds becomes zero
-				// anyway.
-				
-				const int64_t remaining_ticks = remaining_microseconds * 60 / 1000000;
-				
-				if ( remaining_ticks < 0x7FFFFFFF )
-				{
-					Ped::AdjustSleepForTimer( remaining_ticks );
-				}
+				relix::request_timed_wakeup( remaining_microseconds * 1000 );
 				
 				relix::try_again( false );
 				

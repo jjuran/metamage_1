@@ -19,18 +19,13 @@
 // relix-kernel
 #include "relix/api/errno.hh"
 #include "relix/api/get_fd_handle.hh"
+#include "relix/api/request_timed_wakeup.hh"
 #include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
-
-// Pedestal
-#include "Pedestal/Application.hh"
 
 
 namespace Genie
 {
-	
-	namespace Ped = Pedestal;
-	
 	
 	static int select( int n, fd_set*  readfds,
 	                          fd_set*  writefds,
@@ -68,7 +63,7 @@ namespace Genie
 			{
 				if ( timeout )
 				{
-					Ped::AdjustSleepForTimer( remaining_microseconds * 60 / 1000000 );
+					relix::request_timed_wakeup( remaining_microseconds * 1000 );
 				}
 				
 				relix::try_again( false );
