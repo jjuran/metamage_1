@@ -40,6 +40,7 @@
 #include "relix/syscall/readlinkat.hh"
 #include "relix/syscall/registry.hh"
 #include "relix/syscall/renameat.hh"
+#include "relix/syscall/select.hh"
 #include "relix/syscall/setpgid.hh"
 #include "relix/syscall/setsid.hh"
 #include "relix/syscall/sigsuspend.hh"
@@ -94,6 +95,7 @@ namespace Genie
 	using relix::_readlinkat;
 	using relix::_relix_mmap;
 	using relix::renameat;
+	using relix::select;
 	using relix::setpgid;
 	using relix::setsid;
 	using relix::symlinkat;
@@ -156,6 +158,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( _readlinkat );
 	REGISTER_SYSTEM_CALL( _relix_mmap );
 	REGISTER_SYSTEM_CALL( renameat    );
+	REGISTER_SYSTEM_CALL( select      );
 	REGISTER_SYSTEM_CALL( setpgid     );
 	REGISTER_SYSTEM_CALL( setsid      );
 	REGISTER_SYSTEM_CALL( symlinkat   );

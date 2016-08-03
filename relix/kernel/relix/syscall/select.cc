@@ -3,12 +3,13 @@
  *	=========
  */
 
+#include "relix/syscall/select.hh"
+
 // Standard C
 #include <stdint.h>
 #include <time.h>
 
 // POSIX
-#include "sys/select.h"
 #include "unistd.h"
 
 // vfs
@@ -24,12 +25,12 @@
 #include "relix/syscall/registry.hh"
 
 
-namespace Genie
+namespace relix
 {
 	
-	static int select( int n, fd_set*  readfds,
-	                          fd_set*  writefds,
-	                          fd_set*  exceptfds, struct timeval* timeout )
+	int select( int n, fd_set*  readfds,
+	                   fd_set*  writefds,
+	                   fd_set*  exceptfds, struct timeval* timeout )
 	{
 		int64_t   remaining_microseconds = 1;
 		uint64_t  end_microseconds       = 0;
@@ -63,10 +64,10 @@ namespace Genie
 			{
 				if ( timeout )
 				{
-					relix::request_timed_wakeup( remaining_microseconds * 1000 );
+					request_timed_wakeup( remaining_microseconds * 1000 );
 				}
 				
-				relix::try_again( false );
+				try_again( false );
 				
 				if ( timeout )
 				{
@@ -79,7 +80,7 @@ namespace Genie
 					     || FD_ISSET( i, writefds  )
 					     || FD_ISSET( i, exceptfds ) )
 					{
-						unsigned int poll = vfs::poll( relix::get_fd_handle( i ) );
+						unsigned int poll = vfs::poll( get_fd_handle( i ) );
 						
 						//if ( poll == 0 )  continue;  // Optimization
 						
@@ -119,14 +120,8 @@ namespace Genie
 		}
 		catch ( ... )
 		{
-			return relix::set_errno_from_exception();
+			return set_errno_from_exception();
 		}
 	}
-	
-	#pragma force_active on
-	
-	REGISTER_SYSTEM_CALL( select );
-	
-	#pragma force_active reset
 	
 }
