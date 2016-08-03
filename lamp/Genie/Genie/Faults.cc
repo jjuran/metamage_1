@@ -36,22 +36,22 @@ namespace relix
 	extern class Process* gCurrentProcess;  // defined in Process.cc
 	
 	
-	static void BusError()
+	static void bus_error()
 	{
 		deliver_fatal_signal( SIGSEGV );
 	}
 	
-	static void AddressError()
+	static void address_error()
 	{
 		deliver_fatal_signal( SIGBUS );
 	}
 	
-	static void IllegalInstruction()
+	static void illegal_instruction()
 	{
 		deliver_fatal_signal( SIGILL );
 	}
 	
-	static void DivisionByZero()
+	static void division_by_zero()
 	{
 		deliver_fatal_signal( SIGFPE );
 	}
@@ -66,7 +66,7 @@ namespace relix
 		deliver_fatal_signal( SIGFPE );
 	}
 	
-	static void PrivilegeViolation()
+	static void privilege_violation()
 	{
 		deliver_fatal_signal( SIGILL );
 	}
@@ -118,13 +118,13 @@ namespace relix
 	{
 		NULL,  // 0, ISP on reset
 		NULL,  // 1, PC on reset
-		BusError,
-		AddressError,
-		IllegalInstruction,
-		DivisionByZero,
+		bus_error,
+		address_error,
+		illegal_instruction,
+		division_by_zero,
 		integer_range_check,
 		integer_overflow,
-		PrivilegeViolation
+		privilege_violation,
 	};
 	
 	
@@ -278,19 +278,19 @@ namespace relix
 		switch ( exception->theKind )
 		{
 			case kIllegalInstructionException:
-				handler = (const TVector*) IllegalInstruction;
+				handler = (const TVector*) illegal_instruction;
 				
 				break;
 			
 			case kAccessException:
 			case kUnmappedMemoryException:
 			case kUnresolvablePageFaultException:
-				handler = (const TVector*) BusError;
+				handler = (const TVector*) bus_error;
 				
 				break;
 			
 			case kPrivilegeViolationException:
-				handler = (const TVector*) PrivilegeViolation;
+				handler = (const TVector*) privilege_violation;
 				
 				break;
 			
