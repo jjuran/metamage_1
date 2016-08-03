@@ -1,7 +1,9 @@
-/*	=======
- *	time.cc
- *	=======
- */
+/*
+	nanosleep.cc
+	------------
+*/
+
+#include "relix/syscall/nanosleep.hh"
 
 // Standard C
 #include <stdint.h>
@@ -24,7 +26,7 @@
 #endif
 
 
-namespace Genie
+namespace relix
 {
 	
 	static inline uint64_t microseconds_from_timespec( const struct timespec& time )
@@ -48,11 +50,11 @@ namespace Genie
 		}
 	}
 	
-	static int nanosleep( const struct timespec* requested, struct timespec* remaining )
+	int nanosleep( const struct timespec* requested, struct timespec* remaining )
 	{
 		if ( requested == NULL )
 		{
-			return relix::set_errno( EFAULT );
+			return set_errno( EFAULT );
 		}
 		
 		const bool dozing = requested->tv_nsec == NANOSLEEP_DOZE;
@@ -78,9 +80,9 @@ namespace Genie
 			// Yield at least once, even for 0 seconds
 			do
 			{
-				relix::request_timed_wakeup( remaining_microseconds * 1000 );
+				request_timed_wakeup( remaining_microseconds * 1000 );
 				
-				relix::try_again( false );
+				try_again( false );
 				
 				remaining_microseconds = end_microseconds - clock();
 			}
@@ -90,9 +92,9 @@ namespace Genie
 		{
 			remaining_microseconds = end_microseconds - clock();
 			
-			result = relix::set_errno_from_exception();
+			result = set_errno_from_exception();
 			
-			relix::prevent_syscall_restart();
+			prevent_syscall_restart();
 		}
 		
 		if ( remaining_microseconds < 0 )
@@ -104,12 +106,5 @@ namespace Genie
 		
 		return result;
 	}
-	
-	#pragma force_active on
-	
-	REGISTER_SYSTEM_CALL( gettimeofday );
-	REGISTER_SYSTEM_CALL( nanosleep    );
-	
-	#pragma force_active reset
 	
 }

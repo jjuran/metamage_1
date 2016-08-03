@@ -31,6 +31,7 @@
 #include "relix/syscall/mmap.hh"
 #include "relix/syscall/msync.hh"
 #include "relix/syscall/munmap.hh"
+#include "relix/syscall/nanosleep.hh"
 #include "relix/syscall/openat.hh"
 #include "relix/syscall/pipe2.hh"
 #include "relix/syscall/pread.hh"
@@ -54,6 +55,7 @@
 #include "relix/syscall/writev.hh"
 
 
+extern "C" int gettimeofday( struct timeval* tv, struct timezone* tz );
 extern "C" void sync();
 
 
@@ -86,6 +88,7 @@ namespace Genie
 	using relix::mknodat;
 	using relix::msync;
 	using relix::munmap;
+	using relix::nanosleep;
 	using relix::openat;
 	using relix::pipe2;
 	using relix::pread;
@@ -141,6 +144,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( getppid     );
 	REGISTER_SYSTEM_CALL( getsid      );
 	REGISTER_SYSTEM_CALL( gettid      );
+	REGISTER_SYSTEM_CALL( gettimeofday );
 	REGISTER_SYSTEM_CALL( ioctl       );
 	REGISTER_SYSTEM_CALL( linkat      );
 	REGISTER_SYSTEM_CALL( lseek       );
@@ -148,6 +152,7 @@ namespace Genie
 	REGISTER_SYSTEM_CALL( mknodat     );
 	REGISTER_SYSTEM_CALL( munmap      );
 	REGISTER_SYSTEM_CALL( msync       );
+	REGISTER_SYSTEM_CALL( nanosleep   );
 	REGISTER_SYSTEM_CALL( openat      );
 	REGISTER_SYSTEM_CALL( pause       );
 	REGISTER_SYSTEM_CALL( pipe2       );
