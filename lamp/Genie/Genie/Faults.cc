@@ -15,9 +15,6 @@
 #include <MachineExceptions.h>
 #endif
 
-// Standard C
-#include <signal.h>
-
 // Silver
 #if TARGET_CPU_68K
 #include "Silver/Patch.hh"
@@ -26,7 +23,7 @@
 #endif
 
 // relix
-#include "relix/api/deliver_fatal_signal.hh"
+#include "relix/glue/exceptions.hh"
 #include "relix/glue/system_call.68k.hh"
 
 
@@ -35,41 +32,6 @@ namespace relix
 	
 	extern class Process* gCurrentProcess;  // defined in Process.cc
 	
-	
-	static void bus_error()
-	{
-		deliver_fatal_signal( SIGSEGV );
-	}
-	
-	static void address_error()
-	{
-		deliver_fatal_signal( SIGBUS );
-	}
-	
-	static void illegal_instruction()
-	{
-		deliver_fatal_signal( SIGILL );
-	}
-	
-	static void division_by_zero()
-	{
-		deliver_fatal_signal( SIGFPE );
-	}
-	
-	static void integer_range_check()
-	{
-		deliver_fatal_signal( SIGFPE );
-	}
-	
-	static void integer_overflow()
-	{
-		deliver_fatal_signal( SIGFPE );
-	}
-	
-	static void privilege_violation()
-	{
-		deliver_fatal_signal( SIGILL );
-	}
 	
 #if TARGET_CPU_68K
 	
