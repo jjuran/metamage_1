@@ -154,8 +154,6 @@ namespace Genie
 			void ResumeAfterFork();
 			
 			void fork_and_exit( int exit_status );
-			
-			void Exit( int exit_status );
 		
 		public:
 			Process& vfork();

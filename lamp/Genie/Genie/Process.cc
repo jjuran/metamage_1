@@ -270,6 +270,15 @@ namespace relix
 namespace Genie
 {
 	
+	// This function doesn't return if the process is current.
+	static inline
+	void exit_process( Process& process, int exit_status )
+	{
+		const int wait_status = (exit_status & 0xFF) << 8;
+		
+		process.Terminate( wait_status );
+	}
+	
 	static int reexec_start( void* args[] )
 	{
 		Reexec_Function f = (Reexec_Function) args[ 0 ];
@@ -317,7 +326,7 @@ namespace Genie
 		// Accumulate any time between last syscall (if any) and return from userspace
 		relix::enter_system();
 		
-		process->Exit( exit_status );
+		exit_process( *process, exit_status );
 		
 		// Not reached
 		
@@ -965,7 +974,7 @@ namespace Genie
 		
 		child.swap_os_thread( parent );
 		
-		parent.Exit( exit_status );
+		exit_process( parent, exit_status );
 		
 		child.Resume();
 	}
@@ -1099,14 +1108,6 @@ namespace Genie
 	void Process::Terminate( int wait_status )
 	{
 		itsResult = wait_status;
-		
-		Terminate();
-	}
-	
-	// This function doesn't return if the process is current.
-	void Process::Exit( int exit_status )
-	{
-		itsResult = (exit_status & 0xFF) << 8;
 		
 		Terminate();
 	}
