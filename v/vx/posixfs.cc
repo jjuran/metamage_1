@@ -16,6 +16,7 @@
 #include <string.h>
 
 // plus
+#include "plus/integer.hh"
 #include "plus/posix/dirname.hh"
 
 // vlib
@@ -23,11 +24,24 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 
 
 namespace vlib
 {
+	
+	static
+	void fd_error( int fd, int err = errno )
+	{
+		Value error( "errno", Op_mapping, Integer ( err ) );
+		Value desc ( "desc",  Op_mapping, strerror( err ) );
+		Value fd_  ( "fd",    Op_mapping, Integer ( fd  ) );
+		
+		Value exception( error, Value( desc, fd_ ) );
+		
+		throw user_exception( exception, source_spec() );
+	}
 	
 	static
 	void path_error( const char* path, int err = errno )
@@ -109,6 +123,23 @@ namespace vlib
 	Value v_dirname( const Value& v )
 	{
 		return plus::dirname( v.string() );
+	}
+	
+	static
+	Value v_fstat( const Value& v )
+	{
+		const int fd = v.number().clipped();
+		
+		struct stat st;
+		
+		int nok = fstat( fd, &st );
+		
+		if ( nok )
+		{
+			fd_error( fd );
+		}
+		
+		return make_stat( st );
 	}
 	
 	static
@@ -242,8 +273,10 @@ namespace vlib
 	}
 	
 	static const Value c_str = c_str_vtype;
+	static const Value int32 = i32_vtype;
 	
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
+	const proc_info proc_fstat   = { "fstat",   &v_fstat,   &int32 };
 	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
 	const proc_info proc_load    = { "load",    &v_load,    &c_str };
 	const proc_info proc_lstat   = { "lstat",   &v_lstat,   &c_str };
