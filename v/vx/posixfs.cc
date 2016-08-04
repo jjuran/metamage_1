@@ -23,6 +23,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -340,11 +341,33 @@ namespace vlib
 		return make_stat( st );
 	}
 	
+	static
+	Value v_write( const Value& v )
+	{
+		const int           fd = first( v ).number().clipped();
+		const plus::string& s  = rest ( v ).string();
+		
+		const char*  buffer = s.data();
+		const size_t n      = s.size();
+		
+		ssize_t n_written = write( fd, buffer, n );
+		
+		if ( n_written < 0 )
+		{
+			fd_error( fd );
+		}
+		
+		return Integer( n_written );
+	}
+	
 	static const Value c_str = c_str_vtype;
 	static const Value int32 = i32_vtype;
 	
 	static const Value int32_x2( i32_vtype, i32_vtype );
 	static const Value i32_u32 ( i32_vtype, u32_vtype );
+	
+	static const Value bytes( string_vtype, Op_union, data_vtype );
+	static const Value i32_bytes( i32_vtype, bytes );
 	
 	const proc_info proc_close   = { "close",   &v_close,   &int32 };
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
@@ -356,5 +379,6 @@ namespace vlib
 	const proc_info proc_lstat   = { "lstat",   &v_lstat,   &c_str };
 	const proc_info proc_read    = { "read",    &v_read,    &i32_u32 };
 	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
+	const proc_info proc_write   = { "write",   &v_write,   &i32_bytes };
 	
 }

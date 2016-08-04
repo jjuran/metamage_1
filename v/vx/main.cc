@@ -203,6 +203,7 @@ int main( int argc, char** argv )
 	define( proc_sleep   );
 	define( proc_stat    );
 	define( proc_time    );
+	define( proc_write   );
 	
 	const char* path = "<inline script>";
 	
