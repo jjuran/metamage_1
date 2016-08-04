@@ -304,6 +304,26 @@ namespace vlib
 	}
 	
 	static
+	Value v_read( const Value& v )
+	{
+		const int    fd = first( v ).number().clipped();
+		const size_t n  = rest ( v ).number().clipped();
+		
+		plus::string s;
+		
+		char* buffer = s.reset( n );
+		
+		ssize_t n_read = read( fd, buffer, n );
+		
+		if ( n_read < 0 )
+		{
+			fd_error( fd );
+		}
+		
+		return make_data( s.substr( 0, n_read ) );
+	}
+	
+	static
 	Value v_stat( const Value& v )
 	{
 		const char* path = v.string().c_str();
@@ -324,6 +344,7 @@ namespace vlib
 	static const Value int32 = i32_vtype;
 	
 	static const Value int32_x2( i32_vtype, i32_vtype );
+	static const Value i32_u32 ( i32_vtype, u32_vtype );
 	
 	const proc_info proc_close   = { "close",   &v_close,   &int32 };
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
@@ -333,6 +354,7 @@ namespace vlib
 	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
 	const proc_info proc_load    = { "load",    &v_load,    &c_str };
 	const proc_info proc_lstat   = { "lstat",   &v_lstat,   &c_str };
+	const proc_info proc_read    = { "read",    &v_read,    &i32_u32 };
 	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
 	
 }
