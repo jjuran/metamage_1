@@ -120,6 +120,21 @@ namespace vlib
 	
 	
 	static
+	Value v_close( const Value& v )
+	{
+		const int fd = v.number().clipped();
+		
+		int nok = close( fd );
+		
+		if ( nok )
+		{
+			fd_error( fd );
+		}
+		
+		return Value();
+	}
+	
+	static
 	Value v_dirname( const Value& v )
 	{
 		return plus::dirname( v.string() );
@@ -275,6 +290,7 @@ namespace vlib
 	static const Value c_str = c_str_vtype;
 	static const Value int32 = i32_vtype;
 	
+	const proc_info proc_close   = { "close",   &v_close,   &int32 };
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
 	const proc_info proc_fstat   = { "fstat",   &v_fstat,   &int32 };
 	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };

@@ -177,6 +177,7 @@ int main( int argc, char** argv )
 		define( proc_system );
 	}
 	
+	define( proc_close   );
 	define( proc_dirname );
 	define( proc_eval    );
 	define( proc_fstat   );
