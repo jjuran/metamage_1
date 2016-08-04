@@ -23,6 +23,7 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -50,6 +51,59 @@ namespace vlib
 		
 		throw user_exception( exception, source_spec() );
 	}
+	
+	static const char* file_types[] =
+	{
+		"(0)",
+		"FIFO",
+		"CHR",
+		"(3)",
+		"DIR",
+		"(5)",
+		"BLK",
+		"(7)",
+		"REG",
+		"(9)",
+		"LNK",
+		"(11)",
+		"SOCK",
+		"(13)",
+		"(14)",
+		"(15)",
+	};
+	
+	static
+	Value make_stat( const struct stat& st )
+	{
+		list_builder result;
+		
+		const char* type = file_types[ (st.st_mode & S_IFMT) >> 12 ];
+		
+		result.append( Value( "type", Op_mapping, type ) );
+		
+		#define APPEND( field )  \
+		result.append( Value( #field, Op_mapping, Integer( st.st_##field ) ) )
+		
+		APPEND( dev   );
+		APPEND( ino   );
+		APPEND( mode  );
+		APPEND( nlink );
+		APPEND( uid   );
+		APPEND( gid   );
+		APPEND( rdev  );
+		APPEND( atime );
+		APPEND( mtime );
+		APPEND( ctime );
+		
+		APPEND( size    );
+		APPEND( blocks  );
+		APPEND( blksize );
+		
+		#undef APPEND
+		
+		return Value( string_vtype, Op_empower, make_array( result ) );
+	}
+	
 	
 	static
 	Value v_dirname( const Value& v )
@@ -153,10 +207,46 @@ namespace vlib
 		return result;
 	}
 	
+	static
+	Value v_lstat( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		struct stat st;
+		
+		int nok = lstat( path, &st );
+		
+		if ( nok )
+		{
+			path_error( path );
+		}
+		
+		return make_stat( st );
+	}
+	
+	static
+	Value v_stat( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		struct stat st;
+		
+		int nok = stat( path, &st );
+		
+		if ( nok )
+		{
+			path_error( path );
+		}
+		
+		return make_stat( st );
+	}
+	
 	static const Value c_str = c_str_vtype;
 	
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
 	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
 	const proc_info proc_load    = { "load",    &v_load,    &c_str };
+	const proc_info proc_lstat   = { "lstat",   &v_lstat,   &c_str };
+	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
 	
 }
