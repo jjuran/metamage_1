@@ -198,6 +198,7 @@ int main( int argc, char** argv )
 	define( proc_listdir );
 	define( proc_load    );
 	define( proc_lstat   );
+	define( proc_pipe    );
 	define( proc_print   );
 	define( proc_read    );
 	define( proc_sleep   );

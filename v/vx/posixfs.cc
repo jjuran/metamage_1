@@ -305,6 +305,22 @@ namespace vlib
 	}
 	
 	static
+	Value v_pipe( const Value& v )
+	{
+		int pipe_ends[ 2 ];
+		
+		int nok = pipe( pipe_ends );
+		
+		if ( nok )
+		{
+			path_error( "<pipe>" );
+		}
+		
+		return Value( Integer( pipe_ends[ 0 ] ),
+		              Integer( pipe_ends[ 1 ] ) );
+	}
+	
+	static
 	Value v_read( const Value& v )
 	{
 		const int    fd = first( v ).number().clipped();
@@ -377,6 +393,7 @@ namespace vlib
 	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
 	const proc_info proc_load    = { "load",    &v_load,    &c_str };
 	const proc_info proc_lstat   = { "lstat",   &v_lstat,   &c_str };
+	const proc_info proc_pipe    = { "pipe",    &v_pipe,    &empty_list };
 	const proc_info proc_read    = { "read",    &v_read,    &i32_u32 };
 	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
 	const proc_info proc_write   = { "write",   &v_write,   &i32_bytes };
