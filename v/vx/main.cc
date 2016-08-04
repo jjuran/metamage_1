@@ -180,6 +180,7 @@ int main( int argc, char** argv )
 	define( proc_close   );
 	define( proc_dirname );
 	define( proc_dup     );
+	define( proc_dup2    );
 	define( proc_eval    );
 	define( proc_fstat   );
 	define( proc_getenv  );

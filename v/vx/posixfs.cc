@@ -156,6 +156,24 @@ namespace vlib
 	}
 	
 	static
+	Value v_dup2( const Value& v )
+	{
+		const int old_fd = first( v ).number().clipped();
+		const int req_fd = rest ( v ).number().clipped();
+		
+		int new_fd = dup2( old_fd, req_fd );
+		
+		if ( new_fd < 0 )
+		{
+			fd_error( old_fd );
+		}
+		
+		// new_fd should be same as req_fd
+		
+		return Integer( new_fd );
+	}
+	
+	static
 	Value v_fstat( const Value& v )
 	{
 		const int fd = v.number().clipped();
@@ -305,9 +323,12 @@ namespace vlib
 	static const Value c_str = c_str_vtype;
 	static const Value int32 = i32_vtype;
 	
+	static const Value int32_x2( i32_vtype, i32_vtype );
+	
 	const proc_info proc_close   = { "close",   &v_close,   &int32 };
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
 	const proc_info proc_dup     = { "dup",     &v_dup,     &int32 };
+	const proc_info proc_dup2    = { "dup2",    &v_dup2,    &int32_x2 };
 	const proc_info proc_fstat   = { "fstat",   &v_fstat,   &int32 };
 	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
 	const proc_info proc_load    = { "load",    &v_load,    &c_str };
