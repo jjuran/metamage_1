@@ -364,6 +364,14 @@ namespace vlib
 	}
 	
 	static
+	void export_symbol( const Value& exports, const Value& symbol )
+	{
+		Symbol& xsym = *exports.sym();
+		
+		xsym.deref() = Value( Op_export, symbol );
+	}
+	
+	static
 	Value resolve_symbol_expr( const Value& v, const Value& stack )
 	{
 		if ( Expr* expr = v.expr() )
@@ -383,6 +391,15 @@ namespace vlib
 			if ( expr->op == Op_move )
 			{
 				return execute( v, stack );
+			}
+			
+			if ( expr->op == Op_export )
+			{
+				const Value& right = resolve_symbol( expr->right, stack );
+				
+				export_symbol( expr->left, right );
+				
+				return right;
 			}
 			
 			const bool exec = expr->op != Op_list;
@@ -465,6 +482,15 @@ namespace vlib
 				}
 				
 				return resolved;
+			}
+			
+			if ( expr->op == Op_export )
+			{
+				const Value& symbol = expr->right;
+				
+				export_symbol( expr->left, resolve_symbol( symbol, stack ) );
+				
+				return execute( symbol, stack );
 			}
 			
 			if ( expr->op == Op_end )

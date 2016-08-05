@@ -54,6 +54,7 @@ namespace vlib
 	
 	static const precedence_mapping precedence_table[] =
 	{
+		{ Precedence_declarator, Op_export },
 		{ Precedence_declarator, Op_const },
 		{ Precedence_declarator, Op_var   },
 		{ Precedence_declarator, Op_def   },

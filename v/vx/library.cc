@@ -26,6 +26,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/interpret.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/symbol.hh"
 #include "vlib/types.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
@@ -48,7 +49,19 @@ namespace vlib
 		const char* code = expr->left .string().c_str();
 		const char* file = expr->right.string().c_str();
 		
-		return interpret( code, file, NULL, &eval_error_handler );
+		const Value result = interpret( code, file, NULL, &eval_error_handler );
+		
+		if ( Expr* expr = result.expr() )
+		{
+			if ( expr->op == Op_export )
+			{
+				const Value& exported = expr->right;
+				
+				return exported.sym()->get();
+			}
+		}
+		
+		return result;
 	}
 	
 	static

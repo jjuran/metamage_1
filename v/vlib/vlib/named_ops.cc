@@ -43,6 +43,7 @@ namespace vlib
 		{ "const",  Op_const  },
 		{ "def",    Op_def    },
 		{ "do",     Op_do     },
+		{ "export", Op_export },
 		{ "for",    Op_for    },
 		{ "if",     Op_if     },
 		{ "lambda", Op_lambda },

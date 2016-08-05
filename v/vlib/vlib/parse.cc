@@ -94,6 +94,10 @@ namespace vlib
 			Stack stack;
 			
 			source_spec  its_source;
+			
+			unsigned its_export_count;
+			
+			Value its_exports;
 		
 		private:
 			bool expecting_value() const;
@@ -115,7 +119,9 @@ namespace vlib
 			Parser( lexical_scope* globals, const char* file )
 			:
 				scope( globals ),
-				its_source( file )
+				its_source( file ),
+				its_export_count(),
+				its_exports( Symbol_var, "__export__" )
 			{
 			}
 			
@@ -423,6 +429,18 @@ namespace vlib
 						{
 							receive_op( Op_named_unary );
 						}
+						
+						if ( op == Op_export )
+						{
+							if ( its_export_count != 0 )
+							{
+								THROW( "only one export allowed" );
+							}
+							
+							++its_export_count;
+							
+							receive_value( its_exports );
+						}
 					}
 					else if ( token.text == "break" )
 					{
@@ -604,6 +622,11 @@ namespace vlib
 			
 			if ( ! token )
 			{
+				if ( its_export_count )
+				{
+					result = Value( result, Op_end, its_exports );
+				}
+				
 				return enscope_block( scope, result );
 			}
 			
