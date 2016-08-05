@@ -457,14 +457,14 @@ namespace vlib
 					THROW( "declarator operand must be a symbol" );
 				}
 				
+				const Value resolved = resolve_symbol( expr->right, stack );
+				
 				if ( expr->op == Op_def )
 				{
-					const Value resolved = resolve_symbol( expr->right, stack );
-					
 					return bind_args( proc_define, resolved );
 				}
 				
-				return Value_nothing;
+				return resolved;
 			}
 			
 			if ( expr->op == Op_end )
