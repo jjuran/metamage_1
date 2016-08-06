@@ -368,6 +368,11 @@ namespace vlib
 	{
 		if ( Expr* expr = v.expr() )
 		{
+			if ( declares_symbols( expr->op ) )
+			{
+				return resolve_symbol_expr( expr->right, stack );
+			}
+			
 			if ( expr->op == Op_denote )
 			{
 				const Value& left = resolve_symbol( expr->left, stack );
@@ -380,11 +385,9 @@ namespace vlib
 				return execute( v, stack );
 			}
 			
-			const bool decl = declares_symbols( expr->op );
-			const bool exec = ! decl  &&  expr->op != Op_list;
+			const bool exec = expr->op != Op_list;
 			
-			return Value( decl ? expr->left
-			                   : resolve_symbol_expr( expr->left, stack ),
+			return Value( resolve_symbol_expr( expr->left, stack ),
 			              expr->op,
 			              exec ? execute            ( expr->right, stack )
 			                   : resolve_symbol_expr( expr->right, stack ) );
