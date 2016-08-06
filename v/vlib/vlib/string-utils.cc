@@ -58,6 +58,7 @@ namespace vlib
 			case Op_denote:     return "\xa9" " (";  // " (" <-> ')' + 0x80
 			case Op_subscript:  return "\xdd" "[";  // '[' <-> ']' + 0x80
 			
+			case Op_module: return "module ";
 			case Op_export: return "export ";
 			case Op_var:    return "var ";
 			case Op_const:  return "const ";

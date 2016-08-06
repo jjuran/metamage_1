@@ -95,6 +95,7 @@ namespace vlib
 			
 			source_spec  its_source;
 			
+			bool     it_is_a_module;
 			unsigned its_export_count;
 			
 			Value its_exports;
@@ -120,6 +121,7 @@ namespace vlib
 			:
 				scope( globals ),
 				its_source( file ),
+				it_is_a_module(),
 				its_export_count(),
 				its_exports( Symbol_var, "__export__" )
 			{
@@ -432,9 +434,9 @@ namespace vlib
 						
 						if ( op == Op_export )
 						{
-							if ( its_export_count != 0 )
+							if ( ! it_is_a_module  &&  its_export_count != 0 )
 							{
-								THROW( "only one export allowed" );
+								THROW( "only one export allowed in non-module" );
 							}
 							
 							++its_export_count;
@@ -461,6 +463,28 @@ namespace vlib
 							if ( stack.back().op == Op_member )
 							{
 								receive_value( token.text );
+								break;
+							}
+							
+							if ( stack.back().op == Op_module )
+							{
+								if ( it_is_a_module )
+								{
+									THROW( "duplicate `module` declaration" );
+								}
+								
+								if ( its_export_count != 0 )
+								{
+									THROW( "`module` must precede `export`" );
+								}
+								
+								it_is_a_module = true;
+								
+								Value exports( Op_export, empty_array );
+								
+								its_exports.sym()->deref() = exports;
+								
+								receive_value( its_exports );
 								break;
 							}
 							

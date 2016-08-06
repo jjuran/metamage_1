@@ -143,6 +143,11 @@ namespace vlib
 			THROW( "abuse of power" );
 		}
 		
+		if ( expr->op == Op_module )
+		{
+			return Value( expr->op, etc_vtype );
+		}
+		
 		list_builder result;
 		
 		list_iterator it( v );

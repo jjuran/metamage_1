@@ -47,6 +47,7 @@ namespace vlib
 		{ "for",    Op_for    },
 		{ "if",     Op_if     },
 		{ "lambda", Op_lambda },
+		{ "module", Op_module },
 		{ "not",    Op_not    },
 		{ "return", Op_return },
 		{ "throw",  Op_throw  },

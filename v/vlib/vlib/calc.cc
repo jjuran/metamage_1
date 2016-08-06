@@ -603,6 +603,12 @@ namespace vlib
 			{
 				return table_member( left, right.string() );
 			}
+			
+			if ( expr->op == Op_module )
+			{
+				// Pretend the module is a table.
+				return associative_subscript( left, right );
+			}
 		}
 		
 		if ( vtype.type() == Value_base_type )

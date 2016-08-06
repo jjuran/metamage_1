@@ -12,6 +12,7 @@
 #include "plus/var_string.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/collectible.hh"
 #include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
@@ -368,6 +369,20 @@ namespace vlib
 	{
 		Symbol& xsym = *exports.sym();
 		
+		if ( Expr* expr = xsym.get().expr() )
+		{
+			ASSERT( expr->op == Op_export );
+			ASSERT( is_array( expr->right ) );
+			
+			Target target = { &expr->right, &nothing };
+			
+			push( target, symbol );
+			
+			return;
+		}
+		
+		ASSERT( xsym.get().type() == Value_undefined );
+		
 		xsym.deref() = Value( Op_export, symbol );
 	}
 	
@@ -464,6 +479,11 @@ namespace vlib
 			{
 				run_for_loop( expr->right, stack );
 				
+				return Value();
+			}
+			
+			if ( expr->op == Op_module )
+			{
 				return Value();
 			}
 			

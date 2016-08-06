@@ -19,6 +19,7 @@ namespace vlib
 		Op_throw,
 		Op_break,
 		Op_continue,
+		Op_module,
 		Op_export,
 		
 	// begin declares-symbols

@@ -18,6 +18,9 @@
 // must
 #include "must/write.h"
 
+// debug
+#include "debug/assert.hh"
+
 // plus
 #include "plus/integer.hh"
 #include "plus/var_string.hh"
@@ -28,6 +31,8 @@
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
+#include "vlib/iterators/array_iterator.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 
@@ -57,7 +62,26 @@ namespace vlib
 			{
 				const Value& exported = expr->right;
 				
-				return exported.sym()->get();
+				if ( const Symbol* sym = exported.sym() )
+				{
+					return sym->get();
+				}
+				
+				list_builder    mappings;
+				array_iterator  it( exported );
+				
+				while ( it )
+				{
+					const Symbol* sym = it.use().sym();
+					
+					ASSERT( sym );
+					
+					Value mapping( sym->name(), Op_mapping, sym->get() );
+					
+					mappings.append( mapping );
+				}
+				
+				return Value( Op_module, make_array( mappings ) );
 			}
 		}
 		
