@@ -35,4 +35,4 @@ def nth_prime
 	return if _ == last_index then { last_prime } else { primes[ _ ] };
 }
 
-nth_prime
+export nth_prime
