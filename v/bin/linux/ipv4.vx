@@ -1,0 +1,75 @@
+#!/usr/bin/env vx -Z
+
+def begins_with
+{
+	const haystack, const needle = _
+	
+	if haystack.length < needle.length then
+	{
+		return false
+	}
+	
+	return haystack[ 0 -> needle.length ] == needle
+}
+
+def output_from
+{
+	const command (str) = _
+	
+	const out = dup OUT
+	
+	const r, const w = pipe()
+	
+	dup2( w, OUT ); close w
+	
+	system command
+	
+	dup2( out, OUT ); close out
+	
+	var response = "";
+	
+	while var buffer = read( r, 4096 ) do
+	{
+		response = response buffer.string
+	}
+	
+	return response
+}
+
+def get_until_char
+{
+	const c, const text = _
+	
+	for i in 0 -> text.length do
+	{
+		if text[ i ] == c then
+		{
+			return text[ 0 -> i ]
+		}
+	}
+	
+	throw "separator " rep( c ) " not found"
+}
+
+const get_intf_name = get_until_char % ' '
+const get_ipv4_addr = get_until_char % ' '
+
+const inet = "          inet addr:"
+
+var interface
+
+for line in output_from( "/sbin/ifconfig" ).lines() do
+{
+	if line == "" then {continue}
+	
+	if line[ 0 ] != ' ' then
+	{
+		interface = get_intf_name( line )
+	}
+	else if begins_with( line, inet ) then
+	{
+		const ipv4 = get_ipv4_addr( substr( line, inet.length ) )
+		
+		print interface ": " ipv4
+	}
+}
