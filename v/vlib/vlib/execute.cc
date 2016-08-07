@@ -417,7 +417,7 @@ namespace vlib
 		
 		eval( name, Op_duplicate, lambda, expr->source );
 		
-		return name;
+		return lambda;
 	}
 	
 	static const proc_info proc_define = { "define", &v_define, 0 };  // NULL
