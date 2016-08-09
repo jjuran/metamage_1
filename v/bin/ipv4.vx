@@ -1,5 +1,8 @@
 #!/usr/bin/env vx -Z
 
+const libdir = { (dirname argv[ 0 ]) "/../lib/" }
+const import = { eval load libdir() _ ".vobj"  }
+
 def begins_with
 {
 	const haystack, const needle = _
@@ -26,14 +29,35 @@ def output_from
 	
 	dup2( out, OUT ); close out
 	
-	var response = "";
+	var response = ""
 	
 	while var buffer = read( r, 4096 ) do
 	{
 		response = response buffer.string
 	}
 	
+	close r
+	
 	return response
+}
+
+def status_from
+{
+	const command (str) = _
+	
+	const err = dup ERR
+	
+	const r, const w = pipe()
+	
+	dup2( w, ERR ); close w
+	
+	const exit_status = try { system command } catch { _.exit }
+	
+	dup2( err, ERR ); close err
+	
+	close r
+	
+	return exit_status
 }
 
 def get_until_char
@@ -51,10 +75,20 @@ def get_until_char
 	throw "separator " rep( c ) " not found"
 }
 
-const get_intf_name = get_until_char % ':'
+const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
+
+const platform_from_exit = int^[ 1: "bsd", 4: "linux" ]
+
+const ifconfig_platform = platform_from_exit[ ifconfig_version_status ]
+
+const ifconfig = import "ifconfig." ifconfig_platform
+
+const get_intf_name = get_until_char % ifconfig.intf_name_suffix
 const get_ipv4_addr = get_until_char % ' '
 
-const inet = "\t" "inet "
+const inet = ifconfig.inet_addr_prefix
+
+const pad_char = inet[ 0 ]
 
 var interface
 
@@ -62,7 +96,7 @@ for line in output_from( "/sbin/ifconfig" ).lines() do
 {
 	if line == "" then {continue}
 	
-	if line[ 0 ] != '\t' then
+	if line[ 0 ] != pad_char then
 	{
 		interface = get_intf_name( line )
 	}
