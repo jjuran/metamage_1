@@ -20,13 +20,15 @@
 #include "plus/posix/dirname.hh"
 
 // vlib
-#include "vlib/exceptions.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+
+// vx
+#include "exception.hh"
 
 
 namespace vlib
@@ -41,7 +43,7 @@ namespace vlib
 		
 		Value exception( error, Value( desc, fd_ ) );
 		
-		throw user_exception( exception, source_spec() );
+		throw_exception_object( exception );
 	}
 	
 	static
@@ -53,7 +55,7 @@ namespace vlib
 		
 		Value exception( error, Value( desc, path_ ) );
 		
-		throw user_exception( exception, source_spec() );
+		throw_exception_object( exception );
 	}
 	
 	static
@@ -64,7 +66,7 @@ namespace vlib
 		
 		Value exception( desc, path_ );
 		
-		throw user_exception( exception, source_spec() );
+		throw_exception_object( exception );
 	}
 	
 	static const char* file_types[] =

@@ -36,6 +36,9 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 
+// vx
+#include "exception.hh"
+
 
 namespace vlib
 {
@@ -151,7 +154,7 @@ namespace vlib
 			
 			Value exception( command, Value( error, desc ) );
 			
-			throw user_exception( exception, source_spec() );
+			throw_exception_object( exception );
 		}
 		
 		if ( WIFSIGNALED( status ) )
@@ -162,7 +165,7 @@ namespace vlib
 			
 			Value exception( command, signal );
 			
-			throw user_exception( exception, source_spec() );
+			throw_exception_object( exception );
 		}
 		
 		if ( int exit_status = WEXITSTATUS( status ) )
@@ -171,7 +174,7 @@ namespace vlib
 			
 			Value exception( command, exit );
 			
-			throw user_exception( exception, source_spec() );
+			throw_exception_object( exception );
 		}
 		
 		return Integer();  // not reached
