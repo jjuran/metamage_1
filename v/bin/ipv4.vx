@@ -3,18 +3,6 @@
 const libdir = { (dirname argv[ 0 ]) "/../lib/" }
 const import = { eval load libdir() _ ".vobj"  }
 
-def begins_with
-{
-	const haystack, const needle = _
-	
-	if haystack.length < needle.length then
-	{
-		return false
-	}
-	
-	return haystack[ 0 -> needle.length ] == needle
-}
-
 def output_from
 {
 	const command (str) = _
@@ -60,20 +48,8 @@ def status_from
 	return exit_status
 }
 
-def get_until_char
-{
-	const c, const text = _
-	
-	for i in 0 -> text.length do
-	{
-		if text[ i ] == c then
-		{
-			return text[ 0 -> i ]
-		}
-	}
-	
-	throw "separator " rep( c ) " not found"
-}
+const begins_with    = import "begins_with"
+const get_until_char = import "get_until_char"
 
 const ifconfig_version_status = status_from( "/sbin/ifconfig --version" )
 
