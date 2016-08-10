@@ -292,7 +292,16 @@ namespace vlib
 				if ( *p == 'x' )  return ++p, Token_unhex;
 			}
 			
-			while ( is_name( *++p ) )  continue;
+			do
+			{
+				if ( *++p == '-' )  ++p;
+			}
+			while ( is_name( *p ) );
+			
+			if ( p[ -1 ] == '-' )
+			{
+				--p;
+			}
 			
 			const char* q = p;
 			
