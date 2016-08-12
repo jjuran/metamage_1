@@ -20,7 +20,7 @@ extern "C" {
 
 /* GNU extensions */
 
-#ifndef __linux__
+#if ! defined( __linux__ )  ||  defined( ANDROID )
 #ifdef __MC68K__
 
 void* mempcpy( void* dest : __A0, const void* src : __A1, size_t n : __D0 );
@@ -30,7 +30,7 @@ void* mempcpy( void* dest : __A0, const void* src : __A1, size_t n : __D0 );
 void* mempcpy( void* dest, const void* src, size_t n );
 
 #endif
-#endif  // #ifndef __linux__
+#endif  // #if ! defined( __linux__ )  ||  defined( ANDROID )
 
 
 #ifdef __cplusplus
