@@ -21,6 +21,11 @@
 // gear
 #include "gear/parse_decimal.hh"
 
+#ifdef ANDROID
+typedef uint32_t in_addr_t;
+typedef uint16_t in_port_t;
+#endif
+
 
 #define PROGRAM  "listen"
 
