@@ -14,7 +14,7 @@
 #define ED25519_FN2(fn,suffix) ED25519_FN3(fn,suffix)
 #define ED25519_FN(fn)         ED25519_FN2(fn,ED25519_SUFFIX)
 
-#ifdef __RELIX__
+#if defined( __RELIX__ )  ||  defined( ANDROID )
 #define ED25519_CUSTOMRANDOM
 #define ED25519_REFHASH
 #endif
