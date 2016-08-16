@@ -126,17 +126,6 @@ int fixed_size_output( const char* path, unsigned fixed_size )
 		exit( 3 );
 	}
 	
-	if ( st.st_size == 0 )
-	{
-		nok = ftruncate( fd, fixed_size );
-		
-		if ( nok )
-		{
-			fprintf( stderr, PROGRAM ": %s: %s\n", path, strerror( errno ) );
-			exit( 1 );
-		}
-	}
-	
 	return fd;
 }
 
