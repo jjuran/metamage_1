@@ -43,18 +43,6 @@ namespace tool
 	static plus::var_string global_name_data;
 	
 	
-	static uint16_t decode_16_bit_hex( const char* s )
-	{
-		using gear::decoded_hex_digit;
-		
-		const uint16_t result = decoded_hex_digit( s[ 0 ] ) << 12
-		                      | decoded_hex_digit( s[ 1 ] ) <<  8
-		                      | decoded_hex_digit( s[ 2 ] ) <<  4
-		                      | decoded_hex_digit( s[ 3 ] ) <<  0;
-		
-		return result;
-	}
-	
 	static void read_traps( p7::fd_t fd )
 	{
 		global_name_data.reserve( 12 * 1024 );
@@ -74,7 +62,7 @@ namespace tool
 				break;
 			}
 			
-			const uint16_t trap_word = decode_16_bit_hex( &line[0] );
+			const uint16_t trap_word = gear::decode_16_bit_hex( &line[0] );
 			
 			const char* trap_name = &line[ STRLEN( "A123 " ) ];
 			
