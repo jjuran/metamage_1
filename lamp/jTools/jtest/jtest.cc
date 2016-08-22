@@ -5,7 +5,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <vector>
 
 // Standard C/C++
@@ -406,22 +405,31 @@ namespace tool
 	
 	void TestCase::ClosePipeWriters()
 	{
-		std::for_each( itsWriteEnds.begin(),
-			           itsWriteEnds.end(),
-			           std::ptr_fun( close ) );
+		typedef std::vector< int >::const_iterator Iter;
+		
+		for ( Iter it = itsWriteEnds.begin();  it != itsWriteEnds.end();  ++it )
+		{
+			close( *it );
+		}
 		
 		itsWriteEnds.clear();
 	}
 	
 	bool TestCase::DoesOutputMatch() const
 	{
-		std::vector< Redirection >::const_iterator it = std::find_if( itsRedirections.begin(),
-		                                                              itsRedirections.end(),
-		                                                              std::ptr_fun( DiscrepantOutput ) );
+		typedef std::vector< Redirection >::const_iterator Iter;
 		
-		bool output_matches = it == itsRedirections.end();
+		const Iter end = itsRedirections.end();
 		
-		return output_matches;
+		for ( Iter it = itsRedirections.begin();  it != end;  ++it )
+		{
+			if ( DiscrepantOutput( *it ) )
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	
@@ -578,7 +586,12 @@ namespace tool
 		
 		p7::write( p7::stdout_fileno, header );
 		
-		std::for_each( battery.begin(), battery.end(), std::ptr_fun( RunTest ) );
+		typedef std::vector< TestCase >::iterator Iter;
+		
+		for ( Iter it = battery.begin();  it != battery.end();  ++it )
+		{
+			RunTest( *it );
+		}
 		
 		return 0;
 	}
