@@ -4,7 +4,6 @@
  */
 
 // Standard C++
-#include <algorithm>
 #include <vector>
 
 // Standard C/C++
@@ -25,6 +24,7 @@
 
 // iota
 #include "iota/strings.hh"
+#include "iota/swap.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -206,7 +206,7 @@ namespace tool
 					throw p7::exit_failure;
 				}
 				
-				using std::swap;
+				using iota::swap;
 				
 				swap( param, hereDoc );
 			}
