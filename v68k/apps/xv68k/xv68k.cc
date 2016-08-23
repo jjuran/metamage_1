@@ -64,6 +64,7 @@ using v68k::big_longword;
 
 using v68k::auth::fully_authorized;
 
+static bool tracing;
 static bool verbose;
 static bool has_screen;
 
@@ -83,6 +84,7 @@ static module_spec* module_specs;
 enum
 {
 	Opt_authorized = 'A',
+	Opt_trace      = 'T',
 	Opt_module     = 'm',
 	Opt_verbose    = 'v',
 	
@@ -97,6 +99,7 @@ enum
 static command::option options[] =
 {
 	{ "",        Opt_authorized },
+	{ "trace",   Opt_trace      },
 	{ "verbose", Opt_verbose    },
 	{ "pid",     Opt_pid,    command::Param_optional },
 	{ "raster",  Opt_raster, command::Param_required },
@@ -685,6 +688,16 @@ int execute_68k( int argc, char* const* argv )
 	
 	const char* path = argv[0];
 	
+	if ( tracing )
+	{
+		uint16_t* p = (uint16_t*) (mem + code_address);
+		
+		*p++ = v68k::big_word( 0x4EB8 );  // JSR
+		*p++ = v68k::big_word( 0xFFF4 );  //   trace_on
+		
+		mem += 4;
+	}
+	
 	load_code( mem, path );
 	
 	emu.reset();
@@ -737,6 +750,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_ignore_screen_locks:
 				ignore_screen_locks();
+				break;
+			
+			case Opt_trace:
+				tracing = true;
 				break;
 			
 			case Opt_verbose:
