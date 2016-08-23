@@ -28,22 +28,6 @@ static uint32_t step_over;
 
 static void debugger_loop( registers& regs )
 {
-	static uint32_t troff_address = 0;
-	
-	if ( !troff_address )
-	{
-		troff_address = regs.pc + 2;  // stop after the JSR (A1)
-		
-		return;
-	}
-	
-	if ( regs.pc == troff_address )
-	{
-		regs.sr &= 0x3FFF;  // clear Trace bits
-		
-		return;
-	}
-	
 	if ( n_steps > 0 )
 	{
 		--n_steps;
