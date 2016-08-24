@@ -8,9 +8,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <algorithm>
-
 // v68k
 #include "v68k/endian.hh"
 
@@ -113,12 +110,28 @@ static const global globals[] =
 	{ 0x0BFE, 2,    tag_last_A_trap }
 };
 
+static
+const global* find( const global* begin, const global* end, uint16_t address )
+{
+	while ( begin < end )
+	{
+		if ( ! (*begin < address) )
+		{
+			break;
+		}
+		
+		++begin;
+	}
+	
+	return begin;
+}
+
 static const global* find_global( uint16_t address )
 {
 	const global* begin = globals;
 	const global* end   = globals + sizeof globals / sizeof globals[0];
 	
-	const global* it = std::lower_bound( begin, end, address );
+	const global* it = find( begin, end, address );
 	
 	if ( it == end )
 	{
