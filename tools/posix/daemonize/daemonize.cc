@@ -30,9 +30,6 @@
 #include "poseven/functions/open.hh"
 #include "poseven/functions/perror.hh"
 
-// Orion
-#include "Orion/Main.hh"
-
 
 using namespace command::constants;
 
@@ -106,95 +103,90 @@ static char* const* get_options( char* const* argv )
 }
 
 
-namespace tool
+namespace n = nucleus;
+namespace p7 = poseven;
+
+
+static int usage()
 {
+	must_write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
 	
-	namespace n = nucleus;
-	namespace p7 = poseven;
+	return 2;
+}
+
+int main( int argc, char** argv )
+{
+	char *const *args = get_options( argv );
 	
+	const int argn = argc - (args - argv);
 	
-	static int usage()
+	if ( argn < 1 )
 	{
-		must_write( STDERR_FILENO, STR_LEN( "Usage: daemonize command [ arg1 ... argn ]\n" ) );
-		
-		return 2;
+		return usage();
 	}
 	
-	int Main( int argc, char** argv )
+	struct sigaction action = { SIG_IGN };
+	
+	// Ignore SIGHUP
+	sigaction( SIGHUP, &action, NULL );
+	
+	// Ensure we are not a process group leader
+	fork_and_exit( 0 );
+	
+	// Start a new session with no controlling terminal
+	setsid();
+	
+	n::owned< p7::fd_t > stdio;
+	
+	if ( ctty )
 	{
-		char *const *args = get_options( argv );
+		action.sa_handler = SIG_DFL;
 		
-		const int argn = argc - (args - argv);
-		
-		if ( argn < 1 )
-		{
-			return usage();
-		}
-		
-		struct sigaction action = { SIG_IGN };
-		
-		// Ignore SIGHUP
 		sigaction( SIGHUP, &action, NULL );
 		
-		// Ensure we are not a process group leader
+		stdio = p7::open( ctty, p7::o_rdwr );
+		
+	#ifdef TIOCSCTTY
+		
+		p7::ioctl( stdio.get(), TIOCSCTTY, NULL );
+		
+	#endif
+	}
+	else
+	{
+		// Ensure we can't acquire a controlling terminal by being session leader
 		fork_and_exit( 0 );
 		
-		// Start a new session with no controlling terminal
-		setsid();
-		
-		n::owned< p7::fd_t > stdio;
-		
-		if ( ctty )
-		{
-			action.sa_handler = SIG_DFL;
-			
-			sigaction( SIGHUP, &action, NULL );
-			
-			stdio = p7::open( ctty, p7::o_rdwr );
-			
-		#ifdef TIOCSCTTY
-			
-			p7::ioctl( stdio.get(), TIOCSCTTY, NULL );
-			
-		#endif
-		}
-		else
-		{
-			// Ensure we can't acquire a controlling terminal by being session leader
-			fork_and_exit( 0 );
-			
-			stdio = p7::open( "/dev/null", p7::o_rdonly );
-		}
-		
-		if ( !keep_cwd )
-		{
-			must_chdir( "/" );
-		}
-		
-		if ( !keep_stdin )
-		{
-			dup2( stdio, STDIN_FILENO  );
-		}
-		
-		if ( !keep_stdout )
-		{
-			dup2( stdio, STDOUT_FILENO  );
-		}
-		
-		if ( !keep_stderr )
-		{
-			dup2( stdio, STDERR_FILENO  );
-		}
-		
-		p7::close( stdio );
-		
-		(void) execvp( *args, (char**) args );
-		
-		bool noSuchFile = errno == ENOENT;
-		
-		p7::perror( argv[0], argv[1] );
-		
-		return noSuchFile ? 127 : 126;
+		stdio = p7::open( "/dev/null", p7::o_rdonly );
 	}
 	
+	if ( !keep_cwd )
+	{
+		must_chdir( "/" );
+	}
+	
+	if ( !keep_stdin )
+	{
+		dup2( stdio, STDIN_FILENO  );
+	}
+	
+	if ( !keep_stdout )
+	{
+		dup2( stdio, STDOUT_FILENO  );
+	}
+	
+	if ( !keep_stderr )
+	{
+		dup2( stdio, STDERR_FILENO  );
+	}
+	
+	p7::close( stdio );
+	
+	(void) execvp( *args, (char**) args );
+	
+	bool noSuchFile = errno == ENOENT;
+	
+	p7::perror( argv[0], argv[1] );
+	
+	return noSuchFile ? 127 : 126;
 }
