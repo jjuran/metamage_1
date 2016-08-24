@@ -46,36 +46,29 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 		return 0;  // NULL
 	}
 	
-	try
+	using v68k::callback::screen_lock_level;
+	
+	if ( length > screen_size )
 	{
-		using v68k::callback::screen_lock_level;
-		
-		if ( length > screen_size )
-		{
-			// The memory access is somehow wider than the buffer is long
-			return 0;  // NULL
-		}
-		
-		if ( addr > screen_size - length )
-		{
-			return 0;  // NULL
-		}
-		
-		uint8_t* p = (uint8_t*) the_screen_buffer + addr;
-		
-		if ( access == v68k::mem_update  &&  screen_lock_level >= 0 )
-		{
-		#ifdef __RELIX__
-			
-			msync( the_screen_buffer, screen_size, MS_SYNC );
-			
-		#endif
-		}
-		
-		return p;
+		// The memory access is somehow wider than the buffer is long
+		return 0;  // NULL
 	}
-	catch ( ... )
+	
+	if ( addr > screen_size - length )
 	{
 		return 0;  // NULL
 	}
+	
+	uint8_t* p = (uint8_t*) the_screen_buffer + addr;
+	
+	if ( access == v68k::mem_update  &&  screen_lock_level >= 0 )
+	{
+	#ifdef __RELIX__
+		
+		msync( the_screen_buffer, screen_size, MS_SYNC );
+		
+	#endif
+	}
+	
+	return p;
 }
