@@ -33,6 +33,12 @@ typedef uint16_t in_port_t;
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+#ifdef ANDROID
+#define FORK() fork()
+#else
+#define FORK() vfork()
+#endif
+
 
 static int usage()
 {
@@ -153,7 +159,7 @@ static int listen_unix( const char* path )
 
 static void spawn( int client_fd, char** argv )
 {
-	pid_t pid = vfork();
+	pid_t pid = FORK();
 	
 	if ( pid == 0 )
 	{
