@@ -185,7 +185,8 @@ static void event_loop( int listener_fd, char** argv )
 		
 		if ( client_fd < 0 )
 		{
-			return;
+			perror( PROGRAM ": accept" );
+			exit( 125 );
 		}
 		
 		spawn( client_fd, argv );
