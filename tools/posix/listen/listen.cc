@@ -40,13 +40,15 @@ typedef uint16_t in_port_t;
 #endif
 
 
-static int usage()
+static
+int usage()
 {
 	write( STDERR_FILENO, STR_LEN( USAGE ) );
 	return 1;
 }
 
-static in_addr_t resolve_hostname( const char* hostname )
+static
+in_addr_t resolve_hostname( const char* hostname )
 {
 	hostent* hosts = gethostbyname( hostname );
 	
@@ -62,7 +64,8 @@ static in_addr_t resolve_hostname( const char* hostname )
 	return addr.s_addr;
 }
 
-static int listen_inet( in_addr_t addr, in_port_t port )
+static
+int listen_inet( in_addr_t addr, in_port_t port )
 {
 	int s = socket( PF_INET, SOCK_STREAM, 0 );
 	
@@ -99,7 +102,8 @@ static int listen_inet( in_addr_t addr, in_port_t port )
 	return s;
 }
 
-static int listen_unix( const char* path )
+static
+int listen_unix( const char* path )
 {
 	const size_t path_len = strlen( path );
 	
@@ -157,7 +161,8 @@ static int listen_unix( const char* path )
 	return s;
 }
 
-static void spawn( int client_fd, char** argv )
+static
+void spawn( int client_fd, char** argv )
 {
 	pid_t pid = FORK();
 	
@@ -180,7 +185,8 @@ static void spawn( int client_fd, char** argv )
 	}
 }
 
-static void event_loop( int listener_fd, char** argv )
+static
+void event_loop( int listener_fd, char** argv )
 {
 	while ( true )
 	{
@@ -201,7 +207,8 @@ static void event_loop( int listener_fd, char** argv )
 	}
 }
 
-static char* find_first_of_two( char* p, char one, char two )
+static
+char* find_first_of_two( char* p, char one, char two )
 {
 	while ( *p != one  &&  *p != two )
 	{
