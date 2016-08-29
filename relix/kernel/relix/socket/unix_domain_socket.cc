@@ -190,6 +190,8 @@ namespace relix
 		if ( len != NULL )
 		{
 			memset( addr, '\0', *len );
+			
+			addr->sa_family = AF_UNIX;
 		}
 		
 		client.state = State_connected;
