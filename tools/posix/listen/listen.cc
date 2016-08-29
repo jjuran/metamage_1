@@ -6,6 +6,7 @@
 // POSIX
 #include <netdb.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
@@ -19,6 +20,7 @@
 #include <string.h>
 
 // gear
+#include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
 #ifdef ANDROID
@@ -186,6 +188,41 @@ void spawn( int client_fd, char** argv )
 }
 
 static
+const char* rep( const sockaddr_storage& addr )
+{
+	static char buffer[ sizeof "123.123.123.123:12345" ];
+	
+	const sa_family_t af = addr.ss_family;
+	
+	const void* data;
+	
+	switch ( af )
+	{
+		case AF_INET:
+			data = &((sockaddr_in&) addr).sin_addr;
+			break;
+		
+		default:
+			return NULL;
+	}
+	
+	if ( inet_ntop( af, data, buffer, sizeof buffer ) )
+	{
+		char* p = buffer + strlen( buffer );
+		
+		*p++ = ':';
+		
+		const in_port_t port = ((sockaddr_in&) addr).sin_port;
+		
+		gear::inscribe_unsigned_decimal_r( ntohs( port ), p );
+		
+		return buffer;
+	}
+	
+	return NULL;
+}
+
+static
 void event_loop( int listener_fd, char** argv )
 {
 	while ( true )
@@ -200,6 +237,19 @@ void event_loop( int listener_fd, char** argv )
 			perror( PROGRAM ": accept" );
 			exit( 125 );
 		}
+		
+		const char* src = rep( addr );
+		
+		const char* type = addr.ss_family == AF_UNIX ? "Unix-domain socket"
+		                                             : "TCP";
+		const char* from = src ? " from " : "";
+		
+		if ( src == NULL )
+		{
+			src = "";
+		}
+		
+		printf( "%s connection%s%s on fd %d\n", type, from, src, client_fd );
 		
 		spawn( client_fd, argv );
 		
