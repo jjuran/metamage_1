@@ -5,19 +5,22 @@
 
 #include "relix/pump.h"
 
-// Standard C++
-#include <algorithm>
-
 // POSIX
 #include <errno.h>
 #include <unistd.h>
 
 
+static inline
+size_t min( size_t a, size_t b )
+{
+	return b > a ? b : a;
+}
+
 #ifndef __RELIX__
 
 ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count, unsigned flags )
 {
-	const std::size_t buffer_size = 4096;
+	const size_t buffer_size = 4096;
 	
 	char buffer[ buffer_size ];
 	
@@ -39,7 +42,7 @@ ssize_t pump( int fd_in, off_t* off_in, int fd_out, off_t* off_out, size_t count
 	
 	ssize_t bytes_pumped = 0;
 	
-	while ( int bytes_read = read( fd_in, buffer, count ? std::min( count - bytes_pumped, buffer_size ) : buffer_size ) )
+	while ( ssize_t bytes_read = read( fd_in, buffer, count ? min( count - bytes_pumped, buffer_size ) : buffer_size ) )
 	{
 		if ( bytes_read == -1 )
 		{
