@@ -25,6 +25,10 @@
 #include "nucleus/enumeration_traits.hh"
 #endif
 
+#ifdef ANDROID
+typedef uint16_t in_port_t;
+#endif
+
 
 #ifndef CONFIG_LITTLE_ENDIAN
 #error CONFIG_LITTLE_ENDIAN must be defined (in config/endian.h) to use p7::in_port_t
