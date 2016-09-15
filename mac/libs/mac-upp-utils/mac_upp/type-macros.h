@@ -1,10 +1,10 @@
 /*
-	MacFixup/UPP.h
-	--------------
+	type-macros.h
+	-------------
 */
 
-#ifndef MACFIXUP_UPP_H
-#define MACFIXUP_UPP_H
+#ifndef MACUPP_TYPEMACROS_H
+#define MACUPP_TYPEMACROS_H
 
 // Mac OS X
 #ifdef __APPLE__

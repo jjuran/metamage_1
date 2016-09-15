@@ -14,9 +14,9 @@
 #include <MixedMode.h>
 #endif
 
-// MacFixup
+// mac-upp-utils
 #if ! TARGET_API_MAC_CARBON
-#include "UPP.h"
+#include "mac_upp/type-macros.h"
 #endif
 
 

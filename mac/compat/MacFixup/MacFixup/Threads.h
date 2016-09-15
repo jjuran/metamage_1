@@ -19,8 +19,8 @@
 #include <MixedMode.h>
 #endif
 
-// MacFixup
-#include "UPP.h"
+// mac-upp-utils
+#include "mac_upp/type-macros.h"
 
 
 #if TARGET_CPU_68K  &&  TARGET_RT_MAC_CFM  &&  !OPAQUE_UPP_TYPES
