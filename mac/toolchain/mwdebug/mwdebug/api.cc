@@ -40,16 +40,20 @@ namespace mwdebug
 		AmIBeingDebuggedUPP   amIBeingDebugged;
 	};
 	
-	static inline const MetroNubUserEntryBlock* GetMetroNubUserEntryBlock_raw()
+	typedef const MetroNubUserEntryBlock* MetroNubUserEntryBlockPtr;
+	
+	static inline
+	MetroNubUserEntryBlockPtr GetMetroNubUserEntryBlock_raw()
 	{
-		return (const MetroNubUserEntryBlock*) mac::sys::gestalt( 'MnUI' );
+		return (MetroNubUserEntryBlockPtr) mac::sys::gestalt( 'MnUI' );
 	}
 	
-	static const MetroNubUserEntryBlock* GetMetroNubUserEntryBlock( int version )
+	static
+	MetroNubUserEntryBlockPtr GetMetroNubUserEntryBlock( int vers )
 	{
-		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock_raw() )
+		if ( MetroNubUserEntryBlockPtr nub = GetMetroNubUserEntryBlock_raw() )
 		{
-			if ( nub->apiLowVersion <= version  &&  version <= nub->apiHiVersion )
+			if ( nub->apiLowVersion <= vers  &&  vers <= nub->apiHiVersion )
 			{
 				return nub;
 			}
@@ -58,18 +62,19 @@ namespace mwdebug
 		return 0;  // NULL
 	}
 	
-	static const MetroNubUserEntryBlock* GetMetroNubUserEntryBlock()
+	static
+	MetroNubUserEntryBlockPtr GetMetroNubUserEntryBlock()
 	{
 		const int v = kMetroNubUserAPIVersion;
 		
-		static const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock( v );
+		static MetroNubUserEntryBlockPtr nub = GetMetroNubUserEntryBlock( v );
 		
 		return nub;
 	}
 	
 	const unsigned char* MetroNubVersion()
 	{
-		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock_raw() )
+		if ( MetroNubUserEntryBlockPtr nub = GetMetroNubUserEntryBlock_raw() )
 		{
 			return nub->nubVersion;
 		}
@@ -84,7 +89,7 @@ namespace mwdebug
 	
 	bool IsDebuggerRunning()
 	{
-		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock() )
+		if ( MetroNubUserEntryBlockPtr nub = GetMetroNubUserEntryBlock() )
 		{
 			return InvokeIsDebuggerRunningUPP( nub->isDebuggerRunning );
 		}
@@ -94,7 +99,7 @@ namespace mwdebug
 	
 	bool AmIBeingDebugged()
 	{
-		if ( const MetroNubUserEntryBlock* nub = GetMetroNubUserEntryBlock() )
+		if ( MetroNubUserEntryBlockPtr nub = GetMetroNubUserEntryBlock() )
 		{
 			return InvokeAmIBeingDebuggedUPP( nub->amIBeingDebugged );
 		}
