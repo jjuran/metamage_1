@@ -98,7 +98,7 @@ my %fsmap =
 			# Exceptions
 			\ qw( abort buserror div0 illegal privileged ),
 			# Mac-specific
-			\ qw( SetFile aevt ic load-init rsrc-patch tlsrvr ),
+			\ qw( SetFile aevt ic load-init mwnub rsrc-patch tlsrvr ),
 			# AppleScript
 			qw( system ),
 			# aevt wrappers
