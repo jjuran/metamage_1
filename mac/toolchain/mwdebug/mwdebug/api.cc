@@ -5,11 +5,11 @@
 
 #include "mwdebug/api.hh"
 
-// MacFixup
-#include "UPP.h"
-
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+
+// mwdebug
+#include "mwdebug/UPP.hh"
 
 
 namespace mwdebug
