@@ -195,6 +195,8 @@ int main( int argc, char** argv )
 	
 	if ( unrestricted )
 	{
+		define( proc_EXECV  );
+		define( proc_EXECVP );
 		define( proc_SYSTEM );
 	}
 	else

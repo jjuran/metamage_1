@@ -29,6 +29,7 @@
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/interpret.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
@@ -91,6 +92,70 @@ namespace vlib
 		}
 		
 		return result;
+	}
+	
+	typedef int (*exec_f)( const char* arg0, char* const* argv );
+	
+	static
+	Value exec_impl( const Value& v, const char* empty_msg, exec_f exec )
+	{
+		Expr* expr = v.expr();
+		
+		const Value& file = expr->left;
+		const Value& args = expr->right;
+		
+		if ( is_empty_array( args ) )
+		{
+			throw user_exception( String( empty_msg ), source_spec() );
+		}
+		
+		array_iterator it( args );
+		
+		expr = args.expr();
+		
+		size_t n = count( expr->right );
+		
+		const char** argv = new const char*[ n + 1 ];
+		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			argv[ i ] = it.use().string().c_str();
+		}
+		
+		argv[ n ] = NULL;
+		
+		const char* path = file.string().c_str();
+		
+		if ( *path == '\0' )
+		{
+			path = argv[ 0 ];
+		}
+		
+		exec( path, (char**) argv );
+		
+		const int saved_errno = errno;
+		
+		delete [] argv;
+		
+		Value program = mapping( "program", file );
+		
+		Value exception( program, error_desc( saved_errno ) );
+		
+		throw_exception_object( exception );
+		
+		return Value();  // not reached
+	}
+	
+	static
+	Value v_execv( const Value& v )
+	{
+		return exec_impl( v, "empty array passed to execv()", &execv );
+	}
+	
+	static
+	Value v_execvp( const Value& v )
+	{
+		return exec_impl( v, "empty array passed to execvp()", &execvp );
 	}
 	
 	static
@@ -221,11 +286,16 @@ namespace vlib
 	                                      Op_duplicate,
 	                                      String( "<eval>" ) );
 	
+	static const Value c_str_array = Value( c_str, Op_subscript, empty_list );
+	
 	static const Value eval = Value( c_str, cstr_eval );
+	static const Value exec = Value( c_str, c_str_array );
 	
 	#define DESTRUCT  "self-destructing"
 	
 	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
+	const proc_info proc_EXECV  = { "execv",  &v_execv,  &exec       };
+	const proc_info proc_EXECVP = { "execvp", &v_execvp, &exec       };
 	const proc_info proc_exit   = { "exit",   &v_exit,   &u8         };
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
