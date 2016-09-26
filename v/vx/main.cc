@@ -193,6 +193,7 @@ int main( int argc, char** argv )
 	define( proc_dup     );
 	define( proc_dup2    );
 	define( proc_eval    );
+	define( proc_exit    );
 	define( proc_fstat   );
 	define( proc_getenv  );
 	define( proc_listdir );

@@ -92,6 +92,14 @@ namespace vlib
 	}
 	
 	static
+	Value v_exit( const Value& v )
+	{
+		exit( v.number().clipped() );
+		
+		return Value();  // not reached
+	}
+	
+	static
 	Value v_getenv( const Value& v )
 	{
 		if ( const char* var = getenv( v.string().c_str() ) )
@@ -189,6 +197,7 @@ namespace vlib
 	}
 	
 	static const Value c_str = c_str_vtype;
+	static const Value u8    = u8_vtype;
 	static const Value u32   = u32_vtype;
 	
 	static const Value maybe_cstr( c_str_vtype, Op_union, Value_empty_list );
@@ -198,6 +207,7 @@ namespace vlib
 	static const Value eval = Value( c_str, cstr_eval );
 	
 	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
+	const proc_info proc_exit   = { "exit",   &v_exit,   &u8         };
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &u32        };
