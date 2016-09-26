@@ -18,7 +18,6 @@
 
 user_startup=/sys/mac/user/prefs/MacRelix/startup
 
-/bin/test -x $user_startup && $user_startup
+/bin/test-type REG $user_startup && $user_startup
 
 exec /bin/teletype /etc/welcome
-
