@@ -117,6 +117,8 @@ my %fsmap =
 		\ qw( teletype ),
 		# Perl scripts
 		qw( chmod date test ),
+		# V scripts
+		qw( test-type ),
 	],
 	etc =>
 	[
