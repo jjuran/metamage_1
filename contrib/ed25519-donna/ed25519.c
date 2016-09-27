@@ -14,6 +14,19 @@
 #define ED25519_FN2(fn,suffix) ED25519_FN3(fn,suffix)
 #define ED25519_FN(fn)         ED25519_FN2(fn,ED25519_SUFFIX)
 
+#if defined( __RELIX__ )  ||  defined( ANDROID )
+#define ED25519_CUSTOMRANDOM
+#define ED25519_REFHASH
+#endif
+
+#if defined( __APPLE__ )  &&  ! MAC_OS_X_VERSION_10_6
+/*
+	This is known to be needed on 10.5 and not needed on 10.8.
+	Bump the version upward as necessary for 10.6 and 10.7.
+*/
+#define ED25519_REFHASH
+#endif
+
 #include "ed25519-donna.h"
 #include "ed25519.h"
 #include "ed25519-randombytes.h"
