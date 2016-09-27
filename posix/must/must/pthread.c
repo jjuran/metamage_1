@@ -48,3 +48,26 @@ void must_pthread_cond_broadcast( pthread_cond_t* cond )
 		abort();
 	}
 }
+
+void must_pthread_cond_signal( pthread_cond_t* cond )
+{
+	int error = pthread_cond_signal( cond );
+	
+	if ( error )
+	{
+		abort();
+	}
+}
+
+void must_pthread_create( pthread_t*             thread,
+                          pthread_attr_t const*  attrs,
+                          void*                (*start)( void* ),
+                          void*                  param )
+{
+	int error = pthread_create( thread, attrs, start, param );
+	
+	if ( error )
+	{
+		abort();
+	}
+}
