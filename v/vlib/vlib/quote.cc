@@ -212,6 +212,23 @@ namespace vlib
 		return c;
 	}
 	
+	unsigned count_quoted_bytes( const char* p )
+	{
+		unsigned n = 0;
+		
+		while ( *p != '\'' )
+		{
+			++n;
+			
+			if ( *p++ == '\\' )
+			{
+				decode_escaped_byte( p );
+			}
+		}
+		
+		return n;
+	}
+	
 	unsigned char unquote_byte( const plus::string& s )
 	{
 		typedef plus::string::size_type size_t;

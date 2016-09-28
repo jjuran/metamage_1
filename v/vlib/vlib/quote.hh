@@ -15,6 +15,8 @@ namespace vlib
 	
 	char decode_escaped_byte( const char*& p );
 	
+	unsigned count_quoted_bytes( const char* p );
+	
 	unsigned char unquote_byte( const plus::string& s );
 	
 	inline
