@@ -229,39 +229,6 @@ namespace vlib
 		return n;
 	}
 	
-	unsigned char unquote_byte( const plus::string& s )
-	{
-		typedef plus::string::size_type size_t;
-		
-		const size_t size = s.size();
-		
-		if ( size == 2 )
-		{
-			THROW( "invalid empty byte literal" );
-		}
-		
-		const char* p = s.c_str() + 1;
-		
-		if ( size == 3 )
-		{
-			return *p;
-		}
-		
-		if ( *p++ != '\\' )
-		{
-			THROW( "multibyte byte literals not supported" );
-		}
-		
-		char c = decode_escaped_byte( p );
-		
-		if ( *p != '\'' )
-		{
-			THROW( "multibyte byte literals not supported" );
-		}
-		
-		return c;
-	}
-	
 	plus::string unquote_escaped_string( const plus::string& s )
 	{
 		plus::string result;

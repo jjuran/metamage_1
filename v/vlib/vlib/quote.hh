@@ -17,8 +17,6 @@ namespace vlib
 	
 	unsigned count_quoted_bytes( const char* p );
 	
-	unsigned char unquote_byte( const plus::string& s );
-	
 	inline
 	plus::string unquote_string( const plus::string& s )
 	{
