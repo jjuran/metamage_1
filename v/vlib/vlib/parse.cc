@@ -34,6 +34,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/mb32.hh"
 #include "vlib/types/string.hh"
 
 
@@ -98,6 +99,11 @@ namespace vlib
 		if ( n == 1 )
 		{
 			return Byte( decode_escaped_byte( ++p ) );
+		}
+		
+		if ( n == 4 )
+		{
+			return MB32( unquote_mb32( p ) );
 		}
 		
 		THROW( "invalid multibyte byte literal" );

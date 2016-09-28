@@ -20,6 +20,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/mb32.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/vector.hh"
@@ -104,6 +105,7 @@ namespace vlib
 			case Value_base_type:  return type_vtype;
 			case Value_boolean:    return boolean_vtype;
 			case Value_byte:       return byte_vtype;
+			case Value_mb32:       return mb32_vtype;
 			case Value_number:     return integer_vtype;
 			case Value_string:     return string_vtype;
 			case Value_vector:     return vector_vtype;

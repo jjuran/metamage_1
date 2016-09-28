@@ -50,6 +50,7 @@ namespace vlib
 		Value_base_type,
 		Value_boolean,
 		Value_byte,
+		Value_mb32,
 		Value_number,
 		Value_string,
 		Value_vector,

@@ -38,6 +38,7 @@ namespace vlib
 				return Vector( v.string() );
 			
 			case Value_byte:
+			case Value_mb32:
 			case Value_pair:
 				return Vector( pack( v ) );
 		}

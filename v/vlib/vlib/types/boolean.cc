@@ -5,6 +5,9 @@
 
 #include "vlib/types/boolean.hh"
 
+// Standard C
+#include <string.h>
+
 // plus
 #include "plus/integer.hh"
 
@@ -40,6 +43,9 @@ namespace vlib
 			case Value_byte:
 			case Value_number:
 				return Boolean( ! v.number().is_zero() );
+			
+			case Value_mb32:
+				return Boolean( memcmp( v.string().data(), "\0\0\0\0", 4 ) );
 			
 			case Value_vector:
 			case Value_string:

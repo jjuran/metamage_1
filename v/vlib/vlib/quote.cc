@@ -229,6 +229,27 @@ namespace vlib
 		return n;
 	}
 	
+	uint32_t unquote_mb32( const char* p )
+	{
+		uint32_t result = 0;
+		
+		char* q = (char*) &result;
+		
+		while ( *p != '\'' )
+		{
+			unsigned char c = *p++;
+			
+			if ( c == '\\' )
+			{
+				c = decode_escaped_byte( p );
+			}
+			
+			*q++ = c;
+		}
+		
+		return result;
+	}
+	
 	plus::string unquote_escaped_string( const plus::string& s )
 	{
 		plus::string result;

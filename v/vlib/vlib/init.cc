@@ -16,6 +16,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/mb32.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -54,6 +55,7 @@ namespace vlib
 		define_keyword( "c_str",    c_str_vtype    );
 		define_keyword( "type",     type_vtype     );
 		define_keyword( "null",     null_vtype     );
+		define_keyword( "mb32",     mb32_vtype     );
 		define_keyword( "byte",     byte_vtype     );
 		define_keyword( "i64",      i64_vtype      );
 		define_keyword( "u64",      u64_vtype      );
