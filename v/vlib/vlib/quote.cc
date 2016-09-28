@@ -366,10 +366,8 @@ namespace vlib
 		return length;
 	}
 	
-	char* quote_byte( char* q, unsigned char c )
+	char* copy_quotable_byte( char* q, unsigned char c )
 	{
-		*q++ = '\'';
-		
 		if ( ! iota::is_cntrl( c )  &&  iota::is_ascii( c ) )
 		{
 			if ( c == '\\'  ||  c == '\'' )
@@ -396,6 +394,15 @@ namespace vlib
 				*q++ = gear::encoded_hex_char( c >> 0 );
 			}
 		}
+		
+		return q;
+	}
+	
+	char* quote_byte( char* q, unsigned char c )
+	{
+		*q++ = '\'';
+		
+		q = copy_quotable_byte( q, c );
 		
 		*q++ = '\'';
 		
