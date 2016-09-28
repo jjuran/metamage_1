@@ -77,6 +77,35 @@ namespace vlib
 	}
 	
 	static
+	Value unquote_bytes( const plus::string& s )
+	{
+		const unsigned long size = s.size() - 2;
+		
+		if ( size == 0 )
+		{
+			THROW( "invalid empty byte literal" );
+		}
+		
+		const char* p = s.c_str() + 1;
+		
+		if ( size == 1 )
+		{
+			return Byte( *p );
+		}
+		
+		unsigned n = count_quoted_bytes( p );
+		
+		if ( n == 1 )
+		{
+			return Byte( decode_escaped_byte( ++p ) );
+		}
+		
+		THROW( "invalid multibyte byte literal" );
+		
+		return Value();  // not reached
+	}
+	
+	static
 	Value expression( const Value&        left,
 	                  op_type             op,
 	                  const Value&        right,
@@ -396,7 +425,7 @@ namespace vlib
 				break;
 			
 			case Token_byte:
-				receive_value( Byte( unquote_byte( token.text ) ) );
+				receive_value( unquote_bytes( token.text ) );
 				break;
 			
 			case Token_string:
