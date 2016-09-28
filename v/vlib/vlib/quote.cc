@@ -172,7 +172,6 @@ namespace vlib
 		inscribe_unicode( q, uc );
 	}
 	
-	static
 	char decode_escaped_byte( const char*& p )
 	{
 		using iota::is_alpha;
