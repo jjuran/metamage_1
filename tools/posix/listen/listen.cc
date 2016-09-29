@@ -23,6 +23,10 @@
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
 
+// posix-utils
+#include "posix/listen_unix.hh"
+
+
 #ifdef ANDROID
 typedef uint32_t in_addr_t;
 typedef uint16_t in_port_t;
@@ -40,6 +44,9 @@ typedef uint16_t in_port_t;
 #else
 #define FORK() vfork()
 #endif
+
+
+using posix::listen_unix;
 
 
 static
@@ -86,65 +93,6 @@ int listen_inet( in_addr_t addr, in_port_t port )
 	in.sin_addr.s_addr = addr;
 	
 	int nok = bind( s, (const sockaddr*) &in, sizeof in );
-	
-	if ( nok )
-	{
-		close( s );
-		return nok;
-	}
-	
-	nok = listen( s, 5 );
-	
-	if ( nok )
-	{
-		close( s );
-		return nok;
-	}
-	
-	return s;
-}
-
-static
-int listen_unix( const char* path )
-{
-	const size_t path_len = strlen( path );
-	
-	if ( path_len >= sizeof sockaddr_un().sun_path )
-	{
-		errno = ENAMETOOLONG;
-		return -1;
-	}
-	
-	int s = socket( PF_UNIX, SOCK_STREAM, 0 );
-	
-	if ( s < 0 )
-	{
-		return s;
-	}
-	
-	/*
-		We don't fully error-check the lstat() or unlink() calls below.
-		The goal is to delete any existing socket file.  If a non-socket
-		exists, or if something fails (like path resolution), the bind()
-		call will catch it.
-	*/
-	
-	struct stat st;
-	int nok = lstat( path, &st );
-	int ok = ! nok;
-	
-	if ( ok  &&  S_ISSOCK( st.st_mode ) )
-	{
-		unlink( path );
-	}
-	
-	sockaddr_un un = { 0 };
-	
-	un.sun_family = AF_UNIX;
-	
-	memcpy( un.sun_path, path, path_len + 1 );
-	
-	nok = bind( s, (const sockaddr*) &un, sizeof un );
 	
 	if ( nok )
 	{
