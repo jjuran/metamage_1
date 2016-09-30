@@ -908,6 +908,18 @@ namespace Genie
 		return fInfo.fdCreator == 'Poof'  &&  (fInfo.fdType & 0xFFFFFF00) == 'FIF\0';
 	}
 	
+	static bool hfs_is_socket( const CInfoPBRec& cInfo )
+	{
+		if ( cInfo.hFileInfo.ioResult != noErr )
+		{
+			return false;
+		}
+		
+		const FInfo& fInfo = cInfo.hFileInfo.ioFlFndrInfo;
+		
+		return fInfo.fdCreator == 'Poof'  &&  fInfo.fdType == 'SOCK';
+	}
+	
 	static vfs::filehandle_ptr hfs_open( const vfs::node* that, int flags, mode_t mode )
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
@@ -949,6 +961,11 @@ namespace Genie
 		if ( hfs_is_fifo( extra.cinfo ) )
 		{
 			return relix::open_fifo( that, flags );
+		}
+		
+		if ( hfs_is_socket( extra.cinfo ) )
+		{
+			throw p7::errno_t( ENXIO );
 		}
 		
 		const bool async = false;
