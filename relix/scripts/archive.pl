@@ -168,7 +168,7 @@ my %fsmap =
 			# Script apps
 			qw( asklogin confirm iconedit progress prompt psmon ),
 			# App utilities
-			\ qw( daemonize follower idle overwrite select ),
+			\ qw( daemonize follower idle overwrite select stream ),
 			# Misc
 			\ qw( chain copier divide graft jtest pause ptrace th zpipe ),
 			# Mac-specific
