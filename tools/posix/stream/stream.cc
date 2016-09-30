@@ -9,6 +9,7 @@
 
 // Standard C
 #include <stdio.h>
+#include <string.h>
 
 // posix-utils
 #include "posix/open_or_connect.hh"
@@ -28,22 +29,27 @@ int usage()
 
 int main( int argc, char** argv )
 {
-	if ( argc != 2 )
+	bool into;
+	
+	if ( argc < 2  ||  argc != 2 + (into = strcmp( argv[ 1 ], "--into" ) == 0) )
 	{
 		return usage();
 	}
 	
-	const char* path = argv[ 1 ];
+	const char* path = argv[ 1 + into ];
 	
-	int fd = posix::open_or_connect( path, O_RDONLY, 0 );
+	const int flags = O_RDONLY + (O_WRONLY - O_RDONLY) * into;
+	const int stdio = STDIN_FILENO + into;
 	
-	if ( fd < 0  ||  dup2( fd, STDIN_FILENO ) < 0 )
+	int fd = posix::open_or_connect( path, flags, 0 );
+	
+	if ( fd < 0  ||  dup2( fd, stdio ) < 0 )
 	{
 		perror( path );
 		return 1;
 	}
 	
-	if ( fd != STDIN_FILENO )
+	if ( fd != stdio )
 	{
 		close( fd );
 	}
