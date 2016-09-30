@@ -32,6 +32,61 @@ namespace Genie
 	using posix::listen_unix;
 	
 	
+	struct client_data
+	{
+		int fd;
+	};
+	
+	static
+	void* client_proc( void* param )
+	{
+		client_data client = *(client_data*) param;
+		
+		delete (client_data*) param;
+		
+		const int remote_fd = client.fd;
+		
+		write( remote_fd, STR_LEN( "THE SYSTEM IS DOWN\n" ) );
+		
+		close( remote_fd );
+		
+		return NULL;
+	}
+	
+	static
+	void start_client( int remote_fd )
+	{
+		client_data* client = NULL;
+		
+		try
+		{
+			client = new client_data();
+			
+			client->fd = remote_fd;
+		}
+		catch ( ... )
+		{
+			close( remote_fd );
+			
+			return;
+		}
+		
+		pthread_t client_thread;
+		
+		int err = pthread_create( &client_thread, NULL, &client_proc, client );
+		
+		if ( err )
+		{
+			close( remote_fd );
+			
+			delete client;
+		}
+		else
+		{
+			pthread_detach( client_thread );
+		}
+	}
+	
 	static
 	void* listener_proc( void* param )
 	{
@@ -46,8 +101,7 @@ namespace Genie
 			
 			if ( remote_fd >= 0 )
 			{
-				write( remote_fd, STR_LEN( "THE SYSTEM IS DOWN\n" ) );
-				close( remote_fd );
+				start_client( remote_fd );
 			}
 		}
 	}
