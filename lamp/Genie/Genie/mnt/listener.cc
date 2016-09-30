@@ -16,8 +16,12 @@
 // posix-utils
 #include "posix/listen_unix.hh"
 
+// mac-sys-utils
+#include "mac_sys/async_wakeup.hh"
+
 // relix-kernel
 #include "relix/fs/console.hh"
+#include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/mnt/path.hh"
@@ -31,6 +35,25 @@ namespace Genie
 	
 	using posix::listen_unix;
 	
+	
+	struct wake_up_scope
+	{
+		wake_up_scope()
+		{
+			relix::pthread_wakeup();
+			
+			mac::sys::request_async_wakeup();
+		}
+	};
+	
+	class op_scope
+	{
+		typedef relix::synchronized_scope sync_scope;
+		
+		private:
+			wake_up_scope  wake_up;
+			sync_scope     sync;
+	};
 	
 	struct client_data
 	{
@@ -46,7 +69,22 @@ namespace Genie
 		
 		const int remote_fd = client.fd;
 		
-		write( remote_fd, STR_LEN( "THE SYSTEM IS DOWN\n" ) );
+		char buffer[ 256 ];
+		ssize_t n_read;
+		
+		try
+		{
+			while ( (n_read = read( remote_fd, buffer, sizeof buffer )) > 0 )
+			{
+				op_scope sync;
+				
+				relix::console::log( buffer, n_read );
+			}
+		}
+		catch ( ... )
+		{
+			// out of memory?
+		}
 		
 		close( remote_fd );
 		
