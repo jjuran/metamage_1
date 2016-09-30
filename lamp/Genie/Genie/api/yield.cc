@@ -22,7 +22,15 @@ namespace relix
 		
 		mark_thread_inactive( current_process().gettid() );
 		
+	#ifdef __RELIX__
+		
 		current_process().Yield();
+		
+	#else
+		
+		pthread_yield();
+		
+	#endif
 		
 		return check_signals( may_throw );
 	}
