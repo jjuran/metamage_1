@@ -62,7 +62,7 @@ namespace Genie
 	
 	static void WindowRef_iterate( const vfs::node* parent, vfs::dir_contents& cache )
 	{
-		WindowRef window = FrontWindow();
+		WindowRef window = GetWindowList();
 		
 		while ( window != NULL )
 		{
