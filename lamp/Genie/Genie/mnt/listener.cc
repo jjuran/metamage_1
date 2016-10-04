@@ -91,7 +91,7 @@ namespace Genie
 		
 		const vfs::node& root = freemount_root();
 		
-		mnt::session* s;
+		mnt::session* s = NULL;
 		
 		try
 		{
