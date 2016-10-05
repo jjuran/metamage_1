@@ -116,6 +116,12 @@ namespace Genie
 		bool                itHasCloseBox;
 		bool                itIsLocked;
 		
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		bool                it_is_compositing;
+		
+	#endif
+		
 		boost::intrusive_ptr< Ped::Window >  itsWindow;
 		boost::intrusive_ptr< Ped::View   >  itsSubview;
 		
@@ -138,6 +144,13 @@ namespace Genie
 		                     itIsVisible  ( true ),
 		                     itHasCloseBox( true ),
 		                     itIsLocked(),
+		                     
+		                 #ifdef MAC_OS_X_VERSION_10_2
+		                     
+		                     it_is_compositing(),
+		                     
+		                 #endif
+		                     
 		                     itsSubview( Ped::EmptyView::Get() ),
 		                     itsFocus(),
 		                     itsTerminal()
@@ -351,6 +364,21 @@ namespace Genie
 				}
 		}
 		
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		if ( params.it_is_compositing )
+		{
+			attrs |= Mac::kWindowCompositingAttribute;
+			
+		#ifdef MAC_OS_X_VERSION_10_7
+		
+			attrs |= Mac::kWindowHighResolutionCapableAttribute;
+			
+		#endif
+		}
+		
+	#endif
+		
 		Owner owner( new Window( Ped::CreateWindow( wClass, attrs, bounds ) ) );
 		
 		WindowRef window = owner->Get();
@@ -363,6 +391,8 @@ namespace Genie
 		if ( params.itIsVisible )
 		{
 			ShowWindow( window );
+			
+			Ped::invalidate_window( window );
 		}
 		
 	#endif
@@ -946,6 +976,15 @@ namespace Genie
 			return params.itHasCloseBox;
 		}
 		
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		bool& Compositing( WindowParameters& params )
+		{
+			return params.it_is_compositing;
+		}
+		
+	#endif
+		
 	}
 	
 	enum Variability
@@ -1165,6 +1204,12 @@ namespace Genie
 	typedef Window_Property< serialize_ProcID, &ProcID   >  ProcID_Property;
 	typedef Window_Property< serialize_bool,   &CloseBox >  CloseBox_Property;
 	
+#ifdef MAC_OS_X_VERSION_10_2
+	
+	typedef Window_Property< serialize_bool, &Compositing >  Compositing_Property;
+	
+#endif
+	
 	const vfs::fixed_mapping gui_port_ADDR_Mappings[] =
 	{
 		{ "lock", &new_lock },
@@ -1197,6 +1242,13 @@ namespace Genie
 		{ ".~vis",    PROPERTY( kAttrVariable, Visible_Property  ) },
 		{ ".~procid", PROPERTY( kAttrConstant, ProcID_Property   ) },
 		{ ".~goaway", PROPERTY( kAttrConstant, CloseBox_Property ) },
+		
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		{ "compositing",   PROPERTY( kAttrConstant, Compositing_Property ) },
+		{ ".~compositing", PROPERTY( kAttrConstant, Compositing_Property ) },
+		
+	#endif
 		
 		{ NULL, NULL }
 	};
