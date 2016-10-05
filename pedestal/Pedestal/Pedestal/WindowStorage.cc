@@ -427,4 +427,22 @@ namespace Pedestal
 		return n::owned< WindowRef >::seize( window, disposer );
 	}
 	
+	n::owned< WindowRef > CreateWindow( Mac::WindowClass       wClass,
+	                                    Mac::WindowAttributes  attrs,
+	                                    const Rect&            bounds )
+	{
+		OSStatus err;
+		
+		WindowRef window;
+		err = CreateNewWindow( wClass, attrs, &bounds, &window );
+		
+		Mac::ThrowOSStatus( err );
+		
+		SetPortWindowPort( window );
+		
+		typedef nucleus::disposer_class< WindowRef >::type Disposer;
+		
+		return n::owned< WindowRef >::seize( window, Disposer() );
+	}
+	
 }
