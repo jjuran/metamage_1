@@ -292,6 +292,8 @@ namespace Genie
 		
 		typedef boost::intrusive_ptr< Ped::Window > Owner;
 		
+	#if ! TARGET_API_MAC_CARBON
+		
 		Owner owner( new Window( Ped::CreateWindow( bounds,
 		                                            title,
 		                                            params.itIsVisible,
@@ -299,6 +301,71 @@ namespace Genie
 		                                            params.itHasCloseBox ) ) );
 		
 		WindowRef window = owner->Get();
+		
+	#else
+		
+		Mac::WindowClass wClass = Mac::kDocumentWindowClass;
+		
+		Mac::WindowAttributes attrs = Mac::kWindowNoAttributes;
+		
+		switch ( params.itsProcID )
+		{
+			case dBoxProc:
+				wClass = Mac::kModalWindowClass;
+				break;
+			
+			case plainDBox:
+				wClass = Mac::kPlainWindowClass;
+				break;
+			
+			case altDBoxProc:
+				wClass = Mac::kAltPlainWindowClass;
+				break;
+			
+			case movableDBoxProc:
+				wClass = Mac::kMovableModalWindowClass;
+				break;
+			
+			default:
+				if ( (params.itsProcID & ~0xC) != 0 )
+				{
+					// TODO:  Add more proc ID translations as needed.
+					p7::throw_errno( EINVAL );
+				}
+				
+				attrs = Mac::kWindowCollapseBoxAttribute;
+				
+				if ( params.itHasCloseBox )
+				{
+					attrs |= Mac::kWindowCloseBoxAttribute;
+				}
+				
+				if ( (params.itsProcID & 0x4) == 0 )
+				{
+					attrs |= Mac::kWindowResizableAttribute;
+				}
+				
+				if ( (params.itsProcID & 0x8) != 0 )
+				{
+					attrs |= Mac::kWindowFullZoomAttribute;
+				}
+		}
+		
+		Owner owner( new Window( Ped::CreateWindow( wClass, attrs, bounds ) ) );
+		
+		WindowRef window = owner->Get();
+		
+		if ( title != NULL  &&  title[0] != 0 )
+		{
+			SetWTitle( window, title );
+		}
+		
+		if ( params.itIsVisible )
+		{
+			ShowWindow( window );
+		}
+		
+	#endif
 		
 		N::SetWRefCon( window, key );
 		
