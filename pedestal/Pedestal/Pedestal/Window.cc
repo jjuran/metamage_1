@@ -85,32 +85,6 @@ namespace Pedestal
 	}
 	
 	
-	Point GetWindowSize( WindowRef window )
-	{
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-		
-		Point result;
-		
-		result.h = bounds.right - bounds.left;
-		result.v = bounds.bottom - bounds.top;
-		
-		return result;
-	}
-	
-	Point GetWindowPosition( WindowRef window )
-	{
-		n::saved< N::Port > savedPort;
-		
-		N::SetPortWindowPort( window );
-		
-		Point upperLeft = { 0, 0 };
-		
-		::LocalToGlobal( &upperLeft );
-		
-		return upperLeft;
-	}
-	
-	
 	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
 	                                    ConstStr255Param    title,
 	                                    bool                visible,

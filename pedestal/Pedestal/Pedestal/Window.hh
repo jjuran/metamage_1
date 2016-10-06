@@ -40,11 +40,7 @@ namespace Pedestal
 	void ResizeWindow( WindowRef window, Point newSize );
 	
 	
-	Point GetWindowSize( WindowRef window );
-	
 	void SetWindowSize( WindowRef window, Point size );
-	
-	Point GetWindowPosition( WindowRef window );
 	
 	inline void SetWindowPosition( WindowRef window, Point position )
 	{
