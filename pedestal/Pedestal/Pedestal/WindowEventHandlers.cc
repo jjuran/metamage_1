@@ -11,6 +11,7 @@
 #endif
 
 // Pedestal
+#include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
 
 
@@ -101,6 +102,60 @@ namespace Pedestal
 	DEFINE_CARBON_UPP( EventHandler, window_WindowClose )
 	
 	
+	static
+	pascal OSStatus window_ControlDraw( EventHandlerCallRef  handler,
+	                                    EventRef             event,
+	                                    void*                userData )
+	{
+		OSStatus err;
+		
+		ControlRef control;
+		err = GetEventParameter( event,
+		                         kEventParamDirectObject,
+		                         typeControlRef,
+		                         NULL,
+		                         sizeof (ControlRef),
+		                         NULL,
+		                         &control );
+		
+		CGContextRef context = NULL;
+		err = GetEventParameter( event,
+		                         kEventParamCGContextRef,
+		                         typeCGContextRef,
+		                         NULL,
+		                         sizeof (CGContextRef),
+		                         NULL,
+		                         &context );
+		
+	#if TARGET_API_MAC_OSX
+		
+		HIRect bounds;
+		HIViewGetBounds( control, &bounds );
+		
+		CGContextSetGrayFillColor( context, 1, 1 );  // white
+		
+		CGContextFillRect( context, bounds );  // erase
+		
+		CGContextSetGrayFillColor( context, 0, 1 );  // black
+		
+		if ( View* view = get_window_view( GetControlOwner( control ) ) )
+		{
+			view->DrawInContext( context, bounds );
+		}
+		
+	#endif
+		
+		return noErr;
+	}
+	
+	static EventTypeSpec controlDraw_event[] =
+	{
+		{ kEventClassControl, kEventControlDraw },
+	};
+	
+	DEFINE_CARBON_UPP( EventHandler, window_ControlDraw )
+	
+	
 	OSStatus install_window_event_handlers( WindowRef window )
 	{
 		OSStatus err;
@@ -111,6 +166,22 @@ namespace Pedestal
 		                                 windowClose_event,
 		                                 NULL,
 		                                 NULL );
+		
+	#if TARGET_API_MAC_OSX
+		
+		HIViewRef root = HIViewGetRoot( window );
+		
+		HIViewRef content;
+		err = HIViewFindByID( root, kHIViewWindowContentID, &content );
+		
+		err = InstallControlEventHandler( content,
+		                                  UPP_ARG( window_ControlDraw ),
+		                                  1,
+		                                  controlDraw_event,
+		                                  NULL,
+		                                  NULL );
+		
+	#endif
 		
 		return err;
 	}
