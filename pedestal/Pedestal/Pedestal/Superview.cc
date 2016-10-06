@@ -38,4 +38,24 @@ namespace Pedestal
 		return Subview().EnterShiftSpaceQuasimode( event );
 	}
 	
+	void Superview::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		Rect rect =
+		{
+			bounds.origin.y,
+			bounds.origin.x,
+			bounds.origin.y + bounds.size.height,
+			bounds.origin.x + bounds.size.width,
+		};
+		
+		rect = ApertureFromBounds( rect );
+		
+		bounds.origin.x = rect.left;
+		bounds.origin.y = rect.right;
+		bounds.size.width  = rect.right - rect.left;
+		bounds.size.height = rect.bottom - rect.top;
+		
+		Subview().DrawInContext( context, bounds );
+	}
+	
 }

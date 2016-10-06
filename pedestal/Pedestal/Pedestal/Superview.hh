@@ -79,6 +79,8 @@ namespace Pedestal
 				return Subview().Draw( ApertureFromBounds( bounds ), erasing );
 			}
 			
+			void DrawInContext( CGContextRef context, CGRect bounds );
+			
 			bool SetCursor( const EventRecord& event )
 			{
 				if ( HitTest( event ) )
