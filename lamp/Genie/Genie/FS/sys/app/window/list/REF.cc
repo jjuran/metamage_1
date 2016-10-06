@@ -23,6 +23,9 @@
 // mac-sys-utils
 #include "mac_sys/windowlist_contains.hh"
 
+// mac-ui-utils
+#include "mac_ui/windows.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -135,7 +138,7 @@ namespace Genie
 	{
 		static Point Get( WindowRef window )
 		{
-			return Ped::GetWindowPosition( window );
+			return mac::ui::get_window_position( window );
 		}
 		
 		static void Set( WindowRef window, Point position )
@@ -148,7 +151,7 @@ namespace Genie
 	{
 		static Point Get( WindowRef window )
 		{
-			return Ped::GetWindowSize( window );
+			return mac::ui::get_window_size( window );
 		}
 		
 		static void Set( WindowRef window, Point size )
