@@ -481,16 +481,6 @@ namespace Genie
 	};
 	
 	
-	template < class Trigger >
-	static vfs::node_ptr Trigger_Factory( const vfs::node*     parent,
-	                                      const plus::string&  name,
-	                                      const void*          args )
-	{
-		WindowRef key = GetKeyFromParent( parent );
-		
-		return new Trigger( parent, name, key );
-	}
-	
 	static vfs::node_ptr window_trigger_factory( const vfs::node*     parent,
 	                                             const plus::string&  name,
 	                                             const void*          args )
