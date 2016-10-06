@@ -144,15 +144,6 @@ namespace Pedestal
 		return bounds;
 	}
 	
-	static void DrawWindow( WindowRef window )
-	{
-		n::saved< N::Clip > savedClip;
-		
-		N::ClipRect( GrowBoxBounds( window ) );
-		
-		N::DrawGrowIcon( window );
-	}
-	
 	void InvalidateWindowGrowBox( WindowRef window )
 	{
 		N::InvalRect( GrowBoxBounds( window ) );
@@ -222,7 +213,11 @@ namespace Pedestal
 		
 		if ( !TARGET_API_MAC_CARBON && HasGrowIcon() )
 		{
-			DrawWindow( Get() );
+			n::saved< N::Clip > savedClip;
+			
+			N::ClipRect( GrowBoxBounds( Get() ) );
+			
+			N::DrawGrowIcon( Get() );
 		}
 	}
 	
