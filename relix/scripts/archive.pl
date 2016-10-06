@@ -152,7 +152,7 @@ my %fsmap =
 			# Freemount
 			\ qw( fcat fdir fget fls fping fstat ),
 			# djb's UCSPI
-			\ qw( argv0 tcpcat tcpclient ),
+			\ qw( argv0 tcpcat tcpclient unixclient ),
 			# V calculator / executor
 			\ qw( vc vx ),
 			# v68k interpreter
