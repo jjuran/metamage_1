@@ -46,6 +46,8 @@ namespace Pedestal
 			
 			void Draw( const Rect& bounds, bool erasing );
 			
+			void DrawInContext( CGContextRef context, CGRect bounds );
+			
 			bool SetCursor( const EventRecord& event );
 			
 			bool UserCommand( CommandCode code );

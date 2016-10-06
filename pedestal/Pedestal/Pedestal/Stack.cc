@@ -5,6 +5,18 @@
 
 #include "Pedestal/Stack.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <ApplicationServices/ApplicationServices.h>
+#endif
+
+// Mac OS
+#ifndef CGGEOMETRY_H_
+#ifndef __CGGEOMETRY__
+#include <CGGeometry.h>
+#endif
+#endif
+
 // Pedestal
 #include "Pedestal/Quasimode.hh"
 
@@ -59,6 +71,18 @@ namespace Pedestal
 			erasing = erasing  &&  i == count;
 			
 			view.Draw( bounds, erasing );
+		}
+	}
+	
+	void Stack::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		const unsigned count = ViewCount();
+		
+		for ( unsigned i = count;  i > 0;  --i )
+		{
+			View& view = GetNthView( i );
+			
+			view.DrawInContext( context, bounds );
 		}
 	}
 	
