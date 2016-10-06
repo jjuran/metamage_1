@@ -39,6 +39,10 @@ namespace Pedestal
 		}
 	}
 	
+	void View::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+	}
+	
 	boost::intrusive_ptr< Quasimode > View::EnterShiftSpaceQuasimode( const EventRecord& )
 	{
 		return boost::intrusive_ptr< Quasimode >();

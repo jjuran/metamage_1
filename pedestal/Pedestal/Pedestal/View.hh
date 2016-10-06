@@ -21,8 +21,17 @@
 #endif
 
 
+#ifdef __APPLE__
+#define VIRTUAL_ON_OSX  virtual
+#else
+#define VIRTUAL_ON_OSX  /**/
+#endif
+
+struct CGRect;           // CGGeometry.h
 struct EventRecord;      // Events.h
 struct Rect;             // Quickdraw.h
+
+typedef struct CGContext *CGContextRef;  // CGContext.h
 
 
 namespace Pedestal
@@ -51,6 +60,8 @@ namespace Pedestal
 			
 			virtual void Draw( const Rect& bounds, bool erasing );
 			
+			VIRTUAL_ON_OSX void DrawInContext( CGContextRef context, CGRect bounds );
+			
 			virtual void Activate( bool activating )  {}
 			
 			virtual void Focus()  {}
@@ -68,5 +79,7 @@ namespace Pedestal
 	};
 	
 }
+
+#undef VIRTUAL_ON_OSX
 
 #endif
