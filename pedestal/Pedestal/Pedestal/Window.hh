@@ -162,6 +162,8 @@ namespace Pedestal
 			void Update();
 	};
 	
+	Window* get_window_owner( WindowRef window );
+	
 }
 
 #endif

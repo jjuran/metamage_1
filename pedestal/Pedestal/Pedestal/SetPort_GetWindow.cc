@@ -10,6 +10,9 @@
 // Nitrogen
 #include "Nitrogen/MacWindows.hh"
 
+// Pedestal
+#include "Pedestal/Window.hh"
+
 
 namespace Pedestal
 {
@@ -23,7 +26,7 @@ namespace Pedestal
 		{
 			if ( N::GetWindowKind( windowRef ) == N::kApplicationWindowKind )
 			{
-				if ( Window* window = N::GetWRefCon( windowRef ) )
+				if ( Window* window = get_window_owner( windowRef ) )
 				{
 					N::SetPortWindowPort( windowRef );
 					

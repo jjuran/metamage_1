@@ -40,6 +40,17 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	static
+	void set_window_owner( WindowRef window, Window* owner )
+	{
+		N::SetWRefCon( window, owner );
+	}
+	
+	Window* get_window_owner( WindowRef window )
+	{
+		return N::GetWRefCon( window );
+	}
+	
 	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
 	                                               const Rect*       bounds,
 	                                               ConstStr255Param  title,
@@ -61,7 +72,7 @@ namespace Pedestal
 		
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
-		if ( Window* base = N::GetWRefCon( window ) )
+		if ( Window* base = get_window_owner( window ) )
 		{
 			// Don't rely on the requested size because it might have been tweaked
 			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
@@ -141,9 +152,11 @@ namespace Pedestal
 	
 	Window::Window( const NewWindowContext& context )
 	:
-		itsWindowRef( CreateWindow( context, this ) ),
+		itsWindowRef( CreateWindow( context, NULL ) ),
 		itsDefProcID( context.procID )
 	{
+		set_window_owner( itsWindowRef, this );
+		
 		window_created( itsWindowRef.get() );
 	}
 	
