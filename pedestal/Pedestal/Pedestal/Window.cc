@@ -85,6 +85,7 @@ namespace Pedestal
 	}
 	
 	
+	static
 	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
 	                                    ConstStr255Param    title,
 	                                    bool                visible,
@@ -107,6 +108,19 @@ namespace Pedestal
 		N::SetPortWindowPort( window );
 		
 		return n::owned< WindowRef >::seize( window, N::Window_Disposer() );
+	}
+	
+	static inline
+	n::owned< WindowRef > CreateWindow( const NewWindowContext&  context,
+	                                    const void*              refCon )
+	{
+		return CreateWindow( context.bounds,
+		                     context.title,
+		                     context.visible,
+		                     context.procID,
+		                     context.behind,
+		                     context.goAwayFlag,
+		                     refCon );
 	}
 	
 	static Rect GrowBoxBounds( WindowRef window )
