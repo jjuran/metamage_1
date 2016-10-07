@@ -44,14 +44,21 @@ namespace Pedestal
 		kWindowCreator = ':-)\xCA',  // Yes, I actually registered this
 		
 		kWindowOwnerTag = 'This',  // Address of owning object
+		
+		kWindowResizedProcTag = 'Rszd',
 	};
 	
 #if ! OPAQUE_TOOLBOX_STRUCTS
 	
 	struct WindowStorage
 	{
-		Window*       owner;
-		WindowRecord  window;
+		Window*             owner;
+		WindowResized_proc  resized_proc;
+		WindowRecord        window;
+		
+		WindowStorage() : resized_proc()
+		{
+		}
 	};
 	
 	static
@@ -127,6 +134,58 @@ namespace Pedestal
 		err = GetWindowProperty( window,
 		                         kWindowCreator,
 		                         kWindowOwnerTag,
+		                         sizeof result,
+		                         NULL,
+		                         &result );
+		
+		return result;
+	}
+	
+	void set_window_resized_proc( WindowRef           window,
+	                              WindowResized_proc  proc )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			storage->resized_proc = proc;
+		}
+		
+		return;
+		
+	#endif
+		
+		OSStatus err;
+		
+		err = SetWindowProperty( window,
+		                         kWindowOwnerTag,
+		                         kWindowResizedProcTag,
+		                         sizeof proc,
+		                         &proc );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	static
+	WindowResized_proc get_window_resized_proc( WindowRef window )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			return storage->resized_proc;
+		}
+		
+		return NULL;
+		
+	#endif
+		
+		OSStatus err;
+		
+		WindowResized_proc result = NULL;
+		err = GetWindowProperty( window,
+		                         kWindowOwnerTag,
+		                         kWindowResizedProcTag,
 		                         sizeof result,
 		                         NULL,
 		                         &result );
@@ -276,9 +335,9 @@ namespace Pedestal
 		
 		InvalidateGrowBox();
 		
-		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
+		if ( WindowResized_proc proc = get_window_resized_proc( Get() ) )
 		{
-			(*handler)( Get() );
+			proc( Get() );
 		}
 	}
 	

@@ -37,6 +37,9 @@
 namespace Pedestal
 {
 	
+	typedef void (*WindowResized_proc)( WindowRef window );
+	
+	
 	void ResizeWindow( WindowRef window, Point newSize );
 	
 	
@@ -101,21 +104,10 @@ namespace Pedestal
 			virtual void operator()( WindowRef window ) const = 0;
 	};
 	
-	class WindowResizeHandler : public plus::ref_count< WindowResizeHandler >
-	{
-		public:
-			virtual ~WindowResizeHandler()
-			{
-			}
-			
-			virtual void operator()( WindowRef window ) const = 0;
-	};
-	
 	class Window : public plus::ref_count< Window >
 	{
 		private:
 			boost::intrusive_ptr< WindowCloseHandler  > itsCloseHandler;
-			boost::intrusive_ptr< WindowResizeHandler > itsResizeHandler;
 			
 			nucleus::owned< WindowRef > itsWindowRef;
 			
@@ -131,11 +123,6 @@ namespace Pedestal
 			void SetCloseHandler( const boost::intrusive_ptr< WindowCloseHandler >& handler )
 			{
 				itsCloseHandler = handler;
-			}
-			
-			void SetResizeHandler( const boost::intrusive_ptr< WindowResizeHandler >& handler )
-			{
-				itsResizeHandler = handler;
 			}
 			
 			void Close( WindowRef window )  { return (*itsCloseHandler)( window ); }
@@ -163,6 +150,9 @@ namespace Pedestal
 	};
 	
 	Window* get_window_owner( WindowRef window );
+	
+	void set_window_resized_proc( WindowRef           window,
+	                              WindowResized_proc  proc );
 	
 }
 

@@ -228,12 +228,6 @@ namespace Genie
 			void operator()( WindowRef ) const;
 	};
 	
-	class WindowResizeHandler : public Ped::WindowResizeHandler
-	{
-		public:
-			void operator()( WindowRef window ) const;
-	};
-	
 	void UserWindowCloseHandler::operator()( WindowRef window ) const
 	{
 		const vfs::node* key = (const vfs::node*) GetWRefCon( window );
@@ -241,7 +235,8 @@ namespace Genie
 		CloseUserWindow( key );
 	}
 	
-	void WindowResizeHandler::operator()( WindowRef window ) const
+	static
+	void WindowResized( WindowRef window )
 	{
 		const vfs::node* key = (const vfs::node*) GetWRefCon( window );
 		
@@ -313,9 +308,7 @@ namespace Genie
 		
 		window->SetCloseHandler( closeHandler );
 		
-		boost::intrusive_ptr< Ped::WindowResizeHandler > resizeHandler( new WindowResizeHandler() );
-		
-		window->SetResizeHandler( resizeHandler );
+		Ped::set_window_resized_proc( window->Get(), &WindowResized );
 		
 		params.itsWindow = window;
 		
