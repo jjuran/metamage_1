@@ -39,11 +39,18 @@ namespace Pedestal
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
+	enum
+	{
+		kWindowCreator = ':-)\xCA',  // Yes, I actually registered this
+		
+		kWindowOwnerTag = 'This',  // Address of owning object
+	};
 	
 #if ! OPAQUE_TOOLBOX_STRUCTS
 	
 	struct WindowStorage
 	{
+		Window*       owner;
 		WindowRecord  window;
 	};
 	
@@ -75,12 +82,56 @@ namespace Pedestal
 	static
 	void set_window_owner( WindowRef window, Window* owner )
 	{
-		N::SetWRefCon( window, owner );
+	#if ! TARGET_API_MAC_CARBON
+		
+		WindowStorage* storage = RecoverWindowStorage( window );
+		
+		/*
+			This is only called on windows created below, which will always
+			be application windows with custom storage.
+		*/
+		
+		storage->owner = owner;
+		
+		return;
+		
+	#endif
+		
+		OSStatus err;
+		
+		err = SetWindowProperty( window,
+		                         kWindowCreator,
+		                         kWindowOwnerTag,
+		                         sizeof owner,
+		                         &owner );
+		
+		Mac::ThrowOSStatus( err );
 	}
 	
 	Window* get_window_owner( WindowRef window )
 	{
-		return N::GetWRefCon( window );
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			return storage->owner;
+		}
+		
+		return NULL;
+		
+	#endif
+		
+		OSStatus err;
+		
+		Window* result = NULL;
+		err = GetWindowProperty( window,
+		                         kWindowCreator,
+		                         kWindowOwnerTag,
+		                         sizeof result,
+		                         NULL,
+		                         &result );
+		
+		return result;
 	}
 	
 	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
