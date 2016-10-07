@@ -431,11 +431,6 @@ namespace UseEdit
 		itsMap[ document->GetWindowRef() ] = document;
 	}
 	
-	bool DocumentContainer::ExistsElementByID( UInt32 id ) const
-	{
-		return Find( id ) != itsMap.end();
-	}
-	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
 		return TokenForDocument( GetDocumentByIndex( index ) );
@@ -444,20 +439,6 @@ namespace UseEdit
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
 	{
 		return TokenForDocument( GetDocumentByID( id ) );
-	}
-	
-	void DocumentContainer::DeleteElementByIndex( std::size_t index )
-	{
-		if ( !ExistsElementByIndex( index ) )
-		{
-			Mac::ThrowOSStatus( errAENoSuchObject );
-		}
-		
-		Map::iterator it = itsMap.begin();
-		
-		std::advance( it, index - 1 );
-		
-		itsMap.erase( it );
 	}
 	
 	void DocumentContainer::DeleteElementByID( UInt32 id )

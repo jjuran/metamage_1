@@ -82,12 +82,9 @@ namespace UseEdit
 			size_t CountElements() const  { return itsMap.size(); }
 			
 			bool ExistsElementByIndex( std::size_t index ) const  { return index <= CountElements(); }
-			bool ExistsElementByID   ( UInt32      id    ) const;
 			
 			nucleus::owned< Mac::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
 			nucleus::owned< Mac::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
-			
-			void DeleteElementByIndex( std::size_t index );
 			
 			void DeleteElementByID( UInt32 id );
 	};
