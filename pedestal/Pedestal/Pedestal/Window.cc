@@ -102,8 +102,7 @@ namespace Pedestal
 	                                    bool                visible,
 	                                    N::WindowDefProcID  procID,
 	                                    WindowRef           behind,
-	                                    bool                goAwayFlag,
-	                                    const void*         refCon )
+	                                    bool                goAwayFlag )
 	{
 		
 		WindowRef window = gNewWindow( NULL,
@@ -113,7 +112,7 @@ namespace Pedestal
 		                               procID,
 		                               behind,
 		                               goAwayFlag,
-		                               (long) refCon );  // reinterpret_cast
+		                               0 );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
@@ -122,16 +121,14 @@ namespace Pedestal
 	}
 	
 	static inline
-	n::owned< WindowRef > CreateWindow( const NewWindowContext&  context,
-	                                    const void*              refCon )
+	n::owned< WindowRef > CreateWindow( const NewWindowContext& context )
 	{
 		return CreateWindow( context.bounds,
 		                     context.title,
 		                     context.visible,
 		                     context.procID,
 		                     context.behind,
-		                     context.goAwayFlag,
-		                     refCon );
+		                     context.goAwayFlag );
 	}
 	
 	static Rect GrowBoxBounds( WindowRef window )
@@ -152,7 +149,7 @@ namespace Pedestal
 	
 	Window::Window( const NewWindowContext& context )
 	:
-		itsWindowRef( CreateWindow( context, NULL ) ),
+		itsWindowRef( CreateWindow( context ) ),
 		itsDefProcID( context.procID )
 	{
 		set_window_owner( itsWindowRef, this );
