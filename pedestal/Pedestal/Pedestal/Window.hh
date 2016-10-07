@@ -164,8 +164,6 @@ namespace Pedestal
 			
 			void Close( WindowRef window )  { return (*itsCloseHandler)( window ); }
 			
-			void Resize( WindowRef window );
-			
 			virtual boost::intrusive_ptr< View >& GetView() = 0;
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }

@@ -63,9 +63,6 @@ namespace Pedestal
 		
 		if ( Window* base = N::GetWRefCon( window ) )
 		{
-			// Resize the window
-			base->Resize( window );
-			
 			// Don't rely on the requested size because it might have been tweaked
 			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 			
@@ -167,14 +164,6 @@ namespace Pedestal
 		window_removed( itsWindowRef.get() );
 	}
 	
-	void Window::Resize( WindowRef window )
-	{
-		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
-		{
-			(*handler)( window );
-		}
-	}
-	
 	
 	void Window::Activate( bool activating )
 	{
@@ -190,6 +179,11 @@ namespace Pedestal
 		GetView()->SetBounds( bounds );
 		
 		InvalidateGrowBox();
+		
+		if ( const WindowResizeHandler* handler = itsResizeHandler.get() )
+		{
+			(*handler)( Get() );
+		}
 	}
 	
 	void Window::MouseDown( const EventRecord& event )
