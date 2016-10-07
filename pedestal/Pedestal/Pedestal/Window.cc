@@ -40,6 +40,38 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+#if ! OPAQUE_TOOLBOX_STRUCTS
+	
+	struct WindowStorage
+	{
+		WindowRecord  window;
+	};
+	
+	static
+	WindowStorage* RecoverWindowStorage( WindowRef window )
+	{
+		if ( GetWindowKind( window ) != kApplicationWindowKind )
+		{
+			return NULL;
+		}
+		
+		void* address = (char*) window - offsetof( WindowStorage, window );
+		
+		return (WindowStorage*) address;
+	}
+	
+	static
+	pascal void DestroyWindow( WindowRef window )
+	{
+		WindowStorage* storage = RecoverWindowStorage( window );
+		
+		CloseWindow( window );
+		
+		delete storage;
+	}
+	
+#endif
+	
 	static
 	void set_window_owner( WindowRef window, Window* owner )
 	{
@@ -104,8 +136,23 @@ namespace Pedestal
 	                                    WindowRef           behind,
 	                                    bool                goAwayFlag )
 	{
+		typedef nucleus::disposer_class< WindowRef >::type Disposer;
 		
-		WindowRef window = gNewWindow( NULL,
+		Disposer disposer;
+		
+		WindowRef substorage = NULL;
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		disposer = &DestroyWindow;
+		
+		WindowStorage* storage = new WindowStorage;
+		
+		substorage = &storage->window.port;
+		
+	#endif
+		
+		WindowRef window = gNewWindow( substorage,
 		                               &bounds,
 		                               title,
 		                               visible,
@@ -117,7 +164,7 @@ namespace Pedestal
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
 		
-		return n::owned< WindowRef >::seize( window, N::Window_Disposer() );
+		return n::owned< WindowRef >::seize( window, disposer );
 	}
 	
 	static inline
