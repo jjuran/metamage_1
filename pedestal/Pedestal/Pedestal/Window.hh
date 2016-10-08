@@ -37,6 +37,7 @@
 namespace Pedestal
 {
 	
+	typedef void (*WindowClosed_proc )( WindowRef window );
 	typedef void (*WindowResized_proc)( WindowRef window );
 	
 	
@@ -150,6 +151,9 @@ namespace Pedestal
 	};
 	
 	Window* get_window_owner( WindowRef window );
+	
+	void set_window_closed_proc( WindowRef          window,
+	                             WindowClosed_proc  proc );
 	
 	void set_window_resized_proc( WindowRef           window,
 	                              WindowResized_proc  proc );

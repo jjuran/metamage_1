@@ -45,6 +45,7 @@ namespace Pedestal
 		
 		kWindowOwnerTag = 'This',  // Address of owning object
 		
+		kWindowClosedProcTag  = 'Clsd',
 		kWindowResizedProcTag = 'Rszd',
 	};
 	
@@ -53,10 +54,11 @@ namespace Pedestal
 	struct WindowStorage
 	{
 		Window*             owner;
+		WindowClosed_proc   closed_proc;
 		WindowResized_proc  resized_proc;
 		WindowRecord        window;
 		
-		WindowStorage() : resized_proc()
+		WindowStorage() : closed_proc(), resized_proc()
 		{
 		}
 	};
@@ -141,6 +143,58 @@ namespace Pedestal
 		return result;
 	}
 	
+	void set_window_closed_proc( WindowRef          window,
+	                             WindowClosed_proc  proc )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			storage->closed_proc = proc;
+		}
+		
+		return;
+		
+	#endif
+		
+		OSStatus err;
+		
+		err = SetWindowProperty( window,
+		                         kWindowOwnerTag,
+		                         kWindowClosedProcTag,
+		                         sizeof proc,
+		                         &proc );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	static
+	WindowClosed_proc get_window_closed_proc( WindowRef window )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			return storage->closed_proc;
+		}
+		
+		return NULL;
+		
+	#endif
+		
+		OSStatus err;
+		
+		WindowClosed_proc result = NULL;
+		err = GetWindowProperty( window,
+		                         kWindowOwnerTag,
+		                         kWindowClosedProcTag,
+		                         sizeof result,
+		                         NULL,
+		                         &result );
+		
+		return result;
+	}
+	
 	void set_window_resized_proc( WindowRef           window,
 	                              WindowResized_proc  proc )
 	{
@@ -195,6 +249,13 @@ namespace Pedestal
 	
 	void close_window( WindowRef window )
 	{
+		if ( WindowClosed_proc proc = get_window_closed_proc( window ) )
+		{
+			proc( window );
+			
+			return;
+		}
+		
 		if ( Window* obj = get_window_owner( window ) )
 		{
 			obj->Close( window );
