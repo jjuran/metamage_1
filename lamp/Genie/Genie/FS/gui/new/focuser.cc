@@ -60,7 +60,7 @@ namespace Genie
 	{
 		namespace N = Nitrogen;
 		
-		Ped::Window* base = N::GetWRefCon( N::FrontWindow() );
+		Ped::Window* base = Ped::get_window_owner( N::FrontWindow() );
 		
 		return *base->GetView();
 	}

@@ -71,7 +71,7 @@ namespace UseEdit
 	
 	static void CloseDocument( WindowRef window )
 	{
-		if ( Ped::Window* base = N::GetWRefCon( window ) )
+		if ( Ped::Window* base = Ped::get_window_owner( window ) )
 		{
 			base->Close( window );
 		}

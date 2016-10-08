@@ -39,6 +39,100 @@ namespace Pedestal
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
+	enum
+	{
+		kWindowCreator = ':-)\xCA',  // Yes, I actually registered this
+		
+		kWindowOwnerTag = 'This',  // Address of owning object
+	};
+	
+#if ! OPAQUE_TOOLBOX_STRUCTS
+	
+	struct WindowStorage
+	{
+		Window*       owner;
+		WindowRecord  window;
+	};
+	
+	static
+	WindowStorage* RecoverWindowStorage( WindowRef window )
+	{
+		if ( GetWindowKind( window ) != kApplicationWindowKind )
+		{
+			return NULL;
+		}
+		
+		void* address = (char*) window - offsetof( WindowStorage, window );
+		
+		return (WindowStorage*) address;
+	}
+	
+	static
+	pascal void DestroyWindow( WindowRef window )
+	{
+		WindowStorage* storage = RecoverWindowStorage( window );
+		
+		CloseWindow( window );
+		
+		delete storage;
+	}
+	
+#endif
+	
+	static
+	void set_window_owner( WindowRef window, Window* owner )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		WindowStorage* storage = RecoverWindowStorage( window );
+		
+		/*
+			This is only called on windows created below, which will always
+			be application windows with custom storage.
+		*/
+		
+		storage->owner = owner;
+		
+		return;
+		
+	#endif
+		
+		OSStatus err;
+		
+		err = SetWindowProperty( window,
+		                         kWindowCreator,
+		                         kWindowOwnerTag,
+		                         sizeof owner,
+		                         &owner );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
+	Window* get_window_owner( WindowRef window )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			return storage->owner;
+		}
+		
+		return NULL;
+		
+	#endif
+		
+		OSStatus err;
+		
+		Window* result = NULL;
+		err = GetWindowProperty( window,
+		                         kWindowCreator,
+		                         kWindowOwnerTag,
+		                         sizeof result,
+		                         NULL,
+		                         &result );
+		
+		return result;
+	}
 	
 	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
 	                                               const Rect*       bounds,
@@ -61,7 +155,7 @@ namespace Pedestal
 		
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
-		if ( Window* base = N::GetWRefCon( window ) )
+		if ( Window* base = get_window_owner( window ) )
 		{
 			// Don't rely on the requested size because it might have been tweaked
 			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
@@ -85,28 +179,54 @@ namespace Pedestal
 	}
 	
 	
+	static
 	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
 	                                    ConstStr255Param    title,
 	                                    bool                visible,
 	                                    N::WindowDefProcID  procID,
 	                                    WindowRef           behind,
-	                                    bool                goAwayFlag,
-	                                    const void*         refCon )
+	                                    bool                goAwayFlag )
 	{
+		typedef nucleus::disposer_class< WindowRef >::type Disposer;
 		
-		WindowRef window = gNewWindow( NULL,
+		Disposer disposer;
+		
+		WindowRef substorage = NULL;
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		disposer = &DestroyWindow;
+		
+		WindowStorage* storage = new WindowStorage;
+		
+		substorage = &storage->window.port;
+		
+	#endif
+		
+		WindowRef window = gNewWindow( substorage,
 		                               &bounds,
 		                               title,
 		                               visible,
 		                               procID,
 		                               behind,
 		                               goAwayFlag,
-		                               (long) refCon );  // reinterpret_cast
+		                               0 );
 		
 		//N::SetWindowKind( window, kPedestalWindowKind );
 		N::SetPortWindowPort( window );
 		
-		return n::owned< WindowRef >::seize( window, N::Window_Disposer() );
+		return n::owned< WindowRef >::seize( window, disposer );
+	}
+	
+	static inline
+	n::owned< WindowRef > CreateWindow( const NewWindowContext& context )
+	{
+		return CreateWindow( context.bounds,
+		                     context.title,
+		                     context.visible,
+		                     context.procID,
+		                     context.behind,
+		                     context.goAwayFlag );
 	}
 	
 	static Rect GrowBoxBounds( WindowRef window )
@@ -127,9 +247,11 @@ namespace Pedestal
 	
 	Window::Window( const NewWindowContext& context )
 	:
-		itsWindowRef( CreateWindow( context, this ) ),
+		itsWindowRef( CreateWindow( context ) ),
 		itsDefProcID( context.procID )
 	{
+		set_window_owner( itsWindowRef, this );
+		
 		window_created( itsWindowRef.get() );
 	}
 	

@@ -409,7 +409,7 @@ namespace Pedestal
 	{
 		if ( N::TrackGoAway( window, event.where ) )
 		{
-			if ( Window* base = N::GetWRefCon( window ) )
+			if ( Window* base = get_window_owner( window ) )
 			{
 				base->Close( window );
 			}
@@ -1076,7 +1076,7 @@ namespace Pedestal
 			case 'clos':
 				if ( WindowRef window = N::FrontWindow() )
 				{
-					if ( Window* base = N::GetWRefCon( window ) )
+					if ( Window* base = get_window_owner( window ) )
 					{
 						base->Close( window );
 					}

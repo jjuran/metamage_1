@@ -88,26 +88,6 @@ namespace Pedestal
 		}
 	};
 	
-	nucleus::owned< WindowRef > CreateWindow( const Rect&           bounds,
-	                                          ConstStr255Param      title,
-	                                          bool                  visible,
-	                                          Mac::WindowDefProcID  procID,
-	                                          WindowRef             behind,
-	                                          bool                  goAwayFlag,
-	                                          const void*           refCon );
-	
-	inline nucleus::owned< WindowRef > CreateWindow( const NewWindowContext&  context,
-	                                                 const void*              refCon )
-	{
-		return CreateWindow( context.bounds,
-		                     context.title,
-		                     context.visible,
-		                     context.procID,
-		                     context.behind,
-		                     context.goAwayFlag,
-		                     refCon );
-	}
-	
 	void InvalidateWindowGrowBox( WindowRef window );
 	
 	
@@ -181,6 +161,8 @@ namespace Pedestal
 			
 			void Update();
 	};
+	
+	Window* get_window_owner( WindowRef window );
 	
 }
 
