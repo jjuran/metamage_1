@@ -69,19 +69,11 @@ namespace UseEdit
 	static void StoreNewDocument( Document* doc );
 	
 	
-	static void CloseDocument( WindowRef window )
-	{
-		if ( Ped::Window* base = Ped::get_window_owner( window ) )
-		{
-			base->Close( window );
-		}
-	}
-	
 	struct DocumentCloser
 	{
 		void operator()( WindowRef window ) const
 		{
-			CloseDocument( window );
+			Ped::close_window( window );
 		}
 	};
 	
@@ -108,7 +100,7 @@ namespace UseEdit
 				case typeDocument:
 					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< Mac::typePtr >( token, typeDocument ) ) )
 					{
-						CloseDocument( window );
+						Ped::close_window( window );
 					}
 					break;
 				

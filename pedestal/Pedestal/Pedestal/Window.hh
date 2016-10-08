@@ -154,6 +154,8 @@ namespace Pedestal
 	void set_window_resized_proc( WindowRef           window,
 	                              WindowResized_proc  proc );
 	
+	void close_window( WindowRef window );
+	
 }
 
 #endif

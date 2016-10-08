@@ -193,6 +193,15 @@ namespace Pedestal
 		return result;
 	}
 	
+	void close_window( WindowRef window )
+	{
+		if ( Window* obj = get_window_owner( window ) )
+		{
+			obj->Close( window );
+		}
+	}
+	
+	
 	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
 	                                               const Rect*       bounds,
 	                                               ConstStr255Param  title,
