@@ -258,7 +258,11 @@ namespace Pedestal
 		
 		if ( Window* obj = get_window_owner( window ) )
 		{
-			obj->Close( window );
+			delete obj;
+		}
+		else
+		{
+			DisposeWindow( window );
 		}
 	}
 	
