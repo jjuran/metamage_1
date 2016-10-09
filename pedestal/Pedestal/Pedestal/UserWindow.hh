@@ -17,15 +17,10 @@ namespace Pedestal
 	
 	class UserWindow : public Window
 	{
-		private:
-			boost::intrusive_ptr< View > itsView;
-		
 		public:
 			UserWindow( const NewWindowContext& context ) : Window( context )
 			{
 			}
-			
-			boost::intrusive_ptr< View >& GetView()  { return itsView; }
 	};
 	
 }

@@ -168,16 +168,7 @@ namespace Genie
 				Ped::Window( context )
 			{
 			}
-			
-			boost::intrusive_ptr< Ped::View >& GetView();
 	};
-	
-	boost::intrusive_ptr< Ped::View >& Window::GetView()
-	{
-		const vfs::node* key = (const vfs::node*) GetWRefCon( Get() );
-		
-		return gWindowParametersMap[ key ].itsSubview;
-	}
 	
 	
 	static bool Disconnect_Window_Terminal( vfs::filehandle*& h )
@@ -300,6 +291,8 @@ namespace Genie
 		Ped::set_window_resized_proc( window->Get(), &WindowResized );
 		
 		params.itsWindow = window;
+		
+		window->SetView( params.itsSubview );
 		
 		// We could copy from above but the actual bounds could be different
 		bounds = N::GetPortBounds( N::GetWindowPort( window->Get() ) );
@@ -782,7 +775,14 @@ namespace Genie
 	static
 	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
 	{
-		gWindowParametersMap[ key ].itsSubview = view;
+		WindowParameters& params = gWindowParametersMap[ key ];
+		
+		params.itsSubview = view;
+		
+		if ( Ped::Window* owner = params.itsWindow.get() )
+		{
+			owner->SetView( params.itsSubview );
+		}
 	}
 	
 	const View_Accessors access =
