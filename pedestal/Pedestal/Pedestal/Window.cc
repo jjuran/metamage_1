@@ -56,6 +56,7 @@ namespace Pedestal
 		Window*             owner;
 		WindowClosed_proc   closed_proc;
 		WindowResized_proc  resized_proc;
+		WindowAttributes    attributes;
 		WindowRecord        window;
 		
 		WindowStorage() : closed_proc(), resized_proc()
@@ -87,6 +88,27 @@ namespace Pedestal
 	}
 	
 #endif
+	
+	WindowAttributes get_window_attributes( WindowRef window )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			return storage->attributes;
+		}
+		
+		return kWindowNoAttributes;
+		
+	#endif
+		
+		OSStatus err;
+		
+		WindowAttributes attrs = kWindowNoAttributes;
+		err = GetWindowAttributes( window, &attrs );
+		
+		return attrs;
+	}
 	
 	static
 	void set_window_owner( WindowRef window, Window* owner )
@@ -269,12 +291,7 @@ namespace Pedestal
 	static
 	bool window_has_grow_icon( WindowRef window )
 	{
-		if ( const Window* owner = get_window_owner( window ) )
-		{
-			return owner->HasGrowIcon();
-		}
-		
-		return false;
+		return get_window_attributes( window ) & kWindowResizableAttribute;
 	}
 	
 	
@@ -340,6 +357,22 @@ namespace Pedestal
 	}
 	
 	
+	static inline
+	bool has_grow_box( short procID )
+	{
+		// This works for the standard WDEF.
+		
+		return (procID & ~0x8) == 0;  // documentProc (0) or zoomDocProc (8)
+	}
+	
+	static inline
+	bool has_zoom_box( short procID )
+	{
+		// This works for the standard WDEF.
+		
+		return (procID & ~0x4) == 8;  // zoomDocProc (8) or zoomNoGrow (12)
+	}
+	
 	static
 	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
 	                                    ConstStr255Param    title,
@@ -359,6 +392,10 @@ namespace Pedestal
 		disposer = &DestroyWindow;
 		
 		WindowStorage* storage = new WindowStorage;
+		
+		storage->attributes = kWindowResizableAttribute * has_grow_box( procID )
+		                    | kWindowFullZoomAttribute  * has_zoom_box( procID )
+		                    | kWindowCloseBoxAttribute  * goAwayFlag;
 		
 		substorage = &storage->window.port;
 		
@@ -393,8 +430,7 @@ namespace Pedestal
 	
 	Window::Window( const NewWindowContext& context )
 	:
-		itsWindowRef( CreateWindow( context ) ),
-		itsDefProcID( context.procID )
+		itsWindowRef( CreateWindow( context ) )
 	{
 		set_window_owner( itsWindowRef, this );
 		

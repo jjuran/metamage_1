@@ -97,8 +97,6 @@ namespace Pedestal
 	{
 		private:
 			nucleus::owned< WindowRef > itsWindowRef;
-			
-			Mac::WindowDefProcID itsDefProcID;
 		
 		public:
 			Window( const NewWindowContext& context );
@@ -111,8 +109,6 @@ namespace Pedestal
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 			
-			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
-			
 			void Activate( bool activating           );
 			void Resized ( short width, short height );
 			
@@ -120,6 +116,8 @@ namespace Pedestal
 			
 			void Update();
 	};
+	
+	WindowAttributes get_window_attributes( WindowRef window );
 	
 	Window* get_window_owner( WindowRef window );
 	
