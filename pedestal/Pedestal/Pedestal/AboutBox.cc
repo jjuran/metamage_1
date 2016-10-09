@@ -5,12 +5,14 @@
 
 #include "Pedestal/AboutBox.hh"
 
+// Standard C++
+#include <memory>
+
 // Nitrogen
 #include "Nitrogen/Icons.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
-#include "Pedestal/UniqueWindowOwner.hh"
 #include "Pedestal/UserWindow.hh"
 
 
@@ -57,6 +59,14 @@ namespace Pedestal
 	}
 	
 	
+	static std::auto_ptr< Window > sAboutBox;
+	
+	static
+	void AboutClosed( WindowRef window )
+	{
+		sAboutBox.reset();
+	}
+	
 	static std::auto_ptr< Window > NewAboutBox()
 	{
 		Rect bounds = N::SetRect( 0, 0, 128, 128 );
@@ -67,6 +77,8 @@ namespace Pedestal
 		
 		std::auto_ptr< Window > window( new UserWindow( context ) );
 		
+		set_window_closed_proc( window->Get(), &AboutClosed );
+		
 		window->SetView( boost::intrusive_ptr< View >( new AboutBoxView() ) );
 		
 		return window;
@@ -75,9 +87,14 @@ namespace Pedestal
 	
 	void ShowAboutBox()
 	{
-		static UniqueWindowOwner gAboutBox( &NewAboutBox );
-		
-		gAboutBox.Show();
+		if ( sAboutBox.get() == NULL )
+		{
+			sAboutBox = NewAboutBox();
+		}
+		else
+		{
+			SelectWindow( sAboutBox->Get() );
+		}
 	}
 	
 }

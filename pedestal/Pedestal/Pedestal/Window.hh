@@ -37,6 +37,7 @@
 namespace Pedestal
 {
 	
+	typedef void (*WindowClosed_proc )( WindowRef window );
 	typedef void (*WindowResized_proc)( WindowRef window );
 	
 	
@@ -94,21 +95,9 @@ namespace Pedestal
 	void InvalidateWindowGrowBox( WindowRef window );
 	
 	
-	class WindowCloseHandler : public plus::ref_count< WindowCloseHandler >
-	{
-		public:
-			virtual ~WindowCloseHandler()
-			{
-			}
-			
-			virtual void operator()( WindowRef window ) const = 0;
-	};
-	
 	class Window : public plus::ref_count< Window >
 	{
 		private:
-			boost::intrusive_ptr< WindowCloseHandler  > itsCloseHandler;
-			
 			nucleus::owned< WindowRef > itsWindowRef;
 			
 			Mac::WindowDefProcID itsDefProcID;
@@ -119,13 +108,6 @@ namespace Pedestal
 			virtual ~Window();
 			
 			WindowRef Get() const  { return itsWindowRef; }
-			
-			void SetCloseHandler( const boost::intrusive_ptr< WindowCloseHandler >& handler )
-			{
-				itsCloseHandler = handler;
-			}
-			
-			void Close( WindowRef window )  { return (*itsCloseHandler)( window ); }
 			
 			virtual boost::intrusive_ptr< View >& GetView() = 0;
 			
@@ -150,6 +132,9 @@ namespace Pedestal
 	};
 	
 	Window* get_window_owner( WindowRef window );
+	
+	void set_window_closed_proc( WindowRef          window,
+	                             WindowClosed_proc  proc );
 	
 	void set_window_resized_proc( WindowRef           window,
 	                              WindowResized_proc  proc );
