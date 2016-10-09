@@ -69,6 +69,12 @@ namespace UseEdit
 	static void StoreNewDocument( Document* doc );
 	
 	
+	static
+	void DocumentClosed( WindowRef window )
+	{
+		gDocuments.DeleteElementByID( (UInt32) window );  // reinterpret_cast
+	}
+	
 	struct DocumentCloser
 	{
 		void operator()( WindowRef window ) const
@@ -464,23 +470,11 @@ namespace UseEdit
 	}
 	
 	
-	class DocumentCloseHandler : public Ped::WindowCloseHandler
-	{
-		public:
-			void operator()( WindowRef window ) const
-			{
-				gDocuments.DeleteElementByID( (UInt32) window );  // reinterpret_cast
-			}
-	};
-	
-	static boost::intrusive_ptr< Pedestal::WindowCloseHandler > gDocumentCloseHandler = new DocumentCloseHandler;
-	
-	
 	static void StoreNewDocument( Document* doc )
 	{
 		boost::intrusive_ptr< Document > document( doc );
 		
-		document->GetWindow().SetCloseHandler( gDocumentCloseHandler );
+		Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
 		
 		gDocuments.StoreNewElement( document );
 	}
