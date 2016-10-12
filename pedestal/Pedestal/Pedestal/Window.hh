@@ -92,8 +92,6 @@ namespace Pedestal
 		}
 	};
 	
-	void InvalidateWindowGrowBox( WindowRef window );
-	
 	
 	class Window : public plus::ref_count< Window >
 	{

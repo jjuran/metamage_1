@@ -282,6 +282,23 @@ namespace Pedestal
 	                                                                 : &MacGlue::NewWindow;
 	
 	
+	static
+	Rect GrowBoxBounds( WindowRef window )
+	{
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		bounds.left = bounds.right - 15;
+		bounds.top = bounds.bottom - 15;
+		
+		return bounds;
+	}
+	
+	static
+	void InvalidateWindowGrowBox( WindowRef window )
+	{
+		N::InvalRect( GrowBoxBounds( window ) );
+	}
+	
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
 		InvalidateWindowGrowBox( window );  // assume grow box present on resize
@@ -360,21 +377,6 @@ namespace Pedestal
 		                     context.procID,
 		                     context.behind,
 		                     context.goAwayFlag );
-	}
-	
-	static Rect GrowBoxBounds( WindowRef window )
-	{
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-		
-		bounds.left = bounds.right - 15;
-		bounds.top = bounds.bottom - 15;
-		
-		return bounds;
-	}
-	
-	void InvalidateWindowGrowBox( WindowRef window )
-	{
-		N::InvalRect( GrowBoxBounds( window ) );
 	}
 	
 	
