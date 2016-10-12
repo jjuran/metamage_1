@@ -165,7 +165,9 @@ namespace UseEdit
 	static
 	void DocumentClosed( WindowRef window )
 	{
-		gDocuments.DeleteElementByID( (UInt32) window );  // reinterpret_cast
+		Document* doc = (Document*) GetWRefCon( window );
+		
+		delete doc;
 	}
 	
 	struct DocumentCloser
@@ -476,27 +478,6 @@ namespace UseEdit
 	}
 	
 	
-	inline DocumentContainer::Map::iterator DocumentContainer::Find( UInt32 id )
-	{
-		Map::iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
-		
-		return it;
-	}
-	
-	inline void DocumentContainer::ThrowIfNoSuchObject( Map::const_iterator it ) const
-	{
-		if ( it == itsMap.end() )
-		{
-			Mac::ThrowOSStatus( errAENoSuchObject );
-		}
-	}
-	
-	
-	void DocumentContainer::StoreNewElement( const boost::intrusive_ptr< Document >& document )
-	{
-		itsMap[ document->GetWindowRef() ] = document;
-	}
-	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
 		return token_for_document_window( get_nth_document_window( index ) );
@@ -507,25 +488,19 @@ namespace UseEdit
 		return token_for_document_window( get_document_window_by_id( id ) );
 	}
 	
-	void DocumentContainer::DeleteElementByID( UInt32 id )
-	{
-		Map::iterator it = Find( id );
-		
-		ThrowIfNoSuchObject( it );
-		
-		itsMap.erase( it );
-	}
-	
 	
 	static void StoreNewDocument( Document* doc )
 	{
-		boost::intrusive_ptr< Document > document( doc );
-		
 		N::SetWRefCon( doc->GetWindowRef(), doc );
 		
-		Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
-		
-		gDocuments.StoreNewElement( document );
+		try
+		{
+			Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
+		}
+		catch ( ... )
+		{
+			delete doc;
+		}
 	}
 	
 	static bool About( Ped::CommandCode )
