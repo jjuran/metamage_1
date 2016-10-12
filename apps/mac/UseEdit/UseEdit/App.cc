@@ -247,9 +247,20 @@ namespace UseEdit
 		}
 	};
 	
+	static
+	n::owned< Mac::AEDesc_Token > token_for_document_window( WindowRef window )
+	{
+		if ( window == NULL )
+		{
+			Mac::ThrowOSStatus( errAENoSuchObject );
+		}
+		
+		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( window ) );
+	}
+	
 	static n::owned< Mac::AEDesc_Token > TokenForDocument( const Document& document )
 	{
-		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( document.GetWindowRef() ) );
+		return token_for_document_window( document.GetWindowRef() );
 	}
 	
 	struct Document_Element
