@@ -408,7 +408,14 @@ namespace UseEdit
 		{
 			UInt32 id = N::AEGetDescData< Mac::typeSInt32 >( containerToken, typeDocument );
 			
-			const Document& document = gDocuments.GetDocumentByID( id );
+			WindowRef window = get_document_window_by_id( id );
+			
+			if ( window == NULL )
+			{
+				Mac::ThrowOSStatus( errAENoSuchObject );
+			}
+			
+			const Document& document = *(Document*) GetWRefCon( window );
 			
 			return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
 		}
@@ -479,13 +486,6 @@ namespace UseEdit
 	}
 	
 	
-	inline DocumentContainer::Map::const_iterator DocumentContainer::Find( UInt32 id ) const
-	{
-		Map::const_iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
-		
-		return it;
-	}
-	
 	inline DocumentContainer::Map::iterator DocumentContainer::Find( UInt32 id )
 	{
 		Map::iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
@@ -501,15 +501,6 @@ namespace UseEdit
 		}
 	}
 	
-	
-	const Document& DocumentContainer::GetDocumentByID( UInt32 id ) const
-	{
-		Map::const_iterator it = Find( id );
-		
-		ThrowIfNoSuchObject( it );
-		
-		return *it->second.get();
-	}
 	
 	void DocumentContainer::StoreNewElement( const boost::intrusive_ptr< Document >& document )
 	{
@@ -539,6 +530,8 @@ namespace UseEdit
 	static void StoreNewDocument( Document* doc )
 	{
 		boost::intrusive_ptr< Document > document( doc );
+		
+		N::SetWRefCon( doc->GetWindowRef(), doc );
 		
 		Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
 		
