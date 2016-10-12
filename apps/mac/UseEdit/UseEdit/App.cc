@@ -262,7 +262,7 @@ namespace UseEdit
 		{
 			if ( keyForm == Mac::formUniqueID )
 			{
-				return gDocuments.GetElementByID( N::AEGetDescData< Mac::typeUInt32 >( keyData ) );
+				return gDocuments.GetElementByID( N::AEGetDescData< Mac::typeSInt32 >( keyData ) );
 			}
 			
 			if ( keyForm == Mac::formAbsolutePosition )
@@ -307,7 +307,7 @@ namespace UseEdit
 		                                               const Mac::AEDesc_Token&  containerToken,
 		                                               Mac::AEObjectClass        containerClass )
 		{
-			UInt32 id = N::AEGetDescData< Mac::typeUInt32 >( containerToken, typeDocument );
+			UInt32 id = N::AEGetDescData< Mac::typeSInt32 >( containerToken, typeDocument );
 			
 			const Document& document = gDocuments.GetDocumentByID( id );
 			
@@ -360,7 +360,7 @@ namespace UseEdit
 		{
 			AEDesc keyData = obj;
 			
-			keyData.descriptorType = typeUInt32;
+			keyData.descriptorType = typeSInt32;
 			
 			return N::AECreateObjectSpecifier( Mac::cDocument,
 			                                   N::GetRootObjectSpecifier(),
