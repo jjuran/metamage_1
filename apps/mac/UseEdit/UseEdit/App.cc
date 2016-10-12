@@ -3,9 +3,6 @@
 	------
 */
 
-// Standard C++
-#include <algorithm>
-
 // iota
 #include "iota/convert_string.hh"
 
@@ -170,20 +167,15 @@ namespace UseEdit
 		delete doc;
 	}
 	
-	struct DocumentCloser
-	{
-		void operator()( WindowRef window ) const
-		{
-			Ped::close_window( window );
-		}
-	};
-	
 	template < class Container >
 	static void CloseDocuments( const Container& container )
 	{
-		std::for_each( container.begin(),
-		               container.end(),
-		               DocumentCloser() );
+		typedef typename Container::const_iterator Iter;
+		
+		for ( Iter it = container.begin();  it != container.end();  ++it )
+		{
+			Ped::close_window( *it );
+		}
 	}
 	
 	// Apple event handlers
