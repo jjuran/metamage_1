@@ -118,6 +118,26 @@ namespace UseEdit
 		return n;
 	}
 	
+	static
+	WindowRef get_nth_document_window( unsigned i )
+	{
+		unsigned n = 0;
+		
+		WindowRef window = get_first_document_window();
+		
+		while ( window != NULL )
+		{
+			if ( ++n == i )
+			{
+				break;
+			}
+			
+			window = get_next_document_window( window );
+		}
+		
+		return window;
+	}
+	
 	static DocumentContainer gDocuments;
 	
 	
@@ -469,20 +489,6 @@ namespace UseEdit
 	}
 	
 	
-	const Document& DocumentContainer::GetDocumentByIndex( std::size_t index ) const
-	{
-		if ( !ExistsElementByIndex( index ) )
-		{
-			Mac::ThrowOSStatus( errAENoSuchObject );
-		}
-		
-		Map::const_iterator it = itsMap.begin();
-		
-		std::advance( it, index - 1 );
-		
-		return *it->second.get();
-	}
-	
 	const Document& DocumentContainer::GetDocumentByID( UInt32 id ) const
 	{
 		Map::const_iterator it = Find( id );
@@ -499,7 +505,7 @@ namespace UseEdit
 	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
-		return TokenForDocument( GetDocumentByIndex( index ) );
+		return token_for_document_window( get_nth_document_window( index ) );
 	}
 	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
