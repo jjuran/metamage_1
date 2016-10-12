@@ -6,15 +6,6 @@
 #ifndef USEEDIT_APP_HH
 #define USEEDIT_APP_HH
 
-// Standard C++
-#include <map>
-
-// Debug
-#include "debug/boost_assert.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
-
 // Nitrogen
 #ifndef NITROGEN_APPLEEVENTS_HH
 #include "Nitrogen/AppleEvents.hh"
@@ -56,37 +47,12 @@ namespace UseEdit
 	
 #endif
 	
-	class Document;
-	
 	
 	class DocumentContainer
 	{
-		private:
-			typedef std::map< ::WindowRef, boost::intrusive_ptr< Document > > Map;
-			
-			Map itsMap;
-			
-			Map::const_iterator Find( UInt32 id ) const;
-			Map::      iterator Find( UInt32 id );
-			
-			void ThrowIfNoSuchObject( Map::const_iterator it ) const;
-		
 		public:
-			~DocumentContainer();
-			
-			const Document& GetDocumentByIndex( std::size_t index ) const;
-			const Document& GetDocumentByID   ( UInt32      id    ) const;
-			
-			void StoreNewElement( const boost::intrusive_ptr< Document >& document );
-			
-			size_t CountElements() const  { return itsMap.size(); }
-			
-			bool ExistsElementByIndex( std::size_t index ) const  { return index <= CountElements(); }
-			
 			nucleus::owned< Mac::AEDesc_Token > GetElementByIndex( std::size_t index ) const;
 			nucleus::owned< Mac::AEDesc_Token > GetElementByID   ( UInt32      id    ) const;
-			
-			void DeleteElementByID( UInt32 id );
 	};
 	
 	
@@ -94,7 +60,6 @@ namespace UseEdit
 	{
 		public:
 			App();
-			~App();
 	};
 	
 }

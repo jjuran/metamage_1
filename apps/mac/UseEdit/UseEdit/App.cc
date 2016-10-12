@@ -473,11 +473,6 @@ namespace UseEdit
 	};
 	
 	
-	DocumentContainer::~DocumentContainer()
-	{
-	}
-	
-	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
 		return token_for_document_window( get_nth_document_window( index ) );
@@ -555,10 +550,6 @@ namespace UseEdit
 		AppFrontmost_Property::Install_Accessor();
 		
 		DocName_Property::Install_Accessor();
-	}
-	
-	App::~App()
-	{
 	}
 	
 }
