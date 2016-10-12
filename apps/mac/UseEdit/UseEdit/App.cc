@@ -63,6 +63,61 @@ namespace Mac
 namespace UseEdit
 {
 	
+	static
+	bool is_document_window( WindowRef window )
+	{
+		// Our document windows are resizable; the About box isn't.
+		
+		return Ped::get_window_attributes( window ) & kWindowResizableAttribute;
+	}
+	
+	static
+	WindowRef get_this_or_next_document_window( WindowRef window )
+	{
+		while ( window != NULL )
+		{
+			if ( is_document_window( window ) )
+			{
+				break;
+			}
+			
+			window = GetNextWindow( window );
+		}
+		
+		return window;
+	}
+	
+	static
+	WindowRef get_first_document_window()
+	{
+		// Document windows should be visible.
+		
+		return get_this_or_next_document_window( FrontWindow() );
+	}
+	
+	static
+	WindowRef get_next_document_window( WindowRef window )
+	{
+		return get_this_or_next_document_window( GetNextWindow( window ) );
+	}
+	
+	static
+	unsigned count_document_windows()
+	{
+		unsigned n = 0;
+		
+		WindowRef window = get_first_document_window();
+		
+		while ( window != NULL )
+		{
+			++n;
+			
+			window = get_next_document_window( window );
+		}
+		
+		return n;
+	}
+	
 	static DocumentContainer gDocuments;
 	
 	
@@ -278,7 +333,7 @@ namespace UseEdit
 			
 			if ( keyForm == Mac::formAbsolutePosition )
 			{
-				std::size_t count = gDocuments.CountElements();
+				std::size_t count = count_document_windows();
 				
 				UInt32 index = N::ComputeAbsoluteIndex( keyData, count );
 				
@@ -339,7 +394,7 @@ namespace UseEdit
 		                        Mac::AEObjectClass        containerClass,
 		                        const Mac::AEDesc_Token&  containerToken )
 		{
-			return gDocuments.CountElements();
+			return count_document_windows();
 		}
 		
 		static void Install()
