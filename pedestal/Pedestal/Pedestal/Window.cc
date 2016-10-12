@@ -266,6 +266,17 @@ namespace Pedestal
 		}
 	}
 	
+	static
+	bool window_has_grow_icon( WindowRef window )
+	{
+		if ( const Window* owner = get_window_owner( window ) )
+		{
+			return owner->HasGrowIcon();
+		}
+		
+		return false;
+	}
+	
 	
 	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
 	                                               const Rect*       bounds,
@@ -400,7 +411,7 @@ namespace Pedestal
 	{
 		GetView()->Activate( activating );
 		
-		if ( HasGrowIcon() )
+		if ( window_has_grow_icon( Get() ) )
 		{
 			InvalidateWindowGrowBox( Get() );
 		}
@@ -412,7 +423,7 @@ namespace Pedestal
 		
 		GetView()->SetBounds( bounds );
 		
-		if ( HasGrowIcon() )
+		if ( window_has_grow_icon( Get() ) )
 		{
 			InvalidateWindowGrowBox( Get() );
 		}
@@ -440,7 +451,7 @@ namespace Pedestal
 	{
 		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ), true );
 		
-		if ( !TARGET_API_MAC_CARBON && HasGrowIcon() )
+		if ( !TARGET_API_MAC_CARBON && window_has_grow_icon( Get() ) )
 		{
 			n::saved< N::Clip > savedClip;
 			
