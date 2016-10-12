@@ -138,6 +138,24 @@ namespace UseEdit
 		return window;
 	}
 	
+	static
+	WindowRef get_document_window_by_id( long id )
+	{
+		WindowRef window = get_first_document_window();
+		
+		while ( window != NULL )
+		{
+			if ( (long) window == id )
+			{
+				break;
+			}
+			
+			window = get_next_document_window( window );
+		}
+		
+		return window;
+	}
+	
 	static DocumentContainer gDocuments;
 	
 	
@@ -333,11 +351,6 @@ namespace UseEdit
 		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( window ) );
 	}
 	
-	static n::owned< Mac::AEDesc_Token > TokenForDocument( const Document& document )
-	{
-		return token_for_document_window( document.GetWindowRef() );
-	}
-	
 	struct Document_Element
 	{
 		static n::owned< Mac::AEDesc_Token > Accessor( Mac::AEObjectClass        desiredClass,
@@ -510,7 +523,7 @@ namespace UseEdit
 	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
 	{
-		return TokenForDocument( GetDocumentByID( id ) );
+		return token_for_document_window( get_document_window_by_id( id ) );
 	}
 	
 	void DocumentContainer::DeleteElementByID( UInt32 id )
