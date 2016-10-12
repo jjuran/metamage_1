@@ -398,7 +398,10 @@ namespace Pedestal
 	{
 		GetView()->Activate( activating );
 		
-		InvalidateGrowBox();
+		if ( HasGrowIcon() )
+		{
+			InvalidateWindowGrowBox( Get() );
+		}
 	}
 	
 	void Window::Resized( short width, short height )
@@ -407,7 +410,10 @@ namespace Pedestal
 		
 		GetView()->SetBounds( bounds );
 		
-		InvalidateGrowBox();
+		if ( HasGrowIcon() )
+		{
+			InvalidateWindowGrowBox( Get() );
+		}
 		
 		if ( WindowResized_proc proc = get_window_resized_proc( Get() ) )
 		{

@@ -115,14 +115,6 @@ namespace Pedestal
 			
 			bool HasGrowIcon() const  { return (itsDefProcID & 0x7) == 0; }
 			
-			void InvalidateGrowBox() const
-			{
-				if ( HasGrowIcon() )
-				{
-					InvalidateWindowGrowBox( Get() );
-				}
-			}
-			
 			void Activate( bool activating           );
 			void Resized ( short width, short height );
 			
