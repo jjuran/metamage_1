@@ -63,7 +63,7 @@ namespace UseEdit
 	static inline
 	long id_of_window( WindowRef window )
 	{
-		return (unsigned long) window;
+		return (unsigned long) window >> 3;
 	}
 	
 	static
