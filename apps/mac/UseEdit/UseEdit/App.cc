@@ -197,10 +197,7 @@ namespace UseEdit
 			switch ( token.get().descriptorType )
 			{
 				case typeDocument:
-					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< Mac::typePtr >( token, typeDocument ) ) )
-					{
-						Ped::close_window( window );
-					}
+					Ped::close_window( N::AEGetDescData< typeDocument >( token ) );
 					break;
 				
 				case Mac::typeAEList:
@@ -406,14 +403,7 @@ namespace UseEdit
 		                                               const Mac::AEDesc_Token&  containerToken,
 		                                               Mac::AEObjectClass        containerClass )
 		{
-			UInt32 id = N::AEGetDescData< Mac::typeSInt32 >( containerToken, typeDocument );
-			
-			WindowRef window = get_document_window_by_id( id );
-			
-			if ( window == NULL )
-			{
-				Mac::ThrowOSStatus( errAENoSuchObject );
-			}
+			WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
 			
 			const Document& document = *(Document*) GetWRefCon( window );
 			
