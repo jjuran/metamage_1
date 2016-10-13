@@ -60,6 +60,12 @@ namespace Mac
 namespace UseEdit
 {
 	
+	static inline
+	long id_of_window( WindowRef window )
+	{
+		return (unsigned long) window;
+	}
+	
 	static
 	bool is_document_window( WindowRef window )
 	{
@@ -142,7 +148,7 @@ namespace UseEdit
 		
 		while ( window != NULL )
 		{
-			if ( (long) window == id )
+			if ( id_of_window( window ) == id )
 			{
 				break;
 			}
@@ -448,14 +454,16 @@ namespace UseEdit
 		static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
 		                                         Mac::DescType             desiredType )
 		{
-			AEDesc keyData = obj;
+			const WindowRef window = N::AEGetDescData< typeDocument >( obj );
 			
-			keyData.descriptorType = typeSInt32;
+			const long id = id_of_window( window );
+			
+			n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
 			
 			return N::AECreateObjectSpecifier( Mac::cDocument,
 			                                   N::GetRootObjectSpecifier(),
 			                                   Mac::formUniqueID,
-			                                   static_cast< const Mac::AEDesc_Data& >( keyData ) );
+			                                   keyData );
 		}
 		
 		static void Install_DataGetter()
