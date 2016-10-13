@@ -3,9 +3,6 @@
 	------
 */
 
-// Standard C++
-#include <algorithm>
-
 // iota
 #include "iota/convert_string.hh"
 
@@ -63,6 +60,105 @@ namespace Mac
 namespace UseEdit
 {
 	
+	static inline
+	long id_of_window( WindowRef window )
+	{
+		return (unsigned long) window >> 3;
+	}
+	
+	static
+	bool is_document_window( WindowRef window )
+	{
+		// Our document windows are resizable; the About box isn't.
+		
+		return Ped::get_window_attributes( window ) & kWindowResizableAttribute;
+	}
+	
+	static
+	WindowRef get_this_or_next_document_window( WindowRef window )
+	{
+		while ( window != NULL )
+		{
+			if ( is_document_window( window ) )
+			{
+				break;
+			}
+			
+			window = GetNextWindow( window );
+		}
+		
+		return window;
+	}
+	
+	static
+	WindowRef get_first_document_window()
+	{
+		// Document windows should be visible.
+		
+		return get_this_or_next_document_window( FrontWindow() );
+	}
+	
+	static
+	WindowRef get_next_document_window( WindowRef window )
+	{
+		return get_this_or_next_document_window( GetNextWindow( window ) );
+	}
+	
+	static
+	unsigned count_document_windows()
+	{
+		unsigned n = 0;
+		
+		WindowRef window = get_first_document_window();
+		
+		while ( window != NULL )
+		{
+			++n;
+			
+			window = get_next_document_window( window );
+		}
+		
+		return n;
+	}
+	
+	static
+	WindowRef get_nth_document_window( unsigned i )
+	{
+		unsigned n = 0;
+		
+		WindowRef window = get_first_document_window();
+		
+		while ( window != NULL )
+		{
+			if ( ++n == i )
+			{
+				break;
+			}
+			
+			window = get_next_document_window( window );
+		}
+		
+		return window;
+	}
+	
+	static
+	WindowRef get_document_window_by_id( long id )
+	{
+		WindowRef window = get_first_document_window();
+		
+		while ( window != NULL )
+		{
+			if ( id_of_window( window ) == id )
+			{
+				break;
+			}
+			
+			window = get_next_document_window( window );
+		}
+		
+		return window;
+	}
+	
 	static DocumentContainer gDocuments;
 	
 	
@@ -72,23 +168,20 @@ namespace UseEdit
 	static
 	void DocumentClosed( WindowRef window )
 	{
-		gDocuments.DeleteElementByID( (UInt32) window );  // reinterpret_cast
+		Document* doc = (Document*) GetWRefCon( window );
+		
+		delete doc;
 	}
-	
-	struct DocumentCloser
-	{
-		void operator()( WindowRef window ) const
-		{
-			Ped::close_window( window );
-		}
-	};
 	
 	template < class Container >
 	static void CloseDocuments( const Container& container )
 	{
-		std::for_each( container.begin(),
-		               container.end(),
-		               DocumentCloser() );
+		typedef typename Container::const_iterator Iter;
+		
+		for ( Iter it = container.begin();  it != container.end();  ++it )
+		{
+			Ped::close_window( *it );
+		}
 	}
 	
 	// Apple event handlers
@@ -104,10 +197,7 @@ namespace UseEdit
 			switch ( token.get().descriptorType )
 			{
 				case typeDocument:
-					if ( WindowRef window = static_cast< ::WindowRef >( N::AEGetDescData< Mac::typePtr >( token, typeDocument ) ) )
-					{
-						Ped::close_window( window );
-					}
+					Ped::close_window( N::AEGetDescData< typeDocument >( token ) );
 					break;
 				
 				case Mac::typeAEList:
@@ -247,9 +337,15 @@ namespace UseEdit
 		}
 	};
 	
-	static n::owned< Mac::AEDesc_Token > TokenForDocument( const Document& document )
+	static
+	n::owned< Mac::AEDesc_Token > token_for_document_window( WindowRef window )
 	{
-		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( document.GetWindowRef() ) );
+		if ( window == NULL )
+		{
+			Mac::ThrowOSStatus( errAENoSuchObject );
+		}
+		
+		return N::AECreateDesc( typeDocument, N::AECreateDesc< Mac::typePtr, Mac::AEDesc_Token >( window ) );
 	}
 	
 	struct Document_Element
@@ -267,7 +363,7 @@ namespace UseEdit
 			
 			if ( keyForm == Mac::formAbsolutePosition )
 			{
-				std::size_t count = gDocuments.CountElements();
+				std::size_t count = count_document_windows();
 				
 				UInt32 index = N::ComputeAbsoluteIndex( keyData, count );
 				
@@ -307,9 +403,9 @@ namespace UseEdit
 		                                               const Mac::AEDesc_Token&  containerToken,
 		                                               Mac::AEObjectClass        containerClass )
 		{
-			UInt32 id = N::AEGetDescData< Mac::typeSInt32 >( containerToken, typeDocument );
+			WindowRef window = N::AEGetDescData< typeDocument >( containerToken );
 			
-			const Document& document = gDocuments.GetDocumentByID( id );
+			const Document& document = *(Document*) GetWRefCon( window );
 			
 			return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( iota::convert_string< n::string >( document.GetName() ) );
 		}
@@ -328,7 +424,7 @@ namespace UseEdit
 		                        Mac::AEObjectClass        containerClass,
 		                        const Mac::AEDesc_Token&  containerToken )
 		{
-			return gDocuments.CountElements();
+			return count_document_windows();
 		}
 		
 		static void Install()
@@ -358,14 +454,16 @@ namespace UseEdit
 		static n::owned< Mac::AEDesc_Data > Get( const Mac::AEDesc_Token&  obj,
 		                                         Mac::DescType             desiredType )
 		{
-			AEDesc keyData = obj;
+			const WindowRef window = N::AEGetDescData< typeDocument >( obj );
 			
-			keyData.descriptorType = typeSInt32;
+			const long id = id_of_window( window );
+			
+			n::owned< Mac::AEDesc_Data > keyData = N::AECreateDesc< Mac::typeSInt32 >( id );
 			
 			return N::AECreateObjectSpecifier( Mac::cDocument,
 			                                   N::GetRootObjectSpecifier(),
 			                                   Mac::formUniqueID,
-			                                   static_cast< const Mac::AEDesc_Data& >( keyData ) );
+			                                   keyData );
 		}
 		
 		static void Install_DataGetter()
@@ -375,108 +473,29 @@ namespace UseEdit
 	};
 	
 	
-	DocumentContainer::~DocumentContainer()
-	{
-	}
-	
-	
-	inline DocumentContainer::Map::const_iterator DocumentContainer::Find( UInt32 id ) const
-	{
-		Map::const_iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
-		
-		return it;
-	}
-	
-	inline DocumentContainer::Map::iterator DocumentContainer::Find( UInt32 id )
-	{
-		Map::iterator it = itsMap.find( reinterpret_cast< ::WindowRef >( id ) );
-		
-		return it;
-	}
-	
-	inline void DocumentContainer::ThrowIfNoSuchObject( Map::const_iterator it ) const
-	{
-		if ( it == itsMap.end() )
-		{
-			Mac::ThrowOSStatus( errAENoSuchObject );
-		}
-	}
-	
-	
-	const Document& DocumentContainer::GetDocumentByIndex( std::size_t index ) const
-	{
-		if ( !ExistsElementByIndex( index ) )
-		{
-			Mac::ThrowOSStatus( errAENoSuchObject );
-		}
-		
-		Map::const_iterator it = itsMap.begin();
-		
-		std::advance( it, index - 1 );
-		
-		return *it->second.get();
-	}
-	
-	const Document& DocumentContainer::GetDocumentByID( UInt32 id ) const
-	{
-		Map::const_iterator it = Find( id );
-		
-		ThrowIfNoSuchObject( it );
-		
-		return *it->second.get();
-	}
-	
-	void DocumentContainer::StoreNewElement( const boost::intrusive_ptr< Document >& document )
-	{
-		itsMap[ document->GetWindowRef() ] = document;
-	}
-	
-	bool DocumentContainer::ExistsElementByID( UInt32 id ) const
-	{
-		return Find( id ) != itsMap.end();
-	}
-	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByIndex( std::size_t index ) const
 	{
-		return TokenForDocument( GetDocumentByIndex( index ) );
+		return token_for_document_window( get_nth_document_window( index ) );
 	}
 	
 	n::owned< Mac::AEDesc_Token > DocumentContainer::GetElementByID( UInt32 id ) const
 	{
-		return TokenForDocument( GetDocumentByID( id ) );
-	}
-	
-	void DocumentContainer::DeleteElementByIndex( std::size_t index )
-	{
-		if ( !ExistsElementByIndex( index ) )
-		{
-			Mac::ThrowOSStatus( errAENoSuchObject );
-		}
-		
-		Map::iterator it = itsMap.begin();
-		
-		std::advance( it, index - 1 );
-		
-		itsMap.erase( it );
-	}
-	
-	void DocumentContainer::DeleteElementByID( UInt32 id )
-	{
-		Map::iterator it = Find( id );
-		
-		ThrowIfNoSuchObject( it );
-		
-		itsMap.erase( it );
+		return token_for_document_window( get_document_window_by_id( id ) );
 	}
 	
 	
 	static void StoreNewDocument( Document* doc )
 	{
-		boost::intrusive_ptr< Document > document( doc );
+		N::SetWRefCon( doc->GetWindowRef(), doc );
 		
-		Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
-		
-		gDocuments.StoreNewElement( document );
+		try
+		{
+			Ped::set_window_closed_proc( doc->GetWindowRef(), &DocumentClosed );
+		}
+		catch ( ... )
+		{
+			delete doc;
+		}
 	}
 	
 	static bool About( Ped::CommandCode )
@@ -531,10 +550,6 @@ namespace UseEdit
 		AppFrontmost_Property::Install_Accessor();
 		
 		DocName_Property::Install_Accessor();
-	}
-	
-	App::~App()
-	{
 	}
 	
 }
