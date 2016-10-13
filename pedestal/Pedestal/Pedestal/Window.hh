@@ -123,6 +123,12 @@ namespace Pedestal
 	
 	View* get_window_view( WindowRef window );
 	
+	inline
+	void window_activated( WindowRef window, bool activating )
+	{
+		get_window_owner( window )->Activate( activating );
+	}
+	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc );
 	
