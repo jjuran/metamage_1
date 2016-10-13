@@ -121,6 +121,8 @@ namespace Pedestal
 	
 	Window* get_window_owner( WindowRef window );
 	
+	View* get_window_view( WindowRef window );
+	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc );
 	

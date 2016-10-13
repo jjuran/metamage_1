@@ -165,6 +165,16 @@ namespace Pedestal
 		return result;
 	}
 	
+	View* get_window_view( WindowRef window )
+	{
+		if ( Window* owner = get_window_owner( window ) )
+		{
+			return owner->GetView().get();
+		}
+		
+		return NULL;
+	}
+	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc )
 	{
