@@ -90,12 +90,9 @@ namespace Genie
 	//
 	(*ViewGetter)( const vfs::node*, const plus::string& name );
 	
-	typedef void (*ViewPurger)( const vfs::node*, const plus::string& name );
-	
 	vfs::node_ptr New_View( const vfs::node*     parent,
 	                        const plus::string&  name,
-	                        ViewGetter           get,
-	                        ViewPurger           purge = NULL );
+	                        ViewGetter           get );
 	
 	vfs::node_ptr new_view_dir( const vfs::node*     parent,
 	                            const plus::string&  name,

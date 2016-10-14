@@ -285,7 +285,6 @@ namespace Genie
 	struct view_extra
 	{
 		ViewGetter  get;
-		ViewPurger  purge;
 	};
 	
 	
@@ -364,11 +363,6 @@ namespace Genie
 		view_of( that ) = Ped::EmptyView::Get();
 		
 		RemoveAllViewParameters( parent );
-		
-		if ( extra.purge )
-		{
-			extra.purge( parent, name );
-		}
 	}
 	
 	static vfs::node_ptr view_lookup( const vfs::node*     that,
@@ -419,8 +413,7 @@ namespace Genie
 	
 	vfs::node_ptr New_View( const vfs::node*     parent,
 	                        const plus::string&  name,
-	                        ViewGetter           get,
-	                        ViewPurger           purge )
+	                        ViewGetter           get )
 	{
 		const bool exists = view_exists( parent );
 		
@@ -439,8 +432,7 @@ namespace Genie
 		
 		view_extra& extra = *(view_extra*) result->extra();
 		
-		extra.get   = get;
-		extra.purge = purge;
+		extra.get = get;
 		
 		return result;
 	}
