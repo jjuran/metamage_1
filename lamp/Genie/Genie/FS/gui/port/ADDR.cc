@@ -162,15 +162,10 @@ namespace Genie
 	
 	class Window : public Ped::Window
 	{
-		private:
-			const vfs::node* itsKey;
-		
 		public:
-			Window( const vfs::node*              key,
-			        const Ped::NewWindowContext&  context )
+			Window( const Ped::NewWindowContext& context )
 			:
-				Ped::Window( context ),
-				itsKey( key )
+				Ped::Window( context )
 			{
 			}
 			
@@ -179,7 +174,9 @@ namespace Genie
 	
 	boost::intrusive_ptr< Ped::View >& Window::GetView()
 	{
-		return gWindowParametersMap[ itsKey ].itsSubview;
+		const vfs::node* key = (const vfs::node*) GetWRefCon( Get() );
+		
+		return gWindowParametersMap[ key ].itsSubview;
 	}
 	
 	
@@ -295,7 +292,7 @@ namespace Genie
 		                               kFirstWindowOfClass,
 		                               params.itHasCloseBox );
 		
-		boost::intrusive_ptr< Ped::Window > window( new Window( key, context ) );
+		boost::intrusive_ptr< Ped::Window > window( new Window( context ) );
 		
 		N::SetWRefCon( window->Get(), key );
 		
