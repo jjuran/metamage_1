@@ -5,8 +5,8 @@
 
 #include "UseEdit/Window.hh"
 
-// Standard C++
-#include <algorithm>
+// Standard C
+#include <string.h>
 
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
@@ -47,6 +47,13 @@ namespace UseEdit
 	
 	using Pedestal::Scrollbar;
 	
+	
+	template < class Int >
+	static inline
+	Int max( Int a, Int b )
+	{
+		return a > b ? a : b;
+	}
 	
 	static short CountLinesForEditing( const TERec& te )
 	{
@@ -309,7 +316,7 @@ namespace UseEdit
 		int viewLength   = proxy->ViewHeight  ();
 		int offset       = proxy->GetVOffset  ();
 		
-		short max_offset = std::max( clientLength - viewLength, offset );
+		short max_offset = max( clientLength - viewLength, offset );
 		
 		N::SetControlMaximum( control, max_offset );
 	}
@@ -396,9 +403,11 @@ namespace UseEdit
 		
 		Handle hText = textedit.Get()[0]->hText;
 		
-		N::SetHandleSize( hText, text.size() );
+		const size_t size = text.size();
 		
-		std::copy( text.begin(), text.end(), *hText );
+		N::SetHandleSize( hText, size );
+		
+		memcpy( *hText, text.begin(), size );
 		
 		N::TECalText( textedit.Get() );
 	}
