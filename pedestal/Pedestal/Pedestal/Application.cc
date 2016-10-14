@@ -686,14 +686,6 @@ namespace Pedestal
 		}
 	}
 	
-	static void GiveIdleTimeToWindow( WindowRef windowRef, const EventRecord& event )
-	{
-		if ( Window* window = SetPort_GetWindow( windowRef ) )
-		{
-			window->GetView()->Idle( event );
-		}
-	}
-	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
 		n::saved< N::Port > savePort;
@@ -704,7 +696,10 @@ namespace Pedestal
 		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
 		{
-			GiveIdleTimeToWindow( window, event );
+			if ( Window* owner = SetPort_GetWindow( window ) )
+			{
+				owner->GetView()->Idle( event );
+			}
 		}
 	}
 	
