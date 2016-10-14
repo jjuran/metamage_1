@@ -314,16 +314,11 @@ namespace Pedestal
 	{
 		ASSERT( event.what == kHighLevelEvent );
 		
-		try
+		OSErr err = AEProcessAppleEvent( &event );
+		
+		if ( err != errAEEventNotHandled )
 		{
-			N::AEProcessAppleEvent( event );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != errAEEventNotHandled )
-			{
-				throw;
-			}
+			Mac::ThrowOSStatus( err );
 		}
 	}
 	
