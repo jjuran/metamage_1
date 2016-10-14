@@ -21,7 +21,7 @@ namespace Genie
 	{
 		ViewGetter getter = (ViewGetter) args;  // reinterpret_cast
 		
-		return New_View( parent, name, getter, NULL );
+		return New_View( parent, name, getter );
 	}
 	
 }

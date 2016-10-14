@@ -166,7 +166,7 @@ namespace Genie
 	                                            const plus::string&  name,
 	                                            const void*          args )
 	{
-		return New_View( parent, name, get_subview, NULL );
+		return New_View( parent, name, get_subview );
 	}
 	
 	static const vfs::fixed_mapping stack_mappings[] =

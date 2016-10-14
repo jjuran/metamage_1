@@ -95,7 +95,7 @@ namespace Genie
 	vfs::node_ptr New_View( const vfs::node*     parent,
 	                        const plus::string&  name,
 	                        ViewGetter           get,
-	                        ViewPurger           purge );
+	                        ViewPurger           purge = NULL );
 	
 	vfs::node_ptr new_view_dir( const vfs::node*     parent,
 	                            const plus::string&  name,
