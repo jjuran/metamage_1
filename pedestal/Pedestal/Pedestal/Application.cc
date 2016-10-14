@@ -696,9 +696,9 @@ namespace Pedestal
 		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
 		{
-			if ( Window* owner = SetPort_GetWindow( window ) )
+			if ( View* view = get_window_view_ready( window ) )
 			{
-				owner->GetView()->Idle( event );
+				view->Idle( event );
 			}
 		}
 	}
