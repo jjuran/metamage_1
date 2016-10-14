@@ -729,12 +729,19 @@ namespace Pedestal
 		
 		the_Window_menu = windowMenu;
 		
-		if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, gestaltMenuMgrAquaLayoutBit ) )
+		if ( TARGET_API_MAC_CARBON )
 		{
-			SInt16 last = N::CountMenuItems( fileMenu );
+			const int aquaMenusBit = gestaltMenuMgrAquaLayoutBit;
 			
-			N::DeleteMenuItem( fileMenu, last );
-			N::DeleteMenuItem( fileMenu, last - 1 );  // Quit item has a separator above it
+			if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, aquaMenusBit ) )
+			{
+				SInt16 last = CountMenuItems( fileMenu );
+				
+				// Delete "Quit" and the separator above it.
+				
+				DeleteMenuItem( fileMenu, last     );
+				DeleteMenuItem( fileMenu, last - 1 );
+			}
 		}
 		
 		AddMenu( appleMenu );
