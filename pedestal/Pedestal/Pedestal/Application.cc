@@ -236,6 +236,20 @@ namespace Pedestal
 		return handled;
 	}
 	
+	enum SuspendResume_flag
+	{
+		Flag_suspending,
+		Flag_resuming,
+	};
+	
+	static inline
+	SuspendResume_flag get_SuspendResume_flag( const EventRecord& event )
+	{
+		const bool resuming = event.message & resumeFlag;
+		
+		return SuspendResume_flag( resuming );
+	}
+	
 #if !TARGET_API_MAC_CARBON
 	
 	static inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
@@ -256,23 +270,14 @@ namespace Pedestal
 	
 #endif
 	
-	static void Suspend()
+	static
+	void SuspendResume( SuspendResume_flag flag )
 	{
 		gNeedToConfigureKeyboard = true;
 		
 		if ( Window* window = SetPort_FrontWindow() )
 		{
-			window->Activate( false );
-		}
-	}
-	
-	static void Resume()
-	{
-		gNeedToConfigureKeyboard = true;
-		
-		if ( Window* window = SetPort_FrontWindow() )
-		{
-			window->Activate( true );
+			window->Activate( flag != Flag_suspending );
 		}
 	}
 	
@@ -632,15 +637,12 @@ namespace Pedestal
 		switch ( (event.message & osEvtMessageMask) >> 24 )
 		{
 			case suspendResumeMessage:
-				gRunState.inForeground = event.message & resumeFlag;
-				
-				if ( gRunState.inForeground )
 				{
-					Resume();
-				}
-				else
-				{
-					Suspend();
+					SuspendResume_flag flag = get_SuspendResume_flag( event );
+					
+					gRunState.inForeground = flag != Flag_suspending;
+					
+					SuspendResume( flag );
 				}
 				break;
 			
