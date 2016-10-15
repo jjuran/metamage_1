@@ -488,17 +488,20 @@ namespace Pedestal
 		}
 	}
 	
-	void Window::Update()
+	void window_update( WindowRef window )
 	{
-		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ), true );
+		if ( View* view = get_window_view( window ) )
+		{
+			view->Draw( N::GetPortBounds( GetWindowPort( window ) ), true );
+		}
 		
-		if ( !TARGET_API_MAC_CARBON && window_has_grow_icon( Get() ) )
+		if ( ! TARGET_API_MAC_CARBON  &&  window_has_grow_icon( window ) )
 		{
 			n::saved< N::Clip > savedClip;
 			
-			N::ClipRect( GrowBoxBounds( Get() ) );
+			N::ClipRect( GrowBoxBounds( window ) );
 			
-			N::DrawGrowIcon( Get() );
+			DrawGrowIcon( window );
 		}
 	}
 	

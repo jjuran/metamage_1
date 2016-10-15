@@ -108,8 +108,6 @@ namespace Pedestal
 			virtual boost::intrusive_ptr< View >& GetView() = 0;
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
-			
-			void Update();
 	};
 	
 	WindowAttributes get_window_attributes( WindowRef window );
@@ -122,11 +120,7 @@ namespace Pedestal
 	
 	void window_mouseDown( WindowRef window, const EventRecord& event );
 	
-	inline
-	void window_update( WindowRef window )
-	{
-		get_window_owner( window )->Update();
-	}
+	void window_update( WindowRef window );
 	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc );
