@@ -517,9 +517,9 @@ namespace Pedestal
 	
 	static void EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view( FrontWindow() ) )
 		{
-			if (( gQuasimode = window->GetView()->EnterShiftSpaceQuasimode( event ) ))
+			if (( gQuasimode = view->EnterShiftSpaceQuasimode( event ) ))
 			{
 				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 				
