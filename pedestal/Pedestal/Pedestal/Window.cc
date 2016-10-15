@@ -392,7 +392,6 @@ namespace Pedestal
 		return (procID & ~0x4) == 8;  // zoomDocProc (8) or zoomNoGrow (12)
 	}
 	
-	static
 	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
 	                                    ConstStr255Param    title,
 	                                    bool                visible,

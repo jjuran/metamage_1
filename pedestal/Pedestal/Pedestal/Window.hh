@@ -51,6 +51,14 @@ namespace Pedestal
 		::MoveWindow( window, position.h, position.v, false );
 	}
 	
+	nucleus::owned< WindowRef >
+	//
+	CreateWindow( const Rect&           bounds,
+	              ConstStr255Param      title     = "\p",
+	              bool                  visible   = true,
+	              Mac::WindowDefProcID  procID    = Mac::documentProc,
+	              bool                  hasGoAway = true );
+	
 	struct NewWindowContext
 	{
 		const Rect&           bounds;
