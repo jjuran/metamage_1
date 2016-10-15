@@ -588,10 +588,11 @@ namespace Pedestal
 	
 	static void DispatchActivate( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_GetWindow( (::WindowRef) event.message ) )
-		{
-			window->Activate( event.modifiers & activeFlag );
-		}
+		WindowRef window = (WindowRef) event.message;
+		
+		SetPortWindowPort( window );
+		
+		window_activated( window, event.modifiers & activeFlag );
 	}
 	
 	static void DispatchUpdate( const EventRecord& event )
