@@ -315,14 +315,13 @@ namespace Pedestal
 		return false;
 	}
 	
-	static bool DispatchCursor( const EventRecord& event )
+	static
+	void DispatchCursor( const EventRecord& event )
 	{
 		if ( !DispatchCursorToFrontWindow( event ) )
 		{
 			N::SetCursor( N::GetQDGlobalsArrow() );
 		}
-		
-		return true;
 	}
 	
 	static void DispatchHighLevelEvent( const EventRecord& event )
