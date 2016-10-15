@@ -272,7 +272,6 @@ namespace Genie
 		                               title,
 		                               params.itIsVisible,
 		                               params.itsProcID,
-		                               kFirstWindowOfClass,
 		                               params.itHasCloseBox );
 		
 		boost::intrusive_ptr< Ped::Window > owner( new Window( context ) );

@@ -57,21 +57,18 @@ namespace Pedestal
 		ConstStr255Param      title;
 		bool                  visible;
 		Mac::WindowDefProcID  procID;
-		WindowRef             behind;
 		bool                  goAwayFlag;
 		
 		NewWindowContext( const Rect&           bounds,
 			              ConstStr255Param      title,
 			              bool                  visible    = true,
 			              Mac::WindowDefProcID  procID     = Mac::documentProc,
-			              WindowRef             behind     = kFirstWindowOfClass,
 			              bool                  goAwayFlag = true )
 		:
 			bounds    ( bounds     ),
 			title     ( title      ),
 			visible   ( visible    ),
 			procID    ( procID     ),
-			behind    ( behind     ),
 			goAwayFlag( goAwayFlag )
 		{
 		}

@@ -397,7 +397,6 @@ namespace Pedestal
 	                                    ConstStr255Param    title,
 	                                    bool                visible,
 	                                    N::WindowDefProcID  procID,
-	                                    WindowRef           behind,
 	                                    bool                goAwayFlag )
 	{
 		typedef nucleus::disposer_class< WindowRef >::type Disposer;
@@ -425,7 +424,7 @@ namespace Pedestal
 		                               title,
 		                               visible,
 		                               procID,
-		                               behind,
+		                               kFirstWindowOfClass,
 		                               goAwayFlag,
 		                               0 );
 		
@@ -442,7 +441,6 @@ namespace Pedestal
 		                     context.title,
 		                     context.visible,
 		                     context.procID,
-		                     context.behind,
 		                     context.goAwayFlag );
 	}
 	
