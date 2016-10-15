@@ -109,7 +109,6 @@ namespace Pedestal
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 			
-			void Activate( bool activating           );
 			void Resized ( short width, short height );
 			
 			void MouseDown( const EventRecord& event );
@@ -123,11 +122,7 @@ namespace Pedestal
 	
 	View* get_window_view( WindowRef window );
 	
-	inline
-	void window_activated( WindowRef window, bool activating )
-	{
-		get_window_owner( window )->Activate( activating );
-	}
+	void window_activated( WindowRef window, bool activating );
 	
 	inline
 	void window_mouseDown( WindowRef window, const EventRecord& event )

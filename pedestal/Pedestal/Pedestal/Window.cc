@@ -453,13 +453,16 @@ namespace Pedestal
 	}
 	
 	
-	void Window::Activate( bool activating )
+	void window_activated( WindowRef window, bool activating )
 	{
-		GetView()->Activate( activating );
-		
-		if ( window_has_grow_icon( Get() ) )
+		if ( View* view = get_window_view( window ) )
 		{
-			InvalidateWindowGrowBox( Get() );
+			view->Activate( activating );
+		}
+		
+		if ( window_has_grow_icon( window ) )
+		{
+			InvalidateWindowGrowBox( window );
 		}
 	}
 	
