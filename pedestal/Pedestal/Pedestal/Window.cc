@@ -454,6 +454,15 @@ namespace Pedestal
 		window_created( itsWindowRef.get() );
 	}
 	
+	Window::Window( nucleus::owned< WindowRef > window )
+	:
+		itsWindowRef( window )
+	{
+		set_window_owner( itsWindowRef, this );
+		
+		window_created( itsWindowRef.get() );
+	}
+	
 	Window::~Window()
 	{
 		window_removed( itsWindowRef.get() );

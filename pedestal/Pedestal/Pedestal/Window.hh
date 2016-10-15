@@ -85,6 +85,8 @@ namespace Pedestal
 		public:
 			Window( const NewWindowContext& context );
 			
+			Window( nucleus::owned< WindowRef > window );
+			
 			~Window();
 			
 			WindowRef Get() const  { return itsWindowRef; }
