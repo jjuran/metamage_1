@@ -275,19 +275,21 @@ namespace Genie
 		                               kFirstWindowOfClass,
 		                               params.itHasCloseBox );
 		
-		boost::intrusive_ptr< Ped::Window > window( new Window( context ) );
+		boost::intrusive_ptr< Ped::Window > owner( new Window( context ) );
 		
-		N::SetWRefCon( window->Get(), key );
+		WindowRef window = owner->Get();
 		
-		Ped::set_window_closed_proc ( window->Get(), &WindowClosed  );
-		Ped::set_window_resized_proc( window->Get(), &WindowResized );
+		N::SetWRefCon( window, key );
 		
-		params.itsWindow = window;
+		Ped::set_window_closed_proc ( window, &WindowClosed  );
+		Ped::set_window_resized_proc( window, &WindowResized );
 		
-		window->SetView( params.itsSubview );
+		params.itsWindow = owner;
+		
+		owner->SetView( params.itsSubview );
 		
 		// We could copy from above but the actual bounds could be different
-		bounds = N::GetPortBounds( N::GetWindowPort( window->Get() ) );
+		bounds = N::GetPortBounds( GetWindowPort( window ) );
 		
 		params.itsSubview->Install( bounds );
 		

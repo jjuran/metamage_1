@@ -75,13 +75,13 @@ namespace Pedestal
 		
 		NewWindowContext context( bounds, "\p" "Pedestal", true, Mac::noGrowDocProc );
 		
-		std::auto_ptr< Window > window( new Window( context ) );
+		std::auto_ptr< Window > owner( new Window( context ) );
 		
-		set_window_closed_proc( window->Get(), &AboutClosed );
+		set_window_closed_proc( owner->Get(), &AboutClosed );
 		
-		window->SetView( boost::intrusive_ptr< View >( new AboutBoxView() ) );
+		owner->SetView( boost::intrusive_ptr< View >( new AboutBoxView() ) );
 		
-		return window;
+		return owner;
 	}
 	
 	

@@ -436,11 +436,11 @@ namespace UseEdit
 	{
 		Ped::NewWindowContext context( MakeWindowRect(), title );
 		
-		std::auto_ptr< Ped::Window > window( new Ped::Window( context ) );
+		std::auto_ptr< Ped::Window > owner( new Ped::Window( context ) );
 		
-		window->SetView( MakeView() );
+		owner->SetView( MakeView() );
 		
-		return window;
+		return owner;
 	}
 	
 }

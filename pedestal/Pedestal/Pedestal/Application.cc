@@ -383,18 +383,18 @@ namespace Pedestal
 		return TrackedControl( found.control, found.part, point );
 	}
 	
-	static void RespondToContent( const EventRecord& event, WindowRef windowRef )
+	static void RespondToContent( const EventRecord& event, WindowRef window )
 	{
 		Point pt = N::GlobalToLocal( event.where );
 		
 		// TrackedControl's result indicates whether a control was found.
-		if ( TrackedControl( N::FindControl( pt, windowRef ), pt ) )
+		if ( TrackedControl( N::FindControl( pt, window ), pt ) )
 		{
 			// already handled
 		}
 		else
 		{
-			window_mouseDown( windowRef, event );
+			window_mouseDown( window, event );
 		}
 	}
 	
@@ -596,27 +596,27 @@ namespace Pedestal
 	
 	static void DispatchUpdate( const EventRecord& event )
 	{
-		WindowRef windowRef = reinterpret_cast< ::WindowRef >( event.message );
+		WindowRef window = (WindowRef) event.message;
 		
-		ASSERT( windowRef != NULL );
+		ASSERT( window != NULL );
 		
-		N::Update_Scope update( windowRef );
+		N::Update_Scope update( window );
 		
-		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( windowRef ) ) )
+		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
 		{
 			return;
 		}
 		
 		{
-			SetPortWindowPort( windowRef );
+			SetPortWindowPort( window );
 			
-			window_update( windowRef );
+			window_update( window );
 			
 			n::saved< N::Clip > savedClip;
 			
-			N::ClipRect( N::GetPortBounds( N::GetWindowPort( windowRef ) ) );
+			N::ClipRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
 			
-			N::UpdateControls( windowRef );
+			N::UpdateControls( window );
 		}
 	}
 	
