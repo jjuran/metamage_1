@@ -393,9 +393,9 @@ namespace Pedestal
 		{
 			// already handled
 		}
-		else if ( Window* window = SetPort_GetWindow( windowRef ) )
+		else
 		{
-			window->MouseDown( event );
+			window_mouseDown( windowRef, event );
 		}
 	}
 	
