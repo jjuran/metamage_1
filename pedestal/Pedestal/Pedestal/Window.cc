@@ -165,6 +165,16 @@ namespace Pedestal
 		return result;
 	}
 	
+	View* get_window_view( WindowRef window )
+	{
+		if ( Window* owner = get_window_owner( window ) )
+		{
+			return owner->GetView().get();
+		}
+		
+		return NULL;
+	}
+	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc )
 	{
@@ -333,17 +343,26 @@ namespace Pedestal
 		
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
-		if ( Window* base = get_window_owner( window ) )
+		// Don't rely on the requested size because it might have been tweaked
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		// Shotgun approach -- invalidate the whole window.
+		// Clients can validate regions if they want.
+		N::InvalRect( bounds );
+		
+		if ( View* view = get_window_view( window ) )
 		{
-			// Don't rely on the requested size because it might have been tweaked
-			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-			
-			// Shotgun approach -- invalidate the whole window.
-			// Clients can validate regions if they want.
-			N::InvalRect( bounds );
-			
-			// Inform the window's contents that it has been resized
-			base->Resized( bounds.right, bounds.bottom );
+			view->SetBounds( bounds );
+		}
+		
+		if ( window_has_grow_icon( window ) )
+		{
+			InvalidateWindowGrowBox( window );
+		}
+		
+		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
+		{
+			proc( window );
 		}
 	}
 	
@@ -443,57 +462,46 @@ namespace Pedestal
 	}
 	
 	
-	void Window::Activate( bool activating )
+	void window_activated( WindowRef window, bool activating )
 	{
-		GetView()->Activate( activating );
-		
-		if ( window_has_grow_icon( Get() ) )
+		if ( View* view = get_window_view( window ) )
 		{
-			InvalidateWindowGrowBox( Get() );
+			view->Activate( activating );
+		}
+		
+		if ( window_has_grow_icon( window ) )
+		{
+			InvalidateWindowGrowBox( window );
 		}
 	}
 	
-	void Window::Resized( short width, short height )
-	{
-		Rect bounds = { 0, 0, height, width };
-		
-		GetView()->SetBounds( bounds );
-		
-		if ( window_has_grow_icon( Get() ) )
-		{
-			InvalidateWindowGrowBox( Get() );
-		}
-		
-		if ( WindowResized_proc proc = get_window_resized_proc( Get() ) )
-		{
-			proc( Get() );
-		}
-	}
-	
-	void Window::MouseDown( const EventRecord& event )
+	void window_mouseDown( WindowRef window, const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
-		if ( Get() != Nitrogen::FrontWindow() )
+		if ( window != FrontWindow() )
 		{
-			Nitrogen::SelectWindow( Get() );
+			SelectWindow( window );
 		}
-		else
+		else if ( View* view = get_window_view( window ) )
 		{
-			GetView()->MouseDown( event );
+			view->MouseDown( event );
 		}
 	}
 	
-	void Window::Update()
+	void window_update( WindowRef window )
 	{
-		GetView()->Draw( Nitrogen::GetPortBounds( Nitrogen::GetWindowPort( Get() ) ), true );
+		if ( View* view = get_window_view( window ) )
+		{
+			view->Draw( N::GetPortBounds( GetWindowPort( window ) ), true );
+		}
 		
-		if ( !TARGET_API_MAC_CARBON && window_has_grow_icon( Get() ) )
+		if ( ! TARGET_API_MAC_CARBON  &&  window_has_grow_icon( window ) )
 		{
 			n::saved< N::Clip > savedClip;
 			
-			N::ClipRect( GrowBoxBounds( Get() ) );
+			N::ClipRect( GrowBoxBounds( window ) );
 			
-			N::DrawGrowIcon( Get() );
+			DrawGrowIcon( window );
 		}
 	}
 	

@@ -73,7 +73,6 @@
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
-#include "Pedestal/SetPort_GetWindow.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowMenu.hh"
 
@@ -221,9 +220,9 @@ namespace Pedestal
 	{
 		bool handled = false;
 		
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view( FrontWindow() ) )
 		{
-			handled = window->GetView()->UserCommand( code );
+			handled = view->UserCommand( code );
 		}
 		
 		handled = handled || DoCommand( CommandCode( code ) );
@@ -275,12 +274,27 @@ namespace Pedestal
 	{
 		gNeedToConfigureKeyboard = true;
 		
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( WindowRef front = FrontWindow() )
 		{
-			window->Activate( flag != Flag_suspending );
+			window_activated( front, flag != Flag_suspending );
 		}
 	}
 	
+	static
+	View* get_window_view_ready( WindowRef window )
+	{
+		if ( window != NULL )
+		{
+			if ( View* view = get_window_view( window ) )
+			{
+				SetPortWindowPort( window );
+				
+				return view;
+			}
+		}
+		
+		return NULL;
+	}
 	
 	/*
 	 *	--------------------------
@@ -290,24 +304,18 @@ namespace Pedestal
 	
 	static void HandleMenuChoice( long menuChoice );
 	
-	static bool DispatchCursorToFrontWindow( const EventRecord& event )
+	static
+	void DispatchCursor( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			return window->GetView()->SetCursor( event );
+			if ( view->SetCursor( event ) )
+			{
+				return;
+			}
 		}
 		
-		return false;
-	}
-	
-	static bool DispatchCursor( const EventRecord& event )
-	{
-		if ( !DispatchCursorToFrontWindow( event ) )
-		{
-			N::SetCursor( N::GetQDGlobalsArrow() );
-		}
-		
-		return true;
+		N::SetCursor( N::GetQDGlobalsArrow() );
 	}
 	
 	static void DispatchHighLevelEvent( const EventRecord& event )
@@ -384,9 +392,9 @@ namespace Pedestal
 		{
 			// already handled
 		}
-		else if ( Window* window = SetPort_GetWindow( windowRef ) )
+		else
 		{
-			window->MouseDown( event );
+			window_mouseDown( windowRef, event );
 		}
 	}
 	
@@ -508,9 +516,9 @@ namespace Pedestal
 	
 	static void EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view( FrontWindow() ) )
 		{
-			if (( gQuasimode = window->GetView()->EnterShiftSpaceQuasimode( event ) ))
+			if (( gQuasimode = view->EnterShiftSpaceQuasimode( event ) ))
 			{
 				gShiftSpaceQuasimodeMask = event.modifiers & kEitherShiftKey;
 				
@@ -533,9 +541,9 @@ namespace Pedestal
 		
 		if ( event.what == keyUp )
 		{
-			if ( Window* window = SetPort_FrontWindow() )
+			if ( View* view = get_window_view_ready( FrontWindow() ) )
 			{
-				window->GetView()->KeyUp( event );
+				view->KeyUp( event );
 			}
 			
 			return;
@@ -569,9 +577,9 @@ namespace Pedestal
 		{
 			EnterShiftSpaceQuasimode( event );
 		}
-		else if ( Window* window = SetPort_FrontWindow() )
+		else if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			window->GetView()->KeyDown( event );
+			view->KeyDown( event );
 		}
 		
 		gShiftKeyIsDownFromKeyStroke = event.modifiers & kEitherShiftKey;
@@ -579,10 +587,11 @@ namespace Pedestal
 	
 	static void DispatchActivate( const EventRecord& event )
 	{
-		if ( Window* window = SetPort_GetWindow( (::WindowRef) event.message ) )
-		{
-			window->Activate( event.modifiers & activeFlag );
-		}
+		WindowRef window = (WindowRef) event.message;
+		
+		SetPortWindowPort( window );
+		
+		window_activated( window, event.modifiers & activeFlag );
 	}
 	
 	static void DispatchUpdate( const EventRecord& event )
@@ -598,9 +607,10 @@ namespace Pedestal
 			return;
 		}
 		
-		if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
-			window->Update();
+			SetPortWindowPort( windowRef );
+			
+			window_update( windowRef );
 			
 			n::saved< N::Clip > savedClip;
 			
@@ -671,14 +681,6 @@ namespace Pedestal
 		}
 	}
 	
-	static void GiveIdleTimeToWindow( WindowRef windowRef, const EventRecord& event )
-	{
-		if ( Window* window = SetPort_GetWindow( windowRef ) )
-		{
-			window->GetView()->Idle( event );
-		}
-	}
-	
 	static void GiveIdleTimeToWindows( const EventRecord& event )
 	{
 		n::saved< N::Port > savePort;
@@ -689,7 +691,10 @@ namespace Pedestal
 		      //window = N::GetNextWindow( window ) )  // FIXME
 		      window = ::GetNextWindow( window ) )
 		{
-			GiveIdleTimeToWindow( window, event );
+			if ( View* view = get_window_view_ready( window ) )
+			{
+				view->Idle( event );
+			}
 		}
 	}
 	

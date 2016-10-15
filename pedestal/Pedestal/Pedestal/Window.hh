@@ -108,18 +108,19 @@ namespace Pedestal
 			virtual boost::intrusive_ptr< View >& GetView() = 0;
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
-			
-			void Activate( bool activating           );
-			void Resized ( short width, short height );
-			
-			void MouseDown( const EventRecord& event );
-			
-			void Update();
 	};
 	
 	WindowAttributes get_window_attributes( WindowRef window );
 	
 	Window* get_window_owner( WindowRef window );
+	
+	View* get_window_view( WindowRef window );
+	
+	void window_activated( WindowRef window, bool activating );
+	
+	void window_mouseDown( WindowRef window, const EventRecord& event );
+	
+	void window_update( WindowRef window );
 	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc );
