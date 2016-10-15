@@ -109,8 +109,6 @@ namespace Pedestal
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 			
-			void Resized ( short width, short height );
-			
 			void MouseDown( const EventRecord& event );
 			
 			void Update();

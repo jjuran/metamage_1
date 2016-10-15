@@ -350,27 +350,19 @@ namespace Pedestal
 		// Clients can validate regions if they want.
 		N::InvalRect( bounds );
 		
-		if ( Window* base = get_window_owner( window ) )
+		if ( View* view = get_window_view( window ) )
 		{
-			// Inform the window's contents that it has been resized
-			base->Resized( bounds.right, bounds.bottom );
-		}
-	}
-	
-	void Window::Resized( short width, short height )
-	{
-		Rect bounds = { 0, 0, height, width };
-		
-		GetView()->SetBounds( bounds );
-		
-		if ( window_has_grow_icon( Get() ) )
-		{
-			InvalidateWindowGrowBox( Get() );
+			view->SetBounds( bounds );
 		}
 		
-		if ( WindowResized_proc proc = get_window_resized_proc( Get() ) )
+		if ( window_has_grow_icon( window ) )
 		{
-			proc( Get() );
+			InvalidateWindowGrowBox( window );
+		}
+		
+		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
+		{
+			proc( window );
 		}
 	}
 	
