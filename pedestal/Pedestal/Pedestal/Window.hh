@@ -129,6 +129,12 @@ namespace Pedestal
 		get_window_owner( window )->Activate( activating );
 	}
 	
+	inline
+	void window_mouseDown( WindowRef window, const EventRecord& event )
+	{
+		get_window_owner( window )->MouseDown( event );
+	}
+	
 	void set_window_closed_proc( WindowRef          window,
 	                             WindowClosed_proc  proc );
 	
