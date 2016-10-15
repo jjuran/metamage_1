@@ -281,6 +281,21 @@ namespace Pedestal
 		}
 	}
 	
+	static
+	View* get_window_view_ready( WindowRef window )
+	{
+		if ( window != NULL )
+		{
+			if ( View* view = get_window_view( window ) )
+			{
+				SetPortWindowPort( window );
+				
+				return view;
+			}
+		}
+		
+		return NULL;
+	}
 	
 	/*
 	 *	--------------------------
