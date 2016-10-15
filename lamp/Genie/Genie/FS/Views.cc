@@ -285,10 +285,12 @@ namespace Genie
 	struct view_extra
 	{
 		ViewGetter  get;
+		ViewSetter  set;
 	};
 	
 	
-	static boost::intrusive_ptr< Pedestal::View >& view_of( const vfs::node* that )
+	static
+	Pedestal::View* get_view( const vfs::node* that )
 	{
 		ASSERT( that != NULL );
 		
@@ -297,16 +299,14 @@ namespace Genie
 		return extra.get( that->owner(), that->name() );
 	}
 	
-	static inline
-	Pedestal::View* get_view( const vfs::node* that )
-	{
-		return view_of( that ).get();
-	}
-	
-	static inline
+	static
 	void set_view( const vfs::node* that, Pedestal::View* view )
 	{
-		view_of( that ) = view;
+		ASSERT( that != NULL );
+		
+		const view_extra& extra = *(view_extra*) that->extra();
+		
+		extra.set( that->owner(), that->name(), view );
 	}
 	
 	static void unview_mkdir( const vfs::node* that, mode_t mode )
@@ -423,9 +423,9 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	vfs::node_ptr New_View( const vfs::node*     parent,
-	                        const plus::string&  name,
-	                        ViewGetter           get )
+	vfs::node_ptr New_View( const vfs::node*       parent,
+	                        const plus::string&    name,
+	                        const View_Accessors&  access )
 	{
 		const bool exists = view_exists( parent );
 		
@@ -444,7 +444,8 @@ namespace Genie
 		
 		view_extra& extra = *(view_extra*) result->extra();
 		
-		extra.get = get;
+		extra.get = access.get;
+		extra.set = access.set;
 		
 		return result;
 	}

@@ -86,13 +86,22 @@ namespace Genie
 	                            size_t                     extra_annex_size = 0,
 	                            DelegateFactory            delegate_factory = &create_default_delegate_for_new_view );
 	
-	typedef boost::intrusive_ptr< Pedestal::View >&
-	//
-	(*ViewGetter)( const vfs::node*, const plus::string& name );
+	typedef Pedestal::View* (*ViewGetter)( const vfs::node*,
+	                                       const plus::string&  name );
 	
-	vfs::node_ptr New_View( const vfs::node*     parent,
-	                        const plus::string&  name,
-	                        ViewGetter           get );
+	typedef void (*ViewSetter)( const vfs::node*,
+	                            const plus::string&  name,
+	                            Pedestal::View*      view );
+	
+	struct View_Accessors
+	{
+		ViewGetter  get;
+		ViewSetter  set;
+	};
+	
+	vfs::node_ptr New_View( const vfs::node*       parent,
+	                        const plus::string&    name,
+	                        const View_Accessors&  access );
 	
 	vfs::node_ptr new_view_dir( const vfs::node*     parent,
 	                            const plus::string&  name,

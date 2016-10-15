@@ -349,12 +349,25 @@ namespace Genie
 			return gFrameParametersMap[ view ].outline_curvature;
 		}
 		
-		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
-		{
-			return gFrameParametersMap[ key ].itsSubview;
-		}
-		
 	}
+	
+	static
+	Ped::View* get_view( const vfs::node* key, const plus::string& name )
+	{
+		return gFrameParametersMap[ key ].itsSubview.get();
+	}
+	
+	static
+	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
+	{
+		gFrameParametersMap[ key ].itsSubview = view;
+	}
+	
+	const View_Accessors access =
+	{
+		&get_view,
+		&set_view,
+	};
 	
 	
 	template < class Serialize, typename Serialize::result_type& (*Access)( const vfs::node* ) >
@@ -387,8 +400,8 @@ namespace Genie
 		{ ".outline-offset",    PROPERTY_INT( Outline_Offset    ) },
 		{ ".outline-curvature", PROPERTY_INT( Outline_Curvature ) },
 		
-		{ "view", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
-		{ "v",    &new_view_dir,                                                        },
+		{ "view", &subview_factory, &access },
+		{ "v",    &new_view_dir,            },
 		
 		{ NULL, NULL }
 	};

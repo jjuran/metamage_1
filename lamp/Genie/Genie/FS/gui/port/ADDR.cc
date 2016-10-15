@@ -773,15 +773,23 @@ namespace Genie
 	}
 	
 	
-	namespace
+	static
+	Ped::View* get_view( const vfs::node* key, const plus::string& name )
 	{
-		
-		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
-		{
-			return gWindowParametersMap[ key ].itsSubview;
-		}
-		
+		return gWindowParametersMap[ key ].itsSubview.get();
 	}
+	
+	static
+	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
+	{
+		gWindowParametersMap[ key ].itsSubview = view;
+	}
+	
+	const View_Accessors access =
+	{
+		&get_view,
+		&set_view,
+	};
 	
 	
 	static WindowParameters& Find( const vfs::node* key )
@@ -1091,8 +1099,8 @@ namespace Genie
 		{ "window", &new_window },
 		{ "w",      &new_window },
 		
-		{ "view",   &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
-		{ "v",      &new_view_dir,                                                        },
+		{ "view",   &subview_factory, &access },
+		{ "v",      &new_view_dir,            },
 		
 		{ "focus",  &new_focus },
 		

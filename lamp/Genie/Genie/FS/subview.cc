@@ -19,9 +19,9 @@ namespace Genie
 	                               const plus::string&  name,
 	                               const void*          args )
 	{
-		ViewGetter getter = (ViewGetter) args;  // reinterpret_cast
+		const View_Accessors* access = (const View_Accessors*) args;
 		
-		return New_View( parent, name, getter );
+		return New_View( parent, name, *access );
 	}
 	
 }

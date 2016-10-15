@@ -136,14 +136,29 @@ namespace Genie
 	}
 	
 	
-	static boost::intrusive_ptr< Pedestal::View >&
-	//
-	get_subview( const vfs::node* layer, const plus::string& name )
+	static
+	Ped::View* get_subview( const vfs::node* layer, const plus::string& name )
 	{
 		Stack_Parameters& params = gStack_Parameters_Map[ layer->owner() ];
 		
-		return find_or_append_subview( params, layer->name() ).view;
+		return find_or_append_subview( params, layer->name() ).view.get();
 	}
+	
+	static
+	void set_subview( const vfs::node*     layer,
+	                  const plus::string&  name,
+	                  Ped::View*           view )
+	{
+		Stack_Parameters& params = gStack_Parameters_Map[ layer->owner() ];
+		
+		find_or_append_subview( params, layer->name() ).view = view;
+	}
+	
+	const View_Accessors access =
+	{
+		&get_subview,
+		&set_subview,
+	};
 	
 	static void destroy_layer( const vfs::node* that )
 	{
@@ -166,7 +181,7 @@ namespace Genie
 	                                            const plus::string&  name,
 	                                            const void*          args )
 	{
-		return New_View( parent, name, get_subview );
+		return New_View( parent, name, access );
 	}
 	
 	static const vfs::fixed_mapping stack_mappings[] =
