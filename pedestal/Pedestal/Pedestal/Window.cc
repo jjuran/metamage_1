@@ -357,6 +357,23 @@ namespace Pedestal
 		}
 	}
 	
+	void Window::Resized( short width, short height )
+	{
+		Rect bounds = { 0, 0, height, width };
+		
+		GetView()->SetBounds( bounds );
+		
+		if ( window_has_grow_icon( Get() ) )
+		{
+			InvalidateWindowGrowBox( Get() );
+		}
+		
+		if ( WindowResized_proc proc = get_window_resized_proc( Get() ) )
+		{
+			proc( Get() );
+		}
+	}
+	
 	void SetWindowSize( WindowRef window, Point size )
 	{
 		n::saved< N::Port > savePort;
@@ -463,23 +480,6 @@ namespace Pedestal
 		if ( window_has_grow_icon( window ) )
 		{
 			InvalidateWindowGrowBox( window );
-		}
-	}
-	
-	void Window::Resized( short width, short height )
-	{
-		Rect bounds = { 0, 0, height, width };
-		
-		GetView()->SetBounds( bounds );
-		
-		if ( window_has_grow_icon( Get() ) )
-		{
-			InvalidateWindowGrowBox( Get() );
-		}
-		
-		if ( WindowResized_proc proc = get_window_resized_proc( Get() ) )
-		{
-			proc( Get() );
 		}
 	}
 	
