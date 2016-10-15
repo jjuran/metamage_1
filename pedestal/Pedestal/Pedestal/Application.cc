@@ -221,9 +221,9 @@ namespace Pedestal
 	{
 		bool handled = false;
 		
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( View* view = get_window_view( FrontWindow() ) )
 		{
-			handled = window->GetView()->UserCommand( code );
+			handled = view->UserCommand( code );
 		}
 		
 		handled = handled || DoCommand( CommandCode( code ) );
