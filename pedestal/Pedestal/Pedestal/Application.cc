@@ -305,23 +305,18 @@ namespace Pedestal
 	
 	static void HandleMenuChoice( long menuChoice );
 	
-	static bool DispatchCursorToFrontWindow( const EventRecord& event )
-	{
-		if ( Window* window = SetPort_FrontWindow() )
-		{
-			return window->GetView()->SetCursor( event );
-		}
-		
-		return false;
-	}
-	
 	static
 	void DispatchCursor( const EventRecord& event )
 	{
-		if ( !DispatchCursorToFrontWindow( event ) )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			N::SetCursor( N::GetQDGlobalsArrow() );
+			if ( view->SetCursor( event ) )
+			{
+				return;
+			}
 		}
+		
+		N::SetCursor( N::GetQDGlobalsArrow() );
 	}
 	
 	static void DispatchHighLevelEvent( const EventRecord& event )
