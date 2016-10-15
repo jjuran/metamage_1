@@ -75,21 +75,6 @@ namespace Pedestal
 			goAwayFlag( goAwayFlag )
 		{
 		}
-		
-		NewWindowContext( const Rect&          bounds,
-			              ConstStr255Param     title,
-			              bool                 visible,
-			              WindowRef            behind,
-			              bool                 goAwayFlag = true )
-		:
-			bounds    ( bounds     ),
-			title     ( title      ),
-			visible   ( visible    ),
-			procID    ( Mac::documentProc ),
-			behind    ( behind     ),
-			goAwayFlag( goAwayFlag )
-		{
-		}
 	};
 	
 	
