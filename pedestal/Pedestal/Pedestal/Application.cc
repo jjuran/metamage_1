@@ -73,7 +73,6 @@
 #include "Pedestal/MenuBar.hh"
 #include "Pedestal/TrackControl.hh"
 #include "Pedestal/Quasimode.hh"
-#include "Pedestal/SetPort_GetWindow.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowMenu.hh"
 
