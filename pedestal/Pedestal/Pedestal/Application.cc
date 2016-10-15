@@ -275,9 +275,9 @@ namespace Pedestal
 	{
 		gNeedToConfigureKeyboard = true;
 		
-		if ( Window* window = SetPort_FrontWindow() )
+		if ( WindowRef front = FrontWindow() )
 		{
-			window->Activate( flag != Flag_suspending );
+			window_activated( front, flag != Flag_suspending );
 		}
 	}
 	
