@@ -475,16 +475,16 @@ namespace Pedestal
 		}
 	}
 	
-	void Window::MouseDown( const EventRecord& event )
+	void window_mouseDown( WindowRef window, const EventRecord& event )
 	{
 		// FIXME:  The window may want clicks even if it's not in front.
-		if ( Get() != Nitrogen::FrontWindow() )
+		if ( window != FrontWindow() )
 		{
-			Nitrogen::SelectWindow( Get() );
+			SelectWindow( window );
 		}
-		else
+		else if ( View* view = get_window_view( window ) )
 		{
-			GetView()->MouseDown( event );
+			view->MouseDown( event );
 		}
 	}
 	

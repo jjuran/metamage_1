@@ -109,8 +109,6 @@ namespace Pedestal
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 			
-			void MouseDown( const EventRecord& event );
-			
 			void Update();
 	};
 	
@@ -122,11 +120,7 @@ namespace Pedestal
 	
 	void window_activated( WindowRef window, bool activating );
 	
-	inline
-	void window_mouseDown( WindowRef window, const EventRecord& event )
-	{
-		get_window_owner( window )->MouseDown( event );
-	}
+	void window_mouseDown( WindowRef window, const EventRecord& event );
 	
 	inline
 	void window_update( WindowRef window )
