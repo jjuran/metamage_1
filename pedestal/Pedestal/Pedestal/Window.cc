@@ -343,15 +343,15 @@ namespace Pedestal
 		
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
+		// Don't rely on the requested size because it might have been tweaked
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		// Shotgun approach -- invalidate the whole window.
+		// Clients can validate regions if they want.
+		N::InvalRect( bounds );
+		
 		if ( Window* base = get_window_owner( window ) )
 		{
-			// Don't rely on the requested size because it might have been tweaked
-			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
-			
-			// Shotgun approach -- invalidate the whole window.
-			// Clients can validate regions if they want.
-			N::InvalRect( bounds );
-			
 			// Inform the window's contents that it has been resized
 			base->Resized( bounds.right, bounds.bottom );
 		}
