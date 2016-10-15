@@ -297,6 +297,18 @@ namespace Genie
 		return extra.get( that->owner(), that->name() );
 	}
 	
+	static inline
+	Pedestal::View* get_view( const vfs::node* that )
+	{
+		return view_of( that ).get();
+	}
+	
+	static inline
+	void set_view( const vfs::node* that, Pedestal::View* view )
+	{
+		view_of( that ) = view;
+	}
+	
 	static void unview_mkdir( const vfs::node* that, mode_t mode )
 	{
 		const vfs::node* parent = that->owner();
@@ -321,7 +333,7 @@ namespace Genie
 		
 		boost::intrusive_ptr< Ped::View > view = make_view( parent );
 		
-		view_of( that ) = view;
+		set_view( that, view.get() );
 		
 		// Install and invalidate if window exists
 		install_view_in_port( view, windowKey );
@@ -358,9 +370,9 @@ namespace Genie
 		
 		const vfs::node* windowKey = GetViewWindowKey( that );
 		
-		uninstall_view_from_port( view_of( that ), windowKey );
+		uninstall_view_from_port( get_view( that ), windowKey );
 		
-		view_of( that ) = Ped::EmptyView::Get();
+		set_view( that, Ped::EmptyView::Get().get() );
 		
 		RemoveAllViewParameters( parent );
 	}
