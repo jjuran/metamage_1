@@ -608,9 +608,10 @@ namespace Pedestal
 			return;
 		}
 		
-		if ( Window* window = SetPort_GetWindow( windowRef ) )
 		{
-			window->Update();
+			SetPortWindowPort( windowRef );
+			
+			window_update( windowRef );
 			
 			n::saved< N::Clip > savedClip;
 			
