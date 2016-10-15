@@ -542,9 +542,9 @@ namespace Pedestal
 		
 		if ( event.what == keyUp )
 		{
-			if ( Window* window = SetPort_FrontWindow() )
+			if ( View* view = get_window_view_ready( FrontWindow() ) )
 			{
-				window->GetView()->KeyUp( event );
+				view->KeyUp( event );
 			}
 			
 			return;
@@ -578,9 +578,9 @@ namespace Pedestal
 		{
 			EnterShiftSpaceQuasimode( event );
 		}
-		else if ( Window* window = SetPort_FrontWindow() )
+		else if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
-			window->GetView()->KeyDown( event );
+			view->KeyDown( event );
 		}
 		
 		gShiftKeyIsDownFromKeyStroke = event.modifiers & kEitherShiftKey;
