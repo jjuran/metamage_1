@@ -434,9 +434,11 @@ namespace UseEdit
 	
 	std::auto_ptr< Ped::Window > NewWindow( ConstStr255Param title )
 	{
-		Ped::NewWindowContext context( MakeWindowRect(), title );
+		typedef std::auto_ptr< Ped::Window > Owner;
 		
-		std::auto_ptr< Ped::Window > owner( new Ped::Window( context ) );
+		const Rect bounds = MakeWindowRect();
+		
+		Owner owner( new Ped::Window( Ped::CreateWindow( bounds, title ) ) );
 		
 		owner->SetView( MakeView() );
 		
