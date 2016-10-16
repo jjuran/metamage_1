@@ -585,9 +585,4 @@ namespace Vertice
 		}
 	}
 	
-	void Window::Store()
-	{
-
-	}
-	
 }

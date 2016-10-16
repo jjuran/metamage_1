@@ -26,7 +26,6 @@ namespace Vertice
 			Scene& ItsScene();
 			
 			void Load( const FSSpec& file );
-			void Store();
 	};
 	
 }
