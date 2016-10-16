@@ -16,6 +16,7 @@
 
 // Pedestal
 #include "Pedestal/View.hh"
+#include "Pedestal/WindowEventHandlers.hh"
 #include "Pedestal/WindowMenu.hh"
 #include "Pedestal/WindowStorage.hh"
 
@@ -104,6 +105,13 @@ namespace Pedestal
 		itsWindowRef( window )
 	{
 		set_window_owner( itsWindowRef, this );
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			OSStatus err = install_window_event_handlers( itsWindowRef.get() );
+			
+			Mac::ThrowOSStatus( err );
+		}
 		
 		window_created( itsWindowRef.get() );
 	}
