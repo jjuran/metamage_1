@@ -37,6 +37,7 @@
 // Vertice
 #include "Vertice/Model.hh"
 #include "Vertice/Port.hh"
+#include "Vertice/PortView.hh"
 
 
 namespace Vertice
@@ -544,20 +545,15 @@ namespace Vertice
 		}
 	}
 	
-	Scene& Window::ItsScene()
-	{
-		PortView& view = static_cast< PortView& >( *GetView() );
-		
-		return view.ItsScene();
-	}
-	
 	void Window::Load( const FSSpec& file )
 	{
 		N::SetWTitle( Get(), file.name );
 		
 		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
-		Parser parser( ItsScene() );
+		PortView& view = static_cast< PortView& >( *GetView() );
+		
+		Parser parser( view.ItsScene() );
 		
 		std::list< Parser > savedParsers;
 		

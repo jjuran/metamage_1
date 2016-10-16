@@ -11,9 +11,6 @@
 #include "Pedestal/UserWindow.hh"
 #endif
 
-// Vertice
-#include "Vertice/PortView.hh"
-
 
 namespace Vertice
 {
@@ -22,8 +19,6 @@ namespace Vertice
 	{
 		public:
 			Window( ConstStr255Param title );
-			
-			Scene& ItsScene();
 			
 			void Load( const FSSpec& file );
 	};
