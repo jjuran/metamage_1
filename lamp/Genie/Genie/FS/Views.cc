@@ -285,16 +285,28 @@ namespace Genie
 	struct view_extra
 	{
 		ViewGetter  get;
+		ViewSetter  set;
 	};
 	
 	
-	static boost::intrusive_ptr< Pedestal::View >& view_of( const vfs::node* that )
+	static
+	Pedestal::View* get_view( const vfs::node* that )
 	{
 		ASSERT( that != NULL );
 		
 		const view_extra& extra = *(view_extra*) that->extra();
 		
 		return extra.get( that->owner(), that->name() );
+	}
+	
+	static
+	void set_view( const vfs::node* that, Pedestal::View* view )
+	{
+		ASSERT( that != NULL );
+		
+		const view_extra& extra = *(view_extra*) that->extra();
+		
+		extra.set( that->owner(), that->name(), view );
 	}
 	
 	static void unview_mkdir( const vfs::node* that, mode_t mode )
@@ -321,7 +333,7 @@ namespace Genie
 		
 		boost::intrusive_ptr< Ped::View > view = make_view( parent );
 		
-		view_of( that ) = view;
+		set_view( that, view.get() );
 		
 		// Install and invalidate if window exists
 		install_view_in_port( view, windowKey );
@@ -358,9 +370,9 @@ namespace Genie
 		
 		const vfs::node* windowKey = GetViewWindowKey( that );
 		
-		uninstall_view_from_port( view_of( that ), windowKey );
+		uninstall_view_from_port( get_view( that ), windowKey );
 		
-		view_of( that ) = Ped::EmptyView::Get();
+		set_view( that, Ped::EmptyView::Get().get() );
 		
 		RemoveAllViewParameters( parent );
 	}
@@ -411,9 +423,9 @@ namespace Genie
 		&view_dir_methods
 	};
 	
-	vfs::node_ptr New_View( const vfs::node*     parent,
-	                        const plus::string&  name,
-	                        ViewGetter           get )
+	vfs::node_ptr New_View( const vfs::node*       parent,
+	                        const plus::string&    name,
+	                        const View_Accessors&  access )
 	{
 		const bool exists = view_exists( parent );
 		
@@ -432,7 +444,8 @@ namespace Genie
 		
 		view_extra& extra = *(view_extra*) result->extra();
 		
-		extra.get = get;
+		extra.get = access.get;
+		extra.set = access.set;
 		
 		return result;
 	}

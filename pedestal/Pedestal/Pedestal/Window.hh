@@ -96,16 +96,18 @@ namespace Pedestal
 	class Window : public plus::ref_count< Window >
 	{
 		private:
+			boost::intrusive_ptr< View > itsView;
+			
 			nucleus::owned< WindowRef > itsWindowRef;
 		
 		public:
 			Window( const NewWindowContext& context );
 			
-			virtual ~Window();
+			~Window();
 			
 			WindowRef Get() const  { return itsWindowRef; }
 			
-			virtual boost::intrusive_ptr< View >& GetView() = 0;
+			boost::intrusive_ptr< View >& GetView()  { return itsView; }
 			
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 	};

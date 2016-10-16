@@ -13,7 +13,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace Pedestal
@@ -75,7 +75,7 @@ namespace Pedestal
 		
 		NewWindowContext context( bounds, "\p" "Pedestal", true, Mac::noGrowDocProc );
 		
-		std::auto_ptr< Window > window( new UserWindow( context ) );
+		std::auto_ptr< Window > window( new Window( context ) );
 		
 		set_window_closed_proc( window->Get(), &AboutClosed );
 		

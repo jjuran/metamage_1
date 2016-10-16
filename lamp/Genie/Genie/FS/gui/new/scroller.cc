@@ -146,15 +146,23 @@ namespace Genie
 	}
 	
 	
-	namespace
+	static
+	Ped::View* get_view( const vfs::node* key, const plus::string& name )
 	{
-		
-		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
-		{
-			return gBasicScrollerParametersMap[ key ].itsSubview;
-		}
-		
+		return gBasicScrollerParametersMap[ key ].itsSubview.get();
 	}
+	
+	static
+	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
+	{
+		gBasicScrollerParametersMap[ key ].itsSubview = view;
+	}
+	
+	const View_Accessors access =
+	{
+		&get_view,
+		&set_view,
+	};
 	
 	
 	#define PROPERTY( prop )  &vfs::new_property, &vfs::property_params_factory< prop >::value
@@ -173,8 +181,8 @@ namespace Genie
 		{ "x", PROPERTY( HOffset_Property ) },
 		{ "y", PROPERTY( VOffset_Property ) },
 		
-		{ "view", &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
-		{ "v",    &new_view_dir,                                                        },
+		{ "view", &subview_factory, &access },
+		{ "v",    &new_view_dir,            },
 		
 		{ NULL, NULL }
 	};

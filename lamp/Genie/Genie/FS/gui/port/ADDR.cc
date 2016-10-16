@@ -160,24 +160,7 @@ namespace Genie
 	}
 	
 	
-	class Window : public Ped::Window
-	{
-		public:
-			Window( const Ped::NewWindowContext& context )
-			:
-				Ped::Window( context )
-			{
-			}
-			
-			boost::intrusive_ptr< Ped::View >& GetView();
-	};
-	
-	boost::intrusive_ptr< Ped::View >& Window::GetView()
-	{
-		const vfs::node* key = (const vfs::node*) GetWRefCon( Get() );
-		
-		return gWindowParametersMap[ key ].itsSubview;
-	}
+	using Ped::Window;
 	
 	
 	static bool Disconnect_Window_Terminal( vfs::filehandle*& h )
@@ -300,6 +283,8 @@ namespace Genie
 		Ped::set_window_resized_proc( window->Get(), &WindowResized );
 		
 		params.itsWindow = window;
+		
+		window->SetView( params.itsSubview );
 		
 		// We could copy from above but the actual bounds could be different
 		bounds = N::GetPortBounds( N::GetWindowPort( window->Get() ) );
@@ -773,15 +758,30 @@ namespace Genie
 	}
 	
 	
-	namespace
+	static
+	Ped::View* get_view( const vfs::node* key, const plus::string& name )
 	{
-		
-		boost::intrusive_ptr< Ped::View >& GetView( const vfs::node* key, const plus::string& name )
-		{
-			return gWindowParametersMap[ key ].itsSubview;
-		}
-		
+		return gWindowParametersMap[ key ].itsSubview.get();
 	}
+	
+	static
+	void set_view( const vfs::node* key, const plus::string&, Ped::View* view )
+	{
+		WindowParameters& params = gWindowParametersMap[ key ];
+		
+		params.itsSubview = view;
+		
+		if ( Ped::Window* owner = params.itsWindow.get() )
+		{
+			owner->SetView( params.itsSubview );
+		}
+	}
+	
+	const View_Accessors access =
+	{
+		&get_view,
+		&set_view,
+	};
 	
 	
 	static WindowParameters& Find( const vfs::node* key )
@@ -1091,8 +1091,8 @@ namespace Genie
 		{ "window", &new_window },
 		{ "w",      &new_window },
 		
-		{ "view",   &subview_factory, (const void*) static_cast< ViewGetter >( &GetView ) },
-		{ "v",      &new_view_dir,                                                        },
+		{ "view",   &subview_factory, &access },
+		{ "v",      &new_view_dir,            },
 		
 		{ "focus",  &new_focus },
 		
