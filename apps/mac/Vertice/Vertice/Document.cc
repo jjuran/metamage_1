@@ -35,7 +35,7 @@
 #include "Vectoria/Units.hh"
 
 // Pedestal
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 // Vertice
 #include "Vertice/Model.hh"
@@ -86,7 +86,7 @@ namespace Vertice
 		return N::InsetRect( rect, 4, 4 );
 	}
 	
-	class Window : public Ped::UserWindow
+	class Window : public Ped::Window
 	{
 		public:
 			Window( ConstStr255Param title );
@@ -94,8 +94,7 @@ namespace Vertice
 	
 	Window::Window( ConstStr255Param title )
 	: 
-		Ped::UserWindow( Ped::NewWindowContext( MakeWindowRect(),
-		                                        title ) )
+		Ped::Window( Ped::NewWindowContext( MakeWindowRect(), title ) )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
 		

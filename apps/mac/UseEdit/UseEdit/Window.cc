@@ -34,7 +34,7 @@
 #include "Pedestal/Scroller_beta.hh"
 #include "Pedestal/TextEdit.hh"
 #include "Pedestal/TrackScrollbar.hh"
-#include "Pedestal/UserWindow.hh"
+#include "Pedestal/Window.hh"
 
 
 namespace UseEdit
@@ -436,7 +436,7 @@ namespace UseEdit
 	{
 		Ped::NewWindowContext context( MakeWindowRect(), title );
 		
-		std::auto_ptr< Ped::Window > window( new Ped::UserWindow( context ) );
+		std::auto_ptr< Ped::Window > window( new Ped::Window( context ) );
 		
 		window->SetView( MakeView() );
 		
