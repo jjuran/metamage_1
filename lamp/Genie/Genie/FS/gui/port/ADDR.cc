@@ -160,15 +160,7 @@ namespace Genie
 	}
 	
 	
-	class Window : public Ped::Window
-	{
-		public:
-			Window( const Ped::NewWindowContext& context )
-			:
-				Ped::Window( context )
-			{
-			}
-	};
+	using Ped::Window;
 	
 	
 	static bool Disconnect_Window_Terminal( vfs::filehandle*& h )
