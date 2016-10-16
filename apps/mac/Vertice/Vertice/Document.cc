@@ -34,6 +34,9 @@
 #include "Vectoria/TriColor.hh"
 #include "Vectoria/Units.hh"
 
+// Pedestal
+#include "Pedestal/UserWindow.hh"
+
 // Vertice
 #include "Vertice/Model.hh"
 #include "Vertice/Port.hh"
@@ -82,6 +85,14 @@ namespace Vertice
 		return rect;
 		return N::InsetRect( rect, 4, 4 );
 	}
+	
+	class Window : public Ped::UserWindow
+	{
+		public:
+			Window( ConstStr255Param title );
+			
+			void Load( const FSSpec& file );
+	};
 	
 	Window::Window( ConstStr255Param title )
 	: 
@@ -579,6 +590,13 @@ namespace Vertice
 				parser.ParseLine( line );
 			}
 		}
+	}
+	
+	void OpenDocument( const FSSpec& file )
+	{
+		Window* doc = new Window( file.name );
+		
+		doc->Load( file );
 	}
 	
 }

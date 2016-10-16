@@ -34,14 +34,6 @@ namespace Vertice
 	};
 	
 	
-	static
-	void OpenDocument( const FSSpec& file )
-	{
-		Window* doc = new Window( file.name );
-		
-		doc->Load( file );
-	}
-	
 	static bool About( Ped::CommandCode )
 	{
 		Ped::ShowAboutBox();
