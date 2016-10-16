@@ -214,13 +214,29 @@ namespace Pedestal
 		return gReadyToExit_Hook ? gReadyToExit_Hook() : true;
 	}
 	
+	static
+	View* get_window_view_ready( WindowRef window )
+	{
+		if ( window != NULL )
+		{
+			if ( View* view = get_window_view( window ) )
+			{
+				SetPortWindowPort( window );
+				
+				return view;
+			}
+		}
+		
+		return NULL;
+	}
+	
 	static bool DoCommand( CommandCode code );
 	
 	static bool DispatchMenuItem( CommandCode code )
 	{
 		bool handled = false;
 		
-		if ( View* view = get_window_view( FrontWindow() ) )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
 			handled = view->UserCommand( code );
 		}
@@ -278,22 +294,6 @@ namespace Pedestal
 		{
 			window_activated( front, flag != Flag_suspending );
 		}
-	}
-	
-	static
-	View* get_window_view_ready( WindowRef window )
-	{
-		if ( window != NULL )
-		{
-			if ( View* view = get_window_view( window ) )
-			{
-				SetPortWindowPort( window );
-				
-				return view;
-			}
-		}
-		
-		return NULL;
 	}
 	
 	/*
@@ -516,7 +516,7 @@ namespace Pedestal
 	
 	static void EnterShiftSpaceQuasimode( const EventRecord& event )
 	{
-		if ( View* view = get_window_view( FrontWindow() ) )
+		if ( View* view = get_window_view_ready( FrontWindow() ) )
 		{
 			if (( gQuasimode = view->EnterShiftSpaceQuasimode( event ) ))
 			{
