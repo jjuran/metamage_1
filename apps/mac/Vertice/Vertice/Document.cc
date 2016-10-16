@@ -90,8 +90,6 @@ namespace Vertice
 	{
 		public:
 			Window( ConstStr255Param title );
-			
-			void Load( const FSSpec& file );
 	};
 	
 	Window::Window( ConstStr255Param title )
@@ -556,13 +554,16 @@ namespace Vertice
 		}
 	}
 	
-	void Window::Load( const FSSpec& file )
+	static
+	void LoadFileIntoWindow( const FSSpec& file, WindowRef window )
 	{
-		N::SetWTitle( Get(), file.name );
+		using Ped::get_window_view;
+		
+		SetWTitle( window, file.name );
 		
 		n::owned< N::FSFileRefNum > fRefNum = N::FSpOpenDF( file, N::fsRdPerm );
 		
-		PortView& view = static_cast< PortView& >( *GetView() );
+		PortView& view = static_cast< PortView& >( *get_window_view( window ) );
 		
 		Parser parser( view.ItsScene() );
 		
@@ -596,7 +597,7 @@ namespace Vertice
 	{
 		Window* doc = new Window( file.name );
 		
-		doc->Load( file );
+		LoadFileIntoWindow( file, doc->Get() );
 	}
 	
 }
