@@ -10,6 +10,7 @@
 
 // POSIX
 #include <fcntl.h>
+#include <pthread.h>
 #include <sys/stat.h>
 
 // iota
@@ -70,6 +71,7 @@
 #include "relix/signal/signal_process_group.hh"
 
 // Genie
+#include "Genie/notify.hh"
 #include "Genie/FS/focusable_views.hh"
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
@@ -117,6 +119,12 @@ namespace Genie
 		
 		boost::intrusive_ptr< Ped::Window >  itsWindow;
 		boost::intrusive_ptr< Ped::View   >  itsSubview;
+		
+	#ifdef __MACH__
+		
+		pthread_t           its_pthread;
+		
+	#endif
 		
 		const vfs::node* itsFocus;
 		
@@ -194,6 +202,12 @@ namespace Genie
 		{
 			WindowParameters& params = *it;
 			
+		#ifdef __MACH__
+			
+			int err = notify_thread_via_sighup( params.its_pthread );
+			
+		#endif
+			
 			if ( !Disconnect_Window_Terminal( params.itsTerminal ) )
 			{
 				// tty file is not open for this window, just close the window
@@ -250,6 +264,12 @@ namespace Genie
 		}
 		
 		WindowParameters& params = *it;
+		
+	#ifdef __MACH__
+		
+		params.its_pthread = pthread_self();
+		
+	#endif
 		
 		ConstStr255Param title = params.itsTitle;
 		

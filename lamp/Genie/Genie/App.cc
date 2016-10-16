@@ -18,6 +18,7 @@
 #include "relix/task/scheduler.hh"
 
 // Genie
+#include "Genie/notify.hh"
 #include "Genie/ProcessList.hh"
 
 
@@ -75,6 +76,12 @@ namespace Genie
 	App::App()
 	{
 		using Ped::apple_events_present;
+		
+	#ifdef __MACH__
+		
+		install_empty_sighup_handler();
+		
+	#endif
 		
 		Ped::gActivelyBusy_Hook = &relix::is_active;
 		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
