@@ -268,13 +268,13 @@ namespace Genie
 			CenterWindowRect( bounds );
 		}
 		
-		Ped::NewWindowContext context( bounds,
-		                               title,
-		                               params.itIsVisible,
-		                               params.itsProcID,
-		                               params.itHasCloseBox );
+		typedef boost::intrusive_ptr< Ped::Window > Owner;
 		
-		boost::intrusive_ptr< Ped::Window > owner( new Window( context ) );
+		Owner owner( new Window( Ped::CreateWindow( bounds,
+		                                            title,
+		                                            params.itIsVisible,
+		                                            params.itsProcID,
+		                                            params.itHasCloseBox ) ) );
 		
 		WindowRef window = owner->Get();
 		
