@@ -371,14 +371,16 @@ namespace Genie
 	{
 		ASSERT( window != NULL );
 		
-		if ( ::IsPortVisibleRegionEmpty( N::GetWindowPort( window ) ) )
+		CGrafPtr port = GetWindowPort( window );
+		
+		if ( IsPortVisibleRegionEmpty( port ) )
 		{
 			return;
 		}
 		
 		SetWindowPort_Scope scope( window );
 		
-		N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+		N::InvalRect( N::GetPortBounds( port ) );
 		
 		Ped::ScheduleImmediateEventCheck();
 	}
