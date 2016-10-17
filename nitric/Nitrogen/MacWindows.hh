@@ -57,6 +57,9 @@
 #ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWATTRIBUTES_HH
+#include "Mac/Windows/Types/WindowAttributes.hh"
+#endif
 #ifndef MAC_WINDOWS_TYPES_WINDOWCLASS_HH
 #include "Mac/Windows/Types/WindowClass.hh"
 #endif
@@ -148,35 +151,8 @@ namespace Nitrogen
 	};
 	
 	using Mac::WindowClass;
-	
-	enum WindowAttributes
-	{
-		kWindowNoAttributes               = ::kWindowNoAttributes,
-		kWindowCloseBoxAttribute          = ::kWindowCloseBoxAttribute,
-		kWindowHorizontalZoomAttribute    = ::kWindowHorizontalZoomAttribute,
-		kWindowVerticalZoomAttribute      = ::kWindowVerticalZoomAttribute,
-		kWindowFullZoomAttribute          = ::kWindowFullZoomAttribute,
-		kWindowCollapseBoxAttribute       = ::kWindowCollapseBoxAttribute,
-		kWindowResizableAttribute         = ::kWindowResizableAttribute,
-		kWindowSideTitlebarAttribute      = ::kWindowSideTitlebarAttribute,
-		kWindowToolbarButtonAttribute     = ::kWindowToolbarButtonAttribute,
-		kWindowNoUpdatesAttribute         = ::kWindowNoUpdatesAttribute,
-		kWindowNoActivatesAttribute       = ::kWindowNoActivatesAttribute,
-		kWindowOpaqueForEventsAttribute   = ::kWindowOpaqueForEventsAttribute,
-		kWindowNoShadowAttribute          = ::kWindowNoShadowAttribute,
-		kWindowHideOnSuspendAttribute     = ::kWindowHideOnSuspendAttribute,
-		kWindowStandardHandlerAttribute   = ::kWindowStandardHandlerAttribute,
-		kWindowHideOnFullScreenAttribute  = ::kWindowHideOnFullScreenAttribute,
-		kWindowInWindowMenuAttribute      = ::kWindowInWindowMenuAttribute,
-		kWindowLiveResizeAttribute        = ::kWindowLiveResizeAttribute,
-		kWindowNoConstrainAttribute       = ::kWindowNoConstrainAttribute,
-		kWindowStandardDocumentAttributes = ::kWindowStandardDocumentAttributes,
-		kWindowStandardFloatingAttributes = ::kWindowStandardFloatingAttributes,
-		
-		kWindowAttributes_Max = nucleus::enumeration_traits< ::WindowAttributes >::max
-	};
-	
-	NUCLEUS_DEFINE_FLAG_OPS( WindowAttributes )
+	using Mac::WindowAttributes;
+	using Mac::kWindowNoAttributes;
 	
 	enum WindowPosition
 	{
