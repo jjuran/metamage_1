@@ -19,6 +19,7 @@
 namespace Pedestal
 {
 	
+	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
 	
@@ -73,9 +74,12 @@ namespace Pedestal
 		
 		CenterWindowRect( bounds );
 		
-		NewWindowContext context( bounds, "\p" "Pedestal", true, Mac::noGrowDocProc );
+		n::owned< WindowRef > window = CreateWindow( bounds,
+		                                             "\p" "Pedestal",
+		                                             true,
+		                                             Mac::noGrowDocProc );
 		
-		std::auto_ptr< Window > owner( new Window( context ) );
+		std::auto_ptr< Window > owner( new Window( window ) );
 		
 		set_window_closed_proc( owner->Get(), &AboutClosed );
 		
