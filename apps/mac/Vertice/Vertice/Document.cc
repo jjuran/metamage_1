@@ -94,7 +94,7 @@ namespace Vertice
 	
 	Window::Window( ConstStr255Param title )
 	: 
-		Ped::Window( Ped::NewWindowContext( MakeWindowRect(), title ) )
+		Ped::Window( Ped::CreateWindow( MakeWindowRect(), title ) )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
 		
