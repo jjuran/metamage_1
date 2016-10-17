@@ -385,11 +385,11 @@ namespace Pedestal
 		return (procID & ~0x4) == 8;  // zoomDocProc (8) or zoomNoGrow (12)
 	}
 	
-	n::owned< WindowRef > CreateWindow( const Rect&         bounds,
-	                                    ConstStr255Param    title,
-	                                    bool                visible,
-	                                    N::WindowDefProcID  procID,
-	                                    bool                goAwayFlag )
+	n::owned< WindowRef > CreateWindow( const Rect&           bounds,
+	                                    ConstStr255Param      title,
+	                                    bool                  visible,
+	                                    Mac::WindowDefProcID  procID,
+	                                    bool                  goAwayFlag )
 	{
 		typedef nucleus::disposer_class< WindowRef >::type Disposer;
 		
@@ -420,8 +420,7 @@ namespace Pedestal
 		                               goAwayFlag,
 		                               0 );
 		
-		//N::SetWindowKind( window, kPedestalWindowKind );
-		N::SetPortWindowPort( window );
+		SetPortWindowPort( window );
 		
 		return n::owned< WindowRef >::seize( window, disposer );
 	}
