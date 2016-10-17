@@ -32,6 +32,7 @@
 // Pedestal
 #include "Pedestal/AboutBox.hh"
 #include "Pedestal/Commands.hh"
+#include "Pedestal/WindowStorage.hh"
 
 // UseEdit
 #include "UseEdit/App.hh"

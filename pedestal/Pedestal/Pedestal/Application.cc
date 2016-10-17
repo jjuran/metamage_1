@@ -75,6 +75,7 @@
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowMenu.hh"
+#include "Pedestal/WindowStorage.hh"
 
 
 namespace Nitrogen

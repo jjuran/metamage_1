@@ -12,6 +12,7 @@
 #include "Pedestal/CurrentFocus.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 // vfs
 #include "vfs/node.hh"

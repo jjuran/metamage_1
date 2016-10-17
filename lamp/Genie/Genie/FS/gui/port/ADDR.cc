@@ -42,6 +42,7 @@
 #include "Pedestal/EmptyView.hh"
 #include "Pedestal/Application.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 // vfs
 #include "vfs/filehandle.hh"

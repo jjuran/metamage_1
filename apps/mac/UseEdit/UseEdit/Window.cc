@@ -34,7 +34,7 @@
 #include "Pedestal/Scroller_beta.hh"
 #include "Pedestal/TextEdit.hh"
 #include "Pedestal/TrackScrollbar.hh"
-#include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 
 namespace UseEdit

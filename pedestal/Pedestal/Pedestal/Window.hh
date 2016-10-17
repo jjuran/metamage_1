@@ -21,9 +21,6 @@
 #endif
 
 // Nitrogen
-#ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
-#include "Mac/Windows/Types/WindowDefProcID.hh"
-#endif
 #ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
 #include "Mac/Windows/Types/WindowRef.hh"
 #endif
@@ -37,10 +34,6 @@
 namespace Pedestal
 {
 	
-	typedef void (*WindowClosed_proc )( WindowRef window );
-	typedef void (*WindowResized_proc)( WindowRef window );
-	
-	
 	void ResizeWindow( WindowRef window, Point newSize );
 	
 	
@@ -50,14 +43,6 @@ namespace Pedestal
 	{
 		::MoveWindow( window, position.h, position.v, false );
 	}
-	
-	nucleus::owned< WindowRef >
-	//
-	CreateWindow( const Rect&           bounds,
-	              ConstStr255Param      title     = "\p",
-	              bool                  visible   = true,
-	              Mac::WindowDefProcID  procID    = Mac::documentProc,
-	              bool                  hasGoAway = true );
 	
 	
 	class Window : public plus::ref_count< Window >
@@ -79,10 +64,6 @@ namespace Pedestal
 			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
 	};
 	
-	WindowAttributes get_window_attributes( WindowRef window );
-	
-	Window* get_window_owner( WindowRef window );
-	
 	View* get_window_view( WindowRef window );
 	
 	void window_activated( WindowRef window, bool activating );
@@ -90,14 +71,6 @@ namespace Pedestal
 	void window_mouseDown( WindowRef window, const EventRecord& event );
 	
 	void window_update( WindowRef window );
-	
-	void set_window_closed_proc( WindowRef          window,
-	                             WindowClosed_proc  proc );
-	
-	void set_window_resized_proc( WindowRef           window,
-	                              WindowResized_proc  proc );
-	
-	void close_window( WindowRef window );
 	
 }
 

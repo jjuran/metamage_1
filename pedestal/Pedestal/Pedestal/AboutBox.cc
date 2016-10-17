@@ -14,6 +14,7 @@
 
 // Pedestal
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 
 namespace Pedestal

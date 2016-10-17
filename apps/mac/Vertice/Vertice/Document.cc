@@ -36,6 +36,7 @@
 
 // Pedestal
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 // Vertice
 #include "Vertice/Model.hh"
