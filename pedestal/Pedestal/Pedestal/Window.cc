@@ -284,13 +284,6 @@ namespace Pedestal
 		if ( WindowClosed_proc proc = get_window_closed_proc( window ) )
 		{
 			proc( window );
-			
-			return;
-		}
-		
-		if ( Window* obj = get_window_owner( window ) )
-		{
-			delete obj;
 		}
 		else
 		{
