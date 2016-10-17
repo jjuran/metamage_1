@@ -48,9 +48,9 @@ namespace Pedestal
 	class Window : public plus::ref_count< Window >
 	{
 		private:
-			boost::intrusive_ptr< View > itsView;
-			
 			nucleus::owned< WindowRef > itsWindowRef;
+			
+			boost::intrusive_ptr< View > itsView;
 		
 		public:
 			Window( nucleus::owned< WindowRef > window );
