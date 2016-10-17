@@ -378,9 +378,7 @@ namespace Genie
 			return;
 		}
 		
-		SetWindowPort_Scope scope( window );
-		
-		N::InvalRect( N::GetPortBounds( port ) );
+		N::InvalWindowRect( window, N::GetPortBounds( port ) );
 		
 		Ped::ScheduleImmediateEventCheck();
 	}
