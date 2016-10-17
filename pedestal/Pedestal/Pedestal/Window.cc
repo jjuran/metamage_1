@@ -433,25 +433,6 @@ namespace Pedestal
 		return n::owned< WindowRef >::seize( window, disposer );
 	}
 	
-	static inline
-	n::owned< WindowRef > CreateWindow( const NewWindowContext& context )
-	{
-		return CreateWindow( context.bounds,
-		                     context.title,
-		                     context.visible,
-		                     context.procID,
-		                     context.goAwayFlag );
-	}
-	
-	
-	Window::Window( const NewWindowContext& context )
-	:
-		itsWindowRef( CreateWindow( context ) )
-	{
-		set_window_owner( itsWindowRef, this );
-		
-		window_created( itsWindowRef.get() );
-	}
 	
 	Window::Window( nucleus::owned< WindowRef > window )
 	:

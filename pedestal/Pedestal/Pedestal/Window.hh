@@ -59,29 +59,6 @@ namespace Pedestal
 	              Mac::WindowDefProcID  procID    = Mac::documentProc,
 	              bool                  hasGoAway = true );
 	
-	struct NewWindowContext
-	{
-		const Rect&           bounds;
-		ConstStr255Param      title;
-		bool                  visible;
-		Mac::WindowDefProcID  procID;
-		bool                  goAwayFlag;
-		
-		NewWindowContext( const Rect&           bounds,
-			              ConstStr255Param      title,
-			              bool                  visible    = true,
-			              Mac::WindowDefProcID  procID     = Mac::documentProc,
-			              bool                  goAwayFlag = true )
-		:
-			bounds    ( bounds     ),
-			title     ( title      ),
-			visible   ( visible    ),
-			procID    ( procID     ),
-			goAwayFlag( goAwayFlag )
-		{
-		}
-	};
-	
 	
 	class Window : public plus::ref_count< Window >
 	{
@@ -91,8 +68,6 @@ namespace Pedestal
 			nucleus::owned< WindowRef > itsWindowRef;
 		
 		public:
-			Window( const NewWindowContext& context );
-			
 			Window( nucleus::owned< WindowRef > window );
 			
 			~Window();
