@@ -57,6 +57,9 @@
 #ifndef MAC_TOOLBOX_UTILITIES_THROWOSSTATUS_HH
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 #endif
+#ifndef MAC_WINDOWS_TYPES_WINDOWCLASS_HH
+#include "Mac/Windows/Types/WindowClass.hh"
+#endif
 #ifndef MAC_WINDOWS_TYPES_WINDOWDEFPROCID_HH
 #include "Mac/Windows/Types/WindowDefProcID.hh"
 #endif
@@ -144,27 +147,7 @@ namespace Nitrogen
 		kPropertyTag_Max = nucleus::enumeration_traits< ::PropertyTag >::max
 	};
 	
-	enum WindowClass
-	{
-		kAlertWindowClass        = ::kAlertWindowClass,
-		kMovableAlertWindowClass = ::kMovableAlertWindowClass,
-		kModalWindowClass        = ::kModalWindowClass,
-		kMovableModalWindowClass = ::kMovableModalWindowClass,
-		kFloatingWindowClass     = ::kFloatingWindowClass,
-		kDocumentWindowClass     = ::kDocumentWindowClass,
-		kUtilityWindowClass      = ::kUtilityWindowClass,
-		kHelpWindowClass         = ::kHelpWindowClass,
-		kSheetWindowClass        = ::kSheetWindowClass,
-		kToolbarWindowClass      = ::kToolbarWindowClass,
-		kPlainWindowClass        = ::kPlainWindowClass,
-		kOverlayWindowClass      = ::kOverlayWindowClass,
-		kSheetAlertWindowClass   = ::kSheetAlertWindowClass,
-		kAltPlainWindowClass     = ::kAltPlainWindowClass,
-		kDrawerWindowClass       = ::kDrawerWindowClass,
-		kAllWindowClasses        = ::kAllWindowClasses,
-		
-		kWindowClass_Max = nucleus::enumeration_traits< ::WindowClass >::max
-	};
+	using Mac::WindowClass;
 	
 	enum WindowAttributes
 	{
