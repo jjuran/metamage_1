@@ -592,9 +592,19 @@ namespace Vertice
 		}
 	}
 	
+	static
+	void DocumentClosed( WindowRef window )
+	{
+		Ped::Window* doc = Ped::get_window_owner( window );
+		
+		delete doc;
+	}
+	
 	void OpenDocument( const FSSpec& file )
 	{
 		Window* doc = new Window( file.name );
+		
+		Ped::set_window_closed_proc( doc->Get(), &DocumentClosed );
 		
 		LoadFileIntoWindow( file, doc->Get() );
 	}
