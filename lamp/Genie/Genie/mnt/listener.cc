@@ -235,9 +235,6 @@ namespace Genie
 		
 		atexit( &socket_cleanup );
 		
-		log( STR_LEN( "Listening on " ) );
-		log( path, strlen( path ) );
-		
 		return true;
 	}
 	
