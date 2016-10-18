@@ -8,6 +8,9 @@
 // Standard C
 #include <stdio.h>
 
+// gear
+#include "gear/parse_decimal.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -23,15 +26,18 @@ using namespace command::constants;
 enum
 {
 	Opt_output = 'o',
+	Opt_length = 'z',  // siZe, or reZolution
 };
 
 static command::option options[] =
 {
 	{ "output-file", Opt_output, Param_required },
+	{ "edge-length", Opt_length, Param_required },
 	{ NULL }
 };
 
 const char* output_path = NULL;
+const char* edge_length = NULL;
 
 static
 char* const* get_options( char** argv )
@@ -46,6 +52,10 @@ char* const* get_options( char** argv )
 		{
 			case Opt_output:
 				output_path = command::global_result.param;
+				break;
+			
+			case Opt_length:
+				edge_length = command::global_result.param;
 				break;
 			
 			default:
@@ -95,6 +105,23 @@ int icongen_main( int argc, char** argv, drawer draw )
 	}
 	
 	size_t length = 512;
+	
+	if ( edge_length != NULL )
+	{
+		length = gear::parse_unsigned_decimal( edge_length );
+		
+		if ( length < 32 )
+		{
+			fprintf( stderr, PROGRAM ": length must be at least 32, not %lu\n", length );
+			return 2;
+		}
+		
+		if ( length > 1024 )
+		{
+			fprintf( stderr, PROGRAM ": length must be at most 1024, not %lu\n", length );
+			return 2;
+		}
+	}
 	
 	return draw_icon( draw, length, output_path );
 }
