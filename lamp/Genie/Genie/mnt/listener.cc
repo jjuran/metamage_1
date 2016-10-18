@@ -241,11 +241,35 @@ namespace Genie
 		return true;
 	}
 	
+	static
+	void maintain_service_symlink()
+	{
+		const char* path = service_path();
+		
+		/*
+			TODO:
+				Try to connect to the service path.  If it works, close it
+				and return.
+				
+				Otherwise, scan the ~/var/run/fs directory and try to connect
+				to each socket.  Delete any that yield ECONNREFUSED.
+				
+				If our socket is the oldest (or it's tied for earliest mod
+				date and has the lowest PID), update the symlink.
+		*/
+		
+		unlink( path );
+		
+		symlink( socket_path(), path );
+	}
+	
 	struct listener_startup
 	{
 		listener_startup()
 		{
 			spawn_listener_service();
+			
+			maintain_service_symlink();
 		}
 	};
 	

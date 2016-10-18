@@ -39,9 +39,31 @@ plus::string make_socket_path()
 	return path.move();
 }
 
+static
+plus::string make_service_path()
+{
+	plus::var_string path;
+	
+	if ( const char* home = getenv( "HOME" ) )
+	{
+		path = home;
+	}
+	
+	path += FS_SUBPATH "/gui.socket";
+	
+	return path.move();
+}
+
 const char* socket_path()
 {
 	static plus::string path = make_socket_path();
+	
+	return path.c_str();
+}
+
+const char* service_path()
+{
+	static plus::string path = make_service_path();
 	
 	return path.c_str();
 }

@@ -14,6 +14,7 @@ namespace Genie
 {
 	
 	const char* socket_path();
+	const char* service_path();
 	
 }
 
