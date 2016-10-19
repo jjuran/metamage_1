@@ -13,6 +13,8 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
+#include "Pedestal/BundleIcon.hh"
+#include "Pedestal/HIViewPlotIconRef.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
@@ -60,6 +62,8 @@ namespace Pedestal
 	{
 		public:
 			void Draw( const Rect& bounds, bool erasing );
+			
+			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
 	void AboutBoxView::Draw( const Rect& bounds, bool erasing )
@@ -86,6 +90,23 @@ namespace Pedestal
 		               N::ResID( 128 ) );
 	}
 	
+	void AboutBoxView::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		CGContextSetGrayFillColor( context, 1.0 * 0xEEEE / 0xFFFF, 1.0 );
+		CGContextFillRect( context, bounds );
+		
+		const float x = bounds.origin.x + kAboutBoxIconHorizontalMargin;
+		const float y = bounds.origin.y + kAboutBoxTopMargin;
+		
+		const CGRect iconBounds =
+		{
+			{ x, y },
+			{ kAboutBoxIconEdgeLength, kAboutBoxIconEdgeLength },
+		};
+		
+		HIViewPlotIconRef( context, iconBounds, BundleIcon() );
+	}
+	
 	
 	static std::auto_ptr< Window > sAboutBox;
 	
@@ -98,6 +119,12 @@ namespace Pedestal
 	static std::auto_ptr< Window > NewAboutBox()
 	{
 		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
+		                                #ifdef MAC_OS_X_VERSION_10_2
+		                                  | Mac::kWindowCompositingAttribute
+		                                #endif
+		                                #ifdef MAC_OS_X_VERSION_10_7
+		                                  | Mac::kWindowHighResolutionCapableAttribute
+		                                #endif
 		                                  ;
 		
 		Rect bounds = { 0, 0, kAboutBoxHeight, kAboutBoxWidth };
