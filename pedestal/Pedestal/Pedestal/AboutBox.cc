@@ -97,14 +97,30 @@ namespace Pedestal
 	
 	static std::auto_ptr< Window > NewAboutBox()
 	{
+		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
+		                                  | Mac::kWindowCollapseBoxAttribute
+		                                  ;
+		
 		Rect bounds = { 0, 0, kAboutBoxHeight, kAboutBoxWidth };
 		
 		CenterWindowRect( bounds );
 		
+	#if ! TARGET_API_MAC_CARBON
+		
 		n::owned< WindowRef > window = CreateWindow( bounds,
-		                                             "\p" "Pedestal",
+		                                             "\p" "About",
 		                                             true,
 		                                             Mac::noGrowDocProc );
+		
+	#else
+		
+		n::owned< WindowRef > window = CreateWindow( Mac::kDocumentWindowClass,
+		                                             attrs,
+		                                             bounds );
+		
+		SetWTitle( window, "\p" "About" );
+		
+	#endif
 		
 		N::RGBBackColor( kAboutBoxBackgroundColor );
 		
@@ -115,6 +131,12 @@ namespace Pedestal
 		boost::intrusive_ptr< View > view( new AboutBoxView() );
 		
 		set_window_view( owner->Get(), view.get() );
+		
+	#if TARGET_API_MAC_CARBON
+		
+		ShowWindow( owner->Get() );
+		
+	#endif
 		
 		return owner;
 	}
