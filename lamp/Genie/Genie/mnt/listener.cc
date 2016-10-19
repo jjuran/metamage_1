@@ -3,6 +3,8 @@
 	-----------
 */
 
+#include "Genie/mnt/listener.hh"
+
 // POSIX
 #include <pthread.h>
 #include <unistd.h>
@@ -260,20 +262,11 @@ namespace Genie
 		symlink( socket_path(), path );
 	}
 	
-	struct listener_startup
+	void start_gui_service()
 	{
-		listener_startup()
-		{
-			spawn_listener_service();
-			
-			maintain_service_symlink();
-		}
-	};
-	
-#ifndef __RELIX__
-	
-	listener_startup listen_at_startup;
-	
-#endif
+		spawn_listener_service();
+		
+		maintain_service_symlink();
+	}
 	
 }

@@ -20,6 +20,7 @@
 // Genie
 #include "Genie/notify.hh"
 #include "Genie/ProcessList.hh"
+#include "Genie/mnt/listener.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -77,9 +78,11 @@ namespace Genie
 	{
 		using Ped::apple_events_present;
 		
-	#ifdef __MACH__
+	#ifndef __RELIX__
 		
 		install_empty_sighup_handler();
+		
+		start_gui_service();
 		
 	#endif
 		
