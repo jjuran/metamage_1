@@ -24,6 +24,20 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
+	const int kAboutBoxIconEdgeLength       =  64;
+	const int kAboutBoxIconHorizontalMargin = 110;
+	const int kAboutBoxTopMargin            =   8;
+	const int kAboutBoxBottomMargin         =  20;
+	
+	const int kAboutBoxWidth = kAboutBoxIconEdgeLength
+	                         + kAboutBoxIconHorizontalMargin * 2;
+	
+	const int kAboutBoxHeight = kAboutBoxIconEdgeLength
+	                          + kAboutBoxTopMargin + kAboutBoxBottomMargin;
+	
+	static const RGBColor kAboutBoxBackgroundColor = { 0xEEEE, 0xEEEE, 0xEEEE };
+	
+	
 	static void CenterWindowRect( Rect& bounds )
 	{
 		// Pre-conditions:  bounds is set to { 0, 0, v, h }
@@ -54,7 +68,18 @@ namespace Pedestal
 			N::EraseRect( bounds );
 		}
 		
-		N::PlotIconID( bounds,
+		const short top  = bounds.top  + kAboutBoxTopMargin;
+		const short left = bounds.left + kAboutBoxIconHorizontalMargin;
+		
+		const Rect iconBounds =
+		{
+			top,
+			left,
+			top  + kAboutBoxIconEdgeLength,
+			left + kAboutBoxIconEdgeLength,
+		};
+		
+		N::PlotIconID( iconBounds,
 		               N::IconAlignmentType(),
 		               N::IconTransformType(),
 		               N::ResID( 128 ) );
@@ -71,7 +96,7 @@ namespace Pedestal
 	
 	static std::auto_ptr< Window > NewAboutBox()
 	{
-		Rect bounds = N::SetRect( 0, 0, 128, 128 );
+		Rect bounds = { 0, 0, kAboutBoxHeight, kAboutBoxWidth };
 		
 		CenterWindowRect( bounds );
 		
@@ -79,6 +104,8 @@ namespace Pedestal
 		                                             "\p" "Pedestal",
 		                                             true,
 		                                             Mac::noGrowDocProc );
+		
+		N::RGBBackColor( kAboutBoxBackgroundColor );
 		
 		std::auto_ptr< Window > owner( new Window( window ) );
 		
