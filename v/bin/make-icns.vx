@@ -1,0 +1,146 @@
+#!/usr/bin/env vx
+
+const icon_types = str^
+[
+	# 'ICON' elements aren't supported in 'icns', but we document the
+	# format here anyway for completeness.
+
+#	"32x32,1" => "ICON",
+	
+	# .icon
+	
+	"32x32,1+1" => "ICN#",
+	
+	# System 7
+	
+	"16x16,1+1" => "ics#",
+	"16x12,1+1" => "icm#",
+	
+	"16x12,4" => "icm4",
+	"16x12,8" => "icm8",
+	"16x16,4" => "ics4",
+	"16x16,8" => "ics8",
+	"32x32,4" => "icl4",
+	"32x32,8" => "icl8",
+	
+	# Mac OS 8.5
+	
+	"48x48,+1" => "ich#",
+	
+	"48x48,4" => "ich4",
+	"48x48,8" => "ich8",
+	
+	"16x16,24" => "is32",
+	"16x16,+8" => "s8mk",
+	"32x32,24" => "il32",
+	"32x32,+8" => "l8mk",
+	"48x48,24" => "ih32",
+	"48x48,+8" => "h8mk",
+	
+	# Mac OS X 10.0
+	
+	"128x128,24" => "it32",
+	"128x128,+8" => "t8mk",
+	
+	# .png
+	
+	# Mac OS X 10.5
+	
+	"256x256" => "ic08",
+	"512x512" => "ic09",
+	
+	# Mac OS X 10.7
+	
+	"16x16" => "icp4",
+	"32x32" => "icp5",
+	"64x64" => "icp6",
+	"128x128" => "ic07",
+	"1024x1024" => "ic10",
+	
+	# Mac OS X 10.8
+	
+	"512x512@2x" => "ic10",
+	"16x16@2x"   => "ic11",
+	"32x32@2x"   => "ic12",
+	"128x128@2x" => "ic13",
+	"256x256@2x" => "ic14",
+]
+
+def icon_type_of
+{
+	const name = _
+	
+	try
+	{
+		return icon_types[ name ]
+	}
+	catch
+	{
+		throw name " is not a recognized icon type"
+	}
+}
+
+def find_last_char_in_string
+{
+	const c, const s = _
+	
+	var i = s.length
+	
+	while i > 0 do
+	{
+		if s[ --i ] == c then
+		{
+			return i
+		}
+	}
+	
+	return ()
+}
+
+def encode_u32BE
+{
+	const x = unhex hex _
+	
+	const pad = x"00" * (4 - x.size)
+	
+	return pad x
+}
+
+def pack_one
+{
+	const tag  = vec _.key
+	const data = vec _.value
+	
+	const size = encode_u32BE( data.size + 8 )
+	
+	return tag size data
+}
+
+def pack_icon_file
+{
+	const path = _
+	
+	const dot    = find_last_char_in_string( '.', path )
+	const hyphen = find_last_char_in_string( '-', path )
+	
+	assert (+) dot    > 0
+	assert (+) hyphen > 0
+	
+	const desc = path[ hyphen + 1 -> dot ]
+	
+	const icon_type = icon_type_of desc
+	
+	return pack_one( icon_type => load path )
+}
+
+if const icons = argv[ 1 -> argv.length ] map pack_icon_file then
+{
+	const icns = pack_one( icns: icons )
+	
+	write( OUT, icns )
+	
+	exit 0
+}
+
+write( ERR, "usage: make-icns <icon-file> ... > out.icns\n" )
+exit 2
