@@ -860,6 +860,11 @@ namespace vlib
 			return str( Value( f, arguments ) );
 		}
 		
+		if ( f.type() == V_vec )
+		{
+			return pack( Value( f, arguments ) );
+		}
+		
 		if ( f.type() == Value_function )
 		{
 			const proc_info& proc = f.proc();
