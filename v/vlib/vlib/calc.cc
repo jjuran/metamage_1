@@ -1224,6 +1224,24 @@ namespace vlib
 		return safe_calc( left, op, right );
 	}
 	
+	static
+	plus::string repeat_bytes( const plus::string& bytes, const Value& right )
+	{
+		if ( right.type() == V_int )
+		{
+			return repeat_string( bytes, right.number() );
+		}
+		
+		if ( right.type() == V_bool )
+		{
+			return right.boolean() ? bytes : plus::string::null;
+		}
+		
+		THROW( "string/data repetition requires int or bool" );
+		
+		return plus::string::null;  // not reached
+	}
+	
 	Value safe_calc( const Value&  left,
 	                 op_type       op,
 	                 const Value&  right )
@@ -1403,15 +1421,7 @@ namespace vlib
 		
 		if ( op == Op_multiply  &&  left.type() == Value_string )
 		{
-			if ( right.type() == V_bool  ||  right.type() == V_int )
-			{
-				if ( right.type() == V_bool )
-				{
-					return right.boolean() ? left.string() : plus::string::null;
-				}
-				
-				return repeat_string( left.string(), right.number() );
-			}
+			return repeat_bytes( left.string(), right );
 		}
 		
 		THROW( "operator not defined on mixed types" );
