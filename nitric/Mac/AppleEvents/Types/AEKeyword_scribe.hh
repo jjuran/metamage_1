@@ -21,6 +21,9 @@
 #ifndef MAC_APPLEEVENTS_TYPES_AEEVENTID_HH
 #include "Mac/AppleEvents/Types/AEEventID.hh"
 #endif
+#ifndef MAC_APPLEEVENTS_TYPES_AEEVENTSOURCE_HH
+#include "Mac/AppleEvents/Types/AEEventSource.hh"
+#endif
 #ifndef MAC_APPLEEVENTS_TYPES_AEKEYFORM_HH
 #include "Mac/AppleEvents/Types/AEKeyForm.hh"
 #endif
@@ -38,6 +41,9 @@
 #endif
 #ifndef MAC_APPLEEVENTS_TYPES_DESCTYPESCRIBE_HH
 #include "Mac/AppleEvents/Types/DescType_scribe.hh"
+#endif
+#ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
+#include "Mac/Toolbox/Types/OSStatus.hh"
 #endif
 
 
@@ -162,11 +168,11 @@ namespace Mac
 	// AppleEvents
 	// -----------
 	
-	template <> struct AEKeyword_DescType< keyErrorNumber > : Integer_DescType< ::OSErr > {};
+	template <> struct AEKeyword_DescType< keyErrorNumber > : Integer_DescType< ::OSStatus > {};
 	
 	template <> struct AEKeyword_DescType< keyErrorString > : DescType_< typeText > {};
 	
-	template <> struct AEKeyword_data< keyErrorNumber > : type_< AEEventSource > {};
+	template <> struct AEKeyword_data< keyErrorNumber > : type_< OSStatus > {};
 	
 	template <> struct AEKeyword_DescType_simple< keyProcessSerialNumber > : DescType_< typeProcessSerialNumber > {};
 	
