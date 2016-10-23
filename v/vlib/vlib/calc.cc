@@ -1224,6 +1224,12 @@ namespace vlib
 		return safe_calc( left, op, right );
 	}
 	
+	static inline
+	bool is_bytes( const Value& v )
+	{
+		return v.type() == V_str  ||  v.type() == V_vec;
+	}
+	
 	static
 	plus::string repeat_bytes( const plus::string& bytes, const Value& right )
 	{
@@ -1237,7 +1243,7 @@ namespace vlib
 			return right.boolean() ? bytes : plus::string::null;
 		}
 		
-		THROW( "string/data repetition requires int or bool" );
+		THROW( "string/vector repetition requires int or bool" );
 		
 		return plus::string::null;  // not reached
 	}
@@ -1419,9 +1425,11 @@ namespace vlib
 			}
 		}
 		
-		if ( op == Op_multiply  &&  left.type() == Value_string )
+		if ( op == Op_multiply  &&  is_bytes( left ) )
 		{
-			return repeat_bytes( left.string(), right );
+			const plus::string s = repeat_bytes( left.string(), right );
+			
+			return left.type() == V_str ? s : make_vector( s );
 		}
 		
 		THROW( "operator not defined on mixed types" );
