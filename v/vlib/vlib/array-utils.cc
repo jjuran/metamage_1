@@ -55,7 +55,7 @@ namespace vlib
 			
 			THROW( "type not subscriptable" );
 		}
-		else if ( array.type() != V_str  &&  array.type() != V_data )
+		else if ( array.type() != V_str  &&  array.type() != V_vec )
 		{
 			THROW( "type not subscriptable" );
 		}

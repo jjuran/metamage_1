@@ -22,10 +22,10 @@
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_iterator.hh"
-#include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -53,7 +53,7 @@ namespace vlib
 			default:  THROW( "invalid argument to hex()" );
 			
 			case Value_number:  return hex( arg.number() );
-			case Value_data:
+			case Value_vector:
 			case Value_string:  return hex( arg.string() );
 		}
 	}
@@ -151,7 +151,7 @@ namespace vlib
 	static
 	Value v_sha256( const Value& v )
 	{
-		return make_data( sha256( v.string() ) );
+		return make_vector( sha256( v.string() ) );
 	}
 	
 	static
@@ -168,7 +168,7 @@ namespace vlib
 			return Integer( unbin_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_data( unbin( v.string() ) );
+		return make_vector( unbin( v.string() ) );
 	}
 	
 	static
@@ -179,7 +179,7 @@ namespace vlib
 			return Integer( unhex_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_data( unhex( v.string() ) );
+		return make_vector( unhex( v.string() ) );
 	}
 	
 	static const Integer zero = Integer( 0 );
@@ -192,7 +192,7 @@ namespace vlib
 	static const Value u32_2 = Value( u32_vtype, Op_duplicate, two );
 	static const Value mince = Value( string, u32_2 );
 	
-	static const Value bytes( string_vtype, Op_union, data_vtype );
+	static const Value bytes( string_vtype, Op_union, vector_vtype );
 	static const Value x32( u32_vtype, Op_union, i32_vtype );
 	static const Value s_offset( x32, Op_duplicate, zero );
 	static const Value s_length( u32_vtype, Op_duplicate, npos );

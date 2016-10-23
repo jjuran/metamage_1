@@ -84,7 +84,7 @@ namespace vlib
 			case Value_number:
 				return a.number() == b.number();
 			
-			case Value_data:
+			case Value_vector:
 			case Value_string:
 				return a.string() == b.string();
 			
@@ -182,7 +182,7 @@ namespace vlib
 			case Value_number:
 				return compare( a.number(), b.number() );
 			
-			case Value_data:
+			case Value_vector:
 			case Value_string:
 				return compare( a.string(), b.string() );
 			
@@ -266,14 +266,14 @@ namespace vlib
 				return s.find( v.number().clipped() ) != plus::string::npos;
 			
 			case V_str:
-			case V_data:
+			case V_vec:
 				return s.find( v.string() ) != plus::string::npos;
 			
 			default:
 				break;
 		}
 		
-		THROW( "unsupported pattern type for `in` with string/data container" );
+		THROW( "unsupported pattern type for `in` with string/vector" );
 		return false;
 	}
 	
@@ -306,7 +306,7 @@ namespace vlib
 				return false;
 			
 			case V_str:
-			case V_data:
+			case V_vec:
 				return in_string( v, container.string() );
 			
 			default:
@@ -448,14 +448,14 @@ namespace vlib
 				THROW( "unary operator not defined for integers" );
 				break;
 			
-			case Value_data:
+			case Value_vector:
 				if ( op == Op_unary_minus )
 				{
 					// fall through below
 				}
 				else
 				{
-					THROW( "unary operator not defined for raw data" );
+					THROW( "unary operator not defined for vector" );
 				}
 				
 				// fall through
@@ -1349,7 +1349,7 @@ namespace vlib
 			{
 				switch ( left.type() )
 				{
-					case Value_data:    return pack( v );
+					case Value_vector:  return pack( v );
 					case Value_string:  return str ( v );
 					
 					default:

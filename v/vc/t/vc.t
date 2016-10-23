@@ -1353,27 +1353,27 @@ $ vc 'unhex "0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"
 
 %
 
-$ vc 'unbin "0" == data "\0"'
+$ vc 'unbin "0" == vector "\0"'
 1 >= true
 
 %
 
-$ vc 'unbin "01001" == data "\t"'
+$ vc 'unbin "01001" == vector "\t"'
 1 >= true
 
 %
 
-$ vc 'unbin "11110000100111111001001010101001" == data "\u{1f4a9}"'
+$ vc 'unbin "11110000100111111001001010101001" == vector "\u{1f4a9}"'
 1 >= true
 
 %
 
-$ vc 'unhex "0" == data "\0"'
+$ vc 'unhex "0" == vector "\0"'
 1 >= true
 
 %
 
-$ vc 'unhex "01001" == data "\x00\x10\x01"'
+$ vc 'unhex "01001" == vector "\x00\x10\x01"'
 1 >= true
 
 %
@@ -2538,42 +2538,42 @@ $ vc 'const zeros = "0" * 2^8 * 2^8; "0" < zeros, "1" > zeros'
 
 %
 
-$ vc 'data(), data "Nu", data byte 7'
+$ vc 'vector(), vector "Nu", vector byte 7'
 1 >= '(x"", x"4e75", x"07")'
 
 %
 
-$ vc 'data() == data "", data "" < data "\0"'
+$ vc 'vector() == vector "", vector "" < vector "\0"'
 1 >= '(true, true)'
 
 %
 
-$ vc 'data "\x01" < data "\xFF", "\xFF" < "\xFF\x01"'
+$ vc 'vector "\x01" < vector "\xFF", "\xFF" < "\xFF\x01"'
 1 >= '(true, true)'
 
 %
 
-$ vc 'const x = data "Hi\0"; *x, x[0]'
+$ vc 'const x = vector "Hi\0"; *x, x[0]'
 1 >= "('H', 'i', '\x00', 'H')"
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str data x, x == data( x ).string'
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str vec x, x == vec( x ).string'
 1 >= "(false, true)"
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*data x, (+) *data x'
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*vec x, (+) *vec x'
 1 >= "(true, 11)"
 
 %
 
-$ vc 'str .*data( "foo", *"bar", data "baz" )'
+$ vc 'str .*vector( "foo", *"bar", vector "baz" )'
 1 >= '"foobarbaz"'
 
 %
 
-$ vc 'data().size, data("\u{1f4a9}\0").size'
+$ vc 'vector().size, vector("\u{1f4a9}\0").size'
 1 >= '(0, 5)'
 
 %
@@ -2588,7 +2588,7 @@ $ vc 'sha256 sha256 ""'
 
 %
 
-$ vc 'bool data(), bool data byte()'
+$ vc 'bool vector(), bool vector byte()'
 1 >= '(false, true)'
 
 %
@@ -2908,8 +2908,8 @@ $ vc '[[null], [], [1], [1, 2, 3]] map {try {*_ => "key"} catch {"nope"}}'
 
 %
 
-$ vc 'byte^[], bool str^[], typeof data^[], int^[] | ()'
-1 >= '((byte^[]), false, (data^[]), ((integer^[]) | ()))'
+$ vc 'byte^[], bool str^[], typeof vector^[], int^[] | ()'
+1 >= '((byte^[]), false, (vector^[]), ((integer^[]) | ()))'
 
 %
 

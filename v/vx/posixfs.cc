@@ -22,10 +22,10 @@
 // vlib
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
-#include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/vector.hh"
 
 // vx
 #include "exception.hh"
@@ -339,7 +339,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return make_data( s.substr( 0, n_read ) );
+		return make_vector( s.substr( 0, n_read ) );
 	}
 	
 	static
@@ -384,7 +384,7 @@ namespace vlib
 	static const Value int32_x2( i32_vtype, i32_vtype );
 	static const Value i32_u32 ( i32_vtype, u32_vtype );
 	
-	static const Value bytes( string_vtype, Op_union, data_vtype );
+	static const Value bytes( string_vtype, Op_union, vector_vtype );
 	static const Value i32_bytes( i32_vtype, bytes );
 	
 	const proc_info proc_close   = { "close",   &v_close,   &int32 };

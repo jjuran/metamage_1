@@ -15,11 +15,11 @@
 #include "vlib/types.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
-#include "vlib/types/data.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -47,12 +47,13 @@ namespace vlib
 		define_keyword( "function", function_vtype );
 		define_keyword( "integer",  integer_vtype  );
 		define_keyword( "int",      integer_vtype  );
+		define_keyword( "vector",   vector_vtype   );
+		define_keyword( "vec",      vector_vtype   );
 		define_keyword( "string",   string_vtype   );
 		define_keyword( "str",      string_vtype   );
 		define_keyword( "c_str",    c_str_vtype    );
 		define_keyword( "type",     type_vtype     );
 		define_keyword( "null",     null_vtype     );
-		define_keyword( "data",     data_vtype     );
 		define_keyword( "byte",     byte_vtype     );
 		define_keyword( "i64",      i64_vtype      );
 		define_keyword( "u64",      u64_vtype      );

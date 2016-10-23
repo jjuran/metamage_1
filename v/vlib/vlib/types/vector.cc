@@ -1,9 +1,9 @@
 /*
-	data.cc
-	-------
+	vector.cc
+	---------
 */
 
-#include "vlib/types/data.hh"
+#include "vlib/types/vector.hh"
 
 // vlib
 #include "vlib/string-utils.hh"
@@ -15,21 +15,21 @@
 namespace vlib
 {
 	
-	Value Data::coerce( const Value& v )
+	Value Vector::coerce( const Value& v )
 	{
 		switch ( v.type() )
 		{
-			case Value_data:
+			case Value_vector:
 				return v;
 			
 			default:
-				THROW( "type not convertible to data" );
+				THROW( "type not convertible to vector" );
 			
 			case Value_empty_list:
-				return Data();
+				return Vector();
 			
 			case Value_string:
-				return Data( v.string() );
+				return Vector( v.string() );
 			
 			case Value_byte:
 			case Value_pair:
@@ -38,8 +38,8 @@ namespace vlib
 	}
 	
 	static
-	Value data_member( const Value&         obj,
-	                   const plus::string&  member )
+	Value vector_member( const Value&         obj,
+	                     const plus::string&  member )
 	{
 		if ( member == "size" )
 		{
@@ -51,17 +51,17 @@ namespace vlib
 			return obj.string();
 		}
 		
-		THROW( "nonexistent data member" );
+		THROW( "nonexistent vector member" );
 		
 		return Value_nothing;
 	}
 	
-	const type_info data_vtype =
+	const type_info vector_vtype =
 	{
-		"data",
-		&assign_to< Data >,
-		&Data::coerce,
-		&data_member,
+		"vector",
+		&assign_to< Vector >,
+		&Vector::coerce,
+		&vector_member,
 	};
 	
 }

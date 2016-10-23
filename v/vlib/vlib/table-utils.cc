@@ -65,7 +65,7 @@ namespace vlib
 			case Value_number:
 				return a.number() == b.number();
 			
-			case Value_data:
+			case Value_vector:
 			case Value_string:
 				return a.string() == b.string();
 			

@@ -51,7 +51,7 @@ namespace vlib
 		Value_byte,
 		Value_number,
 		Value_string,
-		Value_data,
+		Value_vector,
 		Value_function,
 		Value_pair,
 		
@@ -60,11 +60,11 @@ namespace vlib
 		V_bool  = Value_boolean,
 		V_int   = Value_number,
 		V_str   = Value_string,
-		V_data  = Value_data,
+		V_vec   = Value_vector,
 		V_proc  = Value_function,
 	};
 	
-	struct data_tag {};
+	struct vector_tag {};
 	
 	class Value
 	{
@@ -112,9 +112,9 @@ namespace vlib
 			{
 			}
 			
-			Value( const plus::string& s, data_tag )
+			Value( const plus::string& s, vector_tag )
 			:
-				its_box( (const vu_string&) s, V_data )
+				its_box( (const vu_string&) s, V_vec )
 			{
 			}
 			
@@ -384,9 +384,9 @@ namespace vlib
 	}
 	
 	inline
-	Value make_data( const plus::string& s )
+	Value make_vector( const plus::string& s )
 	{
-		return Value( s, data_tag() );
+		return Value( s, vector_tag() );
 	}
 	
 	inline

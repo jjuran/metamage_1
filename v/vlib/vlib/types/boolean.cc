@@ -35,7 +35,7 @@ namespace vlib
 			case Value_number:
 				return Bool( ! v.number().is_zero() );
 			
-			case Value_data:
+			case Value_vector:
 			case Value_string:
 				return Bool( ! v.string().empty() );
 			

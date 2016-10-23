@@ -191,7 +191,7 @@ namespace vlib
 				case Value_empty_array:
 					return 0;
 				
-				case Value_data:
+				case Value_vector:
 				case Value_string:
 					return value.string().size();
 				
@@ -224,7 +224,7 @@ namespace vlib
 				
 				return 1;
 			
-			case Value_data:
+			case Value_vector:
 				return value.string().size() * 2 + use_quotes( mode ) * 3;
 			
 			case Value_string:
@@ -331,7 +331,7 @@ namespace vlib
 				case Value_empty_array:
 					return p;
 				
-				case Value_data:
+				case Value_vector:
 				case Value_string:
 					return mempcpy( p, value.string() );
 				
@@ -375,7 +375,7 @@ namespace vlib
 				
 				return p;
 			
-			case Value_data:
+			case Value_vector:
 				if ( use_quotes( mode ) )
 				{
 					*p++ = 'x';
