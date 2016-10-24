@@ -16,8 +16,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/symbol.hh"
-#include "vlib/table-utils.hh"
-#include "vlib/target.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
@@ -60,60 +59,6 @@ namespace vlib
 		}
 		
 		return v;
-	}
-	
-	static
-	Target subscript_target( const Target& target, const Value& subscript )
-	{
-		Target result;
-		
-		result.type = &nothing;
-		
-		Expr* expr = target.addr->unshare().expr();
-		
-		if ( expr->op == Op_array )
-		{
-			get_array_index_type( *target.type, result.type );
-			
-			result.addr = get_array_subscript_addr( expr, subscript );
-		}
-		
-		if ( expr->op == Op_empower )
-		{
-			/*
-				Specifying the value type for tables isn't implemented yet.
-			*/
-			
-			result.addr = get_table_subscript_addr( expr, subscript );
-		}
-		
-		return result;
-	}
-	
-	static
-	Target make_target( const Value& v )
-	{
-		if ( Expr* expr = v.expr() )
-		{
-			if ( expr->op == Op_subscript )
-			{
-				Value& container = expr->left;
-				Value& subscript = expr->right;
-				
-				Target target = make_target( container );
-				
-				Target result = subscript_target( target, subscript );
-				
-				return result;
-			}
-		}
-		
-		if ( ! is_symbol( v ) )
-		{
-			THROW( "target value isn't a symbol or component thereof" );
-		}
-		
-		return v.sym()->target();
 	}
 	
 	static

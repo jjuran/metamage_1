@@ -154,6 +154,7 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/symbol_table.cc                \
                        src/vlib/symdesc.cc                     \
                        src/vlib/table-utils.cc                 \
+                       src/vlib/targets.cc                     \
                        src/vlib/throw.cc                       \
                        src/vlib/token.cc                       \
                        src/vlib/token_type.cc                  \
