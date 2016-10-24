@@ -63,14 +63,6 @@ namespace vlib
 	}
 	
 	static
-	Value assign_target( const Target& target, const Value& v, bool coercive )
-	{
-		assign( target, v, coercive );
-		
-		return *target.addr;
-	}
-	
-	static
 	Target subscript_target( const Target& target, const Value& subscript )
 	{
 		Target result;
@@ -163,7 +155,7 @@ namespace vlib
 			
 			const bool coercive = op == Op_approximate;
 			
-			assign_target( target, right, coercive );
+			assign( target, right, coercive );
 			
 			if ( collectible )
 			{
