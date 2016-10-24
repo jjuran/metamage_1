@@ -19,6 +19,7 @@ namespace vlib
 		
 		Precedence_declarator,      // const var def
 		Precedence_adjacency,       // . f(x)
+		Precedence_unary_step,      // ++ --
 		Precedence_exponentiation,  // ^
 		Precedence_unary_math,      // + - (f x)
 		Precedence_multiplication,  // * /
@@ -60,14 +61,15 @@ namespace vlib
 		{ Precedence_declarator, Op_var   },
 		{ Precedence_declarator, Op_def   },
 		
-		{ Precedence_adjacency, Op_preinc    },
-		{ Precedence_adjacency, Op_predec    },
-		{ Precedence_adjacency, Op_postinc   },
-		{ Precedence_adjacency, Op_postdec   },
 		{ Precedence_adjacency, Op_function  },
 		{ Precedence_adjacency, Op_subscript },
 		{ Precedence_adjacency, Op_member    },
 		{ Precedence_adjacency, Op_denote    },
+		
+		{ Precedence_unary_step, Op_preinc  },
+		{ Precedence_unary_step, Op_predec  },
+		{ Precedence_unary_step, Op_postinc },
+		{ Precedence_unary_step, Op_postdec },
 		
 		{ Precedence_exponentiation, Op_empower },
 		
