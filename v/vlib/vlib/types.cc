@@ -148,6 +148,11 @@ namespace vlib
 			return Value( expr->op, etc_vtype );
 		}
 		
+		if ( expr->op != Op_list )
+		{
+			THROW( "unexpected expression in typeof()" );
+		}
+		
 		list_builder result;
 		
 		list_iterator it( v );
