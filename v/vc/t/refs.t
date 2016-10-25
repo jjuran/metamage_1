@@ -112,3 +112,23 @@ $ vc 'var x = 123; var y (*int) = &x; try { var z (**int) = &x } catch {"nope"}'
 
 $ vc 'var x (*...) = &x'
 1 >= '(&x)'
+
+%
+
+$ vc 'var x = 123; var y (*int) = &x; *y'
+1 >= '123'
+
+%
+
+$ vc 'var x = [1, 2, 3]; var y = &x; **y'
+1 >= '(1, 2, 3)'
+
+%
+
+$ vc 'var x = 123; var y = &x; var z = &y; z, *z, **z'
+1 >= '((&y), (&x), 123)'
+
+%
+
+$ vc 'var x (*...) = &x; x, *x, **x'
+1 >= '((&x), (&x), (&x))'

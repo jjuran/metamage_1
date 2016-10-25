@@ -26,6 +26,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/table-utils.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
@@ -215,6 +216,18 @@ namespace vlib
 			if ( expr->op == Op_empower )
 			{
 				return generic_deref( expr->right );
+			}
+			
+			if ( expr->op == Op_unary_refer )
+			{
+				Target target = make_target( expr->right );
+				
+				if ( is_undefined( *target.addr ) )
+				{
+					THROW( "undefined value in dereference" );
+				}
+				
+				return *target.addr;
 			}
 		}
 		
