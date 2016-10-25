@@ -144,11 +144,11 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/types/any.cc                   \
                        src/vlib/types/boolean.cc               \
                        src/vlib/types/byte.cc                  \
-                       src/vlib/types/data.cc                  \
                        src/vlib/types/integer.cc               \
                        src/vlib/types/null.cc                  \
                        src/vlib/types/stdint.cc                \
                        src/vlib/types/string.cc                \
+                       src/vlib/types/vector.cc                \
                        src/vlib/value.cc                       \
                        src/vlib/vbox.cc                        \
 
