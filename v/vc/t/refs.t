@@ -82,3 +82,33 @@ $ vc 'var x (int[]) = [1, 2, 3]; typeof (&x[1], &x)'
 
 $ vc 'var x (u8[]) = [1, 2, 3]; typeof (&x[1], &x)'
 1 >= '((*u8), (*(u8[])))'
+
+%
+
+$ vc 'var x = 123; var y (*int) = &x'
+1 >= '(&x)'
+
+%
+
+$ vc 'var x = 123; var y (*int) = &x; var z (**int) = &y'
+1 >= '(&y)'
+
+%
+
+$ vc 'var x = 12345; try { var y (*u8) = &x } catch {"nope"}'
+1 >= '"nope"'
+
+%
+
+$ vc 'var x = 123; var y (*int) = &x; try { y = &y } catch {"nope"}'
+1 >= '"nope"'
+
+%
+
+$ vc 'var x = 123; var y (*int) = &x; try { var z (**int) = &x } catch {"nope"}'
+1 >= '"nope"'
+
+%
+
+$ vc 'var x (*...) = &x'
+1 >= '(&x)'

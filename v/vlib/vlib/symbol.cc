@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/table-utils.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/list_iterator.hh"
@@ -49,6 +50,19 @@ namespace vlib
 	}
 	
 	static
+	bool is_reference( const Value& type, Expr* vx )
+	{
+		if ( vx == 0  ||  vx->op != Op_unary_refer )  // NULL
+		{
+			return false;
+		}
+		
+		Target target = make_target( vx->right );
+		
+		return as_assigned( type, *target.addr ).type();
+	}
+	
+	static
 	bool is_mapping( Expr* tx, Expr* vx )
 	{
 		return      vx != 0  &&  vx->op == Op_mapping  // NULL
@@ -74,6 +88,11 @@ namespace vlib
 			if ( expr->op == Op_subscript )
 			{
 				return is_homogenous_array( expr->left, v ) ? v : nothing;
+			}
+			
+			if ( expr->op == Op_unary_deref )
+			{
+				return is_reference( expr->right, v.expr() ) ? v : nothing;
 			}
 			
 			if ( expr->op == Op_mapping )
