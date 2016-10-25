@@ -3260,3 +3260,18 @@ $ vc 'var x = [1, 2, 3]; ++x[1]; x'
 
 $ vc 'typeof int[]'
 1 >= type
+
+%
+
+$ vc 'var x (u8) = 123; try { x = -1 } catch {}; x'
+1 >= 123
+
+%
+
+$ vc 'var x (u8) = 123; var y = -1; try { x <- y } catch {}; x'
+1 >= 123
+
+%
+
+$ vc 'var x (u8) = 123; var y = -1; try { x <-> y } catch {}; x'
+1 >= 123

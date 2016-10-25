@@ -170,12 +170,14 @@ namespace vlib
 		
 		if ( vtype.type() )
 		{
-			dst = (coercive ? as_coerced : as_assigned)( vtype, v );
+			Value tmp = (coercive ? as_coerced : as_assigned)( vtype, v );
 			
-			if ( ! dst.type() )
+			if ( ! tmp.type() )
 			{
 				THROW( "type mismatch in assignment" );
 			}
+			
+			dst = tmp;
 		}
 		else
 		{
