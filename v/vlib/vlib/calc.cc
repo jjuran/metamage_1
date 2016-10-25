@@ -197,6 +197,11 @@ namespace vlib
 	static
 	Value generic_deref( const Value& v )
 	{
+		if ( is_type( v ) )
+		{
+			return Value( Op_unary_deref, v );
+		}
+		
 		if ( Expr* expr = v.expr() )
 		{
 			if ( expr->op == Op_array )

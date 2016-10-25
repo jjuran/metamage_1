@@ -63,11 +63,18 @@ namespace vlib
 		
 		For type expressions, one or both component types are checked as
 		needed.  Of the base types, `function` can refer to a code block,
-		and `...` can be anything.  Code blocks are the only values that
-		can refer to symbols, by closing over them.  Since cyclical data
-		structures are not allowed, reference loops only occur when a block
-		closes over the symbol to which it's assigned, or another symbol that
-		references it indirectly.
+		and `...` can be anything.  Code blocks can refer to symbols by
+		closing over them, and a reference loop occurs if the code block is
+		assigned to that symbol (or otherwise contained or referenced by its
+		value).
+		
+		Reference objects can refer to themselves, but only if they allow
+		referents of self-referential type.  (For example, (*...) allows
+		self-ref, but (*int) does not, nor does (**int) -- and no amount of
+		additional indirection will allow self-ref without ... or a closure.)
+		Cyclical data structures are possible with typeless references, and
+		references to closures have the usual issue, but the recursive type
+		check covers these cases.
 	*/
 	
 	static
@@ -105,6 +112,9 @@ namespace vlib
 				
 				case Op_subscript:
 					return type_is_collectible( expr->left );
+				
+				case Op_unary_deref:
+					return type_is_collectible( expr->right );
 				
 				default:
 					break;

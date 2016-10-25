@@ -124,6 +124,11 @@ namespace vlib
 			return type_vtype;
 		}
 		
+		if ( expr->op == Op_unary_deref )
+		{
+			return type_vtype;
+		}
+		
 		if ( expr->op == Op_mapping )
 		{
 			return Value( v_typeof( expr->left  ), expr->op,

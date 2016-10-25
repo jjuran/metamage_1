@@ -181,6 +181,11 @@ namespace vlib
 				}
 			}
 			
+			if ( expr->op == Op_unary_deref )
+			{
+				return is_type( expr->right );
+			}
+			
 			if ( expr->op == Op_empower )
 			{
 				return is_type( expr->left )  &&  is_type( expr->right );
