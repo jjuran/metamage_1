@@ -208,11 +208,14 @@ namespace vlib
 				track_symbol_if_collectible( right, *target.addr );
 			}
 			
+			swap( *target.addr, *second.addr );
+			
 			if ( op == Op_move )
 			{
+				target.addr = second.addr;
+				
 				const bool collectible = target_is_collectible( target );
 				
-				*target.addr = *second.addr;
 				*second.addr = Value_undefined;
 				
 				if ( collectible )
@@ -223,7 +226,6 @@ namespace vlib
 			
 			if ( op == Op_swap )
 			{
-				target.addr->swap( *second.addr );
 				return Value();
 			}
 			
