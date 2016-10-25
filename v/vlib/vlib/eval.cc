@@ -131,6 +131,17 @@ namespace vlib
 	}
 	
 	static
+	bool check_target_sym( const Value& v )
+	{
+		if ( const Symbol* sym = target_sym( v ) )
+		{
+			return sym->check_type_invariant();
+		}
+		
+		return false;
+	}
+	
+	static
 	void check_type( const Value& type, const Value& v )
 	{
 		if ( is_undefined( v ) )
@@ -209,6 +220,27 @@ namespace vlib
 			}
 			
 			swap( *target.addr, *second.addr );
+			
+			const char* error = "type mismatch in swap";
+			
+			if ( ! check_target_sym( left ) )
+			{
+				if ( op == Op_move )
+				{
+					error = "type mismatch in move";
+				}
+			}
+			else if ( op == Op_move  ||  check_target_sym( right ) )
+			{
+				error = NULL;
+			}
+			
+			if ( error )
+			{
+				swap( *target.addr, *second.addr );
+				
+				THROW( error );
+			}
 			
 			if ( op == Op_move )
 			{

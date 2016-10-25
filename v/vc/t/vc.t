@@ -3285,3 +3285,13 @@ $ vc 'var x (u8[] | i8[]); x = [1, 2]; x[0] = -1; x'
 
 $ vc 'var x (u8[] | str[]); x = [1,2]; var y = ""; try { x[0] = y } catch {x}'
 1 >= '[1, 2]'
+
+%
+
+$ vc 'var x (u8[] | str[]); x = [1,2]; var y = ""; try { x[0] <- y } catch {x}'
+1 >= '[1, 2]'
+
+%
+
+$ vc 'var x (u8[] | str[]); x = [1,2]; var y = ""; try { x[0] <-> y } catch {x}'
+1 >= '[1, 2]'
