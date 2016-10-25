@@ -62,6 +62,8 @@ namespace vlib
 			
 			void assign( const Value& v, bool coercive = false );
 			
+			bool check_type_invariant() const;
+			
 			Target target();
 			
 			Value& deref();
@@ -88,7 +90,10 @@ namespace vlib
 			Value clone() const;
 	};
 	
-	void assign( const Target& target, const Value& v, bool coercive = false );
+	void assign( const Target&  target,
+	             const Value&   v,
+	             bool           coercive = false,
+	             const Symbol*  sym      = 0 );  // NULL
 	
 	inline
 	const Value& lookup_symbol( const Symbol* symbol )

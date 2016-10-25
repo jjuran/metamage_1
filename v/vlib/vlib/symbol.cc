@@ -151,6 +151,11 @@ namespace vlib
 		vlib::assign( target(), v, coercive );
 	}
 	
+	bool Symbol::check_type_invariant() const
+	{
+		return ! vtype().type()  ||  as_assigned( vtype(), get() ).type();
+	}
+	
 	Target Symbol::target()
 	{
 		if ( is_immutable() )
@@ -163,7 +168,10 @@ namespace vlib
 		return result;
 	}
 	
-	void assign( const Target& target, const Value& v, bool coercive )
+	void assign( const Target&  target,
+	             const Value&   v,
+	             bool           coercive,
+	             const Symbol*  sym )
 	{
 		Value& dst         = *target.addr;
 		Value const& vtype = *target.type;
@@ -178,6 +186,21 @@ namespace vlib
 			}
 			
 			dst = tmp;
+		}
+		else if ( sym )
+		{
+			Value tmp = v;
+			
+			swap( dst, tmp );
+			
+			if ( ! sym->check_type_invariant() )
+			{
+				// Oops, higher-level type violation.
+				
+				swap( dst, tmp );
+				
+				THROW( "complex type mismatch in assignment" );
+			}
 		}
 		else
 		{

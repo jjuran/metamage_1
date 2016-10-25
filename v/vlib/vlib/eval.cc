@@ -117,6 +117,20 @@ namespace vlib
 	}
 	
 	static
+	const Symbol* target_sym( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			if ( expr->op == Op_subscript )
+			{
+				return target_sym( expr->left );
+			}
+		}
+		
+		return v.sym();
+	}
+	
+	static
 	void check_type( const Value& type, const Value& v )
 	{
 		if ( is_undefined( v ) )
@@ -155,7 +169,7 @@ namespace vlib
 			
 			const bool coercive = op == Op_approximate;
 			
-			assign( target, right, coercive );
+			assign( target, right, coercive, target_sym( left ) );
 			
 			if ( collectible )
 			{
