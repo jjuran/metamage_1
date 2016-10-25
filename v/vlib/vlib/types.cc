@@ -119,6 +119,11 @@ namespace vlib
 			return generic_array_type;
 		}
 		
+		if ( expr->op == Op_subscript )
+		{
+			return type_vtype;
+		}
+		
 		if ( expr->op == Op_mapping )
 		{
 			return Value( v_typeof( expr->left  ), expr->op,
