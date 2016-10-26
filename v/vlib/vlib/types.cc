@@ -134,14 +134,14 @@ namespace vlib
 		{
 			if ( is_type( expr->left ) )
 			{
-				if ( is_empty_array( expr->right ) )
-				{
-					return v;  // typeof type^[] is type^[]
-				}
-				
 				if ( is_array( expr->right ) )
 				{
-					return Value( expr->left, expr->op, Value_empty_array );
+					return Value( expr->left, expr->op, etc_vtype );
+				}
+				
+				if ( is_type( expr->right ) )
+				{
+					return type_vtype;
 				}
 			}
 			

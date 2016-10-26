@@ -183,7 +183,7 @@ namespace vlib
 			
 			if ( expr->op == Op_empower )
 			{
-				return is_type( expr->left )  &&  is_empty_array( expr->right );
+				return is_type( expr->left )  &&  is_type( expr->right );
 			}
 			
 			if ( expr->op == Op_mapping )

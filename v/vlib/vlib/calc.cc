@@ -1344,9 +1344,17 @@ namespace vlib
 		
 		if ( op == Op_empower )
 		{
-			if ( is_type( left )  &&  is_array( right ) )
+			if ( is_type( left ) )
 			{
-				return make_table( left, right );
+				if ( is_array( right ) )
+				{
+					return make_table( left, right );
+				}
+				
+				if ( is_type( right ) )
+				{
+					return Value( left, op, right );
+				}
 			}
 		}
 		
