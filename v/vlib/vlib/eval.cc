@@ -254,14 +254,11 @@ namespace vlib
 				{
 					cull_unreachable_objects();
 				}
+				
+				return right;
 			}
 			
-			if ( op == Op_swap )
-			{
-				return Value();
-			}
-			
-			return right;
+			return Value();
 		}
 		
 		if ( op == Op_push )
