@@ -24,6 +24,13 @@ namespace vlib
 		
 		Expr* expr = target.addr->unshare().expr();
 		
+		if ( expr == 0 )  // NULL
+		{
+			// string or vector
+			
+			THROW( "can't target elements of packed structures" );
+		}
+		
 		if ( expr->op == Op_array )
 		{
 			get_array_index_type( *target.type, result.type );
