@@ -417,6 +417,16 @@ namespace vlib
 				return right;
 			}
 			
+			if ( expr->op == Op_unary_deref )
+			{
+				const Value reference = execute( expr->right, stack );
+				
+				if ( Expr* rexpr = reference.expr() )
+				{
+					return rexpr->right;
+				}
+			}
+			
 			const bool exec = expr->op != Op_list;
 			
 			return Value( resolve_symbol_expr( expr->left, stack ),
