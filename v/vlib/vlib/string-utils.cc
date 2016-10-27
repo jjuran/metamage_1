@@ -80,6 +80,7 @@ namespace vlib
 			case Op_unary_plus:   return "+";
 			case Op_unary_minus:  return "-";
 			case Op_unary_deref:  return "*";
+			case Op_unary_refer:  return "&";
 			case Op_unary_count:  return "(+) ";
 			
 			case Op_multiply:  return " * ";

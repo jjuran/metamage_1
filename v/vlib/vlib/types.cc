@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/proc_info.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
@@ -122,6 +123,27 @@ namespace vlib
 		if ( expr->op == Op_subscript )
 		{
 			return type_vtype;
+		}
+		
+		if ( expr->op == Op_unary_deref )
+		{
+			return type_vtype;
+		}
+		
+		if ( expr->op == Op_unary_refer )
+		{
+			try
+			{
+				Target target = make_target( expr->right );
+				
+				const Value& type = target.type->type() ? *target.type
+				                                        : etc_vtype;
+				
+				return Value( Op_unary_deref, type );
+			}
+			catch ( const exception& e )
+			{
+			}
 		}
 		
 		if ( expr->op == Op_mapping )

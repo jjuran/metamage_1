@@ -26,6 +26,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/table-utils.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
@@ -76,6 +77,9 @@ namespace vlib
 			case Value_dummy_operand:
 			case Value_empty_list:
 				return true;
+			
+			case Value_symbol:
+				return a.sym() == b.sym();
 			
 			case Value_boolean:
 				return a.boolean() == b.boolean();
@@ -197,6 +201,11 @@ namespace vlib
 	static
 	Value generic_deref( const Value& v )
 	{
+		if ( is_type( v ) )
+		{
+			return Value( Op_unary_deref, v );
+		}
+		
 		if ( Expr* expr = v.expr() )
 		{
 			if ( expr->op == Op_array )
@@ -207,6 +216,18 @@ namespace vlib
 			if ( expr->op == Op_empower )
 			{
 				return generic_deref( expr->right );
+			}
+			
+			if ( expr->op == Op_unary_refer )
+			{
+				Target target = make_target( expr->right );
+				
+				if ( is_undefined( *target.addr ) )
+				{
+					THROW( "undefined value in dereference" );
+				}
+				
+				return *target.addr;
 			}
 		}
 		
