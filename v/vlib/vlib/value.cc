@@ -21,8 +21,6 @@
 namespace vlib
 {
 	
-	struct mutable_list_overrun {};
-	
 	const Value nothing       = Value_nothing;
 	const Value dummy_operand = Value_dummy_operand;
 	const Value undefined     = Value_undefined;

@@ -64,6 +64,8 @@ namespace vlib
 		V_proc  = Value_function,
 	};
 	
+	struct mutable_list_overrun {};
+	
 	struct vector_tag {};
 	
 	class Value
