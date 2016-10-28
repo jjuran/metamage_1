@@ -3295,3 +3295,13 @@ $ vc 'var x (u8[] | str[]); x = [1,2]; var y = ""; try { x[0] <- y } catch {x}'
 
 $ vc 'var x (u8[] | str[]); x = [1,2]; var y = ""; try { x[0] <-> y } catch {x}'
 1 >= '[1, 2]'
+
+%
+
+$ vc 'var x = []; try { x[ 0 ] = "" } catch { "nope" }'
+1 >= '"nope"'
+
+%
+
+$ vc 'var x = [1, 2, 3]; try { x[ 4 ] = 5 } catch { "right out" }'
+1 >= '"right out"'

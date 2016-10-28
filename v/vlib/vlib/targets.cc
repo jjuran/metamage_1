@@ -61,9 +61,14 @@ namespace vlib
 				
 				Target target = make_target( container );
 				
-				Target result = subscript_target( target, subscript );
-				
-				return result;
+				try
+				{
+					return subscript_target( target, subscript );
+				}
+				catch ( const mutable_list_overrun& )
+				{
+					THROW( "lvalue array subscript out of range" );
+				}
 			}
 		}
 		
