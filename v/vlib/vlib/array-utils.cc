@@ -149,6 +149,38 @@ namespace vlib
 			
 			if ( expr->op == Op_gamut  ||  expr->op == Op_delta )
 			{
+				if ( array.type() == V_str  ||  array.type() == V_vec )
+				{
+					const unsigned a = subscript_integer( expr->left  );
+					const unsigned b = subscript_integer( expr->right );
+					
+					if ( a > b )
+					{
+						THROW( "descending range in subscript" );
+					}
+					
+					if ( a < b )
+					{
+						const plus::string& s = array.string();
+						
+						plus::string::size_type size = s.size();
+						
+						if ( size == 0 )
+						{
+							THROW( "range subscript of empty string/vector" );
+						}
+						
+						const bool is_gamut = expr->op == Op_gamut;
+						
+						if ( b > size - is_gamut )
+						{
+							THROW( "range subscript overruns string/vector" );
+						}
+						
+						return s.substr( a, b - a + is_gamut );
+					}
+				}
+				
 				return sliced_subscript( array, index );
 			}
 		}
