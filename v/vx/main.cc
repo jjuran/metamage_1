@@ -188,6 +188,11 @@ int main( int argc, char** argv )
 		define( proc_system );
 	}
 	
+	if ( unrestricted )
+	{
+		define( proc_truncate );
+	}
+	
 	define( proc_close   );
 	define( proc_dirname );
 	define( proc_dup     );

@@ -26,6 +26,8 @@ namespace vlib
 	extern const proc_info proc_stat;
 	extern const proc_info proc_write;
 	
+	extern const proc_info proc_truncate;
+	
 }
 
 #endif

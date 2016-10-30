@@ -360,6 +360,22 @@ namespace vlib
 	}
 	
 	static
+	Value v_truncate( const Value& v )
+	{
+		const char*  path   = first( v ).string().c_str();
+		const off_t  offset = rest ( v ).number().clipped();
+		
+		int nok = truncate( path, offset );
+		
+		if ( nok )
+		{
+			path_error( path );
+		}
+		
+		return Value();
+	}
+	
+	static
 	Value v_write( const Value& v )
 	{
 		const int           fd = first( v ).number().clipped();
@@ -387,6 +403,8 @@ namespace vlib
 	static const Value bytes( string_vtype, Op_union, vector_vtype );
 	static const Value i32_bytes( i32_vtype, bytes );
 	
+	static const Value c_str_u32( c_str_vtype, u32_vtype );
+	
 	const proc_info proc_close   = { "close",   &v_close,   &int32 };
 	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
 	const proc_info proc_dup     = { "dup",     &v_dup,     &int32 };
@@ -399,5 +417,7 @@ namespace vlib
 	const proc_info proc_read    = { "read",    &v_read,    &i32_u32 };
 	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
 	const proc_info proc_write   = { "write",   &v_write,   &i32_bytes };
+	
+	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
 	
 }
