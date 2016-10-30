@@ -123,6 +123,37 @@ namespace vlib
 	
 	
 	static
+	Value v_append( const Value& v )
+	{
+		const char*          path = first( v ).string().c_str();
+		const plus::string&  data = rest ( v ).string();
+		
+		int fd = open( path, O_WRONLY | O_APPEND, 0 );
+		
+		if ( fd < 0 )
+		{
+			fd_error( fd );
+		}
+		
+		const size_t size = data.size();
+		
+		ssize_t n_written = write( fd, data.data(), size );
+		
+		if ( n_written < size )
+		{
+			int saved_errno = errno;
+			
+			close( fd );
+			
+			path_error( path, n_written < 0 ? saved_errno : EINTR );
+		}
+		
+		close( fd );
+		
+		return Value();
+	}
+	
+	static
 	Value v_close( const Value& v )
 	{
 		const int fd = v.number().clipped();
@@ -403,6 +434,7 @@ namespace vlib
 	static const Value bytes( string_vtype, Op_union, vector_vtype );
 	static const Value i32_bytes( i32_vtype, bytes );
 	
+	static const Value c_str_bytes( c_str_vtype, bytes );
 	static const Value c_str_u32( c_str_vtype, u32_vtype );
 	
 	const proc_info proc_close   = { "close",   &v_close,   &int32 };
@@ -418,6 +450,7 @@ namespace vlib
 	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
 	const proc_info proc_write   = { "write",   &v_write,   &i32_bytes };
 	
+	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };
 	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
 	
 }

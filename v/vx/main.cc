@@ -190,6 +190,7 @@ int main( int argc, char** argv )
 	
 	if ( unrestricted )
 	{
+		define( proc_append );
 		define( proc_truncate );
 	}
 	
