@@ -2,7 +2,7 @@
 
 host=www.macrelix.org
 
-export RELIX_URL=http://$host/pub/experimental/
+export RELIX_URL=http://$host/pub/channel/46e70108/
 
 test -n "$1" && export RELIX_PLATFORM="$1"
 
