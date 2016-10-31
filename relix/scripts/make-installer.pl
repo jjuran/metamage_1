@@ -70,6 +70,57 @@ sub spew_to_rsrc
 	spew( "$dest_path/.~name", $path );
 }
 
+sub slurp
+{
+	my ( $path ) = @_;
+	
+	open my $in, "<", $path;
+	
+	my @lines = <$in>;
+	
+	return join "", @lines;
+}
+
+sub copy_to_rsrc
+{
+	my ( $path, $src, $type ) = @_;
+	
+	my $contents = slurp $src;
+	
+	$contents =~ s{^#!/usr/bin/env vx}{#!/usr/bin/vx};
+	
+	spew_to_rsrc( $path, $contents, $type );
+}
+
+sub copy_script
+{
+	my ( $name, $path ) = @_;
+	
+	return $name => sub { copy_to_rsrc( $_[1], $path, 'Exec' ) }
+}
+
+my $v_dir = "$relix_files_dir/../../v";
+
+sub copy_vx
+{
+	my ( $name ) = @_;
+	
+	my $path = "$v_dir/bin/$name.vx";
+	
+	return copy_script( $name, $path );
+}
+
+sub copy_vobj
+{
+	my ( $name ) = @_;
+	
+	$name .= '.vobj';
+	
+	my $path = "$v_dir/lib/$name";
+	
+	return $name => sub { copy_to_rsrc( $_[1], $path, 'Data' ) };
+}
+
 my %fsmap =
 (
 	bin =>
@@ -105,13 +156,27 @@ exec /usr/app/installer/init
 			\ qw( touch ),
 			# Common
 			\ qw( gzip htget perl ),
+			# V executor
+			\ qw( vx ),
 			# Script apps
 			qw( confirm progress ),
 			# App utilities
 			\ qw( daemonize idle select ),
 			# Mac-specific
 			\ qw( macbin ),
+			# V scripts
+			{
+				copy_vx( 'arcsign' ),
+			},
 		],
+		lib =>
+		{
+			v =>
+			{
+				map { copy_vobj $_ }
+					qw( arcsign arcsign-unseal options ),
+			},
+		},
 	},
 );
 
