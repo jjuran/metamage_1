@@ -1,0 +1,17 @@
+def arcsign-seal
+{
+	const arcsign, const params = _
+	
+	const key = params[ "key" ]
+	
+	for kit in params[ "kits" ] do
+	{
+		const load, const append = *kit.value
+		
+		const msg = load()
+		
+		append( arcsign.seal( key, msg ) )
+	}
+	
+	return []  # Any non-success would have thrown
+}

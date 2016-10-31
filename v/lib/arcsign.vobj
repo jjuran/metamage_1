@@ -1,0 +1,137 @@
+module arcsign
+
+const ext_tag = "----- ARCSIGN EXTENSION -----"
+const sig_tag = "----- ARCSIGN SIGNATURE -----"
+
+const prefix = "\n" sig_tag "\n"
+
+const pre_length = prefix.length
+const key_length = 32 * 2
+const sig_length = 64 * 2
+
+const signature_block_length = pre_length
+                             + key_length + 1
+                             + sig_length + 2
+
+export
+def seal
+{
+	const key, const msg = _
+	
+	const ext = "\n" ext_tag "\n"
+	
+	const pub = ed25519-publickey key
+	const sig = ed25519-sign( key, msg ext )
+	
+	const sig1 = sig[  0 -> 32 ]
+	const sig2 = sig[ 32 -> 64 ]
+	
+	return ext prefix "\n".join (pub, sig1, sig2, "")
+}
+
+def strict_unhex
+{
+	const result = unhex _
+	
+	if hex result != _ then
+	{
+		throw "malformed or non-canonical hexadecimal data"
+	}
+	
+	return result
+}
+
+def parts_from_keysig
+{
+	const keysig = _
+	
+	assert keysig.length == signature_block_length
+	
+	if keysig[ 0 -> pre_length ] != prefix then
+	{
+		return ()
+	}
+	
+	const hex_lines = keysig[ pre_length -> signature_block_length ].lines()
+	
+	const data = hex_lines map strict_unhex
+	
+	const key = data[ 0 ]
+	const sig = vec data[ 1 .. 2 ]
+	
+	return key, sig
+}
+
+def message_parts
+{
+	const sealed_message = _
+	
+	var n = sealed_message.length
+	
+	var parts = ()
+	
+	if n >= signature_block_length then
+	{
+		const boundary = n - signature_block_length
+		
+		const msgext = sealed_message[ 0 -> boundary ]
+		const keysig = sealed_message[ boundary -> n ]
+		
+		if const parts = parts_from_keysig keysig then
+		{
+			return msgext, parts  # msg ext, key, sig
+		}
+	}
+	
+	return ()
+}
+
+def msgext_parts
+{
+	const msgext = _
+	
+	var i = msgext.length
+	
+	if msgext[ --i ] != '\n' then
+	{
+		return ()
+	}
+	
+	var j
+	
+	while true do
+	{
+		j = i
+		
+		while msgext[ --i ] != '\n' do
+		{
+		}
+		
+		if msgext[ i + 1 -> j ] == ext_tag then
+		{
+			break
+		}
+	}
+	
+	++j
+	
+	const n = msgext.length
+	
+	const msg = msgext[ 0 -> i ]
+	const ext = msgext[ j -> n ]
+	
+	return msg, ext
+}
+
+export
+def validate
+{
+	if const parts = message_parts _ then
+	{
+		const msgext, const key, const sig = parts
+		
+		return ed25519-verify( key, msgext, sig ) and [msgext_parts msgext, key]
+	}
+	
+	return ()
+}
