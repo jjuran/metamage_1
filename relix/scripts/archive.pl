@@ -53,6 +53,40 @@ print "\$OUTPUT = $build_output\n";
 #print "\$TMP    = $tmp_subdir\n";
 print "\$DIST   = $relix_dist\n";
 
+sub copy_script
+{
+	my ( $name, $path ) = @_;
+	
+	return $name => sub
+	{
+		$archiver->copy_file( $path, $_[0] );
+		
+		chmod 0700, $_[0];
+	}
+}
+
+my $v_dir = "$relix_files_dir/../../v";
+
+sub copy_vx
+{
+	my ( $name ) = @_;
+	
+	my $path = "$v_dir/bin/$name.vx";
+	
+	return copy_script( $name, $path );
+}
+
+sub copy_vobj
+{
+	my ( $name ) = @_;
+	
+	$name .= '.vobj';
+	
+	my $path = "$v_dir/lib/$name";
+	
+	return $name => sub { $archiver->copy_file( $path, $_[0] ) };
+}
+
 my %fsmap =
 (
 	Developer =>
@@ -177,6 +211,10 @@ my %fsmap =
 			qw( drvr gestalt ),
 			# Perl scripts
 			qw( grep head printenv strings tee tr wc ),
+			# V scripts
+			{
+				copy_vx( 'arcsign' ),
+			},
 		],
 		lib =>
 		{
@@ -184,6 +222,11 @@ my %fsmap =
 			{
 				"git-receive-pack" => sub { symlink "../../bin/git", $_[0] },
 				map { ("git-$_" => \ "git/$_") } qw( daemon upload-pack )
+			},
+			v =>
+			{
+				map { copy_vobj $_ }
+					qw( arcsign arcsign-seal arcsign-unseal options ),
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
