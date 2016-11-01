@@ -455,12 +455,17 @@ namespace Genie
 			
 			// argv == { "sh", "script", "foo", "bar", "baz", NULL }
 			
-			if ( char* space = strchr( data, ' ' ) )
+			char* p = data;
+			
+			int i = 0;
+			
+			while ( char* space = strchr( p, ' ' ) )
 			{
 				*space = '\0';
 				
-				context.argVector.insert( context.argVector.begin() + 1,
-				                          space + 1 );
+				p = space + 1;
+				
+				context.argVector.insert( context.argVector.begin() + ++i, p );
 			}
 			
 			plus::string path = context.interpreter.substr( 0, strlen( data ) );
