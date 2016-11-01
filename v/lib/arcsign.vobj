@@ -34,11 +34,11 @@ def field
 export
 def seal
 {
-	const key, const msg, const hash = _
+	const key, const msg, const date, const hash = _
 	
 	const f = if hash then { hash_functions[ hash ] } else { {_} }
 	
-	const ext = "\n" ext_tag "\n" field( "Hash", hash )
+	const ext = "\n" ext_tag "\n" field( "Date", date ) field( "Hash", hash )
 	
 	const pub = ed25519-publickey key
 	const sig = ed25519-sign( key, f msg ext )

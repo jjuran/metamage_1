@@ -6,6 +6,10 @@ const import = { eval load libdir() _ ".vobj"  }
 const options = import "options"
 const arcsign = import "arcsign"
 
+const date-time = try { import "date-time" } catch {}
+
+const stamp = if date-time then {{ date-time.stamp time() }} else { null }
+
 const command_defs = str^
 [
 	seal:   [load, append],
@@ -78,7 +82,7 @@ const cmd = command_defs[ command ]
 
 const kits = args map { const x = _; x => cmd map { _ % x } }
 
-const params = str^[ kits: kits, key: key, hash: hash ]
+const params = str^[ kits: kits, key: key, hash: hash, stamp: stamp ]
 
 const handler = import "arcsign-" command
 
