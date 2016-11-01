@@ -624,17 +624,17 @@ namespace Genie
 	
 	static void close_fd_on_exec( void* keep, int fd, vfs::file_descriptor& desc )
 	{
-		if ( desc.will_close_on_exec()  &&  fd != *(int*) keep )
+		if ( desc.will_close_on_exec() )
 		{
 			desc.handle.reset();
 		}
 	}
 	
-	static void CloseMarkedFileDescriptors( relix::fd_map& fileDescriptors, int keep_fd = -1 )
+	static void CloseMarkedFileDescriptors( relix::fd_map& fileDescriptors )
 	{
 		// Close file descriptors with close-on-exec flag.
 		
-		fileDescriptors.for_each( &close_fd_on_exec, &keep_fd );
+		fileDescriptors.for_each( &close_fd_on_exec, NULL );
 	}
 	
 	static void CheckProgramFile( const vfs::node& programFile )
@@ -738,23 +738,7 @@ namespace Genie
 		
 		Normalize( path, context, *cwd );
 		
-		int script_fd = -1;
-		
-		if ( !context.interpreterPath.empty() )
-		{
-			const bool has_arg = !context.interpreterArg.empty();
-			
-			const char* script_path = context.argVector[ 1 + has_arg ];
-			
-			if ( std::memcmp( script_path, STR_LEN( "/dev/fd/" ) ) == 0 )
-			{
-				const char* fd_name = script_path + STRLEN( "/dev/fd/" );
-				
-				script_fd = gear::parse_unsigned_decimal( fd_name );
-			}
-		}
-		
-		CloseMarkedFileDescriptors( FileDescriptors(), script_fd );
+		CloseMarkedFileDescriptors( FileDescriptors() );
 		
 		clear_signals_pending();
 		
