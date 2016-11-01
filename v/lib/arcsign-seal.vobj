@@ -2,7 +2,8 @@ def arcsign-seal
 {
 	const arcsign, const params = _
 	
-	const key = params[ "key" ]
+	const key  = params[ "key"  ]
+	const hash = params[ "hash" ]
 	
 	for kit in params[ "kits" ] do
 	{
@@ -10,7 +11,7 @@ def arcsign-seal
 		
 		const msg = load()
 		
-		append( arcsign.seal( key, msg ) )
+		append( arcsign.seal( key, msg, hash ) )
 	}
 	
 	return []  # Any non-success would have thrown

@@ -43,12 +43,25 @@ if not command in command_defs then
 	exit usage()
 }
 
+def check_hash
+{
+	if not _ in arcsign.hash_functions then
+	{
+		warn "arcsign: " _ ": not a valid hash function"
+		exit 2
+	}
+	
+	return _
+}
+
 const vload = { vec load _ }
 
-var key = null
+var hash = null
+var key  = null
 
 const option_defs = byte^
 [
+	'h': [ &hash, check_hash ],
 	'K': [ &key, unhex ],
 	'k': [ &key, vload ],
 ]
@@ -65,7 +78,7 @@ const cmd = command_defs[ command ]
 
 const kits = args map { const x = _; x => cmd map { _ % x } }
 
-const params = str^[ kits: kits, key: key ]
+const params = str^[ kits: kits, key: key, hash: hash ]
 
 const handler = import "arcsign-" command
 

@@ -14,14 +14,34 @@ const signature_block_length = pre_length
                              + sig_length + 2
 
 export
+const hash_functions = str^
+[
+	SHA-256: sha256,
+]
+
+def field
+{
+	const name, const value = _
+	
+	if value isa null then
+	{
+		return ""
+	}
+	
+	return name ": " value "\n"
+}
+
+export
 def seal
 {
-	const key, const msg = _
+	const key, const msg, const hash = _
 	
-	const ext = "\n" ext_tag "\n"
+	const f = if hash then { hash_functions[ hash ] } else { {_} }
+	
+	const ext = "\n" ext_tag "\n" field( "Hash", hash )
 	
 	const pub = ed25519-publickey key
-	const sig = ed25519-sign( key, msg ext )
+	const sig = ed25519-sign( key, f msg ext )
 	
 	const sig1 = sig[  0 -> 32 ]
 	const sig2 = sig[ 32 -> 64 ]
@@ -130,7 +150,16 @@ def validate
 	{
 		const msgext, const key, const sig = parts
 		
-		return ed25519-verify( key, msgext, sig ) and [msgext_parts msgext, key]
+		const msg, const ext = msgext_parts msgext
+		
+		var f = {_}
+		
+		if "Hash: SHA-256" in ext.lines() then
+		{
+			f = sha256
+		}
+		
+		return ed25519-verify( key, f msgext, sig ) and [msg, ext, key]
 	}
 	
 	return ()
