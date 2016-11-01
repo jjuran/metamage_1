@@ -350,8 +350,7 @@ namespace Genie
 	{
 		vfs::node_ptr               executable;
 		std::vector< const char* >  argVector;
-		plus::string                interpreterPath;
-		plus::string                interpreterArg;
+		plus::var_string            interpreter;
 		
 		ExecContext()  {}
 		
@@ -418,9 +417,6 @@ namespace Genie
 		
 		if ( type == 'TEXT'  ||  (type == 0  &&  has_shebang) )
 		{
-			context.interpreterPath = "/bin/sh";  // default
-			bool hasArg = false;
-			
 			if ( has_shebang )
 			{
 				const char* end = data + bytes;
@@ -435,16 +431,11 @@ namespace Genie
 					throw NotExecutable();  // #! line too long
 				}
 				
-				const char* space = std::find( data, nl, ' ' );
-				
-				hasArg = space != nl;
-				
-				context.interpreterPath.assign( &data[2], space );
-				
-				if ( hasArg )
-				{
-					context.interpreterArg.assign( space + 1, nl );
-				}
+				context.interpreter.assign( &data[ 2 ], nl );
+			}
+			else
+			{
+				context.interpreter = "/bin/sh";  // default
 			}
 			
 			// E.g. "$ script foo bar baz"
@@ -458,18 +449,23 @@ namespace Genie
 				// argv == { "/path/to/script", "foo", "bar", "baz", NULL }
 			}
 			
-			context.argVector.insert( context.argVector.begin(),
-			                          context.interpreterPath.c_str() );
+			char* data = &context.interpreter[ 0 ];
+			
+			context.argVector.insert( context.argVector.begin(), data );
 			
 			// argv == { "sh", "script", "foo", "bar", "baz", NULL }
 			
-			if ( hasArg )
+			if ( char* space = strchr( data, ' ' ) )
 			{
+				*space = '\0';
+				
 				context.argVector.insert( context.argVector.begin() + 1,
-				                          context.interpreterArg.c_str() );
+				                          space + 1 );
 			}
 			
-			context.executable = resolve_pathname( *relix::root(), context.interpreterPath, cwd );
+			plus::string path = context.interpreter.substr( 0, strlen( data ) );
+			
+			context.executable = resolve_pathname( *relix::root(), path, cwd );
 		}
 		else if ( type != 0 )
 		{
