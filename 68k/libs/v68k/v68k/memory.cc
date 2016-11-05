@@ -59,7 +59,7 @@ namespace v68k
 		write_word_aligned( addr, big_word( x ) );
 	}
 	
-	static inline uint32_t read_big_longword_aligned( const uint8_t* addr )
+	static inline uint32_t read_big_long_aligned( const uint8_t* addr )
 	{
 		return longword_from_big( read_long_aligned( addr ) );
 	}
