@@ -2,6 +2,15 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE     := ed25519
+LOCAL_SRC_FILES  := ed25519/ed25519.c
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/ed25519
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE     := must
 LOCAL_SRC_FILES  := src/must/write.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/src
@@ -139,6 +148,7 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/iterators/list_iterator.cc     \
                        src/vlib/iterators/range_iterator.cc    \
                        src/vlib/iterators/string_iterator.cc   \
+                       src/vlib/lib/ed25519.cc                 \
                        src/vlib/list-utils.cc                  \
                        src/vlib/named_ops.cc                   \
                        src/vlib/new_line.cc                    \
@@ -171,7 +181,7 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/value.cc                       \
                        src/vlib/vbox.cc                        \
 
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/ed25519
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_CPP_FEATURES  += exceptions
 
@@ -185,6 +195,6 @@ LOCAL_SRC_FILES     := vx/exception.cc vx/library.cc vx/posixfs.cc vx/main.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := vlib poseven plus gear chars math sha256 command more must
+LOCAL_STATIC_LIBRARIES := vlib poseven plus gear chars math sha256 command more must ed25519
 
 include $(BUILD_EXECUTABLE)
