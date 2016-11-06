@@ -32,6 +32,21 @@
 #include "ed25519-randombytes.h"
 #include "ed25519-hash.h"
 
+#ifdef ANDROID
+/*
+	At least the x86_64 Android toolchain can't figure out dead-code stripping,
+	so we need to define ed25519_randombytes_unsafe(), which is called by
+	ed25519_sign_open_batch(), which isn't called by anything, but it's going
+	to get linked in anyway, because it's still only 2016 and the tools aren't
+	mature yet.
+*/
+
+void ed25519_randombytes_unsafe(void *out, size_t count)
+{
+	abort();
+}
+#endif
+
 /*
 	Generates a (extsk[0..31]) and aExt (extsk[32..63])
 */
