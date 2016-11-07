@@ -399,7 +399,7 @@ namespace tool
 			command.push_back( "off"  );
 		}
 		
-		if ( (arch == arch_ppc  &&  debug)  ||  traceback )
+		if ( arch == arch_ppc )
 		{
 			command.push_back( "-tb" );
 			command.push_back( "on"  );
