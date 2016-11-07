@@ -14,6 +14,36 @@
 #include "plus/ibox.hh"
 
 
+#if defined( __MWERKS__ )  &&  defined( __POWERPC__ )
+/*
+	This works around a compiler bug.  MWCPPC 2.4.1, with optimizations on,
+	is testing the vbox's `type` byte (to determine if it later needs to call
+	destroy_extent()) *before* constructing the vbox, when storing the result
+	of a function returning a Value onto the stack as a const Value.
+	
+	We're not limiting the workaround based on CONFIG_DEBUGGING, because I'm
+	not certain exactly which compiler options trigger the failure mode, and
+	we can't rule out certain optimizations being switched on for debug builds
+	(which are already using -O2 with Metrowerks C/C++).  If a new build tool
+	is developed that mistakenly reverses CONFIG_DEBUGGING or specifies the
+	wrong optimization level, the consequences shouldn't include a broken V
+	interpreter -- especially since the next build tool will in all likelihood
+	be written in V.  Anyway, an examination of the object code generated for
+	a debug build of vc's main.cc reveals that it makes no difference.
+	
+	We also have to do this for the `semantics` byte, for the same reason.
+	There, the symptom is spurious "arguments don't match function prototype"
+	exceptions.
+*/
+
+	typedef volatile char Char;
+
+#else
+
+	typedef char Char;
+
+#endif
+
 namespace vlib
 {
 	
@@ -42,8 +72,10 @@ namespace vlib
 	
 	struct vu_alloc : vu_string
 	{
-		char  type;       // vbox_type
-		char  semantics;  // value_type
+		// Char is a volatile char.  See above for rationale.
+		
+		Char  type;       // vbox_type
+		Char  semantics;  // value_type
 	};
 	
 	struct vu_chars
