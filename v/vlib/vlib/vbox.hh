@@ -72,7 +72,7 @@ namespace vlib
 	
 	struct vu_alloc : vu_string
 	{
-		// Char is a volatile char.  See above for rationale.
+		// Char is a possibly volatile char.  See above for details.
 		
 		Char  type;       // vbox_type
 		Char  semantics;  // value_type
