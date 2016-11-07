@@ -87,7 +87,6 @@ namespace tool
 	static bool cfm = false;
 	static bool mc68020 = false;
 	static bool a4 = false;
-	static bool traceback = false;
 	
 	static void set_codegen_flag( const plus::string& flag )
 	{
@@ -110,10 +109,6 @@ namespace tool
 		else if ( flag == "-mA4-globals" )
 		{
 			a4 = true;
-		}
-		else if ( flag == "-mtraceback" )
-		{
-			traceback = true;
 		}
 	}
 	
