@@ -98,7 +98,6 @@ namespace Pedestal
 	static std::auto_ptr< Window > NewAboutBox()
 	{
 		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
-		                                  | Mac::kWindowCollapseBoxAttribute
 		                                  ;
 		
 		Rect bounds = { 0, 0, kAboutBoxHeight, kAboutBoxWidth };
