@@ -1,0 +1,59 @@
+#!/usr/bin/env vx
+
+const libdir = { (dirname realpath argv[ 0 ]) "/../lib/v/" }
+const import = { eval load libdir() _ ".vobj"  }
+
+const render_xml = import "render_xml"
+
+const Tab = "\t"
+
+const info-txt = load argv[ 1 ]
+const info = eval "[" join( ",\n", *info-txt.lines() ) "\n]"
+
+const mapping = ... => ...
+
+def qq { str ('"', _, '"') }
+
+const reifiers
+
+def reify
+{
+	for r in reifiers do
+	{
+		if _ isa r.key then
+		{
+			return r.value( _ )
+		}
+	}
+	
+	throw "unimplemented XML conversion input"
+}
+
+reifiers =
+[
+	bool      => { str _ => [] },
+	string    => { [ string: [], _ ] },
+	mapping[] => { [ dict: [], *(_ map { [key: [], _.key], reify _.value }) ] },
+	array     => { [ array: [], *(_ map reify) ] },
+]
+
+const plist = [ plist: [ version: "1.0" ], reify info ]
+
+const version  = qq "1.0"
+const encoding = qq "UTF-8"
+const dtd_name = qq "-//Apple//DTD PLIST 1.0//EN"
+const dtd_url  = qq "http://www.apple.com/DTDs/PropertyList-1.0.dtd"
+
+print "<?xml version=" version " encoding=" encoding "?>"
+print "<!DOCTYPE plist PUBLIC " dtd_name " " dtd_url ">"
+
+def printer
+{
+	const depth, const text = _
+	
+	const tabs = Tab * depth
+	
+	print tabs text
+}
+
+render_xml( printer, plist )
