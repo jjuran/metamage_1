@@ -37,6 +37,7 @@
 #include "A-line/A-line.hh"
 #include "A-line/Commands.hh"
 #include "A-line/derived_filename.hh"
+#include "A-line/Info-plist.hh"
 #include "A-line/Locations.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
@@ -864,6 +865,19 @@ namespace tool
 					CreateAppBundle( outputDir, bundleName );
 					
 					plus::string contents( outputDir / bundleName / "Contents" );
+					
+					plus::string info = project.ProjectFolder() / "Info.txt";
+					
+					if ( io::file_exists( info ) )
+					{
+						TaskPtr info_task( new InfoPListTask( project.Name(),
+						                                      info,
+						                                      contents ) );
+						
+						UpdateInputStamp( info_task, info );
+						
+						project_base_task->AddDependent( info_task );
+					}
 					
 					exeDir = contents / "MacOS";
 					
