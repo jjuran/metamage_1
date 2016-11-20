@@ -32,6 +32,9 @@
 #include "vlib/iterators/list_iterator.hh"
 
 
+#undef mempcpy
+
+
 namespace vlib
 {
 	
