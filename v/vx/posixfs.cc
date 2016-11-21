@@ -5,6 +5,10 @@
 
 #include "posixfs.hh"
 
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
 // POSIX
 #include <dirent.h>
 #include <fcntl.h>
@@ -379,7 +383,17 @@ namespace vlib
 	{
 		const char* path = v.string().c_str();
 		
-		const char* real = realpath( path, NULL );
+	#if TARGET_API_MAC_OSX  &&  ! MAC_OS_X_VERSION_10_6
+		
+		char buffer[ PATH_MAX ];
+		
+	#else
+		
+		char* const buffer = NULL;
+		
+	#endif
+		
+		const char* real = realpath( path, buffer );
 		
 		if ( real == NULL )
 		{
@@ -387,6 +401,11 @@ namespace vlib
 		}
 		
 		const size_t len = strlen( real );
+		
+		if ( buffer != NULL )
+		{
+			return plus::string( real, len );
+		}
 		
 		plus::string s( real, len, plus::delete_free );
 		
