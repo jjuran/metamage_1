@@ -194,24 +194,25 @@ int main( int argc, char** argv )
 		define( proc_truncate );
 	}
 	
-	define( proc_close   );
-	define( proc_dirname );
-	define( proc_dup     );
-	define( proc_dup2    );
-	define( proc_eval    );
-	define( proc_exit    );
-	define( proc_fstat   );
-	define( proc_getenv  );
-	define( proc_listdir );
-	define( proc_load    );
-	define( proc_lstat   );
-	define( proc_pipe    );
-	define( proc_print   );
-	define( proc_read    );
-	define( proc_sleep   );
-	define( proc_stat    );
-	define( proc_time    );
-	define( proc_write   );
+	define( proc_close    );
+	define( proc_dirname  );
+	define( proc_dup      );
+	define( proc_dup2     );
+	define( proc_eval     );
+	define( proc_exit     );
+	define( proc_fstat    );
+	define( proc_getenv   );
+	define( proc_listdir  );
+	define( proc_load     );
+	define( proc_lstat    );
+	define( proc_pipe     );
+	define( proc_print    );
+	define( proc_read     );
+	define( proc_realpath );
+	define( proc_sleep    );
+	define( proc_stat     );
+	define( proc_time     );
+	define( proc_write    );
 	
 	const char* path = "<inline script>";
 	

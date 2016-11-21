@@ -13,6 +13,7 @@
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
 #include <string.h>
 
 // plus
@@ -374,6 +375,25 @@ namespace vlib
 	}
 	
 	static
+	Value v_realpath( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		const char* real = realpath( path, NULL );
+		
+		if ( real == NULL )
+		{
+			path_error( path );
+		}
+		
+		const size_t len = strlen( real );
+		
+		plus::string s( real, len, plus::delete_free );
+		
+		return plus::string( s.data(), len );
+	}
+	
+	static
 	Value v_stat( const Value& v )
 	{
 		const char* path = v.string().c_str();
@@ -437,18 +457,19 @@ namespace vlib
 	static const Value c_str_bytes( c_str_vtype, bytes );
 	static const Value c_str_u32( c_str_vtype, u32_vtype );
 	
-	const proc_info proc_close   = { "close",   &v_close,   &int32 };
-	const proc_info proc_dirname = { "dirname", &v_dirname, &c_str };
-	const proc_info proc_dup     = { "dup",     &v_dup,     &int32 };
-	const proc_info proc_dup2    = { "dup2",    &v_dup2,    &int32_x2 };
-	const proc_info proc_fstat   = { "fstat",   &v_fstat,   &int32 };
-	const proc_info proc_listdir = { "listdir", &v_listdir, &c_str };
-	const proc_info proc_load    = { "load",    &v_load,    &c_str };
-	const proc_info proc_lstat   = { "lstat",   &v_lstat,   &c_str };
-	const proc_info proc_pipe    = { "pipe",    &v_pipe,    &empty_list };
-	const proc_info proc_read    = { "read",    &v_read,    &i32_u32 };
-	const proc_info proc_stat    = { "stat",    &v_stat,    &c_str };
-	const proc_info proc_write   = { "write",   &v_write,   &i32_bytes };
+	const proc_info proc_close    = { "close",    &v_close,    &int32 };
+	const proc_info proc_dirname  = { "dirname",  &v_dirname,  &c_str };
+	const proc_info proc_dup      = { "dup",      &v_dup,      &int32 };
+	const proc_info proc_dup2     = { "dup2",     &v_dup2,     &int32_x2 };
+	const proc_info proc_fstat    = { "fstat",    &v_fstat,    &int32 };
+	const proc_info proc_listdir  = { "listdir",  &v_listdir,  &c_str };
+	const proc_info proc_load     = { "load",     &v_load,     &c_str };
+	const proc_info proc_lstat    = { "lstat",    &v_lstat,    &c_str };
+	const proc_info proc_pipe     = { "pipe",     &v_pipe,     &empty_list };
+	const proc_info proc_read     = { "read",     &v_read,     &i32_u32 };
+	const proc_info proc_realpath = { "realpath", &v_realpath, &c_str };
+	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
+	const proc_info proc_write    = { "write",    &v_write,    &i32_bytes };
 	
 	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };
 	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
