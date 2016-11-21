@@ -23,6 +23,28 @@ ssize_t _realpath( const char *path, char *buffer, size_t buffer_size )
 
 char* realpath( const char *path, char *buffer )
 {
+	if ( buffer == NULL )
+	{
+		ssize_t length = _realpath( path, buffer, 0 );
+		
+		length = -length;
+		
+		if (( buffer = (char*) malloc( length ) ))
+		{
+			length = _realpath( path, buffer, length - 1 );
+			
+			if ( length < 0 )
+			{
+				free( buffer );
+				return NULL;
+			}
+			
+			buffer[ length ] = '\0';
+		}
+		
+		return buffer;
+	}
+	
 	const size_t buffer_size = 4096;
 	
 	const int saved_errno = errno;
