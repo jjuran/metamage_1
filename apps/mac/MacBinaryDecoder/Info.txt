@@ -1,0 +1,4 @@
+CFBundleExecutable:  "MacBinary III+ Decoder"
+CFBundleName:        "MacBinary Decoder"
+CFBundlePackageType: "APPL"
+CFBundleSignature:   "mBin"
