@@ -1,0 +1,4 @@
+CFBundleExecutable:  "MacRelix"
+CFBundleName:        "MacRelix"
+CFBundlePackageType: "APPL"
+CFBundleSignature:   "Poof"
