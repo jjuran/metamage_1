@@ -1,0 +1,3 @@
+CFBundleExecutable:  "UseEdit"
+CFBundleName:        "UseEdit"
+CFBundlePackageType: "APPL"

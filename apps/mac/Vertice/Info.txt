@@ -1,0 +1,3 @@
+CFBundleExecutable:  "Vertice"
+CFBundleName:        "Vertice"
+CFBundlePackageType: "APPL"
