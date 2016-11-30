@@ -8,7 +8,12 @@ const render_xml = import "render_xml"
 const Tab = "\t"
 
 const info-txt = load argv[ 1 ]
-const info = eval "[" join( ",\n", *info-txt.lines() ) "\n]"
+
+def comma-terminated { if _[ _.length - 1 ] in ":[" then { _ } else { _ "," } }
+
+const lines = info-txt.lines() map comma-terminated
+
+const info = eval "[" join( "\n", *lines, "]" )
 
 const mapping = ... => ...
 
