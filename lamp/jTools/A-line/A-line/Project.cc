@@ -208,7 +208,7 @@ namespace tool
 		
 		try
 		{
-			return FindIncludeInFolder( its_dir_pathname, filespec );
+			return FindIncludeInFolder( its_dir_pathname / "Rez", filespec );
 		}
 		catch ( ... )
 		{
