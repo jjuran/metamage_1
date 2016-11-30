@@ -100,7 +100,6 @@ namespace tool
 			const std::vector< plus::string >& LibImports()      const  { return get_values( its_config_data, "imports"    ); }
 			const std::vector< plus::string >& Frameworks()      const  { return get_values( its_config_data, "frameworks" ); }
 			const std::vector< plus::string >& UsedRezFiles()    const  { return get_values( its_config_data, "rez"        ); }
-			const std::vector< plus::string >& UsedRsrcFiles()   const  { return get_values( its_config_data, "rsrc"       ); }
 			
 			const plus::string& CreatorCode() const  { return its_creator_code; }
 			

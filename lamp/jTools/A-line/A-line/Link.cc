@@ -914,14 +914,7 @@ namespace tool
 			
 			if ( ALINE_MAC_DEVELOPMENT )
 			{
-				const std::vector< plus::string >& rsrc_filenames = project.UsedRsrcFiles();
-				
-				std::vector< plus::string > rsrc_pathnames( rsrc_filenames.size() );
-				
-				std::transform( rsrc_filenames.begin(), 
-				                rsrc_filenames.end(),
-				                rsrc_pathnames.begin(),
-		                        std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
+				std::vector< plus::string > rsrc_pathnames;
 				
 				TaskPtr rez_task;
 				

@@ -62,7 +62,6 @@ namespace tool
 			"program",
 			"require",
 			"rez",
-			"rsrc",
 			"runtime",
 			"search",
 			"sources",
