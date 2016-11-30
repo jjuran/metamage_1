@@ -200,14 +200,6 @@ namespace tool
 		
 		try
 		{
-			return FindIncludeInFolder( its_dir_pathname / "Resources", filespec );
-		}
-		catch ( ... )
-		{
-		}
-		
-		try
-		{
 			return FindIncludeInFolder( its_dir_pathname / "Rez", filespec );
 		}
 		catch ( ... )
