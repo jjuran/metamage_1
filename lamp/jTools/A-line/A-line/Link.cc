@@ -481,6 +481,79 @@ namespace tool
 	}
 	
 	
+	class ResourceFileCopyingTask : public FileTask
+	{
+		private:
+			const plus::string its_input_pathname;
+		
+		public:
+			ResourceFileCopyingTask( const plus::string&  input,
+			                         const plus::string&  output )
+			:
+				FileTask          ( output ),
+				its_input_pathname( input  )
+			{
+			}
+			
+			void Make();
+			
+			void Return( bool succeeded );
+	};
+	
+	void ResourceFileCopyingTask::Make()
+	{
+		Command command;
+		
+		command.push_back( "cp"                       );
+		command.push_back( its_input_pathname.c_str() );
+		command.push_back( OutputPath()      .c_str() );
+		command.push_back( NULL                       );
+		
+		const plus::string message = "COPY  " + p7::basename( OutputPath() );
+		
+		ExecuteCommand( shared_from_this(), message, command );
+	}
+	
+	void ResourceFileCopyingTask::Return( bool succeeded )
+	{
+	}
+	
+	static
+	TaskPtr make_resources_task( const plus::string&  src,
+	                             const plus::string&  dst )
+	{
+		TaskPtr resources_task( new NullTask() );
+		
+		n::owned< p7::dir_t > resources_dir = p7::opendir( src );
+		
+		errno = 0;
+		
+		while ( const dirent* ent = ::readdir( resources_dir ) )
+		{
+			const char* name = ent->d_name;
+			
+			if ( name[ 0 ] != '.' )
+			{
+				const plus::string src_file = src / name;
+				const plus::string dst_file = dst / name;
+				
+				TaskPtr task( new ResourceFileCopyingTask( src_file, dst_file ) );
+				
+				UpdateInputStamp( task, src_file );
+				
+				resources_task->AddDependent( task );
+			}
+		}
+		
+		if ( errno != 0 )
+		{
+			p7::throw_errno( errno );
+		}
+		
+		return resources_task;
+	}
+	
+	
 	static void make_task_depend_on_libs( const TaskPtr&                      task,
 	                                      const std::vector< plus::string >&  used_project_names,
 	                                      Platform                            platform )
@@ -866,6 +939,8 @@ namespace tool
 					
 					plus::string contents( outputDir / bundleName / "Contents" );
 					
+					const plus::string& proj_dir = project.ProjectFolder();
+					
 					plus::string info = project.ProjectFolder() / "Info.txt";
 					
 					if ( io::file_exists( info ) )
@@ -882,6 +957,17 @@ namespace tool
 					exeDir = contents / "MacOS";
 					
 					pkginfo_dir = contents;
+					
+					const plus::string resources_src = proj_dir / "Resources";
+					const plus::string resources_dst = contents / "Resources";
+					
+					if ( io::directory_exists( resources_src ) )
+					{
+						TaskPtr resources_task =
+							make_resources_task( resources_src, resources_dst );
+						
+						project_base_task->AddDependent( resources_task );
+					}
 				}
 				else if ( fileType != NULL )
 				{
