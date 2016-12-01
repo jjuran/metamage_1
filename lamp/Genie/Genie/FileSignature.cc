@@ -57,6 +57,7 @@ namespace Genie
 		
 		// Archive formats
 		{ "mBin", 'BIN+', "MacBinary III+" " archive" },
+		{ "mbim", 'BIN+', "MacBinary III+" " archive" },
 		{ "mbin", 'mBIN', "MacBinary III"  " archive" },
 		{ "zip",  'ZIP ', "zip"            " archive" },
 		{ "tar",  'TARF', "TAR"            " archive" },
