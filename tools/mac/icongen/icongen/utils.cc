@@ -9,6 +9,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// icongen
+#include "icongen/thumbnail.hh"
+
 
 static
 size_t round_up_to_x16( size_t x )
@@ -105,4 +108,69 @@ void write_PNG_image( CGContextRef c, const char* path )
 	CGImageDestinationFinalize( dest );
 	
 	CFRelease( dest );
+}
+
+static
+void write_buffer_to_file( const void* buffer, size_t n, const char* path )
+{
+	int fd = open( path, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
+	
+	if ( fd < 0 )
+	{
+		perror( path );
+		exit( 1 );
+	}
+	
+	ssize_t n_written = write( fd, buffer, n );
+	
+	if ( n_written != n )
+	{
+		perror( path );
+		exit( 1 );
+	}
+	
+	int nok = close( fd );
+	
+	if ( nok < 0 )
+	{
+		perror( path );
+		exit( 1 );
+	}
+}
+
+typedef uint8_t* (*encoder)( size_t, size_t, size_t, const uint8_t*, uint8_t* );
+
+void write_thumbnail_data( CGContextRef c, const char* path, encoder encode )
+{
+	void* data = CGBitmapContextGetData( c );
+	
+	const size_t width  = CGBitmapContextGetWidth ( c );
+	const size_t height = CGBitmapContextGetHeight( c );
+	
+	const size_t bytes_per_row = CGBitmapContextGetBytesPerRow( c );
+	
+	const size_t buffer_size = thumbnail_buffer_size( width, height );
+	
+	void* buffer = malloc( buffer_size );
+	
+	uint8_t const* src = (uint8_t*) data;
+	uint8_t*       dst = (uint8_t*) buffer;
+	
+	dst = encode( width, height, bytes_per_row, src, dst );
+	
+	const size_t n = dst - (uint8_t*) buffer;
+	
+	write_buffer_to_file( buffer, n, path );
+	
+	free( buffer );
+}
+
+void write_thumbnail( CGContextRef c, const char* path )
+{
+	write_thumbnail_data( c, path, &copy_rle_thumbnail );
+}
+
+void write_mask( CGContextRef c, const char* path )
+{
+	write_thumbnail_data( c, path, &copy_thumbnail_plane );
 }

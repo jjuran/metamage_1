@@ -15,6 +15,8 @@
 CGContextRef create_bitmap_context( size_t length );
 
 void write_PNG_image( CGContextRef c, const char* path );
+void write_thumbnail( CGContextRef c, const char* path );
+void write_mask     ( CGContextRef c, const char* path );
 
 
 #endif

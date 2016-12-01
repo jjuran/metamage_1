@@ -26,15 +26,28 @@ using namespace command::constants;
 enum
 {
 	Opt_output = 'o',
+	Opt_RLE_24 = 't',  // thumbnail 24-bit RLE-compressed planar data
+	Opt_mask_8 = 'k',  // thumbnail 8-bit mask
 	Opt_length = 'z',  // siZe, or reZolution
 };
 
 static command::option options[] =
 {
+	{ "thumbnail",   Opt_RLE_24                 },
+	{ "mask",        Opt_mask_8                 },
 	{ "output-file", Opt_output, Param_required },
 	{ "edge-length", Opt_length, Param_required },
 	{ NULL }
 };
+
+enum Image_mode
+{
+	Image_PNG,
+	Image_thumbnail,
+	Image_mask,
+};
+
+static Image_mode image_mode;
 
 const char* output_path = NULL;
 const char* edge_length = NULL;
@@ -52,6 +65,16 @@ char* const* get_options( char** argv )
 		{
 			case Opt_output:
 				output_path = command::global_result.param;
+				break;
+			
+			case Opt_RLE_24:
+				image_mode  = Image_thumbnail;
+				edge_length = "128";
+				break;
+			
+			case Opt_mask_8:
+				image_mode  = Image_mask;
+				edge_length = "128";
 				break;
 			
 			case Opt_length:
@@ -76,7 +99,23 @@ int draw_icon( drawer draw, size_t length, const char* path )
 	
 	draw( c, width, height );
 	
-	write_PNG_image( c, path );
+	switch ( image_mode )
+	{
+		case Image_PNG:
+			write_PNG_image( c, path );
+			break;
+		
+		case Image_thumbnail:
+			write_thumbnail( c, path );
+			break;
+		
+		case Image_mask:
+			write_mask( c, path );
+			break;
+		
+		default:
+			break;
+	}
 	
 	void* p = CGBitmapContextGetData( c );
 	
