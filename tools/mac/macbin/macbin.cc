@@ -103,7 +103,7 @@ namespace tool
 		
 		ASSERT( length > 0 );
 		
-		const char* extension = ".mBin";
+		const char* extension = ".mbim";  // Default MacBinary+ extension
 		
 		if ( name[ length - 1 ] == '/' )
 		{
