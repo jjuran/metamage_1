@@ -68,7 +68,8 @@ CGContextRef create_bitmap_context( size_t length )
 	return c;
 }
 
-void write_PNG_image( CGContextRef c, const char* path )
+static
+void write_image_as_type( CGContextRef c, const char* path, CFStringRef type )
 {
 	CGImageRef image = CGBitmapContextCreateImage( c );
 	
@@ -91,7 +92,7 @@ void write_PNG_image( CGContextRef c, const char* path )
 	}
 	
 	CGImageDestinationRef dest;
-	dest = CGImageDestinationCreateWithURL( url, kUTTypePNG, 1, NULL );
+	dest = CGImageDestinationCreateWithURL( url, type, 1, NULL );
 	
 	CFRelease( url );
 	
@@ -108,6 +109,16 @@ void write_PNG_image( CGContextRef c, const char* path )
 	CGImageDestinationFinalize( dest );
 	
 	CFRelease( dest );
+}
+
+void write_PNG_image( CGContextRef c, const char* path )
+{
+	write_image_as_type( c, path, kUTTypePNG );
+}
+
+void write_JPEG_2000( CGContextRef c, const char* path )
+{
+	write_image_as_type( c, path, kUTTypeJPEG2000 );
 }
 
 static

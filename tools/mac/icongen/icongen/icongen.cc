@@ -25,6 +25,8 @@ using namespace command::constants;
 
 enum
 {
+	Opt_JP2    = 'J',
+	Opt_PNG    = 'P',
 	Opt_output = 'o',
 	Opt_RLE_24 = 't',  // thumbnail 24-bit RLE-compressed planar data
 	Opt_mask_8 = 'k',  // thumbnail 8-bit mask
@@ -33,6 +35,9 @@ enum
 
 static command::option options[] =
 {
+	{ "png",         Opt_PNG                    },
+	{ "jp2",         Opt_JP2                    },
+	{ "jp2k",        Opt_JP2                    },
 	{ "thumbnail",   Opt_RLE_24                 },
 	{ "mask",        Opt_mask_8                 },
 	{ "output-file", Opt_output, Param_required },
@@ -43,6 +48,7 @@ static command::option options[] =
 enum Image_mode
 {
 	Image_PNG,
+	Image_JP2K,
 	Image_thumbnail,
 	Image_mask,
 };
@@ -65,6 +71,14 @@ char* const* get_options( char** argv )
 		{
 			case Opt_output:
 				output_path = command::global_result.param;
+				break;
+			
+			case Opt_PNG:
+				image_mode = Image_PNG;
+				break;
+			
+			case Opt_JP2:
+				image_mode = Image_JP2K;
 				break;
 			
 			case Opt_RLE_24:
@@ -103,6 +117,10 @@ int draw_icon( drawer draw, size_t length, const char* path )
 	{
 		case Image_PNG:
 			write_PNG_image( c, path );
+			break;
+		
+		case Image_JP2K:
+			write_JPEG_2000( c, path );
 			break;
 		
 		case Image_thumbnail:
