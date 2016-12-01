@@ -6,8 +6,6 @@ export RELIX_URL=http://$host/pub/channel/46e70108/
 
 test -n "$1" && export RELIX_PLATFORM="$1"
 
-export MBIN=mBin
-
 echo Checking $host for latest version...
 
 htget http://$host > /dev/null 2>&1 || failed=1
