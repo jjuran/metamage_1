@@ -11,6 +11,9 @@
 // must
 #include "must/pthread.h"
 
+// poseven
+#include "poseven/types/thread.hh"
+
 
 namespace relix
 {
@@ -48,6 +51,8 @@ namespace relix
 	
 	void pthread_yield()
 	{
+		poseven::thread::testcancel();
+		
 		unsynchronized_scope unsync;
 		
 		sched_yield();
