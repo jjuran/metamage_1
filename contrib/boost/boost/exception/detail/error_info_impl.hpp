@@ -5,13 +5,15 @@
 
 #ifndef UUID_CE6983AC753411DDA764247956D89593
 #define UUID_CE6983AC753411DDA764247956D89593
-#if defined(__GNUC__) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
+#if (__GNUC__*100+__GNUC_MINOR__>301) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
 #pragma GCC system_header
 #endif
 #if defined(_MSC_VER) && !defined(BOOST_EXCEPTION_ENABLE_WARNINGS)
 #pragma warning(push,1)
 #endif
 
+#include <boost/config.hpp>
+#include <utility>
 #include <string>
 
 namespace
@@ -25,8 +27,7 @@ boost
             {
             public:
 
-            virtual std::string tag_typeid_name() const = 0;
-            virtual std::string value_as_string() const = 0;
+            virtual std::string name_value_string() const = 0;
 
             protected:
 
@@ -42,11 +43,16 @@ boost
     error_info:
         public exception_detail::error_info_base
         {
-        public:
+		public:
 
         typedef T value_type;
 
         error_info( value_type const & value );
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+        error_info( error_info const & );
+        error_info( value_type && value ) BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT_EXPR(value_type(std::move(value))));
+        error_info( error_info && x ) BOOST_NOEXCEPT_IF(BOOST_NOEXCEPT_EXPR(value_type(std::move(x.value_))));
+#endif
         ~error_info() throw();
 
         value_type const &
@@ -61,10 +67,13 @@ boost
             return value_;
             }
 
-        private:
+		private:
+        error_info & operator=( error_info const & );
+#ifndef BOOST_NO_CXX11_RVALUE_REFERENCES
+        error_info & operator=( error_info && x );
+#endif
 
-        std::string tag_typeid_name() const;
-        std::string value_as_string() const;
+        std::string name_value_string() const;
 
         value_type value_;
         };

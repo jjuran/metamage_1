@@ -176,12 +176,23 @@
 #  define BOOST_NO_CXX11_HDR_THREAD
 #  define BOOST_NO_CXX11_HDR_TUPLE
 #  define BOOST_NO_CXX11_HDR_TYPEINDEX
-#  define BOOST_NO_STD_UNORDERED        // deprecated; see following
 #  define BOOST_NO_CXX11_HDR_UNORDERED_MAP
 #  define BOOST_NO_CXX11_HDR_UNORDERED_SET
-#  define BOOST_NO_NUMERIC_LIMITS_LOWEST
+#  define BOOST_NO_CXX11_NUMERIC_LIMITS
 #  define BOOST_NO_CXX11_ALLOCATOR
 #  define BOOST_NO_CXX11_ATOMIC_SMART_PTR
 #  define BOOST_NO_CXX11_SMART_PTR
 #  define BOOST_NO_CXX11_HDR_FUNCTIONAL
+#  define BOOST_NO_CXX11_HDR_ATOMIC
+#  define BOOST_NO_CXX11_STD_ALIGN
+#  define BOOST_NO_CXX11_ADDRESSOF
 
+#if defined(__has_include)
+#if !__has_include(<shared_mutex>)
+#  define BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#elif __cplusplus < 201402
+#  define BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#endif
+#else
+#  define BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#endif

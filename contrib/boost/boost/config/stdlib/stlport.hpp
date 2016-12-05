@@ -71,10 +71,6 @@
 #  endif
 #endif
 
-#if defined(_STLPORT_VERSION) && ((_STLPORT_VERSION < 0x500) || (_STLPORT_VERSION >= 0x520))
-#  define BOOST_NO_STD_UNORDERED
-#endif
-
 #if defined(_STLPORT_VERSION) && (_STLPORT_VERSION >= 0x520)
 #  define BOOST_HAS_TR1_UNORDERED_SET
 #  define BOOST_HAS_TR1_UNORDERED_MAP
@@ -228,21 +224,25 @@ namespace boost { using std::min; using std::max; }
 #  define BOOST_NO_CXX11_HDR_TUPLE
 #  define BOOST_NO_CXX11_HDR_TYPE_TRAITS
 #  define BOOST_NO_CXX11_HDR_TYPEINDEX
-#  define BOOST_NO_STD_UNORDERED        // deprecated; see following
 #  define BOOST_NO_CXX11_HDR_UNORDERED_MAP
 #  define BOOST_NO_CXX11_HDR_UNORDERED_SET
-#  define BOOST_NO_NUMERIC_LIMITS_LOWEST
+#  define BOOST_NO_CXX11_NUMERIC_LIMITS
 #  define BOOST_NO_CXX11_ALLOCATOR
 #  define BOOST_NO_CXX11_ATOMIC_SMART_PTR
 #  define BOOST_NO_CXX11_SMART_PTR
 #  define BOOST_NO_CXX11_HDR_FUNCTIONAL
+#  define BOOST_NO_CXX11_HDR_ATOMIC
+#  define BOOST_NO_CXX11_STD_ALIGN
+#  define BOOST_NO_CXX11_ADDRESSOF
+
+#if defined(__has_include)
+#if !__has_include(<shared_mutex>)
+#  define BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#elif __cplusplus < 201402
+#  define BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#endif
+#else
+#  define BOOST_NO_CXX14_HDR_SHARED_MUTEX
+#endif
 
 #define BOOST_STDLIB "STLPort standard library version " BOOST_STRINGIZE(__SGI_STL_PORT)
-
-
-
-
-
-
-
-
