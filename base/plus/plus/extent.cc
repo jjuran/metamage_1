@@ -12,13 +12,18 @@
 // debug
 #include "debug/assert.hh"
 
+// plus
+#include "plus/ref_count.hh"
+
 
 namespace plus
 {
 	
 	struct extent_header
 	{
-		unsigned long refcount;
+		typedef reference_count_t refcount_t;
+		
+		refcount_t    refcount;
 		unsigned long capacity;
 		destructor    dtor;
 	};
