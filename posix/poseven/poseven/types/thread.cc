@@ -5,6 +5,9 @@
 
 #include "poseven/types/thread.hh"
 
+// Standard C
+#include <signal.h>
+
 // debug
 #include "debug/assert.hh"
 
@@ -15,6 +18,8 @@
 
 namespace poseven
 {
+	
+	struct thread_cancelled {};
 	
 	static thread_key< thread* > thread_object_key;
 	
@@ -45,6 +50,10 @@ namespace poseven
 		{
 			result = that.its_entry( that.its_param );
 		}
+		catch ( const thread_cancelled& )
+		{
+			status = Thread_cancelled;
+		}
 		catch ( ... )
 		{
 			status = Thread_failed;
@@ -59,7 +68,7 @@ namespace poseven
 		return result;
 	}
 	
-	thread::thread() : its_status()
+	thread::thread() : its_status(), it_should_cancel()
 	{
 	}
 	
@@ -85,6 +94,45 @@ namespace poseven
 		throw_errno( err );
 		
 		its_status = Thread_new;
+	}
+	
+	void thread::cancel()
+	{
+		lock k( its_mutex );
+		
+		it_should_cancel = true;
+		
+		if ( interrupt_signal )
+		{
+			while ( its_status == Thread_running )
+			{
+				unlock uk( its_mutex );
+				
+				int err = pthread_kill( its_pthread, interrupt_signal );
+				
+				sched_yield();
+			}
+		}
+	}
+	
+	void thread::self_testcancel()
+	{
+		lock k( its_mutex );
+		
+		if ( it_should_cancel )
+		{
+			its_status = Thread_cancelling;
+			
+			throw thread_cancelled();
+		}
+	}
+	
+	void thread::testcancel()
+	{
+		if ( thread* that = thread_object_key.getspecific() )
+		{
+			that->self_testcancel();
+		}
 	}
 	
 	void thread::join()

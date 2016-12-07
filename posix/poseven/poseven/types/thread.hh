@@ -21,6 +21,8 @@ namespace poseven
 		Thread_none,
 		Thread_new,
 		Thread_running,
+		Thread_cancelling,
+		Thread_cancelled,
 		Thread_failed,
 		Thread_ended,
 		Thread_joined,
@@ -39,11 +41,15 @@ namespace poseven
 			thread_entry_proc  its_entry;
 			void*              its_param;
 			
+			bool it_should_cancel;
+			
 			// non-copyable
 			thread           ( const thread &);
 			thread& operator=( const thread &);
 			
 			static void* start( void* param );
+			
+			void self_testcancel();
 		
 		public:
 			struct never_created   {};
@@ -52,6 +58,8 @@ namespace poseven
 			
 			static void set_interrupt_signal( int signum );
 			
+			static void testcancel();
+			
 			thread();
 			~thread();
 			
@@ -59,6 +67,7 @@ namespace poseven
 			
 			void create( thread_entry_proc entry, void* param );
 			
+			void cancel();
 			void join();
 	};
 	
