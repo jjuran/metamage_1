@@ -162,7 +162,9 @@ const char* rep( const sockaddr_storage& addr )
 		
 		const in_port_t port = ((sockaddr_in&) addr).sin_port;
 		
-		gear::inscribe_unsigned_decimal_r( ntohs( port ), p );
+		p = gear::inscribe_unsigned_decimal_r( ntohs( port ), p );
+		
+		*p = '\0';
 		
 		return buffer;
 	}
