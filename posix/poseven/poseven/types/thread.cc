@@ -23,12 +23,19 @@ namespace poseven
 	
 	static thread_key< thread* > thread_object_key;
 	
+	static thread_key< const thread::callback_set* > scope_callbacks_key;
+	
 	static int interrupt_signal = 0;
 	
 	
 	void thread::set_interrupt_signal( int signum )
 	{
 		interrupt_signal = signum;
+	}
+	
+	void thread::set_scope_callbacks( const thread::callback_set* callbacks )
+	{
+		scope_callbacks_key.setspecific( callbacks );
 	}
 	
 	void* thread::start( void* param )
@@ -42,6 +49,11 @@ namespace poseven
 		}
 		
 		thread_object_key.setspecific( &that );
+		
+		if ( that.its_scope_callbacks )
+		{
+			that.its_scope_callbacks->enter( that );
+		}
 		
 		void*         result = NULL;
 		thread_status status = Thread_ended;
@@ -57,6 +69,11 @@ namespace poseven
 		catch ( ... )
 		{
 			status = Thread_failed;
+		}
+		
+		if ( that.its_scope_callbacks )
+		{
+			that.its_scope_callbacks->leave( that );
 		}
 		
 		{
@@ -89,6 +106,8 @@ namespace poseven
 		its_entry = entry;
 		its_param = param;
 		
+		its_scope_callbacks = scope_callbacks_key.getspecific();
+		
 		int err = pthread_create( &its_pthread, NULL, &start, this );
 		
 		throw_errno( err );
@@ -97,6 +116,23 @@ namespace poseven
 	}
 	
 	void thread::cancel()
+	{
+		const callback_set* scope = scope_callbacks_key.getspecific();
+		
+		if ( scope )
+		{
+			scope->leave( *this );
+		}
+		
+		cancel_out_of_scope();
+		
+		if ( scope )
+		{
+			scope->enter( *this );
+		}
+	}
+	
+	void thread::cancel_out_of_scope()
 	{
 		lock k( its_mutex );
 		

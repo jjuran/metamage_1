@@ -32,6 +32,15 @@ namespace poseven
 	
 	class thread
 	{
+		public:
+			typedef void (*callback_proc)( thread& t );
+			
+			struct callback_set
+			{
+				callback_proc enter;
+				callback_proc leave;
+			};
+		
 		private:
 			mutable mutex  its_mutex;
 			
@@ -41,6 +50,8 @@ namespace poseven
 			thread_entry_proc  its_entry;
 			void*              its_param;
 			
+			const callback_set*  its_scope_callbacks;
+			
 			bool it_should_cancel;
 			
 			// non-copyable
@@ -48,6 +59,8 @@ namespace poseven
 			thread& operator=( const thread &);
 			
 			static void* start( void* param );
+			
+			void cancel_out_of_scope();
 			
 			void self_testcancel();
 		
@@ -57,6 +70,8 @@ namespace poseven
 			struct already_joined  {};
 			
 			static void set_interrupt_signal( int signum );
+			
+			static void set_scope_callbacks( const callback_set* callbacks );
 			
 			static void testcancel();
 			
