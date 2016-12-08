@@ -79,6 +79,16 @@ void must_pthread_cond_signal( pthread_cond_t* cond )
 	}
 }
 
+void must_pthread_key_delete( pthread_key_t key )
+{
+	int error = pthread_key_delete( key );
+	
+	if ( error )
+	{
+		abort();
+	}
+}
+
 void must_pthread_create( pthread_t*             thread,
                           pthread_attr_t const*  attrs,
                           void*                (*start)( void* ),

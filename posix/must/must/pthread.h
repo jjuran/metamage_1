@@ -27,6 +27,8 @@ void must_pthread_cond_destroy( pthread_cond_t* cond );
 void must_pthread_cond_broadcast( pthread_cond_t* cond );
 void must_pthread_cond_signal   ( pthread_cond_t* cond );
 
+void must_pthread_key_delete( pthread_key_t key );
+
 void must_pthread_create( pthread_t*             thread,
                           pthread_attr_t const*  attrs,
                           void*                (*start)( void* ),
