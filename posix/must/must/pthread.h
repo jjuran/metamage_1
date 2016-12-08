@@ -15,10 +15,14 @@ extern "C" {
 #endif
 
 
+void must_pthread_mutex_destroy( pthread_mutex_t* mutex );
+
 void must_pthread_mutex_lock  ( pthread_mutex_t* mutex );
 void must_pthread_mutex_unlock( pthread_mutex_t* mutex );
 
 void must_pthread_cond_wait( pthread_cond_t* cond, pthread_mutex_t* mutex );
+
+void must_pthread_cond_destroy( pthread_cond_t* cond );
 
 void must_pthread_cond_broadcast( pthread_cond_t* cond );
 void must_pthread_cond_signal   ( pthread_cond_t* cond );
