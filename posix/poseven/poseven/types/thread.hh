@@ -10,6 +10,7 @@
 #include <pthread.h>
 
 // poseven
+#include "poseven/types/cond.hh"
 #include "poseven/types/mutex.hh"
 
 
@@ -42,6 +43,7 @@ namespace poseven
 		
 		private:
 			mutable mutex  its_mutex;
+			cond           its_cond;
 			
 			thread_status  its_status;
 			pthread_t      its_pthread;
