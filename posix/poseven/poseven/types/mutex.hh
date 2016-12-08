@@ -13,6 +13,7 @@
 namespace poseven
 {
 	
+	class cond;
 	class lock;
 	class unlock;
 	
@@ -37,12 +38,16 @@ namespace poseven
 	
 	class lock
 	{
+		friend class cond;
+		
 		private:
 			mutex& its_mutex;
 			
 			// non-copyable
 			lock           ( const lock& );
 			lock& operator=( const lock& );
+			
+			pthread_mutex_t& get_mutex() const  { return its_mutex.get(); }
 		
 		public:
 			lock( mutex& m );
