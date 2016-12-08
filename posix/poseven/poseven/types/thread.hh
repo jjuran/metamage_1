@@ -50,6 +50,8 @@ namespace poseven
 			struct already_created {};
 			struct already_joined  {};
 			
+			static void set_interrupt_signal( int signum );
+			
 			thread();
 			~thread();
 			

@@ -18,6 +18,13 @@ namespace poseven
 	
 	static thread_key< thread* > thread_object_key;
 	
+	static int interrupt_signal = 0;
+	
+	
+	void thread::set_interrupt_signal( int signum )
+	{
+		interrupt_signal = signum;
+	}
 	
 	void* thread::start( void* param )
 	{
