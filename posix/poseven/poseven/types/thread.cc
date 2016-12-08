@@ -10,10 +10,14 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
+#include "poseven/types/thread_key.hh"
 
 
 namespace poseven
 {
+	
+	static thread_key< thread* > thread_object_key;
+	
 	
 	void* thread::start( void* param )
 	{
@@ -24,6 +28,8 @@ namespace poseven
 			
 			that.its_status = Thread_running;
 		}
+		
+		thread_object_key.setspecific( &that );
 		
 		void*         result = NULL;
 		thread_status status = Thread_ended;
