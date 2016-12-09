@@ -36,6 +36,16 @@ namespace relix
 	
 #ifndef __RELIX__
 	
+	void acquire_sync_semaphore()
+	{
+		must_pthread_mutex_lock( &sync_mutex );
+	}
+	
+	void release_sync_semaphore()
+	{
+		must_pthread_mutex_unlock( &sync_mutex );
+	}
+	
 	void pthread_yield()
 	{
 		must_pthread_mutex_unlock( &sync_mutex );

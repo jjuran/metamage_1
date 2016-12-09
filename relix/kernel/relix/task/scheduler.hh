@@ -13,10 +13,19 @@
 namespace relix
 {
 	
+	void acquire_sync_semaphore();
+	void release_sync_semaphore();
+	
 	void pthread_wakeup();
 	void pthread_yield();
 	
 #ifdef __RELIX__
+	
+	inline
+	void acquire_sync_semaphore() {}
+	
+	inline
+	void release_sync_semaphore() {}
 	
 	inline
 	void pthread_yield() {}
