@@ -6,6 +6,7 @@
 // POSIX
 #include <errno.h>
 #include <pthread.h>
+#include <signal.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -148,6 +149,23 @@ int pthread_join( pthread_t id, void** result )
 		}
 		
 		return EINVAL;
+	}
+	
+	return ESRCH;
+}
+
+int pthread_kill( pthread_t id, int sig )
+{
+	if ( pid_t tid = pthreads[ id ].tid )
+	{
+		if ( sig < 0 )
+		{
+			return EINVAL;
+		}
+		
+		int nok = kill( tid, sig );
+		
+		return nok ? errno : 0;
 	}
 	
 	return ESRCH;
