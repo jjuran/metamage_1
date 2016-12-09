@@ -48,11 +48,9 @@ namespace relix
 	
 	void pthread_yield()
 	{
-		must_pthread_mutex_unlock( &sync_mutex );
+		unsynchronized_scope unsync;
 		
 		sched_yield();
-		
-		must_pthread_mutex_lock( &sync_mutex );
 	}
 	
 #endif

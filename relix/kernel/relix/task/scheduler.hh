@@ -58,6 +58,25 @@ namespace relix
 			}
 	};
 	
+	class unsynchronized_scope
+	{
+		private:
+			// non-copyable
+			unsynchronized_scope           ( const unsynchronized_scope& );
+			unsynchronized_scope& operator=( const unsynchronized_scope& );
+		
+		public:
+			unsynchronized_scope()
+			{
+				release_sync_semaphore();
+			}
+			
+			~unsynchronized_scope()
+			{
+				acquire_sync_semaphore();
+			}
+	};
+	
 }
 
 #endif
