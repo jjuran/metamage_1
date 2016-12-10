@@ -102,16 +102,16 @@ namespace poseven
 		
 		it_should_cancel = true;
 		
-		if ( interrupt_signal )
+		while ( its_status == Thread_running )
 		{
-			while ( its_status == Thread_running )
+			unlock uk( its_mutex );
+			
+			if ( interrupt_signal )
 			{
-				unlock uk( its_mutex );
-				
 				int err = pthread_kill( its_pthread, interrupt_signal );
-				
-				sched_yield();
 			}
+			
+			sched_yield();
 		}
 	}
 	
