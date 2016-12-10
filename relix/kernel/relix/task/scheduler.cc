@@ -80,19 +80,4 @@ namespace relix
 		active_threads.erase( tid );
 	}
 	
-	
-#ifndef __RELIX__
-	
-	synchronized_scope::synchronized_scope()
-	{
-		must_pthread_mutex_lock( &sync_mutex );
-	}
-	
-	synchronized_scope::~synchronized_scope()
-	{
-		must_pthread_mutex_unlock( &sync_mutex );
-	}
-	
-#endif
-	
 }

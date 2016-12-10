@@ -41,19 +41,21 @@ namespace relix
 	
 	class synchronized_scope
 	{
-	#ifndef __RELIX__
-		
 		private:
 			// non-copyable
 			synchronized_scope           ( const synchronized_scope& );
 			synchronized_scope& operator=( const synchronized_scope& );
 		
 		public:
-			synchronized_scope();
+			synchronized_scope()
+			{
+				acquire_sync_semaphore();
+			}
 			
-			~synchronized_scope();
-		
-	#endif
+			~synchronized_scope()
+			{
+				release_sync_semaphore();
+			}
 	};
 	
 }
