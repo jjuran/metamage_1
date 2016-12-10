@@ -21,6 +21,9 @@
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 
+// poseven
+#include "poseven/types/thread.hh"
+
 // vfs
 #include "vfs/node_fwd.hh"
 
@@ -36,6 +39,7 @@
 
 // Genie
 #include "Genie/mnt/path.hh"
+#include "Genie/mnt/spawn.hh"
 #include "Genie/mnt/root.hh"
 
 
@@ -48,6 +52,7 @@ namespace Genie
 	namespace mnt = freemount;
 	
 	using posix::listen_unix;
+	using poseven::thread;
 	
 	
 	struct wake_up_scope
@@ -72,6 +77,7 @@ namespace Genie
 	struct client_data
 	{
 		int fd;
+		int pid;
 	};
 	
 	static
@@ -83,11 +89,33 @@ namespace Genie
 	}
 	
 	static
+	void thread_scope_enter( thread& t )
+	{
+		wake_up_scope wakeup;
+		
+		relix::acquire_sync_semaphore();
+	}
+	
+	static
+	void thread_scope_leave( thread& t )
+	{
+		relix::release_sync_semaphore();
+	}
+	
+	static thread::callback_set scope_callbacks =
+	{
+		&thread_scope_enter,
+		&thread_scope_leave,
+	};
+	
+	static
 	void* client_proc( void* param )
 	{
 		client_data client = *(client_data*) param;
 		
 		delete (client_data*) param;
+		
+		thread::set_scope_callbacks( &scope_callbacks );
 		
 		const int remote_fd = client.fd;
 		
@@ -119,6 +147,8 @@ namespace Genie
 		
 		delete s;  // manipulates shared refcounts
 		
+		terminate_freemount_process( client.pid );
+		
 		return NULL;
 	}
 	
@@ -132,10 +162,16 @@ namespace Genie
 			client = new client_data();
 			
 			client->fd = remote_fd;
+			
+			op_scope sync;
+			
+			client->pid = spawn_freemount_process();
 		}
 		catch ( ... )
 		{
 			close( remote_fd );
+			
+			delete client;
 			
 			return;
 		}
