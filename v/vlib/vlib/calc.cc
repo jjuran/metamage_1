@@ -1192,7 +1192,7 @@ namespace vlib
 	static
 	void check_range_operands( const Value& left, const Value& right )
 	{
-		if ( left.type() != Value_number )
+		if ( left.type() != Value_number  &&  left.type() != Value_byte )
 		{
 			THROW( "non-integer range operand" );
 		}
