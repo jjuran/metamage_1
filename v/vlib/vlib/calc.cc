@@ -1301,6 +1301,9 @@ namespace vlib
 					}
 					// not reached
 				
+				case Value_packed:
+					THROW( "operator not defined for packed values" );
+				
 				case Value_string:
 					THROW( "operator not defined for string values" );
 				
