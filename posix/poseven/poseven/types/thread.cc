@@ -23,7 +23,21 @@ namespace poseven
 	
 	static thread_key< thread* > thread_object_key;
 	
+#ifdef __RELIX__
+	
+	template < class T >
+	struct fake_thread_key
+	{
+		static T getspecific()  { return NULL; }
+	};
+	
+	static fake_thread_key< const thread::callback_set* > scope_callbacks_key;
+	
+#else
+	
 	static thread_key< const thread::callback_set* > scope_callbacks_key;
+	
+#endif
 	
 	static int interrupt_signal = 0;
 	
@@ -33,10 +47,14 @@ namespace poseven
 		interrupt_signal = signum;
 	}
 	
+#ifndef __RELIX__
+	
 	void thread::set_scope_callbacks( const thread::callback_set* callbacks )
 	{
 		scope_callbacks_key.setspecific( callbacks );
 	}
+	
+#endif
 	
 	void* thread::start( void* param )
 	{
