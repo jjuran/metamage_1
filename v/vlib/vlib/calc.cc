@@ -1190,11 +1190,16 @@ namespace vlib
 	}
 	
 	static
-	void check_range_operand( const Value& point )
+	void check_range_operands( const Value& left, const Value& right )
 	{
-		if ( point.type() != Value_number )
+		if ( left.type() != Value_number )
 		{
 			THROW( "non-integer range operand" );
+		}
+		
+		if ( right.type() != left.type() )
+		{
+			THROW( "type-mismatched range operands" );
 		}
 	}
 	
@@ -1304,8 +1309,7 @@ namespace vlib
 			
 			case Op_gamut:
 			case Op_delta:
-				check_range_operand( left  );
-				check_range_operand( right );
+				check_range_operands( left, right );
 				
 				goto no_op;
 			
