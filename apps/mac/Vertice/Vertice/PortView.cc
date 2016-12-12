@@ -583,8 +583,7 @@ namespace Vertice
 	                                           itsSelectedContext(             ),
 	                                           itsAnaglyphMode   ( kNoAnaglyph )
 	{
-		Resize( bounds.right - bounds.left,
-		        bounds.bottom - bounds.top );
+		SetBounds( bounds );
 	}
 	
 	static V::Point3D::Type PortFromScreen_Point( const V::Point3D::Type&  point,
@@ -1722,16 +1721,16 @@ namespace Vertice
 		return std::equal( (const SInt16*)&a, (const SInt16*)&a + 4, (const SInt16*)&b );
 	}
 	
-	void PortView::Resize( short width, short height )
+	void PortView::SetBounds( const Rect& bounds )
 	{
 		using namespace nucleus::operators;
 		
-		//if ( newBounds == itsBounds )  return;
+		//if ( bounds == itsBounds )  return;
 		
-		itsBounds.right = itsBounds.left + width;
-		itsBounds.bottom = itsBounds.top + height;
+		itsBounds = bounds;
 		
-		N::InvalRect( itsBounds );  // Invalidate the entire window, not just the new area
+		const short width  = bounds.right;
+		const short height = bounds.bottom;
 		
 		itsScreen2Port = ScreenToPortTransform( width, height );
 		

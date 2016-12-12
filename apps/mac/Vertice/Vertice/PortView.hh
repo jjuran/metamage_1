@@ -66,7 +66,7 @@ namespace Vertice
 			bool KeyDown( const EventRecord& event );
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::CommandCode code )  { return false; }
-			void Resize( short width, short height );
+			void SetBounds( const Rect& bounds );
 			void Paint();
 			void Redraw();
 			void Draw( const Rect& bounds, bool erasing );
