@@ -1026,7 +1026,7 @@ namespace Pedestal
 					break;
 				
 				case kAEQuitApplication:
-					gRunState.quitRequested = true;
+					Quit();
 					break;
 				
 				default:
@@ -1095,7 +1095,7 @@ namespace Pedestal
 				}
 				else
 				{
-					gRunState.quitRequested = true;
+					Quit();
 				}
 				break;
 			
