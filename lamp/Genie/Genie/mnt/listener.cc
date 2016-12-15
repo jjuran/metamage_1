@@ -21,6 +21,10 @@
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 
+// jack
+#include "jack/fifo.hh"
+#include "jack/interface.hh"
+
 // poseven
 #include "poseven/types/thread.hh"
 
@@ -279,7 +283,9 @@ namespace Genie
 	static
 	void maintain_service_symlink()
 	{
-		const char* path = service_path();
+		jack::interface ji = service_path();
+		
+		const char* path = ji.socket_path();
 		
 		/*
 			TODO:
@@ -293,9 +299,20 @@ namespace Genie
 				date and has the lowest PID), update the symlink.
 		*/
 		
+		
+		
 		unlink( path );
 		
 		symlink( socket_path(), path );
+		
+		static int fifo_fd = -1;
+		
+		if ( fifo_fd >= 0 )
+		{
+			close( fifo_fd );
+		}
+		
+		fifo_fd = jack::fifo_ready( ji.fifo_path(), 0622 );
 	}
 	
 	void start_gui_service()

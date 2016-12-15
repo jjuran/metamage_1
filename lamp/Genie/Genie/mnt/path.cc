@@ -49,7 +49,7 @@ plus::string make_service_path()
 		path = home;
 	}
 	
-	path += FS_SUBPATH "/gui.socket";
+	path += FS_SUBPATH "/gui";
 	
 	return path.move();
 }
