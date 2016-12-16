@@ -58,6 +58,8 @@ def time_pieces (secs)
 	var days  = hours div 24
 	    hours = hours mod 24
 	
+	const wday = days mod 7 + 4
+	
 	var quads = days div q
 	    days  = days mod q
 	
@@ -82,7 +84,7 @@ def time_pieces (secs)
 	
 	days += 1 + +(leap_diff == 0)
 	
-	return 1970 + years, month, days, hours, mins, secs
+	return 1970 + years, month, days, hours, mins, secs, wday
 }
 
 def tens (x)
@@ -93,7 +95,7 @@ def tens (x)
 export
 def stamp
 {
-	const y, const m, const d, const H, const M, const S = time_pieces _
+	const y, const m, const d, const H, const M, const S, ... = time_pieces _
 	
 	const date = "-".join (     y, tens m, tens d)
 	const time = ":".join (tens H, tens M, tens S)
