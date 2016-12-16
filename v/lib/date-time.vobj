@@ -93,6 +93,28 @@ def tens (x)
 }
 
 export
+def gmtime
+{
+	const y, var m, const d, const H, const M, const S, const w = time_pieces _
+	
+	--m
+	
+	const fields =
+	(
+		sec:  S,
+		min:  M,
+		hour: H,
+		mday: d,
+		mon:  m,
+		year: y,
+		wday: w,
+		zone: utc,
+	)
+	
+	return record fields
+}
+
+export
 def stamp
 {
 	const y, const m, const d, const H, const M, const S, ... = time_pieces _
