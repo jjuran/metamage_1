@@ -1,6 +1,18 @@
 module date-time
 
 export
+const days =
+[
+	"Sunday",
+	"Monday",
+	"Tuesday",
+	"Wednesday",
+	"Thursday",
+	"Friday",
+	"Saturday",
+]
+
+export
 const months =
 [
 	"January",
