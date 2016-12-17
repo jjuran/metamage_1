@@ -130,8 +130,8 @@ namespace vlib
 		Op_keyvar,
 		Op_contains,
 		
-	// end right-associative
 		Op_end,
+	// end right-associative
 		
 		Op_frame,  // links caller's stack to a new stack frame
 		Op_scope,  // links a set of symbols to the code declaring them
@@ -181,7 +181,7 @@ namespace vlib
 			return false;
 		}
 		
-		return op <= Op_named_unary  ||  (op >= Op_mapping  &&  op < Op_end);
+		return op <= Op_named_unary  ||  (op >= Op_mapping  &&  op <= Op_end);
 	}
 	
 	inline
