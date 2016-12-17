@@ -137,6 +137,8 @@ namespace raster
 		uint8_t   weight;  // bits per pixel
 		uint8_t   model;   // raster_model
 		uint16_t  flags;
+		
+		uint64_t  reserved;
 	};
 	
 	struct raster_metadata
