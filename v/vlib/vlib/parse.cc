@@ -270,14 +270,14 @@ namespace vlib
 			}
 		}
 		
-		fold_ops_and_add( Op_end );
+		fold_ops_and_add( op );
 		
 		if ( stack.size() < 2  ||  stack.end()[ -2 ].op != op )
 		{
 			throw unbalanced_right_delimiter( its_source );
 		}
 		
-		// Remove the sentinel and clear Op_end.
+		// Remove the sentinel and clear the group op we just added.
 		
 		stack.end()[ -2 ].v  = stack.end()[ -1 ].v;
 		stack.end()[ -2 ].op = Op_none;
