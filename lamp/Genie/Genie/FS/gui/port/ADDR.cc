@@ -308,7 +308,7 @@ namespace Genie
 		
 		params.itsWindow = owner;
 		
-		owner->SetView( params.itsSubview );
+		Ped::set_window_view( window, params.itsSubview.get() );
 		
 		// We could copy from above but the actual bounds could be different
 		bounds = N::GetPortBounds( GetWindowPort( window ) );
@@ -797,7 +797,7 @@ namespace Genie
 		
 		if ( Ped::Window* owner = params.itsWindow.get() )
 		{
-			owner->SetView( params.itsSubview );
+			Ped::set_window_view( owner->Get(), params.itsSubview.get() );
 		}
 	}
 	

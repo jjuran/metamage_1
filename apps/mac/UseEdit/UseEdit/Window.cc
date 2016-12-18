@@ -440,7 +440,7 @@ namespace UseEdit
 		
 		Owner owner( new Ped::Window( Ped::CreateWindow( bounds, title ) ) );
 		
-		owner->SetView( MakeView() );
+		Ped::set_window_view( owner->Get(), MakeView().get() );
 		
 		return owner;
 	}

@@ -99,7 +99,9 @@ namespace Vertice
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
 		
-		SetView( boost::intrusive_ptr< Ped::View >( new PortView( bounds ) ) );
+		boost::intrusive_ptr< Ped::View > view( new PortView( bounds ) );
+		
+		Ped::set_window_view( Get(), view.get() );
 	}
 	
 	class Parser

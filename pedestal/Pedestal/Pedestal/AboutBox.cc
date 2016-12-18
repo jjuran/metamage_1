@@ -111,7 +111,9 @@ namespace Pedestal
 		
 		set_window_closed_proc( owner->Get(), &AboutClosed );
 		
-		owner->SetView( boost::intrusive_ptr< View >( new AboutBoxView() ) );
+		boost::intrusive_ptr< View > view( new AboutBoxView() );
+		
+		set_window_view( owner->Get(), view.get() );
 		
 		return owner;
 	}
