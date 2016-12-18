@@ -13,6 +13,7 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // Pedestal
+#include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
 

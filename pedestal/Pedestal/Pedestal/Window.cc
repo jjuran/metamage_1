@@ -111,11 +111,6 @@ namespace Pedestal
 		window_removed( itsWindowRef.get() );
 	}
 	
-	void Window::SetView( boost::intrusive_ptr< View > const& view )
-	{
-		set_window_view( itsWindowRef.get(), view.get() );
-	}
-	
 	
 	void window_activated( WindowRef window, bool activating )
 	{

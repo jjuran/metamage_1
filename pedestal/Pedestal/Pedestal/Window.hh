@@ -6,14 +6,8 @@
 #ifndef PEDESTAL_WINDOW_HH
 #define PEDESTAL_WINDOW_HH
 
-// Debug
-#include "debug/boost_assert.hh"
-
 // plus
 #include "plus/ref_count.hh"
-
-// Boost
-#include <boost/intrusive_ptr.hpp>
 
 // nucleus
 #ifndef NUCLEUS_OWNED_HH
@@ -23,11 +17,6 @@
 // Nitrogen
 #ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
 #include "Mac/Windows/Types/WindowRef.hh"
-#endif
-
-// Pedestal
-#ifndef PEDESTAL_VIEW_HH
-#include "Pedestal/View.hh"
 #endif
 
 
@@ -56,8 +45,6 @@ namespace Pedestal
 			~Window();
 			
 			WindowRef Get() const  { return itsWindowRef; }
-			
-			void SetView( boost::intrusive_ptr< View > const& view );
 	};
 	
 	void window_activated( WindowRef window, bool activating );
