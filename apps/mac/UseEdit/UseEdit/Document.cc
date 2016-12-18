@@ -18,6 +18,9 @@
 #include "MacFiles/Classic.hh"
 #include "MacFiles/Unicode.hh"
 
+// Pedestal
+#include "Pedestal/WindowStorage.hh"
+
 
 namespace UseEdit
 {

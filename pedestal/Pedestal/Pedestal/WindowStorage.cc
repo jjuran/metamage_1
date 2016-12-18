@@ -19,6 +19,9 @@
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
+// Pedestal
+#include "Pedestal/View.hh"
+
 
 namespace MacGlue
 {
@@ -38,6 +41,7 @@ namespace Pedestal
 		kWindowCreator = ':-)\xCA',  // Yes, I actually registered this
 		
 		kWindowOwnerTag = 'This',  // Address of owning object
+		kWindowViewTag  = 'View',  // Address of view object, if any
 		
 		kWindowClosedProcTag  = 'Clsd',
 		kWindowResizedProcTag = 'Rszd',
@@ -48,12 +52,14 @@ namespace Pedestal
 	struct WindowStorage
 	{
 		Window*             owner;
+		View*               view;
 		WindowClosed_proc   closed_proc;
 		WindowResized_proc  resized_proc;
 		WindowAttributes    attributes;
+		
 		WindowRecord        window;
 		
-		WindowStorage() : closed_proc(), resized_proc()
+		WindowStorage() : view(), closed_proc(), resized_proc()
 		{
 		}
 	};
@@ -151,6 +157,80 @@ namespace Pedestal
 		err = GetWindowProperty( window,
 		                         kWindowCreator,
 		                         kWindowOwnerTag,
+		                         sizeof result,
+		                         NULL,
+		                         &result );
+		
+		return result;
+	}
+	
+	void set_window_view( WindowRef window, View* view )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			View* old_view = storage->view;
+			
+			storage->view = view;
+			
+			if ( view )
+			{
+				intrusive_ptr_add_ref( view );
+			}
+			
+			if ( old_view )
+			{
+				intrusive_ptr_release( old_view );
+			}
+		}
+		
+		return;
+		
+	#endif
+		
+		OSStatus err;
+		
+		View* old_view = get_window_view( window );
+		
+		err = SetWindowProperty( window,
+		                         kWindowCreator,
+		                         kWindowViewTag,
+		                         sizeof view,
+		                         &view );
+		
+		Mac::ThrowOSStatus( err );
+		
+		if ( view )
+		{
+			intrusive_ptr_add_ref( view );
+		}
+		
+		if ( old_view )
+		{
+			intrusive_ptr_release( old_view );
+		}
+	}
+	
+	View* get_window_view( WindowRef window )
+	{
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
+		{
+			return storage->view;
+		}
+		
+		return NULL;
+		
+	#endif
+		
+		OSStatus err;
+		
+		View* result = NULL;
+		err = GetWindowProperty( window,
+		                         kWindowCreator,
+		                         kWindowViewTag,
 		                         sizeof result,
 		                         NULL,
 		                         &result );
@@ -263,6 +343,8 @@ namespace Pedestal
 	
 	void close_window( WindowRef window )
 	{
+		set_window_view( window, NULL );
+		
 		if ( WindowClosed_proc proc = get_window_closed_proc( window ) )
 		{
 			proc( window );

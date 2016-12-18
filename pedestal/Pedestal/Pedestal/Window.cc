@@ -27,16 +27,6 @@ namespace Pedestal
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	View* get_window_view( WindowRef window )
-	{
-		if ( Window* owner = get_window_owner( window ) )
-		{
-			return owner->GetView().get();
-		}
-		
-		return NULL;
-	}
-	
 	static
 	bool window_has_grow_icon( WindowRef window )
 	{
@@ -119,6 +109,11 @@ namespace Pedestal
 	Window::~Window()
 	{
 		window_removed( itsWindowRef.get() );
+	}
+	
+	void Window::SetView( boost::intrusive_ptr< View > const& view )
+	{
+		set_window_view( itsWindowRef.get(), view.get() );
 	}
 	
 	

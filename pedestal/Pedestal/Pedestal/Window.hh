@@ -49,8 +49,6 @@ namespace Pedestal
 	{
 		private:
 			nucleus::owned< WindowRef > itsWindowRef;
-			
-			boost::intrusive_ptr< View > itsView;
 		
 		public:
 			Window( nucleus::owned< WindowRef > window );
@@ -59,12 +57,8 @@ namespace Pedestal
 			
 			WindowRef Get() const  { return itsWindowRef; }
 			
-			boost::intrusive_ptr< View >& GetView()  { return itsView; }
-			
-			void SetView( boost::intrusive_ptr< View > const& view )  { GetView() = view; }
+			void SetView( boost::intrusive_ptr< View > const& view );
 	};
-	
-	View* get_window_view( WindowRef window );
 	
 	void window_activated( WindowRef window, bool activating );
 	
