@@ -42,6 +42,20 @@ namespace Mac
 		kWindowNoUpdatesAttribute         = ::kWindowNoUpdatesAttribute,
 		kWindowNoActivatesAttribute       = ::kWindowNoActivatesAttribute,
 		kWindowOpaqueForEventsAttribute   = ::kWindowOpaqueForEventsAttribute,
+		
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		kWindowCompositingAttribute       = ::kWindowCompositingAttribute,
+		
+	#endif
+		
+	#ifdef MAC_OS_X_VERSION_10_7
+		
+		kWindowHighResolutionCapableAttribute =
+			::kWindowHighResolutionCapableAttribute,
+		
+	#endif
+		
 		kWindowNoShadowAttribute          = ::kWindowNoShadowAttribute,
 		kWindowHideOnSuspendAttribute     = ::kWindowHideOnSuspendAttribute,
 		kWindowStandardHandlerAttribute   = ::kWindowStandardHandlerAttribute,
