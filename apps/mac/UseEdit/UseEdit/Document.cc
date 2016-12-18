@@ -82,7 +82,9 @@ namespace UseEdit
 	
 	static void LoadText( Ped::Window& window, const plus::string& text )
 	{
-		View& scrollframe = reinterpret_cast< View& >( *window.GetView() );
+		Ped::View* view = Ped::get_window_view( window.Get() );
+		
+		View& scrollframe = reinterpret_cast< View& >( *view );
 		
 		SetText( scrollframe, text );
 	}

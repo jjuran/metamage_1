@@ -59,11 +59,7 @@ namespace Genie
 	
 	static Ped::View& RootView()
 	{
-		namespace N = Nitrogen;
-		
-		Ped::Window* base = Ped::get_window_owner( N::FrontWindow() );
-		
-		return *base->GetView();
+		return *Ped::get_window_view( FrontWindow() );
 	}
 	
 	static Ped::View* AutoFocus( Ped::View* current )

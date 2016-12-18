@@ -190,7 +190,9 @@ namespace Genie
 	{
 		if ( window.get() )
 		{
-			uninstall_view_from_port( window->GetView(), key );
+			Ped::View* view = Ped::get_window_view( window->Get() );
+			
+			uninstall_view_from_port( view, key );
 			
 			window.reset();
 		}
