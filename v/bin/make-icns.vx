@@ -120,6 +120,17 @@ def pack_icon_file
 {
 	const path = _
 	
+	const data = load path
+	
+	if data[ 0 -> 4 ] == "icns" then
+	{
+		const size = eval "0x" hex data[ 4 -> 8 ]
+		
+		assert size > 8
+		
+		return data[ 8 -> size ]
+	}
+	
 	const dot    = find_last_char_in_string( '.', path )
 	const hyphen = find_last_char_in_string( '-', path )
 	
@@ -130,7 +141,7 @@ def pack_icon_file
 	
 	const icon_type = icon_type_of desc
 	
-	return pack_one( icon_type => load path )
+	return pack_one( icon_type => data )
 }
 
 if const icons = argv[ 1 -> argv.length ] map pack_icon_file then
