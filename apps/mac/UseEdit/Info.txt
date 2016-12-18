@@ -1,3 +1,4 @@
 CFBundleExecutable:  "UseEdit"
 CFBundleName:        "UseEdit"
 CFBundlePackageType: "APPL"
+NSHighResolutionCapable: true

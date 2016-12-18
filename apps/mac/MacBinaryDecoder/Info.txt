@@ -20,3 +20,4 @@ CFBundleDocumentTypes:
 		CFBundleTypeRole:        "Viewer"
 	]
 ]
+NSHighResolutionCapable: true
