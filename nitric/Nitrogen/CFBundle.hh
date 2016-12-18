@@ -39,77 +39,111 @@
 #endif
 
 namespace Nitrogen
-  {
-   template <> struct CFType_Traits< CFBundleRef >: Basic_CFType_Traits< CFBundleRef, ::CFBundleGetTypeID > {};
-
-  }
+{
+	
+	template <>
+	struct CFType_Traits< CFBundleRef > :
+		Basic_CFType_Traits< CFBundleRef, ::CFBundleGetTypeID >  {};
+	
+}
 
 namespace nucleus
-  {
-   template <> struct disposer_class< CFBundleRef >: disposer_class< Nitrogen::CFTypeRef >  {};
-  }
+{
+	
+	template <>
+	struct disposer_class< CFBundleRef > :
+		disposer_class< Nitrogen::CFTypeRef >  {};
+	
+}
 
 namespace Nitrogen
-  {
-   
-   class CFBundleGetMainBundle_Failed {};
-   CFBundleRef CFBundleGetMainBundle();
-
-   class CFBundleGetBundleWithIdentifier_Failed {};
-   CFBundleRef CFBundleGetBundleWithIdentifier( CFStringRef bundleID );
-
-   using ::CFBundleGetAllBundles;  // Is this really a "Get", not a "Copy"?
-   
-   class CFBundleCreate_Failed {};
-   nucleus::owned<CFBundleRef> CFBundleCreate( CFAllocatorRef allocator, CFURLRef bundleURL );
-   
-   inline nucleus::owned<CFBundleRef> CFBundleCreate( CFURLRef bundleURL )
-     {
-      return Nitrogen::CFBundleCreate( kCFAllocatorDefault, bundleURL );
-     }
-
-   class CFBundleCreateBundlesFromDirectory_Failed {};
-   nucleus::owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFAllocatorRef allocator,
-                                                         CFURLRef       directoryURL,
-                                                         CFStringRef    bundleType );
-   
-   inline nucleus::owned<CFArrayRef> CFBundleCreateBundlesFromDirectory( CFURLRef    directoryURL,
-                                                                CFStringRef bundleType )
-     {
-      return Nitrogen::CFBundleCreateBundlesFromDirectory( kCFAllocatorDefault, directoryURL, bundleType );
-     }
-
-   class CFBundleCopyBundleURL_Failed {};
-   nucleus::owned<CFURLRef> CFBundleCopyBundleURL( CFBundleRef bundle );
-
-   class CFBundleGetValueForInfoDictionaryKey_Failed {};
-   CFTypeRef CFBundleGetValueForInfoDictionaryKey( CFBundleRef bundle,
-                                                   CFStringRef key );
-
-   class CFBundleGetInfoDictionary_Failed {};
-   CFDictionaryRef CFBundleGetInfoDictionary( CFBundleRef bundle );
-
-   class CFBundleGetLocalInfoDictionary_Failed {};
-   CFDictionaryRef CFBundleGetLocalInfoDictionary( CFBundleRef bundle );
-
-   /* ... */
-   
-   class CFBundleCopyResourceURL_Failed {};
-   nucleus::owned<CFURLRef> CFBundleCopyResourceURL( CFBundleRef bundle,
-                                            CFStringRef resourceName,
-                                            CFStringRef resourceType,
-                                            CFStringRef subDirName );
-   
-   /* ... */
-   
-   class CFBundleGetFunctionPointerForName_Failed {};
-   void *CFBundleGetFunctionPointerForName( CFBundleRef bundle, CFStringRef functionName );
-
-   template < class DesiredType >
-   DesiredType CFBundleGetFunctionPointerForName( CFBundleRef bundle, CFStringRef functionName )
-     {
-      return reinterpret_cast< DesiredType >( Nitrogen::CFBundleGetFunctionPointerForName( bundle, functionName ) );
-     }
-  }
+{
+	
+	class CFBundleGetMainBundle_Failed {};
+	CFBundleRef CFBundleGetMainBundle();
+	
+	class CFBundleGetBundleWithIdentifier_Failed {};
+	CFBundleRef CFBundleGetBundleWithIdentifier( CFStringRef bundleID );
+	
+	using ::CFBundleGetAllBundles;  // Is this really a "Get", not a "Copy"?
+	
+	class CFBundleCreate_Failed {};
+	nucleus::owned< CFBundleRef >
+	//
+	CFBundleCreate( CFAllocatorRef allocator, CFURLRef bundleURL );
+	
+	inline
+	nucleus::owned< CFBundleRef > CFBundleCreate( CFURLRef bundleURL )
+	{
+		return Nitrogen::CFBundleCreate( kCFAllocatorDefault, bundleURL );
+	}
+	
+	class CFBundleCreateBundlesFromDirectory_Failed {};
+	
+	nucleus::owned< CFArrayRef >
+	//
+	CFBundleCreateBundlesFromDirectory( CFAllocatorRef  allocator,
+	                                    CFURLRef        directoryURL,
+	                                    CFStringRef     bundleType );
+	
+	inline
+	nucleus::owned< CFArrayRef >
+	//
+	CFBundleCreateBundlesFromDirectory( CFURLRef     directoryURL,
+	                                    CFStringRef  bundleType )
+	{
+		return Nitrogen::CFBundleCreateBundlesFromDirectory( kCFAllocatorDefault,
+		                                                     directoryURL,
+		                                                     bundleType );
+	}
+	
+	class CFBundleCopyBundleURL_Failed {};
+	
+	nucleus::owned< CFURLRef >
+	//
+	CFBundleCopyBundleURL( CFBundleRef bundle );
+	
+	class CFBundleGetValueForInfoDictionaryKey_Failed {};
+	
+	CFTypeRef CFBundleGetValueForInfoDictionaryKey( CFBundleRef  bundle,
+	                                                CFStringRef  key );
+	
+	class CFBundleGetInfoDictionary_Failed {};
+	
+	CFDictionaryRef CFBundleGetInfoDictionary( CFBundleRef bundle );
+	
+	class CFBundleGetLocalInfoDictionary_Failed {};
+	
+	CFDictionaryRef CFBundleGetLocalInfoDictionary( CFBundleRef bundle );
+	
+	/* ... */
+	
+	class CFBundleCopyResourceURL_Failed {};
+	
+	nucleus::owned< CFURLRef >
+	//
+	CFBundleCopyResourceURL( CFBundleRef  bundle,
+	                         CFStringRef  resourceName,
+	                         CFStringRef  resourceType = NULL,
+	                         CFStringRef  subDirName   = NULL );
+	
+	/* ... */
+	
+	class CFBundleGetFunctionPointerForName_Failed {};
+	
+	void* CFBundleGetFunctionPointerForName( CFBundleRef  bundle,
+	                                         CFStringRef  name );
+	
+	template < class DesiredType >
+	inline
+	DesiredType CFBundleGetFunctionPointerForName( CFBundleRef  bundle,
+	                                               CFStringRef  name )
+	{
+		void* ptr = Nitrogen::CFBundleGetFunctionPointerForName( bundle, name );
+		
+		return reinterpret_cast< DesiredType >( ptr );
+	}
+	
+}
 
 #endif
