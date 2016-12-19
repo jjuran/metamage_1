@@ -368,6 +368,56 @@ namespace Nitrogen
 	
 	NUCLEUS_DEFINE_FLAG_OPS( PlotIconRefFlags )
 	
+	void PlotIconRefInContext( CGContextRef       context,
+	                           const CGRect&      rect,
+	                           IconAlignmentType  align,
+	                           IconTransformType  xform,
+	                           const RGBColor*    color,
+	                           PlotIconRefFlags   flags,
+	                           IconRef            icon );
+	
+	inline
+	void PlotIconRefInContext( CGContextRef       context,
+	                           const CGRect&      rect,
+	                           IconAlignmentType  align,
+	                           IconTransformType  xform,
+	                           const RGBColor&    color,
+	                           PlotIconRefFlags   flags,
+	                           IconRef            icon )
+	{
+		PlotIconRefInContext( context,
+		                      rect,
+		                      align,
+		                      xform,
+		                      &color,
+		                      flags,
+		                      icon );
+	}
+	
+	inline
+	void PlotIconRefInContext( CGContextRef       context,
+	                           const CGRect&      rect,
+	                           IconAlignmentType  align,
+	                           IconTransformType  xform,
+	                           PlotIconRefFlags   flags,
+	                           IconRef            icon )
+	{
+		PlotIconRefInContext( context, rect, align, xform, NULL, flags, icon );
+	}
+	
+	inline
+	void PlotIconRefInContext( CGContextRef   context,
+	                           const CGRect&  rect,
+	                           IconRef        icon )
+	{
+		PlotIconRefInContext( context,
+		                      rect,
+		                      IconAlignmentType(),
+		                      IconTransformType(),
+		                      PlotIconRefFlags(),
+		                      icon );
+	}
+	
 	// ... Icon Families
 	// ... Initialization and Termination
 	// ... Conversions

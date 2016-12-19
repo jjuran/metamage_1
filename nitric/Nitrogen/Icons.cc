@@ -152,6 +152,25 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
+	void PlotIconRefInContext( CGContextRef       context,
+	                           const CGRect&      rect,
+	                           IconAlignmentType  align,
+	                           IconTransformType  xform,
+	                           const RGBColor*    color,
+	                           PlotIconRefFlags   flags,
+	                           IconRef            icon )
+	{
+		OSStatus err = ::PlotIconRefInContext( context,
+		                                       &rect,
+		                                       align,
+		                                       xform,
+		                                       color,
+		                                       flags,
+		                                       icon );
+		
+		Mac::ThrowOSStatus( err );
+	}
+	
 	nucleus::owned< IconRef > GetIconRef( Mac::FSVolumeRefNum vRefNum, Mac::FSCreator creator, Mac::FSType iconType )
 	{
 		IconRef result;
