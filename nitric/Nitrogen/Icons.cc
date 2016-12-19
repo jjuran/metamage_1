@@ -152,114 +152,144 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
-   nucleus::owned<IconRef> GetIconRef( Mac::FSVolumeRefNum vRefNum, Mac::FSCreator creator, Mac::FSType iconType )
-     {
-      IconRef result;
-      ThrowOSStatus( ::GetIconRef( vRefNum, creator, iconType, &result ) );
-      return nucleus::owned<IconRef>::seize( result );
-     }
-
-   GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile )
-     {
-      IconRef icon;
-      SInt16 label;
-      ThrowOSStatus( ::GetIconRefFromFile( &theFile, &icon, &label ) );
-      return GetIconRefFromFile_Result( nucleus::owned<IconRef>::seize( icon ),
-                                        IconLabel( label ) );
-     }
-
-   nucleus::owned<IconRef> GetIconRef( Mac::FSCreator creator, Mac::FSType iconType )
-     {
-      return GetIconRef( kOnSystemDisk, creator, iconType );
-     }
-
-   nucleus::owned<IconRef> GetIconRef( Mac::FSType iconType )
-     {
-      return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
-     }
-
+	nucleus::owned< IconRef > GetIconRef( Mac::FSVolumeRefNum vRefNum, Mac::FSCreator creator, Mac::FSType iconType )
+	{
+		IconRef result;
+		
+		ThrowOSStatus( ::GetIconRef( vRefNum, creator, iconType, &result ) );
+		
+		return nucleus::owned< IconRef >::seize( result );
+	}
+	
+	GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile )
+	{
+		IconRef icon;
+		SInt16 label;
+		
+		ThrowOSStatus( ::GetIconRefFromFile( &theFile, &icon, &label ) );
+		
+		return GetIconRefFromFile_Result( nucleus::owned< IconRef >::seize( icon ),
+		                                  IconLabel( label ) );
+	}
+	
+	nucleus::owned< IconRef > GetIconRef( Mac::FSCreator  creator,
+	                                      Mac::FSType     iconType )
+	{
+		return GetIconRef( kOnSystemDisk, creator, iconType );
+	}
+	
+	nucleus::owned< IconRef > GetIconRef( Mac::FSType iconType )
+	{
+		return GetIconRef( kOnSystemDisk, kSystemIconsCreator, iconType );
+	}
+	
 	nucleus::owned< IconRef > GetIconRefFromFolder( Mac::FSVolumeRefNum      vRefNum,
 	                                                Mac::FSDirID             parentFolderID,
 	                                                Mac::FSDirID             folderID,
 	                                                Mac::FSIOFileAttributes  attributes,
 	                                                Mac::FSUserPrivileges    accessPrivileges )
-     {
-      IconRef result;
-      ThrowOSStatus( ::GetIconRefFromFolder( vRefNum,
-                                             parentFolderID,
-                                             folderID,
-                                             attributes,
-                                             accessPrivileges,
-                                             &result ) );
-      return nucleus::owned<IconRef>::seize( result );
-     }
-
-   GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                         UniCharCount           inFileNameLength,
-                                                         const UniChar         *inFileName,
-                                                         FSCatalogInfoBitmap    inWhichInfo,
-                                                         const FSCatalogInfo&   inCatalogInfo,
-                                                         IconServicesUsageFlags inUsageFlags )
-     {
-      IconRef icon;
-      SInt16 label;
-      ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
-                                               inFileNameLength,
-                                               inFileName,
-                                               inWhichInfo,
-                                               &inCatalogInfo,
-                                               inUsageFlags,
-                                               &icon,
-                                               &label ) );
-      return GetIconRefFromFile_Result( nucleus::owned<IconRef>::seize( icon ),
-                                        IconLabel( label ) );
-     }
-
-   GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                         UniCharCount           inFileNameLength,
-                                                         const UniChar         *inFileName,
-                                                         IconServicesUsageFlags inUsageFlags )
-     {
-      IconRef icon;
-      SInt16 label;
-      ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
-                                               inFileNameLength,
-                                               inFileName,
-                                               0,
-                                               0,
-                                               inUsageFlags,
-                                               &icon,
-                                               &label ) );
-      return GetIconRefFromFile_Result( nucleus::owned<IconRef>::seize( icon ),
-                                        IconLabel( label ) );
-     }
-
-   nucleus::owned<IconRef> RegisterIconRefFromFSRef( Mac::FSCreator creator, Mac::FSType iconType, const FSRef& iconFile )
-     {
-      IconRef result;
-      ThrowOSStatus( ::RegisterIconRefFromFSRef( creator, iconType, &iconFile, &result ) );
-      return nucleus::owned<IconRef>::seize( result );
-     }
-
-   nucleus::owned<IconRef> RegisterIconRefFromIconFile( Mac::FSCreator  creator,
-                                                        Mac::FSType     iconType,
-                                                        const FSSpec&   iconFile )
-	  {
-      IconRef result;
-      ThrowOSStatus( ::RegisterIconRefFromIconFile( creator, iconType, &iconFile, &result ) );
-      return nucleus::owned<IconRef>::seize( result );
-     }
-   
-   void RegisterIconManagerErrors()
-     {
-      RegisterOSStatus< paramErr               >();
-      RegisterOSStatus< memFullErr             >();
-      RegisterOSStatus< memWZErr               >();
-      RegisterOSStatus< resNotFound            >();
-      RegisterOSStatus< noMaskFoundErr         >();
-      RegisterOSStatus< invalidIconRefErr      >();
-      RegisterOSStatus< noSuchIconErr          >();
-      RegisterOSStatus< noIconDataAvailableErr >();
-      RegisterOSStatus< afpIconTypeError       >();
-     }
+	{
+		IconRef result;
+		
+		ThrowOSStatus( ::GetIconRefFromFolder( vRefNum,
+		                                       parentFolderID,
+		                                       folderID,
+		                                       attributes,
+		                                       accessPrivileges,
+		                                       &result ) );
+		
+		return nucleus::owned< IconRef >::seize( result );
+	}
+	
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        UniCharCount           inFileNameLength,
+	                        const UniChar         *inFileName,
+	                        FSCatalogInfoBitmap    inWhichInfo,
+	                        const FSCatalogInfo&   inCatalogInfo,
+	                        IconServicesUsageFlags inUsageFlags )
+	{
+		IconRef icon;
+		SInt16 label;
+		ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
+		                                         inFileNameLength,
+		                                         inFileName,
+		                                         inWhichInfo,
+		                                         &inCatalogInfo,
+		                                         inUsageFlags,
+		                                         &icon,
+		                                         &label ) );
+		return GetIconRefFromFile_Result( nucleus::owned< IconRef >::seize( icon ),
+		                                  IconLabel( label ) );
+	}
+	
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        UniCharCount           inFileNameLength,
+	                        const UniChar         *inFileName,
+	                        IconServicesUsageFlags inUsageFlags )
+	{
+		IconRef icon;
+		SInt16 label;
+		
+		ThrowOSStatus( ::GetIconRefFromFileInfo( &inRef,
+		                                         inFileNameLength,
+		                                         inFileName,
+		                                         0,
+		                                         0,
+		                                         inUsageFlags,
+		                                         &icon,
+		                                         &label ) );
+		
+		return GetIconRefFromFile_Result( nucleus::owned< IconRef >::seize( icon ),
+		                                  IconLabel( label ) );
+	}
+	
+	nucleus::owned< IconRef >
+	//
+	RegisterIconRefFromFSRef( Mac::FSCreator  creator,
+	                          Mac::FSType     iconType,
+	                          const FSRef&    iconFile )
+	{
+		IconRef result;
+	
+		ThrowOSStatus( ::RegisterIconRefFromFSRef( creator,
+		                                           iconType,
+		                                           &iconFile,
+		                                           &result ) );
+		
+		return nucleus::owned< IconRef >::seize( result );
+	}
+	
+	nucleus::owned< IconRef >
+	//
+	RegisterIconRefFromIconFile( Mac::FSCreator  creator,
+	                             Mac::FSType     iconType,
+	                             const FSSpec&   iconFile )
+	{
+		IconRef result;
+		
+		ThrowOSStatus( ::RegisterIconRefFromIconFile( creator,
+		                                              iconType,
+		                                              &iconFile,
+		                                              &result ) );
+		
+		return nucleus::owned< IconRef >::seize( result );
+	}
+	
+	void RegisterIconManagerErrors()
+	{
+		RegisterOSStatus< paramErr               >();
+		RegisterOSStatus< memFullErr             >();
+		RegisterOSStatus< memWZErr               >();
+		RegisterOSStatus< resNotFound            >();
+		RegisterOSStatus< noMaskFoundErr         >();
+		RegisterOSStatus< invalidIconRefErr      >();
+		RegisterOSStatus< noSuchIconErr          >();
+		RegisterOSStatus< noIconDataAvailableErr >();
+		RegisterOSStatus< afpIconTypeError       >();
+	}
+	
 }

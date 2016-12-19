@@ -161,7 +161,8 @@ namespace Nitrogen
 }
 
 namespace nucleus
-   {
+{
+	
 	template <> struct disposer_class< Nitrogen::PlainIconHandle  > : disposer_class< Nitrogen::Handle > {};
 	template <> struct disposer_class< Nitrogen::MaskedIconHandle > : disposer_class< Nitrogen::Handle > {};
 	template <> struct disposer_class< Nitrogen::SmallIconHandle  > : disposer_class< Nitrogen::Handle > {};
@@ -179,10 +180,11 @@ namespace nucleus
 			::DisposeCIcon( h );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
+{
 	
 	nucleus::owned< CIconHandle > GetCIcon( ResID iconID );
 	
@@ -210,10 +212,11 @@ namespace Nitrogen
 	
 	typedef IconSuiteRef IconCacheRef;
 	
-  }
+}
 
 namespace nucleus
-  {
+{
+	
 	template <> struct disposer< Nitrogen::IconSuiteRef >
 	{
 		typedef Nitrogen::IconSuiteRef  argument_type;
@@ -234,10 +237,11 @@ namespace nucleus
 			(void) ::DisposeIconSuite( i, disposeData );
 		}
 	};
-  }
+	
+}
 
 namespace Nitrogen
-  {
+{
 	
 	struct DisposeIconSuiteButNotData
 	{
@@ -254,10 +258,10 @@ namespace Nitrogen
 		}
 	};
 	
-  }
+}
 
 namespace Nitrogen
-  {
+{
 	
 	void PlotIconID( const Rect&        rect,
 	                 IconAlignmentType  align,
@@ -279,7 +283,9 @@ namespace Nitrogen
 	};
 	
 	template < bool disposeData >
-	nucleus::owned< IconSuiteRef, typename DisposeData_Traits< disposeData >::Disposer > NewIconSuite()
+	nucleus::owned< IconSuiteRef, typename DisposeData_Traits< disposeData >::Disposer >
+	//
+	NewIconSuite()
 	{
 		typedef typename DisposeData_Traits< disposeData >::Disposer Disposer;
 		
@@ -363,134 +369,162 @@ namespace Nitrogen
 	// ... Conversions
 	// ... Reference counting
 	
-   struct GetIconRefFromFile_Result
-     {
-      nucleus::owned<IconRef> theIconRef;
-      IconLabel theLabel;
-      
-      GetIconRefFromFile_Result( nucleus::owned<IconRef> icon, IconLabel label )
-        : theIconRef( icon ),
-          theLabel( label )
-        {}
-      
-      GetIconRefFromFile_Result( nucleus::resource_transfer< GetIconRefFromFile_Result > r )
-        : theIconRef( r->theIconRef ),
-          theLabel( r->theLabel )
-        {}
-      
-      operator nucleus::resource_transfer< GetIconRefFromFile_Result >()
-        {
-         return nucleus::resource_transfer< GetIconRefFromFile_Result >( *this );
-        }
-      
-      operator nucleus::owned<IconRef>()            { return theIconRef; }
-      operator IconRef() const             { return theIconRef; }
-     };
-
-   GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
-
+	struct GetIconRefFromFile_Result
+	{
+		nucleus::owned< IconRef > theIconRef;
+		IconLabel theLabel;
+		
+		GetIconRefFromFile_Result( nucleus::owned< IconRef > icon, IconLabel label )
+		  : theIconRef( icon ),
+		    theLabel( label )
+		{
+		}
+		
+		GetIconRefFromFile_Result( nucleus::resource_transfer< GetIconRefFromFile_Result > r )
+		  : theIconRef( r->theIconRef ),
+		    theLabel( r->theLabel )
+		{
+		}
+		
+		operator nucleus::resource_transfer< GetIconRefFromFile_Result >()
+		{
+			return nucleus::resource_transfer< GetIconRefFromFile_Result >( *this );
+		}
+		
+		operator nucleus::owned< IconRef >()  { return theIconRef; }
+		operator IconRef() const              { return theIconRef; }
+	};
+	
+	GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
+	
 	nucleus::owned< IconRef > GetIconRef( Mac::FSVolumeRefNum  vRefNum,
 	                                      Mac::FSCreator       creator,
 	                                      Mac::FSType          iconType );
 	
-	nucleus::owned< IconRef > GetIconRef( Mac::FSCreator creator, Mac::FSType iconType );
+	nucleus::owned< IconRef > GetIconRef( Mac::FSCreator  creator,
+	                                      Mac::FSType     iconType );
 	
 	nucleus::owned< IconRef > GetIconRef( Mac::FSType iconType );
 	
-	nucleus::owned<IconRef> GetIconRefFromFolder( Mac::FSVolumeRefNum      vRefNum,
-	                                              Mac::FSDirID             parentFolderID,
-	                                              Mac::FSDirID             folderID,
-	                                              Mac::FSIOFileAttributes  attributes,
-	                                              Mac::FSUserPrivileges    accessPrivileges );
-
-   typedef GetIconRefFromFile_Result GetIconRefFromFileInfo_Result;
-   
-   GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                         UniCharCount           inFileNameLength,
-                                                         const UniChar         *inFileName,
-                                                         FSCatalogInfoBitmap    inWhichInfo,
-                                                         const FSCatalogInfo&   inCatalogInfo,
-                                                         IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
-
-   GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                         UniCharCount           inFileNameLength,
-                                                         const UniChar         *inFileName,
-                                                         IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
-
-   inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                FSCatalogInfoBitmap    inWhichInfo,
-                                                                const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
-     {
-      return GetIconRefFromFileInfo( inRef, 0, 0, inWhichInfo, inCatalogInfo, inUsageFlags );
-     }
-
-   inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
-     {
-      return GetIconRefFromFileInfo( inRef, 0, 0, inUsageFlags );
-     }
-
-   template < class UniString >
-   inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                const UniString&       inFileName,
-                                                                FSCatalogInfoBitmap    inWhichInfo,
-                                                                const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
-     {
+	nucleus::owned< IconRef > GetIconRefFromFolder( Mac::FSVolumeRefNum      vRefNum,
+	                                                Mac::FSDirID             parentFolderID,
+	                                                Mac::FSDirID             folderID,
+	                                                Mac::FSIOFileAttributes  attributes,
+	                                                Mac::FSUserPrivileges    accessPrivileges );
+	
+	typedef GetIconRefFromFile_Result GetIconRefFromFileInfo_Result;
+	
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        UniCharCount           inFileNameLength,
+	                        const UniChar         *inFileName,
+	                        FSCatalogInfoBitmap    inWhichInfo,
+	                        const FSCatalogInfo&   inCatalogInfo,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
+	
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        UniCharCount           inFileNameLength,
+	                        const UniChar         *inFileName,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag );
+	
+	inline
+	GetIconRefFromFileInfo_Result
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        FSCatalogInfoBitmap    inWhichInfo,
+	                        const FSCatalogInfo&   inCatalogInfo,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+	{
+		return GetIconRefFromFileInfo( inRef, 0, 0, inWhichInfo, inCatalogInfo, inUsageFlags );
+	}
+	
+	inline
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+	{
+		return GetIconRefFromFileInfo( inRef, 0, 0, inUsageFlags );
+	}
+	
+	template < class UniString >
+	inline
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        const UniString&       inFileName,
+	                        FSCatalogInfoBitmap    inWhichInfo,
+	                        const FSCatalogInfo&   inCatalogInfo,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+	{
 		using iota::get_string_data;
 		using iota::get_string_size;
 		
-      return GetIconRefFromFileInfo( inRef,
-                                     get_string_size( inFileName ),
-                                     get_string_data( inFileName ),
-                                     inWhichInfo,
-                                     inCatalogInfo,
-                                     inUsageFlags );
-     }
-
-   template < class UniString >
-   inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                const UniString&       inFileName,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
-     {
+		return GetIconRefFromFileInfo( inRef,
+		                               get_string_size( inFileName ),
+		                               get_string_data( inFileName ),
+		                               inWhichInfo,
+		                               inCatalogInfo,
+		                               inUsageFlags );
+	}
+	
+	template < class UniString >
+	inline
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        const UniString&       inFileName,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+	{
 		using iota::get_string_data;
 		using iota::get_string_size;
 		
-      return GetIconRefFromFileInfo( inRef,
-                                     get_string_size( inFileName ),
-                                     get_string_data( inFileName ),
-                                     inUsageFlags );
-     }
-
-   inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                const HFSUniStr255&    inFileName,
-                                                                FSCatalogInfoBitmap    inWhichInfo,
-                                                                const FSCatalogInfo&   inCatalogInfo,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
-     {
-      return GetIconRefFromFileInfo( inRef,
-                                     inFileName.length,
-                                     inFileName.unicode,
-                                     inWhichInfo,
-                                     inCatalogInfo,
-                                     inUsageFlags );
-     }
-
-   inline GetIconRefFromFileInfo_Result GetIconRefFromFileInfo( const FSRef&           inRef,
-                                                                const HFSUniStr255&    inFileName,
-                                                                IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
-     {
-      return GetIconRefFromFileInfo( inRef,
-                                     inFileName.length,
-                                     inFileName.unicode,
-                                     inUsageFlags );
-     }
+		return GetIconRefFromFileInfo( inRef,
+		                               get_string_size( inFileName ),
+		                               get_string_data( inFileName ),
+		                               inUsageFlags );
+	}
+	
+	inline
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        const HFSUniStr255&    inFileName,
+	                        FSCatalogInfoBitmap    inWhichInfo,
+	                        const FSCatalogInfo&   inCatalogInfo,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+	{
+		return GetIconRefFromFileInfo( inRef,
+		                               inFileName.length,
+		                               inFileName.unicode,
+		                               inWhichInfo,
+		                               inCatalogInfo,
+		                               inUsageFlags );
+	}
+	
+	inline
+	GetIconRefFromFileInfo_Result
+	//
+	GetIconRefFromFileInfo( const FSRef&           inRef,
+	                        const HFSUniStr255&    inFileName,
+	                        IconServicesUsageFlags inUsageFlags = kIconServicesNormalUsageFlag )
+	{
+		return GetIconRefFromFileInfo( inRef,
+		                               inFileName.length,
+		                               inFileName.unicode,
+		                               inUsageFlags );
+	}
 	
 	// RegisterIconRefFromIconFamily
 	// RegisterIconRefFromResource
 	
-   nucleus::owned<IconRef> RegisterIconRefFromFSRef( Mac::FSCreator creator, Mac::FSType iconType, const FSRef& iconFile );
+	nucleus::owned< IconRef >
+	//
+	RegisterIconRefFromFSRef( Mac::FSCreator  creator,
+	                          Mac::FSType     iconType,
+	                          const FSRef&    iconFile );
 	
 	// UnregisterIconRef
 	// UpdateIconRef
@@ -503,14 +537,21 @@ namespace Nitrogen
 	// ... Flushing IconRef data
 	// ... Controling custom icons
 	
-	nucleus::owned< IconRef > RegisterIconRefFromIconFile( Mac::FSCreator  creator,
-	                                                       Mac::FSType     iconType,
-	                                                       const FSSpec&   iconFile );
-
-   inline nucleus::owned<IconRef> RegisterIconRefFromIconFile( const FSSpec& iconFile )
-     {
-      return RegisterIconRefFromIconFile( kSystemIconsCreator, Mac::FSType( 0 ), iconFile );
-     }
+	nucleus::owned< IconRef >
+	//
+	RegisterIconRefFromIconFile( Mac::FSCreator  creator,
+	                             Mac::FSType     iconType,
+	                             const FSSpec&   iconFile );
+	
+	inline
+	nucleus::owned< IconRef >
+	//
+	RegisterIconRefFromIconFile( const FSSpec& iconFile )
+	{
+		return RegisterIconRefFromIconFile( kSystemIconsCreator,
+		                                    Mac::FSType( 0 ),
+		                                    iconFile );
+	}
 	
 	// ReadIconFile
 	// ReadIconFromFSRef
