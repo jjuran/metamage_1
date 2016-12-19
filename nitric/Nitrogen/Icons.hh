@@ -359,6 +359,10 @@ namespace Nitrogen
 	
 	enum PlotIconRefFlags
 	{
+		kPlotIconRefNormalFlags = ::kPlotIconRefNormalFlags,
+		kPlotIconRefNoImage     = ::kPlotIconRefNoImage,
+		kPlotIconRefNoMask      = ::kPlotIconRefNoMask,
+		
 		kPlotIconRefFlags_Max = nucleus::enumeration_traits< ::PlotIconRefFlags >::max
 	};
 	
