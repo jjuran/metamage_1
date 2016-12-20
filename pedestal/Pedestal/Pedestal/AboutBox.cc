@@ -28,15 +28,20 @@ namespace Pedestal
 	
 	
 	const int kAboutBoxIconEdgeLength       =  64;
+	
+	const int kAboutBoxIconWidth            = kAboutBoxIconEdgeLength;
 	const int kAboutBoxIconHorizontalMargin = 110;
+	
 	const int kAboutBoxTopMargin            =   8;
+	const int kAboutBoxIconHeight           = kAboutBoxIconEdgeLength;
 	const int kAboutBoxBottomMargin         =  20;
 	
-	const int kAboutBoxWidth = kAboutBoxIconEdgeLength
+	const int kAboutBoxWidth = kAboutBoxIconWidth
 	                         + kAboutBoxIconHorizontalMargin * 2;
 	
-	const int kAboutBoxHeight = kAboutBoxIconEdgeLength
-	                          + kAboutBoxTopMargin + kAboutBoxBottomMargin;
+	const int kAboutBoxHeight = kAboutBoxTopMargin
+	                          + kAboutBoxIconHeight
+	                          + kAboutBoxBottomMargin;
 	
 	static const RGBColor kAboutBoxBackgroundColor = { 0xEEEE, 0xEEEE, 0xEEEE };
 	
@@ -80,8 +85,8 @@ namespace Pedestal
 		{
 			top,
 			left,
-			top  + kAboutBoxIconEdgeLength,
-			left + kAboutBoxIconEdgeLength,
+			top  + kAboutBoxIconHeight,
+			left + kAboutBoxIconWidth,
 		};
 		
 		N::PlotIconID( iconBounds,
@@ -95,13 +100,13 @@ namespace Pedestal
 		CGContextSetGrayFillColor( context, 1.0 * 0xEEEE / 0xFFFF, 1.0 );
 		CGContextFillRect( context, bounds );
 		
-		const float x = bounds.origin.x + kAboutBoxIconHorizontalMargin;
-		const float y = bounds.origin.y + kAboutBoxTopMargin;
+		float x = bounds.origin.x + kAboutBoxIconHorizontalMargin;
+		float y = bounds.origin.y + kAboutBoxTopMargin;
 		
 		const CGRect iconBounds =
 		{
 			{ x, y },
-			{ kAboutBoxIconEdgeLength, kAboutBoxIconEdgeLength },
+			{ kAboutBoxIconWidth, kAboutBoxIconHeight },
 		};
 		
 		HIViewPlotIconRef( context, iconBounds, BundleIcon() );
