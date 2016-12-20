@@ -1,5 +1,8 @@
+/* Owner resource */
+
 type ':-)Ê' as 'STR ';
-resource ':-)Ê' (0) { "Yet another Pedestal hack" };
+
+resource ':-)Ê' (0) { "Made with Pedestal, by Josh Juran" };
 
 data 'ICN#' (128) {
 	$"0000 0000 0000 0000 0001 0000 0006 C000"            /* ..............À. */
