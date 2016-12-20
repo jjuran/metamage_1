@@ -1,3 +1,12 @@
+/* Owner resource */
+
+type 'mBin' as 'STR ';
+
+resource 'mBin' (0, "MacBinary Decoder")
+{
+	"Copyright © 2007-2016 Josh Juran"
+};
+
 data 'BNDL' (128) {
 	$"6D42 696E 0000 0001 4652 4546 0003 0000"            /* mBin....FREF.... */
 	$"0080 0001 0081 0002 0082 0003 0083 4943"            /* .€......‚...ƒIC */
@@ -494,9 +503,3 @@ data 'ics8' (130) {
 	$"00FF 0000 002B 2B2B 2B2B 2B2B 0000 FF00"            /* .ÿ...+++++++..ÿ. */
 	$"00FF FFFF FFFF FFFF FFFF FFFF FFFF FF00"            /* .ÿÿÿÿÿÿÿÿÿÿÿÿÿÿ. */
 };
-
-data 'mBin' (0, "Owner resource") {
-	$"1959 6574 2061 6E6F 7468 6572 2050 6564"            /* .Yet another Ped */
-	$"6573 7461 6C20 6861 636B"                           /* estal hack */
-};
-
