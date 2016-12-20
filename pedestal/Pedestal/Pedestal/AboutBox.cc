@@ -14,6 +14,7 @@
 
 // Pedestal
 #include "Pedestal/BundleIcon.hh"
+#include "Pedestal/CenteredText.hh"
 #include "Pedestal/HIViewPlotIconRef.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
@@ -31,9 +32,12 @@ namespace Pedestal
 	
 	const int kAboutBoxIconWidth            = kAboutBoxIconEdgeLength;
 	const int kAboutBoxIconHorizontalMargin = 110;
+	const int kAboutBoxTextHorizontalMargin =  24;
 	
 	const int kAboutBoxTopMargin            =   8;
 	const int kAboutBoxIconHeight           = kAboutBoxIconEdgeLength;
+	const int kAboutBoxIconToTextGap        =  12;
+	const int kAboutBoxAppNameHeight        =  19;
 	const int kAboutBoxBottomMargin         =  20;
 	
 	const int kAboutBoxWidth = kAboutBoxIconWidth
@@ -41,7 +45,12 @@ namespace Pedestal
 	
 	const int kAboutBoxHeight = kAboutBoxTopMargin
 	                          + kAboutBoxIconHeight
+	                          + kAboutBoxIconToTextGap
+	                          + kAboutBoxAppNameHeight
 	                          + kAboutBoxBottomMargin;
+	
+	const int kAboutBoxTextWidth = kAboutBoxWidth
+	                             - kAboutBoxTextHorizontalMargin * 2;
 	
 	static const RGBColor kAboutBoxBackgroundColor = { 0xEEEE, 0xEEEE, 0xEEEE };
 	
@@ -95,6 +104,22 @@ namespace Pedestal
 		               N::ResID( 128 ) );
 	}
 	
+	static
+	CFStringRef GetBundleName()
+	{
+		CFTypeRef value;
+		value = CFBundleGetValueForInfoDictionaryKey( CFBundleGetMainBundle(),
+		                                              CFSTR( "CFBundleName" ) );
+		
+		return (CFStringRef) value;
+	}
+	
+	static inline
+	void DrawApplicationName( CFStringRef text, const Rect& bounds )
+	{
+		DrawCenteredText( text, bounds, "Lucida Grande Bold", 14 );
+	}
+	
 	void AboutBoxView::DrawInContext( CGContextRef context, CGRect bounds )
 	{
 		CGContextSetGrayFillColor( context, 1.0 * 0xEEEE / 0xFFFF, 1.0 );
@@ -110,6 +135,21 @@ namespace Pedestal
 		};
 		
 		HIViewPlotIconRef( context, iconBounds, BundleIcon() );
+		
+		x = bounds.origin.x + kAboutBoxTextHorizontalMargin;
+		y += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
+		
+		Rect nameBounds =
+		{
+			(short) y,
+			(short) x,
+			(short) y + kAboutBoxAppNameHeight,
+			(short) x + kAboutBoxTextWidth,
+		};
+		
+		CGContextSetGrayFillColor( context, 0.0, 1.0 );  // black
+		
+		DrawApplicationName( GetBundleName(), nameBounds );
 	}
 	
 	
@@ -148,8 +188,6 @@ namespace Pedestal
 		n::owned< WindowRef > window = CreateWindow( Mac::kDocumentWindowClass,
 		                                             attrs,
 		                                             bounds );
-		
-		SetWTitle( window, "\p" "About" );
 		
 	#endif
 		
