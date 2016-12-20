@@ -40,6 +40,9 @@
 #include "Pedestal/WindowStorage.hh"
 
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+
 namespace Pedestal
 {
 	
@@ -140,6 +143,7 @@ namespace Pedestal
 		};
 		
 		TextFont( 0 );  // Use system font
+		TextSize( 0 );
 		
 		const OSType creator = GetCreatorFromBNDL();
 		
@@ -148,6 +152,21 @@ namespace Pedestal
 		GetOwnerResourceName( creator, name );
 		
 		TETextBox( name + 1, name[ 0 ], &nameBounds, teJustCenter );
+		
+		top += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
+		
+		Rect detailBounds =
+		{
+			top,
+			left,
+			top  + kAboutBoxDetailHeight,
+			left + kAboutBoxTextWidth,
+		};
+		
+		TextFont( 1 );  // Use application font, which should be Geneva
+		TextSize( 9 );
+		
+		TETextBox( STR_LEN( VERSION_FALLBACK ), &detailBounds, teJustCenter );
 	}
 	
 	static inline
