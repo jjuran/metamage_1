@@ -1,3 +1,12 @@
+/* Owner resource */
+
+type 'Poof' as 'STR ';
+
+resource 'Poof' (0, "MacRelix")
+{
+	"Copyright © 1999-2016 Josh Juran"
+};
+
 resource 'ICN#' (128) {
 	{	/* array: 2 elements */
 		/* [1] */
@@ -713,12 +722,3 @@ resource 'FREF' (131) {
 	3,
 	""
 };
-
-type 'Poof' {
-	pstring;
-};
-
-resource 'Poof' (0, "Owner resource") {
-	"MacRelix by Josh Juran"
-};
-
