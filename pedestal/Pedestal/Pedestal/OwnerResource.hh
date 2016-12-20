@@ -22,6 +22,7 @@ namespace Pedestal
 	
 	OSType GetCreatorFromBNDL();
 	
+	bool GetOwnerResourceName( OSType creator, Str255 name );
 	bool GetOwnerResourceData( OSType creator, Str255 data );
 	
 }
