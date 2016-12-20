@@ -52,6 +52,8 @@ namespace Pedestal
 	                          + kAboutBoxAppNameHeight
 	                          + kAboutBoxInterTextGap
 	                          + kAboutBoxDetailHeight
+	                          + kAboutBoxInterTextGap
+	                          + kAboutBoxDetailHeight
 	                          + kAboutBoxBottomMargin;
 	
 	const int kAboutBoxTextWidth = kAboutBoxWidth
@@ -116,9 +118,9 @@ namespace Pedestal
 	}
 	
 	static
-	void DrawApplicationDetail( CFStringRef    text,
-	                            const CGRect&  bounds,
-	                            CGContextRef   context )
+	void DrawAboutBoxDetail( CFStringRef    text,
+	                         const CGRect&  bounds,
+	                         CGContextRef   context )
 	{
 		/*
 			We can't use MLTE/TXN + ATSU here, because "Lucida Grande Regular"
@@ -188,7 +190,11 @@ namespace Pedestal
 			kAboutBoxDetailHeight,
 		};
 		
-		DrawApplicationDetail( GetBundleVersion(), detailBounds, context );
+		DrawAboutBoxDetail( GetBundleVersion(), detailBounds, context );
+		
+		detailBounds.origin.y += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
+		
+		DrawAboutBoxDetail( GetBundleGetInfoString(), detailBounds, context );
 	}
 	
 	

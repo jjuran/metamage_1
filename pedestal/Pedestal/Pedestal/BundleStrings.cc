@@ -54,4 +54,12 @@ namespace Pedestal
 		return GetBundleString( key, alt );
 	}
 	
+	CFStringRef GetBundleGetInfoString()
+	{
+		CFStringRef key = CFSTR( "CFBundleGetInfoString" );
+		CFStringRef alt = CFSTR( "" );
+		
+		return GetBundleString( key, alt );
+	}
+	
 }

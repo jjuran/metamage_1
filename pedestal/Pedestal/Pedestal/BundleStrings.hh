@@ -24,6 +24,7 @@ namespace Pedestal
 	
 	CFStringRef GetBundleName();
 	CFStringRef GetBundleVersion();
+	CFStringRef GetBundleGetInfoString();
 	
 }
 
