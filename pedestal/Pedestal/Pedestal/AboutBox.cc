@@ -39,7 +39,7 @@ namespace Pedestal
 	const int kAboutBoxIconToTextGap        =  12;
 	const int kAboutBoxAppNameHeight        =  19;
 	const int kAboutBoxInterTextGap         =   8;
-	const int kAboutBoxVersionHeight        =  12;
+	const int kAboutBoxDetailHeight         =  12;
 	const int kAboutBoxBottomMargin         =  20;
 	
 	const int kAboutBoxWidth = kAboutBoxIconWidth
@@ -50,7 +50,7 @@ namespace Pedestal
 	                          + kAboutBoxIconToTextGap
 	                          + kAboutBoxAppNameHeight
 	                          + kAboutBoxInterTextGap
-	                          + kAboutBoxVersionHeight
+	                          + kAboutBoxDetailHeight
 	                          + kAboutBoxBottomMargin;
 	
 	const int kAboutBoxTextWidth = kAboutBoxWidth
@@ -109,28 +109,38 @@ namespace Pedestal
 	}
 	
 	static
-	CFStringRef GetBundleName()
+	CFStringRef GetBundleString( CFStringRef key )
 	{
 		CFTypeRef value;
 		value = CFBundleGetValueForInfoDictionaryKey( CFBundleGetMainBundle(),
-		                                              CFSTR( "CFBundleName" ) );
+		                                              key );
 		
 		return (CFStringRef) value;
 	}
 	
 	static
+	CFStringRef GetBundleString( CFStringRef key, CFStringRef alternate )
+	{
+		CFStringRef value = GetBundleString( key );
+		
+		return value ? value : alternate;
+	}
+	
+	static
+	CFStringRef GetBundleName()
+	{
+		CFStringRef key = CFSTR( "CFBundleName" );
+		
+		return GetBundleString( key );
+	}
+	
+	static
 	CFStringRef GetBundleVersion()
 	{
-		CFTypeRef value;
-		value = CFBundleGetValueForInfoDictionaryKey( CFBundleGetMainBundle(),
-		                                              CFSTR( "CFBundleVersion" ) );
+		CFStringRef key = CFSTR( "CFBundleVersion" );
+		CFStringRef alt = CFSTR( "(A work in progress)" );
 		
-		if ( value == NULL )
-		{
-			value = CFSTR( "(A work in progress)" );
-		}
-		
-		return (CFStringRef) value;
+		return GetBundleString( key, alt );
 	}
 	
 	static inline
@@ -188,7 +198,7 @@ namespace Pedestal
 		HIViewPlotIconRef( context, iconBounds, BundleIcon() );
 		
 		x = bounds.origin.x + kAboutBoxTextHorizontalMargin;
-		y += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
+		y += kAboutBoxIconHeight + kAboutBoxIconToTextGap;
 		
 		Rect nameBounds =
 		{
@@ -204,15 +214,15 @@ namespace Pedestal
 		
 		y += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
 		
-		const CGRect versionBounds =
+		CGRect detailBounds =
 		{
 			x,
 			y,
 			kAboutBoxTextWidth,
-			kAboutBoxVersionHeight,
+			kAboutBoxDetailHeight,
 		};
 		
-		DrawApplicationDetail( GetBundleVersion(), versionBounds, context );
+		DrawApplicationDetail( GetBundleVersion(), detailBounds, context );
 	}
 	
 	
