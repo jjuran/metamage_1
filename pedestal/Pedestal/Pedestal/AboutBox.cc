@@ -148,8 +148,10 @@ namespace Pedestal
 		const OSType creator = GetCreatorFromBNDL();
 		
 		Str255 name = "\p" "Pedestal";
+		Str255 data = "\p";
 		
 		GetOwnerResourceName( creator, name );
+		GetOwnerResourceData( creator, data );
 		
 		TETextBox( name + 1, name[ 0 ], &nameBounds, teJustCenter );
 		
@@ -167,6 +169,11 @@ namespace Pedestal
 		TextSize( 9 );
 		
 		TETextBox( STR_LEN( VERSION_FALLBACK ), &detailBounds, teJustCenter );
+		
+		detailBounds.top    += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
+		detailBounds.bottom += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
+		
+		TETextBox( data + 1, data[ 0 ], &detailBounds, teJustCenter );
 	}
 	
 	static inline
