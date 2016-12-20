@@ -28,6 +28,9 @@
 // mac-qd-utils
 #include "mac_qd/plot_icon_id.hh"
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
@@ -152,6 +155,12 @@ namespace Pedestal
 		TextFont( 0 );  // Use system font
 		TextSize( 0 );
 		
+		if ( TARGET_API_MAC_CARBON  &&  mac::sys::gestalt( 'sysv' ) >= 0x1000 )
+		{
+			TextSize( 14 );
+			TextFace( bold );
+		}
+		
 		const OSType creator = GetCreatorFromBNDL();
 		
 		Str255 name = "\p" "Pedestal";
@@ -184,6 +193,11 @@ namespace Pedestal
 			top  + kAboutBoxDetailHeight,
 			left + kAboutBoxTextWidth,
 		};
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			TextFace( 0 );
+		}
 		
 		TextFont( 1 );  // Use application font, which should be Geneva
 		TextSize( 9 );
