@@ -38,6 +38,8 @@ namespace Pedestal
 	const int kAboutBoxIconHeight           = kAboutBoxIconEdgeLength;
 	const int kAboutBoxIconToTextGap        =  12;
 	const int kAboutBoxAppNameHeight        =  19;
+	const int kAboutBoxInterTextGap         =   8;
+	const int kAboutBoxVersionHeight        =  12;
 	const int kAboutBoxBottomMargin         =  20;
 	
 	const int kAboutBoxWidth = kAboutBoxIconWidth
@@ -47,6 +49,8 @@ namespace Pedestal
 	                          + kAboutBoxIconHeight
 	                          + kAboutBoxIconToTextGap
 	                          + kAboutBoxAppNameHeight
+	                          + kAboutBoxInterTextGap
+	                          + kAboutBoxVersionHeight
 	                          + kAboutBoxBottomMargin;
 	
 	const int kAboutBoxTextWidth = kAboutBoxWidth
@@ -114,10 +118,57 @@ namespace Pedestal
 		return (CFStringRef) value;
 	}
 	
+	static
+	CFStringRef GetBundleVersion()
+	{
+		CFTypeRef value;
+		value = CFBundleGetValueForInfoDictionaryKey( CFBundleGetMainBundle(),
+		                                              CFSTR( "CFBundleVersion" ) );
+		
+		if ( value == NULL )
+		{
+			value = CFSTR( "(A work in progress)" );
+		}
+		
+		return (CFStringRef) value;
+	}
+	
 	static inline
 	void DrawApplicationName( CFStringRef text, const Rect& bounds )
 	{
 		DrawCenteredText( text, bounds, "Lucida Grande Bold", 14 );
+	}
+	
+	static
+	void DrawApplicationDetail( CFStringRef    text,
+	                            const CGRect&  bounds,
+	                            CGContextRef   context )
+	{
+		/*
+			We can't use MLTE/TXN + ATSU here, because "Lucida Grande Regular"
+			doesn't exist, and "Lucida Grande" is too bold.  Also, there's a
+			perfectly suitable theme font for the purpose.
+		*/
+		
+	#ifdef MAC_OS_X_VERSION_10_3
+		
+		OSStatus err;
+		
+		HIThemeTextInfo textInfo =
+		{
+			kHIThemeTextInfoVersionZero,
+			0,
+			kThemeLabelFont,  // Lucida Grande Regular 10
+			kHIThemeTextHorizontalFlushCenter,
+		};
+		
+		err = HIThemeDrawTextBox( text,
+		                          &bounds,
+		                          &textInfo,
+		                          context,
+		                          kHIThemeOrientationNormal );
+		
+	#endif
 	}
 	
 	void AboutBoxView::DrawInContext( CGContextRef context, CGRect bounds )
@@ -150,6 +201,18 @@ namespace Pedestal
 		CGContextSetGrayFillColor( context, 0.0, 1.0 );  // black
 		
 		DrawApplicationName( GetBundleName(), nameBounds );
+		
+		y += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
+		
+		const CGRect versionBounds =
+		{
+			x,
+			y,
+			kAboutBoxTextWidth,
+			kAboutBoxVersionHeight,
+		};
+		
+		DrawApplicationDetail( GetBundleVersion(), versionBounds, context );
 	}
 	
 	
