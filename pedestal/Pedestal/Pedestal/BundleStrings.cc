@@ -12,6 +12,9 @@
 #endif
 #endif
 
+// Pedestal
+#include "Pedestal/OwnerResource.hh"
+
 
 namespace Pedestal
 {
@@ -21,6 +24,44 @@ namespace Pedestal
 	{
 		return CFBundleGetMainBundle();
 	}
+	
+	static
+	OSType GetCreator()
+	{
+		if ( TARGET_API_MAC_CARBON )
+		{
+			OSType creator;
+			CFBundleGetPackageInfo( MainBundle(), NULL, &creator );
+			
+			return creator;
+		}
+		
+		return GetCreatorFromBNDL();
+	}
+	
+	static
+	CFStringRef CopyOwnerResourceAsCFString()
+	{
+		Str255 data;
+		
+		if ( GetOwnerResourceData( GetCreator(), data ) )
+		{
+			return CFStringCreateWithPascalString( NULL,
+			                                       data,
+			                                       kCFStringEncodingMacRoman );
+		}
+		
+		return NULL;
+	}
+	
+	static
+	CFStringRef GetOwnerResourceAsCFString()
+	{
+		static CFStringRef string = CopyOwnerResourceAsCFString();
+		
+		return string;
+	}
+	
 	
 	static
 	CFStringRef GetBundleString( CFStringRef key )
@@ -59,7 +100,11 @@ namespace Pedestal
 		CFStringRef key = CFSTR( "CFBundleGetInfoString" );
 		CFStringRef alt = CFSTR( "" );
 		
-		return GetBundleString( key, alt );
+		CFStringRef string;
+		
+		return   (string = GetBundleString( key )      ) ? string
+		       : (string = GetOwnerResourceAsCFString()) ? string
+		       : alt;
 	}
 	
 }
