@@ -19,6 +19,9 @@
 #endif
 
 
+#define VERSION_FALLBACK  "(A work in progress)"
+
+
 namespace Pedestal
 {
 	

@@ -37,6 +37,20 @@ namespace Pedestal
 		return 0;
 	}
 	
+	bool GetOwnerResourceName( OSType creator, Str255 name )
+	{
+		if ( Handle h = GetResource( creator, 0 ) )
+		{
+			GetResInfo( h, NULL, NULL, name );
+			
+			ReleaseResource( h );
+			
+			return true;
+		}
+		
+		return false;
+	}
+	
 	bool GetOwnerResourceData( OSType creator, Str255 data )
 	{
 		if ( Handle h = GetResource( creator, 0 ) )

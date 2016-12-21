@@ -5,8 +5,25 @@
 
 #include "Pedestal/AboutBox.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#endif
+
+// Mac OS
+#ifndef __TEXTEDIT__
+#include <TextEdit.h>
+#endif
+
 // Standard C++
 #include <memory>
+
+// missing-macos
+#ifdef MAC_OS_X_VERSION_10_7
+#ifndef MISSING_QUICKDRAWTEXT_H
+#include "missing/QuickdrawText.h"
+#endif
+#endif
 
 // Nitrogen
 #include "Nitrogen/Icons.hh"
@@ -17,9 +34,13 @@
 #include "Pedestal/BundleStrings.hh"
 #include "Pedestal/CenteredText.hh"
 #include "Pedestal/HIViewPlotIconRef.hh"
+#include "Pedestal/OwnerResource.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace Pedestal
@@ -94,8 +115,8 @@ namespace Pedestal
 			N::EraseRect( bounds );
 		}
 		
-		const short top  = bounds.top  + kAboutBoxTopMargin;
-		const short left = bounds.left + kAboutBoxIconHorizontalMargin;
+		short top  = bounds.top  + kAboutBoxTopMargin;
+		short left = bounds.left + kAboutBoxIconHorizontalMargin;
 		
 		const Rect iconBounds =
 		{
@@ -109,6 +130,50 @@ namespace Pedestal
 		               N::IconAlignmentType(),
 		               N::IconTransformType(),
 		               N::ResID( 128 ) );
+		
+		top += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
+		left = bounds.left + kAboutBoxTextHorizontalMargin;
+		
+		const Rect nameBounds =
+		{
+			top,
+			left,
+			top  + kAboutBoxAppNameHeight,
+			left + kAboutBoxTextWidth,
+		};
+		
+		TextFont( 0 );  // Use system font
+		TextSize( 0 );
+		
+		const OSType creator = GetCreatorFromBNDL();
+		
+		Str255 name = "\p" "Pedestal";
+		Str255 data = "\p";
+		
+		GetOwnerResourceName( creator, name );
+		GetOwnerResourceData( creator, data );
+		
+		TETextBox( name + 1, name[ 0 ], &nameBounds, teJustCenter );
+		
+		top += kAboutBoxAppNameHeight + kAboutBoxInterTextGap;
+		
+		Rect detailBounds =
+		{
+			top,
+			left,
+			top  + kAboutBoxDetailHeight,
+			left + kAboutBoxTextWidth,
+		};
+		
+		TextFont( 1 );  // Use application font, which should be Geneva
+		TextSize( 9 );
+		
+		TETextBox( STR_LEN( VERSION_FALLBACK ), &detailBounds, teJustCenter );
+		
+		detailBounds.top    += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
+		detailBounds.bottom += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
+		
+		TETextBox( data + 1, data[ 0 ], &detailBounds, teJustCenter );
 	}
 	
 	static inline
