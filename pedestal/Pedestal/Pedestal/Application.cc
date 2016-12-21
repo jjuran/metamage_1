@@ -748,6 +748,8 @@ namespace Pedestal
 		AddMenu( editMenu  );
 		AddMenu( windowMenu );
 		
+		FixUpAboutMenuItem( appleMenu );
+		
 		if ( !TARGET_API_MAC_CARBON )
 		{
 			PopulateAppleMenu( appleMenu );

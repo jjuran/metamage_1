@@ -41,6 +41,8 @@ namespace Pedestal
 	
 	void AddMenu( MenuRef menu );
 	
+	void FixUpAboutMenuItem( MenuRef appleMenu );
+	
 	void PopulateAppleMenu( MenuRef menu );
 	
 	CommandCode HandleMenuItem( Mac::MenuID menuID, SInt16 item );
