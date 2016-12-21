@@ -114,10 +114,7 @@ namespace Pedestal
 	using Mac::kCoreEventClass;
 	using Mac::kAEQuitApplication;
 	
-	const uint32_t gestaltMenuMgrAttr   = 'menu';
 	const uint32_t gestaltSystemVersion = 'sysv';
-	
-	const int gestaltMenuMgrAquaLayoutBit = 1;
 	
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
@@ -736,19 +733,14 @@ namespace Pedestal
 		
 		the_Window_menu = windowMenu;
 		
-		if ( TARGET_API_MAC_CARBON )
+		if ( HasAquaMenus() )
 		{
-			const int aquaMenusBit = gestaltMenuMgrAquaLayoutBit;
+			SInt16 last = CountMenuItems( fileMenu );
 			
-			if ( mac::sys::gestalt_bit_set( gestaltMenuMgrAttr, aquaMenusBit ) )
-			{
-				SInt16 last = CountMenuItems( fileMenu );
-				
-				// Delete "Quit" and the separator above it.
-				
-				DeleteMenuItem( fileMenu, last     );
-				DeleteMenuItem( fileMenu, last - 1 );
-			}
+			// Delete "Quit" and the separator above it.
+			
+			DeleteMenuItem( fileMenu, last     );
+			DeleteMenuItem( fileMenu, last - 1 );
 		}
 		
 		AddMenu( appleMenu );
