@@ -14,6 +14,7 @@
 
 // Pedestal
 #include "Pedestal/BundleIcon.hh"
+#include "Pedestal/BundleStrings.hh"
 #include "Pedestal/CenteredText.hh"
 #include "Pedestal/HIViewPlotIconRef.hh"
 #include "Pedestal/View.hh"
@@ -106,41 +107,6 @@ namespace Pedestal
 		               N::IconAlignmentType(),
 		               N::IconTransformType(),
 		               N::ResID( 128 ) );
-	}
-	
-	static
-	CFStringRef GetBundleString( CFStringRef key )
-	{
-		CFTypeRef value;
-		value = CFBundleGetValueForInfoDictionaryKey( CFBundleGetMainBundle(),
-		                                              key );
-		
-		return (CFStringRef) value;
-	}
-	
-	static
-	CFStringRef GetBundleString( CFStringRef key, CFStringRef alternate )
-	{
-		CFStringRef value = GetBundleString( key );
-		
-		return value ? value : alternate;
-	}
-	
-	static
-	CFStringRef GetBundleName()
-	{
-		CFStringRef key = CFSTR( "CFBundleName" );
-		
-		return GetBundleString( key );
-	}
-	
-	static
-	CFStringRef GetBundleVersion()
-	{
-		CFStringRef key = CFSTR( "CFBundleVersion" );
-		CFStringRef alt = CFSTR( "(A work in progress)" );
-		
-		return GetBundleString( key, alt );
 	}
 	
 	static inline
