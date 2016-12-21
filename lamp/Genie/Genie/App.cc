@@ -7,6 +7,7 @@
 #include "Nitrogen/AppleEvents.hh"
 
 // Pedestal
+#include "Pedestal/AboutBox.hh"
 #include "Pedestal/Application.hh"
 #include "Pedestal/Commands.hh"
 
@@ -62,7 +63,7 @@ namespace Genie
 	
 	static bool About( Ped::CommandCode )
 	{
-		spawn_process( "/sbin/about" );
+		Ped::ShowAboutBox();
 		
 		return true;
 	}

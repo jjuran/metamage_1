@@ -3,3 +3,4 @@ CFBundleIconFile:    "MacRelix.icns"
 CFBundleName:        "MacRelix"
 CFBundlePackageType: "APPL"
 CFBundleSignature:   "Poof"
+NSHighResolutionCapable: true
