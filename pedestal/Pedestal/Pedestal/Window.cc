@@ -27,10 +27,26 @@ namespace Pedestal
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
-	static
-	bool window_has_grow_icon( WindowRef window )
+	static inline
+	bool window_is_resizable( WindowRef window )
 	{
 		return get_window_attributes( window ) & kWindowResizableAttribute;
+	}
+	
+	static inline
+	bool window_has_grow_icon( WindowRef window )
+	{
+		/*
+			Returns false if the window is not user-resizable, or if the
+			grow box is definitely managed as part of the window frame.
+			
+			Returns true for resizable windows pre-Carbon, although in some
+			cases (e.g. Mac OS 8 and 9) the grow box is part of the window
+			frame and doesn't need to be redrawn/invalidated.  However, it's
+			harmless to do so.
+		*/
+		
+		return ! TARGET_API_MAC_CARBON  &&  window_is_resizable( window );
 	}
 	
 	
@@ -135,7 +151,7 @@ namespace Pedestal
 			view->Draw( N::GetPortBounds( GetWindowPort( window ) ), true );
 		}
 		
-		if ( ! TARGET_API_MAC_CARBON  &&  window_has_grow_icon( window ) )
+		if ( window_has_grow_icon( window ) )
 		{
 			n::saved< N::Clip > savedClip;
 			
