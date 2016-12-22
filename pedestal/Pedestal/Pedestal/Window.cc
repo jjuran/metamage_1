@@ -45,12 +45,6 @@ namespace Pedestal
 		return bounds;
 	}
 	
-	static
-	void InvalidateWindowGrowBox( WindowRef window )
-	{
-		N::InvalRect( GrowBoxBounds( window ) );
-	}
-	
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
 		N::SizeWindow( window, newSize.h, newSize.v, true );
@@ -117,7 +111,7 @@ namespace Pedestal
 		
 		if ( window_has_grow_icon( window ) )
 		{
-			InvalidateWindowGrowBox( window );
+			N::InvalRect( GrowBoxBounds( window ) );
 		}
 	}
 	
