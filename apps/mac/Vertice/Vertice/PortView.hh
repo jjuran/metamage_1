@@ -7,6 +7,9 @@
 #define VERTICE_PORTVIEW_HH
 
 // Nitrogen
+#ifndef NITROGEN_CGIMAGE_HH
+#include "Nitrogen/CGImage.hh"
+#endif
 #ifndef NITROGEN_QDOFFSCREEN_HH
 #include "Nitrogen/QDOffscreen.hh"
 #endif
@@ -33,6 +36,9 @@ namespace Vertice
 			Frame                        itsFrame;
 			std::size_t                  itsSelectedContext;
 			nucleus::owned< GWorldPtr >  itsGWorld;
+		#ifdef MAC_OS_X_VERSION_10_2
+			mutable nucleus::owned< CGImageRef > itsImage;
+		#endif
 			anaglyph_mode                itsAnaglyphMode;
 		
 		public:
@@ -52,8 +58,10 @@ namespace Vertice
 			bool DoCommand( Pedestal::CommandCode code )  { return false; }
 			void SetBounds( const Rect& bounds );
 			void Render();
+			void Derive() const;
 			void Update() const;
 			void Draw( const Rect& bounds, bool erasing );
+			void DrawInContext( CGContextRef context, CGRect bounds );
 			void DrawAnaglyphic();
 			void DrawBetter() const;
 	};

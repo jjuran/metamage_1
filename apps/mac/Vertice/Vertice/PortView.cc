@@ -15,6 +15,7 @@
 #include "ClassicToolbox/MacWindows.hh"
 
 // Nitrogen
+#include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // Portage
@@ -71,6 +72,37 @@ namespace Vertice
 		N::CopyBits( src, thePort );
 	}
 	
+	static
+	n::owned< CGImageRef > CGImage_from_GWorld( CGrafPtr gworld )
+	{
+		n::owned< CGImageRef > result;
+		
+		PixMapHandle pix = ::GetPortPixMap( gworld );
+		
+		const Rect  bounds = ( *pix )->bounds;
+		::Ptr       base   = ( *pix )->baseAddr;
+		unsigned    stride = ( *pix )->rowBytes & 0x3fff;
+		
+		const size_t width  = bounds.right - bounds.left;
+		const size_t height = bounds.bottom - bounds.top;
+		
+		const size_t size = height * stride;
+		
+		n::owned< CGDataProviderRef > provider;
+		provider = N::CGDataProviderCreateWithData( base, size, NULL, NULL );
+		
+		static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+		
+		return N::CGImageCreate( width,
+		                         height,
+		                         8,
+		                         32,
+		                         stride,
+		                         colorSpace,
+		                         kCGImageAlphaNoneSkipFirst,
+		                         provider );
+	}
+	
 	void PortView::Render()
 	{
 		if ( itsAnaglyphMode )
@@ -83,16 +115,60 @@ namespace Vertice
 			
 			render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		}
+		
+		Derive();
+	}
+	
+	void PortView::Derive() const
+	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		itsImage = CGImage_from_GWorld( itsGWorld );
+		
+	#endif
 	}
 	
 	void PortView::Update() const
 	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		OSStatus err;
+		
+		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		
+		ControlRef content;
+		err = GetRootControl( window, &content );
+		
+		if ( HIViewIsCompositingEnabled( content ) )
+		{
+			err = HIViewSetNeedsDisplay( content, true );
+			return;
+		}
+		
+	#endif
+		
 		blit_to_thePort( itsGWorld );
 	}
 	
 	void PortView::Draw( const Rect& bounds, bool erasing )
 	{
 		Update();
+	}
+	
+	void PortView::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		if ( itsImage.get() == NULL )
+		{
+			return;
+		}
+		
+		OSStatus err;
+		
+		err = HIViewDrawCGImage( context, &bounds, itsImage );
+		
+	#endif
 	}
 	
 	void PortView::DrawAnaglyphic()
@@ -150,6 +226,7 @@ namespace Vertice
 	{
 		render_into_GWorld( itsFrame.Models(), &trace_onto_surface, itsGWorld );
 		
+		Derive();
 		Update();
 	}
 	
@@ -174,6 +251,7 @@ namespace Vertice
 		
 		render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		
+		Derive();
 		Update();
 		
 		return true;
