@@ -343,8 +343,6 @@ namespace Pedestal
 	
 	void close_window( WindowRef window )
 	{
-		set_window_view( window, NULL );
-		
 		if ( WindowClosed_proc proc = get_window_closed_proc( window ) )
 		{
 			proc( window );
