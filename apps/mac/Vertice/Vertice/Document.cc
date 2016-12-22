@@ -87,6 +87,22 @@ namespace Vertice
 		return N::InsetRect( rect, 4, 4 );
 	}
 	
+	static
+	n::owned< WindowRef > CreateWindow( const Rect& bounds )
+	{
+		if ( ! TARGET_API_MAC_CARBON )
+		{
+			return Ped::CreateWindow( bounds, "\p" );
+		}
+		
+		Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
+		                            | Mac::kWindowResizableAttribute
+		                            | Mac::kWindowCollapseBoxAttribute
+		                            ;
+		
+		return Ped::CreateWindow( Mac::kDocumentWindowClass, attrs, bounds );
+	}
+	
 	class Window : public Ped::Window
 	{
 		public:
@@ -95,7 +111,7 @@ namespace Vertice
 	
 	Window::Window()
 	: 
-		Ped::Window( Ped::CreateWindow( MakeWindowRect(), "\p" ) )
+		Ped::Window( CreateWindow( MakeWindowRect() ) )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
 		
@@ -612,6 +628,8 @@ namespace Vertice
 		Ped::set_window_closed_proc( window, &DocumentClosed );
 		
 		LoadFileIntoWindow( file, window );
+		
+		ShowWindow( window );
 	}
 	
 }
