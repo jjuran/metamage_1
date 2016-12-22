@@ -53,25 +53,19 @@ namespace Pedestal
 	
 	void ResizeWindow( WindowRef window, Point newSize )
 	{
-		InvalidateWindowGrowBox( window );  // assume grow box present on resize
-		
 		N::SizeWindow( window, newSize.h, newSize.v, true );
 		
 		// Don't rely on the requested size because it might have been tweaked
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 		
 		// Shotgun approach -- invalidate the whole window.
+		// This conveniently includes both old and new grow box locations.
 		// Clients can validate regions if they want.
 		N::InvalRect( bounds );
 		
 		if ( View* view = get_window_view( window ) )
 		{
 			view->SetBounds( bounds );
-		}
-		
-		if ( window_has_grow_icon( window ) )
-		{
-			InvalidateWindowGrowBox( window );
 		}
 		
 		if ( WindowResized_proc proc = get_window_resized_proc( window ) )
