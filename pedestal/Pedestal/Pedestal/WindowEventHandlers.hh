@@ -17,8 +17,17 @@
 #endif
 
 
+struct EventRecord;
+
+
 namespace Pedestal
 {
+	
+	void window_activated( WindowRef window, bool activating );
+	
+	void window_mouseDown( WindowRef window, const EventRecord& event );
+	
+	void window_update( WindowRef window );
 	
 	OSStatus install_window_event_handlers( WindowRef window );
 	

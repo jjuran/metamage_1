@@ -75,6 +75,7 @@
 #include "Pedestal/Quasimode.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowEventHandlers.hh"
 #include "Pedestal/WindowMenu.hh"
 #include "Pedestal/WindowStorage.hh"
 

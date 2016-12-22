@@ -47,12 +47,6 @@ namespace Pedestal
 			WindowRef Get() const  { return itsWindowRef; }
 	};
 	
-	void window_activated( WindowRef window, bool activating );
-	
-	void window_mouseDown( WindowRef window, const EventRecord& event );
-	
-	void window_update( WindowRef window );
-	
 }
 
 #endif
