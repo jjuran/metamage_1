@@ -98,6 +98,9 @@ namespace Vertice
 		Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
 		                            | Mac::kWindowResizableAttribute
 		                            | Mac::kWindowCollapseBoxAttribute
+		                          #ifdef MAC_OS_X_VERSION_10_2
+		                            | Mac::kWindowCompositingAttribute
+		                          #endif
 		                            ;
 		
 		return Ped::CreateWindow( Mac::kDocumentWindowClass, attrs, bounds );
