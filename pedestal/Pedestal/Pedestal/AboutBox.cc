@@ -25,6 +25,9 @@
 #endif
 #endif
 
+// MacFeatures
+#include "MacFeatures/ColorQuickdraw.hh"
+
 // Nitrogen
 #include "Nitrogen/Icons.hh"
 #include "Nitrogen/Quickdraw.hh"
@@ -301,7 +304,10 @@ namespace Pedestal
 		
 	#endif
 		
-		N::RGBBackColor( kAboutBoxBackgroundColor );
+		if ( MacFeatures::Has_ColorQuickdraw() )
+		{
+			N::RGBBackColor( kAboutBoxBackgroundColor );
+		}
 		
 		std::auto_ptr< Window > owner( new Window( window ) );
 		
