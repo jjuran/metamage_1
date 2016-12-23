@@ -166,30 +166,33 @@ namespace Vertice
 	}
 	
 	static inline
-	UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
+	uint8_t* inscribe_argb_pixel( uint8_t* p, uint8_t r, uint8_t g, uint8_t b )
 	{
-		const UInt32 a = 0;
+		p++;  // skip alpha
 		
-		return TARGET_RT_BIG_ENDIAN ? a << 24 | r << 16 | g << 8 | b << 0
-		                            : b << 24 | g << 16 | r << 8 | a << 0;
+		*p++ = r;
+		*p++ = g;
+		*p++ = b;
+		
+		return p;
 	}
 	
 	static inline
-	UInt32 MakePixel32( double red, double green, double blue )
+	uint8_t* inscribe_argb_pixel( uint8_t* p, double r, double g, double b )
 	{
-		UInt32 r = UInt32( red   < 1.0  ?  red   * 255  :  255 );
-		UInt32 g = UInt32( green < 1.0  ?  green * 255  :  255 );
-		UInt32 b = UInt32( blue  < 1.0  ?  blue  * 255  :  255 );
+		uint8_t red   = uint8_t( r < 1.0  ?  r * 255  :  255 );
+		uint8_t green = uint8_t( g < 1.0  ?  g * 255  :  255 );
+		uint8_t blue  = uint8_t( b < 1.0  ?  b * 255  :  255 );
 		
-		return MakePixel32( r, g, b );
+		return inscribe_argb_pixel( p, red, green, blue );
 	}
 	
 	static inline
-	UInt32 MakePixel32( const ColorMatrix& color )
+	uint8_t* inscribe_argb_pixel( uint8_t* p, const ColorMatrix& color )
 	{
-		return MakePixel32( color[ V::Red   ],
-		                    color[ V::Green ],
-		                    color[ V::Blue  ] );
+		return inscribe_argb_pixel( p, color[ V::Red   ],
+		                               color[ V::Green ],
+		                               color[ V::Blue  ] );
 	}
 	
 	
@@ -222,7 +225,7 @@ namespace Vertice
 				double green = color[ V::Green ] / w;
 				double blue  = color[ V::Blue  ] / w;
 				
-				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( red, green, blue );
+				inscribe_argb_pixel( (uint8_t*) pixelAddr, red, green, blue );
 			}
 		}
 	}
@@ -259,7 +262,7 @@ namespace Vertice
 				                                                     uv_spectrum[ tX ] / w ),
 				                                   lightColor );
 				
-				*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( color );
+				inscribe_argb_pixel( (uint8_t*) pixelAddr, color );
 			}
 		}
 	}
@@ -1209,7 +1212,7 @@ namespace Vertice
 								
 								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
 								
-								*reinterpret_cast< UInt32* >( pixelAddr ) = MakePixel32( tweaked );
+								inscribe_argb_pixel( (uint8_t*) pixelAddr, tweaked );
 								
 								if ( !gBlitting )
 								{
