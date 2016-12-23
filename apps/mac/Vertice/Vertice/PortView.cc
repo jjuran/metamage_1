@@ -171,6 +171,16 @@ namespace Vertice
 	#endif
 	}
 	
+	static
+	n::owned< GWorldPtr > new_GWorld( const Rect& bounds )
+	{
+		n::owned< GWorldPtr > gworld = N::NewGWorld( 32, bounds );
+		
+		N::LockPixels( N::GetGWorldPixMap( gworld ) );
+		
+		return gworld;
+	}
+	
 	void PortView::DrawAnaglyphic()
 	{
 		std::size_t contextIndex = itsScene.Cameras().front().ContextIndex();
@@ -179,9 +189,7 @@ namespace Vertice
 		
 		double eyeRadius = 0.05;  // distance from eye to bridge of nose
 		
-		nucleus::owned< GWorldPtr > altGWorld = N::NewGWorld( 32, itsBounds );
-		
-		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
+		nucleus::owned< GWorldPtr > altGWorld = new_GWorld( itsBounds );
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -422,9 +430,7 @@ namespace Vertice
 	{
 		itsBounds = bounds;
 		
-		itsGWorld = N::NewGWorld( 32, itsBounds );
-		
-		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
+		itsGWorld = new_GWorld( itsBounds );
 		
 		Render();
 	}
