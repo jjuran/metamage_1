@@ -746,6 +746,13 @@ namespace Vertice
 		return DotProduct( a, b );
 	}
 	
+	static
+	void paint_onto_surface( const std::vector< MeshModel >&  models,
+	                         void*                            dst,
+	                         size_t                           width,
+	                         size_t                           height,
+	                         size_t                           stride );
+	
 	void PortView::Paint()
 	{
 		::CGrafPtr port = N::GetQDGlobalsThePort();
@@ -766,13 +773,23 @@ namespace Vertice
 		
 		memset( base, '\0', height * stride );
 		
+		paint_onto_surface( itsFrame.Models(), base, width, height, stride );
+	}
+	
+	static
+	void paint_onto_surface( const std::vector< MeshModel >&  models,
+	                         void*                            dst,
+	                         size_t                           width,
+	                         size_t                           height,
+	                         size_t                           stride )
+	{
+		uint8_t* base = (uint8_t*) dst;
+		
 		//fishEye = itsPort.mCamera.fishEyeMode;
 		
 		gDeepPixelDevice.Resize( width, height );
 		
 		const V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
-		
-		const std::vector< MeshModel >& models = itsFrame.Models();
 		
 		typedef std::vector< MeshModel >::const_iterator ModelIter;
 		
