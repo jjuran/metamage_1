@@ -898,18 +898,13 @@ namespace Vertice
 		}
 	}
 	
-	void PortView::Paint()
-	{
-		paint_into_thePort( itsFrame.Models() );
-	}
-	
 	void PortView::Redraw()
 	{
 		n::saved< N::GWorld > savedGWorld;
 		N::SetGWorld( itsGWorld );
 		
 		
-		Paint();
+		paint_into_thePort( itsFrame.Models() );
 		
 		
 		savedGWorld.restore();
@@ -967,7 +962,7 @@ namespace Vertice
 		
 		N::SetGWorld( itsGWorld );
 		
-		Paint();
+		paint_into_thePort( itsFrame.Models() );
 		
 		
 		target.ContextTranslate( 2 * eyeRadius, 0, 0 );
@@ -976,7 +971,7 @@ namespace Vertice
 		
 		N::SetGWorld( altGWorld );
 		
-		Paint();
+		paint_into_thePort( itsFrame.Models() );
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
