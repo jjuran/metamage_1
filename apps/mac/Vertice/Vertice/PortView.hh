@@ -57,7 +57,6 @@ namespace Vertice
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::CommandCode code )  { return false; }
 			void SetBounds( const Rect& bounds );
-			void Redraw();
 			void Draw( const Rect& bounds, bool erasing );
 			void DrawAnaglyphic();
 			void DrawBetter( bool per_scanline ) const;

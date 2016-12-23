@@ -932,13 +932,6 @@ namespace Vertice
 		}
 	}
 	
-	void PortView::Redraw()
-	{
-		paint_into_GWorld( itsFrame.Models(), itsGWorld );
-		
-		blit_to_thePort( itsGWorld );
-	}
-	
 	void PortView::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( itsAnaglyphMode )
@@ -949,7 +942,9 @@ namespace Vertice
 		{
 			itsPort.MakeFrame( itsFrame );
 			
-			Redraw();
+			paint_into_GWorld( itsFrame.Models(), itsGWorld );
+			
+			blit_to_thePort( itsGWorld );
 		}
 	}
 	
@@ -1333,7 +1328,9 @@ namespace Vertice
 			model->Select();
 		}
 		
-		Redraw();
+		paint_into_GWorld( itsFrame.Models(), itsGWorld );
+		
+		blit_to_thePort( itsGWorld );
 		
 		if ( event.modifiers & shiftKey )
 		for ( int y = itsBounds.top;  y < itsBounds.bottom;  ++y )
