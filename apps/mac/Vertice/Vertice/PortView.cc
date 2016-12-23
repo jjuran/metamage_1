@@ -964,7 +964,7 @@ namespace Vertice
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		N::SetGWorld( itsGWorld );
+		N::SetGWorld( altGWorld );
 		
 		paint_into_thePort( itsFrame.Models() );
 		
@@ -973,7 +973,7 @@ namespace Vertice
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		N::SetGWorld( altGWorld );
+		N::SetGWorld( itsGWorld );
 		
 		paint_into_thePort( itsFrame.Models() );
 		
@@ -982,8 +982,8 @@ namespace Vertice
 		
 		savedGWorld.restore();
 		
-		PixMapHandle pixL = N::GetGWorldPixMap( itsGWorld );
-		PixMapHandle pixR = N::GetGWorldPixMap( altGWorld );
+		PixMapHandle pixL = N::GetGWorldPixMap( altGWorld );
+		PixMapHandle pixR = N::GetGWorldPixMap( itsGWorld );
 		
 		::Ptr baseL = pixL[0]->baseAddr;
 		::Ptr baseR = pixR[0]->baseAddr;
@@ -1001,7 +1001,7 @@ namespace Vertice
 		n::saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
-		N::CopyBits( N::GetPortBitMapForCopyBits( altGWorld ),
+		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
 		             N::GetPortBitMapForCopyBits( thePort ),
 		             itsBounds,
 		             itsBounds,
