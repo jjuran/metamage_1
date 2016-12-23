@@ -898,16 +898,20 @@ namespace Vertice
 		}
 	}
 	
-	void PortView::Redraw()
+	static
+	void paint_into_GWorld( const std::vector< MeshModel >&  models,
+	                        GWorldPtr                        gworld )
 	{
 		n::saved< N::GWorld > savedGWorld;
-		N::SetGWorld( itsGWorld );
 		
+		N::SetGWorld( gworld );
 		
-		paint_into_thePort( itsFrame.Models() );
-		
-		
-		savedGWorld.restore();
+		paint_into_thePort( models );
+	}
+	
+	void PortView::Redraw()
+	{
+		paint_into_GWorld( itsFrame.Models(), itsGWorld );
 		
 		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
