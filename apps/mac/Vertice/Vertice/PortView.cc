@@ -287,6 +287,26 @@ namespace Vertice
 		return true;
 	}
 	
+	template < class T, class U >
+	static inline
+	void pin_to_minimum( T& a, U b )
+	{
+		if ( a < b )
+		{
+			a = b;
+		}
+	}
+	
+	template < class T, class U >
+	static inline
+	void pin_to_maximum( T& a, U b )
+	{
+		if ( a > b )
+		{
+			a = b;
+		}
+	}
+	
 	template < class Vertex >
 	static
 	void DrawDeepTrapezoid( const Vertex&  topLeft,
@@ -324,12 +344,12 @@ namespace Vertice
 		short start = short( std::ceil( top    ) );
 		short stop  = short( std::ceil( bottom ) );
 		
-		start = std::max( start, std::max( portRect.top,    bounds.top ) );
-		stop  = std::min( stop,  std::min( portRect.bottom, bounds.bottom ) );
+		pin_to_minimum( start, 0            );
+		pin_to_maximum( stop,  (int) height );  // unsigned comparison == death
 		
 		for ( int y = start;  y < stop;  ++y )
 		{
-			uint8_t* rowAddr = (uint8_t*) base + ( y - bounds.top ) * rowBytes;
+			uint8_t* rowAddr = (uint8_t*) base + y * rowBytes;
 			
 			double tY = (y - top) / vdist;
 			
