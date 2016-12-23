@@ -753,7 +753,8 @@ namespace Vertice
 	                         size_t                           height,
 	                         size_t                           stride );
 	
-	void PortView::Paint()
+	static
+	void paint_into_thePort( const std::vector< MeshModel >& models )
 	{
 		::CGrafPtr port = N::GetQDGlobalsThePort();
 		
@@ -768,12 +769,12 @@ namespace Vertice
 		::Ptr       base   = ( *pix )->baseAddr;
 		unsigned    stride = ( *pix )->rowBytes & 0x3fff;
 		
-		const unsigned width  = itsBounds.right - itsBounds.left;
-		const unsigned height = itsBounds.bottom - itsBounds.top;
+		const unsigned width  = bounds.right - bounds.left;
+		const unsigned height = bounds.bottom - bounds.top;
 		
 		memset( base, '\0', height * stride );
 		
-		paint_onto_surface( itsFrame.Models(), base, width, height, stride );
+		paint_onto_surface( models, base, width, height, stride );
 	}
 	
 	static
@@ -895,6 +896,11 @@ namespace Vertice
 				                 stride );
 			}
 		}
+	}
+	
+	void PortView::Paint()
+	{
+		paint_into_thePort( itsFrame.Models() );
 	}
 	
 	void PortView::Redraw()
