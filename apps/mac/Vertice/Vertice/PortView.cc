@@ -312,34 +312,22 @@ namespace Vertice
 	void DrawDeepTrapezoid( const Vertex&  topLeft,
 	                        const Vertex&  topRight,
 	                        const Vertex&  bottomLeft,
-	                        const Vertex&  bottomRight )
+	                        const Vertex&  bottomRight,
+	                        void*          dst,
+	                        size_t         height,
+	                        size_t         width,
+	                        size_t         stride )
 	{
-		::CGrafPtr port = N::GetQDGlobalsThePort();
-		//::CGrafPtr port = itsGWorld.Get();
-		// Verify that it's a color port
-		if ( !::IsPortColor( port ) )  return;
-		
-		PixMapHandle pix = ::GetPortPixMap( port );
-		
-		if ( !CheckPixMap( pix ) ) return;
-		
 		const MeshPolygon& polygon = topLeft.Polygon();
 		
 		bool using_texture_map = !polygon.Tile().Empty();
-		
-		const Rect& portRect = N::GetPortBounds( port );
-		
-		short width  = portRect.right  - portRect.left;
-		short height = portRect.bottom - portRect.top;
 		
 		double top    = topLeft   [ Y ] * width / -2.0 + height / 2.0;
 		double bottom = bottomLeft[ Y ] * width / -2.0 + height / 2.0;
 		
 		double vdist = bottom - top;
 		
-		const Rect& bounds   = ( *pix )->bounds;
-		::Ptr       base     = ( *pix )->baseAddr;
-		unsigned    rowBytes = ( *pix )->rowBytes & 0x3fff;
+		uint8_t* base = (uint8_t*) dst;
 		
 		short start = short( std::ceil( top    ) );
 		short stop  = short( std::ceil( bottom ) );
@@ -349,7 +337,7 @@ namespace Vertice
 		
 		for ( int y = start;  y < stop;  ++y )
 		{
-			uint8_t* rowAddr = (uint8_t*) base + y * rowBytes;
+			uint8_t* rowAddr = base + y * stride;
 			
 			double tY = (y - top) / vdist;
 			
@@ -513,7 +501,11 @@ namespace Vertice
 	}
 	
 	static
-	void DrawDeepPolygon( std::vector< DeepVertex > vertices )
+	void DrawDeepPolygon( std::vector< DeepVertex >  vertices,
+	                      void*                      dst,
+	                      size_t                     height,
+	                      size_t                     width,
+	                      size_t                     stride )
 	{
 		std::vector< DeepVertex >& sorted_vertices = vertices;
 		
@@ -554,7 +546,14 @@ namespace Vertice
 				
 				DeepVertex interpolated = InterpolateDeepVertex( *prev_right_it, *right_it, t );
 				
-				DrawDeepTrapezoid( prev_left, prev_right, *left_it, interpolated );
+				DrawDeepTrapezoid( prev_left,
+				                   prev_right,
+				                   *left_it,
+				                   interpolated,
+				                   dst,
+				                   height,
+				                   width,
+				                   stride );
 				
 				prev_left  = *left_it;
 				prev_right = interpolated;
@@ -569,7 +568,14 @@ namespace Vertice
 				
 				DeepVertex interpolated = InterpolateDeepVertex( *prev_left_it, *left_it, t );
 				
-				DrawDeepTrapezoid( prev_left, prev_right, interpolated, *right_it );
+				DrawDeepTrapezoid( prev_left,
+				                   prev_right,
+				                   interpolated,
+				                   *right_it,
+				                   dst,
+				                   height,
+				                   width,
+				                   stride );
 				
 				prev_left  = interpolated;
 				prev_right = *right_it;
@@ -578,7 +584,14 @@ namespace Vertice
 			}
 		}
 		
-		DrawDeepTrapezoid( prev_left, prev_right, sorted_vertices.back(), sorted_vertices.back() );
+		DrawDeepTrapezoid( prev_left,
+		                   prev_right,
+		                   sorted_vertices.back(),
+		                   sorted_vertices.back(),
+		                   dst,
+		                   height,
+		                   width,
+		                   stride );
 	}
 	
 	
@@ -735,6 +748,19 @@ namespace Vertice
 	
 	void PortView::Paint()
 	{
+		::CGrafPtr port = N::GetQDGlobalsThePort();
+		
+		// Verify that it's a color port
+		if ( ! ::IsPortColor( port ) )  return;
+		
+		PixMapHandle pix = ::GetPortPixMap( port );
+		
+		if ( ! CheckPixMap( pix ) ) return;
+		
+		const Rect  bounds = ( *pix )->bounds;
+		::Ptr       base   = ( *pix )->baseAddr;
+		unsigned    stride = ( *pix )->rowBytes & 0x3fff;
+		
 		const unsigned width  = itsBounds.right - itsBounds.left;
 		const unsigned height = itsBounds.bottom - itsBounds.top;
 		
@@ -847,7 +873,11 @@ namespace Vertice
 					}
 				}
 				
-				DrawDeepPolygon( vertices );
+				DrawDeepPolygon( vertices,
+				                 base,
+				                 height,
+				                 width,
+				                 stride );
 			}
 		}
 	}
