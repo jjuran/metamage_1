@@ -71,7 +71,7 @@ namespace Vertice
 		N::CopyBits( src, thePort );
 	}
 	
-	void PortView::Draw( const Rect& bounds, bool erasing )
+	void PortView::Render()
 	{
 		if ( itsAnaglyphMode )
 		{
@@ -83,8 +83,17 @@ namespace Vertice
 			
 			render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		}
-		
+	}
+	
+	void PortView::Update() const
+	{
 		blit_to_thePort( itsGWorld );
+	}
+	
+	void PortView::Draw( const Rect& bounds, bool erasing )
+	{
+		Render();
+		Update();
 	}
 	
 	void PortView::DrawAnaglyphic()
