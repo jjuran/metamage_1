@@ -92,7 +92,6 @@ namespace Vertice
 	
 	void PortView::Draw( const Rect& bounds, bool erasing )
 	{
-		Render();
 		Update();
 	}
 	
@@ -348,6 +347,8 @@ namespace Vertice
 		itsGWorld = N::NewGWorld( 32, itsBounds );
 		
 		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
+		
+		Render();
 	}
 	
 }

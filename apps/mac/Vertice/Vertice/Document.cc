@@ -609,6 +609,8 @@ namespace Vertice
 				parser.ParseLine( line );
 			}
 		}
+		
+		view.Render();
 	}
 	
 	static
