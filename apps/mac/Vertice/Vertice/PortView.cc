@@ -876,31 +876,28 @@ namespace Vertice
 		}
 	}
 	
-	static inline
-	int BigToNative32BitOffset( int bits )
-	{
-		return (bits - 12) * (TARGET_RT_BIG_ENDIAN - TARGET_RT_LITTLE_ENDIAN) + 12;
-	}
-	
-	const int kBitOffsetToGWorldAlpha = BigToNative32BitOffset( 24 );  //  0
-	const int kBitOffsetToGWorldRed   = BigToNative32BitOffset( 16 );  //  8
-	const int kBitOffsetToGWorldGreen = BigToNative32BitOffset(  8 );  // 16
-	const int kBitOffsetToGWorldBlue  = BigToNative32BitOffset(  0 );  // 24
-	
 	static
 	void MergeTrueAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		*(UInt32*) right = UInt32( 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3] ) << kBitOffsetToGWorldRed
-		                 |                                                                0 << kBitOffsetToGWorldGreen
-		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldBlue;
+		uint8_t r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
+		uint8_t g = 0;
+		uint8_t b = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
+		
+		right[ 1 ] = r;
+		right[ 2 ] = g;
+		right[ 3 ] = b;
 	}
 	
 	static
 	void MergeGrayAnaglyph( const ::Byte* left, ::Byte* right )
 	{
-		*(UInt32*) right = UInt32( 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3] ) << kBitOffsetToGWorldRed
-		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldGreen
-		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldBlue;
+		uint8_t r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
+		uint8_t g = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
+		uint8_t b = g;
+		
+		right[ 1 ] = r;
+		right[ 2 ] = g;
+		right[ 3 ] = b;
 	}
 	
 	static
