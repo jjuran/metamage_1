@@ -90,12 +90,12 @@ namespace Vertice
 	class Window : public Ped::Window
 	{
 		public:
-			Window( ConstStr255Param title );
+			Window();
 	};
 	
-	Window::Window( ConstStr255Param title )
+	Window::Window()
 	: 
-		Ped::Window( Ped::CreateWindow( MakeWindowRect(), title ) )
+		Ped::Window( Ped::CreateWindow( MakeWindowRect(), "\p" ) )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
 		
@@ -605,7 +605,7 @@ namespace Vertice
 	
 	void OpenDocument( const FSSpec& file )
 	{
-		Window* doc = new Window( file.name );
+		Window* doc = new Window();
 		
 		Ped::set_window_closed_proc( doc->Get(), &DocumentClosed );
 		
