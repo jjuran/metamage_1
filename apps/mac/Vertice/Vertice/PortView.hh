@@ -46,7 +46,6 @@ namespace Vertice
 			Scene                        itsScene;
 			Port                         itsPort;
 			Frame                        itsFrame;
-			Vectoria::XMatrix            itsScreen2Port;
 			std::size_t                  itsSelectedContext;
 			nucleus::owned< GWorldPtr >  itsGWorld;
 			AnaglyphMode                 itsAnaglyphMode;

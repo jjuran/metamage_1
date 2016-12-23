@@ -18,13 +18,11 @@
 #include "Nitrogen/Quickdraw.hh"
 
 // GrafX
-#include "GrafX/Pixel32.hh"
 #include "GrafX/RGBColor.hh"
 
 // Vectoria
 #include "Vectoria/Units.hh"
 #include "Vectoria/Clipping3D.hh"
-#include "Vectoria/HomogeneousClipping.hh"
 #include "Vectoria/ViewFrustum.hh"
 #include "Vectoria/PlaneVector.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
@@ -44,7 +42,6 @@ namespace Vertice
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
-	namespace GX = GrafX;
 	
 	
 	using V::W;
@@ -65,25 +62,23 @@ namespace Vertice
 			Scalar operator[]( double t ) const  { return itsBegin * (1 - t) + itsEnd * t; }
 	};
 	
-	template < class Scalar >
-	LinearSpectrum< Scalar > MakeLinearSpectrum( const Scalar& begin, const Scalar& end )
+	template < class Num >
+	static inline
+	LinearSpectrum< Num > MakeLinearSpectrum( const Num& begin, const Num& end )
 	{
-		return LinearSpectrum< Scalar >( begin, end );
+		return LinearSpectrum< Num >( begin, end );
 	}
 	
 	
-	static double AspectRatio( double width, double height )
-	{
-		return height / width;
-	}
-	
-	static double FocalLength( V::Radians alpha )
+	static
+	double FocalLength( V::Radians alpha )
 	{
 		double e = 1 / std::tan( alpha / 2.0 );
 		return e;
 	}
 	
-	static V::Radians VerticalFieldOfViewAngle( double aspectRatio, double focalLength )
+	static
+	V::Radians VerticalFieldOfViewAngle( double aspectRatio, double focalLength )
 	{
 		double a = aspectRatio;
 		double e = focalLength;
@@ -98,31 +93,19 @@ namespace Vertice
 	static DeepPixelDevice gDeepPixelDevice;
 	
 	
-	static double sAspectRatio = 1;
+	static const V::Radians sHorizontalFieldOfViewAngle = V::Degrees( 45 );
 	
-	static V::Radians sHorizontalFieldOfViewAngle = V::Degrees( 45 );
-	
-	static double sFocalLength = FocalLength( sHorizontalFieldOfViewAngle );
-	
-	static V::XMatrix gPort2Clip;
-	
-	//static V::Radians sVerticalFieldOfViewAngle;
-	
-	/*
-	template < class Device >
-	double AspectRatio( const Device& device )
-	{
-		return AspectRatio( Width( device ), Height( device ) );
-	}
-	*/
+	const double sFocalLength = FocalLength( sHorizontalFieldOfViewAngle );
 	
 	
-	static inline ColorMatrix ModulateGray( double gray, const ColorMatrix& light )
+	static inline
+	ColorMatrix ModulateGray( double gray, const ColorMatrix& light )
 	{
 		return gray * light;
 	}
 	
-	static inline ColorMatrix ModulateColor( const ColorMatrix& color, const ColorMatrix& light )
+	static inline
+	ColorMatrix ModulateColor( const ColorMatrix& color, const ColorMatrix& light )
 	{
 		using V::Red;
 		using V::Green;
@@ -134,7 +117,8 @@ namespace Vertice
 	}
 	
 	
-	static ColorMatrix GetSampleFromMap( const ImageTile& tile, const V::Point2D::Type& point )
+	static
+	ColorMatrix GetSampleFromMap( const ImageTile& tile, const V::Point2D::Type& point )
 	{
 		const unsigned width = tile.Width();
 		
@@ -181,7 +165,8 @@ namespace Vertice
 	{
 	}
 	
-	static inline UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
+	static inline
+	UInt32 MakePixel32( UInt32 r, UInt32 g, UInt32 b )
 	{
 		const UInt32 a = 0;
 		
@@ -189,7 +174,8 @@ namespace Vertice
 		                            : b << 24 | g << 16 | r << 8 | a << 0;
 	}
 	
-	static inline UInt32 MakePixel32( double red, double green, double blue )
+	static inline
+	UInt32 MakePixel32( double red, double green, double blue )
 	{
 		UInt32 r = UInt32( red   < 1.0  ?  red   * 255  :  255 );
 		UInt32 g = UInt32( green < 1.0  ?  green * 255  :  255 );
@@ -198,7 +184,8 @@ namespace Vertice
 		return MakePixel32( r, g, b );
 	}
 	
-	static inline UInt32 MakePixel32( const ColorMatrix& color )
+	static inline
+	UInt32 MakePixel32( const ColorMatrix& color )
 	{
 		return MakePixel32( color[ V::Red   ],
 		                    color[ V::Green ],
@@ -208,6 +195,7 @@ namespace Vertice
 	
 	template < class DoubleSpectrum,
 	           class ColorSpectrum >
+	static
 	void DrawDeepScanLine( int                    y,
 	                       int                    farLeft,
 	                       double                 left,
@@ -242,6 +230,7 @@ namespace Vertice
 	template < class DoubleSpectrum,
 	           class ColorSpectrum,
 	           class UVSpectrum >
+	static
 	void DrawDeepScanLine( int                    y,
 	                       int                    farLeft,
 	                       double                 left,
@@ -275,7 +264,8 @@ namespace Vertice
 		}
 	}
 	
-	static bool CheckPixMap( PixMapHandle pixMapHandle )
+	static
+	bool CheckPixMap( PixMapHandle pixMapHandle )
 	{
 	#if !TARGET_API_MAC_CARBON
 		
@@ -297,6 +287,7 @@ namespace Vertice
 	}
 	
 	template < class Vertex >
+	static
 	void DrawDeepTrapezoid( Vertex  topLeft,
 	                        Vertex  topRight,
 	                        Vertex  bottomLeft,
@@ -410,6 +401,7 @@ namespace Vertice
 	
 	/*
 	template < class Vertex >
+	static
 	void DrawDeepTriangle( const Vertex& A,
 	                       const Vertex& B,
 	                       const Vertex& C )
@@ -458,15 +450,17 @@ namespace Vertice
 	}
 	*/
 	
-	static inline bool VerticallyGreater( const DeepVertex& a, const DeepVertex& b )
+	static inline
+	bool VerticallyGreater( const DeepVertex& a, const DeepVertex& b )
 	{
 		return a[ Y ] > b[ Y ];
 	}
 	
-	static void AdvanceVertexIterator( std::vector< DeepVertex >::const_iterator&  it,
-	                                   unsigned                                    top_index,
-	                                   unsigned                                    bottom_index,
-	                                   bool                                        on_right )
+	static
+	void AdvanceVertexIterator( std::vector< DeepVertex >::const_iterator&  it,
+	                            unsigned                                    top_index,
+	                            unsigned                                    bottom_index,
+	                            bool                                        on_right )
 	{
 		bool seam_is_on_right = top_index < bottom_index;
 		
@@ -477,7 +471,8 @@ namespace Vertice
 		}
 	}
 	
-	static DeepVertex InterpolateDeepVertex( const DeepVertex& a, const DeepVertex& b, double t )
+	static
+	DeepVertex InterpolateDeepVertex( const DeepVertex& a, const DeepVertex& b, double t )
 	{
 		V::Point3D::Type point;
 		
@@ -498,7 +493,8 @@ namespace Vertice
 		return result;
 	}
 	
-	static void DrawDeepPolygon( const std::vector< DeepVertex >& vertices )
+	static
+	void DrawDeepPolygon( const std::vector< DeepVertex >& vertices )
 	{
 		std::vector< DeepVertex > sorted_vertices = vertices;
 		
@@ -567,16 +563,6 @@ namespace Vertice
 	}
 	
 	
-	static void SetPortToClipTransform()
-	{
-		double n = 0.01;  // Think 1cm
-		double f = 100;  // Think 100m
-		double e = sFocalLength;
-		double a = sAspectRatio;
-		
-		gPort2Clip = V::MakePortToClipTransform( n, f, e, a );
-	}
-	
 	PortView::PortView( const Rect& bounds ) : itsBounds         ( bounds      ),
 	                                           itsPort           ( itsScene    ),
 	                                           itsSelectedContext(             ),
@@ -585,83 +571,11 @@ namespace Vertice
 		SetBounds( bounds );
 	}
 	
-	static V::Point3D::Type PortFromScreen_Point( const V::Point3D::Type&  point,
-	                                              short                    width,
-	                                              short                    height,
-	                                              double                   e )
-	{
-		V::Point3D::Type result;
-		
-		double half_width  = width  / 2.0;
-		double half_height = height / 2.0;
-		
-		result[ X ] = ( point[ X ] - half_width  ) / ( e *  half_width );
-		result[ Y ] = ( point[ Y ] - half_height ) / ( e * -half_width );
-		
-		result[ Z ] = point[ Z ];
-		result[ W ] = point[ W ];
-		
-		return result;
-	}
-	
-	static const V::XMatrix& ScreenToPortTransform( short width, short height )
-	{
-		static V::XMatrix screen2port;
-		
-		static short oldWidth = 0, oldHeight = 0;
-		
-		if ( width == oldWidth  &&  height == oldHeight )
-		{
-			return screen2port;
-		}
-		
-		oldWidth = width;
-		oldHeight = height;
-		
-		double e = sFocalLength;
-		
-		V::Translation translate( -width / 2.0, -height / 2.0, 0 );
-		
-		V::XMatrix scale = V::IdentityMatrix();
-		
-		scale.Cell( 0, 0 ) = 1.0 / (e * width / 2);
-		//scale.Cell(1, 1) = 1.0 / (-height / 2);
-		scale.Cell( 1, 1 ) = 1.0 / (e * -width / 2);
-		
-		return screen2port = Compose( translate.Make(), scale );
-	}
-	
-	static const V::XMatrix& PortToScreenTransform( short width, short height )
-	{
-		static V::XMatrix port2screen;
-		
-		static short oldWidth = 0, oldHeight = 0;
-		
-		if ( width == oldWidth  &&  height == oldHeight )
-		{
-			return port2screen;
-		}
-		
-		oldWidth = width;
-		oldHeight = height;
-		
-		double e = sFocalLength;
-		
-		V::XMatrix scale = V::IdentityMatrix();
-		
-		scale.Cell( 0, 0 ) = e * width / 2;
-		//scale.Cell(1, 1) = -height / 2;
-		scale.Cell( 1, 1 ) = e * -width / 2;
-		
-		V::Translation translate( width / 2, height / 2, 0 );
-		
-		return port2screen = Compose( scale, translate.Make() );
-	}
-	
 	static bool fishEye = false;
 	
 	/*
-	static V::Point3D::Type FishEye( const V::Point3D::Type& pt )
+	static
+	V::Point3D::Type FishEye( const V::Point3D::Type& pt )
 	{
 		double x = pt[ X ];
 		double y = pt[ Y ];
@@ -676,7 +590,8 @@ namespace Vertice
 		return V::Point3D::Make( x, y, z );
 	}
 	
-	static V::Point3D::Type UnFishEye( const V::Point3D::Type& pt )
+	static
+	V::Point3D::Type UnFishEye( const V::Point3D::Type& pt )
 	{
 		double x = pt[ X ];
 		double y = pt[ Y ];
@@ -691,53 +606,22 @@ namespace Vertice
 	}
 	*/
 	
-	static V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
+	static inline
+	V::Point3D::Type PerspectiveDivision( const V::Point3D::Type& pt )
 	{
 		return pt / -pt[ Z ] * sFocalLength;
 	}
 	
-	/*
-	static V::Point3D::Type HomogeneousPerspectiveDivision( const V::Point3D::Type& pt )
-	{
-		return V::Point3D::Make( pt[ X ] / pt[ W ],
-		                         pt[ Y ] / pt[ W ],
-		                         pt[ Z ] / pt[ W ] );
-	}
-	*/
-	
-	static V::Point2D::Type Point3DTo2D( const V::Point3D::Type& pt )
+	static inline
+	V::Point2D::Type Point3DTo2D( const V::Point3D::Type& pt )
 	{
 		return V::Point2D::Make( pt[ X ], pt[ Y ] );
 	}
 	
-	/*
-	class ClippingPlane
-	{
-		private:
-			const V::Plane3D::Type& plane;
-		
-		public:
-			ClippingPlane( const V::Plane3D::Type& plane ) : plane( plane )  {}
-			
-			template < class Points >
-			void operator()( Points& points ) const
-			{
-				ClipPolygonAgainstPlane( points, plane );
-			}
-	};
-	*/
-	
-	/*
-	template < class Container, class Filter >
-	void Trim( Container& cont, const Filter& filter )
-	{
-		cont.resize( std::remove_if( cont.begin(), cont.end(), filter ) - cont.begin() );
-	}
-	*/
-	
-	static V::Point2D::Type InterpolatedUV( const V::Point3D::Type& intersection,
-	                                        const V::Point3D::Type* savedPoints,
-	                                        const V::Point2D::Type* uv_points )
+	static
+	V::Point2D::Type InterpolatedUV( const V::Point3D::Type&  intersection,
+	                                 const V::Point3D::Type*  savedPoints,
+	                                 const V::Point2D::Type*  uv_points )
 	{
 		V::Vector3D::Type edgeU = savedPoints[ 1 ] - savedPoints[ 0 ];
 		V::Vector3D::Type edgeV = savedPoints[ 2 ] - savedPoints[ 1 ];
@@ -754,7 +638,8 @@ namespace Vertice
 	}
 	
 	
-	static double ProximityQuotient( double distance )
+	static inline
+	double ProximityQuotient( double distance )
 	{
 		return 1 / (1 + distance * distance);
 	}
@@ -766,9 +651,10 @@ namespace Vertice
 	static const ColorMatrix gCameraLight    = 0.9 * V::MakeRGB( 1.0, 1.0, 0.6 );
 	static const ColorMatrix gSelectionLight = 0.3 * V::MakeRGB( 1.0, 0.8, 0.8 );
 	
-	static ColorMatrix LightColor( double  distance,
-	                               double  incidenceRatio,
-	                               bool    selected )
+	static
+	ColorMatrix LightColor( double  distance,
+	                        double  incidenceRatio,
+	                        bool    selected )
 	{
 		double proximity = ProximityQuotient( distance / 2 );
 		
@@ -813,15 +699,17 @@ namespace Vertice
 		return totalLight;
 	}
 	
-	static inline ColorMatrix TweakColor( const ColorMatrix&  color,
-	                                      double              distance,
-	                                      double              incidenceRatio,
-	                                      bool                selected )
+	static inline
+	ColorMatrix TweakColor( const ColorMatrix&  color,
+	                        double              distance,
+	                        double              incidenceRatio,
+	                        bool                selected )
 	{
 		return ModulateColor( color, LightColor( distance, incidenceRatio, selected ) );
 	}
 	
-	static double operator*( const V::Vector3D::Type& a, const V::Vector3D::Type& b )
+	static
+	double operator*( const V::Vector3D::Type& a, const V::Vector3D::Type& b )
 	{
 		return DotProduct( a, b );
 	}
@@ -988,41 +876,47 @@ namespace Vertice
 		}
 	}
 	
-	static inline int BigToNative32BitOffset( int bits )
+	static inline
+	int BigToNative32BitOffset( int bits )
 	{
 		return (bits - 12) * (TARGET_RT_BIG_ENDIAN - TARGET_RT_LITTLE_ENDIAN) + 12;
 	}
 	
-	static const int kBitOffsetToGWorldAlpha = BigToNative32BitOffset( 24 );  //  0
-	static const int kBitOffsetToGWorldRed   = BigToNative32BitOffset( 16 );  //  8
-	static const int kBitOffsetToGWorldGreen = BigToNative32BitOffset(  8 );  // 16
-	static const int kBitOffsetToGWorldBlue  = BigToNative32BitOffset(  0 );  // 24
+	const int kBitOffsetToGWorldAlpha = BigToNative32BitOffset( 24 );  //  0
+	const int kBitOffsetToGWorldRed   = BigToNative32BitOffset( 16 );  //  8
+	const int kBitOffsetToGWorldGreen = BigToNative32BitOffset(  8 );  // 16
+	const int kBitOffsetToGWorldBlue  = BigToNative32BitOffset(  0 );  // 24
 	
-	static void MergeTrueAnaglyph( const ::Byte* left, ::Byte* right )
+	static
+	void MergeTrueAnaglyph( const ::Byte* left, ::Byte* right )
 	{
 		*(UInt32*) right = UInt32( 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3] ) << kBitOffsetToGWorldRed
 		                 |                                                                0 << kBitOffsetToGWorldGreen
 		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldBlue;
 	}
 	
-	static void MergeGrayAnaglyph( const ::Byte* left, ::Byte* right )
+	static
+	void MergeGrayAnaglyph( const ::Byte* left, ::Byte* right )
 	{
 		*(UInt32*) right = UInt32( 0.299 * left [1] + 0.587 * left [2] + 0.114 * left [3] ) << kBitOffsetToGWorldRed
 		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldGreen
 		                 | UInt32( 0.299 * right[1] + 0.587 * right[2] + 0.114 * right[3] ) << kBitOffsetToGWorldBlue;
 	}
 	
-	static void MergeColorAnaglyph( const ::Byte* left, ::Byte* right )
+	static
+	void MergeColorAnaglyph( const ::Byte* left, ::Byte* right )
 	{
 		right[1] = left[1];
 	}
 	
-	static void MergeHalfColorAnaglyph( const ::Byte* left, ::Byte* right )
+	static
+	void MergeHalfColorAnaglyph( const ::Byte* left, ::Byte* right )
 	{
 		right[1] = UInt8( 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3] );
 	}
 	
-	static void MergeOptimizedAnaglyph( const ::Byte* left, ::Byte* right )
+	static
+	void MergeOptimizedAnaglyph( const ::Byte* left, ::Byte* right )
 	{
 		right[1] = UInt8( 0.7 * left[2] + 0.3 * left[3] );
 	}
@@ -1180,31 +1074,10 @@ namespace Vertice
 		N::SetCPixel( x, y, n::convert< RGBColor >( TracePixel( x, y ) ) );
 	}
 	
-	/*
-	struct TickCounter
-	{
-		typedef UInt32 Time;
-		
-		Time operator()() const  { return ::TickCount(); }
-	};
-	
-	struct AnyThreadYielder
-	{
-		void operator()() const  { N::YieldToAnyThread(); }
-	};
-	*/
-	
 	static const bool gBlitting = false;
 	
 	void PortView::DrawBetter( bool per_scanline ) const
 	{
-		/*
-		typedef NX::Escapement< NX::Timer< TickCounter >,
-		                        AnyThreadYielder > Escapement;
-		
-		Escapement escapement( 10 );
-		*/
-		
 		n::saved< N::GWorld > savedGWorld;
 		
 		if ( gBlitting )
@@ -1305,7 +1178,6 @@ namespace Vertice
 						savedPoints[2] = mesh.Points()[ savedOffsets[ 2 ] ];
 						
 						std::vector< V::Point3D::Type > points( offsets.size() );
-						//std::vector< V::Point3D::Type > points2( offsets.size() );
 						
 						// Lookup the vertices of this polygon
 						// in port coordinates
@@ -1318,41 +1190,11 @@ namespace Vertice
 						
 						V::Plane3D::Type plane = V::PlaneVector( faceNormal, points[ 0 ] );
 						
-						#if 0
-						// Port to clip coordinates
-						std::transform( points.begin(),
-						                points.end(),
-						                points2.begin(),
-						                V::Transformer< V::Point3D::Type >( gPort2Clip ) );
-						#endif
-						
-						#if 0
-						// Perspective division
-						std::transform( points2.begin(),
-						                points2.end(),
-						                points2.begin(),
-						                std::ptr_fun( HomogeneousPerspectiveDivision ) );
-						#endif
-						
-						#if 1
 						// Perspective division
 						std::transform( points.begin(),
 						                points.end(),
 						                points.begin(),
 						                std::ptr_fun( PerspectiveDivision ) );
-						#endif
-						
-						/*
-						for ( int i = 0;  i < points.size();  ++i )
-						{
-							const V::Point3D::Type& pt  = points [ i ];
-							const V::Point3D::Type& pt2 = points2[ i ];
-							
-							std::printf( "[ %f, %f, -1, %f ]  [ %f, %f, %f, 1 ]\n",
-							             pt [ X ], pt [ Y ],           pt [ W ],
-							             pt2[ X ], pt2[ Y ], pt2[ Z ] );
-						}
-						*/
 						
 						V::Polygon2D poly2d;
 						
@@ -1563,7 +1405,7 @@ namespace Vertice
 		}
 	}
 	
-	bool PortView::KeyDown(char c)
+	bool PortView::KeyDown( char c )
 	{
 		if ( c == '~' )
 		{
@@ -1715,27 +1557,9 @@ namespace Vertice
 		return true;
 	}
 	
-	static bool operator==( const Rect& a, const Rect& b )
-	{
-		return std::equal( (const SInt16*)&a, (const SInt16*)&a + 4, (const SInt16*)&b );
-	}
-	
 	void PortView::SetBounds( const Rect& bounds )
 	{
-		using namespace nucleus::operators;
-		
-		//if ( bounds == itsBounds )  return;
-		
 		itsBounds = bounds;
-		
-		const short width  = bounds.right;
-		const short height = bounds.bottom;
-		
-		itsScreen2Port = ScreenToPortTransform( width, height );
-		
-		sAspectRatio = AspectRatio( width, height );
-		
-		SetPortToClipTransform();
 		
 		itsGWorld = N::NewGWorld( 32, itsBounds );
 		
