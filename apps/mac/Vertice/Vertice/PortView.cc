@@ -497,9 +497,9 @@ namespace Vertice
 	}
 	
 	static
-	void DrawDeepPolygon( const std::vector< DeepVertex >& vertices )
+	void DrawDeepPolygon( std::vector< DeepVertex > vertices )
 	{
-		std::vector< DeepVertex > sorted_vertices = vertices;
+		std::vector< DeepVertex >& sorted_vertices = vertices;
 		
 		// sort by Y
 		std::sort( sorted_vertices.begin(),
