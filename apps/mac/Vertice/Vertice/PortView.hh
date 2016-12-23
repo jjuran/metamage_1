@@ -17,21 +17,12 @@
 #endif
 
 // Vertice
+#include "Vertice/Anaglyphs.hh"
 #include "Vertice/Port.hh"
 
 
 namespace Vertice
 {
-	
-	enum AnaglyphMode
-	{
-		kNoAnaglyph,
-		kTrueAnaglyph,
-		kGrayAnaglyph,
-		kColorAnaglyph,
-		kHalfColorAnaglyph,
-		kOptimizedAnaglyph
-	};
 	
 	class PortView : public Pedestal::View
 	{
@@ -48,7 +39,7 @@ namespace Vertice
 			Frame                        itsFrame;
 			std::size_t                  itsSelectedContext;
 			nucleus::owned< GWorldPtr >  itsGWorld;
-			AnaglyphMode                 itsAnaglyphMode;
+			anaglyph_mode                itsAnaglyphMode;
 		
 		public:
 			PortView( const Rect& bounds );

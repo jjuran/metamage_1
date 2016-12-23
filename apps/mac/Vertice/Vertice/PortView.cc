@@ -876,80 +876,8 @@ namespace Vertice
 		}
 	}
 	
-	static
-	void MergeTrueAnaglyph( const ::Byte* left, ::Byte* right )
-	{
-		uint8_t r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
-		uint8_t g = 0;
-		uint8_t b = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
-		
-		right[ 1 ] = r;
-		right[ 2 ] = g;
-		right[ 3 ] = b;
-	}
-	
-	static
-	void MergeGrayAnaglyph( const ::Byte* left, ::Byte* right )
-	{
-		uint8_t r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
-		uint8_t g = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
-		uint8_t b = g;
-		
-		right[ 1 ] = r;
-		right[ 2 ] = g;
-		right[ 3 ] = b;
-	}
-	
-	static
-	void MergeColorAnaglyph( const ::Byte* left, ::Byte* right )
-	{
-		right[1] = left[1];
-	}
-	
-	static
-	void MergeHalfColorAnaglyph( const ::Byte* left, ::Byte* right )
-	{
-		right[1] = UInt8( 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3] );
-	}
-	
-	static
-	void MergeOptimizedAnaglyph( const ::Byte* left, ::Byte* right )
-	{
-		right[1] = UInt8( 0.7 * left[2] + 0.3 * left[3] );
-	}
-	
-	typedef void (*AnaglyphicMerge)( const ::Byte*, ::Byte* );
-	
 	void PortView::DrawAnaglyphic()
 	{
-		AnaglyphicMerge merge = NULL;
-		
-		switch ( itsAnaglyphMode )
-		{
-			case kTrueAnaglyph:
-				merge = &MergeTrueAnaglyph;
-				break;
-			
-			case kGrayAnaglyph:
-				merge = &MergeGrayAnaglyph;
-				break;
-			
-			case kColorAnaglyph:
-				merge = &MergeColorAnaglyph;
-				break;
-			
-			case kHalfColorAnaglyph:
-				merge = &MergeHalfColorAnaglyph;
-				break;
-			
-			case kOptimizedAnaglyph:
-				merge = &MergeOptimizedAnaglyph;
-				break;
-			
-			default:
-				return;  // shouldn't happen
-		}
-		
 		std::size_t contextIndex = itsScene.Cameras().front().ContextIndex();
 		
 		Moveable& target = itsPort.itsScene.GetContext( contextIndex );
@@ -991,25 +919,12 @@ namespace Vertice
 		::Ptr baseL = pixL[0]->baseAddr;
 		::Ptr baseR = pixR[0]->baseAddr;
 		
-		unsigned rowBytes = pixL[0]->rowBytes & 0x3fff;
-		
 		unsigned width  = itsBounds.right - itsBounds.left;
 		unsigned height = itsBounds.bottom - itsBounds.top;
 		
-		for ( unsigned y = 0;  y < height;  ++y )
-		{
-			std::size_t rowOffset = y * rowBytes;
-			
-			for ( unsigned x = 0;  x < width;  ++x )
-			{
-				std::size_t pixelOffset = rowOffset + x * 4;
-				
-				::BytePtr addrL = (::BytePtr) baseL + pixelOffset;
-				::BytePtr addrR = (::BytePtr) baseR + pixelOffset;
-				
-				merge( addrL, addrR );
-			}
-		}
+		unsigned stride = pixL[0]->rowBytes & 0x3fff;
+		
+		merge_anaglyph( itsAnaglyphMode, baseL, baseR, height, width, stride );
 		
 		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
