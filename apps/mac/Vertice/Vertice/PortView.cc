@@ -909,26 +909,34 @@ namespace Vertice
 		paint_into_thePort( models );
 	}
 	
-	void PortView::Redraw()
+	static
+	void blit_to_thePort( CGrafPtr src )
 	{
-		paint_into_GWorld( itsFrame.Models(), itsGWorld );
-		
 		CGrafPtr thePort = N::GetQDGlobalsThePort();
+		
+		const Rect bounds = N::GetPortBounds( thePort );
 		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
 		n::saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
-		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
+		N::CopyBits( N::GetPortBitMapForCopyBits( src ),
 		             N::GetPortBitMapForCopyBits( thePort ),
-		             itsBounds,
-		             itsBounds,
+		             N::GetPortBounds( src ),
+		             bounds,
 		             N::srcCopy );
 		
 		if ( TARGET_API_MAC_CARBON )
 		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
+			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( bounds ) );
 		}
+	}
+	
+	void PortView::Redraw()
+	{
+		paint_into_GWorld( itsFrame.Models(), itsGWorld );
+		
+		blit_to_thePort( itsGWorld );
 	}
 	
 	void PortView::Draw( const Rect& bounds, bool erasing )
@@ -995,22 +1003,7 @@ namespace Vertice
 		
 		merge_anaglyph( itsAnaglyphMode, baseL, baseR, height, width, stride );
 		
-		CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
-		PixMapHandle pix = N::GetGWorldPixMap( thePort );
-		n::saved< N::Pixels_State > savedPixelsState( pix );
-		N::LockPixels( pix );
-		
-		N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
-		             N::GetPortBitMapForCopyBits( thePort ),
-		             itsBounds,
-		             itsBounds,
-		             N::srcCopy );
-		
-		if ( TARGET_API_MAC_CARBON )
-		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
-		}
+		blit_to_thePort( itsGWorld );
 	}
 	
 	
@@ -1323,19 +1316,7 @@ namespace Vertice
 		{
 			savedGWorld.restore();
 			
-			CGrafPtr thePort = N::GetQDGlobalsThePort();
-			
-			PixMapHandle thePortPix = N::GetGWorldPixMap( thePort );
-			n::saved< N::Pixels_State > savedPixelsState( thePortPix );
-			N::LockPixels( thePortPix );
-			
-			N::CopyBits( N::GetPortBitMapForCopyBits( itsGWorld ),
-			             N::GetPortBitMapForCopyBits( thePort ),
-			             itsBounds,
-			             itsBounds,
-			             N::srcCopy );
-			
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
+			blit_to_thePort( itsGWorld );
 		}
 	}
 	
