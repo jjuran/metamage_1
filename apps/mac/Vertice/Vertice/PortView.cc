@@ -172,8 +172,19 @@ namespace Vertice
 	}
 	
 	static
-	n::owned< GWorldPtr > new_GWorld( const Rect& bounds )
+	n::owned< GWorldPtr > new_GWorld( Rect bounds )
 	{
+	#ifdef MAC_OS_X_VERSION_10_7
+		
+		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		
+		CGFloat factor = HIWindowGetBackingScaleFactor( window );
+		
+		bounds.right *= factor;
+		bounds.bottom *= factor;
+		
+	#endif
+		
 		n::owned< GWorldPtr > gworld = N::NewGWorld( 32, bounds );
 		
 		N::LockPixels( N::GetGWorldPixMap( gworld ) );
@@ -214,8 +225,10 @@ namespace Vertice
 		::Ptr baseL = pixL[0]->baseAddr;
 		::Ptr baseR = pixR[0]->baseAddr;
 		
-		unsigned width  = itsBounds.right - itsBounds.left;
-		unsigned height = itsBounds.bottom - itsBounds.top;
+		const Rect bounds = pixL[0]->bounds;
+		
+		unsigned width  = bounds.right - bounds.left;
+		unsigned height = bounds.bottom - bounds.top;
 		
 		unsigned stride = pixL[0]->rowBytes & 0x3fff;
 		
