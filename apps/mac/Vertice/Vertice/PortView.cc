@@ -151,7 +151,7 @@ namespace Vertice
 	{
 		render_into_GWorld( itsFrame.Models(), &trace_onto_surface, itsGWorld );
 		
-		blit_to_thePort( itsGWorld );
+		Update();
 	}
 	
 	bool PortView::MouseDown( const EventRecord& event )
@@ -175,7 +175,7 @@ namespace Vertice
 		
 		render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		
-		blit_to_thePort( itsGWorld );
+		Update();
 		
 		return true;
 	}
@@ -335,7 +335,8 @@ namespace Vertice
 		
 		itsPort.SendCameraCommand( itsSelectedContext, cmd );
 		
-		Draw( Rect(), true );
+		Render();
+		Update();
 		
 		return true;
 	}
