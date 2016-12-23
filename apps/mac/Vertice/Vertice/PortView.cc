@@ -200,7 +200,6 @@ namespace Vertice
 	           class ColorSpectrum >
 	static
 	void DrawDeepScanLine( int                    y,
-	                       int                    farLeft,
 	                       double                 left,
 	                       double                 right,
 	                       const DoubleSpectrum&  w_spectrum,
@@ -217,7 +216,7 @@ namespace Vertice
 			
 			if ( gDeepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
-				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
+				::Ptr pixelAddr = rowAddr + x * 32/8;
 				
 				ColorMatrix color = colors[ tX ];
 				
@@ -235,7 +234,6 @@ namespace Vertice
 	           class UVSpectrum >
 	static
 	void DrawDeepScanLine( int                    y,
-	                       int                    farLeft,
 	                       double                 left,
 	                       double                 right,
 	                       const DoubleSpectrum&  w_spectrum,
@@ -254,7 +252,7 @@ namespace Vertice
 			
 			if ( gDeepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
-				::Ptr pixelAddr = rowAddr + (x - farLeft) * 32/8;
+				::Ptr pixelAddr = rowAddr + x * 32/8;
 				
 				ColorMatrix lightColor = colors[ tX ] / w;
 				
@@ -354,7 +352,6 @@ namespace Vertice
 			if ( !using_texture_map )
 			{
 				DrawDeepScanLine( y,
-				                  bounds.left,
 				                  left,
 				                  right,
 				                  w_spectrum,
@@ -370,7 +367,6 @@ namespace Vertice
 				                                                 bottomRight.itsTexturePoint * bottomRight[ W ] )[ tY ];
 				
 				DrawDeepScanLine( y,
-				                  bounds.left,
 				                  left,
 				                  right,
 				                  w_spectrum,
