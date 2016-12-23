@@ -291,10 +291,10 @@ namespace Vertice
 	
 	template < class Vertex >
 	static
-	void DrawDeepTrapezoid( Vertex  topLeft,
-	                        Vertex  topRight,
-	                        Vertex  bottomLeft,
-	                        Vertex  bottomRight )
+	void DrawDeepTrapezoid( const Vertex&  topLeft,
+	                        const Vertex&  topRight,
+	                        const Vertex&  bottomLeft,
+	                        const Vertex&  bottomRight )
 	{
 		::CGrafPtr port = N::GetQDGlobalsThePort();
 		//::CGrafPtr port = itsGWorld.Get();
