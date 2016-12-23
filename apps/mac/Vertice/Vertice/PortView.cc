@@ -204,7 +204,7 @@ namespace Vertice
 	                       double                 right,
 	                       const DoubleSpectrum&  w_spectrum,
 	                       const ColorSpectrum&   colors,
-	                       ::Ptr                  rowAddr )
+	                       uint8_t*               rowAddr )
 	{
 		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
 		{
@@ -216,7 +216,7 @@ namespace Vertice
 			
 			if ( gDeepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
-				::Ptr pixelAddr = rowAddr + x * 32/8;
+				uint8_t* pixelAddr = rowAddr + x * 32/8;
 				
 				ColorMatrix color = colors[ tX ];
 				
@@ -224,7 +224,7 @@ namespace Vertice
 				double green = color[ V::Green ] / w;
 				double blue  = color[ V::Blue  ] / w;
 				
-				inscribe_argb_pixel( (uint8_t*) pixelAddr, red, green, blue );
+				inscribe_argb_pixel( pixelAddr, red, green, blue );
 			}
 		}
 	}
@@ -240,7 +240,7 @@ namespace Vertice
 	                       const ColorSpectrum&   colors,
 	                       const UVSpectrum&      uv_spectrum,
 	                       const MeshPolygon&     polygon,
-	                       ::Ptr                  rowAddr )
+	                       uint8_t*               rowAddr )
 	{
 		for ( int x = int( std::ceil( left ) );  x < right;  ++x )
 		{
@@ -252,7 +252,7 @@ namespace Vertice
 			
 			if ( gDeepPixelDevice.SetIfNearer( x, y, -z ) )
 			{
-				::Ptr pixelAddr = rowAddr + x * 32/8;
+				uint8_t* pixelAddr = rowAddr + x * 32/8;
 				
 				ColorMatrix lightColor = colors[ tX ] / w;
 				
@@ -260,7 +260,7 @@ namespace Vertice
 				                                                     uv_spectrum[ tX ] / w ),
 				                                   lightColor );
 				
-				inscribe_argb_pixel( (uint8_t*) pixelAddr, color );
+				inscribe_argb_pixel( pixelAddr, color );
 			}
 		}
 	}
@@ -329,7 +329,7 @@ namespace Vertice
 		
 		for ( int y = start;  y < stop;  ++y )
 		{
-			::Ptr rowAddr = base + ( y - bounds.top ) * rowBytes;
+			uint8_t* rowAddr = (uint8_t*) base + ( y - bounds.top ) * rowBytes;
 			
 			double tY = (y - top) / vdist;
 			
