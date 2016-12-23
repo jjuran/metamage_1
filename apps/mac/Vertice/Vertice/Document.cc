@@ -607,9 +607,11 @@ namespace Vertice
 	{
 		Window* doc = new Window();
 		
-		Ped::set_window_closed_proc( doc->Get(), &DocumentClosed );
+		WindowRef window = doc->Get();
 		
-		LoadFileIntoWindow( file, doc->Get() );
+		Ped::set_window_closed_proc( window, &DocumentClosed );
+		
+		LoadFileIntoWindow( file, window );
 	}
 	
 }
