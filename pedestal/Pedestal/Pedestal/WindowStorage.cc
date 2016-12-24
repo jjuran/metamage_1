@@ -420,6 +420,24 @@ namespace Pedestal
 		                               goAwayFlag,
 		                               0 );
 		
+		if ( window == NULL )
+		{
+			OSStatus err = MemError();
+			
+			if ( err == noErr )
+			{
+				err = paramErr;  // E.g. invalid procID
+			}
+			
+		#if ! TARGET_API_MAC_CARBON
+			
+			delete storage;
+			
+		#endif
+			
+			Mac::ThrowOSStatus( err );
+		}
+		
 		SetPortWindowPort( window );
 		
 		return n::owned< WindowRef >::seize( window, disposer );
