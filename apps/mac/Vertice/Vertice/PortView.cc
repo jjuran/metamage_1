@@ -764,11 +764,9 @@ namespace Vertice
 		const unsigned width  = itsBounds.right - itsBounds.left;
 		const unsigned height = itsBounds.bottom - itsBounds.top;
 		
-		N::RGBBackColor( n::make< RGBColor >( 0 ) );
+		memset( base, '\0', height * stride );
 		
 		//fishEye = itsPort.mCamera.fishEyeMode;
-		
-		N::EraseRect( itsBounds );
 		
 		gDeepPixelDevice.Resize( width, height );
 		
