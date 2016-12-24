@@ -320,16 +320,19 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 	};
 	
+	static inline
+	short compute_rowBytes_from_width( short width )
+	{
+		ASSERT( width > 0 );
+		
+		return (width + 15) >> 3 & ~1;
+	}
+	
 	static inline short compute_rowBytes_from_bounds( const Rect& bounds )
 	{
 		const short width = bounds.right - bounds.left;
 		
-		if ( width <= 0 )
-		{
-			return 0;
-		}
-		
-		return (width + 15) >> 3 & ~1;
+		return compute_rowBytes_from_width( width );
 	}
 	
 	void BitMapView::Draw( const Rect& bounds, bool erasing )
@@ -454,6 +457,27 @@ namespace Genie
 		params.bitmap.rowBytes = rowBytes;
 	}
 	
+	struct BitMap_size : serialize_Point
+	{
+		static const bool is_mutable = true;
+		
+		static Point Get( const BitMap& bits )
+		{
+			const short height = bits.bounds.bottom - bits.bounds.top;
+			const short width  = bits.bounds.right - bits.bounds.left;
+			
+			Point point = { height, width };
+			return point;
+		}
+		
+		static void Set( BitMap_Parameters& params, const Point& size )
+		{
+			const Rect bounds = { 0, 0, size.v, size.h };
+			
+			BitMap_bounds::Set( params, bounds );
+		}
+	};
+	
 	static const BitMap& get_bitmap( const vfs::node* that )
 	{
 		BitMap_Parameters* it = gBitMapMap.find( that );
@@ -513,6 +537,7 @@ namespace Genie
 		{ "rowBytes", PROPERTY( BitMap_rowBytes ) },
 		
 		{ "bounds", PROPERTY( BitMap_bounds ) },
+		{ "size",   PROPERTY( BitMap_size   ) },
 		
 		{ "bits", &bitmap_bits_Factory },
 		
