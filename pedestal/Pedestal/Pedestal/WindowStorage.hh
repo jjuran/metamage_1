@@ -63,6 +63,8 @@ namespace Pedestal
 	
 	WindowResized_proc get_window_resized_proc( WindowRef window );
 	
+	void invalidate_window( WindowRef window );
+	
 	void close_window( WindowRef window );
 	
 	nucleus::owned< WindowRef >

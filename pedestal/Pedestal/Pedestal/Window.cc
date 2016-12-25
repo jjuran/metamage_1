@@ -38,7 +38,8 @@ namespace Pedestal
 		// Shotgun approach -- invalidate the whole window.
 		// This conveniently includes both old and new grow box locations.
 		// Clients can validate regions if they want.
-		N::InvalRect( bounds );
+		
+		invalidate_window( window );
 		
 		if ( View* view = get_window_view( window ) )
 		{

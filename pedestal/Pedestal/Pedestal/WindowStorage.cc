@@ -16,10 +16,14 @@
 // Nitrogen
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
+#include "Nitrogen/MacWindows.hh"
+#include "Nitrogen/Quickdraw.hh"
+
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Pedestal
+#include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
 
 
@@ -35,6 +39,7 @@ namespace Pedestal
 {
 	
 	namespace n = nucleus;
+	namespace N = Nitrogen;
 	
 	enum
 	{
@@ -339,6 +344,20 @@ namespace Pedestal
 		                         &result );
 		
 		return result;
+	}
+	
+	void invalidate_window( WindowRef window )
+	{
+		CGrafPtr port = GetWindowPort( window );
+		
+		if ( IsPortVisibleRegionEmpty( port ) )
+		{
+			return;
+		}
+		
+		N::InvalWindowRect( window, N::GetPortBounds( port ) );
+		
+		ScheduleImmediateEventCheck();
 	}
 	
 	void close_window( WindowRef window )

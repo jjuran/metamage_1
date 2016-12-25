@@ -60,6 +60,7 @@
 
 // Pedestal
 #include "Pedestal/Window.hh"
+#include "Pedestal/WindowStorage.hh"
 
 // relix-kernel
 #include "relix/config/color.hh"
@@ -362,7 +363,7 @@ namespace Genie
 			
 			SetColor( color );
 			
-			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			Ped::invalidate_window( window );
 		}
 	};
 	
@@ -381,7 +382,7 @@ namespace Genie
 			
 			::TextFont( fontID );
 			
-			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			Ped::invalidate_window( window );
 		}
 	};
 	
@@ -400,7 +401,7 @@ namespace Genie
 			
 			::TextSize( size );
 			
-			N::InvalRect( N::GetPortBounds( N::GetWindowPort( window ) ) );
+			Ped::invalidate_window( window );
 		}
 	};
 	

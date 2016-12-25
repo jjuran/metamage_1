@@ -41,7 +41,6 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
-#include "Pedestal/Application.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
 
@@ -371,16 +370,7 @@ namespace Genie
 	{
 		ASSERT( window != NULL );
 		
-		CGrafPtr port = GetWindowPort( window );
-		
-		if ( IsPortVisibleRegionEmpty( port ) )
-		{
-			return;
-		}
-		
-		N::InvalWindowRect( window, N::GetPortBounds( port ) );
-		
-		Ped::ScheduleImmediateEventCheck();
+		Ped::invalidate_window( window );
 	}
 	
 	static WindowRef GetWindowRef( const vfs::node* key )
