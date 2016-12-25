@@ -346,20 +346,9 @@ namespace Genie
 		
 		BitMap_Parameters& params = gBitMapMap[ itsKey ];
 		
-		if ( !params.bitmap.rowBytes )
-		{
-			params.bitmap.bounds = bounds;
-			
-			params.bitmap.rowBytes = compute_rowBytes_from_bounds( bounds );
-		}
-		
 		if ( params.bitmap.baseAddr == NULL )
 		{
-			size_t n_bytes = params.bitmap.rowBytes * (bounds.bottom - bounds.top);
-			
-			params.bits = N::NewPtrClear( n_bytes );
-			
-			params.bitmap.baseAddr = params.bits.get();
+			return;
 		}
 		
 		// Copy to dest
