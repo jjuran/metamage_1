@@ -348,6 +348,22 @@ namespace Pedestal
 	
 	void invalidate_window( WindowRef window )
 	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		if ( get_window_attributes( window ) & kWindowCompositingAttribute )
+		{
+			OSStatus err;
+			
+			ControlRef content;
+			err = GetRootControl( window, &content );
+			
+			err = HIViewSetNeedsDisplay( content, true );
+			
+			return;
+		}
+		
+	#endif
+		
 		CGrafPtr port = GetWindowPort( window );
 		
 		if ( IsPortVisibleRegionEmpty( port ) )
