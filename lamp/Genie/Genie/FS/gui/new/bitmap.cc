@@ -43,6 +43,7 @@
 // Genie
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/HIQuickDraw.hh"
 
 
 namespace Genie
@@ -318,6 +319,8 @@ namespace Genie
 			}
 			
 			void Draw( const Rect& bounds, bool erasing );
+			
+			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
 	static inline
@@ -357,6 +360,16 @@ namespace Genie
 		             params.bitmap.bounds,
 		             bounds,
 		             mode );
+	}
+	
+	void BitMapView::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		const BitMap_Parameters& params = gBitMapMap[ itsKey ];
+		
+		if ( params.bitmap.baseAddr != NULL )
+		{
+			HIViewDrawBitMap( context, bounds, params.bitmap );
+		}
 	}
 	
 	
