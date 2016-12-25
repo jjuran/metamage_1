@@ -15,7 +15,11 @@
 #include <AERegistry.h>
 #endif
 
+// POSIX
+#include <unistd.h>
+
 // Standard C
+#include <signal.h>
 #include <stdlib.h>
 
 // Standard C++
@@ -191,6 +195,22 @@ namespace tool
 	}
 	
 	
+	static
+	bool process_exists( const ProcessSerialNumber& psn )
+	{
+		OSErr err;
+		
+		ProcessInfoRec processInfo;
+		
+		processInfo.processInfoLength = sizeof processInfo;
+		processInfo.processName       = NULL;
+		processInfo.processAppSpec    = NULL;
+		
+		err = GetProcessInformation( &psn, &processInfo );
+		
+		return err == noErr;
+	}
+	
 	static ProcessSerialNumber find_or_launch_ToolServer()
 	{
 		try
@@ -260,6 +280,18 @@ namespace tool
 		N::AEPutParamDesc( appleEvent, Mac::keyDirectObject, N::AECreateDesc< Mac::typeChar >( script ) );
 		
 		return appleEvent;
+	}
+	
+	static
+	n::owned< Mac::AppleEvent > CreateQuitEvent( const ProcessSerialNumber& psn )
+	{
+		const Mac::AEEventClass aevt = Mac::kCoreEventClass;
+		const Mac::AEEventID    quit = Mac::kAEQuitApplication;
+		const Mac::DescType  typePSN = Mac::typeProcessSerialNumber;
+		
+		using namespace Nitrogen;
+		
+		return AECreateAppleEvent( aevt, quit, AECreateDesc< typePSN >( psn ) );
 	}
 	
 	static n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& appleEvent )
@@ -405,6 +437,12 @@ namespace tool
 		return false;
 	}
 	
+	static inline
+	bool out_of_memory( const plus::string& output )
+	{
+		return output == "\r" "Out of memory\r";
+	}
+	
 	static void switch_process( const ProcessSerialNumber& from,
 	                            const ProcessSerialNumber& to )
 	{
@@ -424,6 +462,10 @@ namespace tool
 	int RunCommandInToolServer( const plus::string& command, bool switch_layers )
 	{
 		const ProcessSerialNumber& self = mac::sys::current_process();
+		
+		bool retried = false;
+		
+	retry:
 		
 		const ProcessSerialNumber toolServer = find_or_launch_ToolServer();
 		
@@ -448,7 +490,8 @@ namespace tool
 			return 128;
 		}
 		
-		plus::var_string errors = p7::slurp( temp_file_paths[ kErrorFile ] );
+		plus::var_string output = p7::slurp( temp_file_paths[ kOutputFile ] );
+		plus::var_string errors = p7::slurp( temp_file_paths[ kErrorFile  ] );
 		
 		// A Metrowerks tool returns 1 on error and 2 on user break, except that
 		// if you limit the number of diagnostics displayed and there more errors
@@ -471,11 +514,28 @@ namespace tool
 				// printed does NOT equal user-sponsored cancellation.
 				result = 1;
 			}
+			else if ( ! retried  &&  out_of_memory( output ) )
+			{
+				retried = true;
+				
+				write( STDOUT_FILENO, STR_LEN( "tlsrvr: ToolServer is out of memory.\n" ) );
+				write( STDOUT_FILENO, STR_LEN( "tlsrvr: Quitting ToolServer...\n"       ) );
+				
+				AESendBlocking( CreateQuitEvent( toolServer ) );
+				
+				while ( process_exists( toolServer ) )
+				{
+					kill( 1, 0 );
+				}
+				
+				write( STDOUT_FILENO, STR_LEN( "tlsrvr: Retrying command (once)...\n" ) );
+				
+				goto retry;
+			}
 		}
 		
 		ConvertAndDumpMacText( errors, p7::stderr_fileno );
-		
-		dump_file( temp_file_paths[ kOutputFile ], p7::stdout_fileno );
+		ConvertAndDumpMacText( output, p7::stdout_fileno );
 		
 		// Delete temp files
 		std::for_each( temp_file_paths,
