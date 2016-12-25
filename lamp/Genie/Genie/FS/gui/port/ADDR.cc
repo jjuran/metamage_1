@@ -537,8 +537,6 @@ namespace Genie
 		{
 			SetWindowPort_Scope scope( window );
 			
-			InvalidateWindowRef( window );
-			
 			Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 			
 			view->Install( bounds );
@@ -547,6 +545,8 @@ namespace Genie
 			{
 				view->Activate( true );
 			}
+			
+			InvalidateWindowRef( window );
 		}
 	}
 	
@@ -556,9 +556,9 @@ namespace Genie
 		{
 			SetWindowPort_Scope scope( window );
 			
-			InvalidateWindowRef( window );
-			
 			view->Uninstall();
+			
+			InvalidateWindowRef( window );
 		}
 	}
 	
