@@ -9,6 +9,8 @@ ln new/stack view
 ln new/eventtap v/events/view
 ln new/bitmap   v/screen/view
 
+echo 512x342 > v/screen/v/size
+
 events=v/events/v/stream
 screen=v/screen/v/bits
 
