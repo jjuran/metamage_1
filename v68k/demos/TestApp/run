@@ -18,8 +18,6 @@ echo 4 > procid
 
 touch window
 
-perl -e 'sleep 0 while !-f "v/screen/v/bits"'
-
 CTTY=--ctty=tty
 SCREEN=--screen=$screen
 EVENTS=--events-fd=8
