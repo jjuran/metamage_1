@@ -49,6 +49,13 @@ namespace nucleus
 namespace Nitrogen
 {
 	
+#if UNIVERSAL_INTERFACES_VERSION < 0x0400
+	
+	// This definition of CGBitmapInfo should be regarded as private.
+	typedef CGImageAlphaInfo CGBitmapInfo;
+	
+#endif
+	
 	inline
 	nucleus::owned< CGImageRef > CGImageRetain( CGImageRef image )
 	{
@@ -63,6 +70,8 @@ namespace Nitrogen
 #if UNIVERSAL_INTERFACES_VERSION >= 0x0400
 	
 	using ::CGImageGetTypeID;  // CFTypeID CGImageGetTypeID(void)
+	
+#endif
 	
 	
 	class CGImageCreate_Failed {};
@@ -101,8 +110,6 @@ namespace Nitrogen
 		
 		return nucleus::owned< CGImageRef >::seize( result );
 	}
-	
-#endif
 	
 	class CGImageMaskCreate_Failed {};
 	
