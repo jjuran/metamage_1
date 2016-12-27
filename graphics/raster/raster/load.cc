@@ -11,6 +11,9 @@
 // Standard C
 #include <errno.h>
 
+// iota
+#include "iota/endian.hh"
+
 // raster
 #include "raster/raster.hh"
 #include "raster/screen.hh"
@@ -71,6 +74,18 @@ namespace raster
 		return *size_addr;
 	}
 	
+	static
+	void swap_bytes( raster_desc& desc )
+	{
+		desc.magic   = iota::swap_4_bytes( desc.magic   );
+		desc.version = iota::swap_4_bytes( desc.version );
+		desc.width   = iota::swap_4_bytes( desc.width   );
+		desc.height  = iota::swap_4_bytes( desc.height  );
+		desc.stride  = iota::swap_4_bytes( desc.stride  );
+		
+		// weight and model are single bytes
+	}
+	
 	
 	raster_load load_raster( int fd )
 	{
@@ -98,7 +113,22 @@ namespace raster
 		
 		mmap_box box( addr, end );
 		
-		const uint32_t footer_size = get_footer_size( addr, end );
+		uint32_t footer_size = get_footer_size( addr, end );
+		
+		bool byte_swapped = false;
+		
+		if ( footer_size > 0xFFFF )
+		{
+			if ( (uint16_t) footer_size != 0 )
+			{
+				errno = EINVAL;
+				return null_raster_load();
+			}
+			
+			footer_size = iota::swap_4_bytes( footer_size );
+			
+			byte_swapped = true;
+		}
 		
 		if ( ! is_valid_footer_size( footer_size, end ) )
 		{
@@ -111,6 +141,11 @@ namespace raster
 		void* const footer_addr = (char*) addr + footer_offset;
 		
 		raster_metadata* const meta = (raster_metadata*) footer_addr;
+		
+		if ( byte_swapped )
+		{
+			swap_bytes( meta->desc );
+		}
 		
 		if ( ! is_valid_metadata( footer_offset, meta->desc ) )
 		{
