@@ -527,6 +527,7 @@ namespace Genie
 		
 		{ "bounds", PROPERTY( BitMap_bounds ) },
 		{ "size",   PROPERTY( BitMap_size   ) },
+		{ ".~size", PROPERTY( BitMap_size   ) },
 		
 		{ "bits", &bitmap_bits_Factory },
 		
