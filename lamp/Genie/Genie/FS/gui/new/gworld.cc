@@ -322,21 +322,11 @@ namespace Genie
 		
 		GWorld_Parameters& params = gGWorldMap[ itsKey ];
 		
-		if ( !params.bounds_are_valid )
-		{
-			params.bounds           = bounds;
-			params.bounds_are_valid = true;
-		}
-		
 		GWorldPtr gworld = params.gworld.get();
 		
 		if ( gworld == NULL )
 		{
-			params.gworld = N::NewGWorld( params.depth, params.bounds );
-			
-			gworld = params.gworld.get();
-			
-			Erase_GWorld( gworld, bounds );
+			return;
 		}
 		
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
@@ -374,14 +364,21 @@ namespace Genie
 	
 	static void UpdateGWorld_from_params( GWorld_Parameters& params )
 	{
-		if ( params.gworld.get() == NULL )
+		if ( ! params.bounds_are_valid )
 		{
 			return;
 		}
 		
 		n::owned< GWorldPtr > temp = params.gworld.unshare();
 		
-		N::UpdateGWorld( temp, params.depth, params.bounds );
+		if ( temp.get() != NULL )
+		{
+			N::UpdateGWorld( temp, params.depth, params.bounds );
+		}
+		else
+		{
+			temp = N::NewGWorld( params.depth, params.bounds );
+		}
 		
 		Erase_GWorld( temp, params.bounds );
 		
@@ -469,6 +466,7 @@ namespace Genie
 		}
 		
 		params.bounds = bounds;
+		params.bounds_are_valid = true;
 		
 		UpdateGWorld_from_params( params );
 	}
