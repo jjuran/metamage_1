@@ -369,15 +369,27 @@ namespace Genie
 			return;
 		}
 		
+		/*
+			For indexed bit depths, use a grayscale palette.
+			(Bit depth 2 already defaults to grayscale.)
+		*/
+		
+		n::owned< CTabHandle > colorTable;
+		
+		if ( params.depth == 4  ||  params.depth == 8 )
+		{
+			colorTable = N::GetCTable( params.depth + 32 );
+		}
+		
 		n::owned< GWorldPtr > temp = params.gworld.unshare();
 		
 		if ( temp.get() != NULL )
 		{
-			N::UpdateGWorld( temp, params.depth, params.bounds );
+			N::UpdateGWorld( temp, params.depth, params.bounds, colorTable );
 		}
 		else
 		{
-			temp = N::NewGWorld( params.depth, params.bounds );
+			temp = N::NewGWorld( params.depth, params.bounds, colorTable );
 		}
 		
 		Erase_GWorld( temp, params.bounds );
