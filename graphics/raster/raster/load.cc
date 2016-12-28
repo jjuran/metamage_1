@@ -208,6 +208,30 @@ namespace raster
 		return result;
 	}
 	
+	raster_load create_raster( int fd )
+	{
+		const off_t end = size_of_file_if_valid( fd );
+		
+		if ( end < 0 )
+		{
+			return null_raster_load();
+		}
+		
+		const int mmap_prot  = PROT_READ | PROT_WRITE;
+		const int mmap_flags = MAP_SHARED;
+		
+		void* const addr = mmap( NULL, end, mmap_prot, mmap_flags, fd, 0 );
+		
+		if ( addr == MAP_FAILED )
+		{
+			return null_raster_load();
+		}
+		
+		raster_load result = { addr, end, NULL };
+		
+		return result;
+	}
+	
 	void unload_raster( raster_load& loaded )
 	{
 		munmap( loaded.addr, loaded.size );
