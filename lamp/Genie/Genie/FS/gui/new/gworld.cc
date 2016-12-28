@@ -473,6 +473,30 @@ namespace Genie
 		UpdateGWorld_from_params( params );
 	}
 	
+	struct PixMap_size : serialize_Point
+	{
+		static const bool is_mutable = true;
+		
+		static Point Get( PixMapHandle pix )
+		{
+			const Rect bounds = PixMap_bounds::Get( pix );
+			
+			const short height = bounds.bottom - bounds.top;
+			const short width  = bounds.right - bounds.left;
+			
+			Point point = { height, width };
+			return point;
+		}
+		
+		static void Set( GWorld_Parameters& params, const Point& size )
+		{
+			const Rect bounds = { 0, 0, size.v, size.h };
+			
+			PixMap_bounds::Set( params, bounds );
+		}
+	};
+	
+	
 	static n::shared< GWorldPtr >& get_gworldptr( const vfs::node* that )
 	{
 		GWorld_Parameters* it = gGWorldMap.find( that );
@@ -528,6 +552,8 @@ namespace Genie
 		
 		{ "bounds", PROPERTY( PixMap_bounds ) },
 		{ "depth",  PROPERTY( PixMap_depth  ) },
+		{ "size",   PROPERTY( PixMap_size   ) },
+		{ ".~size", PROPERTY( PixMap_size   ) },
 		
 		{ "pixels", &gworld_pixels_factory },
 		
