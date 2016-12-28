@@ -278,6 +278,18 @@ namespace Nitrogen
 		return result;
 	}
 	
+	nucleus::owned< CTabHandle > GetCTable( short ctabID )
+	{
+		CTabHandle result = ::GetCTable( ctabID );
+		
+		if ( result == NULL )
+		{
+			QDError();
+		}
+		
+		return nucleus::owned< CTabHandle >::seize( result );
+	}
+	
 	void QDError()
 	{
 		Mac::ThrowOSStatus( ::QDError() );

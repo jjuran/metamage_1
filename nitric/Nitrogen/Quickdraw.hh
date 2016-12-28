@@ -599,6 +599,8 @@ namespace Nitrogen
 	
 	inline void DisposeCTable( nucleus::owned< CTabHandle > )  {}
 	
+	nucleus::owned< CTabHandle > GetCTable( short ctabID );
+	
 	// GetCTable
 	// GetCCursor
 	// SetCCursor
