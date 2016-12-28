@@ -61,7 +61,8 @@ namespace raster
 		
 		weight:
 			The memory size of a pixel in bits, which must be a factor or
-			multiple of 8.
+			multiple of 8.  The weight includes any unused bits, so 0/5/5/5
+			has a weight of 16, not 15, and xRGB's weight is 32, not 24.
 		
 		model:
 			A selector indicating what the bits in a pixel mean, similar in
