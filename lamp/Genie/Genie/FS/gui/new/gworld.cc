@@ -61,6 +61,7 @@ namespace Genie
 	
 	struct GWorld_Parameters
 	{
+		uint16_t                        stride;
 		uint8_t                         depth;
 		bool                            bounds_are_valid;
 		Rect                            bounds;
@@ -81,7 +82,8 @@ namespace Genie
 #endif
 	
 	
-	static unsigned PixMap_n_bytes( PixMapHandle pix_h )
+	static
+	unsigned PixMap_n_bytes( PixMapHandle pix_h, short stride )
 	{
 		const PixMap& pix = **pix_h;
 		
@@ -89,14 +91,16 @@ namespace Genie
 		
 		const short rowBytes = pix.rowBytes & 0x3FFF;
 		
-		return n_rows * rowBytes;
+		return n_rows * (stride ? stride : rowBytes);
 	}
 	
 	static off_t Pixels_GetEOF( const vfs::node* key )
 	{
-		if ( GWorldPtr gworld = gGWorldMap[ key ].gworld.get() )
+		GWorld_Parameters& params = gGWorldMap[ key ];
+		
+		if ( GWorldPtr gworld = params.gworld.get() )
 		{
-			return PixMap_n_bytes( ::GetGWorldPixMap( gworld ) );
+			return PixMap_n_bytes( ::GetGWorldPixMap( gworld ), params.stride );
 		}
 		
 		return 0;
@@ -163,6 +167,25 @@ namespace Genie
 		return get_file( *this )->owner();
 	}
 	
+	static
+	void check_stride( const PixMap& pix, short stride )
+	{
+		const short n_cols = pix.bounds.right - pix.bounds.left;
+		
+		const short actual_row_bytes = (n_cols * pix.pixelSize + 7) / 8;
+		
+		if ( stride < actual_row_bytes )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+		if ( stride > (pix.rowBytes & 0x3FFF) )
+		{
+			p7::throw_errno( EIO );
+		}
+		
+	}
+	
 	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
 		const vfs::node* view = ViewKey();
@@ -178,27 +201,66 @@ namespace Genie
 		
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		
-		const size_t pix_size = PixMap_n_bytes( pix );
+		const size_t pix_size = PixMap_n_bytes( pix, params.stride );
 		
 		if ( offset >= pix_size )
 		{
 			return 0;
 		}
 		
+		const short rowBytes = pix[0]->rowBytes & 0x3FFF;
+		
+		const short stride = params.stride ? params.stride : rowBytes;
+		
+		check_stride( **pix, stride );
+		
 		n_bytes = min< size_t >( n_bytes, pix_size - offset );
+		
+		const size_t n_read = n_bytes;
 		
 		const bool locked = ::LockPixels( pix );
 		
 		const char* baseAddr = pix[0]->baseAddr;
 		
-		memcpy( buffer, &baseAddr[ offset ], n_bytes );
+		short nth_row = offset / stride;
+		
+		if ( off_t row_offset = offset % stride )
+		{
+			const off_t base_offset = nth_row * rowBytes + row_offset;
+			
+			const size_t n = stride - row_offset;
+			
+			memcpy( buffer, &baseAddr[ base_offset ], n );
+			
+			offset  += n;
+			buffer  += n;
+			n_bytes -= n;
+			
+			++nth_row;
+		}
+		
+		while ( n_bytes >= stride )
+		{
+			memcpy( buffer, &baseAddr[ nth_row * rowBytes ], stride );
+			
+			offset  += stride;
+			buffer  += stride;
+			n_bytes -= stride;
+			
+			++nth_row;
+		}
+		
+		if ( n_bytes > 0 )
+		{
+			memcpy( buffer, &baseAddr[ nth_row * rowBytes ], n_bytes );
+		}
 		
 		if ( locked )
 		{
 			::UnlockPixels( pix );
 		}
 		
-		return n_bytes;
+		return n_read;
 	}
 	
 	ssize_t Pixels_IO::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
@@ -216,7 +278,7 @@ namespace Genie
 		
 		PixMapHandle pix = ::GetGWorldPixMap( gworld );
 		
-		const size_t pix_size = PixMap_n_bytes( pix );
+		const size_t pix_size = PixMap_n_bytes( pix, params.stride );
 		
 		if ( offset >= pix_size )
 		{
@@ -228,11 +290,50 @@ namespace Genie
 			n_bytes = pix_size - offset;
 		}
 		
+		const short rowBytes = pix[0]->rowBytes & 0x3FFF;
+		
+		const short stride = params.stride ? params.stride : rowBytes;
+		
+		check_stride( **pix, stride );
+		
+		const size_t n_written = n_bytes;
+		
 		const bool locked = ::LockPixels( pix );
 		
 		char* baseAddr = pix[0]->baseAddr;
 		
-		memcpy( &baseAddr[ offset ], buffer, n_bytes );
+		short nth_row = offset / stride;
+		
+		if ( off_t row_offset = offset % stride )
+		{
+			const off_t base_offset = nth_row * rowBytes + row_offset;
+			
+			const size_t n = stride - row_offset;
+			
+			memcpy( &baseAddr[ base_offset ], buffer, n );
+			
+			offset  += n;
+			buffer  += n;
+			n_bytes -= n;
+			
+			++nth_row;
+		}
+		
+		while ( n_bytes >= stride )
+		{
+			memcpy( &baseAddr[ nth_row * rowBytes ], buffer, stride );
+			
+			offset  += stride;
+			buffer  += stride;
+			n_bytes -= stride;
+			
+			++nth_row;
+		}
+		
+		if ( n_bytes > 0 )
+		{
+			memcpy( &baseAddr[ nth_row * rowBytes ], buffer, n_bytes );
+		}
 		
 		if ( locked )
 		{
@@ -241,7 +342,7 @@ namespace Genie
 		
 		InvalidateWindowForView( view );
 		
-		return n_bytes;
+		return n_written;
 	}
 	
 	
@@ -349,6 +450,7 @@ namespace Genie
 	{
 		GWorld_Parameters& params = gGWorldMap[ delegate ];
 		
+		params.stride           = 0;
 		params.depth            = 0;
 		params.bounds_are_valid = false;
 		
@@ -420,6 +522,21 @@ namespace Genie
 		}
 		
 		static void Set( GWorld_Parameters& params, short depth );
+	};
+	
+	struct PixMap_stride : plus::serialize_unsigned< short >
+	{
+		static const bool is_mutable = true;
+		
+		static short Get( const GWorld_Parameters& params )
+		{
+			return params.stride;
+		}
+		
+		static void Set( GWorld_Parameters& params, short stride )
+		{
+			params.stride = stride;
+		}
 	};
 	
 	struct PixMap_depth : plus::serialize_unsigned< uint8_t >
@@ -573,6 +690,9 @@ namespace Genie
 		{ ".~depth", PROPERTY( PixMap_depth ) },
 		{ "size",   PROPERTY( PixMap_size   ) },
 		{ ".~size", PROPERTY( PixMap_size   ) },
+		
+		{ "stride",   PROPERTY( PixMap_stride ) },
+		{ ".~stride", PROPERTY( PixMap_stride ) },
 		
 		{ "pixels", &gworld_pixels_factory },
 		
