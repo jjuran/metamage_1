@@ -562,6 +562,7 @@ namespace Genie
 		
 		{ "bounds", PROPERTY( PixMap_bounds ) },
 		{ "depth",  PROPERTY( PixMap_depth  ) },
+		{ ".~depth", PROPERTY( PixMap_depth ) },
 		{ "size",   PROPERTY( PixMap_size   ) },
 		{ ".~size", PROPERTY( PixMap_size   ) },
 		
