@@ -218,13 +218,13 @@ namespace Genie
 		
 		const size_t pix_size = PixMap_n_bytes( pix );
 		
-		if ( offset + n_bytes > pix_size )
+		if ( offset >= pix_size )
 		{
-			if ( offset >= pix_size )
-			{
-				p7::throw_errno( EFAULT );
-			}
-			
+			p7::throw_errno( EFAULT );
+		}
+		
+		if ( n_bytes > pix_size - offset )
+		{
 			n_bytes = pix_size - offset;
 		}
 		
