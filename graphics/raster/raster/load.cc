@@ -84,6 +84,7 @@ namespace raster
 		desc.stride  = iota::swap_4_bytes( desc.stride  );
 		
 		// weight and model are single bytes
+		// flags is reserved and undefined
 	}
 	
 	

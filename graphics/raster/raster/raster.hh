@@ -89,6 +89,9 @@ namespace raster
 			    the result of multiplying the source value by the alpha value.
 			
 			All other values are reserved.
+		
+		flags:
+			This field is reserved and should be set to zero.
 	*/
 	
 	enum raster_model
@@ -116,6 +119,7 @@ namespace raster
 		uint32_t  stride;  // bytes per row
 		uint8_t   weight;  // bits per pixel
 		uint8_t   model;   // raster_model
+		uint16_t  flags;
 	};
 	
 	struct raster_metadata
