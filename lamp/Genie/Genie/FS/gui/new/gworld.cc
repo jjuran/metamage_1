@@ -61,7 +61,7 @@ namespace Genie
 	
 	struct GWorld_Parameters
 	{
-		short                           depth;
+		uint8_t                         depth;
 		bool                            bounds_are_valid;
 		Rect                            bounds;
 		
@@ -414,7 +414,7 @@ namespace Genie
 		static void Set( GWorld_Parameters& params, short depth );
 	};
 	
-	struct PixMap_depth : plus::serialize_unsigned< short >
+	struct PixMap_depth : plus::serialize_unsigned< uint8_t >
 	{
 		static const bool is_mutable = true;
 		
