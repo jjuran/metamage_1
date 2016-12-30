@@ -63,6 +63,7 @@ namespace Genie
 	{
 		uint16_t                        stride;
 		uint8_t                         depth;
+		bool                            grayscale;
 		bool                            bounds_are_valid;
 		Rect                            bounds;
 		
@@ -452,6 +453,7 @@ namespace Genie
 		
 		params.stride           = 0;
 		params.depth            = 0;
+		params.grayscale        = 0;
 		params.bounds_are_valid = false;
 		
 		return new GWorld( delegate );
@@ -472,13 +474,13 @@ namespace Genie
 		}
 		
 		/*
-			For indexed bit depths, use a grayscale palette.
+			Use a grayscale palette at indexed bit depths if requested.
 			(Bit depth 2 already defaults to grayscale.)
 		*/
 		
 		n::owned< CTabHandle > colorTable;
 		
-		if ( params.depth == 4  ||  params.depth == 8 )
+		if ( params.grayscale  &&  (params.depth == 4  ||  params.depth == 8) )
 		{
 			colorTable = N::GetCTable( params.depth + 32 );
 		}
@@ -556,6 +558,23 @@ namespace Genie
 		}
 		
 		static void Set( GWorld_Parameters& params, short depth );
+	};
+	
+	struct PixMap_grayscale : plus::serialize_unsigned< bool >
+	{
+		static const bool is_mutable = true;
+		
+		static bool Get( const GWorld_Parameters& params )
+		{
+			return params.grayscale;
+		}
+		
+		static void Set( GWorld_Parameters& params, bool grayscale )
+		{
+			params.grayscale = grayscale;
+			
+			UpdateGWorld_from_params( params );
+		}
 	};
 	
 	struct PixMap_bounds : serialize_Rect
@@ -693,6 +712,9 @@ namespace Genie
 		
 		{ "stride",   PROPERTY( PixMap_stride ) },
 		{ ".~stride", PROPERTY( PixMap_stride ) },
+		
+		{ "grayscale",   PROPERTY( PixMap_grayscale ) },
+		{ ".~grayscale", PROPERTY( PixMap_grayscale ) },
 		
 		{ "pixels", &gworld_pixels_factory },
 		
