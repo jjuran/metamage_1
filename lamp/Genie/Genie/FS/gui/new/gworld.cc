@@ -397,12 +397,20 @@ namespace Genie
 		params.gworld = temp;
 	}
 	
+	static
+	PixMapHandle get_pixmap( const GWorld_Parameters& params )
+	{
+		return ::GetGWorldPixMap( params.gworld.get() );
+	}
+	
 	struct PixMap_rowBytes : plus::serialize_unsigned< short >
 	{
 		static const bool is_mutable = false;
 		
-		static short Get( PixMapHandle pix )
+		static short Get( const GWorld_Parameters& params )
 		{
+			PixMapHandle pix = get_pixmap( params );
+			
 			if ( pix == NULL )
 			{
 				p7::throw_errno( ENOENT );
@@ -418,8 +426,10 @@ namespace Genie
 	{
 		static const bool is_mutable = true;
 		
-		static short Get( PixMapHandle pix )
+		static short Get( const GWorld_Parameters& params )
 		{
+			PixMapHandle pix = get_pixmap( params );
+			
 			if ( pix == NULL )
 			{
 				p7::throw_errno( ENOENT );
@@ -435,8 +445,10 @@ namespace Genie
 	{
 		static const bool is_mutable = true;
 		
-		static Rect Get( PixMapHandle pix )
+		static Rect Get( const GWorld_Parameters& params )
 		{
+			PixMapHandle pix = get_pixmap( params );
+			
 			if ( pix == NULL )
 			{
 				p7::throw_errno( ENOENT );
@@ -487,9 +499,9 @@ namespace Genie
 	{
 		static const bool is_mutable = true;
 		
-		static Point Get( PixMapHandle pix )
+		static Point Get( const GWorld_Parameters& params )
 		{
-			const Rect bounds = PixMap_bounds::Get( pix );
+			const Rect bounds = PixMap_bounds::Get( params );
 			
 			const short height = bounds.bottom - bounds.top;
 			const short width  = bounds.right - bounds.left;
@@ -520,11 +532,6 @@ namespace Genie
 		return *it;
 	}
 	
-	static PixMapHandle get_pixmap( const vfs::node* that )
-	{
-		return ::GetGWorldPixMap( get_params( that ).gworld.get() );
-	}
-	
 	template < class Accessor >
 	struct PixMap_Property : vfs::readwrite_property
 	{
@@ -536,9 +543,9 @@ namespace Genie
 		
 		static void get( plus::var_string& result, const vfs::node* that, bool binary )
 		{
-			PixMapHandle pix = get_pixmap( that );
+			GWorld_Parameters& params = get_params( that );
 			
-			const result_type data = Accessor::Get( pix );
+			const result_type data = Accessor::Get( params );
 			
 			Accessor::deconstruct::apply( result, data, binary );
 		}
