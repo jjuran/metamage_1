@@ -507,7 +507,8 @@ namespace Genie
 	};
 	
 	
-	static n::shared< GWorldPtr >& get_gworldptr( const vfs::node* that )
+	static
+	GWorld_Parameters& get_params( const vfs::node* that )
 	{
 		GWorld_Parameters* it = gGWorldMap.find( that );
 		
@@ -516,12 +517,12 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		return it->gworld;
+		return *it;
 	}
 	
 	static PixMapHandle get_pixmap( const vfs::node* that )
 	{
-		return ::GetGWorldPixMap( get_gworldptr( that ).get() );
+		return ::GetGWorldPixMap( get_params( that ).gworld.get() );
 	}
 	
 	template < class Accessor >
