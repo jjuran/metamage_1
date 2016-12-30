@@ -432,7 +432,7 @@ namespace Genie
 			
 			if ( pix == NULL )
 			{
-				p7::throw_errno( ENOENT );
+				return params.depth;
 			}
 			
 			return pix[0]->pixelSize;
