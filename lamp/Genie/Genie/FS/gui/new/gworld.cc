@@ -716,6 +716,7 @@ namespace Genie
 		{ "grayscale",   PROPERTY( PixMap_grayscale ) },
 		{ ".~grayscale", PROPERTY( PixMap_grayscale ) },
 		
+		{ "data", &gworld_pixels_factory },
 		{ "pixels", &gworld_pixels_factory },
 		
 		{ NULL, NULL }

@@ -530,6 +530,7 @@ namespace Genie
 		{ ".~size", PROPERTY( BitMap_size   ) },
 		
 		{ "bits", &bitmap_bits_Factory },
+		{ "data", &bitmap_bits_Factory },
 		
 		{ NULL, NULL }
 	};
