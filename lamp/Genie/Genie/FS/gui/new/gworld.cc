@@ -41,6 +41,7 @@
 // Genie
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/Views.hh"
+#include "Genie/Utilities/HIQuickDraw.hh"
 
 
 namespace Genie
@@ -396,6 +397,8 @@ namespace Genie
 			}
 			
 			void Draw( const Rect& bounds, bool erasing );
+			
+			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
 	static void Erase_GWorld( GWorldPtr gworld, const Rect& bounds )
@@ -437,6 +440,16 @@ namespace Genie
 			             mode );
 			
 			::UnlockPixels( pix );
+		}
+	}
+	
+	void GWorld::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		GWorld_Parameters& params = gGWorldMap[ itsKey ];
+		
+		if ( GWorldPtr gworld = params.gworld.get() )
+		{
+			HIViewDrawGWorld( context, bounds, gworld );
 		}
 	}
 	
