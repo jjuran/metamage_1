@@ -28,6 +28,12 @@
 #endif
 
 
+#if UNIVERSAL_INTERFACES_VERSION < 0x0400
+
+typedef CGReleaseDataProcPtr CGDataProviderReleaseDataCallback;
+
+#endif
+
 namespace nucleus
 {
 	
