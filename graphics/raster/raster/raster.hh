@@ -76,6 +76,16 @@ namespace raster
 			    map to a linearly interpolated gray color.
 			    This corresponds with a TIFF PhotometricInterpretation value
 			    of BlackIsZero.
+			2:  Palette.  Each pixel value is an index into a lookup table of
+			    actual color values.
+			    (TODO:  Palettes aren't supported yet.)
+			3:  RGB (red/green/blue).  Pixels are divided into 3 groups of bits
+			    corresponding to red, green, and blue light intensities.
+			4:  ARGB (alpha/red/green/blue).  Pixels are divided into 4 groups:
+			    alpha, which indicates opacity, and red/green/blue as above.
+			5:  Premultiplied ARGB.  Pixels contain alpha, red, green, and blue
+			    components as above, except that the color components represent
+			    the result of multiplying the source value by the alpha value.
 			
 			All other values are reserved.
 	*/
@@ -84,6 +94,8 @@ namespace raster
 	{
 		Model_grayscale_paint,
 		Model_grayscale_light,
+		Model_palette,
+		Model_RGB,
 		
 		Model_end_of_enumeration,
 	};
