@@ -80,7 +80,7 @@ namespace raster
 			All other values are reserved.
 	*/
 	
-	enum Raster_model
+	enum raster_model
 	{
 		Model_grayscale_paint,
 		Model_grayscale_light,
@@ -100,7 +100,7 @@ namespace raster
 		
 		uint32_t  stride;  // bytes per row
 		uint8_t   weight;  // bits per pixel
-		uint8_t   model;   // Raster_model
+		uint8_t   model;   // raster_model
 	};
 	
 	struct raster_metadata
