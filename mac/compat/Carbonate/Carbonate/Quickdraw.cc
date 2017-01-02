@@ -54,8 +54,6 @@ pascal Boolean IsValidPort( CGrafPtr port )
 	return valid;
 }
 
-#if TARGET_CPU_68K
-
 pascal CGrafPtr CreateNewPort()
 {
 	Ptr portMem = NewPtr( sizeof (CGrafPort) );
@@ -76,8 +74,6 @@ pascal void DisposePort( CGrafPtr port )
 	
 	DisposePtr( (Ptr) port );  /* reinterpret_cast */
 }
-
-#endif
 
 pascal Point* QDLocalToGlobalPoint( CGrafPtr port, Point* point )
 {
