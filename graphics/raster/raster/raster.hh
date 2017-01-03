@@ -97,6 +97,8 @@ namespace raster
 		Model_grayscale_light,
 		Model_palette,
 		Model_RGB,
+		Model_ARGB,
+		Model_ARGB_premultiplied,
 		
 		Model_end_of_enumeration,
 	};
