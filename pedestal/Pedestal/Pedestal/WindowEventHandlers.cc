@@ -218,7 +218,7 @@ namespace Pedestal
 		                         NULL,
 		                         &context );
 		
-	#if TARGET_API_MAC_OSX
+	#ifdef MAC_OS_X_VERSION_10_2
 		
 		HIRect bounds;
 		HIViewGetBounds( control, &bounds );
@@ -258,7 +258,7 @@ namespace Pedestal
 		                                 NULL,
 		                                 NULL );
 		
-	#if TARGET_API_MAC_OSX
+	#ifdef MAC_OS_X_VERSION_10_2
 		
 		HIViewRef root = HIViewGetRoot( window );
 		
