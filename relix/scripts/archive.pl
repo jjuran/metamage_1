@@ -206,7 +206,8 @@ my %fsmap =
 			# Misc
 			\ qw( chain copier divide graft jtest pause ptrace th zpipe ),
 			# Mac-specific
-			\ qw( beep cds deicon err2text keymods macbin rom-checksum rominfo vols ),
+			\ qw( beep cds deicon err2text keymods macbin qdscreencap
+				rom-checksum rominfo vols ),
 			# Mac-specific scripts
 			qw( drvr gestalt ),
 			# Perl scripts
