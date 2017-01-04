@@ -35,6 +35,24 @@ namespace plus
 		}
 	};
 	
+	template <>
+	struct thaw_pod< bool >
+	{
+		// A specialization is required, since (sizeof (bool) == 1) isn't.
+		
+		typedef bool result_type;
+		
+		static bool apply( const char* begin, const char* end )
+		{
+			if ( end - begin != 1 )
+			{
+				throw thaw_size_error();
+			}
+			
+			return *begin;
+		}
+	};
+	
 }
 
 #endif
