@@ -179,12 +179,6 @@ namespace Genie
 		{
 			p7::throw_errno( EIO );
 		}
-		
-		if ( stride > (pix.rowBytes & 0x3FFF) )
-		{
-			p7::throw_errno( EIO );
-		}
-		
 	}
 	
 	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
