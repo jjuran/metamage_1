@@ -12,10 +12,17 @@
 #include <Carbon/Carbon.h>
 #endif
 
+// Standard C
+#include <string.h>
+
+// nucleus
+#include "nucleus/saved.hh"
+
 // Nitrogen
 #include "Nitrogen/CGColorSpace.hh"
 #include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/CGImage.hh"
+#include "Nitrogen/QDOffscreen.hh"
 
 
 namespace Genie
@@ -38,12 +45,43 @@ namespace Genie
 	}
 	
 	static
+	n::owned< CGColorSpaceRef > RGBColorSpace()
+	{
+	#ifdef MAC_OS_X_VERSION_10_4
+		
+		return N::CGColorSpaceCreateWithName( kCGColorSpaceGenericRGB );
+		
+	#endif
+		
+		return N::CGColorSpaceCreateDeviceRGB();
+	}
+	
+	static
+	bool is_grayscale( const PixMap& pixmap )
+	{
+		if ( CTabHandle ctab = pixmap.pmTable )
+		{
+			const long ctSeed = ctab[0]->ctSeed;
+			
+			return ctSeed >= 32 + 1  &&  ctSeed <= 32 + 8;
+		}
+		
+		return false;
+	}
+	
+	static
 	void release_data( void* info, const void* data, size_t size )
 	{
 		::operator delete( const_cast< void* >( data ) );
 	}
 	
 	typedef void (*copier)( void* dst, const void* src, size_t n );
+	
+	static
+	void straight_copy( void* dst, const void* src, size_t n )
+	{
+		memcpy( dst, src, n );
+	}
 	
 	static
 	void inverted_copy( void* dst, const void* src, size_t n )
@@ -136,6 +174,24 @@ namespace Genie
 	}
 	
 	static
+	n::owned< CGImageRef > image_from_RGB_data( size_t  width,
+	                                            size_t  height,
+	                                            size_t  degree,
+	                                            size_t  weight,
+	                                            size_t  stride,
+	                                            char*   baseAddr )
+	{
+		return image_from_data( width,
+		                        height,
+		                        degree,  // bits per component
+		                        weight,  // bits per pixel
+		                        stride,
+		                        RGBColorSpace(),
+		                        baseAddr,
+		                        &straight_copy );
+	}
+	
+	static
 	n::owned< CGImageRef > image_from_bitmap( const BitMap& bitmap )
 	{
 		const short width  = bitmap.bounds.right - bitmap.bounds.left;
@@ -149,6 +205,47 @@ namespace Genie
 		                                  bitmap.baseAddr );
 	}
 	
+	static
+	n::owned< CGImageRef > image_from_pixmap( PixMapHandle pix )
+	{
+		const PixMap& pixmap = **pix;  // Blocks don't move in OS X
+		
+		const short width  = pixmap.bounds.right - pixmap.bounds.left;
+		const short height = pixmap.bounds.bottom - pixmap.bounds.top;
+		const short stride = pixmap.rowBytes & 0x3FFF;
+		
+		n::saved< N::Pixels_State > saved_pixels_state( pix );
+		
+		const bool locked = ::LockPixels( pix );
+		
+		if ( ! locked )
+		{
+			return n::owned< CGImageRef >();
+		}
+		
+		if ( const bool direct = pixmap.pixelType != 0 )
+		{
+			return image_from_RGB_data( width,
+			                            height,
+			                            pixmap.cmpSize,
+			                            pixmap.pixelSize,
+			                            stride,
+			                            pixmap.baseAddr );
+		}
+		
+		if ( const bool grayscale = is_grayscale( pixmap ) )
+		{
+			return image_from_grayscale_data( width,
+			                                  height,
+			                                  pixmap.pixelSize,
+			                                  stride,
+			                                  pixmap.baseAddr );
+		}
+		
+		// Indexed (non-gray, non-direct) pixmaps are not supported yet
+		return n::owned< CGImageRef >();
+	}
+	
 	void HIViewDrawBitMap( CGContextRef   context,
 	                       CGRect         bounds,
 	                       const BitMap&  bitmap )
@@ -158,6 +255,26 @@ namespace Genie
 		err = HIViewDrawCGImageUninterpolated( context,
 		                                       bounds,
 		                                       image_from_bitmap( bitmap ) );
+	}
+	
+	void HIViewDrawPixMap( CGContextRef  context,
+	                       CGRect        bounds,
+	                       PixMapHandle  pix )
+	{
+		OSStatus err;
+		
+		err = HIViewDrawCGImageUninterpolated( context,
+		                                       bounds,
+		                                       image_from_pixmap( pix ) );
+	}
+	
+	void HIViewDrawGWorld( CGContextRef  context,
+	                       CGRect        bounds,
+	                       GWorldPtr     gworld )
+	{
+		HIViewDrawPixMap( context,
+		                  bounds,
+		                  GetGWorldPixMap( gworld ) );
 	}
 	
 }

@@ -19,9 +19,14 @@
 #include <CGContext.h>
 #endif
 #endif
-
-
-struct BitMap;
+#ifndef MAC_OS_X_VERSION_10_7
+#ifndef __QDOFFSCREEN__
+#include <QDOffscreen.h>
+#endif
+#endif
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
 
 
 namespace Genie
@@ -30,6 +35,14 @@ namespace Genie
 	void HIViewDrawBitMap( CGContextRef   context,
 	                       CGRect         bounds,
 	                       const BitMap&  bitmap );
+	
+	void HIViewDrawPixMap( CGContextRef  context,
+	                       CGRect        bounds,
+	                       PixMapHandle  pix );
+	
+	void HIViewDrawGWorld( CGContextRef  context,
+	                       CGRect        bounds,
+	                       GWorldPtr     gworld );
 	
 }
 
