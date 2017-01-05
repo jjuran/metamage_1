@@ -112,6 +112,24 @@ namespace Genie
 		                                        &release_data );
 	}
 	
+	static inline
+	bool is_multiple( float dst, size_t src )
+	{
+		if ( dst <= src )
+		{
+			/*
+				For dst == src, return false, because the interpolation
+				setting will have no effect, so we don't need to change it.
+			*/
+			
+			return false;
+		}
+		
+		float factor = dst / src;
+		
+		return factor == size_t( factor );
+	}
+	
 	static
 	OSStatus HIViewDrawCGImageUninterpolated( CGContextRef  context,
 	                                          CGRect        bounds,
@@ -119,9 +137,26 @@ namespace Genie
 	{
 		OSStatus err = 0;
 		
-		CGContextSaveGState( context );
+		CGSize size = bounds.size;
 		
-		CGContextSetInterpolationQuality( context, kCGInterpolationNone );
+	#ifdef MAC_OS_X_VERSION_10_4
+		
+		size = CGContextConvertSizeToDeviceSpace( context, size );
+		
+	#endif
+		
+		size_t width  = CGImageGetWidth ( image );
+		size_t height = CGImageGetHeight( image );
+		
+		const bool disable_interpolation =  is_multiple( size.width,  width  )
+		                                 && is_multiple( size.height, height );
+		
+		if ( disable_interpolation )
+		{
+			CGContextSaveGState( context );
+			
+			CGContextSetInterpolationQuality( context, kCGInterpolationNone );
+		}
 		
 	#ifdef MAC_OS_X_VERSION_10_2
 		
@@ -129,7 +164,10 @@ namespace Genie
 		
 	#endif
 		
-		CGContextRestoreGState( context );
+		if ( disable_interpolation )
+		{
+			CGContextRestoreGState( context );
+		}
 		
 		return err;
 	}
