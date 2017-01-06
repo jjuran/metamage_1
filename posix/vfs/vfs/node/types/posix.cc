@@ -63,9 +63,9 @@ namespace vfs
 			if ( S_ISREG( st.st_mode ) )
 			{
 				/*
-					This is a problem.  A regular file can be not only be
-					written by anybody (which is bad enough), but it's
-					executable.  This may be the result of brokenly creating
+					This is a problem:  A regular file which is not only
+					writable by anybody (which is bad enough), but is also
+					executable. This may be the result of brokenly creating
 					files too permissively on a Unix filesystem, or mounting
 					a brain-damaged filesystem that doesn't store permissions
 					and simply reports 0777 for all files.
