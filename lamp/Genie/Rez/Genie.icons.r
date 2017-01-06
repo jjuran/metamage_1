@@ -4,7 +4,7 @@ type 'Poof' as 'STR ';
 
 resource 'Poof' (0, "MacRelix")
 {
-	"Copyright © 1999-2016 Josh Juran"
+	"Copyright © 1999-2017 Josh Juran"
 };
 
 resource 'ICN#' (128) {
