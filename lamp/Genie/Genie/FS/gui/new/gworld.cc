@@ -65,6 +65,7 @@ namespace Genie
 		uint16_t                        stride;
 		uint8_t                         depth;
 		bool                            grayscale;
+		bool                            little_endian;
 		bool                            bounds_are_valid;
 		Rect                            bounds;
 		
@@ -461,6 +462,7 @@ namespace Genie
 		params.stride           = 0;
 		params.depth            = 0;
 		params.grayscale        = 0;
+		params.little_endian    = 0;
 		params.bounds_are_valid = false;
 		
 		return new GWorld( delegate );
@@ -504,6 +506,34 @@ namespace Genie
 		}
 		
 		Erase_GWorld( temp, params.bounds );
+		
+	#ifdef MAC_OS_X_VERSION_10_4
+		
+		/*
+			Try to handle little-endian image data.  This works for creating a
+			CGImage in 10.4 and later.  It also works with CopyBits() on x86,
+			but not on PPC.
+			
+			TODO:  Manually byte-swap pixels when the OS won't do it.
+		*/
+		
+		if ( params.little_endian )
+		{
+			PixMapHandle pix = GetGWorldPixMap( temp );
+			
+			short depth = pix[0]->pixelSize;
+			
+			if ( depth == 16 )
+			{
+				pix[0]->pixelFormat = k16LE555PixelFormat;
+			}
+			else if ( depth == 32 )
+			{
+				pix[0]->pixelFormat = k32BGRAPixelFormat;
+			}
+		}
+		
+	#endif
 		
 		params.gworld = temp;
 	}
@@ -565,6 +595,21 @@ namespace Genie
 		}
 		
 		static void Set( GWorld_Parameters& params, short depth );
+	};
+	
+	struct PixMap_little_endian : plus::serialize_unsigned< bool >
+	{
+		static const bool is_mutable = true;
+		
+		static short Get( const GWorld_Parameters& params )
+		{
+			return params.little_endian;
+		}
+		
+		static void Set( GWorld_Parameters& params, bool little_endian )
+		{
+			params.little_endian = little_endian;
+		}
 	};
 	
 	struct PixMap_grayscale : plus::serialize_unsigned< bool >
@@ -722,6 +767,9 @@ namespace Genie
 		
 		{ "grayscale",   PROPERTY( PixMap_grayscale ) },
 		{ ".~grayscale", PROPERTY( PixMap_grayscale ) },
+		
+		{ "little-endian",   PROPERTY( PixMap_little_endian ) },
+		{ ".~little-endian", PROPERTY( PixMap_little_endian ) },
 		
 		{ "data", &gworld_pixels_factory },
 		{ "pixels", &gworld_pixels_factory },
