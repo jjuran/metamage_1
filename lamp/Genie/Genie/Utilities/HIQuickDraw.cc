@@ -224,9 +224,49 @@ namespace Genie
 	                                            size_t  degree,
 	                                            size_t  weight,
 	                                            size_t  stride,
+	                                            bool    little_endian,
 	                                            char*   baseAddr )
 	{
 		CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipFirst;
+		
+	#ifdef MAC_OS_X_VERSION_10_4
+		
+		/*
+			Mac OS X assumes big-endian pixel data by default.  If the pixel
+			format is little-endian, then we have to specify that.
+			
+			We don't check for 24-bit RGB, first of all because it's not yet
+			a supported configuration, but also because when we do support it,
+			we'll require it to be big-endian.  I'm not expecting framebuffer
+			memory to ever contain 24-bit RGB (as opposed to 32-bit RGB with
+			one byte unused), so native endianness isn't an issue, and TIFF's
+			24-bit format is RGB, in that order, so there's precedent.
+			
+			Some readers might wonder:  What does pixel component layout have
+			to do with endianness?  Why not just say it's ARGB or BGRA and be
+			done with it?  It's true that you can specify an arbitrary ordering
+			of components when they each fill a single byte.  The difficulty is
+			with 16-bit pixels:  The big-endian format is `xRRRRRGG GGGBBBBB`,
+			but the little-endian format is *not* `BBBBBGGG GGRRRRRx` -- on the
+			contrary, it's `GGGBBBBB xRRRRRGG` -- the green component is split
+			from the perspective of the big-endian viewer.  (This example uses
+			1/5/5/5, but the same logic applies to 0/5/6/5.)
+		*/
+		
+		if ( ! little_endian )
+		{
+			// Do nothing; big-endian requires no special treatment.
+		}
+		else if ( weight == 16 )
+		{
+			bitmapInfo |= kCGBitmapByteOrder16Little;
+		}
+		else if ( weight == 32 )
+		{
+			bitmapInfo |= kCGBitmapByteOrder32Little;
+		}
+		
+	#endif
 		
 		return image_from_data( width,
 		                        height,
@@ -273,11 +313,28 @@ namespace Genie
 		
 		if ( const bool direct = pixmap.pixelType != 0 )
 		{
+			bool little_endian = false;
+			
+		#ifdef MAC_OS_X_VERSION_10_4
+			
+			/*
+				Here we assume that pixelFormat is only set to a newer format
+				manually, in order to indicate little-endianness.  We also
+				assume that the format is the little-endian counterpart to the
+				standard big-endian format for this bit depth (e.g. 1/5/5/5,
+				not 0/5/6/5).
+			*/
+			
+			little_endian = pixmap.pixelFormat > 0xFFFF;
+			
+		#endif
+			
 			return image_from_RGB_data( width,
 			                            height,
 			                            pixmap.cmpSize,
 			                            pixmap.pixelSize,
 			                            stride,
+			                            little_endian,
 			                            pixmap.baseAddr );
 		}
 		
