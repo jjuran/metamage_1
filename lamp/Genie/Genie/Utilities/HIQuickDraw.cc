@@ -351,6 +351,14 @@ namespace Genie
 		return n::owned< CGImageRef >();
 	}
 	
+	static
+	n::owned< CGImageRef > image_from_gworld( GWorldPtr gworld )
+	{
+		PixMapHandle pix = GetGWorldPixMap( gworld );
+		
+		return image_from_pixmap( pix );
+	}
+	
 	void HIViewDrawBitMap( CGContextRef   context,
 	                       CGRect         bounds,
 	                       const BitMap&  bitmap )
@@ -377,9 +385,11 @@ namespace Genie
 	                       CGRect        bounds,
 	                       GWorldPtr     gworld )
 	{
-		HIViewDrawPixMap( context,
-		                  bounds,
-		                  GetGWorldPixMap( gworld ) );
+		OSStatus err;
+		
+		err = HIViewDrawCGImageUninterpolated( context,
+		                                       bounds,
+		                                       image_from_gworld( gworld ) );
 	}
 	
 }
