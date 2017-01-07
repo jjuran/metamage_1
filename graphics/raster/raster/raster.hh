@@ -81,10 +81,17 @@ namespace raster
 			    actual color values.
 			    (TODO:  Palettes aren't supported yet.)
 			3:  RGB (red/green/blue).  Pixels are divided into 3 groups of bits
-			    corresponding to red, green, and blue light intensities.
-			4:  ARGB (alpha/red/green/blue).  Pixels are divided into 4 groups:
+			    corresponding to red, green, and blue light intensities.  There
+			    are no unused bits in a pixel; some color components might have
+			    more bits than others (e.g. 16-bit 5/6/5, a Linux default).
+			4:  xRGB (unused/red/green/blue).  Pixels are split into 4 groups
+			    of bits.  The first group is ignored.  The remaining bits are
+			    divided evenly among red, green, and blue.  A color component
+			    might have more bits than the unused group (e.g. 1/5/5/5, used
+			    in Mac OS for 16-bit color).
+			5:  ARGB (alpha/red/green/blue).  Pixels are divided into 4 groups:
 			    alpha, which indicates opacity, and red/green/blue as above.
-			5:  Premultiplied ARGB.  Pixels contain alpha, red, green, and blue
+			6:  Premultiplied ARGB.  Pixels contain alpha, red, green, and blue
 			    components as above, except that the color components represent
 			    the result of multiplying the source value by the alpha value.
 			
@@ -100,6 +107,7 @@ namespace raster
 		Model_grayscale_light,
 		Model_palette,
 		Model_RGB,
+		Model_xRGB,
 		Model_ARGB,
 		Model_ARGB_premultiplied,
 		
