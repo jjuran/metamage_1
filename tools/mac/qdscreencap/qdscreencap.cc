@@ -154,7 +154,7 @@ raster_info desktop_raster_info()
 	
 	if ( pm.pixelType != 0 )  // chunky
 	{
-		model = Model_RGB;
+		model = Model_xRGB;  // 16-bit or 32-bit
 	}
 	else if ( is_grayscale( pm ) )
 	{
