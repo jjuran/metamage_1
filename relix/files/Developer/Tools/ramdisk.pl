@@ -86,7 +86,7 @@ sub transfer_one
 {
 	my ( $src, $dest ) = @_;
 	
-	if ( -f "$src" )
+	if ( readlink $src  ||  -f $src )
 	{
 		print $copier "$src\0$dest\0\n" or die "Error writing to copier: $!\n";
 	}
