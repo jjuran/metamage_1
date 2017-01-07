@@ -25,6 +25,11 @@
 #include "Nitrogen/QDOffscreen.hh"
 
 
+#ifndef MAC_OS_X_VERSION_10_4
+typedef CGImageAlphaInfo CGBitmapInfo;
+#endif
+
+
 namespace Genie
 {
 	
@@ -179,6 +184,7 @@ namespace Genie
 	                                        size_t           weight,
 	                                        size_t           stride,
 	                                        CGColorSpaceRef  colorSpace,
+	                                        CGBitmapInfo     bitmapInfo,
 	                                        char*            baseAddr,
 	                                        copier           cpy )
 	{
@@ -188,7 +194,7 @@ namespace Genie
 		                         weight,  // bits per pixel
 		                         stride,
 		                         colorSpace,
-		                         kCGImageAlphaNoneSkipFirst,
+		                         bitmapInfo,
 		                         make_data_provider( baseAddr,
 		                                             height * stride,
 		                                             cpy ) );
@@ -207,6 +213,7 @@ namespace Genie
 		                        weight,  // bits per pixel
 		                        stride,
 		                        GrayColorSpace(),
+		                        kCGImageAlphaNone,
 		                        baseAddr,
 		                        &inverted_copy );
 	}
@@ -219,12 +226,15 @@ namespace Genie
 	                                            size_t  stride,
 	                                            char*   baseAddr )
 	{
+		CGBitmapInfo bitmapInfo = kCGImageAlphaNoneSkipFirst;
+		
 		return image_from_data( width,
 		                        height,
 		                        degree,  // bits per component
 		                        weight,  // bits per pixel
 		                        stride,
 		                        RGBColorSpace(),
+		                        bitmapInfo,
 		                        baseAddr,
 		                        &straight_copy );
 	}
