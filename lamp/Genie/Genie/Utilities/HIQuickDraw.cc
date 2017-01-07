@@ -356,6 +356,39 @@ namespace Genie
 	{
 		PixMapHandle pix = GetGWorldPixMap( gworld );
 		
+	#ifdef MAC_OS_X_VERSION_10_4
+		
+		const uint32_t pixelFormat = pix[0]->pixelFormat;
+		
+		if ( TARGET_RT_LITTLE_ENDIAN  &&  pixelFormat == k16LE565PixelFormat )
+		{
+			/*
+				This format is not supported by Core Graphics, but it is by
+				QuickDraw.  Create a new GWorld with the same depth and bounds
+				and call CopyBits() to transcode the pixels for us.
+			*/
+			
+			n::owned< GWorldPtr > native = N::NewGWorld( 16, pix[0]->bounds );
+			
+			PixMapHandle tmp = GetGWorldPixMap( native );
+			
+			if ( ::LockPixels( tmp ) &&  ::LockPixels( pix ) )
+			{
+				N::CopyBits( N::GetPortBitMapForCopyBits( gworld ),
+				             N::GetPortBitMapForCopyBits( native ),
+				             N::GetPortBounds( gworld ),
+				             N::GetPortBounds( native ),
+				             N::srcCopy );
+				
+				::UnlockPixels( pix );
+				::UnlockPixels( tmp );
+				
+				return image_from_pixmap( tmp );
+			}
+		}
+		
+	#endif
+		
 		return image_from_pixmap( pix );
 	}
 	
