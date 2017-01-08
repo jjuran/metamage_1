@@ -483,26 +483,45 @@ namespace Genie
 		}
 		
 		/*
+			We need to distinguish between 1/5/5/5 and 5/6/5.  To do so,
+			we'll redefine "depth" to mean the number of bits that contribute
+			to the number of viewable colors.  Alpha modifies which colors are
+			displayed (when it's considered at all) but doesn't add to the
+			gamut, so 1/5/5/5 is only 15 bits deep.  Its "weight" remains 16.
+		*/
+		
+		short weight = params.depth;
+		
+		if ( weight == 15 )
+		{
+			weight = 16;
+		}
+		else if ( weight == 24 )
+		{
+			weight = 32;
+		}
+		
+		/*
 			Use a grayscale palette at indexed bit depths if requested.
 			(Bit depth 2 already defaults to grayscale.)
 		*/
 		
 		n::owned< CTabHandle > colorTable;
 		
-		if ( params.grayscale  &&  (params.depth == 4  ||  params.depth == 8) )
+		if ( params.grayscale  &&  (weight == 4  ||  weight == 8) )
 		{
-			colorTable = N::GetCTable( params.depth + 32 );
+			colorTable = N::GetCTable( weight + 32 );
 		}
 		
 		n::owned< GWorldPtr > temp = params.gworld.unshare();
 		
 		if ( temp.get() != NULL )
 		{
-			N::UpdateGWorld( temp, params.depth, params.bounds, colorTable );
+			N::UpdateGWorld( temp, weight, params.bounds, colorTable );
 		}
 		else
 		{
-			temp = N::NewGWorld( params.depth, params.bounds, colorTable );
+			temp = N::NewGWorld( weight, params.bounds, colorTable );
 		}
 		
 		Erase_GWorld( temp, params.bounds );
@@ -521,13 +540,13 @@ namespace Genie
 		{
 			PixMapHandle pix = GetGWorldPixMap( temp );
 			
-			short depth = pix[0]->pixelSize;
+			short weight = pix[0]->pixelSize;
 			
-			if ( depth == 16 )
+			if ( weight == 16 )
 			{
 				pix[0]->pixelFormat = k16LE555PixelFormat;
 			}
-			else if ( depth == 32 )
+			else if ( weight == 32 )
 			{
 				pix[0]->pixelFormat = k32BGRAPixelFormat;
 			}
@@ -654,6 +673,11 @@ namespace Genie
 		if ( depth > 32 )
 		{
 			return false;
+		}
+		
+		if ( depth == 15  ||  depth == 24 )
+		{
+			return true;
 		}
 		
 		return (depth | depth - 1)  ==  depth + depth - 1;
