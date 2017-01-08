@@ -648,9 +648,20 @@ namespace Genie
 		static void Set( GWorld_Parameters& params, const Rect& bounds );
 	};
 	
+	static
+	bool is_valid_depth( short depth )
+	{
+		if ( depth > 32 )
+		{
+			return false;
+		}
+		
+		return (depth | depth - 1)  ==  depth + depth - 1;
+	}
+	
 	void PixMap_depth::Set( GWorld_Parameters& params, short depth )
 	{
-		if ( depth > 32  ||  (depth | depth - 1)  !=  depth + depth - 1 )
+		if ( ! is_valid_depth( depth ) )
 		{
 			p7::throw_errno( EINVAL );
 		}
