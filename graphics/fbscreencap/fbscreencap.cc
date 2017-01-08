@@ -25,7 +25,11 @@
 
 #define PROGRAM  "fbscreencap"
 
+#ifdef ANDROID
+#define DEFAULT_FB_PATH  "/dev/graphics/fb0"
+#else
 #define DEFAULT_FB_PATH  "/dev/fb0"
+#endif
 
 #define MISSING_OUTPUT  "stdout is a tty, either redirect or use -o"
 
