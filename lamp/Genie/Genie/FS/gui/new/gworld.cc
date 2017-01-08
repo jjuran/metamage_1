@@ -544,7 +544,8 @@ namespace Genie
 			
 			if ( weight == 16 )
 			{
-				pix[0]->pixelFormat = k16LE555PixelFormat;
+				pix[0]->pixelFormat = params.depth == 15 ? k16LE555PixelFormat
+				                                         : k16LE565PixelFormat;
 			}
 			else if ( weight == 32 )
 			{
