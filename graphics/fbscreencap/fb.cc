@@ -18,15 +18,7 @@
 namespace fb
 {
 	
-	handle::handle() : fd( open( "/dev/fb0", O_RDWR ) )
-	{
-		if ( fd < 0 )
-		{
-			throw errno;
-		}
-	}
-	
-	handle::handle( const char* path ) : fd( open( path, O_RDONLY ) )
+	handle::handle( const char* path ) : fd( open( path, O_RDWR ) )
 	{
 		if ( fd < 0 )
 		{

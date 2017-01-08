@@ -25,6 +25,8 @@
 
 #define PROGRAM  "fbscreencap"
 
+#define DEFAULT_FB_PATH  "/dev/fb0"
+
 #define MISSING_OUTPUT  "stdout is a tty, either redirect or use -o"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -42,7 +44,7 @@ void save_desktop_screenshot( const char* path )
 	using raster::raster_desc;
 	using raster::Model_RGB;
 	
-	fb::handle fbh;
+	fb::handle fbh( DEFAULT_FB_PATH );
 	
 	fb_var_screeninfo var_info = get_var_screeninfo( fbh );
 	fb_fix_screeninfo fix_info = get_fix_screeninfo( fbh );

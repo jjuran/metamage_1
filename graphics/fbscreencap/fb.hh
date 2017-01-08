@@ -26,7 +26,6 @@ namespace fb
 			handle& operator=( const handle& );
 		
 		public:
-			handle();
 			handle( const char* path );
 			
 			~handle();
