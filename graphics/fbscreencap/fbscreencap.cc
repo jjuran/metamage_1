@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// iota
+#include "iota/endian.hh"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -42,11 +45,18 @@ void report_error( const char* path, uint32_t err )
 	more::perror( PROGRAM, path, err );
 }
 
+static inline
+bool is_rgba( const fb_var_screeninfo& var_info )
+{
+	return var_info.red.offset == 24;
+}
+
 static
 void save_desktop_screenshot( const char* path )
 {
 	using raster::raster_desc;
 	using raster::Model_RGB;
+	using raster::Model_RGBx;
 	
 	fb::handle fbh( DEFAULT_FB_PATH );
 	
@@ -72,6 +82,17 @@ void save_desktop_screenshot( const char* path )
 		weight,
 		Model_RGB,
 	};
+	
+	const bool rgba = is_rgba( var_info );
+	
+	if ( rgba )
+	{
+		desc.width  = iota::big_u32( desc.width  );
+		desc.height = iota::big_u32( desc.height );
+		desc.stride = iota::big_u32( desc.stride );
+		
+		desc.model = Model_RGBx;
+	}
 	
 	int fd = open( path, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
 	
@@ -106,6 +127,11 @@ void save_desktop_screenshot( const char* path )
 	const uint32_t total_size = (image_size + footer_size + k) & ~k;
 	
 	footer_size = total_size - image_size;
+	
+	if ( rgba )
+	{
+		footer_size = iota::big_u32( footer_size );
+	}
 	
 	const off_t footer_addr = total_size - sizeof footer_size;
 	
