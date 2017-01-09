@@ -197,6 +197,9 @@ namespace Genie
 			case k32BGRAPixelFormat:  // Mac OS X, Linux, Android (e.g Nexus S)
 				return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;
 			
+			case k32RGBAPixelFormat:  // Android (e.g. Nexus 4)
+				return kCGImageAlphaNoneSkipLast;
+			
 			default:
 				break;
 		}
