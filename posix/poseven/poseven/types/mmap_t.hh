@@ -7,6 +7,10 @@
 #define POSEVEN_TYPES_MMAP_T_HH
 
 // POSIX
+#ifdef __APPLE__
+// This is needed to compile with Mac OS X 10.3's headers.
+#include <sys/types.h>
+#endif
 #include <sys/mman.h>
 
 // nucleus
