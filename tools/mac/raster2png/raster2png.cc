@@ -72,6 +72,27 @@ void inverted_copy( void* dst, const void* src, size_t n )
 }
 
 static
+void converting_LE_565_to_555_copy( void* dst, const void* src, size_t n )
+{
+	uint16_t const* p   = (const uint16_t*) src;
+	uint16_t const* end = (const uint16_t*) src + n / 2;
+	
+	uint16_t* q = (uint16_t*) dst;
+	
+	while ( p < end )
+	{
+		uint16_t pixel = *p++;
+		
+		uint16_t red_green = pixel & 0xFFC0;  // upper 10 bits
+		uint16_t blue      = pixel & 0x001F;  // lower 5 bits
+		
+		pixel = (red_green >> 1) | blue;
+		
+		*q++ = pixel;
+	}
+}
+
+static
 CGDataProviderRef make_data_provider( char* data, size_t size, copier cpy )
 {
 	void* buffer = ::operator new( size );
@@ -127,6 +148,16 @@ CGImageRef CGImage_from_raster( const raster_load& raster )
 	
 	copier cpy = desc.model == Model_grayscale_paint ? inverted_copy
 	                                                 : straight_copy;
+	
+	if ( little_endian  &&  weight == 16  &&  desc.model == Model_RGB )
+	{
+		/*
+			This is a lossy conversion, as it drops the rightmost green bit.
+			TODO:  Convert to 8/8/8/8 instead.
+		*/
+		
+		cpy = &converting_LE_565_to_555_copy;
+	}
 	
 	CGDataProviderRef dataProvider = make_data_provider( base,
 	                                                     height * stride,
