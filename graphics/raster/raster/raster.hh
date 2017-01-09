@@ -89,11 +89,17 @@ namespace raster
 			    divided evenly among red, green, and blue.  A color component
 			    might have more bits than the unused group (e.g. 1/5/5/5, used
 			    in Mac OS for 16-bit color).
-			5:  ARGB (alpha/red/green/blue).  Pixels are divided into 4 groups:
+			5:  RGBx (red/green/blue/unused).  As above, but the unused bits
+			    are last rather than first.
+			6:  ARGB (alpha/red/green/blue).  Pixels are divided into 4 groups:
 			    alpha, which indicates opacity, and red/green/blue as above.
-			6:  Premultiplied ARGB.  Pixels contain alpha, red, green, and blue
+			7:  RGBA (red/green/blue/alpha).  As above, but the alpha component
+			    is last rather than first.
+			8:  Premultiplied ARGB.  Pixels contain alpha, red, green, and blue
 			    components as above, except that the color components represent
 			    the result of multiplying the source value by the alpha value.
+			9:  Premultiplied RGBA.  As above, but the alpha component is last
+			    rather than first.
 			
 			All other values are reserved.
 		
@@ -108,8 +114,11 @@ namespace raster
 		Model_palette,
 		Model_RGB,
 		Model_xRGB,
+		Model_RGBx,
 		Model_ARGB,
+		Model_RGBA,
 		Model_ARGB_premultiplied,
+		Model_RGBA_premultiplied,
 		
 		Model_end_of_enumeration,
 	};
