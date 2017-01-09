@@ -65,6 +65,7 @@ namespace Genie
 		uint16_t                        stride;
 		uint8_t                         depth;
 		bool                            grayscale;
+		bool                            alpha_last;
 		bool                            little_endian;
 		bool                            bounds_are_valid;
 		Rect                            bounds;
@@ -462,6 +463,7 @@ namespace Genie
 		params.stride           = 0;
 		params.depth            = 0;
 		params.grayscale        = 0;
+		params.alpha_last       = 0;
 		params.little_endian    = 0;
 		params.bounds_are_valid = false;
 		
@@ -552,6 +554,12 @@ namespace Genie
 				pix[0]->pixelFormat = k32BGRAPixelFormat;
 			}
 		}
+		else if ( params.alpha_last )
+		{
+			PixMapHandle pix = GetGWorldPixMap( temp );
+			
+			pix[0]->pixelFormat = k32RGBAPixelFormat;
+		}
 		
 	#endif
 		
@@ -615,6 +623,21 @@ namespace Genie
 		}
 		
 		static void Set( GWorld_Parameters& params, short depth );
+	};
+	
+	struct PixMap_alpha_last : plus::serialize_unsigned< bool >
+	{
+		static const bool is_mutable = true;
+		
+		static short Get( const GWorld_Parameters& params )
+		{
+			return params.alpha_last;
+		}
+		
+		static void Set( GWorld_Parameters& params, bool alpha_last )
+		{
+			params.alpha_last = alpha_last;
+		}
 	};
 	
 	struct PixMap_little_endian : plus::serialize_unsigned< bool >
@@ -803,6 +826,9 @@ namespace Genie
 		
 		{ "grayscale",   PROPERTY( PixMap_grayscale ) },
 		{ ".~grayscale", PROPERTY( PixMap_grayscale ) },
+		
+		{ "alpha-last",   PROPERTY( PixMap_alpha_last ) },
+		{ ".~alpha-last", PROPERTY( PixMap_alpha_last ) },
 		
 		{ "little-endian",   PROPERTY( PixMap_little_endian ) },
 		{ ".~little-endian", PROPERTY( PixMap_little_endian ) },
