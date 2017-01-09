@@ -31,7 +31,7 @@ namespace vfs
 	{
 		using mac::relix::FSSpec_from_stat;
 		
-		struct ::stat stat_buffer = { 0 };
+		struct stat stat_buffer = { 0 };
 		
 		try
 		{

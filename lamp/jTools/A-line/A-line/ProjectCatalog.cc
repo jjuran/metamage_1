@@ -188,7 +188,7 @@ namespace tool
 	                         std::back_insert_iterator< std::vector< plus::string > >  configs,
 	                         std::back_insert_iterator< std::vector< plus::string > >  folders )
 	{
-		struct ::stat dir_stat;
+		struct stat dir_stat;
 		
 		if ( !p7::stat( dirPath, dir_stat )  ||  !p7::s_isdir( dir_stat ) )
 		{

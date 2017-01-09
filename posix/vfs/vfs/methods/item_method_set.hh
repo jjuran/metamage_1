@@ -23,7 +23,7 @@ namespace vfs
 	class node;
 	
 	
-	typedef void (*stat_method)( const node*, struct ::stat& );
+	typedef void (*stat_method)( const node*, struct stat& );
 	
 	typedef void (*chmod_method)( const node*, mode_t );
 	

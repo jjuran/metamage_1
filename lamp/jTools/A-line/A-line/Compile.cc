@@ -200,13 +200,13 @@ namespace tool
 				plus::string include_link = includes_union_pathname / dir_name;
 				
 				// Source dir must exist (or it would have been culled)
-				struct ::stat dir_stat = p7::stat( dir_pathname );
+				struct stat dir_stat = p7::stat( dir_pathname );
 				
-				struct ::stat link_stat;
+				struct stat link_stat;
 				
 				const bool target_exists = p7::fstatat( include_fd, dir_name, link_stat );
 				
-				if ( target_exists  &&  memcmp( &dir_stat, &link_stat, sizeof (struct ::stat) ) == 0 )
+				if ( target_exists  &&  memcmp( &dir_stat, &link_stat, sizeof (struct stat) ) == 0 )
 				{
 					// They stat the same.  Assume that one is a symlink.
 					

@@ -70,7 +70,7 @@ namespace poseven
 		typedef const plus::string& filename_parameter;
 		typedef       plus::string  filename_result;
 		
-		typedef struct ::stat file_catalog_record;
+		typedef struct stat file_catalog_record;
 		
 		typedef fd_t stream;
 		
@@ -127,7 +127,7 @@ namespace io
 	
 	inline bool item_exists( const char* item, overload = overload() )
 	{
-		struct ::stat sb;
+		struct stat sb;
 		
 		return poseven::lstat( item, sb );
 	}
@@ -138,12 +138,12 @@ namespace io
 	}
 	
 	
-	inline bool item_is_file( const struct ::stat& sb, overload = overload() )
+	inline bool item_is_file( const struct stat& sb, overload = overload() )
 	{
 		return S_ISREG( sb.st_mode );
 	}
 	
-	inline bool item_is_directory( const struct ::stat& sb, overload = overload() )
+	inline bool item_is_directory( const struct stat& sb, overload = overload() )
 	{
 		return S_ISDIR( sb.st_mode );
 	}
@@ -151,7 +151,7 @@ namespace io
 	
 	inline bool file_exists( const char* item, overload = overload() )
 	{
-		struct ::stat sb;
+		struct stat sb;
 		
 		return poseven::lstat( item, sb ) && !item_is_directory( sb );
 	}
@@ -164,7 +164,7 @@ namespace io
 	
 	inline bool directory_exists( const char* item, overload = overload() )
 	{
-		struct ::stat sb;
+		struct stat sb;
 		
 		return poseven::lstat( item, sb ) && item_is_directory( sb );
 	}

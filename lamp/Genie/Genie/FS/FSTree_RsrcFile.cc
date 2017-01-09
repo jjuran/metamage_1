@@ -50,7 +50,7 @@ namespace Genie
 	
 	
 	static void rsrcfile_stat( const vfs::node*  that,
-	                           struct ::stat&    sb )
+	                           struct stat&      sb )
 	{
 		CInfoPBRec cInfo = {{ 0 }};
 		

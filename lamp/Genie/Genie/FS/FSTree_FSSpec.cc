@@ -389,7 +389,7 @@ namespace Genie
 	static ino_t hfs_inode( const vfs::node* that );
 	
 	static void hfs_stat( const vfs::node*  that,
-	                      struct ::stat&    sb );
+	                      struct stat&      sb );
 	
 	static void hfs_chmod( const vfs::node*  that,
 	                       mode_t            mode );
@@ -715,7 +715,7 @@ namespace Genie
 	}
 	
 	static void hfs_stat( const vfs::node*  that,
-	                      struct ::stat&    sb )
+	                      struct stat&      sb )
 	{
 		const bool async = false;
 		

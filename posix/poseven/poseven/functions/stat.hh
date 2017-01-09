@@ -38,7 +38,7 @@ namespace poseven
 	}
 	
 	template < class String >
-	inline struct ::stat stat( const String& path )
+	inline struct stat stat( const String& path )
 	{
 		using iota::get_string_c_str;
 		

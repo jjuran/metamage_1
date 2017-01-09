@@ -274,7 +274,7 @@ namespace tool
 			return opened;
 		}
 		
-		struct ::stat sb;
+		struct stat sb;
 		
 		int status = fstat( opened, &sb );
 		
@@ -313,7 +313,7 @@ namespace tool
 		// File exists.  Try again without creating.
 		opened = Open( path, O_WRONLY );
 		
-		struct ::stat sb;
+		struct stat sb;
 		
 		int status = fstat( opened, &sb );
 		

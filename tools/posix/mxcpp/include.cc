@@ -99,7 +99,7 @@ namespace tool
 		{
 			const p7::fd_t dirfd = global_include_search_dirs[ i ];
 			
-			struct ::stat sb;
+			struct stat sb;
 			
 			const bool exists = dirfd >= 0  &&  p7::fstatat( dirfd, path, sb );
 			

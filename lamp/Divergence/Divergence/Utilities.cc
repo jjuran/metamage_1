@@ -53,7 +53,7 @@ namespace Divergence
 		
 		using mac::relix::FSSpec_from_stat;
 		
-		struct ::stat stat_buffer;
+		struct stat stat_buffer;
 		
 		const bool exists = p7::stat( path, stat_buffer );
 		

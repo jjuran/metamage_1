@@ -1096,7 +1096,7 @@ namespace tool
 		
 		jsync_path += ".jsync";
 		
-		struct ::stat jsync_stat;
+		struct stat jsync_stat;
 		
 		const bool jsync_exists = p7::stat( jsync_path, jsync_stat );
 		

@@ -348,7 +348,7 @@ namespace tool
 		{
 			const char* rez = "/Developer/Tools/Rez";
 			
-			struct ::stat sb;
+			struct stat sb;
 			
 			if ( stat( rez, &sb ) != 0 )
 			{

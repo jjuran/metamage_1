@@ -259,7 +259,7 @@ namespace tool
 		{
 			// Read from stdin
 			
-			struct ::stat stat_buffer;
+			struct stat stat_buffer;
 			
 			if ( gLoginShell && p7::stat( "/etc/profile", stat_buffer ) )
 			{

@@ -53,9 +53,10 @@ namespace poseven
 	}
 	
 	template < class String >
-	inline struct ::stat fstatat( fd_t           dirfd,
-	                              const String&  path,
-	                              at_flags_t     flags = at_flags_t() )
+	inline
+	struct stat fstatat( fd_t           dirfd,
+	                     const String&  path,
+	                     at_flags_t     flags = at_flags_t() )
 	{
 		using iota::get_string_c_str;
 		

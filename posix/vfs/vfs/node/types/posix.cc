@@ -54,7 +54,7 @@ namespace vfs
 		struct stat          status;
 	};
 	
-	static void fix_loose_filemode( struct ::stat& st )
+	static void fix_loose_filemode( struct stat& st )
 	{
 		if ( st.st_mode & 0002  &&  st.st_mode & 0111 )
 		{
@@ -101,7 +101,7 @@ namespace vfs
 	}
 	
 	static void posix_stat( const node*     that,
-	                        struct ::stat&  sb )
+	                        struct stat&  sb )
 	{
 		posix_extra& extra = *(posix_extra*) that->extra();
 		

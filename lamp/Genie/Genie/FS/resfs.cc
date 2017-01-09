@@ -123,11 +123,11 @@ namespace Genie
 	};
 	
 	static void resfs_file_stat( const vfs::node*  that,
-	                             struct ::stat&    sb )
+	                             struct stat&      sb )
 	{
 		resfs_file_extra& extra = *(resfs_file_extra*) that->extra();
 		
-		memset( &sb, '\0', sizeof (struct ::stat) );
+		memset( &sb, '\0', sizeof (struct stat) );
 		
 		sb.st_mode = extra.res_type == 'Exec' ? S_IFREG | 0555 : S_IFREG | 0444;
 	}

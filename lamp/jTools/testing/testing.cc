@@ -749,7 +749,7 @@ static int TestNull( int argc, char** argv )
 	{
 		n::owned< p7::fd_t > filehandle = p7::open( pathname, p7::o_rdonly );
 		
-		struct ::stat stat_buffer;
+		struct stat stat_buffer;
 		
 		int statted = fstat( filehandle.get(), &stat_buffer );
 		

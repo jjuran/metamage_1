@@ -34,35 +34,35 @@ static const unsigned n_tests = 5 + 6 + 7 + 4 + 20 + 13 + 4 + 1;
 
 static bool exists( const char* path )
 {
-	struct ::stat stat_buffer;
+	struct stat stat_buffer;
 	
 	return lstat( path, &stat_buffer ) == 0;
 }
 
 static bool is_reg( const char* path )
 {
-	struct ::stat sb;
+	struct stat sb;
 	
 	return lstat( path, &sb ) == 0  &&  S_ISREG( sb.st_mode );
 }
 
 static bool is_lnk( const char* path )
 {
-	struct ::stat sb;
+	struct stat sb;
 	
 	return lstat( path, &sb ) == 0  &&  S_ISLNK( sb.st_mode );
 }
 
 static bool is_dir( const char* path )
 {
-	struct ::stat sb;
+	struct stat sb;
 	
 	return lstat( path, &sb ) == 0  &&  S_ISDIR( sb.st_mode );
 }
 
 static bool resolves( const char* path )
 {
-	struct ::stat stat_buffer;
+	struct stat stat_buffer;
 	
 	return stat( path, &stat_buffer ) == 0;
 }
@@ -78,11 +78,11 @@ static int devnull_fd = -1;
 
 static void bootstrap()
 {
-	struct ::stat root_stat;
-	struct ::stat cwd_stat;
-	struct ::stat parent_stat;
-	struct ::stat tmp_stat;
-	struct ::stat tmpdir_stat;
+	struct stat root_stat;
+	struct stat cwd_stat;
+	struct stat parent_stat;
+	struct stat tmp_stat;
+	struct stat tmpdir_stat;
 	
 	CHECK( lstat( "/",  &root_stat   ) );
 	CHECK( lstat( ".",  &cwd_stat    ) );
@@ -184,7 +184,7 @@ static void symlink_readlink_unlink()
 	
 	ssize_t n = 0;
 	
-	struct ::stat sb;
+	struct stat sb;
 	
 	CHECK( mkdir( "foo", 0755 ) );
 	

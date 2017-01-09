@@ -605,7 +605,7 @@ namespace Genie
 	
 	static void CheckProgramFile( const vfs::node& programFile )
 	{
-		struct ::stat sb;
+		struct stat sb;
 		
 		stat( programFile, sb );
 		
