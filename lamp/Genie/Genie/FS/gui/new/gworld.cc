@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-qd-utils
+#include "mac_qd/get_pix_rowBytes.hh"
+
 // plus
 #include "plus/serialize.hh"
 #include "plus/simple_map.hh"
@@ -52,6 +55,8 @@ namespace Genie
 	namespace p7 = poseven;
 	namespace Ped = Pedestal;
 	
+	using mac::qd::get_pix_rowBytes;
+	
 	
 	template < class T >
 	static inline T min( T a, T b )
@@ -93,7 +98,7 @@ namespace Genie
 		
 		const short n_rows = pix.bounds.bottom - pix.bounds.top;
 		
-		const short rowBytes = pix.rowBytes & 0x3FFF;
+		const short rowBytes = get_pix_rowBytes( pix_h );
 		
 		return n_rows * (stride ? stride : rowBytes);
 	}
@@ -206,7 +211,7 @@ namespace Genie
 			return 0;
 		}
 		
-		const short rowBytes = pix[0]->rowBytes & 0x3FFF;
+		const short rowBytes = get_pix_rowBytes( pix );
 		
 		const short stride = params.stride ? params.stride : rowBytes;
 		
@@ -288,7 +293,7 @@ namespace Genie
 			n_bytes = pix_size - offset;
 		}
 		
-		const short rowBytes = pix[0]->rowBytes & 0x3FFF;
+		const short rowBytes = get_pix_rowBytes( pix );
 		
 		const short stride = params.stride ? params.stride : rowBytes;
 		
@@ -585,7 +590,7 @@ namespace Genie
 				p7::throw_errno( ENOENT );
 			}
 			
-			return pix[0]->rowBytes & 0x3FFF;
+			return get_pix_rowBytes( pix );
 		}
 		
 		static void Set( GWorld_Parameters& params, short depth );

@@ -16,6 +16,7 @@
 #include <string.h>
 
 // mac-qd-utils
+#include "mac_qd/get_pix_rowBytes.hh"
 #include "mac_qd/is_grayscale.hh"
 
 // nucleus
@@ -39,6 +40,7 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	
+	using mac::qd::get_pix_rowBytes;
 	using mac::qd::is_grayscale;
 	
 	
@@ -283,7 +285,8 @@ namespace Genie
 		
 		const short width  = pixmap.bounds.right - pixmap.bounds.left;
 		const short height = pixmap.bounds.bottom - pixmap.bounds.top;
-		const short stride = pixmap.rowBytes & 0x3FFF;
+		
+		const long stride = get_pix_rowBytes( pix );
 		
 		n::saved< N::Pixels_State > saved_pixels_state( pix );
 		
