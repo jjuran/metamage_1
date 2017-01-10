@@ -15,6 +15,9 @@
 // Standard C
 #include <string.h>
 
+// mac-qd-utils
+#include "mac_qd/is_grayscale.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -35,6 +38,8 @@ namespace Genie
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
+	
+	using mac::qd::is_grayscale;
 	
 	
 	static
@@ -59,19 +64,6 @@ namespace Genie
 	#endif
 		
 		return N::CGColorSpaceCreateDeviceRGB();
-	}
-	
-	static
-	bool is_grayscale( const PixMap& pixmap )
-	{
-		if ( CTabHandle ctab = pixmap.pmTable )
-		{
-			const long ctSeed = ctab[0]->ctSeed;
-			
-			return ctSeed >= 32 + 1  &&  ctSeed <= 32 + 8;
-		}
-		
-		return false;
 	}
 	
 	static
