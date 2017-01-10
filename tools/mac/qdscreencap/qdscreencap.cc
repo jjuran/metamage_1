@@ -23,6 +23,9 @@
 // Standard C
 #include <stdlib.h>
 
+// mac-qd-utils
+#include "mac_qd/is_grayscale.hh"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
@@ -39,6 +42,7 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
+using mac::qd::is_grayscale;
 using mac::sys::gestalt;
 
 using namespace raster;
@@ -92,19 +96,6 @@ PixMapHandle get_main_pixmap()
 #endif
 	
 	return NULL;
-}
-
-static
-bool is_grayscale( const PixMap& pixmap )
-{
-	if ( CTabHandle ctab = pixmap.pmTable )
-	{
-		const long ctSeed = ctab[0]->ctSeed;
-		
-		return ctSeed >= 32 + 1  &&  ctSeed <= 32 + 8;
-	}
-	
-	return false;
 }
 
 static
