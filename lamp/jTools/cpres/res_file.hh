@@ -25,4 +25,10 @@ open_res_file( const char* path, ForkType fork );
 nucleus::owned< Nitrogen::ResFileRefNum >
 open_res_file( const char* path, ForkType fork, bool exists );
 
+inline
+bool has_FSOpenResourceFile()
+{
+	return TARGET_API_MAC_CARBON  &&  &::FSOpenResourceFile != NULL;
+}
+
 #endif

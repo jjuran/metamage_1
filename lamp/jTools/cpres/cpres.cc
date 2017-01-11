@@ -143,7 +143,7 @@ namespace tool
 		
 		const int argn = argc - (args - argv);
 		
-		if ( globally_using_data_fork  &&  ( !TARGET_API_MAC_CARBON || ::FSOpenResourceFile == NULL ) )
+		if ( globally_using_data_fork  &&  ! has_FSOpenResourceFile() )
 		{
 			std::fprintf( stderr, "cpres: FSOpenResourceFile() unavailable for data fork\n" );
 			

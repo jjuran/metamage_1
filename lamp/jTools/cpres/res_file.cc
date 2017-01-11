@@ -28,11 +28,6 @@ namespace N = Nitrogen;
 namespace Div = Divergence;
 
 
-static inline bool has_FSOpenResourceFile()
-{
-	return TARGET_API_MAC_CARBON  &&  ::FSOpenResourceFile != NULL;
-}
-
 class ForkNames
 {
 	private:
