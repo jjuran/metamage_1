@@ -19,6 +19,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// iota
+#include "iota/endian.hh"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -81,14 +84,14 @@ void converting_LE_565_to_555_copy( void* dst, const void* src, size_t n )
 	
 	while ( p < end )
 	{
-		uint16_t pixel = *p++;
+		uint16_t pixel = iota::u16_from_little( *p++ );
 		
 		uint16_t red_green = pixel & 0xFFC0;  // upper 10 bits
 		uint16_t blue      = pixel & 0x001F;  // lower 5 bits
 		
 		pixel = (red_green >> 1) | blue;
 		
-		*q++ = pixel;
+		*q++ = iota::little_u16( pixel );
 	}
 }
 
