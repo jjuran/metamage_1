@@ -110,7 +110,9 @@ namespace Pedestal
 	
 	static inline bool Has_SetControlViewSize()
 	{
-		return !TARGET_CPU_68K  &&  (TARGET_API_MAC_CARBON || ::SetControlViewSize != NULL );
+		return   TARGET_API_MAC_CARBON ? true
+		       : TARGET_CPU_68K        ? false
+		       :                         &::SetControlViewSize != NULL;
 	}
 	
 	void Scrollbar::Adjust( int clientLength, int offset, int viewLength )
