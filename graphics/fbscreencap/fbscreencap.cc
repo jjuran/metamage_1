@@ -55,8 +55,10 @@ static
 void save_desktop_screenshot( const char* path )
 {
 	using raster::raster_desc;
+	using raster::raster_model;
 	using raster::Model_RGB;
-	using raster::Model_RGBx;
+	using raster::Model_ARGB;
+	using raster::Model_RGBA;
 	
 	fb::handle fbh( DEFAULT_FB_PATH );
 	
@@ -70,6 +72,19 @@ void save_desktop_screenshot( const char* path )
 	const size_t stride = fix_info.line_length;
 	const size_t weight = var_info.bits_per_pixel;
 	
+	/*
+		Uee ARGB rather than xRGB, since Android may have a transparent screen
+		when the camera is in use.  (Obviously this is not the case for 5/6/5,
+		since there are no bits left over for alpha.)
+		
+		An older phone running Froyo has a 5/6/5 surface with the camera image.
+		A Nexus S running Gingerbread has a transparent camera activity screen.
+		A Nexus 4 running Jellybean doesn't -- the blank areas are 00 00 00 FF.
+	*/
+	
+	const raster_model model = weight == 16 ? Model_RGB
+	                                        : Model_ARGB;
+	
 	const uint32_t image_size = height * stride;
 	
 	raster_desc desc =
@@ -80,7 +95,7 @@ void save_desktop_screenshot( const char* path )
 		height,
 		stride,
 		weight,
-		Model_RGB,
+		model,
 	};
 	
 	const bool rgba = is_rgba( var_info );
@@ -91,7 +106,7 @@ void save_desktop_screenshot( const char* path )
 		desc.height = iota::big_u32( desc.height );
 		desc.stride = iota::big_u32( desc.stride );
 		
-		desc.model = Model_RGBx;
+		desc.model = Model_RGBA;
 	}
 	
 	int fd = open( path, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
