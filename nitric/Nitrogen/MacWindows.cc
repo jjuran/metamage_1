@@ -147,9 +147,17 @@ namespace Nitrogen
 		return Detail::GrowWindow( window, startPt, unbounded );
 	}
 	
+	static inline
+	bool has_InvalWindowRect()
+	{
+		return   TARGET_API_MAC_CARBON ? true
+		       : TARGET_CPU_68K        ? false
+		       :                         &::InvalWindowRect != NULL;
+	}
+	
 	void InvalWindowRect( WindowRef window, const Rect& bounds )
 	{
-		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC && ::InvalWindowRect != NULL )
+		if ( has_InvalWindowRect() )
 		{
 			::InvalWindowRect( window, &bounds );
 		}
