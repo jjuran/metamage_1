@@ -14,6 +14,7 @@
 
 // Pedestal
 #include "Pedestal/OwnerResource.hh"
+#include "Pedestal/vers_Resource.hh"
 
 
 namespace Pedestal
@@ -55,9 +56,32 @@ namespace Pedestal
 	}
 	
 	static
+	CFStringRef Copy_vers_1_ResourceAsCFString()
+	{
+		Str255 data;
+		
+		if ( Get_vers_ShortVersionString( 1, data ) )
+		{
+			return CFStringCreateWithPascalString( NULL,
+			                                       data,
+			                                       kCFStringEncodingMacRoman );
+		}
+		
+		return NULL;
+	}
+	
+	static
 	CFStringRef GetOwnerResourceAsCFString()
 	{
 		static CFStringRef string = CopyOwnerResourceAsCFString();
+		
+		return string;
+	}
+	
+	static
+	CFStringRef Get_vers_1_ResourceAsCFString()
+	{
+		static CFStringRef string = Copy_vers_1_ResourceAsCFString();
 		
 		return string;
 	}
@@ -105,6 +129,17 @@ namespace Pedestal
 		return   (string = GetBundleString( key )      ) ? string
 		       : (string = GetOwnerResourceAsCFString()) ? string
 		       : alt;
+	}
+	
+	CFStringRef GetBundleShortVersionString()
+	{
+		CFStringRef key = CFSTR( "CFBundleShortVersionString" );
+		
+		CFStringRef string;
+		
+		return   (string = GetBundleString( key )         ) ? string
+		       : (string = Get_vers_1_ResourceAsCFString()) ? string
+		       : NULL;
 	}
 	
 }
