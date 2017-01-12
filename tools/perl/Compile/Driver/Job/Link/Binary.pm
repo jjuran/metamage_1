@@ -69,7 +69,11 @@ sub command
 	
 	if ( $conf->is_apple_gcc )
 	{
-		push @frameworks, -framework => "Carbon";
+		my @names = @{$module->{DESC}{DATA}{frameworks} || []};
+		
+		@names = "Carbon"  if @names == 0;
+		
+		push @frameworks, map { -framework => $_ } @names;
 	}
 	
 	return $self->tool_name, -o => $dest, @arch, @frameworks;
