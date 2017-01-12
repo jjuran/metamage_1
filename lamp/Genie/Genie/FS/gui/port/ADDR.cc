@@ -37,6 +37,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Nitrogen
+#include "Nitrogen/CFString.hh"
 #include "Nitrogen/MacWindows.hh"
 
 // Pedestal
@@ -75,6 +76,7 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
+#include "Genie/FS/mac_text_property.hh"
 #include "Genie/FS/utf8_text_property.hh"
 
 
@@ -109,7 +111,7 @@ namespace Genie
 	
 	struct WindowParameters
 	{
-		N::Str255           itsTitle;
+		plus::string        itsTitle;
 		Point               itsOrigin;
 		Point               itsSize;
 		N::WindowDefProcID  itsProcID;
@@ -286,8 +288,6 @@ namespace Genie
 		
 	#endif
 		
-		ConstStr255Param title = params.itsTitle;
-		
 		Rect bounds = { 0, 0, 90, 120 };
 		
 		if ( params.itsSize.h || params.itsSize.v )
@@ -307,6 +307,8 @@ namespace Genie
 		typedef boost::intrusive_ptr< Ped::Window > Owner;
 		
 	#if ! TARGET_API_MAC_CARBON
+		
+		N::Str255 title( params.itsTitle.data(), params.itsTitle.size() );
 		
 		Owner owner( new Window( Ped::CreateWindow( bounds,
 		                                            title,
@@ -384,10 +386,15 @@ namespace Genie
 		
 		WindowRef window = owner->Get();
 		
-		if ( title != NULL  &&  title[0] != 0 )
-		{
-			SetWTitle( window, title );
-		}
+		const plus::string&            title = params.itsTitle;
+		const Carbon::CFStringEncoding utf8  = Carbon::kCFStringEncodingUTF8;
+		
+		OSStatus err;
+		
+		err = SetWindowTitleWithCFString( window,
+		                                  N::CFStringCreateWithBytes( title,
+		                                                              utf8,
+		                                                              false ) );
 		
 		if ( params.itIsVisible )
 		{
@@ -922,7 +929,7 @@ namespace Genie
 		{
 			WindowParameters& params = gWindowParametersMap[ that ];
 			
-			params.itsTitle = N::Str255( begin, end - begin );
+			params.itsTitle.assign( begin, end - begin );
 		}
 	};
 	
@@ -1233,11 +1240,23 @@ namespace Genie
 		
 		{ "new",    &vfs::new_static_symlink, "../../new" },
 		
+	#if TARGET_API_MAC_CARBON
+		
+		{ ".mac-title", VARIABLE( mac_text_property< Window_Title > ) },
+		{      "title", VARIABLE(                    Window_Title   ) },
+		
+		{ ".~mac-title", VARIABLE( mac_text_property< Window_Title > ) },
+		{     ".~title", VARIABLE(                    Window_Title   ) },
+		
+	#else
+		
 		{ ".mac-title", VARIABLE(                     Window_Title   ) },
 		{      "title", VARIABLE( utf8_text_property< Window_Title > ) },
 		
 		{ ".~mac-title", VARIABLE(                     Window_Title   ) },
 		{     ".~title", VARIABLE( utf8_text_property< Window_Title > ) },
+		
+	#endif
 		
 		{ "pos",    VARIABLE( Origin_Property   ) },
 		{ "size",   VARIABLE( Size_Property     ) },
