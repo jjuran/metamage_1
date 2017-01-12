@@ -75,6 +75,7 @@
 #include "Genie/FS/Views.hh"
 #include "Genie/FS/serialize_qd.hh"
 #include "Genie/FS/subview.hh"
+#include "Genie/FS/utf8_text_property.hh"
 
 
 namespace Genie
@@ -1232,14 +1233,18 @@ namespace Genie
 		
 		{ "new",    &vfs::new_static_symlink, "../../new" },
 		
-		{ "title",  VARIABLE( Window_Title      ) },
+		{ ".mac-title", VARIABLE(                     Window_Title   ) },
+		{      "title", VARIABLE( utf8_text_property< Window_Title > ) },
+		
+		{ ".~mac-title", VARIABLE(                     Window_Title   ) },
+		{     ".~title", VARIABLE( utf8_text_property< Window_Title > ) },
+		
 		{ "pos",    VARIABLE( Origin_Property   ) },
 		{ "size",   VARIABLE( Size_Property     ) },
 		{ "vis",    VARIABLE( Visible_Property  ) },
 		{ "procid", CONSTANT( ProcID_Property   ) },
 		{ "goaway", CONSTANT( CloseBox_Property ) },
 		
-		{ ".~title",  VARIABLE( Window_Title      ) },
 		{ ".~pos",    VARIABLE( Origin_Property   ) },
 		{ ".~size",   VARIABLE( Size_Property     ) },
 		{ ".~vis",    VARIABLE( Visible_Property  ) },
