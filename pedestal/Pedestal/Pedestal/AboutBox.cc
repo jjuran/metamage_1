@@ -15,6 +15,9 @@
 #include <TextEdit.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <memory>
 
@@ -32,6 +35,8 @@
 #include "MacFeatures/ColorQuickdraw.hh"
 
 // Nitrogen
+#include "Carbon/CF/Types/CFMutableStringRef.hh"
+
 #include "Nitrogen/Icons.hh"
 #include "Nitrogen/Quickdraw.hh"
 
@@ -44,7 +49,10 @@
 #include "Pedestal/View.hh"
 #include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
+#include "Pedestal/vers_Resource.hh"
 
+
+#define STRLEN( s )  (sizeof "" s - 1)
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -152,9 +160,22 @@ namespace Pedestal
 		
 		Str255 name = "\p" "Pedestal";
 		Str255 data = "\p";
+		Str255 vers = "\p" VERSION_FALLBACK;
 		
 		GetOwnerResourceName( creator, name );
 		GetOwnerResourceData( creator, data );
+		
+		if ( Get_vers_ShortVersionString( 1, vers ) )
+		{
+			if ( vers[ 0 ] <= 255 - STRLEN( "Version " ) )
+			{
+				memmove( vers + 1 + STRLEN( "Version " ), vers + 1, vers[ 0 ] );
+				
+				memcpy( vers + 1, STR_LEN( "Version " ) );
+				
+				vers[ 0 ] += STRLEN( "Version " );
+			}
+		}
 		
 		TETextBox( name + 1, name[ 0 ], &nameBounds, teJustCenter );
 		
@@ -171,7 +192,7 @@ namespace Pedestal
 		TextFont( 1 );  // Use application font, which should be Geneva
 		TextSize( 9 );
 		
-		TETextBox( STR_LEN( VERSION_FALLBACK ), &detailBounds, teJustCenter );
+		TETextBox( vers + 1, vers[ 0 ], &detailBounds, teJustCenter );
 		
 		detailBounds.top    += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
 		detailBounds.bottom += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
@@ -217,6 +238,44 @@ namespace Pedestal
 	#endif
 	}
 	
+	static
+	n::owned< CFStringRef > VersionString()
+	{
+		CFStringRef shortVersion = GetBundleShortVersionString();
+		CFStringRef buildNumber  = GetBundleVersion();
+		
+		if ( shortVersion == NULL  &&  buildNumber == NULL )
+		{
+			return n::owned< CFStringRef >::seize( CFSTR( VERSION_FALLBACK ) );
+		}
+		
+		CFMutableStringRef versionString = CFStringCreateMutable( NULL, 0 );
+		
+		const CFStringEncoding macRoman = kCFStringEncodingMacRoman;
+		
+		CFStringAppendPascalString( versionString, "\p" "Version ", macRoman );
+		
+		if ( shortVersion == NULL )
+		{
+			CFStringAppend( versionString, buildNumber );
+			
+			return n::owned< CFStringRef >::seize( versionString );
+		}
+		
+		CFStringAppend( versionString, shortVersion );
+		
+		if ( buildNumber != NULL )
+		{
+			CFStringAppendPascalString( versionString, "\p" " (", macRoman );
+			
+			CFStringAppend( versionString, buildNumber );
+			
+			CFStringAppendPascalString( versionString, "\p" ")", macRoman );
+		}
+		
+		return n::owned< CFStringRef >::seize( versionString );
+	}
+	
 	void AboutBoxView::DrawInContext( CGContextRef context, CGRect bounds )
 	{
 		CGContextSetGrayFillColor( context, 1.0 * 0xEEEE / 0xFFFF, 1.0 );
@@ -258,7 +317,7 @@ namespace Pedestal
 			kAboutBoxDetailHeight,
 		};
 		
-		DrawAboutBoxDetail( GetBundleVersion(), detailBounds, context );
+		DrawAboutBoxDetail( VersionString(), detailBounds, context );
 		
 		detailBounds.origin.y += kAboutBoxDetailHeight + kAboutBoxInterTextGap;
 		

@@ -114,9 +114,8 @@ namespace Pedestal
 	CFStringRef GetBundleVersion()
 	{
 		CFStringRef key = CFSTR( "CFBundleVersion" );
-		CFStringRef alt = CFSTR( VERSION_FALLBACK );
 		
-		return GetBundleString( key, alt );
+		return GetBundleString( key );
 	}
 	
 	CFStringRef GetBundleGetInfoString()
