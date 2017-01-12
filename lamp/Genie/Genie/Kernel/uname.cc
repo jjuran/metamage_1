@@ -27,7 +27,7 @@
 
 
 #define SYSNAME  "Relix"
-#define RELEASE  "0.7.1"
+#define RELEASE  "0.7.2-alpha.1"
 #define VERSION  "MacRelix"
 
 
