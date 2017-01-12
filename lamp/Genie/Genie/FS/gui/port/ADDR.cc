@@ -1198,6 +1198,9 @@ namespace Genie
 	
 	#define PROPERTY( var, prop )  &new_port_property, &port_property_params_factory< prop, var >::value
 	
+	#define VARIABLE( prop )  PROPERTY( kAttrVariable, prop )
+	#define CONSTANT( prop )  PROPERTY( kAttrConstant, prop )
+	
 	typedef Window_Property< serialize_Point,  &Origin   >  Origin_Property;
 	typedef Window_Property< serialize_Point,  &Size     >  Size_Property;
 	typedef Window_Property< serialize_bool,   &Visible  >  Visible_Property;
@@ -1229,24 +1232,24 @@ namespace Genie
 		
 		{ "new",    &vfs::new_static_symlink, "../../new" },
 		
-		{ "title",  PROPERTY( kAttrVariable, Window_Title      ) },
-		{ "pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
-		{ "size",   PROPERTY( kAttrVariable, Size_Property     ) },
-		{ "vis",    PROPERTY( kAttrVariable, Visible_Property  ) },
-		{ "procid", PROPERTY( kAttrConstant, ProcID_Property   ) },
-		{ "goaway", PROPERTY( kAttrConstant, CloseBox_Property ) },
+		{ "title",  VARIABLE( Window_Title      ) },
+		{ "pos",    VARIABLE( Origin_Property   ) },
+		{ "size",   VARIABLE( Size_Property     ) },
+		{ "vis",    VARIABLE( Visible_Property  ) },
+		{ "procid", CONSTANT( ProcID_Property   ) },
+		{ "goaway", CONSTANT( CloseBox_Property ) },
 		
-		{ ".~title",  PROPERTY( kAttrVariable, Window_Title      ) },
-		{ ".~pos",    PROPERTY( kAttrVariable, Origin_Property   ) },
-		{ ".~size",   PROPERTY( kAttrVariable, Size_Property     ) },
-		{ ".~vis",    PROPERTY( kAttrVariable, Visible_Property  ) },
-		{ ".~procid", PROPERTY( kAttrConstant, ProcID_Property   ) },
-		{ ".~goaway", PROPERTY( kAttrConstant, CloseBox_Property ) },
+		{ ".~title",  VARIABLE( Window_Title      ) },
+		{ ".~pos",    VARIABLE( Origin_Property   ) },
+		{ ".~size",   VARIABLE( Size_Property     ) },
+		{ ".~vis",    VARIABLE( Visible_Property  ) },
+		{ ".~procid", CONSTANT( ProcID_Property   ) },
+		{ ".~goaway", CONSTANT( CloseBox_Property ) },
 		
 	#ifdef MAC_OS_X_VERSION_10_2
 		
-		{ "compositing",   PROPERTY( kAttrConstant, Compositing_Property ) },
-		{ ".~compositing", PROPERTY( kAttrConstant, Compositing_Property ) },
+		{ "compositing",   CONSTANT( Compositing_Property ) },
+		{ ".~compositing", CONSTANT( Compositing_Property ) },
 		
 	#endif
 		
