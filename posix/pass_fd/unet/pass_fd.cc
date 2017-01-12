@@ -89,9 +89,12 @@ namespace unet
 		
 		/*
 			In Mac OS X 10.4.11 at least, two consecutive fd sends can fail
-			if the the first isn't received prior to the second.  To ensure
+			if the first isn't received prior to the second.  To ensure
 			this doesn't happen, block after sending until the receiver
 			acknowledges.
+			
+			Turns out this was fixed in 10.5.  More info:
+			<https://developer.apple.com/library/content/qa/qa1541/_index.html>
 		*/
 		
 		char buffer;
