@@ -82,8 +82,10 @@ namespace raster
 	}
 	
 	static
-	void swap_bytes( raster_desc& desc )
+	void swap_bytes( raster_metadata& meta )
 	{
+		raster_desc& desc = meta.desc;
+		
 		desc.magic   = iota::swap_4_bytes( desc.magic   );
 		desc.version = iota::swap_4_bytes( desc.version );
 		desc.width   = iota::swap_4_bytes( desc.width   );
@@ -150,7 +152,7 @@ namespace raster
 		
 		if ( byte_swapped )
 		{
-			swap_bytes( meta->desc );
+			swap_bytes( *meta );
 		}
 		
 		if ( ! is_valid_metadata( footer_offset, meta->desc ) )
