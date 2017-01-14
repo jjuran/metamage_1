@@ -12,14 +12,6 @@
 namespace raster
 {
 	
-	static inline
-	uint32_t mb32( char a, char b, char c, char d )
-	{
-		return (a << 24) | (b << 16) | (c << 8) | d;
-	}
-	
-	const uint32_t kStartupScreenFileType = mb32( 'S', 'C', 'R', 'N' );
-	
 	raster_load mac_screen_raster_load( void* addr )
 	{
 		const uint32_t SCRN = kStartupScreenFileType;
