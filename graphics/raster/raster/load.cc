@@ -82,7 +82,7 @@ namespace raster
 	}
 	
 	static
-	void swap_bytes( raster_metadata& meta )
+	bool swap_bytes( raster_metadata& meta, const void* note_limit )
 	{
 		raster_desc& desc = meta.desc;
 		
@@ -94,6 +94,40 @@ namespace raster
 		
 		// weight and model are single bytes
 		// flags is reserved and undefined
+		
+		raster_note* note = &meta.note;
+		
+		while ( exists( note ) )
+		{
+			note->size = iota::swap_2_bytes( note->size );
+			
+			note = next( note );
+			
+			if ( note > (const raster_note*) note_limit )
+			{
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	static
+	bool walk_notes( const raster_metadata& meta, const void* note_limit )
+	{
+		const raster_note* note = &meta.note;
+		
+		while ( exists( note ) )
+		{
+			note = next( note );
+			
+			if ( note > (const raster_note*) note_limit )
+			{
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	
@@ -150,9 +184,16 @@ namespace raster
 		
 		raster_metadata* const meta = (raster_metadata*) footer_addr;
 		
-		if ( byte_swapped )
+		const void* note_limit = (char*) addr + end
+		                                      - sizeof (uint32_t)
+		                                      - sizeof (raster_note);
+		
+		const bool checked = byte_swapped ? swap_bytes( *meta, note_limit )
+		                                  : walk_notes( *meta, note_limit );
+		
+		if ( ! checked )
 		{
-			swap_bytes( *meta );
+			return invalid_raster();
 		}
 		
 		if ( ! is_valid_metadata( footer_offset, meta->desc ) )
