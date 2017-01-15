@@ -64,6 +64,13 @@ namespace raster
 		return null;
 	}
 	
+	static inline
+	const raster_load& invalid_raster()
+	{
+		errno = EINVAL;
+		return null_raster_load();
+	}
+	
 	static
 	uint32_t get_footer_size( void* addr, off_t end )
 	{
@@ -122,8 +129,7 @@ namespace raster
 		{
 			if ( (uint16_t) footer_size != 0 )
 			{
-				errno = EINVAL;
-				return null_raster_load();
+				return invalid_raster();
 			}
 			
 			footer_size = iota::swap_4_bytes( footer_size );
@@ -133,8 +139,7 @@ namespace raster
 		
 		if ( ! is_valid_footer_size( footer_size, end ) )
 		{
-			errno = EINVAL;
-			return null_raster_load();
+			return invalid_raster();
 		}
 		
 		const off_t footer_offset = end - footer_size;
@@ -150,8 +155,7 @@ namespace raster
 		
 		if ( ! is_valid_metadata( footer_offset, meta->desc ) )
 		{
-			errno = EINVAL;
-			return null_raster_load();
+			return invalid_raster();
 		}
 		
 		box.release();
