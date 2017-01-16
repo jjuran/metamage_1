@@ -144,7 +144,7 @@ namespace poseven
 		its_status = Thread_new;
 	}
 	
-	void thread::cancel()
+	void thread::cancel( pthread_cond_t* cond )
 	{
 		const callback_set* scope = scope_callbacks_key.getspecific();
 		
@@ -153,7 +153,7 @@ namespace poseven
 			scope->leave( *this );
 		}
 		
-		cancel_out_of_scope();
+		cancel_out_of_scope( cond );
 		
 		if ( scope )
 		{
@@ -161,7 +161,7 @@ namespace poseven
 		}
 	}
 	
-	void thread::cancel_out_of_scope()
+	void thread::cancel_out_of_scope( pthread_cond_t* cond )
 	{
 		lock k( its_mutex );
 		
@@ -170,6 +170,13 @@ namespace poseven
 		while ( its_status == Thread_running )
 		{
 			unlock uk( its_mutex );
+			
+			if ( cond )
+			{
+				int err = pthread_cond_broadcast( cond );
+				
+				throw_errno( err );
+			}
 			
 			if ( interrupt_signal )
 			{

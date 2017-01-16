@@ -60,7 +60,7 @@ namespace poseven
 			
 			static void* start( void* param );
 			
-			void cancel_out_of_scope();
+			void cancel_out_of_scope( pthread_cond_t* cond );
 			
 			void self_testcancel();
 		
@@ -82,7 +82,7 @@ namespace poseven
 			
 			void create( thread_entry_proc entry, void* param );
 			
-			void cancel();
+			void cancel( pthread_cond_t* cond = NULL );
 			void join();
 	};
 	
