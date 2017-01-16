@@ -10,6 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+// raster
+#include "raster/note.hh"
+
 
 namespace raster
 {
@@ -144,6 +147,7 @@ namespace raster
 	struct raster_metadata
 	{
 		raster_desc  desc;
+		raster_note  note;  // Actually, one or more notes
 	};
 	
 	struct raster_load
@@ -152,6 +156,19 @@ namespace raster
 		size_t            size;
 		raster_metadata*  meta;
 	};
+	
+	
+	inline
+	const raster_note* find_note( const raster_metadata& meta, note_type type )
+	{
+		return find( &meta.note, type );
+	}
+	
+	inline
+	raster_note* find_note( raster_metadata& meta, note_type type )
+	{
+		return find( &meta.note, type );
+	}
 	
 }
 
