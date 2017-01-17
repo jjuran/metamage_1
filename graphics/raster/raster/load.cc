@@ -131,8 +131,11 @@ namespace raster
 	}
 	
 	
-	raster_load load_raster( int fd )
+	raster_load open_raster( int fd, bool synchronized )
 	{
+		const bool mac_screens_allowed   = ! synchronized;
+		const bool byte_swapping_allowed = ! synchronized;
+		
 		const off_t end = size_of_file_if_valid( fd );
 		
 		if ( end < 0 )
@@ -140,8 +143,13 @@ namespace raster
 			return null_raster_load();
 		}
 		
+		if ( end == mac_screen_size  &&  ! mac_screens_allowed )
+		{
+			return invalid_raster();
+		}
+		
 		const int mmap_prot  = PROT_READ | PROT_WRITE;
-		const int mmap_flags = MAP_PRIVATE;
+		const int mmap_flags = synchronized ? MAP_SHARED : MAP_PRIVATE;
 		
 		void* const addr = mmap( NULL, end, mmap_prot, mmap_flags, fd, 0 );
 		
@@ -163,7 +171,7 @@ namespace raster
 		
 		if ( footer_size > 0xFFFF )
 		{
-			if ( (uint16_t) footer_size != 0 )
+			if ( ! byte_swapping_allowed  ||  (uint16_t) footer_size != 0 )
 			{
 				return invalid_raster();
 			}
@@ -208,9 +216,33 @@ namespace raster
 		return result;
 	}
 	
-	void unload_raster( raster_load& loaded )
+	raster_load create_raster( int fd )
 	{
-		munmap( loaded.addr, loaded.size );
+		const off_t end = size_of_file_if_valid( fd );
+		
+		if ( end < 0 )
+		{
+			return null_raster_load();
+		}
+		
+		const int mmap_prot  = PROT_READ | PROT_WRITE;
+		const int mmap_flags = MAP_SHARED;
+		
+		void* const addr = mmap( NULL, end, mmap_prot, mmap_flags, fd, 0 );
+		
+		if ( addr == MAP_FAILED )
+		{
+			return null_raster_load();
+		}
+		
+		raster_load result = { addr, end, NULL };
+		
+		return result;
+	}
+	
+	void close_raster( raster_load& raster )
+	{
+		munmap( raster.addr, raster.size );
 	}
 	
 }

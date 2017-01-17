@@ -24,6 +24,7 @@ namespace raster
 		metadata structure -- a file is identified as type 0 if and only if
 		it's 21888 bytes long.  The `magic` field in the raster_desc returned
 		by load_raster() is set to 'SCRN', and the `version` field is set to 0.
+		No synchronization is possible.
 		
 		Dimensions: 512x342, stride: 64 bytes, pixel weight: 1 bit.
 		Model: grayscale paint (white = 0; black = 1).
