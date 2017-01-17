@@ -12,6 +12,12 @@ namespace gear
 	
 	unsigned parse_unsigned_decimal( const char **pp );
 	
+	inline
+	unsigned parse_unsigned_decimal( char** pp )
+	{
+		return parse_unsigned_decimal( (const char**) pp );
+	}
+	
 	int parse_decimal( const char **pp );
 	
 	inline unsigned parse_unsigned_decimal( const char *p )
