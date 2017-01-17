@@ -46,8 +46,8 @@ namespace command
 	
 	struct option_result
 	{
-		const char*  param;
-		const char*  mark;
+		char*  param;
+		char*  mark;
 		
 		short  array_offset;
 		short  array_length;

@@ -31,7 +31,8 @@ namespace command
 		return param_mode >= Param_required;
 	}
 	
-	static const char* find_char( const char* begin, char c )
+	static
+	char* find_char( char* begin, char c )
 	{
 		while ( *begin != '\0'  &&  *begin != c )
 		{
@@ -80,7 +81,7 @@ namespace command
 	                   int             flags,
 	                   option_result&  result )
 	{
-		if ( const char* arg = *argv )
+		if ( char* arg = *argv )
 		{
 			if ( result.mark )
 			{
@@ -101,7 +102,7 @@ namespace command
 				{
 					// long option or "--"
 					
-					const char* name = arg + 2;
+					char* name = arg + 2;
 					
 					if ( *name == '\0' )
 					{
@@ -112,7 +113,7 @@ namespace command
 						return 0;
 					}
 					
-					const char* equals = find_char( name, '=' );
+					char* equals = find_char( name, '=' );
 					
 					const size_t name_size = equals - name;
 					
