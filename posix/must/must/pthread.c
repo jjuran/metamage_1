@@ -27,7 +27,7 @@ void must_pthread_mutexattr_init( pthread_mutexattr_t* attr )
 	}
 }
 
-void must_pthread_condattr_init ( pthread_condattr_t*  attr )
+void must_pthread_condattr_init( pthread_condattr_t* attr )
 {
 	int error = pthread_condattr_init( attr );
 	
@@ -47,7 +47,7 @@ void must_pthread_mutexattr_destroy( pthread_mutexattr_t* attr )
 	}
 }
 
-void must_pthread_condattr_destroy ( pthread_condattr_t*  attr )
+void must_pthread_condattr_destroy( pthread_condattr_t* attr )
 {
 	int error = pthread_condattr_destroy( attr );
 	
@@ -69,7 +69,7 @@ void must_pthread_mutexattr_setpshared( pthread_mutexattr_t* attr, int value )
 	}
 }
 
-void must_pthread_condattr_setpshared ( pthread_condattr_t*  attr, int value )
+void must_pthread_condattr_setpshared( pthread_condattr_t* attr, int value )
 {
 	int error = pthread_condattr_setpshared( attr, value );
 	
