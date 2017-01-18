@@ -637,6 +637,17 @@ unsigned int sleep( unsigned int seconds )
 	return nanoseconds.tv_sec + ( nanoseconds.tv_nsec > 0 );
 }
 
+int usleep( useconds_t useconds )
+{
+	const timespec nanoseconds =
+	{
+		useconds / 1000000,
+		useconds % 1000000 * 1000
+	};
+	
+	return nanosleep( &nanoseconds, NULL );
+}
+
 pid_t tcgetpgrp( int fd )
 {
 	int pgrp = -1;
