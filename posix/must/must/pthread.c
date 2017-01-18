@@ -9,6 +9,14 @@
 #include <stdlib.h>
 
 
+#ifndef HAVE_SETPSHARED
+#ifdef __OpenBSD__
+#define HAVE_SETPSHARED  0
+#else
+#define HAVE_SETPSHARED  1
+#endif
+#endif
+
 void must_pthread_mutexattr_init( pthread_mutexattr_t* attr )
 {
 	int error = pthread_mutexattr_init( attr );
@@ -49,6 +57,8 @@ void must_pthread_condattr_destroy ( pthread_condattr_t*  attr )
 	}
 }
 
+#if HAVE_SETPSHARED
+
 void must_pthread_mutexattr_setpshared( pthread_mutexattr_t* attr, int value )
 {
 	int error = pthread_mutexattr_setpshared( attr, value );
@@ -68,6 +78,8 @@ void must_pthread_condattr_setpshared ( pthread_condattr_t*  attr, int value )
 		abort();
 	}
 }
+
+#endif
 
 void must_pthread_mutex_init( pthread_mutex_t* obj, pthread_mutexattr_t* attr )
 {
