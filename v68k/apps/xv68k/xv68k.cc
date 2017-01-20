@@ -65,6 +65,7 @@ using v68k::big_longword;
 using v68k::auth::fully_authorized;
 
 static bool verbose;
+static bool has_screen;
 
 static unsigned long n_instructions;
 
@@ -746,6 +747,14 @@ char* const* get_options( char** argv )
 				break;
 			
 			case Opt_screen:
+				if ( has_screen )
+				{
+					write( STDERR_FILENO,
+					       STR_LEN( "xv68k: duplicate --screen option\n" ) );
+					
+					exit( 2 );
+				}
+				
 				const char* path;
 				path = global_result.param;
 				
@@ -760,6 +769,8 @@ char* const* get_options( char** argv )
 					
 					exit( 1 );
 				}
+				
+				has_screen = true;
 				
 				break;
 			
