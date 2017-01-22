@@ -21,7 +21,18 @@ namespace poseven
 	
 	struct thread_cancelled {};
 	
-	static thread_key< thread* > thread_object_key;
+	static thread_key< thread* >* any_thread_object_key;  // i.e. "if any"
+	
+	static
+	thread_key< thread* >& the_thread_object_key()
+	{
+		if ( any_thread_object_key == NULL )
+		{
+			any_thread_object_key = new thread_key< thread* >();
+		}
+		
+		return *any_thread_object_key;
+	}
 	
 #ifdef __RELIX__
 	
@@ -66,7 +77,7 @@ namespace poseven
 			that.its_status = Thread_running;
 		}
 		
-		thread_object_key.setspecific( &that );
+		the_thread_object_key().setspecific( &that );
 		
 		if ( that.its_scope_callbacks )
 		{
@@ -183,9 +194,12 @@ namespace poseven
 	
 	void thread::testcancel()
 	{
-		if ( thread* that = thread_object_key.getspecific() )
+		if ( any_thread_object_key )
 		{
-			that->self_testcancel();
+			if ( thread* that = any_thread_object_key->getspecific() )
+			{
+				that->self_testcancel();
+			}
 		}
 	}
 	
