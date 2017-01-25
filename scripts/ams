@@ -1,0 +1,15 @@
+#!/bin/sh
+
+mkdir -p ~/var/run/raster
+
+SCREEN=~/var/run/raster/ams
+RASTER="--raster=$SCREEN"
+FIFO="$SCREEN.fifo"
+
+test -e $FIFO  ||  mkfifo $FIFO
+chmod 0622 $FIFO
+
+interact $RASTER -t "Advanced Mac Substitute" | \
+graft 8<&0 \
+	freemountd -q --root ~/68k // \
+	xv68k $RASTER -m [ macos --events-fd=8 -Q ] -m macrsrc ~/68k/app TestApp
