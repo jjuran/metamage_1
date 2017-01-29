@@ -231,7 +231,6 @@ namespace vlib
 				case Value_string:
 					return value.string().size();
 				
-				case Value_byte:
 				case Value_pair:
 					break;  // handled below
 				
@@ -249,16 +248,6 @@ namespace vlib
 			case Value_empty_list:  // "()", ""
 			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
-			
-			case Value_byte:
-				if ( use_quotes( mode ) )
-				{
-					unsigned char c = value.number().clipped();
-					
-					return quoted_length( c );
-				}
-				
-				return 1;
 			
 			case Value_vector:
 				return value.string().size() * 2 + use_quotes( mode ) * 3;
@@ -376,7 +365,6 @@ namespace vlib
 				case Value_string:
 					return mempcpy( p, value.string() );
 				
-				case Value_byte:
 				case Value_pair:
 					break;  // handled below
 				
@@ -403,16 +391,6 @@ namespace vlib
 					
 					p = (char*) mempcpy( p, empty, 2 );
 				}
-				
-				return p;
-			
-			case Value_byte:
-				if ( use_quotes( mode ) )
-				{
-					return quote_byte( p, value.number().clipped() );
-				}
-				
-				*p++ = value.number().clipped();
 				
 				return p;
 			
