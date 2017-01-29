@@ -11,9 +11,6 @@
 // more-libc
 #include "more/string.h"
 
-// gear
-#include "gear/hexadecimal.hh"
-
 // debug
 #include "debug/assert.hh"
 
@@ -227,7 +224,6 @@ namespace vlib
 				case Value_empty_array:
 					return 0;
 				
-				case Value_vector:
 				case Value_string:
 					return value.string().size();
 				
@@ -248,9 +244,6 @@ namespace vlib
 			case Value_empty_list:  // "()", ""
 			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
-			
-			case Value_vector:
-				return value.string().size() * 2 + use_quotes( mode ) * 3;
 			
 			case Value_string:
 				if ( use_quotes( mode ) )
@@ -355,7 +348,6 @@ namespace vlib
 				case Value_empty_array:
 					return p;
 				
-				case Value_vector:
 				case Value_string:
 					return mempcpy( p, value.string() );
 				
@@ -384,26 +376,6 @@ namespace vlib
 					const char* empty = tokens[ index ];
 					
 					p = (char*) mempcpy( p, empty, 2 );
-				}
-				
-				return p;
-			
-			case Value_vector:
-				if ( use_quotes( mode ) )
-				{
-					*p++ = 'x';
-					*p++ = '"';
-				}
-				
-				{
-					const plus::string& s = value.string();
-					
-					p = gear::hexpcpy_lower( p, s.data(), s.size() );
-				}
-				
-				if ( use_quotes( mode ) )
-				{
-					*p++ = '"';
 				}
 				
 				return p;
