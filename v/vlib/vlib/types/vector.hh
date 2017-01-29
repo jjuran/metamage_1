@@ -30,7 +30,7 @@ namespace vlib
 			
 			Vector( const plus::string& s = plus::string::null )
 			:
-				Value( (const vu_string&) s, V_vec )
+				Value( (const vu_string&) s, V_vec, &vector_dispatch )
 			{
 			}
 	};
