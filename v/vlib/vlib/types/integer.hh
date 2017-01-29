@@ -13,7 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct type_info;
+	
+	extern const dispatch integer_dispatch;
 	
 	class Integer : public Value
 	{

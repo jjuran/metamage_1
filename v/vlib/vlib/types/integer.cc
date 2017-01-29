@@ -14,6 +14,8 @@
 // vlib
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/stringify.hh"
 
 
 namespace vlib
@@ -83,6 +85,37 @@ namespace vlib
 				return Integer( decode_int( v.string() ) );
 		}
 	}
+	
+	static
+	size_t integer_str_size( const Value& v )
+	{
+		return decimal_length( v.number() );
+	}
+	
+	static
+	char* integer_str_copy( char* p, const Value& v )
+	{
+		return encode_decimal( p, v.number() );
+	}
+	
+	static const stringify integer_str =
+	{
+		NULL,
+		&integer_str_size,
+		&integer_str_copy,
+	};
+	
+	static const stringifiers integer_stringifiers =
+	{
+		&integer_str,
+		// For rep, fall back to str
+		// Integer vec is unimplemented
+	};
+	
+	const dispatch integer_dispatch =
+	{
+		&integer_stringifiers,
+	};
 	
 	const type_info integer_vtype =
 	{
