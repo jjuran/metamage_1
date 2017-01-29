@@ -269,9 +269,6 @@ namespace vlib
 			case Value_symbol:
 				return value.sym()->name().size();
 			
-			case Value_boolean:
-				return 4 + ! value.boolean();  // "true" or "false"
-			
 			case Value_number:
 				return decimal_length( value.number() );
 			
@@ -430,16 +427,6 @@ namespace vlib
 			
 			case Value_symbol:
 				return mempcpy( p, value.sym()->name() );
-			
-			case Value_boolean:
-				if ( ! value.boolean() )
-				{
-					return (char*) mempcpy( p, STR_LEN( "false" ) );
-				}
-				else
-				{
-					return (char*) mempcpy( p, STR_LEN( "true" ) );
-				}
 			
 			case Value_number:
 				return encode_decimal( p, value.number() );
