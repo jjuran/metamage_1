@@ -83,7 +83,7 @@ namespace vlib
 			{
 			}
 			
-			Value( const vu_ibox& ix, value_type type, const dispatch* d = 0 )
+			Value( const vu_ibox& ix, value_type type, const dispatch* d )
 			:
 				its_box( ix, type )
 			{
