@@ -66,8 +66,6 @@ namespace vlib
 	
 	struct mutable_list_overrun {};
 	
-	struct vector_tag {};
-	
 	class Value
 	{
 		private:
@@ -111,12 +109,6 @@ namespace vlib
 			}
 			
 			Value( Bool b ) : its_box( bool( b ), Value_boolean )
-			{
-			}
-			
-			Value( const plus::string& s, vector_tag )
-			:
-				its_box( (const vu_string&) s, V_vec )
 			{
 			}
 			
