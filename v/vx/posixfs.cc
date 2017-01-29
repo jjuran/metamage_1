@@ -375,7 +375,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return make_vector( s.substr( 0, n_read ) );
+		return Vector( s.substr( 0, n_read ) );
 	}
 	
 	static

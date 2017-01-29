@@ -155,7 +155,7 @@ namespace vlib
 	static
 	Value v_sha256( const Value& v )
 	{
-		return make_vector( sha256( v.string() ) );
+		return Vector( sha256( v.string() ) );
 	}
 	
 	static
@@ -245,7 +245,7 @@ namespace vlib
 			return Integer( unbin_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_vector( unbin( v.string() ) );
+		return Vector( unbin( v.string() ) );
 	}
 	
 	static
@@ -256,7 +256,7 @@ namespace vlib
 			return Integer( unhex_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_vector( unhex( v.string() ) );
+		return Vector( unhex( v.string() ) );
 	}
 	
 	static

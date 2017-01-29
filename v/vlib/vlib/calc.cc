@@ -38,6 +38,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -883,7 +884,7 @@ namespace vlib
 		
 		if ( f.type() == V_vec )
 		{
-			return pack( Value( f, arguments ) );
+			return Vector( pack( Value( f, arguments ) ) );
 		}
 		
 		if ( f.type() == Value_function )
@@ -1411,7 +1412,7 @@ namespace vlib
 			{
 				switch ( left.type() )
 				{
-					case Value_vector:  return pack( v );
+					case Value_vector:  return Vector( pack( v ) );
 					case Value_string:  return str ( v );
 					
 					default:
@@ -1467,7 +1468,7 @@ namespace vlib
 		{
 			const plus::string s = repeat_bytes( left.string(), right );
 			
-			return left.type() == V_str ? s : make_vector( s );
+			return left.type() == V_str ? s : Value( Vector( s ) );
 		}
 		
 		THROW( "operator not defined on mixed types" );

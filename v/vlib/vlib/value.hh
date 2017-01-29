@@ -386,12 +386,6 @@ namespace vlib
 	}
 	
 	inline
-	Value make_vector( const plus::string& s )
-	{
-		return Value( s, vector_tag() );
-	}
-	
-	inline
 	Value make_array( const Value& list )
 	{
 		return is_empty_list( list ) ? empty_array

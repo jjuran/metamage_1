@@ -33,7 +33,7 @@ namespace vlib
 			
 			case Value_byte:
 			case Value_pair:
-				return pack( v );
+				return Vector( pack( v ) );
 		}
 	}
 	
