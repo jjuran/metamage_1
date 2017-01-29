@@ -17,6 +17,10 @@
 namespace vlib
 {
 	
+	const Boolean False( false );
+	const Boolean True ( true  );
+	
+	
 	Value Boolean::coerce( const Value& v )
 	{
 		switch ( v.type() )

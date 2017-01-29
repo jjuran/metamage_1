@@ -21,8 +21,8 @@ namespace vlib
 	
 	enum Bool
 	{
-		False,
-		True,
+		Bool_false,
+		Bool_true,
 	};
 	
 	enum symbol_type
