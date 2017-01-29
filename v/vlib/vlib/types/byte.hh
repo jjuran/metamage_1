@@ -30,7 +30,9 @@ namespace vlib
 			
 		#define IBOX( i )  plus::ibox( (unsigned long) i ).move()
 			
-			Byte( unsigned char c = 0 ) : Value( IBOX( c ), Value_byte )
+			Byte( unsigned char c = 0 ) : Value( IBOX( c ),
+			                                     Value_byte,
+			                                     &byte_dispatch )
 			{
 			}
 			

@@ -76,11 +76,11 @@ namespace vlib
 			friend void pair_destructor( void* pointer );
 		
 		protected:
-			Value( const vu_ibox& ix, value_type type )
+			Value( const vu_ibox& ix, value_type type, const dispatch* d = 0 )
 			:
 				its_box( ix, type )
 			{
-				its_dispatch = 0;  // NULL
+				its_dispatch = d;
 			}
 			
 			Value( const vu_string& sx, value_type type )
