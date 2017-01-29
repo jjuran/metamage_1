@@ -13,7 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct type_info;
+	
+	extern const dispatch vector_dispatch;
 	
 	class Vector : public Value
 	{
