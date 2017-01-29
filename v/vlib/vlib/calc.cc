@@ -446,7 +446,7 @@ namespace vlib
 			case Value_boolean:
 				switch ( op )
 				{
-					case Op_not:  return Bool( ! v.boolean() );
+					case Op_not:  return Boolean( ! v.boolean() );
 					
 					case Op_unary_plus:   return Integer(  v.boolean() );
 					case Op_unary_minus:  return Integer( -v.boolean() );
@@ -1313,15 +1313,15 @@ namespace vlib
 				
 				goto no_op;
 			
-			case Op_in:       return Bool(   in   ( left, right ) );
-			case Op_isa:      return Bool(   isa  ( left, right ) );
-			case Op_equal:    return Bool(   equal( left, right ) );
-			case Op_unequal:  return Bool( ! equal( left, right ) );
+			case Op_in:       return Boolean(   in   ( left, right ) );
+			case Op_isa:      return Boolean(   isa  ( left, right ) );
+			case Op_equal:    return Boolean(   equal( left, right ) );
+			case Op_unequal:  return Boolean( ! equal( left, right ) );
 			
-			case Op_lt:   return Bool( compare( left, right ) <  0 );
-			case Op_lte:  return Bool( compare( left, right ) <= 0 );
-			case Op_gt:   return Bool( compare( left, right ) >  0 );
-			case Op_gte:  return Bool( compare( left, right ) >= 0 );
+			case Op_lt:   return Boolean( compare( left, right ) <  0 );
+			case Op_lte:  return Boolean( compare( left, right ) <= 0 );
+			case Op_gt:   return Boolean( compare( left, right ) >  0 );
+			case Op_gte:  return Boolean( compare( left, right ) >= 0 );
 			
 			case Op_cmp:  return Integer( compare( left, right ) );
 			

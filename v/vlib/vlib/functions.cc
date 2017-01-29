@@ -25,6 +25,7 @@
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/lib/ed25519.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -313,7 +314,7 @@ namespace vlib
 		
 		bool b = ed25519::verify( key, msg, sig );
 		
-		return Bool( b );
+		return Boolean( b );
 	}
 	
 	static const Integer zero = Integer( 0 );

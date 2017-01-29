@@ -33,18 +33,18 @@ namespace vlib
 			
 			case Value_empty_list:
 			case Value_empty_array:
-				return Bool();
+				return Boolean();
 			
 			case Value_byte:
 			case Value_number:
-				return Bool( ! v.number().is_zero() );
+				return Boolean( ! v.number().is_zero() );
 			
 			case Value_vector:
 			case Value_string:
-				return Bool( ! v.string().empty() );
+				return Boolean( ! v.string().empty() );
 			
 			case Value_base_type:
-				return Bool( &v.typeinfo() != &null_vtype );
+				return Boolean( &v.typeinfo() != &null_vtype );
 			
 			case Value_function:
 			case Value_pair:
@@ -53,7 +53,7 @@ namespace vlib
 					if ( expr->op == Op_empower )
 					{
 						// Check if the array is empty.
-						return Bool( expr->right.expr() != 0 );  // NULL
+						return Boolean( expr->right.expr() != 0 );  // NULL
 					}
 				}
 				return True;

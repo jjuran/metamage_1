@@ -33,6 +33,7 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 
@@ -141,7 +142,7 @@ namespace vlib
 	{
 		if ( is_empty_list( v ) )
 		{
-			return Bool( system( NULL ) != 0 );
+			return Boolean( system( NULL ) != 0 );
 		}
 		
 		const int status = system( v.string().c_str() );
