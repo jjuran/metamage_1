@@ -18,7 +18,7 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/decimal.hh"
+#include "plus/integer.hh"
 #include "plus/var_string.hh"
 
 // vlib
@@ -269,9 +269,6 @@ namespace vlib
 			case Value_symbol:
 				return value.sym()->name().size();
 			
-			case Value_number:
-				return decimal_length( value.number() );
-			
 			case Value_pair:
 				break;
 			
@@ -427,9 +424,6 @@ namespace vlib
 			
 			case Value_symbol:
 				return mempcpy( p, value.sym()->name() );
-			
-			case Value_number:
-				return encode_decimal( p, value.number() );
 			
 			case Value_pair:
 				if ( ! use_parens( mode )  &&  is_function( value ) )
