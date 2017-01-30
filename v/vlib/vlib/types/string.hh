@@ -25,6 +25,12 @@ namespace vlib
 			}
 			
 			static Value coerce( const Value& v );
+			
+			String( const plus::string& s = plus::string::null )
+			:
+				Value( (const vu_string&) s, V_str )
+			{
+			}
 	};
 	
 	extern const type_info string_vtype;
