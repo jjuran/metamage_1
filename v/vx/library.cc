@@ -36,6 +36,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
+#include "vlib/types/string.hh"
 
 // vx
 #include "exception.hh"
@@ -45,9 +46,15 @@ namespace vlib
 {
 	
 	static
+	Value mapping( const plus::string& key, const Value& v )
+	{
+		return Value( String( key ), Op_mapping, v );
+	}
+	
+	static
 	void eval_error_handler( const plus::string& msg, const source_spec& src )
 	{
-		throw user_exception( msg, src );
+		throw user_exception( String( msg ), src );
 	}
 	
 	static
@@ -80,9 +87,7 @@ namespace vlib
 					
 					ASSERT( sym );
 					
-					Value mapping( sym->name(), Op_mapping, sym->get() );
-					
-					mappings.append( mapping );
+					mappings.append( mapping( sym->name(), sym->get() ) );
 				}
 				
 				return Value( Op_module, make_array( mappings ) );
@@ -105,7 +110,7 @@ namespace vlib
 	{
 		if ( const char* var = getenv( v.string().c_str() ) )
 		{
-			return var;
+			return String( var );
 		}
 		
 		return Value_empty_list;
@@ -152,14 +157,14 @@ namespace vlib
 			return Integer();
 		}
 		
-		Value command( "command", Op_mapping, v );
+		Value command = mapping( "command", v );
 		
 		if ( status < 0 )
 		{
 			int err = errno;
 			
-			Value error( "errno", Op_mapping, Integer ( err ) );
-			Value desc ( "desc",  Op_mapping, strerror( err ) );
+			Value error = mapping( "errno", Integer(           err   ) );
+			Value desc  = mapping( "desc",  String ( strerror( err ) ) );
 			
 			Value exception( command, Value( error, desc ) );
 			
@@ -170,7 +175,7 @@ namespace vlib
 		{
 			const Integer signo = WTERMSIG( status );
 			
-			Value signal( "signal", Op_mapping, signo );
+			Value signal = mapping( "signal", signo );
 			
 			Value exception( command, signal );
 			
@@ -179,7 +184,7 @@ namespace vlib
 		
 		if ( int exit_status = WEXITSTATUS( status ) )
 		{
-			Value exit( "exit", Op_mapping, Integer( exit_status ) );
+			Value exit = mapping( "exit", Integer( exit_status ) );
 			
 			Value exception( command, exit );
 			
@@ -203,7 +208,9 @@ namespace vlib
 	
 	static const Value maybe_cstr( c_str_vtype, Op_union, Value_empty_list );
 	
-	static const Value cstr_eval = Value( c_str_vtype, Op_duplicate, "<eval>" );
+	static const Value cstr_eval = Value( c_str_vtype,
+	                                      Op_duplicate,
+	                                      String( "<eval>" ) );
 	
 	static const Value eval = Value( c_str, cstr_eval );
 	
