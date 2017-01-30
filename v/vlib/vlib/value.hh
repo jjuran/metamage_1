@@ -90,7 +90,7 @@ namespace vlib
 				its_dispatch = d;
 			}
 			
-			Value( const vu_string& sx, value_type type, const dispatch* d = 0 )
+			Value( const vu_string& sx, value_type type, const dispatch* d )
 			:
 				its_box( sx, type )
 			{
@@ -117,20 +117,6 @@ namespace vlib
 			}
 			
 			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( const plus::string& s )
-			:
-				its_box( (const vu_string&) s, V_str )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( const char* s )
-			:
-				its_box( (const vu_string&) plus::string( s ).move(), V_str )
 			{
 				its_dispatch = 0;  // NULL
 			}

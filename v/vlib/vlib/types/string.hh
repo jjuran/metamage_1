@@ -31,7 +31,7 @@ namespace vlib
 			
 			String( const plus::string& s = plus::string::null )
 			:
-				Value( (const vu_string&) s, V_str )
+				Value( (const vu_string&) s, V_str, &string_dispatch )
 			{
 			}
 	};
