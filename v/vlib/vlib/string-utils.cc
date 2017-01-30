@@ -21,7 +21,6 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
-#include "vlib/quote.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
@@ -224,9 +223,6 @@ namespace vlib
 				case Value_empty_array:
 					return 0;
 				
-				case Value_string:
-					return value.string().size();
-				
 				case Value_pair:
 					break;  // handled below
 				
@@ -244,14 +240,6 @@ namespace vlib
 			case Value_empty_list:  // "()", ""
 			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
-			
-			case Value_string:
-				if ( use_quotes( mode ) )
-				{
-					return quote_string( value.string() ).size();
-				}
-				
-				return value.string().size();
 			
 			case Value_function:
 				return strlen( value.proc().name );
@@ -348,9 +336,6 @@ namespace vlib
 				case Value_empty_array:
 					return p;
 				
-				case Value_string:
-					return mempcpy( p, value.string() );
-				
 				case Value_pair:
 					break;  // handled below
 				
@@ -379,14 +364,6 @@ namespace vlib
 				}
 				
 				return p;
-			
-			case Value_string:
-				if ( use_quotes( mode ) )
-				{
-					return mempcpy( p, quote_string( value.string() ) );
-				}
-				
-				return mempcpy( p, value.string() );
 			
 			case Value_function:
 				return mempcpy( p, value.proc().name );
