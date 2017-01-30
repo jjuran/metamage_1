@@ -15,6 +15,7 @@
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -177,7 +178,7 @@ namespace vlib
 							THROW( "range subscript overruns string/vector" );
 						}
 						
-						return s.substr( a, b - a + is_gamut );
+						return String( s.substr( a, b - a + is_gamut ) );
 					}
 				}
 				

@@ -22,6 +22,7 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -363,7 +364,7 @@ namespace vlib
 		}
 		catch ( const exception& e )
 		{
-			throw user_exception( e.message, source );
+			throw user_exception( String( e.message ), source );
 		}
 		catch ( const user_exception& e )
 		{

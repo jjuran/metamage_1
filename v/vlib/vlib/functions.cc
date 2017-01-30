@@ -56,9 +56,9 @@ namespace vlib
 		{
 			default:  THROW( "invalid argument to hex()" );
 			
-			case Value_number:  return hex( arg.number() );
+			case Value_number:  return String( hex( arg.number() ) );
 			case Value_vector:
-			case Value_string:  return hex( arg.string() );
+			case Value_string:  return String( hex( arg.string() ) );
 		}
 	}
 	
@@ -95,13 +95,13 @@ namespace vlib
 			THROW( "mince() stride must be positive" );
 		}
 		
-		return mince( string, stride );
+		return String( mince( string, stride ) );
 	}
 	
 	static
 	Value v_rep( const Value& v )
 	{
-		return rep( v );
+		return String( rep( v ) );
 	}
 	
 	static
@@ -149,7 +149,7 @@ namespace vlib
 		const size_t offset = substr_offset( s, arg2.number() );
 		const size_t length = substr_length( s, arg3.number() );
 		
-		return s.substr( offset, length );
+		return String( s.substr( offset, length ) );
 	}
 	
 	static
@@ -226,7 +226,7 @@ namespace vlib
 		
 		translate_core( s, pat, sub );
 		
-		text = s;
+		text = String( s );
 		
 		return text;
 	}

@@ -10,6 +10,7 @@
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -48,7 +49,7 @@ namespace vlib
 		
 		if ( member == "string" )
 		{
-			return obj.string();
+			return String( obj.string() );
 		}
 		
 		THROW( "nonexistent vector member" );

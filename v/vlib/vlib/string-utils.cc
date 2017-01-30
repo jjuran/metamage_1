@@ -30,6 +30,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/string.hh"
 
 
 #undef mempcpy
@@ -659,7 +660,7 @@ namespace vlib
 		{
 			while ( *p++ != '\n' )  continue;
 			
-			result.append( plus::string( q, p - 1 ) );
+			result.append( String( plus::string( q, p - 1 ) ) );
 			
 			q = p;
 		}

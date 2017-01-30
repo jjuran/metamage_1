@@ -22,7 +22,7 @@ namespace vlib
 	
 	Value String::coerce( const Value& v )
 	{
-		return str( v );
+		return String( str( v ) );
 	}
 	
 	static
@@ -64,7 +64,7 @@ namespace vlib
 		
 		const Value pieces = rest( args );
 		
-		return join( glue.string(), pieces, count( pieces ) );
+		return String( join( glue.string(), pieces, count( pieces ) ) );
 	}
 	
 	static
