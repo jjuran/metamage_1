@@ -13,8 +13,11 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct proc_info;
 	struct type_info;
+	
+	extern const dispatch string_dispatch;
 	
 	class String : public Value
 	{
