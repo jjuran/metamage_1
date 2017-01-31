@@ -21,7 +21,6 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
-#include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -247,9 +246,6 @@ namespace vlib
 			case Value_base_type:
 				return strlen( value.typeinfo().name );
 			
-			case Value_symbol:
-				return value.sym()->name().size();
-			
 			case Value_pair:
 				break;
 			
@@ -370,9 +366,6 @@ namespace vlib
 				
 			case Value_base_type:
 				return mempcpy( p, value.typeinfo().name );
-			
-			case Value_symbol:
-				return mempcpy( p, value.sym()->name() );
 			
 			case Value_pair:
 				if ( ! use_parens( mode )  &&  is_function( value ) )
