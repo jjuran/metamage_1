@@ -272,6 +272,11 @@ namespace Genie
 	{
 		const N::FSIOPosMode mode = N::fsFromStart;
 		
+		if ( offset > GetEOF() )
+		{
+			hfs_seteof( this, offset );
+		}
+		
 		ssize_t written = MacIO::FSWrite( itsRefNum,
 		                                  mode,
 		                                  offset,
