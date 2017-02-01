@@ -16,6 +16,8 @@
 
 // vlib
 #include "vlib/symbol.hh"  // codependent
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/stringify.hh"
 
 
 namespace vlib
@@ -26,6 +28,37 @@ namespace vlib
 	const Value undefined     = Value_undefined;
 	const Value empty_list    = Value_empty_list;
 	const Value empty_array   = Value_empty_array;
+	
+	static
+	const char* symbol_str_data( const Value& v )
+	{
+		return v.sym()->name().data();
+	}
+	
+	static
+	size_t symbol_str_size( const Value& v )
+	{
+		return v.sym()->name().size();
+	}
+	
+	static const stringify symbol_str =
+	{
+		&symbol_str_data,
+		&symbol_str_size,
+		NULL,
+	};
+	
+	static const stringifiers symbol_stringifiers =
+	{
+		&symbol_str,
+		// rep: reuse str
+		// vec: undefined
+	};
+	
+	static const dispatch symbol_dispatch =
+	{
+		&symbol_stringifiers,
+	};
 	
 	static
 	void symbol_destructor( void* pointer )
@@ -39,7 +72,8 @@ namespace vlib
 	:
 		its_box( sizeof (Symbol), &symbol_destructor, Value_symbol )
 	{
-		its_dispatch = NULL;
+		its_dispatch = &symbol_dispatch;
+		
 		new ((void*) its_box.pointer()) Symbol( symtype, name );
 	}
 	

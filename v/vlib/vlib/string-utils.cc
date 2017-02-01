@@ -11,21 +11,16 @@
 // more-libc
 #include "more/string.h"
 
-// gear
-#include "gear/hexadecimal.hh"
-
 // debug
 #include "debug/assert.hh"
 
 // plus
-#include "plus/decimal.hh"
+#include "plus/integer.hh"
 #include "plus/var_string.hh"
 
 // vlib
 #include "vlib/error.hh"
 #include "vlib/proc_info.hh"
-#include "vlib/quote.hh"
-#include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -227,10 +222,6 @@ namespace vlib
 				case Value_empty_array:
 					return 0;
 				
-				case Value_vector:
-				case Value_string:
-					return value.string().size();
-				
 				case Value_pair:
 					break;  // handled below
 				
@@ -249,31 +240,11 @@ namespace vlib
 			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
 			
-			case Value_vector:
-				return value.string().size() * 2 + use_quotes( mode ) * 3;
-			
-			case Value_string:
-				if ( use_quotes( mode ) )
-				{
-					return quote_string( value.string() ).size();
-				}
-				
-				return value.string().size();
-			
 			case Value_function:
 				return strlen( value.proc().name );
 			
 			case Value_base_type:
 				return strlen( value.typeinfo().name );
-			
-			case Value_symbol:
-				return value.sym()->name().size();
-			
-			case Value_boolean:
-				return 4 + ! value.boolean();  // "true" or "false"
-			
-			case Value_number:
-				return decimal_length( value.number() );
 			
 			case Value_pair:
 				break;
@@ -361,10 +332,6 @@ namespace vlib
 				case Value_empty_array:
 					return p;
 				
-				case Value_vector:
-				case Value_string:
-					return mempcpy( p, value.string() );
-				
 				case Value_pair:
 					break;  // handled below
 				
@@ -394,55 +361,11 @@ namespace vlib
 				
 				return p;
 			
-			case Value_vector:
-				if ( use_quotes( mode ) )
-				{
-					*p++ = 'x';
-					*p++ = '"';
-				}
-				
-				{
-					const plus::string& s = value.string();
-					
-					p = gear::hexpcpy_lower( p, s.data(), s.size() );
-				}
-				
-				if ( use_quotes( mode ) )
-				{
-					*p++ = '"';
-				}
-				
-				return p;
-			
-			case Value_string:
-				if ( use_quotes( mode ) )
-				{
-					return mempcpy( p, quote_string( value.string() ) );
-				}
-				
-				return mempcpy( p, value.string() );
-			
 			case Value_function:
 				return mempcpy( p, value.proc().name );
 				
 			case Value_base_type:
 				return mempcpy( p, value.typeinfo().name );
-			
-			case Value_symbol:
-				return mempcpy( p, value.sym()->name() );
-			
-			case Value_boolean:
-				if ( ! value.boolean() )
-				{
-					return (char*) mempcpy( p, STR_LEN( "false" ) );
-				}
-				else
-				{
-					return (char*) mempcpy( p, STR_LEN( "true" ) );
-				}
-			
-			case Value_number:
-				return encode_decimal( p, value.number() );
 			
 			case Value_pair:
 				if ( ! use_parens( mode )  &&  is_function( value ) )

@@ -11,6 +11,8 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/stringify.hh"
 #include "vlib/types/null.hh"
 
 
@@ -59,6 +61,31 @@ namespace vlib
 				return True;
 		}
 	}
+	
+	static
+	const char* boolean_str_data( const Value& v )
+	{
+		return v.boolean() ? "true" : "false";
+	}
+	
+	static const stringify boolean_str =
+	{
+		&boolean_str_data,
+		NULL,
+		NULL,
+	};
+	
+	const stringifiers boolean_stringifiers =
+	{
+		&boolean_str,
+		// rep: ditto
+		// vec: not defined
+	};
+	
+	const dispatch boolean_dispatch =
+	{
+		&boolean_stringifiers,
+	};
 	
 	const type_info boolean_vtype =
 	{

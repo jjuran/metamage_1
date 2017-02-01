@@ -13,7 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct type_info;
+	
+	extern const dispatch vector_dispatch;
 	
 	class Vector : public Value
 	{
@@ -27,7 +30,7 @@ namespace vlib
 			
 			Vector( const plus::string& s = plus::string::null )
 			:
-				Value( (const vu_string&) s, V_vec )
+				Value( (const vu_string&) s, V_vec, &vector_dispatch )
 			{
 			}
 	};

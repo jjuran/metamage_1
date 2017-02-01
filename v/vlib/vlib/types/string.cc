@@ -5,14 +5,23 @@
 
 #include "vlib/types/string.hh"
 
+// more-libc
+#include "more/string.h"
+
 // vlib
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
+#include "vlib/quote.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/stringify.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/integer.hh"
+
+
+#undef mempcpy
 
 
 namespace vlib
@@ -20,10 +29,69 @@ namespace vlib
 	
 	extern const proc_info proc_lines;
 	
+	using ::mempcpy;
+	
+	static inline
+	char* mempcpy( char* p, const plus::string& s )
+	{
+		return (char*) mempcpy( p, s.data(), s.size() );
+	}
+	
+	
 	Value String::coerce( const Value& v )
 	{
 		return String( str( v ) );
 	}
+	
+	static
+	const char* string_str_data( const Value& v )
+	{
+		return v.string().data();
+	}
+	
+	static
+	size_t string_str_size( const Value& v )
+	{
+		return v.string().size();
+	}
+	
+	static const stringify string_str =
+	{
+		&string_str_data,
+		&string_str_size,
+		NULL,
+	};
+	
+	static
+	size_t string_rep_size( const Value& v )
+	{
+		return quote_string( v.string() ).size();
+	}
+	
+	static
+	char* string_rep_copy( char* p, const Value& v )
+	{
+		return mempcpy( p, quote_string( v.string() ) );
+	}
+	
+	static const stringify string_rep =
+	{
+		NULL,
+		&string_rep_size,
+		&string_rep_copy,
+	};
+	
+	static const stringifiers string_stringifiers =
+	{
+		&string_str,
+		&string_rep,
+		&string_str,  // reuse str for vec
+	};
+	
+	const dispatch string_dispatch =
+	{
+		&string_stringifiers,
+	};
 	
 	static
 	Value string_member( const Value& obj,

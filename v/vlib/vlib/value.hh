@@ -76,18 +76,25 @@ namespace vlib
 			friend void pair_destructor( void* pointer );
 		
 		protected:
-			Value( const vu_ibox& ix, value_type type, const dispatch* d = 0 )
+			Value( Bool b, const dispatch* d )
+			:
+				its_dispatch( d ),
+				its_box( bool( b ), Value_boolean )
+			{
+			}
+			
+			Value( const vu_ibox& ix, value_type type, const dispatch* d )
 			:
 				its_box( ix, type )
 			{
 				its_dispatch = d;
 			}
 			
-			Value( const vu_string& sx, value_type type )
+			Value( const vu_string& sx, value_type type, const dispatch* d )
 			:
 				its_box( sx, type )
 			{
-				its_dispatch = 0;  // NULL
+				its_dispatch = d;
 			}
 		
 		public:
@@ -110,25 +117,6 @@ namespace vlib
 			}
 			
 			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( Bool b ) : its_box( bool( b ), Value_boolean )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( const plus::string& s )
-			:
-				its_box( (const vu_string&) s, V_str )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( const char* s )
-			:
-				its_box( (const vu_string&) plus::string( s ).move(), V_str )
 			{
 				its_dispatch = 0;  // NULL
 			}

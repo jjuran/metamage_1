@@ -5,10 +5,15 @@
 
 #include "vlib/types/vector.hh"
 
+// gear
+#include "gear/hexadecimal.hh"
+
 // vlib
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/stringify.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
 
@@ -37,6 +42,84 @@ namespace vlib
 				return Vector( pack( v ) );
 		}
 	}
+	
+	static
+	size_t vector_str_size( const Value& v )
+	{
+		return v.string().size() * 2;
+	}
+	
+	static
+	char* vector_str_copy( char* p, const Value& v )
+	{
+		const plus::string& s = v.string();
+		
+		return gear::hexpcpy_lower( p, s.data(), s.size() );
+	}
+	
+	static const stringify vector_str =
+	{
+		NULL,
+		&vector_str_size,
+		&vector_str_copy,
+	};
+	
+	static
+	size_t vector_rep_size( const Value& v )
+	{
+		return vector_str_size( v ) + 3;
+	}
+	
+	static
+	char* vector_rep_copy( char* p, const Value& v )
+	{
+		*p++ = 'x';
+		*p++ = '"';
+		
+		p = vector_str_copy( p, v );
+		
+		*p++ = '"';
+		
+		return p;
+	}
+	
+	static const stringify vector_rep =
+	{
+		NULL,
+		&vector_rep_size,
+		&vector_rep_copy,
+	};
+	
+	static
+	const char* vector_vec_data( const Value& v )
+	{
+		return v.string().data();
+	}
+	
+	static
+	size_t vector_vec_size( const Value& v )
+	{
+		return v.string().size();
+	}
+	
+	static const stringify vector_vec =
+	{
+		&vector_vec_data,
+		&vector_vec_size,
+		NULL,
+	};
+	
+	static const stringifiers vector_stringifiers =
+	{
+		&vector_str,
+		&vector_rep,
+		&vector_vec,
+	};
+	
+	const dispatch vector_dispatch =
+	{
+		&vector_stringifiers,
+	};
 	
 	static
 	Value vector_member( const Value&         obj,

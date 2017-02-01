@@ -13,8 +13,11 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct proc_info;
 	struct type_info;
+	
+	extern const dispatch string_dispatch;
 	
 	class String : public Value
 	{
@@ -28,7 +31,7 @@ namespace vlib
 			
 			String( const plus::string& s = plus::string::null )
 			:
-				Value( (const vu_string&) s, V_str )
+				Value( (const vu_string&) s, V_str, &string_dispatch )
 			{
 			}
 	};

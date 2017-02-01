@@ -13,7 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
 	struct type_info;
+	
+	extern const dispatch boolean_dispatch;
 	
 	class Boolean : public Value
 	{
@@ -25,7 +28,7 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Boolean( bool b = false ) : Value( Bool( b ) )
+			Boolean( bool b = false ) : Value( Bool( b ), &boolean_dispatch )
 			{
 			}
 			
