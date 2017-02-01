@@ -25,11 +25,9 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Vector() : Value( plus::string::null, vector_tag() )
-			{
-			}
-			
-			Vector( const plus::string& s ) : Value( s, vector_tag() )
+			Vector( const plus::string& s = plus::string::null )
+			:
+				Value( (const vu_string&) s, V_vec )
 			{
 			}
 	};

@@ -110,7 +110,7 @@ namespace vlib
 			
 			case Value_pair:  break;
 			
-			default:  return "???";
+			default:  return String( "???" );
 		}
 		
 		Expr* expr = v.expr();

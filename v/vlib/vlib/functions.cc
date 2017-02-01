@@ -25,6 +25,7 @@
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/lib/ed25519.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -55,9 +56,9 @@ namespace vlib
 		{
 			default:  THROW( "invalid argument to hex()" );
 			
-			case Value_number:  return hex( arg.number() );
+			case Value_number:  return String( hex( arg.number() ) );
 			case Value_vector:
-			case Value_string:  return hex( arg.string() );
+			case Value_string:  return String( hex( arg.string() ) );
 		}
 	}
 	
@@ -94,13 +95,13 @@ namespace vlib
 			THROW( "mince() stride must be positive" );
 		}
 		
-		return mince( string, stride );
+		return String( mince( string, stride ) );
 	}
 	
 	static
 	Value v_rep( const Value& v )
 	{
-		return rep( v );
+		return String( rep( v ) );
 	}
 	
 	static
@@ -148,13 +149,13 @@ namespace vlib
 		const size_t offset = substr_offset( s, arg2.number() );
 		const size_t length = substr_length( s, arg3.number() );
 		
-		return s.substr( offset, length );
+		return String( s.substr( offset, length ) );
 	}
 	
 	static
 	Value v_sha256( const Value& v )
 	{
-		return make_vector( sha256( v.string() ) );
+		return Vector( sha256( v.string() ) );
 	}
 	
 	static
@@ -225,7 +226,7 @@ namespace vlib
 		
 		translate_core( s, pat, sub );
 		
-		text = s;
+		text = String( s );
 		
 		return text;
 	}
@@ -244,7 +245,7 @@ namespace vlib
 			return Integer( unbin_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_vector( unbin( v.string() ) );
+		return Vector( unbin( v.string() ) );
 	}
 	
 	static
@@ -255,7 +256,7 @@ namespace vlib
 			return Integer( unhex_int( v.string().substr( 2 ) ) );
 		}
 		
-		return make_vector( unhex( v.string() ) );
+		return Vector( unhex( v.string() ) );
 	}
 	
 	static
@@ -313,7 +314,7 @@ namespace vlib
 		
 		bool b = ed25519::verify( key, msg, sig );
 		
-		return Bool( b );
+		return Boolean( b );
 	}
 	
 	static const Integer zero = Integer( 0 );

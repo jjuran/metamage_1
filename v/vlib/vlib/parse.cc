@@ -34,6 +34,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -254,7 +255,7 @@ namespace vlib
 			
 			if ( last.type() == V_str  &&  x.type() == V_str )
 			{
-				last = last.string() + x.string();
+				last = String( last.string() + x.string() );
 				
 				return;
 			}
@@ -399,15 +400,15 @@ namespace vlib
 				break;
 			
 			case Token_string:
-				receive_value( unquote_string( token.text ) );
+				receive_value( String( unquote_string( token.text ) ) );
 				break;
 			
 			case Token_string_escaped:
-				receive_value( unquote_escaped_string( token.text ) );
+				receive_value( String( unquote_escaped_string( token.text ) ) );
 				break;
 			
 			case Token_bareword_map_key:
-				receive_value( token.text );
+				receive_value( String( token.text ) );
 				break;
 			
 			case Token_bareword:
@@ -462,7 +463,7 @@ namespace vlib
 						{
 							if ( stack.back().op == Op_member )
 							{
-								receive_value( token.text );
+								receive_value( String( token.text ) );
 								break;
 							}
 							
@@ -673,7 +674,7 @@ namespace vlib
 		}
 		catch ( const exception& e )
 		{
-			throw user_exception( e.message, parser.source() );
+			throw user_exception( String( e.message ), parser.source() );
 		}
 		
 		// Silence Metrowerks C++ warning

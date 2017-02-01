@@ -28,6 +28,7 @@
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -641,7 +642,7 @@ namespace vlib
 		}
 		catch ( const exception& e )
 		{
-			throw user_exception( e.message, expr->source );
+			throw user_exception( String( e.message ), expr->source );
 		}
 		
 		// Silence Metrowerks C++ warning

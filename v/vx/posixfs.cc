@@ -40,11 +40,17 @@ namespace vlib
 {
 	
 	static
+	Value mapping( const plus::string& key, const Value& v )
+	{
+		return Value( String( key ), Op_mapping, v );
+	}
+	
+	static
 	void fd_error( int fd, int err = errno )
 	{
-		Value error( "errno", Op_mapping, Integer ( err ) );
-		Value desc ( "desc",  Op_mapping, strerror( err ) );
-		Value fd_  ( "fd",    Op_mapping, Integer ( fd  ) );
+		Value error = mapping( "errno", Integer(           err   ) );
+		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
+		Value fd_   = mapping( "fd",    Integer(           fd    ) );
 		
 		Value exception( error, Value( desc, fd_ ) );
 		
@@ -54,9 +60,9 @@ namespace vlib
 	static
 	void path_error( const char* path, int err = errno )
 	{
-		Value error( "errno", Op_mapping, Integer ( err ) );
-		Value desc ( "desc",  Op_mapping, strerror( err ) );
-		Value path_( "path",  Op_mapping, path );
+		Value error = mapping( "errno", Integer(           err   ) );
+		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
+		Value path_ = mapping( "path",  String (           path  ) );
 		
 		Value exception( error, Value( desc, path_ ) );
 		
@@ -66,8 +72,8 @@ namespace vlib
 	static
 	void path_error( const char* path, const char* msg )
 	{
-		Value desc ( "desc",  Op_mapping, msg  );
-		Value path_( "path",  Op_mapping, path );
+		Value desc  = mapping( "desc", String( msg  ) );
+		Value path_ = mapping( "path", String( path ) );
 		
 		Value exception( desc, path_ );
 		
@@ -101,10 +107,10 @@ namespace vlib
 		
 		const char* type = file_types[ (st.st_mode & S_IFMT) >> 12 ];
 		
-		result.append( Value( "type", Op_mapping, type ) );
+		result.append( mapping( "type", String( type ) ) );
 		
 		#define APPEND( field )  \
-		result.append( Value( #field, Op_mapping, Integer( st.st_##field ) ) )
+		result.append( mapping( #field, Integer( st.st_##field ) ) )
 		
 		APPEND( dev   );
 		APPEND( ino   );
@@ -176,7 +182,7 @@ namespace vlib
 	static
 	Value v_dirname( const Value& v )
 	{
-		return plus::dirname( v.string() );
+		return String( plus::dirname( v.string() ) );
 	}
 	
 	static
@@ -253,7 +259,7 @@ namespace vlib
 				continue;
 			}
 			
-			list.append( name );
+			list.append( String( name ) );
 		}
 		
 		closedir( dir );
@@ -322,7 +328,7 @@ namespace vlib
 			path_error( path, "unexpected short read" );
 		}
 		
-		return result;
+		return String( result );
 	}
 	
 	static
@@ -375,7 +381,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return make_vector( s.substr( 0, n_read ) );
+		return Vector( s.substr( 0, n_read ) );
 	}
 	
 	static
@@ -404,12 +410,12 @@ namespace vlib
 		
 		if ( buffer != NULL )
 		{
-			return plus::string( real, len );
+			return String( plus::string( real, len ) );
 		}
 		
 		plus::string s( real, len, plus::delete_free );
 		
-		return plus::string( s.data(), len );
+		return String( plus::string( s.data(), len ) );
 	}
 	
 	static

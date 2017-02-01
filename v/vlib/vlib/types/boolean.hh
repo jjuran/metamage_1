@@ -32,6 +32,9 @@ namespace vlib
 			operator bool() const  { return boolean(); }
 	};
 	
+	extern const Boolean False;
+	extern const Boolean True;
+	
 	extern const type_info boolean_vtype;
 	
 }

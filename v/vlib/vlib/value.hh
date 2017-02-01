@@ -21,8 +21,8 @@ namespace vlib
 	
 	enum Bool
 	{
-		False,
-		True,
+		Bool_false,
+		Bool_true,
 	};
 	
 	enum symbol_type
@@ -65,8 +65,6 @@ namespace vlib
 	};
 	
 	struct mutable_list_overrun {};
-	
-	struct vector_tag {};
 	
 	class Value
 	{
@@ -111,12 +109,6 @@ namespace vlib
 			}
 			
 			Value( Bool b ) : its_box( bool( b ), Value_boolean )
-			{
-			}
-			
-			Value( const plus::string& s, vector_tag )
-			:
-				its_box( (const vu_string&) s, V_vec )
 			{
 			}
 			
@@ -383,12 +375,6 @@ namespace vlib
 	bool is_functional( const Value& v )
 	{
 		return is_function( v )  ||  v.type() == Value_base_type;
-	}
-	
-	inline
-	Value make_vector( const plus::string& s )
-	{
-		return Value( s, vector_tag() );
 	}
 	
 	inline

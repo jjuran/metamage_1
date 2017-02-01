@@ -38,6 +38,8 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
+#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -446,7 +448,7 @@ namespace vlib
 			case Value_boolean:
 				switch ( op )
 				{
-					case Op_not:  return Bool( ! v.boolean() );
+					case Op_not:  return Boolean( ! v.boolean() );
 					
 					case Op_unary_plus:   return Integer(  v.boolean() );
 					case Op_unary_minus:  return Integer( -v.boolean() );
@@ -878,12 +880,12 @@ namespace vlib
 	{
 		if ( f.type() == V_str )
 		{
-			return str( Value( f, arguments ) );
+			return String( str( Value( f, arguments ) ) );
 		}
 		
 		if ( f.type() == V_vec )
 		{
-			return pack( Value( f, arguments ) );
+			return Vector( pack( Value( f, arguments ) ) );
 		}
 		
 		if ( f.type() == Value_function )
@@ -1313,15 +1315,15 @@ namespace vlib
 				
 				goto no_op;
 			
-			case Op_in:       return Bool(   in   ( left, right ) );
-			case Op_isa:      return Bool(   isa  ( left, right ) );
-			case Op_equal:    return Bool(   equal( left, right ) );
-			case Op_unequal:  return Bool( ! equal( left, right ) );
+			case Op_in:       return Boolean(   in   ( left, right ) );
+			case Op_isa:      return Boolean(   isa  ( left, right ) );
+			case Op_equal:    return Boolean(   equal( left, right ) );
+			case Op_unequal:  return Boolean( ! equal( left, right ) );
 			
-			case Op_lt:   return Bool( compare( left, right ) <  0 );
-			case Op_lte:  return Bool( compare( left, right ) <= 0 );
-			case Op_gt:   return Bool( compare( left, right ) >  0 );
-			case Op_gte:  return Bool( compare( left, right ) >= 0 );
+			case Op_lt:   return Boolean( compare( left, right ) <  0 );
+			case Op_lte:  return Boolean( compare( left, right ) <= 0 );
+			case Op_gt:   return Boolean( compare( left, right ) >  0 );
+			case Op_gte:  return Boolean( compare( left, right ) >= 0 );
 			
 			case Op_cmp:  return Integer( compare( left, right ) );
 			
@@ -1390,7 +1392,7 @@ namespace vlib
 		
 		if ( op == Op_format  &&  left.type() == Value_string )
 		{
-			return format( left.string(), right );
+			return String( format( left.string(), right ) );
 		}
 		
 		if ( op == Op_bind_args  &&  is_functional( left ) )
@@ -1411,8 +1413,8 @@ namespace vlib
 			{
 				switch ( left.type() )
 				{
-					case Value_vector:  return pack( v );
-					case Value_string:  return str ( v );
+					case Value_vector:  return Vector( pack( v ) );
+					case Value_string:  return String( str ( v ) );
 					
 					default:
 						break;
@@ -1467,7 +1469,8 @@ namespace vlib
 		{
 			const plus::string s = repeat_bytes( left.string(), right );
 			
-			return left.type() == V_str ? s : make_vector( s );
+			return left.type() == V_str ? Value( String( s ) )
+			                            : Value( Vector( s ) );
 		}
 		
 		THROW( "operator not defined on mixed types" );

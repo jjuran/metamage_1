@@ -30,6 +30,7 @@
 #include "vlib/scope.hh"
 #include "vlib/types.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 // vx
 #include "library.hh"
@@ -108,11 +109,11 @@ Value make_argv( int argn, char* const* args )
 {
 	char* const* argp = args + argn;
 	
-	Value result = *--argp;
+	Value result = String( *--argp );
 	
 	while ( argp > args )
 	{
-		result = Value( *--argp, result );
+		result = Value( String( *--argp ), result );
 	}
 	
 	return result;
@@ -129,12 +130,12 @@ void set_argv( const char* arg0, int argn, char* const* args )
 		
 		if ( arg0 )
 		{
-			argv = Value( arg0, argv );
+			argv = Value( String( arg0 ), argv );
 		}
 	}
 	else if ( arg0 )
 	{
-		argv = arg0;
+		argv = String( arg0 );
 	}
 	
 	const Value& argv_symbol = globals.declare( "argv", Symbol_const );

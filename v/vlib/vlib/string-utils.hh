@@ -38,9 +38,9 @@ namespace vlib
 	}
 	
 	inline
-	Value pack( const Value& v )
+	plus::string pack( const Value& v )
 	{
-		return make_vector( make_string( v, Stringified_to_pack ) );
+		return make_string( v, Stringified_to_pack );
 	}
 	
 	plus::string repeat( const plus::string& s, plus::string::size_type n );
