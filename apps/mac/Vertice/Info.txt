@@ -1,4 +1,4 @@
 CFBundleExecutable:  "Vertice"
 CFBundleName:        "Vertice"
-CFBundlePackageType: "APPL"
+CFBundlePackageType: 'APPL'
 NSHighResolutionCapable: true

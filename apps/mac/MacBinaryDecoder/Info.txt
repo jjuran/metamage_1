@@ -1,22 +1,22 @@
 CFBundleExecutable:  "MacBinary III+ Decoder"
 CFBundleIconFile:    "MacBinaryDecoder.icns"
 CFBundleName:        "MacBinary Decoder"
-CFBundlePackageType: "APPL"
-CFBundleSignature:   "mBin"
+CFBundlePackageType: 'APPL'
+CFBundleSignature:   'mBin'
 CFBundleDocumentTypes:
 [
 	[
 		CFBundleTypeName:        "MacBinaryIII"
 		CFBundleTypeIconFile:    "MacBinaryIII.icns"
 		CFBundleTypeExtensions:  [ "mbin" ]
-		CFBundleTypeOSTypes:     [ "mBIN" ]
+		CFBundleTypeOSTypes:     [ 'mBIN' ]
 		CFBundleTypeRole:        "Viewer"
 	]
 	[
 		CFBundleTypeName:        "MacBinaryIII+"
 		CFBundleTypeIconFile:    "MacBinaryIII+.icns"
 		CFBundleTypeExtensions:  [ "mbim" ]
-		CFBundleTypeOSTypes:     [ "BIN+" ]
+		CFBundleTypeOSTypes:     [ 'BIN+' ]
 		CFBundleTypeRole:        "Viewer"
 	]
 ]
