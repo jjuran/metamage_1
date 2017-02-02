@@ -3,6 +3,10 @@
 echo "MacRelix by Josh Juran <http://www.macrelix.org/>."
 echo
 
+/usr/bin/system-info
+
+echo
+
 # Advise if the perl lib is missing
 /etc/bootstrap/check-perl-lib.pl
 
