@@ -2,3 +2,4 @@ CFBundleExecutable:  "Vertice"
 CFBundleName:        "Vertice"
 CFBundlePackageType: 'APPL'
 NSHighResolutionCapable: true
+NSSupportsSuddenTermination: true
