@@ -457,6 +457,13 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	
 	SetHandleSize( (Handle) dst, max_bytes );  // TODO:  Prove this is enough
 	
+	if ( max_bytes == sizeof (MacRegion) )
+	{
+		RectRgn( dst, &rect );
+		
+		return;
+	}
+	
 	sect_rect_region( (const short*) &rect,
 	                  (const short*) &src[0]->rgnBBox,
 	                  rgn_extent( *src ),
