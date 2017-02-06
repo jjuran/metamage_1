@@ -34,7 +34,12 @@ namespace command
 			{ (void*) STR_LEN( "\n" )    },
 		};
 	
-		writev( STDERR_FILENO, iov, ARRAYLEN( iov ) );
+		ssize_t n_written = writev( STDERR_FILENO, iov, ARRAYLEN( iov ) );
+		
+		if ( n_written < 0 )
+		{
+			abort();
+		}
 	
 		exit( 2 );
 	}
