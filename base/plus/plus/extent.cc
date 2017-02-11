@@ -144,6 +144,8 @@ namespace plus
 	{
 		extent_header* header = header_from_buffer( buffer );
 		
+		ASSERT( dtor == NULL  ||  header->dtor == NULL );
+		
 		header->dtor = dtor;
 	}
 	
