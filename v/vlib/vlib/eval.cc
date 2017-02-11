@@ -136,6 +136,20 @@ namespace vlib
 			return *target.addr;
 		}
 		
+		if ( op == Op_take )
+		{
+			if ( left.sym() == 0 )  // NULL
+			{
+				THROW( "can't take from a container element" );
+			}
+			
+			const Value taken = *target.addr;
+			
+			*target.addr = Value_undefined;
+			
+			return taken;
+		}
+		
 		if ( is_right_varop( op ) )
 		{
 			Target second = make_target( right );

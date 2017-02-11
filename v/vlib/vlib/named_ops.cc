@@ -51,6 +51,7 @@ namespace vlib
 		{ "not",    Op_not    },
 		{ "return", Op_return },
 		{ "throw",  Op_throw  },
+		{ "take",   Op_take   },
 		{ "try",    Op_try    },
 		{ "var",    Op_var    },
 		{ "while",  Op_while  },

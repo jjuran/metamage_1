@@ -71,6 +71,8 @@ namespace vlib
 			
 			case Op_member:  return ".";
 			
+			case Op_take:  return "take ";
+			
 			case Op_empower:  return "^";
 			
 			case Op_preinc:   return "++";

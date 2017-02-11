@@ -33,6 +33,7 @@ namespace vlib
 		Op_move,
 		Op_swap,
 		Op_unary_refer,
+		Op_take,
 		Op_preinc,
 		Op_predec,
 		Op_postinc,
