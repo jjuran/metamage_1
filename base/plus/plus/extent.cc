@@ -85,7 +85,7 @@ namespace plus
 		
 		extent_header* header = (extent_header*) buffer - 1;
 		
-		ASSERT( long( header->refcount ) > 0 );
+		ASSERT( long( header->refcount ) >= 0 );
 		
 		return header;
 	}
@@ -126,6 +126,14 @@ namespace plus
 		}
 	}
 	
+	static
+	void extent_clear( void* buffer )
+	{
+		extent_header* header = header_from_buffer( (char*) buffer );
+		
+		memset( buffer, '\0', header->capacity );
+	}
+	
 	char* extent_unshare( char* buffer )
 	{
 		extent_header* header = header_from_buffer( buffer );
@@ -147,6 +155,20 @@ namespace plus
 		ASSERT( dtor == NULL  ||  header->dtor == NULL );
 		
 		header->dtor = dtor;
+	}
+	
+	bool extent_set_selfdestruct( const char* buffer )
+	{
+		extent_header* header = header_from_buffer( buffer );
+		
+		if ( header->dtor != NULL )
+		{
+			return false;
+		}
+		
+		header->dtor = &extent_clear;
+		
+		return true;
 	}
 	
 	unsigned long extent_refcount( const char* buffer )

@@ -22,6 +22,8 @@ namespace plus
 	
 	void extent_set_destructor( const char* buffer, destructor dtor );
 	
+	bool extent_set_selfdestruct( const char* buffer );
+	
 	unsigned long extent_refcount( const char* buffer );
 	
 	unsigned long extent_area( const char* buffer );
