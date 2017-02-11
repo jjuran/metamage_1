@@ -17,6 +17,7 @@ namespace vlib
 	extern const proc_info proc_exit;
 	extern const proc_info proc_getenv;
 	extern const proc_info proc_print;
+	extern const proc_info proc_secret;
 	extern const proc_info proc_sleep;
 	extern const proc_info proc_system;
 	extern const proc_info proc_SYSTEM;  // unrestricted

@@ -168,6 +168,13 @@ namespace vlib
 		}
 	}
 	
+	const Value& Value::secret() const
+	{
+		its_box.secret();
+		
+		return *this;
+	}
+	
 	Value& Value::unshare()
 	{
 		if ( its_box.refcount() > 1 )

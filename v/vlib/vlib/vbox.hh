@@ -233,6 +233,8 @@ namespace vlib
 			
 			const void* pointer() const  { return u.alloc.pointer; }
 			
+			void secret() const;
+			
 			void unshare();
 			
 			friend unsigned long area( const vbox& box );

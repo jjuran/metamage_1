@@ -24,6 +24,14 @@ namespace vlib
 		u.alloc.type = 0;
 	}
 	
+	void vbox::secret() const
+	{
+		if ( has_extent() )
+		{
+			plus::extent_set_selfdestruct( (char*) u.alloc.pointer );
+		}
+	}
+	
 	void vbox::unshare()
 	{
 		if ( has_extent() )

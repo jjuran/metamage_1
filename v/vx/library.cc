@@ -129,6 +129,12 @@ namespace vlib
 	}
 	
 	static
+	Value v_secret( const Value& v )
+	{
+		return v.secret();
+	}
+	
+	static
 	Value v_sleep( const Value& v )
 	{
 		sleep( v.number().clipped() );
@@ -218,6 +224,7 @@ namespace vlib
 	const proc_info proc_exit   = { "exit",   &v_exit,   &u8         };
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
+	const proc_info proc_secret = { "secret", &v_secret, NULL        };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &u32        };
 	const proc_info proc_system = { "system", &v_system, &empty_list };
 	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };

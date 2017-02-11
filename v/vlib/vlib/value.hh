@@ -228,6 +228,8 @@ namespace vlib
 			
 			void swap( Value& that );
 			
+			const Value& secret() const;
+			
 			Value& unshare();
 			
 			friend unsigned long area( const Value& v );
