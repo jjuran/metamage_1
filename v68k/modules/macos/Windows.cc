@@ -331,6 +331,15 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	MovePortTo( bounds->left, bounds->top );
 	
+	if ( visible )
+	{
+		RectRgn( port->visRgn, bounds );
+	}
+	else
+	{
+		SetEmptyRgn( port->visRgn );
+	}
+	
 	window->windowKind = userKind;
 	window->visible    = -(visible != 0);
 	window->hilited    = -true;
@@ -402,6 +411,11 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	
 	OffsetRgn( window->strucRgn, dh, dv );
 	OffsetRgn( window->contRgn,  dh, dv );
+	
+	if ( window->visible )
+	{
+		SectRgn( window->contRgn, GrayRgn, w->visRgn );
+	}
 	
 	DiffRgn( exposed, window->strucRgn, exposed );
 	
