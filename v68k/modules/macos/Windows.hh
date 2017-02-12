@@ -34,6 +34,9 @@ pascal void MoveWindow_patch( GrafPort* w, short h, short v, char activate );
 
 pascal unsigned char TrackGoAway_patch( struct GrafPort* w, struct Point pt );
 
+pascal void BeginUpdate_patch( struct GrafPort* window );
+pascal void EndUpdate_patch  ( struct GrafPort* window );
+
 pascal struct GrafPort* FrontWindow_patch();
 
 pascal void DragWindow_patch( GrafPort* w, Point start, const Rect* bounds );

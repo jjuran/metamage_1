@@ -19,6 +19,9 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/swap.hh"
+
 // quickdraw
 #include "qd/region_detail.hh"
 
@@ -506,6 +509,30 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	DisposeRgn( mouseRgn );
 	
 	return is_inside;
+}
+
+pascal void BeginUpdate_patch( struct GrafPort* window )
+{
+	WindowPeek w = (WindowPeek) window;
+	
+	using iota::swap;
+	
+	swap( window->visRgn, SaveVisRgn );
+	
+	SectRgn( SaveVisRgn, w->updateRgn, window->visRgn );
+	
+	SetEmptyRgn( w->updateRgn );
+}
+
+pascal void EndUpdate_patch( struct GrafPort* window )
+{
+	WindowPeek w = (WindowPeek) window;
+	
+	using iota::swap;
+	
+	swap( window->visRgn, SaveVisRgn );
+	
+	SetEmptyRgn( SaveVisRgn );
 }
 
 pascal WindowRef FrontWindow_patch()

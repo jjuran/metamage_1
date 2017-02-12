@@ -71,6 +71,8 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 enum
 {
+	_BeginUpdate      = _BeginUpDate,
+	_EndUpdate        = _EndUpDate,
 	_ReallocateHandle = _ReallocHandle,
 	_SetPortBits      = _SetPBits,
 	_SetRectRgn       = _SetRecRgn,
@@ -207,6 +209,8 @@ static void install_Windows()
 	
 	TBTRAP( TrackGoAway   );  // A91E
 	
+	TBTRAP( BeginUpdate   );  // A922
+	TBTRAP( EndUpdate     );  // A923
 	TBTRAP( FrontWindow   );  // A924
 	TBTRAP( DragWindow    );  // A925
 	TBTRAP( DragTheRgn    );  // A926
