@@ -9,6 +9,9 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
 #ifndef __PROCESSES__
 #include <Processes.h>
 #endif
@@ -298,10 +301,14 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	
 	const UInt32 future = add_pinned( now, sleep );
 	
+	/*
+		First timeout is zero, so we can process update events.
+	*/
+	
+	wait_timeout = timeval_from_ticks( 0 );
+	
 	do
 	{
-		wait_timeout = timeval_from_ticks( future - now );
-		
 		const bool got = GetNextEvent( eventMask, event );
 		
 		if ( got  ||  event->what != nullEvent )
@@ -317,7 +324,14 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 			return true;
 		}
 		
+		if ( CheckUpdate( event ) )
+		{
+			return true;
+		}
+		
 		now = Ticks;
+		
+		wait_timeout = timeval_from_ticks( future - now );
 	}
 	while ( now < future );
 	
