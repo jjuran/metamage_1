@@ -116,6 +116,11 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 		
 		WDEF_0( varCode, (WindowPtr) window, wDraw, 0 );
 		
+		if ( SaveUpdate )
+		{
+			UnionRgn( window->updateRgn, clobbered_region, window->updateRgn );
+		}
+		
 		if ( PaintWhite )
 		{
 			EraseRect( &window->contRgn[0]->rgnBBox );
