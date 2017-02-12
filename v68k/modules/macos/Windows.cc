@@ -148,6 +148,26 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 	PaintOne_patch( NULL, clobbered_region );
 }
 
+pascal unsigned char CheckUpdate_patch( EventRecord* event )
+{
+	WindowPeek w = WindowList;
+	
+	if ( w != NULL )
+	{
+		if ( ! EmptyRgn( w->updateRgn ) )
+		{
+			memset( event, '\0', sizeof (EventRecord) );
+			
+			event->what    = updateEvt;
+			event->message = (long) w;
+			
+			return true;
+		}
+	}
+	
+	return false;
+}
+
 
 static const short corner_size = (1 + 4 + 4 * 5 + 1) * sizeof (short);  // 52
 

@@ -6,6 +6,7 @@
 #ifndef WINDOWS_HH
 #define WINDOWS_HH
 
+struct EventRecord;
 struct GrafPort;
 struct Point;
 struct Rect;
@@ -16,6 +17,8 @@ pascal void ClipAbove_patch( struct WindowRecord* window );
 
 pascal void PaintOne_patch   ( struct WindowRecord* w, struct MacRegion** rgn );
 pascal void PaintBehind_patch( struct WindowRecord* w, struct MacRegion** rgn );
+
+pascal unsigned char CheckUpdate_patch( EventRecord* event );
 
 pascal void InitWindows_patch();
 

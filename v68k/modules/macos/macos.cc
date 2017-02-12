@@ -72,6 +72,7 @@ void* toolbox_trap_table[] : 3 * 1024;
 enum
 {
 	_BeginUpdate      = _BeginUpDate,
+	_CheckUpdate      = _CheckUpDate,
 	_EndUpdate        = _EndUpDate,
 	_ReallocateHandle = _ReallocHandle,
 	_SetPortBits      = _SetPBits,
@@ -201,6 +202,7 @@ static void install_Windows()
 	TBTRAP( PaintOne      );  // A90C
 	TBTRAP( PaintBehind   );  // A90D
 	
+	TBTRAP( CheckUpdate   );  // A911
 	TBTRAP( InitWindows   );  // A912
 	TBTRAP( NewWindow     );  // A913
 	TBTRAP( DisposeWindow );  // A914
