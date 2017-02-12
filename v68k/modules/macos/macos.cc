@@ -218,6 +218,10 @@ static void install_Windows()
 	TBTRAP( FrontWindow   );  // A924
 	TBTRAP( DragWindow    );  // A925
 	TBTRAP( DragTheRgn    );  // A926
+	TBTRAP( InvalRgn      );  // A927
+	TBTRAP( InvalRect     );  // A928
+	TBTRAP( ValidRgn      );  // A929
+	TBTRAP( ValidRect     );  // A92A
 	
 	TBTRAP( GrowWindow    );  // A92B
 	TBTRAP( FindWindow    );  // A92C

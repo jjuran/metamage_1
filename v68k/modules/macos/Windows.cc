@@ -658,6 +658,64 @@ pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
 	DisposeRgn( drag_region );
 }
 
+static
+RgnHandle rectangular_utility_region()
+{
+	static RgnHandle rgn = NewRgn();
+	
+	return rgn;
+}
+
+pascal void InvalRect_patch( const Rect* rect )
+{
+	RgnHandle rgn = rectangular_utility_region();
+	
+	RectRgn( rgn, rect );
+	
+	InvalRgn( rgn );
+}
+
+pascal void ValidRect_patch( const Rect* rect )
+{
+	RgnHandle rgn = rectangular_utility_region();
+	
+	RectRgn( rgn, rect );
+	
+	ValidRgn( rgn );
+}
+
+pascal void InvalRgn_patch( struct MacRegion** rgn )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	WindowPeek w = (WindowPeek) thePort;
+	
+	const short csdx = thePort->portBits.bounds.left;
+	const short csdy = thePort->portBits.bounds.top;
+	
+	OffsetRgn( rgn, -csdx, -csdy );  // local to global
+	
+	UnionRgn( w->updateRgn, rgn, w->updateRgn );
+	
+	OffsetRgn( rgn, csdx, csdy );  // global to local
+}
+
+pascal void ValidRgn_patch( struct MacRegion** rgn )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	WindowPeek w = (WindowPeek) thePort;
+	
+	const short csdx = thePort->portBits.bounds.left;
+	const short csdy = thePort->portBits.bounds.top;
+	
+	OffsetRgn( rgn, -csdx, -csdy );  // local to global
+	
+	DiffRgn( w->updateRgn, rgn, w->updateRgn );
+	
+	OffsetRgn( rgn, csdx, csdy );  // global to local
+}
+
 pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 {
 	WindowPeek window = (WindowPeek) w;
