@@ -134,6 +134,9 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 		PaintOne_patch( w, clobbered_region );
 	}
 	
+	SaveUpdate = true;
+	PaintWhite = true;
+	
 	PaintOne_patch( NULL, clobbered_region );
 }
 
