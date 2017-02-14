@@ -554,7 +554,7 @@ void draw_region( const rectangular_op_params&  params,
 	
 	short pat_v = v0 & 0x7;
 	
-	Ptr rowBase = portBits.baseAddr + v0 * portBits.rowBytes;
+	Ptr rowBase = portBits.baseAddr + (v0 - bounds.top) * portBits.rowBytes;
 	
 	while ( true )
 	{
