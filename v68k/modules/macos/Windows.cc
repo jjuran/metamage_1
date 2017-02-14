@@ -30,8 +30,11 @@
 
 
 WindowPeek WindowList  : 0x09D6;
+short      SaveUpdate  : 0x09DA;
+short      PaintWhite  : 0x09DC;
 GrafPtr    WMgrPort    : 0x09DE;
 RgnHandle  GrayRgn     : 0x09EE;
+RgnHandle  SaveVisRgn  : 0x09F2;
 Pattern    DeskPattern : 0x0A3C;
 short      MBarHeight  : 0x0BAA;
 
@@ -213,6 +216,8 @@ static void subtract_corner( RgnHandle     clipRgn,
 pascal void InitWindows_patch()
 {
 	WindowList = NULL;
+	SaveUpdate = true;
+	PaintWhite = true;
 	
 	WMgrPort = (GrafPtr) NewPtr( sizeof (GrafPort) );
 	
@@ -259,6 +264,8 @@ pascal void InitWindows_patch()
 	RectRgn( GrayRgn, &menubar );
 	
 	DiffRgn( BezelRgn, GrayRgn, GrayRgn );
+	
+	SaveVisRgn = NewRgn();
 	
 	draw_desktop_from_WMgrPort();
 	draw_menu_bar_from_WMgr_port();
