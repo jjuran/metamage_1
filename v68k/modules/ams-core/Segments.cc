@@ -21,8 +21,9 @@
 #include "options.hh"
 
 
-Str31 CurApName   : 0x0910;
-short CurJTOffset : 0x0934;
+Str31 CurApName    : 0x0910;
+short CurJTOffset  : 0x0934;
+void* CurStackBase : 0x0908;
 
 
 struct jump_table_header
@@ -161,9 +162,15 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	const uint32_t total_a5_size = header.above_a5_size
 	                             + header.below_a5_size;
 	
-	void* alloc = malloc( total_a5_size );
+	const uint32_t stack_size = 64 * 1024;
 	
-	void* new_a5 = (char*) alloc + header.below_a5_size;
+	const uint32_t total_alloc_size = stack_size + total_a5_size;
+	
+	void* alloc = malloc( total_alloc_size );
+	
+	CurStackBase = (char*) alloc + stack_size;
+	
+	void* new_a5 = (char*) CurStackBase + header.below_a5_size;
 	
 	void* jump_table = (char*) new_a5 + CurJTOffset;
 	
@@ -177,6 +184,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	{
 		MOVEA.L  new_a5,A5
 		MOVEA.L  start,A0
+		MOVE.L   CurStackBase,SP
 		JMP      (A0)
 	}
 	
