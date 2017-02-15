@@ -474,14 +474,40 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	
 	qd.thePort = saved_port;
 	
+	/*
+		Theory:
+		
+		Moving a visible window results in three affected regions that require
+		screen operations.  The first is the surface of the window that can be
+		blitted directly.  The second contains the newly exposed area of the
+		window.  The third consists of uncovered parts of other windows and
+		the desktop.
+	*/
+	
 	RgnHandle uncovered = NULL;
 	
 	if ( window->visible )
 	{
+		qd.thePort = WMgrPort;
+		
+		// Clip to the gray region.
+		
+		SetClip( GrayRgn );
+		
+		// Set the uncovered region to the visible portion of the window.
+		
 		uncovered = NewRgn();
 		
 		CopyRgn( window->strucRgn, uncovered );
+		
+		SectRgn( uncovered, WMgrPort->clipRgn, uncovered );
 	}
+	
+	// Use the structure region's bounding box as the srcRect for blitting.
+	
+	const Rect srcRect = window->strucRgn[0]->rgnBBox;
+	
+	// Offset the window's static regions, even if it's invisible.
 	
 	OffsetRgn( window->strucRgn, dh, dv );
 	OffsetRgn( window->contRgn,  dh, dv );
@@ -491,13 +517,71 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 		return;
 	}
 	
+	// For visible windows, also offset the update region.
+	
+	OffsetRgn( window->updateRgn, dh, dv );
+	
+	/*
+		Set the visRgn of the window's port.  We don't have CalcVis() yet,
+		but this works for a single window.
+	*/
+	
 	SectRgn( window->contRgn, GrayRgn, w->visRgn );
+	
+	/*
+		Further clip to the visible part of the old structure (translated).
+		This means that only visible window bits will be blitted, skipping
+		anything covered by the menu bar or screen corners (or in the future,
+		other windows).
+	*/
+	
+	OffsetRgn( uncovered, dh, dv );
+	
+	SectRgn( uncovered, WMgrPort->clipRgn, WMgrPort->clipRgn );
+	
+	OffsetRgn( uncovered, -dh, -dv );
+	
+	/*
+		Remove the new structure region from the uncovered region.  Anything
+		under the new location of the window is obviously not uncovered.
+	*/
 	
 	DiffRgn( uncovered, window->strucRgn, uncovered );
 	
-	PaintOne_patch( window, window->strucRgn );
+	const Rect dstRect = window->strucRgn[0]->rgnBBox;
+	
+	/*
+		Blit the window.  Make sure to use WMgrPort->portBits, not screenBits,
+		as the destination bitmap, so that WMgrPort->clipRgn will be applied
+		(and so we don't waste time creating a temporary port).
+	*/
+	
+	CopyBits( &WMgrPort->portBits,
+	          &WMgrPort->portBits,
+	          &srcRect,
+	          &dstRect,
+	          srcCopy,
+	          NULL );
+	
+	/*
+		The Window Manager port's clip region excludes parts of the window
+		structure that couldn't be blitted because they were only now exposed
+		and weren't visible on the screen.  Subtract the remaining, blittable
+		area from the structure region to get the exposed region which now
+		must be redrawn.  (Continue to use WMgrPort->clipRgn for storage.)
+		Paint the window frame, and erase any exposed content area and add it
+		to the update region.
+	*/
+	
+	DiffRgn( window->strucRgn, WMgrPort->clipRgn, WMgrPort->clipRgn );
+	
+	PaintOne_patch( window, WMgrPort->clipRgn );
+	
+	// Repaint areas of the desktop or other windows that have become visible.
 	
 	PaintBehind_patch( window->nextWindow, uncovered );
+	
+	qd.thePort = saved_port;
 	
 	DisposeRgn( uncovered );
 }
