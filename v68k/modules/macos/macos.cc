@@ -18,6 +18,7 @@
 #include "gear/parse_decimal.hh"
 
 // macos
+#include "CopyBits.hh"
 #include "Cursor.hh"
 #include "Debugger.hh"
 #include "Drag.hh"
@@ -184,6 +185,9 @@ static void install_QuickDraw()
 	TBTRAP( DiffRgn     );  // A8E6
 	TBTRAP( XOrRgn      );  // A8E7
 	TBTRAP( PtInRgn     );  // A8E8
+	
+	TBTRAP( StdBits     );  // A8EB
+	TBTRAP( CopyBits    );  // A8EC
 	
 	TBTRAP( GetPattern  );  // A9B8
 	TBTRAP( GetCursor   );  // A9B9
