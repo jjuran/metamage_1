@@ -37,6 +37,8 @@ WindowPeek WindowList  : 0x09D6;
 short      SaveUpdate  : 0x09DA;
 short      PaintWhite  : 0x09DC;
 GrafPtr    WMgrPort    : 0x09DE;
+RgnHandle  OldStructure: 0x09E6;
+RgnHandle  OldContent  : 0x09EA;
 RgnHandle  GrayRgn     : 0x09EE;
 RgnHandle  SaveVisRgn  : 0x09F2;
 Pattern    DeskPattern : 0x0A3C;
@@ -293,6 +295,9 @@ pascal void InitWindows_patch()
 	DisposeHandle( (Handle) corner );
 	
 	SetClip( BezelRgn );
+	
+	OldStructure = NewRgn();
+	OldContent   = NewRgn();
 	
 	const QDGlobals& qd = get_QDGlobals();
 	
