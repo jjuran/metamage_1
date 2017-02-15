@@ -19,6 +19,9 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/swap.hh"
+
 // quickdraw
 #include "qd/region_detail.hh"
 
@@ -116,6 +119,11 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 		
 		WDEF_0( varCode, (WindowPtr) window, wDraw, 0 );
 		
+		if ( SaveUpdate )
+		{
+			UnionRgn( window->updateRgn, clobbered_region, window->updateRgn );
+		}
+		
 		if ( PaintWhite )
 		{
 			EraseRect( &window->contRgn[0]->rgnBBox );
@@ -138,6 +146,26 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 	PaintWhite = true;
 	
 	PaintOne_patch( NULL, clobbered_region );
+}
+
+pascal unsigned char CheckUpdate_patch( EventRecord* event )
+{
+	WindowPeek w = WindowList;
+	
+	if ( w != NULL )
+	{
+		if ( ! EmptyRgn( w->updateRgn ) )
+		{
+			memset( event, '\0', sizeof (EventRecord) );
+			
+			event->what    = updateEvt;
+			event->message = (long) w;
+			
+			return true;
+		}
+	}
+	
+	return false;
 }
 
 
@@ -337,8 +365,9 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	if ( port->device < 0 )  goto fail_0;
 	
-	window->strucRgn = NewRgn();  if ( window->strucRgn == NULL )  goto fail_1;
-	window->contRgn  = NewRgn();  if ( window->contRgn  == NULL )  goto fail_2;
+	window->strucRgn  = NewRgn();  if ( window->strucRgn  == NULL )  goto fail_1;
+	window->contRgn   = NewRgn();  if ( window->contRgn   == NULL )  goto fail_2;
+	window->updateRgn = NewRgn();  if ( window->updateRgn == NULL )  goto fail_3;
 	
 	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
 	
@@ -372,6 +401,10 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	PaintOne_patch( window, window->strucRgn );
 	
 	return (WindowPtr) window;
+	
+fail_3:
+	
+	DisposeRgn( window->contRgn );
 	
 fail_2:
 	
@@ -498,6 +531,30 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	return is_inside;
 }
 
+pascal void BeginUpdate_patch( struct GrafPort* window )
+{
+	WindowPeek w = (WindowPeek) window;
+	
+	using iota::swap;
+	
+	swap( window->visRgn, SaveVisRgn );
+	
+	SectRgn( SaveVisRgn, w->updateRgn, window->visRgn );
+	
+	SetEmptyRgn( w->updateRgn );
+}
+
+pascal void EndUpdate_patch( struct GrafPort* window )
+{
+	WindowPeek w = (WindowPeek) window;
+	
+	using iota::swap;
+	
+	swap( window->visRgn, SaveVisRgn );
+	
+	SetEmptyRgn( SaveVisRgn );
+}
+
 pascal WindowRef FrontWindow_patch()
 {
 	return (WindowRef) WindowList;
@@ -566,8 +623,9 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	
 	PaintBehind( (WindowRef) window->nextWindow, window->strucRgn );
 	
-	DisposeRgn( window->strucRgn );
-	DisposeRgn( window->contRgn  );
+	DisposeRgn( window->strucRgn  );
+	DisposeRgn( window->contRgn   );
+	DisposeRgn( window->updateRgn );
 	
 	ClosePort( port );
 }
