@@ -8,14 +8,9 @@
 // Standard C
 #include <stdlib.h>
 
+// config
+#include "config/setpshared.h"
 
-#ifndef HAVE_SETPSHARED
-#ifdef __OpenBSD__
-#define HAVE_SETPSHARED  0
-#else
-#define HAVE_SETPSHARED  1
-#endif
-#endif
 
 void must_pthread_mutexattr_init( pthread_mutexattr_t* attr )
 {
@@ -57,7 +52,7 @@ void must_pthread_condattr_destroy( pthread_condattr_t* attr )
 	}
 }
 
-#if HAVE_SETPSHARED
+#if CONFIG_SETPSHARED
 
 void must_pthread_mutexattr_setpshared( pthread_mutexattr_t* attr, int value )
 {
