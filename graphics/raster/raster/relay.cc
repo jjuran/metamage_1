@@ -5,6 +5,9 @@
 
 #include "raster/relay.hh"
 
+// config
+#include "config/setpshared.h"
+
 // must
 #include "must/pthread.h"
 
@@ -20,7 +23,7 @@ namespace raster
 		pthread_mutexattr_t mutex_attr;
 		pthread_condattr_t  cond_attr;
 		
-	#ifndef __RELIX__
+	#if CONFIG_SETPSHARED
 		
 		const int pshared = PTHREAD_PROCESS_SHARED;
 		
@@ -35,7 +38,7 @@ namespace raster
 		must_pthread_mutex_init( &relay.mutex, &mutex_attr );
 		must_pthread_cond_init ( &relay.cond,  &cond_attr  );
 		
-	#ifndef __RELIX__
+	#if CONFIG_SETPSHARED
 		
 		must_pthread_mutexattr_destroy( &mutex_attr );
 		must_pthread_condattr_destroy ( &cond_attr  );
