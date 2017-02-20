@@ -15,6 +15,7 @@
 #include "plus/extent.hh"
 
 // vlib
+#include "vlib/generic.hh"
 #include "vlib/symbol.hh"  // codependent
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
@@ -60,17 +61,9 @@ namespace vlib
 		&symbol_stringifiers,
 	};
 	
-	static
-	void symbol_destructor( void* pointer )
-	{
-		Symbol* symbol = (Symbol*) pointer;
-		
-		symbol->~Symbol();
-	}
-	
 	Value::Value( symbol_type symtype, const plus::string& name )
 	:
-		its_box( sizeof (Symbol), &symbol_destructor, Value_symbol )
+		its_box( sizeof (Symbol), &generic_destructor< Symbol >, Value_symbol )
 	{
 		its_dispatch = &symbol_dispatch;
 		
