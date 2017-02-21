@@ -5,6 +5,9 @@
 
 #include "vlib/types/mb32.hh"
 
+// Standard C
+#include <string.h>
+
 // more-libc
 #include "more/string.h"
 
@@ -20,6 +23,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/dispatch/verity.hh"
 
 
 #undef mempcpy
@@ -165,9 +169,21 @@ namespace vlib
 		&mb32_bin,
 	};
 	
+	static
+	bool mb32_verity( const Value& v )
+	{
+		return memcmp( v.string().data(), "\0\0\0\0", 4 ) != 0;
+	}
+	
+	static const veritization mb32_veritization =
+	{
+		&mb32_verity,
+	};
+	
 	const dispatch mb32_dispatch =
 	{
 		&mb32_stringifiers,
+		&mb32_veritization,
 	};
 	
 	const type_info mb32_vtype =
