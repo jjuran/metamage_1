@@ -16,6 +16,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/dispatch/verity.hh"
 #include "vlib/types/null.hh"
 
 
@@ -26,8 +27,27 @@ namespace vlib
 	const Boolean True ( true  );
 	
 	
+	static
+	truth_test get_truth_test( const Value& v )
+	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const veritization* t = methods->to_boolean )
+			{
+				return t->verity;
+			}
+		}
+		
+		return NULL;
+	}
+	
 	Value Boolean::coerce( const Value& v )
 	{
+		if ( const truth_test is_true = get_truth_test( v ) )
+		{
+			return Boolean( is_true( v ) );
+		}
+		
 		switch ( v.type() )
 		{
 			case Value_boolean:
