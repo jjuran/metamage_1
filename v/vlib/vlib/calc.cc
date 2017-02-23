@@ -78,6 +78,7 @@ namespace vlib
 			case Value_nothing:
 			case Value_dummy_operand:
 			case Value_empty_list:
+			case Value_empty_array:
 				return true;
 			
 			case Value_symbol:
