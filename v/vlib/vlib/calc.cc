@@ -379,23 +379,9 @@ namespace vlib
 				break;
 			
 			case Value_packed:
-				if ( op == Op_unary_minus )
-				{
-					// fall through below
-				}
-				else
-				{
-					THROW( "unary operator not defined for pack" );
-				}
-				
-				// fall through
+				THROW( "unary operator not defined for packed values" );
 			
 			case Value_string:
-				if ( op == Op_unary_minus )
-				{
-					return reversed_bytes( v );
-				}
-				
 				THROW( "unary operator not defined for string values" );
 				break;
 			

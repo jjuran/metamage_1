@@ -13,6 +13,7 @@
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
@@ -117,9 +118,32 @@ namespace vlib
 		&packed_bin,
 	};
 	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_unary_minus:
+				return reversed_bytes( v );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static const operators ops =
+	{
+		&unary_op_handler,
+	};
+	
 	const dispatch packed_dispatch =
 	{
 		&packed_stringifiers,
+		NULL,
+		NULL,
+		&ops,
 	};
 	
 	static
