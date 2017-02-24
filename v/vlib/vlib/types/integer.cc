@@ -16,6 +16,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 
@@ -136,11 +137,35 @@ namespace vlib
 		&integer_order,
 	};
 	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_unary_plus:
+				return v;
+			
+			case Op_unary_minus:
+				return Integer( -v.number() );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static const operators ops =
+	{
+		&unary_op_handler,
+	};
+	
 	const dispatch integer_dispatch =
 	{
 		&integer_stringifiers,
 		&integer_veritization,
 		&integer_comparison,
+		&ops,
 	};
 	
 	const type_info integer_vtype =

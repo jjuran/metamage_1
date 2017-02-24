@@ -367,14 +367,6 @@ namespace vlib
 				break;
 			
 			case Value_number:
-				switch ( op )
-				{
-					case Op_unary_plus:   return v;
-					case Op_unary_minus:  return Integer( -v.number() );
-					
-					default:  break;
-				}
-				
 				THROW( "unary operator not defined for integers" );
 				break;
 			
