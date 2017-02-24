@@ -353,16 +353,6 @@ namespace vlib
 			
 			
 			case Value_boolean:
-				switch ( op )
-				{
-					case Op_not:  return Boolean( ! v.boolean() );
-					
-					case Op_unary_plus:   return Integer(  v.boolean() );
-					case Op_unary_minus:  return Integer( -v.boolean() );
-					
-					default:  break;
-				}
-				
 				THROW( "unary operator not defined for booleans" );
 				break;
 			

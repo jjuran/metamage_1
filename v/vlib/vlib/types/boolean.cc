@@ -9,8 +9,10 @@
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -82,9 +84,34 @@ namespace vlib
 		// bin: not defined
 	};
 	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_not:  return Boolean( ! v.boolean() );
+			
+			case Op_unary_plus:   return Integer( +v.boolean() );
+			case Op_unary_minus:  return Integer( -v.boolean() );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static const operators ops =
+	{
+		&unary_op_handler,
+	};
+	
 	const dispatch boolean_dispatch =
 	{
 		&boolean_stringifiers,
+		NULL,
+		NULL,
+		&ops,
 	};
 	
 	const type_info boolean_vtype =
