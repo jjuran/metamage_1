@@ -12,6 +12,7 @@
 #include "vlib/quote.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
@@ -96,10 +97,22 @@ namespace vlib
 		&byte_verity,
 	};
 	
+	static
+	cmp_t byte_order( const Value& a, const Value& b )
+	{
+		return compare( a.number(), b.number() );
+	}
+	
+	static const comparison byte_comparison =
+	{
+		&byte_order,
+	};
+	
 	const dispatch byte_dispatch =
 	{
 		&byte_stringifiers,
 		&byte_veritization,
+		&byte_comparison,
 	};
 	
 	const type_info byte_vtype =

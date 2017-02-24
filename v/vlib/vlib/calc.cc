@@ -89,10 +89,6 @@ namespace vlib
 		
 		switch ( a.type() )
 		{
-			case Value_byte:
-			case Value_number:
-				return compare( a.number(), b.number() );
-			
 			case Value_packed:
 			case Value_string:
 				return compare( a.string(), b.string() );

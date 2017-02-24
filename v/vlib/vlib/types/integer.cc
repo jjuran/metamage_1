@@ -14,6 +14,7 @@
 // vlib
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
@@ -124,10 +125,22 @@ namespace vlib
 		&integer_verity,
 	};
 	
+	static
+	cmp_t integer_order( const Value& a, const Value& b )
+	{
+		return compare( a.number(), b.number() );
+	}
+	
+	static const comparison integer_comparison =
+	{
+		&integer_order,
+	};
+	
 	const dispatch integer_dispatch =
 	{
 		&integer_stringifiers,
 		&integer_veritization,
+		&integer_comparison,
 	};
 	
 	const type_info integer_vtype =
