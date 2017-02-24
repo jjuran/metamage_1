@@ -31,6 +31,8 @@
 #include "vlib/throw.hh"
 #include "vlib/types.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/compare.hh"
+#include "vlib/dispatch/dispatch.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -72,6 +74,17 @@ namespace vlib
 		if ( a.type() != b.type() )
 		{
 			THROW( "mismatched types in compare()" );
+		}
+		
+		if ( const dispatch* methods = a.dispatch_methods() )
+		{
+			if ( const comparison* cmp = methods->compare )
+			{
+				if ( const ordering ord = cmp->order )
+				{
+					return ord( a, b );
+				}
+			}
 		}
 		
 		switch ( a.type() )

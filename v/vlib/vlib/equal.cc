@@ -11,6 +11,8 @@
 // vlib
 #include "vlib/error.hh"
 #include "vlib/throw.hh"
+#include "vlib/dispatch/compare.hh"
+#include "vlib/dispatch/dispatch.hh"
 #include "vlib/iterators/list_iterator.hh"
 
 
@@ -23,6 +25,22 @@ namespace vlib
 		if ( a.type() != b.type() )
 		{
 			return false;
+		}
+		
+		if ( const dispatch* methods = a.dispatch_methods() )
+		{
+			if ( const comparison* cmp = methods->compare )
+			{
+				if ( const equality equ = cmp->equal )
+				{
+					return equ( a, b );
+				}
+				
+				if ( const ordering ord = cmp->order )
+				{
+					return ord( a, b ) == 0;
+				}
+			}
 		}
 		
 		switch ( a.type() )
