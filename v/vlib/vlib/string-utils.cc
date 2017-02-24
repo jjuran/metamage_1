@@ -16,6 +16,7 @@
 
 // plus
 #include "plus/integer.hh"
+#include "plus/reverse.hh"
 #include "plus/var_string.hh"
 
 // vlib
@@ -650,6 +651,18 @@ namespace vlib
 		}
 		
 		return result.move();
+	}
+	
+	Value reversed_bytes( const Value& u )
+	{
+		Value v = u;
+		v.unshare();
+		
+		const plus::string& s = v.string();
+		
+		plus::reverse( (char*) s.data(), s.size() );
+		
+		return v;
 	}
 	
 }

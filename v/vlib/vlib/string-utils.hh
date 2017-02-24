@@ -51,6 +51,8 @@ namespace vlib
 	
 	plus::string format( const plus::string& form, const Value& params );
 	
+	Value reversed_bytes( const Value& u );
+	
 }
 
 #endif

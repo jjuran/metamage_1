@@ -13,7 +13,6 @@
 
 // plus
 #include "plus/integer.hh"
-#include "plus/reverse.hh"
 
 // vlib
 #include "vlib/array-utils.hh"
@@ -241,18 +240,6 @@ namespace vlib
 		
 		THROW( "unsupported container type for `in`" );
 		return false;
-	}
-	
-	static
-	Value reversed_bytes( Value v )
-	{
-		v.unshare();
-		
-		const plus::string& s = v.string();
-		
-		plus::reverse( (char*) s.data(), s.size() );
-		
-		return v;
 	}
 	
 	static
