@@ -5,9 +5,6 @@
 
 #include "vlib/types/boolean.hh"
 
-// plus
-#include "plus/integer.hh"
-
 // vlib
 #include "vlib/error.hh"
 #include "vlib/type_info.hh"
@@ -56,10 +53,6 @@ namespace vlib
 			case Value_empty_list:
 			case Value_empty_array:
 				return Boolean();
-			
-			case Value_byte:
-			case Value_number:
-				return Boolean( ! v.number().is_zero() );
 			
 			case Value_packed:
 			case Value_string:

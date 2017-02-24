@@ -16,6 +16,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/dispatch/verity.hh"
 
 
 namespace vlib
@@ -112,9 +113,21 @@ namespace vlib
 		// Integer bin is unimplemented
 	};
 	
+	static
+	bool integer_verity( const Value& v )
+	{
+		return ! v.number().is_zero();
+	}
+	
+	static const veritization integer_veritization =
+	{
+		&integer_verity,
+	};
+	
 	const dispatch integer_dispatch =
 	{
 		&integer_stringifiers,
+		&integer_veritization,
 	};
 	
 	const type_info integer_vtype =

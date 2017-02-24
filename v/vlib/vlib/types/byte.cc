@@ -14,6 +14,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/dispatch/verity.hh"
 
 
 namespace vlib
@@ -84,9 +85,21 @@ namespace vlib
 		&byte_str,  // reuse str for bin
 	};
 	
+	static
+	bool byte_verity( const Value& v )
+	{
+		return ! v.number().is_zero();
+	}
+	
+	static const veritization byte_veritization =
+	{
+		&byte_verity,
+	};
+	
 	const dispatch byte_dispatch =
 	{
 		&byte_stringifiers,
+		&byte_veritization,
 	};
 	
 	const type_info byte_vtype =
