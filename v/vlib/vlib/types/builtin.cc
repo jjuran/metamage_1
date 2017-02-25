@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/value.hh"
+#include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/stringify.hh"
 
 
@@ -41,6 +42,25 @@ namespace vlib
 		&builtin_str,
 		// rep: ditto
 		// bin: not defined
+	};
+	
+	
+	static inline
+	const builtin_info* addr( const Value& v )
+	{
+		return &v.dereference< builtin_info >();
+	}
+	
+	static
+	bool builtin_equal( const Value& a, const Value& b )
+	{
+		return addr( a ) == addr( b );
+	}
+	
+	const comparison builtin_comparison =
+	{
+		NULL,  // built-in procs and types have no ordering
+		&builtin_equal,
 	};
 	
 }

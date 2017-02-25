@@ -66,12 +66,6 @@ namespace vlib
 			case Value_string:
 				return a.string() == b.string();
 			
-			case Value_function:
-				return &a.proc() == &b.proc();
-			
-			case Value_base_type:
-				return &a.typeinfo() == &b.typeinfo();
-			
 			case Value_pair:
 				{
 					Expr& ax = *a.expr();

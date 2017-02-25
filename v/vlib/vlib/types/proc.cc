@@ -29,6 +29,7 @@ namespace vlib
 	{
 		&builtin_stringifiers,
 		&proc_veritization,
+		&builtin_comparison,
 	};
 	
 }

@@ -30,6 +30,7 @@ namespace vlib
 	{
 		&builtin_stringifiers,
 		&type_veritization,
+		&builtin_comparison,
 	};
 	
 }
