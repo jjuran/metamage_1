@@ -9,6 +9,7 @@
 #include "debug/assert.hh"
 
 // vlib
+#include "vlib/equal.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
@@ -73,7 +74,7 @@ namespace vlib
 	static
 	bool is_table( Expr* tx, const Value& v )
 	{
-		return is_table( v )  &&  equal_keys( tx->left, v.expr()->left );
+		return is_table( v )  &&  equal( tx->left, v.expr()->left );
 	}
 	
 	Value as_assigned( const Value& type, const Value& v )
