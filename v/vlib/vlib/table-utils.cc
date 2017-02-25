@@ -5,18 +5,13 @@
 
 #include "vlib/table-utils.hh"
 
-// plus
-#include "plus/integer.hh"
-
 // vlib
-#include "vlib/error.hh"
-#include "vlib/list-utils.hh"
+#include "vlib/equal.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
-#include "vlib/types/byte.hh"
 
 
 namespace vlib
@@ -60,49 +55,18 @@ namespace vlib
 		switch ( a.type() )
 		{
 			case Value_boolean:
-				return a.boolean() == b.boolean();
-			
 			case Value_byte:
 			case Value_number:
-				return a.number() == b.number();
-			
 			case Value_mb32:
 			case Value_vector:
 			case Value_string:
-				return a.string() == b.string();
-			
-			case Value_function:
-				return &a.proc() == &b.proc();
-			
-			case Value_base_type:
-				return &a.typeinfo() == &b.typeinfo();
-			
-			case Value_pair:
-				{
-					Expr& ax = *a.expr();
-					Expr& bx = *b.expr();
-					
-					if ( ax.op != bx.op )
-					{
-						return false;
-					}
-					
-					const bool compare_left = (ax.op & 0xFF) != Op_scope;
-					
-					if ( compare_left  &&  ! equal_keys( ax.left, bx.left ) )
-					{
-						return false;
-					}
-					
-					return equal_keys( ax.right, bx.right );
-				}
+				break;
 			
 			default:
-				INTERNAL_ERROR( "unsupported type in equal_keys()" );
-				break;
+				THROW( "unsupported key type" );
 		}
 		
-		return false;
+		return equal( a, b );
 	}
 	
 	static
