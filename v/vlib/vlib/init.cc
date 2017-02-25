@@ -18,6 +18,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
 #include "vlib/types/null.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/vector.hh"
@@ -35,7 +36,7 @@ namespace vlib
 	static
 	void define_keyword( const proc_info& proc )
 	{
-		create_keyword( proc.name ).sym()->assign( proc );
+		create_keyword( proc.name ).sym()->assign( Proc( proc ) );
 	}
 	
 	bool install_keywords()

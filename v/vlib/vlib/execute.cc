@@ -28,6 +28,7 @@
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
 
 
@@ -174,6 +175,8 @@ namespace vlib
 	
 	static proc_info proc_invoke = { "invoke", &v_invoke, 0 };
 	
+	static const Proc invoke_proc( proc_invoke );
+	
 	static
 	Value make_block_invocation( const Value& scope, const Value& stack )
 	{
@@ -193,14 +196,14 @@ namespace vlib
 		const Value new_stack( stack, Op_frame, new_frame );
 		const Value activation( new_stack, Op_activation, code );
 		
-		return Value( proc_invoke, Op_invocation, activation );
+		return Value( invoke_proc, Op_invocation, activation );
 	}
 	
 	static
 	Value invocable_expression( const Value& tree, const Value& stack )
 	{
 		const Value expr( stack,       Op_expression, tree );
-		const Value proc( proc_invoke, Op_invocation, expr );
+		const Value proc( invoke_proc, Op_invocation, expr );
 		
 		return proc;
 	}
@@ -468,6 +471,8 @@ namespace vlib
 	
 	static const proc_info proc_define = { "define", &v_define, 0 };  // NULL
 	
+	static const Proc define_proc( proc_define );
+	
 	static
 	bool is_elseif( const Expr* expr )
 	{
@@ -509,7 +514,7 @@ namespace vlib
 				
 				if ( expr->op == Op_def )
 				{
-					return bind_args( proc_define, resolved );
+					return bind_args( define_proc, resolved );
 				}
 				
 				return resolved;

@@ -19,6 +19,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/proc.hh"
 
 
 #undef mempcpy
@@ -104,12 +105,12 @@ namespace vlib
 		
 		if ( member == "join" )
 		{
-			return bind_args( proc_join, obj );
+			return bind_args( Proc( proc_join ), obj );
 		}
 		
 		if ( member == "lines" )
 		{
-			return bind_args( proc_lines, obj );
+			return bind_args( Proc( proc_lines ), obj );
 		}
 		
 		THROW( "nonexistent string member" );

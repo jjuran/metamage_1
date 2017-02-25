@@ -35,6 +35,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
 
 
@@ -421,12 +422,12 @@ namespace vlib
 				break;
 			
 			case Token_unbin:
-				receive_value( proc_unbin );
+				receive_value( Proc( proc_unbin ) );
 				fold_ops_and_add( Op_function );
 				break;
 			
 			case Token_unhex:
-				receive_value( proc_unhex );
+				receive_value( Proc( proc_unhex ) );
 				fold_ops_and_add( Op_function );
 				break;
 			
