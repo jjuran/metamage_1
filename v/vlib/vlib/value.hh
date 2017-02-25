@@ -111,6 +111,11 @@ namespace vlib
 			{
 				its_dispatch = d;
 			}
+			
+			Value( const Value&        a,
+			       op_type             op,
+			       const Value&        b,
+			       const dispatch*     d );
 		
 		public:
 			enum symdesc
