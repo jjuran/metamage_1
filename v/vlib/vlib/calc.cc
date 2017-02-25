@@ -32,6 +32,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -245,6 +246,22 @@ namespace vlib
 	static
 	Value calc_unary( op_type op, const Value& v )
 	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const operators* ops = methods->ops )
+			{
+				if ( handler_1arg handler = ops->unary )
+				{
+					const Value result = handler( op, v );
+					
+					if ( result.type() )
+					{
+						return result;
+					}
+				}
+			}
+		}
+		
 		if ( op == Op_array  &&  is_empty_list( v ) )
 		{
 			return empty_array;
