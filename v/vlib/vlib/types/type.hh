@@ -13,6 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
+	
+	extern const dispatch type_dispatch;
+	
 	class Type : public Value
 	{
 		public:
@@ -21,7 +25,7 @@ namespace vlib
 				return v.type() == Value_base_type;
 			}
 			
-			Type( const type_info& type ) : Value( type )
+			Type( const type_info& type ) : Value( type, &type_dispatch )
 			{
 			}
 	};

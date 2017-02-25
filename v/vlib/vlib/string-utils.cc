@@ -20,9 +20,7 @@
 
 // vlib
 #include "vlib/error.hh"
-#include "vlib/proc_info.hh"
 #include "vlib/throw.hh"
-#include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -242,12 +240,6 @@ namespace vlib
 			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
 			
-			case Value_function:
-				return strlen( value.proc().name );
-			
-			case Value_base_type:
-				return strlen( value.typeinfo().name );
-			
 			case Value_pair:
 				break;
 			
@@ -362,12 +354,6 @@ namespace vlib
 				}
 				
 				return p;
-			
-			case Value_function:
-				return mempcpy( p, value.proc().name );
-				
-			case Value_base_type:
-				return mempcpy( p, value.typeinfo().name );
 			
 			case Value_pair:
 				if ( ! use_parens( mode )  &&  is_function( value ) )

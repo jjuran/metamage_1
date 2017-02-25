@@ -97,6 +97,20 @@ namespace vlib
 			{
 				its_dispatch = d;
 			}
+			
+			Value( const proc_info& proc, const dispatch* d )
+			:
+				its_box( &proc, V_proc )
+			{
+				its_dispatch = d;
+			}
+			
+			Value( const type_info& type, const dispatch* d )
+			:
+				its_box( &type, Value_base_type )
+			{
+				its_dispatch = d;
+			}
 		
 		public:
 			enum symdesc
@@ -118,20 +132,6 @@ namespace vlib
 			}
 			
 			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( const proc_info& proc )
-			:
-				its_box( &proc, V_proc )
-			{
-				its_dispatch = 0;  // NULL
-			}
-			
-			Value( const type_info& type )
-			:
-				its_box( &type, Value_base_type )
 			{
 				its_dispatch = 0;  // NULL
 			}
@@ -175,6 +175,12 @@ namespace vlib
 			const plus::string& string() const
 			{
 				return *(const plus::string*) &its_box;
+			}
+			
+			template < class T >
+			const T& dereference() const
+			{
+				return *static_cast< const T* >( its_box.pointer() );
 			}
 			
 			const proc_info& proc() const

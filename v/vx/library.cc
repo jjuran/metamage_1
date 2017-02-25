@@ -37,6 +37,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 
 // vx
 #include "exception.hh"
@@ -208,13 +209,13 @@ namespace vlib
 		return Integer( t );
 	}
 	
-	static const Value c_str = c_str_vtype;
-	static const Value u8    = u8_vtype;
-	static const Value u32   = u32_vtype;
+	static const Type c_str = c_str_vtype;
+	static const Type u8    = u8_vtype;
+	static const Type u32   = u32_vtype;
 	
-	static const Value maybe_cstr( c_str_vtype, Op_union, Value_empty_list );
+	static const Value maybe_cstr( c_str, Op_union, Value_empty_list );
 	
-	static const Value cstr_eval = Value( c_str_vtype,
+	static const Value cstr_eval = Value( c_str,
 	                                      Op_duplicate,
 	                                      String( "<eval>" ) );
 	

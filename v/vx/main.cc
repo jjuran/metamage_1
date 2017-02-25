@@ -30,7 +30,9 @@
 #include "vlib/scope.hh"
 #include "vlib/types.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 
 // vx
 #include "library.hh"
@@ -142,7 +144,7 @@ void set_argv( const char* arg0, int argn, char* const* args )
 	
 	Symbol& sym = *argv_symbol.sym();
 	
-	sym.denote( Value( c_str_vtype, Op_subscript, empty_list ) );
+	sym.denote( Value( Type( c_str_vtype ), Op_subscript, empty_list ) );
 	
 	sym.assign( make_array( argv ) );
 }
@@ -150,7 +152,7 @@ void set_argv( const char* arg0, int argn, char* const* args )
 static
 void define( const proc_info& proc )
 {
-	globals.declare( proc.name, Symbol_const ).sym()->assign( proc );
+	globals.declare( proc.name, Symbol_const ).sym()->assign( Proc( proc ) );
 }
 
 static

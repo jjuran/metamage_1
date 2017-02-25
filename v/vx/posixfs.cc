@@ -30,6 +30,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 #include "vlib/types/vector.hh"
 
 // vx
@@ -38,6 +39,8 @@
 
 namespace vlib
 {
+	
+	static const Type string = string_vtype;
 	
 	static
 	Value mapping( const plus::string& key, const Value& v )
@@ -129,7 +132,7 @@ namespace vlib
 		
 		#undef APPEND
 		
-		return Value( string_vtype, Op_empower, make_array( result ) );
+		return Value( string, Op_empower, make_array( result ) );
 	}
 	
 	
@@ -470,17 +473,19 @@ namespace vlib
 		return Integer( n_written );
 	}
 	
-	static const Value c_str = c_str_vtype;
-	static const Value int32 = i32_vtype;
+	static const Type vector = vector_vtype;
+	static const Type c_str = c_str_vtype;
+	static const Type int32 = i32_vtype;
+	static const Type uint32 = u32_vtype;
 	
-	static const Value int32_x2( i32_vtype, i32_vtype );
-	static const Value i32_u32 ( i32_vtype, u32_vtype );
+	static const Value int32_x2( int32, int32 );
+	static const Value i32_u32 ( int32, uint32 );
 	
-	static const Value bytes( string_vtype, Op_union, vector_vtype );
-	static const Value i32_bytes( i32_vtype, bytes );
+	static const Value bytes( string, Op_union, vector );
+	static const Value i32_bytes( int32, bytes );
 	
-	static const Value c_str_bytes( c_str_vtype, bytes );
-	static const Value c_str_u32( c_str_vtype, u32_vtype );
+	static const Value c_str_bytes( c_str, bytes );
+	static const Value c_str_u32( c_str, uint32 );
 	
 	const proc_info proc_close    = { "close",    &v_close,    &int32 };
 	const proc_info proc_dirname  = { "dirname",  &v_dirname,  &c_str };

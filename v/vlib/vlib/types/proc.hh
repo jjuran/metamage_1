@@ -13,6 +13,10 @@
 namespace vlib
 {
 	
+	struct dispatch;
+	
+	extern const dispatch proc_dispatch;
+	
 	class Proc : public Value
 	{
 		public:
@@ -21,7 +25,7 @@ namespace vlib
 				return v.type() == V_proc;
 			}
 			
-			Proc( const proc_info& proc ) : Value( proc )
+			Proc( const proc_info& proc ) : Value( proc, &proc_dispatch )
 			{
 			}
 	};
