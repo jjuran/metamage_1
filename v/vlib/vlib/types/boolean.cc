@@ -11,7 +11,6 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
-#include "vlib/types/null.hh"
 
 
 namespace vlib
@@ -58,10 +57,6 @@ namespace vlib
 			case Value_string:
 				return Boolean( ! v.string().empty() );
 			
-			case Value_base_type:
-				return Boolean( &v.typeinfo() != &null_vtype );
-			
-			case Value_function:
 			case Value_pair:
 				if ( Expr* expr = v.expr() )
 				{
