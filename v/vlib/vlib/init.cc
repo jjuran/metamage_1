@@ -21,6 +21,7 @@
 #include "vlib/types/proc.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 #include "vlib/types/vector.hh"
 
 
@@ -31,6 +32,12 @@ namespace vlib
 	void define_keyword( const char* name, const Value& v )
 	{
 		create_keyword( name ).sym()->assign( v );
+	}
+	
+	static
+	void define_keyword( const char* name, const type_info& type )
+	{
+		define_keyword( name, Type( type ) );
 	}
 	
 	static

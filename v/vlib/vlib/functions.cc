@@ -29,6 +29,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 #include "vlib/types/vector.hh"
 
 
@@ -321,23 +322,26 @@ namespace vlib
 	static const Integer two  = Integer( 2 );
 	static const Integer npos = Integer( uint32_t( -1 ) );
 	
-	static const Value integer = integer_vtype;
-	static const Value string  = string_vtype;
-	static const Value vector  = vector_vtype;
+	static const Type integer = integer_vtype;
+	static const Type string  = string_vtype;
+	static const Type vector  = vector_vtype;
 	
-	static const Value u32_2 = Value( u32_vtype, Op_duplicate, two );
+	static const Type i32 = i32_vtype;
+	static const Type u32 = u32_vtype;
+	
+	static const Value u32_2 = Value( u32, Op_duplicate, two );
 	static const Value mince = Value( string, u32_2 );
 	
-	static const Value bytes( string_vtype, Op_union, vector_vtype );
-	static const Value sign( vector_vtype, bytes );
-	static const Value verify( vector_vtype, Value( bytes, vector_vtype ) );
-	static const Value x32( u32_vtype, Op_union, i32_vtype );
+	static const Value bytes( string, Op_union, vector );
+	static const Value sign( vector, bytes );
+	static const Value verify( vector, Value( bytes, vector ) );
+	static const Value x32( u32, Op_union, i32 );
 	static const Value s_offset( x32, Op_duplicate, zero );
-	static const Value s_length( u32_vtype, Op_duplicate, npos );
-	static const Value substr( string_vtype, Value( s_offset, s_length ) );
+	static const Value s_length( u32, Op_duplicate, npos );
+	static const Value substr( string, Value( s_offset, s_length ) );
 	
-	static const Value string_ref = Value( Op_unary_deref, string_vtype );
-	static const Value trans( string_ref, Value( string_vtype, string_vtype ) );
+	static const Value string_ref = Value( Op_unary_deref, string );
+	static const Value trans( string_ref, Value( string, string ) );
 	
 	#define TRANS  "translate"
 	

@@ -7,7 +7,7 @@
 #define VLIB_TYPES_NULL_HH
 
 // vlib
-#include "vlib/value.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -17,14 +17,14 @@ namespace vlib
 	
 	extern const type_info null_vtype;
 	
-	class Null : public Value
+	class Null : public Type
 	{
 		public:
 			static bool test( const Value& v );
 			
 			static Value coerce( const Value& v );
 			
-			Null() : Value( null_vtype )
+			Null() : Type( null_vtype )
 			{
 			}
 	};

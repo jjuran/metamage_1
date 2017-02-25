@@ -23,6 +23,7 @@
 #include "vlib/types/mb32.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 #include "vlib/types/vector.hh"
 
 
@@ -79,8 +80,10 @@ namespace vlib
 		return v.type() == Value_base_type  &&  &v.typeinfo() == &null_vtype;
 	}
 	
+	static const type_info no_typeinfo = { 0, 0, 0, 0 };
+	
 	static
-	Value v_typeof( const Value& v )
+	Type basic_typeof( const Value& v )
 	{
 		if ( is_function( v ) )
 		{
@@ -93,15 +96,8 @@ namespace vlib
 			return null_vtype;
 		}
 		
-		if ( is_empty_array( v ) )
-		{
-			return generic_array_type;
-		}
-		
 		switch ( v.type() )
 		{
-			case Value_empty_list:  return v;
-			
 			case Value_base_type:  return type_vtype;
 			case Value_boolean:    return boolean_vtype;
 			case Value_byte:       return byte_vtype;
@@ -110,16 +106,14 @@ namespace vlib
 			case Value_string:     return string_vtype;
 			case Value_vector:     return vector_vtype;
 			
-			case Value_pair:  break;
-			
-			default:  return String( "???" );
+			default:  break;
 		}
 		
 		Expr* expr = v.expr();
 		
-		if ( expr->op == Op_array )
+		if ( expr == NULL )
 		{
-			return generic_array_type;
+			return no_typeinfo;
 		}
 		
 		if ( expr->op == Op_subscript )
@@ -132,6 +126,43 @@ namespace vlib
 			return type_vtype;
 		}
 		
+		return no_typeinfo;
+	}
+	
+	static const Type etc = etc_vtype;
+	
+	static
+	Value v_typeof( const Value& v )
+	{
+		const Type basic_type = basic_typeof( v );
+		
+		if ( &basic_type.typeinfo() != &no_typeinfo )
+		{
+			return basic_type;
+		}
+		
+		if ( is_empty_array( v ) )
+		{
+			return generic_array_type;
+		}
+		
+		if ( v.type() == Value_empty_list )
+		{
+			return v;
+		}
+		
+		Expr* expr = v.expr();
+		
+		if ( expr == NULL )
+		{
+			return String( "???" );
+		}
+		
+		if ( expr->op == Op_array )
+		{
+			return generic_array_type;
+		}
+		
 		if ( expr->op == Op_unary_refer )
 		{
 			try
@@ -139,7 +170,7 @@ namespace vlib
 				Target target = make_target( expr->right );
 				
 				const Value& type = target.type->type() ? *target.type
-				                                        : etc_vtype;
+				                                        : Value( etc );
 				
 				return Value( Op_unary_deref, type );
 			}
@@ -160,12 +191,12 @@ namespace vlib
 			{
 				if ( is_array( expr->right ) )
 				{
-					return Value( expr->left, expr->op, etc_vtype );
+					return Value( expr->left, expr->op, etc );
 				}
 				
 				if ( is_type( expr->right ) )
 				{
-					return type_vtype;
+					return Type( type_vtype );
 				}
 			}
 			
@@ -174,7 +205,7 @@ namespace vlib
 		
 		if ( expr->op == Op_module )
 		{
-			return Value( expr->op, etc_vtype );
+			return Value( expr->op, etc );
 		}
 		
 		if ( expr->op != Op_list )
@@ -196,6 +227,6 @@ namespace vlib
 	
 	const proc_info proc_typeof = { "typeof", &v_typeof, NULL };
 	
-	Value generic_array_type( etc_vtype, Op_subscript, Value_empty_list );
+	Value generic_array_type( etc, Op_subscript, Value_empty_list );
 	
 }

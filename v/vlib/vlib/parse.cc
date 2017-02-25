@@ -37,6 +37,7 @@
 #include "vlib/types/mb32.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -406,7 +407,7 @@ namespace vlib
 				break;
 			
 			case Token_dot_x3:
-				receive_value( etc_vtype );
+				receive_value( Type( etc_vtype ) );
 				break;
 			
 			case Token_bin:

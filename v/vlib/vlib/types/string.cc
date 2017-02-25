@@ -20,6 +20,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/type.hh"
 
 
 #undef mempcpy
@@ -142,8 +143,9 @@ namespace vlib
 		return lines( v.string() );
 	}
 	
-	static const Value string     = string_vtype;
-	static const Value string_etc = Value( string_vtype, etc_vtype );
+	static const Type  etc        = etc_vtype;
+	static const Type  string     = string_vtype;
+	static const Value string_etc = Value( string, etc );
 	
 	const proc_info proc_join  = { "join",  &v_join,  &string_etc };
 	const proc_info proc_lines = { "lines", &v_lines, &string     };
