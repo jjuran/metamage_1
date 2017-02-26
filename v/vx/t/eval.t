@@ -20,8 +20,8 @@ $ vx -e 'const f = eval "{3 + 4}"; print rep f()'
 
 %
 
-$ vx -e 'const f = eval "var x = 0; {++x}"; print rep(f(), f(), f())'
-1 >= '(1, 2, 3)'
+$ vx -e 'const f = eval "var x = 0; {++x}"; print rep(f() + f() + f())'
+1 >= 6
 
 %
 
