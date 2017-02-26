@@ -14,7 +14,7 @@ namespace vlib
 	
 	struct dispatch
 	{
-		stringifiers const* const  to_string;
+		stringifiers const*  to_string;
 	};
 	
 }
