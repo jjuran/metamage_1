@@ -101,6 +101,13 @@ namespace vlib
 		{
 			switch ( expr->op )
 			{
+				case Op_empower:
+					/*
+						This is a table.
+						Assume the worst until we nail down the type details.
+					*/
+					return true;
+				
 				case Op_mapping:
 				case Op_union:
 					return type_is_collectible( expr->left  )  ||
