@@ -10,8 +10,7 @@
 #include <string.h>
 
 // quickdraw
-#include "qd/region_detail.hh"
-#include "qd/segments.hh"
+#include "qd/region_iterator.hh"
 
 // macos
 #include "QDGlobals.hh"
@@ -542,82 +541,44 @@ void draw_region( const rectangular_op_params&  params,
 {
 	const short* extent = (short*) (*region + 1);
 	
-	using quickdraw::Region_end;
-	
-	segments_box segments( region[0]->rgnSize );
+	quickdraw::region_iterator it( region[0]->rgnSize, extent );
 	
 	const BitMap& portBits = params.port->portBits;
 	
 	const Rect& bounds = portBits.bounds;
 	
-	short v0 = *extent++;
-	
-	while ( true )
+	while ( const quickdraw::region_band* band = it.next() )
 	{
-		while ( true )
-		{
-			short h = *extent++;
-			
-			if ( h == Region_end )
-			{
-				break;
-			}
-			
-			segments ^= h;
-		}
-		
-		if ( segments.size() & 0x1 )
-		{
-			segments ^= 0x7FFF;
-		}
-		
-		short v1 = *extent++;
-		
-		if ( segments.empty()  &&  v1 == Region_end )
-		{
-			break;
-		}
-		
-		typedef segments_box::const_iterator Iter;
+		const short v0 = band->v0;
+		const short v1 = band->v1;
 		
 		Ptr rowBase = portBits.baseAddr + (v0 - bounds.top) * portBits.rowBytes;
 		
-	next_row:
-		
-		const short v = v0;
-		
-		const uint8_t pat = params.pattern->pat[ v & 0x7 ];
-		
-		Iter it = segments.begin();
-		Iter end = segments.end();
-		
-		while ( it < end )
+		for ( short v = v0;  v < v1;  ++v )
 		{
-			const short h0 = *it++;
-			const short h1 = *it++;
+			const uint8_t pat = params.pattern->pat[ v & 0x7 ];
 			
-			Ptr start = rowBase + (h0 - bounds.left) / 8;
+			const short* it  = band->h_begin;
+			const short* end = band->h_end;
 			
-			const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
-			const short n_pixels_drawn   =  h1 - h0;
+			while ( it < end )
+			{
+				const short h0 = *it++;
+				const short h1 = *it++;
+				
+				Ptr start = rowBase + (h0 - bounds.left) / 8;
+				
+				const short n_pixels_skipped = (h0 - bounds.left) & 0x7;
+				const short n_pixels_drawn   =  h1 - h0;
+				
+				draw_segment( start,
+				              n_pixels_skipped,
+				              n_pixels_drawn,
+				              pattern_transfer_mode & 0x03,
+				              pat );
+			}
 			
-			draw_segment( start,
-			              n_pixels_skipped,
-			              n_pixels_drawn,
-			              pattern_transfer_mode & 0x03,
-			              pat );
-		}
-		
-		rowBase += portBits.rowBytes;
-		
-		if ( quickdraw::precedes_in_region( ++v0, v1 ) )
-		{
-			goto next_row;
-		}
-		
-		if ( v0 == Region_end )
-		{
-			break;
+			rowBase += portBits.rowBytes;
 		}
 	}
 }
