@@ -546,17 +546,11 @@ void draw_region( const rectangular_op_params&  params,
 	
 	segments_box segments( region[0]->rgnSize );
 	
-	Pattern& pattern = *params.pattern;
-	
 	const BitMap& portBits = params.port->portBits;
 	
 	const Rect& bounds = portBits.bounds;
 	
 	short v0 = *extent++;
-	
-	short pat_v = v0 & 0x7;
-	
-	Ptr rowBase = portBits.baseAddr + (v0 - bounds.top) * portBits.rowBytes;
 	
 	while ( true )
 	{
@@ -586,16 +580,21 @@ void draw_region( const rectangular_op_params&  params,
 		
 		typedef segments_box::const_iterator Iter;
 		
+		Ptr rowBase = portBits.baseAddr + (v0 - bounds.top) * portBits.rowBytes;
+		
 	next_row:
 		
-		const uint8_t pat = pattern.pat[ pat_v ];
+		const short v = v0;
+		
+		const uint8_t pat = params.pattern->pat[ v & 0x7 ];
 		
 		Iter it = segments.begin();
+		Iter end = segments.end();
 		
-		while ( it != segments.end() )
+		while ( it < end )
 		{
-			short h0 = *it++;
-			short h1 = *it++;
+			const short h0 = *it++;
+			const short h1 = *it++;
 			
 			Ptr start = rowBase + (h0 - bounds.left) / 8;
 			
@@ -608,8 +607,6 @@ void draw_region( const rectangular_op_params&  params,
 			              pattern_transfer_mode & 0x03,
 			              pat );
 		}
-		
-		pat_v = (pat_v + 1) & 0x7;
 		
 		rowBase += portBits.rowBytes;
 		
