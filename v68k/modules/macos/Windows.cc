@@ -474,17 +474,24 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	
 	qd.thePort = saved_port;
 	
-	RgnHandle exposed = NewRgn();
+	RgnHandle exposed = NULL;
 	
-	CopyRgn( window->strucRgn, exposed );
+	if ( window->visible )
+	{
+		exposed = NewRgn();
+		
+		CopyRgn( window->strucRgn, exposed );
+	}
 	
 	OffsetRgn( window->strucRgn, dh, dv );
 	OffsetRgn( window->contRgn,  dh, dv );
 	
-	if ( window->visible )
+	if ( ! window->visible )
 	{
-		SectRgn( window->contRgn, GrayRgn, w->visRgn );
+		return;
 	}
+	
+	SectRgn( window->contRgn, GrayRgn, w->visRgn );
 	
 	DiffRgn( exposed, window->strucRgn, exposed );
 	
