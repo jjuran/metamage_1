@@ -177,29 +177,6 @@ Ptr draw_one_byte( Ptr      start,
 }
 
 static
-Ptr draw_masked_byte( Ptr      start,
-                      uint8_t  mask,
-                      short    transfer_mode_AND_0x03,
-                      uint8_t  pattern_sample )
-{
-	Ptr p = start;
-	
-	const uint8_t src = pattern_sample & mask;
-	
-	switch ( transfer_mode_AND_0x03 )
-	{
-		// Use src vs. pat modes because we stripped off the 8 bit
-		
-		case srcCopy:  *p   &= ~mask;  // fall through
-		case srcOr:    *p++ |=  src;  break;
-		case srcXor:   *p++ ^=  src;  break;
-		case srcBic:   *p++ &= ~src;  break;
-	}
-	
-	return p;
-}
-
-static
 Ptr draw_even_segment( Ptr      start,
                        short    n_bytes,
                        short    transfer_mode_AND_0x03,
@@ -277,10 +254,10 @@ Ptr draw_segment( Ptr      start,
 			n_pixels_drawn = 0;
 		}
 		
-		p = draw_masked_byte( p,
+		p = draw_masked_byte( pattern_sample,
 		                      mask,
-		                      transfer_mode_AND_0x03,
-		                      pattern_sample );
+		                      p,
+		                      transfer_mode_AND_0x03 );
 	}
 	
 	if ( n_pixels_drawn > 0 )
@@ -301,10 +278,10 @@ Ptr draw_segment( Ptr      start,
 			
 			const uint8_t mask = -(1 << n_pixels_skipped);
 			
-			p = draw_masked_byte( p,
+			p = draw_masked_byte( pattern_sample,
 			                      mask,
-			                      transfer_mode_AND_0x03,
-			                      pattern_sample );
+			                      p,
+			                      transfer_mode_AND_0x03 );
 		}
 	}
 	

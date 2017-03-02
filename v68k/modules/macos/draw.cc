@@ -46,3 +46,28 @@ void get_refined_clip_region( const GrafPort&  port,
 	
 	SectRgn( port.clipRgn, result, result );
 }
+
+Ptr draw_masked_byte( uint8_t  byte,
+                      uint8_t  mask,
+                      Ptr      dst,
+                      short    transfer_mode_AND_0x07 )
+{
+	if ( transfer_mode_AND_0x07 >= 0x04 )
+	{
+		byte = ~byte;
+	}
+	
+	byte &= mask;
+	
+	switch ( transfer_mode_AND_0x07 )
+	{
+		// Use src vs. pat modes because we stripped off the 8 bit
+		
+		case srcCopy:  *dst   &= ~mask;  // fall through
+		case srcOr:    *dst++ |=  byte;  break;
+		case srcXor:   *dst++ ^=  byte;  break;
+		case srcBic:   *dst++ &= ~byte;  break;
+	}
+	
+	return dst;
+}
