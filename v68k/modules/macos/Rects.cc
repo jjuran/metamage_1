@@ -157,26 +157,6 @@ static void get_rectangular_op_params_for_rect( rectangular_op_params&  params,
 }
 
 static
-Ptr draw_one_byte( Ptr      start,
-                   short    transfer_mode_AND_0x03,
-                   uint8_t  src )
-{
-	Ptr p = start;
-	
-	switch ( transfer_mode_AND_0x03 )
-	{
-		// Use src vs. pat modes because we stripped off the 8 bit
-		
-		case srcCopy:  *p++  = src;  break;
-		case srcOr:    *p++ |= src;  break;
-		case srcXor:   *p++ ^= src;  break;
-		case srcBic:   *p++ &= src;  break;  // src is already negated
-	}
-	
-	return p;
-}
-
-static
 Ptr draw_even_segment( Ptr      start,
                        short    n_bytes,
                        short    transfer_mode_AND_0x03,
@@ -184,18 +164,13 @@ Ptr draw_even_segment( Ptr      start,
 {
 	Ptr p = start;
 	
-	if ( transfer_mode_AND_0x03 == srcBic )
-	{
-		pattern_sample = ~pattern_sample;
-	}
-	
 	uint32_t src = pattern_sample << 8 | pattern_sample;
 	
 	src |= src << 16;
 	
 	while ( (uintptr_t) p & 0x3 )
 	{
-		p = draw_one_byte( p, transfer_mode_AND_0x03, pattern_sample );
+		p = draw_masked_byte( pattern_sample, 0xFF, p, transfer_mode_AND_0x03 );
 		
 		if ( --n_bytes == 0 )
 		{
@@ -212,10 +187,10 @@ Ptr draw_even_segment( Ptr      start,
 		// Use src vs. pat modes because we stripped off the 8 bit
 		// For srcBic, src is already negated.
 		
-		case srcCopy:  while ( --n_longs >= 0 )  *q++  = src;  break;
-		case srcOr:    while ( --n_longs >= 0 )  *q++ |= src;  break;
-		case srcXor:   while ( --n_longs >= 0 )  *q++ ^= src;  break;
-		case srcBic:   while ( --n_longs >= 0 )  *q++ &= src;  break;
+		case srcCopy:  while ( --n_longs >= 0 )  *q++  =  src;  break;
+		case srcOr:    while ( --n_longs >= 0 )  *q++ |=  src;  break;
+		case srcXor:   while ( --n_longs >= 0 )  *q++ ^=  src;  break;
+		case srcBic:   while ( --n_longs >= 0 )  *q++ &= ~src;  break;
 	}
 	
 	p = (Ptr) q;
@@ -224,7 +199,7 @@ Ptr draw_even_segment( Ptr      start,
 	
 	while ( --n_bytes >= 0 )
 	{
-		p = draw_one_byte( p, transfer_mode_AND_0x03, pattern_sample );
+		p = draw_masked_byte( pattern_sample, 0xFF, p, transfer_mode_AND_0x03 );
 	}
 	
 	return p;
