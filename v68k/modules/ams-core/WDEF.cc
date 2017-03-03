@@ -491,6 +491,11 @@ long WDEF_0_DrawGIcon( short varCode, WindowPtr w )
 	
 	EraseRect( &grow_box );
 	
+	if ( ! window->hilited )
+	{
+		return 0;
+	}
+	
 	const Rect mini_box =
 	{
 		grow_box.top  + 4,
