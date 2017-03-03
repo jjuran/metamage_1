@@ -682,12 +682,13 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	
 	OffsetRgn( window->updateRgn, dh, dv );
 	
-	/*
-		Set the visRgn of the window's port.  We don't have CalcVis() yet,
-		but this works for a single window.
-	*/
+	// Recalc the visRgn of this window and those below it.
 	
-	SectRgn( window->contRgn, GrayRgn, w->visRgn );
+	XorRgn( uncovered, window->strucRgn, uncovered );
+	
+	CalcVBehind_patch( window, uncovered );
+	
+	XorRgn( uncovered, window->strucRgn, uncovered );
 	
 	/*
 		Further clip to the visible part of the old structure (translated).
