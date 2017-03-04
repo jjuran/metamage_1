@@ -17,6 +17,9 @@
 // iota
 #include "iota/freestore_free.hh"
 
+// command
+#include "command/get_option.hh"
+
 // ams-common
 #include "callouts.hh"
 
@@ -28,6 +31,7 @@
 #include "Icons.hh"
 #include "IntlUtils.hh"
 #include "Menus.hh"
+#include "options.hh"
 #include "Scrap.hh"
 #include "StandardFile.hh"
 #include "StrUtils.hh"
@@ -40,6 +44,21 @@
 #define PROGRAM  "ams-ui"
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
+
+
+enum
+{
+	Opt_last_byte = 255,
+	
+	Opt_debug_updates,
+};
+
+static command::option options[] =
+{
+	{ "debug-updates", Opt_debug_updates },
+	
+	NULL,
+};
 
 
 BitMap IconBitmap : 0x0A0E;
@@ -291,11 +310,36 @@ void install_IconUtilities()
 	TBTRAP( IconDispatch );  // ABC9
 }
 
+static
+char* const* get_options( char** argv )
+{
+	using command::global_result;
+	
+	int opt;
+	
+	++argv;  // skip arg 0
+	
+	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
+	{
+		switch ( opt )
+		{
+			case Opt_debug_updates:
+				debug_updates = true;
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	return argv;
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc > 0 )
 	{
-		char* const* args = ++argv;
+		char* const* args = get_options( argv );
 		
 		if ( *args != NULL )
 		{

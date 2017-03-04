@@ -22,6 +22,9 @@
 // iota
 #include "iota/swap.hh"
 
+// mac-sys-utils
+#include "mac_sys/delay.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -31,6 +34,7 @@
 #include "desktop.hh"
 #include "MBDF.hh"
 #include "modal_updating.hh"
+#include "options.hh"
 #include "scoped_port.hh"
 #include "StrUtils.hh"
 #include "WDEF.hh"
@@ -90,6 +94,16 @@ RgnHandle QDGlobalToLocalRegion( GrafPtr port, RgnHandle rgn )
 	const Rect& bounds = port->portBits.bounds;
 	
 	OffsetRgn( rgn, bounds.left, bounds.top );
+	
+	return rgn;
+}
+
+static
+RgnHandle QDLocalToGlobalRegion( GrafPtr port, RgnHandle rgn )
+{
+	const Rect& bounds = port->portBits.bounds;
+	
+	OffsetRgn( rgn, -bounds.left, -bounds.top );
 	
 	return rgn;
 }
@@ -1319,6 +1333,35 @@ pascal void BeginUpdate_patch( struct GrafPort* window )
 	SectRgn( SaveVisRgn, w->updateRgn, window->visRgn );
 	
 	SetEmptyRgn( w->updateRgn );
+	
+	if ( debug_updates )
+	{
+		QDGlobals& qd = get_QDGlobals();
+		
+		scoped_port thePort = WMgrPort;
+		
+		ClipRect( &WMgrPort->portRect );
+		
+		QDLocalToGlobalRegion( window, window->visRgn );
+		
+		PenSize( 2, 2 );
+		
+		FrameRgn( window->visRgn );
+		
+		mac::sys::delay( 15 );
+		
+		FillRgn( window->visRgn, &qd.ltGray );
+		
+		FrameRgn( window->visRgn );
+		
+		PenSize( 1, 1 );
+		
+		mac::sys::delay( 45 );
+		
+		EraseRgn( window->visRgn );
+		
+		QDGlobalToLocalRegion( window, window->visRgn );
+	}
 }
 
 pascal void EndUpdate_patch( struct GrafPort* window )
