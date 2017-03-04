@@ -777,11 +777,6 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	XorRgn( OldStructure, w->strucRgn, OldStructure );
 	XorRgn( OldContent,   w->contRgn,  OldContent   );
 	
-	if ( w->visible )
-	{
-		SectRgn( w->contRgn, GrayRgn, window->visRgn );
-	}
-	
 	RgnHandle exposed = OldStructure;
 	
 	UnionRgn( OldStructure, OldContent, exposed );
@@ -802,6 +797,7 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	SaveUpdate = update;
 	
 	PaintBehind_patch( w, exposed );
+	CalcVBehind_patch( w, exposed );
 }
 
 pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
