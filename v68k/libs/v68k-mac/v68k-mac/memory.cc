@@ -24,6 +24,14 @@ namespace mac  {
 enum
 {
 	tag_SysEvtMask,
+	tag_SysEvtBuf,
+	tag_SysEvtBuf_low_word,
+	tag_EventQueue,
+	tag_EventQueue_1,
+	tag_EventQueue_2,
+	tag_EventQueue_3,
+	tag_EventQueue_4,
+	tag_EvtBufCnt,
 	tag_Ticks,
 	tag_Ticks_low_word,
 	tag_MBState_etc,
@@ -101,6 +109,9 @@ static const global globals[] =
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 0x82, 64              },  // ScreenRow
 	{ 0x0144, 2,    tag_SysEvtMask  },
+	{ 0x0146, 4,    tag_SysEvtBuf   },
+	{ 0x014A, 10,   tag_EventQueue  },
+	{ 0x0154, 2,    tag_EvtBufCnt   },
 	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0172, 2,    tag_MBState_etc },  // MBState, Tocks
 	{ 0x017A, 2,    tag_KeyMods     },  // (undocumented)
