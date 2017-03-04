@@ -608,9 +608,11 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	{
 		qd.thePort = WMgrPort;
 		
-		// Clip to the gray region.
+		// Clip to the gray region minus any nearer windows' structure.
 		
 		SetClip( GrayRgn );
+		
+		ClipAbove( w );
 		
 		// Set the uncovered region to the visible portion of the window.
 		
