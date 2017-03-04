@@ -498,9 +498,7 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 		
 		uncovered = NewRgn();
 		
-		CopyRgn( window->strucRgn, uncovered );
-		
-		SectRgn( uncovered, WMgrPort->clipRgn, uncovered );
+		SectRgn( window->strucRgn, WMgrPort->clipRgn, uncovered );
 	}
 	
 	// Use the structure region's bounding box as the srcRect for blitting.
