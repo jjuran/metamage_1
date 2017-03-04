@@ -1153,7 +1153,8 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	
 	remove_from_window_list( window );
 	
-	PaintBehind( (WindowRef) window->nextWindow, window->strucRgn );
+	PaintBehind_patch( window->nextWindow, window->strucRgn );
+	CalcVBehind_patch( window->nextWindow, window->strucRgn );
 	
 	if ( frontmost  &&  WindowList != NULL )
 	{
