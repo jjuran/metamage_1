@@ -22,29 +22,29 @@
 
 
 static inline
-asm void lock_screen()
+asm void inline_lock_screen()
 {
 	JSR  0xFFFFFFEC
 }
 
 static inline
-asm void unlock_screen()
+asm void inline_unlock_screen()
 {
 	JSR  0xFFFFFFEA
 }
 
-screen_lock::screen_lock()
+void lock_screen()
 {
 	if ( synchronized_quickdraw )
 	{
-		lock_screen();
+		inline_lock_screen();
 	}
 }
 
-screen_lock::~screen_lock()
+void unlock_screen()
 {
 	if ( synchronized_quickdraw )
 	{
-		unlock_screen();
+		inline_unlock_screen();
 	}
 }
