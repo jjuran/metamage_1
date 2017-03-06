@@ -11,6 +11,9 @@
 #endif
 
 
+Ptr ScrnBase : 0x0824;
+
+
 void get_refined_clip_region( const GrafPort&  port,
                               const Rect&      dstRect,
                               RgnHandle        result )
@@ -38,11 +41,14 @@ void get_refined_clip_region( const GrafPort&  port,
 	
 	RectRgn( result, &clipRect );
 	
-	OffsetRgn( result, -csdx, -csdy );  // convert to global coordinates
-	
-	SectRgn( port.visRgn, result, result );
-	
-	OffsetRgn( result, csdx, csdy );  // convert back to local coordinates
+	if ( port.portBits.baseAddr == ScrnBase )
+	{
+		OffsetRgn( result, -csdx, -csdy );  // convert to global coordinates
+		
+		SectRgn( port.visRgn, result, result );
+		
+		OffsetRgn( result, csdx, csdy );  // convert back to local coordinates
+	}
 	
 	SectRgn( port.clipRgn, result, result );
 }
