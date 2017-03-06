@@ -36,9 +36,9 @@ void get_refined_clip_region( const GrafPort&  port,
 	SectRect( &dstRect,              &clipRect, &clipRect );
 	SectRect( &port.portBits.bounds, &clipRect, &clipRect );
 	
-	OffsetRect( &clipRect, -csdx, -csdy );  // convert to global coordinates
-	
 	RectRgn( result, &clipRect );
+	
+	OffsetRgn( result, -csdx, -csdy );  // convert to global coordinates
 	
 	SectRgn( port.visRgn, result, result );
 	
