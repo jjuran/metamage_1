@@ -36,6 +36,8 @@ Point  Mouse : 0x0830;
 
 const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
 
+static const timeval zero_timeout = { 0, 0 };
+
 static timeval wait_timeout;
 
 static
@@ -305,7 +307,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 		First timeout is zero, so we can process update events.
 	*/
 	
-	wait_timeout = timeval_from_ticks( 0 );
+	wait_timeout = zero_timeout;
 	
 	do
 	{
