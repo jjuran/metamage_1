@@ -102,6 +102,8 @@ static void install_MemoryManager()
 static void install_OSUtils()
 {
 	OSTRAP( Delay     );  // A03B
+	TBTRAP( Enqueue   );  // A96E
+	TBTRAP( Dequeue   );  // A96F
 	TBTRAP( TickCount );  // A975
 	TBTRAP( SysBeep   );  // A9C8
 }
