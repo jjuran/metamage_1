@@ -34,6 +34,7 @@
 #include "Handles.hh"
 #include "InitGraf.hh"
 #include "Menus.hh"
+#include "OSEvents.hh"
 #include "OSUtils.hh"
 #include "QDUtils.hh"
 #include "Pen.hh"
@@ -260,6 +261,8 @@ static void install_Menus()
 
 static void install_EventManager()
 {
+	OSTRAP( PostEvent );  // A02F
+	
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970
 }
