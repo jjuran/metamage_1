@@ -7,9 +7,15 @@
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
 
 // POSIX
 #include <unistd.h>
+
+// Standard C
+#include <stdlib.h>
 
 // command
 #include "command/get_option.hh"
@@ -61,6 +67,10 @@ static command::option options[] =
 };
 
 
+void* SysEvtBuf : 0x0146;
+QHdr EventQueue : 0x014A;
+short SysEvtCnt : 0x0154;
+
 unsigned long ScrnBase : 0x0824;
 Point         Mouse    : 0x0830;
 
@@ -83,6 +93,13 @@ enum
 
 static void initialize_low_memory_globals()
 {
+	const short n_max_events = 20;
+	
+	const int event_size = 4 + sizeof (EvQEl);
+	
+	SysEvtBuf = calloc( event_size, n_max_events );
+	SysEvtCnt = n_max_events - 1;
+	
 	ScrnBase = 0x0001A700;
 	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
