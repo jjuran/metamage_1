@@ -93,7 +93,7 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	{
 		EventRecord event;
 		
-		const bool eventful = WaitNextEvent( mouseUp, &event, sleep, mouseRgn );
+		const bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
 		
 		// Events for DAs won't occur here, so we don't need to check.
 		

@@ -676,7 +676,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 		
 		EventRecord event;
 		
-		if ( WaitNextEvent( mouseUp, &event, 0x7fffffff, mouseRgn ) )
+		if ( WaitNextEvent( mUpMask, &event, 0x7fffffff, mouseRgn ) )
 		{
 			if ( event.what == mouseUp )
 			{
@@ -846,7 +846,7 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	{
 		EventRecord event;
 		
-		const bool eventful = WaitNextEvent( mouseUp, &event, sleep, mouseRgn );
+		const bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
 		
 		// Events for DAs won't occur here, so we don't need to check.
 		
