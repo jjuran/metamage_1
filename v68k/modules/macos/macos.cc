@@ -261,7 +261,9 @@ static void install_Menus()
 
 static void install_EventManager()
 {
-	OSTRAP( PostEvent );  // A02F
+	OSTRAP( PostEvent    );  // A02F
+	OSTRAP( OSEventAvail );  // A030
+	OSTRAP( GetOSEvent   );  // A031
 	
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970

@@ -77,3 +77,56 @@ pascal short PostEvent_patch( short what : __A0, long msg : __D0 ) : __D0
 	
 	return noErr;
 }
+
+static
+QElemPtr find_an_event( short mask : __D0, EventRecord* event : __A0 )
+{
+	QElemPtr it = EventQueue.qHead;
+	
+	while ( it != NULL )
+	{
+		EvQEl* el = (EvQEl*) it;
+		
+		if ( (1 << el->evtQWhat) & mask )
+		{
+			EventRecord* ev = (EventRecord*) &el->evtQWhat;
+			
+			*event = *ev;
+			
+			return it;
+		}
+		
+		it = it->qLink;
+	}
+	
+	event->what      = nullEvent;
+	event->message   = 0;
+	event->when      = Ticks;
+	event->where     = Mouse;
+	event->modifiers = get_modifiers();
+	
+	return NULL;
+}
+
+pascal char OSEventAvail_patch( short mask : __D0, EventRecord* event : __A0 ) : __D0
+{
+	QElemPtr it = find_an_event( mask, event );
+	
+	return -(it == NULL);
+}
+
+pascal char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 ) : __D0
+{
+	QElemPtr it = find_an_event( mask, event );
+	
+	if ( it != NULL )
+	{
+		Dequeue( it, &EventQueue );
+		
+		EvQEl* el = (EvQEl*) it;
+		
+		el->qType = 0;
+	}
+	
+	return -(it == NULL);
+}
