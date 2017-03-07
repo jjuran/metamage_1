@@ -129,7 +129,8 @@ short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 	
 	if ( action == 0 )
 	{
-		event.what = mouseDown;
+		PostEvent( mouseDown, 0 );
+		PostEvent( mouseUp,   0 );
 		
 		return mouseUp;
 	}
@@ -137,6 +138,8 @@ short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 	MBState = action == 1 ? 0x00 : 0x80;
 	
 	event.what = action + (mouseDown - splode::pointer::down);
+	
+	PostEvent( event.what, 0 );
 	
 	return 0;
 }
@@ -163,12 +166,15 @@ short populate( EventRecord& event, const splode::ascii_event_buffer& buffer )
 	
 	if ( action == 0 )
 	{
-		event.what = keyDown;
+		PostEvent( keyDown, event.message );
+		PostEvent( keyUp,   event.message );
 		
 		return keyUp;
 	}
 	
 	event.what = action + (keyDown - splode::key::down);
+	
+	PostEvent( event.what, event.message );
 	
 	return 0;
 }
@@ -183,9 +189,11 @@ void SetMouse( const splode::pointer_location_buffer& buffer )
 }
 
 static
-EventKind read_event( int fd, EventRecord& event )
+EventKind queue_event( int fd )
 {
 	unsigned char buffer[ 256 ];
+	
+	EventRecord event;
 	
 	/*
 		Reading 0 bytes from a normal stream yields 0, but an eventtap stream
@@ -215,7 +223,10 @@ EventKind read_event( int fd, EventRecord& event )
 			
 			event.what    = keyDown;
 			event.message = ((ascii_synth_buffer*) buffer)->ascii;
-			return keyUp;
+			
+			PostEvent( keyDown, event.message );
+			PostEvent( keyUp,   event.message );
+			break;
 		
 		case 3:
 			using splode::pointer_event_buffer;
@@ -238,55 +249,13 @@ EventKind read_event( int fd, EventRecord& event )
 }
 
 static
-bool get_event( int fd, EventRecord* event )
-{
-	static EventRecord queued_event;
-	
-	if ( queued_event.what )
-	{
-		*event = queued_event;
-		
-		queued_event.what = 0;
-		
-		return true;
-	}
-	
-	EventKind kind_to_queue = 0;
-	
-	memset( event, '\0', sizeof (EventRecord) );
-	
-	if ( wait_for_fd( fd, &wait_timeout ) )
-	{
-		kind_to_queue = read_event( fd, *event );
-	}
-	
-	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
-	
-	event->when  = Ticks;
-	event->where = Mouse;
-	
-	event->modifiers |= MBState;
-	
-	if ( kind_to_queue )
-	{
-		queued_event = *event;
-		
-		queued_event.what = kind_to_queue;
-	}
-	
-	return event->what != nullEvent;
-}
-
-static
 void wait_for_user_input()
 {
 	while ( wait_for_fd( events_fd, &wait_timeout ) )
 	{
 		wait_timeout = zero_timeout;
 		
-		#if 0
 		queue_event( events_fd );
-		#endif
 	}
 }
 
@@ -326,14 +295,25 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
+	poll_user_input();
+	
 	// TODO:  Check for activate events
 	
-	if ( get_event( events_fd, event ) )
+	if ( get_lowlevel_event( eventMask, event ) )
 	{
 		return true;
 	}
 	
-	return CheckUpdate( event );
+	if ( CheckUpdate( event ) )
+	{
+		return true;
+	}
+	
+	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
+	
+	wait_for_user_input();
+	
+	return get_lowlevel_event( eventMask, event );
 }
 
 static inline
