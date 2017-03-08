@@ -344,7 +344,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	
 	wait_timeout = zero_timeout;
 	
-	do
+	while ( true )
 	{
 		const bool got = GetNextEvent( eventMask, event );
 		
@@ -363,9 +363,13 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 		
 		now = Ticks;
 		
+		if ( now >= future )
+		{
+			break;
+		}
+		
 		wait_timeout = timeval_from_ticks( future - now );
 	}
-	while ( now < future );
 	
 	return false;
 }
