@@ -393,8 +393,8 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		{
 			blit_masked_bits( *srcBits,
 			                  *dstBits,
-			                  dstLeft - srcLeft,
-			                  dstTop  - srcTop,
+			                  dstRect->left - srcRect->left,
+			                  dstRect->top  - srcRect->top,
 			                  mode,
 			                  clipRgn,
 			                  blit );
