@@ -30,8 +30,9 @@
 #include "options.hh"
 
 
-UInt32 Ticks : 0x016A;
-Point  Mouse : 0x0830;
+UInt32 Ticks   : 0x016A;
+Byte   MBState : 0x0172;
+Point  Mouse   : 0x0830;
 
 
 const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
@@ -117,6 +118,8 @@ short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 		
 		return mouseUp;
 	}
+	
+	MBState = action == 1 ? 0x00 : 0x80;
 	
 	event.what = action + (mouseDown - splode::pointer::down);
 	
@@ -244,6 +247,8 @@ bool get_event( int fd, EventRecord* event )
 	
 	event->when  = Ticks;
 	event->where = Mouse;
+	
+	event->modifiers |= MBState;
 	
 	if ( kind_to_queue )
 	{
