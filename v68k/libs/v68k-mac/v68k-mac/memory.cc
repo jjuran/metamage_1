@@ -26,6 +26,7 @@ enum
 	tag_SysEvtMask,
 	tag_Ticks,
 	tag_Ticks_low_word,
+	tag_MBState_etc,
 	tag_MemErr,
 	tag_ScrnBase,
 	tag_ScrnBase_low_word,
@@ -100,6 +101,7 @@ static const global globals[] =
 	{ 0x0106, 0x82, 64              },  // ScreenRow
 	{ 0x0144, 2,    tag_SysEvtMask  },
 	{ 0x016A, 0x44, tag_Ticks       },
+	{ 0x0172, 2,    tag_MBState_etc },  // MBState, Tocks
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0824, 4,    tag_ScrnBase    },
