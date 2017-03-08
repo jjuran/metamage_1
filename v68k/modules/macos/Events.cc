@@ -277,6 +277,12 @@ bool get_event( int fd, EventRecord* event )
 	return event->what != nullEvent;
 }
 
+pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
+                                         EventRecord*    event )
+{
+	return get_event( events_fd, event );
+}
+
 static inline
 asm UInt32 add_pinned( UInt32 a : __D0, UInt32 b : __D1 ) : __D0
 {
@@ -360,10 +366,4 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	while ( now < future );
 	
 	return false;
-}
-
-pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
-                                         EventRecord*    event )
-{
-	return get_event( events_fd, event );
 }
