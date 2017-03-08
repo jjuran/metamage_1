@@ -32,6 +32,7 @@
 
 UInt32 Ticks   : 0x016A;
 Byte   MBState : 0x0172;
+UInt16 KeyMods : 0x017A;
 Point  Mouse   : 0x0830;
 
 
@@ -100,6 +101,16 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 }
 
 static
+UInt16 keymods_from_modifiers_high_byte( uint8_t mod )
+{
+	UInt16 result = mod;
+	
+	result = result >> 1 | result << 15;
+	
+	return result;
+}
+
+static
 short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 {
 	using namespace splode::modes;
@@ -108,7 +119,11 @@ short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	
-	event.modifiers = (buffer.modes & mode_mask) << 8;
+	const uint8_t mod = buffer.modes & mode_mask;
+	
+	KeyMods = keymods_from_modifiers_high_byte( mod );
+	
+	event.modifiers = mod << 8;
 	
 	const uint8_t action = buffer.attrs & action_mask;
 	
@@ -139,6 +154,8 @@ short populate( EventRecord& event, const splode::ascii_event_buffer& buffer )
 	const uint8_t attr_mask = Alpha;
 	
 	const uint8_t mod = (buffer.modes & mode_mask) | (buffer.attrs & attr_mask);
+	
+	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
 	event.modifiers = mod << 8;
 	
