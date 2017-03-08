@@ -280,7 +280,14 @@ bool get_event( int fd, EventRecord* event )
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
-	return get_event( events_fd, event );
+	// TODO:  Check for activate events
+	
+	if ( get_event( events_fd, event ) )
+	{
+		return true;
+	}
+	
+	return CheckUpdate( event );
 }
 
 static inline
@@ -351,11 +358,6 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 			event->what    = osEvt;
 			event->message = mouseMovedMessage << 24;
 			
-			return true;
-		}
-		
-		if ( CheckUpdate( event ) )
-		{
 			return true;
 		}
 		
