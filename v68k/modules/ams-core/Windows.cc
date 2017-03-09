@@ -454,6 +454,8 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	if ( visible )
 	{
 		RectRgn( port->visRgn, bounds );
+		
+		CurActivate = (WindowRef) window;
 	}
 	else
 	{
