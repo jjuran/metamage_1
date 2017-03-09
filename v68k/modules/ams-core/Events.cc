@@ -19,7 +19,11 @@
 #include "splode.hh"
 
 
-UInt32 Ticks   : 0x016A;
+UInt32 Ticks : 0x016A;
+Point  Mouse : 0x0830;
+
+WindowRef CurActivate : 0x0A64;
+WindowRef CurDeactive : 0x0A68;
 
 
 const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
@@ -60,7 +64,31 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	
 	poll_user_input();
 	
-	// TODO:  Check for activate events
+	if ( CurDeactive )
+	{
+		event->what      = activateEvt;
+		event->message   = (long) CurDeactive;
+		event->when      = Ticks;
+		event->where     = Mouse;
+		event->modifiers = 0;
+		
+		CurDeactive = NULL;
+		
+		return true;
+	}
+	
+	if ( CurActivate )
+	{
+		event->what      = activateEvt;
+		event->message   = (long) CurActivate;
+		event->when      = Ticks;
+		event->where     = Mouse;
+		event->modifiers = activeFlag;
+		
+		CurActivate = NULL;
+		
+		return true;
+	}
 	
 	if ( get_lowlevel_event( eventMask, event ) )
 	{
