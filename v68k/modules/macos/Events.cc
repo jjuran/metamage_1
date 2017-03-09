@@ -183,7 +183,7 @@ void SetMouse( const splode::pointer_location_buffer& buffer )
 }
 
 static
-EventKind read_event( int fd, EventRecord* event )
+EventKind read_event( int fd, EventRecord& event )
 {
 	unsigned char buffer[ 256 ];
 	
@@ -213,19 +213,19 @@ EventKind read_event( int fd, EventRecord* event )
 		case 1:
 			using splode::ascii_synth_buffer;
 			
-			event->what    = keyDown;
-			event->message = ((ascii_synth_buffer*) buffer)->ascii;
+			event.what    = keyDown;
+			event.message = ((ascii_synth_buffer*) buffer)->ascii;
 			return keyUp;
 		
 		case 3:
 			using splode::pointer_event_buffer;
 			
-			return populate( *event, *(pointer_event_buffer*) buffer );
+			return populate( event, *(pointer_event_buffer*) buffer );
 		
 		case 4:
 			using splode::ascii_event_buffer;
 			
-			return populate( *event, *(ascii_event_buffer*) buffer );
+			return populate( event, *(ascii_event_buffer*) buffer );
 		
 		case 5:
 			using splode::pointer_location_buffer;
@@ -257,7 +257,7 @@ bool get_event( int fd, EventRecord* event )
 	
 	if ( wait_for_fd( fd, &wait_timeout ) )
 	{
-		kind_to_queue = read_event( fd, event );
+		kind_to_queue = read_event( fd, *event );
 	}
 	
 	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
