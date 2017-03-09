@@ -277,6 +277,52 @@ bool get_event( int fd, EventRecord* event )
 	return event->what != nullEvent;
 }
 
+static
+void wait_for_user_input()
+{
+	while ( wait_for_fd( events_fd, &wait_timeout ) )
+	{
+		wait_timeout = zero_timeout;
+		
+		#if 0
+		queue_event( events_fd );
+		#endif
+	}
+}
+
+static
+void poll_user_input()
+{
+	wait_timeout = zero_timeout;
+	
+	wait_for_user_input();
+}
+
+static
+bool get_lowlevel_event( short eventMask, EventRecord* event )
+{
+	const short lowlevel_event_mask = mDownMask   | mUpMask
+	                                | keyDownMask | keyUpMask | autoKeyMask
+	                                | diskMask;
+	
+	eventMask &= lowlevel_event_mask;
+	
+	if ( eventMask != autoKeyMask )
+	{
+		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
+		{
+			return true;
+		}
+	}
+	
+	if ( eventMask & autoKeyMask )
+	{
+		return GetOSEvent( eventMask, event );
+	}
+	
+	return false;
+}
+
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
