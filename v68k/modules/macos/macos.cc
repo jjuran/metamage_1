@@ -7,9 +7,15 @@
 #ifndef __TRAPS__
 #include <Traps.h>
 #endif
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
 
 // POSIX
 #include <unistd.h>
+
+// Standard C
+#include <stdlib.h>
 
 // command
 #include "command/get_option.hh"
@@ -28,6 +34,7 @@
 #include "Handles.hh"
 #include "InitGraf.hh"
 #include "Menus.hh"
+#include "OSEvents.hh"
 #include "OSUtils.hh"
 #include "QDUtils.hh"
 #include "Pen.hh"
@@ -61,6 +68,10 @@ static command::option options[] =
 };
 
 
+void* SysEvtBuf : 0x0146;
+QHdr EventQueue : 0x014A;
+short SysEvtCnt : 0x0154;
+
 unsigned long ScrnBase : 0x0824;
 Point         Mouse    : 0x0830;
 
@@ -83,6 +94,13 @@ enum
 
 static void initialize_low_memory_globals()
 {
+	const short n_max_events = 20;
+	
+	const int event_size = 4 + sizeof (EvQEl);
+	
+	SysEvtBuf = calloc( event_size, n_max_events );
+	SysEvtCnt = n_max_events - 1;
+	
 	ScrnBase = 0x0001A700;
 	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
@@ -102,6 +120,8 @@ static void install_MemoryManager()
 static void install_OSUtils()
 {
 	OSTRAP( Delay     );  // A03B
+	TBTRAP( Enqueue   );  // A96E
+	TBTRAP( Dequeue   );  // A96F
 	TBTRAP( TickCount );  // A975
 	TBTRAP( SysBeep   );  // A9C8
 }
@@ -241,6 +261,10 @@ static void install_Menus()
 
 static void install_EventManager()
 {
+	OSTRAP( PostEvent    );  // A02F
+	OSTRAP( OSEventAvail );  // A030
+	OSTRAP( GetOSEvent   );  // A031
+	
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970
 }

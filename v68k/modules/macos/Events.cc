@@ -111,7 +111,16 @@ UInt16 keymods_from_modifiers_high_byte( uint8_t mod )
 }
 
 static
-short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
+void post_event( const splode::ascii_synth_buffer& buffer )
+{
+	const UInt32 message = buffer.ascii;
+	
+	PostEvent( keyDown, message );
+	PostEvent( keyUp,   message );
+}
+
+static
+void post_event( const splode::pointer_event_buffer& buffer )
 {
 	using namespace splode::modes;
 	using namespace splode::pointer;
@@ -123,32 +132,31 @@ short populate( EventRecord& event, const splode::pointer_event_buffer& buffer )
 	
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
-	event.modifiers = mod << 8;
-	
 	const uint8_t action = buffer.attrs & action_mask;
 	
 	if ( action == 0 )
 	{
-		event.what = mouseDown;
+		PostEvent( mouseDown, 0 );
+		PostEvent( mouseUp,   0 );
 		
-		return mouseUp;
+		return;
 	}
 	
 	MBState = action == 1 ? 0x00 : 0x80;
 	
-	event.what = action + (mouseDown - splode::pointer::down);
+	const short what = action + (mouseDown - splode::pointer::down);
 	
-	return 0;
+	PostEvent( what, 0 );
 }
 
 static
-short populate( EventRecord& event, const splode::ascii_event_buffer& buffer )
+void post_event( const splode::ascii_event_buffer& buffer )
 {
 	using namespace splode::modes;
 	using namespace splode::key;
 	using splode::uint8_t;
 	
-	event.message = buffer.ascii;
+	const UInt32 message = buffer.ascii;
 	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	const uint8_t attr_mask = Alpha;
@@ -157,20 +165,19 @@ short populate( EventRecord& event, const splode::ascii_event_buffer& buffer )
 	
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
-	event.modifiers = mod << 8;
-	
 	const uint8_t action = buffer.attrs & action_mask;
 	
 	if ( action == 0 )
 	{
-		event.what = keyDown;
+		PostEvent( keyDown, message );
+		PostEvent( keyUp,   message );
 		
-		return keyUp;
+		return;
 	}
 	
-	event.what = action + (keyDown - splode::key::down);
+	const short what = action + (keyDown - splode::key::down);
 	
-	return 0;
+	PostEvent( what, message );
 }
 
 static inline
@@ -183,7 +190,7 @@ void SetMouse( const splode::pointer_location_buffer& buffer )
 }
 
 static
-EventKind read_event( int fd, EventRecord& event )
+void queue_event( int fd )
 {
 	unsigned char buffer[ 256 ];
 	
@@ -211,21 +218,16 @@ EventKind read_event( int fd, EventRecord& event )
 			break;
 		
 		case 1:
-			using splode::ascii_synth_buffer;
-			
-			event.what    = keyDown;
-			event.message = ((ascii_synth_buffer*) buffer)->ascii;
-			return keyUp;
+			post_event( *(splode::ascii_synth_buffer*) buffer );
+			break;
 		
 		case 3:
-			using splode::pointer_event_buffer;
-			
-			return populate( event, *(pointer_event_buffer*) buffer );
+			post_event( *(splode::pointer_event_buffer*) buffer );
+			break;
 		
 		case 4:
-			using splode::ascii_event_buffer;
-			
-			return populate( event, *(ascii_event_buffer*) buffer );
+			post_event( *(splode::ascii_event_buffer*) buffer );
+			break;
 		
 		case 5:
 			using splode::pointer_location_buffer;
@@ -233,61 +235,74 @@ EventKind read_event( int fd, EventRecord& event )
 			SetMouse( *(pointer_location_buffer*) buffer );
 			break;
 	}
-	
-	return 0;
 }
 
 static
-bool get_event( int fd, EventRecord* event )
+void wait_for_user_input()
 {
-	static EventRecord queued_event;
-	
-	if ( queued_event.what )
+	while ( wait_for_fd( events_fd, &wait_timeout ) )
 	{
-		*event = queued_event;
+		wait_timeout = zero_timeout;
 		
-		queued_event.what = 0;
-		
-		return true;
+		queue_event( events_fd );
+	}
+}
+
+static
+void poll_user_input()
+{
+	wait_timeout = zero_timeout;
+	
+	wait_for_user_input();
+}
+
+static
+bool get_lowlevel_event( short eventMask, EventRecord* event )
+{
+	const short lowlevel_event_mask = mDownMask   | mUpMask
+	                                | keyDownMask | keyUpMask | autoKeyMask
+	                                | diskMask;
+	
+	eventMask &= lowlevel_event_mask;
+	
+	if ( eventMask != autoKeyMask )
+	{
+		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
+		{
+			return true;
+		}
 	}
 	
-	EventKind kind_to_queue = 0;
-	
-	memset( event, '\0', sizeof (EventRecord) );
-	
-	if ( wait_for_fd( fd, &wait_timeout ) )
+	if ( eventMask & autoKeyMask )
 	{
-		kind_to_queue = read_event( fd, *event );
+		return GetOSEvent( eventMask, event );
 	}
 	
-	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
-	
-	event->when  = Ticks;
-	event->where = Mouse;
-	
-	event->modifiers |= MBState;
-	
-	if ( kind_to_queue )
-	{
-		queued_event = *event;
-		
-		queued_event.what = kind_to_queue;
-	}
-	
-	return event->what != nullEvent;
+	return false;
 }
 
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
+	poll_user_input();
+	
 	// TODO:  Check for activate events
 	
-	if ( get_event( events_fd, event ) )
+	if ( get_lowlevel_event( eventMask, event ) )
 	{
 		return true;
 	}
 	
-	return CheckUpdate( event );
+	if ( CheckUpdate( event ) )
+	{
+		return true;
+	}
+	
+	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
+	
+	wait_for_user_input();
+	
+	return get_lowlevel_event( eventMask, event );
 }
 
 static inline
