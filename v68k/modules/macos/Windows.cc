@@ -435,6 +435,13 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	window->contRgn   = NewRgn();  if ( window->contRgn   == NULL )  goto fail_2;
 	window->updateRgn = NewRgn();  if ( window->updateRgn == NULL )  goto fail_3;
 	
+	SetWTitle_patch( window, title );
+	
+	if ( title != NULL  &&  title[ 0 ] != 0  &&  window->titleHandle == NULL )
+	{
+		goto fail_4;
+	}
+	
 	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
 	
 	MovePortTo( bounds->left, bounds->top );
@@ -467,6 +474,10 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	PaintOne_patch( window, window->strucRgn );
 	
 	return (WindowPtr) window;
+	
+fail_4:
+	
+	DisposeRgn( window->updateRgn );
 	
 fail_3:
 	
@@ -999,6 +1010,11 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	DisposeRgn( window->strucRgn  );
 	DisposeRgn( window->contRgn   );
 	DisposeRgn( window->updateRgn );
+	
+	if ( window->titleHandle )
+	{
+		DisposeHandle( (Handle) window->titleHandle );
+	}
 	
 	ClosePort( port );
 }
