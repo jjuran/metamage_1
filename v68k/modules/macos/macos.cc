@@ -27,6 +27,7 @@
 #include "CopyBits.hh"
 #include "Cursor.hh"
 #include "Debugger.hh"
+#include "Desk.hh"
 #include "Drag.hh"
 #include "Events.hh"
 #include "Fonts.hh"
@@ -269,6 +270,11 @@ static void install_EventManager()
 	TBTRAP( GetNextEvent  );  // A970
 }
 
+static void install_DeskManager()
+{
+	TBTRAP( SystemTask );  // A9B4
+}
+
 static void install_SegmentLoader()
 {
 	TBTRAP( LoadSeg     );  // A9F0
@@ -345,6 +351,8 @@ int main( int argc, char** argv )
 	install_Menus();
 	
 	install_EventManager();
+	
+	install_DeskManager();
 	
 	install_SegmentLoader();
 	
