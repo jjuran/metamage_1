@@ -249,12 +249,22 @@ void wait_for_user_input()
 }
 
 static
+void wait_for_user_input( unsigned long ticks )
+{
+	wait_timeout = timeval_from_ticks( ticks );
+	
+	wait_for_user_input();
+}
+
+static
 void poll_user_input()
 {
 	wait_timeout = zero_timeout;
 	
 	wait_for_user_input();
 }
+
+static unsigned long next_sleep;
 
 static
 bool get_lowlevel_event( short eventMask, EventRecord* event )
@@ -284,6 +294,10 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
+	const unsigned long sleep = next_sleep;
+	
+	next_sleep = 0;
+	
 	poll_user_input();
 	
 	// TODO:  Check for activate events
@@ -298,11 +312,23 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 		return true;
 	}
 	
-	wait_timeout = timeval_from_ticks( GetNextEvent_throttle );
+	wait_for_user_input( sleep );
 	
-	wait_for_user_input();
+	if ( get_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
 	
-	return get_lowlevel_event( eventMask, event );
+	/*
+		If at any point we return a non-null event, leave next_sleep set to
+		zero.  Otherwise, set it to a small but non-zero amount, so we only
+		waste a little CPU in applications that call GetNextEvent() instead
+		of WaitNextEvent(), rather than consuming one entirely.
+	*/
+	
+	next_sleep = GetNextEvent_throttle;
+	
+	return false;
 }
 
 static inline
@@ -327,8 +353,8 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	/*
 		Time is fleeting.  Keep a local, non-volatile copy of Ticks.
 		
-		In theory, Ticks could be (future - 1) at the end of the loop and
-		advance to (future + 1) before the timeval_from_ticks() call, since
+		In theory, Ticks could be (future - 1) when compared to future and
+		advance to (future + 1) when subtracted from future, since
 		each load of Ticks makes a fresh call to gettimeofday() (and the
 		same concern would apply it if were updated at interrupt time).
 	*/
@@ -357,7 +383,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 		First timeout is zero, so we can process update events.
 	*/
 	
-	wait_timeout = zero_timeout;
+	next_sleep = 0;
 	
 	while ( true )
 	{
@@ -383,7 +409,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 			break;
 		}
 		
-		wait_timeout = timeval_from_ticks( future - now );
+		next_sleep = future - now;
 	}
 	
 	return false;
