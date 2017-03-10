@@ -1,9 +1,9 @@
 /*
-	Desk.cc
-	-------
+	desktop.cc
+	----------
 */
 
-#include "Desk.hh"
+#include "desktop.hh"
 
 // Mac OS
 #ifndef __QUICKDRAW__

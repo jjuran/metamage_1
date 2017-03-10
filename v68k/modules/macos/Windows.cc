@@ -26,10 +26,10 @@
 #include "qd/region_detail.hh"
 
 // macos
-#include "Desk.hh"
 #include "MBDF.hh"
 #include "QDGlobals.hh"
 #include "WDEF.hh"
+#include "desktop.hh"
 #include "raster_lock.hh"
 
 
