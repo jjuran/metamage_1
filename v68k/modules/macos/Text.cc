@@ -18,6 +18,41 @@
 const Point OneOne : 0x0A02;
 
 
+pascal void DrawChar_patch( short c )
+{
+	DrawText_patch( (const char*) &c, 1, 1 );
+}
+
+pascal void DrawString_patch( const unsigned char* s )
+{
+	DrawText_patch( (const char*) s, 1, s[ 0 ] );
+}
+
+pascal void DrawText_patch( const char* buffer, short offset, short n )
+{
+	StdText( n, buffer + offset, OneOne, OneOne );
+}
+
+pascal short CharWidth_patch( short c )
+{
+	return TextWidth_patch( (const char*) &c, 1, 1 );
+}
+
+pascal short StringWidth_patch( const unsigned char* s )
+{
+	return TextWidth_patch( (const char*) s, 1, s[ 0 ] );
+}
+
+pascal short TextWidth_patch( const char* buffer, short offset, short n )
+{
+	Point numer = OneOne;
+	Point denom = OneOne;
+	
+	FontInfo info;
+	
+	return StdTxMeas( n, buffer + offset, &numer, &denom, &info );
+}
+
 static
 FMOutPtr get_FontInfo( FontInfo* info, Point numer, Point denom )
 {
