@@ -217,6 +217,8 @@ static void install_QuickDraw()
 static void install_Fonts()
 {
 	TBTRAP( InitFonts );  // A8FE
+	
+	TBTRAP( FMSwapFont );  // A901
 }
 
 static void install_Windows()
