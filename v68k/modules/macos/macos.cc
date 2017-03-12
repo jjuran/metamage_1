@@ -157,10 +157,14 @@ static void install_QuickDraw()
 	TBTRAP( DrawString  );  // A884
 	TBTRAP( DrawText    );  // A885
 	TBTRAP( TextWidth   );  // A886
-	
+	TBTRAP( TextFont    );  // A887
+	TBTRAP( TextFace    );  // A888
+	TBTRAP( TextMode    );  // A889
+	TBTRAP( TextSize    );  // A88A
 	TBTRAP( GetFontInfo );  // A88B
 	TBTRAP( StringWidth );  // A88C
 	TBTRAP( CharWidth   );  // A88D
+	TBTRAP( SpaceExtra  );  // A88E
 	
 	TBTRAP( StdLine );  // A890
 	TBTRAP( LineTo  );  // A891

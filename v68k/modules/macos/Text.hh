@@ -9,6 +9,13 @@
 struct FontInfo;
 struct Point;
 
+pascal void TextFont_patch( short font );
+pascal void TextFace_patch( short face );
+pascal void TextMode_patch( short mode );
+pascal void TextSize_patch( short size );
+
+pascal void SpaceExtra_patch( long extra );  // Fixed
+
 pascal void DrawChar_patch( short c );
 
 pascal void DrawString_patch( const unsigned char* s );

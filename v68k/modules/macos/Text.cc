@@ -18,6 +18,41 @@
 const Point OneOne : 0x0A02;
 
 
+pascal void TextFont_patch( short font )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txFont = font;
+}
+
+pascal void TextFace_patch( short face )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txFace = face;
+}
+
+pascal void TextMode_patch( short mode )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txMode = mode;
+}
+
+pascal void TextSize_patch( short size )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txSize = size;
+}
+
+pascal void SpaceExtra_patch( Fixed extra )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.spExtra = extra;
+}
+
 pascal void DrawChar_patch( short c )
 {
 	DrawText_patch( (const char*) &c, 1, 1 );
