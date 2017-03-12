@@ -43,6 +43,7 @@
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "Segments.hh"
+#include "Text.hh"
 #include "Windows.hh"
 #include "options.hh"
 
@@ -151,6 +152,9 @@ static void install_QuickDraw()
 	TBTRAP( BackPat     );  // A87C
 	TBTRAP( ClosePort   );  // A87D
 	
+	TBTRAP( StdText     );  // A882
+	TBTRAP( GetFontInfo );  // A88B
+	
 	TBTRAP( StdLine );  // A890
 	TBTRAP( LineTo  );  // A891
 	TBTRAP( Line    );  // A892
@@ -209,6 +213,7 @@ static void install_QuickDraw()
 	
 	TBTRAP( StdBits     );  // A8EB
 	TBTRAP( CopyBits    );  // A8EC
+	TBTRAP( StdTxMeas   );  // A8ED
 	
 	TBTRAP( GetPattern  );  // A9B8
 	TBTRAP( GetCursor   );  // A9B9
