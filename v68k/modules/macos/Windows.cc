@@ -114,7 +114,7 @@ pascal void ClipAbove_patch( WindowPeek window )
 
 pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 {
-	if ( clobbered_region == NULL )
+	if ( clobbered_region == NULL  ||  EmptyRgn( clobbered_region ) )
 	{
 		return;
 	}
