@@ -1,0 +1,236 @@
+/*
+	Text.cc
+	-------
+*/
+
+#include "Text.hh"
+
+// Mac OS
+#ifndef __FONTS__
+#include <Fonts.h>
+#endif
+
+// macos
+#include "QDGlobals.hh"
+#include "raster_lock.hh"
+
+
+const Point OneOne : 0x0A02;
+
+
+pascal void TextFont_patch( short font )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txFont = font;
+}
+
+pascal void TextFace_patch( short face )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txFace = face;
+}
+
+pascal void TextMode_patch( short mode )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txMode = mode;
+}
+
+pascal void TextSize_patch( short size )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.txSize = size;
+}
+
+pascal void SpaceExtra_patch( Fixed extra )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	port.spExtra = extra;
+}
+
+pascal void DrawChar_patch( short c )
+{
+	DrawText_patch( (const char*) &c, 1, 1 );
+}
+
+pascal void DrawString_patch( const unsigned char* s )
+{
+	DrawText_patch( (const char*) s, 1, s[ 0 ] );
+}
+
+pascal void DrawText_patch( const char* buffer, short offset, short n )
+{
+	StdText( n, buffer + offset, OneOne, OneOne );
+}
+
+pascal short CharWidth_patch( short c )
+{
+	return TextWidth_patch( (const char*) &c, 1, 1 );
+}
+
+pascal short StringWidth_patch( const unsigned char* s )
+{
+	return TextWidth_patch( (const char*) s, 1, s[ 0 ] );
+}
+
+pascal short TextWidth_patch( const char* buffer, short offset, short n )
+{
+	Point numer = OneOne;
+	Point denom = OneOne;
+	
+	FontInfo info;
+	
+	return StdTxMeas( n, buffer + offset, &numer, &denom, &info );
+}
+
+static
+FMOutPtr get_FontInfo( FontInfo* info, Point numer, Point denom )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	const FMInput input =
+	{
+		port.txFont,
+		port.txSize,
+		port.txFace,
+		false,
+		0,
+		numer,
+		denom,
+	};
+	
+	const FMOutPtr output = FMSwapFont( &input );
+	
+	info->ascent  = output->ascent;
+	info->descent = output->descent;
+	info->widMax  = output->widMax;
+	info->leading = output->leading;
+	
+	return output;
+}
+
+pascal void GetFontInfo_patch( FontInfo* info )
+{
+	get_FontInfo( info, OneOne, OneOne );
+}
+
+pascal short StdTxMeas_patch( short        n,
+                              const char*  p,
+                              Point*       numer,
+                              Point*       denom,
+                              FontInfo*    info )
+{
+	const FMOutPtr output = get_FontInfo( info, *numer, *denom );
+	
+	if ( output->fontHandle == NULL )
+	{
+		return 0;
+	}
+	
+	const FontRec& rec = **(FontRec**) output->fontHandle;
+	
+	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
+	
+	short result = 0;
+	
+	while ( --n >= 0 )
+	{
+		uint8_t c = *p++;
+		
+		if ( c > rec.lastChar )
+		{
+			c = rec.lastChar + 1;  // missing character glyph
+		}
+		
+		const int8_t character_width = owTable[ c ];
+		
+		result += character_width;
+	}
+	
+	return result;
+}
+
+pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	const FMInput input =
+	{
+		port.txFont,
+		port.txSize,
+		port.txFace,
+		port.pnVis >= 0,
+		0,
+		numer,
+		denom,
+	};
+	
+	const FMOutPtr output = FMSwapFont( &input );
+	
+	if ( output->fontHandle == NULL )
+	{
+		return;
+	}
+	
+	const FontRec& rec = **(FontRec**) output->fontHandle;
+	
+	const short* owTable = (short*) &rec.owTLoc + rec.owTLoc;
+	
+	const short rowBytes = rec.rowWords * 2;
+	
+	Ptr src = (Ptr) &rec + sizeof (FontRec);
+	
+	const short* locTable = (short*) (src + rec.fRectHeight * rowBytes);
+	
+	BitMap srcBits = { src, rowBytes, { 0, 0, rec.fRectHeight, rowBytes * 8 } };
+	
+	const BitMap& dstBits = port.portBits;
+	
+	Rect srcRect;
+	Rect dstRect;
+	
+	srcRect.top    = 0;
+	srcRect.bottom = rec.fRectHeight;
+	
+	dstRect.top    = port.pnLoc.v - rec.ascent;
+	dstRect.bottom = port.pnLoc.v - rec.ascent + rec.fRectHeight;
+	
+	raster_lock lock;
+	
+	while ( --n >= 0 )
+	{
+		uint8_t c = *p++;
+		
+		if ( c > rec.lastChar )
+		{
+			c = rec.lastChar + 1;  // missing character glyph
+		}
+		
+		// FIXME:  Check for -1
+		const int8_t* offset_width = (int8_t*) &owTable[ c ];
+		
+		const int8_t character_offset = *offset_width++;
+		const int8_t character_width  = *offset_width;
+		
+		const short this_offset = locTable[ c ];
+		const short next_offset = locTable[ c + 1 ];
+		
+		if ( const short width = next_offset - this_offset )
+		{
+			srcRect.left  = this_offset;
+			srcRect.right = next_offset;
+			
+			dstRect.left  = port.pnLoc.h + character_offset;
+			dstRect.right = port.pnLoc.h + character_offset + width;
+			
+			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, port.txMode, NULL );
+		}
+		
+		port.pnLoc.h += character_width;
+	}
+}

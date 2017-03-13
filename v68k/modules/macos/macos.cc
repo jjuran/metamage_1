@@ -43,6 +43,7 @@
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "Segments.hh"
+#include "Text.hh"
 #include "Windows.hh"
 #include "options.hh"
 
@@ -151,6 +152,20 @@ static void install_QuickDraw()
 	TBTRAP( BackPat     );  // A87C
 	TBTRAP( ClosePort   );  // A87D
 	
+	TBTRAP( StdText     );  // A882
+	TBTRAP( DrawChar    );  // A883
+	TBTRAP( DrawString  );  // A884
+	TBTRAP( DrawText    );  // A885
+	TBTRAP( TextWidth   );  // A886
+	TBTRAP( TextFont    );  // A887
+	TBTRAP( TextFace    );  // A888
+	TBTRAP( TextMode    );  // A889
+	TBTRAP( TextSize    );  // A88A
+	TBTRAP( GetFontInfo );  // A88B
+	TBTRAP( StringWidth );  // A88C
+	TBTRAP( CharWidth   );  // A88D
+	TBTRAP( SpaceExtra  );  // A88E
+	
 	TBTRAP( StdLine );  // A890
 	TBTRAP( LineTo  );  // A891
 	TBTRAP( Line    );  // A892
@@ -209,6 +224,7 @@ static void install_QuickDraw()
 	
 	TBTRAP( StdBits     );  // A8EB
 	TBTRAP( CopyBits    );  // A8EC
+	TBTRAP( StdTxMeas   );  // A8ED
 	
 	TBTRAP( GetPattern  );  // A9B8
 	TBTRAP( GetCursor   );  // A9B9
@@ -217,6 +233,8 @@ static void install_QuickDraw()
 static void install_Fonts()
 {
 	TBTRAP( InitFonts );  // A8FE
+	
+	TBTRAP( FMSwapFont );  // A901
 }
 
 static void install_Windows()
