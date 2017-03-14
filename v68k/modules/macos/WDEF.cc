@@ -102,6 +102,14 @@ short shadow_for_variant( short varCode )
 }
 
 static
+RgnHandle rectangular_utility_region()
+{
+	static RgnHandle rgn = NewRgn();
+	
+	return rgn;
+}
+
+static
 long toggle_close_box( WindowPeek window )
 {
 	static RgnHandle splat_rgn = make_splat();
@@ -338,13 +346,11 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	{
 		OffsetRect( &rect, shadow_px, shadow_px );
 		
-		RgnHandle shadow = NewRgn();
+		RgnHandle shadow = rectangular_utility_region();
 		
 		RectRgn( shadow, &rect );
 		
 		UnionRgn( window->strucRgn, shadow, window->strucRgn );
-		
-		DisposeRgn( shadow );
 	}
 	
 	return 0;
