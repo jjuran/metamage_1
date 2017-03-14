@@ -20,7 +20,7 @@
 // macos
 #include "draw.hh"
 #include "QDGlobals.hh"
-#include "raster_lock.hh"
+#include "redraw_lock.hh"
 
 
 static
@@ -247,9 +247,9 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	
 	static RgnHandle clipRgn = NewRgn();
 	
-	raster_lock lock;
-	
 	GrafPort& port = **get_addrof_thePort();
+	
+	redraw_lock lock( port.portBits.baseAddr );
 	
 	get_refined_clip_region( port, *dstRect, clipRgn );
 	
