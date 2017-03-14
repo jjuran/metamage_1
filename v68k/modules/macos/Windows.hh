@@ -10,8 +10,12 @@ struct EventRecord;
 struct GrafPort;
 struct Point;
 struct Rect;
+struct WindowRecord;
 
 extern struct MacRegion** BezelRgn;
+
+pascal void SetWTitle_patch( WindowRecord* window, const unsigned char* s );
+pascal void GetWTitle_patch( WindowRecord* window,       unsigned char* s );
 
 pascal void DrawGrowIcon_patch( struct WindowRecord* window );
 
