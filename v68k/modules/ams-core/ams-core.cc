@@ -31,6 +31,7 @@
 #include "Drag.hh"
 #include "Events.hh"
 #include "Fonts.hh"
+#include "Gestalt.hh"
 #include "GrafPorts.hh"
 #include "Handles.hh"
 #include "InitGraf.hh"
@@ -131,6 +132,13 @@ static void install_OSUtils()
 	TBTRAP( Dequeue   );  // A96F
 	TBTRAP( TickCount );  // A975
 	TBTRAP( SysBeep   );  // A9C8
+}
+
+static void install_Gestalt()
+{
+	old_Gestalt = (Gestalt_ProcPtr) os_trap_table[ _Gestalt & 0x00FF ];
+	
+	OSTRAP( Gestalt );  // A1AD
 }
 
 static void install_QuickDraw()
@@ -377,6 +385,8 @@ int main( int argc, char** argv )
 	install_MemoryManager();
 	
 	install_OSUtils();
+	
+	install_Gestalt();
 	
 	install_QuickDraw();
 	install_Fonts();
