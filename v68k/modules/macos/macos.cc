@@ -43,6 +43,7 @@
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "Segments.hh"
+#include "StrUtils.hh"
 #include "Text.hh"
 #include "Windows.hh"
 #include "options.hh"
@@ -237,6 +238,14 @@ static void install_Fonts()
 	TBTRAP( FMSwapFont );  // A901
 }
 
+static void install_StrUtils()
+{
+	TBTRAP( NewString );  // A906
+	TBTRAP( SetString );  // A907
+	
+	TBTRAP( GetString );  // A9BA
+}
+
 static void install_Windows()
 {
 	TBTRAP( DrawGrowIcon  );  // A904
@@ -365,6 +374,7 @@ int main( int argc, char** argv )
 	
 	install_QuickDraw();
 	install_Fonts();
+	install_StrUtils();
 	install_Windows();
 	install_Menus();
 	
