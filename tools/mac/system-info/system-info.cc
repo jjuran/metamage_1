@@ -42,6 +42,21 @@ using mac::sys::gestalt_defined;
 #define MOD_TYPE  "Execution module type:  "
 #define COMPILED  "Compiled architecture:  "
 
+
+struct SonyVars_record
+{
+	uint32_t zeros[ 3 ];
+	uint32_t reserved;
+	uint32_t magic;
+	uint32_t address;
+};
+
+#if TARGET_CPU_68K
+
+SonyVars_record* SonyVars : 0x0134;
+
+#endif
+
 static inline
 bool in_supervisor_mode()
 {
@@ -219,6 +234,31 @@ void host_env()
 }
 
 static
+bool in_MinivMac()
+{
+#if TARGET_CPU_68K
+	
+	if ( SonyVars  &&  ((uint32_t) SonyVars & 1) == 0 )
+	{
+		const uint32_t magic = 0x841339E2;
+		
+		const uint32_t* p = SonyVars->zeros;
+		
+		uint32_t zero = 0;
+		
+		zero |= *p++;
+		zero |= *p++;
+		zero |= *p++;
+		
+		return zero == 0  &&  SonyVars->magic == magic;
+	}
+	
+#endif
+	
+	return false;
+}
+
+static
 bool in_SheepShaver()
 {
 	using mac::types::AuxDCE;
@@ -287,6 +327,11 @@ void virt_env()
 	if ( TARGET_CPU_68K  &&  gestalt_defined( 'v68k' ) )
 	{
 		printf( "%s" "68K emulation:          v68k\n", blank );
+		blank = "";
+	}
+	else if ( TARGET_CPU_68K  &&  in_MinivMac() )
+	{
+		printf( "%s" "68K emulation:          Mini vMac\n", blank );
 		blank = "";
 	}
 	else if ( in_SheepShaver() )
