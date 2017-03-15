@@ -17,7 +17,7 @@
 // quickdraw
 #include "qd/region_iterator.hh"
 
-// macos
+// ams-core
 #include "draw.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"

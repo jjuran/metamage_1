@@ -5,7 +5,7 @@
 
 #include "raster_lock.hh"
 
-// macos
+// ams-core
 #include "Cursor.hh"
 #include "screen_lock.hh"
 

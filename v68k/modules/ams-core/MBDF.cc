@@ -5,7 +5,7 @@
 
 #include "MBDF.hh"
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 

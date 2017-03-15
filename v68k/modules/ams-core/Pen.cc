@@ -5,7 +5,7 @@
 
 #include "Pen.hh"
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 
 

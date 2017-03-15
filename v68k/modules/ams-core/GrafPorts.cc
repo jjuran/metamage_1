@@ -5,7 +5,7 @@
 
 #include "GrafPorts.hh"
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 #include "Rects.hh"
 #include "Regions.hh"

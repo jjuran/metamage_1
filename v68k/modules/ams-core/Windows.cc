@@ -25,7 +25,7 @@
 // quickdraw
 #include "qd/region_detail.hh"
 
-// macos
+// ams-core
 #include "MBDF.hh"
 #include "QDGlobals.hh"
 #include "StrUtils.hh"

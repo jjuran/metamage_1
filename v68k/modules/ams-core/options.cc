@@ -3,7 +3,7 @@
 	----------
 */
 
-// macos
+// ams-core
 #include "options.hh"
 
 

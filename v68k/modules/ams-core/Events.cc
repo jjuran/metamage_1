@@ -13,7 +13,7 @@
 #include <MacWindows.h>
 #endif
 
-// macos
+// ams-core
 #include "Region-ops.hh"
 #include "Regions.hh"
 #include "splode.hh"
@@ -123,7 +123,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	
 	/*
 		Pin the addition of Ticks and sleep.  In the improbable (but very
-		possible) event that an instance of macos runs for over a year,
+		possible) event that an instance of AMS runs for over a year,
 		Ticks may exceed 2^31, at which point adding 0x7FFFFFFF (2^31 - 1)
 		will overflow.  This is bad, because it means that WaitNextEvent()
 		calls with a sleep argument of 0x7FFFFFFF (which are intended to

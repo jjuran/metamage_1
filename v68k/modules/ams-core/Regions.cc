@@ -13,7 +13,7 @@
 // Standard C
 #include <string.h>
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 #include "Rect-utils.hh"
 #include "Rects.hh"

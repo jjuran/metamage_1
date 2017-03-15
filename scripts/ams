@@ -15,7 +15,9 @@ FIFO="$SCREEN.fifo"
 test -e $FIFO  ||  mkfifo $FIFO
 chmod 0622 $FIFO
 
+CORE=ams-core
+
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft 8<&0 \
 	freemountd -q --root ~/68k // \
-	xv68k $RASTER -m [ macos --events-fd=8 -Q ] -m macrsrc ~/68k/app $AppName
+	xv68k $RASTER -m [ $CORE --events-fd=8 -Q ] -m macrsrc ~/68k/app $AppName

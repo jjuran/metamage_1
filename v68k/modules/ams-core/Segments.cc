@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// macos
+// ams-core
 #include "options.hh"
 
 

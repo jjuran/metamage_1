@@ -10,7 +10,7 @@
 #include <Quickdraw.h>
 #endif
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 #include "screen_lock.hh"
 

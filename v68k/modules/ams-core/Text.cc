@@ -10,7 +10,7 @@
 #include <Fonts.h>
 #endif
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 

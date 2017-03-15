@@ -1,6 +1,6 @@
 /*
-	macos.cc
-	--------
+	ams-core.cc
+	-----------
 */
 
 // Mac OS
@@ -23,7 +23,7 @@
 // gear
 #include "gear/parse_decimal.hh"
 
-// macos
+// ams-core
 #include "CopyBits.hh"
 #include "Cursor.hh"
 #include "Debugger.hh"
@@ -50,6 +50,10 @@
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define PROGRAM  "ams-core"
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
 
 enum
@@ -362,7 +366,7 @@ int main( int argc, char** argv )
 		
 		if ( *args != NULL )
 		{
-			write( STDERR_FILENO, STR_LEN( "macos: no arguments allowed\n" ) );
+			WARN( "no arguments allowed" );
 			
 			_exit( 1 );
 		}

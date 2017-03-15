@@ -10,7 +10,7 @@
 #include <MacWindows.h>
 #endif
 
-// macos
+// ams-core
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 

@@ -23,7 +23,7 @@
 #include "qd/sect_region.hh"
 #include "qd/xor_region.hh"
 
-// macos
+// ams-core
 #include "Rect-utils.hh"
 #include "Rects.hh"
 

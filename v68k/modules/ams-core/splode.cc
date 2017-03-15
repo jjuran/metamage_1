@@ -20,7 +20,7 @@
 // splode
 #include "splode/splode.hh"
 
-// macos
+// ams-core
 #include "Cursor.hh"
 #include "options.hh"
 

@@ -5,7 +5,7 @@
 
 #include "Menus.hh"
 
-// macos
+// ams-core
 #include "MBDF.hh"
 #include "QDGlobals.hh"
 #include "Windows.hh"

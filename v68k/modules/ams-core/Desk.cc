@@ -5,7 +5,7 @@
 
 #include "Desk.hh"
 
-// macos
+// ams-core
 #include "splode.hh"
 
 
