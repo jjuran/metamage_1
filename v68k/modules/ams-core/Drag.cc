@@ -67,6 +67,12 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	
 	GrafPtr saved_port = qd.thePort;
 	
+	const short dh = -saved_port->portBits.bounds.left;
+	const short dv = -saved_port->portBits.bounds.top;
+	
+	start.h += dh;
+	start.v += dv;
+	
 	qd.thePort = WMgrPort;
 	
 	SetClip( GrayRgn );
