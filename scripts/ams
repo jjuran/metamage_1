@@ -16,8 +16,9 @@ test -e $FIFO  ||  mkfifo $FIFO
 chmod 0622 $FIFO
 
 CORE=ams-core
+RSRC=ams-rsrc
 
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft 8<&0 \
 	freemountd -q --root ~/68k // \
-	xv68k $RASTER -m [ $CORE --events-fd=8 -Q ] -m macrsrc ~/68k/app $AppName
+	xv68k $RASTER -m [ $CORE --events-fd=8 -Q ] -m $RSRC ~/68k/app $AppName

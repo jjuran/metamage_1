@@ -1,6 +1,6 @@
 /*
-	macrsrc.cc
-	----------
+	ams-rsrc.cc
+	-----------
 */
 
 // Mac OS
@@ -11,11 +11,15 @@
 // POSIX
 #include <unistd.h>
 
-// macrsrc
+// ams-rsrc
 #include "Resources.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define PROGRAM  "ams-rsrc"
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
 
 void* os_trap_table     [] : 1 * 1024;
@@ -43,7 +47,7 @@ int main( int argc, char** argv )
 {
 	if ( argc > 1 )
 	{
-		write( STDERR_FILENO, STR_LEN( "macrsrc: no arguments allowed\n" ) );
+		WARN( "no arguments allowed" );
 		
 		_exit( 1 );
 	}
