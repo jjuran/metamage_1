@@ -28,6 +28,7 @@
 // macos
 #include "MBDF.hh"
 #include "QDGlobals.hh"
+#include "StrUtils.hh"
 #include "WDEF.hh"
 #include "desktop.hh"
 #include "raster_lock.hh"
@@ -79,6 +80,48 @@ static
 void draw_window( WindowPeek window )
 {
 	draw_window( *(Byte*) &window->windowDefProc, *window );
+}
+
+pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
+{
+	if ( s != NULL  &&  s[ 0 ] != 0 )
+	{
+		if ( window->titleHandle != NULL )
+		{
+			SetString_patch( window->titleHandle, s );
+		}
+		else
+		{
+			window->titleHandle = NewString_patch( s );
+		}
+		
+		window->titleWidth = StringWidth( s );
+	}
+	else
+	{
+		if ( window->titleHandle != NULL )
+		{
+			DisposeHandle( (Handle) window->titleHandle );
+			
+			window->titleHandle = NULL;
+		}
+		
+		window->titleWidth = 0;
+	}
+}
+
+pascal void GetWTitle_patch( WindowPeek window, unsigned char* s )
+{
+	s[ 0 ] = '\0';
+	
+	if ( window->titleHandle )
+	{
+		const unsigned char* title = *window->titleHandle;
+		
+		const Size size = 1 + title[ 0 ];
+		
+		memcpy( s, title, size );
+	}
 }
 
 pascal void DrawGrowIcon_patch( WindowPeek window )
@@ -392,6 +435,13 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	window->contRgn   = NewRgn();  if ( window->contRgn   == NULL )  goto fail_2;
 	window->updateRgn = NewRgn();  if ( window->updateRgn == NULL )  goto fail_3;
 	
+	SetWTitle_patch( window, title );
+	
+	if ( title != NULL  &&  title[ 0 ] != 0  &&  window->titleHandle == NULL )
+	{
+		goto fail_4;
+	}
+	
 	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
 	
 	MovePortTo( bounds->left, bounds->top );
@@ -424,6 +474,10 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	PaintOne_patch( window, window->strucRgn );
 	
 	return (WindowPtr) window;
+	
+fail_4:
+	
+	DisposeRgn( window->updateRgn );
 	
 fail_3:
 	
@@ -956,6 +1010,11 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	DisposeRgn( window->strucRgn  );
 	DisposeRgn( window->contRgn   );
 	DisposeRgn( window->updateRgn );
+	
+	if ( window->titleHandle )
+	{
+		DisposeHandle( (Handle) window->titleHandle );
+	}
 	
 	ClosePort( port );
 }

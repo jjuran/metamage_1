@@ -24,6 +24,15 @@
 */
 const short title_bar_height = 18;
 
+const short title_bar_interior_height = title_bar_height - 1;
+
+const short system_font_height = 15;
+const short system_font_ascent = 12;
+
+const short title_offset = (title_bar_interior_height - system_font_height) / 2;
+
+const short title_baseline_v = title_offset + system_font_ascent;
+
 const short stripes_v_offset = 3;
 const short stripes_h_offset = 1;
 
@@ -99,6 +108,14 @@ short shadow_for_variant( short varCode )
 	                      :                          0;
 	
 	return shadow_px;
+}
+
+static
+RgnHandle rectangular_utility_region()
+{
+	static RgnHandle rgn = NewRgn();
+	
+	return rgn;
 }
 
 static
@@ -217,6 +234,34 @@ long WDEF_0_Draw( short varCode, GrafPort* w, long param )
 	EraseRect( &title_bar );
 	
 	PaintRect( &edge );
+	
+	if ( window->titleWidth != 0 )
+	{
+		const short h = (content.left + content.right - window->titleWidth) / 2;
+		
+		MoveTo( h, title_bar.top + title_baseline_v );
+		
+		DrawString( *window->titleHandle );
+		
+		if ( window->hilited )
+		{
+			QDGlobals& qd = get_QDGlobals();
+			
+			Rect title_area =
+			{
+				title_bar.top + stripes_v_offset,
+				h - 6,
+				title_bar.bottom - stripes_v_offset,
+				h + window->titleWidth + 6,
+			};
+			
+			RgnHandle title_region = rectangular_utility_region();
+			
+			RectRgn( title_region, &title_area );
+			
+			DiffRgn( qd.thePort->clipRgn, title_region, qd.thePort->clipRgn );
+		}
+	}
 	
 	if ( ! window->hilited )
 	{
@@ -338,13 +383,11 @@ long WDEF_0_CalcRgns( short varCode, WindowPtr w )
 	{
 		OffsetRect( &rect, shadow_px, shadow_px );
 		
-		RgnHandle shadow = NewRgn();
+		RgnHandle shadow = rectangular_utility_region();
 		
 		RectRgn( shadow, &rect );
 		
 		UnionRgn( window->strucRgn, shadow, window->strucRgn );
-		
-		DisposeRgn( shadow );
 	}
 	
 	return 0;

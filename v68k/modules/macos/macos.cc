@@ -260,6 +260,8 @@ static void install_Windows()
 	TBTRAP( NewWindow     );  // A913
 	TBTRAP( DisposeWindow );  // A914
 	
+	TBTRAP( GetWTitle     );  // A919
+	TBTRAP( SetWTitle     );  // A91A
 	TBTRAP( MoveWindow    );  // A91B
 	
 	TBTRAP( SizeWindow    );  // A91D
