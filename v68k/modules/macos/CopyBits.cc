@@ -29,6 +29,13 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
 }
 
+static inline
+bool word_aligned( const void* src, const void* dst )
+{
+	return !( (uint32_t) src & 1  ||  (uint32_t) dst & 1 );
+}
+
+template < class Ptr >
 static
 void copy_aligned_sector( Ptr    src,
                           Ptr    dst,
@@ -375,12 +382,37 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		{
 			width /= 8;
 			
-			copy_aligned_sector( src,
-			                     dst,
-			                     n_rows,
-			                     width,
-			                     srcRowBytes,
-			                     dstRowBytes );
+			if ( word_aligned( src, dst ) )
+			{
+				copy_aligned_sector< uint16_t* >( (uint16_t*) src,
+				                                  (uint16_t*) dst,
+				                                  n_rows,
+				                                  width / 2,
+				                                  srcRowBytes / 2,
+				                                  dstRowBytes / 2 );
+				
+				if ( (width & 1) == 0 )
+				{
+					return;
+				}
+				
+				/*
+					The buffer addresses are word-aligned but the width isn't
+					a multiple of the word size.
+				*/
+				
+				src += width - 1;
+				dst += width - 1;
+				
+				width = 1;
+			}
+			
+			copy_aligned_sector< Ptr >( src,
+			                            dst,
+			                            n_rows,
+			                            width,
+			                            srcRowBytes,
+			                            dstRowBytes );
 		}
 		else
 		{
