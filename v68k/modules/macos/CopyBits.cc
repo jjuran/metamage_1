@@ -23,6 +23,37 @@
 #include "redraw_lock.hh"
 
 
+static inline
+bool byte_aligned( short srcSkip, short dstSkip, short width )
+{
+	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
+}
+
+static
+void copy_aligned_sector( Ptr    src,
+                          Ptr    dst,
+                          short  n_rows,
+                          short  n_per_row,
+                          short  src_stride,
+                          short  dst_stride )
+{
+	const short src_gutter = src_stride - n_per_row;
+	const short dst_gutter = dst_stride - n_per_row;
+	
+	while ( --n_rows >= 0 )
+	{
+		short n = n_per_row;
+		
+		while ( --n >= 0 )
+		{
+			*dst++ = *src++;
+		}
+		
+		src += src_gutter;
+		dst += dst_gutter;
+	}
+}
+
 static
 Ptr blit_byte_aligned_segment( Ptr    src,
                                Ptr    dst,
@@ -339,6 +370,17 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 				              width,
 				              mode );
 			}
+		}
+		else if ( mode == srcCopy  &&  byte_aligned( srcSkip, dstSkip, width ) )
+		{
+			width /= 8;
+			
+			copy_aligned_sector( src,
+			                     dst,
+			                     n_rows,
+			                     width,
+			                     srcRowBytes,
+			                     dstRowBytes );
 		}
 		else
 		{
