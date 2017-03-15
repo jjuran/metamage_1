@@ -73,6 +73,21 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	start.h += dh;
 	start.v += dv;
 	
+	Rect limitRect;
+	Rect slopRect;
+	
+	if ( dh != 0  ||  dv != 0 )
+	{
+		limitRect = *limit;
+		slopRect  = *slop;
+		
+		OffsetRect( &limitRect, dh, dv );
+		OffsetRect( &slopRect,  dh, dv );
+		
+		limit = &limitRect;
+		slop  = &slopRect;
+	}
+	
 	qd.thePort = WMgrPort;
 	
 	SetClip( GrayRgn );
