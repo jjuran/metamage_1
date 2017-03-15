@@ -15,7 +15,7 @@
 // macos
 #include "draw.hh"
 #include "QDGlobals.hh"
-#include "raster_lock.hh"
+#include "redraw_lock.hh"
 
 
 using quickdraw::segments_box;
@@ -538,7 +538,9 @@ void draw_region( const rectangular_op_params&  params,
 
 pascal void StdRect_patch( signed char verb, const Rect* r )
 {
-	raster_lock lock;
+	GrafPort& port = **get_addrof_thePort();
+	
+	redraw_lock lock( port.portBits.baseAddr );
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
@@ -546,8 +548,6 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		
 		return;
 	}
-	
-	GrafPort& port = **get_addrof_thePort();
 	
 	RgnHandle clipRgn = NULL;
 	

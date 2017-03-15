@@ -12,7 +12,7 @@
 
 // macos
 #include "QDGlobals.hh"
-#include "raster_lock.hh"
+#include "redraw_lock.hh"
 
 
 const Point OneOne : 0x0A02;
@@ -200,7 +200,7 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	dstRect.top    = port.pnLoc.v - rec.ascent;
 	dstRect.bottom = port.pnLoc.v - rec.ascent + rec.fRectHeight;
 	
-	raster_lock lock;
+	redraw_lock lock( port.portBits.baseAddr );
 	
 	while ( --n >= 0 )
 	{
