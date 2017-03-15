@@ -8,6 +8,7 @@
 
 enum
 {
+	gestaltMachineIcon            = 'micn',
 	gestaltUserVisibleMachineName = 'mnam',
 };
 
@@ -19,6 +20,10 @@ short Gestalt_payload( unsigned long  selector : __D0,
 {
 	switch ( selector )
 	{
+		case gestaltMachineIcon:
+			*response = 42;
+			break;
+		
 		case gestaltUserVisibleMachineName:
 			*(unsigned char**) response = "\p" "Advanced Mac Substitute";
 			break;
