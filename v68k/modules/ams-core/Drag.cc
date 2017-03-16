@@ -71,6 +71,9 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	
 	SetClip( GrayRgn );
 	
+	PenState saved_penState;
+	GetPenState( &saved_penState );
+	
 	/*
 		Use notPatXor instead of patXor, so when used on a background of
 		qd.gray, the frame appears solid black instead of solid white.
@@ -159,7 +162,7 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 		PaintRgn( rgn );
 	}
 	
-	PenNormal();
+	SetPenState( &saved_penState );
 	
 	qd.thePort = saved_port;
 	
