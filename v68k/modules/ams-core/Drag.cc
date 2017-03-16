@@ -88,10 +88,6 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 		slop  = &slopRect;
 	}
 	
-	qd.thePort = WMgrPort;
-	
-	SetClip( GrayRgn );
-	
 	PenState saved_penState;
 	GetPenState( &saved_penState );
 	
@@ -184,8 +180,6 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	}
 	
 	SetPenState( &saved_penState );
-	
-	qd.thePort = saved_port;
 	
 	DisposeRgn( tmp );
 	
