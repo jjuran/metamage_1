@@ -67,9 +67,29 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 	
 	GrafPtr saved_port = qd.thePort;
 	
-	qd.thePort = WMgrPort;
+	const short dh = -saved_port->portBits.bounds.left;
+	const short dv = -saved_port->portBits.bounds.top;
 	
-	SetClip( GrayRgn );
+	start.h += dh;
+	start.v += dv;
+	
+	Rect limitRect;
+	Rect slopRect;
+	
+	if ( dh != 0  ||  dv != 0 )
+	{
+		limitRect = *limit;
+		slopRect  = *slop;
+		
+		OffsetRect( &limitRect, dh, dv );
+		OffsetRect( &slopRect,  dh, dv );
+		
+		limit = &limitRect;
+		slop  = &slopRect;
+	}
+	
+	PenState saved_penState;
+	GetPenState( &saved_penState );
 	
 	/*
 		Use notPatXor instead of patXor, so when used on a background of
@@ -159,9 +179,7 @@ pascal long DragTheRgn_patch( RgnHandle    rgn,
 		PaintRgn( rgn );
 	}
 	
-	PenNormal();
-	
-	qd.thePort = saved_port;
+	SetPenState( &saved_penState );
 	
 	DisposeRgn( tmp );
 	

@@ -790,7 +790,17 @@ pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
 	
 	CopyRgn( window->strucRgn, drag_region );
 	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( GrayRgn );
+	
 	long delta = DragGrayRgn( drag_region, start, bounds, bounds, 0, NULL );
+	
+	qd.thePort = saved_port;
 	
 	if ( delta != 0  &&  delta != 0x80008000 )
 	{
