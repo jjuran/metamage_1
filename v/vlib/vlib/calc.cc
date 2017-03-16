@@ -1053,6 +1053,22 @@ namespace vlib
 	            op_type       op,
 	            const Value&  right )
 	{
+		if ( const dispatch* methods = left.dispatch_methods() )
+		{
+			if ( const operators* ops = methods->ops )
+			{
+				if ( handler_2arg handler = ops->binary )
+				{
+					const Value result = handler( op, left, right );
+					
+					if ( result.type() )
+					{
+						return result;
+					}
+				}
+			}
+		}
+		
 		if ( op == Op_if )
 		{
 			return calc_if( left );
