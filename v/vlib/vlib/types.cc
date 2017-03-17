@@ -22,9 +22,9 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
 #include "vlib/types/null.hh"
+#include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
-#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -104,7 +104,7 @@ namespace vlib
 			case Value_mb32:       return mb32_vtype;
 			case Value_number:     return integer_vtype;
 			case Value_string:     return string_vtype;
-			case Value_vector:     return vector_vtype;
+			case Value_packed:     return packed_vtype;
 			
 			default:  break;
 		}

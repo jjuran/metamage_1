@@ -26,7 +26,7 @@ namespace vlib
 		
 		if ( expr == 0 )  // NULL
 		{
-			// string or vector
+			// string or pack
 			
 			THROW( "can't target elements of packed structures" );
 		}

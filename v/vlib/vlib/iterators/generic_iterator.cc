@@ -34,7 +34,7 @@ namespace vlib
 		switch ( container.type() )
 		{
 			case V_str:
-			case V_vec:
+			case V_pack:
 				its_impl = new_iterator< string_iterator >( container );
 				return;
 			

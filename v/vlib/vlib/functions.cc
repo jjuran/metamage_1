@@ -27,10 +27,10 @@
 #include "vlib/lib/ed25519.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/packed.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
-#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -58,7 +58,7 @@ namespace vlib
 			default:  THROW( "invalid argument to hex()" );
 			
 			case Value_number:  return String( hex( arg.number() ) );
-			case Value_vector:
+			case Value_packed:
 			case Value_string:  return String( hex( arg.string() ) );
 		}
 	}
@@ -156,7 +156,7 @@ namespace vlib
 	static
 	Value v_sha256( const Value& v )
 	{
-		return Vector( sha256( v.string() ) );
+		return Packed( sha256( v.string() ) );
 	}
 	
 	static
@@ -246,7 +246,7 @@ namespace vlib
 			return Integer( unbin_int( v.string().substr( 2 ) ) );
 		}
 		
-		return Vector( unbin( v.string() ) );
+		return Packed( unbin( v.string() ) );
 	}
 	
 	static
@@ -257,7 +257,7 @@ namespace vlib
 			return Integer( unhex_int( v.string().substr( 2 ) ) );
 		}
 		
-		return Vector( unhex( v.string() ) );
+		return Packed( unhex( v.string() ) );
 	}
 	
 	static
@@ -285,7 +285,7 @@ namespace vlib
 		
 		check_ed25519_key_size( secret_key );
 		
-		return Vector( ed25519::publickey( secret_key ) );
+		return Packed( ed25519::publickey( secret_key ) );
 	}
 	
 	static
@@ -298,7 +298,7 @@ namespace vlib
 		
 		check_ed25519_key_size( key );
 		
-		return Vector( ed25519::sign( key, msg ) );
+		return Packed( ed25519::sign( key, msg ) );
 	}
 	
 	static
@@ -324,7 +324,7 @@ namespace vlib
 	
 	static const Type integer = integer_vtype;
 	static const Type string  = string_vtype;
-	static const Type vector  = vector_vtype;
+	static const Type packed  = packed_vtype;
 	
 	static const Type i32 = i32_vtype;
 	static const Type u32 = u32_vtype;
@@ -332,9 +332,9 @@ namespace vlib
 	static const Value u32_2 = Value( u32, Op_duplicate, two );
 	static const Value mince = Value( string, u32_2 );
 	
-	static const Value bytes( string, Op_union, vector );
-	static const Value sign( vector, bytes );
-	static const Value verify( vector, Value( bytes, vector ) );
+	static const Value bytes( string, Op_union, packed );
+	static const Value sign( packed, bytes );
+	static const Value verify( packed, Value( bytes, packed ) );
 	static const Value x32( u32, Op_union, i32 );
 	static const Value s_offset( x32, Op_duplicate, zero );
 	static const Value s_length( u32, Op_duplicate, npos );
@@ -357,7 +357,7 @@ namespace vlib
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string  };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string  };
 	
-	const proc_info proc_mkpub  = { "ed25519-publickey", &v_mkpub,  &vector };
+	const proc_info proc_mkpub  = { "ed25519-publickey", &v_mkpub,  &packed };
 	const proc_info proc_sign   = { "ed25519-sign",      &v_sign,   &sign   };
 	const proc_info proc_verify = { "ed25519-verify",    &v_verify, &verify };
 	

@@ -58,7 +58,7 @@ namespace vlib
 			case Value_byte:
 			case Value_number:
 			case Value_mb32:
-			case Value_vector:
+			case Value_packed:
 			case Value_string:
 				break;
 			

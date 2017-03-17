@@ -28,10 +28,10 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/packed.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
-#include "vlib/types/vector.hh"
 
 // vx
 #include "exception.hh"
@@ -384,7 +384,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return Vector( s.substr( 0, n_read ) );
+		return Packed( s.substr( 0, n_read ) );
 	}
 	
 	static
@@ -473,7 +473,7 @@ namespace vlib
 		return Integer( n_written );
 	}
 	
-	static const Type vector = vector_vtype;
+	static const Type packed = packed_vtype;
 	static const Type c_str = c_str_vtype;
 	static const Type int32 = i32_vtype;
 	static const Type uint32 = u32_vtype;
@@ -481,7 +481,7 @@ namespace vlib
 	static const Value int32_x2( int32, int32 );
 	static const Value i32_u32 ( int32, uint32 );
 	
-	static const Value bytes( string, Op_union, vector );
+	static const Value bytes( string, Op_union, packed );
 	static const Value i32_bytes( int32, bytes );
 	
 	static const Value c_str_bytes( c_str, bytes );

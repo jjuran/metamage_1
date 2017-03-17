@@ -53,7 +53,7 @@ namespace vlib
 		Value_mb32,
 		Value_number,
 		Value_string,
-		Value_vector,
+		Value_packed,
 		Value_function,
 		Value_pair,
 		
@@ -62,7 +62,7 @@ namespace vlib
 		V_bool  = Value_boolean,
 		V_int   = Value_number,
 		V_str   = Value_string,
-		V_vec   = Value_vector,
+		V_pack  = Value_packed,
 		V_proc  = Value_function,
 	};
 	

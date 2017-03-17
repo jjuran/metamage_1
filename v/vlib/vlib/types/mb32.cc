@@ -62,7 +62,7 @@ namespace vlib
 			case Value_empty_list:
 				return MB32();
 			
-			case Value_vector:
+			case Value_packed:
 				return MB32( v.string() );
 			
 			case Value_string:
