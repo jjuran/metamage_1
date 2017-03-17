@@ -43,6 +43,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/table.hh"
 
 
 namespace vlib
@@ -1276,7 +1277,7 @@ namespace vlib
 			{
 				if ( is_array( right ) )
 				{
-					return make_table( left, right );
+					return Table( left, right );
 				}
 				
 				if ( is_type( right ) )

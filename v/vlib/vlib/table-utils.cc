@@ -7,7 +7,6 @@
 
 // vlib
 #include "vlib/equal.hh"
-#include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -16,33 +15,6 @@
 
 namespace vlib
 {
-	
-	Value make_table( const Value& key_type, const Value& array )
-	{
-		array_iterator it( array );
-		
-		while ( it )
-		{
-			const Value& mapping = it.use();
-			
-			if ( Expr* expr = mapping.expr() )
-			{
-				if ( expr->op == Op_mapping )
-				{
-					if ( as_assigned( key_type, expr->left ).type() )
-					{
-						continue;
-					}
-					
-					THROW( "non-conforming key type in table" );
-				}
-			}
-			
-			THROW( "non-mapping in table" );
-		}
-		
-		return Value( key_type, Op_empower, array );
-	}
 	
 	static
 	bool equal_keys( const Value& a, const Value& b )

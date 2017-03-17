@@ -58,14 +58,6 @@ namespace vlib
 				return Boolean( ! v.string().empty() );
 			
 			case Value_pair:
-				if ( Expr* expr = v.expr() )
-				{
-					if ( expr->op == Op_empower )
-					{
-						// Check if the array is empty.
-						return Boolean( expr->right.expr() != 0 );  // NULL
-					}
-				}
 				return True;
 		}
 	}

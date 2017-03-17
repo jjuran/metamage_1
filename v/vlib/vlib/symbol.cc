@@ -10,11 +10,11 @@
 
 // vlib
 #include "vlib/equal.hh"
-#include "vlib/table-utils.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/table.hh"
 
 
 namespace vlib
