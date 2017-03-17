@@ -87,7 +87,7 @@ namespace vlib
 	{
 		&string_str,
 		&string_rep,
-		&string_str,  // reuse str for vec
+		&string_str,  // reuse str for bin
 	};
 	
 	const dispatch string_dispatch =

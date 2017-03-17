@@ -81,7 +81,7 @@ namespace vlib
 	{
 		&byte_str,
 		&byte_rep,
-		&byte_str,  // reuse str for vec
+		&byte_str,  // reuse str for bin
 	};
 	
 	const dispatch byte_dispatch =

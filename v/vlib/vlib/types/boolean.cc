@@ -85,7 +85,7 @@ namespace vlib
 	{
 		&boolean_str,
 		// rep: ditto
-		// vec: not defined
+		// bin: not defined
 	};
 	
 	const dispatch boolean_dispatch =

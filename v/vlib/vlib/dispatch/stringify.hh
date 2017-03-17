@@ -39,7 +39,7 @@ namespace vlib
 	{
 		const stringify* str;  // human-readable stringification
 		const stringify* rep;  // reproductive format
-		const stringify* vec;  // binary serialization format
+		const stringify* bin;  // binary serialization format
 	};
 	
 	size_t get_stringified_size( const stringify& methods, const Value& v );

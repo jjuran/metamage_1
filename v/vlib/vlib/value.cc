@@ -52,7 +52,7 @@ namespace vlib
 	{
 		&symbol_str,
 		// rep: reuse str
-		// vec: undefined
+		// bin: undefined
 	};
 	
 	static const dispatch symbol_dispatch =

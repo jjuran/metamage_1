@@ -92,21 +92,21 @@ namespace vlib
 	};
 	
 	static
-	const char* vector_vec_data( const Value& v )
+	const char* vector_bin_data( const Value& v )
 	{
 		return v.string().data();
 	}
 	
 	static
-	size_t vector_vec_size( const Value& v )
+	size_t vector_bin_size( const Value& v )
 	{
 		return v.string().size();
 	}
 	
-	static const stringify vector_vec =
+	static const stringify vector_bin =
 	{
-		&vector_vec_data,
-		&vector_vec_size,
+		&vector_bin_data,
+		&vector_bin_size,
 		NULL,
 	};
 	
@@ -114,7 +114,7 @@ namespace vlib
 	{
 		&vector_str,
 		&vector_rep,
-		&vector_vec,
+		&vector_bin,
 	};
 	
 	const dispatch vector_dispatch =

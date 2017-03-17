@@ -109,7 +109,7 @@ namespace vlib
 	{
 		&integer_str,
 		// For rep, fall back to str
-		// Integer vec is unimplemented
+		// Integer bin is unimplemented
 	};
 	
 	const dispatch integer_dispatch =

@@ -40,7 +40,7 @@ namespace vlib
 	{
 		&builtin_str,
 		// rep: ditto
-		// vec: not defined
+		// bin: not defined
 	};
 	
 }
