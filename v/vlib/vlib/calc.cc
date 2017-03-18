@@ -731,6 +731,22 @@ namespace vlib
 	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
+		if ( const dispatch* methods = f.dispatch_methods() )
+		{
+			if ( const operators* ops = methods->ops )
+			{
+				if ( handler_2arg handler = ops->binary )
+				{
+					const Value result = handler( Op_function, f, arguments );
+					
+					if ( result.type() )
+					{
+						return result;
+					}
+				}
+			}
+		}
+		
 		if ( f.type() == V_str )
 		{
 			return String( str( Value( f, arguments ) ) );
