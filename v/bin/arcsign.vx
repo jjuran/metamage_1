@@ -54,7 +54,7 @@ def check_hash
 	return _
 }
 
-const vload = { vec load _ }
+const vload = { packed load _ }
 
 var hash = null
 var key  = null

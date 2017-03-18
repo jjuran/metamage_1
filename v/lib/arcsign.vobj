@@ -77,7 +77,7 @@ def parts_from_keysig
 	const data = hex_lines map strict_unhex
 	
 	const key = data[ 0 ]
-	const sig = vec data[ 1 .. 2 ]
+	const sig = packed data[ 1 .. 2 ]
 	
 	return key, sig
 }
