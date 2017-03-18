@@ -2909,7 +2909,7 @@ $ vc '[[null], [], [1], [1, 2, 3]] map {try {*_ => "key"} catch {"nope"}}'
 %
 
 $ vc 'byte^[], bool str^[], typeof vec^[], typeof bool^..., int^... | ()'
-1 >= '((byte^[]), false, (vector^...), type, ((integer^...) | ()))'
+1 >= '((byte^[]), false, (packed^...), type, ((integer^...) | ()))'
 
 %
 

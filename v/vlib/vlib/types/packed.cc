@@ -143,7 +143,7 @@ namespace vlib
 	
 	const type_info packed_vtype =
 	{
-		"vector",
+		"packed",
 		&assign_to< Packed >,
 		&Packed::coerce,
 		&packed_member,
