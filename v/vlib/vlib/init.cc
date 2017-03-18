@@ -56,6 +56,7 @@ namespace vlib
 		define_keyword( "function", function_vtype );
 		define_keyword( "integer",  integer_vtype  );
 		define_keyword( "int",      integer_vtype  );
+		define_keyword( "packed",   packed_vtype   );
 		define_keyword( "vector",   packed_vtype   );
 		define_keyword( "vec",      packed_vtype   );
 		define_keyword( "string",   string_vtype   );
