@@ -771,25 +771,6 @@ namespace vlib
 			return proc.addr( arguments );
 		}
 		
-		if ( f.type() == Value_base_type )
-		{
-			const type_info& typeinfo = f.typeinfo();
-			
-			if ( coerce_proc coerce = typeinfo.coerce )
-			{
-				return coerce( arguments );
-			}
-			
-			const Value coerced = typeinfo.assign( arguments );
-			
-			if ( coerced.type() )
-			{
-				return coerced;
-			}
-			
-			THROW( "invalid type conversion arguments" );
-		}
-		
 		if ( Expr* expr = f.expr() )
 		{
 			if ( expr->op == Op_lambda )
