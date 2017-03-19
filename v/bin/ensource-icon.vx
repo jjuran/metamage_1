@@ -1,0 +1,63 @@
+#!/usr/bin/env vx
+
+def fracture
+{
+	const input, const len = _
+	
+	var n = input.size / len
+	
+	var result = []
+	
+	var i = 0
+	
+	while --n >= 0 do
+	{
+		const j = i + len
+		
+		result <-- input[ i -> j ]
+		
+		i = j
+	}
+	
+	return result
+}
+
+var binary-strings = [ "" ]
+
+for i in 0 -> 8 do
+{
+	binary-strings = binary-strings map { _ "0", _ "1" }
+}
+
+def binarize
+{
+	const data = _
+	
+	const bits = data map { *binary-strings[ int _ ] }
+	
+	return str bits
+}
+
+def lineate
+{
+	var bits = _
+	
+	translate( &bits, "01", " X" )
+	
+	return "|" join( " ", *bits ) "|\n"
+}
+
+const data = packed load argv[ 1 ]
+
+assert data.size in [ 128, 256 ]
+
+const icons = fracture( data, 128 )
+
+for icon in icons do
+{
+	const rows = fracture( icon, 4 ) map binarize map lineate
+	
+	const source = str rows
+	
+	print source
+}
