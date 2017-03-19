@@ -39,8 +39,8 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
-#include "vlib/types/vector.hh"
 
 
 namespace vlib
@@ -80,7 +80,7 @@ namespace vlib
 			case Value_number:
 				return compare( a.number(), b.number() );
 			
-			case Value_vector:
+			case Value_packed:
 			case Value_string:
 				return compare( a.string(), b.string() );
 			
@@ -181,14 +181,14 @@ namespace vlib
 				return s.find( v.number().clipped() ) != plus::string::npos;
 			
 			case V_str:
-			case V_vec:
+			case V_pack:
 				return s.find( v.string() ) != plus::string::npos;
 			
 			default:
 				break;
 		}
 		
-		THROW( "unsupported pattern type for `in` with string/vector" );
+		THROW( "unsupported pattern type for `in` with string/pack" );
 		return false;
 	}
 	
@@ -221,7 +221,7 @@ namespace vlib
 				return false;
 			
 			case V_str:
-			case V_vec:
+			case V_pack:
 				return in_string( v, container.string() );
 			
 			default:
@@ -363,14 +363,14 @@ namespace vlib
 				THROW( "unary operator not defined for integers" );
 				break;
 			
-			case Value_vector:
+			case Value_packed:
 				if ( op == Op_unary_minus )
 				{
 					// fall through below
 				}
 				else
 				{
-					THROW( "unary operator not defined for vector" );
+					THROW( "unary operator not defined for pack" );
 				}
 				
 				// fall through
@@ -775,9 +775,9 @@ namespace vlib
 			return String( str( Value( f, arguments ) ) );
 		}
 		
-		if ( f.type() == V_vec )
+		if ( f.type() == V_pack )
 		{
-			return Vector( pack( Value( f, arguments ) ) );
+			return Packed( pack( Value( f, arguments ) ) );
 		}
 		
 		if ( f.type() == Value_function )
@@ -1152,7 +1152,7 @@ namespace vlib
 	static inline
 	bool is_bytes( const Value& v )
 	{
-		return v.type() == V_str  ||  v.type() == V_vec;
+		return v.type() == V_str  ||  v.type() == V_pack;
 	}
 	
 	static
@@ -1168,7 +1168,7 @@ namespace vlib
 			return right.boolean() ? bytes : plus::string::null;
 		}
 		
-		THROW( "string/vector repetition requires int or bool" );
+		THROW( "string/pack repetition requires int or bool" );
 		
 		return plus::string::null;  // not reached
 	}
@@ -1305,7 +1305,7 @@ namespace vlib
 			{
 				switch ( left.type() )
 				{
-					case Value_vector:  return Vector( pack( v ) );
+					case Value_packed:  return Packed( pack( v ) );
 					case Value_string:  return String( str ( v ) );
 					
 					default:
@@ -1362,7 +1362,7 @@ namespace vlib
 			const plus::string s = repeat_bytes( left.string(), right );
 			
 			return left.type() == V_str ? Value( String( s ) )
-			                            : Value( Vector( s ) );
+			                            : Value( Packed( s ) );
 		}
 		
 		THROW( "operator not defined on mixed types" );

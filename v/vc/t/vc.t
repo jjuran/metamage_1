@@ -1353,27 +1353,27 @@ $ vc 'unhex "0x1000000000000000000000000000000014def9dea2f79cd65812631a5cf5d3ed"
 
 %
 
-$ vc 'unbin "0" == vector "\0"'
+$ vc 'unbin "0" == packed "\0"'
 1 >= true
 
 %
 
-$ vc 'unbin "01001" == vector "\t"'
+$ vc 'unbin "01001" == packed "\t"'
 1 >= true
 
 %
 
-$ vc 'unbin "11110000100111111001001010101001" == vector "\u{1f4a9}"'
+$ vc 'unbin "11110000100111111001001010101001" == packed "\u{1f4a9}"'
 1 >= true
 
 %
 
-$ vc 'unhex "0" == vector "\0"'
+$ vc 'unhex "0" == packed "\0"'
 1 >= true
 
 %
 
-$ vc 'unhex "01001" == vector "\x00\x10\x01"'
+$ vc 'unhex "01001" == packed "\x00\x10\x01"'
 1 >= true
 
 %
@@ -2538,42 +2538,42 @@ $ vc 'const zeros = "0" * 2^8 * 2^8; "0" < zeros, "1" > zeros'
 
 %
 
-$ vc 'vector(), vector "Nu", vector byte 7'
+$ vc 'packed(), packed "Nu", packed byte 7'
 1 >= '(x"", x"4e75", x"07")'
 
 %
 
-$ vc 'vector() == vector "", vector "" < vector "\0"'
+$ vc 'packed() == packed "", packed "" < packed "\0"'
 1 >= '(true, true)'
 
 %
 
-$ vc 'vector "\x01" < vector "\xFF", "\xFF" < "\xFF\x01"'
+$ vc 'packed "\x01" < packed "\xFF", "\xFF" < "\xFF\x01"'
 1 >= '(true, true)'
 
 %
 
-$ vc 'const x = vector "Hi\0"; *x, x[0]'
+$ vc 'const x = packed "Hi\0"; *x, x[0]'
 1 >= "('H', 'i', '\x00', 'H')"
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str vec x, x == vec( x ).string'
+$ vc 'const x = "Hi\x00 \u{1f4a9}"; x == str packed x, x == packed( x ).string'
 1 >= "(false, true)"
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*vec x, (+) *vec x'
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*packed x, (+) *packed x'
 1 >= "(true, 11)"
 
 %
 
-$ vc 'str .*vector( "foo", *"bar", vector "baz" )'
+$ vc 'str .*packed( "foo", *"bar", packed "baz" )'
 1 >= '"foobarbaz"'
 
 %
 
-$ vc 'vector().size, vector("\u{1f4a9}\0").size'
+$ vc 'packed().size, packed("\u{1f4a9}\0").size'
 1 >= '(0, 5)'
 
 %
@@ -2588,7 +2588,7 @@ $ vc 'sha256 sha256 ""'
 
 %
 
-$ vc 'bool vector(), bool vector byte()'
+$ vc 'bool packed(), bool packed byte()'
 1 >= '(false, true)'
 
 %
@@ -2908,8 +2908,8 @@ $ vc '[[null], [], [1], [1, 2, 3]] map {try {*_ => "key"} catch {"nope"}}'
 
 %
 
-$ vc 'byte^[], bool str^[], typeof vec^[], typeof bool^..., int^... | ()'
-1 >= '((byte^[]), false, (vector^...), type, ((integer^...) | ()))'
+$ vc 'byte^[], bool str^[], typeof packed^[], typeof bool^..., int^... | ()'
+1 >= '((byte^[]), false, (packed^...), type, ((integer^...) | ()))'
 
 %
 

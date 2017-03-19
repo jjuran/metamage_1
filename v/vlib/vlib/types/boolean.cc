@@ -47,7 +47,7 @@ namespace vlib
 			case Value_mb32:
 				return Boolean( memcmp( v.string().data(), "\0\0\0\0", 4 ) );
 			
-			case Value_vector:
+			case Value_packed:
 			case Value_string:
 				return Boolean( ! v.string().empty() );
 			
@@ -85,7 +85,7 @@ namespace vlib
 	{
 		&boolean_str,
 		// rep: ditto
-		// vec: not defined
+		// bin: not defined
 	};
 	
 	const dispatch boolean_dispatch =

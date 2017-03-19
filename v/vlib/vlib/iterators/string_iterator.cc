@@ -18,7 +18,7 @@ namespace vlib
 	
 	string_iterator::string_iterator( const Value& str ) : its_string( str )
 	{
-		if ( str.type() == V_str  ||  str.type() == V_vec )
+		if ( str.type() == V_str  ||  str.type() == V_pack )
 		{
 			const plus::string& s = its_string.string();
 			

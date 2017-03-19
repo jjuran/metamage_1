@@ -62,7 +62,7 @@ namespace vlib
 			case Value_empty_list:
 				return MB32();
 			
-			case Value_vector:
+			case Value_packed:
 				return MB32( v.string() );
 			
 			case Value_string:
@@ -140,21 +140,21 @@ namespace vlib
 	};
 	
 	static
-	const char* mb32_vec_data( const Value& v )
+	const char* mb32_bin_data( const Value& v )
 	{
 		return v.string().data();
 	}
 	
 	static
-	size_t mb32_vec_size( const Value& v )
+	size_t mb32_bin_size( const Value& v )
 	{
 		return 4;
 	}
 	
-	static const stringify mb32_vec =
+	static const stringify mb32_bin =
 	{
-		&mb32_vec_data,
-		&mb32_vec_size,
+		&mb32_bin_data,
+		&mb32_bin_size,
 		NULL,
 	};
 	
@@ -162,7 +162,7 @@ namespace vlib
 	{
 		&mb32_str,
 		&mb32_rep,
-		&mb32_vec,
+		&mb32_bin,
 	};
 	
 	const dispatch mb32_dispatch =

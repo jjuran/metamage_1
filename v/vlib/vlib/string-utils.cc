@@ -190,7 +190,7 @@ namespace vlib
 			{
 				if ( mode < 0 )
 				{
-					return s->vec;
+					return s->bin;
 				}
 				
 				if ( mode > 0  &&  s->rep != NULL )

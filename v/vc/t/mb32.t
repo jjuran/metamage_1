@@ -25,7 +25,7 @@ $ vc "'fnd\xA7'"
 
 %
 
-$ vc "vec 'fnd\xA7'"
+$ vc "packed 'fnd\xA7'"
 1 >= 'x"666e64a7"'
 
 %
@@ -35,7 +35,7 @@ $ vc "mb32() == '\x00\x00\x00\x00'"
 
 %
 
-$ vc 'str mb32 vec "fnd\xA7" == "fnd\xc3\x9f"'
+$ vc 'str mb32 packed "fnd\xA7" == "fnd\xc3\x9f"'
 1 >= true
 
 %
@@ -50,7 +50,7 @@ $ vc "bool mb32(), bool '\x00\x00\x00\x01', bool '\xFF\xFF\xFF\xFF'"
 
 %
 
-$ vc 'const code (mb32) := vec "\u{1f4a9}"'
+$ vc 'const code (mb32) := packed "\u{1f4a9}"'
 1 >= "'\xf0\x9f\x92\xa9'"
 
 %

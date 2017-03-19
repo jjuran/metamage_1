@@ -1,9 +1,9 @@
 /*
-	vector.cc
+	packed.cc
 	---------
 */
 
-#include "vlib/types/vector.hh"
+#include "vlib/types/packed.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -21,109 +21,109 @@
 namespace vlib
 {
 	
-	Value Vector::coerce( const Value& v )
+	Value Packed::coerce( const Value& v )
 	{
 		switch ( v.type() )
 		{
-			case Value_vector:
+			case Value_packed:
 				return v;
 			
 			default:
-				THROW( "type not convertible to vector" );
+				THROW( "type can't be packed" );
 			
 			case Value_empty_list:
-				return Vector();
+				return Packed();
 			
 			case Value_string:
-				return Vector( v.string() );
+				return Packed( v.string() );
 			
 			case Value_byte:
 			case Value_mb32:
 			case Value_pair:
-				return Vector( pack( v ) );
+				return Packed( pack( v ) );
 		}
 	}
 	
 	static
-	size_t vector_str_size( const Value& v )
+	size_t packed_str_size( const Value& v )
 	{
 		return v.string().size() * 2;
 	}
 	
 	static
-	char* vector_str_copy( char* p, const Value& v )
+	char* packed_str_copy( char* p, const Value& v )
 	{
 		const plus::string& s = v.string();
 		
 		return gear::hexpcpy_lower( p, s.data(), s.size() );
 	}
 	
-	static const stringify vector_str =
+	static const stringify packed_str =
 	{
 		NULL,
-		&vector_str_size,
-		&vector_str_copy,
+		&packed_str_size,
+		&packed_str_copy,
 	};
 	
 	static
-	size_t vector_rep_size( const Value& v )
+	size_t packed_rep_size( const Value& v )
 	{
-		return vector_str_size( v ) + 3;
+		return packed_str_size( v ) + 3;
 	}
 	
 	static
-	char* vector_rep_copy( char* p, const Value& v )
+	char* packed_rep_copy( char* p, const Value& v )
 	{
 		*p++ = 'x';
 		*p++ = '"';
 		
-		p = vector_str_copy( p, v );
+		p = packed_str_copy( p, v );
 		
 		*p++ = '"';
 		
 		return p;
 	}
 	
-	static const stringify vector_rep =
+	static const stringify packed_rep =
 	{
 		NULL,
-		&vector_rep_size,
-		&vector_rep_copy,
+		&packed_rep_size,
+		&packed_rep_copy,
 	};
 	
 	static
-	const char* vector_vec_data( const Value& v )
+	const char* packed_bin_data( const Value& v )
 	{
 		return v.string().data();
 	}
 	
 	static
-	size_t vector_vec_size( const Value& v )
+	size_t packed_bin_size( const Value& v )
 	{
 		return v.string().size();
 	}
 	
-	static const stringify vector_vec =
+	static const stringify packed_bin =
 	{
-		&vector_vec_data,
-		&vector_vec_size,
+		&packed_bin_data,
+		&packed_bin_size,
 		NULL,
 	};
 	
-	static const stringifiers vector_stringifiers =
+	static const stringifiers packed_stringifiers =
 	{
-		&vector_str,
-		&vector_rep,
-		&vector_vec,
+		&packed_str,
+		&packed_rep,
+		&packed_bin,
 	};
 	
-	const dispatch vector_dispatch =
+	const dispatch packed_dispatch =
 	{
-		&vector_stringifiers,
+		&packed_stringifiers,
 	};
 	
 	static
-	Value vector_member( const Value&         obj,
+	Value packed_member( const Value&         obj,
 	                     const plus::string&  member )
 	{
 		if ( member == "size" )
@@ -136,17 +136,17 @@ namespace vlib
 			return String( obj.string() );
 		}
 		
-		THROW( "nonexistent vector member" );
+		THROW( "nonexistent packed data member" );
 		
 		return Value_nothing;
 	}
 	
-	const type_info vector_vtype =
+	const type_info packed_vtype =
 	{
-		"vector",
-		&assign_to< Vector >,
-		&Vector::coerce,
-		&vector_member,
+		"packed",
+		&assign_to< Packed >,
+		&Packed::coerce,
+		&packed_member,
 	};
 	
 }

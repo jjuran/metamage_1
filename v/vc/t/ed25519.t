@@ -5,7 +5,7 @@ $ vc 'const sec = x"00" * 32; ed25519-publickey sec'
 
 %
 
-$ vc 'const sec = vec( (0 -> 32) map byte ); ed25519-publickey sec'
+$ vc 'const sec = packed( (0 -> 32) map byte ); ed25519-publickey sec'
 1 >= 'x"03a107bff3ce10be1d70dd18e74bc09967e4d6309ba50d5f1ddc8664125531b8"'
 
 %

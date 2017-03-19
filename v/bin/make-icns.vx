@@ -108,8 +108,8 @@ def encode_u32BE
 
 def pack_one
 {
-	const tag  = vec _.key
-	const data = vec _.value
+	const tag  = packed _.key
+	const data = packed _.value
 	
 	const size = encode_u32BE( data.size + 8 )
 	
