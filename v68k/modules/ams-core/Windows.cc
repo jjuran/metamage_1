@@ -43,6 +43,8 @@ RgnHandle  OldContent  : 0x09EA;
 RgnHandle  GrayRgn     : 0x09EE;
 RgnHandle  SaveVisRgn  : 0x09F2;
 Pattern    DeskPattern : 0x0A3C;
+WindowRef  CurActivate : 0x0A64;
+WindowRef  CurDeactive : 0x0A68;
 short      MBarHeight  : 0x0BAA;
 
 /*
@@ -366,6 +368,9 @@ pascal void InitWindows_patch()
 	DiffRgn( BezelRgn, GrayRgn, GrayRgn );
 	
 	SaveVisRgn = NewRgn();
+	
+	CurActivate = NULL;
+	CurDeactive = NULL;
 	
 	draw_desktop_from_WMgrPort();
 	draw_menu_bar_from_WMgr_port();
