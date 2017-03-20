@@ -40,6 +40,7 @@
 #include "Menus.hh"
 #include "OSEvents.hh"
 #include "OSUtils.hh"
+#include "Ovals.hh"
 #include "QDUtils.hh"
 #include "Pen.hh"
 #include "Rects.hh"
@@ -224,6 +225,13 @@ static void install_QuickDraw()
 	TBTRAP( Pt2Rect    );  // A8AC
 	TBTRAP( PtInRect   );  // A8AD
 	TBTRAP( EmptyRect  );  // A8AE
+	
+	TBTRAP( StdOval    );  // A8B6
+	TBTRAP( FrameOval  );  // A8B7
+	TBTRAP( PaintOval  );  // A8B8
+	TBTRAP( EraseOval  );  // A8B9
+	TBTRAP( InvertOval );  // A8BA
+	TBTRAP( FillOval   );  // A8BB
 	
 	TBTRAP( StdRgn      );  // A8D1
 	TBTRAP( FrameRgn    );  // A8D2
