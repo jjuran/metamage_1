@@ -63,14 +63,49 @@ pascal OSErr PlotIconID_method( const Rect*        rect,
 	return noErr;
 }
 
+static
+pascal OSErr IconIDToRgn_method( RgnHandle          rgn,
+                                 const Rect*        iconRect,
+                                 IconAlignmentType  align,
+                                 short              resID )
+{
+	Handle h = GetResource( 'ICN#', resID );
+	
+	if ( h == NULL )
+	{
+		if ( ResErr != noErr )
+		{
+			return ResErr;
+		}
+		
+		return resNotFound;
+	}
+	
+	IconBitmap.baseAddr = *h + 128;
+	
+	BitMapToRegion( rgn, &IconBitmap );
+	
+	ReleaseResource( h );
+	
+	OffsetRgn( rgn, iconRect->left, iconRect->top );
+	
+	return noErr;
+}
+
 asm void IconDispatch_patch( short method : __D0 )
 {
 	CMPI.W   #0x0500,D0
 	BEQ      dispatch_PlotIconID
+	
+	CMPI.W   #0x0613,D0
+	BEQ      dispatch_IconIDToRgn
 	
 	_Debugger
 	_ExitToShell
 	
 dispatch_PlotIconID:
 	JMP      PlotIconID_method
+	
+dispatch_IconIDToRgn:
+	JMP      IconIDToRgn_method
 }
