@@ -34,6 +34,7 @@
 #include "Gestalt.hh"
 #include "GrafPorts.hh"
 #include "Handles.hh"
+#include "Icons.hh"
 #include "InitGraf.hh"
 #include "Menus.hh"
 #include "OSEvents.hh"
@@ -337,6 +338,11 @@ static void install_Debugger()
 	TBTRAP( DebugStr );  // ABFF
 }
 
+static void install_IconUtilities()
+{
+	TBTRAP( IconDispatch );  // ABC9
+}
+
 static asm void module_suspend()
 {
 	JSR      0xFFFFFFF8
@@ -409,6 +415,8 @@ int main( int argc, char** argv )
 	install_SegmentLoader();
 	
 	install_Debugger();
+	
+	install_IconUtilities();
 	
 	module_suspend();  // doesn't return
 }
