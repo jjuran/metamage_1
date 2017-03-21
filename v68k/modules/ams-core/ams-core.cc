@@ -30,6 +30,7 @@
 #include "Desk.hh"
 #include "Drag.hh"
 #include "Events.hh"
+#include "Fixed.hh"
 #include "Fonts.hh"
 #include "Gestalt.hh"
 #include "GrafPorts.hh"
@@ -158,6 +159,10 @@ static void install_QuickDraw()
 	TBTRAP( ShowCursor );  // A853
 	
 	TBTRAP( Random );  // A861
+	
+	TBTRAP( FixMul   );  // A868
+	TBTRAP( FixRatio );  // A869
+	TBTRAP( FixRound );  // A86C
 	
 	TBTRAP( InitPort    );  // A86D
 	TBTRAP( InitGraf    );  // A86E
