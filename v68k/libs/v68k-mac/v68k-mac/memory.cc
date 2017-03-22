@@ -74,6 +74,13 @@ enum
 	tag_GrayRgn_low_word,
 	tag_SaveVisRgn,
 	tag_SaveVisRgn_low_word,
+	tag_IconBitmap,
+	tag_IconBitmap_1,
+	tag_IconBitmap_2,
+	tag_IconBitmap_3,
+	tag_IconBitmap_4,
+	tag_IconBitmap_5,
+	tag_IconBitmap_6,
 	tag_DragPattern,
 	tag_DragPattern_1,
 	tag_DragPattern_2,
@@ -138,6 +145,7 @@ static const global globals[] =
 	{ 0x09F2, 4,    tag_SaveVisRgn  },
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
+	{ 0x0A0E, 14,   tag_IconBitmap  },
 	{ 0x0A34, 8,    tag_DragPattern },
 	{ 0x0A3C, 8,    tag_DeskPattern },
 	{ 0x0A60, 2,    tag_ResErr      },

@@ -34,6 +34,7 @@
 #include "Gestalt.hh"
 #include "GrafPorts.hh"
 #include "Handles.hh"
+#include "Icons.hh"
 #include "InitGraf.hh"
 #include "Menus.hh"
 #include "OSEvents.hh"
@@ -83,6 +84,8 @@ short SysEvtCnt : 0x0154;
 unsigned long ScrnBase : 0x0824;
 Point         Mouse    : 0x0830;
 
+BitMap IconBitmap : 0x0A0E;
+
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
 
@@ -112,6 +115,12 @@ static void initialize_low_memory_globals()
 	ScrnBase = 0x0001A700;
 	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
+	
+	IconBitmap.rowBytes = 4;
+	IconBitmap.bounds.top  = 0;
+	IconBitmap.bounds.left = 0;
+	IconBitmap.bounds.bottom = 32;
+	IconBitmap.bounds.right  = 32;
 }
 
 static void install_MemoryManager()
@@ -329,6 +338,11 @@ static void install_Debugger()
 	TBTRAP( DebugStr );  // ABFF
 }
 
+static void install_IconUtilities()
+{
+	TBTRAP( IconDispatch );  // ABC9
+}
+
 static asm void module_suspend()
 {
 	JSR      0xFFFFFFF8
@@ -401,6 +415,8 @@ int main( int argc, char** argv )
 	install_SegmentLoader();
 	
 	install_Debugger();
+	
+	install_IconUtilities();
 	
 	module_suspend();  // doesn't return
 }
