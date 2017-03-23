@@ -24,4 +24,6 @@ pascal void DisposeControl_patch( ControlRecord** control );
 
 pascal void KillControls_patch( GrafPort* window );
 
+pascal void DrawControls_patch( GrafPort* window );
+
 #endif

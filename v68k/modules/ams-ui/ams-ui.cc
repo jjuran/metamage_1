@@ -111,6 +111,8 @@ static void install_Controls()
 	TBTRAP( NewControl     );  // A954
 	TBTRAP( DisposeControl );  // A955
 	TBTRAP( KillControls   );  // A956
+	
+	TBTRAP( DrawControls   );  // A969
 }
 
 static

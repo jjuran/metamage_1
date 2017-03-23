@@ -19,6 +19,9 @@
 // Standard C
 #include <string.h>
 
+// ams-core
+#include "CDEF.hh"
+
 
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
@@ -54,7 +57,16 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 			memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
 		}
 		
+		const short varCode = procID & 0x0F;
+		
+		*(Byte*) &control[0]->contrlDefProc = varCode;
+		
 		w->controlList = (Handle) control;
+		
+		if ( visible )
+		{
+			CDEF_0( varCode, control, drawCntl, 0 );
+		}
 	}
 	
 	return control;
@@ -96,5 +108,21 @@ pascal void KillControls_patch( GrafPort* window )
 	while ( ControlRef control = (ControlRef) w->controlList )
 	{
 		DisposeControl( control );
+	}
+}
+
+pascal void DrawControls_patch( GrafPort* window )
+{
+	WindowPeek w = (WindowPeek) window;
+	
+	ControlRef control = (ControlRef) w->controlList;
+	
+	while ( control != NULL )
+	{
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+		
+		control = control[0]->nextControl;
 	}
 }
