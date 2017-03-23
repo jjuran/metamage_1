@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 // ams-ui
+#include "Controls.hh"
 #include "Drag.hh"
 #include "Icons.hh"
 #include "Menus.hh"
@@ -105,6 +106,12 @@ void install_Menus()
 	TBTRAP( FlashMenuBar );  // A94C
 }
 
+static void install_Controls()
+{
+	TBTRAP( DisposeControl );  // A955
+	TBTRAP( KillControls   );  // A956
+}
+
 static
 void install_IconUtilities()
 {
@@ -135,6 +142,7 @@ int main( int argc, char** argv )
 	
 	install_Windows();
 	install_Menus();
+	install_Controls();
 	
 	install_IconUtilities();
 	
