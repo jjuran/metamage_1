@@ -108,6 +108,7 @@ void install_Menus()
 
 static void install_Controls()
 {
+	TBTRAP( NewControl     );  // A954
 	TBTRAP( DisposeControl );  // A955
 	TBTRAP( KillControls   );  // A956
 }
