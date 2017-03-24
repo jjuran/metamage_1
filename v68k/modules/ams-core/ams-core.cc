@@ -64,7 +64,6 @@
 enum
 {
 	Opt_linger = 'L',  // linger on ExitToShell
-	Opt_qdsync = 'Q',
 	
 	Opt_last_byte = 255,
 	
@@ -74,7 +73,6 @@ enum
 static command::option options[] =
 {
 	{ "linger",  Opt_linger },
-	{ "qd-sync", Opt_qdsync },
 	
 	{ "events-fd", Opt_events_fd, command::Param_required },
 };
@@ -383,10 +381,6 @@ static char* const* get_options( char** argv )
 		{
 			case Opt_linger:
 				linger_on_exit = true;
-				break;
-			
-			case Opt_qdsync:
-				synchronized_quickdraw = true;
 				break;
 			
 			case Opt_events_fd:

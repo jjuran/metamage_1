@@ -17,9 +17,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ams-core
-#include "options.hh"
-
 
 static inline
 asm void inline_lock_screen()
@@ -35,16 +32,10 @@ asm void inline_unlock_screen()
 
 void lock_screen()
 {
-	if ( synchronized_quickdraw )
-	{
-		inline_lock_screen();
-	}
+	inline_lock_screen();
 }
 
 void unlock_screen()
 {
-	if ( synchronized_quickdraw )
-	{
-		inline_unlock_screen();
-	}
+	inline_unlock_screen();
 }
