@@ -111,6 +111,111 @@ pascal void KillControls_patch( GrafPort* window )
 	}
 }
 
+pascal short TrackControl_patch( ControlRecord**  control,
+                                 Point            start,
+                                 pascal void    (*action)() )
+{
+	RgnHandle tmp = NewRgn();
+	RgnHandle mouseRgn = tmp;
+	
+	WindowRef window = control[0]->contrlOwner;
+	
+	const short csdx = window->portBits.bounds.left;
+	const short csdy = window->portBits.bounds.top;
+	
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	Point pt = start;
+	
+	const short track_part = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+	
+	control[0]->contrlHilite = track_part;
+	
+	CDEF_0( varCode, control, drawCntl, track_part );
+	
+	long sleep = 0;
+	
+	while ( true )
+	{
+		EventRecord event;
+		
+		const bool eventful = WaitNextEvent( mUpMask, &event, sleep, mouseRgn );
+		
+		// Events for DAs won't occur here, so we don't need to check.
+		
+		if ( event.what == mouseUp )
+		{
+			// global to local
+			pt.h = event.where.h + csdx;
+			pt.v = event.where.v + csdy;
+			break;
+		}
+		
+		Point where = event.where;
+		
+		SetRectRgn( mouseRgn, where.h, where.v, where.h + 1, where.v + 1 );
+		
+		if ( event.what != nullEvent )
+		{
+			/*
+				Discard any mouse-moved events without redrawing.
+				This can be prohibitively CPU-taxing on lightweight systems.
+				
+				Set sleep to 0 to ensure that we get a null event afterward.
+			*/
+			
+			sleep = 0;
+			
+			continue;
+		}
+		
+		/*
+			We got a null event -- redraw the control (if it changed status,
+			that is), and set sleep back to forever (approx).
+		*/
+		
+		sleep = 0x7fffffff;
+		
+		// global to local
+		where.h += csdx;
+		where.v += csdy;
+		
+		if ( *(long*) &pt != *(long*) &where )
+		{
+			pt = where;
+			
+			short hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+			
+			if ( hit != track_part )
+			{
+				hit = 0;
+			}
+			
+			if ( hit != control[0]->contrlHilite )
+			{
+				control[0]->contrlHilite = hit;
+				
+				CDEF_0( varCode, control, drawCntl, track_part );
+			}
+		}
+	}
+	
+	DisposeRgn( tmp );
+	
+	control[0]->contrlHilite = 0;
+	
+	const short hit = CDEF_0( varCode, control, testCntl, *(long*) &pt );
+	
+	if ( hit == track_part )
+	{
+		CDEF_0( varCode, control, drawCntl, hit );
+		
+		return hit;
+	}
+	
+	return 0;
+}
+
 pascal void DrawControls_patch( GrafPort* window )
 {
 	WindowPeek w = (WindowPeek) window;

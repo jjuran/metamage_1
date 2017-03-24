@@ -17,6 +17,9 @@
 const short pushbutton_corner_diameter = 10;
 
 const short switch_edge_length = 12;
+const short switch_thickness   =  1;
+
+const short switch_interior_length = switch_edge_length - switch_thickness * 2;
 
 
 static
@@ -45,6 +48,14 @@ void draw_pushbutton( const Rect& bounds )
 }
 
 static
+void hilite_pushbutton( const Rect& bounds )
+{
+	const short diameter = pushbutton_corner_diameter;  // 10px
+	
+	InvertRoundRect( &bounds, diameter, diameter );
+}
+
+static
 void draw_checkbox( const Rect& button )
 {
 	EraseRect( &button );
@@ -52,10 +63,53 @@ void draw_checkbox( const Rect& button )
 }
 
 static
+void hilite_check( Rect rect )
+{
+	const short inset = switch_thickness;  // 1px
+	
+	InsetRect( &rect, inset, inset );
+	
+	PenMode( patXor );
+	
+	Rect top    = rect;
+	Rect left   = rect;
+	Rect right  = rect;
+	Rect bottom = rect;
+	
+	top.bottom = top.top       + inset;
+	bottom.top = bottom.bottom - inset;
+	
+	++left.top;
+	++right.top;
+	--left.bottom;
+	--right.bottom;
+	
+	left.right = left.left   + inset;
+	right.left = right.right - inset;
+	
+	PaintRect( &top    );
+	PaintRect( &left   );
+	PaintRect( &right  );
+	PaintRect( &bottom );
+}
+
+static
 void draw_radiobutton( const Rect& button )
 {
 	EraseOval( &button );
 	FrameOval( &button );
+}
+
+static
+void hilite_radio( Rect rect )
+{
+	const short inset = switch_thickness;  // 1px
+	
+	InsetRect( &rect, inset, inset );
+	
+	PenMode( patXor );
+	
+	FrameOval( &rect );
 }
 
 static
@@ -76,18 +130,35 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	Rect button_rect = varCode == pushButProc ? bounds
 	                                          : switch_button_rect( bounds );
 	
-	switch ( varCode )
+	const bool draw   = false;
+	const bool hilite = true;
+	
+	const bool hiliting = param != 0;
+	
+	switch ( varCode << 1 | hiliting )
 	{
-		case pushButProc:
+		case pushButProc << 1 | draw:
 			draw_pushbutton( button_rect );
 			break;
 		
-		case checkBoxProc:
+		case pushButProc << 1 | hilite:
+			hilite_pushbutton( button_rect );
+			break;
+		
+		case checkBoxProc << 1 | draw:
 			draw_checkbox( button_rect );
 			break;
 		
-		case radioButProc:
+		case checkBoxProc << 1 | hilite:
+			hilite_check( button_rect );
+			break;
+		
+		case radioButProc << 1 | draw:
 			draw_radiobutton( button_rect );
+			break;
+		
+		case radioButProc << 1 | hilite:
+			hilite_radio( button_rect );
 			break;
 		
 		default:

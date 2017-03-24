@@ -25,6 +25,10 @@ pascal void DisposeControl_patch( ControlRecord** control );
 
 pascal void KillControls_patch( GrafPort* window );
 
+pascal short TrackControl_patch( ControlRecord**  control,
+                                 Point            start,
+                                 pascal void    (*action)() );
+
 pascal void DrawControls_patch( GrafPort* window );
 
 pascal short FindControl_patch( Point             where,
