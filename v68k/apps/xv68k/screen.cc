@@ -35,6 +35,8 @@ using raster::raster_load;
 using raster::sync_relay;
 
 
+static bool ignoring_screen_locks;
+
 static void* the_screen_buffer;
 
 static sync_relay* the_sync_relay;
@@ -166,6 +168,11 @@ int publish_raster( const char* path )
 	return 0;
 }
 
+void ignore_screen_locks()
+{
+	ignoring_screen_locks = true;
+}
+
 int set_screen_backing_store_file( const char* path, bool is_raster )
 {
 	if ( is_raster )
@@ -219,7 +226,9 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 	
 	uint8_t* p = (uint8_t*) the_screen_buffer + addr;
 	
-	if ( access == v68k::mem_update  &&  screen_lock_level >= 0 )
+	const bool unlocked = screen_lock_level >= 0  ||  ignoring_screen_locks;
+	
+	if ( access == v68k::mem_update  &&  unlocked )
 	{
 	#ifdef __RELIX__
 		

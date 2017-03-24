@@ -91,6 +91,7 @@ enum
 	Opt_pid,
 	Opt_raster,
 	Opt_screen,
+	Opt_ignore_screen_locks,
 };
 
 static command::option options[] =
@@ -101,6 +102,8 @@ static command::option options[] =
 	{ "raster",  Opt_raster, command::Param_required },
 	{ "screen",  Opt_screen, command::Param_required },
 	{ "module",  Opt_module, command::Param_required },
+	
+	{ "ignore-screen-locks", Opt_ignore_screen_locks },
 	
 	{ NULL }
 };
@@ -730,6 +733,10 @@ char* const* get_options( char** argv )
 					fake_pid = -1;
 				}
 				
+				break;
+			
+			case Opt_ignore_screen_locks:
+				ignore_screen_locks();
 				break;
 			
 			case Opt_verbose:
