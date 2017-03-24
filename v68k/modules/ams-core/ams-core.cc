@@ -46,6 +46,7 @@
 #include "Rects.hh"
 #include "Region-ops.hh"
 #include "Regions.hh"
+#include "RoundRects.hh"
 #include "Segments.hh"
 #include "StrUtils.hh"
 #include "Text.hh"
@@ -225,6 +226,13 @@ static void install_QuickDraw()
 	TBTRAP( Pt2Rect    );  // A8AC
 	TBTRAP( PtInRect   );  // A8AD
 	TBTRAP( EmptyRect  );  // A8AE
+	
+	TBTRAP( StdRRect       );  // A8AF
+	TBTRAP( FrameRoundRect );  // A8B0
+	TBTRAP( PaintRoundRect );  // A8B1
+	TBTRAP( EraseRoundRect );  // A8B2
+	TBTRAP( InverRoundRect );  // A8B3
+	TBTRAP( FillRoundRect  );  // A8B4
 	
 	TBTRAP( StdOval    );  // A8B6
 	TBTRAP( FrameOval  );  // A8B7
