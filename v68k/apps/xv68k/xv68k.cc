@@ -101,6 +101,8 @@ static command::option options[] =
 	{ "raster",  Opt_raster, command::Param_required },
 	{ "screen",  Opt_screen, command::Param_required },
 	{ "module",  Opt_module, command::Param_required },
+	
+	{ NULL }
 };
 
 
