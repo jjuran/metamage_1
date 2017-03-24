@@ -126,3 +126,33 @@ pascal void DrawControls_patch( GrafPort* window )
 		control = control[0]->nextControl;
 	}
 }
+
+pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
+{
+	*which = NULL;
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	if ( ! w->visible )
+	{
+		return 0;
+	}
+	
+	ControlRef next = (ControlRef) w->controlList;
+	
+	while ( next != NULL )
+	{
+		const short varCode = *(Byte*) &next[0]->contrlDefProc;
+		
+		if ( long hit = CDEF_0( varCode, next, testCntl, *(long*) &pt ) )
+		{
+			*which = next;
+			
+			return hit;
+		}
+		
+		next = next[0]->nextControl;
+	}
+	
+	return 0;
+}

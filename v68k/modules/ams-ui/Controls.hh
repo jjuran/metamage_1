@@ -7,6 +7,7 @@
 #define CONTROLS_HH
 
 struct GrafPort;
+struct Point;
 struct Rect;
 struct ControlRecord;
 
@@ -25,5 +26,9 @@ pascal void DisposeControl_patch( ControlRecord** control );
 pascal void KillControls_patch( GrafPort* window );
 
 pascal void DrawControls_patch( GrafPort* window );
+
+pascal short FindControl_patch( Point             where,
+                                GrafPort*         window,
+                                ControlRecord***  which );
 
 #endif

@@ -99,6 +99,22 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	return 0;
 }
 
+static
+long CDEF_0_Hit( short varCode, ControlRef control, Point where )
+{
+	if ( ! control[0]->contrlVis )
+	{
+		return 0;
+	}
+	
+	if ( PtInRect( where, &control[0]->contrlRect ) )
+	{
+		return 1;
+	}
+	
+	return 0;
+}
+
 long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 {
 	switch ( message )
@@ -107,6 +123,8 @@ long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 			return CDEF_0_Draw( varCode, control, param );
 		
 		case testCntl:
+			return CDEF_0_Hit( varCode, control, *(Point*) &param );
+		
 		case calcCRgns:
 		case initCntl:
 		case dispCntl:
