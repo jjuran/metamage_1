@@ -213,13 +213,28 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 	PaintOne_patch( NULL, clobbered_region );
 }
 
+static
+bool window_needs_update( WindowPeek w )
+{
+	if ( EmptyRgn( w->updateRgn ) )
+	{
+		return false;
+	}
+	
+	// Clip the update region to the visRgn and check again.
+	
+	SectRgn( w->port.visRgn, w->updateRgn, w->updateRgn );
+	
+	return ! EmptyRgn( w->updateRgn );
+}
+
 pascal unsigned char CheckUpdate_patch( EventRecord* event )
 {
 	WindowPeek w = WindowList;
 	
 	if ( w != NULL )
 	{
-		if ( ! EmptyRgn( w->updateRgn ) )
+		if ( window_needs_update( w ) )
 		{
 			memset( event, '\0', sizeof (EventRecord) );
 			
