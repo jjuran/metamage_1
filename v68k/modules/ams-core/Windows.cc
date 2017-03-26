@@ -143,6 +143,49 @@ pascal void DrawGrowIcon_patch( WindowPeek window )
 	qd.thePort = saved_port;
 }
 
+pascal void CalcVis_patch( WindowPeek window )
+{
+	RgnHandle visRgn = window->port.visRgn;
+	
+	SectRgn( window->contRgn, GrayRgn, visRgn );
+	
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			return;  // Specified window doesn't exist.
+		}
+		
+		DiffRgn( visRgn, w->strucRgn, visRgn );
+		
+		w = w->nextWindow;
+	}
+}
+
+pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	while ( w != NULL )
+	{
+		CalcVis_patch( w );
+		
+		w = w->nextWindow;
+	}
+}
+
 pascal void ClipAbove_patch( WindowPeek window )
 {
 	RgnHandle clipRgn = WMgrPort->clipRgn;
@@ -151,9 +194,16 @@ pascal void ClipAbove_patch( WindowPeek window )
 	
 	WindowPeek w = WindowList;
 	
-	if ( w != window )
+	while ( w != window )
 	{
+		if ( w == NULL )
+		{
+			break;
+		}
+		
 		DiffRgn( clipRgn, w->strucRgn, clipRgn );
+		
+		w = w->nextWindow;
 	}
 }
 
@@ -202,9 +252,11 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 {
 	WindowPeek w = window;
 	
-	if ( w != NULL )
+	while ( w != NULL )
 	{
 		PaintOne_patch( w, clobbered_region );
+		
+		w = w->nextWindow;
 	}
 	
 	SaveUpdate = true;
@@ -213,13 +265,28 @@ pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 	PaintOne_patch( NULL, clobbered_region );
 }
 
+static
+bool window_needs_update( WindowPeek w )
+{
+	if ( EmptyRgn( w->updateRgn ) )
+	{
+		return false;
+	}
+	
+	// Clip the update region to the visRgn and check again.
+	
+	SectRgn( w->port.visRgn, w->updateRgn, w->updateRgn );
+	
+	return ! EmptyRgn( w->updateRgn );
+}
+
 pascal unsigned char CheckUpdate_patch( EventRecord* event )
 {
 	WindowPeek w = WindowList;
 	
-	if ( w != NULL )
+	while ( w != NULL )
 	{
-		if ( ! EmptyRgn( w->updateRgn ) )
+		if ( window_needs_update( w ) )
 		{
 			memset( event, '\0', sizeof (EventRecord) );
 			
@@ -228,6 +295,8 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 			
 			return true;
 		}
+		
+		w = w->nextWindow;
 	}
 	
 	return false;
@@ -390,6 +459,20 @@ Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
 		return -true;
 	}
 	
+	WindowPeek prev = NULL;
+	WindowPeek next = WindowList;
+	
+	do
+	{
+		prev = next;
+		
+		next = next->nextWindow;
+	}
+	while ( next != NULL  &&  (GrafPtr) next != behind );
+	
+	window->nextWindow = next;
+	prev->nextWindow = window;
+	
 	return false;
 }
 
@@ -399,6 +482,23 @@ void remove_from_window_list( WindowPeek window )
 	if ( window == WindowList )
 	{
 		WindowList = window->nextWindow;
+		
+		return;
+	}
+	
+	WindowPeek prev;
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		prev = w;
+		
+		w = w->nextWindow;
+	}
+	
+	if ( w != NULL )
+	{
+		prev->nextWindow = window->nextWindow;
 	}
 }
 
@@ -411,11 +511,6 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          unsigned char         closeBox,
                                          long                  refCon )
 {
-	if ( WindowList != NULL )
-	{
-		return NULL;  // Only one window allowed, for now.
-	}
-	
 	WindowPeek window = (WindowPeek) storage;
 	
 	if ( window == NULL )
@@ -451,17 +546,6 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	MovePortTo( bounds->left, bounds->top );
 	
-	if ( visible )
-	{
-		RectRgn( port->visRgn, bounds );
-		
-		CurActivate = (WindowRef) window;
-	}
-	else
-	{
-		SetEmptyRgn( port->visRgn );
-	}
-	
 	window->windowKind = userKind;
 	window->visible    = -(visible != 0);
 	window->hilited    = -true;
@@ -476,9 +560,22 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	window->hilited = frontmost;
 	
+	if ( frontmost  &&  window->nextWindow )
+	{
+		if ( CurActivate != (WindowRef) window->nextWindow )
+		{
+			CurDeactive = (WindowRef) window->nextWindow;
+		}
+		
+		HiliteWindow_patch( window->nextWindow, false );
+	}
+	
+	CurActivate = (WindowRef) window;
+	
 	WDEF_0( varCode, (WindowPtr) window, wCalcRgns, 0 );
 	
-	PaintOne_patch( window, window->strucRgn );
+	CalcVBehind_patch( window, window->strucRgn );
+	PaintOne_patch   ( window, window->strucRgn );
 	
 	return (WindowPtr) window;
 	
@@ -551,9 +648,11 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	{
 		qd.thePort = WMgrPort;
 		
-		// Clip to the gray region.
+		// Clip to the gray region minus any nearer windows' structure.
 		
 		SetClip( GrayRgn );
+		
+		ClipAbove( w );
 		
 		// Set the uncovered region to the visible portion of the window.
 		
@@ -580,12 +679,13 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 	
 	OffsetRgn( window->updateRgn, dh, dv );
 	
-	/*
-		Set the visRgn of the window's port.  We don't have CalcVis() yet,
-		but this works for a single window.
-	*/
+	// Recalc the visRgn of this window and those below it.
 	
-	SectRgn( window->contRgn, GrayRgn, w->visRgn );
+	XorRgn( uncovered, window->strucRgn, uncovered );
+	
+	CalcVBehind_patch( window, uncovered );
+	
+	XorRgn( uncovered, window->strucRgn, uncovered );
 	
 	/*
 		Further clip to the visible part of the old structure (translated).
@@ -674,11 +774,6 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	XorRgn( OldStructure, w->strucRgn, OldStructure );
 	XorRgn( OldContent,   w->contRgn,  OldContent   );
 	
-	if ( w->visible )
-	{
-		SectRgn( w->contRgn, GrayRgn, window->visRgn );
-	}
-	
 	RgnHandle exposed = OldStructure;
 	
 	UnionRgn( OldStructure, OldContent, exposed );
@@ -699,6 +794,7 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	SaveUpdate = update;
 	
 	PaintBehind_patch( w, exposed );
+	CalcVBehind_patch( w, exposed );
 }
 
 pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
@@ -776,6 +872,75 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	DisposeRgn( mouseRgn );
 	
 	return is_inside;
+}
+
+pascal void SelectWindow_patch( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		return;
+	}
+	
+	/*
+		Guard against calling SelectWindow() twice in a row for different
+		windows:  Don't give the front window a deactivate event if an
+		activate event is pending for it, since (a) it's already in an
+		inactive state, and (b) we'd be clobbering the deactivate event for
+		the previous front window (if that too were still pending).
+	*/
+	
+	if ( CurActivate != (WindowRef) WindowList )
+	{
+		CurDeactive = (WindowRef) WindowList;
+	}
+	
+	CurActivate = (WindowRef) window;
+	
+	WindowPeek leader = WindowList;
+	
+	BringToFront_patch( window );
+	HiliteWindow_patch( leader, false );
+	HiliteWindow_patch( window, true  );
+}
+
+pascal void BringToFront_patch( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		return;
+	}
+	
+	WindowPeek w = WindowList;
+	
+	do
+	{
+		if ( w == NULL )
+		{
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	while ( w != window );
+	
+	// Calculate the obscured region of the window (including its structure).
+	
+	RectRgn( WMgrPort->clipRgn, &window->strucRgn[0]->rgnBBox );
+	
+	ClipAbove_patch( window );
+	
+	DiffRgn( window->strucRgn, WMgrPort->clipRgn, WMgrPort->clipRgn );
+	
+	remove_from_window_list( window );
+	insert_into_window_list( window, GrafPtr( -1 ) );
+	
+	// Repaint only the previously hidden area.
+	
+	Rect r = WMgrPort->clipRgn[0]->rgnBBox;
+	
+	PaintOne_patch( window, WMgrPort->clipRgn );
+	
+	CalcVBehind_patch( window, window->strucRgn );
 }
 
 pascal void BeginUpdate_patch( struct GrafPort* window )
@@ -1017,7 +1182,7 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	
 	WindowPeek w = WindowList;
 	
-	if ( w != NULL )
+	while ( w != NULL )
 	{
 		const short varCode = *(Byte*) &w->windowDefProc;
 		
@@ -1029,6 +1194,8 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 			
 			return hit + 2;
 		}
+		
+		w = w->nextWindow;
 	}
 	
 	return inDesk;
@@ -1048,9 +1215,19 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	
 	WindowPeek window = (WindowPeek) port;
 	
+	const bool frontmost = window == WindowList;
+	
 	remove_from_window_list( window );
 	
-	PaintBehind( (WindowRef) window->nextWindow, window->strucRgn );
+	PaintBehind_patch( window->nextWindow, window->strucRgn );
+	CalcVBehind_patch( window->nextWindow, window->strucRgn );
+	
+	if ( frontmost  &&  WindowList != NULL )
+	{
+		CurActivate = (WindowRef) WindowList;
+		
+		HiliteWindow_patch( WindowList, true );
+	}
 	
 	DisposeRgn( window->strucRgn  );
 	DisposeRgn( window->contRgn   );

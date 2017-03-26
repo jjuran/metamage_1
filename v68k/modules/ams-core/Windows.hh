@@ -19,6 +19,10 @@ pascal void GetWTitle_patch( WindowRecord* window,       unsigned char* s );
 
 pascal void DrawGrowIcon_patch( struct WindowRecord* window );
 
+pascal void CalcVis_patch( struct WindowRecord* window );
+
+pascal void CalcVBehind_patch( struct WindowRecord* w, struct MacRegion** rgn );
+
 pascal void ClipAbove_patch( struct WindowRecord* window );
 
 pascal void PaintOne_patch   ( struct WindowRecord* w, struct MacRegion** rgn );
@@ -45,6 +49,9 @@ pascal void SizeWindow_patch( GrafPort* w, short h, short v, char update   );
 pascal void HiliteWindow_patch( WindowRecord* window, unsigned char hilite );
 
 pascal unsigned char TrackGoAway_patch( struct GrafPort* w, struct Point pt );
+
+pascal void SelectWindow_patch( WindowRecord* window );
+pascal void BringToFront_patch( WindowRecord* window );
 
 pascal void BeginUpdate_patch( struct GrafPort* window );
 pascal void EndUpdate_patch  ( struct GrafPort* window );

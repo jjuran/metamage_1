@@ -291,6 +291,8 @@ static void install_Windows()
 	TBTRAP( DrawGrowIcon  );  // A904
 	TBTRAP( DragGrayRgn   );  // A905
 	
+	TBTRAP( CalcVis       );  // A909
+	TBTRAP( CalcVBehind   );  // A90A
 	TBTRAP( ClipAbove     );  // A90B
 	TBTRAP( PaintOne      );  // A90C
 	TBTRAP( PaintBehind   );  // A90D
@@ -307,6 +309,8 @@ static void install_Windows()
 	
 	TBTRAP( SizeWindow    );  // A91D
 	TBTRAP( TrackGoAway   );  // A91E
+	TBTRAP( SelectWindow  );  // A91F
+	TBTRAP( BringToFront  );  // A920
 	
 	TBTRAP( BeginUpdate   );  // A922
 	TBTRAP( EndUpdate     );  // A923
