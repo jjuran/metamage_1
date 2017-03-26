@@ -1018,6 +1018,16 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 
 pascal void CloseWindow_patch( struct GrafPort* port )
 {
+	if ( CurActivate == port )
+	{
+		CurActivate = NULL;
+	}
+	
+	if ( CurDeactive == port )
+	{
+		CurDeactive = NULL;
+	}
+	
 	WindowPeek window = (WindowPeek) port;
 	
 	remove_from_window_list( window );
