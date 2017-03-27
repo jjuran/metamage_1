@@ -252,6 +252,8 @@ static void install_QuickDraw()
 	
 	TBTRAP( NewRgn      );  // A8D8
 	TBTRAP( DisposeRgn  );  // A8D9
+	TBTRAP( OpenRgn     );  // A8DA
+	TBTRAP( CloseRgn    );  // A8DB
 	TBTRAP( CopyRgn     );  // A8DC
 	TBTRAP( SetEmptyRgn );  // A8DD
 	TBTRAP( SetRectRgn  );  // A8DE

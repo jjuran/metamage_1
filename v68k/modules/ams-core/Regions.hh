@@ -21,6 +21,10 @@ pascal void FillRgn_patch( MacRegion** rgn, const Pattern* pattern );
 
 pascal MacRegion** NewRgn_patch();
 
+pascal void OpenRgn_patch();
+
+pascal void CloseRgn_patch( MacRegion** rgn );
+
 pascal void DisposeRgn_patch( MacRegion** rgn );
 
 pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst );

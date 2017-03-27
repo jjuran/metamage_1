@@ -108,6 +108,30 @@ pascal MacRegion** NewRgn_patch()
 	return h;
 }
 
+pascal void OpenRgn_patch()
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	RgnHandle rgn = NewRgn_patch();
+	
+	port.rgnSave = (Handle) rgn;
+	
+	HidePen();
+}
+
+pascal void CloseRgn_patch( MacRegion** rgn )
+{
+	ShowPen();
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	CopyRgn_patch( (RgnHandle) port.rgnSave, rgn );
+	
+	DisposeHandle( port.rgnSave );
+	
+	port.rgnSave = NULL;
+}
+
 pascal void DisposeRgn_patch( MacRegion** rgn )
 {
 	DisposeHandle( (Handle) rgn );
