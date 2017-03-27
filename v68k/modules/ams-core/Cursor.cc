@@ -12,6 +12,7 @@
 
 // ams-core
 #include "QDGlobals.hh"
+#include "cursor_jump.hh"
 #include "screen_lock.hh"
 
 
@@ -24,6 +25,12 @@ static Ptr    CrsrAddr;
 static Buffer CrsrSave;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
+
+void init_lowmem_Cursor()
+{
+	JHideCursor = &hide_cursor;
+	JShowCursor = &show_cursor;
+}
 
 static
 void save_bits_under_cursor( Ptr addr, short rowBytes )

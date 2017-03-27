@@ -8,6 +8,8 @@
 
 struct Cursor;
 
+void init_lowmem_Cursor();
+
 void hide_cursor();
 void show_cursor();
 
