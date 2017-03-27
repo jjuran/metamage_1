@@ -28,7 +28,6 @@
 #include "Cursor.hh"
 #include "Debugger.hh"
 #include "Desk.hh"
-#include "Drag.hh"
 #include "Events.hh"
 #include "Files.hh"
 #include "Fixed.hh"
@@ -36,9 +35,7 @@
 #include "Gestalt.hh"
 #include "GrafPorts.hh"
 #include "Handles.hh"
-#include "Icons.hh"
 #include "InitGraf.hh"
-#include "Menus.hh"
 #include "OSEvents.hh"
 #include "OSUtils.hh"
 #include "Ovals.hh"
@@ -51,7 +48,6 @@
 #include "Segments.hh"
 #include "StrUtils.hh"
 #include "Text.hh"
-#include "Windows.hh"
 #include "options.hh"
 
 
@@ -86,8 +82,6 @@ short SysEvtCnt : 0x0154;
 unsigned long ScrnBase : 0x0824;
 Point         Mouse    : 0x0830;
 
-BitMap IconBitmap : 0x0A0E;
-
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
 
@@ -96,9 +90,6 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 enum
 {
-	_BeginUpdate      = _BeginUpDate,
-	_CheckUpdate      = _CheckUpDate,
-	_EndUpdate        = _EndUpDate,
 	_ReallocateHandle = _ReallocHandle,
 	_SetPortBits      = _SetPBits,
 	_SetRectRgn       = _SetRecRgn,
@@ -117,12 +108,6 @@ static void initialize_low_memory_globals()
 	ScrnBase = 0x0001A700;
 	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
-	
-	IconBitmap.rowBytes = 4;
-	IconBitmap.bounds.top  = 0;
-	IconBitmap.bounds.left = 0;
-	IconBitmap.bounds.bottom = 32;
-	IconBitmap.bounds.right  = 32;
 	
 	init_lowmem_Cursor();
 }
@@ -290,58 +275,7 @@ static void install_Fonts()
 
 static void install_StrUtils()
 {
-	TBTRAP( NewString );  // A906
-	TBTRAP( SetString );  // A907
-	
 	TBTRAP( GetString );  // A9BA
-}
-
-static void install_Windows()
-{
-	TBTRAP( DrawGrowIcon  );  // A904
-	TBTRAP( DragGrayRgn   );  // A905
-	
-	TBTRAP( CalcVis       );  // A909
-	TBTRAP( CalcVBehind   );  // A90A
-	TBTRAP( ClipAbove     );  // A90B
-	TBTRAP( PaintOne      );  // A90C
-	TBTRAP( PaintBehind   );  // A90D
-	
-	TBTRAP( CheckUpdate   );  // A911
-	TBTRAP( InitWindows   );  // A912
-	TBTRAP( NewWindow     );  // A913
-	TBTRAP( DisposeWindow );  // A914
-	
-	TBTRAP( GetWTitle     );  // A919
-	TBTRAP( SetWTitle     );  // A91A
-	TBTRAP( MoveWindow    );  // A91B
-	TBTRAP( HiliteWindow  );  // A91C
-	
-	TBTRAP( SizeWindow    );  // A91D
-	TBTRAP( TrackGoAway   );  // A91E
-	TBTRAP( SelectWindow  );  // A91F
-	TBTRAP( BringToFront  );  // A920
-	
-	TBTRAP( BeginUpdate   );  // A922
-	TBTRAP( EndUpdate     );  // A923
-	TBTRAP( FrontWindow   );  // A924
-	TBTRAP( DragWindow    );  // A925
-	TBTRAP( DragTheRgn    );  // A926
-	TBTRAP( InvalRgn      );  // A927
-	TBTRAP( InvalRect     );  // A928
-	TBTRAP( ValidRgn      );  // A929
-	TBTRAP( ValidRect     );  // A92A
-	
-	TBTRAP( GrowWindow    );  // A92B
-	TBTRAP( FindWindow    );  // A92C
-	TBTRAP( CloseWindow   );  // A92D
-}
-
-static void install_Menus()
-{
-	TBTRAP( InitMenus    );  // A930
-	TBTRAP( DrawMenuBar  );  // A937
-	TBTRAP( FlashMenuBar );  // A94C
 }
 
 static void install_EventManager()
@@ -370,11 +304,6 @@ static void install_Debugger()
 {
 	TBTRAP( Debugger );  // A9FF
 	TBTRAP( DebugStr );  // ABFF
-}
-
-static void install_IconUtilities()
-{
-	TBTRAP( IconDispatch );  // ABC9
 }
 
 static asm void module_suspend()
@@ -437,8 +366,6 @@ int main( int argc, char** argv )
 	install_QuickDraw();
 	install_Fonts();
 	install_StrUtils();
-	install_Windows();
-	install_Menus();
 	
 	install_EventManager();
 	
@@ -447,8 +374,6 @@ int main( int argc, char** argv )
 	install_SegmentLoader();
 	
 	install_Debugger();
-	
-	install_IconUtilities();
 	
 	module_suspend();  // doesn't return
 }

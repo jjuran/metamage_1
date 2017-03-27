@@ -17,8 +17,9 @@ chmod 0622 $FIFO
 
 CORE=ams-core
 RSRC=ams-rsrc
+UI=ams-ui
 
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft 8<&0 \
 	freemountd -q --root ~/68k // \
-	xv68k $RASTER -m [ $CORE --events-fd=8 ] -m $RSRC ~/68k/app $AppName
+	xv68k $RASTER -m [ $CORE --events-fd=8 ] -m $RSRC -m $UI ~/68k/app $AppName
