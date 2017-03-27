@@ -6,18 +6,18 @@
 #include "raster_lock.hh"
 
 // ams-core
-#include "Cursor.hh"
+#include "cursor_jump.hh"
 #include "screen_lock.hh"
 
 
 void lock_raster()
 {
 	lock_screen();
-	hide_cursor();
+	JHideCursor();
 }
 
 void unlock_raster()
 {
-	show_cursor();
+	JShowCursor();
 	unlock_screen();
 }
