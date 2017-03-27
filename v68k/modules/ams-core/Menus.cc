@@ -5,9 +5,11 @@
 
 #include "Menus.hh"
 
+// ams-common
+#include "QDGlobals.hh"
+
 // ams-core
 #include "MBDF.hh"
-#include "QDGlobals.hh"
 #include "Windows.hh"
 
 

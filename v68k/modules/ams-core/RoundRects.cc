@@ -10,8 +10,10 @@
 #include <Quickdraw.h>
 #endif
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
+
+// ams-core
 #include "RoundRectRgn.hh"
 
 

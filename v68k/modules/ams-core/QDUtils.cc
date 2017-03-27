@@ -10,7 +10,7 @@
 #include <Resources.h>
 #endif
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
 
 

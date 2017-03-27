@@ -10,7 +10,7 @@
 #include <Fonts.h>
 #endif
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 

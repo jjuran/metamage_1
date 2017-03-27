@@ -5,7 +5,7 @@
 
 #include "Pen.hh"
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
 
 

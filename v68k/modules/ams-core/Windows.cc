@@ -22,13 +22,15 @@
 // iota
 #include "iota/swap.hh"
 
+// ams-common
+#include "QDGlobals.hh"
+#include "raster_lock.hh"
+
 // ams-core
 #include "MBDF.hh"
-#include "QDGlobals.hh"
 #include "StrUtils.hh"
 #include "WDEF.hh"
 #include "desktop.hh"
-#include "raster_lock.hh"
 
 
 WindowPeek WindowList  : 0x09D6;

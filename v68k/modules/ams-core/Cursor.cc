@@ -10,7 +10,7 @@
 #include <Quickdraw.h>
 #endif
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
 #include "cursor_jump.hh"
 #include "screen_lock.hh"

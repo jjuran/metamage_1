@@ -5,7 +5,7 @@
 
 #include "raster_lock.hh"
 
-// ams-core
+// ams-common
 #include "cursor_jump.hh"
 #include "screen_lock.hh"
 

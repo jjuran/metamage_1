@@ -5,8 +5,10 @@
 
 #include "GrafPorts.hh"
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
+
+// ams-core
 #include "Rects.hh"
 #include "Regions.hh"
 

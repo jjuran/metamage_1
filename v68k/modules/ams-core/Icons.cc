@@ -19,7 +19,7 @@
 #include <Traps.h>
 #endif
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
 
 

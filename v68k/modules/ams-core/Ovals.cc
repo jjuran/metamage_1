@@ -10,9 +10,11 @@
 #include <Quickdraw.h>
 #endif
 
+// ams-common
+#include "QDGlobals.hh"
+
 // ams-core
 #include "OvalRgn.hh"
-#include "QDGlobals.hh"
 
 
 pascal void StdOval_patch( signed char verb, const Rect* r )

@@ -13,8 +13,10 @@
 // Standard C
 #include <string.h>
 
-// ams-core
+// ams-common
 #include "QDGlobals.hh"
+
+// ams-core
 #include "Rect-utils.hh"
 #include "Rects.hh"
 

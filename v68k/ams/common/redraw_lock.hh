@@ -6,7 +6,7 @@
 #ifndef REDRAWLOCK_HH
 #define REDRAWLOCK_HH
 
-// ams-core
+// ams-common
 #include "raster_lock.hh"
 
 

@@ -17,10 +17,12 @@
 // quickdraw
 #include "qd/region_iterator.hh"
 
-// ams-core
-#include "draw.hh"
+// ams-common
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
+
+// ams-core
+#include "draw.hh"
 
 
 static inline
