@@ -39,6 +39,11 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 		
 		GrafPort& port = **get_addrof_thePort();
 		
+		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
+		{
+			UnionRgn( rgn, rgnSave, rgnSave );
+		}
+		
 		InsetRgn( frame, port.pnSize.h, port.pnSize.v );
 		
 		DiffRgn( rgn, frame, frame );

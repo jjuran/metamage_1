@@ -33,6 +33,15 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 		
 		GrafPort& port = **get_addrof_thePort();
 		
+		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
+		{
+			OvalRgn( ovalRgn, width, height );
+			
+			UnionRgn( ovalRgn, rgnSave, rgnSave );
+			
+			EmptyRgn( ovalRgn );
+		}
+		
 		const short penHeight = port.pnSize.v;
 		const short penWidth  = port.pnSize.h;
 		

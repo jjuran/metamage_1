@@ -36,6 +36,15 @@ pascal void StdRRect_patch( signed char  verb,
 		
 		GrafPort& port = **get_addrof_thePort();
 		
+		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
+		{
+			RoundRectRgn( rgn, width, height, ovalWidth, ovalHeight );
+			
+			UnionRgn( rgn, rgnSave, rgnSave );
+			
+			EmptyRgn( rgn );
+		}
+		
 		const short penHeight = port.pnSize.v;
 		const short penWidth  = port.pnSize.h;
 		

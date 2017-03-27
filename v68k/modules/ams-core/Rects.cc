@@ -544,6 +544,17 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
+		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
+		{
+			RgnHandle rgn = NewRgn();
+			
+			RectRgn( rgn, r );
+			
+			UnionRgn( rgn, rgnSave, rgnSave );
+			
+			DisposeRgn( rgn );
+		}
+		
 		frame_rect( r );
 		
 		return;
