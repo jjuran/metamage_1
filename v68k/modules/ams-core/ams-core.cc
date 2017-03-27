@@ -122,6 +122,8 @@ static void initialize_low_memory_globals()
 	IconBitmap.bounds.left = 0;
 	IconBitmap.bounds.bottom = 32;
 	IconBitmap.bounds.right  = 32;
+	
+	init_lowmem_Cursor();
 }
 
 static void install_MemoryManager()
