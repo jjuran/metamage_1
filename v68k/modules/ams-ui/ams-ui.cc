@@ -24,6 +24,7 @@
 #include "Drag.hh"
 #include "Icons.hh"
 #include "Menus.hh"
+#include "StandardFile.hh"
 #include "StrUtils.hh"
 #include "TextEdit.hh"
 #include "Windows.hh"
@@ -238,6 +239,8 @@ static void install_TextEdit()
 
 static void install_Packages()
 {
+	TBTRAP( Pack3 );  // A9EA
+	
 	TBTRAP( Pack7 );  // A9EE
 }
 
