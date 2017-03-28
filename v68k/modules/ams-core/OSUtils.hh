@@ -9,6 +9,7 @@
 struct DateTimeRec;
 struct QElem;
 struct QHdr;
+struct SysEnvRec;
 
 unsigned long CmpString_patch( const unsigned char* a : __A0,
                                const unsigned char* b : __A1,
@@ -31,5 +32,7 @@ short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );
 long Delay_patch( long numTicks : __A0 );
 
 pascal void SysBeep_patch( short duration );
+
+short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 );
 
 #endif

@@ -19,6 +19,9 @@
 // iota
 #include "iota/char_types.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "time.hh"
 
@@ -29,8 +32,11 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-uint32_t Ticks : 0x016A;
-uint32_t Time  : 0x020C;
+uint8_t  CPUFlag    : 0x012F;
+uint16_t SysVersion : 0x015A;
+uint32_t Ticks      : 0x016A;
+uint32_t Time       : 0x020C;
+int16_t  BootDrive  : 0x0210;
 
 
 #pragma mark -
@@ -335,4 +341,31 @@ pascal void SysBeep_patch( short duration )
 	char c = 0x07;
 	
 	write( STDOUT_FILENO, &c, sizeof c );
+}
+
+short SysEnvirons_patch( short v : __D0, SysEnvRec* env : __A0 )
+{
+	/*
+		Default to a Mac Plus for now, which is the minimum for Glider 3.0.
+		A program that refuses to run because a Mac Plus is too old wouldn't
+		have run anyway, and a program so old it doesn't work on a Mac Plus
+		probably wasn't calling SysEnvirons() in the first place.
+	*/
+	
+	env->environsVersion = 1;
+	env->machineType     = envMacPlus;
+	env->systemVersion   = SysVersion;
+	env->processor       = CPUFlag + 1;
+	env->hasFPU          = false;
+	env->hasColorQD      = false;
+	env->keyBoardType    = envUnknownKbd;  // Mac Plus keyboard with keypad
+	env->atDrvrVersNum   = 0;
+	env->sysVRefNum      = BootDrive;
+	
+	if ( v > 1 )
+	{
+		WARNING = "SysEnvirons version ", v, " too big";
+	}
+	
+	return v > 1 ? envVersTooBig : noErr;
 }

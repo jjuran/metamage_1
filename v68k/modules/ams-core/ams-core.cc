@@ -222,6 +222,8 @@ void install_OSUtils()
 	
 	OSTRAP( UprString );  // A054
 	
+	OSTRAP( SysEnvirons );  // A090
+	
 	TBTRAP( Enqueue   );  // A96E
 	TBTRAP( Dequeue   );  // A96F
 	
