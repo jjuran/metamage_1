@@ -30,6 +30,7 @@
 #include "Desk.hh"
 #include "Drag.hh"
 #include "Events.hh"
+#include "Files.hh"
 #include "Fixed.hh"
 #include "Fonts.hh"
 #include "Gestalt.hh"
@@ -151,6 +152,11 @@ static void install_Gestalt()
 	old_Gestalt = (Gestalt_ProcPtr) os_trap_table[ _Gestalt & 0x00FF ];
 	
 	OSTRAP( Gestalt );  // A1AD
+}
+
+static void install_FileManager()
+{
+	OSTRAP( GetVol );  // A014
 }
 
 static void install_QuickDraw()
@@ -425,6 +431,8 @@ int main( int argc, char** argv )
 	install_OSUtils();
 	
 	install_Gestalt();
+	
+	install_FileManager();
 	
 	install_QuickDraw();
 	install_Fonts();
