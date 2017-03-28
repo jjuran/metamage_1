@@ -22,9 +22,6 @@
 // iota
 #include "iota/swap.hh"
 
-// quickdraw
-#include "qd/region_detail.hh"
-
 // ams-core
 #include "MBDF.hh"
 #include "QDGlobals.hh"
@@ -61,7 +58,7 @@ short      MBarHeight  : 0x0BAA;
 
 RgnHandle BezelRgn;
 
-const short End = quickdraw::Region_end;
+const short bezel_corner_diameter = 16;
 
 
 static
@@ -303,84 +300,6 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 }
 
 
-static const short corner_size = (1 + 4 + 4 * 5 + 1) * sizeof (short);  // 52
-
-static const short topLeft[] =
-{
-	corner_size,
-	0, 0, 5, 5,
-	
-	0,  0,             5,  End,
-	1,           3,    5,  End,
-	2,        2, 3,        End,
-	3,     1, 2,           End,
-	//
-	5,  0, 1,              End,
-	
-	End
-};
-
-static const short topRight[] =
-{
-	corner_size,
-	0, -5, 5, 0,
-	
-	0,  -5,                 0,  End,
-	1,  -5,     -3,             End,
-	2,          -3, -2,         End,
-	3,              -2, -1,     End,
-	//
-	5,                  -1, 0,  End,
-	
-	End
-};
-
-static const short bottomLeft[] =
-{
-	corner_size,
-	-5, 0, 0, 5,
-	
-	-5,  0, 1,              End,
-	//
-	-3,     1, 2,           End,
-	-2,        2, 3,        End,
-	-1,           3,    5,  End,
-	-0,  0,             5,  End,
-	
-	End
-};
-
-static const short bottomRight[] =
-{
-	corner_size,
-	-5, -5, 0, 0,
-	
-	-5,                  -1, 0,  End,
-	//
-	-3,              -2, -1,     End,
-	-2,          -3, -2,         End,
-	-1,  -5,     -3,             End,
-	-0,  -5,                 0,  End,
-	
-	End
-};
-
-static void subtract_corner( RgnHandle     clipRgn,
-                             RgnHandle     cornerRgn,
-                             const short*  corner_data,
-                             short         dh,
-                             short         dv )
-{
-	BlockMoveData( corner_data, *cornerRgn, corner_size );
-	
-	if ( dh != 0  ||  dv != 0 )
-	{
-		OffsetRgn( cornerRgn, dh, dv );
-	}
-	
-	XorRgn( clipRgn, cornerRgn, clipRgn );
-}
-
 pascal void InitWindows_patch()
 {
 	WindowList = NULL;
@@ -397,16 +316,9 @@ pascal void InitWindows_patch()
 	
 	BezelRgn = NewRgn();
 	
-	RectRgn( BezelRgn, &bounds );
-	
-	RgnHandle corner = (RgnHandle) NewHandle( corner_size );
-	
-	subtract_corner( BezelRgn, corner, topLeft,     0,            0             );
-	subtract_corner( BezelRgn, corner, topRight,    bounds.right, 0             );
-	subtract_corner( BezelRgn, corner, bottomLeft,  0,            bounds.bottom );
-	subtract_corner( BezelRgn, corner, bottomRight, bounds.right, bounds.bottom );
-	
-	DisposeHandle( (Handle) corner );
+	OpenRgn();
+	FrameRoundRect( &bounds, bezel_corner_diameter, bezel_corner_diameter );
+	CloseRgn( BezelRgn );
 	
 	SetClip( BezelRgn );
 	
