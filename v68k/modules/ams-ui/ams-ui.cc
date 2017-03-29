@@ -15,6 +15,7 @@
 #include <unistd.h>
 
 // ams-ui
+#include "BinaryDecimal.hh"
 #include "Controls.hh"
 #include "Dialogs.hh"
 #include "Drag.hh"
@@ -197,6 +198,11 @@ static void install_TextEdit()
 	TBTRAP( TETextBox );  // A9CE
 }
 
+static void install_Packages()
+{
+	TBTRAP( Pack7 );  // A9EE
+}
+
 static
 void install_IconUtilities()
 {
@@ -232,6 +238,8 @@ int main( int argc, char** argv )
 	install_Dialogs();
 	
 	install_IconUtilities();
+	
+	install_Packages();
 	
 	module_suspend();  // doesn't return
 }
