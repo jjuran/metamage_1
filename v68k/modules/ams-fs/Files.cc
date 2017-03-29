@@ -14,6 +14,9 @@
 #include <errno.h>
 #include <stddef.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 #include "FCB.hh"
@@ -612,4 +615,47 @@ short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	fast_memcpy( &pb->ioFlAttrib, entry, n );
 	
 	return pb->ioResult = noErr;
+}
+
+static
+OSErr GetWDInfo_call( WDPBRec* pb : __A0 )
+{
+	ERROR = "GetWDInfo is unimplemented";
+	
+	return paramErr;
+}
+
+static
+OSErr GetFCBInfo_call( FCBPBRec* pb : __A0 )
+{
+	ERROR = "GetFCBInfo is unimplemented";
+	
+	return paramErr;
+}
+
+static
+void unimplemented_call( short trap_word : __D1, short selector : __D0 )
+{
+	const char* FSDispatch = "HFSDispatch" + !(trap_word & kHFSFlagMask);
+	
+	FATAL = "unimplemented ", FSDispatch, " call ", selector;
+	
+	asm { ILLEGAL }
+}
+
+asm void FSDispatch_patch( short trap_word : __D1, short selector : __D0 )
+{
+	CMPI.W   #0x0007,D0
+	BEQ      dispatch_GetWDInfo
+	
+	CMPI.W   #0x0008,D0
+	BEQ      dispatch_GetFCBInfo
+	
+	JMP      unimplemented_call
+	
+dispatch_GetWDInfo:
+	JMP      GetWDInfo_call
+	
+dispatch_GetFCBInfo:
+	JMP      GetFCBInfo_call
 }

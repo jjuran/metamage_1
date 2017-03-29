@@ -86,6 +86,8 @@ void install_FileManager()
 	OSTRAP( GetFPos  );  // A018
 	
 	OSTRAP( SetFPos  );  // A044
+	
+	OSTRAP( FSDispatch );  // A060
 }
 
 static

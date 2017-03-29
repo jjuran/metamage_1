@@ -36,4 +36,6 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
 short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 );
 
+void FSDispatch_patch( short trap_word : __D1, short selector : __D0 );
+
 #endif
