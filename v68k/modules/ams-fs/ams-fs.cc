@@ -77,7 +77,7 @@ void install_FileManager()
 	
 	OSTRAP( GetVolInfo );  // A007
 	OSTRAP( Create );  // A008
-	
+	OSTRAP( Delete );  // A009
 	OSTRAP( OpenRF );  // A00A
 	
 	OSTRAP( GetFileInfo );  // A00C

@@ -542,6 +542,11 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = rfNumErr;
 }
 
+short Delete_patch( short trap_word : __D1, FileParam* pb : __A0 )
+{
+	return pb->ioResult = extFSErr;
+}
+
 short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
 	VCB* vcb = VCB_lookup( pb->ioVRefNum );

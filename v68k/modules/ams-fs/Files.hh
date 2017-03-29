@@ -32,6 +32,8 @@ short GetEOF_patch ( short trap_word : __D1, IOParam* pb : __A0 );
 
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
+short Delete_patch( short trap_word : __D1, FileParam* pb : __A0 );
+
 short GetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 );
 short SetFileInfo_patch( short trap_word : __D1, FileParam* pb : __A0 );
 
