@@ -116,6 +116,11 @@ namespace vlib
 			       op_type             op,
 			       const Value&        b,
 			       const dispatch*     d );
+			
+			const void* pointer() const
+			{
+				return its_box.pointer();
+			}
 		
 		public:
 			enum symdesc
