@@ -117,6 +117,8 @@ namespace vlib
 			       const Value&        b,
 			       const dispatch*     d );
 			
+			Value( size_t n, destructor dtor, value_type t, const dispatch* d );
+			
 			const void* pointer() const
 			{
 				return its_box.pointer();

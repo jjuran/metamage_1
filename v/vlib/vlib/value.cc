@@ -142,6 +142,13 @@ namespace vlib
 		new ((void*) its_box.pointer()) Expr( a, op, b );
 	}
 	
+	Value::Value( size_t n, destructor dtor, value_type t, const dispatch* d )
+	:
+		its_box( n, dtor, t )
+	{
+		its_dispatch = d;
+	}
+	
 	Expr* Value::listexpr() const
 	{
 		if ( Expr* exp = expr() )
