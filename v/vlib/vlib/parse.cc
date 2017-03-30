@@ -37,6 +37,7 @@
 #include "vlib/types/mb32.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/term.hh"
 #include "vlib/types/type.hh"
 
 
@@ -136,7 +137,7 @@ namespace vlib
 			bool     it_is_a_module;
 			unsigned its_export_count;
 			
-			Value its_exports;
+			Variable its_exports;
 		
 		private:
 			bool expecting_value() const;
@@ -161,7 +162,7 @@ namespace vlib
 				its_source( file ),
 				it_is_a_module(),
 				its_export_count(),
-				its_exports( Symbol_var, "__export__" )
+				its_exports( "__export__" )
 			{
 			}
 			

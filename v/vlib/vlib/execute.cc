@@ -30,6 +30,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/term.hh"
 
 
 namespace vlib
@@ -69,7 +70,7 @@ namespace vlib
 	static
 	Value gensym( symbol_type type, const plus::string& name, const Value &v )
 	{
-		const Value symbol( Symbol_var, name );
+		const Variable symbol( name );
 		
 		/*
 			`_` doesn't need to be tracked, because it's never closed over

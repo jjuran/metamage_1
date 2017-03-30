@@ -12,6 +12,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/stack.hh"
 #include "vlib/symbol.hh"
+#include "vlib/types/term.hh"
 
 
 namespace vlib
@@ -24,7 +25,7 @@ namespace vlib
 		
 		const Value symdesc = Value::symdesc( (depth << 16) | index );
 		
-		Value metasymbol( Symbol_const, name );
+		Constant metasymbol( name );
 		
 		metasymbol.sym()->assign( symdesc );
 		

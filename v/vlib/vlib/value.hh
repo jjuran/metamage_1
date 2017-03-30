@@ -148,8 +148,6 @@ namespace vlib
 				its_dispatch = 0;  // NULL
 			}
 			
-			Value( symbol_type symtype, const plus::string& name );
-			
 			Value( const Value& a, const Value& b );
 			
 			Value( op_type op, const Value& v );

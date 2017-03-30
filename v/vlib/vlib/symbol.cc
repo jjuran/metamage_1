@@ -15,6 +15,7 @@
 #include "vlib/type_info.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/table.hh"
+#include "vlib/types/term.hh"  // codependent
 
 
 namespace vlib
@@ -242,7 +243,7 @@ namespace vlib
 	
 	Value Symbol::clone() const
 	{
-		Value result( its_type, name() );
+		Term result( its_type, name() );
 		
 		Symbol* sym = result.sym();
 		

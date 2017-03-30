@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/throw.hh"
+#include "vlib/types/term.hh"
 
 
 namespace vlib
@@ -17,7 +18,7 @@ namespace vlib
 	
 	void symbol_table::define_constant( const char* name, const Value& v )
 	{
-		Value constant( Symbol_const, name );
+		Constant constant( name );
 		
 		constant.sym()->assign( v );
 		
@@ -85,7 +86,7 @@ namespace vlib
 			THROW( "duplicate symbol" );
 		}
 		
-		its_symbols.push_back( Value( type, name ) );
+		its_symbols.push_back( Term( type, name ) );
 		
 		return its_symbols.back();
 	}
