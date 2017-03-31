@@ -42,6 +42,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
+#include "vlib/types/range.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/table.hh"
 
@@ -1094,20 +1095,6 @@ namespace vlib
 	}
 	
 	static
-	void check_range_operands( const Value& left, const Value& right )
-	{
-		if ( left.type() != Value_number  &&  left.type() != Value_byte )
-		{
-			THROW( "non-integer range operand" );
-		}
-		
-		if ( right.type() != left.type() )
-		{
-			THROW( "type-mismatched range operands" );
-		}
-	}
-	
-	static
 	Value safe_calc( const Value&  left,
 	                 op_type       op,
 	                 const Value&  right );
@@ -1213,9 +1200,7 @@ namespace vlib
 			
 			case Op_gamut:
 			case Op_delta:
-				check_range_operands( left, right );
-				
-				goto no_op;
+				return Range( left, op, right );
 			
 			case Op_in:       return Boolean(   in   ( left, right ) );
 			case Op_isa:      return Boolean(   isa  ( left, right ) );
