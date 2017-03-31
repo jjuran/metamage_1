@@ -341,7 +341,7 @@ namespace vlib
 	static const Value substr( string, Value( s_offset, s_length ) );
 	
 	static const Value string_ref = Value( Op_unary_deref, string );
-	static const Value trans( string_ref, Value( string, string ) );
+	static const Value trans( string_ref, Value( bytes, bytes ) );
 	
 	#define TRANS  "translate"
 	
