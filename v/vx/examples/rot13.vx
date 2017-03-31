@@ -4,12 +4,9 @@ const args = argv[ 1 -> argv.length ]
 
 var text = join( " ", *args )
 
-const ABC = str .*('A' .. 'Z')
-const abc = str .*('a' .. 'z')
+const abc = packed( 'A' .. 'M', 'a' .. 'm' )
+const nop = packed( 'N' .. 'Z', 'n' .. 'z' )
 
-const NOP = ABC[ 13 -> 26 ] ABC[ 0 -> 13 ]
-const nop = abc[ 13 -> 26 ] abc[ 0 -> 13 ]
-
-translate( &text, ABC abc, NOP nop )
+translate( &text, abc nop, nop abc )
 
 print text
