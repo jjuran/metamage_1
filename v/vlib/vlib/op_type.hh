@@ -57,6 +57,7 @@ namespace vlib
 		
 		Op_function,
 		
+		Op_typeof,
 		Op_unary_plus,
 		Op_unary_minus,
 		Op_unary_count,

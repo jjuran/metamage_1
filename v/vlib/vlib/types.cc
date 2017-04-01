@@ -14,6 +14,8 @@
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
@@ -134,6 +136,22 @@ namespace vlib
 	static
 	Value v_typeof( const Value& v )
 	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const operators* ops = methods->ops )
+			{
+				if ( handler_1arg handler = ops->unary )
+				{
+					const Value result = handler( Op_typeof, v );
+					
+					if ( result.type() )
+					{
+						return result;
+					}
+				}
+			}
+		}
+		
 		const Type basic_type = basic_typeof( v );
 		
 		if ( &basic_type.typeinfo() != &no_typeinfo )
