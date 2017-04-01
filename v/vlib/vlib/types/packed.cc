@@ -133,9 +133,26 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value binary_op_handler( op_type op, const Value& a, const Value& b )
+	{
+		switch ( op )
+		{
+			case Op_function:
+			case Op_named_unary:
+				return Packed( pack( Value( a, b ) ) );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
+		&binary_op_handler,
 	};
 	
 	const dispatch packed_dispatch =

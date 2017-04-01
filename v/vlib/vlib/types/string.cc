@@ -111,6 +111,10 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_function:
+			case Op_named_unary:
+				return String( str( Value( a, b ) ) );
+			
 			case Op_format:
 				return String( format( a.string(), b ) );
 			

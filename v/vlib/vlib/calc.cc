@@ -668,16 +668,6 @@ namespace vlib
 			}
 		}
 		
-		if ( f.type() == V_str )
-		{
-			return String( str( Value( f, arguments ) ) );
-		}
-		
-		if ( f.type() == V_pack )
-		{
-			return Packed( pack( Value( f, arguments ) ) );
-		}
-		
 		if ( Expr* expr = f.expr() )
 		{
 			if ( expr->op == Op_lambda )
