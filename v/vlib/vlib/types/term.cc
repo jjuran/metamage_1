@@ -5,6 +5,9 @@
 
 #include "vlib/types/term.hh"
 
+// Standard C++
+#include <new>
+
 // vlib
 #include "vlib/generic.hh"
 #include "vlib/symbol.hh"  // codependent
