@@ -207,11 +207,6 @@ namespace vlib
 		{
 			if ( is_type( expr->left ) )
 			{
-				if ( is_array( expr->right ) )
-				{
-					return Value( expr->left, expr->op, etc );
-				}
-				
 				if ( is_type( expr->right ) )
 				{
 					return Type( type_vtype );

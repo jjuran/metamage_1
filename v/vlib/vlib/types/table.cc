@@ -9,13 +9,18 @@
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/iterators/array_iterator.hh"
+#include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
 {
+	
+	static const Type etc = etc_vtype;
 	
 	static
 	bool table_truth( const Value& v )
@@ -29,10 +34,32 @@ namespace vlib
 		&table_truth,
 	};
 	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_typeof:
+				return Value( v.expr()->left, Op_empower, etc );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static const operators ops =
+	{
+		&unary_op_handler,
+	};
+	
 	const dispatch table_dispatch =
 	{
 		0,  // NULL
 		&table_veritization,
+		0,  // NULL
+		&ops,
 	};
 	
 	static
