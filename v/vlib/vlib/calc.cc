@@ -612,28 +612,6 @@ namespace vlib
 		return result;
 	}
 	
-	static inline
-	const type_info& get_typeinfo( const Value& v )
-	{
-		if ( Expr* expr = v.expr() )
-		{
-			return expr->left.typeinfo();
-		}
-		
-		return v.typeinfo();
-	}
-	
-	static inline
-	const Value* get_default_arg( const Value& v )
-	{
-		if ( Expr* expr = v.expr() )
-		{
-			return &expr->right;
-		}
-		
-		return NULL;
-	}
-	
 	static
 	bool is_etc( const Value& type )
 	{
