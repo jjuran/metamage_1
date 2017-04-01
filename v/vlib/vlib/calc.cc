@@ -5,9 +5,6 @@
 
 #include "vlib/calc.hh"
 
-// relix-compat
-#include "relix/recurse.hh"
-
 // debug
 #include "debug/assert.hh"
 
@@ -628,28 +625,6 @@ namespace vlib
 	}
 	
 	static
-	void recursive_call( function_type invoke, const Value& f, Value& result )
-	{
-		result = invoke( f );
-	}
-	
-	static
-	Value recurse( function_type f, const Value& v )
-	{
-		using relix::recurse;
-		
-		typedef function_type  F;
-		typedef const Value&   V;
-		typedef       Value&   R;
-		
-		Value result;
-		
-		recurse< void, F, F, V, V, R, R >( &recursive_call, f, v, result );
-		
-		return result;
-	}
-	
-	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
 		if ( const dispatch* methods = f.dispatch_methods() )
@@ -688,16 +663,6 @@ namespace vlib
 				{
 					THROW( "`continue` used outside of loop" );
 				}
-			}
-			
-			if ( expr->op == Op_invocation )
-			{
-				const Value& invoke = expr->left;
-				const Value& block  = expr->right;
-				
-				Value bound_block( block, Op_bind_args, arguments );
-				
-				return recurse( invoke.proc().addr, bound_block );
 			}
 			
 			const Value& method = expr->left;

@@ -28,6 +28,7 @@
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/invocation.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/term.hh"
@@ -197,16 +198,15 @@ namespace vlib
 		const Value new_stack( stack, Op_frame, new_frame );
 		const Value activation( new_stack, Op_activation, code );
 		
-		return Value( invoke_proc, Op_invocation, activation );
+		return Invocation( invoke_proc, activation );
 	}
 	
 	static
 	Value invocable_expression( const Value& tree, const Value& stack )
 	{
-		const Value expr( stack,       Op_expression, tree );
-		const Value proc( invoke_proc, Op_invocation, expr );
+		const Value expr( stack, Op_expression, tree );
 		
-		return proc;
+		return Invocation( invoke_proc, expr );
 	}
 	
 	static
