@@ -39,9 +39,11 @@ namespace vlib
 		
 		It's much faster to fall off the end of a function than to return
 		from it.  However, manually eliding the `return` operator and dropping
-		the final semicolon are poor style in multiline functions and are
-		incompatible with a hypothetical future syntax in which newlines are
-		significant.
+		the final semicolon were poor style in multiline functions even before
+		the syntax changed to allow newlines to terminate statements, and now
+		that that's happened, it would be necessary to remove any newlines
+		between the value and the closing right brace, which stylistically is
+		simply indefensible.
 		
 		The solution:
 		
