@@ -26,7 +26,8 @@ namespace vlib
 		}
 	};
 	
-	void throw_exception( const plus::string& msg );
+	void throw_exception( const plus::string&  msg );
+	void throw_exception( const char*          msg );
 	
 }
 

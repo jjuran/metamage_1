@@ -14,4 +14,9 @@ namespace vlib
 		throw exception( msg );
 	}
 	
+	void throw_exception( const char* msg )
+	{
+		throw exception( msg );
+	}
+	
 }
