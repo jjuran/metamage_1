@@ -20,7 +20,7 @@ namespace vlib
 	{
 		Target result;
 		
-		result.type = &nothing;
+		result.type = &NIL;
 		
 		Expr* expr = target.addr->unshare().expr();
 		

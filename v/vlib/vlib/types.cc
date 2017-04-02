@@ -40,7 +40,7 @@ namespace vlib
 			return v;
 		}
 		
-		return Value_nothing;
+		return Value_NIL;
 	}
 	
 	static
@@ -56,7 +56,7 @@ namespace vlib
 			}
 		}
 		
-		return Value_nothing;
+		return Value_NIL;
 	}
 	
 	static
@@ -67,7 +67,7 @@ namespace vlib
 			return v;
 		}
 		
-		return Value_nothing;
+		return Value_NIL;
 	}
 	
 	#define DEFINE_TYPE_INFO( type )  \

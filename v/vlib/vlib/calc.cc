@@ -696,7 +696,7 @@ namespace vlib
 			
 			const Value r = as_assigned_or_default( type, arg );
 			
-			if ( r.type() == Value_nothing )
+			if ( r.type() == Value_NIL )
 			{
 				THROW( "arguments don't match function prototype" );
 			}

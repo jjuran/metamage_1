@@ -45,6 +45,7 @@ namespace vlib
 		
 		switch ( a.type() )
 		{
+			case Value_NIL:
 			case Value_nothing:
 			case Value_dummy_operand:
 			case Value_empty_list:

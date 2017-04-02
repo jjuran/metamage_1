@@ -593,7 +593,7 @@ namespace vlib
 	
 	Value Parser::parse( const char* p )
 	{
-		Value result;  // nothing
+		Value result;  // NIL
 		
 		while ( true )
 		{

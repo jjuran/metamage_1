@@ -33,8 +33,11 @@ namespace vlib
 	{
 		switch ( value.type() )
 		{
+			case Value_NIL:
+				THROW( "invalid NIL state during evaluation" );
+			
 			case Value_nothing:
-				THROW( "invalid void state during evaluation" );
+				THROW( "invalid nothing state during evaluation" );
 			
 			default:
 				break;

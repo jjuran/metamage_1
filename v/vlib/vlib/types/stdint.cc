@@ -50,7 +50,7 @@ namespace vlib
 		{                                \
 			if ( v.number().demotes_to< stdint< s, n >::type >() )  return v;  \
 		}                                \
-		return Value_nothing;            \
+		return Value_NIL;                \
 	}                                         \
 	static                                    \
 	Value coerce_to_##s##n( const Value& v )  \
