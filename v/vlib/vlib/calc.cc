@@ -18,7 +18,6 @@
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/os.hh"
-#include "vlib/peephole.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
@@ -37,6 +36,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/lambda.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/range.hh"
 #include "vlib/types/string.hh"
@@ -645,26 +645,6 @@ namespace vlib
 		
 		if ( Expr* expr = f.expr() )
 		{
-			if ( expr->op == Op_lambda )
-			{
-				try
-				{
-					return call_function( expr->right, arguments );
-				}
-				catch ( const transfer_via_return& e )
-				{
-					return e.object;
-				}
-				catch ( const transfer_via_break& e )
-				{
-					THROW( "`break` used outside of loop" );
-				}
-				catch ( const transfer_via_continue& e )
-				{
-					THROW( "`continue` used outside of loop" );
-				}
-			}
-			
 			const Value& method = expr->left;
 			const Value& object = expr->right;
 			
@@ -1001,16 +981,7 @@ namespace vlib
 	{
 		if ( op == Op_lambda )
 		{
-			if ( ! is_block( left ) )
-			{
-				THROW( "`lambda` requires a block" );
-			}
-			
-			const Value lambda( Op_lambda, left );
-			
-			optimize_lambda_body( lambda.expr()->right );
-			
-			return lambda;
+			return Lambda( left );
 		}
 		
 		if ( right.type() == Value_dummy_operand )
