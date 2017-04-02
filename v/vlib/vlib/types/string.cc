@@ -140,7 +140,7 @@ namespace vlib
 		
 		THROW( "nonexistent string member" );
 		
-		return Value_nothing;
+		return Value();
 	}
 	
 	const type_info string_vtype =
