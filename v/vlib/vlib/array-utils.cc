@@ -239,7 +239,7 @@ namespace vlib
 		{
 			Value assigned = as_assigned( type, make_array( list ) );
 			
-			if ( assigned.type() == Value_nothing )
+			if ( assigned.type() == Value_NIL )
 			{
 				THROW( "push() elements are the wrong type" );
 			}

@@ -82,29 +82,29 @@ namespace vlib
 	{
 		if ( is_empty_list( type ) )
 		{
-			return is_empty_list( v ) ? v : Value_nothing;
+			return is_empty_list( v ) ? v : NIL;
 		}
 		
 		if ( Expr* expr = type.expr() )
 		{
 			if ( expr->op == Op_subscript )
 			{
-				return is_homogenous_array( expr->left, v ) ? v : nothing;
+				return is_homogenous_array( expr->left, v ) ? v : NIL;
 			}
 			
 			if ( expr->op == Op_unary_deref )
 			{
-				return is_reference( expr->right, v.expr() ) ? v : nothing;
+				return is_reference( expr->right, v.expr() ) ? v : NIL;
 			}
 			
 			if ( expr->op == Op_mapping )
 			{
-				return is_mapping( expr, v.expr() ) ? v : nothing;
+				return is_mapping( expr, v.expr() ) ? v : NIL;
 			}
 			
 			if ( expr->op == Op_empower )
 			{
-				return is_table( expr, v ) ? v : nothing;
+				return is_table( expr, v ) ? v : NIL;
 			}
 			
 			Value result = as_assigned( expr->left, v );
@@ -132,7 +132,7 @@ namespace vlib
 	{
 		if ( is_empty_list( type ) )
 		{
-			return is_empty_list( v ) ? v : Value_nothing;
+			return is_empty_list( v ) ? v : NIL;
 		}
 		
 		if ( Expr* expr = type.expr() )
@@ -154,7 +154,7 @@ namespace vlib
 			THROW( "type annotation not a type" );
 		}
 		
-		if ( its_vtype.type() != Value_nothing )
+		if ( its_vtype.type() != Value_NIL )
 		{
 			THROW( "reannotation of type-annotated symbol" );
 		}

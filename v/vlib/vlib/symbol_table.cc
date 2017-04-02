@@ -65,7 +65,7 @@ namespace vlib
 			return *it;
 		}
 		
-		return nothing;
+		return NIL;
 	}
 	
 	const Value& symbol_table::create( const plus::string& name, symbol_type type )

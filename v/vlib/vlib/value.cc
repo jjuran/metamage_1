@@ -18,6 +18,7 @@
 namespace vlib
 {
 	
+	const Value NIL           = Value_NIL;
 	const Value nothing       = Value_nothing;
 	const Value dummy_operand = Value_dummy_operand;
 	const Value undefined     = Value_undefined;

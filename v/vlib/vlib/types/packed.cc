@@ -162,7 +162,7 @@ namespace vlib
 		
 		THROW( "nonexistent packed data member" );
 		
-		return Value_nothing;
+		return Value();
 	}
 	
 	const type_info packed_vtype =

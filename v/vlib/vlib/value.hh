@@ -39,10 +39,11 @@ namespace vlib
 	
 	enum value_type
 	{
-		Value_nothing,
+		Value_NIL,
 		Value_dummy_operand,
 		Value_undefined,
 		Value_expired,
+		Value_nothing,
 		Value_empty_list,
 		Value_empty_array,
 		Value_symbol,
@@ -257,6 +258,7 @@ namespace vlib
 		a.swap( b );
 	}
 	
+	extern const Value NIL;
 	extern const Value nothing;
 	extern const Value dummy_operand;
 	extern const Value undefined;
@@ -302,7 +304,7 @@ namespace vlib
 			return v;
 		}
 		
-		return Value_nothing;
+		return Value_NIL;
 	}
 	
 	inline

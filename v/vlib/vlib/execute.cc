@@ -166,7 +166,7 @@ namespace vlib
 		
 		if ( expr->op == Op_activation )
 		{
-			return invoke_block( v, nothing );
+			return invoke_block( v, NIL );
 		}
 		
 		ASSERT( expr->op == Op_expression );
@@ -379,7 +379,7 @@ namespace vlib
 			ASSERT( expr->op == Op_export );
 			ASSERT( is_array( expr->right ) );
 			
-			Target target = { &expr->right, &nothing };
+			Target target = { &expr->right, &NIL };
 			
 			push( target, symbol );
 			
@@ -569,7 +569,7 @@ namespace vlib
 			{
 				test_assertion( expr, stack );
 				
-				return Value();
+				return Value_nothing;
 			}
 			
 			if ( expr->op == Op_and  ||  expr->op == Op_or )
@@ -640,7 +640,7 @@ namespace vlib
 		
 		Expr* expr = root.expr();
 		
-		const Value stack( Value_nothing, Op_frame, expr->left );
+		const Value stack( NIL, Op_frame, expr->left );
 		
 		try
 		{

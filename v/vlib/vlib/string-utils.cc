@@ -233,6 +233,7 @@ namespace vlib
 		
 		switch ( value.type() )
 		{
+			case Value_NIL:
 			case Value_nothing:
 			case Value_dummy_operand:
 				return 0;
@@ -337,6 +338,7 @@ namespace vlib
 		
 		switch ( value.type() )
 		{
+			case Value_NIL:
 			case Value_nothing:
 			case Value_dummy_operand:
 				return p;
