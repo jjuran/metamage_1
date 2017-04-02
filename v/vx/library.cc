@@ -126,7 +126,7 @@ namespace vlib
 		
 		must_write( STDOUT_FILENO, s.data(), s.size() );
 		
-		return Value();
+		return Value_nothing;
 	}
 	
 	static

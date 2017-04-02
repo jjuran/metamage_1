@@ -49,7 +49,7 @@ static plus::string stringify( const Value& v )
 
 static void reproduce( const Value& v )
 {
-	if ( ! v.type() )
+	if ( v.type() == Value_nothing )
 	{
 		return;
 	}

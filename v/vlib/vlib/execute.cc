@@ -569,7 +569,7 @@ namespace vlib
 			{
 				test_assertion( expr, stack );
 				
-				return Value();
+				return Value_nothing;
 			}
 			
 			if ( expr->op == Op_and  ||  expr->op == Op_or )

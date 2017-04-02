@@ -637,7 +637,7 @@ namespace vlib
 				}
 			}
 			
-			Value value;  // nothing
+			Value value = Value_nothing;
 			
 			if ( ! stack.empty() )
 			{

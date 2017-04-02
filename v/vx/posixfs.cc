@@ -164,7 +164,7 @@ namespace vlib
 		
 		close( fd );
 		
-		return Value();
+		return Value_nothing;
 	}
 	
 	static
@@ -179,7 +179,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return Value();
+		return Value_nothing;
 	}
 	
 	static
@@ -451,7 +451,7 @@ namespace vlib
 			path_error( path );
 		}
 		
-		return Value();
+		return Value_nothing;
 	}
 	
 	static
