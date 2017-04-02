@@ -9,6 +9,7 @@
 #include "vlib/array-utils.hh"
 #include "vlib/assign.hh"
 #include "vlib/is_type.hh"
+#include "vlib/table-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
@@ -66,6 +67,21 @@ namespace vlib
 	}
 	
 	static
+	Value binary_op_handler( op_type op, const Value& a, const Value& b )
+	{
+		switch ( op )
+		{
+			case Op_subscript:
+				return associative_subscript( a, b );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static
 	void push_elements( Value& table, const Value& new_elements )
 	{
 		if ( is_empty_list( new_elements ) )
@@ -107,7 +123,7 @@ namespace vlib
 	static const operators ops =
 	{
 		&unary_op_handler,
-		0,  // NULL
+		&binary_op_handler,
 		0,  // NULL
 		&mutating_op_handler,
 	};

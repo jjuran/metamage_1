@@ -912,11 +912,6 @@ namespace vlib
 		
 		if ( op == Op_subscript )
 		{
-			if ( is_table( left ) )
-			{
-				return associative_subscript( left, right );
-			}
-			
 			const Value v = linear_subscript( left, right );
 			
 			if ( is_empty_array( right )  ||  right.expr() != 0 )  // NULL
