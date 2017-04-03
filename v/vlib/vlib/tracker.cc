@@ -5,14 +5,21 @@
 
 #include "vlib/tracker.hh"
 
+// POSIX
+#include <pthread.h>
+
 // Standard C++
 #include <vector>
+
+// must
+#include "must/pthread.h"
 
 // debug
 #include "debug/assert.hh"
 
 // vlib
 #include "vlib/symbol.hh"
+#include "vlib/throw.hh"
 #include "vlib/value.hh"
 #include "vlib/iterators/full_iterator.hh"
 
@@ -42,6 +49,19 @@ namespace vlib
 	static tracked_set tracked_symbols;
 	static tracked_set tracked_roots;
 	
+	static pthread_mutex_t gc_mutex = PTHREAD_MUTEX_INITIALIZER;
+	
+	class gc_lock
+	{
+		private:
+			// non-copyable
+			gc_lock           ( const gc_lock& );
+			gc_lock& operator=( const gc_lock& );
+		
+		public:
+			gc_lock()   { must_pthread_mutex_lock  ( &gc_mutex ); }
+			~gc_lock()  { must_pthread_mutex_unlock( &gc_mutex ); }
+	};
 	
 	static inline
 	bool is_tracked( const Symbol* sym )
@@ -62,6 +82,8 @@ namespace vlib
 			return;
 		}
 		
+		gc_lock lock;
+		
 		if ( ! is_tracked( sym ) )
 		{
 			tracked_symbols.push_back( v );
@@ -72,11 +94,15 @@ namespace vlib
 	
 	void add_root( const Value& v )
 	{
+		gc_lock lock;
+		
 		tracked_roots.push_back( v );
 	}
 	
 	void del_root( const Value& v )
 	{
+		gc_lock lock;
+		
 		typedef tracked_set::iterator Iter;
 		
 		const Iter begin = tracked_roots.begin();
@@ -212,8 +238,11 @@ namespace vlib
 	{
 		tracked_set garbage;
 		
+		gc_lock lock;
+		
 		cull_unreachable_objects( garbage );
 		
+		// release lock
 		// dispose garbage
 	}
 	

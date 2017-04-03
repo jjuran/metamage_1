@@ -1,0 +1,16 @@
+#!/usr/bin/env vx
+
+def relay
+{
+	const input, const output = _
+	
+	while var line = read( input, 1024 ) do
+	{
+		write( output, line )
+	}
+	
+	exit 0
+}
+
+thread { relay (0, 7) },
+thread { relay (6, 1) }

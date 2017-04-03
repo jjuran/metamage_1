@@ -29,6 +29,7 @@
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
 #include "vlib/types.hh"
+#include "vlib/type_info.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
@@ -37,6 +38,8 @@
 // vx
 #include "library.hh"
 #include "posixfs.hh"
+#include "thread.hh"
+#include "thread_state.hh"
 
 // vx
 #include "library.hh"
@@ -156,6 +159,12 @@ void define( const proc_info& proc )
 }
 
 static
+void define( const type_info& type )
+{
+	globals.declare( type.name, Symbol_const ).sym()->assign( Type( type ) );
+}
+
+static
 void define( const char* name, int i )
 {
 	globals.declare( name, Symbol_const ).sym()->assign( Integer( i ) );
@@ -196,6 +205,8 @@ int main( int argc, char** argv )
 		define( proc_append );
 		define( proc_truncate );
 	}
+	
+	define( thread_vtype  );
 	
 	define( proc_close    );
 	define( proc_dirname  );
@@ -239,6 +250,8 @@ int main( int argc, char** argv )
 			
 			interpret( program.c_str(), path, &globals );
 		}
+		
+		join_all_threads();
 	}
 	catch ( const std::bad_alloc& )
 	{
