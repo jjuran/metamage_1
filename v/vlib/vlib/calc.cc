@@ -660,14 +660,6 @@ namespace vlib
 		const Value* loop;  // the loop body
 	};
 	
-	static inline
-	bool is_block( const Value& v )
-	{
-		Expr* expr = v.expr();
-		
-		return expr != NULL  &&  expr->op == Op_invocation;
-	}
-	
 	static
 	conditional_resolution resolution_for_if( const Value& extension )
 	{

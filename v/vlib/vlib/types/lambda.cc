@@ -16,14 +16,6 @@
 namespace vlib
 {
 	
-	static inline
-	bool is_block( const Value& v )
-	{
-		Expr* expr = v.expr();
-		
-		return expr != 0  &&  expr->op == Op_invocation;  // NULL
-	}
-	
 	static
 	Value call_function_body( const Value& f, const Value& arguments )
 	{

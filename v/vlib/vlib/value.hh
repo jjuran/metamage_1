@@ -373,6 +373,14 @@ namespace vlib
 	bool is_type( const Value& v );
 	
 	inline
+	bool is_block( const Value& v )
+	{
+		Expr* expr = v.expr();
+		
+		return expr  &&  expr->op == Op_invocation;
+	}
+	
+	inline
 	bool is_function( const Value& v )
 	{
 		if ( v.type() == Value_function )
