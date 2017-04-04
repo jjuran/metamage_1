@@ -29,9 +29,12 @@
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
 #include "vlib/tracker.hh"
+#include "vlib/type_info.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/type.hh"
 
 // varyx-mac
+#include "varyx/mac/AEDesc.hh"
 #include "varyx/mac/Delay.hh"
 #include "varyx/mac/PackBits.hh"
 #include "varyx/mac/Sound.hh"
@@ -127,6 +130,15 @@ void define( const proc_info& proc )
 	}
 }
 
+static
+void define( const type_info& type )
+{
+	if ( type.assign != NULL )
+	{
+		define( type.name, Type( type ) );
+	}
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -140,6 +152,8 @@ int main( int argc, char** argv )
 	define( proc_getenv );
 	define( proc_print  );
 	define( proc_warn   );
+	
+	define( AEDesc_vtype  );
 	
 	define( proc_Delay );
 	define( proc_Microseconds );
