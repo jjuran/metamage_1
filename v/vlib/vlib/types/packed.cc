@@ -52,6 +52,7 @@ namespace vlib
 			case Value_byte:
 			case Value_mb32:
 			case Value_pair:
+			case Value_other:
 				return Packed( pack( v ) );
 		}
 	}
