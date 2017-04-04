@@ -38,6 +38,7 @@
 #include "varyx/mac/AEDesc.hh"
 #include "varyx/mac/AEFlatten.hh"
 #include "varyx/mac/AEPrint.hh"
+#include "varyx/mac/AESend.hh"
 #include "varyx/mac/Delay.hh"
 #include "varyx/mac/PackBits.hh"
 #include "varyx/mac/Sound.hh"
@@ -161,6 +162,8 @@ int main( int argc, char** argv )
 	define( proc_AECreateAppleEvent );
 	define( proc_AEFlatten );
 	define( proc_AEPrint );
+	define( proc_AESend );
+	
 	define( proc_Delay );
 	define( proc_Microseconds );
 	
