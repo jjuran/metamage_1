@@ -6,6 +6,9 @@
 #ifndef VLIB_DISPATCH_OPERATORS_HH
 #define VLIB_DISPATCH_OPERATORS_HH
 
+// vlib
+#include "vlib/op_type.hh"
+
 
 namespace vlib
 {
