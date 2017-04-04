@@ -15,6 +15,8 @@ namespace vlib
 	
 	struct Target;
 	
+	unsigned subscript_integer( const Value& index );
+	
 	Value linear_subscript( const Value& array, const Value& index );
 	
 	void get_array_index_type( const Value& array_type, const Value*& base_type );

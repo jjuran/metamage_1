@@ -22,7 +22,6 @@
 namespace vlib
 {
 	
-	static
 	unsigned subscript_integer( const Value& index )
 	{
 		if ( index.type() != Value_number )
