@@ -34,6 +34,7 @@
 #include "vlib/types/type.hh"
 
 // varyx-mac
+#include "varyx/mac/AECreateAppleEvent.hh"
 #include "varyx/mac/AEDesc.hh"
 #include "varyx/mac/AEFlatten.hh"
 #include "varyx/mac/AEPrint.hh"
@@ -157,6 +158,7 @@ int main( int argc, char** argv )
 	
 	define( AEDesc_vtype  );
 	
+	define( proc_AECreateAppleEvent );
 	define( proc_AEFlatten );
 	define( proc_AEPrint );
 	define( proc_Delay );
