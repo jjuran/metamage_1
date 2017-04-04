@@ -255,6 +255,19 @@ namespace vlib
 	                           const Value&   x,
 	                           const Value&   b )
 	{
+		switch ( op )
+		{
+			case Op_increase_by:
+			case Op_decrease_by:
+			case Op_multiply_by:
+			case Op_divide_by:
+			case Op_remain_by:
+				break;
+			
+			default:
+				return Value();  // unimplemented
+		}
+		
 		if ( b.type() != V_int )
 		{
 			THROW( "numeric update requires numeric operands" );

@@ -26,9 +26,16 @@ namespace vlib
 		
 		if ( expr == 0 )  // NULL
 		{
-			// string or pack
+			/*
+				The container is a packed structure, whose elements can't be
+				targeted directly.  Return the container's address with a NULL
+				type to indicate this.
+			*/
 			
-			THROW( "can't target elements of packed structures" );
+			result.addr = target.addr;
+			result.type = 0;  // NULL
+			
+			return result;
 		}
 		
 		if ( expr->op == Op_array )
@@ -60,6 +67,16 @@ namespace vlib
 				Value& subscript = expr->right;
 				
 				Target target = make_target( container );
+				
+				if ( target.type == 0 )  // NULL
+				{
+					/*
+						The container itself can't even be targeted, much less
+						subscripted.  E.g. `"foobar"[i][j]`
+					*/
+					
+					THROW( "can't target elements of packed structures" );
+				}
 				
 				try
 				{

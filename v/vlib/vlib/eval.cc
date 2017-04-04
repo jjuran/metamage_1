@@ -126,6 +126,26 @@ namespace vlib
 			}
 		}
 		
+		if ( target.type == 0 )  // NULL
+		{
+			/*
+				The left operand is a packed structure, whose elements can't
+				be targeted directly.
+			*/
+			
+			if ( handler )
+			{
+				const Value result = handler( op, target, left, right );
+				
+				if ( result.type() )
+				{
+					return result;
+				}
+			}
+			
+			THROW( "can't target left operand" );
+		}
+		
 		if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
 			if ( is_symbol( left ) )
