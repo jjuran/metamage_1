@@ -14,7 +14,6 @@ namespace vlib
 	struct proc_info;
 	struct type_info;
 	
-	extern const type_info type_vtype;
 	extern const type_info c_str_vtype;
 	extern const type_info function_vtype;
 	

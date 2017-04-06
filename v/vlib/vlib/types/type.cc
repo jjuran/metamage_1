@@ -79,4 +79,12 @@ namespace vlib
 		&ops,
 	};
 	
+	const type_info type_vtype =
+	{
+		"type",
+		&assign_to< Type >,
+		0,
+		0,
+	};
+	
 }

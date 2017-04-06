@@ -59,23 +59,11 @@ namespace vlib
 		return Value_NIL;
 	}
 	
-	static
-	Value assign_to_type( const Value& v )
-	{
-		if ( v.type() == Value_base_type )
-		{
-			return v;
-		}
-		
-		return Value_NIL;
-	}
-	
 	#define DEFINE_TYPE_INFO( type )  \
 	const type_info type##_vtype = { #type, &assign_to_##type, 0, 0 }
 	
 	DEFINE_TYPE_INFO( function );
 	DEFINE_TYPE_INFO( c_str    );
-	DEFINE_TYPE_INFO( type     );
 	
 	static const type_info no_typeinfo = { 0, 0, 0, 0 };
 	

@@ -14,6 +14,7 @@ namespace vlib
 {
 	
 	struct dispatch;
+	struct type_info;
 	
 	extern const dispatch type_dispatch;
 	
@@ -29,6 +30,8 @@ namespace vlib
 			{
 			}
 	};
+	
+	extern const type_info type_vtype;
 	
 }
 
