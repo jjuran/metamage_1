@@ -38,6 +38,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/lambda.hh"
+#include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/range.hh"
 #include "vlib/types/string.hh"
@@ -981,7 +982,7 @@ namespace vlib
 		
 		if ( op == Op_mapping )
 		{
-			if ( ! is_single( left )  ||  is_null( left ) )
+			if ( ! is_single( left )  ||  left.is< Null >() )
 			{
 				THROW( "mapping keys must be singular and non-null" );
 			}
