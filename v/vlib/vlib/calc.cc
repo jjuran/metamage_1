@@ -177,7 +177,7 @@ namespace vlib
 		switch ( v.type() )
 		{
 			case Value_byte:
-				return s.find( v.number().clipped() ) != plus::string::npos;
+				return s.find( v.to< Byte >() ) != plus::string::npos;
 			
 			case V_str:
 			case V_pack:

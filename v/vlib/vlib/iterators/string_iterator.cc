@@ -16,6 +16,17 @@
 namespace vlib
 {
 	
+	static inline
+	Value get_byte( const char* begin, const char* end )
+	{
+		if ( begin < end )
+		{
+			return Byte( *begin );
+		}
+		
+		return empty_list;
+	}
+	
 	string_iterator::string_iterator( const Value& str ) : its_string( str )
 	{
 		if ( str.type() == V_str  ||  str.type() == V_pack )
@@ -25,7 +36,7 @@ namespace vlib
 			begin = s.begin();
 			end   = s.size() + begin;
 			
-			its_value = begin < end ? Byte( *begin ) : Value_empty_list;
+			its_value = get_byte( begin, end );
 			
 			return;
 		}
@@ -35,7 +46,7 @@ namespace vlib
 	
 	const Value& string_iterator::get() const
 	{
-		its_value = begin < end ? Byte( *begin ) : Value_empty_list;
+		its_value = get_byte( begin, end );
 		
 		return its_value;
 	}

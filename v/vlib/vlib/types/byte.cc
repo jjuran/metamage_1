@@ -41,6 +41,11 @@ namespace vlib
 		}
 	}
 	
+	unsigned char Byte::get() const
+	{
+		return number().clipped();
+	}
+	
 	static
 	size_t byte_str_size( const Value& v )
 	{

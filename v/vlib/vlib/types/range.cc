@@ -12,6 +12,7 @@
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/types/byte.hh"
 
 
 namespace vlib
@@ -36,8 +37,8 @@ namespace vlib
 	{
 		Expr* expr = v.expr();
 		
-		const uint8_t lower = expr->left .number().clipped();
-		const uint8_t upper = expr->right.number().clipped();
+		const uint8_t lower = expr->left .to< Byte >();
+		const uint8_t upper = expr->right.to< Byte >();
 		
 		return upper - lower + (expr->op == Op_gamut);
 	}
@@ -47,8 +48,8 @@ namespace vlib
 	{
 		Expr* expr = v.expr();
 		
-		uint8_t lower = expr->left .number().clipped();
-		uint8_t upper = expr->right.number().clipped();
+		uint8_t lower = expr->left .to< Byte >();
+		uint8_t upper = expr->right.to< Byte >();
 		
 		if ( upper - lower + (expr->op == Op_gamut) == 0 )
 		{

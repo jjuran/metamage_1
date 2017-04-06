@@ -37,6 +37,13 @@ namespace vlib
 			}
 			
 		#undef IBOX
+			
+			unsigned char get() const;
+			
+			operator unsigned char() const
+			{
+				return get();
+			}
 	};
 	
 	extern const type_info byte_vtype;
