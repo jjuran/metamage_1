@@ -96,6 +96,9 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_typeof:
+				return Type( string_vtype );
+			
 			case Op_unary_minus:
 				return reversed_bytes( v );
 			

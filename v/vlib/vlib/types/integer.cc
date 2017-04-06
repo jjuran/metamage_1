@@ -19,6 +19,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -142,6 +143,9 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_typeof:
+				return Type( integer_vtype );
+			
 			case Op_unary_plus:
 				return v;
 			

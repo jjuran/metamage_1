@@ -13,6 +13,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -89,6 +90,8 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_typeof:  return Type( boolean_vtype );
+			
 			case Op_not:  return Boolean( ! v.boolean() );
 			
 			case Op_unary_plus:   return Integer( +v.boolean() );

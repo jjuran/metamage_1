@@ -17,6 +17,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -123,6 +124,9 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_typeof:
+				return Type( packed_vtype );
+			
 			case Op_unary_minus:
 				return reversed_bytes( v );
 			

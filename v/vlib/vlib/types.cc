@@ -81,19 +81,6 @@ namespace vlib
 			return *null;
 		}
 		
-		switch ( v.type() )
-		{
-			case Value_base_type:  return type_vtype;
-			case Value_boolean:    return boolean_vtype;
-			case Value_byte:       return byte_vtype;
-			case Value_mb32:       return mb32_vtype;
-			case Value_number:     return integer_vtype;
-			case Value_string:     return string_vtype;
-			case Value_packed:     return packed_vtype;
-			
-			default:  break;
-		}
-		
 		Expr* expr = v.expr();
 		
 		if ( expr == NULL )

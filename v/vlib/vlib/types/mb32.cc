@@ -22,8 +22,10 @@
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/type.hh"
 
 
 #undef mempcpy
@@ -180,10 +182,32 @@ namespace vlib
 		&mb32_verity,
 	};
 	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_typeof:
+				return Type( mb32_vtype );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static const operators ops =
+	{
+		&unary_op_handler,
+	};
+	
 	const dispatch mb32_dispatch =
 	{
 		&mb32_stringifiers,
 		&mb32_veritization,
+		0,
+		&ops,
 	};
 	
 	const type_info mb32_vtype =

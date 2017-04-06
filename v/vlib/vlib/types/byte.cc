@@ -14,8 +14,10 @@
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -108,11 +110,32 @@ namespace vlib
 		&byte_order,
 	};
 	
+	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_typeof:
+				return Type( byte_vtype );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static const operators ops =
+	{
+		&unary_op_handler,
+	};
+	
 	const dispatch byte_dispatch =
 	{
 		&byte_stringifiers,
 		&byte_veritization,
 		&byte_comparison,
+		&ops,
 	};
 	
 	const type_info byte_vtype =

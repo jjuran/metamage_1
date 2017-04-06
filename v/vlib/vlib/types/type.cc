@@ -50,6 +50,21 @@ namespace vlib
 	}
 	
 	static
+	Value unary_op_handler( op_type op, const Value& v )
+	{
+		switch ( op )
+		{
+			case Op_typeof:
+				return Type( type_vtype );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		switch ( op )
@@ -67,7 +82,7 @@ namespace vlib
 	
 	static const operators ops =
 	{
-		0,  // NULL
+		&unary_op_handler,
 		&binary_op_handler,
 	};
 	
