@@ -20,6 +20,8 @@
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/types.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
@@ -238,7 +240,25 @@ namespace vlib
 			THROW( "update of undefined symbol" );
 		}
 		
-		if ( value.type() != right.type()  &&  right.type() != V_dummy )
+		if ( right.type() == V_dummy )
+		{
+			if ( const dispatch* methods = target.addr->dispatch_methods() )
+			{
+				if ( const operators* ops = methods->ops )
+				{
+					if ( handler_step handler = ops->advance )
+					{
+						const Value result = handler( op, target );
+						
+						if ( result.type() )
+						{
+							return result;
+						}
+					}
+				}
+			}
+		}
+		else if ( value.type() != right.type() )
 		{
 			THROW( "update between mixed types not supported" );
 		}
