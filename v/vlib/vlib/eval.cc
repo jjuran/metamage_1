@@ -118,7 +118,17 @@ namespace vlib
 	static
 	Value eval_assignment( const Value& left, op_type op, const Value& right )
 	{
+		handler_into handler = 0;  // NULL
+		
 		Target target = make_target( left );
+		
+		if ( const dispatch* methods = target.addr->dispatch_methods() )
+		{
+			if ( const operators* ops = methods->ops )
+			{
+				handler = ops->mutating;
+			}
+		}
 		
 		if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
@@ -261,6 +271,16 @@ namespace vlib
 		else if ( value.type() != right.type() )
 		{
 			THROW( "update between mixed types not supported" );
+		}
+		
+		if ( handler != 0 )  // NULL
+		{
+			const Value result = handler( op, target, left, right );
+			
+			if ( result.type() )
+			{
+				return result;
+			}
 		}
 		
 		if ( value.type() != Value_number )
