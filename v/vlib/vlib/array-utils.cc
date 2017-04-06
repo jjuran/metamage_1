@@ -15,6 +15,7 @@
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/range.hh"
 #include "vlib/types/string.hh"
 
 
@@ -110,7 +111,7 @@ namespace vlib
 				}
 				while ( next_item );
 			}
-			else if ( expr->op == Op_gamut  ||  expr->op == Op_delta )
+			else if ( index.is< Range >() )
 			{
 				const unsigned a = subscript_integer( expr->left  );
 				const unsigned b = subscript_integer( expr->right );
@@ -148,7 +149,7 @@ namespace vlib
 				return sliced_subscript( array, index );
 			}
 			
-			if ( expr->op == Op_gamut  ||  expr->op == Op_delta )
+			if ( index.is< Range >() )
 			{
 				if ( array.type() == V_str  ||  array.type() == V_pack )
 				{
