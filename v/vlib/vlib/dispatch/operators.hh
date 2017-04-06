@@ -21,11 +21,17 @@ namespace vlib
 	
 	typedef Value (*handler_step)( op_type op, const Target& target );
 	
+	typedef Value (*handler_into)( op_type        op,
+	                               const Target&  target,
+	                               const Value&   x,
+	                               const Value&   b );
+	
 	struct operators
 	{
 		handler_1arg  unary;
 		handler_2arg  binary;
 		handler_step  advance;
+		handler_into  mutating;
 	};
 	
 }
