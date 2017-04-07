@@ -379,6 +379,10 @@ namespace vlib
 			
 			return eval_part_2( left, op, right );
 		}
+		catch ( const plus::ibox::limb_count_overflow& )
+		{
+			throw user_exception( String( "bigint overflow" ), source );
+		}
 		catch ( const exception& e )
 		{
 			throw user_exception( String( e.message ), source );
@@ -459,14 +463,7 @@ namespace vlib
 				return left;
 			}
 			
-			try
-			{
-				return eval_assignment( left, op, right );
-			}
-			catch ( const plus::ibox::limb_count_overflow& )
-			{
-				THROW( "bigint overflow" );
-			}
+			return eval_assignment( left, op, right );
 		}
 		
 		return Value();  // not reached
