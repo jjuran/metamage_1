@@ -23,7 +23,6 @@
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
-#include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -73,12 +72,6 @@ namespace vlib
 		if ( is_function( v ) )
 		{
 			return function_vtype;
-		}
-		
-		if ( const Null* null = v.is< Null >() )
-		{
-			// null is its own type
-			return *null;
 		}
 		
 		Expr* expr = v.expr();

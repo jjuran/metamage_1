@@ -55,6 +55,12 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_typeof:
+				if ( v.is< Null >() )
+				{
+					// null is its own type
+					return v;
+				}
+				
 				return Type( type_vtype );
 			
 			default:
