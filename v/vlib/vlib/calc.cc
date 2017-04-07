@@ -52,17 +52,6 @@ namespace vlib
 	
 	
 	static
-	const plus::integer& nonzero( const plus::integer& x )
-	{
-		if ( x.is_zero() )
-		{
-			THROW( "division by zero" );
-		}
-		
-		return x;
-	}
-	
-	static
 	bool isa( const Value& v, const Value& t )
 	{
 		return as_assigned( t, v ).type();
@@ -520,31 +509,6 @@ namespace vlib
 		THROW( "unsupported type for member access" );
 		
 		return Value();
-	}
-	
-	static
-	plus::integer calc( const plus::integer&  left,
-	                    op_type               op,
-	                    const plus::integer&  right )
-	{
-		switch ( op )
-		{
-			case Op_add:       return left + right;
-			case Op_subtract:  return left - right;
-			case Op_multiply:  return left * right;
-			case Op_divide:    return left / nonzero( right );
-			case Op_remain:    return left % nonzero( right );
-			case Op_modulo:    return modulo( left, nonzero( right ) );
-			
-			case Op_empower:   return raise_to_power( left, right );
-			
-			default:
-				break;
-		}
-		
-		INTERNAL_ERROR( "unsupported operator in calc()" );
-		
-		return 0;
 	}
 	
 	static
@@ -1075,18 +1039,7 @@ namespace vlib
 					THROW( "operator not defined for boolean values" );
 				
 				case Value_number:
-					try
-					{
-						const plus::integer& a = left.number();
-						const plus::integer& b = right.number();
-						
-						return Integer( calc( a, op, b ) );
-					}
-					catch ( const plus::ibox::limb_count_overflow& )
-					{
-						THROW( "bigint overflow" );
-					}
-					// not reached
+					THROW( "operator not defined for integer values" );
 				
 				case Value_packed:
 					THROW( "operator not defined for packed values" );

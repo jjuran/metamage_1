@@ -26,6 +26,17 @@ namespace vlib
 {
 	
 	static
+	const plus::integer& nonzero( const plus::integer& x )
+	{
+		if ( x.is_zero() )
+		{
+			THROW( "division by zero" );
+		}
+		
+		return x;
+	}
+	
+	static
 	bool is_decimal( const char* p, plus::string::size_type n )
 	{
 		if ( n == 0 )
@@ -159,9 +170,45 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value binary_op_handler( op_type op, const Value& a, const Value& b )
+	{
+		if ( b.is< Integer >() )
+		{
+			const plus::integer& one = a.number();
+			const plus::integer& two = b.number();
+			
+			plus::integer result;
+			
+			switch ( op )
+			{
+				case Op_add:       result = one + two;  break;
+				case Op_subtract:  result = one - two;  break;
+				case Op_multiply:  result = one * two;  break;
+				
+				case Op_divide:  result = one / nonzero( two );  break;
+				case Op_remain:  result = one % nonzero( two );  break;
+				
+				case Op_modulo:  result = modulo( one, nonzero( two ) );  break;
+				
+				case Op_empower:  result = raise_to_power( one, two );  break;
+				
+				default:
+					goto non_arithmetic;
+			}
+			
+			return Integer( result );
+		}
+		
+	non_arithmetic:
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
+		&binary_op_handler,
 	};
 	
 	const dispatch integer_dispatch =
