@@ -13,11 +13,13 @@
 
 // vlib
 #include "vlib/string-utils.hh"
+#include "vlib/target.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -209,10 +211,37 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value mutating_op_handler( op_type        op,
+	                           const Target&  target,
+	                           const Value&   x,
+	                           const Value&   b )
+	{
+		switch ( op )
+		{
+			case Op_duplicate:
+				if ( b.type() != Value_byte )
+				{
+					THROW( "can't assign non-byte to packed element" );
+				}
+				// fall through
+			
+			case Op_approximate:
+				return assign_byte_to_index( *target.addr, x, b.to< Byte >() );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
 		&binary_op_handler,
+		NULL,
+		&mutating_op_handler,
 	};
 	
 	const dispatch packed_dispatch =

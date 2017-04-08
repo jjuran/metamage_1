@@ -13,6 +13,7 @@
 namespace vlib
 {
 	
+	class Byte;
 	struct dispatch;
 	struct proc_info;
 	struct type_info;
@@ -35,6 +36,8 @@ namespace vlib
 			{
 			}
 	};
+	
+	Value assign_byte_to_index( Value& s, const Value& x, const Byte& byte );
 	
 	extern const type_info string_vtype;
 	

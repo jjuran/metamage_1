@@ -9,16 +9,19 @@
 #include "more/string.h"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/target.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
@@ -128,10 +131,57 @@ namespace vlib
 		return Value();
 	}
 	
+	Value assign_byte_to_index( Value& s, const Value& x, const Byte& byte )
+	{
+		Expr* expr = x.expr();
+		
+		const Value& subscript = expr->right;
+		
+		const unsigned i = subscript_integer( subscript );
+		
+		if ( i > s.string().size() )
+		{
+			THROW( "subscript exceeds string/pack bounds" );
+		}
+		
+		char* data = (char*) s.string().data();
+		
+		data[ i ] = byte;
+		
+		return byte;
+	}
+	
+	static
+	Value mutating_op_handler( op_type        op,
+	                           const Target&  target,
+	                           const Value&   x,
+	                           const Value&   b )
+	{
+		switch ( op )
+		{
+			case Op_duplicate:
+				if ( b.type() != Value_byte )
+				{
+					THROW( "can't assign non-byte to string element" );
+				}
+				// fall through
+			
+			case Op_approximate:
+				return assign_byte_to_index( *target.addr, x, b.to< Byte >() );
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
 		&binary_op_handler,
+		NULL,
+		&mutating_op_handler,
 	};
 	
 	const dispatch string_dispatch =
