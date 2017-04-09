@@ -6,6 +6,7 @@
 #include "vlib/types/table.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -49,9 +50,51 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	void push_elements( Value& table, const Value& new_elements )
+	{
+		if ( is_empty_list( new_elements ) )
+		{
+			return;
+		}
+		
+		const Value& key_type = table.expr()->left;
+		
+		const Value mapping_type( key_type,     Op_mapping,   etc );
+		const Value array_type  ( mapping_type, Op_subscript, etc );
+		
+		Value& array = table.unshare().expr()->right;
+		
+		const Target target = { &array, &array_type };
+		
+		push( target, new_elements );
+	}
+	
+	static
+	Value mutating_op_handler( op_type        op,
+	                           const Target&  target,
+	                           const Value&   x,
+	                           const Value&   b )
+	{
+		switch ( op )
+		{
+			case Op_push:
+				push_elements( *target.addr, b );
+				return nothing;
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
+		0,  // NULL
+		0,  // NULL
+		&mutating_op_handler,
 	};
 	
 	const dispatch table_dispatch =
