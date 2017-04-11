@@ -19,11 +19,6 @@
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
-#include "vlib/types/boolean.hh"
-#include "vlib/types/byte.hh"
-#include "vlib/types/integer.hh"
-#include "vlib/types/mb32.hh"
-#include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
