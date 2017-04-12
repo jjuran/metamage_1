@@ -44,6 +44,7 @@
 // varyx-mac
 #include "varyx/mac/AEDesc-coerce.hh"
 #include "varyx/mac/AEDesc-deref.hh"
+#include "varyx/mac/AEDesc-print.hh"
 
 
 namespace varyx
@@ -83,7 +84,9 @@ Value AEDesc::coerce( const Value& v )
 static
 plus::string AEDesc_str_make( const Value& v )
 {
-	return "<AEDesc>";
+	const AEDesc& desc = static_cast< const AEDesc& >( v );
+	
+	return printable_AEDesc( desc.get() );
 }
 
 static const stringify AEDesc_str =
