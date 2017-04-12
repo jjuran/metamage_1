@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 
 // chars
 #include "charsets/extended_ascii.hh"
@@ -21,9 +20,20 @@ namespace conv
 	using chars::unichar_t;
 	
 	
-	static inline bool is_non_ascii( char c )
+	static
+	const char* find_non_ascii( const char* begin, const char* end )
 	{
-		return c & 0x80;
+		while ( begin < end )
+		{
+			signed char c = *begin++;
+			
+			if ( c < 0 )
+			{
+				return --begin;
+			}
+		}
+		
+		return begin;
 	}
 	
 	static inline unichar_t unicode_from_MacRoman( char c )
@@ -97,9 +107,7 @@ namespace conv
 		{
 			const std::size_t remaining = std::min( end - p, buffer_end - q );
 			
-			const char* it = std::find_if( p,
-			                               p + remaining,
-			                               std::ptr_fun( is_non_ascii ) );
+			const char* it = find_non_ascii( p, p + remaining );
 			
 			std::copy( p, it, q );
 			
@@ -148,9 +156,7 @@ namespace conv
 		{
 			const std::size_t remaining = std::min( end - p, buffer_end - q );
 			
-			const char* it = std::find_if( p,
-			                               p + remaining,
-			                               std::ptr_fun( is_non_ascii ) );
+			const char* it = find_non_ascii( p, p + remaining );
 			
 			std::copy( p, it, q );
 			

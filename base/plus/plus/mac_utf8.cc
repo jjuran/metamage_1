@@ -5,10 +5,6 @@
 
 #include "plus/mac_utf8.hh"
 
-// Standard C++
-#include <algorithm>
-#include <functional>
-
 // chars
 #include "conv/mac_utf8.hh"
 
@@ -19,9 +15,20 @@
 namespace plus
 {
 	
-	static inline bool is_non_ascii( char c )
+	static
+	bool has_non_ascii( const char* begin, const char* end )
 	{
-		return c & 0x80;
+		while ( begin < end )
+		{
+			signed char c = *begin++;
+			
+			if ( c < 0 )
+			{
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	string utf8_from_mac( const char* begin, string::size_type n )
@@ -64,11 +71,7 @@ namespace plus
 		const char* begin = input.data();
 		const char* end   = begin + input.size();
 		
-		const char* it = std::find_if( begin,
-		                               end,
-		                               std::ptr_fun( is_non_ascii ) );
-		
-		if ( it == end )
+		if ( ! has_non_ascii( begin, end ) )
 		{
 			return input;  // input is entirely ASCII
 		}
@@ -81,11 +84,7 @@ namespace plus
 		const char* begin = input.data();
 		const char* end   = begin + input.size();
 		
-		const char* it = std::find_if( begin,
-		                               end,
-		                               std::ptr_fun( is_non_ascii ) );
-		
-		if ( it == end )
+		if ( ! has_non_ascii( begin, end ) )
 		{
 			return input;  // input is entirely ASCII
 		}
