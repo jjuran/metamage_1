@@ -81,16 +81,17 @@ Value AEDesc::coerce( const Value& v )
 }
 
 static
-const char* AEDesc_str_data( const Value& v )
+plus::string AEDesc_str_make( const Value& v )
 {
 	return "<AEDesc>";
 }
 
 static const stringify AEDesc_str =
 {
-	&AEDesc_str_data,
 	NULL,
 	NULL,
+	NULL,
+	&AEDesc_str_make,
 };
 
 static
