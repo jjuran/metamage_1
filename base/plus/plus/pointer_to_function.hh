@@ -6,9 +6,6 @@
 #ifndef PLUS_POINTERTOFUNCTION_HH
 #define PLUS_POINTERTOFUNCTION_HH
 
-// Standard C++
-#include <functional>
-
 
 namespace plus
 {
@@ -38,7 +35,7 @@ namespace plus
 	};
 	
 	template < class T1, class Result >
-	class pointer_to_unary_function : public std::unary_function< T1, Result >
+	class pointer_to_unary_function
 	{
 		public:
 			typedef Result ( *function_type )( T1 );
@@ -56,7 +53,7 @@ namespace plus
 	};
 	
 	template < class T1, class Result >
-	class pointer_to_unary_function_with_const_arg : public std::unary_function< T1, Result >
+	class pointer_to_unary_function_with_const_arg
 	{
 		public:
 			typedef Result ( *function_type )( const T1& );
@@ -74,9 +71,13 @@ namespace plus
 	};
 	
 	template < class T1, class T2, class Result >
-	class pointer_to_binary_function : public std::binary_function< T1, T2, Result >
+	class pointer_to_binary_function
 	{
 		public:
+			typedef T1      first_argument_type;
+			typedef T2      second_argument_type;
+			typedef Result  result_type;
+			
 			typedef Result ( *function_type )( T1, T2 );
 		
 		private:
@@ -92,9 +93,13 @@ namespace plus
 	};
 	
 	template < class T1, class T2, class Result >
-	class pointer_to_binary_function_with_const_arg1 : public std::binary_function< T1, T2, Result >
+	class pointer_to_binary_function_with_const_arg1
 	{
 		public:
+			typedef T1      first_argument_type;
+			typedef T2      second_argument_type;
+			typedef Result  result_type;
+			
 			typedef Result ( *function_type )( const T1&, T2 );
 		
 		private:
@@ -110,9 +115,13 @@ namespace plus
 	};
 	
 	template < class T1, class T2, class Result >
-	class pointer_to_binary_function_with_const_arg2 : public std::binary_function< T1, T2, Result >
+	class pointer_to_binary_function_with_const_arg2
 	{
 		public:
+			typedef T1      first_argument_type;
+			typedef T2      second_argument_type;
+			typedef Result  result_type;
+			
 			typedef Result ( *function_type )( T1, const T2& );
 		
 		private:
@@ -128,9 +137,13 @@ namespace plus
 	};
 	
 	template < class T1, class T2, class Result >
-	class pointer_to_binary_function_with_const_args : public std::binary_function< T1, T2, Result >
+	class pointer_to_binary_function_with_const_args
 	{
 		public:
+			typedef T1      first_argument_type;
+			typedef T2      second_argument_type;
+			typedef Result  result_type;
+			
 			typedef Result ( *function_type )( const T1&, const T2& );
 		
 		private:
