@@ -86,49 +86,11 @@ namespace Vectoria
 			Component      & operator()( unsigned row, unsigned col )        { return myCells[ row * columnCount + col ]; }
 			
 			// Arithmetic operators
-			This& operator+=( const This& other )
-			{
-				std::transform( begin(),
-				                end(),
-				                other.begin(),
-				                begin(),
-				                std::plus< Component >() );
-				
-				return *this;
-			}
+			This& operator+=( const This& other );
+			This& operator-=( const This& other );
 			
-			This& operator-=( const This& other )
-			{
-				std::transform( begin(),
-				                end(),
-				                other.begin(),
-				                begin(),
-				                std::minus< Component >() );
-				
-				return *this;
-			}
-			
-			This& operator*=( Component factor )
-			{
-				std::transform( begin(),
-				                end(),
-				                begin(),
-				                std::bind2nd( std::multiplies< Component >(),
-				                              factor ) );
-				
-				return *this;
-			}
-			
-			This& operator/=( Component divisor )
-			{
-				std::transform( begin(),
-				                end(),
-				                begin(),
-				                std::bind2nd( std::divides< Component >(),
-				                              divisor ) );
-				
-				return *this;
-			}
+			This& operator*=( Component factor  );
+			This& operator/=( Component divisor );
 			
 			// Factor must be a square matrix with dimensions == our width
 			This& operator*=( const Matrix< Component, C, C >& factor )
@@ -141,6 +103,54 @@ namespace Vectoria
 				return std::equal( begin(), end(), other.begin() );
 			}
 	};
+	
+	template < class T, unsigned R, unsigned C >
+	Matrix< T, R, C >& Matrix< T, R, C >::operator+=( const Matrix< T, R, C >& x )
+	{
+		std::transform( begin(),
+		                end(),
+		                x.begin(),
+		                begin(),
+		                std::plus< value_type >() );
+		
+		return *this;
+	}
+	
+	template < class T, unsigned R, unsigned C >
+	Matrix< T, R, C >& Matrix< T, R, C >::operator-=( const Matrix< T, R, C >& x )
+	{
+		std::transform( begin(),
+		                end(),
+		                x.begin(),
+		                begin(),
+		                std::minus< value_type >() );
+		
+		return *this;
+	}
+	
+	template < class T, unsigned R, unsigned C >
+	Matrix< T, R, C >& Matrix< T, R, C >::operator*=( value_type factor )
+	{
+		std::transform( begin(),
+		                end(),
+		                begin(),
+		                std::bind2nd( std::multiplies< value_type >(),
+		                              factor ) );
+		
+		return *this;
+	}
+	
+	template < class T, unsigned R, unsigned C >
+	Matrix< T, R, C >& Matrix< T, R, C >::operator/=( value_type divisor )
+	{
+		std::transform( begin(),
+		                end(),
+		                begin(),
+		                std::bind2nd( std::divides< value_type >(),
+		                              divisor ) );
+		
+		return *this;
+	}
 	
 	
 	template < class T, unsigned R, unsigned C >
@@ -160,7 +170,7 @@ namespace Vectoria
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	inline Matrix< T, R, C > operator-( const Matrix< T, R, C >& matrix )
+	Matrix< T, R, C > operator-( const Matrix< T, R, C >& matrix )
 	{
 		Matrix< T, R, C > addInverse;
 		
