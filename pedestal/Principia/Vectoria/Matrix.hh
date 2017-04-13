@@ -7,7 +7,6 @@
 #define VECTORIA_MATRIX_HH
 
 #include <algorithm>
-#include <functional>
 
 
 namespace Vectoria
@@ -107,11 +106,15 @@ namespace Vectoria
 	template < class T, unsigned R, unsigned C >
 	Matrix< T, R, C >& Matrix< T, R, C >::operator+=( const Matrix< T, R, C >& x )
 	{
-		std::transform( begin(),
-		                end(),
-		                x.begin(),
-		                begin(),
-		                std::plus< value_type >() );
+		value_type const* src = x.myCells;
+		
+		value_type* dst = myCells;
+		value_type* end = myCells + cellCount;
+		
+		while ( dst < end )
+		{
+			*dst++ += *src++;
+		}
 		
 		return *this;
 	}
@@ -119,11 +122,15 @@ namespace Vectoria
 	template < class T, unsigned R, unsigned C >
 	Matrix< T, R, C >& Matrix< T, R, C >::operator-=( const Matrix< T, R, C >& x )
 	{
-		std::transform( begin(),
-		                end(),
-		                x.begin(),
-		                begin(),
-		                std::minus< value_type >() );
+		value_type const* src = x.myCells;
+		
+		value_type* dst = myCells;
+		value_type* end = myCells + cellCount;
+		
+		while ( dst < end )
+		{
+			*dst++ -= *src++;
+		}
 		
 		return *this;
 	}
@@ -131,23 +138,27 @@ namespace Vectoria
 	template < class T, unsigned R, unsigned C >
 	Matrix< T, R, C >& Matrix< T, R, C >::operator*=( value_type factor )
 	{
-		std::transform( begin(),
-		                end(),
-		                begin(),
-		                std::bind2nd( std::multiplies< value_type >(),
-		                              factor ) );
+		value_type* dst = myCells;
+		value_type* end = myCells + cellCount;
+		
+		while ( dst < end )
+		{
+			*dst++ *= factor;
+		}
 		
 		return *this;
 	}
 	
 	template < class T, unsigned R, unsigned C >
-	Matrix< T, R, C >& Matrix< T, R, C >::operator/=( value_type divisor )
+	Matrix< T, R, C >& Matrix< T, R, C >::operator/=( value_type factor )
 	{
-		std::transform( begin(),
-		                end(),
-		                begin(),
-		                std::bind2nd( std::divides< value_type >(),
-		                              divisor ) );
+		value_type* dst = myCells;
+		value_type* end = myCells + cellCount;
+		
+		while ( dst < end )
+		{
+			*dst++ /= factor;
+		}
 		
 		return *this;
 	}
@@ -172,14 +183,7 @@ namespace Vectoria
 	template < class T, unsigned R, unsigned C >
 	Matrix< T, R, C > operator-( const Matrix< T, R, C >& matrix )
 	{
-		Matrix< T, R, C > addInverse;
-		
-		std::transform( matrix.begin(),
-		                matrix.end(),
-		                addInverse.begin(),
-		                std::negate< T >() );
-		
-		return addInverse;
+		return matrix * -1.0;
 	}
 	
 	template < class T, unsigned R, unsigned C >
