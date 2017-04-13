@@ -21,7 +21,7 @@
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
-#include "Vectoria/Polygon3D.hh"
+#include "Vectoria/PlaneVector.hh"
 #include "Vectoria/ViewFrustum.hh"
 
 // Vertice

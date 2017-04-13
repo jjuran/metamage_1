@@ -11,7 +11,7 @@
 // Vectoria
 #include "Vectoria/Coordinates.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
-#include "Vectoria/Polygon3D.hh"
+#include "Vectoria/PlaneVector.hh"
 #include "Vectoria/Transform.hh"
 #include "Vectoria/TriColor.hh"
 

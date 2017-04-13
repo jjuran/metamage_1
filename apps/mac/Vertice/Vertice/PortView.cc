@@ -26,8 +26,7 @@
 #include "Vectoria/Clipping3D.hh"
 #include "Vectoria/HomogeneousClipping.hh"
 #include "Vectoria/ViewFrustum.hh"
-#include "Vectoria/Polygon3D.hh"
-#include "Vectoria/Plane3D.hh"
+#include "Vectoria/PlaneVector.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
 #include "Vectoria/TriColor.hh"
 
