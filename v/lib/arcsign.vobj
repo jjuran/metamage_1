@@ -43,10 +43,7 @@ def seal
 	const pub = ed25519-publickey key
 	const sig = ed25519-sign( key, f msg ext )
 	
-	const sig1 = sig[  0 -> 32 ]
-	const sig2 = sig[ 32 -> 64 ]
-	
-	return ext prefix "\n".join (pub, sig1, sig2, "")
+	return ext prefix "\n".join (pub, sig / 2, "")
 }
 
 def strict_unhex
