@@ -5,6 +5,9 @@
 
 #include "vlib/types/packed.hh"
 
+// math
+#include "math/bitwise.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -120,6 +123,18 @@ namespace vlib
 	};
 	
 	static
+	Value negated_bytes( Value v )
+	{
+		using namespace math::bitwise;
+		
+		const plus::string& s = v.unshare().string();
+		
+		bitwise_not( (char*) s.data(), s.size() );
+		
+		return v;
+	}
+	
+	static
 	Value unary_op_handler( op_type op, const Value& v )
 	{
 		switch ( op )
@@ -130,11 +145,37 @@ namespace vlib
 			case Op_unary_minus:
 				return reversed_bytes( v );
 			
+			case Op_unary_negate:
+				return negated_bytes( v );
+			
 			default:
 				break;
 		}
 		
 		return Value();
+	}
+	
+	static
+	Value binary_bitwise_op( op_type op, Value a, const char* b )
+	{
+		using namespace math::bitwise;
+		
+		const plus::string& s = a.unshare().string();
+		
+		char* data = (char*) s.data();
+		
+		const plus::string::size_type n = s.size();
+		
+		switch ( op )
+		{
+			default:  // won't happen
+			
+			case Op_intersection:  bitwise_and( data, b, n );  break;
+			case Op_exclusion:     bitwise_xor( data, b, n );  break;
+			case Op_union:         bitwise_or ( data, b, n );  break;
+		}
+		
+		return a;
 	}
 	
 	static
@@ -145,6 +186,21 @@ namespace vlib
 			case Op_function:
 			case Op_named_unary:
 				return Packed( pack( Value( a, b ) ) );
+			
+			case Op_intersection:
+			case Op_exclusion:
+			case Op_union:
+				if ( b.type() != V_pack )
+				{
+					THROW( "bitwise logic requires packed operands" );
+				}
+				
+				if ( a.string().size() != b.string().size() )
+				{
+					THROW( "bitwise logic operands must be of equal length" );
+				}
+				
+				return binary_bitwise_op( op, a, b.string().data() );
 			
 			default:
 				break;
