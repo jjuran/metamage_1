@@ -11,6 +11,9 @@
 // gear
 #include "gear/hexadecimal.hh"
 
+// bignum
+#include "bignum/integer.hh"
+
 // vlib
 #include "vlib/string-utils.hh"
 #include "vlib/target.hh"
@@ -20,6 +23,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -181,6 +185,66 @@ namespace vlib
 	}
 	
 	static
+	Value division( const plus::string& s, bignum::integer x )
+	{
+		typedef bignum::ibox::sign_t     sign_t;
+		typedef plus::string::size_type  size_t;
+		
+		const sign_t sign = x.sign();
+		
+		if ( sign == 0 )
+		{
+			THROW( "division by zero (of packed data)" );
+		}
+		
+		x.absolve();  // in-place absolute value
+		
+		if ( ! x.demotes_to< size_t >() )
+		{
+			THROW( "divisor of packed data is excessively large" );
+		}
+		
+		const size_t divisor = x.clipped_to< size_t >();
+		const size_t n_bytes = s.size();
+		
+		const size_t quotient  = n_bytes / divisor;
+		const size_t remainder = n_bytes % divisor;
+		
+		if ( remainder != 0 )
+		{
+			THROW( "division of packed data with non-zero remainder" );
+		}
+		
+		/*
+			Let S be the size of the input data in bytes.
+			Let N be the divisor argument.
+			Let Q be S/abs(N).
+			
+			Dividing by N > 0 yields N pieces of length Q.
+			Dividing by N < 0 yields Q pieces of length -N.
+		*/
+		
+		const size_t chunk_len = sign > 0 ? quotient
+		                                  : divisor;
+		
+		size_t n_chunks = sign > 0 ? divisor
+		                           : quotient;
+		
+		list_builder result;
+		
+		size_t i = 0;
+		
+		while ( n_chunks-- > 0 )
+		{
+			result.append( Packed( s.substr( i, chunk_len ) ) );
+			
+			i += chunk_len;
+		}
+		
+		return result.get();
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		switch ( op )
@@ -203,6 +267,14 @@ namespace vlib
 				}
 				
 				return binary_bitwise_op( op, a, b.string().data() );
+			
+			case Op_divide:
+				if ( const Integer* integer = b.is< Integer >() )
+				{
+					return division( a.string(), *integer );
+				}
+				
+				THROW( "divisor of packed data must be an integer" );
 			
 			default:
 				break;
