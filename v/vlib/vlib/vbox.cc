@@ -57,12 +57,20 @@ namespace vlib
 			plus::extent_add_ref( that.u.alloc.pointer );
 		}
 		
+		/*
+			In the event of `v = rest( v )`, destroying v could deallocate
+			the memory storing the vbox we're going to copy.  So copy it to
+			the stack first.
+		*/
+		
+		vu tmp = that.u;
+		
 		if ( has_extent() )
 		{
 			plus::extent_release( u.alloc.pointer );
 		}
 		
-		u = that.u;
+		u = tmp;
 		
 		return *this;
 	}
