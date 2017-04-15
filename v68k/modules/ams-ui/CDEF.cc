@@ -39,12 +39,24 @@ Rect switch_button_rect( const Rect& bounds )
 }
 
 static
-void draw_pushbutton( const Rect& bounds )
+void draw_pushbutton( const Rect& bounds, const unsigned char* title )
 {
 	const short diameter = pushbutton_corner_diameter;  // 10px
 	
 	EraseRoundRect( &bounds, diameter, diameter );
 	FrameRoundRect( &bounds, diameter, diameter );
+	
+	if ( const short titleWidth = StringWidth( title ) )
+	{
+		const short titleAscent = 9;
+		
+		const short h = (bounds.left + bounds.right - titleWidth) / 2;
+		const short v = (bounds.top + bounds.bottom + titleAscent) / 2;
+		
+		MoveTo( h, v );
+		
+		DrawString( title );
+	}
 }
 
 static
@@ -120,6 +132,14 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 		return 0;
 	}
 	
+	GrafPtr port = control[0]->contrlOwner;
+	
+	const short font = port->txFont;
+	const short size = port->txSize;
+	
+	TextFont( systemFont );
+	TextSize( 0 );
+	
 	PenState penState;
 	GetPenState( &penState );
 	
@@ -135,10 +155,12 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	
 	const bool hiliting = param != 0;
 	
+	const unsigned char* title = control[0]->contrlTitle;
+	
 	switch ( varCode << 1 | hiliting )
 	{
 		case pushButProc << 1 | draw:
-			draw_pushbutton( button_rect );
+			draw_pushbutton( button_rect, title );
 			break;
 		
 		case pushButProc << 1 | hilite:
@@ -166,6 +188,9 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	}
 	
 	SetPenState( &penState );
+	
+	TextFont( font );
+	TextSize( size );
 	
 	return 0;
 }
