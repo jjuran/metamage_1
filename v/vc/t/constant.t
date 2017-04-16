@@ -22,3 +22,8 @@ $ vc '{"abcde"[2]}'
 
 $ vc '{"george" in -"groe" * 3}'
 1 >= '{true}'
+
+%
+
+$ vc '{(+) null}'
+1 >= '{1}'

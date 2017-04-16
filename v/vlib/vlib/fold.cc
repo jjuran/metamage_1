@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/calc.hh"
+#include "vlib/symbol.hh"
 
 
 namespace vlib
@@ -129,6 +130,19 @@ namespace vlib
 		if ( Expr* expr = v.expr() )
 		{
 			return fold( expr->left, expr->op, expr->right );
+		}
+		
+		if ( const Symbol* sym = v.sym() )
+		{
+			if ( sym->is_immutable() )
+			{
+				const Value& x = sym->get();
+				
+				if ( x.type() != V_desc )
+				{
+					return x;
+				}
+			}
 		}
 		
 		return NIL;
