@@ -69,6 +69,15 @@ namespace vlib
 		return its_symbols.create( name, type );
 	}
 	
+	const Value& lexical_scope::immortalize_constant( int i, const Value& v )
+	{
+		const Value& symbol = its_symbols[ i ];
+		
+		symbol.sym()->assign( v );
+		
+		return symbol;
+	}
+	
 	void lexical_scope_box::pop()
 	{
 		ASSERT( its_lexical_scope != its_bottom_scope );

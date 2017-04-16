@@ -318,7 +318,7 @@ namespace vlib
 			}
 		}
 		
-		const Value folded = fold( v );
+		const Value folded = fold( v, its_scope.get() );
 		
 		if ( folded.type() )
 		{

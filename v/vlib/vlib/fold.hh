@@ -13,7 +13,9 @@
 namespace vlib
 {
 	
-	Value fold( const Value& v );
+	class lexical_scope;
+	
+	Value fold( const Value& v, lexical_scope* scope );
 	
 }
 

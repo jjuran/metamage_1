@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/assert.hh"
 #include "vlib/calc.hh"
+#include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 
 
@@ -112,7 +113,7 @@ namespace vlib
 	}
 	
 	static
-	Value fold( const Value& a, op_type op, const Value& b )
+	Value fold( const Value& a, op_type op, const Value& b, lexical_scope* scope )
 	{
 		if ( is_pure( op ) )
 		{
@@ -178,6 +179,13 @@ namespace vlib
 				{
 					Symbol* sym = decl->decl_sym();
 					
+					const int i = sym->get().desc();
+					
+					if ( scope )
+					{
+						scope->immortalize_constant( i, b );
+					}
+					
 					sym->deref_unsafe() = undefined;
 					
 					if ( type )
@@ -195,11 +203,11 @@ namespace vlib
 		return NIL;
 	}
 	
-	Value fold( const Value& v )
+	Value fold( const Value& v, lexical_scope* scope )
 	{
 		if ( Expr* expr = v.expr() )
 		{
-			return fold( expr->left, expr->op, expr->right );
+			return fold( expr->left, expr->op, expr->right, scope );
 		}
 		
 		if ( const Symbol* sym = v.sym() )

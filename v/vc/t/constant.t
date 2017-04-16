@@ -52,3 +52,8 @@ $ vc '{const company = 2; const crowd = 3; 4 + 5}'
 
 $ vc '{const company = 2; const crowd = 3; company + crowd}'
 1 >= '{5}'
+
+%
+
+$ vc '{const x = 3; {const y = 4; {x + y}}}'
+1 >= '{{{7}}}'
