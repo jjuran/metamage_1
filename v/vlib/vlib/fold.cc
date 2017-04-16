@@ -6,6 +6,7 @@
 #include "vlib/fold.hh"
 
 // vlib
+#include "vlib/assert.hh"
 #include "vlib/calc.hh"
 #include "vlib/symbol.hh"
 
@@ -141,6 +142,15 @@ namespace vlib
 				{
 					return body;
 				}
+			}
+		}
+		else if ( op == Op_assert )
+		{
+			if ( is_constant( b ) )
+			{
+				check_assertion_result( b, b, source_spec() );
+				
+				return nothing;  // Assertion passed!
 			}
 		}
 		
