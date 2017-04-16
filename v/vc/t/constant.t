@@ -42,3 +42,13 @@ $ vc '{do {789}}'
 
 $ vc '{assert 2 + 2 == 4}'
 1 >= '{}'
+
+%
+
+$ vc '{const company = 2; const crowd = 3; 4 + 5}'
+1 >= '{9}'
+
+%
+
+$ vc '{const company = 2; const crowd = 3; company + crowd}'
+1 >= '{5}'

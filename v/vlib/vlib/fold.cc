@@ -153,6 +153,44 @@ namespace vlib
 				return nothing;  // Assertion passed!
 			}
 		}
+		else if ( op == Op_duplicate  ||  op == Op_approximate )
+		{
+			if ( is_constant( b ) )
+			{
+				const Value* decl = NULL;
+				const Value* type = NULL;
+				
+				if ( is_symbol_declarator( a ) )
+				{
+					decl = &a;
+				}
+				else if ( is_type_annotation( a ) )
+				{
+					type = &a.expr()->right;
+					
+					if ( is_constant( *type ) )
+					{
+						decl = &a.expr()->left;
+					}
+				}
+				
+				if ( decl  &&  decl->expr()->op == Op_const )
+				{
+					Symbol* sym = decl->decl_sym();
+					
+					sym->deref_unsafe() = undefined;
+					
+					if ( type )
+					{
+						sym->denote( *type );
+					}
+					
+					sym->assign( b, op == Op_approximate );
+					
+					return b;
+				}
+			}
+		}
 		
 		return NIL;
 	}
