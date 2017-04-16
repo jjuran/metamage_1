@@ -122,6 +122,28 @@ namespace vlib
 				return folded;
 			}
 		}
+		else if ( op == Op_end )
+		{
+			if ( is_constant( a ) )
+			{
+				return b;
+			}
+		}
+		else if ( op == Op_do )
+		{
+			Expr* expr = b.expr();
+			
+			if ( expr->op == Op_block )
+			{
+				const Value& body = expr->right.expr()->right;
+				
+				if ( is_constant( body ) )
+				{
+					return body;
+				}
+			}
+		}
+		
 		return NIL;
 	}
 	
