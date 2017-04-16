@@ -11,7 +11,7 @@ $ vx -e 'print rep eval "3 + 4"'
 %
 
 $ vx -e 'print rep eval "{3 + 4}"'
-1 >= '{3 + 4}'
+1 >= '{7}'
 
 %
 
