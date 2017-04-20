@@ -4,6 +4,10 @@
 	Ed25519 reference implementation using Ed25519-donna
 */
 
+#if defined( __APPLE__ )  &&  defined( __clang__ )
+// This header only exists from 10.6 onwards.
+#include <Availability.h>
+#endif
 
 /* define ED25519_SUFFIX to have it appended to the end of each public function */
 #if !defined(ED25519_SUFFIX)
@@ -14,7 +18,7 @@
 #define ED25519_FN2(fn,suffix) ED25519_FN3(fn,suffix)
 #define ED25519_FN(fn)         ED25519_FN2(fn,ED25519_SUFFIX)
 
-#if defined( __RELIX__ )  ||  defined( ANDROID )
+#if defined( __RELIX__ )  ||  defined( ANDROID )  ||  __MAC_10_11
 #define ED25519_CUSTOMRANDOM
 #define ED25519_REFHASH
 #endif
@@ -32,7 +36,7 @@
 #include "ed25519-randombytes.h"
 #include "ed25519-hash.h"
 
-#ifdef ANDROID
+#if defined( ANDROID )  ||  __MAC_10_11
 /*
 	At least the x86_64 Android toolchain can't figure out dead-code stripping,
 	so we need to define ed25519_randombytes_unsafe(), which is called by
