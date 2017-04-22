@@ -6,6 +6,7 @@
 #include "Genie/mnt/listener.hh"
 
 // POSIX
+#include <dirent.h>
 #include <pthread.h>
 #include <unistd.h>
 #include <sys/socket.h>
@@ -16,6 +17,7 @@
 #include <string.h>
 
 // posix-utils
+#include "posix/connect_path.hh"
 #include "posix/listen_unix.hh"
 
 // mac-sys-utils
@@ -280,26 +282,80 @@ namespace Genie
 		return true;
 	}
 	
+	static inline
+	bool ends_with( const char* s, size_t len, const char* sub, size_t sublen )
+	{
+		return len >= sublen  &&  memcmp( s + len - sublen, sub, sublen ) == 0;
+	}
+	
 	static
 	void maintain_service_symlink()
 	{
+		/*
+			Scan the ~/var/run/fs directory and try to connect to each socket.
+			Delete any that yield ECONNREFUSED.
+		*/
+		
+		plus::var_string ind_path = socket_path();
+		
+		ind_path.resize( ind_path.find_last_of( '/' ) + 1 );
+		
+		if ( DIR* dir = opendir( ind_path.c_str() ) )
+		{
+			const size_t subpath_len = ind_path.size();
+			
+			while ( dirent* entry = readdir( dir ) )
+			{
+				const char* name = entry->d_name;
+				const size_t len = strlen( name );
+				
+				if ( ! ends_with( name, len, STR_LEN( ".socket" ) ) )
+				{
+					continue;
+				}
+				
+				ind_path.resize( subpath_len );
+				ind_path += entry->d_name;
+				
+				const char* path = ind_path.c_str();
+				
+				int fd = posix::connect_path( path );
+				
+				if ( fd >= 0 )
+				{
+					close( fd );
+					continue;
+				}
+				
+				if ( errno == ECONNREFUSED )
+				{
+					unlink( path );
+				}
+			}
+			
+			closedir( dir );
+		}
+		
 		jack::interface ji = service_path();
 		
 		const char* path = ji.socket_path();
 		
 		/*
-			TODO:
-				Try to connect to the service path.  If it works, close it
-				and return.
-				
-				Otherwise, scan the ~/var/run/fs directory and try to connect
-				to each socket.  Delete any that yield ECONNREFUSED.
-				
-				If our socket is the oldest (or it's tied for earliest mod
-				date and has the lowest PID), update the symlink.
+			Try to connect to the service path.  If it works, close it
+			and return.
 		*/
 		
+		int fd = posix::connect_path( path );  // ~/var/run/fs/gui.socket
 		
+		if ( fd >= 0 )
+		{
+			// gui.socket works; don't change it.
+			
+			close( fd );
+			return;
+		}
+		
+		// Update the socket symlink.
 		
 		unlink( path );
 		
