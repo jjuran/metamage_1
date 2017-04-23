@@ -227,7 +227,7 @@ my %fsmap =
 			v =>
 			{
 				map { copy_vobj $_ }
-					qw( arcsign arcsign-seal arcsign-unseal options ),
+					qw( arcsign arcsign-seal arcsign-unseal date-time options ),
 			},
 			#perl => sub { copy_tree( '/usr/lib/perl', shift ); },
 		},
