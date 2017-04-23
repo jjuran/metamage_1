@@ -4,7 +4,7 @@ def arcsign-unseal
 	
 	const key = params[ "key" ]
 	
-	def each
+	def unsealed
 	{
 		const load, const truncate = *_
 		
@@ -30,5 +30,5 @@ def arcsign-unseal
 		return [ null, "INVALID SEAL" ]
 	}
 	
-	return params[ "kits" ] map { _.key => each _.value }
+	return params[ "kits" ] map { _.key => unsealed _.value }
 }
