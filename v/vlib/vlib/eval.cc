@@ -5,9 +5,6 @@
 
 #include "vlib/eval.hh"
 
-// plus
-#include "plus/integer.hh"
-
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/calc.hh"
@@ -23,7 +20,6 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/list_iterator.hh"
-#include "vlib/types/integer.hh"
 #include "vlib/types/string.hh"
 
 
@@ -207,7 +203,7 @@ namespace vlib
 			}
 			else if ( op == Op_move  ||  check_target_sym( right ) )
 			{
-				error = NULL;
+				error = 0;  // NULL
 			}
 			
 			if ( error )
@@ -268,10 +264,6 @@ namespace vlib
 				}
 			}
 		}
-		else if ( value.type() != right.type() )
-		{
-			THROW( "update between mixed types not supported" );
-		}
 		
 		if ( handler != 0 )  // NULL
 		{
@@ -283,73 +275,9 @@ namespace vlib
 			}
 		}
 		
-		if ( value.type() != Value_number )
-		{
-			THROW( "non-numeric update not supported" );
-		}
+		THROW( "unimplemented update assignment" );
 		
-		plus::integer&       a = value.number();
-		plus::integer const& b = right.type() == V_dummy ? a : right.number();
-		
-		if ( b.is_zero()  &&  (op == Op_divide_by  ||  op == Op_remain_by) )
-		{
-			THROW( "division by zero in update" );
-		}
-		
-		const Value& vtype = *target.type;
-		
-		/*
-			The next section of code below explicitly assigns a result (in
-			order to check type constraints).  The section below that one
-			updates a plus::integer in place instead of creating a new Value.
-			This is a problem when the new and old values differ in whether
-			they require allocation, since the vbox doesn't get updated to
-			match.  If the new result is allocated but the old isn't, then
-			the memory will be leaked.  If the old is allocated but the new
-			one isn't, then the next access to the refcount will segfault.
-			
-			As a temporary fix, always go through assign().
-		*/
-		
-		//if ( vtype.type() == Value_base_type )
-		{
-			//if ( &vtype.typeinfo() != &integer_vtype )
-			{
-				plus::integer result;
-				
-				switch ( op )
-				{
-					case Op_increase_by:  result = a + b;  break;
-					case Op_decrease_by:  result = a - b;  break;
-					case Op_multiply_by:  result = a * b;  break;
-					case Op_divide_by:    result = a / b;  break;
-					case Op_remain_by:    result = a % b;  break;
-			
-					default:
-						INTERNAL_ERROR( "no such update assignment operator" );
-				}
-				
-				assign( target, Integer( result ) );
-				
-				return value;
-			}
-		}
-		
-		// This is temporarily dead code -- see above.
-		
-		switch ( op )
-		{
-			case Op_increase_by:  a += b;  break;
-			case Op_decrease_by:  a -= b;  break;
-			case Op_multiply_by:  a *= b;  break;
-			case Op_divide_by:    a /= b;  break;
-			case Op_remain_by:    a %= b;  break;
-			
-			default:
-				INTERNAL_ERROR( "unrecognized update assignment operator" );
-		}
-		
-		return value;
+		return Value();
 	}
 	
 	static

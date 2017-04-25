@@ -249,11 +249,56 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value mutating_op_handler( op_type        op,
+	                           const Target&  target,
+	                           const Value&   x,
+	                           const Value&   b )
+	{
+		if ( b.type() != V_int )
+		{
+			THROW( "numeric update requires numeric operands" );
+		}
+		
+		const plus::integer& k = b.number();
+		
+		if ( op == Op_divide_by  ||  op == Op_remain_by )
+		{
+			if ( k.is_zero() )
+			{
+				THROW( "division by zero in update" );
+			}
+		}
+		
+		const plus::integer& i = target.addr->number();
+		
+		plus::integer j = i;
+		
+		switch ( op )
+		{
+			case Op_increase_by:  j += k;  break;
+			case Op_decrease_by:  j -= k;  break;
+			case Op_multiply_by:  j *= k;  break;
+			case Op_divide_by:    j /= k;  break;
+			case Op_remain_by:    j %= k;  break;
+			
+			default:
+				break;
+		}
+		
+		Integer result = j;
+		
+		assign( target, result );
+		
+		return result;
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
 		&binary_op_handler,
 		&advance_op_handler,
+		&mutating_op_handler,
 	};
 	
 	const dispatch integer_dispatch =
