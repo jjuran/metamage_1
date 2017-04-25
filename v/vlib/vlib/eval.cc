@@ -295,24 +295,10 @@ namespace vlib
 		{
 			//if ( &vtype.typeinfo() != &integer_vtype )
 			{
-				if ( op == Op_postinc  ||  op == Op_postdec )
-				{
-					const bool inc = op == Op_postinc;
-					
-					Value result = value;
-					
-					assign( target, Integer( a + (inc ? 1 : -1) ) );
-					
-					return result;
-				}
-				
 				plus::integer result;
 				
 				switch ( op )
 				{
-					case Op_preinc:       result = a + 1;  break;
-					case Op_predec:       result = a - 1;  break;
-					
 					case Op_increase_by:  result = a + b;  break;
 					case Op_decrease_by:  result = a - b;  break;
 					case Op_multiply_by:  result = a * b;  break;
@@ -333,12 +319,6 @@ namespace vlib
 		
 		switch ( op )
 		{
-			case Op_postinc:  return Integer( a++ );
-			case Op_postdec:  return Integer( a-- );
-			
-			case Op_preinc:  ++a;  break;
-			case Op_predec:  --a;  break;
-			
 			case Op_increase_by:  a += b;  break;
 			case Op_decrease_by:  a -= b;  break;
 			case Op_multiply_by:  a *= b;  break;

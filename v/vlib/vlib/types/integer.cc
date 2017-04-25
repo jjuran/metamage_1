@@ -12,6 +12,8 @@
 #include "plus/decimal.hh"
 
 // vlib
+#include "vlib/symbol.hh"
+#include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/compare.hh"
@@ -205,10 +207,53 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value advance_op_handler( op_type op, const Target& target )
+	{
+		int step;
+		
+		switch ( op )
+		{
+			default:  // shouldn't happen
+			
+			case Op_preinc:  case Op_postinc:  step =  1;  break;
+			case Op_predec:  case Op_postdec:  step = -1;  break;
+		}
+		
+		const plus::integer& i = target.addr->number();
+		
+		Integer result = i + step;
+		
+		switch ( op )
+		{
+			case Op_preinc:
+			case Op_predec:
+				assign( target, result );
+				
+				return result;
+			
+			case Op_postinc:
+			case Op_postdec:
+				{
+					Value returned = *target.addr;
+					
+					assign( target, result );
+					
+					return returned;
+				}
+			
+			default:
+				break;
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
 		&binary_op_handler,
+		&advance_op_handler,
 	};
 	
 	const dispatch integer_dispatch =
