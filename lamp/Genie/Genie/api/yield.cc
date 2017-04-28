@@ -28,7 +28,11 @@ namespace relix
 		
 	#else
 		
+		Process* current = relix::gCurrentProcess;
+		
 		pthread_yield();
+		
+		relix::gCurrentProcess = current;
 		
 	#endif
 		
