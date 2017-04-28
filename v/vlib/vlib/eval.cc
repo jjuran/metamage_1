@@ -252,13 +252,6 @@ namespace vlib
 			return Value();
 		}
 		
-		if ( op == Op_push )
-		{
-			push( target, right );
-			
-			return *target.addr;
-		}
-		
 		Value& value = *target.addr;
 		
 		if ( is_undefined( value ) )
@@ -293,6 +286,13 @@ namespace vlib
 			{
 				return result;
 			}
+		}
+		
+		if ( op == Op_push )
+		{
+			push( target, right );
+			
+			return value;
 		}
 		
 		THROW( "unimplemented update assignment" );
