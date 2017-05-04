@@ -3345,3 +3345,13 @@ $ vc '[] == []'
 
 $ vc 'var x (str^...) = str^[]'
 1 >= '(string^[])'
+
+%
+
+$ vc 'x"4e75".string "?"'
+1 >= '"Nu?"'
+
+%
+
+$ vc '"head: " "glue".join( "(", "/", ")" )'
+1 >= '"head: (glue/glue)"'

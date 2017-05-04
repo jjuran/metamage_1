@@ -287,17 +287,6 @@ namespace vlib
 	{
 		if ( ! expecting_value() )
 		{
-			Value& last = stack.back().v;
-			
-			// Try string concatenation.
-			
-			if ( last.type() == V_str  &&  x.type() == V_str )
-			{
-				last = String( last.string() + x.string() );
-				
-				return;
-			}
-			
 			// Assume a function call.
 			
 			fold_ops_and_add( is_empty_list( x ) ? Op_function
