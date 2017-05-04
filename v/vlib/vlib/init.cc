@@ -20,6 +20,7 @@
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/record.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -56,6 +57,7 @@ namespace vlib
 		define_keyword( "function", function_vtype );
 		define_keyword( "integer",  integer_vtype  );
 		define_keyword( "int",      integer_vtype  );
+		define_keyword( "record",   record_vtype   );
 		define_keyword( "packed",   packed_vtype   );
 		define_keyword( "string",   string_vtype   );
 		define_keyword( "str",      string_vtype   );

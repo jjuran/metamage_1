@@ -19,6 +19,7 @@ namespace vlib
 		Op_throw,
 		Op_break,
 		Op_continue,
+		Op_record,
 		Op_module,
 		Op_export,
 		
