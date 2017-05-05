@@ -76,6 +76,12 @@ namespace vlib
 	}
 	
 	static
+	Value v_head( const Value& v )
+	{
+		return first( v );
+	}
+	
+	static
 	Value v_areaof( const Value& v )
 	{
 		return Integer( area( v ) );
@@ -157,6 +163,12 @@ namespace vlib
 	Value v_sha256( const Value& v )
 	{
 		return Packed( sha256( v.string() ) );
+	}
+	
+	static
+	Value v_tail( const Value& v )
+	{
+		return rest( v );
 	}
 	
 	static
@@ -348,11 +360,13 @@ namespace vlib
 	const proc_info proc_abs    = { "abs",    &v_abs,    &integer };
 	const proc_info proc_areaof = { "areaof", &v_areaof, NULL     };
 	const proc_info proc_half   = { "half",   &v_half,   &integer };
+	const proc_info proc_head   = { "head",   &v_head,   NULL     };
 	const proc_info proc_hex    = { "hex",    &v_hex,    NULL     };
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince   };
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL     };
 	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes   };
 	const proc_info proc_substr = { "substr", &v_substr, &substr  };
+	const proc_info proc_tail   = { "tail",   &v_tail,   NULL     };
 	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans   };
 	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string  };
 	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string  };
