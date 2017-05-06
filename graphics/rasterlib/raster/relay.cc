@@ -64,9 +64,18 @@ namespace raster
 	
 	void wait( sync_relay& relay )
 	{
-		must_pthread_mutex_lock  (              &relay.mutex );
-		must_pthread_cond_wait   ( &relay.cond, &relay.mutex );
-		must_pthread_mutex_unlock(              &relay.mutex );
+		must_pthread_mutex_lock( &relay.mutex );
+		
+		int err = pthread_cond_wait( &relay.cond, &relay.mutex );
+		
+		must_pthread_mutex_unlock( &relay.mutex );
+		
+		if ( err )
+		{
+			wait_failed exception = { err };
+			
+			throw exception;
+		}
 	}
 	
 }
