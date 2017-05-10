@@ -41,7 +41,6 @@ namespace vlib
 		return equal( a, b );
 	}
 	
-	static
 	Value keyed_subscript( const Value& array, const Value& key )
 	{
 		array_iterator it( array );
