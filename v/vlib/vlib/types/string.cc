@@ -139,7 +139,7 @@ namespace vlib
 		
 		const unsigned i = subscript_integer( subscript );
 		
-		if ( i > s.string().size() )
+		if ( i >= s.string().size() )
 		{
 			THROW( "subscript exceeds string/pack bounds" );
 		}
