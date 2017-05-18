@@ -19,6 +19,9 @@ CORE=ams-core
 RSRC=ams-rsrc
 UI=ams-ui
 
+test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
+raster init $SCREEN
+
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft 8<&0 \
 	freemountd -q --root ~/68k // \
