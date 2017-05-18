@@ -63,14 +63,6 @@ uint32_t sizeof_raster()
 	return total_size;
 }
 
-static inline
-uint32_t sizeof_footer()
-{
-	const uint32_t image_size = screen_size;  // 21888
-	
-	return sizeof_raster() - image_size;
-}
-
 static
 void close_without_errno( int fd )
 {
@@ -86,34 +78,12 @@ sync_relay& initialize( raster_load& raster )
 {
 	using namespace raster;
 	
-	const uint32_t footer_size = sizeof_footer();
-	
-	memset( raster.addr, '\xFF', raster.size );
-	
 	raster.meta = (raster_metadata*) ((char*) raster.addr + screen_size);
-	
-	uint32_t* end = (uint32_t*) ((char*) raster.meta + footer_size);
-	
-	*--end = footer_size;
 	
 	raster_metadata& meta = *raster.meta;
 	
 	raster_desc& desc = meta.desc;
 	raster_note& note = meta.note;
-	
-	memset( &meta, '\0', sizeof meta );
-	
-	desc.width  = 512;
-	desc.height = 342;
-	desc.stride = 64;
-	desc.weight = 1;
-	
-	note.type = Note_sync;
-	note.size = sizeof (sync_relay);
-	
-	raster_note& last = next( note );
-	
-	last.type = Note_end;
 	
 	return data< sync_relay >( note );
 }
@@ -149,8 +119,6 @@ int publish_raster( const char* path )
 	the_screen_buffer = raster.addr;
 	
 	sync_relay& sync = initialize( raster );
-	
-	publish( sync );
 	
 	the_sync_relay = &sync;
 	
