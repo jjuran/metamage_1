@@ -10,10 +10,6 @@ mkdir -p ~/var/run/raster
 
 SCREEN=~/var/run/raster/ams
 RASTER="--raster=$SCREEN"
-FIFO="$SCREEN.fifo"
-
-test -e $FIFO  ||  mkfifo $FIFO
-chmod 0622 $FIFO
 
 CORE=ams-core
 RSRC=ams-rsrc
