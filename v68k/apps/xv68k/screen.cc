@@ -14,10 +14,6 @@
 #include <errno.h>
 #include <string.h>
 
-// jack
-#include "jack/fifo.hh"
-#include "jack/interface.hh"
-
 // raster
 #include "raster/load.hh"
 #include "raster/relay.hh"
@@ -91,17 +87,6 @@ int publish_raster( const char* path )
 	sync_relay& sync = initialize( raster );
 	
 	the_sync_relay = &sync;
-	
-	jack::interface ji = path;
-	
-	const char* fifo_path = ji.fifo_path();
-	
-	int fifo_fd = jack::fifo_ready( fifo_path, 0622 );
-	
-	if ( fifo_fd < 0 )
-	{
-		return errno;
-	}
 	
 	return 0;
 }
