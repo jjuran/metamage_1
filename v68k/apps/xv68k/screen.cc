@@ -21,8 +21,6 @@
 // raster
 #include "raster/load.hh"
 #include "raster/relay.hh"
-#include "raster/relay_detail.hh"
-#include "raster/sync.hh"
 
 // v68k-callbacks
 #include "callback/bridge.hh"
@@ -41,27 +39,6 @@ static void* the_screen_buffer;
 
 static sync_relay* the_sync_relay;
 
-
-static inline
-uint32_t sizeof_raster()
-{
-	using namespace raster;
-	
-	const uint32_t image_size = screen_size;  // 21888
-	
-	const uint32_t minimum_footer_size = sizeof (raster_metadata)
-	                                   + sizeof (raster_note)
-	                                   + sizeof (sync_relay)
-	                                   + sizeof (uint32_t);
-	
-	const uint32_t disk_block_size = 512;
-	const uint32_t k               = disk_block_size - 1;
-	
-	// Round up the total file size to a multiple of the disk block size.
-	const uint32_t total_size = (image_size + minimum_footer_size + k) & ~k;
-	
-	return total_size;
-}
 
 static
 void close_without_errno( int fd )
@@ -91,23 +68,16 @@ sync_relay& initialize( raster_load& raster )
 static
 int publish_raster( const char* path )
 {
-	int fd = open( path, O_RDWR | O_CREAT, 0664 );
+	int fd = open( path, O_RDWR );
 	
 	if ( fd < 0 )
 	{
 		return errno;
 	}
 	
-	int nok = ftruncate( fd, sizeof_raster() );
-	
-	if ( nok < 0 )
-	{
-		return errno;
-	}
-	
 	using namespace raster;
 	
-	raster_load raster = create_raster( fd );
+	raster_load raster = play_raster( fd );
 	
 	close_without_errno( fd );
 	
