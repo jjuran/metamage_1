@@ -50,6 +50,8 @@ namespace vlib
 			
 		#undef V_INT
 			
+			const bignum::integer& get() const  { return number(); }
+			
 			operator const bignum::integer&() const  { return number(); }
 	};
 	
