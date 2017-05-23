@@ -77,3 +77,13 @@ $ vc 'const x = "foo", "bar"; head (x, "baz")'
 
 $ vc 'const x = "foo", "bar"; tail (x, "baz")'
 1 >= '("bar", "baz")'
+
+%
+
+$ vc '(head % 1 % 2 % 3)()'
+1 >= 1
+
+%
+
+$ vc '(tail % 1 % 2 % 3)()'
+1 >= '(2, 3)'

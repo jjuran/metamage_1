@@ -120,7 +120,7 @@ namespace vlib
 		
 		if ( expr != 0  &&  expr->op == Op_bind_args )  // NULL
 		{
-			return bind_args( expr->left, Value( expr->right, arguments ) );
+			return bind_args( expr->left, make_list( expr->right, arguments ) );
 		}
 		
 		return Value( f, Op_bind_args, arguments );
