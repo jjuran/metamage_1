@@ -20,6 +20,9 @@
 // splode
 #include "splode/splode.hh"
 
+// ams-common
+#include "QDGlobals.hh"
+
 // ams-core
 #include "Cursor.hh"
 #include "options.hh"
@@ -175,8 +178,31 @@ void post_event( const splode::ascii_event_buffer& buffer )
 static inline
 void SetMouse( const splode::pointer_location_buffer& buffer )
 {
+	QDGlobals& qd = get_QDGlobals();
+	
 	Mouse.h = buffer.x;
 	Mouse.v = buffer.y;
+	
+	const short width  = qd.screenBits.bounds.right;
+	const short height = qd.screenBits.bounds.bottom;
+	
+	if ( Mouse.h < 0 )
+	{
+		Mouse.h = 0;
+	}
+	else if ( Mouse.h >= width )
+	{
+		Mouse.h = width - 1;
+	}
+	
+	if ( Mouse.v < 0 )
+	{
+		Mouse.v = 0;
+	}
+	else if ( Mouse.v >= height )
+	{
+		Mouse.v = height - 1;
+	}
 	
 	update_cursor_location();
 }
