@@ -113,6 +113,8 @@ namespace raster
 	
 	enum raster_model
 	{
+		Model_none = -1,
+		
 		Model_grayscale_paint,
 		Model_grayscale_light,
 		Model_palette,
