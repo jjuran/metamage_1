@@ -25,6 +25,8 @@ namespace vlib
 	
 	Value reverse_list( const Value& list );
 	
+	Value bind_args( const Value& f, const Value& arguments );
+	
 }
 
 #endif

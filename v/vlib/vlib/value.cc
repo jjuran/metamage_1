@@ -215,23 +215,6 @@ namespace vlib
 		return v.type() == Value_base_type  ||  is_empty_list( v );
 	}
 	
-	Value bind_args( const Value& f, const Value& arguments )
-	{
-		if ( is_empty_list( arguments ) )
-		{
-			return f;
-		}
-		
-		Expr* expr = f.expr();
-		
-		if ( expr != NULL  &&  expr->op == Op_bind_args )
-		{
-			return bind_args( expr->left, Value( expr->right, arguments ) );
-		}
-		
-		return Value( f, Op_bind_args, arguments );
-	}
-	
 	unsigned long area( const Value& v )
 	{
 		unsigned long total = area( v.its_box );

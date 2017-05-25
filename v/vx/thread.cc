@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/generic.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"

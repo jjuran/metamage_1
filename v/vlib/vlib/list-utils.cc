@@ -109,4 +109,21 @@ namespace vlib
 		return result;
 	}
 	
+	Value bind_args( const Value& f, const Value& arguments )
+	{
+		if ( is_empty_list( arguments ) )
+		{
+			return f;
+		}
+		
+		Expr* expr = f.expr();
+		
+		if ( expr != 0  &&  expr->op == Op_bind_args )  // NULL
+		{
+			return bind_args( expr->left, Value( expr->right, arguments ) );
+		}
+		
+		return Value( f, Op_bind_args, arguments );
+	}
+	
 }

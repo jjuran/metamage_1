@@ -429,8 +429,6 @@ namespace vlib
 		                             : Value( Op_array, list );
 	}
 	
-	Value bind_args( const Value& f, const Value& arguments );
-	
 	unsigned long area( const Value& v );
 	
 	const Value& first( const Value& list );
