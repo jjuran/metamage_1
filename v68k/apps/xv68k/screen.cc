@@ -36,6 +36,19 @@ static void* the_screen_buffer;
 static sync_relay* the_sync_relay;
 
 
+struct end_sync
+{
+	~end_sync()
+	{
+		if ( the_sync_relay )
+		{
+			terminate( *the_sync_relay );
+		}
+	}
+};
+
+static end_sync finally_end_sync;
+
 static
 void close_without_errno( int fd )
 {
