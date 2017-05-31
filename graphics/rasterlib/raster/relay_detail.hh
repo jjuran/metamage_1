@@ -16,9 +16,16 @@
 namespace raster
 {
 	
+	enum sync_status
+	{
+		Sync_invalid = -1,
+		Sync_ready   = 0,
+		Sync_ended   = 1,
+	};
+	
 	struct sync_relay
 	{
-		uint16_t  reserved;
+		int16_t   status;
 		uint16_t  seed;
 		
 		pthread_mutex_t  mutex;

@@ -21,6 +21,7 @@ namespace raster
 	void unpublish( sync_relay& relay );
 	
 	void broadcast( sync_relay& relay );
+	void terminate( sync_relay& relay );
 	void wait     ( sync_relay& relay );
 	
 }

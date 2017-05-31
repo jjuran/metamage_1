@@ -55,8 +55,8 @@ namespace raster
 		must_pthread_mutexattr_destroy( &mutex_attr );
 		must_pthread_condattr_destroy ( &cond_attr  );
 		
-		relay.reserved = 0;
-		relay.seed     = 0;
+		relay.status = Sync_ready;
+		relay.seed   = 0;
 	}
 	
 	void unpublish( sync_relay& relay )
@@ -70,6 +70,13 @@ namespace raster
 		++relay.seed;
 		
 		must_pthread_cond_broadcast( &relay.cond );
+	}
+	
+	void terminate( sync_relay& relay )
+	{
+		relay.status = Sync_ended;
+		
+		broadcast( relay );
 	}
 	
 	void wait( sync_relay& relay )
