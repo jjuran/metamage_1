@@ -16,6 +16,10 @@
 		#define CONFIG_SETPSHARED 0
 	#endif
 	
+	#if defined( __APPLE__ )  &&  ! defined( __clang__ )
+		#define CONFIG_SETPSHARED 0
+	#endif
+	
 	#ifndef CONFIG_SETPSHARED
 		#define CONFIG_SETPSHARED 1
 	#endif
