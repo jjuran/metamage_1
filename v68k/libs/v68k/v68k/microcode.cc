@@ -755,6 +755,8 @@ namespace v68k
 		return model >= dropped;
 	}
 	
+#define BEFORE( x0 )  ((uint8_t) ~(x0) << 8)
+	
 	static const uint16_t control_register_flags[] =
 	{
 		0x01,  // SFC, 3 bits
@@ -768,7 +770,7 @@ namespace v68k
 		
 		0x00,  // USP
 		0x00,  // VBR
-		(~0x40 << 8) |
+		BEFORE(0x40) |
 		0x20,  // CAAR (not 68040)
 		0x20,  // MSP
 		0x20,  // ISP
