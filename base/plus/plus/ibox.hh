@@ -303,7 +303,7 @@ namespace plus
 			unsigned.
 		*/
 		
-		const Int signed_min = Int( 1 ) << (sizeof (Int) * 8 - 1);
+		const Int signed_min = Int( Int( 1 ) << (sizeof (Int) * 8 - 1) );
 		const Int signed_max = Int( ~signed_min );
 		
 		const bool is_signed = Int( -1 ) < 0;
