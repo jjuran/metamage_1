@@ -38,6 +38,8 @@ enum
 #endif
 
 
+#ifndef __MAC_10_11
+
 namespace nucleus
 {
 	
@@ -94,8 +96,12 @@ namespace Nitrogen
 	
 }
 
+#endif  // #ifndef __MAC_10_11
+
 namespace Pedestal
 {
+	
+#ifndef __MAC_10_11
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
@@ -117,12 +123,24 @@ namespace Pedestal
 		return style;
 	}
 	
+#endif
+	
 	void DrawCenteredText( CFStringRef  text,
 	                       Rect         bounds,
 	                       const char*  fontName,
 	                       UInt32       fontSize )
 	{
+	#ifndef __MAC_10_11
+		
 		ATSUFontID font = N::ATSUFindFontFromName( fontName );
+		
+		n::owned< ATSUStyle > style = ATSUFontAndSize( font, fontSize );
+		
+	#else
+		
+		ATSUStyle style = NULL;
+		
+	#endif
 		
 		TXNTextBoxOptionsData options =
 		{
@@ -132,7 +150,7 @@ namespace Pedestal
 		
 		TXNDrawCFStringTextBox( text,
 		                        &bounds,
-		                        ATSUFontAndSize( font, fontSize ),
+		                        style,
 		                        &options );
 	}
 	
