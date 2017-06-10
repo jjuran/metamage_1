@@ -10,6 +10,13 @@
 // This code was written entirely by the above contributor, who places it
 // in the public domain.
 
+#ifdef __clang__
+#include <Availability.h>
+#endif
+
+#ifdef __MAC_10_12
+#include "iota/dummy.hh"
+#else
 
 #include "Nitrogen/Movies.hh"
 
@@ -308,3 +315,5 @@ namespace Nitrogen
 	}
 	
 }
+
+#endif  // #ifndef __10_12
