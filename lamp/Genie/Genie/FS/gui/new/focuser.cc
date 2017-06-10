@@ -178,9 +178,9 @@ namespace Genie
 	{
 		Ped::View* focus = GetFocus();
 		
-		const short disqualifyingModifiers = controlKey | rightControlKey
-		                                   | optionKey  | rightOptionKey
-		                                   | cmdKey;
+		const UInt16 disqualifyingModifiers = controlKey | rightControlKey
+		                                    | optionKey  | rightOptionKey
+		                                    | cmdKey;
 		
 		const bool advance = (event.modifiers & disqualifyingModifiers) == 0;
 		
