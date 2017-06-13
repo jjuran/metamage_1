@@ -19,6 +19,6 @@ test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
 raster init $SCREEN
 
 interact $RASTER -t "Advanced Mac Substitute" | \
-graft 8<&0 \
+graft \
 	freemountd -q --root ~/68k // \
-	xv68k $RASTER -m [ $CORE --events-fd=8 ] -m $RSRC -m $UI ~/68k/app $AppName
+	xv68k $RASTER -m $CORE -m $RSRC -m $UI ~/68k/app $AppName
