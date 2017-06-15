@@ -99,6 +99,21 @@ int raster_init( char** args )
 }
 
 static
+int raster_stop( char** args )
+{
+	while ( const char* path = *args++ )
+	{
+		open_raster( path );
+		
+		stop_relay( loaded_raster );
+		
+		close_raster( loaded_raster );
+	}
+	
+	return 0;
+}
+
+static
 int raster_cast( char** args )
 {
 	while ( const char* path = *args++ )
@@ -154,6 +169,11 @@ int main( int argc, char** argv )
 	if ( strcmp( subcommand, "init" ) == 0 )
 	{
 		return raster_init( args );
+	}
+	
+	if ( strcmp( subcommand, "stop" ) == 0 )
+	{
+		return raster_stop( args );
 	}
 	
 	if ( strcmp( subcommand, "cast" ) == 0 )

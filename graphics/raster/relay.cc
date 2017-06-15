@@ -46,6 +46,11 @@ void init_relay( const raster_load& raster )
 	publish( get_relay( raster ) );
 }
 
+void stop_relay( const raster_load& raster )
+{
+	terminate( get_relay( raster ) );
+}
+
 void cast_relay( const raster_load& raster )
 {
 	broadcast( get_relay( raster ) );
