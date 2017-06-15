@@ -14,6 +14,7 @@
 // rasterlib
 #include "raster/raster.hh"
 #include "raster/relay.hh"
+#include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
 
@@ -56,9 +57,16 @@ void cast_relay( const raster_load& raster )
 	broadcast( get_relay( raster ) );
 }
 
-void wait_relay( const raster_load& raster )
+bool wait_relay( const raster_load& raster )
 {
-	wait( get_relay( raster ) );
+	sync_relay& relay = get_relay( raster );
+	
+	if ( relay.status == Sync_ready )
+	{
+		wait( relay );
+	}
+	
+	return relay.status == Sync_ready;
 }
 
 }  // namespace raster

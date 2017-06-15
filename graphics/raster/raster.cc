@@ -143,6 +143,24 @@ int raster_wait( char** args )
 	return 0;
 }
 
+static
+int raster_feed( char** args )
+{
+	if ( const char* path = *args++ )
+	{
+		open_raster( path );
+		
+		while ( wait_relay( loaded_raster ) )
+		{
+			write( STDOUT_FILENO, STR_LEN( "\n" ) );
+		}
+		
+		close_raster( loaded_raster );
+	}
+	
+	return 0;
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -184,6 +202,11 @@ int main( int argc, char** argv )
 	if ( strcmp( subcommand, "wait" ) == 0 )
 	{
 		return raster_wait( args );
+	}
+	
+	if ( strcmp( subcommand, "feed" ) == 0 )
+	{
+		return raster_feed( args );
 	}
 	
 #endif
