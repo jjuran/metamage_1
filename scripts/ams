@@ -18,7 +18,6 @@ QD=ams-qd
 UI=ams-ui
 
 test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
-raster init $SCREEN
 
 if [ -e /dev/fb0 ]; then
 	if [ ! -r /dev/input/mice ]; then
