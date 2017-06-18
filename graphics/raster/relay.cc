@@ -57,6 +57,15 @@ void cast_relay( const raster_load& raster )
 	broadcast( get_relay( raster ) );
 }
 
+void bump_relay( const raster_load& raster )
+{
+	sync_relay& relay = get_relay( raster );
+	
+	++relay.seed;
+	
+	broadcast( relay );
+}
+
 bool wait_relay( const raster_load& raster )
 {
 	sync_relay& relay = get_relay( raster );
