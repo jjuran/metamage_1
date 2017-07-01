@@ -1,25 +1,25 @@
 #!/usr/bin/env vx
 
-const libdir = { (dirname argv[ 0 ]) "/lib/"  };
-const import = { eval load libdir() _ ".vobj" };
+const libdir = { (dirname argv[ 0 ]) "/lib/"  }
+const import = { eval load libdir() _ ".vobj" }
 
-const nth_prime = import "nth_prime";
+const nth_prime = import "nth_prime"
 
-var product = 600851475143;
-var result = 1;
-var i = 0;
+var product = 600851475143
+var result = 1
+var i = 0
 
 while product > 1 do
 {
-	const factor = nth_prime( i );
+	const factor = nth_prime( i )
 	
 	while product % factor == 0 do
 	{
-		product /= factor;
-		result = factor;
+		product /= factor
+		result = factor
 	}
 	
-	++i;
+	++i
 }
 
 print result

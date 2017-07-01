@@ -1,6 +1,6 @@
 #!/usr/bin/env vx
 
-const target = 1000;
+const target = 1000
 
 def answer
 {
@@ -8,14 +8,14 @@ def answer
 	{
 		for a in 1 -> b do
 		{
-			const c = target - (a + b);
+			const c = target - (a + b)
 			
 			if a^2 + b^2 == c^2 then
 			{
-				return a * b * c;
+				return a * b * c
 			}
 		}
 	}
 }
 
-print answer();
+print answer()

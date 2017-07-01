@@ -7,16 +7,17 @@ const cases =
 	"3 = 4",
 	"3, 4 = 5",
 	"var x, var y; x + y = 5",
-];
+]
 
-const n = cases.length;
+const n = cases.length
 
-print "1.." n;
+print "1.." n
 
-var i = 0;
+var i = 0
+
 while i < n do
 {
-	const ok = try { eval cases[ i ]; "not ok" } catch { "ok" };
+	const ok = try { eval cases[ i ]; "not ok" } catch { "ok" }
 	
-	print ok " " .++i;
-};
+	print ok " " .++i
+}

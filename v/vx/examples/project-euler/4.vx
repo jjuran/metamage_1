@@ -1,40 +1,42 @@
 #!/usr/bin/env vx
 
-const max = 999;
-const min = 100;
+const max = 999
+const min = 100
 
-var solution = 0;
+var solution = 0
 
-var a = max;
+var a = max
+
 while a >= min do
 {
 	if a^2 < solution then
 	{
-		break;
+		break
 	}
 	
-	var b = a;
+	var b = a
+	
 	while b >= min do
 	{
-		const x = a * b;
+		const x = a * b
 		
 		if x <= solution then
 		{
-			break;
+			break
 		}
 		
-		const s = str x;
+		const s = str x
 		
 		if s == -s then
 		{
-			solution = x;
-			break;
+			solution = x
+			break
 		}
 		
-		--b;
+		--b
 	}
 	
-	--a;
+	--a
 }
 
-print solution;
+print solution

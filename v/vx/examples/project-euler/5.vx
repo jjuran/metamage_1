@@ -1,79 +1,79 @@
 #!/usr/bin/env vx
 
-const libdir = { (dirname argv[ 0 ]) "/lib/"  };
-const import = { eval load libdir() _ ".vobj" };
+const libdir = { (dirname argv[ 0 ]) "/lib/"  }
+const import = { eval load libdir() _ ".vobj" }
 
-const nth_prime = import "nth_prime";
+const nth_prime = import "nth_prime"
 
 def prime_factorization
 {
-	var product = _;
+	var product = _
 	
-	var result = [];
+	var result = []
 	
-	var i = 0;
+	var i = 0
 	
 	while product > 1 do
 	{
-		const factor = nth_prime( i++ );
+		const factor = nth_prime( i++ )
 		
-		var n = 0;
+		var n = 0
 		
 		while product % factor == 0 do
 		{
-			product /= factor;
+			product /= factor
 		
-			++n;
+			++n
 		}
 		
 		if n then
 		{
-			result <-- factor => n;
+			result <-- factor => n
 		}
 	}
 	
-	return result;
+	return result
 }
 
 def merge_maps
 {
-	var result = int^[];
+	var result = int^[]
 	
 	for map in _ do
 	{
 		for m in map do
 		{
-			const k = m.key;
+			const k = m.key
 			
 			if not k in result  or  m.value > result[ k ] then
 			{
-				result[ k ] = m.value;
+				result[ k ] = m.value
 			}
 		}
 	}
 	
-	return result;
+	return result
 }
 
 def product
 {
-	var total = 1;
+	var total = 1
 	
 	for x in _ do
 	{
-		total *= x;
+		total *= x
 	}
 	
-	return total;
+	return total
 }
 
 def lcm
 {
-	const pf = merge_maps( _ map prime_factorization );
+	const pf = merge_maps( _ map prime_factorization )
 	
-	const factors = pf map { _.key ^ _.value };
+	const factors = pf map { _.key ^ _.value }
 	
-	return product factors;
+	return product factors
 }
 
-print lcm (1 .. 20);
+print lcm (1 .. 20)

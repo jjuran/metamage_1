@@ -1,21 +1,21 @@
 #!/usr/bin/env vx
 
-const max = 4000000;
+const max = 4000000
 
-var sum = 0;
+var sum = 0
 
-var a = 1;
-var b = 2;
+var a = 1
+var b = 2
 
 while b <= max do
 {
 	if b % 2 == 0 then
 	{
-		sum += b;
+		sum += b
 	}
 	
-	a <-> b;
-	b += a;
+	a <-> b
+	b += a
 }
 
-print sum;
+print sum

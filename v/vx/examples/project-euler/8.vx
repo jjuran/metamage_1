@@ -20,36 +20,36 @@ const number =
 "07198403850962455444362981230987879927244284909188"
 "84580156166097919133875499200524063689912560717606"
 "05886116467109405077541002256983155200055935729725"
-"71636269561882670428252483600823257530420752963450";
+"71636269561882670428252483600823257530420752963450"
 
-const width = 13;
+const width = 13
 
 def digit_product
 {
-	var total = 1;
+	var total = 1
 	
 	for x in _ do
 	{
-		total *= int x - 0x30;
+		total *= int x - 0x30
 	}
 	
-	return total;
+	return total
 }
 
-const last = number.length - width;
+const last = number.length - width
 
-var max_product = 0;
+var max_product = 0
 
 for i in 0 .. last do
 {
-	const digits = substr( number, i, width );
+	const digits = substr( number, i, width )
 	
-	const product = digit_product digits;
+	const product = digit_product digits
 	
 	if max_product < product then
 	{
-		max_product = product;
+		max_product = product
 	}
 }
 
-print max_product;
+print max_product
