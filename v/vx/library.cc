@@ -209,6 +209,18 @@ namespace vlib
 		return Integer( t );
 	}
 	
+	static
+	Value v_warn( const Value& v )
+	{
+		plus::var_string s = str( v ).move();
+		
+		s += "\n";
+		
+		must_write( STDERR_FILENO, s.data(), s.size() );
+		
+		return Value_nothing;
+	}
+	
 	static const Type c_str = c_str_vtype;
 	static const Type u8    = u8_vtype;
 	static const Type u32   = u32_vtype;
@@ -230,5 +242,6 @@ namespace vlib
 	const proc_info proc_system = { "system", &v_system, &empty_list };
 	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };
 	const proc_info proc_time   = { "time",   &v_time,   &empty_list };
+	const proc_info proc_warn   = { "warn",   &v_warn,   NULL        };
 	
 }

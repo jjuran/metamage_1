@@ -22,6 +22,7 @@ namespace vlib
 	extern const proc_info proc_system;
 	extern const proc_info proc_SYSTEM;  // unrestricted
 	extern const proc_info proc_time;
+	extern const proc_info proc_warn;
 	
 }
 
