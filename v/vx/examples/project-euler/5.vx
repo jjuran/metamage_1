@@ -1,7 +1,9 @@
 #!/usr/bin/env vx
 
-const libdir = { (dirname argv[ 0 ]) "/lib/"  }
-const import = { eval load libdir() _ ".vobj" }
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/lib/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
 
 const nth_prime = import "nth_prime"
 
