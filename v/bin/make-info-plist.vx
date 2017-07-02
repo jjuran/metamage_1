@@ -38,14 +38,14 @@ def reify
 
 reifiers =
 [
-	bool      => { str _ => [] },
-	string    => { [ string: [], _ ] },
-	mb32      => { [ string: [], str _ ] },
-	mapping[] => { [ dict: [], *(_ map { [key: [], _.key], reify _.value }) ] },
-	array     => { [ array: [], *(_ map reify) ] },
+	bool      => { str(_): null  },
+	string    => { string: _     },
+	mb32      => { string: str _ },
+	mapping[] => { dict:   _ map { key: _.key, reify _.value } },
+	array     => { array:  _ map reify },
 ]
 
-const plist = [ plist: [ version: "1.0" ], reify info ]
+const plist = plist: [ version: "1.0" ]: reify info
 
 const version  = qq "1.0"
 const encoding = qq "UTF-8"
