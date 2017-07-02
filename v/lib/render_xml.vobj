@@ -1,31 +1,41 @@
+const invalid-node = "invalid XML node"
+
 const mapping = ... => ...
 
 def qq { str ('"', _, '"') }
 
-def needs_escape
-{
-	return _ in [ '<', '&', '"', '\'' ];
-}
+const entities = byte^
+[
+	'"': "quot",
+	'&': "amp",
+	'<': "lt",
+	'>': "gt",
+]
 
 def escaped
 {
 	const c (byte)  = _
+	
+	if c in entities then
+	{
+		return "&" entities[ c ] ";"
+	}
 	
 	const code = str int c
 	
 	return "&#" code ";"
 }
 
-def escape
+def escape_text
 {
 	const text = _
 	
-	const echars = text map { if needs_escape _ then {escaped _} else {_} }
+	const echars = text map { if _ in "<&" then {escaped _} else {_} }
 	
 	return str echars
 }
 
-def render_xml_at_depth
+def render_at_depth
 {
 	const printer, const node, const depth = _
 	
@@ -33,7 +43,7 @@ def render_xml_at_depth
 	
 	if node isa string then
 	{
-		print escape node
+		print escape_text node
 		return ()
 	}
 	
@@ -62,14 +72,14 @@ def render_xml_at_depth
 			
 			if node.length == 2 and node[ 1 ] isa string then
 			{
-				const inner = escape node[ 1 ]
+				const inner = escape_text node[ 1 ]
 				
 				print "<" name attr ">" inner "</" name ">"
 			}
 			else
 			{
 				print "<" name attr ">"
-				render_xml_at_depth( printer, node[ 1 -> node.length ], depth )
+				render_at_depth( printer, node[ 1 -> node.length ], depth )
 				print "</" name ">"
 			}
 		}
@@ -77,13 +87,13 @@ def render_xml_at_depth
 		{
 			for subnode in node do
 			{
-				render_xml_at_depth( printer, subnode, depth + 1 )
+				render_at_depth( printer, subnode, depth + 1 )
 			}
 		}
 		return ()
 	}
 	
-	throw "invalid XML node"
+	throw invalid-node
 }
 
 export
@@ -91,5 +101,5 @@ def render_xml
 {
 	const printer, const doc = _
 	
-	render_xml_at_depth( printer, doc, 0 )
+	render_at_depth( printer, doc, 0 )
 }
