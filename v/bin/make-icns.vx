@@ -153,5 +153,5 @@ if const icons = argv[ 1 -> argv.length ] map pack_icon_file then
 	exit 0
 }
 
-write( ERR, "usage: make-icns <icon-file> ... > out.icns\n" )
+warn "usage: make-icns <icon-file> ... > out.icns"
 exit 2
