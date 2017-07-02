@@ -18,11 +18,6 @@ const command_defs = str^
 	unseal: [load, truncate],
 ]
 
-def warn
-{
-	write( ERR, _ "\n" )
-}
-
 def usage
 {
 	const msg = "Usage: arcsign <command> <args> ...\n"
