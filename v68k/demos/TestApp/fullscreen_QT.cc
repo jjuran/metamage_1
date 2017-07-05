@@ -7,7 +7,13 @@
 
 // Mac OS X
 #ifdef __APPLE__
+#include <Carbon/Carbon.h>
+#ifdef __MAC_10_12
+#include "missing/Movies.h"
+#define __MOVIES__
+#else
 #include <QuickTime/QuickTime.h>
+#endif  // #ifdef __MAC_10_12
 #endif
 
 // Mac OS
