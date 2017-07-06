@@ -640,7 +640,11 @@ namespace vlib
 					receive_value( Value_nothing );
 				}
 				
+				its_source.fudge( new_line );
+				
 				fold_ops_and_add( Op_end );
+				
+				its_source.unfudge( new_line );
 				
 				if ( stack.size() == 1 )
 				{

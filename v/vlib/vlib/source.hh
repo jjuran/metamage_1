@@ -35,6 +35,9 @@ namespace vlib
 			unsigned            line() const  { return its_line; };
 			
 			void next_line()  { ++its_line; }
+			
+			void fudge  ( bool new_line )  { its_line -= new_line; }
+			void unfudge( bool new_line )  { its_line += new_line; }
 	};
 	
 }
