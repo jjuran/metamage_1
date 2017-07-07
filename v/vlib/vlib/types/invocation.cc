@@ -10,7 +10,6 @@
 
 // vlib
 #include "vlib/proc_info.hh"
-#include "vlib/string-utils.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 
