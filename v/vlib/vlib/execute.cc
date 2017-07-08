@@ -62,6 +62,35 @@ namespace vlib
 		}
 	}
 	
+	class RootedValue
+	{
+		private:
+			Value its_value;
+			
+			// non-assignable
+			RootedValue& operator=( const RootedValue& );
+		
+		public:
+			RootedValue( const Value& v ) : its_value( v )
+			{
+				add_root( its_value );
+			}
+			
+			~RootedValue()
+			{
+				del_root( its_value );
+			}
+			
+			RootedValue( const RootedValue& gv ) : its_value( gv.its_value )
+			{
+				add_root( its_value );
+			}
+			
+			const Value& get() const  { return its_value; }
+			
+			operator const Value&() const  { return get(); }
+	};
+	
 	static
 	language_error assertion_result_not_boolean( const source_spec& source )
 	{
@@ -110,7 +139,7 @@ namespace vlib
 	Value execute( const Value& tree, const Value& stack );
 	
 	static
-	Value invoke_block( const Value& block, const Value& arguments )
+	RootedValue invoke_block( const Value& block, const Value& arguments )
 	{
 		Expr* expr = block.expr();
 		
