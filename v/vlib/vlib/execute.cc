@@ -136,7 +136,7 @@ namespace vlib
 	}
 	
 	static
-	Value execute( const Value& tree, const Value& stack );
+	RootedValue execute( const Value& tree, const Value& stack );
 	
 	static
 	RootedValue invoke_block( const Value& block, const Value& arguments )
@@ -465,7 +465,7 @@ namespace vlib
 			
 			return Value( resolve_symbol_expr( expr->left, stack ),
 			              expr->op,
-			              exec ? execute            ( expr->right, stack )
+			              exec ? execute            ( expr->right, stack ).get()
 			                   : resolve_symbol_expr( expr->right, stack ) );
 		}
 		
@@ -515,7 +515,7 @@ namespace vlib
 		return false;
 	}
 	
-	Value execute( const Value& tree, const Value& stack )
+	RootedValue execute( const Value& tree, const Value& stack )
 	{
 		if ( Expr* expr = tree.expr() )
 		{
@@ -596,7 +596,7 @@ namespace vlib
 			{
 				test_assertion( expr, stack );
 				
-				return Value_nothing;
+				return nothing;
 			}
 			
 			if ( expr->op == Op_and  ||  expr->op == Op_or )
