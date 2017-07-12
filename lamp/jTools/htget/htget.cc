@@ -7,7 +7,6 @@
 #include <cerrno>
 
 // POSIX
-#include <arpa/inet.h>
 #include <fcntl.h>
 #include <netdb.h>
 
@@ -17,15 +16,12 @@
 // gear
 #include "gear/find.hh"
 #include "gear/inscribe_decimal.hh"
-#include "gear/parse_decimal.hh"
 
 // poseven
 #include "poseven/bundles/inet.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/read.hh"
-#include "poseven/functions/socket.hh"
 #include "poseven/functions/write.hh"
-#include "poseven/types/exit_t.hh"
 
 // Arcana
 #include "HTTP.hh"
@@ -105,28 +101,6 @@ namespace tool
 	static inline const char* DocName( const char* url_path, std::size_t length )
 	{
 		return gear::find_last_match( url_path, length, '/', url_path - 1 ) + 1;
-	}
-	
-	
-	static p7::in_addr_t ResolveHostname( const char* hostname )
-	{
-		hostent* hosts = gethostbyname( hostname );
-		
-		if ( !hosts || h_errno )
-		{
-			plus::var_string message = "Domain name lookup failed: ";
-			
-			message += gear::inscribe_decimal( h_errno );
-			message += "\n";
-			
-			p7::write( p7::stderr_fileno, message );
-			
-			throw p7::exit_failure;
-		}
-		
-		in_addr addr = *(in_addr*) hosts->h_addr;
-		
-		return p7::in_addr_t( addr.s_addr );
 	}
 	
 	
@@ -211,7 +185,7 @@ namespace tool
 		plus::string urlPath;
 		plus::string portStr;
 		
-		p7::in_port_t default_port = p7::in_port_t( 0 );
+		const char* default_port = "";
 		
 		bool parsed = ParseURL( freeArgs[ 0 ], scheme, hostname, portStr, urlPath );
 		
@@ -226,7 +200,7 @@ namespace tool
 		
 		if ( scheme == "http" )
 		{
-			default_port = p7::in_port_t( 80 );
+			default_port = "80";
 		}
 		else
 		{
@@ -237,21 +211,20 @@ namespace tool
 			return 2;
 		}
 		
-		p7::in_port_t port = default_port;
+		const char* host = hostname.c_str();
+		const char* port = default_port;
 		
 		if ( !portStr.empty() )
 		{
-			port = p7::in_port_t( gear::parse_unsigned_decimal( portStr.c_str() ) );
+			port = portStr.c_str();
 		}
-		
-		p7::in_addr_t ip = ResolveHostname( hostname.c_str() );
 		
 		plus::string message_header =   HTTP::RequestLine( method, urlPath.c_str(), urlPath.size() )
 		                              + HTTP::HeaderFieldLine( "Host", hostname )
 		                              + "User-Agent: " DEFAULT_USER_AGENT "\r\n"
 		                              + "\r\n";
 		
-		n::owned< p7::fd_t > http_server = p7::connect( ip, port );
+		n::owned< p7::fd_t > http_server = p7::connect( host, port );
 		
 		p7::write( http_server, message_header );
 		
