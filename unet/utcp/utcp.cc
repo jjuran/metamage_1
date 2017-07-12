@@ -8,7 +8,6 @@
 // POSIX
 #include <netdb.h>
 #include <unistd.h>
-#include <sys/socket.h>
 
 // Standard C
 #include <errno.h>
@@ -16,11 +15,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-// gear
-#include "gear/parse_decimal.hh"
-
 // poseven
 #include "poseven/bundles/inet.hh"
+#include "poseven/types/gai_error.hh"
 
 
 #define PROGRAM  "utcp"
@@ -47,34 +44,6 @@ static inline int check_n( int result, const char* code )
 	}
 	
 	return result;
-}
-
-static in_addr_t resolve_hostname( const char* hostname )
-{
-	hostent* hosts = gethostbyname( hostname );
-	
-	if ( !hosts  ||  h_errno )
-	{
-		fprintf( stderr, PROGRAM " hostname error (%d): %s\n", h_errno, hostname );
-		
-		exit( 1 );
-	}
-	
-	in_addr addr = *(in_addr*) hosts->h_addr;
-	
-	return addr.s_addr;
-}
-
-static int connect( const char* host, int port )
-{
-	const p7::in_addr_t addr = p7::in_addr_t( resolve_hostname( host ) );
-	
-	return p7::connect( addr, p7::in_port_t( port ) ).release();
-}
-
-static int connect( const char* host, const char* port )
-{
-	return connect( host, gear::parse_unsigned_decimal( port ) );
 }
 
 static int usage()
@@ -114,7 +83,13 @@ int main( int argc, char** argv )
 	
 	try
 	{
-		remote_fd = connect( host, port );
+		remote_fd = p7::connect( host, port ).release();
+	}
+	catch ( const p7::gai_error& err )
+	{
+		fprintf( stderr, "utcp: %s:%s: %s\n", host, port, gai_strerror( err ) );
+		
+		return 1;
 	}
 	catch ( const p7::errno_t& err )
 	{
