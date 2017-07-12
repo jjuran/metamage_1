@@ -5,6 +5,9 @@
 
 #include "Orion/Main.hh"
 
+// POSIX
+#include <netdb.h>
+
 // Standard C++
 #include <exception>
 
@@ -23,6 +26,7 @@
 #include "poseven/functions/write.hh"
 #include "poseven/types/errno_t.hh"
 #include "poseven/types/exit_t.hh"
+#include "poseven/types/gai_error.hh"
 
 
 namespace Orion
@@ -97,6 +101,10 @@ namespace Orion
 		catch ( const p7::exit_t& status )
 		{
 			return status;
+		}
+		catch ( const p7::gai_error& err )
+		{
+			p7::perror( argv[0], gai_strerror( err ) );
 		}
 		catch ( const p7::errno_t& err )
 		{
