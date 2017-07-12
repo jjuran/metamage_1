@@ -6,6 +6,9 @@
 #ifndef POSEVEN_BUNDLES_INET_HH
 #define POSEVEN_BUNDLES_INET_HH
 
+// iota
+#include "iota/string_traits.hh"
+
 // poseven
 #ifndef POSEVEN_FUNCTIONS_ACCEPT_HH
 #include "poseven/functions/accept.hh"
@@ -68,6 +71,18 @@ namespace poseven
 		connect( fd, addr, port );
 		
 		return fd;
+	}
+	
+	nucleus::owned< fd_t > connect( const char* hostname, const char* service );
+	
+	template < class Str1, class Str2 >
+	inline
+	nucleus::owned< fd_t > connect( const Str1& hostname, const Str2& service )
+	{
+		using iota::get_string_c_str;
+		
+		return connect( get_string_c_str( hostname ),
+		                get_string_c_str( service  ) );
 	}
 	
 }
