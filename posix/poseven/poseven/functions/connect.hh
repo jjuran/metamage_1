@@ -32,13 +32,17 @@
 namespace poseven
 {
 	
+	inline
+	void connect( fd_t sock, const sockaddr& server_address, socklen_t size )
+	{
+		throw_posix_result( ::connect( sock, &server_address, size ) );
+	}
+	
 	template < address_family af >
 	void connect( fd_t                                                 sock,
 	              const typename sockaddr_traits< af >::address_type&  addr )
 	{
-		throw_posix_result( ::connect( sock,
-		                               (const sockaddr*) &addr,
-		                               sizeof addr ) );
+		connect( sock, (const sockaddr&) addr, sizeof addr );
 	}
 	
 }
