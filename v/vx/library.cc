@@ -233,11 +233,13 @@ namespace vlib
 	
 	static const Value eval = Value( c_str, cstr_eval );
 	
+	#define DESTRUCT  "self-destructing"
+	
 	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
 	const proc_info proc_exit   = { "exit",   &v_exit,   &u8         };
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
-	const proc_info proc_secret = { "secret", &v_secret, NULL        };
+	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL        };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &u32        };
 	const proc_info proc_system = { "system", &v_system, &empty_list };
 	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };
