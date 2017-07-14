@@ -112,6 +112,15 @@ int listen_inet( in_addr_t addr, in_port_t port )
 }
 
 static
+int listen_peer( const char* host, const char* service )
+{
+	in_addr_t addr = resolve_hostname( host );
+	in_port_t port = htons( gear::parse_unsigned_decimal( service ) );
+	
+	return listen_inet( addr, port );
+}
+
+static
 void spawn( int client_fd, char** argv )
 {
 	pid_t pid = FORK();
@@ -261,10 +270,7 @@ int main( int argc, char** argv )
 	
 	if ( port_arg != NULL )
 	{
-		in_addr_t host = resolve_hostname( addr );
-		in_port_t port = htons( gear::parse_unsigned_decimal( port_arg ) );
-		
-		listener_fd = listen_inet( host, port );
+		listener_fd = listen_peer( addr, port_arg );
 	}
 	else
 	{
