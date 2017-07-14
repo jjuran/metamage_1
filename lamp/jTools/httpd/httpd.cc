@@ -32,6 +32,7 @@
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/functions/execve.hh"
+#include "poseven/functions/inet_ntop.hh"
 #include "poseven/functions/open.hh"
 #include "poseven/functions/stat.hh"
 #include "poseven/functions/vfork.hh"
@@ -610,24 +611,12 @@ namespace tool
 		
 		if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 		{
-			char buffer[ 21 ];  // 4x "123" + 3x "." + ":" + "12345"
+			plus::var_string buffer = p7::inet_ntop( peer.sin_addr ).move();
 			
-			if ( inet_ntop( peer.sin_family, &peer.sin_addr, buffer, sizeof buffer ) != NULL )
-			{
-				const size_t len = strlen( buffer );
-				
-				char *p = buffer + len;
-				
-				*p++ = ':';
-				
-				const size_t port_len = gear::decimal_magnitude( peer.sin_port );
-				
-				gear::inscribe_unsigned_decimal_r( peer.sin_port, p );
-				
-				p += port_len;
-				
-				p7::write( p7::stderr_fileno, buffer, p - buffer );
-			}
+			buffer += ':';
+			buffer += gear::inscribe_unsigned_decimal( peer.sin_port );
+			
+			p7::write( p7::stderr_fileno, buffer );
 		}
 		
 		HTTP::MessageReceiver request;
