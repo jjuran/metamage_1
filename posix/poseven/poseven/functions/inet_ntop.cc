@@ -45,4 +45,27 @@ namespace poseven
 		return p;
 	}
 	
+	plus::string inet_ntop( const ::sockaddr& addr )
+	{
+		switch ( addr.sa_family )
+		{
+			case AF_INET:
+				//return inet_ntop( ((const ::sockaddr_in&) addr).sin_addr );
+				// Return at the bottom, not here, to silence warning
+				break;
+			
+		#ifndef __RELIX__
+			
+			case AF_INET6:
+				return inet_ntop( ((const ::sockaddr_in6&) addr).sin6_addr );
+			
+		#endif
+			
+			default:
+				throw_errno( EAFNOSUPPORT );
+		}
+		
+		return inet_ntop( ((const ::sockaddr_in&) addr).sin_addr );
+	}
+	
 }
