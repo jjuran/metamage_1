@@ -614,7 +614,7 @@ namespace tool
 			plus::var_string buffer = p7::inet_ntop( peer.sin_addr ).move();
 			
 			buffer += ':';
-			buffer += gear::inscribe_unsigned_decimal( peer.sin_port );
+			buffer += gear::inscribe_unsigned_decimal( ntohs( peer.sin_port ) );
 			
 			p7::write( p7::stderr_fileno, buffer );
 		}
