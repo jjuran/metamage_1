@@ -137,7 +137,7 @@ void spawn( int client_fd, char** argv )
 static
 const char* rep( const sockaddr_storage& addr )
 {
-	static char buffer[ sizeof "123.123.123.123:12345" ];
+	static char buffer[ INET6_ADDRSTRLEN + sizeof "12345" ];
 	
 	const sa_family_t af = addr.ss_family;
 	
@@ -148,6 +148,14 @@ const char* rep( const sockaddr_storage& addr )
 		case AF_INET:
 			data = &((sockaddr_in&) addr).sin_addr;
 			break;
+		
+	#ifndef __RELIX__
+		
+		case AF_INET6:
+			data = &((sockaddr_in6&) addr).sin6_addr;
+			break;
+		
+	#endif
 		
 		default:
 			return NULL;
