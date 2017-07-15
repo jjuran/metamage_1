@@ -74,9 +74,9 @@ in_addr_t resolve_hostname( const char* hostname )
 }
 
 static
-int listen_inet( in_addr_t addr, in_port_t port )
+int listen_inet( int pf, const sockaddr* addr, socklen_t size )
 {
-	int s = socket( PF_INET, SOCK_STREAM, 0 );
+	int s = socket( pf, SOCK_STREAM, 0 );
 	
 	if ( s < 0 )
 	{
@@ -86,13 +86,7 @@ int listen_inet( in_addr_t addr, in_port_t port )
 	int on = 1;
 	setsockopt( s, SOL_SOCKET, SO_REUSEADDR, &on, sizeof on );
 	
-	struct sockaddr_in in = { 0 };
-	
-	in.sin_family      = AF_INET;
-	in.sin_port        = port;
-	in.sin_addr.s_addr = addr;
-	
-	int nok = bind( s, (const sockaddr*) &in, sizeof in );
+	int nok = bind( s, addr, size );
 	
 	if ( nok )
 	{
@@ -117,7 +111,13 @@ int listen_peer( const char* host, const char* service )
 	in_addr_t addr = resolve_hostname( host );
 	in_port_t port = htons( gear::parse_unsigned_decimal( service ) );
 	
-	return listen_inet( addr, port );
+	struct sockaddr_in in = { 0 };
+	
+	in.sin_family      = AF_INET;
+	in.sin_port        = port;
+	in.sin_addr.s_addr = addr;
+	
+	return listen_inet( PF_INET, (const sockaddr*) &in, sizeof in );
 }
 
 static
