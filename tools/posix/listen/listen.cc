@@ -21,7 +21,6 @@
 
 // gear
 #include "gear/inscribe_decimal.hh"
-#include "gear/parse_decimal.hh"
 
 // posix-utils
 #include "posix/listen_unix.hh"
@@ -57,23 +56,6 @@ int usage()
 }
 
 static
-in_addr_t resolve_hostname( const char* hostname )
-{
-	hostent* hosts = gethostbyname( hostname );
-	
-	if ( !hosts  ||  h_errno )
-	{
-		fprintf( stderr, PROGRAM " hostname error (%d): %s\n", h_errno, hostname );
-		
-		exit( 1 );
-	}
-	
-	in_addr addr = *(in_addr*) hosts->h_addr;
-	
-	return addr.s_addr;
-}
-
-static
 int listen_inet( int pf, const sockaddr* addr, socklen_t size )
 {
 	int s = socket( pf, SOCK_STREAM, 0 );
@@ -106,18 +88,26 @@ int listen_inet( int pf, const sockaddr* addr, socklen_t size )
 }
 
 static
-int listen_peer( const char* host, const char* service )
+int listen_peer( const char* node, const char* service )
 {
-	in_addr_t addr = resolve_hostname( host );
-	in_port_t port = htons( gear::parse_unsigned_decimal( service ) );
+	addrinfo hints = { 0 };
 	
-	struct sockaddr_in in = { 0 };
+	hints.ai_flags    = AI_PASSIVE;
+	hints.ai_socktype = SOCK_STREAM;
 	
-	in.sin_family      = AF_INET;
-	in.sin_port        = port;
-	in.sin_addr.s_addr = addr;
+	addrinfo* ai;
 	
-	return listen_inet( PF_INET, (const sockaddr*) &in, sizeof in );
+	int err = getaddrinfo( node, service, &hints, &ai );
+	
+	if ( err )
+	{
+		const char* error = gai_strerror( err );
+		
+		fprintf( stderr, PROGRAM ": %s:%s: %s\n", node, service, error );
+		exit( 1 );
+	}
+	
+	return listen_inet( ai->ai_family, ai->ai_addr, ai->ai_addrlen );
 }
 
 static
@@ -248,7 +238,7 @@ int main( int argc, char** argv )
 	{
 		port_arg = addr + 1;
 		
-		addr = (char*) "0.0.0.0";
+		addr = NULL;
 	}
 	else
 	{
