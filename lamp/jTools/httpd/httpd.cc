@@ -606,15 +606,17 @@ namespace tool
 	{
 		char *const *args = get_options( argv );
 		
-		sockaddr_in peer;
+		sockaddr_storage peer;
 		socklen_t peerlen = sizeof peer;
 		
 		if ( getpeername( 0, (sockaddr*)&peer, &peerlen ) == 0 )
 		{
-			plus::var_string buffer = p7::inet_ntop( peer.sin_addr ).move();
+			plus::var_string buffer = p7::inet_ntop( peer ).move();
+			
+			const sockaddr_in& in = (const sockaddr_in&) peer;
 			
 			buffer += ':';
-			buffer += gear::inscribe_unsigned_decimal( ntohs( peer.sin_port ) );
+			buffer += gear::inscribe_unsigned_decimal( ntohs( in.sin_port ) );
 			
 			p7::write( p7::stderr_fileno, buffer );
 		}
