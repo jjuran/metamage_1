@@ -261,3 +261,32 @@ pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 	
 	return 0;
 }
+
+pascal void SetCtlValue_patch( ControlRecord** control, short value )
+{
+	const short min = control[0]->contrlMin;
+	const short max = control[0]->contrlMax;
+	
+	if ( min < max )
+	{
+		if ( value > max )
+		{
+			value = max;
+		}
+		else if ( value < min )
+		{
+			value = min;
+		}
+		
+		control[0]->contrlValue = value;
+		
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+	}
+}
+
+pascal short GetCtlValue_patch( ControlRecord** control )
+{
+	return control[0]->contrlValue;
+}

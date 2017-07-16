@@ -112,6 +112,10 @@ static void install_Controls()
 	TBTRAP( DisposeControl );  // A955
 	TBTRAP( KillControls   );  // A956
 	
+	TBTRAP( GetCtlValue    );  // A960
+	
+	TBTRAP( SetCtlValue    );  // A963
+	
 	TBTRAP( TrackControl   );  // A968
 	TBTRAP( DrawControls   );  // A969
 	

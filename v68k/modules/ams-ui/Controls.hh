@@ -35,4 +35,8 @@ pascal short FindControl_patch( Point             where,
                                 GrafPort*         window,
                                 ControlRecord***  which );
 
+pascal void SetCtlValue_patch( ControlRecord** control, short value );
+
+pascal short GetCtlValue_patch( ControlRecord** control );
+
 #endif

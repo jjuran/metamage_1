@@ -21,6 +21,8 @@ const short switch_thickness   =  1;
 
 const short switch_interior_length = switch_edge_length - switch_thickness * 2;
 
+const short radio_mark_inset = 3;
+
 
 static
 Rect switch_button_rect( const Rect& bounds )
@@ -68,14 +70,32 @@ void hilite_pushbutton( const Rect& bounds )
 }
 
 static
-void draw_checkbox( const Rect& button )
+void draw_checkbox( const Rect& button, bool selected )
 {
 	EraseRect( &button );
 	FrameRect( &button );
+	
+	if ( selected )
+	{
+		const short inset = switch_thickness;  // 1px
+		
+		const short dx = switch_interior_length;  // 10px
+		const short dy = switch_interior_length;
+		
+		Rect interior = button;
+		
+		InsetRect( &interior, inset, inset );
+		
+		MoveTo( interior.left, interior.top );
+		Line( dx, dy );
+		
+		MoveTo( interior.right - inset, interior.top );
+		Line( -dx, dy );
+	}
 }
 
 static
-void hilite_check( Rect rect )
+void hilite_check( Rect rect, bool selected )
 {
 	const short inset = switch_thickness;  // 1px
 	
@@ -87,6 +107,12 @@ void hilite_check( Rect rect )
 	Rect left   = rect;
 	Rect right  = rect;
 	Rect bottom = rect;
+	
+	top.left  += selected;
+	top.right -= selected;
+	
+	bottom.left  += selected;
+	bottom.right -= selected;
 	
 	top.bottom = top.top       + inset;
 	bottom.top = bottom.bottom - inset;
@@ -106,10 +132,21 @@ void hilite_check( Rect rect )
 }
 
 static
-void draw_radiobutton( const Rect& button )
+void draw_radiobutton( const Rect& button, bool selected )
 {
 	EraseOval( &button );
 	FrameOval( &button );
+	
+	if ( selected )
+	{
+		const short inset = radio_mark_inset;  // 3px
+		
+		Rect mark = button;
+		
+		InsetRect( &mark, inset, inset );
+		
+		PaintOval( &mark );
+	}
 }
 
 static
@@ -156,6 +193,7 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	const bool hiliting = param != 0;
 	
 	const unsigned char* title = control[0]->contrlTitle;
+	const short          value = control[0]->contrlValue;
 	
 	switch ( varCode << 1 | hiliting )
 	{
@@ -168,15 +206,15 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 			break;
 		
 		case checkBoxProc << 1 | draw:
-			draw_checkbox( button_rect );
+			draw_checkbox( button_rect, value );
 			break;
 		
 		case checkBoxProc << 1 | hilite:
-			hilite_check( button_rect );
+			hilite_check( button_rect, value );
 			break;
 		
 		case radioButProc << 1 | draw:
-			draw_radiobutton( button_rect );
+			draw_radiobutton( button_rect, value );
 			break;
 		
 		case radioButProc << 1 | hilite:
