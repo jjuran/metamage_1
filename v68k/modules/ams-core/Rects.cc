@@ -601,8 +601,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	}
 	else if ( verb == kQDGrafVerbPaint )
 	{
-		if ( clipping_to_rect  &&  port.pnPat == Black )
+		const short mode = port.pnMode & 0x7;
+		
+		if ( clipping_to_rect  &&  mode <= srcOr  &&  port.pnPat == Black )
 		{
+			// patCopy or patOr -- use optimized paint routine
 			paint_rect( params );
 			
 			return;
