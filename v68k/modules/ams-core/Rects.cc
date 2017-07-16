@@ -466,7 +466,7 @@ static void draw_rect( const rectangular_op_params&  params,
 	
 	short pat_v = top & 0x7;
 	
-	Ptr rowBase = portBits.baseAddr + top * portBits.rowBytes;
+	Ptr rowBase = portBits.baseAddr + (top - bounds.top) * portBits.rowBytes;
 	
 	for ( int i = top;  i < bottom;  ++i )
 	{
