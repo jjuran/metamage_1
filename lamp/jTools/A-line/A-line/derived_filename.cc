@@ -27,6 +27,7 @@
 namespace tool
 {
 	
+	static
 	plus::string derived_filename( const plus::string& source_path )
 	{
 		const char* source_data = source_path.data();
