@@ -665,12 +665,14 @@ namespace tool
 	{
 		CompilerOptions options( project.Name(), target_info );
 		
-		DefineMacros( options, target_info );
+		CompilerOptions& preprocess_options = options;
+		
+		DefineMacros( preprocess_options, target_info );
 		
 		bool needs_include_union = false;
 		
 		// Select the includes belonging to the projects we use
-		IncludeDirGatherer gatherer( options, needs_include_union );
+		IncludeDirGatherer gatherer( preprocess_options, needs_include_union );
 		
 		const std::vector< plus::string >& all_used_projects = project.AllUsedProjects();
 		
@@ -681,10 +683,10 @@ namespace tool
 		
 		if ( needs_include_union )
 		{
-			options.PrependIncludeDir( get_includes_union_pathname() );
+			preprocess_options.PrependIncludeDir( get_includes_union_pathname() );
 		}
 		
-		CompilerOptions precompile_options = options;
+		CompilerOptions precompile_options = preprocess_options;
 		
 		const plus::string& diagnostics_dir_path = ProjectDiagnosticsDirPath( project.Name() );
 		
