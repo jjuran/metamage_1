@@ -120,6 +120,7 @@ namespace tool
 			plus::string     its_diagnostics_file_path;
 			const char*      its_caption;
 			CompileCommandMaker  its_command_maker;
+			bool                 it_has_no_includes;
 		
 		public:
 			CompilingTask( const Project&          project,
@@ -128,16 +129,18 @@ namespace tool
 			               const plus::string&     output,
 			               const plus::string&     diagnostics,
 			               const char*             caption,
-			               CompileCommandMaker     maker )
+			               CompileCommandMaker     maker,
+			               bool                    no_includes )
 			: FileTask                 ( output ),
 			  its_project              ( project ),
 			  its_options              ( options ),
 			  its_source_pathname      ( source  ),
 			  its_diagnostics_file_path( diagnostics_file_path( diagnostics, source ) ),
 			  its_caption              ( caption ),
-			  its_command_maker        ( maker   )
+			  its_command_maker        ( maker   ),
+			  it_has_no_includes       ( no_includes )
 			{
-				if ( project.SourceDirs().empty() )
+				if ( !it_has_no_includes  &&  project.SourceDirs().empty() )
 				{
 					its_options.AppendIncludeDir( io::get_preceding_directory( source ) );
 				}
@@ -541,6 +544,11 @@ namespace tool
 			
 			if ( MoreRecent( output_stat.st_mtime ) )
 			{
+				if ( it_has_no_includes )
+				{
+					return true;
+				}
+				
 				plus::string dependencies_dir = get_project_dependencies_pathname( its_project.Name() );
 				
 				plus::string dependencies_pathname = derived_pathname( dependencies_dir,
@@ -691,7 +699,8 @@ namespace tool
 		                                                output_path,
 		                                                diagnostics_dir_path,
 		                                                "CC    ",
-		                                                &MakeCompileCommand ) );
+		                                                &MakeCompileCommand,
+		                                                preprocessing ) );
 		
 		if ( preprocessing )
 		{
@@ -701,7 +710,8 @@ namespace tool
 			                                                 cpp_path,
 			                                                 diagnostics_dir_path,
 			                                                 "CPP   ",
-			                                                 &MakePreprocessCommand ) );
+			                                                 &MakePreprocessCommand,
+			                                                 false ) );
 			
 			precompile_task->AddDependent( cpp_task );
 			
@@ -864,7 +874,8 @@ namespace tool
 				                                                pchImage,
 				                                                diagnostics_dir_path,
 				                                                "PCH   ",
-				                                                &MakeCompileCommand ) );
+				                                                &MakeCompileCommand,
+				                                                false ) );
 				
 				project.set_precompile_task( precompile_task );
 			}
