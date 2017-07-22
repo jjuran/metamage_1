@@ -43,7 +43,6 @@ void fill_info( gai_record* record, int type, int protocol, int port, int addr )
 	record->info.ai_addrlen  = sizeof (sockaddr_in);
 	record->info.ai_addr     = (sockaddr*) &record->addr;
 	
-	record->addr.sin_len    = sizeof (sockaddr_in);
 	record->addr.sin_family = AF_INET;
 	record->addr.sin_port   = port;
 	record->addr.sin_addr.s_addr = addr;
