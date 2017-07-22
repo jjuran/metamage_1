@@ -98,6 +98,7 @@ enum
 	Option_debug   = 'g',
 	Option_n_jobs  = 'j',
 	Option_dry_run = 'n',
+	Option_cpp     = 'p',
 	Option_catalog = 't',
 	Option_verbose = 'v',
 };
@@ -107,6 +108,7 @@ static command::option options[] =
 	{ "", Option_n_jobs, command::Param_required },
 	
 	{ "all",     Option_all     },
+	{ "cpp",     Option_cpp     },
 	{ "catalog", Option_catalog },
 	{ "dry-run", Option_dry_run },
 	{ "verbose", Option_verbose },
@@ -170,6 +172,10 @@ static char* const* get_options( char* const* argv )
 			
 			case Option_verbose:
 				gOptions.verbose = true;
+				break;
+			
+			case Option_cpp:
+				gOptions.preprocess = true;
 				break;
 			
 			case Option_n_jobs:
@@ -686,6 +692,15 @@ namespace tool
 		const int argn = argc - (args - argv);
 		
 		char const *const *freeArgs = args;
+		
+		if ( gOptions.preprocess  &&  buildVariety == buildSymbolics )
+		{
+			const char* msg = "A-line:  Symbolics and separate preprocessing are incompatible";
+			
+			fprintf( stderr, "%s\n", msg );
+			
+			return 2;
+		}
 		
 	#if TARGET_API_MAC_CARBON
 		

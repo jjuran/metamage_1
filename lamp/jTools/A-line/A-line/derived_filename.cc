@@ -34,15 +34,27 @@ namespace tool
 		
 		const std::size_t source_size = source_path.size();
 		
+		// Offset of project-relative path within the source pathname.
+		std::size_t path_offset = 0;
+		
 		// The sentinel is a double slash inserted in the full pathname
 		// to mark the project directory -- the portion following the
 		// mark is the project-relative path.
 		const std::size_t sentinel = source_path.find( "//" );
 		
-		ASSERT( ~sentinel );
-		
-		// Offset of project-relative path within the source pathname.
-		const std::size_t path_offset = sentinel + STRLEN( "//" );
+		if ( ~sentinel )
+		{
+			path_offset = sentinel + STRLEN( "//" );
+		}
+		else
+		{
+			const std::size_t last_slash = source_path.find_last_of( "/" );
+			
+			if ( ~last_slash )
+			{
+				path_offset = last_slash + STRLEN( "/" );
+			}
+		}
 		
 		// Length of project-relative path:
 		const std::size_t subpath_length = source_size - path_offset;

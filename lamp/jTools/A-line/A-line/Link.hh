@@ -23,7 +23,8 @@ namespace tool
 	struct TargetInfo;
 	
 	void NameObjectFiles( const Project&                project,
-	                      std::vector< plus::string >&  object_pathnames );
+	                      std::vector< plus::string >&  object_pathnames,
+	                      bool                          use_cpp );
 	
 	void LinkProduct( Project&                       project,
 	                  const TargetInfo&              targetInfo,

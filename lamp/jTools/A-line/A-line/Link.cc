@@ -39,6 +39,7 @@
 #include "A-line/derived_filename.hh"
 #include "A-line/Info-plist.hh"
 #include "A-line/Locations.hh"
+#include "A-line/prefix.hh"
 #include "A-line/Project.hh"
 #include "A-line/ProjectCommon.hh"
 
@@ -627,35 +628,44 @@ namespace tool
 	{
 		private:
 			const plus::string& its_objects_dir;
+			const char*         its_extension;
 		
 		public:
-			object_filename_filler( const plus::string& objects )
+			object_filename_filler( const plus::string& objects, const char* extension )
 			:
-				its_objects_dir( objects )
+				its_objects_dir( objects ),
+				its_extension( extension )
 			{
 				ASSERT( !its_objects_dir.empty() );
 			}
 			
 			plus::string operator()( const plus::string& source_path ) const
 			{
-				const char* extension = ".o";
-				
-				return derived_pathname( its_objects_dir, source_path, extension );
+				return derived_pathname( its_objects_dir, source_path, its_extension );
 			}
 	};
 	
-	static void FillObjectFiles( const plus::string&                 objects_dir,
-	                             const std::vector< plus::string >&  source_paths,
-	                             std::vector< plus::string >&        object_pathnames )
+	static
+	void FillObjectFiles( const plus::string&                 objects_dir,
+	                      const std::vector< plus::string >&  source_paths,
+	                      std::vector< plus::string >&        object_pathnames,
+	                      const char*                         extension = ".o" )
 	{
 		std::transform( source_paths.begin(),
 		                source_paths.end(),
 		                object_pathnames.begin(),
-		                object_filename_filler( objects_dir ) );
+		                object_filename_filler( objects_dir, extension ) );
+	}
+	
+	static inline
+	const char* dot_o( bool use_cpp )
+	{
+		return use_cpp ? ".cpp.o" : ".o";
 	}
 	
 	void NameObjectFiles( const Project&                project,
-	                      std::vector< plus::string >&  object_pathnames )
+	                      std::vector< plus::string >&  object_pathnames,
+	                      bool                          use_cpp )
 	{
 		plus::string objects_dir = ProjectObjectsDirPath( project.Name() );
 		
@@ -663,7 +673,7 @@ namespace tool
 		
 		object_pathnames.resize( sources.size() );
 		
-		FillObjectFiles( objects_dir, sources, object_pathnames );
+		FillObjectFiles( objects_dir, sources, object_pathnames, dot_o( use_cpp ) );
 	}
 	
 	
@@ -683,7 +693,9 @@ namespace tool
 		
 		std::vector< plus::string > objectFiles;
 		
-		NameObjectFiles( project, objectFiles );
+		const bool preprocessing = Options().preprocess  &&  !get_project_providing_prefix( project, targetInfo.platform );
+		
+		NameObjectFiles( project, objectFiles, preprocessing );
 		
 		const std::size_t n_tools = project.ToolCount();
 		
@@ -881,6 +893,8 @@ namespace tool
 		
 		if ( toolkit )
 		{
+			const size_t ext_len = strlen( dot_o( preprocessing ) );
+			
 			typedef std::vector< plus::string >::const_iterator Iter;
 			
 			const Iter end = objectFiles.begin() + n_tools;
@@ -893,7 +907,8 @@ namespace tool
 				
 				plus::var_string linkOutput = outputDir / p7::basename( objectFile );
 				
-				linkOutput.resize( linkOutput.size() - 2 );  // truncate ".o"
+				// truncate ".o" or ".cpp.o"
+				linkOutput.resize( linkOutput.size() - ext_len );
 				
 				// truncate ".c" or ".cc"
 				linkOutput.resize( linkOutput.find_last_of( "." ) );
