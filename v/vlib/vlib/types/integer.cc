@@ -21,6 +21,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/fraction.hh"
 #include "vlib/types/type.hh"
 
 
@@ -36,6 +37,24 @@ namespace vlib
 		}
 		
 		return x;
+	}
+	
+	static
+	Value division( const bignum::integer& numer, const bignum::integer& denom )
+	{
+		bignum::fraction f( numer, nonzero( denom ) );
+		
+		if ( numer.is_zero() )
+		{
+			return Integer();
+		}
+		
+		if ( f.denominator() == 1 )
+		{
+			return Integer( f.numerator() );
+		}
+		
+		return Fraction( f );
 	}
 	
 	static
@@ -188,7 +207,9 @@ namespace vlib
 				case Op_subtract:  result = one - two;  break;
 				case Op_multiply:  result = one * two;  break;
 				
-				case Op_divide:  result = one / nonzero( two );  break;
+				case Op_divide:
+					return division( one, two );
+				
 				case Op_DIV:     result = one / nonzero( two );  break;
 				case Op_remain:  result = one % nonzero( two );  break;
 				
@@ -201,6 +222,13 @@ namespace vlib
 			}
 			
 			return Integer( result );
+		}
+		
+		if ( b.is< Fraction >() )
+		{
+			Fraction a_ = bignum::fraction( a.number() );
+			
+			return fraction_dispatch.ops->binary( op, a_, b );
 		}
 		
 	non_arithmetic:
@@ -290,12 +318,20 @@ namespace vlib
 		
 		bignum::integer j = i;
 		
+		if ( op == Op_divide_by )
+		{
+			Value result = division( j, k );
+			
+			assign( target, result );
+			
+			return result;
+		}
+		
 		switch ( op )
 		{
 			case Op_increase_by:  j += k;  break;
 			case Op_decrease_by:  j -= k;  break;
 			case Op_multiply_by:  j *= k;  break;
-			case Op_divide_by:    j /= k;  break;
 			case Op_div_int_by:   j /= k;  break;
 			case Op_remain_by:    j %= k;  break;
 			
