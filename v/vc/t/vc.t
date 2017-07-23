@@ -3355,3 +3355,8 @@ $ vc 'x"4e75".string "?"'
 
 $ vc '"head: " "glue".join( "(", "/", ")" )'
 1 >= '"head: (glue/glue)"'
+
+%
+
+$ vc '{_ / _, _ div _}'
+1 >= '{(_ / _), (_ div _)}'

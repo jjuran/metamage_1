@@ -89,6 +89,7 @@ namespace vlib
 		
 		{ Precedence_multiplication, Op_multiply },
 		{ Precedence_multiplication, Op_divide   },
+		{ Precedence_multiplication, Op_DIV      },
 		{ Precedence_multiplication, Op_percent  },
 		{ Precedence_multiplication, Op_modulo   },
 		

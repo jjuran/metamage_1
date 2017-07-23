@@ -71,6 +71,8 @@ namespace vlib
 		Op_member,
 		Op_multiply,
 		Op_divide,
+		Op_DIV,
+		Op_divide_int = Op_DIV,  // integer division
 		Op_percent,
 		Op_remain    = Op_percent,
 		Op_format    = Op_percent,

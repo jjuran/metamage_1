@@ -189,6 +189,7 @@ namespace vlib
 				case Op_multiply:  result = one * two;  break;
 				
 				case Op_divide:  result = one / nonzero( two );  break;
+				case Op_DIV:     result = one / nonzero( two );  break;
 				case Op_remain:  result = one % nonzero( two );  break;
 				
 				case Op_modulo:  result = modulo( one, nonzero( two ) );  break;

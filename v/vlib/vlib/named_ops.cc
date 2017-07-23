@@ -24,7 +24,7 @@ namespace vlib
 	{
 		{ "and",   Op_and     },
 		{ "catch", Op_catch   },
-		{ "div",   Op_divide  },
+		{ "div",   Op_DIV     },
 		{ "do",    Op_do_2    },
 		{ "else",  Op_else    },
 		{ "in",    Op_in      },

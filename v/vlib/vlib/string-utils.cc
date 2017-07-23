@@ -91,6 +91,7 @@ namespace vlib
 			
 			case Op_multiply:  return " * ";
 			case Op_divide:    return " / ";
+			case Op_DIV:       return " div ";
 			case Op_percent:   return " % ";
 			case Op_modulo:    return " mod ";
 			
