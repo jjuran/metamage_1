@@ -3,8 +3,8 @@
 	-------
 */
 
-#ifndef PLUS_IBOX_HH
-#define PLUS_IBOX_HH
+#ifndef BIGNUM_IBOX_HH
+#define BIGNUM_IBOX_HH
 
 // math
 #include "math/integer_types.hh"
@@ -19,7 +19,7 @@
 */
 
 
-namespace plus
+namespace bignum
 {
 	
 	enum

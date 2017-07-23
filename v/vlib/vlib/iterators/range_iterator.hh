@@ -6,8 +6,8 @@
 #ifndef VLIB_ITERATORS_RANGEITERATOR_HH
 #define VLIB_ITERATORS_RANGEITERATOR_HH
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/value.hh"
@@ -21,8 +21,8 @@ namespace vlib
 		private:
 			typedef const struct unspecified* boolean;
 			
-			plus::integer its_next;
-			plus::integer its_high;
+			bignum::integer its_next;
+			bignum::integer its_high;
 			
 			mutable Value its_value;
 		

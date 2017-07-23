@@ -5,8 +5,8 @@
 
 #include "vlib/equal.hh"
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/error.hh"

@@ -22,8 +22,10 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/integer.hh"
 #include "plus/var_string.hh"
+
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/exceptions.hh"

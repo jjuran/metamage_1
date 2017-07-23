@@ -11,7 +11,9 @@
 
 // plus
 #include "plus/datum_storage.hh"
-#include "plus/ibox.hh"
+
+// bignum
+#include "bignum/ibox.hh"
 
 
 #if defined( __MWERKS__ )  &&  defined( __POWERPC__ )
@@ -68,7 +70,7 @@ namespace vlib
 	};
 	
 	typedef plus::datum_allocation  vu_string;
-	typedef plus::ibox_structure    vu_ibox;
+	typedef bignum::ibox_structure  vu_ibox;
 	
 	struct vu_alloc : vu_string
 	{

@@ -20,7 +20,7 @@ namespace vlib
 	
 	class Integer : public Value
 	{
-		typedef plus::integer integer;
+		typedef bignum::integer integer;
 		
 		public:
 			static bool test( const Value& v )
@@ -31,7 +31,7 @@ namespace vlib
 			static Value coerce( const Value& v );
 			
 		#define V_INT  V_int, &integer_dispatch
-		#define IBOX( i )  plus::ibox( i ).move()
+		#define IBOX( i )  bignum::ibox( i ).move()
 			
 			Integer() : Value( IBOX( 0ul ), V_INT ) {}
 			
@@ -50,7 +50,7 @@ namespace vlib
 			
 		#undef V_INT
 			
-			operator const plus::integer&() const  { return number(); }
+			operator const bignum::integer&() const  { return number(); }
 	};
 	
 	extern const type_info integer_vtype;

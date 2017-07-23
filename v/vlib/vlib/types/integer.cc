@@ -8,8 +8,8 @@
 // iota
 #include "iota/char_types.hh"
 
-// plus
-#include "plus/decimal.hh"
+// bignum
+#include "bignum/decimal.hh"
 
 // vlib
 #include "vlib/symbol.hh"
@@ -28,7 +28,7 @@ namespace vlib
 {
 	
 	static
-	const plus::integer& nonzero( const plus::integer& x )
+	const bignum::integer& nonzero( const bignum::integer& x )
 	{
 		if ( x.is_zero() )
 		{
@@ -69,14 +69,14 @@ namespace vlib
 	}
 	
 	static
-	plus::integer decode_int( const plus::string& s )
+	bignum::integer decode_int( const plus::string& s )
 	{
 		if ( ! is_decimal( s.data(), s.size() ) )
 		{
 			THROW( "not a decimal integer" );
 		}
 		
-		return plus::decode_decimal( s );
+		return bignum::decode_decimal( s );
 	}
 	
 	Value Integer::coerce( const Value& v )
@@ -177,10 +177,10 @@ namespace vlib
 	{
 		if ( b.is< Integer >() )
 		{
-			const plus::integer& one = a.number();
-			const plus::integer& two = b.number();
+			const bignum::integer& one = a.number();
+			const bignum::integer& two = b.number();
 			
-			plus::integer result;
+			bignum::integer result;
 			
 			switch ( op )
 			{
@@ -220,7 +220,7 @@ namespace vlib
 			case Op_predec:  case Op_postdec:  step = -1;  break;
 		}
 		
-		const plus::integer& i = target.addr->number();
+		const bignum::integer& i = target.addr->number();
 		
 		Integer result = i + step;
 		
@@ -273,7 +273,7 @@ namespace vlib
 			THROW( "numeric update requires numeric operands" );
 		}
 		
-		const plus::integer& k = b.number();
+		const bignum::integer& k = b.number();
 		
 		if ( op == Op_divide_by  ||  op == Op_remain_by )
 		{
@@ -283,9 +283,9 @@ namespace vlib
 			}
 		}
 		
-		const plus::integer& i = target.addr->number();
+		const bignum::integer& i = target.addr->number();
 		
-		plus::integer j = i;
+		bignum::integer j = i;
 		
 		switch ( op )
 		{

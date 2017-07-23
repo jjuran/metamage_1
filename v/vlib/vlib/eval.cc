@@ -347,7 +347,7 @@ namespace vlib
 			
 			return eval_part_2( left, op, right );
 		}
-		catch ( const plus::ibox::limb_count_overflow& )
+		catch ( const bignum::ibox::limb_count_overflow& )
 		{
 			throw user_exception( String( "bigint overflow" ), source );
 		}

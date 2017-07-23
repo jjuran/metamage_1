@@ -3,13 +3,13 @@
 	-------------------
 */
 
-#include "plus/nth_power_of_ten.hh"
+#include "bignum/nth_power_of_ten.hh"
 
 // Standard C++
 #include <vector>
 
 
-namespace plus
+namespace bignum
 {
 	
 	static std::vector< integer > memoized_powers_of_ten;

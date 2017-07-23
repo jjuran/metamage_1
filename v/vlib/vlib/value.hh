@@ -7,8 +7,10 @@
 #define VLIB_VALUE_HH
 
 // plus
-#include "plus/integer_fwd.hh"
 #include "plus/string.hh"
+
+// bignum
+#include "bignum/integer_fwd.hh"
 
 // vlib
 #include "vlib/op_type.hh"
@@ -185,14 +187,14 @@ namespace vlib
 				return its_box.boolean();
 			}
 			
-			plus::integer& number()
+			bignum::integer& number()
 			{
-				return *(plus::integer*) &its_box;
+				return *(bignum::integer*) &its_box;
 			}
 			
-			const plus::integer& number() const
+			const bignum::integer& number() const
 			{
-				return *(const plus::integer*) &its_box;
+				return *(const bignum::integer*) &its_box;
 			}
 			
 			const plus::string& string() const

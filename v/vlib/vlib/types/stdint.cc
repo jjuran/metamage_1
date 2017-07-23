@@ -8,8 +8,8 @@
 // Standard C
 #include <stdint.h>
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/type_info.hh"

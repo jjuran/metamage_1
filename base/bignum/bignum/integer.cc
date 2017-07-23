@@ -3,13 +3,13 @@
 	----------
 */
 
-#include "plus/integer.hh"
+#include "bignum/integer.hh"
 
 // relix-compat
 #include "relix/recurse.hh"
 
 
-namespace plus
+namespace bignum
 {
 	
 	integer& integer::operator+=( const integer& y )

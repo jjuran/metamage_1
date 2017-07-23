@@ -13,8 +13,10 @@
 #include "command/get_option.hh"
 
 // plus
-#include "plus/integer_hex.hh"
 #include "plus/var_string.hh"
+
+// bignum
+#include "bignum/integer_hex.hh"
 
 // vlib
 #include "vlib/interpret.hh"

@@ -3,8 +3,8 @@
 	----------
 */
 
-#ifndef PLUS_INTEGER_HH
-#define PLUS_INTEGER_HH
+#ifndef BIGNUM_INTEGER_HH
+#define BIGNUM_INTEGER_HH
 
 // iota
 #include "iota/iterator.hh"
@@ -12,11 +12,11 @@
 // math
 #include "math/integer_types.hh"
 
-// plus
-#include "plus/ibox.hh"
+// bignum
+#include "bignum/ibox.hh"
 
 
-namespace plus
+namespace bignum
 {
 	
 	struct division_by_zero

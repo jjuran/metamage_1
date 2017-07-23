@@ -15,9 +15,11 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/integer.hh"
 #include "plus/reverse.hh"
 #include "plus/var_string.hh"
+
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/error.hh"
@@ -534,7 +536,7 @@ namespace vlib
 			return make_string( v, Stringified_to_print );
 		}
 		
-		plus::integer size = glue.size();
+		bignum::integer size = glue.size();
 		
 		size *= n - 1;
 		

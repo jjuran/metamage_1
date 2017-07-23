@@ -5,8 +5,8 @@
 
 #include "vlib/array-utils.hh"
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/list-utils.hh"
@@ -29,7 +29,7 @@ namespace vlib
 			THROW( "non-integer array subscript" );
 		}
 		
-		const plus::integer& i = index.number();
+		const bignum::integer& i = index.number();
 		
 		if ( i.is_negative() )
 		{

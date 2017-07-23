@@ -3,17 +3,17 @@
 	--------------------
 */
 
-#ifndef PLUS_DECODEBINOIDINT_HH
-#define PLUS_DECODEBINOIDINT_HH
+#ifndef BIGNUM_DECODEBINOIDINT_HH
+#define BIGNUM_DECODEBINOIDINT_HH
 
 // iota
 #include "iota/string_traits.hh"
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 
-namespace plus
+namespace bignum
 {
 	
 	integer unbin_int( const char* p, unsigned n );

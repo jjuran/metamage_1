@@ -6,8 +6,8 @@
 #ifndef VLIB_DYAD_HH
 #define VLIB_DYAD_HH
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/op_type.hh"

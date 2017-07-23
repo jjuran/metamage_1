@@ -12,9 +12,11 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/decimal.hh"
-#include "plus/decode_binoid_int.hh"
 #include "plus/string/concat.hh"
+
+// bignum
+#include "bignum/decimal.hh"
+#include "bignum/decode_binoid_int.hh"
 
 // vlib
 #include "vlib/dyad.hh"
@@ -327,6 +329,10 @@ namespace vlib
 	
 	void Parser::receive_token( const Token& token )
 	{
+		using bignum::unbin_int;
+		using bignum::unhex_int;
+		using bignum::decode_decimal;
+		
 		switch ( token )
 		{
 			case Token_control:

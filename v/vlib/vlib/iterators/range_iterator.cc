@@ -15,7 +15,7 @@ namespace vlib
 {
 	
 	static
-	Value make_int_value_of_same_type( const plus::integer& i, const Value& v )
+	Value make_int_value_of_same_type( const bignum::integer& i, const Value& v )
 	{
 		if ( v.type() == Value_byte )
 		{

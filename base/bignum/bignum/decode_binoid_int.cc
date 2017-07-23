@@ -3,7 +3,7 @@
 	--------------------
 */
 
-#include "plus/decode_binoid_int.hh"
+#include "bignum/decode_binoid_int.hh"
 
 // iota
 #include "iota/endian.hh"
@@ -14,12 +14,14 @@
 #include "plus/reverse.hh"
 
 
-namespace plus
+namespace bignum
 {
+	
+	using plus::string;
 	
 	typedef integer::int_t  int_t;
 	
-	typedef string (*int_decoder)( const char*, unsigned long, align_t );
+	typedef string (*int_decoder)( const char*, unsigned long, plus::align_t );
 	
 	
 	static
@@ -62,12 +64,12 @@ namespace plus
 	
 	integer unbin_int( const char* p, unsigned n )
 	{
-		return decode_binoid_int( &unbin, p, n );
+		return decode_binoid_int( &plus::unbin, p, n );
 	}
 	
 	integer unhex_int( const char* p, unsigned n )
 	{
-		return decode_binoid_int( &unhex, p, n );
+		return decode_binoid_int( &plus::unhex, p, n );
 	}
 	
 }

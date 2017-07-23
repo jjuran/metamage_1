@@ -9,14 +9,14 @@
 #include "sha256/sha256.hh"
 
 // plus
+#include "plus/binary.hh"
+#include "plus/hexadecimal.hh"
+#include "plus/var_string.hh"
 #include "plus/string/mince.hh"
 
-// plus
-#include "plus/binary.hh"
-#include "plus/decode_binoid_int.hh"
-#include "plus/hexadecimal.hh"
-#include "plus/integer_hex.hh"
-#include "plus/var_string.hh"
+// bignum
+#include "bignum/decode_binoid_int.hh"
+#include "bignum/integer_hex.hh"
 
 // vlib
 #include "vlib/proc_info.hh"
@@ -112,8 +112,8 @@ namespace vlib
 	}
 	
 	static
-	plus::string::size_type substr_offset( const plus::string&   s,
-	                                       const plus::integer&  offset )
+	plus::string::size_type substr_offset( const plus::string&     s,
+	                                       const bignum::integer&  offset )
 	{
 		if ( offset.is_negative() )
 		{
@@ -134,8 +134,8 @@ namespace vlib
 	}
 	
 	static inline
-	plus::string::size_type substr_length( const plus::string&   s,
-	                                       const plus::integer&  length )
+	plus::string::size_type substr_length( const plus::string&     s,
+	                                       const bignum::integer&  length )
 	{
 		return length.clipped();
 	}
@@ -255,7 +255,7 @@ namespace vlib
 	{
 		if ( is_0x_numeral( v.string(), 'b' ) )
 		{
-			return Integer( unbin_int( v.string().substr( 2 ) ) );
+			return Integer( bignum::unbin_int( v.string().substr( 2 ) ) );
 		}
 		
 		return Packed( unbin( v.string() ) );
@@ -266,7 +266,7 @@ namespace vlib
 	{
 		if ( is_0x_numeral( v.string(), 'x' ) )
 		{
-			return Integer( unhex_int( v.string().substr( 2 ) ) );
+			return Integer( bignum::unhex_int( v.string().substr( 2 ) ) );
 		}
 		
 		return Packed( unhex( v.string() ) );

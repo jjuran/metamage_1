@@ -21,8 +21,10 @@
 #include <string.h>
 
 // plus
-#include "plus/integer.hh"
 #include "plus/posix/dirname.hh"
+
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/types.hh"

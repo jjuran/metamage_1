@@ -8,8 +8,8 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/integer.hh"
+// bignum
+#include "bignum/integer.hh"
 
 // vlib
 #include "vlib/array-utils.hh"
@@ -531,7 +531,7 @@ namespace vlib
 	}
 	
 	static
-	plus::string repeat_string( const plus::string& s, const plus::integer& n )
+	plus::string repeat_string( const plus::string& s, const bignum::integer& n )
 	{
 		typedef plus::string::size_type size_t;
 		

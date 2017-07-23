@@ -3,14 +3,17 @@
 	----------
 */
 
-#include "plus/decimal.hh"
+#include "bignum/decimal.hh"
 
-// plus
-#include "plus/nth_power_of_ten.hh"
+// bignum
+#include "bignum/nth_power_of_ten.hh"
 
 
-namespace plus
+namespace bignum
 {
+	
+	using plus::string;
+	
 	
 	static inline
 	bool abs_lte( const integer& a, const integer& b )

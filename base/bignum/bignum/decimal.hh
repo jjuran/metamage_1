@@ -3,18 +3,20 @@
 	----------
 */
 
-#ifndef PLUS_DECIMAL_HH
-#define PLUS_DECIMAL_HH
+#ifndef BIGNUM_DECIMAL_HH
+#define BIGNUM_DECIMAL_HH
 
 // iota
 #include "iota/string_traits.hh"
 
 // plus
-#include "plus/integer.hh"
 #include "plus/string.hh"
 
+// bignum
+#include "bignum/integer.hh"
 
-namespace plus
+
+namespace bignum
 {
 	
 	integer decode_decimal( const char* p, unsigned n );
@@ -30,14 +32,14 @@ namespace plus
 	}
 	
 	
-	string::size_type decimal_length( const integer& x );
+	plus::string::size_type decimal_length( const integer& x );
 	
 	char* encode_decimal( char* r, const integer& x );
 	
-	string encode_decimal( const integer& x );
+	plus::string encode_decimal( const integer& x );
 	
 	inline
-	string printable( const integer& x )
+	plus::string printable( const integer& x )
 	{
 		return encode_decimal( x );
 	}

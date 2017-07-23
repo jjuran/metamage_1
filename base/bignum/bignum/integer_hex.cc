@@ -3,7 +3,7 @@
 	--------------
 */
 
-#include "plus/integer_hex.hh"
+#include "bignum/integer_hex.hh"
 
 // iota
 #include "iota/endian.hh"
@@ -12,8 +12,11 @@
 #include "plus/hexadecimal.hh"
 
 
-namespace plus
+namespace bignum
 {
+	
+	using plus::string;
+	
 	
 	static inline
 	iota::span straight_int_buffer( const integer& x )
@@ -58,7 +61,7 @@ namespace plus
 			++p;
 		}
 		
-		return hex_lower( p, q - p );
+		return plus::hex_lower( p, q - p );
 	}
 	
 	string hex( const integer& x )

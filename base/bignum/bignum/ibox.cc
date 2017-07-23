@@ -3,7 +3,7 @@
 	-------
 */
 
-#include "plus/ibox.hh"
+#include "bignum/ibox.hh"
 
 // Standard C++
 #include <algorithm>
@@ -21,11 +21,17 @@
 #include "plus/extent.hh"
 
 
-namespace plus
+namespace bignum
 {
 	
 	using math::integer::limb_t;
 	using math::integer::cmp_t;
+	
+	using plus::extent_release;
+	using plus::extent_unshare;
+	using plus::extent_alloc;
+	using plus::extent_add_ref;
+	using plus::extent_area;
 	
 	
 	void ibox::destroy_extent()
@@ -112,7 +118,7 @@ namespace plus
 			
 			if ( that.has_extent() )
 			{
-				extent_add_ref( (char*) that.its.pointer );
+				plus::extent_add_ref( (char*) that.its.pointer );
 			}
 		}
 		
