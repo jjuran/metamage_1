@@ -32,6 +32,7 @@ namespace vlib
 		Token_bin,
 		Token_hex,
 		Token_digits,
+		Token_decimal,
 		Token_unbin,
 		Token_unhex,
 		Token_byte,

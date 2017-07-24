@@ -220,6 +220,23 @@ namespace vlib
 	static
 	token_type get_number( const char*& p )
 	{
+		if ( *p == '.'  &&  p[ 1 ] != '.' )
+		{
+			if ( is_digit( *++p ) )
+			{
+				while ( is_digit( *++p ) )  continue;
+				
+				if ( ! is_alpha( *p ) )
+				{
+					return Token_decimal;
+				}
+			}
+			
+			++p;
+			
+			return Token_invalid;
+		}
+		
 		return Token_digits;
 	}
 	

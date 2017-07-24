@@ -5,6 +5,9 @@
 
 #include "vlib/parse.hh"
 
+// Standard C
+#include <string.h>
+
 // Standard C++
 #include <vector>
 
@@ -17,6 +20,7 @@
 // bignum
 #include "bignum/decimal.hh"
 #include "bignum/decode_binoid_int.hh"
+#include "bignum/fraction.hh"
 
 // vlib
 #include "vlib/dyad.hh"
@@ -35,6 +39,7 @@
 #include "vlib/token.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/mb32.hh"
 #include "vlib/types/proc.hh"
@@ -45,6 +50,33 @@
 
 namespace vlib
 {
+	
+	static
+	Value decimal_fraction( const plus::string& decimal )
+	{
+		using namespace bignum;
+		
+		const char* p = decimal.data();
+		const char* q = strchr( p, '.' );
+		
+		ASSERT( q > p );  // decimal point must be present
+		
+		integer integral_part = decode_decimal( p, q - p );
+		
+		p += decimal.size();
+		++q;
+		
+		const size_t n_decimal_places = p - q;
+		
+		integer numer = decode_decimal( q, n_decimal_places );
+		integer denom = raise_to_power( 10, n_decimal_places );
+		
+		numer += integral_part * denom;
+		
+		fraction result( numer, denom );
+		
+		return Fraction( result );
+	}
 	
 	static
 	language_error invalid_control_character( const source_spec& source )
@@ -416,6 +448,10 @@ namespace vlib
 			
 			case Token_digits:
 				receive_value( Integer( decode_decimal( token.text ) ) );
+				break;
+			
+			case Token_decimal:
+				receive_value( decimal_fraction( token.text ) );
 				break;
 			
 			case Token_unbin:
