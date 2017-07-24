@@ -18,6 +18,9 @@
 // must
 #include "must/write.h"
 
+// command
+#include "command/get_option.hh"
+
 // poseven
 #include "poseven/functions/fcntl.hh"
 #include "poseven/functions/open.hh"
@@ -29,7 +32,6 @@
 #include "iota/strings.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 // sh
@@ -40,20 +42,107 @@
 #include "ReadExecuteLoop.hh"
 
 
+using namespace command::constants;
+
+enum
+{
+	Option_command     = 'c',
+	Option_interactive = 'i',
+	Option_login_shell = 'l',
+	Option_monitor     = 'm',
+	Option_restricted  = 'r',
+	Option_read_stdin  = 's',
+	Option_verbose     = 'v',
+	Option_verbose_x   = 'x',
+};
+
+static command::option options[] =
+{
+	{ "", Option_command, Param_required },
+	
+	{ "", Option_interactive },
+	{ "", Option_monitor     },
+	{ "", Option_restricted  },
+	{ "", Option_read_stdin  },
+	{ "", Option_verbose_x   },
+	
+	{ "login",   Option_login_shell },
+	{ "verbose", Option_verbose     },
+	{ NULL }
+};
+
+static bool gLoginShell = false;
+
+static const char* the_command = NULL;
+
+static bool interactive = false;
+static bool monitor = false;
+static bool restricted = false;
+static bool readingFromStdin = false;
+static bool verboseInput = false;
+static bool verboseExecution = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_command:
+				the_command = command::global_result.param;
+				break;
+			
+			case Option_login_shell:
+				gLoginShell = true;
+				break;
+			
+			case Option_interactive:
+				interactive = true;
+				break;
+			
+			case Option_monitor:
+				monitor = true;
+				break;
+			
+			case Option_restricted:
+				restricted = true;
+				break;
+			
+			case Option_read_stdin:
+				readingFromStdin = true;
+				break;
+			
+			case Option_verbose:
+				verboseInput = true;
+				break;
+			
+			case Option_verbose_x:
+				verboseExecution = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	const char*         gArgZero        = NULL;
 	std::size_t         gParameterCount = 0;
 	char const* const*  gParameters     = NULL;
-	
-	
-	static bool gLoginShell = false;
 	
 	
 	static void start_monitoring()
@@ -109,48 +198,24 @@ namespace tool
 		setenv( "PS2", "> ", 0 );
 		setenv( "PS4", "+ ", 0 );
 		
-		const char* command = NULL;
+		char *const *args = get_options( argv );
 		
-		bool interactive = false;
-		bool monitor = false;
-		bool restricted = false;
-		bool readingFromStdin = false;
-		bool verboseInput = false;
-		bool verboseExecution = false;
-		
-		o::bind_option_to_variable( "-c", command );
-		
-		o::bind_option_to_variable( "-l", gLoginShell );
-		o::bind_option_to_variable( "-i", interactive );
-		o::bind_option_to_variable( "-m", monitor );
-		o::bind_option_to_variable( "-r", restricted );
-		o::bind_option_to_variable( "-s", readingFromStdin );
-		o::bind_option_to_variable( "-v", verboseInput );
-		o::bind_option_to_variable( "-x", verboseExecution );
-		
-		o::alias_option( "-l", "--login"   );
-		o::alias_option( "-v", "--verbose" );
-		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		gArgZero = argv[ 0 ];
-		
-		char const *const *freeArgs = o::free_arguments();
-		
-		const size_t n_args = o::free_argument_count();
 		
 		// If first char of arg 0 is a hyphen (e.g. "-sh") it's a login shell
 		gLoginShell = gLoginShell  ||  argv[ 0 ][ 0 ] == '-';
 		
-		interactive = interactive  ||  (*freeArgs == NULL && command == NULL && isatty( 0 ) && isatty( 2 ));
+		interactive = interactive  ||  (*args == NULL && the_command == NULL && isatty( 0 ) && isatty( 2 ));
 		
 		monitor = monitor || interactive;
 		
 		SetOption( kOptionInteractive, interactive );
 		SetOption( kOptionMonitor,     monitor     );
 		
-		gParameters = freeArgs;
-		gParameterCount = n_args;
+		gParameters = args;
+		gParameterCount = argn;
 		
 		p7::fd_t input( p7::stdin_fileno );
 		
@@ -162,14 +227,14 @@ namespace tool
 		// Unset stale PWD and OLDPWD, cd . to prime PWD, export unset OLDPWD
 		ExecuteCmdLine( "unset PWD; unset OLDPWD; cd .; export OLDPWD" );
 		
-		if ( *freeArgs != NULL )
+		if ( *args != NULL )
 		{
 			gArgZero = gParameters[ 0 ];
 			
 			++gParameters;
 			--gParameterCount;
 			
-			if ( command == NULL )
+			if ( the_command == NULL )
 			{
 			#ifdef O_CLOEXEC
 				
@@ -202,10 +267,10 @@ namespace tool
 			}
 		}
 		
-		if ( command != NULL )
+		if ( the_command != NULL )
 		{
 			// Run a single command
-			return n::convert< p7::exit_t >( ExecuteCmdLine( command ) );
+			return n::convert< p7::exit_t >( ExecuteCmdLine( the_command ) );
 		}
 		
 		OnExit onExit;

@@ -5,6 +5,10 @@
 
 // Standard C
 #include <errno.h>
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -26,12 +30,69 @@
 #include "Nitrogen/Resources.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
 namespace n = nucleus;
 namespace N = Nitrogen;
+
+using namespace command::constants;
+
+enum
+{
+	Option_type = 't',
+	
+	Option_last_byte = 255,
+	
+	Option_data_fork,
+	Option_id,
+};
+
+static command::option options[] =
+{
+	{ "data",      Option_data_fork },
+	{ "data-fork", Option_data_fork },
+	
+	{ "id",  Option_id, Param_required },
+	{ "",  Option_type, Param_required },
+	
+	{ NULL }
+};
+
+static bool use_data_fork;
+
+static const char*  the_type_opt = NULL;
+static const char*  the_id_opt   = NULL;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_data_fork:
+				use_data_fork = true;
+				break;
+			
+			case Option_type:
+				the_type_opt = command::global_result.param;
+				break;
+			
+			case Option_id:
+				the_id_opt = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -40,11 +101,7 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
-	
-	static const char*  the_type_opt = NULL;
-	static const char*  the_id_opt   = NULL;
 	
 	static Mac::ResType  the_type;
 	static Mac::ResID    the_id;
@@ -173,15 +230,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool use_data_fork = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "--data", use_data_fork );
-		
-		o::bind_option_to_variable( "-t", the_type_opt );
-		
-		o::bind_option_to_variable( "--id", the_id_opt );
-		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		if ( the_type_opt != NULL )
 		{
@@ -198,11 +249,9 @@ namespace tool
 			N::ThrowOSStatus( ::FSGetResourceForkName( &the_fork_name ) );
 		}
 		
-		char const *const *free_args = o::free_arguments();
+		char const *const *free_args = args;
 		
-		std::size_t n_args = o::free_argument_count();
-		
-		if ( n_args < 2 )
+		if ( argn < 2 )
 		{
 			p7::perror( "rsrc: a command and argument are required", 0 );
 			

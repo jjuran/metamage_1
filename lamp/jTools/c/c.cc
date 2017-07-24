@@ -7,6 +7,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+// Standard C
+#include <stdlib.h>
+
+// Standard C++
+#include <algorithm>
+
+// command
+#include "command/get_option.hh"
+
 // chars
 #include "charsets/MacRoman.hh"
 #include "encoding/utf8.hh"
@@ -23,8 +32,53 @@
 #include "poseven/functions/write.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_force    = 'f',
+	Option_macRoman = 'm',
+};
+
+static command::option options[] =
+{
+	{ "",    Option_force    },
+	{ "mac", Option_macRoman },
+	
+	{ NULL }
+};
+
+static bool macRoman_output = false;
+static bool forced = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_force:
+				forced = true;
+				break;
+			
+			case Option_macRoman:
+				macRoman_output = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -32,7 +86,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	const off_t max_file_size = 30000;
@@ -122,28 +175,16 @@ namespace tool
 			return 0;
 		}
 		
-		bool macRoman_output = false;
+		char *const *args = get_options( argv );
 		
-		bool forced = false;
-		
-		o::bind_option_to_variable( "-m", macRoman_output );
-		
-		o::bind_option_to_variable( "-f", forced );
-		
-		o::alias_option( "-m", "--mac" );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
-		
-		std::size_t n_args = o::free_argument_count();
+		const int argn = argc - (args - argv);
 		
 		// Print each file in turn.  Return whether any errors occurred.
 		int exit_status = 0;
 		
-		while ( *free_args != NULL )
+		while ( *args != NULL )
 		{
-			const char* path = *free_args++;
+			const char* path = *args++;
 			
 			try
 			{

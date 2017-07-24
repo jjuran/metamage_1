@@ -19,6 +19,9 @@
 // Relix
 #include "relix/fork_and_exit.h"
 
+// command
+#include "command/get_option.hh"
+
 // poseven
 #include "poseven/extras/pump.hh"
 #include "poseven/extras/spew.hh"
@@ -37,8 +40,72 @@
 #include "poseven/functions/_exit.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_output = 'o',
+	Option_title  = 't',
+	Option_wait   = 'w',
+	
+	Option_last_byte = 255,
+	
+	Option_in_place,
+};
+
+static command::option options[] =
+{
+	{ "out",   Option_output, Param_required },
+	{ "title", Option_title,  Param_required },
+	
+	{ "wait",     Option_wait      },
+	{ "in-place", Option_in_place  },
+	
+	{ NULL }
+};
+
+static bool should_wait = false;
+static bool in_place    = false;
+
+static const char* title       = NULL;
+static const char* output_file = "/dev/null";
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_output:
+				output_file = command::global_result.param;
+				break;
+			
+			case Option_title:
+				title = command::global_result.param;
+				break;
+			
+			case Option_wait:
+				should_wait = true;
+				break;
+			
+			case Option_in_place:
+				in_place = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -46,7 +113,6 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static void make_window( const char* title )
@@ -106,36 +172,18 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool should_wait = false;
+		char *const *args = get_options( argv );
 		
-		bool in_place = false;
+		const int argn = argc - (args - argv);
 		
-		const char* title = NULL;
-		
-		const char* output_file = "/dev/null";
-		
-		o::bind_option_to_variable( "-o", output_file );
-		o::bind_option_to_variable( "-t", title       );
-		o::bind_option_to_variable( "-w", should_wait );
-		
-		o::bind_option_to_variable( "--in-place", in_place );
-		
-		o::alias_option( "-o", "--out"   );
-		o::alias_option( "-t", "--title" );
-		o::alias_option( "-w", "--wait"  );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
-		
-		if ( *freeArgs == NULL )
+		if ( *args == NULL )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Usage: buffer input-file\n" ) );
 			
 			return 1;
 		}
 		
-		const char* input_file = freeArgs[ 0 ];
+		const char* input_file = args[ 0 ];
 		
 		if ( input_file[0] == '-' && input_file[1] == '\0' )
 		{

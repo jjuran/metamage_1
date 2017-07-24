@@ -3,6 +3,9 @@
 	---------
 */
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C++
 #include <algorithm>
 #include <map>
@@ -14,6 +17,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// command
+#include "command/get_option.hh"
+
 // plus
 #include "plus/string/concat.hh"
 
@@ -24,15 +30,60 @@
 #include "poseven/types/exit_t.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_only_one = '1',
+	Option_reader   = 'r',
+};
+
+static command::option options[] =
+{
+	{ "", Option_only_one, Param_unwanted },
+	{ "", Option_reader,   Param_required },
+	
+	{ NULL }
+};
+
+static bool only_one = false;
+
+static std::vector< const char* > readers;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_only_one:
+				only_one = true;
+				break;
+			
+			case Option_reader:
+				readers.push_back( command::global_result.param );
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
 {
 	
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	static int Select( const std::vector< const char* >& read_files, bool only_one )
@@ -97,18 +148,7 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool only_one = false;
-		
-		std::vector< const char* > readers;
-		
-		o::bind_option_to_variable( "-1", only_one );
-		o::bind_option_to_variable( "-r", readers  );
-		
-		o::get_options( argc, argv );
-		
-		//char const *const *free_args = o::free_arguments();
-		
-		//const std::size_t n_args = o::free_argument_count();
+		char *const *args = get_options( argv );
 		
 		return Select( readers, only_one );
 	}

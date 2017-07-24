@@ -17,10 +17,14 @@
 #include <vector>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // iota
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/quad.hh"
@@ -44,8 +48,84 @@
 #endif
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_front   = 'F',
+	Option_app     = 'a',
+	Option_host    = 'h',
+	Option_machine = 'm',
+	Option_sig     = 's',
+	Option_url     = 'u',
+};
+
+static command::option options[] =
+{
+	{ "front", Option_front },
+	
+	{ "app",     Option_app,     Param_required },
+	{ "host",    Option_host,    Param_required },
+	{ "machine", Option_machine, Param_required },
+	{ "sig",     Option_sig,     Param_required },
+	{ "signature", Option_sig,   Param_required },
+	{ "url",     Option_url,     Param_required },
+	{ NULL }
+};
+
+static bool front = false;
+
+static const char*  url     = "";
+static const char*  host    = NULL;
+static const char*  machine = NULL;
+static const char*  app     = "";
+
+static const char* sig = "\?\?\?\?";
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_front:
+				front = true;
+				break;
+			
+			case Option_app:
+				app = command::global_result.param;
+				break;
+			
+			case Option_host:
+				host = command::global_result.param;
+				break;
+			
+			case Option_machine:
+				machine = command::global_result.param;
+				break;
+			
+			case Option_sig:
+				sig = command::global_result.param;
+				break;
+			
+			case Option_url:
+				url = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -54,7 +134,6 @@ namespace tool
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	template < class Quad >
@@ -152,39 +231,17 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool front = false;
+		char *const *args = get_options( argv );
 		
-		const char*  url     = "";
-		const char*  host    = NULL;
-		const char*  machine = NULL;
-		const char*  app     = "";
+		const int argn = argc - (args - argv);
 		
-		const char* sig = "\?\?\?\?";
-		
-		o::bind_option_to_variable( "-F", front   );
-		o::bind_option_to_variable( "-u", url     );
-		o::bind_option_to_variable( "-h", host    );
-		o::bind_option_to_variable( "-m", machine );
-		o::bind_option_to_variable( "-a", app     );
-		o::bind_option_to_variable( "-s", sig     );
-		
-		o::alias_option( "-F", "--front"     );
-		o::alias_option( "-u", "--url"       );
-		o::alias_option( "-h", "--host"      );
-		o::alias_option( "-m", "--machine"   );
-		o::alias_option( "-a", "--app"       );
-		o::alias_option( "-s", "--sig"       );
-		o::alias_option( "-s", "--signature" );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *freeArgs = o::free_arguments();
+		char const *const *freeArgs = args;
 		
 		const char*  argBuild      = NULL;
 		const char*  argEventClass = NULL;
 		const char*  argEventID    = NULL;
 		
-		if ( o::free_argument_count() == 0 )
+		if ( argn == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN(
 				"Usage:  aevt [-m machine] {-a app | -s sign} class id [params]\n"
@@ -194,13 +251,13 @@ namespace tool
 			
 			return 2;
 		}
-		else if ( o::free_argument_count() < 2 )
+		else if ( argn < 2 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "aevt: missing arguments" "\n" ) );
 			
 			return 2;
 		}
-		else if ( o::free_argument_count() < 3 )
+		else if ( argn < 3 )
 		{
 			argBuild = "";
 		}

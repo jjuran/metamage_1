@@ -27,6 +27,12 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
+// Standard C
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
+
 // plus
 #include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
@@ -49,7 +55,6 @@
 #include "SMTP.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -63,6 +68,47 @@ inline bool operator<( const InetMailExchange& a, const InetMailExchange& b )
 #endif
 
 
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_relay,
+};
+
+static command::option options[] =
+{
+	{ "relay", Option_relay },
+	
+	{ NULL }
+};
+
+static const char* gRelayServer = NULL;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_relay:
+				gRelayServer = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
@@ -70,12 +116,8 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	using namespace io::path_descent_operators;
-	
-	
-	static const char* gRelayServer = NULL;
 	
 	
 	static N::FSDirSpec QueueDirectory()
@@ -330,9 +372,9 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		o::bind_option_to_variable( "--relay", gRelayServer );
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
+		const int argn = argc - (args - argv);
 		
 		N::FSDirSpec queue_dir = QueueDirectory();
 		

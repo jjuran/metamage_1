@@ -13,11 +13,17 @@
 #include <MixedMode.h>
 #endif
 
+// Standard C
+#include <stdlib.h>
+
 // Standard C/C++
 #include <cstdio>
 
 // iota
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // gear
 #include "gear/inscribe_decimal.hh"
@@ -45,8 +51,57 @@
 #include "OSErrno/OSErrno.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_last_byte = 255,
+	
+	Option_type,
+	Option_id,
+};
+
+static command::option options[] =
+{
+	{ "type", Option_type, Param_required },
+	{ "id",   Option_id,   Param_required },
+	
+	{ NULL }
+};
+
+static const char* type = "INIT";
+static const char* id   = "0";
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		using namespace tool;
+		
+		switch ( opt )
+		{
+			case Option_type:
+				type = command::global_result.param;
+				break;
+			
+			case Option_id:
+				id = command::global_result.param;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -56,7 +111,6 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
 	
 	static int LoadInit( const char* type, const char* id, const char *const * args )
@@ -119,19 +173,11 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		const char* type = "INIT";
-		const char* id   = "0";
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "--type", type );
-		o::bind_option_to_variable( "--id",   id   );
+		const int argn = argc - (args - argv);
 		
-		o::get_options( argc, argv );
-		
-		const char *const * freeArgs = o::free_arguments();
-		
-		const size_t n_args = o::free_argument_count();
-		
-		if ( n_args == 0 )
+		if ( argn == 0 )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "Usage: load-init --type=TYPE --id=nnn file\n" ) );
 			
@@ -140,7 +186,7 @@ namespace tool
 		
 		try
 		{
-			return LoadInit( type, id, freeArgs );
+			return LoadInit( type, id, args );
 		}
 		catch ( const Mac::OSStatus& err )
 		{

@@ -23,6 +23,9 @@
 // Iota
 #include "iota/strings.hh"
 
+// command
+#include "command/get_option.hh"
+
 // plus
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
@@ -55,8 +58,97 @@
 #include "io/walk.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_no_op   = '0',
+	Option_2_dirs  = '2',
+	Option_dry_run = 'n',
+	Option_verbose = 'v',
+	
+	Option_last_byte = 255,
+	
+	Option_up,
+	Option_down,
+	Option_delete,
+};
+
+static command::option options[] =
+{
+	{ "up",      Option_up      },
+	{ "down",    Option_down    },
+	{ "null",    Option_no_op   },
+	{ "bidi",    Option_2_dirs  },
+	{ "delete",  Option_delete  },
+	{ "dry-run", Option_dry_run },
+	{ "verbose", Option_verbose },
+	
+	{ NULL }
+};
+
+static bool globally_verbose = false;
+static bool global_dry_run = false;
+
+static bool globally_up   = false;
+static bool globally_down = false;
+
+static bool globally_deleting = false;
+
+static bool null = false;
+
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		using namespace tool;
+		
+		switch ( opt )
+		{
+			case Option_2_dirs:
+				globally_up = true;
+				globally_down = true;
+				break;
+			
+			case Option_down:
+				globally_down = true;
+				break;
+			
+			case Option_up:
+				globally_up = true;
+				break;
+			
+			case Option_no_op:
+				null = true;
+				break;
+			
+			case Option_dry_run:
+				global_dry_run = true;
+				break;
+			
+			case Option_verbose:
+				globally_verbose = true;
+				break;
+			
+			case Option_delete:
+				globally_deleting = true;
+				break;
+			
+			default:
+				std::abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -64,19 +156,10 @@ namespace tool
 	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
 	
 	using namespace io::path_descent_operators;
 	
-	
-	static bool globally_verbose = false;
-	static bool global_dry_run = false;
-	
-	static bool globally_up   = false;
-	static bool globally_down = false;
-	
-	static bool globally_deleting = false;
 	
 	static plus::string global_base_root;
 	static plus::string global_local_root;
@@ -991,33 +1074,11 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool bidirectional = false;
-		bool null          = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "-n", global_dry_run   );
-		o::bind_option_to_variable( "-v", globally_verbose );
+		const int argn = argc - (args - argv);
 		
-		o::alias_option( "-n", "--dry-run" );
-		o::alias_option( "-v", "--verbose" );
-		
-		o::bind_option_to_variable( "--up",   globally_up   );
-		o::bind_option_to_variable( "--down", globally_down );
-		
-		o::bind_option_to_variable( "--delete", globally_deleting );
-		
-		o::bind_option_to_variable( "-0", null          );
-		o::bind_option_to_variable( "-2", bidirectional );
-		
-		o::alias_option( "-2", "--bidi" );
-		
-		o::get_options( argc, argv );
-		
-		if ( bidirectional )
-		{
-			globally_up   =
-			globally_down = true;
-		}
-		else if ( !globally_up && !globally_down && !null )
+		if ( !globally_up && !globally_down && !null )
 		{
 			p7::write( p7::stderr_fileno, STR_LEN( "jsync: nothing to do; specify --up, --down, or -2,""\n"
 			                                       "jsync: or pass -0 go through the motions anyway."  "\n" ) );
@@ -1025,13 +1086,9 @@ namespace tool
 			return p7::exit_failure;
 		}
 		
-		char const *const *free_args = o::free_arguments();
-		
-		std::size_t n_args = o::free_argument_count();
-		
 		const char* default_path = "Default";
 		
-		const char* path = n_args >= 1 ? free_args[0] : default_path;
+		const char* path = argn >= 1 ? args[0] : default_path;
 		
 		plus::string jsync_root = get_jsync_root_pathname();
 		

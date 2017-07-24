@@ -10,6 +10,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// command
+#include "command/get_option.hh"
+
 // gear
 #include "gear/quad.hh"
 
@@ -44,8 +47,85 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_app_name      = 'a',
+	Option_system_editor = 'e',  // TextEdit on OS X
+	Option_user_editor   = 't',  // via LaunchServices on OS X
+	
+	Option_last_byte = 255,
+	
+	Option_app_sig,
+	
+	Option_activate,
+	Option_mac_paths,
+};
+
+static command::option options[] =
+{
+	{ "app", Option_app_name, Param_required },
+	{ "sig", Option_app_sig, Param_required },
+	
+	{ "edit",    Option_user_editor   },
+	{ "sysedit", Option_system_editor },
+	
+	{ "activate", Option_activate  },
+	{ "actv",     Option_activate  },
+	{ "mac",      Option_mac_paths },
+	
+	{ NULL }
+};
+
+static const char* gAppNameToOpenIn = NULL;
+static const char* gAppSigToOpenIn  = NULL;
+
+static bool gOpenInEditor    = false;
+static bool gActivate        = false;
+static bool gUseMacPathnames = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_app_name:
+				gAppNameToOpenIn = command::global_result.param;
+				break;
+			
+			case Option_app_sig:
+				gAppSigToOpenIn = command::global_result.param;
+				break;
+			
+			case Option_user_editor:
+			case Option_system_editor:
+				gOpenInEditor = true;
+				break;
+			
+			case Option_activate:
+				gActivate = true;
+				break;
+			
+			case Option_mac_paths:
+				gUseMacPathnames = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -56,16 +136,12 @@ namespace tool
 	namespace p7 = poseven;
 	namespace NX = NitrogenExtras;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
 	
 	enum
 	{
 		sigFinder = 'MACS'
 	};
-	
-	
-	static bool gActivate = false;
 	
 	
 	static FSSpec ResolvePathname( const char* pathname, bool macPathname )
@@ -149,27 +225,6 @@ namespace tool
 		N::LaunchApplication( app, N::LaunchFlags(), appParameters.get() );
 	}
 	
-	
-	static const char* gAppNameToOpenIn = NULL;
-	static const char* gAppSigToOpenIn  = NULL;
-	
-	static bool gOpenInEditor    = false;
-	static bool gUseMacPathnames = false;
-	
-	static void DefineOptions()
-	{
-		o::bind_option_to_variable( "--app",  gAppNameToOpenIn );
-		o::bind_option_to_variable( "--sig",  gAppSigToOpenIn  );
-		o::bind_option_to_variable( "--mac",  gUseMacPathnames );
-		o::bind_option_to_variable( "--edit", gOpenInEditor    );
-		o::bind_option_to_variable( "--actv", gActivate        );
-		
-		o::alias_option( "--app",  "-a" );
-		o::alias_option( "--edit", "-e" );
-		o::alias_option( "--edit", "-t" );
-		
-		o::alias_option( "--actv", "--activate" );
-	}
 	
 	static Mac::FSCreator DefaultTextFileCreator()
 	{
@@ -310,15 +365,13 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		DefineOptions();
+		char *const *args = get_options( argv );
 		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
+		const int argn = argc - (args - argv);
 		
 		n::owned< Mac::AEDescList_Data > items = N::AECreateList< Mac::AEDescList_Data >( false );
 		
-		for ( char const *const *it = free_args;  *it != NULL;  ++it )
+		for ( char const *const *it = args;  *it != NULL;  ++it )
 		{
 			const char* pathname = *it;
 			

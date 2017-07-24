@@ -5,6 +5,10 @@
 
 // Standard C
 #include <stdio.h>
+#include <stdlib.h>
+
+// command
+#include "command/get_option.hh"
 
 // Extended API Set, Part 2
 #include "extended-api-set/part-2.h"
@@ -31,7 +35,6 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
 
 
@@ -40,16 +43,59 @@
 #define PSTR_LEN( s )  "\p" STR_LEN( s )
 
 
+using namespace command::constants;
+
+enum
+{
+	Option_quiet     = 'q',
+	Option_recursive = 'r',
+};
+
+static command::option options[] =
+{
+	{ "", Option_quiet     },
+	{ "", Option_recursive },
+	
+	{ NULL }
+};
+
+static bool globally_recursive = false;
+static bool quiet = false;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_quiet:
+				quiet = true;
+				break;
+			
+			case Option_recursive:
+				globally_recursive = true;
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
+
+
 namespace tool
 {
 	
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	namespace o = orion;
 	
-	
-	static bool globally_recursive = false;
 	
 	static const char* const cvs_filenames[] =
 	{
@@ -234,22 +280,15 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		bool quiet = false;
+		char *const *args = get_options( argv );
 		
-		o::bind_option_to_variable( "-r", globally_recursive );
-		o::bind_option_to_variable( "-q", quiet              );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
-		
-		const std::size_t n_args = o::free_argument_count();
+		const int argn = argc - (args - argv);
 		
 		int exit_status = 0;
 		
-		for ( ;  *free_args != NULL;  ++free_args )
+		for ( ;  *args != NULL;  ++args )
 		{
-			const char* path = *free_args;
+			const char* path = *args;
 			
 			try
 			{

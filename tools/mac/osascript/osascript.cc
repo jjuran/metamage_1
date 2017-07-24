@@ -12,6 +12,7 @@
 #include <cstdio>
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 // POSIX
@@ -20,6 +21,9 @@
 // iota
 #include "iota/convert_string.hh"
 #include "iota/strings.hh"
+
+// command
+#include "command/get_option.hh"
 
 // plus
 #include "plus/mac_utf8.hh"
@@ -46,8 +50,73 @@
 #include "Divergence/Utilities.hh"
 
 // Orion
-#include "Orion/get_options.hh"
 #include "Orion/Main.hh"
+
+
+using namespace command::constants;
+
+enum
+{
+	Option_inline_script   = 'e',
+	Option_human_readable  = 'h',
+	Option_script_readable = 's',
+	
+	Option_last_byte = 255,
+	
+	Option_pass_cwd,
+};
+
+static command::option options[] =
+{
+	{ "cwd", Option_pass_cwd },
+	
+	{ "", Option_human_readable  },
+	{ "", Option_script_readable },
+	
+	{ "", Option_inline_script, Param_required },
+	
+	{ NULL }
+};
+
+// human-readable by default, like Apple osascript
+static bool humanReadable = true;
+static bool getsCWDProperty = false;
+
+static std::vector< const char* > inlineScriptPieces;
+
+static char* const* get_options( char* const* argv )
+{
+	++argv;  // skip arg 0
+	
+	short opt;
+	
+	while ( (opt = command::get_option( &argv, options )) )
+	{
+		switch ( opt )
+		{
+			case Option_pass_cwd:
+				getsCWDProperty = true;
+				break;
+			
+			case Option_human_readable:
+				humanReadable = true;
+				break;
+			
+			case Option_script_readable:
+				humanReadable = false;
+				break;
+			
+			case Option_inline_script:
+				inlineScriptPieces.push_back( command::global_result.param );
+				break;
+			
+			default:
+				abort();
+		}
+	}
+	
+	return argv;
+}
 
 
 namespace tool
@@ -57,7 +126,6 @@ namespace tool
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	namespace Div = Divergence;
-	namespace o = orion;
 	
 	
 	static void ReportAndThrowScriptError( ComponentInstance comp, const char* step )
@@ -292,27 +360,16 @@ namespace tool
 	
 	int Main( int argc, char** argv )
 	{
-		std::vector< const char* > inlineScriptPieces;
+		char *const *args = get_options( argv );
 		
-		// human-readable by default, like Apple osascript
-		bool humanReadable = true;
-		bool getsCWDProperty = false;
+		const int argn = argc - (args - argv);
 		
-		o::bind_option_to_variable( "-e", inlineScriptPieces );
-		
-		o::bind_option_to_variable( "-h", humanReadable, true  );
-		o::bind_option_to_variable( "-s", humanReadable, false );
-		
-		o::bind_option_to_variable( "--cwd", getsCWDProperty );
-		
-		o::get_options( argc, argv );
-		
-		char const *const *free_args = o::free_arguments();
+		char const *const *free_args = args;
 		
 		typedef char const *const *const_iterator;
 		
 		const_iterator params_begin = free_args;
-		const_iterator params_end   = free_args + o::free_argument_count();
+		const_iterator params_end   = free_args + argn;
 		
 		n::owned< N::OSAID > script;
 		
