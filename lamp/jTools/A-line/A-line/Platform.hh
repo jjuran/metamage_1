@@ -31,11 +31,11 @@
 #define ALINE_UNIX_DEVELOPMENT 0
 #endif
 
-#if !ALINE_UNIX_DEVELOPMENT || (defined(__APPLE__) && TARGET_CPU_PPC)
+/*
+	With RPC builds, any platform can host a Relix build, not just MacRelix
+	and OS X / Classic.
+*/
 #define ALINE_RELIX_DEVELOPMENT 1
-#else
-#define ALINE_RELIX_DEVELOPMENT 0
-#endif
 
 /*
 

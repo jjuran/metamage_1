@@ -330,7 +330,13 @@ namespace tool
 		
 		if ( options.Target().envType & envRelix )
 		{
+		#ifdef __RELIX__
+			
+			// For now, mxcpp relies on _realpathat() for this.
+			
 			preprocess.push_back( "--mac-lines" );
+			
+		#endif
 			
 			preprocess.push_back( "-D" "macintosh=1" );
 			
@@ -825,6 +831,16 @@ namespace tool
 		// For width reasons, we call the precompiled header a 'prefix'.
 		
 		const Project* project_providing_prefix = get_project_providing_prefix( project, target_info.platform );
+		
+	#ifndef __RELIX__
+		
+		if ( Options().preprocess )
+		{
+			// On non-MacRelix, precompiling does *not* override preprocessing
+			project_providing_prefix = NULL;
+		}
+		
+	#endif
 		
 		const bool preprocessing = Options().preprocess  &&  !project_providing_prefix;
 		
