@@ -217,6 +217,12 @@ namespace vlib
 		return Token_newline;
 	}
 	
+	static
+	token_type get_number( const char*& p )
+	{
+		return Token_digits;
+	}
+	
 	token_type next_token_type( const char*& p )
 	{
 		if ( *p == '\0' )
@@ -285,7 +291,7 @@ namespace vlib
 			
 			if ( ! is_alnum( *p ) )
 			{
-				return Token_digits;
+				return get_number( p );
 			}
 			
 			char c = *p++;
@@ -313,7 +319,7 @@ namespace vlib
 				return Token_invalid;
 			}
 			
-			return Token_digits;
+			return get_number( p );
 		}
 		
 		if ( is_initial( *p ) )
