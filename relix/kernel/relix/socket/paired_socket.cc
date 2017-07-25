@@ -125,11 +125,6 @@ namespace relix
 					
 					arg->uid = 0;
 					arg->gid = 0;
-					
-					int* fill = (int*) arg->fill;
-					
-					fill[ 0 ] = 0;
-					fill[ 1 ] = 0;
 				}
 				
 				break;
