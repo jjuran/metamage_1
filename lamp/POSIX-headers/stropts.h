@@ -32,6 +32,15 @@ struct strrecvfd
 	char   fill[ 4 ];
 };
 
+int fattach( int, const char* );
+int fdetach( const char* );
+int getmsg( int, struct strbuf*, struct strbuf*, int* );
+int getpmsg( int, struct strbuf*, struct strbuf*, int*, int* );
+int ioctl( int, int, ... );
+int isastream( int );
+int putmsg( int, const struct strbuf*, const struct strbuf*, int );
+int putpmsg( int, const struct strbuf*, const struct strbuf*, int, int );
+
 #ifdef __cplusplus
 }
 #endif
