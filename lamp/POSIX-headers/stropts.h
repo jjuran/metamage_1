@@ -17,6 +17,13 @@
 extern "C" {
 #endif
 
+struct strbuf
+{
+	int    maxlen;
+	int    len;
+	char*  buf;
+};
+
 struct strrecvfd
 {
 	int    fd;
