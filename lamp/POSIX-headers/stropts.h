@@ -1,5 +1,14 @@
+/*
+	stropts.h
+	---------
+*/
+
 #ifndef _STROPTS_H_
 #define _STROPTS_H_
+
+// POSIX
+#include <sys/types.h>
+
 
 #define I_SENDFD  (('S' << 8) | 17)
 #define I_RECVFD  (('S' << 8) | 14)
@@ -10,10 +19,10 @@ extern "C" {
 
 struct strrecvfd
 {
-	int             fd;
-	unsigned short  uid;
-	unsigned short  gid;
-	char            fill[ 8 ];
+	int    fd;
+	uid_t  uid;
+	gid_t  gid;
+	char   fill[ 4 ];
 };
 
 #ifdef __cplusplus
