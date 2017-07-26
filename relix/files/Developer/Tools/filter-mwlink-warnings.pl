@@ -44,21 +44,6 @@ qw
 	getc
 	putc
 	
-	GetGlobalMouse
-	GetWindowList
-	
-	DisposeControlColorUPP
-	NewControlColorUPP
-	InvokeControlColorUPP
-	
-	AECheckIsRecord
-	AESizeOfFlattenedDesc
-	AEFlattenDesc
-	AEUnflattenDesc
-	AEGetDescData
-	AEGetDescDataSize
-	AEReplaceDescData
-	
 	OTInetMailExchange
 );
 
@@ -73,8 +58,6 @@ my @loser_libs =
 	'MSL C.PPC.Lib',
 	'MSL C.Carbon.Lib',
 	'MSL-fixup.lib',
-	'CarbonAccessors.o',
-	'ControlsLib',
 	'OTXTILib',
 	'Apple;Carbon;Networking',
 );
@@ -82,10 +65,8 @@ my @winner_libs =
 map { ":?$_" }
 qw
 (
-	KSIOUXConsole.cc
 	Abort.cc
 	Genie/Abort.cc.cpp
-	KSIOUXConsole.cc
 	OTInetMailExchange.cc
 	OTInetMailExchange.cc.cpp
 	dlmalloc.c
@@ -97,11 +78,8 @@ qw
 	stacked-environ.lib
 	syscalls.c
 	Kerosene-Library.lib
-	Kerosene-User.lib
 	MSL-fixup.lib
-	Carbonate.lib
 	openbsd-libc.lib
-	PascalPreCarbonUPPGlue.o
 	PosixLib.lib
 	sfio.lib
 );
