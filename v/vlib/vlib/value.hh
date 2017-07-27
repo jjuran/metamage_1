@@ -127,6 +127,18 @@ namespace vlib
 			{
 				return its_box.pointer();
 			}
+			
+			template < class T >
+			T const& pod_cast() const
+			{
+				return *reinterpret_cast< T const* >( &its_box );
+			}
+			
+			template < class T >
+			T& pod_cast()
+			{
+				return *reinterpret_cast< T* >( &its_box );
+			}
 		
 		public:
 			enum symdesc
