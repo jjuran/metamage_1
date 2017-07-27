@@ -366,6 +366,59 @@ namespace integer {
 		}
 	}
 	
+	/*
+		Floating-point conversion
+		-------------------------
+	*/
+	
+	template < class Float >
+	Float float_cast_be( limb_t const* x_low, size_t n )
+	{
+		Float result = 0.0;
+		
+		limb_t const* x = x_low;
+		
+		while ( n-- > 0 )
+		{
+			result *= (limb_t) -1 * 1.0 + 1;
+			result += *x++;
+		}
+		
+		return result;
+	}
+	
+	template < class Float >
+	Float float_cast_le( limb_t const* x_high, size_t n )
+	{
+		Float result = 0.0;
+		
+		limb_t const* x = x_high;
+		
+		while ( n-- > 0 )
+		{
+			result *= (limb_t) -1 * 1.0 + 1;
+			result += *--x;
+		}
+		
+		return result;
+	}
+	
+	template < class Float >
+	inline
+	Float float_cast( bool is_little_endian, limb_t const* x, size_t size )
+	{
+		if ( is_little_endian )
+		{
+			x += size;
+			
+			return float_cast_le< Float >( x, size );
+		}
+		else
+		{
+			return float_cast_be< Float >( x, size );
+		}
+	}
+	
 }
 }
 
