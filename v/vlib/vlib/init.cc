@@ -21,6 +21,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/byterange.hh"
+#include "vlib/types/float.hh"
 #include "vlib/types/pointer.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
@@ -93,6 +94,7 @@ namespace vlib
 		define_keyword( "null",     null_vtype     );
 		define_keyword( "mb32",     mb32_vtype     );
 		define_keyword( "byte",     byte_type()    );
+		define_keyword( "float",    float_vtype    );
 		define_keyword( "i64",      i64_type()     );
 		define_keyword( "u64",      u64_type()     );
 		define_keyword( "i32",      i32_type()     );
