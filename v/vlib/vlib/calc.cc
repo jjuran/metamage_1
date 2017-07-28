@@ -532,24 +532,6 @@ namespace vlib
 	}
 	
 	static
-	plus::string repeat_string( const plus::string& s, const bignum::integer& n )
-	{
-		typedef plus::string::size_type size_t;
-		
-		if ( n.is_negative() )
-		{
-			THROW( "negative string multiplier" );
-		}
-		
-		if ( n > size_t( -1 ) )
-		{
-			THROW( "excessively large string multiplier" );
-		}
-		
-		return repeat( s, n.clipped() );
-	}
-	
-	static
 	Value repeat_list( const Value& list, const Value& factor )
 	{
 		if ( factor.type() == Value_boolean )
@@ -557,27 +539,17 @@ namespace vlib
 			return factor.boolean() ? list : Value_empty_list;
 		}
 		
-		if ( factor.type() != Value_number )
-		{
-			THROW( "non-numeric list repetition factor" );
-		}
-		
-		if ( factor.number().is_negative() )
-		{
-			THROW( "negative list repetition factor" );
-		}
-		
-		if ( factor.number().is_zero()  ||  is_empty_list( list ) )
+		if ( is_empty_list( list ) )
 		{
 			return Value_empty_list;
 		}
 		
-		if ( factor.number() > 0xFFFFFFFFu )
-		{
-			THROW( "excessively large list multiplier" );
-		}
+		unsigned long n = integer_cast< unsigned long >( factor );
 		
-		unsigned long n = factor.number().clipped();
+		if ( n == 0 )
+		{
+			return Value_empty_list;
+		}
 		
 		if ( n == 1 )
 		{
@@ -908,7 +880,11 @@ namespace vlib
 	{
 		if ( const Integer* integer = right.is< Integer >() )
 		{
-			return repeat_string( bytes, *integer );
+			typedef plus::string::size_type size_t;
+			
+			const size_t n = integer_cast< size_t >( *integer );
+			
+			return repeat( bytes, n );
 		}
 		
 		if ( const Boolean* boolean = right.is< Boolean >() )
