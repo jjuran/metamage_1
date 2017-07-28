@@ -7,6 +7,7 @@
 #define BIGNUM_INTEGER_HH
 
 // iota
+#include "iota/integer_cast.hh"
 #include "iota/iterator.hh"
 
 // math
@@ -236,6 +237,18 @@ namespace bignum
 	}
 	
 	integer raise_to_power( integer base, integer exponent );
+	
+	template < class Out, class Fail >
+	inline
+	Out integer_cast( const integer& i, Fail fail )
+	{
+		if ( ! i.demotes_to< Out >() )
+		{
+			fail();
+		}
+		
+		return i.clipped_to< Out >();
+	}
 	
 }
 
