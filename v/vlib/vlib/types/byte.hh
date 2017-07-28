@@ -28,15 +28,10 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-		#define IBOX( i )  bignum::ibox( (unsigned long) i ).move()
-			
-			Byte( unsigned char c = 0 ) : Value( IBOX( c ),
-			                                     Value_byte,
-			                                     &byte_dispatch )
+			Byte( unsigned char c = 0 ) : Value( Value_byte, &byte_dispatch )
 			{
+				pod_cast< unsigned char >() = c;
 			}
-			
-		#undef IBOX
 			
 			unsigned char get() const;
 			

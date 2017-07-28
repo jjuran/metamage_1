@@ -48,7 +48,7 @@ namespace vlib
 	
 	unsigned char Byte::get() const
 	{
-		return number().clipped();
+		return pod_cast< unsigned char >();
 	}
 	
 	static
@@ -60,7 +60,7 @@ namespace vlib
 	static
 	char* byte_str_copy( char* p, const Value& v )
 	{
-		*p++ = v.number().clipped();
+		*p++ = v.to< Byte >().get();
 		
 		return p;
 	}
@@ -75,13 +75,13 @@ namespace vlib
 	static
 	size_t byte_rep_size( const Value& v )
 	{
-		return quoted_length( v.number().clipped() );
+		return quoted_length( v.to< Byte >().get() );
 	}
 	
 	static
 	char* byte_rep_copy( char* p, const Value& v )
 	{
-		return quote_byte( p, v.number().clipped() );
+		return quote_byte( p, v.to< Byte >().get() );
 	}
 	
 	static const stringify byte_rep =
@@ -101,7 +101,7 @@ namespace vlib
 	static
 	bool byte_verity( const Value& v )
 	{
-		return ! v.number().is_zero();
+		return v.to< Byte >().get() != '\0';
 	}
 	
 	static const veritization byte_veritization =
@@ -110,9 +110,17 @@ namespace vlib
 	};
 	
 	static
+	cmp_t compare( unsigned char a, unsigned char b )
+	{
+		return a < b ? -1 :
+		       b < a ?  1 :
+		                0;
+	}
+	
+	static
 	cmp_t byte_order( const Value& a, const Value& b )
 	{
-		return compare( a.number(), b.number() );
+		return compare( a.to< Byte >().get(), b.to< Byte >().get() );
 	}
 	
 	static const comparison byte_comparison =
