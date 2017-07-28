@@ -6,6 +6,9 @@
 #ifndef VLIB_TYPES_INTEGER_HH
 #define VLIB_TYPES_INTEGER_HH
 
+// iota
+#include "iota/integer_cast.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -56,6 +59,38 @@ namespace vlib
 	};
 	
 	extern const type_info integer_vtype;
+	
+	struct bad_cast_thrower
+	{
+		void operator()() const;
+	};
+	
+	template < class Out >
+	inline
+	Out integer_cast( const Integer& i )
+	{
+	#ifdef __MWERKS__
+		
+		using bignum::integer_cast;
+		
+	#endif
+		
+		return integer_cast< Out >( i.number(), bad_cast_thrower() );
+	}
+	
+	template < class Out >
+	inline
+	Out integer_cast( const Value& v )
+	{
+		if ( ! Integer::test( v ) )
+		{
+			bad_cast_thrower()();
+		}
+		
+		const Integer& i = static_cast< const Integer& >( v );
+		
+		return integer_cast< Out >( i );
+	}
 	
 }
 

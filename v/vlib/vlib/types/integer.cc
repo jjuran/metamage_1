@@ -370,4 +370,9 @@ namespace vlib
 		0,
 	};
 	
+	void bad_cast_thrower::operator()() const
+	{
+		THROW( "bad integer cast" );
+	}
+	
 }
