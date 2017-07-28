@@ -81,6 +81,13 @@ namespace vlib
 			friend void pair_destructor( void* pointer );
 		
 		protected:
+			Value( value_type type, const dispatch* d )
+			:
+				its_dispatch( d ),
+				its_box( type )
+			{
+			}
+			
 			Value( Bool b, const dispatch* d )
 			:
 				its_dispatch( d ),
