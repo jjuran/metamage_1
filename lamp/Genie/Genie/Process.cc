@@ -111,15 +111,6 @@
 #define SIGSTKFLT  (-1)
 #endif
 
-#if defined(__MWERKS__) && defined(__csignal__)
-	#undef SIGABRT
-	#undef SIGFPE
-	#undef SIGILL
-	#undef SIGINT
-	#undef SIGSEGV
-	#undef SIGTERM
-#endif
-
 
 static void DumpBacktrace()
 {
