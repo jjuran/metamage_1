@@ -127,6 +127,17 @@ void host_env()
 		printf( "%s\n", "Cooperative threading:  Thread Manager" );
 	}
 	
+	if ( TARGET_CPU_68K  &&  gestalt( 'mmu ' ) )
+	{
+		const int gestalt32BitAddressing = 0;
+		
+		const uint32_t addr = gestalt( 'addr' );
+		
+		const bool _32bits = addr & (1 << gestalt32BitAddressing);
+		
+		printf( "680x0 addressing mode:  %s-bit\n", _32bits ? "32" : "24" );
+	}
+	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
 	{
 		const uint32_t cbon = gestalt( 'cbon' );
