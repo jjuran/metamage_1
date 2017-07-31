@@ -14,6 +14,11 @@
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
+#ifdef __MACOS__
+#ifndef __TRAPS__
+#include <Traps.h>
+#endif
+#endif
 
 // Standard C++
 #include <memory>
@@ -24,6 +29,9 @@
 #include "missing/QuickdrawText.h"
 #endif
 #endif
+
+// mac-sys-utils
+#include "mac_sys/trap_available.hh"
 
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
@@ -111,6 +119,34 @@ namespace Pedestal
 			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
+	static inline
+	bool has_IconUtilities()
+	{
+	#if TARGET_CPU_68K
+		
+		return mac::sys::trap_available( _IconDispatch );
+		
+	#endif
+		
+		return true;
+	}
+	
+	static
+	void PlotIcon( const Rect& bounds, short id )
+	{
+		if ( has_IconUtilities() )
+		{
+			N::PlotIconID( bounds,
+			               N::IconAlignmentType(),
+			               N::IconTransformType(),
+			               N::ResID( id ) );
+		}
+		else if ( Handle h = GetResource( 'ICN#', id ) )
+		{
+			PlotIcon( &bounds, h );
+		}
+	}
+	
 	void AboutBoxView::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( erasing )
@@ -129,10 +165,7 @@ namespace Pedestal
 			left + kAboutBoxIconWidth,
 		};
 		
-		N::PlotIconID( iconBounds,
-		               N::IconAlignmentType(),
-		               N::IconTransformType(),
-		               N::ResID( 128 ) );
+		PlotIcon( iconBounds, 128 );
 		
 		top += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
 		left = bounds.left + kAboutBoxTextHorizontalMargin;
