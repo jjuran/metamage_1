@@ -115,7 +115,7 @@ namespace Pedestal
 	using Mac::kCoreEventClass;
 	using Mac::kAEQuitApplication;
 	
-	const uint32_t gestaltSystemVersion = 'sysv';
+	const uint32_t gestaltAppleEventsAttr = 'evnt';
 	
 	static const UInt32 kEitherShiftKey   = shiftKey   | rightShiftKey;
 	static const UInt32 kEitherOptionKey  = optionKey  | rightOptionKey;
@@ -124,9 +124,9 @@ namespace Pedestal
 	static MenuRef the_Window_menu;
 	
 	
-	const uint32_t sysv = mac::sys::gestalt( gestaltSystemVersion );
+	const uint32_t evnt = mac::sys::gestalt( gestaltAppleEventsAttr );
 	
-	const bool apple_events_present = ! TARGET_CPU_68K  ||  sysv >= 0x0700;
+	const bool apple_events_present = ! TARGET_CPU_68K  ||  evnt != 0;
 	
 	
 	struct AppleEventSignature
