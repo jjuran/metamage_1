@@ -515,8 +515,15 @@ namespace UseEdit
 	
 	App::App()
 	{
+		using Ped::apple_events_present;
+		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
+		
+		if ( TARGET_CPU_68K  &&  ! apple_events_present )
+		{
+			return;
+		}
 		
 		OpenDocuments_AppleEvent::Install_Handler();
 		
