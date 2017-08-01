@@ -15,6 +15,7 @@
 #include "AEFramework/AEFramework.h"
 
 // relix-kernel
+#include "relix/api/os_thread_api.hh"
 #include "relix/fs/console.hh"
 #include "relix/task/scheduler.hh"
 
@@ -87,6 +88,7 @@ namespace Genie
 		
 	#endif
 		
+		Ped::gThreadYield_Hook  = &relix::os_thread_yield;
 		Ped::gActivelyBusy_Hook = &relix::is_active;
 		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
 		
