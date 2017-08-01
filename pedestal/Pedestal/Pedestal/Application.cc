@@ -53,10 +53,6 @@
 #include "Nitrogen/Menus.hh"
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Resources.hh"
-#include "Nitrogen/Threads.hh"
-
-// MacFeatures
-#include "MacFeatures/Threads.hh"
 
 #if !TARGET_API_MAC_CARBON
 
@@ -205,18 +201,12 @@ namespace Pedestal
 	bool (*gActivelyBusy_Hook)() = NULL;
 	bool (*gReadyToExit_Hook )() = NULL;
 	
-	static const bool has_ThreadManager = MacFeatures::Has_Threads();
-	
 	static
 	void ThreadYield()
 	{
 		if ( gThreadYield_Hook )
 		{
 			gThreadYield_Hook();
-		}
-		else if ( has_ThreadManager )
-		{
-			N::YieldToAnyThread();
 		}
 	}
 	
