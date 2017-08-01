@@ -12,6 +12,7 @@ namespace Pedestal
 	
 	extern const bool apple_events_present;
 	
+	extern void (*gThreadYield_Hook)();
 	extern bool (*gActivelyBusy_Hook)();
 	extern bool (*gReadyToExit_Hook)();
 	

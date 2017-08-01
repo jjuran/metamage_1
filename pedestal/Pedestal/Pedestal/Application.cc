@@ -201,8 +201,24 @@ namespace Pedestal
 	};
 	
 	
+	void (*gThreadYield_Hook )() = NULL;
 	bool (*gActivelyBusy_Hook)() = NULL;
 	bool (*gReadyToExit_Hook )() = NULL;
+	
+	static const bool has_ThreadManager = MacFeatures::Has_Threads();
+	
+	static
+	void ThreadYield()
+	{
+		if ( gThreadYield_Hook )
+		{
+			gThreadYield_Hook();
+		}
+		else if ( has_ThreadManager )
+		{
+			N::YieldToAnyThread();
+		}
+	}
 	
 	static bool ActivelyBusy()
 	{
@@ -919,8 +935,6 @@ namespace Pedestal
 		return nextEvent;
 	}
 	
-	static const bool has_ThreadManager = MacFeatures::Has_Threads();
-	
 	static void EventLoop()
 	{
 		// Use two levels of looping.
@@ -936,10 +950,7 @@ namespace Pedestal
 					
 					CheckKeyboard();
 					
-					if ( has_ThreadManager )
-					{
-						N::YieldToAnyThread();
-					}
+					ThreadYield();
 					
 					if ( !ActivelyBusy() || ReadyToWaitForEvents() )
 					{
