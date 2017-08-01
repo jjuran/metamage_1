@@ -122,6 +122,11 @@ void host_env()
 		printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
 	}
 	
+	if ( TARGET_CPU_68K  &&  gestalt( 'thds' ) )
+	{
+		printf( "%s\n", "Cooperative threading:  Thread Manager" );
+	}
+	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
 	{
 		const uint32_t cbon = gestalt( 'cbon' );
