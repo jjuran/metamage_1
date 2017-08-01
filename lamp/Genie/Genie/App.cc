@@ -16,7 +16,6 @@
 
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
-#include "relix/fs/console.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie
@@ -24,13 +23,6 @@
 #include "Genie/ProcessList.hh"
 #include "Genie/mnt/listener.hh"
 
-
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-#define THREAD_MANAGER_URL "http://download.info.apple.com/Apple_Support_Area/" "Apple_Software_Updates/English-North_American/Macintosh/System/Other_System/" "Thread_Manager_2.0.1.sea.bin"
-
-#define THREAD_FAIL  "MacRelix requires the Thread Manager." "\n" "\n" \
-                     "Please visit <" THREAD_MANAGER_URL "> and install it.\n"
 
 namespace Genie
 {
@@ -100,14 +92,7 @@ namespace Genie
 			Reply_AppleEvent::Install_Handler();
 		}
 		
-		try
-		{
-			spawn_process( "/etc/startup" );
-		}
-		catch ( ThreadManager_required )
-		{
-			relix::console::log( STR_LEN( THREAD_FAIL ) );
-		}
+		spawn_process( "/etc/startup" );
 	}
 	
 }

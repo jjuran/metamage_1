@@ -23,9 +23,6 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
-// MacFeatures
-#include "MacFeatures/Threads.hh"
-
 // relix-api
 #include "relix/api/get_thread.hh"
 
@@ -150,11 +147,6 @@ namespace Genie
 	
 	static Process& NewProcess( Process::RootProcess )
 	{
-		if ( !MacFeatures::Has_Threads() )
-		{
-			throw ThreadManager_required();
-		}
-		
 		static relix::os_thread_box reaper = relix::new_os_thread( &reaper_thread_start, NULL, 0 );
 		
 		ASSERT( global_processes.empty() );

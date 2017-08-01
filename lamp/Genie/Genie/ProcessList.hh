@@ -18,8 +18,6 @@ namespace Genie
 	
 	class Process;
 	
-	class ThreadManager_required {};
-	
 	
 	Process* lookup_process( pid_t pid );
 	Process& get_process   ( pid_t pid );
