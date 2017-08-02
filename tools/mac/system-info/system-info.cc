@@ -79,10 +79,6 @@ void host_env()
 		memcpy( machine_name, mnam + 1, mnam[ 0 ] );
 	}
 	
-	const char* os_name = sysv < 0x0800 ? "Macintosh System"
-	                    : sysv < 0x1000 ? "Mac OS"
-	                    :                 "Mac OS X";
-	
 	uint8_t sys1 = gestalt( 'sys1' );
 	uint8_t sys2;
 	uint8_t sys3;
@@ -106,6 +102,12 @@ void host_env()
 	gear::inscribe_unsigned_decimal_r( sys1, a );
 	gear::inscribe_unsigned_decimal_r( sys2, b );
 	gear::inscribe_unsigned_decimal_r( sys3, c );
+	
+	const char* os_name = sysv < 0x0800 ? "Macintosh System"
+	                    : sysv < 0x1000 ? "Mac OS"
+	                    : sysv < 0x1080 ? "Mac OS X"
+	                    : sys2 <     12 ? "OS X"
+	                    :                 "macOS";
 	
 	printf( "Host CPU architecture:  %s\n", arch_name );
 	
