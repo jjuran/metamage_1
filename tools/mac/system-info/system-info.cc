@@ -116,7 +116,10 @@ void host_env()
 		printf( "Host CPU machine name:  %s\n", machine_name );
 	}
 	
-	printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
+	if ( sysv != 0 )
+	{
+		printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
+	}
 	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
 	{
