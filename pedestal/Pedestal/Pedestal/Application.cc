@@ -1124,9 +1124,11 @@ namespace Pedestal
 		
 		while ( window != NULL )
 		{
+			WindowRef next = GetNextWindow( window );
+			
 			close_window( window );
 			
-			window = GetNextWindow( window );
+			window = next;
 		}
 		
 		gRunState.quitRequested = true;
