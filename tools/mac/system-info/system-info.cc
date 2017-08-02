@@ -118,6 +118,7 @@ void host_env()
 	
 	if ( sysv != 0 )
 	{
+		printf( "\n" );
 		printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
 	}
 	
@@ -177,30 +178,37 @@ bool in_SheepShaver()
 static
 void virt_env()
 {
+	const char* blank = "\n";
+	
 	if ( gestalt( 'a/ux' ) )
 	{
-		printf( "Paravirtualization:     A/UX\n" );
+		printf( "%s" "Paravirtualization:     A/UX\n", blank );
+		blank = "";
 	}
 	
 	const bool bbox = gestalt( 'bbox' );
 	
 	if ( bbox )
 	{
-		printf( "Paravirtualization:     Blue Box\n" );
+		printf( "%s" "Paravirtualization:     Blue Box\n", blank );
+		blank = "";
 	}
 	
 	if ( TARGET_CPU_68K  &&  gestalt( 'sysa' ) == 2 )
 	{
-		printf( "68K emulation:          Apple\n" );
+		printf( "%s" "68K emulation:          Apple\n", blank );
+		blank = "";
 	}
 	
 	if ( TARGET_CPU_68K  &&  gestalt_defined( 'v68k' ) )
 	{
-		printf( "68K emulation:          v68k\n" );
+		printf( "%s" "68K emulation:          v68k\n", blank );
+		blank = "";
 	}
 	else if ( in_SheepShaver() )
 	{
-		printf( "PPC emulation:          SheepShaver\n" );
+		printf( "%s" "PPC emulation:          SheepShaver\n", blank );
+		blank = "";
 	}
 	
 	if ( !! TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON  &&  ! bbox )
@@ -211,7 +219,8 @@ void virt_env()
 		
 		if ( ! powerpc )
 		{
-			printf( "PPC emulation:          Rosetta\n" );
+			printf( "%s" "PPC emulation:          Rosetta\n", blank );
+			blank = "";
 		}
 	}
 }
