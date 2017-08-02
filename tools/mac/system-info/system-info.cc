@@ -164,6 +164,13 @@ void host_env()
 		printf( "680x0 privilege level:  %s\n", level );
 	}
 	
+	if ( ! TARGET_RT_MAC_MACHO  &&  gestalt( 'mmu ' ) > 1  &&  sysv < 0x1000 )
+	{
+		const char* status = gestalt( 'vm  ' ) ? "On" : "Off";
+		
+		printf( "Virtual memory status:  %s\n", status );
+	}
+	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
 	{
 		const uint32_t cbon = gestalt( 'cbon' );
