@@ -42,6 +42,25 @@ using mac::sys::gestalt_defined;
 #define MOD_TYPE  "Execution module type:  "
 #define COMPILED  "Compiled architecture:  "
 
+static inline
+bool in_supervisor_mode()
+{
+#ifdef __MC68K__
+	
+	uint16_t status;
+	
+	asm
+	{
+		MOVE.W   SR,status
+	}
+	
+	return status & (1 << 13);
+	
+#endif
+	
+	return false;
+}
+
 static
 void compiled()
 {
@@ -136,6 +155,13 @@ void host_env()
 		const bool _32bits = addr & (1 << gestalt32BitAddressing);
 		
 		printf( "680x0 addressing mode:  %s-bit\n", _32bits ? "32" : "24" );
+	}
+	
+	if ( TARGET_CPU_68K )
+	{
+		const char* level = in_supervisor_mode() ? "Supervisor" : "User";
+		
+		printf( "680x0 privilege level:  %s\n", level );
 	}
 	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
