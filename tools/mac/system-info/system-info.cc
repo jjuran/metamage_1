@@ -146,6 +146,24 @@ void host_env()
 		printf( "%s\n", "Cooperative threading:  Thread Manager" );
 	}
 	
+	const uint32_t gestaltOpenTptTCPPresentMask = 0x00000010;
+	
+	if ( gestalt( 'otan' ) & gestaltOpenTptTCPPresentMask )
+	{
+		const uint16_t version = gestalt( 'otvr' ) >> 16;
+		
+		const int major = (version >> 8 & 0xF) + 10 * (version >> 12);
+		const int minor =  version >> 4 & 0xF;
+		const int patch =  version >> 0 & 0xF;
+		
+		const bool mach = TARGET_RT_MAC_MACHO;
+		
+		const char* text = mach ? "Open Transport TCP/IP:  "
+		                        : "TCP/IP protocol stack:  Open Transport ";
+		
+		printf( "%s%d.%d.%d\n", text, major, minor, patch );
+	}
+	
 	if ( TARGET_CPU_68K  &&  gestalt( 'mmu ' ) )
 	{
 		const int gestalt32BitAddressing = 0;
