@@ -42,6 +42,25 @@ using mac::sys::gestalt_defined;
 #define MOD_TYPE  "Execution module type:  "
 #define COMPILED  "Compiled architecture:  "
 
+static inline
+bool in_supervisor_mode()
+{
+#ifdef __MC68K__
+	
+	uint16_t status;
+	
+	asm
+	{
+		MOVE.W   SR,status
+	}
+	
+	return status & (1 << 13);
+	
+#endif
+	
+	return false;
+}
+
 static
 void compiled()
 {
@@ -120,6 +139,36 @@ void host_env()
 	{
 		printf( "\n" );
 		printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
+	}
+	
+	if ( TARGET_CPU_68K  &&  gestalt( 'thds' ) )
+	{
+		printf( "%s\n", "Cooperative threading:  Thread Manager" );
+	}
+	
+	if ( TARGET_CPU_68K  &&  gestalt( 'mmu ' ) )
+	{
+		const int gestalt32BitAddressing = 0;
+		
+		const uint32_t addr = gestalt( 'addr' );
+		
+		const bool _32bits = addr & (1 << gestalt32BitAddressing);
+		
+		printf( "680x0 addressing mode:  %s-bit\n", _32bits ? "32" : "24" );
+	}
+	
+	if ( TARGET_CPU_68K )
+	{
+		const char* level = in_supervisor_mode() ? "Supervisor" : "User";
+		
+		printf( "680x0 privilege level:  %s\n", level );
+	}
+	
+	if ( ! TARGET_RT_MAC_MACHO  &&  gestalt( 'mmu ' ) > 1  &&  sysv < 0x1000 )
+	{
+		const char* status = gestalt( 'vm  ' ) ? "On" : "Off";
+		
+		printf( "Virtual memory status:  %s\n", status );
 	}
 	
 	if ( !! TARGET_RT_MAC_CFM  &&  TARGET_API_MAC_CARBON )
