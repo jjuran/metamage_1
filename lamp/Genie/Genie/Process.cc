@@ -1270,8 +1270,6 @@ namespace Genie
 		
 		if ( relix::is_os_thread_stopped( thread ) )
 		{
-			ASSERT( itsSchedule == kProcessStopped );
-			
 			itsSchedule = kProcessSleeping;
 			
 			relix::wake_os_thread( thread );
