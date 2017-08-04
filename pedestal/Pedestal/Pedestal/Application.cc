@@ -53,10 +53,6 @@
 #include "Nitrogen/Menus.hh"
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Resources.hh"
-#include "Nitrogen/Threads.hh"
-
-// MacFeatures
-#include "MacFeatures/Threads.hh"
 
 #if !TARGET_API_MAC_CARBON
 
@@ -201,8 +197,18 @@ namespace Pedestal
 	};
 	
 	
+	void (*gThreadYield_Hook )() = NULL;
 	bool (*gActivelyBusy_Hook)() = NULL;
 	bool (*gReadyToExit_Hook )() = NULL;
+	
+	static
+	void ThreadYield()
+	{
+		if ( gThreadYield_Hook )
+		{
+			gThreadYield_Hook();
+		}
+	}
 	
 	static bool ActivelyBusy()
 	{
@@ -919,8 +925,6 @@ namespace Pedestal
 		return nextEvent;
 	}
 	
-	static const bool has_ThreadManager = MacFeatures::Has_Threads();
-	
 	static void EventLoop()
 	{
 		// Use two levels of looping.
@@ -936,10 +940,7 @@ namespace Pedestal
 					
 					CheckKeyboard();
 					
-					if ( has_ThreadManager )
-					{
-						N::YieldToAnyThread();
-					}
+					ThreadYield();
 					
 					if ( !ActivelyBusy() || ReadyToWaitForEvents() )
 					{
