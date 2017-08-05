@@ -19,6 +19,9 @@
 #include "mac_sys/current_thread_stack_space.hh"
 #include "mac_sys/init_thread.hh"
 
+// cthread
+#include "cthread/parameter_block.hh"
+
 // plus
 #include "plus/ref_count.hh"
 
@@ -32,22 +35,13 @@
 namespace relix
 {
 	
-	struct os_thread_param
-	{
-		cthread::start_proc  start;
-		void*                param;
-		
-		cthread::switch_proc  switch_in;
-		cthread::switch_proc  switch_out;
-		
-		const void*   stack_bottom;
-		const void*   stack_limit;
-	};
+	using cthread::parameter_block;
+	
 	
 	class os_thread : public plus::ref_count< os_thread >
 	{
 		private:
-			os_thread_param its_param;
+			parameter_block its_param;
 			
 			os_thread_id its_id;
 			
@@ -81,7 +75,7 @@ namespace relix
 	
 	static pascal void* ThreadEntry( void* param_ )
 	{
-		os_thread_param& param = *(os_thread_param*) param_;
+		parameter_block& param = *(parameter_block*) param_;
 		
 		param.stack_bottom = mac::sys::init_thread();
 		param.stack_limit  = measure_stack_limit();
@@ -107,7 +101,7 @@ namespace relix
 	
 	static pascal void ThreadSwitchIn( ThreadID thread, void* param_ )
 	{
-		const os_thread_param& param = *(os_thread_param*) param_;
+		const parameter_block& param = *(parameter_block*) param_;
 		
 		if ( param.switch_in )
 		{
@@ -117,7 +111,7 @@ namespace relix
 	
 	static pascal void ThreadSwitchOut( ThreadID thread, void* param_ )
 	{
-		const os_thread_param& param = *(os_thread_param*) param_;
+		const parameter_block& param = *(parameter_block*) param_;
 		
 		if ( param.switch_out )
 		{
