@@ -6,16 +6,15 @@
 #ifndef RELIX_API_OSTHREADBOX_HH
 #define RELIX_API_OSTHREADBOX_HH
 
+// cthread
+#include "cthread/types.hh"
+
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
 
 
 namespace relix
 {
-	
-	typedef void* (*os_thread_start_type)( void*, const void*, const void* );
-	
-	typedef void (*os_thread_switch_type)( void* );
 	
 	class os_thread;
 	
@@ -47,11 +46,11 @@ namespace relix
 			}
 	};
 	
-	os_thread_box new_os_thread( os_thread_start_type   start,
-	                             void*                  param,
-	                             int                    stack_size,
-	                             os_thread_switch_type  switch_in  = 0,
-	                             os_thread_switch_type  switch_out = 0 );
+	os_thread_box new_os_thread( cthread::start_proc   start,
+	                             void*                 param,
+	                             int                   stack_size,
+	                             cthread::switch_proc  switch_in  = 0,
+	                             cthread::switch_proc  switch_out = 0 );
 	
 	os_thread_id get_os_thread_id( const os_thread& thread );
 	

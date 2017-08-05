@@ -34,11 +34,11 @@ namespace relix
 	
 	struct os_thread_param
 	{
-		os_thread_start_type  start;
-		void*                 param;
+		cthread::start_proc  start;
+		void*                param;
 		
-		os_thread_switch_type  switch_in;
-		os_thread_switch_type  switch_out;
+		cthread::switch_proc  switch_in;
+		cthread::switch_proc  switch_out;
 		
 		const void*   stack_bottom;
 		const void*   stack_limit;
@@ -47,10 +47,6 @@ namespace relix
 	class os_thread : public plus::ref_count< os_thread >
 	{
 		private:
-			typedef void* (*start_function_type)( void*, const void*, const void* );
-			
-			typedef void (*switch_function_type)( void* );
-			
 			os_thread_param its_param;
 			
 			os_thread_id its_id;
@@ -59,11 +55,11 @@ namespace relix
 			os_thread& operator=( const os_thread& );
 		
 		public:
-			os_thread( start_function_type   start,
+			os_thread( cthread::start_proc   start,
 			           void*                 param,
 			           int                   stack_size,
-			           switch_function_type  switch_in,
-			           switch_function_type  switch_out );
+			           cthread::switch_proc  switch_in,
+			           cthread::switch_proc  switch_out );
 			
 			~os_thread();
 			
@@ -129,11 +125,11 @@ namespace relix
 		}
 	}
 	
-	os_thread::os_thread( start_function_type   start,
+	os_thread::os_thread( cthread::start_proc   start,
 	                      void*                 param,
 	                      int                   stack_size,
-	                      switch_function_type  switch_in,
-	                      switch_function_type  switch_out )
+	                      cthread::switch_proc  switch_in,
+	                      cthread::switch_proc  switch_out )
 	{
 		its_param.start = start;
 		its_param.param = param;
@@ -250,11 +246,11 @@ namespace relix
 		that.its_thread = temp;
 	}
 	
-	os_thread_box new_os_thread( os_thread_start_type   start,
-	                             void*                  param,
-	                             int                    stack_size,
-	                             os_thread_switch_type  switch_in,
-	                             os_thread_switch_type  switch_out )
+	os_thread_box new_os_thread( cthread::start_proc   start,
+	                             void*                 param,
+	                             int                   stack_size,
+	                             cthread::switch_proc  switch_in,
+	                             cthread::switch_proc  switch_out )
 	{
 		return os_thread_box( *new os_thread( start,
 		                                      param,
