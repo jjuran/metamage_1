@@ -5,35 +5,20 @@
 
 #include "relix/api/os_thread_box.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __THREADS__
-#include <Threads.h>
-#endif
-
-// mac-sys-utils
-#include "mac_sys/current_thread_stack_space.hh"
-#include "mac_sys/init_thread.hh"
-
 // cthread
 #include "cthread/parameter_block.hh"
+
+// cthread-system
+#include "cthread-system.hh"
 
 // plus
 #include "plus/ref_count.hh"
 
-// recall
-#include "recall/stack_frame.hh"
-
-// Nitrogen
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
-
 
 namespace relix
 {
+	
+	using namespace cthread::system;
 	
 	using cthread::parameter_block;
 	
@@ -61,64 +46,6 @@ namespace relix
 	};
 	
 	
-	static void* measure_stack_limit()
-	{
-	#ifdef __MACOS__
-		
-		return (char*) recall::get_frame_pointer() - mac::sys::current_thread_stack_space();
-		
-	#endif
-		
-		return NULL;
-	}
-	
-	
-	static pascal void* ThreadEntry( void* param_ )
-	{
-		parameter_block& param = *(parameter_block*) param_;
-		
-		param.stack_bottom = mac::sys::init_thread();
-		param.stack_limit  = measure_stack_limit();
-		
-		try
-		{
-			return param.start( param.param, param.stack_bottom, param.stack_limit );
-		}
-		catch ( ... )
-		{
-		}
-		
-		return NULL;
-	}
-	
-	static ThreadEntryTPP GetThreadEntryFunction()
-	{
-		static ThreadEntryTPP upp = NewThreadEntryUPP( &ThreadEntry );
-		
-		return upp;
-	}
-	
-	
-	static pascal void ThreadSwitchIn( ThreadID thread, void* param_ )
-	{
-		const parameter_block& param = *(parameter_block*) param_;
-		
-		if ( param.switch_in )
-		{
-			param.switch_in( param.param );
-		}
-	}
-	
-	static pascal void ThreadSwitchOut( ThreadID thread, void* param_ )
-	{
-		const parameter_block& param = *(parameter_block*) param_;
-		
-		if ( param.switch_out )
-		{
-			param.switch_out( param.param );
-		}
-	}
-	
 	os_thread::os_thread( cthread::start_proc   start,
 	                      void*                 param,
 	                      int                   stack_size,
@@ -131,36 +58,12 @@ namespace relix
 		its_param.switch_in  = switch_in;
 		its_param.switch_out = switch_out;
 		
-		::Size size = 0;
-		
-		// Jaguar returns paramErr
-		OSStatus err = ::GetDefaultThreadStackSize( kCooperativeThread, &size );
-		
-		if ( size > stack_size )
-		{
-			stack_size = size;
-		}
-		
-		err = ::NewThread( kCooperativeThread,
-		                   GetThreadEntryFunction(),
-		                   &its_param,
-		                   stack_size,
-		                   0,
-		                   NULL,
-		                   &its_id );
-		
-		Mac::ThrowOSStatus( err );
-		
-		static ThreadSwitchUPP switchIn  = NewThreadSwitchUPP( ThreadSwitchIn  );
-		static ThreadSwitchUPP switchOut = NewThreadSwitchUPP( ThreadSwitchOut );
-		
-		if ( switch_in  )  SetThreadSwitcher( its_id, switchIn,  &its_param, true  );
-		if ( switch_out )  SetThreadSwitcher( its_id, switchOut, &its_param, false );
+		its_id = create_thread( its_param, stack_size );
 	}
 	
 	os_thread::~os_thread()
 	{
-		::DisposeThread( id(), NULL, false );
+		destroy_thread( id() );
 	}
 	
 	
@@ -211,15 +114,13 @@ namespace relix
 	{
 		if ( get()  &&  intrusive_ptr_ref_count( get() ) == 1 )
 		{
-			::ThreadID thread;
+			os_thread_id thread = current_thread();
 			
-			OSErr err = ::GetCurrentThread( &thread );
-			
-			if ( err == noErr  &&  thread == its_thread->id() )
+			if ( thread == its_thread->id() )
 			{
 				::operator delete( its_thread );
 				
-				::DisposeThread( thread, NULL, false );
+				destroy_thread( thread );
 				
 				// Not reached
 			}
