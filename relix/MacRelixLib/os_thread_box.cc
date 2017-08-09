@@ -141,9 +141,6 @@ namespace relix
 		its_param.switch_in  = switch_in;
 		its_param.switch_out = switch_out;
 		
-		its_param.stack_bottom = NULL;
-		its_param.stack_limit  = NULL;
-		
 		::Size size = 0;
 		
 		// Jaguar returns paramErr
