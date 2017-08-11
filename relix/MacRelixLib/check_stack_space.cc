@@ -9,8 +9,8 @@
 // POSIX
 #include <signal.h>
 
-// cthread-system
-#include "cthread-system.hh"
+// cthread-either
+#include "cthread-either.hh"
 
 // relix-api
 #include "relix/api/deliver_fatal_signal.hh"
@@ -26,7 +26,7 @@ namespace relix
 	
 	void check_stack_space()
 	{
-		using cthread::system::current_thread_stack_space;
+		using cthread::either::current_thread_stack_space;
 		
 		const unsigned long space = current_thread_stack_space();
 		

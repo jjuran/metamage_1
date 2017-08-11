@@ -5,14 +5,14 @@
 
 #include "relix/api/os_thread_api.hh"
 
-// cthread-system
-#include "cthread-system.hh"
+// cthread-either
+#include "cthread-either.hh"
 
 
 namespace relix
 {
 	
-	using namespace cthread::system;
+	using namespace cthread::either;
 	
 	
 	bool is_os_thread_stopped( os_thread_id id )

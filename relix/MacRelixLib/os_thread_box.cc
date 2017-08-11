@@ -8,8 +8,8 @@
 // cthread
 #include "cthread/parameter_block.hh"
 
-// cthread-system
-#include "cthread-system.hh"
+// cthread-either
+#include "cthread-either.hh"
 
 // plus
 #include "plus/ref_count.hh"
@@ -18,7 +18,7 @@
 namespace relix
 {
 	
-	using namespace cthread::system;
+	using namespace cthread::either;
 	
 	using cthread::parameter_block;
 	
