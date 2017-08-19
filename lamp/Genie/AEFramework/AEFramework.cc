@@ -8,6 +8,9 @@
 // Standard C++
 #include <map>
 
+// cthread-either
+#include "cthread-either.hh"
+
 // Nitrogen
 #ifndef MAC_TOOLBOX_TYPES_OSSTATUS_HH
 #include "Mac/Toolbox/Types/OSStatus.hh"
@@ -16,24 +19,26 @@
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
 #endif
-#ifndef NITROGEN_THREADS_HH
-#include "Nitrogen/Threads.hh"
-#endif
 
 
 namespace Nitrogen
 {
 	
+	using cthread::thread_id;
+	
+	using namespace cthread::either;
+	
+	
 	struct ExpectedReply
 	{
-		Mac::ThreadID     thread;
+		thread_id         thread;
 		Mac::AppleEvent*  reply;
 		
 		ExpectedReply()
 		{
 		}
 		
-		ExpectedReply( Mac::ThreadID thread, Mac::AppleEvent* reply )
+		ExpectedReply( thread_id thread, Mac::AppleEvent* reply )
 		:
 			thread( thread ),
 			reply ( reply  )
@@ -52,7 +57,7 @@ namespace Nitrogen
 		// Can replyStorage be NULL?  If you wanted to know when the reply came back
 		// but didn't care what was in it, then it would make sense.
 		
-		gExpectedReplies[ returnID ] = ExpectedReply( GetCurrentThread(), replyStorage );
+		gExpectedReplies[ returnID ] = ExpectedReply( current_thread(), replyStorage );
 	}
 	
 	void ReceiveReply( const Mac::AppleEvent& reply )
@@ -65,15 +70,14 @@ namespace Nitrogen
 		{
 			try
 			{
-				Mac::ThreadID    thread       = found->second.thread;
+				thread_id        thread       = found->second.thread;
 				Mac::AppleEvent* replyStorage = found->second.reply;
 				
 				// Make sure the thread exists
-				ThreadState threadState = GetThreadState( thread );
 				
-				if ( threadState == kStoppedThreadState )
+				if ( is_thread_stopped( thread ) )
 				{
-					SetThreadState( thread, kReadyThreadState );
+					wake_thread( thread );
 				}
 				
 				// before writing to its storage
