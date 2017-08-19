@@ -137,8 +137,17 @@ void host_env()
 	
 	if ( sysv != 0 )
 	{
+		const char* o = ".";
+		
+		if ( sys3 == 0 )
+		{
+			++o;
+			
+			c[ 0 ] = '\0';
+		}
+		
 		printf( "\n" );
-		printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
+		printf( "Host operating system:  %s %s.%s%s%s\n", os_name, a, b, o, c );
 	}
 	
 	if ( ! TARGET_CPU_68K )
