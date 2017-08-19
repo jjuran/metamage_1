@@ -9,8 +9,8 @@
 // POSIX
 #include <signal.h>
 
-// mac-sys-utils
-#include "mac_sys/current_thread_stack_space.hh"
+// cthread-either
+#include "cthread-either.hh"
 
 // relix-api
 #include "relix/api/deliver_fatal_signal.hh"
@@ -26,7 +26,9 @@ namespace relix
 	
 	void check_stack_space()
 	{
-		const unsigned long space = mac::sys::current_thread_stack_space();
+		using cthread::either::current_thread_stack_space;
+		
+		const unsigned long space = current_thread_stack_space();
 		
 		// space will be 0 if we're not on a Thread Manager stack
 		
