@@ -20,6 +20,9 @@
 // iota
 #include "iota/strings.hh"
 
+// AESendBlocking
+#include "AESendBlocking.hh"
+
 // command
 #include "command/get_option.hh"
 
@@ -60,11 +63,13 @@ enum
 	Option_machine = 'm',
 	Option_sig     = 's',
 	Option_url     = 'u',
+	Option_wait    = 'w',
 };
 
 static command::option options[] =
 {
 	{ "front", Option_front },
+	{ "wait",  Option_wait  },
 	
 	{ "app",     Option_app,     Param_required },
 	{ "host",    Option_host,    Param_required },
@@ -76,6 +81,7 @@ static command::option options[] =
 };
 
 static bool front = false;
+static bool waits = false;
 
 static const char*  url     = "";
 static const char*  host    = NULL;
@@ -96,6 +102,10 @@ static char* const* get_options( char* const* argv )
 		{
 			case Option_front:
 				front = true;
+				break;
+			
+			case Option_wait:
+				waits = true;
 				break;
 			
 			case Option_app:
@@ -228,10 +238,34 @@ namespace tool
 		return n::owned< Mac::AEAddressDesc >();
 	}
 	
+	static
+	n::owned< Mac::AppleEvent > AESendBlocking( const Mac::AppleEvent& event )
+	{
+		Mac::AppleEvent reply;
+		
+		Mac::ThrowOSStatus( AESendBlocking( &event, &reply ) );
+		
+		return n::owned< Mac::AppleEvent >::seize( reply );
+	}
+	
 	static inline
 	void AESend( const Mac::AppleEvent& event )
 	{
-		N::AESend( event, Mac::kAENoReply | Mac::kAECanInteract );
+		if ( waits )
+		{
+			n::owned< Mac::AEDesc_Data > reply = AESendBlocking( event );
+			
+			n::string output = N::AEGetParamPtr< Mac::typeChar >( reply, Mac::keyDirectObject );
+			
+			p7::write( p7::stdout_fileno, output.data(), output.size() );
+			
+			p7::write( p7::stdout_fileno, "\n", 1 );
+		}
+		else
+		{
+			N::AESend( event, Mac::kAENoReply | Mac::kAECanInteract );
+		}
+		
 	}
 	
 	int Main( int argc, char** argv )
