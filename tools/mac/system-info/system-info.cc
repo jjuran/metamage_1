@@ -141,9 +141,17 @@ void host_env()
 		printf( "Host operating system:  %s %s.%s.%s\n", os_name, a, b, c );
 	}
 	
-	if ( TARGET_CPU_68K  &&  gestalt( 'thds' ) )
+	if ( ! TARGET_CPU_68K )
+	{
+		// Do nothing.  Thread Manager is implied and goes without saying.
+	}
+	else if ( gestalt( 'thds' ) )
 	{
 		printf( "%s\n", "Cooperative threading:  Thread Manager" );
+	}
+	else
+	{
+		printf( "%s\n", "Cooperative threading:  Bespoke threads" );
 	}
 	
 	const uint32_t gestaltOpenTptTCPPresentMask = 0x00000010;
