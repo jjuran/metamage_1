@@ -1,0 +1,23 @@
+#!/usr/bin/env vx
+
+def pack_icon
+{
+	const source = _.string
+	
+	var meat = mince substr( source, 1 )
+	
+	translate( &meat, " X", "01" )
+	
+	return unbin str meat.lines()
+}
+
+# Width:  32 columns + 31 spaces + 2 '|' + 1 '\n'
+# Height: 32 data rows + 1 blank
+
+const bytes_per_frame = (32 * 2 + 2) * 32 + 1
+
+const source = packed load argv[ 1 ]
+
+const icons = [source / -bytes_per_frame] map pack_icon
+
+write( OUT, packed icons )
