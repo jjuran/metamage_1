@@ -167,16 +167,6 @@ namespace relix
 	}
 	
 	
-	struct ExitToShell_Patch
-	{
-		static void Code( Ag::ExitToShellProcPtr nextHandler )
-		{
-			remove_68k_exception_handlers();
-			
-			nextHandler();
-		}
-	};
-	
 	struct GetNextEvent_Patch
 	{
 		static short Code( EventMask eventMask, EventRecord* theEvent, Ag::GetNextEventProcPtr nextHandler );
@@ -192,6 +182,19 @@ namespace relix
 		
 		return result;
 	}
+	
+	struct ExitToShell_Patch
+	{
+		static void Code( Ag::ExitToShellProcPtr nextHandler )
+		{
+			Ag::TrapPatch< _GetNextEvent, GetNextEvent_Patch::Code >::Remove();
+			Ag::TrapPatch< _ExitToShell,  ExitToShell_Patch::Code  >::Remove();
+			
+			remove_68k_exception_handlers();
+			
+			nextHandler();
+		}
+	};
 	
 	
 	void InstallExceptionHandlers()
