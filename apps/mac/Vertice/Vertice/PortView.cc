@@ -332,8 +332,8 @@ namespace Vertice
 		short width  = portRect.right  - portRect.left;
 		short height = portRect.bottom - portRect.top;
 		
-		double top    = topLeft   [ Y ] * -width / 2.0 + height / 2.0;
-		double bottom = bottomLeft[ Y ] * -width / 2.0 + height / 2.0;
+		double top    = topLeft   [ Y ] * width / -2.0 + height / 2.0;
+		double bottom = bottomLeft[ Y ] * width / -2.0 + height / 2.0;
 		
 		double vdist = bottom - top;
 		
@@ -976,8 +976,8 @@ namespace Vertice
 		const int width  = itsBounds.right - itsBounds.left;
 		const int height = itsBounds.bottom - itsBounds.top;
 		
-		x = (x + 0.5 - width  / 2.0) / ( width / 2.0);
-		y = (y + 0.5 - height / 2.0) / (-width / 2.0);
+		x = (x + 0.5 - width  / 2.0) / (width /  2.0);
+		y = (y + 0.5 - height / 2.0) / (width / -2.0);
 		
 		V::Point3D::Type pt1 = V::Point3D::Make( x, y, -sFocalLength );
 		
@@ -1143,8 +1143,8 @@ namespace Vertice
 						bounding_rect.left  = bounding_rect.left  * width / 2.0 + width / 2.0;
 						bounding_rect.right = bounding_rect.right * width / 2.0 + width / 2.0;
 						
-						bounding_rect.top    = bounding_rect.top    * -width / 2.0 + height / 2.0;
-						bounding_rect.bottom = bounding_rect.bottom * -width / 2.0 + height / 2.0;
+						bounding_rect.top    = bounding_rect.top    * width / -2.0 + height / 2.0;
+						bounding_rect.bottom = bounding_rect.bottom * width / -2.0 + height / 2.0;
 						
 						V::Rect2D< int > bounds;
 						bounds = bounding_rect;
@@ -1169,7 +1169,7 @@ namespace Vertice
 							//escapement();
 							
 							current_pixel_3d[ Y ] =
-							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (-width / 2.0);
+							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (width / -2.0);
 							
 							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
 							
