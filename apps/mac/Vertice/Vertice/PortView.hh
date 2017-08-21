@@ -17,39 +17,23 @@
 #endif
 
 // Vertice
+#include "Vertice/Anaglyphs.hh"
 #include "Vertice/Port.hh"
 
 
 namespace Vertice
 {
 	
-	enum AnaglyphMode
-	{
-		kNoAnaglyph,
-		kTrueAnaglyph,
-		kGrayAnaglyph,
-		kColorAnaglyph,
-		kHalfColorAnaglyph,
-		kOptimizedAnaglyph
-	};
-	
 	class PortView : public Pedestal::View
 	{
 		private:
-			MeshModel* Mesh_HitTest( double x, double y );
-			
-			Vertice::ColorMatrix TracePixel( int x, int y );
-			
-			void DrawPixel( int x, int y );
-			
 			Rect                         itsBounds;  // port coordinates
 			Scene                        itsScene;
 			Port                         itsPort;
 			Frame                        itsFrame;
-			Vectoria::XMatrix            itsScreen2Port;
 			std::size_t                  itsSelectedContext;
 			nucleus::owned< GWorldPtr >  itsGWorld;
-			AnaglyphMode                 itsAnaglyphMode;
+			anaglyph_mode                itsAnaglyphMode;
 		
 		public:
 			PortView( const Rect& bounds );
@@ -67,11 +51,9 @@ namespace Vertice
 			bool KeyDown( char c );
 			bool DoCommand( Pedestal::CommandCode code )  { return false; }
 			void SetBounds( const Rect& bounds );
-			void Paint();
-			void Redraw();
 			void Draw( const Rect& bounds, bool erasing );
 			void DrawAnaglyphic();
-			void DrawBetter( bool per_scanline ) const;
+			void DrawBetter() const;
 	};
 	
 }
