@@ -799,10 +799,10 @@ namespace Vertice
 		}
 		*/
 		
-		// If the sum of the coefficients below <= 1.0, 
+		// If the sum of the coefficients below <= 1.0,
 		// then no color clipping ('overexposure') can occur.
 		
-		ColorMatrix totalLight =   gAmbientLight                            
+		ColorMatrix totalLight =   gAmbientLight
 		                         + gCameraLight * proximity * incidenceRatio;
 		
 		if ( selected )
@@ -1421,7 +1421,7 @@ namespace Vertice
 								double dist = V::Magnitude( sectPt - pt0 );
 								
 								if (    dist > 0
-								     && gDeepPixelDevice.Nearer( iX % width, iY % height, dist ) 
+								     && gDeepPixelDevice.Nearer( iX % width, iY % height, dist )
 								     && poly2d.ContainsPoint( current_pixel_2d ) )
 								{
 									// set the pixel, below
@@ -1437,7 +1437,7 @@ namespace Vertice
 								// cos(a) = P.Q / mag(P) / mag(Q)
 								// The normal is already unit length, so its magnitude is 1.
 								/*
-								double cosTheta = DotProduct( ray, faceNormal ) 
+								double cosTheta = DotProduct( ray, faceNormal )
 									/ Magnitude( ray ) / Magnitude( faceNormal );
 								*/
 								double cosAlpha = ray * faceNormal / V::Magnitude( ray );

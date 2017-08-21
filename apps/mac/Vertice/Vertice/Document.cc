@@ -110,7 +110,7 @@ namespace Vertice
 	};
 	
 	Window::Window()
-	: 
+	:
 		Ped::Window( CreateWindow( MakeWindowRect() ) )
 	{
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
