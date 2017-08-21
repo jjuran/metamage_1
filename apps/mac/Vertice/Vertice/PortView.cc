@@ -1053,8 +1053,7 @@ namespace Vertice
 		::Ptr       baseAddr  = ( *pix )->baseAddr;
 		unsigned    rowBytes  = ( *pix )->rowBytes & 0x3fff;
 		
-		N::RGBForeColor( n::make< RGBColor >( 0 ) );
-		N::PaintRect( portRect );
+		memset( baseAddr, '\0', rowBytes * (pixBounds.bottom - pixBounds.top) );
 		
 		const short width  = portRect.right - portRect.left;
 		const short height = portRect.bottom - portRect.top;
