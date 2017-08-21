@@ -21,12 +21,6 @@
 namespace vlib
 {
 	
-	enum Bool
-	{
-		Bool_false,
-		Bool_true,
-	};
-	
 	enum symbol_type
 	{
 		Symbol_const,
@@ -86,14 +80,6 @@ namespace vlib
 				its_dispatch( d ),
 				its_box( type )
 			{
-			}
-			
-			Value( Bool b, const dispatch* d )
-			:
-				its_dispatch( d ),
-				its_box( Value_boolean )
-			{
-				pod_cast< bool >() = b;
 			}
 			
 			Value( const vu_ibox& ix, value_type type, const dispatch* d )

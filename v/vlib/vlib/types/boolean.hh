@@ -28,8 +28,9 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Boolean( bool b = false ) : Value( Bool( b ), &boolean_dispatch )
+			Boolean( bool b = false ) : Value( V_bool, &boolean_dispatch )
 			{
+				pod_cast< bool >() = b;
 			}
 			
 			operator bool() const  { return boolean(); }
