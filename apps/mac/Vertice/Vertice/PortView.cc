@@ -943,9 +943,9 @@ namespace Vertice
 			itsPort.MakeFrame( itsFrame );
 			
 			paint_into_GWorld( itsFrame.Models(), itsGWorld );
-			
-			blit_to_thePort( itsGWorld );
 		}
+		
+		blit_to_thePort( itsGWorld );
 	}
 	
 	void PortView::DrawAnaglyphic()
@@ -997,8 +997,6 @@ namespace Vertice
 		unsigned stride = pixL[0]->rowBytes & 0x3fff;
 		
 		merge_anaglyph( itsAnaglyphMode, baseL, baseR, height, width, stride );
-		
-		blit_to_thePort( itsGWorld );
 	}
 	
 	
