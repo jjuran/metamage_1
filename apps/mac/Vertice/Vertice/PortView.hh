@@ -27,8 +27,6 @@ namespace Vertice
 	class PortView : public Pedestal::View
 	{
 		private:
-			MeshModel* Mesh_HitTest( double x, double y );
-			
 			Vertice::ColorMatrix TracePixel( int x, int y );
 			
 			void DrawPixel( int x, int y );

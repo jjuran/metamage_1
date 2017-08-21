@@ -1007,14 +1007,9 @@ namespace Vertice
 		return true;
 	}
 	
-	MeshModel* PortView::Mesh_HitTest( double x, double y )
+	static
+	MeshModel* hit_test( Frame& frame, double x, double y )
 	{
-		const int width  = itsBounds.right - itsBounds.left;
-		const int height = itsBounds.bottom - itsBounds.top;
-		
-		x = (x + 0.5 - width  / 2.0) / (width /  2.0);
-		y = (y + 0.5 - height / 2.0) / (width / -2.0);
-		
 		V::Point3D::Type pt1 = V::Point3D::Make( x, y, -sFocalLength );
 		
 		if ( fishEye )
@@ -1022,7 +1017,7 @@ namespace Vertice
 		//	pt1 = UnFishEye(pt1);
 		}
 		
-		return itsFrame.HitTest( pt1 );
+		return frame.HitTest( pt1 );
 	}
 	
 	ColorMatrix PortView::TracePixel( int x, int y )
@@ -1280,7 +1275,13 @@ namespace Vertice
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		MeshModel* model = Mesh_HitTest( macPt.h, macPt.v );
+		const int width  = itsBounds.right - itsBounds.left;
+		const int height = itsBounds.bottom - itsBounds.top;
+		
+		const double x = (macPt.h + 0.5 - width  / 2.0) / (width /  2.0);
+		const double y = (macPt.v + 0.5 - height / 2.0) / (width / -2.0);
+		
+		MeshModel* model = hit_test( itsFrame, x, y );
 		
 		if ( model != NULL )
 		{
