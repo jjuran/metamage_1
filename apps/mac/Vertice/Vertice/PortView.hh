@@ -27,10 +27,6 @@ namespace Vertice
 	class PortView : public Pedestal::View
 	{
 		private:
-			Vertice::ColorMatrix TracePixel( int x, int y );
-			
-			void DrawPixel( int x, int y );
-			
 			Rect                         itsBounds;  // port coordinates
 			Scene                        itsScene;
 			Port                         itsPort;

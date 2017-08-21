@@ -1020,22 +1020,6 @@ namespace Vertice
 		return frame.HitTest( pt1 );
 	}
 	
-	ColorMatrix PortView::TracePixel( int x, int y )
-	{
-		/*
-		MeshPolygon* polygon = HitTest( x, y );
-		
-		return polygon ? polygon->Color() : V::Black();
-		*/
-		
-		return V::Black();
-	}
-	
-	void PortView::DrawPixel( int x, int y )
-	{
-		N::SetCPixel( x, y, n::convert< RGBColor >( TracePixel( x, y ) ) );
-	}
-	
 	static
 	void trace_onto_surface( const std::vector< MeshModel >&  models,
 	                         void*                            dst,
@@ -1291,20 +1275,6 @@ namespace Vertice
 		paint_into_GWorld( itsFrame.Models(), itsGWorld );
 		
 		blit_to_thePort( itsGWorld );
-		
-		if ( event.modifiers & shiftKey )
-		for ( int y = itsBounds.top;  y < itsBounds.bottom;  ++y )
-		{
-			for ( int x = itsBounds.left;  x < itsBounds.right;  ++x )
-			{
-				DrawPixel( x, y );
-			}
-			
-			if ( TARGET_API_MAC_CARBON )
-			{
-				::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
-			}
-		}
 		
 		return true;
 	}
