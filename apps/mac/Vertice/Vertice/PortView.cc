@@ -1041,6 +1041,13 @@ namespace Vertice
 		N::SetCPixel( x, y, n::convert< RGBColor >( TracePixel( x, y ) ) );
 	}
 	
+	static
+	void trace_onto_surface( const std::vector< MeshModel >&  models,
+	                         void*                            dst,
+	                         size_t                           width,
+	                         size_t                           height,
+	                         size_t                           stride );
+	
 	void PortView::DrawBetter() const
 	{
 		PixMapHandle pix = ::GetPortPixMap( itsGWorld );
@@ -1058,6 +1065,17 @@ namespace Vertice
 		const short width  = portRect.right - portRect.left;
 		const short height = portRect.bottom - portRect.top;
 		
+		trace_onto_surface( itsFrame.Models(), baseAddr, width, height, rowBytes );
+		
+		blit_to_thePort( itsGWorld );
+	}
+	
+	void trace_onto_surface( const std::vector< MeshModel >&  models,
+	                         void*                            dst,
+	                         size_t                           width,
+	                         size_t                           height,
+	                         size_t                           stride )
+	{
 		//DeepPixelDevice device( width, height );
 		gDeepPixelDevice.Resize( width, height );
 		
@@ -1080,8 +1098,6 @@ namespace Vertice
 				depthRect.right  = (hp + 1) * width;
 				depthRect.bottom = vp * height;
 				depthRect.top    = (vp + 1) * height;
-				
-				const std::vector< MeshModel >& models = itsFrame.Models();
 				
 				typedef std::vector< MeshModel >::const_iterator ModelIter;
 				
@@ -1192,7 +1208,7 @@ namespace Vertice
 							current_pixel_3d[ Y ] =
 							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (width / -2.0);
 							
-							uint8_t* rowAddr = (uint8_t*) baseAddr + iY * rowBytes;
+							uint8_t* rowAddr = (uint8_t*) dst + iY * stride;
 							
 							// For each pixel in the row
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
@@ -1256,8 +1272,6 @@ namespace Vertice
 				}
 			}
 		}
-		
-		blit_to_thePort( itsGWorld );
 	}
 	
 	bool PortView::MouseDown( const EventRecord& event )
