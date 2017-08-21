@@ -84,8 +84,9 @@ namespace vlib
 			Value( Bool b, const dispatch* d )
 			:
 				its_dispatch( d ),
-				its_box( bool( b ), Value_boolean )
+				its_box( Value_boolean )
 			{
+				pod_cast< bool >() = b;
 			}
 			
 			Value( const vu_ibox& ix, value_type type, const dispatch* d )
@@ -198,7 +199,7 @@ namespace vlib
 			
 			bool boolean() const
 			{
-				return its_box.boolean();
+				return pod_cast< bool >();
 			}
 			
 			bignum::integer& number()
