@@ -1193,7 +1193,7 @@ namespace Vertice
 							current_pixel_3d[ Y ] =
 							current_pixel_2d[ Y ] = (iY + 0.5 - height / 2.0) / (width / -2.0);
 							
-							::Ptr rowAddr = baseAddr + ( iY - pixBounds.top ) * rowBytes;
+							uint8_t* rowAddr = (uint8_t*) baseAddr + ( iY - pixBounds.top ) * rowBytes;
 							
 							// For each pixel in the row
 							for ( unsigned iX = rect.left;  iX < rect.right;  ++iX )
@@ -1248,9 +1248,9 @@ namespace Vertice
 								
 								ColorMatrix tweaked = ModulateColor( sample, lightColor );
 								
-								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
+								uint8_t* pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
 								
-								inscribe_argb_pixel( (uint8_t*) pixelAddr, tweaked );
+								inscribe_argb_pixel( pixelAddr, tweaked );
 							}
 						}
 					}
