@@ -1041,17 +1041,8 @@ namespace Vertice
 		N::SetCPixel( x, y, n::convert< RGBColor >( TracePixel( x, y ) ) );
 	}
 	
-	static const bool gBlitting = false;
-	
-	void PortView::DrawBetter( bool per_scanline ) const
+	void PortView::DrawBetter() const
 	{
-		n::saved< N::GWorld > savedGWorld;
-		
-		if ( gBlitting )
-		{
-			N::SetGWorld( itsGWorld );
-		}
-		
 		PixMapHandle pix = ::GetPortPixMap( itsGWorld );
 		
 		if ( !CheckPixMap( pix ) ) return;
@@ -1064,11 +1055,6 @@ namespace Vertice
 		
 		N::RGBForeColor( n::make< RGBColor >( 0 ) );
 		N::PaintRect( portRect );
-		
-		if ( TARGET_API_MAC_CARBON && !gBlitting )
-		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( itsBounds ) );
-		}
 		
 		const short width  = portRect.right - portRect.left;
 		const short height = portRect.bottom - portRect.top;
@@ -1265,52 +1251,14 @@ namespace Vertice
 								::Ptr pixelAddr = rowAddr + (iX - pixBounds.left) * 32/8;
 								
 								inscribe_argb_pixel( (uint8_t*) pixelAddr, tweaked );
-								
-								if ( !gBlitting )
-								{
-									RGBColor rgb = n::convert< RGBColor >( tweaked );
-									
-									N::SetCPixel( iX, iY, rgb );
-								}
 							}
-							
-							if ( TARGET_API_MAC_CARBON && !gBlitting && per_scanline )
-							{
-								Rect scanline;
-								
-								scanline.top    = iY;
-								scanline.bottom = iY + 1;
-								
-								scanline.left  = rect.left;
-								scanline.right = rect.right;
-								
-								::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( scanline ) );
-							}
-						}
-						
-						if ( TARGET_API_MAC_CARBON && !gBlitting && !per_scanline )
-						{
-							Rect box;
-							
-							box.top    = rect.top;
-							box.bottom = rect.bottom;
-							
-							box.left  = rect.left;
-							box.right = rect.right;
-							
-							::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( box ) );
 						}
 					}
 				}
 			}
 		}
 		
-		if ( gBlitting )
-		{
-			savedGWorld.restore();
-			
-			blit_to_thePort( itsGWorld );
-		}
+		blit_to_thePort( itsGWorld );
 	}
 	
 	bool PortView::MouseDown( const EventRecord& event )
@@ -1366,14 +1314,7 @@ namespace Vertice
 	{
 		if ( c == '~' )
 		{
-			DrawBetter( false );
-			
-			return true;
-		}
-		
-		if ( c == '!' )
-		{
-			DrawBetter( true );
+			DrawBetter();
 			
 			return true;
 		}

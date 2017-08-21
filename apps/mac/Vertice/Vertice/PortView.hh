@@ -59,7 +59,7 @@ namespace Vertice
 			void SetBounds( const Rect& bounds );
 			void Draw( const Rect& bounds, bool erasing );
 			void DrawAnaglyphic();
-			void DrawBetter( bool per_scanline ) const;
+			void DrawBetter() const;
 	};
 	
 }
