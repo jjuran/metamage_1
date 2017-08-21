@@ -170,9 +170,11 @@ namespace vlib
 				its_dispatch = 0;  // NULL
 			}
 			
-			Value( symdesc desc ) : its_box( uint32_t( desc), V_desc )
+			Value( symdesc desc ) : its_box( V_desc )
 			{
 				its_dispatch = 0;  // NULL
+				
+				pod_cast< uint32_t >() = desc;
 			}
 			
 			Value( const Value& a, const Value& b );
@@ -234,7 +236,7 @@ namespace vlib
 			{
 				if ( type() == V_desc )
 				{
-					return symdesc( its_box.u32() );
+					return symdesc( pod_cast< uint32_t >() );
 				}
 				
 				return symdesc( -1 );
