@@ -23,6 +23,10 @@
 #define STATIC extern  // Avoid unneeded static initialization
 #endif
 
+#ifndef NULL
+#define NULL  0
+#endif
+
 void* StkLowPt   AT( 0x110 );
 void* HeapEnd    AT( 0x114 );
 void* ApplLimit  AT( 0x130 );
