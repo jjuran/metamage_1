@@ -7,6 +7,7 @@
 #define VERTICE_PARSER_HH
 
 // Standard C++
+#include <list>
 #include <map>
 
 // plus
@@ -70,6 +71,20 @@ namespace Vertice
 			void SetPhi        ( const char* begin, const char* end );
 			void AddMeshPoint  ( const char* begin, const char* end );
 			void AddMeshPolygon( const char* begin, const char* end );
+	};
+	
+	class Loader
+	{
+		private:
+			Parser               itsParser;
+			std::list< Parser >  itsSavedParsers;
+		
+		public:
+			Loader( Scene& scene ) : itsParser( scene )
+			{
+			}
+			
+			void LoadLine( const plus::string& line );
 	};
 	
 }

@@ -5,12 +5,8 @@
 
 #include "Vertice/Document.hh"
 
-// Standard C/C++
-#include <cstring>
-
 // Standard C++
 #include <algorithm>
-#include <list>
 
 // text-input
 #include "text_input/feed.hh"
@@ -112,9 +108,7 @@ namespace Vertice
 		
 		PortView& view = static_cast< PortView& >( *get_window_view( window ) );
 		
-		Parser parser( view.ItsScene() );
-		
-		std::list< Parser > savedParsers;
+		Loader loader( view.ItsScene() );
 		
 		text_input::feed feed;
 		
@@ -124,19 +118,7 @@ namespace Vertice
 		{
 			const plus::string& line = *s;
 			
-			if ( std::strchr( line.c_str(), '{' ) )
-			{
-				savedParsers.push_back( parser );
-			}
-			else if ( std::strchr( line.c_str(), '}' ) )
-			{
-				parser = savedParsers.back();
-				savedParsers.pop_back();
-			}
-			else
-			{
-				parser.ParseLine( line );
-			}
+			loader.LoadLine( line );
 		}
 		
 		view.Render();

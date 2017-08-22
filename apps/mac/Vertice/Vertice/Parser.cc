@@ -5,6 +5,9 @@
 
 #include "Vertice/Parser.hh"
 
+// Standard C/C++
+#include <cstring>
+
 // Standard C++
 #include <algorithm>
 #include <functional>
@@ -442,6 +445,23 @@ namespace Vertice
 			}
 			
 			(this->*handler)( start, end );
+		}
+	}
+	
+	void Loader::LoadLine( const plus::string& line )
+	{
+		if ( std::strchr( line.c_str(), '{' ) )
+		{
+			itsSavedParsers.push_back( itsParser );
+		}
+		else if ( std::strchr( line.c_str(), '}' ) )
+		{
+			itsParser = itsSavedParsers.back();
+			itsSavedParsers.pop_back();
+		}
+		else
+		{
+			itsParser.ParseLine( line );
 		}
 	}
 	
