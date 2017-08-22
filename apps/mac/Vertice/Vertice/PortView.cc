@@ -121,30 +121,22 @@ namespace Vertice
 		
 		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
 		
-		n::saved< N::GWorld > savedGWorld;
-		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		N::SetGWorld( altGWorld );
-		
-		paint_into_thePort( itsFrame.Models() );
+		paint_into_GWorld( itsFrame.Models(), altGWorld );
 		
 		
 		target.ContextTranslate( 2 * eyeRadius, 0, 0 );
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		N::SetGWorld( itsGWorld );
-		
-		paint_into_thePort( itsFrame.Models() );
+		paint_into_GWorld( itsFrame.Models(), itsGWorld );
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
-		
-		savedGWorld.restore();
 		
 		PixMapHandle pixL = N::GetGWorldPixMap( altGWorld );
 		PixMapHandle pixR = N::GetGWorldPixMap( itsGWorld );
