@@ -55,7 +55,7 @@ namespace Vertice
 		
 		memset( base, '\0', height * stride );
 		
-		paint_onto_surface( models, base, width, height, stride );
+		paint_onto_surface( &*models.begin(), &*models.end(), base, width, height, stride );
 	}
 	
 	static
@@ -163,7 +163,9 @@ namespace Vertice
 		const short width  = portRect.right - portRect.left;
 		const short height = portRect.bottom - portRect.top;
 		
-		trace_onto_surface( itsFrame.Models(), baseAddr, width, height, rowBytes );
+		const std::vector< MeshModel >& models = itsFrame.Models();
+		
+		trace_onto_surface( &*models.begin(), &*models.end(), baseAddr, width, height, rowBytes );
 		
 		blit_to_thePort( itsGWorld );
 	}

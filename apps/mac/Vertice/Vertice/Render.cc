@@ -707,11 +707,12 @@ namespace Vertice
 		return DotProduct( a, b );
 	}
 	
-	void paint_onto_surface( const std::vector< MeshModel >&  models,
-	                         void*                            dst,
-	                         size_t                           width,
-	                         size_t                           height,
-	                         size_t                           stride )
+	void paint_onto_surface( const MeshModel*  begin,
+	                         const MeshModel*  end,
+	                         void*             dst,
+	                         size_t            width,
+	                         size_t            height,
+	                         size_t            stride )
 	{
 		uint8_t* base = (uint8_t*) dst;
 		
@@ -721,10 +722,8 @@ namespace Vertice
 		
 		const V::Point3D::Type pt0 = V::Point3D::Make( 0, 0, 0 );
 		
-		typedef std::vector< MeshModel >::const_iterator ModelIter;
-		
 		// For each mesh model...
-		for ( ModelIter it = models.begin(), end = models.end();  it != end;  ++it )
+		for ( const MeshModel* it = begin;  it != end;  ++it )
 		{
 			const MeshModel& model = *it;
 			
@@ -839,11 +838,12 @@ namespace Vertice
 		return frame.HitTest( pt1 );
 	}
 	
-	void trace_onto_surface( const std::vector< MeshModel >&  models,
-	                         void*                            dst,
-	                         size_t                           width,
-	                         size_t                           height,
-	                         size_t                           stride )
+	void trace_onto_surface( const MeshModel*  begin,
+	                         const MeshModel*  end,
+	                         void*             dst,
+	                         size_t            width,
+	                         size_t            height,
+	                         size_t            stride )
 	{
 		//DeepPixelDevice device( width, height );
 		gDeepPixelDevice.Resize( width, height );
@@ -868,10 +868,8 @@ namespace Vertice
 				depthRect.bottom = vp * height;
 				depthRect.top    = (vp + 1) * height;
 				
-				typedef std::vector< MeshModel >::const_iterator ModelIter;
-				
 				// For each mesh model...
-				for ( ModelIter it = models.begin(), end = models.end();  it != end;  ++it )
+				for ( const MeshModel* it = begin;  it != end;  ++it )
 				{
 					const MeshModel& model = *it;
 					
