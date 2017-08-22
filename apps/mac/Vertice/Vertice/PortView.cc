@@ -31,29 +31,6 @@ namespace Vertice
 	namespace N = Nitrogen;
 	
 	
-	static
-	bool CheckPixMap( PixMapHandle pixMapHandle )
-	{
-	#if !TARGET_API_MAC_CARBON
-		
-		PixMap& pixMap = **pixMapHandle;
-		
-		// We can't deal with BitMap structures
-		if ( ( pixMap.rowBytes & 0x8000 ) != 0x8000 )  return false;
-		
-		// We can't deal with packed data
-		if ( pixMap.packType != 0                   )  return false;
-		
-		// We can't deal with indexed colors (yet)
-		if ( pixMap.pixelType != RGBDirect          )  return false;
-		if ( pixMap.pixelSize != 32                 )  return false;
-		
-	#endif
-		
-		return true;
-	}
-	
-	
 	PortView::PortView( const Rect& bounds ) : itsBounds         ( bounds      ),
 	                                           itsPort           ( itsScene    ),
 	                                           itsSelectedContext(             ),
@@ -68,12 +45,7 @@ namespace Vertice
 	{
 		::CGrafPtr port = N::GetQDGlobalsThePort();
 		
-		// Verify that it's a color port
-		if ( ! ::IsPortColor( port ) )  return;
-		
 		PixMapHandle pix = ::GetPortPixMap( port );
-		
-		if ( ! CheckPixMap( pix ) ) return;
 		
 		const Rect  bounds = ( *pix )->bounds;
 		::Ptr       base   = ( *pix )->baseAddr;
@@ -199,8 +171,6 @@ namespace Vertice
 	void PortView::DrawBetter() const
 	{
 		PixMapHandle pix = ::GetPortPixMap( itsGWorld );
-		
-		if ( !CheckPixMap( pix ) ) return;
 		
 		const Rect& portRect = N::GetPortBounds( itsGWorld );
 		
