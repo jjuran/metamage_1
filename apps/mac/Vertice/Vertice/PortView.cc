@@ -41,8 +41,9 @@ namespace Vertice
 	
 	
 	static
-	void paint_into_GWorld( const std::vector< MeshModel >&  models,
-	                        GWorldPtr                        gworld )
+	void render_into_GWorld( const std::vector< MeshModel >&  models,
+	                         render_proc                      render,
+	                         GWorldPtr                        gworld )
 	{
 		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		
@@ -55,7 +56,7 @@ namespace Vertice
 		
 		memset( base, '\0', height * stride );
 		
-		paint_onto_surface( &*models.begin(), &*models.end(), base, width, height, stride );
+		render( &*models.begin(), &*models.end(), base, width, height, stride );
 	}
 	
 	static
@@ -91,7 +92,7 @@ namespace Vertice
 		{
 			itsPort.MakeFrame( itsFrame );
 			
-			paint_into_GWorld( itsFrame.Models(), itsGWorld );
+			render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		}
 		
 		blit_to_thePort( itsGWorld );
@@ -114,14 +115,14 @@ namespace Vertice
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		paint_into_GWorld( itsFrame.Models(), altGWorld );
+		render_into_GWorld( itsFrame.Models(), &paint_onto_surface, altGWorld );
 		
 		
 		target.ContextTranslate( 2 * eyeRadius, 0, 0 );
 		
 		itsPort.MakeFrame( itsFrame );
 		
-		paint_into_GWorld( itsFrame.Models(), itsGWorld );
+		render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -189,7 +190,7 @@ namespace Vertice
 			model->Select();
 		}
 		
-		paint_into_GWorld( itsFrame.Models(), itsGWorld );
+		render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		
 		blit_to_thePort( itsGWorld );
 		
