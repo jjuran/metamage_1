@@ -15,25 +15,25 @@ namespace Vertice
 	static
 	void MergeTrueAnaglyph( const byte* left, byte* right )
 	{
-		byte r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
-		byte g = 0;
-		byte b = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
+		double r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
+		double g = 0;
+		double b = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
 		
-		right[ 1 ] = r;
-		right[ 2 ] = g;
-		right[ 3 ] = b;
+		right[ 1 ] = (byte) r;
+		right[ 2 ] = (byte) g;
+		right[ 3 ] = (byte) b;
 	}
 	
 	static
 	void MergeGrayAnaglyph( const byte* left, byte* right )
 	{
-		byte r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
-		byte g = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
-		byte b = g;
+		double r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
+		double g = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
+		double b = g;
 		
-		right[ 1 ] = r;
-		right[ 2 ] = g;
-		right[ 3 ] = b;
+		right[ 1 ] = (byte) r;
+		right[ 2 ] = (byte) g;
+		right[ 3 ] = (byte) b;
 	}
 	
 	static
