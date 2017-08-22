@@ -41,11 +41,10 @@ namespace Vertice
 	
 	
 	static
-	void paint_into_thePort( const std::vector< MeshModel >& models )
+	void paint_into_GWorld( const std::vector< MeshModel >&  models,
+	                        GWorldPtr                        gworld )
 	{
-		::CGrafPtr port = N::GetQDGlobalsThePort();
-		
-		PixMapHandle pix = ::GetPortPixMap( port );
+		PixMapHandle pix = N::GetGWorldPixMap( gworld );
 		
 		const Rect  bounds = ( *pix )->bounds;
 		::Ptr       base   = ( *pix )->baseAddr;
@@ -57,17 +56,6 @@ namespace Vertice
 		memset( base, '\0', height * stride );
 		
 		paint_onto_surface( models, base, width, height, stride );
-	}
-	
-	static
-	void paint_into_GWorld( const std::vector< MeshModel >&  models,
-	                        GWorldPtr                        gworld )
-	{
-		n::saved< N::GWorld > savedGWorld;
-		
-		N::SetGWorld( gworld );
-		
-		paint_into_thePort( models );
 	}
 	
 	static
