@@ -151,22 +151,7 @@ namespace Vertice
 	
 	void PortView::DrawBetter() const
 	{
-		PixMapHandle pix = ::GetPortPixMap( itsGWorld );
-		
-		const Rect& portRect = N::GetPortBounds( itsGWorld );
-		
-		const Rect& pixBounds = ( *pix )->bounds;
-		::Ptr       baseAddr  = ( *pix )->baseAddr;
-		unsigned    rowBytes  = ( *pix )->rowBytes & 0x3fff;
-		
-		memset( baseAddr, '\0', rowBytes * (pixBounds.bottom - pixBounds.top) );
-		
-		const short width  = portRect.right - portRect.left;
-		const short height = portRect.bottom - portRect.top;
-		
-		const std::vector< MeshModel >& models = itsFrame.Models();
-		
-		trace_onto_surface( &*models.begin(), &*models.end(), baseAddr, width, height, rowBytes );
+		render_into_GWorld( itsFrame.Models(), &trace_onto_surface, itsGWorld );
 		
 		blit_to_thePort( itsGWorld );
 	}
