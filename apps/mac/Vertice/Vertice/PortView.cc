@@ -75,11 +75,6 @@ namespace Vertice
 		             N::GetPortBounds( src ),
 		             bounds,
 		             N::srcCopy );
-		
-		if ( TARGET_API_MAC_CARBON )
-		{
-			::QDFlushPortBuffer( ::GetQDGlobalsThePort(), N::RectRgn( bounds ) );
-		}
 	}
 	
 	void PortView::Draw( const Rect& bounds, bool erasing )
