@@ -9,17 +9,17 @@
 // Standard C++
 #include <vector>
 
-// vlib
-#include "vlib/value.hh"
-
 
 namespace vlib
 {
 	
+	class Symbol;
+	class Value;
+	
 	class full_iterator
 	{
 		private:
-			std::vector< Value > its_stack;
+			std::vector< const Value* > its_stack;
 		
 		public:
 			full_iterator( const Value& start );

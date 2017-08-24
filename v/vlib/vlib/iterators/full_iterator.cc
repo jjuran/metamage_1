@@ -17,32 +17,32 @@ namespace vlib
 	
 	full_iterator::full_iterator( const Value& start )
 	{
-		its_stack.push_back( start );
+		its_stack.push_back( &start );
 	}
 	
 	const Value& full_iterator::get() const
 	{
 		ASSERT( ! finished() );
 		
-		return its_stack.back();
+		return *its_stack.back();
 	}
 	
 	void full_iterator::step()
 	{
 		ASSERT( ! finished() );
 		
-		const Value v = its_stack.back();
+		const Value& v = *its_stack.back();
 		
 		its_stack.pop_back();
 		
 		if ( Expr* expr = v.expr() )
 		{
-			its_stack.push_back( expr->right );
-			its_stack.push_back( expr->left  );
+			its_stack.push_back( &expr->right );
+			its_stack.push_back( &expr->left  );
 		}
 		else if ( const Symbol* sym = v.sym() )
 		{
-			its_stack.push_back( sym->get() );
+			its_stack.push_back( &sym->get() );
 		}
 	}
 	
