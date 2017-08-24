@@ -23,6 +23,7 @@
 #include "vlib/types/any.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/pointer.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
 
@@ -104,6 +105,9 @@ namespace vlib
 			
 			case Op_unary_minus:
 				return reversed_bytes( v );
+			
+			case Op_each:
+				return Pointer( v );
 			
 			default:
 				break;

@@ -25,6 +25,7 @@
 #include "vlib/types/byte.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/pointer.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
@@ -153,6 +154,9 @@ namespace vlib
 			
 			case Op_unary_negate:
 				return negated_bytes( v );
+			
+			case Op_each:
+				return Pointer( v );
 			
 			default:
 				break;
