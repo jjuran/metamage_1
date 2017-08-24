@@ -24,6 +24,8 @@
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/packed.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
 
@@ -102,6 +104,38 @@ namespace vlib
 	}
 	
 	static
+	Value substring( const Value& p, const Value& q )
+	{
+		if ( Pointer::test( p ) )
+		{
+			const plus::string& a = p.expr()->left.string();
+			const plus::string& b = q.expr()->left.string();
+			
+			if ( &a == &b  ||  a == b )
+			{
+				const size_t i = integer_cast< size_t >( p.expr()->right );
+				const size_t j = integer_cast< size_t >( q.expr()->right );
+				
+				plus::string substring;
+				
+				if ( i <= j  && i < a.size() )
+				{
+					substring = a.substr( i, j - i );
+				}
+				
+				const bool str = q.expr()->left.type() == V_str;
+				
+				return str ? Value( String( substring ) )
+				           : Value( Packed( substring ) );
+			}
+			
+			THROW( "subtraction of pointers from different containers" );
+		}
+		
+		return Value();
+	}
+	
+	static
 	const Value& advance( Value& v, ssize_t delta )
 	{
 		Expr* expr = v.unshare().expr();
@@ -171,6 +205,11 @@ namespace vlib
 	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
+		if ( op == Op_subtract )
+		{
+			return substring( b, a );
+		}
+		
 		Value v = a;
 		
 		if ( op == Op_add )

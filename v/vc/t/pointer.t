@@ -47,3 +47,13 @@ $ vc 'var p = each "Hello"; ++p; ++p; ++p; ++p; *++p'
 
 $ vc '*each x"4e75"'
 1 >= "'N'"
+
+%
+
+$ vc 'var p = each "abcdef"; var q = ++p; ++q; ++q; ++q - p'
+1 >= '"bcd"'
+
+%
+
+$ vc 'var p = each "abc"; var q = ++p; ++q; ++q; p - q'
+1 >= '""'
