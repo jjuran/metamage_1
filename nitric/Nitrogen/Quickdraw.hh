@@ -667,7 +667,7 @@ namespace Nitrogen
 	// GetPortPixMap
 	// ...
 	
-	const BitMap* GetPortBitMapForCopyBits( CGrafPtr port );
+	using ::GetPortBitMapForCopyBits;
 	
 	Rect GetPortBounds( CGrafPtr port );
 	
@@ -691,14 +691,6 @@ namespace Nitrogen
 	// ...
 	
 	bool IsPortColor( CGrafPtr port );
-	
-	// ...
-	
-	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn );
-	
-	// ...
-	
-	void SetPortPenSize( CGrafPtr port, Point penSize );
 	
 	// ...
 	
@@ -827,8 +819,9 @@ namespace Nitrogen
 			
 			Port_ClipRegion( CGrafPtr port )     : port( port ) {}
 			
-			value_type get() const               { return GetPortClipRegion( port );            }
-			void set( param_type region ) const  { Nitrogen::SetPortClipRegion( port, region ); }
+			value_type get() const  { return GetPortClipRegion( port ); }
+			
+			void set( RgnHandle rgn ) const  { SetPortClipRegion( port, rgn ); }
 	};
 	
 	class Port_PenSize
@@ -842,8 +835,8 @@ namespace Nitrogen
 			
 			Port_PenSize( CGrafPtr port )      : port( port ) {}
 			
-			value_type get() const             { return GetPortPenSize( port );          }
-			void set( param_type size ) const  { Nitrogen::SetPortPenSize( port, size ); }
+			Point get() const             { return GetPortPenSize( port ); }
+			void set( Point size ) const  { SetPortPenSize( port, size );  }
 	};
 	
 }

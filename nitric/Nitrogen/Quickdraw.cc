@@ -300,11 +300,6 @@ namespace Nitrogen
 		return CheckResource( ::MacGetCursor( id ) );
 	}
 	
-	const BitMap* GetPortBitMapForCopyBits( CGrafPtr port )
-	{
-		return ::GetPortBitMapForCopyBits( port );
-	}
-	
 	Rect GetPortBounds( CGrafPtr port )
 	{
 		Rect bounds;
@@ -364,16 +359,6 @@ namespace Nitrogen
 	bool IsPortColor( CGrafPtr port )
 	{
 		return ::IsPortColor( port );
-	}
-	
-	void SetPortClipRegion( CGrafPtr port, RgnHandle clipRgn )
-	{
-		::SetPortClipRegion( port, clipRgn );
-	}
-	
-	void SetPortPenSize( CGrafPtr port, Point penSize )
-	{
-		::SetPortPenSize( port, penSize );
 	}
 	
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
