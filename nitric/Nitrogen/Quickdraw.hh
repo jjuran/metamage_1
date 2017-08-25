@@ -514,7 +514,7 @@ namespace Nitrogen
 	               const BitMap*  dstBits,
 	               const Rect&    srcRect,
 	               const Rect&    dstRect,
-	               TransferMode   mode,
+	               TransferMode   mode    = srcCopy,
 	               RgnHandle      maskRgn = NULL )
 	{
 		::CopyBits( srcBits, dstBits, &srcRect, &dstRect, mode, maskRgn );
