@@ -527,6 +527,36 @@ namespace Nitrogen
 		::CopyBits( srcBits, dstBits, &srcRect, &dstRect, mode, maskRgn );
 	}
 	
+	inline
+	void CopyBits( const CGrafPtr  src,
+	               const CGrafPtr  dst,
+	               const Rect&     srcRect,
+	               const Rect&     dstRect,
+	               TransferMode    mode    = srcCopy,
+	               RgnHandle       maskRgn = NULL )
+	{
+		CopyBits( GetPortBitMapForCopyBits( src ),
+		          GetPortBitMapForCopyBits( dst ),
+		          srcRect,
+		          dstRect,
+		          mode,
+		          maskRgn );
+	}
+	
+	inline
+	void CopyBits( const CGrafPtr  src,
+	               const CGrafPtr  dst,
+	               TransferMode    mode    = srcCopy,
+	               RgnHandle       maskRgn = NULL )
+	{
+		CopyBits( src,
+		          dst,
+		          GetPortBounds( src ),
+		          GetPortBounds( dst ),
+		          mode,
+		          maskRgn );
+	}
+	
 	// SeedFill
 	// CalcMask
 	
