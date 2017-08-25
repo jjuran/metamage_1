@@ -21,6 +21,9 @@
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/FindFolder.hh"
+
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
 #include "mac_file/system_file.hh"
@@ -66,8 +69,11 @@ namespace Genie
 	{
 		VRefNum_DirID result;
 		
-		if ( FindPreferencesFolder( kUserDomain,   result ) )  goto done;
-		if ( FindPreferencesFolder( kOnSystemDisk, result ) )  goto done;
+		if ( mac::sys::has_FindFolder() )
+		{
+			if ( FindPreferencesFolder( kUserDomain,   result ) )  goto done;
+			if ( FindPreferencesFolder( kOnSystemDisk, result ) )  goto done;
+		}
 		
 		return system_folder();
 		

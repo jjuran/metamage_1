@@ -13,6 +13,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/has/FindFolder.hh"
 
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
@@ -509,6 +510,11 @@ namespace Genie
 	                                          const plus::string&  name,
 	                                          const void*          args )
 	{
+		if ( ! mac::sys::has_FindFolder() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		N::FSVolumeRefNum key = GetKeyFromParent( *parent );
 		
 		return new vfs::node( parent, name, S_IFLNK | 0777, &folder_link_methods );

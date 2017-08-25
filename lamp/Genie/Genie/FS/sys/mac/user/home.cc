@@ -20,6 +20,7 @@
 
 // mac-sys-utils
 #include "mac_sys/get_user_home.hh"
+#include "mac_sys/has/FindFolder.hh"
 
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
@@ -44,6 +45,7 @@ namespace Genie
 	namespace N = Nitrogen;
 	
 	using mac::types::VRefNum_DirID;
+	using mac::sys::has_FindFolder;
 	
 	
 	static inline
@@ -64,7 +66,7 @@ namespace Genie
 	{
 		VRefNum_DirID result;
 		
-		if ( FindUsersFolder( vRefNum, result ) )
+		if ( has_FindFolder()  &&  FindUsersFolder( vRefNum, result ) )
 		{
 			return result;
 		}
