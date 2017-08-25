@@ -26,9 +26,10 @@ namespace vfs
 	{
 		FSSpec fsspec = FSSpec_from_node( file );
 		
+		OSErr err;
 		FInfo info;
 		
-		OSErr err = ::FSpGetFInfo( &fsspec, &info );
+		err = HGetFInfo( fsspec.vRefNum, fsspec.parID, fsspec.name, &info );
 		
 		if ( err != noErr )
 		{
