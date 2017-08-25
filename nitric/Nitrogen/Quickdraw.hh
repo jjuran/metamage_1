@@ -510,6 +510,13 @@ namespace Nitrogen
 	nucleus::owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv );
 	
 	inline
+	Rect GetPortBounds( CGrafPtr port )
+	{
+		Rect bounds;
+		return *( ::GetPortBounds( port, &bounds ) );
+	}
+	
+	inline
 	void CopyBits( const BitMap*  srcBits,
 	               const BitMap*  dstBits,
 	               const Rect&    srcRect,
@@ -784,13 +791,6 @@ namespace Nitrogen
 	// ...
 	
 	using ::GetPortBitMapForCopyBits;
-	
-	inline
-	Rect GetPortBounds( CGrafPtr port )
-	{
-		Rect bounds;
-		return *( ::GetPortBounds( port, &bounds ) );
-	}
 	
 	inline
 	RGBColor GetPortForeColor( CGrafPtr port )
