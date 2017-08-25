@@ -15,6 +15,7 @@
 #include "ClassicToolbox/MacWindows.hh"
 
 // Nitrogen
+#include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/Quickdraw.hh"
 
 // Portage
@@ -71,7 +72,38 @@ namespace Vertice
 		N::CopyBits( src, thePort );
 	}
 	
-	void PortView::Draw( const Rect& bounds, bool erasing )
+	static
+	n::owned< CGImageRef > CGImage_from_GWorld( CGrafPtr gworld )
+	{
+		n::owned< CGImageRef > result;
+		
+		PixMapHandle pix = ::GetPortPixMap( gworld );
+		
+		const Rect  bounds = ( *pix )->bounds;
+		::Ptr       base   = ( *pix )->baseAddr;
+		unsigned    stride = ( *pix )->rowBytes & 0x3fff;
+		
+		const size_t width  = bounds.right - bounds.left;
+		const size_t height = bounds.bottom - bounds.top;
+		
+		const size_t size = height * stride;
+		
+		n::owned< CGDataProviderRef > provider;
+		provider = N::CGDataProviderCreateWithData( base, size, NULL, NULL );
+		
+		static CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+		
+		return N::CGImageCreate( width,
+		                         height,
+		                         8,
+		                         32,
+		                         stride,
+		                         colorSpace,
+		                         kCGImageAlphaNoneSkipFirst,
+		                         provider );
+	}
+	
+	void PortView::Render()
 	{
 		if ( itsAnaglyphMode )
 		{
@@ -84,7 +116,80 @@ namespace Vertice
 			render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		}
 		
+		Derive();
+	}
+	
+	void PortView::Derive() const
+	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		itsImage = CGImage_from_GWorld( itsGWorld );
+		
+	#endif
+	}
+	
+	void PortView::Update() const
+	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		OSStatus err;
+		
+		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		
+		ControlRef content;
+		err = GetRootControl( window, &content );
+		
+		if ( HIViewIsCompositingEnabled( content ) )
+		{
+			err = HIViewSetNeedsDisplay( content, true );
+			return;
+		}
+		
+	#endif
+		
 		blit_to_thePort( itsGWorld );
+	}
+	
+	void PortView::Draw( const Rect& bounds, bool erasing )
+	{
+		Update();
+	}
+	
+	void PortView::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+	#ifdef MAC_OS_X_VERSION_10_2
+		
+		if ( itsImage.get() == NULL )
+		{
+			return;
+		}
+		
+		OSStatus err;
+		
+		err = HIViewDrawCGImage( context, &bounds, itsImage );
+		
+	#endif
+	}
+	
+	static
+	n::owned< GWorldPtr > new_GWorld( Rect bounds )
+	{
+	#ifdef MAC_OS_X_VERSION_10_7
+		
+		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		
+		CGFloat factor = HIWindowGetBackingScaleFactor( window );
+		
+		bounds.right *= factor;
+		bounds.bottom *= factor;
+		
+	#endif
+		
+		n::owned< GWorldPtr > gworld = N::NewGWorld( 32, bounds );
+		
+		N::LockPixels( N::GetGWorldPixMap( gworld ) );
+		
+		return gworld;
 	}
 	
 	void PortView::DrawAnaglyphic()
@@ -95,9 +200,7 @@ namespace Vertice
 		
 		double eyeRadius = 0.05;  // distance from eye to bridge of nose
 		
-		nucleus::owned< GWorldPtr > altGWorld = N::NewGWorld( 32, itsBounds );
-		
-		N::LockPixels( N::GetGWorldPixMap( altGWorld ) );
+		nucleus::owned< GWorldPtr > altGWorld = new_GWorld( itsBounds );
 		
 		
 		target.ContextTranslate( -eyeRadius, 0, 0 );
@@ -122,8 +225,10 @@ namespace Vertice
 		::Ptr baseL = pixL[0]->baseAddr;
 		::Ptr baseR = pixR[0]->baseAddr;
 		
-		unsigned width  = itsBounds.right - itsBounds.left;
-		unsigned height = itsBounds.bottom - itsBounds.top;
+		const Rect bounds = pixL[0]->bounds;
+		
+		unsigned width  = bounds.right - bounds.left;
+		unsigned height = bounds.bottom - bounds.top;
 		
 		unsigned stride = pixL[0]->rowBytes & 0x3fff;
 		
@@ -142,7 +247,8 @@ namespace Vertice
 	{
 		render_into_GWorld( itsFrame.Models(), &trace_onto_surface, itsGWorld );
 		
-		blit_to_thePort( itsGWorld );
+		Derive();
+		Update();
 	}
 	
 	bool PortView::MouseDown( const EventRecord& event )
@@ -166,7 +272,8 @@ namespace Vertice
 		
 		render_into_GWorld( itsFrame.Models(), &paint_onto_surface, itsGWorld );
 		
-		blit_to_thePort( itsGWorld );
+		Derive();
+		Update();
 		
 		return true;
 	}
@@ -326,7 +433,8 @@ namespace Vertice
 		
 		itsPort.SendCameraCommand( itsSelectedContext, cmd );
 		
-		Draw( Rect(), true );
+		Render();
+		Update();
 		
 		return true;
 	}
@@ -335,9 +443,9 @@ namespace Vertice
 	{
 		itsBounds = bounds;
 		
-		itsGWorld = N::NewGWorld( 32, itsBounds );
+		itsGWorld = new_GWorld( itsBounds );
 		
-		N::LockPixels( N::GetGWorldPixMap( itsGWorld ) );
+		Render();
 	}
 	
 }
