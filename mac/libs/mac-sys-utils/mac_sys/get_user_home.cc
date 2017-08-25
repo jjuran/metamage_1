@@ -20,6 +20,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/has/FindFolder.hh"
 
 
 namespace mac {
@@ -57,7 +58,7 @@ namespace sys {
 	{
 		VRefNum_DirID result;
 		
-		if ( FindCurrentUserFolder( result ) )
+		if ( has_FindFolder()  &&  FindCurrentUserFolder( result ) )
 		{
 			return result;
 		}
