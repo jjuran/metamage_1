@@ -48,22 +48,6 @@ namespace Nitrogen
 #endif
 	
 	
-	GrafPtr GetPort()
-	{
-		::GrafPtr port;
-		::GetPort( &port );
-		
-		return port;
-	}
-	
-	CGrafPtr QDSwapPort( CGrafPtr newPort )
-	{
-		CGrafPtr oldPort;
-		(void) QDSwapPort( newPort, oldPort );
-		
-		return oldPort;
-	}
-	
 	nucleus::owned< RgnHandle > GetClip()
 	{
 		nucleus::owned< RgnHandle > result = NewRgn();
@@ -75,14 +59,6 @@ namespace Nitrogen
 	void MacSetCursor( Mac::ResID id )
 	{
 		MacSetCursor( MacGetCursor( id ) );
-	}
-	
-	PenState GetPenState()
-	{
-		PenState penState;
-		::GetPenState( &penState );
-		
-		return penState;
 	}
 	
 	Rect MacOffsetRect( const Rect& r, short dh, short dv )
@@ -109,15 +85,7 @@ namespace Nitrogen
 		return result;
 	}
 	
-	Rect MacUnionRect( const Rect& a, const Rect& b )
-	{
-		Rect result;
-		::MacUnionRect( &a, &b, &result );
-		
-		return result;
-	}
-	
-	nucleus::owned< RgnHandle > NewRgn(void)
+	nucleus::owned< RgnHandle > NewRgn()
 	{
 		RgnHandle result = ::NewRgn();
 		
@@ -144,13 +112,6 @@ namespace Nitrogen
 		::MacCopyRgn( srcRgn, result );
 		
 		return result;
-	}
-	
-	RgnHandle RectRgn( RgnHandle region, const Rect& rect )
-	{
-		::RectRgn( region, &rect );
-		
-		return region;
 	}
 	
 	nucleus::owned< RgnHandle > RectRgn( const Rect& rect )
@@ -193,11 +154,6 @@ namespace Nitrogen
 		return result;
 	}
 	
-	void ScrollRect( const Rect& r, short dh, short dv, RgnHandle updateRgn )
-	{
-		::ScrollRect( &r, dh, dv, updateRgn );
-	}
-	
 	nucleus::owned< RgnHandle > ScrollRect( const Rect& r, short dh, short dv )
 	{
 		nucleus::owned< RgnHandle > region = NewRgn();
@@ -206,34 +162,10 @@ namespace Nitrogen
 		return region;
 	}
 	
-	void CopyBits( const BitMap*  srcBits,
-	               const BitMap*  dstBits,
-	               const Rect&    srcRect,
-	               const Rect&    dstRect,
-	               TransferMode   mode,
-	               RgnHandle      maskRgn )
-	{
-		::CopyBits( srcBits, dstBits, &srcRect, &dstRect, mode, maskRgn );
-	}
-	
-	Point LocalToGlobal( Point point )
-	{
-		::LocalToGlobal( &point );
-		
-		return point;
-	}
-	
 	Rect LocalToGlobal( const Rect& rect )
 	{
 		return MacSetRect( LocalToGlobal( SetPt( rect.left,  rect.top    ) ),
 		                   LocalToGlobal( SetPt( rect.right, rect.bottom ) ) );
-	}
-	
-	Point GlobalToLocal( Point point )
-	{
-		::GlobalToLocal( &point );
-		
-		return point;
 	}
 	
 	Rect GlobalToLocal( const Rect& rect )
@@ -252,30 +184,6 @@ namespace Nitrogen
 	{
 		return SetPt( a.h - b.h,
 		              a.v - b.v );
-	}
-	
-	RGBColor GetCPixel( short h, short v )
-	{
-		RGBColor result;
-		::GetCPixel( h, v, &result );
-		
-		return result;
-	}
-	
-	RGBColor GetForeColor()
-	{
-		RGBColor result;
-		::GetForeColor( &result );
-		
-		return result;
-	}
-	
-	RGBColor GetBackColor()
-	{
-		RGBColor result;
-		::GetBackColor( &result );
-		
-		return result;
 	}
 	
 	nucleus::owned< CTabHandle > GetCTable( short ctabID )
@@ -300,33 +208,6 @@ namespace Nitrogen
 		return CheckResource( ::MacGetCursor( id ) );
 	}
 	
-	Rect GetPortBounds( CGrafPtr port )
-	{
-		Rect bounds;
-		return *( ::GetPortBounds( port, &bounds ) );
-	}
-	
-	RGBColor GetPortForeColor( CGrafPtr port )
-	{
-		RGBColor result;
-		::GetPortForeColor( port, &result );
-		
-		return result;
-	}
-	
-	RGBColor GetPortBackColor( CGrafPtr port )
-	{
-		RGBColor result;
-		::GetPortBackColor( port, &result );
-		
-		return result;
-	}
-	
-	RgnHandle GetPortVisibleRegion( CGrafPtr port, RgnHandle region )
-	{
-		return ::GetPortVisibleRegion( port, region );
-	}
-	
 	nucleus::owned< RgnHandle > GetPortVisibleRegion( CGrafPtr port )
 	{
 		nucleus::owned< RgnHandle > region = NewRgn();
@@ -335,30 +216,12 @@ namespace Nitrogen
 		return region;
 	}
 	
-	RgnHandle GetPortClipRegion( CGrafPtr port, RgnHandle region )
-	{
-		return ::GetPortClipRegion( port, region );
-	}
-	
 	nucleus::owned< RgnHandle > GetPortClipRegion( CGrafPtr port )
 	{
 		nucleus::owned< RgnHandle > region = NewRgn();
 		Nitrogen::GetPortClipRegion( port, region );
 		
 		return region;
-	}
-	
-	Point GetPortPenSize( CGrafPtr port )
-	{
-		Point result;
-		(void)::GetPortPenSize( port, &result );
-		
-		return result;
-	}
-	
-	bool IsPortColor( CGrafPtr port )
-	{
-		return ::IsPortColor( port );
 	}
 	
 #if ACCESSOR_CALLS_ARE_FUNCTIONS
