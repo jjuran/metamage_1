@@ -64,17 +64,11 @@ namespace Vertice
 	{
 		CGrafPtr thePort = N::GetQDGlobalsThePort();
 		
-		const Rect bounds = N::GetPortBounds( thePort );
-		
 		PixMapHandle pix = N::GetGWorldPixMap( thePort );
 		n::saved< N::Pixels_State > savedPixelsState( pix );
 		N::LockPixels( pix );
 		
-		N::CopyBits( N::GetPortBitMapForCopyBits( src ),
-		             N::GetPortBitMapForCopyBits( thePort ),
-		             N::GetPortBounds( src ),
-		             bounds,
-		             N::srcCopy );
+		N::CopyBits( src, thePort );
 	}
 	
 	void PortView::Draw( const Rect& bounds, bool erasing )
