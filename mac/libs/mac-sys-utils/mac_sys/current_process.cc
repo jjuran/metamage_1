@@ -16,31 +16,11 @@
 #endif
 
 // mac-sys-utils
-#include "mac_sys/gestalt.hh"
+#include "mac_sys/has/ProcessManager.hh"
 
 
 namespace mac {
 namespace sys {
-	
-	static inline
-	bool gestalt_LaunchCanReturn()
-	{
-		// Non-68K Macs always have the Process Manager.
-		
-		if ( ! TARGET_CPU_68K )
-		{
-			return true;
-		}
-		
-		enum
-		{
-			gestaltOSAttr          = 'os  ',
-			
-			gestaltLaunchCanReturn = 1,
-		};
-		
-		return gestalt_bit_set( gestaltOSAttr, gestaltLaunchCanReturn );
-	}
 	
 	/*
 		We can call Process Manager routines in System 7, or in System 6
@@ -54,8 +34,6 @@ namespace sys {
 		a reliable indicator of a multi-process-capable system.
 	*/
 	
-	const bool multiproc_available = gestalt_LaunchCanReturn();
-	
 	struct ProcessSerialNumber
 	{
 		::ProcessSerialNumber psn;
@@ -63,8 +41,9 @@ namespace sys {
 		ProcessSerialNumber()
 		{
 			// Don't invoke the _OSDispatch trap if it's not available.
+			// (Non-68K Macs always have the Process Manager.)
 			
-			if ( multiproc_available )
+			if ( ! TARGET_CPU_68K  ||  has_ProcessManager() )
 			{
 				::GetCurrentProcess( &psn );
 			}
