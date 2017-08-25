@@ -935,67 +935,6 @@ namespace Nitrogen
 			void set( param_type region ) const  { SetClip( region ); }
 	};
 	
-	class Pen_State
-	{
-		public:
-			typedef PenState         value_type;
-			typedef PenState const&  param_type;
-			
-			value_type get() const              { return GetPenState(); }
-			void set( param_type state ) const  { SetPenState( state ); }
-	};
-	
-	class RGBForeColor_Setting
-	{
-		public:
-			typedef RGBColor         value_type;
-			typedef RGBColor const&  param_type;
-			
-			value_type get() const              { return GetForeColor(); }
-			void set( param_type color ) const  { RGBForeColor( color ); }
-	};
-	
-	class RGBBackColor_Setting
-	{
-		public:
-			typedef RGBColor         value_type;
-			typedef RGBColor const&  param_type;
-			
-			value_type get() const              { return GetBackColor(); }
-			void set( param_type color ) const  { RGBBackColor( color ); }
-	};
-	
-	class Port_ClipRegion
-	{
-		private:
-			CGrafPtr port;
-			
-		public:
-			typedef nucleus::owned< RgnHandle >  value_type;
-			typedef                 RgnHandle    param_type;
-			
-			Port_ClipRegion( CGrafPtr port )     : port( port ) {}
-			
-			value_type get() const  { return GetPortClipRegion( port ); }
-			
-			void set( RgnHandle rgn ) const  { SetPortClipRegion( port, rgn ); }
-	};
-	
-	class Port_PenSize
-	{
-		private:
-			CGrafPtr port;
-      
-		public:
-			typedef Point value_type;
-			typedef Point param_type;
-			
-			Port_PenSize( CGrafPtr port )      : port( port ) {}
-			
-			Point get() const             { return GetPortPenSize( port ); }
-			void set( Point size ) const  { SetPortPenSize( port, size );  }
-	};
-	
 }
 
 namespace nucleus
