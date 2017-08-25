@@ -31,6 +31,7 @@
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSTree_FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
@@ -227,7 +228,7 @@ namespace Genie
 	
 	static bool is_text_file( const FSSpec& file )
 	{
-		n::owned< N::FSFileRefNum > in = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > in = OpenDataFork( file, N::fsRdPerm );
 		
 		const size_t buffer_size = TARGET_API_MAC_CARBON ? 4026 : 512;
 		

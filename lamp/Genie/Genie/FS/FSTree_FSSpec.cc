@@ -98,6 +98,7 @@
 #include "Genie/Kernel/native_syscalls.hh"
 #include "Genie/Process/AsyncYield.hh"
 #include "Genie/Utilities/AsyncIO.hh"
+#include "Genie/Utilities/OpenDataFork.hh"
 
 
 namespace Genie
@@ -181,7 +182,7 @@ namespace Genie
 	{
 		plus::string result;
 		
-		n::owned< N::FSFileRefNum > input = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > input = OpenDataFork( file, N::fsRdPerm );
 		
 		const std::size_t size = N::GetEOF( input );
 		
@@ -194,7 +195,7 @@ namespace Genie
 	
 	static void SpewFile( const FSSpec& file, const plus::string& contents )
 	{
-		n::owned< N::FSFileRefNum > output = N::FSpOpenDF( file, N::fsWrPerm );
+		n::owned< N::FSFileRefNum > output = OpenDataFork( file, N::fsWrPerm );
 		
 		N::SetEOF( output, 0 );
 		
@@ -973,7 +974,7 @@ namespace Genie
 		
 		vfs::filehandle_ptr opened = OpenMacFileHandle( extra.fsspec,
 		                                                flags,
-		                                                async ? &Genie::FSpOpenDF : N::FSpOpenDF,
+		                                                async ? &Genie::FSpOpenDF : &OpenDataFork,
 		                                                &FSTreeFromFSSpec );
 		
 		if ( created )

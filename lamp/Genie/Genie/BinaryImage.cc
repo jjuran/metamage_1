@@ -31,6 +31,9 @@
 // poseven
 #include "poseven/types/errno_t.hh"
 
+// Genie
+#include "Genie/Utilities/OpenDataFork.hh"
+
 
 namespace Genie
 {
@@ -103,7 +106,7 @@ namespace Genie
 	
 	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
 	{
-		n::owned< N::FSFileRefNum > refNum = N::FSpOpenDF( file, N::fsRdPerm );
+		n::owned< N::FSFileRefNum > refNum = OpenDataFork( file, N::fsRdPerm );
 		
 		if ( length == kCFragGoesToEOF )
 		{
