@@ -440,8 +440,8 @@ namespace Genie
 		if ( const bool locked = ::LockPixels( pix ) )
 		{
 			// Copy to dest
-			N::CopyBits( N::GetPortBitMapForCopyBits( gworld                   ),
-			             N::GetPortBitMapForCopyBits( N::GetQDGlobalsThePort() ),
+			N::CopyBits( gworld,
+			             N::GetQDGlobalsThePort(),
 			             N::GetPortBounds( gworld ),
 			             bounds,
 			             mode );

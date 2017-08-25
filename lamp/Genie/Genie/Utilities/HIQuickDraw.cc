@@ -344,11 +344,7 @@ namespace Genie
 			
 			if ( ::LockPixels( tmp ) &&  ::LockPixels( pix ) )
 			{
-				N::CopyBits( N::GetPortBitMapForCopyBits( gworld ),
-				             N::GetPortBitMapForCopyBits( native ),
-				             N::GetPortBounds( gworld ),
-				             N::GetPortBounds( native ),
-				             N::srcCopy );
+				N::CopyBits( gworld, native );
 				
 				::UnlockPixels( pix );
 				::UnlockPixels( tmp );
