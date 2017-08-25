@@ -5,14 +5,24 @@
 
 #include "Genie/FS/sys/mac/user/prefs.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FOLDERS__
+#include <Folders.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
 
-// Nitrogen
-#include "Nitrogen/Folders.hh"
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -26,23 +36,35 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
+	using mac::types::VRefNum_DirID;
 	
 	
-	static Mac::FSDirSpec GetPrefsFolder()
+	static inline
+	bool FindPreferencesFolder( short domain, VRefNum_DirID& result )
 	{
-		try
-		{
-			return N::FindFolder( N::kUserDomain,
-			                      N::kPreferencesFolderType,
-			                      false );
-		}
-		catch ( ... )
-		{
-			return N::FindFolder( N::kOnSystemDisk,
-			                      N::kPreferencesFolderType,
-			                      false );
-		}
+		OSErr err;
+		err = FindFolder( domain,
+		                  kPreferencesFolderType,
+		                  false,
+		                  &result.vRefNum,
+		                  &result.dirID );
+		
+		return err == noErr;
+	}
+	
+	static
+	VRefNum_DirID GetPrefsFolder()
+	{
+		VRefNum_DirID result;
+		
+		if ( FindPreferencesFolder( kUserDomain,   result ) )  goto done;
+		if ( FindPreferencesFolder( kOnSystemDisk, result ) )  goto done;
+		
+		Mac::ThrowOSStatus( fnfErr );
+		
+	done:
+		
+		return result;
 	}
 	
 	
