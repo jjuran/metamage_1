@@ -11,6 +11,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-sys-utils
+#include "mac_sys/has/FSSpec_calls.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -92,6 +95,11 @@ namespace Genie
 	
 	static bool ResFile_dir_exists( const FSSpec& file )
 	{
+		if ( ! mac::sys::has_FSSpec_calls() )
+		{
+			p7::throw_errno( ENOSYS );
+		}
+		
 		::ResFileRefNum refNum = ::FSpOpenResFile( &file, fsRdPerm );
 		
 		const bool exists = refNum >= 0;

@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <map>
 
+// mac-sys-utils
+#include "mac_sys/has/FSSpec_calls.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -241,6 +244,11 @@ namespace Genie
 	
 	static inline BinaryImage ReadImageFromFile( const FSSpec& file )
 	{
+		if ( ! mac::sys::has_FSSpec_calls() )
+		{
+			goto data_fork_only;
+		}
+		
 		try
 		{
 			n::owned< N::ResFileRefNum > resFile = N::FSpOpenResFile( file, N::fsRdPerm );
@@ -265,6 +273,8 @@ namespace Genie
 				throw;
 			}
 		}
+		
+	data_fork_only:
 		
 		return ReadProgramFromDataFork( file, 0, kCFragGoesToEOF );
 	}
