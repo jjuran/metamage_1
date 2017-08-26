@@ -8,6 +8,9 @@
 // mac-sys-utils
 #include "mac_sys/unit_table.hh"
 
+// mac-file-utils
+#include "mac_file/boot_volume.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -16,9 +19,6 @@
 
 // poseven
 #include "poseven/types/errno_t.hh"
-
-// Nitrogen
-#include "Nitrogen/Folders.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -34,18 +34,7 @@
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
 	namespace p7 = poseven;
-	
-	
-	static short find_boot_disk()
-	{
-		const Mac::FSDirSpec system_folder = N::FindFolder( N::kOnSystemDisk,
-		                                                    N::kSystemFolderType,
-		                                                    false );
-		
-		return system_folder.vRefNum;
-	}
 	
 	
 	static short find_ram_disk()
@@ -120,7 +109,7 @@ namespace Genie
 	{
 		{ "list", &New_FSTree_sys_mac_vol },
 		
-		{ "boot", &new_volume_link, (void*) &find_boot_disk },
+		{ "boot", &new_volume_link, (void*) &mac::file::boot_volume },
 		
 	#if !TARGET_API_MAC_CARBON
 		

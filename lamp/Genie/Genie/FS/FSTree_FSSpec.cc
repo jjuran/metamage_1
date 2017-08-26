@@ -17,11 +17,15 @@
 #include "MoreFiles/FileCopy.h"
 #include "MoreFiles/MoreFilesExtras.h"
 
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
+
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/volume_params.hh"
 
 // mac-file-utils
+#include "mac_file/boot_volume.hh"
 #include "mac_file/parent_directory.hh"
 
 // mac-app-utils
@@ -37,7 +41,6 @@
 // Nitrogen
 #include "Nitrogen/Aliases.hh"
 #include "Nitrogen/Files.hh"
-#include "Nitrogen/Folders.hh"
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
 
@@ -317,11 +320,9 @@ namespace Genie
 	static
 	VRefNum_DirID FindUsersDirectory()
 	{
-		N::FSDirSpec root = N::FindFolder( N::kOnSystemDisk,
-		                                   N::kSystemFolderType,
-		                                   kDontCreateFolder );
+		const short vRefNum = mac::file::boot_volume();
 		
-		root.dirID = Mac::fsRtDirID;
+		const VRefNum_DirID root = { vRefNum, fsRtDirID };
 		
 		FSSpec users = root / "\p" "Users";
 		
