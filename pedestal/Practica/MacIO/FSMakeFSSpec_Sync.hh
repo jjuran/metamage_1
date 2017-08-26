@@ -10,9 +10,6 @@
 #ifndef MAC_FILES_TYPES_FSDIRID_HH
 #include "Mac/Files/Types/FSDirID.hh"
 #endif
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
 #ifndef MAC_FILES_TYPES_FSVOLUMEREFNUM_HH
 #include "Mac/Files/Types/FSVolumeRefNum.hh"
 #endif
@@ -29,11 +26,13 @@ namespace MacIO
 	                     Mac::FSDirID          dirID,
 	                     const unsigned char  *name );
 	
-	template < class Policy >
-	inline FSSpec FSMakeFSSpec( const Mac::FSDirSpec&  dir,
-	                            const unsigned char*   name )
+	template < class Policy, class Dir >
+	inline FSSpec FSMakeFSSpec( const Dir&            dir,
+	                            const unsigned char*  name )
 	{
-		return FSMakeFSSpec< Policy >( dir.vRefNum, dir.dirID, name );
+		return FSMakeFSSpec< Policy >( Mac::FSVolumeRefNum( dir.vRefNum ),
+		                               Mac::FSDirID       ( dir.dirID   ),
+		                               name );
 	}
 	
 }
