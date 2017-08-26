@@ -30,6 +30,19 @@ namespace sys {
 	
 	
 	static inline
+	bool FindCurrentUserFolder( VRefNum_DirID& result )
+	{
+		OSErr err;
+		err = FindFolder( kOnAppropriateDisk,
+		                  kCurrentUserFolderType,
+		                  kDontCreateFolder,
+		                  &result.vRefNum,
+		                  &result.dirID );
+		
+		return err == noErr;
+	}
+	
+	static inline
 	MultipleUsersState** get_MultipleUsersState()
 	{
 		enum
@@ -44,24 +57,20 @@ namespace sys {
 	{
 		VRefNum_DirID result;
 		
-		OSErr err = ::FindFolder( kOnAppropriateDisk,
-		                          kCurrentUserFolderType,
-		                          kDontCreateFolder,
-		                          &result.vRefNum,
-		                          &result.dirID );
-		
-		if ( err != noErr )
+		if ( FindCurrentUserFolder( result ) )
 		{
-			if ( MultipleUsersState** handle = get_MultipleUsersState() )
+			return result;
+		}
+		
+		if ( MultipleUsersState** handle = get_MultipleUsersState() )
+		{
+			MultipleUsersState* state = *handle;
+			
+			const short version = state->giVersion;
+			
+			if ( version > 1 )
 			{
-				MultipleUsersState* state = *handle;
-				
-				const short version = state->giVersion;
-				
-				if ( version > 1 )
-				{
-					return (const VRefNum_DirID&) state->giDocsVRefNum;
-				}
+				return (const VRefNum_DirID&) state->giDocsVRefNum;
 			}
 		}
 		
