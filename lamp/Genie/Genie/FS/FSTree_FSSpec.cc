@@ -21,6 +21,9 @@
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/volume_params.hh"
 
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+
 // mac-app-utils
 #include "mac_app/create_alias.hh"
 
@@ -107,6 +110,9 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	using mac::types::VRefNum_DirID;
+	using mac::file::parent_directory;
 	
 	
 	namespace path_descent_operators
@@ -664,7 +670,7 @@ namespace Genie
 		{
 		}
 		
-		return FSTreeFromFSDirSpec( io::get_preceding_directory( extra.fsspec ) );
+		return FSTreeFromFSDirSpec( parent_directory( extra.fsspec ) );
 	}
 	
 	static ino_t hfs_inode( const vfs::node* that )
@@ -850,7 +856,7 @@ namespace Genie
 			return;
 		}
 		
-		N::FSDirSpec linkParent = io::get_preceding_directory( linkSpec );
+		VRefNum_DirID linkParent = parent_directory( linkSpec );
 		
 		try
 		{
