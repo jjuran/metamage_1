@@ -71,7 +71,7 @@ namespace Genie
 		
 		return OpenMacFileHandle( fileSpec,
 		                          flags,
-		                          &N::FSpOpenRF,
+		                          &N::HOpenRF,
 		                          &GetRsrcForkFSTree );
 	}
 	
