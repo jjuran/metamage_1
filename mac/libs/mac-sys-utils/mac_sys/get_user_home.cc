@@ -14,12 +14,12 @@
 #ifndef __FOLDERS__
 #include <Folders.h>
 #endif
-#ifndef __GESTALT__
-#include <Gestalt.h>
-#endif
 
 // mac-types
 #include "mac_types/MultipleUsersState.hh"
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
 
 
 namespace mac {
@@ -29,9 +29,20 @@ namespace sys {
 	using mac::types::MultipleUsersState;
 	
 	
+	static inline
+	MultipleUsersState** get_MultipleUsersState()
+	{
+		enum
+		{
+			gestaltMultipleUsersState = 'mfdr',
+		};
+		
+		return (MultipleUsersState**) gestalt( gestaltMultipleUsersState );
+	}
+	
 	mac::types::VRefNum_DirID get_user_home()
 	{
-		mac::types::VRefNum_DirID result = { 0 };
+		VRefNum_DirID result;
 		
 		OSErr err = ::FindFolder( kOnAppropriateDisk,
 		                          kCurrentUserFolderType,
@@ -41,11 +52,7 @@ namespace sys {
 		
 		if ( err != noErr )
 		{
-			MultipleUsersState** handle;
-			
-			err = ::Gestalt( gestaltMultipleUsersState, (SInt32*) &handle );
-			
-			if ( err == noErr )
+			if ( MultipleUsersState** handle = get_MultipleUsersState() )
 			{
 				MultipleUsersState* state = *handle;
 				
@@ -57,6 +64,9 @@ namespace sys {
 				}
 			}
 		}
+		
+		result.vRefNum = 0;
+		result.dirID   = 0;
 		
 		return result;
 	}
