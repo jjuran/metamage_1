@@ -10,18 +10,19 @@
 // mac-sys-utils
 #include "mac_sys/get_process_file.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
 
 
 namespace Genie
 {
 	
-	Mac::FSDirSpec GetAppFolder()
+	using mac::file::parent_directory;
+	
+	
+	mac::types::VRefNum_DirID GetAppFolder()
 	{
-		const FSSpec appFile = mac::sys::get_process_file();
-		
-		return io::get_preceding_directory( appFile );
+		return parent_directory( mac::sys::get_process_file() );
 	}
 	
 }

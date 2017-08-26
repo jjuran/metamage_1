@@ -38,7 +38,7 @@ namespace Genie
 	};
 	
 	
-	MacDirHandle::MacDirHandle( const Mac::FSDirSpec& dir )
+	MacDirHandle::MacDirHandle( const mac::types::VRefNum_DirID& dir )
 	:
 		vfs::dir_handle( macdir_methods ),
 		its_dir_spec( dir )

@@ -118,22 +118,32 @@ namespace Genie
 	namespace path_descent_operators
 	{
 		
-		static inline FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
+		static inline
+		FSSpec operator/( const N::FSDirSpec& dir, const unsigned char* name )
 		{
 			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
 		}
 		
-		static inline FSSpec operator/( const FSSpec& dir, const unsigned char* name )
+		static inline
+		FSSpec operator/( const VRefNum_DirID& dir, const unsigned char* name )
+		{
+			return MacIO::FSMakeFSSpec< FNF_Returns >( dir, name );
+		}
+		
+		static inline
+		FSSpec operator/( const FSSpec& dir, const unsigned char* name )
 		{
 			return Dir_From_FSSpec( dir ) / name;
 		}
 		
-		static inline FSSpec operator/( const N::FSDirSpec& dir, const plus::string& name )
+		static inline
+		FSSpec operator/( const VRefNum_DirID& dir, const plus::string& name )
 		{
 			return dir / N::Str63( name );
 		}
 		
-		static inline FSSpec operator/( const FSSpec& dir, const plus::string& name )
+		static inline
+		FSSpec operator/( const FSSpec& dir, const plus::string& name )
 		{
 			return dir / N::Str63( name );
 		}
@@ -258,7 +268,8 @@ namespace Genie
 	
 	static const unsigned char* const_root_directory_name = "\p" "/";
 	
-	static N::FSDirSpec FindJDirectory()
+	static
+	VRefNum_DirID FindJDirectory()
 	{
 		CInfoPBRec cInfo = { 0 };
 		
@@ -296,14 +307,15 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	const Mac::FSDirSpec& root_DirSpec()
+	const VRefNum_DirID& root_DirSpec()
 	{
-		static N::FSDirSpec j = FindJDirectory();
+		static VRefNum_DirID j = FindJDirectory();
 		
 		return j;
 	}
 	
-	static N::FSDirSpec FindUsersDirectory()
+	static
+	VRefNum_DirID FindUsersDirectory()
 	{
 		N::FSDirSpec root = N::FindFolder( N::kOnSystemDisk,
 		                                   N::kSystemFolderType,
@@ -316,9 +328,10 @@ namespace Genie
 		return Dir_From_FSSpec( users );
 	}
 	
-	static const N::FSDirSpec& GetUsersDirectory()
+	static
+	const VRefNum_DirID& GetUsersDirectory()
 	{
-		static N::FSDirSpec users = FindUsersDirectory();
+		static VRefNum_DirID users = FindUsersDirectory();
 		
 		return users;
 	}
@@ -652,7 +665,7 @@ namespace Genie
 			return Get_sys_mac_vol_N( N::FSVolumeRefNum( extra.fsspec.vRefNum ) );
 		}
 		
-		const Mac::FSDirSpec& root = root_DirSpec();
+		const VRefNum_DirID& root = root_DirSpec();
 		
 		if ( extra.fsspec.vRefNum == root.vRefNum  &&  extra.fsspec.parID == root.dirID )
 		{
@@ -1010,7 +1023,7 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		const N::FSDirSpec dir = Dir_From_CInfo( extra.cinfo );
+		const VRefNum_DirID dir = Dir_From_CInfo( extra.cinfo );
 		
 		return new MacDirHandle( dir );
 	}
@@ -1047,9 +1060,10 @@ namespace Genie
 		return fInfo.fdType == 'TEXT'  &&  fInfo.fdCreator == 'MACS';
 	}
 	
-	static vfs::node_ptr FSTreePtr_From_Lookup( const N::FSDirSpec&  dir,
-	                                            const plus::string&  name,
-	                                            const vfs::node*     parent )
+	static
+	vfs::node_ptr FSTreePtr_From_Lookup( const VRefNum_DirID&  dir,
+	                                     const plus::string&   name,
+	                                     const vfs::node*      parent )
 	{
 		N::Str31 macName = hashed_long_name( slashes_from_colons( plus::mac_from_utf8( name ) ) );
 		
@@ -1098,7 +1112,7 @@ namespace Genie
 		
 		Mac::ThrowOSStatus( extra.cinfo.dirInfo.ioResult );
 		
-		N::FSDirSpec dir = Dir_From_CInfo( extra.cinfo );
+		VRefNum_DirID dir = Dir_From_CInfo( extra.cinfo );
 		
 		return FSTreePtr_From_Lookup( dir, name, parent );
 	}

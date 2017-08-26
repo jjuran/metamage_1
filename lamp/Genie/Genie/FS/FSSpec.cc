@@ -6,7 +6,6 @@
 #include "Genie/FS/FSSpec.hh"
 
 // Nitrogen
-#include "Mac/Files/Types/FSDirID.hh"
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 // MacIO
@@ -18,8 +17,10 @@ namespace Genie
 	
 	namespace n = nucleus;
 	
+	using mac::types::VRefNum_DirID;
 	
-	Mac::FSDirSpec Dir_From_CInfo( const CInfoPBRec& cInfo )
+	
+	VRefNum_DirID Dir_From_CInfo( const CInfoPBRec& cInfo )
 	{
 		const bool is_dir = cInfo.hFileInfo.ioFlAttrib & kioFlAttribDirMask;
 		
@@ -29,13 +30,15 @@ namespace Genie
 			Mac::ThrowOSStatus( errFSNotAFolder );
 		}
 		
-		const Mac::FSVolumeRefNum vRefNum = Mac::FSVolumeRefNum( cInfo.dirInfo.ioVRefNum );
-		const Mac::FSDirID        dirID   = Mac::FSDirID       ( cInfo.dirInfo.ioDrDirID );
+		const short vRefNum = cInfo.dirInfo.ioVRefNum;
+		const long  dirID   = cInfo.dirInfo.ioDrDirID;
 		
-		return n::make< Mac::FSDirSpec >( vRefNum, dirID );
+		const VRefNum_DirID result = { vRefNum, dirID };
+		
+		return result;
 	}
 	
-	Mac::FSDirSpec Dir_From_FSSpec( const FSSpec& dir )
+	VRefNum_DirID Dir_From_FSSpec( const FSSpec& dir )
 	{
 		CInfoPBRec cInfo = { 0 };
 		

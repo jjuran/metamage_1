@@ -8,16 +8,14 @@
 #ifndef GENIE_UTILITIES_GETAPPFOLDER_HH
 #define GENIE_UTILITIES_GETAPPFOLDER_HH
 
-// Nitrogen
-#ifndef MAC_FILES_TYPES_FSDIRSPEC_HH
-#include "Mac/Files/Types/FSDirSpec.hh"
-#endif
+// mac-types
+#include "mac_types/VRefNum_DirID.hh"
 
 
 namespace Genie
 {
 	
-	Mac::FSDirSpec GetAppFolder();
+	mac::types::VRefNum_DirID GetAppFolder();
 	
 }
 

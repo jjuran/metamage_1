@@ -5,20 +5,26 @@
 
 #include "Genie/FS/sys/mac/user/home.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __FOLDERS__
+#include <Folders.h>
+#endif
+
 // POSIX
 #include <sys/stat.h>
 
-// sys-mac-utils
+// mac-sys-utils
 #include "mac_sys/get_user_home.hh"
 
-// Nitrogen
-#include "Nitrogen/Folders.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
 
 // MacIO
-#include "MacIO/FSMakeFSSpec_Sync.hh"
 #include "MacIO/GetCatInfo_Sync.hh"
 
 // vfs
@@ -40,14 +46,27 @@ namespace Genie
 	using mac::types::VRefNum_DirID;
 	
 	
-	static N::FSDirSpec GetUsersFolder( N::FSVolumeRefNum vRefNum )
+	static inline
+	bool FindUsersFolder( short vRefNum, VRefNum_DirID& result )
 	{
-		try
+		OSErr err;
+		err = FindFolder( vRefNum,
+		                  kUsersFolderType,
+		                  false,
+		                  &result.vRefNum,
+		                  &result.dirID );
+		
+		return err == noErr;
+	}
+	
+	static
+	VRefNum_DirID GetUsersFolder( FSVolumeRefNum vRefNum )
+	{
+		VRefNum_DirID result;
+		
+		if ( FindUsersFolder( vRefNum, result ) )
 		{
-			return N::FindFolder( vRefNum, N::kUsersFolderType, false );
-		}
-		catch ( ... )
-		{
+			return result;
 		}
 		
 		CInfoPBRec cInfo = { 0 };
@@ -59,20 +78,26 @@ namespace Genie
 		return Dir_From_CInfo( cInfo );
 	}
 	
-	static N::FSDirSpec FindUserHomeFolder()
+	static
+	VRefNum_DirID FindUserHomeFolder()
 	{
-		N::FSDirSpec appFolder = GetAppFolder();
+		VRefNum_DirID appFolder = GetAppFolder();
 		
-		N::FSDirSpec users = GetUsersFolder( appFolder.vRefNum );
+		VRefNum_DirID users = GetUsersFolder( appFolder.vRefNum );
 		
-		N::FSDirSpec parent = appFolder;
-		N::FSDirSpec child;
+		VRefNum_DirID parent = appFolder;
+		VRefNum_DirID child;
 		
 		do
 		{
 			child = parent;
 			
-			parent = io::get_preceding_directory( MacIO::FSMakeFSSpec< FNF_Throws >( child, NULL ) );
+			parent = mac::file::parent_directory( child );
+			
+			if ( parent.vRefNum == 0 )
+			{
+				Mac::ThrowOSStatus( parent.dirID );
+			}
 		}
 		while ( parent != users );
 		
@@ -88,11 +113,7 @@ namespace Genie
 			return folder;
 		}
 		
-		N::FSDirSpec found = FindUserHomeFolder();
-		
-		VRefNum_DirID result = { found.vRefNum, found.dirID };
-		
-		return result;
+		return FindUserHomeFolder();
 	}
 	
 	
