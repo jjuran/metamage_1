@@ -14,6 +14,9 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -29,9 +32,6 @@
 // Nitrogen
 #include "Nitrogen/Files.hh"
 #include "Nitrogen/Folders.hh"
-
-// MacIO
-#include "MacIO/FSMakeFSSpec_Sync.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -60,7 +60,6 @@
 #include "Genie/FS/sys/mac/vol/list/N/dt.hh"
 #include "Genie/FS/sys/mac/vol/list/N/parms.hh"
 #include "Genie/FS/utf8_text_property.hh"
-#include "Genie/Utilities/AsyncIO.hh"
 #include "Genie/Utilities/canonical_positive_integer.hh"
 
 
@@ -147,21 +146,17 @@ namespace Genie
 	
 	static bool is_valid_VolumeRefNum( N::FSVolumeRefNum key )
 	{
-		try
+		using mac::types::VRefNum_DirID;
+		
+		VRefNum_DirID root   = { key, fsRtDirID };
+		VRefNum_DirID parent = mac::file::parent_directory( root );
+		
+		if ( parent.vRefNum == 0  &&  parent.dirID != nsvErr )
 		{
-			(void) MacIO::FSMakeFSSpec< FNF_Throws >( key, N::fsRtDirID, NULL );
-		}
-		catch ( const Mac::OSStatus& err )
-		{
-			if ( err != nsvErr )
-			{
-				throw;
-			}
-			
-			return false;
+			Mac::ThrowOSStatus( parent.dirID );
 		}
 		
-		return true;
+		return parent.vRefNum != 0;
 	}
 	
 	struct valid_name_of_vol_number
