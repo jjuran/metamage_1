@@ -8,8 +8,8 @@
 // POSIX
 #include <sys/stat.h>
 
-// mac-sys-utils
-#include "mac_sys/get_process_file.hh"
+// mac-file-utils
+#include "mac_file/program_file.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -25,7 +25,7 @@ namespace Genie
 	
 	static vfs::node_ptr app_exe_resolve( const vfs::node* that )
 	{
-		return FSTreeFromFSSpec( mac::sys::get_process_file() );
+		return FSTreeFromFSSpec( mac::file::program_file() );
 	}
 	
 	static const vfs::link_method_set app_exe_link_methods =
