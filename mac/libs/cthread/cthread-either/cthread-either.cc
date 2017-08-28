@@ -14,23 +14,15 @@
 #endif
 
 // mac-sys-utils
-#include "mac_sys/gestalt.hh"
+#include "mac_sys/has/ThreadManager.hh"
 
-
-static inline
-bool has_gestaltThreadMgrAttr()
-{
-	const unsigned long gestaltThreadMgrAttr = 'thds';
-	
-	return mac::sys::gestalt( gestaltThreadMgrAttr );
-}
 
 #if CTHREAD_EITHER
 
 namespace cthread {
 namespace either  {
 	
-	static const bool has_ThreadManager = has_gestaltThreadMgrAttr();
+	static const bool has_ThreadManager = mac::sys::has_ThreadManager();
 	
 	thread_id create_thread( parameter_block& pb, unsigned stack_size )
 	{
