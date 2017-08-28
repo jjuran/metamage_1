@@ -10,6 +10,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 #include "gear/parse_decimal.hh"
@@ -196,6 +199,16 @@ namespace Genie
 	                                             const plus::string&  name,
 	                                             const void*          args )
 	{
+		enum
+		{
+			gestaltCRMAttr = 'crm ',
+		};
+		
+		if ( ! mac::sys::gestalt( gestaltCRMAttr ) )
+		{
+			Mac::ThrowOSStatus( fnfErr );
+		}
+		
 		return vfs::new_basic_directory( parent, name, serial_lookup, serial_iterate );
 	}
 	
