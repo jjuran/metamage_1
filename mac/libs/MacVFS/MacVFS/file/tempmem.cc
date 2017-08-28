@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 
 // mac-sys-utils
+#include "mac_sys/gestalt.hh"
 #include "mac_sys/temp_free_mem.hh"
 
 // poseven
@@ -84,6 +85,20 @@ namespace vfs
 	                              const plus::string&  name,
 	                              const void*          args )
 	{
+		using mac::sys::gestalt_bit_set;
+		
+		enum
+		{
+			gestaltOSAttr         = 'os  ',
+			
+			gestaltTempMemSupport = 4,
+		};
+		
+		if ( ! gestalt_bit_set( gestaltOSAttr, gestaltTempMemSupport ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return new node( parent, name, S_IFREG | 0, &mac_tempmem_methods );
 	}
 	
