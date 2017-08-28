@@ -8,6 +8,9 @@
 // Standard C++
 #include <algorithm>
 
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // plus
 #include "plus/hexadecimal.hh"
 #include "plus/quad.hh"
@@ -420,6 +423,16 @@ namespace Genie
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
+		enum
+		{
+			gestaltComponentMgr = 'cpnt',
+		};
+		
+		if ( ! mac::sys::gestalt( gestaltComponentMgr ) )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return vfs::new_basic_directory( parent, name, thng_lookup, thng_iterate );
 	}
 	
