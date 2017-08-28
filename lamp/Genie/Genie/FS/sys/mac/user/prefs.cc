@@ -21,8 +21,9 @@
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
-// Nitrogen
-#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+#include "mac_file/system_file.hh"
 
 // vfs
 #include "vfs/node.hh"
@@ -52,6 +53,14 @@ namespace Genie
 		return err == noErr;
 	}
 	
+	static inline
+	VRefNum_DirID system_folder()
+	{
+		using namespace mac::file;
+		
+		return parent_directory( system_file() );
+	}
+	
 	static
 	VRefNum_DirID GetPrefsFolder()
 	{
@@ -60,7 +69,7 @@ namespace Genie
 		if ( FindPreferencesFolder( kUserDomain,   result ) )  goto done;
 		if ( FindPreferencesFolder( kOnSystemDisk, result ) )  goto done;
 		
-		Mac::ThrowOSStatus( fnfErr );
+		return system_folder();
 		
 	done:
 		
