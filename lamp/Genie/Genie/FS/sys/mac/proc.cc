@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-sys-utils
+#include "mac_sys/has/ProcessManager.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -246,6 +249,11 @@ namespace Genie
 	                                       const plus::string&  name,
 	                                       const void*          args )
 	{
+		if ( ! mac::sys::has_ProcessManager() )
+		{
+			p7::throw_errno( ENOENT );
+		}
+		
 		return vfs::new_basic_directory( parent, name, psn_lookup, psn_iterate );
 	}
 	
