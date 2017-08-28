@@ -174,7 +174,8 @@ namespace custom  {
 		
 		if ( void* const limit = task->stack_memory )
 		{
-			StkLowPt   = NULL;
+			// StkLowPt was already cleared in suspend_task().
+			
 			HeapEnd    = limit;
 			ApplLimit  = limit;
 			HiHeapMark = limit;
@@ -202,6 +203,13 @@ namespace custom  {
 			Switch from task a to task b.
 			This blocks the current task until it's switched back in.
 		*/
+		
+	#if __A5__
+		
+		// Clear StkLowPt BEFORE switching stacks.
+		StkLowPt = NULL;
+		
+	#endif
 		
 		task_switch( &a->state, &b->state );
 		
