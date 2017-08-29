@@ -5,6 +5,9 @@
 
 #include "vfs/mmap/functions/map_temporary.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/RealTempMemory.hh"
+
 // Nitrogen
 #include "Nitrogen/MacMemory.hh"
 
@@ -19,9 +22,29 @@ namespace vfs
 	namespace N = Nitrogen;
 	
 	
+	static
+	n::owned< Mac::Handle > new_handle( std::size_t size )
+	{
+		OSErr err;
+		Handle h;
+		
+		if ( mac::sys::has_RealTempMemory() )
+		{
+			if (( h = TempNewHandle( size, &err ) ))  goto done;
+		}
+		
+		if (( h = NewHandle( size ) ))  goto done;
+		
+		N::MemError();
+		
+	done:
+		
+		return n::owned< N::Handle >::seize( N::Handle( h ) );
+	}
+	
 	memory_mapping_ptr map_temporary( std::size_t length, int prot, int flags )
 	{
-		n::owned< Mac::Handle > handle = N::TempNewHandle( length );
+		n::owned< Mac::Handle > handle = new_handle( length );
 		
 		return new Handle_memory_mapping( handle, length, flags );
 	}
