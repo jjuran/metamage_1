@@ -12,6 +12,12 @@
 // Standard C
 #include <string.h>
 
+// mac-sys-utils
+#include "mac_sys/has/IconUtilities.hh"
+
+// mac-qd-utils
+#include "mac_qd/plot_icon_id.hh"
+
 // gear
 #include "gear/inscribe_decimal.hh"
 
@@ -167,6 +173,12 @@ namespace Genie
 		
 		if ( itsRef == NULL )
 		{
+			if ( ! mac::sys::has_IconUtilities() )
+			{
+				mac::qd::plot_icon_id( area, itsResID );
+				return;
+			}
+			
 			N::ResID resID = N::ResID( itsResID );
 			
 			try
