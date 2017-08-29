@@ -224,6 +224,66 @@ namespace Nitrogen
 	}
 	
 	
+	void HCreate( const FSSpec&   f,
+	              Mac::FSCreator  creator,
+	              Mac::FSType     type )
+	{
+		ThrowOSStatus( ::HCreate( f.vRefNum, f.parID, f.name, creator, type ) );
+	}
+	
+	Mac::FSDirID DirCreate( const FSSpec& loc )
+	{
+		SInt32 id;
+		ThrowOSStatus( ::DirCreate( loc.vRefNum, loc.parID, loc.name, &id ) );
+		
+		return Mac::FSDirID( id );
+	}
+	
+	void HDelete( const FSSpec& file )
+	{
+		ThrowOSStatus( ::HDelete( file.vRefNum, file.parID, file.name ) );
+	}
+	
+	FInfo HGetFInfo( const FSSpec& f )
+	{
+		FInfo info;
+		ThrowOSStatus( ::HGetFInfo( f.vRefNum, f.parID, f.name, &info ) );
+		
+		return info;
+	}
+	
+	void HSetFInfo( const FSSpec& f, const FInfo& info )
+	{
+		ThrowOSStatus( ::HSetFInfo( f.vRefNum, f.parID, f.name, &info ) );
+	}
+	
+	void HSetFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::HSetFLock( file.vRefNum, file.parID, file.name ) );
+	}
+	
+	void HRstFLock( const FSSpec& file )
+	{
+		ThrowOSStatus( ::HRstFLock( file.vRefNum, file.parID, file.name ) );
+	}
+	
+	void HRename( const FSSpec& file, const unsigned char* name )
+	{
+		ThrowOSStatus( ::HRename( file.vRefNum, file.parID, file.name, name ) );
+	}
+	
+	void CatMove( const FSSpec& f, const FSSpec& d )
+	{
+		if ( f.vRefNum != d.vRefNum )
+		{
+			ThrowOSStatus( paramErr );  // Follow MoreFiles' example
+		}
+		
+		ThrowOSStatus( ::CatMove( f.vRefNum, f.parID, f.name,
+		                                     d.parID, d.name ) );
+	}
+	
+	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock )
 	{
 		ThrowOSStatus( ::PBHGetVolParmsSync( &paramBlock ) );

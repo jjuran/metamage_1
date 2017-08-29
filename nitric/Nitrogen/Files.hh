@@ -488,6 +488,51 @@ namespace Nitrogen
 	
 	// ...
 	
+	void HCreate( const FSSpec&   file,
+	              Mac::FSCreator  creator,
+	              Mac::FSType     type );
+	
+	inline
+	void HCreate( const FSSpec&  file, const FileSignature& signature )
+	{
+		HCreate( file, signature.creator, signature.type );
+	}
+	
+	Mac::FSDirID DirCreate( const FSSpec& loc );
+	
+	void HDelete( const FSSpec& file );
+	
+	FInfo HGetFInfo( const FSSpec& file );
+	
+	void HSetFInfo( const FSSpec& file, const FInfo& info );
+	
+	void HSetFLock( const FSSpec& file );
+	void HRstFLock( const FSSpec& file );
+	
+	void HRename( const FSSpec& file, const unsigned char* name );
+	
+	template < unsigned char n >
+	inline
+	void HRename( const FSSpec& item, const Str< n >& newName )
+	{
+		HRename( item, newName + 0 );
+	}
+	
+	template < class String >
+	inline
+	void HRename( const FSSpec& item, const String& newName )
+	{
+		using iota::get_string_data;
+		using iota::get_string_size;
+		
+		HRename( item, Str255( get_string_data( newName ),
+		                       get_string_size( newName ) ) );
+	}
+	
+	void CatMove( const FSSpec& file, const FSSpec& new_parent );
+	
+	// ...
+	
 	void PBHGetVolParmsSync( HParamBlockRec& paramBlock );
 	
 	GetVolParmsInfoBuffer PBHGetVolParmsSync( FSVolumeRefNum vRefNum );
