@@ -140,14 +140,13 @@ namespace Genie
 	
 	void Rename_HFS( const FSSpec& srcFileSpec, const vfs::node& destFile )
 	{
-		if ( !io::item_exists( srcFileSpec ) )
-		{
-			p7::throw_errno( ENOENT );
-		}
+		CInfoPBRec src_pb;
+		
+		N::FSpGetCatInfo( srcFileSpec, src_pb, N::FNF_Throws() );
 		
 		bool destExists = exists( destFile );
 		
-		bool srcIsDir  = io::directory_exists( srcFileSpec );
+		bool srcIsDir  = io::item_is_directory( src_pb );
 		bool destIsDir = is_directory( destFile );
 		
 		if ( destExists  &&  srcIsDir != destIsDir )
