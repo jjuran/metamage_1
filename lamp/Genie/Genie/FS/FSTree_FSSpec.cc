@@ -15,7 +15,6 @@
 
 // MoreFiles
 #include "MoreFiles/FileCopy.h"
-#include "MoreFiles/MoreFilesExtras.h"
 
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"

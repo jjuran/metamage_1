@@ -17,13 +17,11 @@
 #include "debug/assert.hh"
 
 // Nitrogen
+#include "Nitrogen/Files.hh"
 #include "Nitrogen/Resources.hh"
 
 // MacFeatures
 #include "MacFeatures/Features.hh"
-
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
 
 // MacIO
 #include "MacIO/FSRead_Sync.hh"
