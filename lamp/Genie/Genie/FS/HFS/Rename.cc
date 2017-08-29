@@ -92,31 +92,31 @@ namespace Genie
 			}
 	};
 	
-	static OSErr ForceRenameItem( const FSSpec& srcFile, const FSSpec& destFile )
+	static OSErr ForceRenameItem( const FSSpec& src, const FSSpec& dst )
 	{
-		ASSERT( srcFile.vRefNum == destFile.vRefNum );
-		ASSERT( srcFile.parID   == destFile.parID   );
+		ASSERT( src.vRefNum == dst.vRefNum );
+		ASSERT( src.parID   == dst.parID   );
 		
-		FileLockBypass lockBypass( srcFile );
+		FileLockBypass lockBypass( src );
 		
 		// Rename source to dest
-		OSErr err = ::FSpRename( &srcFile, destFile.name );
+		OSErr err = ::FSpRename( &src, dst.name );
 		
 		if ( err == dupFNErr )
 		{
-			err = ::FSpDelete( &destFile );
+			err = ::FSpDelete( &dst );
 			
 			if ( err != noErr )
 			{
 				return err;
 			}
 			
-			err = ::FSpRename( &srcFile, destFile.name );
+			err = ::FSpRename( &src, dst.name );
 		}
 		
 		Mac::ThrowOSStatus( err );
 		
-		lockBypass.SetFile( destFile );
+		lockBypass.SetFile( dst );
 		
 		return noErr;
 	}

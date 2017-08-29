@@ -725,18 +725,18 @@ namespace Genie
 		              times );
 	}
 	
-	static void Delete_HFS( const FSSpec& fileSpec )
+	static void Delete_HFS( const FSSpec& file )
 	{
 		// returns fnfErr for directories
-		OSErr unlockErr = ::FSpRstFLock( &fileSpec );
+		OSErr unlockErr = ::FSpRstFLock( &file );
 		
-		OSErr deleteErr = ::FSpDelete( &fileSpec );
+		OSErr deleteErr = ::FSpDelete( &file );
 		
 		if ( MacFeatures::Is_Running_OSXNative()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
 		{
 			// If we're on OS X and the file was busy, try the native unlink().
 			
-			const FSRef fsRef = N::FSpMakeFSRef( fileSpec );
+			const FSRef fsRef = N::FSpMakeFSRef( file );
 			
 			const nucleus::string path = N::FSRefMakePath( fsRef );
 			
