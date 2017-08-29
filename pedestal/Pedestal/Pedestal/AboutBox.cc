@@ -14,11 +14,6 @@
 #ifndef __TEXTEDIT__
 #include <TextEdit.h>
 #endif
-#ifdef __MACOS__
-#ifndef __TRAPS__
-#include <Traps.h>
-#endif
-#endif
 
 // Standard C++
 #include <memory>
@@ -31,7 +26,7 @@
 #endif
 
 // mac-sys-utils
-#include "mac_sys/trap_available.hh"
+#include "mac_sys/has/IconUtilities.hh"
 
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
@@ -119,21 +114,11 @@ namespace Pedestal
 			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
-	static inline
-	bool has_IconUtilities()
-	{
-	#if TARGET_CPU_68K
-		
-		return mac::sys::trap_available( _IconDispatch );
-		
-	#endif
-		
-		return true;
-	}
-	
 	static
 	void PlotIcon( const Rect& bounds, short id )
 	{
+		using mac::sys::has_IconUtilities;
+		
 		if ( has_IconUtilities() )
 		{
 			N::PlotIconID( bounds,
