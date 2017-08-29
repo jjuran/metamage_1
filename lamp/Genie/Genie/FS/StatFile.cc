@@ -285,7 +285,7 @@ namespace Genie
 			info.fdFlags = (info.fdFlags & ~kIsShared) | (kIsShared * x_bit);
 			info.fdCreator = x_bit ? 'Poof' : TextFileCreator();
 			
-			N::FSpSetFInfo( file, info );
+			N::HSetFInfo( file, info );
 		}
 		
 		if ( changed_bits & S_IWUSR )
@@ -293,12 +293,12 @@ namespace Genie
 			if ( new_mode & S_IWUSR )
 			{
 				// writeable: reset the lock
-				N::FSpRstFLock( file );
+				N::HRstFLock( file );
 			}
 			else
 			{
 				// not writeable: set the lock
-				N::FSpSetFLock( file );
+				N::HSetFLock( file );
 			}
 		}
 	}

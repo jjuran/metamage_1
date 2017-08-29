@@ -45,9 +45,6 @@
 #include "Nitrogen/Processes.hh"
 #include "Nitrogen/Resources.hh"
 
-// Io: MacFiles
-#include "MacFiles/Classic.hh"
-
 // MacFeatures
 #include "MacFeatures/BlueBoxed.hh"
 #include "MacFeatures/Features.hh"
@@ -187,7 +184,7 @@ namespace Genie
 	                         Mac::FSCreator       creator,
 	                         Mac::FSType          type )
 	{
-		N::FSpCreate( file, creator, type );
+		N::HCreate( file, creator, type );
 		
 		finish_creation( file, name );
 	}
@@ -562,6 +559,8 @@ namespace Genie
 	static void hfs_copyfile( const vfs::node*  that,
 	                          const vfs::node*  destination )
 	{
+		OSErr err;
+		
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
 		const FSSpec& srcFile = extra.fsspec;
@@ -581,9 +580,11 @@ namespace Genie
 		// FIXME:  This logic should be worked into the file copy routine
 		// Maybe use ExchangeFiles() for safety?
 		
-		if ( io::file_exists( destFile ) )
+		err = ::HDelete( destFile.vRefNum, destFile.parID, destFile.name );
+		
+		if ( err != fnfErr )
 		{
-			io::delete_file( destFile );
+			Mac::ThrowOSStatus( err );
 		}
 		
 		FSpFileCopy( srcFile, make_FSSpec( destDir ), name );
@@ -728,9 +729,8 @@ namespace Genie
 	static void Delete_HFS( const FSSpec& file )
 	{
 		// returns fnfErr for directories
-		OSErr unlockErr = ::FSpRstFLock( &file );
-		
-		OSErr deleteErr = ::FSpDelete( &file );
+		OSErr unlockErr = ::HRstFLock( file.vRefNum, file.parID, file.name );
+		OSErr deleteErr = ::HDelete  ( file.vRefNum, file.parID, file.name );
 		
 		if ( MacFeatures::Is_Running_OSXNative()  &&  unlockErr == noErr  &&  deleteErr == fBsyErr )
 		{
@@ -903,7 +903,7 @@ namespace Genie
 		}
 		
 		// Non-aliases get creator and type for OS X symlinks
-		N::FSpCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
+		N::HCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
 		
 	created:
 		
@@ -976,7 +976,7 @@ namespace Genie
 					
 					if ( !equal )
 					{
-						N::FSpRename( extra.fsspec, name );
+						N::HRename( extra.fsspec, name );
 					}
 				}
 			}
@@ -1036,7 +1036,7 @@ namespace Genie
 	{
 		hfs_extra& extra = *(hfs_extra*) that->extra();
 		
-		N::FSpDirCreate( extra.fsspec );
+		N::DirCreate( extra.fsspec );
 		
 		finish_creation( extra.fsspec, that->name() );
 	}

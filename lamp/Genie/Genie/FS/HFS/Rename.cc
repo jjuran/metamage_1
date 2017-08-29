@@ -74,7 +74,7 @@ namespace Genie
 			{
 				if ( itWasLocked )
 				{
-					N::FSpRstFLock( file );
+					N::HRstFLock( file );
 				}
 			}
 			
@@ -82,7 +82,9 @@ namespace Genie
 			{
 				if ( itWasLocked )
 				{
-					OSErr err = ::FSpSetFLock( &itsFileSpec );
+					::HSetFLock( itsFileSpec.vRefNum,
+					             itsFileSpec.parID,
+					             itsFileSpec.name );
 				}
 			}
 			
@@ -100,18 +102,18 @@ namespace Genie
 		FileLockBypass lockBypass( src );
 		
 		// Rename source to dest
-		OSErr err = ::FSpRename( &src, dst.name );
+		OSErr err = ::HRename( src.vRefNum, src.parID, src.name, dst.name );
 		
 		if ( err == dupFNErr )
 		{
-			err = ::FSpDelete( &dst );
+			err = ::HDelete( dst.vRefNum, dst.parID, dst.name );
 			
 			if ( err != noErr )
 			{
 				return err;
 			}
 			
-			err = ::FSpRename( &src, dst.name );
+			err = ::HRename( src.vRefNum, src.parID, src.name, dst.name );
 		}
 		
 		Mac::ThrowOSStatus( err );
@@ -218,7 +220,7 @@ namespace Genie
 		{
 			// Can't be the same file, because it's in a different directory.
 			
-			N::FSpDelete( destFileSpec );
+			N::HDelete( destFileSpec );
 		}
 		
 		if ( keeping_name )
@@ -229,7 +231,7 @@ namespace Genie
 			FSSpec dest_dir = make_FSSpec( parent_directory( destFileSpec ) );
 			
 			// Same name, different dir; move only.
-			N::FSpCatMove( srcFileSpec, dest_dir );
+			N::CatMove( srcFileSpec, dest_dir );
 		}
 		else
 		{
