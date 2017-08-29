@@ -104,6 +104,23 @@ namespace Genie
 		return BinaryFileMetadata( pb.hFileInfo );
 	}
 	
+	static
+	n::owned< N::Handle > new_handle( size_t size )
+	{
+		OSErr err;
+		Handle h;
+		
+		if (( h = NewHandle( size ) ))  goto done;
+		
+		if (( h = TempNewHandle( size, &err ) ))  goto done;
+		
+		Mac::ThrowOSStatus( err );
+		
+	done:
+		
+		return n::owned< N::Handle >::seize( N::Handle( h ) );
+	}
+	
 	static BinaryImage ReadProgramFromDataFork( const FSSpec& file, UInt32 offset, UInt32 length )
 	{
 		n::owned< N::FSFileRefNum > refNum = OpenDataFork( file, N::fsRdPerm );
@@ -120,16 +137,7 @@ namespace Genie
 			length = eof - offset;
 		}
 		
-		BinaryImage data;
-		
-		try
-		{
-			data = N::NewHandle( length );
-		}
-		catch ( ... )
-		{
-			data = N::TempNewHandle( length );
-		}
+		BinaryImage data = new_handle( length );
 		
 		N::HLockHi( data );
 		
