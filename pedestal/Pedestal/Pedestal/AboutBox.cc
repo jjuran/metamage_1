@@ -25,8 +25,8 @@
 #endif
 #endif
 
-// mac-sys-utils
-#include "mac_sys/has/IconUtilities.hh"
+// mac-qd-utils
+#include "mac_qd/plot_icon_id.hh"
 
 // MacFeatures
 #include "MacFeatures/ColorQuickdraw.hh"
@@ -114,24 +114,6 @@ namespace Pedestal
 			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
-	static
-	void PlotIcon( const Rect& bounds, short id )
-	{
-		using mac::sys::has_IconUtilities;
-		
-		if ( has_IconUtilities() )
-		{
-			N::PlotIconID( bounds,
-			               N::IconAlignmentType(),
-			               N::IconTransformType(),
-			               N::ResID( id ) );
-		}
-		else if ( Handle h = GetResource( 'ICN#', id ) )
-		{
-			PlotIcon( &bounds, h );
-		}
-	}
-	
 	void AboutBoxView::Draw( const Rect& bounds, bool erasing )
 	{
 		if ( erasing )
@@ -150,7 +132,7 @@ namespace Pedestal
 			left + kAboutBoxIconWidth,
 		};
 		
-		PlotIcon( iconBounds, 128 );
+		mac::qd::plot_icon_id( iconBounds, 128 );
 		
 		top += kAboutBoxIconEdgeLength + kAboutBoxIconToTextGap;
 		left = bounds.left + kAboutBoxTextHorizontalMargin;
