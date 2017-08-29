@@ -26,6 +26,7 @@
 
 // mac-file-utils
 #include "mac_file/boot_volume.hh"
+#include "mac_file/make_FSSpec.hh"
 #include "mac_file/parent_directory.hh"
 
 // mac-app-utils
@@ -115,6 +116,7 @@ namespace Genie
 	namespace p7 = poseven;
 	
 	using mac::types::VRefNum_DirID;
+	using mac::file::make_FSSpec;
 	using mac::file::parent_directory;
 	
 	
@@ -568,7 +570,7 @@ namespace Genie
 		
 		// Do not resolve links
 		
-		N::FSDirSpec destDir = io::get_preceding_directory( destFile );
+		VRefNum_DirID destDir = parent_directory( destFile );
 		
 		const bool renaming = memcmp( srcFile.name,
 		                              destFile.name,
@@ -584,7 +586,7 @@ namespace Genie
 			io::delete_file( destFile );
 		}
 		
-		FSpFileCopy( srcFile, destDir / "\p", name );
+		FSpFileCopy( srcFile, make_FSSpec( destDir ), name );
 	}
 	
 	
@@ -675,7 +677,7 @@ namespace Genie
 		
 		try
 		{
-			if ( extra.fsspec == GetUsersDirectory() / "\p" )
+			if ( extra.fsspec == make_FSSpec( GetUsersDirectory() ) )
 			{
 				return relix::root();
 			}
@@ -845,7 +847,7 @@ namespace Genie
 	{
 		plus::string utf8_link_name = plus::utf8_from_mac( link_spec.name );
 		
-		FSSpec parent_spec = N::FSMakeFSSpec( io::get_preceding_directory( link_spec ) );
+		FSSpec parent_spec = make_FSSpec( parent_directory( link_spec ) );
 		
 		FSRef parent_ref = N::FSpMakeFSRef( parent_spec );
 		

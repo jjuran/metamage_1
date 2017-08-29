@@ -8,6 +8,10 @@
 // MoreFiles
 #include "MoreFiles/MoreFilesExtras.h"
 
+// mac-file-utils
+#include "mac_file/make_FSSpec.hh"
+#include "mac_file/parent_directory.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -219,8 +223,13 @@ namespace Genie
 		
 		if ( keeping_name )
 		{
+			using mac::file::make_FSSpec;
+			using mac::file::parent_directory;
+			
+			FSSpec dest_dir = make_FSSpec( parent_directory( destFileSpec ) );
+			
 			// Same name, different dir; move only.
-			N::FSpCatMove( srcFileSpec, N::FSDirID( destFileSpec.parID ) );
+			N::FSpCatMove( srcFileSpec, dest_dir );
 		}
 		else
 		{
