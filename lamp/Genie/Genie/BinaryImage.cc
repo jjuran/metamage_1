@@ -11,6 +11,7 @@
 
 // mac-sys-utils
 #include "mac_sys/has/FSSpec_calls.hh"
+#include "mac_sys/has/RealTempMemory.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -112,7 +113,14 @@ namespace Genie
 		
 		if (( h = NewHandle( size ) ))  goto done;
 		
-		if (( h = TempNewHandle( size, &err ) ))  goto done;
+		if ( mac::sys::has_RealTempMemory() )
+		{
+			if (( h = TempNewHandle( size, &err ) ))  goto done;
+		}
+		else
+		{
+			err = MemError();
+		}
 		
 		Mac::ThrowOSStatus( err );
 		
