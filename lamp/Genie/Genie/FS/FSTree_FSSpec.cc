@@ -22,6 +22,7 @@
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
+#include "mac_sys/gestalt.hh"
 #include "mac_sys/volume_params.hh"
 
 // mac-file-utils
@@ -872,10 +873,20 @@ namespace Genie
 			return;
 		}
 		
-		VRefNum_DirID linkParent = parent_directory( linkSpec );
+		enum
+		{
+			gestaltAliasMgrAttr = 'alis',
+		};
+		
+		if ( ! mac::sys::gestalt( gestaltAliasMgrAttr ) )
+		{
+			goto no_alias;
+		}
 		
 		try
 		{
+			VRefNum_DirID linkParent = parent_directory( linkSpec );
+			
 			// Target path is resolved relative to the location of the link file
 			// This throws if a nonterminal path component is missing
 			const vfs::node_ptr target = resolve_pathname( *relix::root(), targetPath, *FSTreeFromFSDirSpec( linkParent ) );
@@ -901,6 +912,8 @@ namespace Genie
 		catch ( const Mac::OSStatus& err )
 		{
 		}
+		
+	no_alias:
 		
 		// Non-aliases get creator and type for OS X symlinks
 		N::HCreate( linkSpec, Mac::kSymLinkCreator, Mac::kSymLinkFileType );
