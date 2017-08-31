@@ -22,7 +22,17 @@ namespace Genie
 	{
 		if ( name.length() > 31 )
 		{
-			N::FSpDTSetComment( item, name );
+			try
+			{
+				N::FSpDTSetComment( item, name );
+			}
+			catch ( const Mac::OSStatus& err )
+			{
+				if ( err != paramErr )
+				{
+					throw;
+				}
+			}
 		}
 	}
 	
