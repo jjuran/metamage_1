@@ -18,12 +18,12 @@ namespace sys {
 	{
 		enum
 		{
-			gestaltOSAttr          = 'os  ',
+			gestaltOSAttr        = 'os  ',
 			
-			gestaltLaunchCanReturn = 1,
+			gestaltLaunchControl = 3,
 		};
 		
-		return gestalt_bit_set( gestaltOSAttr, gestaltLaunchCanReturn );
+		return gestalt_bit_set( gestaltOSAttr, gestaltLaunchControl );
 	}
 	
 }
