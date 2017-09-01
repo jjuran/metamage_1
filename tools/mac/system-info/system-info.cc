@@ -165,6 +165,25 @@ void host_env()
 		printf( "Host operating system:  %s %s.%s%s%s\n", os_name, a, b, o, c );
 	}
 	
+	const uint32_t os = gestalt( 'os  ' );
+	
+	if ( os & (1 << 19) )
+	{
+		printf( "%s\n", "Application switching:  Process Manager (native)" );
+	}
+	else if ( os & (1 << 3) )
+	{
+		printf( "%s\n", "Application switching:  Process Manager" );
+	}
+	else if ( os & (1 << 1) )
+	{
+		printf( "%s\n", "Application switching:  MultiFinder" );
+	}
+	else
+	{
+		printf( "%s\n", "Application switching:  none" );
+	}
+	
 	if ( ! TARGET_CPU_68K )
 	{
 		// Do nothing.  Thread Manager is implied and goes without saying.
