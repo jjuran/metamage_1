@@ -38,7 +38,7 @@ namespace sys {
 		
 		if ( ! available )
 		{
-			*count = LMGetTicks() * (1000000 / 60.15);
+			*count = LMGetTicks() * 100000000ull / 6015;  // * (10^6 / 60.15)
 			
 			return;
 		}
