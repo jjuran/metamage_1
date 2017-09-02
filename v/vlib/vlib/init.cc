@@ -16,6 +16,7 @@
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/iterator.hh"
 #include "vlib/types/mb32.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
@@ -55,6 +56,7 @@ namespace vlib
 		define_keyword( "boolean",  boolean_vtype  );
 		define_keyword( "bool",     boolean_vtype  );
 		define_keyword( "function", function_vtype );
+		define_keyword( "iterator", iterator_vtype );
 		define_keyword( "integer",  integer_vtype  );
 		define_keyword( "int",      integer_vtype  );
 		define_keyword( "record",   record_vtype   );
