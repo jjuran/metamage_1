@@ -16,6 +16,7 @@
 #include "vlib/collectible.hh"
 #include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
+#include "vlib/in-flight.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
@@ -62,35 +63,6 @@ namespace vlib
 		}
 	}
 	
-	class RootedValue
-	{
-		private:
-			Value its_value;
-			
-			// non-assignable
-			RootedValue& operator=( const RootedValue& );
-		
-		public:
-			RootedValue( const Value& v ) : its_value( v )
-			{
-				add_root( its_value );
-			}
-			
-			~RootedValue()
-			{
-				del_root( its_value );
-			}
-			
-			RootedValue( const RootedValue& gv ) : its_value( gv.its_value )
-			{
-				add_root( its_value );
-			}
-			
-			const Value& get() const  { return its_value; }
-			
-			operator const Value&() const  { return get(); }
-	};
-	
 	static
 	language_error assertion_result_not_boolean( const source_spec& source )
 	{
@@ -136,10 +108,10 @@ namespace vlib
 	}
 	
 	static
-	RootedValue execute( const Value& tree, const Value& stack );
+	Value_in_flight execute( const Value& tree, const Value& stack );
 	
 	static
-	RootedValue invoke_block( const Value& block, const Value& arguments )
+	Value_in_flight invoke_block( const Value& block, const Value& arguments )
 	{
 		Expr* expr = block.expr();
 		
@@ -515,7 +487,7 @@ namespace vlib
 		return false;
 	}
 	
-	RootedValue execute( const Value& tree, const Value& stack )
+	Value_in_flight execute( const Value& tree, const Value& stack )
 	{
 		if ( Expr* expr = tree.expr() )
 		{
