@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/peephole.hh"
+#include "vlib/return.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"

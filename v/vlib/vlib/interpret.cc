@@ -27,6 +27,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
 #include "vlib/parse.hh"
+#include "vlib/return.hh"
 #include "vlib/string-utils.hh"
 
 

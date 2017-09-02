@@ -12,6 +12,7 @@
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/list-utils.hh"
+#include "vlib/return.hh"
 #include "vlib/symbol.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
