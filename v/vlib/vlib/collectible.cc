@@ -11,6 +11,7 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/iterator.hh"
 
 
 namespace vlib
@@ -94,7 +95,9 @@ namespace vlib
 		{
 			const type_info& typeinfo = type.typeinfo();
 			
-			return &typeinfo == &etc_vtype  ||  &typeinfo == &function_vtype;
+			return + &typeinfo == &etc_vtype
+			       | &typeinfo == &function_vtype
+			       | &typeinfo == &iterator_vtype;
 		}
 		
 		if ( Expr* expr = type.expr() )

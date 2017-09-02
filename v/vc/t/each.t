@@ -82,3 +82,8 @@ $ vc 'var p = each [0, 1]; ++p; ++p; ++p; *p'
 
 $ vc 'var p = each []; ++p; *p'
 1 >= '()'
+
+%
+
+$ vc 'var q (typeof each []) = each [&q]'
+1 >= '<iterator>'
