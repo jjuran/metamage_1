@@ -12,6 +12,7 @@
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/iterator.hh"
+#include "vlib/types/record.hh"
 
 
 namespace vlib
@@ -97,7 +98,8 @@ namespace vlib
 			
 			return + &typeinfo == &etc_vtype
 			       | &typeinfo == &function_vtype
-			       | &typeinfo == &iterator_vtype;
+			       | &typeinfo == &iterator_vtype
+			       | &typeinfo == &record_vtype;
 		}
 		
 		if ( Expr* expr = type.expr() )

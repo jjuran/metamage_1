@@ -62,3 +62,8 @@ $ vc 'record(foo: 1) == record(foo: 1)'
 
 $ vc 'record(foo: 1) == record(foo: 2)'
 1 >= false
+
+%
+
+$ vc 'var r (record) = record(foo: &r)'
+1 >= '(record ("foo" => (&r)))'
