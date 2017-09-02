@@ -1,0 +1,41 @@
+#!/usr/bin/env vx
+
+def char
+{
+	const c = _
+	
+	return { var p = _; p and *p++ == c and p }
+}
+
+def seq
+{
+	const list = _
+	
+	return lambda
+	{
+		return (*list) _
+	}
+}
+
+def convert
+{
+	return seq _
+	
+	return _  # defeat peephole optimization for `return` above
+}
+
+def check
+{
+	const s, const t = _
+	
+	const r = t each [*s]
+}
+
+const bang = [ char '!' ]
+
+const grammar = convert bang
+
+check( "!", grammar )
+
+print "1..1"
+print "ok 1"
