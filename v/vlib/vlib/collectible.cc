@@ -152,7 +152,7 @@ namespace vlib
 	static
 	bool typed_value_is_collectible( const Value& v, const Value& type )
 	{
-		return v.expr() != 0  &&  type_is_collectible( type );
+		return ! v.is_cycle_free()  &&  type_is_collectible( type );
 	}
 	
 	bool target_is_collectible( const Target& target )
