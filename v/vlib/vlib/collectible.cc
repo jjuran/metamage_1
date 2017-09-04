@@ -149,6 +149,12 @@ namespace vlib
 		return false;
 	}
 	
+	static
+	bool typed_value_is_collectible( const Value& v, const Value& type )
+	{
+		return v.expr() != 0  &&  type_is_collectible( type );
+	}
+	
 	bool target_is_collectible( const Target& target )
 	{
 		const Value& v = *target.addr;
@@ -158,7 +164,7 @@ namespace vlib
 			return true;
 		}
 		
-		return v.expr() != 0  &&  type_is_collectible( *target.type );
+		return typed_value_is_collectible( *target.addr, *target.type );
 	}
 	
 	bool symbol_is_collectible( const Symbol& symbol )
