@@ -233,9 +233,18 @@ namespace vlib
 				{
 					return Token_decimal;
 				}
+				
+				char c = *p++;
+				
+				if ( c == 'f' )
+				{
+					return Token_float;
+				}
 			}
-			
-			++p;
+			else
+			{
+				++p;
+			}
 			
 			return Token_invalid;
 		}
