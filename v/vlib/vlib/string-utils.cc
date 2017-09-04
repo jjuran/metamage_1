@@ -153,6 +153,7 @@ namespace vlib
 			case Op_decrease_by:  return " -= ";
 			case Op_multiply_by:  return " *= ";
 			case Op_divide_by:    return " /= ";
+			case Op_div_int_by:   return " /:= ";
 			case Op_percent_by:   return " %= ";
 			
 			case Op_move:  return " <- ";

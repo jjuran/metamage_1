@@ -121,6 +121,7 @@ namespace vlib
 		
 		{ "/",   Token_slash        },
 		{ "//",  Token_slash_x2     },
+		{ "/:=", Token_slash_colon_equals },
 		{ "/=",  Token_slash_equals },
 		
 		// 0 - 9

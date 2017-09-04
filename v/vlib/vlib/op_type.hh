@@ -45,6 +45,7 @@ namespace vlib
 		Op_decrease_by,
 		Op_multiply_by,
 		Op_divide_by,
+		Op_div_int_by,
 		Op_percent_by,
 		Op_remain_by = Op_percent_by,
 		Op_push,

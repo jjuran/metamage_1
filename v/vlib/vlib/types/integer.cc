@@ -256,12 +256,17 @@ namespace vlib
 	                           const Value&   x,
 	                           const Value&   b )
 	{
+		bool dividing = true;
+		
 		switch ( op )
 		{
 			case Op_increase_by:
 			case Op_decrease_by:
 			case Op_multiply_by:
+				dividing = false;
+				// fall through
 			case Op_divide_by:
+			case Op_div_int_by:
 			case Op_remain_by:
 				break;
 			
@@ -276,12 +281,9 @@ namespace vlib
 		
 		const bignum::integer& k = b.number();
 		
-		if ( op == Op_divide_by  ||  op == Op_remain_by )
+		if ( dividing  &&  k.is_zero() )
 		{
-			if ( k.is_zero() )
-			{
-				THROW( "division by zero in update" );
-			}
+			THROW( "division by zero in update" );
 		}
 		
 		const bignum::integer& i = target.addr->number();
@@ -294,6 +296,7 @@ namespace vlib
 			case Op_decrease_by:  j -= k;  break;
 			case Op_multiply_by:  j *= k;  break;
 			case Op_divide_by:    j /= k;  break;
+			case Op_div_int_by:   j /= k;  break;
 			case Op_remain_by:    j %= k;  break;
 			
 			default:

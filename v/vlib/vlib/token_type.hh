@@ -83,6 +83,7 @@ namespace vlib
 		Token_minus_equals,
 		Token_asterisk_equals,
 		Token_slash_equals,
+		Token_slash_colon_equals,
 		Token_percent_equals,
 		Token_semicolon,
 		Token_tilde,

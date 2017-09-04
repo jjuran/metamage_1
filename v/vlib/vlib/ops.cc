@@ -74,6 +74,7 @@ namespace vlib
 		{ Token_minus_equals,    Op_decrease_by },
 		{ Token_asterisk_equals, Op_multiply_by },
 		{ Token_slash_equals,    Op_divide_by   },
+		{ Token_slash_colon_equals, Op_div_int_by },
 		{ Token_percent_equals,  Op_percent_by  },
 		
 		{ Token_lt_minus_x2, Op_push },
