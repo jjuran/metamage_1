@@ -69,18 +69,13 @@ namespace vlib
 		return sym->mark() != Mark_none;
 	}
 	
-	void track_symbol( const Value& v, const Value& new_value )
+	void track_symbol( const Value& v )
 	{
 		ASSERT( is_symbol( v ) );
 		
 		Symbol* sym = v.sym();
 		
 		ASSERT( sym );
-		
-		if ( new_value.expr() == NULL )
-		{
-			return;
-		}
 		
 		gc_lock lock;
 		

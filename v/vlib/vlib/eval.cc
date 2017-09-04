@@ -108,7 +108,7 @@ namespace vlib
 	{
 		if ( symbol_is_collectible( *symbol.sym(), v ) )
 		{
-			track_symbol( symbol, v );
+			track_symbol( symbol );
 		}
 	}
 	
