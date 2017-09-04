@@ -96,6 +96,11 @@ namespace vlib
 	
 	void add_root( const Value& v )
 	{
+		if ( v.is_cycle_free() )
+		{
+			return;
+		}
+		
 		gc_lock lock;
 		
 		tracked_roots.push_back( v );
@@ -103,6 +108,11 @@ namespace vlib
 	
 	void del_root( const Value& v )
 	{
+		if ( v.is_cycle_free() )
+		{
+			return;
+		}
+		
 		gc_lock lock;
 		
 		typedef tracked_set::iterator Iter;
