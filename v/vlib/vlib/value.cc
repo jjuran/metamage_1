@@ -65,6 +65,11 @@ namespace vlib
 	{
 		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( a, Op_list, b );
+		
+		if ( a.is_cycle_free()  &&  b.is_cycle_free() )
+		{
+			set_cycle_free();
+		}
 	}
 	
 	Value::Value( op_type op, const Value& v )
@@ -73,6 +78,11 @@ namespace vlib
 	{
 		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( Value_dummy_operand, op, v );
+		
+		if ( v.is_cycle_free() )
+		{
+			set_cycle_free();
+		}
 	}
 	
 	Value::Value( const Value&        a,
@@ -84,6 +94,11 @@ namespace vlib
 	{
 		its_dispatch = NULL;
 		new ((void*) its_box.pointer()) Expr( a, op, b, s );
+		
+		if ( a.is_cycle_free()  &&  b.is_cycle_free() )
+		{
+			set_cycle_free();
+		}
 	}
 	
 	Value::Value( const Value&        a,
@@ -95,6 +110,11 @@ namespace vlib
 	{
 		its_dispatch = d;
 		new ((void*) its_box.pointer()) Expr( a, op, b );
+		
+		if ( a.is_cycle_free()  &&  b.is_cycle_free() )
+		{
+			set_cycle_free();
+		}
 	}
 	
 	Value::Value( long n, destructor dtor, value_type t, const dispatch* d )
@@ -162,6 +182,8 @@ namespace vlib
 			
 			its_box.unshare();
 		}
+		
+		clear_cycle_free();  // No longer guaranteed
 		
 		return *this;
 	}

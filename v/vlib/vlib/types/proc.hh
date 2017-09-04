@@ -29,6 +29,8 @@ namespace vlib
 			Proc( const proc_info& proc ) : Value( Value_other, &proc_dispatch )
 			{
 				pod_cast< const proc_info* >() = &proc;
+				
+				set_cycle_free();
 			}
 			
 			function_type addr() const
