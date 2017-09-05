@@ -15,6 +15,7 @@
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/integer.hh"
 #include "vlib/types/range.hh"
 #include "vlib/types/string.hh"
 
@@ -24,24 +25,7 @@ namespace vlib
 	
 	unsigned subscript_integer( const Value& index )
 	{
-		if ( index.type() != Value_number )
-		{
-			THROW( "non-integer array subscript" );
-		}
-		
-		const bignum::integer& i = index.number();
-		
-		if ( i.is_negative() )
-		{
-			THROW( "negative array subscript" );
-		}
-		
-		if ( i > 0xFFFFFFFFu )
-		{
-			THROW( "Array subscript is too large" );
-		}
-		
-		return i.clipped();
+		return integer_cast< unsigned >( index );
 	}
 	
 	static
