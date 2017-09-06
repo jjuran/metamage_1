@@ -127,6 +127,17 @@ namespace vlib
 	}
 	
 	static
+	Value substring( const Value& v, size_t i, size_t n = plus::string::npos )
+	{
+		const bool str = v.type() == V_str;
+		
+		const plus::string substring = v.string().substr( i, n );
+		
+		return str ? Value( String( substring ) )
+		           : Value( Packed( substring ) );
+	}
+	
+	static
 	Value substring( const Value& p, const Value& q )
 	{
 		if ( Pointer::test( p ) )
@@ -144,17 +155,7 @@ namespace vlib
 					THROW( "negative pointer subtraction" );
 				}
 				
-				plus::string substring;
-				
-				if ( i < a.size() )
-				{
-					substring = a.substr( i, j - i );
-				}
-				
-				const bool str = q.expr()->left.type() == V_str;
-				
-				return str ? Value( String( substring ) )
-				           : Value( Packed( substring ) );
+				return substring( p.expr()->left, i, j - i );
 			}
 			
 			THROW( "subtraction of pointers from different containers" );
