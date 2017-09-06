@@ -139,9 +139,14 @@ namespace vlib
 				const size_t i = integer_cast< size_t >( p.expr()->right );
 				const size_t j = integer_cast< size_t >( q.expr()->right );
 				
+				if ( i > j )
+				{
+					THROW( "negative pointer subtraction" );
+				}
+				
 				plus::string substring;
 				
-				if ( i <= j  && i < a.size() )
+				if ( i < a.size() )
 				{
 					substring = a.substr( i, j - i );
 				}
