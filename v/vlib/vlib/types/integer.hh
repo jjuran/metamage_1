@@ -9,6 +9,9 @@
 // iota
 #include "iota/integer_cast.hh"
 
+// bignum
+#include "bignum/integer.hh"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -69,11 +72,7 @@ namespace vlib
 	inline
 	Out integer_cast( const Integer& i )
 	{
-	#ifdef __MWERKS__
-		
 		using bignum::integer_cast;
-		
-	#endif
 		
 		return integer_cast< Out >( i.number(), bad_cast_thrower() );
 	}
