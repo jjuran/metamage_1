@@ -35,27 +35,27 @@ namespace vlib
 	extern const type_info iterator_vtype;
 	
 	static
-	const char* iterator_str_data( const Value& v )
+	const char* pointer_str_data( const Value& v )
 	{
 		return "<pointer>";
 	}
 	
-	static const stringify iterator_str =
+	static const stringify pointer_str =
 	{
-		&iterator_str_data,
+		&pointer_str_data,
 		NULL,
 		NULL,
 	};
 	
-	static const stringifiers iterator_stringifiers =
+	static const stringifiers pointer_stringifiers =
 	{
-		&iterator_str,
+		&pointer_str,
 	};
 	
 	static
-	bool iterator_truth( const Value& v )
+	bool pointer_truth( const Value& v )
 	{
-		// Check if the iterator is empty.
+		// Check if the pointer is at the end.
 		
 		Expr* expr = v.expr();
 		
@@ -65,9 +65,9 @@ namespace vlib
 		return i < s.size();
 	}
 	
-	static const veritization iterator_veritization =
+	static const veritization pointer_veritization =
 	{
-		&iterator_truth,
+		&pointer_truth,
 	};
 	
 	static
@@ -302,8 +302,8 @@ namespace vlib
 	
 	const dispatch pointer_dispatch =
 	{
-		&iterator_stringifiers,
-		&iterator_veritization,
+		&pointer_stringifiers,
+		&pointer_veritization,
 		NULL,
 		&ops,
 	};
