@@ -366,6 +366,20 @@ namespace vlib
 			return Pointer( v.expr()->left, Pointer::Max() );
 		}
 		
+		const Value& container = v.expr()->left;
+		
+		const size_t i = integer_cast< size_t >( v.expr()->right );
+		
+		if ( member == "past" )
+		{
+			return substring( container, 0, i );
+		}
+		
+		if ( member == "rest" )
+		{
+			return substring( container, i );
+		}
+		
 		THROW( "nonexistent pointer member" );
 		
 		return Value();
