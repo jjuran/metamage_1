@@ -337,12 +337,40 @@ namespace vlib
 	{
 	}
 	
+	Pointer::Pointer( const Value& container, Max )
+	:
+		Value( container,
+		       Op_subscript,
+		       Integer( container.string().size() ),
+		       &pointer_dispatch )
+	{
+	}
+	
+	static
+	Value pointer_member( const Value&         v,
+	                      const plus::string&  member )
+	{
+		if ( member == "min" )
+		{
+			return Pointer( v.expr()->left );
+		}
+		
+		if ( member == "max" )
+		{
+			return Pointer( v.expr()->left, Pointer::Max() );
+		}
+		
+		THROW( "nonexistent pointer member" );
+		
+		return Value();
+	}
+	
 	const type_info pointer_vtype =
 	{
 		"pointer",
 		&assign_to< Pointer >,
 		NULL,
-		NULL,
+		&pointer_member,
 	};
 	
 }
