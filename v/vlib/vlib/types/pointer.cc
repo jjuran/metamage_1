@@ -18,6 +18,7 @@
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
@@ -68,6 +69,28 @@ namespace vlib
 	static const veritization pointer_veritization =
 	{
 		&pointer_truth,
+	};
+	
+	static
+	cmp_t pointer_order( const Value& a, const Value& b )
+	{
+		Expr* ax = a.expr();
+		Expr* bx = b.expr();
+		
+		const Value& a_bytes = ax->left;
+		const Value& b_bytes = bx->left;
+		
+		if ( &a_bytes != &b_bytes  &&  a_bytes.string() != b_bytes.string() )
+		{
+			THROW( "comparison of pointers to different containers" );
+		}
+		
+		return compare( ax->right.number(), bx->right.number() );
+	}
+	
+	static const comparison pointer_comparison =
+	{
+		&pointer_order,
 	};
 	
 	static
@@ -304,7 +327,7 @@ namespace vlib
 	{
 		&pointer_stringifiers,
 		&pointer_veritization,
-		NULL,
+		&pointer_comparison,
 		&ops,
 	};
 	
