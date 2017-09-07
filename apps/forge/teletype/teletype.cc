@@ -68,6 +68,9 @@ int main( int argc, char const *const argv[] )
 	
 	p7::spew( "size", STR_LEN( "503x272" "\n" ) );
 	
+	p7::spew( p7::open( ".~title", p7::o_wronly | p7::o_trunc ),
+	          STR_LEN( "teletype" ) );
+	
 	p7::utime( "window" );
 	
 	p7::spew( "w/text-font", STR_LEN( "4" "\n" ) );
