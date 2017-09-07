@@ -66,7 +66,12 @@ struct ttysize {
 #include <sys/cdefs.h>
 
 __BEGIN_DECLS
-int	ioctl __P((int, unsigned long, ...));
+/*
+	Altered to match POSIX:
+	See <http://pubs.opengroup.org/onlinepubs/9699919799/functions/ioctl.html>
+	-- jjuran
+*/
+int	ioctl __P((int, int, ...));
 __END_DECLS
 
 #endif /* !_SYS_IOCTL_H_ */
