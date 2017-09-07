@@ -55,5 +55,5 @@ $ vc 'var p = each "abcdef"; var q = ++p; ++q; ++q; ++q - p'
 
 %
 
-$ vc 'var p = each "abc"; var q = ++p; ++q; ++q; p - q'
-1 >= '""'
+$ vc 'var p = each "abc"; var q = ++p; ++q; ++q; try {p - q} catch {"nope"}'
+1 >= '"nope"'
