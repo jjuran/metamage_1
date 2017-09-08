@@ -53,6 +53,9 @@ namespace vlib
 	static tracked_set tracked_symbols;
 	static tracked_set tracked_roots;
 	
+	static size_t n_steps = 0;
+	static size_t n_culls = 0;
+	
 	static pthread_mutex_t gc_mutex = PTHREAD_MUTEX_INITIALIZER;
 	
 	class gc_lock
@@ -126,6 +129,8 @@ namespace vlib
 	{
 		while ( ! it.finished() )
 		{
+			++n_steps;
+			
 			if ( Symbol* sym = it.get().sym() )
 			{
 				return sym;
@@ -257,6 +262,8 @@ namespace vlib
 		
 		cull_unreachable_objects( garbage );
 		
+		++n_culls;
+		
 		// release lock
 		// dispose garbage
 	}
@@ -292,6 +299,16 @@ namespace vlib
 		if ( name == "roots" )
 		{
 			return Integer( tracked_roots.size() );
+		}
+		
+		if ( name == "steps" )
+		{
+			return Integer( n_steps );
+		}
+		
+		if ( name == "culls" )
+		{
+			return Integer( n_culls );
 		}
 		
 		if ( name == "cull" )
