@@ -306,6 +306,13 @@ namespace vlib
 		{
 			while ( is_digit( *++p ) )  continue;
 			
+			if ( is_alpha( *p ) )
+			{
+				++p;
+				
+				return Token_invalid;
+			}
+			
 			return Token_digits;
 		}
 		
