@@ -85,6 +85,12 @@ namespace vlib
 		throw_exception_object( exception );
 	}
 	
+	static
+	int fd_cast( const Value& v )
+	{
+		return integer_cast< int >( v );
+	}
+	
 	static const char* file_types[] =
 	{
 		"(0)",
@@ -172,7 +178,7 @@ namespace vlib
 	static
 	Value v_close( const Value& v )
 	{
-		const int fd = v.number().clipped();
+		const int fd = fd_cast( v );
 		
 		int nok = close( fd );
 		
@@ -193,7 +199,7 @@ namespace vlib
 	static
 	Value v_dup( const Value& v )
 	{
-		const int fd = v.number().clipped();
+		const int fd = fd_cast( v );
 		
 		int new_fd = dup( fd );
 		
@@ -208,8 +214,8 @@ namespace vlib
 	static
 	Value v_dup2( const Value& v )
 	{
-		const int old_fd = first( v ).number().clipped();
-		const int req_fd = rest ( v ).number().clipped();
+		const int old_fd = fd_cast( first( v ) );
+		const int req_fd = fd_cast( rest ( v ) );
 		
 		int new_fd = dup2( old_fd, req_fd );
 		
@@ -226,7 +232,7 @@ namespace vlib
 	static
 	Value v_fstat( const Value& v )
 	{
-		const int fd = v.number().clipped();
+		const int fd = fd_cast( v );
 		
 		struct stat st;
 		
@@ -372,7 +378,7 @@ namespace vlib
 	static
 	Value v_read( const Value& v )
 	{
-		const int    fd = first( v ).number().clipped();
+		const int    fd = fd_cast( first( v ) );
 		const size_t n  = rest ( v ).number().clipped();
 		
 		plus::string s;
@@ -459,7 +465,7 @@ namespace vlib
 	static
 	Value v_write( const Value& v )
 	{
-		const int           fd = first( v ).number().clipped();
+		const int           fd = fd_cast( first( v ) );
 		const plus::string& s  = rest ( v ).string();
 		
 		const char*  buffer = s.data();
