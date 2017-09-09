@@ -37,6 +37,7 @@
 
 // vx
 #include "exception.hh"
+#include "file_descriptor.hh"
 
 
 namespace vlib
@@ -83,6 +84,17 @@ namespace vlib
 		Value exception( desc, path_ );
 		
 		throw_exception_object( exception );
+	}
+	
+	static
+	int fd_cast( const Value& v )
+	{
+		if ( const FileDescriptor* fd = v.is< FileDescriptor >() )
+		{
+			return fd->get();
+		}
+		
+		return integer_cast< int >( v );
 	}
 	
 	static const char* file_types[] =
@@ -172,7 +184,7 @@ namespace vlib
 	static
 	Value v_close( const Value& v )
 	{
-		const int fd = v.number().clipped();
+		const int fd = fd_cast( v );
 		
 		int nok = close( fd );
 		
@@ -193,7 +205,7 @@ namespace vlib
 	static
 	Value v_dup( const Value& v )
 	{
-		const int fd = v.number().clipped();
+		const int fd = fd_cast( v );
 		
 		int new_fd = dup( fd );
 		
@@ -202,14 +214,14 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return Integer( new_fd );
+		return FileDescriptor( new_fd );
 	}
 	
 	static
 	Value v_dup2( const Value& v )
 	{
-		const int old_fd = first( v ).number().clipped();
-		const int req_fd = rest ( v ).number().clipped();
+		const int old_fd = fd_cast( first( v ) );
+		const int req_fd = fd_cast( rest ( v ) );
 		
 		int new_fd = dup2( old_fd, req_fd );
 		
@@ -220,13 +232,13 @@ namespace vlib
 		
 		// new_fd should be same as req_fd
 		
-		return Integer( new_fd );
+		return FileDescriptor( new_fd );
 	}
 	
 	static
 	Value v_fstat( const Value& v )
 	{
-		const int fd = v.number().clipped();
+		const int fd = fd_cast( v );
 		
 		struct stat st;
 		
@@ -365,14 +377,14 @@ namespace vlib
 			path_error( "<pipe>" );
 		}
 		
-		return Value( Integer( pipe_ends[ 0 ] ),
-		              Integer( pipe_ends[ 1 ] ) );
+		return Value( FileDescriptor( pipe_ends[ 0 ] ),
+		              FileDescriptor( pipe_ends[ 1 ] ) );
 	}
 	
 	static
 	Value v_read( const Value& v )
 	{
-		const int    fd = first( v ).number().clipped();
+		const int    fd = fd_cast( first( v ) );
 		const size_t n  = rest ( v ).number().clipped();
 		
 		plus::string s;
@@ -459,7 +471,7 @@ namespace vlib
 	static
 	Value v_write( const Value& v )
 	{
-		const int           fd = first( v ).number().clipped();
+		const int           fd = fd_cast( first( v ) );
 		const plus::string& s  = rest ( v ).string();
 		
 		const char*  buffer = s.data();
@@ -480,28 +492,30 @@ namespace vlib
 	static const Type int32 = i32_vtype;
 	static const Type uint32 = u32_vtype;
 	
-	static const Value int32_x2( int32, int32 );
-	static const Value i32_u32 ( int32, uint32 );
+	static const Value fd( Type( fd_vtype ), Op_union, int32 );
+	
+	static const Value fd_x2( fd, fd );
+	static const Value fd_u32 ( fd, uint32 );
 	
 	static const Value bytes( string, Op_union, packed );
-	static const Value i32_bytes( int32, bytes );
+	static const Value fd_bytes( fd, bytes );
 	
 	static const Value c_str_bytes( c_str, bytes );
 	static const Value c_str_u32( c_str, uint32 );
 	
-	const proc_info proc_close    = { "close",    &v_close,    &int32 };
+	const proc_info proc_close    = { "close",    &v_close,    &fd    };
 	const proc_info proc_dirname  = { "dirname",  &v_dirname,  &c_str };
-	const proc_info proc_dup      = { "dup",      &v_dup,      &int32 };
-	const proc_info proc_dup2     = { "dup2",     &v_dup2,     &int32_x2 };
-	const proc_info proc_fstat    = { "fstat",    &v_fstat,    &int32 };
+	const proc_info proc_dup      = { "dup",      &v_dup,      &fd    };
+	const proc_info proc_dup2     = { "dup2",     &v_dup2,     &fd_x2 };
+	const proc_info proc_fstat    = { "fstat",    &v_fstat,    &fd    };
 	const proc_info proc_listdir  = { "listdir",  &v_listdir,  &c_str };
 	const proc_info proc_load     = { "load",     &v_load,     &c_str };
 	const proc_info proc_lstat    = { "lstat",    &v_lstat,    &c_str };
 	const proc_info proc_pipe     = { "pipe",     &v_pipe,     &empty_list };
-	const proc_info proc_read     = { "read",     &v_read,     &i32_u32 };
+	const proc_info proc_read     = { "read",     &v_read,     &fd_u32 };
 	const proc_info proc_realpath = { "realpath", &v_realpath, &c_str };
 	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
-	const proc_info proc_write    = { "write",    &v_write,    &i32_bytes };
+	const proc_info proc_write    = { "write",    &v_write,    &fd_bytes };
 	
 	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };
 	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
