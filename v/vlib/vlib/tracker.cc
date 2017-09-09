@@ -18,10 +18,14 @@
 #include "debug/assert.hh"
 
 // vlib
+#include "vlib/namespace_info.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/value.hh"
 #include "vlib/iterators/full_iterator.hh"
+#include "vlib/types/integer.hh"
+#include "vlib/types/proc.hh"
 
 
 namespace vlib
@@ -48,6 +52,9 @@ namespace vlib
 	
 	static tracked_set tracked_symbols;
 	static tracked_set tracked_roots;
+	
+	static size_t n_steps = 0;
+	static size_t n_culls = 0;
 	
 	static pthread_mutex_t gc_mutex = PTHREAD_MUTEX_INITIALIZER;
 	
@@ -115,6 +122,24 @@ namespace vlib
 				break;
 			}
 		}
+	}
+	
+	static
+	Symbol* next_symbol( full_iterator& it )
+	{
+		while ( ! it.finished() )
+		{
+			++n_steps;
+			
+			if ( Symbol* sym = it.get().sym() )
+			{
+				return sym;
+			}
+			
+			it.step();
+		}
+		
+		return NULL;
 	}
 	
 	static
@@ -237,6 +262,8 @@ namespace vlib
 		
 		cull_unreachable_objects( garbage );
 		
+		++n_culls;
+		
 		// release lock
 		// dispose garbage
 	}
@@ -250,5 +277,54 @@ namespace vlib
 	};
 	
 	static garbage_collector gc;
+	
+	static
+	Value v_cull( const Value& )
+	{
+		cull_unreachable_objects();
+		
+		return nothing;
+	}
+	
+	static const proc_info proc_cull = { "cull", &v_cull, &empty_list };
+	
+	static
+	Value tracker_getter( const plus::string& name )
+	{
+		if ( name == "symbols" )
+		{
+			return Integer( tracked_symbols.size() );
+		}
+		
+		if ( name == "roots" )
+		{
+			return Integer( tracked_roots.size() );
+		}
+		
+		if ( name == "steps" )
+		{
+			return Integer( n_steps );
+		}
+		
+		if ( name == "culls" )
+		{
+			return Integer( n_culls );
+		}
+		
+		if ( name == "cull" )
+		{
+			return Proc( proc_cull );
+		}
+		
+		THROW( "nonexistent tracker member" );
+		
+		return Value();
+	}
+	
+	const namespace_info namespace_tracker =
+	{
+		"tracker",
+		&tracker_getter,
+	};
 	
 }

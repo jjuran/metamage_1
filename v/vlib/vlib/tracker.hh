@@ -11,6 +11,7 @@ namespace vlib
 {
 	
 	class Value;
+	struct namespace_info;
 	
 	void track_symbol( const Value& v );
 	
@@ -39,6 +40,8 @@ namespace vlib
 				del_root( its_root );
 			}
 	};
+	
+	extern const namespace_info namespace_tracker;
 	
 }
 

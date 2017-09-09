@@ -53,19 +53,4 @@ namespace vlib
 		its_stack.pop_back();
 	}
 	
-	Symbol* next_symbol( full_iterator& it )
-	{
-		while ( ! it.finished() )
-		{
-			if ( Symbol* sym = it.get().sym() )
-			{
-				return sym;
-			}
-			
-			it.step();
-		}
-		
-		return NULL;
-	}
-	
 }

@@ -10,9 +10,11 @@
 
 // vlib
 #include "vlib/functions.hh"
+#include "vlib/namespace_info.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
+#include "vlib/namespaces/V.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/pointer.hh"
@@ -20,6 +22,7 @@
 #include "vlib/types/integer.hh"
 #include "vlib/types/iterator.hh"
 #include "vlib/types/mb32.hh"
+#include "vlib/types/namespace.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
@@ -50,8 +53,16 @@ namespace vlib
 		create_keyword( proc.name ).sym()->assign( Proc( proc ) );
 	}
 	
+	static
+	void define_keyword( const namespace_info& space )
+	{
+		create_keyword( space.name ).sym()->assign( Namespace( space ) );
+	}
+	
 	bool install_keywords()
 	{
+		define_keyword( namespace_V );
+		
 		define_keyword( "false", False );
 		define_keyword( "true",  True  );
 		
