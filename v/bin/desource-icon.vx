@@ -18,6 +18,4 @@ const bytes_per_frame = (32 * 2 + 2) * 32 + 1
 
 const source = packed load argv[ 1 ]
 
-const icons = [source / -bytes_per_frame] map pack_icon
-
-write( OUT, packed icons )
+OUT <== [source / -bytes_per_frame] map pack_icon

@@ -146,9 +146,7 @@ def pack_icon_file
 
 if const icons = argv[ 1 -> argv.length ] map pack_icon_file then
 {
-	const icns = pack_one( icns: icons )
-	
-	write( OUT, icns )
+	OUT <== pack_one( icns: icons )
 	
 	exit 0
 }

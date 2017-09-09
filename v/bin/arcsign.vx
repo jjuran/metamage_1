@@ -20,12 +20,10 @@ const command_defs = str^
 
 def usage
 {
-	const msg = "Usage: arcsign <command> <args> ...\n"
-	            "       arcsign seal -k <key-file> <msg-file> ...\n"
-	            "       arcsign unseal -K <key-hex> <msg-file> ...\n"
-                "       arcsign verify <msg-file> ...\n"
-	
-	write( ERR, msg )
+	ERR <== "Usage: arcsign <command> <args> ...\n"
+	        "       arcsign seal -k <key-file> <msg-file> ...\n"
+	        "       arcsign unseal -K <key-hex> <msg-file> ...\n"
+	        "       arcsign verify <msg-file> ...\n"
 	
 	return 2
 }
