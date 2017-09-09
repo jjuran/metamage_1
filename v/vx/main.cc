@@ -36,6 +36,7 @@
 #include "vlib/types/type.hh"
 
 // vx
+#include "file_descriptor.hh"
 #include "library.hh"
 #include "posixfs.hh"
 #include "thread.hh"
@@ -206,6 +207,7 @@ int main( int argc, char** argv )
 		define( proc_truncate );
 	}
 	
+	define( fd_vtype      );
 	define( thread_vtype  );
 	
 	define( proc_close    );
