@@ -45,6 +45,14 @@ namespace vlib
 			}
 	};
 	
+	class Identifier : public Bareword
+	{
+		public:
+			Identifier( const plus::string& s ) : Bareword( s )
+			{
+			}
+	};
+	
 }
 
 #endif

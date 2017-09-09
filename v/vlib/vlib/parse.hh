@@ -13,9 +13,7 @@
 namespace vlib
 {
 	
-	class lexical_scope;
-	
-	Value parse( const char* p, const char* file, lexical_scope* globals );
+	Value parse( const char* p, const char* file );
 	
 }
 

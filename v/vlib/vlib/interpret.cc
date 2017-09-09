@@ -24,6 +24,7 @@
 #include "plus/var_string.hh"
 
 // vlib
+#include "vlib/analyze.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
 #include "vlib/parse.hh"
@@ -86,7 +87,7 @@ namespace vlib
 		
 		try
 		{
-			return execute( parse( program, file, globals ) );
+			return execute( analyze( parse( program, file ), globals ) );
 		}
 		catch ( const std::bad_alloc& )
 		{

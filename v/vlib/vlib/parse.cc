@@ -32,7 +32,6 @@
 #include "vlib/ops.hh"
 #include "vlib/precedence.hh"
 #include "vlib/quote.hh"
-#include "vlib/scope.hh"
 #include "vlib/source.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/throw.hh"
@@ -45,7 +44,6 @@
 #include "vlib/types/mb32.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
-#include "vlib/types/term.hh"
 #include "vlib/types/type.hh"
 
 
@@ -163,16 +161,9 @@ namespace vlib
 		private:
 			typedef std::vector< dyad > Stack;
 			
-			lexical_scope_box scope;
-			
 			Stack stack;
 			
 			source_spec  its_source;
-			
-			bool     it_is_a_module;
-			unsigned its_export_count;
-			
-			Variable its_exports;
 		
 		private:
 			bool expecting_value() const;
@@ -191,13 +182,7 @@ namespace vlib
 			void receive_token( const Token& token );
 		
 		public:
-			Parser( lexical_scope* globals, const char* file )
-			:
-				scope( globals ),
-				its_source( file ),
-				it_is_a_module(),
-				its_export_count(),
-				its_exports( "__export__" )
+			Parser( const char* file ) : its_source( file )
 			{
 			}
 			
@@ -354,12 +339,6 @@ namespace vlib
 		}
 	}
 	
-	static
-	Value enscope_block( const lexical_scope_box& scope, const Value& v )
-	{
-		return Value( scope->symbols(), Op_scope, v );
-	}
-	
 	void Parser::receive_token( const Token& token )
 	{
 		using bignum::unbin_int;
@@ -406,21 +385,11 @@ namespace vlib
 				
 				stack.push_back( Op_block );
 				
-				scope.push();
-				
 				push( Op_braces );
 				break;
 			
 			case Token_rbrace:
 				pop( Op_braces );
-				
-				{
-					Value& v = stack.back().v;
-					
-					v = enscope_block( scope, v );
-				}
-				
-				scope.pop();
 				break;
 			
 			case Token_lparen:
@@ -502,18 +471,6 @@ namespace vlib
 						{
 							receive_op( Op_named_unary );
 						}
-						
-						if ( op == Op_export )
-						{
-							if ( ! it_is_a_module  &&  its_export_count != 0 )
-							{
-								THROW( "only one export allowed in non-module" );
-							}
-							
-							++its_export_count;
-							
-							receive_value( its_exports );
-						}
 					}
 					else if ( token.text == "break" )
 					{
@@ -536,45 +493,16 @@ namespace vlib
 								receive_value( Member( token.text ) );
 								break;
 							}
-							
-							if ( stack.back().op == Op_module )
-							{
-								if ( it_is_a_module )
-								{
-									THROW( "duplicate `module` declaration" );
-								}
-								
-								if ( its_export_count != 0 )
-								{
-									THROW( "`module` must precede `export`" );
-								}
-								
-								it_is_a_module = true;
-								
-								Value exports( Op_export, empty_array );
-								
-								its_exports.sym()->deref() = exports;
-								
-								receive_value( its_exports );
-								break;
-							}
-							
-							if ( declares_symbols( stack.back().op ) )
-							{
-								bool is_var = stack.back().op == Op_var;
-								symbol_type type = symbol_type( is_var );
-								
-								scope->declare( token.text, type );
-							}
 						}
 						
-						if ( const Value& sym = scope->resolve( token.text ) )
+						if ( const Value& sym = locate_keyword( token.text ) )
 						{
 							receive_value( sym );
 							break;
 						}
 						
-						throw undeclared_symbol_error( token.text, its_source );
+						receive_value( Identifier( token.text ) );
+						break;
 					}
 				}
 				
@@ -721,12 +649,7 @@ namespace vlib
 			
 			if ( ! token )
 			{
-				if ( its_export_count )
-				{
-					result = Value( result, Op_end, its_exports );
-				}
-				
-				return enscope_block( scope, result );
+				return result;
 			}
 			
 			if ( new_line )
@@ -736,11 +659,11 @@ namespace vlib
 		}
 	}
 	
-	Value parse( const char* p, const char* file, lexical_scope* globals )
+	Value parse( const char* p, const char* file )
 	{
 		static bool installed = install_keywords();
 		
-		Parser parser( globals, file );
+		Parser parser( file );
 		
 		try
 		{
