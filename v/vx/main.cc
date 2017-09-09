@@ -168,7 +168,7 @@ void define( const type_info& type )
 static
 void define( const char* name, int i )
 {
-	globals.declare( name, Symbol_const ).sym()->assign( Integer( i ) );
+	globals.declare( name, Symbol_const ).sym()->assign( FileDescriptor( i ) );
 }
 
 int main( int argc, char** argv )
