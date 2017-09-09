@@ -214,7 +214,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return Integer( new_fd );
+		return FileDescriptor( new_fd );
 	}
 	
 	static
@@ -232,7 +232,7 @@ namespace vlib
 		
 		// new_fd should be same as req_fd
 		
-		return Integer( new_fd );
+		return FileDescriptor( new_fd );
 	}
 	
 	static
@@ -377,8 +377,8 @@ namespace vlib
 			path_error( "<pipe>" );
 		}
 		
-		return Value( Integer( pipe_ends[ 0 ] ),
-		              Integer( pipe_ends[ 1 ] ) );
+		return Value( FileDescriptor( pipe_ends[ 0 ] ),
+		              FileDescriptor( pipe_ends[ 1 ] ) );
 	}
 	
 	static
