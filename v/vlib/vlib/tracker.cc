@@ -122,6 +122,22 @@ namespace vlib
 	}
 	
 	static
+	Symbol* next_symbol( full_iterator& it )
+	{
+		while ( ! it.finished() )
+		{
+			if ( Symbol* sym = it.get().sym() )
+			{
+				return sym;
+			}
+			
+			it.step();
+		}
+		
+		return NULL;
+	}
+	
+	static
 	void set_marks( const Value& src, mark_type old_mark, mark_type new_mark )
 	{
 		full_iterator it( src );

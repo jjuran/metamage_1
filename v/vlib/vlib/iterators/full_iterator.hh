@@ -12,8 +12,7 @@
 
 namespace vlib
 {
-	
-	class Symbol;
+
 	class Value;
 	
 	class full_iterator
@@ -36,8 +35,6 @@ namespace vlib
 			
 			void prune();
 	};
-	
-	Symbol* next_symbol( full_iterator& it );
 	
 }
 
