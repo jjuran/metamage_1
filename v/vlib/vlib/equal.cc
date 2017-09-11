@@ -28,6 +28,11 @@ namespace vlib
 			return false;
 		}
 		
+		if ( a.dispatch_methods() != b.dispatch_methods() )
+		{
+			return false;
+		}
+		
 		if ( const dispatch* methods = a.dispatch_methods() )
 		{
 			if ( const comparison* cmp = methods->compare )
@@ -105,6 +110,11 @@ namespace vlib
 		}
 		
 		if ( one.type() != two.type() )
+		{
+			return true;
+		}
+		
+		if ( one.dispatch_methods() != two.dispatch_methods() )
 		{
 			return true;
 		}

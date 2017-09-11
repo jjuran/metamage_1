@@ -64,6 +64,11 @@ namespace vlib
 			THROW( "mismatched types in compare()" );
 		}
 		
+		if ( a.dispatch_methods() != b.dispatch_methods() )
+		{
+			THROW( "mismatched types in compare()" );
+		}
+		
 		if ( const dispatch* methods = a.dispatch_methods() )
 		{
 			if ( const comparison* cmp = methods->compare )
