@@ -14,6 +14,7 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/throw.hh"
+#include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -40,6 +41,17 @@ namespace vlib
 		&vbytes_cpy_data,
 		&vbytes_cpy_size,
 		NULL,
+	};
+	
+	static
+	cmp_t vbytes_order( const Value& a, const Value& b )
+	{
+		return compare( a.string(), b.string() );
+	}
+	
+	const comparison vbytes_comparison =
+	{
+		&vbytes_order,
 	};
 	
 	

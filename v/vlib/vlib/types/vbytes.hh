@@ -14,10 +14,12 @@ namespace vlib
 {
 	
 	class Byte;
+	struct comparison;
 	struct dispatch;
 	struct stringify;
 	
 	extern const stringify vbytes_cpy;
+	extern const comparison vbytes_comparison;
 	
 	class VBytes : public Value
 	{

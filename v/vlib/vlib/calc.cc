@@ -80,16 +80,7 @@ namespace vlib
 			}
 		}
 		
-		switch ( a.type() )
-		{
-			case Value_packed:
-			case Value_string:
-				return compare( a.string(), b.string() );
-			
-			default:
-				THROW( "unsupported type in compare()" );
-				break;
-		}
+		THROW( "unsupported type in compare()" );
 		
 		return 0;
 	}

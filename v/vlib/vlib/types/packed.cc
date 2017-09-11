@@ -247,7 +247,7 @@ namespace vlib
 	{
 		&packed_stringifiers,
 		NULL,
-		NULL,
+		&vbytes_comparison,
 		&ops,
 	};
 	

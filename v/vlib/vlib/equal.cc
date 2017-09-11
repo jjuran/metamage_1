@@ -64,10 +64,6 @@ namespace vlib
 			case Value_boolean:
 				return a.boolean() == b.boolean();
 			
-			case Value_packed:
-			case Value_string:
-				return a.string() == b.string();
-			
 			case Value_pair:
 				{
 					Expr& ax = *a.expr();

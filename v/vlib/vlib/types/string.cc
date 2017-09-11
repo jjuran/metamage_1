@@ -156,7 +156,7 @@ namespace vlib
 	{
 		&string_stringifiers,
 		NULL,
-		NULL,
+		&vbytes_comparison,
 		&ops,
 	};
 	
