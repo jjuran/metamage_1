@@ -8,9 +8,6 @@
 // debug
 #include "debug/assert.hh"
 
-// bignum
-#include "bignum/integer.hh"
-
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/equal.hh"
