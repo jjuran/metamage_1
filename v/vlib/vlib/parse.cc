@@ -38,6 +38,7 @@
 #include "vlib/throw.hh"
 #include "vlib/token.hh"
 #include "vlib/types/any.hh"
+#include "vlib/types/bareword.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
@@ -532,7 +533,7 @@ namespace vlib
 						{
 							if ( stack.back().op == Op_member )
 							{
-								receive_value( String( token.text ) );
+								receive_value( Member( token.text ) );
 								break;
 							}
 							

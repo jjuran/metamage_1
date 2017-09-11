@@ -12,6 +12,7 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
 
@@ -37,12 +38,20 @@ namespace vlib
 	}
 	
 	static
+	Value record_member( const Value& fields, const Value& member )
+	{
+		Value key = String( member.string() );  // Required for key equality
+		
+		return keyed_subscript( Value( Op_array, fields ), key );
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		switch ( op )
 		{
 			case Op_member:
-				return keyed_subscript( Value( Op_array, a.expr()->right ), b );
+				return record_member( a.expr()->right, b );
 			
 			default:
 				break;
