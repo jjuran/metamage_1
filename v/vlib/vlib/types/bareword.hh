@@ -35,6 +35,14 @@ namespace vlib
 			const plus::string& get() const  { return string(); }
 	};
 	
+	class Member : public Bareword
+	{
+		public:
+			Member( const plus::string& s ) : Bareword( s )
+			{
+			}
+	};
+	
 }
 
 #endif
