@@ -117,6 +117,7 @@ void install_Menus()
 	TBTRAP( SetItem      );  // A947
 	
 	TBTRAP( FlashMenuBar );  // A94C
+	TBTRAP( AddResMenu   );  // A94D
 	
 	TBTRAP( CountMItems  );  // A950
 	

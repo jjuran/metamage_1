@@ -552,6 +552,10 @@ pascal void FlashMenuBar_patch( short menuID )
 	InvertRect( &menu_bar );
 }
 
+pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
+{
+}
+
 pascal short CountMItems_patch( MenuInfo** menu )
 {
 	short n = 0;

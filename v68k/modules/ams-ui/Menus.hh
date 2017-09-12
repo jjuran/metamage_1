@@ -24,6 +24,8 @@ pascal void SetItem_patch( MenuInfo** menu, short i, const unsigned char* txt );
 
 pascal void FlashMenuBar_patch( short menuID );
 
+pascal void AddResMenu_patch( MenuInfo** menu, unsigned long type );
+
 pascal short CountMItems_patch( MenuInfo** menu );
 
 pascal MenuInfo** GetMenu_patch( short resID );
