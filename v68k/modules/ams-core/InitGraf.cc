@@ -6,6 +6,9 @@
 #include "InitGraf.hh"
 
 // Mac OS
+#ifndef __FONTS__
+#include <Fonts.h>
+#endif
 #ifndef __QUICKDRAW__
 #include <Quickdraw.h>
 #endif
@@ -97,11 +100,20 @@ static inline void set_Pattern( Pattern& pattern, uint32_t data )
 
 struct private_QDGlobals
 {
-	char privates[58];
-	
-	MacRegion  maxRegion;
-	RgnPtr     maxRgnPtr;
-	RgnHandle  maxRgnHandle;
+	FMOutput   fontData;
+	Ptr        fontPtr;
+	Fixed      fontAdj;
+	Point      patAlign;
+	short      polyMax;
+	Handle     thePoly;
+	short      playIndex;
+	long       playPic;
+	short      rgnMax;
+	short      rgnIndex;
+	Handle     rgnBuf;
+	MacRegion  wideData;
+	RgnPtr     wideMaster;
+	RgnHandle  wideOpen;
 	
 	char publics[130];
 };
@@ -117,14 +129,14 @@ pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 	
 	private_QDGlobals& private_qd = (private_QDGlobals&) qd;
 	
-	private_qd.maxRegion.rgnSize = sizeof (MacRegion);
-	private_qd.maxRegion.rgnBBox.top    = -32767;
-	private_qd.maxRegion.rgnBBox.left   = -32767;
-	private_qd.maxRegion.rgnBBox.bottom =  32767;
-	private_qd.maxRegion.rgnBBox.right  =  32767;
+	private_qd.wideData.rgnSize = sizeof (MacRegion);
+	private_qd.wideData.rgnBBox.top    = -32767;
+	private_qd.wideData.rgnBBox.left   = -32767;
+	private_qd.wideData.rgnBBox.bottom =  32767;
+	private_qd.wideData.rgnBBox.right  =  32767;
 	
-	private_qd.maxRgnPtr    = &private_qd.maxRegion;
-	private_qd.maxRgnHandle = &private_qd.maxRgnPtr;
+	private_qd.wideMaster = &private_qd.wideData;
+	private_qd.wideOpen   = &private_qd.wideMaster;
 	
 	const unsigned width_px  = 512;
 	const unsigned height_px = 342;
