@@ -363,7 +363,7 @@ plus::string structtype_rep_make( const Value& v )
 	return "struct " +
 	       name +
 	       &" "[ name.empty() ] +
-	       rep( Value( nothing, Op_scope, st.fields() ) );
+	       rep( Value( Op_block, st.fields() ) );
 }
 
 static const stringify structtype_rep =
