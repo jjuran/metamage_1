@@ -5,6 +5,14 @@
 
 #include "Menus.hh"
 
+// Mac OS
+#ifndef __MENUS__
+#include <Menus.h>
+#endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
+
 // ams-common
 #include "QDGlobals.hh"
 
@@ -72,4 +80,11 @@ pascal void FlashMenuBar_patch( short menuID )
 	menu_bar.bottom = MBarHeight;
 	
 	InvertRect( &menu_bar );
+}
+
+pascal MenuInfo** GetMenu_patch( short resID )
+{
+	Handle h = GetResource( 'MENU', resID );
+	
+	return (MenuRef) h;
 }

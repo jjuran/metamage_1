@@ -43,6 +43,7 @@ enum
 	_BeginUpdate = _BeginUpDate,
 	_CheckUpdate = _CheckUpDate,
 	_EndUpdate   = _EndUpDate,
+	_GetMenu     = _GetRMenu,
 };
 
 
@@ -106,6 +107,8 @@ void install_Menus()
 	TBTRAP( InitMenus    );  // A930
 	TBTRAP( DrawMenuBar  );  // A937
 	TBTRAP( FlashMenuBar );  // A94C
+	
+	TBTRAP( GetMenu      );  // A9BF
 }
 
 static void install_Controls()
