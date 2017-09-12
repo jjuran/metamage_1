@@ -105,6 +105,9 @@ static
 void install_Menus()
 {
 	TBTRAP( InitMenus    );  // A930
+	
+	TBTRAP( InsertMenu   );  // A935
+	
 	TBTRAP( DrawMenuBar  );  // A937
 	TBTRAP( FlashMenuBar );  // A94C
 	

@@ -10,6 +10,8 @@ struct MenuInfo;
 
 pascal void InitMenus_patch();
 
+pascal void InsertMenu_patch( MenuInfo** menu, short beforeID );
+
 pascal void DrawMenuBar_patch();
 
 pascal void FlashMenuBar_patch( short menuID );
