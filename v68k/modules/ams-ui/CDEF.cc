@@ -307,6 +307,21 @@ long CDEF_0_Hit( short varCode, ControlRef control, Point where )
 	return 0;
 }
 
+static
+long CDEF_0_CalcRgns( short varCode, ControlRef control, long param )
+{
+	const bool indicator_only = param < 0;
+	
+	*(Byte*) param = 0;
+	
+	RgnHandle rgn = (RgnHandle) param;
+	
+	// TODO:  Calculate the region for real
+	RectRgn( rgn, &control[0]->contrlRect );
+	
+	return 0;
+}
+
 pascal
 long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 {
@@ -319,6 +334,8 @@ long CDEF_0( short varCode, ControlRecord** control, short message, long param )
 			return CDEF_0_Hit( varCode, control, *(Point*) &param );
 		
 		case calcCRgns:
+			return CDEF_0_CalcRgns( varCode, control, param );
+		
 		case initCntl:
 		case dispCntl:
 			break;
