@@ -162,6 +162,20 @@ void hilite_radio( Rect rect )
 }
 
 static
+void draw_switch_title( const Rect& bounds, const unsigned char* title )
+{
+	const short margin = 4;
+	const short ascent = 9;
+	
+	const short h = bounds.left + switch_edge_length + margin;
+	const short v = (bounds.top + bounds.bottom + ascent) / 2;
+	
+	MoveTo( h, v );
+	
+	DrawString( title );
+}
+
+static
 long CDEF_0_Draw( short varCode, ControlRef control, long param )
 {
 	if ( ! control[0]->contrlVis )
@@ -207,6 +221,7 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 		
 		case checkBoxProc << 1 | draw:
 			draw_checkbox( button_rect, value );
+			draw_switch_title( bounds, title );
 			break;
 		
 		case checkBoxProc << 1 | hilite:
@@ -215,6 +230,7 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 		
 		case radioButProc << 1 | draw:
 			draw_radiobutton( button_rect, value );
+			draw_switch_title( bounds, title );
 			break;
 		
 		case radioButProc << 1 | hilite:
