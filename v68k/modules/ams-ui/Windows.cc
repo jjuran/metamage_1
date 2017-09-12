@@ -6,6 +6,9 @@
 #include "Windows.hh"
 
 // Mac OS
+#ifndef __CONTROLS__
+#include <Controls.h>
+#endif
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
@@ -1131,6 +1134,8 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	{
 		CurDeactive = NULL;
 	}
+	
+	KillControls( port );
 	
 	WindowPeek window = (WindowPeek) port;
 	
