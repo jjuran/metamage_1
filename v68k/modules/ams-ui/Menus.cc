@@ -152,6 +152,21 @@ pascal void FlashMenuBar_patch( short menuID )
 	InvertRect( &menu_bar );
 }
 
+pascal short CountMItems_patch( MenuInfo** menu )
+{
+	short n = 0;
+	
+	menu_item_const_iterator it( menu );
+	
+	while ( it )
+	{
+		++it;
+		++n;
+	}
+	
+	return n;
+}
+
 pascal MenuInfo** GetMenu_patch( short resID )
 {
 	Handle h = GetResource( 'MENU', resID );
