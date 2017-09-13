@@ -162,6 +162,54 @@ pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 	result[ 0 ] = '\0';
 }
 
+pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
+{
+	const UInt8 newLen = text[ 0 ];
+	
+	unsigned char* p = menu[0]->menuData;
+	
+	p += 1 + *p;
+	
+	while ( *p )
+	{
+		if ( --item == 0 )
+		{
+			const UInt8 oldLen = p[ 0 ];
+			
+			if ( newLen == oldLen )
+			{
+				memcpy( p + 1, text + 1, newLen );
+				
+				MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+				return;
+			}
+			
+			size_t size = GetHandleSize( (Handle) menu );
+			
+			if ( newLen < oldLen )
+			{
+				unsigned char* q = p + 1 + oldLen;
+				
+				memcpy( p, text, 1 + newLen );
+				
+				p += 1 + newLen;
+				
+				size_t n = (Ptr) *menu + size - (Ptr) q;
+				
+				memmove( p, q, n );
+				
+				MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+			}
+			
+			// TODO:  Allow setting text which is longer than the previous
+			
+			return;
+		}
+		
+		p += 1 + *p + 4;
+	}
+}
+
 pascal void FlashMenuBar_patch( short menuID )
 {
 	WMgrPort_bezel_scope port_swap;

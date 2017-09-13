@@ -111,6 +111,7 @@ void install_Menus()
 	TBTRAP( DrawMenuBar  );  // A937
 	
 	TBTRAP( GetItem      );  // A946
+	TBTRAP( SetItem      );  // A947
 	
 	TBTRAP( FlashMenuBar );  // A94C
 	

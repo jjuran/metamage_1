@@ -15,6 +15,7 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID );
 pascal void DrawMenuBar_patch();
 
 pascal void GetItem_patch( MenuInfo** menu, short item, unsigned char* result );
+pascal void SetItem_patch( MenuInfo** menu, short i, const unsigned char* txt );
 
 pascal void FlashMenuBar_patch( short menuID );
 
