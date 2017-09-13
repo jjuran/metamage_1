@@ -13,6 +13,9 @@
 #include <Resources.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // ams-common
 #include "QDGlobals.hh"
 
@@ -139,6 +142,24 @@ pascal void DrawMenuBar_patch()
 		
 		DrawString( menu[0]->menuData );
 	}
+}
+
+pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
+{
+	menu_item_const_iterator it( menu );
+	
+	while ( const unsigned char* text = it )
+	{
+		if ( --item == 0 )
+		{
+			memcpy( result, text, 1 + text[ 0 ] );
+			return;
+		}
+		
+		++it;
+	}
+	
+	result[ 0 ] = '\0';
 }
 
 pascal void FlashMenuBar_patch( short menuID )
