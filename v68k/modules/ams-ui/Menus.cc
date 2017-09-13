@@ -18,6 +18,7 @@
 
 // ams-core
 #include "MBDF.hh"
+#include "MDEF.hh"
 #include "Windows.hh"
 
 
@@ -113,6 +114,8 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 	header->right_edge += gap_between_titles + StringWidth( menu[0]->menuData );
 	
 	header->extent_bytes += sizeof (MenuList_entry);
+	
+	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 }
 
 pascal void DrawMenuBar_patch()
