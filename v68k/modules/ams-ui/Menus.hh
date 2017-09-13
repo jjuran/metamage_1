@@ -42,6 +42,8 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked );
 
 pascal short CountMItems_patch( MenuInfo** menu );
 
+pascal MenuInfo** GetMHandle_patch( short menuID );
+
 pascal void FlashMenuBar_patch( short menuID );
 
 pascal void SysBeep_patch( short duration );

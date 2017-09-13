@@ -130,6 +130,8 @@ void install_Menus()
 	TBTRAP( GetItem      );  // A946
 	TBTRAP( SetItem      );  // A947
 	
+	TBTRAP( GetMHandle   );  // A949
+	
 	TBTRAP( PlotIcon     );  // A94B
 	TBTRAP( FlashMenuBar );  // A94C
 	TBTRAP( AddResMenu   );  // A94D

@@ -769,6 +769,13 @@ pascal short CountMItems_patch( MenuInfo** menu )
 	return n;
 }
 
+pascal MenuInfo** GetMHandle_patch( short menuID )
+{
+	MenuList_entry* it = find_menu_id( menuID );
+	
+	return it ? it->menu : NULL;
+}
+
 pascal void FlashMenuBar_patch( short menuID )
 {
 	WMgrPort_bezel_scope port_swap;
