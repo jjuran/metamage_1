@@ -1,7 +1,7 @@
 resource 'MENU' (128, "Apple") {
 	1,
 	textMenuProc,
-	allEnabled,
+	0x7FFFFFFD,
 	enabled,
 	apple,
 	{	/* array: 2 elements */
