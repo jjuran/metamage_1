@@ -10,11 +10,93 @@
 #include <Menus.h>
 #endif
 
+// ams-common
+#include "QDGlobals.hh"
+
 
 const short menu_item_height = 16;
 
+const short system_font_ascent =  9;
+const short pen_v_offset_for_text = (menu_item_height + system_font_ascent) / 2;
+const short pen_v_offset_for_rule = menu_item_height / 2;
+
 const short left_padding = 14;
 const short right_padding = 6;
+
+static
+void MDEF_0_Draw( MenuRef menu, const Rect& r )
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	const short top = r.top;
+	const short left = r.left;
+	const short right = r.right;
+	
+	short v = top + pen_v_offset_for_text - menu_item_height;
+	
+	menu_item_const_iterator it( menu );
+	
+	while ( const unsigned char* text = it )
+	{
+		++it;
+		
+		v += menu_item_height;
+		
+		MoveTo( left + left_padding, v );
+		
+		if ( text[ 0 ] == 1  &&  text[ 1 ] == '-' )
+		{
+			short lineTop = v - pen_v_offset_for_text + pen_v_offset_for_rule;
+			
+			Rect line = { lineTop, left, lineTop + 1, right };
+			
+			FillRect( &line, &qd.gray );
+		}
+		else
+		{
+			DrawString( text );
+		}
+	}
+}
+
+static
+void invert_item( Rect rect, short item )
+{
+	if ( item )
+	{
+		rect.top   += --item   * menu_item_height;
+		rect.bottom = rect.top + menu_item_height;
+		
+		InvertRect( &rect );
+	}
+}
+
+static
+void MDEF_0_Choose( MenuRef menu, const Rect& rect, Point hit, short* which )
+{
+	short enabledItem = 0;
+	
+	if ( PtInRect( hit, &rect )  &&  menu[0]->enableFlags & 1 )
+	{
+		const short dv = hit.v - rect.top;
+		
+		const short item = dv / menu_item_height + 1;
+		
+		const short enabled = item > 31  ||  menu[0]->enableFlags & (1 << item);
+		
+		enabledItem = enabled ? item : 0;
+		
+		if ( enabledItem == *which )
+		{
+			return;
+		}
+	}
+	
+	invert_item( rect, *which      );
+	invert_item( rect, enabledItem );
+	
+	*which = enabledItem;
+}
 
 static
 void MDEF_0_Size( MenuRef menu )
@@ -55,7 +137,11 @@ void MDEF_0( short msg, MenuRef menu, const Rect* r, Point hit, short* which )
 	switch ( msg )
 	{
 		case mDrawMsg:
+			MDEF_0_Draw( menu, *r );
+			break;
+		
 		case mChooseMsg:
+			MDEF_0_Choose( menu, *r, hit, which );
 			break;
 		
 		case mSizeMsg:
