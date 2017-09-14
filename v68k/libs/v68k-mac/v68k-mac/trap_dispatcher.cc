@@ -71,7 +71,7 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 	0x6D02,  // BLT.S    nopop
 	
-	0x2E5F,  // MOVE.L   (A7)+,(A7)         ; remove caller's return address
+	0x2E9F,  // MOVE.L   (A7)+,(A7)         ; remove caller's return address
 	
 // nopop:
 	0x4E75,  // RTS                         ; 'return' to Toolbox trap routine
