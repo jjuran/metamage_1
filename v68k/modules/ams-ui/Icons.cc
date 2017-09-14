@@ -37,6 +37,11 @@ void CopyIconBits( Ptr baseAddr, const Rect* r, short mode )
 	CopyBits( &IconBitmap, &port->portBits, &IconBitmap.bounds, r, mode, NULL );
 }
 
+pascal void PlotIcon_patch( const Rect* rect, char** icon )
+{
+	CopyIconBits( *icon, rect, srcCopy );
+}
+
 static
 pascal OSErr PlotIconID_method( const Rect*        rect,
                                 IconAlignmentType  align,
