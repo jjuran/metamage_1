@@ -23,6 +23,11 @@
 #include "CDEF.hh"
 
 
+pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn )
+{
+	DrawControls_patch( window );
+}
+
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,

@@ -7,9 +7,12 @@
 #define CONTROLS_HH
 
 struct GrafPort;
+struct MacRegion;
 struct Point;
 struct Rect;
 struct ControlRecord;
+
+pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
 
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,

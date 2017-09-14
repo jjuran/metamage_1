@@ -44,6 +44,7 @@ enum
 	_CheckUpdate = _CheckUpDate,
 	_EndUpdate   = _EndUpDate,
 	_GetMenu     = _GetRMenu,
+	_UpdateControls = _UpdtControl,
 };
 
 
@@ -131,6 +132,7 @@ void install_Menus()
 
 static void install_Controls()
 {
+	TBTRAP( UpdateControls );  // A953
 	TBTRAP( NewControl     );  // A954
 	TBTRAP( DisposeControl );  // A955
 	TBTRAP( KillControls   );  // A956
