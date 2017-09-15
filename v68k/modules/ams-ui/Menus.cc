@@ -17,6 +17,38 @@ GrafPtr WMgrPort : 0x09DE;
 short MBarHeight : 0x0BAA;
 
 
+class WMgrPort_bezel_scope
+{
+	private:
+		GrafPtr oldPort;
+		
+		// non-copyable
+		WMgrPort_bezel_scope           ( WMgrPort_bezel_scope& );
+		WMgrPort_bezel_scope& operator=( WMgrPort_bezel_scope& );
+	
+	public:
+		WMgrPort_bezel_scope();
+		~WMgrPort_bezel_scope();
+};
+
+inline
+WMgrPort_bezel_scope::WMgrPort_bezel_scope()
+{
+	GrafPtr& thePort = *get_addrof_thePort();
+	
+	oldPort = thePort;
+	thePort = WMgrPort;
+	
+	SetClip( BezelRgn );
+}
+
+inline
+WMgrPort_bezel_scope::~WMgrPort_bezel_scope()
+{
+	*get_addrof_thePort() = oldPort;
+}
+
+
 pascal void InitMenus_patch()
 {
 	calculate_menu_bar_height();
@@ -26,34 +58,18 @@ pascal void InitMenus_patch()
 
 pascal void DrawMenuBar_patch()
 {
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
-	
-	SetClip( BezelRgn );
+	WMgrPort_bezel_scope port_swap;
 	
 	draw_menu_bar_from_WMgr_port();
-	
-	qd.thePort = saved_port;
 }
 
 pascal void FlashMenuBar_patch( short menuID )
 {
-	QDGlobals& qd = get_QDGlobals();
+	WMgrPort_bezel_scope port_swap;
 	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
-	
-	SetClip( BezelRgn );
-	
-	Rect menu_bar = qd.screenBits.bounds;
+	Rect menu_bar = BezelRgn[0]->rgnBBox;
 	
 	menu_bar.bottom = MBarHeight;
 	
 	InvertRect( &menu_bar );
-	
-	qd.thePort = saved_port;
 }
