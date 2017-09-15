@@ -2,6 +2,21 @@
 
 #define mul32x32_64(a,b) (((uint64_t)(a))*(b))
 
+#if defined( __MWERKS__ )  &&  defined( __MC68K__ )
+	#include "m68k-asm.h"
+	
+	#undef mul32x32_64
+	
+	static inline
+	uint64_t mul32x32_64( uint32_t a, uint32_t b )
+	{
+		uint64_t result;
+		long_multiply( &result, a, b );
+		
+		return result;
+	}
+#endif
+
 /* platform */
 #if defined(COMPILER_MSVC)
 	#include <intrin.h>
