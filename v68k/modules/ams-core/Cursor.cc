@@ -18,7 +18,10 @@
 
 typedef uint32_t Buffer[ 16 ];
 
-Point Mouse : 0x0830;
+short ScreenRow : 0x0106;
+Ptr   ScrnBase  : 0x0824;
+Point Mouse     : 0x0830;
+Rect  CrsrPin   : 0x0834;
 
 static Cursor TheCrsr;
 static Ptr    CrsrAddr;
@@ -94,9 +97,7 @@ void erase_cursor()
 {
 	screen_lock lock;
 	
-	QDGlobals& qd = get_QDGlobals();
-	
-	const short rowBytes = qd.screenBits.rowBytes;
+	const short rowBytes = ScreenRow;
 	
 	restore_bits_under_cursor( CrsrAddr, rowBytes );
 }
@@ -105,8 +106,6 @@ static
 void paint_cursor( short h, short v )
 {
 	screen_lock lock;
-	
-	QDGlobals& qd = get_QDGlobals();
 	
 	short h_trim = 0;
 	short v_skip = 0;
@@ -129,23 +128,23 @@ void paint_cursor( short h, short v )
 		v = 0;
 	}
 	
-	const Ptr   baseAddr = qd.screenBits.baseAddr;
-	const short rowBytes = qd.screenBits.rowBytes;
+	const Ptr   baseAddr = ScrnBase;
+	const short rowBytes = ScreenRow;
 	
 	Ptr plotAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
 	
 	CrsrAddr = plotAddr;
 	
-	if ( v > qd.screenBits.bounds.bottom - 16 )
+	if ( v > CrsrPin.bottom - 16 )
 	{
-		v_count = qd.screenBits.bounds.bottom - v;
+		v_count = CrsrPin.bottom - v;
 		
 		if ( v_count <= 0 )
 		{
 			return;
 		}
 		
-		v = qd.screenBits.bounds.bottom - 16;
+		v = CrsrPin.bottom - 16;
 		
 		CrsrAddr = baseAddr + v * rowBytes + (h >> 4) * 2;
 	}
@@ -157,7 +156,7 @@ void paint_cursor( short h, short v )
 		CrsrAddr += 2;
 		plotAddr += 2;
 	}
-	else if ( h > qd.screenBits.bounds.right - 16 )
+	else if ( h > CrsrPin.right - 16 )
 	{
 		h_trim = 1;
 		
