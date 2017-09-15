@@ -80,6 +80,26 @@ pascal void ClosePort_patch( struct GrafPort* port )
 	DisposeRgn( port->clipRgn );
 }
 
+pascal void LocalToGlobal_patch( Point* pt )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	const Rect& bounds = thePort->portBits.bounds;
+	
+	pt->v -= bounds.top;
+	pt->h -= bounds.left;
+}
+
+pascal void GlobalToLocal_patch( Point* pt )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	const Rect& bounds = thePort->portBits.bounds;
+	
+	pt->v += bounds.top;
+	pt->h += bounds.left;
+}
+
 pascal void GetPort_patch( struct GrafPort** port_ptr )
 {
 	*port_ptr = *get_addrof_thePort();

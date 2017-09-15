@@ -10,6 +10,9 @@ pascal void OpenPort_patch ( struct GrafPort* port );
 pascal void InitPort_patch ( struct GrafPort* port );
 pascal void ClosePort_patch( struct GrafPort* port );
 
+pascal void LocalToGlobal_patch( struct Point* pt );
+pascal void GlobalToLocal_patch( struct Point* pt );
+
 pascal void GetPort_patch( struct GrafPort** port_ptr );
 
 pascal void SetPort_patch( struct GrafPort* port );

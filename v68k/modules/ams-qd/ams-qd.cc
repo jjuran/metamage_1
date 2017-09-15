@@ -66,6 +66,10 @@ static void install_QuickDraw()
 	TBTRAP( InitPort    );  // A86D
 	TBTRAP( InitGraf    );  // A86E
 	TBTRAP( OpenPort    );  // A86F
+	
+	TBTRAP( LocalToGlobal );  // A870
+	TBTRAP( GlobalToLocal );  // A871
+	
 	TBTRAP( SetPort     );  // A873
 	TBTRAP( GetPort     );  // A874
 	TBTRAP( SetPortBits );  // A875
