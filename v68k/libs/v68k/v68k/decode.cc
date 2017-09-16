@@ -327,7 +327,7 @@ namespace v68k
 		
 		if ( size_code == 3  &&  ea_is_data( mode, n ) )
 		{
-			storage.size  = long_sized;
+			storage.size  = word_sized;
 			storage.fetch = fetches_math_to_Dn;
 			storage.code  = has_0100 ? microcode_DIVS
 			                         : microcode_DIVU;

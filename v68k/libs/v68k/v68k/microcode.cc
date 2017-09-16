@@ -983,6 +983,8 @@ namespace v68k
 		}
 		else
 		{
+			pb.size = long_sized;  // Store remainder and quotient
+			
 			//const int16_t remainder = dividend % divisor;
 			const int16_t remainder = dividend - quotient * divisor;
 			
@@ -1014,6 +1016,8 @@ namespace v68k
 		}
 		else
 		{
+			pb.size = long_sized;  // Store remainder and quotient
+			
 			//const uint16_t remainder = dividend % divisor;
 			const uint16_t remainder = dividend - quotient * divisor;
 			
