@@ -22,12 +22,19 @@
 #define SYSTEM_FONT_NOT_LOADED "warning: couldn't load the system font"
 
 FontRec** ROMFont0 : 0x0980;
+short     ApFontID : 0x0984;
 
 
 static inline
 short resID_for_font_and_size( short font, short size )
 {
 	return font * 128 + size;
+}
+
+static inline
+short specific_font( short font )
+{
+	return font == applFont ? ApFontID : font;
 }
 
 const short default_font_size = 12;
@@ -57,7 +64,7 @@ pascal void InitFonts_patch()
 
 pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 {
-	const short fontNum  = input->family;
+	const short fontNum  = specific_font( input->family );
 	const short fontSize = input->size ? input->size : default_font_size;
 	
 	const short resID = resID_for_font_and_size( fontNum, fontSize );
