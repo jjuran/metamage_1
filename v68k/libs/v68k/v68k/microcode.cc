@@ -963,13 +963,13 @@ namespace v68k
 	
 	op_result microcode_DIVS( processor_state& s, op_params& pb )
 	{
+		pb.size = unsized;  // Don't store the result unless no error
+		
 		const int32_t dividend = pb.second;
 		const int16_t divisor  = pb.first;
 		
 		if ( divisor == 0 )
 		{
-			pb.size = unsized;  // Don't store the result
-			
 			return Division_by_zero;
 		}
 		
@@ -977,11 +977,7 @@ namespace v68k
 		
 		const int16_t quotient = quotient_32;
 		
-		if ( quotient != quotient_32 )
-		{
-			pb.size = unsized;  // Don't store the result
-		}
-		else
+		if ( quotient == quotient_32 )
 		{
 			pb.size = long_sized;  // Store remainder and quotient
 			
@@ -996,13 +992,13 @@ namespace v68k
 	
 	op_result microcode_DIVU( processor_state& s, op_params& pb )
 	{
+		pb.size = unsized;  // Don't store the result unless no error
+		
 		const uint32_t dividend = pb.second;
 		const uint16_t divisor  = pb.first;
 		
 		if ( divisor == 0 )
 		{
-			pb.size = unsized;  // Don't store the result
-			
 			return Division_by_zero;
 		}
 		
@@ -1010,11 +1006,7 @@ namespace v68k
 		
 		const uint16_t quotient = quotient_32;
 		
-		if ( quotient != quotient_32 )
-		{
-			pb.size = unsized;  // Don't store the result
-		}
-		else
+		if ( quotient == quotient_32 )
 		{
 			pb.size = long_sized;  // Store remainder and quotient
 			
