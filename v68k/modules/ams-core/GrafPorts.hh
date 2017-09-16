@@ -20,6 +20,8 @@ pascal void PortSize_patch( short width, short height );
 
 pascal void MovePortTo_patch( short left, short top );
 
+pascal void SetOrigin_patch( short h, short v );
+
 pascal void SetClip_patch( struct MacRegion** clipRgn );
 pascal void GetClip_patch( struct MacRegion** clipRgn );
 

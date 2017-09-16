@@ -132,6 +132,25 @@ pascal void MovePortTo_patch( short left, short top )
 	OffsetRect_patch( &bounds, -dh, -dv );
 }
 
+pascal void SetOrigin_patch( short h, short v )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return;
+	}
+	
+	Rect& portRect = thePort->portRect;
+	Rect& bounds   = thePort->portBits.bounds;
+	
+	const short dh = h - portRect.left;
+	const short dv = v - portRect.top;
+	
+	OffsetRect_patch( &portRect, dh, dv );
+	OffsetRect_patch( &bounds,   dh, dv );
+}
+
 pascal void SetClip_patch( struct MacRegion** clipRgn )
 {
 	GrafPtr thePort = *get_addrof_thePort();
