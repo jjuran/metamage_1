@@ -118,6 +118,7 @@ static const global globals[] =
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0934, 2,    tag_CurJTOffset },
 	{ 0x0980, 4,    tag_ROMFont0    },
+	{ 0x0984, 0x82, 3               },  // ApFontID (Geneva)
 	{ 0x09D6, 4,    tag_WindowList  },
 	{ 0x09DA, 2,    tag_SaveUpdate  },
 	{ 0x09DC, 2,    tag_PaintWhite  },
