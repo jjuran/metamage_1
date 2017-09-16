@@ -56,7 +56,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	const int kAboutBoxIconEdgeLength       =  64;
+	const int kAboutBoxIconEdgeLength       =  32 << TARGET_API_MAC_CARBON;
 	
 	const int kAboutBoxIconWidth            = kAboutBoxIconEdgeLength;
 	const int kAboutBoxIconHorizontalMargin = 110;
