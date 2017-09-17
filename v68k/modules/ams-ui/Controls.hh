@@ -12,6 +12,8 @@ struct Point;
 struct Rect;
 struct ControlRecord;
 
+typedef pascal void (*ControlActionProcPtr)( ControlRecord**, short );
+
 pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
 
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
@@ -49,5 +51,9 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max );
 
 pascal short GetMinCtl_patch( ControlRecord** control );
 pascal short GetMaxCtl_patch( ControlRecord** control );
+
+pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr action );
+
+pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
 
 #endif

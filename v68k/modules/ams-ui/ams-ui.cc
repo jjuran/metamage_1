@@ -154,7 +154,8 @@ static void install_Controls()
 	
 	TBTRAP( TrackControl   );  // A968
 	TBTRAP( DrawControls   );  // A969
-	
+	TBTRAP( GetCtlAction   );  // A96A
+	TBTRAP( SetCtlAction   );  // A96B
 	TBTRAP( FindControl    );  // A96C
 }
 
