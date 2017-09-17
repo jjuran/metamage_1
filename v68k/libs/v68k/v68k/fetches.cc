@@ -42,6 +42,15 @@ namespace v68k
 		0  // NULL
 	};
 	
+	fetcher fetches_DIV[] =
+	{
+		&fetch_sized_data_at_effective_address,
+		&fetch_data_at_0E00,  // register number
+		// src divisor is word-sized, but dst dividend is long-sized.
+		&force_long_sized,
+		0  // NULL
+	};
+	
 	fetcher fetches_math_to_Dn[] =
 	{
 		&fetch_sized_data_at_effective_address,

@@ -19,6 +19,8 @@ namespace v68k
 	
 	extern fetcher fetches_immediate[];
 	
+	extern fetcher fetches_DIV[];
+	
 	extern fetcher fetches_math_to_Dn[];
 	
 	extern fetcher fetches_math[];
