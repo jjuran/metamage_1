@@ -30,6 +30,8 @@ void init_lowmem_Cursor()
 {
 	JHideCursor = &hide_cursor;
 	JShowCursor = &show_cursor;
+	JInitCrsr   = &init_cursor;
+	JSetCrsr    = &set_cursor;
 }
 
 static
