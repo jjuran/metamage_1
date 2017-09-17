@@ -72,6 +72,8 @@ static command::option options[] =
 	{ "linger",  Opt_linger },
 	
 	{ "events-fd", Opt_events_fd, command::Param_required },
+	
+	NULL,
 };
 
 
