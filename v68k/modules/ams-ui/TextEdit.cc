@@ -42,6 +42,16 @@ pascal void TEIdle_patch( TEHandle hTE )
 {
 }
 
+pascal void TEActivate_patch( TERec** hTE )
+{
+	hTE[0]->active = true;
+}
+
+pascal void TEDeactivate_patch( TERec** hTE )
+{
+	hTE[0]->active = false;
+}
+
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 {
 	FontInfo fontInfo;

@@ -220,7 +220,9 @@ static void install_TextEdit()
 	
 	TBTRAP( TENew     );  // A9D2
 	
-	TBTRAP( TEIdle );  // A9DA
+	TBTRAP( TEActivate   );  // A9D8
+	TBTRAP( TEDeactivate );  // A9D9
+	TBTRAP( TEIdle       );  // A9DA
 }
 
 static void install_Packages()
