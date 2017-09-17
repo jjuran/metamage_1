@@ -24,7 +24,7 @@
 #include "QDGlobals.hh"
 
 // ams-core
-#include "Cursor.hh"
+#include "cursor-core.hh"
 #include "options.hh"
 
 

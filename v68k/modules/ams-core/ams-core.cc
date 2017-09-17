@@ -48,6 +48,7 @@
 #include "Segments.hh"
 #include "StrUtils.hh"
 #include "Text.hh"
+#include "cursor-core.hh"
 #include "options.hh"
 
 
