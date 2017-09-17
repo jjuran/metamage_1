@@ -23,6 +23,7 @@ namespace mac  {
 
 enum
 {
+	tag_ScreenRow,
 	tag_SysEvtMask,
 	tag_SysEvtBuf,
 	tag_SysEvtBuf_low_word,
@@ -100,7 +101,7 @@ static inline bool operator<( const global& g, uint16_t addr )
 static const global globals[] =
 {
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
-	{ 0x0106, 0x82, 64              },  // ScreenRow
+	{ 0x0106, 2,    tag_ScreenRow   },
 	{ 0x0144, 2,    tag_SysEvtMask  },
 	{ 0x0146, 4,    tag_SysEvtBuf   },
 	{ 0x014A, 10,   tag_EventQueue  },
