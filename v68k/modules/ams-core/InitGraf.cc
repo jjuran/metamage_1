@@ -14,7 +14,9 @@
 #endif
 
 
-Ptr ScrnBase : 0x0824;
+short ScreenRow : 0x0106;
+Ptr   ScrnBase  : 0x0824;
+Rect  CrsrPin   : 0x0834;
 
 
 #define PACK16( _15, _14, _13,_12,  \
@@ -138,21 +140,11 @@ pascal void InitGraf_patch( GrafPtr* thePort_ptr )
 	private_qd.wideMaster = &private_qd.wideData;
 	private_qd.wideOpen   = &private_qd.wideMaster;
 	
-	const unsigned width_px  = 512;
-	const unsigned height_px = 342;
-	
-	const unsigned bit_depth = 1;  // bits per pixel
-	
-	const unsigned bits_per_byte = 8;
-	
 	qd.randSeed = 1;
 	
 	qd.screenBits.baseAddr = ScrnBase;
-	qd.screenBits.rowBytes = width_px * bit_depth / bits_per_byte;
-	qd.screenBits.bounds.top    = 0;
-	qd.screenBits.bounds.left   = 0;
-	qd.screenBits.bounds.bottom = height_px;
-	qd.screenBits.bounds.right  = width_px;
+	qd.screenBits.rowBytes = ScreenRow;
+	qd.screenBits.bounds   = CrsrPin;
 	
 	qd.arrow = arrow;
 	
