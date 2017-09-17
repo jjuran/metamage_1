@@ -30,11 +30,27 @@ pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
 {
 	TEHandle hTE = (TEHandle) NewHandleClear( sizeof (TERec) );
 	
+	if ( hTE )
+	{
+		Handle hText = NewHandle( 32 );
+		
+		if ( hText == NULL )
+		{
+			DisposeHandle( (Handle) hTE );
+			
+			return NULL;
+		}
+		
+		hTE[0]->hText = hText;
+	}
+	
 	return hTE;
 }
 
 pascal void TEDispose_patch( TERec** hTE )
 {
+	DisposeHandle( hTE[0]->hText );
+	
 	DisposeHandle( (Handle) hTE );
 }
 
