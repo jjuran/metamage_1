@@ -81,8 +81,10 @@ void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
 
-unsigned long ScrnBase : 0x0824;
-Point         Mouse    : 0x0830;
+short         ScreenRow : 0x0106;
+unsigned long ScrnBase  : 0x0824;
+Point         Mouse     : 0x0830;
+Rect          CrsrPin   : 0x0834;
 
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
@@ -101,6 +103,11 @@ enum
 
 static void initialize_low_memory_globals()
 {
+	const short screen_width  = 512;
+	const short screen_height = 342;
+	
+	ScreenRow = screen_width / 8;  // 64
+	
 	const short n_max_events = 20;
 	
 	const int event_size = 4 + sizeof (EvQEl);
@@ -111,6 +118,11 @@ static void initialize_low_memory_globals()
 	ScrnBase = 0x0001A700;
 	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
+	
+	*(long*) &CrsrPin = 0;  // topLeft
+	
+	CrsrPin.bottom = screen_height;
+	CrsrPin.right  = screen_width;
 	
 	init_lowmem_Cursor();
 }
