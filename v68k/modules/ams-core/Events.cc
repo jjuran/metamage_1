@@ -14,8 +14,6 @@
 #endif
 
 // ams-core
-#include "Region-ops.hh"
-#include "Regions.hh"
 #include "splode.hh"
 
 
@@ -133,7 +131,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
                                           unsigned long   sleep,
                                           RgnHandle       mouseRgn )
 {
-	if ( mouseRgn != NULL  &&  EmptyRgn_patch( mouseRgn ) )
+	if ( mouseRgn != NULL  &&  EmptyRgn( mouseRgn ) )
 	{
 		mouseRgn = NULL;
 	}
@@ -182,7 +180,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 			return got;
 		}
 		
-		if ( mouseRgn != NULL  &&  ! PtInRgn_patch( event->where, mouseRgn ) )
+		if ( mouseRgn != NULL  &&  ! PtInRgn( event->where, mouseRgn ) )
 		{
 			event->what    = osEvt;
 			event->message = mouseMovedMessage << 24;
