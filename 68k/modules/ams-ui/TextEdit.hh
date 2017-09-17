@@ -47,6 +47,8 @@ pascal void TEScroll_patch( short dh, short dv, TERec** hTE );
 
 pascal void TECalText_patch( TERec** hTE );
 
+pascal void TEAutoView_patch( char autoscroll, TERec** hTE );
+
 pascal TERec** TEStyleNew_patch( const Rect* destRect, const Rect* viewRect );
 
 void TEDispatch_patch( short selector );

@@ -265,6 +265,8 @@ static void install_Dialogs()
 
 static void install_TextEdit()
 {
+	TBTRAP( TEAutoView   );  // A813
+	
 	TBTRAP( TEDispatch   );  // A83D
 	TBTRAP( TEStyleNew   );  // A83E
 	

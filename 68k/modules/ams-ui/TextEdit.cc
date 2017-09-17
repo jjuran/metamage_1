@@ -1015,6 +1015,10 @@ pascal void TECalText_patch( TERec** hTE )
 	*starts++ = te.teLength;
 }
 
+pascal void TEAutoView_patch( char autoscroll, TERec** hTE )
+{
+}
+
 pascal TEHandle TEStyleNew_patch( const Rect* destRect, const Rect* viewRect )
 {
 	return TENew( destRect, viewRect );

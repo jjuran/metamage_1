@@ -44,6 +44,7 @@ TextEdit
 --------
 
   * TODO: multi-line selection
+  * _TEAutoView stub
   * _TEStyleNew just calls TENew()
   * _TEDispatch
     * TEStyleInsert no-op
