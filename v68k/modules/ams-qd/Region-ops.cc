@@ -23,7 +23,7 @@
 #include "qd/sect_region.hh"
 #include "qd/xor_region.hh"
 
-// ams-core
+// ams-qd
 #include "Rect-utils.hh"
 #include "Rects.hh"
 

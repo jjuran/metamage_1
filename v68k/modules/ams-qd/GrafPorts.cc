@@ -8,7 +8,7 @@
 // ams-common
 #include "QDGlobals.hh"
 
-// ams-core
+// ams-qd
 #include "Rects.hh"
 #include "Regions.hh"
 

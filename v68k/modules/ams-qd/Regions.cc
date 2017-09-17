@@ -16,7 +16,7 @@
 // ams-common
 #include "QDGlobals.hh"
 
-// ams-core
+// ams-qd
 #include "Rect-utils.hh"
 #include "Rects.hh"
 

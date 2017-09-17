@@ -28,6 +28,7 @@ App=TestApp
 
 CORE=ams-core
 RSRC=ams-rsrc
+QD=ams-qd
 UI=ams-ui
 
-daemonize --cwd $CTTY -- graft freemountd --root $FS // xv68k $SCREEN -m [ $CORE $EVENTS ] -m $RSRC -m $UI $APP $App 8< $events
+daemonize --cwd $CTTY -- graft freemountd --root $FS // xv68k $SCREEN -m [ $CORE $EVENTS ] -m $RSRC -m $QD -m $UI $APP $App 8< $events

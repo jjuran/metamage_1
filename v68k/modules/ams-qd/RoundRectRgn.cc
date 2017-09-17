@@ -10,7 +10,7 @@
 #include <Quickdraw.h>
 #endif
 
-// ams-core
+// ams-qd
 #include "OvalRgn.hh"
 
 

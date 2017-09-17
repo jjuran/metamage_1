@@ -13,7 +13,7 @@
 // ams-common
 #include "QDGlobals.hh"
 
-// ams-core
+// ams-qd
 #include "OvalRgn.hh"
 
 

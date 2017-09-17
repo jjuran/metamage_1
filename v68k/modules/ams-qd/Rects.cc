@@ -16,7 +16,7 @@
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 
-// ams-core
+// ams-qd
 #include "draw.hh"
 
 
