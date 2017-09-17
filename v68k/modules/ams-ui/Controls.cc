@@ -302,3 +302,47 @@ pascal short GetCtlValue_patch( ControlRecord** control )
 {
 	return control[0]->contrlValue;
 }
+
+pascal void SetMinCtl_patch( ControlRecord** control, short min )
+{
+	if ( min != control[0]->contrlMin  &&  min <= control[0]->contrlMax )
+	{
+		if ( control[0]->contrlValue < min )
+		{
+			control[0]->contrlValue = min;
+		}
+		
+		control[0]->contrlMin = min;
+		
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+	}
+}
+
+pascal short GetMinCtl_patch( ControlRecord** control )
+{
+	return control[0]->contrlMin;
+}
+
+pascal void SetMaxCtl_patch( ControlRecord** control, short max )
+{
+	if ( max != control[0]->contrlMax  &&  max >= control[0]->contrlMin )
+	{
+		if ( control[0]->contrlValue > max )
+		{
+			control[0]->contrlValue = max;
+		}
+		
+		control[0]->contrlMax = max;
+		
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+	}
+}
+
+pascal short GetMaxCtl_patch( ControlRecord** control )
+{
+	return control[0]->contrlMax;
+}

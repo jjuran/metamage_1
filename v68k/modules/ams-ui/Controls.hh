@@ -44,4 +44,10 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value );
 
 pascal short GetCtlValue_patch( ControlRecord** control );
 
+pascal void SetMinCtl_patch( ControlRecord** control, short min );
+pascal void SetMaxCtl_patch( ControlRecord** control, short max );
+
+pascal short GetMinCtl_patch( ControlRecord** control );
+pascal short GetMaxCtl_patch( ControlRecord** control );
+
 #endif
