@@ -227,6 +227,8 @@ static void install_TextEdit()
 	TBTRAP( TEActivate   );  // A9D8
 	TBTRAP( TEDeactivate );  // A9D9
 	TBTRAP( TEIdle       );  // A9DA
+	
+	TBTRAP( TEKey        );  // A9DC
 }
 
 static void install_Packages()

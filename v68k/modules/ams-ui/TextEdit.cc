@@ -21,6 +21,15 @@
 #include "scoped_port.hh"
 
 
+enum
+{
+	kBackspaceCharCode  =  8,
+	kLeftArrowCharCode  = 28,
+	kRightArrowCharCode = 29,
+	kUpArrowCharCode    = 30,
+	kDownArrowCharCode  = 31,
+};
+
 long Ticks     : 0x016A;
 long CaretTime : 0x02F4;
 
@@ -271,6 +280,125 @@ pascal void TEDeactivate_patch( TERec** hTE )
 	hide_selection( te );
 	
 	te.active = false;
+}
+
+static inline
+bool has_selection( const TERec& te )
+{
+	return te.selStart < te.selEnd;
+}
+
+static inline
+bool at_beginning( const TERec& te )
+{
+	return te.selEnd == 0;
+}
+
+static
+void delete_chars( TERec& te, short start, short end )
+{
+	const Ptr pText = *te.hText;
+	
+	const short len = end - start;
+	
+	BlockMoveData( pText + end, pText + start, te.teLength - end );
+	
+	te.teLength -= len;
+	te.selEnd    = start;
+}
+
+static inline
+void delete_selection( TERec& te )
+{
+	delete_chars( te, te.selStart, te.selEnd );
+}
+
+static inline
+void delete_prev_char( TERec& te )
+{
+	short end   =   te.selStart;
+	short start = --te.selStart;
+	
+	delete_chars( te, start, end );
+}
+
+static inline
+Size expanded_size( Size size )
+{
+	size *= 2;
+	
+	return size < 32 ? 32 : size;
+}
+
+static
+void insert_char( TEHandle hTE, char c )
+{
+	TERec& te = **hTE;
+	
+	const Handle hText = te.hText;
+	
+	const Size size = GetHandleSize( hText );
+	
+	if ( size <= te.teLength )
+	{
+		SetHandleSize( hText, expanded_size( size ) );
+	}
+	
+	short pos = te.selStart;
+	short len = te.teLength;
+	
+	short n = len - pos;
+	
+	BlockMoveData( *hText + pos, *hText + pos + 1, n );
+	
+	hText[0][ pos ] = c;
+	
+	te.selStart = pos + 1;
+	te.selEnd   = pos + 1;
+	te.teLength = len + 1;
+}
+
+pascal void TEKey_patch( short c, TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	scoped_port thePort = te.inPort;
+	
+	hide_selection( te );
+	
+	switch ( c )
+	{
+		case kBackspaceCharCode:
+			if ( has_selection( te ) )
+			{
+				delete_selection( te );
+			}
+			else if ( ! at_beginning( te ) )
+			{
+				delete_prev_char( te );
+			}
+			break;
+		
+		case kLeftArrowCharCode:
+		case kRightArrowCharCode:
+		case kUpArrowCharCode:
+		case kDownArrowCharCode:
+			break;
+		
+		default:
+			if ( has_selection( te ) )
+			{
+				delete_selection( te );
+			}
+			
+			insert_char( hTE, c );
+			break;
+	}
+	
+	draw_text( te );
+	
+	update_selRect( te );
+	show_selection( te );
 }
 
 pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
