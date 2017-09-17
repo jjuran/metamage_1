@@ -10,6 +10,8 @@ struct Cursor;
 
 void init_lowmem_Cursor();
 
+pascal void set_cursor( const Cursor* crsr );
+
 void hide_cursor();
 void show_cursor();
 

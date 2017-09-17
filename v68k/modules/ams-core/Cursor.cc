@@ -212,6 +212,11 @@ pascal void InitCursor_patch()
 
 pascal void SetCursor_patch( const Cursor* crsr )
 {
+	set_cursor( crsr );
+}
+
+pascal void set_cursor( const Cursor* crsr )
+{
 	TheCrsr = *crsr;
 	
 	update_cursor_location();
