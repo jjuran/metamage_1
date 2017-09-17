@@ -15,6 +15,10 @@
 
 // ams-common
 #include "QDGlobals.hh"
+#include "raster_lock.hh"
+
+// ams-ui
+#include "scoped_port.hh"
 
 
 static
@@ -54,6 +58,23 @@ void draw_text_line( const char*  p,
 	MoveTo( h, v );
 	
 	DrawText( p, 0, n );
+}
+
+static
+void draw_text( const TERec& te )
+{
+	raster_lock lock;
+	
+	const Rect& destRect = te.destRect;
+	
+	EraseRect( &destRect );
+	
+	const short v = destRect.top + te.fontAscent;
+	const short h = destRect.left + 1;
+	
+	const short rectWidth = destRect.right - destRect.left;
+	
+	draw_text_line( *te.hText, te.teLength, h, v, rectWidth, te.just );
 }
 
 pascal void TEInit_patch()
@@ -149,6 +170,11 @@ pascal void TEDeactivate_patch( TERec** hTE )
 
 pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
 {
+	TERec& te = **hTE;
+	
+	scoped_port thePort = te.inPort;
+	
+	draw_text( te );
 }
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
