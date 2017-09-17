@@ -208,9 +208,11 @@ static void install_Dialogs()
 
 static void install_TextEdit()
 {
-	TBTRAP( TEInit );  // A9CC
-	
+	TBTRAP( TEInit    );  // A9CC
+	TBTRAP( TEDispose );  // A9CD
 	TBTRAP( TETextBox );  // A9CE
+	
+	TBTRAP( TENew     );  // A9D2
 	
 	TBTRAP( TEIdle );  // A9DA
 }

@@ -11,6 +11,10 @@ struct TERec;
 
 pascal void TEInit_patch();
 
+pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect );
+
+pascal void TEDispose_patch( TERec** hTE );
+
 pascal void TEIdle_patch( TERec** hTE );
 
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just );

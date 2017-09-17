@@ -26,6 +26,18 @@ pascal void TEInit_patch()
 {
 }
 
+pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
+{
+	TEHandle hTE = (TEHandle) NewHandleClear( sizeof (TERec) );
+	
+	return hTE;
+}
+
+pascal void TEDispose_patch( TERec** hTE )
+{
+	DisposeHandle( (Handle) hTE );
+}
+
 pascal void TEIdle_patch( TEHandle hTE )
 {
 }
