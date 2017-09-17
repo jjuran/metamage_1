@@ -116,6 +116,10 @@ pascal void TEDeactivate_patch( TERec** hTE )
 	hTE[0]->active = false;
 }
 
+pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE )
+{
+}
+
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 {
 	FontInfo fontInfo;

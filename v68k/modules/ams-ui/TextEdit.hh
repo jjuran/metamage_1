@@ -24,6 +24,8 @@ pascal void TESetSelect_patch( long selStart, long selEnd, TERec** hTE );
 pascal void TEActivate_patch( TERec** hTE );
 pascal void TEDeactivate_patch( TERec** hTE );
 
+pascal void TEUpdate_patch( const Rect* updateRect, TERec** hTE );
+
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just );
 
 #endif
