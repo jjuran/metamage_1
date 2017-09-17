@@ -14,6 +14,9 @@ struct WindowRecord;
 
 extern struct MacRegion** BezelRgn;
 
+pascal void SetWRefCon_patch( WindowRecord* window, long data );
+pascal long GetWRefCon_patch( WindowRecord* window );
+
 pascal void SetWTitle_patch( WindowRecord* window, const unsigned char* s );
 pascal void GetWTitle_patch( WindowRecord* window,       unsigned char* s );
 

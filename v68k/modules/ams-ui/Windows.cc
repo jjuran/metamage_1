@@ -86,6 +86,16 @@ void draw_window( WindowPeek window )
 	draw_window( *(Byte*) &window->windowDefProc, *window );
 }
 
+pascal void SetWRefCon_patch( WindowRecord* window, long data )
+{
+	window->refCon = data;
+}
+
+pascal long GetWRefCon_patch( WindowRecord* window )
+{
+	return window->refCon;
+}
+
 pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 {
 	if ( s != NULL  &&  s[ 0 ] != 0 )
