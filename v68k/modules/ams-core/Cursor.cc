@@ -199,15 +199,19 @@ pascal void InitCursor_patch()
 {
 	QDGlobals& qd = get_QDGlobals();
 	
-	TheCrsr = qd.arrow;
+	set_cursor( &qd.arrow );
 	
-	screen_lock lock;
-	
-	hide_cursor();
-	
-	CrsrState = 0;
-	
-	paint_cursor( Mouse.h, Mouse.v );
+	init_cursor();
+}
+
+void init_cursor()
+{
+	if ( CrsrState < 0 )
+	{
+		CrsrState = 0;
+		
+		show_cursor();
+	}
 }
 
 pascal void SetCursor_patch( const Cursor* crsr )
