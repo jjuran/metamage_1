@@ -52,6 +52,9 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max );
 pascal short GetMinCtl_patch( ControlRecord** control );
 pascal short GetMaxCtl_patch( ControlRecord** control );
 
+pascal void SetCRefCon_patch( ControlRecord** control, long refCon );
+pascal long GetCRefCon_patch( ControlRecord** control );
+
 pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr action );
 
 pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );

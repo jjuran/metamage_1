@@ -347,6 +347,16 @@ pascal short GetMaxCtl_patch( ControlRecord** control )
 	return control[0]->contrlMax;
 }
 
+pascal void SetCRefCon_patch( ControlRecord** control, long refCon )
+{
+	control[0]->contrlRfCon = refCon;
+}
+
+pascal long GetCRefCon_patch( ControlRecord** control )
+{
+	return control[0]->contrlRfCon;
+}
+
 pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr action )
 {
 	control[0]->contrlAction = action;
