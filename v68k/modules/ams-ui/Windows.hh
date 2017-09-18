@@ -8,58 +8,44 @@
 
 struct EventRecord;
 struct GrafPort;
+struct MacRegion;
 struct Point;
 struct Rect;
 struct WindowRecord;
 
-extern struct MacRegion** BezelRgn;
+extern MacRegion** BezelRgn;
 
-pascal void SetWRefCon_patch( WindowRecord* window, long data );
-pascal long GetWRefCon_patch( WindowRecord* window );
+pascal void InitWindows_patch();
+
+pascal GrafPort* NewWindow_patch( void*                 storage,
+                                  const Rect*           bounds,
+                                  const unsigned char*  title,
+                                  short                 visible,
+                                  short                 procID,
+                                  GrafPort*             behind,
+                                  unsigned char         closeBox,
+                                  long                  refCon );
+
+pascal void CloseWindow_patch  ( GrafPort* window );
+pascal void DisposeWindow_patch( GrafPort* window );
 
 pascal void SetWTitle_patch( WindowRecord* window, const unsigned char* s );
 pascal void GetWTitle_patch( WindowRecord* window,       unsigned char* s );
 
-pascal void DrawGrowIcon_patch( struct WindowRecord* window );
-
-pascal void CalcVis_patch( struct WindowRecord* window );
-
-pascal void CalcVBehind_patch( struct WindowRecord* w, struct MacRegion** rgn );
-
-pascal void ClipAbove_patch( struct WindowRecord* window );
-
-pascal void PaintOne_patch   ( struct WindowRecord* w, struct MacRegion** rgn );
-pascal void PaintBehind_patch( struct WindowRecord* w, struct MacRegion** rgn );
-
-pascal unsigned char CheckUpdate_patch( EventRecord* event );
-
-pascal void InitWindows_patch();
-
-pascal struct GrafPort* NewWindow_patch( void*                 storage,
-                                         const struct Rect*    bounds,
-                                         const unsigned char*  title,
-                                         short                 visible,
-                                         short                 procID,
-                                         struct GrafPort*      behind,
-                                         unsigned char         closeBox,
-                                         long                  refCon );
-
-pascal void DisposeWindow_patch( struct GrafPort* window );
-
-pascal void MoveWindow_patch( GrafPort* w, short h, short v, char activate );
-pascal void SizeWindow_patch( GrafPort* w, short h, short v, char update   );
+pascal void SelectWindow_patch( WindowRecord* window );
+pascal void BringToFront_patch( WindowRecord* window );
+pascal void DrawGrowIcon_patch( WindowRecord* window );
 
 pascal void HiliteWindow_patch( WindowRecord* window, unsigned char hilite );
 
-pascal unsigned char TrackGoAway_patch( struct GrafPort* w, struct Point pt );
+pascal GrafPort* FrontWindow_patch();
 
-pascal void SelectWindow_patch( WindowRecord* window );
-pascal void BringToFront_patch( WindowRecord* window );
+pascal short FindWindow_patch( Point pt, GrafPort** window );
 
-pascal void BeginUpdate_patch( struct GrafPort* window );
-pascal void EndUpdate_patch  ( struct GrafPort* window );
+pascal unsigned char TrackGoAway_patch( GrafPort* w, Point pt );
 
-pascal struct GrafPort* FrontWindow_patch();
+pascal void MoveWindow_patch( GrafPort* w, short h, short v, char activate );
+pascal void SizeWindow_patch( GrafPort* w, short h, short v, char update   );
 
 pascal void DragWindow_patch( GrafPort* w, Point start, const Rect* bounds );
 pascal long GrowWindow_patch( GrafPort* w, Point start, const Rect* size   );
@@ -67,11 +53,24 @@ pascal long GrowWindow_patch( GrafPort* w, Point start, const Rect* size   );
 pascal void InvalRect_patch( const Rect* rect );
 pascal void ValidRect_patch( const Rect* rect );
 
-pascal void InvalRgn_patch( struct MacRegion** rgn );
-pascal void ValidRgn_patch( struct MacRegion** rgn );
+pascal void InvalRgn_patch( MacRegion** rgn );
+pascal void ValidRgn_patch( MacRegion** rgn );
 
-pascal short FindWindow_patch( struct Point pt, struct GrafPort** window );
+pascal void BeginUpdate_patch( GrafPort* window );
+pascal void EndUpdate_patch  ( GrafPort* window );
 
-pascal void CloseWindow_patch( struct GrafPort* window );
+pascal void SetWRefCon_patch( WindowRecord* window, long data );
+pascal long GetWRefCon_patch( WindowRecord* window );
+
+pascal unsigned char CheckUpdate_patch( EventRecord* event );
+
+pascal void ClipAbove_patch( WindowRecord* window );
+
+pascal void PaintOne_patch   ( WindowRecord* w, MacRegion** rgn );
+pascal void PaintBehind_patch( WindowRecord* w, MacRegion** rgn );
+
+pascal void CalcVis_patch( WindowRecord* window );
+
+pascal void CalcVBehind_patch( WindowRecord* w, MacRegion** rgn );
 
 #endif
