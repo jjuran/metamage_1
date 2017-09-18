@@ -135,6 +135,9 @@ MenuList_entry* find_clicked_menu_title( Point pt )
 	return prev;
 }
 
+#pragma mark -
+#pragma mark Initialization and Allocation
+#pragma mark -
 
 pascal void InitMenus_patch()
 {
@@ -146,6 +149,17 @@ pascal void InitMenus_patch()
 	
 	MenuList[0]->right_edge = 10;
 }
+
+pascal MenuInfo** GetMenu_patch( short resID )
+{
+	Handle h = GetResource( 'MENU', resID );
+	
+	return (MenuRef) h;
+}
+
+#pragma mark -
+#pragma mark Forming the Menus
+#pragma mark -
 
 pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 {
@@ -173,6 +187,14 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	
 	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 }
+
+pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
+{
+}
+
+#pragma mark -
+#pragma mark Forming the Menu Bar
+#pragma mark -
 
 pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 {
@@ -225,6 +247,10 @@ pascal void DrawMenuBar_patch()
 		DrawString( menu[0]->menuData );
 	}
 }
+
+#pragma mark -
+#pragma mark Choosing From a Menu
+#pragma mark -
 
 static
 void invert_menu_title( const MenuList_entry* entry, Rect& rect )
@@ -504,23 +530,9 @@ pascal long MenuSelect_patch( Point pt )
 	return result;
 }
 
-pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
-{
-	menu_item_const_iterator it( menu );
-	
-	while ( const unsigned char* text = it )
-	{
-		if ( --item == 0 )
-		{
-			memcpy( result, text, 1 + text[ 0 ] );
-			return;
-		}
-		
-		++it;
-	}
-	
-	result[ 0 ] = '\0';
-}
+#pragma mark -
+#pragma mark Controlling the Appearance of Items
+#pragma mark -
 
 pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 {
@@ -589,9 +601,31 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 	}
 }
 
+pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
+{
+	menu_item_const_iterator it( menu );
+	
+	while ( const unsigned char* text = it )
+	{
+		if ( --item == 0 )
+		{
+			memcpy( result, text, 1 + text[ 0 ] );
+			return;
+		}
+		
+		++it;
+	}
+	
+	result[ 0 ] = '\0';
+}
+
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 {
 }
+
+#pragma mark -
+#pragma mark Miscellaneous Routines
+#pragma mark -
 
 pascal void FlashMenuBar_patch( short menuID )
 {
@@ -602,10 +636,6 @@ pascal void FlashMenuBar_patch( short menuID )
 	menu_bar.bottom = MBarHeight;
 	
 	InvertRect( &menu_bar );
-}
-
-pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
-{
 }
 
 pascal short CountMItems_patch( MenuInfo** menu )
@@ -621,11 +651,4 @@ pascal short CountMItems_patch( MenuInfo** menu )
 	}
 	
 	return n;
-}
-
-pascal MenuInfo** GetMenu_patch( short resID )
-{
-	Handle h = GetResource( 'MENU', resID );
-	
-	return (MenuRef) h;
 }
