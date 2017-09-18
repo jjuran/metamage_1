@@ -10,6 +10,9 @@
 #include <functional>
 #include <vector>
 
+// mac-ui-utils
+#include "mac_ui/menus.hh"
+
 
 namespace Pedestal
 {
@@ -46,18 +49,6 @@ namespace Pedestal
 		}
 	}
 	
-	static void delete_all_menu_items( MenuRef menu )
-	{
-		uint16_t n = CountMenuItems( menu );
-		
-		while ( n > 0 )
-		{
-			DeleteMenuItem( menu, n );
-			
-			--n;
-		}
-	}
-	
 	static bool window_title_less( const void* a_, const void* b_ )
 	{
 		Str255 one;
@@ -77,6 +68,8 @@ namespace Pedestal
 	
 	void populate_Window_menu( MenuRef menu )
 	{
+		using mac::ui::delete_all_menu_items;
+		
 		delete_all_menu_items( menu );
 		
 		the_windows_in_menu = the_windows;
