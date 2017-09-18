@@ -65,6 +65,64 @@ RgnHandle BezelRgn;
 
 const short bezel_corner_diameter = 16;
 
+static
+Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
+{
+	const WindowPtr all = GrafPtr( -1 );  // Place all windows behind this one.
+	
+	if ( behind == all  ||  behind == (GrafPtr) WindowList  ||  ! WindowList )
+	{
+		window->nextWindow = WindowList;
+		
+		WindowList = window;
+		
+		return -true;
+	}
+	
+	WindowPeek prev = NULL;
+	WindowPeek next = WindowList;
+	
+	do
+	{
+		prev = next;
+		
+		next = next->nextWindow;
+	}
+	while ( next != NULL  &&  (GrafPtr) next != behind );
+	
+	window->nextWindow = next;
+	prev->nextWindow = window;
+	
+	return false;
+}
+
+static
+void remove_from_window_list( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		WindowList = window->nextWindow;
+		
+		return;
+	}
+	
+	WindowPeek prev;
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		prev = w;
+		
+		w = w->nextWindow;
+	}
+	
+	if ( w != NULL )
+	{
+		prev->nextWindow = window->nextWindow;
+	}
+}
+
+#pragma mark -
 #pragma mark Initialization and Allocation
 #pragma mark -
 
@@ -123,6 +181,158 @@ pascal void InitWindows_patch()
 	
 	draw_desktop_from_WMgrPort();
 	draw_menu_bar_from_WMgr_port();
+}
+
+pascal struct GrafPort* NewWindow_patch( void*                 storage,
+                                         const struct Rect*    bounds,
+                                         const unsigned char*  title,
+                                         short                 visible,
+                                         short                 procID,
+                                         struct GrafPort*      behind,
+                                         unsigned char         closeBox,
+                                         long                  refCon )
+{
+	WindowPeek window = (WindowPeek) storage;
+	
+	if ( window == NULL )
+	{
+		window = (WindowPeek) NewPtr( sizeof (WindowRecord) );
+		
+		if ( window == NULL )
+		{
+			return NULL;
+		}
+	}
+	
+	memset( window, '\0', sizeof (WindowRecord) );
+	
+	GrafPtr port = &window->port;
+	
+	OpenPort( port );
+	
+	if ( port->device < 0 )  goto fail_0;
+	
+	window->strucRgn  = NewRgn();  if ( window->strucRgn  == NULL )  goto fail_1;
+	window->contRgn   = NewRgn();  if ( window->contRgn   == NULL )  goto fail_2;
+	window->updateRgn = NewRgn();  if ( window->updateRgn == NULL )  goto fail_3;
+	
+	SetWTitle_patch( window, title );
+	
+	if ( title != NULL  &&  title[ 0 ] != 0  &&  window->titleHandle == NULL )
+	{
+		goto fail_4;
+	}
+	
+	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
+	
+	MovePortTo( bounds->left, bounds->top );
+	
+	window->windowKind = userKind;
+	window->visible    = -(visible != 0);
+	window->hilited    = -true;
+	window->goAwayFlag = closeBox;
+	window->refCon     = refCon;
+	
+	const short varCode = procID & 0x0F;
+	
+	*(Byte*) &window->windowDefProc = varCode;
+	
+	const Boolean frontmost = insert_into_window_list( window, behind );
+	
+	window->hilited = frontmost;
+	
+	if ( frontmost  &&  window->nextWindow )
+	{
+		if ( CurActivate != (WindowRef) window->nextWindow )
+		{
+			CurDeactive = (WindowRef) window->nextWindow;
+		}
+		
+		HiliteWindow_patch( window->nextWindow, false );
+	}
+	
+	CurActivate = (WindowRef) window;
+	
+	WDEF_0( varCode, (WindowPtr) window, wCalcRgns, 0 );
+	
+	CalcVBehind_patch( window, window->strucRgn );
+	PaintOne_patch   ( window, window->strucRgn );
+	
+	return (WindowPtr) window;
+	
+fail_4:
+	
+	DisposeRgn( window->updateRgn );
+	
+fail_3:
+	
+	DisposeRgn( window->contRgn );
+	
+fail_2:
+	
+	DisposeRgn( window->strucRgn );
+	
+fail_1:
+	
+	ClosePort( (WindowPtr) window );
+	
+fail_0:
+	
+	if ( ! storage )
+	{
+		DisposePtr( (Ptr) window );
+	}
+	
+	return NULL;
+}
+
+pascal void CloseWindow_patch( struct GrafPort* port )
+{
+	if ( CurActivate == port )
+	{
+		CurActivate = NULL;
+	}
+	
+	if ( CurDeactive == port )
+	{
+		CurDeactive = NULL;
+	}
+	
+	KillControls( port );
+	
+	WindowPeek window = (WindowPeek) port;
+	
+	const bool frontmost = window == WindowList;
+	
+	remove_from_window_list( window );
+	
+	PaintBehind_patch( window->nextWindow, window->strucRgn );
+	CalcVBehind_patch( window->nextWindow, window->strucRgn );
+	
+	if ( frontmost  &&  WindowList != NULL )
+	{
+		CurActivate = (WindowRef) WindowList;
+		
+		HiliteWindow_patch( WindowList, true );
+	}
+	
+	DisposeRgn( window->strucRgn  );
+	DisposeRgn( window->contRgn   );
+	DisposeRgn( window->updateRgn );
+	
+	if ( window->titleHandle )
+	{
+		DisposeHandle( (Handle) window->titleHandle );
+	}
+	
+	ClosePort( port );
+}
+
+pascal void DisposeWindow_patch( struct GrafPort* window )
+{
+	CloseWindow( window );
+	
+	DisposePtr( (Ptr) window );
 }
 
 pascal void SetWRefCon_patch( WindowRecord* window, long data )
@@ -353,173 +563,6 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 	return false;
 }
 
-
-static
-Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
-{
-	const WindowPtr all = GrafPtr( -1 );  // Place all windows behind this one.
-	
-	if ( behind == all  ||  behind == (GrafPtr) WindowList  ||  ! WindowList )
-	{
-		window->nextWindow = WindowList;
-		
-		WindowList = window;
-		
-		return -true;
-	}
-	
-	WindowPeek prev = NULL;
-	WindowPeek next = WindowList;
-	
-	do
-	{
-		prev = next;
-		
-		next = next->nextWindow;
-	}
-	while ( next != NULL  &&  (GrafPtr) next != behind );
-	
-	window->nextWindow = next;
-	prev->nextWindow = window;
-	
-	return false;
-}
-
-static
-void remove_from_window_list( WindowPeek window )
-{
-	if ( window == WindowList )
-	{
-		WindowList = window->nextWindow;
-		
-		return;
-	}
-	
-	WindowPeek prev;
-	WindowPeek w = WindowList;
-	
-	while ( w != window )
-	{
-		prev = w;
-		
-		w = w->nextWindow;
-	}
-	
-	if ( w != NULL )
-	{
-		prev->nextWindow = window->nextWindow;
-	}
-}
-
-pascal struct GrafPort* NewWindow_patch( void*                 storage,
-                                         const struct Rect*    bounds,
-                                         const unsigned char*  title,
-                                         short                 visible,
-                                         short                 procID,
-                                         struct GrafPort*      behind,
-                                         unsigned char         closeBox,
-                                         long                  refCon )
-{
-	WindowPeek window = (WindowPeek) storage;
-	
-	if ( window == NULL )
-	{
-		window = (WindowPeek) NewPtr( sizeof (WindowRecord) );
-		
-		if ( window == NULL )
-		{
-			return NULL;
-		}
-	}
-	
-	memset( window, '\0', sizeof (WindowRecord) );
-	
-	GrafPtr port = &window->port;
-	
-	OpenPort( port );
-	
-	if ( port->device < 0 )  goto fail_0;
-	
-	window->strucRgn  = NewRgn();  if ( window->strucRgn  == NULL )  goto fail_1;
-	window->contRgn   = NewRgn();  if ( window->contRgn   == NULL )  goto fail_2;
-	window->updateRgn = NewRgn();  if ( window->updateRgn == NULL )  goto fail_3;
-	
-	SetWTitle_patch( window, title );
-	
-	if ( title != NULL  &&  title[ 0 ] != 0  &&  window->titleHandle == NULL )
-	{
-		goto fail_4;
-	}
-	
-	PortSize( bounds->right - bounds->left, bounds->bottom - bounds->top );
-	
-	MovePortTo( bounds->left, bounds->top );
-	
-	window->windowKind = userKind;
-	window->visible    = -(visible != 0);
-	window->hilited    = -true;
-	window->goAwayFlag = closeBox;
-	window->refCon     = refCon;
-	
-	const short varCode = procID & 0x0F;
-	
-	*(Byte*) &window->windowDefProc = varCode;
-	
-	const Boolean frontmost = insert_into_window_list( window, behind );
-	
-	window->hilited = frontmost;
-	
-	if ( frontmost  &&  window->nextWindow )
-	{
-		if ( CurActivate != (WindowRef) window->nextWindow )
-		{
-			CurDeactive = (WindowRef) window->nextWindow;
-		}
-		
-		HiliteWindow_patch( window->nextWindow, false );
-	}
-	
-	CurActivate = (WindowRef) window;
-	
-	WDEF_0( varCode, (WindowPtr) window, wCalcRgns, 0 );
-	
-	CalcVBehind_patch( window, window->strucRgn );
-	PaintOne_patch   ( window, window->strucRgn );
-	
-	return (WindowPtr) window;
-	
-fail_4:
-	
-	DisposeRgn( window->updateRgn );
-	
-fail_3:
-	
-	DisposeRgn( window->contRgn );
-	
-fail_2:
-	
-	DisposeRgn( window->strucRgn );
-	
-fail_1:
-	
-	ClosePort( (WindowPtr) window );
-	
-fail_0:
-	
-	if ( ! storage )
-	{
-		DisposePtr( (Ptr) window );
-	}
-	
-	return NULL;
-}
-
-pascal void DisposeWindow_patch( struct GrafPort* window )
-{
-	CloseWindow( window );
-	
-	DisposePtr( (Ptr) window );
-}
 
 pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 {
@@ -1113,46 +1156,4 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	}
 	
 	return inDesk;
-}
-
-pascal void CloseWindow_patch( struct GrafPort* port )
-{
-	if ( CurActivate == port )
-	{
-		CurActivate = NULL;
-	}
-	
-	if ( CurDeactive == port )
-	{
-		CurDeactive = NULL;
-	}
-	
-	KillControls( port );
-	
-	WindowPeek window = (WindowPeek) port;
-	
-	const bool frontmost = window == WindowList;
-	
-	remove_from_window_list( window );
-	
-	PaintBehind_patch( window->nextWindow, window->strucRgn );
-	CalcVBehind_patch( window->nextWindow, window->strucRgn );
-	
-	if ( frontmost  &&  WindowList != NULL )
-	{
-		CurActivate = (WindowRef) WindowList;
-		
-		HiliteWindow_patch( WindowList, true );
-	}
-	
-	DisposeRgn( window->strucRgn  );
-	DisposeRgn( window->contRgn   );
-	DisposeRgn( window->updateRgn );
-	
-	if ( window->titleHandle )
-	{
-		DisposeHandle( (Handle) window->titleHandle );
-	}
-	
-	ClosePort( port );
 }
