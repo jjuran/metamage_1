@@ -54,6 +54,13 @@ namespace Pedestal
 		const unsigned char* a;
 		const unsigned char* b;
 		
+	#if ! OPAQUE_TOOLBOX_STRUCTS
+		
+		a = *((WindowPeek) a_)->titleHandle;
+		b = *((WindowPeek) b_)->titleHandle;
+		
+	#else
+		
 		Str255 one;
 		Str255 two;
 		
@@ -62,6 +69,8 @@ namespace Pedestal
 		
 		GetWTitle( (WindowRef) a_, one );
 		GetWTitle( (WindowRef) b_, two );
+		
+	#endif
 		
 		const uint8_t a_len = *a++;
 		const uint8_t b_len = *b++;
