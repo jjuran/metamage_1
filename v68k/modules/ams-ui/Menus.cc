@@ -178,6 +178,8 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 {
 	// TODO:  Respect beforeID
 	
+	WMgrPort_bezel_scope port_swap;
+	
 	const UInt16 extent_bytes = MenuList[0]->extent_bytes;
 	
 	const Size new_size = sizeof (MenuList_header)
@@ -522,6 +524,8 @@ pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 
 pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 {
+	WMgrPort_bezel_scope port_swap;
+	
 	const UInt8 newLen = text[ 0 ];
 	
 	unsigned char* p = menu[0]->menuData;
