@@ -72,13 +72,20 @@ namespace Pedestal
 		
 		delete_all_menu_items( menu );
 		
+		const std::size_t n = the_windows.size();
+		
+		if ( n == 0 )
+		{
+			return;
+		}
+		
 		the_windows_in_menu = the_windows;
 		
 		std::stable_sort( the_windows_in_menu.begin(),
 		                  the_windows_in_menu.end(),
 		                  std::ptr_fun( window_title_less ) );
 		
-		const std::size_t n = the_windows.size();
+		WindowRef front = FrontWindow();
 		
 		Str255 title;
 		
@@ -95,7 +102,7 @@ namespace Pedestal
 				SetMenuItemText( menu, i + 1, title );
 			}
 			
-			if ( w == FrontWindow() )
+			if ( w == front )
 			{
 				CheckMenuItem( menu, i + 1, true );
 			}
