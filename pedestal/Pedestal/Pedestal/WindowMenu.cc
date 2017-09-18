@@ -88,7 +88,7 @@ namespace Pedestal
 			
 			GetWTitle( w, title );
 			
-			InsertMenuItem( menu, "\p ", i );
+			AppendMenu( menu, "\p " );
 			
 			if ( title[ 0 ] > 0 )
 			{
