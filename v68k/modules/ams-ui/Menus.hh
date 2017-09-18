@@ -24,6 +24,8 @@ pascal long MenuSelect_patch( Point start );
 pascal void GetItem_patch( MenuInfo** menu, short item, unsigned char* result );
 pascal void SetItem_patch( MenuInfo** menu, short i, const unsigned char* txt );
 
+pascal void CheckItem_patch( MenuInfo** menu, short item, char checked );
+
 pascal void FlashMenuBar_patch( short menuID );
 
 pascal void AddResMenu_patch( MenuInfo** menu, unsigned long type );

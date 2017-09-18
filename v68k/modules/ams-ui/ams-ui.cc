@@ -118,6 +118,7 @@ void install_Menus()
 	
 	TBTRAP( MenuSelect   );  // A93D
 	
+	TBTRAP( CheckItem    );  // A945
 	TBTRAP( GetItem      );  // A946
 	TBTRAP( SetItem      );  // A947
 	

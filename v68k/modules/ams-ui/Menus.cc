@@ -589,6 +589,10 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 	}
 }
 
+pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
+{
+}
+
 pascal void FlashMenuBar_patch( short menuID )
 {
 	WMgrPort_bezel_scope port_swap;
