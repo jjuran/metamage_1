@@ -468,6 +468,11 @@ pascal void BringToFront_patch( WindowPeek window )
 	CalcVBehind_patch( window, window->strucRgn );
 }
 
+pascal WindowRef FrontWindow_patch()
+{
+	return (WindowRef) WindowList;
+}
+
 pascal void DrawGrowIcon_patch( WindowPeek window )
 {
 	QDGlobals& qd = get_QDGlobals();
@@ -485,6 +490,102 @@ pascal void DrawGrowIcon_patch( WindowPeek window )
 	qd.thePort = saved_port;
 }
 
+#pragma mark -
+#pragma mark Mouse Location
+#pragma mark -
+
+pascal short FindWindow_patch( Point pt, WindowPtr* window )
+{
+	*window = NULL;
+	
+	if ( pt.v < MBarHeight )
+	{
+		return inMenuBar;
+	}
+	
+	WindowPeek w = WindowList;
+	
+	while ( w != NULL )
+	{
+		const short varCode = *(Byte*) &w->windowDefProc;
+		
+		WindowPtr ptr = (WindowPtr) w;
+		
+		if ( short hit = WDEF_0( varCode, ptr, wHit, *(long*) &pt ) )
+		{
+			*window = ptr;
+			
+			return hit + 2;
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	return inDesk;
+}
+
+pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
+{
+	RgnHandle mouseRgn = NewRgn();
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	const short varCode = *(Byte*) &w->windowDefProc;
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( w->strucRgn );
+	
+	bool was_inside = false;
+	bool is_inside = true;
+	
+	while ( true )
+	{
+		short hit = WDEF_0( varCode, window, wHit, *(long*) &pt );
+		
+		is_inside = hit == wInGoAway;
+		
+		if ( is_inside != was_inside )
+		{
+			was_inside = is_inside;
+			
+			WDEF_0( varCode, window, wDraw, wInGoAway );
+		}
+		
+		SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
+		
+		EventRecord event;
+		
+		if ( WaitNextEvent( mUpMask, &event, 0x7fffffff, mouseRgn ) )
+		{
+			if ( event.what == mouseUp )
+			{
+				break;
+			}
+		}
+		
+		pt = event.where;
+	}
+	
+	if ( is_inside )
+	{
+		WDEF_0( varCode, window, wDraw, wInGoAway );
+	}
+	
+	qd.thePort = saved_port;
+	
+	DisposeRgn( mouseRgn );
+	
+	return is_inside;
+}
+
+#pragma mark -
+#pragma mark Window Movement and Sizing
+#pragma mark -
 
 pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 {
@@ -676,65 +777,6 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	CalcVBehind_patch( w, exposed );
 }
 
-pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
-{
-	RgnHandle mouseRgn = NewRgn();
-	
-	WindowPeek w = (WindowPeek) window;
-	
-	const short varCode = *(Byte*) &w->windowDefProc;
-	
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
-	
-	SetClip( w->strucRgn );
-	
-	bool was_inside = false;
-	bool is_inside = true;
-	
-	while ( true )
-	{
-		short hit = WDEF_0( varCode, window, wHit, *(long*) &pt );
-		
-		is_inside = hit == wInGoAway;
-		
-		if ( is_inside != was_inside )
-		{
-			was_inside = is_inside;
-			
-			WDEF_0( varCode, window, wDraw, wInGoAway );
-		}
-		
-		SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
-		
-		EventRecord event;
-		
-		if ( WaitNextEvent( mUpMask, &event, 0x7fffffff, mouseRgn ) )
-		{
-			if ( event.what == mouseUp )
-			{
-				break;
-			}
-		}
-		
-		pt = event.where;
-	}
-	
-	if ( is_inside )
-	{
-		WDEF_0( varCode, window, wDraw, wInGoAway );
-	}
-	
-	qd.thePort = saved_port;
-	
-	DisposeRgn( mouseRgn );
-	
-	return is_inside;
-}
-
 pascal void BeginUpdate_patch( struct GrafPort* window )
 {
 	WindowPeek w = (WindowPeek) window;
@@ -757,11 +799,6 @@ pascal void EndUpdate_patch( struct GrafPort* window )
 	swap( window->visRgn, SaveVisRgn );
 	
 	SetEmptyRgn( SaveVisRgn );
-}
-
-pascal WindowRef FrontWindow_patch()
-{
-	return (WindowRef) WindowList;
 }
 
 pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
@@ -961,36 +998,6 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	};
 	
 	return *(long*) &new_size;
-}
-
-pascal short FindWindow_patch( Point pt, WindowPtr* window )
-{
-	*window = NULL;
-	
-	if ( pt.v < MBarHeight )
-	{
-		return inMenuBar;
-	}
-	
-	WindowPeek w = WindowList;
-	
-	while ( w != NULL )
-	{
-		const short varCode = *(Byte*) &w->windowDefProc;
-		
-		WindowPtr ptr = (WindowPtr) w;
-		
-		if ( short hit = WDEF_0( varCode, ptr, wHit, *(long*) &pt ) )
-		{
-			*window = ptr;
-			
-			return hit + 2;
-		}
-		
-		w = w->nextWindow;
-	}
-	
-	return inDesk;
 }
 
 #pragma mark -
