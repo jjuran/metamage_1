@@ -276,26 +276,6 @@ void invert_menu_title( short menuID, Rect& rect )
 	}
 }
 
-pascal void HiliteMenu_patch( short menuID )
-{
-	if ( menuID == TheMenu )
-	{
-		return;
-	}
-	
-	WMgrPort_bezel_scope port_swap;
-	
-	Rect rect;
-	
-	rect.top    = 1;
-	rect.bottom = MBarHeight - 1;
-	
-	invert_menu_title( TheMenu, rect );
-	invert_menu_title( menuID,  rect );
-	
-	TheMenu = menuID;
-}
-
 static Handle SavedHandle;
 
 static
@@ -530,6 +510,26 @@ pascal long MenuSelect_patch( Point pt )
 	return result;
 }
 
+pascal void HiliteMenu_patch( short menuID )
+{
+	if ( menuID == TheMenu )
+	{
+		return;
+	}
+	
+	WMgrPort_bezel_scope port_swap;
+	
+	Rect rect;
+	
+	rect.top    = 1;
+	rect.bottom = MBarHeight - 1;
+	
+	invert_menu_title( TheMenu, rect );
+	invert_menu_title( menuID,  rect );
+	
+	TheMenu = menuID;
+}
+
 #pragma mark -
 #pragma mark Controlling the Appearance of Items
 #pragma mark -
@@ -627,17 +627,6 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 #pragma mark Miscellaneous Routines
 #pragma mark -
 
-pascal void FlashMenuBar_patch( short menuID )
-{
-	WMgrPort_bezel_scope port_swap;
-	
-	Rect menu_bar = BezelRgn[0]->rgnBBox;
-	
-	menu_bar.bottom = MBarHeight;
-	
-	InvertRect( &menu_bar );
-}
-
 pascal short CountMItems_patch( MenuInfo** menu )
 {
 	short n = 0;
@@ -651,4 +640,15 @@ pascal short CountMItems_patch( MenuInfo** menu )
 	}
 	
 	return n;
+}
+
+pascal void FlashMenuBar_patch( short menuID )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	Rect menu_bar = BezelRgn[0]->rgnBBox;
+	
+	menu_bar.bottom = MBarHeight;
+	
+	InvertRect( &menu_bar );
 }

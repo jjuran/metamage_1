@@ -21,17 +21,17 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID );
 
 pascal void DrawMenuBar_patch();
 
-pascal void HiliteMenu_patch( short menuID );
-
 pascal long MenuSelect_patch( Point start );
+
+pascal void HiliteMenu_patch( short menuID );
 
 pascal void SetItem_patch( MenuInfo** menu, short i, const unsigned char* txt );
 pascal void GetItem_patch( MenuInfo** menu, short item, unsigned char* result );
 
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked );
 
-pascal void FlashMenuBar_patch( short menuID );
-
 pascal short CountMItems_patch( MenuInfo** menu );
+
+pascal void FlashMenuBar_patch( short menuID );
 
 #endif
