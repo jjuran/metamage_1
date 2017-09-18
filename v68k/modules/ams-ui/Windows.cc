@@ -65,6 +65,65 @@ RgnHandle BezelRgn;
 
 const short bezel_corner_diameter = 16;
 
+#pragma mark Initialization and Allocation
+#pragma mark -
+
+pascal void InitWindows_patch()
+{
+	WindowList = NULL;
+	SaveUpdate = true;
+	PaintWhite = true;
+	
+	WMgrPort = (GrafPtr) NewPtr( sizeof (GrafPort) );
+	
+	OpenPort( WMgrPort );
+	
+	const Rect& bounds = WMgrPort->portBits.bounds;
+	
+	PaintRect( &bounds );
+	
+	BezelRgn = NewRgn();
+	
+	OpenRgn();
+	FrameRoundRect( &bounds, bezel_corner_diameter, bezel_corner_diameter );
+	CloseRgn( BezelRgn );
+	
+	SetClip( BezelRgn );
+	
+	OldStructure = NewRgn();
+	OldContent   = NewRgn();
+	
+	const QDGlobals& qd = get_QDGlobals();
+	
+	DeskPattern = qd.gray;
+	
+	if ( PatHandle deskPat = GetPattern( deskPatID ) )
+	{
+		DeskPattern = **deskPat;
+		
+		ReleaseResource( (Handle) deskPat );
+	}
+	
+	calculate_menu_bar_height();
+	
+	GrayRgn = NewRgn();
+	
+	Rect menubar = bounds;
+	
+	menubar.bottom = MBarHeight;
+	
+	RectRgn( GrayRgn, &menubar );
+	
+	DiffRgn( BezelRgn, GrayRgn, GrayRgn );
+	
+	SaveVisRgn = NewRgn();
+	
+	CurActivate = NULL;
+	CurDeactive = NULL;
+	
+	draw_desktop_from_WMgrPort();
+	draw_menu_bar_from_WMgr_port();
+}
 
 pascal void SetWRefCon_patch( WindowRecord* window, long data )
 {
@@ -294,63 +353,6 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 	return false;
 }
 
-
-pascal void InitWindows_patch()
-{
-	WindowList = NULL;
-	SaveUpdate = true;
-	PaintWhite = true;
-	
-	WMgrPort = (GrafPtr) NewPtr( sizeof (GrafPort) );
-	
-	OpenPort( WMgrPort );
-	
-	const Rect& bounds = WMgrPort->portBits.bounds;
-	
-	PaintRect( &bounds );
-	
-	BezelRgn = NewRgn();
-	
-	OpenRgn();
-	FrameRoundRect( &bounds, bezel_corner_diameter, bezel_corner_diameter );
-	CloseRgn( BezelRgn );
-	
-	SetClip( BezelRgn );
-	
-	OldStructure = NewRgn();
-	OldContent   = NewRgn();
-	
-	const QDGlobals& qd = get_QDGlobals();
-	
-	DeskPattern = qd.gray;
-	
-	if ( PatHandle deskPat = GetPattern( deskPatID ) )
-	{
-		DeskPattern = **deskPat;
-		
-		ReleaseResource( (Handle) deskPat );
-	}
-	
-	calculate_menu_bar_height();
-	
-	GrayRgn = NewRgn();
-	
-	Rect menubar = bounds;
-	
-	menubar.bottom = MBarHeight;
-	
-	RectRgn( GrayRgn, &menubar );
-	
-	DiffRgn( BezelRgn, GrayRgn, GrayRgn );
-	
-	SaveVisRgn = NewRgn();
-	
-	CurActivate = NULL;
-	CurDeactive = NULL;
-	
-	draw_desktop_from_WMgrPort();
-	draw_menu_bar_from_WMgr_port();
-}
 
 static
 Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
