@@ -66,26 +66,6 @@ RgnHandle BezelRgn;
 const short bezel_corner_diameter = 16;
 
 
-static
-void draw_window( short varCode, const WindowRecord& window )
-{
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
-	
-	WDEF_0( varCode, (WindowPtr) &window, wDraw, 0 );
-	
-	qd.thePort = saved_port;
-}
-
-static
-void draw_window( WindowPeek window )
-{
-	draw_window( *(Byte*) &window->windowDefProc, *window );
-}
-
 pascal void SetWRefCon_patch( WindowRecord* window, long data )
 {
 	window->refCon = data;
