@@ -335,6 +335,10 @@ pascal void DisposeWindow_patch( struct GrafPort* window )
 	DisposePtr( (Ptr) window );
 }
 
+#pragma mark -
+#pragma mark Window Display
+#pragma mark -
+
 pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 {
 	if ( s != NULL  &&  s[ 0 ] != 0 )
@@ -375,6 +379,93 @@ pascal void GetWTitle_patch( WindowPeek window, unsigned char* s )
 		
 		memcpy( s, title, size );
 	}
+}
+
+pascal void SelectWindow_patch( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		return;
+	}
+	
+	/*
+		Guard against calling SelectWindow() twice in a row for different
+		windows:  Don't give the front window a deactivate event if an
+		activate event is pending for it, since (a) it's already in an
+		inactive state, and (b) we'd be clobbering the deactivate event for
+		the previous front window (if that too were still pending).
+	*/
+	
+	if ( CurActivate != (WindowRef) WindowList )
+	{
+		CurDeactive = (WindowRef) WindowList;
+	}
+	
+	CurActivate = (WindowRef) window;
+	
+	WindowPeek leader = WindowList;
+	
+	BringToFront_patch( window );
+	HiliteWindow_patch( leader, false );
+	HiliteWindow_patch( window, true  );
+}
+
+pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
+{
+	if ( window->hilited == hilite )
+	{
+		return;
+	}
+	
+	window->hilited = hilite;
+	
+	SaveUpdate = false;
+	PaintWhite = false;
+	
+	PaintOne_patch( window, window->strucRgn );
+	
+	SaveUpdate = true;
+	PaintWhite = true;
+}
+
+pascal void BringToFront_patch( WindowPeek window )
+{
+	if ( window == WindowList )
+	{
+		return;
+	}
+	
+	WindowPeek w = WindowList;
+	
+	do
+	{
+		if ( w == NULL )
+		{
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	while ( w != window );
+	
+	// Calculate the obscured region of the window (including its structure).
+	
+	RectRgn( WMgrPort->clipRgn, &window->strucRgn[0]->rgnBBox );
+	
+	ClipAbove_patch( window );
+	
+	DiffRgn( window->strucRgn, WMgrPort->clipRgn, WMgrPort->clipRgn );
+	
+	remove_from_window_list( window );
+	insert_into_window_list( window, GrafPtr( -1 ) );
+	
+	// Repaint only the previously hidden area.
+	
+	Rect r = WMgrPort->clipRgn[0]->rgnBBox;
+	
+	PaintOne_patch( window, WMgrPort->clipRgn );
+	
+	CalcVBehind_patch( window, window->strucRgn );
 }
 
 pascal void DrawGrowIcon_patch( WindowPeek window )
@@ -585,24 +676,6 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	CalcVBehind_patch( w, exposed );
 }
 
-pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
-{
-	if ( window->hilited == hilite )
-	{
-		return;
-	}
-	
-	window->hilited = hilite;
-	
-	SaveUpdate = false;
-	PaintWhite = false;
-	
-	PaintOne_patch( window, window->strucRgn );
-	
-	SaveUpdate = true;
-	PaintWhite = true;
-}
-
 pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 {
 	RgnHandle mouseRgn = NewRgn();
@@ -660,75 +733,6 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	DisposeRgn( mouseRgn );
 	
 	return is_inside;
-}
-
-pascal void SelectWindow_patch( WindowPeek window )
-{
-	if ( window == WindowList )
-	{
-		return;
-	}
-	
-	/*
-		Guard against calling SelectWindow() twice in a row for different
-		windows:  Don't give the front window a deactivate event if an
-		activate event is pending for it, since (a) it's already in an
-		inactive state, and (b) we'd be clobbering the deactivate event for
-		the previous front window (if that too were still pending).
-	*/
-	
-	if ( CurActivate != (WindowRef) WindowList )
-	{
-		CurDeactive = (WindowRef) WindowList;
-	}
-	
-	CurActivate = (WindowRef) window;
-	
-	WindowPeek leader = WindowList;
-	
-	BringToFront_patch( window );
-	HiliteWindow_patch( leader, false );
-	HiliteWindow_patch( window, true  );
-}
-
-pascal void BringToFront_patch( WindowPeek window )
-{
-	if ( window == WindowList )
-	{
-		return;
-	}
-	
-	WindowPeek w = WindowList;
-	
-	do
-	{
-		if ( w == NULL )
-		{
-			return;
-		}
-		
-		w = w->nextWindow;
-	}
-	while ( w != window );
-	
-	// Calculate the obscured region of the window (including its structure).
-	
-	RectRgn( WMgrPort->clipRgn, &window->strucRgn[0]->rgnBBox );
-	
-	ClipAbove_patch( window );
-	
-	DiffRgn( window->strucRgn, WMgrPort->clipRgn, WMgrPort->clipRgn );
-	
-	remove_from_window_list( window );
-	insert_into_window_list( window, GrafPtr( -1 ) );
-	
-	// Repaint only the previously hidden area.
-	
-	Rect r = WMgrPort->clipRgn[0]->rgnBBox;
-	
-	PaintOne_patch( window, WMgrPort->clipRgn );
-	
-	CalcVBehind_patch( window, window->strucRgn );
 }
 
 pascal void BeginUpdate_patch( struct GrafPort* window )
