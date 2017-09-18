@@ -562,8 +562,23 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 				
 				SetHandleSize( (Handle) menu, size - (oldLen - newLen) );
 			}
-			
-			// TODO:  Allow setting text which is longer than the previous
+			else
+			{
+				const short offset = p - (unsigned char*) *menu;
+				
+				SetHandleSize( (Handle) menu, size + (newLen - oldLen) );
+				
+				p = (unsigned char*) *menu + offset;
+				
+				unsigned char* q = p + 1 + oldLen;
+				unsigned char* r = p + 1 + newLen;
+				
+				size_t n = (Ptr) *menu + size - (Ptr) q;
+				
+				memmove( r, q, n );
+				
+				memcpy( p, text, 1 + newLen );
+			}
 			
 			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 			
