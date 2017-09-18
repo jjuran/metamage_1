@@ -147,6 +147,33 @@ pascal void InitMenus_patch()
 	MenuList[0]->right_edge = 10;
 }
 
+pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	const Size oldSize = GetHandleSize( (Handle) menu );
+	
+	// TODO:  Parse the format string
+	const Size newSize = oldSize + 1 + format[ 0 ] + 4;
+	
+	SetHandleSize( (Handle) menu, newSize );
+	
+	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
+	
+	memcpy( p, format, 1 + format[ 0 ] );
+	
+	p += 1 + format[ 0 ];
+	
+	*p++ = 0;  // icon
+	*p++ = 0;  // key
+	*p++ = 0;  // mark
+	*p++ = 0;  // style
+	
+	*p = 0;  // terminating empty string
+	
+	MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+}
+
 pascal void InsertMenu_patch( MenuInfo** menu, short beforeID )
 {
 	// TODO:  Respect beforeID
