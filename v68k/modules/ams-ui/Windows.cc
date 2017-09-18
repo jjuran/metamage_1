@@ -335,16 +335,6 @@ pascal void DisposeWindow_patch( struct GrafPort* window )
 	DisposePtr( (Ptr) window );
 }
 
-pascal void SetWRefCon_patch( WindowRecord* window, long data )
-{
-	window->refCon = data;
-}
-
-pascal long GetWRefCon_patch( WindowRecord* window )
-{
-	return window->refCon;
-}
-
 pascal void SetWTitle_patch( WindowPeek window, const unsigned char* s )
 {
 	if ( s != NULL  &&  s[ 0 ] != 0 )
@@ -402,165 +392,6 @@ pascal void DrawGrowIcon_patch( WindowPeek window )
 	WDEF_0( varCode, port, wDrawGIcon, 0 );
 	
 	qd.thePort = saved_port;
-}
-
-pascal void CalcVis_patch( WindowPeek window )
-{
-	RgnHandle visRgn = window->port.visRgn;
-	
-	SectRgn( window->contRgn, GrayRgn, visRgn );
-	
-	WindowPeek w = WindowList;
-	
-	while ( w != window )
-	{
-		if ( w == NULL )
-		{
-			return;  // Specified window doesn't exist.
-		}
-		
-		DiffRgn( visRgn, w->strucRgn, visRgn );
-		
-		w = w->nextWindow;
-	}
-}
-
-pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
-{
-	WindowPeek w = WindowList;
-	
-	while ( w != window )
-	{
-		if ( w == NULL )
-		{
-			return;
-		}
-		
-		w = w->nextWindow;
-	}
-	
-	while ( w != NULL )
-	{
-		CalcVis_patch( w );
-		
-		w = w->nextWindow;
-	}
-}
-
-pascal void ClipAbove_patch( WindowPeek window )
-{
-	RgnHandle clipRgn = WMgrPort->clipRgn;
-	
-	SectRgn( clipRgn, GrayRgn, clipRgn );
-	
-	WindowPeek w = WindowList;
-	
-	while ( w != window )
-	{
-		if ( w == NULL )
-		{
-			break;
-		}
-		
-		DiffRgn( clipRgn, w->strucRgn, clipRgn );
-		
-		w = w->nextWindow;
-	}
-}
-
-pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
-{
-	if ( clobbered_region == NULL  ||  EmptyRgn( clobbered_region ) )
-	{
-		return;
-	}
-	
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
-	
-	SetClip( clobbered_region );
-	
-	ClipAbove_patch( window );
-	
-	if ( window == NULL )
-	{
-		draw_desktop_from_WMgrPort();
-	}
-	else
-	{
-		const short varCode = *(Byte*) &window->windowDefProc;
-		
-		WDEF_0( varCode, (WindowPtr) window, wDraw, 0 );
-		
-		if ( SaveUpdate )
-		{
-			UnionRgn( window->updateRgn, clobbered_region, window->updateRgn );
-		}
-		
-		if ( PaintWhite )
-		{
-			EraseRect( &window->contRgn[0]->rgnBBox );
-		}
-	}
-	
-	qd.thePort = saved_port;
-}
-
-pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
-{
-	WindowPeek w = window;
-	
-	while ( w != NULL )
-	{
-		PaintOne_patch( w, clobbered_region );
-		
-		w = w->nextWindow;
-	}
-	
-	SaveUpdate = true;
-	PaintWhite = true;
-	
-	PaintOne_patch( NULL, clobbered_region );
-}
-
-static
-bool window_needs_update( WindowPeek w )
-{
-	if ( EmptyRgn( w->updateRgn ) )
-	{
-		return false;
-	}
-	
-	// Clip the update region to the visRgn and check again.
-	
-	SectRgn( w->port.visRgn, w->updateRgn, w->updateRgn );
-	
-	return ! EmptyRgn( w->updateRgn );
-}
-
-pascal unsigned char CheckUpdate_patch( EventRecord* event )
-{
-	WindowPeek w = WindowList;
-	
-	while ( w != NULL )
-	{
-		if ( window_needs_update( w ) )
-		{
-			memset( event, '\0', sizeof (EventRecord) );
-			
-			event->what    = updateEvt;
-			event->message = (long) w;
-			
-			return true;
-		}
-		
-		w = w->nextWindow;
-	}
-	
-	return false;
 }
 
 
@@ -1156,4 +987,181 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	}
 	
 	return inDesk;
+}
+
+#pragma mark -
+#pragma mark Miscellaneous Routines
+#pragma mark -
+
+pascal void SetWRefCon_patch( WindowRecord* window, long data )
+{
+	window->refCon = data;
+}
+
+pascal long GetWRefCon_patch( WindowRecord* window )
+{
+	return window->refCon;
+}
+
+#pragma mark -
+#pragma mark Low-Level Routines
+#pragma mark -
+
+static
+bool window_needs_update( WindowPeek w )
+{
+	if ( EmptyRgn( w->updateRgn ) )
+	{
+		return false;
+	}
+	
+	// Clip the update region to the visRgn and check again.
+	
+	SectRgn( w->port.visRgn, w->updateRgn, w->updateRgn );
+	
+	return ! EmptyRgn( w->updateRgn );
+}
+
+pascal unsigned char CheckUpdate_patch( EventRecord* event )
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != NULL )
+	{
+		if ( window_needs_update( w ) )
+		{
+			memset( event, '\0', sizeof (EventRecord) );
+			
+			event->what    = updateEvt;
+			event->message = (long) w;
+			
+			return true;
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	return false;
+}
+
+pascal void ClipAbove_patch( WindowPeek window )
+{
+	RgnHandle clipRgn = WMgrPort->clipRgn;
+	
+	SectRgn( clipRgn, GrayRgn, clipRgn );
+	
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			break;
+		}
+		
+		DiffRgn( clipRgn, w->strucRgn, clipRgn );
+		
+		w = w->nextWindow;
+	}
+}
+
+pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
+{
+	if ( clobbered_region == NULL  ||  EmptyRgn( clobbered_region ) )
+	{
+		return;
+	}
+	
+	QDGlobals& qd = get_QDGlobals();
+	
+	GrafPtr saved_port = qd.thePort;
+	
+	qd.thePort = WMgrPort;
+	
+	SetClip( clobbered_region );
+	
+	ClipAbove_patch( window );
+	
+	if ( window == NULL )
+	{
+		draw_desktop_from_WMgrPort();
+	}
+	else
+	{
+		const short varCode = *(Byte*) &window->windowDefProc;
+		
+		WDEF_0( varCode, (WindowPtr) window, wDraw, 0 );
+		
+		if ( SaveUpdate )
+		{
+			UnionRgn( window->updateRgn, clobbered_region, window->updateRgn );
+		}
+		
+		if ( PaintWhite )
+		{
+			EraseRect( &window->contRgn[0]->rgnBBox );
+		}
+	}
+	
+	qd.thePort = saved_port;
+}
+
+pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
+{
+	WindowPeek w = window;
+	
+	while ( w != NULL )
+	{
+		PaintOne_patch( w, clobbered_region );
+		
+		w = w->nextWindow;
+	}
+	
+	SaveUpdate = true;
+	PaintWhite = true;
+	
+	PaintOne_patch( NULL, clobbered_region );
+}
+
+pascal void CalcVis_patch( WindowPeek window )
+{
+	RgnHandle visRgn = window->port.visRgn;
+	
+	SectRgn( window->contRgn, GrayRgn, visRgn );
+	
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			return;  // Specified window doesn't exist.
+		}
+		
+		DiffRgn( visRgn, w->strucRgn, visRgn );
+		
+		w = w->nextWindow;
+	}
+}
+
+pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
+{
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	while ( w != NULL )
+	{
+		CalcVis_patch( w );
+		
+		w = w->nextWindow;
+	}
 }
