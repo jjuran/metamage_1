@@ -529,6 +529,8 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 				
 				memmove( p, q, n );
 				
+				SetHandleSize( (Handle) menu, size - (oldLen - newLen) );
+				
 				MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 			}
 			
