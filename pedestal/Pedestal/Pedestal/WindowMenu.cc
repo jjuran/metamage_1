@@ -51,17 +51,23 @@ namespace Pedestal
 	
 	static bool window_title_less( const void* a_, const void* b_ )
 	{
+		const unsigned char* a;
+		const unsigned char* b;
+		
 		Str255 one;
 		Str255 two;
+		
+		a = one;
+		b = two;
 		
 		GetWTitle( (WindowRef) a_, one );
 		GetWTitle( (WindowRef) b_, two );
 		
-		const unsigned char* a = one + 1;
-		const unsigned char* b = two + 1;
+		const uint8_t a_len = *a++;
+		const uint8_t b_len = *b++;
 		
-		const unsigned char* a_end = a + one[ 0 ];
-		const unsigned char* b_end = b + two[ 0 ];
+		const unsigned char* a_end = a + a_len;
+		const unsigned char* b_end = b + b_len;
 		
 		return std::lexicographical_compare( a, a_end, b, b_end );
 	}
