@@ -25,6 +25,8 @@ class menu_item_iterator
 			next += 1 + next[ 0 ];
 		}
 		
+		const unsigned char* get() const  { return next; }
+		
 		// bool conversion
 		operator unsigned char*() const  { return *next ? next : 0; }
 		
