@@ -648,6 +648,14 @@ pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 	result[ 0 ] = '\0';
 }
 
+pascal void DisableItem_patch( MenuInfo** menu, short item )
+{
+}
+
+pascal void EnableItem_patch( MenuInfo** menu, short item )
+{
+}
+
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 {
 }

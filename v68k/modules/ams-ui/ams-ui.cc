@@ -117,7 +117,8 @@ void install_Menus()
 	
 	TBTRAP( DrawMenuBar  );  // A937
 	TBTRAP( HiliteMenu   );  // A938
-	
+	TBTRAP( EnableItem   );  // A939
+	TBTRAP( DisableItem  );  // A93A
 	TBTRAP( GetMenuBar   );  // A93B
 	TBTRAP( SetMenuBar   );  // A93C
 	TBTRAP( MenuSelect   );  // A93D

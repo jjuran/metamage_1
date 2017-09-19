@@ -33,6 +33,9 @@ pascal void HiliteMenu_patch( short menuID );
 pascal void SetItem_patch( MenuInfo** menu, short i, const unsigned char* txt );
 pascal void GetItem_patch( MenuInfo** menu, short item, unsigned char* result );
 
+pascal void DisableItem_patch( MenuInfo** menu, short item );
+pascal void EnableItem_patch ( MenuInfo** menu, short item );
+
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked );
 
 pascal short CountMItems_patch( MenuInfo** menu );
