@@ -102,6 +102,8 @@ void install_Windows()
 	TBTRAP( GrowWindow    );  // A92B
 	TBTRAP( FindWindow    );  // A92C
 	TBTRAP( CloseWindow   );  // A92D
+	
+	TBTRAP( GetNewWindow  );  // A9BD
 }
 
 static

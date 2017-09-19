@@ -26,6 +26,10 @@ pascal GrafPort* NewWindow_patch( void*                 storage,
                                   unsigned char         closeBox,
                                   long                  refCon );
 
+pascal GrafPort* GetNewWindow_patch( short      resID,
+                                     void*      storage,
+                                     GrafPort*  behind );
+
 pascal void CloseWindow_patch  ( GrafPort* window );
 pascal void DisposeWindow_patch( GrafPort* window );
 

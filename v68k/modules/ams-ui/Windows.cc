@@ -286,6 +286,45 @@ fail_0:
 	return NULL;
 }
 
+struct WIND_resource
+{
+	Rect    bounds;
+	short   procID;
+	short   visible;
+	short   goAwayFlag;
+	long    refCon;
+	Str255  title;
+};
+
+pascal GrafPort* GetNewWindow_patch( short      resID,
+                                     void*      storage,
+                                     GrafPort*  behind )
+{
+	Handle h = GetResource( 'WIND', resID );
+	
+	if ( h == NULL )
+	{
+		return NULL;
+	}
+	
+//	HLock( h );
+	
+	const WIND_resource& wind = *(const WIND_resource*) *h;
+	
+	WindowRef window = NewWindow( storage,
+	                              &wind.bounds,
+	                              wind.title,
+	                              wind.visible,
+	                              wind.procID,
+	                              behind,
+	                              wind.goAwayFlag,
+	                              wind.refCon );
+	
+	ReleaseResource( h );
+	
+	return window;
+}
+
 pascal void CloseWindow_patch( struct GrafPort* port )
 {
 	if ( CurActivate == port )
