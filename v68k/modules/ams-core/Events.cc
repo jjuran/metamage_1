@@ -213,6 +213,21 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 #pragma mark Reading the Mouse
 #pragma mark -
 
+pascal void GetMouse_patch( Point* loc )
+{
+	poll_user_input();
+	
+	*loc = Mouse;
+	
+	GrafPtr thePort;
+	GetPort( &thePort );
+	
+	if ( thePort )
+	{
+		GlobalToLocal( loc );
+	}
+}
+
 pascal char Button_patch()
 {
 	wait_for_user_input( polling_interval );

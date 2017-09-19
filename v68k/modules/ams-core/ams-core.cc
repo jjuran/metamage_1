@@ -157,6 +157,7 @@ static void install_EventManager()
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970
 	
+	TBTRAP( GetMouse      );  // A972
 	TBTRAP( StillDown     );  // A973
 	TBTRAP( Button        );  // A974
 }
