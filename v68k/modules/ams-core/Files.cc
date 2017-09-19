@@ -28,3 +28,13 @@ pascal short GetVol_patch( VolumeParam* pb : __A0 ) : __D0
 	
 	return pb->ioResult = noErr;
 }
+
+pascal short Create_patch( FileParam* pb : __A0 ) : __D0
+{
+	return pb->ioResult = extFSErr;
+}
+
+pascal short Open_patch( FileParam* pb : __A0 ) : __D0
+{
+	return pb->ioResult = extFSErr;
+}

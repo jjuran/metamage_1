@@ -145,6 +145,10 @@ static void install_Gestalt()
 
 static void install_FileManager()
 {
+	OSTRAP( Open   );  // A000
+	
+	OSTRAP( Create );  // A008
+	
 	OSTRAP( GetVol );  // A014
 }
 
