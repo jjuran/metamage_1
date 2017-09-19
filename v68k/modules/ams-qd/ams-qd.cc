@@ -63,6 +63,8 @@ static void install_QuickDraw()
 	
 	TBTRAP( FixMul   );  // A868
 	TBTRAP( FixRatio );  // A869
+	TBTRAP( HiWord   );  // A86A
+	TBTRAP( LoWord   );  // A86B
 	TBTRAP( FixRound );  // A86C
 	
 	TBTRAP( InitPort    );  // A86D

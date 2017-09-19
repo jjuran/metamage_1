@@ -26,3 +26,13 @@ pascal short FixRound_patch( long x )
 {
 	return fix_round( x );
 }
+
+pascal short HiWord_patch( long x )
+{
+	return *(short*) &x;
+}
+
+pascal short LoWord_patch( long x )
+{
+	return x;
+}
