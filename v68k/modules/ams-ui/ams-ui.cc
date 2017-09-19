@@ -110,12 +110,14 @@ void install_Menus()
 	TBTRAP( InitMenus    );  // A930
 	
 	TBTRAP( AppendMenu   );  // A933
-	
+	TBTRAP( ClearMenuBar );  // A934
 	TBTRAP( InsertMenu   );  // A935
 	
 	TBTRAP( DrawMenuBar  );  // A937
 	TBTRAP( HiliteMenu   );  // A938
 	
+	TBTRAP( GetMenuBar   );  // A93B
+	TBTRAP( SetMenuBar   );  // A93C
 	TBTRAP( MenuSelect   );  // A93D
 	
 	TBTRAP( CheckItem    );  // A945

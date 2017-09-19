@@ -20,6 +20,11 @@ pascal void AddResMenu_patch( MenuInfo** menu, unsigned long type );
 pascal void InsertMenu_patch( MenuInfo** menu, short beforeID );
 
 pascal void DrawMenuBar_patch();
+pascal void ClearMenuBar_patch();
+
+pascal char** GetMenuBar_patch();
+
+pascal void SetMenuBar_patch( char** list );
 
 pascal long MenuSelect_patch( Point start );
 

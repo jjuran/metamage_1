@@ -248,6 +248,35 @@ pascal void DrawMenuBar_patch()
 	}
 }
 
+pascal void ClearMenuBar_patch()
+{
+	SetHandleSize( (Handle) MenuList, sizeof (MenuList_header) );
+	
+	MenuList[0]->extent_bytes = 0;
+	MenuList[0]->right_edge   = 10;
+}
+
+pascal Handle GetMenuBar_patch()
+{
+	Handle result = (Handle) MenuList;
+	
+	if ( OSErr err = HandToHand( &result ) )
+	{
+		return NULL;
+	}
+	
+	return result;
+}
+
+pascal void SetMenuBar_patch( Handle list )
+{
+	const Size size = GetHandleSize( list );
+	
+	SetHandleSize( (Handle) MenuList, size );
+	
+	BlockMoveData( *list, *MenuList, size );
+}
+
 #pragma mark -
 #pragma mark Choosing From a Menu
 #pragma mark -
