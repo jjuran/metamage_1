@@ -29,6 +29,8 @@ const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
 
 static unsigned long next_sleep;
 
+static unsigned long polling_interval = 0;
+
 #pragma mark Accessing Events
 #pragma mark -
 
@@ -60,6 +62,8 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event )
 {
+	polling_interval = 0;
+	
 	const unsigned long sleep = next_sleep;
 	
 	next_sleep = 0;
@@ -211,7 +215,9 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 
 pascal char Button_patch()
 {
-	poll_user_input();
+	wait_for_user_input( polling_interval );
+	
+	polling_interval = 0xFFFFFFFF;
 	
 	return ! MBState;
 }
