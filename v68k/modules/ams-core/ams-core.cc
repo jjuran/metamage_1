@@ -29,6 +29,7 @@
 #include "Events.hh"
 #include "Files.hh"
 #include "Gestalt.hh"
+#include "HandleUtils.hh"
 #include "Handles.hh"
 #include "OSEvents.hh"
 #include "OSUtils.hh"
@@ -122,6 +123,8 @@ static void install_MemoryManager()
 	OSTRAP( ReserveMem       );  // A040
 	OSTRAP( MaxApplZone      );  // A063
 	OSTRAP( NewEmptyHandle   );  // A066
+	
+	TBTRAP( HandToHand  );  // A9E1
 }
 
 static void install_OSUtils()
