@@ -59,6 +59,8 @@ static void install_QuickDraw()
 	
 	TBTRAP( Random );  // A861
 	
+	TBTRAP( StuffHex );  // A866
+	
 	TBTRAP( FixMul   );  // A868
 	TBTRAP( FixRatio );  // A869
 	TBTRAP( FixRound );  // A86C
