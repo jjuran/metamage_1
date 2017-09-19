@@ -17,4 +17,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
                                           unsigned long   sleep,
                                           MacRegion**     mouseRgn );
 
+pascal char Button_patch();
+pascal char StillDown_patch();
+
 #endif

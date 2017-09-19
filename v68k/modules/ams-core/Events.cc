@@ -17,8 +17,9 @@
 #include "splode.hh"
 
 
-UInt32 Ticks : 0x016A;
-Point  Mouse : 0x0830;
+UInt32 Ticks   : 0x016A;
+Byte   MBState : 0x0172;
+Point  Mouse   : 0x0830;
 
 WindowRef CurActivate : 0x0A64;
 WindowRef CurDeactive : 0x0A68;
@@ -27,6 +28,9 @@ WindowRef CurDeactive : 0x0A68;
 const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
 
 static unsigned long next_sleep;
+
+#pragma mark Accessing Events
+#pragma mark -
 
 static
 bool get_lowlevel_event( short eventMask, EventRecord* event )
@@ -199,4 +203,20 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 	}
 	
 	return false;
+}
+
+#pragma mark -
+#pragma mark Reading the Mouse
+#pragma mark -
+
+pascal char Button_patch()
+{
+	poll_user_input();
+	
+	return ! MBState;
+}
+
+pascal char StillDown_patch()
+{
+	return Button_patch();
 }
