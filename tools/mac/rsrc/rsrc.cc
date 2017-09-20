@@ -109,6 +109,47 @@ namespace tool
 	static HFSUniStr255 the_fork_name;
 	
 	
+	/*
+		Mac OS X helpfully flips to little-endian the resources we're trying
+		to copy and use portably.  Redefine all the relevant resource flippers
+		as no-ops so we get the original pristine data.
+	*/
+	
+	static
+	OSStatus null_flip_proc( OSType, OSType, SInt16, void*, ByteCount, Boolean, void* )
+	{
+		return noErr;
+	}
+	
+	static
+	void install_null_flipper( ResType type )
+	{
+		OSStatus err;
+		
+		err = CoreEndianInstallFlipper( kCoreEndianResourceManagerDomain,
+		                                type,
+		                                &null_flip_proc,
+		                                NULL );
+		
+		if ( err != noErr )
+		{
+			Mac::ThrowOSStatus( err );
+		}
+	}
+	
+	static
+	void install_null_flippers()
+	{
+		int n_types = N::Count1Types();
+		
+		for ( int i = 1;  i <= n_types;  ++i )
+		{
+			Mac::ResType type = N::Get1IndType( i );
+			
+			install_null_flipper( type );
+		}
+	}
+	
 	static n::owned< N::ResFileRefNum > open_res_file( const FSRef& ref )
 	{
 		return N::FSOpenResourceFile( ref,
@@ -294,6 +335,12 @@ namespace tool
 		try
 		{
 			resFile = open_res_file( ref );
+			
+		#ifdef __LITTLE_ENDIAN__
+			
+			install_null_flippers();
+			
+		#endif
 		}
 		catch ( const Mac::OSStatus& err )
 		{
