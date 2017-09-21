@@ -14,6 +14,7 @@ namespace v68k {
 namespace mac  {
 
 uint32_t get_Ticks();
+uint32_t get_Time();
 
 }  // namespace mac
 }  // namespace v68k

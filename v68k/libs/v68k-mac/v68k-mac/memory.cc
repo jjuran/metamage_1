@@ -34,6 +34,8 @@ enum
 	tag_Ticks_low_word,
 	tag_MBState_etc,
 	tag_KeyMods,
+	tag_Time,
+	tag_Time_low_word,
 	tag_MemErr,
 	tag_JHideCursor,
 	tag_JHideCursor_low_word,
@@ -121,6 +123,7 @@ static const global globals[] =
 	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0172, 2,    tag_MBState_etc },  // MBState, Tocks
 	{ 0x017A, 2,    tag_KeyMods     },  // (undocumented)
+	{ 0x020C, 0x44, tag_Time        },
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0800, 4,    tag_JHideCursor },
@@ -204,6 +207,13 @@ static void refresh_dynamic_global( uint8_t tag )
 	{
 		case tag_Ticks:
 			longword = get_Ticks();
+			
+			*(uint32_t*) address = big_longword( longword );
+			
+			break;
+		
+		case tag_Time:
+			longword = get_Time();
 			
 			*(uint32_t*) address = big_longword( longword );
 			
