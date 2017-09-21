@@ -59,6 +59,10 @@ static void install_QuickDraw()
 	
 	TBTRAP( BitAnd );  // A858
 	
+	TBTRAP( BitTst );  // A85D
+	TBTRAP( BitSet );  // A85E
+	TBTRAP( BitClr );  // A85F
+	
 	TBTRAP( Random );  // A861
 	
 	TBTRAP( GetPixel );  // A865
