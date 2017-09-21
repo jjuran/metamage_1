@@ -130,6 +130,93 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	return false;
 }
 
+static
+bool peek_lowlevel_event( short eventMask, EventRecord* event )
+{
+	const short lowlevel_event_mask = mDownMask   | mUpMask
+	                                | keyDownMask | keyUpMask | autoKeyMask
+	                                | diskMask;
+	
+	eventMask &= lowlevel_event_mask;
+	
+	if ( eventMask != autoKeyMask )
+	{
+		if ( OSEventAvail( eventMask & ~autoKeyMask, event ) )
+		{
+			return true;
+		}
+	}
+	
+	if ( eventMask & autoKeyMask )
+	{
+		return OSEventAvail( eventMask, event );
+	}
+	
+	return false;
+}
+
+pascal unsigned char EventAvail_patch( unsigned short  eventMask,
+                                       EventRecord*    event )
+{
+	polling_interval = 0;
+	
+	const unsigned long sleep = next_sleep;
+	
+	next_sleep = 0;
+	
+	poll_user_input();
+	
+	if ( CurDeactive )
+	{
+		event->what      = activateEvt;
+		event->message   = (long) CurDeactive;
+		event->when      = Ticks;
+		event->where     = Mouse;
+		event->modifiers = 0;
+		
+		return true;
+	}
+	
+	if ( CurActivate )
+	{
+		event->what      = activateEvt;
+		event->message   = (long) CurActivate;
+		event->when      = Ticks;
+		event->where     = Mouse;
+		event->modifiers = activeFlag;
+		
+		return true;
+	}
+	
+	if ( peek_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
+	
+	if ( CheckUpdate( event ) )
+	{
+		return true;
+	}
+	
+	wait_for_user_input( sleep );
+	
+	if ( peek_lowlevel_event( eventMask, event ) )
+	{
+		return true;
+	}
+	
+	/*
+		If at any point we return a non-null event, leave next_sleep set to
+		zero.  Otherwise, set it to a small but non-zero amount, so we only
+		waste a little CPU in applications that call GetNextEvent() instead
+		of WaitNextEvent(), rather than consuming one entirely.
+	*/
+	
+	next_sleep = GetNextEvent_throttle;
+	
+	return false;
+}
+
 static inline
 asm UInt32 add_pinned( UInt32 a : __D0, UInt32 b : __D1 ) : __D0
 {
