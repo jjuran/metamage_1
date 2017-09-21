@@ -25,6 +25,7 @@
 #include "Ovals.hh"
 #include "QDUtils.hh"
 #include "Pen.hh"
+#include "Pictures.hh"
 #include "Polygons.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
@@ -195,6 +196,8 @@ static void install_QuickDraw()
 	TBTRAP( StdBits     );  // A8EB
 	TBTRAP( CopyBits    );  // A8EC
 	TBTRAP( StdTxMeas   );  // A8ED
+	
+	TBTRAP( DrawPicture );  // A8F6
 	
 	TBTRAP( GetPattern  );  // A9B8
 	TBTRAP( GetCursor   );  // A9B9
