@@ -223,36 +223,6 @@ namespace tool
 		
 		Mac::Handle h = N::Get1Resource( the_type, the_id );
 		
-	#ifdef __LITTLE_ENDIAN__
-		
-		OSStatus err;
-		
-		/*
-			Mac OS X helpfully flips to little-endian the resources we're
-			trying to copy and use portably.  Flip them back to big-endian.
-		*/
-		
-		err = CoreEndianFlipData( kCoreEndianResourceManagerDomain,
-		                          the_type,
-		                          the_id,
-		                          *h,
-		                          GetHandleSize( h ),
-		                          true );
-		
-		/*
-			We get handlerNotFoundErr when the system doesn't have a handler
-			installed for a particular resource type.  In that case, such a
-			resource wouldn't have been flipped in the first place, so from
-			our perspective it's not an error at all.
-		*/
-		
-		if ( err != handlerNotFoundErr )
-		{
-			Mac::ThrowOSStatus( err );
-		}
-		
-	#endif
-		
 		print_rsrc_by_handle( h, showing );
 		
 		return 0;
