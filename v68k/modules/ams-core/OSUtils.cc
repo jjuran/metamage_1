@@ -19,7 +19,19 @@
 
 
 uint32_t Ticks : 0x016A;
+uint32_t Time  : 0x020C;
 
+
+#pragma mark -
+#pragma mark Date and Time Operations
+#pragma mark -
+
+pascal short ReadDateTime_patch( long* secs : __A0 ) : __D0
+{
+	*secs = Time;
+	
+	return noErr;
+}
 
 #pragma mark -
 #pragma mark Queue Manipulation
