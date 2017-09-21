@@ -38,6 +38,8 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 static void install_Packages()
 {
+	TBTRAP( InitAllPacks );  // A9E6
+	
 	TBTRAP( Pack0 );  // A9E7
 	TBTRAP( Pack1 );  // A9E8
 	TBTRAP( Pack2 );  // A9E9
