@@ -185,7 +185,8 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 		MOVEA.L  new_a5,A5
 		MOVEA.L  start,A0
 		MOVE.L   CurStackBase,SP
-		JMP      (A0)
+		JSR      (A0)
+		DC.W     0xA9F4  // _ExitToShell
 	}
 	
 	return 0;  // not reached
