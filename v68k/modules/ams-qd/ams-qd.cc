@@ -198,6 +198,8 @@ static void install_QuickDraw()
 	
 	TBTRAP( GetPattern  );  // A9B8
 	TBTRAP( GetCursor   );  // A9B9
+	
+	TBTRAP( GetPicture  );  // A9BC
 }
 
 static void install_Fonts()

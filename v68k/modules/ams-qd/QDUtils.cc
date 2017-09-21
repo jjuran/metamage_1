@@ -94,3 +94,8 @@ pascal CursHandle GetCursor_patch( short id )
 {
 	return (CursHandle) GetResource( 'CURS', id );
 }
+
+pascal PicHandle GetPicture_patch( short id )
+{
+	return (PicHandle) GetResource( 'PICT', id );
+}

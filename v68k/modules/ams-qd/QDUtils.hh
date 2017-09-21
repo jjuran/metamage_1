@@ -18,5 +18,6 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex );
 
 pascal struct Pattern** GetPattern_patch( short id );
 pascal struct Cursor**  GetCursor_patch ( short id );
+pascal struct Picture** GetPicture_patch( short id );
 
 #endif
