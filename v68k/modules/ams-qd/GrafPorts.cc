@@ -218,3 +218,28 @@ pascal void BackPat_patch( const struct Pattern* pat )
 	
 	thePort->bkPat = *pat;
 }
+
+pascal unsigned char GetPixel_patch( short h, short v )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == NULL )
+	{
+		return false;
+	}
+	
+	const BitMap& bits = thePort->portBits;
+	const Rect& bounds = bits.bounds;
+	
+	v -= bounds.top;
+	h -= bounds.left;
+	
+	Ptr addr = bits.baseAddr;
+	
+	addr += v * bits.rowBytes;
+	addr += h / 8;
+	
+	h &= 0x7;
+	
+	return (*addr & (1 << 7 - h)) != 0;
+}

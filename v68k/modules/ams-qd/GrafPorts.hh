@@ -32,4 +32,6 @@ pascal void ClipRect_patch( const struct Rect* clipRect );
 
 pascal void BackPat_patch( const struct Pattern* pat );
 
+pascal unsigned char GetPixel_patch( short h, short v );
+
 #endif
