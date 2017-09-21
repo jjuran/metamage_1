@@ -171,6 +171,7 @@ static void install_QuickDraw()
 	TBTRAP( DiffRgn     );  // A8E6
 	TBTRAP( XOrRgn      );  // A8E7
 	TBTRAP( PtInRgn     );  // A8E8
+	TBTRAP( RectInRgn   );  // A8E9
 	
 	TBTRAP( StdBits     );  // A8EB
 	TBTRAP( CopyBits    );  // A8EC

@@ -207,6 +207,21 @@ pascal void RectRgn_patch( MacRegion** rgn, const Rect* r )
 	set_rect_region( rgn, *r );
 }
 
+pascal unsigned char RectInRgn_patch( const Rect* r, MacRegion** rgn )
+{
+	/*
+		Inside Macintosh Volume I documents that RectInRgn() sometimes
+		returns true when the rectangle merely intersects the region's
+		bounding box but not the region itself.  It's not clear if Apple's
+		implementation is more than a glorified SectRect() call, but in any
+		case the documentation doesn't require it.
+	*/
+	
+	Rect intersection;
+	
+	return SectRect_patch( r, &rgn[0]->rgnBBox, &intersection );
+}
+
 pascal unsigned char EmptyRgn_patch( MacRegion** rgn )
 {
 	/*
