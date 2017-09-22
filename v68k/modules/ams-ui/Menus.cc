@@ -650,10 +650,18 @@ pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 
 pascal void DisableItem_patch( MenuInfo** menu, short item )
 {
+	if ( item <= 31 )
+	{
+		menu[0]->enableFlags &= ~(1 << item);
+	}
 }
 
 pascal void EnableItem_patch( MenuInfo** menu, short item )
 {
+	if ( item <= 31 )
+	{
+		menu[0]->enableFlags |= 1 << item;
+	}
 }
 
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
