@@ -39,6 +39,7 @@
 #include "file_descriptor.hh"
 #include "library.hh"
 #include "posixfs.hh"
+#include "sockets.hh"
 #include "thread.hh"
 #include "thread_state.hh"
 
@@ -204,6 +205,7 @@ int main( int argc, char** argv )
 	if ( unrestricted )
 	{
 		define( proc_append );
+		define( proc_tcpconnect );
 		define( proc_truncate );
 	}
 	
