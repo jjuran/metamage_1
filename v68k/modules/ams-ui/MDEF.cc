@@ -35,6 +35,8 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 	
 	UInt32 enableFlags = menu[0]->enableFlags;
 	
+	const bool menuEnabled = enableFlags & 1;
+	
 	if ( ~enableFlags )
 	{
 		PenPat( &qd.gray );
@@ -80,7 +82,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			
 			DrawString( text );
 			
-			const bool enabled = enableFlags & 1;
+			const bool enabled = enableFlags & 1  &&  menuEnabled;
 			
 			if ( ! enabled )
 			{
