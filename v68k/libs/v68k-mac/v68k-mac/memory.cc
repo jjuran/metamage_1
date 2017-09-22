@@ -33,6 +33,8 @@ enum
 	tag_UTableBase,
 	tag_UTableBase_low_word,
 	tag_MMOk_CPUFlag,
+	tag_ApplLimit,
+	tag_ApplLimit_low_word,
 	tag_SysEvtMask,
 	tag_SysEvtBuf,
 	tag_SysEvtBuf_low_word,
@@ -235,6 +237,7 @@ static const global globals[] =
 	{ 0x0108, 4,    tag_MemTop      },
 	{ 0x011C, 4,    tag_UTableBase  },
 	{ 0x012E, 2,    tag_MMOk_CPUFlag},  // MMInOk, CPUFlag
+	{ 0x0130, 4,    tag_ApplLimit   },
 	{ 0x0144, 2,    tag_SysEvtMask  },
 	{ 0x0146, 4,    tag_SysEvtBuf   },
 	{ 0x014A, 10,   tag_EventQueue  },
