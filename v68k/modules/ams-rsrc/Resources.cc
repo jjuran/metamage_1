@@ -249,6 +249,10 @@ pascal void UseResFile_patch( short refnum )
 	CurMap = refnum;
 }
 
+pascal void SetResLoad_patch( unsigned char load )
+{
+}
+
 static
 bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 {
