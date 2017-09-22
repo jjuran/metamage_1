@@ -20,6 +20,7 @@ const short system_font_ascent =  9;
 const short pen_v_offset_for_text = (menu_item_height + system_font_ascent) / 2;
 const short pen_v_offset_for_rule = menu_item_height / 2;
 
+const short mark_padding = 2;
 const short left_padding = 14;
 const short right_padding = 6;
 
@@ -42,8 +43,6 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 		
 		v += menu_item_height;
 		
-		MoveTo( left + left_padding, v );
-		
 		if ( text[ 0 ] == 1  &&  text[ 1 ] == '-' )
 		{
 			short lineTop = v - pen_v_offset_for_text + pen_v_offset_for_rule;
@@ -54,6 +53,22 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 		}
 		else
 		{
+			const unsigned char* p = text + 1 + text[ 0 ];
+			
+			const uint8_t icon  = *p++;
+			const uint8_t key   = *p++;
+			const uint8_t mark  = *p++;
+			const uint8_t style = *p++;
+			
+			if ( mark )
+			{
+				MoveTo( left + mark_padding, v );
+				
+				DrawChar( mark );
+			}
+			
+			MoveTo( left + left_padding, v );
+			
 			DrawString( text );
 		}
 	}
