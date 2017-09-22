@@ -34,7 +34,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 	
 	short v = top + pen_v_offset_for_text - menu_item_height;
 	
-	menu_item_const_iterator it( menu );
+	menu_item_iterator it( menu );
 	
 	while ( const unsigned char* text = it )
 	{
@@ -105,7 +105,7 @@ void MDEF_0_Size( MenuRef menu )
 	
 	short maxTextWidth = 0;
 	
-	menu_item_const_iterator it( menu );
+	menu_item_iterator it( menu );
 	
 	while ( const unsigned char* text = it )
 	{

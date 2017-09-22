@@ -12,31 +12,31 @@ struct Rect;
 
 void MDEF_0( short msg, MenuInfo** menu, const Rect* r, Point pt, short* item );
 
-class menu_item_const_iterator
+class menu_item_iterator
 {
 	private:
-		const unsigned char* next;
+		unsigned char* next;
 	
 	public:
-		menu_item_const_iterator( MenuInfo** menu )
+		menu_item_iterator( MenuInfo** menu )
 		{
-			next = (const unsigned char*) *menu + 14;  // menu[0]->menuData;
+			next = (unsigned char*) *menu + 14;  // menu[0]->menuData;
 			
 			next += 1 + next[ 0 ];
 		}
 		
 		// bool conversion
-		operator const unsigned char*() const  { return *next ? next : 0; }
+		operator unsigned char*() const  { return *next ? next : 0; }
 		
-		menu_item_const_iterator& operator++()
+		menu_item_iterator& operator++()
 		{
 			next += 1 + next[ 0 ] + 4;
 			return *this;
 		}
 		
-		menu_item_const_iterator operator++( int )
+		menu_item_iterator operator++( int )
 		{
-			menu_item_const_iterator prev = *this;
+			menu_item_iterator prev = *this;
 			
 			++*this;
 			

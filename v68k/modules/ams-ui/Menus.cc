@@ -632,7 +632,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 
 pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 {
-	menu_item_const_iterator it( menu );
+	menu_item_iterator it( menu );
 	
 	while ( const unsigned char* text = it )
 	{
@@ -668,7 +668,7 @@ pascal short CountMItems_patch( MenuInfo** menu )
 {
 	short n = 0;
 	
-	menu_item_const_iterator it( menu );
+	menu_item_iterator it( menu );
 	
 	while ( it )
 	{
