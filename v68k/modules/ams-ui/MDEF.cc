@@ -33,6 +33,14 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 	const short left = r.left;
 	const short right = r.right;
 	
+	UInt32 enableFlags = menu[0]->enableFlags;
+	
+	if ( ~enableFlags )
+	{
+		PenPat( &qd.gray );
+		PenMode( patBic );
+	}
+	
 	short v = top + pen_v_offset_for_text - menu_item_height;
 	
 	menu_item_iterator it( menu );
@@ -40,6 +48,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 	while ( const unsigned char* text = it )
 	{
 		++it;
+		enableFlags >>= 1;
 		
 		v += menu_item_height;
 		
@@ -70,7 +79,24 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			MoveTo( left + left_padding, v );
 			
 			DrawString( text );
+			
+			const bool enabled = enableFlags & 1;
+			
+			if ( ! enabled )
+			{
+				const short top    = v - pen_v_offset_for_text;
+				const short bottom = top + menu_item_height;
+				
+				Rect itemRect = { top, left, bottom, right };
+				
+				PaintRect( &itemRect );
+			}
 		}
+	}
+	
+	if ( ~menu[0]->enableFlags )
+	{
+		PenNormal();
 	}
 }
 
