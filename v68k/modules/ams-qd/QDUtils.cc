@@ -45,12 +45,14 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex )
 	
 	unsigned char c;
 	
-	while ( (len -= 2) > 0 )
+	while ( len > 0 )
 	{
 		c  = unhex( *srcHex++ ) << 4;
 		c |= unhex( *srcHex++ );
 		
 		*dst++ = c;
+		
+		len -= 2;
 	}
 }
 
