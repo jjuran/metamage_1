@@ -37,6 +37,7 @@
 #include "OSUtils.hh"
 #include "Patches.hh"
 #include "Pointers.hh"
+#include "PRAM.hh"
 #include "SysError.hh"
 #include "VBL.hh"
 #include "Zones.hh"
@@ -251,6 +252,8 @@ void install_OSUtils()
 	OSTRAP( CmpString );  // A03C
 	
 	OSTRAP( InitUtil  );  // A03F
+	
+	OSTRAP( ReadXPRam );  // A051
 	
 	OSTRAP( UprString );  // A054
 	
