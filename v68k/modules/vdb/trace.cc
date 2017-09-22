@@ -14,12 +14,17 @@
 // gear
 #include "gear/parse_decimal.hh"
 
+// recall
+#include "recall/macsbug_symbols.hh"
+#include "recall/stack_crawl.hh"
+
 // vdb
 #include "print_registers.hh"
 
 
 #pragma exceptions off
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define PROMPT "vdb> "
 
@@ -113,6 +118,66 @@ class NMI_reentry_guard
 };
 
 volatile int NMI_reentry_guard::level;
+
+static
+void print_stack_crawl( const registers& regs )
+{
+	using namespace recall;
+	
+	char label[] = "\n" "0: ";
+	
+	const int label_size = sizeof label - 1;
+	
+	return_address_native retaddr = (return_address_native) regs.pc;
+	
+	if ( const macsbug_symbol* here = find_symbol_name( retaddr ) )
+	{
+		if ( const char* mangled_name = get_symbol_string( here ) )
+		{
+			write( STDERR_FILENO, label, label_size );
+			write( STDERR_FILENO, mangled_name, strlen( mangled_name ) );
+		}
+	}
+	
+	stack_frame_pointer top = (stack_frame_pointer) regs.a[ 6 ];
+	
+	enum { capacity = 9 };
+	
+	frame_data frames[ capacity ];
+	
+	unsigned n = make_stack_crawl( frames, capacity, top );
+	
+	for ( int i = 0;  i < n;  ++i )
+	{
+		++label[ 1 ];
+		
+		const char* name = "???";
+		
+		retaddr = frames[ i ].addr_native;
+		
+		if ( (long) retaddr & 0x1 )
+		{
+			name = "<<odd address>>";
+		}
+		else
+		{
+			const macsbug_symbol* symbol = find_symbol_name( retaddr );
+			
+			if ( symbol )
+			{
+				if ( const char* mangled_name = get_symbol_string( symbol ) )
+				{
+					name = mangled_name;
+				}
+			}
+		}
+		
+		write( STDERR_FILENO, label, label_size );
+		write( STDERR_FILENO, name, strlen( name ) );
+	}
+	
+	write( STDERR_FILENO, STR_LEN( "\n\n" ) );
+}
 
 static void debugger_loop( registers& regs )
 {
@@ -225,6 +290,10 @@ static void debugger_loop( registers& regs )
 			case 'o':
 				step_over = regs.pc;
 				return;
+			
+			case 'k':
+				print_stack_crawl( regs );
+				break;
 			
 			case 'r':
 				print_registers( regs );
