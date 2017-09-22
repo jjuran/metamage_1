@@ -546,6 +546,8 @@ unsigned parse_instruction_limit( const char* var )
 static
 void emulation_loop( v68k::emulator& emu )
 {
+	emu.regs[ 8 + 6 ] = 0;
+	
 	const char* instruction_limit_var = getenv( "XV68K_INSTRUCTION_LIMIT" );
 	
 	const unsigned max_steps = parse_instruction_limit( instruction_limit_var );
