@@ -32,6 +32,8 @@ enum
 	tag_ScreenRow,
 	tag_MemTop,
 	tag_MemTop_low_word,
+	tag_StkLowPt,
+	tag_StkLowPt_low_word,
 	tag_HeapEnd,
 	tag_HeapEnd_low_word,
 	tag_TheZone,
@@ -285,6 +287,7 @@ static const global globals[] =
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 2,    tag_ScreenRow   },
 	{ 0x0108, 4,    tag_MemTop      },
+	{ 0x0110, 4,    tag_StkLowPt    },
 	{ 0x0114, 4,    tag_HeapEnd     },
 	{ 0x0118, 4,    tag_TheZone     },
 	{ 0x011C, 4,    tag_UTableBase  },
