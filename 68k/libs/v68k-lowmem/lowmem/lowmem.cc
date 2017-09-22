@@ -226,6 +226,8 @@ enum
 	tag_MenuDisable,
 	tag_MenuDisable_low_word,
 	tag_MBarHeight,
+	tag_HiHeapMark,
+	tag_HiHeapMark_low_word,
 	tag_last_A_trap,
 	n_words
 };
@@ -426,6 +428,7 @@ static const global globals[] =
 	{ 0x0B22, 2,    tag_SCSIFlag    },
 	{ 0x0B54, 4,    tag_MenuDisable },
 	{ 0x0BAA, 2,    tag_MBarHeight  },
+	{ 0x0BAE, 4,    tag_HiHeapMark  },
 	{ 0x0BFE, 2,    tag_last_A_trap }
 };
 
