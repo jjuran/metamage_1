@@ -673,6 +673,7 @@ void load_file( uint8_t* mem, const char* path )
 	*p++ = iota::big_u16( 0x4EF9 );
 	*p++ = iota::big_u16( addr >> 16 );
 	*p++ = iota::big_u16( addr );
+	*p++ = iota::big_u16( 0x4E75 );  // Terminates function name lookup
 }
 
 static
