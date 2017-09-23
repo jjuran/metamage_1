@@ -22,13 +22,19 @@ namespace vlib
 		return Value( String( key ), Op_mapping, v );
 	}
 	
-	void fd_error( int fd, int err )
+	Value error_desc( int err )
 	{
 		Value error = mapping( "errno", Integer(           err   ) );
 		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
-		Value fd_   = mapping( "fd",    Integer(           fd    ) );
 		
-		Value exception( error, Value( desc, fd_ ) );
+		return Value( error, desc );
+	}
+	
+	void fd_error( int fd, int err )
+	{
+		Value fd_ = mapping( "fd", Integer( fd ) );
+		
+		Value exception( fd_, error_desc( err ) );
 		
 		throw_exception_object( exception );
 	}
@@ -45,11 +51,9 @@ namespace vlib
 	
 	void path_error( const char* path, int err )
 	{
-		Value error = mapping( "errno", Integer(           err   ) );
-		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
-		Value path_ = mapping( "path",  String (           path  ) );
+		Value path_ = mapping( "path", String( path  ) );
 		
-		Value exception( error, Value( desc, path_ ) );
+		Value exception( path_, error_desc( err ) );
 		
 		throw_exception_object( exception );
 	}

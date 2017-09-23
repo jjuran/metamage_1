@@ -20,6 +20,8 @@ namespace vlib
 	
 	Value mapping( const plus::string& key, const Value& v );
 	
+	Value error_desc( int err );
+	
 	void fd_error( int fd, int err = errno );
 	void fd_error( int fd, const char* msg );
 	

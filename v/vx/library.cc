@@ -6,7 +6,6 @@
 #include "library.hh"
 
 // POSIX
-#include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
 
@@ -164,12 +163,7 @@ namespace vlib
 		
 		if ( status < 0 )
 		{
-			int err = errno;
-			
-			Value error = mapping( "errno", Integer(           err   ) );
-			Value desc  = mapping( "desc",  String ( strerror( err ) ) );
-			
-			Value exception( command, Value( error, desc ) );
+			Value exception( command, error_desc( errno ) );
 			
 			throw_exception_object( exception );
 		}

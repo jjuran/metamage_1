@@ -5,9 +5,6 @@
 
 #include "thread_state.hh"
 
-// Standard C
-#include <string.h>
-
 // Standard C++
 #include <vector>
 
@@ -86,10 +83,7 @@ namespace vlib
 	static
 	void thread_error( int err )
 	{
-		Value error = mapping( "errno", Integer(           err   ) );
-		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
-		
-		Value exception( error, desc );
+		Value exception = error_desc( err );
 		
 		throw_exception_object( exception );
 	}
