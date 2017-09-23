@@ -1,0 +1,19 @@
+#!/usr/bin/env vx -Z
+
+if argv.length < 3 then
+{
+	warn "Usage:  tcpcat <host> <port>"
+	exit 2
+}
+
+const node    = argv[ 1 ]
+const service = argv[ 2 ]
+
+const fd = tcp-connect( node, service )
+
+while var data = read( fd, 4096 ) do
+{
+	OUT <== data
+}
+
+end.
