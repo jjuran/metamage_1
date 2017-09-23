@@ -152,6 +152,20 @@ pascal void InitMenus_patch()
 	MenuList[0]->right_edge = 10;
 }
 
+pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
+{
+	Handle h = NewHandleClear( sizeof (MenuInfo) - (255 - title[ 0 ]) + 1 );
+	
+	MenuRef menu = (MenuRef) h;
+	
+	menu[0]->menuID      = menuID;
+	menu[0]->enableFlags = 0xFFFFFFFF;
+	
+	BlockMoveData( title, menu[0]->menuData, 1 + title[ 0 ] );
+	
+	return menu;
+}
+
 pascal MenuInfo** GetMenu_patch( short resID )
 {
 	Handle h = GetResource( 'MENU', resID );

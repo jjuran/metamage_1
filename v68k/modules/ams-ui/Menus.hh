@@ -11,6 +11,8 @@ struct Point;
 
 pascal void InitMenus_patch();
 
+pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title );
+
 pascal MenuInfo** GetMenu_patch( short resID );
 
 pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format );

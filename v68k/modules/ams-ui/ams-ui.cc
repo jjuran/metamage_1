@@ -114,6 +114,7 @@ static
 void install_Menus()
 {
 	TBTRAP( InitMenus    );  // A930
+	TBTRAP( NewMenu      );  // A931
 	
 	TBTRAP( AppendMenu   );  // A933
 	TBTRAP( ClearMenuBar );  // A934
