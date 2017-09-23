@@ -40,6 +40,7 @@ pascal void SelectWindow_patch( WindowRecord* window );
 pascal void BringToFront_patch( WindowRecord* window );
 pascal void DrawGrowIcon_patch( WindowRecord* window );
 
+pascal void ShowHide_patch    ( WindowRecord* window, unsigned char showFlag );
 pascal void HiliteWindow_patch( WindowRecord* window, unsigned char hilite );
 
 pascal GrafPort* FrontWindow_patch();

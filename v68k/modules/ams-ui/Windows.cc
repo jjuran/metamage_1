@@ -469,6 +469,30 @@ pascal void SelectWindow_patch( WindowPeek window )
 	HiliteWindow_patch( window, true  );
 }
 
+typedef pascal void (*window_painter)( WindowPeek, RgnHandle );
+
+pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )
+{
+	if ( window == NULL  ||  ! window->visible == ! showFlag )
+	{
+		return;
+	}
+	
+	window_painter paint_one_or_many = &PaintBehind_patch;
+	
+	window->visible = showFlag;
+	
+	if ( showFlag )
+	{
+		call_WDEF( window, wCalcRgns, 0 );
+		
+		paint_one_or_many = &PaintOne_patch;
+	}
+	
+	CalcVBehind_patch( window, window->strucRgn );
+	paint_one_or_many( window, window->strucRgn );
+}
+
 pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
 {
 	if ( window->hilited == hilite )

@@ -65,7 +65,7 @@ void install_Windows()
 	TBTRAP( DragGrayRgn   );  // A905
 	TBTRAP( NewString     );  // A906
 	TBTRAP( SetString     );  // A907
-	
+	TBTRAP( ShowHide      );  // A908
 	TBTRAP( CalcVis       );  // A909
 	TBTRAP( CalcVBehind   );  // A90A
 	TBTRAP( ClipAbove     );  // A90B
