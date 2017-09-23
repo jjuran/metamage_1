@@ -469,6 +469,35 @@ pascal void SelectWindow_patch( WindowPeek window )
 	HiliteWindow_patch( window, true  );
 }
 
+pascal void HideWindow_patch( WindowPeek window )
+{
+	if ( ! window->visible )
+	{
+		return;
+	}
+	
+	ShowHide_patch( window, false );
+	
+	if ( window == WindowList  &&  window->nextWindow != NULL )
+	{
+		// TODO:  What if the next window is invisible?
+		
+		SelectWindow_patch( window->nextWindow );
+	}
+}
+
+pascal void ShowWindow_patch( WindowPeek window )
+{
+	if ( window->visible )
+	{
+		return;
+	}
+	
+	ShowHide_patch( window, true );
+	
+	// TODO:  Highlight and activate previously invisible front window
+}
+
 typedef pascal void (*window_painter)( WindowPeek, RgnHandle );
 
 pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )

@@ -76,7 +76,8 @@ void install_Windows()
 	TBTRAP( InitWindows   );  // A912
 	TBTRAP( NewWindow     );  // A913
 	TBTRAP( DisposeWindow );  // A914
-	
+	TBTRAP( ShowWindow    );  // A915
+	TBTRAP( HideWindow    );  // A916
 	TBTRAP( GetWRefCon    );  // A917
 	TBTRAP( SetWRefCon    );  // A918
 	TBTRAP( GetWTitle     );  // A919

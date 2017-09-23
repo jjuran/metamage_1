@@ -37,6 +37,8 @@ pascal void SetWTitle_patch( WindowRecord* window, const unsigned char* s );
 pascal void GetWTitle_patch( WindowRecord* window,       unsigned char* s );
 
 pascal void SelectWindow_patch( WindowRecord* window );
+pascal void HideWindow_patch  ( WindowRecord* window );
+pascal void ShowWindow_patch  ( WindowRecord* window );
 pascal void BringToFront_patch( WindowRecord* window );
 pascal void DrawGrowIcon_patch( WindowRecord* window );
 
