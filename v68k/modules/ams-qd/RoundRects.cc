@@ -42,6 +42,8 @@ pascal void StdRRect_patch( signed char  verb,
 		{
 			RoundRectRgn( rgn, width, height, ovalWidth, ovalHeight );
 			
+			OffsetRgn( rgn, r->left, r->top );
+			
 			UnionRgn( rgn, rgnSave, rgnSave );
 			
 			EmptyRgn( rgn );
