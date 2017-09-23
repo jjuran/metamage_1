@@ -5,12 +5,64 @@
 
 #include "exception.hh"
 
+// POSIX
+#include <string.h>
+
 // vlib
 #include "vlib/exceptions.hh"
+#include "vlib/types/integer.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
 {
+	
+	Value mapping( const plus::string& key, const Value& v )
+	{
+		return Value( String( key ), Op_mapping, v );
+	}
+	
+	void fd_error( int fd, int err )
+	{
+		Value error = mapping( "errno", Integer(           err   ) );
+		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
+		Value fd_   = mapping( "fd",    Integer(           fd    ) );
+		
+		Value exception( error, Value( desc, fd_ ) );
+		
+		throw_exception_object( exception );
+	}
+	
+	void fd_error( int fd, const char* msg )
+	{
+		Value desc  = mapping( "desc", String( msg ) );
+		Value fd_   = mapping( "fd",   Integer( fd ) );
+		
+		Value exception( desc, fd_ );
+		
+		throw_exception_object( exception );
+	}
+	
+	void path_error( const char* path, int err )
+	{
+		Value error = mapping( "errno", Integer(           err   ) );
+		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
+		Value path_ = mapping( "path",  String (           path  ) );
+		
+		Value exception( error, Value( desc, path_ ) );
+		
+		throw_exception_object( exception );
+	}
+	
+	void path_error( const char* path, const char* msg )
+	{
+		Value desc  = mapping( "desc", String( msg  ) );
+		Value path_ = mapping( "path", String( path ) );
+		
+		Value exception( desc, path_ );
+		
+		throw_exception_object( exception );
+	}
 	
 	void throw_exception_object( const Value& mappings )
 	{

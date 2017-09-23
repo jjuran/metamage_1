@@ -49,12 +49,6 @@ namespace vlib
 {
 	
 	static
-	Value mapping( const plus::string& key, const Value& v )
-	{
-		return Value( String( key ), Op_mapping, v );
-	}
-	
-	static
 	void eval_error_handler( const plus::string& msg, const source_spec& src )
 	{
 		throw user_exception( String( msg ), src );

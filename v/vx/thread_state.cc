@@ -84,12 +84,6 @@ namespace vlib
 	}
 	
 	static
-	Value mapping( const plus::string& key, const Value& v )
-	{
-		return Value( String( key ), Op_mapping, v );
-	}
-	
-	static
 	void thread_error( int err )
 	{
 		Value error = mapping( "errno", Integer(           err   ) );
