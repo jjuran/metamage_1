@@ -36,7 +36,8 @@ void install_FileManager()
 	
 	OSTRAP( Create );  // A008
 	
-	OSTRAP( GetVol );  // A014
+	OSTRAP( FlushVol );  // A013
+	OSTRAP( GetVol   );  // A014
 }
 
 static
