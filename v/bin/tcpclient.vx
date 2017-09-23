@@ -1,0 +1,28 @@
+#!/usr/bin/env vx -Z
+
+const argc = argv.length
+
+if argc < 4 then
+{
+	warn "Usage:  tcpclient <host> <port> <program argv>"
+	exit 2
+}
+
+const node    = argv[ 1 ]
+const service = argv[ 2 ]
+
+const program-argv = argv[ 3 -> argc ]
+
+const fd = tcp-connect( node, service )
+
+dup2( fd, 6 )
+dup2( fd, 7 )
+
+if not *fd in 6 .. 7 then
+{
+	close fd
+}
+
+execvp( program-argv[ 0 ], program-argv )
+
+end.
