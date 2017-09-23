@@ -1150,7 +1150,7 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 	{
 		draw_desktop_from_WMgrPort();
 	}
-	else
+	else if ( window->visible )
 	{
 		call_WDEF( window, wDraw, 0 );
 		
