@@ -73,6 +73,13 @@ long call_WDEF( WindowPeek window, short message, long param )
 	
 	const short varCode = *(Byte*) &window->windowDefProc;
 	
+	Handle h = window->windowDefProc;
+	
+	if ( (UInt32) h & 0x00FFFFFF )
+	{
+		wdef = (WindowDefProcPtr) *h;
+	}
+	
 	return wdef( varCode, (WindowPtr) window, message, param );
 }
 
@@ -243,6 +250,8 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	window->hilited    = -true;
 	window->goAwayFlag = closeBox;
 	window->refCon     = refCon;
+	
+	window->windowDefProc = GetResource( 'WDEF', procID >> 4 );
 	
 	const short varCode = procID & 0x0F;
 	
