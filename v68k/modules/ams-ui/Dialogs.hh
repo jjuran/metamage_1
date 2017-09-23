@@ -26,6 +26,8 @@ pascal GrafPort* NewDialog_patch( void*                 storage,
                                   long                  refCon,
                                   char**                items );
 
+pascal GrafPort* GetNewDialog_patch( short id, void* ds, GrafPort* behind );
+
 pascal void CloseDialog_patch( GrafPort* dialog );
 
 pascal void DisposeDialog_patch( GrafPort* dialog );

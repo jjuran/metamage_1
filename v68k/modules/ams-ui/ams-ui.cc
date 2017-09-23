@@ -168,7 +168,7 @@ static void install_Controls()
 static void install_Dialogs()
 {
 	TBTRAP( InitDialogs  );  // A97B
-	
+	TBTRAP( GetNewDialog );  // A97C
 	TBTRAP( NewDialog    );  // A97D
 	
 	TBTRAP( DrawDialog   );  // A981

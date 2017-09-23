@@ -313,6 +313,41 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	return window;
 }
 
+pascal DialogRef GetNewDialog_patch( short id, void* storage, WindowRef behind )
+{
+	Handle h = GetResource( 'DLOG', id );
+	
+	if ( h == NULL )
+	{
+		return NULL;
+	}
+	
+	const DialogTemplate dlog = *(const DialogTemplate*) *h;
+	
+	ReleaseResource( h );
+	
+	h = GetResource( 'DITL', dlog.itemsID );
+	
+	if ( h == NULL )
+	{
+		return NULL;
+	}
+	
+	DetachResource( h );
+	
+	DialogRef dialog = NewDialog( storage,
+	                              &dlog.boundsRect,
+	                              dlog.title,
+	                              dlog.visible,
+	                              dlog.procID,
+	                              behind,
+	                              dlog.goAwayFlag,
+	                              dlog.refCon,
+	                              h );
+	
+	return dialog;
+}
+
 pascal void CloseDialog_patch( DialogRef dialog )
 {
 	DialogPeek d = (DialogPeek) dialog;
