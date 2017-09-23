@@ -165,7 +165,12 @@ static void install_Controls()
 
 static void install_Dialogs()
 {
-	TBTRAP( InitDialogs );  // A97B
+	TBTRAP( InitDialogs  );  // A97B
+	
+	TBTRAP( Alert        );  // A985
+	TBTRAP( StopAlert    );  // A986
+	TBTRAP( NoteAlert    );  // A987
+	TBTRAP( CautionAlert );  // A988
 }
 
 static void install_TextEdit()
