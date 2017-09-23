@@ -242,9 +242,25 @@ pascal void DrawMenuBar_patch()
 	{
 		MenuRef menu = next->menu;
 		
-		MoveTo( next->left_edge - 1 + menu_title_padding, pen_v );
+		const short left = next->left_edge - 1 + menu_title_padding;
+		
+		MoveTo( left, pen_v );
 		
 		DrawString( menu[0]->menuData );
+		
+		if ( ! (menu[0]->enableFlags & 1) )
+		{
+			QDGlobals& qd = get_QDGlobals();
+			
+			PenPat( &qd.gray );
+			PenMode( patBic );
+			
+			Rect titleRect = { 1, left, MBarHeight - 1, qd.thePort->pnLoc.h };
+			
+			PaintRect( &titleRect );
+			
+			PenNormal();
+		}
 	}
 }
 
