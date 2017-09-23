@@ -169,12 +169,21 @@ static void install_Dialogs()
 {
 	TBTRAP( InitDialogs  );  // A97B
 	
+	TBTRAP( NewDialog    );  // A97D
+	
+	TBTRAP( DrawDialog   );  // A981
+	TBTRAP( CloseDialog  );  // A982
+	
+	TBTRAP( DisposeDialog );  // A983
+	
 	TBTRAP( Alert        );  // A985
 	TBTRAP( StopAlert    );  // A986
 	TBTRAP( NoteAlert    );  // A987
 	TBTRAP( CautionAlert );  // A988
 	
 	TBTRAP( ParamText    );  // A98B
+	
+	TBTRAP( ModalDialog  );  // A991
 }
 
 static void install_TextEdit()

@@ -8,12 +8,31 @@
 
 struct EventRecord;
 struct GrafPort;
+struct Rect;
 
 typedef pascal unsigned char (*ModalFilterUPP)( GrafPort*     dialog,
                                                 EventRecord*  event,
                                                 short*        itemHit );
 
 pascal void InitDialogs_patch( void* proc );
+
+pascal GrafPort* NewDialog_patch( void*                 storage,
+                                  const Rect*           bounds,
+                                  const unsigned char*  title,
+                                  unsigned char         visible,
+                                  short                 procID,
+                                  GrafPort*             behind,
+                                  unsigned char         closable,
+                                  long                  refCon,
+                                  char**                items );
+
+pascal void CloseDialog_patch( GrafPort* dialog );
+
+pascal void DisposeDialog_patch( GrafPort* dialog );
+
+pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit );
+
+pascal void DrawDialog_patch( GrafPort* dialog );
 
 pascal short Alert_patch       ( short alertID, ModalFilterUPP filterProc );
 pascal short StopAlert_patch   ( short alertID, ModalFilterUPP filterProc );

@@ -22,6 +22,9 @@
 // Standard C
 #include <string.h>
 
+// ams-common
+#include "QDGlobals.hh"
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -182,9 +185,215 @@ const expansion_storage& expand_param_text( const unsigned char* text )
 }
 
 
+#pragma mark -
+#pragma mark Initialization
+#pragma mark -
+
 pascal void InitDialogs_patch( void* proc )
 {
 }
+
+#pragma mark -
+#pragma mark Creating and Disposing of Dialogs
+#pragma mark -
+
+pascal DialogRef NewDialog_patch( void*                 storage,
+                                  const Rect*           bounds,
+                                  const unsigned char*  title,
+                                  Boolean               visible,
+                                  short                 procID,
+                                  WindowRef             behind,
+                                  Boolean               closable,
+                                  long                  refCon,
+                                  Handle                items )
+{
+	void* original_storage = storage;
+	
+	if ( storage == NULL )
+	{
+		storage = NewPtr( sizeof (DialogRecord) );
+		
+		if ( storage == NULL )
+		{
+			return NULL;
+		}
+	}
+	
+	memset( storage, '\0', sizeof (DialogRecord) );
+	
+	WindowRef window = NewWindow( storage,
+	                              bounds,
+	                              title,
+	                              visible,
+	                              procID,
+	                              behind,
+	                              closable,
+	                              refCon );
+	
+	if ( window == NULL )
+	{
+		if ( original_storage == NULL )
+		{
+			DisposePtr( (Ptr) storage );
+		}
+		
+		return NULL;
+	}
+	
+	WindowPeek w = (WindowPeek) window;
+	DialogPeek d = (DialogPeek) window;
+	
+	w->windowKind = dialogKind;
+	
+	TextFont( systemFont );
+	
+	d->items = items;
+	
+	char* p = *items;
+	
+	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
+	
+	while ( n_items_1-- >= 0 )
+	{
+		void*& placeholder = *((void**) p)++;
+		
+		const Rect& bounds = *((Rect*) p)++;
+		
+		UInt8 type = *p++;
+		UInt8 len  = *p++;
+		
+		switch ( type & 0x7F )
+		{
+			case ctrlItem + btnCtrl:
+				placeholder = NewControl( window,
+				                          &bounds,
+				                          (const uint8_t*) p - 1,
+				                          visible,
+				                          0,  // value
+				                          0,  // min
+				                          1,  // max
+				                          pushButProc,
+				                          0 );
+				
+				ValidRect( &bounds );
+				break;
+			
+			default:
+				break;
+		}
+		
+		p += len + (len & 1);
+	}
+	
+	return window;
+}
+
+pascal void CloseDialog_patch( DialogRef dialog )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	DisposeHandle( d->items );
+	
+	CloseWindow( dialog );
+}
+
+pascal void DisposeDialog_patch( DialogRef dialog )
+{
+	CloseDialog( dialog );
+	
+	DisposePtr( (Ptr) dialog );
+}
+
+#pragma mark -
+#pragma mark Handling Dialog Events
+#pragma mark -
+
+pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	WindowRef window = qd.thePort;
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	const long sleep = 0x7fffffff;
+	
+	while ( true )
+	{
+		EventRecord event;
+		
+		if ( WaitNextEvent( everyEvent, &event, sleep, NULL ) )
+		{
+			switch ( event.what )
+			{
+				case updateEvt:
+					BeginUpdate( window );
+					DrawDialog( window );
+					EndUpdate( window );
+					break;
+				
+				case mouseDown:
+				{
+					if ( ! PtInRgn( event.where, w->contRgn ) )
+					{
+						continue;
+					}
+					
+					*itemHit = 1;
+					return;
+				}
+				
+				default:
+					break;
+			}
+		}
+	}
+}
+
+pascal void DrawDialog_patch( DialogRef dialog )
+{
+	DrawControls( dialog );
+	
+	DialogPeek d = (DialogPeek) dialog;
+	
+	Handle h = d->items;
+	
+	const char* p = *h;
+	
+	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
+	
+	while ( n_items_1-- >= 0 )
+	{
+		p += 4;  // skip placeholder
+		
+		const Rect& bounds = *((Rect*) p)++;
+		
+		UInt8 type = *p++;
+		UInt8 len  = *p++;
+		
+		switch ( type & 0x7F )
+		{
+			case statText:
+			{
+				const UInt8* text = (const UInt8*) p - 1;
+				
+				const expansion_storage& expansion = expand_param_text( text );
+				
+				TETextBox( *expansion.text, expansion.size, &bounds, 0 );
+				break;
+			}
+			
+			default:
+				break;
+		}
+		
+		p += len + (len & 1);
+	}
+}
+
+#pragma mark -
+#pragma mark Invoking Alerts
+#pragma mark -
 
 static
 short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
@@ -362,6 +571,10 @@ pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc )
 {
 	return basic_Alert( alertID, filterProc, caution_icon );
 }
+
+#pragma mark -
+#pragma mark Manipulating Items in Dialogs and Alerts
+#pragma mark -
 
 pascal void ParamText_patch( const unsigned char*  p1,
                              const unsigned char*  p2,
