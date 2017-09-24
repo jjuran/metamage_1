@@ -85,7 +85,7 @@ void LoadSegment( short segnum : __D0 )
 	
 	if ( code == NULL )
 	{
-		ExitToShell_patch();
+		SysError( 15 );
 	}
 	
 	const segment_header* segment = (segment_header*) *code;
@@ -154,6 +154,11 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	memcpy( CurApName, appName, 1 + len );
 	
 	Handle code0 = GetResource( 'CODE', 0 );
+	
+	if ( code0 == NULL )
+	{
+		SysError( 26 );
+	}
 	
 	const jump_table_header header = *(jump_table_header*) *code0;
 	
