@@ -39,6 +39,8 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 		{
 			OvalRgn( ovalRgn, width, height );
 			
+			OffsetRgn( ovalRgn, r->left, r->top );
+			
 			UnionRgn( ovalRgn, rgnSave, rgnSave );
 			
 			EmptyRgn( ovalRgn );
