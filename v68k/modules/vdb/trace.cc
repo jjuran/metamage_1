@@ -26,8 +26,58 @@ static unsigned n_steps;
 
 static uint32_t step_over;
 
+static const char* causes[] =
+{
+	NULL,  // Reset SP (this is a stack pointer)
+	NULL,  // Reset PC (would be overridden by actual Reset exception)
+	"Bus Error",
+	"Address Error",
+	"Illegal Instruction",
+	"Division By Zero",
+	"CHK Exception",
+	"TRAPV Exception",
+	"Privilege Violation",
+	NULL,  // Trace Exception (implied)
+	NULL,  // Line 1010 (reserved for trap dispatcher)
+	"Line 1111",
+	NULL,  // unassigned, reserved
+	"Coprocessor Protocol Violation",
+	"Format Error",
+};
+
+static
+void report_exception( uint8_t vector_offset )
+{
+	const char* cause = NULL;
+	
+	const uint8_t vector_number = vector_offset >> 2;
+	
+	if ( vector_number < sizeof causes / sizeof *causes )
+	{
+		cause = causes[ vector_number ];
+	}
+	
+	if ( cause == NULL )
+	{
+		cause = "unknown exception";
+	}
+	
+	write( STDERR_FILENO, "\n", 1 );
+	write( STDERR_FILENO, cause, strlen( cause ) );
+	write( STDERR_FILENO, "\n\n", 2 );
+}
+
 static void debugger_loop( registers& regs )
 {
+	const uint8_t trace_offset = 9 * sizeof (uint32_t);
+	
+	const uint8_t vector_offset = (uint8_t) regs.fv;
+	
+	if ( vector_offset != trace_offset )
+	{
+		report_exception( vector_offset );
+	}
+	
 	if ( n_steps > 0 )
 	{
 		--n_steps;
@@ -148,8 +198,6 @@ no_USP_store:
 	RTE
 }
 
-void* trace_vector : 0x00000024;
-
 asm int set_trace_handler()
 {
 	JSR     0xFFFFFFFA ;  // enter_supervisor_mode()
@@ -157,7 +205,20 @@ asm int set_trace_handler()
 	BMI.S   bail ;  // D0 is -1 if branch taken
 	
 	LEA     trace_handler,A0
-	MOVE.L  A0,trace_vector
+	
+	MOVE.L  A0,0x0008  // Bus Error
+	MOVE.L  A0,0x000C  // Address Error
+	MOVE.L  A0,0x0010  // Illegal Instruction
+	MOVE.L  A0,0x0014  // Division By Zero
+	MOVE.L  A0,0x0018  // CHK
+	MOVE.L  A0,0x001C  // TRAPV
+	MOVE.L  A0,0x0020  // Privilege Violation
+	MOVE.L  A0,0x0024  // Trace
+//	MOVE.L  A0,0x0028  // Line 1010
+	MOVE.L  A0,0x002C  // Line 1111
+	MOVE.L  A0,0x0030  // unassigned, reserved
+	MOVE.L  A0,0x0034  // Coprocessor Protocol Violation
+	MOVE.L  A0,0x0038  // Format Error
 	
 	MOVE    D0,SR
 	MOVEQ   #0,D0
