@@ -34,6 +34,7 @@
 #include "OSEvents.hh"
 #include "OSUtils.hh"
 #include "Segments.hh"
+#include "SysError.hh"
 #include "cursor-core.hh"
 #include "options.hh"
 
@@ -139,6 +140,7 @@ static void install_OSUtils()
 	TBTRAP( Dequeue   );  // A96F
 	TBTRAP( TickCount );  // A975
 	TBTRAP( SysBeep   );  // A9C8
+	TBTRAP( SysError  );  // A9C9
 }
 
 static void install_Gestalt()
