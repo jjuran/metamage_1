@@ -239,6 +239,8 @@ int main( int argc, char** argv )
 		}
 	}
 	
+	set_syserr_handler();
+	
 	initialize_low_memory_globals();
 	
 	install_MemoryManager();
