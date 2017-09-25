@@ -14,9 +14,7 @@ void privileged_instruction_test()
 {
 	asm
 	{
-		machine 68020
-		
-		MOVEC	VBR,A0
+		ORI      #0,SR
 	}
 }
 
