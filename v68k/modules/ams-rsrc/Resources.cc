@@ -149,3 +149,7 @@ pascal void ReleaseResource_patch( char** resource )
 {
 	DisposeHandle( resource );
 }
+
+pascal void DetachResource_patch( char** res )
+{
+}
