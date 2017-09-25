@@ -28,6 +28,11 @@ pascal short Random_patch()
 	return qd.randSeed;
 }
 
+pascal long BitAnd_patch( long a, long b )
+{
+	return a & b;
+}
+
 static const char hex_table[ 32 ] =
 {
 	0,  10, 11, 12, 13, 14, 15, 0,
