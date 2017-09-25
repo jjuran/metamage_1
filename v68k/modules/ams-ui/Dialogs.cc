@@ -382,6 +382,11 @@ pascal void InitDialogs_patch( void* proc )
 {
 }
 
+pascal void ErrorSound_patch( void* proc )
+{
+	ERROR = "ErrorSound is unimplemented";
+}
+
 #pragma mark -
 #pragma mark Creating and Disposing of Dialogs
 #pragma mark -

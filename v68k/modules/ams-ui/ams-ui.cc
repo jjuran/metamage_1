@@ -217,6 +217,7 @@ static void install_Dialogs()
 	TBTRAP( CautionAlert );  // A988
 	
 	TBTRAP( ParamText    );  // A98B
+	TBTRAP( ErrorSound   );  // A98C
 	
 	TBTRAP( GetDItem     );  // A98D
 	TBTRAP( SetDItem     );  // A98E

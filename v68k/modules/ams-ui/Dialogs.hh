@@ -16,6 +16,7 @@ typedef pascal unsigned char (*ModalFilterUPP)( GrafPort*     dialog,
                                                 short*        itemHit );
 
 pascal void InitDialogs_patch( void* proc );
+pascal void ErrorSound_patch ( void* proc );
 
 pascal GrafPort* NewDialog_patch( void*                 storage,
                                   const Rect*           bounds,
