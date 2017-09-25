@@ -34,6 +34,8 @@ short SetApplLimit_patch( char* p : __A0 );
 
 void MoreMasters_patch();
 
+void MaxMem_patch();
+
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 
 void MaxApplZone_patch();

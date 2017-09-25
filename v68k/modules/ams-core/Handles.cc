@@ -380,6 +380,13 @@ void MoreMasters_patch()
 	MemErr = noErr;
 }
 
+asm void MaxMem_patch()
+{
+	SUBA.L   A0,A0
+	MOVE.L   #0x100000,D0
+	RTS
+}
+
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 {
 	return MemErr = noErr;
