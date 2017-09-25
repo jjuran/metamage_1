@@ -41,6 +41,8 @@ enum
 	tag_Time_low_word,
 	tag_MemErr,
 	tag_ROM85,
+	tag_DefltStack,
+	tag_DefltStack_low_word,
 	tag_FCBSPtr,
 	tag_FCBSPtr_low_word,
 	tag_JHideCursor,
@@ -153,6 +155,7 @@ static const global globals[] =
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
+	{ 0x0322, 4,    tag_DefltStack  },
 	{ 0x034E, 4,    tag_FCBSPtr     },
 	{ 0x0800, 4,    tag_JHideCursor },
 	{ 0x0804, 4,    tag_JShowCursor },
