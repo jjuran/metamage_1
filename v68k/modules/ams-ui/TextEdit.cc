@@ -11,6 +11,14 @@
 #endif
 
 
+static
+void draw_text_line( const char*  p,
+                     long         n,
+                     short        h,
+                     short        v,
+                     short        rectWidth,
+                     short        just );
+
 pascal void TEInit_patch()
 {
 }
@@ -23,13 +31,25 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	short h = r->left;
 	short v = r->top + fontInfo.ascent;
 	
+	const short rectWidth = r->right - r->left;
+	
+	draw_text_line( p, n, h, v, rectWidth, just );
+}
+
+static
+void draw_text_line( const char*  p,
+                     long         n,
+                     short        h,
+                     short        v,
+                     short        rectWidth,
+                     short        just )
+{
 	// Treat teFlushDefault like teFlushLeft.
 	
 	if ( just & 1 )
 	{
 		// center- or right-justified
 		
-		short rectWidth = r->right - r->left;
 		short textWidth = TextWidth( p, 0, n );
 		
 		short margin = rectWidth - textWidth;
