@@ -39,6 +39,8 @@ void install_ResourceManager()
 	
 	TBTRAP( GetResource     );  // A9A0
 	TBTRAP( ReleaseResource );  // A9A3
+	
+	TBTRAP( ResError        );  // A9AF
 }
 
 int main( int argc, char** argv )

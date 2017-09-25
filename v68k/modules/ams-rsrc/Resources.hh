@@ -12,4 +12,6 @@ pascal void ReleaseResource_patch( char** res );
 
 pascal void DetachResource_patch( char** res );
 
+pascal short ResError_patch();
+
 #endif
