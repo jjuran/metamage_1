@@ -151,7 +151,7 @@ namespace v68k
 			
 			if ( result < 0 )
 			{
-				condition = halted;
+				return fault( result, instruction_address );
 			}
 			
 			if ( condition != normal )
@@ -169,18 +169,18 @@ namespace v68k
 			+ true )
 		{
 			// pb.address is left set to the PC (which is always even) if unused.
-			return address_error();
+			return fault( Address_error, instruction_address );
 		}
 		
 		// load
 		
 		if ( decoded->flags & loads_and )
 		{
-			load( *this, pb );
+			const op_result result = load( *this, pb );
 			
-			if ( condition != normal )
+			if ( result < 0 )
 			{
-				return false;
+				return fault( result, instruction_address );
 			}
 		}
 		
@@ -248,7 +248,7 @@ namespace v68k
 		
 		if ( (decoded->flags & stores_data)  &&  !store( *this, pb ) )
 		{
-			return bus_error();
+			return fault( Bus_error, instruction_address );
 		}
 		
 		++its_instruction_counter;
