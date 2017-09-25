@@ -490,6 +490,10 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				                                    0 );
 				break;
 			
+			case ctrlItem + resCtrl:
+				item->handle = (Handle) GetNewControl( item_ResID( item ), window );
+				break;
+			
 			case editText:
 				if ( edit_offset < 0 )
 				{
