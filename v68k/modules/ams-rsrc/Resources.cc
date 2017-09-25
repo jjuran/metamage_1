@@ -185,3 +185,8 @@ pascal short ResError_patch()
 {
 	return ResErr;
 }
+
+pascal long SizeRsrc_patch( Handle res )
+{
+	return GetHandleSize( res );
+}

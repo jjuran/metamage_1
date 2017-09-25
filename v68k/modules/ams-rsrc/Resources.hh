@@ -14,4 +14,6 @@ pascal void DetachResource_patch( char** res );
 
 pascal short ResError_patch();
 
+pascal long SizeRsrc_patch( char** res );
+
 #endif
