@@ -34,7 +34,7 @@ static uint32_t step_over;
 
 static const char* causes[] =
 {
-	NULL,  // Reset SP (this is a stack pointer)
+	"User Break",
 	NULL,  // Reset PC (would be overridden by actual Reset exception)
 	"Bus Error",
 	"Address Error",
@@ -237,9 +237,11 @@ asm void debugger_break()
 {
 	MOVEM.L  D0-D7/A0-A7,-(SP)
 	
-	MOVE.W   #0x2000,D3
-	AND.W    64(SP),D3
-	BNE.S    no_USP_load
+	MOVE     SR,D3        // S bit is set if we're in Supervisor mode
+	NOT.W    D3           // S bit is clear if we're in Supervisor mode
+	OR.W     64(SP),D3    // S bit is clear if we went from User -> Supervisor
+	BTST     #13,D3       // Test the S bit
+	BNE.S    no_USP_load  // no mode switch
 	
 	MOVE     USP,A0
 	MOVE.L   A0,60(SP)  // copy user SP to registers
@@ -264,7 +266,28 @@ no_USP_store:
 	
 	ADDQ.L   #4,SP
 	
+	TST.W    6(SP)  // test the format/vector word
+	BEQ.S    return_to_user
+	
 	RTE
+	
+return_to_user:
+	MOVE     (SP)+,CCR   // restore the CCR
+	MOVE.L   (SP),6(SP)  // copy the PC to the return address
+	ADDQ.L   #6,SP       // pop the PC and format/vector word off the stack
+	
+	RTS
+}
+
+asm void user_break()
+{
+	// return address is on top of stack
+	
+	CLR.W    -(SP)        // vector 0 shall mean a user break
+	MOVE.L   2(SP),-(SP)  // push the PC again
+	MOVE     SR,-(SP)     // push the SR
+	
+	JMP  debugger_break
 }
 
 asm int set_trace_handler()
