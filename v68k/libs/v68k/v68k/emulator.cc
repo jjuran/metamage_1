@@ -205,6 +205,10 @@ namespace v68k
 					
 					break;
 				
+				case Bus_error:
+				case Address_error:
+				case Format_error:
+				
 				case Division_by_zero:
 				case CHK_exception:
 				case Overflow_trap:
@@ -212,9 +216,6 @@ namespace v68k
 					
 					break;
 				
-				case Bus_error:
-				case Address_error:
-				case Format_error:
 				default:
 					condition = halted;
 					

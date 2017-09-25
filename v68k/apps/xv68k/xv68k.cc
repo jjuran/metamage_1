@@ -352,6 +352,8 @@ void load_vectors( v68k::user::os_load_spec& os )
 	
 	using namespace v68k::callback;
 	
+	vectors[ 2] = big_longword( callback_address( bus_error           ) );
+	vectors[ 3] = big_longword( callback_address( address_error       ) );
 	vectors[ 4] = big_longword( callback_address( illegal_instruction ) );
 	vectors[ 5] = big_longword( callback_address( division_by_zero    ) );
 	vectors[ 6] = big_longword( callback_address( chk_trap            ) );
@@ -359,6 +361,7 @@ void load_vectors( v68k::user::os_load_spec& os )
 	vectors[ 8] = big_longword( callback_address( privilege_violation ) );
 	vectors[ 9] = big_longword( callback_address( trace_exception     ) );
 	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
+	vectors[14] = big_longword( callback_address( format_error        ) );
 }
 
 static
