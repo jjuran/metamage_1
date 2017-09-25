@@ -10,6 +10,9 @@
 #include <TextEdit.h>
 #endif
 
+// gear
+#include "gear/find.hh"
+
 
 static
 void draw_text_line( const char*  p,
@@ -28,12 +31,27 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	FontInfo fontInfo;
 	GetFontInfo( &fontInfo );
 	
+	const short line_height = fontInfo.ascent
+	                        + fontInfo.descent
+	                        + fontInfo.leading;
+	
 	short h = r->left;
 	short v = r->top + fontInfo.ascent;
 	
 	const short rectWidth = r->right - r->left;
 	
-	draw_text_line( p, n, h, v, rectWidth, just );
+	const char* end = p + n;
+	
+	while ( p < end )
+	{
+		const char* q = gear::find_first_match( p, end, '\r', end );
+		
+		draw_text_line( p, q - p, h, v, rectWidth, just );
+		
+		v += line_height;
+		
+		p = q + 1;
+	}
 }
 
 static
