@@ -217,6 +217,8 @@ static void install_Packages()
 static
 void install_IconUtilities()
 {
+	TBTRAP( GetIcon      );  // A9BB
+	
 	TBTRAP( IconDispatch );  // ABC9
 }
 
