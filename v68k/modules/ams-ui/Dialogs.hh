@@ -46,4 +46,10 @@ pascal void ParamText_patch( const unsigned char*  p1,
                              const unsigned char*  p3,
                              const unsigned char*  p4 );
 
+pascal void GetDItem_patch( GrafPort*  dialog,
+                            short      i,
+                            short*     type,
+                            char***    h,
+                            Rect*      box );
+
 #endif

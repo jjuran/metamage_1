@@ -183,6 +183,8 @@ static void install_Dialogs()
 	
 	TBTRAP( ParamText    );  // A98B
 	
+	TBTRAP( GetDItem     );  // A98D
+	
 	TBTRAP( ModalDialog  );  // A991
 }
 

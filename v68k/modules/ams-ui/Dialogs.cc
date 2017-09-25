@@ -798,3 +798,23 @@ pascal void ParamText_patch( const unsigned char*  p1,
 	set_param( 2, p3 );
 	set_param( 3, p4 );
 }
+
+pascal void GetDItem_patch( DialogRef  dialog,
+                            short      i,
+                            short*     type,
+                            Handle*    h,
+                            Rect*      box )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	while ( --i > 0 )
+	{
+		item = next( item );
+	}
+	
+	*type = item->type;
+	*h    = item->handle;
+	*box  = item->bounds;
+}
