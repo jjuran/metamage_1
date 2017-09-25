@@ -26,6 +26,8 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          short                 procID,
                                          long                  refCon );
 
+pascal ControlRecord** GetNewControl_patch( short controlID, GrafPort* window );
+
 pascal void DisposeControl_patch( ControlRecord** control );
 
 pascal void KillControls_patch( GrafPort* window );

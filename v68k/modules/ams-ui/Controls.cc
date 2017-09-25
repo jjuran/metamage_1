@@ -15,6 +15,9 @@
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
 #endif
+#ifndef __RESOURCES__
+#include <Resources.h>
+#endif
 
 // Standard C
 #include <string.h>
@@ -73,6 +76,44 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 			CDEF_0( varCode, control, drawCntl, 0 );
 		}
 	}
+	
+	return control;
+}
+
+struct CNTL_resource
+{
+	Rect    bounds;
+	short   value;
+	short   visible;
+	short   max;
+	short   min;
+	short   procID;
+	long    refCon;
+	Str255  title;
+};
+
+pascal ControlRecord** GetNewControl_patch( short controlID, WindowRef window )
+{
+	Handle h = GetResource( 'CNTL', controlID );
+	
+	if ( h == NULL )
+	{
+		return NULL;
+	}
+	
+	const CNTL_resource cntl = *(const CNTL_resource*) *h;
+	
+	ReleaseResource( h );
+	
+	ControlRef control = NewControl( window,
+	                                 &cntl.bounds,
+	                                 cntl.title,
+	                                 cntl.visible,
+	                                 cntl.value,
+	                                 cntl.min,
+	                                 cntl.max,
+	                                 cntl.procID,
+	                                 cntl.refCon );
 	
 	return control;
 }
