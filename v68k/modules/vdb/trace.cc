@@ -232,7 +232,8 @@ static void debugger_loop( registers& regs )
 	}
 }
 
-static asm void trace_handler()
+static
+asm void debugger_break()
 {
 	MOVEM.L  D0-D7/A0-A7,-(SP)
 	
@@ -272,7 +273,7 @@ asm int set_trace_handler()
 	
 	BMI.S   bail ;  // D0 is -1 if branch taken
 	
-	LEA     trace_handler,A0
+	LEA     debugger_break,A0
 	
 	MOVE.L  A0,0x0008  // Bus Error
 	MOVE.L  A0,0x000C  // Address Error
