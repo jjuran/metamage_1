@@ -21,13 +21,22 @@
 #include "options.hh"
 
 
-Str31 CurApName    : 0x0910;
-short CurJTOffset  : 0x0934;
+short CurApRefNum  : 0x0900;
 void* CurrentA5    : 0x0904;
 void* CurStackBase : 0x0908;
+Str31 CurApName    : 0x0910;
+short CurJTOffset  : 0x0934;
 
 Handle AppParmHandle : 0x0AEC;
 
+
+pascal void GetAppParms_patch( StringPtr name, short* refNum, Handle* hp )
+{
+	BlockMoveData( CurApName, name, 1 + CurApName[ 0 ] );
+	
+	*refNum = CurApRefNum;
+	*hp     = AppParmHandle;
+}
 
 struct jump_table_header
 {

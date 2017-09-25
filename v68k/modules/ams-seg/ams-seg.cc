@@ -55,6 +55,7 @@ static void install_SegmentLoader()
 	TBTRAP( UnloadSeg   );  // A9F1
 	TBTRAP( Launch      );  // A9F2
 	TBTRAP( ExitToShell );  // A9F4
+	TBTRAP( GetAppParms );  // A9F5
 }
 
 static asm void module_suspend()
