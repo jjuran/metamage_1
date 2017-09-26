@@ -520,7 +520,7 @@ long WDEF_0_DrawGIcon( short varCode, WindowPtr w )
 	return 0;
 }
 
-long WDEF_0( short varCode, WindowPtr w, short message, long param )
+pascal long WDEF_0( short varCode, WindowPtr w, short message, long param )
 {
 	switch ( message )
 	{

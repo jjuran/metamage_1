@@ -65,6 +65,24 @@ RgnHandle BezelRgn;
 
 const short bezel_corner_diameter = 16;
 
+
+static
+long call_WDEF( WindowPeek window, short message, long param )
+{
+	WindowDefProcPtr wdef = &WDEF_0;
+	
+	const short varCode = *(Byte*) &window->windowDefProc;
+	
+	Handle h = window->windowDefProc;
+	
+	if ( (UInt32) h & 0x00FFFFFF )
+	{
+		wdef = (WindowDefProcPtr) *h;
+	}
+	
+	return wdef( varCode, (WindowPtr) window, message, param );
+}
+
 static
 Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
 {
@@ -233,6 +251,8 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	window->goAwayFlag = closeBox;
 	window->refCon     = refCon;
 	
+	window->windowDefProc = GetResource( 'WDEF', procID >> 4 );
+	
 	const short varCode = procID & 0x0F;
 	
 	*(Byte*) &window->windowDefProc = varCode;
@@ -253,7 +273,7 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	CurActivate = (WindowRef) window;
 	
-	WDEF_0( varCode, (WindowPtr) window, wCalcRgns, 0 );
+	call_WDEF( window, wCalcRgns, 0 );
 	
 	CalcVBehind_patch( window, window->strucRgn );
 	PaintOne_patch   ( window, window->strucRgn );
@@ -522,9 +542,7 @@ pascal void DrawGrowIcon_patch( WindowPeek window )
 	
 	qd.thePort = port;
 	
-	const short varCode = *(Byte*) &window->windowDefProc;
-	
-	WDEF_0( varCode, port, wDrawGIcon, 0 );
+	call_WDEF( window, wDrawGIcon, 0 );
 	
 	qd.thePort = saved_port;
 }
@@ -546,11 +564,9 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	
 	while ( w != NULL )
 	{
-		const short varCode = *(Byte*) &w->windowDefProc;
-		
 		WindowPtr ptr = (WindowPtr) w;
 		
-		if ( short hit = WDEF_0( varCode, ptr, wHit, *(long*) &pt ) )
+		if ( short hit = call_WDEF( w, wHit, *(long*) &pt ) )
 		{
 			*window = ptr;
 			
@@ -569,8 +585,6 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	
 	WindowPeek w = (WindowPeek) window;
 	
-	const short varCode = *(Byte*) &w->windowDefProc;
-	
 	QDGlobals& qd = get_QDGlobals();
 	
 	GrafPtr saved_port = qd.thePort;
@@ -584,7 +598,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	
 	while ( true )
 	{
-		short hit = WDEF_0( varCode, window, wHit, *(long*) &pt );
+		short hit = call_WDEF( w, wHit, *(long*) &pt );
 		
 		is_inside = hit == wInGoAway;
 		
@@ -592,7 +606,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 		{
 			was_inside = is_inside;
 			
-			WDEF_0( varCode, window, wDraw, wInGoAway );
+			call_WDEF( w, wDraw, wInGoAway );
 		}
 		
 		SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
@@ -612,7 +626,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	
 	if ( is_inside )
 	{
-		WDEF_0( varCode, window, wDraw, wInGoAway );
+		call_WDEF( w, wDraw, wInGoAway );
 	}
 	
 	qd.thePort = saved_port;
@@ -786,9 +800,7 @@ pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 	
 	qd.thePort = saved_port;
 	
-	const short varCode = *(Byte*) &w->windowDefProc;
-	
-	WDEF_0( varCode, window, wCalcRgns, 0 );
+	call_WDEF( w, wCalcRgns, 0 );
 	
 	XorRgn( OldStructure, w->strucRgn, OldStructure );
 	XorRgn( OldContent,   w->contRgn,  OldContent   );
@@ -876,9 +888,7 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	
 	SetRectRgn( mouseRgn, pt.h, pt.v, pt.h + 1, pt.v + 1 );
 	
-	const short varCode = *(Byte*) &window->windowDefProc;
-	
-	WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+	call_WDEF( window, wGrow, (long) &grow_rect );
 	
 	long sleep = 0;
 	
@@ -924,18 +934,18 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 		{
 			raster_lock lock;
 			
-			WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+			call_WDEF( window, wGrow, (long) &grow_rect );
 			
 			grow_rect.bottom += event.where.v - pt.v;
 			grow_rect.right  += event.where.h - pt.h;
 			
-			WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+			call_WDEF( window, wGrow, (long) &grow_rect );
 			
 			pt = event.where;
 		}
 	}
 	
-	WDEF_0( varCode, w, wGrow, (long) &grow_rect );
+	call_WDEF( window, wGrow, (long) &grow_rect );
 	
 	PenNormal();
 	
@@ -1142,9 +1152,7 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 	}
 	else
 	{
-		const short varCode = *(Byte*) &window->windowDefProc;
-		
-		WDEF_0( varCode, (WindowPtr) window, wDraw, 0 );
+		call_WDEF( window, wDraw, 0 );
 		
 		if ( SaveUpdate )
 		{
