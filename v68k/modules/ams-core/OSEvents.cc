@@ -133,4 +133,19 @@ pascal char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 ) : _
 
 pascal void FlushEvents_patch( unsigned long masks : __D0 )
 {
+	QElemPtr it = EventQueue.qHead;
+	
+	while ( it != NULL )
+	{
+		QElemPtr next = it->qLink;
+		
+		EvQEl* el = (EvQEl*) it;
+		
+		if ( (1 << el->evtQWhat) & masks )
+		{
+			Dequeue( it, &EventQueue );
+		}
+		
+		it = next;
+	}
 }
