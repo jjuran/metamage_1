@@ -54,7 +54,7 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 		
 		v += menu_item_height;
 		
-		if ( text[ 0 ] == 1  &&  text[ 1 ] == '-' )
+		if ( text[ 1 ] == '-' )
 		{
 			short lineTop = v - pen_v_offset_for_text + pen_v_offset_for_rule;
 			
