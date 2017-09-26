@@ -469,6 +469,59 @@ pascal void SelectWindow_patch( WindowPeek window )
 	HiliteWindow_patch( window, true  );
 }
 
+pascal void HideWindow_patch( WindowPeek window )
+{
+	if ( ! window->visible )
+	{
+		return;
+	}
+	
+	ShowHide_patch( window, false );
+	
+	if ( window == WindowList  &&  window->nextWindow != NULL )
+	{
+		// TODO:  What if the next window is invisible?
+		
+		SelectWindow_patch( window->nextWindow );
+	}
+}
+
+pascal void ShowWindow_patch( WindowPeek window )
+{
+	if ( window->visible )
+	{
+		return;
+	}
+	
+	ShowHide_patch( window, true );
+	
+	// TODO:  Highlight and activate previously invisible front window
+}
+
+typedef pascal void (*window_painter)( WindowPeek, RgnHandle );
+
+pascal void ShowHide_patch( WindowRecord* window, Boolean showFlag )
+{
+	if ( window == NULL  ||  ! window->visible == ! showFlag )
+	{
+		return;
+	}
+	
+	window_painter paint_one_or_many = &PaintBehind_patch;
+	
+	window->visible = showFlag;
+	
+	if ( showFlag )
+	{
+		call_WDEF( window, wCalcRgns, 0 );
+		
+		paint_one_or_many = &PaintOne_patch;
+	}
+	
+	CalcVBehind_patch( window, window->strucRgn );
+	paint_one_or_many( window, window->strucRgn );
+}
+
 pascal void HiliteWindow_patch( WindowPeek window, unsigned char hilite )
 {
 	if ( window->hilited == hilite )
@@ -1150,7 +1203,7 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 	{
 		draw_desktop_from_WMgrPort();
 	}
-	else
+	else if ( window->visible )
 	{
 		call_WDEF( window, wDraw, 0 );
 		

@@ -65,7 +65,7 @@ void install_Windows()
 	TBTRAP( DragGrayRgn   );  // A905
 	TBTRAP( NewString     );  // A906
 	TBTRAP( SetString     );  // A907
-	
+	TBTRAP( ShowHide      );  // A908
 	TBTRAP( CalcVis       );  // A909
 	TBTRAP( CalcVBehind   );  // A90A
 	TBTRAP( ClipAbove     );  // A90B
@@ -76,7 +76,8 @@ void install_Windows()
 	TBTRAP( InitWindows   );  // A912
 	TBTRAP( NewWindow     );  // A913
 	TBTRAP( DisposeWindow );  // A914
-	
+	TBTRAP( ShowWindow    );  // A915
+	TBTRAP( HideWindow    );  // A916
 	TBTRAP( GetWRefCon    );  // A917
 	TBTRAP( SetWRefCon    );  // A918
 	TBTRAP( GetWTitle     );  // A919
