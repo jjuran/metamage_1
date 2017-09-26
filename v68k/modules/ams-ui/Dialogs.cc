@@ -513,6 +513,30 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 	}
 }
 
+pascal Boolean IsDialogEvent_patch( const EventRecord* event )
+{
+	const short what = event->what;
+	
+	if ( what == activateEvt  ||  what == updateEvt )
+	{
+		return ((WindowPeek) event->message)->windowKind == dialogKind;
+	}
+	
+	WindowPeek front = (WindowPeek) FrontWindow();
+	
+	if ( front  &&  front->windowKind == dialogKind )
+	{
+		if ( what == mouseDown )
+		{
+			return PtInRgn( event->where, front->contRgn );
+		}
+		
+		return true;
+	}
+	
+	return false;
+}
+
 pascal void DrawDialog_patch( DialogRef dialog )
 {
 	DrawControls( dialog );
