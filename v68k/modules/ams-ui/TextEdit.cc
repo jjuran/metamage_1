@@ -295,6 +295,13 @@ bool at_beginning( const TERec& te )
 }
 
 static
+void select( TERec& te, short pos )
+{
+	te.selStart = pos;
+	te.selEnd   = pos;
+}
+
+static
 void delete_chars( TERec& te, short start, short end )
 {
 	const Ptr pText = *te.hText;
@@ -380,10 +387,30 @@ pascal void TEKey_patch( short c, TERec** hTE )
 			break;
 		
 		case kLeftArrowCharCode:
-		case kRightArrowCharCode:
-		case kUpArrowCharCode:
-		case kDownArrowCharCode:
+			/*
+				It would be nice to just use selStart if there's a
+				selection range, but that's not what TextEdit does, and
+				applications should do the right thing and compensate
+				for this on their own.
+			*/
+			
+			select( te, te.selStart - (te.selStart != 0) );
 			break;
+			
+		case kRightArrowCharCode:
+			// Ditto above, for selEnd.
+			
+			select( te, te.selEnd + (te.selEnd != te.teLength) );
+			break;
+			
+		case kUpArrowCharCode:
+			select( te, 0 );
+			break;
+			
+		case kDownArrowCharCode:
+			select( te, te.teLength );
+			break;
+			
 		
 		default:
 			if ( has_selection( te ) )
