@@ -625,6 +625,27 @@ pascal void TEKey_patch( short c, TERec** hTE )
 	show_selection( te );
 }
 
+pascal void TEDelete_patch( TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	if ( has_selection( te ) )
+	{
+		delete_selection( te );
+		
+		TECalText( hTE );
+		
+		scoped_port thePort = te.inPort;
+		
+		hide_selection( te );
+		
+		draw_text( te );
+		
+		update_selRect( te );
+		show_selection( te );
+	}
+}
+
 pascal void TEInsert_patch( const char* text, long length, TERec** hTE )
 {
 	TERec& te = **hTE;
