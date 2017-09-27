@@ -21,6 +21,9 @@
 #include "scoped_port.hh"
 
 
+long CaretTime : 0x02F4;
+
+
 static
 void draw_text_line( const char*  p,
                      long         n,
@@ -124,6 +127,7 @@ void hide_selection( TERec& te )
 
 pascal void TEInit_patch()
 {
+	CaretTime = 30;
 }
 
 pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
