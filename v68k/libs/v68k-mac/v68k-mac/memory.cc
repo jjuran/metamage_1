@@ -35,7 +35,8 @@ enum
 	tag_Ticks,
 	tag_Ticks_low_word,
 	tag_MBState_esc,
-	tag_KeyMods,
+	tag_KeyMaps,
+	tag_KeyMaps_word_7 = tag_KeyMaps + 7,  // 16 bytes
 	tag_Time,
 	tag_Time_low_word,
 	tag_MemErr,
@@ -130,7 +131,7 @@ static const global globals[] =
 	{ 0x0154, 2,    tag_EvtBufCnt   },
 	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
-	{ 0x017A, 2,    tag_KeyMods     },  // (undocumented)
+	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x020C, 0x44, tag_Time        },
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x028E, 2,    tag_ROM85       },
