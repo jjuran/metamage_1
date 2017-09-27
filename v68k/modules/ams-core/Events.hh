@@ -27,6 +27,8 @@ pascal char Button_patch();
 pascal char StillDown_patch();
 pascal char WaitMouseUp_patch();
 
+pascal void GetKeys_patch( unsigned long* keys );
+
 pascal long TickCount_patch();
 
 #endif

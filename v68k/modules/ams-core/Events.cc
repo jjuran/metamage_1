@@ -20,6 +20,7 @@
 UInt32 Ticks   : 0x016A;
 Byte   MBState : 0x0172;
 UInt8  escapes : 0x0173;  // count of Button() calls that won't block
+KeyMap KeyMaps : 0x0174;
 Point  Mouse   : 0x0830;
 
 WindowRef CurActivate : 0x0A64;
@@ -365,4 +366,19 @@ pascal char WaitMouseUp_patch()
 pascal long TickCount_patch()
 {
 	return Ticks;
+}
+
+#pragma mark -
+#pragma mark Reading the Keyboard and Keypad
+#pragma mark -
+
+pascal void GetKeys_patch( KeyMap keys )
+{
+	UInt32* src = KeyMaps;
+	UInt32* dst = keys;
+	
+	*dst++ = *src++;
+	*dst++ = *src++;
+	*dst++ = *src++;
+	*dst   = *src;
 }

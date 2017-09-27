@@ -216,7 +216,7 @@ void install_EventManager()
 	TBTRAP( StillDown     );  // A973
 	TBTRAP( Button        );  // A974
 	TBTRAP( TickCount     );  // A975
-	
+	TBTRAP( GetKeys       );  // A976
 	TBTRAP( WaitMouseUp   );  // A977
 }
 
