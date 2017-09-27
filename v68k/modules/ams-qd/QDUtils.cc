@@ -18,7 +18,7 @@ pascal short Random_patch()
 {
 	QDGlobals& qd = get_QDGlobals();
 	
-	qd.randSeed = UInt32( qd.randSeed * 16807 ) % 0x7FFFFFFF;
+	qd.randSeed = UInt64( qd.randSeed * 16807ull ) % 0x7FFFFFFF;
 	
 	return qd.randSeed;
 }
