@@ -21,6 +21,7 @@
 
 // ams-core
 #include "cursor-core.hh"
+#include "keycodes.hh"
 #include "options.hh"
 #include "reactor-core.hh"
 
@@ -143,7 +144,10 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	using namespace splode::key;
 	using splode::uint8_t;
 	
-	const UInt32 message = buffer.ascii;
+	const uint8_t ascii = buffer.ascii;
+	const int8_t  code  = reverse_lookup_general_key[ ascii & 0x7F ];
+	
+	const UInt32 message = code << 8 | ascii;
 	
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	const uint8_t attr_mask = Alpha;
