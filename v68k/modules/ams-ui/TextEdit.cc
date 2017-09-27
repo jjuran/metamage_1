@@ -26,6 +26,10 @@ pascal void TEInit_patch()
 {
 }
 
+pascal void TEIdle_patch( TEHandle hTE )
+{
+}
+
 pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 {
 	FontInfo fontInfo;
