@@ -19,6 +19,8 @@ pascal void TESetText_patch( const char* p, long n, TERec** hTE );
 
 pascal void TEIdle_patch( TERec** hTE );
 
+pascal void TESetSelect_patch( long selStart, long selEnd, TERec** hTE );
+
 pascal void TEActivate_patch( TERec** hTE );
 pascal void TEDeactivate_patch( TERec** hTE );
 

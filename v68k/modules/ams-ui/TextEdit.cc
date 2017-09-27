@@ -93,6 +93,19 @@ pascal void TEIdle_patch( TEHandle hTE )
 {
 }
 
+pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
+{
+	TERec& te = **hTE;
+	
+	if ( selEnd > te.teLength )
+	{
+		selEnd = te.teLength;
+	}
+	
+	te.selStart = selStart;
+	te.selEnd   = selEnd;
+}
+
 pascal void TEActivate_patch( TERec** hTE )
 {
 	hTE[0]->active = true;

@@ -219,7 +219,8 @@ static void install_TextEdit()
 	TBTRAP( TETextBox );  // A9CE
 	TBTRAP( TESetText );  // A9CF
 	
-	TBTRAP( TENew     );  // A9D2
+	TBTRAP( TESetSelect  );  // A9D1
+	TBTRAP( TENew        );  // A9D2
 	
 	TBTRAP( TEActivate   );  // A9D8
 	TBTRAP( TEDeactivate );  // A9D9
