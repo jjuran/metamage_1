@@ -20,6 +20,11 @@ pascal short Random_patch()
 	
 	qd.randSeed = UInt64( qd.randSeed * 16807ull ) % 0x7FFFFFFF;
 	
+	if ( (short) qd.randSeed == (short) 0x8000 )
+	{
+		return 0;
+	}
+	
 	return qd.randSeed;
 }
 
