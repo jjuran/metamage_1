@@ -34,7 +34,8 @@
 
 
 Byte   MBState : 0x0172;
-UInt16 KeyMods : 0x017A;
+KeyMap KeyMaps : 0x0174;
+UInt16 KeyMods : 0x017A;  // Yes, this is a subfield of KeyMaps.
 Point  Mouse   : 0x0830;
 Rect   CrsrPin : 0x0834;
 
@@ -240,6 +241,19 @@ void post_event( const splode::ascii_event_buffer& buffer )
 		PostEvent( keyUp,   message );
 		
 		return;
+	}
+	
+	if ( code >= 0 )
+	{
+		if ( action == splode::key::down )
+		{
+			KeyMaps[ code >> 5 ] |= 1 << 0x1F - (code & 0x1F);
+		}
+		
+		if ( action == splode::key::up )
+		{
+			KeyMaps[ code >> 5 ] &= ~(1 << 0x1F - (code & 0x1F));
+		}
 	}
 	
 	const short what = action + (keyDown - splode::key::down);
