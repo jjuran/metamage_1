@@ -3,7 +3,7 @@
 	-----------
 */
 
-#include "UseEdit/Document.hh"
+#include "TestEdit/Document.hh"
 
 // Standard C++
 #include <algorithm>
@@ -22,7 +22,7 @@
 #include "Pedestal/WindowStorage.hh"
 
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	namespace n = nucleus;

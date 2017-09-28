@@ -1,0 +1,4 @@
+CFBundleExecutable:  "TestEdit"
+CFBundleName:        "TestEdit"
+CFBundlePackageType: 'APPL'
+NSHighResolutionCapable: true

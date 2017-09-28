@@ -3,8 +3,8 @@
 	------
 */
 
-#ifndef USEEDIT_APP_HH
-#define USEEDIT_APP_HH
+#ifndef TESTEDIT_APP_HH
+#define TESTEDIT_APP_HH
 
 // Nitrogen
 #ifndef NITROGEN_APPLEEVENTS_HH
@@ -24,7 +24,7 @@
 #endif
 
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	struct FSSpec_Io_Details : public Nitrogen::FSSpec_Io_Details

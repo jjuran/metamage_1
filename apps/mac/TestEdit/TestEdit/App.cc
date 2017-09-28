@@ -34,12 +34,12 @@
 #include "Pedestal/Commands.hh"
 #include "Pedestal/WindowStorage.hh"
 
-// UseEdit
-#include "UseEdit/App.hh"
-#include "UseEdit/Document.hh"
+// TestEdit
+#include "TestEdit/App.hh"
+#include "TestEdit/Document.hh"
 
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	namespace n = nucleus;
@@ -54,11 +54,11 @@ namespace UseEdit
 namespace Mac
 {
 	
-	template <> struct DescType_scribe< UseEdit::typeDocument > : DescType_scribe< typeWindowRef > {};
+	template <> struct DescType_scribe< TestEdit::typeDocument > : DescType_scribe< typeWindowRef > {};
 	
 }
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	static inline
@@ -329,7 +329,7 @@ namespace UseEdit
 		                                               const Mac::AEDesc_Token&  containerToken,
 		                                               Mac::AEObjectClass        containerClass )
 		{
-			return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "UseEdit" );
+			return N::AECreateDesc< Mac::typeChar, Mac::AEDesc_Token >( "TestEdit" );
 		}
 		
 		static void Install_Accessor()
@@ -564,7 +564,7 @@ namespace UseEdit
 
 int main( void )
 {
-	UseEdit::App app;
+	TestEdit::App app;
 	
 	return app.Run();
 }

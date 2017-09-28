@@ -3,8 +3,8 @@
 	---------
 */
 
-#ifndef USEEDIT_WINDOW_HH
-#define USEEDIT_WINDOW_HH
+#ifndef TESTEDIT_WINDOW_HH
+#define TESTEDIT_WINDOW_HH
 
 // Standard C++
 #include <memory>
@@ -18,7 +18,7 @@
 #endif
 
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	class ScrollFrame;
@@ -27,7 +27,7 @@ namespace UseEdit
 	
 	std::auto_ptr< Pedestal::Window >
 	//
-	NewWindow( ConstStr255Param title = "\p" "UseEdit" );
+	NewWindow( ConstStr255Param title = "\p" "TestEdit" );
 	
 	void SetText( ScrollFrame& view, const plus::string& text );
 	

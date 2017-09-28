@@ -3,18 +3,18 @@
 	-----------
 */
 
-#ifndef USEEDIT_DOCUMENT_HH
-#define USEEDIT_DOCUMENT_HH
+#ifndef TESTEDIT_DOCUMENT_HH
+#define TESTEDIT_DOCUMENT_HH
 
 // plus
 #include "plus/ref_count.hh"
 #include "plus/string.hh"
 
-// UseEdit
-#include "UseEdit/Window.hh"
+// TestEdit
+#include "TestEdit/Window.hh"
 
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	class Document : public plus::ref_count< Document >

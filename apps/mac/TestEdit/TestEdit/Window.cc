@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "UseEdit/Window.hh"
+#include "TestEdit/Window.hh"
 
 // Standard C
 #include <string.h>
@@ -37,7 +37,7 @@
 #include "Pedestal/WindowStorage.hh"
 
 
-namespace UseEdit
+namespace TestEdit
 {
 	
 	namespace n = nucleus;
