@@ -13,6 +13,9 @@
 // gear
 #include "gear/find.hh"
 
+// ams-common
+#include "QDGlobals.hh"
+
 
 static
 void draw_text_line( const char*  p,
@@ -43,6 +46,29 @@ pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect )
 		
 		hTE[0]->hText = hText;
 	}
+	
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	FontInfo fontInfo;
+	GetFontInfo( &fontInfo );
+	
+	const short line_height = fontInfo.ascent
+	                        + fontInfo.descent
+	                        + fontInfo.leading;
+	
+	TERec& te = **hTE;
+	
+	te.destRect = *destRect;
+	te.viewRect = *viewRect;
+	
+	te.lineHeight = line_height;
+	te.fontAscent = fontInfo.ascent;
+	
+	te.txFont = thePort->txFont;
+	te.txFace = thePort->txFace;
+	te.txMode = thePort->txMode;
+	te.txSize = thePort->txSize;
+	te.inPort = thePort;
 	
 	return hTE;
 }
