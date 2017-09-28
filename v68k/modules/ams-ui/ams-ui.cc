@@ -24,6 +24,7 @@
 #include "Drag.hh"
 #include "Icons.hh"
 #include "Menus.hh"
+#include "Scrap.hh"
 #include "StandardFile.hh"
 #include "StrUtils.hh"
 #include "TextEdit.hh"
@@ -261,6 +262,12 @@ static void install_Packages()
 }
 
 static
+void install_Scrap()
+{
+	TBTRAP( ZeroScrap );  // A9FC
+}
+
+static
 void install_IconUtilities()
 {
 	TBTRAP( GetIcon      );  // A9BB
@@ -289,6 +296,7 @@ int main( int argc, char** argv )
 	install_Controls();
 	install_TextEdit();
 	install_Dialogs();
+	install_Scrap();
 	
 	install_IconUtilities();
 	
