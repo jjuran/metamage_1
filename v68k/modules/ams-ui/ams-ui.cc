@@ -265,6 +265,8 @@ static
 void install_Scrap()
 {
 	TBTRAP( ZeroScrap );  // A9FC
+	TBTRAP( GetScrap  );  // A9FD
+	TBTRAP( PutScrap  );  // A9FE
 }
 
 static
