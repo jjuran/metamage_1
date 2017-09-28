@@ -202,7 +202,10 @@ namespace Pedestal
 		
 		Handle kchr = GetResource( 'KCHR', 0 );
 		
-		N::ResError();
+		if ( kchr == NULL )
+		{
+			N::ResError();
+		}
 		
 		ASSERT(  kchr != NULL );
 		ASSERT( *kchr != NULL );
