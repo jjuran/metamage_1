@@ -231,6 +231,43 @@ pascal void TEIdle_patch( TEHandle hTE )
 	}
 }
 
+static
+short hit_test( const TERec& te, Point pt )
+{
+	short h = pt.h;
+	
+	h -= te.destRect.left;
+	
+	const char* p = *te.hText;
+	
+	const short len = te.teLength;
+	
+	short hit = 0;
+	
+	while ( hit < len )
+	{
+		const short width = TextWidth( p, hit, 1 );
+		
+		if ( (h -= width) < 0 )
+		{
+			return hit + (h + width / 2 > 0);
+		}
+		
+		++hit;
+	}
+	
+	return hit;
+}
+
+pascal void TEClick_patch( Point pt, char extend, TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	const short hit = hit_test( te, pt );
+	
+	TESetSelect_patch( hit, hit, hTE );
+}
+
 pascal void TESetSelect_patch( long selStart, long selEnd, TEHandle hTE )
 {
 	TERec& te = **hTE;

@@ -6,6 +6,7 @@
 #ifndef TEXTEDIT_HH
 #define TEXTEDIT_HH
 
+struct Point;
 struct Rect;
 struct TERec;
 
@@ -18,6 +19,8 @@ pascal void TEDispose_patch( TERec** hTE );
 pascal void TESetText_patch( const char* p, long n, TERec** hTE );
 
 pascal void TEIdle_patch( TERec** hTE );
+
+pascal void TEClick_patch( Point pt, char extend, TERec** hTE );
 
 pascal void TESetSelect_patch( long selStart, long selEnd, TERec** hTE );
 
