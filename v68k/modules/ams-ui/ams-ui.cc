@@ -241,12 +241,13 @@ static void install_TextEdit()
 	TBTRAP( TENew        );  // A9D2
 	TBTRAP( TEUpdate     );  // A9D3
 	TBTRAP( TEClick      );  // A9D4
-	
+	TBTRAP( TECopy       );  // A9D5
+	TBTRAP( TECut        );  // A9D6
 	TBTRAP( TEDelete     );  // A9D7
 	TBTRAP( TEActivate   );  // A9D8
 	TBTRAP( TEDeactivate );  // A9D9
 	TBTRAP( TEIdle       );  // A9DA
-	
+	TBTRAP( TEPaste      );  // A9DB
 	TBTRAP( TEKey        );  // A9DC
 	TBTRAP( TEScroll     );  // A9DD
 	TBTRAP( TEInsert     );  // A9DE
