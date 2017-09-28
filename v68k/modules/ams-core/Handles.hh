@@ -12,7 +12,7 @@ char** NewEmptyHandle_patch() : __A0;
 
 void DisposeHandle_patch( char** h : __A0 );
 
-void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
+short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
 
 long GetHandleSize_patch( char** h : __A0 ) : __D0;
 

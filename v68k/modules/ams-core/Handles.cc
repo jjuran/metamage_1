@@ -10,6 +10,7 @@
 #include <string.h>
 
 
+const short noErr        = 0;
 const short paramErr     = -50;
 const short memFullErr   = -108;
 const short nilHandleErr = -109;
@@ -180,20 +181,16 @@ void DisposeHandle_patch( char** h : __A0 )
 	free( h );
 }
 
-void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
 	if ( size < 0 )
 	{
-		MemErr = memSCErr;
-		
-		return;
+		return MemErr = memSCErr;
 	}
 	
 	Handle_header* header = get_header( *h );
@@ -218,13 +215,13 @@ void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : _
 		}
 		else
 		{
-			MemErr = memFullErr;
-			
-			return;
+			return MemErr = memFullErr;
 		}
 	}
 	
 	set_epilogue( header );
+	
+	return MemErr = noErr;
 }
 
 long GetHandleSize_patch( char** h : __A0 ) : __D0
