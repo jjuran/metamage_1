@@ -146,6 +146,8 @@ char** GetResource_handler( unsigned long type : __D0, short id : __D1 )
 	
 	memcpy( *result, rsrc.data(), size );
 	
+	ResErr = noErr;
+	
 	return result;
 }
 
