@@ -168,9 +168,6 @@ namespace UseEdit
 		DrawQuasimodeFrame( N::GetPortBounds( N::GetQDGlobalsThePort() ) );
 	}
 	
-	static const RGBColor gRGBBlack = {     0,     0,     0 };
-	static const RGBColor gRGBWhite = { 65535, 65535, 65535 };
-	
 	void TextEdit::BeginQuasimode()
 	{
 		DrawQuasimodeFrame();
@@ -178,11 +175,11 @@ namespace UseEdit
 	
 	void TextEdit::EndQuasimode()
 	{
-		N::RGBForeColor( gRGBWhite );
+		N::PenPat( N::GetQDGlobalsWhite() );
 		
 		DrawQuasimodeFrame();
 		
-		N::RGBForeColor( gRGBBlack );
+		N::PenPat( N::GetQDGlobalsBlack() );
 	}
 	
 	Ped::TextSelection TextEdit::GetPriorSelection() const
