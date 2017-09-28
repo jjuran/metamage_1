@@ -143,6 +143,9 @@ enum
 	tag_ACount,
 	tag_DAStrings,
 	tag_DAStrings_word_7 = tag_DAStrings + 7,  // 16 bytes
+	tag_TEScrpLength,
+	tag_TEScrpHandle,
+	tag_TEScrpHandle_low_word,
 	tag_AppPacks,
 	tag_AppPacks_word_15 = tag_AppPacks + 15,  // 32 bytes
 	tag_AppParmHandle,
@@ -275,6 +278,8 @@ static const global globals[] =
 	{ 0x0A78, 12,   tag_ApplScratch },
 	{ 0x0A9A, 2,    tag_ACount      },
 	{ 0x0AA0, 16,   tag_DAStrings   },
+	{ 0x0AB0, 2,    tag_TEScrpLength},
+	{ 0x0AB4, 4,    tag_TEScrpHandle},
 	{ 0x0AB8, 32,   tag_AppPacks    },
 	{ 0x0AEC, 4,    tag_AppParmHandle},
 	{ 0x0AFA, 2,    tag_DlgFont     },
