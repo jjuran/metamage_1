@@ -28,6 +28,8 @@ pascal void SetMenuBar_patch( char** list );
 
 pascal long MenuSelect_patch( Point start );
 
+pascal long MenuKey_patch( unsigned short key );  // char
+
 pascal void HiliteMenu_patch( short menuID );
 
 pascal void SetItem_patch( MenuInfo** menu, short i, const unsigned char* txt );

@@ -16,6 +16,9 @@
 // Standard C
 #include <string.h>
 
+// iota
+#include "iota/char_types.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
@@ -553,6 +556,45 @@ pascal long MenuSelect_patch( Point pt )
 	}
 	
 	return result;
+}
+
+pascal long MenuKey_patch( unsigned short key )  // char
+{
+	const char c = iota::to_upper( key );
+	
+	const UInt16 extent_bytes = MenuList[0]->extent_bytes;
+	
+	MenuList_entry* next = (MenuList_entry*) ((char*) *MenuList + extent_bytes);
+	MenuList_entry* end  = (MenuList_entry*) *MenuList;
+	
+	while ( next > end )
+	{
+		MenuRef menu = next->menu;
+		
+		menu_item_iterator it( menu );
+		
+		short n = 0;
+		
+		while ( const unsigned char* text = it )
+		{
+			++n;
+			
+			const unsigned char* p = text + 1 + text[ 0 ] + 1;  // skip icon
+			
+			if ( *p == c )
+			{
+				HiliteMenu_patch( menu[0]->menuID );
+				
+				return menu[0]->menuID << 16 | n;
+			}
+			
+			++it;
+		}
+		
+		--next;
+	}
+	
+	return 0;
 }
 
 pascal void HiliteMenu_patch( short menuID )

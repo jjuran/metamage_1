@@ -123,6 +123,7 @@ void install_Menus()
 	TBTRAP( GetMenuBar   );  // A93B
 	TBTRAP( SetMenuBar   );  // A93C
 	TBTRAP( MenuSelect   );  // A93D
+	TBTRAP( MenuKey      );  // A93E
 	
 	TBTRAP( CheckItem    );  // A945
 	TBTRAP( GetItem      );  // A946
