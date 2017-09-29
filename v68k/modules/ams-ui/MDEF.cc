@@ -20,9 +20,35 @@ const short system_font_ascent =  9;
 const short pen_v_offset_for_text = (menu_item_height + system_font_ascent) / 2;
 const short pen_v_offset_for_rule = menu_item_height / 2;
 
+const short key_padding = 1;
 const short mark_padding = 2;
 const short left_padding = 14;
+const short keystroke_gap = 14;
 const short right_padding = 6;
+
+static
+short keystroke_pen_offset_once()
+{
+	const uint8_t keystroke[] = { 2, kCommandCharCode, 'M' };
+	
+	const short width = StringWidth( keystroke );
+	
+	return width + key_padding;
+}
+
+static
+short keystroke_pen_offset()
+{
+	static const short offset = keystroke_pen_offset_once();
+	
+	return offset;
+}
+
+static inline
+short total_keystroke_offset()
+{
+	return keystroke_gap + keystroke_pen_offset();
+}
 
 static
 void MDEF_0_Draw( MenuRef menu, const Rect& r )
@@ -81,6 +107,15 @@ void MDEF_0_Draw( MenuRef menu, const Rect& r )
 			MoveTo( left + left_padding, v );
 			
 			DrawString( text );
+			
+			if ( key )
+			{
+				MoveTo( right - keystroke_pen_offset(), v );
+				
+				const uint8_t keystroke[] = { 2, kCommandCharCode, key };
+				
+				DrawString( keystroke );
+			}
 			
 			const bool enabled = enableFlags & 1  &&  menuEnabled;
 			
@@ -159,6 +194,13 @@ void MDEF_0_Size( MenuRef menu )
 		const short textWidth = StringWidth( text );
 		
 		short itemWidth = textWidth + right_padding;
+		
+		const unsigned char* p = text + 1 + text[ 0 ] + 1;  // skip icon
+		
+		if ( const uint8_t key = *p )
+		{
+			itemWidth += total_keystroke_offset() - right_padding;
+		}
 		
 		if ( itemWidth > maxItemWidth )
 		{
