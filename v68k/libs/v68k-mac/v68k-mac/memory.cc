@@ -88,6 +88,8 @@ enum
 	tag_CurStackBase_low_word,
 	tag_CurApName,
 	tag_CurApName_word_15 = tag_CurApName + 15,  // 32 bytes
+	tag_SaveSegHandle,
+	tag_SaveSegHandle_low_word,
 	tag_CurJTOffset,
 	tag_PrintErr,
 	tag_ROMFont0,
@@ -225,6 +227,7 @@ static const global globals[] =
 	{ 0x0904, 4,    tag_CurrentA5   },
 	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
+	{ 0x0930, 4,    tag_SaveSegHandle},
 	{ 0x0934, 2,    tag_CurJTOffset },
 	{ 0x0944, 2,    tag_PrintErr    },
 	{ 0x0980, 4,    tag_ROMFont0    },
