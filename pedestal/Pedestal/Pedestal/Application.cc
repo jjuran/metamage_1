@@ -636,7 +636,10 @@ namespace Pedestal
 		if ( err != noErr )
 		{
 			::DILoad();
-			err = ::DIBadMount( Point(), message );  // System 7 ignores the point
+			
+			const Point pt = { 120, 120 };
+			err = ::DIBadMount( pt, message );
+			
 			::DIUnload();
 		}
 		
