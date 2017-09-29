@@ -13,6 +13,9 @@
 #include <Controls.h>
 #endif
 
+// ams-common
+#include "QDGlobals.hh"
+
 
 const short pushbutton_corner_diameter = 10;
 
@@ -41,12 +44,13 @@ Rect switch_button_rect( const Rect& bounds )
 }
 
 static
-void draw_pushbutton( const Rect& bounds, const unsigned char* title )
+void draw_pushbutton( const Rect&           bounds,
+                      const unsigned char*  title,
+                      bool                  inactive )
 {
 	const short diameter = pushbutton_corner_diameter;  // 10px
 	
 	EraseRoundRect( &bounds, diameter, diameter );
-	FrameRoundRect( &bounds, diameter, diameter );
 	
 	if ( const short titleWidth = StringWidth( title ) )
 	{
@@ -58,7 +62,32 @@ void draw_pushbutton( const Rect& bounds, const unsigned char* title )
 		MoveTo( h, v );
 		
 		DrawString( title );
+		
+		if ( inactive )
+		{
+			QDGlobals& qd = get_QDGlobals();
+			
+			PenPat( &qd.gray );
+			PenMode( patBic );
+			
+			PaintRoundRect( &bounds, diameter, diameter );
+			
+			PenNormal();
+		}
 	}
+	
+	FrameRoundRect( &bounds, diameter, diameter );
+}
+
+static
+void gray_out( const Rect& rect )
+{
+	QDGlobals& qd = get_QDGlobals();
+	
+	PenPat( &qd.gray );
+	PenMode( patBic );
+	
+	PaintRect( &rect );
 }
 
 static
@@ -204,7 +233,8 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	const bool draw   = false;
 	const bool hilite = true;
 	
-	const bool hiliting = param != 0;
+	const bool inactive = param == 255;
+	const bool hiliting = param != 0  &&  ! inactive;
 	
 	const unsigned char* title = control[0]->contrlTitle;
 	const short          value = control[0]->contrlValue;
@@ -212,7 +242,7 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 	switch ( varCode << 1 | hiliting )
 	{
 		case pushButProc << 1 | draw:
-			draw_pushbutton( button_rect, title );
+			draw_pushbutton( button_rect, title, inactive );
 			break;
 		
 		case pushButProc << 1 | hilite:
@@ -222,6 +252,12 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 		case checkBoxProc << 1 | draw:
 			draw_checkbox( button_rect, value );
 			draw_switch_title( bounds, title );
+			
+			if ( inactive )
+			{
+				gray_out( bounds );
+			}
+			
 			break;
 		
 		case checkBoxProc << 1 | hilite:
@@ -231,6 +267,12 @@ long CDEF_0_Draw( short varCode, ControlRef control, long param )
 		case radioButProc << 1 | draw:
 			draw_radiobutton( button_rect, value );
 			draw_switch_title( bounds, title );
+			
+			if ( inactive )
+			{
+				gray_out( bounds );
+			}
+			
 			break;
 		
 		case radioButProc << 1 | hilite:
