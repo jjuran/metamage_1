@@ -43,6 +43,7 @@ enum
 	tag_KeyMaps,
 	tag_KeyMaps_word_7 = tag_KeyMaps + 7,  // 16 bytes
 	tag_UnitNtryCnt,
+	tag_SPKbdPrint,
 	tag_Time,
 	tag_Time_low_word,
 	tag_MemErr,
@@ -179,6 +180,7 @@ static const global globals[] =
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
+	{ 0x0207, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
 	{ 0x020C, 0x44, tag_Time        },
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
