@@ -237,6 +237,13 @@ pascal void DrawControls_patch( GrafPort* window )
 	}
 }
 
+pascal void HiliteControl_patch( ControlRef control, short hiliteState )
+{
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	CDEF_0( varCode, control, drawCntl, hiliteState );
+}
+
 pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
 {
 	*which = NULL;
