@@ -146,7 +146,7 @@ void MDEF_0_Size( MenuRef menu )
 {
 	short height = 0;
 	
-	short maxTextWidth = 0;
+	short maxItemWidth = 0;  // Excludes mark area, includes right padding
 	
 	menu_item_iterator it( menu );
 	
@@ -158,17 +158,19 @@ void MDEF_0_Size( MenuRef menu )
 		
 		const short textWidth = StringWidth( text );
 		
-		if ( textWidth > maxTextWidth )
+		short itemWidth = textWidth + right_padding;
+		
+		if ( itemWidth > maxItemWidth )
 		{
-			maxTextWidth = textWidth;
+			maxItemWidth = itemWidth;
 		}
 	}
 	
 	short width = 0;
 	
-	if ( maxTextWidth > 0 )
+	if ( maxItemWidth > 0 )
 	{
-		width = left_padding + maxTextWidth + right_padding;
+		width = left_padding + maxItemWidth;
 	}
 	
 	menu[0]->menuWidth  = width;
