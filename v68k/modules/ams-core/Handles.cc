@@ -109,7 +109,8 @@ static Handle_header* allocate_Handle_mem( long size : __D0, short trap_word : _
 }
 
 
-pascal char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0
+static
+char** new_handle( long size : __D0, short trap_word : __D1 ) : __A0
 {
 	char** h = NewEmptyHandle_patch();
 	
@@ -126,6 +127,19 @@ pascal char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0
 	}
 	
 	return NULL;
+}
+
+asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0
+{
+	JSR      new_handle
+	
+	MOVE.L   A0,D0      // If A0 is NULL, clears D0, which is a nice touch
+	BNE.S    ok
+	
+	MOVE.W   MemErr,D0  // Includes the effect of TST.W D0
+	
+ok:
+	RTS
 }
 
 /*pascal*/ char** NewEmptyHandle_patch() : __A0
