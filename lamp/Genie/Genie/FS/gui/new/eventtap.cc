@@ -58,6 +58,14 @@
 #include "Genie/FS/Views.hh"
 
 
+#ifndef CONFIG_MOUSEMOVED_HANDLER
+	#ifdef __APPLE__
+		#define CONFIG_MOUSEMOVED_HANDLER  1
+	#else
+		#define CONFIG_MOUSEMOVED_HANDLER  0
+	#endif
+#endif
+
 static inline bool operator==( const Point& a, const Point& b )
 {
 	return a.v == b.v  &&  a.h == b.h;
@@ -195,12 +203,31 @@ namespace Genie
 		private:
 			const vfs::node* itsKey;
 			Rect             itsBounds;
+			
+		#if CONFIG_MOUSEMOVED_HANDLER
+			
+			EventHandlerRef  itsEventHandler;
+			
+		#endif
 		
 		public:
 			eventtap_handler( const vfs::node* key ) : itsKey( key )
 			{
 				*(uint64_t*) &itsBounds = 0;
+				
+			#if CONFIG_MOUSEMOVED_HANDLER
+				
+				itsEventHandler = NULL;
+				
+			#endif
 			}
+			
+		#if CONFIG_MOUSEMOVED_HANDLER
+			
+			void Install( const Rect& bounds );
+			void Uninstall();
+			
+		#endif
 			
 			void Idle     ( const EventRecord& event );
 			bool MouseDown( const EventRecord& event );
@@ -210,6 +237,59 @@ namespace Genie
 			
 			void Draw( const Rect& bounds, bool erasing );
 	};
+	
+#if CONFIG_MOUSEMOVED_HANDLER
+	
+	static
+	pascal OSStatus eventtap_MouseMoved( EventHandlerCallRef  handler,
+	                                     EventRef             event,
+	                                     void*                userData )
+	{
+		ProcessSerialNumber psn = { 0, kCurrentProcess };
+		::WakeUpProcess( &psn );
+		
+		return eventNotHandledErr;
+	}
+	
+	static EventTypeSpec mouseMoved_event[] =
+	{
+		{ kEventClassMouse, kEventMouseMoved },
+	};
+	
+	void eventtap_handler::Install( const Rect& bounds )
+	{
+		Ped::View::Install( bounds );
+		
+		WindowRef window = GetWindowFromPort( GetQDGlobalsThePort() );
+		
+		OSStatus err;
+		
+		err = InstallWindowEventHandler( window,
+		                                 &eventtap_MouseMoved,
+		                                 1,
+		                                 mouseMoved_event,
+		                                 NULL,
+		                                 &itsEventHandler );
+		
+		if ( err )
+		{
+			itsEventHandler = NULL;
+		}
+	}
+	
+	void eventtap_handler::Uninstall()
+	{
+		OSStatus err;
+		
+		if ( itsEventHandler )
+		{
+			err = RemoveEventHandler( itsEventHandler );
+		}
+		
+		Ped::View::Uninstall();
+	}
+	
+#endif
 	
 	void eventtap_handler::Idle( const EventRecord& event )
 	{
