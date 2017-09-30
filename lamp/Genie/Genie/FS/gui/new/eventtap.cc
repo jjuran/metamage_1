@@ -11,6 +11,9 @@
 #endif
 
 // Mac OS
+#ifndef __CARBONEVENTS__
+#include <CarbonEvents.h>
+#endif
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
@@ -36,6 +39,7 @@
 
 // Pedestal
 #include "Pedestal/ClickTarget.hh"
+#include "Pedestal/UPPMacros.hh"
 #include "Pedestal/View.hh"
 
 // vfs
@@ -59,7 +63,7 @@
 
 
 #ifndef CONFIG_MOUSEMOVED_HANDLER
-	#ifdef __APPLE__
+	#if TARGET_API_MAC_CARBON
 		#define CONFIG_MOUSEMOVED_HANDLER  1
 	#else
 		#define CONFIG_MOUSEMOVED_HANDLER  0
@@ -251,6 +255,8 @@ namespace Genie
 		return eventNotHandledErr;
 	}
 	
+	DEFINE_CARBON_UPP( EventHandler, eventtap_MouseMoved )
+	
 	static EventTypeSpec mouseMoved_event[] =
 	{
 		{ kEventClassMouse, kEventMouseMoved },
@@ -265,7 +271,7 @@ namespace Genie
 		OSStatus err;
 		
 		err = InstallWindowEventHandler( window,
-		                                 &eventtap_MouseMoved,
+		                                 UPP_ARG( eventtap_MouseMoved ),
 		                                 1,
 		                                 mouseMoved_event,
 		                                 NULL,
