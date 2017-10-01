@@ -49,7 +49,11 @@ struct end_sync
 	}
 };
 
+#ifndef __RELIX__
+
 static end_sync finally_end_sync;
+
+#endif
 
 static
 void close_without_errno( int fd )
