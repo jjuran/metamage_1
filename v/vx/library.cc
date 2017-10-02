@@ -45,6 +45,13 @@
 #include "exception.hh"
 
 
+#ifdef ANDROID
+#define FORK() fork()
+#else
+#define FORK() vfork()
+#endif
+
+
 namespace vlib
 {
 	
@@ -97,7 +104,10 @@ namespace vlib
 	typedef int (*exec_f)( const char* arg0, char* const* argv );
 	
 	static
-	Value exec_impl( const Value& v, const char* empty_msg, exec_f exec )
+	Value exec_impl( const Value&  v,
+	                 const char*   empty_msg,
+	                 exec_f        exec,
+	                 bool          throwing = true )
 	{
 		Expr* expr = v.expr();
 		
@@ -141,9 +151,12 @@ namespace vlib
 		
 		Value exception( program, error_desc( saved_errno ) );
 		
-		throw_exception_object( exception );
+		if ( throwing )
+		{
+			throw_exception_object( exception );
+		}
 		
-		return Value();  // not reached
+		return Integer( saved_errno );
 	}
 	
 	static
@@ -187,6 +200,57 @@ namespace vlib
 		must_write( STDOUT_FILENO, s.data(), s.size() );
 		
 		return Value_nothing;
+	}
+	
+	static
+	Value v_run( const Value& v )
+	{
+		if ( is_empty_array( v ) )
+		{
+			const char* empty = "empty array passed to run()";
+			
+			throw user_exception( String( empty ), source_spec() );
+		}
+		
+		pid_t pid = FORK();
+		
+		if ( pid < 0 )
+		{
+			throw_exception_object( error_desc( errno ) );
+		}
+		
+		if ( pid == 0 )
+		{
+			const Value& arg0 = first( v.expr()->right );
+			
+			const Value err = exec_impl( Value( arg0, v ), "", &execvp, false );
+			
+			const int errnum = integer_cast< int >( err );
+			
+			_exit( errnum == ENOENT ? 127 : 126 );
+		}
+		
+		int status = -1;
+		pid_t waited = waitpid( pid, &status, 0 );
+		
+		if ( waited < 0 )
+		{
+			throw_exception_object( error_desc( errno ) );
+		}
+		
+		if ( WIFSIGNALED( status ) )
+		{
+			const int termsig = WTERMSIG( status );
+			
+			throw_exception_object( mapping( "signal", Integer( termsig ) ) );
+		}
+		
+		if ( const int exit_status = WEXITSTATUS( status ) )
+		{
+			throw_exception_object( mapping( "exit", Integer( exit_status ) ) );
+		}
+		
+		return Integer();
 	}
 	
 	static
@@ -299,6 +363,7 @@ namespace vlib
 	const proc_info proc_exit   = { "exit",   &v_exit,   &u8         };
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
+	const proc_info proc_RUN    = { "run",    &v_run,    &c_str_array};
 	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL        };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &u32        };
 	const proc_info proc_system = { "system", &v_system, &empty_list };
