@@ -11,6 +11,7 @@
 #include "command/get_option.hh"
 
 // gear
+#include "gear/hexadecimal.hh"
 #include "gear/parse_decimal.hh"
 
 // plus
@@ -41,6 +42,7 @@ using namespace command::constants;
 enum
 {
 	Option_type = 't',
+	Option_hex  = 'x',
 	
 	Option_last_byte = 255,
 	
@@ -52,6 +54,7 @@ static command::option options[] =
 {
 	{ "data",      Option_data_fork },
 	{ "data-fork", Option_data_fork },
+	{ "hex-types", Option_hex       },
 	
 	{ "id",  Option_id, Param_required },
 	{ "",  Option_type, Param_required },
@@ -60,6 +63,7 @@ static command::option options[] =
 };
 
 static bool use_data_fork;
+static bool use_hex_types;
 
 static const char*  the_type_opt = NULL;
 static const char*  the_id_opt   = NULL;
@@ -76,6 +80,10 @@ static char* const* get_options( char* const* argv )
 		{
 			case Option_data_fork:
 				use_data_fork = true;
+				break;
+			
+			case Option_hex:
+				use_hex_types = true;
 				break;
 			
 			case Option_type:
@@ -161,6 +169,29 @@ namespace tool
 	static void list_rsrc_by_handle( N::Handle h )
 	{
 		mac::types::ResInfo resInfo = N::GetResInfo( h );
+		
+		if ( use_hex_types )
+		{
+			char buffer[ 4 + 1 + 8 + 1 ];
+			
+			char* p = buffer;
+			
+			gear::encode_16_bit_hex( resInfo.id, p );
+			
+			p += 4;
+			
+			*p++ = '.';
+			
+			gear::encode_32_bit_hex( resInfo.type, p );
+			
+			p += 8;
+			
+			*p++ = '\n';
+			
+			p7::write( p7::stdout_fileno, buffer, sizeof buffer );
+			
+			return;
+		}
 		
 		plus::string name = MacScribe::get_utf8_name_from_ResInfo( resInfo );
 		
