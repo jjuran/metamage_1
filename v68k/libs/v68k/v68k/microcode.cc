@@ -956,7 +956,16 @@ namespace v68k
 		const int a = decoded_BCD( pb.first  );
 		const int b = decoded_BCD( pb.second );
 		
+		const int difference = b - a;
+		
 		pb.result = BCD_encoded( (100 + b - a) % 100 );
+		
+		if ( const bool borrow = difference < 0 )
+		{
+			// Hack so SUBX-style CCR update sets the bits correctly
+			pb.first  = -1;
+			pb.second =  0;
+		}
 		
 		return Ok;
 	}
