@@ -68,7 +68,7 @@ namespace v68k
 	
 	static void update_CCR_ADDX( processor_state& s, const op_params& pb )
 	{
-		const int32_t a = sign_extend( pb.first,  pb.size );
+		const int32_t a = sign_extend( pb.first,  pb.size ) - s.sr.x;
 		const int32_t b = sign_extend( pb.second, pb.size );
 		const int32_t c = sign_extend( pb.result, pb.size );
 		
@@ -78,10 +78,9 @@ namespace v68k
 	
 	static void update_CCR_SUBX( processor_state& s, const op_params& pb )
 	{
-		const int32_t a = pb.first;
+		const int32_t a = pb.first - s.sr.x;
 		const int32_t b = pb.second;
-		
-		const int32_t d = b - a;
+		const int32_t d = pb.result;
 		
 		s.sr.nzvc = ADDX_NZ( d, s.sr.nzvc )
 		          | additive_VC( a, d, b );  // b is the sum
