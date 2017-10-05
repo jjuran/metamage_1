@@ -5,9 +5,11 @@ PLATFORMS := ${ANDROID_NDK}/platforms
 NDK_BUILD := ${ANDROID_NDK}/ndk-build
 ADB       := ${ANDROID_SDK}/platform-tools/adb
 
-PLATFORM_NUMBER ?= `ls ${PLATFORMS} | sed -e s/android-// | sort -n | head -n1`
+ANDROIDS := "${PLATFORMS}/android-"
 
-NDK_PLATFORM ?= android-${PLATFORM_NUMBER}
+API_LEVEL ?= `ls -d ${ANDROIDS}* | sed -e s/.*android-// | sort -n | head -n1`
+
+NDK_PLATFORM ?= android-${API_LEVEL}
 
 BIN_DIR     := libs/armeabi
 INSTALL_DIR := /data/local/tmp/bin

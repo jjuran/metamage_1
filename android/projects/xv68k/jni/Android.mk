@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE     := must
-LOCAL_SRC_FILES  := src/must/write.c
+LOCAL_SRC_FILES  := src/must/write.c src/must/pthread.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/src
 
 include $(BUILD_STATIC_LIBRARY)
@@ -35,6 +35,22 @@ LOCAL_MODULE        := gear
 LOCAL_SRC_FILES     := src/gear/inscribe_decimal.cc src/gear/parse_decimal.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE        := rasterlib
+LOCAL_SRC_FILES     := src/raster/load.cc      \
+                       src/raster/relay.cc     \
+                       src/raster/screen.cc    \
+                       src/raster/sync.cc      \
+                       src/raster/validity.cc  \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -97,6 +113,6 @@ LOCAL_SRC_FILES     := xv68k/diagnostics.cc    \
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/xv68k
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := v68k-libs v68k gear command more must
+LOCAL_STATIC_LIBRARIES := v68k-libs v68k rasterlib gear command more must
 
 include $(BUILD_EXECUTABLE)
