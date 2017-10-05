@@ -12,7 +12,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE     := must
-LOCAL_SRC_FILES  := src/must/write.c
+LOCAL_SRC_FILES  := src/must/write.c src/must/pthread.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/src
 
 include $(BUILD_STATIC_LIBRARY)
@@ -62,9 +62,14 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := chars
-LOCAL_SRC_FILES     := src/encoding/utf8.cc
+LOCAL_SRC_FILES     := src/charsets/MacRoman.cc        \
+                       src/charsets/extended_ascii.cc  \
+                       src/conv/mac_utf8.cc            \
+                       src/encoding/utf8.cc            \
+
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -86,23 +91,37 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := plus
-LOCAL_SRC_FILES     := src/plus/binary.cc             \
-                       src/plus/datum_access.cc       \
-                       src/plus/datum_alloc.cc        \
-                       src/plus/decode_binoid_int.cc  \
-                       src/plus/extent.cc             \
-                       src/plus/decimal.cc            \
-                       src/plus/hexadecimal.cc        \
-                       src/plus/ibox.cc               \
-                       src/plus/integer.cc            \
-                       src/plus/integer_hex.cc        \
-                       src/plus/nth_power_of_ten.cc   \
-                       src/plus/own_string.cc         \
-                       src/plus/reverse.cc            \
-                       src/plus/string.cc             \
-                       src/plus/string/concat.cc      \
-                       src/plus/string/mince.cc       \
-                       src/plus/string_common.cc      \
+LOCAL_SRC_FILES     := src/plus/binary.cc         \
+                       src/plus/datum_access.cc   \
+                       src/plus/datum_alloc.cc    \
+                       src/plus/extent.cc         \
+                       src/plus/hexadecimal.cc    \
+                       src/plus/mac_utf8.cc       \
+                       src/plus/own_string.cc     \
+                       src/plus/reverse.cc        \
+                       src/plus/string.cc         \
+                       src/plus/string/concat.cc  \
+                       src/plus/string/mince.cc   \
+                       src/plus/string_common.cc  \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+LOCAL_CPP_FEATURES  += exceptions
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE        := bignum
+LOCAL_SRC_FILES     := src/bignum/decode_binoid_int.cc  \
+                       src/bignum/decimal.cc            \
+                       src/bignum/fraction.cc           \
+                       src/bignum/gcd.cc                \
+                       src/bignum/ibox.cc               \
+                       src/bignum/integer.cc            \
+                       src/bignum/integer_hex.cc        \
+                       src/bignum/nth_power_of_ten.cc   \
 
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
@@ -117,9 +136,12 @@ LOCAL_MODULE        := vlib
 LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/calc.cc                        \
                        src/vlib/collectible.cc                 \
+                       src/vlib/dispatch/stringify.cc          \
+                       src/vlib/equal.cc                       \
                        src/vlib/error.cc                       \
                        src/vlib/eval.cc                        \
                        src/vlib/execute.cc                     \
+                       src/vlib/function-utils.cc              \
                        src/vlib/functions.cc                   \
                        src/vlib/init.cc                        \
                        src/vlib/interpret.cc                   \
@@ -133,6 +155,7 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/lib/ed25519.cc                 \
                        src/vlib/list-utils.cc                  \
                        src/vlib/named_ops.cc                   \
+                       src/vlib/namespaces/V.cc                \
                        src/vlib/new_line.cc                    \
                        src/vlib/ops.cc                         \
                        src/vlib/parse.cc                       \
@@ -154,12 +177,26 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/types.cc                       \
                        src/vlib/types/any.cc                   \
                        src/vlib/types/boolean.cc               \
+                       src/vlib/types/builtin.cc               \
                        src/vlib/types/byte.cc                  \
+                       src/vlib/types/fraction.cc              \
                        src/vlib/types/integer.cc               \
+                       src/vlib/types/invocation.cc            \
+                       src/vlib/types/iterator.cc              \
+                       src/vlib/types/lambda.cc                \
+                       src/vlib/types/mb32.cc                  \
+                       src/vlib/types/namespace.cc             \
                        src/vlib/types/null.cc                  \
+                       src/vlib/types/packed.cc                \
+                       src/vlib/types/pointer.cc               \
+                       src/vlib/types/proc.cc                  \
+                       src/vlib/types/range.cc                 \
+                       src/vlib/types/record.cc                \
                        src/vlib/types/stdint.cc                \
                        src/vlib/types/string.cc                \
-                       src/vlib/types/vector.cc                \
+                       src/vlib/types/table.cc                 \
+                       src/vlib/types/term.cc                  \
+                       src/vlib/types/type.cc                  \
                        src/vlib/value.cc                       \
                        src/vlib/vbox.cc                        \
 
@@ -177,6 +214,6 @@ LOCAL_SRC_FILES     := main.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := vlib plus gear chars math sha256 command more must ed25519
+LOCAL_STATIC_LIBRARIES := vlib bignum plus gear chars math sha256 command more must ed25519
 
 include $(BUILD_EXECUTABLE)
