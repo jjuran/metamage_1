@@ -18,8 +18,40 @@ namespace vlib
 	
 	extern const dispatch fd_dispatch;
 	
+	enum automatic_t { automatic };
+	
+	class auto_fd
+	{
+		private:
+			int its_fd;
+			bool it_is_closed;
+			
+			// non-copyable
+			auto_fd           ( const auto_fd& );
+			auto_fd& operator=( const auto_fd& );
+		
+		public:
+			auto_fd( int fd ) : its_fd( fd ), it_is_closed()
+			{
+			}
+			
+			~auto_fd();
+			
+			int get() const  { return its_fd; }
+			
+			bool closed() const  { return it_is_closed; }
+			void closing()       { it_is_closed = true; }
+	};
+	
 	class FileDescriptor : public Value
 	{
+		private:
+			bool has_extent() const
+			{
+				return pod_cast< vbox >().has_extent();
+			}
+			
+		
 		public:
 			static bool test( const Value& v )
 			{
@@ -33,8 +65,20 @@ namespace vlib
 				pod_cast< int >() = fd;
 			}
 			
+			FileDescriptor( int fd, automatic_t );
+			
+			bool is_automatic() const
+			{
+				return has_extent()  &&  ! dereference< auto_fd >().closed();
+			}
+			
 			int get() const
 			{
+				if ( has_extent() )
+				{
+					return dereference< auto_fd >().get();
+				}
+				
 				return pod_cast< int >();
 			}
 			

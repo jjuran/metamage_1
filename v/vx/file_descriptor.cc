@@ -5,6 +5,15 @@
 
 #include "file_descriptor.hh"
 
+// POSIX
+#include <unistd.h>
+
+// Standard C
+#include <errno.h>
+
+// Standard C++
+#include <new>
+
 // more-libc
 #include "more/string.h"
 
@@ -12,6 +21,7 @@
 #include "gear/inscribe_decimal.hh"
 
 // vlib
+#include "vlib/generic.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
@@ -24,8 +34,21 @@
 #include "posixfs.hh"
 
 
+#define STRLEN( s )  (sizeof "" s - 1)
+
+
 namespace vlib
 {
+	
+	inline
+	auto_fd::~auto_fd()
+	{
+		if ( ! it_is_closed )
+		{
+			::close( its_fd );
+		}
+	}
+	
 	
 	Value FileDescriptor::coerce( const Value& v )
 	{
@@ -62,7 +85,14 @@ namespace vlib
 	{
 		const FileDescriptor& that = static_cast< const FileDescriptor& >( v );
 		
-		return 5 + gear::decimal_magnitude( that.get() );
+		size_t wrapper_size = STRLEN( "(fd )" );
+		
+		if ( that.is_automatic() )
+		{
+			wrapper_size += STRLEN( "auto " );
+		}
+		
+		return wrapper_size + gear::decimal_magnitude( that.get() );
 	}
 	
 	static
@@ -71,6 +101,16 @@ namespace vlib
 		const FileDescriptor& that = static_cast< const FileDescriptor& >( v );
 		
 		*p++ = '(';
+		
+		if ( that.is_automatic() )
+		{
+			*p++ = 'a';
+			*p++ = 'u';
+			*p++ = 't';
+			*p++ = 'o';
+			*p++ = ' ';
+		}
+		
 		*p++ = 'f';
 		*p++ = 'd';
 		*p++ = ' ';
@@ -145,6 +185,14 @@ namespace vlib
 			case Op_unary_deref:
 				return Integer( that.get() );
 			
+			case Op_auto:
+				if ( that.is_automatic() )
+				{
+					return v;
+				}
+				
+				return FileDescriptor( that.get(), automatic );
+			
 			default:
 				break;
 		}
@@ -184,8 +232,32 @@ namespace vlib
 		&ops,
 	};
 	
+	FileDescriptor::FileDescriptor( int fd, automatic_t )
+	:
+		Value( sizeof (auto_fd),
+		       &generic_destructor< auto_fd >,
+		       Value_other,
+		       &fd_dispatch )
+	{
+		new ((void*) pointer()) auto_fd( fd );
+	}
+	
 	int FileDescriptor::close() const
 	{
+		if ( is_automatic() )
+		{
+			const auto_fd& autofd = dereference< auto_fd >();
+			
+			if ( autofd.closed() )
+			{
+				// Don't close the same fd twice
+				errno = EBADF;
+				return -1;
+			}
+			
+			const_cast< auto_fd& >( autofd ).closing();
+		}
+		
 		return ::close( get() );
 	}
 	
