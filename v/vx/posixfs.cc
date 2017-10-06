@@ -162,7 +162,9 @@ namespace vlib
 	{
 		const int fd = fd_cast( v );
 		
-		int nok = close( fd );
+		const FileDescriptor& that = (const FileDescriptor&) v;
+		
+		int nok = that.close();
 		
 		if ( nok )
 		{

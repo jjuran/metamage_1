@@ -37,6 +37,8 @@ namespace vlib
 			{
 				return pod_cast< int >();
 			}
+			
+			int close() const;
 	};
 	
 	extern const type_info fd_vtype;

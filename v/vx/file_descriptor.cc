@@ -184,6 +184,11 @@ namespace vlib
 		&ops,
 	};
 	
+	int FileDescriptor::close() const
+	{
+		return ::close( get() );
+	}
+	
 	const type_info fd_vtype =
 	{
 		"fd",
