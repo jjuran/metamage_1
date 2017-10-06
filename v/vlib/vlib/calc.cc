@@ -386,7 +386,7 @@ namespace vlib
 				break;
 		}
 		
-		INTERNAL_ERROR( "unsupported operator in calc_unary()" );
+		THROW( "unary operator not implemented by operand" );
 		
 		return Value();
 	}
