@@ -209,6 +209,7 @@ int main( int argc, char** argv )
 		define( proc_append );
 		define( proc_chdir  );
 		define( proc_link   );
+		define( proc_rewrite );
 		define( proc_tcpconnect );
 		define( proc_touch  );
 		define( proc_truncate );

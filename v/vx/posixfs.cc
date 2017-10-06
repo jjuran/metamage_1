@@ -441,6 +441,46 @@ namespace vlib
 	}
 	
 	static
+	Value v_rewrite( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		/*
+			Open nonblocking in case it's a FIFO.
+			Nonblocking I/O shouldn't affect writing to a regular file.
+		*/
+		
+		int fd = open( path, O_WRONLY | O_NONBLOCK | O_CREAT | O_TRUNC, 0666 );
+		
+		if ( fd < 0 )
+		{
+			path_error( path );
+		}
+		
+		struct stat st;
+		
+		int nok = fstat( fd, &st );
+		
+		if ( nok )
+		{
+			int saved_errno = errno;
+			
+			close( fd );
+			
+			path_error( path, saved_errno );
+		}
+		
+		if ( ! S_ISREG( st.st_mode ) )
+		{
+			close( fd );
+			
+			path_error( path, "not a regular file" );
+		}
+		
+		return FileDescriptor( fd, automatic );
+	}
+	
+	static
 	Value v_stat( const Value& v )
 	{
 		const char* path = v.string().c_str();
@@ -538,6 +578,7 @@ namespace vlib
 	const proc_info proc_pipe     = { "pipe",     &v_pipe,     &empty_list };
 	const proc_info proc_read     = { "read",     &v_read,     &fd_u32 };
 	const proc_info proc_realpath = { "realpath", &v_realpath, &c_str };
+	const proc_info proc_rewrite  = { "rewrite",  &v_rewrite,  &c_str };
 	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
 	const proc_info proc_touch    = { "touch",    &v_touch,    &c_str };
 	const proc_info proc_write    = { "write",    &v_write,    &fd_bytes };
