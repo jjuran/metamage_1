@@ -40,6 +40,7 @@ namespace vlib
 	const named_op_mapping named_unary_ops[] =
 	{
 		{ "assert", Op_assert },
+		{ "auto",   Op_auto   },
 		{ "const",  Op_const  },
 		{ "def",    Op_def    },
 		{ "do",     Op_do     },
