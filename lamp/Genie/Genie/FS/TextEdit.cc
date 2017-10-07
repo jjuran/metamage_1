@@ -37,6 +37,7 @@
 
 // Pedestal
 #include "Pedestal/Clipboard.hh"
+#include "Pedestal/CurrentFocus.hh"
 
 // Genie
 #include "Genie/FS/focusable_views.hh"
@@ -183,6 +184,11 @@ namespace Genie
 		InstallCustomTEClickLoop( itsTE );
 		
 		add_focusable_view( itsKey, this );
+		
+		if ( Ped::Get_Focus() == NULL )
+		{
+			Ped::Set_Focus( this );
+		}
 	}
 	
 	void TextEdit::Uninstall()
