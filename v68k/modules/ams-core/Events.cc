@@ -47,6 +47,8 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 	{
 		if ( GetOSEvent( eventMask & ~autoKeyMask, event ) )
 		{
+			button_clicked = false;
+			
 			return true;
 		}
 	}
@@ -230,6 +232,13 @@ pascal void GetMouse_patch( Point* loc )
 
 pascal char Button_patch()
 {
+	if ( button_clicked )
+	{
+		button_clicked = false;
+		
+		return true;
+	}
+	
 	wait_for_user_input( polling_interval );
 	
 	polling_interval = 0xFFFFFFFF;

@@ -33,6 +33,9 @@ UInt16 KeyMods : 0x017A;
 Point  Mouse   : 0x0830;
 
 
+bool button_clicked;
+
+
 static const timeval zero_timeout = { 0, 0 };
 
 static timeval wait_timeout;
@@ -128,6 +131,11 @@ void post_event( const splode::pointer_event_buffer& buffer )
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
 	const uint8_t action = buffer.attrs & action_mask;
+	
+	if ( action <= 1 )
+	{
+		button_clicked = true;
+	}
 	
 	if ( action == 0 )
 	{
