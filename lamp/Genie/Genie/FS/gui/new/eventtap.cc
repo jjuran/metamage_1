@@ -240,6 +240,8 @@ namespace Genie
 			void KeyUp    ( const EventRecord& event ) { KeyDown( event ); }
 			
 			void Draw( const Rect& bounds, bool erasing );
+			
+			void DrawInContext( CGContextRef context, CGRect bounds );
 	};
 	
 #if CONFIG_MOUSEMOVED_HANDLER
@@ -404,6 +406,19 @@ namespace Genie
 		itsBounds = bounds;
 		
 		View::Draw( bounds, erasing );
+	}
+	
+	void eventtap_handler::DrawInContext( CGContextRef context, CGRect bounds )
+	{
+		const short top  = bounds.origin.y;
+		const short left = bounds.origin.x;
+		
+		itsBounds.top  = top;
+		itsBounds.left = left;
+		itsBounds.bottom = top + bounds.size.height;
+		itsBounds.right  = left + bounds.size.width;
+		
+		View::DrawInContext( context, bounds );
 	}
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
