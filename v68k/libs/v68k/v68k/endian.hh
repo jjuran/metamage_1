@@ -13,6 +13,7 @@
 namespace v68k
 {
 	
+	using iota::is_little_endian;
 	using iota::swap_2_bytes_big;
 	using iota::swap_4_bytes_big;
 	
@@ -36,6 +37,22 @@ namespace v68k
 	{
 		return swap_4_bytes_big( longword );
 	}
+	
+	inline uint8_t& select_byte( uint16_t& word, int i )
+	{
+		return ((uint8_t*) &word)[ i == is_little_endian() ];
+	}
+	
+	inline uint16_t& select_word( uint32_t& longword, int i )
+	{
+		return ((uint16_t*) &longword)[ i == is_little_endian() ];
+	}
+	
+	inline uint8_t& high_byte( uint16_t& x )  { return select_byte( x, 1 ); }
+	inline uint8_t& low_byte ( uint16_t& x )  { return select_byte( x, 0 ); }
+	
+	inline uint16_t& high_word( uint32_t& x )  { return select_word( x, 1 ); }
+	inline uint16_t& low_word ( uint32_t& x )  { return select_word( x, 0 ); }
 	
 }
 

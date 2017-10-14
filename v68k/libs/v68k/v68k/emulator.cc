@@ -147,7 +147,12 @@ namespace v68k
 		
 		while ( *fetch != 0 )  // NULL
 		{
-			(*fetch++)( *this, pb );
+			const op_result result = (*fetch++)( *this, pb );
+			
+			if ( result < 0 )
+			{
+				condition = halted;
+			}
 			
 			if ( condition != normal )
 			{

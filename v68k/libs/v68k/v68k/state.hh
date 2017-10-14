@@ -11,6 +11,7 @@
 
 // v68k
 #include "v68k/memory.hh"
+#include "v68k/op.hh"
 #include "v68k/op_params.hh"
 #include "v68k/registers.hh"
 
@@ -41,7 +42,7 @@ namespace v68k
 	
 	struct processor_state;
 	
-	typedef uint16_t (*bkpt_handler)(processor_state& s, int vector);
+	typedef op_result (*bkpt_handler)(processor_state& s, int vector);
 	
 	struct processor_state
 	{
@@ -89,7 +90,45 @@ namespace v68k
 			return regs[ PC ];
 		}
 		
-		uint32_t read_mem( uint32_t addr, op_size_t size );
+		op_result read_byte( uint32_t addr, uint32_t& data );
+		op_result read_word( uint32_t addr, uint32_t& data );
+		op_result read_long( uint32_t addr, uint32_t& data );
+		
+		op_result read_byte_signed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_byte( addr, data );
+			
+			data = int32_t( int8_t( data ) );
+			
+			return result;
+		}
+		
+		op_result read_byte_zeroed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_byte( addr, data );
+			
+			data = uint8_t( data );
+			
+			return result;
+		}
+		
+		op_result read_word_signed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_word( addr, data );
+			
+			data = int32_t( int16_t( data ) );
+			
+			return result;
+		}
+		
+		op_result read_word_zeroed( uint32_t addr, uint32_t& data )
+		{
+			op_result result = read_word( addr, data );
+			
+			data = uint16_t( data );
+			
+			return result;
+		}
 		
 		uint16_t get_CCR() const;
 		
@@ -119,6 +158,11 @@ namespace v68k
 			*/
 			
 			return (model < mc68020) & addr;
+		}
+		
+		void acknowledge_breakpoint( uint16_t new_opcode )
+		{
+			opcode = new_opcode;
 		}
 		
 		uint32_t bus_error    ()  { condition = halted;  return 0; }

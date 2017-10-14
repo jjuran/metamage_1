@@ -31,54 +31,44 @@ namespace v68k
 		}
 	}
 	
-	uint32_t processor_state::read_mem( uint32_t addr, op_size_t size )
+	op_result processor_state::read_byte( uint32_t addr, uint32_t& data )
 	{
-		if ( size != byte_sized  &&  badly_aligned_data( addr ) )
+		if ( !mem.get_byte( addr, low_byte( low_word( data ) ), data_space() ) )
 		{
-			return address_error();
+			return Bus_error;
 		}
 		
-		uint32_t result;
-		
-		bool ok;
-		
-		switch ( size )
+		return Ok;
+	}
+	
+	op_result processor_state::read_word( uint32_t addr, uint32_t& data )
+	{
+		if ( badly_aligned_data( addr ) )
 		{
-			case byte_sized:
-				uint8_t byte;
-				
-				ok = mem.get_byte( addr, byte, data_space() );
-				
-				result = byte;
-				
-				break;
-			
-			case word_sized:
-				uint16_t word;
-				
-				ok = mem.get_word( addr, word, data_space() );
-				
-				result = word;
-				
-				break;
-			
-			case long_sized:
-				ok = mem.get_long( addr, result, data_space() );
-				
-				break;
-			
-			default:
-				// Not reached
-				ok = 0;  // silence uninitialized-variable warning
-				break;
+			return Address_error;
 		}
 		
-		if ( !ok )
+		if ( !mem.get_word( addr, low_word( data ), data_space() ) )
 		{
-			return bus_error();
+			return Bus_error;
 		}
 		
-		return result;
+		return Ok;
+	}
+	
+	op_result processor_state::read_long( uint32_t addr, uint32_t& data )
+	{
+		if ( badly_aligned_data( addr ) )
+		{
+			return Address_error;
+		}
+		
+		if ( !mem.get_long( addr, data, data_space() ) )
+		{
+			return Bus_error;
+		}
+		
+		return Ok;
 	}
 	
 	uint16_t processor_state::get_CCR() const

@@ -98,6 +98,8 @@ namespace v68k
 	{
 		&FETCH_MAJOR_REGISTER_NUM,
 		&fetch_MOVEP_address,
+		&fetch_signed_word,
+		&add_first_to_address,
 		0  // NULL
 	};
 	
@@ -300,8 +302,8 @@ namespace v68k
 	
 	fetcher fetches_ADDX_Dn[] =
 	{
-		&FETCH_MAJOR_REGISTER_NUM,
 		&fetch_sized_data_at_effective_address,
+		&FETCH_MAJOR_REGISTER_NUM,
 		&add_X_to_first,
 		0  // NULL
 	};

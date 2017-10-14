@@ -74,7 +74,8 @@ static void set_errno( v68k::processor_state& s )
 	}
 }
 
-static inline bool set_result( v68k::processor_state& s, int result )
+static
+v68k::op_result set_result( v68k::processor_state& s, int result )
 {
 	s.d(0) = result;
 	
@@ -83,16 +84,17 @@ static inline bool set_result( v68k::processor_state& s, int result )
 		set_errno( s );
 	}
 	
-	return true;
+	return v68k::Ok;
 }
 
-static bool emu_exit( v68k::processor_state& s )
+static
+v68k::op_result emu_exit( v68k::processor_state& s )
 {
 	uint32_t args[1];  // status
 	
 	if ( !get_stacked_args( s, args, 1 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	const int status = int32_t( args[0] );
@@ -100,16 +102,17 @@ static bool emu_exit( v68k::processor_state& s )
 	exit( status );
 	
 	// Not reached
-	return false;
+	return v68k::op_result();
 }
 
-static bool emu_read( v68k::processor_state& s )
+static
+v68k::op_result emu_read( v68k::processor_state& s )
 {
 	uint32_t args[3];  // fd, buffer, length
 	
 	if ( !get_stacked_args( s, args, 3 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	const int fd = int32_t( args[0] );
@@ -136,13 +139,14 @@ static bool emu_read( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-static bool emu_write( v68k::processor_state& s )
+static
+v68k::op_result emu_write( v68k::processor_state& s )
 {
 	uint32_t args[3];  // fd, buffer, length
 	
 	if ( !get_stacked_args( s, args, 3 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	const int fd = int32_t( args[0] );
@@ -169,13 +173,14 @@ static bool emu_write( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-static bool emu_close( v68k::processor_state& s )
+static
+v68k::op_result emu_close( v68k::processor_state& s )
 {
 	uint32_t args[ 1 ];  // fd
 	
 	if ( !get_stacked_args( s, args, 1 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	int result;
@@ -196,27 +201,30 @@ static bool emu_close( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-static bool emu_getpid( v68k::processor_state& s )
+static
+v68k::op_result emu_getpid( v68k::processor_state& s )
 {
 	int32_t result = emulated_pid();
 	
 	return set_result( s, result );
 }
 
-static bool emu_pause( v68k::processor_state& s )
+static
+v68k::op_result emu_pause( v68k::processor_state& s )
 {
 	int result = pause();
 	
 	return set_result( s, result );
 }
 
-static bool emu_kill( v68k::processor_state& s )
+static
+v68k::op_result emu_kill( v68k::processor_state& s )
 {
 	uint32_t args[2];  // pid, sig
 	
 	if ( !get_stacked_args( s, args, 2 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	pid_t     pid = int32_t( args[0] );
@@ -243,13 +251,14 @@ static bool emu_kill( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-static bool emu_gettimeofday( v68k::processor_state& s )
+static
+v68k::op_result emu_gettimeofday( v68k::processor_state& s )
 {
 	uint32_t args[2];  // tv, tz
 	
 	if ( !get_stacked_args( s, args, 2 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	timeval tv;
@@ -414,7 +423,8 @@ static int store_fdset( v68k::processor_state&  s,
 	return 1;
 }
 
-static bool emu_select( v68k::processor_state& s )
+static
+v68k::op_result emu_select( v68k::processor_state& s )
 {
 	fd_set read_fds;
 	fd_set write_fds;
@@ -430,7 +440,7 @@ static bool emu_select( v68k::processor_state& s )
 	
 	if ( !get_stacked_args( s, args, 5 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	const int n = args[ 0 ];
@@ -502,13 +512,14 @@ struct iovec_68k
 	uint32_t len;
 };
 
-static bool emu_writev( v68k::processor_state& s )
+static
+v68k::op_result emu_writev( v68k::processor_state& s )
 {
 	uint32_t args[3];  // fd, iov, n
 	
 	if ( !get_stacked_args( s, args, 3 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	int result = -1;
@@ -569,13 +580,14 @@ end:
 	return set_result( s, result );
 }
 
-static bool emu_nanosleep( v68k::processor_state& s )
+static
+v68k::op_result emu_nanosleep( v68k::processor_state& s )
 {
 	uint32_t args[2];  // requested, remaining
 	
 	if ( !get_stacked_args( s, args, 2 ) )
 	{
-		return s.bus_error();
+		return v68k::Bus_error;
 	}
 	
 	uint32_t requested = args[0];
@@ -624,7 +636,7 @@ static bool emu_nanosleep( v68k::processor_state& s )
 	return set_result( s, result );
 }
 
-bool bridge_call( v68k::processor_state& s )
+v68k::op_result bridge_call( v68k::processor_state& s )
 {
 	const uint16_t call_number = s.d(0);
 	
@@ -645,6 +657,6 @@ bool bridge_call( v68k::processor_state& s )
 		case 162:  return emu_nanosleep( s );
 		
 		default:
-			return false;
+			return v68k::Illegal_instruction;
 	}
 }

@@ -23,7 +23,7 @@ namespace v68k
 	#define C( x )  (!!(x) << 0)
 	
 	
-	void load( processor_state& s, op_params& pb )
+	op_result load( processor_state& s, op_params& pb )
 	{
 		const int32_t target = pb.target;
 		
@@ -31,18 +31,22 @@ namespace v68k
 		{
 			pb.second = s.regs[ target ];
 			
-			if ( target > 7 )
+			if ( target <= 7 )
 			{
-				// address register, don't sign-extend
-				return;
+				// only sign-extend data registers
+				pb.second = sign_extend( pb.second, pb.size );
 			}
-		}
-		else
-		{
-			pb.second = s.read_mem( pb.address, pb.size );
+			
+			return Ok;
 		}
 		
-		pb.second = sign_extend( pb.second, pb.size );
+		switch ( pb.size )
+		{
+			default:  // shouldn't happen
+			case byte_sized:  return s.read_byte_signed( pb.address, pb.second );
+			case word_sized:  return s.read_word_signed( pb.address, pb.second );
+			case long_sized:  return s.read_long       ( pb.address, pb.second );
+		}
 	}
 	
 	bool store( processor_state& s, const op_params& pb )

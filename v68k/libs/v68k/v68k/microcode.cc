@@ -338,7 +338,12 @@ namespace v68k
 		
 		if ( bkpt_handler f = s.bkpt )
 		{
-			s.opcode = f( s, data );
+			op_result result = f( s, data );
+			
+			if ( result < 0 )
+			{
+				return result;
+			}
 		}
 		
 		return Breakpoint;

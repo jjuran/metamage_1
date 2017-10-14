@@ -449,13 +449,15 @@ void load_code( uint8_t* mem, const char* path )
 }
 
 static
-uint16_t bkpt_2( v68k::processor_state& s )
+v68k::op_result bkpt_2( v68k::processor_state& s )
 {
-	if ( bridge_call( s ) )
+	v68k::op_result result = bridge_call( s );
+	
+	if ( result >= 0 )
 	{
-		return 0x4E75;  // RTS
+		s.acknowledge_breakpoint( 0x4E75 );  // RTS
 	}
-	else
+	else if ( result == v68k::Illegal_instruction )
 	{
 		// FIXME:  Report call number
 		
@@ -464,24 +466,24 @@ uint16_t bkpt_2( v68k::processor_state& s )
 		const char* msg = "Unimplemented system call\n";
 		
 		write( STDERR_FILENO, msg, strlen( msg ) );
-		
-		return 0x4AFC;  // ILLEGAL
 	}
+	
+	return result;
 }
 
 static
-uint16_t bkpt_3( v68k::processor_state& s )
+v68k::op_result bkpt_3( v68k::processor_state& s )
 {
 	if ( uint32_t new_opcode = v68k::callback::bridge( s ) )
 	{
-		return new_opcode;
+		s.acknowledge_breakpoint( new_opcode );
 	}
 	
-	return 0x4AFC;  // ILLEGAL
+	return v68k::Ok;
 }
 
 static
-uint16_t bkpt_handler( v68k::processor_state& s, int vector )
+v68k::op_result bkpt_handler( v68k::processor_state& s, int vector )
 {
 	switch ( vector )
 	{
@@ -492,7 +494,7 @@ uint16_t bkpt_handler( v68k::processor_state& s, int vector )
 			return ::bkpt_3( s );
 		
 		default:
-			return 0x4AFC;  // ILLEGAL
+			return v68k::Illegal_instruction;
 	}
 }
 
