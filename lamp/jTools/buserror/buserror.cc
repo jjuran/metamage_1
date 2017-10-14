@@ -1,24 +1,23 @@
-/*	===========
- *	buserror.cc
- *	===========
- */
+/*
+	buserror.cc
+	-----------
+*/
 
 
 #pragma exceptions off
 
 
-static int BusErrorTest()
+static
+char bus_error_test()
 {
-	const int* unmapped_address = (const int*) 0x68f168f1;
+	const char* unmapped_address = (const char*) 0x68f168f1;
 	
 	return *unmapped_address;
 }
 
 int main()
 {
-	//Debugger();
-	
-	BusErrorTest();
+	bus_error_test();
 	
 	return 0;
 }
