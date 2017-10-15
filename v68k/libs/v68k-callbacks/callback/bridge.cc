@@ -201,6 +201,54 @@ static uint32_t set_trace_mode_callback( v68k::processor_state& s )
 	return rts;
 }
 
+#define BIG16 iota::big_u16
+
+static const uint8_t screenBits[] =
+{
+	0x00, 0x01, 0xA7, 0x00,  // baseAddr = 0x0001A700
+	0x00, 0x40,              // rowBytes = 64
+	0x00, 0x00, 0x00, 0x00,  // bounds[] = { 0, 0, 342, 512 }
+	0x01, 0x56, 0x02, 0x00,
+};
+
+static
+uint32_t ScrnBitMap_callback( v68k::processor_state& s )
+{
+	uint32_t& sp = s.a(7);
+	
+	uint32_t return_address;
+	uint32_t pointer;
+	
+	if ( ! s.mem.get_long( sp, return_address, s.data_space() ) )
+	{
+		return v68k::Bus_error;
+	}
+	
+	sp += 4;
+	
+	if ( ! s.mem.get_long( sp, pointer, s.data_space() ) )
+	{
+		return v68k::Bus_error;
+	}
+	
+	sp += 4;
+	
+	const size_t n = sizeof screenBits;
+	
+	uint8_t* p = s.mem.translate( pointer, n, s.data_space(), v68k::mem_write );
+	
+	if ( p == NULL )
+	{
+		return v68k::Bus_error;
+	}
+	
+	memcpy( p, screenBits, n );
+	
+	s.pc() = return_address - 2;
+	
+	return nop;
+}
+
 static inline
 void flush_screen_callback( v68k::processor_state& s )
 {
@@ -436,7 +484,7 @@ static const function_type the_callbacks[] =
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
 	
-	&unimplemented_callback,
+	&ScrnBitMap_callback,
 	&lock_screen_callback,
 	&unlock_screen_callback,
 	

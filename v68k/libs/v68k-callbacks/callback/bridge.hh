@@ -25,7 +25,7 @@ enum
 	trace_flow,
 	trace_off,
 	
-	flush_screen_OBSOLETE,
+	ScrnBitMap_trap,
 	lock_screen,
 	unlock_screen,
 	
