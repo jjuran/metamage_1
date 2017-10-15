@@ -48,6 +48,7 @@ namespace v68k
 	extern fetcher fetches_TRAP[];
 	
 	extern fetcher fetches_LINK[];
+	extern fetcher fetches_UNLK[];
 	
 	extern fetcher fetches_unsigned_word[];
 	

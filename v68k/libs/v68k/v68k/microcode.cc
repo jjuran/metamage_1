@@ -523,8 +523,6 @@ namespace v68k
 		uint32_t& An = s.a(n);
 		uint32_t& sp = s.a(7);
 		
-		sp = An;
-		
 		if ( s.badly_aligned_data( sp ) )
 		{
 			return Address_error;

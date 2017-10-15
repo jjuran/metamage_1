@@ -158,6 +158,14 @@ namespace v68k
 	};
 	
 	
+	fetcher fetches_UNLK[] =
+	{
+		&FETCH_MINOR_REGISTER_NUM,
+		&replace_SP,
+		0  // NULL
+	};
+	
+	
 	fetcher fetches_unsigned_word[] =
 	{
 		&fetch_unsigned_word,

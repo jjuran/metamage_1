@@ -92,6 +92,8 @@ namespace v68k
 	
 	op_result shift_NEG_operands( processor_state& state, op_params& pb );
 	
+	op_result replace_SP( processor_state& s, op_params& pb );
+	
 	
 	op_result read_address_on_68000( processor_state& state, op_params& pb );
 	

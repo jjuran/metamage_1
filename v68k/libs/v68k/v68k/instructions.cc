@@ -107,7 +107,7 @@ namespace v68k
 	
 	instruction decoded_UNLK =
 	{
-		FETCHES_MINOR_REGISTER_NUM,
+		fetches_UNLK,
 		microcode_UNLK
 	};
 	

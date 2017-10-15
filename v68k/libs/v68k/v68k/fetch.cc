@@ -438,6 +438,18 @@ namespace v68k
 		return Ok;
 	}
 	
+	op_result replace_SP( processor_state& s, op_params& pb )
+	{
+		const uint32_t n = pb.target;
+		
+		uint32_t& sp = s.a(7);
+		uint32_t  An = s.a(n);
+		
+		sp = An;
+		
+		return Ok;
+	}
+	
 	
 	op_result read_address_on_68000( processor_state& s, op_params& pb )
 	{
