@@ -201,14 +201,13 @@ static uint32_t set_trace_mode_callback( v68k::processor_state& s )
 	return rts;
 }
 
-static uint32_t flush_screen_callback( v68k::processor_state& s )
+static inline
+void flush_screen_callback( v68k::processor_state& s )
 {
 	s.mem.translate( 0x0001A700,
 	                 21888,
 	                 v68k::user_data_space,
 	                 v68k::mem_update );
-	
-	return rts;
 }
 
 static
@@ -431,13 +430,16 @@ static const function_type the_callbacks[] =
 	&load_callback,
 	&enter_supervisor_mode_callback,
 	&module_suspend_callback,
+	
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
 	&set_trace_mode_callback,
-	&flush_screen_callback,
+	
+	&unimplemented_callback,
 	&lock_screen_callback,
 	&unlock_screen_callback,
+	
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
 	&chk_trap_callback,

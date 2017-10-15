@@ -19,13 +19,16 @@ enum
 	load,
 	enter_supervisor_mode,
 	module_suspend,
+	
 	trace_reserved,
 	trace_all,
 	trace_flow,
 	trace_off,
-	flush_screen,
+	
+	flush_screen_OBSOLETE,
 	lock_screen,
 	unlock_screen,
+	
 	illegal_instruction,
 	division_by_zero,
 	chk_trap,
