@@ -97,6 +97,8 @@ namespace v68k
 	
 	op_result read_address_on_68000( processor_state& state, op_params& pb );
 	
+	op_result check_stack_alignment( processor_state& state, op_params& pb );
+	
 }
 
 #endif

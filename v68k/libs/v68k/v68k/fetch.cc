@@ -478,4 +478,16 @@ namespace v68k
 		return Ok;
 	}
 	
+	op_result check_stack_alignment( processor_state& s, op_params& pb )
+	{
+		uint32_t sp = s.a(7);
+		
+		if ( s.badly_aligned_data( sp ) )
+		{
+			return Address_error;
+		}
+		
+		return Ok;
+	}
+	
 }
