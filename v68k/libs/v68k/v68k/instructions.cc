@@ -81,7 +81,9 @@ namespace v68k
 	instruction decoded_PEA =
 	{
 		fetches_effective_address,
-		microcode_PEA
+		microcode_PEA,
+		unsized,
+		uses_stack,
 	};
 	
 	instruction decoded_EXTB =
@@ -102,13 +104,16 @@ namespace v68k
 	{
 		fetches_LINK,
 		microcode_LINK,
-		word_sized
+		word_sized,
+		uses_stack,
 	};
 	
 	instruction decoded_UNLK =
 	{
 		fetches_UNLK,
-		microcode_UNLK
+		microcode_UNLK,
+		unsized,
+		uses_stack,
 	};
 	
 	instruction decoded_MOVE_to_USP =
@@ -154,7 +159,7 @@ namespace v68k
 		fetches_none,
 		microcode_RTE,
 		unsized,
-		privileged
+		privileged | uses_stack,
 	};
 	
 	instruction decoded_RTD =
@@ -162,13 +167,15 @@ namespace v68k
 		fetches_signed_word,
 		microcode_RTD,
 		word_sized,
-		not_before_68010
+		not_before_68010 | uses_stack,
 	};
 	
 	instruction decoded_RTS =
 	{
 		fetches_none,
-		microcode_RTS
+		microcode_RTS,
+		unsized,
+		uses_stack,
 	};
 	
 	instruction decoded_TRAPV =
@@ -180,7 +187,9 @@ namespace v68k
 	instruction decoded_RTR =
 	{
 		fetches_none,
-		microcode_RTR
+		microcode_RTR,
+		unsized,
+		uses_stack,
 	};
 	
 	instruction decoded_MOVEC =

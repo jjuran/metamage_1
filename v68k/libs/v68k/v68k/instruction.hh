@@ -28,6 +28,7 @@ namespace v68k
 		
 		loads_and        = 0x1000,
 		stores_data      = 0x2000,
+		uses_stack       = 0x4000,
 		byte_access      = 0x8000,  // all access is byte-sized:  MOVEP
 		
 		CCR_update_set_X = 0x0080,  // Assign C to X

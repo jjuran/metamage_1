@@ -114,6 +114,11 @@ namespace v68k
 				storage.code = opcode & 0x0040 ? microcode_BRA
 				                               : microcode_BSR;
 				
+				if ( ! (opcode & 0x0040) )
+				{
+					storage.flags = uses_stack;
+				}
+				
 				return &storage;
 			}
 			

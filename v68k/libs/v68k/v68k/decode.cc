@@ -286,6 +286,7 @@ namespace v68k
 			
 			case 0x6100:
 				storage.code = &microcode_BSR;
+				storage.flags = uses_stack;
 				break;
 			
 			default:

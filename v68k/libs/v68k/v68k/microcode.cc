@@ -360,11 +360,6 @@ namespace v68k
 	{
 		uint32_t& sp = s.a(7);
 		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
-		
 		sp -= 4;
 		
 		if ( !s.mem.put_long( sp, pb.address, s.data_space() ) )
@@ -497,11 +492,6 @@ namespace v68k
 		uint32_t& An = s.a(n);
 		uint32_t& sp = s.a(7);
 		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
-		
 		sp -= 4;
 		
 		if ( !s.mem.put_long( sp, An, s.data_space() ) )
@@ -522,11 +512,6 @@ namespace v68k
 		
 		uint32_t& An = s.a(n);
 		uint32_t& sp = s.a(7);
-		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
 		
 		if ( !s.mem.get_long( sp, An, s.data_space() ) )
 		{
@@ -587,11 +572,6 @@ namespace v68k
 	{
 		uint32_t& sp = s.a(7);
 		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
-		
 		uint16_t id;
 		
 		if ( !s.mem.get_word( sp + 6, id, supervisor_data_space ) )
@@ -647,11 +627,6 @@ namespace v68k
 	{
 		uint32_t& sp = s.a(7);
 		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
-		
 		if ( !s.mem.get_long( sp, s.pc(), s.data_space() ) )
 		{
 			return Bus_error;
@@ -675,11 +650,6 @@ namespace v68k
 	op_result microcode_RTR( processor_state& s, op_params& pb )
 	{
 		uint32_t& sp = s.a(7);
-		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
 		
 		uint16_t ccr;
 		
@@ -853,11 +823,6 @@ namespace v68k
 	op_result microcode_BSR( processor_state& s, op_params& pb )
 	{
 		uint32_t& sp = s.a(7);
-		
-		if ( s.badly_aligned_data( sp ) )
-		{
-			return Address_error;
-		}
 		
 		sp -= 4;
 		

@@ -164,6 +164,16 @@ namespace v68k
 			}
 		}
 		
+		// stack alignment check
+		
+		if ( decoded->flags & uses_stack )
+		{
+			if ( badly_aligned_data( a(7) ) )
+			{
+				return address_error();
+			}
+		}
+		
 		const uint8_t saved_ttsm = sr.ttsm;
 		
 		// execute
