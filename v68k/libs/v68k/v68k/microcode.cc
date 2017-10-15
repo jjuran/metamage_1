@@ -626,7 +626,12 @@ namespace v68k
 	
 	op_result microcode_RTD( processor_state& s, op_params& pb )
 	{
-		microcode_RTS( s, pb );
+		op_result result = microcode_RTS( s, pb );
+		
+		if ( result < 0 )
+		{
+			return result;
+		}
 		
 		s.a(7) += pb.first;
 		
