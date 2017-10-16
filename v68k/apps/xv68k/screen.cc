@@ -20,6 +20,7 @@
 
 // v68k-screen
 #include "screen/lock.hh"
+#include "screen/surface.hh"
 
 // xv68k
 #include "shared_memory.hh"
@@ -101,6 +102,12 @@ int publish_raster( const char* path )
 	
 	the_screen_buffer = raster.addr;
 	
+	using v68k::screen::the_surface_shape;
+	
+	the_surface_shape.width  = raster.meta->desc.width;
+	the_surface_shape.height = raster.meta->desc.height;
+	the_surface_shape.stride = raster.meta->desc.stride;
+	
 	sync_relay& sync = initialize( raster );
 	
 	the_sync_relay = &sync;
@@ -120,6 +127,12 @@ int set_screen_backing_store_file( const char* path, bool is_raster )
 		
 		return publish_raster( path );
 	}
+	
+	using v68k::screen::the_surface_shape;
+	
+	the_surface_shape.width  = 512;
+	the_surface_shape.height = 342;
+	the_surface_shape.stride = 64;
 	
 	the_screen_buffer = open_shared_memory( path, screen_size );
 	
