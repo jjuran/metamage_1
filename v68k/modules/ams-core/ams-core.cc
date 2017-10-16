@@ -69,10 +69,10 @@ void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
 
-short         ScreenRow : 0x0106;
-unsigned long ScrnBase  : 0x0824;
-Point         Mouse     : 0x0830;
-Rect          CrsrPin   : 0x0834;
+short ScreenRow : 0x0106;
+void* ScrnBase  : 0x0824;
+Point Mouse     : 0x0830;
+Rect  CrsrPin   : 0x0834;
 
 void* os_trap_table     [] : 1 * 1024;
 void* toolbox_trap_table[] : 3 * 1024;
@@ -87,12 +87,19 @@ enum
 };
 
 
+static inline
+pascal asm void ScrnBitMap( BitMap* screenBits )
+{
+	DC.W     _ScrnBitMap
+}
+
 static void initialize_low_memory_globals()
 {
-	const short screen_width  = 512;
-	const short screen_height = 342;
+	BitMap screenBits;
 	
-	ScreenRow = screen_width / 8;  // 64
+	ScrnBitMap( &screenBits );
+	
+	ScreenRow = screenBits.rowBytes;
 	
 	const short n_max_events = 20;
 	
@@ -101,14 +108,11 @@ static void initialize_low_memory_globals()
 	SysEvtBuf = calloc( event_size, n_max_events );
 	SysEvtCnt = n_max_events - 1;
 	
-	ScrnBase = 0x0001A700;
+	ScrnBase = screenBits.baseAddr;
 	
 	*(long*) &Mouse = 0x000F000F;  // 15, 15
 	
-	*(long*) &CrsrPin = 0;  // topLeft
-	
-	CrsrPin.bottom = screen_height;
-	CrsrPin.right  = screen_width;
+	CrsrPin = screenBits.bounds;
 	
 	init_lowmem_Cursor();
 }
