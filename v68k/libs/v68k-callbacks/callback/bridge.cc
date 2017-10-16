@@ -201,16 +201,6 @@ static uint32_t set_trace_mode_callback( v68k::processor_state& s )
 	return rts;
 }
 
-#define BIG16 iota::big_u16
-
-static const uint8_t screenBits[] =
-{
-	0x00, 0x01, 0xA7, 0x00,  // baseAddr = 0x0001A700
-	0x00, 0x40,              // rowBytes = 64
-	0x00, 0x00, 0x00, 0x00,  // bounds[] = { 0, 0, 342, 512 }
-	0x01, 0x56, 0x02, 0x00,
-};
-
 static
 uint32_t ScrnBitMap_callback( v68k::processor_state& s )
 {
@@ -233,7 +223,9 @@ uint32_t ScrnBitMap_callback( v68k::processor_state& s )
 	
 	sp += 4;
 	
-	const size_t n = sizeof screenBits;
+	const size_t n = sizeof (uint32_t)
+	               + sizeof (uint16_t)
+	               + sizeof (uint16_t) * 4;
 	
 	uint8_t* p = s.mem.translate( pointer, n, s.data_space(), v68k::mem_write );
 	
@@ -242,7 +234,30 @@ uint32_t ScrnBitMap_callback( v68k::processor_state& s )
 		return v68k::Bus_error;
 	}
 	
-	memcpy( p, screenBits, n );
+	const uint32_t baseAddr = 0x0001A700;
+	const uint16_t rowBytes = 64;
+	const uint16_t height   = 342;
+	const uint16_t width    = 512;
+	
+	*p++ = uint8_t( baseAddr >> 24 );
+	*p++ = uint8_t( baseAddr >> 16 );
+	*p++ = uint8_t( baseAddr >>  8 );
+	*p++ = uint8_t( baseAddr       );
+	
+	*p++ = uint8_t( rowBytes >> 8 );
+	*p++ = uint8_t( rowBytes      );
+	
+	*p++ = 0;
+	*p++ = 0;
+	
+	*p++ = 0;
+	*p++ = 0;
+	
+	*p++ = uint8_t( height >> 8 );
+	*p++ = uint8_t( height      );
+	
+	*p++ = uint8_t( width >> 8 );
+	*p++ = uint8_t( width      );
 	
 	s.pc() = return_address - 2;
 	
