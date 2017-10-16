@@ -5,8 +5,14 @@
 
 #include "memory.hh"
 
+// v68k-screen
+#include "screen/storage.hh"
+
 
 #pragma exceptions off
+
+
+const uint32_t screen_addr = 0x0001A700;
 
 
 memory_manager::memory_manager( uint8_t*  low_mem_base,
@@ -35,6 +41,8 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	{
 		return its_low_mem.translate( addr, length, fc, access );
 	}
+	
+	const uint32_t screen_size = v68k::screen::the_screen_size;
 	
 	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
 	{

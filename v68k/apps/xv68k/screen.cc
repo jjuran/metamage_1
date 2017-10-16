@@ -20,6 +20,7 @@
 
 // v68k-screen
 #include "screen/lock.hh"
+#include "screen/storage.hh"
 #include "screen/surface.hh"
 
 // xv68k
@@ -29,8 +30,9 @@
 using raster::raster_load;
 using raster::sync_relay;
 
+using v68k::screen::the_screen_buffer;
+using v68k::screen::the_screen_size;
 
-static void* the_screen_buffer;
 
 static sync_relay* the_sync_relay;
 
@@ -41,7 +43,7 @@ struct end_sync
 	{
 		if ( the_sync_relay )
 		{
-			memset( the_screen_buffer, '\xFF', screen_size );
+			memset( the_screen_buffer, '\xFF', the_screen_size );
 			
 			terminate( *the_sync_relay );
 		}
@@ -65,7 +67,7 @@ void close_without_errno( int fd )
 }
 
 static
-sync_relay& initialize( raster_load& raster )
+sync_relay& initialize( raster_load& raster, uint32_t screen_size )
 {
 	using namespace raster;
 	
@@ -108,7 +110,10 @@ int publish_raster( const char* path )
 	the_surface_shape.height = raster.meta->desc.height;
 	the_surface_shape.stride = raster.meta->desc.stride;
 	
-	sync_relay& sync = initialize( raster );
+	the_screen_size = raster.meta->desc.height
+	                * raster.meta->desc.stride;
+	
+	sync_relay& sync = initialize( raster, the_screen_size );
 	
 	the_sync_relay = &sync;
 	
@@ -134,6 +139,9 @@ int set_screen_backing_store_file( const char* path, bool is_raster )
 	the_surface_shape.height = 342;
 	the_surface_shape.stride = 64;
 	
+	const uint32_t screen_size = 21888;  // 512x342x1 / 8
+	
+	the_screen_size   = screen_size;
 	the_screen_buffer = open_shared_memory( path, screen_size );
 	
 	if ( the_screen_buffer == 0 )  // NULL
@@ -160,6 +168,8 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 	}
 	
 	using v68k::screen::is_unlocked;
+	
+	const uint32_t screen_size = the_screen_size;
 	
 	if ( length > screen_size )
 	{
