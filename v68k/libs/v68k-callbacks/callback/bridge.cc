@@ -25,6 +25,9 @@
 // v68k-auth
 #include "auth/auth.hh"
 
+// v68k-screen
+#include "screen/lock.hh"
+
 // v68k-utils
 #include "utils/load.hh"
 #include "utils/print_register_dump.hh"
@@ -46,9 +49,8 @@ namespace v68k     {
 namespace callback {
 
 using v68k::auth::fully_authorized;
+using v68k::screen::lock_level;
 
-
-short screen_lock_level;
 
 enum
 {
@@ -276,7 +278,7 @@ void flush_screen_callback( v68k::processor_state& s )
 static
 uint32_t lock_screen_callback( v68k::processor_state& s )
 {
-	--screen_lock_level;
+	--lock_level;
 	
 	return rts;
 }
@@ -284,7 +286,7 @@ uint32_t lock_screen_callback( v68k::processor_state& s )
 static
 uint32_t unlock_screen_callback( v68k::processor_state& s )
 {
-	if ( ++screen_lock_level == 0 )
+	if ( ++lock_level == 0 )
 	{
 		flush_screen_callback( s );
 	}

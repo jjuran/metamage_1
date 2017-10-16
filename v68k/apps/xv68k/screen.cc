@@ -18,8 +18,8 @@
 #include "raster/load.hh"
 #include "raster/relay.hh"
 
-// v68k-callbacks
-#include "callback/bridge.hh"
+// v68k-screen
+#include "screen/lock.hh"
 
 // xv68k
 #include "shared_memory.hh"
@@ -153,7 +153,7 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 		return 0;  // NULL
 	}
 	
-	using v68k::callback::screen_lock_level;
+	using v68k::screen::lock_level;
 	
 	if ( length > screen_size )
 	{
@@ -168,7 +168,7 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 	
 	uint8_t* p = (uint8_t*) the_screen_buffer + addr;
 	
-	const bool unlocked = screen_lock_level >= 0  ||  ignoring_screen_locks;
+	const bool unlocked = lock_level >= 0  ||  ignoring_screen_locks;
 	
 	if ( access == v68k::mem_update  &&  unlocked )
 	{
