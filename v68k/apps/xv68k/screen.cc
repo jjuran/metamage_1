@@ -8,7 +8,6 @@
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
-#include <sys/mman.h>
 
 // Standard C
 #include <errno.h>
@@ -16,12 +15,12 @@
 
 // raster
 #include "raster/load.hh"
-#include "raster/relay.hh"
 
 // v68k-screen
 #include "screen/lock.hh"
 #include "screen/storage.hh"
 #include "screen/surface.hh"
+#include "screen/update.hh"
 
 // xv68k
 #include "shared_memory.hh"
@@ -32,29 +31,8 @@ using raster::sync_relay;
 
 using v68k::screen::the_screen_buffer;
 using v68k::screen::the_screen_size;
+using v68k::screen::the_sync_relay;
 
-
-static sync_relay* the_sync_relay;
-
-
-struct end_sync
-{
-	~end_sync()
-	{
-		if ( the_sync_relay )
-		{
-			memset( the_screen_buffer, '\xFF', the_screen_size );
-			
-			terminate( *the_sync_relay );
-		}
-	}
-};
-
-#ifndef __RELIX__
-
-static end_sync finally_end_sync;
-
-#endif
 
 static
 void close_without_errno( int fd )
@@ -186,18 +164,7 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 	
 	if ( access == v68k::mem_update  &&  is_unlocked() )
 	{
-	#ifdef __RELIX__
-		
-		msync( the_screen_buffer, screen_size, MS_SYNC );
-		
-	#else
-		
-		if ( the_sync_relay != NULL )
-		{
-			raster::broadcast( *the_sync_relay );
-		}
-		
-	#endif
+		v68k::screen::update();
 	}
 	
 	return p;
