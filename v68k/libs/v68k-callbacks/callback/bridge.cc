@@ -28,6 +28,7 @@
 // v68k-screen
 #include "screen/lock.hh"
 #include "screen/surface.hh"
+#include "screen/update.hh"
 
 // v68k-utils
 #include "utils/load.hh"
@@ -269,15 +270,6 @@ uint32_t ScrnBitMap_callback( v68k::processor_state& s )
 	return nop;
 }
 
-static inline
-void flush_screen_callback( v68k::processor_state& s )
-{
-	s.mem.translate( 0x0001A700,
-	                 21888,
-	                 v68k::user_data_space,
-	                 v68k::mem_update );
-}
-
 static
 uint32_t lock_screen_callback( v68k::processor_state& s )
 {
@@ -291,7 +283,7 @@ uint32_t unlock_screen_callback( v68k::processor_state& s )
 {
 	if ( ++lock_level == 0 )
 	{
-		flush_screen_callback( s );
+		v68k::screen::update();
 	}
 	
 	return rts;
