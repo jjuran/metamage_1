@@ -46,8 +46,6 @@ enum
 	n
 };
 
-extern short screen_lock_level;
-
 inline uint32_t callback_address( int index )
 {
 	return uint32_t( (index + 1) * -2 );

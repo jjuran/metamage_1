@@ -25,6 +25,10 @@
 // v68k-auth
 #include "auth/auth.hh"
 
+// v68k-screen
+#include "screen/lock.hh"
+#include "screen/surface.hh"
+
 // v68k-utils
 #include "utils/load.hh"
 #include "utils/print_register_dump.hh"
@@ -46,9 +50,8 @@ namespace v68k     {
 namespace callback {
 
 using v68k::auth::fully_authorized;
+using v68k::screen::lock_level;
 
-
-short screen_lock_level;
 
 enum
 {
@@ -234,10 +237,12 @@ uint32_t ScrnBitMap_callback( v68k::processor_state& s )
 		return v68k::Bus_error;
 	}
 	
+	using v68k::screen::the_surface_shape;
+	
 	const uint32_t baseAddr = 0x0001A700;
-	const uint16_t rowBytes = 64;
-	const uint16_t height   = 342;
-	const uint16_t width    = 512;
+	const uint16_t rowBytes = the_surface_shape.stride;
+	const uint16_t height   = the_surface_shape.height;
+	const uint16_t width    = the_surface_shape.width;
 	
 	*p++ = uint8_t( baseAddr >> 24 );
 	*p++ = uint8_t( baseAddr >> 16 );
@@ -276,7 +281,7 @@ void flush_screen_callback( v68k::processor_state& s )
 static
 uint32_t lock_screen_callback( v68k::processor_state& s )
 {
-	--screen_lock_level;
+	--lock_level;
 	
 	return rts;
 }
@@ -284,7 +289,7 @@ uint32_t lock_screen_callback( v68k::processor_state& s )
 static
 uint32_t unlock_screen_callback( v68k::processor_state& s )
 {
-	if ( ++screen_lock_level == 0 )
+	if ( ++lock_level == 0 )
 	{
 		flush_screen_callback( s );
 	}

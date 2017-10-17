@@ -10,13 +10,6 @@
 #include "v68k/memory.hh"
 
 
-const uint32_t screen_addr = 0x0001A700;
-
-const uint32_t screen_size = 21888;  // 512x342x1 / 8
-
-
-void ignore_screen_locks();
-
 int set_screen_backing_store_file( const char* path, bool is_raster );
 
 class screen_memory : public v68k::memory

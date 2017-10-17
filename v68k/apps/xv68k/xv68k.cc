@@ -42,6 +42,9 @@
 #include "utils/load.hh"
 #include "utils/print_register_dump.hh"
 
+// v68k-screen
+#include "screen/lock.hh"
+
 // v68k-syscalls
 #include "syscall/bridge.hh"
 #include "syscall/handler.hh"
@@ -63,6 +66,7 @@
 using v68k::big_longword;
 
 using v68k::auth::fully_authorized;
+using v68k::screen::ignore_screen_locks;
 
 static bool tracing;
 static bool verbose;
