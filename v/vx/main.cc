@@ -42,6 +42,7 @@
 #include "sockets.hh"
 #include "thread.hh"
 #include "thread_state.hh"
+#include "channel/concept.hh"
 
 // vx
 #include "library.hh"
@@ -221,6 +222,8 @@ int main( int argc, char** argv )
 		define( proc_touch  );
 		define( proc_truncate );
 	}
+	
+	define( "channel", Channel_Concept() );
 	
 	define( fd_vtype      );
 	define( thread_vtype  );
