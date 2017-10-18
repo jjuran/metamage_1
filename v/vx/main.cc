@@ -155,21 +155,27 @@ void set_argv( const char* arg0, int argn, char* const* args )
 }
 
 static
+void define( const char* name, const Value& v )
+{
+	globals.declare( name, Symbol_const ).sym()->assign( v );
+}
+
+static
 void define( const proc_info& proc )
 {
-	globals.declare( proc.name, Symbol_const ).sym()->assign( Proc( proc ) );
+	define( proc.name, Proc( proc ) );
 }
 
 static
 void define( const type_info& type )
 {
-	globals.declare( type.name, Symbol_const ).sym()->assign( Type( type ) );
+	define( type.name, Type( type ) );
 }
 
 static
 void define( const char* name, int i )
 {
-	globals.declare( name, Symbol_const ).sym()->assign( FileDescriptor( i ) );
+	define( name, FileDescriptor( i ) );
 }
 
 int main( int argc, char** argv )
