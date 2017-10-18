@@ -77,6 +77,7 @@ namespace vlib
 			
 			case Op_empower:  return "^";
 			
+			case Op_recv:     return "<=";
 			case Op_preinc:   return "++";
 			case Op_predec:   return "--";
 			case Op_postinc:  return "++";

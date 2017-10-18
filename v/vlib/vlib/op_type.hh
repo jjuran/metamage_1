@@ -106,6 +106,7 @@ namespace vlib
 		Op_delta,
 		Op_list,
 		Op_send,
+		Op_recv,
 		Op_assert,
 		Op_lambda,
 		Op_try,

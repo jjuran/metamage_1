@@ -31,6 +31,7 @@ namespace vlib
 		{ Token_tilde, Op_unary_negate },
 		{ Token_plus_x2,  Op_preinc },
 		{ Token_minus_x2, Op_predec },
+		{ Token_lt_equals,   Op_recv        },
 		{ Token_parens_plus, Op_unary_count },
 		{ Token_asterisk,    Op_unary_deref },
 		{ Token_ampersand,   Op_unary_refer },
