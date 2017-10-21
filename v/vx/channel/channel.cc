@@ -49,10 +49,15 @@ namespace vlib
 	static
 	Value unary_op_handler( op_type op, const Value& v )
 	{
+		const Channel& channel = static_cast< const Channel& >( v );
+		
 		switch ( op )
 		{
 			case Op_typeof:
 				return Channel_Concept();
+			
+			case Op_recv:
+				return channel.get()->recv();
 			
 			default:
 				break;
