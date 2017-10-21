@@ -25,6 +25,8 @@
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
@@ -307,6 +309,47 @@ namespace vlib
 		Value& stack_frame = expr->right;
 		
 		Value& variable = get_nth_mutable( stack_frame, index );
+		
+		if ( const dispatch* methods = container.dispatch_methods() )
+		{
+			if ( const operators* ops = methods->ops )
+			{
+				if ( handler_1arg handler = ops->unary )
+				{
+					while ( true )
+					{
+						// This may block
+						
+						const Value result = handler( Op_recv, container );
+						
+						if ( result.type() == 0 )
+						{
+							break;
+						}
+						
+						if ( is_empty_list( result ) )
+						{
+							return;
+						}
+						
+						variable.sym()->deref_unsafe() = result;
+						
+						try
+						{
+							v_invoke( activation );
+						}
+						catch ( const transfer_via_break& )
+						{
+							return;
+						}
+						catch ( const transfer_via_continue& )
+						{
+							continue;  // no-op
+						}
+					}
+				}
+			}
+		}
 		
 		generic_iterator it( container );
 		
