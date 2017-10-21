@@ -308,8 +308,6 @@ namespace vlib
 		
 		Value& variable = get_nth_mutable( stack_frame, index );
 		
-		expr = container.expr();
-		
 		generic_iterator it( container );
 		
 		while ( it )
