@@ -1,0 +1,30 @@
+#!/usr/bin/env vx
+
+const args = argv[ 1 -> argv.length ]
+
+const results = channel()
+
+def worker
+{
+	const path = _
+	
+	return thread { results <== path => str sha256 load path }
+}
+
+def report
+{
+	while var r = results.recv() do
+	{
+		print r.value "  " r.key
+	}
+}
+
+const workers = args map worker
+const reporter = thread report
+
+for w in workers do
+{
+	w.join()
+}
+
+results.close()
