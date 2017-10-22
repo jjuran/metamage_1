@@ -13,7 +13,7 @@ def worker
 
 def report
 {
-	while var r = results.recv() do
+	for r in results do
 	{
 		print r.value "  " r.key
 	}
