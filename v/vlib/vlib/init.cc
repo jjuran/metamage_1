@@ -26,6 +26,7 @@
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/receiver.hh"
 #include "vlib/types/record.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -70,6 +71,7 @@ namespace vlib
 		define_keyword( "bool",     boolean_vtype  );
 		define_keyword( "function", function_vtype );
 		define_keyword( "fraction", fraction_vtype );
+		define_keyword( "receiver", receiver_vtype );
 		define_keyword( "iterator", iterator_vtype );
 		define_keyword( "pointer",  pointer_vtype  );
 		define_keyword( "integer",  integer_vtype  );
