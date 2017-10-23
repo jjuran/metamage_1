@@ -76,7 +76,7 @@ namespace vlib
 			fd_error( fd );
 		}
 		
-		return FileDescriptor( fd );
+		return FileDescriptor( fd, automatic );
 	}
 	
 	static const Type c_str = c_str_vtype;
