@@ -5,8 +5,17 @@
 
 #include "thread_state.hh"
 
+// POSIX
+#include <unistd.h>
+
+// Standard C
+#include <stdlib.h>
+
 // Standard C++
 #include <vector>
+
+// debug
+#include "debug/assert.hh"
 
 // poseven
 #include "poseven/types/errno_t.hh"
@@ -20,6 +29,11 @@
 
 // vx
 #include "exception.hh"
+
+
+#define THREAD_SELF_DESTRUCTION  "\n" "vx:   SELF-DESTRUCT CODE ACCEPTED" "\n"
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 namespace vlib
@@ -138,6 +152,15 @@ namespace vlib
 	{
 		if ( its_thread.exists() )
 		{
+			if ( its_thread.is_the_current_thread() )
+			{
+				write( STDERR_FILENO, STR_LEN( THREAD_SELF_DESTRUCTION "\n" ) );
+				
+				ASSERT( ! its_thread.is_the_current_thread() );
+				
+				abort();  // in case ASSERT() is a no-op
+			}
+			
 			try
 			{
 				its_thread.join();
