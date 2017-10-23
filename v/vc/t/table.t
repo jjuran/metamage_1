@@ -17,3 +17,8 @@ $ vc 'var t = str^[]; t <-- baz: 3; t'
 
 $ vc 'var t = str^[]; t <-- (); t'
 1 >= '(string^[])'
+
+%
+
+$ vc 'int^[] map {_}'
+1 >= '[]'

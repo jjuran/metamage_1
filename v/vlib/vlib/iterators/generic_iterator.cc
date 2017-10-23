@@ -47,6 +47,12 @@ namespace vlib
 			switch ( expr->op )
 			{
 				case Op_empower:
+					if ( is_empty_array( expr->right ) )
+					{
+						its_impl = new_iterator< list_iterator >( empty_list );
+						return;
+					}
+					
 					expr = expr->right.expr();
 					// fall through
 				
