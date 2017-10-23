@@ -220,6 +220,7 @@ int main( int argc, char** argv )
 		define( proc_link   );
 		define( proc_rewrite );
 		define( proc_tcpconnect );
+		define( proc_tcplisten  );
 		define( proc_touch  );
 		define( proc_truncate );
 	}
@@ -229,6 +230,7 @@ int main( int argc, char** argv )
 	define( fd_vtype      );
 	define( thread_vtype  );
 	
+	define( proc_accept   );
 	define( proc_close    );
 	define( proc_dirname  );
 	define( proc_dup      );

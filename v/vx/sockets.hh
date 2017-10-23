@@ -13,7 +13,9 @@
 namespace vlib
 {
 	
+	extern const proc_info proc_accept;
 	extern const proc_info proc_tcpconnect;
+	extern const proc_info proc_tcplisten;
 	
 }
 
