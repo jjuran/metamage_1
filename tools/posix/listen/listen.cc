@@ -55,6 +55,26 @@ int usage()
 	return 1;
 }
 
+class addrinfo_cleanup
+{
+	private:
+		addrinfo* its_ai;
+		
+		// non-copyable
+		addrinfo_cleanup           ( const addrinfo_cleanup& );
+		addrinfo_cleanup& operator=( const addrinfo_cleanup& );
+	
+	public:
+		addrinfo_cleanup( addrinfo* ai ) : its_ai( ai )
+		{
+		}
+		
+		~addrinfo_cleanup()
+		{
+			::freeaddrinfo( its_ai );
+		}
+};
+
 static
 int listen_inet( int pf, const sockaddr* addr, socklen_t size )
 {
@@ -106,6 +126,8 @@ int listen_peer( const char* node, const char* service )
 		fprintf( stderr, PROGRAM ": %s:%s: %s\n", node, service, error );
 		exit( 1 );
 	}
+	
+	addrinfo_cleanup cleanup( ai );
 	
 	return listen_inet( ai->ai_family, ai->ai_addr, ai->ai_addrlen );
 }
