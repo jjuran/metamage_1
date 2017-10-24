@@ -22,8 +22,29 @@
 #include "file_descriptor.hh"
 
 
+
 namespace vlib
 {
+	
+	class addrinfo_cleanup
+	{
+		private:
+			addrinfo* its_ai;
+			
+			// non-copyable
+			addrinfo_cleanup           ( const addrinfo_cleanup& );
+			addrinfo_cleanup& operator=( const addrinfo_cleanup& );
+		
+		public:
+			addrinfo_cleanup( addrinfo* ai ) : its_ai( ai )
+			{
+			}
+			
+			~addrinfo_cleanup()
+			{
+				::freeaddrinfo( its_ai );
+			}
+	};
 	
 	static
 	void gai_error( const char* node, const char* service, int err )
@@ -59,6 +80,8 @@ namespace vlib
 		{
 			gai_error( node, service, err );
 		}
+		
+		addrinfo_cleanup cleanup( ai );
 		
 		int fd = socket( ai->ai_family, SOCK_STREAM, 0 );
 		
