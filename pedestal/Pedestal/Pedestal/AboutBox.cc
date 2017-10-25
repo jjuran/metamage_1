@@ -280,6 +280,9 @@ namespace Pedestal
 		                                #ifdef MAC_OS_X_VERSION_10_2
 		                                  | Mac::kWindowCompositingAttribute
 		                                #endif
+		                                #ifdef MAC_OS_X_VERSION_10_3
+		                                  | Mac::kWindowAsyncDragAttribute
+		                                #endif
 		                                #ifdef MAC_OS_X_VERSION_10_7
 		                                  | Mac::kWindowHighResolutionCapableAttribute
 		                                #endif
