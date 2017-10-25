@@ -49,6 +49,12 @@ namespace Mac
 		
 	#endif
 		
+	#ifdef MAC_OS_X_VERSION_10_3
+		
+		kWindowAsyncDragAttribute         = ::kWindowAsyncDragAttribute,
+		
+	#endif
+		
 	#ifdef MAC_OS_X_VERSION_10_7
 		
 		kWindowHighResolutionCapableAttribute =
