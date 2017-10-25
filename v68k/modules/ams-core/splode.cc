@@ -183,13 +183,13 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	PostEvent( what, message );
 }
 
-static inline
-void SetMouse( const splode::pointer_location_buffer& buffer )
+static
+void SetMouse( short x, short y )
 {
 	QDGlobals& qd = get_QDGlobals();
 	
-	Mouse.h = buffer.x;
-	Mouse.v = buffer.y;
+	Mouse.h = x;
+	Mouse.v = y;
 	
 	const short width  = qd.screenBits.bounds.right;
 	const short height = qd.screenBits.bounds.bottom;
@@ -213,6 +213,18 @@ void SetMouse( const splode::pointer_location_buffer& buffer )
 	}
 	
 	update_cursor_location();
+}
+
+static inline
+void SetMouse( const splode::pointer_movement_buffer& buffer )
+{
+	SetMouse( Mouse.h + buffer.dx, Mouse.v - buffer.dy );
+}
+
+static inline
+void SetMouse( const splode::pointer_location_buffer& buffer )
+{
+	SetMouse( buffer.x, buffer.y );
 }
 
 static
@@ -245,6 +257,12 @@ void queue_event( int fd )
 		
 		case 1:
 			post_event( *(splode::ascii_synth_buffer*) buffer );
+			break;
+		
+		case 2:
+			using splode::pointer_movement_buffer;
+			
+			SetMouse( *(pointer_movement_buffer*) buffer );
 			break;
 		
 		case 3:
