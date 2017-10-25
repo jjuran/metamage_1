@@ -91,6 +91,15 @@ namespace pointer
 		uint8_t ascii;
 	};
 	
+	// Type/length 2:  Pointer movement.
+	
+	struct pointer_movement_buffer
+	{
+		uint8_t len;
+		int8_t  dx;
+		int8_t  dy;
+	};
+	
 	// Type/length 3:  Pointer input event.
 	
 	struct pointer_event_buffer
