@@ -367,6 +367,12 @@ namespace Genie
 				}
 		}
 		
+	#ifdef MAC_OS_X_VERSION_10_3
+		
+		attrs |= Mac::kWindowAsyncDragAttribute;
+		
+	#endif
+		
 	#ifdef MAC_OS_X_VERSION_10_2
 		
 		if ( params.it_is_compositing )
