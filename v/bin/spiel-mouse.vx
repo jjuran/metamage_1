@@ -1,0 +1,24 @@
+#!/usr/bin/env vx
+
+var button-state = x"00"
+
+for msg in receiver { read( IN, 3 ) or () } do
+{
+	const deltas = msg[ 1 .. 2 ]
+	
+	if deltas != x"0000" then
+	{
+		OUT <== x"02" deltas
+	}
+	
+	const b = msg[[ 0 ]] & x"01"
+	
+	if b != button-state then
+	{
+		const action = packed( x"0300", byte (u8 .*button-state + 1), x"00" )
+		
+		button-state = b
+		
+		OUT <== action
+	}
+}
