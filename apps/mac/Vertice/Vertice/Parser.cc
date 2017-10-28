@@ -413,7 +413,11 @@ namespace Vertice
 	
 	void Parser::ParseLine( const plus::string& line )
 	{
-		const char* cmd_start = gear::find_first_nonmatch( line.data(), line.size(), "\p \t" );
+		const unsigned char whitespace[] = { 2, ' ', '\t' };
+		
+		const char* cmd_start = gear::find_first_nonmatch( line.data(),
+		                                                   line.size(),
+		                                                   whitespace );
 		
 		if ( cmd_start == NULL )
 		{
