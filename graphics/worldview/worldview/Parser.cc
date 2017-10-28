@@ -1,9 +1,9 @@
 /*
-	Vertice/Parser.cc
-	-----------------
+	worldview/Parser.cc
+	-------------------
 */
 
-#include "Vertice/Parser.hh"
+#include "worldview/Parser.hh"
 
 // Standard C/C++
 #include <cstring>
@@ -20,11 +20,11 @@
 // Vectoria
 #include "Vectoria/TriColor.hh"
 
-// Vertice
-#include "Vertice/Model.hh"
+// worldview
+#include "worldview/Model.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	using V::X;

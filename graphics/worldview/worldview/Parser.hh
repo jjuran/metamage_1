@@ -1,10 +1,10 @@
 /*
-	Vertice/Parser.hh
-	-----------------
+	worldview/Parser.hh
+	-------------------
 */
 
-#ifndef VERTICE_PARSER_HH
-#define VERTICE_PARSER_HH
+#ifndef WORLDVIEW_PARSER_HH
+#define WORLDVIEW_PARSER_HH
 
 // Standard C++
 #include <list>
@@ -17,11 +17,11 @@
 #include "Vectoria/Point3D.hh"
 #include "Vectoria/Units.hh"
 
-// Vertice
-#include "Vertice/Objects.hh"
+// worldview
+#include "worldview/Objects.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	class Scene;

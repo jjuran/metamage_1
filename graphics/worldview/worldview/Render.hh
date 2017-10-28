@@ -1,16 +1,16 @@
 /*
-	Vertice/Render.hh
-	-----------------
+	worldview/Render.hh
+	-------------------
 */
 
-#ifndef VERTICE_RENDER_HH
-#define VERTICE_RENDER_HH
+#ifndef WORLDVIEW_RENDER_HH
+#define WORLDVIEW_RENDER_HH
 
 // Standard C
 #include <stddef.h>
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	class Frame;

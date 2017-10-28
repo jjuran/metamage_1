@@ -1,9 +1,9 @@
 /*
-	Vertice/Render.cc
-	-----------------
+	worldview/Render.cc
+	-------------------
 */
 
-#include "Vertice/Render.hh"
+#include "worldview/Render.hh"
 
 // Standard C
 #include <stdint.h>
@@ -26,13 +26,13 @@
 // Portage
 #include "Portage/DepthBuffer.hh"
 
-// Vertice
-#include "Vertice/Objects.hh"
-#include "Vertice/Model.hh"
-#include "Vertice/Port.hh"
+// worldview
+#include "worldview/Model.hh"
+#include "worldview/Objects.hh"
+#include "worldview/Port.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	using V::W;

@@ -1,15 +1,15 @@
 /*
-	Vertice/Anaglyphs.cc
-	--------------------
+	worldview/Anaglyphs.cc
+	----------------------
 */
 
-#include "Vertice/Anaglyphs.hh"
+#include "worldview/Anaglyphs.hh"
 
 // iota
 #include "iota/endian.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	typedef unsigned char byte;

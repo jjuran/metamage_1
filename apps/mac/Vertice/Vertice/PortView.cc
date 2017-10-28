@@ -18,8 +18,8 @@
 #include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/Quickdraw.hh"
 
-// Vertice
-#include "Vertice/Render.hh"
+// worldview
+#include "worldview/Render.hh"
 
 
 namespace Vertice
