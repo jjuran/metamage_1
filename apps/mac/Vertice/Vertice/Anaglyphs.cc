@@ -5,13 +5,32 @@
 
 #include "Vertice/Anaglyphs.hh"
 
+// iota
+#include "iota/endian.hh"
+
 
 namespace Vertice
 {
 	
 	typedef unsigned char byte;
 	
-	enum { A, R, G, B };
+	enum
+	{
+		A_BE = 0,
+		R_BE = 1,
+		G_BE = 2,
+		B_BE = 3,
+		
+		B_LE = 0,
+		G_LE = 1,
+		R_LE = 2,
+		A_LE = 3,
+	};
+	
+	const int A = iota::is_little_endian() ? A_LE : A_BE;
+	const int R = iota::is_little_endian() ? R_LE : R_BE;
+	const int G = iota::is_little_endian() ? G_LE : G_BE;
+	const int B = iota::is_little_endian() ? B_LE : B_BE;
 	
 	static
 	void MergeTrueAnaglyph( const byte* left, byte* right )

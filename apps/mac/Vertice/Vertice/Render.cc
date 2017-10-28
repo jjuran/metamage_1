@@ -12,6 +12,9 @@
 #include <functional>
 #include <vector>
 
+// iota
+#include "iota/endian.hh"
+
 // Vectoria
 #include "Vectoria/Units.hh"
 #include "Vectoria/Clipping3D.hh"
@@ -159,11 +162,22 @@ namespace Vertice
 	static inline
 	uint8_t* inscribe_argb_pixel( uint8_t* p, uint8_t r, uint8_t g, uint8_t b )
 	{
-		p++;  // skip alpha
-		
-		*p++ = r;
-		*p++ = g;
-		*p++ = b;
+		if ( iota::is_little_endian() )
+		{
+			*p++ = b;
+			*p++ = g;
+			*p++ = r;
+			
+			p++;  // skip alpha
+		}
+		else
+		{
+			p++;  // skip alpha
+			
+			*p++ = r;
+			*p++ = g;
+			*p++ = b;
+		}
 		
 		return p;
 	}

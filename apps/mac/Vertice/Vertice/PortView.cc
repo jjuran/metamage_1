@@ -69,6 +69,18 @@ namespace Vertice
 		N::CopyBits( src, thePort );
 	}
 	
+	static inline
+	CGImageAlphaInfo skipFirst32Bit()
+	{
+	#ifdef __LITTLE_ENDIAN__
+		
+		return kCGImageAlphaNoneSkipFirst | kCGBitmapByteOrder32Little;
+		
+	#endif
+		
+		return kCGImageAlphaNoneSkipFirst;
+	}
+	
 	static
 	n::owned< CGImageRef > CGImage_from_GWorld( CGrafPtr gworld )
 	{
@@ -96,7 +108,7 @@ namespace Vertice
 		                         32,
 		                         stride,
 		                         colorSpace,
-		                         kCGImageAlphaNoneSkipFirst,
+		                         skipFirst32Bit(),
 		                         provider );
 	}
 	
