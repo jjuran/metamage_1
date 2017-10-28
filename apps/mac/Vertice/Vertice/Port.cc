@@ -15,9 +15,6 @@
 // Standard C++
 #include <functional>
 
-// Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
-
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
@@ -57,7 +54,7 @@ namespace Vertice
 		
 		if ( contextIndex == 0 )
 		{
-			Mac::SysBeep();
+			// Emit a warning of some kind?
 			
 			return;
 		}

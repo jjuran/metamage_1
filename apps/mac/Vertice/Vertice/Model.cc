@@ -8,7 +8,7 @@
 // Standard C++
 #include <algorithm>
 
-// Vertice
+// Vectoria
 #include "Vectoria/Units.hh"
 
 

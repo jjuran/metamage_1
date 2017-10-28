@@ -9,8 +9,10 @@
 // Standard C++
 #include <vector>
 
-// Vertice
+// Vectoria
 #include "Vectoria/Polygon2D.hh"
+
+// Vertice
 #include "Vertice/Model.hh"
 
 

@@ -18,9 +18,6 @@
 #include "Nitrogen/CGDataProvider.hh"
 #include "Nitrogen/Quickdraw.hh"
 
-// Portage
-#include "Portage/DepthBuffer.hh"
-
 // Vertice
 #include "Vertice/Render.hh"
 
