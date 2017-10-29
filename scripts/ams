@@ -19,6 +19,23 @@ UI=ams-ui
 test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
 raster init $SCREEN
 
+if [ -e /dev/fb0 ]; then
+	CAT="cat"
+	
+	if [ ! -r /dev/input/mice ]; then
+		echo "Note: ams requires privileges to read /dev/input/mice" >&2
+		CAT="sudo cat"
+	fi
+	
+	$CAT /dev/input/mice | spiel-mouse | \
+	graft \
+		freemountd -q --root ~/68k // \
+		xv68k $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName | \
+	display-fb -w $SCREEN
+	
+	exit 0
+fi
+
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft \
 	freemountd -q --root ~/68k // \
