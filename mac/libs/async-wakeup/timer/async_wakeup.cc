@@ -48,18 +48,12 @@ namespace sys {
 	
 	static pascal void async_wakeup_proc( TMTaskPtr task IN( a1 ) )
 	{
-		if ( TARGET_API_MAC_CARBON  &&  ! wakeup_requested )
+		if ( wakeup_requested )
 		{
-			::RmvTime( (QElemPtr) task );
-			
-			task->qLink = 0;  // Release the lock.
-			
-			return;
+			::PrimeTime( (QElemPtr) task, 10 );  // 10ms
 		}
 		
 		::WakeUpProcess( ((const wakeup_TMTask*) task)->psn );
-		
-		::PrimeTime( (QElemPtr) task, 10 );  // 10ms
 	}
 	
 	static wakeup_TMTask the_wakeup_task =
@@ -145,27 +139,15 @@ namespace sys {
 			the_wakeup_task.tm.tmReserved = 0;
 			
 			::InsTime( (QElemPtr) &the_wakeup_task );
-			
-			::PrimeTime( (QElemPtr) &the_wakeup_task, 10 );  // 10ms
 		}
+		
+		::PrimeTime( (QElemPtr) &the_wakeup_task, 10 );  // 10ms
 		
 		::WakeUpProcess( the_wakeup_task.psn );
 	}
 	
 	void clear_async_wakeup()
 	{
-		if ( ! multiproc_available )
-		{
-			return;
-		}
-		
-		if ( ! TARGET_API_MAC_CARBON  &&  wakeup_requested )
-		{
-			::RmvTime( (QElemPtr) &the_wakeup_task );
-			
-			the_wakeup_task.tm.qLink = 0;  // release the lock
-		}
-		
 		wakeup_requested = false;
 	}
 	
