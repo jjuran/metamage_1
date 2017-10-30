@@ -40,6 +40,17 @@ namespace sys {
 	
 	static volatile bool wakeup_requested;
 	
+	static inline
+	void prime_timer( TMTaskPtr task )
+	{
+		/*
+			Expect the timer task as an argument instead of using a global,
+			so on 68K we don't rely on the value of A5.
+		*/
+		
+		::PrimeTime( (QElemPtr) task, 10 );  // 10ms
+	}
+	
 	struct wakeup_TMTask
 	{
 		TMTask                      tm;
@@ -50,7 +61,7 @@ namespace sys {
 	{
 		if ( wakeup_requested )
 		{
-			::PrimeTime( (QElemPtr) task, 10 );  // 10ms
+			prime_timer( task );
 		}
 		
 		::WakeUpProcess( ((const wakeup_TMTask*) task)->psn );
@@ -141,7 +152,7 @@ namespace sys {
 			::InsTime( (QElemPtr) &the_wakeup_timer );
 		}
 		
-		::PrimeTime( (QElemPtr) &the_wakeup_timer, 10 );  // 10ms
+		prime_timer( &the_wakeup_timer.tm );
 		
 		::WakeUpProcess( the_wakeup_timer.psn );
 	}
