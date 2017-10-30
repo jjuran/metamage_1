@@ -56,7 +56,7 @@ namespace sys {
 		::WakeUpProcess( ((const wakeup_TMTask*) task)->psn );
 	}
 	
-	static wakeup_TMTask the_wakeup_task =
+	static wakeup_TMTask the_wakeup_timer =
 	{
 		{
 			0,
@@ -87,11 +87,11 @@ namespace sys {
 		return ! TARGET_CPU_68K  ||  psn.lowLongOfPSN != 0;
 	}
 	
-	const bool multiproc_available = is_multiproc_PSN( *the_wakeup_task.psn );
+	const bool multiproc_available = is_multiproc_PSN( *the_wakeup_timer.psn );
 	
 	static bool lock_timer()
 	{
-		register void** mutex = (void**) &the_wakeup_task.tm.qLink;
+		register void** mutex = (void**) &the_wakeup_timer.tm.qLink;
 		
 	#if TARGET_CPU_68K
 		
@@ -135,15 +135,15 @@ namespace sys {
 		
 		if ( lock_timer() )
 		{
-			the_wakeup_task.tm.tmWakeUp   = 0;
-			the_wakeup_task.tm.tmReserved = 0;
+			the_wakeup_timer.tm.tmWakeUp   = 0;
+			the_wakeup_timer.tm.tmReserved = 0;
 			
-			::InsTime( (QElemPtr) &the_wakeup_task );
+			::InsTime( (QElemPtr) &the_wakeup_timer );
 		}
 		
-		::PrimeTime( (QElemPtr) &the_wakeup_task, 10 );  // 10ms
+		::PrimeTime( (QElemPtr) &the_wakeup_timer, 10 );  // 10ms
 		
-		::WakeUpProcess( the_wakeup_task.psn );
+		::WakeUpProcess( the_wakeup_timer.psn );
 	}
 	
 	void clear_async_wakeup()
