@@ -16,6 +16,9 @@
 #include <OpenTransport.h>
 #endif
 #endif
+#ifndef __OSUTILS__
+#include <OSUtils.h>
+#endif
 #ifndef __PROCESSES__
 #include <Processes.h>
 #endif
@@ -25,6 +28,7 @@
 
 // mac-sys-utils
 #include "mac_sys/current_process.hh"
+#include "mac_sys/gestalt.hh"
 
 
 #if TARGET_CPU_68K
@@ -38,7 +42,11 @@
 namespace mac {
 namespace sys {
 	
+	using mac::sys::gestalt;
+	
 	static volatile bool wakeup_requested;
+	
+	const bool is_osx = TARGET_API_MAC_CARBON  &&  gestalt( 'sysv' ) >= 0x1000;
 	
 	static inline
 	void prime_timer( TMTaskPtr task )
@@ -80,6 +88,43 @@ namespace sys {
 		},
 		&current_process()
 	};
+	
+	static pascal
+	void deferred_wakeup( long param IN( a1 ) )
+	{
+		do
+		{
+			::WakeUpProcess( the_wakeup_timer.psn );
+			
+			uint32_t dummy;
+			::Delay( 1, &dummy );  // one tick == 16ms
+		}
+		while ( wakeup_requested );
+	}
+	
+	static DeferredTask the_wakeup_dt =
+	{
+		0,
+		0,
+		0,
+		is_osx ? ::NewDeferredTaskUPP( (DeferredTaskProcPtr) &deferred_wakeup )
+		       : 0,
+		0,
+		0,
+	};
+	
+	static inline
+	void schedule_wakeup( TMTaskPtr task )
+	{
+		if ( is_osx )
+		{
+			OSErr err = DTInstall( &the_wakeup_dt );
+		}
+		else
+		{
+			prime_timer( task );
+		}
+	}
 	
 	/*
 		Determine whether the ProcessSerialNumber for this process (as
@@ -153,7 +198,7 @@ namespace sys {
 			::InsTime( (QElemPtr) &the_wakeup_timer );
 		}
 		
-		prime_timer( &the_wakeup_timer.tm );
+		schedule_wakeup( &the_wakeup_timer.tm );
 		
 		::WakeUpProcess( the_wakeup_timer.psn );
 	}
