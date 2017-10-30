@@ -57,14 +57,15 @@ namespace sys {
 		const ProcessSerialNumber*  psn;
 	};
 	
-	static pascal void async_wakeup_proc( TMTaskPtr task IN( a1 ) )
+	static pascal
+	void async_wakeup_proc( TMTaskPtr task IN( a1 ) )
 	{
 		if ( wakeup_requested )
 		{
 			prime_timer( task );
+			
+			::WakeUpProcess( ((const wakeup_TMTask*) task)->psn );
 		}
-		
-		::WakeUpProcess( ((const wakeup_TMTask*) task)->psn );
 	}
 	
 	static wakeup_TMTask the_wakeup_timer =
