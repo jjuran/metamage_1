@@ -1,10 +1,10 @@
 /*
-	Vertice/Objects.hh
-	------------------
+	worldview/Objects.hh
+	--------------------
 */
 
-#ifndef VERTICE_OBJECTS_HH
-#define VERTICE_OBJECTS_HH
+#ifndef WORLDVIEW_OBJECTS_HH
+#define WORLDVIEW_OBJECTS_HH
 
 #include <vector>
 
@@ -18,7 +18,7 @@
 #include "Vectoria/Vector3D.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	namespace V = Vectoria;

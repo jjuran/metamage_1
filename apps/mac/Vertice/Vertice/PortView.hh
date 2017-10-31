@@ -19,13 +19,15 @@
 #include "Pedestal/View.hh"
 #endif
 
-// Vertice
-#include "Vertice/Anaglyphs.hh"
-#include "Vertice/Port.hh"
+// worldview
+#include "worldview/Anaglyphs.hh"
+#include "worldview/Port.hh"
 
 
 namespace Vertice
 {
+	
+	using namespace worldview;
 	
 	class PortView : public Pedestal::View
 	{

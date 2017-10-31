@@ -1,57 +1,77 @@
 /*
-	Vertice/Anaglyphs.cc
-	--------------------
+	worldview/Anaglyphs.cc
+	----------------------
 */
 
-#include "Vertice/Anaglyphs.hh"
+#include "worldview/Anaglyphs.hh"
+
+// iota
+#include "iota/endian.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	typedef unsigned char byte;
 	
+	enum
+	{
+		A_BE = 0,
+		R_BE = 1,
+		G_BE = 2,
+		B_BE = 3,
+		
+		B_LE = 0,
+		G_LE = 1,
+		R_LE = 2,
+		A_LE = 3,
+	};
+	
+	const int A = iota::is_little_endian() ? A_LE : A_BE;
+	const int R = iota::is_little_endian() ? R_LE : R_BE;
+	const int G = iota::is_little_endian() ? G_LE : G_BE;
+	const int B = iota::is_little_endian() ? B_LE : B_BE;
 	
 	static
 	void MergeTrueAnaglyph( const byte* left, byte* right )
 	{
-		double r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
+		double r = 0.299 * left  [R] + 0.587 * left  [G] + 0.114 * left  [B];
 		double g = 0;
-		double b = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
+		double b = 0.299 * right [R] + 0.587 * right [G] + 0.114 * right [B];
 		
-		right[ 1 ] = (byte) r;
-		right[ 2 ] = (byte) g;
-		right[ 3 ] = (byte) b;
+		right[ R ] = (byte) r;
+		right[ G ] = (byte) g;
+		right[ B ] = (byte) b;
 	}
 	
 	static
 	void MergeGrayAnaglyph( const byte* left, byte* right )
 	{
-		double r = 0.299 * left  [1] + 0.587 * left  [2] + 0.114 * left  [3];
-		double g = 0.299 * right [1] + 0.587 * right [2] + 0.114 * right [3];
+		double r = 0.299 * left  [R] + 0.587 * left  [G] + 0.114 * left  [B];
+		double g = 0.299 * right [R] + 0.587 * right [G] + 0.114 * right [B];
 		double b = g;
 		
-		right[ 1 ] = (byte) r;
-		right[ 2 ] = (byte) g;
-		right[ 3 ] = (byte) b;
+		right[ R ] = (byte) r;
+		right[ G ] = (byte) g;
+		right[ B ] = (byte) b;
 	}
 	
 	static
 	void MergeColorAnaglyph( const byte* left, byte* right )
 	{
-		right[1] = left[1];
+		right[R] = left[R];
 	}
 	
 	static
 	void MergeHalfColorAnaglyph( const byte* left, byte* right )
 	{
-		right[1] = byte( 0.299 * left[1] + 0.587 * left[2] + 0.114 * left[3] );
+		right[R] = byte( 0.299 * left[R] + 0.587 * left[G] + 0.114 * left[B] );
 	}
 	
 	static
 	void MergeOptimizedAnaglyph( const byte* left, byte* right )
 	{
-		right[1] = byte( 0.7 * left[2] + 0.3 * left[3] );
+		right[R] = byte( 0.7 * left[G] + 0.3 * left[B] );
 	}
 	
 	typedef void (*anaglyphic_merge_proc)( const byte*, byte* );

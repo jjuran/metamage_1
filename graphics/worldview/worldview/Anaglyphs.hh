@@ -1,16 +1,16 @@
 /*
-	Vertice/Anaglyphs.hh
-	--------------------
+	worldview/Anaglyphs.hh
+	----------------------
 */
 
-#ifndef VERTICE_ANAGLYPHS_HH
-#define VERTICE_ANAGLYPHS_HH
+#ifndef WORLDVIEW_ANAGLYPHS_HH
+#define WORLDVIEW_ANAGLYPHS_HH
 
 // Standard C
 #include <stddef.h>
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	enum anaglyph_mode

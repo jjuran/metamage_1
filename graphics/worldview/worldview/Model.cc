@@ -1,18 +1,18 @@
 /*
-	Vertice/Model.cc
-	----------------
+	worldview/Model.cc
+	------------------
 */
 
-#include "Vertice/Model.hh"
+#include "worldview/Model.hh"
 
 // Standard C++
 #include <algorithm>
 
-// Vertice
+// Vectoria
 #include "Vectoria/Units.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	V::XMatrix Camera::WorldToEyeTransform( const Scene& scene ) const

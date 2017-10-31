@@ -1,9 +1,9 @@
 /*
-	Vertice/Port.cc
-	---------------
+	worldview/Port.cc
+	-----------------
 */
 
-#include "Vertice/Port.hh"
+#include "worldview/Port.hh"
 
 // Standard C
 #include <math.h>
@@ -15,21 +15,18 @@
 // Standard C++
 #include <functional>
 
-// Nitrogen
-#include "Mac/Sound/Functions/SysBeep.hh"
-
 // Vectoria
 #include "Vectoria/Clipping3D.hh"
 #include "Vectoria/LinearAlgebra3D.hh"
 #include "Vectoria/PlaneVector.hh"
 #include "Vectoria/ViewFrustum.hh"
 
-// Vertice
-#include "Vertice/Objects.hh"
-#include "Vertice/Model.hh"
+// worldview
+#include "worldview/Model.hh"
+#include "worldview/Objects.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	/*
@@ -57,7 +54,7 @@ namespace Vertice
 		
 		if ( contextIndex == 0 )
 		{
-			Mac::SysBeep();
+			// Emit a warning of some kind?
 			
 			return;
 		}

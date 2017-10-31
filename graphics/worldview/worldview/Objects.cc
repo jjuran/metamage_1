@@ -1,9 +1,9 @@
 /*
-	Vertice/Objects.cc
-	------------------
+	worldview/Objects.cc
+	--------------------
 */
 
-#include "Vertice/Objects.hh"
+#include "worldview/Objects.hh"
 
 // Standard C/C++
 #include <cstdio>
@@ -16,7 +16,7 @@
 #include "Vectoria/TriColor.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	using Vectoria::X;

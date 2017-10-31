@@ -1,10 +1,10 @@
 /*
-	Vertice/Model.hh
-	----------------
+	worldview/Model.hh
+	------------------
 */
 
-#ifndef VERTICE_MODEL_HH
-#define VERTICE_MODEL_HH
+#ifndef WORLDVIEW_MODEL_HH
+#define WORLDVIEW_MODEL_HH
 
 #include <map>
 #include <vector>
@@ -12,10 +12,11 @@
 // plus
 #include "plus/string.hh"
 
-#include "Vertice/Objects.hh"
+// worldview
+#include "worldview/Objects.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	namespace V = Vectoria;

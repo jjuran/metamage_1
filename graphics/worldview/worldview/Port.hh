@@ -1,20 +1,22 @@
 /*
-	Vertice/Port.hh
-	---------------
+	worldview/Port.hh
+	-----------------
 */
 
-#ifndef VERTICE_PORT_HH
-#define VERTICE_PORT_HH
+#ifndef WORLDVIEW_PORT_HH
+#define WORLDVIEW_PORT_HH
 
 // Standard C++
 #include <vector>
 
-// Vertice
+// Vectoria
 #include "Vectoria/Polygon2D.hh"
-#include "Vertice/Model.hh"
+
+// worldview
+#include "worldview/Model.hh"
 
 
-namespace Vertice
+namespace worldview
 {
 	
 	using V::X;
