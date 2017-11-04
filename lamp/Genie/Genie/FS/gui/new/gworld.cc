@@ -127,29 +127,25 @@ namespace Genie
 		
 		public:
 			Pixels_IO( const vfs::node& file, int flags );
-			
-			const vfs::node* ViewKey()  { return pixmap_data_view_key( this ); }
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 	};
 	
 	
-	static ssize_t pixels_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Pixels_IO& >( *file ).Positioned_Read( buffer, n, offset );
-	}
+	static
+	ssize_t pixels_pread( vfs::filehandle*  that,
+	                      char*             buffer,
+	                      size_t            n_bytes,
+	                      off_t             offset );
 	
 	static off_t pixels_geteof( vfs::filehandle* file )
 	{
 		return Pixels_GetEOF( pixmap_data_view_key( file ) );
 	}
 	
-	static ssize_t pixels_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Pixels_IO& >( *file ).Positioned_Write( buffer, n, offset );
-	}
+	static
+	ssize_t pixels_pwrite( vfs::filehandle*  that,
+	                       const char*       buffer,
+	                       size_t            n_bytes,
+	                       off_t             offset );
 	
 	static const vfs::bstore_method_set pixels_bstore_methods =
 	{
@@ -189,9 +185,13 @@ namespace Genie
 		}
 	}
 	
-	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t pixels_pread( vfs::filehandle*  that,
+	                      char*             buffer,
+	                      size_t            n_bytes,
+	                      off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = pixmap_data_view_key( that );
 		
 		GWorld_Parameters& params = gGWorldMap[ view ];
 		
@@ -266,9 +266,13 @@ namespace Genie
 		return n_read;
 	}
 	
-	ssize_t Pixels_IO::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t pixels_pwrite( vfs::filehandle*  that,
+	                       const char*       buffer,
+	                       size_t            n_bytes,
+	                       off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = pixmap_data_view_key( that );
 		
 		GWorld_Parameters& params = gGWorldMap[ view ];
 		
