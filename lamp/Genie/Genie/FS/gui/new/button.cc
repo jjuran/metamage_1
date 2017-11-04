@@ -232,11 +232,13 @@ namespace Genie
 	};
 	
 	
+	struct button_stream_extra
+	{
+		unsigned long seed;
+	};
+	
 	class Button_socket_Handle : public vfs::filehandle
 	{
-		private:
-			std::size_t itsSeed;
-		
 		public:
 			Button_socket_Handle( const vfs::node& file, int flags );
 			
@@ -272,26 +274,32 @@ namespace Genie
 	
 	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
 	:
-		vfs::filehandle( &file, flags, &buttonstream_methods ),
-		itsSeed( gButtonMap[ file.owner() ].seed )
+		vfs::filehandle( &file, flags, &buttonstream_methods, sizeof (button_stream_extra) )
 	{
+		button_stream_extra& extra = *(button_stream_extra*) this->extra();
+		
+		extra.seed = gButtonMap[ file.owner() ].seed;
 	}
 	
 	unsigned int Button_socket_Handle::SysPoll()
 	{
+		button_stream_extra& extra = *(button_stream_extra*) this->extra();
+		
 		const vfs::node* view = get_file( *this )->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
 		const bool readable =    it == NULL
 		                      || !it->installed
-		                      || it->seed != itsSeed;
+		                      || it->seed != extra.seed;
 		
 		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
 	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
 	{
+		button_stream_extra& extra = *(button_stream_extra*) this->extra();
+		
 		const vfs::node* view = get_file( *this )->owner();
 		
 	retry:
@@ -305,7 +313,7 @@ namespace Genie
 		
 		const Button_Parameters& params = *it;
 		
-		if ( params.seed == itsSeed )
+		if ( params.seed == extra.seed )
 		{
 			relix::try_again( is_nonblocking( *this ) );
 			
@@ -317,7 +325,7 @@ namespace Genie
 			return 0;
 		}
 		
-		itsSeed = params.seed;
+		extra.seed = params.seed;
 		
 		const char c = '\n';
 		
