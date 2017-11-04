@@ -138,22 +138,27 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
+	static
+	const vfs::node* caption_view_key( vfs::filehandle* that );
+	
+	static inline
+	plus::var_string& caption_text( vfs::filehandle* that )
+	{
+		return gCaptionParametersMap[ caption_view_key( that ) ].its_utf8_text;
+	}
+	
 	class CaptionTextFileHandle : public vfs::filehandle
 	{
 		public:
 			CaptionTextFileHandle( const vfs::node& file, int flags );
 			
-			const vfs::node* ViewKey();
+			const vfs::node* ViewKey()  { return caption_view_key( this ); }
 			
-			plus::var_string& String()  { return gCaptionParametersMap[ ViewKey() ].its_utf8_text; }
+			plus::var_string& String()  { return caption_text( this ); }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return String().size(); }
-			
-			void SetEOF( off_t length )  { CaptionText_SetEOF( get_file( *this ).get(), length ); }
 	};
 	
 	
@@ -164,7 +169,7 @@ namespace Genie
 	
 	static off_t caption_text_geteof( vfs::filehandle* file )
 	{
-		return static_cast< CaptionTextFileHandle& >( *file ).GetEOF();
+		return caption_text( file ).size();
 	}
 	
 	static ssize_t caption_text_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
@@ -174,7 +179,7 @@ namespace Genie
 	
 	static void caption_text_seteof( vfs::filehandle* file, off_t length )
 	{
-		static_cast< CaptionTextFileHandle& >( *file ).SetEOF( length );
+		CaptionText_SetEOF( get_file( *file ).get(), length );
 	}
 	
 	static const vfs::bstore_method_set caption_text_bstore_methods =
@@ -197,9 +202,10 @@ namespace Genie
 	{
 	}
 	
-	const vfs::node* CaptionTextFileHandle::ViewKey()
+	static
+	const vfs::node* caption_view_key( vfs::filehandle* that )
 	{
-		return get_file( *this )->owner();
+		return get_file( *that )->owner();
 	}
 	
 	ssize_t CaptionTextFileHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
