@@ -118,17 +118,6 @@ namespace Genie
 		return 0;
 	}
 	
-	class Pixels_IO : public vfs::filehandle
-	{
-		private:
-			// non-copyable
-			Pixels_IO           ( const Pixels_IO& );
-			Pixels_IO& operator=( const Pixels_IO& );
-		
-		public:
-			Pixels_IO( const vfs::node& file, int flags );
-	};
-	
 	
 	static
 	ssize_t pixels_pread( vfs::filehandle*  that,
@@ -159,12 +148,6 @@ namespace Genie
 		&pixels_bstore_methods,
 	};
 	
-	
-	Pixels_IO::Pixels_IO( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &pixels_methods )
-	{
-	}
 	
 	static
 	const vfs::node* pixmap_data_view_key( vfs::filehandle* that )
@@ -370,7 +353,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr gworld_pixels_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new Pixels_IO( *that, flags );
+		return new vfs::filehandle( that, flags, &pixels_methods );
 	}
 	
 	static const vfs::data_method_set gworld_pixels_data_methods =
