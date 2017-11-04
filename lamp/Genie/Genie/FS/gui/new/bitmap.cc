@@ -100,36 +100,32 @@ namespace Genie
 		
 		public:
 			Bits_IO( const vfs::node* file, int flags );
-			
-			const vfs::node* ViewKey()  { return bitmap_data_view_key( this ); }
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
 	};
 	
 	
-	static ssize_t bits_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Bits_IO& >( *file ).Positioned_Read( buffer, n, offset );
-	}
+	static
+	ssize_t bits_pread( vfs::filehandle*  that,
+	                    char*             buffer,
+	                    size_t            n_bytes,
+	                    off_t             offset );
 	
 	static off_t bits_geteof( vfs::filehandle* file )
 	{
 		return Bits_GetEOF( bitmap_data_view_key( file ) );
 	}
 	
-	static ssize_t bits_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Bits_IO& >( *file ).Positioned_Write( buffer, n, offset );
-	}
+	static
+	ssize_t bits_pwrite( vfs::filehandle*  that,
+	                     const char*       buffer,
+	                     size_t            n_bytes,
+	                     off_t             offset );
 	
-	static vfs::memory_mapping_ptr bits_mmap( vfs::filehandle* that, size_t length, int prot, int flags, off_t offset )
-	{
-		return static_cast< Bits_IO& >( *that ).Map( length, prot, flags, offset );
-	}
+	static
+	vfs::memory_mapping_ptr bits_mmap( vfs::filehandle*  that,
+	                                   size_t            length,
+	                                   int               prot,
+	                                   int               flags,
+	                                   off_t             offset );
 	
 	static const vfs::bstore_method_set bits_bstore_methods =
 	{
@@ -193,9 +189,7 @@ namespace Genie
 	
 	void bits_memory_mapping::msync( void* addr, size_t len, int flags ) const
 	{
-		Bits_IO& file = static_cast< Bits_IO& >( *its_file.get() );
-		
-		InvalidateWindowForView( file.ViewKey() );
+		InvalidateWindowForView( bitmap_data_view_key( its_file.get() ) );
 	}
 	
 	
@@ -205,9 +199,13 @@ namespace Genie
 		return get_file( *that )->owner();
 	}
 	
-	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t bits_pread( vfs::filehandle*  that,
+	                    char*             buffer,
+	                    size_t            n_bytes,
+	                    off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = bitmap_data_view_key( that );
 		
 		BitMap_Parameters& params = gBitMapMap[ view ];
 		
@@ -227,9 +225,13 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	ssize_t Bits_IO::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t bits_pwrite( vfs::filehandle*  that,
+	                     const char*       buffer,
+	                     size_t            n_bytes,
+	                     off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = bitmap_data_view_key( that );
 		
 		BitMap_Parameters& params = gBitMapMap[ view ];
 		
@@ -259,11 +261,14 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	vfs::memory_mapping_ptr
-	//
-	Bits_IO::Map( size_t length, int prot, int flags, off_t offset )
+	static
+	vfs::memory_mapping_ptr bits_mmap( vfs::filehandle*  that,
+	                                   size_t            length,
+	                                   int               prot,
+	                                   int               flags,
+	                                   off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = bitmap_data_view_key( that );
 		
 		BitMap_Parameters& params = gBitMapMap[ view ];
 		
@@ -274,7 +279,11 @@ namespace Genie
 			p7::throw_errno( ENXIO );
 		}
 		
-		return new bits_memory_mapping( params.bits, length, flags, *this, offset );
+		return new bits_memory_mapping( params.bits,
+		                                length,
+		                                flags,
+		                                *that,
+		                                offset );
 	}
 	
 	
