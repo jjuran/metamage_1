@@ -59,12 +59,6 @@ namespace Genie
 		InvalidateWindowForView( view );
 	}
 	
-	class TextEdit_text_Handle : public vfs::filehandle
-	{
-		public:
-			TextEdit_text_Handle( const vfs::node& file, int flags );
-	};
-	
 	
 	static
 	ssize_t TextEdit_text_pread( vfs::filehandle*  that,
@@ -101,12 +95,6 @@ namespace Genie
 		&TextEdit_text_bstore_methods,
 	};
 	
-	
-	TextEdit_text_Handle::TextEdit_text_Handle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &TextEdit_text_methods )
-	{
-	}
 	
 	static
 	const vfs::node* view_key( vfs::filehandle* that )
@@ -182,7 +170,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr textedit_text_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new TextEdit_text_Handle( *that, flags );
+		return new vfs::filehandle( that, flags, &TextEdit_text_methods );
 	}
 	
 	static const vfs::data_method_set textedit_text_data_methods =
