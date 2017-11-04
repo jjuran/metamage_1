@@ -64,13 +64,6 @@ namespace Genie
 	}
 	
 	
-	class TextEdit_gate_Handle : public vfs::filehandle
-	{
-		public:
-			TextEdit_gate_Handle( const vfs::node& file, int flags );
-	};
-	
-	
 	static
 	unsigned texteditgate_poll( vfs::filehandle* that );
 	
@@ -90,12 +83,6 @@ namespace Genie
 		&texteditgate_stream_methods,
 	};
 	
-	
-	TextEdit_gate_Handle::TextEdit_gate_Handle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &texteditgate_methods )
-	{
-	}
 	
 	static
 	unsigned texteditgate_poll( vfs::filehandle* that )
@@ -127,7 +114,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr textedit_gate_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new TextEdit_gate_Handle( *that, flags );
+		return new vfs::filehandle( that, flags, &texteditgate_methods );
 	}
 	
 	static const vfs::data_method_set textedit_gate_data_methods =
