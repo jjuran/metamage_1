@@ -74,6 +74,9 @@ namespace Genie
 	static BitMapMap gBitMapMap;
 	
 	
+	static
+	const vfs::node* bitmap_data_view_key( vfs::filehandle* that );
+	
 	static unsigned BitMap_n_bytes( const BitMap& bits )
 	{
 		const short n_rows = bits.bounds.bottom - bits.bounds.top;
@@ -98,17 +101,13 @@ namespace Genie
 		public:
 			Bits_IO( const vfs::node* file, int flags );
 			
-			const vfs::node* ViewKey();
+			const vfs::node* ViewKey()  { return bitmap_data_view_key( this ); }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			off_t GetEOF()  { return Bits_GetEOF( ViewKey() ); }
-			
 			vfs::memory_mapping_ptr Map( size_t length, int prot, int flags, off_t offset );
-			
-			//void Synchronize( bool metadata );
 	};
 	
 	
@@ -119,7 +118,7 @@ namespace Genie
 	
 	static off_t bits_geteof( vfs::filehandle* file )
 	{
-		return static_cast< Bits_IO& >( *file ).GetEOF();
+		return Bits_GetEOF( bitmap_data_view_key( file ) );
 	}
 	
 	static ssize_t bits_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
@@ -200,9 +199,10 @@ namespace Genie
 	}
 	
 	
-	const vfs::node* Bits_IO::ViewKey()
+	static
+	const vfs::node* bitmap_data_view_key( vfs::filehandle* that )
 	{
-		return get_file( *this )->owner();
+		return get_file( *that )->owner();
 	}
 	
 	ssize_t Bits_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
