@@ -133,19 +133,8 @@ namespace Genie
 	}
 	
 	
-	class List_data_Handle : public vfs::filehandle
-	{
-		public:
-			List_data_Handle( const vfs::node& file, int flags );
-			
-			ssize_t SysWrite( const char* buffer, std::size_t byteCount );
-	};
-	
-	
-	static ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n )
-	{
-		return static_cast< List_data_Handle& >( *that ).SysWrite( buffer, n );
-	}
+	static
+	ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n );
 	
 	static const vfs::stream_method_set listdata_stream_methods =
 	{
@@ -162,31 +151,26 @@ namespace Genie
 	};
 	
 	
-	List_data_Handle::List_data_Handle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &listdata_methods )
+	static
+	ssize_t listdata_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-	}
-	
-	ssize_t List_data_Handle::SysWrite( const char* buffer, std::size_t byteCount )
-	{
-		if ( byteCount != 0  &&  buffer[ byteCount - 1 ] != '\n' )
+		if ( n != 0  &&  buffer[ n - 1 ] != '\n' )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		ListParameters& params = gListParameterMap[ view ];
 		
 		std::vector< plus::string >& strings = params.itsStrings;
 		
-		if ( get_flags() & O_TRUNC )
+		if ( that->get_flags() & O_TRUNC )
 		{
 			strings.clear();
 		}
 		
-		const char* end = buffer + byteCount;
+		const char* end = buffer + n;
 		
 		const char* p = buffer;
 		
@@ -205,7 +189,7 @@ namespace Genie
 		
 		InvalidateWindowForView( view );
 		
-		return byteCount;
+		return n;
 	}
 	
 	
@@ -275,7 +259,7 @@ namespace Genie
 			throw p7::errno_t( EINVAL );
 		}
 		
-		return new List_data_Handle( *that, flags );
+		return new vfs::filehandle( that, flags, &listdata_methods );
 	}
 	
 	static const vfs::data_method_set list_data_data_methods =
