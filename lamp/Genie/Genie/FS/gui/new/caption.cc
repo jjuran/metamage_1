@@ -147,12 +147,6 @@ namespace Genie
 		return gCaptionParametersMap[ caption_view_key( that ) ].its_utf8_text;
 	}
 	
-	class CaptionTextFileHandle : public vfs::filehandle
-	{
-		public:
-			CaptionTextFileHandle( const vfs::node& file, int flags );
-	};
-	
 	
 	static
 	ssize_t caption_text_pread( vfs::filehandle*  that,
@@ -189,12 +183,6 @@ namespace Genie
 		&caption_text_bstore_methods,
 	};
 	
-	
-	CaptionTextFileHandle::CaptionTextFileHandle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &caption_text_filehandle_methods )
-	{
-	}
 	
 	static
 	const vfs::node* caption_view_key( vfs::filehandle* that )
@@ -263,7 +251,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr caption_text_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new CaptionTextFileHandle( *that, flags );
+		return new vfs::filehandle( that, flags, &caption_text_filehandle_methods );
 	}
 	
 	static const vfs::data_method_set caption_text_data_methods =
