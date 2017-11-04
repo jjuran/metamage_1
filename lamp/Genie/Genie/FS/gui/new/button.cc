@@ -241,22 +241,14 @@ namespace Genie
 	{
 		public:
 			Button_socket_Handle( const vfs::node& file, int flags );
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
 	};
 	
 	
-	static unsigned buttonstream_poll( vfs::filehandle* that )
-	{
-		return static_cast< Button_socket_Handle& >( *that ).SysPoll();
-	}
+	static
+	unsigned buttonstream_poll( vfs::filehandle* that );
 	
-	static ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< Button_socket_Handle& >( *that ).SysRead( buffer, n );
-	}
+	static
+	ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n );
 	
 	static const vfs::stream_method_set buttonstream_stream_methods =
 	{
@@ -281,11 +273,12 @@ namespace Genie
 		extra.seed = gButtonMap[ file.owner() ].seed;
 	}
 	
-	unsigned int Button_socket_Handle::SysPoll()
+	static
+	unsigned buttonstream_poll( vfs::filehandle* that )
 	{
-		button_stream_extra& extra = *(button_stream_extra*) this->extra();
+		button_stream_extra& extra = *(button_stream_extra*) that->extra();
 		
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
@@ -296,11 +289,12 @@ namespace Genie
 		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
-	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
+	static
+	ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		button_stream_extra& extra = *(button_stream_extra*) this->extra();
+		button_stream_extra& extra = *(button_stream_extra*) that->extra();
 		
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 	retry:
 		
@@ -315,12 +309,12 @@ namespace Genie
 		
 		if ( params.seed == extra.seed )
 		{
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 			
 			goto retry;
 		}
 		
-		if ( byteCount == 0 )
+		if ( n == 0 )
 		{
 			return 0;
 		}
