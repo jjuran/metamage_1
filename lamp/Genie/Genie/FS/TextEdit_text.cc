@@ -38,6 +38,9 @@ namespace Genie
 	}
 	
 	
+	static
+	const vfs::node* view_key( vfs::filehandle* that );
+	
 	static void TextEdit_text_SetEOF( const vfs::node* text, off_t length )
 	{
 		const vfs::node* view = text->owner();
@@ -60,37 +63,29 @@ namespace Genie
 	{
 		public:
 			TextEdit_text_Handle( const vfs::node& file, int flags );
-			
-			const vfs::node* ViewKey();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return TextEditParameters::Get( ViewKey() ).its_utf8_text.size(); }
-			
-			void SetEOF( off_t length )  { TextEdit_text_SetEOF( get_file( *this ).get(), length ); }
 	};
 	
 	
-	static ssize_t TextEdit_text_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< TextEdit_text_Handle& >( *file ).Positioned_Read( buffer, n, offset );
-	}
+	static
+	ssize_t TextEdit_text_pread( vfs::filehandle*  that,
+	                             char*             buffer,
+	                             size_t            n_bytes,
+	                             off_t             offset );
 	
 	static off_t TextEdit_text_geteof( vfs::filehandle* file )
 	{
-		return static_cast< TextEdit_text_Handle& >( *file ).GetEOF();
+		return TextEditParameters::Get( view_key( file ) ).its_utf8_text.size();
 	}
 	
-	static ssize_t TextEdit_text_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< TextEdit_text_Handle& >( *file ).Positioned_Write( buffer, n, offset );
-	}
+	static
+	ssize_t TextEdit_text_pwrite( vfs::filehandle*  that,
+	                              const char*       buffer,
+	                              size_t            n_bytes,
+	                              off_t             offset );
 	
 	static void TextEdit_text_seteof( vfs::filehandle* file, off_t length )
 	{
-		static_cast< TextEdit_text_Handle& >( *file ).SetEOF( length );
+		TextEdit_text_SetEOF( get_file( *file ).get(), length );
 	}
 	
 	static const vfs::bstore_method_set TextEdit_text_bstore_methods =
@@ -113,14 +108,19 @@ namespace Genie
 	{
 	}
 	
-	const vfs::node* TextEdit_text_Handle::ViewKey()
+	static
+	const vfs::node* view_key( vfs::filehandle* that )
 	{
-		return get_file( *this )->owner();
+		return get_file( *that )->owner();
 	}
 	
-	ssize_t TextEdit_text_Handle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t TextEdit_text_pread( vfs::filehandle*  that,
+	                             char*             buffer,
+	                             size_t            n_bytes,
+	                             off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = view_key( that );
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -138,9 +138,13 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	ssize_t TextEdit_text_Handle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t TextEdit_text_pwrite( vfs::filehandle*  that,
+	                              const char*       buffer,
+	                              size_t            n_bytes,
+	                              off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = view_key( that );
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
