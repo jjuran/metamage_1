@@ -68,22 +68,14 @@ namespace Genie
 	{
 		public:
 			TextEdit_gate_Handle( const vfs::node& file, int flags );
-			
-			unsigned SysPoll();
-			
-			ssize_t SysRead( char* buffer, size_t n_bytes );
 	};
 	
 	
-	static unsigned texteditgate_poll( vfs::filehandle* that )
-	{
-		return static_cast< TextEdit_gate_Handle& >( *that ).SysPoll();
-	}
+	static
+	unsigned texteditgate_poll( vfs::filehandle* that );
 	
-	static ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< TextEdit_gate_Handle& >( *that ).SysRead( buffer, n );
-	}
+	static
+	ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n );
 	
 	static const vfs::stream_method_set texteditgate_stream_methods =
 	{
@@ -105,9 +97,10 @@ namespace Genie
 	{
 	}
 	
-	unsigned TextEdit_gate_Handle::SysPoll()
+	static
+	unsigned texteditgate_poll( vfs::filehandle* that )
 	{
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -116,15 +109,16 @@ namespace Genie
 		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
-	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
+	static
+	ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		while ( params.itIsInterlocked )
 		{
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 		}
 		
 		return 0;
