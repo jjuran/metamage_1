@@ -42,14 +42,6 @@
 "       where screen-path is a raster file\n"
 
 
-struct surface
-{
-	uint8_t*  address;
-	uint32_t  width;
-	uint32_t  height;
-	uint32_t  stride;
-};
-
 enum
 {
 	Opt_watch = 'w',
