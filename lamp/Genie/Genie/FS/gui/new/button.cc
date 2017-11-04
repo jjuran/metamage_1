@@ -237,13 +237,6 @@ namespace Genie
 		unsigned long seed;
 	};
 	
-	class Button_socket_Handle : public vfs::filehandle
-	{
-		public:
-			Button_socket_Handle( const vfs::node& file, int flags );
-	};
-	
-	
 	static
 	unsigned buttonstream_poll( vfs::filehandle* that );
 	
@@ -263,15 +256,6 @@ namespace Genie
 		&buttonstream_stream_methods,
 	};
 	
-	
-	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &buttonstream_methods, sizeof (button_stream_extra) )
-	{
-		button_stream_extra& extra = *(button_stream_extra*) this->extra();
-		
-		extra.seed = gButtonMap[ file.owner() ].seed;
-	}
 	
 	static
 	unsigned buttonstream_poll( vfs::filehandle* that )
@@ -340,7 +324,18 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return new Button_socket_Handle( *that, flags );
+		typedef button_stream_extra stream_extra;
+		
+		vfs::filehandle* result = new vfs::filehandle( that,
+		                                               flags,
+		                                               &buttonstream_methods,
+		                                               sizeof (stream_extra) );
+		
+		stream_extra& extra = *(stream_extra*) result->extra();
+		
+		extra.seed = it->seed;
+		
+		return result;
 	}
 	
 	static const vfs::data_method_set button_stream_data_methods =
