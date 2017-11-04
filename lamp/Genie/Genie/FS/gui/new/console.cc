@@ -387,21 +387,29 @@ namespace Genie
 	}
 	
 	
+	struct console_extra
+	{
+		vfs::node const*  tty_file;
+		unsigned          id;
+	};
+	
+	static
+	void destroy_console( vfs::filehandle* that )
+	{
+		console_extra& extra = *(console_extra*) that->extra();
+		
+		vfs::get_dynamic_group< relix::con_tag >().erase( extra.id );
+		
+		intrusive_ptr_release( extra.tty_file );
+	}
+	
 	class ConsoleTTYHandle : public vfs::filehandle
 	{
 		private:
-			vfs::node_ptr  itsTTYFile;
-			unsigned       itsID;
-			
 			const vfs::node* ViewKey() const;
 		
 		public:
 			ConsoleTTYHandle( const vfs::node& file, unsigned id );
-			
-			~ConsoleTTYHandle()
-			{
-				vfs::get_dynamic_group< relix::con_tag >().erase( itsID );
-			}
 			
 			void Attach( vfs::filehandle* terminal );
 			
@@ -466,10 +474,14 @@ namespace Genie
 	
 	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
 	:
-		vfs::filehandle( 0, &consoletty_methods ),
-		itsTTYFile( &file ),
-		itsID( id )
+		vfs::filehandle( 0, &consoletty_methods, sizeof (console_extra), &destroy_console )
 	{
+		console_extra& extra = *(console_extra*) this->extra();
+		
+		extra.id = id;
+		extra.tty_file = &file;
+		
+		intrusive_ptr_add_ref( &file );
 	}
 	
 	void ConsoleTTYHandle::Attach( vfs::filehandle* terminal )
@@ -483,7 +495,9 @@ namespace Genie
 	
 	const vfs::node* ConsoleTTYHandle::ViewKey() const
 	{
-		return itsTTYFile->owner();
+		console_extra& extra = *(console_extra*) this->extra();
+		
+		return extra.tty_file->owner();
 	}
 	
 	unsigned int ConsoleTTYHandle::SysPoll()
