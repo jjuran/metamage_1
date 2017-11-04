@@ -92,6 +92,9 @@ namespace Genie
 	
 	
 	static
+	const vfs::node* pixmap_data_view_key( vfs::filehandle* that );
+	
+	static
 	unsigned PixMap_n_bytes( PixMapHandle pix_h, short stride )
 	{
 		const PixMap& pix = **pix_h;
@@ -125,15 +128,11 @@ namespace Genie
 		public:
 			Pixels_IO( const vfs::node& file, int flags );
 			
-			const vfs::node* ViewKey();
+			const vfs::node* ViewKey()  { return pixmap_data_view_key( this ); }
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return Pixels_GetEOF( ViewKey() ); }
-			
-			//void Synchronize( bool metadata );
 	};
 	
 	
@@ -144,7 +143,7 @@ namespace Genie
 	
 	static off_t pixels_geteof( vfs::filehandle* file )
 	{
-		return static_cast< Pixels_IO& >( *file ).GetEOF();
+		return Pixels_GetEOF( pixmap_data_view_key( file ) );
 	}
 	
 	static ssize_t pixels_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
@@ -171,9 +170,10 @@ namespace Genie
 	{
 	}
 	
-	const vfs::node* Pixels_IO::ViewKey()
+	static
+	const vfs::node* pixmap_data_view_key( vfs::filehandle* that )
 	{
-		return get_file( *this )->owner();
+		return get_file( *that )->owner();
 	}
 	
 	static
