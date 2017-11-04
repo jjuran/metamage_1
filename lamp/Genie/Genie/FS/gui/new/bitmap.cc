@@ -91,17 +91,6 @@ namespace Genie
 		return BitMap_n_bytes( gBitMapMap[ key ].bitmap );
 	}
 	
-	class Bits_IO : public vfs::filehandle
-	{
-		private:
-			// non-copyable
-			Bits_IO           ( const Bits_IO& );
-			Bits_IO& operator=( const Bits_IO& );
-		
-		public:
-			Bits_IO( const vfs::node* file, int flags );
-	};
-	
 	
 	static
 	ssize_t bits_pread( vfs::filehandle*  that,
@@ -147,12 +136,6 @@ namespace Genie
 		&bits_general_methods,
 	};
 	
-	
-	Bits_IO::Bits_IO( const vfs::node* file, int flags )
-	:
-		vfs::filehandle( file, flags, &bits_methods )
-	{
-	}
 	
 	class bits_memory_mapping : public vfs::Ptr_memory_mapping
 	{
@@ -299,7 +282,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr bitmap_bits_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new Bits_IO( that, flags );
+		return new vfs::filehandle( that, flags, &bits_methods );
 	}
 	
 	static const vfs::data_method_set bitmap_bits_data_methods =
