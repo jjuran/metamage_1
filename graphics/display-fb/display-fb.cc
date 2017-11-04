@@ -42,6 +42,18 @@
 "       where screen-path is a raster file\n"
 
 
+/*
+	Theoretically, 8-bit should work, but we've had mixed success with it on
+	Raspberry Pi.  16-bit works fine on RPi, but not on the PC graphics chips
+	I've tried.  This may need to become a run-time switch in the future.
+*/
+
+#ifdef __arm__
+typedef uint16_t bilevel_pixel_t;
+#else
+typedef uint32_t bilevel_pixel_t;
+#endif
+
 enum
 {
 	Opt_watch = 'w',
@@ -110,10 +122,11 @@ raster::sync_relay* open_raster( const char* path )
 
 typedef void (*draw_proc)( const char* src, char* dst, int width );
 
+template < class UInt >
 static
-void transcode_1_to_16( const char* src, char* dst, int width )
+void transcode_1_to_direct( const char* src, char* dst, int width )
 {
-	uint16_t* p = (uint16_t*) dst;
+	UInt* p = (UInt*) dst;
 	
 	while ( width > 0 )
 	{
@@ -121,7 +134,7 @@ void transcode_1_to_16( const char* src, char* dst, int width )
 		
 		for ( int mask = 1 << 7;  mask != 0;  mask >>= 1 )
 		{
-			const uint16_t pixel = byte & mask ? 0x0000 : 0xFFFF;
+			const UInt pixel = byte & mask ? 0x00000000 : 0xFFFFFFFF;
 			
 			*p++ = pixel;
 		}
@@ -175,7 +188,7 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 	switch ( desc.weight )
 	{
 		case 1:
-			return &transcode_1_to_16;
+			return &transcode_1_to_direct< bilevel_pixel_t >;
 		
 		case 16:
 			return &copy_16;
@@ -310,7 +323,7 @@ int main( int argc, char** argv )
 	
 	if ( desc.weight == 1 )
 	{
-		var_info.bits_per_pixel = 16;
+		var_info.bits_per_pixel = sizeof (bilevel_pixel_t) * 8;
 	}
 	
 	set_var_screeninfo( fbh, var_info );
