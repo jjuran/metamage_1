@@ -49,14 +49,24 @@ namespace Genie
 	using mac::file::refnum_file;
 	
 	
+	typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
+	
+	struct Mac_file_extra
+	{
+		FileGetter  getfile;
+		short       refnum;
+	};
+	
+	static
+	void close_Mac_file( vfs::filehandle* that )
+	{
+		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
+		
+		::FSClose( extra.refnum );
+	}
+	
 	class MacFileHandle : public vfs::filehandle
 	{
-		private:
-			typedef vfs::node_ptr (*FileGetter)( const FSSpec& );
-			
-			n::owned< Nitrogen::FSFileRefNum >  itsRefNum;
-			FileGetter                          itsFileGetter;
-		
 		public:
 			MacFileHandle( n::owned< Nitrogen::FSFileRefNum >&  refNum,
 			               int                                  flags,
@@ -73,10 +83,6 @@ namespace Genie
 			ssize_t Append( const char* buffer, size_t n_bytes );
 			
 			void Synchronize( bool metadata );
-			
-			off_t GetEOF()  { return Nitrogen::GetEOF( itsRefNum ); }
-			
-			void SetEOF( off_t length )  { Nitrogen::SetEOF( itsRefNum, length ); }
 	};
 	
 	
@@ -87,7 +93,12 @@ namespace Genie
 	
 	static off_t hfs_geteof( vfs::filehandle* file )
 	{
-		return static_cast< MacFileHandle& >( *file ).GetEOF();
+		Mac_file_extra& extra = *(Mac_file_extra*) file->extra();
+		
+		Size size;
+		Mac::ThrowOSStatus( ::GetEOF( extra.refnum, &size ) );
+		
+		return size;
 	}
 	
 	static ssize_t hfs_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
@@ -97,11 +108,13 @@ namespace Genie
 	
 	static void hfs_seteof( vfs::filehandle* file, off_t length )
 	{
+		Mac_file_extra& extra = *(Mac_file_extra*) file->extra();
+		
 		MacFileHandle& h = static_cast< MacFileHandle& >( *file );
 		
-		const off_t eof = h.GetEOF();
+		const off_t eof = hfs_geteof( file );
 		
-		h.SetEOF( length );
+		Mac::ThrowOSStatus( ::SetEOF( extra.refnum, length ) );
 		
 		if ( length > eof )
 		{
@@ -220,10 +233,12 @@ namespace Genie
 	MacFileHandle::MacFileHandle( n::owned< N::FSFileRefNum >&  refNum,
 	                              int                           flags,
 	                              FileGetter                    getFile )
-	: vfs::filehandle( flags, &hfs_methods ),
-	  itsRefNum      ( refNum ),
-	  itsFileGetter  ( getFile )
+	: vfs::filehandle( flags, &hfs_methods, sizeof (Mac_file_extra), &close_Mac_file )
 	{
+		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		
+		extra.getfile = getFile;
+		extra.refnum  = refNum.release();
 	}
 	
 	MacFileHandle::~MacFileHandle()
@@ -232,11 +247,15 @@ namespace Genie
 	
 	vfs::node_ptr MacFileHandle::GetFile()
 	{
-		return itsFileGetter( refnum_file( itsRefNum ) );
+		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		
+		return extra.getfile( refnum_file( extra.refnum ) );
 	}
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
 	{
+		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		
 		const bool readable = (get_flags() + 1 - O_RDONLY) & 1;
 		
 		if ( !readable )
@@ -245,7 +264,7 @@ namespace Genie
 		}
 		
 		ssize_t read = MacIO::FSRead( MacIO::kThrowEOF_Never,
-		                              itsRefNum,
+		                              Mac::FSFileRefNum( extra.refnum ),
 		                              N::fsFromStart,
 		                              offset,
 		                              byteCount,
@@ -256,14 +275,16 @@ namespace Genie
 	
 	ssize_t MacFileHandle::Positioned_Write( const char* data, size_t byteCount, off_t offset )
 	{
+		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		
 		const N::FSIOPosMode mode = N::fsFromStart;
 		
-		if ( offset > GetEOF() )
+		if ( offset > hfs_geteof( this ) )
 		{
 			hfs_seteof( this, offset );
 		}
 		
-		ssize_t written = MacIO::FSWrite( itsRefNum,
+		ssize_t written = MacIO::FSWrite( Mac::FSFileRefNum( extra.refnum ),
 		                                  mode,
 		                                  offset,
 		                                  byteCount,
@@ -271,7 +292,7 @@ namespace Genie
 		
 		if ( offset == 0 )
 		{
-			CheckFileSignature( refnum_file( itsRefNum ), data, byteCount );
+			CheckFileSignature( refnum_file( extra.refnum ), data, byteCount );
 		}
 		
 		return written;
@@ -279,10 +300,12 @@ namespace Genie
 	
 	ssize_t MacFileHandle::Append( const char* data, size_t byteCount )
 	{
+		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		
 		const N::FSIOPosMode  mode   = N::fsFromLEOF;
 		const SInt32          offset = 0;
 		
-		ssize_t written = MacIO::FSWrite( itsRefNum,
+		ssize_t written = MacIO::FSWrite( Mac::FSFileRefNum( extra.refnum ),
 		                                  mode,
 		                                  offset,
 		                                  byteCount,
@@ -293,11 +316,13 @@ namespace Genie
 	
 	void MacFileHandle::Synchronize( bool metadata )
 	{
+		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		
 		metadata = true;  // until we implement data-only flush
 		
 		if ( metadata )
 		{
-			FSSpec file = refnum_file( itsRefNum );
+			FSSpec file = refnum_file( extra.refnum );
 			
 			// Just flush the whole volume, since we can't be more specific.
 			Mac::ThrowOSStatus( ::FlushVol( NULL, file.vRefNum ) );
