@@ -65,14 +65,6 @@ namespace Genie
 		::FSClose( extra.refnum );
 	}
 	
-	class MacFileHandle : public vfs::filehandle
-	{
-		public:
-			MacFileHandle( n::owned< Nitrogen::FSFileRefNum >&  refNum,
-			               int                                  flags,
-			               FileGetter                           getFile );
-	};
-	
 	
 	static
 	ssize_t hfs_pread( vfs::filehandle*  that,
@@ -212,15 +204,22 @@ namespace Genie
 	}
 	
 	
-	MacFileHandle::MacFileHandle( n::owned< N::FSFileRefNum >&  refNum,
-	                              int                           flags,
-	                              FileGetter                    getFile )
-	: vfs::filehandle( flags, &hfs_methods, sizeof (Mac_file_extra), &close_Mac_file )
+	static
+	vfs::filehandle* new_Mac_filehandle( n::owned< N::FSFileRefNum >&  refNum,
+	                                     int                           flags,
+	                                     FileGetter                    getFile )
 	{
-		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		vfs::filehandle* result = new vfs::filehandle( flags,
+		                                               &hfs_methods,
+		                                               sizeof (Mac_file_extra),
+		                                               &close_Mac_file );
+		
+		Mac_file_extra& extra = *(Mac_file_extra*) result->extra();
 		
 		extra.getfile = getFile;
 		extra.refnum  = refNum.release();
+		
+		return result;
 	}
 	
 	static
@@ -337,7 +336,7 @@ namespace Genie
 		
 		n::owned< Mac::FSFileRefNum > fileHandle = openFork( fileSpec, perm );
 		
-		return new MacFileHandle( fileHandle, flags, getFile );
+		return new_Mac_filehandle( fileHandle, flags, getFile );
 	}
 	
 }
