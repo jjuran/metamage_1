@@ -14,6 +14,9 @@
 // gear
 #include "gear/is_binary_data.hh"
 
+// mac-file-utils
+#include "mac_file/refnum_file.hh"
+
 // poseven
 #include "poseven/types/errno_t.hh"
 
@@ -42,6 +45,8 @@ namespace Genie
 	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
+	
+	using mac::file::refnum_file;
 	
 	
 	class MacFileHandle : public vfs::filehandle
@@ -174,25 +179,6 @@ namespace Genie
 	};
 	
 	
-	static FSSpec FSSpecFromFRefNum( N::FSFileRefNum refNum )
-	{
-		FSSpec result;
-		
-		FCBPBRec pb;
-		
-		pb.ioVRefNum = 0;
-		pb.ioFCBIndx = 0;
-		pb.ioRefNum  = refNum;
-		pb.ioNamePtr = result.name;
-		
-		Mac::ThrowOSStatus( ::PBGetFCBInfoSync( &pb ) );
-		
-		result.vRefNum = pb.ioFCBVRefNum;
-		result.parID   = pb.ioFCBParID;
-		
-		return result;
-	}
-	
 	static bool ToggleBinaryFileSignature( FInfo& fInfo, bool to_binary )
 	{
 		const ::OSType creators[] = { TextFileCreator(), '\?\?\?\?' };
@@ -246,7 +232,7 @@ namespace Genie
 	
 	vfs::node_ptr MacFileHandle::GetFile()
 	{
-		return itsFileGetter( FSSpecFromFRefNum( itsRefNum ) );
+		return itsFileGetter( refnum_file( itsRefNum ) );
 	}
 	
 	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
@@ -285,7 +271,7 @@ namespace Genie
 		
 		if ( offset == 0 )
 		{
-			CheckFileSignature( FSSpecFromFRefNum( itsRefNum ), data, byteCount );
+			CheckFileSignature( refnum_file( itsRefNum ), data, byteCount );
 		}
 		
 		return written;
@@ -311,7 +297,7 @@ namespace Genie
 		
 		if ( metadata )
 		{
-			FSSpec file = FSSpecFromFRefNum( itsRefNum );
+			FSSpec file = refnum_file( itsRefNum );
 			
 			// Just flush the whole volume, since we can't be more specific.
 			Mac::ThrowOSStatus( ::FlushVol( NULL, file.vRefNum ) );
