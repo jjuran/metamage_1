@@ -406,12 +406,6 @@ namespace Genie
 		intrusive_ptr_release( extra.tty_file );
 	}
 	
-	class ConsoleTTYHandle : public vfs::filehandle
-	{
-		public:
-			ConsoleTTYHandle( const vfs::node& file, unsigned id );
-	};
-	
 	
 	static
 	unsigned consoletty_poll( vfs::filehandle* that );
@@ -452,16 +446,22 @@ namespace Genie
 	};
 	
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
-	:
-		vfs::filehandle( 0, &consoletty_methods, sizeof (console_extra), &destroy_console )
+	static
+	vfs::filehandle* new_tty_handle( const vfs::node& file, unsigned id )
 	{
-		console_extra& extra = *(console_extra*) this->extra();
+		vfs::filehandle* result = new vfs::filehandle( 0,
+		                                               &consoletty_methods,
+		                                               sizeof (console_extra),
+		                                               &destroy_console );
+		
+		console_extra& extra = *(console_extra*) result->extra();
 		
 		extra.id = id;
 		extra.tty_file = &file;
 		
 		intrusive_ptr_add_ref( &file );
+		
+		return result;
 	}
 	
 	static
@@ -827,7 +827,7 @@ namespace Genie
 		
 		unsigned id = ++gLastID;
 		
-		vfs::filehandle_ptr result( new ConsoleTTYHandle( *that, id ) );
+		vfs::filehandle_ptr result( new_tty_handle( *that, id ) );
 		
 		vfs::set_dynamic_element_by_id< relix::con_tag >( id, result.get() );
 		
