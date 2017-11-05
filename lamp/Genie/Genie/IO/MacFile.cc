@@ -73,23 +73,14 @@ namespace Genie
 			               FileGetter                           getFile );
 			
 			~MacFileHandle();
-			
-			vfs::node_ptr GetFile();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Append( const char* buffer, size_t n_bytes );
-			
-			void Synchronize( bool metadata );
 	};
 	
 	
-	static ssize_t hfs_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< MacFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
-	}
+	static
+	ssize_t hfs_pread( vfs::filehandle*  that,
+	                   char*             buffer,
+	                   size_t            n,
+	                   off_t             offset );
 	
 	static off_t hfs_geteof( vfs::filehandle* file )
 	{
@@ -101,16 +92,15 @@ namespace Genie
 		return size;
 	}
 	
-	static ssize_t hfs_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< MacFileHandle& >( *file ).Positioned_Write( buffer, n, offset );
-	}
+	static
+	ssize_t hfs_pwrite( vfs::filehandle*  that,
+	                    const char*       buffer,
+	                    size_t            n,
+	                    off_t             offset );
 	
 	static void hfs_seteof( vfs::filehandle* file, off_t length )
 	{
 		Mac_file_extra& extra = *(Mac_file_extra*) file->extra();
-		
-		MacFileHandle& h = static_cast< MacFileHandle& >( *file );
 		
 		const off_t eof = hfs_geteof( file );
 		
@@ -128,43 +118,37 @@ namespace Genie
 			
 			if ( length <= block_offset )
 			{
-				h.Positioned_Write( buffer, length - eof, eof );
+				hfs_pwrite( file, buffer, length - eof, eof );
 				
 				return;
 			}
 			
-			h.Positioned_Write( buffer, block_offset - eof, eof );
+			hfs_pwrite( file, buffer, block_offset - eof, eof );
 			
 			off_t end_block_offset = length & ~(block_size - 1);
 			
 			while ( block_offset < end_block_offset )
 			{
-				h.Positioned_Write( buffer, block_size, block_offset );
+				hfs_pwrite( file, buffer, block_size, block_offset );
 				
 				block_offset += block_size;
 			}
 			
 			if ( block_offset < length )
 			{
-				h.Positioned_Write( buffer, length - block_offset, block_offset );
+				hfs_pwrite( file, buffer, length - block_offset, block_offset );
 			}
 		}
 	}
 	
-	static ssize_t hfs_append( vfs::filehandle* file, const char* buffer, size_t n )
-	{
-		return static_cast< MacFileHandle& >( *file ).Append( buffer, n );
-	}
+	static
+	ssize_t hfs_append( vfs::filehandle* that, const char* buffer, size_t n );
 	
-	static void hfs_fsync( vfs::filehandle* file )
-	{
-		return static_cast< MacFileHandle& >( *file ).Synchronize( true );
-	}
+	static
+	void hfs_fsync( vfs::filehandle* that );
 	
-	static vfs::node_ptr hfs_getfile( vfs::filehandle* file )
-	{
-		return static_cast< MacFileHandle& >( *file ).GetFile();
-	}
+	static
+	vfs::node_ptr hfs_getfile( vfs::filehandle* that );
 	
 	static const vfs::bstore_method_set hfs_bstore_methods =
 	{
@@ -245,18 +229,23 @@ namespace Genie
 	{
 	}
 	
-	vfs::node_ptr MacFileHandle::GetFile()
+	static
+	vfs::node_ptr hfs_getfile( vfs::filehandle* that )
 	{
-		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
 		return extra.getfile( refnum_file( extra.refnum ) );
 	}
 	
-	ssize_t MacFileHandle::Positioned_Read( char* data, size_t byteCount, off_t offset )
+	static
+	ssize_t hfs_pread( vfs::filehandle*  that,
+	                   char*             buffer,
+	                   size_t            n,
+	                   off_t             offset )
 	{
-		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
-		const bool readable = (get_flags() + 1 - O_RDONLY) & 1;
+		const bool readable = (that->get_flags() + 1 - O_RDONLY) & 1;
 		
 		if ( !readable )
 		{
@@ -267,40 +256,45 @@ namespace Genie
 		                              Mac::FSFileRefNum( extra.refnum ),
 		                              N::fsFromStart,
 		                              offset,
-		                              byteCount,
-		                              data );
+		                              n,
+		                              buffer );
 		
 		return read;
 	}
 	
-	ssize_t MacFileHandle::Positioned_Write( const char* data, size_t byteCount, off_t offset )
+	static
+	ssize_t hfs_pwrite( vfs::filehandle*  that,
+	                    const char*       buffer,
+	                    size_t            n,
+	                    off_t             offset )
 	{
-		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
 		const N::FSIOPosMode mode = N::fsFromStart;
 		
-		if ( offset > hfs_geteof( this ) )
+		if ( offset > hfs_geteof( that ) )
 		{
-			hfs_seteof( this, offset );
+			hfs_seteof( that, offset );
 		}
 		
 		ssize_t written = MacIO::FSWrite( Mac::FSFileRefNum( extra.refnum ),
 		                                  mode,
 		                                  offset,
-		                                  byteCount,
-		                                  data );
+		                                  n,
+		                                  buffer );
 		
 		if ( offset == 0 )
 		{
-			CheckFileSignature( refnum_file( extra.refnum ), data, byteCount );
+			CheckFileSignature( refnum_file( extra.refnum ), buffer, n );
 		}
 		
 		return written;
 	}
 	
-	ssize_t MacFileHandle::Append( const char* data, size_t byteCount )
+	static
+	ssize_t hfs_append( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
 		const N::FSIOPosMode  mode   = N::fsFromLEOF;
 		const SInt32          offset = 0;
@@ -308,17 +302,18 @@ namespace Genie
 		ssize_t written = MacIO::FSWrite( Mac::FSFileRefNum( extra.refnum ),
 		                                  mode,
 		                                  offset,
-		                                  byteCount,
-		                                  data );
+		                                  n,
+		                                  buffer );
 		
 		return written;
 	}
 	
-	void MacFileHandle::Synchronize( bool metadata )
+	static
+	void hfs_fsync( vfs::filehandle* that )
 	{
-		Mac_file_extra& extra = *(Mac_file_extra*) this->extra();
+		Mac_file_extra& extra = *(Mac_file_extra*) that->extra();
 		
-		metadata = true;  // until we implement data-only flush
+		const bool metadata = true;  // until we implement data-only flush
 		
 		if ( metadata )
 		{
