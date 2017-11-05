@@ -71,8 +71,6 @@ namespace Genie
 			MacFileHandle( n::owned< Nitrogen::FSFileRefNum >&  refNum,
 			               int                                  flags,
 			               FileGetter                           getFile );
-			
-			~MacFileHandle();
 	};
 	
 	
@@ -223,10 +221,6 @@ namespace Genie
 		
 		extra.getfile = getFile;
 		extra.refnum  = refNum.release();
-	}
-	
-	MacFileHandle::~MacFileHandle()
-	{
 	}
 	
 	static
