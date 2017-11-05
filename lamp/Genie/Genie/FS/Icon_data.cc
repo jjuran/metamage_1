@@ -362,19 +362,27 @@ namespace Genie
 	}
 	
 	
+	struct icon_data_extra
+	{
+		IconData* data;
+	};
+	
+	static
+	void dispose_icon_data( vfs::filehandle* that )
+	{
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
+		
+		intrusive_ptr_release( extra.data );
+	}
+	
 	class IconDataFileHandle : public vfs::filehandle
 	{
-		private:
-			boost::intrusive_ptr< IconData > itsData;
-		
 		public:
 			IconDataFileHandle( const vfs::node&                         file,
 			                    int                                      flags,
 			                    const boost::intrusive_ptr< IconData >&  data );
 			
 			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return itsData->GetSize(); }
 	};
 	
 	
@@ -385,7 +393,9 @@ namespace Genie
 	
 	static off_t icon_data_geteof( vfs::filehandle* file )
 	{
-		return static_cast< IconDataFileHandle& >( *file ).GetEOF();
+		icon_data_extra& extra = *(icon_data_extra*) file->extra();
+		
+		return extra.data->GetSize();
 	}
 	
 	static const vfs::bstore_method_set icon_data_bstore_methods =
@@ -404,18 +414,24 @@ namespace Genie
 	                                        int                                      flags,
 	                                        const boost::intrusive_ptr< IconData >&  data )
 	:
-		vfs::filehandle( &file, flags, &icon_data_filehandle_methods ),
-		itsData( data )
+		vfs::filehandle( &file,
+		                 flags,
+		                 &icon_data_filehandle_methods,
+		                 sizeof (icon_data_extra),
+		                 &dispose_icon_data )
 	{
-		ASSERT( itsData.get() != NULL );
+		ASSERT( data.get() != NULL );
+		
+		icon_data_extra& extra = *(icon_data_extra*) file.extra();
+		
+		extra.data = data.get();
+		
+		intrusive_ptr_add_ref( data.get() );
 	}
 	
 	
 	class IconDataWriterHandle : public vfs::filehandle
 	{
-		private:
-			boost::intrusive_ptr< IconData > itsData;
-		
 		public:
 			IconDataWriterHandle( const vfs::node&                         file,
 			                      int                                      flags,
@@ -451,17 +467,28 @@ namespace Genie
 	                                            int                                      flags,
 	                                            const boost::intrusive_ptr< IconData >&  data )
 	:
-		vfs::filehandle( &file, flags, &icondatawriter_methods ),
-		itsData( data )
+		vfs::filehandle( &file,
+		                 flags,
+		                 &icondatawriter_methods,
+		                 sizeof (icon_data_extra),
+		                 &dispose_icon_data )
 	{
-		ASSERT( itsData.get() != NULL );
+		ASSERT( data.get() != NULL );
+		
+		icon_data_extra& extra = *(icon_data_extra*) file.extra();
+		
+		extra.data = data.get();
+		
+		intrusive_ptr_add_ref( data.get() );
 	}
 	
 	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
 	{
-		ASSERT( itsData.get() != NULL );
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
 		
-		ssize_t bytes_read = itsData->Read( buffer, byteCount, offset );
+		ASSERT( extra.data != NULL );
+		
+		ssize_t bytes_read = extra.data->Read( buffer, byteCount, offset );
 		
 		if ( bytes_read == sizeof (::ResID) )
 		{
@@ -496,7 +523,9 @@ namespace Genie
 	
 	ssize_t IconDataWriterHandle::SysWrite( const char* buffer, size_t byteCount )
 	{
-		ASSERT( itsData.get() != NULL );
+		icon_data_extra& extra = *(icon_data_extra*) this->extra();
+		
+		ASSERT( extra.data != NULL );
 		
 		SInt16 resID;
 		
@@ -511,7 +540,7 @@ namespace Genie
 			actual_byte_count = sizeof (::ResID);
 		}
 		
-		itsData->Write( buffer, actual_byte_count );
+		extra.data->Write( buffer, actual_byte_count );
 		
 		const vfs::node* view = ViewKey();
 		
@@ -520,11 +549,6 @@ namespace Genie
 		return byteCount;
 	}
 	
-	
-	struct icon_data_extra
-	{
-		IconData* data;
-	};
 	
 	static void dispose_icon_data( const vfs::node* that )
 	{
