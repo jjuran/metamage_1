@@ -285,7 +285,7 @@ namespace Genie
 		
 		const N::Handle r = GetOrAddResource( resSpec );
 		
-		const size_t size = GetEOF();
+		const size_t size = ::GetHandleSize( extra.handle );
 		
 		N::SetHandleSize( r, size );
 		

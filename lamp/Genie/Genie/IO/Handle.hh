@@ -41,8 +41,6 @@ namespace Genie
 			
 			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
 			
-			off_t GetEOF();
-			
 			void SetEOF( off_t length );
 	};
 	

@@ -48,10 +48,8 @@ namespace Genie
 		return static_cast< Handle_IOHandle& >( *file ).Positioned_Read( buffer, n, offset );
 	}
 	
-	static off_t Mac_Handle_geteof( vfs::filehandle* file )
-	{
-		return static_cast< Handle_IOHandle& >( *file ).GetEOF();
-	}
+	static
+	off_t Mac_Handle_geteof( vfs::filehandle* that );
 	
 	static ssize_t Mac_Handle_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
 	{
@@ -96,7 +94,7 @@ namespace Genie
 	{
 		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
 		
-		const size_t size = GetEOF();
+		const size_t size = ::GetHandleSize( extra.handle );
 		
 		if ( offset >= size )
 		{
@@ -128,7 +126,7 @@ namespace Genie
 		
 		const size_t required_size = offset + n_bytes;
 		
-		const size_t existing_size = GetEOF();
+		const size_t existing_size = ::GetHandleSize( extra.handle );
 		
 		if ( required_size > existing_size )
 		{
@@ -150,9 +148,10 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	off_t Handle_IOHandle::GetEOF()
+	static
+	off_t Mac_Handle_geteof( vfs::filehandle* that )
 	{
-		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
 		return ::GetHandleSize( extra.handle );
 	}
