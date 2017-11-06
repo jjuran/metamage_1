@@ -214,11 +214,13 @@ namespace Genie
 	};
 	
 	
+	struct rsrc_extra : Mac_Handle_extra
+	{
+		FSSpec filespec;
+	};
+	
 	class Rsrc_IOHandle : public Handle_IOHandle
 	{
-		private:
-			FSSpec itsFileSpec;
-		
 		private:
 			void FlushResource();
 		
@@ -233,9 +235,11 @@ namespace Genie
 			               n::owned< N::Handle >&  h,
 			               const FSSpec&           resFile )
 			:
-				Handle_IOHandle( file, flags, h ),
-				itsFileSpec( resFile )
+				Handle_IOHandle( file, flags, h )
 			{
+				rsrc_extra& extra = *(rsrc_extra*) this->extra();
+				
+				extra.filespec = resFile;
 			}
 			
 			~Rsrc_IOHandle();
@@ -271,11 +275,13 @@ namespace Genie
 	
 	void Rsrc_IOHandle::FlushResource()
 	{
+		rsrc_extra& extra = *(rsrc_extra*) this->extra();
+		
 		vfs::node_ptr file = get_file( *this );
 		
 		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
-		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+		RdWr_OpenResFile_Scope openResFile( extra.filespec );
 		
 		const N::Handle r = GetOrAddResource( resSpec );
 		
