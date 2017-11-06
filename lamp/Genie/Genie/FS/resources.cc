@@ -223,34 +223,10 @@ namespace Genie
 	void flush_resource( vfs::filehandle* that );
 	
 	static
-	void rsrc_cleanup( vfs::filehandle* that );
-	
-	class Rsrc_IOHandle : public Handle_IOHandle
-	{
-		private:
-			// non-copyable
-			Rsrc_IOHandle           ( const Rsrc_IOHandle& );
-			Rsrc_IOHandle& operator=( const Rsrc_IOHandle& );
-		
-		public:
-			Rsrc_IOHandle( const vfs::node&        file,
-			               int                     flags,
-			               n::owned< N::Handle >&  h,
-			               const FSSpec&           resFile )
-			:
-				Handle_IOHandle( file, flags, h )
-			{
-				rsrc_extra& extra = *(rsrc_extra*) this->extra();
-				
-				extra.filespec = resFile;
-			}
-			
-			~Rsrc_IOHandle()  { rsrc_cleanup( this ); }
-	};
-	
-	static
 	void rsrc_cleanup( vfs::filehandle* that )
 	{
+		rsrc_extra& extra = *(rsrc_extra*) that->extra();
+		
 		try
 		{
 			flush_resource( that );
@@ -259,7 +235,27 @@ namespace Genie
 		{
 		}
 		
-		// TODO:  Dispose the handle, once Handle_IOHandle doesn't.
+		::DisposeHandle( extra.handle );
+	}
+	
+	static
+	vfs::filehandle* new_rsrc_handle( const vfs::node&        file,
+	                                  int                     flags,
+	                                  n::owned< N::Handle >&  h,
+	                                  const FSSpec&           resFile )
+	{
+		vfs::filehandle* result = new vfs::filehandle( &file,
+		                                               flags,
+		                                               &Mac_Handle_methods,
+		                                               sizeof (rsrc_extra),
+		                                               &rsrc_cleanup );
+		
+		rsrc_extra& extra = *(rsrc_extra*) result->extra();
+		
+		extra.handle   = h.release();
+		extra.filespec = resFile;
+		
+		return result;
 	}
 	
 	static N::Handle GetOrAddResource( const ResSpec& resSpec )
@@ -503,8 +499,8 @@ namespace Genie
 		
 		that = new_node.get();
 		
-		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                                  : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
+		                                  : new_Handle_handle( *that, flags, h );
 		
 		return result;
 	}
@@ -523,8 +519,8 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                                  : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
+		                                  : new_Handle_handle( *that, flags, h );
 		
 		return result;
 	}

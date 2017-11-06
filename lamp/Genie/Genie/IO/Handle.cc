@@ -75,15 +75,23 @@ namespace Genie
 	};
 	
 	
-	Handle_IOHandle::Handle_IOHandle( const vfs::node&               file,
-	                                  int                            flags,
-	                                  nucleus::owned< Mac::Handle >  h )
-	:
-		vfs::filehandle( &file, flags, &Mac_Handle_methods, sizeof (Mac_Handle_extra), &dispose_Mac_Handle )
+	vfs::filehandle* new_Handle_handle( const vfs::node&               file,
+	                                    int                            flags,
+	                                    nucleus::owned< Mac::Handle >  h )
 	{
-		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		using vfs::filehandle;
+		
+		filehandle* result = new filehandle( &file,
+		                                     flags,
+		                                     &Mac_Handle_methods,
+		                                     sizeof (Mac_Handle_extra),
+		                                     &dispose_Mac_Handle );
+		
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) result->extra();
 		
 		extra.handle = h.release();
+		
+		return result;
 	}
 	
 	static
