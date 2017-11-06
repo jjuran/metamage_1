@@ -36,12 +36,6 @@ namespace Genie
 			                 nucleus::owned< Mac::Handle >  h );
 			
 			~Handle_IOHandle();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			void SetEOF( off_t length );
 	};
 	
 }

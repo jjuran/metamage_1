@@ -43,23 +43,23 @@ namespace Genie
 	}
 	
 	
-	static ssize_t Mac_Handle_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Handle_IOHandle& >( *file ).Positioned_Read( buffer, n, offset );
-	}
+	static
+	ssize_t Mac_Handle_pread( vfs::filehandle*  that,
+	                          char*             buffer,
+	                          size_t            n,
+	                          off_t             offset );
 	
 	static
 	off_t Mac_Handle_geteof( vfs::filehandle* that );
 	
-	static ssize_t Mac_Handle_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Handle_IOHandle& >( *file ).Positioned_Write( buffer, n, offset );
-	}
+	static
+	ssize_t Mac_Handle_pwrite( vfs::filehandle*  that,
+	                           const char*       buffer,
+	                           size_t            n,
+	                           off_t             offset );
 	
-	static void Mac_Handle_seteof( vfs::filehandle* file, off_t length )
-	{
-		static_cast< Handle_IOHandle& >( *file ).SetEOF( length );
-	}
+	static
+	void Mac_Handle_seteof( vfs::filehandle* that, off_t length );
 	
 	static const vfs::bstore_method_set Mac_Handle_bstore_methods =
 	{
@@ -90,9 +90,13 @@ namespace Genie
 	{
 	}
 	
-	ssize_t Handle_IOHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t Mac_Handle_pread( vfs::filehandle*  that,
+	                          char*             buffer,
+	                          size_t            n_bytes,
+	                          off_t             offset )
 	{
-		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
 		const size_t size = ::GetHandleSize( extra.handle );
 		
@@ -108,11 +112,15 @@ namespace Genie
 		return n_bytes;
 	}
 	
-	ssize_t Handle_IOHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t Mac_Handle_pwrite( vfs::filehandle*  that,
+	                           const char*       buffer,
+	                           size_t            n_bytes,
+	                           off_t             offset )
 	{
-		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
-		const bool writable = get_flags() + (1 - O_RDONLY) & 2;
+		const bool writable = that->get_flags() + (1 - O_RDONLY) & 2;
 		
 		if ( !writable )
 		{
@@ -156,9 +164,10 @@ namespace Genie
 		return ::GetHandleSize( extra.handle );
 	}
 	
-	void Handle_IOHandle::SetEOF( off_t length )
+	static
+	void Mac_Handle_seteof( vfs::filehandle* that, off_t length )
 	{
-		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
 		
 		N::SetHandleSize( extra.handle, length );
 	}
