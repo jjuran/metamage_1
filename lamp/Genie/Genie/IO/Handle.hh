@@ -20,6 +20,13 @@
 #include "vfs/filehandle.hh"
 
 
+namespace vfs
+{
+	
+	struct filehandle_method_set;
+	
+}
+
 namespace Genie
 {
 	
@@ -28,14 +35,14 @@ namespace Genie
 		char** handle;
 	};
 	
+	extern const vfs::filehandle_method_set Mac_Handle_methods;
+	
 	class Handle_IOHandle : public vfs::filehandle
 	{
 		public:
 			Handle_IOHandle( const vfs::node&               file,
 			                 int                            flags,
 			                 nucleus::owned< Mac::Handle >  h );
-			
-			~Handle_IOHandle();
 	};
 	
 }

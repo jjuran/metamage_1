@@ -69,7 +69,7 @@ namespace Genie
 		&Mac_Handle_seteof,
 	};
 	
-	static const vfs::filehandle_method_set Mac_Handle_methods =
+	const vfs::filehandle_method_set Mac_Handle_methods =
 	{
 		&Mac_Handle_bstore_methods,
 	};
@@ -84,10 +84,6 @@ namespace Genie
 		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
 		
 		extra.handle = h.release();
-	}
-	
-	Handle_IOHandle::~Handle_IOHandle()
-	{
 	}
 	
 	static
