@@ -239,8 +239,6 @@ namespace Genie
 			}
 			
 			~Rsrc_IOHandle();
-			
-			void Synchronize( bool metadata );
 	};
 	
 	Rsrc_IOHandle::~Rsrc_IOHandle()
@@ -289,23 +287,6 @@ namespace Genie
 		
 		N::ChangedResource( r );
 		N::WriteResource  ( r );
-	}
-	
-	void Rsrc_IOHandle::Synchronize( bool metadata )
-	{
-		FlushResource();
-		
-		metadata = true;  // until we implement data-only flush
-		
-		if ( metadata )
-		{
-			// Just flush the whole volume, since we can't be more specific.
-			Mac::ThrowOSStatus( ::FlushVol( NULL, itsFileSpec.vRefNum ) );
-		}
-		else
-		{
-			// Call PBFlushFile(), or high-level wrapper
-		}
 	}
 	
 	
