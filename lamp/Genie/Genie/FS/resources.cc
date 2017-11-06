@@ -289,7 +289,7 @@ namespace Genie
 		
 		N::SetHandleSize( r, size );
 		
-		Positioned_Read( *r.Get(), size, 0 );
+		memcpy( *r.Get(), *extra.handle, size );
 		
 		N::ChangedResource( r );
 		N::WriteResource  ( r );
