@@ -222,6 +222,9 @@ namespace Genie
 	static
 	void flush_resource( vfs::filehandle* that );
 	
+	static
+	void rsrc_cleanup( vfs::filehandle* that );
+	
 	class Rsrc_IOHandle : public Handle_IOHandle
 	{
 		private:
@@ -242,18 +245,21 @@ namespace Genie
 				extra.filespec = resFile;
 			}
 			
-			~Rsrc_IOHandle();
+			~Rsrc_IOHandle()  { rsrc_cleanup( this ); }
 	};
 	
-	Rsrc_IOHandle::~Rsrc_IOHandle()
+	static
+	void rsrc_cleanup( vfs::filehandle* that )
 	{
 		try
 		{
-			flush_resource( this );
+			flush_resource( that );
 		}
 		catch ( ... )
 		{
 		}
+		
+		// TODO:  Dispose the handle, once Handle_IOHandle doesn't.
 	}
 	
 	static N::Handle GetOrAddResource( const ResSpec& resSpec )
