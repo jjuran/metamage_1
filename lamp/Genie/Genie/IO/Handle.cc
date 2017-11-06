@@ -34,6 +34,15 @@ namespace Genie
 	}
 	
 	
+	static
+	void dispose_Mac_Handle( vfs::filehandle* that )
+	{
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) that->extra();
+		
+		::DisposeHandle( extra.handle );
+	}
+	
+	
 	static ssize_t Mac_Handle_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
 	{
 		return static_cast< Handle_IOHandle& >( *file ).Positioned_Read( buffer, n, offset );
@@ -72,9 +81,11 @@ namespace Genie
 	                                  int                            flags,
 	                                  nucleus::owned< Mac::Handle >  h )
 	:
-		vfs::filehandle( &file, flags, &Mac_Handle_methods ),
-		itsHandle( h )
+		vfs::filehandle( &file, flags, &Mac_Handle_methods, sizeof (Mac_Handle_extra), &dispose_Mac_Handle )
 	{
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		
+		extra.handle = h.release();
 	}
 	
 	Handle_IOHandle::~Handle_IOHandle()
@@ -83,6 +94,8 @@ namespace Genie
 	
 	ssize_t Handle_IOHandle::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
 	{
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		
 		const size_t size = GetEOF();
 		
 		if ( offset >= size )
@@ -92,13 +105,15 @@ namespace Genie
 		
 		n_bytes = min< size_t >( n_bytes, size - offset );
 		
-		memcpy( buffer, *itsHandle.get().Get() + offset, n_bytes );
+		memcpy( buffer, *extra.handle + offset, n_bytes );
 		
 		return n_bytes;
 	}
 	
 	ssize_t Handle_IOHandle::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
 	{
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		
 		const bool writable = get_flags() + (1 - O_RDONLY) & 2;
 		
 		if ( !writable )
@@ -117,11 +132,9 @@ namespace Genie
 		
 		if ( required_size > existing_size )
 		{
-			try
-			{
-				N::SetHandleSize( itsHandle, required_size );
-			}
-			catch ( ... )
+			::SetHandleSize( extra.handle, required_size );
+			
+			if ( MemError() != noErr )
 			{
 				if ( offset > existing_size )
 				{
@@ -132,19 +145,23 @@ namespace Genie
 			}
 		}
 		
-		memcpy( *itsHandle.get().Get() + offset, buffer, n_bytes );
+		memcpy( *extra.handle + offset, buffer, n_bytes );
 		
 		return n_bytes;
 	}
 	
 	off_t Handle_IOHandle::GetEOF()
 	{
-		return N::GetHandleSize( itsHandle );
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		
+		return ::GetHandleSize( extra.handle );
 	}
 	
 	void Handle_IOHandle::SetEOF( off_t length )
 	{
-		N::SetHandleSize( itsHandle, length );
+		Mac_Handle_extra& extra = *(Mac_Handle_extra*) this->extra();
+		
+		N::SetHandleSize( extra.handle, length );
 	}
 	
 }

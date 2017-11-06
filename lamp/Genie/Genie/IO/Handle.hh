@@ -23,11 +23,13 @@
 namespace Genie
 {
 	
+	struct Mac_Handle_extra
+	{
+		char** handle;
+	};
+	
 	class Handle_IOHandle : public vfs::filehandle
 	{
-		private:
-			nucleus::owned< Mac::Handle > itsHandle;
-		
 		public:
 			Handle_IOHandle( const vfs::node&               file,
 			                 int                            flags,
