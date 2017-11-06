@@ -219,11 +219,11 @@ namespace Genie
 		FSSpec filespec;
 	};
 	
+	static
+	void flush_resource( vfs::filehandle* that );
+	
 	class Rsrc_IOHandle : public Handle_IOHandle
 	{
-		private:
-			void FlushResource();
-		
 		private:
 			// non-copyable
 			Rsrc_IOHandle           ( const Rsrc_IOHandle& );
@@ -249,7 +249,7 @@ namespace Genie
 	{
 		try
 		{
-			FlushResource();
+			flush_resource( this );
 		}
 		catch ( ... )
 		{
@@ -273,11 +273,12 @@ namespace Genie
 		}
 	}
 	
-	void Rsrc_IOHandle::FlushResource()
+	static
+	void flush_resource( vfs::filehandle* that )
 	{
-		rsrc_extra& extra = *(rsrc_extra*) this->extra();
+		rsrc_extra& extra = *(rsrc_extra*) that->extra();
 		
-		vfs::node_ptr file = get_file( *this );
+		vfs::node_ptr file = get_file( *that );
 		
 		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
