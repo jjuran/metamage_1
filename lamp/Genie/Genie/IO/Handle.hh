@@ -20,29 +20,26 @@
 #include "vfs/filehandle.hh"
 
 
+namespace vfs
+{
+	
+	struct filehandle_method_set;
+	
+}
+
 namespace Genie
 {
 	
-	class Handle_IOHandle : public vfs::filehandle
+	struct Mac_Handle_extra
 	{
-		private:
-			nucleus::owned< Mac::Handle > itsHandle;
-		
-		public:
-			Handle_IOHandle( const vfs::node&               file,
-			                 int                            flags,
-			                 nucleus::owned< Mac::Handle >  h );
-			
-			~Handle_IOHandle();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF();
-			
-			void SetEOF( off_t length );
+		char** handle;
 	};
+	
+	extern const vfs::filehandle_method_set Mac_Handle_methods;
+	
+	vfs::filehandle* new_Handle_handle( const vfs::node&               file,
+	                                    int                            flags,
+	                                    nucleus::owned< Mac::Handle >  h );
 	
 }
 

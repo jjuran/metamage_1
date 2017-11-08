@@ -64,26 +64,11 @@ namespace Genie
 	}
 	
 	
-	class TextEdit_gate_Handle : public vfs::filehandle
-	{
-		public:
-			TextEdit_gate_Handle( const vfs::node& file, int flags );
-			
-			unsigned SysPoll();
-			
-			ssize_t SysRead( char* buffer, size_t n_bytes );
-	};
+	static
+	unsigned texteditgate_poll( vfs::filehandle* that );
 	
-	
-	static unsigned texteditgate_poll( vfs::filehandle* that )
-	{
-		return static_cast< TextEdit_gate_Handle& >( *that ).SysPoll();
-	}
-	
-	static ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< TextEdit_gate_Handle& >( *that ).SysRead( buffer, n );
-	}
+	static
+	ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n );
 	
 	static const vfs::stream_method_set texteditgate_stream_methods =
 	{
@@ -99,15 +84,10 @@ namespace Genie
 	};
 	
 	
-	TextEdit_gate_Handle::TextEdit_gate_Handle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &texteditgate_methods )
+	static
+	unsigned texteditgate_poll( vfs::filehandle* that )
 	{
-	}
-	
-	unsigned TextEdit_gate_Handle::SysPoll()
-	{
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -116,15 +96,16 @@ namespace Genie
 		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
-	ssize_t TextEdit_gate_Handle::SysRead( char* buffer, size_t n_bytes )
+	static
+	ssize_t texteditgate_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		const vfs::node* view = get_file( *this )->owner();
+		const vfs::node* view = get_file( *that )->owner();
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		while ( params.itIsInterlocked )
 		{
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 		}
 		
 		return 0;
@@ -133,7 +114,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr textedit_gate_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new TextEdit_gate_Handle( *that, flags );
+		return new vfs::filehandle( that, flags, &texteditgate_methods );
 	}
 	
 	static const vfs::data_method_set textedit_gate_data_methods =

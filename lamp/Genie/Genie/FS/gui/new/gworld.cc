@@ -92,6 +92,9 @@ namespace Genie
 	
 	
 	static
+	const vfs::node* pixmap_data_view_key( vfs::filehandle* that );
+	
+	static
 	unsigned PixMap_n_bytes( PixMapHandle pix_h, short stride )
 	{
 		const PixMap& pix = **pix_h;
@@ -115,42 +118,23 @@ namespace Genie
 		return 0;
 	}
 	
-	class Pixels_IO : public vfs::filehandle
-	{
-		private:
-			// non-copyable
-			Pixels_IO           ( const Pixels_IO& );
-			Pixels_IO& operator=( const Pixels_IO& );
-		
-		public:
-			Pixels_IO( const vfs::node& file, int flags );
-			
-			const vfs::node* ViewKey();
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			ssize_t Positioned_Write( const char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return Pixels_GetEOF( ViewKey() ); }
-			
-			//void Synchronize( bool metadata );
-	};
 	
-	
-	static ssize_t pixels_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Pixels_IO& >( *file ).Positioned_Read( buffer, n, offset );
-	}
+	static
+	ssize_t pixels_pread( vfs::filehandle*  that,
+	                      char*             buffer,
+	                      size_t            n_bytes,
+	                      off_t             offset );
 	
 	static off_t pixels_geteof( vfs::filehandle* file )
 	{
-		return static_cast< Pixels_IO& >( *file ).GetEOF();
+		return Pixels_GetEOF( pixmap_data_view_key( file ) );
 	}
 	
-	static ssize_t pixels_pwrite( vfs::filehandle* file, const char* buffer, size_t n, off_t offset )
-	{
-		return static_cast< Pixels_IO& >( *file ).Positioned_Write( buffer, n, offset );
-	}
+	static
+	ssize_t pixels_pwrite( vfs::filehandle*  that,
+	                       const char*       buffer,
+	                       size_t            n_bytes,
+	                       off_t             offset );
 	
 	static const vfs::bstore_method_set pixels_bstore_methods =
 	{
@@ -165,15 +149,10 @@ namespace Genie
 	};
 	
 	
-	Pixels_IO::Pixels_IO( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &pixels_methods )
+	static
+	const vfs::node* pixmap_data_view_key( vfs::filehandle* that )
 	{
-	}
-	
-	const vfs::node* Pixels_IO::ViewKey()
-	{
-		return get_file( *this )->owner();
+		return get_file( *that )->owner();
 	}
 	
 	static
@@ -189,9 +168,13 @@ namespace Genie
 		}
 	}
 	
-	ssize_t Pixels_IO::Positioned_Read( char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t pixels_pread( vfs::filehandle*  that,
+	                      char*             buffer,
+	                      size_t            n_bytes,
+	                      off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = pixmap_data_view_key( that );
 		
 		GWorld_Parameters& params = gGWorldMap[ view ];
 		
@@ -266,9 +249,13 @@ namespace Genie
 		return n_read;
 	}
 	
-	ssize_t Pixels_IO::Positioned_Write( const char* buffer, size_t n_bytes, off_t offset )
+	static
+	ssize_t pixels_pwrite( vfs::filehandle*  that,
+	                       const char*       buffer,
+	                       size_t            n_bytes,
+	                       off_t             offset )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = pixmap_data_view_key( that );
 		
 		GWorld_Parameters& params = gGWorldMap[ view ];
 		
@@ -366,7 +353,7 @@ namespace Genie
 	
 	static vfs::filehandle_ptr gworld_pixels_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		return new Pixels_IO( *that, flags );
+		return new vfs::filehandle( that, flags, &pixels_methods );
 	}
 	
 	static const vfs::data_method_set gworld_pixels_data_methods =

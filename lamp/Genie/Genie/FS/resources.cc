@@ -214,44 +214,48 @@ namespace Genie
 	};
 	
 	
-	class Rsrc_IOHandle : public Handle_IOHandle
+	struct rsrc_extra : Mac_Handle_extra
 	{
-		private:
-			FSSpec itsFileSpec;
-		
-		private:
-			void FlushResource();
-		
-		private:
-			// non-copyable
-			Rsrc_IOHandle           ( const Rsrc_IOHandle& );
-			Rsrc_IOHandle& operator=( const Rsrc_IOHandle& );
-		
-		public:
-			Rsrc_IOHandle( const vfs::node&        file,
-			               int                     flags,
-			               n::owned< N::Handle >&  h,
-			               const FSSpec&           resFile )
-			:
-				Handle_IOHandle( file, flags, h ),
-				itsFileSpec( resFile )
-			{
-			}
-			
-			~Rsrc_IOHandle();
-			
-			void Synchronize( bool metadata );
+		FSSpec filespec;
 	};
 	
-	Rsrc_IOHandle::~Rsrc_IOHandle()
+	static
+	void flush_resource( vfs::filehandle* that );
+	
+	static
+	void rsrc_cleanup( vfs::filehandle* that )
 	{
+		rsrc_extra& extra = *(rsrc_extra*) that->extra();
+		
 		try
 		{
-			FlushResource();
+			flush_resource( that );
 		}
 		catch ( ... )
 		{
 		}
+		
+		::DisposeHandle( extra.handle );
+	}
+	
+	static
+	vfs::filehandle* new_rsrc_handle( const vfs::node&        file,
+	                                  int                     flags,
+	                                  n::owned< N::Handle >&  h,
+	                                  const FSSpec&           resFile )
+	{
+		vfs::filehandle* result = new vfs::filehandle( &file,
+		                                               flags,
+		                                               &Mac_Handle_methods,
+		                                               sizeof (rsrc_extra),
+		                                               &rsrc_cleanup );
+		
+		rsrc_extra& extra = *(rsrc_extra*) result->extra();
+		
+		extra.handle   = h.release();
+		extra.filespec = resFile;
+		
+		return result;
 	}
 	
 	static N::Handle GetOrAddResource( const ResSpec& resSpec )
@@ -271,41 +275,27 @@ namespace Genie
 		}
 	}
 	
-	void Rsrc_IOHandle::FlushResource()
+	static
+	void flush_resource( vfs::filehandle* that )
 	{
-		vfs::node_ptr file = get_file( *this );
+		rsrc_extra& extra = *(rsrc_extra*) that->extra();
+		
+		vfs::node_ptr file = get_file( *that );
 		
 		const ResSpec resSpec = GetResSpec_from_name( file->name() );
 		
-		RdWr_OpenResFile_Scope openResFile( itsFileSpec );
+		RdWr_OpenResFile_Scope openResFile( extra.filespec );
 		
 		const N::Handle r = GetOrAddResource( resSpec );
 		
-		const size_t size = GetEOF();
+		const size_t size = ::GetHandleSize( extra.handle );
 		
 		N::SetHandleSize( r, size );
 		
-		Positioned_Read( *r.Get(), size, 0 );
+		memcpy( *r.Get(), *extra.handle, size );
 		
 		N::ChangedResource( r );
 		N::WriteResource  ( r );
-	}
-	
-	void Rsrc_IOHandle::Synchronize( bool metadata )
-	{
-		FlushResource();
-		
-		metadata = true;  // until we implement data-only flush
-		
-		if ( metadata )
-		{
-			// Just flush the whole volume, since we can't be more specific.
-			Mac::ThrowOSStatus( ::FlushVol( NULL, itsFileSpec.vRefNum ) );
-		}
-		else
-		{
-			// Call PBFlushFile(), or high-level wrapper
-		}
 	}
 	
 	
@@ -509,8 +499,8 @@ namespace Genie
 		
 		that = new_node.get();
 		
-		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                                  : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
+		                                  : new_Handle_handle( *that, flags, h );
 		
 		return result;
 	}
@@ -529,8 +519,8 @@ namespace Genie
 		
 		n::owned< N::Handle > h = N::DetachResource( r );
 		
-		vfs::filehandle* result = writing ? new Rsrc_IOHandle  ( *that, flags, h, fileSpec )
-		                                  : new Handle_IOHandle( *that, flags, h );
+		vfs::filehandle* result = writing ? new_rsrc_handle  ( *that, flags, h, fileSpec )
+		                                  : new_Handle_handle( *that, flags, h );
 		
 		return result;
 	}

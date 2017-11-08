@@ -387,58 +387,40 @@ namespace Genie
 	}
 	
 	
-	class ConsoleTTYHandle : public vfs::filehandle
+	struct console_extra
 	{
-		private:
-			vfs::node_ptr  itsTTYFile;
-			unsigned       itsID;
-			
-			const vfs::node* ViewKey() const;
-		
-		public:
-			ConsoleTTYHandle( const vfs::node& file, unsigned id );
-			
-			~ConsoleTTYHandle()
-			{
-				vfs::get_dynamic_group< relix::con_tag >().erase( itsID );
-			}
-			
-			void Attach( vfs::filehandle* terminal );
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* data, std::size_t byteCount );
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
-			void IOCtl( unsigned long request, int* argp );
+		vfs::node const*  tty_file;
+		unsigned          id;
 	};
 	
+	static
+	const vfs::node* console_view_key( const vfs::filehandle* that );
 	
-	static unsigned consoletty_poll( vfs::filehandle* that )
+	static
+	void destroy_console( vfs::filehandle* that )
 	{
-		return static_cast< ConsoleTTYHandle& >( *that ).SysPoll();
+		console_extra& extra = *(console_extra*) that->extra();
+		
+		vfs::get_dynamic_group< relix::con_tag >().erase( extra.id );
+		
+		intrusive_ptr_release( extra.tty_file );
 	}
 	
-	static ssize_t consoletty_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< ConsoleTTYHandle& >( *that ).SysRead( buffer, n );
-	}
 	
-	static ssize_t consoletty_write( vfs::filehandle* that, const char* buffer, size_t n )
-	{
-		return static_cast< ConsoleTTYHandle& >( *that ).SysWrite( buffer, n );
-	}
+	static
+	unsigned consoletty_poll( vfs::filehandle* that );
 	
-	static void consoletty_ioctl( vfs::filehandle* that, unsigned long request, int* argp )
-	{
-		static_cast< ConsoleTTYHandle& >( *that ).IOCtl( request, argp );
-	}
+	static
+	ssize_t consoletty_read( vfs::filehandle* that, char* buffer, size_t n );
 	
-	static void consoletty_conjoin( vfs::filehandle& that, vfs::filehandle& target )
-	{
-		static_cast< ConsoleTTYHandle& >( that ).Attach( &target );
-	}
+	static
+	ssize_t consoletty_write( vfs::filehandle* that, const char* buffer, size_t n );
+	
+	static
+	void consoletty_ioctl( vfs::filehandle* that, unsigned long req, int* arg );
+	
+	static
+	void consoletty_conjoin( vfs::filehandle& that, vfs::filehandle& target );
 	
 	static const vfs::stream_method_set consoletty_stream_methods =
 	{
@@ -464,31 +446,46 @@ namespace Genie
 	};
 	
 	
-	ConsoleTTYHandle::ConsoleTTYHandle( const vfs::node& file, unsigned id )
-	:
-		vfs::filehandle( 0, &consoletty_methods ),
-		itsTTYFile( &file ),
-		itsID( id )
+	static
+	vfs::filehandle* new_tty_handle( const vfs::node& file, unsigned id )
 	{
+		vfs::filehandle* result = new vfs::filehandle( 0,
+		                                               &consoletty_methods,
+		                                               sizeof (console_extra),
+		                                               &destroy_console );
+		
+		console_extra& extra = *(console_extra*) result->extra();
+		
+		extra.id = id;
+		extra.tty_file = &file;
+		
+		intrusive_ptr_add_ref( &file );
+		
+		return result;
 	}
 	
-	void ConsoleTTYHandle::Attach( vfs::filehandle* terminal )
+	static
+	void consoletty_conjoin( vfs::filehandle& that, vfs::filehandle& target )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = console_view_key( &that );
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
-		params.itsTerminal = terminal;
+		params.itsTerminal = &target;
 	}
 	
-	const vfs::node* ConsoleTTYHandle::ViewKey() const
+	static
+	const vfs::node* console_view_key( const vfs::filehandle* that )
 	{
-		return itsTTYFile->owner();
+		console_extra& extra = *(console_extra*) that->extra();
+		
+		return extra.tty_file->owner();
 	}
 	
-	unsigned int ConsoleTTYHandle::SysPoll()
+	static
+	unsigned consoletty_poll( vfs::filehandle* that )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = console_view_key( that );
 		
 		ConsoleParameters& params = gConsoleParametersMap[ view ];
 		
@@ -525,9 +522,10 @@ namespace Genie
 		}
 	}
 	
-	ssize_t ConsoleTTYHandle::SysRead( char* buffer, std::size_t byteCount )
+	static
+	ssize_t consoletty_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = console_view_key( that );
 		
 		TextEditParameters& text_params = TextEditParameters::Get( view );
 		
@@ -558,7 +556,7 @@ namespace Genie
 				break;
 			}
 			
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 		}
 		
 		if ( params.itHasReceivedEOF )
@@ -573,7 +571,7 @@ namespace Genie
 		const char* begin = s.begin() + params.itsStartOfInput;
 		const char* input = begin;
 		
-		byteCount = conv::utf8_from_mac( buffer, byteCount, &input, command_size );
+		n = conv::utf8_from_mac( buffer, n, &input, command_size );
 		
 		command_size = input - begin;
 		
@@ -583,7 +581,7 @@ namespace Genie
 		text_params.itsSelection.start =
 		text_params.itsSelection.end   = s.size();
 		
-		return byteCount;
+		return n;
 	}
 	
 	static inline char MacRoman_from_unicode( chars::unichar_t uc )
@@ -594,9 +592,10 @@ namespace Genie
 		return extended_ascii_from_unicode( uc, MacRoman_encoder_map );
 	}
 	
-	ssize_t ConsoleTTYHandle::SysWrite( const char* buffer, std::size_t byteCount )
+	static
+	ssize_t consoletty_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = console_view_key( that );
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
@@ -611,9 +610,9 @@ namespace Genie
 		
 		const size_t max_TextEdit_size = 30000;
 		
-		// byteCount is for UTF-8, so non-ASCII chars may cause an early cut
+		// n is for UTF-8, so non-ASCII chars may cause an early cut
 		
-		if ( s.size() + byteCount > max_TextEdit_size )
+		if ( s.size() + n > max_TextEdit_size )
 		{
 			size_t n_cut = consoleParams.itsStartOfOutput / 2;
 			
@@ -642,7 +641,7 @@ namespace Genie
 			
 			const size_t max_write_after_cut = 8192;
 			
-			byteCount = min( byteCount, max_write_after_cut );
+			n = min( n, max_write_after_cut );
 		}
 		
 		const size_t start_of_input  = consoleParams.itsStartOfInput;
@@ -655,9 +654,9 @@ namespace Genie
 		
 		const plus::string saved_input( s.begin() + start_of_input, s.end() );
 		
-		if ( start_of_output + byteCount > s.size() )
+		if ( start_of_output + n > s.size() )
 		{
-			s.resize( start_of_output + byteCount );
+			s.resize( start_of_output + n );
 		}
 		
 		const size_t bytes_overwritable = start_of_input - start_of_output;
@@ -669,7 +668,7 @@ namespace Genie
 		
 		char* start_of_last_line = NULL;
 		
-		const char* buffer_end = buffer + byteCount;
+		const char* buffer_end = buffer + n;
 		
 		const char* mark = buffer;
 		
@@ -780,18 +779,19 @@ namespace Genie
 		
 		InvalidateWindowForView( view );
 		
-		return byteCount;
+		return n;
 	}
 	
-	void ConsoleTTYHandle::IOCtl( unsigned long request, int* argp )
+	static
+	void consoletty_ioctl( vfs::filehandle* that, unsigned long req, int* argp )
 	{
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = console_view_key( that );
 		
 		TextEditParameters& params = TextEditParameters::Get( view );
 		
 		Point* result = (Point*) argp;
 		
-		switch ( request )
+		switch ( req )
 		{
 			case TIOCGWINSZ:
 				if ( result != NULL )
@@ -827,7 +827,7 @@ namespace Genie
 		
 		unsigned id = ++gLastID;
 		
-		vfs::filehandle_ptr result( new ConsoleTTYHandle( *that, id ) );
+		vfs::filehandle_ptr result( new_tty_handle( *that, id ) );
 		
 		vfs::set_dynamic_element_by_id< relix::con_tag >( id, result.get() );
 		

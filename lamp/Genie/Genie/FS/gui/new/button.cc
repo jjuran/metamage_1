@@ -232,29 +232,16 @@ namespace Genie
 	};
 	
 	
-	class Button_socket_Handle : public vfs::filehandle
+	struct button_stream_extra
 	{
-		private:
-			std::size_t itsSeed;
-		
-		public:
-			Button_socket_Handle( const vfs::node& file, int flags );
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* buffer, std::size_t byteCount );
+		unsigned long seed;
 	};
 	
+	static
+	unsigned buttonstream_poll( vfs::filehandle* that );
 	
-	static unsigned buttonstream_poll( vfs::filehandle* that )
-	{
-		return static_cast< Button_socket_Handle& >( *that ).SysPoll();
-	}
-	
-	static ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< Button_socket_Handle& >( *that ).SysRead( buffer, n );
-	}
+	static
+	ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n );
 	
 	static const vfs::stream_method_set buttonstream_stream_methods =
 	{
@@ -270,29 +257,28 @@ namespace Genie
 	};
 	
 	
-	Button_socket_Handle::Button_socket_Handle( const vfs::node& file, int flags )
-	:
-		vfs::filehandle( &file, flags, &buttonstream_methods ),
-		itsSeed( gButtonMap[ file.owner() ].seed )
+	static
+	unsigned buttonstream_poll( vfs::filehandle* that )
 	{
-	}
-	
-	unsigned int Button_socket_Handle::SysPoll()
-	{
-		const vfs::node* view = get_file( *this )->owner();
+		button_stream_extra& extra = *(button_stream_extra*) that->extra();
+		
+		const vfs::node* view = get_file( *that )->owner();
 		
 		Button_Parameters* it = gButtonMap.find( view );
 		
 		const bool readable =    it == NULL
 		                      || !it->installed
-		                      || it->seed != itsSeed;
+		                      || it->seed != extra.seed;
 		
 		return readable * vfs::Poll_read | vfs::Poll_write;
 	}
 	
-	ssize_t Button_socket_Handle::SysRead( char* buffer, std::size_t byteCount )
+	static
+	ssize_t buttonstream_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		const vfs::node* view = get_file( *this )->owner();
+		button_stream_extra& extra = *(button_stream_extra*) that->extra();
+		
+		const vfs::node* view = get_file( *that )->owner();
 		
 	retry:
 		
@@ -305,19 +291,19 @@ namespace Genie
 		
 		const Button_Parameters& params = *it;
 		
-		if ( params.seed == itsSeed )
+		if ( params.seed == extra.seed )
 		{
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 			
 			goto retry;
 		}
 		
-		if ( byteCount == 0 )
+		if ( n == 0 )
 		{
 			return 0;
 		}
 		
-		itsSeed = params.seed;
+		extra.seed = params.seed;
 		
 		const char c = '\n';
 		
@@ -338,7 +324,18 @@ namespace Genie
 			p7::throw_errno( ECONNREFUSED );
 		}
 		
-		return new Button_socket_Handle( *that, flags );
+		typedef button_stream_extra stream_extra;
+		
+		vfs::filehandle* result = new vfs::filehandle( that,
+		                                               flags,
+		                                               &buttonstream_methods,
+		                                               sizeof (stream_extra) );
+		
+		stream_extra& extra = *(stream_extra*) result->extra();
+		
+		extra.seed = it->seed;
+		
+		return result;
 	}
 	
 	static const vfs::data_method_set button_stream_data_methods =

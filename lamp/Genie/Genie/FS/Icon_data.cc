@@ -362,30 +362,31 @@ namespace Genie
 	}
 	
 	
-	class IconDataFileHandle : public vfs::filehandle
+	struct icon_data_extra
 	{
-		private:
-			boost::intrusive_ptr< IconData > itsData;
-		
-		public:
-			IconDataFileHandle( const vfs::node&                         file,
-			                    int                                      flags,
-			                    const boost::intrusive_ptr< IconData >&  data );
-			
-			ssize_t Positioned_Read( char* buffer, size_t n_bytes, off_t offset );
-			
-			off_t GetEOF()  { return itsData->GetSize(); }
+		IconData* data;
 	};
 	
-	
-	static ssize_t icon_data_pread( vfs::filehandle* file, char* buffer, size_t n, off_t offset )
+	static
+	void dispose_icon_data( vfs::filehandle* that )
 	{
-		return static_cast< IconDataFileHandle& >( *file ).Positioned_Read( buffer, n, offset );
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
+		
+		intrusive_ptr_release( extra.data );
 	}
+	
+	
+	static
+	ssize_t icon_data_pread( vfs::filehandle*  that,
+	                         char*             buffer,
+	                         size_t            n,
+	                         off_t             offset );
 	
 	static off_t icon_data_geteof( vfs::filehandle* file )
 	{
-		return static_cast< IconDataFileHandle& >( *file ).GetEOF();
+		icon_data_extra& extra = *(icon_data_extra*) file->extra();
+		
+		return extra.data->GetSize();
 	}
 	
 	static const vfs::bstore_method_set icon_data_bstore_methods =
@@ -400,37 +401,33 @@ namespace Genie
 	};
 	
 	
-	IconDataFileHandle::IconDataFileHandle( const vfs::node&                         file,
-	                                        int                                      flags,
-	                                        const boost::intrusive_ptr< IconData >&  data )
-	:
-		vfs::filehandle( &file, flags, &icon_data_filehandle_methods ),
-		itsData( data )
+	static
+	vfs::filehandle* new_data_reader( const vfs::node&  file,
+	                                  int               flags,
+	                                  IconData*         data )
 	{
-		ASSERT( itsData.get() != NULL );
-	}
-	
-	
-	class IconDataWriterHandle : public vfs::filehandle
-	{
-		private:
-			boost::intrusive_ptr< IconData > itsData;
+		ASSERT( data != NULL );
 		
-		public:
-			IconDataWriterHandle( const vfs::node&                         file,
-			                      int                                      flags,
-			                      const boost::intrusive_ptr< IconData >&  data );
-			
-			const vfs::node* ViewKey();
-			
-			ssize_t SysWrite( const char* buffer, size_t n_bytes );
-	};
-	
-	
-	static ssize_t icondatawriter_write( vfs::filehandle* that, const char* buffer, size_t n )
-	{
-		return static_cast< IconDataWriterHandle& >( *that ).SysWrite( buffer, n );
+		vfs::filehandle* result = new vfs::filehandle( &file,
+		                                               flags,
+		                                               &icon_data_filehandle_methods,
+		                                               sizeof (icon_data_extra),
+		                                               &dispose_icon_data );
+		
+		icon_data_extra& extra = *(icon_data_extra*) result->extra();
+		
+		extra.data = data;
+		
+		intrusive_ptr_add_ref( data );
+		
+		return result;
 	}
+	
+	
+	static
+	ssize_t icondatawriter_write( vfs::filehandle*  that,
+	                              const char*       buffer,
+	                              size_t            n );
 	
 	static const vfs::stream_method_set icondatawriter_stream_methods =
 	{
@@ -447,21 +444,39 @@ namespace Genie
 	};
 	
 	
-	IconDataWriterHandle::IconDataWriterHandle( const vfs::node&                         file,
-	                                            int                                      flags,
-	                                            const boost::intrusive_ptr< IconData >&  data )
-	:
-		vfs::filehandle( &file, flags, &icondatawriter_methods ),
-		itsData( data )
+	static
+	vfs::filehandle* new_data_writer( const vfs::node&  file,
+	                                  int               flags,
+	                                  IconData*         data )
 	{
-		ASSERT( itsData.get() != NULL );
+		ASSERT( data != NULL );
+		
+		vfs::filehandle* result = new vfs::filehandle( &file,
+		                                               flags,
+		                                               &icondatawriter_methods,
+		                                               sizeof (icon_data_extra),
+		                                               &dispose_icon_data );
+		
+		icon_data_extra& extra = *(icon_data_extra*) result->extra();
+		
+		extra.data = data;
+		
+		intrusive_ptr_add_ref( data );
+		
+		return result;
 	}
 	
-	ssize_t IconDataFileHandle::Positioned_Read( char* buffer, size_t byteCount, off_t offset )
+	static
+	ssize_t icon_data_pread( vfs::filehandle*  that,
+	                         char*             buffer,
+	                         size_t            n,
+	                         off_t             offset )
 	{
-		ASSERT( itsData.get() != NULL );
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
 		
-		ssize_t bytes_read = itsData->Read( buffer, byteCount, offset );
+		ASSERT( extra.data != NULL );
+		
+		ssize_t bytes_read = extra.data->Read( buffer, n, offset );
 		
 		if ( bytes_read == sizeof (::ResID) )
 		{
@@ -477,7 +492,7 @@ namespace Genie
 			
 			 bytes_read = end - decimal;
 			
-			if ( bytes_read > byteCount )
+			if ( bytes_read > n )
 			{
 				// Here's a nickel, kid.  Get yourself a larger buffer.
 				p7::throw_errno( ERANGE );
@@ -489,20 +504,26 @@ namespace Genie
 		return bytes_read;
 	}
 	
-	const vfs::node* IconDataWriterHandle::ViewKey()
+	static inline
+	const vfs::node* view_key( vfs::filehandle* that )
 	{
-		return get_file( *this )->owner();
+		return get_file( *that )->owner();
 	}
 	
-	ssize_t IconDataWriterHandle::SysWrite( const char* buffer, size_t byteCount )
+	static
+	ssize_t icondatawriter_write( vfs::filehandle*  that,
+	                              const char*       buffer,
+	                              size_t            n )
 	{
-		ASSERT( itsData.get() != NULL );
+		icon_data_extra& extra = *(icon_data_extra*) that->extra();
+		
+		ASSERT( extra.data != NULL );
 		
 		SInt16 resID;
 		
-		size_t actual_byte_count = byteCount;
+		size_t actual_byte_count = n;
 		
-		if ( byteCount >= 2  && byteCount <= 7 )
+		if ( n >= 2  && n <= 7 )
 		{
 			resID = gear::parse_decimal( buffer );
 			
@@ -511,20 +532,15 @@ namespace Genie
 			actual_byte_count = sizeof (::ResID);
 		}
 		
-		itsData->Write( buffer, actual_byte_count );
+		extra.data->Write( buffer, actual_byte_count );
 		
-		const vfs::node* view = ViewKey();
+		const vfs::node* view = view_key( that );
 		
 		InvalidateWindowForView( view );
 		
-		return byteCount;
+		return n;
 	}
 	
-	
-	struct icon_data_extra
-	{
-		IconData* data;
-	};
 	
 	static void dispose_icon_data( const vfs::node* that )
 	{
@@ -545,11 +561,11 @@ namespace Genie
 		switch ( accmode )
 		{
 			case O_RDONLY:
-				result = new IconDataFileHandle( *that, flags, extra.data );
+				result = new_data_reader( *that, flags, extra.data );
 				break;
 			
 			case O_WRONLY:
-				result = new IconDataWriterHandle( *that, flags, extra.data );
+				result = new_data_writer( *that, flags, extra.data );
 				break;
 			
 			default:

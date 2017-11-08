@@ -141,7 +141,7 @@ namespace Genie
 		
 		Mac::Handle r = N::Get1Resource( resType, resID );
 		
-		return new Handle_IOHandle( *that, flags, N::DetachResource( r ) );
+		return new_Handle_handle( *that, flags, N::DetachResource( r ) );
 	}
 	
 	static off_t resfs_file_geteof( const vfs::node* that )
