@@ -14,9 +14,15 @@
 // Iota
 #include "iota/strings.hh"
 
+// more-libc
+#include "more/string.h"
+
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_driver_open.hh"
+
+// plus
+#include "plus/string.hh"
 
 // nucleus
 #include "nucleus/shared.hh"
@@ -52,13 +58,66 @@ enum
 namespace Genie
 {
 	
+	class serial_driver_pair
+	{
+		private:
+			typedef struct unspecified* boolean;
+			
+			short its_output_refnum;
+			short its_input_refnum;
+		
+		public:
+			serial_driver_pair() : its_output_refnum(), its_input_refnum()
+			{
+			}
+			
+			serial_driver_pair( const plus::string& base_name );
+			
+		#if ! TARGET_API_MAC_CARBON
+			
+			void destroy() const
+			{
+				::CloseDriver( its_input_refnum  );
+				::CloseDriver( its_output_refnum );
+			}
+			
+			typedef Mac::DriverRefNum MacType;
+			
+			MacType output() const  { return MacType( its_output_refnum ); }
+			MacType input () const  { return MacType( its_input_refnum  ); }
+			
+		#endif
+			
+			operator boolean() const  { return (boolean) (its_output_refnum < 0); }
+	};
+	
+}
+
+namespace nucleus
+{
+	
+	template <> struct disposer< Genie::serial_driver_pair >
+	{
+		typedef Genie::serial_driver_pair  argument_type;
+		typedef void                       result_type;
+		
+		void operator()( const Genie::serial_driver_pair& pair ) const
+		{
+		#if ! TARGET_API_MAC_CARBON
+			
+			pair.destroy();
+			
+		#endif
+		}
+	};
+	
+}
+
+namespace Genie
+{
+	
 	namespace n = nucleus;
 	namespace p7 = poseven;
-	
-	
-#if !TARGET_API_MAC_CARBON
-	
-	namespace N = Nitrogen;
 	
 	
 	template < class T >
@@ -71,13 +130,12 @@ namespace Genie
 	class SerialDeviceHandle : public vfs::filehandle
 	{
 		private:
-			plus::string                    itsPortName;
-			n::shared< Mac::DriverRefNum >  itsOutputRefNum;
-			n::shared< Mac::DriverRefNum >  itsInputRefNum;
-			bool                            itIsPassive;
+			plus::string                     itsPortName;
+			n::shared< serial_driver_pair >  its_drivers;
+			bool                             itIsPassive;
 		
 		protected:
-			bool IsShared() const  { return !itsOutputRefNum.sole(); }
+			bool IsShared() const  { return ! its_drivers.sole(); }
 		
 		public:
 			SerialDeviceHandle( const plus::string& portName, bool passive );
@@ -173,8 +231,6 @@ namespace Genie
 		return new SerialDeviceHandle( counterpart, isPassive );
 	}
 	
-#endif
-	
 	
 	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
 	                                      bool                 isPassive,
@@ -208,28 +264,6 @@ namespace Genie
 	#endif
 	}
 	
-#if !TARGET_API_MAC_CARBON
-	
-	static N::Str255 MakeDriverName( const plus::string&   port_name,
-	                                 const char           *direction,
-	                                 size_t                direction_length )
-	{
-		const size_t total_length = 1 + port_name.length() + direction_length;
-		
-		if ( total_length > 255 )
-		{
-			Mac::ThrowOSStatus( bdNamErr );
-		}
-		
-		Str255 result = { total_length, '.' };
-		
-		memcpy( &result[ 2 ], port_name.data(), port_name.size() );
-		
-		memcpy( &result[ 2 + port_name.size() ], direction, direction_length );
-		
-		return result;
-	}
-	
 	static inline bool SerialPortsAreArbitrated()
 	{
 		return mac::sys::gestalt_bit_set( gestaltSerialPortArbitratorAttr, gestaltSerialPortArbitratorExists );
@@ -242,25 +276,74 @@ namespace Genie
 		return SerialPortsAreArbitrated()  ||  ! is_driver_open( driverName );
 	}
 	
-	static n::owned< Mac::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
+	serial_driver_pair::serial_driver_pair( const plus::string& base_name )
 	{
-		if ( !SerialDriverMayBeOpened( driverName ) )
+		const size_t max_basename_len = 255 - 1 - 3;  // ".<basename>Out"
+		
+		const char*   base_addr = base_name.data();
+		const size_t  base_size = base_name.size();
+		
+		if ( base_size > max_basename_len )
+		{
+			p7::throw_errno( ENAMETOOLONG );
+		}
+		
+		Str255 driver_name;
+		
+		uint8_t* p = driver_name;
+		
+		*p++ = base_size + 1 + 3;
+		
+		*p++ = '.';
+		
+		p = (uint8_t*) mempcpy( p, base_addr, base_size );
+		
+		*p++ = 'O';
+		*p++ = 'u';
+		*p   = 't';
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( ! SerialDriverMayBeOpened( driver_name ) )
 		{
 			Mac::ThrowOSStatus( portInUse );
 		}
 		
-		return N::OpenDriver( driverName );
+		Mac::ThrowOSStatus( OpenDriver( driver_name, &its_output_refnum ) );
+		
+	#endif
+		
+		*--p = 'n';
+		*--p = 'I';
+		
+		--driver_name[ 0 ];
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		if ( OSErr err = OpenDriver( driver_name, &its_input_refnum ) )
+		{
+			::CloseDriver( its_output_refnum );
+			
+			Mac::ThrowOSStatus( err );
+		}
+		
+	#endif
 	}
+	
+#if ! TARGET_API_MAC_CARBON
+	
+	namespace N = Nitrogen;
+	
+	typedef serial_driver_pair dyad;
 	
 	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
 		vfs::filehandle( O_RDWR, &serial_methods ),
 		itsPortName( portName ),
-		itsOutputRefNum( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "Out" ) ) ) ),
-		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
+		its_drivers( n::owned< dyad >::seize( dyad( portName ) ) ),
 		itIsPassive( passive )
 	{
-		const Mac::DriverRefNum output = itsOutputRefNum;
+		const Mac::DriverRefNum output = its_drivers.get().output();
 		
 		using N::kSERDHandshake;
 		using N::baud19200;
@@ -277,9 +360,8 @@ namespace Genie
 	:
 		vfs::filehandle( O_RDWR, &serial_methods ),
 		itsPortName( other.itsPortName ),
-		itsOutputRefNum( other.itsOutputRefNum ),
-		itsInputRefNum ( other.itsInputRefNum  ),
-		itIsPassive    ( passive               )
+		its_drivers( other.its_drivers ),
+		itIsPassive( passive           )
 	{
 	}
 	
@@ -290,7 +372,7 @@ namespace Genie
 	
 	unsigned int SerialDeviceHandle::SysPoll()
 	{
-		const Mac::DriverRefNum input = itsInputRefNum;
+		const Mac::DriverRefNum input = its_drivers.get().input();
 		
 		bool unblocked = !Preempted();
 		
@@ -305,7 +387,7 @@ namespace Genie
 	
 	ssize_t SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		const Mac::DriverRefNum input = itsInputRefNum;
+		const Mac::DriverRefNum input = its_drivers.get().input();
 		
 		while ( true )
 		{
@@ -332,7 +414,7 @@ namespace Genie
 	
 	ssize_t SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		const Mac::DriverRefNum output = itsOutputRefNum;
+		const Mac::DriverRefNum output = its_drivers.get().output();
 		
 		while ( Preempted() )
 		{
