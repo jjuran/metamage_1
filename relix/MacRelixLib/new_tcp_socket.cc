@@ -21,9 +21,6 @@
 #include <OpenTransportProviders.h>
 #endif
 
-// Standard C
-#include <signal.h>
-
 // POSIX
 #include <sys/socket.h>
 
@@ -47,7 +44,6 @@
 // Nitrogen
 #include "Nitrogen/OpenTransport.hh"
 #include "Nitrogen/OpenTransportProviders.hh"
-#include "Nitrogen/OSUtils.hh"
 
 // ClassicToolbox
 #include "ClassicToolbox/OpenTransport.hh"
@@ -61,38 +57,47 @@
 namespace relix
 {
 	
-	namespace n = nucleus;
 	namespace N = Nitrogen;
 	namespace p7 = poseven;
 	
-	using mac::app::OpenTransport_share;
 	
-	
-	struct InetAddress : private ::InetAddress
+	struct OT_socket_extra
 	{
-		operator const sockaddr&() const  { return *(const sockaddr*) this; }
+		int backlog;
+		
+		InetAddress sock_addr;
+		InetAddress peer_addr;
+		
+		EndpointRef endpoint;
+		
+		OTResult its_result;
+		
+		SInt32 n_incoming_connections;
+		
+		bool  it_is_bound;
+		bool  it_is_listener;
+		bool  it_is_connecting;
+		bool  it_is_connected;
+		bool  it_has_sent_FIN;
+		bool  it_has_received_FIN;
+		bool  it_has_received_RST;
 	};
+	
+	static
+	void destroy_OT_socket( vfs::filehandle* that )
+	{
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
+		
+		if ( extra.endpoint )
+		{
+			::OTCloseProvider( extra.endpoint );
+		}
+		
+		mac::app::CloseOpenTransport_shared();
+	}
 	
 	class OTSocket : public vfs::filehandle
 	{
-		private:
-			OpenTransport_share      itsOpenTransport;
-			int                      itsBacklog;
-			InetAddress              itsSocketAddress;
-			InetAddress              itsPeerAddress;
-		
-		public:
-			n::owned< EndpointRef >  itsEndpoint;
-			OTResult                 its_result;
-			SInt32                   n_incoming_connections;
-			bool                     it_is_bound;
-			bool                     it_is_listener;
-			bool                     it_is_connecting;
-			bool                     it_is_connected;
-			bool                     it_has_sent_FIN;
-			bool                     it_has_received_FIN;
-			bool                     it_has_received_RST;
-		
 		public:
 			OTSocket( bool nonblocking = false );
 			
@@ -114,9 +119,6 @@ namespace relix
 			
 			void Connect( const sockaddr& server, socklen_t len );
 			
-			const sockaddr& GetSockName() const  { return itsSocketAddress; }
-			const sockaddr& GetPeerName() const  { return itsPeerAddress;   }
-			
 			void ShutdownReading()  {}
 			void ShutdownWriting();
 	};
@@ -131,7 +133,7 @@ namespace relix
 		
 		try
 		{
-			if ( OTSocket* socket = (OTSocket*) context )
+			if ( OT_socket_extra* socket = (OT_socket_extra*) context )
 			{
 				switch ( code )
 				{
@@ -148,21 +150,21 @@ namespace relix
 						break;
 					
 					case T_CONNECT:
-						(void) ::OTRcvConnect( socket->itsEndpoint, NULL );
+						(void) ::OTRcvConnect( socket->endpoint, NULL );
 						
 						socket->it_is_connecting = false;
 						socket->it_is_connected  = true;
 						break;
 					
 					case T_DISCONNECT:
-						(void) ::OTRcvDisconnect( socket->itsEndpoint, NULL );
+						(void) ::OTRcvDisconnect( socket->endpoint, NULL );
 						
 						socket->it_is_connecting    = false;
 						socket->it_has_received_RST = true;
 						break;
 					
 					case T_ORDREL:
-						(void) ::OTRcvOrderlyDisconnect( socket->itsEndpoint );
+						(void) ::OTRcvOrderlyDisconnect( socket->endpoint );
 						
 						socket->it_has_received_FIN = true;
 						
@@ -188,7 +190,7 @@ namespace relix
 						
 						if ( result == noErr )
 						{
-							socket->itsEndpoint = n::owned< EndpointRef >::seize( (EndpointRef) cookie );
+							socket->endpoint = (EndpointRef) cookie;
 						}
 						
 						break;
@@ -203,13 +205,14 @@ namespace relix
 		}
 	}
 	
-	static void OTBind_sync( OTSocket&  socket,
-	                         TBind*     reqAddr = NULL,
-	                         TBind*     retAddr = NULL )
+	static
+	void OTBind_sync( OT_socket_extra&  socket,
+	                  TBind*            reqAddr = NULL,
+	                  TBind*            retAddr = NULL )
 	{
 		socket.its_result = 0;
 		
-		N::OTBind( socket.itsEndpoint, reqAddr, retAddr );
+		N::OTBind( socket.endpoint, reqAddr, retAddr );
 		
 		while ( socket.its_result == 0  &&  !socket.it_is_bound )
 		{
@@ -223,7 +226,8 @@ namespace relix
 	static OTNotifyUPP gSocketNotifier = ::NewOTNotifyUPP( socket_notifier );
 	
 	
-	static void Complete( OTSocket& socket )
+	static
+	void Complete( OT_socket_extra& socket )
 	{
 		while ( socket.its_result > 0  )
 		{
@@ -233,7 +237,8 @@ namespace relix
 		N::ThrowOTResult( socket.its_result );
 	}
 	
-	static void AsyncOpenEndpoint( const char* config, OTSocket* socket )
+	static
+	void AsyncOpenEndpoint( const char* config, OT_socket_extra* socket )
 	{
 		socket->its_result = 1;
 		
@@ -295,12 +300,16 @@ namespace relix
 	
 	static const sockaddr* OT_getsockname( vfs::filehandle* sock )
 	{
-		return &static_cast< OTSocket& >( *sock ).GetSockName();
+		OT_socket_extra& extra = *(OT_socket_extra*) sock->extra();
+		
+		return (const sockaddr*) &extra.sock_addr;
 	}
 	
 	static const sockaddr* OT_getpeername( vfs::filehandle* sock )
 	{
-		return &static_cast< OTSocket& >( *sock ).GetPeerName();
+		OT_socket_extra& extra = *(OT_socket_extra*) sock->extra();
+		
+		return (const sockaddr*) &extra.peer_addr;
 	}
 	
 	static const vfs::stream_method_set OT_stream_methods =
@@ -332,32 +341,34 @@ namespace relix
 	:
 		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
 		                             : O_RDWR,
-		              &OT_methods ),
-		itsBacklog(),
-		its_result            ( 0 ),
-		n_incoming_connections( 0 ),
-		it_is_bound        ( false ),
-		it_is_listener     ( false ),
-		it_is_connecting   ( false ),
-		it_is_connected    ( false ),
-		it_has_sent_FIN    ( false ),
-		it_has_received_FIN( false ),
-		it_has_received_RST( false )
+		                 &OT_methods,
+		                 sizeof (OT_socket_extra) )
 	{
-		AsyncOpenEndpoint( "tcp", this );
+		using namespace mac::app;
+		
+		InitOpenTransport_shared( &default_OSStatus_handler );
+		
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
+		memset( &extra, '\0', sizeof extra );
+		
+		AsyncOpenEndpoint( "tcp", &extra );
 	}
 	
 	OTSocket::~OTSocket()
 	{
+		destroy_OT_socket( this );
 	}
 	
 	bool OTSocket::RepairListener()
 	{
-		if ( it_is_listener && ::OTGetEndpointState( itsEndpoint ) == 0 )
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
+		if ( extra.it_is_listener  &&  ! OTGetEndpointState( extra.endpoint ) )
 		{
 			try_again( false );
 			
-			Listen( itsBacklog );
+			Listen( extra.backlog );
 			
 			return true;
 		}
@@ -367,9 +378,11 @@ namespace relix
 	
 	unsigned int OTSocket::SysPoll()
 	{
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
 		RepairListener();
 		
-		::OTResult state = ::OTGetEndpointState( itsEndpoint );
+		::OTResult state = ::OTGetEndpointState( extra.endpoint );
 		
 		bool canRead = true;
 		
@@ -381,7 +394,7 @@ namespace relix
 		{
 			::OTByteCount count;
 			
-			canRead = ::OTCountDataBytes( itsEndpoint, &count ) == noErr;
+			canRead = ::OTCountDataBytes( extra.endpoint, &count ) == noErr;
 		}
 		
 		return (canRead ? vfs::Poll_read : 0) | vfs::Poll_write;
@@ -389,7 +402,9 @@ namespace relix
 	
 	ssize_t OTSocket::SysRead( char* data, std::size_t byteCount )
 	{
-		if ( it_has_received_FIN )
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
+		if ( extra.it_has_received_FIN )
 		{
 			return 0;
 		}
@@ -400,9 +415,9 @@ namespace relix
 		
 		while ( true )
 		{
-			err_count = ::OTCountDataBytes( itsEndpoint, &n_readable_bytes );
+			err_count = ::OTCountDataBytes( extra.endpoint, &n_readable_bytes );
 			
-			if ( it_has_received_FIN )
+			if ( extra.it_has_received_FIN )
 			{
 				return 0;
 			}
@@ -422,12 +437,14 @@ namespace relix
 			byteCount = n_readable_bytes;
 		}
 		
-		return N::OTRcv( itsEndpoint, data, byteCount );
+		return N::OTRcv( extra.endpoint, data, byteCount );
 	}
 	
 	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
 	{
-		if ( it_has_sent_FIN )
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
+		if ( extra.it_has_sent_FIN )
 		{
 			broken_pipe();
 		}
@@ -438,12 +455,12 @@ namespace relix
 		
 	retry:
 		
-		const ssize_t sent = ::OTSnd( itsEndpoint,
+		const ssize_t sent = ::OTSnd( extra.endpoint,
 									  (char*) p + n_written,
 									  byteCount - n_written,
 									  0 );
 		
-		if ( it_has_received_RST )
+		if ( extra.it_has_received_RST )
 		{
 			p7::throw_errno( ECONNRESET );
 		}
@@ -479,36 +496,42 @@ namespace relix
 	
 	void OTSocket::Bind( const sockaddr& local, socklen_t len )
 	{
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
 		if ( len != sizeof (InetAddress) )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		itsSocketAddress = (const InetAddress&) local;
+		extra.sock_addr = (const InetAddress&) local;
 	}
 	
 	void OTSocket::Listen( int backlog )
 	{
-		itsBacklog = backlog;
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
+		extra.backlog = backlog;
 		
 		// Throw out our tcp-only endpoint and make one with tilisten prepended
-		AsyncOpenEndpoint( "tilisten,tcp", this );
+		AsyncOpenEndpoint( "tilisten,tcp", &extra );
 		
 		TBind reqAddr;
 		
 		::OTMemzero( &reqAddr, sizeof (TBind) );
 		
-		reqAddr.addr.buf = (unsigned char*) &itsSocketAddress;  // reinterpret_cast
-		reqAddr.addr.len = sizeof itsSocketAddress;
+		reqAddr.addr.buf = (uint8_t*) &extra.sock_addr;  // reinterpret_cast
+		reqAddr.addr.len = sizeof extra.sock_addr;
 		reqAddr.qlen = backlog;
 		
-		OTBind_sync( *this, &reqAddr );
+		OTBind_sync( extra, &reqAddr );
 		
-		it_is_listener = true;
+		extra.it_is_listener = true;
 	}
 	
 	vfs::filehandle_ptr OTSocket::Accept( sockaddr& client, socklen_t& len )
 	{
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
 		RepairListener();
 		
 		TCall call;
@@ -523,14 +546,14 @@ namespace relix
 		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
 		call.addr.maxlen = len;
 		
-		while ( n_incoming_connections == 0 )
+		while ( extra.n_incoming_connections == 0 )
 		{
 			try_again( is_nonblocking( *this ) );
 		}
 		
-		::OTAtomicAdd32( -1, &n_incoming_connections );
+		::OTAtomicAdd32( -1, &extra.n_incoming_connections );
 		
-		N::OTListen( itsEndpoint, &call );
+		N::OTListen( extra.endpoint, &call );
 		
 		len = call.addr.len;
 		
@@ -541,24 +564,28 @@ namespace relix
 		
 		OTSocket* handle = new OTSocket;
 		
+		OT_socket_extra& new_extra = *(OT_socket_extra*) handle->extra();
+		
 		vfs::filehandle_ptr newSocket( handle );
 		
-		handle->itsPeerAddress = (const InetAddress&) client;
+		new_extra.peer_addr = (const InetAddress&) client;
 		
-		its_result = 1;
+		extra.its_result = 1;
 		
-		N::OTAccept( itsEndpoint, handle->itsEndpoint, &call );
+		N::OTAccept( extra.endpoint, new_extra.endpoint, &call );
 		
-		Complete( *this );
+		Complete( extra );
 		
 		return newSocket;
 	}
 	
 	void OTSocket::Connect( const sockaddr& server, socklen_t len )
 	{
-		if ( !it_is_bound )
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		
+		if ( ! extra.it_is_bound )
 		{
-			OTBind_sync( *this );
+			OTBind_sync( extra );
 		}
 		
 		TCall sndCall;
@@ -568,23 +595,23 @@ namespace relix
 		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
 		sndCall.addr.len = len;
 		
-		it_is_connecting = true;
+		extra.it_is_connecting = true;
 		
-		OSStatus err = ::OTConnect( itsEndpoint, &sndCall, NULL );
+		OSStatus err = ::OTConnect( extra.endpoint, &sndCall, NULL );
 		
 		if ( err != kOTNoDataErr )
 		{
-			it_is_connecting = false;
+			extra.it_is_connecting = false;
 			
 			Mac::ThrowOSStatus( err );
 		}
 		
-		while ( it_is_connecting )
+		while ( extra.it_is_connecting )
 		{
 			try_again( false );
 		}
 		
-		if ( it_has_received_RST )
+		if ( extra.it_has_received_RST )
 		{
 			// FIXME:  We should check the discon info, but for now assume
 			p7::throw_errno( ECONNREFUSED );
@@ -593,9 +620,11 @@ namespace relix
 	
 	void OTSocket::ShutdownWriting()
 	{
-		N::OTSndOrderlyDisconnect( itsEndpoint );
+		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
 		
-		it_has_sent_FIN = true;
+		N::OTSndOrderlyDisconnect( extra.endpoint );
+		
+		extra.it_has_sent_FIN = true;
 	}
 	
 }
