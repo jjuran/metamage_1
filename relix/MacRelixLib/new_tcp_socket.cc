@@ -102,25 +102,6 @@ namespace relix
 			OTSocket( bool nonblocking = false );
 			
 			~OTSocket();
-			
-			bool RepairListener();
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* data, std::size_t byteCount );
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
-			void Bind( const sockaddr& local, socklen_t len );
-			
-			void Listen( int backlog );
-			
-			vfs::filehandle_ptr Accept( sockaddr& client, socklen_t& len );
-			
-			void Connect( const sockaddr& server, socklen_t len );
-			
-			void ShutdownReading()  {}
-			void ShutdownWriting();
 	};
 	
 	
@@ -250,51 +231,40 @@ namespace relix
 	}
 	
 	
-	static unsigned OT_poll( vfs::filehandle* sock )
-	{
-		return static_cast< OTSocket& >( *sock ).SysPoll();
-	}
+	static
+	unsigned OT_poll( vfs::filehandle* that );
 	
-	static ssize_t OT_read( vfs::filehandle* sock, char* buffer, size_t n )
-	{
-		return static_cast< OTSocket& >( *sock ).SysRead( buffer, n );
-	}
+	static
+	ssize_t OT_read( vfs::filehandle* that, char* buffer, size_t n );
 	
-	static ssize_t OT_write( vfs::filehandle* sock, const char* buffer, size_t n )
-	{
-		return static_cast< OTSocket& >( *sock ).SysWrite( buffer, n );
-	}
+	static
+	ssize_t OT_write( vfs::filehandle* that, const char* buffer, size_t n );
 	
-	static void OT_bind( vfs::filehandle* sock, const sockaddr* local, socklen_t len )
-	{
-		static_cast< OTSocket& >( *sock ).Bind( *local, len );
-	}
+	static
+	void OT_bind( vfs::filehandle* that, const sockaddr* local, socklen_t len );
 	
-	static void OT_listen( vfs::filehandle* sock, int backlog )
-	{
-		static_cast< OTSocket& >( *sock ).Listen( backlog );
-	}
+	static
+	void OT_listen( vfs::filehandle* that, int backlog );
 	
-	static vfs::filehandle_ptr OT_accept( vfs::filehandle* sock, sockaddr* client, socklen_t* len )
-	{
-		return static_cast< OTSocket& >( *sock ).Accept( *client, *len );
-	}
+	static
+	vfs::filehandle_ptr OT_accept( vfs::filehandle* that, sockaddr* client, socklen_t* len );
 	
-	static void OT_connect( vfs::filehandle* sock, const sockaddr* server, socklen_t len )
-	{
-		static_cast< OTSocket& >( *sock ).Connect( *server, len );
-	}
+	static
+	void OT_connect( vfs::filehandle* that, const sockaddr* server, socklen_t len );
+	
+	static
+	void shut_down_writing( vfs::filehandle* that );
 	
 	static void OT_shutdown( vfs::filehandle* sock, int how )
 	{
 		if ( how != SHUT_WR )
 		{
-			static_cast< OTSocket& >( *sock ).ShutdownReading();
+			// reading shutdown is unimplemented
 		}
 		
 		if ( how != SHUT_RD )
 		{
-			static_cast< OTSocket& >( *sock ).ShutdownWriting();
+			shut_down_writing( sock );
 		}
 	}
 	
@@ -360,15 +330,16 @@ namespace relix
 		destroy_OT_socket( this );
 	}
 	
-	bool OTSocket::RepairListener()
+	static
+	bool repair_listener( vfs::filehandle* that )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		if ( extra.it_is_listener  &&  ! OTGetEndpointState( extra.endpoint ) )
 		{
 			try_again( false );
 			
-			Listen( extra.backlog );
+			OT_listen( that, extra.backlog );
 			
 			return true;
 		}
@@ -376,11 +347,12 @@ namespace relix
 		return false;
 	}
 	
-	unsigned int OTSocket::SysPoll()
+	static
+	unsigned OT_poll( vfs::filehandle* that )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
-		RepairListener();
+		repair_listener( that );
 		
 		::OTResult state = ::OTGetEndpointState( extra.endpoint );
 		
@@ -400,9 +372,10 @@ namespace relix
 		return (canRead ? vfs::Poll_read : 0) | vfs::Poll_write;
 	}
 	
-	ssize_t OTSocket::SysRead( char* data, std::size_t byteCount )
+	static
+	ssize_t OT_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		if ( extra.it_has_received_FIN )
 		{
@@ -427,29 +400,30 @@ namespace relix
 				break;
 			}
 			
-			try_again( is_nonblocking( *this ) );
+			try_again( is_nonblocking( *that ) );
 		}
 		
 		Mac::ThrowOSStatus( err_count );
 		
-		if ( byteCount > n_readable_bytes )
+		if ( n > n_readable_bytes )
 		{
-			byteCount = n_readable_bytes;
+			n = n_readable_bytes;
 		}
 		
-		return N::OTRcv( extra.endpoint, data, byteCount );
+		return N::OTRcv( extra.endpoint, buffer, n );
 	}
 	
-	ssize_t OTSocket::SysWrite( const char* data, std::size_t byteCount )
+	static
+	ssize_t OT_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		if ( extra.it_has_sent_FIN )
 		{
 			broken_pipe();
 		}
 		
-		const char* p = data;
+		const char* p = buffer;
 		
 		std::size_t n_written = 0;
 		
@@ -457,7 +431,7 @@ namespace relix
 		
 		const ssize_t sent = ::OTSnd( extra.endpoint,
 									  (char*) p + n_written,
-									  byteCount - n_written,
+									  n         - n_written,
 									  0 );
 		
 		if ( extra.it_has_received_RST )
@@ -472,14 +446,14 @@ namespace relix
 			n_written += sent;
 		}
 		
-		if ( is_nonblocking( *this ) )
+		if ( is_nonblocking( *that ) )
 		{
 			if ( n_written == 0 )
 			{
 				p7::throw_errno( EAGAIN );
 			}
 		}
-		else if ( n_written < byteCount )
+		else if ( n_written < n )
 		{
 			const bool signal_caught = yield( false );
 			
@@ -494,21 +468,23 @@ namespace relix
 		return n_written;
 	}
 	
-	void OTSocket::Bind( const sockaddr& local, socklen_t len )
+	static
+	void OT_bind( vfs::filehandle* that, const sockaddr* local, socklen_t len )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		if ( len != sizeof (InetAddress) )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		extra.sock_addr = (const InetAddress&) local;
+		extra.sock_addr = (const InetAddress&) *local;
 	}
 	
-	void OTSocket::Listen( int backlog )
+	static
+	void OT_listen( vfs::filehandle* that, int backlog )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		extra.backlog = backlog;
 		
@@ -528,36 +504,37 @@ namespace relix
 		extra.it_is_listener = true;
 	}
 	
-	vfs::filehandle_ptr OTSocket::Accept( sockaddr& client, socklen_t& len )
+	static
+	vfs::filehandle_ptr OT_accept( vfs::filehandle* that, sockaddr* client, socklen_t* len )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
-		RepairListener();
+		repair_listener( that );
 		
 		TCall call;
 		
 		::OTMemzero( &call, sizeof (TCall) );
 		
-		if ( len < sizeof (InetAddress) )
+		if ( *len < sizeof (InetAddress) )
 		{
 			p7::throw_errno( EINVAL );
 		}
 		
-		call.addr.buf = reinterpret_cast< unsigned char* >( &client );
-		call.addr.maxlen = len;
+		call.addr.buf = reinterpret_cast< unsigned char* >( client );
+		call.addr.maxlen = *len;
 		
 		while ( extra.n_incoming_connections == 0 )
 		{
-			try_again( is_nonblocking( *this ) );
+			try_again( is_nonblocking( *that ) );
 		}
 		
 		::OTAtomicAdd32( -1, &extra.n_incoming_connections );
 		
 		N::OTListen( extra.endpoint, &call );
 		
-		len = call.addr.len;
+		*len = call.addr.len;
 		
-		if ( len != sizeof (InetAddress) )
+		if ( *len != sizeof (InetAddress) )
 		{
 			p7::throw_errno( EINVAL );
 		}
@@ -568,7 +545,7 @@ namespace relix
 		
 		vfs::filehandle_ptr newSocket( handle );
 		
-		new_extra.peer_addr = (const InetAddress&) client;
+		new_extra.peer_addr = (const InetAddress&) *client;
 		
 		extra.its_result = 1;
 		
@@ -579,9 +556,10 @@ namespace relix
 		return newSocket;
 	}
 	
-	void OTSocket::Connect( const sockaddr& server, socklen_t len )
+	static
+	void OT_connect( vfs::filehandle* that, const sockaddr* server, socklen_t len )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		if ( ! extra.it_is_bound )
 		{
@@ -592,7 +570,7 @@ namespace relix
 		
 		::OTMemzero( &sndCall, sizeof (TCall) );
 		
-		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( &server ) );
+		sndCall.addr.buf = reinterpret_cast< unsigned char* >( const_cast< sockaddr* >( server ) );
 		sndCall.addr.len = len;
 		
 		extra.it_is_connecting = true;
@@ -618,9 +596,10 @@ namespace relix
 		}
 	}
 	
-	void OTSocket::ShutdownWriting()
+	static
+	void shut_down_writing( vfs::filehandle* that )
 	{
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		OT_socket_extra& extra = *(OT_socket_extra*) that->extra();
 		
 		N::OTSndOrderlyDisconnect( extra.endpoint );
 		
