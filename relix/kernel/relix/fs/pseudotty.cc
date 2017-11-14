@@ -40,21 +40,11 @@
 namespace relix
 {
 	
-	typedef std::size_t TerminalID;
-	
 	struct pseudotty_extra
 	{
 		unsigned        id;
 		plus::conduit*  input;
 		plus::conduit*  output;
-	};
-	
-	class PseudoTTYHandle : public vfs::filehandle
-	{
-		public:
-			PseudoTTYHandle( std::size_t                            id,
-			                 boost::intrusive_ptr< plus::conduit >  input,
-			                 boost::intrusive_ptr< plus::conduit >  output );
 	};
 	
 	static
@@ -86,15 +76,6 @@ namespace relix
 		return vfs::get_dynamic_group< pts_tag >();
 	}
 	
-	static inline vfs::filehandle_ptr
-	//
-	NewPseudoTTY( TerminalID                                    id,
-	              const boost::intrusive_ptr< plus::conduit >&  input,
-	              const boost::intrusive_ptr< plus::conduit >&  output )
-	{
-		return new PseudoTTYHandle( id, input, output );
-	}
-	
 	static inline plus::string make_devpts( size_t id )
 	{
 		plus::var_string result = "/dev/pts/";
@@ -104,16 +85,21 @@ namespace relix
 		return result;
 	}
 	
+	static
+	vfs::filehandle* new_pseudotty( unsigned        id,
+	                                plus::conduit&  input,
+	                                plus::conduit&  output );
+	
 	void new_pseudotty_pair( vfs::filehandle_ptr&  master,
 	                         vfs::filehandle_ptr&  slave )
 	{
-		static TerminalID index = 0;
+		static unsigned index = 0;
 		
 		boost::intrusive_ptr< plus::conduit > incoming( new plus::conduit );
 		boost::intrusive_ptr< plus::conduit > outgoing( new plus::conduit );
 		
-		vfs::filehandle_ptr master_handle( NewPseudoTTY( index, outgoing, incoming ) );
-		vfs::filehandle_ptr slave_handle ( NewPseudoTTY( index, incoming, outgoing ) );
+		vfs::filehandle_ptr master_handle( new_pseudotty( index, *outgoing, *incoming ) );
+		vfs::filehandle_ptr slave_handle ( new_pseudotty( index, *incoming, *outgoing ) );
 		
 		vfs::set_dynamic_element_by_id< pts_tag >( index, slave_handle.get() );
 		
@@ -131,19 +117,26 @@ namespace relix
 	static
 	void destroy_pseudotty( vfs::filehandle* that );
 	
-	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
-			                          boost::intrusive_ptr< plus::conduit >  input,
-			                          boost::intrusive_ptr< plus::conduit >  output )
-	: vfs::filehandle( O_RDWR, &pseudotty_methods, sizeof (pseudotty_extra), &destroy_pseudotty )
+	static
+	vfs::filehandle* new_pseudotty( unsigned        id,
+	                                plus::conduit&  input,
+	                                plus::conduit&  output )
 	{
-		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
+		                                               &pseudotty_methods,
+		                                               sizeof (pseudotty_extra),
+		                                               &destroy_pseudotty );
+		
+		pseudotty_extra& extra = *(pseudotty_extra*) result->extra();
 		
 		extra.id     = id;
-		extra.input  = input.get();
-		extra.output = output.get();
+		extra.input  = &input;
+		extra.output = &output;
 		
 		intrusive_ptr_add_ref( extra.input  );
 		intrusive_ptr_add_ref( extra.output );
+		
+		return result;
 	}
 	
 	static
