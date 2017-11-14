@@ -5,19 +5,6 @@
 
 #include "Genie/IO/SerialDevice.hh"
 
-// Mac OS X
-#ifdef __APPLE__
-#include <CoreServices/CoreServices.h>
-#endif
-
-// Mac OS
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
-#ifndef __STRINGCOMPARE__
-#include <StringCompare.h>
-#endif
-
 // Standard C++
 #include <map>
 
@@ -29,6 +16,7 @@
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
+#include "mac_sys/is_driver_open.hh"
 
 // nucleus
 #include "nucleus/shared.hh"
@@ -241,34 +229,11 @@ namespace Genie
 		return mac::sys::gestalt_bit_set( gestaltSerialPortArbitratorAttr, gestaltSerialPortArbitratorExists );
 	}
 	
-	static bool DriverIsOpen( const unsigned char* driverName )
-	{
-		for ( int unit = 0;  unit < LMGetUnitTableEntryCount();  ++unit )
-		{
-			DCtlHandle dceHandle = GetDCtlEntry( -unit );
-			
-			if ( dceHandle != NULL  &&  dceHandle[0]->dCtlDriver != NULL )
-			{
-				const bool ramBased = dceHandle[0]->dCtlFlags & dRAMBasedMask;
-				
-				DRVRHeaderPtr header = ramBased ? *reinterpret_cast< DRVRHeader** >( dceHandle[0]->dCtlDriver )
-				                                :  reinterpret_cast< DRVRHeader*  >( dceHandle[0]->dCtlDriver );
-				
-				ConstStr255Param name = header->drvrName;
-				
-				if ( ::EqualString( name, driverName, false, true ) )
-				{
-					return dceHandle[0]->dCtlFlags & dOpenedMask;
-				}
-			}
-		}
-		
-		return false;
-	}
-	
 	static bool SerialDriverMayBeOpened( const unsigned char* driverName )
 	{
-		return SerialPortsAreArbitrated() || !DriverIsOpen( driverName );
+		using mac::sys::is_driver_open;
+		
+		return SerialPortsAreArbitrated()  ||  ! is_driver_open( driverName );
 	}
 	
 	static n::owned< Mac::DriverRefNum > OpenSerialDriver( const unsigned char* driverName )
