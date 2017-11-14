@@ -96,14 +96,6 @@ namespace relix
 		mac::app::CloseOpenTransport_shared();
 	}
 	
-	class OTSocket : public vfs::filehandle
-	{
-		public:
-			OTSocket( bool nonblocking = false );
-			
-			~OTSocket();
-	};
-	
 	
 	static pascal void socket_notifier( void*        context,
 	                                    OTEventCode  code,
@@ -307,27 +299,30 @@ namespace relix
 		&OT_stream_methods,
 	};
 	
-	OTSocket::OTSocket( bool nonblocking )
-	:
-		vfs::filehandle( nonblocking ? O_RDWR | O_NONBLOCK
-		                             : O_RDWR,
-		                 &OT_methods,
-		                 sizeof (OT_socket_extra) )
+	static
+	vfs::filehandle_ptr new_OT_socket( bool nonblocking = false )
 	{
 		using namespace mac::app;
 		
 		InitOpenTransport_shared( &default_OSStatus_handler );
 		
-		OT_socket_extra& extra = *(OT_socket_extra*) this->extra();
+		const int flags = nonblocking ? O_RDWR | O_NONBLOCK
+		                              : O_RDWR;
+		
+		vfs::filehandle* socket = new vfs::filehandle( flags,
+		                                               &OT_methods,
+		                                               sizeof (OT_socket_extra),
+		                                               &destroy_OT_socket );
+		
+		OT_socket_extra& extra = *(OT_socket_extra*) socket->extra();
 		
 		memset( &extra, '\0', sizeof extra );
 		
+		vfs::filehandle_ptr result = socket;
+		
 		AsyncOpenEndpoint( "tcp", &extra );
-	}
-	
-	OTSocket::~OTSocket()
-	{
-		destroy_OT_socket( this );
+		
+		return result;
 	}
 	
 	static
@@ -539,11 +534,9 @@ namespace relix
 			p7::throw_errno( EINVAL );
 		}
 		
-		OTSocket* handle = new OTSocket;
+		vfs::filehandle_ptr handle = new_OT_socket();
 		
 		OT_socket_extra& new_extra = *(OT_socket_extra*) handle->extra();
-		
-		vfs::filehandle_ptr newSocket( handle );
 		
 		new_extra.peer_addr = (const InetAddress&) *client;
 		
@@ -553,7 +546,7 @@ namespace relix
 		
 		Complete( extra );
 		
-		return newSocket;
+		return handle;
 	}
 	
 	static
@@ -617,7 +610,7 @@ namespace relix
 	{
 	#ifndef MAC_OS_X_VERSION_10_8
 		
-		return new OTSocket( nonblocking );
+		return new_OT_socket( nonblocking );
 		
 	#endif
 		
