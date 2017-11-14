@@ -42,13 +42,15 @@ namespace relix
 	
 	typedef std::size_t TerminalID;
 	
+	struct pseudotty_extra
+	{
+		unsigned        id;
+		plus::conduit*  input;
+		plus::conduit*  output;
+	};
+	
 	class PseudoTTYHandle : public vfs::filehandle
 	{
-		private:
-			TerminalID                             itsID;
-			boost::intrusive_ptr< plus::conduit >  itsInput;
-			boost::intrusive_ptr< plus::conduit >  itsOutput;
-		
 		public:
 			PseudoTTYHandle( std::size_t                            id,
 			                 boost::intrusive_ptr< plus::conduit >  input,
@@ -144,34 +146,50 @@ namespace relix
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 			                          boost::intrusive_ptr< plus::conduit >  input,
 			                          boost::intrusive_ptr< plus::conduit >  output )
-	: vfs::filehandle( O_RDWR, &pseudotty_methods ),
-	  itsID( id ),
-	  itsInput( input ),
-	  itsOutput( output )
+	: vfs::filehandle( O_RDWR, &pseudotty_methods, sizeof (pseudotty_extra) )
 	{
+		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		
+		extra.id     = id;
+		extra.input  = input.get();
+		extra.output = output.get();
+		
+		intrusive_ptr_add_ref( extra.input  );
+		intrusive_ptr_add_ref( extra.output );
 	}
 	
 	PseudoTTYHandle::~PseudoTTYHandle()
 	{
-		itsInput->close_egress();
-		itsOutput->close_ingress();
+		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
 		
-		GetPseudoTTYMap().erase( itsID );
+		extra.input->close_egress();
+		extra.output->close_ingress();
+		
+		GetPseudoTTYMap().erase( extra.id );
+		
+		intrusive_ptr_release( extra.input  );
+		intrusive_ptr_release( extra.output );
 	}
 	
 	unsigned int PseudoTTYHandle::SysPoll()
 	{
-		return (itsInput->is_readable() ? vfs::Poll_read : 0) | vfs::Poll_write;
+		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		
+		return (extra.input->is_readable() ? vfs::Poll_read : 0) | vfs::Poll_write;
 	}
 	
 	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		return itsInput->read( data, byteCount, is_nonblocking( *this ), &try_again );
+		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		
+		return extra.input->read( data, byteCount, is_nonblocking( *this ), &try_again );
 	}
 	
 	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		return itsOutput->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
+		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		
+		return extra.output->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
 	}
 	
 }
