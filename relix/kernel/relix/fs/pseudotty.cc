@@ -55,8 +55,6 @@ namespace relix
 			PseudoTTYHandle( std::size_t                            id,
 			                 boost::intrusive_ptr< plus::conduit >  input,
 			                 boost::intrusive_ptr< plus::conduit >  output );
-			
-			~PseudoTTYHandle();
 	};
 	
 	static
@@ -130,10 +128,13 @@ namespace relix
 	}
 	
 	
+	static
+	void destroy_pseudotty( vfs::filehandle* that );
+	
 	PseudoTTYHandle::PseudoTTYHandle( std::size_t                            id,
 			                          boost::intrusive_ptr< plus::conduit >  input,
 			                          boost::intrusive_ptr< plus::conduit >  output )
-	: vfs::filehandle( O_RDWR, &pseudotty_methods, sizeof (pseudotty_extra) )
+	: vfs::filehandle( O_RDWR, &pseudotty_methods, sizeof (pseudotty_extra), &destroy_pseudotty )
 	{
 		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
 		
@@ -145,9 +146,10 @@ namespace relix
 		intrusive_ptr_add_ref( extra.output );
 	}
 	
-	PseudoTTYHandle::~PseudoTTYHandle()
+	static
+	void destroy_pseudotty( vfs::filehandle* that )
 	{
-		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		pseudotty_extra& extra = *(pseudotty_extra*) that->extra();
 		
 		extra.input->close_egress();
 		extra.output->close_ingress();
