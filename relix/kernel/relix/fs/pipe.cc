@@ -44,16 +44,6 @@ namespace relix
 		pipe_end_type   type;
 	};
 	
-	class pipe_end : public vfs::filehandle
-	{
-		public:
-			pipe_end( const boost::intrusive_ptr< plus::conduit >&  conduit,
-			          int                                           open_flags,
-			          pipe_end_type                                 end_type );
-			
-			~pipe_end();
-	};
-	
 	static unsigned pipein_poll( vfs::filehandle* that )
 	{
 		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
@@ -126,23 +116,35 @@ namespace relix
 		                           : pipeout_methods;
 	}
 	
-	pipe_end::pipe_end( const boost::intrusive_ptr< plus::conduit >&  conduit,
-	                    int                                           open_flags,
-	                    pipe_end_type                                 end_type )
-	:
-		vfs::filehandle( open_flags, &methods_for_end( end_type ), sizeof (pipe_end_extra) )
+	static
+	void destroy_pipe_end( vfs::filehandle* that );
+	
+	static
+	vfs::filehandle* new_pipe_end( plus::conduit&  conduit,
+	                               int             open_flags,
+	                               pipe_end_type   end_type )
 	{
-		pipe_end_extra& extra = *(pipe_end_extra*) this->extra();
+		const vfs::filehandle_method_set& methods = methods_for_end( end_type );
 		
-		extra.conduit = conduit.get();
+		vfs::filehandle* result = new vfs::filehandle( open_flags,
+		                                               &methods,
+		                                               sizeof (pipe_end_extra),
+		                                               &destroy_pipe_end );
+		
+		pipe_end_extra& extra = *(pipe_end_extra*) result->extra();
+		
+		extra.conduit = &conduit;
 		extra.type    = end_type;
 		
 		intrusive_ptr_add_ref( extra.conduit );
+		
+		return result;
 	}
 	
-	pipe_end::~pipe_end()
+	static
+	void destroy_pipe_end( vfs::filehandle* that )
 	{
-		pipe_end_extra& extra = *(pipe_end_extra*) this->extra();
+		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
 		
 		if ( extra.type == Pipe_reader )
 		{
@@ -168,8 +170,8 @@ namespace relix
 		const int w_flags = nonblock ? O_WRONLY | O_NONBLOCK
 		                             : O_WRONLY;
 		
-		result.writer.reset( new pipe_end( conduit, w_flags, Pipe_writer ) );
-		result.reader.reset( new pipe_end( conduit, r_flags, Pipe_reader ) );
+		result.writer.reset( new_pipe_end( *conduit, w_flags, Pipe_writer ) );
+		result.reader.reset( new_pipe_end( *conduit, r_flags, Pipe_reader ) );
 		
 		return result;
 	}
