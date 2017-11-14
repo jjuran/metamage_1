@@ -57,29 +57,16 @@ namespace relix
 			                 boost::intrusive_ptr< plus::conduit >  output );
 			
 			~PseudoTTYHandle();
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* data, std::size_t byteCount );
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
-			
 	};
 	
-	static unsigned pseudotty_poll( vfs::filehandle* that )
-	{
-		return static_cast< PseudoTTYHandle& >( *that ).SysPoll();
-	}
+	static
+	unsigned pseudotty_poll( vfs::filehandle* that );
 	
-	static ssize_t pseudotty_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< PseudoTTYHandle& >( *that ).SysRead( buffer, n );
-	}
+	static
+	ssize_t pseudotty_read( vfs::filehandle* that, char* buffer, size_t n );
 	
-	static ssize_t pseudotty_write( vfs::filehandle* that, const char* buffer, size_t n )
-	{
-		return static_cast< PseudoTTYHandle& >( *that ).SysWrite( buffer, n );
-	}
+	static
+	ssize_t pseudotty_write( vfs::filehandle* that, const char* buffer, size_t n );
 	
 	static const vfs::stream_method_set pseudotty_stream_methods =
 	{
@@ -171,25 +158,28 @@ namespace relix
 		intrusive_ptr_release( extra.output );
 	}
 	
-	unsigned int PseudoTTYHandle::SysPoll()
+	static
+	unsigned pseudotty_poll( vfs::filehandle* that )
 	{
-		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		pseudotty_extra& extra = *(pseudotty_extra*) that->extra();
 		
 		return (extra.input->is_readable() ? vfs::Poll_read : 0) | vfs::Poll_write;
 	}
 	
-	ssize_t PseudoTTYHandle::SysRead( char* data, std::size_t byteCount )
+	static
+	ssize_t pseudotty_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		pseudotty_extra& extra = *(pseudotty_extra*) that->extra();
 		
-		return extra.input->read( data, byteCount, is_nonblocking( *this ), &try_again );
+		return extra.input->read( buffer, n, is_nonblocking( *that ), &try_again );
 	}
 	
-	ssize_t PseudoTTYHandle::SysWrite( const char* data, std::size_t byteCount )
+	static
+	ssize_t pseudotty_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		pseudotty_extra& extra = *(pseudotty_extra*) this->extra();
+		pseudotty_extra& extra = *(pseudotty_extra*) that->extra();
 		
-		return extra.output->write( data, byteCount, is_nonblocking( *this ), &try_again, &broken_pipe );
+		return extra.output->write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
 	
 }
