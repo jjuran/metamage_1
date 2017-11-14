@@ -38,27 +38,27 @@ namespace relix
 		Pipe_writer,
 	};
 	
+	struct pipe_end_extra
+	{
+		plus::conduit*  conduit;
+		pipe_end_type   type;
+	};
+	
 	class pipe_end : public vfs::filehandle
 	{
-		private:
-			boost::intrusive_ptr< plus::conduit > itsConduit;
-			pipe_end_type                         its_pipe_end_type;
-		
 		public:
 			pipe_end( const boost::intrusive_ptr< plus::conduit >&  conduit,
 			          int                                           open_flags,
 			          pipe_end_type                                 end_type );
 			
 			~pipe_end();
-			
-			plus::conduit& get_conduit() const  { return *itsConduit; }
-			
-			pipe_end_type which_end() const  { return its_pipe_end_type; }
 	};
 	
 	static unsigned pipein_poll( vfs::filehandle* that )
 	{
-		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
+		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
+		
+		plus::conduit& conduit = *extra.conduit;
 		
 		return + vfs::Poll_read
 		       | vfs::Poll_write * conduit.is_writable();
@@ -66,14 +66,18 @@ namespace relix
 	
 	static ssize_t pipein_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
+		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
+		
+		plus::conduit& conduit = *extra.conduit;
 		
 		return conduit.read( buffer, n, is_nonblocking( *that ), &try_again );
 	}
 	
 	static unsigned pipeout_poll( vfs::filehandle* that )
 	{
-		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
+		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
+		
+		plus::conduit& conduit = *extra.conduit;
 		
 		return + vfs::Poll_read * conduit.is_readable()
 		       | vfs::Poll_write;
@@ -81,7 +85,9 @@ namespace relix
 	
 	static ssize_t pipeout_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		plus::conduit& conduit = static_cast< pipe_end& >( *that ).get_conduit();
+		pipe_end_extra& extra = *(pipe_end_extra*) that->extra();
+		
+		plus::conduit& conduit = *extra.conduit;
 		
 		return conduit.write( buffer, n, is_nonblocking( *that ), &try_again, &broken_pipe );
 	}
@@ -124,22 +130,30 @@ namespace relix
 	                    int                                           open_flags,
 	                    pipe_end_type                                 end_type )
 	:
-		vfs::filehandle( open_flags, &methods_for_end( end_type ) ),
-		itsConduit( conduit ),
-		its_pipe_end_type( end_type )
+		vfs::filehandle( open_flags, &methods_for_end( end_type ), sizeof (pipe_end_extra) )
 	{
+		pipe_end_extra& extra = *(pipe_end_extra*) this->extra();
+		
+		extra.conduit = conduit.get();
+		extra.type    = end_type;
+		
+		intrusive_ptr_add_ref( extra.conduit );
 	}
 	
 	pipe_end::~pipe_end()
 	{
-		if ( which_end() == Pipe_reader )
+		pipe_end_extra& extra = *(pipe_end_extra*) this->extra();
+		
+		if ( extra.type == Pipe_reader )
 		{
-			itsConduit->close_egress();
+			extra.conduit->close_egress();
 		}
 		else
 		{
-			itsConduit->close_ingress();
+			extra.conduit->close_ingress();
 		}
+		
+		intrusive_ptr_release( extra.conduit );
 	}
 	
 	pipe_ends new_pipe( int nonblock )
