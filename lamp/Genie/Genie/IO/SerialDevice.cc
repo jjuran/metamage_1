@@ -156,15 +156,8 @@ namespace Genie
 		return extra.passive  &&  ! extra.drivers.sole();
 	}
 	
-	class SerialDeviceHandle : public vfs::filehandle
-	{
-		public:
-			SerialDeviceHandle( const plus::string& portName, bool passive );
-			
-			SerialDeviceHandle( const SerialDeviceHandle& other, bool passive );
-			
-			~SerialDeviceHandle();
-	};
+	static
+	void destroy_serial_device( vfs::filehandle* that );
 	
 	
 	static
@@ -224,19 +217,11 @@ namespace Genie
 		}
 	}
 	
-	static inline
-	vfs::filehandle* fresh_device( const plus::string& param, bool isPassive )
-	{
-		return new SerialDeviceHandle( param, isPassive );
-	}
+	static
+	vfs::filehandle* fresh_device( const plus::string& name, bool passive );
 	
-	static inline
-	vfs::filehandle* other_device( vfs::filehandle& other, bool isPassive )
-	{
-		SerialDeviceHandle& counterpart = (SerialDeviceHandle&) other;
-		
-		return new SerialDeviceHandle( counterpart, isPassive );
-	}
+	static
+	vfs::filehandle* other_device( vfs::filehandle& other, bool passive );
 	
 	
 	vfs::filehandle_ptr OpenSerialDevice( const plus::string&  portName,
@@ -339,9 +324,8 @@ namespace Genie
 	
 	typedef serial_driver_pair dyad;
 	
-	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
-	:
-		vfs::filehandle( O_RDWR, &serial_methods, sizeof (serial_device_extra) )
+	static
+	vfs::filehandle* fresh_device( const plus::string& portName, bool passive )
 	{
 		n::shared< dyad > drivers = n::owned< dyad >::seize( dyad( portName ) );
 		
@@ -363,26 +347,43 @@ namespace Genie
 		
 	#endif
 		
-		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
+		                                               &serial_methods,
+		                                               sizeof (serial_device_extra),
+		                                               &destroy_serial_device );
 		
+		serial_device_extra& extra = *(serial_device_extra*) result->extra();
+		
+		// doesn't throw
 		new (&extra) serial_device_extra( portName, drivers, passive );
+		
+		return result;
 	}
 	
-	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
-	:
-		vfs::filehandle( O_RDWR, &serial_methods, sizeof (serial_device_extra) )
+	static
+	vfs::filehandle* other_device( vfs::filehandle& other, bool passive )
 	{
 		serial_device_extra const* extra = (serial_device_extra*) other.extra();
-		serial_device_extra*   new_extra = (serial_device_extra*) this->extra();
 		
+		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
+		                                               &serial_methods,
+		                                               sizeof (serial_device_extra),
+		                                               &destroy_serial_device );
+		
+		serial_device_extra* new_extra = (serial_device_extra*) result->extra();
+		
+		// doesn't throw
 		new (new_extra) serial_device_extra( extra->base_name,
 		                                     extra->drivers,
 		                                     passive );
+		
+		return result;
 	}
 	
-	SerialDeviceHandle::~SerialDeviceHandle()
+	static
+	void destroy_serial_device( vfs::filehandle* that )
 	{
-		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		serial_device_extra& extra = *(serial_device_extra*) that->extra();
 		
 		UnreferenceSerialDevice( extra.base_name, extra.passive );
 		
