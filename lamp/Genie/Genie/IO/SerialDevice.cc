@@ -325,6 +325,24 @@ namespace Genie
 	typedef serial_driver_pair dyad;
 	
 	static
+	vfs::filehandle* new_device( const plus::string&       name,
+	                             const n::shared< dyad >&  drivers,
+	                             bool                      passive )
+	{
+		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
+		                                               &serial_methods,
+		                                               sizeof (serial_device_extra),
+		                                               &destroy_serial_device );
+		
+		serial_device_extra& extra = *(serial_device_extra*) result->extra();
+		
+		// doesn't throw
+		new (&extra) serial_device_extra( name, drivers, passive );
+		
+		return result;
+	}
+	
+	static
 	vfs::filehandle* fresh_device( const plus::string& portName, bool passive )
 	{
 		n::shared< dyad > drivers = n::owned< dyad >::seize( dyad( portName ) );
@@ -347,17 +365,7 @@ namespace Genie
 		
 	#endif
 		
-		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
-		                                               &serial_methods,
-		                                               sizeof (serial_device_extra),
-		                                               &destroy_serial_device );
-		
-		serial_device_extra& extra = *(serial_device_extra*) result->extra();
-		
-		// doesn't throw
-		new (&extra) serial_device_extra( portName, drivers, passive );
-		
-		return result;
+		return new_device( portName, drivers, passive );
 	}
 	
 	static
@@ -365,19 +373,7 @@ namespace Genie
 	{
 		serial_device_extra const* extra = (serial_device_extra*) other.extra();
 		
-		vfs::filehandle* result = new vfs::filehandle( O_RDWR,
-		                                               &serial_methods,
-		                                               sizeof (serial_device_extra),
-		                                               &destroy_serial_device );
-		
-		serial_device_extra* new_extra = (serial_device_extra*) result->extra();
-		
-		// doesn't throw
-		new (new_extra) serial_device_extra( extra->base_name,
-		                                     extra->drivers,
-		                                     passive );
-		
-		return result;
+		return new_device( extra->base_name, extra->drivers, passive );
 	}
 	
 	static
