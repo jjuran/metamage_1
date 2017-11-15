@@ -260,6 +260,7 @@ namespace Genie
 		itsInputRefNum ( OpenSerialDriver( MakeDriverName( portName, STR_LEN( "In"  ) ) ) ),
 		itIsPassive( passive )
 	{
+		const Mac::DriverRefNum output = itsOutputRefNum;
 		
 		using N::kSERDHandshake;
 		using N::baud19200;
@@ -267,9 +268,9 @@ namespace Genie
 		using N::noParity;
 		using N::stop10;
 		
-		N::Control< kSERDHandshake >( itsOutputRefNum, n::make< SerShk >() );
+		N::Control< kSERDHandshake >( output, n::make< SerShk >() );
 		
-		N::SerReset( itsOutputRefNum, baud19200 | data8 | noParity | stop10 );
+		N::SerReset( output, baud19200 | data8 | noParity | stop10 );
 	}
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
@@ -289,9 +290,11 @@ namespace Genie
 	
 	unsigned int SerialDeviceHandle::SysPoll()
 	{
+		const Mac::DriverRefNum input = itsInputRefNum;
+		
 		bool unblocked = !Preempted();
 		
-		bool readable = unblocked  &&  N::SerGetBuf( itsInputRefNum ) > 0;
+		bool readable = unblocked  &&  N::SerGetBuf( input ) > 0;
 		bool writable = unblocked;
 		
 		unsigned readability = readable * vfs::Poll_read;
@@ -302,6 +305,8 @@ namespace Genie
 	
 	ssize_t SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
+		const Mac::DriverRefNum input = itsInputRefNum;
+		
 		while ( true )
 		{
 			if ( !Preempted() )
@@ -311,7 +316,7 @@ namespace Genie
 					return 0;
 				}
 				
-				if ( std::size_t bytesAvailable = N::SerGetBuf( itsInputRefNum ) )
+				if ( std::size_t bytesAvailable = N::SerGetBuf( input ) )
 				{
 					byteCount = min( byteCount, bytesAvailable );
 					
@@ -322,17 +327,19 @@ namespace Genie
 			relix::try_again( is_nonblocking( *this ) );
 		}
 		
-		return N::Read( itsInputRefNum, data, byteCount );
+		return N::Read( input, data, byteCount );
 	}
 	
 	ssize_t SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
+		const Mac::DriverRefNum output = itsOutputRefNum;
+		
 		while ( Preempted() )
 		{
 			relix::try_again( is_nonblocking( *this ) );
 		}
 		
-		return N::Write( itsOutputRefNum, data, byteCount );
+		return N::Write( output, data, byteCount );
 	}
 	
 #endif
