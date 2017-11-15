@@ -84,8 +84,6 @@ namespace Genie
 			
 			SerialDeviceHandle( const SerialDeviceHandle& other, bool passive );
 			
-			SerialDeviceHandle( const SerialDeviceHandle& other );
-			
 			~SerialDeviceHandle();
 			
 			bool Preempted() const  { return itIsPassive && IsShared(); }
@@ -161,10 +159,18 @@ namespace Genie
 		}
 	}
 	
-	template < class Type >
-	static inline vfs::filehandle_ptr NewSerialDeviceHandle( Type param, bool isPassive )
+	static inline
+	vfs::filehandle* fresh_device( const plus::string& param, bool isPassive )
 	{
 		return new SerialDeviceHandle( param, isPassive );
+	}
+	
+	static inline
+	vfs::filehandle* other_device( vfs::filehandle& other, bool isPassive )
+	{
+		SerialDeviceHandle& counterpart = (SerialDeviceHandle&) other;
+		
+		return new SerialDeviceHandle( counterpart, isPassive );
 	}
 	
 #endif
@@ -192,10 +198,10 @@ namespace Genie
 			relix::try_again( nonblocking );
 		}
 		
-		vfs::filehandle_ptr result = other == NULL ? NewSerialDeviceHandle( portName, isPassive )
-		                                           : NewSerialDeviceHandle( static_cast< const SerialDeviceHandle& >( *other ), isPassive );
+		vfs::filehandle* result = ! other ? fresh_device( portName, isPassive )
+		                                  : other_device( *other,   isPassive );
 		
-		same = result.get();
+		same = result;
 		
 		return result;
 		
@@ -273,16 +279,6 @@ namespace Genie
 		itsOutputRefNum( other.itsOutputRefNum ),
 		itsInputRefNum ( other.itsInputRefNum  ),
 		itIsPassive    ( passive               )
-	{
-	}
-	
-	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other )
-	:
-		vfs::filehandle( O_RDWR, &serial_methods ),
-		itsPortName( other.itsPortName ),
-		itsOutputRefNum( other.itsOutputRefNum ),
-		itsInputRefNum ( other.itsInputRefNum  ),
-		itIsPassive    ( other.itIsPassive     )
 	{
 	}
 	
