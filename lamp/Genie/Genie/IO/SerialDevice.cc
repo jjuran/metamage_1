@@ -127,24 +127,43 @@ namespace Genie
 	}
 	
 	
+	struct serial_device_extra
+	{
+		plus::string                     base_name;
+		n::shared< serial_driver_pair >  drivers;
+		bool                             passive;
+		
+		serial_device_extra( const plus::string&                     name,
+		                     const n::shared< serial_driver_pair >&  drivers,
+		                     bool                                    passive )
+		:
+			base_name( name ),
+			drivers( drivers ),
+			passive( passive )
+		{
+		}
+		
+		~serial_device_extra();
+	};
+	
+	serial_device_extra::~serial_device_extra()
+	{
+	}
+	
+	static
+	bool preempted( const serial_device_extra& extra )
+	{
+		return extra.passive  &&  ! extra.drivers.sole();
+	}
+	
 	class SerialDeviceHandle : public vfs::filehandle
 	{
-		private:
-			plus::string                     itsPortName;
-			n::shared< serial_driver_pair >  its_drivers;
-			bool                             itIsPassive;
-		
-		protected:
-			bool IsShared() const  { return ! its_drivers.sole(); }
-		
 		public:
 			SerialDeviceHandle( const plus::string& portName, bool passive );
 			
 			SerialDeviceHandle( const SerialDeviceHandle& other, bool passive );
 			
 			~SerialDeviceHandle();
-			
-			bool Preempted() const  { return itIsPassive && IsShared(); }
 			
 			unsigned int SysPoll();
 			
@@ -330,20 +349,19 @@ namespace Genie
 	#endif
 	}
 	
-#if ! TARGET_API_MAC_CARBON
-	
-	namespace N = Nitrogen;
-	
 	typedef serial_driver_pair dyad;
 	
 	SerialDeviceHandle::SerialDeviceHandle( const plus::string& portName, bool passive )
 	:
-		vfs::filehandle( O_RDWR, &serial_methods ),
-		itsPortName( portName ),
-		its_drivers( n::owned< dyad >::seize( dyad( portName ) ) ),
-		itIsPassive( passive )
+		vfs::filehandle( O_RDWR, &serial_methods, sizeof (serial_device_extra) )
 	{
-		const Mac::DriverRefNum output = its_drivers.get().output();
+		n::shared< dyad > drivers = n::owned< dyad >::seize( dyad( portName ) );
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		const Mac::DriverRefNum output = drivers.get().output();
+		
+		namespace N = Nitrogen;
 		
 		using N::kSERDHandshake;
 		using N::baud19200;
@@ -354,27 +372,46 @@ namespace Genie
 		N::Control< kSERDHandshake >( output, n::make< SerShk >() );
 		
 		N::SerReset( output, baud19200 | data8 | noParity | stop10 );
+		
+	#endif
+		
+		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		
+		new (&extra) serial_device_extra( portName, drivers, passive );
 	}
 	
 	SerialDeviceHandle::SerialDeviceHandle( const SerialDeviceHandle& other, bool passive )
 	:
-		vfs::filehandle( O_RDWR, &serial_methods ),
-		itsPortName( other.itsPortName ),
-		its_drivers( other.its_drivers ),
-		itIsPassive( passive           )
+		vfs::filehandle( O_RDWR, &serial_methods, sizeof (serial_device_extra) )
 	{
+		serial_device_extra const* extra = (serial_device_extra*) other.extra();
+		serial_device_extra*   new_extra = (serial_device_extra*) this->extra();
+		
+		new (new_extra) serial_device_extra( extra->base_name,
+		                                     extra->drivers,
+		                                     passive );
 	}
 	
 	SerialDeviceHandle::~SerialDeviceHandle()
 	{
-		UnreferenceSerialDevice( itsPortName, itIsPassive );
+		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		
+		UnreferenceSerialDevice( extra.base_name, extra.passive );
+		
+		extra.~serial_device_extra();
 	}
 	
 	unsigned int SerialDeviceHandle::SysPoll()
 	{
-		const Mac::DriverRefNum input = its_drivers.get().input();
+		serial_device_extra& extra = *(serial_device_extra*) this->extra();
 		
-		bool unblocked = !Preempted();
+	#if ! TARGET_API_MAC_CARBON
+		
+		namespace N = Nitrogen;
+		
+		const Mac::DriverRefNum input = extra.drivers.get().input();
+		
+		bool unblocked = ! preempted( extra );
 		
 		bool readable = unblocked  &&  N::SerGetBuf( input ) > 0;
 		bool writable = unblocked;
@@ -383,15 +420,25 @@ namespace Genie
 		unsigned writability = writable * vfs::Poll_write;
 		
 		return readability | writability;
+		
+	#endif
+		
+		return 0;
 	}
 	
 	ssize_t SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
 	{
-		const Mac::DriverRefNum input = its_drivers.get().input();
+		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		
+	#if ! TARGET_API_MAC_CARBON
+		
+		namespace N = Nitrogen;
+		
+		const Mac::DriverRefNum input = extra.drivers.get().input();
 		
 		while ( true )
 		{
-			if ( !Preempted() )
+			if ( ! preempted( extra ) )
 			{
 				if ( byteCount == 0 )
 				{
@@ -410,20 +457,32 @@ namespace Genie
 		}
 		
 		return N::Read( input, data, byteCount );
+		
+	#endif
+		
+		return 0;
 	}
 	
 	ssize_t SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
 	{
-		const Mac::DriverRefNum output = its_drivers.get().output();
+		serial_device_extra& extra = *(serial_device_extra*) this->extra();
 		
-		while ( Preempted() )
+	#if ! TARGET_API_MAC_CARBON
+		
+		namespace N = Nitrogen;
+		
+		const Mac::DriverRefNum output = extra.drivers.get().output();
+		
+		while ( preempted( extra ) )
 		{
 			relix::try_again( is_nonblocking( *this ) );
 		}
 		
 		return N::Write( output, data, byteCount );
+		
+	#endif
+		
+		return 0;
 	}
-	
-#endif
 	
 }
