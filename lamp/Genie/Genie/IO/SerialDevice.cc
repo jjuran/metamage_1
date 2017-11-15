@@ -164,29 +164,17 @@ namespace Genie
 			SerialDeviceHandle( const SerialDeviceHandle& other, bool passive );
 			
 			~SerialDeviceHandle();
-			
-			unsigned int SysPoll();
-			
-			ssize_t SysRead( char* data, std::size_t byteCount );
-			
-			ssize_t SysWrite( const char* data, std::size_t byteCount );
 	};
 	
 	
-	static unsigned serial_poll( vfs::filehandle* that )
-	{
-		return static_cast< SerialDeviceHandle& >( *that ).SysPoll();
-	}
+	static
+	unsigned serial_poll( vfs::filehandle* that );
 	
-	static ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n )
-	{
-		return static_cast< SerialDeviceHandle& >( *that ).SysRead( buffer, n );
-	}
+	static
+	ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n );
 	
-	static ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n )
-	{
-		return static_cast< SerialDeviceHandle& >( *that ).SysWrite( buffer, n );
-	}
+	static
+	ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n );
 	
 	static const vfs::stream_method_set serial_stream_methods =
 	{
@@ -401,9 +389,10 @@ namespace Genie
 		extra.~serial_device_extra();
 	}
 	
-	unsigned int SerialDeviceHandle::SysPoll()
+	static
+	unsigned serial_poll( vfs::filehandle* that )
 	{
-		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		serial_device_extra& extra = *(serial_device_extra*) that->extra();
 		
 	#if ! TARGET_API_MAC_CARBON
 		
@@ -426,9 +415,10 @@ namespace Genie
 		return 0;
 	}
 	
-	ssize_t SerialDeviceHandle::SysRead( char* data, std::size_t byteCount )
+	static
+	ssize_t serial_read( vfs::filehandle* that, char* buffer, size_t n )
 	{
-		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		serial_device_extra& extra = *(serial_device_extra*) that->extra();
 		
 	#if ! TARGET_API_MAC_CARBON
 		
@@ -440,32 +430,33 @@ namespace Genie
 		{
 			if ( ! preempted( extra ) )
 			{
-				if ( byteCount == 0 )
+				if ( n == 0 )
 				{
 					return 0;
 				}
 				
 				if ( std::size_t bytesAvailable = N::SerGetBuf( input ) )
 				{
-					byteCount = min( byteCount, bytesAvailable );
+					n = min( n, bytesAvailable );
 					
 					break;
 				}
 			}
 			
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 		}
 		
-		return N::Read( input, data, byteCount );
+		return N::Read( input, buffer, n );
 		
 	#endif
 		
 		return 0;
 	}
 	
-	ssize_t SerialDeviceHandle::SysWrite( const char* data, std::size_t byteCount )
+	static
+	ssize_t serial_write( vfs::filehandle* that, const char* buffer, size_t n )
 	{
-		serial_device_extra& extra = *(serial_device_extra*) this->extra();
+		serial_device_extra& extra = *(serial_device_extra*) that->extra();
 		
 	#if ! TARGET_API_MAC_CARBON
 		
@@ -475,10 +466,10 @@ namespace Genie
 		
 		while ( preempted( extra ) )
 		{
-			relix::try_again( is_nonblocking( *this ) );
+			relix::try_again( is_nonblocking( *that ) );
 		}
 		
-		return N::Write( output, data, byteCount );
+		return N::Write( output, buffer, n );
 		
 	#endif
 		
