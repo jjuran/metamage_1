@@ -120,6 +120,11 @@ namespace vfs
 	                           std::size_t  length,
 	                           const node&  current )
 	{
+		if ( length == 0 )
+		{
+			return &current;
+		}
+		
 		if ( const bool absolute = *begin == '/' )
 		{
 			return resolve_absolute_path( root, begin, length );
