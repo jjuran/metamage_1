@@ -1,0 +1,49 @@
+#!/usr/bin/env vx
+
+let limit = 2000000 / 2 - 1
+
+var primes = channel()
+
+def sieve-of-eratosthenes
+{
+	primes <== 2
+	
+	var is_composite = x"00" * limit
+	
+	for i in 1 -> limit do
+	{
+		if not is_composite[ i ] then
+		{
+			let i2_1 = i * 2 + 1
+			
+			primes <== i2_1
+			
+			var j = i2_1^2 div 2
+			
+			while j < limit do
+			{
+				is_composite[ j ] = 'x'
+				
+				j += i2_1
+			}
+		}
+	}
+	
+	primes.close()
+}
+
+var gen = thread sieve-of-eratosthenes
+
+def answer
+{
+	var sum = 0
+	
+	for x in primes do
+	{
+		sum += x
+	}
+	
+	return sum
+}
+
+put answer()
