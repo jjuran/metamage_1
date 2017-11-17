@@ -1,0 +1,29 @@
+#!/usr/bin/env vx
+
+def make-sieve (limit)
+{
+	var n = 0
+	
+	var composites = x"00" * limit
+	
+	for i in 2 -> limit do
+	{
+		if not bool composites[ i ] then
+		{
+			++n
+			
+			var j = i^2
+			
+			while j < limit do
+			{
+				composites[ j ] = '\xFF'
+				
+				j += i
+			}
+		}
+	}
+	
+	return n
+}
+
+print make-sieve int argv[ 1 ]
