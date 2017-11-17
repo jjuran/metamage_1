@@ -1,38 +1,29 @@
-/*	====================
- *	GetStringResource.cc
- *	====================
- */
+/*
+	GetStringResource.cc
+	--------------------
+*/
 
 #include "Genie/Utilities/GetStringResource.hh"
 
-// Standard C
-#include <string.h>
-
-// Nitrogen
-#include "Nitrogen/Resources.hh"
+// mac-rsrc-utils
+#include "mac_rsrc/get_string_from_resource.hh"
 
 
 namespace Genie
 {
 	
-	namespace N = Nitrogen;
-	
-	
-	plus::string GetStringResource( ::ResID id )
+	plus::string GetStringResource( short id )
 	{
-		::Handle h = N::GetResource( N::ResType( 'STR ' ), N::ResID( id ) );
+		using mac::rsrc::get_STR_resource;
 		
-		std::size_t length = **h;
+		unsigned char str[ 255 ];
 		
-		plus::string result;
+		if ( get_STR_resource( str, id ) )
+		{
+			return plus::string( str );
+		}
 		
-		char* p = result.reset( length );
-		
-		const char* begin = *h + 1;
-		
-		memcpy( p, begin, length );
-		
-		return result;
+		return plus::string::null;
 	}
 	
 }

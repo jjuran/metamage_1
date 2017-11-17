@@ -5,6 +5,16 @@
 
 #include "Genie/Utilities/GetWorkstationName.hh"
 
+// Mac OS X
+#ifdef __APPLE__
+#include <CoreServices/CoreServices.h>
+#endif
+
+// Mac OS
+#ifndef __OSUTILS__
+#include <OSUtils.h>
+#endif
+
 // plus
 #include "plus/mac_utf8.hh"
 
@@ -23,7 +33,6 @@ namespace Genie
 {
 	
 	namespace n = nucleus;
-	namespace N = Nitrogen;
 	
 	
 	using MacFeatures::Is_Running_OSXNative;
