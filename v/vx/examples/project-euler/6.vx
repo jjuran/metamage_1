@@ -12,7 +12,7 @@ def sum
 	return total
 }
 
-const set = 1 .. 10000
+const set = 1 .. 100
 
 const square_of_sum = sum( set )^2
 
