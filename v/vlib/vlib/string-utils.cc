@@ -507,7 +507,7 @@ namespace vlib
 	
 	plus::string repeat( const plus::string& s, plus::string::size_type n )
 	{
-		if ( n > 65535 )
+		if ( n > 0x7fffffff )
 		{
 			THROW( "excessively large string multiplier" );
 		}
@@ -515,12 +515,19 @@ namespace vlib
 		const char*  data = s.data();
 		const size_t size = s.size();
 		
-		if ( size > 65535 )
+		if ( size > 0x7fffffff )
 		{
 			THROW( "excessively large string multiplicand" );
 		}
 		
-		const size_t n_bytes = n * size;
+		const uint64_t product = (uint64_t) n * size;
+		
+		if ( product > 0x7fffffff )
+		{
+			THROW( "string multiplication overflow" );
+		}
+		
+		const size_t n_bytes = product;
 		
 		plus::string result;
 		
