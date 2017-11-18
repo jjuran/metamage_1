@@ -533,9 +533,16 @@ namespace vlib
 		
 		char* p = result.reset( n_bytes );
 		
-		while ( n-- > 0 )
+		if ( size == 1 )
 		{
-			p = (char*) mempcpy( p, data, size );
+			memset( p, *data, n );
+		}
+		else
+		{
+			while ( n-- > 0 )
+			{
+				p = (char*) mempcpy( p, data, size );
+			}
 		}
 		
 		return result;
