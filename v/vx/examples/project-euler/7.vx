@@ -5,6 +5,24 @@ const libdir = bindir "/lib/"
 
 const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
 
-const nth_prime = import "nth_prime"
+const generate = import "prime-numbers"
 
-print nth_prime (10001 - 1)
+var prime-numbers = channel()
+
+var generator = thread { generate prime-numbers }
+
+def nth_prime
+{
+	var n = _
+	
+	while --n > 0 do
+	{
+		<=prime-numbers
+	}
+	
+	return <=prime-numbers
+}
+
+print nth_prime 10001
+
+prime-numbers.close()
