@@ -1,0 +1,111 @@
+#!/usr/bin/env vx
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+
+const display-grid = import "display-grid"
+
+const wdays = ["Sun Mon Tue Wed Thu Fri Sat" / ' ']
+
+const offsets =
+[
+	1, 4, 4,
+	0, 2, 5,
+	0, 3, 6,
+	1, 4, 6,
+]
+
+const mdays =
+[
+	31, 28, 31,
+	30, 31, 30,
+	31, 31, 30,
+	31, 30, 31,
+]
+
+def is_leap_year (y)
+{
+	return +(y % 4 == 0) - +(y % 100 == 0) + +(y % 400 == 0)
+}
+
+def days_in_month (month, leap_year)
+{
+	return mdays[ month - 1 ] + leap_year * +(month == 2)
+}
+
+def weekday_of (year, month, day)
+{
+	const century = year div 100
+	const ydigits = year mod 100
+	
+	const leap_year = is_leap_year year
+	
+	const leap = leap_year * +(month <= 2)
+	
+	const offset = offsets[ month - 1 ]
+	
+	const fudge = 19 - century  # works for 19xx and 20xx
+	
+	const x = ydigits + ydigits div 4 + offset + day - 1 - leap + fudge
+	
+	return x mod 7
+}
+
+def make_cal (offset, n_days)  # offset = 0 for Sunday, 1 for Monday, etc.
+{
+	const one =  1 ..      9 map {"  " str _}
+	const two = 10 .. n_days map {" "  str _}
+	
+	const extra = 6 * 7 - (offset + n_days)
+	
+	const cells = "" (*) offset, *one, *two, "" (*) extra
+	
+	return [7, 7]: [ *wdays, cells ]
+}
+
+def calendar_month (year, month, day)
+{
+	const offset = weekday_of( year, month, 1 )
+	
+	const days = days_in_month( month, is_leap_year year )
+	
+	var cal = make_cal( offset, days )
+	
+	if day then
+	{
+		const i = 7 + offset + day - 1
+		
+		var cells = cal.value
+		
+		cells[ i ][ 0 ] = '>'
+		
+		cal = cal.key => cells
+	}
+	
+	return cal
+}
+
+def ymd
+{
+	if argv.length < 3 then
+	{
+		warn "Usage:  cal <year> <month>"
+		warn "        cal <year> <month> <day>"
+		exit 2
+	}
+	
+	if argv.length == 3 then
+	{
+		return *(argv[ 1 .. 2 ] map int), 0
+	}
+	
+	return *(argv[ 1 .. 3 ] map int)
+}
+
+const year, const month, const day = ymd()
+
+print display-grid calendar_month( year, month, day )
+
+end.
