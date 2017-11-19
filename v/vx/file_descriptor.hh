@@ -45,13 +45,6 @@ namespace vlib
 	
 	class FileDescriptor : public Value
 	{
-		private:
-			bool has_extent() const
-			{
-				return pod_cast< vbox >().has_extent();
-			}
-			
-		
 		public:
 			static bool test( const Value& v )
 			{
