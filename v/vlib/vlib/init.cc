@@ -31,6 +31,7 @@
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/vector/metatype.hh"
 
 
 namespace vlib
@@ -95,6 +96,8 @@ namespace vlib
 		define_keyword( "u8",       u8_vtype       );
 		
 		define_keyword( "array", generic_array_type );
+		
+		define_keyword( "vector", Vector_Metatype() );
 		
 		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_vtype );
 		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_vtype );
