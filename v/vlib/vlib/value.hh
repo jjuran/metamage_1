@@ -141,6 +141,8 @@ namespace vlib
 				symdesc_max = 0xFFFFFFFFu,
 			};
 			
+			bool has_extent() const  { return its_box.has_extent(); }
+			
 			template < class Type >
 			Type const* is() const
 			{
