@@ -36,6 +36,7 @@
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/boolean.hh"
+#include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
@@ -262,7 +263,32 @@ namespace vlib
 	static
 	Value v_sleep( const Value& v )
 	{
-		sleep( v.number().clipped() );
+		const useconds_t max_useconds = useconds_t( -1 );
+		
+		if ( const Fraction* fract = v.is< Fraction >() )
+		{
+			const bignum::integer& numer = fract->numerator  ().get();
+			const bignum::integer& denom = fract->denominator().get();
+			
+			const bignum::integer approx_useconds = numer * 1000000 / denom;
+			
+			if ( numer.is_negative()  ||  approx_useconds > max_useconds )
+			{
+				// FIXME:  This isn't a clear error message.
+				
+				Value exception( mapping( "sleep", v ) );
+				
+				throw_exception_object( exception );
+			}
+			
+			const useconds_t delay = approx_useconds.clipped_to< useconds_t >();
+			
+			usleep( delay );
+		}
+		else
+		{
+			sleep( v.number().clipped() );
+		}
 		
 		return Value_nothing;
 	}
@@ -343,7 +369,9 @@ namespace vlib
 	static const Type c_str = c_str_vtype;
 	static const Type u8    = u8_vtype;
 	static const Type u32   = u32_vtype;
+	static const Type fract = fraction_vtype;
 	
+	static const Value sleep_arg ( u32,   Op_union, fract );
 	static const Value maybe_cstr( c_str, Op_union, Value_empty_list );
 	
 	static const Value cstr_eval = Value( c_str,
@@ -365,7 +393,7 @@ namespace vlib
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
 	const proc_info proc_RUN    = { "run",    &v_run,    &c_str_array};
 	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL        };
-	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &u32        };
+	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &sleep_arg  };
 	const proc_info proc_system = { "system", &v_system, &empty_list };
 	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };
 	const proc_info proc_time   = { "time",   &v_time,   &empty_list };
