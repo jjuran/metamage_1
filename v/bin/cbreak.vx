@@ -1,0 +1,25 @@
+#!/usr/bin/env vx -Z
+
+const argc = argv.length
+
+if argc > 1 then
+{
+	# BSD's stty lets us combine these as `stty -g cbreak -echo`, but
+	# GNU coreutils' stty forbids this:
+	#
+	#     stty: when specifying an output style, modes may not be set
+	
+	const previous = output-from-run .[ "stty", "-g" ]
+	
+	run .[ "stty", "cbreak", "-echo" ]
+	
+	try
+	{
+		run argv[ 1 -> argc ]
+	}
+	catch { warn rep _ }
+	
+	# GNU coreutils' stty also can't handle a trailing LF.
+	
+	run .[ "stty", *previous.lines() ]
+}
