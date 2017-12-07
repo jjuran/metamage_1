@@ -29,7 +29,7 @@ namespace vlib
 	
 	Value Thread::coerce( const Value& v )
 	{
-		if ( ! is_functional( v ) )
+		if ( ! is_function( v ) )
 		{
 			THROW( "thread argument must be a function" );
 		}
