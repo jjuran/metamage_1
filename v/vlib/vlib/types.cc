@@ -26,6 +26,11 @@
 namespace vlib
 {
 	
+	bool is_functional( const Value& v )
+	{
+		return is_function( v )  ||  v.type() == Value_base_type;
+	}
+	
 	static
 	Value assign_to_function( const Value& v )
 	{

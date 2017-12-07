@@ -429,12 +429,6 @@ namespace vlib
 	}
 	
 	inline
-	bool is_functional( const Value& v )
-	{
-		return is_function( v )  ||  v.type() == Value_base_type;
-	}
-	
-	inline
 	Value make_array( const Value& list )
 	{
 		return is_empty_list( list ) ? empty_array

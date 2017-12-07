@@ -21,6 +21,8 @@ namespace vlib
 	
 	extern Value generic_array_type;
 	
+	bool is_functional( const Value& v );
+	
 }
 
 #endif
