@@ -102,3 +102,13 @@ $ vc 'var v = vector[ record(size: 2, decode: {~_}) ] x"12345678"; *v'
 
 $ vc 'var v (vector[ record(size: 2, decode: {~_}) ]); v := x"deadbeef"; *v'
 1 >= '(x"2152", x"4110")'
+
+%
+
+$ vc 'vector isa type'
+1 >= true
+
+%
+
+$ vc 'vector[ record(size: 1) ] isa type'
+1 >= true

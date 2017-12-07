@@ -7,6 +7,7 @@
 #define VLIB_TYPES_TYPE_HH
 
 // vlib
+#include "vlib/is_type.hh"
 #include "vlib/value.hh"
 
 
@@ -23,7 +24,7 @@ namespace vlib
 		public:
 			static bool test( const Value& v )
 			{
-				return v.type() == Value_base_type;
+				return is_type( v );
 			}
 			
 			Type( const type_info& type ) : Value( type, &type_dispatch )
