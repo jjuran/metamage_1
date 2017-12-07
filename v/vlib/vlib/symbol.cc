@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/equal.hh"
+#include "vlib/is_type.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"

@@ -394,8 +394,6 @@ namespace vlib
 		return v.type() == Value_symbol  ||  is_symbol_declarator( v );
 	}
 	
-	bool is_type( const Value& v );
-	
 	inline
 	bool is_block( const Value& v )
 	{

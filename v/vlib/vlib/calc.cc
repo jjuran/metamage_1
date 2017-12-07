@@ -17,6 +17,7 @@
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/function-utils.hh"
+#include "vlib/is_type.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/os.hh"
 #include "vlib/proc_info.hh"

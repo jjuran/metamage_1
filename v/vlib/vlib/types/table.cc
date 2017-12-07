@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/is_type.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
