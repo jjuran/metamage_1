@@ -28,9 +28,9 @@
 #include "vlib/types/proc.hh"
 #include "vlib/types/receiver.hh"
 #include "vlib/types/record.hh"
-#include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/integer/stdint.hh"
 #include "vlib/types/vector/metatype.hh"
 
 
@@ -86,21 +86,21 @@ namespace vlib
 		define_keyword( "null",     null_vtype     );
 		define_keyword( "mb32",     mb32_vtype     );
 		define_keyword( "byte",     byte_vtype     );
-		define_keyword( "i64",      i64_vtype      );
-		define_keyword( "u64",      u64_vtype      );
-		define_keyword( "i32",      i32_vtype      );
-		define_keyword( "u32",      u32_vtype      );
-		define_keyword( "i16",      i16_vtype      );
-		define_keyword( "u16",      u16_vtype      );
-		define_keyword( "i8",       i8_vtype       );
-		define_keyword( "u8",       u8_vtype       );
+		define_keyword( "i64",      i64_type()     );
+		define_keyword( "u64",      u64_type()     );
+		define_keyword( "i32",      i32_type()     );
+		define_keyword( "u32",      u32_type()     );
+		define_keyword( "i16",      i16_type()     );
+		define_keyword( "u16",      u16_type()     );
+		define_keyword( "i8",       i8_type()      );
+		define_keyword( "u8",       u8_type()      );
 		
 		define_keyword( "array", generic_array_type );
 		
 		define_keyword( "vector", Vector_Metatype() );
 		
-		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_vtype );
-		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_vtype );
+		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_type() );
+		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_type() );
 		
 		define_keyword( proc_abs    );
 		define_keyword( proc_areaof );
