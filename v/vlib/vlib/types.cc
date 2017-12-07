@@ -29,7 +29,7 @@ namespace vlib
 	
 	bool is_functional( const Value& v )
 	{
-		return is_function( v )  ||  v.type() == Value_base_type;
+		return is_function( v )  ||  is_type( v );
 	}
 	
 	static

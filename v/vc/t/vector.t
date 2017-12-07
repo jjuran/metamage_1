@@ -117,3 +117,8 @@ $ vc 'vector[ record(size: 1) ] isa type'
 
 $ vc 'vector == vector[ record(size: 1) ]'
 1 >= false
+
+%
+
+$ vc '1 .. 2 map { record(size: _) } map vector'
+1 >= '[<vector type>, <vector type>]'
