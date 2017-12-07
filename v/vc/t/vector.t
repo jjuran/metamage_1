@@ -112,3 +112,8 @@ $ vc 'vector isa type'
 
 $ vc 'vector[ record(size: 1) ] isa type'
 1 >= true
+
+%
+
+$ vc 'vector == vector[ record(size: 1) ]'
+1 >= false

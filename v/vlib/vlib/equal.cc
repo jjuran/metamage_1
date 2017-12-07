@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/is_type.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -94,6 +95,11 @@ namespace vlib
 	bool single_type_mismatch( const Value& one, const Value& two )
 	{
 		if ( ! is_single( one )  ||  ! is_single( two ) )
+		{
+			return false;
+		}
+		
+		if ( is_type( one )  &&  is_type( two ) )
 		{
 			return false;
 		}
