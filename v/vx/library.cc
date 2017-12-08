@@ -203,25 +203,57 @@ namespace vlib
 		return Value_nothing;
 	}
 	
+	enum output_capture
+	{
+		Capture_none,
+		Capture_stdout,
+	};
+	
 	static
-	Value v_run( const Value& v )
+	Value run( const Value& v, const char* empty, output_capture capture )
 	{
 		if ( is_empty_array( v ) )
 		{
-			const char* empty = "empty array passed to run()";
-			
 			throw user_exception( String( empty ), source_spec() );
+		}
+		
+		int fds[ 2 ];
+		
+		if ( capture )
+		{
+			if ( pipe( fds ) < 0 )
+			{
+				throw_exception_object( error_desc( errno ) );
+			}
 		}
 		
 		pid_t pid = FORK();
 		
 		if ( pid < 0 )
 		{
+			if ( capture )
+			{
+				close( fds[ 0 ] );
+				close( fds[ 1 ] );
+			}
+			
 			throw_exception_object( error_desc( errno ) );
 		}
 		
 		if ( pid == 0 )
 		{
+			if ( capture )
+			{
+				close( fds[ 0 ] );
+				
+				if ( dup2( fds[ 1 ], STDOUT_FILENO ) < 0 )
+				{
+					_exit( 126 );
+				}
+				
+				close( fds[ 1 ] );
+			}
+			
 			const Value& arg0 = first( v.expr()->right );
 			
 			const Value err = exec_impl( Value( arg0, v ), "", &execvp, false );
@@ -229,6 +261,35 @@ namespace vlib
 			const int errnum = integer_cast< int >( err );
 			
 			_exit( errnum == ENOENT ? 127 : 126 );
+		}
+		
+		Value result = Integer();
+		
+		if ( capture )
+		{
+			close( fds[ 1 ] );
+			
+			plus::var_string output;
+			
+			char buffer[ 4069 ];
+			
+			ssize_t n_read;
+			
+			while ( (n_read = read( fds[ 0 ], buffer, sizeof buffer )) > 0 )
+			{
+				output.append( buffer, n_read );
+			}
+			
+			int saved_errno = errno;
+			
+			close( fds[ 0 ] );
+			
+			if ( n_read < 0 )
+			{
+				throw_exception_object( error_desc( saved_errno ) );
+			}
+			
+			result = String( output );
 		}
 		
 		int status = -1;
@@ -251,7 +312,23 @@ namespace vlib
 			throw_exception_object( mapping( "exit", Integer( exit_status ) ) );
 		}
 		
-		return Integer();
+		return result;
+	}
+	
+	static
+	Value v_run( const Value& v )
+	{
+		const char* empty = "empty array passed to run()";
+		
+		return run( v, empty, Capture_none );
+	}
+	
+	static
+	Value v_runout( const Value& v )
+	{
+		const char* empty = "empty array passed to output-from-run()";
+		
+		return run( v, empty, Capture_stdout );
 	}
 	
 	static
@@ -384,6 +461,7 @@ namespace vlib
 	static const Value exec = Value( c_str, c_str_array );
 	
 	#define DESTRUCT  "self-destructing"
+	#define RUNOUT    "output-from-run"
 	
 	const proc_info proc_eval   = { "eval",   &v_eval,   &eval       };
 	const proc_info proc_EXECV  = { "execv",  &v_execv,  &exec       };
@@ -392,6 +470,7 @@ namespace vlib
 	const proc_info proc_getenv = { "getenv", &v_getenv, &c_str      };
 	const proc_info proc_print  = { "print",  &v_print,  NULL        };
 	const proc_info proc_RUN    = { "run",    &v_run,    &c_str_array};
+	const proc_info proc_RUNOUT = { RUNOUT,   &v_runout, &c_str_array};
 	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL        };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &sleep_arg  };
 	const proc_info proc_system = { "system", &v_system, &empty_list };

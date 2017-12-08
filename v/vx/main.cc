@@ -205,6 +205,7 @@ int main( int argc, char** argv )
 		define( proc_EXECV  );
 		define( proc_EXECVP );
 		define( proc_RUN    );
+		define( proc_RUNOUT );
 		define( proc_SYSTEM );
 	}
 	else
