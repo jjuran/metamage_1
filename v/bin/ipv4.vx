@@ -5,32 +5,6 @@ const libdir = bindir "/../lib/"
 
 const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
 
-def output_from
-{
-	const command (str) = _
-	
-	const out = dup OUT
-	
-	const r, const w = pipe()
-	
-	dup2( w, OUT ); close w
-	
-	system command
-	
-	dup2( out, OUT ); close out
-	
-	var response = ""
-	
-	while var buffer = read( r, 4096 ) do
-	{
-		response = response buffer.string
-	}
-	
-	close r
-	
-	return response
-}
-
 def status_from
 {
 	const command (str) = _
@@ -70,7 +44,7 @@ const pad_char = inet[ 0 ]
 
 var interface
 
-for line in output_from( "/sbin/ifconfig" ).lines() do
+for line in output-from-run( ["/sbin/ifconfig"] ).lines() do
 {
 	if line == "" then {continue}
 	
