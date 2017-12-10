@@ -1,0 +1,46 @@
+#!/usr/bin/env vx
+
+var start = ()
+var timer
+
+OUT <== "-:--"
+
+const events = channel()
+
+var reader = thread lambda
+{
+	while var input = read( IN, 1 ) do
+	{
+		const c = *input
+		
+		if c == ' ' then
+		{
+			events <== c
+		}
+	}
+}
+
+for ev in events do
+{
+	if ev == '\0' then
+	{
+		const dt = time() - start
+		const m  = str( dt div 60 )
+		const ss = str( dt mod 60 + 100 )[ 1 .. 2 ]
+		
+		OUT <== "\r" m ":" ss
+	}
+	else if ev == ' ' then
+	{
+		if (+) start then
+		{
+			OUT <== "\n"
+			
+			exit 0
+		}
+		
+		start = time()
+		
+		timer = thread { while true do { events <== '\0'; sleep 1 } }
+	}
+}
