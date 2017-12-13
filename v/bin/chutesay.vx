@@ -1,0 +1,59 @@
+#!/usr/bin/env vx
+#
+# Copyright 2017 Josh Juran.  All rights reserved.
+#
+# The stick-figure parachute messenger is a trademark of Josh Juran.
+
+if argv.length < 2 then
+{
+	warn "chutesay: argument required"
+	exit 2
+}
+
+const words = argv[ 1 ]
+
+const halflen = words.length div 2
+
+const width = halflen * 2 + 1
+
+const pad = " " * (words.length != width)
+
+const canopy =
+[
+	"   _" ("_" * width) "_",
+	"  / " (" " * width) " \\",
+	" /  " words     pad "  \\",
+	"(___" ("_" * width) "___)",
+]
+
+def spc { " " * _ }
+
+const lines = 1 .. halflen + 2 map { (spc _) "\\" spc( width + 6 - 2 * _ ) "/" }
+
+const indent = " " * (halflen + 3)
+
+const pilot =
+[
+	"\\o/",  # \o/
+	"/H\\",  # /H\
+	"/ \\",  # / \
+]
+map { indent _ }
+
+print join( "\n", *canopy, *lines, *pilot, "" )
+
+end.
+
+   ___________
+  /           \
+ /  951 bytes  \
+(_______________)
+ \             /
+  \           /
+   \         /
+    \       /
+     \     /
+      \   /
+       \o/
+       /H\
+       / \
