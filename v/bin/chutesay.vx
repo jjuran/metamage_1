@@ -2,35 +2,88 @@
 #
 # Copyright 2017 Josh Juran.  All rights reserved.
 #
+# "chutesay" is a trademark of Josh Juran.
 # The stick-figure parachute messenger is a trademark of Josh Juran.
 
-if argv.length < 2 then
+def calc-width
+{
+	const lines = _
+	
+	var result = 0
+	
+	var i = 0
+	
+	for x in lines do
+	{
+		# The more lines we have, the wider we have to be.
+		
+		result += 2
+		
+		const len = x.length
+		
+		if len > result then {result = len}
+	}
+	
+	return result
+}
+
+def odd-padded
+{
+	const x = _
+	
+	return x + 1 - x mod 2
+}
+
+const argc = argv.length
+
+if argc < 2 then
 {
 	warn "chutesay: argument required"
 	exit 2
 }
 
-const words = argv[ 1 ]
+const text-lines = [ "", *argv[ 1 -> argc ] ]
 
-const halflen = words.length div 2
+const n = text-lines.length
 
-const width = halflen * 2 + 1
-
-const pad = " " * (words.length != width)
-
-const canopy =
-[
-	"   _" ("_" * width) "_",
-	"  / " (" " * width) " \\",
-	" /  " words     pad "  \\",
-	"(___" ("_" * width) "___)",
-]
+const widest    = 6 + odd-padded calc-width text-lines
+const narrowest = widest - n * 2
 
 def spc { " " * _ }
 
-const lines = 1 .. halflen + 2 map { (spc _) "\\" spc( width + 6 - 2 * _ ) "/" }
+const canopy-top = spc (n + 1) ("_" * narrowest)
 
-const indent = " " * (halflen + 3)
+var i = n
+var width = narrowest
+
+def centered
+{
+	const text = _
+	
+	const margin = width - text.length
+	
+	width += 2
+	
+	const pre  = margin div 2
+	const post = margin - pre
+	
+	return (spc pre) text (spc post)
+}
+
+const canopy-mid = text-lines map { (spc i--) "/" (centered _) "\\" }
+
+const canopy-bottom = "(" ("_" * widest) ")"
+
+const canopy = canopy-top,
+               *canopy-mid,
+               canopy-bottom
+
+const halflen = widest div 2
+
+# shroud lines
+const lines = 1 -> halflen map { (spc _) "\\" spc( widest - 2 * _ ) "/" }
+
+const indent = spc halflen
 
 const pilot =
 [
@@ -40,20 +93,25 @@ const pilot =
 ]
 map { indent _ }
 
-print join( "\n", *canopy, *lines, *pilot, "" )
+print join( "\n", canopy, *lines, *pilot, "" )
 
 end.
 
-   ___________
-  /           \
- /  951 bytes  \
-(_______________)
- \             /
-  \           /
-   \         /
-    \       /
-     \     /
-      \   /
-       \o/
-       /H\
-       / \
+    _________________
+   /                 \
+  /  That escalated   \
+ /      quickly        \
+(_______________________)
+ \                     /
+  \                   /
+   \                 /
+    \               /
+     \             /
+      \           /
+       \         /
+        \       /
+         \     /
+          \   /
+           \o/
+           /H\
+           / \
