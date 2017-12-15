@@ -32,6 +32,8 @@ namespace vlib
 			static Value coerce( const Value& v );
 			
 			MB32( uint32_t mb = 0 );
+			
+			const uint32_t& get() const  { return pod_cast< uint32_t >(); }
 		
 		private:
 			MB32( const plus::string& s );

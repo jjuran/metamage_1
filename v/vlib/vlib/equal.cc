@@ -58,7 +58,6 @@ namespace vlib
 			case Value_boolean:
 				return a.boolean() == b.boolean();
 			
-			case Value_mb32:
 			case Value_packed:
 			case Value_string:
 				return a.string() == b.string();

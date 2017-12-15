@@ -21,6 +21,7 @@
 #include "vlib/quote.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
@@ -45,20 +46,21 @@ namespace vlib
 	
 	MB32::MB32( uint32_t mb )
 	:
-		Value( (const vu_string&) plus::string( (char*) &mb, 4 ).move(),
-		       Value_mb32,
-		       &mb32_dispatch )
+		Value( Value_mb32, &mb32_dispatch )
 	{
+		pod_cast< uint32_t >() = mb;
 	}
 	
 	MB32::MB32( const plus::string& s )
 	:
-		Value( (const vu_string&) s, Value_mb32, &mb32_dispatch )
+		Value( Value_mb32, &mb32_dispatch )
 	{
 		if ( s.size() != 4 )
 		{
 			THROW( "multibyte conversion requires 4 bytes" );
 		}
+		
+		pod_cast< uint32_t >() = *(const uint32_t*) s.data();
 	}
 	
 	Value MB32::coerce( const Value& v )
@@ -90,15 +92,27 @@ namespace vlib
 	}
 	
 	static
+	plus::string utf8_from_mb32( uint32_t mb )
+	{
+		plus::string s( (const char*) &mb, sizeof mb );
+		
+		return utf8_from_mac( s );
+	}
+	
+	static
 	size_t mb32_str_size( const Value& v )
 	{
-		return utf8_from_mac( v.string() ).size();
+		const MB32& mb32 = (const MB32&) v;
+		
+		return utf8_from_mb32( mb32.get() ).size();
 	}
 	
 	static
 	char* mb32_str_copy( char* p, const Value& v )
 	{
-		return mempcpy( p, utf8_from_mac( v.string() ) );
+		const MB32& mb32 = (const MB32&) v;
+		
+		return mempcpy( p, utf8_from_mb32( mb32.get() ) );
 	}
 	
 	static const stringify mb32_str =
@@ -111,7 +125,9 @@ namespace vlib
 	static
 	size_t mb32_rep_size( const Value& v )
 	{
-		const char* p = v.string().data();
+		const MB32& mb32 = (const MB32&) v;
+		
+		const char* p = (const char*) &mb32.get();
 		
 		unsigned length = 0;
 		
@@ -126,7 +142,9 @@ namespace vlib
 	static
 	char* mb32_rep_copy( char* p, const Value& v )
 	{
-		const char* q = v.string().data();
+		const MB32& mb32 = (const MB32&) v;
+		
+		const char* q = (const char*) &mb32.get();
 		
 		*p++ = '\'';
 		p = copy_quotable_byte( p, *q++ );
@@ -148,7 +166,9 @@ namespace vlib
 	static
 	const char* mb32_bin_data( const Value& v )
 	{
-		return v.string().data();
+		const MB32& mb32 = (const MB32&) v;
+		
+		return (const char*) &mb32.get();
 	}
 	
 	static
@@ -174,12 +194,36 @@ namespace vlib
 	static
 	bool mb32_verity( const Value& v )
 	{
-		return memcmp( v.string().data(), "\0\0\0\0", 4 ) != 0;
+		const MB32& mb32 = (const MB32&) v;
+		
+		return mb32.get() != 0;
 	}
 	
 	static const veritization mb32_veritization =
 	{
 		&mb32_verity,
+	};
+	
+	static inline
+	cmp_t compare_u32( uint32_t a, uint32_t b )
+	{
+		return   a < b ? -1
+		       : a > b ?  1
+		       :          0;
+	}
+	
+	static
+	cmp_t mb32_order( const Value& a, const Value& b )
+	{
+		const MB32& one = (const MB32&) a;
+		const MB32& two = (const MB32&) b;
+		
+		return compare_u32( one.get(), two.get() );
+	}
+	
+	const comparison mb32_comparison =
+	{
+		&mb32_order,
 	};
 	
 	static
@@ -206,7 +250,7 @@ namespace vlib
 	{
 		&mb32_stringifiers,
 		&mb32_veritization,
-		0,
+		&mb32_comparison,
 		&ops,
 	};
 	
