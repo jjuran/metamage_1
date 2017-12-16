@@ -217,7 +217,7 @@ namespace vlib
 	
 	unsigned long area( const Value& v )
 	{
-		unsigned long total = area( v.its_box );
+		unsigned long total = area( v.its_box ) + sizeof (dispatch*);
 		
 		if ( v.type() != Value_pair )
 		{
