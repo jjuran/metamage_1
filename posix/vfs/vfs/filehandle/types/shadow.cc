@@ -24,14 +24,6 @@ namespace vfs
 		filehandle* basis;
 	};
 	
-	class shadow_filehandle : public filehandle
-	{
-		public:
-			shadow_filehandle( const node&  file,
-			                   int          flags,
-			                   filehandle&  basis );
-	};
-	
 	static ssize_t shadow_pread( filehandle* that, char* buffer, size_t n, off_t offset )
 	{
 		shadow_extra& extra = *(shadow_extra*) that->extra();
