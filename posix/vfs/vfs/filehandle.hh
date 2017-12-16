@@ -65,7 +65,7 @@ namespace vfs
 			            size_t                        n_extra = 0,
 			            filehandle_destructor         dtor    = 0 );  // NULL
 			
-			~filehandle();
+			virtual ~filehandle();
 			
 			int get_flags() const  { return its_flags; }
 			
