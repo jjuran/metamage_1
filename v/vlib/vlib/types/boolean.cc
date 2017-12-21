@@ -61,6 +61,7 @@ namespace vlib
 				return Boolean( ! v.string().empty() );
 			
 			case Value_pair:
+			case Value_other:
 				return True;
 		}
 	}

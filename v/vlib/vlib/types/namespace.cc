@@ -10,23 +10,11 @@
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
-#include "vlib/dispatch/verity.hh"
 #include "vlib/types/builtin.hh"
 
 
 namespace vlib
 {
-	
-	static
-	bool always_true( const Value& v )
-	{
-		return true;
-	}
-	
-	static const veritization namespace_veritization =
-	{
-		&always_true,
-	};
 	
 	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
@@ -59,7 +47,7 @@ namespace vlib
 	const dispatch namespace_dispatch =
 	{
 		&builtin_stringifiers,
-		&namespace_veritization,
+		0,  // NULL
 		&builtin_comparison,
 		&ops,
 	};
