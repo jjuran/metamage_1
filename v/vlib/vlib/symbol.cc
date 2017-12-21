@@ -149,6 +149,22 @@ namespace vlib
 			return is_empty_list( v ) ? v : NIL;
 		}
 		
+		if ( const dispatch* methods = type.dispatch_methods() )
+		{
+			if ( const typing* typ = methods->type )
+			{
+				if ( transformer transform = typ->transform )
+				{
+					return transform( type, v );
+				}
+				
+				if ( typechecker typecheck = typ->typecheck )
+				{
+					return typecheck( type, v ) ? v : NIL;
+				}
+			}
+		}
+		
 		if ( Expr* expr = type.expr() )
 		{
 			THROW( "coercion to expression types is undefined" );

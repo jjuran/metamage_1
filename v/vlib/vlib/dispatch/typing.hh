@@ -12,11 +12,13 @@ namespace vlib
 	
 	class Value;
 	
-	typedef bool (*typechecker)( const Value& type, const Value& v );
+	typedef bool  (*typechecker)( const Value& type, const Value& v );
+	typedef Value (*transformer)( const Value& type, const Value& v );
 	
 	struct typing
 	{
 		typechecker  typecheck;
+		transformer  transform;
 	};
 	
 }
