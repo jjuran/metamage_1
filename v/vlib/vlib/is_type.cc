@@ -7,6 +7,8 @@
 
 // vlib
 #include "vlib/value.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/typing.hh"
 
 
 namespace vlib
@@ -14,6 +16,14 @@ namespace vlib
 	
 	bool is_type( const Value& v )
 	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const typing* type = methods->type )
+			{
+				return true;
+			}
+		}
+		
 		if ( Expr* expr = v.expr() )
 		{
 			if ( expr->op == Op_subscript )

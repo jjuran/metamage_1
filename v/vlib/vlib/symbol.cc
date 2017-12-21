@@ -14,6 +14,8 @@
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/typing.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/table.hh"
 #include "vlib/types/term.hh"  // codependent
@@ -84,6 +86,17 @@ namespace vlib
 		if ( is_empty_list( type ) )
 		{
 			return is_empty_list( v ) ? v : NIL;
+		}
+		
+		if ( const dispatch* methods = type.dispatch_methods() )
+		{
+			if ( const typing* typ = methods->type )
+			{
+				if ( typechecker typecheck = typ->typecheck )
+				{
+					return typecheck( type, v ) ? v : NIL;
+				}
+			}
 		}
 		
 		if ( Expr* expr = type.expr() )

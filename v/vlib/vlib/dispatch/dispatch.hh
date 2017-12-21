@@ -14,6 +14,7 @@ namespace vlib
 	struct veritization;
 	struct comparison;
 	struct operators;
+	struct typing;
 	
 	struct dispatch
 	{
@@ -21,6 +22,7 @@ namespace vlib
 		veritization const*  to_boolean;
 		comparison   const*  compare;
 		operators    const*  ops;
+		typing       const*  type;
 	};
 	
 }
