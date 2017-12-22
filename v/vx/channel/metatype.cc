@@ -11,6 +11,7 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/dispatch/typing.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/stdint.hh"
@@ -88,12 +89,24 @@ namespace vlib
 		&binary_op_handler,
 	};
 	
+	static
+	bool typecheck( const Value& type, const Value& v )
+	{
+		return v.is< Channel >();
+	}
+	
+	static const typing type =
+	{
+		&typecheck,
+	};
+	
 	const dispatch channelmetatype_dispatch =
 	{
 		&channelmetatype_stringifiers,
 		NULL,
 		NULL,
 		&ops,
+		&type,
 	};
 	
 }
