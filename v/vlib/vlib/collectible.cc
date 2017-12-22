@@ -133,7 +133,6 @@ namespace vlib
 			}
 		}
 		
-		INTERNAL_ERROR( "unexpected type in type_is_collectible()" );
 		return true;
 	}
 	
