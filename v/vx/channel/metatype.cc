@@ -1,9 +1,9 @@
 /*
-	concept.cc
-	----------
+	metatype.cc
+	-----------
 */
 
-#include "channel/concept.hh"
+#include "channel/metatype.hh"
 
 // vlib
 #include "vlib/throw.hh"
@@ -25,21 +25,21 @@ namespace vlib
 {
 	
 	static
-	const char* channelconcept_str_data( const Value& v )
+	const char* channelmetatype_str_data( const Value& v )
 	{
 		return "channel";
 	}
 	
-	static const stringify channelconcept_str =
+	static const stringify channelmetatype_str =
 	{
-		&channelconcept_str_data,
+		&channelmetatype_str_data,
 		NULL,
 		NULL,
 	};
 	
-	const stringifiers channelconcept_stringifiers =
+	const stringifiers channelmetatype_stringifiers =
 	{
-		&channelconcept_str,
+		&channelmetatype_str,
 		// rep: ditto
 		// bin: not defined
 	};
@@ -88,9 +88,9 @@ namespace vlib
 		&binary_op_handler,
 	};
 	
-	const dispatch channelconcept_dispatch =
+	const dispatch channelmetatype_dispatch =
 	{
-		&channelconcept_stringifiers,
+		&channelmetatype_stringifiers,
 		NULL,
 		NULL,
 		&ops,

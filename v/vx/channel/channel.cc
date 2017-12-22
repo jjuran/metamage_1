@@ -19,7 +19,7 @@
 #include "vlib/types/proc.hh"
 
 // vx
-#include "channel/concept.hh"
+#include "channel/metatype.hh"
 #include "channel/state.hh"
 
 
@@ -54,7 +54,7 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_typeof:
-				return Channel_Concept();
+				return Channel_Metatype();
 			
 			case Op_recv:
 				return channel.get()->recv();
