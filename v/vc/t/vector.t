@@ -97,3 +97,8 @@ $ vc 'var v = vector[ record(size: 1, encode: {~_}) ] 2; v[1] = x"7e"; packed v'
 
 $ vc 'var v = vector[ record(size: 2, decode: {~_}) ] x"12345678"; *v'
 1 >= '(x"edcb", x"a987")'
+
+%
+
+$ vc 'var v (vector[ record(size: 2, decode: {~_}) ]); v := x"deadbeef"; *v'
+1 >= '(x"2152", x"4110")'

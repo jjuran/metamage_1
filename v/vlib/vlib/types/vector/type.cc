@@ -110,9 +110,28 @@ namespace vlib
 		return false;
 	}
 	
+	static
+	Value transform( const Value& type, const Value& v )
+	{
+		if ( typecheck( type, v ) )
+		{
+			return v;
+		}
+		
+		const Vector_Type& vt = static_cast< const Vector_Type& >( type );
+		
+		if ( const Packed* packed = v.is< Packed >() )
+		{
+			return Vector( vt.element_type(), packed->string() );
+		}
+		
+		return NIL;
+	}
+	
 	static const typing type =
 	{
 		&typecheck,
+		&transform,
 	};
 	
 	const dispatch vectortype_dispatch =
