@@ -58,6 +58,7 @@ namespace vlib
 			void expire()
 			{
 				its_value = Value_expired;
+				its_vtype = Value_expired;
 			}
 			
 			void assign( const Value& v, bool coercive = false );

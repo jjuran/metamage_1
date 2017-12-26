@@ -429,6 +429,8 @@ namespace vlib
 			{
 				left.sym()->denote( right );
 				
+				track_symbol_if_collectible( left );
+				
 				return left;
 			}
 			

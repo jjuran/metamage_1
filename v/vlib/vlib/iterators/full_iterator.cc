@@ -43,6 +43,7 @@ namespace vlib
 		else if ( const Symbol* sym = v.sym() )
 		{
 			its_stack.push_back( &sym->get() );
+			its_stack.push_back( &sym->vtype() );
 		}
 	}
 	

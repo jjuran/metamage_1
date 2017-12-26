@@ -188,6 +188,7 @@ namespace vlib
 		{
 			if ( sym->mark() == Mark_white )
 			{
+				garbage.push_back( sym->vtype() );
 				garbage.push_back( sym->get() );
 				
 				++it;
