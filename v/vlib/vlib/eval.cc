@@ -104,9 +104,9 @@ namespace vlib
 	}
 	
 	static
-	void track_symbol_if_collectible( const Value& symbol, const Value& v )
+	void track_symbol_if_collectible( const Value& symbol )
 	{
-		if ( symbol_is_collectible( *symbol.sym(), v ) )
+		if ( symbol_is_collectible( *symbol.sym() ) )
 		{
 			track_symbol( symbol );
 		}
@@ -151,7 +151,7 @@ namespace vlib
 		{
 			if ( is_symbol( left ) )
 			{
-				track_symbol_if_collectible( left, right );
+				track_symbol_if_collectible( left );
 			}
 			
 			const bool collectible = target_is_collectible( target );
@@ -203,12 +203,12 @@ namespace vlib
 			
 			if ( Symbol* sym = left.sym() )
 			{
-				track_symbol_if_collectible( left, *second.addr );
+				track_symbol_if_collectible( left );
 			}
 			
 			if ( op == Op_swap  &&  right.sym() )
 			{
-				track_symbol_if_collectible( right, *target.addr );
+				track_symbol_if_collectible( right );
 			}
 			
 			swap( *target.addr, *second.addr );

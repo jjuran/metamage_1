@@ -143,9 +143,9 @@ namespace vlib
 		return v.expr() != 0  &&  type_is_collectible( *target.type );
 	}
 	
-	bool symbol_is_collectible( const Symbol& symbol, const Value& v )
+	bool symbol_is_collectible( const Symbol& symbol )
 	{
-		return v.expr() != 0  &&  type_is_collectible( symbol.vtype() );
+		return type_is_collectible( symbol.vtype() );
 	}
 	
 	bool symbol_list_is_collectible( const Value& symlist )
@@ -154,9 +154,7 @@ namespace vlib
 		
 		while ( const Symbol* sym = it.use().sym() )
 		{
-			const Value& v = sym->get();
-			
-			if ( symbol_is_collectible( *sym, v ) )
+			if ( symbol_is_collectible( *sym ) )
 			{
 				return true;
 			}
