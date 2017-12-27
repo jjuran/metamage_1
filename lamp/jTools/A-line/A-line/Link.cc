@@ -976,6 +976,15 @@ namespace tool
 						UpdateInputStamp( info_task, info );
 						
 						project_base_task->AddDependent( info_task );
+						
+						const char* Build = "Build-origin.txt";
+						
+						plus::string build = project.ProjectFolder() / Build;
+						
+						if ( io::file_exists( build ) )
+						{
+							UpdateInputStamp( info_task, build );
+						}
 					}
 					
 					exeDir = contents / "MacOS";
