@@ -1,10 +1,12 @@
+#define COPYRIGHT  "2007-2016 Josh Juran"
+
 #define COPY "\0xA9"
 
 type 'mBin' as 'STR ';
 
 resource 'mBin' (0, "MacBinary Decoder")
 {
-	"Copyright " COPY " 2007-2016 Josh Juran"
+	"Copyright " COPY " " COPYRIGHT
 };
 
 resource 'vers' (1) {
@@ -14,5 +16,5 @@ resource 'vers' (1) {
 	0,
 	smRoman,
 	"0.5.0",
-	"0.5.0, " COPY "2007-2016 Josh Juran"
+	"0.5.0, " COPY COPYRIGHT
 };
