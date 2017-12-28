@@ -11,3 +11,12 @@ resource 'vers' (1) {
 	"0.7.2-alpha.1",
 	"0.7.2-alpha.1, " COPY COPYRIGHT
 };
+
+/* Owner resource */
+
+type 'Poof' as 'STR ';
+
+resource 'Poof' (0, "MacRelix")
+{
+	"Copyright " COPY " " COPYRIGHT
+};
