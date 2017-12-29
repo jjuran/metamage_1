@@ -179,8 +179,8 @@ sub new
 	
 	if ( defined $date )
 	{
-		$self{ vers_1 } = make_vers( "", "as of $date, by Josh Juran"     );
-		$self{ vers_2 } = make_vers( "", "MacRelix experimental snapshot" );
+		$self{ vers_1 } = make_vers( $date, "as of $date, by Josh Juran"     );
+		$self{ vers_2 } = make_vers( "",    "MacRelix experimental snapshot" );
 	}
 	
 	my $dir = $RealBin;
