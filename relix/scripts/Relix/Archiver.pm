@@ -144,6 +144,24 @@ sub make_macball
 	return $gz;
 }
 
+sub pascal_string
+{
+	my ( $string ) = @_;
+	
+	my $len = length $string;
+	
+	die "Can't make Pascal string longer than 255 bytes" if $len > 255;
+	
+	return (chr $len) . $string;
+}
+
+sub make_vers
+{
+	my ( $short, $long ) = @_;
+	
+	return ("\0" x 6) . (pascal_string $short) . (pascal_string $long);
+}
+
 sub new
 {
 	my $class = shift;
@@ -161,8 +179,8 @@ sub new
 	
 	if ( defined $date )
 	{
-		$self{ vers_1 } = `vers "" "as of $date, by Josh Juran"`;
-		$self{ vers_2 } = `vers "" "MacRelix experimental snapshot"`;
+		$self{ vers_1 } = make_vers( "", "as of $date, by Josh Juran"     );
+		$self{ vers_2 } = make_vers( "", "MacRelix experimental snapshot" );
 	}
 	
 	my $dir = $RealBin;
