@@ -22,6 +22,13 @@
 #include "worldview/Render.hh"
 
 
+#if UNIVERSAL_INTERFACES_VERSION < 0x0400
+	
+	typedef CGImageAlphaInfo CGBitmapInfo;
+	
+#endif
+
+
 namespace Vertice
 {
 	
@@ -70,7 +77,7 @@ namespace Vertice
 	}
 	
 	static inline
-	CGImageAlphaInfo skipFirst32Bit()
+	CGBitmapInfo skipFirst32Bit()
 	{
 	#ifdef __LITTLE_ENDIAN__
 		
