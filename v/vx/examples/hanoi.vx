@@ -1,0 +1,68 @@
+#!/usr/bin/env vx
+
+var depth  = 4
+var silent = false
+
+var p = each argv
+
+while ++p do
+{
+	const arg = *p
+	
+	if arg == "-s" then
+	{
+		silent = true
+	}
+	else
+	{
+		depth = int arg
+	}
+}
+
+const pegs = "ABC"
+
+def other-peg
+{
+	const src, const dst = _
+	
+	return 3 - src - dst
+}
+
+def move
+{
+	const n, const src, const dst = _
+	
+	print ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
+}
+
+def move-tower
+{
+	const n, const src, const dst = _
+	
+	if n > 0 then
+	{
+		const mid = other-peg( src, dst )
+		
+		move-tower( n - 1, src, mid )
+		
+		if not silent then
+		{
+			move _
+		}
+		
+		move-tower( n - 1, mid, dst )
+	}
+}
+
+move-tower( depth, 0, 2 )
+
+end.
+
+
+        __|__
+1      (_____)
+2     (_______)
+3    (_________)
+4  _(___________)_
+  |_______________|
+
