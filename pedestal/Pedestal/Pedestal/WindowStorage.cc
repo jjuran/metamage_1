@@ -25,6 +25,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
+#include "Pedestal/WindowMenu.hh"
 
 
 namespace MacGlue
@@ -336,6 +337,8 @@ namespace Pedestal
 	
 	void window_closing( WindowRef window )
 	{
+		window_removed( window );
+		
 		set_window_view( window, NULL );
 	}
 	
@@ -381,6 +384,8 @@ namespace Pedestal
 		
 		n::owned< WindowRef > result =
 		n::owned< WindowRef >::seize( window, disposer );
+		
+		window_created( window );
 		
 		return result;
 	}

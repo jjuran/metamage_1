@@ -17,7 +17,6 @@
 // Pedestal
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowEventHandlers.hh"
-#include "Pedestal/WindowMenu.hh"
 #include "Pedestal/WindowStorage.hh"
 
 
@@ -72,13 +71,10 @@ namespace Pedestal
 			
 			Mac::ThrowOSStatus( err );
 		}
-		
-		window_created( itsWindowRef.get() );
 	}
 	
 	Window::~Window()
 	{
-		window_removed( itsWindowRef.get() );
 	}
 	
 	
