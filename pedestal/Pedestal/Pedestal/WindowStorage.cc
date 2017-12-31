@@ -260,7 +260,7 @@ namespace Pedestal
 		OSStatus err;
 		
 		err = SetWindowProperty( window,
-		                         kWindowOwnerTag,
+		                         kWindowCreator,
 		                         kWindowClosedProcTag,
 		                         sizeof proc,
 		                         &proc );
@@ -286,7 +286,7 @@ namespace Pedestal
 		
 		WindowClosed_proc result = NULL;
 		err = GetWindowProperty( window,
-		                         kWindowOwnerTag,
+		                         kWindowCreator,
 		                         kWindowClosedProcTag,
 		                         sizeof result,
 		                         NULL,
@@ -312,7 +312,7 @@ namespace Pedestal
 		OSStatus err;
 		
 		err = SetWindowProperty( window,
-		                         kWindowOwnerTag,
+		                         kWindowCreator,
 		                         kWindowResizedProcTag,
 		                         sizeof proc,
 		                         &proc );
@@ -337,7 +337,7 @@ namespace Pedestal
 		
 		WindowResized_proc result = NULL;
 		err = GetWindowProperty( window,
-		                         kWindowOwnerTag,
+		                         kWindowCreator,
 		                         kWindowResizedProcTag,
 		                         sizeof result,
 		                         NULL,
