@@ -83,6 +83,8 @@ namespace Pedestal
 	static
 	pascal void DestroyWindow( WindowRef window )
 	{
+		window_closing( window );
+		
 		WindowStorage* storage = RecoverWindowStorage( window );
 		
 		CloseWindow( window );
@@ -330,6 +332,10 @@ namespace Pedestal
 		{
 			DisposeWindow( window );
 		}
+	}
+	
+	void window_closing( WindowRef window )
+	{
 	}
 	
 	

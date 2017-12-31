@@ -62,6 +62,8 @@ namespace Pedestal
 	
 	void close_window( WindowRef window );
 	
+	void window_closing( WindowRef window );
+	
 	nucleus::owned< WindowRef >
 	//
 	CreateWindow( const Rect&           bounds,

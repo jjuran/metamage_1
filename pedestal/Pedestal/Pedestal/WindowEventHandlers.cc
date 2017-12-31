@@ -143,6 +143,38 @@ namespace Pedestal
 	
 	
 	static
+	pascal OSStatus window_WindowClosed( EventHandlerCallRef  handler,
+	                                     EventRef             event,
+	                                     void*                userData )
+	{
+		OSStatus err;
+		
+		WindowRef window;
+		err = GetEventParameter( event,
+		                         kEventParamDirectObject,
+		                         typeWindowRef,
+		                         NULL,
+		                         sizeof (WindowRef),
+		                         NULL,
+		                         &window );
+		
+		if ( err == noErr )
+		{
+			window_closing( window );
+		}
+		
+		return err;
+	}
+	
+	DEFINE_CARBON_UPP( EventHandler, window_WindowClosed )
+	
+	static EventTypeSpec windowClosed_event[] =
+	{
+		{ kEventClassWindow, kEventWindowClosed },
+	};
+	
+	
+	static
 	pascal OSStatus window_ControlDraw( EventHandlerCallRef  handler,
 	                                    EventRef             event,
 	                                    void*                userData )
@@ -204,6 +236,13 @@ namespace Pedestal
 		                                 UPP_ARG( window_WindowClose ),
 		                                 1,
 		                                 windowClose_event,
+		                                 NULL,
+		                                 NULL );
+		
+		err = InstallWindowEventHandler( window,
+		                                 UPP_ARG( window_WindowClosed ),
+		                                 1,
+		                                 windowClosed_event,
 		                                 NULL,
 		                                 NULL );
 		
