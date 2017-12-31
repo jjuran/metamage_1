@@ -92,6 +92,8 @@ namespace Vertice
 	:
 		Ped::Window( CreateWindow( MakeWindowRect() ) )
 	{
+		N::SetWRefCon( Get(), this );
+		
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
 		
 		boost::intrusive_ptr< Ped::View > view( new PortView( bounds ) );
@@ -129,7 +131,7 @@ namespace Vertice
 	static
 	void DocumentClosed( WindowRef window )
 	{
-		Ped::Window* doc = Ped::get_window_owner( window );
+		Window* doc = (Window*) GetWRefCon( window );
 		
 		delete doc;
 	}
