@@ -139,10 +139,7 @@ namespace tool
 		                                &null_flip_proc,
 		                                NULL );
 		
-		if ( err != noErr )
-		{
-			Mac::ThrowOSStatus( err );
-		}
+		Mac::ThrowOSStatus( err );
 	}
 	
 	static
