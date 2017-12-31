@@ -16,7 +16,6 @@
 
 // Pedestal
 #include "Pedestal/View.hh"
-#include "Pedestal/WindowEventHandlers.hh"
 #include "Pedestal/WindowStorage.hh"
 
 
@@ -65,12 +64,6 @@ namespace Pedestal
 	:
 		itsWindowRef( window )
 	{
-		if ( TARGET_API_MAC_CARBON )
-		{
-			OSStatus err = install_window_event_handlers( itsWindowRef.get() );
-			
-			Mac::ThrowOSStatus( err );
-		}
 	}
 	
 	Window::~Window()

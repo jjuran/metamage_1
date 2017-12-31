@@ -25,6 +25,7 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
+#include "Pedestal/WindowEventHandlers.hh"  // codependent
 #include "Pedestal/WindowMenu.hh"
 
 
@@ -386,6 +387,13 @@ namespace Pedestal
 		n::owned< WindowRef >::seize( window, disposer );
 		
 		window_created( window );
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			OSStatus err = install_window_event_handlers( window );
+			
+			Mac::ThrowOSStatus( err );
+		}
 		
 		return result;
 	}
