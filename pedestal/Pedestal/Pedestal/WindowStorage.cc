@@ -371,14 +371,26 @@ namespace Pedestal
 		return (procID & ~0x4) == 8;  // zoomDocProc (8) or zoomNoGrow (12)
 	}
 	
+	typedef nucleus::disposer_class< WindowRef >::type Disposer;
+	
+	static inline
+	n::owned< WindowRef > finish_window( WindowRef  window,
+	                                     Disposer   disposer )
+	{
+		SetPortWindowPort( window );
+		
+		n::owned< WindowRef > result =
+		n::owned< WindowRef >::seize( window, disposer );
+		
+		return result;
+	}
+	
 	n::owned< WindowRef > CreateWindow( const Rect&           bounds,
 	                                    ConstStr255Param      title,
 	                                    bool                  visible,
 	                                    Mac::WindowDefProcID  procID,
 	                                    bool                  goAwayFlag )
 	{
-		typedef nucleus::disposer_class< WindowRef >::type Disposer;
-		
 		Disposer disposer;
 		
 		WindowRef substorage = NULL;
@@ -424,9 +436,7 @@ namespace Pedestal
 			Mac::ThrowOSStatus( err );
 		}
 		
-		SetPortWindowPort( window );
-		
-		return n::owned< WindowRef >::seize( window, disposer );
+		return finish_window( window, disposer );
 	}
 	
 	n::owned< WindowRef > CreateWindow( Mac::WindowClass       wClass,
@@ -440,11 +450,7 @@ namespace Pedestal
 		
 		Mac::ThrowOSStatus( err );
 		
-		SetPortWindowPort( window );
-		
-		typedef nucleus::disposer_class< WindowRef >::type Disposer;
-		
-		return n::owned< WindowRef >::seize( window, Disposer() );
+		return finish_window( window, Disposer() );
 	}
 	
 }
