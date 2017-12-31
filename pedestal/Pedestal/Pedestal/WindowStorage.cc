@@ -45,7 +45,6 @@ namespace Pedestal
 	{
 		kWindowCreator = ':-)\xCA',  // Yes, I actually registered this
 		
-		kWindowOwnerTag = 'This',  // Address of owning object
 		kWindowViewTag  = 'View',  // Address of view object, if any
 		
 		kWindowClosedProcTag  = 'Clsd',
@@ -56,7 +55,6 @@ namespace Pedestal
 	
 	struct WindowStorage
 	{
-		Window*             owner;
 		View*               view;
 		WindowClosed_proc   closed_proc;
 		WindowResized_proc  resized_proc;
@@ -113,60 +111,6 @@ namespace Pedestal
 		err = GetWindowAttributes( window, &attrs );
 		
 		return attrs;
-	}
-	
-	void set_window_owner( WindowRef window, Window* owner )
-	{
-	#if ! TARGET_API_MAC_CARBON
-		
-		WindowStorage* storage = RecoverWindowStorage( window );
-		
-		/*
-			This is only called on windows created below, which will always
-			be application windows with custom storage.
-		*/
-		
-		storage->owner = owner;
-		
-		return;
-		
-	#endif
-		
-		OSStatus err;
-		
-		err = SetWindowProperty( window,
-		                         kWindowCreator,
-		                         kWindowOwnerTag,
-		                         sizeof owner,
-		                         &owner );
-		
-		Mac::ThrowOSStatus( err );
-	}
-	
-	Window* get_window_owner( WindowRef window )
-	{
-	#if ! TARGET_API_MAC_CARBON
-		
-		if ( WindowStorage* storage = RecoverWindowStorage( window ) )
-		{
-			return storage->owner;
-		}
-		
-		return NULL;
-		
-	#endif
-		
-		OSStatus err;
-		
-		Window* result = NULL;
-		err = GetWindowProperty( window,
-		                         kWindowCreator,
-		                         kWindowOwnerTag,
-		                         sizeof result,
-		                         NULL,
-		                         &result );
-		
-		return result;
 	}
 	
 	void set_window_view( WindowRef window, View* view )

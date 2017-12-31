@@ -66,8 +66,6 @@ namespace Pedestal
 	:
 		itsWindowRef( window )
 	{
-		set_window_owner( itsWindowRef, this );
-		
 		if ( TARGET_API_MAC_CARBON )
 		{
 			OSStatus err = install_window_event_handlers( itsWindowRef.get() );

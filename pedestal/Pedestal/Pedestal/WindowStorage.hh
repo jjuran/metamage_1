@@ -43,13 +43,8 @@ namespace Pedestal
 	typedef void (*WindowResized_proc)( WindowRef window );
 	
 	class View;
-	class Window;
 	
 	WindowAttributes get_window_attributes( WindowRef window );
-	
-	void set_window_owner( WindowRef window, Window* owner );
-	
-	Window* get_window_owner( WindowRef window );
 	
 	void set_window_view( WindowRef window, View* view );
 	
