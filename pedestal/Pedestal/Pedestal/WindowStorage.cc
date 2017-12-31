@@ -336,6 +336,7 @@ namespace Pedestal
 	
 	void window_closing( WindowRef window )
 	{
+		set_window_view( window, NULL );
 	}
 	
 	

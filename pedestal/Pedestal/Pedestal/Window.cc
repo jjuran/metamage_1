@@ -79,8 +79,6 @@ namespace Pedestal
 	Window::~Window()
 	{
 		window_removed( itsWindowRef.get() );
-		
-		set_window_view( itsWindowRef.get(), NULL );
 	}
 	
 	
