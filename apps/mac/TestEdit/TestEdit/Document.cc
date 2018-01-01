@@ -83,9 +83,10 @@ namespace TestEdit
 	{
 	}
 	
-	static void LoadText( Ped::Window& window, const plus::string& text )
+	static
+	void LoadText( WindowRef window, const plus::string& text )
 	{
-		Ped::View* view = Ped::get_window_view( window.Get() );
+		Ped::View* view = Ped::get_window_view( window );
 		
 		View& scrollframe = reinterpret_cast< View& >( *view );
 		
@@ -98,7 +99,7 @@ namespace TestEdit
 		itHasFile( true  ),
 		itIsDirty( false )
 	{
-		LoadText( *itsWindow, ReadFileData( file ) );
+		LoadText( itsWindow, ReadFileData( file ) );
 	}
 	
 	Document::Document( const FSRef& file )
@@ -110,7 +111,7 @@ namespace TestEdit
 		N::SetWindowTitleWithCFString( N::FrontWindow(),
 		                               GetFilenameAsCFString( file ) );
 		
-		LoadText( *itsWindow, ReadFileData( file ) );
+		LoadText( itsWindow, ReadFileData( file ) );
 	}
 	
 	plus::string Document::GetName() const

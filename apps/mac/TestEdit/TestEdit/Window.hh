@@ -6,15 +6,17 @@
 #ifndef TESTEDIT_WINDOW_HH
 #define TESTEDIT_WINDOW_HH
 
-// Standard C++
-#include <memory>
-
 // plus
 #include "plus/string_fwd.hh"
 
-// Pedestal
-#ifndef PEDESTAL_WINDOW_HH
-#include "Pedestal/Window.hh"
+// nucleus
+#ifndef NUCLEUS_OWNED_HH
+#include "nucleus/owned.hh"
+#endif
+
+// Nitrogen
+#ifndef MAC_WINDOWS_TYPES_WINDOWREF_HH
+#include "Mac/Windows/Types/WindowRef.hh"
 #endif
 
 
@@ -25,7 +27,7 @@ namespace TestEdit
 	
 	typedef ScrollFrame View;
 	
-	std::auto_ptr< Pedestal::Window >
+	nucleus::owned< WindowRef >
 	//
 	NewWindow( ConstStr255Param title = "\p" "TestEdit" );
 	

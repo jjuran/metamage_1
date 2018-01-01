@@ -429,17 +429,15 @@ namespace TestEdit
 		return view;
 	}
 	
-	std::auto_ptr< Ped::Window > NewWindow( ConstStr255Param title )
+	n::owned< WindowRef > NewWindow( ConstStr255Param title )
 	{
-		typedef std::auto_ptr< Ped::Window > Owner;
-		
 		const Rect bounds = MakeWindowRect();
 		
-		Owner owner( new Ped::Window( Ped::CreateWindow( bounds, title ) ) );
+		n::owned< WindowRef > window = Ped::CreateWindow( bounds, title );
 		
-		Ped::set_window_view( owner->Get(), MakeView().get() );
+		Ped::set_window_view( window, MakeView().get() );
 		
-		return owner;
+		return window;
 	}
 	
 }
