@@ -60,17 +60,6 @@ namespace Pedestal
 	}
 	
 	
-	Window::Window( nucleus::owned< WindowRef > window )
-	:
-		itsWindowRef( window )
-	{
-	}
-	
-	Window::~Window()
-	{
-	}
-	
-	
 	#if 0
 	
 	static Rect CalcWindowStructureDiff()
