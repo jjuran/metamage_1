@@ -332,7 +332,15 @@ namespace Pedestal
 		}
 		else
 		{
+		#if ! OPAQUE_TOOLBOX_STRUCTS
+			
+			DestroyWindow( window );
+			
+		#else
+			
 			DisposeWindow( window );
+			
+		#endif
 		}
 	}
 	
