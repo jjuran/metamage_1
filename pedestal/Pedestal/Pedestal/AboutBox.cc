@@ -18,9 +18,6 @@
 // Standard C
 #include <string.h>
 
-// Standard C++
-#include <memory>
-
 // missing-macos
 #ifdef MAC_OS_X_VERSION_10_7
 #ifndef MISSING_QUICKDRAWTEXT_H
@@ -47,7 +44,6 @@
 #include "Pedestal/HIViewPlotIconRef.hh"
 #include "Pedestal/OwnerResource.hh"
 #include "Pedestal/View.hh"
-#include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
 #include "Pedestal/vers_Resource.hh"
 
@@ -325,7 +321,7 @@ namespace Pedestal
 	}
 	
 	
-	static std::auto_ptr< Window > sAboutBox;
+	static n::owned< WindowRef > sAboutBox;
 	
 	static
 	void AboutClosed( WindowRef window )
@@ -333,7 +329,8 @@ namespace Pedestal
 		sAboutBox.reset();
 	}
 	
-	static std::auto_ptr< Window > NewAboutBox()
+	static
+	n::owned< WindowRef > NewAboutBox()
 	{
 		const Mac::WindowAttributes attrs = Mac::kWindowCloseBoxAttribute
 		                                #ifdef MAC_OS_X_VERSION_10_2
@@ -371,21 +368,19 @@ namespace Pedestal
 			N::RGBBackColor( kAboutBoxBackgroundColor );
 		}
 		
-		std::auto_ptr< Window > owner( new Window( window ) );
-		
-		set_window_closed_proc( owner->Get(), &AboutClosed );
+		set_window_closed_proc( window, &AboutClosed );
 		
 		boost::intrusive_ptr< View > view( new AboutBoxView() );
 		
-		set_window_view( owner->Get(), view.get() );
+		set_window_view( window, view.get() );
 		
 	#if TARGET_API_MAC_CARBON
 		
-		ShowWindow( owner->Get() );
+		ShowWindow( window );
 		
 	#endif
 		
-		return owner;
+		return window;
 	}
 	
 	
@@ -397,7 +392,7 @@ namespace Pedestal
 		}
 		else
 		{
-			SelectWindow( sAboutBox->Get() );
+			SelectWindow( sAboutBox );
 		}
 	}
 	
