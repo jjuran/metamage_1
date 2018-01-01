@@ -25,6 +25,8 @@
 // Pedestal
 #include "Pedestal/Application.hh"
 #include "Pedestal/View.hh"
+#include "Pedestal/WindowEventHandlers.hh"  // codependent
+#include "Pedestal/WindowMenu.hh"
 
 
 namespace MacGlue
@@ -83,6 +85,8 @@ namespace Pedestal
 	static
 	pascal void DestroyWindow( WindowRef window )
 	{
+		window_closing( window );
+		
 		WindowStorage* storage = RecoverWindowStorage( window );
 		
 		CloseWindow( window );
@@ -332,6 +336,13 @@ namespace Pedestal
 		}
 	}
 	
+	void window_closing( WindowRef window )
+	{
+		window_removed( window );
+		
+		set_window_view( window, NULL );
+	}
+	
 	
 	typedef pascal WindowRef (*NewWindow_ProcPtr)( void*             storage,
 	                                               const Rect*       bounds,
@@ -364,14 +375,35 @@ namespace Pedestal
 		return (procID & ~0x4) == 8;  // zoomDocProc (8) or zoomNoGrow (12)
 	}
 	
+	typedef nucleus::disposer_class< WindowRef >::type Disposer;
+	
+	static inline
+	n::owned< WindowRef > finish_window( WindowRef  window,
+	                                     Disposer   disposer )
+	{
+		SetPortWindowPort( window );
+		
+		n::owned< WindowRef > result =
+		n::owned< WindowRef >::seize( window, disposer );
+		
+		window_created( window );
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			OSStatus err = install_window_event_handlers( window );
+			
+			Mac::ThrowOSStatus( err );
+		}
+		
+		return result;
+	}
+	
 	n::owned< WindowRef > CreateWindow( const Rect&           bounds,
 	                                    ConstStr255Param      title,
 	                                    bool                  visible,
 	                                    Mac::WindowDefProcID  procID,
 	                                    bool                  goAwayFlag )
 	{
-		typedef nucleus::disposer_class< WindowRef >::type Disposer;
-		
 		Disposer disposer;
 		
 		WindowRef substorage = NULL;
@@ -417,9 +449,7 @@ namespace Pedestal
 			Mac::ThrowOSStatus( err );
 		}
 		
-		SetPortWindowPort( window );
-		
-		return n::owned< WindowRef >::seize( window, disposer );
+		return finish_window( window, disposer );
 	}
 	
 	n::owned< WindowRef > CreateWindow( Mac::WindowClass       wClass,
@@ -433,11 +463,7 @@ namespace Pedestal
 		
 		Mac::ThrowOSStatus( err );
 		
-		SetPortWindowPort( window );
-		
-		typedef nucleus::disposer_class< WindowRef >::type Disposer;
-		
-		return n::owned< WindowRef >::seize( window, Disposer() );
+		return finish_window( window, Disposer() );
 	}
 	
 }
