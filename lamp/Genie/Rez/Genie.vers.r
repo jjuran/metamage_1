@@ -1,4 +1,4 @@
-#define COPYRIGHT  "1999-2017 Josh Juran"
+#define COPYRIGHT  "1999-2018 Josh Juran"
 
 #define COPY "\0xA9"
 
