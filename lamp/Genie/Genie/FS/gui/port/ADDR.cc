@@ -42,7 +42,6 @@
 
 // Pedestal
 #include "Pedestal/EmptyView.hh"
-#include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
 
 // vfs
@@ -125,8 +124,9 @@ namespace Genie
 		
 	#endif
 		
-		boost::intrusive_ptr< Ped::Window >  itsWindow;
-		boost::intrusive_ptr< Ped::View   >  itsSubview;
+		n::owned< WindowRef >              itsWindow;
+		
+		boost::intrusive_ptr< Ped::View >  itsSubview;
 		
 	#ifdef __MACH__
 		
@@ -184,9 +184,6 @@ namespace Genie
 	}
 	
 	
-	using Ped::Window;
-	
-	
 	static bool Disconnect_Window_Terminal( vfs::filehandle*& h )
 	{
 		if ( h != NULL )
@@ -201,11 +198,12 @@ namespace Genie
 		return false;
 	}
 	
-	static void Destroy_Window( boost::intrusive_ptr< Ped::Window >& window, const vfs::node* key )
+	static
+	void Destroy_Window( n::owned< WindowRef >& window, const vfs::node* key )
 	{
 		if ( window.get() )
 		{
-			Ped::View* view = Ped::get_window_view( window->Get() );
+			Ped::View* view = Ped::get_window_view( window );
 			
 			uninstall_view_from_port( view, key );
 			
@@ -304,19 +302,19 @@ namespace Genie
 			CenterWindowRect( bounds );
 		}
 		
-		typedef boost::intrusive_ptr< Ped::Window > Owner;
+		typedef n::owned< WindowRef > Owner;
 		
 	#if ! TARGET_API_MAC_CARBON
 		
 		N::Str255 title( params.itsTitle.data(), params.itsTitle.size() );
 		
-		Owner owner( new Window( Ped::CreateWindow( bounds,
-		                                            title,
-		                                            params.itIsVisible,
-		                                            params.itsProcID,
-		                                            params.itHasCloseBox ) ) );
+		Owner owner = Ped::CreateWindow( bounds,
+		                                 title,
+		                                 params.itIsVisible,
+		                                 params.itsProcID,
+		                                 params.itHasCloseBox );
 		
-		WindowRef window = owner->Get();
+		WindowRef window = owner;
 		
 	#else
 		
@@ -388,9 +386,9 @@ namespace Genie
 		
 	#endif
 		
-		Owner owner( new Window( Ped::CreateWindow( wClass, attrs, bounds ) ) );
+		Owner owner = Ped::CreateWindow( wClass, attrs, bounds );
 		
-		WindowRef window = owner->Get();
+		WindowRef window = owner;
 		
 		const plus::string&            title = params.itsTitle;
 		const Carbon::CFStringEncoding utf8  = Carbon::kCFStringEncodingUTF8;
@@ -488,12 +486,7 @@ namespace Genie
 	{
 		if ( WindowParameters* it = gWindowParametersMap.find( key ) )
 		{
-			const boost::intrusive_ptr< Ped::Window >& window = it->itsWindow;
-			
-			if ( window.get() != NULL )
-			{
-				return window->Get();
-			}
+			return it->itsWindow;
 		}
 		
 		return NULL;
@@ -896,9 +889,9 @@ namespace Genie
 		
 		params.itsSubview = view;
 		
-		if ( Ped::Window* owner = params.itsWindow.get() )
+		if ( WindowRef window = params.itsWindow.get() )
 		{
-			Ped::set_window_view( owner->Get(), params.itsSubview.get() );
+			Ped::set_window_view( window, params.itsSubview.get() );
 		}
 	}
 	
