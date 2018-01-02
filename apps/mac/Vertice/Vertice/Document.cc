@@ -19,7 +19,6 @@
 #include "FSReader.hh"
 
 // Pedestal
-#include "Pedestal/Window.hh"
 #include "Pedestal/WindowStorage.hh"
 
 // worldview
@@ -82,18 +81,6 @@ namespace Vertice
 		return Ped::CreateWindow( Mac::kDocumentWindowClass, attrs, bounds );
 	}
 	
-	class Window : public Ped::Window
-	{
-		public:
-			Window();
-	};
-	
-	Window::Window()
-	:
-		Ped::Window( CreateWindow( MakeWindowRect() ) )
-	{
-	}
-	
 	static
 	void LoadFileIntoWindow( const FSSpec& file, WindowRef window )
 	{
@@ -121,27 +108,9 @@ namespace Vertice
 		view.Render();
 	}
 	
-	static
-	void DocumentClosed( WindowRef window )
-	{
-		Window* doc = (Window*) GetWRefCon( window );
-		
-		delete doc;
-	}
-	
 	void OpenDocument( const FSSpec& file )
 	{
-		Window* doc = new Window();
-		
-		WindowRef window = doc->Get();
-		
-		N::SetWRefCon( window, doc );
-		
-		/*
-			Theoretically this could fail in Carbon (leaking an invisible
-			window), but it's highly unlikely, and this is temporary anyway.
-		*/
-		Ped::set_window_closed_proc( window, &DocumentClosed );
+		n::owned< WindowRef > window = CreateWindow( MakeWindowRect() );
 		
 		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
 		
@@ -152,6 +121,8 @@ namespace Vertice
 		LoadFileIntoWindow( file, window );
 		
 		ShowWindow( window );
+		
+		window.release();
 	}
 	
 }
