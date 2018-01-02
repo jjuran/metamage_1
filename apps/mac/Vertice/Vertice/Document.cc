@@ -92,13 +92,6 @@ namespace Vertice
 	:
 		Ped::Window( CreateWindow( MakeWindowRect() ) )
 	{
-		N::SetWRefCon( Get(), this );
-		
-		Rect bounds = N::GetPortBounds( N::GetWindowPort( Get() ) );
-		
-		boost::intrusive_ptr< Ped::View > view( new PortView( bounds ) );
-		
-		Ped::set_window_view( Get(), view.get() );
 	}
 	
 	static
@@ -142,7 +135,19 @@ namespace Vertice
 		
 		WindowRef window = doc->Get();
 		
+		N::SetWRefCon( window, doc );
+		
+		/*
+			Theoretically this could fail in Carbon (leaking an invisible
+			window), but it's highly unlikely, and this is temporary anyway.
+		*/
 		Ped::set_window_closed_proc( window, &DocumentClosed );
+		
+		Rect bounds = N::GetPortBounds( N::GetWindowPort( window ) );
+		
+		boost::intrusive_ptr< Ped::View > view( new PortView( bounds ) );
+		
+		Ped::set_window_view( window, view.get() );
 		
 		LoadFileIntoWindow( file, window );
 		
