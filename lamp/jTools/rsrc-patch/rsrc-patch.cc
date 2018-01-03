@@ -4,8 +4,7 @@
  */
 
 // Standard C++
-#include <functional>
-#include <vector>
+#include <algorithm>
 
 // Standard C
 #include <stdlib.h>
