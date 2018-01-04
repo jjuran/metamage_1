@@ -53,7 +53,7 @@ def check_hash
 	return _
 }
 
-const vload = { packed load _ }
+const vload = { packed self-destructing load _ }
 
 var hash = null
 var key  = null
