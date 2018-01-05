@@ -54,6 +54,9 @@ namespace vlib
 			void join();
 			
 			const Value& operator*();
+			
+			const Value& function() const  { return its_pb.f;      }
+			const Value& result  () const  { return its_pb.result; }
 	};
 	
 	void join_all_threads();

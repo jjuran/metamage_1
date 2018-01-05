@@ -17,6 +17,7 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/dispatch/refs.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
 
@@ -80,12 +81,30 @@ namespace vlib
 		&unary_op_handler,
 	};
 	
+	static
+	void getref( const Value& v, put_ref put, void* param )
+	{
+		const Thread& thread = static_cast< const Thread& >( v );
+		
+		const thread_state& state = *thread.get();
+		
+		put( state.function(), param );
+		put( state.result  (), param );
+	}
+	
+	static const refs ref =
+	{
+		&getref,
+	};
+	
 	const dispatch thread_dispatch =
 	{
 		&thread_stringifiers,
 		NULL,
 		NULL,
 		&ops,
+		NULL,
+		&ref,
 	};
 	
 	Thread::Thread( const Value& entry_point )
