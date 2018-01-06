@@ -9,7 +9,7 @@ const events = channel()
 
 var reader = thread lambda
 {
-	while var input = read( IN, 1 ) do
+	while var input = IN.read 1 do
 	{
 		const c = *input
 		

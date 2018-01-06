@@ -11,7 +11,7 @@ const service = argv[ 2 ]
 
 const fd = tcp-connect( node, service )
 
-while var data = read( fd, 4096 ) do
+while var data = fd.read 4096 do
 {
 	OUT <== data
 }
