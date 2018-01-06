@@ -2,7 +2,7 @@
 
 var button-state = x"00"
 
-for msg in receiver { read( IN, 3 ) or () } do
+for msg in receiver { IN.read 3 } do
 {
 	const deltas = msg[ 1 .. 2 ]
 	
