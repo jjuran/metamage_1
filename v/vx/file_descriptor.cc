@@ -22,12 +22,15 @@
 
 // vlib
 #include "vlib/generic.hh"
+#include "vlib/list-utils.hh"
+#include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
 
 // vx
@@ -261,12 +264,25 @@ namespace vlib
 		return ::close( get() );
 	}
 	
+	static
+	Value fd_member( const Value& obj, const plus::string& member )
+	{
+		if ( member == "read" )
+		{
+			return bind_args( Proc( proc_read ), obj );
+		}
+		
+		THROW( "nonexistent fd member" );
+		
+		return Value_nothing;
+	}
+	
 	const type_info fd_vtype =
 	{
 		"fd",
 		&assign_to< FileDescriptor >,
 		&FileDescriptor::coerce,
-		NULL,
+		&fd_member,
 	};
 	
 }
