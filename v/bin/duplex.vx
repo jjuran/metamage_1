@@ -2,11 +2,12 @@
 
 def relay
 {
-	const input, const output = _
+	const input  = fd head _
+	const output = fd tail _
 	
-	while var line = read( input, 1024 ) do
+	while var data = input.read 1024 do
 	{
-		write( output, line )
+		output <== data
 	}
 	
 	exit 0
