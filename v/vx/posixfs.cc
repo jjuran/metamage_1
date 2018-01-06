@@ -403,6 +403,11 @@ namespace vlib
 			fd_error( fd );
 		}
 		
+		if ( n_read == 0 )
+		{
+			return empty_list;
+		}
+		
 		return Packed( s.substr( 0, n_read ) );
 	}
 	
