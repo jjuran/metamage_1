@@ -120,7 +120,7 @@ namespace poseven
 	
 	thread::~thread()
 	{
-		ASSERT( ! exists() );
+		ASSERT( ! it_is_joinable );
 	}
 	
 	void thread::create( thread_entry_proc entry, void* param )

@@ -79,7 +79,6 @@ namespace poseven
 			thread();
 			~thread();
 			
-			bool exists() const;
 			bool is_the_current_thread() const;
 			
 			void create( thread_entry_proc entry, void* param );
@@ -89,17 +88,11 @@ namespace poseven
 	};
 	
 	inline
-	bool thread::exists() const
-	{
-		return its_status != Thread_none  &&  its_status != Thread_joined;
-	}
-	
-	inline
 	bool thread::is_the_current_thread() const
 	{
 		lock k( its_mutex );
 		
-		return exists()  &&  pthread_equal( pthread_self(), its_pthread );
+		return it_is_joinable  &&  pthread_equal( pthread_self(), its_pthread );
 	}
 	
 }
