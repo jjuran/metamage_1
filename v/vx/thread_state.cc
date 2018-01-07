@@ -150,28 +150,29 @@ namespace vlib
 	
 	void thread_state::join()
 	{
-		if ( its_thread.exists() )
+		if ( its_thread.is_the_current_thread() )
 		{
-			if ( its_thread.is_the_current_thread() )
-			{
-				write( STDERR_FILENO, STR_LEN( THREAD_SELF_DESTRUCTION "\n" ) );
-				
-				ASSERT( ! its_thread.is_the_current_thread() );
-				
-				abort();  // in case ASSERT() is a no-op
-			}
+			write( STDERR_FILENO, STR_LEN( THREAD_SELF_DESTRUCTION "\n" ) );
 			
-			try
-			{
-				its_thread.join();
-			}
-			catch ( const p7::errno_t& err )
-			{
-				thread_error( err );
-			}
+			ASSERT( ! its_thread.is_the_current_thread() );
 			
-			del_joinable_thread( this );
+			abort();  // in case ASSERT() is a no-op
 		}
+		
+		try
+		{
+			its_thread.join();
+		}
+		catch ( const p7::errno_t& err )
+		{
+			thread_error( err );
+		}
+		catch ( const p7::thread::already_joined& )
+		{
+			return;
+		}
+		
+		del_joinable_thread( this );
 	}
 	
 	const Value& thread_state::operator*()
