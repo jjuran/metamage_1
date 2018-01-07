@@ -96,7 +96,9 @@ namespace poseven
 	inline
 	bool thread::is_the_current_thread() const
 	{
-		return pthread_equal( pthread_self(), its_pthread );
+		lock k( its_mutex );
+		
+		return exists()  &&  pthread_equal( pthread_self(), its_pthread );
 	}
 	
 }
