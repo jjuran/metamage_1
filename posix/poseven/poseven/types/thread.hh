@@ -52,6 +52,7 @@ namespace poseven
 			
 			const callback_set*  its_scope_callbacks;
 			
+			bool it_is_joinable;
 			bool it_should_cancel;
 			
 			// non-copyable
