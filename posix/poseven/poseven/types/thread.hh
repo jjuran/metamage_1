@@ -25,7 +25,6 @@ namespace poseven
 		Thread_cancelled,
 		Thread_failed,
 		Thread_ended,
-		Thread_joined,
 	};
 	
 	typedef void* (*thread_entry_proc)( void* param );

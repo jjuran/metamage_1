@@ -238,8 +238,6 @@ namespace poseven
 			
 			throw_errno( err );
 		}
-		
-		its_status = Thread_joined;
 	}
 	
 }
