@@ -10,10 +10,36 @@
 
 // vlib
 #include "vlib/symbol.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/refs.hh"
 
 
 namespace vlib
 {
+	
+	static inline
+	get_refs get_getrefs( const Value& v )
+	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const refs* ref = methods->ref )
+			{
+				return ref->getrefs;
+			}
+		}
+		
+		return NULL;
+	}
+	
+	static
+	void put( const Value& v, void* param )
+	{
+		typedef std::vector< const Value* > Stack;
+		
+		Stack& stack = *(Stack*) param;
+		
+		stack.push_back( &v );
+	}
 	
 	full_iterator::full_iterator( const Value& start )
 	{
@@ -44,6 +70,10 @@ namespace vlib
 		{
 			its_stack.push_back( &sym->get() );
 			its_stack.push_back( &sym->vtype() );
+		}
+		else if ( get_refs getrefs = get_getrefs( v ) )
+		{
+			getrefs( v, &put, &its_stack );
 		}
 	}
 	

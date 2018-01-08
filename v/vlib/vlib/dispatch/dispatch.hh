@@ -15,6 +15,7 @@ namespace vlib
 	struct comparison;
 	struct operators;
 	struct typing;
+	struct refs;
 	
 	struct dispatch
 	{
@@ -23,6 +24,7 @@ namespace vlib
 		comparison   const*  compare;
 		operators    const*  ops;
 		typing       const*  type;
+		refs         const*  ref;
 	};
 	
 }
