@@ -114,13 +114,13 @@ namespace poseven
 		return result;
 	}
 	
-	thread::thread() : its_status(), it_should_cancel()
+	thread::thread() : its_status(), it_is_joinable(), it_should_cancel()
 	{
 	}
 	
 	thread::~thread()
 	{
-		ASSERT( ! exists() );
+		ASSERT( ! it_is_joinable );
 	}
 	
 	void thread::create( thread_entry_proc entry, void* param )
@@ -142,6 +142,8 @@ namespace poseven
 		throw_errno( err );
 		
 		its_status = Thread_new;
+		
+		it_is_joinable = true;
 	}
 	
 	void thread::cancel( pthread_cond_t* cond )
@@ -214,15 +216,20 @@ namespace poseven
 	{
 		lock k( its_mutex );
 		
-		if ( its_status == Thread_none )
+		if ( it_is_joinable )
+		{
+			// continue below
+		}
+		else if ( its_status == Thread_none )
 		{
 			throw never_created();
 		}
-		
-		if ( its_status == Thread_joined )
+		else
 		{
 			throw already_joined();
 		}
+		
+		it_is_joinable = false;
 		
 		{
 			unlock uk( its_mutex );
@@ -231,8 +238,6 @@ namespace poseven
 			
 			throw_errno( err );
 		}
-		
-		its_status = Thread_joined;
 	}
 	
 }

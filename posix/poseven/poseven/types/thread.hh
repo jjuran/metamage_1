@@ -25,7 +25,6 @@ namespace poseven
 		Thread_cancelled,
 		Thread_failed,
 		Thread_ended,
-		Thread_joined,
 	};
 	
 	typedef void* (*thread_entry_proc)( void* param );
@@ -52,6 +51,7 @@ namespace poseven
 			
 			const callback_set*  its_scope_callbacks;
 			
+			bool it_is_joinable;
 			bool it_should_cancel;
 			
 			// non-copyable
@@ -78,7 +78,6 @@ namespace poseven
 			thread();
 			~thread();
 			
-			bool exists() const;
 			bool is_the_current_thread() const;
 			
 			void create( thread_entry_proc entry, void* param );
@@ -88,17 +87,11 @@ namespace poseven
 	};
 	
 	inline
-	bool thread::exists() const
-	{
-		return its_status != Thread_none  &&  its_status != Thread_joined;
-	}
-	
-	inline
 	bool thread::is_the_current_thread() const
 	{
 		lock k( its_mutex );
 		
-		return exists()  &&  pthread_equal( pthread_self(), its_pthread );
+		return it_is_joinable  &&  pthread_equal( pthread_self(), its_pthread );
 	}
 	
 }
