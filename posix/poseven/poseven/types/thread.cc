@@ -229,6 +229,11 @@ namespace poseven
 			throw already_joined();
 		}
 		
+		join_internals( k );
+	}
+	
+	void thread::join_internals( lock& )
+	{
 		it_is_joinable = false;
 		
 		{
@@ -237,6 +242,38 @@ namespace poseven
 			int err = pthread_join( its_pthread, NULL );
 			
 			throw_errno( err );
+		}
+		
+		// The join is complete.  Broadcast the news to any waiters.
+		
+		its_cond.broadcast();
+	}
+	
+	void thread::wait()
+	{
+		lock k( its_mutex );
+		
+		if ( its_status == Thread_none )
+		{
+			throw never_created();
+		}
+		
+		// Thread must have been created, and therefore is (or was) joinable.
+		
+		if ( it_is_joinable )
+		{
+			// We're the first to call join() or wait().
+			
+			join_internals( k );
+		}
+		else
+		{
+			// Another thread joined (or waited) first.  Wait on the condvar.
+			
+			while ( its_status <= Thread_cancelling )  // running or cancelling
+			{
+				its_cond.wait( k );
+			}
 		}
 	}
 	

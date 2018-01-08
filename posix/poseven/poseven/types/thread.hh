@@ -65,6 +65,8 @@ namespace poseven
 			void cancel_out_of_scope( pthread_cond_t* cond );
 			
 			void self_testcancel();
+			
+			void join_internals( lock& );
 		
 		public:
 			struct never_created   {};
@@ -86,6 +88,7 @@ namespace poseven
 			
 			void cancel( pthread_cond_t* cond = NULL );
 			void join();
+			void wait();
 	};
 	
 	inline
