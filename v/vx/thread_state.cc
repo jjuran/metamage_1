@@ -161,15 +161,11 @@ namespace vlib
 		
 		try
 		{
-			its_thread.join();
+			its_thread.wait();
 		}
 		catch ( const p7::errno_t& err )
 		{
 			thread_error( err );
-		}
-		catch ( const p7::thread::already_joined& )
-		{
-			return;
 		}
 		
 		del_joinable_thread( this );
