@@ -232,7 +232,7 @@ namespace poseven
 		join_internals( k );
 	}
 	
-	void thread::join_internals( lock& )
+	void thread::join_internals_already_locked()
 	{
 		it_is_joinable = false;
 		

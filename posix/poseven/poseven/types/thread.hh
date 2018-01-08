@@ -66,7 +66,8 @@ namespace poseven
 			
 			void self_testcancel();
 			
-			void join_internals( lock& );
+			void join_internals_already_locked();
+			void join_internals( lock& )  { join_internals_already_locked(); }
 		
 		public:
 			struct never_created   {};
