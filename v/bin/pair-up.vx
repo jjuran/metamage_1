@@ -1,0 +1,66 @@
+#!/usr/bin/env vx -Z
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+
+const date-time = import "date-time"
+
+const port = getenv "PAIRUP_PORT"
+
+if not bool port then
+{
+	warn "pair-up: Please set PAIRUP_PORT to an available TCP port."
+	exit 2
+}
+
+const listener-fd = tcp-listen port
+
+def respond { print "\r" "[" (date-time.stamp time()) "]" "  " _ }
+
+def recruit
+{
+	const name = _
+	
+	OUT <== "Waiting for " name "..."
+	
+	const n = "Alice".length - name.length  # We know that "Bob" is shorter
+	
+	const connection = accept listener-fd
+	
+	respond name ":  " (" " * n) connection.address
+	
+	return connection.socket
+}
+
+def relay
+{
+	const input, const output = _
+	
+	while var line = input.read 1024 do
+	{
+		output <== line
+	}
+	
+	close input
+	close output
+}
+
+def pair-up
+{
+	const A = recruit "Alice"
+	const B = recruit "Bob"
+	
+	OUT <== "Full-duplex relay in progress..."
+	
+	thread { relay (A, B) },
+	thread { relay (B, A) }
+	
+	respond "Thank you, please come again." "\n"
+}
+
+while true do
+{
+	pair-up()
+}
