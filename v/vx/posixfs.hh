@@ -19,6 +19,7 @@ namespace vlib
 	extern const proc_info proc_dup;
 	extern const proc_info proc_dup2;
 	extern const proc_info proc_fstat;
+	extern const proc_info proc_isatty;
 	extern const proc_info proc_link;
 	extern const proc_info proc_listdir;
 	extern const proc_info proc_load;

@@ -31,6 +31,7 @@
 #include "vlib/string-utils.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/stdint.hh"
@@ -228,6 +229,31 @@ namespace vlib
 		}
 		
 		return make_stat( st );
+	}
+	
+	static
+	Value v_isatty( const Value& v )
+	{
+		const int fd = fd_cast( v );
+		
+		const int is_a_tty = isatty( fd );
+		
+		if ( ! is_a_tty )
+		{
+			/*
+				Not a tty:
+				
+				POSIX specifies ENOTTY.
+				Mac OS X yields EPERM.
+			*/
+			
+			if ( errno != ENOTTY  &&  errno != EPERM )
+			{
+				fd_error( fd );  // e.g. EBADF
+			}
+		}
+		
+		return Boolean( is_a_tty );
 	}
 	
 	static
@@ -576,6 +602,7 @@ namespace vlib
 	const proc_info proc_dup      = { "dup",      &v_dup,      &fd    };
 	const proc_info proc_dup2     = { "dup2",     &v_dup2,     &fd_x2 };
 	const proc_info proc_fstat    = { "fstat",    &v_fstat,    &fd    };
+	const proc_info proc_isatty   = { "isatty",   &v_isatty,   &fd    };
 	const proc_info proc_link     = { "link",     &v_link,     &c_str_x2 };
 	const proc_info proc_listdir  = { "listdir",  &v_listdir,  &c_str };
 	const proc_info proc_load     = { "load",     &v_load,     &c_str };
