@@ -12,6 +12,7 @@
 #include "bignum/decimal.hh"
 
 // vlib
+#include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
@@ -22,6 +23,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/fraction.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
 
@@ -194,6 +196,14 @@ namespace vlib
 	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
+		if ( op == Op_function  ||  op == Op_named_unary )
+		{
+			if ( b.is< String >() )
+			{
+				return String( str( Value( a, b ) ) );
+			}
+		}
+		
 		if ( b.is< Integer >() )
 		{
 			const bignum::integer& one = a.number();
