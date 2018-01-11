@@ -256,6 +256,11 @@ namespace vlib
 		{
 			case Op_function:
 			case Op_named_unary:
+				if ( b.is< String >() )
+				{
+					return String( str( Value( a, b ) ) );
+				}
+				
 				return Packed( pack( Value( a, b ) ) );
 			
 			case Op_intersection:
