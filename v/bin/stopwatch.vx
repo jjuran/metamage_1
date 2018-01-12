@@ -20,15 +20,20 @@ var reader = thread lambda
 	}
 }
 
+def tens
+{
+	return ("0" * (_ < 10)) _
+}
+
 for ev in events do
 {
 	if ev == '\0' then
 	{
 		const dt = time() - start
-		const m  = str( dt div 60 )
-		const ss = str( dt mod 60 + 100 )[ 1 .. 2 ]
+		const m  = dt div 60
+		const ss = dt mod 60
 		
-		OUT <== "\r" m ":" ss
+		OUT <== "\r" m ":" tens ss
 	}
 	else if ev == ' ' then
 	{
