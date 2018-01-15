@@ -59,6 +59,7 @@
 // vfs
 #include "vfs/dir_contents.hh"
 #include "vfs/dir_entry.hh"
+#include "vfs/filehandle.hh"
 #include "vfs/node.hh"
 #include "vfs/functions/file-tests.hh"
 #include "vfs/functions/pathname.hh"
@@ -1040,7 +1041,7 @@ namespace Genie
 		
 		const VRefNum_DirID dir = Dir_From_CInfo( extra.cinfo );
 		
-		return new MacDirHandle( dir );
+		return Mac_dir_handle( dir );
 	}
 	
 	static void hfs_mkdir( const vfs::node*  that,
