@@ -8,6 +8,7 @@
 
 // vfs
 #include "vfs/filehandle.hh"
+#include "vfs/filehandle_ptr.hh"
 #include "vfs/node_fwd.hh"
 #include "vfs/filehandle/methods/stream_method_set.hh"
 
@@ -29,11 +30,8 @@ namespace vfs
 	void destroy_dir_handle( filehandle* that );
 	
 	
-	class dir_handle : public filehandle
-	{
-		public:
-			dir_handle( const node* dir, filehandle_destructor dtor = 0 );  // NULL
-	};
+	filehandle_ptr new_dir_handle( const node*            dir,
+	                               filehandle_destructor  dtor = 0 );  // NULL
 	
 }
 

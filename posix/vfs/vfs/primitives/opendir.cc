@@ -28,7 +28,7 @@ namespace vfs
 			}
 		}
 		
-		return new dir_handle( &that );
+		return new_dir_handle( &that );
 	}
 	
 }

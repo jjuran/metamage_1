@@ -96,18 +96,22 @@ namespace vfs
 		return result;
 	}
 	
-	dir_handle::dir_handle( const node* dir, filehandle_destructor dtor  )
-	:
-		filehandle( dir,
-		            O_RDONLY | O_DIRECTORY,
-		            &dir_methods,
-		            sizeof (dir_handle_extra),
-		            &destroy_dir_handle )
+	filehandle_ptr new_dir_handle( const node* dir, filehandle_destructor dtor )
 	{
-		dir_handle_extra& extra = *(dir_handle_extra*) this->extra();
+		using vfs::filehandle;
+		
+		filehandle* result = new filehandle( dir,
+		                                     O_RDONLY | O_DIRECTORY,
+		                                     &dir_methods,
+		                                     sizeof (dir_handle_extra),
+		                                     &destroy_dir_handle );
+		
+		dir_handle_extra& extra = *(dir_handle_extra*) result->extra();
 		
 		extra.chained_destructor = dtor;
 		extra.contents           = NULL;
+		
+		return result;
 	}
 	
 	static void set_dir_entry( dirent& dir, ino_t inode, const plus::string& name )
