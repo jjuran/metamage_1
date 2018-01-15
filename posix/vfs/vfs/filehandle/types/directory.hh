@@ -17,8 +17,6 @@ namespace vfs
 	
 	class dir_contents;
 	
-	struct filehandle_method_set;
-	
 	extern const stream_method_set dir_stream_methods;
 	
 	
@@ -35,10 +33,6 @@ namespace vfs
 	{
 		public:
 			dir_handle( const node* dir, filehandle_destructor dtor = 0 );  // NULL
-			
-			dir_handle( const filehandle_method_set& methods );
-			
-			~dir_handle();
 	};
 	
 }

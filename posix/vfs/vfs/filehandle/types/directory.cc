@@ -110,24 +110,6 @@ namespace vfs
 		extra.contents           = NULL;
 	}
 	
-	dir_handle::dir_handle( const filehandle_method_set& methods )
-	:
-		filehandle( NULL,
-		            O_RDONLY | O_DIRECTORY,
-		            &methods,
-		            sizeof (dir_handle_extra),
-		            &destroy_dir_handle )
-	{
-		dir_handle_extra& extra = *(dir_handle_extra*) this->extra();
-		
-		extra.chained_destructor = NULL;
-		extra.contents           = NULL;
-	}
-	
-	dir_handle::~dir_handle()
-	{
-	}
-	
 	static void set_dir_entry( dirent& dir, ino_t inode, const plus::string& name )
 	{
 		dir.d_ino = inode;
