@@ -40,6 +40,21 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	void destroy_dir_handle( filehandle* that )
+	{
+		dir_handle_extra& extra = *(dir_handle_extra*) that->extra();
+		
+		if ( extra.contents )
+		{
+			intrusive_ptr_release( extra.contents );
+		}
+		
+		if ( extra.chained_destructor )
+		{
+			extra.chained_destructor( that );
+		}
+	};
+	
 	static ssize_t dir_read( filehandle* that, char* buffer, size_t n )
 	{
 		ASSERT( n >= sizeof (dirent) );
@@ -84,17 +99,27 @@ namespace vfs
 		filehandle( dir,
 		            O_RDONLY | O_DIRECTORY,
 		            &dir_methods,
-		            0,
-		            dtor )
+		            sizeof (dir_handle_extra),
+		            &destroy_dir_handle )
 	{
+		dir_handle_extra& extra = *(dir_handle_extra*) this->extra();
+		
+		extra.chained_destructor = dtor;
+		extra.contents           = NULL;
 	}
 	
 	dir_handle::dir_handle( const filehandle_method_set& methods )
 	:
 		filehandle( NULL,
 		            O_RDONLY | O_DIRECTORY,
-		            &methods )
+		            &methods,
+		            sizeof (dir_handle_extra),
+		            &destroy_dir_handle )
 	{
+		dir_handle_extra& extra = *(dir_handle_extra*) this->extra();
+		
+		extra.chained_destructor = NULL;
+		extra.contents           = NULL;
 	}
 	
 	dir_handle::~dir_handle()

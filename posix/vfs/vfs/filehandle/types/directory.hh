@@ -20,9 +20,20 @@ struct dirent;
 namespace vfs
 {
 	
+	class dir_contents;
+	
 	struct filehandle_method_set;
 	
 	extern const stream_method_set dir_stream_methods;
+	
+	
+	struct dir_handle_extra
+	{
+		filehandle_destructor  chained_destructor;
+		dir_contents*          contents;
+	};
+	
+	void destroy_dir_handle( filehandle* that );
 	
 	
 	class dir_handle : public filehandle
