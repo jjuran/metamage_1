@@ -24,6 +24,7 @@
 
 // vfs
 #include "vfs/dir_contents.hh"
+#include "vfs/dir_contents_box.hh"
 #include "vfs/dir_entry.hh"
 #include "vfs/node.hh"
 #include "vfs/filehandle/methods/filehandle_method_set.hh"
@@ -40,15 +41,31 @@ namespace vfs
 	namespace p7 = poseven;
 	
 	
+	void destroy_dir_handle( filehandle* that )
+	{
+		dir_handle_extra& extra = *(dir_handle_extra*) that->extra();
+		
+		if ( extra.contents )
+		{
+			intrusive_ptr_release( extra.contents );
+		}
+		
+		if ( extra.chained_destructor )
+		{
+			extra.chained_destructor( that );
+		}
+	};
+	
+	static
+	ssize_t dir_readdir( filehandle* that, dirent& entry );
+	
 	static ssize_t dir_read( filehandle* that, char* buffer, size_t n )
 	{
 		ASSERT( n >= sizeof (dirent) );
 		
 		dirent& entry = *(dirent*) buffer;
 		
-		int result = static_cast< dir_handle& >( *that ).readdir( entry );
-		
-		return result;
+		return dir_readdir( that, entry );
 	}
 	
 	const stream_method_set dir_stream_methods =
@@ -79,26 +96,22 @@ namespace vfs
 		return result;
 	}
 	
-	dir_handle::dir_handle( const node* dir, filehandle_destructor dtor  )
-	:
-		filehandle( dir,
-		            O_RDONLY | O_DIRECTORY,
-		            &dir_methods,
-		            0,
-		            dtor )
+	filehandle_ptr new_dir_handle( const node* dir, filehandle_destructor dtor )
 	{
-	}
-	
-	dir_handle::dir_handle( const filehandle_method_set& methods )
-	:
-		filehandle( NULL,
-		            O_RDONLY | O_DIRECTORY,
-		            &methods )
-	{
-	}
-	
-	dir_handle::~dir_handle()
-	{
+		using vfs::filehandle;
+		
+		filehandle* result = new filehandle( dir,
+		                                     O_RDONLY | O_DIRECTORY,
+		                                     &dir_methods,
+		                                     sizeof (dir_handle_extra),
+		                                     &destroy_dir_handle );
+		
+		dir_handle_extra& extra = *(dir_handle_extra*) result->extra();
+		
+		extra.chained_destructor = dtor;
+		extra.contents           = NULL;
+		
+		return result;
 	}
 	
 	static void set_dir_entry( dirent& dir, ino_t inode, const plus::string& name )
@@ -113,16 +126,21 @@ namespace vfs
 		strcpy( dir.d_name, name.c_str() );
 	}
 	
-	int dir_handle::readdir( dirent& entry )
+	static
+	ssize_t dir_readdir( filehandle* that, dirent& entry )
 	{
-		if ( !its_contents.get() )
+		dir_handle_extra& extra = *(dir_handle_extra*) that->extra();
+		
+		if ( ! extra.contents )
 		{
-			its_contents = get_contents( *get_file( *this ) );
+			dir_contents_box box = get_contents( *get_file( *that ) );
+			
+			intrusive_ptr_add_ref( extra.contents = box.get() );
 		}
 		
-		dir_contents& contents = *its_contents;
+		dir_contents& contents = *extra.contents;
 		
-		const int i = get_mark();
+		const off_t i = that->get_mark();
 		
 		if ( i >= contents.size() )
 		{
@@ -131,7 +149,7 @@ namespace vfs
 		
 		dir_entry node = contents.at( i );
 		
-		advance_mark( 1 );
+		that->advance_mark( 1 );
 		
 		set_dir_entry( entry, node.inode, node.name );
 		

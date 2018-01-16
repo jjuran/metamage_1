@@ -3,30 +3,20 @@
 	---------------
 */
 
-#ifndef GENIE_IO_VIRTUALDIRECTORY_HH
-#define GENIE_IO_VIRTUALDIRECTORY_HH
+#ifndef GENIE_IO_MACDIRECTORY_HH
+#define GENIE_IO_MACDIRECTORY_HH
 
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
 // vfs
-#include "vfs/node_ptr.hh"
-#include "vfs/filehandle/types/directory.hh"
+#include "vfs/filehandle_ptr.hh"
 
 
 namespace Genie
 {
 	
-	class MacDirHandle : public vfs::dir_handle
-	{
-		private:
-			mac::types::VRefNum_DirID its_dir_spec;
-		
-		public:
-			MacDirHandle( const mac::types::VRefNum_DirID& dir );
-			
-			vfs::node_ptr GetFile();
-	};
+	vfs::filehandle_ptr Mac_dir_handle( const mac::types::VRefNum_DirID& dir );
 	
 }
 

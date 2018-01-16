@@ -31,7 +31,7 @@ namespace Genie
 	{
 		vfs::node_ptr dir = new_port();
 		
-		return new vfs::dir_handle( dir.get(), &remove_port_file );
+		return vfs::new_dir_handle( dir.get(), &remove_port_file );
 	}
 	
 	static const vfs::dir_method_set new_port_dir_methods =
