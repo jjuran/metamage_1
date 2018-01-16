@@ -36,7 +36,7 @@ namespace vlib
 				its_next = expr->left .number();
 				its_high = expr->right.number() - (op == Op_delta);
 				
-				its_value = make_int_value_of_same_type( its_next, expr->left );
+				its_value = expr->left;
 				
 				return;
 			}
