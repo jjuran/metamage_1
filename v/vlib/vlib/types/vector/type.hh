@@ -25,7 +25,7 @@ namespace vlib
 				return v.dispatch_methods() == &vectortype_dispatch;
 			}
 			
-			Vector_Type( const Value& element_type );
+			explicit Vector_Type( const Value& element_type );
 			
 			const Value& element_type() const;
 	};

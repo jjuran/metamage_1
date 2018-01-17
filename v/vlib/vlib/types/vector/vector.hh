@@ -28,7 +28,7 @@ namespace vlib
 				return v.dispatch_methods() == &vector_dispatch;
 			}
 			
-			Vector( const Value& endec, size_type n = 0 );
+			explicit Vector( const Value& endec, size_type n = 0 );
 			
 			Vector( const Value& endec, const plus::string& buffer );
 			
