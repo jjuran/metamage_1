@@ -16,7 +16,7 @@ namespace vlib
 	class Lambda : public Value
 	{
 		public:
-			Lambda( const Value& body );
+			explicit Lambda( const Value& body );
 	};
 	
 }

@@ -28,8 +28,8 @@ namespace vlib
 				return v.dispatch_methods() == &pointer_dispatch;
 			}
 			
-			Pointer( const Value& container );
-			Pointer( const Value& container, Max );
+			explicit Pointer( const Value& container );
+			explicit Pointer( const Value& container, Max );
 	};
 	
 	extern const type_info pointer_vtype;

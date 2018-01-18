@@ -28,7 +28,7 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Record( const Value& fields );
+			explicit Record( const Value& fields );
 	};
 	
 	extern const type_info record_vtype;
