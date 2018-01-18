@@ -30,7 +30,7 @@ namespace vlib
 			
 			static Value coerce( const Value& v );
 			
-			Thread( const Value& entry_point );
+			explicit Thread( const Value& entry_point );
 			
 			thread_state* get() const
 			{
