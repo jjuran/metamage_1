@@ -34,7 +34,35 @@ namespace vlib
 	
 	const Value& Vector_Type::element_type() const
 	{
-		return expr()->left;
+		const Value* type = &expr()->left;
+		
+		if ( Expr* expr = type->listexpr() )
+		{
+			type = &expr->left;
+		}
+		
+		return *type;
+	}
+	
+	bool Vector_Type::has_fixed_length() const
+	{
+		const Value* type = &expr()->left;
+		
+		return type->listexpr() != NULL;
+	}
+	
+	size_t Vector_Type::fixed_length() const
+	{
+		const Value* type = &expr()->left;
+		
+		if ( Expr* expr = type->listexpr() )
+		{
+			const Value& length = expr->right;
+			
+			return integer_cast< size_t >( length );
+		}
+		
+		return 0;
 	}
 	
 	static
@@ -42,7 +70,7 @@ namespace vlib
 	{
 		const Vector_Type& vt = static_cast< const Vector_Type& >( v );
 		
-		return "vector" + rep( make_array( vt.element_type() ) );
+		return "vector" + rep( make_array( vt.expr()->left ) );
 	}
 	
 	static const stringify vectortype_str =
@@ -86,7 +114,17 @@ namespace vlib
 			case Op_named_unary:
 				if ( const Packed* packed = b.is< Packed >() )
 				{
+					if ( vt.has_fixed_length() )
+					{
+						return Vector( a, packed->string(), vt.fixed_length() );
+					}
+					
 					return Vector( a, packed->string() );
+				}
+				
+				if ( b.type() == Value_empty_list )
+				{
+					return Vector( a, vt.fixed_length() );
 				}
 				
 				return Vector( a, integer_cast< size_t >( b ) );

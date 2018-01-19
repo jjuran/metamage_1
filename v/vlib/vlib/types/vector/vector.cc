@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// gear
+#include "gear/find.hh"
+
 // vlib
 #include "vlib/function-utils.hh"
 #include "vlib/target.hh"
@@ -75,10 +78,21 @@ namespace vlib
 		&vector_bin,
 	};
 	
+	static inline
+	bool is_nonzero( const plus::string& buffer )
+	{
+		return gear::find_first_nonmatch( buffer.data(), buffer.size(), '\0' );
+	}
+	
 	static
 	bool nonempty_vector( const Value& v )
 	{
 		const plus::string& buffer = v.expr()->right.string();
+		
+		if ( ((const Vector_Type&) v.expr()->left ).has_fixed_length() )
+		{
+			return is_nonzero( buffer );
+		}
 		
 		return ! buffer.empty();
 	}
@@ -314,6 +328,28 @@ namespace vlib
 		if ( buffer.size() % unit_size )
 		{
 			THROW( "vector input buffer size not a multiple of unit width" );
+		}
+	}
+	
+	Vector::Vector( const Value& type, const plus::string& buffer, size_t n )
+	:
+		Value( type,
+		       Op_list,
+		       Packed( buffer ),
+		       &vector_dispatch )
+	{
+		const size_t unit_size = endec_unit_size( endec_from_type( type ) );
+		
+		const size_t buffer_size = buffer.size();
+		
+		if ( buffer_size % unit_size )
+		{
+			THROW( "vector input buffer size not a multiple of unit width" );
+		}
+		
+		if ( buffer_size / unit_size != n )
+		{
+			THROW( "vector input buffer size wrong for fixed-length vector" );
 		}
 	}
 	

@@ -32,6 +32,7 @@ namespace vlib
 			Vector( const Value& type, size_t n );
 			
 			Vector( const Value& type, const plus::string& buffer );
+			Vector( const Value& type, const plus::string& buffer, size_t n );
 			
 			const Value& get_type() const  { return expr()->left; }
 			

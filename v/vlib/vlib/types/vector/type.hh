@@ -6,6 +6,9 @@
 #ifndef VLIB_TYPES_VECTOR_TYPE_HH
 #define VLIB_TYPES_VECTOR_TYPE_HH
 
+// more-libc
+#include "more/size.h"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -28,6 +31,10 @@ namespace vlib
 			explicit Vector_Type( const Value& element_type );
 			
 			const Value& element_type() const;
+			
+			bool has_fixed_length() const;
+			
+			size_t fixed_length() const;
 	};
 	
 }

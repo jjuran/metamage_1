@@ -127,3 +127,63 @@ $ vc '1 .. 2 map { record(size: _) } map vector'
 
 $ vc 'typeof vector[ u8 ] 4'
 1 >= 'vector[u8]'
+
+%
+
+$ vc 'bool vector[ u8, 4 ]'
+1 >= true
+
+%
+
+$ vc 'typeof vector[ u8, 4 ]'
+1 >= type
+
+%
+
+$ vc 'vector[ u8, 4 ] isa type'
+1 >= true
+
+%
+
+$ vc 'vector[ u8, 4 ]()'
+1 >= '<vector>'
+
+%
+
+$ vc 'packed vector[ u8, 4 ]()'
+1 >= 'x"00000000"'
+
+%
+
+$ vc 'packed vector[ u8, 4 ] x"00000001"'
+1 >= 'x"00000001"'
+
+%
+
+$ vc 'bool vector[ u8, 4 ] x"00000000"'
+1 >= false
+
+%
+
+$ vc 'bool vector[ u8, 4 ] x"00000001"'
+1 >= true
+
+%
+
+$ vc 'vector[ u8, 4 ]() == vector[ u8, 4 ] x"00000000"'
+1 >= true
+
+%
+
+$ vc 'packed vector[ u8, 0 ]()'
+1 >= 'x""'
+
+%
+
+$ vc 'var v = vector[ u8, 4 ](); v[0] = 123; packed v'
+1 >= 'x"7b000000"'
+
+%
+
+$ vc 'var v = vector[ u8, 4 ] x"12345678"; v[3]'
+1 >= 120
