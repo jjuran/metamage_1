@@ -11,12 +11,14 @@
 // vlib
 #include "vlib/equal.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/typing.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
 // vx
@@ -104,6 +106,41 @@ namespace vlib
 	}
 	
 	static
+	Value vectortype_member( const Vector_Type& vt, const Value& member )
+	{
+		const String* name_string = member.is< String >();
+		
+		if ( name_string == NULL )
+		{
+			THROW( "non-string vector type member" );
+		}
+		
+		const plus::string& name = name_string->string();
+		
+		if ( ! vt.has_fixed_length() )
+		{
+			THROW( "no such (free-length) vector type member" );
+		}
+		
+		if ( name == "size" )
+		{
+			return Integer( sizeof_vector( vt, vt.fixed_length() ) );
+		}
+		
+		if ( name == "encode" )
+		{
+			return Type( packed_vtype );
+		}
+		
+		if ( name == "decode" )
+		{
+			return vt;
+		}
+		
+		return NIL;
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		const Vector_Type& vt = static_cast< const Vector_Type& >( a );
@@ -128,6 +165,9 @@ namespace vlib
 				}
 				
 				return Vector( a, integer_cast< size_t >( b ) );
+			
+			case Op_member:
+				return vectortype_member( vt, b );
 			
 			default:
 				break;

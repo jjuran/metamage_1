@@ -187,3 +187,18 @@ $ vc 'var v = vector[ u8, 4 ](); v[0] = 123; packed v'
 
 $ vc 'var v = vector[ u8, 4 ] x"12345678"; v[3]'
 1 >= 120
+
+%
+
+$ vc 'var vv = vector[ vector[u8, 2], 3 ](); packed vv'
+1 >= x"000000000000"
+
+%
+
+$ vc 'var vv = vector[ vector[u8, 2], 3 ] x"1234567890ab"; vv[1][0]'
+1 >= 86
+
+%
+
+$ vc 'var vv = vector[ vector[u8, 2], 3 ] (); vv[2] = x"1234"; packed vv'
+1 >= x"000000001234"
