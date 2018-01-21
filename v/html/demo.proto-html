@@ -1,0 +1,18 @@
+html:
+[
+	head:
+	[
+		title: "Proto-HTML Markup"
+	]
+	body:
+	[
+		p:
+		[
+		"This file contains a nearly valid "
+		a: [href: "https://www.vcode.org/"]: "Varyx", " expression."
+		"(The commas are omitted.)"
+		]
+		p: "To convert this to actual HTML, run this:"
+		pre: "v/bin/proto2html.vx v/html/demo.proto-html"
+	]
+]
