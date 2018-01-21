@@ -1,0 +1,23 @@
+#!/usr/bin/env minivx
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../lib/v/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const pretty-printing = import "pretty-printing"
+
+const Tab = "\t"
+
+def printer (depth, text)
+{
+	const tabs = Tab * depth
+	
+	print tabs text
+}
+
+const pretty-print = pretty-printing printer
+
+pretty-print eval load argv[ 1 ]
+
+end.
