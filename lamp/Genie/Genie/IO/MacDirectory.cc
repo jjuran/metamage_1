@@ -8,6 +8,9 @@
 // POSIX
 #include <fcntl.h>
 
+// Extended API Set, part 2
+#include "extended-api-set/part-2.h"
+
 // vfs
 #include "vfs/node.hh"
 #include "vfs/node_ptr.hh"
