@@ -76,7 +76,6 @@ namespace Genie
 			pid_t itsForkedChildPID;
 			
 			ProcessLifeStage        itsLifeStage;
-			ProcessInterdependence  itsInterdependence;
 			ProcessSchedule         itsSchedule;
 			
 			int itsResult;

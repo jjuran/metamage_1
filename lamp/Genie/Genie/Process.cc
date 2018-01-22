@@ -506,7 +506,6 @@ namespace Genie
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
 		itsLifeStage          ( kProcessLive ),
-		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessSleeping ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
@@ -542,7 +541,6 @@ namespace Genie
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
-		itsInterdependence    ( kProcessIndependent ),
 		itsSchedule           ( kProcessRunning ),
 		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
@@ -573,8 +571,6 @@ namespace Genie
 		mark_vfork_stack_frame();
 		
 		// activate child
-		
-		child.itsInterdependence = kProcessForked;
 		
 		gCurrentProcess = &child;
 		
@@ -729,7 +725,6 @@ namespace Genie
 		old_image.reset();
 		
 		itsLifeStage       = kProcessLive;
-		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
 		if ( gCurrentProcess != this )
@@ -797,7 +792,6 @@ namespace Genie
 		swap_os_thread( looseThread );
 		
 		itsLifeStage       = kProcessLive;
-		itsInterdependence = kProcessIndependent;
 		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
 		return looseThread;
