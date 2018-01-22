@@ -1042,9 +1042,14 @@ namespace Genie
 		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
-		if ( itsInterdependence == kProcessForked )
+		if ( pid_t ppid = GetPPID() )
 		{
-			GetProcess( GetPPID() ).ResumeAfterFork();  // Calls longjmp()
+			Process& parent = GetProcess( ppid );
+			
+			if ( parent.itsForkedChildPID != 0 )
+			{
+				parent.ResumeAfterFork();  // Calls longjmp()
+			}
 		}
 	}
 	
