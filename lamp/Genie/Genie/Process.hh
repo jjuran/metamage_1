@@ -36,12 +36,6 @@ namespace Genie
 		kProcessReleased
 	};
 	
-	enum ProcessInterdependence
-	{
-		kProcessIndependent,
-		kProcessForked
-	};
-	
 	enum ProcessSchedule
 	{
 		kProcessRunning,
