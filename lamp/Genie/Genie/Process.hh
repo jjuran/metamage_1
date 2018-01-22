@@ -58,13 +58,6 @@ namespace Genie
 	
 	class Process : public relix::thread
 	{
-		public:
-			enum
-			{
-				kNoProcessPID   = 0,
-				kRootProcessPID = 1
-			};
-		
 		private:
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
