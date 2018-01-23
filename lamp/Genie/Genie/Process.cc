@@ -679,7 +679,9 @@ namespace Genie
 		
 		relix::os_thread_box looseThread;
 		
-		vfs::node_ptr cwd = getcwd( get_process() );
+		relix::process& proc = get_process();
+		
+		vfs::node_ptr cwd = getcwd( proc );
 		
 		vfs::node_ptr programFile = resolve_pathname( *relix::root(), path, *cwd );
 		
@@ -688,7 +690,7 @@ namespace Genie
 		CheckProgramFile( *programFile );
 		
 		// Do we take the name before or after normalization?
-		get_process().set_name( programFile->name() );
+		proc.set_name( programFile->name() );
 		
 		ExecContext context( *programFile, argv );
 		
@@ -698,7 +700,7 @@ namespace Genie
 		
 		clear_signals_pending();
 		
-		get_process().reset_signal_handlers();
+		proc.reset_signal_handlers();
 		
 		// We always spawn a new thread for the exec'ed process.
 		// If we've forked, then the thread is null, but if not, it's the
@@ -706,8 +708,6 @@ namespace Genie
 		
 		// Create the new thread
 		looseThread = new_thread( *this );
-		
-		relix::process& proc = get_process();
 		
 		// Save the process image that we're running from and set the new one.
 		boost::intrusive_ptr< relix::process_image > old_image = &proc.get_process_image();
@@ -734,7 +734,7 @@ namespace Genie
 		
 		if ( looseThread.get() == 0 )
 		{
-			resume.enable( GetPPID() );
+			resume.enable( proc.getppid() );
 		}
 	}
 	
@@ -1038,7 +1038,7 @@ namespace Genie
 		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
-		if ( pid_t ppid = GetPPID() )
+		if ( ppid != 0 )
 		{
 			Process& parent = GetProcess( ppid );
 			
