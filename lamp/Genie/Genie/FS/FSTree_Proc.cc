@@ -337,12 +337,18 @@ namespace Genie
 		public:
 			static plus::string Get( const Process& process )
 			{
-				pid_t pid  = process.GetPID();
-				pid_t ppid = process.GetPPID();
-				pid_t pgid = process.GetPGID();
-				pid_t sid  = process.GetSID();
+				// `process` is actually a thread
 				
-				vfs::filehandle* term = process.get_process().get_process_group().get_session().get_ctty().get();
+				relix::process&        proc    = process.get_process();
+				relix::process_group&  group   = proc.get_process_group();
+				relix::session&        session = group.get_session();
+				
+				pid_t pid  = process.GetPID();
+				pid_t ppid = proc.getppid();
+				pid_t pgid = group.id();
+				pid_t sid  = session.id();
+				
+				vfs::filehandle* term = session.get_ctty().get();
 				
 				plus::string terminal_name = "?";
 				
@@ -360,7 +366,7 @@ namespace Genie
 				result += gear::inscribe_decimal( pid );
 				result += " "
 				          "(";
-				result += process.get_process().name();
+				result += proc.name();
 				result += ")"
 				          " ";
 				result += ProcessStateCode( process );
