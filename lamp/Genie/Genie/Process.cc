@@ -807,11 +807,6 @@ namespace Genie
 		return get_process().get_process_group().id();
 	}
 	
-	pid_t Process::GetSID()  const
-	{
-		return get_process().get_process_group().get_session().id();
-	}
-	
 	char Process::run_state_code() const
 	{
 		if ( itsLifeStage == kProcessReleased )

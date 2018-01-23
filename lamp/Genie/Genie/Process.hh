@@ -113,7 +113,6 @@ namespace Genie
 			pid_t GetPID()  const  { return itsPID;  }
 			
 			pid_t GetPGID() const;
-			pid_t GetSID()  const;
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			
