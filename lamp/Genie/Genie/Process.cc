@@ -507,7 +507,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsLifeStage          ( kProcessLive ),
 		itsSchedule           ( kProcessSleeping ),
-		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itMayDumpCore         ()
 	{
@@ -542,7 +541,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
 		itsSchedule           ( kProcessRunning ),
-		itsResult             ( 0 ),
 		itsAsyncOpCount       ( 0 ),
 		itMayDumpCore         ( true )
 	{
@@ -968,9 +966,7 @@ namespace Genie
 	// This function doesn't return if the process is current.
 	void Process::Terminate( int wait_status )
 	{
-		itsResult = wait_status;
-		
-		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
+		if ( WCOREDUMP( wait_status )  &&  itMayDumpCore )
 		{
 			// prevent reentry if backtrace causes exception
 			itMayDumpCore = false;
@@ -982,6 +978,8 @@ namespace Genie
 		itsSchedule  = kProcessUnscheduled;
 		
 		relix::process& process = get_process();
+		
+		process.set_status( wait_status );
 		
 		pid_t ppid = process.getppid();
 		pid_t pid  = GetPID();

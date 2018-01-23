@@ -65,8 +65,6 @@ namespace Genie
 			ProcessLifeStage        itsLifeStage;
 			ProcessSchedule         itsSchedule;
 			
-			int itsResult;
-			
 			unsigned itsAsyncOpCount;
 		
 		private:
@@ -117,8 +115,6 @@ namespace Genie
 			bool is_stopped() const  { return itsSchedule == kProcessStopped; }
 			
 			char run_state_code() const;
-			
-			int Result() const  { return itsResult; }
 			
 			void Release();
 			

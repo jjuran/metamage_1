@@ -43,6 +43,7 @@ namespace relix
 		private:
 			int its_id;
 			int its_ppid;
+			int its_status;
 			
 			plus::string its_name;
 			
@@ -74,6 +75,10 @@ namespace relix
 			void set_ppid( int ppid )  { its_ppid = ppid; }
 			
 			void clear_ppid()  { its_ppid = 0; }
+			
+			int status() const  { return its_status; }
+			
+			void set_status( int status )  { its_status = status; }
 			
 			const plus::string& name() const  { return its_name; }
 			

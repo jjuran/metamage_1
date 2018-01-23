@@ -171,9 +171,11 @@ namespace Genie
 				                    : is_thread ? CheckTID( ppid, pid )
 				                                : CheckPID( ppid, pid, untraced ) )
 				{
+					relix::process& proc = child->get_process();
+					
 					if ( stat_loc != NULL )
 					{
-						*stat_loc = child->is_stopped() ? 0x7f : child->Result();
+						*stat_loc = child->is_stopped() ? 0x7f : proc.status();
 					}
 					
 					pid_t found_pid = child->GetPID();
@@ -182,7 +184,7 @@ namespace Genie
 					{
 						if ( !is_thread )
 						{
-							caller.accumulate_child_times( child->get_process().get_times() );
+							caller.accumulate_child_times( proc.get_times() );
 						}
 						
 						child->Release();
