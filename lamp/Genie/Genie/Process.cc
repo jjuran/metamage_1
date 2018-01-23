@@ -819,7 +819,7 @@ namespace Genie
 			return 'X';
 		}
 		
-		if ( CountAsyncOps() > 0 )
+		if ( itsAsyncOpCount > 0 )
 		{
 			return 'D';
 		}

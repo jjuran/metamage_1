@@ -123,8 +123,6 @@ namespace Genie
 			
 			int Result() const  { return itsResult; }
 			
-			unsigned CountAsyncOps() const  { return itsAsyncOpCount; }
-			
 			void Release();
 			
 			void Breathe();
