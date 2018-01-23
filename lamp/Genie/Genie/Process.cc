@@ -1001,7 +1001,7 @@ namespace Genie
 		
 		if ( gettid() == pid )
 		{
-			process.reset_process_resources();
+			process.zombify();
 		}
 		
 		itsLifeStage = kProcessZombie;

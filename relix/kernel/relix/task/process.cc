@@ -100,12 +100,7 @@ namespace relix
 		its_process_image = &image;
 	}
 	
-	void process::reset_process_image()
-	{
-		its_process_image.reset();
-	}
-	
-	void process::reset_process_resources()
+	void process::zombify()
 	{
 		its_process_resources.reset();
 	}
