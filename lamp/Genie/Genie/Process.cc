@@ -932,7 +932,7 @@ namespace Genie
 			
 			if ( process.itsLifeStage < kProcessTerminating )
 			{
-				process.Terminate();  // singly recursive call
+				process.Terminate( 0 );  // singly recursive call
 			}
 			
 			if ( process.itsLifeStage == kProcessZombie )
@@ -966,8 +966,10 @@ namespace Genie
 	}
 	
 	// This function doesn't return if the process is current.
-	void Process::Terminate()
+	void Process::Terminate( int wait_status )
 	{
+		itsResult = wait_status;
+		
 		if ( WCOREDUMP( itsResult )  &&  itMayDumpCore )
 		{
 			// prevent reentry if backtrace causes exception
@@ -1047,14 +1049,6 @@ namespace Genie
 				parent.ResumeAfterFork();  // Calls longjmp()
 			}
 		}
-	}
-	
-	// This function doesn't return if the process is current.
-	void Process::Terminate( int wait_status )
-	{
-		itsResult = wait_status;
-		
-		Terminate();
 	}
 	
 	void Process::Orphan()

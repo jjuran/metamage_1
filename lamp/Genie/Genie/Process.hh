@@ -84,8 +84,6 @@ namespace Genie
 			
 			bool DeliverPendingSignals( bool may_throw );
 			
-			void Terminate();
-			
 			static void* notify_process( void* param, pid_t, Process& process );
 			
 			void Orphan();
