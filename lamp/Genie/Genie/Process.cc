@@ -925,6 +925,8 @@ namespace Genie
 	
 	void* Process::notify_process( void* param, pid_t, Process& process )
 	{
+		// `process` is actually a thread
+		
 		const notify_param& pb = *(notify_param*) param;
 		
 		const pid_t that_pid = process.GetPID();
@@ -944,12 +946,15 @@ namespace Genie
 			}
 		}
 		
-		if ( pb.is_session_leader  &&  process.GetSID() == pb.pid )
+		relix::process&  proc    = process.get_process();
+		relix::session&  session = proc.get_process_group().get_session();
+		
+		if ( pb.is_session_leader  &&  session.id() == pb.pid )
 		{
 			process.Raise( SIGHUP );
 		}
 		
-		if ( process.GetPPID() == pb.pid )
+		if ( proc.getppid() == pb.pid )
 		{
 			process.Orphan();
 		}
@@ -979,15 +984,17 @@ namespace Genie
 		itsLifeStage = kProcessTerminating;
 		itsSchedule  = kProcessUnscheduled;
 		
-		pid_t ppid = GetPPID();
+		relix::process& process = get_process();
+		
+		pid_t ppid = process.getppid();
 		pid_t pid  = GetPID();
-		pid_t sid  = GetSID();
+		pid_t sid  = process.get_process_group().get_session().id();
 		
 		bool isSessionLeader = pid == sid;
 		
 		if ( gettid() == pid )
 		{
-			get_process().reset_process_resources();
+			process.reset_process_resources();
 		}
 		
 		itsLifeStage = kProcessZombie;
