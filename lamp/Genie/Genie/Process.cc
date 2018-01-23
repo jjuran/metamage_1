@@ -1114,7 +1114,7 @@ namespace Genie
 	// But always returns when *raising* a fatal signal.
 	void Process::Raise( int signo )
 	{
-		if ( itsLifeStage >= kProcessTerminating  ||  itsResult != 0 )
+		if ( itsLifeStage >= kProcessTerminating )
 		{
 			return;
 		}
@@ -1152,15 +1152,6 @@ namespace Genie
 		if ( get_process().get_alarm_clock().check() )
 		{
 			Raise( SIGALRM );
-		}
-		
-		if ( itsResult != 0 )
-		{
-			// Fatal signal received.  Terminate.
-			
-			Terminate();  // Kills the thread
-			
-			// Not reached
 		}
 		
 		return DeliverPendingSignals( may_throw );
