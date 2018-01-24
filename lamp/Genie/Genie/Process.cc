@@ -1099,10 +1099,12 @@ namespace Genie
 		
 		bool signal_was_caught = false;
 		
+		const sigset_t pending = signals_pending();
+		
+		sigset_t active_signals = pending & ~signals_blocked();
+		
 		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
-			const sigset_t active_signals = signals_pending() & ~signals_blocked();
-			
 			if ( !active_signals )
 			{
 				return false;
@@ -1112,6 +1114,8 @@ namespace Genie
 			
 			if ( active_signals & signo_mask )
 			{
+				sigdelset( &active_signals, signo );
+				
 				const struct sigaction& action = proc.get_sigaction( signo );
 				
 				if ( action.sa_handler == SIG_IGN )
