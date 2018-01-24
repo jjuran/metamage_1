@@ -44,11 +44,6 @@ namespace relix
 				return set_errno( EINVAL );
 			}
 			
-			if ( action->sa_handler == SIG_IGN )
-			{
-				this_thread.clear_pending_signal( signo );
-			}
-			
 		#ifdef SA_SIGINFO
 			
 			if ( action->sa_flags & SA_SIGINFO )

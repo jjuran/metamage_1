@@ -1163,6 +1163,8 @@ namespace Genie
 				
 				if ( action.sa_handler == SIG_IGN )
 				{
+					clear_pending_signal( signo );
+					
 					continue;
 				}
 				
