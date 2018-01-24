@@ -949,7 +949,12 @@ namespace Genie
 		
 		if ( proc.getppid() == pb.pid )
 		{
-			process.Orphan();
+			proc.orphan();
+			
+			if ( process.itsLifeStage == kProcessZombie )
+			{
+				process.Release();
+			}
 		}
 		
 		return NULL;
@@ -1046,18 +1051,6 @@ namespace Genie
 			{
 				parent.ResumeAfterFork();  // Calls longjmp()
 			}
-		}
-	}
-	
-	void Process::Orphan()
-	{
-		ASSERT( GetPPID() != 1 );
-		
-		get_process().orphan();
-		
-		if ( itsLifeStage == kProcessZombie )
-		{
-			Release();
 		}
 	}
 	

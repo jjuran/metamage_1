@@ -83,8 +83,6 @@ namespace Genie
 			bool DeliverPendingSignals( bool may_throw );
 			
 			static void* notify_process( void* param, pid_t, Process& process );
-			
-			void Orphan();
 		
 		public:
 			bool IsBeingTraced() const  { return false; }
