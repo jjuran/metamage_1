@@ -23,7 +23,13 @@ namespace relix
 		
 		if ( proc.is_stopped() )
 		{
-			const sigset_t pending     = pthread.signals_pending();
+		#ifndef __linux__
+			
+			const sigset_t pending = pthread.signals_pending()
+			                       | proc.signals_pending();
+			
+		#endif
+			
 			const sigset_t unstoppable = unstoppable_signals( pthread );
 			
 		#ifndef __linux__

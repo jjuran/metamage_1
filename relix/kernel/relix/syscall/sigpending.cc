@@ -7,6 +7,7 @@
 
 // relix-kernel
 #include "relix/api/current_thread.hh"
+#include "relix/task/process.hh"
 #include "relix/task/thread.hh"
 
 
@@ -17,7 +18,15 @@ namespace relix
 	{
 		if ( oldset != 0 )  // NULL
 		{
-			*oldset = current_thread().signals_pending();
+			thread&  self = current_thread();
+			process& proc = self.get_process();
+			
+		#ifndef __linux__
+			
+			*oldset = self.signals_pending()
+			        | proc.signals_pending();
+			
+		#endif
 		}
 		
 		return 0;

@@ -30,7 +30,8 @@ namespace relix
 		
 		bool signal_was_caught = false;
 		
-		const sigset_t pending = self.signals_pending();
+		const sigset_t pending = self.signals_pending()
+		                       | proc.signals_pending();
 		
 		sigset_t active_signals = pending & ~self.signals_blocked();
 		
@@ -52,6 +53,7 @@ namespace relix
 				if ( action.sa_handler == SIG_IGN )
 				{
 					self.clear_pending_signal( signo );
+					proc.clear_pending_signal( signo );
 					
 					continue;
 				}
@@ -63,6 +65,7 @@ namespace relix
 					using namespace relix;
 					
 					self.clear_pending_signal( signo );
+					proc.clear_pending_signal( signo );
 					
 					const signal_traits traits = global_signal_traits[ signo ];
 					

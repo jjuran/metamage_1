@@ -8,6 +8,7 @@
 // relix
 #include "relix/api/current_thread.hh"
 #include "relix/signal/signal.hh"
+#include "relix/task/process.hh"
 #include "relix/task/thread.hh"
 
 
@@ -25,7 +26,10 @@ namespace relix
 		
 		thread& self = current_thread();
 		
+		process& proc = self.get_process();
+		
 		self.clear_pending_signal( sig.number );
+		proc.clear_pending_signal( sig.number );
 		
 		const sigset_t blocked_signals = self.signals_blocked();
 		
