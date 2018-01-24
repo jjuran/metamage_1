@@ -291,7 +291,7 @@ namespace Genie
 		
 		relix::process_image& image = process->get_process().get_process_image();
 		
-		_relix_user_parameter_block& pb = image.initialize_param_block( bottom, limit );
+		_relix_user_parameter_block& pb = image.param_block();
 		
 		global_parameter_block.current_user = &pb;
 		

@@ -87,14 +87,6 @@ namespace relix
 		}
 	}
 	
-	pb& process_image::initialize_param_block( const void* bottom, const void* limit )
-	{
-		its_pb.stack_bottom = bottom;
-		its_pb.stack_limit  = limit;
-		
-		return its_pb;
-	}
-	
 	int process_image::get_errno() const
 	{
 		if ( its_pb.errno_var != 0 )  // NULL

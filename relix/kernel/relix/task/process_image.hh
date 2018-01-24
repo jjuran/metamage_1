@@ -52,7 +52,7 @@ namespace relix
 			
 			~process_image();
 			
-			pb& initialize_param_block( const void* bottom, const void* limit );
+			pb& param_block()  { return its_pb; }
 			
 			int get_errno() const;
 			
