@@ -1119,7 +1119,9 @@ namespace Genie
 	// This function doesn't return if the process receives a fatal signal.
 	bool Process::HandlePendingSignals( bool may_throw )
 	{
-		if ( get_process().get_alarm_clock().check() )
+		relix::process& proc = get_process();
+		
+		if ( proc.get_alarm_clock().check() )
 		{
 			Raise( SIGALRM );
 		}
@@ -1139,7 +1141,7 @@ namespace Genie
 			
 			if ( active_signals & signo_mask )
 			{
-				const struct sigaction& action = GetSignalAction( signo );
+				const struct sigaction& action = proc.get_sigaction( signo );
 				
 				if ( action.sa_handler == SIG_IGN )
 				{
@@ -1196,7 +1198,7 @@ namespace Genie
 				{
 					const struct sigaction default_sigaction = { SIG_DFL };
 					
-					get_process().set_sigaction( signo, default_sigaction );
+					proc.set_sigaction( signo, default_sigaction );
 				}
 				
 				throw signal;
