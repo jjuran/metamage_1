@@ -7,6 +7,7 @@
 #define RELIX_TASK_PROCESS_HH
 
 // POSIX
+#include <signal.h>
 #include <time.h>
 #include <sys/times.h>
 
@@ -21,6 +22,7 @@
 #include "plus/string.hh"
 
 // relix-kernel
+#include "relix/signal/sigset_t.hh"
 #include "relix/task/alarm_clock.hh"
 
 
@@ -54,6 +56,8 @@ namespace relix
 			struct tms its_times;
 			
 			alarm_clock its_alarm_clock;
+			
+			sigset_t its_pending_signals;
 			
 			boost::intrusive_ptr< process_group > its_process_group;
 			boost::intrusive_ptr< process_image > its_process_image;
@@ -98,6 +102,18 @@ namespace relix
 			alarm_clock& get_alarm_clock()  { return its_alarm_clock; }
 			
 			const plus::string& get_cmdline() const;
+			
+			sigset_t signals_pending() const  { return its_pending_signals; }
+			
+			void set_pending_signal( int sig )
+			{
+				sigaddset( &its_pending_signals, sig );
+			}
+			
+			void clear_pending_signal( int sig )
+			{
+				sigdelset( &its_pending_signals, sig );
+			}
 			
 			process_group& get_process_group() const;
 			process_image& get_process_image() const;
