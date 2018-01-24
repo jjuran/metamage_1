@@ -1109,15 +1109,6 @@ namespace Genie
 			return;
 		}
 		
-		typedef void (*signal_handler_t)(int);
-		
-		signal_handler_t action = GetSignalAction( signo ).sa_handler;
-		
-		if ( action == SIG_IGN )
-		{
-			return;
-		}
-		
 		set_pending_signal( signo );
 		
 		if ( signo == SIGKILL  ||  signo == SIGCONT )
