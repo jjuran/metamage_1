@@ -1230,25 +1230,9 @@ namespace Genie
 	
 	void Process::Continue()
 	{
-		relix::os_thread_id thread = get_os_thread();
-		
-		if ( thread == 0 )
-		{
-			relix::console::log( STR_LEN( "Genie: Process::Continue(): no thread assigned\n" ) );
-			
-			return;
-		}
-		
-		if ( itsForkedChildPID != 0 )
-		{
-			return;
-		}
-		
-		if ( relix::is_os_thread_stopped( thread ) )
+		if ( itsSchedule == kProcessStopped )
 		{
 			itsSchedule = kProcessSleeping;
-			
-			relix::wake_os_thread( thread );
 		}
 	}
 	
