@@ -148,7 +148,6 @@ namespace Genie
 			relix::os_thread_box SpawnThread( Clone_Function f, void* arg );
 			
 			void Stop();
-			void Continue();
 			
 			bool HandlePendingSignals( bool may_throw );
 	};

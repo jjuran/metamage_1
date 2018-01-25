@@ -843,7 +843,7 @@ namespace Genie
 			//     set in Yield() after YieldToAnyThread() returns
 			//     set in StopThread() after SetThreadState() if same thread
 			// [2] set at end of Process::Exec() (after creating new thread for child)
-			//     set in Process::Continue() if thread was stopped
+			//     set in Process::DeliverPendingSignals() if thread was stopped
 			//     set in Yield() before YieldToAnyThread() is called
 			
 			default:
@@ -1188,7 +1188,10 @@ namespace Genie
 							break;
 						
 						case signal_continue:
-							Continue();
+							if ( itsSchedule == kProcessStopped )
+							{
+								itsSchedule = kProcessSleeping;
+							}
 							break;
 					}
 					
@@ -1226,14 +1229,6 @@ namespace Genie
 		Pause( kProcessStopped );
 		
 		relix::mark_thread_active( gettid() );
-	}
-	
-	void Process::Continue()
-	{
-		if ( itsSchedule == kProcessStopped )
-		{
-			itsSchedule = kProcessSleeping;
-		}
 	}
 	
 	
