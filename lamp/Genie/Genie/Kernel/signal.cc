@@ -24,6 +24,11 @@
 #include "Genie/ProcessList.hh"
 
 
+#ifndef __RELIX__
+#define __SIGTHREAD  0
+#endif
+
+
 namespace Genie
 {
 	
@@ -93,6 +98,13 @@ namespace Genie
 		{
 			// Optimize for canonical 'yield' idiom.
 			return 0;
+		}
+		
+		const bool kill_pthread = signo & __SIGTHREAD;
+		
+		if ( kill_pthread )
+		{
+			signo &= ~__SIGTHREAD;
 		}
 		
 		if ( signo < 0  ||  signo >= NSIG )
