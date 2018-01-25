@@ -163,7 +163,7 @@ int pthread_kill( pthread_t id, int sig )
 			return EINVAL;
 		}
 		
-		int nok = kill( tid, sig );
+		int nok = kill( tid, sig | __SIGTHREAD );
 		
 		return nok ? errno : 0;
 	}
