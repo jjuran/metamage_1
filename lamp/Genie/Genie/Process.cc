@@ -1113,7 +1113,13 @@ namespace Genie
 		
 		if ( signo == SIGKILL  ||  signo == SIGCONT )
 		{
-			Continue();
+			if ( relix::os_thread_id thread = get_os_thread() )
+			{
+				if ( relix::is_os_thread_stopped( thread ) )
+				{
+					relix::wake_os_thread( thread );
+				}
+			}
 		}
 	}
 	
