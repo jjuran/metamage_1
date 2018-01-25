@@ -89,6 +89,7 @@
 #include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
+#include "relix/signal/unstoppable.hh"
 #include "relix/task/A5_world.hh"
 #include "relix/task/alarm_clock.hh"
 #include "relix/task/fd_map.hh"
@@ -1081,16 +1082,17 @@ namespace Genie
 	{
 		itsSchedule = newSchedule;
 		
+		const bool stopped = newSchedule == kProcessStopped;
+		
+		const sigset_t unstoppable = stopped ? unstoppable_signals( *this ) : 0;
+		
 		mark_current_stack_frame();
 		
-		if ( newSchedule == kProcessStopped )
-		{
-			relix::stop_os_thread( get_os_thread() );
-		}
-		else
+		do
 		{
 			relix::os_thread_yield();
 		}
+		while ( stopped  &&  ! (signals_pending() & unstoppable) );
 		
 		Resume();
 	}
