@@ -1113,7 +1113,6 @@ namespace Genie
 		
 		set_pending_signal( signo );
 		
-		if ( signo == SIGKILL  ||  signo == SIGCONT )
 		{
 			if ( relix::os_thread_id thread = get_os_thread() )
 			{
