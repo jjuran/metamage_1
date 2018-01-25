@@ -42,6 +42,8 @@
 #include <sys/signal.h>
 #include <pthread.h>
 
+#define __SIGTHREAD  0x80000000
+
 #if !defined(_ANSI_SOURCE) && !defined(_POSIX_SOURCE)
 extern const char *const sys_signame[NSIG];
 #endif
