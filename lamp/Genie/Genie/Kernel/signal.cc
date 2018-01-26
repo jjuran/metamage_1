@@ -52,6 +52,34 @@ namespace Genie
 		return relix::set_errno( ESRCH );
 	}
 	
+	static
+	int kill_tid( pid_t tid, int signo )
+	{
+		Process& current = current_process();
+		
+		if ( Process* target = FindProcess( tid ) )
+		{
+			if ( current.GetPID() == target->GetPID() )
+			{
+				if ( signo != 0 )
+				{
+					target->set_pending_signal( signo );
+				}
+				
+				return 0;
+			}
+			
+			/*
+				Not reached by pthread_kill().
+				Someone made an evil call to kill() with __SIGTHREAD set.
+			*/
+			
+			return relix::set_errno( EINVAL );
+		}
+		
+		return relix::set_errno( ESRCH );
+	}
+	
 	struct kill_param
 	{
 		pid_t  id;
@@ -110,6 +138,11 @@ namespace Genie
 		if ( signo < 0  ||  signo >= NSIG )
 		{
 			return set_errno( EINVAL );
+		}
+		
+		if ( kill_pthread )
+		{
+			return kill_tid( pid, signo );
 		}
 		
 		Process& current = current_process();
