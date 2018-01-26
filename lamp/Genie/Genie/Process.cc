@@ -850,11 +850,15 @@ namespace Genie
 			}
 		}
 		
+		if ( proc.is_zombie() )
+		{
+			return 'Z';
+		}
+		
 		switch ( itsSchedule )
 		{
 			case kProcessRunning:      return 'R';  // [1]
 			case kProcessSleeping:     return 'S';  // [2]
-			case kProcessUnscheduled:  return 'Z';  // set in Process::Terminate()
 			
 			// [1] set on parent in execve() after child.Exec()
 			//     set on parent in _exit() if forked
