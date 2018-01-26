@@ -877,7 +877,7 @@ namespace Genie
 		
 		update_os_thread_param( this );
 		
-		Resume();
+		gCurrentProcess = this;
 		
 		pid_t child = itsForkedChildPID;
 		
@@ -907,7 +907,7 @@ namespace Genie
 		
 		child.update_os_thread_param( &child );
 		
-		child.Resume();
+		gCurrentProcess = &child;
 	}
 	
 	struct notify_param
@@ -1068,13 +1068,6 @@ namespace Genie
 		notify_reaper();
 	}
 	
-	void Process::Resume()
-	{
-		gCurrentProcess = this;
-		
-		itsSchedule = kProcessRunning;
-	}
-	
 	void Process::Pause( ProcessSchedule newSchedule )
 	{
 		itsSchedule = newSchedule;
@@ -1091,7 +1084,7 @@ namespace Genie
 		}
 		while ( stopped  &&  ! (signals_pending() & unstoppable) );
 		
-		Resume();
+		itsSchedule = kProcessRunning;
 	}
 	
 	void Process::Raise( int signo )

@@ -77,7 +77,6 @@ namespace Genie
 			Process           ( const Process& );
 			Process& operator=( const Process& );
 			
-			void Resume();
 			void Pause( ProcessSchedule newSchedule );
 			
 			bool DeliverPendingSignals( bool may_throw );
