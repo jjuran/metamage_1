@@ -13,7 +13,8 @@
 #include "poseven/types/errno_t.hh"
 
 // relix-kernel
-#include "relix/api/raise.hh"
+#include "relix/api/current_thread.hh"
+#include "relix/task/thread.hh"
 
 
 namespace relix
@@ -24,7 +25,7 @@ namespace relix
 	
 	void broken_pipe()
 	{
-		raise( SIGPIPE );
+		current_thread().set_pending_signal( SIGPIPE );
 		
 		p7::throw_errno( EPIPE );
 	}
