@@ -826,6 +826,11 @@ namespace Genie
 	
 	char Process::run_state_code() const
 	{
+		if ( gCurrentProcess == this )
+		{
+			return 'R';
+		}
+		
 		if ( itsLifeStage == kProcessReleased )
 		{
 			return 'X';
@@ -866,22 +871,7 @@ namespace Genie
 			return 'Z';
 		}
 		
-		switch ( itsSchedule )
-		{
-			case kProcessRunning:      return 'R';  // [1]
-			case kProcessSleeping:     return 'S';  // [2]
-			
-			// [1] set on parent in execve() after child.Exec()
-			//     set on parent in _exit() if forked
-			//     set in Yield() after YieldToAnyThread() returns
-			//     set in StopThread() after SetThreadState() if same thread
-			// [2] set at end of Process::Exec() (after creating new thread for child)
-			//     set in Process::HandlePendingSignals() if thread was stopped
-			//     set in Yield() before YieldToAnyThread() is called
-			
-			default:
-				return '?';
-		}
+		return 'S';
 	}
 	
 	relix::fd_map& Process::FileDescriptors()
