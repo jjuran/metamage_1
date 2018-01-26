@@ -18,6 +18,8 @@ namespace relix
 	
 	class os_thread;
 	
+	void set_os_thread_param( os_thread& thread, void* param );
+	
 	class os_thread_box
 	{
 		private:

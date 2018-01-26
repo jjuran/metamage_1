@@ -113,6 +113,11 @@ namespace relix
 			
 			void reset_os_thread()  { its_os_thread.reset(); }
 			
+			void update_os_thread_param( void* param )
+			{
+				set_os_thread_param( *its_os_thread.get(), param );
+			}
+			
 			void switch_in();
 			void switch_out();
 	};

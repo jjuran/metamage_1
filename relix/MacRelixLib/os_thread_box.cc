@@ -43,7 +43,14 @@ namespace relix
 			~os_thread();
 			
 			os_thread_id id() const  { return its_id; }
+			
+			void set_param( void* param )  { its_param.param = param; }
 	};
+	
+	void set_os_thread_param( os_thread& thread, void* param )
+	{
+		thread.set_param( param );
+	}
 	
 	
 	os_thread::os_thread( cthread::start_proc   start,
