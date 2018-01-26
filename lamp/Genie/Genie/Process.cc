@@ -646,6 +646,8 @@ namespace Genie
 		
 		gCurrentProcess = &thread;
 		
+		thread.clear_stack_frame_mark();  // We don't track this while running
+		
 		thread.switch_in();
 	}
 	
@@ -1069,8 +1071,6 @@ namespace Genie
 	void Process::Resume()
 	{
 		gCurrentProcess = this;
-		
-		clear_stack_frame_mark();  // We don't track this while running
 		
 		itsSchedule = kProcessRunning;
 	}
