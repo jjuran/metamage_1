@@ -571,6 +571,8 @@ namespace Genie
 		
 		// activate child
 		
+		update_os_thread_param( &child );
+		
 		gCurrentProcess = &child;
 		
 		return child;
@@ -873,6 +875,8 @@ namespace Genie
 		// Stack grows down
 		const bool stack_fault = !CONFIG_SYSCALL_STACKS  &&  stack_fp >= vfork_fp;
 		
+		update_os_thread_param( this );
+		
 		Resume();
 		
 		pid_t child = itsForkedChildPID;
@@ -907,6 +911,8 @@ namespace Genie
 		child.swap_os_thread( parent );
 		
 		exit_process( parent, exit_status );
+		
+		child.update_os_thread_param( &child );
 		
 		child.Resume();
 	}
