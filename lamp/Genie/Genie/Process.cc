@@ -883,13 +883,6 @@ namespace Genie
 		
 		itsForkedChildPID = 0;
 		
-		if ( itsPID == 1 )
-		{
-			itsSchedule = kProcessSleeping;
-			
-			return;
-		}
-		
 		if ( stack_fault )
 		{
 			relix::deliver_fatal_signal( SIGSTKFLT );
