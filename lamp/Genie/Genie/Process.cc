@@ -296,8 +296,6 @@ namespace Genie
 		
 		global_parameter_block.current_user = &pb;
 		
-		process->Resume();
-		
 		// Accumulate any system time between start and entry to main()
 		relix::leave_system();
 		
