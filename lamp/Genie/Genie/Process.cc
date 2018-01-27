@@ -1119,11 +1119,6 @@ namespace Genie
 	// This function doesn't return if the process receives a fatal signal.
 	bool Process::HandlePendingSignals( bool may_throw )
 	{
-		if ( itsLifeStage > kProcessLive )
-		{
-			return false;  // Don't try to handle signals in terminated processes
-		}
-		
 		if ( get_process().get_alarm_clock().check() )
 		{
 			Raise( SIGALRM );
