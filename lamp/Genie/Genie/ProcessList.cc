@@ -296,7 +296,8 @@ namespace Genie
 	
 	static void* send_sigterm_or_sigkill( void*, pid_t pid, Process& process )
 	{
-		const int signo = process.is_stopped() ? SIGKILL : SIGTERM;
+		// TODO:  Send SIGKILL on Command-Option-Q or such
+		const int signo = SIGTERM;
 		
 		process.Raise( signo );
 		
