@@ -1155,6 +1155,8 @@ namespace Genie
 				{
 					using namespace relix;
 					
+					clear_pending_signal( signo );
+					
 					const signal_traits traits = global_signal_traits[ signo ];
 					
 					switch ( traits & signal_default_action_mask )
@@ -1188,6 +1190,8 @@ namespace Genie
 				{
 					continue;
 				}
+				
+				clear_pending_signal( signo );
 				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
