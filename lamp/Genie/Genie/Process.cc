@@ -1076,10 +1076,10 @@ namespace Genie
 		
 		const sigset_t unstoppable = stopped ? unstoppable_signals( *this ) : 0;
 		
-		mark_current_stack_frame();
-		
 		do
 		{
+			mark_current_stack_frame();
+			
 			relix::os_thread_yield();
 		}
 		while ( stopped  &&  ! (signals_pending() & unstoppable) );
