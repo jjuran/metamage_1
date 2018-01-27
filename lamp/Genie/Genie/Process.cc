@@ -232,7 +232,9 @@ namespace relix
 		
 		if ( gCurrentProcess != NULL )
 		{
-			signal_handler_t handler = gCurrentProcess->GetSignalAction( signo ).sa_handler;
+			relix::process& proc = gCurrentProcess->get_process();
+			
+			signal_handler_t handler = proc.get_sigaction( signo ).sa_handler;
 			
 			if ( handler != SIG_DFL  &&  handler != SIG_IGN )
 			{
@@ -969,14 +971,6 @@ namespace Genie
 		}
 		
 		return NULL;
-	}
-	
-	const struct sigaction& Process::GetSignalAction( int signo ) const
-	{
-		ASSERT( signo >    0 );
-		ASSERT( signo < NSIG );
-		
-		return get_process().get_sigaction( signo );
 	}
 	
 	// This function doesn't return if the process is current.

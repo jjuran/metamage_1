@@ -10,10 +10,6 @@
 #include "relix/task/thread.hh"
 
 
-struct sigaction;
-struct tms;
-
-
 namespace relix
 {
 	
@@ -120,8 +116,6 @@ namespace Genie
 			void AsyncYield();
 			
 			relix::fd_map& FileDescriptors();
-			
-			const struct sigaction& GetSignalAction( int signo ) const;
 			
 			void Raise( int signal );
 			
