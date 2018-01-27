@@ -857,7 +857,7 @@ namespace Genie
 			//     set in Yield() after YieldToAnyThread() returns
 			//     set in StopThread() after SetThreadState() if same thread
 			// [2] set at end of Process::Exec() (after creating new thread for child)
-			//     set in Process::DeliverPendingSignals() if thread was stopped
+			//     set in Process::HandlePendingSignals() if thread was stopped
 			//     set in Yield() before YieldToAnyThread() is called
 			
 			default:
@@ -1124,11 +1124,6 @@ namespace Genie
 			Raise( SIGALRM );
 		}
 		
-		return DeliverPendingSignals( may_throw );
-	}
-	
-	bool Process::DeliverPendingSignals( bool may_throw )
-	{
 		bool signal_was_caught = false;
 		
 		for ( int signo = 1;  signo < NSIG;  ++signo )

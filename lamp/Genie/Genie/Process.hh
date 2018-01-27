@@ -81,8 +81,6 @@ namespace Genie
 			
 			void Pause( ProcessSchedule newSchedule );
 			
-			bool DeliverPendingSignals( bool may_throw );
-			
 			static void* notify_process( void* param, pid_t, Process& process );
 		
 		public:
