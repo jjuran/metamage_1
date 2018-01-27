@@ -818,11 +818,6 @@ namespace Genie
 		return get_process().get_process_group().id();
 	}
 	
-	bool Process::is_stopped() const
-	{
-		return get_process().is_stopped();
-	}
-	
 	char Process::run_state_code() const
 	{
 		if ( itsLifeStage == kProcessReleased )
@@ -840,7 +835,9 @@ namespace Genie
 			return 'V';
 		}
 		
-		if ( is_stopped() )
+		relix::process& proc = get_process();
+		
+		if ( proc.is_stopped() )
 		{
 			return 'T';
 		}
@@ -1079,7 +1076,9 @@ namespace Genie
 	static inline
 	bool stopped( const Process& thread )
 	{
-		if ( thread.is_stopped() )
+		const relix::process& proc = thread.get_process();
+		
+		if ( proc.is_stopped() )
 		{
 			const sigset_t pending     = thread.signals_pending();
 			const sigset_t unstoppable = unstoppable_signals( thread );

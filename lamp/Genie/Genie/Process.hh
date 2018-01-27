@@ -104,8 +104,6 @@ namespace Genie
 			
 			ProcessLifeStage  GetLifeStage() const  { return itsLifeStage; }
 			
-			bool is_stopped() const;
-			
 			char run_state_code() const;
 			
 			void Release();

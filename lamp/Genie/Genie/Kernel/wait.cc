@@ -57,7 +57,7 @@ namespace Genie
 		
 		const bool terminated   = process.GetLifeStage() == kProcessZombie;
 		
-		const bool stopped      = process.is_stopped();
+		const bool stopped      = process.get_process().is_stopped();
 		
 		const bool traced       = process.IsBeingTraced();
 		
@@ -113,7 +113,7 @@ namespace Genie
 		
 		bool terminated = process->GetLifeStage() == kProcessZombie;
 		
-		bool stopped    = process->is_stopped();
+		bool stopped    = process->get_process().is_stopped();
 		
 		bool traced     = process->IsBeingTraced();
 		
@@ -175,7 +175,7 @@ namespace Genie
 					
 					if ( stat_loc != NULL )
 					{
-						*stat_loc = child->is_stopped() ? 0x7f : proc.status();
+						*stat_loc = proc.is_stopped() ? 0x7f : proc.status();
 					}
 					
 					pid_t found_pid = child->GetPID();
