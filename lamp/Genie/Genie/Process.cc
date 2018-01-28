@@ -1071,13 +1071,23 @@ namespace Genie
 		notify_reaper();
 	}
 	
+	static inline
+	bool stopped( const Process& thread )
+	{
+		if ( thread.is_stopped() )
+		{
+			const sigset_t pending     = thread.signals_pending();
+			const sigset_t unstoppable = unstoppable_signals( thread );
+			
+			return !( pending & unstoppable );
+		}
+		
+		return false;
+	}
+	
 	void Process::Pause( ProcessSchedule newSchedule )
 	{
 		itsSchedule = newSchedule;
-		
-		const bool stopped = newSchedule == kProcessStopped;
-		
-		const sigset_t unstoppable = stopped ? unstoppable_signals( *this ) : 0;
 		
 		do
 		{
@@ -1085,7 +1095,7 @@ namespace Genie
 			
 			relix::os_thread_yield();
 		}
-		while ( stopped  &&  ! (signals_pending() & unstoppable) );
+		while ( stopped( *this ) );
 		
 		itsSchedule = kProcessRunning;
 	}
