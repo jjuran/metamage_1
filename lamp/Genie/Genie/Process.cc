@@ -504,6 +504,7 @@ namespace Genie
 		               false ),
 		itsPID                ( 1 ),
 		itsForkedChildPID     ( 0 ),
+		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessLive ),
 		itsSchedule           ( kProcessSleeping ),
 		itsAsyncOpCount       ( 0 ),
@@ -538,6 +539,7 @@ namespace Genie
 		               false ),
 		itsPID                ( pid ),
 		itsForkedChildPID     ( 0 ),
+		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
 		itsSchedule           ( kProcessRunning ),
 		itsAsyncOpCount       ( 0 ),
@@ -564,6 +566,8 @@ namespace Genie
 		// suspend parent for vfork
 		
 		itsForkedChildPID = child.GetPID();
+		
+		child.its_vfork_parent = this;
 		
 		mark_vfork_stack_frame();
 		
@@ -617,16 +621,16 @@ namespace Genie
 	class thing_that_may_resume_after_vfork
 	{
 		private:
-			pid_t its_ppid;
+			Process* its_parent;
 		
 		public:
-			thing_that_may_resume_after_vfork() : its_ppid( 0 )
+			thing_that_may_resume_after_vfork() : its_parent()
 			{
 			}
 			
-			void enable( pid_t ppid )
+			void enable( Process* parent )
 			{
-				its_ppid = ppid;
+				its_parent = parent;
 			}
 			
 			~thing_that_may_resume_after_vfork();
@@ -634,9 +638,9 @@ namespace Genie
 	
 	thing_that_may_resume_after_vfork::~thing_that_may_resume_after_vfork()
 	{
-		if ( its_ppid )
+		if ( its_parent )
 		{
-			GetProcess( its_ppid ).ResumeAfterFork();
+			its_parent->ResumeAfterFork();
 		}
 	}
 	
@@ -704,8 +708,6 @@ namespace Genie
 		proc.reset_signal_handlers();
 		
 		// We always spawn a new thread for the exec'ed process.
-		// If we've forked, then the thread is null, but if not, it's the
-		// current thread -- be careful!
 		
 		// Create the new thread
 		looseThread = new_thread( *this );
@@ -733,9 +735,11 @@ namespace Genie
 			return;
 		}
 		
-		if ( looseThread.get() == 0 )
+		if ( its_vfork_parent )
 		{
-			resume.enable( proc.getppid() );
+			resume.enable( its_vfork_parent );
+			
+			its_vfork_parent = NULL;
 		}
 	}
 	
@@ -767,9 +771,11 @@ namespace Genie
 			return;
 		}
 		
-		if ( looseThread.get() == 0 )
+		if ( its_vfork_parent )
 		{
-			resume.enable( GetPPID() );
+			resume.enable( its_vfork_parent );
+			
+			its_vfork_parent = NULL;
 		}
 	}
 	
@@ -1043,14 +1049,12 @@ namespace Genie
 		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
-		if ( ppid != 0 )
+		if ( its_vfork_parent )
 		{
-			Process& parent = GetProcess( ppid );
+			ASSERT( its_vfork_parent->itsForkedChildPID != 0 );
+			ASSERT( its_vfork_parent->itsForkedChildPID == pid );
 			
-			if ( parent.itsForkedChildPID != 0 )
-			{
-				parent.ResumeAfterFork();  // Calls longjmp()
-			}
+			its_vfork_parent->ResumeAfterFork();  // Calls longjmp()
 		}
 	}
 	

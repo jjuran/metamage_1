@@ -62,6 +62,8 @@ namespace Genie
 			pid_t itsPID;
 			pid_t itsForkedChildPID;
 			
+			Process* its_vfork_parent;
+			
 			ProcessLifeStage        itsLifeStage;
 			ProcessSchedule         itsSchedule;
 			
