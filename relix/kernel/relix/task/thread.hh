@@ -111,6 +111,8 @@ namespace relix
 			
 			void swap_os_thread( thread& other )  { its_os_thread.swap( other.its_os_thread ); }
 			
+			void share_os_thread( const thread& other )  { its_os_thread = other.its_os_thread; }
+			
 			void reset_os_thread()  { its_os_thread.reset(); }
 			
 			void update_os_thread_param( void* param )

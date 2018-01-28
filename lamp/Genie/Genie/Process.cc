@@ -573,6 +573,8 @@ namespace Genie
 		
 		// activate child
 		
+		child.share_os_thread( *this );
+		
 		update_os_thread_param( &child );
 		
 		gCurrentProcess = &child;
