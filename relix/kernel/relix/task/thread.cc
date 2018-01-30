@@ -64,7 +64,14 @@ namespace relix
 				return 0;
 			}
 			
-			next_thread = &get_thread( ppid );
+			try
+			{
+				next_thread = &get_thread( ppid );
+			}
+			catch ( ... )
+			{
+				return os_thread_id();
+			}
 		}
 		
 		return get_os_thread_id( *next_thread->its_os_thread.get() );
