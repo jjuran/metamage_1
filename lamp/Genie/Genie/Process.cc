@@ -856,6 +856,11 @@ namespace Genie
 			}
 		}
 		
+		if ( relix::is_thread_active( gettid() ) )
+		{
+			return 'Q';
+		}
+		
 		if ( proc.is_zombie() )
 		{
 			return 'Z';
