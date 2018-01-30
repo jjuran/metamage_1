@@ -6,7 +6,6 @@
 #include "relix/task/thread.hh"
 
 // relix
-#include "relix/api/get_thread.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_image.hh"
 #include "relix/task/scheduler.hh"
@@ -53,28 +52,12 @@ namespace relix
 	
 	os_thread_id thread::get_os_thread() const
 	{
-		const thread* next_thread = this;
-		
-		while ( next_thread->its_os_thread.get() == 0 )
+		if ( const os_thread* thread = its_os_thread.get() )
 		{
-			pid_t ppid = next_thread->get_process().getppid();
-			
-			if ( ppid == 1 )
-			{
-				return 0;
-			}
-			
-			try
-			{
-				next_thread = &get_thread( ppid );
-			}
-			catch ( ... )
-			{
-				return os_thread_id();
-			}
+			return get_os_thread_id( *thread );
 		}
 		
-		return get_os_thread_id( *next_thread->its_os_thread.get() );
+		return os_thread_id();
 	}
 	
 	void thread::switch_in()
