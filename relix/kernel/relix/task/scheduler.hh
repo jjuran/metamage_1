@@ -34,6 +34,8 @@ namespace relix
 	
 	bool is_active();
 	
+	bool is_thread_active( pid_t tid );
+	
 	void mark_thread_active( pid_t tid );
 	
 	void mark_thread_inactive( pid_t tid );

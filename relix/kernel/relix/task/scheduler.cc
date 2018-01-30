@@ -73,6 +73,11 @@ namespace relix
 		return !active_threads.empty();
 	}
 	
+	bool is_thread_active( pid_t tid )
+	{
+		return active_threads.find( tid ) != active_threads.end();
+	}
+	
 	void mark_thread_active( pid_t tid )
 	{
 		active_threads.insert( tid );
