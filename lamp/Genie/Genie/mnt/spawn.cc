@@ -13,7 +13,6 @@
 #include "relix/task/fs_info.hh"
 #include "relix/task/process.hh"
 #include "relix/task/process_resources.hh"
-#include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -40,8 +39,6 @@ pid_t spawn_freemount_process()
 	fs.chdir( opendir( freemount_root() ) );
 	
 	const pid_t tid = child.gettid();
-	
-	relix::mark_thread_inactive( tid );
 	
 	return tid;  // Same as pid
 }

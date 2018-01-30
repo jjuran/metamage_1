@@ -556,7 +556,11 @@ namespace Genie
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
 		
+	#ifdef __RELIX__
+		
 		relix::mark_thread_active( tid );
+		
+	#endif
 	}
 	
 	Process& Process::vfork()
