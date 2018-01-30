@@ -32,13 +32,6 @@ namespace Genie
 		kProcessReleased
 	};
 	
-	enum ProcessSchedule
-	{
-		kProcessRunning,
-		kProcessSleeping,
-		kProcessUnscheduled
-	};
-	
 	typedef int (*Reexec_Function)( void* _1,
 	                                void* _2,
 	                                void* _3,
@@ -73,7 +66,7 @@ namespace Genie
 			Process           ( const Process& );
 			Process& operator=( const Process& );
 			
-			void Pause( ProcessSchedule newSchedule );
+			void Pause();
 			
 			static void* notify_process( void* param, pid_t, Process& process );
 		

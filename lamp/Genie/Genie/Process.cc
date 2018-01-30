@@ -1087,7 +1087,7 @@ namespace Genie
 		return false;
 	}
 	
-	void Process::Pause( ProcessSchedule newSchedule )
+	void Process::Pause()
 	{
 		do
 		{
@@ -1213,18 +1213,18 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
-		Pause( kProcessSleeping );
+		Pause();
 	}
 	
 	
 	void Process::Breathe()
 	{
-		Pause( kProcessRunning );
+		Pause();
 	}
 	
 	void Process::Yield()
 	{
-		Pause( kProcessSleeping );
+		Pause();
 	}
 	
 	void Process::AsyncYield()
