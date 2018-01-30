@@ -41,6 +41,8 @@ namespace relix
 			
 			current.Breathe();
 			
+			relix::mark_thread_inactive( current_process().gettid() );
+			
 			the_last_breath_time = clock();
 			
 			// Check for fatal signals again

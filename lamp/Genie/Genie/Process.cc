@@ -292,6 +292,8 @@ namespace Genie
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
+		relix::mark_thread_inactive( process->gettid() );
+		
 		relix::process_image& image = process->get_process().get_process_image();
 		
 		_relix_user_parameter_block& pb = image.param_block();
