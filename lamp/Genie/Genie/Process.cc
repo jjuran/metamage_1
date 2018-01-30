@@ -510,7 +510,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessLive ),
-		itsSchedule           ( kProcessSleeping ),
 		itsAsyncOpCount       ( 0 ),
 		itMayDumpCore         ()
 	{
@@ -545,7 +544,6 @@ namespace Genie
 		itsForkedChildPID     ( 0 ),
 		its_vfork_parent      ( 0 ),
 		itsLifeStage          ( kProcessStarting ),
-		itsSchedule           ( kProcessRunning ),
 		itsAsyncOpCount       ( 0 ),
 		itMayDumpCore         ( true )
 	{
@@ -738,7 +736,6 @@ namespace Genie
 		old_image.reset();
 		
 		itsLifeStage       = kProcessLive;
-		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
 		if ( gCurrentProcess != this )
 		{
@@ -809,7 +806,6 @@ namespace Genie
 		swap_os_thread( looseThread );
 		
 		itsLifeStage       = kProcessLive;
-		itsSchedule        = kProcessRunning;  // a new process is runnable
 		
 		return looseThread;
 	}
@@ -992,7 +988,6 @@ namespace Genie
 		}
 		
 		itsLifeStage = kProcessTerminating;
-		itsSchedule  = kProcessUnscheduled;
 		
 		relix::process& process = get_process();
 		
@@ -1094,8 +1089,6 @@ namespace Genie
 	
 	void Process::Pause( ProcessSchedule newSchedule )
 	{
-		itsSchedule = newSchedule;
-		
 		do
 		{
 			mark_current_stack_frame();
@@ -1103,8 +1096,6 @@ namespace Genie
 			relix::os_thread_yield();
 		}
 		while ( stopped( *this ) );
-		
-		itsSchedule = kProcessRunning;
 	}
 	
 	void Process::Raise( int signo )

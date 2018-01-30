@@ -60,7 +60,6 @@ namespace Genie
 			Process* its_vfork_parent;
 			
 			ProcessLifeStage        itsLifeStage;
-			ProcessSchedule         itsSchedule;
 			
 			unsigned itsAsyncOpCount;
 		
