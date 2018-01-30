@@ -1056,8 +1056,6 @@ namespace Genie
 		
 		reset_os_thread();
 		
-		relix::mark_thread_active( gettid() );
-		
 		// We get here if this is a vforked child, or fork_and_exit().
 		
 		if ( its_vfork_parent )
@@ -1229,11 +1227,7 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
-		relix::mark_thread_inactive( gettid() );
-		
 		Pause( kProcessSleeping );
-		
-		relix::mark_thread_active( gettid() );
 	}
 	
 	

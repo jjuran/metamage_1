@@ -20,8 +20,6 @@ namespace relix
 	{
 		using namespace Genie;
 		
-		mark_thread_inactive( current_process().gettid() );
-		
 	#ifdef __RELIX__
 		
 		current_process().Yield();

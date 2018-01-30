@@ -19,7 +19,6 @@
 // relix
 #include "relix/api/current_thread.hh"
 #include "relix/signal/signal.hh"
-#include "relix/task/scheduler.hh"
 #include "relix/task/thread.hh"
 
 // Genie
@@ -54,12 +53,8 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		
 	stop_and_wait:
 		
-		relix::mark_thread_inactive( tid );
-		
 		// Sleep until the reply is delivered
 		stop_os_thread( current.get_os_thread() );
-		
-		relix::mark_thread_active( tid );
 		
 		/*
 			Check for fatal signals; ignore caught ones (for now).
