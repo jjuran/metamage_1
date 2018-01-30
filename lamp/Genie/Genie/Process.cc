@@ -838,9 +838,12 @@ namespace Genie
 			return 'T';
 		}
 		
-		if ( relix::is_os_thread_stopped( get_os_thread() ) )
+		if ( relix::os_thread_id thread = get_os_thread() )
 		{
-			return 'W';
+			if ( relix::is_os_thread_stopped( thread ) )
+			{
+				return 'W';
+			}
 		}
 		
 		switch ( itsSchedule )
