@@ -25,6 +25,7 @@
 // poseven
 #include "poseven/extras/slurp.hh"
 #include "poseven/types/errno_t.hh"
+#include "poseven/types/thread.hh"
 
 // vlib
 #include "vlib/interpret.hh"
@@ -46,6 +47,7 @@
 #include "channel/metatype.hh"
 
 // vx
+#include "empty_signal_handler.hh"
 #include "library.hh"
 
 
@@ -58,6 +60,8 @@ namespace p7 = poseven;
 using namespace command::constants;
 using namespace vlib;
 
+
+const int thread_interrupt_signal = SIGUSR1;
 
 enum
 {
@@ -182,6 +186,8 @@ void define( const char* name, int i )
 
 int main( int argc, char** argv )
 {
+	using poseven::thread;
+	
 	if ( argc == 0 )
 	{
 		return 0;
@@ -198,6 +204,9 @@ int main( int argc, char** argv )
 	                 :                 "-";
 	
 	set_argv( arg0, argn, args );
+	
+	install_empty_signal_handler( thread_interrupt_signal );
+	thread::set_interrupt_signal( thread_interrupt_signal );
 	
 	define( "IN",  0 );
 	define( "OUT", 1 );
