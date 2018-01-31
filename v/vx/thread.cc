@@ -128,9 +128,20 @@ namespace vlib
 		return Value_nothing;
 	}
 	
+	static
+	Value v_cancel( const Value& v )
+	{
+		const Thread& thread = static_cast< const Thread& >( v );
+		
+		thread.get()->cancel();
+		
+		return Value_nothing;
+	}
+	
 	static const Type thread = thread_vtype;
 	
 	static const proc_info proc_thread_join = { "join", &v_join, &thread };
+	static const proc_info proc_thread_cancel = { "cancel", &v_cancel, &thread };
 	
 	static
 	Value thread_member( const Value&         obj,
@@ -139,6 +150,11 @@ namespace vlib
 		if ( member == "join" )
 		{
 			return bind_args( Proc( proc_thread_join ), obj );
+		}
+		
+		if ( member == "cancel" )
+		{
+			return bind_args( Proc( proc_thread_cancel ), obj );
 		}
 		
 		THROW( "nonexistent thread member" );
