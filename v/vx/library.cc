@@ -26,6 +26,9 @@
 // bignum
 #include "bignum/integer.hh"
 
+// poseven
+#include "poseven/types/thread.hh"
+
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/interpret.hh"
@@ -292,11 +295,18 @@ namespace vlib
 			result = String( output );
 		}
 		
+	retry:
+		
 		int status = -1;
 		pid_t waited = waitpid( pid, &status, 0 );
 		
 		if ( waited < 0 )
 		{
+			if ( errno == EINTR )
+			{
+				goto retry;
+			}
+			
 			throw_exception_object( error_desc( errno ) );
 		}
 		
@@ -366,6 +376,8 @@ namespace vlib
 		{
 			sleep( v.number().clipped() );
 		}
+		
+		poseven::thread::testcancel();
 		
 		return Value_nothing;
 	}
