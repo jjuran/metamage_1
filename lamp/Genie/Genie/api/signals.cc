@@ -6,14 +6,12 @@
 #include "Genie/api/signals.hh"
 
 // relix-kernel
+#include "relix/api/current_thread.hh"
 #include "relix/api/thread_yield.hh"
 #include "relix/signal/signal.hh"
 #include "relix/signal/signal_traits.hh"
 #include "relix/task/process.hh"
-
-// Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
+#include "relix/task/thread.hh"
 
 
 namespace relix
@@ -21,21 +19,7 @@ namespace relix
 	
 	bool check_signals( bool may_throw )
 	{
-		using namespace Genie;
-		
-		Process& current = current_process();
-		
-		return current.HandlePendingSignals( may_throw );
-	}
-	
-}
-
-namespace Genie
-{
-	
-	bool Process::HandlePendingSignals( bool may_throw )
-	{
-		thread& self = *this;
+		thread& self = current_thread();
 		
 		relix::process& proc = self.get_process();
 		

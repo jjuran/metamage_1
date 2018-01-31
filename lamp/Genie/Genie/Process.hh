@@ -124,8 +124,6 @@ namespace Genie
 			                                void* _7 );
 			
 			relix::os_thread_box SpawnThread( Clone_Function f, void* arg );
-			
-			bool HandlePendingSignals( bool may_throw );
 	};
 	
 	void SendSignalToProcessGroup( int sig, pid_t pgid );
