@@ -66,8 +66,6 @@ namespace Genie
 			Process           ( const Process& );
 			Process& operator=( const Process& );
 			
-			void Pause();
-			
 			static void* notify_process( void* param, pid_t, Process& process );
 		
 		public:

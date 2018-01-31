@@ -79,6 +79,7 @@
 #include "relix/api/get_process_group.hh"
 #include "relix/api/root.hh"
 #include "relix/api/terminate_current_process.hh"
+#include "relix/api/thread_yield.hh"
 #include "relix/api/waits_for_children.hh"
 #include "relix/config/mini.hh"
 #include "relix/config/syscall_stacks.hh"
@@ -89,7 +90,6 @@
 #include "relix/signal/signal.hh"
 #include "relix/signal/signal_process_group.hh"
 #include "relix/signal/signal_traits.hh"
-#include "relix/signal/unstoppable.hh"
 #include "relix/task/A5_world.hh"
 #include "relix/task/alarm_clock.hh"
 #include "relix/task/fd_map.hh"
@@ -1071,33 +1071,6 @@ namespace Genie
 		notify_reaper();
 	}
 	
-	static inline
-	bool stopped( const Process& thread )
-	{
-		const relix::process& proc = thread.get_process();
-		
-		if ( proc.is_stopped() )
-		{
-			const sigset_t pending     = thread.signals_pending();
-			const sigset_t unstoppable = unstoppable_signals( thread );
-			
-			return !( pending & unstoppable );
-		}
-		
-		return false;
-	}
-	
-	void Process::Pause()
-	{
-		do
-		{
-			mark_current_stack_frame();
-			
-			relix::os_thread_yield();
-		}
-		while ( stopped( *this ) );
-	}
-	
 	void Process::Raise( int signo )
 	{
 		if ( GetPID() == 1 )
@@ -1213,18 +1186,18 @@ namespace Genie
 	{
 		ASSERT( gCurrentProcess == this );
 		
-		Pause();
+		relix::thread_yield();
 	}
 	
 	
 	void Process::Breathe()
 	{
-		Pause();
+		relix::thread_yield();
 	}
 	
 	void Process::Yield()
 	{
-		Pause();
+		relix::thread_yield();
 	}
 	
 	void Process::AsyncYield()
