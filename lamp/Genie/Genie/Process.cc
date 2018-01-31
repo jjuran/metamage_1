@@ -1147,7 +1147,8 @@ namespace Genie
 						
 						case signal_stop:
 							proc.signal_stop();
-							Stop();
+							
+							relix::thread_yield();
 							break;
 						
 						case signal_continue:
@@ -1181,30 +1182,11 @@ namespace Genie
 		return signal_was_caught;
 	}
 	
-	// Stops the process' thread.  Eventually returns.
-	void Process::Stop()
-	{
-		ASSERT( gCurrentProcess == this );
-		
-		relix::thread_yield();
-	}
-	
-	
-	void Process::Breathe()
-	{
-		relix::thread_yield();
-	}
-	
-	void Process::Yield()
-	{
-		relix::thread_yield();
-	}
-	
 	void Process::AsyncYield()
 	{
 		++itsAsyncOpCount;
 		
-		Yield();
+		relix::thread_yield();
 		
 		--itsAsyncOpCount;
 	}

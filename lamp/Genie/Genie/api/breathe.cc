@@ -8,6 +8,7 @@
 
 // relix-kernel
 #include "relix/api/breathe.hh"
+#include "relix/api/thread_yield.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie
@@ -33,13 +34,11 @@ namespace relix
 		
 		const clock_t now = clock();
 		
-		Process& current = current_process();
-		
 		if ( now - the_last_breath_time > 20000 )
 		{
 			relix::mark_thread_active( current_process().gettid() );
 			
-			current.Breathe();
+			thread_yield();
 			
 			relix::mark_thread_inactive( current_process().gettid() );
 			

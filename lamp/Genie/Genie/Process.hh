@@ -98,8 +98,6 @@ namespace Genie
 			
 			void Release();
 			
-			void Breathe();
-			void Yield();
 			void AsyncYield();
 			
 			relix::fd_map& FileDescriptors();
@@ -126,8 +124,6 @@ namespace Genie
 			                                void* _7 );
 			
 			relix::os_thread_box SpawnThread( Clone_Function f, void* arg );
-			
-			void Stop();
 			
 			bool HandlePendingSignals( bool may_throw );
 	};

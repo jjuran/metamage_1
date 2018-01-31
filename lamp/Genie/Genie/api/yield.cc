@@ -4,12 +4,12 @@
 */
 
 // relix-kernel
+#include "relix/api/thread_yield.hh"
 #include "relix/api/yield.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/current_process.hh"
-#include "Genie/Process.hh"
 #include "Genie/api/signals.hh"
 
 
@@ -22,7 +22,7 @@ namespace relix
 		
 	#ifdef __RELIX__
 		
-		current_process().Yield();
+		thread_yield();
 		
 	#else
 		
