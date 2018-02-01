@@ -1166,8 +1166,6 @@ namespace Genie
 					continue;
 				}
 				
-				clear_pending_signal( signo );
-				
 				if ( action.sa_flags & SA_RESETHAND  &&  signo != SIGILL  &&  signo != SIGTRAP )
 				{
 					const struct sigaction default_sigaction = { SIG_DFL };
