@@ -75,8 +75,6 @@ namespace relix
 			
 			void clear_pending_signal( int sig )  { sigdelset( &its_pending_signals, sig ); }
 			
-			void clear_signals_pending()  { sigemptyset( &its_pending_signals ); }
-			
 			void block_signals  ( sigset_t sigset );
 			void unblock_signals( sigset_t sigset );
 			

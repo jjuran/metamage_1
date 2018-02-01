@@ -711,8 +711,6 @@ namespace Genie
 		
 		CloseMarkedFileDescriptors( FileDescriptors() );
 		
-		clear_signals_pending();
-		
 		proc.reset_signal_handlers();
 		
 		// We always spawn a new thread for the exec'ed process.
@@ -796,8 +794,6 @@ namespace Genie
 		itsReexecArgs[5] =
 		itsReexecArgs[6] =
 		itsReexecArgs[7] = NULL;
-		
-		clear_signals_pending();
 		
 		// Create the new thread
 		relix::os_thread_box looseThread = new_thread( *this );
