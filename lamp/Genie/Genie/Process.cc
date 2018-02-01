@@ -1067,12 +1067,14 @@ namespace Genie
 	
 	void Process::Raise( int signo )
 	{
+		relix::process& proc = get_process();
+		
 		if ( GetPID() == 1 )
 		{
 			return;
 		}
 		
-		set_pending_signal( signo );
+		proc.set_pending_signal( signo );
 		
 		{
 			if ( relix::os_thread_id thread = get_os_thread() )

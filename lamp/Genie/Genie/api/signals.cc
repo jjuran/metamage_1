@@ -25,7 +25,7 @@ namespace relix
 		
 		if ( proc.get_alarm_clock().check() )
 		{
-			self.set_pending_signal( SIGALRM );
+			proc.set_pending_signal( SIGALRM );
 		}
 		
 		bool signal_was_caught = false;
