@@ -35,18 +35,20 @@ namespace Genie
 	
 	bool Process::HandlePendingSignals( bool may_throw )
 	{
-		relix::process& proc = get_process();
+		thread& self = *this;
+		
+		relix::process& proc = self.get_process();
 		
 		if ( proc.get_alarm_clock().check() )
 		{
-			set_pending_signal( SIGALRM );
+			self.set_pending_signal( SIGALRM );
 		}
 		
 		bool signal_was_caught = false;
 		
-		const sigset_t pending = signals_pending();
+		const sigset_t pending = self.signals_pending();
 		
-		sigset_t active_signals = pending & ~signals_blocked();
+		sigset_t active_signals = pending & ~self.signals_blocked();
 		
 		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
@@ -65,7 +67,7 @@ namespace Genie
 				
 				if ( action.sa_handler == SIG_IGN )
 				{
-					clear_pending_signal( signo );
+					self.clear_pending_signal( signo );
 					
 					continue;
 				}
@@ -76,7 +78,7 @@ namespace Genie
 				{
 					using namespace relix;
 					
-					clear_pending_signal( signo );
+					self.clear_pending_signal( signo );
 					
 					const signal_traits traits = global_signal_traits[ signo ];
 					
