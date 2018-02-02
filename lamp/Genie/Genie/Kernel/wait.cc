@@ -17,6 +17,7 @@
 #include "relix/api/try_again.hh"
 #include "relix/syscall/registry.hh"
 #include "relix/task/process.hh"
+#include "relix/task/process_group.hh"
 
 // Genie
 #include "Genie/current_process.hh"
@@ -43,6 +44,12 @@ namespace Genie
 		bool   has_children;
 	};
 	
+	static inline
+	pid_t get_pgid( const relix::process& proc )
+	{
+		return proc.get_process_group().id();
+	}
+	
 	static void* check_process( void* param, pid_t pid, Process& process )
 	{
 		wait_param& pb = *(wait_param*) param;
@@ -52,13 +59,13 @@ namespace Genie
 			return NULL;  // ignore non-leader threads
 		}
 		
-		const bool is_child     =                   process.GetPPID() == pb.ppid;
-		const bool pgid_matches = pb.pgid == 0  ||  process.GetPGID() == pb.pgid;
+		relix::process& proc = process.get_process();
 		
-		const bool terminated   = process.GetLifeStage() == kProcessZombie;
+		const bool is_child     =                   proc.getppid()   == pb.ppid;
+		const bool pgid_matches = pb.pgid == 0  ||  get_pgid( proc ) == pb.pgid;
 		
-		const bool stopped      = process.get_process().is_stopped();
-		
+		const bool terminated   = proc.is_zombie();
+		const bool stopped      = proc.is_stopped();
 		const bool traced       = false;
 		
 		if ( is_child && pgid_matches )
@@ -105,16 +112,16 @@ namespace Genie
 			p7::throw_errno( ECHILD );
 		}
 		
-		if ( process->GetPPID() != ppid )
+		relix::process& proc = process->get_process();
+		
+		if ( proc.getppid() != ppid )
 		{
 			// Process exists but its not your child
 			p7::throw_errno( EINVAL );
 		}
 		
-		bool terminated = process->GetLifeStage() == kProcessZombie;
-		
-		bool stopped    = process->get_process().is_stopped();
-		
+		bool terminated = proc.is_zombie();
+		bool stopped    = proc.is_stopped();
 		bool traced     = false;
 		
 		if ( terminated  ||  (stopped && (traced || match_untraced)) )
