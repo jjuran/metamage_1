@@ -36,6 +36,8 @@ namespace relix
 		its_times.tms_stime  = 0;
 		its_times.tms_cutime = 0;
 		its_times.tms_cstime = 0;
+		
+		checkpoint_delta();  // Reset clock()-relative timebase
 	}
 	
 	process::process( int id, process& parent )
