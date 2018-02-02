@@ -8,13 +8,11 @@
 
 // relix-kernel
 #include "relix/api/breathe.hh"
+#include "relix/api/current_thread.hh"
 #include "relix/api/thread_yield.hh"
 #include "relix/signal/check_signals.hh"
 #include "relix/task/scheduler.hh"
-
-// Genie
-#include "Genie/current_process.hh"
-#include "Genie/Process.hh"
+#include "relix/task/thread.hh"
 
 
 namespace relix
@@ -25,8 +23,6 @@ namespace relix
 	
 	bool breathe( bool may_throw )
 	{
-		using namespace Genie;
-		
 		if ( check_signals( may_throw ) )
 		{
 			return true;
@@ -36,11 +32,13 @@ namespace relix
 		
 		if ( now - the_last_breath_time > 20000 )
 		{
-			relix::mark_thread_active( current_process().gettid() );
+			const pid_t tid = current_thread().id();
+			
+			mark_thread_active( tid );
 			
 			thread_yield();
 			
-			relix::mark_thread_inactive( current_process().gettid() );
+			mark_thread_inactive( tid );
 			
 			the_last_breath_time = clock();
 			
