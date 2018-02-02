@@ -18,11 +18,9 @@
 
 // relix
 #include "relix/api/current_thread.hh"
+#include "relix/signal/check_signals.hh"
 #include "relix/signal/signal.hh"
 #include "relix/task/thread.hh"
-
-// Genie
-#include "Genie/api/signals.hh"
 
 
 namespace N = Nitrogen;

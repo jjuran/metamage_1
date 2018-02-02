@@ -1,9 +1,9 @@
 /*
-	signals.cc
-	----------
+	check_signals.cc
+	----------------
 */
 
-#include "Genie/api/signals.hh"
+#include "relix/signal/check_signals.hh"
 
 // relix-kernel
 #include "relix/api/current_thread.hh"
@@ -30,21 +30,29 @@ namespace relix
 		
 		bool signal_was_caught = false;
 		
+		sigset_t active_signals;
+		
+	#ifndef __linux__
+		
 		const sigset_t pending = self.signals_pending()
 		                       | proc.signals_pending();
 		
-		sigset_t active_signals = pending & ~self.signals_blocked();
+		active_signals = pending & ~self.signals_blocked();
+		
+	#endif
 		
 		for ( int signo = 1;  signo < NSIG;  ++signo )
 		{
+		#ifndef __linux__
+			
 			if ( !active_signals )
 			{
 				return false;
 			}
 			
-			const sigset_t signo_mask = 1 << (signo - 1);
+		#endif
 			
-			if ( active_signals & signo_mask )
+			if ( sigismember( &active_signals, signo ) )
 			{
 				sigdelset( &active_signals, signo );
 				

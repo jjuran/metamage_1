@@ -9,12 +9,12 @@
 // relix-kernel
 #include "relix/api/breathe.hh"
 #include "relix/api/thread_yield.hh"
+#include "relix/signal/check_signals.hh"
 #include "relix/task/scheduler.hh"
 
 // Genie
 #include "Genie/current_process.hh"
 #include "Genie/Process.hh"
-#include "Genie/api/signals.hh"
 
 
 namespace relix
