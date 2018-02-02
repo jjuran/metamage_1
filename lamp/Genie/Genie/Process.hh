@@ -69,8 +69,6 @@ namespace Genie
 			static void* notify_process( void* param, pid_t, Process& process );
 		
 		public:
-			bool IsBeingTraced() const  { return false; }
-			
 			void Terminate( int wait_status );
 			
 			struct RootProcess {};

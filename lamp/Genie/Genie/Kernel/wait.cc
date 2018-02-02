@@ -59,7 +59,7 @@ namespace Genie
 		
 		const bool stopped      = process.get_process().is_stopped();
 		
-		const bool traced       = process.IsBeingTraced();
+		const bool traced       = false;
 		
 		if ( is_child && pgid_matches )
 		{
@@ -115,7 +115,7 @@ namespace Genie
 		
 		bool stopped    = process->get_process().is_stopped();
 		
-		bool traced     = process->IsBeingTraced();
+		bool traced     = false;
 		
 		if ( terminated  ||  (stopped && (traced || match_untraced)) )
 		{
