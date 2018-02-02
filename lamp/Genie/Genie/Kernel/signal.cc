@@ -11,6 +11,7 @@
 
 // relix-kernel
 #include "relix/api/errno.hh"
+#include "relix/signal/check_signals.hh"
 #include "relix/syscall/getpid.hh"
 #include "relix/syscall/registry.hh"
 #include "relix/syscall/sigaction.hh"
@@ -152,6 +153,13 @@ namespace Genie
 			           : pid ==  0 ? kill_pgid( getpgid(), signo )
 			           : pid == -1 ? kill_pgid( 0,         signo )
 			           :             kill_pgid( -pid,      signo );
+			
+			/*
+				Fatal signals terminate the process immediately.
+				Caught signals remain pending until reentering the kernel.
+			*/
+			
+			relix::check_signals( false );
 			
 			return result;
 		}
