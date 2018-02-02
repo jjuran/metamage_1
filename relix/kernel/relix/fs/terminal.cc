@@ -128,20 +128,14 @@ namespace relix
 				
 				CheckControllingTerminal( ctty, *that );
 				
+				// If the terminal has an existing foreground process group,
+				// it must be in the same session as the calling process.
+				if ( ! session_controls_pgrp( process_session, extra.pgid ) )
 				{
-					// If the terminal has an existing foreground process group,
-					// it must be in the same session as the calling process.
-					if ( session_controls_pgrp( process_session, extra.pgid ) )
-					{
-						// This must be the caller's controlling terminal.
-						if ( ctty == that )
-						{
-							setpgrp( *that, get_process_group_in_session( *argp, process_session )->id() );
-						}
-					}
-					
 					p7::throw_errno( ENOTTY );
 				}
+				
+				setpgrp( *that, get_process_group_in_session( *argp, process_session )->id() );
 				
 				break;
 			
