@@ -16,7 +16,7 @@ $ vc 'bool vector'
 %
 
 $ vc 'vector[ record(size: 4) ]'
-1 >= '<vector type>'
+1 >= 'vector[record ("size" => 4)]'
 
 %
 
@@ -121,4 +121,4 @@ $ vc 'vector == vector[ record(size: 1) ]'
 %
 
 $ vc '1 .. 2 map { record(size: _) } map vector'
-1 >= '[<vector type>, <vector type>]'
+1 >= '[vector[record ("size" => 1)], vector[record ("size" => 2)]]'

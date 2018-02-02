@@ -5,8 +5,12 @@
 
 #include "vlib/types/vector/type.hh"
 
+// plus
+#include "plus/string/concat.hh"
+
 // vlib
 #include "vlib/equal.hh"
+#include "vlib/string-utils.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
@@ -34,16 +38,19 @@ namespace vlib
 	}
 	
 	static
-	const char* vectortype_str_data( const Value& v )
+	plus::string vectortype_str_make( const Value& v )
 	{
-		return "<vector type>";
+		const Vector_Type& vt = static_cast< const Vector_Type& >( v );
+		
+		return "vector" + rep( make_array( vt.element_type() ) );
 	}
 	
 	static const stringify vectortype_str =
 	{
-		&vectortype_str_data,
 		NULL,
 		NULL,
+		NULL,
+		&vectortype_str_make,
 	};
 	
 	const stringifiers vectortype_stringifiers =
