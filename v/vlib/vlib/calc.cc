@@ -379,10 +379,6 @@ namespace vlib
 				THROW( "unary operator not defined for types" );
 				break;
 			
-			case Value_function:
-				THROW( "unary operator not defined for functions" );
-				break;
-			
 			default:
 				break;
 		}
@@ -1043,9 +1039,6 @@ namespace vlib
 				
 				case Value_string:
 					THROW( "operator not defined for string values" );
-				
-				case Value_function:
-					THROW( "operator not defined for functions" );
 				
 				case Value_base_type:
 					THROW( "operator not defined for types" );

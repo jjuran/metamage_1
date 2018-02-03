@@ -6,7 +6,7 @@
 #include "vlib/is_function.hh"
 
 // vlib
-#include "vlib/value.hh"
+#include "vlib/types/proc.hh"
 
 
 namespace vlib
@@ -14,7 +14,7 @@ namespace vlib
 	
 	bool is_function( const Value& v )
 	{
-		if ( v.type() == Value_function )
+		if ( v.is< Proc >() )
 		{
 			return true;
 		}

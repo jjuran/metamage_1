@@ -50,7 +50,6 @@ namespace vlib
 		Value_number,
 		Value_string,
 		Value_packed,
-		Value_function,
 		Value_pair,
 		Value_other,
 		
@@ -60,7 +59,6 @@ namespace vlib
 		V_int   = Value_number,
 		V_str   = Value_string,
 		V_pack  = Value_packed,
-		V_proc  = Value_function,
 	};
 	
 	struct mutable_list_overrun {};
