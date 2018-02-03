@@ -119,6 +119,11 @@ namespace Genie
 		
 	}
 	
+	static inline
+	pid_t getpgid()
+	{
+		return current_process().GetPGID();
+	}
 	
 	static int kill( pid_t pid, int signo )
 	{
@@ -145,14 +150,12 @@ namespace Genie
 			return kill_tid( pid, signo );
 		}
 		
-		Process& current = current_process();
-		
 		try
 		{
-			int result = pid >   0 ? kill_pid ( pid,               signo )
-			           : pid ==  0 ? kill_pgid( current.GetPGID(), signo )
-			           : pid == -1 ? kill_pgid( 0,                 signo )
-			           :             kill_pgid( -pid,              signo );
+			int result = pid >   0 ? kill_pid ( pid,       signo )
+			           : pid ==  0 ? kill_pgid( getpgid(), signo )
+			           : pid == -1 ? kill_pgid( 0,         signo )
+			           :             kill_pgid( -pid,      signo );
 			
 			return result;
 		}
