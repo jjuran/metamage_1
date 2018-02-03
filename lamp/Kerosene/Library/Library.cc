@@ -192,6 +192,8 @@ void abort()
 		during the kill() call made by raise().
 	*/
 	
+retry:
+	
 	(void) raise( SIGABRT );
 	
 	/*
@@ -201,13 +203,18 @@ void abort()
 		but the subsequent sigaction() call will be interrupted to call the
 		signal handler.  If the handler returns, then we reset the default
 		signal disposition and the next raise() call terminates the process.
+		
+		In the event that the next raise() call switches to another thread,
+		which then reinstalls the signal handler, raise() may return again.
+		In that case, reset the signal disposition and call raise() again,
+		ad infinitum, until the process terminates.
 	*/
 	
 	struct sigaction action = { SIG_DFL, 0, 0 };
 	
 	(void) sigaction( SIGABRT, &action, NULL );
 	
-	(void) raise( SIGABRT );
+	goto retry;
 }
 
 /*
