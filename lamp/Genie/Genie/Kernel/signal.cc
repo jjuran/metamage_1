@@ -133,9 +133,9 @@ namespace Genie
 			return 0;
 		}
 		
-		const bool kill_pthread = signo & __SIGTHREAD;
+		const bool is_thread = signo & __SIGTHREAD;
 		
-		if ( kill_pthread )
+		if ( is_thread )
 		{
 			signo &= ~__SIGTHREAD;
 		}
@@ -145,14 +145,10 @@ namespace Genie
 			return set_errno( EINVAL );
 		}
 		
-		if ( kill_pthread )
-		{
-			return kill_tid( pid, signo );
-		}
-		
 		try
 		{
-			int result = pid >   0 ? kill_pid ( pid,       signo )
+			int result = is_thread ? kill_tid ( pid,       signo )
+			           : pid >   0 ? kill_pid ( pid,       signo )
 			           : pid ==  0 ? kill_pgid( getpgid(), signo )
 			           : pid == -1 ? kill_pgid( 0,         signo )
 			           :             kill_pgid( -pid,      signo );
