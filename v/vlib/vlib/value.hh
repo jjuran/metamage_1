@@ -28,7 +28,6 @@ namespace vlib
 	};
 	
 	struct dispatch;
-	struct proc_info;
 	struct type_info;
 	struct Expr;
 	class Symbol;
@@ -94,13 +93,6 @@ namespace vlib
 			Value( const vu_string& sx, value_type type, const dispatch* d )
 			:
 				its_box( sx, type )
-			{
-				its_dispatch = d;
-			}
-			
-			Value( const proc_info& proc, const dispatch* d )
-			:
-				its_box( &proc, V_proc )
 			{
 				its_dispatch = d;
 			}

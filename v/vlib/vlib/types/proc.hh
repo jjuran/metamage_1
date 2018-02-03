@@ -26,8 +26,9 @@ namespace vlib
 				return v.type() == V_proc;
 			}
 			
-			Proc( const proc_info& proc ) : Value( proc, &proc_dispatch )
+			Proc( const proc_info& proc ) : Value( V_proc, &proc_dispatch )
 			{
+				pod_cast< const proc_info* >() = &proc;
 			}
 			
 			function_type addr() const
