@@ -182,6 +182,27 @@ signal_handler_t signal( int signo, signal_handler_t func )
 
 void abort()
 {
+	const sigset_t abrt = 1 << (SIGABRT - 1);
+	
+	(void) sigprocmask( SIG_UNBLOCK, &abrt, NULL );
+	
+	/*
+		With the signal unblocked in this thread, we needn't care whether
+		it's sent to the thread or the process, since it will be delivered
+		during the kill() call made by raise().
+	*/
+	
+	(void) raise( SIGABRT );
+	
+	/*
+		If the disposition is SIG_DFL, the process is terminated immediately
+		and raise() doesn't return.  If it's SIG_IGN, we raise() again with
+		SIG_DFL.  If the signal sent by kill() is caught, it remains pending,
+		but the subsequent sigaction() call will be interrupted to call the
+		signal handler.  If the handler returns, then we reset the default
+		signal disposition and the next raise() call terminates the process.
+	*/
+	
 	struct sigaction action = { SIG_DFL, 0, 0 };
 	
 	(void) sigaction( SIGABRT, &action, NULL );
