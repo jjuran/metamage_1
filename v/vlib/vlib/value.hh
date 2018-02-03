@@ -403,30 +403,6 @@ namespace vlib
 	}
 	
 	inline
-	bool is_function( const Value& v )
-	{
-		if ( v.type() == Value_function )
-		{
-			return true;
-		}
-		
-		if ( Expr* expr = v.expr() )
-		{
-			if ( expr->op == Op_bind_args  ||  expr->op == Op_invocation )
-			{
-				return true;
-			}
-			
-			if ( expr->op == Op_lambda )
-			{
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	inline
 	Value make_array( const Value& list )
 	{
 		return is_empty_list( list ) ? empty_array

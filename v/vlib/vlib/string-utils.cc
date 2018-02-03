@@ -23,6 +23,7 @@
 
 // vlib
 #include "vlib/error.hh"
+#include "vlib/is_function.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/stringify.hh"

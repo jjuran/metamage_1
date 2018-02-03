@@ -9,6 +9,7 @@
 #include <string.h>
 
 // vlib
+#include "vlib/is_function.hh"
 #include "vlib/is_type.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/targets.hh"
