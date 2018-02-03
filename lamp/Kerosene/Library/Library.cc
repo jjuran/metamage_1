@@ -236,7 +236,14 @@ int mkstemp( char* name )
 
 int raise( int sig )
 {
-	return kill( getpid(), sig );
+	if ( int err = pthread_kill( pthread_self(), sig ) )
+	{
+		errno = err;
+		
+		return -1;
+	}
+	
+	return 0;
 }
 
 int system( const char* command )
