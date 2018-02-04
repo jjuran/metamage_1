@@ -28,6 +28,8 @@ namespace poseven
 		Thread_ended,
 	};
 	
+	struct thread_cancelled {};
+	
 	typedef void* (*thread_entry_proc)( void* param );
 	
 	class thread

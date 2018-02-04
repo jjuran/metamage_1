@@ -19,8 +19,6 @@
 namespace poseven
 {
 	
-	struct thread_cancelled {};
-	
 	static thread_key< thread* >* any_thread_object_key;  // i.e. "if any"
 	
 	static
