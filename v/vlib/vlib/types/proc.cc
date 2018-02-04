@@ -9,7 +9,6 @@
 #include "debug/assert.hh"
 
 // vlib
-#include "vlib/proc_info.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -116,7 +115,7 @@ namespace vlib
 	static
 	Value call_function( const Value& f, const Value& arguments )
 	{
-		const proc_info& proc = f.proc();
+		const proc_info& proc = f.dereference< proc_info >();
 		
 		if ( const Value* prototype = proc.prototype )
 		{

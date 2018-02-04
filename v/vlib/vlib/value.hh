@@ -231,11 +231,6 @@ namespace vlib
 				return *static_cast< const T* >( its_box.pointer() );
 			}
 			
-			const proc_info& proc() const
-			{
-				return *(const proc_info*) its_box.pointer();
-			}
-			
 			const type_info& typeinfo() const
 			{
 				return *(const type_info*) its_box.pointer();

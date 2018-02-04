@@ -20,7 +20,6 @@
 #include "vlib/is_type.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/os.hh"
-#include "vlib/proc_info.hh"
 #include "vlib/return.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/symbol.hh"
@@ -43,6 +42,7 @@
 #include "vlib/types/lambda.hh"
 #include "vlib/types/null.hh"
 #include "vlib/types/packed.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/range.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/table.hh"
@@ -580,7 +580,7 @@ namespace vlib
 		const Value& invoke = expr->left;
 		const Value& body   = expr->right;
 		
-		return invoke.proc().addr( body );
+		return invoke.as< Proc >().call( body );
 	}
 	
 	static

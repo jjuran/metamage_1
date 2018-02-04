@@ -7,6 +7,7 @@
 #define VLIB_TYPES_PROC_HH
 
 // vlib
+#include "vlib/proc_info.hh"
 #include "vlib/value.hh"
 
 
@@ -27,6 +28,16 @@ namespace vlib
 			
 			Proc( const proc_info& proc ) : Value( proc, &proc_dispatch )
 			{
+			}
+			
+			function_type addr() const
+			{
+				return dereference< proc_info >().addr;
+			}
+			
+			Value call( const Value& arguments ) const
+			{
+				return addr()( arguments );
 			}
 	};
 	
