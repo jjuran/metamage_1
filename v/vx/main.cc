@@ -7,6 +7,7 @@
 #include <unistd.h>
 
 // Standard C
+#include <signal.h>
 #include <string.h>
 
 // Standard C++
@@ -187,6 +188,8 @@ int main( int argc, char** argv )
 	}
 	
 	char* const* args = get_options( argv );
+	
+	(void) signal( SIGPIPE, SIG_IGN );
 	
 	const int argn = argc - (args - argv);
 	
