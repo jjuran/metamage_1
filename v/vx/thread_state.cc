@@ -113,6 +113,12 @@ namespace vlib
 			
 			return param;
 		}
+		catch ( const p7::thread_cancelled& )
+		{
+			pb.status = Thread_cancelled;
+			
+			throw;
+		}
 		catch ( const user_exception& e )
 		{
 			pb.result = e.object;

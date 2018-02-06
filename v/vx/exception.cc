@@ -8,6 +8,12 @@
 // POSIX
 #include <string.h>
 
+// Standard C
+#include <errno.h>
+
+// poseven
+#include "poseven/types/thread.hh"
+
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/types/integer.hh"
@@ -24,6 +30,11 @@ namespace vlib
 	
 	Value error_desc( int err )
 	{
+		if ( err == EINTR )
+		{
+			poseven::thread::testcancel();
+		}
+		
 		Value error = mapping( "errno", Integer(           err   ) );
 		Value desc  = mapping( "desc",  String ( strerror( err ) ) );
 		

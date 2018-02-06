@@ -20,6 +20,7 @@ namespace vlib
 	{
 		Thread_running,
 		Thread_returned,
+		Thread_cancelled,
 		Thread_threw_exception,
 	};
 	
@@ -50,6 +51,8 @@ namespace vlib
 			{
 				join();
 			}
+			
+			void cancel()  { its_thread.cancel(); }
 			
 			void join();
 			
