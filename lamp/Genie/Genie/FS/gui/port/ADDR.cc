@@ -1057,7 +1057,12 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		vfs::filehandle* result = new vfs::filehandle( that,
+		vfs::node_ptr file = new vfs::node( that->owner(),
+		                                    that->name(),
+		                                    S_IFREG | 0000,
+		                                    that->methods() );
+		
+		vfs::filehandle* result = new vfs::filehandle( file.get(),
 		                                               flags,
 		                                               NULL,
 		                                               0,
