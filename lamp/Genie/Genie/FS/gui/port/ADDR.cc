@@ -1057,7 +1057,11 @@ namespace Genie
 			p7::throw_errno( ENOENT );
 		}
 		
-		vfs::filehandle_ptr result = new vfs::filehandle( that, flags, NULL, 0, &destroy_lock_handle );
+		vfs::filehandle* result = new vfs::filehandle( that,
+		                                               flags,
+		                                               NULL,
+		                                               0,
+		                                               &destroy_lock_handle );
 		
 		locked = true;
 		
