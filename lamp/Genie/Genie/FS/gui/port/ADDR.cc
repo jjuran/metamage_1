@@ -1040,7 +1040,9 @@ namespace Genie
 	
 	static vfs::filehandle_ptr lock_open( const vfs::node* that, int flags, mode_t mode )
 	{
-		if ( gWindowParametersMap[ that->owner() ].itIsLocked )
+		bool& locked = gWindowParametersMap[ that->owner() ].itIsLocked;
+		
+		if ( locked )
 		{
 			if ( flags & O_EXCL )
 			{
@@ -1057,7 +1059,7 @@ namespace Genie
 		
 		vfs::filehandle_ptr result = new vfs::filehandle( that, flags, NULL, 0, &destroy_lock_handle );
 		
-		gWindowParametersMap[ that->owner() ].itIsLocked = true;
+		locked = true;
 		
 		return result;
 	}
