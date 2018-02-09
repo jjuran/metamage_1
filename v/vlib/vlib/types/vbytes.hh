@@ -14,6 +14,9 @@ namespace vlib
 {
 	
 	struct dispatch;
+	struct stringify;
+	
+	extern const stringify vbytes_cpy;
 	
 	class VBytes : public Value
 	{

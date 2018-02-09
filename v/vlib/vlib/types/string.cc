@@ -26,6 +26,7 @@
 #include "vlib/types/pointer.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/vbytes.hh"
 
 
 #undef mempcpy
@@ -51,25 +52,6 @@ namespace vlib
 	}
 	
 	static
-	const char* string_str_data( const Value& v )
-	{
-		return v.string().data();
-	}
-	
-	static
-	size_t string_str_size( const Value& v )
-	{
-		return v.string().size();
-	}
-	
-	static const stringify string_str =
-	{
-		&string_str_data,
-		&string_str_size,
-		NULL,
-	};
-	
-	static
 	size_t string_rep_size( const Value& v )
 	{
 		return quote_string( v.string() ).size();
@@ -90,9 +72,9 @@ namespace vlib
 	
 	static const stringifiers string_stringifiers =
 	{
-		&string_str,
+		&vbytes_cpy,  // str
 		&string_rep,
-		&string_str,  // reuse str for bin
+		&vbytes_cpy,  // reuse str for bin
 	};
 	
 	static

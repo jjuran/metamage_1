@@ -105,30 +105,11 @@ namespace vlib
 		&packed_rep_copy,
 	};
 	
-	static
-	const char* packed_bin_data( const Value& v )
-	{
-		return v.string().data();
-	}
-	
-	static
-	size_t packed_bin_size( const Value& v )
-	{
-		return v.string().size();
-	}
-	
-	static const stringify packed_bin =
-	{
-		&packed_bin_data,
-		&packed_bin_size,
-		NULL,
-	};
-	
 	static const stringifiers packed_stringifiers =
 	{
 		&packed_str,
 		&packed_rep,
-		&packed_bin,
+		&vbytes_cpy,  // bin
 	};
 	
 	static
