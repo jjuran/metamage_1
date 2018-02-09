@@ -2,7 +2,7 @@
 
 def pack_icon
 {
-	const source = _.string
+	const source = _
 	
 	var meat = mince substr( source, 1 )
 	
@@ -16,6 +16,6 @@ def pack_icon
 
 const bytes_per_frame = (32 * 2 + 2) * 32 + 1
 
-const source = packed load argv[ 1 ]
+const source = load argv[ 1 ]
 
 OUT <== [source / -bytes_per_frame] map pack_icon
