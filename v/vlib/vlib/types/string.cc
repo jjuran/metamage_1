@@ -9,7 +9,6 @@
 #include "more/string.h"
 
 // vlib
-#include "vlib/array-utils.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/quote.hh"
@@ -115,26 +114,6 @@ namespace vlib
 		}
 		
 		return Value();
-	}
-	
-	Value assign_byte_to_index( Value& s, const Value& x, const Byte& byte )
-	{
-		Expr* expr = x.expr();
-		
-		const Value& subscript = expr->right;
-		
-		const unsigned i = subscript_integer( subscript );
-		
-		if ( i >= s.string().size() )
-		{
-			THROW( "subscript exceeds string/pack bounds" );
-		}
-		
-		char* data = (char*) s.string().data();
-		
-		data[ i ] = byte;
-		
-		return byte;
 	}
 	
 	static
