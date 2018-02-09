@@ -41,11 +41,10 @@
 #include "vlib/types/iterator.hh"
 #include "vlib/types/lambda.hh"
 #include "vlib/types/null.hh"
-#include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/range.hh"
-#include "vlib/types/string.hh"
 #include "vlib/types/table.hh"
+#include "vlib/types/vbytes.hh"
 
 
 namespace vlib
@@ -1008,13 +1007,12 @@ namespace vlib
 			
 			if ( is_empty_array( right )  ||  right.expr() != 0 )  // NULL
 			{
-				switch ( left.type() )
+				if ( is_bytes( left ) )
 				{
-					case Value_packed:  return Packed( pack( v ) );
-					case Value_string:  return String( str ( v ) );
-					
-					default:
-						break;
+					return VBytes( left.type() == V_str ? str ( v )
+					                                    : pack( v ),
+					               left.type(),
+					               left.dispatch_methods() );
 				}
 			}
 			
@@ -1055,8 +1053,7 @@ namespace vlib
 		{
 			const plus::string s = repeat_bytes( left.string(), right );
 			
-			return left.type() == V_str ? Value( String( s ) )
-			                            : Value( Packed( s ) );
+			return VBytes( s, left.type(), left.dispatch_methods() );
 		}
 		
 		THROW( "operator not defined on mixed types" );

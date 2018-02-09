@@ -25,9 +25,8 @@
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
-#include "vlib/types/packed.hh"
-#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/vbytes.hh"
 
 
 namespace vlib
@@ -129,12 +128,9 @@ namespace vlib
 	static
 	Value substring( const Value& v, size_t i, size_t n = plus::string::npos )
 	{
-		const bool str = v.type() == V_str;
-		
 		const plus::string substring = v.string().substr( i, n );
 		
-		return str ? Value( String( substring ) )
-		           : Value( Packed( substring ) );
+		return VBytes( substring, v.type(), v.dispatch_methods() );
 	}
 	
 	static

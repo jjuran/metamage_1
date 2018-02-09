@@ -28,6 +28,7 @@
 #include "vlib/types/pointer.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/vbytes.hh"
 
 
 namespace vlib
@@ -249,6 +250,15 @@ namespace vlib
 		return result.get();
 	}
 	
+	static inline
+	Value flatten( const Value& v, const Value& type_sample )
+	{
+		return VBytes( type_sample.type() == V_str ? str ( v )
+		                                           : pack( v ),
+		               type_sample.type(),
+		               type_sample.dispatch_methods() );
+	}
+	
 	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
@@ -256,12 +266,7 @@ namespace vlib
 		{
 			case Op_function:
 			case Op_named_unary:
-				if ( b.is< String >() )
-				{
-					return String( str( Value( a, b ) ) );
-				}
-				
-				return Packed( pack( Value( a, b ) ) );
+				return flatten( Value( a, b ), b.is< String >() ? b : a );
 			
 			case Op_intersection:
 			case Op_exclusion:
