@@ -126,7 +126,7 @@ my %fsmap =
 		Tools =>
 		[
 			# Build tools
-			\ qw( A-line ar cpres ld mpwrez mwcc mxcpp postlink-68k-tool strip vers ),
+			\ qw( A-line ar cpres ld mpwrez mwcc mxcpp postlink-68k-tool strip ),
 			# Debugging
 			\ qw( d68k demangle ),
 			# Exceptions
