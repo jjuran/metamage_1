@@ -31,6 +31,8 @@ namespace vlib
 	
 	Value assign_byte_to_index( Value& s, const Value& x, const Byte& byte );
 	
+	Value division( const VBytes& bytes, const Value& divisor );
+	
 }
 
 #endif
