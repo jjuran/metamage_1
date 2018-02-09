@@ -5,6 +5,9 @@
 
 #include "vlib/types/vbytes.hh"
 
+// gear
+#include "gear/find.hh"
+
 // bignum
 #include "bignum/integer.hh"
 
@@ -125,6 +128,48 @@ namespace vlib
 		return result.get();
 	}
 	
+	static
+	Value division( const VBytes& bytes, char c )
+	{
+		typedef plus::string::size_type  size_t;
+		
+		const plus::string& s = bytes.string();
+		
+		const char* begin = s.data();
+		const size_t size = s.size();
+		
+		const char* end = begin + size;
+		
+		const char* q = gear::find_first_match( begin, end, c, NULL );
+		
+		if ( q == NULL )
+		{
+			return bytes;
+		}
+		
+		const char* p = begin;
+		
+		list_builder result;
+		
+		goto start;
+		
+		do
+		{
+			p = ++q;
+			
+			q = gear::find_first_match( q, end, c, end );
+			
+		start:
+			
+			result.append( VBytes( s.substr( p - begin, q - p ),
+			                       bytes.type(),
+			                       bytes.dispatch_methods() ) );
+		}
+		while ( q < end );
+		
+		return result.get();
+	}
+	
 	Value division( const VBytes& bytes, const Value& divisor )
 	{
 		if ( const Integer* integer = divisor.is< Integer >() )
@@ -132,7 +177,12 @@ namespace vlib
 			return division( bytes, integer->get() );
 		}
 		
-		THROW( "divisor of bytes must be an integer" );
+		if ( const Byte* byte = divisor.is< Byte >() )
+		{
+			return division( bytes, byte->get() );
+		}
+		
+		THROW( "divisor of bytes must be an integer or byte" );
 		
 		return Value();
 	}
