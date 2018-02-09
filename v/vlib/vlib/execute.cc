@@ -551,7 +551,7 @@ namespace vlib
 					THROW( "declarator operand must be a symbol" );
 				}
 				
-				const Value resolved = resolve_symbol( expr->right, stack );
+				const Value& resolved = resolve_symbol( expr->right, stack );
 				
 				if ( expr->op == Op_def )
 				{
@@ -586,21 +586,21 @@ namespace vlib
 			
 			if ( expr->op == Op_do_2 )
 			{
-				const Value test = invocable_expression( expr->left, stack );
+				const Value& test = invocable_expression( expr->left, stack );
 				
 				return Value( test, Op_do_2, execute( expr->right, stack ) );
 			}
 			
 			if ( expr->op == Op_while_2 )
 			{
-				const Value test = invocable_expression( expr->right, stack );
+				const Value& test = invocable_expression( expr->right, stack );
 				
 				return Value( execute( expr->left, stack ), Op_while_2, test );
 			}
 			
 			if ( is_elseif( expr ) )
 			{
-				const Value proc = invocable_expression( expr->right, stack );
+				const Value& proc = invocable_expression( expr->right, stack );
 				
 				return Value( execute( expr->left, stack ), Op_else, proc );
 			}
