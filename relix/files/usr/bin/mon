@@ -1,0 +1,38 @@
+#!/usr/bin/vx -Z
+
+chdir "/gui/port/psmon"
+
+try { touch "w/select"; exit 0 } catch {}
+
+const lock = try { rewrite "lock" } catch { exit 0 }
+
+const LF = "\n"
+
+rewrite "vis"   <== 0 LF
+rewrite "pos"   <== "10,47" LF
+rewrite "size"  <== "500x100" LF
+rewrite "title" <== "Processes" LF
+
+touch "window"
+
+rewrite "w/text-size" <== 9 LF
+rewrite "w/text-font" <== 4 LF
+
+try
+{
+	rewrite "w/back-color" <== "000" LF
+	rewrite "w/fore-color" <== "0f0" LF
+}
+catch {}
+
+link( "/gui/new/frame",   "view"   )
+link( "/gui/new/caption", "v/view" )
+
+rewrite "v/padding"   <== 4 LF
+rewrite "v/v/wrapped" <== 0 LF
+
+dup2( rewrite "v/v/text", OUT )
+
+run .["daemonize --cwd --stdout --ctty=tty -- /bin/ps --wide --sleep=0.2" / ' ']
+
+rewrite "vis" <== 1 LF
