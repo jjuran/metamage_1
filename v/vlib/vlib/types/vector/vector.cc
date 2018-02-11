@@ -131,7 +131,7 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_subscript:
-				return vector.at( integer_cast< Vector::size_type >( b ) );
+				return vector.at( integer_cast< size_t >( b ) );
 			
 			default:
 				break;
@@ -146,11 +146,9 @@ namespace vlib
 	                           const Value&   x,
 	                           const Value&   b )
 	{
-		typedef Vector::size_type size_type;
-		
 		Vector& vector = static_cast< Vector& >( *target.addr );
 		
-		const size_type i = integer_cast< size_type >( x.expr()->right );
+		const size_t i = integer_cast< size_t >( x.expr()->right );
 		
 		switch ( op )
 		{
@@ -284,7 +282,7 @@ namespace vlib
 	}
 	
 	static inline
-	size_t sizeof_vector( const Value& type, Vector::size_type n )
+	size_t sizeof_vector( const Value& type, size_t n )
 	{
 		const size_t unit_size = endec_unit_size( endec_from_type( type ) );
 		
@@ -296,7 +294,7 @@ namespace vlib
 		return unit_size * n;
 	}
 	
-	Vector::Vector( const Value& type, size_type n )
+	Vector::Vector( const Value& type, size_t n )
 	:
 		Value( type,
 		       Op_list,
@@ -325,14 +323,14 @@ namespace vlib
 		return endec_from_type( get_type() );
 	}
 	
-	Vector::size_type Vector::size() const
+	size_t Vector::size() const
 	{
 		const size_t unit_size = endec_unit_size_unchecked( get_endec() );
 		
 		return expr()->right.string().size() / unit_size;
 	}
 	
-	Value Vector::at( size_type i ) const
+	Value Vector::at( size_t i ) const
 	{
 		const Value& endec = get_endec();
 		
@@ -342,7 +340,7 @@ namespace vlib
 		
 		const plus::string& memory = expr()->right.string();
 		
-		const size_type length = memory.size() / unit_size;
+		const size_t length = memory.size() / unit_size;
 		
 		if ( i >= length )
 		{
@@ -358,7 +356,7 @@ namespace vlib
 		return result;
 	}
 	
-	Value Vector::assign_at( const Value& v, size_type i, bool coercive )
+	Value Vector::assign_at( const Value& v, size_t i, bool coercive )
 	{
 		// TODO:  What about coercion?
 		
@@ -370,7 +368,7 @@ namespace vlib
 		
 		const plus::string& memory = expr()->right.unshare().string();
 		
-		const size_type length = memory.size() / unit_size;
+		const size_t length = memory.size() / unit_size;
 		
 		if ( i >= length )
 		{

@@ -6,6 +6,9 @@
 #ifndef VLIB_TYPES_VECTOR_VECTOR_HH
 #define VLIB_TYPES_VECTOR_VECTOR_HH
 
+// more-libc
+#include "more/size.h"
+
 // vlib
 #include "vlib/value.hh"
 
@@ -21,14 +24,12 @@ namespace vlib
 	class Vector : public Value
 	{
 		public:
-			typedef unsigned long size_type;
-			
 			static bool test( const Value& v )
 			{
 				return v.dispatch_methods() == &vector_dispatch;
 			}
 			
-			explicit Vector( const Value& type, size_type n = 0 );
+			Vector( const Value& type, size_t n );
 			
 			Vector( const Value& type, const plus::string& buffer );
 			
@@ -36,11 +37,11 @@ namespace vlib
 			
 			const Value& get_endec() const;
 			
-			size_type size() const;
+			size_t size() const;
 			
-			Value at( size_type i ) const;
+			Value at( size_t i ) const;
 			
-			Value assign_at( const Value& v, size_type i, bool coercive );
+			Value assign_at( const Value& v, size_t i, bool coercive );
 	};
 	
 	extern const type_info vector_vtype;
