@@ -39,6 +39,7 @@ const month_days =
 
 const utc = "UTC"
 
+export
 def time_pieces (secs)
 {
 	const q = 365 * 4 + 1
