@@ -44,6 +44,8 @@ namespace vlib
 			Value assign_at( const Value& v, size_t i, bool coercive );
 	};
 	
+	size_t sizeof_vector( const Value& type, size_t n );
+	
 	extern const type_info vector_vtype;
 	
 }

@@ -281,7 +281,6 @@ namespace vlib
 		return vt.element_type();
 	}
 	
-	static inline
 	size_t sizeof_vector( const Value& type, size_t n )
 	{
 		const size_t unit_size = endec_unit_size( endec_from_type( type ) );
