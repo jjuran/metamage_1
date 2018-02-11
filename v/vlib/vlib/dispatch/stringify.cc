@@ -29,6 +29,11 @@ namespace vlib
 			return strlen( methods.data( v ) );
 		}
 		
+		if ( methods.make )
+		{
+			throw dynamic_data_exception();
+		}
+		
 		return 0;  // FIXME:  Throw an exception?
 	}
 	

@@ -8,6 +8,9 @@
 // Standard C
 #include <string.h>
 
+// Standard C++
+#include <vector>
+
 // more-libc
 #include "more/string.h"
 
@@ -193,6 +196,28 @@ namespace vlib
 	}
 	
 	
+	class string_maker
+	{
+		private:
+			std::vector< plus::string > its_cache;
+			
+			size_t its_index;
+		
+		public:
+			string_maker() : its_index()
+			{
+			}
+			
+			size_t composite_length( const Value&     value,
+			                         stringification  mode,
+			                         bool             print_parens = true );
+			
+			char* make_string( char*            p,
+			                   const Value&     value,
+			                   stringification  mode,
+			                   bool             print_parens = true );
+	};
+	
 	static
 	const stringify* get_str_methods( const Value& v, stringification mode )
 	{
@@ -217,14 +242,22 @@ namespace vlib
 		return NULL;
 	}
 	
-	static
-	size_t composite_length( const Value&     value,
-	                         stringification  mode,
-	                         bool             print_parens = true )
+	size_t string_maker::composite_length( const Value&     value,
+	                                       stringification  mode,
+	                                       bool             print_parens )
 	{
 		if ( const stringify* str = get_str_methods( value, mode ) )
 		{
-			return get_stringified_size( *str, value );
+			try
+			{
+				return get_stringified_size( *str, value );
+			}
+			catch ( const dynamic_data_exception& )
+			{
+				its_cache.push_back( str->make( value ) );
+				
+				return its_cache.back().size();
+			}
 		}
 		
 		if ( mode == Stringified_to_pack )
@@ -321,15 +354,23 @@ namespace vlib
 		return total + composite_length( expr->right, mode );
 	}
 	
-	static
-	char* make_string( char*            p,
-	                   const Value&     value,
-	                   stringification  mode,
-	                   bool             print_parens = true )
+	char* string_maker::make_string( char*            p,
+	                                 const Value&     value,
+	                                 stringification  mode,
+	                                 bool             print_parens )
 	{
 		if ( const stringify* str = get_str_methods( value, mode ) )
 		{
-			return copy_stringified( p, *str, value );
+			try
+			{
+				return copy_stringified( p, *str, value );
+			}
+			catch ( const dynamic_data_exception& )
+			{
+				const plus::string& s = its_cache[ its_index++ ];
+				
+				return mempcpy( p, s );
+			}
 		}
 		
 		if ( mode == Stringified_to_pack )
@@ -495,13 +536,15 @@ namespace vlib
 	
 	plus::string make_string( const Value& value, stringification mode )
 	{
-		const size_t size = composite_length( value, mode );
+		string_maker maker;
+		
+		const size_t size = maker.composite_length( value, mode );
 		
 		plus::string result;
 		
 		char* p = result.reset( size );
 		
-		make_string( p, value, mode );
+		maker.make_string( p, value, mode );
 		
 		return result;
 	}
@@ -560,7 +603,9 @@ namespace vlib
 		
 		size *= n - 1;
 		
-		size += composite_length( v, Stringified_to_print );
+		string_maker maker;
+		
+		size += maker.composite_length( v, Stringified_to_print );
 		
 		if ( size > size_t( -1 ) )
 		{
@@ -581,7 +626,7 @@ namespace vlib
 			
 		loop_start:
 			
-			p = make_string( p, it.use(), Stringified_to_print );
+			p = maker.make_string( p, it.use(), Stringified_to_print );
 		}
 		while ( it );
 		
