@@ -89,6 +89,13 @@ def calendar_month (year, month, day)
 
 def ymd
 {
+	if argv.length == 1 then
+	{
+		const date-time = import "../lib/v/date-time"
+		
+		return *[ date-time.time_pieces time() ][ 0 .. 2 ]
+	}
+	
 	if argv.length < 3 then
 	{
 		warn "Usage:  cal <year> <month>"
