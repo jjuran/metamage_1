@@ -1,0 +1,24 @@
+module sockaddr
+
+export
+def display
+{
+	const sa = _
+	
+	const family = u8 (sa[ 1 ] or sa[ 0 ])
+	
+	const addr
+	
+	if family == 2 then
+	{
+		addr = ".".join .*(sa[ 4 -> 8 ] map u8)
+	}
+	else
+	{
+		return sa
+	}
+	
+	const port = u8 sa[ 2 ] * 256 + u8 sa[ 3 ]
+	
+	return addr ":" port
+}
