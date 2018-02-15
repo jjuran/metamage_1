@@ -6,6 +6,7 @@ const libdir = bindir "/../lib/"
 const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
 
 const date-time = import "date-time"
+const sockaddr  = import "sockaddr"
 
 const port = getenv "PAIRUP_PORT"
 
@@ -29,7 +30,7 @@ def recruit
 	
 	const connection = accept listener-fd
 	
-	respond name ":  " (" " * n) connection.address
+	respond name ":  " (" " * n) sockaddr.display connection.address
 	
 	return connection.socket
 }
