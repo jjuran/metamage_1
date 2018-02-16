@@ -13,6 +13,10 @@ def display
 	{
 		addr = ".".join *(sa[ 4 -> 8 ] map u8)
 	}
+	else if family == 30 then
+	{
+		addr = "[" ":".join( hex sa[ 8 -> 24 ] / -4 ) "]"
+	}
 	else
 	{
 		return sa
