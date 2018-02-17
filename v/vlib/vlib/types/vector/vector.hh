@@ -28,11 +28,13 @@ namespace vlib
 				return v.dispatch_methods() == &vector_dispatch;
 			}
 			
-			explicit Vector( const Value& endec, size_type n = 0 );
+			explicit Vector( const Value& type, size_type n = 0 );
 			
-			Vector( const Value& endec, const plus::string& buffer );
+			Vector( const Value& type, const plus::string& buffer );
 			
-			const Value& get_endec() const  { return expr()->left; }
+			const Value& get_type() const  { return expr()->left; }
+			
+			const Value& get_endec() const;
 			
 			size_type size() const;
 			

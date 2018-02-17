@@ -122,3 +122,8 @@ $ vc 'vector == vector[ record(size: 1) ]'
 
 $ vc '1 .. 2 map { record(size: _) } map vector'
 1 >= '[vector[record ("size" => 1)], vector[record ("size" => 2)]]'
+
+%
+
+$ vc 'typeof vector[ u8 ] 4'
+1 >= 'vector[u8]'

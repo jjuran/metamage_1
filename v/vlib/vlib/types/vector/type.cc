@@ -86,10 +86,10 @@ namespace vlib
 			case Op_named_unary:
 				if ( const Packed* packed = b.is< Packed >() )
 				{
-					return Vector( vt.element_type(), packed->string() );
+					return Vector( a, packed->string() );
 				}
 				
-				return Vector( vt.element_type(), integer_cast< size_t >( b ) );
+				return Vector( a, integer_cast< size_t >( b ) );
 			
 			default:
 				break;
@@ -125,11 +125,9 @@ namespace vlib
 			return v;
 		}
 		
-		const Vector_Type& vt = static_cast< const Vector_Type& >( type );
-		
 		if ( const Packed* packed = v.is< Packed >() )
 		{
-			return Vector( vt.element_type(), packed->string() );
+			return Vector( type, packed->string() );
 		}
 		
 		return NIL;

@@ -22,6 +22,7 @@
 #include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/vector/type.hh"
 
 
 namespace vlib
@@ -110,7 +111,7 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_typeof:
-				return Type( vector_vtype );
+				return v.expr()->left;
 			
 			case Op_unary_deref:
 				return element_list( v );
@@ -275,9 +276,17 @@ namespace vlib
 	}
 	
 	static inline
-	size_t sizeof_vector( const Value& endec, Vector::size_type n )
+	const Value& endec_from_type( const Value& type )
 	{
-		const size_t unit_size = endec_unit_size( endec );
+		const Vector_Type& vt = static_cast< const Vector_Type& >( type );
+		
+		return vt.element_type();
+	}
+	
+	static inline
+	size_t sizeof_vector( const Value& type, Vector::size_type n )
+	{
+		const size_t unit_size = endec_unit_size( endec_from_type( type ) );
 		
 		if ( n > (size_t) -1 / unit_size )
 		{
@@ -287,28 +296,33 @@ namespace vlib
 		return unit_size * n;
 	}
 	
-	Vector::Vector( const Value& endec, size_type n )
+	Vector::Vector( const Value& type, size_type n )
 	:
-		Value( endec,
+		Value( type,
 		       Op_list,
-		       Packed( plus::string( sizeof_vector( endec, n ), '\0' ) ),
+		       Packed( plus::string( sizeof_vector( type, n ), '\0' ) ),
 		       &vector_dispatch )
 	{
 	}
 	
-	Vector::Vector( const Value& endec, const plus::string& buffer )
+	Vector::Vector( const Value& type, const plus::string& buffer )
 	:
-		Value( endec,
+		Value( type,
 		       Op_list,
 		       Packed( buffer ),
 		       &vector_dispatch )
 	{
-		const size_t unit_size = endec_unit_size( endec );
+		const size_t unit_size = endec_unit_size( endec_from_type( type ) );
 		
 		if ( buffer.size() % unit_size )
 		{
 			THROW( "vector input buffer size not a multiple of unit width" );
 		}
+	}
+	
+	const Value& Vector::get_endec() const
+	{
+		return endec_from_type( get_type() );
 	}
 	
 	Vector::size_type Vector::size() const
