@@ -107,11 +107,9 @@ namespace vlib
 	static
 	bool typecheck( const Value& type, const Value& v )
 	{
-		const Vector_Type& vt = static_cast< const Vector_Type& >( type );
-		
 		if ( const Vector* vector = v.is< Vector >() )
 		{
-			return equal( vector->get_endec(), vt.element_type() );
+			return equal( vector->get_type(), type );
 		}
 		
 		return false;
