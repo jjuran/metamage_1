@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <utime.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
 
 // Standard C
@@ -37,6 +38,7 @@
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/unitary.hh"
 
 // vx
 #include "exception.hh"
@@ -618,8 +620,29 @@ namespace vlib
 	const proc_info proc_append   = { "append",   &v_append,   &c_str_bytes };
 	const proc_info proc_truncate = { "truncate", &v_truncate, &c_str_u32 };
 	
+	class FIN : public Unitary
+	{
+		public:
+			static bool test( const Value& v )
+			{
+				return v.is< Unitary >()  &&  v.string() == "FIN";
+			}
+	};
+	
 	void send_data( int fd, const Value& v )
 	{
+		if ( v.is< FIN >() )
+		{
+			int nok = shutdown( fd, SHUT_WR );
+			
+			if ( nok )
+			{
+				fd_error( fd );
+			}
+			
+			return;
+		}
+		
 		const Packed data = pack( v );
 		
 		const plus::string& buffer = data.string();

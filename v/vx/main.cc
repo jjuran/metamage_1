@@ -36,6 +36,7 @@
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
+#include "vlib/types/unitary.hh"
 
 // vx
 #include "file_descriptor.hh"
@@ -184,6 +185,12 @@ void define( const char* name, int i )
 	define( name, FileDescriptor( i ) );
 }
 
+static
+void define( const char* name )
+{
+	define( name, Unitary( name ) );
+}
+
 int main( int argc, char** argv )
 {
 	using poseven::thread;
@@ -211,6 +218,8 @@ int main( int argc, char** argv )
 	define( "IN",  0 );
 	define( "OUT", 1 );
 	define( "ERR", 2 );
+	
+	define( "FIN" );
 	
 	if ( unrestricted )
 	{
