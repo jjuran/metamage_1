@@ -1,6 +1,6 @@
 #!/usr/bin/env jtest
 
-$ vx v/vx/examples/fizzbuzz.vx
+$ vx v/examples/fizzbuzz.vx
 1 >> .
 1
 2

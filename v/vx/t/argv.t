@@ -5,10 +5,10 @@ $ vx -e 'print rep argv' foo bar baz
 
 %
 
-$ vx v/vx/examples/argv.vx foo bar baz
-1 >= '["v/vx/examples/argv.vx", "foo", "bar", "baz"]'
+$ vx v/examples/argv.vx foo bar baz
+1 >= '["v/examples/argv.vx", "foo", "bar", "baz"]'
 
 %
 
-$ vx < v/vx/examples/argv.vx
+$ vx < v/examples/argv.vx
 1 >= '["-"]'
