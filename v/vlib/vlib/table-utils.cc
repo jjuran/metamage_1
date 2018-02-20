@@ -31,8 +31,10 @@ namespace vlib
 			case Value_number:
 			case Value_mb32:
 			case Value_packed:
-			case Value_string:
 				break;
+			
+			case Value_string:
+				return a.string() == b.string();
 			
 			default:
 				THROW( "unsupported key type" );
