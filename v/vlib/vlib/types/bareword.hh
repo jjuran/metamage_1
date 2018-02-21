@@ -14,8 +14,10 @@ namespace vlib
 {
 	
 	struct dispatch;
+	struct stringifiers;
 	
-	extern const dispatch bareword_dispatch;
+	extern const stringifiers  bareword_stringifiers;
+	extern const dispatch      bareword_dispatch;
 	
 	class Bareword : public Value
 	{

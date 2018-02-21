@@ -14,7 +14,7 @@
 namespace vlib
 {
 	
-	static const stringifiers string_stringifiers =
+	const stringifiers bareword_stringifiers =
 	{
 		&vbytes_cpy,
 		// ditto for rep
@@ -23,7 +23,7 @@ namespace vlib
 	
 	const dispatch bareword_dispatch =
 	{
-		&string_stringifiers,
+		&bareword_stringifiers,
 		NULL,
 		NULL,
 		NULL,
