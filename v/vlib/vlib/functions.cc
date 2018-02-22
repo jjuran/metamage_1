@@ -19,6 +19,7 @@
 #include "bignum/integer_hex.hh"
 
 // vlib
+#include "vlib/compare.hh"
 #include "vlib/proc_info.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/targets.hh"
@@ -85,6 +86,56 @@ namespace vlib
 	Value v_areaof( const Value& v )
 	{
 		return Integer( area( v ) );
+	}
+	
+	static
+	Value v_max( const Value& v )
+	{
+		if ( is_empty_list( v ) )
+		{
+			return v;
+		}
+		
+		list_iterator args( v );
+		
+		const Value* result = &args.use();
+		
+		while ( args )
+		{
+			const Value& next = args.use();
+			
+			if ( compare( *result, next ) <= 0 )
+			{
+				result = &next;
+			}
+		}
+		
+		return *result;
+	}
+	
+	static
+	Value v_min( const Value& v )
+	{
+		if ( is_empty_list( v ) )
+		{
+			return v;
+		}
+		
+		list_iterator args( v );
+		
+		const Value* result = &args.use();
+		
+		while ( args )
+		{
+			const Value& next = args.use();
+			
+			if ( compare( *result, next ) > 0 )
+			{
+				result = &next;
+			}
+		}
+		
+		return *result;
 	}
 	
 	static
@@ -362,6 +413,8 @@ namespace vlib
 	const proc_info proc_half   = { "half",   &v_half,   &integer };
 	const proc_info proc_head   = { "head",   &v_head,   NULL     };
 	const proc_info proc_hex    = { "hex",    &v_hex,    NULL     };
+	const proc_info proc_max    = { "max",    &v_max,    NULL     };
+	const proc_info proc_min    = { "min",    &v_min,    NULL     };
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince   };
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL     };
 	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes   };

@@ -36,6 +36,16 @@ namespace vlib
 			return Proc( proc_half );
 		}
 		
+		if ( name == "max" )
+		{
+			return Proc( proc_max );
+		}
+		
+		if ( name == "min" )
+		{
+			return Proc( proc_min );
+		}
+		
 		THROW( "nonexistent member of namespace Math" );
 		
 		return Value();
