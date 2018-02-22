@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/compare.hh"
 #include "vlib/equal.hh"
 #include "vlib/error.hh"
 #include "vlib/exceptions.hh"
@@ -47,42 +48,10 @@
 namespace vlib
 {
 	
-	using math::integer::cmp_t;
-	
-	
 	static
 	bool isa( const Value& v, const Value& t )
 	{
 		return as_assigned( t, v ).type();
-	}
-	
-	static
-	cmp_t compare( const Value& a, const Value& b )
-	{
-		if ( a.type() != b.type() )
-		{
-			THROW( "mismatched types in compare()" );
-		}
-		
-		if ( a.dispatch_methods() != b.dispatch_methods() )
-		{
-			THROW( "mismatched types in compare()" );
-		}
-		
-		if ( const dispatch* methods = a.dispatch_methods() )
-		{
-			if ( const comparison* cmp = methods->compare )
-			{
-				if ( const ordering ord = cmp->order )
-				{
-					return ord( a, b );
-				}
-			}
-		}
-		
-		THROW( "unsupported type in compare()" );
-		
-		return 0;
 	}
 	
 	static
