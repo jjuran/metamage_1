@@ -2,23 +2,29 @@
 
 var button-state = x"00"
 
-for msg in receiver { IN.read 3 } do
+try
 {
-	const deltas = msg[ 1 .. 2 ]
-	
-	if deltas != x"0000" then
+	for msg in receiver { IN.read 3 } do
 	{
-		OUT <== x"02" deltas
-	}
-	
-	const b = msg[[ 0 ]] & x"01"
-	
-	if b != button-state then
-	{
-		const action = packed( x"0300", byte (u8 .*button-state + 1), x"00" )
+		const deltas = msg[ 1 .. 2 ]
 		
-		button-state = b
+		if deltas != x"0000" then
+		{
+			OUT <== x"02" deltas
+		}
 		
-		OUT <== action
+		const b = msg[[ 0 ]] & x"01"
+		
+		if b != button-state then
+		{
+			const action = packed( x"0300", byte (u8 .*button-state + 1), '\0' )
+			
+			button-state = b
+			
+			OUT <== action
+		}
 	}
+}
+catch
+{
 }
