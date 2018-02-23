@@ -14,6 +14,7 @@
 #include "vlib/proc_info.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
+#include "vlib/namespaces/Math.hh"
 #include "vlib/namespaces/V.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
@@ -63,7 +64,8 @@ namespace vlib
 	
 	bool install_keywords()
 	{
-		define_keyword( namespace_V );
+		define_keyword( namespace_Math );
+		define_keyword( namespace_V    );
 		
 		define_keyword( "false", False );
 		define_keyword( "true",  True  );
