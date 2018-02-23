@@ -44,12 +44,7 @@ for i in 0 .. last do
 {
 	const digits = substr( number, i, width )
 	
-	const product = digit_product digits
-	
-	if max_product < product then
-	{
-		max_product = product
-	}
+	max_product = Math.max( max_product, digit_product digits )
 }
 
 print max_product
