@@ -11,17 +11,11 @@ def calc-width
 	
 	var result = 0
 	
-	var i = 0
-	
 	for x in lines do
 	{
 		# The more lines we have, the wider we have to be.
 		
-		result += 2
-		
-		const len = x.length
-		
-		if len > result then {result = len}
+		result = Math.max( result + 2, x.length )
 	}
 	
 	return result
