@@ -32,6 +32,7 @@ namespace vlib
 		{ "map",   Op_map     },
 		{ "mod",   Op_modulo  },
 		{ "or",    Op_or      },
+		{ "per",   Op_per     },
 		{ "then",  Op_then    },
 		{ "while", Op_while_2 },
 	};

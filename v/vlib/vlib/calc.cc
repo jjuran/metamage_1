@@ -564,6 +564,33 @@ namespace vlib
 		return make_array( result );
 	}
 	
+	static
+	Value reduce( const Value& container, const Value& f )
+	{
+		if ( ! is_functional( f ) )
+		{
+			THROW( "per (reduce) requires a function" );
+		}
+		
+		generic_iterator it( container );
+		
+		if ( ! it )
+		{
+			return empty_list;
+		}
+		
+		Value result = it.use();
+		
+		while ( it )
+		{
+			const Value& x = it.use();
+			
+			result = call_function( f, make_list( result, x ) );
+		}
+		
+		return result;
+	}
+	
 	struct conditional_resolution
 	{
 		const Value* affirm;
@@ -822,6 +849,11 @@ namespace vlib
 		if ( op == Op_map )
 		{
 			return map( left, right );
+		}
+		
+		if ( op == Op_per )
+		{
+			return reduce( left, right );
 		}
 		
 		return safe_calc( left, op, right );
