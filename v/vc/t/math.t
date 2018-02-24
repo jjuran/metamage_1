@@ -82,3 +82,23 @@ $ vc 'const P = -7, -5, -3, -1; Math.min P, Math.max P'
 
 $ vc 'const P = 5, 4, 3, 2, 1, 0; Math.min P, Math.max P'
 1 >= '(0, 5)'
+
+%
+
+$ vc 'const P = 2, 2; Math.sum P, Math.product P'
+1 >= '(4, 4)'
+
+%
+
+$ vc 'const P = 3, 3/2; Math.sum P, Math.product P'
+1 >= '((9/2), (9/2))'
+
+%
+
+$ vc 'const P = 12, 144, 20; Math.sum P, Math.product P'
+1 >= '(176, 34560)'
+
+%
+
+$ vc 'const P = 1, 2, 3, 4, 5; Math.sum P, Math.product P'
+1 >= '(15, 120)'

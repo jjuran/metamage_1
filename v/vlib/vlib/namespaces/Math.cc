@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/functions.hh"
 #include "vlib/namespace_info.hh"
+#include "vlib/reduce.hh"
 #include "vlib/throw.hh"
 #include "vlib/value.hh"
 #include "vlib/types/namespace.hh"
@@ -44,6 +45,16 @@ namespace vlib
 		if ( name == "min" )
 		{
 			return Proc( proc_min );
+		}
+		
+		if ( name == "product" )
+		{
+			return Proc( proc_product );
+		}
+		
+		if ( name == "sum" )
+		{
+			return Proc( proc_sum );
 		}
 		
 		THROW( "nonexistent member of namespace Math" );
