@@ -57,25 +57,13 @@ def merge_maps
 	return result
 }
 
-def product
-{
-	var total = 1
-	
-	for x in _ do
-	{
-		total *= x
-	}
-	
-	return total
-}
-
 def lcm
 {
 	const pf = merge_maps( _ map prime_factorization )
 	
 	const factors = pf map { _.key ^ _.value }
 	
-	return product factors
+	return Math.product .*factors
 }
 
 print lcm (1 .. 20)
