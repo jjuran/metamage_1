@@ -89,7 +89,7 @@ namespace vlib
 	}
 	
 	static
-	Value v_max( const Value& v )
+	Value minmax( const Value& v, bool min_vs_max )
 	{
 		if ( is_empty_list( v ) )
 		{
@@ -104,7 +104,7 @@ namespace vlib
 		{
 			const Value& next = args.use();
 			
-			if ( compare( *result, next ) <= 0 )
+			if ( (compare( *result, next ) > 0) == min_vs_max )
 			{
 				result = &next;
 			}
@@ -114,28 +114,15 @@ namespace vlib
 	}
 	
 	static
+	Value v_max( const Value& v )
+	{
+		return minmax( v, false );
+	}
+	
+	static
 	Value v_min( const Value& v )
 	{
-		if ( is_empty_list( v ) )
-		{
-			return v;
-		}
-		
-		list_iterator args( v );
-		
-		const Value* result = &args.use();
-		
-		while ( args )
-		{
-			const Value& next = args.use();
-			
-			if ( compare( *result, next ) > 0 )
-			{
-				result = &next;
-			}
-		}
-		
-		return *result;
+		return minmax( v, true );
 	}
 	
 	static
