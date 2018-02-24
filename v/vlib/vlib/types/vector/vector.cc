@@ -15,12 +15,12 @@
 #include "vlib/function-utils.hh"
 #include "vlib/target.hh"
 #include "vlib/throw.hh"
-#include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/types/bareword.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
@@ -138,6 +138,22 @@ namespace vlib
 	}
 	
 	static
+	Value vector_member( const Value& obj,
+	                     const plus::string& member )
+	{
+		const Vector& vector = static_cast< const Vector& >( obj );
+		
+		if ( member == "length" )
+		{
+			return Integer( vector.size() );
+		}
+		
+		THROW( "nonexistent vector member" );
+		
+		return Value();
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		const Vector& vector = static_cast< const Vector& >( a );
@@ -146,6 +162,9 @@ namespace vlib
 		{
 			case Op_subscript:
 				return vector.at( integer_cast< size_t >( b ) );
+			
+			case Op_member:
+				return vector_member( a, b.as< Member >().get() );
 			
 			default:
 				break;
@@ -434,29 +453,5 @@ namespace vlib
 		
 		return v;
 	}
-	
-	static
-	Value vector_member( const Value& obj,
-	                     const plus::string& member )
-	{
-		const Vector& vector = static_cast< const Vector& >( obj );
-		
-		if ( member == "length" )
-		{
-			return Integer( vector.size() );
-		}
-		
-		THROW( "nonexistent vector member" );
-		
-		return Value();
-	}
-	
-	const type_info vector_vtype =
-	{
-		"vector",
-		&assign_to< Vector >,
-		NULL,
-		&vector_member,
-	};
 	
 }

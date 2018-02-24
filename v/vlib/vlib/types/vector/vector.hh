@@ -17,7 +17,6 @@ namespace vlib
 {
 	
 	struct dispatch;
-	struct type_info;
 	
 	extern const dispatch vector_dispatch;
 	
@@ -46,8 +45,6 @@ namespace vlib
 	};
 	
 	size_t sizeof_vector( const Value& type, size_t n );
-	
-	extern const type_info vector_vtype;
 	
 }
 

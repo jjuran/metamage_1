@@ -202,3 +202,8 @@ $ vc 'var vv = vector[ vector[u8, 2], 3 ] x"1234567890ab"; vv[1][0]'
 
 $ vc 'var vv = vector[ vector[u8, 2], 3 ] (); vv[2] = x"1234"; packed vv'
 1 >= x"000000001234"
+
+%
+
+$ vc 'vector[ u8, 2 ]().length, vector[ u8 ](3).length'
+1 >= '(2, 3)'
