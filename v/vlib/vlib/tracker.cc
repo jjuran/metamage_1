@@ -48,6 +48,8 @@ namespace vlib
 			black -> PRUNE
 	*/
 	
+	static bool no_gc_culling;
+	
 	typedef std::vector< Value > tracked_set;
 	
 	static tracked_set tracked_symbols;
@@ -83,6 +85,11 @@ namespace vlib
 		gc_lock lock;
 		
 		dst = src;
+	}
+	
+	void set_gc_culling_disabled( bool disabled_or_not )
+	{
+		no_gc_culling = disabled_or_not;
 	}
 	
 	static inline
@@ -282,6 +289,11 @@ namespace vlib
 	
 	void cull_unreachable_objects()
 	{
+		if ( no_gc_culling )
+		{
+			return;
+		}
+		
 		tracked_set garbage;
 		
 		gc_lock lock;

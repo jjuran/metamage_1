@@ -21,6 +21,7 @@
 // vlib
 #include "vlib/interpret.hh"
 #include "vlib/string-utils.hh"
+#include "vlib/tracker.hh"
 
 
 using namespace vlib;
@@ -28,12 +29,14 @@ using namespace vlib;
 
 enum
 {
-	Opt_hex_output = 'x',
+	Opt_no_GC_culling = 'G',
+	Opt_hex_output    = 'x',
 };
 
 static command::option options[] =
 {
-	{ "hex",  Opt_hex_output },
+	{ "hex",   Opt_hex_output    },
+	{ "no-gc", Opt_no_GC_culling },
 	{ NULL },
 };
 
@@ -76,6 +79,10 @@ static char* const* get_options( char** argv )
 		{
 			case Opt_hex_output:
 				hex_output = true;
+				break;
+			
+			case Opt_no_GC_culling:
+				disable_gc_culling();
 				break;
 			
 			default:

@@ -78,6 +78,7 @@ using namespace varyx::quickdraw;
 
 enum
 {
+	Opt_no_GC_culling = 'G',
 	Opt_unrestricted  = 'Z',
 	Opt_inline_script = 'e',
 };
@@ -85,6 +86,7 @@ enum
 static command::option options[] =
 {
 	{ "inline-script",  Opt_inline_script, Param_required },
+	{ "no-gc",          Opt_no_GC_culling },
 	{ "unrestricted",   Opt_unrestricted },
 	{ NULL }
 };
@@ -115,6 +117,10 @@ char* const* get_options( char** argv )
 		{
 			case Opt_inline_script:
 				inline_script = command::global_result.param;
+				break;
+			
+			case Opt_no_GC_culling:
+				disable_gc_culling();
 				break;
 			
 			case Opt_unrestricted:

@@ -17,6 +17,11 @@ namespace vlib
 	struct namespace_info;
 	
 	void gc_safe_overwrite( Value& dst, const Value& src );
+
+	void set_gc_culling_disabled( bool disabled_or_not );
+	
+	inline void enable_gc_culling()  { set_gc_culling_disabled( false ); }
+	inline void disable_gc_culling()  { set_gc_culling_disabled( true ); }
 	
 	void track_symbol( const Value& v );
 	

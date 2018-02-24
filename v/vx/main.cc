@@ -85,6 +85,7 @@ const int thread_interrupt_signal = SIGUSR1;
 
 enum
 {
+	Opt_no_GC_culling = 'G',
 	Opt_unrestricted  = 'Z',
 	Opt_check_syntax  = 'c',
 	Opt_inline_script = 'e',
@@ -93,6 +94,7 @@ enum
 static command::option options[] =
 {
 	{ "inline-script",  Opt_inline_script, Param_required },
+	{ "no-gc",          Opt_no_GC_culling },
 	{ "unrestricted",   Opt_unrestricted },
 	{ "",               Opt_check_syntax },
 	{ NULL }
@@ -130,6 +132,10 @@ static char* const* get_options( char** argv )
 			
 			case Opt_check_syntax:
 				check_syntax = true;
+				break;
+			
+			case Opt_no_GC_culling:
+				disable_gc_culling();
 				break;
 			
 			case Opt_unrestricted:
