@@ -2518,7 +2518,7 @@ $ vc 'const x = "Hi\x00 \u{1f4a9}"; x == str packed x, x == packed( x ).string'
 
 %
 
-$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*packed x, (+) *packed x'
+$ vc 'const x = "Hello\x00 \u{1f4a9}"; x == str .*(packed x), (+) *(packed x)'
 1 >= "(true, 11)"
 
 %
