@@ -29,6 +29,9 @@ namespace vlib
 				case Op_multiply:
 					return true;
 				
+				case Op_empower:
+					return expr->right.type() == V_int;
+				
 				default:
 					break;
 			}

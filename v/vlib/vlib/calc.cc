@@ -1021,6 +1021,14 @@ namespace vlib
 			}
 		}
 		
+		if ( op == Op_empower )
+		{
+			if ( is_functional( left )  &&  right.is< Integer >() )
+			{
+				goto no_op;
+			}
+		}
+		
 		if ( left.type() == right.type() )
 		{
 			switch ( left.type() )

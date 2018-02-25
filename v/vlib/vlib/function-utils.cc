@@ -7,9 +7,11 @@
 
 // vlib
 #include "vlib/list-utils.hh"
+#include "vlib/os.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
+#include "vlib/types/integer.hh"
 
 
 namespace vlib
@@ -40,6 +42,22 @@ namespace vlib
 				return call_function( expr->left,
 				                      call_function( expr->right,
 				                                     arguments ) );
+			}
+			
+			if ( expr->op == Op_empower )
+			{
+				size_t n = integer_cast< size_t >( expr->right );
+				
+				Value result = arguments;
+				
+				while ( n-- )
+				{
+					periodic_yield();
+					
+					result = call_function( expr->left, result );
+				}
+				
+				return result;
 			}
 			
 			const Value& method = expr->left;
