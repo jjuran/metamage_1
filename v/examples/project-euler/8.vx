@@ -22,18 +22,16 @@ const number =
 "05886116467109405077541002256983155200055935729725"
 "71636269561882670428252483600823257530420752963450"
 
+const digits = packed .*(   '0' ..    '9')
+const values = packed .*('\x00' .. '\x09')
+
 const width = 13
 
 def digit_product
 {
-	var total = 1
+	translate( &_, digits, values )
 	
-	for x in _ do
-	{
-		total *= int x - 0x30
-	}
-	
-	return total
+	return _ map int per Math.product
 }
 
 const last = number.length - width
