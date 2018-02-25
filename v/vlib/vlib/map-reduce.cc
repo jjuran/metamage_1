@@ -15,6 +15,11 @@
 #include "vlib/types/boolean.hh"
 
 
+#ifndef NULL
+#define NULL  0
+#endif
+
+
 namespace vlib
 {
 	
@@ -67,8 +72,26 @@ namespace vlib
 		return make_array( result );
 	}
 	
-	Value reduce( const Value& container, const Value& f )
+	Value reduce( const Value& container, const Value& reducer )
 	{
+		const Value* routine = &reducer;
+		const Value* initial = NULL;
+		
+		if ( Expr* expr = reducer.expr() )
+		{
+			if ( expr->op == Op_forward_init )
+			{
+				initial = &expr->left;
+				routine = &expr->right;
+			}
+			else if ( expr->op == Op_reverse_init )
+			{
+				THROW( "per (reduce) doesn't support reverse folding yet" );
+			}
+		}
+		
+		const Value& f = *routine;
+		
 		if ( ! is_functional( f ) )
 		{
 			THROW( "per (reduce) requires a function" );
@@ -76,12 +99,12 @@ namespace vlib
 		
 		generic_iterator it( container );
 		
-		if ( ! it )
+		if ( ! initial  &&  ! it )
 		{
 			return empty_list;
 		}
 		
-		Value result = it.use();
+		Value result = initial ? *initial : it.use();
 		
 		while ( it )
 		{

@@ -81,6 +81,9 @@ namespace vlib
 		{ Token_lt_minus_x2, Op_push },
 		{ Token_lt_equals_x2, Op_send },
 		
+		{ Token_gt_minus,    Op_forward_init },
+		{ Token_minus_lt,    Op_reverse_init },
+		
 		{ Token_ampersand,   Op_intersection },
 		{ Token_parens_plus, Op_exclusion    },
 		{ Token_pipe,        Op_union        },

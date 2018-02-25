@@ -65,6 +65,8 @@ namespace vlib
 		Op_unary_negate,
 		Op_unary_count,
 		Op_unary_deref,
+		Op_forward_init,
+		Op_reverse_init,
 		Op_auto,
 		Op_begin,
 		Op_array,
@@ -195,6 +197,8 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_forward_init:
+			case Op_reverse_init:
 			case Op_mapping:
 			case Op_then:
 			case Op_else:

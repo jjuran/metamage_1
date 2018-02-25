@@ -112,6 +112,7 @@ namespace vlib
 		
 		{ "-",   Token_minus        },
 		{ "--",  Token_minus_x2     },
+		{ "-<",  Token_minus_lt     },
 		{ "-=",  Token_minus_equals },
 		{ "->",  Token_minus_gt     },
 		
@@ -144,6 +145,7 @@ namespace vlib
 		{ "==",  Token_equals_x2 },
 		{ "=>",  Token_equals_gt },
 		{ ">",   Token_gt        },
+		{ ">-",  Token_gt_minus  },
 		{ ">=",  Token_gt_equals },
 		{ ">>",  Token_gt_x2 },
 		

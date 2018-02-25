@@ -168,6 +168,9 @@ namespace vlib
 			case Op_div_int_by:   return " /:= ";
 			case Op_percent_by:   return " %= ";
 			
+			case Op_forward_init:  return " >-";
+			case Op_reverse_init:  return "-< ";
+			
 			case Op_move:  return " <- ";
 			case Op_swap:  return " <-> ";
 			case Op_push:  return " <-- ";

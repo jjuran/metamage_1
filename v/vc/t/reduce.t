@@ -72,3 +72,18 @@ $ vc '8 .. 12 map ([ {_ / 2}, str, {_ * 2} ] per { var f, var g = _; {f g _} })'
 
 $ vc '8 .. 12 map ([ {_ / 2}, str, {_ * 2} ] per { var f, var g = _; {g f _} })'
 1 >= '["44", "9/29/2", "55", "11/211/2", "66"]'
+
+%
+
+$ vc '2 .. 1 per 1 >-Math.product'
+1 >= 1
+
+%
+
+$ vc '["one", "two", "three", "four"] per 0 >-{head _ + (tail _).length}'
+1 >= 15
+
+%
+
+$ vc '1 .. 5 per [1, 1]>-{[(head _)[1], head _ per {a + b}]}'
+1 >= '[8, 13]'
