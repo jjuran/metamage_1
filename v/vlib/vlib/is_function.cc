@@ -21,14 +21,16 @@ namespace vlib
 		
 		if ( Expr* expr = v.expr() )
 		{
-			if ( expr->op == Op_bind_args  ||  expr->op == Op_invocation )
+			switch ( expr->op )
 			{
-				return true;
-			}
-			
-			if ( expr->op == Op_lambda )
-			{
-				return true;
+				case Op_bind_args:
+				case Op_invocation:
+				case Op_lambda:
+				case Op_multiply:
+					return true;
+				
+				default:
+					break;
 			}
 		}
 		

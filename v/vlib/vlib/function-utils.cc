@@ -35,6 +35,13 @@ namespace vlib
 		
 		if ( Expr* expr = f.expr() )
 		{
+			if ( expr->op == Op_multiply )
+			{
+				return call_function( expr->left,
+				                      call_function( expr->right,
+				                                     arguments ) );
+			}
+			
 			const Value& method = expr->left;
 			const Value& object = expr->right;
 			

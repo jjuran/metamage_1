@@ -1013,6 +1013,14 @@ namespace vlib
 			return v;
 		}
 		
+		if ( op == Op_multiply )
+		{
+			if ( is_functional( left )  &&  is_functional( right ) )
+			{
+				goto no_op;
+			}
+		}
+		
 		if ( left.type() == right.type() )
 		{
 			switch ( left.type() )
