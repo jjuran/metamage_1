@@ -7,16 +7,9 @@
 
 def calc-width (lines: str[])
 {
-	var result = 0
+	# The more lines we have, the wider we have to be.
 	
-	for x in lines do
-	{
-		# The more lines we have, the wider we have to be.
-		
-		result = Math.max( result + 2, x.length )
-	}
-	
-	return result
+	return lines per 0 >-{ Math.max( L + 2, x.length ) }
 }
 
 def odd-padded (x: int)
