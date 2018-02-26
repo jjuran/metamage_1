@@ -6,6 +6,7 @@
 #include "vlib/functions.hh"
 
 // crypto
+#include "md5/md5.hh"
 #include "sha256/sha256.hh"
 
 // plus
@@ -41,6 +42,14 @@ namespace vlib
 	plus::string hex( const plus::string& s )
 	{
 		return plus::hex_lower( s.data(), s.size() );
+	}
+	
+	static
+	plus::string md5( const plus::string& s )
+	{
+		crypto::md5_digest hash = crypto::md5( s.data(), s.size() );
+		
+		return plus::string( (const char*) &hash, sizeof hash );
 	}
 	
 	static
@@ -117,6 +126,12 @@ namespace vlib
 	Value v_max( const Value& v )
 	{
 		return minmax( v, false );
+	}
+	
+	static
+	Value v_md5( const Value& v )
+	{
+		return Packed( md5( v.string() ) );
 	}
 	
 	static
@@ -401,6 +416,7 @@ namespace vlib
 	const proc_info proc_head   = { "head",   &v_head,   NULL     };
 	const proc_info proc_hex    = { "hex",    &v_hex,    NULL     };
 	const proc_info proc_max    = { "max",    &v_max,    NULL     };
+	const proc_info proc_md5    = { "md5",    &v_md5,    &bytes   };
 	const proc_info proc_min    = { "min",    &v_min,    NULL     };
 	const proc_info proc_mince  = { "mince",  &v_mince,  &mince   };
 	const proc_info proc_rep    = { "rep",    &v_rep,    NULL     };

@@ -18,6 +18,7 @@ namespace vlib
 	extern const proc_info proc_head;
 	extern const proc_info proc_hex;
 	extern const proc_info proc_max;
+	extern const proc_info proc_md5;
 	extern const proc_info proc_min;
 	extern const proc_info proc_mince;
 	extern const proc_info proc_rep;
