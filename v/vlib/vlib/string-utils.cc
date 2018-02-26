@@ -37,6 +37,10 @@
 
 #undef mempcpy
 
+#define STRLEN( s ) (sizeof "" s - 1)
+
+#define UNDEFINED  "<UNDEFINED>"
+
 
 namespace vlib
 {
@@ -284,6 +288,9 @@ namespace vlib
 			case Value_dummy_operand:
 				return 0;
 			
+			case Value_undefined:
+				return STRLEN( UNDEFINED );
+			
 			case Value_empty_list:  // "()", ""
 			case Value_empty_array:  // "[]", ""
 				return 2 * use_parens( mode );
@@ -396,6 +403,9 @@ namespace vlib
 			case Value_nothing:
 			case Value_dummy_operand:
 				return p;
+			
+			case Value_undefined:
+				return (char*) mempcpy( p, STR_LEN( UNDEFINED ) );
 			
 			case Value_empty_list:  // ""
 			case Value_empty_array:
