@@ -166,7 +166,7 @@ namespace vlib
 		return type_is_collectible( symbol.vtype() );
 	}
 	
-	bool symbol_list_is_collectible( const Value& symlist )
+	bool symbol_list_with_values_is_collectible( const Value& symlist )
 	{
 		list_iterator it( symlist );
 		
@@ -179,7 +179,7 @@ namespace vlib
 				return true;
 			}
 			
-			if ( symbol_is_collectible( *sym ) )
+			if ( v.expr() != 0  &&  symbol_is_collectible( *sym ) )
 			{
 				return true;
 			}

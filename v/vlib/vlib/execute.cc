@@ -59,7 +59,7 @@ namespace vlib
 	
 	gc_cleanup::~gc_cleanup()
 	{
-		if ( symbol_list_is_collectible( its_symbol_list ) )
+		if ( symbol_list_with_values_is_collectible( its_symbol_list ) )
 		{
 			cull_unreachable_objects();
 		}

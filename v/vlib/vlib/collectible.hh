@@ -18,7 +18,7 @@ namespace vlib
 	
 	bool symbol_is_collectible( const Symbol& symbol );
 
-	bool symbol_list_is_collectible( const Value& symlist );
+	bool symbol_list_with_values_is_collectible( const Value& symlist );
 	
 }
 
