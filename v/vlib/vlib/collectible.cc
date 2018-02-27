@@ -9,6 +9,8 @@
 #include "vlib/error.hh"
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/refs.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/any.hh"
 #include "vlib/types/iterator.hh"
@@ -136,9 +138,25 @@ namespace vlib
 		return true;
 	}
 	
+	static
+	bool value_has_custom_references( const Value& v )
+	{
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			return methods->ref;
+		}
+		
+		return false;
+	}
+	
 	bool target_is_collectible( const Target& target )
 	{
 		const Value& v = *target.addr;
+		
+		if ( value_has_custom_references( v ) )
+		{
+			return true;
+		}
 		
 		return v.expr() != 0  &&  type_is_collectible( *target.type );
 	}
@@ -154,6 +172,13 @@ namespace vlib
 		
 		while ( const Symbol* sym = it.use().sym() )
 		{
+			const Value& v = sym->get();
+			
+			if ( value_has_custom_references( v ) )
+			{
+				return true;
+			}
+			
 			if ( symbol_is_collectible( *sym ) )
 			{
 				return true;
