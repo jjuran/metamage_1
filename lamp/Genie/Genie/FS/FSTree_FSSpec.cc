@@ -16,6 +16,9 @@
 // MoreFiles
 #include "MoreFiles/FileCopy.h"
 
+// mac-config
+#include "mac_config/aliases.hh"
+
 // mac-types
 #include "mac_types/VRefNum_DirID.hh"
 
@@ -810,6 +813,16 @@ namespace Genie
 		return pathname( *hfs_resolve( that ) );
 	}
 	
+	enum
+	{
+		gestaltAliasMgrAttr = 'alis',
+	};
+	
+	const bool aliases_present =
+		CONFIG_ALIASES  &&
+			(CONFIG_ALIASES_GRANTED  ||
+				mac::sys::gestalt( gestaltAliasMgrAttr ) );
+	
 	static vfs::node_ptr hfs_resolve( const vfs::node* that )
 	{
 		if ( !is_symlink( *that ) )
@@ -832,15 +845,13 @@ namespace Genie
 		{
 			const FInfo& fInfo = hFileInfo.ioFlFndrInfo;
 			
-			const bool is_alias = fInfo.fdFlags & kIsAlias;
-			
 			const plus::string target = SlurpFile( extra.fsspec );
 			
 			if ( !target.empty() )
 			{
 				return resolve_pathname( *relix::root(), target, *hfs_parent( that ) );
 			}
-			else if ( is_alias )
+			else if ( aliases_present  &&  fInfo.fdFlags & kIsAlias )
 			{
 				FSSpec target = N::ResolveAliasFile( extra.fsspec, false );
 				
@@ -886,12 +897,7 @@ namespace Genie
 			return;
 		}
 		
-		enum
-		{
-			gestaltAliasMgrAttr = 'alis',
-		};
-		
-		if ( ! mac::sys::gestalt( gestaltAliasMgrAttr ) )
+		if ( ! aliases_present )
 		{
 			goto no_alias;
 		}
