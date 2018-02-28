@@ -82,6 +82,7 @@
 #include "relix/api/thread_yield.hh"
 #include "relix/api/waits_for_children.hh"
 #include "relix/config/mini.hh"
+#include "relix/config/reexec.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/fs/console.hh"
 #include "relix/glue/system_call.68k.hh"
@@ -303,7 +304,7 @@ namespace Genie
 		
 		int exit_status = 0;
 		
-		if ( process->itsReexecArgs[ 0 ] )
+		if ( CONFIG_REEXEC  &&  process->itsReexecArgs[ 0 ] )
 		{
 			exit_status = reexec_start( process->itsReexecArgs );
 		}

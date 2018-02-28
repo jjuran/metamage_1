@@ -1,12 +1,14 @@
-/*	=========
- *	reexec.cc
- *	=========
- */
+/*
+
+	reexec.cc
+	---------
+*/
 
 // Debug
 #include "debug/assert.hh"
 
 // relix
+#include "relix/config/reexec.hh"
 #include "relix/syscall/registry.hh"
 
 // Genie
@@ -42,11 +44,14 @@ namespace Genie
 		return 0;
 	}
 	
+#if CONFIG_REEXEC
 	
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( reexec );
 	
 	#pragma force_active reset
+	
+#endif
 	
 }
