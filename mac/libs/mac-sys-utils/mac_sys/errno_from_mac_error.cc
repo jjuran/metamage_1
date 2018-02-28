@@ -68,6 +68,7 @@ namespace sys {
 			case kOTNoDataErr   :  result = EAGAIN;        break;
 			case bdNamErr       :  result = ENAMETOOLONG;  break;
 			case kOTBadAddressErr:  result = EADDRINUSE;   break;
+			case unimpErr       :  result = ENOSYS;        break;
 			
 			default:
 				result = -1;
