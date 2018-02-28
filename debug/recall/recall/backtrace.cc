@@ -42,6 +42,14 @@
 	#endif
 #endif
 
+#ifndef CONFIG_DEMANGLING
+	#ifdef __MC68K__
+		#define CONFIG_DEMANGLING  CONFIG_DEBUGGING
+	#else
+		#define CONFIG_DEMANGLING  1
+	#endif
+#endif
+
 
 namespace recall
 {
@@ -134,16 +142,19 @@ namespace recall
 		plus::string name = located_name ? plus::string( located_name )
 		                                 : get_symbol_name( addr );
 		
-		plus::var_string result;
-		
-		try
+		if ( CONFIG_DEMANGLING )
 		{
-			demangler_traits< ReturnAddr >::demangle( result, name );
+			plus::var_string result;
 			
-			return move( result );
-		}
-		catch ( ... )
-		{
+			try
+			{
+				demangler_traits< ReturnAddr >::demangle( result, name );
+				
+				return move( result );
+			}
+			catch ( ... )
+			{
+			}
 		}
 		
 		return name;
