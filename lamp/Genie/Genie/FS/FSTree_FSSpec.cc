@@ -84,6 +84,7 @@
 // Genie
 #include "Genie/BinaryImage.hh"
 #include "Genie/code/prepare_executable.hh"
+#include "Genie/config/resfs.hh"
 #include "Genie/FileSignature.hh"
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/FS/FSTree_RsrcFile.hh"
@@ -643,14 +644,26 @@ namespace Genie
 		                                     plus::string::null,
 		                                     Root_Overlay_Mappings );
 		
+	#if CONFIG_RESFS
+		
 		vfs::node_ptr resfs = new_resfs_root();
 		
+	#endif
+		
 		vfs::node_ptr diskfs = FSTreeFromFSDirSpec( root_DirSpec() );
+		
+	#if CONFIG_RESFS
 		
 		vfs::node_ptr bottom = vfs::new_union_directory( NULL,
 		                                                 plus::string::null,
 		                                                 resfs.get(),
 		                                                 diskfs.get() );
+		
+	#else
+		
+		const vfs::node_ptr& bottom = diskfs;
+		
+	#endif
 		
 		vfs::node_ptr rootfs = vfs::new_union_directory( NULL,
 		                                                 plus::string::null,
