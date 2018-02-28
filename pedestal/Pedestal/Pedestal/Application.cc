@@ -29,6 +29,9 @@
 // Nostalgia
 #include "Nostalgia/LowMem.hh"
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 #include "mac_sys/current_process.hh"
@@ -120,9 +123,10 @@ namespace Pedestal
 	static MenuRef the_Window_menu;
 	
 	
-	const uint32_t evnt = mac::sys::gestalt( gestaltAppleEventsAttr );
-	
-	const bool apple_events_present = ! TARGET_CPU_68K  ||  evnt != 0;
+	const bool apple_events_present =
+		CONFIG_APPLE_EVENTS  &&
+			(CONFIG_APPLE_EVENTS_GRANTED  ||
+				mac::sys::gestalt( gestaltAppleEventsAttr ) != 0);
 	
 	
 	struct AppleEventSignature
@@ -674,7 +678,13 @@ namespace Pedestal
 		switch ( event.what )
 		{
 		//	case nullEvent:        DispatchNullEvent     ( event );  break;
+			
+		#if CONFIG_APPLE_EVENTS
+		
 			case kHighLevelEvent:  DispatchHighLevelEvent( event );  break;
+			
+		#endif
+			
 			case mouseDown:        DispatchMouseDown     ( event );  break;
 			case mouseUp:          DispatchMouseUp       ( event );  break;
 			case keyDown:
