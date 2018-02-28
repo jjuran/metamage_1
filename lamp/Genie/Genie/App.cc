@@ -3,6 +3,9 @@
 	------
 */
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // Nitrogen
 #include "Nitrogen/AppleEvents.hh"
 
@@ -70,7 +73,10 @@ namespace Genie
 	
 	App::App()
 	{
-		using Ped::apple_events_present;
+		const bool apple_events_present =
+			CONFIG_APPLE_EVENTS  &&
+				(CONFIG_APPLE_EVENTS_GRANTED  ||
+					Ped::apple_events_present);
 		
 	#ifndef __RELIX__
 		
@@ -87,7 +93,7 @@ namespace Genie
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );
 		
-		if ( ! TARGET_CPU_68K  ||  apple_events_present )
+		if ( apple_events_present )
 		{
 			Reply_AppleEvent::Install_Handler();
 		}

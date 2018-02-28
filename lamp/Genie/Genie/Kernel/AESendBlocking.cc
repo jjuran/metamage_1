@@ -3,6 +3,9 @@
  *	=================
  */
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // Relix
 #include "relix/AESendBlocking.h"
 #include "relix/syscall/registry.hh"
@@ -86,8 +89,12 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 	return noErr;
 }
 
+#if CONFIG_APPLE_EVENTS
+
 #pragma force_active on
 
 REGISTER_SYSTEM_CALL( AESendBlocking );
 
 #pragma force_active reset
+
+#endif

@@ -8,6 +8,9 @@
 // Standard C++
 #include <map>
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
 // cthread-either
 #include "cthread-either.hh"
 
@@ -18,6 +21,13 @@
 
 #ifndef NITROGEN_AEDATAMODEL_HH
 #include "Nitrogen/AEDataModel.hh"
+#endif
+
+
+#if CONFIG_APPLE_EVENTS
+#define STATIC  static
+#else
+#define STATIC  extern
 #endif
 
 
@@ -48,7 +58,7 @@ namespace Nitrogen
 	
 	typedef std::map< AEReturnID_32Bit, ExpectedReply > ExpectedReplies;
 	
-	static ExpectedReplies gExpectedReplies;
+	STATIC ExpectedReplies gExpectedReplies;  // Not for System-6-only builds
 	
 	void ExpectReply( Mac::AEReturnID_32Bit   returnID,
 	                  Mac::AppleEvent        *replyStorage )
