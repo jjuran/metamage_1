@@ -1,82 +1,75 @@
-/*	======
- *	cat.cc
- *	======
- */
+/*
+	cat.cc
+	------
+*/
 
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
 
-// poseven
-#include "poseven/extras/pump.hh"
-#include "poseven/functions/open.hh"
-#include "poseven/functions/perror.hh"
+// Relix
+#include "relix/pump.h"
 
-// Orion
-#include "Orion/Main.hh"
+// more-posix
+#include "more/perror.hh"
 
 
-namespace tool
+int main( int argc, char** argv )
 {
+	const char* argv0 = argv[0];
 	
-	namespace n = nucleus;
-	namespace p7 = poseven;
+	const char *const * args = argv + 1;
 	
-	
-	static bool PathnameMeansStdIn( const char* pathname )
+	// Check for sufficient number of args
+	if ( *args == NULL )
 	{
-		return    pathname[0] == '-'
-			   && pathname[1] == '\0';
+		static const char *const default_args[] = { "-", NULL };
+		
+		args = default_args;
 	}
 	
-	static const char* EvaluateMetaFilename( const char* pathname )
-	{
-		if ( PathnameMeansStdIn( pathname ) )
-		{
-			return "/dev/fd/0";
-		}
-		
-		return pathname;
-	}
+	// Print each file in turn.  Return whether any errors occurred.
+	int exit_status = 0;
 	
-	int Main( int argc, char** argv )
+	while ( *args != NULL )
 	{
-		const char* argv0 = argv[0];
+		const char* pathname = *args++;
 		
-		const char *const * args = argv + 1;
+		int fd;
 		
-		// Check for sufficient number of args
-		if ( *args == NULL )
+		if ( pathname[ 0 ] == '-'  &&  pathname[ 1 ] == '\0' )
 		{
-			static const char *const default_args[] = { "-", NULL };
+			pathname = NULL;
 			
-			args = default_args;
+			fd = STDIN_FILENO;
 		}
-		
-		// Print each file in turn.  Return whether any errors occurred.
-		int exit_status = 0;
-		
-		while ( *args != NULL )
+		else
 		{
-			const char* pathname = EvaluateMetaFilename( *args++ );
+			fd = open( pathname, O_RDONLY );
 			
-			try
+			if ( fd < 0 )
 			{
-				n::owned< p7::fd_t > fd = p7::open( pathname, p7::o_rdonly );
-				
-				p7::pump( fd, p7::stdout_fileno );
-			}
-			catch ( const p7::errno_t& error )
-			{
-				p7::perror( argv0, pathname, error );
-				
 				exit_status = 1;
 				
+				more::perror( argv0, pathname );
 				continue;
 			}
 		}
 		
-		return exit_status;
+		ssize_t n = pump( fd, NULL, STDOUT_FILENO, NULL, 0, 0 );
+		
+		if ( n < 0 )
+		{
+			exit_status = 1;
+			
+			more::perror( argv0, pathname );
+		}
+		
+		if ( pathname != NULL )
+		{
+			close( fd );
+		}
 	}
 	
+	return exit_status;
 }
