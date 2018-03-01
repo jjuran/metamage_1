@@ -363,7 +363,14 @@ namespace custom  {
 	{
 		parameter_block& param = *(parameter_block*) param_;
 		
-		prepare_task( &*the_current_task );
+		thread_task* task = &*the_current_task;
+		
+		prepare_task( task );
+		
+		if ( switch_proc f = task->switch_in )
+		{
+			f( task->param );
+		}
 		
 		try
 		{
