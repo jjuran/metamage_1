@@ -6,13 +6,19 @@
 #ifndef CTHREADEITHER_HH
 #define CTHREADEITHER_HH
 
-#if ! defined( __MACOS__ )  ||  ! defined( __MC68K__ )
-#define CTHREAD_SYSTEM  1
-#undef  CTHREAD_CUSTOM
-#elif CTHREAD_CUSTOM
-#undef  CTHREAD_SYSTEM
+// mac-config
+#include "mac_config/threads.hh"
+
+
+#if ! CONFIG_THREAD_MANAGER
+	#ifndef __MC68K__
+		#error  Custom threads are only supported on 68K
+	#endif
+	#define CTHREAD_CUSTOM  1
+#elif CONFIG_THREAD_MANAGER_GRANTED
+	#define CTHREAD_SYSTEM  1
 #else
-#define CTHREAD_EITHER  1
+	#define CTHREAD_EITHER  1
 #endif
 
 #if CTHREAD_SYSTEM
