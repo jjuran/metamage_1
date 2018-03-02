@@ -61,12 +61,12 @@ namespace custom  {
 	
 	struct thread_task
 	{
-		void*          stack_memory;
-		void*          param;
-		switch_proc    switch_in;
-		switch_proc    switch_out;
-		task_schedule  schedule;
-		machine_state  state;
+		void*             stack_memory;
+		parameter_block*  pb;
+		switch_proc       switch_in;
+		switch_proc       switch_out;
+		task_schedule     schedule;
+		machine_state     state;
 	};
 	
 	static thread_task* stale_task;
@@ -196,7 +196,7 @@ namespace custom  {
 	{
 		if ( switch_proc f = a->switch_out )
 		{
-			f( a->param );
+			f( a->pb->param );
 		}
 		
 		/*
@@ -217,7 +217,7 @@ namespace custom  {
 		
 		if ( switch_proc f = a->switch_in )
 		{
-			f( a->param );
+			f( a->pb->param );
 		}
 	}
 	
@@ -369,7 +369,7 @@ namespace custom  {
 		
 		if ( switch_proc f = task->switch_in )
 		{
-			f( task->param );
+			f( task->pb->param );
 		}
 		
 		try
@@ -409,9 +409,7 @@ namespace custom  {
 		*--sp = &pb;
 		*--sp = (void*) &end_of_task;
 		
-		void* const arg = pb.param;
-		
-		thread_task task = { stack, arg, pb.switch_in, pb.switch_out };
+		thread_task task = { stack, &pb, pb.switch_in, pb.switch_out };
 		
 		task.schedule = Task_sleeping;
 		
