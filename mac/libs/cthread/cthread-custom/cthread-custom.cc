@@ -359,9 +359,9 @@ namespace custom  {
 	}
 	
 	static
-	void thread_entry( void* param_ )
+	void thread_entry( void* param )
 	{
-		parameter_block& param = *(parameter_block*) param_;
+		parameter_block& pb = *(parameter_block*) param;
 		
 		thread_task* task = &*the_current_task;
 		
@@ -374,7 +374,7 @@ namespace custom  {
 		
 		try
 		{
-			param.start( param.param, param.stack_bottom, param.stack_limit );
+			pb.start( pb.param, pb.stack_bottom, pb.stack_limit );
 		}
 		catch ( ... )
 		{
