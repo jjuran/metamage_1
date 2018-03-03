@@ -123,6 +123,7 @@ namespace vlib
 			case Op_lambda:  return "lambda ";
 			
 			case Op_map:  return " map ";
+			case Op_ver:  return " ver ";
 			case Op_per:  return " per ";
 			
 			case Op_lt:  return " < ";

@@ -12,6 +12,7 @@
 #include "vlib/types.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_builder.hh"
+#include "vlib/types/boolean.hh"
 
 
 namespace vlib
@@ -35,6 +36,32 @@ namespace vlib
 			Value f_x = call_function( f, x );
 			
 			result.append( f_x );
+		}
+		
+		return make_array( result );
+	}
+	
+	Value filter( const Value& container, const Value& f )
+	{
+		if ( ! is_functional( f ) )
+		{
+			THROW( "filter requires a function" );
+		}
+		
+		generic_iterator it( container );
+		
+		list_builder result;
+		
+		while ( it )
+		{
+			const Value& x = it.use();
+			
+			Value passed = call_function( f, x );
+			
+			if ( passed.to< Boolean >().boolean() )
+			{
+				result.append( x );
+			}
 		}
 		
 		return make_array( result );

@@ -115,6 +115,7 @@ namespace vlib
 		{ Precedence_try, Op_catch },
 		
 		{ Precedence_map, Op_map },
+		{ Precedence_map, Op_ver },
 		{ Precedence_map, Op_per },
 		
 		{ Precedence_comparison, Op_cmp },

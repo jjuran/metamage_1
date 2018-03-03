@@ -801,6 +801,11 @@ namespace vlib
 			return map( left, right );
 		}
 		
+		if ( op == Op_ver )
+		{
+			return filter( left, right );
+		}
+		
 		if ( op == Op_per )
 		{
 			return reduce( left, right );

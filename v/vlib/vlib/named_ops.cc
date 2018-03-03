@@ -34,6 +34,7 @@ namespace vlib
 		{ "or",    Op_or      },
 		{ "per",   Op_per     },
 		{ "then",  Op_then    },
+		{ "ver",   Op_ver     },
 		{ "while", Op_while_2 },
 	};
 	
