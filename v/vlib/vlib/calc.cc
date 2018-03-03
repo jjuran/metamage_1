@@ -17,6 +17,7 @@
 #include "vlib/function-utils.hh"
 #include "vlib/is_type.hh"
 #include "vlib/list-utils.hh"
+#include "vlib/map-reduce.hh"
 #include "vlib/os.hh"
 #include "vlib/return.hh"
 #include "vlib/string-utils.hh"
@@ -538,57 +539,6 @@ namespace vlib
 		const Value& body   = expr->right;
 		
 		return invoke.as< Proc >().call( body );
-	}
-	
-	static
-	Value map( const Value& container, const Value& f )
-	{
-		if ( ! is_functional( f ) )
-		{
-			THROW( "map requires a function" );
-		}
-		
-		generic_iterator it( container );
-		
-		list_builder result;
-		
-		while ( it )
-		{
-			const Value& x = it.use();
-			
-			Value f_x = call_function( f, x );
-			
-			result.append( f_x );
-		}
-		
-		return make_array( result );
-	}
-	
-	static
-	Value reduce( const Value& container, const Value& f )
-	{
-		if ( ! is_functional( f ) )
-		{
-			THROW( "per (reduce) requires a function" );
-		}
-		
-		generic_iterator it( container );
-		
-		if ( ! it )
-		{
-			return empty_list;
-		}
-		
-		Value result = it.use();
-		
-		while ( it )
-		{
-			const Value& x = it.use();
-			
-			result = call_function( f, make_list( result, x ) );
-		}
-		
-		return result;
 	}
 	
 	struct conditional_resolution
