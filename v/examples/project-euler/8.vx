@@ -42,7 +42,10 @@ for i in 0 .. last do
 {
 	const digits = substr( number, i, width )
 	
-	max_product = Math.max( max_product, digit_product digits )
+	if not '0' in digits then
+	{
+		max_product = Math.max( max_product, digit_product digits )
+	}
 }
 
 print max_product
