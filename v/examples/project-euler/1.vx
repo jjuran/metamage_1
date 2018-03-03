@@ -1,13 +1,8 @@
 #!/usr/bin/env vx
 
-var x = 0
+const sum =
+	1 -> 1000
+	ver {(_ % 3) * (_ % 5) == 0}
+	per Math.sum
 
-for i in 1 -> 1000 do
-{
-	if (i % 3) * (i % 5) == 0 then
-	{
-		x += i
-	}
-}
-
-print x
+print sum
