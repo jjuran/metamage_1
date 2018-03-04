@@ -549,13 +549,31 @@ namespace tool
 		                  p7::basename( source_path ) ) != tools.end();
 	}
 	
+	class filename_belonging_check
+	{
+		private:
+			const std::vector< plus::string >& its_tools;
+		
+		public:
+			filename_belonging_check( const std::vector< plus::string >& tools )
+			:
+				its_tools( tools )
+			{
+			}
+			
+			bool operator()( const plus::string& source_path ) const
+			{
+				return filename_belongs( source_path, its_tools );
+			}
+	};
+	
 	static std::size_t partition_sources( const std::vector< plus::string >&  tool_filenames,
 	                                      std::vector< plus::string >&        source_paths )
 	{
 		std::size_t n_tools = std::partition( source_paths.begin(),
 		                                      source_paths.end(),
-		                                      std::bind2nd( plus::ptr_fun( &filename_belongs ),
-		                                                                    tool_filenames ) ) - source_paths.begin();
+		                                      filename_belonging_check( tool_filenames )
+		                                    ) - source_paths.begin();
 		
 		return n_tools;
 	}
