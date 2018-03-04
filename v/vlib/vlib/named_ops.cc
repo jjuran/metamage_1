@@ -47,7 +47,6 @@ namespace vlib
 		{ "const",  Op_const  },
 		{ "def",    Op_def    },
 		{ "do",     Op_do     },
-		{ "each",   Op_begin  },
 		{ "export", Op_export },
 		{ "for",    Op_for    },
 		{ "if",     Op_if     },
