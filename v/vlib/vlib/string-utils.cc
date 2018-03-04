@@ -119,7 +119,7 @@ namespace vlib
 			case Op_catch:  return " catch ";
 			
 			case Op_auto:    return "auto ";
-			case Op_each:    return "each ";
+			case Op_each:    return "begin ";
 			case Op_lambda:  return "lambda ";
 			
 			case Op_map:  return " map ";
