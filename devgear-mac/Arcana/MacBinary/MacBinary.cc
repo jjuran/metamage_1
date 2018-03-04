@@ -330,9 +330,7 @@ namespace MacBinary
 		{
 			Value result;
 			
-			std::copy( h.data + offset,
-			           h.data + offset + sizeof (Value),
-			           reinterpret_cast< unsigned char* >( &result ) );
+			memcpy( &result, h.data + offset, sizeof (Value) );
 			
 			return ByteSwap_Traits< Type >::Swap( result );
 		}
@@ -341,11 +339,7 @@ namespace MacBinary
 		{
 			v = ByteSwap_Traits< Type >::Swap( v );
 			
-			const unsigned char* value = reinterpret_cast< const unsigned char* >( &v );
-			
-			std::copy( value,
-			           value + sizeof (Value),
-			           h.data + offset );
+			memcpy( h.data + offset, &v, sizeof (Value) );
 		}
 	};
 	
@@ -369,9 +363,7 @@ namespace MacBinary
 		
 		static void Set( Header& h, Value v )
 		{
-			std::copy( v,
-			           v + 1 + v[ 0 ],
-			           &h.data[ offset ] );
+			memcpy( &h.data[ offset ], v, 1 + v[ 0 ] );
 		}
 	};
 	
