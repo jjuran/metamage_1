@@ -3,9 +3,6 @@
  *	==========
  */
 
-// Standard C++
-#include <algorithm>
-
 // Standard C/C++
 #include <cstdio>
 #include <cstring>
@@ -186,10 +183,12 @@ namespace tool
 		
 		N::ADBDevice_Container adbs;
 		
-		std::for_each( adbs.begin(),
-		               adbs.end(),
-		               std::bind2nd( std::ptr_fun( DoLEDs ),
-		                             leds ) );
+		typedef N::ADBDevice_Container::const_iterator Iter;
+		
+		for ( Iter it = adbs.begin(), end = adbs.end();  it != end;  ++it )
+		{
+			DoLEDs( *it, leds );
+		}
 		
 		return 0;
 		
