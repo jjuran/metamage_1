@@ -380,9 +380,12 @@ namespace tool
 		
 		N::FSSpecContents_Container queue = io::directory_contents( queue_dir );
 		
-		std::for_each( queue.begin(),
-		               queue.end(),
-		               std::bind1st( plus::ptr_fun( ProcessMessage ), queue_dir ) );
+		typedef N::FSSpecContents_Container::const_iterator Iter;
+		
+		for ( Iter it = queue.begin(), end = queue.end();  it != end;  ++it )
+		{
+			ProcessMessage( queue_dir, *it );
+		}
 		
 		return 0;
 	}
