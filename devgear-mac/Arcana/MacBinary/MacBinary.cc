@@ -491,11 +491,10 @@ namespace MacBinary
 		return length + blockSize - ( (length + blockSize - 1) % blockSize + 1 );
 	}
 	
-	static void ZeroHeader( Header& h )
+	static inline
+	void ZeroHeader( Header& h )
 	{
-		std::fill( h.data,
-		           h.data + kMacBinaryHeaderLength,
-		           '\0' );
+		memset( h.data, '\0', kMacBinaryHeaderLength );
 	}
 	
 	static void MakePartialHeaderForItem( const HFileInfo& pb, Header& h )
