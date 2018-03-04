@@ -3,7 +3,7 @@
 var depth  = 4
 var silent = false
 
-var p = each argv
+var p = begin argv
 
 while ++p do
 {

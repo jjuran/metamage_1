@@ -30,7 +30,7 @@ namespace vlib
 			
 			Iterator( const Value& container )
 			:
-				Value( dummy_operand, Op_each, container, &iterator_dispatch )
+				Value( dummy_operand, Op_begin, container, &iterator_dispatch )
 			{
 			}
 	};

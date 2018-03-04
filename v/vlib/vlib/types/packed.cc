@@ -134,7 +134,7 @@ namespace vlib
 			case Op_unary_negate:
 				return negated_bytes( v );
 			
-			case Op_each:
+			case Op_begin:
 				return Pointer( v );
 			
 			default:

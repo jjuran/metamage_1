@@ -78,8 +78,8 @@ namespace vlib
 		{ Precedence_exponentiation, Op_empower },
 		
 		{ Precedence_unary_math, Op_auto        },
-		{ Precedence_unary_math, Op_each        },
 		{ Precedence_unary_math, Op_recv        },
+		{ Precedence_unary_math, Op_begin       },
 		{ Precedence_unary_math, Op_lambda      },
 		{ Precedence_unary_math, Op_named_unary },
 		{ Precedence_unary_math, Op_unary_plus  },

@@ -257,7 +257,7 @@ namespace vlib
 						return make_array( reverse_list( expr->right ) );
 					}
 					
-					if ( op == Op_each )
+					if ( op == Op_begin )
 					{
 						return Iterator( expr->right );
 					}
@@ -289,7 +289,7 @@ namespace vlib
 				case Op_invocation:
 					THROW( "unary operator not defined for blocks" );
 				
-				case Op_each:
+				case Op_begin:
 					THROW( "unary operator not defined for iterators" );
 				
 				default:
@@ -300,7 +300,7 @@ namespace vlib
 		switch ( v.type() )
 		{
 			case Value_empty_list:
-				if ( op == Op_each )
+				if ( op == Op_begin )
 				{
 					return Iterator( empty_list );
 				}
@@ -313,7 +313,7 @@ namespace vlib
 					return v;
 				}
 				
-				if ( op == Op_each )
+				if ( op == Op_begin )
 				{
 					return Iterator( empty_list );
 				}

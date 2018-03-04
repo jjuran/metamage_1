@@ -28,7 +28,7 @@ def check
 {
 	const s, const t = _
 	
-	const r = t each [*s]
+	const r = t begin [*s]
 }
 
 const bang = [ char '!' ]
