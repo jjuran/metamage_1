@@ -29,9 +29,6 @@
 
 #include "MacBinary.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <string.h>
 
@@ -191,7 +188,8 @@ namespace MacBinary
 	
 #endif
 	
-	static unsigned short CalcCRC( register const unsigned char *dataBuf, std::size_t size )
+	static
+	unsigned short CalcCRC( register const unsigned char *dataBuf, size_t size )
 	{
 		//#define CCITT_CRC_GEN	0x1021
 		
@@ -292,7 +290,7 @@ namespace MacBinary
 		}
 	};
 	
-	template < UInt8 value, std::size_t offset >
+	template < UInt8 value, size_t offset >
 	struct Byte_Field_Traits
 	{
 		typedef UInt8 Value;
@@ -308,10 +306,10 @@ namespace MacBinary
 		}
 	};
 	
-	template < std::size_t offset >
+	template < size_t offset >
 	struct Zero_Field_Traits : Byte_Field_Traits< 0, offset > {};
 	
-	template < class Type, std::size_t offset >
+	template < class Type, size_t offset >
 	struct POD_Field_Traits
 	{
 		typedef Type Value;
@@ -327,7 +325,7 @@ namespace MacBinary
 		}
 	};
 	
-	template < class Type, std::size_t offset >
+	template < class Type, size_t offset >
 	struct MisalignedPOD_Field_Traits
 	{
 		typedef Type Value;
@@ -358,7 +356,7 @@ namespace MacBinary
 	{
 		typedef ConstStr63Param Value;
 		
-		static const std::size_t offset = 1;
+		static const size_t offset = 1;
 		
 		static bool Check( const Header& h )
 		{
@@ -381,8 +379,8 @@ namespace MacBinary
 	{
 		typedef unsigned short Value;
 		
-		static const std::size_t highOffset = 73;
-		static const std::size_t lowOffset = 101;
+		static const size_t highOffset = 73;
+		static const size_t lowOffset = 101;
 		
 		typedef POD_Field_Traits< unsigned char, highOffset > High;
 		typedef POD_Field_Traits< unsigned char, lowOffset  > Low;
@@ -409,7 +407,7 @@ namespace MacBinary
 	{
 		typedef FInfo Value;
 		
-		static const std::size_t offset = 65;
+		static const size_t offset = 65;
 		
 		typedef MisalignedPOD_Field_Traits< FInfo, offset > POD;
 		
@@ -466,8 +464,8 @@ namespace MacBinary
 	template <>
 	struct Field_Traits< kCRC >
 	{
-		static const std::size_t offset     = 124;
-		static const std::size_t dataLength = 124;
+		static const size_t offset     = 124;
+		static const size_t dataLength = 124;
 		
 		typedef POD_Field_Traits< UInt16, offset > Field;
 		
@@ -486,7 +484,8 @@ namespace MacBinary
 	// blockSize     -> blockSize
 	// blockSize + k -> blockSize * 2
 	// etc.
-	static std::size_t PaddedLength( std::size_t length, std::size_t blockSize )
+	static
+	size_t PaddedLength( size_t length, size_t blockSize )
 	{
 		return length + blockSize - ( (length + blockSize - 1) % blockSize + 1 );
 	}
@@ -555,9 +554,10 @@ namespace MacBinary
 		Block block;
 	};
 	
-	static void ReadWrite( N::FSFileRefNum file, BlockWriter blockWrite, int output, std::size_t byteCount )
+	static
+	void ReadWrite( N::FSFileRefNum file, BlockWriter blockWrite, int output, size_t byteCount )
 	{
-		std::size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
+		size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
 		
 		n::owned< N::Handle > tempMem = N::TempNewHandle( paddedCount );
 		
