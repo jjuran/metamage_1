@@ -223,8 +223,6 @@ namespace tool
 		
 		typedef io::directory_contents_traits< plus::string >::container_type directory_container;
 		
-		typedef plus::string (*path_descender)(const plus::string&, const char*);
-		
 		plus::string confd = dirPath / "A-line.confd";
 		
 		const bool has_confd = io::directory_exists( confd );
@@ -233,11 +231,15 @@ namespace tool
 		
 		directory_container contents = io::directory_contents( conf_path );
 		
-		std::transform( contents.begin(),
-		                contents.end(),
-		                has_confd ? configs : folders,
-		                std::bind1st( plus::ptr_fun( path_descender( io::path_descent ) ),
-		                              conf_path ) );
+		typedef directory_container::const_iterator Iter;
+		
+		Iter end = contents.end();
+		
+		for ( Iter it = contents.begin();  it != end;  ++it )
+		{
+			*(has_confd ? configs
+			            : folders)++ = io::path_descent( conf_path, *it );
+		}
 	}
 	
 	
