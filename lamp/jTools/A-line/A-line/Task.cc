@@ -71,14 +71,15 @@ namespace tool
 	
 	void Task::Complete()
 	{
-		std::for_each( its_dependents.begin(),
-		               its_dependents.end(),
-		               std::bind2nd( plus::ptr_fun( UpdateTaskInputStamp ),
-		                             its_input_stamp ) );
+		for ( size_t i = 0;  i < its_dependents.size();  ++i )
+		{
+			UpdateTaskInputStamp( its_dependents[ i ], its_input_stamp );
+		}
 		
-		std::for_each( its_dependents.begin(),
-		               its_dependents.end(),
-		               std::ptr_fun( CheckIfTaskIsReady ) );
+		for ( size_t i = 0;  i < its_dependents.size();  ++i )
+		{
+			CheckIfTaskIsReady( its_dependents[ i ] );
+		}
 		
 		its_dependents.clear();
 	}
