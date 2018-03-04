@@ -355,13 +355,19 @@ namespace tool
 		directory_spec destFolder( N::FSpMake_FSDirSpec( destinations ) );
 		
 		typedef io::directory_contents_traits< directory_spec >::container_type directory_container;
-		directory_container contents = io::directory_contents( destFolder );
 		
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               Transmitter( ReadOneLinerFromFile( returnPath ),
-		                            message,
-		                            destinations ) );
+		directory_container dests = io::directory_contents( destFolder );
+		
+		typedef directory_container::const_iterator Iter;
+		
+		Transmitter transmitter( ReadOneLinerFromFile( returnPath ),
+		                         message,
+		                         destinations );
+		
+		for ( Iter it = dests.begin(), end = dests.end();  it != end;  ++it )
+		{
+			transmitter( *it );
+		}
 		
 		io::delete_empty_directory( destFolder );  // this fails if destinations remain
 		io::delete_file           ( returnPath );
