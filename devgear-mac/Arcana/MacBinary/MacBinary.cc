@@ -630,12 +630,6 @@ namespace MacBinary
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
 		
-		/*
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               std::bind2nd( Encoder, output ) );
-		*/
-		
 		typedef N::FSSpecContents_Container::const_iterator const_iterator;
 		
 		for ( const_iterator it = contents.begin();  it != contents.end();  ++it )
