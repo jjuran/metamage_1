@@ -87,7 +87,7 @@ namespace vlib
 			case Op_unary_minus:
 				return reversed_bytes( v );
 			
-			case Op_each:
+			case Op_begin:
 				return Pointer( v );
 			
 			default:

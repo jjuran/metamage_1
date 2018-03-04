@@ -66,7 +66,7 @@ namespace vlib
 		Op_unary_count,
 		Op_unary_deref,
 		Op_auto,
-		Op_each,
+		Op_begin,
 		Op_array,
 		Op_subscript,
 		Op_block,

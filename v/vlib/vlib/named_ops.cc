@@ -43,11 +43,11 @@ namespace vlib
 	{
 		{ "assert", Op_assert },
 		{ "auto",   Op_auto   },
-		{ "begin",  Op_each   },
+		{ "begin",  Op_begin  },
 		{ "const",  Op_const  },
 		{ "def",    Op_def    },
 		{ "do",     Op_do     },
-		{ "each",   Op_each   },
+		{ "each",   Op_begin  },
 		{ "export", Op_export },
 		{ "for",    Op_for    },
 		{ "if",     Op_if     },
