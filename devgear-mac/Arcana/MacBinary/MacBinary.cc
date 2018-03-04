@@ -132,6 +132,12 @@ namespace MacBinary
 	using N::fsWrPerm;
 	
 	
+	static inline
+	ByteCount min( ByteCount a, ByteCount b )
+	{
+		return b < a ? b : a;
+	}
+	
 	template < class Type > struct ByteSwap_Traits
 	{
 		static Type Swap( Type value )
@@ -831,7 +837,7 @@ namespace MacBinary
 		
 		if ( itsSecondaryHeaderLength  &&  data < end )
 		{
-			ByteCount headerBytes = std::min< ByteCount >( itsSecondaryHeaderLength, end - data );
+			ByteCount headerBytes = min( itsSecondaryHeaderLength, end - data );
 			
 			itsSecondaryHeaderLength -= headerBytes;
 			
@@ -840,7 +846,7 @@ namespace MacBinary
 		
 		if ( itsDataForkLength  &&  data < end )
 		{
-			ByteCount dataBytes = std::min< ByteCount >( itsDataForkLength, end - data );
+			ByteCount dataBytes = min( itsDataForkLength, end - data );
 			
 			itsDataForkLength -= dataBytes;
 			
@@ -851,7 +857,7 @@ namespace MacBinary
 		
 		if ( itsResourceForkLength  &&  data < end )
 		{
-			ByteCount resourceBytes = std::min< ByteCount >( itsResourceForkLength, end - data );
+			ByteCount resourceBytes = min( itsResourceForkLength, end - data );
 			
 			itsResourceForkLength -= resourceBytes;
 			
@@ -862,7 +868,7 @@ namespace MacBinary
 		
 		if ( itsCommentLength  &&  data < end )
 		{
-			ByteCount commentBytes = std::min< ByteCount >( itsCommentLength, end - data );
+			ByteCount commentBytes = min( itsCommentLength, end - data );
 			
 			itsCommentLength -= commentBytes;
 			
