@@ -1,59 +1,59 @@
 #!/usr/bin/env jtest
 
-$ vc 'each "Hello"'
+$ vc 'begin "Hello"'
 1 >= '<pointer>'
 
 %
 
-$ vc '*each "Hello"'
+$ vc '*begin "Hello"'
 1 >= "'H'"
 
 %
 
-$ vc 'bool each "Hello"'
+$ vc 'bool begin "Hello"'
 1 >= true
 
 %
 
-$ vc 'each ""'
+$ vc 'begin ""'
 1 >= '<pointer>'
 
 %
 
-$ vc 'bool each ""'
+$ vc 'bool begin ""'
 1 >= false
 
 %
 
-$ vc 'var p = each "Hello"; *p'
+$ vc 'var p = begin "Hello"; *p'
 1 >= "'H'"
 
 %
 
-$ vc 'var p = each "Hello"; ++p; *p'
+$ vc 'var p = begin "Hello"; ++p; *p'
 1 >= "'e'"
 
 %
 
-$ vc 'var p = each "Hello"; ++p; ++p; ++p; ++p; *p'
+$ vc 'var p = begin "Hello"; ++p; ++p; ++p; ++p; *p'
 1 >= "'o'"
 
 %
 
-$ vc 'var p = each "Hello"; ++p; ++p; ++p; ++p; *++p'
+$ vc 'var p = begin "Hello"; ++p; ++p; ++p; ++p; *++p'
 1 >= '()'
 
 %
 
-$ vc '*each x"4e75"'
+$ vc '*begin x"4e75"'
 1 >= "'N'"
 
 %
 
-$ vc 'var p = each "abcdef"; var q = ++p; ++q; ++q; ++q - p'
+$ vc 'var p = begin "abcdef"; var q = ++p; ++q; ++q; ++q - p'
 1 >= '"bcd"'
 
 %
 
-$ vc 'var p = each "abc"; var q = ++p; ++q; ++q; try {p - q} catch {"nope"}'
+$ vc 'var p = begin "abc"; var q = ++p; ++q; ++q; try {p - q} catch {"nope"}'
 1 >= '"nope"'
