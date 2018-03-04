@@ -14,9 +14,6 @@
 #include <cstdlib>
 #include <cstring>
 
-// Standard C++
-#include <functional>
-
 // gear
 #include "gear/find.hh"
 
@@ -24,7 +21,6 @@
 #include "debug/assert.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/var_string.hh"
 #include "plus/string/concat.hh"
 
@@ -863,6 +859,24 @@ namespace ShellShock
 		return result;
 	}
 	
+	class parameter_expander
+	{
+		private:
+			param_lookup_f its_lookup;
+		
+		public:
+			typedef std::vector< plus::string > result_type;
+			
+			parameter_expander( param_lookup_f f ) : its_lookup( f )
+			{
+			}
+			
+			result_type operator()( const plus::string& word ) const
+			{
+				return ParameterExpansion( its_lookup, word );
+			}
+	};
+	
 	template < class Inserter >
 	static inline void Copy( const plus::string& word, Inserter inserter )
 	{
@@ -952,13 +966,7 @@ namespace ShellShock
 						Apply( ProcessSubstitution,
 							Apply( ArithmeticExpansion,
 								Apply( CommandSubstitution,
-									Apply
-									(
-										std::bind1st
-										(
-											plus::ptr_fun( ParameterExpansion ),
-											lookup_param
-										),
+									Apply( parameter_expander( lookup_param ),
 										Apply( TildeExpansion,
 											Apply( BraceExpansion,
 												command
