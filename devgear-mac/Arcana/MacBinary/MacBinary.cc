@@ -29,9 +29,6 @@
 
 #include "MacBinary.hh"
 
-// Standard C++
-#include <algorithm>
-
 // Standard C
 #include <string.h>
 
@@ -132,6 +129,12 @@ namespace MacBinary
 	using N::fsWrPerm;
 	
 	
+	static inline
+	ByteCount min( ByteCount a, ByteCount b )
+	{
+		return b < a ? b : a;
+	}
+	
 	template < class Type > struct ByteSwap_Traits
 	{
 		static Type Swap( Type value )
@@ -185,7 +188,8 @@ namespace MacBinary
 	
 #endif
 	
-	static unsigned short CalcCRC( register const unsigned char *dataBuf, std::size_t size )
+	static
+	unsigned short CalcCRC( register const unsigned char *dataBuf, size_t size )
 	{
 		//#define CCITT_CRC_GEN	0x1021
 		
@@ -286,7 +290,7 @@ namespace MacBinary
 		}
 	};
 	
-	template < UInt8 value, std::size_t offset >
+	template < UInt8 value, size_t offset >
 	struct Byte_Field_Traits
 	{
 		typedef UInt8 Value;
@@ -302,10 +306,10 @@ namespace MacBinary
 		}
 	};
 	
-	template < std::size_t offset >
+	template < size_t offset >
 	struct Zero_Field_Traits : Byte_Field_Traits< 0, offset > {};
 	
-	template < class Type, std::size_t offset >
+	template < class Type, size_t offset >
 	struct POD_Field_Traits
 	{
 		typedef Type Value;
@@ -321,7 +325,7 @@ namespace MacBinary
 		}
 	};
 	
-	template < class Type, std::size_t offset >
+	template < class Type, size_t offset >
 	struct MisalignedPOD_Field_Traits
 	{
 		typedef Type Value;
@@ -330,9 +334,7 @@ namespace MacBinary
 		{
 			Value result;
 			
-			std::copy( h.data + offset,
-			           h.data + offset + sizeof (Value),
-			           reinterpret_cast< unsigned char* >( &result ) );
+			memcpy( &result, h.data + offset, sizeof (Value) );
 			
 			return ByteSwap_Traits< Type >::Swap( result );
 		}
@@ -341,11 +343,7 @@ namespace MacBinary
 		{
 			v = ByteSwap_Traits< Type >::Swap( v );
 			
-			const unsigned char* value = reinterpret_cast< const unsigned char* >( &v );
-			
-			std::copy( value,
-			           value + sizeof (Value),
-			           h.data + offset );
+			memcpy( h.data + offset, &v, sizeof (Value) );
 		}
 	};
 	
@@ -358,7 +356,7 @@ namespace MacBinary
 	{
 		typedef ConstStr63Param Value;
 		
-		static const std::size_t offset = 1;
+		static const size_t offset = 1;
 		
 		static bool Check( const Header& h )
 		{
@@ -369,9 +367,7 @@ namespace MacBinary
 		
 		static void Set( Header& h, Value v )
 		{
-			std::copy( v,
-			           v + 1 + v[ 0 ],
-			           &h.data[ offset ] );
+			memcpy( &h.data[ offset ], v, 1 + v[ 0 ] );
 		}
 	};
 	
@@ -383,8 +379,8 @@ namespace MacBinary
 	{
 		typedef unsigned short Value;
 		
-		static const std::size_t highOffset = 73;
-		static const std::size_t lowOffset = 101;
+		static const size_t highOffset = 73;
+		static const size_t lowOffset = 101;
 		
 		typedef POD_Field_Traits< unsigned char, highOffset > High;
 		typedef POD_Field_Traits< unsigned char, lowOffset  > Low;
@@ -411,7 +407,7 @@ namespace MacBinary
 	{
 		typedef FInfo Value;
 		
-		static const std::size_t offset = 65;
+		static const size_t offset = 65;
 		
 		typedef MisalignedPOD_Field_Traits< FInfo, offset > POD;
 		
@@ -468,8 +464,8 @@ namespace MacBinary
 	template <>
 	struct Field_Traits< kCRC >
 	{
-		static const std::size_t offset     = 124;
-		static const std::size_t dataLength = 124;
+		static const size_t offset     = 124;
+		static const size_t dataLength = 124;
 		
 		typedef POD_Field_Traits< UInt16, offset > Field;
 		
@@ -488,16 +484,16 @@ namespace MacBinary
 	// blockSize     -> blockSize
 	// blockSize + k -> blockSize * 2
 	// etc.
-	static std::size_t PaddedLength( std::size_t length, std::size_t blockSize )
+	static
+	size_t PaddedLength( size_t length, size_t blockSize )
 	{
 		return length + blockSize - ( (length + blockSize - 1) % blockSize + 1 );
 	}
 	
-	static void ZeroHeader( Header& h )
+	static inline
+	void ZeroHeader( Header& h )
 	{
-		std::fill( h.data,
-		           h.data + kMacBinaryHeaderLength,
-		           '\0' );
+		memset( h.data, '\0', kMacBinaryHeaderLength );
 	}
 	
 	static void MakePartialHeaderForItem( const HFileInfo& pb, Header& h )
@@ -558,9 +554,10 @@ namespace MacBinary
 		Block block;
 	};
 	
-	static void ReadWrite( N::FSFileRefNum file, BlockWriter blockWrite, int output, std::size_t byteCount )
+	static
+	void ReadWrite( N::FSFileRefNum file, BlockWriter blockWrite, int output, size_t byteCount )
 	{
-		std::size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
+		size_t paddedCount = PaddedLength( byteCount, kMacBinaryBlockSize );
 		
 		n::owned< N::Handle > tempMem = N::TempNewHandle( paddedCount );
 		
@@ -629,12 +626,6 @@ namespace MacBinary
 		N::FSDirSpec dir = n::make< N::FSDirSpec >( cInfo );
 		
 		N::FSSpecContents_Container contents = N::FSContents( dir );
-		
-		/*
-		std::for_each( contents.begin(),
-		               contents.end(),
-		               std::bind2nd( Encoder, output ) );
-		*/
 		
 		typedef N::FSSpecContents_Container::const_iterator const_iterator;
 		
@@ -845,7 +836,7 @@ namespace MacBinary
 		
 		if ( itsSecondaryHeaderLength  &&  data < end )
 		{
-			ByteCount headerBytes = std::min< ByteCount >( itsSecondaryHeaderLength, end - data );
+			ByteCount headerBytes = min( itsSecondaryHeaderLength, end - data );
 			
 			itsSecondaryHeaderLength -= headerBytes;
 			
@@ -854,7 +845,7 @@ namespace MacBinary
 		
 		if ( itsDataForkLength  &&  data < end )
 		{
-			ByteCount dataBytes = std::min< ByteCount >( itsDataForkLength, end - data );
+			ByteCount dataBytes = min( itsDataForkLength, end - data );
 			
 			itsDataForkLength -= dataBytes;
 			
@@ -865,7 +856,7 @@ namespace MacBinary
 		
 		if ( itsResourceForkLength  &&  data < end )
 		{
-			ByteCount resourceBytes = std::min< ByteCount >( itsResourceForkLength, end - data );
+			ByteCount resourceBytes = min( itsResourceForkLength, end - data );
 			
 			itsResourceForkLength -= resourceBytes;
 			
@@ -876,7 +867,7 @@ namespace MacBinary
 		
 		if ( itsCommentLength  &&  data < end )
 		{
-			ByteCount commentBytes = std::min< ByteCount >( itsCommentLength, end - data );
+			ByteCount commentBytes = min( itsCommentLength, end - data );
 			
 			itsCommentLength -= commentBytes;
 			
