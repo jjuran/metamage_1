@@ -6,9 +6,6 @@
 #ifndef MXCPP_DIRECTIVE_HH
 #define MXCPP_DIRECTIVE_HH
 
-// Standard C/C++
-#include <cctype>
-
 // plus
 #include "plus/string.hh"
 
@@ -17,11 +14,6 @@ namespace tool
 {
 	
 	class unclosed_macro_definition {};
-	
-	inline bool is_space( char c )
-	{
-		return std::isspace( c );
-	}
 	
 	bool emitting();
 	
