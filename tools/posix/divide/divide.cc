@@ -6,14 +6,12 @@
 // Standard C++
 #include <algorithm>
 
-// Standard C/C++
-#include <cctype>
-
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // plus
@@ -84,7 +82,7 @@ namespace tool
 			
 			const char* q = ++p;
 			
-			while ( std::isdigit( *q )  &&  q - p < 3 )
+			while ( iota::is_digit( *q )  &&  q - p < 3 )
 			{
 				++q;
 			}

@@ -10,9 +10,11 @@
 #include <pwd.h>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdlib>
 #include <cstring>
+
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/find.hh"
@@ -774,7 +776,7 @@ namespace ShellShock
 				break;
 			
 			default:
-				for ( end = var;  std::isalnum( *end ) || *end == '_';  ++end ) continue;
+				for ( end = var;  iota::is_alnum( *end ) || *end == '_';  ++end ) continue;
 				p = end;
 				// p == var if name is empty, p > var otherwise
 				break;

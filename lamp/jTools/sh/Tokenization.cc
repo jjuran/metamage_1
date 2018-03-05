@@ -4,8 +4,8 @@
 
 #include "Tokenization.hh"
 
-// Standard C/C++
-#include <cctype>
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/parse_decimal.hh"
@@ -93,7 +93,7 @@ namespace ShellShock
 		
 		const char* q = p;
 		
-		if ( std::isdigit( *q ) )
+		if ( iota::is_digit( *q ) )
 		{
 			fd = gear::parse_unsigned_decimal( &q );
 		}

@@ -10,7 +10,6 @@
 #include <set>
 
 // Standard C/C++
-#include <cctype>
 #include <cstring>
 
 // Standard C
@@ -25,7 +24,8 @@
 // must
 #include "must/pipe.h"
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -219,7 +219,7 @@ namespace tool
 			
 			return result;
 		}
-		else if ( std::isdigit( param[0] ) )
+		else if ( iota::is_digit( param[0] ) )
 		{
 			int i = gear::parse_unsigned_decimal( param.c_str() );
 			
@@ -479,7 +479,7 @@ namespace tool
 		
 		for ( const char* p = word;  *p != '\0';  ++p )
 		{
-			if ( !std::isalnum( *p ) )
+			if ( !iota::is_alnum( *p ) )
 			{
 				result += '\\';
 			}

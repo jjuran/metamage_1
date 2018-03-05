@@ -7,9 +7,6 @@
 #include <signal.h>
 #include <stdlib.h>
 
-// Standard C/C++
-#include <cctype>
-
 // POSIX
 #include <unistd.h>
 
@@ -17,6 +14,7 @@
 #include "must/write.h"
 
 // iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -39,7 +37,7 @@ int main( int argc, char **argv )
 	{
 		const char *const sig = argp[ 1 ] + 1;
 		
-		const bool numeric = std::isdigit( *sig );
+		const bool numeric = iota::is_digit( *sig );
 		
 		// FIXME:  Needs error checking instead of silently using 0
 		sig_number = numeric ? gear::parse_unsigned_decimal( sig )

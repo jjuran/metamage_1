@@ -5,12 +5,12 @@
 
 #include "Genie/FS/resources.hh"
 
-// Standard C
-#include <ctype.h>
-
 // POSIX
 #include <fcntl.h>
 #include <sys/stat.h>
+
+// iota
+#include "iota/char_types.hh"
 
 // gear
 #include "gear/hexadecimal.hh"
@@ -130,12 +130,12 @@ namespace Genie
 		const char* begin = mac_name.data();
 		const char* end   = mac_name.size() + begin;
 		
-		// In the event of a short name, isxdigit( '\0' ) will return false
+		// In the event of a short name, is_xdigit( '\0' ) will return false
 		
-		const bool has_id =      isxdigit( begin[0] )
-		                     &&  isxdigit( begin[1] )
-		                     &&  isxdigit( begin[2] )
-		                     &&  isxdigit( begin[3] );
+		const bool has_id =      iota::is_xdigit( begin[0] )
+		                     &&  iota::is_xdigit( begin[1] )
+		                     &&  iota::is_xdigit( begin[2] )
+		                     &&  iota::is_xdigit( begin[3] );
 		
 		if ( !has_id )
 		{

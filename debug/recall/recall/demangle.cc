@@ -9,10 +9,10 @@
 #include <algorithm>
 
 // Standard C/C++
-#include <cctype>
 #include <cstring>
 
 // iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -230,10 +230,10 @@ namespace recall
 			code[2] = (x >>= 8) & 0xff;
 			code[1] = (x >>= 8) & 0xff;
 			
-			bool isCode =    std::isprint( code[1] )
-			              && std::isprint( code[2] )
-			              && std::isprint( code[3] )
-			              && std::isprint( code[4] );
+			bool isCode =    iota::is_print( code[1] )
+			              && iota::is_print( code[2] )
+			              && iota::is_print( code[3] )
+			              && iota::is_print( code[4] );
 			
 			if ( isCode )
 			{
@@ -320,9 +320,9 @@ namespace recall
 	{
 		if ( p[0] != '_' )  return false;
 		
-		if ( std::isdigit( p[1] ) )  return true;
+		if ( iota::is_digit( p[1] ) )  return true;
 		
-		if ( p[1] == 'Q'  &&  std::isdigit( p[2] ) )  return true;
+		if ( p[1] == 'Q'  &&  iota::is_digit( p[2] ) )  return true;
 		
 		if ( GetBuiltinType( p[1] ) != NULL  &&  p[2] == '_' )  return true;
 		
@@ -368,7 +368,7 @@ namespace recall
 			++p;
 		}
 		
-		if ( std::isdigit( *p ) )
+		if ( iota::is_digit( *p ) )
 		{
 			unsigned x = gear::parse_unsigned_decimal( &p );
 			
@@ -579,7 +579,7 @@ namespace recall
 			return;
 		}
 		
-		if ( std::isdigit( *p ) )
+		if ( iota::is_digit( *p ) )
 		{
 			ReadQualName( out, p );
 			
@@ -743,7 +743,7 @@ namespace recall
 		
 		p += 2;
 		
-		if ( std::isdigit( *p ) )
+		if ( iota::is_digit( *p ) )
 		{
 			ReadQualName( out, p );
 			

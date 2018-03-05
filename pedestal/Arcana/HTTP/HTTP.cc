@@ -6,14 +6,14 @@
 #include "HTTP.hh"
 
 // Standard C/C++
-#include <cctype>
 #include <cerrno>
 #include <cstring>
 
 // Standard C++
 #include <vector>
 
-// Iota
+// iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 
 // gear
@@ -123,7 +123,7 @@ namespace HTTP
 		
 		for ( const char* a_end = a + a_len;  a < a_end;  ++a, ++b )
 		{
-			if ( std::tolower( *a ) != std::tolower( *b ) )
+			if ( iota::to_lower( *a ) != iota::to_lower( *b ) )
 			{
 				return false;
 			}

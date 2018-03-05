@@ -7,12 +7,12 @@
 #include <vector>
 
 // Standard C
-#include <ctype.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
 // iota
+#include "iota/char_types.hh"
 #include "iota/endian.hh"
 #include "iota/strings.hh"
 
@@ -855,10 +855,17 @@ namespace tool
 		{
 			const uint32_t data = global_last_immediate_data_from_ea;
 			
-			if (     isprint( data >> 24        )
-			     &&  isprint( data >> 16 & 0xff )
-			     &&         ( data >>  8 & 0xff ) >= ' '
-			     &&         ( data       & 0xff ) >= ' ' )
+			/*
+				Since we're determining if this value is human-readable or
+				not, it's not a serious problem to use the locale-dependent
+				isprint().  However, it's better if output is deterministic,
+				so use a pure function.
+			*/
+			
+			if (     iota::is_print( data >> 24        )
+			     &&  iota::is_print( data >> 16 & 0xff )
+			     &&                ( data >>  8 & 0xff ) >= ' '
+			     &&                ( data       & 0xff ) >= ' ' )
 			{
 				comment = COMMENT;
 				

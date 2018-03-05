@@ -7,7 +7,6 @@
 #include <vector>
 
 // Standard C/C++
-#include <cctype>
 #include <cstdio>
 #include <cstring>
 
@@ -23,6 +22,7 @@
 #include "must/write.h"
 
 // iota
+#include "iota/char_types.hh"
 #include "iota/strings.hh"
 #include "iota/swap.hh"
 
@@ -554,7 +554,7 @@ namespace tool
 				continue;
 			}
 			
-			if ( std::isdigit( line[0] ) )
+			if ( iota::is_digit( line[0] ) )
 			{
 				test.AddRedirection( GetRedirectionFromLine( line, feed, reader ) );
 				
