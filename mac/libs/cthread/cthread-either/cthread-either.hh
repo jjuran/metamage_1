@@ -15,7 +15,13 @@
 		#error  Custom threads are only supported on 68K
 	#endif
 	#define CTHREAD_CUSTOM  1
-#elif CONFIG_THREAD_MANAGER_GRANTED
+#elif CONFIG_THREAD_MANAGER_GRANTED  ||  ! defined( __MC68K__ )
+	/*
+		Assume Thread Manager is available in PPC builds.
+		This is true for System 7.5+, or System 7.1.2 with the extension.
+		
+		TODO:  Add startup check in case Thread Manager /isn't/ available.
+	*/
 	#define CTHREAD_SYSTEM  1
 #else
 	#define CTHREAD_EITHER  1
