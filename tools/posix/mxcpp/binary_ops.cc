@@ -9,7 +9,6 @@
 #include <algorithm>
 
 // Standard C
-#include <ctype.h>
 #include <stdint.h>
 #include <string.h>
 
