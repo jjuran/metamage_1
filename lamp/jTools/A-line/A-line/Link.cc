@@ -411,12 +411,17 @@ namespace tool
 	{
 		const std::vector< plus::string >& input_filenames = project.UsedRezFiles();
 		
+		const size_t n = input_filenames.size();
+		
 		std::vector< plus::string > input_pathnames( input_filenames.size() );
 		
-		std::transform( input_filenames.begin(),
-		                input_filenames.end(),
-		                input_pathnames.begin(),
-		                std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			const plus::string& filename = input_filenames[ i ];
+			
+			input_pathnames[ i ] = Project_FindResourceFile( project,
+			                                                 filename );
+		}
 		
 		if ( needsCarbResource )
 		{
