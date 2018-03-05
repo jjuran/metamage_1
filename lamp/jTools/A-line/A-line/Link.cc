@@ -18,7 +18,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
 // Debug
@@ -431,10 +430,11 @@ namespace tool
 		                                               includeDir,
 		                                               relix ) );
 		
-		std::for_each( input_pathnames.begin(),
-		               input_pathnames.end(),
-		               std::bind1st( plus::ptr_fun( UpdateInputStamp ), rez_task ) );
-		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			UpdateInputStamp( rez_task, input_pathnames[ i ] );
+		}
+
 		return rez_task;
 	}
 	
