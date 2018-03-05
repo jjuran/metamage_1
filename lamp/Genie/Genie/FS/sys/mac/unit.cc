@@ -5,9 +5,6 @@
 
 #include "Genie/FS/sys/mac/unit.hh"
 
-// Standard C
-#include <ctype.h>
-
 // mac-types
 #include "mac_types/AuxDCE.hh"
 
