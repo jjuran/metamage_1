@@ -399,11 +399,6 @@ namespace tool
 	}
 	
 	
-	static plus::string Project_FindResourceFile( const Project& project, const plus::string& filespec )
-	{
-		return project.FindResourceFile( filespec );
-	}
-	
 	static TaskPtr MakeRezTask( const Project&       project,
 	                            const plus::string&  output_pathname,
 	                            bool                 needsCarbResource,
@@ -413,14 +408,15 @@ namespace tool
 		
 		const size_t n = input_filenames.size();
 		
-		std::vector< plus::string > input_pathnames( input_filenames.size() );
+		std::vector< plus::string > input_pathnames;
+		
+		input_pathnames.reserve( n );
 		
 		for ( size_t i = 0;  i < n;  ++i )
 		{
 			const plus::string& filename = input_filenames[ i ];
 			
-			input_pathnames[ i ] = Project_FindResourceFile( project,
-			                                                 filename );
+			input_pathnames.push_back( project.FindResourceFile( filename ) );
 		}
 		
 		if ( needsCarbResource )
