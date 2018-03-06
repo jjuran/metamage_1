@@ -40,22 +40,22 @@ $ vc '"Hello" per ...'
 
 %
 
-$ vc '"foo bar" per {head _ and tail _}'
+$ vc '"foo bar" per {a and b}'
 1 >= "'r'"
 
 %
 
-$ vc '"foo\x00bar" per {head _ and tail _}'
+$ vc '"foo\x00bar" per {a and b}'
 1 >= "'\x00'"
 
 %
 
-$ vc '"\x00foo\0" per {head _ or tail _}'
+$ vc '"\x00foo\0" per {a or b}'
 1 >= "'f'"
 
 %
 
-$ vc '[ x"0003", x"0100", x"0400" ] per {head _ | tail _}'
+$ vc '[ x"0003", x"0100", x"0400" ] per {a | b}'
 1 >= 'x"0503"'
 
 %

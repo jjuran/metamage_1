@@ -20,6 +20,44 @@
 namespace vlib
 {
 	
+	static
+	void insert_code_to_unpack_arguments( const Value& f, const Value& params )
+	{
+		if ( Expr* expr = f.expr() )
+		{
+			if ( expr->op == Op_block )
+			{
+				Value unpack = Value( params, Op_duplicate, Identifier( "_" ) );
+				
+				const Value& body = expr->right;
+				
+				Value rebuilt( unpack, Op_end, body );
+				
+				expr->right = rebuilt;
+			}
+		}
+	}
+	
+	static
+	void insert_code_to_unpack_into_x( const Value& f )
+	{
+		const Value const_x( Op_const, Identifier( "x" ) );
+		
+		insert_code_to_unpack_arguments( f, const_x );
+	}
+	
+	static
+	void insert_code_to_unpack_into_a_b( const Value& f )
+	{
+		const Value const_a( Op_const, Identifier( "a" ) );
+		const Value const_b( Op_const, Identifier( "b" ) );
+		
+		const Value ab_list( const_a, const_b );
+		
+		insert_code_to_unpack_arguments( f, ab_list );
+	}
+	
+	
 	class Analyzer
 	{
 		private:
@@ -93,6 +131,14 @@ namespace vlib
 			else if ( op == Op_block )
 			{
 				its_scope.push();
+			}
+			else if ( op == Op_map  ||  op == Op_ver )
+			{
+				insert_code_to_unpack_into_x( expr->right );
+			}
+			else if ( op == Op_per )
+			{
+				insert_code_to_unpack_into_a_b( expr->right );
 			}
 			else if ( declares_symbols( op ) )
 			{
