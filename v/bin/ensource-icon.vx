@@ -1,17 +1,14 @@
 #!/usr/bin/env vx
 
-var binary-strings = [ "" ]
+def bitstrings { _ map { x "0", x "1" } }
 
-for i in 0 -> 8 do
-{
-	binary-strings = binary-strings map { _ "0", _ "1" }
-}
+const binary-strings = bitstrings^8 .[ "" ]
 
 def binarize
 {
 	const data = _
 	
-	const bits = data map { *binary-strings[ int _ ] }
+	const bits = data map { *binary-strings[ int x ] }
 	
 	return str bits
 }
@@ -33,7 +30,7 @@ const icons = [data / -128]
 
 for icon in icons do
 {
-	const rows = [icon / -4] map binarize map lineate
+	const rows = [icon / -4] map lineate * binarize
 	
 	const source = str rows
 	
