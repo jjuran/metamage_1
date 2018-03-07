@@ -2,10 +2,10 @@
 
 const set = 1 .. 100
 
-const square_of_sum = Math.sum( *set )^2
+const sum = set per {a + b}
 
-const sum_of_squares = Math.sum .*(set map { _^2 })
+const sum_of_squares = set map { x^2 } per {a + b}
 
-const diff = square_of_sum - sum_of_squares
+const diff = sum^2 - sum_of_squares
 
 print diff
