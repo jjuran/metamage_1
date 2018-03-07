@@ -2,7 +2,7 @@
 
 const sum =
 	1 -> 1000
-	ver {(_ % 3) * (_ % 5) == 0}
+	ver {(x % 3) * (x % 5) == 0}
 	per Math.sum
 
 print sum
