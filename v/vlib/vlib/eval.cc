@@ -20,6 +20,7 @@
 #include "vlib/types.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
+#include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/string.hh"
 
@@ -407,6 +408,8 @@ namespace vlib
 				list_iterator a( left  );
 				list_iterator b( right );
 				
+				list_builder results;
+				
 				while ( b )
 				{
 					if ( ! a )
@@ -414,12 +417,14 @@ namespace vlib
 						THROW( "too many values in list assignment" );
 					}
 					
-					eval( a.use(), op, b.use(), source_spec() );
+					Value result = eval( a.use(), op, b.use(), source_spec() );
+					
+					results.append( result );
 				}
 				
 				if ( a.finished() )
 				{
-					return right;
+					return results;
 				}
 				
 				THROW( "too few values in list assignment" );
