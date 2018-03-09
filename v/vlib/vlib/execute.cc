@@ -447,7 +447,9 @@ namespace vlib
 			{
 				const Value& left = resolve_symbol( expr->left, stack );
 				
-				return eval( left, Op_denote, expr->right, expr->source );
+				const Value type = execute( expr->right, stack );
+				
+				return eval( left, Op_denote, type, expr->source );
 			}
 			
 			if ( expr->op == Op_move )
