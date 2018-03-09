@@ -230,21 +230,7 @@ namespace vlib
 	{
 		if ( op == Op_parens  &&  ! expecting_value() )
 		{
-			// Assume a function call.
-			op_type op = Op_function;
-			
-			if ( is_symbol( stack.back().v )  &&  stack.size() >= 2 )
-			{
-				const op_type prev_op = stack.end()[ -2 ].op;
-				
-				if ( declares_symbols( prev_op ) )
-				{
-					// Nope, it's a type annotation.
-					op = Op_denote;
-				}
-			}
-			
-			fold_ops_and_add( op );
+			fold_ops_and_add( Op_function );
 		}
 		
 		stack.push_back( op );
