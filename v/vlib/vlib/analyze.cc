@@ -12,9 +12,13 @@
 #include "vlib/exceptions.hh"
 #include "vlib/scope.hh"
 #include "vlib/throw.hh"
+#include "vlib/iterators/list_builder.hh"
+#include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/any.hh"
 #include "vlib/types/bareword.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/term.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -57,6 +61,79 @@ namespace vlib
 		insert_code_to_unpack_arguments( f, ab_list );
 	}
 	
+	static
+	void insert_prototype_prelude( const Value& f, const Value& prototype )
+	{
+		list_iterator it( prototype );
+		
+		list_builder prelude;
+		
+		if ( ! it )
+		{
+			Value var( Op_var, Identifier( "" ) );
+			
+			prelude.append( Value( var, Op_denote, empty_list ) );
+		}
+		
+		while ( it )
+		{
+			const Value& parameter = it.use();
+			
+			if ( Expr* expr = parameter.expr() )
+			{
+				if ( declares_symbols( expr->op ) )
+				{
+					prelude.append( parameter );
+					continue;
+				}
+				
+				if ( expr->op == Op_mapping )
+				{
+					if ( expr->left.type() != V_str )
+					{
+						THROW( "non-string parameter name" );
+					}
+					
+					Value var( Op_var, Identifier( expr->left.string() ) );
+					
+					prelude.append( Value( var, Op_denote, expr->right ) );
+					continue;
+				}
+			}
+			
+			Value var( Op_var, parameter );
+			
+			prelude.append( Value( var, Op_denote, Type( one_vtype ) ) );
+		}
+		
+		insert_code_to_unpack_arguments( f, prelude.get() );
+	}
+	
+	static
+	void insert_prototype_prelude( Expr* expr )
+	{
+		ASSERT( expr->op == Op_function );
+		
+		const Value& L = expr->left;
+		const Value& R = expr->right;
+		
+		if ( R.expr()  &&  R.expr()->op == Op_block )
+		{
+			Expr* L_expr = L.expr();
+			
+			if ( L_expr  &&  L_expr->op == Op_function )
+			{
+				const Value& LL = L_expr->left;
+				
+				if ( LL.expr()  &&  LL.expr()->op == Op_def )
+				{
+					insert_prototype_prelude( R, L_expr->right );
+					
+					expr->left = LL;
+				}
+			}
+		}
+	}
 	
 	class Analyzer
 	{
@@ -139,6 +216,10 @@ namespace vlib
 			else if ( op == Op_per )
 			{
 				insert_code_to_unpack_into_a_b( expr->right );
+			}
+			else if ( op == Op_function )
+			{
+				insert_prototype_prelude( expr );
 			}
 			else if ( declares_symbols( op ) )
 			{
