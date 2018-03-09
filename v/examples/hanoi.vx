@@ -21,24 +21,18 @@ while ++p do
 
 const pegs = "ABC"
 
-def other-peg
+def other-peg (src, dst)
 {
-	const src, const dst = _
-	
 	return 3 - src - dst
 }
 
-def move
+def move (n, src, dst)
 {
-	const n, const src, const dst = _
-	
 	print ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
 }
 
-def move-tower
+def move-tower (n, src, dst)
 {
-	const n, const src, const dst = _
-	
 	if n > 0 then
 	{
 		const mid = other-peg( src, dst )
