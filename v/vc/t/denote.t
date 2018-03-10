@@ -32,3 +32,13 @@ $ vc 'var x (str), var y (...) = "-", 1, 2, 3; join( x, y )'
 
 $ vc 'var x, ... = 1, 2, 3'
 1 >= 1
+
+%
+
+$ vc 'var x (str), var y (...) = "solo"; [x], [y]'
+1 >= '(["solo"], [])'
+
+%
+
+$ vc 'var x (str), ... = "solo"'
+1 >= '"solo"'

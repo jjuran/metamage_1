@@ -454,7 +454,22 @@ namespace vlib
 				
 				if ( a )
 				{
-					THROW( "too few values in list assignment" );
+					const Value& lvalue = a.use();
+					
+					if ( ! permissive( lvalue ) )
+					{
+						THROW( "too few values in list assignment" );
+					}
+					
+					if ( a )
+					{
+						THROW( "no parameters allowed after `...`" );
+					}
+					
+					if ( lvalue.sym() )
+					{
+						eval( lvalue, op, empty_list, source );
+					}
 				}
 				
 				return results;
