@@ -29,6 +29,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/generic_iterator.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/invocation.hh"
 #include "vlib/types/lambda.hh"
@@ -484,7 +485,7 @@ namespace vlib
 			                   : resolve_symbol_expr( expr->right, stack ) );
 		}
 		
-		if ( v.type() != Value_symbol )
+		if ( v.type() != Value_symbol  &&  ! is_etc( v ) )
 		{
 			THROW( "mutable operand must be a symbol (or component thereof)" );
 		}

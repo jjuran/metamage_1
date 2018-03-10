@@ -404,7 +404,7 @@ namespace vlib
 	{
 		Symbol* sym = v.sym();
 		
-		return sym  &&  is_etc( sym->vtype() );
+		return is_etc( sym ? sym->vtype() : v );
 	}
 	
 	Value eval_part_2( const Value&  left,
@@ -437,9 +437,12 @@ namespace vlib
 							THROW( "no parameters allowed after `...`" );
 						}
 						
-						Value result = eval( lvalue, op, b.rest(), source );
-						
-						results.append( result );
+						if ( lvalue.sym() )
+						{
+							Value result = eval( lvalue, op, b.rest(), source );
+							
+							results.append( result );
+						}
 						
 						break;
 					}

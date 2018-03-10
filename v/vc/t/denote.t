@@ -27,3 +27,8 @@ $ vc 'var x (str), var y (bool) := 1, 2'
 
 $ vc 'var x (str), var y (...) = "-", 1, 2, 3; join( x, y )'
 1 >= '"1-2-3"'
+
+%
+
+$ vc 'var x, ... = 1, 2, 3'
+1 >= 1
