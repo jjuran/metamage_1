@@ -22,6 +22,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/any.hh"
 #include "vlib/types/string.hh"
 
 
@@ -398,6 +399,14 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	bool permissive( const Value& v )
+	{
+		Symbol* sym = v.sym();
+		
+		return sym  &&  is_etc( sym->vtype() );
+	}
+	
 	Value eval_part_2( const Value&  left,
 	                   op_type       op,
 	                   const Value&  right )
@@ -420,6 +429,20 @@ namespace vlib
 					}
 					
 					const Value& lvalue = a.use();
+					
+					if ( permissive( lvalue ) )
+					{
+						if ( a )
+						{
+							THROW( "no parameters allowed after `...`" );
+						}
+						
+						Value result = eval( lvalue, op, b.rest(), source );
+						
+						results.append( result );
+						
+						break;
+					}
 					
 					Value result = eval( lvalue, op, b.use(), source );
 					
