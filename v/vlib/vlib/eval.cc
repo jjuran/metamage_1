@@ -405,6 +405,8 @@ namespace vlib
 		{
 			if ( Expr* ax = left.listexpr() )
 			{
+				source_spec source;
+				
 				list_iterator a( left  );
 				list_iterator b( right );
 				
@@ -417,17 +419,19 @@ namespace vlib
 						THROW( "too many values in list assignment" );
 					}
 					
-					Value result = eval( a.use(), op, b.use(), source_spec() );
+					const Value& lvalue = a.use();
+					
+					Value result = eval( lvalue, op, b.use(), source );
 					
 					results.append( result );
 				}
 				
-				if ( a.finished() )
+				if ( a )
 				{
-					return results;
+					THROW( "too few values in list assignment" );
 				}
 				
-				THROW( "too few values in list assignment" );
+				return results;
 			}
 			
 			if ( op == Op_denote )
