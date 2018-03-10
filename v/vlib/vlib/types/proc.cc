@@ -35,19 +35,6 @@ namespace vlib
 	};
 	
 	static
-	bool is_etc( const Value& type )
-	{
-		if ( type.type() == Value_base_type )
-		{
-			const type_info& typeinfo = type.typeinfo();
-			
-			return &typeinfo == &etc_vtype;
-		}
-		
-		return false;
-	}
-	
-	static
 	Value as_assigned_or_default( const Value& type, const Value& v )
 	{
 		if ( Expr* expr = type.expr() )
