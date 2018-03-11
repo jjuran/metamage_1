@@ -6,6 +6,7 @@
 #include "vlib/types/any.hh"
 
 // vlib
+#include "vlib/list-utils.hh"
 #include "vlib/type_info.hh"
 #include "vlib/value.hh"
 
@@ -19,7 +20,19 @@ namespace vlib
 		return v;
 	}
 	
+	static
+	Value singular( const Value& v )
+	{
+		if ( count( v ) != 1 )
+		{
+			return NIL;
+		}
+		
+		return v;
+	}
+	
 	const type_info etc_vtype = { "...", &identity, 0, 0 };
+	const type_info one_vtype = { "one", &singular, 0, 0 };
 	
 	bool is_etc( const Value& type )
 	{

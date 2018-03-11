@@ -42,3 +42,23 @@ $ vc 'var x (str), var y (...) = "solo"; [x], [y]'
 
 $ vc 'var x (str), ... = "solo"'
 1 >= '"solo"'
+
+%
+
+$ vc 'var x (one) = 1'
+1 >= 1
+
+%
+
+$ vc 'var x (one), var y (one) = 1, 2'
+1 >= '(1, 2)'
+
+%
+
+$ vc 'try {var x (one) = 1, 2} catch {"nope"}'
+1 >= '"nope"'
+
+%
+
+$ vc 'try {var x (one) = ()} catch {"nope"}'
+1 >= '"nope"'

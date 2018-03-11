@@ -16,6 +16,7 @@
 #include "vlib/types.hh"
 #include "vlib/namespaces/Math.hh"
 #include "vlib/namespaces/V.hh"
+#include "vlib/types/any.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/pointer.hh"
@@ -96,6 +97,8 @@ namespace vlib
 		define_keyword( "u16",      u16_type()     );
 		define_keyword( "i8",       i8_type()      );
 		define_keyword( "u8",       u8_type()      );
+		
+		define_keyword( "one", one_vtype );
 		
 		define_keyword( "array", generic_array_type );
 		
