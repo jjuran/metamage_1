@@ -5,10 +5,8 @@
 # "chutesay" is a trademark of Josh Juran.
 # The stick-figure parachute messenger is a trademark of Josh Juran.
 
-def calc-width
+def calc-width (lines: str[])
 {
-	const lines = _
-	
 	var result = 0
 	
 	for x in lines do
@@ -21,10 +19,8 @@ def calc-width
 	return result
 }
 
-def odd-padded
+def odd-padded (x: int)
 {
-	const x = _
-	
 	return x + 1 - x mod 2
 }
 
@@ -43,17 +39,15 @@ const n = text-lines.length
 const widest    = 6 + odd-padded calc-width text-lines
 const narrowest = widest - n * 2
 
-def spc { " " * _ }
+def spc (n: int) { " " * n }
 
 const canopy-top = spc (n + 1) ("_" * narrowest)
 
 var i = n
 var width = narrowest
 
-def centered
+def centered (text: str)
 {
-	const text = _
-	
 	const margin = width - text.length
 	
 	width += 2
@@ -64,7 +58,7 @@ def centered
 	return (spc pre) text (spc post)
 }
 
-const canopy-mid = text-lines map { (spc i--) "/" (centered _) "\\" }
+const canopy-mid = text-lines map { (spc i--) "/" (centered x) "\\" }
 
 const canopy-bottom = "(" ("_" * widest) ")"
 
@@ -75,7 +69,7 @@ const canopy = canopy-top,
 const halflen = widest div 2
 
 # shroud lines
-const lines = 1 -> halflen map { (spc _) "\\" spc( widest - 2 * _ ) "/" }
+const lines = 1 -> halflen map { (spc x) "\\" spc( widest - 2 * x ) "/" }
 
 const indent = spc halflen
 
@@ -85,7 +79,7 @@ const pilot =
 	"/H\\",  # /H\
 	"/ \\",  # / \
 ]
-map { indent _ }
+map { indent x }
 
 print join( "\n", canopy, *lines, *pilot, "" )
 
@@ -94,7 +88,7 @@ end.
     _________________
    /                 \
   /  That escalated   \
- /      quickly        \
+ /       quickly       \
 (_______________________)
  \                     /
   \                   /
