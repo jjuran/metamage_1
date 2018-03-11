@@ -45,20 +45,20 @@ $ vc 'var x (str), ... = "solo"'
 
 %
 
-$ vc 'var x (one) = 1'
+$ vc 'var x (V.one) = 1'
 1 >= 1
 
 %
 
-$ vc 'var x (one), var y (one) = 1, 2'
+$ vc 'var x (V.one), var y (V.one) = 1, 2'
 1 >= '(1, 2)'
 
 %
 
-$ vc 'try {var x (one) = 1, 2} catch {"nope"}'
+$ vc 'try {var x (V.one) = 1, 2} catch {"nope"}'
 1 >= '"nope"'
 
 %
 
-$ vc 'try {var x (one) = ()} catch {"nope"}'
+$ vc 'try {var x (V.one) = ()} catch {"nope"}'
 1 >= '"nope"'

@@ -10,8 +10,10 @@
 #include "vlib/throw.hh"
 #include "vlib/tracker.hh"
 #include "vlib/value.hh"
+#include "vlib/types/any.hh"
 #include "vlib/types/namespace.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/type.hh"
 
 
 namespace vlib
@@ -23,6 +25,11 @@ namespace vlib
 		if ( name == "name" )
 		{
 			return String( "V" );
+		}
+		
+		if ( name == "one" )
+		{
+			return Type( one_vtype );
 		}
 		
 		if ( name == "tracker" )
