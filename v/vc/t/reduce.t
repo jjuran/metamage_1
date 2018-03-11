@@ -80,10 +80,10 @@ $ vc '2 .. 1 per 1 >-Math.product'
 
 %
 
-$ vc '["one", "two", "three", "four"] per 0 >-{head _ + (tail _).length}'
+$ vc '["one", "two", "three", "four"] per 0 >-{L + x.length}'
 1 >= 15
 
 %
 
-$ vc '1 .. 5 per [1, 1]>-{[(head _)[1], head _ per {a + b}]}'
+$ vc '1 .. 5 per [1, 1]>-{[L[1], L per {a + b}]}'
 1 >= '[8, 13]'

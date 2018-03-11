@@ -51,14 +51,44 @@ namespace vlib
 	}
 	
 	static
-	void insert_code_to_unpack_into_a_b( const Value& f )
+	void insert_code_to_unpack_into_two( const Value&  f,
+	                                     const char*   a,
+	                                     const char*   b )
 	{
-		const Value const_a( Op_const, Identifier( "a" ) );
-		const Value const_b( Op_const, Identifier( "b" ) );
+		const Value const_a( Op_const, Identifier( a ) );
+		const Value const_b( Op_const, Identifier( b ) );
 		
 		const Value ab_list( const_a, const_b );
 		
 		insert_code_to_unpack_arguments( f, ab_list );
+	}
+	
+	static inline
+	void insert_code_to_unpack_into_a_b( const Value& f )
+	{
+		insert_code_to_unpack_into_two( f, "a", "b" );
+	}
+	
+	static inline
+	void insert_code_to_unpack_into_L_x( const Value& f )
+	{
+		insert_code_to_unpack_into_two( f, "L", "x" );
+	}
+	
+	static
+	void insert_code_to_unpack_reducer( const Value& reducer )
+	{
+		if ( Expr* expr = reducer.expr() )
+		{
+			if ( expr->op == Op_block )
+			{
+				insert_code_to_unpack_into_a_b( reducer );
+			}
+			else if ( expr->op == Op_forward_init )
+			{
+				insert_code_to_unpack_into_L_x( expr->right );
+			}
+		}
 	}
 	
 	static
@@ -215,7 +245,7 @@ namespace vlib
 			}
 			else if ( op == Op_per )
 			{
-				insert_code_to_unpack_into_a_b( expr->right );
+				insert_code_to_unpack_reducer( expr->right );
 			}
 			else if ( op == Op_function )
 			{
