@@ -8,6 +8,14 @@
 #include <CoreServices/CoreServices.h>
 #endif
 
+// Mac OS
+#ifndef __CONDITIONALMACROS__
+#include <ConditionalMacros.h>
+#endif
+
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // vfs
 #include "vfs/filehandle.hh"
 
@@ -196,7 +204,7 @@ namespace relix
 	}
 	
 	
-	static OTNotifyUPP gSocketNotifier = ::NewOTNotifyUPP( socket_notifier );
+	DEFINE_UPP( OTNotify, socket_notifier )
 	
 	
 	static
@@ -216,7 +224,7 @@ namespace relix
 		socket->its_result = 1;
 		
 		N::OTAsyncOpenEndpoint( N::OTCreateConfiguration( config ),
-		                        gSocketNotifier,
+		                        UPP_ARG( socket_notifier ),
 		                        socket );
 		
 		Complete( *socket );
