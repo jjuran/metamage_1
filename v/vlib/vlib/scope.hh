@@ -36,6 +36,8 @@ namespace vlib
 			const Value& resolve( const plus::string& name, int depth = 0 );
 			const Value& declare( const plus::string& name, symbol_type type );
 			
+			const Value& immortalize_constant( int i, const Value& v );
+			
 			Value symbols() const  { return its_symbols.list(); }
 			
 			lexical_scope* parent() const  { return its_parent; }

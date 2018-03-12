@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/exceptions.hh"
+#include "vlib/fold.hh"
 #include "vlib/scope.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_builder.hh"
@@ -315,6 +316,13 @@ namespace vlib
 			{
 				throw undeclared_symbol_error( name, source_spec() );
 			}
+		}
+		
+		const Value folded = fold( v, its_scope.get() );
+		
+		if ( folded.type() )
+		{
+			v = folded;
 		}
 	}
 	

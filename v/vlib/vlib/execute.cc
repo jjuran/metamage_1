@@ -8,11 +8,9 @@
 // debug
 #include "debug/assert.hh"
 
-// plus
-#include "plus/var_string.hh"
-
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/assert.hh"
 #include "vlib/collectible.hh"
 #include "vlib/eval.hh"
 #include "vlib/exceptions.hh"
@@ -64,12 +62,6 @@ namespace vlib
 		{
 			cull_unreachable_objects();
 		}
-	}
-	
-	static
-	language_error assertion_result_not_boolean( const source_spec& source )
-	{
-		return language_error( "assertion result not boolean", source );
 	}
 	
 	static
@@ -380,19 +372,7 @@ namespace vlib
 		
 		const Value result = execute( test, stack );
 		
-		if ( result.type() != V_bool )
-		{
-			throw assertion_result_not_boolean( expr->source );
-		}
-		
-		if ( ! result.boolean() )
-		{
-			plus::var_string s = "assertion failed: ";
-			
-			s += rep( test );
-			
-			throw language_error( s, expr->source );
-		}
+		check_assertion_result( test, result, expr->source );
 	}
 	
 	static
@@ -637,6 +617,12 @@ namespace vlib
 				using iota::swap;
 				
 				swap( left, right );
+			}
+			else if ( expr->op == Op_typeof )
+			{
+				// This is an endec type, not a typeof operation
+				
+				return tree;
 			}
 			
 			if ( is_right_varop( expr->op ) )
