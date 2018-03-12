@@ -5,6 +5,9 @@
 
 #include "Genie/Utilities/Copy_IconSuite.hh"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 
 namespace Genie
 {
@@ -43,18 +46,18 @@ namespace Genie
 		return err;
 	}
 	
-	static ::IconActionUPP gCopyIconToSuiteUPP = ::NewIconActionUPP( &CopyIconToSuite );
-	
 	#pragma exceptions reset
 	
 	
 	n::owned< N::IconSuiteRef > Copy_IconSuite( N::IconSuiteRef iconSuite )
 	{
+		DEFINE_UPP( IconAction, CopyIconToSuite )
+		
 		n::owned< N::IconSuiteRef > copy = N::NewIconSuite();
 		
 		Mac::ThrowOSStatus( ::ForEachIconDo( iconSuite,
 		                                     kSelectorAllAvailableData,
-		                                     gCopyIconToSuiteUPP,
+		                                     UPP_ARG( CopyIconToSuite ),
 		                                     copy.get().Get() ) );
 		
 		return copy;

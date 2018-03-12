@@ -20,6 +20,7 @@
 
 // mac-config
 #include "mac_config/open-transport.hh"
+#include "mac_config/upp-macros.hh"
 
 // mac-app-utils
 #include "mac_app/OpenTransport_share.hh"
@@ -74,13 +75,13 @@ namespace relix
 	}
 	
 	
+	DEFINE_UPP( OTNotify, netdb_notifier )
+	
 	static n::owned< InetSvcRef > InternetServices( netdb_provider_data& data )
 	{
-		static OTNotifyUPP gNotifyUPP = ::NewOTNotifyUPP( netdb_notifier );
-		
 		n::owned< InetSvcRef > provider = N::OTOpenInternetServices( kDefaultInternetServicesPath );
 		
-		N::OTInstallNotifier( provider, gNotifyUPP, &data );
+		N::OTInstallNotifier( provider, UPP_ARG( netdb_notifier ), &data );
 		
 		N::OTSetAsynchronous( provider );
 		

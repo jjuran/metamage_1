@@ -5,6 +5,9 @@
 
 #include "Genie/Utilities/AsyncIO.hh"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
 
@@ -28,7 +31,7 @@
 #include "Genie/Process/AsyncYield.hh"
 
 
-#define CALLBACK  plus::ptr_fun( AsyncYield )
+#define YIELD  plus::ptr_fun( AsyncYield )
 
 
 namespace Genie
@@ -50,7 +53,7 @@ namespace Genie
 		mac::sys::request_async_wakeup();
 	}
 	
-	static IOCompletionUPP gWakeUp = ::NewIOCompletionUPP( WakeUp );
+	DEFINE_UPP( IOCompletion, WakeUp )
 	
 	SInt32 FSRead( MacIO::EOF_Policy  policy,
 	               Mac::FSFileRefNum  file,
@@ -66,8 +69,8 @@ namespace Genie
 		                              positionOffset,
 		                              requestCount,
 		                              buffer,
-		                              CALLBACK,
-		                              gWakeUp )
+		                              YIELD,
+		                              UPP_ARG( WakeUp ) )
 		             : MacIO::FSRead( policy,
 		                              file,
 		                              positionMode,
@@ -89,8 +92,8 @@ namespace Genie
 		                               positionOffset,
 		                               requestCount,
 		                               buffer,
-		                               CALLBACK,
-		                               gWakeUp )
+		                               YIELD,
+		                               UPP_ARG( WakeUp ) )
 		             : MacIO::FSWrite( file,
 		                               positionMode,
 		                               positionOffset,
@@ -148,8 +151,8 @@ namespace Genie
 		                                    dirID,
 		                                    name,
 		                                    index,
-		                                    CALLBACK,
-		                                    gWakeUp );
+		                                    YIELD,
+		                                    UPP_ARG( WakeUp ) );
 	}
 	
 	template
@@ -177,8 +180,8 @@ namespace Genie
 		return MacIO::FSMakeFSSpec< Policy >( vRefNum,
 		                                      dirID,
 		                                      name,
-		                                      CALLBACK,
-		                                      gWakeUp );
+		                                      YIELD,
+		                                      UPP_ARG( WakeUp ) );
 	}
 	
 	template
@@ -197,7 +200,7 @@ namespace Genie
 	FSpOpenDF( const FSSpec&  spec,
 	           Mac::FSIOPerm  permissions )
 	{
-		return MacIO::FSpOpenDF( spec, permissions, CALLBACK, gWakeUp );
+		return MacIO::FSpOpenDF( spec, permissions, YIELD, UPP_ARG( WakeUp ) );
 	}
 	
 	n::owned< Mac::FSFileRefNum >
@@ -205,7 +208,7 @@ namespace Genie
 	FSpOpenRF( const FSSpec&  spec,
 	           Mac::FSIOPerm  permissions )
 	{
-		return MacIO::FSpOpenRF( spec, permissions, CALLBACK, gWakeUp );
+		return MacIO::FSpOpenRF( spec, permissions, YIELD, UPP_ARG( WakeUp ) );
 	}
 	
 }
