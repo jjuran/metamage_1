@@ -21,7 +21,7 @@
 
 
 #ifndef CONFIG_SOCKETS
-#define CONFIG_SOCKETS  (!CONFIG_MINI)
+#define CONFIG_SOCKETS  1
 #endif
 
 
