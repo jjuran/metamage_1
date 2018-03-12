@@ -1,10 +1,10 @@
 /*
-	UPPMacros.hh
-	------------
+	upp-macros.hh
+	-------------
 */
 
-#ifndef PEDESTAL_UPPMACROS_HH
-#define PEDESTAL_UPPMACROS_HH
+#ifndef MACCONFIG_UPPMACROS_HH
+#define MACCONFIG_UPPMACROS_HH
 
 
 #ifndef TARGET_RT_MAC_CFM

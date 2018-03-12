@@ -31,6 +31,9 @@
 // iota
 #include "iota/endian.hh"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // splode
 #include "splode/splode.hh"
 
@@ -39,7 +42,6 @@
 
 // Pedestal
 #include "Pedestal/ClickTarget.hh"
-#include "Pedestal/UPPMacros.hh"
 #include "Pedestal/View.hh"
 
 // vfs

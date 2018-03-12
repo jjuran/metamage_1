@@ -10,6 +10,9 @@
 #include <CarbonEvents.h>
 #endif
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // nucleus
 #include "nucleus/saved.hh"
 
@@ -20,7 +23,6 @@
 #include "ClassicToolbox/MacWindows.hh"
 
 // Pedestal
-#include "Pedestal/UPPMacros.hh"
 #include "Pedestal/View.hh"
 #include "Pedestal/WindowStorage.hh"
 
