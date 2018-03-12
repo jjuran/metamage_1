@@ -14,7 +14,11 @@
 #endif
 
 // mac-config
+#include "mac_config/open-transport.hh"
 #include "mac_config/upp-macros.hh"
+
+// poseven
+#include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -37,9 +41,6 @@
 
 // mac-app-utils
 #include "mac_app/OpenTransport_share.hh"
-
-// poseven
-#include "poseven/types/errno_t.hh"
 
 // vfs
 #include "vfs/filehandle.hh"
@@ -616,6 +617,13 @@ namespace relix
 	
 	vfs::filehandle_ptr new_tcp_socket( bool nonblocking )
 	{
+		if ( ! CONFIG_OPEN_TRANSPORT )
+		{
+			poseven::throw_errno( EAFNOSUPPORT );
+			
+			return NULL;
+		}
+		
 	#ifndef MAC_OS_X_VERSION_10_8
 		
 		return new_OT_socket( nonblocking );
