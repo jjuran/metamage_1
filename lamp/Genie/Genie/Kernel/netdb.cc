@@ -18,6 +18,9 @@
 // POSIX
 #include "netdb.h"
 
+// mac-config
+#include "mac_config/open-transport.hh"
+
 // mac-app-utils
 #include "mac_app/OpenTransport_share.hh"
 
@@ -150,6 +153,8 @@ namespace relix
 		}
 	}
 	
+#if CONFIG_OPEN_TRANSPORT
+	
 	#pragma force_active on
 	
 	REGISTER_SYSTEM_CALL( _OTInetStringToAddress );
@@ -161,6 +166,8 @@ namespace relix
 #endif
 	
 	#pragma force_active reset
+	
+#endif  // #if CONFIG_OPEN_TRANSPORT
 	
 }
 
