@@ -15,6 +15,9 @@
 #include <Threads.h>
 #endif
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-sys-utils
 #include "mac_sys/current_thread_stack_space.hh"
 #include "mac_sys/gestalt.hh"
@@ -70,15 +73,6 @@ namespace system  {
 	}
 	
 	static
-	ThreadEntryTPP GetThreadEntryFunction()
-	{
-		static ThreadEntryTPP upp = NewThreadEntryUPP( &ThreadEntry );
-		
-		return upp;
-	}
-	
-	
-	static
 	pascal void ThreadSwitchIn( ThreadID thread, void* param )
 	{
 		const parameter_block& pb = *(parameter_block*) param;
@@ -100,11 +94,13 @@ namespace system  {
 		}
 	}
 	
-	static ThreadSwitchUPP switchIn  = NewThreadSwitchUPP( ThreadSwitchIn  );
-	static ThreadSwitchUPP switchOut = NewThreadSwitchUPP( ThreadSwitchOut );
-	
 	thread_id create_thread( parameter_block& pb, unsigned stack_size )
 	{
+		DEFINE_TPP( ThreadEntry, ThreadEntry )
+		
+		DEFINE_TPP( ThreadSwitch, ThreadSwitchIn  )
+		DEFINE_TPP( ThreadSwitch, ThreadSwitchOut )
+		
 		::Size size = 0;
 		
 		// Jaguar returns paramErr
@@ -118,7 +114,7 @@ namespace system  {
 		thread_id thread;
 		
 		err = ::NewThread( kCooperativeThread,
-		                   GetThreadEntryFunction(),
+		                   TPP_ARG( ThreadEntry ),
 		                   &pb,
 		                   stack_size,
 		                   0,
@@ -127,14 +123,16 @@ namespace system  {
 		
 		Mac::ThrowOSStatus( err );
 		
+		enum { Out, In };
+		
 		if ( pb.switch_in )
 		{
-			::SetThreadSwitcher( thread, switchIn, &pb, true );
+			::SetThreadSwitcher( thread, TPP_ARG( ThreadSwitchIn ), &pb, In );
 		}
 		
 		if ( pb.switch_out )
 		{
-			::SetThreadSwitcher( thread, switchOut, &pb, false );
+			::SetThreadSwitcher( thread, TPP_ARG( ThreadSwitchOut ), &pb, Out );
 		}
 		
 		return thread;
