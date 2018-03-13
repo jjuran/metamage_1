@@ -205,9 +205,6 @@ namespace relix
 	}
 	
 	
-	DEFINE_UPP( OTNotify, socket_notifier )
-	
-	
 	static
 	void Complete( OT_socket_extra& socket )
 	{
@@ -222,6 +219,8 @@ namespace relix
 	static
 	void AsyncOpenEndpoint( const char* config, OT_socket_extra* socket )
 	{
+		DEFINE_UPP( OTNotify, socket_notifier )
+		
 		socket->its_result = 1;
 		
 		N::OTAsyncOpenEndpoint( N::OTCreateConfiguration( config ),
