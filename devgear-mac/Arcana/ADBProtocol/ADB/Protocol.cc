@@ -7,8 +7,14 @@
 
 #include "ADB/Protocol.hh"
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // Debug
 #include "debug/assert.hh"
+
+// Nitrogen
+#include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
 namespace N = Nitrogen;
@@ -23,24 +29,38 @@ const UInt8 kDeviceHandlerIDRegisterOffset = 3;
 const UInt8 kDeviceHandlerIDByteIndex      = 2;
 
 
-namespace
+#if TARGET_CPU_68K
+
+static
+asm pascal void ADBCompletion()
 {
+	// buffer  in A0
+	// refCon  in A2 (we always pass a non-NULL pointer)
+	// command in D0 (byte, assured to be non-zero)
 	
-	pascal void ADBCompletion( ::Ptr buffer, ::Ptr refCon, long command )
-	{
-		if ( refCon != NULL )
-		{
-			*refCon = true;
-		}
-	}
-	
+	MOVE.B   D0,(A2)  // The command is a byte, assured to be non-zero
+	RTS
 }
+
+#else
+
+static
+pascal void ADBCompletion( ::Ptr buffer, ::Ptr refCon, long command )
+{
+	*refCon = true;
+}
+
+#endif
 
 static void SendADBCommandSync( char* buffer, UInt8 command )
 {
+	DEFINE_UPP( ADBCompletion, ADBCompletion )
+	
 	char refCon = false;
 	
-	N::ADBOp< ADBCompletion >( &refCon, buffer, command );
+	OSErr err = ::ADBOp( &refCon, UPP_ARG( ADBCompletion ), buffer, command );
+	
+	Mac::ThrowOSStatus( err );
 	
 	volatile const char& done = refCon;
 	
