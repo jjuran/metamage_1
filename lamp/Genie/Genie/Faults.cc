@@ -15,6 +15,9 @@
 #include <MachineExceptions.h>
 #endif
 
+// mac-config
+#include "mac_config/upp-macros.hh"
+
 // mac-sys-utils
 #if TARGET_CPU_68K
 #include "mac_sys/trap_address.hh"
@@ -355,9 +358,9 @@ namespace relix
 	
 	void InstallExceptionHandlers()
 	{
-		static ExceptionHandlerUPP upp = ::NewExceptionHandlerUPP( ExceptionHandler );
+		DEFINE_UPP( ExceptionHandler, ExceptionHandler )
 		
-		::InstallExceptionHandler( upp );
+		::InstallExceptionHandler( UPP_ARG( ExceptionHandler ) );
 	}
 	
 #endif
