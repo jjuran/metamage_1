@@ -40,6 +40,30 @@
 	
 	#define DEFINE_UPP( BaseName, proc )  DEFINE_UPP2( BaseName ## UPP, proc )
 	
+#if TARGET_CPU_PPC  &&  ! OPAQUE_UPP_TYPES
+	
+	/*
+		Non-Carbon PPC uses plain function pointers for TPPs.
+	*/
+	
+	#define DEFINE_TPP( BaseName, proc )  /**/
+	
+	#define TPP_ARG( proc )  &proc
+	
+#else
+	
+	/*
+		Carbon and CFM-68K use UPPs (routine descriptors) for TPPs.
+		Non-Carbon PPC with OPAQUE_UPP_TYPES enabled also uses UPPs.
+		In Classic 68K, UPPs are plain function pointers, so it's moot.
+	*/
+	
+	#define DEFINE_TPP( BaseName, proc )  DEFINE_UPP( BaseName, proc )
+	
+	#define TPP_ARG( proc )  UPP_ARG( proc )
+	
+#endif
+	
 #if ! TARGET_RT_MAC_CFM  ||  TARGET_API_MAC_CARBON
 	
 	/*
