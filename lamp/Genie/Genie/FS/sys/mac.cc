@@ -5,6 +5,9 @@
 
 #include "Genie/FS/sys/mac.hh"
 
+// mac-config
+#include "mac_config/adb.hh"
+
 // vfs
 #include "vfs/node.hh"
 #include "vfs/property.hh"
@@ -49,7 +52,7 @@
 
 
 #ifndef CONFIG_SYS_MAC_ADB
-#define CONFIG_SYS_MAC_ADB  (!CONFIG_MINI)
+#define CONFIG_SYS_MAC_ADB  (CONFIG_ADB  &&  ! CONFIG_MINI)
 #endif
 
 #ifndef CONFIG_SYS_MAC_CRM
