@@ -52,9 +52,13 @@
 #include "library.hh"
 
 
+#define STRLEN( s )  (sizeof "" s - 1)
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define FAIL( s )  fail( STR_LEN( "ERROR: " s "\n" ) )
+
+#define END  "\n" "end." "\n"
 
 namespace p7 = poseven;
 
@@ -294,6 +298,19 @@ int main( int argc, char** argv )
 			{
 				return FAIL( "Program contains NUL bytes" );
 			}
+			
+			plus::string::size_type pos = program.find( END );
+			
+			if ( pos != plus::string::npos )
+			{
+				const plus::string::size_type data_pos = pos + STRLEN( END );
+				
+				define( "DATA", String( program.substr( data_pos ) ) );
+				
+				++pos;
+			}
+			
+			define( "CODE", String( program.substr( 0, pos ) ) );
 			
 			interpret( program.c_str(), path, &globals );
 		}
