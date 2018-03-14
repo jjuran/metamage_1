@@ -211,7 +211,7 @@ namespace vlib
 		{
 			p += STRLEN( "end." );
 			
-			if ( *p == '\n'  ||  *p == '\r' )
+			if ( *p == '\n' )
 			{
 				return Token_end;
 			}
@@ -260,13 +260,6 @@ namespace vlib
 				{
 					return new_line( p );
 				}
-				
-				if ( c == '\r' )
-				{
-					if ( *p == '\n' )  ++p;
-					
-					return new_line( p );
-				}
 			}
 			while ( is_space( *p ) );
 			
@@ -294,7 +287,7 @@ namespace vlib
 			
 			while ( char c = *p++ )
 			{
-				if ( c == '\n'  ||  c == '\r' )
+				if ( c == '\n' )
 				{
 					--p;
 					
