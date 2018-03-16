@@ -169,12 +169,8 @@ namespace Pedestal
 	
 	static Point gLastMouseLocation;
 	
-#if !TARGET_API_MAC_CARBON
-	
 	// ADB address of the keyboard from the last key-down event.
-	static N::ADBAddress gLastKeyboard;
-	
-#endif
+	static SInt8 gLastKeyboard;  // ADBAddress
 	
 	static bool gKeyboardConfigured      = false;
 	static bool gNeedToConfigureKeyboard = false;
@@ -275,15 +271,19 @@ namespace Pedestal
 		return SuspendResume_flag( resuming );
 	}
 	
-#if !TARGET_API_MAC_CARBON
-	
-	static inline N::ADBAddress GetKeyboardFromEvent( const EventRecord& event )
+	static inline
+	SInt8 GetKeyboardFromEvent( const EventRecord& event )
 	{
-		return N::ADBAddress( (event.message & adbAddrMask) >> 16 );
+		return (event.message & adbAddrMask) >> 16;
 	}
 	
-	static void ConfigureKeyboard( N::ADBAddress keyboard, bool active )
+#if !TARGET_API_MAC_CARBON
+	
+	static
+	void ConfigureKeyboard( ::ADBAddress kbd, bool active )
 	{
+		const N::ADBAddress keyboard = N::ADBAddress( kbd );
+		
 		UInt8 capsLED = ::GetCurrentKeyModifiers() & alphaLock ? 2 : 0;
 		
 		SetLEDs( keyboard, (active ? 1 : 0) | capsLED );
@@ -543,11 +543,7 @@ namespace Pedestal
 	{
 		ASSERT( event.what >= keyDown  &&  event.what <= autoKey );
 		
-	#if !TARGET_API_MAC_CARBON
-		
 		gLastKeyboard = GetKeyboardFromEvent( event );
-		
-	#endif
 		
 		if ( event.what == keyUp )
 		{
