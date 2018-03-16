@@ -280,13 +280,11 @@ namespace Pedestal
 #if !TARGET_API_MAC_CARBON
 	
 	static
-	void ConfigureKeyboard( ::ADBAddress kbd, bool active )
+	void ConfigureKeyboard( ::ADBAddress kbd, bool active, bool capsLock_on )
 	{
 		const N::ADBAddress keyboard = N::ADBAddress( kbd );
 		
-		UInt8 capsLED = ::GetCurrentKeyModifiers() & alphaLock ? 2 : 0;
-		
-		SetLEDs( keyboard, (active ? 1 : 0) | capsLED );
+		SetLEDs( keyboard, (active ? 1 : 0) | (capsLock_on ? 2 : 0) );
 		
 		SetKeyboardModifiersDistinctness( keyboard, active );
 		
@@ -799,11 +797,15 @@ namespace Pedestal
 			                            | kEitherOptionKey
 			                            | kEitherControlKey;
 			
-			if ( (::GetCurrentKeyModifiers() & confusingModifiers) == 0 )
+			const UInt32 currentKeyModifiers = ::GetCurrentKeyModifiers();
+			
+			if ( (currentKeyModifiers & confusingModifiers) == 0 )
 			{
+				const bool capsLock_on = currentKeyModifiers & alphaLock;
+				
 				bool active = gRunState.inForeground && !gRunState.endOfEventLoop;
 				
-				ConfigureKeyboard( gLastKeyboard, active );
+				ConfigureKeyboard( gLastKeyboard, active, capsLock_on );
 				
 				gNeedToConfigureKeyboard = false;
 			}
