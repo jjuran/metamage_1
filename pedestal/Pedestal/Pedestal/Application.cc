@@ -940,54 +940,48 @@ namespace Pedestal
 	
 	static void EventLoop()
 	{
-		// Use two levels of looping.
-		// This lets us loop inside the try block without entering and leaving,
-		// and will continue looping if an exception is thrown.
 		while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
 		{
 			try
 			{
-				while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
+				CheckMouse();
+				
+				CheckKeyboard();
+				
+				ThreadYield();
+				
+				if ( !ActivelyBusy() || ReadyToWaitForEvents() )
 				{
-					CheckMouse();
+					EventRecord event = GetAnEvent();
 					
-					CheckKeyboard();
+					gEventCheckNeeded = false;
 					
-					ThreadYield();
 					
-					if ( !ActivelyBusy() || ReadyToWaitForEvents() )
+					gTickCountAtLastContextSwitch = ::LMGetTicks();
+					
+					CheckShiftSpaceQuasiMode( event );
+					
+					(void) DispatchCursor( event );
+					
+					gIdleNeeded = false;
+					
+					if ( event.what != nullEvent )
 					{
-						EventRecord event = GetAnEvent();
+						DispatchEvent( event );
 						
-						gEventCheckNeeded = false;
+						gEventCheckNeeded = true;
 						
+						gIdleNeeded = true;
+					}
+					else if ( (gIdleNeeded = gRunState.quitRequested)  &&  ReadyToExit() )
+					{
+						gRunState.endOfEventLoop = true;
 						
-						gTickCountAtLastContextSwitch = ::LMGetTicks();
-						
-						CheckShiftSpaceQuasiMode( event );
-						
-						(void) DispatchCursor( event );
-						
-						gIdleNeeded = false;
-						
-						if ( event.what != nullEvent )
-						{
-							DispatchEvent( event );
-							
-							gEventCheckNeeded = true;
-							
-							gIdleNeeded = true;
-						}
-						else if ( (gIdleNeeded = gRunState.quitRequested)  &&  ReadyToExit() )
-						{
-							gRunState.endOfEventLoop = true;
-							
-							gNeedToConfigureKeyboard = gKeyboardConfigured;
-						}
-						else
-						{
-							GiveIdleTimeToWindows( event );
-						}
+						gNeedToConfigureKeyboard = gKeyboardConfigured;
+					}
+					else
+					{
+						GiveIdleTimeToWindows( event );
 					}
 				}
 			}
