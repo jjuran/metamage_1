@@ -303,7 +303,17 @@ namespace Pedestal
 	
 	static void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
-		N::DragWindow( window, event.where, N::GetQDGlobalsScreenBits().bounds );
+	#if TARGET_API_MAC_CARBON
+		
+		const Rect& bounds = N::GetQDGlobalsScreenBits().bounds;
+		
+	#else
+		
+		const Rect& bounds = qd.screenBits.bounds;
+		
+	#endif
+		
+		N::DragWindow( window, event.where, bounds );
 	}
 	
 	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
