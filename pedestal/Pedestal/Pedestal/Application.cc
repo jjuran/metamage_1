@@ -30,6 +30,7 @@
 #include "Nostalgia/LowMem.hh"
 
 // mac-config
+#include "mac_config/adb.hh"
 #include "mac_config/apple-events.hh"
 
 // mac-sys-utils
@@ -258,7 +259,10 @@ namespace Pedestal
 	static
 	void SuspendResume( SuspendResume_flag flag )
 	{
-		gNeedToConfigureKeyboard = true;
+		if ( CONFIG_ADB )
+		{
+			gNeedToConfigureKeyboard = true;
+		}
 		
 		if ( WindowRef front = FrontWindow() )
 		{
@@ -503,7 +507,10 @@ namespace Pedestal
 	{
 		ASSERT( event.what >= keyDown  &&  event.what <= autoKey );
 		
-		gLastKeyboard = GetKeyboardFromEvent( event );
+		if ( CONFIG_ADB )
+		{
+			gLastKeyboard = GetKeyboardFromEvent( event );
+		}
 		
 		if ( event.what == keyUp )
 		{
@@ -749,8 +756,6 @@ namespace Pedestal
 	
 	static void CheckKeyboard()
 	{
-	#if !TARGET_API_MAC_CARBON
-		
 		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
 		{
 			// Don't reconfigure the keyboard if certain modifiers are down,
@@ -772,8 +777,6 @@ namespace Pedestal
 				gNeedToConfigureKeyboard = false;
 			}
 		}
-		
-	#endif
 	}
 	
 	static bool gEventCheckNeeded = false;
@@ -900,13 +903,16 @@ namespace Pedestal
 	
 	static void EventLoop()
 	{
-		while ( ! gEndOfEventLoop  ||  gKeyboardConfigured )
+		while ( ! gEndOfEventLoop  ||  (CONFIG_ADB  &&  gKeyboardConfigured) )
 		{
 			try
 			{
 				CheckMouse();
 				
-				CheckKeyboard();
+				if ( CONFIG_ADB )
+				{
+					CheckKeyboard();
+				}
 				
 				ThreadYield();
 				
@@ -937,7 +943,10 @@ namespace Pedestal
 					{
 						gEndOfEventLoop = true;
 						
-						gNeedToConfigureKeyboard = gKeyboardConfigured;
+						if ( CONFIG_ADB )
+						{
+							gNeedToConfigureKeyboard = gKeyboardConfigured;
+						}
 					}
 					else
 					{
@@ -959,7 +968,10 @@ namespace Pedestal
 		
 		gInForeground = is_front_process( current_process() );
 		
-		gNeedToConfigureKeyboard = gInForeground;
+		if ( CONFIG_ADB )
+		{
+			gNeedToConfigureKeyboard = gInForeground;
+		}
 		
 		SetEventMask( everyEvent );
 		
