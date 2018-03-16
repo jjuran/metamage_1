@@ -137,26 +137,12 @@ namespace Pedestal
 		{}
 	};
 	
-	struct RunState
-	{
-		AppleEventSignature signatureOfFirstAppleEvent;
-		
-		bool inForeground;     // set to true when the app is frontmost
-		bool startupComplete;  // set to true once the app is ready to respond to events
-		bool quitRequested;    // set to true when quitting is in process, to false if cancelled
-		bool endOfEventLoop;   // set to true once the app is ready to stop processing events
-		
-		RunState()
-		:
-			inForeground   ( false ),  // we have to check
-			startupComplete( false ),
-			quitRequested  ( false ),
-			endOfEventLoop ( false )
-		{}
-	};
+	AppleEventSignature gSignatureOfFirstAppleEvent;
 	
+	static bool gInForeground;     // set to true when the app is frontmost
+	static bool gQuitRequested;    // set to true when quitting is in process
+	static bool gEndOfEventLoop;   // set to true once the app is ready to exit
 	
-	static RunState gRunState;
 	
 	static UInt32 gTickCountAtLastContextSwitch = 0;
 	
@@ -628,7 +614,7 @@ namespace Pedestal
 				{
 					SuspendResume_flag flag = get_SuspendResume_flag( event );
 					
-					gRunState.inForeground = flag != Flag_suspending;
+					gInForeground = flag != Flag_suspending;
 					
 					SuspendResume( flag );
 				}
@@ -779,7 +765,7 @@ namespace Pedestal
 			{
 				const bool capsLock_on = currentKeyModifiers & alphaLock;
 				
-				bool active = gRunState.inForeground && !gRunState.endOfEventLoop;
+				bool active = gInForeground  &&  ! gEndOfEventLoop;
 				
 				ConfigureKeyboard( gLastKeyboard, active, capsLock_on );
 				
@@ -914,7 +900,7 @@ namespace Pedestal
 	
 	static void EventLoop()
 	{
-		while ( !gRunState.endOfEventLoop || gKeyboardConfigured )
+		while ( ! gEndOfEventLoop  ||  gKeyboardConfigured )
 		{
 			try
 			{
@@ -947,9 +933,9 @@ namespace Pedestal
 						
 						gIdleNeeded = true;
 					}
-					else if ( (gIdleNeeded = gRunState.quitRequested)  &&  ReadyToExit() )
+					else if ( (gIdleNeeded = gQuitRequested)  &&  ReadyToExit() )
 					{
-						gRunState.endOfEventLoop = true;
+						gEndOfEventLoop = true;
 						
 						gNeedToConfigureKeyboard = gKeyboardConfigured;
 					}
@@ -971,9 +957,9 @@ namespace Pedestal
 		using mac::sys::current_process;
 		using mac::sys::is_front_process;
 		
-		gRunState.inForeground = is_front_process( current_process() );
+		gInForeground = is_front_process( current_process() );
 		
-		gNeedToConfigureKeyboard = gRunState.inForeground;
+		gNeedToConfigureKeyboard = gInForeground;
 		
 		SetEventMask( everyEvent );
 		
@@ -991,7 +977,7 @@ namespace Pedestal
 		
 		if ( firstTime )
 		{
-			gRunState.signatureOfFirstAppleEvent = AppleEventSignature( eventClass, eventID );
+			gSignatureOfFirstAppleEvent = AppleEventSignature( eventClass, eventID );
 			firstTime = false;
 		}
 		
@@ -1113,7 +1099,7 @@ namespace Pedestal
 			window = next;
 		}
 		
-		gRunState.quitRequested = true;
+		gQuitRequested = true;
 	}
 	
 }
