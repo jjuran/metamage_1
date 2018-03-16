@@ -301,7 +301,8 @@ namespace Pedestal
 		}
 	}
 	
-	static void RespondToDrag( const EventRecord& event, WindowRef window )
+	static inline
+	void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
 	#if TARGET_API_MAC_CARBON
 		
