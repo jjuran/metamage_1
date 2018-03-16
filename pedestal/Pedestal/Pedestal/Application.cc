@@ -51,7 +51,6 @@
 #include "Nitrogen/AEInteraction.hh"
 #include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Controls.hh"
-#include "Nitrogen/Events.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
@@ -146,8 +145,6 @@ namespace Pedestal
 	
 	
 	static UInt32 gTickCountAtLastContextSwitch = 0;
-	
-	static Point gLastMouseLocation;
 	
 	// ADB address of the keyboard from the last key-down event.
 	static SInt8 gLastKeyboard;  // ADBAddress
@@ -742,18 +739,6 @@ namespace Pedestal
 	}
 	
 	
-	static void CheckMouse()
-	{
-		using namespace nucleus::operators;
-		
-		Point mouseLocation = N::GetGlobalMouse();
-		
-		if ( mouseLocation != gLastMouseLocation )
-		{
-			gLastMouseLocation = mouseLocation;
-		}
-	}
-	
 	static void CheckKeyboard()
 	{
 		if ( gNeedToConfigureKeyboard  &&  gLastKeyboard != 0 )
@@ -907,8 +892,6 @@ namespace Pedestal
 		{
 			try
 			{
-				CheckMouse();
-				
 				if ( CONFIG_ADB )
 				{
 					CheckKeyboard();
