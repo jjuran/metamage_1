@@ -57,15 +57,8 @@
 #include "Nitrogen/Quickdraw.hh"
 #include "Nitrogen/Resources.hh"
 
-#if !TARGET_API_MAC_CARBON
-
-// Arcana
-#include "ADB/KeyboardLEDs.hh"
-#include "ADB/KeyboardModifiers.hh"
-
-#endif
-
 // Pedestal
+#include "Pedestal/ADBKeyboard.hh"
 #include "Pedestal/ClickTarget.hh"
 #include "Pedestal/Commands.hh"
 #include "Pedestal/Initialize.hh"
@@ -172,7 +165,6 @@ namespace Pedestal
 	// ADB address of the keyboard from the last key-down event.
 	static SInt8 gLastKeyboard;  // ADBAddress
 	
-	static bool gKeyboardConfigured      = false;
 	static bool gNeedToConfigureKeyboard = false;
 	
 	static bool gShiftKeyIsDownFromKeyStroke = false;
@@ -276,22 +268,6 @@ namespace Pedestal
 	{
 		return (event.message & adbAddrMask) >> 16;
 	}
-	
-#if !TARGET_API_MAC_CARBON
-	
-	static
-	void ConfigureKeyboard( ::ADBAddress kbd, bool active, bool capsLock_on )
-	{
-		const N::ADBAddress keyboard = N::ADBAddress( kbd );
-		
-		SetLEDs( keyboard, (active ? 1 : 0) | (capsLock_on ? 2 : 0) );
-		
-		SetKeyboardModifiersDistinctness( keyboard, active );
-		
-		gKeyboardConfigured = active;
-	}
-	
-#endif
 	
 	static
 	void SuspendResume( SuspendResume_flag flag )
