@@ -303,20 +303,7 @@ namespace Pedestal
 	
 	static void RespondToDrag( const EventRecord& event, WindowRef window )
 	{
-		Rect before = N::GetPortBounds( N::GetWindowPort( window ) );
-		
 		N::DragWindow( window, event.where, N::GetQDGlobalsScreenBits().bounds );
-		
-		// FIXME
-		if ( false )
-		{
-			Rect after = N::GetPortBounds( N::GetWindowPort( window ) );
-			
-			if ( before.top != after.top  ||  before.left != after.left )
-			{
-				//window->Moved( after );
-			}
-		}
 	}
 	
 	static bool TrackedControl( ControlRef control, N::ControlPartCode part, Point point )
