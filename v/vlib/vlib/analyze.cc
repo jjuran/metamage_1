@@ -44,6 +44,14 @@ namespace vlib
 	}
 	
 	static
+	void insert_code_to_unpack_into_v( const Value& f )
+	{
+		const Value const_v( Op_const, Identifier( "v" ) );
+		
+		insert_code_to_unpack_arguments( f, const_v );
+	}
+	
+	static
 	void insert_code_to_unpack_into_x( const Value& f )
 	{
 		const Value const_x( Op_const, Identifier( "x" ) );
@@ -71,6 +79,12 @@ namespace vlib
 	}
 	
 	static inline
+	void insert_code_to_unpack_into_L_v( const Value& f )
+	{
+		insert_code_to_unpack_into_two( f, "L", "v" );
+	}
+	
+	static inline
 	void insert_code_to_unpack_into_L_x( const Value& f )
 	{
 		insert_code_to_unpack_into_two( f, "L", "x" );
@@ -87,6 +101,7 @@ namespace vlib
 			}
 			else if ( expr->op == Op_forward_init )
 			{
+				insert_code_to_unpack_into_L_v( expr->right );
 				insert_code_to_unpack_into_L_x( expr->right );
 			}
 		}
@@ -242,6 +257,7 @@ namespace vlib
 			}
 			else if ( op == Op_map  ||  op == Op_ver )
 			{
+				insert_code_to_unpack_into_v( expr->right );
 				insert_code_to_unpack_into_x( expr->right );
 			}
 			else if ( op == Op_per )
