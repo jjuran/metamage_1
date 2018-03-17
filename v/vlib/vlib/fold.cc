@@ -8,8 +8,11 @@
 // vlib
 #include "vlib/assert.hh"
 #include "vlib/calc.hh"
+#include "vlib/exceptions.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
+#include "vlib/throw.hh"
+#include "vlib/types/string.hh"
 
 
 namespace vlib
@@ -207,7 +210,14 @@ namespace vlib
 	{
 		if ( Expr* expr = v.expr() )
 		{
-			return fold( expr->left, expr->op, expr->right, scope );
+			try
+			{
+				return fold( expr->left, expr->op, expr->right, scope );
+			}
+			catch ( const exception& e )
+			{
+				throw user_exception( String( e.message ), expr->source );
+			}
 		}
 		
 		if ( const Symbol* sym = v.sym() )
