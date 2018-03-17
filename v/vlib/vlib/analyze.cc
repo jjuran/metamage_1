@@ -179,7 +179,7 @@ namespace vlib
 		private:
 			Value enscope( const Value& block ) const;
 			
-			void visit( Value& syntree );
+			void visit( Value& syntree, const source_spec& source );
 		
 		public:
 			Analyzer( lexical_scope* globals )
@@ -199,7 +199,7 @@ namespace vlib
 		return Value( its_scope->symbols(), Op_scope, block );
 	}
 	
-	void Analyzer::visit( Value& v )
+	void Analyzer::visit( Value& v, const source_spec& source )
 	{
 		if ( Expr* expr = v.expr() )
 		{
@@ -278,14 +278,14 @@ namespace vlib
 				its_scope->declare( x->string(), type );
 			}
 			
-			visit( expr->left );
+			visit( expr->left, expr->source );
 			
 			if ( op == Op_member )
 			{
 				return;
 			}
 			
-			visit( expr->right );
+			visit( expr->right, expr->source );
 			
 			if ( op == Op_function )
 			{
@@ -314,7 +314,7 @@ namespace vlib
 			}
 			else
 			{
-				throw undeclared_symbol_error( name, source_spec() );
+				throw undeclared_symbol_error( name, source );
 			}
 		}
 		
@@ -330,7 +330,7 @@ namespace vlib
 	{
 		try
 		{
-			visit( syntree );
+			visit( syntree, source_spec() );
 			
 			if ( its_export_count )
 			{
