@@ -275,7 +275,14 @@ namespace vlib
 				bool is_var = op == Op_var;
 				symbol_type type = symbol_type( is_var );
 				
-				its_scope->declare( x->string(), type );
+				try
+				{
+					its_scope->declare( x->string(), type );
+				}
+				catch ( const exception& e )
+				{
+					throw user_exception( String( e.message ), expr->source );
+				}
 			}
 			
 			visit( expr->left, expr->source );
