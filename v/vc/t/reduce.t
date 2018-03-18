@@ -80,7 +80,7 @@ $ vc '2 .. 1 per 1 >-Math.product'
 
 %
 
-$ vc '["one", "two", "three", "four"] per 0 >-{L + x.length}'
+$ vc '["one", "two", "three", "four"] per 0 >-{L + v.length}'
 1 >= 15
 
 %
