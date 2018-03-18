@@ -61,7 +61,7 @@ def lcm
 {
 	const pf = merge_maps( _ map prime_factorization )
 	
-	const factors = pf map { x.key ^ x.value }
+	const factors = pf map { v.key ^ v.value }
 	
 	return Math.product .*factors
 }

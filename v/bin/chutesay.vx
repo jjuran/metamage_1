@@ -9,7 +9,7 @@ def calc-width (lines: str[])
 {
 	# The more lines we have, the wider we have to be.
 	
-	return lines per 0 >-{ Math.max( L + 2, x.length ) }
+	return lines per 0 >-{ Math.max( L + 2, v.length ) }
 }
 
 def odd-padded (x: int)
@@ -51,7 +51,7 @@ def centered (text: str)
 	return (spc pre) text (spc post)
 }
 
-const canopy-mid = text-lines map { (spc i--) "/" (centered x) "\\" }
+const canopy-mid = text-lines map { (spc i--) "/" (centered v) "\\" }
 
 const canopy-bottom = "(" ("_" * widest) ")"
 
@@ -62,7 +62,7 @@ const canopy = canopy-top,
 const halflen = widest div 2
 
 # shroud lines
-const lines = 1 -> halflen map { (spc x) "\\" spc( widest - 2 * x ) "/" }
+const lines = 1 -> halflen map { (spc v) "\\" spc( widest - 2 * v ) "/" }
 
 const indent = spc halflen
 
@@ -72,7 +72,7 @@ const pilot =
 	"/H\\",  # /H\
 	"/ \\",  # / \
 ]
-map { indent x }
+map { indent v }
 
 print join( "\n", canopy, *lines, *pilot, "" )
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env vx
 
-def bitstrings { _ map { x "0", x "1" } }
+def bitstrings { _ map { v "0", v "1" } }
 
 const binary-strings = bitstrings^8 .[ "" ]
 
@@ -8,7 +8,7 @@ def binarize
 {
 	const data = _
 	
-	const bits = data map { *binary-strings[ int x ] }
+	const bits = data map { *binary-strings[ int v ] }
 	
 	return str bits
 }
