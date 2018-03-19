@@ -144,7 +144,7 @@ def pack_icon_file
 	return pack_one( icon_type => data )
 }
 
-if const icons = argv[ 1 -> argv.length ] map pack_icon_file then
+if const icons = argv[ 1 -> argc ] map pack_icon_file then
 {
 	OUT <== pack_one( icns: icons )
 	

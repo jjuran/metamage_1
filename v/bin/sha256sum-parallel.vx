@@ -1,6 +1,6 @@
 #!/usr/bin/env vx
 
-const args = argv[ 1 -> argv.length ]
+const args = argv[ 1 -> argc ]
 
 const results = channel()
 

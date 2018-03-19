@@ -1,6 +1,6 @@
 #!/usr/bin/env vx -Z
 
-if argv.length < 3 then
+if argc < 3 then
 {
 	warn "Usage:  tcpcat <host> <port>"
 	exit 2
