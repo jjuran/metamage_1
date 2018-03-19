@@ -216,6 +216,8 @@ int main( int argc, char** argv )
 	
 	set_argv( arg0, argn, args );
 	
+	define( "argc", Integer( argn + (arg0 != NULL) ) );
+	
 	install_empty_signal_handler( thread_interrupt_signal );
 	thread::set_interrupt_signal( thread_interrupt_signal );
 	
