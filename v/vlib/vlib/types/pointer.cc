@@ -15,6 +15,8 @@
 #include "bignum/integer.hh"
 
 // vlib
+#include "vlib/list-utils.hh"
+#include "vlib/proc_info.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
@@ -25,6 +27,7 @@
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/proc.hh"
 #include "vlib/types/type.hh"
 #include "vlib/types/vbytes.hh"
 
@@ -349,6 +352,42 @@ namespace vlib
 	}
 	
 	static
+	Value v_find( const Value& v )
+	{
+		const Value& pointer = first( v );
+		const Value& target  = rest ( v );
+		
+		const Value& container = pointer.expr()->left;
+		const Value& index     = pointer.expr()->right;
+		
+		const plus::string& s = container.string();
+		
+		const size_t i = integer_cast< size_t >( index );
+		
+		const char c = target.as< Byte >().get();
+		
+		const size_t loc = s.find( c, i );
+		
+		if ( loc == plus::string::npos )
+		{
+			return empty_list;
+		}
+		
+		Pointer result( container );
+		
+		advance( result, loc );
+		
+		return result;
+	}
+	
+	static const Type pointer = pointer_vtype;
+	static const Type byte    = byte_vtype;
+	
+	static const Value find( pointer, byte );
+	
+	static const proc_info proc_find = { "find", &v_find, &find };
+	
+	static
 	Value pointer_member( const Value&         v,
 	                      const plus::string&  member )
 	{
@@ -374,6 +413,11 @@ namespace vlib
 		if ( member == "rest" )
 		{
 			return substring( container, i );
+		}
+		
+		if ( member == "find" )
+		{
+			return bind_args( Proc( proc_find ), v );
 		}
 		
 		THROW( "nonexistent pointer member" );
