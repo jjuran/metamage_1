@@ -1,7 +1,5 @@
-def get_until_char
+def get_until_char (c: byte, text: string)
 {
-	const c, const text = _
-	
 	const p = begin text
 	
 	const q = p.find c or throw "separator " rep( c ) " not found"
