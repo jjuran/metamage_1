@@ -1,7 +1,5 @@
 #!/usr/bin/env vx -Z
 
-const argc = argv.length
-
 if argc > 1 then
 {
 	# BSD's stty lets us combine these as `stty -g cbreak -echo`, but

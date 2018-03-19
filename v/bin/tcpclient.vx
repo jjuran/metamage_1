@@ -1,7 +1,5 @@
 #!/usr/bin/env vx -Z
 
-const argc = argv.length
-
 if argc < 4 then
 {
 	warn "Usage:  tcpclient <host> <port> <program argv>"

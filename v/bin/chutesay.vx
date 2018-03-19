@@ -17,8 +17,6 @@ def odd-padded (x: int)
 	return x + 1 - x mod 2
 }
 
-const argc = argv.length
-
 if argc < 2 then
 {
 	warn "chutesay: argument required"
