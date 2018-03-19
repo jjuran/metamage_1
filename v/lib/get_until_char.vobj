@@ -2,13 +2,9 @@ def get_until_char
 {
 	const c, const text = _
 	
-	for i in 0 -> text.length do
-	{
-		if text[ i ] == c then
-		{
-			return text[ 0 -> i ]
-		}
-	}
+	const p = begin text
 	
-	throw "separator " rep( c ) " not found"
+	const q = p.find c or throw "separator " rep( c ) " not found"
+	
+	return q - p
 }
