@@ -1,0 +1,22 @@
+#!/usr/bin/env vx
+#
+# See <https://en.wikipedia.org/wiki/Man_or_boy_test>
+
+def A (k, x1, x2, x3, x4, x5)
+{
+	if k <= 0 then
+	{
+		return x4() + x5()
+	}
+	
+	def B
+	{
+		return A( --k, B, x1, x2, x3, x4 )
+	}
+	
+	return B()
+}
+
+const k = int argv[ 1 ]
+
+print A( k, {1}, {-1}, {-1}, {1}, {0} )
