@@ -12,6 +12,7 @@
 // POSIX
 #include <dirent.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <unistd.h>
 #include <utime.h>
 #include <sys/socket.h>
