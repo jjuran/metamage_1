@@ -459,6 +459,23 @@ namespace vlib
 	}
 	
 	static
+	Value v_readlink( const Value& v )
+	{
+		const char* path = v.string().c_str();
+		
+		char buffer[ PATH_MAX ];
+		
+		ssize_t len = readlink( path, buffer, sizeof buffer );
+		
+		if ( len < 0 )
+		{
+			path_error( path );
+		}
+		
+		return String( plus::string( buffer, len ) );
+	}
+	
+	static
 	Value v_realpath( const Value& v )
 	{
 		const char* path = v.string().c_str();
@@ -631,6 +648,7 @@ namespace vlib
 	const proc_info proc_pipe     = { "pipe",     &v_pipe,     &empty_list };
 	const proc_info proc_read     = { "read",     &v_read,     &fd_u32 };
 	const proc_info proc_reader   = { "reader",   &v_reader,   &c_str };
+	const proc_info proc_readlink = { "readlink", &v_readlink, &c_str };
 	const proc_info proc_realpath = { "realpath", &v_realpath, &c_str };
 	const proc_info proc_rewrite  = { "rewrite",  &v_rewrite,  &c_str };
 	const proc_info proc_stat     = { "stat",     &v_stat,     &c_str };
