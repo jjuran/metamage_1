@@ -135,6 +135,14 @@ static command::option options[] =
 };
 
 
+static sig_atomic_t sigint_pending;
+
+static
+void sigint_handler( int )
+{
+	sigint_pending = true;
+}
+
 #define EXIT( status, msg )  exit_with_message( STR_LEN( msg "\n" ), status )
 
 static
@@ -381,6 +389,8 @@ void load_vectors( v68k::user::os_load_spec& os )
 	vectors[ 9] = big_longword( callout_address( trace_exception     ) );
 	vectors[11] = big_longword( callout_address( line_F_emulator     ) );
 	vectors[14] = big_longword( callout_address( format_error        ) );
+	
+	vectors[66] = big_longword( callout_address( sigint_interrupt    ) );
 }
 
 static
@@ -607,6 +617,16 @@ void emulation_loop( v68k::emulator& emu )
 			const int vector = 64;
 			
 			emu.interrupt( level, vector );
+		}
+		
+		if ( sigint_pending )
+		{
+			sigint_pending = false;
+			
+			const int signal_number =  2;
+			const int signal_vector = 64 + signal_number;
+			
+			emu.interrupt( 7, signal_vector );
 		}
 	}
 }
@@ -960,6 +980,11 @@ int main( int argc, char** argv )
 		argc = 1;
 		argv = (char**) new_argv;
 	}
+	
+	struct sigaction action = { 0 };
+	action.sa_handler = &sigint_handler;
+	
+	int nok = sigaction( SIGINT, &action, NULL );
 	
 	module_specs = (module_spec*) alloca( argc * sizeof (module_spec) );
 	

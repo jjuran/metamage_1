@@ -827,6 +827,18 @@ int32_t format_error_callout( v68k::processor_state& s )
 	return nil;
 }
 
+static
+int32_t sigint_interrupt_callout( v68k::processor_state& s )
+{
+	WRITE_ERR( "SIGINT interrupt" );
+	
+	signal( SIGINT, SIG_DFL );
+	
+	dump_and_raise( s, SIGINT );
+	
+	return nil;
+}
+
 
 static const function_type the_callouts[] =
 {
@@ -874,6 +886,8 @@ static const function_type the_callouts[] =
 	&line_A_emulator_callout,
 	&line_F_emulator_callout,
 	&format_error_callout,
+	
+	&sigint_interrupt_callout,
 	
 	&unimplemented_trap_callout,
 	&BlockMove_callout,
