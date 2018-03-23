@@ -42,6 +42,8 @@ using mac::sys::gestalt_defined;
 #define MOD_TYPE  "Execution module type:  "
 #define COMPILED  "Compiled architecture:  "
 
+#define MAE  "Macintosh Application Environment (MAE)"
+
 
 struct SonyVars_record
 {
@@ -346,6 +348,11 @@ void virt_env()
 	if ( TARGET_CPU_68K  &&  gestalt_defined( 'v68k' ) )
 	{
 		printf( "%s" "68K emulation:          v68k\n", blank );
+		blank = "";
+	}
+	else if ( TARGET_CPU_68K  &&  gestalt_defined( 'cith' ) )
+	{
+		printf( "%s" "68K emulation:          " MAE "\n", blank );
 		blank = "";
 	}
 	else if ( TARGET_CPU_68K  &&  in_MinivMac() )
