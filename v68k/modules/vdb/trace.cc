@@ -45,12 +45,34 @@ static const char* causes[] =
 	"Format Error",
 };
 
+static const char* interrupts[] =
+{
+	NULL,  // Reserved (there is no signal 0)
+	NULL,  // SIGHUP
+	"SIGINT",
+};
+
 static
-void report_exception( uint8_t vector_offset )
+void report_exception( uint16_t vector_offset )
 {
 	const char* cause = NULL;
 	
 	const uint8_t vector_number = vector_offset >> 2;
+	
+	if ( vector_number >= 64 )
+	{
+		const uint8_t index = vector_number - 64;
+		
+		if ( index < sizeof interrupts / sizeof *interrupts )
+		{
+			cause = interrupts[ index ];
+		}
+		
+		if ( cause == NULL )
+		{
+			cause = "unspecified interrupt";
+		}
+	}
 	
 	if ( vector_number < sizeof causes / sizeof *causes )
 	{
@@ -69,9 +91,9 @@ void report_exception( uint8_t vector_offset )
 
 static void debugger_loop( registers& regs )
 {
-	const uint8_t trace_offset = 9 * sizeof (uint32_t);
+	const uint16_t trace_offset = 9 * sizeof (uint32_t);
 	
-	const uint8_t vector_offset = (uint8_t) regs.fv;
+	const uint16_t vector_offset = regs.fv & 0x03FF;
 	
 	if ( vector_offset != trace_offset )
 	{
@@ -219,6 +241,8 @@ asm int set_trace_handler()
 	MOVE.L  A0,0x0030  // unassigned, reserved
 	MOVE.L  A0,0x0034  // Coprocessor Protocol Violation
 	MOVE.L  A0,0x0038  // Format Error
+	
+	MOVE.L  A0,0x0108  // SIGINT interrupt
 	
 	MOVE    D0,SR
 	MOVEQ   #0,D0
