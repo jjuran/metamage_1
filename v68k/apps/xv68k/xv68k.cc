@@ -276,8 +276,8 @@ void init_trap_table( uint32_t* table, uint32_t* end, uint32_t address )
 static
 const uint16_t loader_code[] =
 {
-	0x027C,  // ANDI #DFFF,SR  ; clear S
-	0xDFFF,
+	0x027C,  // ANDI #0xD8FF,SR  ; clear S and the interrupt mask
+	0xD8FF,
 	
 	0x4FF8,  // LEA  (3072).W,A7
 	initial_USP,
