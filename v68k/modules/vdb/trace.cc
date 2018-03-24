@@ -8,6 +8,9 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <errno.h>
+
 // gear
 #include "gear/parse_decimal.hh"
 
@@ -130,8 +133,21 @@ static void debugger_loop( registers& regs )
 		
 		ssize_t n_read = read( STDIN_FILENO, buffer, sizeof buffer );
 		
+		int local_errno = 0;
+		
+		asm
+		{
+			MOVE.L   D1,local_errno
+		}
+		
 		if ( n_read <= 0 )
 		{
+			if ( n_read < 0  &&  local_errno == EINTR )
+			{
+				PRINT( "" );
+				continue;
+			}
+			
 			// FIXME
 			break;
 		}
