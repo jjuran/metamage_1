@@ -34,7 +34,7 @@ if [ -e /dev/fb0 ]; then
 	$CAT /dev/input/mice | spiel-mouse | \
 	graft \
 		freemountd -q --root ~/68k // \
-		xv68k $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName | \
+		xv68k -S $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName | \
 	display-fb -w $SCREEN
 	
 	exit 0
@@ -43,4 +43,4 @@ fi
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft \
 	freemountd -q --root ~/68k // \
-	xv68k $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName
+	xv68k -S $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName
