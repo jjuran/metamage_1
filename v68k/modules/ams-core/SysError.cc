@@ -11,10 +11,38 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+#define SPACE  "    "
+#define BOMB1  SPACE  " __^-*  "
+#define BOMB2  SPACE  "/  \\"
+#define BOMB3  SPACE "\\__/    "
+#define SORRY  "Sorry, a system error occurred."
+
+#define SYSERROR_PRE "\n"  \
+        BOMB1  SORRY "\n"  \
+        BOMB2        "\n"  \
+        BOMB3  "ID = "
+
 
 void SysError_patch( short error : __D0 )
 {
-	write( STDERR_FILENO, STR_LEN( "Sorry, a system error occurred.\n" ) );
+	write( STDERR_FILENO, STR_LEN( SYSERROR_PRE ) );
+	
+	char buffer[ 7 ];
+	
+	char* end = buffer + sizeof buffer;
+	
+	char* p = end;
+	
+	*--p = '\n';
+	*--p = '\n';
+	
+	while ( error != 0 )
+	{
+		*--p  = error % 10 + '0';
+		error = error / 10;
+	}
+	
+	write( STDERR_FILENO, p, end - p );
 	
 	_exit( error );
 }
