@@ -69,6 +69,7 @@ using v68k::auth::fully_authorized;
 using v68k::auth::supervisor_mode_switch_allowed;
 using v68k::screen::ignore_screen_locks;
 
+static bool polling;
 static bool tracing;
 static bool verbose;
 static bool has_screen;
@@ -89,6 +90,7 @@ static module_spec* module_specs;
 enum
 {
 	Opt_authorized = 'A',
+	Opt_poll       = 'P',
 	Opt_supervisor = 'S',
 	Opt_trace      = 'T',
 	Opt_module     = 'm',
@@ -105,6 +107,7 @@ enum
 static command::option options[] =
 {
 	{ "",           Opt_authorized },
+	{ "poll",       Opt_poll       },
 	{ "supervisor", Opt_supervisor },
 	{ "trace",      Opt_trace      },
 	{ "verbose",    Opt_verbose    },
@@ -317,6 +320,12 @@ const uint16_t loader_code[] =
 	0x4E75   // RTS
 };
 
+static
+const uint16_t no_op_exception[] =
+{
+	0x4E73,  // RTE
+};
+
 #define HANDLER( handler )  handler, sizeof handler
 
 static
@@ -334,6 +343,8 @@ void load_vectors( v68k::user::os_load_spec& os )
 	install_exception_handler( os, 10, HANDLER( trap_dispatcher ) );
 	install_exception_handler( os, 32 + 0, HANDLER( system_call ) );
 	install_exception_handler( os, 32 + 2, HANDLER( system_call ) );
+	
+	install_exception_handler( os, 64, HANDLER( no_op_exception ) );
 	
 	os.mem_used = boot_address;
 	
@@ -539,6 +550,26 @@ void emulation_loop( v68k::emulator& emu )
 		if ( short( n_instructions ) == 0 )
 		{
 			kill( 1, 0 );  // Guaranteed yield point in MacRelix
+		}
+		
+		if ( short( n_instructions ) == 0  &&  polling )
+		{
+			timeval timeout = { 0 };
+			fd_set readfds;
+			FD_ZERO( &readfds );
+			FD_SET( STDIN_FILENO, &readfds );
+			
+			const int max_fd = STDIN_FILENO;
+			
+			int selected = select( max_fd + 1, &readfds, NULL, NULL, &timeout );
+			
+			if ( selected > 0 )
+			{
+				const int level  = 1;
+				const int vector = 64;
+				
+				emu.interrupt( level, vector );
+			}
 		}
 	}
 }
@@ -765,6 +796,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_ignore_screen_locks:
 				ignore_screen_locks();
+				break;
+			
+			case Opt_poll:
+				polling = true;
 				break;
 			
 			case Opt_trace:
