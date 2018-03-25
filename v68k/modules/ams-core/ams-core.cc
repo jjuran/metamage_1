@@ -36,6 +36,7 @@
 #include "Segments.hh"
 #include "SysError.hh"
 #include "cursor-core.hh"
+#include "interrupts.hh"
 #include "options.hh"
 
 
@@ -169,6 +170,8 @@ static void install_EventManager()
 	OSTRAP( OSEventAvail );  // A030
 	OSTRAP( GetOSEvent   );  // A031
 	OSTRAP( FlushEvents  );  // A032
+	
+	set_event_poll_interrupt_handler();
 	
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970
