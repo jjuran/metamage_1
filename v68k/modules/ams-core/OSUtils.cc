@@ -45,24 +45,30 @@ pascal long Delay_patch( long numTicks : __A0 ) : __D0
 	return Ticks;
 }
 
+asm
 pascal void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 )
 {
-	qEntry->qLink = NULL;
+	CLR.L    (A0)     // qEntry->qLink = NULL;
 	
 	// TODO:  Disable interrupts
 	
-	if ( queue->qHead == NULL )
-	{
-		queue->qHead = qEntry;
-	}
-	else
-	{
-		queue->qTail->qLink = qEntry;
-	}
+	MOVE.L   A0,D2    // Move qEntry to D2 (freeing up A0 for next pointer)
+	ADDQ.L   #2,A1    // Point to qHead field of queue
 	
-	queue->qTail = qEntry;
+	MOVEA.L  A1,A0    // next = &queue->qHead;
+	TST.L    (A1)+    // if (queue->qHead)  // advances A1 to &queue->qTail
+	BEQ.S    set_link
+	
+	MOVE.L   (A1),A0  // next = &queue->qTail->qLink;
+	
+set_link:
+	
+	MOVE.L   D2,(A0)  // *next        = qEntry;
+	MOVE.L   D2,(A1)  // queue->qTail = qEntry;
 	
 	// TODO:  Reenable interrupts
+	
+	RTS
 }
 
 pascal short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 ) : __D0
