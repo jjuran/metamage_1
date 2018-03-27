@@ -50,7 +50,11 @@ pascal void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 )
 {
 	CLR.L    (A0)     // qEntry->qLink = NULL;
 	
-	// TODO:  Disable interrupts
+	JSR      0xFFFFFFFA  // enter_supervisor_mode()
+	ORI      #0x0700,SR  // mask all interrupts (except NMI)
+	ANDI     #0xDFFF,SR  // exit supervisor mode
+	
+	// old SR (with old interrupt mask) is in D0
 	
 	MOVE.L   A0,D2    // Move qEntry to D2 (freeing up A0 for next pointer)
 	ADDQ.L   #2,A1    // Point to qHead field of queue
@@ -66,7 +70,9 @@ set_link:
 	MOVE.L   D2,(A0)  // *next        = qEntry;
 	MOVE.L   D2,(A1)  // queue->qTail = qEntry;
 	
-	// TODO:  Reenable interrupts
+	MOVE.L   D0,D1       // move old SR to D1
+	JSR      0xFFFFFFFA  // enter_supervisor_mode()
+	MOVE     D1,SR       // restore old SR (with old interrupt mask)
 	
 	RTS
 }
@@ -74,12 +80,16 @@ set_link:
 asm
 pascal short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 ) : __D0
 {
-	MOVEQ.L  #0,D0       // noErr
+	CLR.W    -(SP)       // noErr
 	
 	ADDQ.L   #2,A1       // Point to qHead field of queue
 	MOVE.L   A1,D1       // Copy &queue->qHead to D1
 	
-	// TODO:  Disable interrupts, save and restore A1
+	JSR      0xFFFFFFFA  // enter_supervisor_mode()
+	ORI      #0x0700,SR  // mask all interrupts (except NMI)
+	ANDI     #0xDFFF,SR  // exit supervisor mode
+	
+	// old SR (with old interrupt mask) is in D0
 	
 	CMPA.L   (A1)+,A0    // if ( qEntry == queue->qHead )
 	BNE.S    not_first
@@ -97,7 +107,7 @@ first_but_not_last:
 	
 not_found:
 	
-	MOVEQ.L  #-1,D0      // qErr: "Entry not in specified queue"
+	SUBQ.W   #1,(SP)     // qErr: "Entry not in specified queue"
 	BRA.S    cleanup
 	
 not_first:
@@ -126,7 +136,11 @@ not_last:
 	
 cleanup:
 	
-	// TODO:  Reenable interrupts
+	MOVE.L   D0,D1       // move old SR to D1
+	JSR      0xFFFFFFFA  // enter_supervisor_mode()
+	MOVE     D1,SR       // restore old SR (with old interrupt mask)
+	
+	MOVE.W   (SP)+,D0
 	
 	RTS
 }
