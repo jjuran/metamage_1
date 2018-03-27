@@ -71,44 +71,64 @@ set_link:
 	RTS
 }
 
+asm
 pascal short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 ) : __D0
 {
-	QElemPtr prev = NULL;
+	MOVEQ.L  #0,D0       // noErr
+	
+	ADDQ.L   #2,A1       // Point to qHead field of queue
+	MOVE.L   A1,D1       // Copy &queue->qHead to D1
 	
 	// TODO:  Disable interrupts, save and restore A1
 	
-	QElemPtr next = queue->qHead;
+	CMPA.L   (A1)+,A0    // if ( qEntry == queue->qHead )
+	BNE.S    not_first
 	
-	while ( next != NULL )
-	{
-		if ( next == qEntry )
-		{
-			QElemPtr* link = prev ? &prev->qLink : &queue->qHead;
-			
-			*link = qEntry->qLink;
-			
-			if ( qEntry == queue->qTail )
-			{
-				queue->qTail = prev;
-				
-				if ( prev == NULL )
-				{
-					queue->qHead = NULL;
-				}
-			}
-			
-			// TODO:  Reenable interrupts
-			
-			return noErr;
-		}
-		
-		prev = next;
-		next = next->qLink;
-	}
+	CMP.L    (A1),A0     // if ( qEntry == queue->qTail )
+	BNE.S    first_but_not_last
+	
+	CLR.L    (A1)        // queue->qTail = NULL;
+	
+first_but_not_last:
+	
+	MOVE.L   (A0),-(A1)  // queue->qHead = qEntry->qLink;
+	
+	BRA.S    cleanup
+	
+not_found:
+	
+	MOVEQ.L  #-1,D0      // qErr: "Entry not in specified queue"
+	BRA.S    cleanup
+	
+not_first:
+	
+	MOVE.L   A0,D2       // Move qEntry to D2 (freeing up A0 for next pointer)
+	
+loop:
+	
+	MOVEA.L  D1,A0       // prev = next;         // or &queue->qHead, once
+	MOVE.L   (A0),D1     // next = next->qLink;  // or queue->qHead, once
+	
+	BEQ.S    not_found   // while ( next != NULL )
+	
+	CMP.L    D2,D1       // if ( next == qEntry )
+	BNE.S    loop
+	
+	CMP.L    (A1),D2     // if ( qEntry == queue->qTail )
+	BNE.S    not_last
+	
+	MOVE.L   A0,(A1)     // queue->qTail = prev;
+	
+not_last:
+	
+	MOVEA.L  D2,A1
+	MOVE.L   (A1),(A0)   // prev->qLink = qEntry->qLink;
+	
+cleanup:
 	
 	// TODO:  Reenable interrupts
 	
-	return qErr;  // "Entry not in specified queue"
+	RTS
 }
 
 pascal void SysBeep_patch( short duration )
