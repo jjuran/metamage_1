@@ -25,6 +25,7 @@ Rect  CrsrPin   : 0x0834;
 static Cursor TheCrsr;
 static Ptr    CrsrAddr;
 static Buffer CrsrSave;
+static char   CrsrBusy;
 static short  CrsrState = -1;  // Invisible cursor, at first
 
 
@@ -170,7 +171,11 @@ void hide_cursor()
 {
 	if ( CrsrState-- == 0 )
 	{
+		--CrsrBusy;
+		
 		erase_cursor();
+		
+		++CrsrBusy;
 	}
 }
 
@@ -180,13 +185,17 @@ void show_cursor()
 	{
 		CrsrState = 0;
 		
+		--CrsrBusy;
+		
 		paint_cursor( Mouse.h, Mouse.v );
+		
+		++CrsrBusy;
 	}
 }
 
 void update_cursor_location()
 {
-	if ( CrsrState == 0 )
+	if ( CrsrState == 0  &&  ! CrsrBusy )
 	{
 		screen_lock lock;
 		
@@ -207,7 +216,11 @@ void init_cursor()
 
 pascal void set_cursor( const Cursor* crsr )
 {
+	--CrsrBusy;
+	
 	TheCrsr = *crsr;
 	
 	update_cursor_location();
+	
+	++CrsrBusy;
 }
