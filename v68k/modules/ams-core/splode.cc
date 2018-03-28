@@ -279,10 +279,24 @@ void queue_event( int fd )
 	}
 }
 
+static char reentered_flag;
+
+static inline
+asm char reentered()
+{
+	TAS.B    reentered_flag
+	SNE.B    D0
+}
+
 static
 void wait_for_user_input( const timeval& timeout )
 {
 	static timeval wait_timeout;
+	
+	if ( reentered() )
+	{
+		return;
+	}
 	
 	wait_timeout = timeout;
 	
@@ -292,6 +306,8 @@ void wait_for_user_input( const timeval& timeout )
 		
 		queue_event( events_fd );
 	}
+	
+	reentered_flag = 0;
 }
 
 void wait_for_user_input( unsigned long ticks )
