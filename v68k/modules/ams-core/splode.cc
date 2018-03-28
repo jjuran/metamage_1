@@ -38,8 +38,6 @@ bool button_clicked;
 
 static const timeval zero_timeout = { 0, 0 };
 
-static timeval wait_timeout;
-
 static
 timeval timeval_from_ticks( unsigned long ticks )
 {
@@ -282,8 +280,12 @@ void queue_event( int fd )
 }
 
 static
-void wait_for_user_input()
+void wait_for_user_input( const timeval& timeout )
 {
+	static timeval wait_timeout;
+	
+	wait_timeout = timeout;
+	
 	while ( wait_for_fd( events_fd, &wait_timeout ) )
 	{
 		wait_timeout = zero_timeout;
@@ -294,14 +296,10 @@ void wait_for_user_input()
 
 void wait_for_user_input( unsigned long ticks )
 {
-	wait_timeout = timeval_from_ticks( ticks );
-	
-	wait_for_user_input();
+	wait_for_user_input( timeval_from_ticks( ticks ) );
 }
 
 void poll_user_input()
 {
-	wait_timeout = zero_timeout;
-	
-	wait_for_user_input();
+	wait_for_user_input( zero_timeout );
 }
