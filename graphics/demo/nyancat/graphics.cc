@@ -26,6 +26,8 @@
 #include "bitmap.hh"
 
 
+typedef uint32_t Color, ColorRef;
+
 const uint32_t black = 0xFF000000;
 const uint32_t white = 0xFFFFFFFF;
 
@@ -46,7 +48,7 @@ const uint32_t green  = 0xFF00FF00;
 const uint32_t blue   = 0xFF5588FF;
 const uint32_t violet = 0xFF6644AA;
 
-static const uint32_t wave_colors[] =
+static const Color wave_colors[] =
 {
 	red,
 	orange,
@@ -84,7 +86,7 @@ static const firework_schedule fireworks[ n_fireworks ] =
 };
 
 static
-void draw_wave( bitmap& bits, int x, int y, int stage, uint32_t color )
+void draw_wave( bitmap& bits, int x, int y, int stage, ColorRef color )
 {
 	const int a = ! stage;
 	const int b = !! stage;
@@ -127,7 +129,7 @@ void draw_waves( bitmap& bits, int x, int y, bool step )
 {
 	for ( int i = 0;  i < 6;  ++i )
 	{
-		const uint32_t color = wave_colors[ i ];
+		const ColorRef color = wave_colors[ i ];
 		
 		draw_wave( bits, 0, y++, step, color );
 		draw_wave( bits, 0, y++, step, color );
