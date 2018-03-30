@@ -42,6 +42,8 @@ class backing_store
 		}
 };
 
+namespace nyancat {
+
 class bitmap
 {
 	private:
@@ -81,5 +83,7 @@ class bitmap
 			}
 		}
 };
+
+}  // namespace nyancat
 
 #endif

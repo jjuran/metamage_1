@@ -28,9 +28,11 @@
 #include "raster/load.hh"
 #include "raster/relay.hh"
 
+// nyancatlib
+#include "nyancat/graphics.hh"
+
 // nyancat
 #include "bitmap.hh"
-#include "graphics.hh"
 
 
 #define PROGRAM  "nyancat"
@@ -38,6 +40,9 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define ERROR( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
+
+using nyancat::bitmap;
+using nyancat::n_frames;
 
 using raster::raster_desc;
 using raster::raster_load;
