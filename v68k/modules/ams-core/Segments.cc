@@ -161,7 +161,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 		SysError( 26 );
 	}
 	
-	const jump_table_header header = *(jump_table_header*) *code0;
+	const jump_table_header& header = *(jump_table_header*) *code0;
 	
 	CurJTOffset = header.jmptable_offset;
 	
@@ -180,7 +180,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	void* jump_table = (char*) CurrentA5 + CurJTOffset;
 	
-	memcpy( jump_table, (jump_table_header*) *code0 + 1, header.jmptable_size );
+	memcpy( jump_table, &header + 1, header.jmptable_size );
 	
 	ReleaseResource( code0 );
 	
