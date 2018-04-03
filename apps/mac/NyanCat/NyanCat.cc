@@ -9,8 +9,14 @@
 #endif
 
 // Mac OS
+#if TARGET_API_MAC_CARBON
+#ifndef __MACWINDOWS__
+#include <MacWindows.h>
+#endif
+#else
 #ifndef __LOWMEM__
 #include <LowMem.h>
+#endif
 #endif
 
 // missing-macos
