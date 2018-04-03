@@ -53,17 +53,7 @@
 	
 	#include <stdint.h>
 	
-	#define _INT8_T_DEFINED_
-	#define	_INT16_T_DEFINED_
-	#define	_INT32_T_DEFINED_
-	#define	_INT64_T_DEFINED_
-	#define _UINT8_T_DEFINED_
-	#define	_UINT16_T_DEFINED_
-	#define	_UINT32_T_DEFINED_
-	#define	_UINT64_T_DEFINED_
-	
 	#define _WCHAR_T_DEFINED_
-	#define	_TIMER_T_DEFINED_
 	
 #endif
 
@@ -72,14 +62,6 @@ typedef	unsigned char	u_char;
 typedef	unsigned short	u_short;
 typedef	unsigned int	u_int;
 typedef	unsigned long	u_long;
-
-typedef unsigned char	unchar;		/* Sys V compatibility */
-typedef	unsigned short	ushort;		/* Sys V compatibility */
-typedef	unsigned int	uint;		/* Sys V compatibility */
-typedef unsigned long	ulong;		/* Sys V compatibility */
-
-typedef	__cpuid_t	cpuid_t;	/* CPU id */
-//typedef	__register_t	register_t;	/* register-sized type */
 #endif /* __BSD_VISIBLE */
 
 /* BSD-style unsigned bits types */
@@ -94,12 +76,8 @@ typedef	__uint64_t	u_int64_t;
 /* quads, deprecated in favor of 64 bit int types */
 typedef	__int64_t	quad_t;
 typedef	__uint64_t	u_quad_t;
-typedef	quad_t *	qaddr_t;
 
 /* Standard system types */
-typedef	__int32_t	daddr_t;	/* 32-bit disk address */
-typedef	__int32_t	daddr32_t;	/* 32-bit disk address */
-typedef	__int64_t	daddr64_t;	/* 64-bit disk address */
 typedef	__fixpt_t	fixpt_t;	/* fixed point number */
 typedef	__id_t		id_t;		/* may contain pid, uid or gid */
 typedef	__ino_t		ino_t;		/* inode number */
@@ -108,8 +86,6 @@ typedef	__mode_t	mode_t;		/* permissions */
 typedef	__nlink_t	nlink_t;	/* link count */
 typedef	__pid_t		pid_t;		/* process id */
 typedef __rlim_t	rlim_t;		/* resource limit */
-typedef	__segsz_t	segsz_t;	/* segment size */
-typedef	__swblk_t	swblk_t;	/* swap offset */
 typedef	__useconds_t	useconds_t;	/* microseconds */
 typedef	__suseconds_t	suseconds_t;	/* microseconds (signed) */
 
@@ -154,11 +130,6 @@ typedef	__ssize_t	ssize_t;
 typedef	__time_t	time_t;
 #endif
 
-#ifndef	_TIMER_T_DEFINED_
-#define	_TIMER_T_DEFINED_
-typedef	__timer_t	timer_t;
-#endif
-
 #ifndef	_OFF_T_DEFINED_
 #define	_OFF_T_DEFINED_
 typedef	__off_t		off_t;
@@ -176,13 +147,6 @@ int	 ftruncate(int, off_t);
 int	 truncate(const char *, off_t);
 __END_DECLS
 #endif /* __BSD_VISIBLE && !_KERNEL */
-
-#if __BSD_VISIBLE
-/* Major, minor numbers, dev_t's. */
-#define	major(x)	((int32_t)(((u_int32_t)(x) >> 8) & 0xff))
-#define	minor(x)	((int32_t)((x) & 0xff) | (((x) & 0xffff0000) >> 8))
-#define	makedev(x,y)	((dev_t)((((x) & 0xff) << 8) | ((y) & 0xff) | (((y) & 0xffff00) << 8)))
-#endif
 
 #if __BSD_VISIBLE
 #include <sys/select.h>	/* must be after type declarations */
