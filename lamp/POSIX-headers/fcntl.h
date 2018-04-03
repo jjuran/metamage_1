@@ -32,8 +32,6 @@ extern "C" {
 	#define	O_TRUNC		0x0400		/* truncate to zero length */
 	#define	O_EXCL		0x0800		/* error if already exists */
 	
-	#define O_NDELAY	O_NONBLOCK
-	
 	#define	O_NOCTTY	0		/* don't assign controlling terminal */
 	#define O_NOATIME	0		/* atime is not supported and therefore never modified */
 	
