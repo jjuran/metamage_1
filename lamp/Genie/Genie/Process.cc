@@ -523,9 +523,9 @@ namespace Genie
 		
 		relix::fd_map& fds = FileDescriptors();
 		
-		fds[ 0 ] =
-		fds[ 1 ] = open_device( STR_LEN( "/dev/null"    ) );
 		fds[ 2 ] = open_device( STR_LEN( "/dev/console" ) );
+		fds[ 1 ] =
+		fds[ 0 ] = open_device( STR_LEN( "/dev/null"    ) );
 		
 		relix::InstallExceptionHandlers();
 		
