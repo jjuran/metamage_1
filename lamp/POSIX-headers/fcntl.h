@@ -44,8 +44,6 @@ extern "C" {
 	
 	#define O_XATTR  0x40000000
 	
-	#define O_MAC_ASYNC 0x80000000  // allow asynchronous File Manager calls
-	
 	#define AT_FDCWD  (-100)
 	
 	#define AT_REMOVEDIR  1
