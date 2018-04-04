@@ -26,6 +26,7 @@
 #include "QDUtils.hh"
 #include "Pen.hh"
 #include "Pictures.hh"
+#include "Points.hh"
 #include "Polygons.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
@@ -95,6 +96,8 @@ static void install_QuickDraw()
 	TBTRAP( ClipRect    );  // A87B
 	TBTRAP( BackPat     );  // A87C
 	TBTRAP( ClosePort   );  // A87D
+	
+	TBTRAP( SetPt       );  // A880
 	
 	TBTRAP( StdText     );  // A882
 	TBTRAP( DrawChar    );  // A883
