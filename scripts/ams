@@ -13,6 +13,7 @@ RASTER="--raster=$SCREEN"
 
 CORE=ams-core
 RSRC=ams-rsrc
+PACK=ams-pack
 QD=ams-qd
 UI=ams-ui
 
@@ -31,4 +32,4 @@ fi
 interact $RASTER -t "Advanced Mac Substitute" | \
 graft \
 	freemountd -q --root ~/68k // \
-	xv68k -SP $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName
+	xv68k -SP $RASTER -m$CORE -m$RSRC -m$PACK -m$QD -m$UI ~/68k/app $AppName
