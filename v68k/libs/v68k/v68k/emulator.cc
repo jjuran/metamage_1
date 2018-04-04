@@ -33,11 +33,6 @@ namespace v68k
 	{
 	}
 	
-	void emulator::double_bus_fault()
-	{
-		condition = halted;
-	}
-	
 	void emulator::reset()
 	{
 		condition = normal;

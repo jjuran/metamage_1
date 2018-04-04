@@ -21,7 +21,7 @@ namespace v68k
 		private:
 			unsigned long its_instruction_counter;
 			
-			void double_bus_fault();
+			void double_bus_fault()  { condition = halted; }
 			
 			uint32_t bus_error    ()  { condition = halted;  return 0; }
 			uint32_t address_error()  { condition = halted;  return 0; }
