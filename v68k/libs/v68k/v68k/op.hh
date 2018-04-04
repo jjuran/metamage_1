@@ -22,6 +22,7 @@ namespace v68k
 		Division_by_zero    = -5,
 		CHK_exception       = -6,
 		Overflow_trap       = -7,
+		Trace_exception     = -9,
 		Format_error        = -14,
 		
 		Trap_0 = -32,

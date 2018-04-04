@@ -38,6 +38,11 @@ namespace v68k
 			                     uint16_t  vector_offset,
 			                     uint32_t  instruction_address = 0 );
 			
+			bool fault( op_result result, uint32_t instruction_address )
+			{
+				return take_exception( 2, result * -4, instruction_address );
+			}
+			
 			bool illegal_instruction()  { return take_exception( 0, 4 * sizeof (uint32_t) ); }
 			bool privilege_violation()  { return take_exception( 0, 8 * sizeof (uint32_t) ); }
 			

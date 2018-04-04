@@ -212,7 +212,7 @@ namespace v68k
 				case Division_by_zero:
 				case CHK_exception:
 				case Overflow_trap:
-					take_exception( 2, -result * sizeof (uint32_t), instruction_address );
+					fault( result, instruction_address );
 					
 					break;
 				
@@ -260,7 +260,7 @@ namespace v68k
 				condition = normal;  // Traced STOP instructions don't stop
 			}
 			
-			take_exception( 2, 9 * sizeof (uint32_t), instruction_address );
+			fault( Trace_exception, instruction_address );
 		}
 		
 		// prefetch next
