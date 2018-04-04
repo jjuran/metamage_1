@@ -320,8 +320,16 @@ static uint32_t unimplemented_trap_callback( v68k::processor_state& s )
 	return nil;
 }
 
+enum
+{
+	noErr      = 0,
+	memFullErr = -108,
+};
+
 static uint32_t NewPtr_callback( v68k::processor_state& s )
 {
+	int32_t err = noErr;
+	
 	const uint32_t size = s.d(0);
 	
 	uint32_t addr = v68k::alloc::allocate( size );
@@ -332,10 +340,12 @@ static uint32_t NewPtr_callback( v68k::processor_state& s )
 	{
 		const uint32_t addr_MemErr = 0x0220;
 		
-		const int16_t memFullErr = -108;
+		err = memFullErr;
 		
 		s.mem.put_word( addr_MemErr, memFullErr, v68k::user_data_space );
 	}
+	
+	s.d(0) = err;
 	
 	return rts;
 }
