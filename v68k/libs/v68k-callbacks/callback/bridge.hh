@@ -29,6 +29,8 @@ enum
 	lock_screen,
 	unlock_screen,
 	
+	bus_error,
+	address_error,
 	illegal_instruction,
 	division_by_zero,
 	chk_trap,
@@ -37,6 +39,8 @@ enum
 	trace_exception,
 	line_A_emulator,
 	line_F_emulator,
+	format_error,
+	
 	unimplemented_trap,
 	NewPtr_trap,
 	DisposePtr_trap,

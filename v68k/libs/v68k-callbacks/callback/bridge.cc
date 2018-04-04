@@ -412,6 +412,24 @@ static uint32_t Gestalt_callback( v68k::processor_state& s )
 }
 
 
+static uint32_t bus_error_callback( v68k::processor_state& s )
+{
+	WRITE_ERR( "Bus Error" );
+	
+	dump_and_raise( s, SIGSEGV );
+	
+	return nil;
+}
+
+static uint32_t address_error_callback( v68k::processor_state& s )
+{
+	WRITE_ERR( "Address Error" );
+	
+	dump_and_raise( s, SIGBUS );
+	
+	return nil;
+}
+
 static uint32_t illegal_instruction_callback( v68k::processor_state& s )
 {
 	WRITE_ERR( "Illegal Instruction" );
@@ -484,6 +502,23 @@ static uint32_t line_F_emulator_callback( v68k::processor_state& s )
 	return nil;
 }
 
+#ifndef SIGSTKFLT
+#define SIGSTKFLT SIGSEGV
+#endif
+
+#ifndef SIGFMT
+#define SIGFMT SIGSTKFLT
+#endif
+
+static uint32_t format_error_callback( v68k::processor_state& s )
+{
+	WRITE_ERR( "Format Error" );
+	
+	dump_and_raise( s, SIGFMT );
+	
+	return nil;
+}
+
 
 static const function_type the_callbacks[] =
 {
@@ -501,6 +536,8 @@ static const function_type the_callbacks[] =
 	&lock_screen_callback,
 	&unlock_screen_callback,
 	
+	&bus_error_callback,
+	&address_error_callback,
 	&illegal_instruction_callback,
 	&division_by_zero_callback,
 	&chk_trap_callback,
@@ -509,6 +546,8 @@ static const function_type the_callbacks[] =
 	&trace_exception_callback,
 	&line_A_emulator_callback,
 	&line_F_emulator_callback,
+	&format_error_callback,
+	
 	&unimplemented_trap_callback,
 	&NewPtr_callback,
 	&DisposePtr_callback,
