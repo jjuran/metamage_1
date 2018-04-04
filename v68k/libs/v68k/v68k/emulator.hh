@@ -22,6 +22,9 @@ namespace v68k
 			unsigned long its_instruction_counter;
 			
 			void double_bus_fault();
+			
+			uint32_t bus_error    ()  { condition = halted;  return 0; }
+			uint32_t address_error()  { condition = halted;  return 0; }
 		
 		public:
 			emulator( processor_model model, const memory& mem, bkpt_handler bkpt = 0 );  // NULL

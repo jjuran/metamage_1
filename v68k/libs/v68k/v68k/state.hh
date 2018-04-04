@@ -164,9 +164,6 @@ namespace v68k
 		{
 			opcode = new_opcode;
 		}
-		
-		uint32_t bus_error    ()  { condition = halted;  return 0; }
-		uint32_t address_error()  { condition = halted;  return 0; }
 	};
 	
 }
