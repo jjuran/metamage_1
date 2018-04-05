@@ -142,7 +142,7 @@ ok:
 	RTS
 }
 
-/*pascal*/ char** NewEmptyHandle_patch() : __A0
+char** NewEmptyHandle_patch() : __A0
 {
 	void* alloc = malloc( sizeof (master_pointer) );  // 8 bytes
 	
@@ -161,7 +161,7 @@ ok:
 	return (char**) h;
 }
 
-pascal void DisposeHandle_patch( char** h : __A0 )
+void DisposeHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
@@ -180,7 +180,7 @@ pascal void DisposeHandle_patch( char** h : __A0 )
 	free( h );
 }
 
-pascal void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
@@ -227,7 +227,7 @@ pascal void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_w
 	set_epilogue( header );
 }
 
-pascal long GetHandleSize_patch( char** h : __A0 ) : __D0
+long GetHandleSize_patch( char** h : __A0 ) : __D0
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
@@ -241,7 +241,7 @@ pascal long GetHandleSize_patch( char** h : __A0 ) : __D0
 	return header->size;
 }
 
-pascal void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
 {
 	if ( h == NULL )
 	{
@@ -271,7 +271,7 @@ pascal void ReallocateHandle_patch( char** h : __A0, long size : __D0, short tra
 	header->backlink = (master_pointer*) h;
 }
 
-pascal void EmptyHandle_patch( char** h : __A0 )
+void EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
@@ -292,18 +292,18 @@ pascal void EmptyHandle_patch( char** h : __A0 )
 	*h = NULL;
 }
 
-pascal void SetApplLimit_patch( char* p : __A0 )
+void SetApplLimit_patch( char* p : __A0 )
 {
 }
 
-pascal void MoreMasters_patch()
+void MoreMasters_patch()
 {
 }
 
-pascal void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
+void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 {
 }
 
-pascal void MaxApplZone_patch()
+void MaxApplZone_patch()
 {
 }

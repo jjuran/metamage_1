@@ -8,24 +8,24 @@
 
 char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0;
 
-/*pascal*/ char** NewEmptyHandle_patch() : __A0;
+char** NewEmptyHandle_patch() : __A0;
 
-pascal void DisposeHandle_patch( char** h : __A0 );
+void DisposeHandle_patch( char** h : __A0 );
 
-pascal void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
+void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
 
-pascal long GetHandleSize_patch( char** h : __A0 ) : __D0;
+long GetHandleSize_patch( char** h : __A0 ) : __D0;
 
-pascal void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
+void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
 
-pascal void EmptyHandle_patch( char** h : __A0 );
+void EmptyHandle_patch( char** h : __A0 );
 
-pascal void SetApplLimit_patch( char* p : __A0 );
+void SetApplLimit_patch( char* p : __A0 );
 
-pascal void MoreMasters_patch();
+void MoreMasters_patch();
 
-pascal void ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
+void ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 
-pascal void MaxApplZone_patch();
+void MaxApplZone_patch();
 
 #endif
