@@ -28,6 +28,10 @@ enum
 	ScrnBitMap_trap,
 	lock_screen,
 	unlock_screen,
+	reserved1,
+	
+	alloc,
+	dealloc,
 	
 	bus_error,
 	address_error,
@@ -42,8 +46,6 @@ enum
 	format_error,
 	
 	unimplemented_trap,
-	NewPtr_trap,
-	DisposePtr_trap,
 	BlockMove_trap,
 	Gestalt_trap,
 	unimplemented,

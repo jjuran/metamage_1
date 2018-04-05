@@ -326,7 +326,8 @@ enum
 	memFullErr = -108,
 };
 
-static uint32_t NewPtr_callback( v68k::processor_state& s )
+static
+uint32_t alloc_callback( v68k::processor_state& s )
 {
 	int32_t err = noErr;
 	
@@ -350,7 +351,8 @@ static uint32_t NewPtr_callback( v68k::processor_state& s )
 	return rts;
 }
 
-static uint32_t DisposePtr_callback( v68k::processor_state& s )
+static
+uint32_t dealloc_callback( v68k::processor_state& s )
 {
 	const uint32_t addr = s.a(0);
 	
@@ -547,6 +549,10 @@ static const function_type the_callbacks[] =
 	&ScrnBitMap_callback,
 	&lock_screen_callback,
 	&unlock_screen_callback,
+	NULL,
+	
+	&alloc_callback,
+	&dealloc_callback,
 	
 	&bus_error_callback,
 	&address_error_callback,
@@ -561,8 +567,6 @@ static const function_type the_callbacks[] =
 	&format_error_callback,
 	
 	&unimplemented_trap_callback,
-	&NewPtr_callback,
-	&DisposePtr_callback,
 	&BlockMove_callback,
 	&Gestalt_callback,
 	&unimplemented_callback
