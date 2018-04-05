@@ -74,6 +74,20 @@ Handle_footer* get_footer( char* p )
 	return get_footer( get_header( p ) );
 }
 
+static inline
+short size_error( unsigned long size : __D0 )
+{
+	const unsigned extra_size = sizeof (Handle_header)
+	                          + sizeof (Handle_footer);  // 16 bytes
+	
+	if ( size > 0x7FFFFFFF - extra_size )
+	{
+		return memSCErr;
+	}
+	
+	return noErr;
+}
+
 static
 Handle_header* allocate_Handle_mem( long   size      : __D0,
                                     short  trap_word : __D1 ) : __A0
@@ -83,10 +97,8 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	
 	const unsigned long padded_size = padded( size );
 	
-	if ( size < 0  ||  padded_size > 0x7FFFFFFF - extra_size )
+	if (( MemErr = size_error( size ) ))
 	{
-		MemErr = memSCErr;
-		
 		return NULL;
 	}
 	
