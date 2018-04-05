@@ -356,6 +356,8 @@ static uint32_t DisposePtr_callback( v68k::processor_state& s )
 	
 	v68k::alloc::deallocate( addr );
 	
+	s.d(0) = noErr;
+	
 	return rts;
 }
 
