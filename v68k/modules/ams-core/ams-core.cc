@@ -33,6 +33,7 @@
 #include "Handles.hh"
 #include "OSEvents.hh"
 #include "OSUtils.hh"
+#include "Pointers.hh"
 #include "Segments.hh"
 #include "SysError.hh"
 #include "cursor-core.hh"
@@ -120,6 +121,9 @@ static void initialize_low_memory_globals()
 
 static void install_MemoryManager()
 {
+	OSTRAP( NewPtr           );  // A11E
+	OSTRAP( DisposePtr       );  // A01F
+	
 	OSTRAP( NewHandle        );  // A022
 	OSTRAP( DisposeHandle    );  // A023
 	OSTRAP( SetHandleSize    );  // A024
