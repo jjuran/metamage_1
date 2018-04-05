@@ -27,6 +27,10 @@ void MaxApplZone_patch();
 
 void MoreMasters_patch();
 
+THz GetZone_patch();
+
+short SetZone_patch( THz z : __A0 );
+
 long FreeMem_patch();
 
 void MaxMem_patch();

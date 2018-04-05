@@ -10,6 +10,9 @@
 #include <MacMemory.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "callouts.hh"
 
@@ -305,6 +308,47 @@ void MaxApplZone_patch()
 void MoreMasters_patch()
 {
 	MemErr = noErr;
+}
+
+#pragma mark -
+#pragma mark Heap Zone Access
+#pragma mark -
+
+static
+THz GetZone_handler()
+{
+	if ( TheZone == NULL )
+	{
+		ERROR   = "GetZone() called when TheZone is NULL!";
+		WARNING = "Set AMS_MEM for ams.vx to pass --mem to xv68k for a heap.";
+		WARNING = "Valid values: 0 1 2 4 5 8 (number of 512K RAM units)";
+	}
+	
+	return TheZone;
+}
+
+asm THz GetZone_patch()
+{
+	JSR      GetZone_handler
+	
+	MOVEQ.L  #0,D0
+	MOVE.W   D0,MemErr
+	
+	RTS
+}
+
+short SetZone_patch( THz z : __A0 )
+{
+	TheZone = z;
+	
+	if ( TheZone == NULL )
+	{
+		ERROR   = "SetZone() called with a NULL zone!";
+		WARNING = "Set AMS_MEM for ams.vx to pass --mem to xv68k for a heap.";
+		WARNING = "Valid values: 0 1 2 4 5 8 (number of 512K RAM units)";
+	}
+	
+	return MemErr = noErr;
 }
 
 #pragma mark -
