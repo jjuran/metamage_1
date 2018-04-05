@@ -339,11 +339,7 @@ uint32_t alloc_callback( v68k::processor_state& s )
 	
 	if ( addr == 0 )
 	{
-		const uint32_t addr_MemErr = 0x0220;
-		
 		err = memFullErr;
-		
-		s.mem.put_word( addr_MemErr, memFullErr, v68k::user_data_space );
 	}
 	
 	s.d(0) = err;
