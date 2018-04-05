@@ -44,46 +44,53 @@ struct Handle_footer
 };
 
 
-static inline unsigned long padded_size( size_t size )
+static inline
+unsigned long padded( size_t size )
 {
 	return size + 3 & ~3;
 }
 
-static inline Handle_header* get_header( char* p )
+static inline
+Handle_header* get_header( char* p )
 {
 	return (Handle_header*) p - 1;
 }
 
-static inline Handle_footer* get_footer( Handle_header* header )
+static inline
+Handle_footer* get_footer( Handle_header* header )
 {
-	return (Handle_footer*) ((char*) &header[ 1 ] + padded_size( header->size ));
+	return (Handle_footer*) ((char*) &header[ 1 ] + padded( header->size ));
 }
 
-static inline void set_epilogue( Handle_header* header )
+static inline
+void set_epilogue( Handle_header* header )
 {
 	get_footer( header )->epilogue = Handle_epilogue;
 }
 
-static inline Handle_footer* get_footer( char* p )
+static inline
+Handle_footer* get_footer( char* p )
 {
 	return get_footer( get_header( p ) );
 }
 
-static Handle_header* allocate_Handle_mem( long size : __D0, short trap_word : __D1 ) : __A0
+static
+Handle_header* allocate_Handle_mem( long   size      : __D0,
+                                    short  trap_word : __D1 ) : __A0
 {
 	const unsigned extra_size = sizeof (Handle_header)
 	                          + sizeof (Handle_footer);  // 16 bytes
 	
-	const unsigned long size_with_padding = padded_size( size );
+	const unsigned long padded_size = padded( size );
 	
-	if ( size < 0  ||  size_with_padding > 0x7FFFFFFF - extra_size )
+	if ( size < 0  ||  padded_size > 0x7FFFFFFF - extra_size )
 	{
 		MemErr = memSCErr;
 		
 		return NULL;
 	}
 	
-	const long full_size = size_with_padding + extra_size;
+	const long full_size = padded_size + extra_size;
 	
 	void* alloc = trap_word & 0x0200 ? calloc( 1, full_size )
 	                                 : malloc(    full_size );
@@ -96,10 +103,10 @@ static Handle_header* allocate_Handle_mem( long size : __D0, short trap_word : _
 	}
 	
 	Handle_header* header = (Handle_header*) alloc;
-	Handle_footer* footer = (Handle_footer*) ((char*) &header[1] + size_with_padding);
+	Handle_footer* footer = (Handle_footer*) ((char*) &header[1] + padded_size);
 	
 	header->size     = size;
-	header->capacity = size_with_padding;
+	header->capacity = padded_size;
 	
 	header->backlink = NULL;
 	
@@ -191,7 +198,9 @@ short DisposeHandle_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
-short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+short SetHandleSize_patch( char**  h         : __A0,
+                           long    size      : __D0,
+                           short   trap_word : __D1 )
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
@@ -211,22 +220,22 @@ short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : 
 	}
 	else
 	{
-		if ( Handle_header* new_header = allocate_Handle_mem( size, trap_word ) )
-		{
-			memcpy( new_header + 1, header + 1, header->size );
-			
-			new_header->backlink = header->backlink;
-			
-			*h = (char*) &new_header[1];
-			
-			free( header );
-			
-			header = new_header;
-		}
-		else
+		Handle_header* new_header = allocate_Handle_mem( size, trap_word );
+		
+		if ( new_header == NULL )
 		{
 			return MemErr = memFullErr;
 		}
+		
+		memcpy( new_header + 1, header + 1, header->size );
+		
+		new_header->backlink = header->backlink;
+		
+		*h = (char*) &new_header[1];
+		
+		free( header );
+		
+		header = new_header;
 	}
 	
 	set_epilogue( header );
@@ -248,7 +257,9 @@ long GetHandleSize_patch( char** h : __A0 ) : __D0
 	return header->size;
 }
 
-short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+short ReallocateHandle_patch( char**  h         : __A0,
+                              long    size      : __D0,
+                              short   trap_word : __D1 )
 {
 	if ( h == NULL )
 	{
