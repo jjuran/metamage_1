@@ -23,6 +23,7 @@
 
 Str31 CurApName    : 0x0910;
 short CurJTOffset  : 0x0934;
+void* CurrentA5    : 0x0904;
 void* CurStackBase : 0x0908;
 
 
@@ -175,9 +176,9 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	CurStackBase = (char*) alloc + stack_size;
 	
-	void* new_a5 = (char*) CurStackBase + header.below_a5_size;
+	CurrentA5 = (char*) CurStackBase + header.below_a5_size;
 	
-	void* jump_table = (char*) new_a5 + CurJTOffset;
+	void* jump_table = (char*) CurrentA5 + CurJTOffset;
 	
 	memcpy( jump_table, (jump_table_header*) *code0 + 1, header.jmptable_size );
 	
@@ -187,7 +188,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	asm
 	{
-		MOVEA.L  new_a5,A5
+		MOVEA.L  CurrentA5,A5
 		MOVEA.L  start,A0
 		MOVE.L   CurStackBase,SP
 		JSR      (A0)
