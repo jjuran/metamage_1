@@ -51,6 +51,8 @@ enum
 	tag_CrsrPin_word_3 = tag_CrsrPin + 3,  // 8 bytes
 	tag_CurStackBase,
 	tag_CurStackBase_low_word,
+	tag_CurrentA5,
+	tag_CurrentA5_low_word,
 	tag_CurApName,
 	tag_CurApName_word_15 = tag_CurApName + 15,  // 32 bytes
 	tag_CurJTOffset,
@@ -124,6 +126,7 @@ static const global globals[] =
 	{ 0x0824, 4,    tag_ScrnBase    },
 	{ 0x0830, 4,    tag_Mouse       },
 	{ 0x0834, 8,    tag_CrsrPin     },
+	{ 0x0904, 4,    tag_CurrentA5   },
 	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0934, 2,    tag_CurJTOffset },
