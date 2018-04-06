@@ -111,9 +111,29 @@ static Handle_header* allocate_Handle_mem( long size : __D0, short trap_word : _
 
 
 static
+char** new_empty_handle() : __A0
+{
+	MemErr = memFullErr;
+	
+	void* alloc = malloc( sizeof (master_pointer) );  // 8 bytes
+	
+	if ( alloc != NULL )
+	{
+		master_pointer* h = (master_pointer*) alloc;
+		
+		h->alloc = NULL;
+		h->flags = 0;
+		
+		MemErr = noErr;
+	}
+	
+	return (char**) alloc;
+}
+
+static
 char** new_handle( long size : __D0, short trap_word : __D1 ) : __A0
 {
-	char** h = NewEmptyHandle_patch();
+	char** h = new_empty_handle();
 	
 	if ( h != NULL )
 	{
@@ -145,21 +165,7 @@ ok:
 
 char** NewEmptyHandle_patch() : __A0
 {
-	void* alloc = malloc( sizeof (master_pointer) );  // 8 bytes
-	
-	if ( alloc == NULL )
-	{
-		MemErr = memFullErr;
-		
-		return NULL;
-	}
-	
-	master_pointer* h = (master_pointer*) alloc;
-	
-	h->alloc = NULL;
-	h->flags = 0;
-	
-	return (char**) h;
+	return new_empty_handle();
 }
 
 void DisposeHandle_patch( char** h : __A0 )
