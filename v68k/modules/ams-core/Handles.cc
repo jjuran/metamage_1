@@ -278,25 +278,23 @@ short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word
 	return MemErr = noErr;
 }
 
-void EmptyHandle_patch( char** h : __A0 )
+short EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
-	if ( *h == NULL )
+	if ( *h != NULL )
 	{
-		return;
+		Handle_header* header = get_header( *h );
+		
+		free( header );
+		
+		*h = NULL;
 	}
 	
-	Handle_header* header = get_header( *h );
-	
-	free( header );
-	
-	*h = NULL;
+	return MemErr = noErr;
 }
 
 void SetApplLimit_patch( char* p : __A0 )
