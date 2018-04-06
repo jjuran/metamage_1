@@ -20,7 +20,7 @@ short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word
 
 short EmptyHandle_patch( char** h : __A0 );
 
-void SetApplLimit_patch( char* p : __A0 );
+short SetApplLimit_patch( char* p : __A0 );
 
 void MoreMasters_patch();
 

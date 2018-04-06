@@ -297,8 +297,9 @@ short EmptyHandle_patch( char** h : __A0 )
 	return MemErr = noErr;
 }
 
-void SetApplLimit_patch( char* p : __A0 )
+short SetApplLimit_patch( char* p : __A0 )
 {
+	return MemErr = noErr;
 }
 
 void MoreMasters_patch()
