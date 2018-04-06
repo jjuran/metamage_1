@@ -10,6 +10,7 @@
 #include <string.h>
 
 
+const short noErr        = 0;
 const short paramErr     = -50;
 const short memFullErr   = -108;
 const short nilHandleErr = -109;
@@ -110,9 +111,29 @@ static Handle_header* allocate_Handle_mem( long size : __D0, short trap_word : _
 
 
 static
+char** new_empty_handle() : __A0
+{
+	MemErr = memFullErr;
+	
+	void* alloc = malloc( sizeof (master_pointer) );  // 8 bytes
+	
+	if ( alloc != NULL )
+	{
+		master_pointer* h = (master_pointer*) alloc;
+		
+		h->alloc = NULL;
+		h->flags = 0;
+		
+		MemErr = noErr;
+	}
+	
+	return (char**) alloc;
+}
+
+static
 char** new_handle( long size : __D0, short trap_word : __D1 ) : __A0
 {
-	char** h = NewEmptyHandle_patch();
+	char** h = new_empty_handle();
 	
 	if ( h != NULL )
 	{
@@ -142,32 +163,20 @@ ok:
 	RTS
 }
 
+asm
 char** NewEmptyHandle_patch() : __A0
 {
-	void* alloc = malloc( sizeof (master_pointer) );  // 8 bytes
+	JSR      new_empty_handle
+	MOVE.W   MemErr,D0
 	
-	if ( alloc == NULL )
-	{
-		MemErr = memFullErr;
-		
-		return NULL;
-	}
-	
-	master_pointer* h = (master_pointer*) alloc;
-	
-	h->alloc = NULL;
-	h->flags = 0;
-	
-	return (char**) h;
+	RTS
 }
 
-void DisposeHandle_patch( char** h : __A0 )
+short DisposeHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
 	if ( *h != NULL )
@@ -178,22 +187,20 @@ void DisposeHandle_patch( char** h : __A0 )
 	}
 	
 	free( h );
+	
+	return MemErr = noErr;
 }
 
-void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
 	if ( size < 0 )
 	{
-		MemErr = memSCErr;
-		
-		return;
+		return MemErr = memSCErr;
 	}
 	
 	Handle_header* header = get_header( *h );
@@ -218,13 +225,13 @@ void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : _
 		}
 		else
 		{
-			MemErr = memFullErr;
-			
-			return;
+			return MemErr = memFullErr;
 		}
 	}
 	
 	set_epilogue( header );
+	
+	return MemErr = noErr;
 }
 
 long GetHandleSize_patch( char** h : __A0 ) : __D0
@@ -241,13 +248,11 @@ long GetHandleSize_patch( char** h : __A0 ) : __D0
 	return header->size;
 }
 
-void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
 {
 	if ( h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
 	if ( *h != NULL )
@@ -263,45 +268,48 @@ void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word 
 	
 	if ( header == NULL )
 	{
-		return;
+		return MemErr;  // set in allocate_Handle_mem()
 	}
 	
 	*h = (char*) &header[1];
 	
 	header->backlink = (master_pointer*) h;
+	
+	return MemErr = noErr;
 }
 
-void EmptyHandle_patch( char** h : __A0 )
+short EmptyHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
-	if ( *h == NULL )
+	if ( *h != NULL )
 	{
-		return;
+		Handle_header* header = get_header( *h );
+		
+		free( header );
+		
+		*h = NULL;
 	}
 	
-	Handle_header* header = get_header( *h );
-	
-	free( header );
-	
-	*h = NULL;
+	return MemErr = noErr;
 }
 
-void SetApplLimit_patch( char* p : __A0 )
+short SetApplLimit_patch( char* p : __A0 )
 {
+	return MemErr = noErr;
 }
 
 void MoreMasters_patch()
 {
+	MemErr = noErr;
 }
 
-void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
+short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 {
+	return MemErr = noErr;
 }
 
 void MaxApplZone_patch()

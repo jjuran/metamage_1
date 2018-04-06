@@ -10,21 +10,21 @@ char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0;
 
 char** NewEmptyHandle_patch() : __A0;
 
-void DisposeHandle_patch( char** h : __A0 );
+short DisposeHandle_patch( char** h : __A0 );
 
-void SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
+short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
 
 long GetHandleSize_patch( char** h : __A0 ) : __D0;
 
-void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
+short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
 
-void EmptyHandle_patch( char** h : __A0 );
+short EmptyHandle_patch( char** h : __A0 );
 
-void SetApplLimit_patch( char* p : __A0 );
+short SetApplLimit_patch( char* p : __A0 );
 
 void MoreMasters_patch();
 
-void ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
+short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 
 void MaxApplZone_patch();
 
