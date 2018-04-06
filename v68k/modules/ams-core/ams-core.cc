@@ -33,6 +33,7 @@
 #include "Handles.hh"
 #include "OSEvents.hh"
 #include "OSUtils.hh"
+#include "Patches.hh"
 #include "Pointers.hh"
 #include "Segments.hh"
 #include "SysError.hh"
@@ -152,6 +153,12 @@ static void install_OSUtils()
 	TBTRAP( SysError  );  // A9C9
 }
 
+static void install_PatchManager()
+{
+	OSTRAP( GetTrapAddress );  // A146
+	OSTRAP( SetTrapAddress );  // A047
+}
+
 static void install_Gestalt()
 {
 	old_Gestalt = (Gestalt_ProcPtr) os_trap_table[ _Gestalt & 0x00FF ];
@@ -257,6 +264,8 @@ int main( int argc, char** argv )
 	install_MemoryManager();
 	
 	install_OSUtils();
+	
+	install_PatchManager();
 	
 	install_Gestalt();
 	
