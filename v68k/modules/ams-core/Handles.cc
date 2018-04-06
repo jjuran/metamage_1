@@ -304,6 +304,7 @@ short SetApplLimit_patch( char* p : __A0 )
 
 void MoreMasters_patch()
 {
+	MemErr = noErr;
 }
 
 void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
