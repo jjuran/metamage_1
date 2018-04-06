@@ -172,13 +172,11 @@ char** NewEmptyHandle_patch() : __A0
 	RTS
 }
 
-void DisposeHandle_patch( char** h : __A0 )
+short DisposeHandle_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
 	if ( *h != NULL )
@@ -189,6 +187,8 @@ void DisposeHandle_patch( char** h : __A0 )
 	}
 	
 	free( h );
+	
+	return MemErr = noErr;
 }
 
 short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
