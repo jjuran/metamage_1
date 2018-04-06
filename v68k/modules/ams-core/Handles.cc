@@ -163,9 +163,13 @@ ok:
 	RTS
 }
 
+asm
 char** NewEmptyHandle_patch() : __A0
 {
-	return new_empty_handle();
+	JSR      new_empty_handle
+	MOVE.W   MemErr,D0
+	
+	RTS
 }
 
 void DisposeHandle_patch( char** h : __A0 )
