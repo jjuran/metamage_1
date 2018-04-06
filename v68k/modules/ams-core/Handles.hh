@@ -16,7 +16,7 @@ short SetHandleSize_patch( char** h : __A0, long size : __D0, short trap_word : 
 
 long GetHandleSize_patch( char** h : __A0 ) : __D0;
 
-void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
+short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 );
 
 void EmptyHandle_patch( char** h : __A0 );
 

@@ -248,13 +248,11 @@ long GetHandleSize_patch( char** h : __A0 ) : __D0
 	return header->size;
 }
 
-void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
+short ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word : __D1 )
 {
 	if ( h == NULL )
 	{
-		MemErr = nilHandleErr;
-		
-		return;
+		return MemErr = nilHandleErr;
 	}
 	
 	if ( *h != NULL )
@@ -270,12 +268,14 @@ void ReallocateHandle_patch( char** h : __A0, long size : __D0, short trap_word 
 	
 	if ( header == NULL )
 	{
-		return;
+		return MemErr;  // set in allocate_Handle_mem()
 	}
 	
 	*h = (char*) &header[1];
 	
 	header->backlink = (master_pointer*) h;
+	
+	return MemErr = noErr;
 }
 
 void EmptyHandle_patch( char** h : __A0 )
