@@ -307,8 +307,9 @@ void MoreMasters_patch()
 	MemErr = noErr;
 }
 
-void ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
+short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 {
+	return MemErr = noErr;
 }
 
 void MaxApplZone_patch()
