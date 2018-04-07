@@ -36,7 +36,7 @@ if [ -e /dev/fb0 ]; then
 	graft \
 		freemountd -q --root ~/68k // \
 		xv68k -SP $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName | \
-	display-fb -w $SCREEN
+	gfx display-fb -w $SCREEN
 	
 	exit 0
 fi
