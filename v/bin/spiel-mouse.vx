@@ -1,10 +1,12 @@
 #!/usr/bin/env vx
 
+const input = if argc > 1 then {reader argv[ 1 ]} else {IN}
+
 var button-state = x"00"
 
 try
 {
-	for msg in receiver { IN.read 3 } do
+	for msg in receiver { input.read 3 } do
 	{
 		const deltas = msg[ 1 .. 2 ]
 		
