@@ -20,7 +20,8 @@ test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
 raster init $SCREEN
 
 if [ -e /dev/fb0 ]; then
-	CAT="cat"
+	MOUSE=~/bin/spiel-mouse
+	VX=~/bin/vx
 	
 	if [ ! -r /dev/input/mice ]; then
 		echo "Note: ams requires privileges to read /dev/input/mice" >&2
@@ -28,10 +29,10 @@ if [ -e /dev/fb0 ]; then
 		# Request authentication *before* we obliterate the screen
 		sudo true
 		
-		CAT="sudo cat"
+		VX="sudo $VX"
 	fi
 	
-	$CAT /dev/input/mice | spiel-mouse | \
+	$VX $MOUSE /dev/input/mice | \
 	graft \
 		freemountd -q --root ~/68k // \
 		xv68k -SP $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName | \
