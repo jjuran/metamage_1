@@ -1,0 +1,45 @@
+#!/usr/bin/env vx -Z
+
+# TODO:  Catch, ignore, or block SIGINT and SIGTERM
+
+const BIN = "/opt/metamage/bin/"
+
+if argc > 1 then
+{
+	const kdmode = *(output-from-run .[ BIN "kdmode" ]).lines()
+	
+	assert kdmode in [ "text", "graphics" ]
+	
+	const kdswitch = kdmode != "graphics"
+	
+	const gtag = "    geometry "
+	const tagn = gtag.length
+	
+	const fbset  = output-from-run .[ "fbset" ]
+	const fbgeom = fbset.lines() ver { substr( v, 0, tagn ) == gtag }
+	const fbmode = substr( *fbgeom, tagn ) / ' '
+	
+	assert (+) fbmode == 5
+	
+	[fbmode] map int  # make sure each component is an int
+	
+	if kdswitch then
+	{
+		run .[ BIN "kdgraphics" ]
+	}
+	
+	try
+	{
+		run .[ "unblank" ]
+		
+		run argv[ 1 -> argc ]
+	}
+	catch { warn rep _ }
+	
+	run .[ "fbset", "-g", fbmode ]
+	
+	if kdswitch then
+	{
+		run .[ BIN "kd" kdmode ]
+	}
+}
