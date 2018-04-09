@@ -261,7 +261,7 @@ ssize_t read( int fd, unsigned char* buffer, size_t n, bool direct )
 }
 
 static
-void read_event( int fd, unsigned char buffer[ 256 ] )
+uint8_t read_event( int fd, unsigned char buffer[ 256 ] )
 {
 	/*
 		Reading 0 bytes from a normal stream yields 0, but an eventtap stream
@@ -272,6 +272,11 @@ void read_event( int fd, unsigned char buffer[ 256 ] )
 	
 	const ssize_t n_read = read( fd, buffer, 256, direct );
 	
+	if ( n_read == 0 )
+	{
+		return n_read;
+	}
+	
 	const ssize_t len = buffer[ 0 ];
 	
 	if ( 1 + len != n_read )
@@ -279,6 +284,8 @@ void read_event( int fd, unsigned char buffer[ 256 ] )
 		write( STDERR_FILENO, STR_LEN( PROGRAM ": short read\n" ) );
 		exit( 1 );
 	}
+	
+	return n_read;
 }
 
 static
@@ -412,7 +419,10 @@ int main( int argc, char** argv )
 		{
 			unsigned char buffer[ 256 ];
 			
-			read_event( STDIN_FILENO, buffer );
+			if ( read_event( STDIN_FILENO, buffer ) == 0 )
+			{
+				break;
+			}
 			
 			uint16_t key = get_keydown( buffer );
 			
@@ -421,8 +431,7 @@ int main( int argc, char** argv )
 			switch ( key )
 			{
 				case 'q':
-					raster::terminate( *relay );
-					return 0;
+					goto cleanup;
 				
 				case ' ':
 					paused = ! paused;
@@ -468,6 +477,10 @@ int main( int argc, char** argv )
 		
 		raster::broadcast( *relay );
 	}
+	
+cleanup:
+	
+	raster::terminate( *relay );
 	
 	return 0;
 }
