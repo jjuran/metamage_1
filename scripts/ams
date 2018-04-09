@@ -19,15 +19,6 @@ UI=ams-ui
 
 test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
 
-if [ -e /dev/fb0 ]; then
-	if [ ! -r /dev/input/mice ]; then
-		echo "Note: ams requires privileges to read /dev/input/mice" >&2
-		
-		# Request authentication *before* we obliterate the screen
-		sudo true
-	fi
-fi
-
 exhibit $RASTER -t "Advanced Mac Substitute" \
 graft \
 	freemountd -q --root ~/68k // \

@@ -35,7 +35,11 @@
 "usage: " PROGRAM " --raster <raster-path>\n"  \
 "       where raster-path is a raster file\n"
 
+#define SUDO_NEEDED "Note: root privileges required to read /dev/input/mice"
+
 #define STR_LEN( s )  "" s, (sizeof s - 1)
+
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
 
 enum
@@ -193,6 +197,22 @@ static
 void launch_subprocesses( char* const* args )
 {
 	const bool sudo_needed = ! readable( DEV_MOUSE );
+	
+	if ( sudo_needed )
+	{
+		WARN( SUDO_NEEDED );
+		
+		int status = system( "sudo true" );
+		
+		if ( WIFSIGNALED( status ) )
+		{
+			exit( 128 + WTERMSIG( status ) );
+		}
+		else if ( status != 0 )
+		{
+			exit( WEXITSTATUS( status ) );
+		}
+	}
 	
 	mouser_pid = fork();
 	
