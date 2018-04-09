@@ -418,6 +418,11 @@ short ReserveMem_patch( long needed : __D0, short trap_word : __D1 )
 	return MemErr = noErr;
 }
 
+short SetGrowZone_patch( void* proc : __A0 )
+{
+	return MemErr = noErr;
+}
+
 void MaxApplZone_patch()
 {
 }

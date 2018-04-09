@@ -42,6 +42,8 @@ void MaxMem_patch();
 
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
 
+short SetGrowZone_patch( void* proc : __A0 );
+
 void MaxApplZone_patch();
 
 signed char HGetState_patch( char** h : __A0 ) : __D0;
