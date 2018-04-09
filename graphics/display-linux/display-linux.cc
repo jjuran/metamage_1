@@ -1,6 +1,6 @@
 /*
-	display-fb.cc
-	-------------
+	display-linux.cc
+	----------------
 */
 
 // Linux
@@ -28,11 +28,11 @@
 #include "raster/relay_detail.hh"
 #include "raster/sync.hh"
 
-// display-fb
+// display-linux
 #include "fb.hh"
 
 
-#define PROGRAM  "display-fb"
+#define PROGRAM  "display-linux"
 
 #define DEFAULT_FB_PATH  "/dev/fb0"
 
