@@ -20,25 +20,12 @@ test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
 raster init $SCREEN
 
 if [ -e /dev/fb0 ]; then
-	MOUSE=~/bin/spiel-mouse
-	VX=~/bin/vx
-	
 	if [ ! -r /dev/input/mice ]; then
 		echo "Note: ams requires privileges to read /dev/input/mice" >&2
 		
 		# Request authentication *before* we obliterate the screen
 		sudo true
-		
-		VX="sudo $VX"
 	fi
-	
-	$VX $MOUSE /dev/input/mice | \
-	graft \
-		freemountd -q --root ~/68k // \
-		xv68k -SP $RASTER -m $CORE -m $RSRC -m $QD -m $UI ~/68k/app $AppName | \
-	gfx display-fb -w $SCREEN
-	
-	exit 0
 fi
 
 interact $RASTER -t "Advanced Mac Substitute" | \
