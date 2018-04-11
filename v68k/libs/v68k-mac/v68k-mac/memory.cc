@@ -49,10 +49,10 @@ enum
 	tag_Mouse_low_word,
 	tag_CrsrPin,
 	tag_CrsrPin_word_3 = tag_CrsrPin + 3,  // 8 bytes
-	tag_CurStackBase,
-	tag_CurStackBase_low_word,
 	tag_CurrentA5,
 	tag_CurrentA5_low_word,
+	tag_CurStackBase,
+	tag_CurStackBase_low_word,
 	tag_CurApName,
 	tag_CurApName_word_15 = tag_CurApName + 15,  // 32 bytes
 	tag_CurJTOffset,
