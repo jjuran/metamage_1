@@ -125,6 +125,7 @@ enum
 	tag_AppPacks_word_15 = tag_AppPacks + 15,  // 32 bytes
 	tag_AppParmHandle,
 	tag_AppParmHandle_low_word,
+	tag_SCSIFlag,
 	tag_MBarHeight,
 	tag_last_A_trap,
 	n_words
@@ -238,6 +239,7 @@ static const global globals[] =
 	{ 0x0AA0, 16,   tag_DAStrings   },
 	{ 0x0AB8, 32,   tag_AppPacks    },
 	{ 0x0AEC, 4,    tag_AppParmHandle},
+	{ 0x0B22, 2,    tag_SCSIFlag    },
 	{ 0x0BAA, 2,    tag_MBarHeight  },
 	{ 0x0BFE, 2,    tag_last_A_trap }
 };
