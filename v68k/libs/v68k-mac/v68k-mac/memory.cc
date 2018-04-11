@@ -47,6 +47,7 @@ enum
 	tag_SPKbdPrint,
 	tag_Time,
 	tag_Time_low_word,
+	tag_BootDrive,
 	tag_Kbd_Alarm,
 	tag_MemErr,
 	tag_SdVolEnable,
@@ -187,6 +188,7 @@ static const global globals[] =
 	{ 0x01FA, 2,    tag_SPATBConfig },  // SPATalkB, SPConfig
 	{ 0x0207, 2,    tag_SPKbdPrint  },  // SPKbd, SPPrint
 	{ 0x020C, 0x44, tag_Time        },
+	{ 0x0210, 2,    tag_BootDrive   },
 	{ 0x021E, 2,    tag_Kbd_Alarm   },  // KbdType, AlarmState
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
