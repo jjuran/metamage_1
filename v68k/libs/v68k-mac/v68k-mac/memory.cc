@@ -63,6 +63,7 @@ enum
 	tag_DefVCBPtr_low_word,
 	tag_VCBQHdr,
 	tag_VCBQHdr_word_4 = tag_VCBQHdr + 4,  // 10 bytes
+	tag_FSFCBLen,
 	tag_JHideCursor,
 	tag_JHideCursor_low_word,
 	tag_JShowCursor,
@@ -143,6 +144,7 @@ void initialize()
 	((char*) &words[ tag_ROMBase ])[ 1 ] = 0x40;  // ROMBase = 0x00400000
 	
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
+	words[ tag_FSFCBLen   ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
 	words[ tag_PaintWhite ] = 0xFFFF;  // initially true
 	words[ tag_MBarHeight ] = 0xFFFF;  // signals to use default menu bar height
@@ -203,6 +205,7 @@ static const global globals[] =
 	{ 0x034E, 4,    tag_FCBSPtr     },
 	{ 0x0352, 4,    tag_DefVCBPtr   },
 	{ 0x0356, 10,   tag_VCBQHdr     },
+	{ 0x03F6, 2,    tag_FSFCBLen    },
 	{ 0x0800, 4,    tag_JHideCursor },
 	{ 0x0804, 4,    tag_JShowCursor },
 	{ 0x0814, 4,    tag_JInitCrsr   },
