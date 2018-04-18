@@ -196,7 +196,7 @@ void host_env()
 	}
 	else
 	{
-		printf( "%s\n", "Cooperative threading:  Bespoke threads" );
+		printf( "%s\n", "Cooperative threading:  Metamage threads" );
 	}
 	
 	const uint32_t gestaltOpenTptTCPPresentMask = 0x00000010;
