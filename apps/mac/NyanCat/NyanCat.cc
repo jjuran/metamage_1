@@ -59,32 +59,6 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	FillRect( &r, &color );
 }
 
-static const Rect grow_size =
-{
-	50, 50,
-	32767, 32767,
-};
-
-static
-Point get_window_topLeft( WindowRef w )
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	const Rect& bitmap_bounds = w->portBits.bounds;
-	
-	Point topLeft = { -bitmap_bounds.top, -bitmap_bounds.left };
-	
-	return topLeft;
-	
-#endif
-	
-	Rect bounds;
-	
-	GetWindowBounds( w, kWindowContentRgn, &bounds );
-	
-	return *(Point*) &bounds;
-}
-
 static
 const Rect* drag_bounds()
 {
