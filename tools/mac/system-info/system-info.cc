@@ -214,7 +214,18 @@ void host_env()
 		const char* text = mach ? "Open Transport TCP/IP:  "
 		                        : "TCP/IP protocol stack:  Open Transport ";
 		
-		printf( "%s%d.%d.%d\n", text, major, minor, patch );
+		char dot[] = ".0";
+		
+		if ( patch != 0 )
+		{
+			dot[ 1 ] += patch;
+		}
+		else
+		{
+			dot[ 0 ] = '\0';
+		}
+		
+		printf( "%s%d.%d%s\n", text, major, minor, dot );
 	}
 	
 	if ( TARGET_CPU_68K  &&  gestalt( 'mmu ' ) )
@@ -250,7 +261,18 @@ void host_env()
 		const char b = 0x30 + ((cbon >> 4) & 0xF);
 		const char c = 0x30 + ((cbon >> 0) & 0xF);
 		
-		printf( "CarbonLib version:      %c.%c.%c\n", a, b, c );
+		char dot[] = ".0";
+		
+		if ( c != '0' )
+		{
+			dot[ 1 ] = c;
+		}
+		else
+		{
+			dot[ 0 ] = '\0';
+		}
+		
+		printf( "CarbonLib version:      %c.%c%s\n", a, b, dot );
 	}
 }
 
