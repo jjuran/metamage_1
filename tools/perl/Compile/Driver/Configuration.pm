@@ -25,6 +25,9 @@ my %category_of_spec = qw
 	ppc  arch
 	x86  arch
 	
+	m32  width
+	m64  width
+	
 	dbg  build
 	opt  build
 );
@@ -63,6 +66,14 @@ sub new
 		else
 		{
 			$self{ arch } = $osx_arch;
+		}
+		
+		$self{width} ||= "m32";
+		
+		if ( $self{ width } eq "m64" )
+		{
+			$self{ arch } =~ s/^ ppc $/ppc64/x;
+			$self{ arch } =~ s/^ x86 $/x86_64/x;
 		}
 		
 		$self{ mac_runtime } = 'mach-o';
