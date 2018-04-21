@@ -76,9 +76,6 @@
 	    multiply, the sum of the two operand sizes will be sufficient.  (Since
 	    subtraction is strictly a diminishing operation, the result will never
 	    exceed the left operand.)
-	  * It's assumed that a limb_t can be accessed with twig_t alignment on
-	    big-endian systems.  FIXME:  Port the little-endian alignment-ensurance
-	    code and test on 64-bit PowerPC.
 */
 
 

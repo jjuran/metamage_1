@@ -506,10 +506,19 @@ namespace integer {
 	void multiply_be( limb_t*       x_low, size_t x_size,
 	                  limb_t const* y_low, size_t y_size )
 	{
+		const bool needs_alignment = sizeof (twig_t) < sizeof (limb_t);
+		
 		twig_t* p = (twig_t*) x_low;
+		
+		bool p_is_aligned = true;
 		
 		for ( int i = x_size * twigs_per_limb;  i > 0;  --i )
 		{
+			if ( needs_alignment )
+			{
+				p_is_aligned = ! p_is_aligned;
+			}
+			
 			if ( const twig_t a = *p++ )
 			{
 				p[ -1 ] = 0;
@@ -523,6 +532,23 @@ namespace integer {
 						long_t product;
 						
 						long_multiply( &product, a, b );
+						
+						if ( needs_alignment  &&  p_is_aligned == (j & 1) )
+						{
+							const int n_bits = sizeof (twig_t) * 8;
+							
+							if ( const limb_t upper = product >> n_bits )
+							{
+								add_be( (limb_t*) (p - j - 1), &upper + 1, 1 );
+							}
+							
+							if ( const limb_t lower = product << n_bits )
+							{
+								add_be( (limb_t*) (p - j + 1), &lower + 1, 1 );
+							}
+							
+							continue;
+						}
 						
 						add_be( (limb_t*) (p - j),
 						        (limb_t const*) (&product + 1),
