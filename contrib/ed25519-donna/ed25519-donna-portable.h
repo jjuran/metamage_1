@@ -98,7 +98,7 @@
 	#endif
 
 	#if !defined(HAVE_UINT128)
-		#error Need a uint128_t implementation!
+		#warning Using 32-bit uint128_t implementation on 64-bit architecture!
 	#endif
 #endif
 
