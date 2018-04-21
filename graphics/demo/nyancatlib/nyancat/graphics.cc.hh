@@ -129,7 +129,7 @@ void draw_waves( bitmap& bits, int x, int y, bool step )
 {
 	for ( int i = 0;  i < 6;  ++i )
 	{
-		const ColorRef color = wave_colors[ i ];
+		ColorRef color = wave_colors[ i ];
 		
 		draw_wave( bits, 0, y++, step, color );
 		draw_wave( bits, 0, y++, step, color );
