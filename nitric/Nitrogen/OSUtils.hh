@@ -137,9 +137,10 @@ namespace Nitrogen
 	
 	// SwapMMUMode
 	
-	inline UInt32 Delay( UInt32 ticks )
+	inline
+	unsigned long Delay( unsigned long ticks )
 	{
-		UInt32 finalTicks;
+		unsigned long finalTicks;
 		::Delay( ticks, &finalTicks );
 		
 		return finalTicks;
