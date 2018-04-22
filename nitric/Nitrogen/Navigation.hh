@@ -20,8 +20,10 @@
 #endif
 
 // Mac OS
+#if ! __LP64__
 #ifndef __NAVIGATION__
 #include <Navigation.h>
+#endif
 #endif
 
 // nucleus
@@ -94,6 +96,8 @@ namespace Nitrogen {
 	
   }
 
+#if ! __LP64__
+	
 namespace nucleus
   {
 	template <> struct disposer< NavDialogRef >
@@ -504,6 +508,7 @@ NavTranslateFile(
 		}
 
 	}
-	
+
+#endif  // #if ! __LP64__
 
 #endif /* NITROGEN_NAVIGATION_HH */
