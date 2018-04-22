@@ -82,6 +82,8 @@ namespace Nitrogen
 	
   }
 
+#if ! __LP64__
+
 namespace nucleus
   {
    // Not actually used, since controls are owned by the parent window
@@ -97,6 +99,8 @@ namespace nucleus
         }
      };
   }
+
+#endif  // #if ! __LP64__
 
 namespace Nitrogen
   {
@@ -183,6 +187,8 @@ namespace Nitrogen
 		                   procID,
 		                   (long) refCon );  // reinterpret_cast
 	}
+	
+#if ! __LP64__
 	
 	// 1007
 	using ::DisposeControl;
@@ -275,6 +281,8 @@ namespace Nitrogen
 	using ::GetControlMaximum;
 	using ::SetControlMaximum;
 	
+#endif  // #if ! __LP64__
+	
 	// 2211
    using ::ControlID;
    
@@ -320,6 +328,8 @@ namespace Nitrogen
    ControlRef GetControlByID( WindowRef inWindow, const ControlID& id );
    ControlRef GetControlByID( WindowRef inWindow, Mac::OSType signature, SInt32 id );  // To be removed; use Make.
 
+#if ! __LP64__
+	
 	// 2491
 	inline void SetControlAction( ControlRef control, ControlActionUPP actionProc )
 	{
@@ -354,6 +364,8 @@ namespace Nitrogen
 	{
 		return ::GetControlReference( control );
 	}
+	
+#endif  // #if ! __LP64__
 	
 
    template < ::ResType inTagName >
@@ -497,6 +509,8 @@ namespace Nitrogen
 	// 3140
    bool IsAutomaticControlDragTrackingEnabledForWindow( WindowRef theWindow );
 
+#if ! __LP64__
+	
 	// 3395
 	inline Rect GetControlBounds( ControlRef control )
 	{
@@ -510,6 +524,8 @@ namespace Nitrogen
 	{
 		::SetControlBounds( control, &bounds );
 	}
+	
+#endif  // #if ! __LP64__
 	
    /* ... */
    
