@@ -28,6 +28,8 @@
 #endif
 
 
+#if ! __LP64__
+
 namespace Nitrogen
 {
 	
@@ -251,5 +253,7 @@ namespace io
 	}
 	
 }
+
+#endif  // #if ! __LP64__
 
 #endif

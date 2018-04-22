@@ -9,6 +9,8 @@
 #include "mac_file/open_data_fork.hh"
 
 
+#if ! __LP64__
+
 namespace io
 {
 
@@ -28,3 +30,9 @@ open_data_fork( const FSSpec& file, Mac::FSIOPerm perm )
 }
 
 }
+
+#else
+
+int dummy;
+
+#endif
