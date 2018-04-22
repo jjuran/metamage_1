@@ -131,7 +131,11 @@ namespace Nitrogen
 	
 	inline bool IsMetric()  { return ::IsMetric(); }
 	
+#if ! __LP64__
+	
 	void DTInstall( DeferredTask& dtTaskPtr );
+	
+#endif
 	
 	inline MMUMode GetMMUMode()  { return MMUMode( ::GetMMUMode() ); }
 	
@@ -153,6 +157,8 @@ namespace Nitrogen
 	// SetA5
 	// InitUtil
 	
+#if ! __LP64__
+	
 	inline void ReadLocation ( MachineLocation      & loc )  { ::ReadLocation ( &loc ); }
 	inline void WriteLocation( MachineLocation const& loc )  { ::WriteLocation( &loc ); }
 	
@@ -164,6 +170,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	using ::TickCount;
 	
