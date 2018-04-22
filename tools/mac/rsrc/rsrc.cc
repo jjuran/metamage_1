@@ -252,10 +252,14 @@ namespace tool
 	
 	static void print_rsrc_by_handle( N::Handle h, bool showing )
 	{
+	#if ! __LP64__
+		
 		if ( !TARGET_RT_MAC_MACHO )
 		{
 			N::HNoPurge( h );  // not needed on OS X
 		}
+		
+	#endif
 		
 		const char* data = *h.Get();
 		
