@@ -379,7 +379,7 @@ namespace Nitrogen
 		return AEInstallObjectAccessor( OSLAccessor( desiredClass,
 		                                             containerType,
 		                                             StaticUPP< OSLAccessorUPP, accessor >(),
-		                                             (::SRefCon) accessorRefCon,
+		                                             (::SRefCon) (long) accessorRefCon,
 		                                             isSysHandler ) );
 	}
 	
