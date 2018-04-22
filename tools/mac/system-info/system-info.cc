@@ -176,7 +176,11 @@ void host_env()
 	
 	const uint32_t os = gestalt( 'os  ' );
 	
-	if ( os & (1 << 19) )
+	if ( TARGET_RT_MAC_MACHO )
+	{
+		// Do nothing.  Process Manager is implied and goes without saying.
+	}
+	else if ( os & (1 << 19) )
 	{
 		printf( "%s\n", "Application switching:  Process Manager (native)" );
 	}
