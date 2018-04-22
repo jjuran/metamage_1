@@ -54,6 +54,8 @@ namespace Nitrogen
 	// This definition of CGBitmapInfo should be regarded as private.
 	typedef CGImageAlphaInfo CGBitmapInfo;
 	
+	typedef float CGFloat;
+	
 #endif
 	
 	inline
@@ -87,7 +89,7 @@ namespace Nitrogen
 	               CGColorSpaceRef         colorspace,
 	               CGBitmapInfo            bitmapInfo,
 	               CGDataProviderRef       provider,
-	               const float             decode[]          = NULL,
+	               const CGFloat           decode[]          = NULL,
 	               bool                    shouldInterpolate = false,
 	               CGColorRenderingIntent  intent            = kCGRenderingIntentDefault )
 	{
@@ -122,7 +124,7 @@ namespace Nitrogen
 	                   size_t             bitsPerPixel,
 	                   size_t             bytesPerRow,
 	                   CGDataProviderRef  provider,
-	                   const float        decode[]          = NULL,
+	                   const CGFloat      decode[]          = NULL,
 	                   bool               shouldInterpolate = false )
 	{
 		CGImageRef result = ::CGImageMaskCreate( width,
@@ -167,7 +169,7 @@ namespace Nitrogen
 	nucleus::owned< CGImageRef >
 	//
 	CGImageCreateWithJPEGDataProvider( CGDataProviderRef       source,
-	                                   const float             decode[]          = NULL,
+	                                   const CGFloat           decode[]          = NULL,
 	                                   bool                    shouldInterpolate = false,
 	                                   CGColorRenderingIntent  intent            = kCGRenderingIntentDefault )
 	{
@@ -192,7 +194,7 @@ namespace Nitrogen
 	nucleus::owned< CGImageRef >
 	//
 	CGImageCreateWithPNGDataProvider( CGDataProviderRef       source,
-	                                  const float             decode[]          = NULL,
+	                                  const CGFloat           decode[]          = NULL,
 	                                  bool                    shouldInterpolate = false,
 	                                  CGColorRenderingIntent  intent            = kCGRenderingIntentDefault )
 	{
