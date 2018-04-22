@@ -45,6 +45,8 @@ namespace Nitrogen
    
   }
 
+#if ! __LP64__
+	
 namespace nucleus
   {
    template <> struct disposer< IBNibRef >
@@ -78,4 +80,6 @@ namespace Nitrogen
    
   }
 
+#endif  // #if ! __LP64__
+	
 #endif
