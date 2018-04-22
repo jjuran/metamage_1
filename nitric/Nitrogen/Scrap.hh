@@ -43,6 +43,8 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( ScrapManager );
 	
+#if ! __LP64__
+	
 #if CALL_NOT_IN_CARBON
 	
 	void ZeroScrap();
@@ -52,6 +54,8 @@ namespace Nitrogen
 	ScrapRef GetCurrentScrap();
 	
 	void ClearCurrentScrap();
+	
+#endif  // #if ! __LP64__
 	
 }
 

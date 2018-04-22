@@ -42,6 +42,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 #if CALL_NOT_IN_CARBON
 	
 	void ZeroScrap()
@@ -64,6 +66,8 @@ namespace Nitrogen
 	{
 		Mac::ThrowOSStatus( ::ClearCurrentScrap() );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterScrapManagerErrors()
 	{
