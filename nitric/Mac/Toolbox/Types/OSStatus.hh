@@ -43,7 +43,12 @@ namespace Mac
 			OSStatus( ::OSStatus s )                              : status( s )        {}
 			
 			OSStatus( ::OSErr s )                                 : status( s )        {}
+			
+		#if ! __LP64__
+			
 			OSStatus( signed int s )                              : status( s )        {}
+			
+		#endif
 			
 			static OSStatus Make( ::OSStatus s )                  { return OSStatus( s ); }
 			::OSStatus Get() const                                { return status; }
