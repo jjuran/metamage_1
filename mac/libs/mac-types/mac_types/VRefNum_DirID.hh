@@ -10,12 +10,18 @@
 namespace mac   {
 namespace types {
 	
-#pragma options align=mac68k
+#if ! __LP64__
+typedef long SInt32;
+#else
+typedef int SInt32;
+#endif
+	
+#pragma options align=packed
 	
 	struct VRefNum_DirID
 	{
-		short  vRefNum;
-		long   dirID;
+		short   vRefNum;
+		SInt32  dirID;
 	};
 	
 #pragma options align=reset

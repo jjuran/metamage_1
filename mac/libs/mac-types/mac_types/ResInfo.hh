@@ -12,10 +12,20 @@ namespace types {
 	
 	// ResInfo is not an actual Mac OS type and alignment doesn't matter.
 	
+#if ! __LP64__
+	
+	typedef unsigned long ResType;
+	
+#else
+	
+	typedef unsigned int  ResType;
+	
+#endif
+	
 	struct ResInfo
 	{
 		short          id;
-		unsigned long  type;
+		ResType        type;
 		unsigned char  name[ 255 ];
 	};
 	

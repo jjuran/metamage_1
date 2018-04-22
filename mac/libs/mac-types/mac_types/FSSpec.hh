@@ -14,7 +14,7 @@ struct FSSpec;
 namespace mac   {
 namespace types {
 	
-#pragma options align=mac68k
+#pragma options align=packed
 	
 	struct FSSpec
 	{
