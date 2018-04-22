@@ -25,6 +25,8 @@
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< ListHandle >
 	{
 		typedef ListHandle  argument_type;
@@ -35,6 +37,8 @@ namespace nucleus
 			::LDispose( list );
 		}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 
