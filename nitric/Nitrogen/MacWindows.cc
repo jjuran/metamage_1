@@ -45,6 +45,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	nucleus::owned< WindowRef > NewWindow( const Rect&       bounds,
 	                                       ConstStr255Param  title,
 	                                       bool              visible,
@@ -190,6 +192,8 @@ namespace Nitrogen
       Mac::ThrowOSStatus( ::ChangeWindowAttributes( window, setTheseAttributes, clearTheseAttributes ) );
      }
    
+#endif  // #if ! __LP64__
+	
    void RegisterWindowManagerErrors()
      {
       RegisterOSStatus< memFullErr >();

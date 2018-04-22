@@ -213,6 +213,8 @@ namespace Nitrogen
 	
   }
 
+#if ! __LP64__
+
 namespace MacGlue
 {
 	
@@ -787,5 +789,7 @@ namespace Nitrogen
 	}
 	
 }
+
+#endif  // #if ! __LP64__
 
 #endif
