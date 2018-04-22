@@ -1187,9 +1187,9 @@ Return Value
 	
 	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
 	{
-	#if TARGET_CPU_PPC
+	#if ! TARGET_CPU_68K
 		
-		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  ::FSGetVolumeInfo != NULL )
+		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  &::FSGetVolumeInfo )
 		{
 			FSVolumeRefNum result;
 			FSGetVolumeInfo( volumeIndex,
