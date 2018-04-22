@@ -74,6 +74,8 @@ namespace Nitrogen
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	// TEScrapHandle
 	// TEGetScrapLength
 	
@@ -293,6 +295,8 @@ namespace Nitrogen
 				TEInsert( begin, iota::ptr_diff( begin, end ), itsTE );
 			}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 
