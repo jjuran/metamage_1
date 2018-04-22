@@ -49,7 +49,11 @@ namespace Mac
 		// CodeFragments
 		// -------------
 		
+	#if ! __LP64__
+		
 		kCFragResourceType = ::kCFragResourceType,
+		
+	#endif
 		
 		// Components
 		// ----------
