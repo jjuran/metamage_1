@@ -449,7 +449,11 @@ namespace Nitrogen
 		operator IconRef() const              { return theIconRef; }
 	};
 	
+#if ! __LP64__
+	
 	GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile );
+	
+#endif  // #if ! __LP64__
 	
 	nucleus::owned< IconRef > GetIconRef( Mac::FSVolumeRefNum  vRefNum,
 	                                      Mac::FSCreator       creator,
@@ -591,6 +595,8 @@ namespace Nitrogen
 	// ... Flushing IconRef data
 	// ... Controling custom icons
 	
+#if ! __LP64__
+	
 	nucleus::owned< IconRef >
 	//
 	RegisterIconRefFromIconFile( Mac::FSCreator  creator,
@@ -606,6 +612,8 @@ namespace Nitrogen
 		                                    Mac::FSType( 0 ),
 		                                    iconFile );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	// ReadIconFile
 	// ReadIconFromFSRef
