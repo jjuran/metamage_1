@@ -105,6 +105,8 @@ namespace Nitrogen
 	
 }
 
+#if ! __LP64__
+	
 namespace nucleus
   {   
    template <> struct disposer< MenuRef >
@@ -119,6 +121,8 @@ namespace nucleus
      };
   }
 
+#endif  // #if ! __LP64__
+	
 namespace Nitrogen
   {
    /* ... */
@@ -137,6 +141,8 @@ namespace Nitrogen
 	
    /* ... */
    
+#if ! __LP64__
+	
    #pragma mark -
    #pragma mark ** Menu Manipulation **
    
@@ -264,6 +270,8 @@ namespace Nitrogen
 	{
 		return MenuID( ::GetMenuID( menu ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
   }
 
