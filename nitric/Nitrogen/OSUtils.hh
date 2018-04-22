@@ -131,8 +131,6 @@ namespace Nitrogen
 	
 	inline bool IsMetric()  { return ::IsMetric(); }
 	
-	using ::GetSysPPtr;
-	
 	void DTInstall( DeferredTask& dtTaskPtr );
 	
 	inline MMUMode GetMMUMode()  { return MMUMode( ::GetMMUMode() ); }
@@ -153,12 +151,6 @@ namespace Nitrogen
 	// SetCurrentA5
 	// SetA5
 	// InitUtil
-	
-#if !TARGET_CPU_68K
-	
-	using ::MakeDataExecutable;
-	
-#endif
 	
 	inline void ReadLocation ( MachineLocation      & loc )  { ::ReadLocation ( &loc ); }
 	inline void WriteLocation( MachineLocation const& loc )  { ::WriteLocation( &loc ); }

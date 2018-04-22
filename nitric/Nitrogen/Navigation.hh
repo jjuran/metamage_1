@@ -260,7 +260,6 @@ typedef UInt32 NavTranslationOptions;
 
 
 //	extern UInt32 NavLibraryVersion(void)
-	using ::NavLibraryVersion;
 
 /*	We don't provide Nitrogen versions of the deprecated functions:
 		NavChooseFile

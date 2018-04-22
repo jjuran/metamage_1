@@ -55,8 +55,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( QuickTime );
 	
-	using ::Movie;
-	
 	enum MovieFileRefNum
 	{
 		kMovieFileRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
