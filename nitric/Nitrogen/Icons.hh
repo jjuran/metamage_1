@@ -154,9 +154,13 @@ namespace Nitrogen
 	typedef SmallIconHandle SICNHandle;
 	
 	
+#if ! __LP64__
+	
 	template <> struct ResType_Traits< kPlainIconResourceType > : Handle_ResType_Traits< PlainIcon   > {};
 	template <> struct ResType_Traits< kColorIconResourceType > : Handle_ResType_Traits< CIcon       > {};
 	template <> struct ResType_Traits< kLarge1BitMask         > : Handle_ResType_Traits< MaskedIcon  > {};
+	
+#endif  // #if ! __LP64__
 	
 }
 
@@ -166,6 +170,8 @@ namespace nucleus
 	template <> struct disposer_class< Nitrogen::PlainIconHandle  > : disposer_class< Nitrogen::Handle > {};
 	template <> struct disposer_class< Nitrogen::MaskedIconHandle > : disposer_class< Nitrogen::Handle > {};
 	template <> struct disposer_class< Nitrogen::SmallIconHandle  > : disposer_class< Nitrogen::Handle > {};
+	
+#if ! __LP64__
 	
 	// ResType 'cicn'
 	template <> struct disposer< CIconHandle >
@@ -181,10 +187,14 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	nucleus::owned< CIconHandle > GetCIcon( ResID iconID );
 	
@@ -212,10 +222,14 @@ namespace Nitrogen
 	
 	typedef IconSuiteRef IconCacheRef;
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <> struct disposer< Nitrogen::IconSuiteRef >
 	{
@@ -238,10 +252,14 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	struct DisposeIconSuiteButNotData
 	{
@@ -258,10 +276,14 @@ namespace Nitrogen
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	void PlotIconID( const Rect&        rect,
 	                 IconAlignmentType  align,
@@ -347,6 +369,8 @@ namespace Nitrogen
 	                      IconAlignmentType  align,
 	                      IconTransformType  transform,
 	                      CIconHandle        theCIcon );
+	
+#endif  // #if ! __LP64__
 	
 	enum IconServicesUsageFlags
 	{

@@ -46,6 +46,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	nucleus::owned< CIconHandle > GetCIcon( ResID iconID )
 	{
 		CIconHandle h = ::GetCIcon( iconID );
@@ -151,6 +153,8 @@ namespace Nitrogen
 	{
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void PlotIconRefInContext( CGContextRef       context,
 	                           const CGRect&      rect,
