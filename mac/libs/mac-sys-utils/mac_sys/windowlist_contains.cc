@@ -19,6 +19,8 @@
 namespace mac {
 namespace sys {
 	
+#if ! __LP64__
+	
 	bool windowlist_contains( void* window )
 	{
 		WindowRef w = GetWindowList();
@@ -35,6 +37,14 @@ namespace sys {
 		
 		return false;
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif
 	
 }
 }

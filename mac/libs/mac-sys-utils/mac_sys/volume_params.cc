@@ -22,6 +22,8 @@
 namespace mac {
 namespace sys {
 	
+#if ! __LP64__
+	
 	short get_volume_params( ::GetVolParmsInfoBuffer& buffer, short vRefNum )
 	{
 		HParamBlockRec pb = { 0 };
@@ -45,6 +47,14 @@ namespace sys {
 		
 		return get_volume_params( buffer, vRefNum ) == noErr  &&  buffer.vMServerAdr != 0;
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif
 	
 }
 }

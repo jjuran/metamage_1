@@ -19,6 +19,8 @@
 namespace mac {
 namespace sys {
 	
+#if ! __LP64__
+	
 	mac::types::FSSpec get_process_file()
 	{
 		::FSSpec file;
@@ -41,6 +43,14 @@ namespace sys {
 		
 		return (const mac::types::FSSpec&) file;
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif
 	
 }
 }

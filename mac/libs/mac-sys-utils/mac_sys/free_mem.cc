@@ -19,10 +19,20 @@
 namespace mac {
 namespace sys {
 	
+#if ! __LP64__
+	
 	long free_mem()
 	{
 		return ::FreeMem();
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif
 	
 }
 }
