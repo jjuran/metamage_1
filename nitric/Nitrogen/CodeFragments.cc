@@ -48,6 +48,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	template < class ErrorCode >
 	void ThrowOSStatusErrMessage( ConstStr255Param errMessage )
 	{
@@ -239,6 +241,8 @@ namespace Nitrogen
 			*symClass = CFragSymbolClass( tempSymClass );
 		}
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterCodeFragmentManagerErrors()
 	{
