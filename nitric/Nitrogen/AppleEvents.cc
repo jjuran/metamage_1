@@ -66,7 +66,7 @@ namespace Nitrogen
 	                                  bool          isSysHandler )
 	{
 		::AEEventHandlerUPP  handler;
-		long                 handlerRefCon;
+		SRefCon              handlerRefCon;
 		
 		ThrowOSStatus( ::AEGetEventHandler( theAEEventClass,
 		                                    theAEEventID,
