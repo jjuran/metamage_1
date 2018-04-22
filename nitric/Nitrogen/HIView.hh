@@ -59,6 +59,8 @@ namespace Nitrogen {
 /*  EMBEDDING                                                                   */
 /*==============================================================================*/
 
+#if ! __LP64__
+	
 /*	extern HIViewRef HIViewGetRoot(WindowRef inWindow) */
 	using ::HIViewGetRoot;
 
@@ -760,6 +762,8 @@ namespace Nitrogen {
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, IconRef iconRef );
 	void HISegmentedViewSetSegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased, CGImageRef imageRef );
 
+#endif  // #if ! __LP64__
+	
 #if 0
 	template <typename returnType>
 	returnType HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased );
