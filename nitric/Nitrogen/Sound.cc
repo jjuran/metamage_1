@@ -23,6 +23,8 @@ namespace Nitrogen
 	using Mac::ThrowOSStatus;
 	
 	
+#if ! __LP64__
+	
 	// does nothing, but guarantees construction of theRegistration
 	NUCLEUS_DEFINE_ERRORS_DEPENDENCY( SoundManager )
 	
@@ -100,6 +102,8 @@ namespace Nitrogen
 	{
 		ThrowOSStatus( ::SPBSetDeviceInfo( refNum, infoType, infoData ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterSoundManagerErrors()
 	{
