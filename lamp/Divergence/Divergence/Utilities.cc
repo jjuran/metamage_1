@@ -27,6 +27,8 @@ namespace Divergence
 	namespace p7 = poseven;
 	
 	
+#if ! __LP64__
+	
 	FSSpec ResolvePathToFSSpec( const char* path )
 	{
 	#if TARGET_RT_MAC_MACHO
@@ -65,5 +67,7 @@ namespace Divergence
 		
 	#endif
 	}
+	
+#endif  // #if ! __LP64__
 	
 }
