@@ -25,6 +25,11 @@
 #include "mac_sys/unit_table.hh"
 
 
+#ifndef TARGET_CPU_X86_64
+#define TARGET_CPU_X86_64  0
+#endif
+
+
 #define PROGRAM  "system-info"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -34,10 +39,11 @@ using mac::sys::gestalt;
 using mac::sys::gestalt_defined;
 
 
-#define M68K  "Motorola 68K"
-#define PPC   "PowerPC"
-#define X86   "x86"
-#define WHAT  "???"
+#define M68K    "Motorola 68K"
+#define PPC     "PowerPC"
+#define X86     "x86"
+#define X86_64  "x86_64"
+#define WHAT    "???"
 
 #define MOD_TYPE  "Execution module type:  "
 #define COMPILED  "Compiled architecture:  "
@@ -87,10 +93,11 @@ void compiled()
 	
 	printf( "%s\n", type );
 	
-	const char* arch = TARGET_CPU_68K ? COMPILED M68K
-	                 : TARGET_CPU_PPC ? COMPILED PPC
-	                 : TARGET_CPU_X86 ? COMPILED X86
-	                 :                  COMPILED WHAT;
+	const char* arch = TARGET_CPU_68K    ? COMPILED M68K
+	                 : TARGET_CPU_PPC    ? COMPILED PPC
+	                 : TARGET_CPU_X86    ? COMPILED X86
+	                 : TARGET_CPU_X86_64 ? COMPILED X86_64
+	                 :                     COMPILED WHAT;
 	
 	printf( "%s\n", arch );
 }
