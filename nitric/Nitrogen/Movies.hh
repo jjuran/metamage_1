@@ -79,6 +79,8 @@ namespace Nitrogen
 	
 }
 
+#if ! __LP64__
+
 namespace nucleus
 {
 	
@@ -168,5 +170,7 @@ namespace Nitrogen
 	inline void EndFullScreen( nucleus::owned< FullScreenContextPtr > )  {}
 	
 }
+
+#endif  // #if ! __LP64__
 
 #endif

@@ -52,6 +52,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	nucleus::owned< MovieFileRefNum > OpenMovieFile( const FSSpec&  file,
 	                                                 Mac::FSIOPerm  permission )
 	{
@@ -143,6 +145,8 @@ namespace Nitrogen
 		                        &eraseColor,
 		                        flags );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterQuickTimeErrors()
 	{
