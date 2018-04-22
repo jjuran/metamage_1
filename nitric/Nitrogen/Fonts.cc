@@ -24,11 +24,21 @@
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	FontID GetFNum( ConstStr255Param name )
 	{
 		short fontNum;
 		::GetFNum( name, &fontNum );
 		return FontID( fontNum );
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif  // #if ! __LP64__
 	
 }
