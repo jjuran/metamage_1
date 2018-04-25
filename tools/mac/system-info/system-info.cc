@@ -313,6 +313,47 @@ bool in_MinivMac()
 }
 
 static
+bool in_BasiliskII()
+{
+	using mac::types::AuxDCE;
+	
+	if ( ! TARGET_CPU_68K )
+	{
+		return false;
+	}
+	
+	const short n = mac::sys::get_unit_table_entry_count();
+	
+	AuxDCE*** const begin = mac::sys::get_unit_table_base();
+	AuxDCE*** const end   = begin + n;
+	
+	for ( AuxDCE*** it = begin;  it < end;  ++it )
+	{
+		const unsigned char* name = mac::sys::get_driver_name( *it );
+		
+		if ( name[ 0 ] == 0 )
+		{
+			continue;
+		}
+		
+		const bool undotted = name[ 1 ] != '.';
+		
+		const int cmp = memcmp( ".Display_Video_Apple_Basilisk",
+		                        name + 1,
+		                        name[ 0 ] );
+		
+		if ( cmp == 0 )
+		{
+			return true;
+		}
+		
+		++it;
+	}
+	
+	return false;
+}
+
+static
 bool in_SheepShaver()
 {
 	using mac::types::AuxDCE;
@@ -391,6 +432,11 @@ void virt_env()
 	else if ( TARGET_CPU_68K  &&  in_MinivMac() )
 	{
 		printf( "%s" "68K emulation:          Mini vMac\n", blank );
+		blank = "";
+	}
+	else if ( in_BasiliskII() )
+	{
+		printf( "%s" "68K emulation:          Basilisk II\n", blank );
 		blank = "";
 	}
 	else if ( in_SheepShaver() )
