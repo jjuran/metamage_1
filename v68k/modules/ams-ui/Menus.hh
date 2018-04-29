@@ -39,6 +39,7 @@ pascal void DisableItem_patch( MenuInfo** menu, short item );
 pascal void EnableItem_patch ( MenuInfo** menu, short item );
 
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked );
+pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark );
 
 pascal short CountMItems_patch( MenuInfo** menu );
 

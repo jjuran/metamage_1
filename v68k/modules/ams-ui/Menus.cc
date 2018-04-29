@@ -731,6 +731,14 @@ pascal void EnableItem_patch( MenuInfo** menu, short item )
 
 pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 {
+	char mark = checked ? kCheckCharCode  // 0x12
+	                    : kNullCharCode;  // 0x00
+	
+	SetItemMark_patch( menu, item, mark );
+}
+
+pascal void SetItemMark_patch( MenuInfo** menu, short item, char mark )
+{
 	menu_item_iterator it( menu );
 	
 	while ( unsigned char* p = it )
@@ -739,8 +747,7 @@ pascal void CheckItem_patch( MenuInfo** menu, short item, char checked )
 		{
 			p += 1 + p[ 0 ] + 2;
 			
-			*p = checked ? kCheckCharCode  // 0x12
-			             : kNullCharCode;  // 0x00
+			*p = mark;
 			
 			return;
 		}

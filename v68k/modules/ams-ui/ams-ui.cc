@@ -44,6 +44,7 @@ enum
 	_BeginUpdate = _BeginUpDate,
 	_CheckUpdate = _CheckUpDate,
 	_EndUpdate   = _EndUpDate,
+	_SetItemMark = _SetItmMark,
 	_GetMenu     = _GetRMenu,
 	_UpdateControls = _UpdtControl,
 };
@@ -127,6 +128,7 @@ void install_Menus()
 	TBTRAP( MenuSelect   );  // A93D
 	TBTRAP( MenuKey      );  // A93E
 	
+	TBTRAP( SetItemMark  );  // A944
 	TBTRAP( CheckItem    );  // A945
 	TBTRAP( GetItem      );  // A946
 	TBTRAP( SetItem      );  // A947
