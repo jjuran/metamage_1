@@ -125,6 +125,8 @@ enum
 	tag_CurActivate_low_word,
 	tag_CurDeactive,
 	tag_CurDeactive_low_word,
+	tag_ApplScratch,
+	tag_ApplScratch_word_5 = tag_ApplScratch + 5,  // 12 bytes
 	tag_ACount,
 	tag_DAStrings,
 	tag_DAStrings_word_7 = tag_DAStrings + 7,  // 16 bytes
@@ -249,6 +251,7 @@ static const global globals[] =
 	{ 0x0A60, 2,    tag_ResErr      },
 	{ 0x0A64, 4,    tag_CurActivate },
 	{ 0x0A68, 4,    tag_CurDeactive },
+	{ 0x0A78, 12,   tag_ApplScratch },
 	{ 0x0A9A, 2,    tag_ACount      },
 	{ 0x0AA0, 16,   tag_DAStrings   },
 	{ 0x0AB8, 32,   tag_AppPacks    },
