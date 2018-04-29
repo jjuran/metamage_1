@@ -17,6 +17,8 @@ extern MacRegion** BezelRgn;
 
 pascal void InitWindows_patch();
 
+pascal void GetWMgrPort_patch( struct GrafPort** port );
+
 pascal GrafPort* NewWindow_patch( void*                 storage,
                                   const Rect*           bounds,
                                   const unsigned char*  title,

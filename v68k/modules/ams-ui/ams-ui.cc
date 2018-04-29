@@ -73,6 +73,7 @@ void install_Windows()
 	TBTRAP( PaintOne      );  // A90C
 	TBTRAP( PaintBehind   );  // A90D
 	
+	TBTRAP( GetWMgrPort   );  // A910
 	TBTRAP( CheckUpdate   );  // A911
 	TBTRAP( InitWindows   );  // A912
 	TBTRAP( NewWindow     );  // A913

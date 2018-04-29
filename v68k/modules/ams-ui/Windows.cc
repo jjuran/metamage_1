@@ -209,6 +209,11 @@ pascal void InitWindows_patch()
 	draw_menu_bar_from_WMgr_port();
 }
 
+pascal void GetWMgrPort_patch( struct GrafPort** port )
+{
+	*port = WMgrPort;
+}
+
 pascal struct GrafPort* NewWindow_patch( void*                 storage,
                                          const struct Rect*    bounds,
                                          const unsigned char*  title,
