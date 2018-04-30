@@ -1,5 +1,5 @@
 /*
-	Copyright 2017, Josh Juran.  All rights reserved.
+	Copyright 2017-2018, Josh Juran.  All rights reserved.
 	
 	Assembly-optimized numerics functions for the Motorola 68K architecture.
 	
@@ -22,6 +22,49 @@ void long_multiply( uint64_t*  x : __A0,
                     uint32_t   a : __D0,
                     uint32_t   b : __D1 )
 {
+		/*
+			A 68020 or later implements longword multiplication in a single
+			instruction, which we'd like to use if available.  If codegen is
+			specifically targeting 68020 (or later), then we can just use it.
+			Otherwise, we'll test for it (though obliquely) -- just because
+			our build is inclusive of the 68000 doesn't mean we don't want to
+			have the advantage on a 68020+.
+		*/
+		
+	#if ! __MC68020__
+		
+		/*
+			This is an inclusive build, so we check.  A PC-relative jump has
+			an offset relative to the word following the beginning of the JMP
+			instruction (which is the /middle/ of the instruction, not the end
+			of it).  So an offset of 2 jumps to the end of the JMP instruction
+			(to the subsequent BRA) and an offset of 4 jumps over the BRA and
+			directly to the 68020-only MULU.L.  The jump's effective address
+			contains a scaling factor which is only recognized by a 68020+, so
+			the scaled offset is 4 in that case but remains 2 on a 68000.  In
+			the latter event, we branch over the 68020+ block and calculate
+			via FOIL as we did previously.
+		*/
+		
+		MOVEQ.L  #2,D2
+		JMP      (PC, D2.W*2)
+		BRA.S    foil
+		
+	#endif
+		
+		machine  68020
+		
+		MULU.L   D0,D2:D1  // a * b -> D2 (high) and D1 (low)
+		
+		MOVE.L   D2,(A0)+
+		MOVE.L   D1,(A0)
+		
+		RTS
+	
+	#if ! __MC68020__
+		
+	foil:
+		
 	/*
 		Multiply 32-bit operands using a FOIL (first/outer/inner/last)
 		strategy.  Instead of first and last, we have upper and lower
@@ -56,4 +99,6 @@ void long_multiply( uint64_t*  x : __A0,
 	ADD.W    D1,(A0)   // add the carries to X (high longword)
 	
 	RTS
+		
+	#endif  // #if ! __MC68020__
 }
