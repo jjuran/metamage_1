@@ -33,6 +33,67 @@ pascal short ReadDateTime_patch( long* secs : __A0 ) : __D0
 	return noErr;
 }
 
+static const char month_days[] =
+{
+	31, 28, 31,
+	30, 31, 30,
+	31, 31, 30,
+	31, 30, 31,
+};
+
+pascal DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
+                                     DateTimeRec*   date : __A0 ) : __A0
+{
+	const unsigned long days_per_quad = 365 * 4 + 1;
+	
+	unsigned long mins, hour, days;
+	
+	date->second = secs % 60;
+	mins         = secs / 60;
+	date->minute = mins % 60;
+	hour         = mins / 60;
+	date->hour   = hour % 24;
+	days         = hour / 24;
+	
+	const unsigned short quads = days / days_per_quad;
+	days                       = days % days_per_quad;
+	
+	date->dayOfWeek = (days + 5) % 7 + 1;  // 1904-01-01 is a Friday
+	
+	const unsigned short feb29 = 31 + 28;
+	
+	const short leap_diff = days - feb29;
+	
+	days -= leap_diff > 0;
+	
+	unsigned short years = quads * 4;
+	
+	years += days / 365;
+	days   = days % 365;
+	
+	unsigned short month = 1;
+	
+	for ( int i = 0;  i < 12;  ++i )
+	{
+		if ( days < month_days[ i ] )
+		{
+			break;
+		}
+		
+		days -= month_days[ i ];
+		
+		++month;
+	}
+	
+	days += 1 + (leap_diff == 0);
+	
+	date->year  = 1904 + years;
+	date->month = month;
+	date->day   = days;
+	
+	return date;
+}
+
 #pragma mark -
 #pragma mark Queue Manipulation
 #pragma mark -

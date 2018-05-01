@@ -158,6 +158,9 @@ static void install_OSUtils()
 	OSTRAP( Delay     );  // A03B
 	TBTRAP( Enqueue   );  // A96E
 	TBTRAP( Dequeue   );  // A96F
+	
+	TBTRAP( Secs2Date );  // A9C6
+	
 	TBTRAP( SysBeep   );  // A9C8
 	TBTRAP( SysError  );  // A9C9
 }
