@@ -148,7 +148,6 @@ static void install_OSUtils()
 	OSTRAP( Delay     );  // A03B
 	TBTRAP( Enqueue   );  // A96E
 	TBTRAP( Dequeue   );  // A96F
-	TBTRAP( TickCount );  // A975
 	TBTRAP( SysBeep   );  // A9C8
 	TBTRAP( SysError  );  // A9C9
 }
@@ -190,6 +189,7 @@ static void install_EventManager()
 	TBTRAP( GetMouse      );  // A972
 	TBTRAP( StillDown     );  // A973
 	TBTRAP( Button        );  // A974
+	TBTRAP( TickCount     );  // A975
 }
 
 static void install_DeskManager()

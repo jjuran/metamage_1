@@ -23,4 +23,6 @@ pascal void GetMouse_patch( Point* loc );
 pascal char Button_patch();
 pascal char StillDown_patch();
 
+pascal long TickCount_patch();
+
 #endif

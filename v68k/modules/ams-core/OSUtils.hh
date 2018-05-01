@@ -9,8 +9,6 @@
 struct QElem;
 struct QHdr;
 
-pascal long TickCount_patch();
-
 pascal long Delay_patch( long numTicks : __A0 ) : __D0;
 
 pascal void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );

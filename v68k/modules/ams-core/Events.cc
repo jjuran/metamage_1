@@ -250,3 +250,8 @@ pascal char StillDown_patch()
 {
 	return Button_patch();
 }
+
+pascal long TickCount_patch()
+{
+	return Ticks;
+}
