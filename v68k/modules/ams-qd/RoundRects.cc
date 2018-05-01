@@ -46,7 +46,7 @@ pascal void StdRRect_patch( signed char  verb,
 			
 			UnionRgn( rgn, rgnSave, rgnSave );
 			
-			EmptyRgn( rgn );
+			SetEmptyRgn( rgn );
 		}
 		
 		const short penHeight = port.pnSize.v;

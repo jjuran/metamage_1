@@ -43,7 +43,7 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 			
 			UnionRgn( ovalRgn, rgnSave, rgnSave );
 			
-			EmptyRgn( ovalRgn );
+			SetEmptyRgn( ovalRgn );
 		}
 		
 		const short penHeight = port.pnSize.v;
