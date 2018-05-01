@@ -78,6 +78,9 @@ static void install_QuickDraw()
 	
 	TBTRAP( Random );  // A861
 	
+	TBTRAP( ForeColor );  // A862
+	TBTRAP( BackColor );  // A863
+	
 	TBTRAP( GetPixel );  // A865
 	TBTRAP( StuffHex );  // A866
 	TBTRAP( LongMul  );  // A867

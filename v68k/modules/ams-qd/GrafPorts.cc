@@ -5,6 +5,9 @@
 
 #include "GrafPorts.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 
@@ -203,6 +206,28 @@ pascal void BackPat_patch( const struct Pattern* pat )
 	}
 	
 	thePort->bkPat = *pat;
+}
+
+#pragma mark -
+#pragma mark Drawing in Color
+#pragma mark -
+
+pascal void ForeColor_patch( long color )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	thePort->fgColor = color;
+	
+	WARNING = "ForeColor: unused fgColor set to ", color;
+}
+
+pascal void BackColor_patch( long color )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	thePort->bkColor = color;
+	
+	WARNING = "BackColor: unused bkColor set to ", color;
 }
 
 #pragma mark -
