@@ -16,6 +16,10 @@
 short MemErr : 0x0220;
 
 
+#pragma mark -
+#pragma mark GrafPort Routines
+#pragma mark -
+
 pascal void OpenPort_patch( struct GrafPort* port )
 {
 	port->visRgn  = NewRgn();  if ( port->visRgn  == NULL )  goto fail_visRgn;
@@ -80,34 +84,14 @@ pascal void ClosePort_patch( struct GrafPort* port )
 	DisposeRgn( port->clipRgn );
 }
 
-pascal void LocalToGlobal_patch( Point* pt )
+pascal void SetPort_patch( struct GrafPort* port )
 {
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	const Rect& bounds = thePort->portBits.bounds;
-	
-	pt->v -= bounds.top;
-	pt->h -= bounds.left;
-}
-
-pascal void GlobalToLocal_patch( Point* pt )
-{
-	GrafPtr thePort = *get_addrof_thePort();
-	
-	const Rect& bounds = thePort->portBits.bounds;
-	
-	pt->v += bounds.top;
-	pt->h += bounds.left;
+	*get_addrof_thePort() = port;
 }
 
 pascal void GetPort_patch( struct GrafPort** port_ptr )
 {
 	*port_ptr = *get_addrof_thePort();
-}
-
-pascal void SetPort_patch( struct GrafPort* port )
-{
-	*get_addrof_thePort() = port;
 }
 
 pascal void SetPortBits_patch( const BitMap* bitmap )
@@ -220,6 +204,34 @@ pascal void BackPat_patch( const struct Pattern* pat )
 	
 	thePort->bkPat = *pat;
 }
+
+#pragma mark -
+#pragma mark Calculations with Points
+#pragma mark -
+
+pascal void LocalToGlobal_patch( Point* pt )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	const Rect& bounds = thePort->portBits.bounds;
+	
+	pt->v -= bounds.top;
+	pt->h -= bounds.left;
+}
+
+pascal void GlobalToLocal_patch( Point* pt )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	const Rect& bounds = thePort->portBits.bounds;
+	
+	pt->v += bounds.top;
+	pt->h += bounds.left;
+}
+
+#pragma mark -
+#pragma mark Miscellaneous Routines
+#pragma mark -
 
 pascal unsigned char GetPixel_patch( short h, short v )
 {
