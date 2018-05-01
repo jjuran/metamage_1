@@ -32,7 +32,7 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 {
 	const Fixed c_squared = 0x00010000;
 	
-	RgnHandle tmp = NewRgn();
+	static RgnHandle tmp = NewRgn();
 	
 	short x = width / 2;
 	short y0 = 0;
@@ -75,7 +75,7 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 	
 	XorRgnRect( rgn, tmp, y0, y0, height - y0, height - y0 );
 	
-	DisposeRgn( tmp );
+	SetEmptyRgn( tmp );
 }
 
 static
