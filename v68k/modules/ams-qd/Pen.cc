@@ -28,7 +28,7 @@ static void even_dexter( Point a, UInt16 n )
 {
 	Rect r = { a.v, a.h, a.v + 1, a.h + 1 };
 	
-	PaintRect( &r );
+	StdRect( kQDGrafVerbPaint, &r );
 	
 	while ( n > 0 )
 	{
@@ -37,7 +37,7 @@ static void even_dexter( Point a, UInt16 n )
 		++r.bottom;
 		++r.right;
 		
-		PaintRect( &r );
+		StdRect( kQDGrafVerbPaint, &r );
 		
 		--n;
 	}
@@ -47,7 +47,7 @@ static void even_sinister( Point a, UInt16 n )
 {
 	Rect r = { a.v, a.h, a.v + 1, a.h + 1 };
 	
-	PaintRect( &r );
+	StdRect( kQDGrafVerbPaint, &r );
 	
 	while ( n > 0 )
 	{
@@ -56,7 +56,7 @@ static void even_sinister( Point a, UInt16 n )
 		++r.bottom;
 		--r.right;
 		
-		PaintRect( &r );
+		StdRect( kQDGrafVerbPaint, &r );
 		
 		--n;
 	}
@@ -87,7 +87,7 @@ pascal void StdLine_patch( Point newPt )
 		line.bottom += thePort->pnSize.v;
 		line.right  += thePort->pnSize.h;
 		
-		PaintRect( &line );
+		StdRect( kQDGrafVerbPaint, &line );
 		
 		return;
 	}
