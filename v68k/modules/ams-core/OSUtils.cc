@@ -6,11 +6,11 @@
 #include "OSUtils.hh"
 
 // Mac OS
-#ifndef __OSUTILS__
-#include <OSUtils.h>
-#endif
 #ifndef __MACERRORS__
 #include <MacErrors.h>
+#endif
+#ifndef __OSUTILS__
+#include <OSUtils.h>
 #endif
 
 // POSIX
@@ -21,24 +21,9 @@
 uint32_t Ticks : 0x016A;
 
 
-pascal long Delay_patch( long numTicks : __A0 ) : __D0
-{
-	const long nanoseconds_per_tick = 1000 * 1000 * 1000 / 60;
-	
-	const long seconds     = numTicks / 60;
-	const long nanoseconds = numTicks % 60 * nanoseconds_per_tick;
-	
-	timespec delay = { seconds, nanoseconds };
-	
-	timespec remaining;
-	
-	while ( nanosleep( &delay, &remaining ) != 0 )
-	{
-		delay = remaining;
-	}
-	
-	return Ticks;
-}
+#pragma mark -
+#pragma mark Queue Manipulation
+#pragma mark -
 
 asm
 pascal void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 )
@@ -138,6 +123,29 @@ cleanup:
 	MOVE.W   (SP)+,D0
 	
 	RTS
+}
+
+#pragma mark -
+#pragma mark Miscellaneous Utilities
+#pragma mark -
+
+pascal long Delay_patch( long numTicks : __A0 ) : __D0
+{
+	const long nanoseconds_per_tick = 1000 * 1000 * 1000 / 60;
+	
+	const long seconds     = numTicks / 60;
+	const long nanoseconds = numTicks % 60 * nanoseconds_per_tick;
+	
+	timespec delay = { seconds, nanoseconds };
+	
+	timespec remaining;
+	
+	while ( nanosleep( &delay, &remaining ) != 0 )
+	{
+		delay = remaining;
+	}
+	
+	return Ticks;
 }
 
 pascal void SysBeep_patch( short duration )
