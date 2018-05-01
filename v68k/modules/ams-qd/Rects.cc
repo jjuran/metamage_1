@@ -548,13 +548,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	{
 		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
 		{
-			RgnHandle rgn = NewRgn();
+			RgnHandle rgn = clipRgn;  // Reuse the existing region
 			
 			RectRgn( rgn, r );
 			
 			UnionRgn( rgn, rgnSave, rgnSave );
-			
-			DisposeRgn( rgn );
 		}
 		
 		frame_rect( r );
