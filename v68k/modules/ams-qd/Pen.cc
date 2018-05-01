@@ -5,6 +5,11 @@
 
 #include "Pen.hh"
 
+// Mac OS
+#ifndef __FIXMATH__
+#include <FixMath.h>
+#endif
+
 // iota
 #include "iota/swap.hh"
 
@@ -104,6 +109,156 @@ void even_sinister( RgnHandle rgn, short len )
 	*p++ = 0x7FFF;
 }
 
+static
+void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
+{
+	Region& region = **rgn;
+	
+	short* p = (short*) (*rgn + 1);
+	
+	short v  = region.rgnBBox.top;
+	short h0 = region.rgnBBox.left;
+	short h1 = h0;
+	short h2 = h0;
+	
+	Fixed h = h0 << 16;
+	
+	while ( --len > 0 )
+	{
+		h += h_increment;
+		
+		h2 = h >> 16;
+		
+		*p++ = v++;
+		*p++ = h0;
+		*p++ = h2;
+		*p++ = 0x7FFF;
+		
+		h0 = h1;
+		h1 = h2;
+	}
+	
+	h2 = region.rgnBBox.right;
+	
+	*p++ = v++;
+	*p++ = h0;
+	*p++ = h2;
+	*p++ = 0x7FFF;
+	
+	*p++ = v;
+	*p++ = h1;
+	*p++ = h2;
+	*p++ = 0x7FFF;
+	*p++ = 0x7FFF;
+}
+
+static
+void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
+{
+	Region& region = **rgn;
+	
+	short* p = (short*) (*rgn + 1);
+	
+	short v  = region.rgnBBox.top;
+	short h0 = region.rgnBBox.right;
+	short h1 = h0;
+	short h2 = h0;
+	
+	Fixed h = h0 << 16;
+	
+	while ( --len > 0 )
+	{
+		h -= h_increment;
+		
+		h2 = h >> 16;
+		
+		*p++ = v++;
+		*p++ = h2;
+		*p++ = h0;
+		*p++ = 0x7FFF;
+		
+		h0 = h1;
+		h1 = h2;
+	}
+	
+	h2 = region.rgnBBox.left;
+	
+	*p++ = v++;
+	*p++ = h2;
+	*p++ = h0;
+	*p++ = 0x7FFF;
+	
+	*p++ = v;
+	*p++ = h2;
+	*p++ = h1;
+	*p++ = 0x7FFF;
+	*p++ = 0x7FFF;
+}
+
+static
+void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
+{
+	Region& region = **rgn;
+	
+	short* p = (short*) (*rgn + 1);
+	
+	Fixed v  = region.rgnBBox.top << 16;
+	short h0 = region.rgnBBox.left;
+	short h1 = h0;
+	short h2 = h0;
+	
+	while ( len-- > 0 )
+	{
+		*p++ = v >> 16;
+		*p++ = h0;
+		*p++ = ++h2;
+		*p++ = 0x7FFF;
+		
+		v += v_increment;
+		
+		h0 = h1;
+		h1 = h2;
+	}
+	
+	*p++ = region.rgnBBox.bottom;
+	*p++ = h0;
+	*p++ = h1;
+	*p++ = 0x7FFF;
+	*p++ = 0x7FFF;
+}
+
+static
+void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
+{
+	Region& region = **rgn;
+	
+	short* p = (short*) (*rgn + 1);
+	
+	Fixed v  = region.rgnBBox.top << 16;
+	short h0 = region.rgnBBox.right;
+	short h1 = h0;
+	short h2 = h0;
+	
+	while ( len-- > 0 )
+	{
+		*p++ = v >> 16;
+		*p++ = --h2;
+		*p++ = h0;
+		*p++ = 0x7FFF;
+		
+		v += v_increment;
+		
+		h0 = h1;
+		h1 = h2;
+	}
+	
+	*p++ = region.rgnBBox.bottom;
+	*p++ = h1;
+	*p++ = h0;
+	*p++ = 0x7FFF;
+	*p++ = 0x7FFF;
+}
+
 pascal void StdLine_patch( Point newPt )
 {
 	GrafPtr thePort = *get_addrof_thePort();
@@ -171,9 +326,35 @@ pascal void StdLine_patch( Point newPt )
 		{
 			even_sinister( rgn, len );
 		}
-		
-		StdRgn( kQDGrafVerbPaint, rgn );
 	}
+	else if ( advance > descent )
+	{
+		const Fixed h_increment = FixRatio( advance, descent );
+		
+		if ( newPt.h >= pnLoc.h )
+		{
+			shallow_dexter( rgn, len, h_increment );
+		}
+		else
+		{
+			shallow_sinister( rgn, len, h_increment );
+		}
+	}
+	else
+	{
+		const Fixed v_increment = FixRatio( descent, advance );
+		
+		if ( newPt.h >= pnLoc.h )
+		{
+			steep_dexter( rgn, len, v_increment );
+		}
+		else
+		{
+			steep_sinister( rgn, len, v_increment );
+		}
+	}
+	
+	StdRgn( kQDGrafVerbPaint, rgn );
 }
 
 pascal void HidePen_patch()
