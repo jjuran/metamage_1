@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/time.h>
 
+// Standard C
+#include <time.h>
+
 
 #pragma exceptions off
 
