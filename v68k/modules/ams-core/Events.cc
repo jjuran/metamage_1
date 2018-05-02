@@ -251,6 +251,13 @@ pascal char StillDown_patch()
 	return Button_patch();
 }
 
+pascal char WaitMouseUp_patch()
+{
+	EventRecord event;
+	
+	return Button_patch()  &&  GetOSEvent( mUpMask, &event ) != 0;
+}
+
 pascal long TickCount_patch()
 {
 	return Ticks;
