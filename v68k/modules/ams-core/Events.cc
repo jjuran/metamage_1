@@ -72,30 +72,33 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	
 	poll_user_input();
 	
-	if ( CurDeactive )
+	if ( eventMask & activMask )
 	{
-		event->what      = activateEvt;
-		event->message   = (long) CurDeactive;
-		event->when      = Ticks;
-		event->where     = Mouse;
-		event->modifiers = 0;
+		if ( CurDeactive )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurDeactive;
+			event->when      = Ticks;
+			event->where     = Mouse;
+			event->modifiers = 0;
+			
+			CurDeactive = NULL;
+			
+			return true;
+		}
 		
-		CurDeactive = NULL;
-		
-		return true;
-	}
-	
-	if ( CurActivate )
-	{
-		event->what      = activateEvt;
-		event->message   = (long) CurActivate;
-		event->when      = Ticks;
-		event->where     = Mouse;
-		event->modifiers = activeFlag;
-		
-		CurActivate = NULL;
-		
-		return true;
+		if ( CurActivate )
+		{
+			event->what      = activateEvt;
+			event->message   = (long) CurActivate;
+			event->when      = Ticks;
+			event->where     = Mouse;
+			event->modifiers = activeFlag;
+			
+			CurActivate = NULL;
+			
+			return true;
+		}
 	}
 	
 	if ( get_lowlevel_event( eventMask, event ) )
@@ -103,7 +106,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 		return true;
 	}
 	
-	if ( CheckUpdate( event ) )
+	if ( eventMask & updateMask  &&  CheckUpdate( event ) )
 	{
 		return true;
 	}
