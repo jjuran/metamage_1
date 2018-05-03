@@ -12,6 +12,8 @@
 #include "QDGlobals.hh"
 
 
+short MemErr : 0x0220;
+
 static inline
 short min( short a, short b )
 {
@@ -24,42 +26,82 @@ short max( short a, short b )
 	return a > b ? a : b;
 }
 
-static void even_dexter( Point a, UInt16 n )
+static
+void even_dexter( RgnHandle rgn, short len )
 {
-	Rect r = { a.v, a.h, a.v + 1, a.h + 1 };
+	Region& region = **rgn;
 	
-	StdRect( kQDGrafVerbPaint, &r );
+	short* p = (short*) (*rgn + 1);
 	
-	while ( n > 0 )
+	short v  = region.rgnBBox.top;
+	short h0 = region.rgnBBox.left;
+	short h1 = h0;
+	short h2 = h0;
+	
+	while ( --len > 0 )
 	{
-		++r.top;
-		++r.left;
-		++r.bottom;
-		++r.right;
+		++h2;
 		
-		StdRect( kQDGrafVerbPaint, &r );
+		*p++ = v++;
+		*p++ = h0;
+		*p++ = h2;
+		*p++ = 0x7FFF;
 		
-		--n;
+		h0 = h1;
+		h1 = h2;
 	}
+	
+	h2 = region.rgnBBox.right;
+	
+	*p++ = v++;
+	*p++ = h0;
+	*p++ = h2;
+	*p++ = 0x7FFF;
+	
+	*p++ = v;
+	*p++ = h1;
+	*p++ = h2;
+	*p++ = 0x7FFF;
+	*p++ = 0x7FFF;
 }
 
-static void even_sinister( Point a, UInt16 n )
+static
+void even_sinister( RgnHandle rgn, short len )
 {
-	Rect r = { a.v, a.h, a.v + 1, a.h + 1 };
+	Region& region = **rgn;
 	
-	StdRect( kQDGrafVerbPaint, &r );
+	short* p = (short*) (*rgn + 1);
 	
-	while ( n > 0 )
+	short v  = region.rgnBBox.top;
+	short h0 = region.rgnBBox.right;
+	short h1 = h0;
+	short h2 = h0;
+	
+	while ( --len > 0 )
 	{
-		++r.top;
-		--r.left;
-		++r.bottom;
-		--r.right;
+		--h2;
 		
-		StdRect( kQDGrafVerbPaint, &r );
+		*p++ = v++;
+		*p++ = h2;
+		*p++ = h0;
+		*p++ = 0x7FFF;
 		
-		--n;
+		h0 = h1;
+		h1 = h2;
 	}
+	
+	h2 = region.rgnBBox.left;
+	
+	*p++ = v++;
+	*p++ = h2;
+	*p++ = h0;
+	*p++ = 0x7FFF;
+	
+	*p++ = v;
+	*p++ = h2;
+	*p++ = h1;
+	*p++ = 0x7FFF;
+	*p++ = 0x7FFF;
 }
 
 pascal void StdLine_patch( Point newPt )
@@ -92,19 +134,45 @@ pascal void StdLine_patch( Point newPt )
 		return;
 	}
 	
+	static Handle handle = NewHandle( 0 );
+	static Size   h_size = 0;
+	
 	const UInt16 descent = line.bottom - line.top;
 	const UInt16 advance = line.right - line.left;
+	
+	const short len = min( advance, descent );
+	const short pts = len + 1;
+	
+	const long handle_len = sizeof (Region) + 2 + pts * 8;
+	
+	SetHandleSize( handle, handle_len );
+	
+	if ( MemErr != noErr )
+	{
+		return;
+	}
+	
+	h_size = handle_len;
+	
+	RgnHandle rgn = (RgnHandle) handle;
+	
+	Region& region = **rgn;
+	
+	region.rgnSize = handle_len;
+	region.rgnBBox = line;
 	
 	if ( advance == descent )
 	{
 		if ( newPt.h >= pnLoc.h )
 		{
-			even_dexter( pnLoc, descent );
+			even_dexter( rgn, len );
 		}
 		else
 		{
-			even_sinister( pnLoc, descent );
+			even_sinister( rgn, len );
 		}
+		
+		StdRgn( kQDGrafVerbPaint, rgn );
 	}
 }
 
