@@ -548,6 +548,14 @@ pascal long MenuSelect_patch( Point pt )
 		
 		result = TheMenu << 16 | whichItem;
 	}
+	else if ( opened )
+	{
+		// If nothing was chosen, unhighlight the menu title.
+		
+		invert_menu_title( opened, titleRect );
+		
+		TheMenu = 0;
+	}
 	
 	if ( savedBits.baseAddr != NULL )
 	{
