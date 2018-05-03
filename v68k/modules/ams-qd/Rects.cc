@@ -23,11 +23,8 @@
 using quickdraw::segments_box;
 
 
-class white_t {};
-class black_t {};
-
-static const white_t White = white_t();
-static const black_t Black = black_t();
+enum white_t { White };
+enum black_t { Black };
 
 static inline bool operator==( const Pattern& a, white_t )
 {
