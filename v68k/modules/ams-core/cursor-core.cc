@@ -156,7 +156,7 @@ void paint_cursor( short h, short v )
 		CrsrAddr += 2;
 		plotAddr += 2;
 	}
-	else if ( h > CrsrPin.right - 16 )
+	else if ( h >= CrsrPin.right - 16 )
 	{
 		h_trim = 1;
 		
