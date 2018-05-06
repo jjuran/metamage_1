@@ -694,9 +694,9 @@ namespace Pedestal
 	
 	Application::Application()
 	{
-		Init_MacToolbox();
-		
 		Init_Memory( 0 );
+		
+		Init_MacToolbox();
 		
 		if ( apple_events_present )
 		{
