@@ -202,6 +202,11 @@ namespace tool
 			return;  // skip "(Guarded)" directories
 		}
 		
+		if ( dirName == ".git" )
+		{
+			return;
+		}
+		
 		if ( dirName == "CVS" )
 		{
 			return;
