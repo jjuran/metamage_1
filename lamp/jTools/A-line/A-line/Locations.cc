@@ -53,6 +53,11 @@ namespace tool
 	
 	plus::string UserSrcTreePath()
 	{
+		if ( const char* root = getenv( "ALINE_SRC_ROOT" ) )
+		{
+			return root;
+		}
+		
 		if ( const char* tree = getenv( "ALINE_SRC_TREE" ) )
 		{
 			return tree;
