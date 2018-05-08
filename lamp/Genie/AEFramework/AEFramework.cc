@@ -95,6 +95,8 @@ namespace Nitrogen
 				{
 					*replyStorage = AEDuplicateDesc( reply ).release();
 				}
+				
+				yield_to_thread( thread );
 			}
 			catch ( const Mac::OSStatus& err )
 			{
