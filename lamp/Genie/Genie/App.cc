@@ -25,6 +25,9 @@
 #include "mac_config/apple-events.hh"
 #include "mac_config/upp-macros.hh"
 
+// cthread-either
+#include "cthread-either.hh"
+
 // plus
 #include "plus/string.hh"
 
@@ -36,6 +39,7 @@
 // relix-kernel
 #include "relix/api/os_thread_api.hh"
 #include "relix/task/scheduler.hh"
+#include "relix/task/thread.hh"
 
 // Genie
 #include "AEFramework/AEFramework.h"
@@ -49,6 +53,30 @@ namespace Ped = Pedestal;
 
 namespace Genie
 {
+	
+	static bool in_user_thread;
+	
+	static
+	cthread::thread_id os_thread_scheduler()
+	{
+		using namespace relix;
+		
+		in_user_thread = ! in_user_thread;
+		
+		if ( ! in_user_thread )
+		{
+			return cthread::thread_id();
+		}
+		
+		if ( queue_element* next = schedule_next_task() )
+		{
+			thread* next_thread = thread::from_queue_element( next );
+			
+			return next_thread->get_os_thread();
+		}
+		
+		return cthread::thread_id();
+	}
 	
 	static
 	pascal OSErr Handle_Reply_event( AppleEvent const*  event,
@@ -94,6 +122,8 @@ namespace Genie
 		Ped::gThreadYield_Hook  = &relix::os_thread_yield;
 		Ped::gActivelyBusy_Hook = &relix::is_active;
 		Ped::gReadyToExit_Hook  = &is_ready_to_exit;
+		
+		cthread::set_thread_scheduler( &os_thread_scheduler );
 		
 		SetCommandHandler( Ped::kCmdAbout, &About       );
 		SetCommandHandler( Ped::kCmdNew,   &NewDocument );

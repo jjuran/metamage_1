@@ -79,8 +79,12 @@
 #include "MacVFS/util/FSSpec_from_node.hh"
 
 // relix-kernel
+#include "relix/api/current_thread.hh"
 #include "relix/api/root.hh"
 #include "relix/fs/fifo.hh"
+#include "relix/task/scheduler.hh"
+#include "relix/task/task.hh"
+#include "relix/task/thread.hh"
 
 // Genie
 #include "Genie/BinaryImage.hh"
@@ -1130,6 +1134,7 @@ namespace Genie
 	
 	struct IterateIntoCache_CInfoPBRec
 	{
+		relix::task*   task;
 		CInfoPBRec     cInfo;
 		NameAndID      items[ kMaxItems ];
 		UInt16         n_items;
@@ -1180,6 +1185,8 @@ namespace Genie
 		done:
 			
 			pb.done = true;
+			
+			async_resume_task( pb.task );
 			
 			mac::sys::request_async_wakeup();
 		}
@@ -1266,6 +1273,7 @@ namespace Genie
 		
 		IterateIntoCache_CInfoPBRec pb;
 		
+		pb.task  = relix::current_thread().get_task();
 		pb.cInfo = extra.cinfo;
 		
 		IterateFilesIntoCache( pb, cache );

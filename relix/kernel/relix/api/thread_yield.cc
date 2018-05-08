@@ -51,7 +51,11 @@ namespace relix
 		{
 			current.mark_current_stack_frame();
 			
+			suspend_task( current.get_task() );
+			
 			os_thread_yield();
+			
+			resume_task( current.get_task() );
 		}
 		while ( stopped( current ) );
 	}
@@ -62,8 +66,6 @@ namespace relix
 		
 		const pid_t tid = current.id();
 		
-		mark_thread_active( tid );
-		
 		do
 		{
 			current.mark_current_stack_frame();
@@ -71,8 +73,6 @@ namespace relix
 			os_thread_yield();
 		}
 		while ( stopped( current ) );
-		
-		mark_thread_inactive( tid );
 	}
 	
 }

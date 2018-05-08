@@ -20,6 +20,7 @@
 #include "relix/api/current_thread.hh"
 #include "relix/signal/check_signals.hh"
 #include "relix/signal/signal.hh"
+#include "relix/task/scheduler.hh"
 #include "relix/task/thread.hh"
 
 // Genie
@@ -61,6 +62,8 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		
 		thread& current = current_thread();
 		
+		suspend_task( current.get_task() );
+		
 	stop_and_wait:
 		
 		current.mark_current_stack_frame();
@@ -84,6 +87,8 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		{
 			goto stop_and_wait;
 		}
+		
+		resume_task( current.get_task() );
 	}
 	catch ( const relix::signal& sig )
 	{

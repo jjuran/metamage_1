@@ -291,8 +291,6 @@ namespace Genie
 	{
 		Process* process = reinterpret_cast< Process* >( param );
 		
-		relix::mark_thread_inactive( process->gettid() );
-		
 		relix::process_image& image = process->get_process().get_process_image();
 		
 		_relix_user_parameter_block& pb = image.param_block();
@@ -557,7 +555,7 @@ namespace Genie
 		
 	#ifdef __RELIX__
 		
-		relix::mark_thread_active( tid );
+		create_task( this );
 		
 	#endif
 	}
@@ -569,6 +567,8 @@ namespace Genie
 		child.get_process().unshare_per_fork();
 		
 		// suspend parent for vfork
+		
+		suspend_task( this );
 		
 		itsForkedChildPID = child.GetPID();
 		
@@ -738,8 +738,6 @@ namespace Genie
 		
 		itsLifeStage       = kProcessLive;
 		
-		relix::mark_thread_active( gettid() );
-		
 		if ( gCurrentProcess != this )
 		{
 			return;
@@ -747,6 +745,7 @@ namespace Genie
 		
 		if ( its_vfork_parent )
 		{
+			resume_task  ( its_vfork_parent );
 			resume.enable( its_vfork_parent );
 			
 			its_vfork_parent = NULL;
@@ -783,6 +782,7 @@ namespace Genie
 		
 		if ( its_vfork_parent )
 		{
+			resume_task  ( its_vfork_parent );
 			resume.enable( its_vfork_parent );
 			
 			its_vfork_parent = NULL;
@@ -807,8 +807,6 @@ namespace Genie
 		swap_os_thread( looseThread );
 		
 		itsLifeStage       = kProcessLive;
-		
-		relix::mark_thread_active( gettid() );
 		
 		return looseThread;
 	}
@@ -860,7 +858,7 @@ namespace Genie
 			}
 		}
 		
-		if ( relix::is_thread_active( gettid() ) )
+		if ( is_on_run_queue( this ) )
 		{
 			return 'Q';
 		}
@@ -1017,6 +1015,8 @@ namespace Genie
 			
 			Process& parent = GetProcess( ppid );
 			
+			resume_task( &parent );
+			
 			if ( ppid > 1  &&  waits_for_children( parent.get_process() ) )
 			{
 				parent.Raise( SIGCHLD );
@@ -1045,7 +1045,7 @@ namespace Genie
 			the thread active again.
 		*/
 		
-		relix::mark_thread_inactive( gettid() );
+		remove_task( this );
 		
 		reset_os_thread();
 		

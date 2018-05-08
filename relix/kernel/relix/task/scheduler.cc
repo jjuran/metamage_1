@@ -5,9 +5,6 @@
 
 #include "relix/task/scheduler.hh"
 
-// Standard C++
-#include <set>
-
 // must
 #include "must/pthread.h"
 
@@ -22,8 +19,6 @@
 
 namespace relix
 {
-	
-	static std::set< pid_t > active_threads;
 	
 	static bool pthread_yield_needed;
 	
@@ -162,27 +157,17 @@ namespace relix
 			pthread_yield();
 		}
 		
-		return !active_threads.empty();
+		if ( resumptions_pending )
+		{
+			resume_pending_tasks();
+		}
+		
+		return ! run_queue.empty();
 	}
 	
 	bool is_on_run_queue( const task* that )
 	{
 		return that  &&  that->from == &run_queue;
-	}
-	
-	bool is_thread_active( pid_t tid )
-	{
-		return active_threads.find( tid ) != active_threads.end();
-	}
-	
-	void mark_thread_active( pid_t tid )
-	{
-		active_threads.insert( tid );
-	}
-	
-	void mark_thread_inactive( pid_t tid )
-	{
-		active_threads.erase( tid );
 	}
 	
 }
