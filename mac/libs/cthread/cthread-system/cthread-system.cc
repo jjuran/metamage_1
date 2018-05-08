@@ -187,5 +187,11 @@ namespace system  {
 		(void) ::YieldToAnyThread();
 	}
 	
+	void yield_to_thread( thread_id id )
+	{
+		// Ignore errors so we don't throw in critical sections
+		(void) ::YieldToThread( id );
+	}
+	
 }
 }

@@ -240,6 +240,22 @@ namespace custom  {
 		return &*the_current_task;
 	}
 	
+	static
+	void select_next_task( thread_task* task )
+	{
+		typedef std::list< thread_task >::iterator Iter;
+		
+		for ( Iter it = all_tasks.begin();  it != all_tasks.end();  ++it )
+		{
+			if ( &*it == task )
+			{
+				the_current_task = it;
+				
+				return;
+			}
+		}
+	}
+	
 	static inline
 	thread_id get_thread_id( thread_task* task )
 	{
@@ -336,6 +352,22 @@ namespace custom  {
 		
 		if ( task != next )
 		{
+			task->schedule = Task_sleeping;
+			next->schedule = Task_running;
+			
+			suspend_task( task, next );
+		}
+	}
+	
+	void yield_to_thread( thread_id id )
+	{
+		thread_task* task = current_task();
+		thread_task* next = task_from_id( id );
+		
+		if ( task != next )
+		{
+			select_next_task( next );
+			
 			task->schedule = Task_sleeping;
 			next->schedule = Task_running;
 			

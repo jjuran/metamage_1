@@ -96,6 +96,18 @@ namespace either  {
 		}
 	}
 	
+	void yield_to_thread( thread_id id )
+	{
+		if ( has_ThreadManager )
+		{
+			system::yield_to_thread( id );
+		}
+		else
+		{
+			custom::yield_to_thread( id );
+		}
+	}
+	
 }
 }
 
