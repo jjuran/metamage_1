@@ -60,7 +60,6 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		N::ExpectReply( returnID, &reply );
 		
 		const thread& current = current_thread();
-		const pid_t   tid     = current.id();
 		
 	stop_and_wait:
 		
