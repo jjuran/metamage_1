@@ -25,6 +25,7 @@
 #include "relix/api/os_thread_box.hh"
 #include "relix/config/syscall_stacks.hh"
 #include "relix/signal/sigset_t.hh"
+#include "relix/task/task.hh"
 #include "relix/task/syscall_stack.hh"
 #include "relix/task/vfork_context.hh"
 
@@ -36,6 +37,7 @@ namespace relix
 	
 	
 	class thread : public plus::ref_count< thread >,
+	               protected task,
 	               public relix::vfork_context
 	{
 		private:
@@ -63,6 +65,13 @@ namespace relix
 			thread( int id, sigset_t blocked, process& p, bool use_syscall_stack );
 			
 			~thread();
+			
+			static thread* from_queue_element( queue_element* that )
+			{
+				return static_cast< thread* >( that );
+			}
+			
+			task* get_task()  { return this; }
 			
 			int id() const  { return its_id; }
 			

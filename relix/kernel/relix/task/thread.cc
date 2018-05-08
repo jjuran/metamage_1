@@ -30,7 +30,6 @@ namespace relix
 	
 	thread::~thread()
 	{
-		mark_thread_inactive( its_id );
 	}
 	
 	process& thread::get_process() const

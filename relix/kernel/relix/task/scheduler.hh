@@ -13,6 +13,9 @@
 namespace relix
 {
 	
+	struct queue_element;
+	struct task;
+	
 	void acquire_sync_semaphore();
 	void release_sync_semaphore();
 	
@@ -32,7 +35,21 @@ namespace relix
 	
 #endif
 	
+	void async_resume_task( task* that );
+	
+	void resume_pending_tasks();
+	
+	queue_element* schedule_next_task();
+	
+	void create_task( task* that );
+	void remove_task( task* that );
+	
+	void suspend_task( task* that );
+	void resume_task ( task* that );
+	
 	bool is_active();
+	
+	bool is_on_run_queue( const task* that );
 	
 	bool is_thread_active( pid_t tid );
 	
