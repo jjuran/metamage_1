@@ -308,9 +308,12 @@ namespace custom  {
 				return;  // throw?
 			}
 			
+			that->schedule = Task_stopped;
 			next->schedule = Task_running;
 			
 			suspend_task( task, next );
+			
+			return;
 		}
 		
 		that->schedule = Task_stopped;
