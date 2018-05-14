@@ -5,14 +5,14 @@
 
 #include "cthread-custom.hh"
 
-// Standard C++
-#include <list>
-
 // cthread
 #include "cthread/parameter_block.hh"
 
 // debug
 #include "debug/assert.hh"
+
+// cthread-custom
+#include "circular_queue.hh"
 
 
 #ifdef __MC68K__
@@ -59,7 +59,7 @@ namespace custom  {
 		Task_ended = -1,
 	};
 	
-	struct thread_task
+	struct thread_task : queue_element
 	{
 		void*             stack_memory;
 		parameter_block*  pb;
@@ -69,9 +69,7 @@ namespace custom  {
 		machine_state     state;
 	};
 	
-	STATIC std::list< thread_task > all_tasks;
-	
-	STATIC std::list< thread_task >::iterator the_current_task;
+	STATIC circular_queue task_queue;
 	
 	STATIC thread_task* main_task;
 	
@@ -87,15 +85,13 @@ namespace custom  {
 		
 	#endif
 		
-		thread_task task = { NULL };
+		static thread_task task;
 		
 		task.schedule = Task_running;
 		
-		all_tasks.push_back( task );
+		task_queue.reset( &task );
 		
-		the_current_task = all_tasks.begin();
-		
-		return &*the_current_task;
+		return &task;
 	}
 	
 	static
@@ -110,7 +106,7 @@ namespace custom  {
 	static inline
 	thread_task* current_task()
 	{
-		return &*the_current_task;
+		return (thread_task*) task_queue.tail();
 	}
 	
 	static inline
@@ -208,29 +204,22 @@ namespace custom  {
 	}
 	
 	static inline
+	bool ended( const thread_task* task )
+	{
+		ASSERT( task != NULL );
+		
+		return task->schedule < 0;
+	}
+	
+	static
 	thread_task* next_task()
 	{
-	next:
-		
-		if ( ++the_current_task == all_tasks.end() )
+		while ( ended( (thread_task*) task_queue.head() ) )
 		{
-			the_current_task = all_tasks.begin();
+			destroy_task( (thread_task*) task_queue.behead() );
 		}
 		
-		if ( the_current_task->schedule < 0 )
-		{
-			std::list< thread_task >::iterator it = the_current_task;
-			
-			--the_current_task;
-			
-			destroy_task( &*it );
-			
-			all_tasks.erase( it );
-			
-			goto next;
-		}
-		
-		return &*the_current_task;
+		return (thread_task*) task_queue.next();
 	}
 	
 	static
@@ -244,17 +233,7 @@ namespace custom  {
 	static
 	void select_next_task( thread_task* task )
 	{
-		typedef std::list< thread_task >::iterator Iter;
-		
-		for ( Iter it = all_tasks.begin();  it != all_tasks.end();  ++it )
-		{
-			if ( &*it == task )
-			{
-				the_current_task = it;
-				
-				return;
-			}
-		}
+		task_queue.select( task );
 	}
 	
 	static inline
@@ -382,8 +361,6 @@ namespace custom  {
 	static
 	void end_of_task()
 	{
-		ASSERT( ! all_tasks.empty() );
-		
 		thread_task* task = current_task();
 		thread_task* next = next_runnable_task();
 		
@@ -428,6 +405,9 @@ namespace custom  {
 		
 		void* stack = ::operator new( stack_size );
 		
+		thread_task* task_ptr = (thread_task*) stack;
+		thread_task& task     = *task_ptr;
+		
 		void* base = (char*) stack + stack_size;
 		
 		void** fp = (void**) base;
@@ -436,14 +416,19 @@ namespace custom  {
 		*--fp = 0;  // null frame pointer backlink
 		
 		pb.stack_bottom = fp;
-		pb.stack_limit  = stack;  // Leave room for a header?
+		pb.stack_limit  = task_ptr + 1;  // Leave room for a header?
 		
 		void** sp = fp;
 		
 		*--sp = &pb;
 		*--sp = (void*) &end_of_task;
 		
-		thread_task task = { stack, &pb, pb.switch_in, pb.switch_out };
+		task.stack_memory = stack;
+		
+		task.pb = &pb;
+		
+		task.switch_in  = pb.switch_in;
+		task.switch_out = pb.switch_out;
 		
 		task.schedule = Task_sleeping;
 		
@@ -451,9 +436,9 @@ namespace custom  {
 		task.state.a6 = fp;
 		task.state.a7 = sp;
 		
-		all_tasks.push_back( task );
+		task_queue.prepend( &task );
 		
-		return (thread_id) &all_tasks.back();
+		return (thread_id) &task;
 	}
 	
 	void destroy_thread( thread_id id )
