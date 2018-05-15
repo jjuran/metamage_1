@@ -238,7 +238,7 @@ namespace custom  {
 	{
 		while ( next_task()->schedule == Task_stopped )  continue;
 		
-		return &*the_current_task;
+		return current_task();
 	}
 	
 	static
@@ -273,7 +273,7 @@ namespace custom  {
 	{
 		init_tasks_idempotent();
 		
-		return get_thread_id( &*the_current_task );
+		return get_thread_id( current_task() );
 	}
 	
 #ifdef __MC68K__
@@ -296,7 +296,7 @@ namespace custom  {
 	
 	unsigned long current_thread_stack_space()
 	{
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		
 		void* limit = task->stack_memory;
 		void* point = get_SP();
@@ -313,7 +313,7 @@ namespace custom  {
 	
 	void stop_thread( thread_id id )
 	{
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		thread_task* that = task_from_id( id );
 		
 		if ( that == task )
@@ -342,7 +342,7 @@ namespace custom  {
 	{
 		thread_task* that = task_from_id( id );
 		
-		if ( that != &*the_current_task )
+		if ( that != current_task() )
 		{
 			that->schedule = Task_ready;
 		}
@@ -388,7 +388,7 @@ namespace custom  {
 	{
 		ASSERT( ! all_tasks.empty() );
 		
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		thread_task* next = next_runnable_task();
 		
 		ASSERT( task != next );
@@ -406,7 +406,7 @@ namespace custom  {
 	{
 		parameter_block& pb = *(parameter_block*) param;
 		
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		
 		prepare_task( task );
 		
@@ -471,7 +471,7 @@ namespace custom  {
 		
 		ASSERT( that != main_task );
 		
-		if ( that == &*the_current_task )
+		if ( that == current_task() )
 		{
 			end_of_task();  // doesn't return
 		}
