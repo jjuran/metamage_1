@@ -193,8 +193,11 @@ namespace custom  {
 	}
 	
 	static
-	void suspend_task( thread_task* a, thread_task* b )
+	void suspend_task( task_schedule suspended, thread_task* a, thread_task* b )
 	{
+		a->schedule = suspended;
+		b->schedule = Task_running;
+		
 		if ( switch_proc f = a->switch_out )
 		{
 			f( a->pb->param );
@@ -327,10 +330,7 @@ namespace custom  {
 				return;  // throw?
 			}
 			
-			that->schedule = Task_stopped;
-			next->schedule = Task_running;
-			
-			suspend_task( task, next );
+			suspend_task( Task_stopped, task, next );
 			
 			return;
 		}
@@ -360,10 +360,7 @@ namespace custom  {
 		
 		if ( task != next )
 		{
-			task->schedule = Task_sleeping;
-			next->schedule = Task_running;
-			
-			suspend_task( task, next );
+			suspend_task( Task_sleeping, task, next );
 		}
 	}
 	
@@ -376,10 +373,7 @@ namespace custom  {
 		{
 			select_next_task( next );
 			
-			task->schedule = Task_sleeping;
-			next->schedule = Task_running;
-			
-			suspend_task( task, next );
+			suspend_task( Task_sleeping, task, next );
 		}
 	}
 	
@@ -393,12 +387,9 @@ namespace custom  {
 		
 		ASSERT( task != next );
 		
-		task->schedule = Task_ended;
-		next->schedule = Task_running;
-		
 		stale_task = task;
 		
-		suspend_task( task, next );
+		suspend_task( Task_ended, task, next );
 	}
 	
 	static
