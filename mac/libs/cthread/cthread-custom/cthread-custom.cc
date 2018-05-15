@@ -112,8 +112,6 @@ namespace custom  {
 	static inline
 	thread_task* current_task()
 	{
-		init_tasks_idempotent();  // Make sure the_current_task is set.
-		
 		return &*the_current_task;
 	}
 	
@@ -352,6 +350,11 @@ namespace custom  {
 	
 	void thread_yield()
 	{
+		if ( ! main_task )
+		{
+			return;
+		}
+		
 		thread_task* task = current_task();
 		thread_task* next = next_runnable_task();
 		
