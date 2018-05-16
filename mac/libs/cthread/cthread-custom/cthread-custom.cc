@@ -75,6 +75,8 @@ namespace custom  {
 	
 	STATIC std::list< thread_task >::iterator the_current_task;
 	
+	STATIC thread_task* main_task;
+	
 	static
 	thread_task* add_main_task()
 	{
@@ -101,7 +103,10 @@ namespace custom  {
 	static
 	thread_task* get_main_task()
 	{
-		static thread_task* main_task = add_main_task();
+		if ( main_task == NULL )
+		{
+			main_task = add_main_task();
+		}
 		
 		return main_task;
 	}
@@ -459,12 +464,9 @@ namespace custom  {
 	
 	void destroy_thread( thread_id id )
 	{
-		ASSERT( ! all_tasks.empty() );
-		
 		thread_task* that = task_from_id( id );
-		thread_task* main = &all_tasks.front();
 		
-		ASSERT( that != main );
+		ASSERT( that != main_task );
 		
 		if ( that == &*the_current_task )
 		{
