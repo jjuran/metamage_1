@@ -101,20 +101,18 @@ namespace custom  {
 	}
 	
 	static
-	thread_task* get_main_task()
+	void init_tasks_idempotent()
 	{
 		if ( main_task == NULL )
 		{
 			main_task = add_main_task();
 		}
-		
-		return main_task;
 	}
 	
 	static inline
 	thread_task* current_task()
 	{
-		get_main_task();  // Make sure the_current_task is set.
+		init_tasks_idempotent();  // Make sure the_current_task is set.
 		
 		return &*the_current_task;
 	}
@@ -423,7 +421,7 @@ namespace custom  {
 	
 	thread_id create_thread( parameter_block& pb, unsigned stack_size )
 	{
-		get_main_task();  // Make sure the main thread is represented.
+		init_tasks_idempotent();
 		
 		const unsigned long minimum_size = 32768;
 		
