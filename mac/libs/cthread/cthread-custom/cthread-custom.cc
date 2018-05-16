@@ -273,6 +273,8 @@ namespace custom  {
 	
 	thread_id current_thread()
 	{
+		init_tasks_idempotent();
+		
 		return get_thread_id( &*the_current_task );
 	}
 	
