@@ -69,8 +69,6 @@ namespace custom  {
 		machine_state     state;
 	};
 	
-	static thread_task* stale_task;
-	
 	STATIC std::list< thread_task > all_tasks;
 	
 	STATIC std::list< thread_task >::iterator the_current_task;
@@ -115,21 +113,10 @@ namespace custom  {
 		return &*the_current_task;
 	}
 	
-	static
+	static inline
 	void destroy_task( thread_task* task )
 	{
 		::operator delete( task->stack_memory );
-		
-		std::list< thread_task >::iterator it = all_tasks.end();
-		
-		while ( it != all_tasks.begin() )
-		{
-			if ( &*--it == task )
-			{
-				all_tasks.erase( it );
-				return;
-			}
-		}
 	}
 	
 #ifdef __MC68K__
@@ -159,13 +146,6 @@ namespace custom  {
 	static
 	void prepare_task( thread_task* task )
 	{
-		if ( stale_task )
-		{
-			destroy_task( stale_task );
-			
-			stale_task = NULL;
-		}
-		
 	#if __A5__
 		
 		/*
@@ -228,9 +208,24 @@ namespace custom  {
 	static inline
 	thread_task* next_task()
 	{
+	next:
+		
 		if ( ++the_current_task == all_tasks.end() )
 		{
 			the_current_task = all_tasks.begin();
+		}
+		
+		if ( the_current_task->schedule < 0 )
+		{
+			std::list< thread_task >::iterator it = the_current_task;
+			
+			--the_current_task;
+			
+			destroy_task( &*it );
+			
+			all_tasks.erase( it );
+			
+			goto next;
 		}
 		
 		return &*the_current_task;
@@ -387,8 +382,6 @@ namespace custom  {
 		
 		ASSERT( task != next );
 		
-		stale_task = task;
-		
 		suspend_task( Task_ended, task, next );
 	}
 	
@@ -467,7 +460,7 @@ namespace custom  {
 			end_of_task();  // doesn't return
 		}
 		
-		destroy_task( that );
+		that->schedule = Task_ended;
 	}
 	
 }
