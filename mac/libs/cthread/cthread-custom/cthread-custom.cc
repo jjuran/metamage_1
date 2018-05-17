@@ -153,8 +153,10 @@ namespace custom  {
 			which low memory globals need to be zapped to keep QuickDraw happy.
 		*/
 		
-		if ( const void* limit = task->stack_memory )
+		if ( task->pb != NULL )
 		{
+			const void* limit = task->pb->stack_limit;
+			
 			// StkLowPt was already cleared in suspend_task().
 			
 			HeapEnd    = limit;
@@ -296,7 +298,12 @@ namespace custom  {
 	{
 		thread_task* task = current_task();
 		
-		const void* limit = task->stack_memory;
+		if ( ! task->pb )
+		{
+			return 0;
+		}
+		
+		const void* limit = task->pb->stack_limit;
 		const void* point = get_SP();
 		
 		return (char*) point - (char*) limit;  // The stack grows downward.
