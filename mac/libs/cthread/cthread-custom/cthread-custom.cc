@@ -27,19 +27,19 @@
 #define NULL  0
 #endif
 
-void* StkLowPt   AT( 0x110 );
-void* HeapEnd    AT( 0x114 );
-void* ApplLimit  AT( 0x130 );
-void* HiHeapMark AT( 0xBAE );
+const void* StkLowPt   AT( 0x110 );
+const void* HeapEnd    AT( 0x114 );
+const void* ApplLimit  AT( 0x130 );
+const void* HiHeapMark AT( 0xBAE );
 
 
 namespace cthread {
 namespace custom  {
 	
-	static void* saved_StkLowPt;
-	static void* saved_HeapEnd;
-	static void* saved_ApplLimit;
-	static void* saved_HiHeapMark;
+	static const void* saved_StkLowPt;
+	static const void* saved_HeapEnd;
+	static const void* saved_ApplLimit;
+	static const void* saved_HiHeapMark;
 	
 	struct machine_state
 	{
@@ -153,7 +153,7 @@ namespace custom  {
 			which low memory globals need to be zapped to keep QuickDraw happy.
 		*/
 		
-		if ( void* const limit = task->stack_memory )
+		if ( const void* limit = task->stack_memory )
 		{
 			// StkLowPt was already cleared in suspend_task().
 			
@@ -296,8 +296,8 @@ namespace custom  {
 	{
 		thread_task* task = current_task();
 		
-		void* limit = task->stack_memory;
-		void* point = get_SP();
+		const void* limit = task->stack_memory;
+		const void* point = get_SP();
 		
 		return (char*) point - (char*) limit;  // The stack grows downward.
 	}
