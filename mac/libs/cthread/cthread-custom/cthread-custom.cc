@@ -61,7 +61,6 @@ namespace custom  {
 	
 	struct thread_task : queue_element
 	{
-		void*             stack_memory;
 		parameter_block*  pb;
 		switch_proc       switch_in;
 		switch_proc       switch_out;
@@ -112,7 +111,7 @@ namespace custom  {
 	static inline
 	void destroy_task( thread_task* task )
 	{
-		::operator delete( task->stack_memory );
+		::operator delete( task );
 	}
 	
 #ifdef __MC68K__
@@ -422,8 +421,6 @@ namespace custom  {
 		
 		*--sp = &pb;
 		*--sp = (void*) &end_of_task;
-		
-		task.stack_memory = stack;
 		
 		task.pb = &pb;
 		
