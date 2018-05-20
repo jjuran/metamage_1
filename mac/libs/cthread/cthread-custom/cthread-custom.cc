@@ -5,14 +5,14 @@
 
 #include "cthread-custom.hh"
 
-// Standard C++
-#include <list>
-
 // cthread
 #include "cthread/parameter_block.hh"
 
 // debug
 #include "debug/assert.hh"
+
+// cthread-custom
+#include "circular_queue.hh"
 
 
 #ifdef __MC68K__
@@ -27,19 +27,19 @@
 #define NULL  0
 #endif
 
-void* StkLowPt   AT( 0x110 );
-void* HeapEnd    AT( 0x114 );
-void* ApplLimit  AT( 0x130 );
-void* HiHeapMark AT( 0xBAE );
+const void* StkLowPt   AT( 0x110 );
+const void* HeapEnd    AT( 0x114 );
+const void* ApplLimit  AT( 0x130 );
+const void* HiHeapMark AT( 0xBAE );
 
 
 namespace cthread {
 namespace custom  {
 	
-	static void* saved_StkLowPt;
-	static void* saved_HeapEnd;
-	static void* saved_ApplLimit;
-	static void* saved_HiHeapMark;
+	static const void* saved_StkLowPt;
+	static const void* saved_HeapEnd;
+	static const void* saved_ApplLimit;
+	static const void* saved_HiHeapMark;
 	
 	struct machine_state
 	{
@@ -59,9 +59,8 @@ namespace custom  {
 		Task_ended = -1,
 	};
 	
-	struct thread_task
+	struct thread_task : queue_element
 	{
-		void*             stack_memory;
 		parameter_block*  pb;
 		switch_proc       switch_in;
 		switch_proc       switch_out;
@@ -69,11 +68,9 @@ namespace custom  {
 		machine_state     state;
 	};
 	
-	static thread_task* stale_task;
+	STATIC circular_queue task_queue;
 	
-	STATIC std::list< thread_task > all_tasks;
-	
-	STATIC std::list< thread_task >::iterator the_current_task;
+	STATIC thread_task* main_task;
 	
 	static
 	thread_task* add_main_task()
@@ -87,48 +84,34 @@ namespace custom  {
 		
 	#endif
 		
-		thread_task task = { NULL };
+		static thread_task task;
 		
 		task.schedule = Task_running;
 		
-		all_tasks.push_back( task );
+		task_queue.reset( &task );
 		
-		the_current_task = all_tasks.begin();
-		
-		return &*the_current_task;
+		return &task;
 	}
 	
 	static
-	thread_task* get_main_task()
+	void init_tasks_idempotent()
 	{
-		static thread_task* main_task = add_main_task();
-		
-		return main_task;
+		if ( main_task == NULL )
+		{
+			main_task = add_main_task();
+		}
 	}
 	
 	static inline
 	thread_task* current_task()
 	{
-		get_main_task();  // Make sure the_current_task is set.
-		
-		return &*the_current_task;
+		return (thread_task*) task_queue.tail();
 	}
 	
-	static
+	static inline
 	void destroy_task( thread_task* task )
 	{
-		::operator delete( task->stack_memory );
-		
-		std::list< thread_task >::iterator it = all_tasks.end();
-		
-		while ( it != all_tasks.begin() )
-		{
-			if ( &*--it == task )
-			{
-				all_tasks.erase( it );
-				return;
-			}
-		}
+		::operator delete( task );
 	}
 	
 #ifdef __MC68K__
@@ -158,13 +141,6 @@ namespace custom  {
 	static
 	void prepare_task( thread_task* task )
 	{
-		if ( stale_task )
-		{
-			destroy_task( stale_task );
-			
-			stale_task = NULL;
-		}
-		
 	#if __A5__
 		
 		/*
@@ -172,8 +148,10 @@ namespace custom  {
 			which low memory globals need to be zapped to keep QuickDraw happy.
 		*/
 		
-		if ( void* const limit = task->stack_memory )
+		if ( task->pb != NULL )
 		{
+			const void* limit = task->pb->stack_limit;
+			
 			// StkLowPt was already cleared in suspend_task().
 			
 			HeapEnd    = limit;
@@ -192,8 +170,11 @@ namespace custom  {
 	}
 	
 	static
-	void suspend_task( thread_task* a, thread_task* b )
+	void suspend_task( task_schedule suspended, thread_task* a, thread_task* b )
 	{
+		a->schedule = suspended;
+		b->schedule = Task_running;
+		
 		if ( switch_proc f = a->switch_out )
 		{
 			f( a->pb->param );
@@ -222,14 +203,22 @@ namespace custom  {
 	}
 	
 	static inline
+	bool ended( const thread_task* task )
+	{
+		ASSERT( task != NULL );
+		
+		return task->schedule < 0;
+	}
+	
+	static
 	thread_task* next_task()
 	{
-		if ( ++the_current_task == all_tasks.end() )
+		while ( ended( (thread_task*) task_queue.head() ) )
 		{
-			the_current_task = all_tasks.begin();
+			destroy_task( (thread_task*) task_queue.behead() );
 		}
 		
-		return &*the_current_task;
+		return (thread_task*) task_queue.next();
 	}
 	
 	static
@@ -237,23 +226,13 @@ namespace custom  {
 	{
 		while ( next_task()->schedule == Task_stopped )  continue;
 		
-		return &*the_current_task;
+		return current_task();
 	}
 	
 	static
 	void select_next_task( thread_task* task )
 	{
-		typedef std::list< thread_task >::iterator Iter;
-		
-		for ( Iter it = all_tasks.begin();  it != all_tasks.end();  ++it )
-		{
-			if ( &*it == task )
-			{
-				the_current_task = it;
-				
-				return;
-			}
-		}
+		task_queue.select( task );
 	}
 	
 	static inline
@@ -270,7 +249,9 @@ namespace custom  {
 	
 	thread_id current_thread()
 	{
-		return get_thread_id( &*the_current_task );
+		init_tasks_idempotent();
+		
+		return get_thread_id( current_task() );
 	}
 	
 #ifdef __MC68K__
@@ -293,10 +274,15 @@ namespace custom  {
 	
 	unsigned long current_thread_stack_space()
 	{
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		
-		void* limit = task->stack_memory;
-		void* point = get_SP();
+		if ( ! task->pb )
+		{
+			return 0;
+		}
+		
+		const void* limit = task->pb->stack_limit;
+		const void* point = get_SP();
 		
 		return (char*) point - (char*) limit;  // The stack grows downward.
 	}
@@ -310,7 +296,7 @@ namespace custom  {
 	
 	void stop_thread( thread_id id )
 	{
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		thread_task* that = task_from_id( id );
 		
 		if ( that == task )
@@ -324,10 +310,7 @@ namespace custom  {
 				return;  // throw?
 			}
 			
-			that->schedule = Task_stopped;
-			next->schedule = Task_running;
-			
-			suspend_task( task, next );
+			suspend_task( Task_stopped, task, next );
 			
 			return;
 		}
@@ -339,7 +322,7 @@ namespace custom  {
 	{
 		thread_task* that = task_from_id( id );
 		
-		if ( that != &*the_current_task )
+		if ( that != current_task() )
 		{
 			that->schedule = Task_ready;
 		}
@@ -347,15 +330,17 @@ namespace custom  {
 	
 	void thread_yield()
 	{
+		if ( ! main_task )
+		{
+			return;
+		}
+		
 		thread_task* task = current_task();
 		thread_task* next = next_runnable_task();
 		
 		if ( task != next )
 		{
-			task->schedule = Task_sleeping;
-			next->schedule = Task_running;
-			
-			suspend_task( task, next );
+			suspend_task( Task_sleeping, task, next );
 		}
 	}
 	
@@ -368,29 +353,19 @@ namespace custom  {
 		{
 			select_next_task( next );
 			
-			task->schedule = Task_sleeping;
-			next->schedule = Task_running;
-			
-			suspend_task( task, next );
+			suspend_task( Task_sleeping, task, next );
 		}
 	}
 	
 	static
 	void end_of_task()
 	{
-		ASSERT( ! all_tasks.empty() );
-		
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		thread_task* next = next_runnable_task();
 		
 		ASSERT( task != next );
 		
-		task->schedule = Task_ended;
-		next->schedule = Task_running;
-		
-		stale_task = task;
-		
-		suspend_task( task, next );
+		suspend_task( Task_ended, task, next );
 	}
 	
 	static
@@ -398,7 +373,7 @@ namespace custom  {
 	{
 		parameter_block& pb = *(parameter_block*) param;
 		
-		thread_task* task = &*the_current_task;
+		thread_task* task = current_task();
 		
 		prepare_task( task );
 		
@@ -418,7 +393,7 @@ namespace custom  {
 	
 	thread_id create_thread( parameter_block& pb, unsigned stack_size )
 	{
-		get_main_task();  // Make sure the main thread is represented.
+		init_tasks_idempotent();
 		
 		const unsigned long minimum_size = 32768;
 		
@@ -429,6 +404,9 @@ namespace custom  {
 		
 		void* stack = ::operator new( stack_size );
 		
+		thread_task* task_ptr = (thread_task*) stack;
+		thread_task& task     = *task_ptr;
+		
 		void* base = (char*) stack + stack_size;
 		
 		void** fp = (void**) base;
@@ -437,14 +415,17 @@ namespace custom  {
 		*--fp = 0;  // null frame pointer backlink
 		
 		pb.stack_bottom = fp;
-		pb.stack_limit  = stack;  // Leave room for a header?
+		pb.stack_limit  = task_ptr + 1;  // Leave room for a header?
 		
 		void** sp = fp;
 		
 		*--sp = &pb;
 		*--sp = (void*) &end_of_task;
 		
-		thread_task task = { stack, &pb, pb.switch_in, pb.switch_out };
+		task.pb = &pb;
+		
+		task.switch_in  = pb.switch_in;
+		task.switch_out = pb.switch_out;
 		
 		task.schedule = Task_sleeping;
 		
@@ -452,26 +433,23 @@ namespace custom  {
 		task.state.a6 = fp;
 		task.state.a7 = sp;
 		
-		all_tasks.push_back( task );
+		task_queue.prepend( &task );
 		
-		return (thread_id) &all_tasks.back();
+		return (thread_id) &task;
 	}
 	
 	void destroy_thread( thread_id id )
 	{
-		ASSERT( ! all_tasks.empty() );
-		
 		thread_task* that = task_from_id( id );
-		thread_task* main = &all_tasks.front();
 		
-		ASSERT( that != main );
+		ASSERT( that != main_task );
 		
-		if ( that == &*the_current_task )
+		if ( that == current_task() )
 		{
 			end_of_task();  // doesn't return
 		}
 		
-		destroy_task( that );
+		that->schedule = Task_ended;
 	}
 	
 }
