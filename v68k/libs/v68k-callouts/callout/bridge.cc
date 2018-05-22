@@ -20,6 +20,9 @@
 // must
 #include "must/write.h"
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // v68k
 #include "v68k/endian.hh"
 
@@ -354,6 +357,8 @@ int32_t alloc_callout( v68k::processor_state& s )
 	if ( addr == 0 )
 	{
 		err = memFullErr;
+		
+		WARNING = "Memory exhaustion: ", size, "-byte allocation failed";
 	}
 	
 	s.d(0) = err;
