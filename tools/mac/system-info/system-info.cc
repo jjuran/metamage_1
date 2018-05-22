@@ -34,6 +34,9 @@
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
+// Pascal string and entire length, including length byte
+#define PSTR_LEN( s )  "\p" s, (sizeof s)
+
 
 using mac::sys::gestalt;
 using mac::sys::gestalt_defined;
@@ -336,11 +339,7 @@ bool in_BasiliskII()
 			continue;
 		}
 		
-		const bool undotted = name[ 1 ] != '.';
-		
-		const int cmp = memcmp( ".Display_Video_Apple_Basilisk",
-		                        name + 1,
-		                        name[ 0 ] );
+		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_Apple_Basilisk" ) );
 		
 		if ( cmp == 0 )
 		{
