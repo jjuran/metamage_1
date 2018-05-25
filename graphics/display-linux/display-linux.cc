@@ -56,12 +56,14 @@ typedef uint32_t bilevel_pixel_t;
 
 enum
 {
-	Opt_watch = 'w',
+	Opt_watch   = 'w',
+	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
 };
 
 static command::option options[] =
 {
-	{ "watch", Opt_watch },
+	{ "magnify", Opt_magnify, command::Param_required },
+	{ "watch",   Opt_watch },
 	{ NULL }
 };
 

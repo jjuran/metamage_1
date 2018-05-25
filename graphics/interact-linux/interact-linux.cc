@@ -40,7 +40,8 @@
 
 enum
 {
-	Opt_title = 't',
+	Opt_title   = 't',
+	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
 	
 	Opt_last_byte = 255,
 	
@@ -49,8 +50,9 @@ enum
 
 static command::option options[] =
 {
-	{ "raster", Opt_raster, command::Param_required },
-	{ "title",  Opt_title,  command::Param_required },
+	{ "magnify", Opt_magnify, command::Param_required },
+	{ "raster",  Opt_raster,  command::Param_required },
+	{ "title",   Opt_title,   command::Param_required },
 	{ NULL }
 };
 
