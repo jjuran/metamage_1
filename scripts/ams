@@ -18,7 +18,6 @@ QD=ams-qd
 UI=ams-ui
 
 test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
-raster init $SCREEN
 
 if [ -e /dev/fb0 ]; then
 	if [ ! -r /dev/input/mice ]; then
@@ -29,7 +28,7 @@ if [ -e /dev/fb0 ]; then
 	fi
 fi
 
-interact $RASTER -t "Advanced Mac Substitute" | \
+exhibit $RASTER -t "Advanced Mac Substitute" \
 graft \
 	freemountd -q --root ~/68k // \
 	xv68k -SP $RASTER -m$CORE -m$RSRC -m$PACK -m$QD -m$UI ~/68k/app $AppName
