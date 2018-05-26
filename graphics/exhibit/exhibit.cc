@@ -231,6 +231,22 @@ void launch_interactive( char* const* args )
 		exec_or_exit_endpoint( argv, socket_fds[ 1 ], socket_fds[ 0 ] );
 	}
 	
+	char ready;
+	ssize_t n = read( socket_fds[ 0 ], &ready, 1 );
+	
+	if ( n < 0 )
+	{
+		report_error( "waiting for interactive viewer", errno );
+		exit( 1 );
+	}
+	
+	if ( n == 0  ||  ready != '\0' )
+	{
+		// Interactive didn't send ready byte.
+		WARN( "interactive viewer not ready" );
+		exit( 1 );
+	}
+	
 	author_pid = fork();
 	
 	if ( author_pid < 0 )
