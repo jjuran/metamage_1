@@ -221,6 +221,13 @@ void launch_subprocesses( char* const* args )
 	}
 	
 	/*
+		Send a NUL byte.  This may be intercepted by exhibit to indicate
+		readiness, or passed on to the raster author as a null SPIEL message.
+	*/
+	
+	write( STDOUT_FILENO, "", 1 );
+	
+	/*
 		Now that mouse input is set up, close the I/O channel so we retain no
 		references to the pipe/socket that the interactive is reading from.
 		That way, if the spiel-mouse process is killed, read() will return 0
