@@ -9,9 +9,6 @@
 #ifndef __EVENTS__
 #include <Events.h>
 #endif
-#ifndef __PROCESSES__
-#include <Processes.h>
-#endif
 
 // POSIX
 #include <unistd.h>
@@ -26,6 +23,9 @@
 // ams-core
 #include "cursor-core.hh"
 #include "options.hh"
+
+
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 Byte   MBState : 0x0172;
@@ -243,7 +243,9 @@ void queue_event( int fd )
 	
 	if ( 1 + len != n_read )
 	{
-		ExitToShell();
+		write( STDERR_FILENO, STR_LEN( "ams-core: SPIEL protocol error\n" ) );
+		
+		_exit( 1 );
 	}
 	
 	switch ( len )
