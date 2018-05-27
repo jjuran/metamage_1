@@ -3,8 +3,8 @@
 	----------
 */
 
-// ams-core
+// ams-seg
 #include "options.hh"
 
 
-int events_fd;
+bool linger_on_exit;

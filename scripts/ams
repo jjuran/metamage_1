@@ -14,12 +14,15 @@ RASTER="--raster=$SCREEN"
 CORE=ams-core
 RSRC=ams-rsrc
 PACK=ams-pack
+SEG=ams-seg
 QD=ams-qd
 UI=ams-ui
+
+APP=~/68k/app
 
 test -f $SCREEN || raster make -g 512x342*1 -m paint -R $SCREEN
 
 exhibit $RASTER -t "Advanced Mac Substitute" \
 graft \
 	freemountd -q --root ~/68k // \
-	xv68k -SP $RASTER -m$CORE -m$RSRC -m$PACK -m$QD -m$UI ~/68k/app $AppName
+	xv68k -SP $RASTER -m$CORE -m$RSRC -m$SEG -m$PACK -m$QD -m$UI $APP $AppName

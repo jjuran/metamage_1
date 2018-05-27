@@ -35,7 +35,6 @@
 #include "OSUtils.hh"
 #include "Patches.hh"
 #include "Pointers.hh"
-#include "Segments.hh"
 #include "SysError.hh"
 #include "cursor-core.hh"
 #include "interrupts.hh"
@@ -201,13 +200,6 @@ static void install_DeskManager()
 	TBTRAP( SystemTask );  // A9B4
 }
 
-static void install_SegmentLoader()
-{
-	TBTRAP( LoadSeg     );  // A9F0
-	TBTRAP( Launch      );  // A9F2
-	TBTRAP( ExitToShell );  // A9F4
-}
-
 static void install_Debugger()
 {
 	TBTRAP( Debugger );  // A9FF
@@ -231,10 +223,6 @@ static char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
-			case Opt_linger:
-				linger_on_exit = true;
-				break;
-			
 			case Opt_events_fd:
 				events_fd = gear::parse_unsigned_decimal( global_result.param );
 				break;
@@ -278,8 +266,6 @@ int main( int argc, char** argv )
 	install_EventManager();
 	
 	install_DeskManager();
-	
-	install_SegmentLoader();
 	
 	install_Debugger();
 	

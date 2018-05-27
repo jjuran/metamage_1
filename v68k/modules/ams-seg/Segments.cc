@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// ams-core
+// ams-seg
 #include "options.hh"
 
 

@@ -6,6 +6,6 @@
 #ifndef OPTIONS_HH
 #define OPTIONS_HH
 
-extern int events_fd;
+extern bool linger_on_exit;
 
 #endif
