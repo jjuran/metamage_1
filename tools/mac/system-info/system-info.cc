@@ -125,18 +125,27 @@ void host_env()
 		memcpy( machine_name, mnam + 1, mnam[ 0 ] );
 	}
 	
-	uint8_t sys1 = gestalt( 'sys1' );
+	uint8_t sys1;
 	uint8_t sys2;
 	uint8_t sys3;
 	
-	if ( sys1 )
+	if ( sysv >= 0x1049 )
 	{
+		sys1 = gestalt( 'sys1' );
 		sys2 = gestalt( 'sys2' );
 		sys3 = gestalt( 'sys3' );
 	}
 	else
 	{
-		sys1 = (sysv >> 8) & 0xF;
+		if ( sysv >= 0x1000 )
+		{
+			sys1 = 10;
+		}
+		else
+		{
+			sys1 = (sysv >> 8) & 0xF;
+		}
+		
 		sys2 = (sysv >> 4) & 0xF;
 		sys3 = (sysv >> 0) & 0xF;
 	}
