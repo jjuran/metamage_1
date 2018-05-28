@@ -158,7 +158,7 @@ void host_env()
 	gear::inscribe_unsigned_decimal_r( sys2, b );
 	gear::inscribe_unsigned_decimal_r( sys3, c );
 	
-	const char* os_name = sysv < 0x0800 ? "Macintosh System"
+	const char* os_name = sysv < 0x0760 ? "Macintosh System"
 	                    : sysv < 0x1000 ? "Mac OS"
 	                    : sysv < 0x1080 ? "Mac OS X"
 	                    : sys2 <     12 ? "OS X"
