@@ -10,7 +10,8 @@ asm int syscall( int number, ... )
 	MOVE.L   4(SP), D0    // copy system call number to d0
 	MOVE.L   (SP)+, (SP)  // overwrite it with the return address, and pop
 	
-	TRAP  #2
+	MOVEA.L  global_dispatcher,A0
+	JMP      (A0)
 }
 
 #define DEFINE_SYSCALL_7F( name )    \
@@ -18,7 +19,8 @@ asm int syscall( int number, ... )
 	asm void name()                  \
 	{                                \
 		MOVEQ.L  #__NR_##name,D0  ;  \
-		TRAP     #2               ;  \
+		MOVEA.L  global_dispatcher,A0  ;  \
+		JMP      (A0)                  ;  \
 	}
 
 #define DEFINE_SYSCALL( name )       \
@@ -26,7 +28,8 @@ asm int syscall( int number, ... )
 	asm void name()                  \
 	{                                \
 		MOVE.W   #__NR_##name,D0  ;  \
-		TRAP     #2               ;  \
+		MOVEA.L  global_dispatcher,A0  ;  \
+		JMP      (A0)                  ;  \
 	}
 
 #else
