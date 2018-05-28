@@ -43,11 +43,7 @@ extern void exit( int );
 
 void _relix_main( int argc, char** argv, char** envp, _relix_system_parameter_block* pb )
 {
-#ifndef __MC68K__
-	
 	_set_dispatcher( pb->dispatcher );
-	
-#endif
 	
 	environ = envp;
 	
