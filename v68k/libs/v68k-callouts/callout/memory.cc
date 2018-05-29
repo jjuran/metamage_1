@@ -3,18 +3,18 @@
 	---------
 */
 
-// v68k-callbacks
-#include "callback/bridge.hh"
-#include "callback/memory.hh"
+// v68k-callouts
+#include "callout/bridge.hh"
+#include "callout/memory.hh"
 
 
 #pragma exceptions off
 
 
-namespace v68k     {
-namespace callback {
+namespace v68k    {
+namespace callout {
 
-static uint8_t callback_trap[] = { 0x48, 0x4B, 0x48, 0x4B, 0x48 };  // BKPT #3 (2.5x)
+static uint8_t callout_trap[] = { 0x48, 0x4B, 0x48, 0x4B, 0x48 };  // BKPT #3 (2.5x)
 
 
 uint8_t* memory::translate( uint32_t               addr,
@@ -24,28 +24,28 @@ uint8_t* memory::translate( uint32_t               addr,
 {
 	if ( access >= v68k::mem_write )
 	{
-		// Callback memory is read-only
+		// Callout memory is read-only
 		
 		return 0;  // NULL
 	}
 	
 	/*
-		Callback addresses occupy high memory.  Multiply the callback number by
+		Callout addresses occupy high memory.  Multiply the callout number by
 		the size of the BKPT instruction to get the distance from the end of
 		memory.  Subtract this from 0 and cast to uint32_t to get the address.
 	*/
 	
-	const uint32_t first_callback_addr = uint32_t( 0 - n * sizeof (uint16_t) );
+	const uint32_t first_callout_addr = uint32_t( 0 - n * sizeof (uint16_t) );
 	
-	if ( addr < first_callback_addr )
+	if ( addr < first_callout_addr )
 	{
 		// address out of bounds
 		
 		return 0;  // NULL
 	}
 	
-	return callback_trap + (addr & 1);
+	return callout_trap + (addr & 1);
 }
 
-}  // namespace callback
+}  // namespace callout
 }  // namespace v68k

@@ -3,7 +3,7 @@
 	---------
 */
 
-#include "callback/bridge.hh"
+#include "callout/bridge.hh"
 
 // POSIX
 #include <fcntl.h>
@@ -47,8 +47,8 @@
 #define WRITE_ERR( msg )  must_write( STDERR_FILENO, STR_LEN( ERR_MSG( msg ) ) )
 
 
-namespace v68k     {
-namespace callback {
+namespace v68k    {
+namespace callout {
 
 using v68k::auth::fully_authorized;
 using v68k::auth::supervisor_mode_switch_allowed;
@@ -74,7 +74,8 @@ static void dump_and_raise( const v68k::processor_state& s, int signo )
 	raise( signo );
 }
 
-static uint32_t unimplemented_callback( v68k::processor_state& s )
+static
+uint32_t unimplemented_callout( v68k::processor_state& s )
 {
 	abort();
 	
@@ -82,12 +83,14 @@ static uint32_t unimplemented_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t no_op_callback( v68k::processor_state& s )
+static
+uint32_t no_op_callout( v68k::processor_state& s )
 {
 	return rts;
 }
 
-static uint32_t load_callback( v68k::processor_state& s )
+static
+uint32_t load_callout( v68k::processor_state& s )
 {
 	const uint32_t path_addr = s.a(0);
 	const uint32_t path_size = s.d(0);  // includes trailing NUL
@@ -147,7 +150,8 @@ static uint32_t load_callback( v68k::processor_state& s )
 	return rts;
 }
 
-static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
+static
+uint32_t enter_supervisor_mode_callout( v68k::processor_state& s )
 {
 	const uint16_t old_SR = s.get_SR();
 	const uint16_t new_SR = old_SR | 0x2000;
@@ -192,14 +196,16 @@ static uint32_t enter_supervisor_mode_callback( v68k::processor_state& s )
 	return rts;
 }
 
-static uint32_t module_suspend_callback( v68k::processor_state& s )
+static
+uint32_t module_suspend_callout( v68k::processor_state& s )
 {
 	s.condition = startup;
 	
 	return rts;
 }
 
-static uint32_t set_trace_mode_callback( v68k::processor_state& s )
+static
+uint32_t set_trace_mode_callout( v68k::processor_state& s )
 {
 	s.sr.ttsm = (s.sr.ttsm & 0x3) | (uint8_t( s.pc() ) << 1 & 0xC);
 	
@@ -207,7 +213,7 @@ static uint32_t set_trace_mode_callback( v68k::processor_state& s )
 }
 
 static
-uint32_t ScrnBitMap_callback( v68k::processor_state& s )
+uint32_t ScrnBitMap_callout( v68k::processor_state& s )
 {
 	uint32_t& sp = s.a(7);
 	
@@ -272,7 +278,7 @@ uint32_t ScrnBitMap_callback( v68k::processor_state& s )
 }
 
 static
-uint32_t lock_screen_callback( v68k::processor_state& s )
+uint32_t lock_screen_callout( v68k::processor_state& s )
 {
 	--lock_level;
 	
@@ -280,7 +286,7 @@ uint32_t lock_screen_callback( v68k::processor_state& s )
 }
 
 static
-uint32_t unlock_screen_callback( v68k::processor_state& s )
+uint32_t unlock_screen_callout( v68k::processor_state& s )
 {
 	if ( ++lock_level == 0 )
 	{
@@ -300,7 +306,8 @@ static char hex[] =
 
 #define UNIMPLEMENTED_TRAP_PREFIX  "v68k: exception: Unimplemented Mac trap: "
 
-static uint32_t unimplemented_trap_callback( v68k::processor_state& s )
+static
+uint32_t unimplemented_trap_callout( v68k::processor_state& s )
 {
 	static char buffer[] = UNIMPLEMENTED_TRAP_PREFIX "A123\n";
 	
@@ -327,7 +334,7 @@ enum
 };
 
 static
-uint32_t alloc_callback( v68k::processor_state& s )
+uint32_t alloc_callout( v68k::processor_state& s )
 {
 	int32_t err = noErr;
 	
@@ -348,7 +355,7 @@ uint32_t alloc_callback( v68k::processor_state& s )
 }
 
 static
-uint32_t dealloc_callback( v68k::processor_state& s )
+uint32_t dealloc_callout( v68k::processor_state& s )
 {
 	const uint32_t addr = s.a(0);
 	
@@ -359,7 +366,8 @@ uint32_t dealloc_callback( v68k::processor_state& s )
 	return rts;
 }
 
-static uint32_t BlockMove_callback( v68k::processor_state& s )
+static
+uint32_t BlockMove_callout( v68k::processor_state& s )
 {
 	const uint32_t src = s.a(0);
 	const uint32_t dst = s.a(1);
@@ -391,7 +399,8 @@ static uint32_t BlockMove_callback( v68k::processor_state& s )
 
 #define OSTYPE(a, b, c, d)  ((a) << 24 | (b) << 16 | (c) << 8 | (d))
 
-static uint32_t Gestalt_callback( v68k::processor_state& s )
+static
+uint32_t Gestalt_callout( v68k::processor_state& s )
 {
 	const int32_t gestaltUndefSelectorErr = -5551;
 	
@@ -422,7 +431,8 @@ static uint32_t Gestalt_callback( v68k::processor_state& s )
 }
 
 
-static uint32_t bus_error_callback( v68k::processor_state& s )
+static
+uint32_t bus_error_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Bus Error" );
 	
@@ -431,7 +441,8 @@ static uint32_t bus_error_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t address_error_callback( v68k::processor_state& s )
+static
+uint32_t address_error_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Address Error" );
 	
@@ -440,7 +451,8 @@ static uint32_t address_error_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t illegal_instruction_callback( v68k::processor_state& s )
+static
+uint32_t illegal_instruction_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Illegal Instruction" );
 	
@@ -449,7 +461,8 @@ static uint32_t illegal_instruction_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t division_by_zero_callback( v68k::processor_state& s )
+static
+uint32_t division_by_zero_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Division By Zero" );
 	
@@ -458,7 +471,8 @@ static uint32_t division_by_zero_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t chk_trap_callback( v68k::processor_state& s )
+static
+uint32_t chk_trap_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "CHK range exceeded" );
 	
@@ -467,7 +481,8 @@ static uint32_t chk_trap_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t trapv_trap_callback( v68k::processor_state& s )
+static
+uint32_t trapv_trap_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "TRAPV on overflow" );
 	
@@ -476,7 +491,8 @@ static uint32_t trapv_trap_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t privilege_violation_callback( v68k::processor_state& s )
+static
+uint32_t privilege_violation_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Privilege Violation" );
 	
@@ -485,7 +501,8 @@ static uint32_t privilege_violation_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t trace_exception_callback( v68k::processor_state& s )
+static
+uint32_t trace_exception_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Trace Exception" );
 	
@@ -494,7 +511,8 @@ static uint32_t trace_exception_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t line_A_emulator_callback( v68k::processor_state& s )
+static
+uint32_t line_A_emulator_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line A Emulator" );
 	
@@ -503,7 +521,8 @@ static uint32_t line_A_emulator_callback( v68k::processor_state& s )
 	return nil;
 }
 
-static uint32_t line_F_emulator_callback( v68k::processor_state& s )
+static
+uint32_t line_F_emulator_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line F Emulator" );
 	
@@ -520,7 +539,8 @@ static uint32_t line_F_emulator_callback( v68k::processor_state& s )
 #define SIGFMT SIGSTKFLT
 #endif
 
-static uint32_t format_error_callback( v68k::processor_state& s )
+static
+uint32_t format_error_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Format Error" );
 	
@@ -530,42 +550,42 @@ static uint32_t format_error_callback( v68k::processor_state& s )
 }
 
 
-static const function_type the_callbacks[] =
+static const function_type the_callouts[] =
 {
-	&no_op_callback,
-	&load_callback,
-	&enter_supervisor_mode_callback,
-	&module_suspend_callback,
+	&no_op_callout,
+	&load_callout,
+	&enter_supervisor_mode_callout,
+	&module_suspend_callout,
 	
-	&set_trace_mode_callback,
-	&set_trace_mode_callback,
-	&set_trace_mode_callback,
-	&set_trace_mode_callback,
+	&set_trace_mode_callout,
+	&set_trace_mode_callout,
+	&set_trace_mode_callout,
+	&set_trace_mode_callout,
 	
-	&ScrnBitMap_callback,
-	&lock_screen_callback,
-	&unlock_screen_callback,
+	&ScrnBitMap_callout,
+	&lock_screen_callout,
+	&unlock_screen_callout,
 	NULL,
 	
-	&alloc_callback,
-	&dealloc_callback,
+	&alloc_callout,
+	&dealloc_callout,
 	
-	&bus_error_callback,
-	&address_error_callback,
-	&illegal_instruction_callback,
-	&division_by_zero_callback,
-	&chk_trap_callback,
-	&trapv_trap_callback,
-	&privilege_violation_callback,
-	&trace_exception_callback,
-	&line_A_emulator_callback,
-	&line_F_emulator_callback,
-	&format_error_callback,
+	&bus_error_callout,
+	&address_error_callout,
+	&illegal_instruction_callout,
+	&division_by_zero_callout,
+	&chk_trap_callout,
+	&trapv_trap_callout,
+	&privilege_violation_callout,
+	&trace_exception_callout,
+	&line_A_emulator_callout,
+	&line_F_emulator_callout,
+	&format_error_callout,
 	
-	&unimplemented_trap_callback,
-	&BlockMove_callback,
-	&Gestalt_callback,
-	&unimplemented_callback
+	&unimplemented_trap_callout,
+	&BlockMove_callout,
+	&Gestalt_callout,
+	&unimplemented_callout
 };
 
 
@@ -575,11 +595,11 @@ uint32_t bridge( v68k::processor_state& s )
 	
 	const uint32_t call_number = pc / -2 - 1;
 	
-	const size_t n_callbacks = sizeof the_callbacks / sizeof the_callbacks[0];
+	const size_t n_callouts = sizeof the_callouts / sizeof the_callouts[0];
 	
-	if ( call_number < n_callbacks )
+	if ( call_number < n_callouts )
 	{
-		const function_type f = the_callbacks[ call_number ];
+		const function_type f = the_callouts[ call_number ];
 		
 		if ( f != NULL )
 		{
@@ -590,5 +610,5 @@ uint32_t bridge( v68k::processor_state& s )
 	return nil;
 }
 
-}  // namespace callback
+}  // namespace callout
 }  // namespace v68k

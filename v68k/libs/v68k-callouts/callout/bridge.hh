@@ -3,15 +3,15 @@
 	---------
 */
 
-#ifndef CALLBACK_BRIDGE_HH
-#define CALLBACK_BRIDGE_HH
+#ifndef CALLOUT_BRIDGE_HH
+#define CALLOUT_BRIDGE_HH
 
 // v68k
 #include "v68k/state.hh"
 
 
-namespace v68k     {
-namespace callback {
+namespace v68k    {
+namespace callout {
 
 enum
 {
@@ -52,14 +52,14 @@ enum
 	n
 };
 
-inline uint32_t callback_address( int index )
+inline uint32_t callout_address( int index )
 {
 	return uint32_t( (index + 1) * -2 );
 }
 
 uint32_t bridge( v68k::processor_state& emu );
 
-}  // namespace callback
+}  // namespace callout
 }  // namespace v68k
 
 

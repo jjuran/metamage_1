@@ -35,8 +35,8 @@
 // v68k-user
 #include "v68k-user/load.hh"
 
-// v68k-callbacks
-#include "callback/bridge.hh"
+// v68k-callouts
+#include "callout/bridge.hh"
 
 // v68k-utils
 #include "utils/load.hh"
@@ -350,46 +350,46 @@ void load_vectors( v68k::user::os_load_spec& os )
 	
 	install_exception_handler( os,  1, HANDLER( loader_code ) );
 	
-	using namespace v68k::callback;
+	using namespace v68k::callout;
 	
-	vectors[ 2] = big_longword( callback_address( bus_error           ) );
-	vectors[ 3] = big_longword( callback_address( address_error       ) );
-	vectors[ 4] = big_longword( callback_address( illegal_instruction ) );
-	vectors[ 5] = big_longword( callback_address( division_by_zero    ) );
-	vectors[ 6] = big_longword( callback_address( chk_trap            ) );
-	vectors[ 7] = big_longword( callback_address( trapv_trap          ) );
-	vectors[ 8] = big_longword( callback_address( privilege_violation ) );
-	vectors[ 9] = big_longword( callback_address( trace_exception     ) );
-	vectors[11] = big_longword( callback_address( line_F_emulator     ) );
-	vectors[14] = big_longword( callback_address( format_error        ) );
+	vectors[ 2] = big_longword( callout_address( bus_error           ) );
+	vectors[ 3] = big_longword( callout_address( address_error       ) );
+	vectors[ 4] = big_longword( callout_address( illegal_instruction ) );
+	vectors[ 5] = big_longword( callout_address( division_by_zero    ) );
+	vectors[ 6] = big_longword( callout_address( chk_trap            ) );
+	vectors[ 7] = big_longword( callout_address( trapv_trap          ) );
+	vectors[ 8] = big_longword( callout_address( privilege_violation ) );
+	vectors[ 9] = big_longword( callout_address( trace_exception     ) );
+	vectors[11] = big_longword( callout_address( line_F_emulator     ) );
+	vectors[14] = big_longword( callout_address( format_error        ) );
 }
 
 static
 void load_Mac_traps( uint8_t* mem )
 {
-	using namespace v68k::callback;
+	using namespace v68k::callout;
 	
 	uint32_t* os_traps = (uint32_t*) &mem[ os_trap_table_address ];
 	uint32_t* tb_traps = (uint32_t*) &mem[ tb_trap_table_address ];
 	
-	const uint32_t unimplemented = callback_address( unimplemented_trap );
+	const uint32_t unimplemented = callout_address( unimplemented_trap );
 	
 	init_trap_table( os_traps, os_traps + os_trap_count, unimplemented );
 	init_trap_table( tb_traps, tb_traps + tb_trap_count, unimplemented );
 	
-	os_traps[ 0x1E ] = big_longword( callback_address( alloc           ) );
-	os_traps[ 0x1F ] = big_longword( callback_address( dealloc         ) );
-	os_traps[ 0x2E ] = big_longword( callback_address( BlockMove_trap  ) );
-	os_traps[ 0xAD ] = big_longword( callback_address( Gestalt_trap    ) );
+	os_traps[ 0x1E ] = big_longword( callout_address( alloc           ) );
+	os_traps[ 0x1F ] = big_longword( callout_address( dealloc         ) );
+	os_traps[ 0x2E ] = big_longword( callout_address( BlockMove_trap  ) );
+	os_traps[ 0xAD ] = big_longword( callout_address( Gestalt_trap    ) );
 	
-	const uint32_t big_no_op = big_longword( callback_address( no_op ) );
+	const uint32_t big_no_op = big_longword( callout_address( no_op ) );
 	
 	os_traps[ 0x46 ] = big_no_op;  // GetTrapAddress
 	os_traps[ 0x47 ] = big_no_op;  // SetTrapAddress
 	os_traps[ 0x55 ] = big_no_op;  // StripAddress
 	os_traps[ 0x98 ] = big_no_op;  // HWPriv
 	
-	tb_traps[ 0x33 ] = big_longword( callback_address( ScrnBitMap_trap ) );
+	tb_traps[ 0x33 ] = big_longword( callout_address( ScrnBitMap_trap ) );
 }
 
 static
@@ -497,7 +497,7 @@ v68k::op_result bkpt_2( v68k::processor_state& s )
 static
 v68k::op_result bkpt_3( v68k::processor_state& s )
 {
-	if ( uint32_t new_opcode = v68k::callback::bridge( s ) )
+	if ( uint32_t new_opcode = v68k::callout::bridge( s ) )
 	{
 		s.acknowledge_breakpoint( new_opcode );
 	}

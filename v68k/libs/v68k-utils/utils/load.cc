@@ -48,7 +48,7 @@ loop:
 	MOVE.L   A1,D0    ;  // d0 = a1;
 	// LEAVE strlen0
 	
-	JSR  0xFFFFFFFC   ;  // the actual load callback
+	JSR  0xFFFFFFFC   ;  // the actual load callout
 	
 	MOVE.L   A0,D2    ;  // if ( *a0 != NULL ) ;
 	BNE.S    no_errno ;  // else

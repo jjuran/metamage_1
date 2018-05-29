@@ -54,5 +54,5 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return its_alloc_mem.translate( addr, length, fc, access );
 	}
 	
-	return its_callback_memory.translate( addr, length, fc, access );
+	return its_callout_memory.translate( addr, length, fc, access );
 }

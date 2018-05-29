@@ -3,15 +3,15 @@
 	---------
 */
 
-#ifndef CALLBACKMEMORY_HH
-#define CALLBACKMEMORY_HH
+#ifndef CALLOUTMEMORY_HH
+#define CALLOUTMEMORY_HH
 
 // v68k
 #include "v68k/memory.hh"
 
 
-namespace v68k     {
-namespace callback {
+namespace v68k    {
+namespace callout {
 
 class memory : public v68k::memory
 {
@@ -22,8 +22,8 @@ class memory : public v68k::memory
 		                    v68k::memory_access_t  access ) const;
 };
 
+}  // namespace callout
 }  // namespace v68k
-}  // namespace callback
 
 
 #endif
