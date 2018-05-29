@@ -1,22 +1,8 @@
 /*
-	syscalls.ppc.c
-	--------------
+	syscalls.ppc.c.h
+	----------------
 */
 
-
-extern int syscall( int number, ... );
-
-static void* global_dispatcher;
-
-extern void _set_dispatcher( void* address );
-
-void _set_dispatcher( void* address )
-{
-	global_dispatcher = address;
-}
-
-#ifdef __POWERPC__
-	
 	extern void __ptr_glue();
 	
 	static asm void _ppc_system_call()
@@ -55,9 +41,3 @@ void _set_dispatcher( void* address )
 		}
 	
 	#define DEFINE_SYSCALL_7F( name )  DEFINE_SYSCALL( name )
-	
-	
-	// syscalls
-	#include "define_syscalls.h"
-	
-#endif

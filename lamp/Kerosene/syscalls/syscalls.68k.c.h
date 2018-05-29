@@ -1,13 +1,8 @@
 /*
-	syscalls.68k.c
-	--------------
+	syscalls.68k.c.h
+	----------------
 */
 
-
-extern int syscall( int number, ... );
-
-#if defined( __MC68K__ )  ||  defined( __SC__ )
-	
 #ifdef __MWERKS__
 	
 	asm int syscall( int number, ... )
@@ -51,10 +46,4 @@ extern int syscall( int number, ... );
 			     0x4e42 );             \
 		}
 
-#endif
-	
-	
-	// syscalls
-	#include "define_syscalls.h"
-	
 #endif
