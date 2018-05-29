@@ -14,20 +14,20 @@ asm int syscall( int number, ... )
 	JMP      (A0)
 }
 
-#define DEFINE_SYSCALL_7F( name )    \
-	extern void name();              \
-	asm void name()                  \
-	{                                \
-		MOVEQ.L  #__NR_##name,D0  ;  \
+#define DEFINE_SYSCALL_7F( name )         \
+	extern void name();                   \
+	asm void name()                       \
+	{                                     \
+		MOVEQ.L  #__NR_##name,D0       ;  \
 		MOVEA.L  global_dispatcher,A0  ;  \
 		JMP      (A0)                  ;  \
 	}
 
-#define DEFINE_SYSCALL( name )       \
-	extern void name();              \
-	asm void name()                  \
-	{                                \
-		MOVE.W   #__NR_##name,D0  ;  \
+#define DEFINE_SYSCALL( name )            \
+	extern void name();                   \
+	asm void name()                       \
+	{                                     \
+		MOVE.W   #__NR_##name,D0       ;  \
 		MOVEA.L  global_dispatcher,A0  ;  \
 		JMP      (A0)                  ;  \
 	}
