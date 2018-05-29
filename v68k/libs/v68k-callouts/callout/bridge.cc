@@ -30,6 +30,9 @@
 #include "screen/surface.hh"
 #include "screen/update.hh"
 
+// v68k-syscalls
+#include "syscall/bridge.hh"
+
 // v68k-utils
 #include "utils/load.hh"
 #include "utils/print_register_dump.hh"
@@ -367,6 +370,29 @@ uint32_t dealloc_callout( v68k::processor_state& s )
 }
 
 static
+uint32_t system_call_callout( v68k::processor_state& s )
+{
+	op_result result = bridge_call( s );
+	
+	if ( result >= 0 )
+	{
+		return rts;
+	}
+	else if ( result == Illegal_instruction )
+	{
+		// FIXME:  Report call number
+		
+		//const uint16_t call_number = s.d(0);
+		
+		const char* msg = "Unimplemented system call\n";
+		
+		write( STDERR_FILENO, msg, strlen( msg ) );
+	}
+	
+	return nil;
+}
+
+static
 uint32_t BlockMove_callout( v68k::processor_state& s )
 {
 	const uint32_t src = s.a(0);
@@ -569,6 +595,8 @@ static const function_type the_callouts[] =
 	
 	&alloc_callout,
 	&dealloc_callout,
+	
+	&system_call_callout,
 	
 	&bus_error_callout,
 	&address_error_callout,

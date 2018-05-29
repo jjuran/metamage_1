@@ -33,6 +33,8 @@ enum
 	alloc,
 	dealloc,
 	
+	system_call,
+	
 	bus_error,
 	address_error,
 	illegal_instruction,
