@@ -6,7 +6,7 @@
 #include "syscall/handler.hh"
 
 
-const uint16_t system_call[ system_call_word_count ] =
+const uint16_t syscall_patch_handler[ syscall_patch_handler_word_count ] =
 {
 	0x41EF,  // LEA  (2,A7),A0
 	0x0002,

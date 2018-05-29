@@ -341,8 +341,7 @@ void load_vectors( v68k::user::os_load_spec& os )
 	using v68k::mac::trap_dispatcher;
 	
 	install_exception_handler( os, 10, HANDLER( trap_dispatcher ) );
-	install_exception_handler( os, 32 + 0, HANDLER( system_call ) );
-	install_exception_handler( os, 32 + 2, HANDLER( system_call ) );
+	install_exception_handler( os, 32 + 2, HANDLER( syscall_patch_handler ) );
 	
 	install_exception_handler( os, 64, HANDLER( no_op_exception ) );
 	

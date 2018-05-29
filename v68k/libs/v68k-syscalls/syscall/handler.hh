@@ -10,9 +10,9 @@
 #include <stdint.h>
 
 
-const int system_call_word_count = 7;
+const int syscall_patch_handler_word_count = 7;
 
-extern const uint16_t system_call[ system_call_word_count ];
+extern const uint16_t syscall_patch_handler[ syscall_patch_handler_word_count ];
 
 
 #endif
