@@ -59,9 +59,11 @@ OSStatus AESendBlocking( const AppleEvent* appleEventPtr, AppleEvent* replyPtr )
 		// Subscribe to AEFramework's queued reply delivery and wake-up service
 		N::ExpectReply( returnID, &reply );
 		
-		const thread& current = current_thread();
+		thread& current = current_thread();
 		
 	stop_and_wait:
+		
+		current.mark_current_stack_frame();
 		
 		// Sleep until the reply is delivered
 		stop_os_thread( current.get_os_thread() );
