@@ -10,6 +10,7 @@ namespace relix
 {
 	
 	void thread_yield();
+	void thread_yield_active();
 	
 }
 

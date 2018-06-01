@@ -8,10 +8,8 @@
 
 // relix-kernel
 #include "relix/api/breathe.hh"
-#include "relix/api/current_thread.hh"
 #include "relix/api/thread_yield.hh"
 #include "relix/signal/check_signals.hh"
-#include "relix/task/scheduler.hh"
 #include "relix/task/thread.hh"
 
 
@@ -32,13 +30,7 @@ namespace relix
 		
 		if ( now - the_last_breath_time > 20000 )
 		{
-			const pid_t tid = current_thread().id();
-			
-			mark_thread_active( tid );
-			
-			thread_yield();
-			
-			mark_thread_inactive( tid );
+			thread_yield_active();
 			
 			the_last_breath_time = clock();
 			

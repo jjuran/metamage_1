@@ -10,6 +10,7 @@
 #include "relix/api/os_thread_api.hh"
 #include "relix/signal/unstoppable.hh"
 #include "relix/task/process.hh"
+#include "relix/task/scheduler.hh"
 #include "relix/task/thread.hh"
 
 
@@ -53,6 +54,25 @@ namespace relix
 			os_thread_yield();
 		}
 		while ( stopped( current ) );
+	}
+	
+	void thread_yield_active()
+	{
+		thread& current = current_thread();
+		
+		const pid_t tid = current.id();
+		
+		mark_thread_active( tid );
+		
+		do
+		{
+			current.mark_current_stack_frame();
+			
+			os_thread_yield();
+		}
+		while ( stopped( current ) );
+		
+		mark_thread_inactive( tid );
 	}
 	
 }
