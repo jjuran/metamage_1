@@ -28,8 +28,6 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
-#include "relix/api/os_thread_api.hh"
-#include "relix/api/os_thread_box.hh"
 #include "relix/task/process.hh"
 
 // Genie
@@ -151,26 +149,8 @@ namespace Genie
 		cannot_self_terminate = tid;
 	}
 	
-	void ReaperThreadEntry();
-	
-	static void* reaper_thread_start( void* param, const void* bottom, const void* limit )
-	{
-		while ( true )
-		{
-			relix::gCurrentProcess = NULL;
-			
-			destroy_pending();
-			
-			relix::os_thread_yield();
-		}
-		
-		return NULL;
-	}
-	
 	static Process& NewProcess( Process::RootProcess )
 	{
-		static relix::os_thread_box reaper = relix::new_os_thread( &reaper_thread_start, NULL, 0 );
-		
 		ASSERT( global_processes.empty() );
 		
 		global_processes.resize( max_n_tasks );
