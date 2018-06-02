@@ -19,7 +19,7 @@ namespace system
 	
 	using cthread::parameter_block;
 	
-	void thread_yield();
+	void yield_to_any_thread();
 	
 	unsigned long current_thread_stack_space();
 	

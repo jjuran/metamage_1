@@ -195,7 +195,7 @@ namespace system  {
 		return ::SetThreadState( id, kReadyThreadState, id ) == noErr;
 	}
 	
-	void thread_yield()
+	void yield_to_any_thread()
 	{
 		// Ignore errors so we don't throw in critical sections
 		(void) ::YieldToAnyThread();

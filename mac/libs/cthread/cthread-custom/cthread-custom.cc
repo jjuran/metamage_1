@@ -349,7 +349,7 @@ namespace custom  {
 		return false;
 	}
 	
-	void thread_yield()
+	void yield_to_any_thread()
 	{
 		if ( ! main_task )
 		{

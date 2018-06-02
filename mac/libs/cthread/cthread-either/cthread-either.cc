@@ -17,6 +17,16 @@
 #include "mac_sys/has/ThreadManager.hh"
 
 
+namespace cthread
+{
+	
+	void thread_yield()
+	{
+		either::yield_to_any_thread();
+	}
+	
+}
+
 #if CTHREAD_EITHER
 
 namespace cthread {
@@ -96,15 +106,15 @@ namespace either  {
 		}
 	}
 	
-	void thread_yield()
+	void yield_to_any_thread()
 	{
 		if ( has_ThreadManager )
 		{
-			system::thread_yield();
+			system::yield_to_any_thread();
 		}
 		else
 		{
-			custom::thread_yield();
+			custom::yield_to_any_thread();
 		}
 	}
 	

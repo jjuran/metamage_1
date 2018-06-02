@@ -12,6 +12,7 @@
 namespace relix
 {
 	
+	using namespace cthread;
 	using namespace cthread::either;
 	
 	

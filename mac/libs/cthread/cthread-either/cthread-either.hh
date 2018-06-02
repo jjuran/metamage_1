@@ -45,15 +45,21 @@ namespace cthread
 	
 	typedef unsigned long thread_id;
 	
+	void thread_yield();
+	
 #if CTHREAD_SYSTEM
 	
 	namespace either = system;
+	
+	namespace system { using ::cthread::thread_yield; }
 	
 #endif
 	
 #if CTHREAD_CUSTOM
 	
 	namespace either = custom;
+	
+	namespace custom { using ::cthread::thread_yield; }
 	
 #endif
 	
@@ -64,7 +70,7 @@ namespace either
 	
 	using cthread::parameter_block;
 	
-	void thread_yield();
+	void yield_to_any_thread();
 	
 	unsigned long current_thread_stack_space();
 	
