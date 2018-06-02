@@ -1007,6 +1007,10 @@ namespace Genie
 		
 		if ( gettid() == pid )
 		{
+			notify_param param = { pid, isSessionLeader };
+			
+			for_each_process( &notify_process, &param );
+			
 			Process& parent = GetProcess( ppid );
 			
 			if ( ppid > 1  &&  waits_for_children( parent.get_process() ) )
@@ -1017,10 +1021,6 @@ namespace Genie
 			{
 				Release();
 			}
-			
-			notify_param param = { pid, isSessionLeader };
-			
-			for_each_process( &notify_process, &param );
 		}
 		
 		if ( gCurrentProcess != this )
