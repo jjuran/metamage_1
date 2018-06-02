@@ -45,6 +45,10 @@ namespace cthread
 	
 	typedef unsigned long thread_id;
 	
+	typedef thread_id (*thread_scheduler)();
+	
+	void set_thread_scheduler( thread_scheduler proc );
+	
 	void thread_yield();
 	
 #if CTHREAD_SYSTEM

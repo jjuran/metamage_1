@@ -20,8 +20,25 @@
 namespace cthread
 {
 	
+	static thread_scheduler the_thread_scheduler;
+	
+	void set_thread_scheduler( thread_scheduler proc )
+	{
+		the_thread_scheduler = proc;
+	}
+	
 	void thread_yield()
 	{
+		if ( the_thread_scheduler )
+		{
+			if ( thread_id thread = the_thread_scheduler() )
+			{
+				either::yield_to_thread( thread );
+				
+				return;
+			}
+		}
+		
 		either::yield_to_any_thread();
 	}
 	
