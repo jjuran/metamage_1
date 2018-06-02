@@ -124,7 +124,6 @@ namespace Genie
 		slot.reset();
 	}
 	
-	static
 	void destroy_pending()
 	{
 		if ( cannot_self_terminate )
@@ -331,6 +330,10 @@ namespace Genie
 	
 	bool is_ready_to_exit()
 	{
+		relix::gCurrentProcess = NULL;
+		
+		destroy_pending();
+		
 		if ( !already_quitting )
 		{
 			for_each_process( &send_sigterm_or_sigkill );

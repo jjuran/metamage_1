@@ -653,6 +653,10 @@ namespace Genie
 	
 	static void thread_switch_in( void* param )
 	{
+		gCurrentProcess = NULL;
+		
+		destroy_pending();
+		
 		Process& thread = *(Process*) param;
 		
 		gCurrentProcess = &thread;
