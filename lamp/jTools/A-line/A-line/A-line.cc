@@ -494,7 +494,7 @@ namespace tool
 			{
 				p7::write( p7::stderr_fileno, STR_LEN( "### Aborting on user break via ToolServer.\n" ) );
 				
-				throw p7::exit_t( 128 );
+				_exit( 128 );
 			}
 			
 			end_task( pid, wait_status );
