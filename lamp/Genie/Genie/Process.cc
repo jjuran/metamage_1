@@ -1067,7 +1067,7 @@ namespace Genie
 		
 		itsLifeStage = kProcessReleased;
 		
-		notify_reaper();
+		notify_reaper( this );
 	}
 	
 	void Process::Raise( int signo )

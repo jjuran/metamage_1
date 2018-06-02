@@ -38,7 +38,7 @@ namespace Genie
 	
 	void spawn_process( const plus::string& program_args );
 	
-	void notify_reaper();
+	void notify_reaper( Process* released );
 	
 	bool is_ready_to_exit();
 	

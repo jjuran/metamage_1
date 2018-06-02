@@ -33,6 +33,7 @@
 #include "relix/task/process.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 
 
@@ -111,8 +112,30 @@ namespace Genie
 	
 	static bool reaper_must_run = false;
 	
-	void notify_reaper()
+	static
+	void destroy( pid_t tid )
 	{
+		boost::intrusive_ptr< Process >& slot = global_processes[ tid ];
+		
+		ASSERT( slot.get() != relix::gCurrentProcess );
+		
+		ASSERT( slot->GetLifeStage() == kProcessReleased );
+		
+		slot.reset();
+	}
+	
+	void notify_reaper( Process* released )
+	{
+		ASSERT( released != NULL );
+		
+		const pid_t tid = released->id();
+		
+		if ( released != relix::gCurrentProcess )
+		{
+			destroy( tid );
+			return;
+		}
+		
 		reaper_must_run = true;
 	}
 	
