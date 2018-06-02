@@ -110,7 +110,7 @@ namespace Genie
 	}
 	
 	
-	static bool reaper_must_run = false;
+	static pid_t cannot_self_terminate;
 	
 	static
 	void destroy( pid_t tid )
@@ -124,9 +124,22 @@ namespace Genie
 		slot.reset();
 	}
 	
+	static
+	void destroy_pending()
+	{
+		if ( cannot_self_terminate )
+		{
+			destroy( cannot_self_terminate );
+			
+			cannot_self_terminate = 0;
+		}
+	}
+	
 	void notify_reaper( Process* released )
 	{
 		ASSERT( released != NULL );
+		
+		destroy_pending();
 		
 		const pid_t tid = released->id();
 		
@@ -136,17 +149,7 @@ namespace Genie
 			return;
 		}
 		
-		reaper_must_run = true;
-	}
-	
-	static void* reap_process( void*, pid_t pid, Process& process )
-	{
-		if ( process.GetLifeStage() == kProcessReleased )
-		{
-			boost::intrusive_ptr< Process >().swap( global_processes[ pid ] );
-		}
-		
-		return NULL;
+		cannot_self_terminate = tid;
 	}
 	
 	void ReaperThreadEntry();
@@ -155,12 +158,9 @@ namespace Genie
 	{
 		while ( true )
 		{
-			if ( reaper_must_run )
-			{
-				reaper_must_run = false;
-				
-				for_each_process( &reap_process );
-			}
+			relix::gCurrentProcess = NULL;
+			
+			destroy_pending();
 			
 			relix::os_thread_yield();
 		}
