@@ -28,11 +28,10 @@
 
 // relix-kernel
 #include "relix/config/mini.hh"
-#include "relix/api/os_thread_api.hh"
-#include "relix/api/os_thread_box.hh"
 #include "relix/task/process.hh"
 
 // Genie
+#include "Genie/current_process.hh"
 #include "Genie/Process.hh"
 
 
@@ -109,46 +108,49 @@ namespace Genie
 	}
 	
 	
-	static bool reaper_must_run = false;
+	static pid_t cannot_self_terminate;
 	
-	void notify_reaper()
+	static
+	void destroy( pid_t tid )
 	{
-		reaper_must_run = true;
-	}
-	
-	static void* reap_process( void*, pid_t pid, Process& process )
-	{
-		if ( process.GetLifeStage() == kProcessReleased )
-		{
-			boost::intrusive_ptr< Process >().swap( global_processes[ pid ] );
-		}
+		boost::intrusive_ptr< Process >& slot = global_processes[ tid ];
 		
-		return NULL;
+		ASSERT( slot.get() != relix::gCurrentProcess );
+		
+		ASSERT( slot->GetLifeStage() == kProcessReleased );
+		
+		slot.reset();
 	}
 	
-	void ReaperThreadEntry();
-	
-	static void* reaper_thread_start( void* param, const void* bottom, const void* limit )
+	void destroy_pending()
 	{
-		while ( true )
+		if ( cannot_self_terminate )
 		{
-			if ( reaper_must_run )
-			{
-				reaper_must_run = false;
-				
-				for_each_process( &reap_process );
-			}
+			destroy( cannot_self_terminate );
 			
-			relix::os_thread_yield();
+			cannot_self_terminate = 0;
+		}
+	}
+	
+	void notify_reaper( Process* released )
+	{
+		ASSERT( released != NULL );
+		
+		destroy_pending();
+		
+		const pid_t tid = released->id();
+		
+		if ( released != relix::gCurrentProcess )
+		{
+			destroy( tid );
+			return;
 		}
 		
-		return NULL;
+		cannot_self_terminate = tid;
 	}
 	
 	static Process& NewProcess( Process::RootProcess )
 	{
-		static relix::os_thread_box reaper = relix::new_os_thread( &reaper_thread_start, NULL, 0 );
-		
 		ASSERT( global_processes.empty() );
 		
 		global_processes.resize( max_n_tasks );
@@ -308,6 +310,10 @@ namespace Genie
 	
 	bool is_ready_to_exit()
 	{
+		relix::gCurrentProcess = NULL;
+		
+		destroy_pending();
+		
 		if ( !already_quitting )
 		{
 			for_each_process( &send_sigterm_or_sigkill );

@@ -653,6 +653,10 @@ namespace Genie
 	
 	static void thread_switch_in( void* param )
 	{
+		gCurrentProcess = NULL;
+		
+		destroy_pending();
+		
 		Process& thread = *(Process*) param;
 		
 		gCurrentProcess = &thread;
@@ -1067,7 +1071,7 @@ namespace Genie
 		
 		itsLifeStage = kProcessReleased;
 		
-		notify_reaper();
+		notify_reaper( this );
 	}
 	
 	void Process::Raise( int signo )
