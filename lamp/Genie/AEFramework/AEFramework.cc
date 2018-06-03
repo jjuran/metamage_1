@@ -88,25 +88,17 @@ namespace Nitrogen
 		
 		if ( found != gExpectedReplies.end() )
 		{
+			thread_id        thread       = found->second.thread;
+			Mac::AppleEvent* replyStorage = found->second.reply;
+			
 			try
 			{
-				thread_id        thread       = found->second.thread;
-				Mac::AppleEvent* replyStorage = found->second.reply;
-				
 				// Make sure the thread exists
 				
 				if ( is_thread_stopped( thread ) )
 				{
 					wake_thread( thread );
 				}
-				
-				// before writing to its storage
-				if ( replyStorage != NULL )
-				{
-					*replyStorage = AEDuplicateDesc( reply ).release();
-				}
-				
-				yield_to_thread( thread );
 			}
 			catch ( const Mac::OSStatus& err )
 			{
@@ -116,6 +108,18 @@ namespace Nitrogen
 				}
 				
 				// A thread terminated without canceling a pending reply
+				thread = 0;
+			}
+			
+			if ( thread )
+			{
+				// before writing to its storage
+				if ( replyStorage != NULL )
+				{
+					*replyStorage = AEDuplicateDesc( reply ).release();
+				}
+				
+				yield_to_thread( thread );
 			}
 			
 			gExpectedReplies.erase( found );
