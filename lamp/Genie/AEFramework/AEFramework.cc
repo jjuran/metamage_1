@@ -91,6 +91,8 @@ namespace Nitrogen
 			thread_id        thread       = found->second.thread;
 			Mac::AppleEvent* replyStorage = found->second.reply;
 			
+			gExpectedReplies.erase( found );
+			
 			try
 			{
 				// Make sure the thread exists
@@ -121,8 +123,6 @@ namespace Nitrogen
 				
 				yield_to_thread( thread );
 			}
-			
-			gExpectedReplies.erase( found );
 		}
 		else
 		{
