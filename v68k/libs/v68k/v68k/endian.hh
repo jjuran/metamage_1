@@ -48,11 +48,19 @@ namespace v68k
 		return ((uint16_t*) &longword)[ i == is_little_endian() ];
 	}
 	
+	inline uint32_t& select_long( uint64_t& quadword, int i )
+	{
+		return ((uint32_t*) &quadword)[ i == is_little_endian() ];
+	}
+	
 	inline uint8_t& high_byte( uint16_t& x )  { return select_byte( x, 1 ); }
 	inline uint8_t& low_byte ( uint16_t& x )  { return select_byte( x, 0 ); }
 	
 	inline uint16_t& high_word( uint32_t& x )  { return select_word( x, 1 ); }
 	inline uint16_t& low_word ( uint32_t& x )  { return select_word( x, 0 ); }
+	
+	inline uint32_t& high_long( uint64_t& x )  { return select_long( x, 1 ); }
+	inline uint32_t& low_long ( uint64_t& x )  { return select_long( x, 0 ); }
 	
 }
 
