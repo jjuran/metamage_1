@@ -34,6 +34,7 @@ enum
 	dealloc,
 	
 	system_call,
+	microseconds,
 	
 	bus_error,
 	address_error,

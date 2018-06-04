@@ -69,6 +69,7 @@ using v68k::auth::fully_authorized;
 using v68k::auth::supervisor_mode_switch_allowed;
 using v68k::callout::callout_address;
 using v68k::callout::system_call;
+using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
 
 static bool polling;
@@ -302,6 +303,11 @@ const uint16_t loader_code[] =
 	0xFFFF,
 	callout_address(system_call),
 	system_pb_addr + 3 * sizeof (uint32_t),
+	
+	0x21FC,  // MOVE.L   #callout_address(microseconds),<microseconds field>
+	0xFFFF,
+	callout_address(microseconds),
+	system_pb_addr + 4 * sizeof (uint32_t),
 	
 	0x4878,  // PEA  (system_pb_addr).W  ; pb
 	system_pb_addr,

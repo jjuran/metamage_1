@@ -9,6 +9,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 
 // Standard C
 #include <errno.h>
@@ -18,6 +19,9 @@
 
 // must
 #include "must/write.h"
+
+// v68k
+#include "v68k/endian.hh"
 
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
@@ -393,6 +397,36 @@ uint32_t system_call_callout( v68k::processor_state& s )
 }
 
 static
+uint32_t microseconds_callout( v68k::processor_state& s )
+{
+	uint32_t sp = s.a(7);
+	
+	uint32_t result_address;
+	
+	if ( ! s.mem.get_long( sp + 4, result_address, s.data_space() ) )
+	{
+		return v68k::Bus_error;
+	}
+	
+	timeval tv;
+	gettimeofday( &tv, NULL );
+	
+	uint64_t t = tv.tv_sec * 1000000ull + tv.tv_usec;
+	
+	if ( ! s.mem.put_long( result_address, high_long( t ), s.data_space() ) )
+	{
+		return v68k::Bus_error;
+	}
+	
+	if ( ! s.mem.put_long( result_address + 4, low_long( t ), s.data_space() ) )
+	{
+		return v68k::Bus_error;
+	}
+	
+	return rts;
+}
+
+static
 uint32_t BlockMove_callout( v68k::processor_state& s )
 {
 	const uint32_t src = s.a(0);
@@ -597,6 +631,7 @@ static const function_type the_callouts[] =
 	&dealloc_callout,
 	
 	&system_call_callout,
+	&microseconds_callout,
 	
 	&bus_error_callout,
 	&address_error_callout,
