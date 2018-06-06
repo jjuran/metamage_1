@@ -396,6 +396,10 @@ uint32_t system_call_callout( v68k::processor_state& s )
 	return nil;
 }
 
+static timeval start_tv;
+static int gottimeofday = gettimeofday( &start_tv, NULL );
+static const uint64_t start_time = start_tv.tv_sec * 1000000ull + start_tv.tv_usec;
+
 static
 uint32_t microseconds_callout( v68k::processor_state& s )
 {
@@ -411,7 +415,7 @@ uint32_t microseconds_callout( v68k::processor_state& s )
 	timeval tv;
 	gettimeofday( &tv, NULL );
 	
-	uint64_t t = tv.tv_sec * 1000000ull + tv.tv_usec;
+	uint64_t t = tv.tv_sec * 1000000ull + tv.tv_usec - start_time;
 	
 	if ( ! s.mem.put_long( result_address, high_long( t ), s.data_space() ) )
 	{
