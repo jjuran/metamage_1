@@ -1,0 +1,49 @@
+#!/usr/bin/env vx -Z
+
+const title = "Advanced Mac Substitute"
+
+const default_app = "TestApp"
+
+const app_name = if argc > 1 then {argv[ 1 ]} else {default_app}
+
+def exists (path)
+{
+	return try {stat path; true} catch {false}
+}
+
+const home     = getenv "HOME"
+const home_68k = home "/68k"
+
+const freemountd-subcmd = "freemountd -q --root" / ' ', home_68k
+
+const ams_modules = [ "core rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
+const module_opts = ams_modules map {"-m", v}
+
+const app = home_68k "/app"
+
+const xv68k-screen
+const command-prefix
+
+const var_run_raster = home "/var/run/raster"
+
+run .[ "mkdir -p" / ' ', var_run_raster ]
+
+const screen = var_run_raster "/ams"
+const raster = "--raster=" screen
+
+if not exists screen then
+{
+	run .[ "raster make -g 512x342*1 -m paint -R" / ' ', screen ]
+}
+
+run .[ "raster init" / ' ', screen ]
+
+xv68k-screen   = raster
+command-prefix = "exhibit", "-t", title, raster
+
+const xv68k-subcmd = "xv68k", "-SP", xv68k-screen, *module_opts, app, app_name
+const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
+
+const command = [ command-prefix, graft-subcmd ]
+
+run command
