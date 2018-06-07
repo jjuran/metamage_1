@@ -24,22 +24,45 @@ const app = home_68k "/app"
 const xv68k-screen
 const command-prefix
 
-const var_run_raster = home "/var/run/raster"
-
-run .[ "mkdir -p" / ' ', var_run_raster ]
-
-const screen = var_run_raster "/ams"
-const raster = "--raster=" screen
-
-if not exists screen then
+if exists "/gui" then
 {
-	run .[ "raster make -g 512x342*1 -m paint -R" / ' ', screen ]
+	chdir "/gui/new/port"
+	
+	link( "new/stack", "view" )
+	
+	link( "new/eventtap", "v/events/view" )
+	link( "new/bitmap",   "v/screen/view" )
+	
+	rewrite "procid"          <== "4\n"
+	rewrite "size"            <== "512x342\n"
+	rewrite "v/screen/v/size" <== "512x342\n"
+	
+	touch "window"
+	
+	dup2( reader "v/events/v/stream", 0 )
+	
+	xv68k-screen   = "--screen=v/screen/v/bits"
+	command-prefix = "daemonize --stdin --cwd --ctty=tty --" / ' '
 }
-
-run .[ "raster init" / ' ', screen ]
-
-xv68k-screen   = raster
-command-prefix = "exhibit", "-t", title, raster
+else
+{
+	const var_run_raster = home "/var/run/raster"
+	
+	run .[ "mkdir -p" / ' ', var_run_raster ]
+	
+	const screen = var_run_raster "/ams"
+	const raster = "--raster=" screen
+	
+	if not exists screen then
+	{
+		run .[ "raster make -g 512x342*1 -m paint -R" / ' ', screen ]
+	}
+	
+	run .[ "raster init" / ' ', screen ]
+	
+	xv68k-screen   = raster
+	command-prefix = "exhibit", "-t", title, raster
+}
 
 const xv68k-subcmd = "xv68k", "-SP", xv68k-screen, *module_opts, app, app_name
 const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
