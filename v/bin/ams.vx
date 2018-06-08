@@ -16,7 +16,7 @@ const home_68k = home "/68k"
 
 const freemountd-subcmd = "freemountd -q --root" / ' ', home_68k
 
-const ams_modules = [ "core rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
+const ams_modules = [ "core fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
 const module_opts = ams_modules map {"-m", v}
 
 const app = home_68k "/app"
