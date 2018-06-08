@@ -27,7 +27,6 @@
 #include "Debugger.hh"
 #include "Desk.hh"
 #include "Events.hh"
-#include "Files.hh"
 #include "Gestalt.hh"
 #include "HandleUtils.hh"
 #include "Handles.hh"
@@ -173,15 +172,6 @@ static void install_Gestalt()
 	OSTRAP( Gestalt );  // A1AD
 }
 
-static void install_FileManager()
-{
-	OSTRAP( Open   );  // A000
-	
-	OSTRAP( Create );  // A008
-	
-	OSTRAP( GetVol );  // A014
-}
-
 static void install_EventManager()
 {
 	OSTRAP( PostEvent    );  // A02F
@@ -267,8 +257,6 @@ int main( int argc, char** argv )
 	install_PatchManager();
 	
 	install_Gestalt();
-	
-	install_FileManager();
 	
 	install_EventManager();
 	

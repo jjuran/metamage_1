@@ -3,8 +3,16 @@
 	---------
 */
 
+// Mac OS
+#ifndef __TRAPS__
+#include <Traps.h>
+#endif
+
 // POSIX
 #include <unistd.h>
+
+// ams-fs
+#include "Files.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -13,6 +21,21 @@
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
+
+void* os_trap_table[] : 1 * 1024;
+
+#define OSTRAP( Proc )  (os_trap_table[ _##Proc & 0x00FF ] = &Proc##_patch)
+
+
+static
+void install_FileManager()
+{
+	OSTRAP( Open   );  // A000
+	
+	OSTRAP( Create );  // A008
+	
+	OSTRAP( GetVol );  // A014
+}
 
 static
 asm void module_suspend()
@@ -33,6 +56,8 @@ int main( int argc, char** argv )
 			_exit( 1 );
 		}
 	}
+	
+	install_FileManager();
 	
 	module_suspend();  // doesn't return
 }
