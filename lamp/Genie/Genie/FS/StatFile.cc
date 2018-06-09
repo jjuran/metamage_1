@@ -12,6 +12,9 @@
 #include "stdlib.h"
 #include "sys/stat.h"
 
+// mac-types
+#include "mac_types/epoch.hh"
+
 // gear
 #include "gear/is_binary_data.hh"
 
@@ -23,9 +26,6 @@
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
-
-// TimeOff
-#include "TimeOff/TimeOff.hh"
 
 // Genie
 #include "Genie/FileSignature.hh"
@@ -140,7 +140,7 @@ namespace Genie
 	               const unsigned char*  name,
 	               bool                  is_rsrc_fork )
 	{
-		const unsigned long timeDiff = TimeOff::MacToUnixTimeDifference();
+		const unsigned long timeDiff = mac::types::epoch_delta();
 		
 		const HFileInfo& hFileInfo = cInfo.hFileInfo;
 		

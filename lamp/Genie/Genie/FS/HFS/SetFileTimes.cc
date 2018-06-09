@@ -8,15 +8,15 @@
 // POSIX
 #include <utime.h>
 
+// mac-types
+#include "mac_types/epoch.hh"
+
 // Nitrogen
 #include "Nitrogen/DateTimeUtils.hh"
 #include "Nitrogen/Files.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
-
-// TimeOff
-#include "TimeOff/TimeOff.hh"
 
 
 #ifndef UTIME_ARCHIVE
@@ -58,9 +58,7 @@ namespace Genie
 		}
 		else
 		{
-			using namespace TimeOff;
-			
-			date = time.tv_sec + MacToUnixTimeDifference();
+			date = time.tv_sec + mac::types::epoch_delta();
 		}
 	}
 	
