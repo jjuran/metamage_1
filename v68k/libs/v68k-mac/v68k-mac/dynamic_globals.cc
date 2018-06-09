@@ -29,7 +29,7 @@ static uint64_t microsecond_clock()
 		return 0;
 	}
 	
-	return + tv.tv_sec * 1000 * 1000
+	return + tv.tv_sec * 1000000ull
 	       + tv.tv_usec;
 }
 
