@@ -8,22 +8,20 @@
 #include <DateTimeUtils.h>
 #endif
 
-// POSIX
+// Standard C
 #include <time.h>
 
-// TimeOff
-#include "TimeOff/TimeOff.hh"
+// mac-types
+#include "mac_types/epoch.hh"
 
 
 time_t time( time_t* result )
 {
-	const unsigned long delta = TimeOff::MacToUnixTimeDifference();
-	
 	UInt32 dateTime;
 	
 	GetDateTime( &dateTime );
 	
-	const time_t now = dateTime - delta;
+	const time_t now = dateTime - mac::types::epoch_delta();
 	
 	if ( result )
 	{

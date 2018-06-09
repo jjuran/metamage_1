@@ -11,11 +11,12 @@
 // POSIX
 #include <sys/time.h>
 
-// mac-sys-utils
-#include "mac_sys/microseconds.hh"
+// mac-types
+#include "mac_types/epoch.hh"
 
-// TimeOff
-#include "TimeOff/TimeOff.hh"
+// mac-sys-utils
+#include "mac_sys/gmt_delta.hh"
+#include "mac_sys/microseconds.hh"
 
 
 namespace PosixLib
@@ -27,14 +28,14 @@ namespace PosixLib
 		
 		::GetDateTime( &result );
 		
-		result -= TimeOff::GetGMTDelta();
+		result -= mac::sys::gmt_delta();
 		
 		return result;
 	}
 	
 	static inline time_t UnixTime()
 	{
-		return GetGlobalDateTime() - TimeOff::MacUnixEpochOffset();
+		return GetGlobalDateTime() - mac::types::epoch_delta();
 	}
 	
 	class MicrosecondUnixTimeClock
