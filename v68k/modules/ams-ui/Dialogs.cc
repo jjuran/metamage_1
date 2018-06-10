@@ -114,6 +114,18 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 				static_text_size = len;
 				break;
 			
+			case iconItem:
+				switch ( *(const short*) data )
+				{
+					case stopIcon:     icon = stop_icon;     break;
+					case noteIcon:     icon = note_icon;     break;
+					case cautionIcon:  icon = caution_icon;  break;
+					
+					default:
+						break;
+				}
+				break;
+			
 			default:
 				break;
 		}
