@@ -20,4 +20,9 @@ pascal short StopAlert_patch   ( short alertID, ModalFilterUPP filterProc );
 pascal short NoteAlert_patch   ( short alertID, ModalFilterUPP filterProc );
 pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc );
 
+pascal void ParamText_patch( const unsigned char*  p1,
+                             const unsigned char*  p2,
+                             const unsigned char*  p3,
+                             const unsigned char*  p4 );
+
 #endif

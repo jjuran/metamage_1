@@ -19,10 +19,17 @@
 // POSIX
 #include <unistd.h>
 
+// Standard C
+#include <string.h>
+
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define SPACE  "    "
+
+
+StringHandle DAStrings[ 4 ] : 0x0AA0;
+
 
 static const char* no_icon[ 3 ] =
 {
@@ -51,6 +58,42 @@ static const char* caution_icon[ 3 ] =
 	" /  \\ ",
 	"/____\\"
 };
+
+static
+Handle NewHandleOrBust( Size size )
+{
+	Handle h = NewHandle( size );
+	
+	if ( h == NULL )
+	{
+		SysError( 25 );
+	}
+	
+	return h;
+}
+
+static
+void set_param( short i, const unsigned char* text )
+{
+	StringHandle& h = DAStrings[ i ];
+	
+	if ( text == NULL  ||  text[ 0 ] == 0 )
+	{
+		if ( h != NULL )
+		{
+			**h = 0;
+		}
+		
+		return;
+	}
+	
+	if ( h == NULL )
+	{
+		h = (StringHandle) NewHandleOrBust( 256 );
+	}
+	
+	memcpy( *h, text, 1 + text[ 0 ] );
+}
 
 
 pascal void InitDialogs_patch( void* proc )
@@ -180,4 +223,15 @@ pascal short NoteAlert_patch( short alertID, ModalFilterUPP filterProc )
 pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc )
 {
 	return basic_Alert( alertID, filterProc, caution_icon );
+}
+
+pascal void ParamText_patch( const unsigned char*  p1,
+                             const unsigned char*  p2,
+                             const unsigned char*  p3,
+                             const unsigned char*  p4 )
+{
+	set_param( 0, p1 );
+	set_param( 1, p2 );
+	set_param( 2, p3 );
+	set_param( 3, p4 );
 }

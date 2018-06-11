@@ -171,6 +171,8 @@ static void install_Dialogs()
 	TBTRAP( StopAlert    );  // A986
 	TBTRAP( NoteAlert    );  // A987
 	TBTRAP( CautionAlert );  // A988
+	
+	TBTRAP( ParamText    );  // A98B
 }
 
 static void install_TextEdit()
