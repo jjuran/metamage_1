@@ -95,6 +95,91 @@ void set_param( short i, const unsigned char* text )
 	memcpy( *h, text, 1 + text[ 0 ] );
 }
 
+struct expansion_storage
+{
+	Handle text;
+	UInt16 size;  // Worst case is 127 * 255 + 1 == 32386
+};
+
+static
+const expansion_storage& expand_param_text( const unsigned char* text )
+{
+	static expansion_storage expanded = { NewHandleOrBust( 0 ) };
+	
+	static UInt16 capacity = 0;
+	
+	UInt16 expanded_size = 0;
+	
+	const unsigned char* begin = text + 1;
+	const unsigned char* end   = begin + text[ 0 ];
+	
+	for ( const unsigned char* it = begin;  it < end; )
+	{
+		unsigned char c = *it++;
+		
+		if ( c != '^'  ||  it == end )
+		{
+			++expanded_size;
+			continue;
+		}
+		
+		c = *it++ - '0';
+		
+		if ( c > 3 )
+		{
+			expanded_size += 2;
+			continue;
+		}
+		
+		if ( StringHandle h = DAStrings[ c ] )
+		{
+			expanded_size += **h;
+		}
+	}
+	
+	expanded.size = expanded_size;
+	
+	if ( capacity < expanded_size )
+	{
+		capacity = expanded_size;
+		
+		DisposeHandle( expanded.text );
+		
+		expanded.text = NewHandleOrBust( capacity );
+	}
+	
+	char* p = *expanded.text;
+	
+	for ( const unsigned char* q = begin;  q < end; )
+	{
+		unsigned char c = *q++;
+		
+		if ( c != '^'  ||  q == end )
+		{
+			*p++ = c;
+			continue;
+		}
+		
+		c = *q++ - '0';
+		
+		if ( c > 3 )
+		{
+			*p++ = '^';
+			*p++ = c + '0';
+			continue;
+		}
+		
+		if ( StringHandle h = DAStrings[ c ] )
+		{
+			memcpy( p, *h + 1, **h );
+			
+			p += **h;
+		}
+	}
+	
+	return expanded;
+}
+
 
 pascal void InitDialogs_patch( void* proc )
 {
@@ -177,8 +262,10 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	if ( static_text )
 	{
+		const expansion_storage& expansion = expand_param_text( static_text );
+		
 		write( STDERR_FILENO, STR_LEN( "  " ) );
-		write( STDERR_FILENO, static_text + 1, static_text[ 0 ] );
+		write( STDERR_FILENO, *expansion.text, expansion.size );
 	}
 	
 	p = *icon++;
