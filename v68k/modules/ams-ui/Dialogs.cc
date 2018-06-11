@@ -84,11 +84,8 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
 	
-	const char*  button_title_data = 0;
-	UInt8        button_title_size = 0;
-	
-	const char*  static_text_data = 0;
-	UInt8        static_text_size = 0;
+	const unsigned char*  button_title = NULL;
+	const unsigned char*  static_text  = NULL;
 	
 	while ( n_items_1-- >= 0 )
 	{
@@ -96,26 +93,23 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 		p += 8;  // display rect
 		
 		UInt8 type = *p++;
-		UInt8 len  = *p++;
 		
-		const char* data = p;
+		const unsigned char* data = (const unsigned char*) p;
 		
-		p += len;
+		UInt8 len = *p++;
 		
 		switch ( type & 0x7F )
 		{
 			case ctrlItem + btnCtrl:
-				button_title_data = data;
-				button_title_size = len;
+				button_title = data;
 				break;
 			
 			case statText:
-				static_text_data = data;
-				static_text_size = len;
+				static_text = data;
 				break;
 			
 			case iconItem:
-				switch ( *(const short*) data )
+				switch ( *(const short*) p )
 				{
 					case stopIcon:     icon = stop_icon;     break;
 					case noteIcon:     icon = note_icon;     break;
@@ -129,6 +123,8 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 			default:
 				break;
 		}
+		
+		p += len;
 	}
 	
 	p = *icon++;
@@ -136,10 +132,10 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
 	write( STDERR_FILENO, p, strlen( p ) );
 	
-	if ( static_text_size )
+	if ( static_text )
 	{
 		write( STDERR_FILENO, STR_LEN( "  " ) );
-		write( STDERR_FILENO, static_text_data, static_text_size );
+		write( STDERR_FILENO, static_text + 1, static_text[ 0 ] );
 	}
 	
 	p = *icon++;
@@ -152,10 +148,10 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
 	write( STDERR_FILENO, p, strlen( p ) );
 	
-	if ( button_title_size )
+	if ( button_title )
 	{
 		write( STDERR_FILENO, STR_LEN( "  [" ) );
-		write( STDERR_FILENO, button_title_data, button_title_size );
+		write( STDERR_FILENO, button_title + 1, button_title[ 0 ] );
 		write( STDERR_FILENO, STR_LEN( "]" ) );
 	}
 	
