@@ -131,8 +131,6 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 		}
 	}
 	
-	ReleaseResource ( h );
-	
 	p = *icon++;
 	
 	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
@@ -162,6 +160,8 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	}
 	
 	write( STDERR_FILENO, STR_LEN( "\n\n" ) );
+	
+	ReleaseResource ( h );
 	
 	return 0;
 }
