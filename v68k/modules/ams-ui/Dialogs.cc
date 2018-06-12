@@ -252,7 +252,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 				break;
 		}
 		
-		p += len;
+		p += len + (len & 1);
 	}
 	
 	p = *icon++;
