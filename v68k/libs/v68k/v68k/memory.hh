@@ -33,6 +33,10 @@ namespace v68k
 		mem_update = 0x3
 	};
 	
+	typedef uint32_t         addr_t;
+	typedef function_code_t  fc_t;
+	typedef memory_access_t  mem_t;
+	
 	class memory
 	{
 		public:
@@ -43,17 +47,17 @@ namespace v68k
 			
 			//virtual ~memory();
 			
-			virtual uint8_t* translate( uint32_t addr, uint32_t length, function_code_t fc, memory_access_t access ) const = 0;
+			virtual uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access ) const = 0;
 			
-			bool get_byte( uint32_t addr, uint8_t & x, function_code_t fc ) const;
-			bool get_word( uint32_t addr, uint16_t& x, function_code_t fc ) const;
-			bool get_long( uint32_t addr, uint32_t& x, function_code_t fc ) const;
+			bool get_byte( addr_t addr, uint8_t & x, fc_t fc ) const;
+			bool get_word( addr_t addr, uint16_t& x, fc_t fc ) const;
+			bool get_long( addr_t addr, uint32_t& x, fc_t fc ) const;
 			
-			bool put_byte( uint32_t addr, uint8_t  x, function_code_t fc ) const;
-			bool put_word( uint32_t addr, uint16_t x, function_code_t fc ) const;
-			bool put_long( uint32_t addr, uint32_t x, function_code_t fc ) const;
+			bool put_byte( addr_t addr, uint8_t  x, fc_t fc ) const;
+			bool put_word( addr_t addr, uint16_t x, fc_t fc ) const;
+			bool put_long( addr_t addr, uint32_t x, fc_t fc ) const;
 			
-			bool get_instruction_word( uint32_t addr, uint16_t& x, function_code_t fc ) const;
+			bool get_instruction_word( addr_t addr, uint16_t& x, fc_t fc ) const;
 	};
 	
 	class memory_region : public memory
