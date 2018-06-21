@@ -28,6 +28,18 @@ uint8_t* memory_manager::translate( uint32_t               addr,
                                     v68k::function_code_t  fc,
                                     v68k::memory_access_t  access ) const
 {
+	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
+	{
+		return its_alloc_mem.translate( addr, length, fc, access );
+	}
+	
+	const uint32_t screen_size = v68k::screen::the_screen_size;
+	
+	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
+	{
+		return its_screen.translate( addr - screen_addr, length, fc, access );
+	}
+	
 	if ( addr < 3 * 1024  &&  (addr & 0x07FF) < 1024 )
 	{
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
@@ -40,18 +52,6 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	if ( addr < its_low_mem_size )
 	{
 		return its_low_mem.translate( addr, length, fc, access );
-	}
-	
-	const uint32_t screen_size = v68k::screen::the_screen_size;
-	
-	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
-	{
-		return its_screen.translate( addr - screen_addr, length, fc, access );
-	}
-	
-	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
-	{
-		return its_alloc_mem.translate( addr, length, fc, access );
 	}
 	
 	return its_callout_memory.translate( addr, length, fc, access );
