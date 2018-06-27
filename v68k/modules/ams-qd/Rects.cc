@@ -7,7 +7,6 @@
 
 // Standard C
 #include <stdlib.h>
-#include <string.h>
 
 // quickdraw
 #include "qd/region_iterator.hh"
@@ -62,6 +61,12 @@ struct rectangular_op_params
 	Pattern*  pattern;
 	short     origin_h;
 };
+
+static inline
+asm void fast_memset( void* mem : __A0, char x :__D1, size_t n : __D0 )
+{
+	JSR      0xFFFFFFD6
+}
 
 static inline short min( short a, short b )
 {
@@ -274,7 +279,7 @@ static void erase_rect( const rectangular_op_params& params )
 			*p++ &= params.left_mask;
 		}
 		
-		memset( p, '\0', params.draw_bytes );
+		fast_memset( p, '\0', params.draw_bytes );
 		
 		p += params.draw_bytes;
 		
@@ -298,7 +303,7 @@ static void paint_rect( const rectangular_op_params& params )
 			*p++ |= ~params.left_mask;
 		}
 		
-		memset( p, 0xFF, params.draw_bytes );
+		fast_memset( p, 0xFF, params.draw_bytes );
 		
 		p += params.draw_bytes;
 		
@@ -430,7 +435,7 @@ static void fill_rect( const rectangular_op_params& params )
 			++p;
 		}
 		
-		memset( p, pat, params.draw_bytes );
+		fast_memset( p, pat, params.draw_bytes );
 		
 		p += params.draw_bytes;
 		
