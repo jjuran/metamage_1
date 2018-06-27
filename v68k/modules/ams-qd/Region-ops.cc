@@ -26,6 +26,7 @@
 // ams-qd
 #include "Rect-utils.hh"
 #include "Rects.hh"
+#include "Regions.hh"
 
 
 using quickdraw::offset_region;
@@ -622,16 +623,16 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 	}
 }
 
+static RgnHandle union_diff_tmp = NewRgn_patch();
+
 pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
-	RgnHandle tmp = NewRgn();
+	RgnHandle tmp = union_diff_tmp;
 	
 	SectRgn( a, b, tmp );
 	
 	XorRgn( a, tmp, tmp );
 	XorRgn( b, tmp, dst );
-	
-	DisposeRgn( tmp );
 }
 
 pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
@@ -643,13 +644,11 @@ pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		return;
 	}
 	
-	RgnHandle tmp = NewRgn();
+	RgnHandle tmp = union_diff_tmp;
 	
 	SectRgn( a, b, tmp );
 	
 	XorRgn( a, tmp, dst );
-	
-	DisposeRgn( tmp );
 }
 
 pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
