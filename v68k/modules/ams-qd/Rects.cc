@@ -167,6 +167,13 @@ Ptr draw_even_segment( Ptr      start,
                        short    transfer_mode_AND_0x03,
                        uint8_t  pattern_sample )
 {
+	if ( transfer_mode_AND_0x03 == srcCopy )
+	{
+		fast_memset( start, pattern_sample, n_bytes );
+		
+		return start + n_bytes;
+	}
+	
 	Ptr p = start;
 	
 	uint32_t src = pattern_sample << 8 | pattern_sample;
