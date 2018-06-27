@@ -473,15 +473,6 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	finish_region( dst );
 }
 
-static RgnHandle new_sect_rect_region( const Rect& rect, RgnHandle src )
-{
-	RgnHandle dst = NewRgn();
-	
-	sect_rect_region( rect, src, dst );
-	
-	return dst;
-}
-
 pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
 	ASSERT( is_valid_region( a ) );
@@ -559,8 +550,14 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		Clip each input region to the intersection of the bounding boxes.
 	*/
 	
-	a = new_sect_rect_region( bbox_intersection, a );
-	b = new_sect_rect_region( bbox_intersection, b );
+	static RgnHandle one = NewRgn();
+	static RgnHandle two = NewRgn();
+	
+	sect_rect_region( bbox_intersection, a, one );  // clobbers one
+	sect_rect_region( bbox_intersection, b, two );  // clobbers two
+	
+	a = one;
+	b = two;
 	
 	while ( true )
 	{
@@ -623,9 +620,6 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		
 		// ... and try again.
 	}
-	
-	DisposeRgn( a );
-	DisposeRgn( b );
 }
 
 pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
