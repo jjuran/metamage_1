@@ -376,7 +376,7 @@ void stretch_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
 
 pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
 {
-	RgnHandle tmp = NewRgn();
+	static RgnHandle tmp = NewRgn();
 	
 	if ( dh != 0 )
 	{
@@ -405,8 +405,6 @@ pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
 			stretch_region_v( rgn, dv, tmp );
 		}
 	}
-	
-	DisposeRgn( tmp );
 }
 
 static void finish_region( RgnHandle r )
