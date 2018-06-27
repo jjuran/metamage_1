@@ -30,7 +30,7 @@ pascal void StdRRect_patch( signed char  verb,
 		return;
 	}
 	
-	RgnHandle rgn = NewRgn();
+	static RgnHandle rgn = NewRgn();
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
@@ -69,7 +69,7 @@ pascal void StdRRect_patch( signed char  verb,
 	
 	StdRgn( verb, rgn );
 	
-	DisposeRgn( rgn );
+	SetEmptyRgn( rgn );
 }
 
 pascal void EraseRoundRect_patch( const Rect*  rect,
