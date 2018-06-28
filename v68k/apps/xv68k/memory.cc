@@ -5,6 +5,9 @@
 
 #include "memory.hh"
 
+// v68k-alloc
+#include "v68k-alloc/memory.hh"
+
 // v68k-screen
 #include "screen/storage.hh"
 
@@ -30,7 +33,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 {
 	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
 	{
-		return its_alloc_mem.translate( addr, length, fc, access );
+		return v68k::alloc::translate( addr, length, fc, access );
 	}
 	
 	const uint32_t screen_size = v68k::screen::the_screen_size;

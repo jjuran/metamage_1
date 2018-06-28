@@ -183,10 +183,7 @@ unsigned verify_n_pages( unsigned first, unsigned n )
 }
 
 
-uint8_t* memory::translate( uint32_t               addr,
-                            uint32_t               length,
-                            v68k::function_code_t  fc,
-                            v68k::memory_access_t  access ) const
+uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access == mem_exec )
 	{

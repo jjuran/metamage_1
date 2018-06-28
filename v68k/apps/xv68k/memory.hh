@@ -6,9 +6,6 @@
 #ifndef MEMORY_HH
 #define MEMORY_HH
 
-// v68k-alloc
-#include "v68k-alloc/memory.hh"
-
 // v68k-callouts
 #include "callout/memory.hh"
 
@@ -27,7 +24,6 @@ class memory_manager : public v68k::memory
 		
 		v68k::mac::low_memory  its_mac_low_mem;
 		
-		v68k::alloc  ::memory  its_alloc_mem;
 		v68k::callout::memory  its_callout_memory;
 		
 		screen_memory           its_screen;
