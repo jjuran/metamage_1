@@ -12,9 +12,6 @@
 // v68k-mac
 #include "v68k-mac/memory.hh"
 
-// xv68k
-#include "screen.hh"
-
 
 class memory_manager : public v68k::memory
 {
@@ -25,8 +22,6 @@ class memory_manager : public v68k::memory
 		v68k::mac::low_memory  its_mac_low_mem;
 		
 		v68k::callout::memory  its_callout_memory;
-		
-		screen_memory           its_screen;
 	
 	public:
 		memory_manager( uint8_t*  low_mem_base,

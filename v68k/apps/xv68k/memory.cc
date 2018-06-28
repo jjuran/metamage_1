@@ -11,6 +11,9 @@
 // v68k-screen
 #include "screen/storage.hh"
 
+// xv68k
+#include "screen.hh"
+
 
 #pragma exceptions off
 
@@ -40,7 +43,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 	
 	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
 	{
-		return its_screen.translate( addr - screen_addr, length, fc, access );
+		return screen::translate( addr - screen_addr, length, fc, access );
 	}
 	
 	if ( addr < 3 * 1024  &&  (addr & 0x07FF) < 1024 )
