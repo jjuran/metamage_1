@@ -5,39 +5,91 @@
 
 #include "memory.hh"
 
+// v68k-alloc
+#include "v68k-alloc/memory.hh"
+
+// v68k-callouts
+#include "callout/memory.hh"
+
+// v68k-mac
+#include "v68k-mac/memory.hh"
+
 // v68k-screen
 #include "screen/storage.hh"
+
+// xv68k
+#include "screen.hh"
 
 
 #pragma exceptions off
 
 
+using v68k::addr_t;
+using v68k::fc_t;
+using v68k::mem_t;
+
+using v68k::user_program_space;
+using v68k::mem_exec;
+
+
 const uint32_t screen_addr = 0x0001A700;
 
+static uint8_t* low_memory_base;
+static uint32_t low_memory_size;
+
+
+static
+uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+{
+	if ( addr < 1024 )
+	{
+		if ( fc <= user_program_space )
+		{
+			// No user access to system vectors
+			
+			return 0;  // NULL
+		}
+		
+		if ( access == mem_exec )
+		{
+			// System vectors are not code -- not even the reset vector
+			
+			return 0;  // NULL
+		}
+	}
+	
+	if ( length > low_memory_size  ||  addr > low_memory_size - length )
+	{
+		return 0;  // NULL
+	}
+	
+	return low_memory_base + addr;
+}
 
 memory_manager::memory_manager( uint8_t*  low_mem_base,
                                 uint32_t  low_mem_size )
 :
-	its_low_mem_size( low_mem_size ),
-	its_low_mem     ( low_mem_base, low_mem_size )
+	v68k::memory( &translate )
 {
+	low_memory_base = low_mem_base;
+	low_memory_size = low_mem_size;
 }
 
 uint8_t* memory_manager::translate( uint32_t               addr,
                                     uint32_t               length,
                                     v68k::function_code_t  fc,
-                                    v68k::memory_access_t  access ) const
+                                    v68k::memory_access_t  access )
 {
 	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
 	{
-		return its_alloc_mem.translate( addr, length, fc, access );
+		return v68k::alloc::translate( addr, length, fc, access );
 	}
 	
 	const uint32_t screen_size = v68k::screen::the_screen_size;
 	
 	if ( addr >= screen_addr  &&  addr < screen_addr + screen_size )
 	{
-		return its_screen.translate( addr - screen_addr, length, fc, access );
+		return screen::translate( addr - screen_addr, length, fc, access );
 	}
 	
 	if ( addr < 3 * 1024  &&  (addr & 0x07FF) < 1024 )
@@ -45,14 +97,14 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
 		{
 			// Mac OS low memory
-			return its_mac_low_mem.translate( addr, length, fc, access );
+			return v68k::mac::translate( addr, length, fc, access );
 		}
 	}
 	
-	if ( addr < its_low_mem_size )
+	if ( addr < low_memory_size )
 	{
-		return its_low_mem.translate( addr, length, fc, access );
+		return lowmem_translate( addr, length, fc, access );
 	}
 	
-	return its_callout_memory.translate( addr, length, fc, access );
+	return v68k::callout::translate( addr, length, fc, access );
 }

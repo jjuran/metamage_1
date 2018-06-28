@@ -13,14 +13,7 @@
 namespace v68k    {
 namespace callout {
 
-class memory : public v68k::memory
-{
-	public:
-		uint8_t* translate( uint32_t               addr,
-		                    uint32_t               length,
-		                    v68k::function_code_t  fc,
-		                    v68k::memory_access_t  access ) const;
-};
+uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );
 
 }  // namespace callout
 }  // namespace v68k

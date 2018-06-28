@@ -26,6 +26,9 @@
 #include "v68k/emulator.hh"
 #include "v68k/endian.hh"
 
+// v68k-alloc
+#include "v68k-alloc/memory.hh"
+
 // v68k-auth
 #include "auth/auth.hh"
 

@@ -130,10 +130,9 @@ int set_screen_backing_store_file( const char* path, bool is_raster )
 	return 0;
 }
 
-uint8_t* screen_memory::translate( uint32_t               addr,
-                                   uint32_t               length,
-                                   v68k::function_code_t  fc,
-                                   v68k::memory_access_t  access ) const
+namespace screen {
+
+uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access == v68k::mem_exec )
 	{
@@ -169,3 +168,5 @@ uint8_t* screen_memory::translate( uint32_t               addr,
 	
 	return p;
 }
+
+}  // namespace screen
