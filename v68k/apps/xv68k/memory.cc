@@ -68,6 +68,8 @@ uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 
 memory_manager::memory_manager( uint8_t*  low_mem_base,
                                 uint32_t  low_mem_size )
+:
+	v68k::memory( &translate )
 {
 	low_memory_base = low_mem_base;
 	low_memory_size = low_mem_size;
@@ -76,7 +78,7 @@ memory_manager::memory_manager( uint8_t*  low_mem_base,
 uint8_t* memory_manager::translate( uint32_t               addr,
                                     uint32_t               length,
                                     v68k::function_code_t  fc,
-                                    v68k::memory_access_t  access ) const
+                                    v68k::memory_access_t  access )
 {
 	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
 	{

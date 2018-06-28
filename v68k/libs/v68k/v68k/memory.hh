@@ -37,17 +37,22 @@ namespace v68k
 	typedef function_code_t  fc_t;
 	typedef memory_access_t  mem_t;
 	
+	typedef uint8_t* (*translate_f)( addr_t a, uint32_t n, fc_t fc, mem_t mem );
+	
 	class memory
 	{
+		private:
+			translate_f its_translate;
+		
 		public:
-			/*
-				Since we don't destroy instances of derived classes through
-				pointers to this class, we don't need a virtual destructor.
-			*/
+			memory( translate_f f ) : its_translate( f )
+			{
+			}
 			
-			//virtual ~memory();
-			
-			virtual uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access ) const = 0;
+			uint8_t* translate( addr_t a, uint32_t n, fc_t fc, mem_t mem ) const
+			{
+				return its_translate( a, n, fc, mem );
+			}
 			
 			bool get_byte( addr_t addr, uint8_t & x, fc_t fc ) const;
 			bool get_word( addr_t addr, uint16_t& x, fc_t fc ) const;
