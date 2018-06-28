@@ -8,6 +8,9 @@
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
 
+// v68k-mac
+#include "v68k-mac/memory.hh"
+
 // v68k-screen
 #include "screen/storage.hh"
 
@@ -51,7 +54,7 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )
 		{
 			// Mac OS low memory
-			return its_mac_low_mem.translate( addr, length, fc, access );
+			return v68k::mac::translate( addr, length, fc, access );
 		}
 	}
 	

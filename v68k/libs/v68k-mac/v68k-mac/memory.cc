@@ -324,10 +324,7 @@ static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
 	return buffer;
 }
 
-uint8_t* low_memory::translate( uint32_t               addr,
-                                uint32_t               length,
-                                v68k::function_code_t  fc,
-                                v68k::memory_access_t  access ) const
+uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access == mem_exec )
 	{
