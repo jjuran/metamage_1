@@ -24,15 +24,53 @@
 #pragma exceptions off
 
 
+using v68k::addr_t;
+using v68k::fc_t;
+using v68k::mem_t;
+
+using v68k::user_program_space;
+using v68k::mem_exec;
+
+
 const uint32_t screen_addr = 0x0001A700;
 
+static uint8_t* low_memory_base;
+static uint32_t low_memory_size;
+
+
+static
+uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
+{
+	if ( addr < 1024 )
+	{
+		if ( fc <= user_program_space )
+		{
+			// No user access to system vectors
+			
+			return 0;  // NULL
+		}
+		
+		if ( access == mem_exec )
+		{
+			// System vectors are not code -- not even the reset vector
+			
+			return 0;  // NULL
+		}
+	}
+	
+	if ( length > low_memory_size  ||  addr > low_memory_size - length )
+	{
+		return 0;  // NULL
+	}
+	
+	return low_memory_base + addr;
+}
 
 memory_manager::memory_manager( uint8_t*  low_mem_base,
                                 uint32_t  low_mem_size )
-:
-	its_low_mem_size( low_mem_size ),
-	its_low_mem     ( low_mem_base, low_mem_size )
 {
+	low_memory_base = low_mem_base;
+	low_memory_size = low_mem_size;
 }
 
 uint8_t* memory_manager::translate( uint32_t               addr,
@@ -61,9 +99,9 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		}
 	}
 	
-	if ( addr < its_low_mem_size )
+	if ( addr < low_memory_size )
 	{
-		return its_low_mem.translate( addr, length, fc, access );
+		return lowmem_translate( addr, length, fc, access );
 	}
 	
 	return v68k::callout::translate( addr, length, fc, access );
