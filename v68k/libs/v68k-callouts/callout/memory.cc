@@ -17,10 +17,7 @@ namespace callout {
 static uint8_t callout_trap[] = { 0x48, 0x4B, 0x48, 0x4B, 0x48 };  // BKPT #3 (2.5x)
 
 
-uint8_t* memory::translate( uint32_t               addr,
-                            uint32_t               length,
-                            v68k::function_code_t  fc,
-                            v68k::memory_access_t  access ) const
+uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 {
 	if ( access >= v68k::mem_write )
 	{

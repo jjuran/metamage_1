@@ -8,6 +8,9 @@
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
 
+// v68k-callouts
+#include "callout/memory.hh"
+
 // v68k-mac
 #include "v68k-mac/memory.hh"
 
@@ -63,5 +66,5 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return its_low_mem.translate( addr, length, fc, access );
 	}
 	
-	return its_callout_memory.translate( addr, length, fc, access );
+	return v68k::callout::translate( addr, length, fc, access );
 }
