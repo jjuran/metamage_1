@@ -12,6 +12,7 @@
 
 // ams-qd
 #include "OvalRgn.hh"
+#include "Regions.hh"
 
 
 static
@@ -53,7 +54,7 @@ void round_rect_corners( RgnHandle rgn, RgnHandle corners )
 	const short hRadius = ovalWidth  / 2;
 	const short vRadius = ovalHeight / 2;
 	
-	RgnHandle tmp = NewRgn();
+	static RgnHandle tmp = NewRgn();
 	
 	SetRectRgn( tmp,
 	            0,       0,
@@ -86,8 +87,10 @@ void round_rect_corners( RgnHandle rgn, RgnHandle corners )
 	OffsetRgn( tmp, width - ovalWidth, height - ovalHeight );
 	XorRgn( tmp, rgn, rgn );
 	
-	DisposeRgn( tmp );
+	SetEmptyRgn( tmp );
 }
+
+static RgnHandle corners = NewRgn_patch();
 
 void RoundRectRgn( MacRegion**  rgn,
                    short        width,
@@ -95,8 +98,6 @@ void RoundRectRgn( MacRegion**  rgn,
                    short        ovalWidth,
                    short        ovalHeight )
 {
-	RgnHandle corners = NewRgn();
-	
 	XorRgnRect( rgn, 0, 0, width, height );
 	
 	OvalRgn( corners, ovalWidth, ovalHeight );
@@ -105,7 +106,7 @@ void RoundRectRgn( MacRegion**  rgn,
 	
 	round_rect_corners( rgn, corners );
 	
-	DisposeRgn( corners );
+	SetEmptyRgn( corners );
 }
 
 void FramedRoundRectRgn( MacRegion**  rgn,
@@ -119,8 +120,6 @@ void FramedRoundRectRgn( MacRegion**  rgn,
 	const short hRadius = ovalWidth  / 2;
 	const short vRadius = ovalHeight / 2;
 	
-	RgnHandle corners = NewRgn();
-	
 	XorRgnRect( rgn, hRadius, 0,                  width - hRadius, penHeight );
 	XorRgnRect( rgn, hRadius, height - penHeight, width - hRadius, height    );
 	
@@ -131,5 +130,5 @@ void FramedRoundRectRgn( MacRegion**  rgn,
 	
 	round_rect_corners( rgn, corners );
 	
-	DisposeRgn( corners );
+	SetEmptyRgn( corners );
 }

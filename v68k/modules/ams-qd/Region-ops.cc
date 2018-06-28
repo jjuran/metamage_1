@@ -26,6 +26,7 @@
 // ams-qd
 #include "Rect-utils.hh"
 #include "Rects.hh"
+#include "Regions.hh"
 
 
 using quickdraw::offset_region;
@@ -375,7 +376,7 @@ void stretch_region_v( RgnHandle rgn, short dv, RgnHandle tmp )
 
 pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
 {
-	RgnHandle tmp = NewRgn();
+	static RgnHandle tmp = NewRgn();
 	
 	if ( dh != 0 )
 	{
@@ -404,8 +405,6 @@ pascal void InsetRgn_patch ( MacRegion** rgn, short dh, short dv )
 			stretch_region_v( rgn, dv, tmp );
 		}
 	}
-	
-	DisposeRgn( tmp );
 }
 
 static void finish_region( RgnHandle r )
@@ -471,15 +470,6 @@ static void sect_rect_region( const Rect& rect, RgnHandle src, RgnHandle dst )
 	                  rgn_extent( *dst ) );
 	
 	finish_region( dst );
-}
-
-static RgnHandle new_sect_rect_region( const Rect& rect, RgnHandle src )
-{
-	RgnHandle dst = NewRgn();
-	
-	sect_rect_region( rect, src, dst );
-	
-	return dst;
 }
 
 pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
@@ -559,8 +549,14 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		Clip each input region to the intersection of the bounding boxes.
 	*/
 	
-	a = new_sect_rect_region( bbox_intersection, a );
-	b = new_sect_rect_region( bbox_intersection, b );
+	static RgnHandle one = NewRgn();
+	static RgnHandle two = NewRgn();
+	
+	sect_rect_region( bbox_intersection, a, one );  // clobbers one
+	sect_rect_region( bbox_intersection, b, two );  // clobbers two
+	
+	a = one;
+	b = two;
 	
 	while ( true )
 	{
@@ -623,21 +619,18 @@ pascal void SectRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		
 		// ... and try again.
 	}
-	
-	DisposeRgn( a );
-	DisposeRgn( b );
 }
+
+static RgnHandle union_diff_tmp = NewRgn_patch();
 
 pascal void UnionRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 {
-	RgnHandle tmp = NewRgn();
+	RgnHandle tmp = union_diff_tmp;
 	
 	SectRgn( a, b, tmp );
 	
 	XorRgn( a, tmp, tmp );
 	XorRgn( b, tmp, dst );
-	
-	DisposeRgn( tmp );
 }
 
 pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
@@ -649,13 +642,11 @@ pascal void DiffRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )
 		return;
 	}
 	
-	RgnHandle tmp = NewRgn();
+	RgnHandle tmp = union_diff_tmp;
 	
 	SectRgn( a, b, tmp );
 	
 	XorRgn( a, tmp, dst );
-	
-	DisposeRgn( tmp );
 }
 
 pascal void XOrRgn_patch( MacRegion** a, MacRegion** b, MacRegion** dst )

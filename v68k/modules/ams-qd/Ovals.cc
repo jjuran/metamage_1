@@ -27,7 +27,7 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
-	RgnHandle ovalRgn = NewRgn();
+	static RgnHandle ovalRgn = NewRgn();
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
@@ -60,7 +60,7 @@ pascal void StdOval_patch( signed char verb, const Rect* r )
 	
 	StdRgn( verb, ovalRgn );
 	
-	DisposeRgn( ovalRgn );
+	SetEmptyRgn( ovalRgn );
 }
 
 pascal void EraseOval_patch( const Rect* rect )

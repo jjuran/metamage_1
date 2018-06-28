@@ -26,16 +26,11 @@ static const Rect emptyRect = { 0, 0, 0, 0 };
 
 pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 {
-	RgnHandle tmp = NewRgn();
-	
-	if ( tmp == NULL )
-	{
-		return;
-	}
+	static RgnHandle utility_rgn = NewRgn();
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
-		RgnHandle frame = tmp;
+		RgnHandle frame = utility_rgn;  // clobbered by CopyRgn()
 		
 		CopyRgn( rgn, frame );
 		
@@ -57,7 +52,7 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	
 	GrafPort& port = **get_addrof_thePort();
 	
-	RgnHandle clipRgn = tmp;
+	RgnHandle clipRgn = utility_rgn;  // clobbered by SectRgn()
 	
 	SectRgn( port.clipRgn, rgn, clipRgn );
 	
@@ -70,8 +65,6 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 	StdRect_patch( verb, &box );
 	
 	port.clipRgn = saved_clipRgn;
-	
-	DisposeRgn( tmp );
 }
 
 pascal void FrameRgn_patch( MacRegion** rgn )

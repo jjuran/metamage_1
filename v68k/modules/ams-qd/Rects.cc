@@ -18,6 +18,7 @@
 
 // ams-qd
 #include "draw.hh"
+#include "Regions.hh"
 
 
 using quickdraw::segments_box;
@@ -535,6 +536,8 @@ void draw_region( const rectangular_op_params&  params,
 	}
 }
 
+static RgnHandle clipRgn = NewRgn_patch();
+
 pascal void StdRect_patch( signed char verb, const Rect* r )
 {
 	GrafPort& port = **get_addrof_thePort();
@@ -545,13 +548,11 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 	{
 		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
 		{
-			RgnHandle rgn = NewRgn();
+			RgnHandle rgn = clipRgn;  // Reuse the existing region
 			
 			RectRgn( rgn, r );
 			
 			UnionRgn( rgn, rgnSave, rgnSave );
-			
-			DisposeRgn( rgn );
 		}
 		
 		frame_rect( r );
@@ -559,22 +560,12 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		return;
 	}
 	
-	RgnHandle clipRgn = NULL;
-	
-	clipRgn = NewRgn();
-	
+	// This initializes clipRgn by calling RectRgn().
 	get_refined_clip_region( port, *r, clipRgn );
 	
 	const Rect clipRect = clipRgn[0]->rgnBBox;
 	
 	bool clipping_to_rect = clipRgn[0]->rgnSize <= sizeof (MacRegion);
-	
-	if ( clipping_to_rect )
-	{
-		DisposeRgn( clipRgn );
-		
-		clipRgn = NULL;
-	}
 	
 	rectangular_op_params params;
 	
@@ -654,11 +645,9 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 		}
 	}
 	
-	if ( clipRgn != NULL )
+	if ( ! clipping_to_rect )
 	{
 		draw_region( params, patMode, clipRgn );
-		
-		DisposeRgn( clipRgn );
 	}
 	else
 	{
