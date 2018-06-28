@@ -55,6 +55,7 @@
 // xv68k
 #include "diagnostics.hh"
 #include "memory.hh"
+#include "native.hh"
 #include "screen.hh"
 
 
@@ -562,7 +563,7 @@ void emulation_loop( v68k::emulator& emu )
 	
 	const unsigned max_steps = parse_instruction_limit( instruction_limit_var );
 	
-	while ( emu.step() )
+	while ( (turbo  &&  native_override( emu ))  ||  emu.step() )
 	{
 		n_instructions = emu.instruction_count();
 		
