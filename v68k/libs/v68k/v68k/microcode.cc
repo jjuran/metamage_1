@@ -7,6 +7,7 @@
 
 // v68k
 #include "v68k/conditional.hh"
+#include "v68k/endian.hh"
 #include "v68k/macros.hh"
 #include "v68k/state.hh"
 
@@ -66,68 +67,64 @@ namespace v68k
 	
 	op_result microcode_MOVEP_to( processor_state& s, op_params& pb )
 	{
-		const uint32_t x = pb.target;
+		const function_code_t fc = s.data_space();
 		
-		const uint32_t Dx = s.d( x );
+		const memory& mem = s.mem;
 		
-		uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_write );
-		
-		if ( p == 0 )  // NULL
-		{
-			return Bus_error;
-		}
-		
-		switch ( (pb.size == long_sized) + 0 )  // clang hates boolean switch conditions
-		{
-			case true:
-				p[0] = Dx >> 24;
-				p[2] = Dx >> 16;
-				
-				p += 4;
-				
-				// fall through
-			
-			case false:
-				p[0] = Dx >>  8;
-				p[2] = Dx >>  0;
-		}
-		
-		return Ok;
-	}
-	
-	op_result microcode_MOVEP_from( processor_state& s, op_params& pb )
-	{
 		const uint32_t x = pb.target;
 		
 		uint32_t& Dx = s.d( x );
 		
-		const uint8_t* p = s.mem.translate( pb.address, (1 << pb.size) - 1, s.data_space(), mem_read );
+		uint32_t addr = pb.address;
 		
-		if ( p == 0 )  // NULL
+		bool ok = true;
+		
+		if ( pb.size == long_sized )
 		{
-			return Bus_error;
-		}
-		
-		uint32_t data = pb.size == long_sized ? 0 : Dx & 0xFFFF0000;
-		
-		switch ( (pb.size == long_sized) + 0 )  // clang hates boolean switch conditions
-		{
-			case true:
-				data |= p[0] << 24;
-				data |= p[2] << 16;
-				
-				p += 4;
-				
-				// fall through
+			ok = mem.put_byte( addr + 0, high_byte( high_word( Dx ) ), fc )  &&
+			     mem.put_byte( addr + 2, low_byte ( high_word( Dx ) ), fc );
 			
-			case false:
-				data |= p[0] << 8;
-				data |= p[2] << 0;
+			addr += 4;
 		}
 		
-		Dx = data;
+		if ( ok )
+		{
+			ok = mem.put_byte( addr + 0, high_byte( low_word( Dx ) ), fc )  &&
+			     mem.put_byte( addr + 2, low_byte ( low_word( Dx ) ), fc );
+		}
 		
-		return Ok;
+		return ok ? Ok : Bus_error;
+	}
+	
+	op_result microcode_MOVEP_from( processor_state& s, op_params& pb )
+	{
+		const function_code_t fc = s.data_space();
+		
+		const memory& mem = s.mem;
+		
+		const uint32_t x = pb.target;
+		
+		uint32_t& Dx = s.d( x );
+		
+		uint32_t addr = pb.address;
+		
+		bool ok = true;
+		
+		if ( pb.size == long_sized )
+		{
+			ok = mem.get_byte( addr + 0, high_byte( high_word( Dx ) ), fc )  &&
+			     mem.get_byte( addr + 2, low_byte ( high_word( Dx ) ), fc );
+			
+			addr += 4;
+		}
+		
+		if ( ok )
+		{
+			ok = mem.get_byte( addr + 0, high_byte( low_word( Dx ) ), fc )  &&
+			     mem.get_byte( addr + 2, low_byte ( low_word( Dx ) ), fc );
+		}
+		
+		return ok ? Ok : Bus_error;
 	}
 	
 	op_result microcode_ANDI_to_CCR( processor_state& s, op_params& pb )
