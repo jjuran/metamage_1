@@ -7,7 +7,6 @@
 
 // v68k
 #include "v68k/decode.hh"
-#include "v68k/endian.hh"
 #include "v68k/instruction.hh"
 #include "v68k/load_store.hh"
 #include "v68k/update_CCR.hh"
@@ -18,13 +17,6 @@
 
 namespace v68k
 {
-	
-	struct reset_vector
-	{
-		uint32_t isp;
-		uint32_t pc;
-	};
-	
 	
 	emulator::emulator( processor_model model, const memory& mem, bkpt_handler bkpt )
 	:
@@ -44,12 +36,10 @@ namespace v68k
 			*is* in fact a read operation, not execution.
 		*/
 		
-		const uint8_t* zero = mem.translate( 0,
-		                                     sizeof (reset_vector),
-		                                     supervisor_program_space,
-		                                     mem_read );
+		const bool ok = mem.get_long( 0, a(7), supervisor_program_space )  &&
+		                mem.get_long( 4, pc(), supervisor_program_space );
 		
-		if ( zero == 0 )  // NULL
+		if ( ! ok )
 		{
 			double_bus_fault();
 		}
@@ -63,11 +53,6 @@ namespace v68k
 			
 			sr.   x = 0;  // clear CCR
 			sr.nzvc = 0;
-			
-			const reset_vector* v = (const reset_vector*) zero;
-			
-			a(7) = longword_from_big( v->isp );
-			pc() = longword_from_big( v->pc  );
 			
 			// prefetch
 			prefetch_instruction_word();
