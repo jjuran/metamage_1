@@ -165,6 +165,9 @@ namespace v68k
 	
 	op_result microcode_MOVES( processor_state& s, op_params& pb )
 	{
+		const memory& mem = s.mem;
+		
+		const uint32_t addr = pb.address;
 		const uint32_t more = pb.first;
 		
 		const int size = byte_count( pb.size );  // 1,2,4
@@ -173,30 +176,27 @@ namespace v68k
 		
 		const uint16_t writing = more & 0x0800;
 		
-		const function_code_t fc = function_code_t( s.regs[ writing ? DFC : SFC ] );
-		
-		const memory_access_t access = writing ? mem_write : mem_read;
-		
-		uint8_t* p = s.mem.translate( pb.address, size, fc, access );
-		
-		if ( p == 0 )
-		{
-			return Bus_error;
-		}
+		bool ok;
 		
 		if ( writing )
 		{
 			const uint32_t data = s.regs[ reg_id ];
 			
+			const function_code_t fc = function_code_t( s.regs[ DFC ] );
+			
 			switch ( pb.size )
 			{
 				case long_sized:
-					*p++ = data >> 24;
-					*p++ = data >> 16;
+					ok = mem.put_long( addr, data, fc );
+					break;
+				
 				case word_sized:
-					*p++ = data >>  8;
+					ok = mem.put_word( addr, data, fc );
+					break;
+				
 				case byte_sized:
-					*p++ = data >>  0;
+					ok = mem.put_byte( addr, data, fc );
+					break;
 				
 				default:
 					break;
@@ -206,23 +206,33 @@ namespace v68k
 		{
 			uint32_t& reg = s.regs[ reg_id ];
 			
+			const function_code_t fc = function_code_t( s.regs[ SFC ] );
+			
 			uint32_t data = 0;
 			
 			switch ( pb.size )
 			{
 				case long_sized:
-					data |= *p++ << 24;
-					data |= *p++ << 16;
+					ok = mem.get_long( addr, data, fc );
+					break;
+				
 				case word_sized:
-					data |= *p++ <<  8;
+					ok = mem.get_word( addr, low_word( data ), fc );
+					break;
+				
 				case byte_sized:
-					data |= *p++ <<  0;
+					ok = mem.get_byte( addr, low_byte( low_word( data ) ), fc );
+					break;
 				
 				default:
 					break;
 			}
 			
-			if ( reg_id & 0x8 )
+			if ( ! ok )
+			{
+				// don't update the register
+			}
+			else if ( reg_id & 0x8 )
 			{
 				reg = sign_extend( data, pb.size );
 			}
@@ -232,7 +242,7 @@ namespace v68k
 			}
 		}
 		
-		return Ok;
+		return ok ? Ok : Bus_error;
 	}
 	
 	#pragma mark -
