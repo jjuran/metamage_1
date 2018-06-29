@@ -76,7 +76,7 @@ namespace v68k
 	static inline void write_big_word_unaligned( uint8_t* addr, uint16_t x )
 	{
 		addr[0] = x >> 8;
-		addr[1] = x & 0xFF;
+		addr[1] = x;
 	}
 	
 	static inline uint32_t read_big_long_unaligned( const uint8_t* addr )
@@ -92,9 +92,9 @@ namespace v68k
 	static inline void write_big_long_unaligned( uint8_t* addr, uint32_t x )
 	{
 		addr[0] = x >> 24;
-		addr[1] = x >> 16 & 0xFF;
-		addr[2] = x >>  8 & 0xFF;
-		addr[3] = x       & 0xFF;
+		addr[1] = x >> 16;
+		addr[2] = x >>  8;
+		addr[3] = x;
 	}
 	
 	

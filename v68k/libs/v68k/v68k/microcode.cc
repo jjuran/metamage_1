@@ -195,11 +195,11 @@ namespace v68k
 			{
 				case long_sized:
 					*p++ = data >> 24;
-					*p++ = data >> 16 & 0xFF;
+					*p++ = data >> 16;
 				case word_sized:
-					*p++ = data >>  8 & 0xFF;
+					*p++ = data >>  8;
 				case byte_sized:
-					*p++ = data >>  0 & 0xFF;
+					*p++ = data >>  0;
 				
 				default:
 					break;
