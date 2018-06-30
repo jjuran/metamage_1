@@ -227,7 +227,7 @@ static void refresh_dynamic_global( uint8_t tag )
 	}
 }
 
-static uint8_t buffer[ 16 ];
+static uint8_t buffer[ 32 ];  // needs to be as big as the largest global
 
 static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 {
