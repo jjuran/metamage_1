@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-print-directory
+
 ANDROID_NDK ?= ${HOME}/opt/android/ndk
 ANDROID_SDK ?= ${HOME}/opt/android/sdk
 
