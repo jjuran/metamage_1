@@ -50,6 +50,6 @@ tidy:
 	@find . -name .DS_Store | xargs rm -v
 
 install: install-ready default
-	@${ADB} shell "umask 022 && mkdir ${INSTALL_DIR}" | grep -v exists || true
+	@${ADB} shell "umask 022 && mkdir ${INSTALL_DIR}" 2>&1 | grep -v exists || :
 	@chmod -w ${BIN_DIR}/*
 	@find ${BIN_DIR} -type f -perm -111 -exec ${ADB} push {} ${INSTALL_DIR}/ ';'
