@@ -80,6 +80,7 @@ enum
 	tag_SaveVisRgn_low_word,
 	tag_IconBitmap,
 	tag_IconBitmap_word_6 = tag_IconBitmap + 6,  // 14 bytes
+	tag_TheMenu,
 	tag_DragPattern,
 	tag_DragPattern_word_3 = tag_DragPattern + 3,  // 8 bytes
 	tag_DeskPattern,
@@ -162,6 +163,9 @@ static const global globals[] =
 	{ 0x0A02, 0x84, 0x01            },  // OneOne
 	{ 0x0A06, 0x84, 0xFF            },  // MinusOne
 	{ 0x0A0E, 14,   tag_IconBitmap  },
+	
+	{ 0x0A26, 2,    tag_TheMenu     },
+	
 	{ 0x0A34, 8,    tag_DragPattern },
 	{ 0x0A3C, 8,    tag_DeskPattern },
 	{ 0x0A4A, 6,    tag_FPState     },
