@@ -25,10 +25,10 @@ SET_SDK_MSG := "Can't find adb (ANDROID_SDK is unset)."
 FIX_SDK_MSG := "Can't find adb (ANDROID_SDK is set incorrectly)."
 
 default: build-ready
-	${NDK_BUILD}
+	@${NDK_BUILD}
 
 clean: build-ready
-	${NDK_BUILD} clean
+	@${NDK_BUILD} clean
 
 build-ready: jni project.properties
 	@test -x ${NDK_BUILD} -o -n "${ANDROID_NDK}" || echo ${SET_NDK_MSG}
