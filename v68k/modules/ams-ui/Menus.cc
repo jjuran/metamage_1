@@ -30,6 +30,7 @@
 
 
 GrafPtr WMgrPort : 0x09DE;
+short TheMenu    : 0x0A26;
 short MBarHeight : 0x0BAA;
 
 
@@ -45,8 +46,6 @@ struct MenuList_entry
 	MenuRef  menu;
 	SInt16   left_edge;
 };
-
-static short TheMenu;
 
 static MenuList_header** MenuList;
 
