@@ -5,6 +5,8 @@ PLATFORMS := ${ANDROID_NDK}/platforms
 NDK_BUILD := ${ANDROID_NDK}/ndk-build
 ADB       := ${ANDROID_SDK}/platform-tools/adb
 
+PROGRAM := `basename ${PWD}`
+
 ANDROIDS := "${PLATFORMS}/android-"
 
 API_LEVEL ?= `ls -d ${ANDROIDS}* | sed -e s/.*android-// | sort -n | head -n1`
@@ -52,4 +54,4 @@ tidy:
 install: install-ready default
 	@${ADB} shell "umask 022 && mkdir ${INSTALL_DIR}" 2>&1 | grep -v exists || :
 	@chmod -w ${BIN_DIR}/*
-	@find ${BIN_DIR} -type f -perm -111 -exec ${ADB} push {} ${INSTALL_DIR}/ ';'
+	@${ADB} push ${BIN_DIR}/${PROGRAM} ${INSTALL_DIR}/
