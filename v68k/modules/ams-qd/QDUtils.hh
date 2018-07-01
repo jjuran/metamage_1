@@ -28,4 +28,6 @@ pascal struct Pattern** GetPattern_patch( short id );
 pascal struct Cursor**  GetCursor_patch ( short id );
 pascal struct Picture** GetPicture_patch( short id );
 
+pascal long DeltaPoint_patch( Point a, Point b );
+
 #endif

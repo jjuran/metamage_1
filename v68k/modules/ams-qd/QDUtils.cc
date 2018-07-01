@@ -129,3 +129,13 @@ pascal PicHandle GetPicture_patch( short id )
 {
 	return (PicHandle) GetResource( 'PICT', id );
 }
+
+pascal long DeltaPoint_patch( Point a, Point b )
+{
+	Point delta;
+	
+	delta.v = a.v - b.v;
+	delta.h = a.h - b.h;
+	
+	return *(long*) &delta;
+}
