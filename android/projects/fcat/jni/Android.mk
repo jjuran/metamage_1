@@ -46,6 +46,8 @@ LOCAL_SRC_FILES     := src/poseven/functions/dup2.cc        \
                        src/poseven/functions/waitpid.cc     \
                        src/poseven/types/errno_t.cc         \
                        src/poseven/types/fd_pair.cc         \
+                       src/poseven/types/mutex.cc           \
+                       src/poseven/types/thread.cc          \
 
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
@@ -93,7 +95,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := fcat
-LOCAL_SRC_FILES     := fcat.cc
+LOCAL_SRC_FILES     := fcat.cc src/must/pthread.c
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
 
