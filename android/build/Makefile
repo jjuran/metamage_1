@@ -15,7 +15,6 @@ API_LEVEL ?= `ls -d ${ANDROIDS}* | sed -e s/.*android-// | sort -n | head -n1`
 
 NDK_PLATFORM ?= android-${API_LEVEL}
 
-BIN_DIR     := libs/armeabi
 INSTALL_DIR := /data/local/tmp/bin
 
 SET_NDK_MSG := "Can't find ndk-build (ANDROID_NDK is unset)."
@@ -23,6 +22,8 @@ FIX_NDK_MSG := "Can't find ndk-build (ANDROID_NDK is set incorrectly)."
 
 SET_SDK_MSG := "Can't find adb (ANDROID_SDK is unset)."
 FIX_SDK_MSG := "Can't find adb (ANDROID_SDK is set incorrectly)."
+
+GET_API := ${ADB} shell "getprop ro.product.cpu.abi" | sed $$'s/\r//'
 
 default: build-ready
 	@${NDK_BUILD}
@@ -56,4 +57,4 @@ tidy:
 
 install: install-ready default
 	@${ADB} shell "umask 022 && mkdir ${INSTALL_DIR}" 2>&1 | grep -v exists || :
-	@${ADB} push ${BIN_DIR}/${PROGRAM} ${INSTALL_DIR}/
+	@${ADB} push libs/`${GET_API}`/${PROGRAM} ${INSTALL_DIR}/
