@@ -26,6 +26,7 @@ FIX_SDK_MSG := "Can't find adb (ANDROID_SDK is set incorrectly)."
 
 default: build-ready
 	@${NDK_BUILD}
+	@chmod -w libs/*/*
 
 clean: build-ready
 	@${NDK_BUILD} clean
@@ -55,5 +56,4 @@ tidy:
 
 install: install-ready default
 	@${ADB} shell "umask 022 && mkdir ${INSTALL_DIR}" 2>&1 | grep -v exists || :
-	@chmod -w ${BIN_DIR}/*
 	@${ADB} push ${BIN_DIR}/${PROGRAM} ${INSTALL_DIR}/
