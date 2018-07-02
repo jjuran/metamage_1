@@ -70,6 +70,7 @@ LOCAL_SRC_FILES     := v68k/conditional.cc        \
                        v68k/macros.cc             \
                        v68k/memory.cc             \
                        v68k/microcode.cc          \
+                       v68k/ops.cc                \
                        v68k/state.cc              \
                        v68k/update_CCR.cc         \
 
@@ -83,8 +84,12 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE        := v68k-libs
 LOCAL_SRC_FILES     := auth/auth.cc                  \
-                       callback/bridge.cc            \
-                       callback/memory.cc            \
+                       callout/bridge.cc             \
+                       callout/memory.cc             \
+                       screen/lock.cc                \
+                       screen/storage.cc             \
+                       screen/surface.cc             \
+                       screen/update.cc              \
                        syscall/bridge.cc             \
                        syscall/handler.cc            \
                        utils/load.cc                 \
