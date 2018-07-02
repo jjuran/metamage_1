@@ -40,6 +40,18 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE        := md5
+LOCAL_SRC_FILES     := src/md5/table.cc   \
+                       src/md5/rounds.cc  \
+                       src/md5/md5.cc
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE        := sha256
 LOCAL_SRC_FILES     := src/sha256/table.cc   \
                        src/sha256/rounds.cc  \
@@ -79,6 +91,7 @@ include $(CLEAR_VARS)
 
 LOCAL_MODULE        := gear
 LOCAL_SRC_FILES     := src/gear/compare.cc           \
+                       src/gear/find.cc              \
                        src/gear/hexadecimal.cc       \
                        src/gear/inscribe_decimal.cc  \
                        src/gear/mince.cc             \
@@ -140,6 +153,7 @@ LOCAL_SRC_FILES     := src/poseven/extras/read_all.cc  \
                        src/poseven/functions/fstat.cc  \
                        src/poseven/functions/open.cc   \
                        src/poseven/types/errno_t.cc    \
+                       src/poseven/types/cond.cc       \
                        src/poseven/types/mutex.cc      \
                        src/poseven/types/thread.cc     \
 
@@ -153,18 +167,24 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := vlib
-LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
+LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
+                       src/vlib/array-utils.cc                 \
+                       src/vlib/assert.cc                      \
                        src/vlib/calc.cc                        \
                        src/vlib/collectible.cc                 \
+                       src/vlib/compare.cc                     \
                        src/vlib/dispatch/stringify.cc          \
                        src/vlib/equal.cc                       \
                        src/vlib/error.cc                       \
                        src/vlib/eval.cc                        \
                        src/vlib/execute.cc                     \
+                       src/vlib/fold.cc                        \
                        src/vlib/function-utils.cc              \
                        src/vlib/functions.cc                   \
                        src/vlib/init.cc                        \
                        src/vlib/interpret.cc                   \
+                       src/vlib/is_function.cc                 \
+                       src/vlib/is_type.cc                     \
                        src/vlib/iterators/array_iterator.cc    \
                        src/vlib/iterators/full_iterator.cc     \
                        src/vlib/iterators/generic_iterator.cc  \
@@ -174,7 +194,9 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/iterators/string_iterator.cc   \
                        src/vlib/lib/ed25519.cc                 \
                        src/vlib/list-utils.cc                  \
+                       src/vlib/map-reduce.cc                  \
                        src/vlib/named_ops.cc                   \
+                       src/vlib/namespaces/Math.cc             \
                        src/vlib/namespaces/V.cc                \
                        src/vlib/new_line.cc                    \
                        src/vlib/ops.cc                         \
@@ -182,6 +204,7 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/peephole.cc                    \
                        src/vlib/precedence.cc                  \
                        src/vlib/quote.cc                       \
+                       src/vlib/reduce.cc                      \
                        src/vlib/scope.cc                       \
                        src/vlib/string-utils.cc                \
                        src/vlib/stack.cc                       \
@@ -196,11 +219,14 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/tracker.cc                     \
                        src/vlib/types.cc                       \
                        src/vlib/types/any.cc                   \
+                       src/vlib/types/bareword.cc              \
                        src/vlib/types/boolean.cc               \
                        src/vlib/types/builtin.cc               \
                        src/vlib/types/byte.cc                  \
+                       src/vlib/types/endec/stdint.cc          \
                        src/vlib/types/fraction.cc              \
                        src/vlib/types/integer.cc               \
+                       src/vlib/types/integer/stdint.cc        \
                        src/vlib/types/invocation.cc            \
                        src/vlib/types/iterator.cc              \
                        src/vlib/types/lambda.cc                \
@@ -212,11 +238,17 @@ LOCAL_SRC_FILES     := src/vlib/array-utils.cc                 \
                        src/vlib/types/proc.cc                  \
                        src/vlib/types/range.cc                 \
                        src/vlib/types/record.cc                \
+                       src/vlib/types/receiver.cc              \
                        src/vlib/types/stdint.cc                \
                        src/vlib/types/string.cc                \
                        src/vlib/types/table.cc                 \
                        src/vlib/types/term.cc                  \
                        src/vlib/types/type.cc                  \
+                       src/vlib/types/unitary.cc               \
+                       src/vlib/types/vbytes.cc                \
+                       src/vlib/types/vector/metatype.cc       \
+                       src/vlib/types/vector/type.cc           \
+                       src/vlib/types/vector/vector.cc         \
                        src/vlib/value.cc                       \
                        src/vlib/vbox.cc                        \
 
@@ -230,18 +262,22 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := vx
-LOCAL_SRC_FILES     := vx/main.cc             \
-                       vx/exception.cc        \
-                       vx/file_descriptor.cc  \
-                       vx/library.cc          \
-                       vx/posixfs.cc          \
-                       vx/sockets.cc          \
-                       vx/thread.cc           \
-                       vx/thread_state.cc     \
+LOCAL_SRC_FILES     := vx/main.cc                  \
+                       vx/channel/channel.cc       \
+                       vx/channel/metatype.cc      \
+                       vx/channel/state.cc         \
+                       vx/empty_signal_handler.cc  \
+                       vx/exception.cc             \
+                       vx/file_descriptor.cc       \
+                       vx/library.cc               \
+                       vx/posixfs.cc               \
+                       vx/sockets.cc               \
+                       vx/thread.cc                \
+                       vx/thread_state.cc          \
 
-LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/vx
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := vlib poseven bignum plus gear chars math sha256 command more must ed25519
+LOCAL_STATIC_LIBRARIES := vlib poseven bignum plus gear chars math md5 sha256 command more must ed25519
 
 include $(BUILD_EXECUTABLE)
