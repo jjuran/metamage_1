@@ -45,10 +45,12 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE        := poseven
-LOCAL_SRC_FILES     := src/poseven/functions/perror.cc  \
-                       src/poseven/functions/socket.cc  \
-                       src/poseven/functions/write.cc   \
-                       src/poseven/types/errno_t.cc     \
+LOCAL_SRC_FILES     := src/poseven/bundles/inet.cc           \
+                       src/poseven/functions/getaddrinfo.cc  \
+                       src/poseven/functions/perror.cc       \
+                       src/poseven/functions/socket.cc       \
+                       src/poseven/functions/write.cc        \
+                       src/poseven/types/errno_t.cc          \
 
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
 LOCAL_CPP_EXTENSION := .cc
