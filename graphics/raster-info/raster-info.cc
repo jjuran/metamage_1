@@ -78,7 +78,7 @@ void print_info( const raster::raster_load& loaded_raster )
 {
 	using namespace raster;
 	
-	printf( "File size: %lu\n", loaded_raster.size );
+	printf( "File size: %lu\n", (unsigned long) loaded_raster.size );
 	
 	const char* base = (char*) loaded_raster.addr;
 	
@@ -88,7 +88,7 @@ void print_info( const raster::raster_load& loaded_raster )
 	
 	const raster_desc& desc = loaded_raster.meta->desc;
 	
-	const size_t min_stride = (desc.width * desc.weight + 7) / 8;
+	const unsigned long min_stride = (desc.width * desc.weight + 7) / 8;
 	
 	char mb32_type[] = "'type'";
 	
