@@ -1,0 +1,1 @@
+../../../../graphics/demo/nyancat/bitmap.hh
