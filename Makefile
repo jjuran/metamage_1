@@ -11,10 +11,14 @@ XV68K = var/build/dbg/bin/xv68k/xv68k
 
 PACK68K = utils/pack.pl
 
+METAMAGE_1 = `git remote -v | grep '^origin.*\(fetch\)' | awk '{print $$2}'`
+PLEASE_RUN = 'Please run `(cd .. && git clone' $(METAMAGE_1)')`.'
+
 default:
 	@echo 'For help, run `make help`.'
 
 help:
+	@echo 'To clone a documented companion repository, run `make $$repo.git`.'
 	@echo 'To build a command-line tool, run `./build.pl $$toolname`.'
 	@echo 'To build a Mac app, first `make A-line` and then `./A-line $$appname`.'
 	@echo "If build.pl can't find a new config file, run \`make catalog\` and retry."
@@ -27,14 +31,14 @@ catalog: rm-catalog
 
 ../%:
 	@echo $(REPOS) | grep $* > /dev/null || (echo Unknown repo $*; exit 1)
-	@test -d ../$*/.git || git clone git://github.com/jjuran/$*.git ../$*
+	@test -d ../$*/.git || bin/clone-repo $*
 
 var/links:
 	mkdir -p var/links
 
 var/links/%: var/links
 	@echo $(REPOS) | grep $* > /dev/null || (echo Unknown repo $*; exit 1)
-	@test -d ../$*/.git || (echo 'Please run `(cd .. && git clone git://github.com/jjuran/$*.git)`.'; exit 128)
+	@test -d ../$*/.git || (echo; echo $(PLEASE_RUN) | sed s/metamage_1/$*/; echo; exit 128)
 	@test -e var/links/$* || (ln -s ../../../$* var/links/ && rm -f var/cache/compile-driver/catalog)
 
 %.git: ../% var/links/%
