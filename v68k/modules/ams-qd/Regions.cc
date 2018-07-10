@@ -28,13 +28,13 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 {
 	static RgnHandle utility_rgn = NewRgn();
 	
+	GrafPort& port = **get_addrof_thePort();
+	
 	if ( verb == kQDGrafVerbFrame )
 	{
 		RgnHandle frame = utility_rgn;  // clobbered by CopyRgn()
 		
 		CopyRgn( rgn, frame );
-		
-		GrafPort& port = **get_addrof_thePort();
 		
 		if ( RgnHandle rgnSave = (RgnHandle) port.rgnSave )
 		{
@@ -49,8 +49,6 @@ pascal void StdRgn_patch( signed char verb, MacRegion** rgn )
 		
 		rgn = frame;
 	}
-	
-	GrafPort& port = **get_addrof_thePort();
 	
 	RgnHandle clipRgn = utility_rgn;  // clobbered by SectRgn()
 	
