@@ -555,8 +555,16 @@ pascal void StdRect_patch( signed char verb, const Rect* r )
 			UnionRgn( rgn, rgnSave, rgnSave );
 		}
 		
-		frame_rect( r );
+		if ( port.pnVis >= 0 )
+		{
+			frame_rect( r );
+		}
 		
+		return;
+	}
+	
+	if ( port.pnVis < 0 )
+	{
 		return;
 	}
 	
