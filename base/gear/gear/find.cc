@@ -12,51 +12,7 @@
 namespace gear
 {
 	
-	static inline bool char_matches( char a, char b )
-	{
-		return a == b;
-	}
-	
-	const char* find_first_match( const char*  p,
-	                              const char*  end,
-	                              char         c,
-	                              const char*  _default,
-	                              bool         negated )
-	{
-		for ( ;  p != end;  ++p )
-		{
-			if ( char_matches( *p, c ) - negated )
-			{
-				return p;
-			}
-		}
-		
-		return _default;
-	}
-	
-	const char* find_last_match( const char*  p,
-	                             const char*  end,
-	                             char         c,
-	                             const char*  _default,
-	                             bool         negated )
-	{
-		const char* begin = p;
-		
-		p = end;
-		
-		while ( p != begin )
-		{
-			if ( char_matches( *--p, c ) - negated )
-			{
-				return p;
-			}
-		}
-		
-		return _default;
-	}
-	
-	
-	static bool char_matches( char c, const unsigned char* chars )
+	bool char_matches( char c, const unsigned char* chars )
 	{
 		for ( int n = *chars++;  n != 0;  --n )
 		{
@@ -67,44 +23,6 @@ namespace gear
 		}
 		
 		return false;
-	}
-	
-	const char* find_first_match( const char*           p,
-	                              const char*           end,
-	                              const unsigned char*  chars,
-	                              const char*           _default,
-	                              bool                  negated )
-	{
-		for ( ;  p != end;  ++p )
-		{
-			if ( char_matches( *p, chars ) - negated )
-			{
-				return p;
-			}
-		}
-		
-		return _default;
-	}
-	
-	const char* find_last_match( const char*           p,
-	                             const char*           end,
-	                             const unsigned char*  chars,
-	                             const char*           _default,
-	                             bool                  negated )
-	{
-		const char* begin = p;
-		
-		p = end;
-		
-		while ( p != begin )
-		{
-			if ( char_matches( *--p, chars ) - negated )
-			{
-				return p;
-			}
-		}
-		
-		return _default;
 	}
 	
 	const char* find_first_match( const char*  p,
