@@ -19,6 +19,7 @@
 #include "vlib/namespaces/V.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 #include "vlib/types/pointer.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
@@ -73,6 +74,7 @@ namespace vlib
 		
 		define_keyword( "boolean",  boolean_vtype  );
 		define_keyword( "bool",     boolean_vtype  );
+		define_keyword( "byterange", byterange_vtype );
 		define_keyword( "function", function_vtype );
 		define_keyword( "fraction", fraction_vtype );
 		define_keyword( "receiver", receiver_vtype );

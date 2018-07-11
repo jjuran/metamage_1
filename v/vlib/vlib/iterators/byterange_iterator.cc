@@ -6,8 +6,8 @@
 #include "vlib/iterators/byterange_iterator.hh"
 
 // vlib
-#include "vlib/throw.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 
 
 namespace vlib
@@ -15,22 +15,10 @@ namespace vlib
 	
 	byterange_iterator::byterange_iterator( const Value& range )
 	{
-		if ( Expr* expr = range.expr() )
-		{
-			const op_type op = expr->op;
-			
-			if ( op == Op_gamut )
-			{
-				its_next = expr->left .to< Byte >();
-				its_high = expr->right.to< Byte >();
-				
-				its_value = expr->left;
-				
-				return;
-			}
-		}
+		iota::byte_range br = range.as< ByteRange >().get();
 		
-		THROW( "invalid range object" );
+		its_next = begin( br );
+		its_high = end  ( br ) - 1;
 	}
 	
 	const Value& byterange_iterator::get() const

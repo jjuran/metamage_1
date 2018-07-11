@@ -71,6 +71,7 @@ namespace vlib
 			case Op_gt:
 			case Op_gte:
 			case Op_cmp:
+			case Op_gamut:
 				return Fold_always;
 			
 			case Op_named_unary:

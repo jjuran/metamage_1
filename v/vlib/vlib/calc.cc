@@ -36,6 +36,7 @@
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/iterator.hh"
 #include "vlib/types/lambda.hh"
@@ -844,6 +845,11 @@ namespace vlib
 			
 			case Op_gamut:
 			case Op_delta:
+				if ( left.is< Byte >()  &&  right.is< Byte >() )
+				{
+					return ByteRange( left, op, right );
+				}
+				
 				return Range( left, op, right );
 			
 			case Op_in:       return Boolean(   in   ( left, right ) );
