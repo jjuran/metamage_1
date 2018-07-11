@@ -6,6 +6,9 @@
 #ifndef GEAR_FIND_HH
 #define GEAR_FIND_HH
 
+// iota
+#include "iota/byte_range.hh"
+
 
 namespace gear
 {
@@ -14,6 +17,12 @@ namespace gear
 	bool char_matches( char a, char b )
 	{
 		return a == b;
+	}
+	
+	static inline
+	bool char_matches( char c, ::iota::byte_range br )
+	{
+		return contains( br, c );
 	}
 	
 	bool char_matches( char c, const unsigned char* chars );
