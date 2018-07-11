@@ -7,10 +7,12 @@
 
 // vlib
 #include "vlib/throw.hh"
+#include "vlib/iterators/byterange_iterator.hh"
 #include "vlib/iterators/iterator_template.hh"
 #include "vlib/iterators/list_iterator.hh"
 #include "vlib/iterators/range_iterator.hh"
 #include "vlib/iterators/string_iterator.hh"
+#include "vlib/types/byte.hh"
 
 
 namespace vlib
@@ -62,7 +64,13 @@ namespace vlib
 				
 				case Op_gamut:
 				case Op_delta:
-					its_impl = new_iterator< range_iterator >( container );
+					if ( ! expr->left.is< Byte >() )
+					{
+						its_impl = new_iterator< range_iterator >( container );
+						return;
+					}
+					
+					its_impl = new_iterator< byterange_iterator >( container );
 					return;
 				
 				default:
