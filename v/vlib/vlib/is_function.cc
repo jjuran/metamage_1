@@ -63,6 +63,18 @@ namespace vlib
 			return ! proc->is_pure();
 		}
 		
+		if ( Expr* expr = v.expr() )
+		{
+			switch ( expr->op )
+			{
+				case Op_bind_args:
+					return is_functionally_impure( expr->left );
+				
+				default:
+					break;
+			}
+		}
+		
 		return is_function( v );
 	}
 	

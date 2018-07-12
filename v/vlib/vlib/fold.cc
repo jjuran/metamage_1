@@ -89,6 +89,7 @@ namespace vlib
 			case Op_empower:
 			case Op_array:
 			case Op_divide:
+			case Op_percent:
 			case Op_mapping:
 			case Op_gamut:
 			case Op_delta:
