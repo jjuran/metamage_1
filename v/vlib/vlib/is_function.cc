@@ -67,6 +67,14 @@ namespace vlib
 		{
 			switch ( expr->op )
 			{
+				case Op_multiply:
+					if ( is_functionally_impure( expr->right ) )
+					{
+						return true;
+					}
+					
+					// fall through
+				case Op_empower:
 				case Op_bind_args:
 					return is_functionally_impure( expr->left );
 				

@@ -127,3 +127,13 @@ $ vc '{".".join(1, 2, 3)}'
 
 $ vc '{"foo\nbar\n".lines()}'
 1 >= '{["foo", "bar"]}'
+
+%
+
+$ vc '{const hash = hex * md5; hash "" }'
+1 >= '{"d41d8cd98f00b204e9800998ecf8427e"}'
+
+%
+
+$ vc '{md5^2 ""}'
+1 >= '{x"59adb24ef3cdbe0297f05b395827453f"}'
