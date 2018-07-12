@@ -287,12 +287,10 @@ namespace vlib
 			
 			visit( expr->left, expr->source );
 			
-			if ( op == Op_member )
+			if ( op != Op_member )
 			{
-				return;
+				visit( expr->right, expr->source );
 			}
-			
-			visit( expr->right, expr->source );
 			
 			if ( op == Op_function )
 			{
