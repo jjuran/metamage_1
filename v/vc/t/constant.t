@@ -57,3 +57,23 @@ $ vc '{const company = 2; const crowd = 3; company + crowd}'
 
 $ vc '{const x = 3; {const y = 4; {x + y}}}'
 1 >= '{{{7}}}'
+
+%
+
+$ vc '{(+) [1, 2, 3]}'
+1 >= '{1}'
+
+%
+
+$ vc '{(+) str^[foo: 1, bar: 2]}'
+1 >= '{1}'
+
+%
+
+$ vc '{const m = str^[foo: 1, bar: 2, baz: 3]; m["bar"]}'
+1 >= '{2}'
+
+%
+
+$ vc '{-[1, 2, 3, 4]}'
+1 >= '{[4, 3, 2, 1]}'
