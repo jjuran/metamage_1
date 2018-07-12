@@ -58,6 +58,11 @@ namespace vlib
 			}
 		}
 		
+		if ( const Proc* proc = v.is< Proc >() )
+		{
+			return ! proc->is_pure();
+		}
+		
 		return is_function( v );
 	}
 	

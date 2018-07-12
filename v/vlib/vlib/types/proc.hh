@@ -38,6 +38,11 @@ namespace vlib
 				return dereference< proc_info >().addr;
 			}
 			
+			bool is_pure() const
+			{
+				return dereference< proc_info >().flags & Proc_pure;
+			}
+			
 			Value call( const Value& arguments ) const
 			{
 				return addr()( arguments );

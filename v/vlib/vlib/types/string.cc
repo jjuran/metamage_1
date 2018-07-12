@@ -213,7 +213,7 @@ namespace vlib
 	static const Type  string     = string_vtype;
 	static const Value string_etc = Value( string, etc );
 	
-	const proc_info proc_join  = { "join",  &v_join,  &string_etc };
-	const proc_info proc_lines = { "lines", &v_lines, &string     };
+	const proc_info proc_join  = { "join",  &v_join,  &string_etc, Proc_pure };
+	const proc_info proc_lines = { "lines", &v_lines, &string,     Proc_pure };
 	
 }

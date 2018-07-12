@@ -410,22 +410,27 @@ namespace vlib
 	
 	#define TRANS  "translate"
 	
-	const proc_info proc_abs    = { "abs",    &v_abs,    &integer };
-	const proc_info proc_areaof = { "areaof", &v_areaof, NULL     };
-	const proc_info proc_half   = { "half",   &v_half,   &integer };
-	const proc_info proc_head   = { "head",   &v_head,   NULL     };
-	const proc_info proc_hex    = { "hex",    &v_hex,    NULL     };
-	const proc_info proc_max    = { "max",    &v_max,    NULL     };
-	const proc_info proc_md5    = { "md5",    &v_md5,    &bytes   };
-	const proc_info proc_min    = { "min",    &v_min,    NULL     };
-	const proc_info proc_mince  = { "mince",  &v_mince,  &mince   };
-	const proc_info proc_rep    = { "rep",    &v_rep,    NULL     };
-	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes   };
-	const proc_info proc_substr = { "substr", &v_substr, &substr  };
-	const proc_info proc_tail   = { "tail",   &v_tail,   NULL     };
-	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans   };
-	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string  };
-	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string  };
+	enum
+	{
+		pure = Proc_pure,
+	};
+	
+	const proc_info proc_abs    = { "abs",    &v_abs,    &integer, pure };
+	const proc_info proc_areaof = { "areaof", &v_areaof, NULL,     pure };
+	const proc_info proc_half   = { "half",   &v_half,   &integer, pure };
+	const proc_info proc_head   = { "head",   &v_head,   NULL,     pure };
+	const proc_info proc_hex    = { "hex",    &v_hex,    NULL,     pure };
+	const proc_info proc_max    = { "max",    &v_max,    NULL,     pure };
+	const proc_info proc_md5    = { "md5",    &v_md5,    &bytes,   pure };
+	const proc_info proc_min    = { "min",    &v_min,    NULL,     pure };
+	const proc_info proc_mince  = { "mince",  &v_mince,  &mince,   pure };
+	const proc_info proc_rep    = { "rep",    &v_rep,    NULL,     pure };
+	const proc_info proc_sha256 = { "sha256", &v_sha256, &bytes,   pure };
+	const proc_info proc_substr = { "substr", &v_substr, &substr,  pure };
+	const proc_info proc_tail   = { "tail",   &v_tail,   NULL,     pure };
+	const proc_info proc_trans  = { TRANS,    &v_trans,  &trans         };
+	const proc_info proc_unbin  = { "unbin",  &v_unbin,  &string,  pure };
+	const proc_info proc_unhex  = { "unhex",  &v_unhex,  &string,  pure };
 	
 	const proc_info proc_mkpub  = { "ed25519-publickey", &v_mkpub,  &packed };
 	const proc_info proc_sign   = { "ed25519-sign",      &v_sign,   &sign   };

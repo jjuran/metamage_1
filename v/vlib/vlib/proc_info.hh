@@ -14,11 +14,17 @@ namespace vlib
 	
 	typedef Value (*function_type)( const Value& argument );
 	
+	enum
+	{
+		Proc_pure = 1,
+	};
+	
 	struct proc_info
 	{
 		char const* const    name;
 		function_type const  addr;
 		const Value* const   prototype;
+		int                  flags;
 	};
 	
 }
