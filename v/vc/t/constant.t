@@ -137,3 +137,23 @@ $ vc '{const hash = hex * md5; hash "" }'
 
 $ vc '{md5^2 ""}'
 1 >= '{x"59adb24ef3cdbe0297f05b395827453f"}'
+
+%
+
+$ vc '{-2 .. 2 map abs}'
+1 >= '{[2, 1, 0, 1, 2]}'
+
+%
+
+$ vc '{-3 .. 3 ver half}'
+1 >= '{[-3, -2, 2, 3]}'
+
+%
+
+$ vc '{2 .. 5 per Math.product}'
+1 >= '{120}'
+
+%
+
+$ vc '{2 .. 1 per 1>-Math.product}'
+1 >= '{1}'

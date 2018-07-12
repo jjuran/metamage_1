@@ -74,6 +74,11 @@ namespace vlib
 			case Op_function:
 				return Pure_if_pure_left;
 			
+			case Op_map:
+			case Op_ver:
+			case Op_per:
+				return Pure_if_pure_right;
+			
 			default:
 				break;
 		}
@@ -87,6 +92,8 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_empower:
+			case Op_forward_init:
+			case Op_reverse_init:
 			case Op_array:
 			case Op_multiply:
 			case Op_divide:
@@ -138,6 +145,11 @@ namespace vlib
 		}
 		
 		if ( purity & Pure_if_pure_left  &&  is_functionally_impure( a ) )
+		{
+			return false;
+		}
+		
+		if ( purity & Pure_if_pure_right  &&  is_functionally_impure( b ) )
 		{
 			return false;
 		}
