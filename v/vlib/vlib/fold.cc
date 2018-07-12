@@ -112,7 +112,13 @@ namespace vlib
 	{
 		if ( is_constant( a )  &&  is_constant( b ) )
 		{
-			return compute( a, op, b );
+			try
+			{
+				return compute( a, op, b );
+			}
+			catch ( const user_exception& )
+			{
+			}
 		}
 		
 		return NIL;
