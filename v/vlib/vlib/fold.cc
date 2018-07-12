@@ -198,7 +198,7 @@ namespace vlib
 					
 					sym->assign( b, op == Op_approximate );
 					
-					return b;
+					return sym->get();
 				}
 			}
 		}

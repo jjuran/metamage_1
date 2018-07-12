@@ -72,3 +72,8 @@ $ vc 'mb32() isa mb32, typeof mb32(), typeof mb32'
 
 $ vc "'1234' isa byte, '1' isa mb32"
 1 >= '(false, false)'
+
+%
+
+$ vc '{const code (mb32) := "1234"}'
+1 >= "{'1234'}"
