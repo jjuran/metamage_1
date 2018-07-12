@@ -513,6 +513,11 @@ namespace vlib
 	
 	Value_in_flight execute( const Value& tree, const Value& stack )
 	{
+		if ( tree.is_evaluated() )
+		{
+			return tree;
+		}
+		
 		if ( Expr* expr = tree.expr() )
 		{
 			if ( expr->op == Op_for )
