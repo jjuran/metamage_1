@@ -7,8 +7,8 @@
 
 // vlib
 #include "vlib/assert.hh"
-#include "vlib/calc.hh"
 #include "vlib/exceptions.hh"
+#include "vlib/execute.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
@@ -100,16 +100,19 @@ namespace vlib
 	}
 	
 	static
+	Value compute( const Value& a, op_type op, const Value& b )
+	{
+		Value scope( empty_list, Op_scope, Value( a, op, b ) );
+		
+		return execute( scope );
+	}
+	
+	static
 	Value subfold( const Value& a, op_type op, const Value& b )
 	{
 		if ( is_constant( a )  &&  is_constant( b ) )
 		{
-			if ( a.type() == V_dummy )
-			{
-				return calc( b, op, a );
-			}
-			
-			return calc( a, op, b );
+			return compute( a, op, b );
 		}
 		
 		return NIL;
