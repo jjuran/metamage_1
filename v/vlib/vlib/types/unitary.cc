@@ -64,6 +64,7 @@ namespace vlib
 	:
 		Value( (const vu_string&) name, V_str, &unitary_dispatch )
 	{
+		set_evaluated();
 	}
 	
 }

@@ -32,6 +32,7 @@ namespace vlib
 			:
 				Value( (const vu_string&) s, V_pack, &packed_dispatch )
 			{
+				set_evaluated();
 			}
 	};
 	

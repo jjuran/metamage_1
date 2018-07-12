@@ -33,6 +33,7 @@ namespace vlib
 			:
 				Value( (const vu_string&) s, V_str, &string_dispatch )
 			{
+				set_evaluated();
 			}
 	};
 	

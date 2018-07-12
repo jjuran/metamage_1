@@ -64,6 +64,7 @@ namespace vlib
 	enum value_flags
 	{
 		Flag_cycle_free,
+		Flag_evaluated,
 	};
 	
 	struct mutable_list_overrun {};
@@ -97,6 +98,11 @@ namespace vlib
 				its_box( type )
 			{
 				set_cycle_free();
+				
+				if ( d )
+				{
+					set_evaluated();
+				}
 			}
 			
 			Value( const vu_ibox& ix, value_type type, const dispatch* d )
@@ -106,6 +112,7 @@ namespace vlib
 				its_dispatch = d;
 				
 				set_cycle_free();
+				set_evaluated();
 			}
 			
 			Value( const vu_string& sx, value_type type, const dispatch* d )
@@ -124,6 +131,11 @@ namespace vlib
 				its_dispatch = d;
 				
 				set_cycle_free();
+				
+				if ( d )
+				{
+					set_evaluated();
+				}
 			}
 			
 			Value( const Value&        a,
@@ -135,6 +147,8 @@ namespace vlib
 			
 			void set_cycle_free()    { set_flag  ( Flag_cycle_free ); }
 			void clear_cycle_free()  { clear_flag( Flag_cycle_free ); }
+			
+			void set_evaluated()     { set_flag  ( Flag_evaluated ); }
 			
 			const void* pointer() const
 			{
@@ -163,6 +177,7 @@ namespace vlib
 			bool has_extent() const  { return its_box.has_extent(); }
 			
 			bool is_cycle_free() const  { return flag_bit( Flag_cycle_free ); }
+			bool is_evaluated()  const  { return flag_bit( Flag_evaluated  ); }
 			
 			template < class Type >
 			Type const* is() const

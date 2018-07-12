@@ -70,6 +70,11 @@ namespace vlib
 		{
 			set_cycle_free();
 		}
+		
+		if ( a.is_evaluated()  &&  b.is_evaluated() )
+		{
+			set_evaluated();
+		}
 	}
 	
 	Value::Value( op_type op, const Value& v )
@@ -82,6 +87,11 @@ namespace vlib
 		if ( v.is_cycle_free() )
 		{
 			set_cycle_free();
+		}
+		
+		if ( v.is_evaluated() )
+		{
+			set_evaluated();
 		}
 	}
 	
@@ -99,6 +109,21 @@ namespace vlib
 		{
 			set_cycle_free();
 		}
+		
+		if ( op == Op_list )
+		{
+			if ( ! a.listexpr()  &&  a.is_evaluated()  &&  b.is_evaluated() )
+			{
+				set_evaluated();
+			}
+			
+			return;
+		}
+		
+		if ( is_supporting( op )  &&  a.is_evaluated()  &&  b.is_evaluated() )
+		{
+			set_evaluated();
+		}
 	}
 	
 	Value::Value( const Value&        a,
@@ -114,6 +139,11 @@ namespace vlib
 		if ( a.is_cycle_free()  &&  b.is_cycle_free() )
 		{
 			set_cycle_free();
+		}
+		
+		if ( d )
+		{
+			set_evaluated();
 		}
 	}
 	

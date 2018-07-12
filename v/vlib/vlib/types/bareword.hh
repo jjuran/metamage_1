@@ -42,6 +42,7 @@ namespace vlib
 		public:
 			Member( const plus::string& s ) : Bareword( s )
 			{
+				set_evaluated();
 			}
 	};
 	
