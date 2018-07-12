@@ -14,6 +14,8 @@ namespace vlib
 	
 	bool is_function( const Value& v );
 	
+	bool is_functionally_impure( const Value& v );
+	
 }
 
 #endif

@@ -40,4 +40,14 @@ namespace vlib
 		return false;
 	}
 	
+	bool is_functionally_impure( const Value& v )
+	{
+		if ( v.type() == Value_base_type )
+		{
+			return true;
+		}
+		
+		return is_function( v );
+	}
+	
 }

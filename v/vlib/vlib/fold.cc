@@ -9,6 +9,7 @@
 #include "vlib/assert.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
+#include "vlib/is_function.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
@@ -68,6 +69,10 @@ namespace vlib
 			case Op_gte:
 			case Op_cmp:
 				return Pure_always;
+			
+			case Op_named_unary:
+			case Op_function:
+				return Pure_if_pure_left;
 			
 			default:
 				break;
@@ -130,7 +135,11 @@ namespace vlib
 			return purity == Pure_always;
 		}
 		
-		// not reached
+		if ( purity & Pure_if_pure_left  &&  is_functionally_impure( a ) )
+		{
+			return false;
+		}
+		
 		return true;
 	}
 	
