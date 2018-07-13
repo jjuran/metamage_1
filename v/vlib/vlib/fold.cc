@@ -85,6 +85,11 @@ namespace vlib
 	static
 	bool is_constant( const Value& v )
 	{
+		if ( v.is_evaluated() )
+		{
+			return true;
+		}
+		
 		if ( Expr* expr = v.expr() )
 		{
 			if ( expr->op == Op_list  &&  expr->left.listexpr() )
