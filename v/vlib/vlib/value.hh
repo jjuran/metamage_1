@@ -61,6 +61,11 @@ namespace vlib
 		V_pack  = Value_packed,
 	};
 	
+	enum value_flags
+	{
+		Flag_cycle_free,
+	};
+	
 	struct mutable_list_overrun {};
 	
 	struct invalid_cast {};
@@ -72,6 +77,18 @@ namespace vlib
 			vbox             its_box;
 			
 			friend void pair_destructor( void* pointer );
+			
+			bool flag_bit( int b ) const  { return its_box.flags() & (1 << b); }
+			
+			void set_flag( int bit )
+			{
+				its_box.set_flags( its_box.flags() | (1 << bit) );
+			}
+			
+			void clear_flag( int bit )
+			{
+				its_box.set_flags( its_box.flags() & ~(1 << bit) );
+			}
 		
 		protected:
 			Value( value_type type, const dispatch* d )
@@ -79,6 +96,7 @@ namespace vlib
 				its_dispatch( d ),
 				its_box( type )
 			{
+				set_cycle_free();
 			}
 			
 			Value( const vu_ibox& ix, value_type type, const dispatch* d )
@@ -86,6 +104,8 @@ namespace vlib
 				its_box( ix, type )
 			{
 				its_dispatch = d;
+				
+				set_cycle_free();
 			}
 			
 			Value( const vu_string& sx, value_type type, const dispatch* d )
@@ -93,6 +113,8 @@ namespace vlib
 				its_box( sx, type )
 			{
 				its_dispatch = d;
+				
+				set_cycle_free();
 			}
 			
 			Value( const type_info& type, const dispatch* d )
@@ -100,6 +122,8 @@ namespace vlib
 				its_box( &type, Value_base_type )
 			{
 				its_dispatch = d;
+				
+				set_cycle_free();
 			}
 			
 			Value( const Value&        a,
@@ -108,6 +132,9 @@ namespace vlib
 			       const dispatch*     d );
 			
 			Value( long n, destructor dtor, value_type t, const dispatch* d );
+			
+			void set_cycle_free()    { set_flag  ( Flag_cycle_free ); }
+			void clear_cycle_free()  { clear_flag( Flag_cycle_free ); }
 			
 			const void* pointer() const
 			{
@@ -134,6 +161,8 @@ namespace vlib
 			};
 			
 			bool has_extent() const  { return its_box.has_extent(); }
+			
+			bool is_cycle_free() const  { return flag_bit( Flag_cycle_free ); }
 			
 			template < class Type >
 			Type const* is() const
@@ -167,6 +196,8 @@ namespace vlib
 			Value( value_type type = value_type() ) : its_box( type )
 			{
 				its_dispatch = 0;  // NULL
+				
+				set_cycle_free();
 			}
 			
 			Value( symdesc desc ) : its_box( V_desc )
@@ -174,6 +205,8 @@ namespace vlib
 				its_dispatch = 0;  // NULL
 				
 				pod_cast< uint32_t >() = desc;
+				
+				set_cycle_free();
 			}
 			
 			Value( const Value& a, const Value& b );
