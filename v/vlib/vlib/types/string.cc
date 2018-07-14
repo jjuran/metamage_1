@@ -190,6 +190,7 @@ namespace vlib
 		&assign_to< String >,
 		&String::coerce,
 		&string_member,
+		Type_pure,
 	};
 	
 	static

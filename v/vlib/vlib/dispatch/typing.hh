@@ -19,6 +19,7 @@ namespace vlib
 	{
 		typechecker  typecheck;
 		transformer  transform;
+		int          flags;
 	};
 	
 }

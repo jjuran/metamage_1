@@ -21,6 +21,11 @@
 namespace vlib
 {
 	
+	enum
+	{
+		Type_pure = 1,
+	};
+	
 	enum symbol_type
 	{
 		Symbol_const,

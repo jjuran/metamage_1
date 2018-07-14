@@ -6,6 +6,9 @@
 #include "vlib/is_function.hh"
 
 // vlib
+#include "vlib/type_info.hh"
+#include "vlib/dispatch/dispatch.hh"
+#include "vlib/dispatch/typing.hh"
 #include "vlib/types/proc.hh"
 
 
@@ -44,7 +47,15 @@ namespace vlib
 	{
 		if ( v.type() == Value_base_type )
 		{
-			return true;
+			return ! (v.typeinfo().flags & Type_pure);
+		}
+		
+		if ( const dispatch* methods = v.dispatch_methods() )
+		{
+			if ( const typing* typ = methods->type )
+			{
+				return ! (typ->flags & Type_pure);
+			}
 		}
 		
 		return is_function( v );

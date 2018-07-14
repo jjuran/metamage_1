@@ -220,6 +220,7 @@ namespace vlib
 	{
 		&typecheck,
 		&transform,
+		Type_pure,
 	};
 	
 	static const dispatch stdint_dispatch =

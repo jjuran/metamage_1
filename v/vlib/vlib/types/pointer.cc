@@ -431,6 +431,7 @@ namespace vlib
 		&assign_to< Pointer >,
 		NULL,
 		&pointer_member,
+		Type_pure,
 	};
 	
 }

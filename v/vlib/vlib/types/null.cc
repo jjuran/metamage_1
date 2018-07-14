@@ -36,6 +36,7 @@ namespace vlib
 		&assign_to< Null >,
 		&Null::coerce,
 		0,
+		Type_pure,
 	};
 	
 }
