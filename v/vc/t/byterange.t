@@ -10,13 +10,8 @@ $ vc "packed('a' .. 'a').string"
 
 %
 
-$ vc "packed('a' -> 'e').string"
-1 >= '"abcd"'
-
-%
-
-$ vc "packed('a' -> 'a').string"
-1 >= '""'
+$ vc "try {'a' -> 'e'} catch {-50}"
+1 >= '-50'
 
 %
 

@@ -130,9 +130,21 @@ namespace vlib
 		return Value();
 	}
 	
+	static
+	Value binary_op_handler( op_type op, const Value& a, const Value& b )
+	{
+		if ( op == Op_delta )
+		{
+			THROW( "BYTE -> BYTE unimplemented (use BYTE .. BYTE instead)" );
+		}
+		
+		return Value();
+	}
+	
 	static const operators ops =
 	{
 		&unary_op_handler,
+		&binary_op_handler,
 	};
 	
 	const dispatch byte_dispatch =
