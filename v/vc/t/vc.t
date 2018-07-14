@@ -3315,3 +3315,8 @@ $ vc '"head: " "glue".join( "(", "/", ")" )'
 
 $ vc '{_ / _, _ div _}'
 1 >= '{(_ / _), (_ div _)}'
+
+%
+
+$ vc '"foo" byte(32) "bar"'
+1 >= '"foo bar"'

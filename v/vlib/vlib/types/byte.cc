@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/quote.hh"
+#include "vlib/string-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/compare.hh"
@@ -17,6 +18,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
 
@@ -133,6 +135,14 @@ namespace vlib
 	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
+		if ( op == Op_function  ||  op == Op_named_unary )
+		{
+			if ( b.is< String >() )
+			{
+				return String( str( Value( a, b ) ) );
+			}
+		}
+		
 		if ( op == Op_delta )
 		{
 			THROW( "BYTE -> BYTE unimplemented (use BYTE .. BYTE instead)" );
