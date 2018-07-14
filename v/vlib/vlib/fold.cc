@@ -18,8 +18,23 @@
 namespace vlib
 {
 	
+	enum op_purity
+	{
+		Pure_never         = -1,
+		Pure_always        = 0,
+		Pure_if_pure_left  = 1,
+		Pure_if_pure_right = 2,
+		Pure_if_pure_both  = 3,
+	};
+	
+	static inline
+	bool unconditional( op_purity purity )
+	{
+		return purity <= 0;
+	}
+	
 	static
-	bool is_pure( op_type op )
+	op_purity purity_of( op_type op )
 	{
 		switch ( op )
 		{
@@ -52,13 +67,13 @@ namespace vlib
 			case Op_gt:
 			case Op_gte:
 			case Op_cmp:
-				return true;
+				return Pure_always;
 			
 			default:
 				break;
 		}
 		
-		return false;
+		return Pure_never;
 	}
 	
 	static
@@ -106,6 +121,20 @@ namespace vlib
 	}
 	
 	static
+	bool is_pure( const Value& a, op_type op, const Value& b )
+	{
+		const op_purity purity = purity_of( op );
+		
+		if ( unconditional( purity ) )
+		{
+			return purity == Pure_always;
+		}
+		
+		// not reached
+		return true;
+	}
+	
+	static
 	Value compute( const Value& a, op_type op, const Value& b )
 	{
 		Value scope( empty_list, Op_scope, Value( a, op, b ) );
@@ -133,7 +162,7 @@ namespace vlib
 	static
 	Value fold( const Value& a, op_type op, const Value& b, lexical_scope* scope )
 	{
-		if ( is_pure( op ) )
+		if ( is_pure( a, op, b ) )
 		{
 			const Value folded = subfold( a, op, b );
 			
