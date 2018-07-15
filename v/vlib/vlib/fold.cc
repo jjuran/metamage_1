@@ -9,7 +9,7 @@
 #include "vlib/assert.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
-#include "vlib/is_function.hh"
+#include "vlib/pure.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
@@ -144,12 +144,12 @@ namespace vlib
 			return foldability == Fold_always;
 		}
 		
-		if ( foldability & Fold_if_pure_left  &&  is_functionally_impure( a ) )
+		if ( foldability & Fold_if_pure_left  &&  ! is_pure( a ) )
 		{
 			return false;
 		}
 		
-		if ( foldability & Fold_if_pure_right  &&  is_functionally_impure( b ) )
+		if ( foldability & Fold_if_pure_right  &&  ! is_pure( b ) )
 		{
 			return false;
 		}

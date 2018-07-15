@@ -6,9 +6,6 @@
 #include "vlib/is_function.hh"
 
 // vlib
-#include "vlib/type_info.hh"
-#include "vlib/dispatch/dispatch.hh"
-#include "vlib/dispatch/typing.hh"
 #include "vlib/types/proc.hh"
 
 
@@ -41,49 +38,6 @@ namespace vlib
 		}
 		
 		return false;
-	}
-	
-	bool is_functionally_impure( const Value& v )
-	{
-		if ( v.type() == Value_base_type )
-		{
-			return ! (v.typeinfo().flags & Type_pure);
-		}
-		
-		if ( const dispatch* methods = v.dispatch_methods() )
-		{
-			if ( const typing* typ = methods->type )
-			{
-				return ! (typ->flags & Type_pure);
-			}
-		}
-		
-		if ( const Proc* proc = v.is< Proc >() )
-		{
-			return ! proc->is_pure();
-		}
-		
-		if ( Expr* expr = v.expr() )
-		{
-			switch ( expr->op )
-			{
-				case Op_multiply:
-					if ( is_functionally_impure( expr->right ) )
-					{
-						return true;
-					}
-					
-					// fall through
-				case Op_empower:
-				case Op_bind_args:
-					return is_functionally_impure( expr->left );
-				
-				default:
-					break;
-			}
-		}
-		
-		return is_function( v );
 	}
 	
 }
