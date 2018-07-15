@@ -276,6 +276,7 @@ namespace vlib
 		&assign_to< Packed >,
 		&Packed::coerce,
 		&packed_member,
+		Type_pure,
 	};
 	
 }

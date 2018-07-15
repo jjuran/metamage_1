@@ -283,6 +283,7 @@ namespace vlib
 		&assign_to< FileDescriptor >,
 		&FileDescriptor::coerce,
 		&fd_member,
+		Type_pure,
 	};
 	
 }

@@ -80,7 +80,7 @@ namespace vlib
 	}
 	
 	
-	const proc_info proc_product = { "product", &v_product, NULL };
-	const proc_info proc_sum     = { "sum",     &v_sum,     NULL };
+	const proc_info proc_product = { "product", &v_product, NULL, Proc_pure };
+	const proc_info proc_sum     = { "sum",     &v_sum,     NULL, Proc_pure };
 	
 }

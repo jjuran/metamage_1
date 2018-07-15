@@ -378,6 +378,7 @@ namespace vlib
 		&assign_to< Integer >,
 		&Integer::coerce,
 		0,
+		Type_pure,
 	};
 	
 	void bad_cast_thrower::operator()() const

@@ -9,6 +9,7 @@
 #include "vlib/assert.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
+#include "vlib/is_function.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
@@ -69,6 +70,15 @@ namespace vlib
 			case Op_cmp:
 				return Pure_always;
 			
+			case Op_named_unary:
+			case Op_function:
+				return Pure_if_pure_left;
+			
+			case Op_map:
+			case Op_ver:
+			case Op_per:
+				return Pure_if_pure_right;
+			
 			default:
 				break;
 		}
@@ -82,8 +92,12 @@ namespace vlib
 		switch ( op )
 		{
 			case Op_empower:
+			case Op_forward_init:
+			case Op_reverse_init:
 			case Op_array:
+			case Op_multiply:
 			case Op_divide:
+			case Op_percent:
 			case Op_mapping:
 			case Op_gamut:
 			case Op_delta:
@@ -130,7 +144,16 @@ namespace vlib
 			return purity == Pure_always;
 		}
 		
-		// not reached
+		if ( purity & Pure_if_pure_left  &&  is_functionally_impure( a ) )
+		{
+			return false;
+		}
+		
+		if ( purity & Pure_if_pure_right  &&  is_functionally_impure( b ) )
+		{
+			return false;
+		}
+		
 		return true;
 	}
 	
