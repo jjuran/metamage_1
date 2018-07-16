@@ -202,3 +202,8 @@ $ vc '{{*_} "hi"}'
 
 $ vc '{var x; {*_} .&x}'
 1 >= '{(var x); ({*_} (&x))}'
+
+%
+
+$ vc '{(lambda {return "Lambda " _ }) "Complex"}'
+1 >= '{"Lambda Complex"}'
