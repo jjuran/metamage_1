@@ -135,6 +135,12 @@ namespace vlib
 	}
 	
 	static
+	bool is_block_or_constant( const Value& v )
+	{
+		return (v.expr()  &&  v.expr()->op == Op_block)  ||  is_constant( v );
+	}
+	
+	static
 	bool is_foldable( const Value& a, op_type op, const Value& b )
 	{
 		const op_foldability foldability = foldability_of( op );
@@ -168,7 +174,7 @@ namespace vlib
 	static
 	Value subfold( const Value& a, op_type op, const Value& b )
 	{
-		if ( is_constant( a )  &&  is_constant( b ) )
+		if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
 		{
 			try
 			{
