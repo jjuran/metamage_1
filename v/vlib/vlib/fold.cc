@@ -9,7 +9,7 @@
 #include "vlib/assert.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
-#include "vlib/is_function.hh"
+#include "vlib/pure.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
@@ -135,6 +135,12 @@ namespace vlib
 	}
 	
 	static
+	bool is_block_or_constant( const Value& v )
+	{
+		return (v.expr()  &&  v.expr()->op == Op_block)  ||  is_constant( v );
+	}
+	
+	static
 	bool is_foldable( const Value& a, op_type op, const Value& b )
 	{
 		const op_foldability foldability = foldability_of( op );
@@ -144,12 +150,12 @@ namespace vlib
 			return foldability == Fold_always;
 		}
 		
-		if ( foldability & Fold_if_pure_left  &&  is_functionally_impure( a ) )
+		if ( foldability & Fold_if_pure_left  &&  ! is_pure( a ) )
 		{
 			return false;
 		}
 		
-		if ( foldability & Fold_if_pure_right  &&  is_functionally_impure( b ) )
+		if ( foldability & Fold_if_pure_right  &&  ! is_pure( b ) )
 		{
 			return false;
 		}
@@ -168,7 +174,7 @@ namespace vlib
 	static
 	Value subfold( const Value& a, op_type op, const Value& b )
 	{
-		if ( is_constant( a )  &&  is_constant( b ) )
+		if ( is_block_or_constant( a )  &&  is_block_or_constant( b ) )
 		{
 			try
 			{
