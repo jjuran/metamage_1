@@ -19,23 +19,23 @@
 namespace vlib
 {
 	
-	enum op_purity
+	enum op_foldability
 	{
-		Pure_never         = -1,
-		Pure_always        = 0,
-		Pure_if_pure_left  = 1,
-		Pure_if_pure_right = 2,
-		Pure_if_pure_both  = 3,
+		Fold_never         = -1,
+		Fold_always        = 0,
+		Fold_if_pure_left  = 1,
+		Fold_if_pure_right = 2,
+		Fold_if_pure_both  = 3,
 	};
 	
 	static inline
-	bool unconditional( op_purity purity )
+	bool unconditional( op_foldability foldability )
 	{
-		return purity <= 0;
+		return foldability <= 0;
 	}
 	
 	static
-	op_purity purity_of( op_type op )
+	op_foldability foldability_of( op_type op )
 	{
 		switch ( op )
 		{
@@ -68,22 +68,22 @@ namespace vlib
 			case Op_gt:
 			case Op_gte:
 			case Op_cmp:
-				return Pure_always;
+				return Fold_always;
 			
 			case Op_named_unary:
 			case Op_function:
-				return Pure_if_pure_left;
+				return Fold_if_pure_left;
 			
 			case Op_map:
 			case Op_ver:
 			case Op_per:
-				return Pure_if_pure_right;
+				return Fold_if_pure_right;
 			
 			default:
 				break;
 		}
 		
-		return Pure_never;
+		return Fold_never;
 	}
 	
 	static
@@ -135,21 +135,21 @@ namespace vlib
 	}
 	
 	static
-	bool is_pure( const Value& a, op_type op, const Value& b )
+	bool is_foldable( const Value& a, op_type op, const Value& b )
 	{
-		const op_purity purity = purity_of( op );
+		const op_foldability foldability = foldability_of( op );
 		
-		if ( unconditional( purity ) )
+		if ( unconditional( foldability ) )
 		{
-			return purity == Pure_always;
+			return foldability == Fold_always;
 		}
 		
-		if ( purity & Pure_if_pure_left  &&  is_functionally_impure( a ) )
+		if ( foldability & Fold_if_pure_left  &&  is_functionally_impure( a ) )
 		{
 			return false;
 		}
 		
-		if ( purity & Pure_if_pure_right  &&  is_functionally_impure( b ) )
+		if ( foldability & Fold_if_pure_right  &&  is_functionally_impure( b ) )
 		{
 			return false;
 		}
@@ -185,7 +185,7 @@ namespace vlib
 	static
 	Value fold( const Value& a, op_type op, const Value& b, lexical_scope* scope )
 	{
-		if ( is_pure( a, op, b ) )
+		if ( is_foldable( a, op, b ) )
 		{
 			const Value folded = subfold( a, op, b );
 			
