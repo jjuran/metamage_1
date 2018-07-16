@@ -6,6 +6,7 @@
 #include "vlib/pure.hh"
 
 // vlib
+#include "vlib/proc_info.hh"
 #include "vlib/symbol.hh"
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
@@ -67,5 +68,17 @@ namespace vlib
 		
 		return true;
 	}
+	
+	static
+	Value v_is_pure( const Value& v )
+	{
+		return Boolean( is_pure( v ) );
+	}
+	
+	#ifndef NULL
+	#define NULL  0
+	#endif
+	
+	const proc_info proc_is_pure = { "is_pure", &v_is_pure, NULL, Proc_pure };
 	
 }

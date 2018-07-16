@@ -12,6 +12,7 @@
 #include "vlib/functions.hh"
 #include "vlib/namespace_info.hh"
 #include "vlib/proc_info.hh"
+#include "vlib/pure.hh"
 #include "vlib/symbol_table.hh"
 #include "vlib/types.hh"
 #include "vlib/namespaces/Math.hh"
@@ -109,6 +110,7 @@ namespace vlib
 		define_keyword( proc_half   );
 		define_keyword( proc_head   );
 		define_keyword( proc_hex    );
+		define_keyword( proc_is_pure );
 		define_keyword( proc_join   );
 		define_keyword( proc_md5    );
 		define_keyword( proc_mince  );
