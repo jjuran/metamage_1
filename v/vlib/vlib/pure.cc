@@ -47,11 +47,9 @@ namespace vlib
 			switch ( expr->op )
 			{
 				/*
-					Dereference could be used to modify the caller's state.
 					Reference construction returns non-equal results.
 				*/
 				
-				case Op_unary_deref:
 				case Op_unary_refer:
 					return false;
 				
