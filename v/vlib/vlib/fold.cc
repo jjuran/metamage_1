@@ -139,7 +139,15 @@ namespace vlib
 	static
 	bool is_block_or_constant( const Value& v )
 	{
-		return (v.expr()  &&  v.expr()->op == Op_block)  ||  is_constant( v );
+		if ( Expr* expr = v.expr() )
+		{
+			if ( expr->op == Op_block  ||  expr->op == Op_lambda )
+			{
+				return true;
+			}
+		}
+		
+		return is_constant( v );
 	}
 	
 	static
