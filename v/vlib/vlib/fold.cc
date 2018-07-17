@@ -143,6 +143,20 @@ namespace vlib
 	}
 	
 	static
+	bool is_pure_block( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			if ( expr->op == Op_block )
+			{
+				return is_pure( v );
+			}
+		}
+		
+		return false;
+	}
+	
+	static
 	bool is_foldable( const Value& a, op_type op, const Value& b )
 	{
 		const op_foldability foldability = foldability_of( op );
@@ -243,7 +257,7 @@ namespace vlib
 		}
 		else if ( op == Op_duplicate  ||  op == Op_approximate )
 		{
-			if ( is_constant( b ) )
+			if ( is_pure_block( b )  ||  is_constant( b ) )
 			{
 				const Value* decl = NULL;
 				const Value* type = NULL;
