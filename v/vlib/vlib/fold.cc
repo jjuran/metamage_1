@@ -213,7 +213,7 @@ namespace vlib
 		}
 		else if ( op == Op_end )
 		{
-			if ( is_constant( a ) )
+			if ( is_block_or_constant( a ) )
 			{
 				return b;
 			}

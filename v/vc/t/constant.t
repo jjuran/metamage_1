@@ -207,3 +207,18 @@ $ vc '{var x; {*_} .&x}'
 
 $ vc '{(lambda {return "Lambda " _ }) "Complex"}'
 1 >= '{"Lambda Complex"}'
+
+%
+
+$ vc '{{...}; 123}'
+1 >= '{123}'
+
+%
+
+$ vc 'var x; {{x}; 456}'
+1 >= '{456}'
+
+%
+
+$ vc 'var x; {{&x}; 789}'
+1 >= '{789}'
