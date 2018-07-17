@@ -10,6 +10,7 @@
 #include "vlib/exceptions.hh"
 #include "vlib/execute.hh"
 #include "vlib/pure.hh"
+#include "vlib/return.hh"
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
@@ -181,6 +182,15 @@ namespace vlib
 				return compute( a, op, b );
 			}
 			catch ( const user_exception& )
+			{
+			}
+			catch ( const transfer_via_break& )
+			{
+			}
+			catch ( const transfer_via_continue& )
+			{
+			}
+			catch ( const transfer_via_return& )
 			{
 			}
 		}
