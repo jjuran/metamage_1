@@ -232,3 +232,8 @@ $ vc '{const f = {2^_}; f 10}'
 
 $ vc '{const f = lambda {_^3}; f 4}'
 1 >= '{64}'
+
+%
+
+$ vc '{def ovo (o) {join( "v", ("(" o ")") (*) 2)}; ovo "O"}'
+1 >= '{"(O)v(O)"}'

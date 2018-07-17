@@ -165,6 +165,20 @@ namespace vlib
 	}
 	
 	static
+	bool is_pure_block_def( const Value& a, op_type op, const Value& b )
+	{
+		if ( op == Op_function )
+		{
+			if ( Expr* expr = a.expr() )
+			{
+				return expr->op == Op_def  &&  is_pure_block( b );
+			}
+		}
+		
+		return false;
+	}
+	
+	static
 	bool is_foldable( const Value& a, op_type op, const Value& b )
 	{
 		const op_foldability foldability = foldability_of( op );
@@ -254,6 +268,11 @@ namespace vlib
 	{
 		if ( is_foldable( a, op, b ) )
 		{
+			if ( is_pure_block_def( a, op, b ) )
+			{
+				return make_constant( a, NULL, Value( Op_lambda, b ), scope );
+			}
+			
 			const Value folded = subfold( a, op, b );
 			
 			if ( folded.type() )
