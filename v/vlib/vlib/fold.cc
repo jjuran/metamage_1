@@ -222,6 +222,34 @@ namespace vlib
 	}
 	
 	static
+	Value make_constant( const Value&    decl,
+	                     const Value*    type,
+	                     const Value&    value,
+	                     lexical_scope*  scope,
+	                     bool            coercive = false )
+	{
+		Symbol* sym = decl.decl_sym();
+		
+		const int i = sym->get().desc();
+		
+		if ( scope )
+		{
+			scope->immortalize_constant( i, value );
+		}
+		
+		sym->deref_unsafe() = undefined;
+		
+		if ( type )
+		{
+			sym->denote( *type );
+		}
+		
+		sym->assign( value, coercive );
+		
+		return sym->get();
+	}
+	
+	static
 	Value fold( const Value& a, op_type op, const Value& b, lexical_scope* scope )
 	{
 		if ( is_foldable( a, op, b ) )
@@ -286,25 +314,9 @@ namespace vlib
 				
 				if ( decl  &&  decl->expr()->op == Op_const )
 				{
-					Symbol* sym = decl->decl_sym();
+					const bool coercive = op == Op_approximate;
 					
-					const int i = sym->get().desc();
-					
-					if ( scope )
-					{
-						scope->immortalize_constant( i, b );
-					}
-					
-					sym->deref_unsafe() = undefined;
-					
-					if ( type )
-					{
-						sym->denote( *type );
-					}
-					
-					sym->assign( b, op == Op_approximate );
-					
-					return sym->get();
+					return make_constant( *decl, type, b, scope, coercive );
 				}
 			}
 		}
