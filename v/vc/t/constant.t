@@ -237,3 +237,8 @@ $ vc '{const f = lambda {_^3}; f 4}'
 
 $ vc '{def ovo (o) {join( "v", ("(" o ")") (*) 2)}; ovo "O"}'
 1 >= '{"(O)v(O)"}'
+
+%
+
+$ vc '{(lambda (x: int) {2^x})^2 4}'
+1 >= '{65536}'

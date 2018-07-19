@@ -166,6 +166,31 @@ namespace vlib
 		}
 	}
 	
+	static
+	void insert_lambda_prototype_prelude( Expr* expr )
+	{
+		ASSERT( expr->op == Op_lambda );
+		
+		const Value& R = expr->right;
+		
+		Expr* R_expr = R.expr();
+		
+		if ( R_expr->op != Op_function )
+		{
+			return;
+		}
+		
+		const Value& RL = R_expr->left;
+		const Value& RR = R_expr->right;
+		
+		if ( RR.expr()  &&  RR.expr()->op == Op_block )
+		{
+			insert_prototype_prelude( RR, RL );
+			
+			expr->right = RR;
+		}
+	}
+	
 	class Analyzer
 	{
 		private:
@@ -251,6 +276,10 @@ namespace vlib
 			else if ( op == Op_function )
 			{
 				insert_prototype_prelude( expr );
+			}
+			else if ( op == Op_lambda )
+			{
+				insert_lambda_prototype_prelude( expr );
 			}
 			else if ( declares_symbols( op ) )
 			{
