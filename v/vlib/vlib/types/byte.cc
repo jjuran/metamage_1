@@ -18,6 +18,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 
@@ -140,6 +141,11 @@ namespace vlib
 			if ( b.is< String >() )
 			{
 				return String( str( Value( a, b ) ) );
+			}
+			
+			if ( b.is< Packed >() )
+			{
+				return Packed( pack( Value( a, b ) ) );
 			}
 		}
 		

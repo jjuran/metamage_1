@@ -3320,3 +3320,8 @@ $ vc '{_ / _, _ div _}'
 
 $ vc '"foo" byte(32) "bar"'
 1 >= '"foo bar"'
+
+%
+
+$ vc 'byte(5) packed "Hello"'
+1 >= 'x"0548656c6c6f"'
