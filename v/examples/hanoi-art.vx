@@ -30,20 +30,36 @@ const CLEAN = CSI "H" CSI "J"  # home, clear to end
 
 def display
 {
-	OUT <== CLEAN
+	def send (rows)
+	{
+		OUT <== CLEAN
+		
+		print "\n".join .*rows
+	}
 	
-	var rows = rendering()
-	
-	print "\n".join( rows, "" )
+	rendering( send, null )
 }
 
 def visual-move (n, src, dst)
 {
-	simulator.move _
+	def send (rows)
+	{
+		OUT <== CLEAN
+		
+		print "\n".join .*rows
+	}
 	
 	sleep 0.3
 	
-	display()
+	#simulator.move _
+	
+	simulator.remove( n, src )
+	
+	rendering( {sleep 0.2} * send, [_] )
+	
+	simulator.insert( n, dst )
+	
+	rendering( send, null )
 }
 
 display()

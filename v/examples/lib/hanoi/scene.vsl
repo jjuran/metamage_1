@@ -77,13 +77,31 @@ def render-peg (i)
 	return buffer
 }
 
-def display
+def display (send, extra)
 {
 	var pegs = 0 .. 2 map render-peg
 	
 	var rows = 0 -> height map { const r = v; 0 .. 2 map { pegs[ v ][ r ] } }
 	
-	return "", *rows
+	rows = ["", "", "", *rows, ""]
+	
+	if extra then
+	{
+		const n, const src, const dst = *extra
+		
+		rows[ 0 ] =
+		rows[ 1 ] = [ empty-space (*) 3 ]
+		
+		rows[ 0 ][ src ] = composite( render-disc-top n, empty-space )
+		rows[ 1 ][ src ] = composite( render-disc     n, empty-space )
+		
+		send rows
+		
+		rows[ 0 ][ src ] <-> rows[ 0 ][ dst ]
+		rows[ 1 ][ src ] <-> rows[ 1 ][ dst ]
+	}
+	
+	send rows
 }
 
 return display
