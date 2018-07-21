@@ -72,15 +72,15 @@ namespace vlib
 	{
 		if ( const Value* it = find_symbol( its_symbols, name ) )
 		{
-			const Value& sym = *it;
+			const Value& symbol = *it;
 			
-			Symbol& var = *sym;
+			Symbol& var = *symbol.sym();
 			
 			if ( type == Symbol_const  &&  var.is_var() )
 			{
 				var.constify();
 				
-				return sym;
+				return symbol;
 			}
 			
 			THROW( "duplicate symbol" );
