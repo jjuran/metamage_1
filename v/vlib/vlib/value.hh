@@ -82,6 +82,8 @@ namespace vlib
 			const dispatch*  its_dispatch;
 			vbox             its_box;
 			
+			typedef const struct opaque* unspecified_boolean;
+			
 			friend void pair_destructor( void* pointer );
 			
 			bool flag_bit( int b ) const  { return its_box.flags() & (1 << b); }
@@ -248,6 +250,11 @@ namespace vlib
 				return value_type( its_box.semantics() );
 			}
 			
+			operator unspecified_boolean() const
+			{
+				return unspecified_boolean( type() );
+			}
+			
 			bool boolean() const
 			{
 				return pod_cast< bool >();
@@ -300,11 +307,6 @@ namespace vlib
 			}
 			
 			Symbol* decl_sym() const;
-			
-			operator Symbol*() const
-			{
-				return sym();
-			}
 			
 			Expr* expr() const
 			{
