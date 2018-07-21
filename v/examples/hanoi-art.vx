@@ -1,0 +1,55 @@
+#!/usr/bin/env vx
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/lib/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const board = import "hanoi/board"
+const logic = import "hanoi/logic"
+const scene = import "hanoi/scene"
+
+var depth = 4
+
+var p = begin argv
+
+while ++p do
+{
+	const arg = *p
+	
+	depth = int arg
+}
+
+const simulator = board.make  depth
+const rendering = scene.make( depth, simulator.get )
+
+const ESC = "\x1b"
+const CSI = ESC "["
+
+const CLEAN = CSI "H" CSI "J"  # home, clear to end
+
+def display
+{
+	OUT <== CLEAN
+	
+	var rows = rendering()
+	
+	print "\n".join( rows, "" )
+}
+
+def visual-move (n, src, dst)
+{
+	simulator.move _
+	
+	sleep 0.3
+	
+	display()
+}
+
+display()
+
+const move-tower = logic.make-tower-mover visual-move
+
+move-tower( depth, 0, 2 )
+
+end.

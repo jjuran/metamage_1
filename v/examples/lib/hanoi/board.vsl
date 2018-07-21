@@ -1,0 +1,22 @@
+module board
+
+export
+def make (depth: int)
+{
+	var state = [ 1 .. depth map ..., [], [] ]
+	
+	def move (n, src, dst)
+	{
+		state[ src ] = [tail .*state[ src ]]
+		state[ dst ] = [n,    *state[ dst ]]
+	}
+	
+	def get (i)
+	{
+		return -state[ i ]  # bottom-up, e.g. [4, 3, 2, 1]
+	}
+	
+	const methods = get: get, move: move
+	
+	return record methods
+}
