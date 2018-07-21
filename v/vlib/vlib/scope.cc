@@ -55,7 +55,7 @@ namespace vlib
 		}
 		while ( scope != NULL );
 		
-		return nothing;
+		return NIL;
 	}
 	
 	const Value& lexical_scope::declare( const plus::string&  name,
