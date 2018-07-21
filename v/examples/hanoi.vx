@@ -1,5 +1,12 @@
 #!/usr/bin/env vx
 
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/lib/"
+
+const import = { const path = libdir _ ".vsl"; eval( load path, path ) }
+
+const logic = import "hanoi/logic"
+
 var depth  = 4
 var silent = false
 
@@ -21,32 +28,14 @@ while ++p do
 
 const pegs = "ABC"
 
-def other-peg (src, dst)
-{
-	return 3 - src - dst
-}
-
 def move (n, src, dst)
 {
 	print ("Move disc %s from peg %s to peg %s" % (n, pegs[ src ], pegs[ dst ]))
 }
 
-def move-tower (n, src, dst)
-{
-	if n > 0 then
-	{
-		const mid = other-peg( src, dst )
-		
-		move-tower( n - 1, src, mid )
-		
-		if not silent then
-		{
-			move _
-		}
-		
-		move-tower( n - 1, mid, dst )
-	}
-}
+const disc-mover = if silent then {{}} else {move}
+
+const move-tower = logic.make-tower-mover disc-mover
 
 move-tower( depth, 0, 2 )
 
