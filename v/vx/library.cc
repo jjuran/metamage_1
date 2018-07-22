@@ -463,14 +463,14 @@ namespace vlib
 	static const Value sleep_arg ( u32,   Op_union, fract );
 	static const Value maybe_cstr( c_str, Op_union, Value_empty_list );
 	
-	static const Value cstr_eval = Value( c_str,
-	                                      Op_duplicate,
-	                                      String( "<eval>" ) );
+	static const Value cstr_eval( c_str,
+	                              Op_duplicate,
+	                              String( "<eval>" ) );
 	
-	static const Value c_str_array = Value( c_str, Op_subscript, empty_list );
+	static const Value c_str_array( c_str, Op_subscript, empty_list );
 	
-	static const Value eval = Value( c_str, cstr_eval );
-	static const Value exec = Value( c_str, c_str_array );
+	static const Value eval( c_str, cstr_eval );
+	static const Value exec( c_str, c_str_array );
 	
 	#define DESTRUCT  "self-destructing"
 	#define RUNOUT    "output-from-run"

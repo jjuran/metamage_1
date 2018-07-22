@@ -198,7 +198,7 @@ namespace vlib
 	{
 		const Value& glue = first( args );
 		
-		const Value pieces = rest( args );
+		const Value& pieces = rest( args );
 		
 		return String( join( glue.string(), pieces, count( pieces ) ) );
 	}
@@ -211,7 +211,7 @@ namespace vlib
 	
 	static const Type  etc        = etc_vtype;
 	static const Type  string     = string_vtype;
-	static const Value string_etc = Value( string, etc );
+	static const Value string_etc( string, etc );
 	
 	const proc_info proc_join  = { "join",  &v_join,  &string_etc, Proc_pure };
 	const proc_info proc_lines = { "lines", &v_lines, &string,     Proc_pure };

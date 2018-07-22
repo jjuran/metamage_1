@@ -49,7 +49,7 @@
 namespace vlib
 {
 	
-	static
+	static inline
 	bool isa( const Value& v, const Value& t )
 	{
 		return as_assigned( t, v ).type();

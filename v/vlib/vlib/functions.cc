@@ -394,8 +394,8 @@ namespace vlib
 	static const Type i32 = i32_vtype;
 	static const Type u32 = u32_vtype;
 	
-	static const Value u32_2 = Value( u32, Op_duplicate, two );
-	static const Value mince = Value( string, u32_2 );
+	static const Value u32_2( u32, Op_duplicate, two );
+	static const Value mince( string, u32_2 );
 	
 	static const Value bytes( string, Op_union, packed );
 	static const Value sign( packed, bytes );
@@ -405,7 +405,7 @@ namespace vlib
 	static const Value s_length( u32, Op_duplicate, npos );
 	static const Value substr( string, Value( s_offset, s_length ) );
 	
-	static const Value string_ref = Value( Op_unary_deref, string );
+	static const Value string_ref( Op_unary_deref, string );
 	static const Value trans( string_ref, Value( bytes, bytes ) );
 	
 	#define TRANS  "translate"

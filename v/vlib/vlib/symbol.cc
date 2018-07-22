@@ -121,11 +121,11 @@ namespace vlib
 				return is_table( expr, v ) ? v : NIL;
 			}
 			
-			Value result = as_assigned( expr->left, v );
+			const Value& result = as_assigned( expr->left, v );
 			
 			if ( (! result.type()) == (expr->op == Op_union) )
 			{
-				result = as_assigned( expr->right, v );
+				return as_assigned( expr->right, v );
 			}
 			
 			return result;

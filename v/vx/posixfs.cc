@@ -624,7 +624,7 @@ namespace vlib
 	
 	static const Value fd( Type( fd_vtype ), Op_union, int32 );
 	
-	static const Value c_str_x2 = Value( c_str, c_str );
+	static const Value c_str_x2( c_str, c_str );
 	
 	static const Value fd_x2( fd, fd );
 	static const Value fd_u32 ( fd, uint32 );
