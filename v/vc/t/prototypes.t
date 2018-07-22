@@ -57,3 +57,8 @@ $ vc 'def f (x: int, y: int) {x^2 + y}; try {f (3.5, 4)} catch {"nope"}'
 
 $ vc 'def f (x, y: ...) {x, [y]}; try {f()} catch {"nope"}'
 1 >= '"nope"'
+
+%
+
+$ vc 'export def f () {...}'
+1 >= '(export f)'

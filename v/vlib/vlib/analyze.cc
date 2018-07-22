@@ -156,7 +156,14 @@ namespace vlib
 			{
 				const Value& LL = L_expr->left;
 				
-				if ( LL.expr()  &&  LL.expr()->op == Op_def )
+				Expr* def_expr = LL.expr();
+				
+				if ( def_expr  &&  def_expr->op == Op_export )
+				{
+					def_expr = def_expr->right.expr();
+				}
+				
+				if ( def_expr  &&  def_expr->op == Op_def )
 				{
 					insert_prototype_prelude( R, L_expr->right );
 					
