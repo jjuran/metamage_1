@@ -26,6 +26,7 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 #define SPACE  "    "
+#define BLANK  "      "
 
 
 StringHandle DAStrings[ 4 ] : 0x0AA0;
@@ -260,12 +261,29 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
 	write( STDERR_FILENO, p, strlen( p ) );
 	
+	const char* text = NULL;
+	size_t      size = 0;
+	
+	bool multiple_lines = false;
+	
 	if ( static_text )
 	{
 		const expansion_storage& expansion = expand_param_text( static_text );
 		
+		text = *expansion.text;
+		size =  expansion.size;
+		
+		const char* eol = (char*) memchr( text, '\r', size );
+		
+		const size_t n = eol ? eol - text : size;
+		
 		write( STDERR_FILENO, STR_LEN( "  " ) );
-		write( STDERR_FILENO, *expansion.text, expansion.size );
+		write( STDERR_FILENO, text, n );
+		
+		size -= n + !! eol;
+		text += n + !! eol;
+		
+		multiple_lines = size != 0;
 	}
 	
 	p = *icon++;
@@ -273,13 +291,46 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
 	write( STDERR_FILENO, p, strlen( p ) );
 	
+	if ( size )
+	{
+		const char* eol = (char*) memchr( text, '\r', size );
+		
+		const size_t n = eol ? eol - text : size;
+		
+		write( STDERR_FILENO, STR_LEN( "  " ) );
+		write( STDERR_FILENO, text, n );
+		
+		size -= n + !! eol;
+		text += n + !! eol;
+	}
+	
 	p = *icon;
 	
 	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
 	write( STDERR_FILENO, p, strlen( p ) );
 	
+	while ( size )
+	{
+		const char* eol = (char*) memchr( text, '\r', size );
+		
+		const size_t n = eol ? eol - text : size;
+		
+		write( STDERR_FILENO, STR_LEN( "  " ) );
+		write( STDERR_FILENO, text, n );
+		
+		size -= n + !! eol;
+		text += n + !! eol;
+		
+		write( STDERR_FILENO, STR_LEN( "\n" SPACE BLANK ) );
+	}
+	
 	if ( button_title )
 	{
+		if ( multiple_lines )
+		{
+			write( STDERR_FILENO, STR_LEN( "\n" SPACE BLANK ) );
+		}
+		
 		write( STDERR_FILENO, STR_LEN( "  [" ) );
 		write( STDERR_FILENO, button_title + 1, button_title[ 0 ] );
 		write( STDERR_FILENO, STR_LEN( "]" ) );
