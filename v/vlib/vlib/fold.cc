@@ -14,6 +14,7 @@
 #include "vlib/scope.hh"
 #include "vlib/symbol.hh"
 #include "vlib/throw.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/string.hh"
 
 
@@ -308,6 +309,15 @@ namespace vlib
 				check_assertion_result( b, b, source_spec() );
 				
 				return nothing;  // Assertion passed!
+			}
+		}
+		else if ( op == Op_and  ||  op == Op_or )
+		{
+			if ( is_constant( a ) )
+			{
+				const Boolean truth = a.to< Boolean >();
+				
+				return truth == (op == Op_or) ? a : b;
 			}
 		}
 		else if ( op == Op_duplicate  ||  op == Op_approximate )

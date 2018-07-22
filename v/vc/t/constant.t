@@ -242,3 +242,23 @@ $ vc '{def ovo (o) {join( "v", ("(" o ")") (*) 2)}; ovo "O"}'
 
 $ vc '{(lambda (x: int) {2^x})^2 4}'
 1 >= '{65536}'
+
+%
+
+$ vc '{1 and 2 and 3, 1 and 2 or 3, 1 or 2 and 3, 1 or 2 or 3}'
+1 >= '{3, 2, 1, 1}'
+
+%
+
+$ vc '{0 and 2 and 3, 0 and 2 or 3, 0 or 2 and 3, 0 or 2 or 3}'
+1 >= '{0, 3, 3, 2}'
+
+%
+
+$ vc '{1 and 0 and 3, 1 and 0 or 3, 1 or 0 and 3, 1 or 0 or 3}'
+1 >= '{0, 3, 1, 1}'
+
+%
+
+$ vc '{1 and 2 and 0, 1 and 2 or 0, 1 or 2 and 0, 1 or 2 or 0}'
+1 >= '{0, 2, 1, 1}'
