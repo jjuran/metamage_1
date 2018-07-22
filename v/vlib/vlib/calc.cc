@@ -206,7 +206,7 @@ namespace vlib
 				{
 					const Value result = handler( op, v );
 					
-					if ( result.type() )
+					if ( result )
 					{
 						return result;
 					}
@@ -753,7 +753,7 @@ namespace vlib
 				{
 					const Value result = handler( op, left, right );
 					
-					if ( result.type() )
+					if ( result )
 					{
 						return result;
 					}

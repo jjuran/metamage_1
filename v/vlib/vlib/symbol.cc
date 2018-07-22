@@ -45,7 +45,7 @@ namespace vlib
 		
 		while ( it )
 		{
-			if ( ! as_assigned( type, it.use() ).type() )
+			if ( ! as_assigned( type, it.use() ) )
 			{
 				return false;
 			}
@@ -64,15 +64,15 @@ namespace vlib
 		
 		Target target = make_target( vx->right );
 		
-		return as_assigned( type, *target.addr ).type();
+		return as_assigned( type, *target.addr );
 	}
 	
 	static
 	bool is_mapping( Expr* tx, Expr* vx )
 	{
 		return      vx != 0  &&  vx->op == Op_mapping  // NULL
-		        &&  as_assigned( tx->left,  vx->left  ).type()
-		        &&  as_assigned( tx->right, vx->right ).type();
+		        &&  as_assigned( tx->left,  vx->left  )
+		        &&  as_assigned( tx->right, vx->right );
 	}
 	
 	static
@@ -123,7 +123,7 @@ namespace vlib
 			
 			const Value& result = as_assigned( expr->left, v );
 			
-			if ( (! result.type()) == (expr->op == Op_union) )
+			if ( ! result == (expr->op == Op_union) )
 			{
 				return as_assigned( expr->right, v );
 			}
@@ -184,7 +184,7 @@ namespace vlib
 			THROW( "type annotation not a type" );
 		}
 		
-		if ( its_vtype.type() != Value_NIL )
+		if ( its_vtype )
 		{
 			THROW( "reannotation of type-annotated symbol" );
 		}
@@ -204,7 +204,7 @@ namespace vlib
 	
 	bool Symbol::check_type_invariant() const
 	{
-		return ! vtype().type()  ||  as_assigned( vtype(), get() ).type();
+		return ! vtype()  ||  as_assigned( vtype(), get() );
 	}
 	
 	Target Symbol::target()
@@ -227,11 +227,11 @@ namespace vlib
 		Value& dst         = *target.addr;
 		Value const& vtype = *target.type;
 		
-		if ( vtype.type() )
+		if ( vtype )
 		{
 			Value tmp = (coercive ? as_coerced : as_assigned)( vtype, v );
 			
-			if ( ! tmp.type() )
+			if ( ! tmp )
 			{
 				THROW( "type mismatch in assignment" );
 			}
@@ -277,7 +277,7 @@ namespace vlib
 		
 		Symbol* sym = result.sym();
 		
-		if ( its_vtype.type() )
+		if ( its_vtype )
 		{
 			sym->denote( its_vtype );
 		}

@@ -247,7 +247,7 @@ namespace vlib
 	{
 		const Value result = handler( Op_member, obj, name );
 		
-		if ( result.type() )
+		if ( result )
 		{
 			return result;
 		}

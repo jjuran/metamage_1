@@ -275,7 +275,7 @@ namespace vlib
 			
 			const Value folded = subfold( a, op, b );
 			
-			if ( folded.type() )
+			if ( folded )
 			{
 				return folded;
 			}

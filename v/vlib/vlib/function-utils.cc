@@ -27,7 +27,7 @@ namespace vlib
 				{
 					const Value result = handler( Op_function, f, arguments );
 					
-					if ( result.type() )
+					if ( result )
 					{
 						return result;
 					}

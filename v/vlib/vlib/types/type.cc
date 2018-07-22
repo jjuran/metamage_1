@@ -41,7 +41,7 @@ namespace vlib
 		
 		const Value coerced = typeinfo.assign( arguments );
 		
-		if ( ! coerced.type() )
+		if ( ! coerced )
 		{
 			THROW( "invalid type conversion arguments" );
 		}

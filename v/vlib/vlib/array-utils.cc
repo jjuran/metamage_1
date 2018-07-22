@@ -183,7 +183,7 @@ namespace vlib
 	
 	void get_array_index_type( const Value& array_type, const Value*& base_type )
 	{
-		if ( array_type.type() )
+		if ( array_type )
 		{
 			Expr* expr = array_type.expr();
 			
@@ -219,7 +219,7 @@ namespace vlib
 			THROW( "push() destination must be an array" );
 		}
 		
-		if ( type.type() )
+		if ( type )
 		{
 			if ( ! as_assigned( type, make_array( list ) ) )
 			{

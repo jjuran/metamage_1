@@ -32,7 +32,7 @@ namespace vlib
 				{
 					const Value result = handler( op, a, b );
 					
-					if ( result.type() )
+					if ( result )
 					{
 						return result;
 					}

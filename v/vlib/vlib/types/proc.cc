@@ -43,7 +43,7 @@ namespace vlib
 			{
 				if ( is_empty_list( v ) )
 				{
-					ASSERT( as_assigned( expr->left, expr->right ).type() );
+					ASSERT( as_assigned( expr->left, expr->right ) );
 					
 					return expr->right;
 				}
@@ -83,7 +83,7 @@ namespace vlib
 			
 			const Value r = as_assigned_or_default( type, arg );
 			
-			if ( r.type() == Value_NIL )
+			if ( ! r )
 			{
 				THROW( "arguments don't match function prototype" );
 			}

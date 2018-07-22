@@ -278,7 +278,7 @@ namespace vlib
 		
 		const Value result = binary_op_handler( op, *target.addr, b );
 		
-		if ( result.type() )
+		if ( result )
 		{
 			assign( target, result );
 		}

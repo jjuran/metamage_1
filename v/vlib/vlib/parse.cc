@@ -624,7 +624,7 @@ namespace vlib
 				}
 			}
 			
-			if ( ! result.type() )
+			if ( ! result )
 			{
 				result = value;
 			}

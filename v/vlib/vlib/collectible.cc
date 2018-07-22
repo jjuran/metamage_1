@@ -84,7 +84,7 @@ namespace vlib
 	static
 	bool type_is_collectible( const Value& type )
 	{
-		if ( ! type.type() )
+		if ( ! type )
 		{
 			return true;
 		}

@@ -109,7 +109,7 @@ namespace vlib
 				{
 					const Value result = handler( Op_typeof, v );
 					
-					if ( result.type() )
+					if ( result )
 					{
 						return result;
 					}

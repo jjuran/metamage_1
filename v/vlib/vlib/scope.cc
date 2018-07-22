@@ -61,7 +61,7 @@ namespace vlib
 	const Value& lexical_scope::declare( const plus::string&  name,
 	                                     symbol_type          type )
 	{
-		if ( locate_keyword( name ).type() )
+		if ( locate_keyword( name ) )
 		{
 			THROW( "keyword override attempt" );
 		}

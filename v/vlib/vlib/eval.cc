@@ -99,7 +99,7 @@ namespace vlib
 			THROW( "undefined value" );
 		}
 		
-		if ( type.type()  &&  ! as_assigned( type, v ).type() )
+		if ( type  &&  ! as_assigned( type, v ) )
 		{
 			THROW( "type mismatch in assignment" );
 		}
@@ -140,7 +140,7 @@ namespace vlib
 			{
 				const Value result = handler( op, target, left, right );
 				
-				if ( result.type() )
+				if ( result )
 				{
 					return result;
 				}
@@ -272,7 +272,7 @@ namespace vlib
 					{
 						const Value result = handler( op, target );
 						
-						if ( result.type() )
+						if ( result )
 						{
 							return result;
 						}
@@ -285,7 +285,7 @@ namespace vlib
 		{
 			const Value result = handler( op, target, left, right );
 			
-			if ( result.type() )
+			if ( result )
 			{
 				return result;
 			}
