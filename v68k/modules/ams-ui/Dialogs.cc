@@ -407,6 +407,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	AlertTHndl alert = (AlertTHndl) h;
 	
+	const Rect bounds   = alert[0]->boundsRect;
 	const short itemsID = alert[0]->itemsID;
 	
 	ReleaseResource( h );
@@ -416,6 +417,23 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	if ( h == NULL )
 	{
 		return ResError();
+	}
+	
+	DetachResource( h );
+	
+	DialogRef dialog = NewDialog( NULL,
+	                              &bounds,
+	                              "\p",   // dBoxProc doesn't draw a title
+	                              true,   // visible
+	                              dBoxProc,
+	                              (WindowRef) -1,
+	                              false,  // not closable
+	                              0,      // refCon
+	                              h );
+	
+	if ( dialog == NULL )
+	{
+		return MemError();
 	}
 	
 	const char* p = *h;
@@ -547,9 +565,13 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	write( STDERR_FILENO, STR_LEN( "\n\n" ) );
 	
-	ReleaseResource ( h );
+	short itemHit = 0;
 	
-	return 0;
+	ModalDialog( NULL, &itemHit );
+	
+	DisposeDialog( dialog );
+	
+	return itemHit;
 }
 
 pascal short Alert_patch( short alertID, ModalFilterUPP filterProc )
