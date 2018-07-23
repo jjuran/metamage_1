@@ -44,4 +44,6 @@ pascal short CountMItems_patch( MenuInfo** menu );
 
 pascal void FlashMenuBar_patch( short menuID );
 
+pascal void SysBeep_patch( short duration );
+
 #endif

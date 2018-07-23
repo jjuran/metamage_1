@@ -779,3 +779,13 @@ pascal void FlashMenuBar_patch( short menuID )
 	
 	InvertRect( &menu_bar );
 }
+
+pascal void SysBeep_patch( short duration )
+{
+	FlashMenuBar_patch( 0 );
+	
+	UInt32 dummy;
+	Delay( 8, &dummy );
+	
+	FlashMenuBar_patch( 0 );
+}

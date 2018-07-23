@@ -136,6 +136,8 @@ void install_Menus()
 	TBTRAP( CountMItems  );  // A950
 	
 	TBTRAP( GetMenu      );  // A9BF
+	
+	TBTRAP( SysBeep      );  // A9C8
 }
 
 static void install_Controls()
