@@ -15,6 +15,9 @@
 #ifndef __RESOURCES__
 #include <Resources.h>
 #endif
+#ifndef __SOUND__
+#include <Sound.h>
+#endif
 
 // Standard C
 #include <string.h>
@@ -341,6 +344,7 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 				{
 					if ( ! PtInRgn( event.where, w->contRgn ) )
 					{
+						SysBeep( 30 );
 						continue;
 					}
 					
