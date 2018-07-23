@@ -46,6 +46,13 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	{
 		const char* q = gear::find_first_match( p, end, '\r', end );
 		
+		const char* first_space = gear::find_first_match( p, q, ' ', q );
+		
+		while ( q > first_space  &&  TextWidth( p, 0, q - p ) > rectWidth )
+		{
+			while ( *--q != ' ' ) continue;
+		}
+		
 		draw_text_line( p, q - p, h, v, rectWidth, just );
 		
 		v += line_height;
