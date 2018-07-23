@@ -53,11 +53,19 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 			while ( *--q != ' ' ) continue;
 		}
 		
+		if ( q == first_space )
+		{
+			while ( q > p + 1  &&  TextWidth( p, 0, q - p ) > rectWidth )
+			{
+				--q;
+			}
+		}
+		
 		draw_text_line( p, q - p, h, v, rectWidth, just );
 		
 		v += line_height;
 		
-		p = q + 1;
+		p = q + (q >= first_space);
 	}
 }
 
