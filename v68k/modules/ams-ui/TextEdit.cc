@@ -21,7 +21,7 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	GetFontInfo( &fontInfo );
 	
 	short h = r->left;
-	short v = (r->top + r->bottom + fontInfo.ascent) / 2;
+	short v = r->top + fontInfo.ascent;
 	
 	// Treat teFlushDefault like teFlushLeft.
 	
