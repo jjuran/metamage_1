@@ -315,6 +315,7 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 	WindowRef window = qd.thePort;
 	
 	WindowPeek w = (WindowPeek) window;
+	DialogPeek d = (DialogPeek) window;
 	
 	const long sleep = 0x7fffffff;
 	
@@ -339,8 +340,50 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 						continue;
 					}
 					
-					*itemHit = 1;
-					return;
+					Point pt = event.where;
+					GlobalToLocal( &pt );
+					
+					const char* p = *d->items;
+					
+					// item count minus one
+					const short n_items_1 = *((const UInt16*) p)++;
+					
+					short item_index = 0;
+					
+					while ( item_index++ <= n_items_1 )
+					{
+						const void* pointer = *((const void**) p)++;
+						
+						const Rect* bounds = (const Rect*) p;
+						
+						p += sizeof (Rect);
+						
+						UInt8 type = *p++;
+						UInt8 len  = *p++;
+						
+						if ( PtInRect( pt, bounds ) )
+						{
+							if ( (type & 0x7c) == ctrlItem )
+							{
+								ControlRef control = (ControlRef) pointer;
+								
+								if ( ! TrackControl( control, pt, NULL ) )
+								{
+									continue;
+								}
+							}
+							
+							if ( ! (type & 0x80) )
+							{
+								*itemHit = item_index;
+								return;
+							}
+						}
+						
+						p += len + (len & 1);
+					}
+					
+					break;
 				}
 				
 				default:
