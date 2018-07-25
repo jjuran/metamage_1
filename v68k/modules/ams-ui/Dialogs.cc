@@ -32,6 +32,9 @@
 #define BLANK  "      "
 
 
+static short ANumber;
+static short ACount = -1;
+
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
 
@@ -247,6 +250,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	TextFont( systemFont );
 	
+	d->aDefItem = 1;
+	
 	d->items = items;
 	
 	char* p = *items;
@@ -452,6 +457,7 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	const Rect bounds   = alert[0]->boundsRect;
 	const short itemsID = alert[0]->itemsID;
+	const short stages  = alert[0]->stages;
 	
 	ReleaseResource( h );
 	
@@ -478,6 +484,20 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	{
 		return MemError();
 	}
+	
+	if ( alertID != ANumber )
+	{
+		ANumber = alertID;
+		ACount  = 0;
+	}
+	else if ( ACount < 3 )
+	{
+		++ACount;
+	}
+	
+	DialogPeek d = (DialogPeek) dialog;
+	
+	d->aDefItem = ((stages >> 4 * ACount + 3) & 0x1) + 1;
 	
 	const char* p = *h;
 	
