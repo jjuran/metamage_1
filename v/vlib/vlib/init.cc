@@ -87,7 +87,7 @@ namespace vlib
 		define_keyword( "type",     type_vtype     );
 		define_keyword( "null",     null_vtype     );
 		define_keyword( "mb32",     mb32_vtype     );
-		define_keyword( "byte",     byte_vtype     );
+		define_keyword( "byte",     byte_type()    );
 		define_keyword( "i64",      i64_type()     );
 		define_keyword( "u64",      u64_type()     );
 		define_keyword( "i32",      i32_type()     );

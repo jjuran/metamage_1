@@ -48,6 +48,8 @@ namespace vlib
 	
 	extern const type_info byte_vtype;
 	
+	Value byte_type();
+	
 }
 
 #endif

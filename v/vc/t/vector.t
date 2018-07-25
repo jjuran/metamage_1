@@ -212,3 +212,13 @@ $ vc 'vector[ u8, 2 ]().length, vector[ u8 ](3).length'
 
 $ vc '(+) vector[ u8, 4 ]()'
 1 >= '1'
+
+%
+
+$ vc '*(vector[byte] packed "abc")'
+1 >= "('a', 'b', 'c')"
+
+%
+
+$ vc "var v = vector[byte, 2](); v[0] = 'N'; v[1] = 'u'; packed v"
+1 >= 'x"4e75"'

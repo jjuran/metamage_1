@@ -18,6 +18,8 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/endec/byte.hh"
+#include "vlib/types/field.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -179,5 +181,10 @@ namespace vlib
 		0,
 		Type_pure,
 	};
+	
+	Value byte_type()
+	{
+		return Field( 1, byte_vtype, proc_encode_byte, proc_decode_byte );
+	}
 	
 }
