@@ -149,6 +149,11 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	
 	if ( ! got )
 	{
+		got = try_to_get( name_end, end, STR_LEN( "AMS Resources" ), rsrc );
+	}
+	
+	if ( ! got )
+	{
 		// ResErr is already set.
 		return result;
 	}
