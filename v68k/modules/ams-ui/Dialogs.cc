@@ -329,10 +329,22 @@ bool invoke_defItem( DialogPeek d )
 		p += len + (len & 1);
 	}
 	
-	p += sizeof (void*);
+	void* placeholder = *((void**) p)++;
+	
 	p += sizeof (Rect);
 	
 	UInt8 type = *p;
+	
+	if ( type == ctrlItem + btnCtrl )
+	{
+		UInt32 dummy;
+		
+		ControlRef button = (ControlRef) placeholder;
+		
+		HiliteControl( button, kControlButtonPart );
+		Delay( 8, &dummy );
+		HiliteControl( button, kControlNoPart );
+	}
 	
 	return ! (type & 0x80);
 }
