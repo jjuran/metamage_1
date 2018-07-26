@@ -27,6 +27,7 @@
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 short MemErr    : 0x0220;
@@ -92,6 +93,20 @@ bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 	return false;
 }
 
+static
+bool try_to_get( char*              insert_end,
+                 char*              end,
+                 const char*        name,
+                 size_t             len,
+                 plus::var_string&  result )
+{
+	char* begin = insert_end - len;
+	
+	memcpy( begin, name, len );
+	
+	return try_to_get( begin, end, result );
+}
+
 pascal char** GetResource_patch( unsigned long type, short id )
 {
 	temp_A4 a4;
@@ -124,22 +139,12 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	{
 		const size_t len = CurApName[ 0 ];
 		
-		char* begin = name_end - len;
-		
-		memcpy( begin, CurApName + 1, len );
-		
-		got = try_to_get( begin, end, rsrc );
+		got = try_to_get( name_end, end, (char*) CurApName + 1, len, rsrc );
 	}
 	
 	if ( ! got )
 	{
-		const size_t len = STRLEN( "System" );
-		
-		char* begin = name_end - len;
-		
-		memcpy( begin, "System", len );
-		
-		got = try_to_get( begin, end, rsrc );
+		got = try_to_get( name_end, end, STR_LEN( "System" ), rsrc );
 	}
 	
 	if ( ! got )
