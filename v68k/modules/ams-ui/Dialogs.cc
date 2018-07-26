@@ -313,6 +313,30 @@ pascal void DisposeDialog_patch( DialogRef dialog )
 #pragma mark Handling Dialog Events
 #pragma mark -
 
+static
+bool invoke_defItem( DialogPeek d )
+{
+	const char* p = *d->items;
+	
+	const short n_items_1 = *((const UInt16*) p)++;  // item count minus one
+	
+	if ( d->aDefItem > 1 )
+	{
+		p += sizeof (void*) + sizeof (Rect) + sizeof (UInt8);
+		
+		UInt8 len = *p++;
+		
+		p += len + (len & 1);
+	}
+	
+	p += sizeof (void*);
+	p += sizeof (Rect);
+	
+	UInt8 type = *p;
+	
+	return ! (type & 0x80);
+}
+
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 {
 	QDGlobals& qd = get_QDGlobals();
@@ -386,6 +410,25 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 						}
 						
 						p += len + (len & 1);
+					}
+					
+					break;
+				}
+				
+				case keyDown:
+				{
+					switch ( (char) event.message )
+					{
+						case kEnterCharCode:
+						case kReturnCharCode:
+							if ( invoke_defItem( d ) )
+							{
+								*itemHit = d->aDefItem;
+								return;
+							}
+						
+						default:
+							break;
 					}
 					
 					break;
