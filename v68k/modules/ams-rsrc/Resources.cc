@@ -65,8 +65,10 @@ class temp_A4
 };
 
 static
-bool try_to_get( const plus::string& path, plus::var_string& data )
+bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 {
+	plus::string path( begin, end - begin, plus::delete_never );
+	
 	try
 	{
 		namespace F = freemount;
@@ -126,9 +128,7 @@ pascal char** GetResource_patch( unsigned long type, short id )
 		
 		memcpy( begin, CurApName + 1, len );
 		
-		plus::string app_path( begin, end - begin, plus::delete_never );
-		
-		got = try_to_get( app_path, rsrc );
+		got = try_to_get( begin, end, rsrc );
 	}
 	
 	if ( ! got )
@@ -139,9 +139,7 @@ pascal char** GetResource_patch( unsigned long type, short id )
 		
 		memcpy( begin, "System", len );
 		
-		plus::string sys_path( begin, end - begin, plus::delete_never );
-		
-		got = try_to_get( sys_path, rsrc );
+		got = try_to_get( begin, end, rsrc );
 	}
 	
 	if ( ! got )
