@@ -94,11 +94,19 @@ pascal char** GetResource_patch( unsigned long type, short id )
 {
 	temp_A4 a4;
 	
-	char sys_path[] = "System/r/1234.TYPE";
+	/*
+		The app name can only be 31 bytes (not 32), but with the extra byte,
+		"TYPE" is word-aligned.
+	*/
 	
-	char* p = sys_path + STRLEN( "System/r/" );
+	char tmp_path[] = "1234567890" "1234567890" "1234567890" "12/r/1234.TYPE";
 	
-	gear::encode_16_bit_hex( id, p );
+	char* const end      = tmp_path + sizeof tmp_path - 1;
+	char* const name_end = tmp_path + 32;
+	
+	char* p = end - STRLEN( "1234.TYPE" );
+	
+	gear::encode_16_bit_hex( id, name_end + STRLEN( "/r/" ) );
 	
 	p += 5;
 	
@@ -112,15 +120,27 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	
 	if ( CurApName[ 0 ] != '\0' )
 	{
-		plus::var_string app_path = CurApName;
+		const size_t len = CurApName[ 0 ];
 		
-		app_path += sys_path + STRLEN( "System" );
+		char* begin = name_end - len;
+		
+		memcpy( begin, CurApName + 1, len );
+		
+		plus::string app_path( begin, end - begin, plus::delete_never );
 		
 		got = try_to_get( app_path, rsrc );
 	}
 	
 	if ( ! got )
 	{
+		const size_t len = STRLEN( "System" );
+		
+		char* begin = name_end - len;
+		
+		memcpy( begin, "System", len );
+		
+		plus::string sys_path( begin, end - begin, plus::delete_never );
+		
 		got = try_to_get( sys_path, rsrc );
 	}
 	
