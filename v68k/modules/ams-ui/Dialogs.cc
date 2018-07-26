@@ -486,6 +486,18 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				break;
 			}
 			
+			case iconItem:
+				if ( Handle h = GetResource( 'ICON', *(const ResID*) p ) )
+				{
+					PlotIcon( &bounds, h );
+					ReleaseResource( h );
+				}
+				else
+				{
+					FrameRect( &bounds );
+				}
+				break;
+			
 			default:
 				break;
 		}
