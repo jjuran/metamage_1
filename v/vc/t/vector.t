@@ -207,3 +207,8 @@ $ vc 'var vv = vector[ vector[u8, 2], 3 ] (); vv[2] = x"1234"; packed vv'
 
 $ vc 'vector[ u8, 2 ]().length, vector[ u8 ](3).length'
 1 >= '(2, 3)'
+
+%
+
+$ vc '(+) vector[ u8, 4 ]()'
+1 >= '1'

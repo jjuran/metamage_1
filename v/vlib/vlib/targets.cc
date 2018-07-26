@@ -24,7 +24,7 @@ namespace vlib
 		
 		Expr* expr = target.addr->unshare().expr();
 		
-		if ( expr == 0  ||  expr->op == Op_list )  // NULL
+		if ( expr == 0  ||  expr->op == Op_internal_vector )  // NULL
 		{
 			/*
 				The container is a packed structure, whose elements can't be

@@ -125,6 +125,7 @@ namespace vlib
 		Op_parens,
 		Op_brackets,
 		Op_braces,
+		Op_internal_vector,
 		
 	// end right-associative
 		Op_end,

@@ -329,7 +329,7 @@ namespace vlib
 	Vector::Vector( const Value& type, size_t n )
 	:
 		Value( type,
-		       Op_list,
+		       Op_internal_vector,
 		       Packed( plus::string( sizeof_vector( type, n ), '\0' ) ),
 		       &vector_dispatch )
 	{
@@ -338,7 +338,7 @@ namespace vlib
 	Vector::Vector( const Value& type, const plus::string& buffer )
 	:
 		Value( type,
-		       Op_list,
+		       Op_internal_vector,
 		       Packed( buffer ),
 		       &vector_dispatch )
 	{
@@ -353,7 +353,7 @@ namespace vlib
 	Vector::Vector( const Value& type, const plus::string& buffer, size_t n )
 	:
 		Value( type,
-		       Op_list,
+		       Op_internal_vector,
 		       Packed( buffer ),
 		       &vector_dispatch )
 	{
