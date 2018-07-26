@@ -510,6 +510,54 @@ pascal void DrawDialog_patch( DialogRef dialog )
 #pragma mark Invoking Alerts
 #pragma mark -
 
+/*
+	Apple's Human Interface Guidelines state that there should be 13 vertical
+	and 23 horizontal white pixels between, respectively the top and left edges
+	of the window frame and the dialog/alert icon.  Since the frame itself has
+	a 3-pixel margin already, that reduces the figures to 10 and 20.
+*/
+
+static const Rect alert_icon_bounds = { 10, 20, 10 + 32, 20 + 32 };
+
+static
+void DITL_append_icon( Handle items, ResID icon_id )
+{
+	char* p = *items;
+	
+	short n_items_1 = *((const short*) p)++;  // item count minus one
+	
+	for ( short i = 0;  i <= n_items_1;  ++i )
+	{
+		p += sizeof (void*) + sizeof (Rect) + sizeof (UInt8);
+		
+		UInt8 len = *p++;
+		
+		p += len + (len & 1);
+	}
+	
+	const short added_length = sizeof (void*)
+	                         + sizeof (Rect)
+	                         + sizeof (UInt8)
+	                         + sizeof (UInt8)
+	                         + sizeof (ResID);  // 16 bytes
+	
+	const Size old_size = p - *items;
+	
+	SetHandleSize( items, old_size + added_length );
+	
+	p = *items + old_size;
+	
+	*((void**) p)++ = NULL;
+	*((Rect* ) p)++ = alert_icon_bounds;
+	
+	*p++ = iconItem + itemDisable;
+	*p++ = sizeof (ResID);
+	
+	*(short*) p = icon_id;
+	
+	++*((short*) *items);
+}
+
 static
 short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 {
@@ -536,6 +584,15 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	}
 	
 	DetachResource( h );
+	
+	if ( icon != no_icon )
+	{
+		const short icon_id = icon == stop_icon ? 0
+		                    : icon == note_icon ? 1
+		                    :                     2;
+		
+		DITL_append_icon( h, icon_id );
+	}
 	
 	DialogRef dialog = NewDialog( NULL,
 	                              &bounds,
