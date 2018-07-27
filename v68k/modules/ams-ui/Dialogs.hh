@@ -52,4 +52,6 @@ pascal void GetDItem_patch( GrafPort*  dialog,
                             char***    h,
                             Rect*      box );
 
+pascal void SetIText_patch( char** h, const unsigned char* text );
+
 #endif

@@ -807,3 +807,17 @@ pascal void GetDItem_patch( DialogRef  dialog,
 	*h    = item->handle;
 	*box  = item->bounds;
 }
+
+pascal void SetIText_patch( Handle h, const unsigned char* text )
+{
+	const Size len = text[ 0 ];
+	
+	if ( GetHandleSize( h ) < len )
+	{
+		SetHandleSize( h, len );
+	}
+	
+	memcpy( *h, text + 1, len );
+	
+	// TODO:  Invalidate the text rect
+}
