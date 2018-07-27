@@ -377,7 +377,7 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 								
 								if ( ! TrackControl( control, pt, NULL ) )
 								{
-									continue;
+									break;
 								}
 							}
 							
