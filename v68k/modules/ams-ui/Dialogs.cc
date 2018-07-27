@@ -153,6 +153,62 @@ const expansion_storage& expand_param_text( const unsigned char* text )
 	return expanded;
 }
 
+struct DialogItem
+{
+	Handle  handle;
+	Rect    bounds;
+	UInt8   type;
+	UInt8   length;
+};
+
+struct DialogItemList_header
+{
+	short       count_minus_1;
+	DialogItem  first;
+};
+
+static inline
+short& dialog_item_count_minus_one( Handle items )
+{
+	return ((DialogItemList_header*) *items)->count_minus_1;
+}
+
+static inline
+short dialog_item_count( Handle items )
+{
+	return dialog_item_count_minus_one( items ) + 1;
+}
+
+static inline
+DialogItem* first_dialog_item( Handle items )
+{
+	return &((DialogItemList_header*) *items)->first;
+}
+
+static
+ResID& item_ResID( DialogItem* di )
+{
+	return *(ResID*) (di + 1);
+}
+
+static
+ResID item_ResID( const DialogItem* di )
+{
+	return *(const ResID*) (di + 1);
+}
+
+static
+DialogItem* next( DialogItem* di )
+{
+	return (DialogItem*) ((char*) (di + 1) + di->length + (di->length & 1));
+}
+
+static
+const DialogItem* next( const DialogItem* di )
+{
+	return next( const_cast< DialogItem* >( di ) );
+}
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -220,40 +276,33 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	d->items = items;
 	
-	char* p = *items;
+	short n_items_1 = dialog_item_count_minus_one( items );
 	
-	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
+	DialogItem* item = first_dialog_item( items );
 	
 	do
 	{
-		void*& placeholder = *((void**) p)++;
-		
-		const Rect& bounds = *((Rect*) p)++;
-		
-		UInt8 type = *p++;
-		UInt8 len  = *p++;
-		
-		switch ( type & 0x7F )
+		switch ( item->type & 0x7F )
 		{
 			case ctrlItem + btnCtrl:
-				placeholder = NewControl( window,
-				                          &bounds,
-				                          (const uint8_t*) p - 1,
-				                          visible,
-				                          0,  // value
-				                          0,  // min
-				                          1,  // max
-				                          pushButProc,
-				                          0 );
+				item->handle = (Handle) NewControl( window,
+				                                    &item->bounds,
+				                                    &item->length,
+				                                    visible,
+				                                    0,  // value
+				                                    0,  // min
+				                                    1,  // max
+				                                    pushButProc,
+				                                    0 );
 				
-				ValidRect( &bounds );
+				ValidRect( &item->bounds );
 				break;
 			
 			default:
 				break;
 		}
 		
-		p += len + (len & 1);
+		item = next( item );
 	}
 	while ( --n_items_1 >= 0 );
 	
@@ -283,30 +332,20 @@ pascal void DisposeDialog_patch( DialogRef dialog )
 static
 bool invoke_defItem( DialogPeek d )
 {
-	const char* p = *d->items;
-	
-	const short n_items_1 = *((const UInt16*) p)++;  // item count minus one
+	const DialogItem* item = first_dialog_item( d->items );
 	
 	if ( d->aDefItem > 1 )
 	{
-		p += sizeof (void*) + sizeof (Rect) + sizeof (UInt8);
-		
-		UInt8 len = *p++;
-		
-		p += len + (len & 1);
+		item = next( item );
 	}
 	
-	void* placeholder = *((void**) p)++;
-	
-	p += sizeof (Rect);
-	
-	UInt8 type = *p;
+	const UInt8 type = item->type;
 	
 	if ( type == ctrlItem + btnCtrl )
 	{
 		UInt32 dummy;
 		
-		ControlRef button = (ControlRef) placeholder;
+		ControlRef button = (ControlRef) item->handle;
 		
 		HiliteControl( button, kControlButtonPart );
 		Delay( 8, &dummy );
@@ -352,29 +391,22 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 					Point pt = event.where;
 					GlobalToLocal( &pt );
 					
-					const char* p = *d->items;
-					
 					// item count minus one
-					const short n_items_1 = *((const UInt16*) p)++;
+					short n_items_1 = dialog_item_count_minus_one( d->items );
+					
+					const DialogItem* item = first_dialog_item( d->items );
 					
 					short item_index = 0;
 					
 					while ( item_index++ <= n_items_1 )
 					{
-						const void* pointer = *((const void**) p)++;
+						const UInt8 type = item->type;
 						
-						const Rect* bounds = (const Rect*) p;
-						
-						p += sizeof (Rect);
-						
-						UInt8 type = *p++;
-						UInt8 len  = *p++;
-						
-						if ( PtInRect( pt, bounds ) )
+						if ( PtInRect( pt, &item->bounds ) )
 						{
 							if ( (type & 0x7c) == ctrlItem )
 							{
-								ControlRef control = (ControlRef) pointer;
+								ControlRef control = (ControlRef) item->handle;
 								
 								if ( ! TrackControl( control, pt, NULL ) )
 								{
@@ -389,7 +421,7 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 							}
 						}
 						
-						p += len + (len & 1);
+						item = next( item );
 					}
 					
 					break;
@@ -427,26 +459,19 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	
 	DialogPeek d = (DialogPeek) dialog;
 	
-	Handle h = d->items;
+	short n_items_1 = dialog_item_count_minus_one( d->items );
 	
-	const char* p = *h;
-	
-	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
+	const DialogItem* item = first_dialog_item( d->items );
 	
 	do
 	{
-		p += 4;  // skip placeholder
+		const Rect& bounds = item->bounds;
 		
-		const Rect& bounds = *((Rect*) p)++;
-		
-		UInt8 type = *p++;
-		UInt8 len  = *p++;
-		
-		switch ( type & 0x7F )
+		switch ( item->type & 0x7F )
 		{
 			case statText:
 			{
-				const UInt8* text = (const UInt8*) p - 1;
+				const UInt8* text = &item->length;
 				
 				const expansion_storage& expansion = expand_param_text( text );
 				
@@ -455,7 +480,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			}
 			
 			case iconItem:
-				if ( Handle h = GetResource( 'ICON', *(const ResID*) p ) )
+				if ( Handle h = GetResource( 'ICON', item_ResID( item ) ) )
 				{
 					PlotIcon( &bounds, h );
 					ReleaseResource( h );
@@ -470,7 +495,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				break;
 		}
 		
-		p += len + (len & 1);
+		item = next( item );
 	}
 	while ( --n_items_1 >= 0 );
 }
@@ -491,41 +516,33 @@ static const Rect alert_icon_bounds = { 10, 20, 10 + 32, 20 + 32 };
 static
 void DITL_append_icon( Handle items, ResID icon_id )
 {
-	char* p = *items;
+	short n_items_1 = dialog_item_count_minus_one( items );
 	
-	short n_items_1 = *((const short*) p)++;  // item count minus one
+	DialogItem* item = first_dialog_item( items );
 	
 	do
 	{
-		p += sizeof (void*) + sizeof (Rect) + sizeof (UInt8);
-		
-		UInt8 len = *p++;
-		
-		p += len + (len & 1);
+		item = next( item );
 	}
 	while ( --n_items_1 >= 0 );
 	
-	const short added_length = sizeof (void*)
-	                         + sizeof (Rect)
-	                         + sizeof (UInt8)
-	                         + sizeof (UInt8)
+	const short added_length = sizeof (DialogItem)
 	                         + sizeof (ResID);  // 16 bytes
 	
-	const Size old_size = p - *items;
+	const Size old_size = (char*) item - *items;
 	
 	SetHandleSize( items, old_size + added_length );
 	
-	p = *items + old_size;
+	item = (DialogItem*) (*items + old_size);
 	
-	*((void**) p)++ = NULL;
-	*((Rect* ) p)++ = alert_icon_bounds;
+	item->handle = NULL;
+	item->bounds = alert_icon_bounds;
+	item->type   = iconItem + itemDisable;
+	item->length = sizeof (ResID);
 	
-	*p++ = iconItem + itemDisable;
-	*p++ = sizeof (ResID);
+	item_ResID( item ) = icon_id;
 	
-	*(short*) p = icon_id;
-	
-	++*((short*) *items);
+	++dialog_item_count_minus_one( items );
 }
 
 static
