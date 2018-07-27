@@ -27,6 +27,7 @@
 
 
 #define STRLEN( s )  (sizeof "" s - 1)
+#define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
 short MemErr    : 0x0220;
@@ -65,8 +66,10 @@ class temp_A4
 };
 
 static
-bool try_to_get( const plus::string& path, plus::var_string& data )
+bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 {
+	plus::string path( begin, end - begin, plus::delete_never );
+	
 	try
 	{
 		namespace F = freemount;
@@ -90,15 +93,37 @@ bool try_to_get( const plus::string& path, plus::var_string& data )
 	return false;
 }
 
+static
+bool try_to_get( char*              insert_end,
+                 char*              end,
+                 const char*        name,
+                 size_t             len,
+                 plus::var_string&  result )
+{
+	char* begin = insert_end - len;
+	
+	memcpy( begin, name, len );
+	
+	return try_to_get( begin, end, result );
+}
+
 pascal char** GetResource_patch( unsigned long type, short id )
 {
 	temp_A4 a4;
 	
-	char sys_path[] = "System/r/1234.TYPE";
+	/*
+		The app name can only be 31 bytes (not 32), but with the extra byte,
+		"TYPE" is word-aligned.
+	*/
 	
-	char* p = sys_path + STRLEN( "System/r/" );
+	char tmp_path[] = "1234567890" "1234567890" "1234567890" "12/r/1234.TYPE";
 	
-	gear::encode_16_bit_hex( id, p );
+	char* const end      = tmp_path + sizeof tmp_path - 1;
+	char* const name_end = tmp_path + 32;
+	
+	char* p = end - STRLEN( "1234.TYPE" );
+	
+	gear::encode_16_bit_hex( id, name_end + STRLEN( "/r/" ) );
 	
 	p += 5;
 	
@@ -112,16 +137,19 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	
 	if ( CurApName[ 0 ] != '\0' )
 	{
-		plus::var_string app_path = CurApName;
+		const size_t len = CurApName[ 0 ];
 		
-		app_path += sys_path + STRLEN( "System" );
-		
-		got = try_to_get( app_path, rsrc );
+		got = try_to_get( name_end, end, (char*) CurApName + 1, len, rsrc );
 	}
 	
 	if ( ! got )
 	{
-		got = try_to_get( sys_path, rsrc );
+		got = try_to_get( name_end, end, STR_LEN( "System" ), rsrc );
+	}
+	
+	if ( ! got )
+	{
+		got = try_to_get( name_end, end, STR_LEN( "AMS Resources" ), rsrc );
 	}
 	
 	if ( ! got )
