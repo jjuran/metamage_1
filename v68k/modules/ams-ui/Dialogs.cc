@@ -16,9 +16,6 @@
 #include <Resources.h>
 #endif
 
-// POSIX
-#include <unistd.h>
-
 // Standard C
 #include <string.h>
 
@@ -26,45 +23,11 @@
 #include "QDGlobals.hh"
 
 
-#define STR_LEN( s )  "" s, (sizeof s - 1)
-
-#define SPACE  "    "
-#define BLANK  "      "
-
-
 static short ANumber;
 static short ACount = -1;
 
 StringHandle DAStrings[ 4 ] : 0x0AA0;
 
-
-static const char* no_icon[ 3 ] =
-{
-	"      ",
-	"      ",
-	"      "
-};
-
-static const char* stop_icon[ 3 ] =
-{
-	"  !!  ",
-	"  !!  ",
-	"  ..  "
-};
-
-static const char* note_icon[ 3 ] =
-{
-	"  **  ",
-	" **** ",
-	"  **  "
-};
-
-static const char* caution_icon[ 3 ] =
-{
-	"  /\\  ",
-	" /  \\ ",
-	"/____\\"
-};
 
 static
 Handle NewHandleOrBust( Size size )
@@ -559,7 +522,7 @@ void DITL_append_icon( Handle items, ResID icon_id )
 }
 
 static
-short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
+short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 {
 	Handle h = GetResource( 'ALRT', alertID );
 	
@@ -585,12 +548,8 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	DetachResource( h );
 	
-	if ( icon != no_icon )
+	if ( icon_id >= 0 )
 	{
-		const short icon_id = icon == stop_icon ? 0
-		                    : icon == note_icon ? 1
-		                    :                     2;
-		
 		DITL_append_icon( h, icon_id );
 	}
 	
@@ -623,135 +582,6 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 	
 	d->aDefItem = ((stages >> 4 * ACount + 3) & 0x1) + 1;
 	
-	const char* p = *h;
-	
-	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
-	
-	const unsigned char*  button_title = NULL;
-	const unsigned char*  static_text  = NULL;
-	
-	while ( n_items_1-- >= 0 )
-	{
-		p += 4;  // placeholder for handle or proc ptr
-		p += 8;  // display rect
-		
-		UInt8 type = *p++;
-		
-		const unsigned char* data = (const unsigned char*) p;
-		
-		UInt8 len = *p++;
-		
-		switch ( type & 0x7F )
-		{
-			case ctrlItem + btnCtrl:
-				button_title = data;
-				break;
-			
-			case statText:
-				static_text = data;
-				break;
-			
-			case iconItem:
-				switch ( *(const short*) p )
-				{
-					case stopIcon:     icon = stop_icon;     break;
-					case noteIcon:     icon = note_icon;     break;
-					case cautionIcon:  icon = caution_icon;  break;
-					
-					default:
-						break;
-				}
-				break;
-			
-			default:
-				break;
-		}
-		
-		p += len + (len & 1);
-	}
-	
-	p = *icon++;
-	
-	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
-	write( STDERR_FILENO, p, strlen( p ) );
-	
-	const char* text = NULL;
-	size_t      size = 0;
-	
-	bool multiple_lines = false;
-	
-	if ( static_text )
-	{
-		const expansion_storage& expansion = expand_param_text( static_text );
-		
-		text = *expansion.text;
-		size =  expansion.size;
-		
-		const char* eol = (char*) memchr( text, '\r', size );
-		
-		const size_t n = eol ? eol - text : size;
-		
-		write( STDERR_FILENO, STR_LEN( "  " ) );
-		write( STDERR_FILENO, text, n );
-		
-		size -= n + !! eol;
-		text += n + !! eol;
-		
-		multiple_lines = size != 0;
-	}
-	
-	p = *icon++;
-	
-	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
-	write( STDERR_FILENO, p, strlen( p ) );
-	
-	if ( size )
-	{
-		const char* eol = (char*) memchr( text, '\r', size );
-		
-		const size_t n = eol ? eol - text : size;
-		
-		write( STDERR_FILENO, STR_LEN( "  " ) );
-		write( STDERR_FILENO, text, n );
-		
-		size -= n + !! eol;
-		text += n + !! eol;
-	}
-	
-	p = *icon;
-	
-	write( STDERR_FILENO, STR_LEN( "\n" SPACE ) );
-	write( STDERR_FILENO, p, strlen( p ) );
-	
-	while ( size )
-	{
-		const char* eol = (char*) memchr( text, '\r', size );
-		
-		const size_t n = eol ? eol - text : size;
-		
-		write( STDERR_FILENO, STR_LEN( "  " ) );
-		write( STDERR_FILENO, text, n );
-		
-		size -= n + !! eol;
-		text += n + !! eol;
-		
-		write( STDERR_FILENO, STR_LEN( "\n" SPACE BLANK ) );
-	}
-	
-	if ( button_title )
-	{
-		if ( multiple_lines )
-		{
-			write( STDERR_FILENO, STR_LEN( "\n" SPACE BLANK ) );
-		}
-		
-		write( STDERR_FILENO, STR_LEN( "  [" ) );
-		write( STDERR_FILENO, button_title + 1, button_title[ 0 ] );
-		write( STDERR_FILENO, STR_LEN( "]" ) );
-	}
-	
-	write( STDERR_FILENO, STR_LEN( "\n\n" ) );
-	
 	short itemHit = 0;
 	
 	ModalDialog( NULL, &itemHit );
@@ -763,22 +593,22 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, const char** icon )
 
 pascal short Alert_patch( short alertID, ModalFilterUPP filterProc )
 {
-	return basic_Alert( alertID, filterProc, no_icon );
+	return basic_Alert( alertID, filterProc, -1 );
 }
 
 pascal short StopAlert_patch( short alertID, ModalFilterUPP filterProc )
 {
-	return basic_Alert( alertID, filterProc, stop_icon );
+	return basic_Alert( alertID, filterProc, kStopIcon );
 }
 
 pascal short NoteAlert_patch( short alertID, ModalFilterUPP filterProc )
 {
-	return basic_Alert( alertID, filterProc, note_icon );
+	return basic_Alert( alertID, filterProc, kNoteIcon );
 }
 
 pascal short CautionAlert_patch( short alertID, ModalFilterUPP filterProc )
 {
-	return basic_Alert( alertID, filterProc, caution_icon );
+	return basic_Alert( alertID, filterProc, kCautionIcon );
 }
 
 #pragma mark -
