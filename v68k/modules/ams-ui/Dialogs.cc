@@ -463,12 +463,21 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	
 	const DialogItem* item = first_dialog_item( d->items );
 	
+	short item_index = 1;
+	
 	do
 	{
 		const Rect& bounds = item->bounds;
 		
 		switch ( item->type & 0x7F )
 		{
+			case userItem:
+				if ( UserItemUPP userProc = (UserItemUPP) item->handle )
+				{
+					userProc( dialog, item_index );
+				}
+				break;
+			
 			case statText:
 			{
 				const UInt8* text = &item->length;
@@ -496,6 +505,8 @@ pascal void DrawDialog_patch( DialogRef dialog )
 		}
 		
 		item = next( item );
+		
+		++item_index;
 	}
 	while ( --n_items_1 >= 0 );
 }
