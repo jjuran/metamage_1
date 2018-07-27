@@ -224,7 +224,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 	
 	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
 	
-	while ( n_items_1-- >= 0 )
+	do
 	{
 		void*& placeholder = *((void**) p)++;
 		
@@ -255,6 +255,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		
 		p += len + (len & 1);
 	}
+	while ( --n_items_1 >= 0 );
 	
 	return window;
 }
@@ -432,7 +433,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 	
 	short n_items_1 = *((const UInt16*) p)++;  // item count minus one
 	
-	while ( n_items_1-- >= 0 )
+	do
 	{
 		p += 4;  // skip placeholder
 		
@@ -471,6 +472,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 		
 		p += len + (len & 1);
 	}
+	while ( --n_items_1 >= 0 );
 }
 
 #pragma mark -
@@ -493,7 +495,7 @@ void DITL_append_icon( Handle items, ResID icon_id )
 	
 	short n_items_1 = *((const short*) p)++;  // item count minus one
 	
-	for ( short i = 0;  i <= n_items_1;  ++i )
+	do
 	{
 		p += sizeof (void*) + sizeof (Rect) + sizeof (UInt8);
 		
@@ -501,6 +503,7 @@ void DITL_append_icon( Handle items, ResID icon_id )
 		
 		p += len + (len & 1);
 	}
+	while ( --n_items_1 >= 0 );
 	
 	const short added_length = sizeof (void*)
 	                         + sizeof (Rect)
