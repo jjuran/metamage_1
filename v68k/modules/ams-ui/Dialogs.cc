@@ -266,6 +266,8 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		switch ( item->type & 0x7F )
 		{
 			case ctrlItem + btnCtrl:
+			case ctrlItem + chkCtrl:
+			case ctrlItem + radCtrl:
 				item->handle = (Handle) NewControl( window,
 				                                    &item->bounds,
 				                                    &item->length,
@@ -273,7 +275,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				                                    0,  // value
 				                                    0,  // min
 				                                    1,  // max
-				                                    pushButProc,
+				                                    item->type & 0x03,
 				                                    0 );
 				
 				ValidRect( &item->bounds );
