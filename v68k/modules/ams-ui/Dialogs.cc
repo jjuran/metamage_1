@@ -557,6 +557,59 @@ void DITL_append_icon( Handle items, ResID icon_id )
 }
 
 static
+void DITL_append_userItem( Handle items, UserItemUPP proc, const Rect& bounds )
+{
+	short n_items_1 = dialog_item_count_minus_one( items );
+	
+	DialogItem* item = first_dialog_item( items );
+	
+	do
+	{
+		item = next( item );
+	}
+	while ( --n_items_1 >= 0 );
+	
+	const short added_length = sizeof (DialogItem);  // 14 bytes
+	
+	const Size old_size = (char*) item - *items;
+	
+	SetHandleSize( items, old_size + added_length );
+	
+	item = (DialogItem*) (*items + old_size);
+	
+	item->handle = (Handle) proc;
+	item->bounds = bounds;
+	item->type   = userItem + itemDisable;
+	item->length = 0;
+	
+	++dialog_item_count_minus_one( items );
+}
+
+static
+pascal void default_button_outline( DialogRef dialog, short index )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	if ( d->aDefItem > 1 )
+	{
+		item = next( item );
+	}
+	
+	if ( item->type == ctrlItem + btnCtrl )
+	{
+		Rect bounds = item->bounds;
+		
+		InsetRect( &bounds, -4, -4 );
+		
+		PenSize( 3, 3 );
+		FrameRoundRect( &bounds, 16, 16 );
+		PenNormal();
+	}
+}
+
+static
 short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 {
 	Handle h = GetResource( 'ALRT', alertID );
@@ -602,6 +655,8 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	{
 		return MemError();
 	}
+	
+	DITL_append_userItem( h, &default_button_outline, dialog->portRect );
 	
 	if ( alertID != ANumber )
 	{
