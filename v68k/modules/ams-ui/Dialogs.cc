@@ -68,19 +68,9 @@ void set_param( short i, const unsigned char* text )
 	memcpy( *h, text, 1 + text[ 0 ] );
 }
 
-struct expansion_storage
-{
-	Handle text;
-	UInt16 size;  // Worst case is 127 * 255 + 1 == 32386
-};
-
 static
-const expansion_storage& expand_param_text( const unsigned char* text )
+Handle expand_param_text( const unsigned char* text )
 {
-	static expansion_storage expanded = { NewHandleOrBust( 0 ) };
-	
-	static UInt16 capacity = 0;
-	
 	UInt16 expanded_size = 0;
 	
 	const unsigned char* begin = text + 1;
@@ -110,18 +100,9 @@ const expansion_storage& expand_param_text( const unsigned char* text )
 		}
 	}
 	
-	expanded.size = expanded_size;
+	Handle expanded = NewHandleOrBust( expanded_size );
 	
-	if ( capacity < expanded_size )
-	{
-		capacity = expanded_size;
-		
-		DisposeHandle( expanded.text );
-		
-		expanded.text = NewHandleOrBust( capacity );
-	}
-	
-	char* p = *expanded.text;
+	char* p = *expanded;
 	
 	for ( const unsigned char* q = begin;  q < end; )
 	{
@@ -298,6 +279,11 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				ValidRect( &item->bounds );
 				break;
 			
+			case statText:
+			case editText:
+				item->handle = expand_param_text( &item->length );
+				break;
+			
 			case iconItem:
 				item->handle = GetResource( 'ICON', item_ResID( item ) );
 				break;
@@ -362,6 +348,11 @@ pascal void CloseDialog_patch( DialogRef dialog )
 		{
 			switch ( item->type & 0x7F )
 			{
+				case statText:
+				case editText:
+					DisposeHandle( h );
+					break;
+				
 				case iconItem:
 					ReleaseResource( h );
 					break;
@@ -551,11 +542,9 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			
 			case statText:
 			{
-				const UInt8* text = &item->length;
+				Handle h = item->handle;
 				
-				const expansion_storage& expansion = expand_param_text( text );
-				
-				TETextBox( *expansion.text, expansion.size, &bounds, 0 );
+				TETextBox( *h, GetHandleSize( h ), &bounds, 0 );
 				break;
 			}
 			
