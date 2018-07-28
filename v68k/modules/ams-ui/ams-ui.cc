@@ -151,10 +151,10 @@ static void install_Controls()
 	TBTRAP( KillControls   );  // A956
 	TBTRAP( ShowControl    );  // A957
 	TBTRAP( HideControl    );  // A958
-	
+	TBTRAP( MoveControl    );  // A959
 	TBTRAP( GetCRefCon     );  // A95A
 	TBTRAP( SetCRefCon     );  // A95B
-	
+	TBTRAP( SizeControl    );  // A95C
 	TBTRAP( HiliteControl  );  // A95D
 	
 	TBTRAP( GetCtlValue    );  // A960

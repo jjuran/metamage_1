@@ -431,3 +431,42 @@ pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control )
 {
 	return control[0]->contrlAction;
 }
+
+pascal void MoveControl_patch( ControlRecord** control, short h, short v )
+{
+	Rect* bounds = &control[0]->contrlRect;
+	
+	const bool visible = control[0]->contrlVis;
+	
+	if ( visible )
+	{
+		HideControl_patch( control );
+	}
+	
+	OffsetRect( bounds, h - bounds->left, v - bounds->top );
+	
+	if ( visible )
+	{
+		ShowControl_patch( control );
+	}
+}
+
+pascal void SizeControl_patch( ControlRecord** control, short w, short h )
+{
+	Rect* bounds = &control[0]->contrlRect;
+	
+	const bool visible = control[0]->contrlVis;
+	
+	if ( visible )
+	{
+		HideControl_patch( control );
+	}
+	
+	bounds->right = bounds->left + w;
+	bounds->bottom = bounds->top + h;
+	
+	if ( visible )
+	{
+		ShowControl_patch( control );
+	}
+}

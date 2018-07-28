@@ -64,4 +64,7 @@ pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr ac
 
 pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
 
+pascal void MoveControl_patch( ControlRecord** control, short w, short h );
+pascal void SizeControl_patch( ControlRecord** control, short w, short h );
+
 #endif
