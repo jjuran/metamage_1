@@ -184,7 +184,7 @@ static void install_Dialogs()
 	TBTRAP( ParamText    );  // A98B
 	
 	TBTRAP( GetDItem     );  // A98D
-	
+	TBTRAP( SetDItem     );  // A98E
 	TBTRAP( SetIText     );  // A98F
 	TBTRAP( GetIText     );  // A990
 	TBTRAP( ModalDialog  );  // A991

@@ -808,6 +808,28 @@ pascal void GetDItem_patch( DialogRef  dialog,
 	*box  = item->bounds;
 }
 
+pascal void SetDItem_patch( DialogRef    dialog,
+                            short        i,
+                            short        type,
+                            Handle       h,
+                            const Rect*  box )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	DialogItem* item = first_dialog_item( d->items );
+	
+	while ( --i > 0 )
+	{
+		item = next( item );
+	}
+	
+	item->handle = h;
+	item->bounds = *box;
+	item->type   = type;
+}
+
 pascal void GetIText_patch( Handle h, Str255 text )
 {
 	Size size = GetHandleSize( h );
