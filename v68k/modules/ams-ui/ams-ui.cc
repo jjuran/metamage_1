@@ -149,6 +149,8 @@ static void install_Controls()
 	TBTRAP( NewControl     );  // A954
 	TBTRAP( DisposeControl );  // A955
 	TBTRAP( KillControls   );  // A956
+	TBTRAP( ShowControl    );  // A957
+	TBTRAP( HideControl    );  // A958
 	
 	TBTRAP( GetCRefCon     );  // A95A
 	TBTRAP( SetCRefCon     );  // A95B

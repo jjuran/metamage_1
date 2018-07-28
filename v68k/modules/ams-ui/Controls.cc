@@ -262,6 +262,30 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	return 0;
 }
 
+pascal void ShowControl_patch( ControlRef control )
+{
+	if ( ! control[0]->contrlVis )
+	{
+		control[0]->contrlVis = -1;
+		
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+	}
+}
+
+pascal void HideControl_patch( ControlRef control )
+{
+	if ( control[0]->contrlVis )
+	{
+		control[0]->contrlVis = 0;
+		
+		// TODO:  Erase the region instead
+		EraseRect( &control[0]->contrlRect );
+		InvalRect( &control[0]->contrlRect );
+	}
+}
+
 pascal void DrawControls_patch( GrafPort* window )
 {
 	WindowPeek w = (WindowPeek) window;

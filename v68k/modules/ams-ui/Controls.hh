@@ -36,6 +36,9 @@ pascal short TrackControl_patch( ControlRecord**  control,
                                  Point            start,
                                  pascal void    (*action)() );
 
+pascal void ShowControl_patch( ControlRecord** control );
+pascal void HideControl_patch( ControlRecord** control );
+
 pascal void DrawControls_patch( GrafPort* window );
 
 pascal void HiliteControl_patch( ControlRecord** control, short hiliteState );
