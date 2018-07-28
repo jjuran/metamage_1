@@ -285,6 +285,34 @@ pascal void DrawMenuBar_patch()
 	}
 }
 
+pascal void DeleteMenu_patch( short menuID )
+{
+	if ( MenuList[0]->extent_bytes == 0 )
+	{
+		DebugStr( "\p" "DeleteMenu with empty menu bar" );
+		return;
+	}
+	
+	MenuList_header* header = *MenuList;
+	
+	const UInt16 extent_bytes = header->extent_bytes;
+	
+	MenuList_entry* last = (MenuList_entry*) ((char*) header + extent_bytes);
+	
+	if ( last->menu[0]->menuID == menuID )
+	{
+		header->right_edge = last->left_edge;
+	}
+	else
+	{
+		// TODO:  Delete non-last menus
+		DebugStr( "\p" "DeleteMenu of non-last menu is unimplemented" );
+		return;
+	}
+	
+	header->extent_bytes -= sizeof (MenuList_entry);
+}
+
 pascal void ClearMenuBar_patch()
 {
 	SetHandleSize( (Handle) MenuList, sizeof (MenuList_header) );

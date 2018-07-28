@@ -22,6 +22,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format );
 pascal void AddResMenu_patch( MenuInfo** menu, unsigned long type );
 
 pascal void InsertMenu_patch( MenuInfo** menu, short beforeID );
+pascal void DeleteMenu_patch( short menuID );
 
 pascal void DrawMenuBar_patch();
 pascal void ClearMenuBar_patch();
