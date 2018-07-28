@@ -36,3 +36,8 @@ pascal short LoWord_patch( long x )
 {
 	return x;
 }
+
+pascal void LongMul_patch( long a, long b, struct Int64Bit* product )
+{
+	*(long long*) product = (long long) a * b;
+}

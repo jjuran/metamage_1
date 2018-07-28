@@ -15,4 +15,6 @@ pascal short FixRound_patch( long x );
 pascal short HiWord_patch( long x );
 pascal short LoWord_patch( long x );
 
+pascal void LongMul_patch( long a, long b, struct Int64Bit* product );
+
 #endif

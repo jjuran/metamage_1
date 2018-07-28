@@ -73,7 +73,7 @@ static void install_QuickDraw()
 	
 	TBTRAP( GetPixel );  // A865
 	TBTRAP( StuffHex );  // A866
-	
+	TBTRAP( LongMul  );  // A867
 	TBTRAP( FixMul   );  // A868
 	TBTRAP( FixRatio );  // A869
 	TBTRAP( HiWord   );  // A86A
