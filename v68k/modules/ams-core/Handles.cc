@@ -376,6 +376,11 @@ void MoreMasters_patch()
 	MemErr = noErr;
 }
 
+long FreeMem_patch() : __D0
+{
+	return 1024 * 1024;
+}
+
 asm void MaxMem_patch()
 {
 	SUBA.L   A0,A0

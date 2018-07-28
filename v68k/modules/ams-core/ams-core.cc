@@ -150,6 +150,8 @@ void initialize_low_memory_globals()
 static
 void install_MemoryManager()
 {
+	OSTRAP( FreeMem          );  // A01C
+	
 	OSTRAP( NewPtr           );  // A11E
 	OSTRAP( DisposePtr       );  // A01F
 	

@@ -36,6 +36,8 @@ short SetApplLimit_patch( char* p : __A0 );
 
 void MoreMasters_patch();
 
+long FreeMem_patch() : __D0;
+
 void MaxMem_patch();
 
 short ReserveMem_patch( long needed : __D0, short trap_word : __D1 );
