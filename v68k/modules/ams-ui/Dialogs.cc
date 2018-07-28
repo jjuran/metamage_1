@@ -561,6 +561,19 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				}
 				break;
 			
+			case picItem:
+				if ( PicHandle picture = (PicHandle) item->handle )
+				{
+				}
+				else
+				{
+					QDGlobals& qd = get_QDGlobals();
+					
+					FillRect( &bounds, &qd.ltGray );
+					FrameRect( &bounds );
+				}
+				break;
+			
 			default:
 				break;
 		}
