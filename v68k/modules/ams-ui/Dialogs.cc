@@ -298,6 +298,10 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				ValidRect( &item->bounds );
 				break;
 			
+			case iconItem:
+				item->handle = GetResource( 'ICON', item_ResID( item ) );
+				break;
+			
 			default:
 				break;
 		}
@@ -312,6 +316,29 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 pascal void CloseDialog_patch( DialogRef dialog )
 {
 	DialogPeek d = (DialogPeek) dialog;
+	
+	short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	do
+	{
+		if ( Handle h = item->handle )
+		{
+			switch ( item->type & 0x7F )
+			{
+				case iconItem:
+					ReleaseResource( h );
+					break;
+				
+				default:
+					break;
+			}
+		}
+		
+		item = next( item );
+	}
+	while ( --n_items_1 >= 0 );
 	
 	DisposeHandle( d->items );
 	
@@ -489,10 +516,9 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			}
 			
 			case iconItem:
-				if ( Handle h = GetResource( 'ICON', item_ResID( item ) ) )
+				if ( Handle h = item->handle )
 				{
 					PlotIcon( &bounds, h );
-					ReleaseResource( h );
 				}
 				else
 				{
