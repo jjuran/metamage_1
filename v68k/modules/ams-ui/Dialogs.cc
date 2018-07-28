@@ -540,6 +540,15 @@ pascal void DrawDialog_patch( DialogRef dialog )
 				}
 				break;
 			
+			case editText:
+			{
+				Rect box = bounds;
+				
+				InsetRect( &box, -3, -3 );
+				FrameRect( &box );
+			}
+			// fall through
+			
 			case statText:
 			{
 				const UInt8* text = &item->length;
