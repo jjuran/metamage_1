@@ -97,6 +97,18 @@ pascal void StuffHex_patch( char* dst, const unsigned char* srcHex )
 	}
 }
 
+pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
+{
+	const int srcHeight = src->bottom - src->top;
+	const int dstHeight = dst->bottom - dst->top;
+	
+	const int srcWidth = src->right - src->left;
+	const int dstWidth = dst->right - dst->left;
+	
+	pt->v = (pt->v - src->top ) * dstHeight / srcHeight + dst->top;
+	pt->h = (pt->h - src->left) * dstHeight / srcHeight + dst->left;
+}
+
 pascal PatHandle GetPattern_patch( short id )
 {
 	return (PatHandle) GetResource( 'PAT ', id );
