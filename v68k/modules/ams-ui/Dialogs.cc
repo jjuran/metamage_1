@@ -808,6 +808,20 @@ pascal void GetDItem_patch( DialogRef  dialog,
 	*box  = item->bounds;
 }
 
+pascal void GetIText_patch( Handle h, Str255 text )
+{
+	Size size = GetHandleSize( h );
+	
+	if ( size > 255 )
+	{
+		size = 255;
+	}
+	
+	text[ 0 ] = size;
+	
+	BlockMoveData( *h, text + 1, size );
+}
+
 pascal void SetIText_patch( Handle h, const unsigned char* text )
 {
 	const Size len = text[ 0 ];
