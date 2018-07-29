@@ -220,6 +220,14 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 		const short this_offset = locTable[ c ];
 		const short next_offset = locTable[ c + 1 ];
 		
+		if ( port.txMode == srcCopy )
+		{
+			dstRect.left  = port.pnLoc.h;
+			dstRect.right = port.pnLoc.h + rec.widMax;
+			
+			EraseRect( &dstRect );
+		}
+		
 		if ( const short width = next_offset - this_offset )
 		{
 			srcRect.left  = this_offset;
