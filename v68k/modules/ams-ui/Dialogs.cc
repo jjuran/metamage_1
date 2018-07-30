@@ -290,6 +290,10 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 				item->handle = GetResource( 'ICON', item_ResID( item ) );
 				break;
 			
+			case picItem:
+				item->handle = GetResource( 'PICT', item_ResID( item ) );
+				break;
+			
 			default:
 				break;
 		}
@@ -356,6 +360,7 @@ pascal void CloseDialog_patch( DialogRef dialog )
 					break;
 				
 				case iconItem:
+				case picItem:
 					ReleaseResource( h );
 					break;
 				
@@ -564,6 +569,7 @@ pascal void DrawDialog_patch( DialogRef dialog )
 			case picItem:
 				if ( PicHandle picture = (PicHandle) item->handle )
 				{
+					DrawPicture( picture, &bounds );
 				}
 				else
 				{
