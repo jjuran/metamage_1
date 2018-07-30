@@ -9,9 +9,9 @@
 struct FileParam;
 struct VolumeParam;
 
-pascal short GetVol_patch( VolumeParam* pb : __A0 ) : __D0;
+short GetVol_patch( short trap_word : __D1, VolumeParam* pb : __A0 );
 
-pascal short Create_patch( FileParam* pb : __A0 ) : __D0;
-pascal short Open_patch  ( FileParam* pb : __A0 ) : __D0;
+short Create_patch( short trap_word : __D1, FileParam* pb : __A0 );
+short Open_patch  ( short trap_word : __D1, FileParam* pb : __A0 );
 
 #endif

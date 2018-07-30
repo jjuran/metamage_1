@@ -17,7 +17,7 @@
 #define VOLNAME  "\p" "Macintosh HD"
 
 
-pascal short GetVol_patch( VolumeParam* pb : __A0 ) : __D0
+short GetVol_patch( short trap_word : __D1, VolumeParam* pb : __A0 )
 {
 	if ( pb->ioNamePtr )
 	{
@@ -29,12 +29,12 @@ pascal short GetVol_patch( VolumeParam* pb : __A0 ) : __D0
 	return pb->ioResult = noErr;
 }
 
-pascal short Create_patch( FileParam* pb : __A0 ) : __D0
+short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
 	return pb->ioResult = extFSErr;
 }
 
-pascal short Open_patch( FileParam* pb : __A0 ) : __D0
+short Open_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
 	return pb->ioResult = extFSErr;
 }
