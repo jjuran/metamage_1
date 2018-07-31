@@ -92,6 +92,14 @@ bool is_current_application( const mfs::file_directory_entry* entry )
 }
 
 static inline
+bool is_writable( const FCB* fcb )
+{
+	const SInt8 flags = fcb->fcbMdRByt;
+	
+	return flags & (kioFCBWriteMask >> 8);
+}
+
+static inline
 void set_writable( FCB* fcb )
 {
 	fcb->fcbMdRByt |= (kioFCBWriteMask >> 8);
@@ -379,7 +387,63 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return old_Write( trap_word, pb );
 	}
 	
-	return pb->ioResult = rfNumErr;
+	if ( pb->ioReqCount < 0 )
+	{
+		return pb->ioResult = paramErr;  // Negative ioReqCount
+	}
+	
+	FCB* fcb = get_FCB( pb->ioRefNum );
+	
+	if ( ! fcb )
+	{
+		return pb->ioResult = rfNumErr;
+	}
+	
+	if ( ! is_writable( fcb ) )
+	{
+		return pb->ioResult = wrPermErr;
+	}
+	
+	const short mode = pb->ioPosMode;
+	
+	const size_t eof = fcb->fcbEOF;
+	
+	long& mark = fcb->fcbCrPs;
+	
+	switch ( pb->ioPosMode )
+	{
+		case fsAtMark:
+			break;
+		
+		case fsFromStart:
+			mark = pb->ioPosOffset;
+			break;
+		
+		case fsFromLEOF:
+			mark = eof + pb->ioPosOffset;
+			break;
+		
+		case fsFromMark:
+			mark += pb->ioPosOffset;
+			break;
+		
+		default:
+			return pb->ioResult = paramErr;
+	}
+	
+	pb->ioActCount = 0;
+	
+	if ( pb->ioPosOffset < eof )
+	{
+		long count = min( pb->ioReqCount, eof - pb->ioPosOffset );
+		
+		fast_memcpy( &fcb->fcbBfAdr[ mark ], pb->ioBuffer, count );
+		
+		pb->ioActCount = count;
+		pb->ioPosOffset = mark += count;
+	}
+	
+	return pb->ioResult = pb->ioActCount == pb->ioReqCount ? noErr : eofErr;
 }
 
 short GetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
