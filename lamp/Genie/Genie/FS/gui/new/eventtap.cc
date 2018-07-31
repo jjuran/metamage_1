@@ -212,7 +212,7 @@ namespace Genie
 			
 		#if CONFIG_MOUSEMOVED_HANDLER
 			
-			EventHandlerRef  itsEventHandler;
+			EventHandlerRef  itsMouseMovedEventHandler;
 			
 		#endif
 		
@@ -223,7 +223,7 @@ namespace Genie
 				
 			#if CONFIG_MOUSEMOVED_HANDLER
 				
-				itsEventHandler = NULL;
+				itsMouseMovedEventHandler = NULL;
 				
 			#endif
 			}
@@ -280,11 +280,11 @@ namespace Genie
 		                                 2,
 		                                 mouseMoved_event,
 		                                 NULL,
-		                                 &itsEventHandler );
+		                                 &itsMouseMovedEventHandler );
 		
 		if ( err )
 		{
-			itsEventHandler = NULL;
+			itsMouseMovedEventHandler = NULL;
 		}
 	}
 	
@@ -292,9 +292,9 @@ namespace Genie
 	{
 		OSStatus err;
 		
-		if ( itsEventHandler )
+		if ( itsMouseMovedEventHandler )
 		{
-			err = RemoveEventHandler( itsEventHandler );
+			err = RemoveEventHandler( itsMouseMovedEventHandler );
 		}
 		
 		Ped::View::Uninstall();
