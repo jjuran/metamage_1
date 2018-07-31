@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "module_A4.hh"
+
 // ams-rsrc
 #include "Resources.hh"
 
@@ -38,13 +41,6 @@ void install_ResourceManager()
 	TBTRAP( ReleaseResource );  // A9A3
 }
 
-static
-asm void module_suspend()
-{
-	MOVE.L   A4,module_A4
-	JSR      0xFFFFFFF8
-}
-
 int main( int argc, char** argv )
 {
 	if ( argc > 1 )
@@ -56,5 +52,5 @@ int main( int argc, char** argv )
 	
 	install_ResourceManager();
 	
-	module_suspend();  // doesn't return
+	module_A4_suspend();  // doesn't return
 }

@@ -25,6 +25,9 @@
 // freemount-client
 #include "freemount/synced.hh"
 
+// ams-common
+#include "module_A4.hh"
+
 
 #define STRLEN( s )  (sizeof "" s - 1)
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -36,34 +39,6 @@ short ResErr    : 0x0A60;
 
 const short memFullErr  = -108;
 const short resNotFound = -192;
-
-unsigned long module_A4;
-
-static inline
-asm uint32_t swap_A4( uint32_t a4 : __D0 ) : __D0
-{
-	EXG      D0,A4
-}
-
-class temp_A4
-{
-	private:
-		uint32_t saved_A4;
-		
-		// non-copyable
-		temp_A4           ( const temp_A4& );
-		temp_A4& operator=( const temp_A4& );
-	
-	public:
-		temp_A4() : saved_A4( swap_A4( module_A4 ) )
-		{
-		}
-		
-		~temp_A4()
-		{
-			swap_A4( saved_A4 );
-		}
-};
 
 static
 bool try_to_get( const char* begin, const char* end, plus::var_string& data )
