@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "module_A4.hh"
+
 // ams-fs
 #include "Files.hh"
 
@@ -48,12 +51,6 @@ void install_FileManager()
 	OSTRAP( GetVol   );  // A014
 }
 
-static
-asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
-}
-
 int main( int argc, char** argv )
 {
 	if ( argc > 0 )
@@ -70,5 +67,5 @@ int main( int argc, char** argv )
 	
 	install_FileManager();
 	
-	module_suspend();  // doesn't return
+	module_A4_suspend();  // doesn't return
 }
