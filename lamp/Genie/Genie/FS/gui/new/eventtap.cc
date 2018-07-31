@@ -263,7 +263,8 @@ namespace Genie
 	
 	static EventTypeSpec mouseMoved_event[] =
 	{
-		{ kEventClassMouse, kEventMouseMoved },
+		{ kEventClassMouse, kEventMouseMoved   },
+		{ kEventClassMouse, kEventMouseDragged },
 	};
 	
 	void eventtap_handler::Install( const Rect& bounds )
@@ -276,7 +277,7 @@ namespace Genie
 		
 		err = InstallWindowEventHandler( window,
 		                                 UPP_ARG( eventtap_MouseMoved ),
-		                                 1,
+		                                 2,
 		                                 mouseMoved_event,
 		                                 NULL,
 		                                 &itsEventHandler );
