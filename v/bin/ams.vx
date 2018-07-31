@@ -16,8 +16,20 @@ const home_68k = home "/68k"
 
 const freemountd-subcmd = "freemountd -q --root" / ' ', home_68k
 
+const module_args = str^
+[
+]
+
+def argify (name)
+{
+	return
+		if name in module_args
+			then {"[", name, *module_args[ name ], "]"}
+			else {name}
+}
+
 const ams_modules = [ "core fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
-const module_opts = ams_modules map {"-m", v}
+const module_opts = ams_modules map {"-m", argify v}
 
 const app = home_68k "/app"
 
