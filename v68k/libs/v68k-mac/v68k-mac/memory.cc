@@ -65,6 +65,8 @@ enum
 	tag_CurPitch,
 	tag_ROM85,
 	tag_PortABUse,
+	tag_SysZone,
+	tag_SysZone_low_word,
 	tag_ApplZone,
 	tag_ApplZone_low_word,
 	tag_ROMBase,
@@ -252,6 +254,7 @@ static const global globals[] =
 	{ 0x0280, 2,    tag_CurPitch    },
 	{ 0x028E, 2,    tag_ROM85       },
 	{ 0x0290, 2,    tag_PortABUse   },  // PortAUse, PortBUse
+	{ 0x02A6, 4,    tag_SysZone     },
 	{ 0x02AA, 4,    tag_ApplZone    },
 	{ 0x02AE, 4,    tag_ROMBase     },
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
