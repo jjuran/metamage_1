@@ -184,7 +184,7 @@ void install_Gestalt()
 }
 
 static
-void install_EventManager()
+void install_OSEventManager()
 {
 	OSTRAP( PostEvent    );  // A02F
 	OSTRAP( OSEventAvail );  // A030
@@ -192,7 +192,11 @@ void install_EventManager()
 	OSTRAP( FlushEvents  );  // A032
 	
 	set_event_poll_interrupt_handler();
-	
+}
+
+static
+void install_EventManager()
+{
 	TBTRAP( WaitNextEvent );  // A860
 	TBTRAP( GetNextEvent  );  // A970
 	
@@ -274,6 +278,7 @@ int main( int argc, char** argv )
 	
 	install_Gestalt();
 	
+	install_OSEventManager();
 	install_EventManager();
 	
 	install_DeskManager();
