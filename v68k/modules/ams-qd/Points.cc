@@ -28,3 +28,8 @@ pascal void SetPt_patch( Point* pt, short h, short v )
 	pt->h = h;
 	pt->v = v;
 }
+
+pascal unsigned char EqualPt_patch( Point a, Point b )
+{
+	return *(long*) &a == *(long*) &b;
+}

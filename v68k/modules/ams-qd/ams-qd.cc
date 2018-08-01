@@ -99,7 +99,7 @@ static void install_QuickDraw()
 	TBTRAP( AddPt       );  // A87E
 	TBTRAP( SubPt       );  // A87F
 	TBTRAP( SetPt       );  // A880
-	
+	TBTRAP( EqualPt     );  // A881
 	TBTRAP( StdText     );  // A882
 	TBTRAP( DrawChar    );  // A883
 	TBTRAP( DrawString  );  // A884
