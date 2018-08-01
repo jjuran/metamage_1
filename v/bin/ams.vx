@@ -32,16 +32,19 @@ const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
 
 const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
 
+const events_fd_slot = reader "/dev/null"
+const events_fd_opt  = "--events-fd=" events_fd_slot
+
 def core_opts
 {
-	var opts = []
+	var opts = [ events_fd_opt ]
 	
 	if const romgen = getenv "AMS_ROMGEN" then
 	{
 		opts <-- "-R" romgen
 	}
 	
-	return if opts then {ams-core: opts}
+	return ams-core: opts
 }
 
 const module_args = str^
@@ -105,7 +108,7 @@ else
 	run .[ "raster init" / ' ', screen ]
 	
 	xv68k-screen   = raster
-	command-prefix = "exhibit", "-t", title, raster
+	command-prefix = "exhibit", "-t", title, raster, events_fd_opt
 }
 
 const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
