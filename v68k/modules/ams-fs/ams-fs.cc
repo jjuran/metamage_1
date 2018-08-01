@@ -73,6 +73,8 @@ void install_FileManager()
 	OSTRAP( GetVol   );  // A014
 	
 	OSTRAP( GetFPos  );  // A018
+	
+	OSTRAP( SetFPos  );  // A044
 }
 
 static

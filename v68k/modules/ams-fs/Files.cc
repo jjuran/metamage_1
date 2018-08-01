@@ -324,6 +324,45 @@ short GetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = rfNumErr;
 }
 
+short SetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	FCB* fcb = get_FCB( pb->ioRefNum );
+	
+	if ( ! fcb )
+	{
+		return pb->ioResult = rfNumErr;
+	}
+	
+	const size_t eof = fcb->fcbEOF;
+	
+	long& mark = fcb->fcbCrPs;
+	
+	switch ( pb->ioPosMode )
+	{
+		case fsAtMark:
+			break;
+		
+		case fsFromStart:
+			mark = pb->ioPosOffset;
+			break;
+		
+		case fsFromLEOF:
+			mark = eof + pb->ioPosOffset;
+			break;
+		
+		case fsFromMark:
+			mark += pb->ioPosOffset;
+			break;
+		
+		default:
+			return pb->ioResult = paramErr;
+	}
+	
+	pb->ioPosOffset = mark;
+	
+	return pb->ioResult = noErr;
+}
+
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )

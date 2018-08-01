@@ -27,6 +27,7 @@ short Read_patch  ( short trap_word : __D1, IOParam* pb : __A0 );
 short Write_patch ( short trap_word : __D1, IOParam* pb : __A0 );
 
 short GetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 );
+short SetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
