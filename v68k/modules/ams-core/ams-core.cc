@@ -95,7 +95,8 @@ pascal asm void ScrnBitMap( BitMap* screenBits )
 	DC.W     _ScrnBitMap
 }
 
-static void initialize_low_memory_globals()
+static
+void initialize_low_memory_globals()
 {
 	BitMap screenBits;
 	
@@ -121,7 +122,8 @@ static void initialize_low_memory_globals()
 	init_lowmem_Cursor();
 }
 
-static void install_MemoryManager()
+static
+void install_MemoryManager()
 {
 	OSTRAP( NewPtr           );  // A11E
 	OSTRAP( DisposePtr       );  // A01F
@@ -151,7 +153,8 @@ static void install_MemoryManager()
 	TBTRAP( HandToHand  );  // A9E1
 }
 
-static void install_OSUtils()
+static
+void install_OSUtils()
 {
 	OSTRAP( ReadDateTime );  // A039
 	
@@ -165,20 +168,23 @@ static void install_OSUtils()
 	TBTRAP( SysError  );  // A9C9
 }
 
-static void install_PatchManager()
+static
+void install_PatchManager()
 {
 	OSTRAP( GetTrapAddress );  // A146
 	OSTRAP( SetTrapAddress );  // A047
 }
 
-static void install_Gestalt()
+static
+void install_Gestalt()
 {
 	old_Gestalt = (Gestalt_ProcPtr) os_trap_table[ _Gestalt & 0x00FF ];
 	
 	OSTRAP( Gestalt );  // A1AD
 }
 
-static void install_EventManager()
+static
+void install_EventManager()
 {
 	OSTRAP( PostEvent    );  // A02F
 	OSTRAP( OSEventAvail );  // A030
@@ -198,23 +204,27 @@ static void install_EventManager()
 	TBTRAP( WaitMouseUp   );  // A977
 }
 
-static void install_DeskManager()
+static
+void install_DeskManager()
 {
 	TBTRAP( SystemTask );  // A9B4
 }
 
-static void install_Debugger()
+static
+void install_Debugger()
 {
 	TBTRAP( Debugger );  // A9FF
 	TBTRAP( DebugStr );  // ABFF
 }
 
-static asm void module_suspend()
+static
+asm void module_suspend()
 {
 	JSR      0xFFFFFFF8
 }
 
-static char* const* get_options( char** argv )
+static
+char* const* get_options( char** argv )
 {
 	using command::global_result;
 	
