@@ -73,6 +73,8 @@
 	#endif
 #endif
 
+#define LENGTH( array )  (sizeof (array) / sizeof *(array))
+
 static inline bool operator==( const Point& a, const Point& b )
 {
 	return a.v == b.v  &&  a.h == b.h;
@@ -205,6 +207,8 @@ namespace Genie
 	
 	struct non_ascii_char {};
 	
+	static const class eventtap_handler* active_eventtap;
+	
 	class eventtap_handler : public Ped::View
 	{
 		private:
@@ -214,6 +218,7 @@ namespace Genie
 		#if CONFIG_CARBONEVENT_HANDLERS
 			
 			EventHandlerRef  itsMouseMovedEventHandler;
+			EventHandlerRef  itsRawKeyEventHandler;
 			
 		#endif
 		
@@ -225,6 +230,7 @@ namespace Genie
 			#if CONFIG_CARBONEVENT_HANDLERS
 				
 				itsMouseMovedEventHandler = NULL;
+				itsRawKeyEventHandler     = NULL;
 				
 			#endif
 			}
@@ -236,6 +242,18 @@ namespace Genie
 		#endif
 			
 			void Uninstall();
+			
+			eventtap_stream_client* client() const
+			{
+				eventtap_stream_server& extra = *(eventtap_stream_server*) itsKey->extra();
+				
+				return extra.client;
+			}
+			
+			eventtap_stream_client* active_client() const
+			{
+				return active_eventtap ? client() : NULL;
+			}
 			
 			void Idle     ( const EventRecord& event );
 			bool MouseDown( const EventRecord& event );
@@ -249,8 +267,6 @@ namespace Genie
 			
 			void Activate( bool activating );
 	};
-	
-	static const eventtap_handler* active_eventtap;
 	
 #if CONFIG_CARBONEVENT_HANDLERS
 	
@@ -273,6 +289,60 @@ namespace Genie
 		{ kEventClassMouse, kEventMouseDragged },
 	};
 	
+	static
+	pascal OSStatus eventtap_RawKey( EventHandlerCallRef  handler,
+	                                 EventRef             event,
+	                                 void*                userData )
+	{
+		eventtap_handler* that = (eventtap_handler*) userData;
+		
+		eventtap_stream_client* client = that->active_client();
+		
+		if ( ! client )
+		{
+			return eventNotHandledErr;
+		}
+		
+		OSStatus err;
+		
+		UInt32 modifiers = 0;
+		err = GetEventParameter( event,
+		                         kEventParamKeyModifiers,
+		                         typeUInt32,
+		                         NULL,
+		                         sizeof (UInt32),
+		                         NULL,
+		                         &modifiers );
+		
+		using namespace splode::modes;
+		using namespace splode::key;
+		
+		const uint8_t mode_mask = Command | Shift | Option | Control;
+		const uint8_t attr_mask = Alpha;
+		
+		splode::ascii_event_buffer buffer =
+		{
+			sizeof buffer - 1,
+			'\0',
+			(modifiers >> 8) & mode_mask,
+			(modifiers >> 8) & attr_mask,
+		};
+		
+		client->buffer->write( &buffer.len, sizeof buffer );
+		
+		ProcessSerialNumber psn = { 0, kCurrentProcess };
+		::WakeUpProcess( &psn );
+		
+		return noErr;
+	}
+	
+	DEFINE_CARBON_UPP( EventHandler, eventtap_RawKey )
+	
+	static EventTypeSpec rawKey_event[] =
+	{
+		{ kEventClassKeyboard, kEventRawKeyModifiersChanged },
+	};
+	
 	void eventtap_handler::Install( const Rect& bounds )
 	{
 		Ped::View::Install( bounds );
@@ -292,6 +362,17 @@ namespace Genie
 		{
 			itsMouseMovedEventHandler = NULL;
 		}
+		
+		err = InstallApplicationEventHandler( UPP_ARG( eventtap_RawKey ),
+		                                      LENGTH( rawKey_event ),
+		                                      rawKey_event,
+		                                      this,
+		                                      &itsRawKeyEventHandler );
+		
+		if ( err )
+		{
+			itsRawKeyEventHandler = NULL;
+		}
 	}
 	
 #endif
@@ -305,6 +386,11 @@ namespace Genie
 		if ( itsMouseMovedEventHandler )
 		{
 			err = RemoveEventHandler( itsMouseMovedEventHandler );
+		}
+		
+		if ( itsRawKeyEventHandler )
+		{
+			err = RemoveEventHandler( itsRawKeyEventHandler );
 		}
 		
 	#endif
