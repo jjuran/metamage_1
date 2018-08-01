@@ -42,6 +42,7 @@ enum
 	Opt_last_byte = 255,
 	
 	Opt_raster,
+	Opt_events_fd,
 };
 
 static command::option options[] =
@@ -49,6 +50,7 @@ static command::option options[] =
 	{ "raster",  Opt_raster,  command::Param_required },
 	{ "title",   Opt_title,   command::Param_required },
 	{ "magnify", Opt_magnify, command::Param_required },
+	{ "events-fd", Opt_events_fd, command::Param_required },
 	{ NULL }
 };
 
@@ -58,6 +60,7 @@ static const char* title = "";
 
 static const char* magnifier = "1";
 
+static int events_fd = 0;
 
 static pid_t viewer_pid = 0;  // either interact or display
 static pid_t author_pid = 0;
@@ -102,6 +105,10 @@ char* const* get_options( char** argv )
 				magnifier = global_result.param;
 				break;
 			
+			case Opt_events_fd:
+				events_fd = atoi( global_result.param );
+				break;
+			
 			default:
 				break;
 		}
@@ -123,9 +130,12 @@ void exec_or_exit( const char* const argv[] )
 }
 
 static
-void exec_or_exit_endpoint( const char* const argv[], int our_fd, int other_fd )
+void exec_or_exit_endpoint( const char* const  argv[],
+                            int                our_fd,
+                            int                other_fd,
+                            int                input_fd = STDIN_FILENO )
 {
-	dup2( our_fd, STDIN_FILENO  );
+	dup2( our_fd, input_fd      );
 	dup2( our_fd, STDOUT_FILENO );
 	
 	close( our_fd   );
@@ -257,7 +267,10 @@ void launch_interactive( char* const* args )
 	
 	if ( author_pid == 0 )
 	{
-		exec_or_exit_endpoint( args, socket_fds[ 0 ], socket_fds[ 1 ] );
+		const int ours  = socket_fds[ 0 ];
+		const int other = socket_fds[ 1 ];
+		
+		exec_or_exit_endpoint( args, ours, other, events_fd );
 	}
 	
 	close( socket_fds[ 0 ] );
