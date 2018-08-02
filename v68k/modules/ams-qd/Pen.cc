@@ -279,11 +279,11 @@ pascal void StdLine_patch( Point newPt )
 	line.bottom = max( pnLoc.v, newPt.v );
 	line.right  = max( pnLoc.h, newPt.h );
 	
-	if ( line.top == line.bottom  ||  line.left == line.right )
+	line.bottom += thePort->pnSize.v;
+	line.right  += thePort->pnSize.h;
+	
+	if ( pnLoc.v == newPt.v  ||  pnLoc.h == newPt.h )
 	{
-		line.bottom += thePort->pnSize.v;
-		line.right  += thePort->pnSize.h;
-		
 		StdRect( kQDGrafVerbPaint, &line );
 		
 		return;
