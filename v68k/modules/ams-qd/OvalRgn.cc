@@ -54,16 +54,17 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 		
 		if ( a_squared + b_squared > c_squared  ||  x <= y1 )
 		{
+			if ( x == y1  &&  a_squared + b_squared < c_squared )
+			{
+				--x;
+			}
+			
 			XorRgnRect( rgn, tmp, x,          y0, width - x,          y1 );
 			XorRgnRect( rgn, tmp, x, height - y1, width - x, height - y0 );
 			
 			if ( x == y0 )
 			{
 				++x;
-			}
-			else if ( x == y1  &&  a_squared + b_squared < c_squared )
-			{
-				--x;
 			}
 			
 			XorRgnRect( rgn, tmp,          y0, x,          y1, width - x );
