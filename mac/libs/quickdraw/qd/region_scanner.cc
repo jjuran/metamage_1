@@ -127,7 +127,6 @@ namespace quickdraw
 	region_scanner::region_scanner( short* out, uint16_t* temp, unsigned size )
 	:
 		its_mark( out ),
-		its_last( temp ),
 		its_temp( temp ),
 		its_line_size( size )
 	{

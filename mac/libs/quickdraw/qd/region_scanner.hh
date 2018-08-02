@@ -13,10 +13,9 @@ namespace quickdraw
 	class region_scanner
 	{
 		private:
-			short*                 its_mark;
-			const unsigned short*  its_last;
-			unsigned short*        its_temp;
-			const unsigned         its_line_size;
+			short*           its_mark;
+			unsigned short*  its_temp;
+			const unsigned   its_line_size;
 		
 		public:
 			region_scanner( short* out, unsigned short* temp, unsigned size );
