@@ -13,8 +13,14 @@
 // iota
 #include "iota/swap.hh"
 
+// quickdraw
+#include "qd/convex_region_generator.hh"
+
 // ams-common
 #include "QDGlobals.hh"
+
+
+using quickdraw::convex_region_generator;
 
 
 short MemErr : 0x0220;
@@ -38,36 +44,20 @@ void even_dexter( RgnHandle rgn, short len )
 	
 	short* p = (short*) (*rgn + 1);
 	
+	convex_region_generator generator( p );
+	
 	short v  = region.rgnBBox.top;
 	short h0 = region.rgnBBox.left;
-	short h1 = h0;
-	short h2 = h0;
+	short h1 = h0 + 1;
+	
+	generator.start( v, h0, h1 );
 	
 	while ( --len > 0 )
 	{
-		++h2;
-		
-		*p++ = v++;
-		*p++ = h0;
-		*p++ = h2;
-		*p++ = 0x7FFF;
-		
-		h0 = h1;
-		h1 = h2;
+		generator.tack_right( ++v, ++h0, ++h1 );
 	}
 	
-	h2 = region.rgnBBox.right;
-	
-	*p++ = v++;
-	*p++ = h0;
-	*p++ = h2;
-	*p++ = 0x7FFF;
-	
-	*p++ = v;
-	*p++ = h1;
-	*p++ = h2;
-	*p++ = 0x7FFF;
-	*p++ = 0x7FFF;
+	generator.finish( ++v );
 }
 
 static
@@ -77,36 +67,20 @@ void even_sinister( RgnHandle rgn, short len )
 	
 	short* p = (short*) (*rgn + 1);
 	
+	convex_region_generator generator( p );
+	
 	short v  = region.rgnBBox.top;
 	short h0 = region.rgnBBox.right;
-	short h1 = h0;
-	short h2 = h0;
+	short h1 = h0 - 1;
+	
+	generator.start( v, h1, h0 );
 	
 	while ( --len > 0 )
 	{
-		--h2;
-		
-		*p++ = v++;
-		*p++ = h2;
-		*p++ = h0;
-		*p++ = 0x7FFF;
-		
-		h0 = h1;
-		h1 = h2;
+		generator.tack_left( ++v, --h1, --h0 );
 	}
 	
-	h2 = region.rgnBBox.left;
-	
-	*p++ = v++;
-	*p++ = h2;
-	*p++ = h0;
-	*p++ = 0x7FFF;
-	
-	*p++ = v;
-	*p++ = h2;
-	*p++ = h1;
-	*p++ = 0x7FFF;
-	*p++ = 0x7FFF;
+	generator.finish( ++v );
 }
 
 static
@@ -116,40 +90,34 @@ void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 	
 	short* p = (short*) (*rgn + 1);
 	
+	convex_region_generator generator( p );
+	
 	short v  = region.rgnBBox.top;
 	short h0 = region.rgnBBox.left;
-	short h1 = h0;
-	short h2 = h0;
 	
 	Fixed h = h0 << 16;
+	
+	h += h_increment;
+	
+	short h1 = h >> 16;
+	
+	generator.start( v, h0, h1 );
+	
+	--len;
 	
 	while ( --len > 0 )
 	{
 		h += h_increment;
 		
-		h2 = h >> 16;
-		
-		*p++ = v++;
-		*p++ = h0;
-		*p++ = h2;
-		*p++ = 0x7FFF;
-		
 		h0 = h1;
-		h1 = h2;
+		h1 = h >> 16;
+		
+		generator.tack_right( ++v, h0, h1 );
 	}
 	
-	h2 = region.rgnBBox.right;
+	generator.tack_right( ++v, h1, region.rgnBBox.right );
 	
-	*p++ = v++;
-	*p++ = h0;
-	*p++ = h2;
-	*p++ = 0x7FFF;
-	
-	*p++ = v;
-	*p++ = h1;
-	*p++ = h2;
-	*p++ = 0x7FFF;
-	*p++ = 0x7FFF;
+	generator.finish( ++v );
 }
 
 static
@@ -159,40 +127,34 @@ void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 	
 	short* p = (short*) (*rgn + 1);
 	
+	convex_region_generator generator( p );
+	
 	short v  = region.rgnBBox.top;
 	short h0 = region.rgnBBox.right;
-	short h1 = h0;
-	short h2 = h0;
 	
 	Fixed h = h0 << 16;
+	
+	h -= h_increment;
+	
+	short h1 = h >> 16;
+	
+	generator.start( v, h1, h0 );
+	
+	--len;
 	
 	while ( --len > 0 )
 	{
 		h -= h_increment;
 		
-		h2 = h >> 16;
-		
-		*p++ = v++;
-		*p++ = h2;
-		*p++ = h0;
-		*p++ = 0x7FFF;
-		
 		h0 = h1;
-		h1 = h2;
+		h1 = h >> 16;
+		
+		generator.tack_left( ++v, h1, h0 );
 	}
 	
-	h2 = region.rgnBBox.left;
+	generator.tack_left( ++v, region.rgnBBox.left, h1 );
 	
-	*p++ = v++;
-	*p++ = h2;
-	*p++ = h0;
-	*p++ = 0x7FFF;
-	
-	*p++ = v;
-	*p++ = h2;
-	*p++ = h1;
-	*p++ = 0x7FFF;
-	*p++ = 0x7FFF;
+	generator.finish( ++v );
 }
 
 static
@@ -202,29 +164,22 @@ void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
 	
 	short* p = (short*) (*rgn + 1);
 	
+	convex_region_generator generator( p );
+	
 	Fixed v  = region.rgnBBox.top << 16;
 	short h0 = region.rgnBBox.left;
-	short h1 = h0;
-	short h2 = h0;
+	short h1 = h0 + 1;
 	
-	while ( len-- > 0 )
+	generator.start( v >> 16, h0, h1 );
+	
+	while ( --len > 0 )
 	{
-		*p++ = v >> 16;
-		*p++ = h0;
-		*p++ = ++h2;
-		*p++ = 0x7FFF;
-		
 		v += v_increment;
 		
-		h0 = h1;
-		h1 = h2;
+		generator.tack_right( v >> 16, ++h0, ++h1 );
 	}
 	
-	*p++ = region.rgnBBox.bottom;
-	*p++ = h0;
-	*p++ = h1;
-	*p++ = 0x7FFF;
-	*p++ = 0x7FFF;
+	generator.finish( region.rgnBBox.bottom );
 }
 
 static
@@ -234,29 +189,22 @@ void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
 	
 	short* p = (short*) (*rgn + 1);
 	
+	convex_region_generator generator( p );
+	
 	Fixed v  = region.rgnBBox.top << 16;
 	short h0 = region.rgnBBox.right;
-	short h1 = h0;
-	short h2 = h0;
+	short h1 = h0 - 1;
 	
-	while ( len-- > 0 )
+	generator.start( v >> 16, h1, h0 );
+	
+	while ( --len > 0 )
 	{
-		*p++ = v >> 16;
-		*p++ = --h2;
-		*p++ = h0;
-		*p++ = 0x7FFF;
-		
 		v += v_increment;
 		
-		h0 = h1;
-		h1 = h2;
+		generator.tack_left( v >> 16, --h1, --h0 );
 	}
 	
-	*p++ = region.rgnBBox.bottom;
-	*p++ = h1;
-	*p++ = h0;
-	*p++ = 0x7FFF;
-	*p++ = 0x7FFF;
+	generator.finish( region.rgnBBox.bottom );
 }
 
 pascal void StdLine_patch( Point newPt )
