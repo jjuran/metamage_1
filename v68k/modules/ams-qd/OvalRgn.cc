@@ -13,18 +13,70 @@
 #include <Quickdraw.h>
 #endif
 
+// Standard C
+#include <stdlib.h>
+
+// quickdraw
+#include "qd/convex_region_generator.hh"
+
+
+using quickdraw::convex_region_generator;
+
 
 static
-void XorRgnRect( RgnHandle  rgn,
-                 RgnHandle  tmp,
-                 short      left,
-                 short      top,
-                 short      right,
-                 short      bottom )
+short* generate_circle( short width, short height, const short* p, short* r )
 {
-	SetRectRgn( tmp, left, top, right, bottom );
+	convex_region_generator generator( r );
 	
-	XorRgn( tmp, rgn, rgn );
+	short y = 0;
+	short x = *p++;
+	
+	generator.start( y, x, width - x );
+	
+	while ( x > ++y )
+	{
+		x = *p++;
+		
+		generator.expand( y, x, width - x );
+	}
+	
+	if ( x < y )
+	{
+		--p;
+	}
+	
+	while ( --x >= 0 )
+	{
+		y = *--p;
+		
+		generator.expand( y, x, width - x );
+	}
+	
+	x = 0;
+	y = *p++;
+	
+	while ( ++x < y )
+	{
+		generator.contract( height - y, x, width - x );
+		
+		y = *p++;
+	}
+	
+	if ( x > y )
+	{
+		--p;
+	}
+	
+	while ( y > 0 )
+	{
+		x = *--p;
+		
+		generator.contract( height - y, x, width - x );
+		
+		--y;
+	}
+	
+	return generator.finish( height );
 }
 
 static
@@ -39,6 +91,10 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 	
 	const Fixed width_reciprocal  = FixRatio( 1, width  );
 	const Fixed height_reciprocal = FixRatio( 1, height );
+	
+	short* scratchpad = (short*) alloca( 2 + height / 2 );
+	
+	short* p = scratchpad;
 	
 	while ( y0 < x )
 	{
@@ -59,24 +115,32 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 				--x;
 			}
 			
-			XorRgnRect( rgn, tmp, x,          y0, width - x,          y1 );
-			XorRgnRect( rgn, tmp, x, height - y1, width - x, height - y0 );
-			
-			if ( x == y0 )
-			{
-				++x;
-			}
-			
-			XorRgnRect( rgn, tmp,          y0, x,          y1, width - x );
-			XorRgnRect( rgn, tmp, height - y1, x, height - y0, width - x );
+			*p++ = x;
 			
 			y0 = y1;
 		}
 	}
 	
-	XorRgnRect( rgn, tmp, y0, y0, height - y0, height - y0 );
+	Size rgnSize = sizeof (MacRegion) + height * 2 * 6;  // close enough
 	
-	SetEmptyRgn( tmp );
+	if ( GetHandleSize( (Handle) tmp ) < rgnSize )
+	{
+		SetHandleSize( (Handle) tmp, rgnSize );
+	}
+	
+	Rect& bbox = tmp[0]->rgnBBox;
+	
+	bbox.top  = 0;
+	bbox.left = 0;
+	bbox.bottom = height;
+	bbox.right  = width;
+	
+	short* begin = (short*) (*tmp + 1);
+	short* end   = generate_circle( width, height, scratchpad, begin );
+	
+	tmp[0]->rgnSize = sizeof (MacRegion) + (end - begin) * sizeof (short);
+	
+	XorRgn( tmp, rgn, rgn );
 }
 
 static
