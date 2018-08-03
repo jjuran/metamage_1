@@ -213,6 +213,12 @@ namespace vlib
 	};
 	
 	static
+	void throw_run_exception( const char* type, int status )
+	{
+		throw_exception_object( mapping( type, Integer( status ) ) );
+	}
+	
+	static
 	Value run( const Value& v, const char* empty, output_capture capture )
 	{
 		if ( is_empty_array( v ) )
@@ -314,12 +320,12 @@ namespace vlib
 		{
 			const int termsig = WTERMSIG( status );
 			
-			throw_exception_object( mapping( "signal", Integer( termsig ) ) );
+			throw_run_exception( "signal", termsig );
 		}
 		
 		if ( const int exit_status = WEXITSTATUS( status ) )
 		{
-			throw_exception_object( mapping( "exit", Integer( exit_status ) ) );
+			throw_run_exception( "exit", exit_status );
 		}
 		
 		return result;
