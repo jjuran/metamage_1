@@ -213,9 +213,12 @@ namespace vlib
 	};
 	
 	static
-	void throw_run_exception( const char* type, int status )
+	void throw_run_exception( const char* type, int status, const Value& argv )
 	{
-		throw_exception_object( mapping( type, Integer( status ) ) );
+		Value stat = mapping( type, Integer( status ) );
+		Value args = mapping( "argv", argv );
+		
+		throw_exception_object( Value( stat, args ) );
 	}
 	
 	static
@@ -320,12 +323,12 @@ namespace vlib
 		{
 			const int termsig = WTERMSIG( status );
 			
-			throw_run_exception( "signal", termsig );
+			throw_run_exception( "signal", termsig, v );
 		}
 		
 		if ( const int exit_status = WEXITSTATUS( status ) )
 		{
-			throw_run_exception( "exit", exit_status );
+			throw_run_exception( "exit", exit_status, v );
 		}
 		
 		return result;
