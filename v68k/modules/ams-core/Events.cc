@@ -19,6 +19,7 @@
 
 UInt32 Ticks   : 0x016A;
 Byte   MBState : 0x0172;
+UInt8  escapes : 0x0173;  // count of Button() calls that won't block
 Point  Mouse   : 0x0830;
 
 WindowRef CurActivate : 0x0A64;
@@ -333,6 +334,13 @@ pascal char Button_patch()
 		button_clicked = false;
 		
 		return true;
+	}
+	
+	if ( escapes )
+	{
+		polling_interval = 1;
+		
+		--escapes;
 	}
 	
 	wait_for_user_input( polling_interval );
