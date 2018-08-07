@@ -33,6 +33,7 @@
 #include "auth/auth.hh"
 
 // v68k-mac
+#include "v68k-mac/memory.hh"
 #include "v68k-mac/trap_dispatcher.hh"
 
 // v68k-user
@@ -583,8 +584,12 @@ void emulation_loop( v68k::emulator& emu )
 		
 	#endif
 		
-		if ( short( n_instructions ) == 0  &&  polling )
+		using v68k::mac::ticking;
+		
+		if ( (short( n_instructions ) == 0  ||  ticking)  &&  polling )
 		{
+			ticking = false;
+			
 			timeval timeout = { 0 };
 			fd_set readfds;
 			FD_ZERO( &readfds );
