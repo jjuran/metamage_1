@@ -69,6 +69,7 @@ static command::option options[] =
 void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
+Byte  MBState   : 0x0172;
 
 short ScreenRow : 0x0106;
 void* ScrnBase  : 0x0824;
@@ -108,6 +109,8 @@ static void initialize_low_memory_globals()
 	
 	SysEvtBuf = calloc( event_size, n_max_events );
 	SysEvtCnt = n_max_events - 1;
+	
+	MBState = 0x80;
 	
 	ScrnBase = screenBits.baseAddr;
 	
