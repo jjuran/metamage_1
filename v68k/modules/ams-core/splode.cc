@@ -184,7 +184,7 @@ void post_event( const splode::ascii_event_buffer& buffer )
 static
 void SetMouse( short x, short y )
 {
-	QDGlobals& qd = get_QDGlobals();
+	QDGlobals& qd = get_QDGlobals_from_CurrentA5();
 	
 	Mouse.h = x;
 	Mouse.v = y;
