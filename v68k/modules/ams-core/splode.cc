@@ -17,6 +17,9 @@
 // splode
 #include "splode/splode.hh"
 
+// ams-common
+#include "QDGlobals.hh"
+
 // ams-core
 #include "cursor-core.hh"
 #include "options.hh"
@@ -25,10 +28,10 @@
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
 
-Byte   MBState   : 0x0172;
-UInt16 KeyMods   : 0x017A;
-Point  Mouse     : 0x0830;
-void*  CurrentA5 : 0x0904;
+Byte   MBState : 0x0172;
+UInt16 KeyMods : 0x017A;
+Point  Mouse   : 0x0830;
+
 
 bool button_clicked;
 
@@ -181,7 +184,7 @@ void post_event( const splode::ascii_event_buffer& buffer )
 static
 void SetMouse( short x, short y )
 {
-	QDGlobals& qd = *((QDGlobals*) (*(long**) CurrentA5 + 1) - 1);
+	QDGlobals& qd = get_QDGlobals();
 	
 	Mouse.h = x;
 	Mouse.v = y;
