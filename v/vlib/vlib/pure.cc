@@ -48,9 +48,12 @@ namespace vlib
 			{
 				/*
 					Reference construction returns non-equal results.
+					Writing to a file descriptor is obviously a side effect.
 				*/
 				
 				case Op_unary_refer:
+				case Op_send:
+				case Op_recv:
 					return false;
 				
 				case Op_block:
