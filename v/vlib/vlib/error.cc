@@ -21,7 +21,7 @@ namespace vlib
 	
 	void error( const char* msg, unsigned len )
 	{
-		must_write( STDOUT_FILENO, msg, len );
+		must_write( STDERR_FILENO, msg, len );
 		exit( 1 );
 	}
 	
