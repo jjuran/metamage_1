@@ -238,7 +238,7 @@ namespace vlib
 		
 		const Value& declarate = expr->left;
 		
-		Value container = execute( expr->right, stack );
+		Value_in_flight container = execute( expr->right, stack );
 		
 		int index = 0;
 		
@@ -303,7 +303,7 @@ namespace vlib
 		
 		Value& variable = get_nth_mutable( stack_frame, index );
 		
-		if ( const dispatch* methods = container.dispatch_methods() )
+		if ( const dispatch* methods = container.get().dispatch_methods() )
 		{
 			if ( const operators* ops = methods->ops )
 			{
