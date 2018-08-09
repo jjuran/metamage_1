@@ -38,6 +38,7 @@
 #include "vlib/types/packed.hh"
 #include "vlib/types/stdint.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/table.hh"
 #include "vlib/types/type.hh"
 #include "vlib/types/unitary.hh"
 
@@ -111,7 +112,7 @@ namespace vlib
 		
 		#undef APPEND
 		
-		return Value( string, Op_empower, make_array( result ) );
+		return Table( string, make_array( result ) );
 	}
 	
 	
