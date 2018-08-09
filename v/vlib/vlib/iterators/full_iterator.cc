@@ -53,6 +53,15 @@ namespace vlib
 		return *its_stack.back();
 	}
 	
+	static
+	void push( std::vector< const Value* >& stack, const Value* v )
+	{
+		if ( ! v->is_cycle_free() )
+		{
+			stack.push_back( v );
+		}
+	}
+	
 	void full_iterator::step()
 	{
 		ASSERT( ! finished() );
@@ -63,13 +72,13 @@ namespace vlib
 		
 		if ( Expr* expr = v.expr() )
 		{
-			its_stack.push_back( &expr->right );
-			its_stack.push_back( &expr->left  );
+			push( its_stack, &expr->right );
+			push( its_stack, &expr->left  );
 		}
 		else if ( const Symbol* sym = v.sym() )
 		{
-			its_stack.push_back( &sym->get() );
-			its_stack.push_back( &sym->vtype() );
+			push( its_stack, &sym->get() );
+			push( its_stack, &sym->vtype() );
 		}
 		else if ( get_refs getrefs = get_getrefs( v ) )
 		{
