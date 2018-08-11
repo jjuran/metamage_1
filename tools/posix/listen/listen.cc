@@ -305,7 +305,7 @@ int main( int argc, char** argv )
 		{
 			*colon = ':';
 		}
-		else
+		else if ( port_arg )
 		{
 			write( STDERR_FILENO, STR_LEN( "0.0.0.0" ) );
 		}
