@@ -7,6 +7,7 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/time.h>
 #include <sys/wait.h>
 
 // Standard C
@@ -453,6 +454,16 @@ namespace vlib
 	}
 	
 	static
+	Value v_utime( const Value& v )
+	{
+		timeval tv = { 0 };
+		
+		int nok = gettimeofday( &tv, NULL );
+		
+		return Integer( tv.tv_sec * 1000000ull + tv.tv_usec );
+	}
+	
+	static
 	Value v_warn( const Value& v )
 	{
 		plus::var_string s = str( v ).move();
@@ -497,6 +508,7 @@ namespace vlib
 	const proc_info proc_system = { "system", &v_system, &empty_list };
 	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };
 	const proc_info proc_time   = { "time",   &v_time,   &empty_list };
+	const proc_info proc_utime  = { "utime",  &v_utime,  &empty_list };
 	const proc_info proc_warn   = { "warn",   &v_warn,   NULL        };
 	
 }
