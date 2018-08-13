@@ -27,7 +27,9 @@
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/integer.hh"
+#include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
 #include "vlib/types/vbytes.hh"
 
@@ -364,9 +366,20 @@ namespace vlib
 		
 		const size_t i = integer_cast< size_t >( index );
 		
-		const char c = target.as< Byte >().get();
+		size_t loc = plus::string::npos;
 		
-		const size_t loc = s.find( c, i );
+		if ( const Byte* byte = target.is< Byte >() )
+		{
+			const char c = byte->get();
+			
+			loc = s.find( c, i );
+		}
+		else
+		{
+			const plus::string& sub = target.string();
+			
+			loc = s.find( sub );
+		}
 		
 		if ( loc == plus::string::npos )
 		{
@@ -382,8 +395,13 @@ namespace vlib
 	
 	static const Type pointer = pointer_vtype;
 	static const Type byte    = byte_vtype;
+	static const Type packed  = packed_vtype;
+	static const Type string  = string_vtype;
 	
-	static const Value find( pointer, byte );
+	static const Value vbytes ( string, Op_union, packed );
+	static const Value finding( byte,   Op_union, vbytes );
+	
+	static const Value find( pointer, finding );
 	
 	static const proc_info proc_find = { "find", &v_find, &find };
 	
