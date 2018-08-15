@@ -79,7 +79,7 @@ short* generate_circle( short width, short height, const short* p, short* r )
 	return generator.finish( height );
 }
 
-RgnHandle circular_region( short diameter )
+RgnHandle circular_region( short diameter, short width, short height )
 {
 	const Fixed c_squared = 0x00010000;
 	
@@ -125,9 +125,6 @@ RgnHandle circular_region( short diameter )
 	{
 		SetHandleSize( (Handle) tmp, rgnSize );
 	}
-	
-	const short width  = diameter;
-	const short height = diameter;
 	
 	Rect& bbox = tmp[0]->rgnBBox;
 	

@@ -8,6 +8,12 @@
 
 struct MacRegion;
 
-MacRegion** circular_region( short diameter );
+MacRegion** circular_region( short diameter, short width, short height );
+
+inline
+MacRegion** circular_region( short diameter )
+{
+	return circular_region( diameter, diameter, diameter );
+}
 
 #endif
