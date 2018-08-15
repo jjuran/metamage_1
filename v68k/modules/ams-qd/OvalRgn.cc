@@ -80,19 +80,18 @@ short* generate_circle( short width, short height, const short* p, short* r )
 }
 
 static
-void CircularOvalRgn( RgnHandle rgn, short width, short height )
+RgnHandle circular_region( short diameter )
 {
 	const Fixed c_squared = 0x00010000;
 	
 	static RgnHandle tmp = NewRgn();
 	
-	short x = width / 2;
+	short x = diameter / 2;
 	short y0 = 0;
 	
-	const Fixed width_reciprocal  = FixRatio( 1, width  );
-	const Fixed height_reciprocal = FixRatio( 1, height );
+	const Fixed diameter_reciprocal = FixRatio( 1, diameter );
 	
-	short* scratchpad = (short*) alloca( 2 + height / 2 );
+	short* scratchpad = (short*) alloca( 2 + diameter / 2 );
 	
 	short* p = scratchpad;
 	
@@ -102,8 +101,8 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 		
 		const short y1 = y0 + 1;
 		
-		const Fixed a = (width  - x  * 2 + 1) * width_reciprocal;
-		const Fixed b = (height - y0 * 2 - 1) * height_reciprocal;
+		const Fixed a = (diameter - x  * 2 + 1) * diameter_reciprocal;
+		const Fixed b = (diameter - y0 * 2 - 1) * diameter_reciprocal;
 		
 		const Fixed a_squared = FixMul( a, a );
 		const Fixed b_squared = FixMul( b, b );
@@ -121,12 +120,15 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 		}
 	}
 	
-	Size rgnSize = sizeof (MacRegion) + height * 2 * 6;  // close enough
+	Size rgnSize = sizeof (MacRegion) + diameter * 2 * 6;  // close enough
 	
 	if ( GetHandleSize( (Handle) tmp ) < rgnSize )
 	{
 		SetHandleSize( (Handle) tmp, rgnSize );
 	}
+	
+	const short width  = diameter;
+	const short height = diameter;
 	
 	Rect& bbox = tmp[0]->rgnBBox;
 	
@@ -139,6 +141,14 @@ void CircularOvalRgn( RgnHandle rgn, short width, short height )
 	short* end   = generate_circle( width, height, scratchpad, begin );
 	
 	tmp[0]->rgnSize = sizeof (MacRegion) + (end - begin) * sizeof (short);
+	
+	return tmp;
+}
+
+static
+void CircularOvalRgn( RgnHandle rgn, short width, short height )
+{
+	RgnHandle tmp = circular_region( width );
 	
 	XorRgn( tmp, rgn, rgn );
 }
