@@ -313,7 +313,9 @@ namespace vlib
 					{
 						// This may block
 						
-						const Value result = handler( Op_recv, container );
+						Value& result = variable.sym()->deref_unsafe();
+						
+						result = handler( Op_recv, container );
 						
 						if ( result.type() == 0 )
 						{
@@ -324,8 +326,6 @@ namespace vlib
 						{
 							return;
 						}
-						
-						variable.sym()->deref_unsafe() = result;
 						
 						try
 						{
