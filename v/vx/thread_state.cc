@@ -23,9 +23,12 @@
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/function-utils.hh"
+#include "vlib/symbol.hh"
+#include "vlib/tracker.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/lambda.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/term.hh"
 
 // vx
 #include "exception.hh"
@@ -108,7 +111,7 @@ namespace vlib
 		
 		try
 		{
-			pb.result = call_function( pb.f, empty_list );
+			pb.result.sym()->deref_unsafe() = call_function( pb.f, empty_list );
 			pb.status = Thread_returned;
 			
 			return param;
@@ -121,7 +124,7 @@ namespace vlib
 		}
 		catch ( const user_exception& e )
 		{
-			pb.result = e.object;
+			pb.result.sym()->deref_unsafe() = e.object;
 		}
 		catch ( ... )
 		{
@@ -135,7 +138,10 @@ namespace vlib
 	thread_state::thread_state( const Value& f )
 	{
 		its_pb.f      = f;
+		its_pb.result = Constant( "__thread_result" );
 		its_pb.status = Thread_running;
+		
+		track_symbol( its_pb.result );
 		
 		if ( is_block( f ) )
 		{
@@ -183,10 +189,10 @@ namespace vlib
 		
 		if ( its_pb.status == Thread_threw_exception )
 		{
-			throw user_exception( its_pb.result, source_spec() );
+			throw user_exception( its_pb.result.sym()->get(), source_spec() );
 		}
 		
-		return its_pb.result;
+		return its_pb.result.sym()->get();
 	}
 	
 }
