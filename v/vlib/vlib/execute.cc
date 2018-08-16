@@ -205,6 +205,28 @@ namespace vlib
 		return Invocation( invoke_proc, expr );
 	}
 	
+	class temporary
+	{
+		private:
+			Value& its_location;
+			
+			// non-copyable
+			temporary           ( const temporary& );
+			temporary& operator=( const temporary& );
+		
+		public:
+			temporary( Value& location )
+			:
+				its_location( location )
+			{
+			}
+			
+			~temporary()
+			{
+				its_location = undefined;
+			}
+	};
+	
 	static
 	void run_for_loop( const Value& do_clause, const Value& stack )
 	{
@@ -326,6 +348,8 @@ namespace vlib
 						{
 							return;
 						}
+						
+						temporary tmp( result );
 						
 						try
 						{
