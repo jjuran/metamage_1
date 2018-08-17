@@ -455,11 +455,7 @@ void virt_env()
 	
 	if ( !! TARGET_CPU_PPC  &&  TARGET_API_MAC_CARBON  &&  ! bbox )
 	{
-		const unsigned char* name = mac::sys::get_machine_name();
-		
-		const bool powerpc = name != NULL  &&  name[ 1 ] == 'P';
-		
-		if ( ! powerpc )
+		if ( gestalt( 'ppcf' ) == 0x0011 )
 		{
 			printf( "%s" "PPC emulation:          Rosetta\n", blank );
 			blank = "";
