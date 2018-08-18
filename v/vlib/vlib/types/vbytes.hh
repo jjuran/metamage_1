@@ -14,6 +14,7 @@ namespace vlib
 {
 	
 	class Byte;
+	struct Target;
 	struct comparison;
 	struct dispatch;
 	struct stringify;
@@ -34,6 +35,11 @@ namespace vlib
 	Value assign_byte_to_index( Value& s, const Value& x, const Byte& byte );
 	
 	Value division( const VBytes& bytes, const Value& divisor );
+	
+	Value vbytes_mutating_op_handler( op_type        op,
+	                                  const Target&  target,
+	                                  const Value&   x,
+	                                  const Value&   b );
 	
 }
 

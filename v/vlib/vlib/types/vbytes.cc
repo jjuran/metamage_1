@@ -13,6 +13,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/target.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/stringify.hh"
@@ -195,6 +196,30 @@ namespace vlib
 		}
 		
 		THROW( "divisor of bytes must be an integer or byte" );
+		
+		return Value();
+	}
+	
+	Value vbytes_mutating_op_handler( op_type        op,
+	                                  const Target&  target,
+	                                  const Value&   x,
+	                                  const Value&   b )
+	{
+		switch ( op )
+		{
+			case Op_duplicate:
+				if ( b.type() != Value_byte )
+				{
+					THROW( "can't assign non-byte to string/packed element" );
+				}
+				// fall through
+			
+			case Op_approximate:
+				return assign_byte_to_index( *target.addr, x, b.to< Byte >() );
+			
+			default:
+				break;
+		}
 		
 		return Value();
 	}
