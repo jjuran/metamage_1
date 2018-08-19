@@ -36,6 +36,8 @@ namespace vlib
 	
 	Value division( const VBytes& bytes, const Value& divisor );
 	
+	Value vbytes_contains( const Value& a, const Value& b );
+	
 	Value vbytes_mutating_op_handler( op_type        op,
 	                                  const Target&  target,
 	                                  const Value&   x,

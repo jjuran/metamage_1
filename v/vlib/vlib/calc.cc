@@ -136,26 +136,6 @@ namespace vlib
 	}
 	
 	static
-	bool in_string( const Value& v, const plus::string& s )
-	{
-		switch ( v.type() )
-		{
-			case Value_byte:
-				return s.find( v.to< Byte >() ) != plus::string::npos;
-			
-			case V_str:
-			case V_pack:
-				return s.find( v.string() ) != plus::string::npos;
-			
-			default:
-				break;
-		}
-		
-		THROW( "unsupported pattern type for `in` with string/pack" );
-		return false;
-	}
-	
-	static
 	bool in( const Value& v, const Value& container )
 	{
 		if ( Expr* expr = container.expr() )
@@ -182,10 +162,6 @@ namespace vlib
 		{
 			case Value_empty_array:
 				return false;
-			
-			case V_str:
-			case V_pack:
-				return in_string( v, container.string() );
 			
 			default:
 				break;

@@ -111,6 +111,9 @@ namespace vlib
 			case Op_format:
 				return String( format( a.string(), b ) );
 			
+			case Op_contains:
+				return vbytes_contains( a, b );
+			
 			default:
 				break;
 		}

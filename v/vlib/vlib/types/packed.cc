@@ -202,6 +202,9 @@ namespace vlib
 			case Op_divide:
 				return division( (const VBytes&) a, b );
 			
+			case Op_contains:
+				return vbytes_contains( a, b );
+			
 			default:
 				break;
 		}

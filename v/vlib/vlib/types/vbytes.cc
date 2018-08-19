@@ -17,6 +17,7 @@
 #include "vlib/throw.hh"
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/types/integer.hh"
@@ -198,6 +199,31 @@ namespace vlib
 		THROW( "divisor of bytes must be an integer or byte" );
 		
 		return Value();
+	}
+	
+	static
+	bool in_string( const Value& v, const plus::string& s )
+	{
+		switch ( v.type() )
+		{
+			case Value_byte:
+				return s.find( v.to< Byte >() ) != plus::string::npos;
+			
+			case V_str:
+			case V_pack:
+				return s.find( v.string() ) != plus::string::npos;
+			
+			default:
+				break;
+		}
+		
+		THROW( "unsupported pattern type for `in` with string/pack" );
+		return false;
+	}
+	
+	Value vbytes_contains( const Value& a, const Value& b )
+	{
+		return Boolean( in_string( b, a.string() ) );
 	}
 	
 	Value vbytes_mutating_op_handler( op_type        op,
