@@ -12,6 +12,7 @@
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
+#include "vlib/types/byteclass.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/byte.hh"
 #include "vlib/types/type.hh"
@@ -120,6 +121,9 @@ namespace vlib
 	{
 		switch ( op )
 		{
+			case Op_union:
+				return a.to< ByteClass >() | b.to< ByteClass >();
+			
 			case Op_contains:
 				return Boolean( byterange_contains( a, b ) );
 			

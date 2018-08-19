@@ -18,6 +18,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/byteclass.hh"
 #include "vlib/types/endec/byte.hh"
 #include "vlib/types/field.hh"
 #include "vlib/types/packed.hh"
@@ -157,6 +158,15 @@ namespace vlib
 			{
 				return Packed( pack( Value( a, b ) ) );
 			}
+		}
+		
+		if ( op == Op_union )
+		{
+			ByteClass result = b.to< ByteClass >();
+			
+			result.set( a.as< Byte >().get() );
+			
+			return result;
 		}
 		
 		if ( op == Op_delta )
