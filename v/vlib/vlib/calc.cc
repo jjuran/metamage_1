@@ -191,6 +191,11 @@ namespace vlib
 				break;
 		}
 		
+		if ( Value contains = calc( container, Op_contains, v ) )
+		{
+			return contains.as< Boolean >();
+		}
+		
 		THROW( "unsupported container type for `in`" );
 		return false;
 	}
