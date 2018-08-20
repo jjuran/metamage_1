@@ -230,7 +230,7 @@ namespace Genie
 	{
 		n::owned< N::FSFileRefNum > in = OpenDataFork( file, N::fsRdPerm );
 		
-		const size_t buffer_size = TARGET_API_MAC_CARBON ? 4026 : 512;
+		const size_t buffer_size = TARGET_API_MAC_CARBON ? 4096 : 512;
 		
 		char buffer[ buffer_size ];
 		
