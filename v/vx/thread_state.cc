@@ -52,6 +52,8 @@ namespace vlib
 	static
 	void add_joinable_thread( thread_state* t )
 	{
+		add_root( t->function() );
+		
 		p7::lock k( joinable_threads_mutex );
 		
 		joinable_threads.push_back( t );
@@ -60,6 +62,8 @@ namespace vlib
 	static
 	void del_joinable_thread( thread_state* t )
 	{
+		del_root( t->function() );
+		
 		p7::lock k( joinable_threads_mutex );
 		
 		typedef std::vector< thread_state* >::iterator Iter;
