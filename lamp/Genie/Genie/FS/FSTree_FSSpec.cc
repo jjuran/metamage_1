@@ -28,9 +28,9 @@
 #include "mac_sys/volume_params.hh"
 
 // mac-file-utils
-#include "mac_file/boot_volume.hh"
 #include "mac_file/make_FSSpec.hh"
 #include "mac_file/parent_directory.hh"
+#include "mac_file/program_file.hh"
 
 // mac-app-utils
 #include "mac_app/create_alias.hh"
@@ -324,7 +324,7 @@ namespace Genie
 	static
 	VRefNum_DirID FindUsersDirectory()
 	{
-		const short vRefNum = mac::file::boot_volume();
+		const short vRefNum = mac::file::program_file().vRefNum;
 		
 		const VRefNum_DirID root = { vRefNum, fsRtDirID };
 		
