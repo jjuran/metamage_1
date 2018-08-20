@@ -8,6 +8,10 @@
 // POSIX
 #include <sys/stat.h>
 
+// mac-file-utils
+#include "mac_file/parent_directory.hh"
+#include "mac_file/program_file.hh"
+
 // vfs
 #include "vfs/node.hh"
 #include "vfs/methods/link_method_set.hh"
@@ -15,15 +19,18 @@
 
 // Genie
 #include "Genie/FS/FSSpec.hh"
-#include "Genie/Utilities/GetAppFolder.hh"
 
 
 namespace Genie
 {
 	
+	using mac::file::parent_directory;
+	using mac::file::program_file;
+	
+	
 	static vfs::node_ptr app_dir_resolve( const vfs::node* that )
 	{
-		return FSTreeFromFSDirSpec( GetAppFolder() );
+		return FSTreeFromFSDirSpec( parent_directory( program_file() ) );
 	}
 	
 	static const vfs::link_method_set app_dir_link_methods =

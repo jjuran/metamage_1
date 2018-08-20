@@ -24,6 +24,7 @@
 
 // mac-file-utils
 #include "mac_file/parent_directory.hh"
+#include "mac_file/program_file.hh"
 
 // MacIO
 #include "MacIO/GetCatInfo_Sync.hh"
@@ -36,7 +37,6 @@
 // Genie
 #include "Genie/FS/FSSpec.hh"
 #include "Genie/Utilities/AsyncIO.hh"
-#include "Genie/Utilities/GetAppFolder.hh"
 
 
 namespace Genie
@@ -46,6 +46,8 @@ namespace Genie
 	
 	using mac::types::VRefNum_DirID;
 	using mac::sys::has_FindFolder;
+	using mac::file::parent_directory;
+	using mac::file::program_file;
 	
 	
 	static inline
@@ -83,7 +85,7 @@ namespace Genie
 	static
 	VRefNum_DirID FindUserHomeFolder()
 	{
-		VRefNum_DirID appFolder = GetAppFolder();
+		VRefNum_DirID appFolder = parent_directory( program_file() );
 		
 		VRefNum_DirID users = GetUsersFolder( appFolder.vRefNum );
 		
