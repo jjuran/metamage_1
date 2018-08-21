@@ -38,6 +38,8 @@ pascal void AppendMenu_patch( MenuRef menu, ConstStr255Param format );
 
 pascal void AddResMenu_patch( MenuRef menu, ResType type );
 
+pascal short OpenDeskAcc_patch( ConstStr255Param name );
+
 pascal void InsertMenu_patch( MenuRef menu, short beforeID );
 pascal void DeleteMenu_patch( short menuID );
 

@@ -191,6 +191,8 @@ void install_Menus()
 	
 	TBTRAP( DelMenuItem  );  // A952
 	
+	TBTRAP( OpenDeskAcc  );  // A9B6
+	
 	TBTRAP( GetMenu      );  // A9BF
 	TBTRAP( GetNewMBar   );  // A9C0
 }

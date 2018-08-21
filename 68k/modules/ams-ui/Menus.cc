@@ -16,6 +16,9 @@
 #include <TextUtils.h>
 #endif
 
+// <Sound.h>
+extern "C" pascal void SysBeep( short ticks )  ONEWORDINLINE( 0xA9C8 );
+
 // mac-glue-utils
 #include "mac_glue/Memory.hh"
 #include "mac_glue/OSUtils.hh"
@@ -470,6 +473,13 @@ pascal void AddResMenu_patch( MenuRef menu, ResType type )
 		                  "(\0" "Advanced Mac Substitute" ";"
 		                  "(\0" "by Josh Juran" );
 	}
+}
+
+pascal short OpenDeskAcc_patch( ConstStr255Param name )
+{
+	SysBeep( 6 );
+	
+	return paramErr;
 }
 
 #pragma mark -
