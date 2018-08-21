@@ -43,6 +43,9 @@ void FramedRoundRectHollowRgn( MacRegion**  rgn,
 {
 	if ( (width -= 2 * penWidth) > 0  &&  (height -= 2 * penHeight) > 0 )
 	{
+		ovalWidth  -= 2 * penWidth;
+		ovalHeight -= 2 * penHeight;
+		
 		RoundRectRgn( rgn, width, height, ovalWidth, ovalHeight );
 		
 		OffsetRgn( rgn, penWidth, penHeight );
