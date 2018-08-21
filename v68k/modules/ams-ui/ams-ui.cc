@@ -143,6 +143,7 @@ void install_Menus()
 	TBTRAP( CountMItems  );  // A950
 	
 	TBTRAP( GetMenu      );  // A9BF
+	TBTRAP( GetNewMBar   );  // A9C0
 	
 	TBTRAP( SysBeep      );  // A9C8
 }

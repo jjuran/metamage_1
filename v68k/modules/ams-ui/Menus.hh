@@ -26,6 +26,8 @@ pascal void InsertMenu_patch( MenuInfo** menu, short beforeID );
 pascal void DrawMenuBar_patch();
 pascal void ClearMenuBar_patch();
 
+pascal char** GetNewMBar_patch( short menuBarID );
+
 pascal char** GetMenuBar_patch();
 
 pascal void SetMenuBar_patch( char** list );

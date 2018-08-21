@@ -293,6 +293,57 @@ pascal void ClearMenuBar_patch()
 	MenuList[0]->right_edge   = 10;
 }
 
+pascal Handle GetNewMBar_patch( ResID menuBarID )
+{
+	WMgrPort_bezel_scope port_swap;
+	
+	if ( Handle h = GetResource( 'MBAR', menuBarID ) )
+	{
+		const short* p = (const short*) *h;
+		
+		short n = *p++;
+		
+		const UInt16 extent_bytes = sizeof (MenuList_entry) * n;
+		
+		const Size size = sizeof (MenuList_header)
+		                + sizeof (MenuList_entry) * n;
+		
+		Handle menuList = NewHandleClear( size );
+		
+		MenuList_header* header = (MenuList_header*) *menuList;
+		
+		header->extent_bytes = extent_bytes;
+		
+		MenuList_entry* next = (MenuList_entry*) header;
+		
+		short right_edge = 10;
+		
+		while ( n-- > 0 )
+		{
+			++next;
+			
+			short id = *p++;
+			
+			MenuRef menu = GetMenu_patch( id );
+			
+			next->menu      = menu;
+			next->left_edge = right_edge;
+			
+			right_edge += gap_between_titles + StringWidth( menu[0]->menuData );
+			
+			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
+		}
+		
+		header->right_edge = right_edge;
+		
+		ReleaseResource( h );
+		
+		return menuList;
+	}
+	
+	return NULL;
+}
+
 pascal Handle GetMenuBar_patch()
 {
 	Handle result = (Handle) MenuList;
