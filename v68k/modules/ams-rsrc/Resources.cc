@@ -82,7 +82,8 @@ bool try_to_get( char*              insert_end,
 	return try_to_get( begin, end, result );
 }
 
-pascal char** GetResource_patch( unsigned long type, short id )
+static
+char** GetResource_handler( unsigned long type : __D0, short id : __D1 )
 {
 	temp_A4 a4;
 	
@@ -146,6 +147,27 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	memcpy( *result, rsrc.data(), size );
 	
 	return result;
+}
+
+asm
+pascal char** GetResource_patch( unsigned long type, short id )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D1
+	MOVE.L   (A2)+,D0
+	
+	JSR      GetResource_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #6,SP
+	
+	JMP      (A0)
 }
 
 pascal void ReleaseResource_patch( char** resource )
