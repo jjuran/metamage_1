@@ -46,7 +46,7 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	
 	0x0C41,  // CMPI.W   #0xA800,D1         ; OS or Toolbox trap?
 	0xA800,
-	0x6D22,  // BLT.S    os_trap
+	0x6D1E,  // BLT.S    os_trap
 	
 	0x307C,  // MOVEA.W  #3072,A0           ; point A0 to Toolbox trap table
 	0x0C00,
@@ -63,11 +63,8 @@ const uint16_t trap_dispatcher[ trap_dispatcher_word_count ] =
 	0x0C41,  // CMPI.W   #0xAC00,D1         ; auto-pop?
 	0xAC00,
 	
-	0x206F,  // MOVEA.L  (8,A7),A0          ; restore original A0
-	0x0008,
-	
-	0x4FEF,  // LEA      (16,A7),A7         ; pop stack without touching CCR
-	0x0010,
+	0x4CDF,  // MOVEM.L  (A7)+,D1-D2/A0-A1  ; restore regs
+	0x0306,  // 
 	
 	0x6D02,  // BLT.S    nopop
 	

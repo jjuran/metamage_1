@@ -13,7 +13,7 @@
 namespace v68k {
 namespace mac {
 
-const int trap_dispatcher_word_count = 119;
+const int trap_dispatcher_word_count = 117;
 
 extern const uint16_t trap_dispatcher[ trap_dispatcher_word_count ];
 
