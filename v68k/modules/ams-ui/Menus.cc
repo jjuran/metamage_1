@@ -307,6 +307,12 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 
 pascal void AddResMenu_patch( MenuInfo** menu, ResType type )
 {
+	if ( type == 'DRVR' )
+	{
+		AppendMenu( menu, "\p"
+		                  "(\0" "Advanced Mac Substitute" ";"
+		                  "(\0" "by Josh Juran" );
+	}
 }
 
 #pragma mark -
