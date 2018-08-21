@@ -28,7 +28,7 @@ def argify (name)
 			else {name}
 }
 
-const ams_modules = [ "core fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
+const ams_modules = [ "core io fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
 const module_opts = ams_modules map {"-m", argify v}
 
 const app = home_68k "/app"
