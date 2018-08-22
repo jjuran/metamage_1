@@ -64,18 +64,34 @@ short* even_dexter( RgnHandle rgn, Point penSize )
 	const short v0 = bbox.top;
 	const short vn = bbox.bottom;
 	
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
 	short v = v0;
 	
 	short h0 = bbox.left;
-	short h1 = h0 + 1;
+	short h1 = h0 + penSize.h;
 	
 	generator.start( v, h0, h1 );
 	
-	++v;
+	while ( ++v < v1 )
+	{
+		generator.extend_right( v, ++h1 );
+	}
+	
+	while ( v < vertex_closing )
+	{
+		generator.tack_right( v++, ++h0, ++h1 );
+	}
+	
+	v = v2;
 	
 	while ( v < vn )
 	{
-		generator.tack_right( v++, ++h0, ++h1 );
+		generator.condense_right( v++, ++h0 );
 	}
 	
 	return generator.finish( v );
@@ -93,18 +109,34 @@ short* even_sinister( RgnHandle rgn, Point penSize )
 	const short v0 = bbox.top;
 	const short vn = bbox.bottom;
 	
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
 	short v = v0;
 	
 	short h0 = bbox.right;
-	short h1 = h0 - 1;
+	short h1 = h0 - penSize.h;
 	
 	generator.start( v, h1, h0 );
 	
-	++v;
+	while ( ++v < v1 )
+	{
+		generator.extend_left( v, --h1 );
+	}
+	
+	while ( v < vertex_closing )
+	{
+		generator.tack_left( v++, --h1, --h0 );
+	}
+	
+	v = v2;
 	
 	while ( v < vn )
 	{
-		generator.tack_left( v++, --h1, --h0 );
+		generator.condense_left( v++, --h0 );
 	}
 	
 	return generator.finish( v );
