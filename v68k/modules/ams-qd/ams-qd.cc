@@ -25,6 +25,7 @@
 #include "Ovals.hh"
 #include "QDUtils.hh"
 #include "Pen.hh"
+#include "Polygons.hh"
 #include "Rects.hh"
 #include "Region-ops.hh"
 #include "Regions.hh"
@@ -154,6 +155,12 @@ static void install_QuickDraw()
 	TBTRAP( InvertOval );  // A8BA
 	TBTRAP( FillOval   );  // A8BB
 	
+	TBTRAP( StdPoly    );  // A8C5
+	
+	TBTRAP( PaintPoly  );  // A8C7
+	TBTRAP( ErasePoly  );  // A8C8
+	TBTRAP( InvertPoly );  // A8C9
+	TBTRAP( FillPoly   );  // A8CA
 	TBTRAP( OpenPoly   );  // A8CB
 	TBTRAP( ClosePoly  );  // A8CC
 	TBTRAP( KillPoly   );  // A8CD
