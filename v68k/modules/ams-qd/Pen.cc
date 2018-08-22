@@ -284,7 +284,7 @@ pascal void StdLine_patch( Point newPt )
 	const short len = min( advance, descent );
 	const short pts = len + 1;
 	
-	const long handle_len = sizeof (Region) + 2 + pts * 8;
+	const long handle_len = sizeof (Region) + 2 + pts * 6 * sizeof (short);
 	
 	SetHandleSize( handle, handle_len );
 	
