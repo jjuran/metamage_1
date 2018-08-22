@@ -53,7 +53,7 @@ Fixed max( Fixed a, Fixed b )
 }
 
 static
-void even_dexter( RgnHandle rgn, short len )
+void even_dexter( RgnHandle rgn, Point penSize )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -82,7 +82,7 @@ void even_dexter( RgnHandle rgn, short len )
 }
 
 static
-void even_sinister( RgnHandle rgn, short len )
+void even_sinister( RgnHandle rgn, Point penSize )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -111,7 +111,7 @@ void even_sinister( RgnHandle rgn, short len )
 }
 
 static
-void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
+void shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -152,7 +152,7 @@ void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 }
 
 static
-void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
+void shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -193,7 +193,7 @@ void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 }
 
 static
-void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
+void steep_dexter( RgnHandle rgn, Point penSize, Fixed v_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -220,7 +220,7 @@ void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
 }
 
 static
-void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
+void steep_sinister( RgnHandle rgn, Point penSize, Fixed v_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -307,11 +307,11 @@ pascal void StdLine_patch( Point newPt )
 	{
 		if ( newPt.h >= pnLoc.h )
 		{
-			even_dexter( rgn, len );
+			even_dexter( rgn, thePort->pnSize );
 		}
 		else
 		{
-			even_sinister( rgn, len );
+			even_sinister( rgn, thePort->pnSize );
 		}
 	}
 	else if ( advance > descent )
@@ -320,11 +320,11 @@ pascal void StdLine_patch( Point newPt )
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			shallow_dexter( rgn, len, h_increment );
+			shallow_dexter( rgn, thePort->pnSize, h_increment );
 		}
 		else
 		{
-			shallow_sinister( rgn, len, h_increment );
+			shallow_sinister( rgn, thePort->pnSize, h_increment );
 		}
 	}
 	else
@@ -333,11 +333,11 @@ pascal void StdLine_patch( Point newPt )
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			steep_dexter( rgn, len, v_increment );
+			steep_dexter( rgn, thePort->pnSize, v_increment );
 		}
 		else
 		{
-			steep_sinister( rgn, len, v_increment );
+			steep_sinister( rgn, thePort->pnSize, v_increment );
 		}
 	}
 	
