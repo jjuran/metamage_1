@@ -21,6 +21,7 @@
 #include "Fonts.hh"
 #include "GrafPorts.hh"
 #include "InitGraf.hh"
+#include "OpenPoly.hh"
 #include "Ovals.hh"
 #include "QDUtils.hh"
 #include "Pen.hh"
@@ -152,6 +153,10 @@ static void install_QuickDraw()
 	TBTRAP( EraseOval  );  // A8B9
 	TBTRAP( InvertOval );  // A8BA
 	TBTRAP( FillOval   );  // A8BB
+	
+	TBTRAP( OpenPoly   );  // A8CB
+	TBTRAP( ClosePoly  );  // A8CC
+	TBTRAP( KillPoly   );  // A8CD
 	
 	TBTRAP( StdRgn      );  // A8D1
 	TBTRAP( FrameRgn    );  // A8D2

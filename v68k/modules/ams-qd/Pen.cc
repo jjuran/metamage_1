@@ -19,6 +19,9 @@
 // ams-common
 #include "QDGlobals.hh"
 
+// ams-qd
+#include "OpenPoly.hh"
+
 
 using quickdraw::convex_region_generator;
 
@@ -398,6 +401,11 @@ pascal void LineTo_patch( short h, short v )
 	if ( thePort->pnVis >= 0 )
 	{
 		StdLine( *(const Point*) &v );
+	}
+	
+	if ( thePort->polySave )
+	{
+		add_polygon_point( *(Point*) &v );
 	}
 	
 	thePort->pnLoc.v = v;

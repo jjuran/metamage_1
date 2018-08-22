@@ -1,0 +1,126 @@
+/*
+	OpenPoly.cc
+	-----------
+*/
+
+#include "OpenPoly.hh"
+
+// Mac OS
+#ifndef __QUICKDRAW__
+#include <Quickdraw.h>
+#endif
+
+// ams-common
+#include "QDGlobals.hh"
+
+
+pascal PolyHandle OpenPoly_patch()
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	const Size initial_size = sizeof (Polygon) + 6 * sizeof (Point);
+	
+	PolyHandle poly = (PolyHandle) NewHandle( initial_size );
+	
+	if ( poly )
+	{
+		poly[0]->polySize = sizeof (Polygon) - sizeof (Point);
+		
+		port.polySave = (Handle) poly;
+		
+		HidePen();
+	}
+	
+	return poly;
+}
+
+void add_polygon_point( Point pt )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	PolyHandle poly = (PolyHandle) port.polySave;
+	
+	if ( poly[0]->polySize < sizeof (Polygon) )
+	{
+		poly[0]->polySize = sizeof (Polygon);
+		
+		poly[0]->polyPoints[ 0 ] = port.pnLoc;
+	}
+	
+	Point* next = (Point*) (*port.polySave + poly[0]->polySize);
+	
+	if ( (long&) pt == (long&) next[ -1 ] )
+	{
+		return;
+	}
+	
+	Size size = GetHandleSize( port.polySave );
+	
+	if ( poly[0]->polySize + sizeof (Point) > size )
+	{
+		SetHandleSize( port.polySave, 2 * size );
+		
+		next = (Point*) (*port.polySave + poly[0]->polySize);
+	}
+	
+	*next = pt;
+	
+	poly[0]->polySize += sizeof (Point);
+}
+
+pascal void ClosePoly_patch()
+{
+	ShowPen();
+	
+	GrafPort& port = **get_addrof_thePort();
+	
+	PolyHandle poly = (PolyHandle) port.polySave;
+	
+	add_polygon_point( *poly[0]->polyPoints );
+	
+	Point* pt = poly[0]->polyPoints;
+	
+	Point start = *pt++;
+	
+	short top    = start.v;
+	short left   = start.h;
+	short bottom = start.v;
+	short right  = start.h;
+	
+	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
+	
+	while ( n-- > 0 )
+	{
+		if ( pt->v < top )
+		{
+			top = pt->v;
+		}
+		else if ( pt->v > bottom )
+		{
+			bottom = pt->v;
+		}
+		
+		if ( pt->h < left )
+		{
+			left = pt->h;
+		}
+		else if ( pt->h > right )
+		{
+			right = pt->h;
+		}
+		
+		++pt;
+	}
+	
+	poly[0]->polyBBox.top    = top;
+	poly[0]->polyBBox.left   = left;
+	poly[0]->polyBBox.bottom = bottom;
+	poly[0]->polyBBox.right  = right;
+	
+	port.polySave = NULL;
+}
+
+pascal void KillPoly_patch( PolyHandle poly )
+{
+	DisposeHandle( (Handle) poly );
+}
