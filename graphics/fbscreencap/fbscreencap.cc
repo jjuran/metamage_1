@@ -18,14 +18,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-// iota
-#include "iota/endian.hh"
-
 // more-posix
 #include "more/perror.hh"
 
 // raster
 #include "raster/raster.hh"
+#include "raster/skif.hh"
 
 // fbraster
 #include "fb.hh"
@@ -51,9 +49,39 @@ void report_error( const char* path, uint32_t err )
 }
 
 static inline
-bool is_rgba( const fb_var_screeninfo& var_info )
+uint8_t length_offset( const fb_bitfield& bf )
 {
-	return var_info.red.offset == 24;
+	/*
+		We have to account for length = 0, offset = 16, which occurs
+		for var_info.transp at 16-bit depth on a Raspberry Pi.
+	*/
+	
+	return bf.length << 4 | (bf.offset & 0xf);
+}
+
+static inline
+raster::pixel_layout pix_layout( const fb_var_screeninfo& var_info )
+{
+	raster::pixel_layout layout = { 0 };
+	
+	if ( var_info.bits_per_pixel == 16 )
+	{
+		layout.red   = length_offset( var_info.red    );
+		layout.green = length_offset( var_info.green  );
+		layout.blue  = length_offset( var_info.blue   );
+		layout.alpha = length_offset( var_info.transp );
+	}
+	else
+	{
+		const bool has_alpha = var_info.transp.length != 0;
+		
+		layout.per_pixel =  1 << var_info.red   .offset
+		                 |  2 << var_info.green .offset
+		                 |  3 << var_info.blue  .offset
+		                 | (4 << var_info.transp.offset) * has_alpha;
+	}
+	
+	return layout;
 }
 
 static
@@ -61,9 +89,8 @@ void save_desktop_screenshot( const char* path )
 {
 	using raster::raster_desc;
 	using raster::raster_model;
+	using raster::kSKIFFileType;
 	using raster::Model_RGB;
-	using raster::Model_ARGB;
-	using raster::Model_RGBA;
 	
 	fb::handle fbh( DEFAULT_FB_PATH );
 	
@@ -87,23 +114,21 @@ void save_desktop_screenshot( const char* path )
 		A Nexus 4 running Jellybean doesn't -- the blank areas are 00 00 00 FF.
 	*/
 	
-	const raster_model model = weight == 16 ? Model_RGB
-	                                        : Model_ARGB;
-	
 	const uint32_t image_size = height * stride;
 	
 	raster_desc desc =
 	{
-		0,
+		kSKIFFileType,
 		0,
 		(uint32_t) width,
 		(uint32_t) height,
 		(uint32_t) stride,
 		(uint8_t)  weight,
-		(uint8_t)  model,
+		(uint8_t)  Model_RGB,
+		0,
+		0,
+		pix_layout( var_info ),
 	};
-	
-	bool rgba = is_rgba( var_info );
 	
 #ifdef __ANDROID__
 	
@@ -114,27 +139,18 @@ void save_desktop_screenshot( const char* path )
 		to my knowledge).
 	*/
 	
-	if ( ! rgba )
+	if ( weight > 16  &&  desc.layout.per_pixel != raster::ABGR )
 	{
 		char buffer[ PROP_VALUE_MAX + 1 ];
 		int len = __system_property_get( "ro.build.version.release", buffer );
 		
 		if ( len >= 2  &&  (buffer[ 0 ] >= '4'  ||  buffer[ 1 ] != '.') )
 		{
-			rgba = true;
+			desc.layout.per_pixel = raster::ABGR;  // RGBA, but little-endian
 		}
 	}
 	
 #endif
-	
-	if ( rgba )
-	{
-		desc.width  = iota::big_u32( desc.width  );
-		desc.height = iota::big_u32( desc.height );
-		desc.stride = iota::big_u32( desc.stride );
-		
-		desc.model = Model_RGBA;
-	}
 	
 	int fd = open( path, O_WRONLY | O_CREAT | O_TRUNC, 0666 );
 	
@@ -169,11 +185,6 @@ void save_desktop_screenshot( const char* path )
 	const uint32_t total_size = (image_size + footer_size + k) & ~k;
 	
 	footer_size = total_size - image_size;
-	
-	if ( rgba )
-	{
-		footer_size = iota::big_u32( footer_size );
-	}
 	
 	const off_t footer_addr = total_size - sizeof footer_size;
 	
