@@ -23,6 +23,7 @@
 
 // raster
 #include "raster/raster.hh"
+#include "raster/skif.hh"
 
 
 #define PROGRAM  "cgscreencap"
@@ -43,7 +44,7 @@ static
 void save_desktop_screenshot( const char* path )
 {
 	using raster::raster_desc;
-	using raster::Model_xRGB;
+	using raster::Model_RGB;
 	
 	CGImageRef image;
 	
@@ -67,13 +68,16 @@ void save_desktop_screenshot( const char* path )
 	
 	raster_desc desc =
 	{
-		0,
+		raster::kSKIFFileType,
 		0,
 		width,
 		height,
 		stride,
 		weight,
-		Model_xRGB,
+		Model_RGB,
+		0,
+		0,
+		{ raster::xRGB },
 	};
 	
 	CFDataRef data;
