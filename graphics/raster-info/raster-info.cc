@@ -19,6 +19,7 @@
 
 // rasterlib
 #include "raster/load.hh"
+#include "raster/skif.hh"
 
 
 #define PROGRAM  "raster-info"
@@ -74,6 +75,12 @@ void open_raster( const char* path )
 }
 
 static
+void print_color_channel( const char* label, uint8_t code )
+{
+	printf( "\t%s %d@%d\n", label, code >> 4, code & 0xF );
+}
+
+static
 void print_info( const raster::raster_load& loaded_raster )
 {
 	using namespace raster;
@@ -119,6 +126,37 @@ void print_info( const raster::raster_load& loaded_raster )
 	else
 	{
 		printf( "Pixel model: %s\n", raster_models[ desc.model ] );
+	}
+	
+	if ( desc.magic == kSKIFFileType  &&  desc.model == Model_RGB )
+	{
+		if ( desc.weight == 16 )
+		{
+			printf( "Layout:\n" );
+			
+			print_color_channel( "red:  ", desc.layout.red   );
+			print_color_channel( "green:", desc.layout.green );
+			print_color_channel( "blue: ", desc.layout.blue  );
+			print_color_channel( "alpha:", desc.layout.alpha );
+		}
+		else if ( desc.weight == 32 )
+		{
+			printf( "Layout: " );
+			
+			const char labels[] = "xRGBArgb";
+			
+			for ( int i = 0;  i < 4;  ++i )
+			{
+				const uint8_t code = desc.layout.per_byte[ i ];
+				
+				if ( code < sizeof labels - 1 )
+				{
+					putchar( labels[ code ] );
+				}
+			}
+			
+			putchar( '\n' );
+		}
 	}
 	
 	const raster_note* note = &loaded_raster.meta->note;
