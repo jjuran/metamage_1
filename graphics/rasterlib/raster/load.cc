@@ -90,14 +90,14 @@ namespace raster
 	{
 		raster_desc& desc = meta.desc;
 		
-		desc.magic   = iota::swap_4_bytes( desc.magic   );
 		desc.version = iota::swap_4_bytes( desc.version );
 		desc.width   = iota::swap_4_bytes( desc.width   );
 		desc.height  = iota::swap_4_bytes( desc.height  );
 		desc.stride  = iota::swap_4_bytes( desc.stride  );
 		
 		// weight and model are single bytes
-		// flags is reserved and undefined
+		// extra and frame are single bytes
+		// layout contains single bytes (per_pixel can be used un-swapped)
 		
 		raster_note* note = &meta.note;
 		

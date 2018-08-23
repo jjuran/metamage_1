@@ -51,7 +51,11 @@ namespace raster
 		struct raster_desc
 		
 		magic, version:
-			Reserved.  For now, set them to zero.
+			Early raster files have zero in both fields.  Since they have zero
+			magic, let us call them *mundane* rasters.
+			
+			SKIF (Simple Kinetic Image Format) is a refinement.  Its magic
+			value is 'SKIF'.  Set the version to zero for now.
 		
 		width, height:
 			Image dimensions in pixels.  While `height` is the number of rows
@@ -71,6 +75,8 @@ namespace raster
 		model:
 			A selector indicating what the bits in a pixel mean, similar in
 			purpose to TIFF's PhotometricInterpretation.
+			
+			For mundane rasters:
 			0:  Monochrome "paint".  Pixels with all bits set to zero are white;
 			    those with all bits set to one are black.  Values in between
 			    map to a linearly interpolated gray color.
@@ -105,6 +111,10 @@ namespace raster
 			9:  Premultiplied RGBA.  As above, but the alpha component is last
 			    rather than first.
 			
+			For SKIF files, the meaning of values 0 through 2 above is
+			unchanged.  Value 3 is RGB in general (potentially with alpha).
+			The pixel layout details for RGB are defined by `layout`.
+			
 			All other values are reserved.
 		
 		extra:
@@ -115,6 +125,55 @@ namespace raster
 		frame:
 			The currently displayed image frame number, zero-indexed.  Must be
 			less than or equal to `extra`.
+		
+		layout:
+			The pixel format description for model RGB in SKIF files.  For a
+			pixel weight of 32, it specifies the function of each byte in a
+			pixel.  For a pixel weight of 8 or 16, it provides the location of
+			each color channel within a pixel as length and offset (in bits).
+			For any other pixel weight, it's unused and should be set to zero.
+			
+			See "Pixel format specifiers", below.
+	*/
+	
+	/*
+		Pixel format specifiers
+		
+		For pixel weight of 8 or 16:
+		
+			bit count  (4 bits)
+			bit index  (4 bits)
+		
+		More significant bits are to the left of less significant bits.
+		
+		Examples:
+			3/3/2:    red=0x35, green=0x32, blue=0x20, alpha=0x00
+			5/6/5:    red=0x5B, green=0x65, blue=0x50, alpha=0x00
+			1/5/5/5:  red=0x5A, green=0x55, blue=0x50, alpha=0x1F
+		
+		Little-endian note:  Multibyte pixels are in native byte order.
+		For little-endian files, the pairs of bytes forming each pixel
+		are swapped, so a fully saturated 5/6/5 green pixel would appear
+		in the file as 0xE0 0x07, not 0x07 0xE0.
+		
+		For pixel weight of 32:
+		
+			xRGB 32:  0 1 2 3
+			ARGB 32:  4 1 2 3
+			RGBA 32:  1 2 3 4
+			BGRA 32:  3 2 1 4
+			ABGR 32:  4 3 2 1
+			Argb 32:  4 5 6 7 (premultiplied)
+		
+		Little-endian note:  Multibyte pixels and layout.per_pixel are in native
+		byte order.  For little-endian files, the quadruplets of bytes forming
+		each pixel are swapped, and the bytes of the pixel layout descriptor
+		are /also/ swapped.  Therefore, a program can assign layout.per_pixel
+		the value 0x04010203 (ARGB) and write pixels as 4-byte integers, and
+		the results will be equivalent regardless of whether the architecture
+		is big-endian or little-endian.  In the latter case, the actual bytes
+		in the file will be x"03020104", and the pixels will be in BGRA order.
+		
 	*/
 	
 	enum raster_model
@@ -123,10 +182,10 @@ namespace raster
 		
 		Model_monochrome_paint,
 		Model_monochrome_light,
-		Model_grayscale_paint = Model_monochrome_paint,
-		Model_grayscale_light = Model_monochrome_light,
 		Model_palette,
 		Model_RGB,
+		
+		// for "mundane" rasters only:
 		Model_xRGB,
 		Model_RGBx,
 		Model_ARGB,
@@ -135,6 +194,39 @@ namespace raster
 		Model_RGBA_premultiplied,
 		
 		Model_end_of_enumeration,
+	};
+	
+	enum data_channel
+	{
+		Channel_unused,
+		
+		Channel_red,
+		Channel_green,
+		Channel_blue,
+		
+		Channel_alpha,
+		
+		Channel_premultiplied_red,
+		Channel_premultiplied_green,
+		Channel_premultiplied_blue,
+	};
+	
+	union pixel_layout
+	{
+		// For weight = 32:
+		
+		uint32_t  per_pixel;
+		uint8_t   per_byte[ 4 ];
+		
+		// For weight = 16 (or 8):
+		
+		struct
+		{
+			uint8_t  red;
+			uint8_t  green;
+			uint8_t  blue;
+			uint8_t  alpha;
+		};
 	};
 	
 	struct raster_desc
@@ -153,7 +245,9 @@ namespace raster
 		uint8_t   extra;   // number of additional stored frames
 		uint8_t   frame;   // currently displayed frame
 		
-		uint64_t  reserved;
+		pixel_layout  layout;
+		
+		uint32_t  reserved;
 	};
 	
 	struct raster_metadata
