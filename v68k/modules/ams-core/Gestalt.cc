@@ -15,8 +15,8 @@ enum
 Gestalt_ProcPtr old_Gestalt;
 
 static
-short Gestalt_payload( unsigned long  selector : __D0,
-                       long*          response : __A1 ) : __D0
+long Gestalt_payload( unsigned long  selector : __D0,
+                      long*          response : __A1 )
 {
 	switch ( selector )
 	{
@@ -29,7 +29,7 @@ short Gestalt_payload( unsigned long  selector : __D0,
 			break;
 		
 		default:
-			return -1;  // Any non-zero value will do here.
+			return selector;
 	}
 	
 	return 0;
@@ -44,7 +44,7 @@ pascal short Gestalt_patch( unsigned long selector : __D0 ) : __D0
 	
 	MOVEA.L  (SP)+,A1         // restore A1
 	
-	TST.W    D0
+	TST.L    D0
 	BEQ.S    found
 	
 	// Not found -- try the native implementation.
