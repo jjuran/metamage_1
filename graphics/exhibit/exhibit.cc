@@ -133,10 +133,11 @@ static
 void exec_or_exit_endpoint( const char* const  argv[],
                             int                our_fd,
                             int                other_fd,
-                            int                input_fd = STDIN_FILENO )
+                            int                input_fd = STDIN_FILENO,
+                            int                output_fd = STDOUT_FILENO )
 {
-	dup2( our_fd, input_fd      );
-	dup2( our_fd, STDOUT_FILENO );
+	dup2( our_fd, input_fd  );
+	dup2( our_fd, output_fd );
 	
 	close( our_fd   );
 	close( other_fd );
@@ -270,7 +271,9 @@ void launch_interactive( char* const* args )
 		const int ours  = socket_fds[ 0 ];
 		const int other = socket_fds[ 1 ];
 		
-		exec_or_exit_endpoint( args, ours, other, events_fd );
+		const int keep_output = -1;  // Don't clobber stdout
+		
+		exec_or_exit_endpoint( args, ours, other, events_fd, keep_output );
 	}
 	
 	close( socket_fds[ 0 ] );
