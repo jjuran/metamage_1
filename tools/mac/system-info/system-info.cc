@@ -362,6 +362,50 @@ bool in_BasiliskII()
 }
 
 static
+bool in_ShapeShifter()
+{
+	using mac::types::AuxDCE;
+	
+	if ( ! TARGET_CPU_68K )
+	{
+		return false;
+	}
+	
+	const short n = mac::sys::get_unit_table_entry_count();
+	
+	AuxDCE*** const begin = mac::sys::get_unit_table_base();
+	AuxDCE*** const end   = begin + n;
+	
+	for ( AuxDCE*** it = begin;  it < end;  ++it )
+	{
+		const unsigned char* name = mac::sys::get_driver_name( *it );
+		
+		if ( name[ 0 ] == 0 )
+		{
+			continue;
+		}
+		
+		/*
+			Expecting one of:
+			
+				.Display_Video_Apple_Amiga1
+				.Display_Video_Apple_Amiga2
+		*/
+		
+		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_Apple_Amiga?" ) - 1 );
+		
+		if ( cmp == 0 )
+		{
+			return true;
+		}
+		
+		++it;
+	}
+	
+	return false;
+}
+
+static
 bool in_SheepShaver()
 {
 	using mac::types::AuxDCE;
@@ -445,6 +489,11 @@ void virt_env()
 	else if ( in_BasiliskII() )
 	{
 		printf( "%s" "68K emulation:          Basilisk II\n", blank );
+		blank = "";
+	}
+	else if ( TARGET_CPU_68K  &&  in_ShapeShifter() )
+	{
+		printf( "%s" "68K emulation:          ShapeShifter\n", blank );
 		blank = "";
 	}
 	else if ( in_SheepShaver() )
