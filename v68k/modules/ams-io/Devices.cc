@@ -73,3 +73,25 @@ short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	return pb->ioResult = noErr;
 }
+
+short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( pb->ioNamePtr == NULL )
+	{
+		return pb->ioResult = paramErr;
+	}
+	
+	for ( short i = 0;  i < LENGTH( drivers );  ++i )
+	{
+		const driver& d = drivers[ i ];
+		
+		if ( memcmp( pb->ioNamePtr, d.name, 1 + *d.name ) == 0 )
+		{
+			pb->ioRefNum = -100 - i;
+			
+			return pb->ioResult = noErr;
+		}
+	}
+	
+	return pb->ioResult = fnfErr;
+}
