@@ -22,6 +22,8 @@ enum
 	kHFSFlagMask = 0x0200,
 };
 
+Open_ProcPtr old_Open;
+
 short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
 {
 	if ( trap_word & kHFSFlagMask )
@@ -48,5 +50,16 @@ short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 
 short Open_patch( short trap_word : __D1, FileParam* pb : __A0 )
 {
+	if ( trap_word & kHFSFlagMask )
+	{
+		// not a driver
+	}
+	else if ( pb->ioNamePtr  &&  *pb->ioNamePtr  &&  pb->ioNamePtr[ 1 ] == '.' )
+	{
+		// maybe a driver
+		
+		return old_Open( trap_word, pb );
+	}
+	
 	return pb->ioResult = extFSErr;
 }
