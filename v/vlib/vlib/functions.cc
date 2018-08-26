@@ -74,12 +74,6 @@ namespace vlib
 	}
 	
 	static
-	Value v_abs( const Value& arg )
-	{
-		return Integer( abs( arg.number() ) );
-	}
-	
-	static
 	Value v_half( const Value& arg )
 	{
 		return Integer( half( arg.number() ) );
@@ -415,7 +409,6 @@ namespace vlib
 		pure = Proc_pure,
 	};
 	
-	const proc_info proc_abs    = { "abs",    &v_abs,    &integer, pure };
 	const proc_info proc_areaof = { "areaof", &v_areaof, NULL,     pure };
 	const proc_info proc_half   = { "half",   &v_half,   &integer, pure };
 	const proc_info proc_head   = { "head",   &v_head,   NULL,     pure };

@@ -27,11 +27,6 @@ namespace vlib
 			return String( "Math" );
 		}
 		
-		if ( name == "abs" )
-		{
-			return Proc( proc_abs );
-		}
-		
 		if ( name == "half" )
 		{
 			return Proc( proc_half );

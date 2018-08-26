@@ -105,7 +105,6 @@ namespace vlib
 		if ( sizeof (size_t) == 4 )  define_keyword( "size_t", u32_type() );
 		if ( sizeof (size_t) == 8 )  define_keyword( "size_t", u64_type() );
 		
-		define_keyword( proc_abs    );
 		define_keyword( proc_areaof );
 		define_keyword( proc_half   );
 		define_keyword( proc_head   );

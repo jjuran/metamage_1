@@ -45,11 +45,6 @@ $ vc 'half 2^100 == 2^99'
 
 %
 
-$ vc 'abs == Math.abs'
-1 >= true
-
-%
-
 $ vc 'half == Math.half'
 1 >= true
 

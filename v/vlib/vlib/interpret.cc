@@ -29,6 +29,7 @@
 #include "vlib/execute.hh"
 #include "vlib/parse.hh"
 #include "vlib/return.hh"
+#include "vlib/startup.hh"
 #include "vlib/string-utils.hh"
 
 
@@ -87,6 +88,8 @@ namespace vlib
 		
 		try
 		{
+			static int startup = (inject_startup_header( globals ), 0);
+			
 			return execute( analyze( parse( program, file ), globals ) );
 		}
 		catch ( const std::bad_alloc& )
