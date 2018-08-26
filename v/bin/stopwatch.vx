@@ -3,7 +3,7 @@
 var start = ()
 var timer
 
-OUT <== "-:--"
+OUT <== "-:--.--"
 
 const events = channel()
 
@@ -29,11 +29,14 @@ for ev in events do
 {
 	if ev == '\0' then
 	{
-		const dt = time() - start
+		const micro_dt = utime() - start
+		const centi_dt = micro_dt div 10^4
+		const cc = centi_dt mod 100
+		const dt = centi_dt div 100
 		const m  = dt div 60
 		const ss = dt mod 60
 		
-		OUT <== "\r" m ":" tens ss
+		OUT <== "\r" m ":" (tens ss) "." tens cc
 	}
 	else if ev == ' ' then
 	{
@@ -44,8 +47,8 @@ for ev in events do
 			exit 0
 		}
 		
-		start = time()
+		start = utime()
 		
-		timer = thread { while true do { events <== '\0'; sleep 1 } }
+		timer = thread { while true do { events <== '\0'; sleep 0.005 } }
 	}
 }
