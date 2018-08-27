@@ -8,6 +8,7 @@
 // vlib
 #include "vlib/array-utils.hh"
 #include "vlib/equal.hh"
+#include "vlib/list-utils.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/array_iterator.hh"
 #include "vlib/iterators/list_builder.hh"

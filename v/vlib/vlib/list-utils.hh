@@ -13,6 +13,11 @@
 namespace vlib
 {
 	
+	struct mutable_list_overrun {};
+	
+	Value& first_mutable( Value& list );
+	Value& rest_mutable ( Value& list );
+	
 	const Value& get_nth( const Value& list, unsigned i );
 	
 	Value& get_nth_mutable( Value& list, unsigned i );
