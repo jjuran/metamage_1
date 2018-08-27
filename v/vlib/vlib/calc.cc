@@ -493,9 +493,9 @@ namespace vlib
 	static
 	Value repeat_list( const Value& list, const Value& factor )
 	{
-		if ( factor.type() == Value_boolean )
+		if ( const Boolean* value = factor.is< Boolean >() )
 		{
-			return factor.boolean() ? list : Value_empty_list;
+			return *value ? list : Value_empty_list;
 		}
 		
 		if ( is_empty_list( list ) )

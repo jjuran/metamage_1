@@ -15,6 +15,7 @@
 #include "vlib/dispatch/compare.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/iterators/list_iterator.hh"
+#include "vlib/types/boolean.hh"
 
 
 namespace vlib
@@ -62,7 +63,7 @@ namespace vlib
 				return a.sym() == b.sym();
 			
 			case Value_boolean:
-				return a.boolean() == b.boolean();
+				return !!(const Boolean&) a == !!(const Boolean&) b;
 			
 			case Value_pair:
 				{

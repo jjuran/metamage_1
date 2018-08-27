@@ -33,7 +33,7 @@ namespace vlib
 				pod_cast< bool >() = b;
 			}
 			
-			operator bool() const  { return boolean(); }
+			operator bool() const  { return pod_cast< bool >(); }
 	};
 	
 	extern const Boolean False;

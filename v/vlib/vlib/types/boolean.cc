@@ -69,7 +69,7 @@ namespace vlib
 	static
 	const char* boolean_str_data( const Value& v )
 	{
-		return v.boolean() ? "true" : "false";
+		return (const Boolean&) v ? "true" : "false";
 	}
 	
 	static const stringify boolean_str =
@@ -89,14 +89,16 @@ namespace vlib
 	static
 	Value unary_op_handler( op_type op, const Value& v )
 	{
+		const Boolean& b = (const Boolean&) v;
+		
 		switch ( op )
 		{
 			case Op_typeof:  return Type( boolean_vtype );
 			
-			case Op_not:  return Boolean( ! v.boolean() );
+			case Op_not:  return Boolean( ! b );
 			
-			case Op_unary_plus:   return Integer( +v.boolean() );
-			case Op_unary_minus:  return Integer( -v.boolean() );
+			case Op_unary_plus:   return Integer( +!!b );
+			case Op_unary_minus:  return Integer( -!!b );
 			
 			default:
 				break;

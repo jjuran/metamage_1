@@ -22,6 +22,7 @@
 #include "vlib/dispatch/operators.hh"
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
+#include "vlib/types/boolean.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/string.hh"
 #include "vlib/types/type.hh"
@@ -114,7 +115,7 @@ namespace vlib
 				return Integer();
 			
 			case Value_boolean:
-				return Integer( v.boolean() + 0 );
+				return Integer( !!(const Boolean&) v + 0 );
 			
 			case Value_byte:
 				return Integer( v.number() );

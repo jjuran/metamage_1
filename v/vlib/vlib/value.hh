@@ -253,11 +253,6 @@ namespace vlib
 				return unspecified_boolean( type() );
 			}
 			
-			bool boolean() const
-			{
-				return pod_cast< bool >();
-			}
-			
 			bignum::integer& number()
 			{
 				return *(bignum::integer*) &its_box;

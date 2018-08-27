@@ -64,7 +64,7 @@ namespace vlib
 			
 			Value passed = call_function( f, x );
 			
-			if ( passed.to< Boolean >().boolean() )
+			if ( passed.to< Boolean >() )
 			{
 				result.append( x );
 			}

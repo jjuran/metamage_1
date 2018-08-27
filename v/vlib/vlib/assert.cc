@@ -11,7 +11,7 @@
 // vlib
 #include "vlib/exceptions.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/value.hh"
+#include "vlib/types/boolean.hh"
 
 
 namespace vlib
@@ -27,12 +27,18 @@ namespace vlib
 	                             const Value&        v,
 	                             const source_spec&  source )
 	{
-		if ( v.type() != V_bool )
+		bool passed;
+		
+		if ( const Boolean* value = v.is< Boolean >() )
+		{
+			passed = *value;
+		}
+		else
 		{
 			throw assertion_result_not_boolean( source );
 		}
 		
-		if ( ! v.boolean() )
+		if ( ! passed )
 		{
 			plus::var_string s = "assertion failed: ";
 			
