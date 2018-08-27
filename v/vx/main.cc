@@ -28,6 +28,7 @@
 #include "poseven/types/thread.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/interpret.hh"
 #include "vlib/scope.hh"
 #include "vlib/types.hh"
@@ -39,6 +40,7 @@
 #include "vlib/types/unitary.hh"
 
 // vx
+#include "empty_signal_handler.hh"
 #include "file_descriptor.hh"
 #include "library.hh"
 #include "posixfs.hh"
@@ -46,10 +48,6 @@
 #include "thread.hh"
 #include "thread_state.hh"
 #include "channel/metatype.hh"
-
-// vx
-#include "empty_signal_handler.hh"
-#include "library.hh"
 
 
 #define STRLEN( s )  (sizeof "" s - 1)

@@ -9,6 +9,7 @@
 #include "plus/string/concat.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/equal.hh"
 #include "vlib/string-utils.hh"
 #include "vlib/throw.hh"

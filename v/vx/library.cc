@@ -31,6 +31,7 @@
 #include "poseven/types/thread.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/exceptions.hh"
 #include "vlib/interpret.hh"
 #include "vlib/list-utils.hh"

@@ -15,6 +15,13 @@ namespace vlib
 	
 	struct Target;
 	
+	inline
+	Value make_array( const Value& list )
+	{
+		return is_empty_list( list ) ? empty_array
+		                             : Value( Op_array, list );
+	}
+	
 	unsigned subscript_integer( const Value& index );
 	
 	Value linear_subscript( const Value& array, const Value& index );

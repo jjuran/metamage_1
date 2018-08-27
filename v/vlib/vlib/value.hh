@@ -455,13 +455,6 @@ namespace vlib
 		return expr  &&  expr->op == Op_invocation;
 	}
 	
-	inline
-	Value make_array( const Value& list )
-	{
-		return is_empty_list( list ) ? empty_array
-		                             : Value( Op_array, list );
-	}
-	
 	unsigned long area( const Value& v );
 	
 	const Value& first( const Value& list );

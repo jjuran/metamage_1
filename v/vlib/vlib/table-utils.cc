@@ -6,6 +6,7 @@
 #include "vlib/table-utils.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/equal.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/array_iterator.hh"

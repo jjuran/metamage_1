@@ -25,6 +25,7 @@
 #include "bignum/integer.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/error.hh"
 #include "vlib/is_function.hh"
 #include "vlib/throw.hh"

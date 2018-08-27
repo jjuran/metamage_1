@@ -6,6 +6,7 @@
 #include "vlib/map-reduce.hh"
 
 // vlib
+#include "vlib/array-utils.hh"
 #include "vlib/function-utils.hh"
 #include "vlib/list-utils.hh"
 #include "vlib/throw.hh"
