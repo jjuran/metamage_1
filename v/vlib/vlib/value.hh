@@ -341,7 +341,6 @@ namespace vlib
 	}
 	
 	template < class Type >
-	static
 	Value assign_to( const Value& v )
 	{
 		if ( Type::test( v ) )
