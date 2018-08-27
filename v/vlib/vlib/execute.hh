@@ -13,6 +13,17 @@
 namespace vlib
 {
 	
+	inline
+	bool is_type_annotation( const Value& v )
+	{
+		if ( Expr* expr = v.expr() )
+		{
+			return expr->op == Op_denote;
+		}
+		
+		return false;
+	}
+	
 	Value execute( const Value& root );
 	
 }
