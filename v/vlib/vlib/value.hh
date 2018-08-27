@@ -173,12 +173,6 @@ namespace vlib
 			}
 		
 		public:
-			enum symdesc
-			{
-				symdesc_min = 0,
-				symdesc_max = 0xFFFFFFFFu,
-			};
-			
 			bool has_extent() const  { return its_box.has_extent(); }
 			
 			bool is_cycle_free() const  { return flag_bit( Flag_cycle_free ); }
@@ -216,15 +210,6 @@ namespace vlib
 			Value( value_type type = value_type() ) : its_box( type )
 			{
 				its_dispatch = 0;  // NULL
-				
-				set_cycle_free();
-			}
-			
-			Value( symdesc desc ) : its_box( V_desc )
-			{
-				its_dispatch = 0;  // NULL
-				
-				pod_cast< uint32_t >() = desc;
 				
 				set_cycle_free();
 			}
@@ -277,16 +262,6 @@ namespace vlib
 			const type_info& typeinfo() const
 			{
 				return *(const type_info*) its_box.pointer();
-			}
-			
-			symdesc desc() const
-			{
-				if ( type() == V_desc )
-				{
-					return symdesc( pod_cast< uint32_t >() );
-				}
-				
-				return symdesc( -1 );
 			}
 			
 			Symbol* sym() const

@@ -13,6 +13,7 @@
 #include "vlib/dispatch/typing.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/proc.hh"
+#include "vlib/types/symdesc.hh"
 
 
 namespace vlib
@@ -22,7 +23,14 @@ namespace vlib
 	{
 		if ( Symbol* sym = v.sym() )
 		{
-			return sym->get().desc() <= 0xFFFF;  // Local variable reference?
+			const Value& v = sym->get();
+			
+			if ( const SymDesc* symdesc = v.is< SymDesc >() )
+			{
+				return symdesc->depth() == 0;  // Local variable reference?
+			}
+			
+			return false;
 		}
 		
 		if ( const Proc* proc = v.is< Proc >() )

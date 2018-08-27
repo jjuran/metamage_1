@@ -12,6 +12,7 @@
 #include "vlib/list-utils.hh"
 #include "vlib/stack.hh"
 #include "vlib/symbol.hh"
+#include "vlib/types/symdesc.hh"
 #include "vlib/types/term.hh"
 
 
@@ -23,7 +24,7 @@ namespace vlib
 		ASSERT( depth >= 0 );
 		ASSERT( index >= 0 );
 		
-		const Value symdesc = Value::symdesc( (depth << 16) | index );
+		const SymDesc symdesc( depth, index );
 		
 		Constant metasymbol( name );
 		
@@ -33,14 +34,10 @@ namespace vlib
 	}
 	
 	static
-	const Value& resolve_symdesc( const Value& symdesc, const Value& stack )
+	const Value& resolve_symdesc( const SymDesc& symdesc, const Value& stack )
 	{
-		ASSERT( symdesc.type() == V_desc );
-		
-		const int desc = symdesc.desc();
-		
-		const int index = desc & 0xFFFF;
-		const int delta = desc >> 16;
+		const int index = symdesc.index();
+		const int delta = symdesc.depth();
 		
 		const Value& frame = nth_frame( stack, delta );
 		
@@ -64,7 +61,7 @@ namespace vlib
 			
 			if ( value.type() == V_desc )
 			{
-				return resolve_symdesc( value, stack );
+				return resolve_symdesc( (const SymDesc&) value, stack );
 			}
 		}
 		

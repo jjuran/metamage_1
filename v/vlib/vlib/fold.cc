@@ -16,6 +16,7 @@
 #include "vlib/throw.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/symdesc.hh"
 
 
 namespace vlib
@@ -245,7 +246,7 @@ namespace vlib
 	{
 		Symbol* sym = decl.decl_sym();
 		
-		const int i = sym->get().desc();
+		const int i = ((const SymDesc&) sym->get()).index();
 		
 		if ( scope )
 		{

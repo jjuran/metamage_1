@@ -33,6 +33,7 @@
 #include "vlib/types/lambda.hh"
 #include "vlib/types/proc.hh"
 #include "vlib/types/string.hh"
+#include "vlib/types/symdesc.hh"
 #include "vlib/types/term.hh"
 
 
@@ -270,11 +271,11 @@ namespace vlib
 			
 			ASSERT( v.type() == V_desc );
 			
-			const Value::symdesc desc = v.desc();
+			const SymDesc& symdesc = (const SymDesc&) v;
 			
-			index = (short) desc;
+			index = symdesc.index();
 			
-			ASSERT( desc - index == 0 );
+			ASSERT( symdesc.depth() == 0 );
 		}
 		else
 		{
