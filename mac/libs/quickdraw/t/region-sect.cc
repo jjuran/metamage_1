@@ -192,7 +192,7 @@ static void sect_rgns()
 		
 		const rgn_test_case& test = sect_rgns_tests[ i ];
 		
-		const size_t max = sizeof r;
+		const unsigned long max = sizeof r;
 		
 		quickdraw::sect_regions( rect_2_1_8_64, test.a, max, test.b, max, r );
 		
