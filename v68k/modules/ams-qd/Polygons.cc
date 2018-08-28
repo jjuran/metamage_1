@@ -32,28 +32,6 @@
 using quickdraw::Region_end;
 
 
-static
-short x_intercept( Point a, Point b, short y )
-{
-	short y0 = a.v;
-	short y1 = b.v;
-	
-	if ( (y0 > y) == (y1 > y) )
-	{
-		return 0x8000;
-	}
-	
-	short x0 = a.h;
-	short x1 = b.h;
-	
-	short dy = y1 - y0;
-	short dx = x1 - x0;
-	
-	Fixed proportional_distance = FixRatio( (y - y0) * 2 + 1, dy * 2 );
-	
-	return (FixMul( proportional_distance, dx << 16 ) >> 16) + x0;
-}
-
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
