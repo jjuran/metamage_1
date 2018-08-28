@@ -13,6 +13,9 @@
 #include <Quickdraw.h>
 #endif
 
+// Standard C
+#include <stdlib.h>
+
 // quickdraw
 #include "qd/region_detail.hh"
 #include "qd/segments.hh"
@@ -22,6 +25,7 @@
 #include "scoped_zone.hh"
 
 // ams-qd
+#include "antislope.hh"
 #include "segments_box.hh"
 
 
@@ -53,6 +57,37 @@ short x_intercept( Point a, Point b, short y )
 void PolyRgn( RgnHandle rgn, PolyHandle poly )
 {
 	short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
+	
+	Point** edges = (Point**) alloca( n * 4 );
+	
+	Point** p = edges;
+	
+	Point* pt = poly[0]->polyPoints;
+	
+	for ( short i = 0;  i < n;  ++i )
+	{
+		Point a = *pt++;
+		Point b = *pt;
+		
+		if ( a.v != b.v )
+		{
+			*p++ = pt;
+		}
+	}
+	
+	const short edge_count = p - edges;  // non-horizontal edges only
+	
+	Fixed* antislopes = (Fixed*) alloca( edge_count * 4 );
+	Fixed* intercepts = (Fixed*) alloca( edge_count * 4 );  // X intercepts
+	
+	for ( short i = 0;  i < edge_count;  ++i )
+	{
+		Point a = edges[ i ][ -1 ];
+		Point b = edges[ i ][  0 ];
+		
+		antislopes[ i ] = antislope( a, b );
+		intercepts[ i ] = 0x80000000;
+	}
 	
 	const Rect& bbox = poly[0]->polyBBox;
 	
@@ -107,22 +142,29 @@ void PolyRgn( RgnHandle rgn, PolyHandle poly )
 	
 	while ( v < bbox.bottom )
 	{
-		Point* pt = poly[0]->polyPoints;
-		
-		Point a = *pt++;  // start
-		
-		for ( short i = 0;  i < n;  ++i )
+		for ( short i = 0;  i < edge_count;  ++i )
 		{
-			Point b = *pt++;
+			Point a = edges[ i ][ -1 ];
+			Point b = edges[ i ][  0 ];
 			
-			short x = x_intercept( a, b, v );
-			
-			a = b;
-			
-			if ( x < bbox.left )
+			if ( (a.v > v) == (b.v > v) )
 			{
 				continue;
 			}
+			
+			Fixed  w  = antislopes[ i ];
+			Fixed& xi = intercepts[ i ];
+			
+			short x = *(short*) &xi;
+			
+			if ( x < bbox.left )
+			{
+				xi = ((a.v == v ? a.h : b.h) << 16) + w / 2;
+				
+				x = *(short*) &xi;
+			}
+			
+			xi += w;
 			
 			if ( x < left  )  left  = x;
 			if ( x > right )  right = x;
