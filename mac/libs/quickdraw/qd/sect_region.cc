@@ -35,26 +35,6 @@ namespace quickdraw
 		return a > b ? a : b;
 	}
 	
-	static inline
-	void xor_segments( segments_box& segments, short coord )
-	{
-		segments ^= coord;
-	}
-	
-	static
-	void xor_segments( segments_box&        a,
-	                   segments_box const&  b )
-	{
-		typedef segments_box::const_iterator Iter;
-		
-		Iter it = b.begin();
-		
-		while ( it != b.end() )
-		{
-			xor_segments( a, *it++ );
-		}
-	}
-	
 	static
 	void and_segments( segments_box const&  a,
 	                   segments_box const&  b,

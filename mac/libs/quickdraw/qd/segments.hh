@@ -27,7 +27,7 @@ namespace quickdraw
 			typedef short*        iterator;
 			typedef short const*  const_iterator;
 			
-			segments_box( size_t capacity );  // bytes
+			explicit segments_box( size_t capacity );  // bytes
 			~segments_box();
 			
 			size_t size() const  { return its_size; }
@@ -60,6 +60,15 @@ namespace quickdraw
 				return *this;
 			}
 	};
+	
+	inline
+	void xor_segments( segments_box& segments, short coord )
+	{
+		segments ^= coord;
+	}
+	
+	void xor_segments( segments_box&        a,
+	                   segments_box const&  b );
 	
 }
 
