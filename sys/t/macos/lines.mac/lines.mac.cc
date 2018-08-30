@@ -196,7 +196,8 @@ QDGlobals qd;
 
 static GrafPtr testing_grafPort;
 
-static void init()
+static
+void init()
 {
 	InitGraf( &qd.thePort );
 	
@@ -213,7 +214,8 @@ static void init()
 	SetPortBits( &bitmap );
 }
 
-static void term()
+static
+void term()
 {
 	SetPort( NULL );
 	
@@ -227,7 +229,8 @@ static void term()
 	}
 }
 
-static void nondiagonal( const char* base, const Rect& bounds )
+static
+void nondiagonal( const char* base, const Rect& bounds )
 {
 	Rect rect = bounds;
 	
@@ -262,11 +265,12 @@ static void nondiagonal( const char* base, const Rect& bounds )
 	PenPat( &qd.black );
 }
 
-static void diagonal_line( const char*  base,
-                           const Rect&  bounds,
-                           short        dh,
-                           short        dv,
-                           const icon*  bits )
+static
+void diagonal_line( const char*  base,
+                    const Rect&  bounds,
+                    short        dh,
+                    short        dv,
+                    const icon*  bits )
 {
 	EraseRect( &bounds );
 	
@@ -276,7 +280,8 @@ static void diagonal_line( const char*  base,
 	EXPECT_ICONS( base, bits );
 }
 
-static void diagonal( const char* base, const Rect& bounds )
+static
+void diagonal( const char* base, const Rect& bounds )
 {
 	Rect rect = bounds;
 	
