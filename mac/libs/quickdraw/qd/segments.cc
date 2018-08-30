@@ -7,9 +7,13 @@
 
 // Standard C
 #include <stdlib.h>
+#include <string.h>
 
 // Standard C++
 #include <algorithm>
+
+// quickdraw
+#include "qd/region_detail.hh"
 
 
 namespace quickdraw
@@ -86,6 +90,35 @@ namespace quickdraw
 		while ( it != b.end() )
 		{
 			xor_segments( a, *it++ );
+		}
+	}
+	
+	static inline
+	void copy_segments( short*& r, const short* begin, const short* end )
+	{
+		memcpy( r, begin, (end - begin) * sizeof (short) );
+		
+		r += end - begin;
+	}
+	
+	static inline
+	void copy_segments( short*& r, const segments_box& segments )
+	{
+		copy_segments( r, &*segments.begin(), &*segments.end() );
+	}
+	
+	void accumulate_row( short*& r, short v, const segments_box& segments )
+	{
+		if ( ! segments.empty() )
+		{
+			*r++ = v;
+			
+			copy_segments( r, segments );
+			
+			if ( r[ -1 ] != Region_end )
+			{
+				*r++ = Region_end;
+			}
 		}
 	}
 	

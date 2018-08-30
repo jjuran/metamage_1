@@ -70,6 +70,8 @@ namespace quickdraw
 	void xor_segments( segments_box&        a,
 	                   segments_box const&  b );
 	
+	void accumulate_row( short*& r, short v, const segments_box& segments );
+	
 }
 
 #endif

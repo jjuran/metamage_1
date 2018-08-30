@@ -5,16 +5,6 @@
 
 #include "qd/sect_region.hh"
 
-// Standard C
-#include <stdlib.h>
-#include <string.h>
-
-// Standard C++
-#include <algorithm>
-
-// iota
-#include "iota/endian.hh"
-
 // quickdraw
 #include "qd/region_detail.hh"
 #include "qd/segments.hh"
@@ -105,38 +95,6 @@ namespace quickdraw
 				}
 				
 				y = *it_b++;
-			}
-		}
-	}
-	
-	static inline
-	void copy_segments( short*& r, const short* begin, const short* end )
-	{
-		memcpy( r, begin, (end - begin) * sizeof (short) );
-		
-		r += end - begin;
-	}
-	
-	template < class Container >
-	static
-	void copy_segments( short*& r, const Container& container )
-	{
-		copy_segments( r, &*container.begin(), &*container.end() );
-	}
-	
-	template < class Container >
-	static
-	void accumulate_row( short*& r, short v, const Container& segments )
-	{
-		if ( ! segments.empty() )
-		{
-			*r++ = v;
-			
-			copy_segments( r, segments );
-			
-			if ( r[ -1 ] != Region_end )
-			{
-				*r++ = Region_end;
 			}
 		}
 	}
