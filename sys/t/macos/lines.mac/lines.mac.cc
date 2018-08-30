@@ -30,9 +30,26 @@ static const unsigned n_tests = 5 + 5;
 #define EXPECT_ICONS( a, b )  EXPECT_CMP( a, icon_bytes, b, icon_bytes )
 
 
+static inline
+int rowBytes_from_bitwidth( int bits )
+{
+	return (bits + 15) / 16 * 2;
+}
+
+typedef uint32_t icon_row;
+
+const int icon_width  = 32;
+const int icon_height = 32;
+
+const int icon_px = icon_width * icon_height;  // 1024
+const int icon_bytes = icon_px / 8;  // 128;
+
+const int icon_rowBytes = rowBytes_from_bitwidth( icon_width );  // 4
+
+
 struct icon
 {
-	uint32_t rows[ 32 ];
+	icon_row rows[ icon_height ];
 };
 
 static const icon line_1[] =
@@ -287,19 +304,6 @@ static const icon line_n4_4[] =
 	BIG32( _,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_ ),
 };
 
-static inline int rowBytes_from_bitwidth( int bits )
-{
-	return (bits + 15) / 16 * 2;
-}
-
-const int icon_width  = 32;
-const int icon_height = 32;
-
-const int icon_px = icon_width * icon_height;  // 1024
-const int icon_bytes = icon_px / 8;  // 128;
-
-const int icon_rowBytes = rowBytes_from_bitwidth( icon_width );  // 4
-
 QDGlobals qd;
 
 static GrafPtr testing_grafPort;
@@ -312,7 +316,7 @@ static void init()
 	
 	OpenPort( testing_grafPort );
 	
-	PortSize( 32, 32 );
+	PortSize( icon_width, icon_height );
 	
 	char* mem = (char*) malloc( icon_bytes );
 	
