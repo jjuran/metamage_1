@@ -277,7 +277,6 @@ pascal void StdLine_patch( Point newPt )
 	}
 	
 	static Handle handle = NewHandle( 0 );
-	static Size   h_size = 0;
 	
 	const short descent = line.bottom - line.top;
 	const short advance = line.right - line.left;
@@ -294,24 +293,23 @@ pascal void StdLine_patch( Point newPt )
 		return;
 	}
 	
-	h_size = handle_len;
-	
 	RgnHandle rgn = (RgnHandle) handle;
 	
 	Region& region = **rgn;
 	
-	region.rgnSize = handle_len;
 	region.rgnBBox = line;
+	
+	short* end;
 	
 	if ( advance == descent )
 	{
 		if ( newPt.h >= pnLoc.h )
 		{
-			even_dexter( rgn, thePort->pnSize );
+			end = even_dexter( rgn, thePort->pnSize );
 		}
 		else
 		{
-			even_sinister( rgn, thePort->pnSize );
+			end = even_sinister( rgn, thePort->pnSize );
 		}
 	}
 	else if ( advance > descent )
@@ -320,11 +318,11 @@ pascal void StdLine_patch( Point newPt )
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			shallow_dexter( rgn, thePort->pnSize, h_increment );
+			end = shallow_dexter( rgn, thePort->pnSize, h_increment );
 		}
 		else
 		{
-			shallow_sinister( rgn, thePort->pnSize, h_increment );
+			end = shallow_sinister( rgn, thePort->pnSize, h_increment );
 		}
 	}
 	else
@@ -333,13 +331,15 @@ pascal void StdLine_patch( Point newPt )
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			steep_dexter( rgn, thePort->pnSize, v_increment );
+			end = steep_dexter( rgn, thePort->pnSize, v_increment );
 		}
 		else
 		{
-			steep_sinister( rgn, thePort->pnSize, v_increment );
+			end = steep_sinister( rgn, thePort->pnSize, v_increment );
 		}
 	}
+	
+	rgn[0]->rgnSize = (char*) end - (char*) *rgn;
 	
 	StdRgn( kQDGrafVerbPaint, rgn );
 }
