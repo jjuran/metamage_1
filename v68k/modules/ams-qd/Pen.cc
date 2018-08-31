@@ -55,14 +55,14 @@ Fixed max( Fixed a, Fixed b )
 static
 void even_dexter( RgnHandle rgn, short len )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.left;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	short v  = bbox.top;
+	short h0 = bbox.left;
 	short h1 = h0 + 1;
 	
 	generator.start( v, h0, h1 );
@@ -78,14 +78,14 @@ void even_dexter( RgnHandle rgn, short len )
 static
 void even_sinister( RgnHandle rgn, short len )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.right;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	short v  = bbox.top;
+	short h0 = bbox.right;
 	short h1 = h0 - 1;
 	
 	generator.start( v, h1, h0 );
@@ -101,14 +101,14 @@ void even_sinister( RgnHandle rgn, short len )
 static
 void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.left;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	short v  = bbox.top;
+	short h0 = bbox.left;
 	
 	Fixed h = h0 << 16;
 	
@@ -130,7 +130,7 @@ void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 		generator.tack_right( ++v, h0, h1 );
 	}
 	
-	generator.tack_right( ++v, h1, region.rgnBBox.right );
+	generator.tack_right( ++v, h1, bbox.right );
 	
 	generator.finish( ++v );
 }
@@ -138,14 +138,14 @@ void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 static
 void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.right;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	short v  = bbox.top;
+	short h0 = bbox.right;
 	
 	Fixed h = h0 << 16;
 	
@@ -167,7 +167,7 @@ void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 		generator.tack_left( ++v, h1, h0 );
 	}
 	
-	generator.tack_left( ++v, region.rgnBBox.left, h1 );
+	generator.tack_left( ++v, bbox.left, h1 );
 	
 	generator.finish( ++v );
 }
@@ -175,14 +175,14 @@ void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 static
 void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	Fixed v  = region.rgnBBox.top << 16;
-	short h0 = region.rgnBBox.left;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	Fixed v  = bbox.top << 16;
+	short h0 = bbox.left;
 	short h1 = h0 + 1;
 	
 	generator.start( v >> 16, h0, h1 );
@@ -194,20 +194,20 @@ void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
 		generator.tack_right( v >> 16, ++h0, ++h1 );
 	}
 	
-	generator.finish( region.rgnBBox.bottom );
+	generator.finish( bbox.bottom );
 }
 
 static
 void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	Fixed v  = region.rgnBBox.top << 16;
-	short h0 = region.rgnBBox.right;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	Fixed v  = bbox.top << 16;
+	short h0 = bbox.right;
 	short h1 = h0 - 1;
 	
 	generator.start( v >> 16, h1, h0 );
@@ -219,7 +219,7 @@ void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
 		generator.tack_left( v >> 16, --h1, --h0 );
 	}
 	
-	generator.finish( region.rgnBBox.bottom );
+	generator.finish( bbox.bottom );
 }
 
 pascal void StdLine_patch( Point newPt )
