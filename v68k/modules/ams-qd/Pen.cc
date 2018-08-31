@@ -61,18 +61,24 @@ void even_dexter( RgnHandle rgn, short len )
 	
 	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	short v  = bbox.top;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	short v = v0;
+	
 	short h0 = bbox.left;
 	short h1 = h0 + 1;
 	
 	generator.start( v, h0, h1 );
 	
-	while ( --len > 0 )
+	++v;
+	
+	while ( v < vn )
 	{
-		generator.tack_right( ++v, ++h0, ++h1 );
+		generator.tack_right( v++, ++h0, ++h1 );
 	}
 	
-	generator.finish( ++v );
+	generator.finish( v );
 }
 
 static
@@ -84,18 +90,24 @@ void even_sinister( RgnHandle rgn, short len )
 	
 	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	short v  = bbox.top;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	short v = v0;
+	
 	short h0 = bbox.right;
 	short h1 = h0 - 1;
 	
 	generator.start( v, h1, h0 );
 	
-	while ( --len > 0 )
+	++v;
+	
+	while ( v < vn )
 	{
-		generator.tack_left( ++v, --h1, --h0 );
+		generator.tack_left( v++, --h1, --h0 );
 	}
 	
-	generator.finish( ++v );
+	generator.finish( v );
 }
 
 static
@@ -107,7 +119,11 @@ void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 	
 	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	short v  = bbox.top;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	short v = v0;
+	
 	short h0 = bbox.left;
 	
 	Fixed h = h0 << 16;
@@ -118,21 +134,21 @@ void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
 	
 	generator.start( v, h0, h1 );
 	
-	--len;
+	++v;
 	
-	while ( --len > 0 )
+	while ( v < vn - 1 )
 	{
 		h += h_increment;
 		
 		h0 = h1;
 		h1 = h >> 16;
 		
-		generator.tack_right( ++v, h0, h1 );
+		generator.tack_right( v++, h0, h1 );
 	}
 	
-	generator.tack_right( ++v, h1, bbox.right );
+	generator.tack_right( v++, h1, bbox.right );
 	
-	generator.finish( ++v );
+	generator.finish( v );
 }
 
 static
@@ -144,7 +160,11 @@ void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 	
 	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	short v  = bbox.top;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	short v = v0;
+	
 	short h0 = bbox.right;
 	
 	Fixed h = h0 << 16;
@@ -155,21 +175,21 @@ void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
 	
 	generator.start( v, h1, h0 );
 	
-	--len;
+	++v;
 	
-	while ( --len > 0 )
+	while ( v < vn - 1 )
 	{
 		h -= h_increment;
 		
 		h0 = h1;
 		h1 = h >> 16;
 		
-		generator.tack_left( ++v, h1, h0 );
+		generator.tack_left( v++, h1, h0 );
 	}
 	
-	generator.tack_left( ++v, bbox.left, h1 );
+	generator.tack_left( v++, bbox.left, h1 );
 	
-	generator.finish( ++v );
+	generator.finish( v );
 }
 
 static
@@ -181,20 +201,22 @@ void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
 	
 	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	Fixed v  = bbox.top << 16;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	Fixed v = v0 << 16;
+	
 	short h0 = bbox.left;
 	short h1 = h0 + 1;
 	
 	generator.start( v >> 16, h0, h1 );
 	
-	while ( --len > 0 )
+	while ( (v += v_increment) < (vn << 16) )
 	{
-		v += v_increment;
-		
 		generator.tack_right( v >> 16, ++h0, ++h1 );
 	}
 	
-	generator.finish( bbox.bottom );
+	generator.finish( vn );
 }
 
 static
@@ -206,20 +228,22 @@ void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
 	
 	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	Fixed v  = bbox.top << 16;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	Fixed v = v0 << 16;
+	
 	short h0 = bbox.right;
 	short h1 = h0 - 1;
 	
 	generator.start( v >> 16, h1, h0 );
 	
-	while ( --len > 0 )
+	while ( (v += v_increment) < (vn << 16) )
 	{
-		v += v_increment;
-		
 		generator.tack_left( v >> 16, --h1, --h0 );
 	}
 	
-	generator.finish( bbox.bottom );
+	generator.finish( vn );
 }
 
 pascal void StdLine_patch( Point newPt )
