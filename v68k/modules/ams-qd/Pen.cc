@@ -154,31 +154,46 @@ short* shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 	const short v0 = bbox.top;
 	const short vn = bbox.bottom;
 	
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
 	short v = v0;
 	
-	short h0 = bbox.left;
+	const short h0    = bbox.left;
+	const Fixed h_max = bbox.right << 16;
 	
-	Fixed h = h0 << 16;
+	Fixed h1 = (h0                 << 16) + h_increment / 2 + 0x8000;
+	Fixed h2 = (h0 + penSize.h - 1 << 16) + h_increment / 2 + 0x8000;
 	
-	h += h_increment;
+	generator.start( v, h0, h2 >> 16 );
 	
-	short h1 = h >> 16;
-	
-	generator.start( v, h0, h1 );
-	
-	++v;
-	
-	while ( v < vn - 1 )
+	while ( ++v < v1 )
 	{
-		h += h_increment;
+		h2 = min( h2 + h_increment, h_max );
 		
-		h0 = h1;
-		h1 = h >> 16;
-		
-		generator.tack_right( v++, h0, h1 );
+		generator.extend_right( v, h2 >> 16 );
 	}
 	
-	generator.tack_right( v++, h1, bbox.right );
+	while ( v < vertex_closing )
+	{
+		h2 = min( h2 + h_increment, h_max );
+		
+		generator.tack_right( v++, h1 >> 16, h2 >> 16 );
+		
+		h1 += h_increment;
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		generator.condense_right( v++, h1 >> 16 );
+		
+		h1 += h_increment;
+	}
 	
 	return generator.finish( v );
 }
@@ -195,31 +210,46 @@ short* shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 	const short v0 = bbox.top;
 	const short vn = bbox.bottom;
 	
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
 	short v = v0;
 	
-	short h0 = bbox.right;
+	const short h0    = bbox.right;
+	const Fixed h_min = bbox.left << 16;
 	
-	Fixed h = h0 << 16;
+	Fixed h1 = (h0                 << 16) + h_increment / 2 + 0x8000;
+	Fixed h2 = (h0 - penSize.h + 1 << 16) + h_increment / 2 + 0x8000;
 	
-	h -= h_increment;
+	generator.start( v, h2 >> 16, h0 );
 	
-	short h1 = h >> 16;
-	
-	generator.start( v, h1, h0 );
-	
-	++v;
-	
-	while ( v < vn - 1 )
+	while ( ++v < v1 )
 	{
-		h -= h_increment;
+		h2 = max( h2 + h_increment, h_min );
 		
-		h0 = h1;
-		h1 = h >> 16;
-		
-		generator.tack_left( v++, h1, h0 );
+		generator.extend_left( v, h2 >> 16 );
 	}
 	
-	generator.tack_left( v++, bbox.left, h1 );
+	while ( v < vertex_closing )
+	{
+		h2 = max( h2 + h_increment, h_min );
+		
+		generator.tack_left( v++, h2 >> 16, h1 >> 16 );
+		
+		h1 += h_increment;
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		generator.condense_left( v++, h1 >> 16 );
+		
+		h1 += h_increment;
+	}
 	
 	return generator.finish( v );
 }
@@ -346,7 +376,7 @@ pascal void StdLine_patch( Point newPt )
 	}
 	else if ( advance > descent )
 	{
-		const Fixed h_increment = FixRatio( advance, descent );
+		const Fixed h_increment = FixRatio( newPt.h - pnLoc.h, newPt.v - pnLoc.v );
 		
 		if ( newPt.h >= pnLoc.h )
 		{
