@@ -53,7 +53,7 @@ Fixed max( Fixed a, Fixed b )
 }
 
 static
-void even_dexter( RgnHandle rgn, Point penSize )
+short* even_dexter( RgnHandle rgn, Point penSize )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -78,11 +78,11 @@ void even_dexter( RgnHandle rgn, Point penSize )
 		generator.tack_right( v++, ++h0, ++h1 );
 	}
 	
-	generator.finish( v );
+	return generator.finish( v );
 }
 
 static
-void even_sinister( RgnHandle rgn, Point penSize )
+short* even_sinister( RgnHandle rgn, Point penSize )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -107,11 +107,11 @@ void even_sinister( RgnHandle rgn, Point penSize )
 		generator.tack_left( v++, --h1, --h0 );
 	}
 	
-	generator.finish( v );
+	return generator.finish( v );
 }
 
 static
-void shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
+short* shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -148,11 +148,11 @@ void shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 	
 	generator.tack_right( v++, h1, bbox.right );
 	
-	generator.finish( v );
+	return generator.finish( v );
 }
 
 static
-void shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
+short* shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -189,11 +189,11 @@ void shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 	
 	generator.tack_left( v++, bbox.left, h1 );
 	
-	generator.finish( v );
+	return generator.finish( v );
 }
 
 static
-void steep_dexter( RgnHandle rgn, Point penSize, Fixed v_increment )
+short* steep_dexter( RgnHandle rgn, Point penSize, Fixed v_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -216,11 +216,11 @@ void steep_dexter( RgnHandle rgn, Point penSize, Fixed v_increment )
 		generator.tack_right( v >> 16, ++h0, ++h1 );
 	}
 	
-	generator.finish( vn );
+	return generator.finish( vn );
 }
 
 static
-void steep_sinister( RgnHandle rgn, Point penSize, Fixed v_increment )
+short* steep_sinister( RgnHandle rgn, Point penSize, Fixed v_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -243,7 +243,7 @@ void steep_sinister( RgnHandle rgn, Point penSize, Fixed v_increment )
 		generator.tack_left( v >> 16, --h1, --h0 );
 	}
 	
-	generator.finish( vn );
+	return generator.finish( vn );
 }
 
 pascal void StdLine_patch( Point newPt )
