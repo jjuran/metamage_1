@@ -40,6 +40,18 @@ short max( short a, short b )
 	return a > b ? a : b;
 }
 
+static inline
+Fixed min( Fixed a, Fixed b )
+{
+	return b < a ? b : a;
+}
+
+static inline
+Fixed max( Fixed a, Fixed b )
+{
+	return a > b ? a : b;
+}
+
 static
 void even_dexter( RgnHandle rgn, short len )
 {
