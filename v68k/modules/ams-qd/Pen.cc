@@ -243,8 +243,8 @@ pascal void StdLine_patch( Point newPt )
 	static Handle handle = NewHandle( 0 );
 	static Size   h_size = 0;
 	
-	const UInt16 descent = line.bottom - line.top;
-	const UInt16 advance = line.right - line.left;
+	const short descent = line.bottom - line.top;
+	const short advance = line.right - line.left;
 	
 	const short len = min( advance, descent );
 	const short pts = len + 1;
