@@ -255,7 +255,7 @@ short* shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 }
 
 static
-short* steep_dexter( RgnHandle rgn, Point penSize, Fixed v_increment )
+short* steep_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -266,23 +266,51 @@ short* steep_dexter( RgnHandle rgn, Point penSize, Fixed v_increment )
 	const short v0 = bbox.top;
 	const short vn = bbox.bottom;
 	
-	Fixed v = v0 << 16;
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
 	
-	short h0 = bbox.left;
-	short h1 = h0 + 1;
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
 	
-	generator.start( v >> 16, h0, h1 );
+	short v = v0;
 	
-	while ( (v += v_increment) < (vn << 16) )
+	const short h0 = bbox.left;
+	const short hn = bbox.right;
+	
+	Fixed h1 = (h0             << 16) + 0x8000;
+	Fixed h2 = (h0 + penSize.h << 16) + 0x8000 + h_increment / 2;
+	
+	generator.start( v, h0, h2 >> 16 );
+	
+	while ( ++v < v1 )
 	{
-		generator.tack_right( v >> 16, ++h0, ++h1 );
+		h2 += h_increment;
+		
+		generator.move_right( v, h0, h2 >> 16 );
+	}
+	
+	while ( v < vertex_closing )
+	{
+		h1 += h_increment;
+		h2 += h_increment;
+		
+		generator.move_right( v++, h1 >> 16, h2 >> 16 );
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		h1 += h_increment;
+		
+		generator.move_right( v++, h1 >> 16, hn );
 	}
 	
 	return generator.finish( vn );
 }
 
 static
-short* steep_sinister( RgnHandle rgn, Point penSize, Fixed v_increment )
+short* steep_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
 	short* p = (short*) (*rgn + 1);
 	
@@ -293,16 +321,44 @@ short* steep_sinister( RgnHandle rgn, Point penSize, Fixed v_increment )
 	const short v0 = bbox.top;
 	const short vn = bbox.bottom;
 	
-	Fixed v = v0 << 16;
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
 	
-	short h0 = bbox.right;
-	short h1 = h0 - 1;
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
 	
-	generator.start( v >> 16, h1, h0 );
+	short v = v0;
 	
-	while ( (v += v_increment) < (vn << 16) )
+	const short h0 = bbox.right;
+	const short hn = bbox.left;
+	
+	Fixed h1 = (h0             << 16) + 0x8000 + h_increment / 2;
+	Fixed h2 = (h0 - penSize.h << 16) + 0x8000 + h_increment / 2;
+	
+	generator.start( v, h2 >> 16, h0 );
+	
+	while ( ++v < v1 )
 	{
-		generator.tack_left( v >> 16, --h1, --h0 );
+		h2 += h_increment;
+		
+		generator.move_left( v, h2 >> 16, h0 );
+	}
+	
+	while ( v < vertex_closing )
+	{
+		h1 += h_increment;
+		h2 += h_increment;
+		
+		generator.move_left( v++, h2 >> 16, h1 >> 16 );
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		h1 += h_increment;
+		
+		generator.move_left( v++, hn, h1 >> 16 );
 	}
 	
 	return generator.finish( vn );
@@ -388,15 +444,15 @@ pascal void StdLine_patch( Point newPt )
 	}
 	else
 	{
-		const Fixed v_increment = FixRatio( descent, advance );
+		const Fixed h_increment = FixRatio( newPt.h - pnLoc.h, newPt.v - pnLoc.v );
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			end = steep_dexter( rgn, thePort->pnSize, v_increment );
+			end = steep_dexter( rgn, thePort->pnSize, h_increment );
 		}
 		else
 		{
-			end = steep_sinister( rgn, thePort->pnSize, v_increment );
+			end = steep_sinister( rgn, thePort->pnSize, h_increment );
 		}
 	}
 	
