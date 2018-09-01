@@ -306,7 +306,7 @@ short* steep_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 		generator.move_right( v++, h1 >> 16, hn );
 	}
 	
-	return generator.finish( vn );
+	return generator.finish( v );
 }
 
 static
@@ -361,7 +361,7 @@ short* steep_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 		generator.move_left( v++, hn, h1 >> 16 );
 	}
 	
-	return generator.finish( vn );
+	return generator.finish( v );
 }
 
 pascal void StdLine_patch( Point newPt )
