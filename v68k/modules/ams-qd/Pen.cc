@@ -40,174 +40,328 @@ short max( short a, short b )
 	return a > b ? a : b;
 }
 
-static
-void even_dexter( RgnHandle rgn, short len )
+static inline
+Fixed min( Fixed a, Fixed b )
 {
-	Region& region = **rgn;
-	
+	return b < a ? b : a;
+}
+
+static inline
+Fixed max( Fixed a, Fixed b )
+{
+	return a > b ? a : b;
+}
+
+static
+short* even_dexter( RgnHandle rgn, Point penSize )
+{
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.left;
-	short h1 = h0 + 1;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
+	short v = v0;
+	
+	short h0 = bbox.left;
+	short h1 = h0 + penSize.h;
 	
 	generator.start( v, h0, h1 );
 	
-	while ( --len > 0 )
+	while ( ++v < v1 )
 	{
-		generator.tack_right( ++v, ++h0, ++h1 );
+		generator.extend_right( v, ++h1 );
 	}
 	
-	generator.finish( ++v );
+	while ( v < vertex_closing )
+	{
+		generator.tack_right( v++, ++h0, ++h1 );
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		generator.condense_right( v++, ++h0 );
+	}
+	
+	return generator.finish( v );
 }
 
 static
-void even_sinister( RgnHandle rgn, short len )
+short* even_sinister( RgnHandle rgn, Point penSize )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.right;
-	short h1 = h0 - 1;
+	const Rect& bbox = rgn[0]->rgnBBox;
+	
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
+	
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
+	short v = v0;
+	
+	short h0 = bbox.right;
+	short h1 = h0 - penSize.h;
 	
 	generator.start( v, h1, h0 );
 	
-	while ( --len > 0 )
+	while ( ++v < v1 )
 	{
-		generator.tack_left( ++v, --h1, --h0 );
+		generator.extend_left( v, --h1 );
 	}
 	
-	generator.finish( ++v );
+	while ( v < vertex_closing )
+	{
+		generator.tack_left( v++, --h1, --h0 );
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		generator.condense_left( v++, --h0 );
+	}
+	
+	return generator.finish( v );
 }
 
 static
-void shallow_dexter( RgnHandle rgn, short len, Fixed h_increment )
+short* shallow_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.left;
+	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	Fixed h = h0 << 16;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
 	
-	h += h_increment;
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
 	
-	short h1 = h >> 16;
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
 	
-	generator.start( v, h0, h1 );
+	short v = v0;
 	
-	--len;
+	const short h0    = bbox.left;
+	const Fixed h_max = bbox.right << 16;
 	
-	while ( --len > 0 )
+	Fixed h1 = (h0                 << 16) + h_increment / 2 + 0x8000;
+	Fixed h2 = (h0 + penSize.h - 1 << 16) + h_increment / 2 + 0x8000;
+	
+	generator.start( v, h0, h2 >> 16 );
+	
+	while ( ++v < v1 )
 	{
-		h += h_increment;
+		h2 = min( h2 + h_increment, h_max );
 		
-		h0 = h1;
-		h1 = h >> 16;
-		
-		generator.tack_right( ++v, h0, h1 );
+		generator.extend_right( v, h2 >> 16 );
 	}
 	
-	generator.tack_right( ++v, h1, region.rgnBBox.right );
+	while ( v < vertex_closing )
+	{
+		h2 = min( h2 + h_increment, h_max );
+		
+		generator.tack_right( v++, h1 >> 16, h2 >> 16 );
+		
+		h1 += h_increment;
+	}
 	
-	generator.finish( ++v );
+	v = v2;
+	
+	while ( v < vn )
+	{
+		generator.condense_right( v++, h1 >> 16 );
+		
+		h1 += h_increment;
+	}
+	
+	return generator.finish( v );
 }
 
 static
-void shallow_sinister( RgnHandle rgn, short len, Fixed h_increment )
+short* shallow_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	short v  = region.rgnBBox.top;
-	short h0 = region.rgnBBox.right;
+	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	Fixed h = h0 << 16;
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
 	
-	h -= h_increment;
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
 	
-	short h1 = h >> 16;
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
 	
-	generator.start( v, h1, h0 );
+	short v = v0;
 	
-	--len;
+	const short h0    = bbox.right;
+	const Fixed h_min = bbox.left << 16;
 	
-	while ( --len > 0 )
+	Fixed h1 = (h0                 << 16) + h_increment / 2 + 0x8000;
+	Fixed h2 = (h0 - penSize.h + 1 << 16) + h_increment / 2 + 0x8000;
+	
+	generator.start( v, h2 >> 16, h0 );
+	
+	while ( ++v < v1 )
 	{
-		h -= h_increment;
+		h2 = max( h2 + h_increment, h_min );
 		
-		h0 = h1;
-		h1 = h >> 16;
-		
-		generator.tack_left( ++v, h1, h0 );
+		generator.extend_left( v, h2 >> 16 );
 	}
 	
-	generator.tack_left( ++v, region.rgnBBox.left, h1 );
+	while ( v < vertex_closing )
+	{
+		h2 = max( h2 + h_increment, h_min );
+		
+		generator.tack_left( v++, h2 >> 16, h1 >> 16 );
+		
+		h1 += h_increment;
+	}
 	
-	generator.finish( ++v );
+	v = v2;
+	
+	while ( v < vn )
+	{
+		generator.condense_left( v++, h1 >> 16 );
+		
+		h1 += h_increment;
+	}
+	
+	return generator.finish( v );
 }
 
 static
-void steep_dexter( RgnHandle rgn, short len, Fixed v_increment )
+short* steep_dexter( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	Fixed v  = region.rgnBBox.top << 16;
-	short h0 = region.rgnBBox.left;
-	short h1 = h0 + 1;
+	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	generator.start( v >> 16, h0, h1 );
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
 	
-	while ( --len > 0 )
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
+	short v = v0;
+	
+	const short h0 = bbox.left;
+	const short hn = bbox.right;
+	
+	Fixed h1 = (h0             << 16) + 0x8000;
+	Fixed h2 = (h0 + penSize.h << 16) + 0x8000 + h_increment / 2;
+	
+	generator.start( v, h0, h2 >> 16 );
+	
+	while ( ++v < v1 )
 	{
-		v += v_increment;
+		h2 += h_increment;
 		
-		generator.tack_right( v >> 16, ++h0, ++h1 );
+		generator.move_right( v, h0, h2 >> 16 );
 	}
 	
-	generator.finish( region.rgnBBox.bottom );
+	while ( v < vertex_closing )
+	{
+		h1 += h_increment;
+		h2 += h_increment;
+		
+		generator.move_right( v++, h1 >> 16, h2 >> 16 );
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		h1 += h_increment;
+		
+		generator.move_right( v++, h1 >> 16, hn );
+	}
+	
+	return generator.finish( v );
 }
 
 static
-void steep_sinister( RgnHandle rgn, short len, Fixed v_increment )
+short* steep_sinister( RgnHandle rgn, Point penSize, Fixed h_increment )
 {
-	Region& region = **rgn;
-	
 	short* p = (short*) (*rgn + 1);
 	
 	convex_region_generator generator( p );
 	
-	Fixed v  = region.rgnBBox.top << 16;
-	short h0 = region.rgnBBox.right;
-	short h1 = h0 - 1;
+	const Rect& bbox = rgn[0]->rgnBBox;
 	
-	generator.start( v >> 16, h1, h0 );
+	const short v0 = bbox.top;
+	const short vn = bbox.bottom;
 	
-	while ( --len > 0 )
+	const short vertex_leading = v0 + penSize.v;
+	const short vertex_closing = vn - penSize.v + 1;
+	
+	const short v1 = min( vertex_leading, vertex_closing );
+	const short v2 = max( vertex_leading, vertex_closing );
+	
+	short v = v0;
+	
+	const short h0 = bbox.right;
+	const short hn = bbox.left;
+	
+	Fixed h1 = (h0             << 16) + 0x8000 + h_increment / 2;
+	Fixed h2 = (h0 - penSize.h << 16) + 0x8000 + h_increment / 2;
+	
+	generator.start( v, h2 >> 16, h0 );
+	
+	while ( ++v < v1 )
 	{
-		v += v_increment;
+		h2 += h_increment;
 		
-		generator.tack_left( v >> 16, --h1, --h0 );
+		generator.move_left( v, h2 >> 16, h0 );
 	}
 	
-	generator.finish( region.rgnBBox.bottom );
+	while ( v < vertex_closing )
+	{
+		h1 += h_increment;
+		h2 += h_increment;
+		
+		generator.move_left( v++, h2 >> 16, h1 >> 16 );
+	}
+	
+	v = v2;
+	
+	while ( v < vn )
+	{
+		h1 += h_increment;
+		
+		generator.move_left( v++, hn, h1 >> 16 );
+	}
+	
+	return generator.finish( v );
 }
 
 pascal void StdLine_patch( Point newPt )
@@ -241,15 +395,13 @@ pascal void StdLine_patch( Point newPt )
 	}
 	
 	static Handle handle = NewHandle( 0 );
-	static Size   h_size = 0;
 	
-	const UInt16 descent = line.bottom - line.top;
-	const UInt16 advance = line.right - line.left;
+	const short descent = line.bottom - line.top;
+	const short advance = line.right - line.left;
 	
-	const short len = min( advance, descent );
-	const short pts = len + 1;
+	const short pts = descent + 1;
 	
-	const long handle_len = sizeof (Region) + 2 + pts * 8;
+	const long handle_len = sizeof (Region) + 2 + pts * 6 * sizeof (short);
 	
 	SetHandleSize( handle, handle_len );
 	
@@ -258,52 +410,53 @@ pascal void StdLine_patch( Point newPt )
 		return;
 	}
 	
-	h_size = handle_len;
-	
 	RgnHandle rgn = (RgnHandle) handle;
 	
 	Region& region = **rgn;
 	
-	region.rgnSize = handle_len;
 	region.rgnBBox = line;
+	
+	short* end;
 	
 	if ( advance == descent )
 	{
 		if ( newPt.h >= pnLoc.h )
 		{
-			even_dexter( rgn, len );
+			end = even_dexter( rgn, thePort->pnSize );
 		}
 		else
 		{
-			even_sinister( rgn, len );
+			end = even_sinister( rgn, thePort->pnSize );
 		}
 	}
 	else if ( advance > descent )
 	{
-		const Fixed h_increment = FixRatio( advance, descent );
+		const Fixed h_increment = FixRatio( newPt.h - pnLoc.h, newPt.v - pnLoc.v );
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			shallow_dexter( rgn, len, h_increment );
+			end = shallow_dexter( rgn, thePort->pnSize, h_increment );
 		}
 		else
 		{
-			shallow_sinister( rgn, len, h_increment );
+			end = shallow_sinister( rgn, thePort->pnSize, h_increment );
 		}
 	}
 	else
 	{
-		const Fixed v_increment = FixRatio( descent, advance );
+		const Fixed h_increment = FixRatio( newPt.h - pnLoc.h, newPt.v - pnLoc.v );
 		
 		if ( newPt.h >= pnLoc.h )
 		{
-			steep_dexter( rgn, len, v_increment );
+			end = steep_dexter( rgn, thePort->pnSize, h_increment );
 		}
 		else
 		{
-			steep_sinister( rgn, len, v_increment );
+			end = steep_sinister( rgn, thePort->pnSize, h_increment );
 		}
 	}
+	
+	rgn[0]->rgnSize = (char*) end - (char*) *rgn;
 	
 	StdRgn( kQDGrafVerbPaint, rgn );
 }

@@ -31,6 +31,9 @@ namespace quickdraw
 			void tack_left ( short v, short left, short right );  /*  /  /  */
 			void tack_right( short v, short left, short right );  /*  \  \  */
 			
+			void move_left ( short v, short left, short right );  /*  ?  ?  */
+			void move_right( short v, short left, short right );  /*  ?  ?  */
+			
 			void expand  ( short v, short left, short right );    /*  /  \  */
 			void contract( short v, short left, short right );    /*  \  /  */
 			

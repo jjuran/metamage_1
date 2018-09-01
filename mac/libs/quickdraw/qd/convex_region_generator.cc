@@ -111,6 +111,38 @@ namespace quickdraw
 		its_prev_right = right;
 	}
 	
+	void convex_region_generator::move_left( short v, short left, short right )
+	{
+		const int state = (left == its_prev_left) * 2
+		                | right == its_prev_right;
+		
+		switch ( state )
+		{
+			case 0:  tack_left    ( v, left, right );  break;
+			case 1:  extend_left  ( v, left        );  break;
+			case 2:  condense_left( v,       right );  break;
+			
+			default:
+				break;
+		}
+	}
+	
+	void convex_region_generator::move_right( short v, short left, short right )
+	{
+		const int state = (left == its_prev_left) * 2
+		                | right == its_prev_right;
+		
+		switch ( state )
+		{
+			case 0:  tack_right    ( v, left, right );  break;
+			case 1:  condense_right( v, left        );  break;
+			case 2:  extend_right  ( v,       right );  break;
+			
+			default:
+				break;
+		}
+	}
+	
 	void convex_region_generator::expand( short v, short left, short right )
 	{
 		*its_mark++ = v;
