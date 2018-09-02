@@ -66,7 +66,7 @@ var/freemount/hello.txt:
 	echo Hello world > var/freemount/hello.txt
 
 freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
-	var/out/listen :4564 var/out/freemountd --root var/freemount
+	var/out/listen 127.0.0.1:4564 var/out/freemountd --root var/freemount
 
 freemount-tcp: freemount.git
 	./build.pl -i fls fcat fget utcp
