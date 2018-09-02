@@ -59,14 +59,14 @@ d68k-fizzbuzz: d68k
 	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
 
 freemountd-tcp: freemount.git
-	./build.pl -i freemountd superd
+	./build.pl -i freemountd listen
 
 var/freemount/hello.txt:
 	mkdir -p var/freemount/
 	echo Hello world > var/freemount/hello.txt
 
 freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
-	var/out/superd 4564 var/out/freemountd --root var/freemount
+	var/out/listen :4564 var/out/freemountd --root var/freemount
 
 freemount-tcp: freemount.git
 	./build.pl -i fls fcat fget utcp
