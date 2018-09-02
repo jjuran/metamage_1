@@ -59,10 +59,7 @@ d68k-fizzbuzz: d68k
 	$(PACK68K) v68k/demos/fizzbuzz.p68k | $(D68K)
 
 freemountd-tcp: freemount.git
-	./build.pl freemountd superd
-	mkdir -p var/out
-	cp var/build/dbg/bin/freemountd/freemountd var/out/
-	cp var/build/dbg/bin/superd/superd var/out/
+	./build.pl -i freemountd superd
 
 var/freemount/hello.txt:
 	mkdir -p var/freemount/
@@ -72,12 +69,7 @@ freemountd-tcp-test: freemountd-tcp var/freemount/hello.txt
 	var/out/superd 4564 var/out/freemountd --root var/freemount
 
 freemount-tcp: freemount.git
-	./build.pl fls fcat fget utcp
-	mkdir -p var/out
-	cp var/build/dbg/bin/fls/fls var/out/
-	cp var/build/dbg/bin/fcat/fcat var/out/
-	cp var/build/dbg/bin/fget/fget var/out/
-	cp var/build/dbg/bin/utcp/utcp var/out/
+	./build.pl -i fls fcat fget utcp
 
 fls-test: freemount-tcp
 	PATH="$$PWD/var/out:$$PATH" var/out/fls mnt://127.0.0.1
