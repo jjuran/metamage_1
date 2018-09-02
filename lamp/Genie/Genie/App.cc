@@ -80,6 +80,8 @@ namespace Genie
 		
 	#ifndef __RELIX__
 		
+		(void) signal( SIGPIPE, SIG_IGN );
+		
 		install_empty_sighup_handler();
 		
 		start_gui_service();
