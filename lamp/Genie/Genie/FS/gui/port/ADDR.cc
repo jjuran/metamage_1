@@ -318,6 +318,14 @@ namespace Genie
 		
 	#else
 		
+	#if MAC_OS_X_VERSION_10_2
+		
+		const ProcessSerialNumber psn = { 0, kCurrentProcess };
+		
+		SetFrontProcessWithOptions( &psn, kSetFrontProcessFrontWindowOnly );
+		
+	#endif
+		
 		Mac::WindowClass wClass = Mac::kDocumentWindowClass;
 		
 		Mac::WindowAttributes attrs = Mac::kWindowNoAttributes;
