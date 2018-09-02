@@ -6,7 +6,6 @@ REPOS += freemount
 REPOS += git
 REPOS += macward-compat
 
-ALINE = var/build/dbg/bin/A-line/A-line
 D68K  = var/build/dbg/bin/d68k/d68k
 XV68K = var/build/dbg/bin/xv68k/xv68k
 
@@ -21,7 +20,7 @@ default:
 help:
 	@echo 'To clone a documented companion repository, run `make $$repo.git`.'
 	@echo 'To build a command-line tool, run `./build.pl $$toolname`.'
-	@echo 'To build a Mac app, first `make A-line` and then `./A-line $$appname`.'
+	@echo 'To build a Mac app, run `bin/build-app $$appname`.'
 	@echo "If build.pl can't find a new config file, run \`make catalog\` and retry."
 
 rm-catalog:
@@ -45,9 +44,8 @@ var/links/%: var/links
 %.git: ../% var/links/%
 	@true
 
-A-line:
-	./build.pl A-line
-	cp $(ALINE) .
+app-build-tools:
+	./build.pl -i A-line cpres vx
 
 d68k:
 	./build.pl d68k
