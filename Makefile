@@ -47,6 +47,16 @@ var/links/%: var/links
 app-build-tools:
 	./build.pl -i A-line cpres vx
 
+AMS_REPOS := freemount.git ams-68k-bin.git
+AMS_TOOLS := exhibit graft raster vx xv68k freemountd
+
+ams-osx: $(AMS_REPOS) macward-compat.git
+	bin/build-app Genie
+	mkdir -p ~/var/run/fs
+	open `ls -d ~/var/build/*/bin/Genie/MacRelix.app | head -n1`
+	./build.pl -i $(AMS_TOOLS) uunix interact
+	PATH="$$PWD/var/out:$$PATH" ./scripts/ams Welcome
+
 d68k:
 	./build.pl d68k
 
