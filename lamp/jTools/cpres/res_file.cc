@@ -176,7 +176,7 @@ open_res_file_template( const char* path, ForkType fork, N::FSIOPermssn perm )
 	
 	typename Traits::File destFile = Traits::resolve_path( path );
 	
-	return open_res_file( destFile, fork, N::fsRdWrPerm );
+	return open_res_file( destFile, fork, perm );
 }
 
 template < bool unicode >
