@@ -3,6 +3,7 @@ package Compile::Driver;
 use Compile::Driver::Configuration;
 use Compile::Driver::Job;
 use Compile::Driver::Job::Compile;
+use Compile::Driver::Job::Install;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
 use Compile::Driver::Module;
@@ -54,6 +55,7 @@ sub jobs_for
 	}
 	
 	my $link;
+	my $copy;
 	
 	if ( @objs  and  $module->is_static_lib  ||  $module->is_toolkit )
 	{
@@ -67,17 +69,32 @@ sub jobs_for
 	}
 	elsif ( $module->is_executable )
 	{
+		my $prog = $module->program_name;
+		my $path = Compile::Driver::Job::bin_pathname( $target, $name, $prog );
+		
 		$link = Compile::Driver::Job::Link::Binary::->new
 		(
 			TYPE => "LINK",
 			FROM => $module,
 			OBJS => \@objs,
 			PREQ => $module->recursive_prerequisites,
-			DEST => Compile::Driver::Job::bin_pathname( $target, $name, $module->program_name ),
+			DEST => $path,
 		);
+		
+		if ( Compile::Driver::Options::installing )
+		{
+			$copy = Compile::Driver::Job::Install::->new
+			(
+				TYPE => "COPY",
+				FROM => $module,
+				ORIG => $path,
+				DEST => "var/out/$prog",
+			);
+		}
 	}
 	
 	push @jobs, $link  if defined $link;
+	push @jobs, $copy  if defined $copy;
 	
 	my @prereqs = @{ $module->recursive_prerequisites };
 	

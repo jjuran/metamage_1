@@ -6,6 +6,7 @@ use strict;
 my %Flag_for_option = qw
 (
 	v verbose
+	i install
 );
 
 my %Spec_for_option = qw
@@ -25,6 +26,11 @@ my @Specs;
 sub verbose
 {
 	return $Flags{ verbose };
+}
+
+sub installing
+{
+	return $Flags{ install };
 }
 
 sub specs
