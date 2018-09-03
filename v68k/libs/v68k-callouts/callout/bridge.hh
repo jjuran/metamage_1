@@ -55,12 +55,13 @@ enum
 	n
 };
 
-inline uint32_t callout_address( int index )
+inline
+uint32_t callout_address( int index )
 {
 	return uint32_t( (index + 1) * -2 );
 }
 
-uint32_t bridge( v68k::processor_state& emu );
+int32_t bridge( v68k::processor_state& emu );
 
 }  // namespace callout
 }  // namespace v68k

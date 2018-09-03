@@ -508,7 +508,14 @@ v68k::op_result bkpt_2( v68k::processor_state& s )
 static
 v68k::op_result bkpt_3( v68k::processor_state& s )
 {
-	if ( uint32_t new_opcode = v68k::callout::bridge( s ) )
+	int32_t new_opcode = v68k::callout::bridge( s );
+	
+	if ( new_opcode < 0 )
+	{
+		return v68k::op_result( new_opcode );
+	}
+	
+	if ( new_opcode > 0 )
 	{
 		s.acknowledge_breakpoint( new_opcode );
 	}

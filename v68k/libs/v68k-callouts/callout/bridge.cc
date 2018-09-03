@@ -69,7 +69,7 @@ enum
 	nil = 0
 };
 
-typedef uint32_t (*function_type)( v68k::processor_state& s );
+typedef int32_t (*function_type)( v68k::processor_state& s );
 
 
 static void dump_and_raise( const v68k::processor_state& s, int signo )
@@ -82,7 +82,7 @@ static void dump_and_raise( const v68k::processor_state& s, int signo )
 }
 
 static
-uint32_t unimplemented_callout( v68k::processor_state& s )
+int32_t unimplemented_callout( v68k::processor_state& s )
 {
 	abort();
 	
@@ -91,13 +91,13 @@ uint32_t unimplemented_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t no_op_callout( v68k::processor_state& s )
+int32_t no_op_callout( v68k::processor_state& s )
 {
 	return rts;
 }
 
 static
-uint32_t load_callout( v68k::processor_state& s )
+int32_t load_callout( v68k::processor_state& s )
 {
 	const uint32_t path_addr = s.a(0);
 	const uint32_t path_size = s.d(0);  // includes trailing NUL
@@ -158,7 +158,7 @@ uint32_t load_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t enter_supervisor_mode_callout( v68k::processor_state& s )
+int32_t enter_supervisor_mode_callout( v68k::processor_state& s )
 {
 	const uint16_t old_SR = s.get_SR();
 	const uint16_t new_SR = old_SR | 0x2000;
@@ -204,7 +204,7 @@ uint32_t enter_supervisor_mode_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t module_suspend_callout( v68k::processor_state& s )
+int32_t module_suspend_callout( v68k::processor_state& s )
 {
 	s.condition = startup;
 	
@@ -212,7 +212,7 @@ uint32_t module_suspend_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t set_trace_mode_callout( v68k::processor_state& s )
+int32_t set_trace_mode_callout( v68k::processor_state& s )
 {
 	s.sr.ttsm = (s.sr.ttsm & 0x3) | (uint8_t( s.pc() ) << 1 & 0xC);
 	
@@ -220,7 +220,7 @@ uint32_t set_trace_mode_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t ScrnBitMap_callout( v68k::processor_state& s )
+int32_t ScrnBitMap_callout( v68k::processor_state& s )
 {
 	uint32_t& sp = s.a(7);
 	
@@ -285,7 +285,7 @@ uint32_t ScrnBitMap_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t lock_screen_callout( v68k::processor_state& s )
+int32_t lock_screen_callout( v68k::processor_state& s )
 {
 	--lock_level;
 	
@@ -293,7 +293,7 @@ uint32_t lock_screen_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t unlock_screen_callout( v68k::processor_state& s )
+int32_t unlock_screen_callout( v68k::processor_state& s )
 {
 	if ( ++lock_level == 0 )
 	{
@@ -314,7 +314,7 @@ static char hex[] =
 #define UNIMPLEMENTED_TRAP_PREFIX  "v68k: exception: Unimplemented Mac trap: "
 
 static
-uint32_t unimplemented_trap_callout( v68k::processor_state& s )
+int32_t unimplemented_trap_callout( v68k::processor_state& s )
 {
 	static char buffer[] = UNIMPLEMENTED_TRAP_PREFIX "A123\n";
 	
@@ -341,7 +341,7 @@ enum
 };
 
 static
-uint32_t alloc_callout( v68k::processor_state& s )
+int32_t alloc_callout( v68k::processor_state& s )
 {
 	int32_t err = noErr;
 	
@@ -362,7 +362,7 @@ uint32_t alloc_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t dealloc_callout( v68k::processor_state& s )
+int32_t dealloc_callout( v68k::processor_state& s )
 {
 	const uint32_t addr = s.a(0);
 	
@@ -374,7 +374,7 @@ uint32_t dealloc_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t system_call_callout( v68k::processor_state& s )
+int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
 	
@@ -401,7 +401,7 @@ static int gottimeofday = gettimeofday( &start_tv, NULL );
 static const uint64_t start_time = start_tv.tv_sec * 1000000ull + start_tv.tv_usec;
 
 static
-uint32_t microseconds_callout( v68k::processor_state& s )
+int32_t microseconds_callout( v68k::processor_state& s )
 {
 	uint32_t sp = s.a(7);
 	
@@ -431,7 +431,7 @@ uint32_t microseconds_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t BlockMove_callout( v68k::processor_state& s )
+int32_t BlockMove_callout( v68k::processor_state& s )
 {
 	const uint32_t src = s.a(0);
 	const uint32_t dst = s.a(1);
@@ -464,7 +464,7 @@ uint32_t BlockMove_callout( v68k::processor_state& s )
 #define OSTYPE(a, b, c, d)  ((a) << 24 | (b) << 16 | (c) << 8 | (d))
 
 static
-uint32_t Gestalt_callout( v68k::processor_state& s )
+int32_t Gestalt_callout( v68k::processor_state& s )
 {
 	const int32_t gestaltUndefSelectorErr = -5551;
 	
@@ -496,7 +496,7 @@ uint32_t Gestalt_callout( v68k::processor_state& s )
 
 
 static
-uint32_t bus_error_callout( v68k::processor_state& s )
+int32_t bus_error_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Bus Error" );
 	
@@ -506,7 +506,7 @@ uint32_t bus_error_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t address_error_callout( v68k::processor_state& s )
+int32_t address_error_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Address Error" );
 	
@@ -516,7 +516,7 @@ uint32_t address_error_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t illegal_instruction_callout( v68k::processor_state& s )
+int32_t illegal_instruction_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Illegal Instruction" );
 	
@@ -526,7 +526,7 @@ uint32_t illegal_instruction_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t division_by_zero_callout( v68k::processor_state& s )
+int32_t division_by_zero_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Division By Zero" );
 	
@@ -536,7 +536,7 @@ uint32_t division_by_zero_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t chk_trap_callout( v68k::processor_state& s )
+int32_t chk_trap_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "CHK range exceeded" );
 	
@@ -546,7 +546,7 @@ uint32_t chk_trap_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t trapv_trap_callout( v68k::processor_state& s )
+int32_t trapv_trap_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "TRAPV on overflow" );
 	
@@ -556,7 +556,7 @@ uint32_t trapv_trap_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t privilege_violation_callout( v68k::processor_state& s )
+int32_t privilege_violation_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Privilege Violation" );
 	
@@ -566,7 +566,7 @@ uint32_t privilege_violation_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t trace_exception_callout( v68k::processor_state& s )
+int32_t trace_exception_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Trace Exception" );
 	
@@ -576,7 +576,7 @@ uint32_t trace_exception_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t line_A_emulator_callout( v68k::processor_state& s )
+int32_t line_A_emulator_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line A Emulator" );
 	
@@ -586,7 +586,7 @@ uint32_t line_A_emulator_callout( v68k::processor_state& s )
 }
 
 static
-uint32_t line_F_emulator_callout( v68k::processor_state& s )
+int32_t line_F_emulator_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Line F Emulator" );
 	
@@ -604,7 +604,7 @@ uint32_t line_F_emulator_callout( v68k::processor_state& s )
 #endif
 
 static
-uint32_t format_error_callout( v68k::processor_state& s )
+int32_t format_error_callout( v68k::processor_state& s )
 {
 	WRITE_ERR( "Format Error" );
 	
@@ -656,7 +656,7 @@ static const function_type the_callouts[] =
 };
 
 
-uint32_t bridge( v68k::processor_state& s )
+int32_t bridge( v68k::processor_state& s )
 {
 	const int32_t pc = s.pc();
 	
