@@ -42,10 +42,10 @@ namespace Pedestal
 	{
 		Rect rect =
 		{
-			bounds.origin.y,
-			bounds.origin.x,
-			bounds.origin.y + bounds.size.height,
-			bounds.origin.x + bounds.size.width,
+			short( bounds.origin.y ),
+			short( bounds.origin.x ),
+			short( bounds.origin.y + bounds.size.height ),
+			short( bounds.origin.x + bounds.size.width  ),
 		};
 		
 		rect = ApertureFromBounds( rect );
