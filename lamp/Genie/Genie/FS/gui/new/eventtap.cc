@@ -413,13 +413,13 @@ namespace Genie
 	
 	void eventtap_handler::DrawInContext( CGContextRef context, CGRect bounds )
 	{
-		const short top  = bounds.origin.y;
-		const short left = bounds.origin.x;
+		const short top  = (short) bounds.origin.y;
+		const short left = (short) bounds.origin.x;
 		
 		itsBounds.top  = top;
 		itsBounds.left = left;
-		itsBounds.bottom = top + bounds.size.height;
-		itsBounds.right  = left + bounds.size.width;
+		itsBounds.bottom = top  + (short) bounds.size.height;
+		itsBounds.right  = left + (short) bounds.size.width;
 		
 		View::DrawInContext( context, bounds );
 	}
