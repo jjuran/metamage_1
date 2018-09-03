@@ -916,8 +916,8 @@ namespace v68k
 		if ( const bool borrow = difference < 0 )
 		{
 			// Hack so SUBX-style CCR update sets the bits correctly
-			pb.first  = -1;
-			pb.second =  0;
+			pb.first  = 0xFFFFFFFF;
+			pb.second = 0x00000000;
 		}
 		
 		return Ok;
