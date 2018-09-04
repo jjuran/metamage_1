@@ -181,10 +181,13 @@ void hide_cursor()
 
 void show_cursor()
 {
+	if ( CrsrState >= 0 )
+	{
+		return;
+	}
+	
 	if ( ++CrsrState >= 0 )
 	{
-		CrsrState = 0;
-		
 		--CrsrBusy;
 		
 		paint_cursor( Mouse.h, Mouse.v );
@@ -208,7 +211,7 @@ void init_cursor()
 {
 	if ( CrsrState < 0 )
 	{
-		CrsrState = 0;
+		CrsrState = -1;
 		
 		show_cursor();
 	}
