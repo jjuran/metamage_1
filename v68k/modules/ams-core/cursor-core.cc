@@ -186,14 +186,15 @@ void show_cursor()
 		return;
 	}
 	
+	--CrsrBusy;
+	
 	if ( ++CrsrState >= 0 )
 	{
-		--CrsrBusy;
 		
 		paint_cursor( Mouse.h, Mouse.v );
-		
-		++CrsrBusy;
 	}
+	
+	++CrsrBusy;
 }
 
 void update_cursor_location()
