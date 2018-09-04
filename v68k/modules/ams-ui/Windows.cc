@@ -385,6 +385,13 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	}
 	
 	ClosePort( port );
+	
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	if ( thePort == port )
+	{
+		SetPort( WindowList ? (WindowRef) WindowList : WMgrPort );
+	}
 }
 
 pascal void DisposeWindow_patch( struct GrafPort* window )
