@@ -616,18 +616,16 @@ namespace relix
 	
 	vfs::filehandle_ptr new_tcp_socket( bool nonblocking )
 	{
-		if ( ! CONFIG_OPEN_TRANSPORT )
-		{
-			poseven::throw_errno( EAFNOSUPPORT );
-			
-			return NULL;
-		}
-		
 	#ifndef MAC_OS_X_VERSION_10_8
 		
-		return new_OT_socket( nonblocking );
+		if ( CONFIG_OPEN_TRANSPORT )
+		{
+			return new_OT_socket( nonblocking );
+		}
 		
 	#endif
+		
+		poseven::throw_errno( EAFNOSUPPORT );
 		
 		return NULL;
 	}
