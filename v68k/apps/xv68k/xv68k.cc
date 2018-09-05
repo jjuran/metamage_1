@@ -570,10 +570,14 @@ void emulation_loop( v68k::emulator& emu )
 			dump_and_raise( emu, SIGXCPU );
 		}
 		
+	#ifdef __RELIX__
+		
 		if ( short( n_instructions ) == 0 )
 		{
 			kill( 1, 0 );  // Guaranteed yield point in MacRelix
 		}
+		
+	#endif
 		
 		if ( short( n_instructions ) == 0  &&  polling )
 		{
