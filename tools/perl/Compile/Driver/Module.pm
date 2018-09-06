@@ -182,6 +182,31 @@ sub tree
 	return $desc->{ROOT} = $dir;
 }
 
+sub find_rez
+{
+	my $self = shift;
+	
+	my ( $spec ) = @_;
+	
+	if ( my ( $projname, $rezname ) = $spec =~ /^ (\w+?) : (.+) $/x )
+	{
+		return $self->get( $projname )->find_rez( $rezname );
+	}
+	
+	return $self->tree . "/Rez/$spec";
+}
+
+sub rez_files
+{
+	my $self = shift;
+	
+	my $data = $self->{DESC}{DATA};
+	
+	my $rez = $data->{rez} || [];
+	
+	return map { $self->find_rez( $_ ) } @$rez;
+}
+
 sub source_list
 {
 	my $self = shift;

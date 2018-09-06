@@ -7,6 +7,7 @@ use Compile::Driver::Job::Copy;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
 use Compile::Driver::Job::Link::PkgInfo;
+use Compile::Driver::Job::Rez;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
@@ -83,6 +84,17 @@ sub jobs_for
 				FROM => $module,
 				DEST => "$bundle/Contents/PkgInfo",
 			);
+			
+			if ( my @rez = $module->rez_files )
+			{
+				push @jobs, Compile::Driver::Job::Rez::->new
+				(
+					TYPE => "REZ",
+					FROM => $module,
+					SRCS => \@rez,
+					DEST => "$bundle/Contents/Resources/$prog.rsrc",
+				);
+			}
 			
 			$path = "$bundle/Contents/MacOS/$prog";
 		}
