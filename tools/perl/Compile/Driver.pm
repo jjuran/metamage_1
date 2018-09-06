@@ -6,6 +6,7 @@ use Compile::Driver::Job::Compile;
 use Compile::Driver::Job::Copy;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
+use Compile::Driver::Job::Link::PkgInfo;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
@@ -75,6 +76,13 @@ sub jobs_for
 		if ( $module->is_bundle )
 		{
 			my $bundle = "$path.app";
+			
+			push @jobs, Compile::Driver::Job::Link::PkgInfo::->new
+			(
+				TYPE => "BNDL",
+				FROM => $module,
+				DEST => "$bundle/Contents/PkgInfo",
+			);
 			
 			$path = "$bundle/Contents/MacOS/$prog";
 		}

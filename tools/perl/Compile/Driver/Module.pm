@@ -98,6 +98,13 @@ sub program_name
 	return $self->{DESC}{DATA}{ program }[0] || $self->name;
 }
 
+sub mac_creator
+{
+	my $self = shift;
+	
+	return $self->{DESC}{DATA}{ creator }[0] || "????";
+}
+
 sub immediate_prerequisites
 {
 	my $self = shift;
