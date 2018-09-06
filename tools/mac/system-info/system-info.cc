@@ -425,13 +425,14 @@ bool in_SheepShaver()
 			continue;
 		}
 		
-		const bool undotted = name[ 1 ] != '.';
+		// Yes, SheepShaver currently installs a driver with a dotless name.
 		
-		const int cmp = memcmp( &".Display_Video_Apple_Sheep"[ undotted ],
-		                        name + 1,
-		                        name[ 0 ] );
+		if ( memcmp( name, PSTR_LEN( "Display_Video_Apple_Sheep" ) ) == 0 )
+		{
+			return true;
+		}
 		
-		if ( cmp == 0 )
+		if ( memcmp( name, PSTR_LEN( ".Display_Video_Apple_Sheep" ) ) == 0 )
 		{
 			return true;
 		}
