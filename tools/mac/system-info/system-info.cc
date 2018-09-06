@@ -343,11 +343,6 @@ bool in_BasiliskII()
 	{
 		const unsigned char* name = mac::sys::get_driver_name( *it );
 		
-		if ( name[ 0 ] == 0 )
-		{
-			continue;
-		}
-		
 		int cmp = memcmp( name, PSTR_LEN( ".Display_Video_Apple_Basilisk" ) );
 		
 		if ( cmp == 0 )
@@ -377,11 +372,6 @@ bool in_ShapeShifter()
 	for ( AuxDCE*** it = begin;  it < end;  ++it )
 	{
 		const unsigned char* name = mac::sys::get_driver_name( *it );
-		
-		if ( name[ 0 ] == 0 )
-		{
-			continue;
-		}
 		
 		/*
 			Expecting one of:
@@ -419,11 +409,6 @@ bool in_SheepShaver()
 	for ( AuxDCE*** it = begin;  it < end;  ++it )
 	{
 		const unsigned char* name = mac::sys::get_driver_name( *it );
-		
-		if ( name[ 0 ] == 0 )
-		{
-			continue;
-		}
 		
 		// Yes, SheepShaver currently installs a driver with a dotless name.
 		
