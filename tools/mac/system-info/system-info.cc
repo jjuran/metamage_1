@@ -354,8 +354,6 @@ bool in_BasiliskII()
 		{
 			return true;
 		}
-		
-		++it;
 	}
 	
 	return false;
@@ -398,8 +396,6 @@ bool in_ShapeShifter()
 		{
 			return true;
 		}
-		
-		++it;
 	}
 	
 	return false;
@@ -439,8 +435,6 @@ bool in_SheepShaver()
 		{
 			return true;
 		}
-		
-		++it;
 	}
 	
 	return false;
