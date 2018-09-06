@@ -79,7 +79,7 @@ struct tm* gmtime_r( const time_t* time_p, struct tm* result )
 	
 	result->tm_yday = extra_days;
 	
-	result->tm_wday = (years + years / 4 + extra_days) % 7;
+	result->tm_wday = (years + years / 4 + extra_days + 1) % 7;
 	
 	const bool leap_year = extra_years == 0;
 	
