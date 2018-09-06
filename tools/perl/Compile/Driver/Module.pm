@@ -70,6 +70,13 @@ sub is_toolkit
 	return $self->product_type eq 'toolkit';
 }
 
+sub is_bundle
+{
+	my $self = shift;
+	
+	return $self->product_type eq "app"
+}
+
 sub is_executable
 {
 	my $self = shift;

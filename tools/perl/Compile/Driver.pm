@@ -72,6 +72,13 @@ sub jobs_for
 		my $prog = $module->program_name;
 		my $path = Compile::Driver::Job::bin_pathname( $target, $name, $prog );
 		
+		if ( $module->is_bundle )
+		{
+			my $bundle = "$path.app";
+			
+			$path = "$bundle/Contents/MacOS/$prog";
+		}
+		
 		$link = Compile::Driver::Job::Link::Binary::->new
 		(
 			TYPE => "LINK",
