@@ -12,6 +12,38 @@
 namespace quickdraw
 {
 	
+	void pack_bits( uint8_t const*& src, unsigned n_src, uint8_t*& dst )
+	{
+		uint8_t const* p = src;
+		uint8_t*       r = dst;
+		
+		unsigned n = n_src;
+		
+		while ( n > 127 )
+		{
+			*r++ = 127;
+			
+			memcpy( r, p, 128 );
+			
+			r += 128;
+			p += 128;
+			n -= 128;
+		}
+		
+		if ( n )
+		{
+			*r++ = n - 1;
+			
+			memcpy( r, p, n );
+			
+			r += n;
+			p += n;
+		}
+		
+		src = p;
+		dst = r;
+	}
+	
 	void unpack_bits( uint8_t const*& src, uint8_t*& dst, unsigned n_dst )
 	{
 		uint8_t const* p = src;
