@@ -114,7 +114,7 @@ namespace quickdraw
 	void convex_region_generator::move_left( short v, short left, short right )
 	{
 		const int state = (left == its_prev_left) * 2
-		                | right == its_prev_right;
+		                | (right == its_prev_right);
 		
 		switch ( state )
 		{
@@ -130,7 +130,7 @@ namespace quickdraw
 	void convex_region_generator::move_right( short v, short left, short right )
 	{
 		const int state = (left == its_prev_left) * 2
-		                | right == its_prev_right;
+		                | (right == its_prev_right);
 		
 		switch ( state )
 		{
