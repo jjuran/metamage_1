@@ -4,6 +4,7 @@ use Compile::Driver::Configuration;
 use Compile::Driver::Job;
 use Compile::Driver::Job::Compile;
 use Compile::Driver::Job::Copy;
+use Compile::Driver::Job::InfoPList;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
 use Compile::Driver::Job::Link::PkgInfo;
@@ -84,6 +85,17 @@ sub jobs_for
 				FROM => $module,
 				DEST => "$bundle/Contents/PkgInfo",
 			);
+			
+			if ( my $info_txt = $module->info_txt )
+			{
+				push @jobs, Compile::Driver::Job::InfoPList::->new
+				(
+					TYPE => "INFO",
+					FROM => $module,
+					ORIG => $info_txt,
+					DEST => "$bundle/Contents/Info.plist",
+				);
+			}
 			
 			if ( my @rez = $module->rez_files )
 			{

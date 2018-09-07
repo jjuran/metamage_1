@@ -222,6 +222,20 @@ sub resources
 	return;
 }
 
+sub info_txt
+{
+	my $self = shift;
+	
+	my $info_txt = $self->tree . "/Info.txt";
+	
+	if ( -f $info_txt )
+	{
+		return $info_txt;
+	}
+	
+	return;
+}
+
 sub source_list
 {
 	my $self = shift;
