@@ -3,7 +3,7 @@ package Compile::Driver;
 use Compile::Driver::Configuration;
 use Compile::Driver::Job;
 use Compile::Driver::Job::Compile;
-use Compile::Driver::Job::Install;
+use Compile::Driver::Job::Copy;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
 use Compile::Driver::Module;
@@ -83,7 +83,7 @@ sub jobs_for
 		
 		if ( Compile::Driver::Options::installing )
 		{
-			$copy = Compile::Driver::Job::Install::->new
+			$copy = Compile::Driver::Job::Copy::->new
 			(
 				TYPE => "COPY",
 				FROM => $module,

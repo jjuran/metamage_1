@@ -1,4 +1,4 @@
-package Compile::Driver::Job::Install;
+package Compile::Driver::Job::Copy;
 
 use     Compile::Driver::Job ;
 @ISA = 'Compile::Driver::Job';
