@@ -7,6 +7,7 @@ use warnings FATAL => 'all';
 use strict;
 
 
+*list_files      = \&Compile::Driver::Files::list;
 *enumerate_files = \&Compile::Driver::Files::enumerate;
 
 *read_source_list_file = \&Compile::Driver::InputFile::SourceList::read_file;
@@ -205,6 +206,20 @@ sub rez_files
 	my $rez = $data->{rez} || [];
 	
 	return map { $self->find_rez( $_ ) } @$rez;
+}
+
+sub resources
+{
+	my $self = shift;
+	
+	my $dir = $self->tree . "/Resources";
+	
+	if ( -d $dir )
+	{
+		return list_files( $dir, sub {1} );
+	}
+	
+	return;
 }
 
 sub source_list

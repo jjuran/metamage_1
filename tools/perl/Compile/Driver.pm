@@ -96,6 +96,20 @@ sub jobs_for
 				);
 			}
 			
+			foreach my $resource ( $module->resources )
+			{
+				my ( $basename ) = $resource =~ m{^ .* / ([^/]+) $}x;
+				
+				push @jobs, Compile::Driver::Job::Copy::->new
+				(
+					TYPE => "COPY",
+					FROM => $module,
+					ORIG => $resource,
+					PATH => $basename,
+					DEST => "$bundle/Contents/Resources/",
+				);
+			}
+			
 			$path = "$bundle/Contents/MacOS/$prog";
 		}
 		
