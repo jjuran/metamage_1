@@ -27,12 +27,17 @@
 #endif
 #endif
 
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+
 // nyancatlib
 #include "nyancat/graphics.hh"
 
 // NyanCat
 #include "Bitmap.hh"
 
+
+using mac::qd::get_portRect;
 
 using nyancat::bitmap;
 using nyancat::n_frames;
@@ -70,39 +75,6 @@ const Rect* drag_bounds()
 	
 	return NULL;  // DragWindow() bounds may be NULL in Carbon
 }
-
-#if ! TARGET_API_MAC_CARBON
-
-static inline
-const Rect& get_portRect( GrafPtr port )
-{
-	return port->portRect;
-}
-
-static inline
-const Rect& get_portRect( CGrafPtr port )
-{
-	return port->portRect;
-}
-
-#else
-
-static inline
-Rect get_portRect( GrafPtr port )
-{
-	Rect bounds;
-	GetPortBounds( port, &bounds );
-	
-	return bounds;
-}
-
-static inline
-Rect get_portRect( WindowRef window )
-{
-	return get_portRect( GetWindowPort( window ) );
-}
-
-#endif
 
 const int fps = 15;
 const int tick_period = 60 / fps;
