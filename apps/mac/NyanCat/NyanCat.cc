@@ -23,6 +23,7 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
+#include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
 // nyancatlib
@@ -33,6 +34,7 @@
 
 
 using mac::qd::get_portRect;
+using mac::qd::main_display_bounds;
 using mac::qd::wide_drag_area;
 
 using nyancat::bitmap;
@@ -121,18 +123,6 @@ void make_offscreen_buffer()
 	}
 	
 	MovePortTo( 0, 0 );
-}
-
-static
-const Rect& main_display_bounds()
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	return qd.screenBits.bounds;
-	
-#endif
-	
-	return GetMainDevice()[0]->gdRect;
 }
 
 static inline
