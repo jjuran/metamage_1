@@ -136,13 +136,37 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 		return;
 	}
 	
+	GrafPort& port = **get_addrof_thePort();
+	
+	if ( verb == kQDGrafVerbFrame )
+	{
+		// TODO: draw lines
+		
+		if ( port.rgnSave == NULL )
+		{
+			return;
+		}
+	}
+	
 	static RgnHandle rgn = NewRgn();
 	
 	PolyRgn( rgn, poly );
 	
-	StdRgn( verb, rgn );
+	if ( verb == kQDGrafVerbFrame  &&  port.rgnSave != NULL )
+	{
+		XorRgn( rgn, (RgnHandle) port.rgnSave, (RgnHandle) port.rgnSave );
+	}
+	else
+	{
+		StdRgn( verb, rgn );
+	}
 	
 	SetEmptyRgn( rgn );
+}
+
+pascal void FramePoly_patch( PolyHandle poly )
+{
+	StdPoly( kQDGrafVerbFrame, poly );
 }
 
 pascal void PaintPoly_patch( PolyHandle poly )

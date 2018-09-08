@@ -157,7 +157,7 @@ static void install_QuickDraw()
 	TBTRAP( FillOval   );  // A8BB
 	
 	TBTRAP( StdPoly    );  // A8C5
-	
+	TBTRAP( FramePoly  );  // A8C6
 	TBTRAP( PaintPoly  );  // A8C7
 	TBTRAP( ErasePoly  );  // A8C8
 	TBTRAP( InvertPoly );  // A8C9

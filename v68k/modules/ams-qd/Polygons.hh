@@ -9,6 +9,7 @@
 struct MacPolygon;
 struct Pattern;
 
+pascal void FramePoly_patch( MacPolygon** poly );
 pascal void PaintPoly_patch( MacPolygon** poly );
 pascal void ErasePoly_patch( MacPolygon** poly );
 pascal void InvertPoly_patch( MacPolygon** poly );
