@@ -9,14 +9,8 @@
 #endif
 
 // Mac OS
-#if TARGET_API_MAC_CARBON
 #ifndef __MACWINDOWS__
 #include <MacWindows.h>
-#endif
-#else
-#ifndef __LOWMEM__
-#include <LowMem.h>
-#endif
 #endif
 
 // missing-macos
@@ -29,6 +23,7 @@
 
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
+#include "mac_qd/wide_drag_area.hh"
 
 // nyancatlib
 #include "nyancat/graphics.hh"
@@ -38,6 +33,7 @@
 
 
 using mac::qd::get_portRect;
+using mac::qd::wide_drag_area;
 
 using nyancat::bitmap;
 using nyancat::n_frames;
@@ -62,18 +58,6 @@ void bitmap::set_pixel( unsigned x, unsigned y, const Pattern& color )
 	Rect r = { y, x, y + its_magnifier, x + its_magnifier };
 	
 	FillRect( &r, &color );
-}
-
-static
-const Rect* drag_bounds()
-{
-#if ! TARGET_API_MAC_CARBON
-	
-	return &LMGetGrayRgn()[0]->rgnBBox;
-	
-#endif
-	
-	return NULL;  // DragWindow() bounds may be NULL in Carbon
 }
 
 const int fps = 15;
@@ -330,7 +314,7 @@ int main()
 							break;
 						
 						case inDrag:
-							DragWindow( window, event.where, drag_bounds() );
+							DragWindow( window, event.where, wide_drag_area() );
 							break;
 						
 						case inGoAway:
