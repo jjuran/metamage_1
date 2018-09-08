@@ -26,8 +26,13 @@
 #endif
 #endif
 
-// Welcome
-#include "display.hh"
+// mac-qd-utils
+#include "mac_qd/get_portRect.hh"
+#include "mac_qd/main_display_bounds.hh"
+
+
+using mac::qd::get_portRect;
+using mac::qd::main_display_bounds;
 
 
 static inline
@@ -86,27 +91,6 @@ WindowRef create_window()
 	return new_window( &bounds, "\p", true, dBoxProc, (WindowRef) -1, false, 0 );
 }
 
-#if ! TARGET_API_MAC_CARBON
-
-static inline
-const Rect& get_window_portRect( WindowRef window )
-{
-	return window->portRect;
-}
-
-#else
-
-static inline
-Rect get_window_portRect( WindowRef window )
-{
-	Rect bounds;
-	GetPortBounds( GetWindowPort( window ), &bounds );
-	
-	return bounds;
-}
-
-#endif
-
 #define WELCOME( name ) "\p" "Welcome to " name "."
 
 static
@@ -114,7 +98,7 @@ void draw_window( WindowRef window )
 {
 	OSErr err;
 	
-	const Rect& portRect = get_window_portRect( window );
+	const Rect& portRect = get_portRect( window );
 	
 	SetPortWindowPort( window );
 	
