@@ -47,6 +47,11 @@ bool native_override( v68k::emulator& emu )
 			
 			const uint32_t trap_addr = get_toolbox_trap_addr( emu, trap_word );
 			
+			if ( trap_addr == get_toolbox_trap_addr( emu, unimplemented_trap ) )
+			{
+				emu.regs[ D1 ] = trap_word;
+			}
+			
 			if ( const bool no_autopop = trap_word < 0xAC00 )
 			{
 				const uint32_t stack_top = emu.regs[ SP ] -= 4;
