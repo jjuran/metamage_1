@@ -55,6 +55,7 @@
 // xv68k
 #include "diagnostics.hh"
 #include "memory.hh"
+#include "native.hh"
 #include "screen.hh"
 
 
@@ -75,6 +76,7 @@ using v68k::callout::system_call;
 using v68k::callout::microseconds;
 using v68k::screen::ignore_screen_locks;
 
+static bool turbo;
 static bool polling;
 static bool tracing;
 static bool verbose;
@@ -100,6 +102,7 @@ enum
 	Opt_supervisor = 'S',
 	Opt_trace      = 'T',
 	Opt_module     = 'm',
+	Opt_turbo      = 't',
 	Opt_verbose    = 'v',
 	
 	Opt_last_byte = 255,
@@ -116,6 +119,7 @@ static command::option options[] =
 	{ "poll",       Opt_poll       },
 	{ "supervisor", Opt_supervisor },
 	{ "trace",      Opt_trace      },
+	{ "turbo",      Opt_turbo      },
 	{ "verbose",    Opt_verbose    },
 	{ "pid",        Opt_pid,    command::Param_optional },
 	{ "raster",     Opt_raster, command::Param_required },
@@ -559,7 +563,7 @@ void emulation_loop( v68k::emulator& emu )
 	
 	const unsigned max_steps = parse_instruction_limit( instruction_limit_var );
 	
-	while ( emu.step() )
+	while ( (turbo  &&  native_override( emu ))  ||  emu.step() )
 	{
 		n_instructions = emu.instruction_count();
 		
@@ -832,6 +836,10 @@ char* const* get_options( char** argv )
 			
 			case Opt_trace:
 				tracing = true;
+				break;
+			
+			case Opt_turbo:
+				turbo = true;
 				break;
 			
 			case Opt_verbose:

@@ -1,0 +1,147 @@
+/*
+	native.cc
+	---------
+*/
+
+#include "native.hh"
+
+
+#pragma exceptions off
+
+
+const uint32_t os_trap_table_address = 1024;
+const uint32_t tb_trap_table_address = 3072;
+
+
+static
+uint32_t get_toolbox_trap_addr( v68k::emulator& emu, uint16_t trap_word )
+{
+	const uint32_t trap_table_addr = tb_trap_table_address;
+	const uint32_t trap_entry_addr = trap_table_addr + 4 * (trap_word & 0x3FF);
+	
+	uint32_t trap_addr;
+	emu.mem.get_long( trap_entry_addr, trap_addr, emu.data_space() );
+	
+	return trap_addr;
+}
+
+bool native_override( v68k::emulator& emu )
+{
+	using v68k::D1;
+	using v68k::D2;
+	using v68k::A0;
+	using v68k::A1;
+	using v68k::SP;
+	using v68k::PC;
+	using v68k::function_code_t;
+	
+	if ( (emu.opcode & 0xF000) == 0xA000 )
+	{
+		const uint16_t trap_word = emu.opcode;
+		
+		const function_code_t data_space = emu.data_space();
+		
+		if ( const bool toolbox = trap_word >= 0xA800 )
+		{
+			const uint16_t unimplemented_trap = 0xA89F;
+			
+			const uint32_t trap_addr = get_toolbox_trap_addr( emu, trap_word );
+			
+			if ( const bool no_autopop = trap_word < 0xAC00 )
+			{
+				const uint32_t stack_top = emu.regs[ SP ] -= 4;
+				
+				emu.mem.put_long( stack_top, emu.regs[ PC ] + 2, data_space );
+			}
+			
+			emu.regs[ PC ] = trap_addr;
+			
+			emu.prefetch_instruction_word();
+			
+			return true;
+		}
+		else
+		{
+			// OS trap
+			
+			const uint16_t trap_num = trap_word & 0xFF;
+			
+			const uint32_t trap_table_addr = os_trap_table_address;
+			const uint32_t trap_entry_addr = trap_table_addr + 4 * trap_num;
+			
+			uint32_t trap_addr;
+			emu.mem.get_long( trap_entry_addr, trap_addr, data_space );
+			
+			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ PC ] + 2, data_space );
+			
+			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ A1 ], data_space );
+			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ A0 ], data_space );
+			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ D2 ], data_space );
+			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ D1 ], data_space );
+			
+			emu.regs[ D1 ] = trap_word;
+			
+			emu.mem.put_word( emu.regs[ SP ] -= 2, trap_word, data_space );
+			emu.mem.put_word( emu.regs[ SP ] -= 2, 0x484F,    data_space );
+			
+			// Push the stack pointer as the return address
+			
+			const uint32_t sp = emu.regs[ SP ];
+			
+			emu.mem.put_long( emu.regs[ SP ] -= 4, sp, data_space );
+			
+			emu.regs[ PC ] = trap_addr;
+			
+			emu.prefetch_instruction_word();
+			
+			return true;
+		}
+	}
+	
+	if ( emu.opcode == 0x484F )
+	{
+		// BKPT #7
+		
+		const function_code_t data_space = emu.data_space();
+		
+		emu.regs[ SP ] += 2;  // pop BKPT instruction word
+		
+		uint16_t trap_word;
+		emu.mem.get_word( emu.regs[ SP ], trap_word, data_space );
+		
+		emu.regs[ SP ] += 2;  // pop trap word
+		
+		emu.mem.get_long( emu.regs[ SP ], emu.regs[ D1 ], data_space );
+		
+		emu.regs[ SP ] += 4;  // pop saved D1
+		
+		emu.mem.get_long( emu.regs[ SP ], emu.regs[ D2 ], data_space );
+		
+		emu.regs[ SP ] += 4;  // pop saved D2
+		
+		if ( const bool keep_A0 = trap_word & 0x100 )
+		{
+			// don't restore A0
+		}
+		else
+		{
+			emu.mem.get_long( emu.regs[ SP ], emu.regs[ A0 ], data_space );
+		}
+		
+		emu.regs[ SP ] += 4;  // pop saved A0
+		
+		emu.mem.get_long( emu.regs[ SP ], emu.regs[ A1 ], data_space );
+		
+		emu.regs[ SP ] += 4;  // pop saved A1
+		
+		emu.mem.get_long( emu.regs[ SP ], emu.regs[ PC ], data_space );
+		
+		emu.regs[ SP ] += 4;  // pop saved return address
+		
+		emu.prefetch_instruction_word();
+		
+		return true;
+	}
+	
+	return false;
+}
