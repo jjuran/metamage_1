@@ -2,4 +2,4 @@
 
 make app-build-tools
 
-PATH="var/out:$PATH" ALINE_SRC_ROOT="$PWD/.." var/out/A-line "$@"
+PATH="$PWD/var/out:$PWD/bin:$PATH" ALINE_SRC_ROOT="$PWD/.." var/out/A-line "$@"
