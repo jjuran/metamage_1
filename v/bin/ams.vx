@@ -76,7 +76,7 @@ else
 	command-prefix = "exhibit", "-t", title, raster
 }
 
-const xv68k-subcmd = "xv68k", "-SP", xv68k-screen, *module_opts, app, app_name
+const xv68k-subcmd = "xv68k", "-tSP", xv68k-screen, *module_opts, app, app_name
 const graft-subcmd = "graft", freemountd-subcmd, "//", xv68k-subcmd
 
 const command = [ command-prefix, graft-subcmd ]
