@@ -4,8 +4,11 @@ use Compile::Driver::Configuration;
 use Compile::Driver::Job;
 use Compile::Driver::Job::Compile;
 use Compile::Driver::Job::Copy;
+use Compile::Driver::Job::InfoPList;
 use Compile::Driver::Job::Link::Archive;
 use Compile::Driver::Job::Link::Binary;
+use Compile::Driver::Job::Link::PkgInfo;
+use Compile::Driver::Job::Rez;
 use Compile::Driver::Module;
 use Compile::Driver::Options;
 
@@ -71,6 +74,56 @@ sub jobs_for
 	{
 		my $prog = $module->program_name;
 		my $path = Compile::Driver::Job::bin_pathname( $target, $name, $prog );
+		
+		if ( $module->is_bundle )
+		{
+			my $bundle = "$path.app";
+			
+			push @jobs, Compile::Driver::Job::Link::PkgInfo::->new
+			(
+				TYPE => "BNDL",
+				FROM => $module,
+				DEST => "$bundle/Contents/PkgInfo",
+			);
+			
+			if ( my $info_txt = $module->info_txt )
+			{
+				push @jobs, Compile::Driver::Job::InfoPList::->new
+				(
+					TYPE => "INFO",
+					FROM => $module,
+					ORIG => $info_txt,
+					DEST => "$bundle/Contents/Info.plist",
+				);
+			}
+			
+			if ( my @rez = $module->rez_files )
+			{
+				push @jobs, Compile::Driver::Job::Rez::->new
+				(
+					TYPE => "REZ",
+					FROM => $module,
+					SRCS => \@rez,
+					DEST => "$bundle/Contents/Resources/$prog.rsrc",
+				);
+			}
+			
+			foreach my $resource ( $module->resources )
+			{
+				my ( $basename ) = $resource =~ m{^ .* / ([^/]+) $}x;
+				
+				push @jobs, Compile::Driver::Job::Copy::->new
+				(
+					TYPE => "COPY",
+					FROM => $module,
+					ORIG => $resource,
+					PATH => $basename,
+					DEST => "$bundle/Contents/Resources/",
+				);
+			}
+			
+			$path = "$bundle/Contents/MacOS/$prog";
+		}
 		
 		$link = Compile::Driver::Job::Link::Binary::->new
 		(
