@@ -26,15 +26,6 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 #define TBTRAP( Proc )  (toolbox_trap_table[ _##Proc & 0x03FF ] = &Proc##_patch)
 
-#define Pack0_patch PACK_N_patch
-#define Pack1_patch PACK_N_patch
-#define Pack2_patch PACK_N_patch
-#define Pack3_patch PACK_N_patch
-#define Pack4_patch PACK_N_patch
-#define Pack5_patch PACK_N_patch
-#define Pack6_patch PACK_N_patch
-#define Pack7_patch PACK_N_patch
-
 
 static void install_Packages()
 {

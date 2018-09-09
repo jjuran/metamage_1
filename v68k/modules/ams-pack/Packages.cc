@@ -19,7 +19,7 @@ pascal void InitAllPacks_patch()
 }
 
 /*
-	Stack on entry to PACK_N_patch():
+	Stack on entry to PackN_patch():
 	
 	:                :
 	+----------------+
@@ -191,11 +191,50 @@ invoke:
 	RTS
 }
 
-asm void PACK_N_patch()
+asm void Pack0_patch()
 {
-	MOVE.W   D1,-(SP)      // e.g. A9EB
-	SUBI.W   #0xA9E7,(SP)  // A9EB -> 0004
-	CLR.B    (SP)          // in case the trap word had the auto-pop bit set
-	CLR.W    -(SP)
+	CLR.L    -(SP)
+	JMP      call_PACK
+}
+
+asm void Pack1_patch()
+{
+	PEA      0x0001
+	JMP      call_PACK
+}
+
+asm void Pack2_patch()
+{
+	PEA      0x0002
+	JMP      call_PACK
+}
+
+asm void Pack3_patch()
+{
+	PEA      0x0003
+	JMP      call_PACK
+}
+
+asm void Pack4_patch()
+{
+	PEA      0x0004
+	JMP      call_PACK
+}
+
+asm void Pack5_patch()
+{
+	PEA      0x0005
+	JMP      call_PACK
+}
+
+asm void Pack6_patch()
+{
+	PEA      0x0006
+	JMP      call_PACK
+}
+
+asm void Pack7_patch()
+{
+	PEA      0x0007
 	JMP      call_PACK
 }
