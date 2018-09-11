@@ -13,6 +13,9 @@
 #include <Traps.h>
 #endif
 
+// log-of-war
+#include "logofwar/report.hh"
+
 // ams-io
 #include "Console.hh"
 #include "DRVR.hh"
@@ -20,6 +23,19 @@
 #include "Sound.hh"
 #include "UnitTable.hh"
 
+
+namespace logofwar
+{
+
+static inline
+void print( const unsigned char* s )
+{
+	print( (const char*) s + 1, *s );
+}
+
+}
+
+using logofwar::print;
 
 typedef OSErr (*IODoneProcPtr)( DCtlEntry* dce : __A1, OSErr err : __D0 );
 
@@ -110,10 +126,14 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		pb->ioRefNum = ~i;
 		
+		NOTICE = "Open \"", pb->ioNamePtr, "\" -> ", pb->ioRefNum;
+		
 		trap_word |= 1 << noQueueBit;  // treat Open like an immediate call
 		
 		return pb->ioResult = DRVR_IO_patch( trap_word, pb );
 	}
+	
+	WARNING = "Open \"", pb->ioNamePtr, "\": driver not found";
 	
 	return pb->ioResult = fnfErr;
 }
