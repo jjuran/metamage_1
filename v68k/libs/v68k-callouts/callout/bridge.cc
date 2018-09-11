@@ -74,6 +74,29 @@ enum
 
 typedef int32_t (*function_type)( v68k::processor_state& s );
 
+enum code32_t
+{
+	code32_min = 0,
+	code32_max = 0xffffffff,
+};
+
+static
+void print( code32_t x )
+{
+	char buffer[ 7 ];
+	
+	char* p = buffer;
+	
+	*p++ = '\'';
+	*p++ = x >> 24;
+	*p++ = x >> 16;
+	*p++ = x >>  8;
+	*p++ = x >>  0;
+	*p++ = '\'';
+	*p++ = '\0';
+	
+	logofwar::print( buffer );
+}
 
 static void dump_and_raise( const v68k::processor_state& s, int signo )
 {
@@ -490,6 +513,8 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 		
 		default:
 			result = gestaltUndefSelectorErr;
+			
+			WARNING = "Undefined Gestalt selector ", code32_t( selector );
 			break;
 	}
 	
