@@ -146,7 +146,7 @@ sub get_module
 		}
 		else
 		{
-			die "No such project '$name'\n";
+			die "No such project '$name'.  Run `make catalog` and try again.\n";
 		}
 	}
 	
