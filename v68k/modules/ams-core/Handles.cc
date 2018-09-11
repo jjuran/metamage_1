@@ -97,7 +97,7 @@ short size_error( unsigned long size : __D0 )
 
 static
 Handle_header* allocate_Handle_mem( long   size      : __D0,
-                                    short  trap_word : __D1 ) : __A0
+                                    short  trap_word : __D1 )
 {
 	const unsigned extra_size = sizeof (Handle_header)
 	                          + sizeof (Handle_footer);  // 16 bytes
@@ -137,7 +137,7 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 
 
 static
-char** new_empty_handle() : __A0
+char** new_empty_handle()
 {
 	MemErr = memFullErr;
 	
@@ -157,7 +157,7 @@ char** new_empty_handle() : __A0
 }
 
 static
-char** new_handle( long size : __D0, short trap_word : __D1 ) : __A0
+char** new_handle( long size : __D0, short trap_word : __D1 )
 {
 	char** h = new_empty_handle();
 	
@@ -176,7 +176,7 @@ char** new_handle( long size : __D0, short trap_word : __D1 ) : __A0
 	return NULL;
 }
 
-asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 ) : __A0
+asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 )
 {
 	JSR      new_handle
 	
@@ -190,7 +190,7 @@ ok:
 }
 
 asm
-char** NewEmptyHandle_patch() : __A0
+char** NewEmptyHandle_patch()
 {
 	JSR      new_empty_handle
 	MOVE.W   MemErr,D0
@@ -310,7 +310,7 @@ short SetHandleSize_patch( char**  h         : __A0,
 	return MemErr = noErr;
 }
 
-long GetHandleSize_patch( char** h : __A0 ) : __D0
+long GetHandleSize_patch( char** h : __A0 )
 {
 	if ( h == NULL  ||  *h == NULL )
 	{
