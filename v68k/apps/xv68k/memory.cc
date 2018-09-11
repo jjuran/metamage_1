@@ -5,6 +5,12 @@
 
 #include "memory.hh"
 
+// log-of-war
+#include "logofwar/report.hh"
+
+// v68k
+#include "v68k/print.hh"
+
 // v68k-alloc
 #include "v68k-alloc/memory.hh"
 
@@ -66,10 +72,27 @@ uint8_t* lowmem_translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 	return low_memory_base + addr;
 }
 
+static
+uint8_t* translate_with_diagnostic( uint32_t               addr,
+                                    uint32_t               length,
+                                    v68k::function_code_t  fc,
+                                    v68k::memory_access_t  access )
+{
+	uint8_t* p = memory_manager::translate( addr, length, fc, access );
+	
+	if ( ! p )
+	{
+		ERROR = "Illegal memory access: ", length, "-byte ", access,
+		" at ", v68k::hex32_t( addr ), " in ", fc;
+	}
+	
+	return p;
+}
+
 memory_manager::memory_manager( uint8_t*  low_mem_base,
                                 uint32_t  low_mem_size )
 :
-	v68k::memory( &translate )
+	v68k::memory( &translate_with_diagnostic )
 {
 	low_memory_base = low_mem_base;
 	low_memory_size = low_mem_size;
