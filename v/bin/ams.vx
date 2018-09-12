@@ -45,6 +45,7 @@ if exists "/gui" then
 	link( "new/eventtap", "v/events/view" )
 	link( "new/bitmap",   "v/screen/view" )
 	
+	rewrite "title"           <== title "\n"
 	rewrite "procid"          <== "4\n"
 	rewrite "size"            <== "512x342\n"
 	rewrite "v/screen/v/size" <== "512x342\n"
