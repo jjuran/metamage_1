@@ -56,6 +56,7 @@ typedef uint32_t bilevel_pixel_t;
 
 enum
 {
+	Opt_title   = 't',
 	Opt_watch   = 'w',
 	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
 };
@@ -63,6 +64,7 @@ enum
 static command::option options[] =
 {
 	{ "magnify", Opt_magnify, command::Param_required },
+	{ "title",   Opt_title,   command::Param_required },
 	{ "watch",   Opt_watch },
 	{ NULL }
 };
@@ -270,6 +272,9 @@ char* const* get_options( char** argv )
 			case Opt_watch:
 				watching = true;
 				break;
+			
+			case Opt_title:
+				// For compatibility with FORGE display -- ignored
 			
 			default:
 				break;
