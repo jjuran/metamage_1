@@ -320,11 +320,16 @@ int main( int argc, char** argv )
 	
 	fb_var_screeninfo var_info = get_var_screeninfo( fbh );
 	
-	var_info.xres = desc.width;
-	var_info.yres = desc.height;
+	const char* fullscreen = getenv( "DISPLAY_FULLSCREEN" );
 	
-	var_info.xres_virtual = desc.width;
-	var_info.yres_virtual = desc.height;
+	if ( fullscreen )
+	{
+		var_info.xres = desc.width;
+		var_info.yres = desc.height;
+		
+		var_info.xres_virtual = desc.width;
+		var_info.yres_virtual = desc.height;
+	}
 	
 	var_info.bits_per_pixel = desc.weight;
 	
@@ -350,6 +355,12 @@ int main( int argc, char** argv )
 	const size_t width  = desc.width;
 	const size_t height = desc.height;
 	const size_t stride = desc.stride;
+	
+	if ( ! fullscreen )
+	{
+		dst += (var_info.yres - height) / 2 * dst_stride;
+		dst += (var_info.xres - width ) / 2 * var_info.bits_per_pixel / 8;
+	}
 	
 	if ( sync )
 	{
