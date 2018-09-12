@@ -56,7 +56,7 @@ static command::option options[] =
 
 
 static const char* raster_path;
-static const char* title = "";
+static const char* title;
 
 static const char* magnifier = "1";
 
@@ -204,9 +204,19 @@ void launch_viewer( const char* raster_path )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[] = { DISPLAY, "-x", "1", raster_path, NULL };
+		const char* argv[ 7 ] = { DISPLAY, "-x", "1" };
 		
 		argv[ 2 ] = magnifier;
+		
+		const char** p = argv + 3;
+		
+		if ( title )
+		{
+			*p++ = "-t";
+			*p++ = title;
+		}
+		
+		*p++ = raster_path;
 		
 		exec_or_exit( argv );
 	}
@@ -235,9 +245,15 @@ void launch_interactive( char* const* args )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[ 7 ] = { INTERACT, "--raster", raster_path, "-x" };
+		const char* argv[ 8 ] = { INTERACT, "--raster", raster_path, "-x" };
 		
 		argv[ 4 ] = magnifier;
+		
+		if ( title )
+		{
+			argv[ 5 ] = "-t";
+			argv[ 6 ] = title;
+		}
 		
 		exec_or_exit_endpoint( argv, socket_fds[ 1 ], socket_fds[ 0 ] );
 	}
