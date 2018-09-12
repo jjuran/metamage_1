@@ -11,6 +11,8 @@ const ams_mnt = ams-68k-bin "/mnt"
 
 const title = "Advanced Mac Substitute"
 
+const screen_res = getenv "AMS_SCREENRES" or "512x342"
+
 const default_app = "Welcome"
 
 const app_name =
@@ -120,7 +122,7 @@ else
 	const screen = var_run_raster "/ams"
 	const raster = "--raster=" screen
 	
-	run .[ "raster make -fg 512x342*1 -m paint -R" / ' ', screen ]
+	run .[ "raster make -fg " screen_res "*1 -m paint -R" / ' ', screen ]
 	
 	run .[ "raster init" / ' ', screen ]
 	
