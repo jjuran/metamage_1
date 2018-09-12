@@ -38,12 +38,14 @@
 enum
 {
 	Opt_relay    = 'R',
+	Opt_force    = 'f',
 	Opt_geometry = 'g',
 	Opt_model    = 'm',
 };
 
 static command::option options[] =
 {
+	{ "force",    Opt_force                             },
 	{ "geometry", Opt_geometry, command::Param_required },
 	{ "model",    Opt_model,    command::Param_required },
 	{ "relay",    Opt_relay                             },
@@ -61,6 +63,7 @@ static geometry_spec the_geometry;
 
 static raster::raster_model the_model = raster::Model_none;
 
+static bool force_create  = false;
 static bool include_relay = false;
 
 static const char* raster_models[] =
@@ -167,6 +170,10 @@ char* const* get_options( char** argv )
 		
 		switch ( opt )
 		{
+			case Opt_force:
+				force_create = true;
+				break;
+			
 			case Opt_geometry:
 				the_geometry = parse_geometry( global_result.param );
 				break;
@@ -251,7 +258,10 @@ int create_raster_file( const char* path, const geometry_spec& geometry )
 {
 	using namespace raster;
 	
-	int fd = open( path, O_RDWR | O_CREAT | O_EXCL, 0664 );
+	int flags = force_create ? O_RDWR | O_CREAT
+	                         : O_RDWR | O_CREAT | O_EXCL;
+	
+	int fd = open( path, flags, 0664 );
 	
 	if ( fd < 0 )
 	{
