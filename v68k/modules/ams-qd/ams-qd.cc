@@ -171,6 +171,7 @@ static void install_QuickDraw()
 	TBTRAP( OpenPoly   );  // A8CB
 	TBTRAP( ClosePoly  );  // A8CC
 	TBTRAP( KillPoly   );  // A8CD
+	TBTRAP( OffsetPoly );  // A8CE
 	
 	TBTRAP( UnpackBits );  // A8D0
 	

@@ -17,4 +17,6 @@ pascal void ClosePoly_patch();
 
 pascal void KillPoly_patch( MacPolygon** poly );
 
+pascal void OffsetPoly_patch( MacPolygon** poly, short dh, short dv );
+
 #endif

@@ -124,3 +124,19 @@ pascal void KillPoly_patch( PolyHandle poly )
 {
 	DisposeHandle( (Handle) poly );
 }
+
+pascal void OffsetPoly_patch( PolyHandle poly, short dh, short dv )
+{
+	Point* end = (Point*) ((char*) *poly + poly[0]->polySize);
+	Point* pt  = (Point*) &poly[0]->polyBBox;
+	
+	// Offset the bounding box, the start point, and each edge point
+	
+	while ( pt < end )
+	{
+		pt->v += dv;
+		pt->h += dh;
+		
+		++pt;
+	}
+}
