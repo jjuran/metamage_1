@@ -34,6 +34,12 @@ static unsigned long polling_interval = 0;
 #pragma mark Accessing Events
 #pragma mark -
 
+static inline
+asm UInt32 get_Ticks()
+{
+	JSR      0xFFFFFFDE  // get_Ticks_immediate
+}
+
 static
 bool get_lowlevel_event( short eventMask, EventRecord* event )
 {
@@ -78,7 +84,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 		{
 			event->what      = activateEvt;
 			event->message   = (long) CurDeactive;
-			event->when      = Ticks;
+			event->when      = get_Ticks();
 			event->where     = Mouse;
 			event->modifiers = 0;
 			
@@ -91,7 +97,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 		{
 			event->what      = activateEvt;
 			event->message   = (long) CurActivate;
-			event->when      = Ticks;
+			event->when      = get_Ticks();
 			event->where     = Mouse;
 			event->modifiers = activeFlag;
 			
@@ -170,7 +176,7 @@ pascal unsigned char EventAvail_patch( unsigned short  eventMask,
 	{
 		event->what      = activateEvt;
 		event->message   = (long) CurDeactive;
-		event->when      = Ticks;
+		event->when      = get_Ticks();
 		event->where     = Mouse;
 		event->modifiers = 0;
 		
@@ -181,7 +187,7 @@ pascal unsigned char EventAvail_patch( unsigned short  eventMask,
 	{
 		event->what      = activateEvt;
 		event->message   = (long) CurActivate;
-		event->when      = Ticks;
+		event->when      = get_Ticks();
 		event->where     = Mouse;
 		event->modifiers = activeFlag;
 		
@@ -245,7 +251,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 		same concern would apply it if were updated at interrupt time).
 	*/
 	
-	UInt32 now = Ticks;
+	UInt32 now = get_Ticks();
 	
 	/*
 		Pin the addition of Ticks and sleep.  In the improbable (but very
@@ -288,7 +294,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 			return true;
 		}
 		
-		now = Ticks;
+		now = get_Ticks();
 		
 		if ( now >= future )
 		{
