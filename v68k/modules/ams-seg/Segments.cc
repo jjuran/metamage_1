@@ -132,6 +132,10 @@ pascal asm void LoadSeg_patch( short segnum )
 	RTS
 }
 
+pascal void UnloadSeg_patch( void* ptr )
+{
+}
+
 pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 {
 	const unsigned char* appName = (StringPtr) pb->reserved1;

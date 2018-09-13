@@ -43,10 +43,16 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 #define TBTRAP( Proc )  (toolbox_trap_table[ _##Proc & 0x03FF ] = &Proc##_patch)
 
+enum
+{
+	_UnloadSeg = _UnLoadSeg,
+};
+
 
 static void install_SegmentLoader()
 {
 	TBTRAP( LoadSeg     );  // A9F0
+	TBTRAP( UnloadSeg   );  // A9F1
 	TBTRAP( Launch      );  // A9F2
 	TBTRAP( ExitToShell );  // A9F4
 }
