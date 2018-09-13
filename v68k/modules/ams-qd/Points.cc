@@ -11,6 +11,12 @@
 #endif
 
 
+pascal void SubPt_patch( Point src, Point* dst )
+{
+	dst->v -= src.v;
+	dst->h -= src.h;
+}
+
 pascal void SetPt_patch( Point* pt, short h, short v )
 {
 	pt->h = h;
