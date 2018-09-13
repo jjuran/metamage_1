@@ -9,7 +9,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <sys/time.h>
 
 // Standard C
 #include <errno.h>
@@ -39,6 +38,9 @@
 
 // v68k-syscalls
 #include "syscall/bridge.hh"
+
+// v68k-time
+#include "v68k-time/clock.hh"
 
 // v68k-utils
 #include "utils/load.hh"
@@ -424,10 +426,6 @@ int32_t system_call_callout( v68k::processor_state& s )
 	return nil;
 }
 
-static timeval start_tv;
-static int gottimeofday = gettimeofday( &start_tv, NULL );
-static const uint64_t start_time = start_tv.tv_sec * 1000000ull + start_tv.tv_usec;
-
 static
 int32_t microseconds_callout( v68k::processor_state& s )
 {
@@ -440,10 +438,9 @@ int32_t microseconds_callout( v68k::processor_state& s )
 		return v68k::Bus_error;
 	}
 	
-	timeval tv;
-	gettimeofday( &tv, NULL );
+	using namespace v68k::time;
 	
-	uint64_t t = tv.tv_sec * 1000000ull + tv.tv_usec - start_time;
+	uint64_t t = microsecond_clock() - initial_clock;
 	
 	if ( ! s.mem.put_long( result_address, high_long( t ), s.data_space() ) )
 	{
