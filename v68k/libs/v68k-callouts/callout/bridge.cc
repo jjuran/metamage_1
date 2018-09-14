@@ -404,6 +404,20 @@ int32_t dealloc_callout( v68k::processor_state& s )
 }
 
 static
+int32_t get_Ticks_immediate_callout( v68k::processor_state& s )
+{
+	using namespace v68k::time;
+	
+	const uint64_t delta = microsecond_clock() - initial_clock;
+	
+	const unsigned microseconds_per_tick = 1000 * 1000 / 60;
+	
+	s.d(0) = delta / microseconds_per_tick;
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -660,6 +674,10 @@ static const function_type the_callouts[] =
 	
 	&alloc_callout,
 	&dealloc_callout,
+	NULL,
+	NULL,
+	
+	&get_Ticks_immediate_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,

@@ -13,6 +13,8 @@
 namespace v68k {
 namespace mac  {
 
+extern bool ticking;
+
 uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access );
 
 }  // namespace mac

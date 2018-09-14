@@ -21,6 +21,8 @@
 namespace v68k {
 namespace mac  {
 
+bool ticking;
+
 enum
 {
 	tag_ScreenRow,
@@ -32,7 +34,7 @@ enum
 	tag_EvtBufCnt,
 	tag_Ticks,
 	tag_Ticks_low_word,
-	tag_MBState_etc,
+	tag_MBState_esc,
 	tag_KeyMods,
 	tag_Time,
 	tag_Time_low_word,
@@ -123,7 +125,7 @@ static const global globals[] =
 	{ 0x014A, 10,   tag_EventQueue  },
 	{ 0x0154, 2,    tag_EvtBufCnt   },
 	{ 0x016A, 0x44, tag_Ticks       },
-	{ 0x0172, 2,    tag_MBState_etc },  // MBState, Tocks
+	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x017A, 2,    tag_KeyMods     },  // (undocumented)
 	{ 0x020C, 0x44, tag_Time        },
 	{ 0x0220, 2,    tag_MemErr      },
@@ -209,6 +211,17 @@ static void refresh_dynamic_global( uint8_t tag )
 	switch ( tag )
 	{
 		case tag_Ticks:
+			/*
+				We're coopting Tocks to be the number of Button() calls that
+				can be made without blocking before reading Ticks again.
+				The 1987 rewrite of Steve Capps' Clock only needs one, but the
+				1984 original makes two consecutive calls.
+			*/
+			
+			((uint8_t*) &words[ tag_MBState_esc ])[ 1 ] = 2;  // big-endian
+			
+			ticking = true;
+			
 			longword = get_Ticks();
 			
 			*(uint32_t*) address = big_longword( longword );

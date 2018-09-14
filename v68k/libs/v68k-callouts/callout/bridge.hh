@@ -15,23 +15,31 @@ namespace callout {
 
 enum
 {
+	// $FFFE - $FFF8
 	no_op,
 	load,
 	enter_supervisor_mode,
 	module_suspend,
 	
+	// $FFF6 - $FFF0
 	trace_reserved,
 	trace_all,
 	trace_flow,
 	trace_off,
 	
+	// $FFEE - $FFE8
 	ScrnBitMap_trap,
 	lock_screen,
 	unlock_screen,
 	reserved1,
 	
+	// $FFE6 - $FFE0
 	alloc,
 	dealloc,
+	reserved2,
+	reserved3,
+	
+	get_Ticks_immediate,
 	
 	system_call,
 	microseconds,
