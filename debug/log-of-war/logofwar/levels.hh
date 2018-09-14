@@ -6,6 +6,10 @@
 #ifndef LOGOFWAR_LEVELS_HH
 #define LOGOFWAR_LEVELS_HH
 
+#ifndef CONFIG_DEBUGGING
+#define CONFIG_DEBUGGING  0
+#endif
+
 namespace logofwar
 {
 	
