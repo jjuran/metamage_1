@@ -473,6 +473,16 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 	}
 }
 
+static
+GrafPtr new_port()
+{
+	GrafPtr port = (GrafPtr) NewPtr( sizeof (GrafPort) );
+	
+	OpenPort( port );
+	
+	return port;
+}
+
 pascal void CopyBits_patch( const BitMap*  srcBits,
                             const BitMap*  dstBits,
                             const Rect*    srcRect,
@@ -488,9 +498,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	{
 		saved_port = qd.thePort;
 		
-		static GrafPtr port = (GrafPtr) NewPtr( sizeof (GrafPort) );
-		
-		OpenPort( port );
+		static GrafPtr port = new_port();
 		
 		qd.thePort = port;
 		
@@ -501,8 +509,6 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	
 	if ( saved_port )
 	{
-		ClosePort( qd.thePort );
-		
 		qd.thePort = saved_port;
 	}
 }
