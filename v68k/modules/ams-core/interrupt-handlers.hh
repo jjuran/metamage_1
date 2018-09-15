@@ -6,6 +6,6 @@
 #ifndef INTERRUPTHANDLERS_HH
 #define INTERRUPTHANDLERS_HH
 
-int set_event_poll_interrupt_handler();
+int install_interrupt_handlers();
 
 #endif

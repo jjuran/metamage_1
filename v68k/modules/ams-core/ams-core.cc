@@ -242,7 +242,7 @@ void install_OSEventManager()
 	OSTRAP( GetOSEvent   );  // A031
 	OSTRAP( FlushEvents  );  // A032
 	
-	set_event_poll_interrupt_handler();
+	install_interrupt_handlers();
 }
 
 static

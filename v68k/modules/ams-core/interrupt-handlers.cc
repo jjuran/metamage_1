@@ -26,7 +26,7 @@ asm void event_poll_interrupt_handler()
 	RTE
 }
 
-asm int set_event_poll_interrupt_handler()
+asm int install_interrupt_handlers()
 {
 	JSR      0xFFFFFFFA  // enter_supervisor_mode()
 	BMI.S    bail        // D0 is -1 if branch taken
