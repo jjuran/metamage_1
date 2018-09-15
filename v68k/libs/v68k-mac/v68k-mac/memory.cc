@@ -43,6 +43,7 @@ enum
 	tag_Time,
 	tag_Time_low_word,
 	tag_MemErr,
+	tag_SdVolEnable,
 	tag_ROM85,
 	tag_DefltStack,
 	tag_DefltStack_low_word,
@@ -160,6 +161,7 @@ static const global globals[] =
 	{ 0x01D2, 2,    tag_UnitNtryCnt },
 	{ 0x020C, 0x44, tag_Time        },
 	{ 0x0220, 2,    tag_MemErr      },
+	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
 	{ 0x028E, 2,    tag_ROM85       },
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
