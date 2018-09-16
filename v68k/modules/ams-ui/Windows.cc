@@ -1139,11 +1139,7 @@ bool window_needs_update( WindowPeek w )
 		return false;
 	}
 	
-	// Clip the update region to the visRgn and check again.
-	
-	SectRgn( w->port.visRgn, w->updateRgn, w->updateRgn );
-	
-	return ! EmptyRgn( w->updateRgn );
+	return true;
 }
 
 pascal unsigned char CheckUpdate_patch( EventRecord* event )
