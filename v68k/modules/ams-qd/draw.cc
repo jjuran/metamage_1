@@ -21,7 +21,6 @@ void get_refined_clip_region( const GrafPort&  port,
 	Rect clipRect = port.clipRgn[0]->rgnBBox;
 	
 	SectRect( &dstRect,              &clipRect, &clipRect );
-	SectRect( &port.portRect,        &clipRect, &clipRect );
 	SectRect( &port.portBits.bounds, &clipRect, &clipRect );
 	
 	RectRgn( result, &clipRect );
