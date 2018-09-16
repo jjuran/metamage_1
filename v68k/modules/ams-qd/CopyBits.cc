@@ -34,7 +34,7 @@ bool byte_aligned( short srcSkip, short dstSkip, short width )
 static inline
 bool word_aligned( const void* src, const void* dst )
 {
-	return !( (uint32_t) src & 1  ||  (uint32_t) dst & 1 );
+	return !( ((uint32_t) src | (uint32_t) dst) & 1 );
 }
 
 template < class Ptr >
