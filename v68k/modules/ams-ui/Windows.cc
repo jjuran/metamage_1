@@ -67,6 +67,16 @@ const short bezel_corner_diameter = 16;
 
 
 static
+RgnHandle QDGlobalToLocalRegion( GrafPtr port, RgnHandle rgn )
+{
+	const Rect& bounds = port->portBits.bounds;
+	
+	OffsetRgn( rgn, bounds.left, bounds.top );
+	
+	return rgn;
+}
+
+static
 long call_WDEF( WindowPeek window, short message, long param )
 {
 	WindowDefProcPtr wdef = &WDEF_0;
@@ -1031,6 +1041,19 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 #pragma mark Update Region Maintenance
 #pragma mark -
 
+/*
+	csdx, csdy:  Coordinate system deltas
+	
+	These are deltas from the global coordinate system to the local
+	coordinate system.  Add them to global points to get local, and
+	subtract them from local points to get global.
+	
+	Note that for a local origin below and to the right of the global
+	origin, these values will be negative -- for example, to get from
+	local (0,0) to global (100,80), you must add positive numbers or
+	subtract negative ones.
+*/
+
 static
 RgnHandle rectangular_utility_region()
 {
@@ -1096,6 +1119,8 @@ pascal void BeginUpdate_patch( struct GrafPort* window )
 	using iota::swap;
 	
 	swap( window->visRgn, SaveVisRgn );
+	
+	QDGlobalToLocalRegion( window, w->updateRgn );
 	
 	SectRgn( SaveVisRgn, w->updateRgn, window->visRgn );
 	
@@ -1260,6 +1285,8 @@ pascal void CalcVis_patch( WindowPeek window )
 		
 		w = w->nextWindow;
 	}
+	
+	QDGlobalToLocalRegion( &window->port, visRgn );
 }
 
 pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
