@@ -1156,15 +1156,10 @@ pascal long GetWRefCon_patch( WindowRecord* window )
 #pragma mark Low-Level Routines
 #pragma mark -
 
-static
+static inline
 bool window_needs_update( WindowPeek w )
 {
-	if ( EmptyRgn( w->updateRgn ) )
-	{
-		return false;
-	}
-	
-	return true;
+	return ! EmptyRgn( w->updateRgn );
 }
 
 pascal unsigned char CheckUpdate_patch( EventRecord* event )
