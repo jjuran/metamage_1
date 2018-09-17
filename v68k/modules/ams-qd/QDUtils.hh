@@ -6,6 +6,8 @@
 #ifndef QDUTILS_HH
 #define QDUTILS_HH
 
+pascal void UnpackBits_patch( char** src, char** dst, short dstBytes );
+
 pascal unsigned char BitTst_patch( char* addr, long bit );
 pascal void          BitSet_patch( char* addr, long bit );
 pascal void          BitClr_patch( char* addr, long bit );

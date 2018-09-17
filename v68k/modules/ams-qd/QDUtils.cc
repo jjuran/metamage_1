@@ -10,9 +10,21 @@
 #include <Resources.h>
 #endif
 
+// quickdraw
+#include "qd/pack_bits.hh"
+
 // ams-common
 #include "QDGlobals.hh"
 
+
+pascal void UnpackBits_patch( Ptr* src, Ptr* dst, short dstBytes )
+{
+	UInt8** tmp = (UInt8**) dst;
+	
+	quickdraw::unpack_bits( (const UInt8*&) *src, *tmp, dstBytes );
+	
+	dst = (Ptr*) tmp;
+}
 
 pascal unsigned char BitTst_patch( Ptr addr, long bit )
 {
