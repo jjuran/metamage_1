@@ -62,6 +62,21 @@ pascal void InitFonts_patch()
 	}
 }
 
+pascal void GetFNum_patch( const unsigned char* name, short* num )
+{
+	if ( memcmp( name, "\p" STR_LEN( "Geneva" ) ) == 0 )
+	{
+		*num = kFontIDGeneva;
+		return;
+	}
+	
+	write( STDERR_FILENO, STR_LEN( "GetFNum:\n" ) );
+	
+	DebugStr( name );
+	
+	*num = 10;
+}
+
 pascal FMOutPtr FMSwapFont_patch( const FMInput* input )
 {
 	const short fontNum  = specific_font( input->family );
