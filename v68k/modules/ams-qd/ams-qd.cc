@@ -61,6 +61,8 @@ static void install_QuickDraw()
 	TBTRAP( HideCursor );  // A852
 	TBTRAP( ShowCursor );  // A853
 	
+	TBTRAP( ObscureCursor );  // A856
+	
 	TBTRAP( BitAnd );  // A858
 	
 	TBTRAP( BitTst );  // A85D

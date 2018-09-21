@@ -15,4 +15,6 @@ pascal void SetCursor_patch( const Cursor* crsr );
 pascal void HideCursor_patch();
 pascal void ShowCursor_patch();
 
+pascal void ObscureCursor_patch();
+
 #endif

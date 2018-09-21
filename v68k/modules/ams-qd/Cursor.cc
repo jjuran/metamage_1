@@ -33,3 +33,7 @@ pascal void ShowCursor_patch()
 {
 	JShowCursor();
 }
+
+pascal void ObscureCursor_patch()
+{
+}
