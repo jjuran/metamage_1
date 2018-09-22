@@ -269,6 +269,11 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	window->hilited = frontmost;
 	
+	if ( ! visible )
+	{
+		return (WindowPtr) window;
+	}
+	
 	if ( frontmost  &&  window->nextWindow )
 	{
 		if ( CurActivate != (WindowRef) window->nextWindow )
@@ -373,14 +378,17 @@ pascal void CloseWindow_patch( struct GrafPort* port )
 	
 	remove_from_window_list( window );
 	
-	PaintBehind_patch( window->nextWindow, window->strucRgn );
-	CalcVBehind_patch( window->nextWindow, window->strucRgn );
-	
-	if ( frontmost  &&  WindowList != NULL )
+	if ( window->visible )
 	{
-		CurActivate = (WindowRef) WindowList;
+		PaintBehind_patch( window->nextWindow, window->strucRgn );
+		CalcVBehind_patch( window->nextWindow, window->strucRgn );
 		
-		HiliteWindow_patch( WindowList, true );
+		if ( frontmost  &&  WindowList != NULL )
+		{
+			CurActivate = (WindowRef) WindowList;
+			
+			HiliteWindow_patch( WindowList, true );
+		}
 	}
 	
 	DisposeRgn( window->strucRgn  );
@@ -630,6 +638,11 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 	
 	for ( WindowPeek w = WindowList;  w != NULL;  w = w->nextWindow )
 	{
+		if ( ! w->visible )
+		{
+			continue;
+		}
+		
 		WindowPtr ptr = (WindowPtr) w;
 		
 		if ( short hit = call_WDEF( w, wHit, *(long*) &pt ) )
@@ -1187,7 +1200,10 @@ pascal void ClipAbove_patch( WindowPeek window )
 			break;
 		}
 		
-		DiffRgn( clipRgn, w->strucRgn, clipRgn );
+		if ( w->visible )
+		{
+			DiffRgn( clipRgn, w->strucRgn, clipRgn );
+		}
 	}
 }
 
@@ -1247,6 +1263,12 @@ pascal void CalcVis_patch( WindowPeek window )
 {
 	RgnHandle visRgn = window->port.visRgn;
 	
+	if ( ! window->visible )
+	{
+		SetEmptyRgn( visRgn );
+		return;
+	}
+	
 	SectRgn( window->contRgn, GrayRgn, visRgn );
 	
 	for ( WindowPeek w = WindowList;  w != window;  w = w->nextWindow )
@@ -1256,7 +1278,10 @@ pascal void CalcVis_patch( WindowPeek window )
 			return;  // Specified window doesn't exist.
 		}
 		
-		DiffRgn( visRgn, w->strucRgn, visRgn );
+		if ( w->visible )
+		{
+			DiffRgn( visRgn, w->strucRgn, visRgn );
+		}
 	}
 	
 	QDGlobalToLocalRegion( &window->port, visRgn );
