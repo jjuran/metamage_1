@@ -137,11 +137,9 @@ void remove_from_window_list( WindowPeek window )
 	WindowPeek prev;
 	WindowPeek w = WindowList;
 	
-	while ( w != window )
+	for ( ;  w != window;  w = w->nextWindow )
 	{
 		prev = w;
-		
-		w = w->nextWindow;
 	}
 	
 	if ( w != NULL )
@@ -630,9 +628,7 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 		return inMenuBar;
 	}
 	
-	WindowPeek w = WindowList;
-	
-	while ( w != NULL )
+	for ( WindowPeek w = WindowList;  w != NULL;  w = w->nextWindow )
 	{
 		WindowPtr ptr = (WindowPtr) w;
 		
@@ -642,8 +638,6 @@ pascal short FindWindow_patch( Point pt, WindowPtr* window )
 			
 			return hit + 2;
 		}
-		
-		w = w->nextWindow;
 	}
 	
 	return inDesk;
@@ -1164,9 +1158,7 @@ bool window_needs_update( WindowPeek w )
 
 pascal unsigned char CheckUpdate_patch( EventRecord* event )
 {
-	WindowPeek w = WindowList;
-	
-	while ( w != NULL )
+	for ( WindowPeek w = WindowList;  w != NULL;  w = w->nextWindow )
 	{
 		if ( window_needs_update( w ) )
 		{
@@ -1177,8 +1169,6 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 			
 			return true;
 		}
-		
-		w = w->nextWindow;
 	}
 	
 	return false;
@@ -1190,9 +1180,7 @@ pascal void ClipAbove_patch( WindowPeek window )
 	
 	SectRgn( clipRgn, GrayRgn, clipRgn );
 	
-	WindowPeek w = WindowList;
-	
-	while ( w != window )
+	for ( WindowPeek w = WindowList;  w != window;  w = w->nextWindow )
 	{
 		if ( w == NULL )
 		{
@@ -1200,8 +1188,6 @@ pascal void ClipAbove_patch( WindowPeek window )
 		}
 		
 		DiffRgn( clipRgn, w->strucRgn, clipRgn );
-		
-		w = w->nextWindow;
 	}
 }
 
@@ -1246,13 +1232,9 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 
 pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
 {
-	WindowPeek w = window;
-	
-	while ( w != NULL )
+	for ( WindowPeek w = window;  w != NULL;  w = w->nextWindow )
 	{
 		PaintOne_patch( w, clobbered_region );
-		
-		w = w->nextWindow;
 	}
 	
 	SaveUpdate = true;
@@ -1267,9 +1249,7 @@ pascal void CalcVis_patch( WindowPeek window )
 	
 	SectRgn( window->contRgn, GrayRgn, visRgn );
 	
-	WindowPeek w = WindowList;
-	
-	while ( w != window )
+	for ( WindowPeek w = WindowList;  w != window;  w = w->nextWindow )
 	{
 		if ( w == NULL )
 		{
@@ -1277,8 +1257,6 @@ pascal void CalcVis_patch( WindowPeek window )
 		}
 		
 		DiffRgn( visRgn, w->strucRgn, visRgn );
-		
-		w = w->nextWindow;
 	}
 	
 	QDGlobalToLocalRegion( &window->port, visRgn );
@@ -1288,20 +1266,16 @@ pascal void CalcVBehind_patch( WindowPeek window, RgnHandle rgn )
 {
 	WindowPeek w = WindowList;
 	
-	while ( w != window )
+	for ( ;  w != window;  w = w->nextWindow )
 	{
 		if ( w == NULL )
 		{
 			return;
 		}
-		
-		w = w->nextWindow;
 	}
 	
-	while ( w != NULL )
+	for ( ;  w != NULL;  w = w->nextWindow )
 	{
 		CalcVis_patch( w );
-		
-		w = w->nextWindow;
 	}
 }
