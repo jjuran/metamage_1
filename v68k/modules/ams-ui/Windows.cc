@@ -271,6 +271,8 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	if ( ! visible )
 	{
+		SetEmptyRgn( port->visRgn );
+		
 		return (WindowPtr) window;
 	}
 	
