@@ -473,6 +473,10 @@ pascal Handle GetNamedResource_patch( ResType type, ConstStr255Param name )
 	JMP      (A0)
 }
 
+pascal void LoadResource_patch( Handle resource )
+{
+}
+
 pascal void ReleaseResource_patch( Handle resource )
 {
 	DetachResource_patch( resource );

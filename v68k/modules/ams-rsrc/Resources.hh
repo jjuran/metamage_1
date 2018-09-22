@@ -20,6 +20,8 @@ pascal char** GetResource_patch( unsigned long type, short id );
 pascal char** GetNamedResource_patch( unsigned long         type,
                                       const unsigned char*  name );
 
+pascal void LoadResource_patch( char** resource );
+
 pascal void ReleaseResource_patch( char** resource );
 
 pascal void DetachResource_patch( char** resource );
