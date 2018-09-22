@@ -22,6 +22,9 @@
 // Standard C
 #include <string.h>
 
+// ams-common
+#include "raster_lock.hh"
+
 // ams-core
 #include "CDEF.hh"
 
@@ -288,6 +291,8 @@ pascal void HideControl_patch( ControlRef control )
 
 pascal void DrawControls_patch( GrafPort* window )
 {
+	raster_lock lock;
+	
 	WindowPeek w = (WindowPeek) window;
 	
 	ControlRef control = (ControlRef) w->controlList;
