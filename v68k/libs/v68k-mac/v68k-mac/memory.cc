@@ -89,6 +89,7 @@ enum
 	tag_DeskPattern_word_3 = tag_DeskPattern + 3,  // 8 bytes
 	tag_FPState,
 	tag_FPState_word_2 = tag_FPState + 2,
+	tag_CurMap,
 	tag_ResLoad,
 	tag_ResErr,
 	tag_CurActivate,
@@ -184,6 +185,7 @@ static const global globals[] =
 	{ 0x0A34, 8,    tag_DragPattern },
 	{ 0x0A3C, 8,    tag_DeskPattern },
 	{ 0x0A4A, 6,    tag_FPState     },
+	{ 0x0A5A, 2,    tag_CurMap      },
 	{ 0x0A5E, 2,    tag_ResLoad     },
 	{ 0x0A60, 2,    tag_ResErr      },
 	{ 0x0A64, 4,    tag_CurActivate },
