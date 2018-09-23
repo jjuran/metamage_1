@@ -50,6 +50,7 @@
 enum
 {
 	Opt_linger = 'L',  // linger on ExitToShell
+	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
 	
 	Opt_last_byte = 255,
 	
@@ -60,16 +61,22 @@ static command::option options[] =
 {
 	{ "linger",  Opt_linger },
 	
+	{ "romgen", Opt_romgen, command::Param_required },
+	
 	{ "events-fd", Opt_events_fd, command::Param_required },
 	
 	NULL,
 };
+
+static unsigned romgen;
 
 
 void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
 Byte  MBState   : 0x0172;
+
+short ROM85     : 0x028E;
 
 short ScreenRow : 0x0106;
 void* ScrnBase  : 0x0824;
@@ -98,6 +105,11 @@ pascal asm void ScrnBitMap( BitMap* screenBits )
 static
 void initialize_low_memory_globals()
 {
+	if ( romgen < 16 )
+	{
+		ROM85 = 0xFFFFu >> romgen;
+	}
+	
 	BitMap screenBits;
 	
 	ScrnBitMap( &screenBits );
@@ -242,6 +254,10 @@ char* const* get_options( char** argv )
 		{
 			case Opt_events_fd:
 				events_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
+			case Opt_romgen:
+				romgen = gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
 			default:
