@@ -66,6 +66,7 @@ enum
 	tag_CurApName,
 	tag_CurApName_word_15 = tag_CurApName + 15,  // 32 bytes
 	tag_CurJTOffset,
+	tag_PrintErr,
 	tag_ROMFont0,
 	tag_ROMFont0_low_word,
 	tag_WindowList,
@@ -169,6 +170,7 @@ static const global globals[] =
 	{ 0x0908, 4,    tag_CurStackBase},
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0934, 2,    tag_CurJTOffset },
+	{ 0x0944, 2,    tag_PrintErr    },
 	{ 0x0980, 4,    tag_ROMFont0    },
 	{ 0x0984, 0x82, 3               },  // ApFontID (Geneva)
 	{ 0x09D6, 4,    tag_WindowList  },
