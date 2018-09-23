@@ -8,14 +8,14 @@
 
 pascal void RsrcZoneInit_patch();
 
-pascal char** GetResource_patch( unsigned long type, short id );
-
-pascal void ReleaseResource_patch( char** res );
-
-pascal void DetachResource_patch( char** res );
-
 pascal short ResError_patch();
 
-pascal long SizeRsrc_patch( char** res );
+pascal char** GetResource_patch( unsigned long type, short id );
+
+pascal void ReleaseResource_patch( char** resource );
+
+pascal void DetachResource_patch( char** resource );
+
+pascal long SizeRsrc_patch( char** resource );
 
 #endif

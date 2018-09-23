@@ -53,6 +53,11 @@ pascal void RsrcZoneInit_patch()
 	CurMap = CurApRefNum;
 }
 
+pascal short ResError_patch()
+{
+	return ResErr;
+}
+
 static
 bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 {
@@ -96,10 +101,8 @@ bool try_to_get( char*              insert_end,
 }
 
 static
-char** GetResource_handler( unsigned long type : __D0, short id : __D1 )
+Handle GetResource_core( ResType type : __D0, short id : __D1 )
 {
-	temp_A4 a4;
-	
 	/*
 		The app name can only be 31 bytes (not 32), but with the extra byte,
 		"TYPE" is word-aligned.
@@ -116,11 +119,11 @@ char** GetResource_handler( unsigned long type : __D0, short id : __D1 )
 	
 	p += 5;
 	
-	*(unsigned long*) p = type;
+	*(ResType*) p = type;
 	
 	plus::var_string rsrc;
 	
-	char** result = 0;  // NULL
+	Handle result = 0;  // NULL
 	
 	bool got = false;
 	
@@ -164,8 +167,16 @@ char** GetResource_handler( unsigned long type : __D0, short id : __D1 )
 	return result;
 }
 
+static
+Handle GetResource_handler( ResType type : __D0, short id : __D1 )
+{
+	temp_A4 a4;
+	
+	return GetResource_core( type, id );
+}
+
 asm
-pascal char** GetResource_patch( unsigned long type, short id )
+pascal Handle GetResource_patch( ResType type, short id )
 {
 	MOVEM.L  D1-D2/A1-A2,-(SP)
 	
@@ -185,21 +196,16 @@ pascal char** GetResource_patch( unsigned long type, short id )
 	JMP      (A0)
 }
 
-pascal void ReleaseResource_patch( char** resource )
+pascal void ReleaseResource_patch( Handle resource )
 {
 	DisposeHandle( resource );
 }
 
-pascal void DetachResource_patch( char** res )
+pascal void DetachResource_patch( Handle resource )
 {
 }
 
-pascal short ResError_patch()
+pascal long SizeRsrc_patch( Handle resource )
 {
-	return ResErr;
-}
-
-pascal long SizeRsrc_patch( Handle res )
-{
-	return GetHandleSize( res );
+	return GetHandleSize( resource );
 }

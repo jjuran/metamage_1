@@ -35,14 +35,15 @@ void* toolbox_trap_table[] : 3 * 1024;
 static
 void install_ResourceManager()
 {
-	TBTRAP( SizeRsrc        );  // A9A5
-	
 	TBTRAP( DetachResource  );  // A992
 	
 	TBTRAP( RsrcZoneInit    );  // A996
 	
 	TBTRAP( GetResource     );  // A9A0
+	
 	TBTRAP( ReleaseResource );  // A9A3
+	
+	TBTRAP( SizeRsrc        );  // A9A5
 	
 	TBTRAP( ResError        );  // A9AF
 }
