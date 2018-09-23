@@ -701,11 +701,24 @@ short basic_Alert( short alertID, ModalFilterUPP filterProc, ResID icon_id )
 	
 	AlertTHndl alert = (AlertTHndl) h;
 	
-	const Rect bounds   = alert[0]->boundsRect;
+	Rect bounds = alert[0]->boundsRect;
+	
 	const short itemsID = alert[0]->itemsID;
 	const short stages  = alert[0]->stages;
 	
 	ReleaseResource( h );
+	
+	if ( *(long*) &bounds.top == 0 )
+	{
+		QDGlobals& qd = get_QDGlobals();
+		
+		const Rect& screen = qd.screenBits.bounds;
+		
+		const short dh = (screen.right - screen.left - bounds.right) / 2;
+		const short dv = (screen.bottom - screen.top - bounds.bottom) / 3;
+		
+		OffsetRect( &bounds, dh, dv );
+	}
 	
 	h = GetResource( 'DITL', itemsID );
 	
