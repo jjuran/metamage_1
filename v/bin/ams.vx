@@ -16,8 +16,21 @@ const home_68k = home "/68k"
 
 const freemountd-subcmd = "freemountd -q --root" / ' ', home_68k
 
+def core_opts
+{
+	var opts = []
+	
+	if const romgen = getenv "AMS_ROMGEN" then
+	{
+		opts <-- "-R" romgen
+	}
+	
+	return if opts then {ams-core: opts}
+}
+
 const module_args = str^
 [
+	core_opts(),
 ]
 
 def argify (name)
