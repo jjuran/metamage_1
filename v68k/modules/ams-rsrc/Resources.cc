@@ -32,6 +32,7 @@
 
 #define STRLEN( s )  (sizeof "" s - 1)
 #define STR_LEN( s )  "" s, (sizeof s - 1)
+#define PSTR_LEN( s )  "\p" s, (sizeof s - 1)
 
 
 short MemErr    : 0x0220;
@@ -202,6 +203,45 @@ pascal Handle GetResource_patch( ResType type, short id )
 	MOVEA.L  (SP)+,A0
 	
 	ADDQ.L   #6,SP
+	
+	JMP      (A0)
+}
+
+static
+Handle GetNamedResource_handler( ResType type : __D0, const UInt8* name : __A0 )
+{
+	if ( type == 'SCOT'  &&  memcmp( name, PSTR_LEN( "Terry" ) + 1 ) == 0 )
+	{
+		return GetResource_handler( type, 1 );
+	}
+	
+	if ( type == 'ANDY'  &&  memcmp( name, PSTR_LEN( "Gariepy" ) + 1 ) == 0 )
+	{
+		return GetResource_handler( type, 1 );
+	}
+	
+	ResErr = resNotFound;
+	
+	return 0;  // NULL
+}
+
+asm
+pascal Handle GetNamedResource_patch( ResType type, ConstStr255Param name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	MOVE.L   (A2)+,D0
+	
+	JSR      GetNamedResource_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #8,SP
 	
 	JMP      (A0)
 }

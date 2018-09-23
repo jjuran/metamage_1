@@ -44,6 +44,7 @@ void install_ResourceManager()
 	TBTRAP( UseResFile      );  // A998
 	
 	TBTRAP( GetResource     );  // A9A0
+	TBTRAP( GetNamedResource);  // A9A1
 	
 	TBTRAP( ReleaseResource );  // A9A3
 	
