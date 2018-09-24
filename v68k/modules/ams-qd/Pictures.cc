@@ -10,6 +10,9 @@
 #include <Quickdraw.h>
 #endif
 
+// Standard C
+#include <string.h>
+
 // quickdraw
 #include "qd/pack_bits.hh"
 
@@ -45,6 +48,33 @@ Rect read_Rect( const UInt8*& p )
 	result.right  = read_word( p );
 	
 	return result;
+}
+
+static
+const UInt8* pen_pat( const UInt8* p )
+{
+	Pattern pattern;
+	memcpy( &pattern, p, sizeof pattern );
+	
+	PenPat( &pattern );
+	
+	return p + 8;
+}
+
+static
+const UInt8* short_line( const UInt8* p, const Rect& target, const Rect& frame )
+{
+	const short v = read_word( p );
+	const short h = read_word( p );
+	
+	const SInt8 dh = *p++;
+	const SInt8 dv = *p++;
+	
+	MoveTo( h + target.left - frame.left, v + target.top - frame.top );
+	
+	Line( dh, dv );
+	
+	return p;
 }
 
 static
@@ -129,6 +159,14 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 			
 			case 0x01:
 				p += read_word( p ) - 2;
+				continue;
+			
+			case 0x09:
+				p = pen_pat( p );
+				continue;
+			
+			case 0x22:
+				p = short_line( p, *dstRect, pic[0]->picFrame );
 				continue;
 			
 			case 0x98:
