@@ -15,6 +15,8 @@ pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title );
 
 pascal MenuInfo** GetMenu_patch( short resID );
 
+pascal void DisposeMenu_patch( MenuInfo** menu );
+
 pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format );
 
 pascal void AddResMenu_patch( MenuInfo** menu, unsigned long type );

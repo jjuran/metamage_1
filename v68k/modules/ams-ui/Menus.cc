@@ -173,6 +173,11 @@ pascal MenuInfo** GetMenu_patch( short resID )
 	return (MenuRef) h;
 }
 
+pascal void DisposeMenu_patch( MenuInfo** menu )
+{
+	DisposeHandle( (Handle) menu );
+}
+
 #pragma mark -
 #pragma mark Forming the Menus
 #pragma mark -
