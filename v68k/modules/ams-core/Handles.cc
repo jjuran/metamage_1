@@ -179,13 +179,8 @@ char** new_handle( long size : __D0, short trap_word : __D1 )
 asm char** NewHandle_patch( long size : __D0, short trap_word : __D1 )
 {
 	JSR      new_handle
-	
-	MOVE.L   A0,D0      // If A0 is NULL, clears D0, which is a nice touch
-	BNE.S    ok
-	
 	MOVE.W   MemErr,D0  // Includes the effect of TST.W D0
 	
-ok:
 	RTS
 }
 
