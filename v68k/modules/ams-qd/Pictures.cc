@@ -108,6 +108,11 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 	const UInt8* end = (UInt8*) pic[0] + pic[0]->picSize;
 	const UInt8* p   = (UInt8*) (pic[0] + 1);
 	
+	PenState penState;
+	GetPenState( &penState );
+	
+	port.pnMode = patCopy;
+	
 	while ( p < end )
 	{
 		UInt8 c = *p++;
@@ -137,4 +142,6 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 		
 		break;
 	}
+	
+	SetPenState( &penState );
 }
