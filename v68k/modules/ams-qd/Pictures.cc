@@ -15,7 +15,6 @@
 
 // ams-common
 #include "QDGlobals.hh"
-#include "redraw_lock.hh"
 
 
 union Word
@@ -105,8 +104,6 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 {
 	GrafPort& port = **get_addrof_thePort();
-	
-	redraw_lock lock( port.portBits.baseAddr );
 	
 	const UInt8* end = (UInt8*) pic[0] + pic[0]->picSize;
 	const UInt8* p   = (UInt8*) (pic[0] + 1);
