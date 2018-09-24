@@ -529,6 +529,8 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 			break;
 	}
 	
+	s.sr.nzvc = result ? 0x8 : 0x4;  // either N or Z
+	
 	s.d(0) = result;
 	s.a(0) = value;
 	
