@@ -26,6 +26,8 @@ short CurJTOffset  : 0x0934;
 void* CurrentA5    : 0x0904;
 void* CurStackBase : 0x0908;
 
+Handle AppParmHandle : 0x0AEC;
+
 
 struct jump_table_header
 {
@@ -66,6 +68,20 @@ struct LaunchParamBlockRec
 {
 	uint32_t reserved1;
 	// ...
+};
+
+typedef struct GrafPort* GrafPtr;
+
+struct above_A5_area
+{
+	GrafPtr*  thePort_addr;
+	uint32_t  unknown_4;
+	void*     stdin_hook;
+	void*     stdout_hook;
+	Handle    Finder_handle;
+	uint32_t  unknown_20;
+	uint32_t  unknown_24;
+	uint32_t  unknown_28;
 };
 
 static inline
@@ -187,6 +203,11 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	memcpy( jump_table, &header + 1, header.jmptable_size );
 	
 	ReleaseResource( code0 );
+	
+	AppParmHandle = NewHandleClear( 4 );
+	
+	above_A5_area* above_A5 = (above_A5_area*) CurrentA5;
+	above_A5->Finder_handle = AppParmHandle;
 	
 	void* start = (char*) jump_table + 2;
 	
