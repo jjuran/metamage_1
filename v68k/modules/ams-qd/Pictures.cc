@@ -97,6 +97,17 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
 	
+	if ( rowBytes < 8 )
+	{
+		bitmap.baseAddr = (Ptr) p;
+		
+		p += rowBytes * n_rows;
+		
+		StdBits( &bitmap, &srcRect, &dstRect, mode, NULL );
+		
+		return p;
+	}
+	
 	bitmap.bounds.top    = 0;
 	bitmap.bounds.bottom = 1;
 	
@@ -169,6 +180,7 @@ pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
 				p = short_line( p, *dstRect, pic[0]->picFrame );
 				continue;
 			
+			case 0x90:
 			case 0x98:
 				p = draw_bits( p, *dstRect, pic[0]->picFrame );
 				continue;
