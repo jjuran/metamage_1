@@ -93,6 +93,8 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 	
 	const short mode = read_word( p );
 	
+	OffsetRect( &dstRect, target.left - frame.left, target.top - frame.top );
+	
 	short n_rows = bitmap.bounds.bottom - bitmap.bounds.top;
 	
 	bitmap.bounds.top    = 0;
@@ -102,8 +104,6 @@ const UInt8* draw_bits( const UInt8* p, const Rect& target, const Rect& frame )
 	srcRect.bottom = 1;
 	
 	dstRect.bottom = dstRect.top;
-	
-	OffsetRect( &dstRect, target.left - frame.left, target.top - frame.top );
 	
 	if ( rowBytes <= 250 )
 	{
