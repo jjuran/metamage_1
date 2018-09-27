@@ -234,6 +234,7 @@ UInt8 actual_item_text_length( const UInt8* format, UInt8 len )
 			case '(':
 				break;
 			
+			case '^':
 			case '/':
 				if ( len )
 				{
@@ -276,7 +277,8 @@ short decode_item_format( UInt8 const* format, UInt8 len,
 		switch ( c )
 		{
 			case '(':  break;
-			case '/':  if ( len )  key = *q++, --len;  break;
+			case '^':  if ( len )  icon = *q++ - '0', --len;  break;
+			case '/':  if ( len )  key  = *q++,       --len;  break;
 			
 			default:
 				*p++ = c;
