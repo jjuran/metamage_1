@@ -233,8 +233,10 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 			srcRect.left  = this_offset;
 			srcRect.right = next_offset;
 			
-			dstRect.left  = port.pnLoc.h + character_offset;
-			dstRect.right = port.pnLoc.h + character_offset + width;
+			const short dstLeft = port.pnLoc.h + character_offset + rec.kernMax;
+			
+			dstRect.left  = dstLeft;
+			dstRect.right = dstLeft + width;
 			
 			CopyBits( &srcBits, &dstBits, &srcRect, &dstRect, port.txMode, NULL );
 		}
