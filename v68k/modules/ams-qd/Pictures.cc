@@ -97,6 +97,36 @@ Rect read_Rect( const UInt8*& p )
 }
 
 static
+const UInt8* text_font( const UInt8* p )
+{
+	const short font = read_word( p );
+	
+	TextFont( font );
+	
+	return p;
+}
+
+static
+const UInt8* text_mode( const UInt8* p )
+{
+	const short mode = read_word( p );
+	
+	TextMode( mode );
+	
+	return p;
+}
+
+static
+const UInt8* text_size( const UInt8* p )
+{
+	const short size = read_word( p );
+	
+	TextSize( size );
+	
+	return p;
+}
+
+static
 const UInt8* pen_pat( const UInt8* p )
 {
 	Pattern pattern;
@@ -121,6 +151,21 @@ const UInt8* short_line( const UInt8* p, const Rect& target, const Rect& frame )
 	Line( dh, dv );
 	
 	return p;
+}
+
+static
+const UInt8* long_text( const UInt8* p, const Rect& target, const Rect& frame )
+{
+	const short v = read_word( p );
+	const short h = read_word( p );
+	
+	MoveTo( h + target.left - frame.left, v + target.top - frame.top );
+	
+	DrawString( p );
+	
+	const UInt8 n = *p++;
+	
+	return p + n;
 }
 
 static
@@ -214,12 +259,28 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 			p += read_word( p ) - 2;
 			break;
 		
+		case 0x03:
+			p = text_font( p );
+			break;
+		
+		case 0x05:
+			p = text_mode( p );
+			break;
+		
 		case 0x09:
 			p = pen_pat( p );
 			break;
 		
+		case 0x0D:
+			p = text_size( p );
+			break;
+		
 		case 0x22:
 			p = short_line( p, dstRect, frame );
+			break;
+		
+		case 0x28:
+			p = long_text( p, dstRect, frame );
 			break;
 		
 		case 0x90:

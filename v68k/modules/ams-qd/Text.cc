@@ -164,6 +164,36 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 	
 	GrafPort& port = **get_addrof_thePort();
 	
+	if ( Handle h = port.picSave )
+	{
+		Size size = GetHandleSize( h );
+		
+		SetHandleSize( h, size + 3 + 3 + 3 + 6 + (Byte) n );
+		
+		char* dst = *h + size;
+		
+		*dst++ = 0x03;  // TxFont
+		*dst++ = port.txFont >> 8;
+		*dst++ = port.txFont;
+		
+		*dst++ = 0x05;  // TxMode
+		*dst++ = port.txMode >> 8;
+		*dst++ = port.txMode;
+		
+		*dst++ = 0x0D;  // TxSize
+		*dst++ = port.txSize >> 8;
+		*dst++ = port.txSize;
+		
+		*dst++ = 0x28;  // LongText
+		*dst++ = port.pnLoc.v >> 8;
+		*dst++ = port.pnLoc.v;
+		*dst++ = port.pnLoc.h >> 8;
+		*dst++ = port.pnLoc.h;
+		*dst++ = n;
+		
+		BlockMoveData( p, dst, (Byte) n );
+	}
+	
 	if ( port.pnVis < 0 )
 	{
 		return;
