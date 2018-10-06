@@ -231,7 +231,10 @@ static void install_QuickDraw()
 	
 	TBTRAP( ScrollRect  );  // A8EF
 	
-	TBTRAP( DrawPicture );  // A8F6
+	TBTRAP( OpenPicture  );  // A8F3
+	TBTRAP( ClosePicture );  // A8F4
+	TBTRAP( KillPicture  );  // A8F5
+	TBTRAP( DrawPicture  );  // A8F6
 	
 	TBTRAP( MapPt       );  // A8F9
 	TBTRAP( MapRect     );  // A8FA

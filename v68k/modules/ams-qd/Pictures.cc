@@ -27,6 +27,51 @@ union Word
 	UInt8  u8[2];
 };
 
+pascal PicHandle OpenPicture_patch( const Rect* frame )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	enum { initial_size = 12 };
+	
+	Handle h = NewHandle( initial_size );
+	
+	if ( h )
+	{
+		port.picSave = h;
+		
+		char* p = *h + sizeof (Picture);
+		
+		*p++ = 0x11;  // picVersion
+		*p++ = 0x01;  // version 1
+		
+		HidePen();
+	}
+	
+	return (PicHandle) h;
+}
+
+pascal void ClosePicture_patch()
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	if ( Handle h = port.picSave )
+	{
+		ShowPen();
+		
+		Size size = GetHandleSize( h );
+		
+		SetHandleSize( h, size + 1 );
+		h[0][ size++ ] = 0xFF;  // EndOfPicture
+		
+		PicHandle picture = (PicHandle) h;
+		
+		picture[0]->picSize  = size;
+		picture[0]->picFrame = port.portRect;
+		
+		port.picSave = NULL;
+	}
+}
+
 static
 short read_word( const UInt8*& p )
 {
@@ -221,6 +266,11 @@ const Byte* do_opcode2( const Byte* p, const Rect& dstRect, const Rect& frame )
 	}
 	
 	return (const Byte*) p2;
+}
+
+pascal void KillPicture_patch( PicHandle picture )
+{
+	DisposeHandle( (Handle) picture );
 }
 
 pascal void DrawPicture_patch( PicHandle pic, const Rect* dstRect )
