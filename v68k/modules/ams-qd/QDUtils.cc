@@ -109,6 +109,12 @@ pascal void MapPt_patch( Point* pt, const Rect* src, const Rect* dst )
 	pt->h = (pt->h - src->left) * dstHeight / srcHeight + dst->left;
 }
 
+pascal void MapRect_patch( Rect* r, const Rect* src, const Rect* dst )
+{
+	MapPt_patch( (Point*) &r->top,    src, dst );
+	MapPt_patch( (Point*) &r->bottom, src, dst );
+}
+
 pascal PatHandle GetPattern_patch( short id )
 {
 	return (PatHandle) GetResource( 'PAT ', id );

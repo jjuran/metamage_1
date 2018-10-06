@@ -208,6 +208,7 @@ static void install_QuickDraw()
 	TBTRAP( DrawPicture );  // A8F6
 	
 	TBTRAP( MapPt       );  // A8F9
+	TBTRAP( MapRect     );  // A8FA
 	
 	TBTRAP( GetPattern  );  // A9B8
 	TBTRAP( GetCursor   );  // A9B9
