@@ -159,6 +159,11 @@ pascal void StdText_patch( short n, const char* p, Point numer, Point denom )
 {
 	GrafPort& port = **get_addrof_thePort();
 	
+	if ( port.pnVis < 0 )
+	{
+		return;
+	}
+	
 	const FMInput input =
 	{
 		port.txFont,
