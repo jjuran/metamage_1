@@ -21,6 +21,8 @@
 #include "QDGlobals.hh"
 
 
+typedef Byte Op;
+
 union Word
 {
 	SInt16 s16;
@@ -138,6 +140,16 @@ const UInt8* pen_pat( const UInt8* p )
 }
 
 static
+const UInt8* fill_pat( const UInt8* p )
+{
+	GrafPort& port = **get_addrof_thePort();
+	
+	fast_memcpy( &port.fillPat, p, sizeof (Pattern) );
+	
+	return p + sizeof (Pattern);
+}
+
+static
 const UInt8* short_line( const UInt8* p, const Rect& target, const Rect& frame )
 {
 	const short v = read_word( p );
@@ -166,6 +178,28 @@ const UInt8* long_text( const UInt8* p, const Rect& target, const Rect& frame )
 	const UInt8 n = *p++;
 	
 	return p + n;
+}
+
+static
+const UInt8* poly( const Byte* p, const Rect& target, const Rect& frame, Op op )
+{
+	const UInt8* q = p;
+	
+	const short polySize = read_word( q );
+	
+	Handle h = NewHandle( polySize );
+	
+	BlockMoveData( p, *h, polySize );
+	
+	OffsetPoly( (PolyHandle) h, target.left - frame.left, target.top - frame.top );
+	
+	signed char verb = op - 0x70;
+	
+	StdPoly( verb, (PolyHandle) h );
+	
+	DisposeHandle( h );
+	
+	return p + polySize;
 }
 
 static
@@ -271,6 +305,10 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 			p = pen_pat( p );
 			break;
 		
+		case 0x0A:
+			p = fill_pat( p );
+			break;
+		
 		case 0x0D:
 			p = text_size( p );
 			break;
@@ -281,6 +319,14 @@ const Byte* do_opcode( const Byte* p, const Rect& dstRect, const Rect& frame )
 		
 		case 0x28:
 			p = long_text( p, dstRect, frame );
+			break;
+		
+		case 0x70:
+		case 0x71:
+		case 0x72:
+		case 0x73:
+		case 0x74:
+			p = poly( p, dstRect, frame, opcode );
 			break;
 		
 		case 0x90:

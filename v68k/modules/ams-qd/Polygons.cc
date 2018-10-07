@@ -156,6 +156,61 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 	
 	GrafPort& port = **get_addrof_thePort();
 	
+	if ( Handle h = port.picSave )
+	{
+		Size size = GetHandleSize( h );
+		
+		Size new_size = size + 1 + poly[0]->polySize;
+		
+		if ( verb != kQDGrafVerbInvert )
+		{
+			new_size += 1 + sizeof (Pattern);
+		}
+		
+		SetHandleSize( h, new_size );
+		
+		char* dst = *h + size;
+		
+		Byte pattern_op = 0;
+		
+		const Pattern* pattern = NULL;
+		
+		switch ( verb )
+		{
+			case kQDGrafVerbFrame:
+			case kQDGrafVerbPaint:
+				pattern_op = 0x09;  // PnPat
+				pattern    = &port.pnPat;
+				break;
+			
+			case kQDGrafVerbErase:
+				pattern_op = 0x02;  // BkPat
+				pattern    = &port.bkPat;
+				break;
+			
+			case kQDGrafVerbFill:
+				pattern_op = 0x0A;  // FillPat
+				pattern    = &port.fillPat;
+				break;
+			
+			default:
+				break;
+		}
+		
+		if ( pattern_op )
+		{
+			*dst++ = pattern_op;
+			
+			BlockMoveData( pattern, dst, sizeof (Pattern) );
+			
+			dst += sizeof (Pattern);
+		}
+		
+		*dst++ = 0x70 + verb;
+		
+		BlockMoveData( *poly, dst, poly[0]->polySize );
+	}
+	
 	if ( verb == kQDGrafVerbFrame )
 	{
 		if ( port.pnVis >= 0 )
