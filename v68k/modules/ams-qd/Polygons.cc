@@ -140,7 +140,23 @@ pascal void StdPoly_patch( signed char verb, PolyHandle poly )
 	
 	if ( verb == kQDGrafVerbFrame )
 	{
-		// TODO: draw lines
+		if ( port.pnVis >= 0 )
+		{
+			short n = (poly[0]->polySize - sizeof (Polygon)) / 4;
+			
+			const Point* pt = poly[0]->polyPoints;
+			
+			const Point a = *pt++;  // start
+			
+			MoveTo( a.h, a.v );
+			
+			for ( short i = 0;  i < n;  ++i )
+			{
+				const Point b = *pt++;
+				
+				LineTo( b.h, b.v );
+			}
+		}
 		
 		if ( port.rgnSave == NULL )
 		{
