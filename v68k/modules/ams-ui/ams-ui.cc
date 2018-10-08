@@ -188,6 +188,7 @@ static void install_Dialogs()
 	
 	TBTRAP( DisposeDialog );  // A983
 	
+	TBTRAP( FindDItem    );  // A984
 	TBTRAP( Alert        );  // A985
 	TBTRAP( StopAlert    );  // A986
 	TBTRAP( NoteAlert    );  // A987

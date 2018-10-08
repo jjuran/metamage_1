@@ -8,6 +8,7 @@
 
 struct EventRecord;
 struct GrafPort;
+struct Point;
 struct Rect;
 
 typedef pascal unsigned char (*ModalFilterUPP)( GrafPort*     dialog,
@@ -61,5 +62,7 @@ pascal void SetDItem_patch( GrafPort*    dialog,
 pascal void GetIText_patch( char** h, unsigned char text[ 255 ] );
 
 pascal void SetIText_patch( char** h, const unsigned char* text );
+
+pascal short FindDItem_patch( GrafPort* dialog, Point pt );
 
 #endif

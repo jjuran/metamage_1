@@ -878,3 +878,30 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	
 	// TODO:  Invalidate the text rect
 }
+
+pascal short FindDItem_patch( DialogRef dialog, Point pt )
+{
+	DialogPeek d = (DialogPeek) dialog;
+	
+	// item count minus one
+	short n_items_1 = dialog_item_count_minus_one( d->items );
+	
+	const DialogItem* item = first_dialog_item( d->items );
+	
+	short item_index = 0;
+	
+	do
+	{
+		const Rect& r = item->bounds;
+		
+		if ( PtInRect( pt, &item->bounds ) )
+		{
+			return item_index;
+		}
+		
+		item = next( item );
+	}
+	while ( ++item_index <= n_items_1 );
+	
+	return -1;
+}
