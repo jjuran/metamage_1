@@ -32,6 +32,7 @@ void install_DeviceManager()
 {
 	OSTRAP( Open   );  // A000
 	
+	OSTRAP( Read   );  // A002
 	OSTRAP( Write  );  // A003
 	
 	OSTRAP( KillIO );  // A006
