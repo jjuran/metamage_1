@@ -537,6 +537,92 @@ pascal Boolean IsDialogEvent_patch( const EventRecord* event )
 	return false;
 }
 
+pascal Boolean DialogSelect_patch( const EventRecord*  event,
+                                   DialogRef*          dialogHit,
+                                   short*              itemHit )
+{
+	DialogRef dialog;
+	GrafPtr savedPort;
+	
+	switch ( event->what )
+	{
+		case mouseDown:
+		case keyDown:
+		case autoKey:
+			break;
+		
+		case updateEvt:
+			dialog = (DialogRef) event->message;
+			
+			GetPort( &savedPort );
+			SetPort( dialog );
+			
+			BeginUpdate( dialog );
+			DrawDialog ( dialog );
+			EndUpdate  ( dialog );
+			
+			SetPort( savedPort );
+			return false;
+		
+		case activateEvt:
+			// TODO:  Activate TE items
+			return false;
+		
+		default:
+			return false;
+	}
+	
+	dialog = FrontWindow();
+	
+	DialogPeek d = (DialogPeek) dialog;
+	
+	// TODO:  keyDown/autoKey
+	
+	if ( event->what == mouseDown )
+	{
+		Point pt = event->where;
+		GlobalToLocal( &pt );
+		
+		// item count minus one
+		short n_items_1 = dialog_item_count_minus_one( d->items );
+		
+		const DialogItem* item = first_dialog_item( d->items );
+		
+		short item_index = 0;
+		
+		while ( item_index++ <= n_items_1 )
+		{
+			const UInt8 type = item->type;
+			
+			if ( PtInRect( pt, &item->bounds ) )
+			{
+				if ( type & 0x80 )
+				{
+					return false;  // disabled
+				}
+				
+				if ( (type & 0x7c) == ctrlItem )
+				{
+					ControlRef control = (ControlRef) item->handle;
+					
+					if ( ! TrackControl( control, pt, NULL ) )
+					{
+						return false;
+					}
+				}
+				
+				*itemHit = item_index;
+				
+				return true;
+			}
+			
+			item = next( item );
+		}
+	}
+	
+	return false;
+}
+
 pascal void DrawDialog_patch( DialogRef dialog )
 {
 	DrawControls( dialog );

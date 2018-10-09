@@ -37,6 +37,10 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit );
 
 pascal unsigned char IsDialogEvent_patch( const EventRecord* event );
 
+pascal unsigned char DialogSelect_patch( const EventRecord*  event,
+                                         GrafPort**          dialogHit,
+                                         short*              itemHit );
+
 pascal void DrawDialog_patch( GrafPort* dialog );
 
 pascal short Alert_patch       ( short alertID, ModalFilterUPP filterProc );
