@@ -57,3 +57,8 @@ $ vc 'var p = begin "abcdef"; var q = ++p; ++q; ++q; ++q - p'
 
 $ vc 'var p = begin "abc"; var q = ++p; ++q; ++q; try {p - q} catch {"nope"}'
 1 >= '"nope"'
+
+%
+
+$ vc 'var p = begin "abcdef"; for i in 0 -> 3 do {p += *"a" .. *"b"}; p.rest'
+1 >= '"cdef"'

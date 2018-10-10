@@ -26,6 +26,7 @@
 #include "vlib/dispatch/stringify.hh"
 #include "vlib/dispatch/verity.hh"
 #include "vlib/types/byte.hh"
+#include "vlib/types/byterange.hh"
 #include "vlib/types/integer.hh"
 #include "vlib/types/packed.hh"
 #include "vlib/types/proc.hh"
@@ -233,6 +234,26 @@ namespace vlib
 	}
 	
 	static
+	const Value& scan( Value& v, const iota::byte_range& pattern )
+	{
+		Expr* expr = v.unshare().expr();
+		
+		const plus::string& s = expr->left.string();
+		bignum::integer& iter = expr->right.number();
+		
+		const size_t i = integer_cast< size_t >( iter );
+		
+		if ( i < s.size()  &&  contains( pattern, s[ i ] ) )
+		{
+			++iter;
+			
+			return v;
+		}
+		
+		return empty_list;  // No match
+	}
+	
+	static
 	Value binary_op_handler( op_type op, const Value& a, const Value& b )
 	{
 		if ( op == Op_subtract )
@@ -246,9 +267,14 @@ namespace vlib
 		{
 			if ( b.type() == v.expr()->left.type() )
 			{
-				// E.g. `p += "pattern"`
+				// E.g. `p + "pattern"`
 				
 				return scan( v, b.string() );
+			}
+			
+			if ( const ByteRange* byterange = b.is< ByteRange >() )
+			{
+				return scan( v, byterange->get() );
 			}
 		}
 		else if ( op != Op_subtract )
@@ -312,6 +338,11 @@ namespace vlib
 				// E.g. `p += "pattern"`
 				
 				return scan( v, b.string() );
+			}
+			
+			if ( const ByteRange* byterange = b.is< ByteRange >() )
+			{
+				return scan( v, byterange->get() );
 			}
 		}
 		else if ( op != Op_decrease_by )
