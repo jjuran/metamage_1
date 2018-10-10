@@ -8,6 +8,9 @@
 // POSIX
 #include <sys/types.h>
 
+// gear
+#include "gear/find.hh"
+
 // debug
 #include "debug/assert.hh"
 
@@ -405,6 +408,15 @@ namespace vlib
 			
 			loc = s.find( c, i );
 		}
+		else if ( const ByteRange* byterange = target.is< ByteRange >() )
+		{
+			const iota::byte_range br = byterange->get();
+			
+			const char* begin = s.data();
+			const char* match = gear::find_first_match( begin, s.size(), br );
+			
+			loc = match ? match - begin : plus::string::npos;
+		}
 		else
 		{
 			const plus::string& sub = target.string();
@@ -426,11 +438,13 @@ namespace vlib
 	
 	static const Type pointer = pointer_vtype;
 	static const Type byte    = byte_vtype;
+	static const Type brange  = byterange_vtype;
 	static const Type packed  = packed_vtype;
 	static const Type string  = string_vtype;
 	
 	static const Value vbytes ( string, Op_union, packed );
-	static const Value finding( byte,   Op_union, vbytes );
+	static const Value a_byte ( byte,   Op_union, brange );
+	static const Value finding( a_byte, Op_union, vbytes );
 	
 	static const Value find( pointer, finding );
 	

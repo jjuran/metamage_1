@@ -67,3 +67,8 @@ $ vc '(begin "foo\n\tbar").find( x"0a09" ).rest'
 
 $ vc '(begin x"07ffffe0").find( x"ffff" ).past'
 1 >= 'x"07"'
+
+%
+
+$ vc '(begin "abcde").find( *"c" .. *"d" ).rest'
+1 >= '"cde"'
