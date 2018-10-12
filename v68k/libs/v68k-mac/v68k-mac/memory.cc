@@ -53,6 +53,10 @@ enum
 	tag_DefltStack_low_word,
 	tag_FCBSPtr,
 	tag_FCBSPtr_low_word,
+	tag_DefVCBPtr,
+	tag_DefVCBPtr_low_word,
+	tag_VCBQHdr,
+	tag_VCBQHdr_word_4 = tag_VCBQHdr + 4,  // 10 bytes
 	tag_JHideCursor,
 	tag_JHideCursor_low_word,
 	tag_JShowCursor,
@@ -181,6 +185,8 @@ static const global globals[] =
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
 	{ 0x0322, 4,    tag_DefltStack  },
 	{ 0x034E, 4,    tag_FCBSPtr     },
+	{ 0x0352, 4,    tag_DefVCBPtr   },
+	{ 0x0356, 10,   tag_VCBQHdr     },
 	{ 0x0800, 4,    tag_JHideCursor },
 	{ 0x0804, 4,    tag_JShowCursor },
 	{ 0x0814, 4,    tag_JInitCrsr   },
