@@ -30,7 +30,10 @@ void* os_trap_table[] : 1 * 1024;
 static
 void install_FileManager()
 {
-	old_Open = (Open_ProcPtr) os_trap_table[ _Open & 0x00FF ];
+	old_Open  = (Open_ProcPtr) os_trap_table[ _Open  & 0x00FF ];
+	old_Close = (IO_ProcPtr  ) os_trap_table[ _Close & 0x00FF ];
+	old_Read  = (IO_ProcPtr  ) os_trap_table[ _Read  & 0x00FF ];
+	old_Write = (IO_ProcPtr  ) os_trap_table[ _Write & 0x00FF ];
 	
 	OSTRAP( Open   );  // A000
 	

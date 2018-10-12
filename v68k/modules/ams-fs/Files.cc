@@ -23,6 +23,9 @@ enum
 };
 
 Open_ProcPtr old_Open;
+IO_ProcPtr   old_Close;
+IO_ProcPtr   old_Read;
+IO_ProcPtr   old_Write;
 
 short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
 {
