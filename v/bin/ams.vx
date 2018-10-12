@@ -56,9 +56,19 @@ def io_opts
 	}
 }
 
+def fs_opts
+{
+	return
+	if const disk = getenv "AMS_DISK" then
+	{
+		ams-fs: [ "--disk", disk ],
+	}
+}
+
 const module_args = str^
 [
 	core_opts(),
+	fs_opts(),
 	io_opts(),
 ]
 
