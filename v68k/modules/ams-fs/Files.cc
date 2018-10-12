@@ -71,3 +71,39 @@ short Open_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	
 	return pb->ioResult = extFSErr;
 }
+
+short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( pb->ioRefNum < 0 )
+	{
+		// it's a driver
+		
+		return old_Read( trap_word, pb );
+	}
+	
+	return pb->ioResult = rfNumErr;
+}
+
+short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( pb->ioRefNum < 0 )
+	{
+		// it's a driver
+		
+		return old_Write( trap_word, pb );
+	}
+	
+	return pb->ioResult = rfNumErr;
+}
+
+short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( pb->ioRefNum < 0 )
+	{
+		// it's a driver
+		
+		return old_Close( trap_word, pb );
+	}
+	
+	return pb->ioResult = rfNumErr;
+}
