@@ -105,6 +105,7 @@ enum
 	tag_SaveSegHandle,
 	tag_SaveSegHandle_low_word,
 	tag_CurJTOffset,
+	tag_CurPageOption,
 	tag_PrintErr,
 	tag_ROMFont0,
 	tag_ROMFont0_low_word,
@@ -256,6 +257,7 @@ static const global globals[] =
 	{ 0x0910, 32,   tag_CurApName   },
 	{ 0x0930, 4,    tag_SaveSegHandle},
 	{ 0x0934, 2,    tag_CurJTOffset },
+	{ 0x0936, 2,    tag_CurPageOption},
 	{ 0x0944, 2,    tag_PrintErr    },
 	{ 0x0980, 4,    tag_ROMFont0    },
 	{ 0x0984, 0x82, 3               },  // ApFontID (Geneva)
