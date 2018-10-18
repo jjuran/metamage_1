@@ -275,6 +275,7 @@ void install_MemoryManager()
 static
 void install_OSUtils()
 {
+	OSTRAP( WriteParam   );  // A038
 	OSTRAP( ReadDateTime );  // A039
 	
 	OSTRAP( Delay     );  // A03B

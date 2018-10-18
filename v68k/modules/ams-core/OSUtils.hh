@@ -34,6 +34,8 @@ DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
 
 short InitUtil_patch();
 
+short WriteParam_patch();
+
 void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );
 
 short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 );

@@ -316,6 +316,11 @@ short InitUtil_patch()
 	return prInitErr;
 }
 
+OSErr WriteParam_patch()
+{
+	return noErr;
+}
+
 #pragma mark -
 #pragma mark Queue Manipulation
 #pragma mark -
