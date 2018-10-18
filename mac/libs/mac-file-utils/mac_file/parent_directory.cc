@@ -22,6 +22,8 @@ namespace file {
 	using types::VRefNum_DirID;
 	
 	
+#if ! __LP64__
+	
 	VRefNum_DirID parent_directory( const VRefNum_DirID& dir )
 	{
 		CInfoPBRec pb;
@@ -45,6 +47,14 @@ namespace file {
 		
 		return result;
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif  // #if ! __LP64__
 	
 }
 }

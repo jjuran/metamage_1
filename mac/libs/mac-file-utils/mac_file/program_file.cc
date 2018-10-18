@@ -22,10 +22,20 @@
 namespace mac  {
 namespace file {
 	
+#if ! __LP64__
+	
 	types::FSSpec program_file()
 	{
 		return refnum_file( LMGetCurApRefNum() );
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif  // #if ! __LP64__
 	
 }
 }

@@ -19,6 +19,8 @@
 namespace mac  {
 namespace file {
 	
+#if ! __LP64__
+	
 	types::FSSpec refnum_file( short refNum )
 	{
 		types::FSSpec result;
@@ -43,6 +45,14 @@ namespace file {
 		
 		return result;
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif  // #if ! __LP64__
 	
 }
 }
