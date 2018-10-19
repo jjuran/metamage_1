@@ -215,6 +215,12 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = tmfoErr;
 }
 
+static inline
+unsigned long min( unsigned long a, unsigned long b )
+{
+	return b < a ? b : a;
+}
+
 short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
@@ -224,7 +230,56 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return old_Read( trap_word, pb );
 	}
 	
-	return pb->ioResult = rfNumErr;
+	if ( pb->ioReqCount < 0 )
+	{
+		return pb->ioResult = paramErr;  // Negative ioReqCount
+	}
+	
+	FCB* fcb = get_FCB( pb->ioRefNum );
+	
+	if ( ! fcb )
+	{
+		return pb->ioResult = rfNumErr;
+	}
+	
+	const short mode = pb->ioPosMode;
+	
+	const size_t eof = fcb->lEOF;
+	
+	switch ( pb->ioPosMode )
+	{
+		case fsAtMark:
+			break;
+		
+		case fsFromStart:
+			fcb->mark = pb->ioPosOffset;
+			break;
+		
+		case fsFromLEOF:
+			fcb->mark = eof + pb->ioPosOffset;
+			break;
+		
+		case fsFromMark:
+			fcb->mark += pb->ioPosOffset;
+			break;
+		
+		default:
+			return pb->ioResult = paramErr;
+	}
+	
+	pb->ioActCount = 0;
+	
+	if ( pb->ioPosOffset < eof )
+	{
+		long count = min( pb->ioReqCount, eof - pb->ioPosOffset );
+		
+		fast_memcpy( pb->ioBuffer, &fcb->buffer[ fcb->mark ], count );
+		
+		pb->ioActCount = count;
+		pb->ioPosOffset = fcb->mark += count;
+	}
+	
+	return pb->ioResult = pb->ioActCount == pb->ioReqCount ? noErr : eofErr;
 }
 
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
