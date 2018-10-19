@@ -308,6 +308,22 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = rfNumErr;
 }
 
+short GetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	pb->ioReqCount = 0;
+	pb->ioActCount = 0;
+	pb->ioPosMode  = 0;
+	
+	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
+	{
+		pb->ioPosOffset = fcb->fcbCrPs;
+		
+		return pb->ioResult = noErr;
+	}
+	
+	return pb->ioResult = rfNumErr;
+}
+
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )
