@@ -363,6 +363,18 @@ short SetFPos_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
+short GetEOF_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
+	{
+		pb->ioMisc = (Ptr) fcb->fcbEOF;
+		
+		return pb->ioResult = noErr;
+	}
+	
+	return pb->ioResult = rfNumErr;
+}
+
 short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( pb->ioRefNum < 0 )

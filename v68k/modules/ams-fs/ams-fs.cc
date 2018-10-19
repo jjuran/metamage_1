@@ -69,6 +69,8 @@ void install_FileManager()
 	
 	OSTRAP( OpenRF );  // A00A
 	
+	OSTRAP( GetEOF   );  // A011
+	
 	OSTRAP( FlushVol );  // A013
 	OSTRAP( GetVol   );  // A014
 	
