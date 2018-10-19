@@ -52,6 +52,46 @@ IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
 
+static inline
+short FCB_index( const FCB* fcb )
+{
+	return fcb - FCBSPtr->fcbs + 1;
+}
+
+static
+FCB* get_FCB( unsigned short refNum )
+{
+	if ( --refNum < kFCBCount )
+	{
+		return &FCBSPtr->fcbs[ refNum ];
+	}
+	
+	return NULL;
+}
+
+static
+FCB* find_FCB( long fileNum )
+{
+	FCB* begin = FCBSPtr->fcbs;
+	FCB* end   = begin + kFCBCount;
+	
+	for ( FCB* it = begin;  it < end;  ++it )
+	{
+		if ( it->fileNum == fileNum )
+		{
+			return it;
+		}
+	}
+	
+	return NULL;
+}
+
+static inline
+FCB* find_next_empty_FCB()
+{
+	return find_FCB( 0 );
+}
+
 void initialize()
 {
 	FCBSPtr = (FCBS*) malloc( sizeof (FCBS) );
