@@ -11,6 +11,7 @@
 #endif
 
 // Standard C
+#include <stdlib.h>
 #include <string.h>
 
 
@@ -22,10 +23,43 @@ enum
 	kHFSFlagMask = 0x0200,
 };
 
+struct FCB
+{
+	long    fileNum;
+	SInt8   flags;
+	SInt8   versNum;
+	UInt16  startBlock;
+	long    lEOF;
+	long    pEOF;
+	long    mark;
+	VCB*    vcb;
+	Ptr     buffer;
+	short   internal;
+};
+
+enum { kFCBCount = 48 };
+
+struct FCBS
+{
+	UInt16  bufSize;
+	FCB     fcbs[ kFCBCount ];
+};
+
+static FCBS* FCBSPtr;
+
 Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
+
+void initialize()
+{
+	FCBSPtr = (FCBS*) malloc( sizeof (FCBS) );
+	
+	memset( FCBSPtr, '\0', sizeof (FCBS) );
+	
+	FCBSPtr->bufSize = sizeof (FCBS);
+}
 
 short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
 {

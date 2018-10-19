@@ -35,6 +35,8 @@ void install_FileManager()
 	old_Read  = (IO_ProcPtr  ) os_trap_table[ _Read  & 0x00FF ];
 	old_Write = (IO_ProcPtr  ) os_trap_table[ _Write & 0x00FF ];
 	
+	initialize();
+	
 	OSTRAP( Open   );  // A000
 	OSTRAP( Close  );  // A001
 	OSTRAP( Read   );  // A002
