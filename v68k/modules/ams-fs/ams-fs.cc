@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "module_A4.hh"
+
 // ams-fs
 #include "Files.hh"
 
@@ -35,6 +38,8 @@ void install_FileManager()
 	old_Read  = (IO_ProcPtr  ) os_trap_table[ _Read  & 0x00FF ];
 	old_Write = (IO_ProcPtr  ) os_trap_table[ _Write & 0x00FF ];
 	
+	initialize();
+	
 	OSTRAP( Open   );  // A000
 	OSTRAP( Close  );  // A001
 	OSTRAP( Read   );  // A002
@@ -44,12 +49,6 @@ void install_FileManager()
 	
 	OSTRAP( FlushVol );  // A013
 	OSTRAP( GetVol   );  // A014
-}
-
-static
-asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 int main( int argc, char** argv )
@@ -68,5 +67,5 @@ int main( int argc, char** argv )
 	
 	install_FileManager();
 	
-	module_suspend();  // doesn't return
+	module_A4_suspend();  // doesn't return
 }
