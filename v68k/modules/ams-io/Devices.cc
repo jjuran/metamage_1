@@ -21,6 +21,27 @@ typedef OSErr (*IODoneProcPtr)( DCtlEntry* dce : __A1, OSErr err : __D0 );
 IODoneProcPtr JIODone : 0x08FC;
 
 
+static inline
+asm void call_completion_routine( void* pb : __A0,
+                                  short err : __D0,
+                                  void* proc : __A1 )
+{
+	JSR      (A1)
+}
+
+static
+OSErr IOComplete( IOParam* pb : __A0, OSErr err : __D0 )
+{
+	pb->ioResult = err;
+	
+	if ( pb->ioCompletion )
+	{
+		call_completion_routine( pb, err, pb->ioCompletion );
+	}
+	
+	return pb->ioResult;
+}
+
 static
 OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 {
@@ -30,9 +51,7 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 	
 	IOParam* pb = (IOParam*) head;
 	
-	pb->ioResult = err;
-	
-	return pb->ioResult;
+	return IOComplete( pb, err );
 }
 
 short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
@@ -98,7 +117,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( h == NULL )
 	{
-		return pb->ioResult = unitEmptyErr;
+		return IOComplete( pb, unitEmptyErr );
 	}
 	
 	DCtlEntry* dce = *h;
@@ -107,7 +126,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( drvr == NULL )
 	{
-		return pb->ioResult = badUnitErr;
+		return IOComplete( pb, badUnitErr );
 	}
 	
 	uint8_t command = trap_word;
@@ -125,7 +144,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 			OSErr:   -19     -20     -17     -18
 		*/
 		
-		return (bit ^ 1) - 20;
+		return IOComplete( pb, (bit ^ 1) - 20 );
 	}
 	
 	if ( ! immed )
