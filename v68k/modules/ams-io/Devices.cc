@@ -62,6 +62,19 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 
 short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
+	const int noQueueMask   = 1 << noQueueBit;
+	const int asyncTrapMask = 1 << asyncTrpBit;
+	
+	pb->ioTrap = trap_word;
+	
+	const short immed = trap_word & noQueueMask;
+	const short async = trap_word & asyncTrapMask;
+	
+	if ( ! async )
+	{
+		pb->ioCompletion = NULL;
+	}
+	
 	DCtlHandle h = GetDCtlEntry( pb->ioRefNum );
 	
 	if ( h == NULL )
