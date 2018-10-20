@@ -11,8 +11,15 @@
 #endif
 
 // Standard C
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+
+// ams-common
+#include "module_A4.hh"
+
+// ams-fs
+#include "freemount.hh"
 
 
 #define VOLNAME  "\p" "Macintosh HD"
@@ -51,6 +58,12 @@ Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
+
+static inline
+void fast_memcpy( void* dst, const void* src, size_t n )
+{
+	BlockMoveData( src, dst, n );
+}
 
 static inline
 short FCB_index( const FCB* fcb )
@@ -143,7 +156,63 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return old_Open( trap_word, (FileParam*) pb );
 	}
 	
-	return pb->ioResult = extFSErr;
+	StringPtr name = pb->ioNamePtr;
+	
+	if ( ! name )
+	{
+		return pb->ioResult = bdNamErr;
+	}
+	
+	temp_A4 a4;
+	
+	size_t len = name[ 0 ];
+	
+	char path[ 256 + 5 ];
+	
+	fast_memcpy( path, name + 1, len );
+	path[ len ] = '\0';
+	
+	plus::var_string file_data;
+	
+	int err = try_to_get( path, len, file_data );
+	
+	if ( err == -EISDIR )
+	{
+		fast_memcpy( path + len, "/data", 5 );
+		
+		err = try_to_get( path, len + 5, file_data );
+	}
+	
+	if ( err < 0 )
+	{
+		return pb->ioResult = fnfErr;  // TODO:  Check for other errors.
+	}
+	
+	if ( FCB* fcb = find_next_empty_FCB() )
+	{
+		const size_t size = file_data.size();
+		
+		if ( void* buffer = malloc( size ) )
+		{
+			BlockMoveData( file_data.data(), buffer, size );
+			
+			fcb->fileNum = -1;  // Claim the FCB as in use.
+			
+			fcb->lEOF =
+			fcb->pEOF = size;
+			fcb->mark = 0;
+			
+			fcb->buffer = (Ptr) buffer;
+			
+			pb->ioRefNum = FCB_index( fcb );
+			
+			return pb->ioResult = noErr;
+		}
+		
+		return pb->ioResult = memFullErr;
+	}
+	
+	return pb->ioResult = tmfoErr;
 }
 
 short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
@@ -177,6 +246,15 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		// it's a driver
 		
 		return old_Close( trap_word, pb );
+	}
+	
+	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
+	{
+		free( fcb->buffer );
+		
+		fcb->fileNum = 0;
+		
+		return pb->ioResult = noErr;
 	}
 	
 	return pb->ioResult = rfNumErr;
