@@ -47,10 +47,14 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	void DTInstall( DeferredTask& dtTaskPtr )
 	{
 		Mac::ThrowOSStatus( ::DTInstall( &dtTaskPtr ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterDeferredTaskManagerErrors()
 	{

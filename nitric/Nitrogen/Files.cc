@@ -25,8 +25,14 @@
 #include "debug/assert.hh"
 
 
+#ifndef __APPLE__
+typedef SInt16 FSIORefNum;
+#endif
+
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	CInfoPBRec&
 	//
@@ -45,6 +51,8 @@ namespace nucleus
 		
 		return pb;
 	}
+	
+#endif  // #if ! __LP64__
 	
 }
 
@@ -75,6 +83,8 @@ namespace Nitrogen
 #pragma force_active reset
 #endif
 	
+	
+#if ! __LP64__
 	
 	static inline OSErr FixedAsyncResult( OSErr err, const HParamBlockRec& pb )
 	{
@@ -557,6 +567,8 @@ namespace Nitrogen
       return result;
      }
 
+#endif  // #if ! __LP64__
+	
 /*
 Return Value
 	A result code. See "File Manager Result Codes".
@@ -579,11 +591,15 @@ Return Value
       (void) ::FSDeleteObject( &ref );
      }
 
+#if ! __LP64__
+	
    void FileSystemDisposer::operator()( const FSSpec& spec ) const
      {
       (void) ::FSpDelete( &spec );
      }
    
+#endif  // #if ! __LP64__
+	
    
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
                                                    UniCharCount         nameLength,
@@ -917,7 +933,7 @@ Return Value
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions )
      {
-      SInt16 result;
+      FSIORefNum result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
       return nucleus::owned<FSForkRefNum>::seize( FSForkRefNum( result ) );
      }
@@ -1066,7 +1082,7 @@ Return Value
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkRefNum desiredRefNum )
      {
       FSGetForkCBInfo_Result result;
-      SInt16 actualRefNum;
+      FSIORefNum actualRefNum;
       ThrowOSStatus( ::FSGetForkCBInfo( desiredRefNum,
                                         0,
                                         0,
@@ -1082,7 +1098,7 @@ Return Value
                                            FSForkIterator& iterator )
      {
       FSGetForkCBInfo_Result result;
-      SInt16 actualRefNum;
+      FSIORefNum actualRefNum;
       SInt16 realIterator = iterator;
       ThrowOSStatus( ::FSGetForkCBInfo( 0,
                                         volume,
@@ -1180,16 +1196,20 @@ Return Value
      }
 	
 	
+#if ! __LP64__
+	
 	static void PBHGetVInfoSync( HParamBlockRec& pb )
 	{
 		ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 	}
 	
+#endif  // #if ! __LP64__
+	
 	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
 	{
-	#if TARGET_CPU_PPC
+	#if ! TARGET_CPU_68K
 		
-		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  ::FSGetVolumeInfo != NULL )
+		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  &::FSGetVolumeInfo )
 		{
 			FSVolumeRefNum result;
 			FSGetVolumeInfo( volumeIndex,
@@ -1204,6 +1224,8 @@ Return Value
 		
 	#endif
 		{
+		#if ! __LP64__
+			
 			HParamBlockRec pb;
 			
 			pb.volumeParam.ioNamePtr = NULL;
@@ -1213,6 +1235,8 @@ Return Value
 			PBHGetVInfoSync( pb );
 			
 			return FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+			
+		#endif
 		}
 	}
 

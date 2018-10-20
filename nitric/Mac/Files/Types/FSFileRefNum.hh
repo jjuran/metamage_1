@@ -38,6 +38,8 @@ namespace Mac
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< Mac::FSFileRefNum >
 	{
 		typedef Mac::FSFileRefNum  argument_type;
@@ -48,6 +50,8 @@ namespace nucleus
 			::FSClose( file );
 		}
 	};
+	
+#endif
 	
 }
 

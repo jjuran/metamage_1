@@ -97,12 +97,16 @@ namespace Nitrogen
 //	Boolean KCIsInteractionAllowed ( void );
 	using ::KCIsInteractionAllowed;
 	
+#if ! __LP64__
+	
 	inline nucleus::owned<KCRef> KCMakeKCRefFromFSSpec ( const FSSpec &spec ) {
 		(void) KeychainErrorsRegistrationDependency();
 		KCRef	result;
 		Mac::ThrowOSStatus ( ::KCMakeKCRefFromFSSpec ( const_cast <FSSpec *> ( &spec ), &result ));
   	    return nucleus::owned<KCRef>::seize( result );
 		}
+	
+#endif  // #if ! __LP64__
 	
 	inline nucleus::owned<KCRef> KCMakeKCRefFromAlias ( AliasHandle keychainAlias ) {
 		(void) KeychainErrorsRegistrationDependency();

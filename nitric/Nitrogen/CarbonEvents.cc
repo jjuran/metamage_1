@@ -122,7 +122,7 @@ namespace Nitrogen
                                                void *            outData )
      {
       ::EventParamType outActualType;
-      UInt32 outActualSize;
+      ByteCount outActualSize;
 
 
       ThrowOSStatus( ::GetEventParameter( inEvent,
@@ -203,10 +203,14 @@ namespace Nitrogen
         }
      }
 
+#if ! __LP64__
+
    void InstallStandardEventHandler( EventTargetRef inTarget )
      {
       ThrowOSStatus( ::InstallStandardEventHandler( inTarget ) );
      }
+
+#endif  // #if ! __LP64__
 
    void RemoveEventHandler( nucleus::owned<EventHandlerRef> inHandlerRef )
      {
@@ -263,6 +267,8 @@ namespace Nitrogen
      }
   }
 
+#if ! __LP64__
+
 namespace Test
 {
 	
@@ -286,3 +292,5 @@ namespace Test
 	}
 	
 }
+
+#endif  // #if ! __LP64__

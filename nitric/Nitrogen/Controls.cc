@@ -47,6 +47,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	ControlRef NewControl( WindowRef         owningWindow,
 	                       const Rect&       boundsRect, 
 	                       ConstStr255Param  controlTitle,
@@ -185,6 +187,8 @@ namespace Nitrogen
       return tracks;
      }
 
+#endif  // #if ! __LP64__
+	
    void RegisterControlManagerErrors()
      {
       RegisterOSStatus< memFullErr                   >();

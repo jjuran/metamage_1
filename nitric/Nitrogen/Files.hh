@@ -115,11 +115,15 @@
 
 #undef PBGetCatInfo
 
+#if ! __LP64__
+	
 inline OSErr PBGetCatInfo( CInfoPBRec* pb, Boolean async )
 {
 	return async ? PBGetCatInfoAsync( pb )
 	             : PBGetCatInfoSync ( pb );
 }
+
+#endif
 
 
 namespace Nitrogen
@@ -309,6 +313,8 @@ namespace Nitrogen
 	
 	// Trivial PBFoo() wrappers
 	
+#if ! __LP64__
+	
 	void PBHOpenDFSync ( HParamBlockRec& pb );
 	void PBHOpenDFAsync( HParamBlockRec& pb );
 	void PBHOpenRFSync ( HParamBlockRec& pb );
@@ -375,12 +381,16 @@ namespace Nitrogen
 	
 	// GetVRefNum
 	
+#endif  // #if ! __LP64__
+	
 	using Mac::FSDirSpec;
 	
 }
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <>
 	struct initializer< CInfoPBRec >
@@ -391,6 +401,8 @@ namespace nucleus
 		                        StringPtr    name,
 		                        SInt16       index );
 	};
+	
+	#endif
 	
 }
 
@@ -428,6 +440,8 @@ namespace Nitrogen
 		}
 	};
 	
+	
+#if ! __LP64__
 	
 	void PBGetCatInfoSync ( CInfoPBRec& pb, FNF_Throws  policy );
 	bool PBGetCatInfoSync ( CInfoPBRec& pb, FNF_Returns policy );
@@ -610,10 +624,14 @@ namespace Nitrogen
 	
 	FSSpec FSMakeFSSpec( const FSRef& ref );
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <> struct converter< FSSpec, Nitrogen::FSDirSpec >
 	{
@@ -637,10 +655,14 @@ namespace nucleus
 		}
 	};
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	FSSpec FSMakeFSSpec( ConstStr255Param pathname );
 	
@@ -718,10 +740,14 @@ namespace Nitrogen
 	// 5414
 	FSRef FSpMakeFSRef( const FSSpec& );
 	
+#endif  // #if ! __LP64__
+	
 }
 
 namespace nucleus
 {
+	
+#if ! __LP64__
 	
 	template <> struct converter< FSRef, FSSpec >
 	{
@@ -733,6 +759,8 @@ namespace nucleus
 			return Nitrogen::FSpMakeFSRef( spec );
 		}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 
@@ -1025,9 +1053,13 @@ namespace Nitrogen
 	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoDataSizes > : ForkSizes_FSCatalogInfoBit_Traits< &FSCatalogInfo::dataLogicalSize, &FSCatalogInfo::dataPhysicalSize > {};
 	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoRsrcSizes > : ForkSizes_FSCatalogInfoBit_Traits< &FSCatalogInfo::rsrcLogicalSize, &FSCatalogInfo::rsrcPhysicalSize > {};
 
+#if ! __LP64__
+	
 	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoPermissions  > : Array_FSCatalogInfoBit_Traits< Permissions,   ::UInt32, 4, &FSCatalogInfo::permissions,   &Permissions::permissions     > {};
 	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderInfo   > : Array_FSCatalogInfoBit_Traits< FinderInfo,    ::UInt8, 16, &FSCatalogInfo::finderInfo,    &FinderInfo::finderInfo       > {};
 	template <> struct FSCatalogInfoBit_Traits< kFSCatInfoFinderXInfo  > : Array_FSCatalogInfoBit_Traits< ExtFinderInfo, ::UInt8, 16, &FSCatalogInfo::extFinderInfo, &ExtFinderInfo::extFinderInfo > {};
+	
+#endif  // #if ! __LP64__
 	
 #endif
 	
@@ -1067,6 +1099,8 @@ namespace Nitrogen
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct converter< FSSpec, FSRef >
 	{
 		typedef FSRef   argument_type;
@@ -1088,6 +1122,8 @@ namespace nucleus
 			return Nitrogen::FSpMake_FSDirSpec( Nitrogen::FSMakeFSSpec( ref ) );
 		}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 
@@ -1973,6 +2009,8 @@ namespace nucleus
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	template < class VolumeIter >
 	FSSpec DTGetAPPL( Mac::FSCreator signature, VolumeIter begin, VolumeIter end )
 	{
@@ -2009,6 +2047,8 @@ namespace Nitrogen
 	{
 		return DTGetAPPL( signature, Volumes().begin(), Volumes().end() );
 	}
+	
+#endif  // #if ! __LP64__
 	
 }
 

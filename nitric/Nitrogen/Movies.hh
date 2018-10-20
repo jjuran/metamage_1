@@ -55,8 +55,6 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( QuickTime );
 	
-	using ::Movie;
-	
 	enum MovieFileRefNum
 	{
 		kMovieFileRefNum_Max = nucleus::enumeration_traits< SInt16 >::max
@@ -80,6 +78,8 @@ namespace Nitrogen
 	NUCLEUS_DEFINE_FLAG_OPS( FullScreenFlags )
 	
 }
+
+#if ! __LP64__
 
 namespace nucleus
 {
@@ -170,5 +170,7 @@ namespace Nitrogen
 	inline void EndFullScreen( nucleus::owned< FullScreenContextPtr > )  {}
 	
 }
+
+#endif  // #if ! __LP64__
 
 #endif

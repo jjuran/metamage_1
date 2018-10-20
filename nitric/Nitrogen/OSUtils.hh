@@ -131,17 +131,20 @@ namespace Nitrogen
 	
 	inline bool IsMetric()  { return ::IsMetric(); }
 	
-	using ::GetSysPPtr;
+#if ! __LP64__
 	
 	void DTInstall( DeferredTask& dtTaskPtr );
+	
+#endif
 	
 	inline MMUMode GetMMUMode()  { return MMUMode( ::GetMMUMode() ); }
 	
 	// SwapMMUMode
 	
-	inline UInt32 Delay( UInt32 ticks )
+	inline
+	unsigned long Delay( unsigned long ticks )
 	{
-		UInt32 finalTicks;
+		unsigned long finalTicks;
 		::Delay( ticks, &finalTicks );
 		
 		return finalTicks;
@@ -154,11 +157,7 @@ namespace Nitrogen
 	// SetA5
 	// InitUtil
 	
-#if !TARGET_CPU_68K
-	
-	using ::MakeDataExecutable;
-	
-#endif
+#if ! __LP64__
 	
 	inline void ReadLocation ( MachineLocation      & loc )  { ::ReadLocation ( &loc ); }
 	inline void WriteLocation( MachineLocation const& loc )  { ::WriteLocation( &loc ); }
@@ -171,6 +170,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	using ::TickCount;
 	

@@ -23,8 +23,10 @@
 #ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
 #endif
+#if ! __LP64__
 #ifndef __TSMTE__
 #include <TSMTE.h>
+#endif
 #endif
 
 // nucleus
@@ -97,7 +99,9 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlUserPaneKeyDownProcTag                 >: nucleus::POD_scribe    < ControlUserPaneKeyDownUPP     > {};
    template<> struct ControlData_Traits< kControlUserPaneActivateProcTag                >: nucleus::POD_scribe    < ControlUserPaneActivateUPP    > {};
    template<> struct ControlData_Traits< kControlUserPaneFocusProcTag                   >: nucleus::POD_scribe    < ControlUserPaneFocusUPP       > {};
+#if ! __LP64__
    template<> struct ControlData_Traits< kControlUserPaneBackgroundProcTag              >: nucleus::POD_scribe    < ControlUserPaneBackgroundUPP  > {};
+#endif
 
    template<> struct ControlData_Traits< kControlEditTextTextTag                        >: nucleus::string_scribe                                   {};
    template<> struct ControlData_Traits< kControlEditTextTEHandleTag                    >: nucleus::POD_scribe    < TEHandle                      > {};
@@ -107,8 +111,10 @@ namespace Nitrogen
    template<> struct ControlData_Traits< kControlEditTextLockedTag                      >: Mac::Boolean_scribe                                      {};
    template<> struct ControlData_Traits< kControlEditTextFixedTextTag                   >: nucleus::string_scribe                                   {};
    template<> struct ControlData_Traits< kControlEditTextValidationProcTag              >: nucleus::POD_scribe    < ControlEditTextValidationUPP  > {};
+#if ! __LP64__
    template<> struct ControlData_Traits< kControlEditTextInlinePreUpdateProcTag         >: nucleus::POD_scribe    < TSMTEPreUpdateUPP             > {};
    template<> struct ControlData_Traits< kControlEditTextInlinePostUpdateProcTag        >: nucleus::POD_scribe    < TSMTEPostUpdateUPP            > {};
+#endif
    template<> struct ControlData_Traits< kControlEditTextCFStringTag                    >: nucleus::seizing_POD_scribe< CFStringRef                   > {};
    template<> struct ControlData_Traits< kControlEditTextPasswordCFStringTag            >: nucleus::seizing_POD_scribe< CFStringRef                   > {};
    

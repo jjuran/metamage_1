@@ -32,7 +32,7 @@
 namespace nucleus
 {
 	
-#if OPAQUE_TOOLBOX_STRUCTS
+#if OPAQUE_TOOLBOX_STRUCTS  &&  ! __LP64__
 	
 	template <> struct disposer< WindowRef >
 	{

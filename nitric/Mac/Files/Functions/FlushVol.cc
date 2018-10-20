@@ -12,6 +12,8 @@
 namespace Mac
 {
 	
+#if ! __LP64__
+	
 	void FlushVol( ConstStr63Param volName )
 	{
 		ThrowOSStatus( ::FlushVol( volName, 0 ) );
@@ -21,5 +23,13 @@ namespace Mac
 	{
 		ThrowOSStatus( ::FlushVol( NULL, vRefNum ) );
 	}
+	
+#else
+	
+	void dummy()
+	{
+	}
+	
+#endif
 	
 }

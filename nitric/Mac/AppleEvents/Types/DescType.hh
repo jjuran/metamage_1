@@ -71,7 +71,13 @@ namespace Mac
 		typeType                   = ::typeType,
 		typeAppParameters          = ::typeAppParameters,
 		typeProperty               = ::typeProperty,
+		
+	#if ! __LP64__
+		
 		typeFSS                    = ::typeFSS,
+		
+	#endif
+		
 		typeFSRef                  = ::typeFSRef,
 		typeFileURL                = ::typeFileURL,
 		typeKeyword                = ::typeKeyword,

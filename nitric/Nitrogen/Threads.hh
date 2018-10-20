@@ -434,12 +434,18 @@ namespace Nitrogen
 	                       std::size_t  numToCreate,
 	                       std::size_t  stackSize );
 	
+#if ! __LP64__
+	
 	std::size_t GetFreeThreadCount( ThreadStyle threadStyle );
 	
 	std::size_t GetSpecificFreeThreadCount( ThreadStyle  threadStyle,
 	                                        std::size_t  stackSize );
 	
+#endif  // #if ! __LP64__
+	
 	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle );
+	
+#if ! __LP64__
 	
 	inline std::size_t ThreadCurrentStackSpace( ThreadID thread )
 	{
@@ -449,6 +455,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void DisposeThread( nucleus::owned< ThreadID >  thread,
 	                    void*              threadResult,

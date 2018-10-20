@@ -114,6 +114,8 @@ namespace Nitrogen
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <>
 	struct initializer< ProcessInfoRec >
 	{
@@ -138,16 +140,22 @@ namespace nucleus
 		}
 	};
 	
+#endif
+	
 }
 
 namespace Nitrogen
 {
+	
+#if ! __LP64__
 	
 	// Nitrogen accessors, since no Carbon accessors exist
 	inline FSSpec GetProcessInfoAppSpec( const ProcessInfoRec& processInfo )
 	{
 		return *processInfo.processAppSpec;
 	}
+	
+#endif
 	
 	ProcessSerialNumber GetCurrentProcess();
 	

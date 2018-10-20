@@ -168,6 +168,8 @@ namespace Nitrogen
   	    return nucleus::owned<HIObjectRef>::seize( retVal );
 		}
 	
+#if ! __LP64__
+	
 /*	extern Boolean HIObjectIsAccessibilityIgnored(HIObjectRef inObject) */
 	using ::HIObjectIsAccessibilityIgnored;
 
@@ -175,6 +177,8 @@ namespace Nitrogen
 		(void) HIObjectErrorsRegistrationDependency();
 		Mac::ThrowOSStatus ( ::HIObjectSetAccessibilityIgnored ( inObject, inIgnored ));
 		}
+#endif  // #if ! __LP64__
+	
 	}
 
 #endif /* NITROGEN_HIOBJECT_HH */

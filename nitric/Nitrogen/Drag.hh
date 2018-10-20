@@ -51,6 +51,8 @@ namespace Nitrogen
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( DragManager );
 	
 	
+#if ! __LP64__
+	
 	enum DragItemRef
 	{
 		kDragItemRef_Max = nucleus::enumeration_traits< ::DragItemRef >::max
@@ -414,6 +416,8 @@ namespace Nitrogen
                     Point            zoomDistance,
                     SInt16           zoomSteps,
                     ZoomAcceleration acceleration );
+#endif  // #if ! __LP64__
+	
   }
  
 #endif

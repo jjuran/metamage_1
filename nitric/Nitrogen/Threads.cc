@@ -112,6 +112,8 @@ namespace Nitrogen
 		ThrowOSStatus( ::CreateThreadPool( threadStyle, numToCreate, stackSize ) );
 	}
 	
+#if ! __LP64__
+	
 	std::size_t GetFreeThreadCount( ThreadStyle threadStyle )
 	{
 		SInt16 result;
@@ -128,6 +130,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	std::size_t GetDefaultThreadStackSize( ThreadStyle threadStyle )
 	{

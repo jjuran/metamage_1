@@ -38,6 +38,8 @@ namespace Mac
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< Mac::MenuID >
 	{
 		typedef Mac::MenuID  argument_type;
@@ -48,6 +50,8 @@ namespace nucleus
 			::DeleteMenu( id );
 		}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 

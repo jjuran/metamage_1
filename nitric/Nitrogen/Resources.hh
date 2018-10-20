@@ -305,6 +305,8 @@ namespace Nitrogen
 	
 	void SetResFileAttrs( ResFileRefNum refNum, ResFileAttributes attrs );
 	
+#if ! __LP64__
+	
 	// OpenRFPerm     -- not implemented; use FSpOpenRF
 	// RGetResource
 	// HOpenResFile   -- not implemented; use FSpOpenResFile
@@ -324,6 +326,8 @@ namespace Nitrogen
 	{
 		FSpCreateResFile( spec, signature.creator, signature.type, scriptTag );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	// ReadPartialResource
 	// WritePartialResource

@@ -39,6 +39,8 @@ namespace Nitrogen {
 	static HIViewErrorsRegistration theRegistration;
 	
 	
+#if ! __LP64__
+	
 	HIViewCreateOffscreenImage_Result HIViewCreateOffscreenImage ( HIViewRef inView, OptionBits inOptions ) {
 		HIViewCreateOffscreenImage_Result retVal;
 		CGImageRef	returnedCG;
@@ -79,6 +81,8 @@ namespace Nitrogen {
 		cinfo.u.imageRef	= imageRef;	/* It's a union */
 		ThrowOSStatus ( ::HISegmentedViewSetSegmentImage ( inSegmentedView, inSegmentIndexOneBased, &cinfo ));
 		}
+	
+#endif  // #if ! __LP64__
 	
 #if 0
 	template < nucleus::owned<CGImageRef> > HISegmentedViewCopySegmentImage ( HIViewRef inSegmentedView, UInt32 inSegmentIndexOneBased ) {

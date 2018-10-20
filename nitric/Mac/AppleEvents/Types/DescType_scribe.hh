@@ -134,7 +134,13 @@ namespace Mac
 	template <> struct DescType_scribe< type128BitFloatingPoint >    : type_< nucleus::POD_scribe< long double > > {};
 	
 	template <> struct DescType_scribe< typeEventRecord         > : type_< nucleus::POD_scribe< EventRecord         > > {};
+	
+#if ! __LP64__
+	
 	template <> struct DescType_scribe< typeFSS                 > : type_< nucleus::POD_scribe< FSSpec              > > {};
+	
+#endif
+	
 	template <> struct DescType_scribe< typeFSRef               > : type_< nucleus::POD_scribe< FSRef               > > {};
 	template <> struct DescType_scribe< typeQDRectangle         > : type_< nucleus::POD_scribe< Rect                > > {};
 	template <> struct DescType_scribe< typeProcessSerialNumber > : type_< nucleus::POD_scribe< ProcessSerialNumber > > {};

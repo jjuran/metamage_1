@@ -49,6 +49,8 @@ namespace Nitrogen
 	
 	void RegisterListManagerErrors();
 	
+#if ! __LP64__
+	
 	// 436
 	nucleus::owned< ListHandle > LNew( const Rect&        rView,
 	                                   const ListBounds&  dataBounds,
@@ -172,6 +174,8 @@ namespace Nitrogen
 	
 	// 1281
 	ListBounds GetListDataBounds( ListHandle list );
+	
+#endif  // #if ! __LP64__
 	
 }
 

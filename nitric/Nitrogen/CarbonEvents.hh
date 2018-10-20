@@ -95,6 +95,8 @@
      }
 #endif
 
+#if ! __LP64__
+
 #ifdef InstallWindowEventHandler
    #undef InstallWindowEventHandler
    inline OSStatus InstallWindowEventHandler( WindowRef              inTarget,
@@ -149,6 +151,8 @@
      }
 #endif
 
+#endif  // #if ! __LP64__
+
 #ifdef HIViewInstallEventHandler
    #undef HIViewInstallEventHandler
    inline OSStatus HIViewInstallEventHandler( HIViewRef              inTarget,
@@ -174,6 +178,8 @@
       return SendEventToEventTarget( inEvent, GetApplicationEventTarget() );
      }
 #endif
+
+#if ! __LP64__
 
 #ifdef SendEventToWindow
    #undef SendEventToWindow
@@ -206,6 +212,8 @@
       return SendEventToEventTarget( inEvent, GetUserFocusEventTarget() );
      }
 #endif
+
+#endif  // #if ! __LP64__
 
 namespace Nitrogen
 {
@@ -888,8 +896,10 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassAppleEvent, kEventAppleEvent,             kEventParamAEEventClass >: Basic_EventParameter_Traits< Mac::typeType,                    true,  false >{};
    template <> struct EventParameter_Traits< kEventClassAppleEvent, kEventAppleEvent,             kEventParamAEEventID    >: Basic_EventParameter_Traits< Mac::typeType,                    true,  false >{};
 
+#if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowUpdate,                kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDrawContent,           kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
+#endif  // #if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowActivated,             kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDeactivated,           kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowGetClickActivation,    kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
@@ -916,6 +926,7 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowResizeCompleted,       kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragStarted,           kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowDragCompleted,         kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
+#if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamMouseLocation           >: Basic_EventParameter_Traits< Mac::typeHIPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickDragRgn,          kEventParamMouseButton             >: Basic_EventParameter_Traits< Mac::typeMouseButton,             true,  false >{};
@@ -988,6 +999,7 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletEventType         >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletPointRec          >: Basic_EventParameter_Traits< Mac::typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowClickStructureRgn,     kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< Mac::typeTabletProximityRec,      true,  false >{};
+#endif  // #if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamMouseLocation           >: Basic_EventParameter_Traits< Mac::typeQDPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowCursorChange,          kEventParamKeyModifiers            >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
@@ -1016,6 +1028,7 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamAttributes              >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamWindowRegionCode        >: Basic_EventParameter_Traits< Mac::typeWindowRegionCode,        true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowConstrain,             kEventParamRgnHandle               >: Basic_EventParameter_Traits< Mac::typeQDRgnHandle,             true,  false >{};
+#if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamMouseLocation           >: Basic_EventParameter_Traits< Mac::typeHIPoint,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamKeyModifiers            >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
@@ -1025,6 +1038,7 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletEventType         >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletPointRec          >: Basic_EventParameter_Traits< Mac::typeTabletPointRec,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowHandleContentClick,    kEventParamTabletProximityRec      >: Basic_EventParameter_Traits< Mac::typeTabletProximityRec,      true,  false >{};
+#endif  // #if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowProxyBeginDrag,        kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowProxyEndDrag,          kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassWindow, kEventWindowFocusAcquired,         kEventParamDirectObject            >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
@@ -1142,11 +1156,13 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlDraw,                       kEventParamDirectObject                   >: Basic_EventParameter_Traits< Mac::typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlDraw,                       kEventParamControlPart                    >: Basic_EventParameter_Traits< Mac::typeControlPartCode,         true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlDraw,                       kEventParamGrafPort                       >: Basic_EventParameter_Traits< Mac::typeGrafPtr,                 true,  false >{};
+#if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamDirectObject                   >: Basic_EventParameter_Traits< Mac::typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlSubControl              >: Basic_EventParameter_Traits< Mac::typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlDrawDepth               >: Basic_EventParameter_Traits< Mac::typeSInt16,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamControlDrawInColor             >: Basic_EventParameter_Traits< Mac::typeBoolean,                 true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyBackground,            kEventParamGrafPort                       >: Basic_EventParameter_Traits< Mac::typeGrafPtr,                 true,  false >{};
+#endif  // #if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamDirectObject                   >: Basic_EventParameter_Traits< Mac::typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamControlSubControl              >: Basic_EventParameter_Traits< Mac::typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlApplyTextColor,             kEventParamControlDrawDepth               >: Basic_EventParameter_Traits< Mac::typeSInt16,                  true,  false >{};
@@ -1223,10 +1239,12 @@ namespace Nitrogen
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamAttributes                     >: Basic_EventParameter_Traits< Mac::typeUInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamControlOriginalOwningWindow    >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlOwningWindowChanged,        kEventParamControlCurrentOwningWindow     >: Basic_EventParameter_Traits< Mac::typeWindowRef,               true,  false >{};
+#if ! __LP64__
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlArbitraryMessage,           kEventParamDirectObject                   >: Basic_EventParameter_Traits< Mac::typeControlRef,              true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlArbitraryMessage,           kEventParamControlMessage                 >: Basic_EventParameter_Traits< Mac::typeSInt16,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlArbitraryMessage,           kEventParamControlParam                   >: Basic_EventParameter_Traits< Mac::typeSInt32,                  true,  false >{};
    template <> struct EventParameter_Traits< kEventClassControl, kEventControlArbitraryMessage,           kEventParamControlResult                  >: Basic_EventParameter_Traits< Mac::typeSInt32,                  false, true  >{};
+#endif  // #if ! __LP64__
 
    template <> struct EventParameter_Traits< kEventClassVolume, kEventVolumeMounted,   kEventParamDirectObject >: Basic_EventParameter_Traits< Mac::typeFSVolumeRefNum,          true,  false >{};
    template <> struct EventParameter_Traits< kEventClassVolume, kEventVolumeUnmounted, kEventParamDirectObject >: Basic_EventParameter_Traits< Mac::typeFSVolumeRefNum,          true,  false >{};
@@ -1267,13 +1285,6 @@ namespace Nitrogen
                                RefCon              inUserData,
                                EventHandlerUPP     userUPP );
    
-   using ::GetWindowEventTarget;
-   using ::GetControlEventTarget;
-   using ::GetMenuEventTarget;
-   using ::GetApplicationEventTarget;
-   using ::GetUserFocusEventTarget;
-   using ::GetEventDispatcherTarget;
-
   }
 
 namespace nucleus
@@ -2169,6 +2180,8 @@ namespace Nitrogen
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetApplicationEventTarget(), inUserData );
         }
 
+#if ! __LP64__
+
    /* InstallWindowEventHandler */
 
       inline nucleus::owned<EventHandlerRef> InstallWindowEventHandler( WindowRef              window,
@@ -2403,6 +2416,8 @@ namespace Nitrogen
          return InstallEventHandler< eventClass, eventKind, resultParameter, Object, ParameterNames, handler >( GetMenuEventTarget( menu ), inUserData );
         }
 
+#endif  // #if ! __LP64__
+
 
    /* HIViewInstallEventHandler */
 
@@ -2497,8 +2512,6 @@ namespace Nitrogen
    /* ... */
    
    void ProcessHICommand( const HICommand& inCommand );
-   
-   using ::RunApplicationEventLoop;
    
    /* ... */
 

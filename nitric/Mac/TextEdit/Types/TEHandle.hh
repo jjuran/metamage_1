@@ -25,6 +25,8 @@
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <> struct disposer< TEHandle >
 	{
 		typedef TEHandle  argument_type;
@@ -35,6 +37,8 @@ namespace nucleus
 			::TEDispose( hTE );
 		}
 	};
+	
+#endif  // #if ! __LP64__
 	
 }
 

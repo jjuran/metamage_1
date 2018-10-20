@@ -59,6 +59,8 @@ namespace Nitrogen
 	
 }
 
+#if ! __LP64__
+
 namespace nucleus
 {
 	
@@ -144,5 +146,7 @@ namespace Nitrogen
 	};
 	
 }
+
+#endif  // #if ! __LP64__
 
 #endif
