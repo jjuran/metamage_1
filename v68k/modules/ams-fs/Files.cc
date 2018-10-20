@@ -56,7 +56,7 @@ short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	return pb->ioResult = extFSErr;
 }
 
-short Open_patch( short trap_word : __D1, FileParam* pb : __A0 )
+short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	if ( trap_word & kHFSFlagMask )
 	{
@@ -66,7 +66,7 @@ short Open_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	{
 		// maybe a driver
 		
-		return old_Open( trap_word, pb );
+		return old_Open( trap_word, (FileParam*) pb );
 	}
 	
 	return pb->ioResult = extFSErr;
