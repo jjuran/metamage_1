@@ -52,7 +52,7 @@ struct FCBS
 	FCB     fcbs[ kFCBCount ];
 };
 
-static FCBS* FCBSPtr;
+FCBS* FCBSPtr : 0x034E;
 
 Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
