@@ -311,6 +311,8 @@ namespace Nitrogen
 		ResError();
 	}
 	
+#if ! __LP64__
+	
 	nucleus::owned< ResFileRefNum > FSpOpenResFile( const FSSpec& spec, Mac::FSIOPerm permissions )
 	{
 		ResFileRefNum refNum = ResFileRefNum( ::FSpOpenResFile( &spec, permissions ) );
@@ -329,6 +331,8 @@ namespace Nitrogen
 		
 		ResError();
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void FSCreateResourceFile( const Mac::FSRefNameSpec&  file,
 	                           UniCharCount               forkNameLength,

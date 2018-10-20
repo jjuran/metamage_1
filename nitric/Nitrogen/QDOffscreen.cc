@@ -20,6 +20,8 @@
 #include "Mac/Toolbox/Utilities/ThrowOSStatus.hh"
 
 
+#if ! __LP64__
+
 namespace MacGlue
 {
 	
@@ -140,3 +142,11 @@ namespace Nitrogen
 	}
 	
 }
+
+#else
+
+void dummy()
+{
+}
+
+#endif  // #if ! __LP64__

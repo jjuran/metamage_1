@@ -46,6 +46,8 @@ namespace Nitrogen
 #endif
 	
 	
+#if ! __LP64__
+	
 	nucleus::owned< CIconHandle > GetCIcon( ResID iconID )
 	{
 		CIconHandle h = ::GetCIcon( iconID );
@@ -152,6 +154,8 @@ namespace Nitrogen
 		ThrowOSStatus( ::PlotCIconHandle( &rect, align, transform, theCIcon ) );
 	}
 	
+#endif  // #if ! __LP64__
+	
 	void PlotIconRefInContext( CGContextRef       context,
 	                           const CGRect&      rect,
 	                           IconAlignmentType  align,
@@ -180,6 +184,8 @@ namespace Nitrogen
 		return nucleus::owned< IconRef >::seize( result );
 	}
 	
+#if ! __LP64__
+	
 	GetIconRefFromFile_Result GetIconRefFromFile( const FSSpec& theFile )
 	{
 		IconRef icon;
@@ -190,6 +196,8 @@ namespace Nitrogen
 		return GetIconRefFromFile_Result( nucleus::owned< IconRef >::seize( icon ),
 		                                  IconLabel( label ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	nucleus::owned< IconRef > GetIconRef( Mac::FSCreator  creator,
 	                                      Mac::FSType     iconType )
@@ -282,6 +290,8 @@ namespace Nitrogen
 		return nucleus::owned< IconRef >::seize( result );
 	}
 	
+#if ! __LP64__
+	
 	nucleus::owned< IconRef >
 	//
 	RegisterIconRefFromIconFile( Mac::FSCreator  creator,
@@ -297,6 +307,8 @@ namespace Nitrogen
 		
 		return nucleus::owned< IconRef >::seize( result );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterIconManagerErrors()
 	{

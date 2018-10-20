@@ -32,6 +32,8 @@ typedef SInt16 FSIORefNum;
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	CInfoPBRec&
 	//
 	initializer< CInfoPBRec >::operator()( CInfoPBRec&  pb,
@@ -49,6 +51,8 @@ namespace nucleus
 		
 		return pb;
 	}
+	
+#endif  // #if ! __LP64__
 	
 }
 
@@ -79,6 +83,8 @@ namespace Nitrogen
 #pragma force_active reset
 #endif
 	
+	
+#if ! __LP64__
 	
 	static inline OSErr FixedAsyncResult( OSErr err, const HParamBlockRec& pb )
 	{
@@ -561,6 +567,8 @@ namespace Nitrogen
       return result;
      }
 
+#endif  // #if ! __LP64__
+	
 /*
 Return Value
 	A result code. See "File Manager Result Codes".
@@ -583,11 +591,15 @@ Return Value
       (void) ::FSDeleteObject( &ref );
      }
 
+#if ! __LP64__
+	
    void FileSystemDisposer::operator()( const FSSpec& spec ) const
      {
       (void) ::FSpDelete( &spec );
      }
    
+#endif  // #if ! __LP64__
+	
    
    FSCreateFileUnicode_Result FSCreateFileUnicode( const FSRef&         parentRef,
                                                    UniCharCount         nameLength,
@@ -1184,10 +1196,14 @@ Return Value
      }
 	
 	
+#if ! __LP64__
+	
 	static void PBHGetVInfoSync( HParamBlockRec& pb )
 	{
 		ThrowOSStatus( ::PBHGetVInfoSync( &pb ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	FSVolumeRefNum FSGetVolumeRefNum( FSVolumeIndex volumeIndex )
 	{
@@ -1208,6 +1224,8 @@ Return Value
 		
 	#endif
 		{
+		#if ! __LP64__
+			
 			HParamBlockRec pb;
 			
 			pb.volumeParam.ioNamePtr = NULL;
@@ -1217,6 +1235,8 @@ Return Value
 			PBHGetVInfoSync( pb );
 			
 			return FSVolumeRefNum( pb.volumeParam.ioVRefNum );
+			
+		#endif
 		}
 	}
 

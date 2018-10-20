@@ -73,6 +73,8 @@ namespace Nitrogen
 	
 	NUCLEUS_DECLARE_ERRORS_DEPENDENCY( CodeFragmentManager );
 	
+#if ! __LP64__
+	
 	static const Mac::ResID kCFragResourceID = Mac::ResID( ::kCFragResourceID );
 	
 	enum CFragArchitecture
@@ -423,6 +425,8 @@ namespace Nitrogen
 	}
 	
 	// ...
+	
+#endif  // #if ! __LP64__
 	
 }
 

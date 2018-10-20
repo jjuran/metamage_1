@@ -41,6 +41,8 @@ namespace Nitrogen
 	static InterfaceBuilderServicesErrorsRegistration theRegistration;
 	
 	
+#if ! __LP64__
+	
    nucleus::owned< IBNibRef > CreateNibReference( CFStringRef inNibName )
      {
       IBNibRef result;
@@ -84,6 +86,8 @@ namespace Nitrogen
       ThrowOSStatus( ::SetMenuBarFromNib( inNibRef, inName ) );
      }
    
+#endif  // #if ! __LP64__
+	
    void RegisterInterfaceBuilderServicesErrors()
      {
       RegisterOSStatus< memFullErr                               >();

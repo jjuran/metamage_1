@@ -239,6 +239,8 @@ namespace Nitrogen
 		MemError();
 	}
 	
+#if ! __LP64__
+	
 	inline void HPurge( Handle h )
 	{
 		::HPurge( h );
@@ -251,6 +253,8 @@ namespace Nitrogen
 		MemError();
 	}
 	
+#endif
+	
 	inline void HLockHi( Handle h )
 	{
 		::HLockHi( h );
@@ -259,11 +263,15 @@ namespace Nitrogen
 	
 	nucleus::owned< Handle > TempNewHandle( std::size_t size );
 	
+#if ! __LP64__
+	
 	inline void MoveHHi( Handle h )
 	{
 		::MoveHHi( h );
 		MemError();
 	}
+	
+#endif
 	
 	// 1058
 	inline void DisposePtr( nucleus::owned< Ptr > )  {}

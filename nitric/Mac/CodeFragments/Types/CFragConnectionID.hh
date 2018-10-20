@@ -25,6 +25,8 @@
 namespace nucleus
 {
 	
+#if ! __LP64__
+	
 	template <>
 	struct disposer< CFragConnectionID >
 	{
@@ -36,6 +38,8 @@ namespace nucleus
 			::CloseConnection( &connID );
 		}
 	};
+	
+#endif
 	
 }
 

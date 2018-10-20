@@ -76,6 +76,8 @@ namespace nucleus
 			return result;
 		}
 		
+	#if ! __LP64__
+		
 		Mac::FSDirSpec operator()( const ::DirInfo& dirInfo ) const
 		{
 			return operator()( Mac::FSVolumeRefNum( dirInfo.ioVRefNum ),
@@ -86,6 +88,8 @@ namespace nucleus
 		{
 			return operator()( cInfo.dirInfo );
 		}
+		
+	#endif
 	};
 	
 }

@@ -75,6 +75,8 @@ namespace Nitrogen
 		ThrowOSStatus( ::SetFrontProcess( &psn ) );
 	}
 	
+#if ! __LP64__
+	
 	ProcessSerialNumber LaunchApplication( const FSSpec&   file,
 	                                       LaunchFlags     launchFlags,
 	                                       AppParameters*  appParameters )
@@ -95,6 +97,8 @@ namespace Nitrogen
 		return pb.launchProcessSN;
 	}
 	
+#endif  // #if ! __LP64__
+	
 	ProcessSerialNumber GetNextProcess( ProcessSerialNumber process )
 	{
 		ThrowOSStatus( ::GetNextProcess( &process ) );
@@ -110,12 +114,16 @@ namespace Nitrogen
 		return processInfo;
 	}
 	
+#if ! __LP64__
+	
 	ProcessInfoRec GetProcessInformation( const ProcessSerialNumber& process )
 	{
 		ProcessInfoRec processInfo;
 		
 		return GetProcessInformation( process, nucleus::initialize< ProcessInfoRec >( processInfo ) );
 	}
+	
+#endif  // #if ! __LP64__
 	
 	FSRef GetProcessBundleLocation( const ProcessSerialNumber& psn )
 	{
@@ -124,6 +132,8 @@ namespace Nitrogen
 		
 		return location;
 	}
+	
+#if ! __LP64__
 	
 	FSSpec GetProcessAppSpec( const ProcessSerialNumber& process )
 	{
@@ -138,6 +148,8 @@ namespace Nitrogen
 		                                                                  &appSpec ) )
 		);
 	}
+	
+#endif  // #if ! __LP64__
 	
 	void RegisterProcessManagerErrors()
 	{

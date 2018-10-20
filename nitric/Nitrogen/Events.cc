@@ -17,6 +17,8 @@
 namespace Nitrogen
 {
 	
+#if ! __LP64__
+	
 	Point GetMouse()
 	{
 		Point pt;
@@ -84,6 +86,8 @@ namespace Nitrogen
 		
 		return result;
 	}
+	
+#endif  // #if ! __LP64__
 	
 	KeyModifiers GetCurrentKeyModifiers()
 	{
