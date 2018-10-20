@@ -25,6 +25,10 @@
 #include "debug/assert.hh"
 
 
+#ifndef __APPLE__
+typedef SInt16 FSIORefNum;
+#endif
+
 namespace nucleus
 {
 	
@@ -917,7 +921,7 @@ Return Value
                                             const UniChar *forkName,
                                             FSIOPermssn    permissions )
      {
-      SInt16 result;
+      FSIORefNum result;
       ThrowOSStatus( ::FSOpenFork( &ref, forkNameLength, forkName, permissions, &result ) );
       return nucleus::owned<FSForkRefNum>::seize( FSForkRefNum( result ) );
      }
@@ -1066,7 +1070,7 @@ Return Value
    FSGetForkCBInfo_Result FSGetForkCBInfo( FSForkRefNum desiredRefNum )
      {
       FSGetForkCBInfo_Result result;
-      SInt16 actualRefNum;
+      FSIORefNum actualRefNum;
       ThrowOSStatus( ::FSGetForkCBInfo( desiredRefNum,
                                         0,
                                         0,
@@ -1082,7 +1086,7 @@ Return Value
                                            FSForkIterator& iterator )
      {
       FSGetForkCBInfo_Result result;
-      SInt16 actualRefNum;
+      FSIORefNum actualRefNum;
       SInt16 realIterator = iterator;
       ThrowOSStatus( ::FSGetForkCBInfo( 0,
                                         volume,

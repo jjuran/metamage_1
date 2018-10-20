@@ -72,7 +72,7 @@ namespace Nitrogen
 	AESend( const Mac::AppleEvent&  appleEvent,
 	        Mac::AESendMode         sendMode,
 	        Mac::AESendPriority     sendPriority   = Mac::kAENormalPriority,
-	        long                    timeOutInTicks = kAEDefaultTimeout,
+	        SInt32                  timeOutInTicks = kAEDefaultTimeout,
 	        AEIdleUPP               idleProc       = NULL,
 	        AEFilterUPP             filterProc     = NULL );
 	
@@ -92,7 +92,7 @@ namespace Nitrogen
 	}
 	
 	inline bool InvokeAEIdleUPP( EventRecord&  theEvent,
-	                             long&         sleepTime,
+	                             SInt32&       sleepTime,
 	                             RgnHandle&    mouseRgn,
 	                             AEIdleUPP     userUPP )
 	{

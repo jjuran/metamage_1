@@ -122,7 +122,7 @@ namespace Nitrogen
                                                void *            outData )
      {
       ::EventParamType outActualType;
-      UInt32 outActualSize;
+      ByteCount outActualSize;
 
 
       ThrowOSStatus( ::GetEventParameter( inEvent,
