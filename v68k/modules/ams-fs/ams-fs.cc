@@ -16,6 +16,7 @@
 
 // ams-fs
 #include "Files.hh"
+#include "Volumes.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
