@@ -10,9 +10,6 @@
 #include <Files.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 
 #define VOLNAME  "\p" "AMS Made-up Storage"
 
@@ -58,19 +55,28 @@ void mount_virtual_network_volume()
 
 short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
 {
+	if ( DefVCBPtr == NULL )
+	{
+		return pb->ioResult = nsvErr;
+	}
+	
+	const short vRefNum = DefVCBPtr->vcbVRefNum;
+	
 	if ( trap_word & kHFSFlagMask )
 	{
 		pb->ioWDProcID  = 0;
-		pb->ioWDVRefNum = -1;
+		pb->ioWDVRefNum = vRefNum;
 		pb->ioWDDirID   = 2;
 	}
 	
 	if ( pb->ioNamePtr )
 	{
-		memcpy( pb->ioNamePtr, VOLNAME, sizeof VOLNAME );
+		StringPtr name = DefVCBPtr->vcbVN;
+		
+		fast_memcpy( pb->ioNamePtr, name, 1 + name[ 0 ] );
 	}
 	
-	pb->ioVRefNum = -1;
+	pb->ioVRefNum = vRefNum;
 	
 	return pb->ioResult = noErr;
 }
