@@ -70,5 +70,7 @@ int main( int argc, char** argv )
 	
 	install_FileManager();
 	
+	mount_virtual_network_volume();
+	
 	module_A4_suspend();  // doesn't return
 }
