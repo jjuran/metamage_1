@@ -166,6 +166,13 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = bdNamErr;
 	}
 	
+	FCB* fcb = find_next_empty_FCB();
+	
+	if ( fcb == NULL )
+	{
+		return pb->ioResult = tmfoErr;
+	}
+	
 	temp_A4 a4;
 	
 	size_t len = name[ 0 ];
@@ -191,31 +198,26 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = fnfErr;  // TODO:  Check for other errors.
 	}
 	
-	if ( FCB* fcb = find_next_empty_FCB() )
+	const size_t size = file_data.size();
+	
+	if ( void* buffer = malloc( size ) )
 	{
-		const size_t size = file_data.size();
+		BlockMoveData( file_data.data(), buffer, size );
 		
-		if ( void* buffer = malloc( size ) )
-		{
-			BlockMoveData( file_data.data(), buffer, size );
-			
-			fcb->fileNum = -1;  // Claim the FCB as in use.
-			
-			fcb->lEOF =
-			fcb->pEOF = size;
-			fcb->mark = 0;
-			
-			fcb->buffer = (Ptr) buffer;
-			
-			pb->ioRefNum = FCB_index( fcb );
-			
-			return pb->ioResult = noErr;
-		}
+		fcb->fileNum = -1;  // Claim the FCB as in use.
 		
-		return pb->ioResult = memFullErr;
+		fcb->lEOF =
+		fcb->pEOF = size;
+		fcb->mark = 0;
+		
+		fcb->buffer = (Ptr) buffer;
+		
+		pb->ioRefNum = FCB_index( fcb );
+		
+		return pb->ioResult = noErr;
 	}
 	
-	return pb->ioResult = tmfoErr;
+	return pb->ioResult = memFullErr;
 }
 
 static inline
