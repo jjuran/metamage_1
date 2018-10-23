@@ -146,19 +146,9 @@ short Create_patch( short trap_word : __D1, FileParam* pb : __A0 )
 	return pb->ioResult = extFSErr;
 }
 
-short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
+static
+short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 {
-	if ( trap_word & kHFSFlagMask )
-	{
-		// not a driver
-	}
-	else if ( pb->ioNamePtr  &&  *pb->ioNamePtr  &&  pb->ioNamePtr[ 1 ] == '.' )
-	{
-		// maybe a driver
-		
-		return old_Open( trap_word, (FileParam*) pb );
-	}
-	
 	StringPtr name = pb->ioNamePtr;
 	
 	if ( ! name )
@@ -184,7 +174,8 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	plus::var_string file_data;
 	
-	int err = try_to_get( path, len, file_data );
+	int err;
+	err = try_to_get( path, len, file_data );
 	
 	if ( err == -EISDIR )
 	{
@@ -218,6 +209,22 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	}
 	
 	return pb->ioResult = memFullErr;
+}
+
+short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
+	if ( trap_word & kHFSFlagMask )
+	{
+		// not a driver
+	}
+	else if ( pb->ioNamePtr  &&  *pb->ioNamePtr  &&  pb->ioNamePtr[ 1 ] == '.' )
+	{
+		// maybe a driver
+		
+		return old_Open( trap_word, (FileParam*) pb );
+	}
+	
+	return open_fork( trap_word, pb );
 }
 
 static inline
