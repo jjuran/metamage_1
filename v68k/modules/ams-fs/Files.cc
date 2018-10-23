@@ -163,6 +163,8 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = tmfoErr;
 	}
 	
+	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
+	
 	temp_A4 a4;
 	
 	size_t len = name[ 0 ];
@@ -175,11 +177,21 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	plus::var_string file_data;
 	
 	int err;
-	err = try_to_get( path, len, file_data );
 	
-	if ( err == -EISDIR )
+	if ( ! is_rsrc )
 	{
-		fast_memcpy( path + len, "/data", 5 );
+		err = try_to_get( path, len, file_data );
+		
+		if ( err == -EISDIR )
+		{
+			fast_memcpy( path + len, "/data", 5 );
+			
+			err = try_to_get( path, len + 5, file_data );
+		}
+	}
+	else
+	{
+		fast_memcpy( path + len, "/rsrc", 5 );
 		
 		err = try_to_get( path, len + 5, file_data );
 	}
@@ -224,6 +236,11 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return old_Open( trap_word, (FileParam*) pb );
 	}
 	
+	return open_fork( trap_word, pb );
+}
+
+short OpenRF_patch( short trap_word : __D1, IOParam* pb : __A0 )
+{
 	return open_fork( trap_word, pb );
 }
 
