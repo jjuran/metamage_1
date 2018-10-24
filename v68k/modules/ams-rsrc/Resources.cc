@@ -6,6 +6,9 @@
 #include "Resources.hh"
 
 // Mac OS
+#ifndef __FILES__
+#include <Files.h>
+#endif
 #ifndef __MACMEMORY__
 #include <MacMemory.h>
 #endif
@@ -29,19 +32,134 @@
 #include "FCB.hh"
 #include "module_A4.hh"
 
+// ams-rsrc
+#include "rsrc_fork.hh"
+
 
 #define STRLEN( s )  (sizeof "" s - 1)
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 #define PSTR_LEN( s )  "\p" s, (sizeof s - 1)
 
 
-short MemErr    : 0x0220;
-Str31 CurApName : 0x0910;
-short CurMap    : 0x0A5A;
-short ResErr    : 0x0A60;
+short MemErr      : 0x0220;
+Str31 CurApName   : 0x0910;
+Handle TopMapHndl : 0x0A50;
+short CurMap      : 0x0A5A;
+short ResErr      : 0x0A60;
 
-const short memFullErr  = -108;
-const short resNotFound = -192;
+
+typedef rsrc_map_header**  RsrcMapHandle;
+
+
+static inline
+asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
+{
+	DC.W     0xA9E3  // _PtrToHand
+}
+
+static
+short OpenResFile_handler( ConstStr255Param name : __A0 )
+{
+	const short vRefNum = 0;  // default
+	
+	OSErr err;
+	short refNum;
+	
+	err = OpenRF( name, vRefNum, &refNum );
+	
+	if ( err != noErr )
+	{
+		goto bail;
+	}
+	
+	FCB* fcb = get_FCB( refNum );
+	
+	Ptr fork_buffer = fcb->fcbBfAdr;
+	
+	if ( fcb->fcbEOF < 256 )  // TODO
+	{
+		err = eofErr;
+		goto close_and_bail;
+	}
+	
+	rsrc_fork_header& header = *(rsrc_fork_header*) fork_buffer;
+	
+	Ptr start_of_map = fork_buffer + header.offset_to_map;
+	
+	Handle h = PtrToHand( start_of_map, header.length_of_map );
+	
+	if ( h == NULL )
+	{
+		err = MemErr;
+		goto close_and_bail;
+	}
+	
+	RsrcMapHandle rsrc_map = (RsrcMapHandle) h;
+	
+	rsrc_map_header& map = **rsrc_map;
+	
+	map.fork_header = header;
+	map.next_map    = TopMapHndl;
+	map.refnum      = refNum;
+	
+	type_list& types = *(type_list*) (*h + map.offset_to_types);
+	
+	uint16_t n_types_1 = types.count_1;
+	
+	type_header* type = types.list;
+	
+	do
+	{
+		uint16_t n_rsrcs_1 = type->count_1;
+		uint16_t offset    = type->offset;
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
+		
+		do
+		{
+			rsrc->handle = NULL;
+			
+			++rsrc;
+		}
+		while ( n_rsrcs_1-- > 0 );
+		
+		++type;
+	}
+	while ( n_types_1-- > 0 );
+	
+	TopMapHndl = h;
+	
+	return CurMap = refNum;
+	
+	DisposeHandle( h );
+	
+close_and_bail:
+	FSClose( refNum );
+	
+bail:
+	ResErr = err;
+	return -1;
+}
+
+asm
+pascal short OpenResFile_patch( ConstStr255Param name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      OpenResFile_handler
+	MOVE.W   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
 
 pascal void RsrcZoneInit_patch()
 {
