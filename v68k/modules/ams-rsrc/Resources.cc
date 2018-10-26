@@ -59,6 +59,19 @@ asm Handle PtrToHand( const void* p : __A0, long size : __D0 )
 	DC.W     0xA9E3  // _PtrToHand
 }
 
+static inline
+rsrc_header* recover_rsrc_header( Handle resource )
+{
+	const master_pointer& mp = *(const master_pointer*) resource;
+	
+	if ( mp.flags & kHandleIsResourceMask )
+	{
+		return (rsrc_header*) (*(char**) mp.base + mp.offset);
+	}
+	
+	return NULL;
+}
+
 static
 rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 {
@@ -467,8 +480,38 @@ pascal void ReleaseResource_patch( Handle resource )
 	DisposeHandle( resource );
 }
 
+static
+void DetachResource_handler( Handle resource : __A0 )
+{
+	OSErr err = resNotFound;
+	
+	if ( rsrc_header* rsrc = recover_rsrc_header( resource ) )
+	{
+		rsrc->handle = NULL;
+		
+		err = noErr;
+	}
+	
+	ResErr = err;
+}
+
+asm
 pascal void DetachResource_patch( Handle resource )
 {
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      DetachResource_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
 }
 
 pascal long SizeRsrc_patch( Handle resource )
