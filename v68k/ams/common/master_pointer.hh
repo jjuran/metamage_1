@@ -8,8 +8,16 @@
 
 struct master_pointer
 {
-	char*  alloc;
-	long   flags;
+	typedef unsigned char   UInt8;
+	typedef unsigned short  UInt16;
+	typedef unsigned long   UInt32;
+	
+	char*   alloc;
+	UInt8   flags;
+	UInt8   reserved;
+	UInt16  offset;
+	UInt32  type;
+	void*   base;
 };
 
 #endif
