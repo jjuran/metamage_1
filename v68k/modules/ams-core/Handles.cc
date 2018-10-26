@@ -9,6 +9,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// ams-common
+#include "master_pointer.hh"
+
 
 enum
 {
@@ -28,12 +31,6 @@ short MemErr : 0x0220;
 
 const unsigned long Handle_prologue = 0xC7C7C7C7;  // left guillemots
 const unsigned long Handle_epilogue = 0xC8C8C8C8;  // right guillemots
-
-struct master_pointer
-{
-	char*  alloc;
-	long   flags;
-};
 
 struct Handle_header
 {
