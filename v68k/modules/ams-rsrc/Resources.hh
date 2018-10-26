@@ -9,6 +9,7 @@
 pascal void RsrcZoneInit_patch();
 
 pascal short ResError_patch();
+pascal short CurResFile_patch();
 
 pascal char** GetResource_patch( unsigned long type, short id );
 

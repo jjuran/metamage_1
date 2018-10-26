@@ -58,6 +58,11 @@ pascal short ResError_patch()
 	return ResErr;
 }
 
+pascal short CurResFile_patch()
+{
+	return CurMap;
+}
+
 static
 bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 {
