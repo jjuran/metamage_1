@@ -477,6 +477,15 @@ pascal Handle GetNamedResource_patch( ResType type, ConstStr255Param name )
 
 pascal void ReleaseResource_patch( Handle resource )
 {
+	DetachResource_patch( resource );
+	
+	/*
+		TODO:  Check ResErr.
+		
+		For now we call DisposeHandle() unconditionally, so that we
+		don't leak handles owned by non-map resources.
+	*/
+	
 	DisposeHandle( resource );
 }
 
