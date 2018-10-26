@@ -103,6 +103,15 @@ uint8_t* memory_manager::translate( uint32_t               addr,
                                     v68k::function_code_t  fc,
                                     v68k::memory_access_t  access )
 {
+	if ( addr < 0xFFFF0000u )
+	{
+		/*
+			24-bit mode compatibility hack for 32-bit-dirty applications
+		*/
+		
+		addr &= 0x00FFFFFF;
+	}
+	
 	if ( addr >= v68k::alloc::start  &&  addr < v68k::alloc::limit )
 	{
 		return v68k::alloc::translate( addr, length, fc, access );
