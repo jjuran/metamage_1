@@ -17,7 +17,10 @@ void calculate_menu_bar_height()
 {
 	const short default_MBarHeight = 20;
 	
-	MBarHeight = default_MBarHeight;
+	if ( MBarHeight < 0 )
+	{
+		MBarHeight = default_MBarHeight;
+	}
 }
 
 void draw_menu_bar_from_WMgr_port()
