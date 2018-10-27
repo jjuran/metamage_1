@@ -44,6 +44,8 @@ pascal void ShowWindow_patch  ( WindowRecord* window );
 pascal void BringToFront_patch( WindowRecord* window );
 pascal void DrawGrowIcon_patch( WindowRecord* window );
 
+pascal void SendBehind_patch  ( WindowRecord* window, WindowRecord* behind );
+
 pascal void ShowHide_patch    ( WindowRecord* window, unsigned char showFlag );
 pascal void HiliteWindow_patch( WindowRecord* window, unsigned char hilite );
 

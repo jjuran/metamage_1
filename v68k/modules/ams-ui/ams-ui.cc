@@ -95,7 +95,7 @@ void install_Windows()
 	TBTRAP( TrackGoAway   );  // A91E
 	TBTRAP( SelectWindow  );  // A91F
 	TBTRAP( BringToFront  );  // A920
-	
+	TBTRAP( SendBehind    );  // A921
 	TBTRAP( BeginUpdate   );  // A922
 	TBTRAP( EndUpdate     );  // A923
 	TBTRAP( FrontWindow   );  // A924

@@ -627,6 +627,86 @@ pascal void BringToFront_patch( WindowPeek window )
 	CalcVBehind_patch( window, window->strucRgn );
 }
 
+pascal void SendBehind_patch( WindowPeek window, WindowPeek behindWindow )
+{
+	if ( behindWindow != NULL )
+	{
+		if ( window == behindWindow  ||  window == behindWindow->nextWindow )
+		{
+			// SendBehind itself, or the one it's already behind.  Do nothing.
+			return;
+		}
+	}
+	else if ( window->nextWindow == NULL )
+	{
+		// SendBehind all, but window is already last.  Do nothing.
+		return;
+	}
+	
+	const bool was_frontmost = window == WindowList;
+	
+	WindowPeek w = WindowList;
+	
+	while ( w != window )
+	{
+		if ( w == NULL )
+		{
+			// The window to SendBehind isn't in the list.  Bail out.
+			return;
+		}
+		
+		if ( w == behindWindow )
+		{
+			// Sending forward -- just do it, let the caller update the visRgn.
+			
+			remove_from_window_list( window );
+			insert_into_window_list( window, (WindowRef) behindWindow );
+			
+			return;
+		}
+		
+		w = w->nextWindow;
+	}
+	
+	// Found the window.  Remove and reinsert it.
+	
+	w = w->nextWindow;
+	
+	remove_from_window_list( window );
+	insert_into_window_list( window, (WindowRef) behindWindow );
+	
+	// Repaint and recalc the windows in between the two z-order positions.
+	
+	while ( w != window )
+	{
+		PaintOne_patch( w, w->strucRgn );
+		CalcVis_patch( w );
+		
+		w = w->nextWindow;
+	}
+	
+	// Also recalc the lowered window.
+	
+	CalcVis_patch( w );
+	
+	if ( ! was_frontmost )
+	{
+		return;
+	}
+	
+	if ( CurActivate != (WindowRef) window )
+	{
+		CurDeactive = (WindowRef) window;
+	}
+	
+	WindowPeek leader = WindowList;
+	
+	CurActivate = (WindowRef) leader;
+	
+	HiliteWindow_patch( window, false );
+	HiliteWindow_patch( leader, true  );
+}
+
 pascal WindowRef FrontWindow_patch()
 {
 	return (WindowRef) WindowList;
