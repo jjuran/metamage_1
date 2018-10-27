@@ -155,8 +155,6 @@ void remove_from_window_list( WindowPeek window )
 pascal void InitWindows_patch()
 {
 	WindowList = NULL;
-	SaveUpdate = true;
-	PaintWhite = true;
 	
 	WMgrPort = (GrafPtr) NewPtr( sizeof (GrafPort) );
 	
