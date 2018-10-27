@@ -31,6 +31,15 @@
 #include "mac_qd/main_display_bounds.hh"
 
 
+#ifdef __MC68K__
+#define AT( addr )  : addr
+#else
+#define AT( addr )
+#endif
+
+short MBarHeight AT( 0x0BAA );  // only used in v68k for AMS
+
+
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
 
@@ -128,6 +137,11 @@ int main()
 	
 #if ! TARGET_API_MAC_CARBON
 	
+	if ( TARGET_CPU_68K  &&  in_v68k() )
+	{
+		MBarHeight = 0;
+	}
+	
 	InitGraf( &qd.thePort );
 	
 	InitFonts();
@@ -139,8 +153,6 @@ int main()
 	if ( TARGET_CPU_68K  &&  in_v68k() )
 	{
 		HideCursor();
-		
-		FillRect( &qd.screenBits.bounds, &qd.gray );
 	}
 	
 #endif
