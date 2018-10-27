@@ -131,6 +131,7 @@ enum
 	tag_MouseMask_low_word,
 	tag_MouseOffset,
 	tag_MouseOffset_low_word,
+	tag_WWQDExist,
 	tag_JIODone,
 	tag_JIODone_low_word,
 	tag_CurApRefNum,
@@ -227,6 +228,8 @@ void initialize()
 	words[ tag_AE8        ] = 0xFFFF;
 	words[ tag_AE8 + 1    ] = 0xFFFF;
 	words[ tag_MBarHeight ] = 0xFFFF;  // signals to use default menu bar height
+	
+	words[ tag_WWQDExist  ] = 0xFFFF;
 }
 
 static int initialization = (initialize(), 0);
@@ -327,6 +330,7 @@ static const global globals[] =
 	{ 0x08CE, 2,    tag_CrsrNewCouple},  // CrsrNew, CrsrCouple
 	{ 0x08D6, 4,    tag_MouseMask   },
 	{ 0x08DA, 4,    tag_MouseOffset },
+	{ 0x08F2, 2,    tag_WWQDExist   },  // WWExist, QDExist
 	{ 0x08FC, 4,    tag_JIODone     },
 	{ 0x0900, 2,    tag_CurApRefNum },
 	{ 0x0904, 4,    tag_CurrentA5   },
