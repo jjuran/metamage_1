@@ -148,6 +148,7 @@ void initialize_low_memory_globals()
 	CrsrPin = screenBits.bounds;
 	
 	init_lowmem_Cursor();
+	init_cursor();
 }
 
 static
