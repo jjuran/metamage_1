@@ -108,6 +108,17 @@ enum
 
 static uint16_t words[ n_words ];
 
+static
+void initialize()
+{
+	words[ tag_ROM85      ] = -1;  // indicates 64K ROM
+	words[ tag_SaveUpdate ] = -1;  // initially true
+	words[ tag_PaintWhite ] = -1;  // initially true
+	words[ tag_MBarHeight ] = -1;  // signals to use default menu bar height
+}
+
+static int initialization = (initialize(), 0);
+
 struct global
 {
 	uint16_t  addr;
