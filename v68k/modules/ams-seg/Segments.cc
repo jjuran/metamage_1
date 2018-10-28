@@ -183,6 +183,8 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	memcpy( CurApName, appName, 1 + len );
 	
+	RsrcZoneInit();
+	
 	Handle code0 = GetResource( 'CODE', 0 );
 	
 	if ( code0 == NULL )
