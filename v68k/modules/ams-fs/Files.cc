@@ -89,9 +89,6 @@ void initialize()
 	memset( FCBSPtr, '\0', sizeof (FCBS) );
 	
 	FCBSPtr->bufSize = sizeof (FCBS);
-	
-	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
-	FCBSPtr->fcbs[ 1 ].fcbFlNum = -1;  // claim for application resource fork
 }
 
 short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
