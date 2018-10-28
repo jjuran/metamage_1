@@ -63,6 +63,11 @@ pascal short CurResFile_patch()
 	return CurMap;
 }
 
+pascal void UseResFile_patch( short refnum )
+{
+	CurMap = refnum;
+}
+
 static
 bool try_to_get( const char* begin, const char* end, plus::var_string& data )
 {

@@ -11,6 +11,8 @@ pascal void RsrcZoneInit_patch();
 pascal short ResError_patch();
 pascal short CurResFile_patch();
 
+pascal void UseResFile_patch( short refnum );
+
 pascal char** GetResource_patch( unsigned long type, short id );
 
 pascal void ReleaseResource_patch( char** resource );
