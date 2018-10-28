@@ -37,6 +37,12 @@ bool word_aligned( const void* src, const void* dst )
 	return !( ((uint32_t) src | (uint32_t) dst) & 1 );
 }
 
+static
+bool equal_bitmaps( const BitMap* a, const BitMap* b )
+{
+	return a == b  ||  memcmp( a, b, sizeof (BitMap) ) == 0;
+}
+
 template < class Ptr >
 static
 void copy_aligned_sector( Ptr    src,
@@ -489,7 +495,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	
 	GrafPtr saved_port = NULL;
 	
-	if ( dstBits != &qd.thePort->portBits )
+	if ( ! equal_bitmaps( dstBits, &qd.thePort->portBits ) )
 	{
 		saved_port = qd.thePort;
 		
