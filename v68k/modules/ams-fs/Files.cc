@@ -32,16 +32,16 @@ enum
 
 struct FCB
 {
-	long    fileNum;
-	SInt8   flags;
-	SInt8   versNum;
-	UInt16  startBlock;
-	long    lEOF;
-	long    pEOF;
-	long    mark;
-	VCB*    vcb;
-	Ptr     buffer;
-	short   internal;
+	long    fcbFlNum;   // file number
+	SInt8   fcbMdRByt;  // flags
+	SInt8   fcbTypByt;  // version number
+	UInt16  fcbSBlk;    // first allocation block
+	long    fcbEOF;     // logical EOF
+	long    fcbPLen;    // physical EOF
+	long    fcbCrPs;    // mark
+	VCB*    fcbVPtr;    // VCB pointer
+	Ptr     fcbBfAdr;   // buffer address
+	short   fcbFlPos;   // for internal use
 };
 
 enum { kFCBCount = 48 };
@@ -90,7 +90,7 @@ FCB* find_FCB( long fileNum )
 	
 	for ( FCB* it = begin;  it < end;  ++it )
 	{
-		if ( it->fileNum == fileNum )
+		if ( it->fcbFlNum == fileNum )
 		{
 			return it;
 		}
@@ -113,8 +113,8 @@ void initialize()
 	
 	FCBSPtr->bufSize = sizeof (FCBS);
 	
-	FCBSPtr->fcbs[ 0 ].fileNum = -1;  // claim for System resource fork
-	FCBSPtr->fcbs[ 1 ].fileNum = -1;  // claim for application resource fork
+	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
+	FCBSPtr->fcbs[ 1 ].fcbFlNum = -1;  // claim for application resource fork
 }
 
 short GetVol_patch( short trap_word : __D1, WDPBRec* pb : __A0 )
@@ -207,13 +207,13 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		BlockMoveData( file_data.data(), buffer, size );
 		
-		fcb->fileNum = -1;  // Claim the FCB as in use.
+		fcb->fcbFlNum = -1;  // Claim the FCB as in use.
 		
-		fcb->lEOF =
-		fcb->pEOF = size;
-		fcb->mark = 0;
+		fcb->fcbEOF  =
+		fcb->fcbPLen = size;
+		fcb->fcbCrPs = 0;
 		
-		fcb->buffer = (Ptr) buffer;
+		fcb->fcbBfAdr = (Ptr) buffer;
 		
 		pb->ioRefNum = FCB_index( fcb );
 		
@@ -273,7 +273,9 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const short mode = pb->ioPosMode;
 	
-	const size_t eof = fcb->lEOF;
+	const size_t eof = fcb->fcbEOF;
+	
+	long& mark = fcb->fcbCrPs;
 	
 	switch ( pb->ioPosMode )
 	{
@@ -281,15 +283,15 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 			break;
 		
 		case fsFromStart:
-			fcb->mark = pb->ioPosOffset;
+			mark = pb->ioPosOffset;
 			break;
 		
 		case fsFromLEOF:
-			fcb->mark = eof + pb->ioPosOffset;
+			mark = eof + pb->ioPosOffset;
 			break;
 		
 		case fsFromMark:
-			fcb->mark += pb->ioPosOffset;
+			mark += pb->ioPosOffset;
 			break;
 		
 		default:
@@ -302,10 +304,10 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	{
 		long count = min( pb->ioReqCount, eof - pb->ioPosOffset );
 		
-		fast_memcpy( pb->ioBuffer, &fcb->buffer[ fcb->mark ], count );
+		fast_memcpy( pb->ioBuffer, &fcb->fcbBfAdr[ mark ], count );
 		
 		pb->ioActCount = count;
-		pb->ioPosOffset = fcb->mark += count;
+		pb->ioPosOffset = mark += count;
 	}
 	
 	return pb->ioResult = pb->ioActCount == pb->ioReqCount ? noErr : eofErr;
@@ -334,9 +336,9 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
 	{
-		free( fcb->buffer );
+		free( fcb->fcbBfAdr );
 		
-		fcb->fileNum = 0;
+		fcb->fcbFlNum = 0;
 		
 		return pb->ioResult = noErr;
 	}
