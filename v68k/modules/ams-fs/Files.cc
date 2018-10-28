@@ -16,6 +16,7 @@
 #include <string.h>
 
 // ams-common
+#include "FCB.hh"
 #include "module_A4.hh"
 
 // ams-fs
@@ -29,30 +30,6 @@ enum
 {
 	kHFSFlagMask = 0x0200,
 };
-
-struct FCB
-{
-	long    fcbFlNum;   // file number
-	SInt8   fcbMdRByt;  // flags
-	SInt8   fcbTypByt;  // version number
-	UInt16  fcbSBlk;    // first allocation block
-	long    fcbEOF;     // logical EOF
-	long    fcbPLen;    // physical EOF
-	long    fcbCrPs;    // mark
-	VCB*    fcbVPtr;    // VCB pointer
-	Ptr     fcbBfAdr;   // buffer address
-	short   fcbFlPos;   // for internal use
-};
-
-enum { kFCBCount = 48 };
-
-struct FCBS
-{
-	UInt16  bufSize;
-	FCB     fcbs[ kFCBCount ];
-};
-
-FCBS* FCBSPtr : 0x034E;
 
 Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
