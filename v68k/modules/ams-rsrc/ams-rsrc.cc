@@ -39,6 +39,8 @@ void install_ResourceManager()
 	
 	TBTRAP( DetachResource  );  // A992
 	
+	TBTRAP( RsrcZoneInit    );  // A996
+	
 	TBTRAP( GetResource     );  // A9A0
 	TBTRAP( ReleaseResource );  // A9A3
 	

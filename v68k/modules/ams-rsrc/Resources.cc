@@ -26,6 +26,7 @@
 #include "freemount/synced.hh"
 
 // ams-common
+#include "FCB.hh"
 #include "module_A4.hh"
 
 
@@ -35,10 +36,22 @@
 
 short MemErr    : 0x0220;
 Str31 CurApName : 0x0910;
+short CurMap    : 0x0A5A;
 short ResErr    : 0x0A60;
 
 const short memFullErr  = -108;
 const short resNotFound = -192;
+
+pascal void RsrcZoneInit_patch()
+{
+	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
+	FCBSPtr->fcbs[ 1 ].fcbFlNum = -1;  // claim for application resource fork
+	
+	// CurApRefNum is automatically fixed at 2
+	const short CurApRefNum = 2;
+	
+	CurMap = CurApRefNum;
+}
 
 static
 bool try_to_get( const char* begin, const char* end, plus::var_string& data )
