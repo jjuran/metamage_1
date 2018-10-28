@@ -25,6 +25,7 @@ Ptr   CurrentA5    : 0x0904;
 Ptr   CurStackBase : 0x0908;
 Str31 CurApName    : 0x0910;
 short CurJTOffset  : 0x0934;
+short CurPageOption : 0x0936;
 
 Handle AppParmHandle : 0x0AEC;
 
@@ -75,6 +76,7 @@ struct segment_header
 struct LaunchParamBlockRec
 {
 	uint32_t reserved1;
+	uint16_t reserved2;
 	// ...
 };
 
@@ -240,6 +242,8 @@ short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 	}
 	
 	fast_memcpy( CurApName, appName, 1 + len );
+	
+	CurPageOption = pb->reserved2;
 	
 	RsrcZoneInit();
 	
