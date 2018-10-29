@@ -68,6 +68,12 @@ asm void fast_memset( void* mem : __A0, char x :__D1, size_t n : __D0 )
 	JSR      0xFFFFFFD6
 }
 
+static inline
+asm void fast_memnot( void* mem : __A0, size_t n : __D0 )
+{
+	JSR      0xFFFFFFD4
+}
+
 static inline short min( short a, short b )
 {
 	return b < a ? b : a;
@@ -337,12 +343,9 @@ static void invert_rect( const rectangular_op_params& params )
 			*p++ = out | in;
 		}
 		
-		for ( int n = params.draw_bytes;  n > 0;  --n )
-		{
-			*p = ~*p;
-			
-			++p;
-		}
+		fast_memnot( p, params.draw_bytes );
+		
+		p += params.draw_bytes;
 		
 		if ( params.right_mask )
 		{
