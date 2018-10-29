@@ -228,12 +228,10 @@ pascal short OpenResFile_patch( ConstStr255Param name )
 pascal void RsrcZoneInit_patch()
 {
 	FCBSPtr->fcbs[ 0 ].fcbFlNum = -1;  // claim for System resource fork
-	FCBSPtr->fcbs[ 1 ].fcbFlNum = -1;  // claim for application resource fork
 	
 	// CurApRefNum is automatically fixed at 2
-	const short CurApRefNum = 2;
 	
-	CurMap = CurApRefNum;
+	CurMap = OpenResFile_handler( CurApName );
 }
 
 pascal short ResError_patch()
