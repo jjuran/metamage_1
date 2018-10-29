@@ -25,7 +25,7 @@
 #include "debug/assert.hh"
 
 
-#ifndef __APPLE__
+#ifndef MAC_OS_X_VERSION_10_5
 typedef SInt16 FSIORefNum;
 #endif
 
