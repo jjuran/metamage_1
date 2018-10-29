@@ -333,6 +333,15 @@ static void invert_rect( const rectangular_op_params& params )
 {
 	Ptr p = params.start;
 	
+	if ( params.left_mask == 0  &&  params.right_mask == 0 )
+	{
+		if ( params.skip_bytes == 0 )
+		{
+			fast_memnot( p, params.height * params.draw_bytes );
+			return;
+		}
+	}
+	
 	for ( int i = params.height;  i > 0;  --i )
 	{
 		if ( params.left_mask )
