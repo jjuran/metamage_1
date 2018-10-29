@@ -448,6 +448,38 @@ int32_t fast_memset_callout( v68k::processor_state& s )
 }
 
 static
+int32_t fast_memnot_callout( v68k::processor_state& s )
+{
+	const uint32_t mem = s.a(0);
+	
+	const uint32_t n = s.d(0);
+	
+	if ( n == 0 )
+	{
+		return rts;
+	}
+	
+	uint8_t* p = s.mem.translate( mem, n, v68k::user_data_space, v68k::mem_write );
+	
+	if ( p == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* q = p + n;
+	
+	while ( p < q )
+	{
+		*p++ ^= 0xFF;
+	}
+	
+	s.mem.translate( mem, n, v68k::user_data_space, v68k::mem_update );
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -715,6 +747,7 @@ static const function_type the_callouts[] =
 	NULL,
 	
 	&fast_memset_callout,
+	&fast_memnot_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,

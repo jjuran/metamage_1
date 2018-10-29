@@ -46,6 +46,7 @@ enum
 	reserved6,
 	
 	fast_memset,
+	fast_memnot,
 	
 	system_call,
 	microseconds,
