@@ -78,6 +78,8 @@ Byte  MBState   : 0x0172;
 
 short ROM85     : 0x028E;
 
+long  DefltStack : 0x0322;
+
 short ScreenRow : 0x0106;
 void* ScrnBase  : 0x0824;
 Point Mouse     : 0x0830;
@@ -109,6 +111,8 @@ void initialize_low_memory_globals()
 	{
 		ROM85 = 0xFFFFu >> romgen;
 	}
+	
+	DefltStack = 64 * 1024;
 	
 	BitMap screenBits;
 	
