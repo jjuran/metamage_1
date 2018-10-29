@@ -54,6 +54,10 @@ namespace Nitrogen
 	// This definition of CGBitmapInfo should be regarded as private.
 	typedef CGImageAlphaInfo CGBitmapInfo;
 	
+#endif
+	
+#ifndef MAC_OS_X_VERSION_10_5
+	
 	typedef float CGFloat;
 	
 #endif
