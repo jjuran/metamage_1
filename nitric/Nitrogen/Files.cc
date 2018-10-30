@@ -1209,7 +1209,7 @@ Return Value
 	{
 	#if ! TARGET_CPU_68K
 		
-		if ( TARGET_API_MAC_CARBON  ||  TARGET_CPU_PPC  &&  &::FSGetVolumeInfo )
+		if ( TARGET_API_MAC_CARBON  ||  &::FSGetVolumeInfo != NULL )
 		{
 			FSVolumeRefNum result;
 			FSGetVolumeInfo( volumeIndex,
