@@ -14,6 +14,9 @@
 // command
 #include "command/get_option.hh"
 
+// ams-common
+#include "callouts.hh"
+
 // ams-seg
 #include "Segments.hh"
 #include "options.hh"
@@ -56,11 +59,6 @@ static void install_SegmentLoader()
 	TBTRAP( Launch      );  // A9F2
 	TBTRAP( ExitToShell );  // A9F4
 	TBTRAP( GetAppParms );  // A9F5
-}
-
-static asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 static char* const* get_options( char** argv )

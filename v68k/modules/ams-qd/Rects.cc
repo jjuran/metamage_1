@@ -12,6 +12,7 @@
 #include "qd/region_iterator.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 
@@ -61,18 +62,6 @@ struct rectangular_op_params
 	Pattern*  pattern;
 	short     origin_h;
 };
-
-static inline
-asm void fast_memset( void* mem : __A0, char x :__D1, size_t n : __D0 )
-{
-	JSR      0xFFFFFFD6
-}
-
-static inline
-asm void fast_memnot( void* mem : __A0, size_t n : __D0 )
-{
-	JSR      0xFFFFFFD4
-}
 
 static inline short min( short a, short b )
 {

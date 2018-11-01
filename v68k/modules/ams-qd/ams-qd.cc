@@ -14,6 +14,9 @@
 // Standard C
 #include <stdlib.h>
 
+// ams-common
+#include "callouts.hh"
+
 // ams-core
 #include "CopyBits.hh"
 #include "Cursor.hh"
@@ -232,11 +235,6 @@ static void install_Fonts()
 static void install_StrUtils()
 {
 	TBTRAP( GetString );  // A9BA
-}
-
-static asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 int main( int argc, char** argv )

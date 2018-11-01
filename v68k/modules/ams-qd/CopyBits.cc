@@ -18,6 +18,7 @@
 #include "qd/region_iterator.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 #include "redraw_lock.hh"
 
@@ -173,15 +174,6 @@ void blit_segment_buffered( Ptr       src,
 	fast_memcpy( buffer, src, n_bytes );
 	
 	blit_segment_direct( buffer, dst, n_pixels_skipped, n_pixels_drawn, mode );
-}
-
-static inline
-asm void fast_rshift( Ptr dst : __A1,
-                      Ptr src : __A0,
-                      int n   : __D0,  // src byte count; dst count is n + 1
-                      int x   : __D1 )  // right shift bit count
-{
-	JSR      0xFFFFFFD2
 }
 
 static

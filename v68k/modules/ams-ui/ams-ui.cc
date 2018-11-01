@@ -14,6 +14,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "callouts.hh"
+
 // ams-ui
 #include "BinaryDecimal.hh"
 #include "Controls.hh"
@@ -228,12 +231,6 @@ void install_IconUtilities()
 	TBTRAP( GetIcon      );  // A9BB
 	
 	TBTRAP( IconDispatch );  // ABC9
-}
-
-static
-asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 int main( int argc, char** argv )

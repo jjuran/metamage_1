@@ -6,9 +6,9 @@
 #ifndef SCREENLOCK_HH
 #define SCREENLOCK_HH
 
+// ams-common
+#include "callouts.hh"
 
-void lock_screen();
-void unlock_screen();
 
 class screen_lock
 {

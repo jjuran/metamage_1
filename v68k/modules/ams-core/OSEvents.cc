@@ -10,6 +10,9 @@
 #include <Events.h>
 #endif
 
+// ams-common
+#include "callouts.hh"
+
 
 Ptr  SysEvtBuf  : 0x0146;
 QHdr EventQueue : 0x014A;
@@ -20,12 +23,6 @@ Byte   MBState : 0x0172;
 UInt16 KeyMods : 0x017A;
 Point  Mouse   : 0x0830;
 
-
-static inline
-asm UInt32 get_Ticks()
-{
-	JSR      0xFFFFFFDE  // get_Ticks_immediate
-}
 
 struct OSEvQEl
 {

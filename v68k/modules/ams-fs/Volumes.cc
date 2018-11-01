@@ -10,6 +10,9 @@
 #include <Files.h>
 #endif
 
+// ams-common
+#include "callouts.hh"
+
 
 #define VOLNAME  "\p" "AMS Made-up Storage"
 
@@ -21,12 +24,6 @@ enum
 
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
-
-static inline
-asm void fast_memset( void* mem : __A0, char x :__D1, UInt32 n : __D0 )
-{
-	JSR      0xFFFFFFD6
-}
 
 static inline
 void fast_memcpy( void* dst, const void* src, UInt32 n )

@@ -23,6 +23,9 @@
 // gear
 #include "gear/parse_decimal.hh"
 
+// ams-common
+#include "callouts.hh"
+
 // ams-core
 #include "Debugger.hh"
 #include "Desk.hh"
@@ -262,12 +265,6 @@ void install_Debugger()
 {
 	TBTRAP( Debugger );  // A9FF
 	TBTRAP( DebugStr );  // ABFF
-}
-
-static
-asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 static

@@ -13,6 +13,9 @@
 #include <MacWindows.h>
 #endif
 
+// ams-common
+#include "callouts.hh"
+
 // ams-core
 #include "splode.hh"
 
@@ -35,12 +38,6 @@ static unsigned long polling_interval = 0;
 
 #pragma mark Accessing Events
 #pragma mark -
-
-static inline
-asm UInt32 get_Ticks()
-{
-	JSR      0xFFFFFFDE  // get_Ticks_immediate
-}
 
 static
 bool get_lowlevel_event( short eventMask, EventRecord* event )

@@ -17,6 +17,9 @@
 // gear
 #include "gear/parse_decimal.hh"
 
+// ams-common
+#include "callouts.hh"
+
 // ams-io
 #include "Devices.hh"
 #include "options.hh"
@@ -59,12 +62,6 @@ void install_DeviceManager()
 	OSTRAP( Control);  // A004
 	OSTRAP( Status );  // A005
 	OSTRAP( KillIO );  // A006
-}
-
-static
-asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 static

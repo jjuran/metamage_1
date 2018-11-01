@@ -11,6 +11,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "callouts.hh"
+
 // ams-pack
 #include "Packages.hh"
 
@@ -40,11 +43,6 @@ static void install_Packages()
 	TBTRAP( Pack5 );  // A9EC
 	TBTRAP( Pack6 );  // A9ED
 	TBTRAP( Pack7 );  // A9EE
-}
-
-static asm void module_suspend()
-{
-	JSR      0xFFFFFFF8
 }
 
 int main( int argc, char** argv )
