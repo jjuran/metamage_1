@@ -251,7 +251,7 @@ void update_loop( raster::sync_relay*  sync,
 {
 	uint32_t seed = 0;
 	
-	while ( sync->status == Sync_ready )
+	while ( sync->status == Sync_ready  &&  ! signalled )
 	{
 		while ( seed == sync->seed )
 		{
@@ -300,6 +300,11 @@ static
 void signal_handler( int )
 {
 	signalled = true;
+	
+	if ( raster_sync )
+	{
+		raster::broadcast( *raster_sync );
+	}
 }
 
 int main( int argc, char** argv )
@@ -340,7 +345,7 @@ int main( int argc, char** argv )
 	
 	const fb_var_screeninfo old_var_info = var_info;
 	
-	if ( waiting )
+	if ( watching  ||  waiting )
 	{
 		struct sigaction action = { 0 };
 		
