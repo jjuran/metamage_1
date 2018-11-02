@@ -110,15 +110,15 @@ raster::sync_relay* open_raster( const char* path )
 	
 	if ( watching )
 	{
-		raster_note* sync = find_note( *loaded_raster.meta, Note_sync );
+		raster_note* sync_note = find_note( *loaded_raster.meta, Note_sync );
 		
-		if ( ! is_valid_sync( sync ) )
+		if ( ! is_valid_sync( sync_note ) )
 		{
 			report_error( path, ENOSYS );
 			exit( 3 );
 		}
 		
-		return (sync_relay*) data( sync );
+		return (sync_relay*) data( sync_note );
 	}
 	
 	return NULL;
