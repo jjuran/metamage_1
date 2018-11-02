@@ -284,6 +284,8 @@ char* const* get_options( char** argv )
 	return argv;
 }
 
+static raster::sync_relay* raster_sync;
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -303,7 +305,7 @@ int main( int argc, char** argv )
 	
 	const char* raster_path = args[ 0 ];
 	
-	raster::sync_relay* sync = open_raster( raster_path );
+	raster_sync = open_raster( raster_path );
 	
 	if ( loaded_raster.addr == NULL )
 	{
@@ -362,7 +364,7 @@ int main( int argc, char** argv )
 		dst += (var_info.xres - width ) / 2 * var_info.bits_per_pixel / 8;
 	}
 	
-	if ( sync )
+	if ( raster::sync_relay* sync = raster_sync )
 	{
 		update_loop( sync, src, stride, dst, dst_stride, width, height, draw );
 	}
