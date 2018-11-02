@@ -12,6 +12,7 @@
 
 // Standard C
 #include <errno.h>
+#include <signal.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,6 +59,7 @@ enum
 {
 	Opt_watch   = 'W',
 	Opt_title   = 't',
+	Opt_wait    = 'w',
 	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
 };
 
@@ -65,10 +67,12 @@ static command::option options[] =
 {
 	{ "magnify", Opt_magnify, command::Param_required },
 	{ "title",   Opt_title,   command::Param_required },
+	{ "wait",    Opt_wait  },
 	{ "watch",   Opt_watch },
 	{ NULL }
 };
 
+static bool waiting;
 static bool watching;
 
 static raster::raster_load loaded_raster;
@@ -233,6 +237,8 @@ void blit( const char*  src,
 	}
 }
 
+static volatile sig_atomic_t signalled;
+
 static
 void update_loop( raster::sync_relay*  sync,
                   const char*          src,
@@ -269,6 +275,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_wait:
+				waiting = true;
+				break;
+			
 			case Opt_watch:
 				watching = true;
 				break;
@@ -285,6 +295,12 @@ char* const* get_options( char** argv )
 }
 
 static raster::sync_relay* raster_sync;
+
+static
+void signal_handler( int )
+{
+	signalled = true;
+}
 
 int main( int argc, char** argv )
 {
@@ -321,6 +337,19 @@ int main( int argc, char** argv )
 	fb::handle fbh( DEFAULT_FB_PATH );
 	
 	fb_var_screeninfo var_info = get_var_screeninfo( fbh );
+	
+	const fb_var_screeninfo old_var_info = var_info;
+	
+	if ( waiting )
+	{
+		struct sigaction action = { 0 };
+		
+		action.sa_handler = &signal_handler;
+		
+		sigaction( SIGHUP,  &action, NULL );
+		sigaction( SIGINT,  &action, NULL );
+		sigaction( SIGTERM, &action, NULL );
+	}
 	
 	const char* fullscreen = getenv( "DISPLAY_FULLSCREEN" );
 	
@@ -370,6 +399,12 @@ int main( int argc, char** argv )
 	}
 	
 	blit( src, stride, dst, dst_stride, width, height, draw );
+	
+	if ( waiting )
+	{
+		char dummy;
+		read( STDIN_FILENO, &dummy, sizeof dummy );
+	}
 	
 	return 0;
 }
