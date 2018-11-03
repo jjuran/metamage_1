@@ -41,6 +41,20 @@ include $(BUILD_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
 
+LOCAL_MODULE        := logofwar
+LOCAL_SRC_FILES     := src/logofwar/clock.cc   \
+                       src/logofwar/levels.cc  \
+                       src/logofwar/print.cc   \
+                       src/logofwar/report.cc  \
+
+LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
+LOCAL_CPP_EXTENSION := .cc
+
+include $(BUILD_STATIC_LIBRARY)
+
+
+include $(CLEAR_VARS)
+
 LOCAL_MODULE        := rasterlib
 LOCAL_SRC_FILES     := src/raster/load.cc      \
                        src/raster/relay.cc     \
@@ -72,6 +86,7 @@ LOCAL_SRC_FILES     := v68k/conditional.cc        \
                        v68k/microcode.cc          \
                        v68k/ops.cc                \
                        v68k/state.cc              \
+                       v68k/print.cc              \
                        v68k/update_CCR.cc         \
 
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src
@@ -98,6 +113,7 @@ LOCAL_SRC_FILES     := auth/auth.cc                  \
                        v68k-mac/dynamic_globals.cc   \
                        v68k-mac/memory.cc            \
                        v68k-mac/trap_dispatcher.cc   \
+                       v68k-time/clock.cc            \
                        v68k-user/line_A_shim.cc      \
                        v68k-user/load.cc             \
 
@@ -112,12 +128,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE        := xv68k
 LOCAL_SRC_FILES     := xv68k/diagnostics.cc    \
                        xv68k/memory.cc         \
+                       xv68k/native.cc         \
                        xv68k/screen.cc         \
                        xv68k/shared_memory.cc  \
                        xv68k/xv68k.cc
 LOCAL_C_INCLUDES    := $(LOCAL_PATH)/src $(LOCAL_PATH)/xv68k
 LOCAL_CPP_EXTENSION := .cc
 
-LOCAL_STATIC_LIBRARIES := v68k-libs v68k rasterlib gear command more must
+LOCAL_STATIC_LIBRARIES := v68k-libs v68k rasterlib logofwar gear command more must
 
 include $(BUILD_EXECUTABLE)
