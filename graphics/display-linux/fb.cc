@@ -64,6 +64,8 @@ namespace fb
 			throw errno;
 		}
 		
+		ioctl( h.get_fd(), FBIOBLANK, FB_BLANK_UNBLANK );
+		
 		return result;
 	}
 	
