@@ -153,7 +153,7 @@ int reader( const char* path )
 	{
 		dup2( fds[ 1 ], STDOUT_FILENO );
 		
-		const char* argv[] = { "sudo", READER, DEV_MOUSE, NULL };
+		const char* argv[] = { "sudo", READER, path, NULL };
 		
 		exec_or_exit( argv );
 	}
