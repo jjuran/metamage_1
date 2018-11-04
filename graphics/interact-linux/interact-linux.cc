@@ -297,7 +297,7 @@ int main( int argc, char** argv )
 	pid_t child = wait( &wait_status );
 	
 	/*
-		One of out subprocesses has terminated.  If it's the viewer, kill the
+		One of our subprocesses has terminated.  If it's the viewer, kill the
 		other one.  But if it's the input translator, do nothing, since the
 		viewer will exit on its own (after restoring any configuration changes
 		it made to the console ).
