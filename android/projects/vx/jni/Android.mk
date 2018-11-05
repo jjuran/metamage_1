@@ -203,9 +203,11 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/parse.cc                       \
                        src/vlib/peephole.cc                    \
                        src/vlib/precedence.cc                  \
+                       src/vlib/pure.cc                        \
                        src/vlib/quote.cc                       \
                        src/vlib/reduce.cc                      \
                        src/vlib/scope.cc                       \
+                       src/vlib/startup.cc                     \
                        src/vlib/string-utils.cc                \
                        src/vlib/stack.cc                       \
                        src/vlib/symbol.cc                      \
@@ -223,7 +225,9 @@ LOCAL_SRC_FILES     := src/vlib/analyze.cc                     \
                        src/vlib/types/boolean.cc               \
                        src/vlib/types/builtin.cc               \
                        src/vlib/types/byte.cc                  \
+                       src/vlib/types/endec/byte.cc            \
                        src/vlib/types/endec/stdint.cc          \
+                       src/vlib/types/field.cc                 \
                        src/vlib/types/fraction.cc              \
                        src/vlib/types/integer.cc               \
                        src/vlib/types/integer/stdint.cc        \
