@@ -26,7 +26,6 @@
 #define READER       "/opt/metamage/bin/reader"
 #define SPIEL_MOUSE  "spiel-mouse"
 #define DEV_MOUSE    "/dev/input/mice"
-#define GFX          "gfx"
 #define DISPLAY      "display"
 
 #define PROGRAM  "interact-linux"
@@ -267,7 +266,7 @@ void launch_subprocesses( char* const* args )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[] = { GFX, DISPLAY, "--watch", raster_path, NULL };
+		const char* argv[] = { DISPLAY, "-g", "--watch", raster_path, NULL };
 		
 		exec_or_exit( argv );
 	}
