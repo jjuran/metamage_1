@@ -5,10 +5,15 @@
 
 // Linux
 #include <linux/fb.h>
+#include <linux/kd.h>
 
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
 
 // Standard C
 #include <errno.h>
@@ -33,6 +38,8 @@
 #include "fb.hh"
 
 
+#define KDMODE  "/opt/metamage/bin/kdmode"
+
 #define PROGRAM  "display-linux"
 
 #define DEFAULT_FB_PATH  "/dev/fb0"
@@ -41,6 +48,8 @@
 
 #define USAGE  "usage: " PROGRAM " <screen-path>\n" \
 "       where screen-path is a raster file\n"
+
+#define SUDO_NEEDED "Note: root privileges required to switch console modes"
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
 
@@ -60,13 +69,18 @@ typedef uint32_t bilevel_pixel_t;
 enum
 {
 	Opt_watch   = 'W',
+	Opt_gfxmode = 'g',
 	Opt_title   = 't',
 	Opt_wait    = 'w',
 	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
+	
+	Opt_graphics_mode = Opt_gfxmode,
 };
 
 static command::option options[] =
 {
+	{ "graphics-mode", Opt_graphics_mode },
+	
 	{ "magnify", Opt_magnify, command::Param_required },
 	{ "title",   Opt_title,   command::Param_required },
 	{ "wait",    Opt_wait  },
@@ -74,6 +88,7 @@ static command::option options[] =
 	{ NULL }
 };
 
+static bool gfx_mode;
 static bool waiting;
 static bool watching;
 
@@ -277,6 +292,10 @@ char* const* get_options( char** argv )
 	{
 		switch ( opt )
 		{
+			case Opt_graphics_mode:
+				gfx_mode = true;
+				break;
+			
 			case Opt_wait:
 				waiting = true;
 				break;
@@ -294,6 +313,137 @@ char* const* get_options( char** argv )
 	}
 	
 	return argv;
+}
+
+static
+void exec_or_exit( const char* const argv[] )
+{
+	execvp( *argv, (char**) argv );
+	
+	const int saved_errno = errno;
+	
+	report_error( *argv, saved_errno );
+	
+	_exit( saved_errno == ENOENT ? 127 : 126 );
+}
+
+static
+bool console_is_known_to_be_in_graphics_mode()
+{
+	bool result = false;
+	
+	int tty0_fd = open( "/dev/tty0", O_WRONLY );
+	
+	if ( tty0_fd >= 0 )
+	{
+		long mode;
+		int nok = ioctl( tty0_fd, KDGETMODE, &mode );
+		
+		if ( nok == 0  &&  mode == KD_GRAPHICS )
+		{
+			result = true;
+		}
+		
+		close( tty0_fd );
+	}
+	
+	return result;
+}
+
+static
+bool is_suid_root( const char* path )
+{
+	struct stat st;
+	int nok = stat( KDMODE, &st );
+	
+	return nok == 0  &&  st.st_uid == 0  &&  st.st_mode & 04000;
+}
+
+static inline
+bool sudo_needs_passwd()
+{
+	return system( "sudo -n true" ) != 0;
+}
+
+static pid_t kdmode_pid = 0;
+
+static
+void launch_coprocess()
+{
+	if ( console_is_known_to_be_in_graphics_mode() )
+	{
+		return;  // No coprocess needed
+	}
+	
+	const bool sudo_needed = ! is_suid_root( KDMODE );
+	
+	if ( sudo_needed  &&  sudo_needs_passwd() )
+	{
+		WARN( SUDO_NEEDED );
+		
+		int status = system( "sudo true" );
+		
+		if ( WIFSIGNALED( status ) )
+		{
+			exit( 128 + WTERMSIG( status ) );
+		}
+		else if ( status != 0 )
+		{
+			exit( WEXITSTATUS( status ) );
+		}
+	}
+	
+	int fds[ 2 ];
+	
+	int nok = socketpair( PF_UNIX, SOCK_STREAM, 0, fds );
+	
+	if ( nok )
+	{
+		report_error( "socketpair", errno );
+		exit( 1 );
+	}
+	
+	kdmode_pid = fork();
+	
+	if ( kdmode_pid < 0 )
+	{
+		report_error( "fork", errno );
+		exit( 1 );
+	}
+	
+	if ( kdmode_pid == 0 )
+	{
+		const char* argv[] = { "sudo", KDMODE, "graphics", NULL };
+		
+		dup2( fds[ 1 ], STDIN_FILENO  );
+		dup2( fds[ 1 ], STDOUT_FILENO );
+		
+		close( fds[ 0 ] );
+		close( fds[ 1 ] );
+		
+		exec_or_exit( argv + ! sudo_needed );
+	}
+	
+	close( fds[ 1 ] );
+	
+	/*
+		Wait for kdmode to send a byte to indicate it's ready.
+	*/
+	
+	char dummy;
+	ssize_t n_read = read( fds[ 0 ], &dummy, sizeof dummy );
+	
+	if ( n_read < 0 )
+	{
+		report_error( "kdmode", errno );
+		exit( 1 );
+	}
+	
+	if ( n_read == 0 )
+	{
+		report_error( "kdmode", ENOTCONN );
+		exit( 1 );
+	}
 }
 
 static raster::sync_relay* raster_sync;
@@ -409,6 +559,11 @@ int main( int argc, char** argv )
 	
 	var_info.bits_per_pixel = bpp;
 	
+	if ( gfx_mode )
+	{
+		launch_coprocess();
+	}
+	
 	if ( showing_fullscreen() )
 	{
 		var_info.xres = desc.width;
@@ -462,6 +617,11 @@ int main( int argc, char** argv )
 	{
 		set_var_screeninfo( fbh, old_var_info );
 	}
+	
+	/*
+		Our exit will close the kdmode control socket, signalling it's time to
+		restore the previous console mode.
+	*/
 	
 	return 0;
 }
