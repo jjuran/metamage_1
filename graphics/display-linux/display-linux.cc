@@ -56,8 +56,8 @@ typedef uint32_t bilevel_pixel_t;
 
 enum
 {
+	Opt_watch   = 'W',
 	Opt_title   = 't',
-	Opt_watch   = 'w',
 	Opt_magnify = 'x',  // unimplemented, but accepted for compatibility
 };
 
