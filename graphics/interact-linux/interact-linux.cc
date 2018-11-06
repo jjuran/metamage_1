@@ -267,7 +267,7 @@ void launch_subprocesses( char* const* args )
 	
 	if ( viewer_pid == 0 )
 	{
-		const char* argv[] = { GFX, DISPLAY, "-w", raster_path, NULL };
+		const char* argv[] = { GFX, DISPLAY, "--watch", raster_path, NULL };
 		
 		exec_or_exit( argv );
 	}
