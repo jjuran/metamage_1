@@ -12,7 +12,9 @@
 #include <sys/ioctl.h>
 
 // Standard C
+#include <signal.h>
 #include <stdio.h>
+#include <string.h>
 
 
 static
@@ -24,6 +26,11 @@ void check_nok( const char* s, int nok )
 		
 		_exit( 1 );
 	}
+}
+
+static
+void signal_handler( int )
+{
 }
 
 int main( int argc, char** argv )
@@ -42,12 +49,42 @@ int main( int argc, char** argv )
 	
 	const char* modes[] = { "text", "graphics" };
 	
-	if ( (unsigned long) mode > sizeof modes / sizeof modes[ 0 ] )
+	if ( argc <= 1 )
 	{
-		check_nok( "unknown mode", -1 );
+		if ( (unsigned long) mode > sizeof modes / sizeof modes[ 0 ] )
+		{
+			check_nok( "unknown mode", -1 );
+		}
+		
+		printf( "%s\n", modes[ mode ] );
+		
+		return 0;
 	}
 	
-	printf( "%s\n", modes[ mode ] );
+	const char* mode_arg = argv[ 1 ];
+	
+	long new_mode = strcmp( mode_arg, modes[ 0 ] ) == 0 ? 0
+	              : strcmp( mode_arg, modes[ 1 ] ) == 0 ? 1
+	              :                                      -1;
+	
+	if ( new_mode < 0 )
+	{
+		fprintf( stderr, "invalid mode '%s'\n", mode_arg );
+		return 2;
+	}
+	
+	signal( SIGHUP,  &signal_handler );
+	signal( SIGINT,  &signal_handler );
+	signal( SIGTERM, &signal_handler );
+	
+	check_nok( "KDSETMODE", ioctl( tty0_fd, KDSETMODE, new_mode ) );
+	
+	write( STDOUT_FILENO, "\n", 1 );
+	
+	char dummy;
+	read( STDIN_FILENO, &dummy, sizeof dummy );
+	
+	check_nok( "KDSETMODE", ioctl( tty0_fd, KDSETMODE, mode ) );
 	
 	return 0;
 }
