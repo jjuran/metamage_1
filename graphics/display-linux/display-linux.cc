@@ -318,6 +318,12 @@ enum display_format
 static display_format the_format;
 
 static inline
+bool theater_boxed()
+{
+	return the_format == Format_theater;
+}
+
+static inline
 bool showing_fullscreen()
 {
 	return the_format < Format_theater;
@@ -387,6 +393,17 @@ int main( int argc, char** argv )
 		sigaction( SIGTERM, &action, NULL );
 	}
 	
+	uint8_t bpp = desc.weight;
+	
+	if ( desc.weight == 1 )
+	{
+		bpp = sizeof (bilevel_pixel_t) * 8;
+	}
+	
+	const bool changing_depth = bpp != var_info.bits_per_pixel;
+	
+	var_info.bits_per_pixel = bpp;
+	
 	if ( showing_fullscreen() )
 	{
 		var_info.xres = desc.width;
@@ -396,18 +413,9 @@ int main( int argc, char** argv )
 		var_info.yres_virtual = desc.height;
 	}
 	
-	var_info.bits_per_pixel = desc.weight;
-	
-	if ( desc.weight == 1 )
-	{
-		var_info.bits_per_pixel = sizeof (bilevel_pixel_t) * 8;
-	}
-	
 	set_var_screeninfo( fbh, var_info );
 	
 	fb_fix_screeninfo fix_info = get_fix_screeninfo( fbh );
-	
-	size_t size = fix_info.smem_len;
 	
 	const char* src = (char*) loaded_raster.addr /*+ desc.image_offset*/;
 	
@@ -420,6 +428,11 @@ int main( int argc, char** argv )
 	const size_t width  = desc.width;
 	const size_t height = desc.height;
 	const size_t stride = desc.stride;
+	
+	if ( theater_boxed()  &&  ! changing_depth )
+	{
+		memset( dst, '\0', fix_info.smem_len );
+	}
 	
 	if ( ! showing_fullscreen() )
 	{
