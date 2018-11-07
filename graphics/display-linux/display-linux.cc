@@ -42,6 +42,8 @@
 #define USAGE  "usage: " PROGRAM " <screen-path>\n" \
 "       where screen-path is a raster file\n"
 
+#define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
+
 
 /*
 	Theoretically, 8-bit should work, but we've had mixed success with it on
@@ -307,6 +309,20 @@ void signal_handler( int )
 	}
 }
 
+enum display_format
+{
+	Format_fullscreen = -1,
+	Format_theater,
+};
+
+static display_format the_format;
+
+static inline
+bool showing_fullscreen()
+{
+	return the_format < Format_theater;
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc == 0 )
@@ -322,6 +338,21 @@ int main( int argc, char** argv )
 	{
 		write( STDERR_FILENO, STR_LEN( USAGE ) );
 		return 2;
+	}
+	
+	const char* env_format = getenv( "DISPLAY_FORMAT" );
+	
+	if ( env_format )
+	{
+		if ( strcmp( env_format, "fullscreen" ) == 0 )
+		{
+			the_format = Format_fullscreen;
+		}
+		else if ( strcmp( env_format, "theater" ) != 0 )
+		{
+			WARN( "invalid DISPLAY_FORMAT" );
+			return 3;
+		}
 	}
 	
 	const char* raster_path = args[ 0 ];
@@ -356,9 +387,7 @@ int main( int argc, char** argv )
 		sigaction( SIGTERM, &action, NULL );
 	}
 	
-	const char* fullscreen = getenv( "DISPLAY_FULLSCREEN" );
-	
-	if ( fullscreen )
+	if ( showing_fullscreen() )
 	{
 		var_info.xres = desc.width;
 		var_info.yres = desc.height;
@@ -392,7 +421,7 @@ int main( int argc, char** argv )
 	const size_t height = desc.height;
 	const size_t stride = desc.stride;
 	
-	if ( ! fullscreen )
+	if ( ! showing_fullscreen() )
 	{
 		dst += (var_info.yres - height) / 2 * dst_stride;
 		dst += (var_info.xres - width ) / 2 * var_info.bits_per_pixel / 8;
@@ -411,7 +440,7 @@ int main( int argc, char** argv )
 		read( STDIN_FILENO, &dummy, sizeof dummy );
 	}
 	
-	if ( fullscreen )
+	if ( showing_fullscreen() )
 	{
 		set_var_screeninfo( fbh, old_var_info );
 	}
