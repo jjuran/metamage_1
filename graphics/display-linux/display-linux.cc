@@ -466,9 +466,16 @@ enum display_format
 {
 	Format_fullscreen = -1,
 	Format_theater,
+	Format_center,
 };
 
 static display_format the_format;
+
+static inline
+bool preserving_console_text()
+{
+	return the_format > Format_theater;
+}
 
 static inline
 bool theater_boxed()
@@ -506,6 +513,10 @@ int main( int argc, char** argv )
 		if ( strcmp( env_format, "fullscreen" ) == 0 )
 		{
 			the_format = Format_fullscreen;
+		}
+		else if ( strcmp( env_format, "center" ) == 0 )
+		{
+			the_format = Format_center;
 		}
 		else if ( strcmp( env_format, "theater" ) != 0 )
 		{
@@ -560,7 +571,15 @@ int main( int argc, char** argv )
 	
 	const bool changing_depth = bpp != var_info.bits_per_pixel;
 	
-	var_info.bits_per_pixel = bpp;
+	if ( changing_depth )
+	{
+		var_info.bits_per_pixel = bpp;
+		
+		if ( preserving_console_text() )
+		{
+			set_var_screeninfo( fbh, var_info );
+		}
+	}
 	
 	if ( gfx_mode )
 	{
@@ -576,7 +595,10 @@ int main( int argc, char** argv )
 		var_info.yres_virtual = desc.height;
 	}
 	
-	set_var_screeninfo( fbh, var_info );
+	if ( ! preserving_console_text() )
+	{
+		set_var_screeninfo( fbh, var_info );
+	}
 	
 	fb_fix_screeninfo fix_info = get_fix_screeninfo( fbh );
 	
