@@ -393,6 +393,11 @@ int main( int argc, char** argv )
 		sigaction( SIGTERM, &action, NULL );
 	}
 	
+	if ( desc.width > var_info.xres  ||  desc.height > var_info.yres )
+	{
+		the_format = Format_fullscreen;
+	}
+	
 	uint8_t bpp = desc.weight;
 	
 	if ( desc.weight == 1 )
