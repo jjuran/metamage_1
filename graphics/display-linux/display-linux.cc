@@ -411,5 +411,10 @@ int main( int argc, char** argv )
 		read( STDIN_FILENO, &dummy, sizeof dummy );
 	}
 	
+	if ( fullscreen )
+	{
+		set_var_screeninfo( fbh, old_var_info );
+	}
+	
 	return 0;
 }
