@@ -50,6 +50,40 @@ app-build-tools:
 AMS_REPOS := freemount.git ams-68k-bin.git
 AMS_TOOLS := exhibit graft raster vx xv68k freemountd
 
+ams-linux-tools: $(AMS_REPOS)
+	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
+
+ams-vx-Z:
+	@echo 'vx -Z "$$@"' > bin/"vx -Z"
+	@chmod +x bin/"vx -Z"
+
+ams-linux: ams-linux-tools ams-vx-Z
+	@test -x bin/display     || ln -s ../var/out/display-linux  bin/display
+	@test -x bin/interact    || ln -s ../var/out/interact-linux bin/interact
+	@test -x bin/spiel-mouse || ln -s ../v/bin/spiel-mouse.vx bin/spiel-mouse
+	@echo
+	@echo "Build phase complete.  Run \`make ams-linux-opt\` to continue."
+	@echo
+
+ams-linux-opt:
+	@echo
+	@echo "Note: root privileges required to install under /opt"
+	sudo mkdir -p /opt/metamage/bin
+	sudo cp var/out/kdmode var/out/reader /opt/metamage/bin/
+	sudo chown root:root /opt/metamage/bin/kdmode /opt/metamage/bin/reader
+	@echo
+	@echo "Utilities installed.  Run \`make ams-linux-demo\` to continue."
+	@echo
+
+ams-linux-suid:
+	@echo
+	@echo "Note: root privileges required for setuid-root"
+	sudo chmod +s /opt/metamage/bin/kdmode
+
+ams-linux-demo:
+	@test -d ~/68k || ln -s "$$PWD/../ams-68k-bin/68k" ~/
+	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams Welcome
+
 ams-osx: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
 	mkdir -p ~/var/run/fs
