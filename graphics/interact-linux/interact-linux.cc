@@ -23,7 +23,7 @@
 #include "unet/pass_fd.hh"
 
 
-#define READER       "/opt/metamage/bin/reader"
+#define READER       "/usr/local/lib/metamage/reader"
 #define SPIEL_MOUSE  "spiel-mouse"
 #define DEV_MOUSE    "/dev/input/mice"
 #define DISPLAY      "display"

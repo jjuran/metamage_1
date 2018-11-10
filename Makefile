@@ -50,7 +50,7 @@ app-build-tools:
 AMS_REPOS := freemount.git ams-68k-bin.git
 AMS_TOOLS := exhibit graft raster vx xv68k freemountd
 
-AMS_UTILS_ROOT := /opt/metamage/bin
+AMS_UTILS_ROOT := /usr/local/lib/metamage
 
 ams-linux-tools: $(AMS_REPOS)
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader

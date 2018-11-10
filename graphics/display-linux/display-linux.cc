@@ -38,7 +38,7 @@
 #include "fb.hh"
 
 
-#define KDMODE  "/opt/metamage/bin/kdmode"
+#define KDMODE  "/usr/local/lib/metamage/kdmode"
 
 #define PROGRAM  "display-linux"
 
