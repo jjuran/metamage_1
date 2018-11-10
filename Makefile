@@ -64,10 +64,10 @@ ams-linux: ams-linux-tools ams-vx-Z
 	@test -x bin/interact    || ln -s ../var/out/interact-linux bin/interact
 	@test -x bin/spiel-mouse || ln -s ../v/bin/spiel-mouse.vx bin/spiel-mouse
 	@echo
-	@echo "Build phase complete.  Run \`make ams-linux-opt\` to continue."
+	@echo "Build phase complete.  Run \`make ams-linux-inst\` to continue."
 	@echo
 
-ams-linux-opt:
+ams-linux-inst:
 	@echo
 	@echo "Note: root privileges required to install in $(AMS_UTILS_ROOT)"
 	sudo mkdir -p $(AMS_UTILS_ROOT)
