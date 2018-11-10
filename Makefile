@@ -50,6 +50,8 @@ app-build-tools:
 AMS_REPOS := freemount.git ams-68k-bin.git
 AMS_TOOLS := exhibit graft raster vx xv68k freemountd
 
+AMS_UTILS_ROOT := /opt/metamage/bin
+
 ams-linux-tools: $(AMS_REPOS)
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
@@ -67,10 +69,10 @@ ams-linux: ams-linux-tools ams-vx-Z
 
 ams-linux-opt:
 	@echo
-	@echo "Note: root privileges required to install under /opt"
-	sudo mkdir -p /opt/metamage/bin
-	sudo cp var/out/kdmode var/out/reader /opt/metamage/bin/
-	sudo chown root:root /opt/metamage/bin/kdmode /opt/metamage/bin/reader
+	@echo "Note: root privileges required to install in $(AMS_UTILS_ROOT)"
+	sudo mkdir -p $(AMS_UTILS_ROOT)
+	sudo cp var/out/kdmode var/out/reader $(AMS_UTILS_ROOT)/
+	sudo chown root:root $(AMS_UTILS_ROOT)/kdmode $(AMS_UTILS_ROOT)/reader
 	@echo
 	@echo "Utilities installed.  Run \`make ams-linux-demo\` to continue."
 	@echo
@@ -78,7 +80,7 @@ ams-linux-opt:
 ams-linux-suid:
 	@echo
 	@echo "Note: root privileges required for setuid-root"
-	sudo chmod +s /opt/metamage/bin/kdmode
+	sudo chmod +s $(AMS_UTILS_ROOT)/kdmode
 
 ams-linux-demo:
 	@test -d ~/68k || ln -s "$$PWD/../ams-68k-bin/68k" ~/
