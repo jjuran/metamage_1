@@ -13,6 +13,9 @@
 #include <signal.h>
 #include <stdlib.h>
 
+// config
+#include "config/install.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -23,7 +26,7 @@
 #include "unet/pass_fd.hh"
 
 
-#define READER       "/usr/local/lib/metamage/reader"
+#define READER       CONFIG_INSTALL_PREFIX "/lib/metamage/reader"
 #define SPIEL_MOUSE  "spiel-mouse"
 #define DEV_MOUSE    "/dev/input/mice"
 #define DISPLAY      "display"
