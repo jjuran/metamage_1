@@ -70,8 +70,8 @@ ams-linux: ams-linux-tools ams-vx-Z
 ams-linux-inst:
 	@echo
 	@echo "Note: root privileges required to install in $(AMS_UTILS_ROOT)"
-	sudo mkdir -p $(AMS_UTILS_ROOT)
-	sudo cp var/out/kdmode var/out/reader $(AMS_UTILS_ROOT)/
+	sudo install -d $(AMS_UTILS_ROOT)
+	sudo install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
 	@echo
 	@echo "Utilities installed.  Run \`make ams-linux-demo\` to continue."
 	@echo
