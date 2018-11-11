@@ -22,6 +22,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// config
+#include "config/install.h"
+
 // more-posix
 #include "more/perror.hh"
 
@@ -38,7 +41,7 @@
 #include "fb.hh"
 
 
-#define KDMODE  "/usr/local/lib/metamage/kdmode"
+#define KDMODE  CONFIG_INSTALL_PREFIX "/lib/metamage/kdmode"
 
 #define PROGRAM  "display-linux"
 
