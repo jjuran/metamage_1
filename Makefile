@@ -68,19 +68,15 @@ ams-linux: ams-linux-tools ams-vx-Z
 	@echo
 
 ams-linux-inst:
-	@echo
-	@echo "Note: root privileges required to install in $(AMS_UTILS_ROOT)"
-	sudo install -d $(AMS_UTILS_ROOT)
-	sudo install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
+	install -d $(AMS_UTILS_ROOT)
+	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
 	@echo
 	@echo "Utilities installed.  Run \`make ams-linux-demo\` to continue."
 	@echo
 
 ams-linux-suid:
-	@echo
-	@echo "Note: root privileges required for setuid-root"
-	sudo chown root:root $(AMS_UTILS_ROOT)/kdmode
-	sudo chmod +s $(AMS_UTILS_ROOT)/kdmode
+	chown root:root $(AMS_UTILS_ROOT)/kdmode
+	chmod +s $(AMS_UTILS_ROOT)/kdmode
 
 ams-linux-demo:
 	@test -d ~/68k || ln -s "$$PWD/../ams-68k-bin/68k" ~/
