@@ -72,7 +72,6 @@ ams-linux-inst:
 	@echo "Note: root privileges required to install in $(AMS_UTILS_ROOT)"
 	sudo mkdir -p $(AMS_UTILS_ROOT)
 	sudo cp var/out/kdmode var/out/reader $(AMS_UTILS_ROOT)/
-	sudo chown root:root $(AMS_UTILS_ROOT)/kdmode $(AMS_UTILS_ROOT)/reader
 	@echo
 	@echo "Utilities installed.  Run \`make ams-linux-demo\` to continue."
 	@echo
@@ -80,6 +79,7 @@ ams-linux-inst:
 ams-linux-suid:
 	@echo
 	@echo "Note: root privileges required for setuid-root"
+	sudo chown root:root $(AMS_UTILS_ROOT)/kdmode
 	sudo chmod +s $(AMS_UTILS_ROOT)/kdmode
 
 ams-linux-demo:
