@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -e
 
 mkdir -p var/gen
 
@@ -7,6 +7,9 @@ if [ -z "$INSTALL_PREFIX" ]; then
 fi
 
 quoted_install_prefix="\"$INSTALL_PREFIX\""
+
+rm -f var/install
+ln -s "$INSTALL_PREFIX" var/install
 
 site_config_h="base/config/config/site_config.h"
 site_config_mk="var/gen/site_config.mk"
