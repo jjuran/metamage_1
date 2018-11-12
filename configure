@@ -6,11 +6,13 @@ if [ -z "$INSTALL_PREFIX" ]; then
 	INSTALL_PREFIX="/usr/local"
 fi
 
+quoted_install_prefix="\"$INSTALL_PREFIX\""
+
 site_config_h="base/config/config/site_config.h"
 site_config_mk="var/gen/site_config.mk"
 
-echo '#define CONFIG_INSTALL_PREFIX  "'$INSTALL_PREFIX'"' > $site_config_h
+echo "#define CONFIG_INSTALL_PREFIX  $quoted_install_prefix" > $site_config_h
 
-echo 'INSTALL_PREFIX := '$INSTALL_PREFIX > $site_config_mk
+echo "INSTALL_PREFIX := $quoted_install_prefix" > $site_config_mk
 
-echo INSTALL_PREFIX = \"$INSTALL_PREFIX\"
+echo "INSTALL_PREFIX = $quoted_install_prefix"
