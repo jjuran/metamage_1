@@ -1,7 +1,5 @@
 # Makefile for <https://github.com/jjuran/metamage_1>
 
-include var/gen/site_config.mk
-
 REPOS =
 REPOS += ams-68k-bin
 REPOS += freemount
@@ -52,7 +50,7 @@ app-build-tools:
 AMS_REPOS := freemount.git ams-68k-bin.git
 AMS_TOOLS := exhibit graft raster vx xv68k freemountd
 
-AMS_UTILS_ROOT := $(INSTALL_PREFIX)/lib/metamage
+AMS_UTILS_ROOT := var/install/lib/metamage
 
 ams-linux-tools: $(AMS_REPOS)
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader

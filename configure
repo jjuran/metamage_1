@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-mkdir -p var/gen
+mkdir -p var
 
 if [ -z "$INSTALL_PREFIX" ]; then
 	INSTALL_PREFIX="/usr/local"
@@ -12,10 +12,7 @@ rm -f var/install
 ln -s "$INSTALL_PREFIX" var/install
 
 site_config_h="base/config/config/site_config.h"
-site_config_mk="var/gen/site_config.mk"
 
 echo "#define CONFIG_INSTALL_PREFIX  $quoted_install_prefix" > $site_config_h
-
-echo "INSTALL_PREFIX := $quoted_install_prefix" > $site_config_mk
 
 echo "INSTALL_PREFIX = $quoted_install_prefix"
