@@ -1,5 +1,12 @@
 #!/usr/bin/env vx -Z
 
+const bindir = dirname realpath argv[ 0 ]
+
+const metamage_1 = bindir "/../.."
+const ams-68k-bin = metamage_1 "/../ams-68k-bin"
+
+const ams_bin = ams-68k-bin "/bin"
+
 const title = "Advanced Mac Substitute"
 
 const default_app = "TestApp"
@@ -44,7 +51,7 @@ def argify (name)
 const ams_modules = [ "core io fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
 const module_opts = ams_modules map {"-m", argify v}
 
-const app = home_68k "/app"
+const app = ams_bin "/app"
 
 const xv68k-screen
 const command-prefix
