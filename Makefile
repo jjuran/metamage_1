@@ -52,7 +52,17 @@ AMS_TOOLS := exhibit graft raster vx xv68k freemountd
 
 AMS_UTILS_ROOT := var/install/lib/metamage
 
-ams-linux-tools: $(AMS_REPOS)
+var/install:
+	@echo
+	@echo "Please run \`./configure\`.  Or, if you lack root access, run"
+	@echo
+	@echo "    INSTALL_PREFIX=\$$HOME ./configure"
+	@echo
+	@echo "instead."
+	@echo
+	@exit 1
+
+ams-linux-tools: $(AMS_REPOS) var/install
 	./build.pl -i $(AMS_TOOLS) display-linux interact-linux kdmode reader
 
 ams-vx-Z:
@@ -67,7 +77,7 @@ ams-linux: ams-linux-tools ams-vx-Z
 	@echo "Build phase complete.  Run \`make ams-linux-inst\` to continue."
 	@echo
 
-ams-linux-inst:
+ams-linux-inst: var/install
 	install -d $(AMS_UTILS_ROOT)
 	install -t $(AMS_UTILS_ROOT) var/out/kdmode var/out/reader
 	@echo
