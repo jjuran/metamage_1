@@ -6,6 +6,7 @@ const metamage_1 = bindir "/../.."
 const ams-68k-bin = metamage_1 "/../ams-68k-bin"
 
 const ams_bin = ams-68k-bin "/bin"
+const ams_lib = ams-68k-bin "/lib"
 
 const title = "Advanced Mac Substitute"
 
@@ -42,10 +43,12 @@ const module_args = str^
 
 def argify (name)
 {
+	const path = ams_lib "/" name
+	
 	return
 		if name in module_args
-			then {"[", name, *module_args[ name ], "]"}
-			else {name}
+			then {"[", path, *module_args[ name ], "]"}
+			else {path}
 }
 
 const ams_modules = [ "core io fs rsrc pack seg qd ui" / ' ' ] map {"ams-" v}
