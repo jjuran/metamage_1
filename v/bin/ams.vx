@@ -7,6 +7,7 @@ const ams-68k-bin = metamage_1 "/../ams-68k-bin"
 
 const ams_bin = ams-68k-bin "/bin"
 const ams_lib = ams-68k-bin "/lib"
+const ams_mnt = ams-68k-bin "/mnt"
 
 const title = "Advanced Mac Substitute"
 
@@ -22,7 +23,9 @@ def exists (path)
 const home     = getenv "HOME"
 const home_68k = home "/68k"
 
-const freemountd-subcmd = "freemountd -q --root" / ' ', home_68k
+const root_dir = if exists home_68k then {home_68k} else {ams_mnt}
+
+const freemountd-subcmd = "freemountd -q --root" / ' ', root_dir
 
 def core_opts
 {
