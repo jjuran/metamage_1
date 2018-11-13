@@ -89,11 +89,9 @@ ams-linux-suid:
 	chmod +s $(AMS_UTILS_ROOT)/kdmode
 
 ams-linux-demo:
-	@test -d ~/68k || ln -s "$$PWD/../ams-68k-bin/68k" ~/
 	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams Welcome
 
 ams-osx: $(AMS_REPOS) macward-compat.git
-	@test -d ~/68k || ln -s "$$PWD/../ams-68k-bin/68k" ~/
 	bin/build-app Genie
 	mkdir -p ~/var/run/fs
 	open var/build/dbg/bin/Genie/MacRelix.app
