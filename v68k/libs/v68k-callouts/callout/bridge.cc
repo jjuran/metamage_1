@@ -587,7 +587,7 @@ int32_t Gestalt_callout( v68k::processor_state& s )
 		default:
 			result = gestaltUndefSelectorErr;
 			
-			WARNING = "Undefined Gestalt selector ", code32_t( selector );
+			NOTICE = "Undefined Gestalt selector ", code32_t( selector );
 			break;
 	}
 	
