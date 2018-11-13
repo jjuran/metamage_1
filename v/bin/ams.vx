@@ -11,7 +11,7 @@ const ams_mnt = ams-68k-bin "/mnt"
 
 const title = "Advanced Mac Substitute"
 
-const default_app = "TestApp"
+const default_app = "Welcome"
 
 const app_name = if argc > 1 then {argv[ 1 ]} else {default_app}
 
