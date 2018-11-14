@@ -18,6 +18,13 @@ sub list
 		
 		my $full_path = "$dir/$entry";
 		
+		if ( $entry eq "var" )
+		{
+			$full_path .= "/links";
+			
+			next if ! -d $full_path;
+		}
+		
 		if ( grep { $filter->() } $full_path )
 		{
 			push @result, $full_path;
