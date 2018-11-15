@@ -307,10 +307,11 @@ namespace Pedestal
 		
 		CGRect detailBounds =
 		{
-			x,
-			y,
-			kAboutBoxTextWidth,
-			kAboutBoxDetailHeight,
+			{ x, y, },
+			{
+				kAboutBoxTextWidth,
+				kAboutBoxDetailHeight,
+			},
 		};
 		
 		DrawAboutBoxDetail( VersionString(), detailBounds, context );
