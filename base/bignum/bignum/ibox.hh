@@ -182,7 +182,7 @@ namespace bignum
 				{
 					construct( (long) i );
 				}
-				else if ( i == (unsigned long ) i )
+				else if ( i == (long long) (unsigned long) i )
 				{
 					construct( (unsigned long) i );
 				}
@@ -329,7 +329,7 @@ namespace bignum
 			// FIXME:  This assumes that Int is the same size as long long.
 			unsigned long long result = *(unsigned long long*) data();
 			
-			return result - (sign() < 0) <= signed_max;
+			return result - (sign() < 0) <= (unsigned long long) signed_max;
 		}
 		
 		/*
@@ -345,7 +345,7 @@ namespace bignum
 		if ( smaller_type )
 		{
 			// Multiplying by the condition is a no-op to shut up a warning.
-			return its.integer <= Int( -1 ) * smaller_type;
+			return its.integer <= (int_t) Int( -1 ) * smaller_type;
 		}
 		
 		return true;
