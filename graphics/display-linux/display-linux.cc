@@ -91,6 +91,7 @@ static command::option options[] =
 	{ NULL }
 };
 
+static int  the_corner;
 static bool gfx_mode;
 static bool waiting;
 static bool watching;
@@ -467,6 +468,7 @@ enum display_format
 	Format_fullscreen = -1,
 	Format_theater,
 	Format_center,
+	Format_corner = Format_center,
 };
 
 static display_format the_format;
@@ -517,6 +519,26 @@ int main( int argc, char** argv )
 		else if ( strcmp( env_format, "center" ) == 0 )
 		{
 			the_format = Format_center;
+		}
+		else if ( strcmp( env_format, "top-left" ) == 0 )
+		{
+			the_corner = 1;
+			the_format = Format_corner;
+		}
+		else if ( strcmp( env_format, "top-right" ) == 0 )
+		{
+			the_corner = 2;
+			the_format = Format_corner;
+		}
+		else if ( strcmp( env_format, "bottom-left" ) == 0 )
+		{
+			the_corner = 3;
+			the_format = Format_corner;
+		}
+		else if ( strcmp( env_format, "bottom-right" ) == 0 )
+		{
+			the_corner = 4;
+			the_format = Format_corner;
 		}
 		else if ( strcmp( env_format, "theater" ) != 0 )
 		{
@@ -621,9 +643,12 @@ int main( int argc, char** argv )
 	
 	if ( ! showing_fullscreen() )
 	{
-		size_t dx = var_info.xres - width;
-		size_t dy = var_info.yres - height;
+		const uint8_t corner_raw = the_corner - 1;  // 0-based, none = 255
 		
+		size_t dx = the_corner & 1 ? 0 : var_info.xres - width;
+		size_t dy = corner_raw < 2 ? 0 : var_info.yres - height;
+		
+		if ( the_corner == 0 )
 		{
 			dx /= 2;
 			dy /= 2;
