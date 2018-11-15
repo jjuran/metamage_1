@@ -26,7 +26,7 @@ namespace sys {
 	
 	short get_volume_params( ::GetVolParmsInfoBuffer& buffer, short vRefNum )
 	{
-		HParamBlockRec pb = { 0 };
+		HParamBlockRec pb = {{ 0 }};
 		
 		HIOParam& io = pb.ioParam;
 		
