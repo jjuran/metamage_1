@@ -457,9 +457,9 @@ namespace v68k
 			switch ( pb.size )
 			{
 				default:  // not reached
-				byte_sized:  return s.read_byte( pb.address, dummy );
-				word_sized:  return s.read_word( pb.address, dummy );
-				long_sized:  return s.read_long( pb.address, dummy );
+				case byte_sized:  return s.read_byte( pb.address, dummy );
+				case word_sized:  return s.read_word( pb.address, dummy );
+				case long_sized:  return s.read_long( pb.address, dummy );
 			}
 		}
 		
