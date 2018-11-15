@@ -86,7 +86,7 @@ namespace vfs
 		
 		listdir( *extra.top, cache );
 		
-		for ( i = i;  i < cache.size();  ++i )
+		for ( /* i = ... */;  i < cache.size();  ++i )
 		{
 			vfs::dir_entry node = cache.at( i );
 			
