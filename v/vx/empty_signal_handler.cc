@@ -18,7 +18,7 @@ void empty_signal_handler( int )
 
 void install_empty_signal_handler( int signum )
 {
-	struct sigaction action = { 0 };
+	struct sigaction action = {{ 0 }};
 	action.sa_handler = &empty_signal_handler;
 	
 	int nok = sigaction( signum, &action, NULL );
