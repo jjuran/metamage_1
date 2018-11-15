@@ -46,17 +46,12 @@ Point get_window_size( WindowRef window )
 	
 	Rect& bounds = window->portRect;
 	
-	goto measure;
-	
 #else
 	
 	Rect bounds;
-	
-#endif
-	
 	GetWindowBounds( window, kWindowGlobalPortRgn, &bounds );
 	
-measure:
+#endif
 	
 	Point size = { bounds.bottom - bounds.top, bounds.right - bounds.left };
 	
