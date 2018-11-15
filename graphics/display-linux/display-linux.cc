@@ -621,8 +621,16 @@ int main( int argc, char** argv )
 	
 	if ( ! showing_fullscreen() )
 	{
-		dst += (var_info.yres - height) / 2 * dst_stride;
-		dst += (var_info.xres - width ) / 2 * var_info.bits_per_pixel / 8;
+		size_t dx = var_info.xres - width;
+		size_t dy = var_info.yres - height;
+		
+		{
+			dx /= 2;
+			dy /= 2;
+		}
+		
+		dst += dy * dst_stride;
+		dst += dx * var_info.bits_per_pixel / 8;
 	}
 	
 	if ( raster::sync_relay* sync = raster_sync )
