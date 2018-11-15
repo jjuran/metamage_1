@@ -3325,3 +3325,8 @@ $ vc '"foo" byte(32) "bar"'
 
 $ vc 'byte(5) packed "Hello"'
 1 >= 'x"0548656c6c6f"'
+
+%
+
+$ vc 'var x = "\xe2\x80\xa2"; translate( &x, "\xe2\x80\xa2", "abc" ); x'
+1 >= '"abc"'

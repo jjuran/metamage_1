@@ -258,7 +258,7 @@ namespace vlib
 			
 			while ( n-- )
 			{
-				char c = *p;
+				uint8_t c = *p;
 				
 				*p++ = map[ c ];
 			}
