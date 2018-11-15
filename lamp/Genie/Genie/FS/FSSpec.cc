@@ -40,7 +40,7 @@ namespace Genie
 	
 	VRefNum_DirID Dir_From_FSSpec( const FSSpec& dir )
 	{
-		CInfoPBRec cInfo = { 0 };
+		CInfoPBRec cInfo = {{ 0 }};
 		
 		MacIO::GetCatInfo< MacIO::Throw_All >( cInfo, dir );
 		

@@ -51,7 +51,7 @@ namespace Genie
 	
 	static bool FileIsLocked( const FSSpec& file )
 	{
-		CInfoPBRec cInfo = { 0 };
+		CInfoPBRec cInfo = {{ 0 }};
 		
 		MacIO::GetCatInfo< FNF_Throws >( cInfo, file );
 		

@@ -241,7 +241,7 @@ namespace Genie
 	
 	void ChangeFileMode( const FSSpec& file, mode_t new_mode )
 	{
-		CInfoPBRec paramBlock = { 0 };
+		CInfoPBRec paramBlock = {{ 0 }};
 		
 		MacIO::GetCatInfo< FNF_Throws >( paramBlock, file );
 		

@@ -154,7 +154,7 @@ namespace Genie
 	{
 		const FSSpec& fileSpec = *(FSSpec*) that->extra();
 		
-		CInfoPBRec cInfo = { 0 };
+		CInfoPBRec cInfo = {{ 0 }};
 		
 		const bool exists = FSpGetCatInfo< FNF_Returns >( cInfo, false, fileSpec );
 		
