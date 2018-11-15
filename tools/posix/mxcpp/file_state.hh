@@ -33,7 +33,6 @@ namespace tool
 			plus::string        its_line_directed_file;
 			plus::string        its_path;
 			const char*         its_dir_path;
-			poseven::fd_t       its_fd;
 			text_input::feed    its_feed;
 			poseven::fd_reader  its_reader;
 			std::size_t         its_nth_line;
@@ -48,7 +47,6 @@ namespace tool
 			:
 				its_path    ( path ),
 				its_dir_path( dir  ),
-				its_fd      ( fd   ),
 				its_reader  ( fd   ),
 				its_nth_line( 0    ),
 				its_buffered_blank_line_count()
