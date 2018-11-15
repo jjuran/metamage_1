@@ -176,7 +176,7 @@ namespace v68k
 		
 		const uint16_t writing = more & 0x0800;
 		
-		bool ok;
+		bool ok = false;
 		
 		if ( writing )
 		{
