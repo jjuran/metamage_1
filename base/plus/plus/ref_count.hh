@@ -11,7 +11,7 @@
 #define GCC_ASM_IS_DEFECTIVE 0  // begin optimistic
 #endif
 
-#ifdef __APPLE__
+#if defined( __APPLE__ )  &&  ! defined( __LP64__ )
 #  ifdef __GNUC__
 #    if __GNUC__ < 4  ||  (__GNUC__ == 4  &&  __GNUC_MINOR__ == 0 )
 #      undef  GCC_ASM_IS_DEFECTIVE
