@@ -35,11 +35,23 @@ namespace unet
 	
 	const size_t control_len = CMSG_LEN( sizeof (int) );
 	
+#if defined( __APPLE__ )  &&  ! defined( __clang__ )
+	
 	struct cmsg_fd_alloc
 	{
 		cmsghdr  header;
 		int      _data;
 	};
+	
+#else
+	
+	union cmsg_fd_alloc
+	{
+		cmsghdr  header;
+		char     _alloc[ CMSG_SPACE( sizeof (int) ) ];
+	};
+	
+#endif
 	
 	
 	int send_fd( int socket_fd, int payload_fd )
