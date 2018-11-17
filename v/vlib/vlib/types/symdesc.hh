@@ -27,7 +27,7 @@ namespace vlib
 				return v.type() == V_desc;
 			}
 			
-			SymDesc( int depth, int index ) : Value( V_desc )
+			SymDesc( short depth, short index ) : Value( V_desc )
 			{
 				const fields desc = { depth, index };
 				
