@@ -143,7 +143,9 @@ namespace raster
 			return null_raster_load();
 		}
 		
-		if ( end == mac_screen_size  &&  ! mac_screens_allowed )
+		const size_t file_size = end;
+		
+		if ( file_size == mac_screen_size  &&  ! mac_screens_allowed )
 		{
 			return invalid_raster();
 		}
@@ -158,12 +160,12 @@ namespace raster
 			return null_raster_load();
 		}
 		
-		if ( end == mac_screen_size )
+		if ( file_size == mac_screen_size )
 		{
 			return mac_screen_raster_load( addr );
 		}
 		
-		mmap_box box( addr, end );
+		mmap_box box( addr, file_size );
 		
 		uint32_t footer_size = get_footer_size( addr, end );
 		
@@ -211,7 +213,7 @@ namespace raster
 		
 		box.release();
 		
-		raster_load result = { addr, end, meta };
+		raster_load result = { addr, file_size, meta };
 		
 		return result;
 	}
@@ -225,6 +227,8 @@ namespace raster
 			return null_raster_load();
 		}
 		
+		const size_t file_size = end;
+		
 		const int mmap_prot  = PROT_READ | PROT_WRITE;
 		const int mmap_flags = MAP_SHARED;
 		
@@ -235,7 +239,7 @@ namespace raster
 			return null_raster_load();
 		}
 		
-		raster_load result = { addr, end, NULL };
+		raster_load result = { addr, file_size, NULL };
 		
 		return result;
 	}
