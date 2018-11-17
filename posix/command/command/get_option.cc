@@ -178,7 +178,7 @@ namespace command
 				
 				result.param = 0;  // NULL
 				
-				const unsigned char c = *arg++;
+				const char c = *arg++;
 				
 				const option* opt = find_option( options, c );
 				
