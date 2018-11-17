@@ -308,12 +308,12 @@ const uint16_t loader_code[] =
 	
 	0x21FC,  // MOVE.L   #callout_address(system_call),<dispatcher field>
 	0xFFFF,
-	callout_address(system_call),
+	(uint16_t) callout_address(system_call),
 	system_pb_addr + 3 * sizeof (uint32_t),
 	
 	0x21FC,  // MOVE.L   #callout_address(microseconds),<microseconds field>
 	0xFFFF,
-	callout_address(microseconds),
+	(uint16_t) callout_address(microseconds),
 	system_pb_addr + 4 * sizeof (uint32_t),
 	
 	0x4878,  // PEA  (system_pb_addr).W  ; pb
