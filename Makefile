@@ -88,7 +88,13 @@ ams-linux-suid:
 	chown root:root $(AMS_UTILS_ROOT)/kdmode
 	chmod +s $(AMS_UTILS_ROOT)/kdmode
 
-ams-linux-demo:
+ams-linux-check:
+	@test -e /dev/fb0 || echo
+	@test -e /dev/fb0 || echo "No /dev/fb0?  Sorry, this isn't going to work."
+	@test -e /dev/fb0 || echo
+	@test -e /dev/fb0 || exit 1
+
+ams-linux-demo: ams-linux-check
 	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams Welcome
 
 ams-osx: $(AMS_REPOS) macward-compat.git
