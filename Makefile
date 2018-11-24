@@ -100,14 +100,14 @@ ams-linux-check:
 	@test -w /dev/fb0 || exit 1
 
 ams-linux-demo: ams-linux-check
-	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams Welcome
+	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams
 
 ams-osx: $(AMS_REPOS) macward-compat.git
 	bin/build-app Genie
 	mkdir -p ~/var/run/fs
 	open var/build/dbg/bin/Genie/MacRelix.app
 	./build.pl -i $(AMS_TOOLS) uunix interact
-	PATH="$$PWD/var/out:$$PATH" ./scripts/ams Welcome
+	PATH="$$PWD/var/out:$$PATH" ./scripts/ams
 
 d68k:
 	./build.pl d68k
