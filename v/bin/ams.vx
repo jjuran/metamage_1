@@ -13,7 +13,12 @@ const title = "Advanced Mac Substitute"
 
 const default_app = "Welcome"
 
-const app_name = if argc > 1 then {argv[ 1 ]} else {default_app}
+const app_name =
+	if argc > 1
+		then {argv[ 1 ]}
+	else if const ams_appname = getenv "AMS_APPNAME"
+		then {ams_appname}
+	else {default_app}
 
 def exists (path)
 {
