@@ -286,6 +286,25 @@ void update_loop( raster::sync_relay*  sync,
 }
 
 static
+bool should_modeswitch()
+{
+	const char* display_modeswitch = getenv( "DISPLAY_MODESWITCH" );
+	
+	if ( ! display_modeswitch  ||  strcmp( display_modeswitch, "always" ) == 0 )
+	{
+		return true;
+	}
+	
+	if ( strcmp( display_modeswitch, "never" ) != 0 )
+	{
+		WARN( "invalid DISPLAY_MODESWITCH" );
+		exit( 3 );
+	}
+	
+	return false;
+}
+
+static
 char* const* get_options( char** argv )
 {
 	int opt;
@@ -297,7 +316,7 @@ char* const* get_options( char** argv )
 		switch ( opt )
 		{
 			case Opt_graphics_mode:
-				gfx_mode = true;
+				gfx_mode = should_modeswitch();
 				break;
 			
 			case Opt_wait:
