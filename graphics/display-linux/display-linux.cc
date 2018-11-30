@@ -61,13 +61,13 @@
 	Theoretically, 8-bit should work, but we've had mixed success with it on
 	Raspberry Pi.  16-bit works fine on RPi, but not on the PC graphics chips
 	I've tried.  This may need to become a run-time switch in the future.
+	
+	For now, just use 32-bit bilevel pixels in all cases.  It works fine on
+	the Raspberry Pi, memory's not an issue, and it opens up opportunities
+	for post-processing, including mixing with other graphics sources.
 */
 
-#ifdef __arm__
-typedef uint16_t bilevel_pixel_t;
-#else
 typedef uint32_t bilevel_pixel_t;
-#endif
 
 enum
 {
