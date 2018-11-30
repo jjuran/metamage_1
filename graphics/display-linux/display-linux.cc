@@ -96,8 +96,16 @@ static bool gfx_mode;
 static bool waiting;
 static bool watching;
 
+static size_t reflection_height;
+
 static raster::raster_load loaded_raster;
 
+
+static inline
+size_t min( size_t a, size_t b )
+{
+	return b < a ? b : a;
+}
 
 static
 void report_error( const char* path, uint32_t err )
@@ -241,6 +249,15 @@ bool is_byte_swapped( const raster_load& raster )
 }
 
 static
+void memcpy_fixmul( uint8_t* p, const uint8_t* q, size_t n, int fraction )
+{
+	while ( n-- )
+	{
+		*p++ = *q++ * fraction / 256;
+	}
+}
+
+static
 void blit( const uint8_t*  src,
            size_t          src_stride,
            uint8_t*        dst,
@@ -249,12 +266,43 @@ void blit( const uint8_t*  src,
            size_t          height,
            draw_proc       draw )
 {
-	while ( height-- > 0 )
+	while ( height-- > reflection_height )
 	{
 		draw( src, dst, width );
 		
 		src += src_stride;
 		dst += dst_stride;
+	}
+	
+	if ( reflection_height == 0 )
+	{
+		return;
+	}
+	
+	const int denom = reflection_height * 4;
+	
+	size_t n = 0;
+	
+	uint8_t* tmp = (uint8_t*) alloca( dst_stride );
+	
+	memset( tmp, '\0', dst_stride );
+	
+	uint8_t* fxp = dst + 2 * reflection_height * dst_stride;
+	
+	while ( height-- > 0 )
+	{
+		draw( src, tmp, width );
+		
+		memcpy( dst, tmp, dst_stride );
+		
+		const int fraction = ++n * 256 / denom;
+		
+		src += src_stride;
+		dst += dst_stride;
+		
+		fxp -= dst_stride;
+		
+		memcpy_fixmul( fxp, tmp, dst_stride, fraction );
 	}
 }
 
@@ -675,6 +723,11 @@ int main( int argc, char** argv )
 		
 		dst += dy * dst_stride;
 		dst += dx * var_info.bits_per_pixel / 8;
+		
+		if ( getenv( "DISPLAY_REFLECTION" )  &&  the_corner < 3 )
+		{
+			reflection_height = min( height / 2, var_info.yres - dy - height );
+		}
 	}
 	
 	if ( raster::sync_relay* sync = raster_sync )
