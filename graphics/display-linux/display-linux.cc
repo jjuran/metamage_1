@@ -149,11 +149,11 @@ raster::sync_relay* open_raster( const char* path )
 	return NULL;
 }
 
-typedef void (*draw_proc)( const char* src, char* dst, int width );
+typedef void (*draw_proc)( const uint8_t* src, uint8_t* dst, int width );
 
 template < class UInt >
 static
-void transcode_1_to_direct( const char* src, char* dst, int width )
+void transcode_1_to_direct( const uint8_t* src, uint8_t* dst, int width )
 {
 	UInt* p = (UInt*) dst;
 	
@@ -173,25 +173,25 @@ void transcode_1_to_direct( const char* src, char* dst, int width )
 }
 
 static
-void copy_8( const char* src, char* dst, int width )
+void copy_8( const uint8_t* src, uint8_t* dst, int width )
 {
 	memcpy( dst, src, width );
 }
 
 static
-void copy_16( const char* src, char* dst, int width )
+void copy_16( const uint8_t* src, uint8_t* dst, int width )
 {
 	memcpy( dst, src, width * 2 );
 }
 
 static
-void copy_32( const char* src, char* dst, int width )
+void copy_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	memcpy( dst, src, width * 4 );
 }
 
 static
-void swap_32( const char* src, char* dst, int width )
+void swap_32( const uint8_t* src, uint8_t* dst, int width )
 {
 	while ( width > 0 )
 	{
@@ -233,7 +233,7 @@ draw_proc select_draw_proc( const raster_desc& desc, bool swap_bytes )
 static
 bool is_byte_swapped( const raster_load& raster )
 {
-	const char* addr = (char*) raster.addr;
+	const uint8_t* addr = (uint8_t*) raster.addr;
 	
 	const uint32_t footer_size = *(uint32_t*) (addr + raster.size - 4);
 	
@@ -241,13 +241,13 @@ bool is_byte_swapped( const raster_load& raster )
 }
 
 static
-void blit( const char*  src,
-           size_t       src_stride,
-           char*        dst,
-           size_t       dst_stride,
-           size_t       width,
-           size_t       height,
-           draw_proc    draw )
+void blit( const uint8_t*  src,
+           size_t          src_stride,
+           uint8_t*        dst,
+           size_t          dst_stride,
+           size_t          width,
+           size_t          height,
+           draw_proc       draw )
 {
 	while ( height-- > 0 )
 	{
@@ -262,9 +262,9 @@ static volatile sig_atomic_t signalled;
 
 static
 void update_loop( raster::sync_relay*  sync,
-                  const char*          src,
+                  const uint8_t*       src,
                   size_t               src_stride,
-                  char*                dst,
+                  uint8_t*             dst,
                   size_t               dst_stride,
                   size_t               width,
                   size_t               height,
@@ -643,11 +643,11 @@ int main( int argc, char** argv )
 	
 	fb_fix_screeninfo fix_info = get_fix_screeninfo( fbh );
 	
-	const char* src = (char*) loaded_raster.addr /*+ desc.image_offset*/;
+	const uint8_t* src = (uint8_t*) loaded_raster.addr /*+ desc.image_offset*/;
 	
 	fb::map map( fbh );
 	
-	char* dst = (char*) map.get_base();
+	uint8_t* dst = (uint8_t*) map.get_base();
 	
 	const size_t dst_stride = fix_info.line_length;
 	
