@@ -10,10 +10,8 @@ const month_days =
 
 const utc = "UTC"
 
-def time_pieces
+def time_pieces (secs)
 {
-	var secs = _
-	
 	const q = 365 * 4 + 1
 	
 	# 365 * n           is Jan 1
@@ -58,9 +56,9 @@ def time_pieces
 	return 1970 + years, month, days, hours, mins, secs
 }
 
-def tens
+def tens (x)
 {
-	return ("0" * (_ < 10)) _
+	return ("0" * (x < 10)) x
 }
 
 export
