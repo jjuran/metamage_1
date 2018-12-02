@@ -59,7 +59,7 @@ def time_pieces (secs)
 	var days  = hours div 24
 	    hours = hours mod 24
 	
-	const wday = days mod 7 + 4
+	const wday = (days + 4) mod 7
 	
 	var quads = days div q
 	    days  = days mod q
