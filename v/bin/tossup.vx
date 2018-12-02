@@ -44,6 +44,11 @@ const opponent-output = fd 7
 
 def abort
 {
+	if not isa_tty then
+	{
+		print "!"
+	}
+	
 	warn "Tossup protocol aborted."
 	exit 1
 }
@@ -164,10 +169,11 @@ while result == mark-int .-result  # ignore 0 and 2^(k-1)
 
 const scored = won-or-lost[ +(result < 0) ]
 
-mention "You " AMBER
+mention "You " AMBER scored RESET ".\n\n"
 
-print scored "."
-
-mention RESET "\n"
+if not isa_tty then
+{
+	print "+-"[ +(result < 0) ]
+}
 
 end.
