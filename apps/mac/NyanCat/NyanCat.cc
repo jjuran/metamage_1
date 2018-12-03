@@ -155,7 +155,7 @@ void make_main_window()
 	
 	main_window = NewWindow( NULL,
 	                         &bounds,
-	                         "\p" "NyanCat",
+	                         "\p" "Nyan Cat",
 	                         true,
 	                         noGrowDocProc,
 	                         (WindowRef) -1,
