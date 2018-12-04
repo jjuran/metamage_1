@@ -107,6 +107,15 @@ void make_offscreen_port()
 static
 void make_offscreen_buffer()
 {
+	CursHandle cursor_handle = GetCursor( watchCursor );
+	
+	if ( cursor_handle )
+	{
+		Cursor cursor = **cursor_handle;
+		
+		SetCursor( &cursor );
+	}
+	
 	make_offscreen_port();
 	
 	bitmap bits( zoom );
@@ -123,6 +132,11 @@ void make_offscreen_buffer()
 	}
 	
 	MovePortTo( 0, 0 );
+	
+	if ( cursor_handle )
+	{
+		InitCursor();
+	}
 }
 
 static inline
