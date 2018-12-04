@@ -224,7 +224,7 @@ pascal void set_cursor( const Cursor* crsr )
 	
 	TheCrsr = *crsr;
 	
-	update_cursor_location();
-	
 	++CrsrBusy;
+	
+	update_cursor_location();
 }
