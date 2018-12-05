@@ -25,6 +25,8 @@ open_res_file( const char* path, ForkType fork );
 nucleus::owned< Nitrogen::ResFileRefNum >
 open_res_file( const char* path, ForkType fork, bool exists );
 
+void set_BNDL_bit( const char* path, bool value );
+
 inline
 bool has_FSOpenResourceFile()
 {

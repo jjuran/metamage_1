@@ -78,6 +78,8 @@ static char* const* get_options( char* const* argv )
 namespace tool
 {
 	
+	static bool has_BNDL = false;
+	
 	static int TryResCopy( const char*       source_path,
 	                       N::ResFileRefNum  destRes,
 	                       ForkType          fork )
@@ -99,6 +101,12 @@ namespace tool
 		for ( int iType = 1;  iType <= types;  ++iType )
 		{
 			N::ResType type = N::Get1IndType( iType );
+			
+			if ( type == 'BNDL' )
+			{
+				has_BNDL = true;
+			}
+			
 			int rsrcs = N::Count1Resources( type );
 			
 			for ( int iRsrc = 1;  iRsrc <= rsrcs;  ++iRsrc )
@@ -200,6 +208,8 @@ namespace tool
 				                                                       dest_name );
 			}
 		}
+		
+		set_BNDL_bit( dest_path, has_BNDL );
 		
 		return fail;
 	}

@@ -231,3 +231,18 @@ open_res_file( const char* path, ForkType fork, bool exists )
 	
 	return open_new_res_file_template< no_unicode >( path, fork );
 }
+
+void set_BNDL_bit( const char* path, bool value )
+{
+	const FSSpec file = Div::ResolvePathToFSSpec( path );
+	
+	FInfo info = N::FSpGetFInfo( file );
+	
+	if ( value == ! (info.fdFlags & kHasBundle) )
+	{
+		info.fdFlags &= ~kHasBundle;
+		info.fdFlags |=  kHasBundle * value;
+		
+		N::FSpSetFInfo( file, info );
+	}
+}
