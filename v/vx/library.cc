@@ -39,7 +39,7 @@
 #include "vlib/symbol.hh"
 #include "vlib/types.hh"
 #include "vlib/iterators/array_iterator.hh"
-#include "vlib/iterators/list_builder.hh"
+#include "vlib/iterators/safe_list_builder.hh"
 #include "vlib/types/boolean.hh"
 #include "vlib/types/fraction.hh"
 #include "vlib/types/integer.hh"
@@ -88,8 +88,8 @@ namespace vlib
 					return sym->get();
 				}
 				
-				list_builder    mappings;
-				array_iterator  it( exported );
+				safe_list_builder  mappings;
+				array_iterator     it( exported );
 				
 				while ( it )
 				{
