@@ -19,11 +19,23 @@
 namespace poseven
 {
 	
+#ifndef __RELIX__
+	
+	static mutex key_mutex;
+	
+#endif
+	
 	static thread_key< thread* >* any_thread_object_key;  // i.e. "if any"
 	
 	static
 	thread_key< thread* >& the_thread_object_key()
 	{
+	#ifndef __RELIX__
+		
+		lock k( key_mutex );
+		
+	#endif
+		
 		if ( any_thread_object_key == NULL )
 		{
 			any_thread_object_key = new thread_key< thread* >();
