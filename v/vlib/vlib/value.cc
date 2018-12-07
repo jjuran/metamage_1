@@ -213,8 +213,6 @@ namespace vlib
 			its_box.unshare();
 		}
 		
-		clear_cycle_free();  // No longer guaranteed
-		
 		return *this;
 	}
 	
