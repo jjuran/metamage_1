@@ -125,7 +125,7 @@ namespace vlib
 		{
 			--it;
 			
-			if ( it->expr() == v.expr() )
+			if ( &it->dereference< int >() == &v.dereference< int >() )
 			{
 				tracked_roots.erase( it );
 				
