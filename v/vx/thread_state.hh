@@ -58,6 +58,8 @@ namespace vlib
 			
 			const Value& operator*();
 			
+			bool terminated() const  { return its_thread.terminated(); }
+			
 			const Value& function() const  { return its_pb.f;      }
 			const Value& result  () const  { return its_pb.result; }
 	};
