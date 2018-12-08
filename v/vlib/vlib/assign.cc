@@ -12,6 +12,7 @@
 #include "vlib/equal.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
+#include "vlib/tracker.hh"  // codependent:  tracker > symbol > assign
 #include "vlib/type_info.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/typing.hh"
@@ -175,6 +176,20 @@ namespace vlib
 		return (typeinfo.coerce ? typeinfo.coerce : typeinfo.assign)( v );
 	}
 	
+	static inline
+	void safe_overwrite( Value& dst, const Value& src )
+	{
+	#ifdef __RELIX__
+		
+		dst = src;
+		
+	#else
+		
+		gc_safe_overwrite( dst, src );
+		
+	#endif
+	}
+	
 	void assign( const Target&  target,
 	             const Value&   v,
 	             bool           coercive )
@@ -195,7 +210,7 @@ namespace vlib
 		}
 		else
 		{
-			dst = v;
+			safe_overwrite( dst, v );
 		}
 	}
 	

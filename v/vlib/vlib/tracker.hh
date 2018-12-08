@@ -13,6 +13,8 @@ namespace vlib
 	class Value;
 	struct namespace_info;
 	
+	void gc_safe_overwrite( Value& dst, const Value& src );
+	
 	void track_symbol( const Value& v );
 	
 	void add_root( const Value& v );

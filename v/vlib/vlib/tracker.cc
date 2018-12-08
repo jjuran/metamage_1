@@ -70,6 +70,13 @@ namespace vlib
 			~gc_lock()  { must_pthread_mutex_unlock( &gc_mutex ); }
 	};
 	
+	void gc_safe_overwrite( Value& dst, const Value& src )
+	{
+		gc_lock lock;
+		
+		dst = src;
+	}
+	
 	static inline
 	bool is_tracked( const Symbol* sym )
 	{
