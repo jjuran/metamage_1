@@ -13,7 +13,7 @@
 #include "bignum/fraction.hh"
 
 // vlib
-#include "vlib/symbol.hh"
+#include "vlib/assign.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"

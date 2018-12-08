@@ -17,8 +17,6 @@
 namespace vlib
 {
 	
-	Value as_assigned( const Value& type, const Value& v );
-	
 	enum mark_type
 	{
 		Mark_none,   // not participating in GC
@@ -93,8 +91,8 @@ namespace vlib
 	
 	void assign( const Target&  target,
 	             const Value&   v,
-	             bool           coercive = false,
-	             const Symbol*  sym      = 0 );  // NULL
+	             bool           coercive,
+	             const Symbol*  sym );
 	
 	inline
 	const Value& lookup_symbol( const Symbol* symbol )

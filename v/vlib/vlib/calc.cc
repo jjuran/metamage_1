@@ -10,6 +10,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/assign.hh"
 #include "vlib/compare.hh"
 #include "vlib/equal.hh"
 #include "vlib/error.hh"
@@ -21,7 +22,6 @@
 #include "vlib/os.hh"
 #include "vlib/return.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/symbol.hh"
 #include "vlib/table-utils.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"

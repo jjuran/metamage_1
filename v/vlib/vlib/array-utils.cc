@@ -9,8 +9,8 @@
 #include "bignum/integer.hh"
 
 // vlib
+#include "vlib/assign.hh"
 #include "vlib/list-utils.hh"
-#include "vlib/symbol.hh"
 #include "vlib/throw.hh"
 #include "vlib/iterators/list_builder.hh"
 #include "vlib/iterators/list_iterator.hh"

@@ -12,8 +12,8 @@
 #include "bignum/decimal.hh"
 
 // vlib
+#include "vlib/assign.hh"
 #include "vlib/string-utils.hh"
-#include "vlib/symbol.hh"
 #include "vlib/targets.hh"
 #include "vlib/throw.hh"
 #include "vlib/type_info.hh"

@@ -9,7 +9,7 @@
 #include "debug/assert.hh"
 
 // vlib
-#include "vlib/symbol.hh"
+#include "vlib/assign.hh"
 #include "vlib/throw.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/operators.hh"

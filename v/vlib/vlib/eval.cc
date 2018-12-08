@@ -7,6 +7,7 @@
 
 // vlib
 #include "vlib/array-utils.hh"
+#include "vlib/assign.hh"
 #include "vlib/calc.hh"
 #include "vlib/collectible.hh"
 #include "vlib/error.hh"
