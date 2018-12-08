@@ -85,6 +85,8 @@ namespace poseven
 			thread();
 			~thread();
 			
+			bool terminated() const;
+			
 			bool is_the_current_thread() const;
 			
 			void create( thread_entry_proc entry, void* param );
@@ -93,6 +95,14 @@ namespace poseven
 			void join();
 			void wait();
 	};
+	
+	inline
+	bool thread::terminated() const
+	{
+		lock k( its_mutex );
+		
+		return its_status >= Thread_cancelled;
+	}
 	
 	inline
 	bool thread::is_the_current_thread() const
