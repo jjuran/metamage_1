@@ -90,7 +90,11 @@ namespace vlib
 		const thread_state& state = *thread.get();
 		
 		put( state.function(), param );
-		put( state.result  (), param );
+		
+		if ( state.terminated() )
+		{
+			put( state.result(), param );
+		}
 	}
 	
 	static const refs ref =
