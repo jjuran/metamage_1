@@ -1,0 +1,81 @@
+#!/usr/bin/env vx -Z
+
+# This is a spoiled version of pair-up.vx.  It still works, but it wastes a
+# bunch of CPU time.  Its benefit is that it makes a particular GC bug much
+# more likely to occur.
+
+const bindir = dirname realpath argv[ 0 ]
+const libdir = bindir "/../../lib/"
+
+const import = { const path = libdir _ ".vobj"; eval( load path, path ) }
+
+const date-time = import "date-time"
+const sockaddr  = import "sockaddr"
+
+const port = getenv "PAIRUP_PORT"
+
+if not bool port then
+{
+	warn "pair-up: Please set PAIRUP_PORT to an available TCP port."
+	exit 2
+}
+
+const listener-fd = tcp-listen port
+
+def churn
+{
+	while time() do
+	{
+		sleep (1/100000)
+	}
+}
+
+def respond { print "\r" "[" (date-time.stamp time()) "]" "  " _ }
+
+def recruit
+{
+	const name = _
+	
+	OUT <== "Waiting for " name "..."
+	
+	const n = "Alice".length - name.length  # We know that "Bob" is shorter
+	
+	const connection = accept listener-fd
+	
+	respond name ":  " (" " * n) sockaddr.display connection.address
+	
+	return connection.socket
+}
+
+def relay
+{
+	const input, const output = _
+	
+	while var line = input.read 1024 do
+	{
+		output <== line
+	}
+	
+	close input
+	close output
+}
+
+def pair-up
+{
+	const A = recruit "Alice"
+	const B = recruit "Bob"
+	
+	OUT <== "Full-duplex relay in progress..."
+	
+	thread { relay (A, B) },
+	thread { relay (B, A) }
+	
+	respond "Thank you, please come again." "\n"
+}
+
+var churnage = 1 .. 3 map {thread churn}
+
+while true do
+{
+	pair-up()
+}
