@@ -74,20 +74,18 @@ namespace vlib
 		{
 			return assign( target, v, coercive );
 		}
-		else if ( sym )
+		
+		Value tmp = v;
+		
+		swap( dst, tmp );
+		
+		if ( ! sym->check_type_invariant() )
 		{
-			Value tmp = v;
+			// Oops, higher-level type violation.
 			
 			swap( dst, tmp );
 			
-			if ( ! sym->check_type_invariant() )
-			{
-				// Oops, higher-level type violation.
-				
-				swap( dst, tmp );
-				
-				THROW( "complex type mismatch in assignment" );
-			}
+			THROW( "complex type mismatch in assignment" );
 		}
 	}
 	
