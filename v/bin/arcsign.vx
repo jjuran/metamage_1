@@ -63,7 +63,7 @@ const option_defs = byte^
 	'k': [ &key, vload ],
 ]
 
-const args = options.parse( argv, option_defs, { exit usage() } )
+const args = options.parse( argv[ 1 -> argc ], option_defs, { exit usage() } )
 
 if key isa null then
 {

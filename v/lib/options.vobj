@@ -10,7 +10,7 @@ def parse
 	
 	const argc = argv.length
 	
-	var i = 1
+	var i = 0
 	
 	while i < argc do
 	{
