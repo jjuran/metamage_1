@@ -9,7 +9,7 @@
 #include "debug/assert.hh"
 
 // vlib
-#include "vlib/symbol.hh"
+#include "vlib/value.hh"
 #include "vlib/dispatch/dispatch.hh"
 #include "vlib/dispatch/refs.hh"
 
@@ -34,6 +34,11 @@ namespace vlib
 	static
 	void put( const Value& v, void* param )
 	{
+		if ( v.is_cycle_free() )
+		{
+			return;
+		}
+		
 		typedef std::vector< const Value* > Stack;
 		
 		Stack& stack = *(Stack*) param;
@@ -74,11 +79,6 @@ namespace vlib
 		{
 			push( its_stack, &expr->right );
 			push( its_stack, &expr->left  );
-		}
-		else if ( const Symbol* sym = v.sym() )
-		{
-			push( its_stack, &sym->get() );
-			push( its_stack, &sym->vtype() );
 		}
 		else if ( get_refs getrefs = get_getrefs( v ) )
 		{
