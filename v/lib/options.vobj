@@ -12,9 +12,9 @@ def parse
 	
 	var i = 0
 	
-	while i < argc do
+	while ++i < argc do
 	{
-		const arg = argv[ ++i ]
+		const arg = argv[ i ]
 		
 		if arg[ 0 ] != '-' then
 		{
