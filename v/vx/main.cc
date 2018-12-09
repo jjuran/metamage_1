@@ -275,6 +275,7 @@ int main( int argc, char** argv )
 	define( proc_readlink );
 	define( proc_realpath );
 	define( proc_secret   );
+	define( proc_setenv   );
 	define( proc_sleep    );
 	define( proc_stat     );
 	define( proc_time     );

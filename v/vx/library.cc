@@ -359,6 +359,24 @@ namespace vlib
 	}
 	
 	static
+	Value v_setenv( const Value& v )
+	{
+		Expr* expr = v.expr();
+		
+		const char* name  = expr->left.string().c_str();
+		const char* value = expr->right.string().c_str();
+		
+		int nok = setenv( name, value, 1 );
+		
+		if ( nok )
+		{
+			throw_exception_object( error_desc( errno ) );
+		}
+		
+		return Value_nothing;
+	}
+	
+	static
 	Value v_sleep( const Value& v )
 	{
 		const useconds_t max_useconds = useconds_t( -1 );
@@ -481,6 +499,8 @@ namespace vlib
 	static const Type u32   = u32_vtype;
 	static const Type fract = fraction_vtype;
 	
+	static const Value cstr_x2( c_str, c_str );
+	
 	static const Value sleep_arg ( u32,   Op_union, fract );
 	static const Value maybe_cstr( c_str, Op_union, Value_empty_list );
 	
@@ -505,6 +525,7 @@ namespace vlib
 	const proc_info proc_RUN    = { "run",    &v_run,    &c_str_array};
 	const proc_info proc_RUNOUT = { RUNOUT,   &v_runout, &c_str_array};
 	const proc_info proc_secret = { DESTRUCT, &v_secret, NULL        };
+	const proc_info proc_setenv = { "setenv", &v_setenv, &cstr_x2    };
 	const proc_info proc_sleep  = { "sleep",  &v_sleep,  &sleep_arg  };
 	const proc_info proc_system = { "system", &v_system, &empty_list };
 	const proc_info proc_SYSTEM = { "system", &v_SYSTEM, &maybe_cstr };
