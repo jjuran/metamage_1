@@ -56,6 +56,10 @@ def parse
 			
 			*optvar = f( param )
 		}
+		else if *optvar isa int then
+		{
+			++*optvar
+		}
 	}
 	
 	const args = argv[ i -> argc ]
