@@ -1,0 +1,5 @@
+CFBundleExecutable:  "Nyan Cat"
+CFBundleIconFile:    "NyanCat.icns"
+CFBundleName:        "Nyan Cat"
+CFBundlePackageType: 'APPL'
+CFBundleSignature:   'NYAN'
