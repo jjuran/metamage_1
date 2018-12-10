@@ -21,42 +21,47 @@ def parse
 			break
 		}
 		
-		const c = *p++
-		
-		if c == '-' then
+		if *p == '-' then
 		{
 			# TODO:  long options
 			++i
 			break
 		}
 		
-		if not c in defs then
+		while p do
 		{
-			error()
-		}
-		
-		const opt = defs[ c ]
-		
-		const optvar = opt[ reference ]
-		
-		if const f = opt[ interpret ] then
-		{
-			const param
+			const c = *p++
 			
-			if p then
+			if not c in defs then
 			{
-				param = p.rest
-			}
-			else
-			{
-				param = argv[ ++i ]
+				error()
 			}
 			
-			*optvar = f( param )
-		}
-		else if *optvar isa int then
-		{
-			++*optvar
+			const opt = defs[ c ]
+			
+			const optvar = opt[ reference ]
+			
+			if const f = opt[ interpret ] then
+			{
+				const param
+				
+				if p then
+				{
+					param = p.rest
+				}
+				else
+				{
+					param = argv[ ++i ]
+				}
+				
+				*optvar = f( param )
+				
+				break
+			}
+			else if *optvar isa int then
+			{
+				++*optvar
+			}
 		}
 	}
 	
