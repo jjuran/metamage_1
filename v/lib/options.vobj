@@ -14,16 +14,14 @@ def parse
 	
 	while ++i < argc do
 	{
-		const arg = argv[ i ]
+		var p = begin argv[ i ]
 		
-		if arg[ 0 ] != '-' then
+		if *p++ != '-' then
 		{
 			break
 		}
 		
-		const len = arg.length
-		
-		const c = arg[ 1 ]
+		const c = *p++
 		
 		if c == '-' then
 		{
@@ -45,9 +43,9 @@ def parse
 		{
 			const param
 			
-			if len > 2 then
+			if p then
 			{
-				param = arg[ 2 -> len ]
+				param = p.rest
 			}
 			else
 			{
