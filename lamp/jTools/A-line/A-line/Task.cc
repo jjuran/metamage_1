@@ -6,12 +6,7 @@
 #include "A-line/Task.hh"
 
 // Standard C++
-#include <algorithm>
-#include <functional>
 #include <queue>
-
-// plus
-#include "plus/pointer_to_function.hh"
 
 // poseven
 #include "poseven/functions/stat.hh"
@@ -21,6 +16,7 @@
 
 // A-line
 #include "A-line/A-line.hh"
+#include "A-line/Commands.hh"
 
 
 namespace tool
@@ -144,12 +140,6 @@ namespace tool
 	}
 	
 	
-	static const char* c_str( const plus::string& s )
-	{
-		return s.c_str();
-	}
-	
-	
 	CommandTask::CommandTask( const Command&       command,
 			                  const plus::string&  output,
 			                  const plus::string&  diagnostics,
@@ -164,10 +154,7 @@ namespace tool
 		
 		its_command.push_back( OutputPath().c_str() );
 		
-		std::transform( its_input_file_paths.begin(),
-		                its_input_file_paths.end(),
-		                std::back_inserter( its_command ),
-		                std::ptr_fun( c_str ));
+		AugmentCommand( its_command, its_input_file_paths );
 		
 		its_command.push_back( NULL );
 	}
