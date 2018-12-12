@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <set>
 #include <vector>
 
@@ -18,7 +17,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
 // Debug
@@ -375,14 +373,12 @@ namespace tool
 	{
 		std::vector< plus::string > result;
 		
-		result.resize( search_directives.size() );
+		result.reserve( search_directives.size() );
 		
-		// Find and record search directories.
-		std::transform( search_directives.begin(),
-		                search_directives.end(),
-		                result.begin(),
-		                std::bind1st( plus::ptr_fun( FindSearchDir ),
-			                          project_dir_pathname ) );
+		for ( size_t i = 0;  i < search_directives.size();  ++i )
+		{
+			result.push_back( FindSearchDir( project_dir_pathname, search_directives[ i ] ) );
+		}
 		
 		return result;
 	}
