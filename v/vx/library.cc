@@ -285,7 +285,7 @@ namespace vlib
 			
 			plus::var_string output;
 			
-			char buffer[ 4069 ];
+			char buffer[ 4096 ];
 			
 			ssize_t n_read;
 			
