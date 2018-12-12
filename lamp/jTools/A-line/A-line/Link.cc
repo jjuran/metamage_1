@@ -7,9 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
-#include <numeric>
-#include <vector>
 
 // Standard C
 #include <stdlib.h>
