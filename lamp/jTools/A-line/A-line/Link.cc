@@ -7,9 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
-#include <numeric>
-#include <vector>
 
 // Standard C
 #include <stdlib.h>
@@ -18,7 +15,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
 // Debug
@@ -399,11 +395,6 @@ namespace tool
 	}
 	
 	
-	static plus::string Project_FindResourceFile( const Project& project, const plus::string& filespec )
-	{
-		return project.FindResourceFile( filespec );
-	}
-	
 	static TaskPtr MakeRezTask( const Project&       project,
 	                            const plus::string&  output_pathname,
 	                            bool                 needsCarbResource,
@@ -411,12 +402,18 @@ namespace tool
 	{
 		const std::vector< plus::string >& input_filenames = project.UsedRezFiles();
 		
-		std::vector< plus::string > input_pathnames( input_filenames.size() );
+		const size_t n = input_filenames.size();
 		
-		std::transform( input_filenames.begin(),
-		                input_filenames.end(),
-		                input_pathnames.begin(),
-		                std::bind1st( plus::ptr_fun( &Project_FindResourceFile ), project ) );
+		std::vector< plus::string > input_pathnames;
+		
+		input_pathnames.reserve( n );
+		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			const plus::string& filename = input_filenames[ i ];
+			
+			input_pathnames.push_back( project.FindResourceFile( filename ) );
+		}
 		
 		if ( needsCarbResource )
 		{
@@ -430,10 +427,11 @@ namespace tool
 		                                               includeDir,
 		                                               relix ) );
 		
-		std::for_each( input_pathnames.begin(),
-		               input_pathnames.end(),
-		               std::bind1st( plus::ptr_fun( UpdateInputStamp ), rez_task ) );
-		
+		for ( size_t i = 0;  i < n;  ++i )
+		{
+			UpdateInputStamp( rez_task, input_pathnames[ i ] );
+		}
+
 		return rez_task;
 	}
 	

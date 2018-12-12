@@ -7,7 +7,6 @@
 
 // Standard C++
 #include <algorithm>
-#include <functional>
 #include <set>
 #include <vector>
 
@@ -18,7 +17,6 @@
 #include "iota/strings.hh"
 
 // plus
-#include "plus/pointer_to_function.hh"
 #include "plus/string/concat.hh"
 
 // Debug
@@ -375,14 +373,12 @@ namespace tool
 	{
 		std::vector< plus::string > result;
 		
-		result.resize( search_directives.size() );
+		result.reserve( search_directives.size() );
 		
-		// Find and record search directories.
-		std::transform( search_directives.begin(),
-		                search_directives.end(),
-		                result.begin(),
-		                std::bind1st( plus::ptr_fun( FindSearchDir ),
-			                          project_dir_pathname ) );
+		for ( size_t i = 0;  i < search_directives.size();  ++i )
+		{
+			result.push_back( FindSearchDir( project_dir_pathname, search_directives[ i ] ) );
+		}
 		
 		return result;
 	}
@@ -549,13 +545,31 @@ namespace tool
 		                  p7::basename( source_path ) ) != tools.end();
 	}
 	
+	class filename_belonging_check
+	{
+		private:
+			const std::vector< plus::string >& its_tools;
+		
+		public:
+			filename_belonging_check( const std::vector< plus::string >& tools )
+			:
+				its_tools( tools )
+			{
+			}
+			
+			bool operator()( const plus::string& source_path ) const
+			{
+				return filename_belongs( source_path, its_tools );
+			}
+	};
+	
 	static std::size_t partition_sources( const std::vector< plus::string >&  tool_filenames,
 	                                      std::vector< plus::string >&        source_paths )
 	{
 		std::size_t n_tools = std::partition( source_paths.begin(),
 		                                      source_paths.end(),
-		                                      std::bind2nd( plus::ptr_fun( &filename_belongs ),
-		                                                                    tool_filenames ) ) - source_paths.begin();
+		                                      filename_belonging_check( tool_filenames )
+		                                    ) - source_paths.begin();
 		
 		return n_tools;
 	}
