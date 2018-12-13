@@ -66,10 +66,8 @@ const icon_types = str^
 	"256x256@2x" => 'ic14',
 ]
 
-def icon_type_of
+def icon_type_of (name)
 {
-	const name = _
-	
 	try
 	{
 		return icon_types[ name ]
@@ -80,10 +78,8 @@ def icon_type_of
 	}
 }
 
-def find_last_char_in_string
+def find_last_char_in_string (c, s)
 {
-	const c, const s = _
-	
 	var i = s.length
 	
 	while i > 0 do
@@ -116,10 +112,8 @@ def pack_one
 	return tag size data
 }
 
-def pack_icon_file
+def pack_icon_file (path)
 {
-	const path = _
-	
 	const data = load path
 	
 	if data[ 0 -> 4 ] == "icns" then
