@@ -1,0 +1,5 @@
+CFBundleExecutable:  "Tic-tac-toe"
+CFBundleIconFile:    "Tic-tac-toe.icns"
+CFBundleName:        "Tic-tac-toe"
+CFBundlePackageType: 'APPL'
+CFBundleSignature:   'XvO#'
