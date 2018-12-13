@@ -78,21 +78,6 @@ def icon_type_of (name)
 	}
 }
 
-def find_last_char_in_string (c, s)
-{
-	var i = s.length
-	
-	while i > 0 do
-	{
-		if s[ --i ] == c then
-		{
-			return i
-		}
-	}
-	
-	return ()
-}
-
 def encode_u32BE
 {
 	const x = unhex hex _
@@ -112,6 +97,61 @@ def pack_one
 	return tag size data
 }
 
+def icon_type_from_filename (name)
+{
+	const r0 = begin -name
+	
+	var r1 = r0.find '.'
+	
+	if r1 then
+	{
+		const ext = -r1.past
+		
+		if ext.length == 4 and mb32 ext in icon_types.values then
+		{
+			return mb32 ext
+		}
+		
+		++r1
+		
+		name = -r1.rest
+	}
+	else
+	{
+		r1 = r0
+	}
+	
+	if var r2 = r1.find '-' then
+	{
+		name = -(r2 - r1)
+	}
+	
+	return icon_type_of name
+}
+
+assert icon_type_from_filename "foo.icl8" == 'icl8'
+assert icon_type_from_filename "512x512@2x.ic10" == 'ic10'
+assert icon_type_from_filename "512x512@2x.icon" == 'ic10'
+assert icon_type_from_filename "foo-32x32,1+1.ICN#" == 'ICN#'
+assert icon_type_from_filename "foo-32x32,1+1.icon" == 'ICN#'
+assert icon_type_from_filename "foo-32x32,1+1" == 'ICN#'
+assert icon_type_from_filename "32x32,1+1" == 'ICN#'
+
+def basename (path)
+{
+	if const p = (begin -path).find '/' then
+	{
+		return -p.past
+	}
+	
+	return path
+}
+
+assert basename "/foo/bar" == "bar"
+assert basename "foo/bar" == "bar"
+assert basename "/bar" == "bar"
+assert basename "bar" == "bar"
+
 def pack_icon_file (path)
 {
 	const data = load path
@@ -125,15 +165,7 @@ def pack_icon_file (path)
 		return data[ 8 -> size ]
 	}
 	
-	const dot    = find_last_char_in_string( '.', path )
-	const hyphen = find_last_char_in_string( '-', path )
-	
-	assert (+) dot    > 0
-	assert (+) hyphen > 0
-	
-	const desc = path[ hyphen + 1 -> dot ]
-	
-	const icon_type = icon_type_of desc
+	const icon_type = icon_type_from_filename basename path
 	
 	return pack_one( icon_type => data )
 }
