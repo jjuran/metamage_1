@@ -169,6 +169,8 @@ pascal void SetOrigin_patch( short h, short v )
 	
 	OffsetRect_patch( &portRect, dh, dv );
 	OffsetRect_patch( &bounds,   dh, dv );
+	
+	OffsetRgn( thePort->visRgn, dh, dv );
 }
 
 pascal void SetClip_patch( struct MacRegion** clipRgn )
