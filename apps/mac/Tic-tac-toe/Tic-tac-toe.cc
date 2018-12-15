@@ -103,6 +103,21 @@ enum
 	kMargin = 3,
 };
 
+static
+short window_unitLength( WindowRef window )
+{
+	const Rect& portRect = get_portRect( window );
+	
+	const short portWidth  = portRect.right - portRect.left;
+	const short portHeight = portRect.bottom - portRect.top;
+	
+	const short portLength = min( portWidth, portHeight );
+	
+	const short unitLength = portLength / 32;
+	
+	return unitLength;
+}
+
 static WindowRef main_window;
 
 static
@@ -151,12 +166,7 @@ void draw_window( WindowRef window )
 	
 	EraseRect( &portRect );
 	
-	const short portWidth  = portRect.right - portRect.left;
-	const short portHeight = portRect.bottom - portRect.top;
-	
-	const short portLength = min( portWidth, portHeight );
-	
-	const short unitLength = portLength / 32;
+	const short unitLength = window_unitLength( window );
 	
 	Rect line;
 	
@@ -217,14 +227,7 @@ void draw_window( WindowRef window )
 static
 void draw_token( WindowRef window, player_t token, short index )
 {
-	const Rect& portRect = get_portRect( window );
-	
-	const short portWidth  = portRect.right - portRect.left;
-	const short portHeight = portRect.bottom - portRect.top;
-	
-	const short portLength = min( portWidth, portHeight );
-	
-	const short unitLength = portLength / 32;
+	const short unitLength = window_unitLength( window );
 	
 	const short i = index / 3;
 	const short j = index % 3;
@@ -245,14 +248,7 @@ void draw_token( WindowRef window, player_t token, short index )
 static
 short hit_test( WindowRef window, Point where )
 {
-	const Rect& portRect = get_portRect( window );
-	
-	const short portWidth  = portRect.right - portRect.left;
-	const short portHeight = portRect.bottom - portRect.top;
-	
-	const short portLength = min( portWidth, portHeight );
-	
-	const short unitLength = portLength / 32;
+	const short unitLength = window_unitLength( window );
 	
 	short x = where.h / unitLength;
 	short y = where.v / unitLength;
@@ -323,14 +319,7 @@ void calibrate_mouseRgns( WindowRef window )
 	
 	LocalToGlobal( &globalOffset );
 	
-	const Rect& portRect = get_portRect( window );
-	
-	const short portWidth  = portRect.right - portRect.left;
-	const short portHeight = portRect.bottom - portRect.top;
-	
-	const short portLength = min( portWidth, portHeight );
-	
-	const short unitLength = portLength / 32;
+	const short unitLength = window_unitLength( window );
 	
 	Rect rect = { -32000, -32000, 32000, 32000 };
 	
