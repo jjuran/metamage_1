@@ -313,13 +313,11 @@ void click( WindowRef window, Point where )
 }
 
 static
-void calibrate_mouseRgns( WindowRef window )
+void calibrate_mouseRgns( short unitLength )
 {
 	Point globalOffset = { 0, 0 };
 	
 	LocalToGlobal( &globalOffset );
-	
-	const short unitLength = window_unitLength( window );
 	
 	Rect rect = { -32000, -32000, 32000, 32000 };
 	
@@ -390,7 +388,9 @@ int main()
 	
 	make_main_window();
 	
-	calibrate_mouseRgns( main_window );
+	short unitLength = window_unitLength( main_window );
+	
+	calibrate_mouseRgns( unitLength );
 	
 	while ( ! quitting )
 	{
@@ -410,7 +410,7 @@ int main()
 						
 						case inDrag:
 							DragWindow( window, event.where, wide_drag_area() );
-							calibrate_mouseRgns( window );
+							calibrate_mouseRgns( unitLength );
 							break;
 						
 						case inGoAway:
@@ -435,7 +435,9 @@ int main()
 								
 								InvalRect( window, get_portRect( window ) );
 								
-								calibrate_mouseRgns( window );
+								unitLength = window_unitLength( window );
+								
+								calibrate_mouseRgns( unitLength );
 							}
 							break;
 						
