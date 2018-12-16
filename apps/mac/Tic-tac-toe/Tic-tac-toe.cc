@@ -313,6 +313,13 @@ void click( WindowRef window, Point where )
 }
 
 static
+void calculate_token_regions( short unitLength )
+{
+	get_X_token( unitLength );
+	get_O_token( unitLength );
+}
+
+static
 void calibrate_mouseRgns( short unitLength )
 {
 	Point globalOffset = { 0, 0 };
@@ -390,6 +397,8 @@ int main()
 	
 	short unitLength = window_unitLength( main_window );
 	
+	calculate_token_regions( unitLength );
+	
 	calibrate_mouseRgns( unitLength );
 	
 	while ( ! quitting )
@@ -436,6 +445,8 @@ int main()
 								InvalRect( window, get_portRect( window ) );
 								
 								unitLength = window_unitLength( window );
+								
+								calculate_token_regions( unitLength );
 								
 								calibrate_mouseRgns( unitLength );
 							}
