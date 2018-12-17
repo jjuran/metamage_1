@@ -12,12 +12,15 @@
 
 // POSIX
 #include <unistd.h>
+#include <sys/select.h>
 
 
 #define LENGTH( array )  (sizeof array / sizeof *array)
 
 
 typedef OSErr (*driver_routine)( short trap_word : __D1, IOParam* pb : __A0 );
+
+typedef OSErr (*cntrl_routine)( short trap_word : __D1, CntrlParam* pb : __A0 );
 
 static
 OSErr CIn_read( short trap_word : __D1, IOParam* pb : __A0 )
@@ -67,14 +70,56 @@ OSErr COut_write( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
+static
+ssize_t readable_bytes( int fd )
+{
+	// TODO:  Check FIONREAD
+	
+	fd_set readfds;
+	FD_ZERO( &readfds );
+	FD_SET( fd, &readfds );
+	
+	const int max_fd = fd;
+	
+	timeval timeout = { 0 };
+	
+	int selected = select( max_fd + 1, &readfds, NULL, NULL, &timeout );
+	
+	return selected > 0;
+}
+
+static
+OSErr CIn_status( short trap_word : __D1, CntrlParam* pb : __A0 )
+{
+	enum
+	{
+		kSERDInputCount = 2,
+	};
+	
+	switch ( pb->csCode )
+	{
+		case kSERDInputCount:
+			*(long*) pb->csParam = readable_bytes( STDIN_FILENO );
+			break;
+		
+		default:
+			return pb->ioResult = statusErr;
+	}
+	
+	return pb->ioResult = noErr;
+}
+
+#define COut_status  NULL
+
 struct driver
 {
 	const uint8_t*  name;
 	driver_routine  read;
 	driver_routine  write;
+	cntrl_routine   status;
 };
 
-#define DRIVER( name )  { "\p." #name, name##_read, name##_write }
+#define DRIVER( d )  { "\p." #d, d##_read, d##_write, d##_status }
 
 static const driver drivers[] =
 {
@@ -118,6 +163,25 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	}
 	
 	return d.write( trap_word, pb );
+}
+
+short Status_patch( short trap_word : __D1, CntrlParam* pb : __A0 )
+{
+	UInt16 index = -100 - pb->ioCRefNum;
+	
+	if ( index >= LENGTH( drivers ) )
+	{
+		return pb->ioResult = unitEmptyErr;
+	}
+	
+	const driver& d = drivers[ index ];
+	
+	if ( d.status == NULL )
+	{
+		return pb->ioResult = statusErr;
+	}
+	
+	return d.status( trap_word, pb );
 }
 
 short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
