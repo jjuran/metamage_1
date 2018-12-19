@@ -5,6 +5,12 @@
 
 #include "Gestalt.hh"
 
+// ams-common
+#include "reactor-gestalt.hh"
+
+// ams-core
+#include "reactor-core.hh"
+
 
 enum
 {
@@ -20,6 +26,10 @@ long Gestalt_payload( unsigned long  selector : __D0,
 {
 	switch ( selector )
 	{
+		case gestaltReactorCoreAddr:
+			*response = (long) &the_reactor_core;
+			break;
+		
 		case gestaltMachineIcon:
 			*response = 42;
 			break;
