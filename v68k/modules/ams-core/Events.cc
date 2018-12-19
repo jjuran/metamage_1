@@ -47,7 +47,7 @@ bool get_lowlevel_event( short eventMask, EventRecord* event )
 {
 	const short lowlevel_event_mask = mDownMask   | mUpMask
 	                                | keyDownMask | keyUpMask | autoKeyMask
-	                                | diskMask;
+	                                | diskMask    | driverMask;
 	
 	eventMask &= lowlevel_event_mask;
 	
