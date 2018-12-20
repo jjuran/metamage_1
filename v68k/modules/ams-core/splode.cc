@@ -12,14 +12,17 @@
 
 // POSIX
 #include <unistd.h>
-#include <sys/select.h>
 
 // splode
 #include "splode/splode.hh"
 
+// ams-common
+#include "reactor.hh"
+
 // ams-core
 #include "cursor-core.hh"
 #include "options.hh"
+#include "reactor-core.hh"
 
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
@@ -47,20 +50,6 @@ timeval timeval_from_ticks( unsigned long ticks )
 	timeval tv = { seconds, microseconds };
 	
 	return tv;
-}
-
-static
-bool wait_for_fd( int fd, timeval* timeout )
-{
-	fd_set readfds;
-	FD_ZERO( &readfds );
-	FD_SET( fd, &readfds );
-	
-	const int max_fd = fd;
-	
-	int selected = select( max_fd + 1, &readfds, NULL, NULL, timeout );
-	
-	return selected > 0;
 }
 
 static inline
@@ -286,6 +275,23 @@ asm char reentered()
 	SNE.B    D0
 }
 
+static reactor_node splode_node;
+
+static
+void splode_ready( reactor_node* )
+{
+	queue_event( events_fd );
+}
+
+static
+void reactor_insert()
+{
+	splode_node.fd    = events_fd;
+	splode_node.ready = &splode_ready;
+	
+	the_reactor_core.insert( &splode_node );
+}
+
 static
 void wait_for_user_input( const timeval& timeout )
 {
@@ -298,11 +304,13 @@ void wait_for_user_input( const timeval& timeout )
 	
 	wait_timeout = timeout;
 	
-	while ( wait_for_fd( events_fd, &wait_timeout ) )
+	static int inserted = (reactor_insert(), 0);
+	
+	while ( reactor_wait( &wait_timeout ) )
 	{
 		wait_timeout = zero_timeout;
 		
-		queue_event( events_fd );
+		// already handled
 	}
 	
 	reentered_flag = 0;
