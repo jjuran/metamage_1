@@ -381,12 +381,12 @@ static void store_fdset( uint8_t* emulated, fd_set& native, int n )
 {
 	while ( --n >= 0 )
 	{
-		if ( FD_ISSET( n, &native ) )
+		if ( ! FD_ISSET( n, &native ) )
 		{
 			uint32_t unit;
 			copy_u32_aligned_x2_from_big( &unit, emulated + (n >> 5) * 4 );
 			
-			unit |= 1 << (n & 31);
+			unit &= ~(1 << (n & 31));
 			
 			copy_big_u32_aligned_x2( emulated + (n >> 5) * 4, &unit );
 		}
