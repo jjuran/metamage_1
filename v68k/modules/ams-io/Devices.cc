@@ -9,10 +9,20 @@
 #ifndef __DEVICES__
 #include <Devices.h>
 #endif
+#ifndef __EVENTS__
+#include <Events.h>
+#endif
 
 // POSIX
 #include <unistd.h>
 #include <sys/select.h>
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
+// ams-common
+#include "reactor.hh"
+#include "reactor-gestalt.hh"
 
 
 #define LENGTH( array )  (sizeof array / sizeof *array)
@@ -88,6 +98,39 @@ ssize_t readable_bytes( int fd )
 	return selected > 0;
 }
 
+static reactor_node CIn_reactor_node;
+
+static
+void CIn_ready( reactor_node* node )
+{
+	typedef reactor_core_parameter_block pb_t;
+	
+	pb_t* reactor = (pb_t*) mac::sys::gestalt( gestaltReactorCoreAddr );
+	
+	reactor->remove( node );
+	
+	CIn_reactor_node.ready = NULL;  // Needed to prevent double insertion
+	
+	PostEvent( driverEvt, 0 );
+}
+
+static
+void CIn_watch()
+{
+	typedef reactor_core_parameter_block pb_t;
+	
+	if ( pb_t* reactor = (pb_t*) mac::sys::gestalt( gestaltReactorCoreAddr ) )
+	{
+		if ( CIn_reactor_node.ready == NULL )
+		{
+			CIn_reactor_node.fd    = STDIN_FILENO;
+			CIn_reactor_node.ready = &CIn_ready;
+			
+			reactor->insert( &CIn_reactor_node );
+		}
+	}
+}
+
 static
 OSErr CIn_status( short trap_word : __D1, CntrlParam* pb : __A0 )
 {
@@ -99,7 +142,10 @@ OSErr CIn_status( short trap_word : __D1, CntrlParam* pb : __A0 )
 	switch ( pb->csCode )
 	{
 		case kSERDInputCount:
-			*(long*) pb->csParam = readable_bytes( STDIN_FILENO );
+			if ( (*(long*) pb->csParam = readable_bytes( STDIN_FILENO )) == 0 )
+			{
+				CIn_watch();
+			}
 			break;
 		
 		default:
