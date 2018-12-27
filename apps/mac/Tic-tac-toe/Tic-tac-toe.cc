@@ -26,6 +26,9 @@
 #include "mac_qd/wide_drag_area.hh"
 #include "mac_qd/globals/arrow.hh"
 
+// mac-app-utils
+#include "mac_app/init.hh"
+
 // Tic-tac-toe
 #include "cursors.hh"
 #include "regions.hh"
@@ -379,17 +382,7 @@ int main()
 {
 	Boolean quitting = false;
 	
-#if ! TARGET_API_MAC_CARBON
-	
-	InitGraf( &qd.thePort );
-	
-	InitFonts();
-	InitWindows();
-	InitMenus();
-	
-	InitCursor();
-	
-#endif
+	mac::app::init_toolbox();
 	
 	alloc_mouseRgns();
 	

@@ -26,6 +26,9 @@
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
+// mac-app-utils
+#include "mac_app/init.hh"
+
 // nyancatlib
 #include "nyancat/graphics.hh"
 
@@ -269,17 +272,7 @@ int main()
 {
 	Boolean quitting = false;
 	
-#if ! TARGET_API_MAC_CARBON
-	
-	InitGraf( &qd.thePort );
-	
-	InitFonts();
-	InitWindows();
-	InitMenus();
-	
-	InitCursor();
-	
-#endif
+	mac::app::init_toolbox();
 	
 	SetEventMask( everyEvent );
 	
