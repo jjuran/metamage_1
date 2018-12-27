@@ -35,6 +35,7 @@
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
+#include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
 // nyancatlib
@@ -261,6 +262,42 @@ unsigned next_sleep()
 }
 
 static
+void menu_item_chosen( long choice )
+{
+	short menu = choice >> 16;
+	short item = choice;
+	
+	switch ( menu )
+	{
+		case 1:  // (Apple)
+			break;
+		
+		case 2:  // File
+			switch ( item )
+			{
+				case 1:  // New
+				case 2:  // Open
+					break;
+				
+				case 3:  // Close
+				case 4:  // -
+				case 5:  // Quit
+					mac::app::quitting = true;
+					break;
+				
+				default:
+					break;
+			}
+		
+		case 3:  // Edit
+		default:
+			break;
+	}
+	
+	HiliteMenu( 0 );
+}
+
+static
 void draw_window( WindowRef window )
 {
 	SetPortWindowPort( window );
@@ -288,6 +325,7 @@ int main()
 	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
+	mac::app::install_menus();
 	
 	if ( apple_events_present )
 	{
@@ -328,6 +366,7 @@ int main()
 					switch ( FindWindow( event.where, &window ) )
 					{
 						case inMenuBar:
+							menu_item_chosen( MenuSelect( event.where ) );
 							break;
 						
 						case inDrag:
@@ -357,12 +396,13 @@ int main()
 					break;
 					
 				case keyDown:
+					if ( event.modifiers & cmdKey )
+					{
+						menu_item_chosen( MenuKey( event.message ) );
+					}
+					
 					switch( (char) event.message )
 					{
-						case 'q':
-							quitting = true;
-							break;
-						
 						case ' ':
 							animation_timer.play_pause();
 							break;
