@@ -11,6 +11,9 @@
 // gear
 #include "gear/quad.hh"
 
+// mac-sys-utils
+#include "mac_sys/has/Aqua_menus.hh"
+
 // mac-app-utils
 #include "mac_app/menus.hh"
 
@@ -171,7 +174,7 @@ namespace Pedestal
 				
 				about[ 0 ] = p - about;
 				
-				if ( HasAquaMenus() )
+				if ( mac::sys::has_Aqua_menus() )
 				{
 					--about[ 0 ];
 				}

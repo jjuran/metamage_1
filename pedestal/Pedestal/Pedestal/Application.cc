@@ -38,6 +38,7 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
+#include "mac_sys/has/Aqua_menus.hh"
 
 // mac-app-utils
 #include "mac_app/init.hh"
@@ -714,7 +715,7 @@ namespace Pedestal
 		
 		the_Window_menu = windowMenu;
 		
-		if ( HasAquaMenus() )
+		if ( mac::sys::has_Aqua_menus() )
 		{
 			SInt16 last = CountMenuItems( fileMenu );
 			
