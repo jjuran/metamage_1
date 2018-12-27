@@ -20,6 +20,9 @@
 #include <Menus.h>
 #endif
 
+// mac-sys-utils
+#include "mac_sys/has/Aqua_menus.hh"
+
 
 namespace mac {
 namespace app {
@@ -27,6 +30,7 @@ namespace app {
 enum
 {
 	kAppleMenuID = 1,
+	kFileMenuID  = 2,
 };
 
 void install_menus()
@@ -47,6 +51,18 @@ void install_menus()
 		MenuRef appleMenu = GetMenuHandle( kAppleMenuID );
 		
 		AppendResMenu( appleMenu, kDeskAccessoryResourceType );
+	}
+	
+	if ( mac::sys::has_Aqua_menus() )
+	{
+		MenuRef fileMenu = GetMenuHandle( kFileMenuID );
+		
+		SInt16 last = CountMenuItems( fileMenu );
+		
+		// Delete "Quit" and the separator above it.
+		
+		DeleteMenuItem( fileMenu, last     );
+		DeleteMenuItem( fileMenu, last - 1 );
 	}
 }
 
