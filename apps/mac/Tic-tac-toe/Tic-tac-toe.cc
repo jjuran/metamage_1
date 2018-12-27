@@ -35,6 +35,7 @@
 // mac-app-utils
 #include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
+#include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
 // Tic-tac-toe
@@ -372,6 +373,42 @@ void calibrate_mouseRgns( short unitLength )
 }
 
 static
+void menu_item_chosen( long choice )
+{
+	short menu = choice >> 16;
+	short item = choice;
+	
+	switch ( menu )
+	{
+		case 1:  // (Apple)
+			break;
+		
+		case 2:  // File
+			switch ( item )
+			{
+				case 1:  // New
+				case 2:  // Open
+					break;
+				
+				case 3:  // Close
+				case 4:  // -
+				case 5:  // Quit
+					mac::app::quitting = true;
+					break;
+				
+				default:
+					break;
+			}
+		
+		case 3:  // Edit
+		default:
+			break;
+	}
+	
+	HiliteMenu( 0 );
+}
+
+static
 RgnHandle mouse_moved( Point where )
 {
 	GlobalToLocal( &where );
@@ -399,6 +436,7 @@ int main()
 	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
+	mac::app::install_menus();
 	
 	if ( apple_events_present )
 	{
@@ -429,6 +467,7 @@ int main()
 					switch ( FindWindow( event.where, &window ) )
 					{
 						case inMenuBar:
+							menu_item_chosen( MenuSelect( event.where ) );
 							break;
 						
 						case inDrag:
@@ -472,15 +511,11 @@ int main()
 					break;
 				
 				case keyDown:
-					switch( (char) event.message )
+					if ( event.modifiers & cmdKey )
 					{
-						case 'q':
-							quitting = true;
-							break;
-						
-						default:
-							break;
+						menu_item_chosen( MenuKey( event.message ) );
 					}
+					
 					break;
 				
 				case updateEvt:
