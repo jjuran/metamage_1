@@ -3,11 +3,11 @@
 resource 'MENU' (129) {
 	2,
 	textMenuProc,
-	0x7FFFFFF4,
+	0x7FFFFFF5,
 	enabled,
 	"File",
 	{
-		"New", noIcon, "N", noMark, plain,
+		"New Game", noIcon, "N", noMark, plain,
 		"Open…", noIcon, "O", noMark, plain,
 		"Close", noIcon, "W", noMark, plain,
 		"-", noIcon, noKey, noMark, plain,

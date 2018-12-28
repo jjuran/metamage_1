@@ -373,6 +373,37 @@ void calibrate_mouseRgns( short unitLength )
 }
 
 static
+void reset()
+{
+	tictactoe::reset();
+	
+	current_player = tictactoe::Player_X;
+	
+	for ( short i = 1;  i < 10;  ++i )
+	{
+		if ( mouseRgns[ i ] == otherRgn )
+		{
+			mouseRgns[ i ] = NewRgn();
+		}
+	}
+	
+	short unitLength = window_unitLength( main_window );
+	
+	calibrate_mouseRgns( unitLength );
+	
+	Point mouse;
+	GetMouse( &mouse );
+	
+	short i = hit_test( main_window, mouse );
+	
+	SetCursor( i + 1 ? &X_cursor : &mac::qd::arrow() );
+	
+	gMouseRgn = mouseRgns[ i + 1 ];
+	
+	draw_window( main_window );
+}
+
+static
 void menu_item_chosen( long choice )
 {
 	short menu = choice >> 16;
@@ -386,7 +417,10 @@ void menu_item_chosen( long choice )
 		case 2:  // File
 			switch ( item )
 			{
-				case 1:  // New
+				case 1:  // New Game
+					reset();
+					break;
+				
 				case 2:  // Open
 					break;
 				

@@ -74,4 +74,12 @@ move_t move( player_t player, unsigned i )
 	return move_t( won() );
 }
 
+void reset()
+{
+	for ( short i = 0;  i < n_squares;  ++i )
+	{
+		squares[ i ] = 0;
+	}
+}
+
 }

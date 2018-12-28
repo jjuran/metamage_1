@@ -38,6 +38,8 @@ bool can_move( unsigned i );
 
 move_t move( player_t player, unsigned i );
 
+void reset();
+
 }
 
 #endif
