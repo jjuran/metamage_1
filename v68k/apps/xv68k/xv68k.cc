@@ -590,22 +590,10 @@ void emulation_loop( v68k::emulator& emu )
 		{
 			ticking = false;
 			
-			timeval timeout = { 0 };
-			fd_set readfds;
-			FD_ZERO( &readfds );
-			FD_SET( STDIN_FILENO, &readfds );
+			const int level  = 1;
+			const int vector = 64;
 			
-			const int max_fd = STDIN_FILENO;
-			
-			int selected = select( max_fd + 1, &readfds, NULL, NULL, &timeout );
-			
-			if ( selected > 0 )
-			{
-				const int level  = 1;
-				const int vector = 64;
-				
-				emu.interrupt( level, vector );
-			}
+			emu.interrupt( level, vector );
 		}
 	}
 }
