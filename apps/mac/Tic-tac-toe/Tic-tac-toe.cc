@@ -28,6 +28,7 @@
 
 // mac-app-utils
 #include "mac_app/init.hh"
+#include "mac_app/state.hh"
 
 // Tic-tac-toe
 #include "cursors.hh"
@@ -380,7 +381,7 @@ RgnHandle mouse_moved( Point where )
 
 int main()
 {
-	Boolean quitting = false;
+	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
 	

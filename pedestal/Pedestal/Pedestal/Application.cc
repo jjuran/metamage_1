@@ -41,6 +41,7 @@
 
 // mac-app-utils
 #include "mac_app/init.hh"
+#include "mac_app/state.hh"
 
 // Debug
 #include "debug/assert.hh"
@@ -143,7 +144,6 @@ namespace Pedestal
 	AppleEventSignature gSignatureOfFirstAppleEvent;
 	
 	static bool gInForeground;     // set to true when the app is frontmost
-	static bool gQuitRequested;    // set to true when quitting is in process
 	static bool gEndOfEventLoop;   // set to true once the app is ready to exit
 	
 	
@@ -902,6 +902,8 @@ namespace Pedestal
 				
 				if ( !ActivelyBusy() || ReadyToWaitForEvents() )
 				{
+					using mac::app::quitting;
+					
 					EventRecord event = GetAnEvent();
 					
 					gEventCheckNeeded = false;
@@ -923,7 +925,7 @@ namespace Pedestal
 						
 						gIdleNeeded = true;
 					}
-					else if ( (gIdleNeeded = gQuitRequested)  &&  ReadyToExit() )
+					else if ( (gIdleNeeded = quitting)  &&  ReadyToExit() )
 					{
 						gEndOfEventLoop = true;
 						
@@ -1095,7 +1097,7 @@ namespace Pedestal
 			window = next;
 		}
 		
-		gQuitRequested = true;
+		mac::app::quitting = true;
 	}
 	
 }

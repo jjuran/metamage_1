@@ -28,6 +28,7 @@
 
 // mac-app-utils
 #include "mac_app/init.hh"
+#include "mac_app/state.hh"
 
 // nyancatlib
 #include "nyancat/graphics.hh"
@@ -270,7 +271,7 @@ void draw_window( WindowRef window )
 
 int main()
 {
-	Boolean quitting = false;
+	using mac::app::quitting;
 	
 	mac::app::init_toolbox();
 	
