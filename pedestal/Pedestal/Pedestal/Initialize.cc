@@ -7,41 +7,17 @@
 
 // Mac OS X
 #ifdef __APPLE__
-#include <Carbon/Carbon.h>
+#include <CoreServices/CoreServices.h>
 #endif
 
 // Mac OS
-#ifndef __DIALOGS__
-#include <Dialogs.h>
-#endif
-
-// missing-macos
-#ifdef MAC_OS_X_VERSION_10_7
-#ifndef MISSING_QUICKDRAW_H
-#include "missing/Quickdraw.h"
-#endif
+#ifndef __MACMEMORY__
+#include <MacMemory.h>
 #endif
 
 
 namespace Pedestal
 {
-	
-	void Init_MacToolbox()
-	{
-	#if !TARGET_API_MAC_CARBON
-		
-		::InitGraf( &qd.thePort );
-		::InitFonts();
-		::InitWindows();
-		::InitMenus();
-		::TEInit();
-		::InitDialogs( NULL );
-		
-	#endif
-		
-		::InitCursor();
-		// FlushEvents?
-	}
 	
 	void Init_Memory( unsigned moreMasters )
 	{

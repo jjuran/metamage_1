@@ -39,6 +39,9 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-app-utils
+#include "mac_app/init.hh"
+
 // Debug
 #include "debug/assert.hh"
 
@@ -696,7 +699,7 @@ namespace Pedestal
 	{
 		Init_Memory( 0 );
 		
-		Init_MacToolbox();
+		mac::app::init_toolbox();
 		
 		if ( apple_events_present )
 		{
