@@ -11,16 +11,14 @@
 // gear
 #include "gear/quad.hh"
 
+// mac-app-utils
+#include "mac_app/menus.hh"
+
 // Nitrogen
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
 #include "Mac/Resources/Types/ResType.hh"
 
 #include "Nitrogen/Menus.hh"
-
-// ClassicToolbox
-#if CALL_NOT_IN_CARBON
-#include "ClassicToolbox/Devices.hh"
-#endif
 
 // Pedestal
 #include "Pedestal/BundleStrings.hh"
@@ -208,7 +206,7 @@ namespace Pedestal
 		
 		if ( menuID == gAppleMenuID )
 		{
-			N::OpenDeskAcc( N::GetMenuItemText( N::GetMenuRef( menuID ), item ) );
+			mac::app::open_DA_from_menu( item );
 		}
 		
 	#endif
