@@ -38,10 +38,10 @@
 #include "mac_sys/current_process.hh"
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
-#include "mac_sys/has/Aqua_menus.hh"
 
 // mac-app-utils
 #include "mac_app/init.hh"
+#include "mac_app/menus.hh"
 #include "mac_app/state.hh"
 
 // Debug
@@ -60,7 +60,6 @@
 #include "Nitrogen/MacWindows.hh"
 #include "Nitrogen/Menus.hh"
 #include "Nitrogen/Quickdraw.hh"
-#include "Nitrogen/Resources.hh"
 
 // Pedestal
 #include "Pedestal/ADBKeyboard.hh"
@@ -166,15 +165,6 @@ namespace Pedestal
 	{
 		Mac::SysBeep();
 	}
-	
-	enum
-	{
-		idAppleMENU = 128,  // menu ID = 1
-		idFileMENU,
-		idEditMENU,
-		idWindowMENU,
-		//, idDebugMENU = 255  // menu ID = 128
-	};
 	
 	
 	void (*gThreadYield_Hook )() = NULL;
@@ -687,20 +677,12 @@ namespace Pedestal
 		
 	};
 	
-	static MenuRef GetAndInsertMenu( N::ResID resID )
-	{
-		MenuRef menu = N::GetMenu( resID );
-		
-		::InsertMenu( menu, MenuID() );
-		
-		return menu;
-	}
-	
 	Application::Application()
 	{
 		Init_Memory( 0 );
 		
 		mac::app::init_toolbox();
+		mac::app::install_menus();
 		
 		if ( apple_events_present )
 		{
@@ -708,22 +690,12 @@ namespace Pedestal
 			                                                 N::AEEventID( typeWildCard ) ).release();
 		}
 		
-		MenuRef appleMenu = GetAndInsertMenu( N::ResID( idAppleMENU ) );
-		MenuRef fileMenu  = GetAndInsertMenu( N::ResID( idFileMENU  ) );
-		MenuRef editMenu  = GetAndInsertMenu( N::ResID( idEditMENU  ) );
-		MenuRef windowMenu = GetAndInsertMenu( N::ResID( idWindowMENU ) );
+		MenuRef appleMenu  = GetMenuHandle( 1 );
+		MenuRef fileMenu   = GetMenuHandle( 2 );
+		MenuRef editMenu   = GetMenuHandle( 3 );
+		MenuRef windowMenu = GetMenuHandle( 4 );
 		
 		the_Window_menu = windowMenu;
-		
-		if ( mac::sys::has_Aqua_menus() )
-		{
-			SInt16 last = CountMenuItems( fileMenu );
-			
-			// Delete "Quit" and the separator above it.
-			
-			DeleteMenuItem( fileMenu, last     );
-			DeleteMenuItem( fileMenu, last - 1 );
-		}
 		
 		AddMenu( appleMenu );
 		AddMenu( fileMenu  );
@@ -731,13 +703,6 @@ namespace Pedestal
 		AddMenu( windowMenu );
 		
 		FixUpAboutMenuItem( appleMenu );
-		
-		if ( !TARGET_API_MAC_CARBON )
-		{
-			PopulateAppleMenu( appleMenu );
-		}
-		
-		DrawMenuBar();
 	}
 	
 	

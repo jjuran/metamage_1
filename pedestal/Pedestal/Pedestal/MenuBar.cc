@@ -70,7 +70,7 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static N::MenuID gAppleMenuID = N::MenuID();
+	static const N::MenuID gAppleMenuID = N::MenuID( 1 );
 	
 	
 	static CommandCode TakeCodeFromItemText( Str255 ioItemText )
@@ -188,15 +188,6 @@ namespace Pedestal
 		}
 	}
 	
-	
-	static const Mac::ResType kDeskAccessoryResourceType = Mac::ResType( 'DRVR' );
-	
-	void PopulateAppleMenu( MenuRef menu )
-	{
-		gAppleMenuID = N::GetMenuID( menu );
-		
-		N::AppendResMenu( menu, kDeskAccessoryResourceType );
-	}
 	
 	CommandCode HandleMenuItem( N::MenuID menuID, SInt16 item )
 	{
