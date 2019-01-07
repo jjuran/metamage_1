@@ -412,6 +412,14 @@ void menu_item_chosen( long choice )
 	switch ( menu )
 	{
 		case 1:  // (Apple)
+			if ( item == 1 )
+			{
+				// About...
+			}
+			else if ( ! TARGET_API_MAC_CARBON )
+			{
+				mac::app::open_DA_from_menu( item );
+			}
 			break;
 		
 		case 2:  // File
