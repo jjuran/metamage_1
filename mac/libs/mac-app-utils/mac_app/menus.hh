@@ -11,6 +11,8 @@ namespace app {
 	
 	void install_menus();
 	
+	void open_DA_from_menu( short item );
+	
 }
 }
 
