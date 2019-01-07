@@ -19,6 +19,11 @@
 namespace mac {
 namespace app {
 
+enum
+{
+	kAppleMenuID = 1,
+};
+
 void install_menus()
 {
 	short id = 128;
@@ -29,6 +34,15 @@ void install_menus()
 	}
 	
 	DrawMenuBar();
+	
+	if ( ! TARGET_API_MAC_CARBON )
+	{
+		const ResType kDeskAccessoryResourceType = 'DRVR';
+		
+		MenuRef appleMenu = GetMenuHandle( kAppleMenuID );
+		
+		AppendResMenu( appleMenu, kDeskAccessoryResourceType );
+	}
 }
 
 }
