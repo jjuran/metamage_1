@@ -21,12 +21,19 @@
 #endif
 #endif
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
 #include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
+#include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
 #include "mac_app/state.hh"
 
@@ -44,6 +51,13 @@ using mac::qd::wide_drag_area;
 using nyancat::bitmap;
 using nyancat::n_frames;
 
+
+// gestaltAppleEventsAttr = 'evnt'
+
+const bool apple_events_present =
+	CONFIG_APPLE_EVENTS  &&
+		(CONFIG_APPLE_EVENTS_GRANTED  ||
+			mac::sys::gestalt( 'evnt' ) != 0);
 
 const Pattern veryDarkGray = { 0x77, 0xFF, 0xDD, 0xFF, 0x77, 0xFF, 0xDD, 0xFF };
 
@@ -275,6 +289,11 @@ int main()
 	
 	mac::app::init_toolbox();
 	
+	if ( apple_events_present )
+	{
+		mac::app::install_basic_event_handlers();
+	}
+	
 	SetEventMask( everyEvent );
 	
 	make_offscreen_buffer();
@@ -371,6 +390,14 @@ int main()
 					draw_window( window );
 					EndUpdate  ( window );
 					break;
+				
+			#if CONFIG_APPLE_EVENTS
+				
+				case kHighLevelEvent:
+					(void) AEProcessAppleEvent( &event );
+					break;
+				
+			#endif
 				
 				default:
 					break;

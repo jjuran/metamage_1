@@ -20,6 +20,12 @@
 #endif
 #endif
 
+// mac-config
+#include "mac_config/apple-events.hh"
+
+// mac-sys-utils
+#include "mac_sys/gestalt.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
@@ -27,6 +33,7 @@
 #include "mac_qd/globals/arrow.hh"
 
 // mac-app-utils
+#include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
 #include "mac_app/state.hh"
 
@@ -42,6 +49,14 @@ using mac::qd::wide_drag_area;
 
 using tictactoe::move_t;
 using tictactoe::player_t;
+
+
+// gestaltAppleEventsAttr = 'evnt'
+
+const bool apple_events_present =
+	CONFIG_APPLE_EVENTS  &&
+		(CONFIG_APPLE_EVENTS_GRANTED  ||
+			mac::sys::gestalt( 'evnt' ) != 0);
 
 static player_t current_player = tictactoe::Player_X;
 
@@ -385,6 +400,11 @@ int main()
 	
 	mac::app::init_toolbox();
 	
+	if ( apple_events_present )
+	{
+		mac::app::install_basic_event_handlers();
+	}
+	
 	alloc_mouseRgns();
 	
 	make_main_window();
@@ -482,6 +502,14 @@ int main()
 							break;
 					}
 					break;
+				
+			#if CONFIG_APPLE_EVENTS
+				
+				case kHighLevelEvent:
+					(void) AEProcessAppleEvent( &event );
+					break;
+				
+			#endif
 				
 				default:
 					break;
