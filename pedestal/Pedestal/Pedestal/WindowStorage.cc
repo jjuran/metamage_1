@@ -152,7 +152,10 @@ namespace Pedestal
 		                         sizeof view,
 		                         &view );
 		
-		Mac::ThrowOSStatus( err );
+		if ( err != noErr  &&  view != NULL )
+		{
+			Mac::ThrowOSStatus( err );
+		}
 		
 		if ( view )
 		{
