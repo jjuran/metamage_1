@@ -126,23 +126,6 @@ namespace Pedestal
 				mac::sys::gestalt( gestaltAppleEventsAttr ) != 0);
 	
 	
-	struct AppleEventSignature
-	{
-		Nitrogen::AEEventClass eventClass;
-		Nitrogen::AEEventID    eventID;
-		
-		AppleEventSignature()  {}
-		
-		AppleEventSignature( Nitrogen::AEEventClass  eventClass,
-		                     Nitrogen::AEEventID     eventID )
-		:
-			eventClass( eventClass ),
-			eventID   ( eventID    )
-		{}
-	};
-	
-	AppleEventSignature gSignatureOfFirstAppleEvent;
-	
 	static bool gInForeground;     // set to true when the app is frontmost
 	static bool gEndOfEventLoop;   // set to true once the app is ready to exit
 	
@@ -936,14 +919,6 @@ namespace Pedestal
 	{
 		Mac::AEEventClass eventClass = N::AEGetAttributePtr< Mac::keyEventClassAttr >( appleEvent );
 		Mac::AEEventID    eventID    = N::AEGetAttributePtr< Mac::keyEventIDAttr    >( appleEvent );
-		
-		static bool firstTime = true;
-		
-		if ( firstTime )
-		{
-			gSignatureOfFirstAppleEvent = AppleEventSignature( eventClass, eventID );
-			firstTime = false;
-		}
 		
 		if ( eventClass == kCoreEventClass )
 		{
