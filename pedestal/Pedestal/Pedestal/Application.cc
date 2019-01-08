@@ -32,6 +32,7 @@
 // mac-config
 #include "mac_config/adb.hh"
 #include "mac_config/apple-events.hh"
+#include "mac_config/upp-macros.hh"
 
 // mac-sys-utils
 #include "mac_sys/async_wakeup.hh"
@@ -54,7 +55,6 @@
 #include "Mac/Sound/Functions/SysBeep.hh"
 
 #include "Nitrogen/AEInteraction.hh"
-#include "Nitrogen/AppleEvents.hh"
 #include "Nitrogen/Controls.hh"
 #include "Nitrogen/MacErrors.hh"
 #include "Nitrogen/MacWindows.hh"
@@ -171,6 +171,14 @@ namespace Pedestal
 	static bool ReadyToExit()
 	{
 		return gReadyToExit_Hook ? gReadyToExit_Hook() : true;
+	}
+	
+	static
+	pascal OSErr Quit( const ::AppleEvent* event, ::AppleEvent* reply, SInt32 )
+	{
+		Quit();
+		
+		return noErr;
 	}
 	
 	static
@@ -652,14 +660,6 @@ namespace Pedestal
 		}
 	}
 	
-	struct AppleEvent
-	{
-		
-		static void Handler( const Mac::AppleEvent&  appleEvent,
-		                     Mac::AppleEvent&        reply );
-		
-	};
-	
 	Application::Application()
 	{
 		Init_Memory( 0 );
@@ -669,8 +669,15 @@ namespace Pedestal
 		
 		if ( apple_events_present )
 		{
-			N::AEInstallEventHandler< AppleEvent::Handler >( kCoreEventClass,
-			                                                 N::AEEventID( typeWildCard ) ).release();
+			DEFINE_UPP( AEEventHandler, Quit );
+			
+			OSErr err;
+			
+			err = AEInstallEventHandler( kCoreEventClass,
+			                             kAEQuitApplication,
+			                             UPP_ARG( Quit ),
+			                             0,
+			                             false );
 		}
 		
 		MenuRef appleMenu  = GetMenuHandle( 1 );
@@ -913,30 +920,6 @@ namespace Pedestal
 		EventLoop();
 		
 		return 0;
-	}
-	
-	void AppleEvent::Handler( const Mac::AppleEvent& appleEvent, Mac::AppleEvent& reply )
-	{
-		Mac::AEEventClass eventClass = N::AEGetAttributePtr< Mac::keyEventClassAttr >( appleEvent );
-		Mac::AEEventID    eventID    = N::AEGetAttributePtr< Mac::keyEventIDAttr    >( appleEvent );
-		
-		if ( eventClass == kCoreEventClass )
-		{
-			switch ( eventID )
-			{
-				case kAEOpenApplication:
-					//myOpenAppReceived = true;
-					break;
-				
-				case kAEQuitApplication:
-					Quit();
-					break;
-				
-				default:
-					throw N::ErrAEEventNotHandled();
-					break;
-			}
-		}
 	}
 	
 	struct UnhighlightMenus
