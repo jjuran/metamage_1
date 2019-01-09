@@ -23,6 +23,7 @@
 
 // mac-config
 #include "mac_config/apple-events.hh"
+#include "mac_config/desk-accessories.hh"
 
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
@@ -33,6 +34,7 @@
 #include "mac_qd/wide_drag_area.hh"
 
 // mac-app-utils
+#include "mac_app/DAs.hh"
 #include "mac_app/event_handlers.hh"
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
@@ -44,6 +46,8 @@
 // NyanCat
 #include "Bitmap.hh"
 
+
+#define CONFIG_DAs CONFIG_DESK_ACCESSORIES
 
 using mac::qd::get_portRect;
 using mac::qd::main_display_bounds;
@@ -288,6 +292,11 @@ void menu_item_chosen( long choice )
 					break;
 				
 				case 3:  // Close
+					if ( CONFIG_DAs  &&  mac::app::close_front_DA() )
+					{
+						break;
+					}
+				
 				case 4:  // -
 				case 5:  // Quit
 					mac::app::quitting = true;
@@ -377,6 +386,14 @@ int main()
 							menu_item_chosen( MenuSelect( event.where ) );
 							break;
 						
+					#if CONFIG_DESK_ACCESSORIES
+						
+						case inSysWindow:
+							SystemClick( &event, window );
+							break;
+						
+					#endif
+						
 						case inDrag:
 							DragWindow( window, event.where, wide_drag_area() );
 							break;
@@ -392,6 +409,12 @@ int main()
 							break;
 						
 						case inContent:
+							if ( CONFIG_DAs  &&  window != FrontWindow() )
+							{
+								SelectWindow( window );
+								break;
+							}
+							
 							animation_timer.play_pause();
 							break;
 						
