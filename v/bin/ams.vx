@@ -86,7 +86,7 @@ if exists "/gui" then
 	
 	touch "window"
 	
-	dup2( reader "v/events/v/stream", 0 )
+	dup2( reader "v/events/v/stream", events_fd_slot )
 	
 	xv68k-screen   = "--screen=v/screen/v/bits"
 	command-prefix = "daemonize --stdin --cwd --ctty=tty --" / ' '
