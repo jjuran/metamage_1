@@ -8,6 +8,9 @@
 // Standard C
 #include <stdlib.h>
 
+// log-of-war
+#include "logofwar/report.hh"
+
 
 #pragma exceptions off
 
@@ -125,6 +128,18 @@ void* deallocate_existing( uint32_t addr )
 		int i = (addr - start) / page_size;
 		
 		void* alloc = alloc_pages[ i ];
+		
+		if ( i > 0 )
+		{
+			void* prev = alloc_pages[ i - 1 ];
+			
+			if ( (char*) alloc - (char*) prev == page_size )
+			{
+				ERROR = "dealloc: pointer is in middle of block -- skipping";
+				
+				return NULL;
+			}
+		}
 		
 		if ( alloc != NULL  &&  alloc != (void*) -1L )
 		{
