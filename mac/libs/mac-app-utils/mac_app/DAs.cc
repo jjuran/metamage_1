@@ -24,10 +24,8 @@
 namespace mac {
 namespace app {
 
-bool close_front_DA()
+bool close_DA_window( WindowRef window )
 {
-	WindowRef window = FrontWindow();
-	
 	const short kind = GetWindowKind( window );
 	
 	if ( kind < 0 )
@@ -40,6 +38,11 @@ bool close_front_DA()
 	}
 	
 	return kind < 0;
+}
+
+bool close_front_DA()
+{
+	return close_DA_window( FrontWindow() );
 }
 
 }
