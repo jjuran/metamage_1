@@ -10,6 +10,12 @@
 #include <MacWindows.h>
 #endif
 
+// mac-config
+#include "mac_config/desk-accessories.hh"
+
+// mac-app-utils
+#include "mac_app/DAs.hh"
+
 // MacGlue
 #include "MacGlue/MacGlue.hh"
 
@@ -349,6 +355,12 @@ namespace Pedestal
 	
 	void window_closing( WindowRef window )
 	{
+		if ( CONFIG_DESK_ACCESSORIES  &&  mac::app::close_DA_window( window ) )
+		{
+			// We never call window_created() for DAs.
+			return;
+		}
+		
 		window_removed( window );
 		
 		set_window_view( window, NULL );
