@@ -21,8 +21,6 @@
 #include "Carbon/CF/Types/CFMutableStringRef.hh"
 #include "Mac/Resources/Types/ResType.hh"
 
-#include "Nitrogen/Menus.hh"
-
 // Pedestal
 #include "Pedestal/BundleStrings.hh"
 #include "Pedestal/MenuItemCommands.hh"
@@ -70,9 +68,6 @@ namespace Pedestal
 	namespace N = Nitrogen;
 	
 	
-	static const N::MenuID gAppleMenuID = N::MenuID( 1 );
-	
-	
 	static CommandCode TakeCodeFromItemText( Str255 ioItemText )
 	{
 		int len = ioItemText[ 0 ];
@@ -89,13 +84,14 @@ namespace Pedestal
 	
 	static CommandCode ExtractItemCmdCode( MenuRef menu, short item )
 	{
-		N::Str255 itemText = N::GetMenuItemText( menu, item );
+		Str255 itemText;
+		GetMenuItemText( menu, item, itemText );
 		
 		CommandCode code = TakeCodeFromItemText( itemText );
 		
 		if ( code != kCmdNone )
 		{
-			N::SetMenuItemText( menu, item, itemText );
+			SetMenuItemText( menu, item, itemText );
 		}
 		
 		return code;
@@ -103,9 +99,9 @@ namespace Pedestal
 	
 	void AddMenu( MenuRef menu )
 	{
-		const Mac::MenuID menuID = N::GetMenuID( menu );
+		const Mac::MenuID menuID = Mac::MenuID( GetMenuID( menu ) );
 		
-		const UInt16 count = N::CountMenuItems( menu );
+		const UInt16 count = CountMenuItems( menu );
 		
 		for ( int i = count;  i > 0;  i-- )
 		{
@@ -189,12 +185,14 @@ namespace Pedestal
 	}
 	
 	
-	CommandCode HandleMenuItem( N::MenuID menuID, SInt16 item )
+	CommandCode HandleMenuItem( Mac::MenuID menuID, SInt16 item )
 	{
 		if ( CommandCode code = GetMenuItemCommandCode( menuID, item ) )
 		{
 			return code;
 		}
+		
+		const short gAppleMenuID = 1;
 		
 	#if CALL_NOT_IN_CARBON
 		
