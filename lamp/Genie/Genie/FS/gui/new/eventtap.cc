@@ -231,9 +231,10 @@ namespace Genie
 		#if CONFIG_MOUSEMOVED_HANDLER
 			
 			void Install( const Rect& bounds );
-			void Uninstall();
 			
 		#endif
+			
+			void Uninstall();
 			
 			void Idle     ( const EventRecord& event );
 			bool MouseDown( const EventRecord& event );
@@ -288,8 +289,12 @@ namespace Genie
 		}
 	}
 	
+#endif
+	
 	void eventtap_handler::Uninstall()
 	{
+	#if CONFIG_MOUSEMOVED_HANDLER
+		
 		OSStatus err;
 		
 		if ( itsMouseMovedEventHandler )
@@ -297,10 +302,10 @@ namespace Genie
 			err = RemoveEventHandler( itsMouseMovedEventHandler );
 		}
 		
+	#endif
+		
 		Ped::View::Uninstall();
 	}
-	
-#endif
 	
 	void eventtap_handler::Idle( const EventRecord& event )
 	{
