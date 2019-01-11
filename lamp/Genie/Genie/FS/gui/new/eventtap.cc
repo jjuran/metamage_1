@@ -41,6 +41,7 @@
 #include "poseven/types/errno_t.hh"
 
 // Pedestal
+#include "Pedestal/Application.hh"
 #include "Pedestal/ClickTarget.hh"
 #include "Pedestal/View.hh"
 
@@ -245,7 +246,11 @@ namespace Genie
 			void Draw( const Rect& bounds, bool erasing );
 			
 			void DrawInContext( CGContextRef context, CGRect bounds );
+			
+			void Activate( bool activating );
 	};
+	
+	static const eventtap_handler* active_eventtap;
 	
 #if CONFIG_MOUSEMOVED_HANDLER
 	
@@ -303,6 +308,13 @@ namespace Genie
 		}
 		
 	#endif
+		
+		if ( active_eventtap == this )
+		{
+			active_eventtap = NULL;
+			
+			Ped::set_key_event_tap( false );
+		}
 		
 		Ped::View::Uninstall();
 	}
@@ -427,6 +439,13 @@ namespace Genie
 		itsBounds.right  = left + (short) bounds.size.width;
 		
 		View::DrawInContext( context, bounds );
+	}
+	
+	void eventtap_handler::Activate( bool activating )
+	{
+		active_eventtap = activating ? this : NULL;
+		
+		Ped::set_key_event_tap( activating );
 	}
 	
 	static boost::intrusive_ptr< Ped::View > CreateView( const vfs::node* delegate )
