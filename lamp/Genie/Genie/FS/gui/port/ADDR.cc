@@ -16,6 +16,10 @@
 // iota
 #include "iota/strings.hh"
 
+// mac-sys-utils
+#include "mac_sys/current_process.hh"
+#include "mac_sys/is_front_process.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -165,6 +169,12 @@ namespace Genie
 	
 	static WindowParametersMap gWindowParametersMap;
 	
+	
+	static inline
+	bool is_front_process()
+	{
+		return mac::sys::is_front_process( mac::sys::current_process() );
+	}
 	
 	static void CenterWindowRect( Rect& bounds )
 	{
@@ -431,7 +441,10 @@ namespace Genie
 		
 		params.itsSubview->Install( bounds );
 		
-		params.itsSubview->Activate( true );
+		if ( is_front_process() )
+		{
+			params.itsSubview->Activate( true );
+		}
 	}
 	
 	void remove_window_and_views_from_port( const vfs::node* key )
@@ -548,7 +561,7 @@ namespace Genie
 			
 			view->Install( bounds );
 			
-			if ( window == N::FrontWindow() )
+			if ( window == FrontWindow()  &&  is_front_process() )
 			{
 				view->Activate( true );
 			}
