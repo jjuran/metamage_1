@@ -154,6 +154,25 @@ namespace Pedestal
 	bool (*gActivelyBusy_Hook)() = NULL;
 	bool (*gReadyToExit_Hook )() = NULL;
 	
+	static bool tapping_key_events;
+	
+	void set_key_event_tap( bool enabled )
+	{
+		if ( enabled == tapping_key_events )
+		{
+			return;
+		}
+		
+		tapping_key_events = enabled;
+		
+		if ( TARGET_API_MAC_CARBON )
+		{
+			mac::app::set_Aqua_menu_key( kHICommandQuit, 'Q' * ! enabled );
+			mac::app::set_Aqua_menu_key( kHICommandHide, 'H' * ! enabled );
+		}
+	}
+	
+	
 	static
 	void ThreadYield()
 	{
@@ -492,8 +511,10 @@ namespace Pedestal
 			gLastKeyboard = GetKeyboardFromEvent( event );
 		}
 		
-		if ( event.what == keyUp )
+		if ( event.what == keyUp  ||  tapping_key_events )
 		{
+			// Genie's eventtap view calls KeyDown() from KeyUp() anyway.
+			
 			if ( View* view = get_window_view_ready( FrontWindow() ) )
 			{
 				view->KeyUp( event );

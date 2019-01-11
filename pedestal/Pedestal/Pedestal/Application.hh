@@ -16,6 +16,8 @@ namespace Pedestal
 	extern bool (*gActivelyBusy_Hook)();
 	extern bool (*gReadyToExit_Hook)();
 	
+	void set_key_event_tap( bool enabled );
+	
 	class Application
 	{
 		public:
