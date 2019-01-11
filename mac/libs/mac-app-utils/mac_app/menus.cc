@@ -66,6 +66,24 @@ void install_menus()
 	}
 }
 
+void set_Aqua_menu_key( unsigned commandID, char key )
+{
+	if ( mac::sys::has_Aqua_menus() )
+	{
+		OSStatus err;
+		
+		MenuRef menu;
+		MenuItemIndex index;
+		
+		err = GetIndMenuItemWithCommandID( NULL, commandID, 1, &menu, &index );
+		
+		if ( err == noErr )
+		{
+			SetMenuItemCommandKey( menu, index, false, key );
+		}
+	}
+}
+
 void open_DA_from_menu( short item )
 {
 	static MenuRef appleMenu = GetMenuHandle( kAppleMenuID );
