@@ -69,6 +69,8 @@ namespace Pedestal
 		                               bounds,
 		                               title,
 		                               RefCon() );
+		
+		HiliteControl( itsControl, kControlInactivePart );
 	}
 	
 	void PushButton::Uninstall()
