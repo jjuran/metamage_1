@@ -53,6 +53,7 @@ namespace Genie
 		
 		Icon_Parameters() : align(), xform(), label(), selected(), disabling()
 		{
+			xform = N::kTransformDisabled;
 		}
 	};
 	

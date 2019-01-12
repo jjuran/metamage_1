@@ -67,7 +67,7 @@ namespace Genie
 			bool  itIsActive;
 		
 		public:
-			Caption( Key key ) : itsKey( key ), itIsActive( true )
+			Caption( Key key ) : itsKey( key ), itIsActive( false )
 			{
 			}
 			
