@@ -134,8 +134,6 @@ namespace TestEdit
 	{
 		ASSERT( itsTE == NULL );
 		
-		CGrafPtr thePort = N::GetQDGlobalsThePort();
-		
 		::TextFont( kFontIDMonaco );
 		
 		::TextSize( 9 );
@@ -145,11 +143,6 @@ namespace TestEdit
 		N::TEAutoView( true, itsTE );  // enable auto-scrolling
 		
 		InstallCustomTEClickLoop( itsTE );
-		
-		if ( N::GetWindowPort( N::FrontWindow() ) == thePort )
-		{
-			N::TEActivate( itsTE );
-		}
 	}
 	
 	void TextEdit::Uninstall()
