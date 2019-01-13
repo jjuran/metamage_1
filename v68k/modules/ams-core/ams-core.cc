@@ -293,6 +293,8 @@ void install_EventManager()
 static
 void install_DeskManager()
 {
+	TBTRAP( SystemEvent );  // A9B2
+	
 	TBTRAP( SystemTask );  // A9B4
 	
 	TBTRAP( SystemEdit );  // A9C2

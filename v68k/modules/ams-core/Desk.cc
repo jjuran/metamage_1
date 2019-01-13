@@ -18,3 +18,8 @@ pascal void SystemTask_patch()
 {
 	poll_user_input();
 }
+
+pascal Boolean SystemEvent_patch( const EventRecord* event )
+{
+	return false;
+}
