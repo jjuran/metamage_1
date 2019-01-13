@@ -930,7 +930,12 @@ pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
 	
 	qd.thePort = saved_port;
 	
-	if ( delta != 0  &&  delta != 0x80008000 )
+	if ( delta == 0 )
+	{
+		// TODO:  Don't raise the window if Command is down
+		SelectWindow( w );
+	}
+	else if ( delta != 0x80008000 )
 	{
 		const short dh = delta;
 		const short dv = delta >> 16;
