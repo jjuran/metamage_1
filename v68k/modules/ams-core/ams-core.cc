@@ -71,6 +71,9 @@ static command::option options[] =
 static unsigned romgen;
 
 
+void* UTableBase  : 0x011C;
+short UnitNtryCnt : 0x01D2;
+
 void* SysEvtBuf : 0x0146;
 QHdr EventQueue : 0x014A;
 short SysEvtCnt : 0x0154;
@@ -113,6 +116,11 @@ void initialize_low_memory_globals()
 	}
 	
 	DefltStack = 64 * 1024;
+	
+	const int n_unit_table_entries = 32;
+	
+	UnitNtryCnt = n_unit_table_entries;
+	UTableBase  = calloc( n_unit_table_entries, sizeof (void**) );
 	
 	BitMap screenBits;
 	
