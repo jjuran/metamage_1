@@ -135,7 +135,7 @@ pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
 	
 got_event:
 	
-	return true;
+	return ! SystemEvent( event );
 }
 
 static
