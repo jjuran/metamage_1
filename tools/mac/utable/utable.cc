@@ -27,6 +27,8 @@ static short* const UnitTableEntryCount_Ptr = (short*) 0x01d2;
 
 int main( int argc, char** argv )
 {
+#ifdef __POWERPC__
+	
 	printf( "%s\n", "T-Vector addresses:" );
 	printf( "    %p: %s\n", TVECTOR( LMGetUTableBase ) );
 	printf( "    %p: %s\n", TVECTOR( LMGetUnitTableEntryCount ) );
@@ -34,6 +36,8 @@ int main( int argc, char** argv )
 	printf( "%s\n", "function addresses:" );
 	printf( "    %p: %s\n", ENTRYPT( LMGetUTableBase ) );
 	printf( "    %p: %s\n", ENTRYPT( LMGetUnitTableEntryCount ) );
+	
+#endif
 	
 	printf( "%s\n", "low memory globals:" );
 	printf( "    %p: %s\n", GLOBAL( UTableBase ) );
