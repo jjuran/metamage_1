@@ -10,92 +10,11 @@
 #include <Devices.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // ams-io
 #include "Console.hh"
+#include "DRVR.hh"
 #include "UnitTable.hh"
 
-
-#define LENGTH( array )  (sizeof array / sizeof *array)
-
-
-typedef OSErr (*driver_routine)( short trap_word : __D1, IOParam* pb : __A0 );
-
-typedef OSErr (*cntrl_routine)( short trap_word : __D1, CntrlParam* pb : __A0 );
-
-struct driver
-{
-	const uint8_t*  name;
-	driver_routine  prime;
-	cntrl_routine   status;
-};
-
-#define DRIVER( d )  { "\p." #d, d##_prime, d##_status }
-
-static const driver drivers[] =
-{
-	DRIVER( CIn  ),
-	DRIVER( COut ),
-};
-
-short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
-{
-	UInt16 index = -100 - pb->ioRefNum;
-	
-	if ( index >= LENGTH( drivers ) )
-	{
-		return pb->ioResult = unitEmptyErr;
-	}
-	
-	const driver& d = drivers[ index ];
-	
-	if ( d.prime == NULL )
-	{
-		return pb->ioResult = readErr;
-	}
-	
-	return d.prime( trap_word, pb );
-}
-
-short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
-{
-	UInt16 index = -100 - pb->ioRefNum;
-	
-	if ( index >= LENGTH( drivers ) )
-	{
-		return pb->ioResult = unitEmptyErr;
-	}
-	
-	const driver& d = drivers[ index ];
-	
-	if ( d.prime == NULL )
-	{
-		return pb->ioResult = writErr;
-	}
-	
-	return d.prime( trap_word, pb );
-}
-
-short Status_patch( short trap_word : __D1, CntrlParam* pb : __A0 )
-{
-	UInt16 index = -100 - pb->ioCRefNum;
-	
-	if ( index >= LENGTH( drivers ) )
-	{
-		return pb->ioResult = unitEmptyErr;
-	}
-	
-	const driver& d = drivers[ index ];
-	
-	if ( d.status == NULL )
-	{
-		return pb->ioResult = statusErr;
-	}
-	
-	return d.status( trap_word, pb );
-}
 
 short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
@@ -129,16 +48,13 @@ short Open_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return pb->ioResult = paramErr;
 	}
 	
-	for ( short i = 0;  i < LENGTH( drivers );  ++i )
+	short i = find_unit_entry_by_name( pb->ioNamePtr );
+	
+	if ( i >= 0 )
 	{
-		const driver& d = drivers[ i ];
+		pb->ioRefNum = ~i;
 		
-		if ( memcmp( pb->ioNamePtr, d.name, 1 + *d.name ) == 0 )
-		{
-			pb->ioRefNum = -100 - i;
-			
-			return pb->ioResult = noErr;
-		}
+		return pb->ioResult = noErr;
 	}
 	
 	return pb->ioResult = fnfErr;
@@ -188,4 +104,13 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	long entry_point = (long) drvr + offset;
 	
 	return call_DRVR( trap_word, entry_point, pb, dce );
+}
+
+#define INSTALL_DRIVER( d )  \
+	install( make_DRVR( "\p." #d, 0, d##_prime, 0, d##_status, 0 ) )
+
+void install_drivers()
+{
+	INSTALL_DRIVER( CIn  );
+	INSTALL_DRIVER( COut );
 }

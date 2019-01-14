@@ -61,5 +61,7 @@ int main( int argc, char** argv )
 	
 	install_DeviceManager();
 	
+	install_drivers();
+	
 	module_suspend();  // doesn't return
 }
