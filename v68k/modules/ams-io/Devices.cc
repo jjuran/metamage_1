@@ -33,7 +33,7 @@ typedef OSErr (*driver_routine)( short trap_word : __D1, IOParam* pb : __A0 );
 typedef OSErr (*cntrl_routine)( short trap_word : __D1, CntrlParam* pb : __A0 );
 
 static
-OSErr CIn_read( short trap_word : __D1, IOParam* pb : __A0 )
+OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	Ptr     buffer = pb->ioBuffer;
 	ssize_t needed = pb->ioReqCount;
@@ -62,11 +62,8 @@ OSErr CIn_read( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
-#define CIn_write  NULL
-#define COut_read  NULL
-
 static
-OSErr COut_write( short trap_word : __D1, IOParam* pb : __A0 )
+OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	ssize_t n_written = write( STDOUT_FILENO, pb->ioBuffer, pb->ioReqCount );
 	
@@ -160,12 +157,11 @@ OSErr CIn_status( short trap_word : __D1, CntrlParam* pb : __A0 )
 struct driver
 {
 	const uint8_t*  name;
-	driver_routine  read;
-	driver_routine  write;
+	driver_routine  prime;
 	cntrl_routine   status;
 };
 
-#define DRIVER( d )  { "\p." #d, d##_read, d##_write, d##_status }
+#define DRIVER( d )  { "\p." #d, d##_prime, d##_status }
 
 static const driver drivers[] =
 {
@@ -184,12 +180,12 @@ short Read_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const driver& d = drivers[ index ];
 	
-	if ( d.read == NULL )
+	if ( d.prime == NULL )
 	{
 		return pb->ioResult = readErr;
 	}
 	
-	return d.read( trap_word, pb );
+	return d.prime( trap_word, pb );
 }
 
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
@@ -203,12 +199,12 @@ short Write_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const driver& d = drivers[ index ];
 	
-	if ( d.write == NULL )
+	if ( d.prime == NULL )
 	{
 		return pb->ioResult = writErr;
 	}
 	
-	return d.write( trap_word, pb );
+	return d.prime( trap_word, pb );
 }
 
 short Status_patch( short trap_word : __D1, CntrlParam* pb : __A0 )
