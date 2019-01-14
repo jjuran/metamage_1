@@ -11,6 +11,8 @@ struct IOParam;
 
 short Open_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
+short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 );
+
 short Read_patch( short trap_word : __D1, IOParam* pb : __A0 );
 short Write_patch( short trap_word : __D1, IOParam* pb : __A0 );
 
