@@ -80,6 +80,22 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	uint8_t command = trap_word;
 	
+	int8_t bit = command - 2;
+	
+	if ( ! (dce->dCtlFlags & (0x100 << bit)) )
+	{
+		/*
+			The driver doesn't implement this call.
+			
+			        Read    Write   Control Status
+			Trap:   A002    A003    A004    A005
+			Bit#:      0       1       2       3
+			OSErr:   -19     -20     -17     -18
+		*/
+		
+		return (bit ^ 1) - 20;
+	}
+	
 	short offset = 0;
 	
 	switch ( command )
