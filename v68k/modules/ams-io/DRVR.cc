@@ -35,6 +35,29 @@ UInt16* set_DRVR_offset( void* base, UInt16* p, short* field, cntrl_routine f )
 	return set_DRVR_offset( base, p, field, (long) f );
 }
 
+static
+short read_write_mask( ConstStr255Param name )
+{
+	short len = *name;
+	
+	if ( len > 3 )
+	{
+		const unsigned char* end = name + 1 + len;
+		
+		if ( end[ -2 ] == 'I'  &&  end[ -1 ] == 'n' )
+		{
+			return dReadEnableMask;
+		}
+		
+		if ( end[ -3 ] == 'O'  &&  end[ -2 ] == 'u'  &&  end[ -1 ] == 't' )
+		{
+			return dWritEnableMask;
+		}
+	}
+	
+	return dReadEnableMask | dWritEnableMask;
+}
+
 DRVRHeader** make_DRVR( ConstStr255Param  name,
                         driver_routine    open,
                         driver_routine    prime,
@@ -62,6 +85,10 @@ DRVRHeader** make_DRVR( ConstStr255Param  name,
 	if ( h )
 	{
 		DRVRHeader& header = **h;
+		
+		header.drvrFlags = (prime ? read_write_mask( name ) : 0)
+		                 | dCtlEnableMask  * !! cntrl
+		                 | dStatEnableMask * !! status;
 		
 		BlockMoveData( name, &header.drvrName, 1 + name[ 0 ] );
 		
