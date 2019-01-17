@@ -40,6 +40,9 @@
 #include "mac_sys/gestalt.hh"
 #include "mac_sys/is_front_process.hh"
 
+// mac-qd-utils
+#include "mac_qd/assign_pixel_rgn.hh"
+
 // mac-app-utils
 #include "mac_app/init.hh"
 #include "mac_app/menus.hh"
@@ -797,13 +800,6 @@ namespace Pedestal
 	
 	static bool gIdleNeeded = false;
 	
-	static void set_pixel_region( RgnHandle rgn, Point pt )
-	{
-		Rect rect = { pt.v, pt.h, pt.v + 1, pt.h + 1 };
-		
-		RectRgn( rgn, &rect );
-	}
-	
 	static EventRecord WaitNextEvent( UInt32 sleep, RgnHandle mouseRgn = NULL )
 	{
 		static Point last_global_mouse = { 0, 0 };
@@ -823,7 +819,7 @@ namespace Pedestal
 		
 		last_global_mouse = event.where;
 		
-		set_pixel_region( current_mouse_location, last_global_mouse );
+		mac::qd::assign_pixel_rgn( current_mouse_location, last_global_mouse );
 		
 		return event;
 	}
