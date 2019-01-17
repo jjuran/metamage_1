@@ -67,6 +67,8 @@ void install_ResourceManager()
 	TBTRAP( ChangedResource );  // A9AA
 	
 	TBTRAP( ResError        );  // A9AF
+	
+	TBTRAP( OpenRFPerm      );  // A9C4
 }
 
 int main( int argc, char** argv )

@@ -56,4 +56,6 @@ pascal char** Get1Resource_patch( unsigned long type, short id );
 pascal char** Get1NamedResource_patch( unsigned long         type,
                                        const unsigned char*  name );
 
+pascal short OpenRFPerm_patch( const unsigned char* name, short vRefNum, char perm );
+
 #endif

@@ -1034,3 +1034,26 @@ pascal Handle Get1NamedResource_patch( ResType type, ConstStr255Param name )
 	
 	JMP      (A0)
 }
+
+asm
+pascal short OpenRFPerm_patch( ConstStr255Param name, short vRefNum, char perm )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.B   (A2)+,D1  // payload in the high byte
+	ADDQ.L   #1,A2     // skip the low byte
+	MOVE.W   (A2)+,D0
+	MOVEA.L  (A2)+,A0
+	
+	JSR      OpenResFile_handler
+	MOVE.W   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #8,SP
+	
+	JMP      (A0)
+}
