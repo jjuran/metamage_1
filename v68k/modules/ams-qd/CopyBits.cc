@@ -24,6 +24,7 @@
 
 // ams-qd
 #include "draw.hh"
+#include "stretch.hh"
 
 
 static inline
@@ -269,14 +270,32 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 		return;
 	}
 	
-	if ( dstWidth != srcWidth  ||  dstHeight != srcHeight )
-	{
-		return;
-	}
+	const bool congruent  = dstWidth == srcWidth  &&  dstHeight == srcHeight;
+	const bool stretching = ! congruent;
 	
 	static RgnHandle clipRgn = NewRgn();
 	
 	GrafPort& port = **get_addrof_thePort();
+	
+	BitMap stretched_bits;
+	
+	stretched_bits.baseAddr = NULL;
+	
+	if ( stretching )
+	{
+		const short rowBytes = (dstWidth + 15) / 16 * 2;
+		
+		const Rect bounds = { 0, 0, dstHeight, dstWidth };
+		
+		stretched_bits.baseAddr = NewPtr( dstHeight * rowBytes );
+		stretched_bits.rowBytes = rowBytes;
+		stretched_bits.bounds   = bounds;
+		
+		stretch_bits( *srcBits, stretched_bits, *srcRect, bounds );
+		
+		srcBits = &stretched_bits;
+		srcRect = &stretched_bits.bounds;
+	}
 	
 	redraw_lock lock( port.portBits, *dstRect, *srcBits, *srcRect );
 	
@@ -439,6 +458,11 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  clipRgn,
 			                  blit );
 		}
+	}
+	
+	if ( stretched_bits.baseAddr )
+	{
+		DisposePtr( stretched_bits.baseAddr );
 	}
 }
 
