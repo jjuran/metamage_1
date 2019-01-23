@@ -1,0 +1,18 @@
+#!/usr/bin/env vx
+
+const limit = int argv[ 1 ]
+
+def fibonacci
+{
+	var a = 0
+	var b = 1
+	
+	return { a <-> b; b += a }
+}
+
+const f = fibonacci()
+
+for i in 0 -> limit do
+{
+	print f()
+}
