@@ -243,6 +243,9 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	
 	memset( window, '\0', sizeof (WindowRecord) );
 	
+	GrafPtr& thePort   = *get_addrof_thePort();
+	GrafPtr  savedPort = thePort;
+	
 	GrafPtr port = &window->port;
 	
 	OpenPort( port );
@@ -277,6 +280,11 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 	*(Byte*) &window->windowDefProc = varCode;
 	
 	const Boolean frontmost = insert_into_window_list( window, behind );
+	
+	if ( ! frontmost )
+	{
+		thePort = savedPort;
+	}
 	
 	window->hilited = frontmost;
 	
@@ -326,6 +334,8 @@ fail_1:
 	ClosePort( (WindowPtr) window );
 	
 fail_0:
+	
+	thePort = savedPort;
 	
 	if ( ! storage )
 	{
