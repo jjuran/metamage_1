@@ -54,6 +54,7 @@
 
 enum
 {
+	Opt_GNEtix = 'G',  // GetNextEvent throttle, in ticks
 	Opt_linger = 'L',  // linger on ExitToShell
 	Opt_romgen = 'R',  // ROM generation: 0 for 64K ROM, 1 for 128K, etc.
 	
@@ -64,6 +65,8 @@ enum
 
 static command::option options[] =
 {
+	{ "gne-ticks",  Opt_GNEtix, command::Param_required },
+	
 	{ "linger",  Opt_linger },
 	
 	{ "romgen", Opt_romgen, command::Param_required },
@@ -299,6 +302,11 @@ char* const* get_options( char** argv )
 		{
 			case Opt_events_fd:
 				events_fd = gear::parse_unsigned_decimal( global_result.param );
+				break;
+			
+			case Opt_GNEtix:
+				GetNextEvent_throttle =
+					gear::parse_unsigned_decimal( global_result.param );
 				break;
 			
 			case Opt_romgen:
