@@ -34,6 +34,8 @@ enum
 	tag_EventQueue,
 	tag_EventQueue_word_4 = tag_EventQueue + 4,  // 10 bytes
 	tag_EvtBufCnt,
+	tag_VBLQueue,
+	tag_VBLQueue_word_4 = tag_VBLQueue + 4,  // 10 bytes
 	tag_Ticks,
 	tag_Ticks_low_word,
 	tag_MBState_esc,
@@ -155,6 +157,7 @@ static const global globals[] =
 	{ 0x0146, 4,    tag_SysEvtBuf   },
 	{ 0x014A, 10,   tag_EventQueue  },
 	{ 0x0154, 2,    tag_EvtBufCnt   },
+	{ 0x0160, 10,   tag_VBLQueue    },
 	{ 0x016A, 0x44, tag_Ticks       },
 	{ 0x0172, 2,    tag_MBState_esc },  // MBState, Tocks (Button escapes)
 	{ 0x0174, 16,   tag_KeyMaps     },  // KeyMap, KeyPadMap, 4 more bytes
