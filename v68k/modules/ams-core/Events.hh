@@ -10,6 +10,8 @@ struct EventRecord;
 struct MacRegion;
 struct Point;
 
+extern unsigned long GetNextEvent_throttle;  // minimum ticks between calls
+
 pascal unsigned char GetNextEvent_patch( unsigned short  eventMask,
                                          EventRecord*    event );
 

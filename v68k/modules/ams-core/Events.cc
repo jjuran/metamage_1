@@ -30,7 +30,9 @@ WindowRef CurActivate : 0x0A64;
 WindowRef CurDeactive : 0x0A68;
 
 
-const unsigned long GetNextEvent_throttle = 2;  // minimum ticks between calls
+const long default_GetNextEvent_throttle = 2;  // minimum ticks between calls
+
+unsigned long GetNextEvent_throttle = default_GetNextEvent_throttle;
 
 static unsigned long next_sleep;
 
