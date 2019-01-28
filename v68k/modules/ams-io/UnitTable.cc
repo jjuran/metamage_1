@@ -80,7 +80,6 @@ short find_unused_unit_entry()
 	return 0;
 }
 
-static
 short install( DRVRHeader** d, short i )
 {
 	DCtlHandle h = (DCtlHandle) NewHandleClear( sizeof (DCtlEntry) );
