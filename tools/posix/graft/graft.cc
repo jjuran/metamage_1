@@ -7,6 +7,7 @@
 #include <errno.h>
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
@@ -127,6 +128,17 @@ int main( int argc, char** argv )
 	
 	// Invoke subprocesses
 	// -------------------
+	
+	/*
+		Reserve fds 6 and 7 so neither becomes one of our sockets.
+		Otherwise, we might clobber them when launching the client.
+	*/
+	
+	CHECK_N( dup2( 2, 6 ) );
+	CHECK_N( dup2( 2, 7 ) );
+	
+	CHECK_N( fcntl( 6, F_SETFD, FD_CLOEXEC ) );
+	CHECK_N( fcntl( 7, F_SETFD, FD_CLOEXEC ) );
 	
 	int fds[ 2 ];
 	
