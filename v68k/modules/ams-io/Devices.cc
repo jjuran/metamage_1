@@ -24,7 +24,15 @@ IODoneProcPtr JIODone : 0x08FC;
 static
 OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 {
-	return err;
+	QElemPtr head = dce->dCtlQHdr.qHead;
+	
+	Dequeue( head, &dce->dCtlQHdr );
+	
+	IOParam* pb = (IOParam*) head;
+	
+	pb->ioResult = err;
+	
+	return pb->ioResult;
 }
 
 short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
@@ -120,6 +128,13 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return (bit ^ 1) - 20;
 	}
 	
+	if ( ! immed )
+	{
+		pb->qType = ioQType;
+		
+		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
+	}
+	
 	short offset = 0;
 	
 	switch ( command )
@@ -143,7 +158,20 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	long entry_point = (long) drvr + offset;
 	
-	return call_DRVR( trap_word, entry_point, pb, dce );
+	OSErr err = call_DRVR( trap_word, entry_point, pb, dce );
+	
+	if ( ! async )
+	{
+		while ( pb->ioResult > 0 )
+		{
+			UInt32 dummy;
+			Delay( -1, &dummy );  // calls reactor_wait() once
+		}
+		
+		err = pb->ioResult;
+	}
+	
+	return err;
 }
 
 #define INSTALL_DRIVER( d )  \
