@@ -27,6 +27,8 @@
 
 OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
+	OSErr err = noErr;
+	
 	Ptr     buffer = pb->ioBuffer;
 	ssize_t needed = pb->ioReqCount;
 	
@@ -38,12 +40,14 @@ OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 		
 		if ( n_read < 0 )
 		{
-			return pb->ioResult = ioErr;
+			err = ioErr;
+			goto done;
 		}
 		
 		if ( n_read == 0 )
 		{
-			return pb->ioResult = eofErr;
+			err = eofErr;
+			goto done;
 		}
 		
 		pb->ioActCount += n_read;
@@ -51,21 +55,42 @@ OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 		needed         -= n_read;
 	}
 	
-	return pb->ioResult = noErr;
+done:
+	
+	const short immed = pb->ioTrap & (1 << noQueueBit);
+	
+	if ( ! immed )
+	{
+		IODone( dce, err );
+	}
+	
+	return pb->ioResult = err;
 }
 
 OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
+	OSErr err = noErr;
+	
 	ssize_t n_written = write( STDOUT_FILENO, pb->ioBuffer, pb->ioReqCount );
 	
 	if ( n_written < 0 )
 	{
-		return pb->ioResult = ioErr;
+		err = ioErr;
+		goto done;
 	}
 	
 	pb->ioActCount = n_written;
 	
-	return pb->ioResult = noErr;
+done:
+	
+	const short immed = pb->ioTrap & (1 << noQueueBit);
+	
+	if ( ! immed )
+	{
+		IODone( dce, err );
+	}
+	
+	return pb->ioResult = err;
 }
 
 static
@@ -126,6 +151,8 @@ OSErr CIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 		kSERDInputCount = 2,
 	};
 	
+	OSErr err = noErr;
+	
 	switch ( pb->csCode )
 	{
 		case kSERDInputCount:
@@ -136,8 +163,18 @@ OSErr CIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 			break;
 		
 		default:
-			return pb->ioResult = statusErr;
+			err = statusErr;
+			goto done;
 	}
 	
-	return pb->ioResult = noErr;
+done:
+	
+	const short immed = pb->ioTrap & (1 << noQueueBit);
+	
+	if ( ! immed )
+	{
+		IODone( dce, err );
+	}
+	
+	return pb->ioResult = err;
 }
