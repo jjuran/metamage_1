@@ -7,12 +7,15 @@
 #define DRVR_HH
 
 struct CntrlParam;
+struct DCtlEntry;
 struct DRVRHeader;
 struct IOParam;
 
-typedef short (*driver_routine)( short trap_word : __D1, IOParam* pb : __A0 );
+typedef DCtlEntry DCE;
 
-typedef short (*cntrl_routine)( short trap_word : __D1, CntrlParam* pb : __A0 );
+typedef short (*driver_routine)( short : __D1, IOParam* : __A0, DCE* : __A1 );
+
+typedef short (*cntrl_routine)( short : __D1, CntrlParam* : __A0, DCE* : __A1 );
 
 DRVRHeader** make_DRVR( const unsigned char*  name,
                         driver_routine        open,

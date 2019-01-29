@@ -25,7 +25,7 @@
 #include "reactor-gestalt.hh"
 
 
-OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0 )
+OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	Ptr     buffer = pb->ioBuffer;
 	ssize_t needed = pb->ioReqCount;
@@ -54,7 +54,7 @@ OSErr CIn_prime( short trap_word : __D1, IOParam* pb : __A0 )
 	return pb->ioResult = noErr;
 }
 
-OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0 )
+OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
 {
 	ssize_t n_written = write( STDOUT_FILENO, pb->ioBuffer, pb->ioReqCount );
 	
@@ -119,7 +119,7 @@ void CIn_watch()
 	}
 }
 
-OSErr CIn_status( short trap_word : __D1, CntrlParam* pb : __A0 )
+OSErr CIn_status( short trap : __D1, CntrlParam* pb : __A0, DCE* dce : __A1 )
 {
 	enum
 	{
