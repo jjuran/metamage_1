@@ -16,6 +16,17 @@
 #include "UnitTable.hh"
 
 
+typedef OSErr (*IODoneProcPtr)( DCtlEntry* dce : __A1, OSErr err : __D0 );
+
+IODoneProcPtr JIODone : 0x08FC;
+
+
+static
+OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
+{
+	return err;
+}
+
 short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 {
 	return pb->ioResult = noErr;
@@ -140,6 +151,8 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 
 void install_drivers()
 {
+	JIODone = &IODone_handler;
+	
 	INSTALL_DRIVER( CIn  );
 	INSTALL_DRIVER( COut );
 }
