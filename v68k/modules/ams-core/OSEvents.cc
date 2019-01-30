@@ -21,6 +21,12 @@ UInt16 KeyMods : 0x017A;
 Point  Mouse   : 0x0830;
 
 
+static inline
+asm UInt32 get_Ticks()
+{
+	JSR      0xFFFFFFDE  // get_Ticks_immediate
+}
+
 struct OSEvQEl
 {
 	UInt32  flags;
@@ -69,7 +75,7 @@ pascal short PostEvent_patch( short what : __A0, long msg : __D0 ) : __D0
 	qElem->evtQWhat    = what;
 	qElem->evtQMessage = msg;
 	
-	qElem->evtQWhen      = Ticks;
+	qElem->evtQWhen      = get_Ticks();
 	qElem->evtQWhere     = Mouse;
 	qElem->evtQModifiers = get_modifiers();
 	
