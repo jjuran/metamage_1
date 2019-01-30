@@ -64,7 +64,7 @@ done:
 		IODone( dce, err );
 	}
 	
-	return pb->ioResult = err;
+	return err;
 }
 
 OSErr COut_prime( short trap_word : __D1, IOParam* pb : __A0, DCE* dce : __A1 )
@@ -90,7 +90,7 @@ done:
 		IODone( dce, err );
 	}
 	
-	return pb->ioResult = err;
+	return err;
 }
 
 static
@@ -176,5 +176,5 @@ done:
 		IODone( dce, err );
 	}
 	
-	return pb->ioResult = err;
+	return err;
 }
