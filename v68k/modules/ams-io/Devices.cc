@@ -54,11 +54,6 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 	return IOComplete( pb, err );
 }
 
-short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
-{
-	return pb->ioResult = noErr;
-}
-
 static
 asm
 short call_DRVR( short  trap : __D1,
@@ -131,6 +126,17 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	uint8_t command = trap_word;
 	
+	const bool killIO = command == kKillIOCommand;
+	
+	if ( killIO )
+	{
+		command = kControlCommand;
+		
+		CntrlParam* cntrl = (CntrlParam*) pb;
+		
+		cntrl->csCode = killCode;
+	}
+	
 	int8_t bit = command - 2;
 	
 	if ( ! (dce->dCtlFlags & (0x100 << bit)) )
@@ -147,7 +153,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 		return IOComplete( pb, (bit ^ 1) - 20 );
 	}
 	
-	if ( ! immed )
+	if ( ! immed  &&  ! killIO )
 	{
 		pb->qType = ioQType;
 		
@@ -178,6 +184,14 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	long entry_point = (long) drvr + offset;
 	
 	OSErr err = call_DRVR( trap_word, entry_point, pb, dce );
+	
+	if ( killIO )
+	{
+		while ( QElemPtr head = dce->dCtlQHdr.qHead )
+		{
+			IODone( dce, abortErr );
+		}
+	}
 	
 	if ( ! async )
 	{
