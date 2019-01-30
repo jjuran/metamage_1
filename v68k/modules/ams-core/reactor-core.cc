@@ -11,9 +11,11 @@
 // ams-common
 #include "interrupts.hh"
 #include "reactor.hh"
+#include "time.hh"
 
 
 static reactor_node* reactor_chain;
+static timer_node*   timer_chain;
 
 static fd_set active_readfds;
 
@@ -72,14 +74,103 @@ void remove( reactor_node* node )
 	reenable_interrupts( saved_SR );
 }
 
+void schedule( timer_node* node )
+{
+	const short saved_SR = disable_interrupts();
+	
+	const uint64_t wake = node->wakeup;
+	
+	timer_node** slot = &timer_chain;
+	
+	timer_node* next;
+	
+	while ( (next = *slot)  &&  wake > next->wakeup )
+	{
+		slot = &next->next;
+	}
+	
+	node->next = *slot;
+	
+	*slot = node;
+	
+	reenable_interrupts( saved_SR );
+}
+
+void cancel( timer_node* node )
+{
+	const short saved_SR = disable_interrupts();
+	
+	if ( timer_chain == node )
+	{
+		timer_chain = node->next;
+	}
+	else
+	{
+		timer_node* prev = timer_chain;
+		timer_node* it = prev->next;
+		
+		while ( it != NULL )
+		{
+			if ( it == node )
+			{
+				prev->next = it->next;
+				break;
+			}
+			
+			prev = it;
+			it   = it->next;
+		}
+	}
+	
+	reenable_interrupts( saved_SR );
+}
+
+static
+uint64_t check_timers()
+{
+	if ( timer_chain == NULL )
+	{
+		return 0;
+	}
+	
+	const uint64_t now_time = time_microseconds();
+	
+	while ( timer_chain != NULL  &&  timer_chain->wakeup <= now_time )
+	{
+		timer_node* next = timer_chain;
+		
+		timer_chain = timer_chain->next;
+		
+		next->ready( next );
+	}
+	
+	if ( timer_chain == NULL )
+	{
+		return 0;
+	}
+	
+	return timer_chain->wakeup - now_time;
+}
+
 bool reactor_wait( timeval* timeout )
 {
 	const short saved_SR = disable_interrupts();
+	
+	if ( uint64_t dt = check_timers() )
+	{
+		if ( dt < microseconds( *timeout ) )
+		{
+			timeout->tv_sec  = dt / 1000000;
+			timeout->tv_usec = dt % 1000000;
+		}
+	}
 	
 	fd_set readfds;
 	FD_COPY( &active_readfds, &readfds );
 	
 	int selected = select( max_fd + 1, &readfds, NULL, NULL, timeout );
+	
+	check_timers();
 	
 	if ( selected <= 0 )
 	{
@@ -115,4 +206,6 @@ reactor_core_parameter_block the_reactor_core =
 	0,  // reserved
 	&insert,
 	&remove,
+	&schedule,
+	&cancel,
 };
