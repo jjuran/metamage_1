@@ -13,10 +13,17 @@
 // ams-io
 #include "Console.hh"
 #include "DRVR.hh"
+#include "options.hh"
+#include "Sound.hh"
 #include "UnitTable.hh"
 
 
 typedef OSErr (*IODoneProcPtr)( DCtlEntry* dce : __A1, OSErr err : __D0 );
+
+UInt16 SdVolEnb : 0x0260;
+
+Byte SdVolume : 0x0260;
+Byte SdEnable : 0x0261;
 
 IODoneProcPtr JIODone : 0x08FC;
 
@@ -215,12 +222,22 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	return err;
 }
 
+#define INSTALL_SYS_DRIVER( d, i )  \
+	install( make_DRVR( "\p." #d, 0, d##_prime, d##_control, d##_status, 0 ), i )
+
 #define INSTALL_DRIVER( d )  \
 	install( make_DRVR( "\p." #d, 0, d##_prime, 0, d##_status, 0 ) )
 
 void install_drivers()
 {
 	JIODone = &IODone_handler;
+	
+	if ( sound_fd >= 0 )
+	{
+		INSTALL_SYS_DRIVER( Sound, 3 );
+		
+		SdVolEnb = -1;
+	}
 	
 	INSTALL_DRIVER( CIn  );
 	INSTALL_DRIVER( COut );
