@@ -230,7 +230,7 @@ bool reactor_wait( uint64_t dt )
 
 pascal long Delay_patch( long numTicks : __A0 ) : __D0
 {
-	const long microseconds_per_tick = 1000 * 1000 / 60;
+	const long microseconds_per_tick = 1000 * 1000 * 100 / 6015;
 	
 	const uint64_t start = time_microseconds();
 	
