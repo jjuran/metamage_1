@@ -266,7 +266,7 @@ pascal unsigned char WaitNextEvent_patch( unsigned short  eventMask,
 		year or so (until Ticks passes 2^32 - 1 and overflows on its own).
 		
 		By pinning the addition to 2^32 - 1, busy-polling is limited to
-		one tick (1/60 of a second) after two years or so -- which isn't
+		one tick (1/60.15 of a second) after two years or so -- which isn't
 		bad at all.  (Though you may have other issues if you let Ticks
 		overflow.  I strongly don't recommend it...)
 	*/

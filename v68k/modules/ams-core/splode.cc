@@ -42,12 +42,11 @@ static const timeval zero_timeout = { 0, 0 };
 static
 timeval timeval_from_ticks( unsigned long ticks )
 {
-	const long microseconds_per_tick = 1000 * 1000 / 60;
+	const uint64_t microseconds_per_tick = 1000 * 1000 * 100 / 6015;
 	
-	const long seconds      = ticks / 60;
-	const long microseconds = ticks % 60 * microseconds_per_tick;
+	const uint64_t dt = ticks * microseconds_per_tick;
 	
-	timeval tv = { seconds, microseconds };
+	const timeval tv = { dt / 1000000, dt % 1000000 };
 	
 	return tv;
 }
