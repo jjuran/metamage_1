@@ -14,8 +14,11 @@
 #endif
 
 // POSIX
-#include <time.h>
 #include <unistd.h>
+#include <sys/time.h>
+
+// ams-core
+#include "reactor-core.hh"
 
 
 uint32_t Ticks : 0x016A;
@@ -202,20 +205,42 @@ cleanup:
 #pragma mark Miscellaneous Utilities
 #pragma mark -
 
+static inline
+uint64_t microseconds( const timeval& tv )
+{
+	return tv.tv_sec * 1000000 + tv.tv_usec;
+}
+
+static inline
+uint64_t time_microseconds()
+{
+	timeval now;
+	gettimeofday( &now, NULL );
+	
+	return microseconds( now );
+}
+
+static inline
+bool reactor_wait( uint64_t dt )
+{
+	timeval timeout = { dt / 1000000, dt % 1000000 };
+	
+	return reactor_wait( &timeout );
+}
+
 pascal long Delay_patch( long numTicks : __A0 ) : __D0
 {
-	const long nanoseconds_per_tick = 1000 * 1000 * 1000 / 60;
+	const long microseconds_per_tick = 1000 * 1000 / 60;
 	
-	const long seconds     = numTicks / 60;
-	const long nanoseconds = numTicks % 60 * nanoseconds_per_tick;
+	const uint64_t start = time_microseconds();
 	
-	timespec delay = { seconds, nanoseconds };
+	uint64_t dt = (uint64_t) numTicks * microseconds_per_tick;
 	
-	timespec remaining;
+	const uint64_t end_time = start + dt;
 	
-	while ( nanosleep( &delay, &remaining ) != 0 )
+	while ( reactor_wait( dt ) != 0 )
 	{
-		delay = remaining;
+		dt = end_time - time_microseconds();
 	}
 	
 	return Ticks;
