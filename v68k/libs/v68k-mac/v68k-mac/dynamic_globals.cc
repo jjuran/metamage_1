@@ -32,7 +32,7 @@ uint32_t get_Ticks()
 	
 	const uint64_t delta = microsecond_clock() - initial_clock;
 	
-	const unsigned microseconds_per_tick = 1000 * 1000 / 60;
+	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
 	
 	uint32_t ticks = delta / microseconds_per_tick;
 	
