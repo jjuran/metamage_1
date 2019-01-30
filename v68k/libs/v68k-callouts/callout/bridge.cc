@@ -410,7 +410,7 @@ int32_t get_Ticks_immediate_callout( v68k::processor_state& s )
 	
 	const uint64_t delta = microsecond_clock() - initial_clock;
 	
-	const unsigned microseconds_per_tick = 1000 * 1000 / 60;
+	const unsigned microseconds_per_tick = 1000 * 1000 * 100 / 6015;
 	
 	s.d(0) = delta / microseconds_per_tick;
 	
