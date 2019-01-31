@@ -98,13 +98,21 @@ Boolean insert_into_window_list( WindowPeek window, GrafPtr behind )
 {
 	const WindowPtr all = GrafPtr( -1 );  // Place all windows behind this one.
 	
-	if ( behind == all  ||  behind == (GrafPtr) WindowList  ||  ! WindowList )
+	if ( behind == all  ||  ! WindowList )
 	{
 		window->nextWindow = WindowList;
 		
 		WindowList = window;
 		
 		return -true;
+	}
+	
+	if ( behind == (GrafPtr) WindowList )
+	{
+		window->nextWindow = WindowList->nextWindow;
+		WindowList->nextWindow = window;
+		
+		return false;
 	}
 	
 	WindowPeek prev = NULL;
