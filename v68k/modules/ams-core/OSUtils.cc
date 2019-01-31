@@ -208,7 +208,7 @@ cleanup:
 static inline
 uint64_t microseconds( const timeval& tv )
 {
-	return tv.tv_sec * 1000000 + tv.tv_usec;
+	return tv.tv_sec * 1000000ull + tv.tv_usec;
 }
 
 static inline
