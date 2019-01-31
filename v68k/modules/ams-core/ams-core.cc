@@ -35,6 +35,7 @@
 #include "Patches.hh"
 #include "Pointers.hh"
 #include "SysError.hh"
+#include "VBL.hh"
 #include "cursor-core.hh"
 #include "interrupt-handlers.hh"
 #include "options.hh"
@@ -195,6 +196,13 @@ void install_OSUtils()
 }
 
 static
+void install_VerticalRetraceManager()
+{
+	OSTRAP( VInstall );  // A033
+	OSTRAP( VRemove  );  // A034
+}
+
+static
 void install_PatchManager()
 {
 	OSTRAP( GetTrapAddress );  // A146
@@ -303,6 +311,8 @@ int main( int argc, char** argv )
 	install_MemoryManager();
 	
 	install_OSUtils();
+	
+	install_VerticalRetraceManager();
 	
 	install_PatchManager();
 	
