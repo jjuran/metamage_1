@@ -15,7 +15,9 @@
 
 // POSIX
 #include <unistd.h>
-#include <sys/time.h>
+
+// ams-common
+#include "time.hh"
 
 // ams-core
 #include "reactor-core.hh"
@@ -206,21 +208,6 @@ cleanup:
 #pragma mark -
 
 static inline
-uint64_t microseconds( const timeval& tv )
-{
-	return tv.tv_sec * 1000000ull + tv.tv_usec;
-}
-
-static inline
-uint64_t time_microseconds()
-{
-	timeval now;
-	gettimeofday( &now, NULL );
-	
-	return microseconds( now );
-}
-
-static inline
 bool reactor_wait( uint64_t dt )
 {
 	timeval timeout = { dt / 1000000, dt % 1000000 };
@@ -230,11 +217,9 @@ bool reactor_wait( uint64_t dt )
 
 pascal long Delay_patch( long numTicks : __A0 ) : __D0
 {
-	const long microseconds_per_tick = 1000 * 1000 * 100 / 6015;
-	
 	const uint64_t start = time_microseconds();
 	
-	uint64_t dt = (uint64_t) numTicks * microseconds_per_tick;
+	uint64_t dt = (uint64_t) numTicks * tick_microseconds;
 	
 	const uint64_t end_time = start + dt;
 	
