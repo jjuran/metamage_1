@@ -16,9 +16,42 @@
 #include "UnitTable.hh"
 
 
-short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 )
+typedef OSErr (*IODoneProcPtr)( DCtlEntry* dce : __A1, OSErr err : __D0 );
+
+IODoneProcPtr JIODone : 0x08FC;
+
+
+static inline
+asm void call_completion_routine( void* pb : __A0,
+                                  short err : __D0,
+                                  void* proc : __A1 )
 {
-	return pb->ioResult = noErr;
+	JSR      (A1)
+}
+
+static
+OSErr IOComplete( IOParam* pb : __A0, OSErr err : __D0 )
+{
+	pb->ioResult = err;
+	
+	if ( pb->ioCompletion )
+	{
+		call_completion_routine( pb, err, pb->ioCompletion );
+	}
+	
+	return pb->ioResult;
+}
+
+static
+OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
+{
+	QElemPtr head = dce->dCtlQHdr.qHead;
+	
+	Dequeue( head, &dce->dCtlQHdr );
+	
+	IOParam* pb = (IOParam*) head;
+	
+	return IOComplete( pb, err );
 }
 
 static
@@ -79,7 +112,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( h == NULL )
 	{
-		return pb->ioResult = unitEmptyErr;
+		return IOComplete( pb, unitEmptyErr );
 	}
 	
 	DCtlEntry* dce = *h;
@@ -88,10 +121,21 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( drvr == NULL )
 	{
-		return pb->ioResult = badUnitErr;
+		return IOComplete( pb, badUnitErr );
 	}
 	
 	uint8_t command = trap_word;
+	
+	const bool killIO = command == kKillIOCommand;
+	
+	if ( killIO )
+	{
+		command = kControlCommand;
+		
+		CntrlParam* cntrl = (CntrlParam*) pb;
+		
+		cntrl->csCode = killCode;
+	}
 	
 	int8_t bit = command - 2;
 	
@@ -106,7 +150,14 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 			OSErr:   -19     -20     -17     -18
 		*/
 		
-		return (bit ^ 1) - 20;
+		return IOComplete( pb, (bit ^ 1) - 20 );
+	}
+	
+	if ( ! immed  &&  ! killIO )
+	{
+		pb->qType = ioQType;
+		
+		Enqueue( (QElemPtr) pb, &dce->dCtlQHdr );
 	}
 	
 	short offset = 0;
@@ -132,7 +183,28 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	long entry_point = (long) drvr + offset;
 	
-	return call_DRVR( trap_word, entry_point, pb, dce );
+	OSErr err = call_DRVR( trap_word, entry_point, pb, dce );
+	
+	if ( killIO )
+	{
+		while ( QElemPtr head = dce->dCtlQHdr.qHead )
+		{
+			IODone( dce, abortErr );
+		}
+	}
+	
+	if ( ! async )
+	{
+		while ( pb->ioResult > 0 )
+		{
+			UInt32 dummy;
+			Delay( -1, &dummy );  // calls reactor_wait() once
+		}
+		
+		err = pb->ioResult;
+	}
+	
+	return err;
 }
 
 #define INSTALL_DRIVER( d )  \
@@ -140,6 +212,8 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 )
 
 void install_drivers()
 {
+	JIODone = &IODone_handler;
+	
 	INSTALL_DRIVER( CIn  );
 	INSTALL_DRIVER( COut );
 }

@@ -16,8 +16,7 @@ short DRVR_IO_patch( short trap_word : __D1, IOParam* pb : __A0 );
 #define Write_patch    DRVR_IO_patch
 #define Control_patch  DRVR_IO_patch
 #define Status_patch   DRVR_IO_patch
-
-short KillIO_patch( short trap_word : __D1, IOParam* pb : __A0 );
+#define KillIO_patch   DRVR_IO_patch
 
 void install_drivers();
 
