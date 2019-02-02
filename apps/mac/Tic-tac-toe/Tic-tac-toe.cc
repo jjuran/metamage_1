@@ -27,6 +27,9 @@
 // mac-sys-utils
 #include "mac_sys/gestalt.hh"
 
+// mac-snd-utils
+#include "mac_snd/playback.hh"
+
 // mac-qd-utils
 #include "mac_qd/get_portRect.hh"
 #include "mac_qd/main_display_bounds.hh"
@@ -62,6 +65,8 @@ const bool apple_events_present =
 	CONFIG_APPLE_EVENTS  &&
 		(CONFIG_APPLE_EVENTS_GRANTED  ||
 			mac::sys::gestalt( 'evnt' ) != 0);
+
+static bool sound_enabled;
 
 static player_t current_player = tictactoe::Player_X;
 
@@ -296,6 +301,33 @@ short hit_test( WindowRef window, Point where )
 }
 
 static
+void play_tone( UInt16 swCount )
+{
+	const UInt16 n_notes = 1;
+	
+	UInt16 buffer[ 1 + 3 * (n_notes + 1) ];
+	
+	UInt16* p = buffer;
+	
+	*p++ = swMode;
+	
+	const UInt16 amplitude = 30;  // 0 - 255
+	const UInt16 duration  =  6;  // 0 - 65535
+	
+	*p++ = swCount;
+	*p++ = amplitude;
+	*p++ = duration;
+	
+	*p++ = 0;
+	*p++ = 0;
+	*p++ = 0;
+	
+	const SWSynthRec& rec = *(SWSynthRec*) buffer;
+	
+	mac::snd::play( rec, sizeof buffer );
+}
+
+static
 void click( WindowRef window, Point where )
 {
 	if ( ! current_player )
@@ -325,6 +357,13 @@ void click( WindowRef window, Point where )
 	DisposeRgn( rgn );
 	
 	draw_token( window, current_player, i );
+	
+	if ( sound_enabled )
+	{
+		const UInt16 tone = current_player == tictactoe::Player_X ? 629 : 1497;
+		
+		play_tone( tone );
+	}
 	
 	if ( result == Move_ok )
 	{
@@ -452,6 +491,14 @@ void menu_item_chosen( long choice )
 			}
 		
 		case 3:  // Edit
+			break;
+		
+		case 4:  // Options
+			sound_enabled = ! sound_enabled;
+			
+			CheckMenuItem( GetMenuHandle( menu ), item, sound_enabled );
+			break;
+		
 		default:
 			break;
 	}

@@ -30,3 +30,14 @@ resource 'MENU' (130) {
 		"Clear", noIcon, noKey, noMark, plain,
 	}
 };
+
+resource 'MENU' (131) {
+	4,
+	textMenuProc,
+	0x7FFFFFFF,
+	enabled,
+	"Options",
+	{
+		"Sound", noIcon, noKey, noMark, plain,
+	}
+};
