@@ -287,17 +287,20 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 		return (WindowPtr) window;
 	}
 	
-	if ( frontmost  &&  window->nextWindow )
+	if ( frontmost )
 	{
-		if ( CurActivate != (WindowRef) window->nextWindow )
+		if ( window->nextWindow )
 		{
-			CurDeactive = (WindowRef) window->nextWindow;
+			if ( CurActivate != (WindowRef) window->nextWindow )
+			{
+				CurDeactive = (WindowRef) window->nextWindow;
+			}
+			
+			HiliteWindow_patch( window->nextWindow, false );
 		}
 		
-		HiliteWindow_patch( window->nextWindow, false );
+		CurActivate = (WindowRef) window;
 	}
-	
-	CurActivate = (WindowRef) window;
 	
 	call_WDEF( window, wCalcRgns, 0 );
 	
