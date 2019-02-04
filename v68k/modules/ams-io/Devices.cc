@@ -47,7 +47,15 @@ OSErr IODone_handler( DCtlEntry* dce : __A1, OSErr err : __D0 )
 {
 	QElemPtr head = dce->dCtlQHdr.qHead;
 	
-	Dequeue( head, &dce->dCtlQHdr );
+	if ( OSErr err = Dequeue( head, &dce->dCtlQHdr ) )
+	{
+		/*
+			Another IODone() call beat us to the punch.  Bail out now, so we
+			don't call the completion handler a second time.
+		*/
+		
+		return err;
+	}
 	
 	IOParam* pb = (IOParam*) head;
 	
