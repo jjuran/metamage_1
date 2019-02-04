@@ -138,6 +138,10 @@ set_link:
 asm
 pascal short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 ) : __D0
 {
+	MOVEQ.L  #qErr,D0
+	MOVE.L   A0,D2       // Null-check qEntry (and move to D2 for later)
+	BEQ.S    bail
+	
 	CLR.W    -(SP)       // noErr
 	
 	ADDQ.L   #2,A1       // Point to qHead field of queue
@@ -150,7 +154,7 @@ pascal short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 ) : __D0
 	// old SR (with old interrupt mask) is in D0
 	
 	CMPA.L   (A1)+,A0    // if ( qEntry == queue->qHead )
-	BNE.S    not_first
+	BNE.S    loop
 	
 	CMP.L    (A1),A0     // if ( qEntry == queue->qTail )
 	BNE.S    first_but_not_last
@@ -167,10 +171,6 @@ not_found:
 	
 	SUBQ.W   #1,(SP)     // qErr: "Entry not in specified queue"
 	BRA.S    cleanup
-	
-not_first:
-	
-	MOVE.L   A0,D2       // Move qEntry to D2 (freeing up A0 for next pointer)
 	
 loop:
 	
@@ -200,6 +200,7 @@ cleanup:
 	
 	MOVE.W   (SP)+,D0
 	
+bail:
 	RTS
 }
 
