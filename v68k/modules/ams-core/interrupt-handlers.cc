@@ -1,9 +1,9 @@
 /*
-	interrupts.cc
-	-------------
+	interrupt-handlers.cc
+	---------------------
 */
 
-#include "interrupts.hh"
+#include "interrupt-handlers.hh"
 
 // ams-core
 #include "splode.hh"

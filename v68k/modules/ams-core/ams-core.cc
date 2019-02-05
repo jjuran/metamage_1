@@ -36,7 +36,7 @@
 #include "Pointers.hh"
 #include "SysError.hh"
 #include "cursor-core.hh"
-#include "interrupts.hh"
+#include "interrupt-handlers.hh"
 #include "options.hh"
 
 
