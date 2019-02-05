@@ -9,6 +9,7 @@
 #include <sys/select.h>
 
 // ams-common
+#include "interrupts.hh"
 #include "reactor.hh"
 
 
@@ -23,6 +24,8 @@ void insert( reactor_node* node )
 {
 	const int fd = node->fd;
 	
+	const short saved_SR = disable_interrupts();
+	
 	if ( fd > max_fd )
 	{
 		max_fd = fd;
@@ -33,11 +36,15 @@ void insert( reactor_node* node )
 	node->next = reactor_chain;
 	
 	reactor_chain = node;
+	
+	reenable_interrupts( saved_SR );
 }
 
 static
 void remove( reactor_node* node )
 {
+	const short saved_SR = disable_interrupts();
+	
 	FD_CLR( node->fd, &active_readfds );
 	
 	if ( reactor_chain == node )
@@ -61,10 +68,14 @@ void remove( reactor_node* node )
 			it   = it->next;
 		}
 	}
+	
+	reenable_interrupts( saved_SR );
 }
 
 bool reactor_wait( timeval* timeout )
 {
+	const short saved_SR = disable_interrupts();
+	
 	fd_set readfds;
 	FD_COPY( &active_readfds, &readfds );
 	
@@ -72,6 +83,8 @@ bool reactor_wait( timeval* timeout )
 	
 	if ( selected <= 0 )
 	{
+		reenable_interrupts( saved_SR );
+		
 		return false;
 	}
 	
@@ -90,6 +103,8 @@ bool reactor_wait( timeval* timeout )
 			tmp->ready( tmp );
 		}
 	}
+	
+	reenable_interrupts( saved_SR );
 	
 	return true;
 }
