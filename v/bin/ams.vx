@@ -47,9 +47,19 @@ def core_opts
 	return ams-core: opts
 }
 
+def io_opts
+{
+	return
+	if const sound_fd = getenv "AMS_SOUND_FD" then
+	{
+		ams-io: [ "--sound-fd=" sound_fd ],
+	}
+}
+
 const module_args = str^
 [
 	core_opts(),
+	io_opts(),
 ]
 
 def argify (name)
