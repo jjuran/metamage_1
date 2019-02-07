@@ -49,17 +49,6 @@ short FCB_index( const FCB* fcb )
 }
 
 static
-FCB* get_FCB( unsigned short refNum )
-{
-	if ( --refNum < kFCBCount )
-	{
-		return &FCBSPtr->fcbs[ refNum ];
-	}
-	
-	return NULL;
-}
-
-static
 FCB* find_FCB( long fileNum )
 {
 	FCB* begin = FCBSPtr->fcbs;
