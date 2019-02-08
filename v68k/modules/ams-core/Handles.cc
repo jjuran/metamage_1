@@ -139,18 +139,13 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 static
 char** new_empty_handle()
 {
-	MemErr = memFullErr;
+	MemErr = noErr;
 	
-	void* alloc = malloc( sizeof (master_pointer) );  // 8 bytes
+	void* alloc = calloc( sizeof (master_pointer), 1 );
 	
-	if ( alloc != NULL )
+	if ( alloc == NULL )
 	{
-		master_pointer* h = (master_pointer*) alloc;
-		
-		h->alloc = NULL;
-		h->flags = 0;
-		
-		MemErr = noErr;
+		MemErr = memFullErr;
 	}
 	
 	return (char**) alloc;
