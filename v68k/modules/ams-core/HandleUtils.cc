@@ -36,3 +36,24 @@ end:
 	RTS
 
 }
+
+asm short PtrToHand_patch( char* p : __A0, long size : __D0 )
+{
+	MOVE.L   A0,D2     // save the input pointer
+	MOVE.L   D0,D1     // save the input size
+	
+	_NewHandle
+	BMI.S    end
+	
+	MOVEA.L  (A0),A1   // dereference the new handle into A1
+	EXG      D2,A0     // move the data pointer into A0, save the new handle
+	MOVE.L   D1,D0     // restore the handle size
+	
+	_BlockMove         // copy the data
+	
+	MOVEA.L  D2,A0     // set the new handle as the result
+	MOVEQ.L  #0,D0     // set noErr as the result code
+	
+end:
+	RTS
+}
