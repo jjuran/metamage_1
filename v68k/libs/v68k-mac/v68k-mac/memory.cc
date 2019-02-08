@@ -134,16 +134,17 @@ static int initialization = (initialize(), 0);
 
 struct global
 {
-	uint16_t  addr;
-	uint8_t   size_;
-	uint8_t   index;
+	int16_t  addr;
+	uint8_t  size_;
+	uint8_t  index;
 	
 	uint8_t size() const  { return size_ & 0x3F; }
 	
 	uint16_t word() const  { return int16_t( int8_t( index ) ); }
 };
 
-static inline bool operator<( const global& g, uint16_t addr )
+static inline
+bool operator<( const global& g, int16_t addr )
 {
 	return g.addr + g.size() <= addr;
 }
@@ -218,7 +219,7 @@ static const global globals[] =
 };
 
 static
-const global* find( const global* begin, const global* end, uint16_t address )
+const global* find( const global* begin, const global* end, int16_t address )
 {
 	while ( begin < end )
 	{
@@ -233,7 +234,7 @@ const global* find( const global* begin, const global* end, uint16_t address )
 	return begin;
 }
 
-static const global* find_global( uint16_t address )
+static const global* find_global( int16_t address )
 {
 	const global* begin = globals;
 	const global* end   = globals + sizeof globals / sizeof globals[0];
@@ -293,7 +294,7 @@ static void refresh_dynamic_global( uint8_t tag )
 
 static uint8_t buffer[ 32 ];  // needs to be as big as the largest global
 
-static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
+static uint8_t* read_globals( const global* g, int16_t addr, uint32_t size )
 {
 	// size == 1 -> offset = 0
 	// size == 2 -> offset = addr & 1
@@ -367,9 +368,9 @@ static uint8_t* read_globals( const global* g, uint32_t addr, uint32_t size )
 	return buffer + offset;
 }
 
-static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
+static uint8_t* write_globals( const global* g, int16_t addr, uint32_t size )
 {
-	const uint32_t offset = addr - g->addr;
+	const uint16_t offset = addr - g->addr;
 	
 	if ( offset + size <= g->size_ )
 	{
@@ -379,9 +380,9 @@ static uint8_t* write_globals( const global* g, uint32_t addr, uint32_t size )
 	return NULL;
 }
 
-static uint8_t* update_globals( const global* g, uint32_t addr, uint32_t size )
+static uint8_t* update_globals( const global* g, int16_t addr, uint32_t size )
 {
-	const uint32_t offset = addr - g->addr;
+	const uint16_t offset = addr - g->addr;
 	
 	memcpy( (char*) &words[ g->index ] + offset, buffer + offset, size );
 	
