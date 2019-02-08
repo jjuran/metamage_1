@@ -10,8 +10,8 @@
 #include <Devices.h>
 #endif
 
-// Standard C
-#include <string.h>
+// iota
+#include "iota/char_types.hh"
 
 
 DCtlHandle*  UTableBase  : 0x011C;
@@ -35,6 +35,26 @@ DRVRHeader* get_driver( const DCtlEntry* dce )
 	return NULL;
 }
 
+static
+bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )
+{
+	while ( len-- > 0 )
+	{
+		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+static
+bool equivalent_fsnames( ConstStr255Param a, ConstStr255Param b )
+{
+	return *a == *b  &&  equivalent_fsnames( a + 1, b + 1, *a );
+}
+
 short find_unit_entry_by_name( ConstStr255Param name )
 {
 	for ( short i = 0;  i < UnitNtryCnt;  ++i )
@@ -43,7 +63,7 @@ short find_unit_entry_by_name( ConstStr255Param name )
 		{
 			if ( DRVRHeader* drvr = get_driver( *h ) )
 			{
-				if ( memcmp( drvr->drvrName, name, 1 + *name ) == 0 )
+				if ( equivalent_fsnames( drvr->drvrName, name ) )
 				{
 					return i;
 				}
