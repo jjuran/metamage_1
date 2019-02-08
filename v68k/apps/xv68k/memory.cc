@@ -115,6 +115,12 @@ uint8_t* memory_manager::translate( uint32_t               addr,
 		return screen::translate( addr - screen_addr, length, fc, access );
 	}
 	
+	if ( (addr >> 16) == 0x0040 )
+	{
+		// Mac ROM
+		return v68k::mac::translate( addr, length, fc, access );
+	}
+	
 	if ( addr < 3 * 1024  &&  (addr & 0x07FF) < 1024 )
 	{
 		if ( fc <= v68k::user_program_space  &&  access != v68k::mem_exec )

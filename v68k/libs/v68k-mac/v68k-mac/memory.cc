@@ -398,6 +398,11 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		return 0;  // NULL
 	}
 	
+	if ( (addr >> 16) == 0x0040 )
+	{
+		addr -= 0x8000;
+	}
+	
 	if ( const global* g = find_global( addr ) )
 	{
 		if ( access == mem_read )
