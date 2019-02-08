@@ -11,7 +11,7 @@
 #endif
 
 
-pascal asm short HandToHand_patch( char** h : __A0 ) : __D0
+asm short HandToHand_patch( char** h : __A0 )
 {
 	_GetHandleSize
 	TST.L    D0
