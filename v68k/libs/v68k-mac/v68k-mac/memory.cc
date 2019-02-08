@@ -151,6 +151,8 @@ bool operator<( const global& g, int16_t addr )
 
 static const global globals[] =
 {
+	{ 0x8008, 0x82, 0x00            },  // ROM version = 0x0000
+	
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 2,    tag_ScreenRow   },
 	{ 0x011C, 4,    tag_UTableBase  },
