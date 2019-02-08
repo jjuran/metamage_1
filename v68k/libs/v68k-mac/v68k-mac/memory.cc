@@ -47,6 +47,8 @@ enum
 	tag_MemErr,
 	tag_SdVolEnable,
 	tag_ROM85,
+	tag_ROMBase,
+	tag_ROMBase_low_word,
 	tag_DefltStack,
 	tag_DefltStack_low_word,
 	tag_FCBSPtr,
@@ -124,6 +126,8 @@ static uint16_t words[ n_words ];
 static
 void initialize()
 {
+	((char*) &words[ tag_ROMBase ])[ 1 ] = 0x40;  // ROMBase = 0x00400000
+	
 	words[ tag_ROM85      ] = 0xFFFF;  // indicates 64K ROM
 	words[ tag_SaveUpdate ] = 0xFFFF;  // initially true
 	words[ tag_PaintWhite ] = 0xFFFF;  // initially true
@@ -151,6 +155,8 @@ bool operator<( const global& g, int16_t addr )
 
 static const global globals[] =
 {
+	{ 0x8008, 0x82, 0x00            },  // ROM version = 0x0000
+	
 	{ 0x0102, 0x84, 72              },  // ScrVRes, ScrHRes
 	{ 0x0106, 2,    tag_ScreenRow   },
 	{ 0x011C, 4,    tag_UTableBase  },
@@ -167,6 +173,7 @@ static const global globals[] =
 	{ 0x0220, 2,    tag_MemErr      },
 	{ 0x0260, 2,    tag_SdVolEnable },  // SdVolume, SdEnable
 	{ 0x028E, 2,    tag_ROM85       },
+	{ 0x02AE, 4,    tag_ROMBase     },
 	{ 0x02F0, 0x82, 0               },  // DoubleTime (high word)
 	{ 0x02F2, 0x82, 15              },  // DoubleTime (low word)
 	{ 0x031A, 0x83, 0xFF            },  // Lo3Bytes
@@ -396,6 +403,11 @@ uint8_t* translate( addr_t addr, uint32_t length, fc_t fc, mem_t access )
 		// None of Mac low memory is executable
 		
 		return 0;  // NULL
+	}
+	
+	if ( (addr >> 16) == 0x0040 )
+	{
+		addr -= 0x8000;
 	}
 	
 	if ( const global* g = find_global( addr ) )
