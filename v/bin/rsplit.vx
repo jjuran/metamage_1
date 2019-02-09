@@ -1,0 +1,21 @@
+#!/usr/bin/env vx -Z
+
+const src = argv[ 1 ]
+const dst = argv[ 2 ]
+
+def dump_fork( src, dst )
+{
+	if const data = load src then
+	{
+		warn dst
+	
+		rewrite dst <== data
+	}
+}
+
+run .[ "mkdir", "-p", dst ]
+
+dump_fork (src,                     dst "/data")
+dump_fork (src "/..namedfork/rsrc", dst "/rsrc")
+
+end.
