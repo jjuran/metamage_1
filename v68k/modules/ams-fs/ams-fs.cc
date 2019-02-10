@@ -11,11 +11,15 @@
 // POSIX
 #include <unistd.h>
 
+// command
+#include "command/get_option.hh"
+
 // ams-common
 #include "module_A4.hh"
 
 // ams-fs
 #include "Files.hh"
+#include "mount.hh"
 #include "Volumes.hh"
 
 
@@ -24,6 +28,21 @@
 #define PROGRAM  "ams-fs"
 
 #define WARN( msg )  write( STDERR_FILENO, STR_LEN( PROGRAM ": " msg "\n" ) )
+
+
+enum
+{
+	Opt_last_byte = 255,
+	
+	Opt_disk,
+};
+
+static command::option options[] =
+{
+	{ "disk", Opt_disk, command::Param_required },
+	
+	NULL,
+};
 
 
 void* os_trap_table[] : 1 * 1024;
@@ -54,11 +73,36 @@ void install_FileManager()
 	OSTRAP( GetVol   );  // A014
 }
 
+static
+char* const* get_options( char** argv )
+{
+	using command::global_result;
+	
+	int opt;
+	
+	++argv;  // skip arg 0
+	
+	while ( (opt = command::get_option( (char* const**) &argv, options )) > 0 )
+	{
+		switch ( opt )
+		{
+			case Opt_disk:
+				try_to_mount( global_result.param );
+				break;
+			
+			default:
+				break;
+		}
+	}
+	
+	return argv;
+}
+
 int main( int argc, char** argv )
 {
 	if ( argc > 0 )
 	{
-		char* const* args = ++argv;
+		char* const* args = get_options( argv );
 		
 		if ( *args != NULL )
 		{

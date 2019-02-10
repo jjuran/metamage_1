@@ -21,6 +21,7 @@
 
 // ams-fs
 #include "freemount.hh"
+#include "MFS.hh"
 
 
 enum
@@ -28,10 +29,25 @@ enum
 	kHFSFlagMask = 0x0200,
 };
 
+QHdr VCBQHdr : 0x0356;
+
 Open_ProcPtr old_Open;
 IO_ProcPtr   old_Close;
 IO_ProcPtr   old_Read;
 IO_ProcPtr   old_Write;
+
+struct fork_spec
+{
+	uint16_t  forkStBlk;
+	uint32_t  forkLgLen;
+	uint32_t  forkPyLen;
+};
+
+static inline
+const fork_spec& get_fork( const mfs::file_directory_entry* entry, Byte rsrc )
+{
+	return (const fork_spec&) (rsrc ? entry->flRStBlk : entry->flStBlk);
+}
 
 static inline
 void fast_memcpy( void* dst, const void* src, size_t n )
@@ -100,6 +116,43 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	}
 	
 	const Byte is_rsrc = trap_word;  // Open is A000, OpenRF is A00A
+	
+	VCB* vcb = (VCB*) VCBQHdr.qHead;
+	
+	while ( vcb != NULL )
+	{
+		if ( const mfs::file_directory_entry* entry = MFS_lookup( vcb, name ) )
+		{
+			const fork_spec& fork = get_fork( entry, is_rsrc );
+			
+			const size_t len = fork.forkPyLen;
+			
+			Ptr buffer = (Ptr) malloc( len );
+			
+			if ( buffer == NULL )
+			{
+				return pb->ioResult = memFullErr;
+			}
+			
+			MFS_load( vcb, fork.forkStBlk, buffer, len / 512 );
+			
+			fcb->fcbFlNum  = entry->flNum;
+			fcb->fcbMdRByt = entry->flAttrib;
+			fcb->fcbTypByt = entry->flVersNum;
+			fcb->fcbSBlk   = fork.forkStBlk;
+			fcb->fcbEOF    = fork.forkLgLen;
+			fcb->fcbPLen   = fork.forkPyLen;
+			fcb->fcbCrPs   = 0;
+			fcb->fcbVPtr   = vcb;
+			fcb->fcbBfAdr  = buffer;
+			
+			pb->ioRefNum = FCB_index( fcb );
+			
+			return pb->ioResult = noErr;
+		}
+		
+		vcb = (VCB*) vcb->qLink;
+	}
 	
 	temp_A4 a4;
 	
