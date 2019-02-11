@@ -26,6 +26,12 @@
 
 
 static inline
+void fast_memcpy( void* dst, const void* src, UInt32 n )
+{
+	BlockMoveData( src, dst, n );
+}
+
+static inline
 bool byte_aligned( short srcSkip, short dstSkip, short width )
 {
 	return srcSkip + dstSkip == 0  &&  width % 8 == 0;
@@ -52,20 +58,14 @@ void copy_aligned_sector( Ptr    src,
                           short  src_stride,
                           short  dst_stride )
 {
-	const short src_gutter = src_stride - n_per_row;
-	const short dst_gutter = dst_stride - n_per_row;
+	const short n_bytes = n_per_row * sizeof *src;
 	
 	while ( --n_rows >= 0 )
 	{
-		short n = n_per_row;
+		fast_memcpy( dst, src, n_bytes );
 		
-		while ( --n >= 0 )
-		{
-			*dst++ = *src++;
-		}
-		
-		src += src_gutter;
-		dst += dst_gutter;
+		src += src_stride;
+		dst += dst_stride;
 	}
 }
 
@@ -79,7 +79,11 @@ Ptr blit_byte_aligned_segment( Ptr    src,
 	{
 		// Use src vs. pat modes because we stripped off the 8 bit
 		
-		case srcCopy:     while ( --n_bytes >= 0 )  *dst++  =  *src++;  break;
+		case srcCopy:
+			fast_memcpy( dst, src, n_bytes );
+			dst += n_bytes;
+			break;
+		
 		case srcOr:       while ( --n_bytes >= 0 )  *dst++ |=  *src++;  break;
 		case srcXor:      while ( --n_bytes >= 0 )  *dst++ ^=  *src++;  break;
 		case srcBic:      while ( --n_bytes >= 0 )  *dst++ &= ~*src++;  break;
@@ -166,7 +170,7 @@ void blit_segment_buffered( Ptr       src,
 	
 	Ptr buffer = (Ptr) alloca( n_bytes );
 	
-	memcpy( buffer, src, n_bytes );
+	fast_memcpy( buffer, src, n_bytes );
 	
 	blit_segment_direct( buffer, dst, n_pixels_skipped, n_pixels_drawn, mode );
 }
