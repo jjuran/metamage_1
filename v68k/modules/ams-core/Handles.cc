@@ -192,7 +192,7 @@ short HLock_patch( char** h : __A0 )
 		return MemErr = paramErr;
 	}
 	
-	*(char*) &h[1] |= kHandleLockedMask;
+	((master_pointer*) h)->flags |= kHandleLockedMask;
 	
 	return MemErr = noErr;
 }
@@ -204,7 +204,7 @@ short HUnlock_patch( char** h : __A0 )
 		return MemErr = paramErr;
 	}
 	
-	*(char*) &h[1] &= ~kHandleLockedMask;
+	((master_pointer*) h)->flags &= ~kHandleLockedMask;
 	
 	return MemErr = noErr;
 }
@@ -216,7 +216,7 @@ short HPurge_patch( char** h : __A0 )
 		return MemErr = paramErr;
 	}
 	
-	*(char*) &h[1] |= kHandlePurgeableMask;
+	((master_pointer*) h)->flags |= kHandlePurgeableMask;
 	
 	return MemErr = noErr;
 }
@@ -228,7 +228,7 @@ short HNoPurge_patch( char** h : __A0 )
 		return MemErr = paramErr;
 	}
 	
-	*(char*) &h[1] &= ~kHandlePurgeableMask;
+	((master_pointer*) h)->flags &= ~kHandlePurgeableMask;
 	
 	return MemErr = noErr;
 }
