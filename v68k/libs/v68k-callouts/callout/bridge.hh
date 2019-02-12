@@ -47,6 +47,7 @@ enum
 	
 	fast_memset,
 	fast_memnot,
+	fast_rshift,
 	
 	system_call,
 	microseconds,

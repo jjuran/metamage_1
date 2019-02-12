@@ -480,6 +480,59 @@ int32_t fast_memnot_callout( v68k::processor_state& s )
 }
 
 static
+int32_t fast_rshift_callout( v68k::processor_state& s )
+{
+	using v68k::user_data_space;
+	using v68k::mem_read;
+	using v68k::mem_write;
+	
+	const uint32_t a = s.a(0);
+	const uint32_t b = s.a(1);
+	
+	const uint32_t n = s.d(0);
+	const uint32_t x = s.d(1);
+	
+	if ( x >= 8 )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	const uint8_t right_shift = x;
+	const uint8_t left_shift  = 8 - right_shift;
+	
+	const uint8_t* src = s.mem.translate( a, n, user_data_space, mem_read );
+	
+	if ( src == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* dst = s.mem.translate( b, n + 1, user_data_space, mem_write );
+	
+	if ( dst == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint32_t n_src_bytes = n;
+	
+	while ( n_src_bytes-- > 0 )
+	{
+		const uint8_t byte = *src++;
+		
+		*dst++ |= byte >> right_shift;
+		*dst    = byte << left_shift;
+	}
+	
+	s.mem.translate( b, n + 1, user_data_space, v68k::mem_update );
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -748,6 +801,7 @@ static const function_type the_callouts[] =
 	
 	&fast_memset_callout,
 	&fast_memnot_callout,
+	&fast_rshift_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,
