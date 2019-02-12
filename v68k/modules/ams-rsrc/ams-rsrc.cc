@@ -45,6 +45,7 @@ void install_ResourceManager()
 	
 	TBTRAP( SetResLoad      );  // A99B
 	TBTRAP( CountResources  );  // A99C
+	TBTRAP( GetIndResource  );  // A99D
 	
 	TBTRAP( GetResource     );  // A9A0
 	TBTRAP( GetNamedResource);  // A9A1

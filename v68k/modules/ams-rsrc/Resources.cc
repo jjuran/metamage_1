@@ -107,6 +107,35 @@ uint16_t count_rsrcs( const rsrc_map_header& map, ResType type )
 }
 
 static
+rsrc_header* get_nth_rsrc( const rsrc_map_header& map, ResType type, short i )
+{
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	uint16_t n_types_1 = types.count_1;
+	
+	const type_header* it = types.list;
+	
+	do
+	{
+		if ( it->type != type )  continue;
+		
+		if ( --i > it->count_1 )
+		{
+			return NULL;
+		}
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + it->offset);
+		
+		do {} while ( ++rsrc, i-- > 0 );
+		
+		return rsrc;
+	}
+	while ( ++it, n_types_1-- > 0 );
+	
+	return NULL;
+}
+
+static
 rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
@@ -513,6 +542,63 @@ pascal short CountResources_patch( ResType type )
 	MOVEA.L  (SP)+,A0
 	
 	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+static
+Handle GetIndResource_handler( unsigned long type : __D0, short index : __D1 )
+{
+	if ( index <= 0 )
+	{
+		ResErr = noErr;
+		
+		return 0;  // NULL
+	}
+	
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	while ( rsrc_map != NULL )
+	{
+		uint16_t count = count_rsrcs( **rsrc_map, type );
+		
+		if ( index <= count )
+		{
+			if ( rsrc_header* rsrc = get_nth_rsrc( **rsrc_map, type, index ) )
+			{
+				return new_res_handle( rsrc_map, *rsrc, type );
+			}
+			
+			// Shouldn't get here?
+		}
+		
+		index -= count;
+		
+		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
+	}
+	
+	ResErr = resNotFound;
+	
+	return 0;  // NULL
+}
+
+asm
+pascal short GetIndResource_patch( ResType type, short index )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D1
+	MOVE.L   (A2)+,D0
+	
+	JSR      GetIndResource_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #6,SP
 	
 	JMP      (A0)
 }
