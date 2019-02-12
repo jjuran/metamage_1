@@ -175,6 +175,15 @@ void blit_segment_buffered( Ptr       src,
 	blit_segment_direct( buffer, dst, n_pixels_skipped, n_pixels_drawn, mode );
 }
 
+static inline
+asm void fast_rshift( Ptr dst : __A1,
+                      Ptr src : __A0,
+                      int n   : __D0,  // src byte count; dst count is n + 1
+                      int x   : __D1 )  // right shift bit count
+{
+	JSR      0xFFFFFFD2
+}
+
 static
 void blit_segment( Ptr       src,
                    Ptr       dst,
@@ -197,17 +206,9 @@ void blit_segment( Ptr       src,
 		
 		buffer[ 0 ] = '\0';
 		
-		Ptr tmp = buffer;
-		
 		short n_src_bytes = (n_src_pixels_skipped + n_pixels_drawn + 7) / 8;
 		
-		while ( n_src_bytes-- )
-		{
-			const uint8_t byte = *src++;
-			
-			*tmp++ |= byte >> right_shift;
-			*tmp    = byte << left_shift;
-		}
+		fast_rshift( buffer, src, n_src_bytes, right_shift );
 		
 		src = buffer + (skip_delta > 0);
 	}
