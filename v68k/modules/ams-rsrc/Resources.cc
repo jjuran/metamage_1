@@ -73,6 +73,19 @@ rsrc_header* recover_rsrc_header( Handle resource )
 }
 
 static
+RsrcMapHandle find_rsrc_map( short refnum )
+{
+	RsrcMapHandle rsrc_map = (RsrcMapHandle) TopMapHndl;
+	
+	while ( rsrc_map  &&  rsrc_map[0]->refnum != refnum )
+	{
+		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
+	}
+	
+	return rsrc_map;
+}
+
+static
 rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
@@ -331,18 +344,16 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 static
 Handle GetResource_core( ResType type : __D0, short id : __D1 )
 {
-	Handle h = TopMapHndl;
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
 	
-	while ( h != NULL )
+	while ( rsrc_map != NULL )
 	{
-		RsrcMapHandle rsrc_map = (RsrcMapHandle) h;
-		
 		if ( rsrc_header* rsrc = find_rsrc( **rsrc_map, type, id ) )
 		{
 			return new_res_handle( rsrc_map, *rsrc, type );
 		}
 		
-		h = rsrc_map[0]->next_map;
+		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
 	}
 	
 	/*
