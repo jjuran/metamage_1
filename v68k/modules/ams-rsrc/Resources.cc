@@ -257,6 +257,45 @@ pascal short CurResFile_patch()
 	return CurMap;
 }
 
+static
+short HomeResFile_handler( Handle resource : __A0 )
+{
+	const master_pointer& mp = *(const master_pointer*) resource;
+	
+	if ( mp.flags & kHandleIsResourceMask )
+	{
+		ResErr = noErr;
+		
+		RsrcMapHandle map = (RsrcMapHandle) mp.base;
+		
+		return map[0]->refnum;
+	}
+	
+	ResErr = resNotFound;
+	
+	return -1;
+}
+
+asm
+pascal short HomeResFile_patch( Handle resource )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	
+	JSR      HomeResFile_handler
+	MOVE.W   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
 pascal void UseResFile_patch( short refnum )
 {
 	CurMap = refnum;

@@ -13,6 +13,8 @@ pascal short OpenResFile_patch( const unsigned char* name );
 pascal short ResError_patch();
 pascal short CurResFile_patch();
 
+pascal short HomeResFile_patch( char** resource );
+
 pascal void UseResFile_patch( short refnum );
 
 pascal void SetResLoad_patch( unsigned char load );
