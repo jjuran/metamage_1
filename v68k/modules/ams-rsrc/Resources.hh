@@ -19,6 +19,8 @@ pascal void UseResFile_patch( short refnum );
 
 pascal void SetResLoad_patch( unsigned char load );
 
+pascal short CountResources_patch( unsigned long type );
+
 pascal char** GetResource_patch( unsigned long type, short id );
 
 pascal char** GetNamedResource_patch( unsigned long         type,

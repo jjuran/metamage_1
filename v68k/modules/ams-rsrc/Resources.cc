@@ -86,6 +86,27 @@ RsrcMapHandle find_rsrc_map( short refnum )
 }
 
 static
+uint16_t count_rsrcs( const rsrc_map_header& map, ResType type )
+{
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	uint16_t n_types_1 = types.count_1;
+	
+	const type_header* it = types.list;
+	
+	do
+	{
+		if ( it->type == type )
+		{
+			return it->count_1 + 1;
+		}
+	}
+	while ( ++it, n_types_1-- > 0 );
+	
+	return 0;
+}
+
+static
 rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
@@ -457,6 +478,43 @@ Handle GetResource_core( ResType type : __D0, short id : __D1 )
 	ResErr = noErr;
 	
 	return result;
+}
+
+static
+short CountResources_handler( ResType type : __D0 )
+{
+	uint16_t count = 0;
+	
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	while ( rsrc_map != NULL )
+	{
+		count += count_rsrcs( **rsrc_map, type );
+		
+		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
+	}
+	
+	return count;
+}
+
+asm
+pascal short CountResources_patch( ResType type )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.L   (A2)+,D0
+	
+	JSR      CountResources_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
 }
 
 static
