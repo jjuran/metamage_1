@@ -524,3 +524,32 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 		qd.thePort = saved_port;
 	}
 }
+
+pascal void ScrollRect_patch( const Rect*  srcRect,
+                              short        dh,
+                              short        dv,
+                              MacRegion**  updateRgn )
+{
+	GrafPtr thePort = *get_addrof_thePort();
+	
+	Rect dstRect = *srcRect;
+	
+	OffsetRect( &dstRect, dh, dv );
+	
+	RectRgn( updateRgn, srcRect );
+	
+	CopyBits( &thePort->portBits,
+	          &thePort->portBits,
+	          srcRect,
+	          &dstRect,
+	          srcCopy,
+	          updateRgn );
+	
+	static RgnHandle tmp = NewRgn();
+	
+	tmp[0]->rgnBBox = dstRect;
+	
+	DiffRgn( updateRgn, tmp, updateRgn );
+	
+	EraseRgn( updateRgn );
+}

@@ -23,4 +23,9 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
                             short          mode,
                             MacRegion**    maskRgn );
 
+pascal void ScrollRect_patch( const Rect*  srcRect,
+                              short        dh,
+                              short        dv,
+                              MacRegion**  updateRgn );
+
 #endif

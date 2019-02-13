@@ -206,6 +206,8 @@ static void install_QuickDraw()
 	TBTRAP( CopyBits    );  // A8EC
 	TBTRAP( StdTxMeas   );  // A8ED
 	
+	TBTRAP( ScrollRect  );  // A8EF
+	
 	TBTRAP( DrawPicture );  // A8F6
 	
 	TBTRAP( MapPt       );  // A8F9
