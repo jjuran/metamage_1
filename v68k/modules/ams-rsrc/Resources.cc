@@ -167,6 +167,19 @@ rsrc_header* find_rsrc( const rsrc_map_header& map, ResType type, short id )
 	return NULL;
 }
 
+static inline
+ConstStr255Param get_name( const rsrc_map_header& map, const rsrc_header& rsrc )
+{
+	if ( rsrc.name_offset == 0xFFFF )
+	{
+		return NULL;
+	}
+	
+	ConstStr255Param names = (const unsigned char*) &map + map.offset_to_names;
+	
+	return names + rsrc.name_offset;
+}
+
 static
 const rsrc_data* get_data( const rsrc_map_header& map, const rsrc_header& rsrc )
 {
@@ -719,6 +732,71 @@ pascal void DetachResource_patch( Handle resource )
 	MOVEA.L  (SP)+,A0
 	
 	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+struct GetResInfo_args
+{
+	unsigned char*  name;
+	unsigned long*  type;
+	short*          id;
+	Handle          resource;
+};
+
+static
+void GetResInfo_handler( const GetResInfo_args* args : __A0 )
+{
+	Handle resource = args->resource;
+	
+	const master_pointer& mp = *(const master_pointer*) resource;
+	
+	const rsrc_header* rsrc = recover_rsrc_header( resource );
+	
+	if ( rsrc == NULL )
+	{
+		ResErr = resNotFound;
+		return;
+	}
+	
+	if ( args->id )
+	{
+		*args->id = rsrc->id;
+	}
+	
+	if ( args->type )
+	{
+		*args->type = mp.type;
+	}
+	
+	if ( args->name )
+	{
+		const rsrc_map_header& rsrc_map = **(RsrcMapHandle) mp.base;
+		
+		if ( ConstStr255Param name = get_name( rsrc_map, *rsrc ) )
+		{
+			BlockMoveData( name, args->name, 1 + name[ 0 ] );
+		}
+	}
+}
+
+asm
+pascal void GetResInfo_patch( Handle          resource,
+                              short*          id,
+                              unsigned long*  type,
+                              unsigned char*  name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A0
+	
+	JSR      GetResInfo_handler
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDA.L   #16,SP
 	
 	JMP      (A0)
 }

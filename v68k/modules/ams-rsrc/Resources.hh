@@ -34,6 +34,11 @@ pascal void ReleaseResource_patch( char** resource );
 
 pascal void DetachResource_patch( char** resource );
 
+pascal void GetResInfo_patch( char**          resource,
+                              short*          id,
+                              unsigned long*  type,
+                              unsigned char*  name );
+
 pascal short GetResAttrs_patch( char** resource );
 
 pascal long SizeRsrc_patch( char** resource );
