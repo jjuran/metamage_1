@@ -19,6 +19,9 @@
 // Standard C++
 #include <new>
 
+// iota
+#include "iota/char_types.hh"
+
 // gear
 #include "gear/hexadecimal.hh"
 
@@ -178,6 +181,63 @@ ConstStr255Param get_name( const rsrc_map_header& map, const rsrc_header& rsrc )
 	ConstStr255Param names = (const unsigned char*) &map + map.offset_to_names;
 	
 	return names + rsrc.name_offset;
+}
+
+static
+bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )
+{
+	while ( len-- > 0 )
+	{
+		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+static
+bool equivalent_fsnames( ConstStr255Param a, ConstStr255Param b )
+{
+	return *a == *b  &&  equivalent_fsnames( a + 1, b + 1, *a );
+}
+
+static
+rsrc_header* find_rsrc( const rsrc_map_header&  map,
+                        ResType                 type,
+                        ConstStr255Param        name )
+{
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	uint16_t n_types_1 = types.count_1;
+	
+	const type_header* it = types.list;
+	
+	do
+	{
+		if ( it->type != type )  continue;
+		
+		uint16_t n_rsrcs_1 = it->count_1;
+		uint16_t offset    = it->offset;
+		
+		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + offset);
+		
+		do
+		{
+			if ( ConstStr255Param found_name = get_name( map, *rsrc ) )
+			{
+				if ( equivalent_fsnames( name, found_name ) )
+				{
+					return rsrc;
+				}
+			}
+		}
+		while ( ++rsrc, n_rsrcs_1-- > 0 );
+	}
+	while ( ++it, n_types_1-- > 0 );
+	
+	return NULL;
 }
 
 static
@@ -648,6 +708,18 @@ pascal Handle GetResource_patch( ResType type, short id )
 static
 Handle GetNamedResource_handler( ResType type : __D0, const UInt8* name : __A0 )
 {
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	while ( rsrc_map != NULL )
+	{
+		if ( rsrc_header* rsrc = find_rsrc( **rsrc_map, type, name ) )
+		{
+			return new_res_handle( rsrc_map, *rsrc, type );
+		}
+		
+		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
+	}
+	
 	if ( type == 'SCOT'  &&  memcmp( name, PSTR_LEN( "Terry" ) + 1 ) == 0 )
 	{
 		return GetResource_handler( type, 1 );
