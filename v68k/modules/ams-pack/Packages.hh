@@ -6,6 +6,8 @@
 #ifndef PACKAGES_HH
 #define PACKAGES_HH
 
+pascal void InitPack_patch( short packID );
+
 pascal void InitAllPacks_patch();
 
 void Pack0_patch();

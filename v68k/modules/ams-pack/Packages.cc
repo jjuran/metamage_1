@@ -14,6 +14,10 @@ char** AppPacks : 0x0AB8;
 
 const int n_packs = 8;
 
+pascal void InitPack_patch( short packID )
+{
+}
+
 pascal void InitAllPacks_patch()
 {
 }

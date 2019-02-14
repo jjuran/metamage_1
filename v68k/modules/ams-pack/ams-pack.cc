@@ -29,6 +29,7 @@ void* toolbox_trap_table[] : 3 * 1024;
 
 static void install_Packages()
 {
+	TBTRAP( InitPack     );  // A9E5
 	TBTRAP( InitAllPacks );  // A9E6
 	
 	TBTRAP( Pack0 );  // A9E7
