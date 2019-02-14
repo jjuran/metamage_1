@@ -15,6 +15,8 @@ pascal TERec** TENew_patch( const Rect* destRect, const Rect* viewRect );
 
 pascal void TEDispose_patch( TERec** hTE );
 
+pascal void TESetText_patch( const char* p, long n, TERec** hTE );
+
 pascal void TEIdle_patch( TERec** hTE );
 
 pascal void TEActivate_patch( TERec** hTE );

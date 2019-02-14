@@ -80,6 +80,15 @@ pascal void TEDispose_patch( TERec** hTE )
 	DisposeHandle( (Handle) hTE );
 }
 
+pascal void TESetText_patch( const char* p, long n, TERec** hTE )
+{
+	PtrToXHand( p, hTE[0]->hText, n );
+	
+	hTE[0]->selStart = n;
+	hTE[0]->selEnd   = n;
+	hTE[0]->teLength = n;
+}
+
 pascal void TEIdle_patch( TEHandle hTE )
 {
 }
