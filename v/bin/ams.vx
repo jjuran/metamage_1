@@ -492,7 +492,7 @@ def argify (name)
 			else {path}
 }
 
-let prefix_list = "core io fs snd rsrc pack seg qd ui print"
+let prefix_list = "core io fs snd rsrc drvr pack seg qd ui print"
 var ams_modules = [ prefix_list / ' ' ] map {"ams-" v}
 
 ams_modules <-- "vdb"
