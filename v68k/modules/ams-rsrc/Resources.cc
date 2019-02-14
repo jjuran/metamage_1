@@ -914,3 +914,147 @@ pascal long SizeRsrc_patch( Handle resource )
 pascal void SetResPurge_patch( unsigned char install )
 {
 }
+
+static
+short Count1Resources_handler( ResType type : __D0 )
+{
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	return count_rsrcs( **rsrc_map, type );
+}
+
+asm
+pascal short Count1Resources_patch( ResType type )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.L   (A2)+,D0
+	
+	JSR      Count1Resources_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #4,SP
+	
+	JMP      (A0)
+}
+
+static
+Handle Get1IxResource_handler( unsigned long type : __D0, short index : __D1 )
+{
+	if ( index <= 0 )
+	{
+		ResErr = noErr;
+		
+		return 0;  // NULL
+	}
+	
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	if ( rsrc_header* rsrc = get_nth_rsrc( **rsrc_map, type, index ) )
+	{
+		return new_res_handle( rsrc_map, *rsrc, type );
+	}
+	
+	ResErr = resNotFound;
+	
+	return 0;  // NULL
+}
+
+asm
+pascal short Get1IxResource_patch( ResType type, short index )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D1
+	MOVE.L   (A2)+,D0
+	
+	JSR      Get1IxResource_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #6,SP
+	
+	JMP      (A0)
+}
+
+static
+Handle Get1Resource_handler( ResType type : __D0, short id : __D1 )
+{
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	if ( rsrc_header* rsrc = find_rsrc( **rsrc_map, type, id ) )
+	{
+		return new_res_handle( rsrc_map, *rsrc, type );
+	}
+	
+	ResErr = resNotFound;
+	
+	return NULL;
+}
+
+asm
+pascal Handle Get1Resource_patch( ResType type, short id )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D1
+	MOVE.L   (A2)+,D0
+	
+	JSR      Get1Resource_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #6,SP
+	
+	JMP      (A0)
+}
+
+static
+Handle Get1NamedResource_handler( ResType          type : __D0,
+                                  ConstStr255Param name : __A0 )
+{
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	if ( rsrc_header* rsrc = find_rsrc( **rsrc_map, type, name ) )
+	{
+		return new_res_handle( rsrc_map, *rsrc, type );
+	}
+	
+	ResErr = resNotFound;
+	
+	return 0;  // NULL
+}
+
+asm
+pascal Handle Get1NamedResource_patch( ResType type, ConstStr255Param name )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVEA.L  (A2)+,A0
+	MOVE.L   (A2)+,D0
+	
+	JSR      Get1NamedResource_handler
+	MOVE.L   A0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #8,SP
+	
+	JMP      (A0)
+}
