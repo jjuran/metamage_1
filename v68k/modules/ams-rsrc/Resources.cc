@@ -331,8 +331,6 @@ short OpenResFile_handler( ConstStr255Param name : __A0 )
 	
 	return CurMap = refNum;
 	
-	DisposeHandle( h );
-	
 close_and_bail:
 	FSClose( refNum );
 	
@@ -367,7 +365,7 @@ pascal void RsrcZoneInit_patch()
 	
 	// CurApRefNum is automatically fixed at 2
 	
-	CurMap = OpenResFile_handler( CurApName );
+	OpenResFile_handler( CurApName );
 }
 
 pascal short ResError_patch()
