@@ -40,7 +40,7 @@ enum
 	reserved3,
 	
 	// $FFDE - $FFD8
-	get_Ticks_immediate,
+	get_Ticks,
 	reserved4,
 	reserved5,
 	reserved6,

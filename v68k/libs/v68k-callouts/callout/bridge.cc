@@ -404,7 +404,7 @@ int32_t dealloc_callout( v68k::processor_state& s )
 }
 
 static
-int32_t get_Ticks_immediate_callout( v68k::processor_state& s )
+int32_t get_Ticks_callout( v68k::processor_state& s )
 {
 	using namespace v68k::time;
 	
@@ -794,7 +794,7 @@ static const function_type the_callouts[] =
 	NULL,
 	NULL,
 	
-	&get_Ticks_immediate_callout,
+	&get_Ticks_callout,
 	NULL,
 	NULL,
 	NULL,
