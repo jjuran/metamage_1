@@ -3,10 +3,16 @@
 	-----------------
 */
 
+// Linux
+#ifdef __linux__
+#include <linux/input.h>
+#endif
+
 // POSIX
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <sys/wait.h>
 
 // Standard C
@@ -29,8 +35,11 @@
 
 #define READER       CONFIG_INSTALL_PREFIX "/lib/metamage/reader"
 #define SPIEL_MOUSE  "spiel-mouse"
+#define SPIEL_KEYBD  "spiel-keyboard"
 #define DEV_MOUSE    "/dev/input/mice"
 #define DISPLAY      "display"
+
+#define INTERACT_KEYBOARD "INTERACT_KEYBOARD"
 
 #define PROGRAM  "interact-linux"
 
@@ -38,7 +47,7 @@
 "usage: " PROGRAM " --raster <raster-path>\n"  \
 "       where raster-path is a raster file\n"
 
-#define SUDO_NEEDED "Note: root privileges required to read /dev/input/mice"
+#define SUDO_NEEDED "Note: root privileges required to read input devices"
 
 #define STR_LEN( s )  "" s, (sizeof s - 1)
 
@@ -64,10 +73,12 @@ static command::option options[] =
 };
 
 
+static const char* keyboard_path;
 static const char* raster_path;
 
 
 static pid_t mouser_pid = 0;
+static pid_t keysrc_pid = 0;
 static pid_t viewer_pid = 0;
 
 
@@ -215,12 +226,21 @@ int reader( const char* path, privileged_flag privileged = Unprivileged )
 	return reading_fd;
 }
 
+static inline
+privileged_flag privileged( const char* path )
+{
+	// A NULL path argument is allowed, and yields false.
+	
+	return privileged_flag( path  &&  ! readable( path ) );
+}
+
 static
 void launch_subprocesses( char* const* args )
 {
-	const bool sudo_needed = ! readable( DEV_MOUSE );
+	const privileged_flag privileged_mouse    = privileged( DEV_MOUSE     );
+	const privileged_flag privileged_keyboard = privileged( keyboard_path );
 	
-	if ( sudo_needed )
+	if ( privileged_mouse || privileged_keyboard )
 	{
 		WARN( SUDO_NEEDED );
 		
@@ -248,7 +268,7 @@ void launch_subprocesses( char* const* args )
 	{
 		const char* argv[] = { SPIEL_MOUSE, DEV_MOUSE, NULL };
 		
-		if ( sudo_needed )
+		if ( privileged_mouse )
 		{
 			const int reader_fd = reader( DEV_MOUSE, Privileged );
 			
@@ -260,6 +280,41 @@ void launch_subprocesses( char* const* args )
 		}
 		
 		exec_or_exit( argv );
+	}
+	
+	if ( keyboard_path )
+	{
+		keysrc_pid = fork();
+		
+		if ( keysrc_pid < 0 )
+		{
+			report_error( "fork", errno );
+			exit( 1 );
+		}
+		
+		if ( keysrc_pid == 0 )
+		{
+			const char* argv[] = { SPIEL_KEYBD, NULL };
+			
+			const int reader_fd = reader( keyboard_path, privileged_keyboard );
+			
+		#ifdef __linux__
+			
+			int nok = ioctl( reader_fd, EVIOCGRAB, (void*) 1 );
+			
+			if ( nok )
+			{
+				_exit( 125 );
+			}
+			
+		#endif
+			
+			dup2( reader_fd, STDIN_FILENO );
+			
+			close( reader_fd );
+			
+			exec_or_exit( argv );
+		}
 	}
 	
 	/*
@@ -302,6 +357,8 @@ int main( int argc, char** argv )
 		return 0;
 	}
 	
+	keyboard_path = getenv( INTERACT_KEYBOARD );
+	
 	char* const* args = get_options( argv );
 	
 	int argn = argc - (args - argv);
@@ -320,14 +377,32 @@ int main( int argc, char** argv )
 	
 	/*
 		One of our subprocesses has terminated.  If it's the viewer, kill the
-		other one.  But if it's the input translator, do nothing, since the
-		viewer will exit on its own (after restoring any configuration changes
-		it made to the console ).
+		other two.  But if it's an input translator, only kill the other one,
+		since the viewer will exit on its own (after restoring configuration
+		changes it made to the console, if any).
 	*/
 	
 	if ( child == viewer_pid )
 	{
 		kill( mouser_pid, SIGTERM );
+		
+		if ( keysrc_pid )
+		{
+			kill( keysrc_pid, SIGTERM );
+		}
+	}
+	else if ( child == keysrc_pid )
+	{
+		kill( mouser_pid, SIGTERM );
+	}
+	else if ( keysrc_pid )
+	{
+		kill( keysrc_pid, SIGTERM );
+	}
+	
+	if ( keysrc_pid )
+	{
+		child = wait( &wait_status );
 	}
 	
 	child = wait( &wait_status );
