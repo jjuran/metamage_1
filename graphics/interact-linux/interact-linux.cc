@@ -4,6 +4,7 @@
 */
 
 // POSIX
+#include <fcntl.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/wait.h>
@@ -130,9 +131,28 @@ bool readable( const char* path )
 	return nok == 0;
 }
 
-static
-int reader( const char* path )
+enum privileged_flag
 {
+	Unprivileged,
+	Privileged,
+};
+
+static
+int reader( const char* path, privileged_flag privileged = Unprivileged )
+{
+	if ( ! privileged )
+	{
+		int fd = open( path, O_RDONLY );
+		
+		if ( fd < 0 )
+		{
+			report_error( path, errno );
+			exit( 1 );
+		}
+		
+		return fd;
+	}
+	
 	int fds[ 2 ];
 	
 	int nok = socketpair( PF_UNIX, SOCK_STREAM, 0, fds );
@@ -230,7 +250,7 @@ void launch_subprocesses( char* const* args )
 		
 		if ( sudo_needed )
 		{
-			const int reader_fd = reader( DEV_MOUSE );
+			const int reader_fd = reader( DEV_MOUSE, Privileged );
 			
 			dup2( reader_fd, STDIN_FILENO );
 			
