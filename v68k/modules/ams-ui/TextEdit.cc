@@ -618,6 +618,15 @@ pascal void TETextBox_patch( const char* p, long n, const Rect* r, short just )
 	TEDispose( hTE );
 }
 
+pascal void TEScroll_patch( short dh, short dv, TERec** hTE )
+{
+	TERec& te = **hTE;
+	
+	OffsetRect( &te.destRect, dh, dv );
+	
+	TEUpdate( &te.viewRect, hTE );
+}
+
 pascal void TECalText_patch( TERec** hTE )
 {
 	TERec& te = **hTE;

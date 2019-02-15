@@ -246,6 +246,7 @@ static void install_TextEdit()
 	TBTRAP( TEIdle       );  // A9DA
 	
 	TBTRAP( TEKey        );  // A9DC
+	TBTRAP( TEScroll     );  // A9DD
 }
 
 static void install_Packages()
