@@ -140,6 +140,7 @@ void post_event( const splode::pointer_event_buffer& buffer )
 static
 void post_event( const splode::ascii_event_buffer& buffer )
 {
+	using namespace splode::ascii;
 	using namespace splode::modes;
 	using namespace splode::key;
 	using splode::uint8_t;
@@ -152,7 +153,26 @@ void post_event( const splode::ascii_event_buffer& buffer )
 	const uint8_t mode_mask = Command | Shift | Option | Control;
 	const uint8_t attr_mask = Alpha;
 	
-	const uint8_t mod = (buffer.modes & mode_mask) | (buffer.attrs & attr_mask);
+	const uint8_t modes = buffer.modes & mode_mask;
+	
+	if ( ascii == Esc  &&  modes == (Command | Option) )
+	{
+		/*
+			Command-Option Esc:  Force Quit.
+			
+			This can't be sent using a Mac's keyboard since it would be caught
+			by the host operating system.  But it can be sent on Linux (if the
+			keyboard has been grabbed for our use), which may be necessary if
+			the user launched AMS from the console and needs to force an exit
+			(since Ctrl-C won't work with the keyboard grabbed).
+			
+			There's no dialog yet.  It just exits.
+		*/
+		
+		_exit( 128 );
+	}
+	
+	const uint8_t mod = modes | (buffer.attrs & attr_mask);
 	
 	KeyMods = keymods_from_modifiers_high_byte( mod );
 	
