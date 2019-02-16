@@ -73,6 +73,7 @@ ams-linux: ams-linux-tools ams-vx-Z
 	@test -x bin/display     || ln -s ../var/out/display-linux  bin/display
 	@test -x bin/interact    || ln -s ../var/out/interact-linux bin/interact
 	@test -x bin/spiel-mouse || ln -s ../v/bin/spiel-mouse.vx bin/spiel-mouse
+	@test -x bin/spiel-keyboard || ln -s ../v/bin/spiel-mouse.vx bin/spiel-keyboard
 	@echo
 	@echo "Build phase complete.  Run \`make ams-linux-inst\` to continue."
 	@echo
