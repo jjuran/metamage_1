@@ -31,7 +31,7 @@ uint32_t Time  : 0x020C;
 #pragma mark Date and Time Operations
 #pragma mark -
 
-pascal short ReadDateTime_patch( long* secs : __A0 ) : __D0
+short ReadDateTime_patch( long* secs : __A0 )
 {
 	*secs = Time;
 	
@@ -46,8 +46,8 @@ static const char month_days[] =
 	31, 30, 31,
 };
 
-pascal DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
-                                     DateTimeRec*   date : __A0 ) : __A0
+DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
+                              DateTimeRec*   date : __A0 )
 {
 	const unsigned long days_per_quad = 365 * 4 + 1;
 	
@@ -104,7 +104,7 @@ pascal DateTimeRec* Secs2Date_patch( unsigned long  secs : __D0,
 #pragma mark -
 
 asm
-pascal void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 )
+void Enqueue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 )
 {
 	CLR.L    (A0)     // qEntry->qLink = NULL;
 	
@@ -136,7 +136,7 @@ set_link:
 }
 
 asm
-pascal short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 ) : __D0
+short Dequeue_patch( QElem* qEntry : __A0, QHdr* queue : __A1 )
 {
 	MOVEQ.L  #qErr,D0
 	MOVE.L   A0,D2       // Null-check qEntry (and move to D2 for later)
@@ -216,7 +216,7 @@ bool reactor_wait( uint64_t dt )
 	return reactor_wait( &timeout );
 }
 
-pascal long Delay_patch( long numTicks : __A0 ) : __D0
+long Delay_patch( long numTicks : __A0 )
 {
 	const uint64_t start = time_microseconds();
 	
