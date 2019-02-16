@@ -89,7 +89,17 @@ ams-linux-suid:
 	chown root:root $(AMS_UTILS_ROOT)/kdmode
 	chmod +s $(AMS_UTILS_ROOT)/kdmode
 
-ams-linux-check:
+unspeakably-root:
+	@test `id -u` -ne 0 || echo
+	@test `id -u` -ne 0 || echo "    Are you ABSOLUTELY SURE you want to run this as root?"
+	@test `id -u` -ne 0 || echo
+	@test `id -u` -ne 0 || echo "    Do you /really/ think that's a good idea?"
+	@test `id -u` -ne 0 || echo
+	@test `id -u` -ne 0 || echo "    (Spoiler:  It's not.)"
+	@test `id -u` -ne 0 || echo
+	@test `id -u` -ne 0 || exit 13
+
+ams-linux-check: unspeakably-root
 	@test -e /dev/fb0 || echo
 	@test -e /dev/fb0 || echo "No /dev/fb0?  Sorry, this isn't going to work."
 	@test -e /dev/fb0 || echo
@@ -97,6 +107,9 @@ ams-linux-check:
 	@test -w /dev/fb0 || echo
 	@test -w /dev/fb0 || echo "/dev/fb0 exists, but isn't writable."
 	@test -w /dev/fb0 || echo "Join the 'video' group and try again."
+	@test -w /dev/fb0 || echo
+	@test -w /dev/fb0 || echo "(You need a new login shell for this to work -- "
+	@test -w /dev/fb0 || echo 'DO NOT run AMS as root!)'
 	@test -w /dev/fb0 || echo
 	@test -w /dev/fb0 || exit 1
 
