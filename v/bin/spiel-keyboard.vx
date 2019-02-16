@@ -1,0 +1,197 @@
+#!/usr/bin/env vx
+
+# cat /dev/input/eventN | spiel-keyboard.vx | ...
+
+const Command = 2^0
+const Shift   = 2^1
+const Alt     = 2^2
+const Option  = 2^3
+const Control = 2^4
+const Meta    = 2^5
+
+const left_Control_id  =  29
+const left_Shift_id    =  42
+const right_Shift_id   =  54
+const left_Alt_id      =  56
+const CapsLock_id      =  58
+const right_Control_id =  97
+const right_Alt_id     = 100
+const left_Meta_id     = 125
+const right_Meta_id    = 126
+
+const left_Option_id
+const left_Command_id
+const right_Option_id
+const right_Command_id
+
+if getenv "SPIEL_SWAP_CMD_OPT" then
+{
+	left_Option_id   = left_Meta_id
+	left_Command_id  = left_Alt_id
+	right_Option_id  = right_Meta_id
+	right_Command_id = right_Alt_id
+}
+else
+{
+	left_Option_id   = left_Alt_id
+	left_Command_id  = left_Meta_id
+	right_Option_id  = right_Alt_id
+	right_Command_id = right_Meta_id
+}
+
+const ascii_chars =
+(
+	'\0',  # There is no key 0
+	'\x1B',  # Esc
+	'1' .. '9',
+	"0-=",
+	'\x08',  # Backspace (Delete)
+	'\x09',  # Tab
+	"qwertyuiop[]",
+	'\x0D',  # Enter (Return)
+	'\0',  # left Control
+	"asdfghjkl;'`",
+	'\0',  # left Shift
+	"\\zxcvbnm,./",
+	'\0',  # right Shift
+	'*',
+	'\0',  # left Alt
+	' ',
+	'\0',  # Caps Lock
+	"\0" * 10,  # F1 - F10
+	'\0',  # Num Lock
+	'\0',  # Scroll Lock
+	"789-456+1230.",
+	'\0',  # skipped
+	'\0',  # ZENKAKUHANKAKU
+	'\0',  # 102nd
+	"\0" * 2,  # F11, F12
+	"\0" * 6,  # Ro, Katakana, Hiragana, Henkan, Katakana-Hiragana, Muhenkan
+	'\0',  # keypad JP-comma
+	'\0',  # keypad Enter
+	'\0',  # right Control
+	'/',
+	'\0',  # SysRq
+	'\0',  # right Alt,
+	'\0',  # Linefeed
+	'\0',  # Home
+	'\x1E',  # Up
+	'\0',  # PageUp
+	'\x1C',  # Left
+	'\x1D',  # Right
+	'\0',  # End
+	'\x1F',  # Down
+	'\0',  # PageDown
+	'\0',  # Insert (Help)
+	'\x7F',  # Delete (FwdDel)
+	'\0',  # Mute
+	'\0',  # Volume Down
+	'\0',  # Volume Up
+	'\0',  # Power
+	'=',
+	'\0',  # Pause
+	',',
+	"\0" * 3,  # Hanguel, Hanja, Yen
+	"\0" * 2,  # left/right Meta (Command)
+	'\0',  # Compose
+	"\0" * 3,  # Stop, Again, Props
+	'\0',  # Undo,
+	'\0',  # Front
+	'\0',  # Copy
+	'\0',  # Open
+	'\0',  # Paste
+	'\0',  # Find
+	'\0',  # Cut
+	'\0',  # Help
+	"\0" * 12,  # F13 - F24
+)
+
+const ascii = packed ascii_chars
+
+var key_state = x"00" * ascii.size
+
+const keyevent_len = byte 4
+const keydevice_id = byte 0
+
+def upconvert (key_id, act)
+{
+	if key_id < ascii.size and act in 0 .. 2 then
+	{
+		# Linux has 0 .. 2 as up, down, repeat.
+		# SPIEL has 0 .. 3 as atomic, down, up, repeat
+		
+		var attrs = packed byte .[2, 1, 3][act]
+		
+		key_state[ key_id ] = *(attrs & x"01")
+		
+		if const c = ascii[ key_id ] then
+		{
+			const Command = key_state[[ left_Command_id  ]]
+			              | key_state[[ right_Command_id ]]
+			
+			const Shift = key_state[[ left_Shift_id  ]]
+			            | key_state[[ right_Shift_id ]]
+			
+			const Alt = key_state[[ left_Alt_id  ]]
+			          | key_state[[ right_Alt_id ]]
+			
+			const Option = key_state[[ left_Option_id  ]]
+			             | key_state[[ right_Option_id ]]
+			
+			const Control = key_state[[ left_Control_id  ]]
+			              | key_state[[ right_Control_id ]]
+			
+			const Meta = key_state[[ left_Meta_id  ]]
+			           | key_state[[ right_Meta_id ]]
+			
+			const bits = -[ Command, Shift, Alt, Option, Control, Meta ]
+			
+			const binary_digits = bits map { *(v | x"30") }
+			
+			const modes = *(unbin str binary_digits)
+			
+			if key_state[ CapsLock_id ] then
+			{
+				attrs = attrs | x"04"
+			}
+			
+			return packed (keyevent_len, c, modes, attrs, keydevice_id)
+		}
+	}
+	
+	return x""
+}
+
+const sizeof_timeval = (hex size_t(-1)).length
+
+const field_types = [ u16, u16, u32 ]  # type, code, value
+
+var i = 0
+var j = sizeof_timeval
+
+const field_defs = field_types map { i = j; j += v.size; v => [i -> j] }
+
+const record_size = j
+
+for ev in receiver { IN.read record_size } do
+{
+	const fields = field_defs map { v.key.decode-native ev[ *v.value ] }
+	
+	if fields[ 0 ] == 1 then
+	{
+		const id  = fields[ 1 ]
+		const act = fields[ 2 ]
+		
+		if id isa u8 and act isa u8 then
+		{
+			try
+			{
+				OUT <== upconvert( id, act )
+			}
+			catch
+			{
+				exit 0
+			}
+		}
+	}
+}
