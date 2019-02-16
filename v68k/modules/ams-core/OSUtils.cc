@@ -220,16 +220,19 @@ pascal long Delay_patch( long numTicks : __A0 ) : __D0
 {
 	const uint64_t start = time_microseconds();
 	
-	uint64_t dt = (uint64_t) numTicks * tick_microseconds;
+	int64_t dt = (uint32_t) numTicks * tick_microseconds;
 	
 	const uint64_t end_time = start + dt;
 	
 	// If numTicks is negative, return after one reactor-wait.
 	
-	while ( reactor_wait( dt )  &&  numTicks >= 0 )
+	do
 	{
+		reactor_wait( dt );
+		
 		dt = end_time - time_microseconds();
 	}
+	while ( dt > 0  &&  numTicks >= 0 );
 	
 	return Ticks;
 }
