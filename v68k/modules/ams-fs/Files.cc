@@ -12,7 +12,6 @@
 
 // Standard C
 #include <errno.h>
-#include <stdlib.h>
 #include <string.h>
 
 // ams-common
@@ -86,7 +85,7 @@ FCB* find_next_empty_FCB()
 
 void initialize()
 {
-	FCBSPtr = (FCBS*) malloc( sizeof (FCBS) );
+	FCBSPtr = (FCBS*) NewPtr( sizeof (FCBS) );
 	
 	memset( FCBSPtr, '\0', sizeof (FCBS) );
 	
@@ -127,7 +126,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 			
 			const size_t len = fork.forkPyLen;
 			
-			Ptr buffer = (Ptr) malloc( len );
+			Ptr buffer = NewPtr( len );
 			
 			if ( buffer == NULL )
 			{
@@ -192,7 +191,7 @@ short open_fork( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	const size_t size = file_data.size();
 	
-	if ( void* buffer = malloc( size ) )
+	if ( void* buffer = NewPtr( size ) )
 	{
 		BlockMoveData( file_data.data(), buffer, size );
 		
@@ -325,7 +324,7 @@ short Close_patch( short trap_word : __D1, IOParam* pb : __A0 )
 	
 	if ( FCB* fcb = get_FCB( pb->ioRefNum ) )
 	{
-		free( fcb->fcbBfAdr );
+		DisposePtr( fcb->fcbBfAdr );
 		
 		fcb->fcbFlNum = 0;
 		

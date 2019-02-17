@@ -11,7 +11,6 @@
 #endif
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // ams-fs
@@ -48,7 +47,7 @@ void try_to_mount( const char* name )
 		return;
 	}
 	
-	VCB* vcb = (VCB*) malloc( sizeof (VCB) );
+	VCB* vcb = (VCB*) NewPtr( sizeof (VCB) );
 	
 	if ( vcb == NULL )
 	{
