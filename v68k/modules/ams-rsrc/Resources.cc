@@ -32,6 +32,7 @@
 #include "freemount/synced.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "FCB.hh"
 #include "master_pointer.hh"
 #include "module_A4.hh"
@@ -463,7 +464,7 @@ bool try_to_get( char*              insert_end,
 {
 	char* begin = insert_end - len;
 	
-	memcpy( begin, name, len );
+	fast_memcpy( begin, name, len );
 	
 	return try_to_get( begin, end, result );
 }
@@ -478,7 +479,7 @@ Handle new_res_handle( RsrcMapHandle rsrc_map, rsrc_header& rsrc, ResType type )
 		// data may be misaligned
 		
 		Size data_length;
-		BlockMoveData( &data->length, &data_length, sizeof (Size) );
+		fast_memcpy( &data_length, &data->length, sizeof (Size) );
 		
 		if ( Handle h = PtrToHand( data->bytes, data_length ) )
 		{
@@ -573,7 +574,7 @@ Handle GetResource_core( ResType type : __D0, short id : __D1 )
 		return result;
 	}
 	
-	memcpy( *result, rsrc.data(), size );
+	fast_memcpy( *result, rsrc.data(), size );
 	
 	ResErr = noErr;
 	
@@ -845,7 +846,7 @@ void GetResInfo_handler( const GetResInfo_args* args : __A0 )
 		
 		if ( ConstStr255Param name = get_name( rsrc_map, *rsrc ) )
 		{
-			BlockMoveData( name, args->name, 1 + name[ 0 ] );
+			fast_memcpy( args->name, name, 1 + name[ 0 ] );
 		}
 	}
 }
