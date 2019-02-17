@@ -25,12 +25,6 @@ enum
 VCB* DefVCBPtr : 0x0352;
 QHdr VCBQHdr   : 0x0356;
 
-static inline
-void fast_memcpy( void* dst, const void* src, UInt32 n )
-{
-	BlockMoveData( src, dst, n );
-}
-
 static VCB virtual_network_volume_VCB;
 
 void mount_virtual_network_volume()

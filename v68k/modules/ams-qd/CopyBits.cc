@@ -27,12 +27,6 @@
 
 
 static inline
-void fast_memcpy( void* dst, const void* src, UInt32 n )
-{
-	BlockMoveData( src, dst, n );
-}
-
-static inline
 bool byte_aligned( short srcSkip, short dstSkip, short width )
 {
 	return srcSkip + dstSkip == 0  &&  width % 8 == 0;

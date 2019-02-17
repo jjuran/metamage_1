@@ -36,4 +36,16 @@ DEFINE_CALLOUT( void,
 
 #undef DEFINE_CALLOUT
 
+inline asm
+void fast_memcpy( void* : __A1, const void* : __A0, unsigned long : __D0 )
+{
+	0xA22E  // _BlockMoveData
+}
+
+inline asm
+void fast_memmove( void* : __A1, const void* : __A0, unsigned long : __D0 )
+{
+	0xA22E  // _BlockMoveData
+}
+
 #endif

@@ -13,17 +13,14 @@
 // iota
 #include "iota/char_types.hh"
 
+// ams-common
+#include "callouts.hh"
+
 
 struct logical_block
 {
 	uint8_t bytes[ 512 ];
 };
-
-static inline
-void fast_memcpy( void* dst, const void* src, uint32_t n )
-{
-	BlockMoveData( src, dst, n );
-}
 
 static
 bool equivalent_fsnames( const UInt8* a, const UInt8* b, UInt16 len )

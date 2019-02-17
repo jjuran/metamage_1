@@ -15,6 +15,7 @@
 #include <string.h>
 
 // ams-common
+#include "callouts.hh"
 #include "FCB.hh"
 #include "module_A4.hh"
 
@@ -46,12 +47,6 @@ static inline
 const fork_spec& get_fork( const mfs::file_directory_entry* entry, Byte rsrc )
 {
 	return (const fork_spec&) (rsrc ? entry->flRStBlk : entry->flStBlk);
-}
-
-static inline
-void fast_memcpy( void* dst, const void* src, size_t n )
-{
-	BlockMoveData( src, dst, n );
 }
 
 static inline
