@@ -13,8 +13,8 @@
 // POSIX
 #include <unistd.h>
 
-// Standard C
-#include <string.h>
+// ams-common
+#include "callouts.hh"
 
 // ams-seg
 #include "options.hh"
@@ -31,7 +31,7 @@ Handle AppParmHandle : 0x0AEC;
 
 pascal void GetAppParms_patch( StringPtr name, short* refNum, Handle* hp )
 {
-	BlockMoveData( CurApName, name, 1 + CurApName[ 0 ] );
+	fast_memcpy( name, CurApName, 1 + CurApName[ 0 ] );
 	
 	*refNum = CurApRefNum;
 	*hp     = AppParmHandle;
@@ -180,7 +180,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 		ExitToShell_patch();
 	}
 	
-	memcpy( CurApName, appName, 1 + len );
+	fast_memcpy( CurApName, appName, 1 + len );
 	
 	RsrcZoneInit();
 	
@@ -210,7 +210,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	void* jump_table = CurrentA5 + CurJTOffset;
 	
-	memcpy( jump_table, &header + 1, header.jmptable_size );
+	fast_memcpy( jump_table, &header + 1, header.jmptable_size );
 	
 	ReleaseResource( code0 );
 	
