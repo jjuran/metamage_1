@@ -8,6 +8,9 @@
 // POSIX
 #include <unistd.h>
 
+// ams-common
+#include "callouts.hh"
+
 
 #define DEBUGGER_TEXT  "Debugger() was called!"
 
@@ -25,7 +28,7 @@ pascal void DebugStr_patch( const unsigned char* message )
 	
 	const size_t length = message[0];
 	
-	memcpy( buffer, message + 1, length );
+	fast_memcpy( buffer, message + 1, length );
 	
 	buffer[ length ] = '\n';
 	

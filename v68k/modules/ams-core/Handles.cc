@@ -10,6 +10,7 @@
 #include <string.h>
 
 // ams-common
+#include "callouts.hh"
 #include "master_pointer.hh"
 
 
@@ -285,7 +286,7 @@ short SetHandleSize_patch( char**  h         : __A0,
 			return MemErr = memFullErr;
 		}
 		
-		memcpy( new_header + 1, header + 1, header->size );
+		fast_memcpy( new_header + 1, header + 1, header->size );
 		
 		new_header->backlink = header->backlink;
 		
