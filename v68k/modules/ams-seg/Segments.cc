@@ -14,7 +14,6 @@
 #include <unistd.h>
 
 // Standard C
-#include <stdlib.h>
 #include <string.h>
 
 // ams-seg
@@ -203,7 +202,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	const uint32_t total_alloc_size = stack_size + total_a5_size;
 	
-	void* alloc = malloc( total_alloc_size );
+	Ptr alloc = NewPtr( total_alloc_size );
 	
 	CurStackBase = (char*) alloc + stack_size;
 	
