@@ -19,9 +19,6 @@
 #include <Sound.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // ams-common
 #include "callouts.hh"
 #include "QDGlobals.hh"
@@ -226,7 +223,7 @@ pascal DialogRef NewDialog_patch( void*                 storage,
 		}
 	}
 	
-	memset( storage, '\0', sizeof (DialogRecord) );
+	fast_memset( storage, '\0', sizeof (DialogRecord) );
 	
 	WindowRef window = NewWindow( storage,
 	                              bounds,

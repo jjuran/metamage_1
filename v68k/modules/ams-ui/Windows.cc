@@ -19,9 +19,6 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // iota
 #include "iota/swap.hh"
 
@@ -242,7 +239,7 @@ pascal struct GrafPort* NewWindow_patch( void*                 storage,
 		}
 	}
 	
-	memset( window, '\0', sizeof (WindowRecord) );
+	fast_memset( window, '\0', sizeof (WindowRecord) );
 	
 	GrafPtr& thePort   = *get_addrof_thePort();
 	GrafPtr  savedPort = thePort;
@@ -1207,7 +1204,7 @@ pascal unsigned char CheckUpdate_patch( EventRecord* event )
 	{
 		if ( window_needs_update( w ) )
 		{
-			memset( event, '\0', sizeof (EventRecord) );
+			fast_memset( event, '\0', sizeof (EventRecord) );
 			
 			event->what    = updateEvt;
 			event->message = (long) w;
