@@ -12,7 +12,7 @@
 
 // Standard C
 #include <errno.h>
-#include <string.h>
+#include <stddef.h>
 
 // ams-common
 #include "callouts.hh"
@@ -82,7 +82,7 @@ void initialize()
 {
 	FCBSPtr = (FCBS*) NewPtr( sizeof (FCBS) );
 	
-	memset( FCBSPtr, '\0', sizeof (FCBS) );
+	fast_memset( FCBSPtr, '\0', sizeof (FCBS) );
 	
 	FCBSPtr->bufSize = sizeof (FCBS);
 }
