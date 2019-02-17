@@ -13,6 +13,9 @@
 #include "callouts.hh"
 #include "master_pointer.hh"
 
+// ams-core
+#include "Pointers.hh"
+
 
 enum
 {
@@ -28,6 +31,19 @@ const short nilHandleErr = -109;
 const short memSCErr     = -116;
 
 short MemErr : 0x0220;
+
+
+static inline
+void free_with_native_alloc( void* p )
+{
+	native_alloc = true;
+	
+	free( p );
+	
+	native_alloc = false;
+}
+
+#define free(p) free_with_native_alloc(p)
 
 
 const unsigned long Handle_prologue = 0xC7C7C7C7;  // left guillemots
@@ -109,8 +125,12 @@ Handle_header* allocate_Handle_mem( long   size      : __D0,
 	
 	const long full_size = padded_size + extra_size;
 	
+	native_alloc = true;
+	
 	void* alloc = trap_word & 0x0200 ? calloc( 1, full_size )
 	                                 : malloc(    full_size );
+	
+	native_alloc = false;
 	
 	if ( alloc == NULL )
 	{
@@ -139,7 +159,11 @@ char** new_empty_handle()
 {
 	MemErr = noErr;
 	
+	native_alloc = true;
+	
 	void* alloc = calloc( sizeof (master_pointer), 1 );
+	
+	native_alloc = false;
 	
 	if ( alloc == NULL )
 	{
@@ -248,7 +272,7 @@ short DisposeHandle_patch( char** h : __A0 )
 	if ( *h != NULL )
 	{
 		Handle_header* header = get_header( *h );
-	
+		
 		free( header );
 	}
 	
