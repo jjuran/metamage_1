@@ -21,8 +21,8 @@
 
 
 short CurApRefNum  : 0x0900;
-void* CurrentA5    : 0x0904;
-void* CurStackBase : 0x0908;
+Ptr   CurrentA5    : 0x0904;
+Ptr   CurStackBase : 0x0908;
 Str31 CurApName    : 0x0910;
 short CurJTOffset  : 0x0934;
 
@@ -204,11 +204,11 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	
 	Ptr alloc = NewPtr( total_alloc_size );
 	
-	CurStackBase = (char*) alloc + stack_size;
+	CurStackBase = alloc + stack_size;
 	
-	CurrentA5 = (char*) CurStackBase + header.below_a5_size;
+	CurrentA5 = CurStackBase + header.below_a5_size;
 	
-	void* jump_table = (char*) CurrentA5 + CurJTOffset;
+	void* jump_table = CurrentA5 + CurJTOffset;
 	
 	memcpy( jump_table, &header + 1, header.jmptable_size );
 	
