@@ -496,7 +496,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	{
 		saved_port = qd.thePort;
 		
-		GrafPtr port = (GrafPtr) malloc( sizeof (GrafPort) );
+		static GrafPtr port = (GrafPtr) malloc( sizeof (GrafPort) );
 		
 		OpenPort( port );
 		
@@ -510,8 +510,6 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	if ( saved_port )
 	{
 		ClosePort( qd.thePort );
-		
-		free( (Ptr) qd.thePort );
 		
 		qd.thePort = saved_port;
 	}
