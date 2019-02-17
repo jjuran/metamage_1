@@ -113,7 +113,16 @@ ams-linux-check: unspeakably-root
 	@test -w /dev/fb0 || echo
 	@test -w /dev/fb0 || exit 1
 
-ams-linux-demo: ams-linux-check
+display-check:
+	@test -z "$(DISPLAY)" || echo
+	@test -z "$(DISPLAY)" || echo "You have the DISPLAY environment variable set,"
+	@test -z "$(DISPLAY)" || echo "but AMS doesn't work in X11 yet."
+	@test -z "$(DISPLAY)" || echo
+	@test -z "$(DISPLAY)" || echo "Switch to a framebuffer console and try again."
+	@test -z "$(DISPLAY)" || echo
+	@test -z "$(DISPLAY)" || exit 1
+
+ams-linux-demo: ams-linux-check display-check
 	PATH="$$PWD/bin:$$PWD/var/out:$$PATH" ./scripts/ams
 
 ams-osx: $(AMS_REPOS) macward-compat.git
