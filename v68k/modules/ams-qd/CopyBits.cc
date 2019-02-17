@@ -442,7 +442,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			const short tmpRight = srcSkip + width;
 			const short tmpRowBytes = (tmpRight + 15) / 16 * 2;
 			
-			Ptr tmp = (Ptr) malloc( n_rows * tmpRowBytes );
+			Ptr tmp = NewPtr( n_rows * tmpRowBytes );
 			
 			BitMap tmpBits = { tmp, tmpRowBytes, { 0, 0, n_rows, tmpRight } };
 			
@@ -466,7 +466,7 @@ pascal void StdBits_patch( const BitMap*  srcBits,
 			                  clipRgn,
 			                  blit );
 			
-			free( tmpBits.baseAddr );
+			DisposePtr( tmpBits.baseAddr );
 		}
 		else
 		{
@@ -496,7 +496,7 @@ pascal void CopyBits_patch( const BitMap*  srcBits,
 	{
 		saved_port = qd.thePort;
 		
-		static GrafPtr port = (GrafPtr) malloc( sizeof (GrafPort) );
+		static GrafPtr port = (GrafPtr) NewPtr( sizeof (GrafPort) );
 		
 		OpenPort( port );
 		
