@@ -10,13 +10,11 @@
 #include <Quickdraw.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // quickdraw
 #include "qd/pack_bits.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 
 
@@ -54,7 +52,7 @@ static
 const UInt8* pen_pat( const UInt8* p )
 {
 	Pattern pattern;
-	memcpy( &pattern, p, sizeof pattern );
+	fast_memcpy( &pattern, p, sizeof pattern );
 	
 	PenPat( &pattern );
 	

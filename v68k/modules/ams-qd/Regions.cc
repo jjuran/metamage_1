@@ -10,10 +10,8 @@
 #include <Quickdraw.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 
 // ams-qd
@@ -151,7 +149,7 @@ pascal void CopyRgn_patch( MacRegion** src, MacRegion** dst )
 		return;
 	}
 	
-	memcpy( *dst, *src, size );
+	fast_memcpy( *dst, *src, size );
 }
 
 static void set_rect_region( MacRegion** rgn, const Rect& r )
