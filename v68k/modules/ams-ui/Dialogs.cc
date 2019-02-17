@@ -23,6 +23,7 @@
 #include <string.h>
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 
 
@@ -65,7 +66,7 @@ void set_param( short i, const unsigned char* text )
 		h = (StringHandle) NewHandleOrBust( 256 );
 	}
 	
-	memcpy( *h, text, 1 + text[ 0 ] );
+	fast_memcpy( *h, text, 1 + text[ 0 ] );
 }
 
 static
@@ -125,7 +126,7 @@ Handle expand_param_text( const unsigned char* text )
 		
 		if ( StringHandle h = DAStrings[ c ] )
 		{
-			memcpy( p, *h + 1, **h );
+			fast_memcpy( p, *h + 1, **h );
 			
 			p += **h;
 		}
@@ -968,7 +969,7 @@ pascal void GetIText_patch( Handle h, Str255 text )
 	
 	text[ 0 ] = size;
 	
-	BlockMoveData( *h, text + 1, size );
+	fast_memcpy( text + 1, *h, size );
 }
 
 pascal void SetIText_patch( Handle h, const unsigned char* text )
@@ -980,7 +981,7 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 		SetHandleSize( h, len );
 	}
 	
-	memcpy( *h, text + 1, len );
+	fast_memcpy( *h, text + 1, len );
 	
 	// TODO:  Invalidate the text rect
 }

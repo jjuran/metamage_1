@@ -19,6 +19,9 @@
 // gear
 #include "gear/inscribe_decimal.hh"
 
+// ams-common
+#include "callouts.hh"
+
 
 static
 pascal StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 ) : __A0
@@ -31,7 +34,7 @@ pascal StringPtr NumToString_method( long x : __D0, StringPtr p : __A0 ) : __A0
 	
 	*p++ = len;
 	
-	memcpy( p, s, len );
+	fast_memcpy( p, s, len );
 	
 	return q;
 }

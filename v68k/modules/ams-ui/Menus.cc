@@ -13,13 +13,11 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // iota
 #include "iota/char_types.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 
@@ -161,7 +159,7 @@ pascal MenuInfo** NewMenu_patch( short menuID, const unsigned char* title )
 	menu[0]->menuID      = menuID;
 	menu[0]->enableFlags = 0xFFFFFFFF;
 	
-	BlockMoveData( title, menu[0]->menuData, 1 + title[ 0 ] );
+	fast_memcpy( menu[0]->menuData, title, 1 + title[ 0 ] );
 	
 	return menu;
 }
@@ -195,7 +193,7 @@ pascal void AppendMenu_patch( MenuInfo** menu, const unsigned char* format )
 	
 	unsigned char* p = (unsigned char*) *menu + oldSize - 1;
 	
-	memcpy( p, format, 1 + format[ 0 ] );
+	fast_memcpy( p, format, 1 + format[ 0 ] );
 	
 	p += 1 + format[ 0 ];
 	
@@ -390,7 +388,7 @@ pascal void SetMenuBar_patch( Handle list )
 	
 	SetHandleSize( (Handle) MenuList, size );
 	
-	BlockMoveData( *list, *MenuList, size );
+	fast_memcpy( *MenuList, *list, size );
 }
 
 #pragma mark -
@@ -744,7 +742,7 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 			
 			if ( newLen == oldLen )
 			{
-				memcpy( p + 1, text + 1, newLen );
+				fast_memcpy( p + 1, text + 1, newLen );
 				
 				MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
 				return;
@@ -756,13 +754,13 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 			{
 				unsigned char* q = p + 1 + oldLen;
 				
-				memcpy( p, text, 1 + newLen );
+				fast_memcpy( p, text, 1 + newLen );
 				
 				p += 1 + newLen;
 				
 				size_t n = (Ptr) *menu + size - (Ptr) q;
 				
-				memmove( p, q, n );
+				fast_memmove( p, q, n );
 				
 				SetHandleSize( (Handle) menu, size - (oldLen - newLen) );
 			}
@@ -779,9 +777,9 @@ pascal void SetItem_patch( MenuInfo** menu, short item, ConstStr255Param text )
 				
 				size_t n = (Ptr) *menu + size - (Ptr) q;
 				
-				memmove( r, q, n );
+				fast_memmove( r, q, n );
 				
-				memcpy( p, text, 1 + newLen );
+				fast_memcpy( p, text, 1 + newLen );
 			}
 			
 			MDEF_0( mSizeMsg, menu, NULL, Point(), NULL );
@@ -801,7 +799,7 @@ pascal void GetItem_patch( MenuInfo** menu, short item, Str255 result )
 	{
 		if ( --item == 0 )
 		{
-			memcpy( result, text, 1 + text[ 0 ] );
+			fast_memcpy( result, text, 1 + text[ 0 ] );
 			return;
 		}
 		

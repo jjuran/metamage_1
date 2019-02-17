@@ -10,8 +10,8 @@
 #include <MacMemory.h>
 #endif
 
-// Standard C
-#include <string.h>
+// ams-common
+#include "callouts.hh"
 
 
 pascal unsigned char** NewString_patch( const unsigned char* s )
@@ -22,7 +22,7 @@ pascal unsigned char** NewString_patch( const unsigned char* s )
 	
 	if ( h != NULL )
 	{
-		memcpy( *h, s, size );
+		fast_memcpy( *h, s, size );
 	}
 	
 	return (StringHandle) h;
@@ -36,6 +36,6 @@ pascal void SetString_patch( unsigned char** h, const unsigned char* s )
 	{
 		SetHandleSize( (Handle) h, size );
 		
-		memcpy( *h, s, size );
+		fast_memcpy( *h, s, size );
 	}
 }

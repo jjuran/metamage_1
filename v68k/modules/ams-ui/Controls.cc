@@ -23,6 +23,7 @@
 #include <string.h>
 
 // ams-common
+#include "callouts.hh"
 #include "raster_lock.hh"
 
 // ams-core
@@ -65,7 +66,7 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		
 		if ( title )
 		{
-			memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
+			fast_memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
 		}
 		
 		const short varCode = procID & 0x0F;

@@ -26,6 +26,7 @@
 #include "iota/swap.hh"
 
 // ams-common
+#include "callouts.hh"
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 
@@ -485,7 +486,7 @@ pascal void GetWTitle_patch( WindowPeek window, unsigned char* s )
 		
 		const Size size = 1 + title[ 0 ];
 		
-		memcpy( s, title, size );
+		fast_memcpy( s, title, size );
 	}
 }
 
