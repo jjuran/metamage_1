@@ -119,3 +119,13 @@ short DisposePtr_patch( char* p : __A0 )
 not_native:
 	JMP      DisposePtr_handler
 }
+
+long GetPtrSize_patch( char* p : __A0 )
+{
+	block_header& header = *(block_header*) (p - sizeof (block_header));
+	
+	const long physical_size = header.size_high_byte << 16
+	                         | header.size_low_word;
+	
+	return physical_size - sizeof (block_header) - (header.tag & 0xF);
+}
