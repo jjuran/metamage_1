@@ -14,7 +14,7 @@
 #endif
 
 // Standard C
-#include <string.h>
+#include <stddef.h>
 
 // Standard C++
 #include <new>
@@ -43,7 +43,6 @@
 
 #define STRLEN( s )  (sizeof "" s - 1)
 #define STR_LEN( s )  "" s, (sizeof s - 1)
-#define PSTR_LEN( s )  "\p" s, (sizeof s - 1)
 
 
 short MemErr      : 0x0220;
@@ -717,16 +716,6 @@ Handle GetNamedResource_handler( ResType type : __D0, const UInt8* name : __A0 )
 		}
 		
 		rsrc_map = (RsrcMapHandle) rsrc_map[0]->next_map;
-	}
-	
-	if ( type == 'SCOT'  &&  memcmp( name, PSTR_LEN( "Terry" ) + 1 ) == 0 )
-	{
-		return GetResource_handler( type, 1 );
-	}
-	
-	if ( type == 'ANDY'  &&  memcmp( name, PSTR_LEN( "Gariepy" ) + 1 ) == 0 )
-	{
-		return GetResource_handler( type, 1 );
 	}
 	
 	ResErr = resNotFound;
