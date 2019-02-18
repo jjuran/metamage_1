@@ -113,6 +113,19 @@ RsrcMapHandle& find_rsrc_map( short refnum )
 }
 
 static
+SInt64 get_nth_type( const rsrc_map_header& map, UInt16 i )
+{
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	if ( --i > types.count_1 )
+	{
+		return -1;
+	}
+	
+	return types.list[ i ].type;
+}
+
+static
 UInt16 count_rsrcs( const rsrc_map_header& map, ResType type )
 {
 	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
@@ -1307,6 +1320,45 @@ pascal void WriteResource_patch( Handle resource )
 
 pascal void SetResPurge_patch( Boolean install )
 {
+}
+
+static
+ResType Get1IxType_handler( short index : __D0 )
+{
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	SInt64 type = get_nth_type( **rsrc_map, index );
+	
+	if ( type < 0 )
+	{
+		ResErr = resNotFound;
+		return 0;
+	}
+	
+	ResErr = noErr;
+	
+	return type;
+}
+
+asm
+pascal void Get1IxType_patch( ResType* type, short index )
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	MOVE.W   (A2)+,D0
+	MOVEA.L  (A2)+,A2
+	
+	JSR      Get1IxType_handler
+	MOVE.L   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	
+	MOVEA.L  (SP)+,A0
+	
+	ADDQ.L   #6,SP
+	
+	JMP      (A0)
 }
 
 static

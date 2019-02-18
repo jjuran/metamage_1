@@ -76,6 +76,8 @@ pascal void WriteResource_patch( Handle resource );
 
 pascal void SetResPurge_patch( Boolean install );
 
+pascal void Get1IxType_patch( ResType* type, short index );
+
 pascal short Count1Resources_patch( ResType type );
 
 pascal Handle Get1IxResource_patch( ResType type, short index );
