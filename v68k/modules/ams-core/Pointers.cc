@@ -24,7 +24,7 @@ bool native_alloc;
 
 
 static
-char* NewPtr_handler( long size : __D0, short trap_word : __D1 )
+char* NewPtr_handler( unsigned long size : __D0, short trap_word : __D1 )
 {
 	native_alloc = true;  // Set native_alloc in case malloc() calls NewPtr()
 	
@@ -61,7 +61,7 @@ short DisposePtr_handler( char* alloc : __A0 )
 }
 
 asm
-char* NewPtr_patch( long size : __D0, short trap_word : __D1 ) : __A0
+char* NewPtr_patch( unsigned long size : __D0, short trap_word : __D1 )
 {
 	TST.B    native_alloc
 	BEQ.S    not_native
@@ -75,7 +75,7 @@ not_native:
 }
 
 asm
-short DisposePtr_patch( char* p : __A0 ) : __D0
+short DisposePtr_patch( char* p : __A0 )
 {
 	TST.B    native_alloc
 	BEQ.S    not_native
