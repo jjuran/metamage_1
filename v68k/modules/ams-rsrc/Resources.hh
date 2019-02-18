@@ -21,7 +21,7 @@ pascal void SetResLoad_patch( unsigned char load );
 
 pascal short CountResources_patch( unsigned long type );
 
-pascal short GetIndResource_patch( unsigned long type, short index );
+pascal char** GetIndResource_patch( unsigned long type, short index );
 
 pascal char** GetResource_patch( unsigned long type, short id );
 
@@ -47,7 +47,7 @@ pascal void SetResPurge_patch( unsigned char install );
 
 pascal short Count1Resources_patch( unsigned long type );
 
-pascal short Get1IxResource_patch( unsigned long type, short index );
+pascal char** Get1IxResource_patch( unsigned long type, short index );
 
 pascal char** Get1Resource_patch( unsigned long type, short id );
 

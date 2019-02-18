@@ -607,7 +607,7 @@ pascal short CountResources_patch( ResType type )
 	MOVE.L   (A2)+,D0
 	
 	JSR      CountResources_handler
-	MOVE.L   A0,(A2)
+	MOVE.W   D0,(A2)
 	
 	MOVEM.L  (SP)+,D1-D2/A1-A2
 	
@@ -655,7 +655,7 @@ Handle GetIndResource_handler( unsigned long type : __D0, short index : __D1 )
 }
 
 asm
-pascal short GetIndResource_patch( ResType type, short index )
+pascal Handle GetIndResource_patch( ResType type, short index )
 {
 	MOVEM.L  D1-D2/A1-A2,-(SP)
 	
@@ -933,7 +933,7 @@ pascal short Count1Resources_patch( ResType type )
 	MOVE.L   (A2)+,D0
 	
 	JSR      Count1Resources_handler
-	MOVE.L   A0,(A2)
+	MOVE.W   D0,(A2)
 	
 	MOVEM.L  (SP)+,D1-D2/A1-A2
 	
@@ -967,7 +967,7 @@ Handle Get1IxResource_handler( unsigned long type : __D0, short index : __D1 )
 }
 
 asm
-pascal short Get1IxResource_patch( ResType type, short index )
+pascal Handle Get1IxResource_patch( ResType type, short index )
 {
 	MOVEM.L  D1-D2/A1-A2,-(SP)
 	
