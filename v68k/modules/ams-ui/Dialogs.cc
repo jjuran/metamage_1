@@ -983,6 +983,13 @@ pascal void SetIText_patch( Handle h, const unsigned char* text )
 	// TODO:  Invalidate the text rect
 }
 
+pascal void SelIText_patch( GrafPort*  dialog,
+                            short      item,
+                            short      start,
+                            short      end )
+{
+}
+
 pascal short FindDItem_patch( DialogRef dialog, Point pt )
 {
 	DialogPeek d = (DialogPeek) dialog;

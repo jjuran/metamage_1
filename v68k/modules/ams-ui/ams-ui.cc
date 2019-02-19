@@ -186,7 +186,7 @@ static void install_Dialogs()
 	TBTRAP( InitDialogs  );  // A97B
 	TBTRAP( GetNewDialog );  // A97C
 	TBTRAP( NewDialog    );  // A97D
-	
+	TBTRAP( SelIText      );  // A97E
 	TBTRAP( IsDialogEvent );  // A97F
 	TBTRAP( DialogSelect  );  // A980
 	

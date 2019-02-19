@@ -69,6 +69,11 @@ pascal void GetIText_patch( char** h, unsigned char text[ 255 ] );
 
 pascal void SetIText_patch( char** h, const unsigned char* text );
 
+pascal void SelIText_patch( GrafPort*  dialog,
+                            short      item,
+                            short      start,
+                            short      end );
+
 pascal short FindDItem_patch( GrafPort* dialog, Point pt );
 
 #endif
