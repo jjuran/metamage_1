@@ -16,6 +16,9 @@
 // POSIX
 #include <unistd.h>
 
+// iota
+#include "iota/char_types.hh"
+
 // ams-common
 #include "time.hh"
 
@@ -23,9 +26,66 @@
 #include "reactor-core.hh"
 
 
+#define STR_LEN( s )  "" s, (sizeof s - 1)
+
+
 uint32_t Ticks : 0x016A;
 uint32_t Time  : 0x020C;
 
+
+#pragma mark -
+#pragma mark String Comparison
+#pragma mark -
+
+static
+bool case_insensitive_equal( const uint8_t* a, const uint8_t* b, uint16_t len )
+{
+	while ( len-- > 0 )
+	{
+		if ( iota::to_lower( *a++ ) != iota::to_lower( *b++ ) )
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+unsigned long CmpString_patch( const unsigned char* a : __A0,
+                               const unsigned char* b : __A1,
+                               unsigned long        m : __D0,
+                               unsigned short       A : __D1 )
+{
+	enum
+	{
+		MARKS = 0x0200,  // diacritics-insensitive
+		CASE  = 0x0400,  // case-sensitive
+	};
+	
+	if ( m == 0 )
+	{
+		return true;  // Empty strings are equal
+	}
+	
+	uint16_t len = m;
+	
+	if ( (m >> 16) != len )
+	{
+		return false;
+	}
+	
+	if ( A & MARKS )
+	{
+		write( STDERR_FILENO, STR_LEN( "CmpString: ignoring MARKS bit\n" ) );
+	}
+	
+	if ( A & CASE )
+	{
+		return memcmp( a, b, len ) != 0;
+	}
+	
+	return ! case_insensitive_equal( a, b, len );
+}
 
 #pragma mark -
 #pragma mark Date and Time Operations

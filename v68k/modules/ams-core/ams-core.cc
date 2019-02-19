@@ -201,6 +201,8 @@ void install_OSUtils()
 	OSTRAP( ReadDateTime );  // A039
 	
 	OSTRAP( Delay     );  // A03B
+	OSTRAP( CmpString );  // A03C
+	
 	TBTRAP( Enqueue   );  // A96E
 	TBTRAP( Dequeue   );  // A96F
 	
