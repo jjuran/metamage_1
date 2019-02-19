@@ -556,7 +556,7 @@ namespace vlib
 			
 			Token token;
 			
-			while (( token = next_token( p ) ))
+			while (( next_token( p, token ) ))
 			{
 				if ( ignorable( token ) )
 				{

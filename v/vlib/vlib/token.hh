@@ -24,7 +24,7 @@ namespace vlib
 		operator token_type() const  { return type; }
 	};
 	
-	Token next_token( const char*& p );
+	token_type next_token( const char*& p, Token& result );
 	
 }
 

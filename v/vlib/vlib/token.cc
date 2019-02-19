@@ -9,11 +9,9 @@
 namespace vlib
 {
 	
-	Token next_token( const char*& p )
+	token_type next_token( const char*& p, Token& result )
 	{
 		const char* q = p;
-		
-		Token result;
 		
 		result.type = next_token_type( q );
 		
