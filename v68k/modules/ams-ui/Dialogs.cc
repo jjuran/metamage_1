@@ -417,7 +417,9 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 	
 	QDGlobals& qd = get_QDGlobals();
 	
-	WindowRef window = qd.thePort;
+	WindowRef window = FrontWindow();
+	
+	scoped_port thePort = window;
 	
 	WindowPeek w = (WindowPeek) window;
 	DialogPeek d = (DialogPeek) window;
