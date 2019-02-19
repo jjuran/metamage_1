@@ -14,8 +14,6 @@ struct ControlRecord;
 
 typedef pascal void (*ControlActionProcPtr)( ControlRecord**, short );
 
-pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
-
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
@@ -32,12 +30,8 @@ pascal void DisposeControl_patch( ControlRecord** control );
 
 pascal void KillControls_patch( GrafPort* window );
 
-pascal short TrackControl_patch( ControlRecord**  control,
-                                 Point            start,
-                                 pascal void    (*action)() );
-
-pascal void ShowControl_patch( ControlRecord** control );
 pascal void HideControl_patch( ControlRecord** control );
+pascal void ShowControl_patch( ControlRecord** control );
 
 pascal void DrawControls_patch( GrafPort* window );
 
@@ -46,6 +40,10 @@ pascal void HiliteControl_patch( ControlRecord** control, short hiliteState );
 pascal short FindControl_patch( Point             where,
                                 GrafPort*         window,
                                 ControlRecord***  which );
+
+pascal short TrackControl_patch( ControlRecord**  control,
+                                 Point            start,
+                                 pascal void    (*action)() );
 
 pascal void SetCtlValue_patch( ControlRecord** control, short value );
 
@@ -66,5 +64,7 @@ pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
 
 pascal void MoveControl_patch( ControlRecord** control, short w, short h );
 pascal void SizeControl_patch( ControlRecord** control, short w, short h );
+
+pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
 
 #endif

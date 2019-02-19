@@ -30,11 +30,6 @@
 #include "CDEF.hh"
 
 
-pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn )
-{
-	DrawControls_patch( window );
-}
-
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
@@ -161,6 +156,93 @@ pascal void KillControls_patch( GrafPort* window )
 	}
 }
 
+#pragma mark -
+#pragma mark Control Display
+#pragma mark -
+
+pascal void HideControl_patch( ControlRef control )
+{
+	if ( control[0]->contrlVis )
+	{
+		control[0]->contrlVis = 0;
+		
+		// TODO:  Erase the region instead
+		EraseRect( &control[0]->contrlRect );
+		InvalRect( &control[0]->contrlRect );
+	}
+}
+
+pascal void ShowControl_patch( ControlRef control )
+{
+	if ( ! control[0]->contrlVis )
+	{
+		control[0]->contrlVis = -1;
+		
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+	}
+}
+
+pascal void DrawControls_patch( GrafPort* window )
+{
+	raster_lock lock;
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	ControlRef control = (ControlRef) w->controlList;
+	
+	while ( control != NULL )
+	{
+		const short varCode = *(Byte*) &control[0]->contrlDefProc;
+		
+		CDEF_0( varCode, control, drawCntl, 0 );
+		
+		control = control[0]->nextControl;
+	}
+}
+
+pascal void HiliteControl_patch( ControlRef control, short hiliteState )
+{
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	CDEF_0( varCode, control, drawCntl, hiliteState );
+}
+
+#pragma mark -
+#pragma mark Mouse Location
+#pragma mark -
+
+pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
+{
+	*which = NULL;
+	
+	WindowPeek w = (WindowPeek) window;
+	
+	if ( ! w->visible )
+	{
+		return 0;
+	}
+	
+	ControlRef next = (ControlRef) w->controlList;
+	
+	while ( next != NULL )
+	{
+		const short varCode = *(Byte*) &next[0]->contrlDefProc;
+		
+		if ( long hit = CDEF_0( varCode, next, testCntl, *(long*) &pt ) )
+		{
+			*which = next;
+			
+			return hit;
+		}
+		
+		next = next[0]->nextControl;
+	}
+	
+	return 0;
+}
+
 pascal short TrackControl_patch( ControlRecord**  control,
                                  Point            start,
                                  pascal void    (*action)() )
@@ -261,85 +343,6 @@ pascal short TrackControl_patch( ControlRecord**  control,
 		CDEF_0( varCode, control, drawCntl, hit );
 		
 		return hit;
-	}
-	
-	return 0;
-}
-
-pascal void ShowControl_patch( ControlRef control )
-{
-	if ( ! control[0]->contrlVis )
-	{
-		control[0]->contrlVis = -1;
-		
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
-	}
-}
-
-pascal void HideControl_patch( ControlRef control )
-{
-	if ( control[0]->contrlVis )
-	{
-		control[0]->contrlVis = 0;
-		
-		// TODO:  Erase the region instead
-		EraseRect( &control[0]->contrlRect );
-		InvalRect( &control[0]->contrlRect );
-	}
-}
-
-pascal void DrawControls_patch( GrafPort* window )
-{
-	raster_lock lock;
-	
-	WindowPeek w = (WindowPeek) window;
-	
-	ControlRef control = (ControlRef) w->controlList;
-	
-	while ( control != NULL )
-	{
-		const short varCode = *(Byte*) &control[0]->contrlDefProc;
-		
-		CDEF_0( varCode, control, drawCntl, 0 );
-		
-		control = control[0]->nextControl;
-	}
-}
-
-pascal void HiliteControl_patch( ControlRef control, short hiliteState )
-{
-	const short varCode = *(Byte*) &control[0]->contrlDefProc;
-	
-	CDEF_0( varCode, control, drawCntl, hiliteState );
-}
-
-pascal short FindControl_patch( Point pt, WindowRef window, ControlRef* which )
-{
-	*which = NULL;
-	
-	WindowPeek w = (WindowPeek) window;
-	
-	if ( ! w->visible )
-	{
-		return 0;
-	}
-	
-	ControlRef next = (ControlRef) w->controlList;
-	
-	while ( next != NULL )
-	{
-		const short varCode = *(Byte*) &next[0]->contrlDefProc;
-		
-		if ( long hit = CDEF_0( varCode, next, testCntl, *(long*) &pt ) )
-		{
-			*which = next;
-			
-			return hit;
-		}
-		
-		next = next[0]->nextControl;
 	}
 	
 	return 0;
@@ -475,4 +478,13 @@ pascal void SizeControl_patch( ControlRecord** control, short w, short h )
 	{
 		ShowControl_patch( control );
 	}
+}
+
+#pragma mark -
+#pragma mark 128K ROM Additions
+#pragma mark -
+
+pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn )
+{
+	DrawControls_patch( window );
 }
