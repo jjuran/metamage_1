@@ -164,6 +164,15 @@ pascal void KillControls_patch( GrafPort* window )
 #pragma mark Control Display
 #pragma mark -
 
+pascal void SetCTitle_patch( ControlRef control, ConstStr255Param title )
+{
+	fast_memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
+	
+	const short varCode = *(Byte*) &control[0]->contrlDefProc;
+	
+	CDEF_0( varCode, control, drawCntl, 0 );
+}
+
 pascal void HideControl_patch( ControlRef control )
 {
 	if ( control[0]->contrlVis )

@@ -165,6 +165,7 @@ static void install_Controls()
 	TBTRAP( SizeControl    );  // A95C
 	TBTRAP( HiliteControl  );  // A95D
 	
+	TBTRAP( SetCTitle      );  // A95F
 	TBTRAP( GetCtlValue    );  // A960
 	
 	TBTRAP( SetCtlValue    );  // A963
