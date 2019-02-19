@@ -19,15 +19,13 @@
 #include <Resources.h>
 #endif
 
-// Standard C
-#include <string.h>
-
 // ams-common
 #include "callouts.hh"
 #include "raster_lock.hh"
 
-// ams-core
+// ams-ui
 #include "CDEF.hh"
+#include "scoped_port.hh"
 
 
 static
@@ -90,6 +88,8 @@ pascal ControlRecord** NewControl_patch( GrafPort*             window,
 		
 		if ( visible )
 		{
+			scoped_port thePort = control[0]->contrlOwner;
+			
 			call_CDEF( control, drawCntl, 0 );
 		}
 	}
@@ -184,6 +184,8 @@ pascal void SetCTitle_patch( ControlRef control, ConstStr255Param title )
 {
 	fast_memcpy( control[0]->contrlTitle, title, 1 + title[ 0 ] );
 	
+	scoped_port thePort = control[0]->contrlOwner;
+	
 	call_CDEF( control, drawCntl, 0 );
 }
 
@@ -192,6 +194,8 @@ pascal void HideControl_patch( ControlRef control )
 	if ( control[0]->contrlVis )
 	{
 		control[0]->contrlVis = 0;
+		
+		scoped_port thePort = control[0]->contrlOwner;
 		
 		// TODO:  Erase the region instead
 		EraseRect( &control[0]->contrlRect );
@@ -205,6 +209,8 @@ pascal void ShowControl_patch( ControlRef control )
 	{
 		control[0]->contrlVis = -1;
 		
+		scoped_port thePort = control[0]->contrlOwner;
+		
 		call_CDEF( control, drawCntl, 0 );
 	}
 }
@@ -212,6 +218,8 @@ pascal void ShowControl_patch( ControlRef control )
 pascal void DrawControls_patch( GrafPort* window )
 {
 	raster_lock lock;
+	
+	scoped_port thePort = window;
 	
 	WindowPeek w = (WindowPeek) window;
 	
@@ -227,6 +235,8 @@ pascal void DrawControls_patch( GrafPort* window )
 
 pascal void HiliteControl_patch( ControlRef control, short hiliteState )
 {
+	scoped_port thePort = control[0]->contrlOwner;
+	
 	call_CDEF( control, drawCntl, hiliteState );
 }
 
@@ -270,6 +280,8 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	RgnHandle mouseRgn = tmp;
 	
 	WindowRef window = control[0]->contrlOwner;
+	
+	scoped_port thePort = window;
 	
 	const short csdx = window->portBits.bounds.left;
 	const short csdy = window->portBits.bounds.top;
@@ -369,6 +381,8 @@ pascal short TestControl_patch( ControlRecord** control, Point pt )
 {
 	if ( control[0]->contrlVis  &&  control[0]->contrlHilite != 255 )
 	{
+		scoped_port thePort = control[0]->contrlOwner;
+		
 		long hit = call_CDEF( control, testCntl, *(long*) &pt );
 		
 		return hit;
@@ -442,6 +456,8 @@ pascal void SetCtlValue_patch( ControlRecord** control, short value )
 		
 		control[0]->contrlValue = value;
 		
+		scoped_port thePort = control[0]->contrlOwner;
+		
 		call_CDEF( control, drawCntl, 0 );
 	}
 }
@@ -462,6 +478,8 @@ pascal void SetMinCtl_patch( ControlRecord** control, short min )
 		
 		control[0]->contrlMin = min;
 		
+		scoped_port thePort = control[0]->contrlOwner;
+		
 		call_CDEF( control, drawCntl, 0 );
 	}
 }
@@ -481,6 +499,8 @@ pascal void SetMaxCtl_patch( ControlRecord** control, short max )
 		}
 		
 		control[0]->contrlMax = max;
+		
+		scoped_port thePort = control[0]->contrlOwner;
 		
 		call_CDEF( control, drawCntl, 0 );
 	}
