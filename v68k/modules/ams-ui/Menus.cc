@@ -590,8 +590,8 @@ pascal long MenuSelect_patch( Point pt )
 					{
 						// Save the bits under the menu and draw it.
 						
-						savedBits.bounds.left   = menuRect.left - 1;
-						savedBits.bounds.right  = menuRect.right + 2;
+						savedBits.bounds.left   = menuRect.left  - 1     & ~0x7;
+						savedBits.bounds.right  = menuRect.right + 2 + 7 & ~0x7;
 						savedBits.bounds.bottom = menuRect.bottom + 2;
 						
 						save_bits( savedBits );
