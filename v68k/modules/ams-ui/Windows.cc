@@ -28,13 +28,16 @@
 #include "raster_lock.hh"
 
 // ams-ui
+#include "desktop.hh"
 #include "MBDF.hh"
 #include "modal_updating.hh"
+#include "scoped_port.hh"
 #include "StrUtils.hh"
 #include "WDEF.hh"
-#include "desktop.hh"
-#include "scoped_port.hh"
 #include "utility_region.hh"
+
+
+#pragma exceptions off
 
 
 short      ApFontID    : 0x0984;
@@ -777,17 +780,9 @@ pascal WindowRef FrontWindow_patch()
 
 pascal void DrawGrowIcon_patch( WindowPeek window )
 {
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	GrafPort* const port = &window->port;
-	
-	qd.thePort = port;
+	scoped_port thePort = &window->port;
 	
 	call_WDEF( window, wDrawGIcon, 0 );
-	
-	qd.thePort = saved_port;
 }
 
 #pragma mark -
@@ -829,11 +824,7 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	
 	WindowPeek w = (WindowPeek) window;
 	
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
+	scoped_port thePort = WMgrPort;
 	
 	SetClip( w->strucRgn );
 	
@@ -874,8 +865,6 @@ pascal unsigned char TrackGoAway_patch( WindowRef window, Point pt )
 	{
 		call_WDEF( w, wDraw, wInGoAway );
 	}
-	
-	qd.thePort = saved_port;
 	
 	DisposeRgn( mouseRgn );
 	
@@ -1026,15 +1015,11 @@ pascal void MoveWindow_patch( WindowRef w, short h, short v, char activate )
 
 pascal void SizeWindow_patch( WindowRef window, short h, short v, char update )
 {
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = window;
-	
-	PortSize( h, v );
-	
-	qd.thePort = saved_port;
+	{
+		scoped_port thePort = window;
+		
+		PortSize( h, v );
+	}
 	
 	WindowPeek w = (WindowPeek) window;
 	
@@ -1082,17 +1067,15 @@ pascal void DragWindow_patch( WindowRef w, Point start, const Rect* bounds )
 	
 	CopyRgn( window->strucRgn, drag_region );
 	
-	QDGlobals& qd = get_QDGlobals();
+	long delta;
 	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
-	
-	SetClip( GrayRgn );
-	
-	long delta = DragGrayRgn( drag_region, start, bounds, bounds, 0, NULL );
-	
-	qd.thePort = saved_port;
+	{
+		scoped_port thePort = WMgrPort;
+		
+		SetClip( GrayRgn );
+		
+		delta = DragGrayRgn( drag_region, start, bounds, bounds, 0, NULL );
+	}
 	
 	if ( delta == 0 )
 	{
@@ -1124,9 +1107,7 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	
 	QDGlobals& qd = get_QDGlobals();
 	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
+	scoped_port thePort = WMgrPort;
 	
 	SetClip( GrayRgn );
 	
@@ -1199,8 +1180,6 @@ pascal long GrowWindow_patch( WindowRef w, Point start, const Rect* size )
 	call_WDEF( window, wGrow, (long) &grow_rect );
 	
 	PenNormal();
-	
-	qd.thePort = saved_port;
 	
 	DisposeRgn( mouseRgn );
 	
@@ -1433,11 +1412,7 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 		return;
 	}
 	
-	QDGlobals& qd = get_QDGlobals();
-	
-	GrafPtr saved_port = qd.thePort;
-	
-	qd.thePort = WMgrPort;
+	scoped_port thePort = WMgrPort;
 	
 	SetClip( clobbered_region );
 	
@@ -1461,8 +1436,6 @@ pascal void PaintOne_patch( WindowPeek window, RgnHandle clobbered_region )
 			EraseRect( &window->contRgn[0]->rgnBBox );
 		}
 	}
-	
-	qd.thePort = saved_port;
 }
 
 pascal void PaintBehind_patch( WindowPeek window, RgnHandle clobbered_region )
