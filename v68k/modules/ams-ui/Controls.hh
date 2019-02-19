@@ -45,6 +45,9 @@ pascal short TrackControl_patch( ControlRecord**  control,
                                  Point            start,
                                  pascal void    (*action)() );
 
+pascal void MoveControl_patch( ControlRecord** control, short w, short h );
+pascal void SizeControl_patch( ControlRecord** control, short w, short h );
+
 pascal void SetCtlValue_patch( ControlRecord** control, short value );
 
 pascal short GetCtlValue_patch( ControlRecord** control );
@@ -61,9 +64,6 @@ pascal long GetCRefCon_patch( ControlRecord** control );
 pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr action );
 
 pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control );
-
-pascal void MoveControl_patch( ControlRecord** control, short w, short h );
-pascal void SizeControl_patch( ControlRecord** control, short w, short h );
 
 pascal void UpdateControls_patch( GrafPort* window, MacRegion** updateRgn );
 

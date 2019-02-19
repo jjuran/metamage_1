@@ -30,6 +30,10 @@
 #include "CDEF.hh"
 
 
+#pragma mark -
+#pragma mark Initialization and Allocation
+#pragma mark -
+
 pascal ControlRecord** NewControl_patch( GrafPort*             window,
                                          const Rect*           bounds,
                                          const unsigned char*  title,
@@ -348,6 +352,53 @@ pascal short TrackControl_patch( ControlRecord**  control,
 	return 0;
 }
 
+#pragma mark -
+#pragma mark Control Movement and Sizing
+#pragma mark -
+
+pascal void MoveControl_patch( ControlRecord** control, short h, short v )
+{
+	Rect* bounds = &control[0]->contrlRect;
+	
+	const bool visible = control[0]->contrlVis;
+	
+	if ( visible )
+	{
+		HideControl_patch( control );
+	}
+	
+	OffsetRect( bounds, h - bounds->left, v - bounds->top );
+	
+	if ( visible )
+	{
+		ShowControl_patch( control );
+	}
+}
+
+pascal void SizeControl_patch( ControlRecord** control, short w, short h )
+{
+	Rect* bounds = &control[0]->contrlRect;
+	
+	const bool visible = control[0]->contrlVis;
+	
+	if ( visible )
+	{
+		HideControl_patch( control );
+	}
+	
+	bounds->right = bounds->left + w;
+	bounds->bottom = bounds->top + h;
+	
+	if ( visible )
+	{
+		ShowControl_patch( control );
+	}
+}
+
+#pragma mark -
+#pragma mark Control Setting and Range
+#pragma mark -
+
 pascal void SetCtlValue_patch( ControlRecord** control, short value )
 {
 	const short min = control[0]->contrlMin;
@@ -421,6 +472,10 @@ pascal short GetMaxCtl_patch( ControlRecord** control )
 	return control[0]->contrlMax;
 }
 
+#pragma mark -
+#pragma mark Miscellaneous Routines
+#pragma mark -
+
 pascal void SetCRefCon_patch( ControlRecord** control, long refCon )
 {
 	control[0]->contrlRfCon = refCon;
@@ -439,45 +494,6 @@ pascal void SetCtlAction_patch( ControlRecord** control, ControlActionProcPtr ac
 pascal ControlActionProcPtr GetCtlAction_patch( ControlRecord** control )
 {
 	return control[0]->contrlAction;
-}
-
-pascal void MoveControl_patch( ControlRecord** control, short h, short v )
-{
-	Rect* bounds = &control[0]->contrlRect;
-	
-	const bool visible = control[0]->contrlVis;
-	
-	if ( visible )
-	{
-		HideControl_patch( control );
-	}
-	
-	OffsetRect( bounds, h - bounds->left, v - bounds->top );
-	
-	if ( visible )
-	{
-		ShowControl_patch( control );
-	}
-}
-
-pascal void SizeControl_patch( ControlRecord** control, short w, short h )
-{
-	Rect* bounds = &control[0]->contrlRect;
-	
-	const bool visible = control[0]->contrlVis;
-	
-	if ( visible )
-	{
-		HideControl_patch( control );
-	}
-	
-	bounds->right = bounds->left + w;
-	bounds->bottom = bounds->top + h;
-	
-	if ( visible )
-	{
-		ShowControl_patch( control );
-	}
 }
 
 #pragma mark -
