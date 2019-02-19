@@ -612,6 +612,8 @@ int32_t BlockMove_callout( v68k::processor_state& s )
 	
 	s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
 	
+	s.d(0) = noErr;
+	
 	return rts;
 }
 
