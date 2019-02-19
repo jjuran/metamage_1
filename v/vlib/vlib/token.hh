@@ -20,6 +20,12 @@ namespace vlib
 	{
 		plus::string  text;
 		token_type    type;
+		bool          space_before;
+		bool          space_after;
+		
+		Token() : type(), space_before(), space_after()
+		{
+		}
 		
 		operator token_type() const  { return type; }
 	};
