@@ -496,10 +496,19 @@ namespace vlib
 				break;
 			
 			default:
+			retry:
 				if ( op_type op = op_from_token( token, expecting_value() ) )
 				{
 					receive_op( op );
 					break;
+				}
+				
+				if ( ! expecting_value() )
+				{
+					// E.g. `hex ~x"abc123"`
+					
+					receive_op( Op_named_unary );
+					goto retry;
 				}
 				
 				throw operator_out_of_context( its_source );
