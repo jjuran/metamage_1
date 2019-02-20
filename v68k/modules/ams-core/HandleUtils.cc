@@ -30,7 +30,6 @@ asm short HandToHand_patch( char** h : __A0 )
 	_BlockMove         // copy the data
 	
 	MOVEA.L  D2,A0     // set the new handle as the result
-	MOVEQ.L  #0,D0     // set noErr as the result code
 	
 end:
 	RTS
@@ -52,7 +51,6 @@ asm short PtrToHand_patch( char* p : __A0, long size : __D0 )
 	_BlockMove         // copy the data
 	
 	MOVEA.L  D2,A0     // set the new handle as the result
-	MOVEQ.L  #0,D0     // set noErr as the result code
 	
 end:
 	RTS
