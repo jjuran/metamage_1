@@ -104,6 +104,14 @@ RsrcMapHandle& find_rsrc_map( short refnum )
 	return *rsrc_map;
 }
 
+static inline
+UInt16 count_types( const rsrc_map_header& map )
+{
+	const type_list& types = *(type_list*) ((Ptr) &map + map.offset_to_types);
+	
+	return types.count_1 + 1;
+}
+
 static
 SInt64 get_nth_type( const rsrc_map_header& map, UInt16 i )
 {
@@ -1248,6 +1256,31 @@ pascal short GetResFileAttrs_patch( short refnum )
 	ADDQ.L   #2,SP
 	
 	JMP      (A0)
+}
+
+static
+short Count1Types_handler()
+{
+	ResErr = noErr;
+	
+	RsrcMapHandle rsrc_map = find_rsrc_map( CurMap );
+	
+	return count_types( **rsrc_map );
+}
+
+asm
+pascal short Count1Types_patch()
+{
+	MOVEM.L  D1-D2/A1-A2,-(SP)
+	
+	LEA      20(SP),A2
+	
+	JSR      Count1Types_handler
+	MOVE.W   D0,(A2)
+	
+	MOVEM.L  (SP)+,D1-D2/A1-A2
+	RTS
+
 }
 
 static

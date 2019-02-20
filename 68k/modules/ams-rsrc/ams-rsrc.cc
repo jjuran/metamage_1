@@ -41,6 +41,8 @@ void install_ResourceManager()
 	TBTRAP( Get1IxResource    );  // A80E
 	TBTRAP( Get1IxType        );  // A80F
 	
+	TBTRAP( Count1Types       );  // A81C
+	
 	TBTRAP( Get1Resource      );  // A81F
 	TBTRAP( Get1NamedResource );  // A820
 	
