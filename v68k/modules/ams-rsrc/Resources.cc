@@ -563,19 +563,9 @@ Handle GetResource_core( ResType type : __D0, short id : __D1 )
 		return result;
 	}
 	
-	const unsigned long size = rsrc.size();
+	result = PtrToHand( rsrc.data(), rsrc.size() );
 	
-	result = NewHandle( size );
-	
-	if ( result == 0 )  // NULL
-	{
-		ResErr = MemErr;
-		return result;
-	}
-	
-	fast_memcpy( *result, rsrc.data(), size );
-	
-	ResErr = noErr;
+	ResErr = MemErr;
 	
 	return result;
 }
