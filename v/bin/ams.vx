@@ -120,10 +120,7 @@ else
 	const screen = var_run_raster "/ams"
 	const raster = "--raster=" screen
 	
-	if not exists screen then
-	{
-		run .[ "raster make -g 512x342*1 -m paint -R" / ' ', screen ]
-	}
+	run .[ "raster make -fg 512x342*1 -m paint -R" / ' ', screen ]
 	
 	run .[ "raster init" / ' ', screen ]
 	
