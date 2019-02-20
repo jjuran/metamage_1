@@ -357,7 +357,7 @@ pascal char WaitMouseUp_patch()
 {
 	EventRecord event;
 	
-	return Button_patch()  &&  GetOSEvent( mUpMask, &event ) != 0;
+	return Button_patch()  &&  ! GetOSEvent( mUpMask, &event );
 }
 
 pascal long TickCount_patch()
