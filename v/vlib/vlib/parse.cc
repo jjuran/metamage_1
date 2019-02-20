@@ -540,12 +540,6 @@ namespace vlib
 		return Op_none;
 	}
 	
-	static
-	bool ignorable( token_type token )
-	{
-		return token == Token_whitespace  ||  token == Token_comment;
-	}
-	
 	Value Parser::parse( const char* p )
 	{
 		Value result;  // NIL
@@ -558,11 +552,6 @@ namespace vlib
 			
 			while (( next_token( p, token ) ))
 			{
-				if ( ignorable( token ) )
-				{
-					continue;
-				}
-				
 				if ( token == Token_semicolon )
 				{
 					new_line = false;
