@@ -129,7 +129,10 @@ rsrc_header* get_nth_rsrc( const rsrc_map_header& map, ResType type, short i )
 		
 		rsrc_header* rsrc = (rsrc_header*) ((Ptr) &types + it->offset);
 		
-		do {} while ( ++rsrc, i-- > 0 );
+		while ( i-- > 0 )
+		{
+			++rsrc;
+		}
 		
 		return rsrc;
 	}
