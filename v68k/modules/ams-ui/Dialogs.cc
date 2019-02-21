@@ -435,6 +435,8 @@ pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 			switch ( event.what )
 			{
 				case updateEvt:
+					window = (WindowRef) event.message;
+					
 					BeginUpdate( window );
 					DrawDialog( window );
 					EndUpdate( window );
