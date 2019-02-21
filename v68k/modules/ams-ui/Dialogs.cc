@@ -25,6 +25,7 @@
 
 // ams-ui
 #include "modal_updating.hh"
+#include "scoped_port.hh"
 
 
 static short ANumber;
@@ -624,6 +625,8 @@ pascal Boolean DialogSelect_patch( const EventRecord*  event,
 
 pascal void DrawDialog_patch( DialogRef dialog )
 {
+	scoped_port thePort = dialog;
+	
 	DrawControls( dialog );
 	
 	DialogPeek d = (DialogPeek) dialog;
