@@ -921,6 +921,39 @@ pascal void ParamText_patch( const unsigned char*  p1,
 	set_param( 1, p2 );
 	set_param( 2, p3 );
 	set_param( 3, p4 );
+	
+	if ( WindowRef window = FrontWindow() )
+	{
+		WindowPeek w = (WindowPeek) window;
+		
+		if ( w->windowKind == dialogKind )
+		{
+			DialogPeek d = (DialogPeek) window;
+			
+			short n_items_1 = dialog_item_count_minus_one( d->items );
+			
+			DialogItem* item = first_dialog_item( d->items );
+			
+			do
+			{
+				switch ( item->type & 0x7F )
+				{
+					case statText:
+					case editText:
+						DisposeHandle( item->handle );
+						
+						item->handle = expand_param_text( &item->length );
+						break;
+					
+					default:
+						break;
+				}
+				
+				item = next( item );
+			}
+			while ( --n_items_1 >= 0 );
+		}
+	}
 }
 
 pascal void GetDItem_patch( DialogRef  dialog,
