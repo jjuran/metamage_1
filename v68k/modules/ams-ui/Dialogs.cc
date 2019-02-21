@@ -23,6 +23,9 @@
 #include "callouts.hh"
 #include "QDGlobals.hh"
 
+// ams-ui
+#include "modal_updating.hh"
+
 
 static short ANumber;
 static short ACount = -1;
@@ -411,6 +414,8 @@ bool invoke_defItem( DialogPeek d )
 
 pascal void ModalDialog_patch( ModalFilterUPP filterProc, short* itemHit )
 {
+	modal_update_scope updating( filterProc == NULL );
+	
 	QDGlobals& qd = get_QDGlobals();
 	
 	WindowRef window = qd.thePort;

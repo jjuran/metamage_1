@@ -27,8 +27,9 @@
 #include "QDGlobals.hh"
 #include "raster_lock.hh"
 
-// ams-core
+// ams-ui
 #include "MBDF.hh"
+#include "modal_updating.hh"
 #include "StrUtils.hh"
 #include "WDEF.hh"
 #include "desktop.hh"
@@ -1278,11 +1279,17 @@ bool window_needs_update( WindowPeek w )
 	return ! EmptyRgn( w->updateRgn );
 }
 
+static inline
+bool window_could_be_updated_now( WindowPeek w )
+{
+	return ! exclusive_modal_updating  ||  w->windowKind == dialogKind;
+}
+
 pascal unsigned char CheckUpdate_patch( EventRecord* event )
 {
 	for ( WindowPeek w = WindowList;  w != NULL;  w = w->nextWindow )
 	{
-		if ( window_needs_update( w ) )
+		if ( window_needs_update( w )  &&  window_could_be_updated_now( w ) )
 		{
 			fast_memset( event, '\0', sizeof (EventRecord) );
 			
