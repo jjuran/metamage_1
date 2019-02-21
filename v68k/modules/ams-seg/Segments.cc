@@ -92,8 +92,8 @@ struct above_A5_area
 	uint32_t  unknown_28;
 };
 
-static inline
-asm jump_table_entry* get_jump_table_offset( uint16_t offset : __D0 ) : __A0
+static inline asm
+jump_table_entry* get_jump_table_offset( uint16_t offset : __D0 )
 {
 	MOVEA.L  A5,A0
 	ADDA.W   CurJTOffset,A0
@@ -160,7 +160,7 @@ pascal void UnloadSeg_patch( void* ptr )
 {
 }
 
-pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
+short Launch_patch( LaunchParamBlockRec* pb : __A0 )
 {
 	const unsigned char* appName = (StringPtr) pb->reserved1;
 	
@@ -233,7 +233,7 @@ pascal short Launch_patch( LaunchParamBlockRec* pb : __A0 ) : __D0
 	return 0;  // not reached
 }
 
-pascal void ExitToShell_patch()
+void ExitToShell_patch()
 {
 	if ( linger_on_exit )
 	{
