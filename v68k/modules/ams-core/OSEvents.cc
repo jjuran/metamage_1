@@ -61,7 +61,7 @@ UInt16 get_modifiers()
 	return (KeyMods << 1 | KeyMods >> 15) << 8 | MBState;
 }
 
-pascal short PostEvent_patch( short what : __A0, long msg : __D0 ) : __D0
+short PostEvent_patch( short what : __A0, long msg : __D0 )
 {
 	// TODO:  Reject events not enabled in the system event mask.
 	
@@ -111,14 +111,14 @@ QElemPtr find_an_event( short mask : __D0, EventRecord* event : __A0 )
 	return NULL;
 }
 
-pascal char OSEventAvail_patch( short mask : __D0, EventRecord* event : __A0 ) : __D0
+char OSEventAvail_patch( short mask : __D0, EventRecord* event : __A0 )
 {
 	QElemPtr it = find_an_event( mask, event );
 	
 	return -(it == NULL);
 }
 
-pascal char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 ) : __D0
+char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 )
 {
 	QElemPtr it = find_an_event( mask, event );
 	
@@ -134,7 +134,7 @@ pascal char GetOSEvent_patch( short mask : __D0, EventRecord* event : __A0 ) : _
 	return -(it == NULL);
 }
 
-pascal void FlushEvents_patch( unsigned long masks : __D0 )
+void FlushEvents_patch( unsigned long masks : __D0 )
 {
 	QElemPtr it = EventQueue.qHead;
 	

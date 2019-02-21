@@ -46,7 +46,7 @@ long Gestalt_payload( unsigned long  selector : __D0,
 }
 
 asm
-pascal short Gestalt_patch( unsigned long selector : __D0 ) : __D0
+short Gestalt_patch( unsigned long selector : __D0 )
 {
 	MOVE.L   A1,-(SP)         // save A1, the 'response' address
 	

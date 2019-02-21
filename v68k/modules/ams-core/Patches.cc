@@ -30,12 +30,12 @@ void*& find_trap( short trapNum : __D0 )
 	return table[ trapNum & mask ];
 }
 
-void* GetTrapAddress_patch( short trapNum : __D0 ) : __A0
+void* GetTrapAddress_patch( unsigned short trapNum : __D0 )
 {
 	return find_trap( trapNum );
 }
 
-void SetTrapAddress_patch( short trapNum : __D0, void* addr : __A0 )
+void SetTrapAddress_patch( unsigned short trapNum : __D0, void* addr : __A0 )
 {
 	find_trap( trapNum ) = addr;
 }

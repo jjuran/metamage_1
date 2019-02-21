@@ -401,7 +401,7 @@ void MoreMasters_patch()
 	MemErr = noErr;
 }
 
-long FreeMem_patch() : __D0
+long FreeMem_patch()
 {
 	return 1024 * 1024;
 }
@@ -427,7 +427,7 @@ void MaxApplZone_patch()
 {
 }
 
-signed char HGetState_patch( char** h : __A0 ) : __D0
+signed char HGetState_patch( char** h : __A0 )
 {
 	if ( h == NULL )
 	{
