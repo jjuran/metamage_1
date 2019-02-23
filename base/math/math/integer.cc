@@ -452,7 +452,7 @@ namespace integer {
 	
 #ifdef __MC68K__
 	
-	static asm
+	asm
 	void long_multiply( long_t*  x : __A0,
 	                    twig_t   a : __D0,
 	                    twig_t   b : __D1 )
@@ -536,14 +536,6 @@ namespace integer {
 		RTS
 		
 	#endif  // #if ! __MC68020__
-	}
-	
-#else
-	
-	static inline
-	void long_multiply( long_t* x, twig_t a, twig_t b )
-	{
-		*x = (long_t) a * b;
 	}
 	
 #endif
