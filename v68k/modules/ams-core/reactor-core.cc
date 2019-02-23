@@ -21,6 +21,12 @@ static fd_set active_readfds;
 
 static int max_fd = 0;
 
+static inline
+timeval operator -( const timeval& a, const timeval& b )
+{
+	return timeval_sub( a, b );
+}
+
 static
 void insert( reactor_node* node )
 {
@@ -78,7 +84,7 @@ void schedule( timer_node* node )
 {
 	const short saved_SR = disable_interrupts();
 	
-	const uint64_t wake = node->wakeup;
+	const timeval& wake = node->wakeup;
 	
 	timer_node** slot = &timer_chain;
 	
@@ -126,16 +132,17 @@ void cancel( timer_node* node )
 }
 
 static
-uint64_t check_timers()
+bool check_timers( timeval* timeout = NULL )
 {
 	if ( timer_chain == NULL )
 	{
-		return 0;
+		return false;
 	}
 	
-	const uint64_t now_time = time_microseconds();
+	timeval now;
+	time( &now );
 	
-	while ( timer_chain != NULL  &&  timer_chain->wakeup <= now_time )
+	while ( timer_chain != NULL  &&  timer_chain->wakeup <= now )
 	{
 		timer_node* next = timer_chain;
 		
@@ -146,24 +153,27 @@ uint64_t check_timers()
 	
 	if ( timer_chain == NULL )
 	{
-		return 0;
+		return false;
 	}
 	
-	return timer_chain->wakeup - now_time;
+	if ( timeout )
+	{
+		timeval dt = timer_chain->wakeup - now;
+		
+		if ( dt < *timeout )
+		{
+			*timeout = dt;
+		}
+	}
+	
+	return true;
 }
 
 bool reactor_wait( timeval* timeout )
 {
 	const short saved_SR = disable_interrupts();
 	
-	if ( uint64_t dt = check_timers() )
-	{
-		if ( dt < microseconds( *timeout ) )
-		{
-			timeout->tv_sec  = dt / 1000000;
-			timeout->tv_usec = dt % 1000000;
-		}
-	}
+	check_timers( timeout );
 	
 	fd_set readfds;
 	FD_COPY( &active_readfds, &readfds );

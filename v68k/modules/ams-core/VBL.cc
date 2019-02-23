@@ -23,6 +23,18 @@ QHdr VBLQueue : 0x0160;
 
 
 static timer_node VBL_timer_node;
+static bool       timer_scheduled;
+
+static
+void timeval_add( timeval& tv, uint32_t more_usecs )
+{
+	if ( (tv.tv_usec += more_usecs) >= 1000000 )
+	{
+		tv.tv_usec -= 1000000;
+		
+		++tv.tv_sec;
+	}
+}
 
 static
 asm void call_VBL_task( VBLProcPtr proc : __A0 )
@@ -38,9 +50,10 @@ asm void call_VBL_task( VBLProcPtr proc : __A0 )
 static
 void schedule_VBL_timer()
 {
-	const unsigned long long now = time_microseconds();
+	timeval now;
+	time( &now );
 	
-	VBL_timer_node.wakeup += tick_microseconds;
+	timeval_add( VBL_timer_node.wakeup, tick_microseconds );
 	
 	if ( now > VBL_timer_node.wakeup )
 	{
@@ -48,8 +61,10 @@ void schedule_VBL_timer()
 		
 		VBL_timer_node.wakeup = now;
 		
-		VBL_timer_node.wakeup += tick_microseconds;
+		timeval_add( VBL_timer_node.wakeup, tick_microseconds );
 	}
+	
+	timer_scheduled = true;
 	
 	schedule( &VBL_timer_node );
 }
@@ -86,7 +101,7 @@ void do_VBL()
 static
 void VBL_ready( timer_node* )
 {
-	VBL_timer_node.wakeup = 0;
+	timer_scheduled = false;
 	
 	do_VBL();
 	
@@ -104,7 +119,7 @@ short VInstall_patch( QElem* vbl : __A0 )
 	
 	Enqueue( vbl, &VBLQueue );
 	
-	if ( VBL_timer_node.wakeup == 0 )
+	if ( ! timer_scheduled )
 	{
 		VBL_timer_node.ready = &VBL_ready;
 		
@@ -126,7 +141,7 @@ short VRemove_patch( QElem* vbl : __A0 )
 	{
 		cancel( &VBL_timer_node );
 		
-		VBL_timer_node.wakeup = 0;
+		timer_scheduled = false;
 	}
 	
 	reenable_interrupts( saved_SR );
