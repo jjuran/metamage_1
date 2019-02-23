@@ -40,9 +40,16 @@ void schedule_VBL_timer()
 {
 	const unsigned long long now = time_microseconds();
 	
-	const unsigned long delta = tick_microseconds - now % tick_microseconds;
+	VBL_timer_node.wakeup += tick_microseconds;
 	
-	VBL_timer_node.wakeup = now + delta;
+	if ( now > VBL_timer_node.wakeup )
+	{
+		// A discontinuity has occurred.  Happens on first schedule.
+		
+		VBL_timer_node.wakeup = now;
+		
+		VBL_timer_node.wakeup += tick_microseconds;
+	}
 	
 	schedule( &VBL_timer_node );
 }
