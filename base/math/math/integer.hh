@@ -287,11 +287,37 @@ namespace integer {
 		--------------
 	*/
 	
+#ifdef __MC68K__
+	
+	asm
+	void long_multiply( long_t*  x : __A0,
+	                    twig_t   a : __D0,
+	                    twig_t   b : __D1 );
+	
+	inline
+	long_t long_multiply( twig_t a, twig_t b )
+	{
+		long_t x;
+		long_multiply( &x, a, b );
+		
+		return x;
+	}
+	
+#else
+	
+	inline
+	void long_multiply( long_t* x, twig_t a, twig_t b )
+	{
+		*x = (long_t) a * b;
+	}
+	
 	inline
 	long_t long_multiply( twig_t a, twig_t b )
 	{
 		return (long_t) a * b;
 	}
+	
+#endif
 	
 	void multiply_be( limb_t*       x_low, size_t x_size,
 	                  limb_t const* y_low, size_t y_size );

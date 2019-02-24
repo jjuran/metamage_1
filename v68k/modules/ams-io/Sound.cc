@@ -64,6 +64,7 @@ ssize_t abort_sound()
 }
 
 static timer_node Sound_timer_node;
+static bool       timer_scheduled;
 
 static inline
 reactor_core_parameter_block* reactor_core()
@@ -76,18 +77,43 @@ reactor_core_parameter_block* reactor_core()
 }
 
 static
+void timeval_add( timeval& a, const timeval& b )
+{
+	a.tv_sec += b.tv_sec;
+	
+	uint32_t usec = a.tv_usec + b.tv_usec;
+	
+	if ( usec >= 1000000 )
+	{
+		usec -= 1000000;
+	}
+	
+	a.tv_usec = usec;
+}
+
+static
 void schedule_timer( IOParam* pb, uint64_t duration_nanoseconds )
 {
-	if ( Sound_timer_node.wakeup )
+	if ( timer_scheduled )
 	{
 		return;
 	}
 	
 	start_sound( pb->ioBuffer, pb->ioReqCount );
 	
-	const uint64_t now = time_microseconds();
+	time( &Sound_timer_node.wakeup );
 	
-	Sound_timer_node.wakeup = now + duration_nanoseconds / 1000;
+	const uint64_t duration_microseconds = duration_nanoseconds / 1000;
+	
+	const timeval duration =
+	{
+		duration_microseconds / 1000000,
+		duration_microseconds % 1000000,
+	};
+	
+	timeval_add( Sound_timer_node.wakeup, duration );
+	
+	timer_scheduled = true;
 	
 	reactor_core()->schedule( &Sound_timer_node );
 }
@@ -97,11 +123,11 @@ void cancel_timer()
 {
 	short saved_SR = disable_interrupts();
 	
-	if ( Sound_timer_node.wakeup )
+	if ( timer_scheduled )
 	{
 		reactor_core()->cancel( &Sound_timer_node );
 		
-		Sound_timer_node.wakeup = 0;
+		timer_scheduled = false;
 	}
 	
 	reenable_interrupts( saved_SR );
@@ -118,7 +144,7 @@ void Sound_ready( timer_node* node )
 	
 	IODone( dce, noErr );
 	
-	Sound_timer_node.wakeup = 0;
+	timer_scheduled = false;
 	
 	if ( IOParam* pb = (IOParam*) dce->dCtlQHdr.qHead )
 	{

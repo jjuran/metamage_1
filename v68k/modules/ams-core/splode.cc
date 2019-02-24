@@ -40,14 +40,34 @@ bool button_clicked;
 
 static const timeval zero_timeout = { 0, 0 };
 
-static
-timeval timeval_from_ticks( unsigned long ticks )
+static inline
+timeval approximate_timeval_from_ticks( unsigned long ticks )
 {
-	const uint64_t microseconds_per_tick = 1000 * 1000 * 100 / 6015;
+	/*
+		The number of ticks per seconds is 60.15, but we'll use 64, or 2^6.
+		
+		The number of microseconds per tick is (1000 * 1000 * 100 / 6015),
+		which is approximately 16625.1.  We'll use 16384, or 2^14.
+		
+		To convert microseconds to seconds, we need to divide by 1000000.
+		We'll use 1048576, or 2^20.
+		
+		Since we're multiplying dt by 2^14 and then dividing it by 2^20,
+		we can instead just divide it by 2^6.  Using a bit shift, of course.
+		
+		We're also taking (ticks * 2^14) modulo 2^20, i.e. the low 20 bits.
+		We already know the low 14 bits will be zero, so we can do the modulo
+		first, keeping the low 6 bits.  (Using bit intersection, naturally.)
+	*/
+	
+	/*
+	const uint64_t actual_microseconds_per_tick = 1000 * 1000 * 100 / 6015;
+	const uint64_t approx_microseconds_per_tick = 1024 * 1024       / 64;
 	
 	const uint64_t dt = ticks * microseconds_per_tick;
+	*/
 	
-	const timeval tv = { dt / 1000000, dt % 1000000 };
+	const timeval tv = { ticks >> 6, (ticks & (1 << 6) - 1) << 14 };
 	
 	return tv;
 }
@@ -341,7 +361,7 @@ void wait_for_user_input( const timeval& timeout )
 
 void wait_for_user_input( unsigned long ticks )
 {
-	wait_for_user_input( timeval_from_ticks( ticks ) );
+	wait_for_user_input( approximate_timeval_from_ticks( ticks ) );
 }
 
 void poll_user_input()

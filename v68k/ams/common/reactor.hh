@@ -6,6 +6,9 @@
 #ifndef REACTOR_HH
 #define REACTOR_HH
 
+// POSIX
+#include <sys/time.h>
+
 
 typedef void (*reactor_callback)( struct reactor_node* node );
 typedef void (*timer_callback  )( struct timer_node*   node );
@@ -23,7 +26,7 @@ struct timer_node
 {
 	timer_node* next;
 	
-	unsigned long long wakeup;  // microseconds since Jan 1, 1970
+	timeval wakeup;  // seconds,microseconds since Jan 1, 1970
 	
 	timer_callback ready;
 };
