@@ -13,6 +13,20 @@ const uint32_t os_trap_table_address = 1024;
 const uint32_t tb_trap_table_address = 3072;
 
 
+static bool spinloop_flag;
+
+static inline
+bool is_spinloop_memtest( uint16_t opcode )
+{
+	return opcode == 0x4A6D;  // TST.W    (offset,A5)
+}
+
+static inline
+bool is_spinloop_branch( uint16_t opcode )
+{
+	return opcode == 0x66FA;  // BNE.S    *-4
+}
+
 static
 uint32_t get_toolbox_trap_addr( v68k::emulator& emu, uint16_t trap_word )
 {
@@ -34,6 +48,18 @@ bool native_override( v68k::emulator& emu )
 	using v68k::SP;
 	using v68k::PC;
 	using v68k::function_code_t;
+	
+	if ( spinloop_flag  &&  is_spinloop_memtest( emu.opcode ) )
+	{
+		const int level  = 1;
+		const int vector = 88;
+		
+		emu.interrupt( level, vector );
+		
+		return false;
+	}
+	
+	spinloop_flag = is_spinloop_branch( emu.opcode );
 	
 	if ( (emu.opcode & 0xF000) == 0xA000 )
 	{
