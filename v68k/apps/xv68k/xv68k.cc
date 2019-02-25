@@ -365,6 +365,7 @@ void load_vectors( v68k::user::os_load_spec& os )
 	install_exception_handler( os, 32 + 2, HANDLER( syscall_patch_handler ) );
 	
 	install_exception_handler( os, 64, HANDLER( no_op_exception ) );
+	install_exception_handler( os, 88, HANDLER( no_op_exception ) );
 	
 	using namespace v68k::callout;
 	
