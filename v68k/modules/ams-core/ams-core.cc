@@ -41,6 +41,7 @@
 #include "VBL.hh"
 #include "cursor-core.hh"
 #include "interrupt-handlers.hh"
+#include "memwatch.hh"
 #include "options.hh"
 
 
@@ -149,6 +150,17 @@ void initialize_low_memory_globals()
 	
 	init_lowmem_Cursor();
 	init_cursor();
+}
+
+static
+void install_spinloop_mitigation()
+{
+	enum
+	{
+		_WaitUntilZero = 0xA0F6,
+	};
+	
+	OSTRAP( WaitUntilZero );  // A0F6
 }
 
 static
@@ -318,6 +330,8 @@ int main( int argc, char** argv )
 	set_syserr_handler();
 	
 	initialize_low_memory_globals();
+	
+	install_spinloop_mitigation();
 	
 	install_MemoryManager();
 	
