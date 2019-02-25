@@ -97,6 +97,15 @@ bool native_override( v68k::emulator& emu )
 			
 			const uint16_t trap_num = trap_word & 0xFF;
 			
+			uint32_t pointer_arg = 0;
+			
+			if ( trap_num == 0x00F6 )
+			{
+				emu.mem.get_long( emu.regs[ SP ], pointer_arg, data_space );
+				
+				emu.regs[ SP ] += 4;
+			}
+			
 			const uint32_t trap_table_addr = os_trap_table_address;
 			const uint32_t trap_entry_addr = trap_table_addr + 4 * trap_num;
 			
@@ -111,6 +120,11 @@ bool native_override( v68k::emulator& emu )
 			emu.mem.put_long( emu.regs[ SP ] -= 4, emu.regs[ D1 ], data_space );
 			
 			emu.regs[ D1 ] = trap_word;
+			
+			if ( trap_num == 0x00F6 )
+			{
+				emu.regs[ A0 ] = pointer_arg;
+			}
 			
 			emu.mem.put_word( emu.regs[ SP ] -= 2, trap_word, data_space );
 			emu.mem.put_word( emu.regs[ SP ] -= 2, 0x484F,    data_space );
