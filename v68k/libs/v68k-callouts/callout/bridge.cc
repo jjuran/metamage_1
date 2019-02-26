@@ -533,6 +533,40 @@ int32_t fast_rshift_callout( v68k::processor_state& s )
 }
 
 static
+int32_t fast_mempcpy_callout( v68k::processor_state& s )
+{
+	const uint32_t dst = s.a(0);
+	const uint32_t src = s.a(1);
+	
+	const uint32_t n = s.d(0);
+	
+	const uint8_t* p = s.mem.translate( src, n, v68k::user_data_space, v68k::mem_read );
+	
+	if ( p == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	uint8_t* q = s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_write );
+	
+	if ( q == NULL )
+	{
+		abort();
+		return nil;  // FIXME
+	}
+	
+	memmove( q, p, n );
+	
+	s.mem.translate( dst, n, v68k::user_data_space, v68k::mem_update );
+	
+	s.a(0) += n;
+	s.a(1) += n;
+	
+	return rts;
+}
+
+static
 int32_t system_call_callout( v68k::processor_state& s )
 {
 	op_result result = bridge_call( s );
@@ -804,6 +838,7 @@ static const function_type the_callouts[] =
 	&fast_memset_callout,
 	&fast_memnot_callout,
 	&fast_rshift_callout,
+	&fast_mempcpy_callout,
 	
 	&system_call_callout,
 	&microseconds_callout,

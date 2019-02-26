@@ -45,9 +45,11 @@ enum
 	reserved5,
 	reserved6,
 	
+	// $FFD6 - $FFD0
 	fast_memset,
 	fast_memnot,
 	fast_rshift,
+	fast_mempcpy,
 	
 	system_call,
 	microseconds,
