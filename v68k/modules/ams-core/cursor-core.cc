@@ -38,11 +38,11 @@ void init_lowmem_Cursor()
 }
 
 static
-void save_bits_under_cursor( Ptr addr, short rowBytes )
+void save_bits_under_cursor( Ptr addr, short rowBytes, short n )
 {
 	uint32_t* p = CrsrSave;
 	
-	for ( short i = 0;  i < 16;  ++i )
+	while ( --n >= 0 )
 	{
 		*p++ = *(uint32_t*) addr;
 		
@@ -51,11 +51,11 @@ void save_bits_under_cursor( Ptr addr, short rowBytes )
 }
 
 static
-void restore_bits_under_cursor( Ptr addr, short rowBytes )
+void restore_bits_under_cursor( Ptr addr, short rowBytes, short n )
 {
 	uint32_t* p = CrsrSave;
 	
-	for ( short i = 0;  i < 16;  ++i )
+	while ( --n >= 0 )
 	{
 		*(uint32_t*) addr = *p++;
 		
@@ -97,9 +97,9 @@ void erase_cursor()
 {
 	screen_lock lock;
 	
-	const short rowBytes = ScreenRow;
+	const short n_rows = 16;
 	
-	restore_bits_under_cursor( CrsrAddr, rowBytes );
+	restore_bits_under_cursor( CrsrAddr, ScreenRow, n_rows );
 }
 
 static
@@ -163,7 +163,7 @@ void paint_cursor( short h, short v )
 		CrsrAddr -= 2;
 	}
 	
-	save_bits_under_cursor( CrsrAddr, rowBytes );
+	save_bits_under_cursor( CrsrAddr, rowBytes, 16 );
 	plot_cursor           ( plotAddr, rowBytes, h & 0xF, h_trim, v_skip, v_count );
 }
 
